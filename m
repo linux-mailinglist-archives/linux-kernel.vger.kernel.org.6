@@ -1,189 +1,143 @@
-Return-Path: <linux-kernel+bounces-527490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 547E0A40BCA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:47:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8769A40BCC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:51:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2131117EE3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFA93178F9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12F81EF0B4;
-	Sat, 22 Feb 2025 21:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30925202C53;
+	Sat, 22 Feb 2025 21:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Z9RG7vDV"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eTPqoxW3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65990CA5A
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 21:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7812DCA5A
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 21:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740260816; cv=none; b=Gd85MUmNxxNqoTT/pkA5NVnJfPcs9/1c+IjwTG/E5ase4I6q7wjnGPpP/g7xxncwpxPBSOVq/oTvdvRIPh+l/XKwO1qBdHpKWXPx+rrRdkpXug0KkIGCuTIqmtuU2H7DDO+/otlZWl+quVfw1Gnc7yJ3JgmxjCF7wLxJNC1DxK8=
+	t=1740261058; cv=none; b=NKu6d4IBnSqu8GOsYfb4qLFgRaEWtv3IwkVZGb6O86E3QTFzMVnFQAoVreRbQUdaoZnS41w7pl2v04ylVCl98wBqyDCmffPGzNKfmkrV4MrXH5m0P8LSr71TRWVz7pc2FnWhl4DfJwrgHdOzzYL2PYldquJEfhptP6DbxFsH8Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740260816; c=relaxed/simple;
-	bh=R/cqKSeDckVDEF7yPpH+aIK1cWmoP4uCgucXOhuI4zE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAYDMlJ7hDivnIXS312XwUQqEWwsxvpX7yJa5dwFkIiXQWU3IXTVaVqqY49/3XZLs6HYsJeIsra1ZBZU8fNZdBSOfQzo/AHCVVFprd0Mv/6NGXhnEsPSbA2sHqvM4hOx2e3qy6MhcIgrU6x0Fu7h3+6jzMxAqbNPZDkKeARGGPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Z9RG7vDV; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abb90c20baeso427912866b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:46:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740260812; x=1740865612; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TIAnEzzzjax0vkLbj+pBB4HtwVvgwKWI24/rmxYjENo=;
-        b=Z9RG7vDVbLuMupBS2SR5QQ+Bw66i7T751C3ROFWiUue+FTSt7eMlgVdpqGBueiDXwh
-         xUXu/rtV01xcR+rdnmtU2wl4hidhshqlz9SyBbONPo4s///a6zT717J3Bvsb3UoxZgqW
-         irJavQiGiCFWAz93/AiO7u45ZCghvSBzvQq00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740260812; x=1740865612;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TIAnEzzzjax0vkLbj+pBB4HtwVvgwKWI24/rmxYjENo=;
-        b=oQHj4Mov5BQQOcvbDZtpNVXp2qBz979kXwUujGjWtBnXBx1tQW04g5tXxtFhK03pvb
-         uTUH12cxd6we+skQfSI5iqk2rbSX9fJP/LSugFSoh1I6VLHwBdrnOTtQKQrdPKrMqlOE
-         ktCSLWSYp2xEyHcHwrNbtlVthwCwO3rddasbmm6rqj+pGOK79ngpFpTn6vOfBH9mkPt3
-         AoQn61hE6I5O+HvnqcYQ+f+sMRH79D5ofw4SmjBBOpPhJbvy3BE2jdjcBFpinKfYrlWA
-         1US5JoQTPUctmF0SMDtdW08xzDv3dlWLRYw4FxsPhcD97MlZJEk6T2+I0Ym9/n6LMUvr
-         O3mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkcF0xvTkYF0tdXcH/dpkH5qZjHkuQFLaZbt9Llc4B74oNUEMoASrdl8/VjG95C9/dAHkdSIkBqdtRyhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/A0U9pdOtwoTqtRoqoU8qYQcT/Yd/WOEulosTSdNi49vMA40o
-	hKGKmF1SEWnAyeX2rehTIOy9+8RFcu436amGWDHXu98OjoO+vBVxAlOIsztWk/KsYt0xAD3C9kd
-	K6Vs=
-X-Gm-Gg: ASbGncsAsg3oxiykIb93jCpnupH8adNxUS5m5LfuzRNPX5IfyztnBkelI6FLyCtrBli
-	ehM5iTztffgpGDV8VQcKBcOkCc0DOW4yxtkIw/ZwqqPtPjSOePlIJ94lA6G+E55CNCL6NK1JHGN
-	NejZPq4TTaAM1yX619yXGbzfQTZL/L+nTW9GM2/LUR3iE2tDFda/bsd0iitpyHf6ztZQIq1Lqga
-	oJfV1k0mJN0XvDWW7vXlDc8tLKUIgVaXTh2b1MDit3EQx7RZHwIBtR6jQGkeX6cWeSa4jatA707
-	70UuJJ0OVYcSDE2njE7SvaQr+UupqYSy9bahGLj8sOstEYRziHVKqV1OXyLa3rdEtxvdCaEVN/p
-	Z
-X-Google-Smtp-Source: AGHT+IGh3bRilDRJPtYiOAZmi6vhScgs1DkpJT7iOSfQeQWu5f2qWePfuFv1c0icL/CZwk/SpiuzXw==
-X-Received: by 2002:a17:907:c28:b0:ab7:bcc0:9050 with SMTP id a640c23a62f3a-abc0da301cfmr944583366b.27.1740260812420;
-        Sat, 22 Feb 2025 13:46:52 -0800 (PST)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532802a1sm1912208566b.76.2025.02.22.13.46.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2025 13:46:51 -0800 (PST)
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbda4349e9so467159966b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:46:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW+eBD6XUy+rvogBD/k2+gTzQHwsQl4tfnzmIKAqwYczMpatM9gcTKSX839XhxKjXiiroU7DvMuzcxqnP4=@vger.kernel.org
-X-Received: by 2002:a17:907:970c:b0:abb:d047:960b with SMTP id
- a640c23a62f3a-abc0d9885e7mr719250966b.4.1740260810677; Sat, 22 Feb 2025
- 13:46:50 -0800 (PST)
+	s=arc-20240116; t=1740261058; c=relaxed/simple;
+	bh=TsRNaCiBwhb8aWV+R66NFreX8r9V2ZMiX4UrVeScVBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=G/aAL74yQ3NuNwH4bR3LU8Xwq39ucc3g2p+vi/AbJII/27O8AfPuKJp0k8sTYiLFgPhMTiV56fDM1X0e8AAY4Z4K3qJFjkNcnOu7hXRI5DIuJxXb4YfqxcwDPp1f/s3E5moU8eJPdO1bakJiFeHAn4d6gT6STpyva4YA0K1DYaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eTPqoxW3; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740261056; x=1771797056;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=TsRNaCiBwhb8aWV+R66NFreX8r9V2ZMiX4UrVeScVBI=;
+  b=eTPqoxW3iHuaTJ54aJmfwklrhOPDsVaBcoOWobIXmQhz4Wn1sIwZ5C7A
+   T+YwFfd4Jrl0yMYIw1VNAoUNIgZkRAvqua5kpEGoAP6lxVrRECGDdA6k4
+   JK9LSM7EwyWT7boUqNXwoLIoKOA3mZdjOiyRZ0pwEgpymA/tMtObtXxxo
+   YW1LhT3cYCpJMqloYifVR+t55B60xljHbqS9LQoXrmIR46nOLRH/TwqLG
+   XlJF0ZAKMnrmwi4q1nATLbBr+qETEWVzxD51a+0vmg3kqX3dvQXMavQJd
+   QNVRCLg/52lqEaFH2CT4LpESKBTLxF0HpJfPrQEY5FCobtyupdnmiKPqu
+   Q==;
+X-CSE-ConnectionGUID: XmuiPkPQQUao4A5UQTgz4A==
+X-CSE-MsgGUID: Tpvb16xRRJSNhHBS9IwzLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="52457525"
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="52457525"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 13:50:55 -0800
+X-CSE-ConnectionGUID: SFJzLQpFSmWvEDu+E8ugUQ==
+X-CSE-MsgGUID: lbGqOC8jR8iNhKlF6l4tEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="116206479"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 22 Feb 2025 13:50:54 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlxOe-0006vr-1Z;
+	Sat, 22 Feb 2025 21:50:52 +0000
+Date: Sun, 23 Feb 2025 05:49:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Elizabeth Figura <zfigura@codeweavers.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: include/linux/thread_info.h:259:25: error: call to '__bad_copy_to'
+ declared with attribute error: copy destination size is too small
+Message-ID: <202502230554.IA0tyUeS-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
- <6EFFB41B-9145-496E-8217-07AF404BE695@zytor.com> <c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
-In-Reply-To: <c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 22 Feb 2025 13:46:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
-X-Gm-Features: AWEUYZlfgH2FWGDgxF-FUknCaXkkoysm8XxdV5A68axeTzsJ2Kz9bsbxjCAZi30
-Message-ID: <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com, 
-	ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, 
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sat, 22 Feb 2025 at 13:22, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Power hungry and prone to information leaks, though.
+Hi Elizabeth,
 
-The power argument is bogus.
+FYI, the error/warning still remains.
 
-The fact is, high performance is <i>always</i> "inefficient". Anybody
-who doesn't understand that doesn't understand reality.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5cf80612d3f72c46ad53ef5042b4c609c393122f
+commit: c301e1fefc2d6c83a2beb47e9cdd7b59a90b0067 ntsync: No longer depend on BROKEN.
+date:   6 weeks ago
+config: i386-buildonly-randconfig-002-20250221 (https://download.01.org/0day-ci/archive/20250223/202502230554.IA0tyUeS-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502230554.IA0tyUeS-lkp@intel.com/reproduce)
 
-And I very much say "reality". Because it has nothing to do with CPU
-design, and everything to do with "that is how reality is".
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502230554.IA0tyUeS-lkp@intel.com/
 
-Look at biology. Look at absolutely <i>any</i> other area of
-technology. Are you a car nut? Performance cars are not efficient.
+All errors (new ones prefixed by >>):
 
-Efficiency comes at a very real cost in performance. It's basically a
-fundamental rule of entropy, but if you want to call it anything else,
-you can attribute it to me.
+   In file included from include/linux/spinlock.h:60,
+                    from include/linux/wait.h:9,
+                    from include/linux/wait_bit.h:8,
+                    from include/linux/fs.h:6,
+                    from drivers/misc/ntsync.c:11:
+   In function 'check_copy_size',
+       inlined from 'copy_from_user' at include/linux/uaccess.h:207:7,
+       inlined from 'setup_wait' at drivers/misc/ntsync.c:888:6:
+>> include/linux/thread_info.h:259:25: error: call to '__bad_copy_to' declared with attribute error: copy destination size is too small
+     259 |                         __bad_copy_to();
+         |                         ^~~~~~~~~~~~~~~
 
-Being a high-performance warm-blooded mammal takes a lot of energy,
-but only a complete nincompoop then takes that as a negative. You'd be
-*ignorant* and stupid to make that argument.
 
-But somehow when it comes to technology, people _do_ make that
-argument, and other people take those clowns seriously. It boggles the
-mind.
+vim +/__bad_copy_to +259 include/linux/thread_info.h
 
-Being a snake is a _hell_ of a lot more "efficient". You might only
-need to eat once a month. But you have to face the reality that that
-particular form of efficiency comes at a very real cost, and saying
-that being "cold-blooded" is more efficient than being a warm-blooded
-mammal is in many ways a complete lie and is distorting the truth.
+b0377fedb65280 Al Viro   2017-06-29  248  
+9dd819a15162f8 Kees Cook 2019-09-25  249  static __always_inline __must_check bool
+b0377fedb65280 Al Viro   2017-06-29  250  check_copy_size(const void *addr, size_t bytes, bool is_source)
+b0377fedb65280 Al Viro   2017-06-29  251  {
+c80d92fbb67b2c Kees Cook 2021-06-17  252  	int sz = __builtin_object_size(addr, 0);
+b0377fedb65280 Al Viro   2017-06-29  253  	if (unlikely(sz >= 0 && sz < bytes)) {
+b0377fedb65280 Al Viro   2017-06-29  254  		if (!__builtin_constant_p(bytes))
+b0377fedb65280 Al Viro   2017-06-29  255  			copy_overflow(sz, bytes);
+b0377fedb65280 Al Viro   2017-06-29  256  		else if (is_source)
+b0377fedb65280 Al Viro   2017-06-29  257  			__bad_copy_from();
+b0377fedb65280 Al Viro   2017-06-29  258  		else
+b0377fedb65280 Al Viro   2017-06-29 @259  			__bad_copy_to();
+b0377fedb65280 Al Viro   2017-06-29  260  		return false;
+b0377fedb65280 Al Viro   2017-06-29  261  	}
+6d13de1489b6bf Kees Cook 2019-12-04  262  	if (WARN_ON_ONCE(bytes > INT_MAX))
+6d13de1489b6bf Kees Cook 2019-12-04  263  		return false;
+b0377fedb65280 Al Viro   2017-06-29  264  	check_object_size(addr, bytes, is_source);
+b0377fedb65280 Al Viro   2017-06-29  265  	return true;
+b0377fedb65280 Al Viro   2017-06-29  266  }
+b0377fedb65280 Al Viro   2017-06-29  267  
 
-It's only more efficient within the narrow band where it works, and
-only if you are willing to take the very real costs that come with it.
+:::::: The code at line 259 was first introduced by commit
+:::::: b0377fedb6528087ed319b0d054d6ed82240372c copy_{to,from}_user(): consolidate object size checks
 
-If you need performance in the general case, it's not at all more
-efficient any more: it's dead.
+:::::: TO: Al Viro <viro@zeniv.linux.org.uk>
+:::::: CC: Al Viro <viro@zeniv.linux.org.uk>
 
-Yes, good OoO takes power. But I claim - and history backs me up -
-that it does so by outperforming the alternatives.
-
-The people who try to claim anything else are deluded and wrong, and
-are making arguments based on fever dreams and hopes and rose-tinted
-glasses.
-
-It wasn't all that long ago that the ARM people claimed that their
-in-order cores were better because they were lower power and more
-efficient. Guess what? When they needed higher performance, those
-delusions stopped, and they don't make those stupid and ignorant
-arguments any more. They still try to mumble about "little" cores, but
-if you look at the undisputed industry leader in ARM cores (hint: it
-starts with an 'A' and sounds like a fruit), even the "little" cores
-are OoO.
-
-The VLIW people have proclaimed the same efficiency advantages for
-decades. I know. I was there (with Peter ;), and we tried. We were
-very very wrong.
-
-At some point you just have to face reality.
-
-The vogue thing now is to talk about explicit parallelism, and just
-taking lots of those lower-performance (but thus more "efficient" -
-not really: they are just targeting a different performance envelope)
-cores perform as well as OoO cores.
-
-And that's _lovely_ if your load is actually that parallel and you
-don't need a power-hungry cross-bar to make them all communicate very
-closely.
-
-So if you're a GPU - or, as we call them now: AI accelerators - you'd
-be stupid to do anything else.
-
-Don't believe the VLIW hype.  It's literally the snake of the CPU
-world: it can be great in particular niches, but it's not some "answer
-to efficiency". Keep it in your DSP's, and make your GPU's use a
-metric shit-load of them, but don't think that being good at one thing
-makes you somehow the solution in the general purpose computing model.
-
-It's not like VLIW hasn't been around for many decades. And there's a
-reason you don't see it in GP CPUs.
-
-                Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
