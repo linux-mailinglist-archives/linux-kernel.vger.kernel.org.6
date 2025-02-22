@@ -1,155 +1,176 @@
-Return-Path: <linux-kernel+bounces-527197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764E3A40854
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:26:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5A9CA40855
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 041193BA0E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9872019C066B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 954E020B1E1;
-	Sat, 22 Feb 2025 12:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6954920ADCF;
+	Sat, 22 Feb 2025 12:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UFXq5CYL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vnJRvRJq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpLxVcDZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7828B209695;
-	Sat, 22 Feb 2025 12:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEE3BA53
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740227182; cv=none; b=c+Ys+hw+DXj674xYWVW2Sm2OtHXI6a8lg4IJjwZCjhLNlQw9jjebklOhecaJZl8S4mx8lYgHufOIsvO0dYo3l9D4TUTUOOl5sdkTAMoci6fWaZ9I7lc/YzP/+AzimlLeMKaqGZh+39Zf6GkSMUq28DK2yK/zVIY+6Wiw6XkofcQ=
+	t=1740227376; cv=none; b=Z9MbcMgCYpMwYS2q7CINd/w+D01RjkVF4mZPoMPtOAxJeffY15Dbad5IXW/9f5LqjAHP/ifl/z8fwNLMObpjxrChEc1rW7cWqDtRkqz6h3L2eq5nbkanfVGE9u8+qdO5vRMZj/D0xs9Lohm/L0iTsQEjiFtI/VelN2dWsrgINXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740227182; c=relaxed/simple;
-	bh=x2KN1wWyffIyMEJ2zI0OinlEcF0podCUFAEcLXFID4A=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=DVaqrRV5chPxpZbci6IuzxEKvKlSawdOt4WliUis/ckGmnyqWWrcxH+R9uqzQvSNCwfAitlKdnRbSmiVpgfgrW8C+wfFTyCBzu6puxAGQfpGRkd07CwchB8C7x3/nbyKWNFUCVmgjXy0aHfFoNCttv+W0xXCMXe7YA/6A3lwqmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UFXq5CYL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vnJRvRJq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 22 Feb 2025 12:26:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740227178;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2JW3WU97tQ2Vo5oDnkbb4HHLBsUEakNLFIFQiwVAQ/Y=;
-	b=UFXq5CYLx3DVJrFG0QFRZJKpcwkkvEM0oIP2XjRNL2RsGEVHMZiFQBmogSdWXjc4rr5sBV
-	OEmwQ2SWaw/jan+9XhRA/MKUHkz5x2ulvHwWDYV1HiEHNjN62BClVIK4GhHQlUOQQ6ZIg9
-	hgbu7TiHdsnZKsSt95uQbZi9P6kEQbmNitQLtc846oBqOU8E17HX5QHtCrZAzA96yySjKX
-	KegVe3AecKfMhpGfpf0pk/NZHKcsOwjInvlVD+sa4t/Cph4yHLCsrCE9f6GgqSn5pqNv7z
-	dNix6mkvtseDbNbzrN/BZd2mMrhIJQ3P4wrY3EMHXDYrSJd/XVxxQJC7Rc2jLw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740227178;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2JW3WU97tQ2Vo5oDnkbb4HHLBsUEakNLFIFQiwVAQ/Y=;
-	b=vnJRvRJqSPj+N2DD0uwkXtdBZpjyAUT+dYKIfILuYeFVC8L0ApxS4ntdTWqxkLFcMoX6vG
-	pgWXifSkXUxfX6Cg==
-From: "tip-bot2 for Maciej Wieczor-Retman" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] selftests/lam: Move cpu_has_la57() to use cpuinfo flag
-Cc: "Maciej Wieczor-Retman" <maciej.wieczor-retman@intel.com>,
- Ingo Molnar <mingo@kernel.org>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Alexander Potapenko <glider@google.com>,
- Peter Zijlstra <peterz@infradead.org>, Shuah Khan <skhan@linuxfoundation.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C8b1ca51b13e6d94b5a42b6930d81b692cbb0bcbb=2E17379?=
- =?utf-8?q?90375=2Egit=2Emaciej=2Ewieczor-retman=40intel=2Ecom=3E?=
-References: =?utf-8?q?=3C8b1ca51b13e6d94b5a42b6930d81b692cbb0bcbb=2E173799?=
- =?utf-8?q?0375=2Egit=2Emaciej=2Ewieczor-retman=40intel=2Ecom=3E?=
+	s=arc-20240116; t=1740227376; c=relaxed/simple;
+	bh=SSGSmoHatyl6HQLxw8fOkh4lN56WlcFQLHj1JxpvagQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJz0Dw3ZOajNJHBCJkwJTnG3GlGuflJR+uCkCEoxx3fg/UgoWuxjQeMxRTEVUQij/JdLQlkc7uZIEpLHwrzFF3DDikBwAFKrhB6NPTQL0K+a8JBg0WxJJauisP8M/8zwGjE9+xgjlp/btrhlKFfLenLXc2ZFiIRERbRG63NGjjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpLxVcDZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6ECBC4CED1;
+	Sat, 22 Feb 2025 12:29:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740227376;
+	bh=SSGSmoHatyl6HQLxw8fOkh4lN56WlcFQLHj1JxpvagQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lpLxVcDZtSEnc2/4o39uLntPR3zWzkfv7KPT6J9r3JTW6sMirnbLY9YErrscDTsvO
+	 DN3LRsX67sK165Sv73Y+EZpsWd0lw/GDgZJLkQh5v5htZLCOJ+7ZCEroexeXPH6nJg
+	 BVZRwwaUF2fv8fe8pcIvlwMzdrmPLV6Y9EA9qyX+Kx0qFG0lLePhOqsP1w3VsnY/ce
+	 I/tlSOkPc4cneQPTc5hSJdef/SK2ra0n9puV25X+c1MfeloPatxqt1vCg55Oae8WB0
+	 HBd0VftTlqM//MsUx80cQUjaHewOBL/bKmj7q5LspuJx1qs+IVUU+ZBIXWytHkhXaU
+	 zxO1OHtLq/LXw==
+Date: Sat, 22 Feb 2025 13:29:25 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Manali Shukla <manali.shukla@amd.com>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
+	mhklinux@outlook.com, andrew.cooper3@citrix.com
+Subject: Re: [PATCH v7 00/12] AMD broadcast TLB invalidation
+Message-ID: <Z7nDJQanWxv5cC8d@gmail.com>
+References: <20250123042447.2259648-1-riel@surriel.com>
+ <93792758-bc88-4d84-bdea-f366988c2d53@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174022717804.10177.14425767347553583879.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <93792758-bc88-4d84-bdea-f366988c2d53@amd.com>
 
-The following commit has been merged into the x86/mm branch of tip:
 
-Commit-ID:     ec8f5b4659b4044db55e1f7d947703dd4948626c
-Gitweb:        https://git.kernel.org/tip/ec8f5b4659b4044db55e1f7d947703dd4948626c
-Author:        Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-AuthorDate:    Mon, 27 Jan 2025 16:31:55 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Sat, 22 Feb 2025 13:17:07 +01:00
+* Manali Shukla <manali.shukla@amd.com> wrote:
 
-selftests/lam: Move cpu_has_la57() to use cpuinfo flag
+> On 1/23/2025 9:53 AM, Rik van Riel wrote:
+> > Add support for broadcast TLB invalidation using AMD's INVLPGB instruction.
+> > 
+> > This allows the kernel to invalidate TLB entries on remote CPUs without
+> > needing to send IPIs, without having to wait for remote CPUs to handle
+> > those interrupts, and with less interruption to what was running on
+> > those CPUs.
+> > 
+> > Because x86 PCID space is limited, and there are some very large
+> > systems out there, broadcast TLB invalidation is only used for
+> > processes that are active on 3 or more CPUs, with the threshold
+> > being gradually increased the more the PCID space gets exhausted.
+> > 
+> > Combined with the removal of unnecessary lru_add_drain calls
+> > (see https://lkml.org/lkml/2024/12/19/1388) this results in a
+> > nice performance boost for the will-it-scale tlb_flush2_threads
+> > test on an AMD Milan system with 36 cores:
+> > 
+> > - vanilla kernel:           527k loops/second
+> > - lru_add_drain removal:    731k loops/second
+> > - only INVLPGB:             527k loops/second
+> > - lru_add_drain + INVLPGB: 1157k loops/second
+> > 
+> > Profiling with only the INVLPGB changes showed while
+> > TLB invalidation went down from 40% of the total CPU
+> > time to only around 4% of CPU time, the contention
+> > simply moved to the LRU lock.
+> > 
+> > Fixing both at the same time about doubles the
+> > number of iterations per second from this case.
+> > 
+> > Some numbers closer to real world performance
+> > can be found at Phoronix, thanks to Michael:
+> > 
+> > https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
+> > 
+> > My current plan is to implement support for Intel's RAR
+> > (Remote Action Request) TLB flushing in a follow-up series,
+> > after this thing has been merged into -tip. Making things
+> > any larger would just be unwieldy for reviewers.
+> > 
+> > v7:
+> >  - a few small code cleanups (Nadav)
+> >  - fix spurious VM_WARN_ON_ONCE in mm_global_asid
+> >  - code simplifications & better barriers (Peter & Dave)
+> > v6:
+> >  - fix info->end check in flush_tlb_kernel_range (Michael)
+> >  - disable broadcast TLB flushing on 32 bit x86
+> > v5:
+> >  - use byte assembly for compatibility with older toolchains (Borislav, Michael)
+> >  - ensure a panic on an invalid number of extra pages (Dave, Tom)
+> >  - add cant_migrate() assertion to tlbsync (Jann)
+> >  - a bunch more cleanups (Nadav)
+> >  - key TCE enabling off X86_FEATURE_TCE (Andrew)
+> >  - fix a race between reclaim and ASID transition (Jann)
+> > v4:
+> >  - Use only bitmaps to track free global ASIDs (Nadav)
+> >  - Improved AMD initialization (Borislav & Tom)
+> >  - Various naming and documentation improvements (Peter, Nadav, Tom, Dave)
+> >  - Fixes for subtle race conditions (Jann)
+> > v3:
+> >  - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
+> >  - More suggested cleanups and changelog fixes by Peter and Nadav
+> > v2:
+> >  - Apply suggestions by Peter and Borislav (thank you!)
+> >  - Fix bug in arch_tlbbatch_flush, where we need to do both
+> >    the TLBSYNC, and flush the CPUs that are in the cpumask.
+> >  - Some updates to comments and changelogs based on questions.
+> > 
+> > 
+> 
+> I have collected performance data using the will-it-scale
+> tlb_flush2_threads benchmark on my AMD Milan, Genoa, and Turin systems.
+> 
+> As expected, I don't see any discrepancies in the data.
+> (Performance Testing is done based on 6.13.0-rc7).
+> 
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | ./tlb_flush2_threads -s 5 -t 128 | Milan 1P (NPS1) | Milan 1P (NPS2) | Genoa 1P (NPS1) | Genoa 1P (NPS2) | Turin 2P (NPS1) | Turin 2P (NPS2) |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | Vanila                           |      357647     |      419631     |     319885      |      311069     |      380559     |      379286     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | LRU drain removal                |      784734     |      796056     |     540862      |      530472     |      549168     |      482683     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | INVLPGB                          |      581069     |      950848     |     501033      |      553987     |      528660     |      536535     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | LRU drain removal + INVLPGB      |     1094941     |     1086826     |     980293      |      979005     |      1228823    |      1238440    |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | LRU drain vs. Vanila             |      54.42%     |     47.29%      |     40.86%      |      41.36%     |      30.70%     |      21.42%     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | INVLPGB vs. Vanila               |      38.45%     |     55.87%      |     55.87%      |      43.85%     |      28.01%     |      29.31%     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> | (LRU drain + INVLPGB) vs. Vanila |      67.34%     |     61.39%      |     67.37%      |      68.23%     |      69.03%     |      69.37%     |
+> ------------------------------------------------------------------------------------------------------------------------------------------------
+> 
+> Feel free to add:
+> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
 
-In current form cpu_has_la57() reports platform's support for LA57
-through reading the output of cpuid. A much more useful information is
-whether 5-level paging is actually enabled on the running system.
+Great data!
 
-Check whether 5-level paging is enabled by trying to map a page in the
-high linear address space.
+Could we please add all the scalability testing results to patch #9 or 
+so, so that it's preserved in the kernel Git history and provides a 
+background as to why we want this feature?
 
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Shuah Khan <skhan@linuxfoundation.org>
-Link: https://lore.kernel.org/r/8b1ca51b13e6d94b5a42b6930d81b692cbb0bcbb.1737990375.git.maciej.wieczor-retman@intel.com
----
- tools/testing/selftests/x86/lam.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+Thanks,
 
-diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-index 4d4a765..60170a3 100644
---- a/tools/testing/selftests/x86/lam.c
-+++ b/tools/testing/selftests/x86/lam.c
-@@ -124,14 +124,18 @@ static inline int cpu_has_lam(void)
- 	return (cpuinfo[0] & (1 << 26));
- }
- 
--/* Check 5-level page table feature in CPUID.(EAX=07H, ECX=00H):ECX.[bit 16] */
--static inline int cpu_has_la57(void)
-+static inline int la57_enabled(void)
- {
--	unsigned int cpuinfo[4];
-+	int ret;
-+	void *p;
-+
-+	p = mmap((void *)HIGH_ADDR, PAGE_SIZE, PROT_READ | PROT_WRITE,
-+		 MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED, -1, 0);
- 
--	__cpuid_count(0x7, 0, cpuinfo[0], cpuinfo[1], cpuinfo[2], cpuinfo[3]);
-+	ret = p == MAP_FAILED ? 0 : 1;
- 
--	return (cpuinfo[2] & (1 << 16));
-+	munmap(p, PAGE_SIZE);
-+	return ret;
- }
- 
- /*
-@@ -322,7 +326,7 @@ static int handle_mmap(struct testcases *test)
- 		   flags, -1, 0);
- 	if (ptr == MAP_FAILED) {
- 		if (test->addr == HIGH_ADDR)
--			if (!cpu_has_la57())
-+			if (!la57_enabled())
- 				return 3; /* unsupport LA57 */
- 		return 1;
- 	}
+	Ingo
 
