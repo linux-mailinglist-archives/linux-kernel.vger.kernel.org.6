@@ -1,197 +1,144 @@
-Return-Path: <linux-kernel+bounces-527188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B91BA4083F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:11:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A04DA40842
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:13:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A103519C67E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:11:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2845319C65D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECF520B209;
-	Sat, 22 Feb 2025 12:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D7120ADCA;
+	Sat, 22 Feb 2025 12:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R0m8KywF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S0+zcLGZ"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F3820AF98;
-	Sat, 22 Feb 2025 12:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F28A20ADC0;
+	Sat, 22 Feb 2025 12:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740226284; cv=none; b=PA8S4v4xsTZTCY2jHIJZmmSQAsbvtM4fbCwVNo78xC/TtcDzi4/JMfKLctWmsK9/U5YyWa+zFfQihRkoQwcaBx3cmRxWCOgACXmwBvagj8B3PzVatnDoPo+DSRx807LH+pX2T1OOtwChMDnCPHSYd4UXWERyZDU67kXkZP6WE8g=
+	t=1740226384; cv=none; b=CXRfU+bN2XNZF+kHAs/cg5rEOR3+T9wmQU23QRGT5czAc1Y8bf3reEZqVea+WN3t8tf6B+3uYiBYxTO+zvDTPbEeO1U1mvMuafT8FQZIwV/hvCUuKp3qgerIZcXtwoNcSiR4RNrZBRfzqIVctZ5gYV0WD3JAfVO4uIBqOL+guBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740226284; c=relaxed/simple;
-	bh=mLxhZTOj27R+dTNlE0OdxaRjvavfPa9bJxD6ENetFX4=;
+	s=arc-20240116; t=1740226384; c=relaxed/simple;
+	bh=UcCs92//+CGxlxHBIWo7ThWL5U5qDI/Ou+tv4w3OPwI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fg9yvW5hz8O3gpuyRxSK52Bp4ugvJ5DNWVu2ah/J83PU8hiW3fRSBfaI99qGdl2SCv4X3ZhAdB63ObsO4Xd1mXuEnlPLQfmlzLR9RPnuSqUKRN7XzjJMhyn550mTDLBkNO+E3PQo1flh5Z24w8oA46OC1wMpbqZE8owyMW7OKOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R0m8KywF; arc=none smtp.client-ip=209.85.128.46
+	 To:Cc:Content-Type; b=DkXlKH4oPQ1PK8efeQTSj5RcFgJ5VIrvYIc9f5p0tnNNFTTu4pBO2iNIG7MNinZB/nrDJImRpLFP6yRcK8zDdBrJEHONlNS30uWrFkiWqg4BCJABTTDcc7kBinjRgnmVr/WGWqKGNDw8XNPC7jkrvOfFouXWoF3lx1j6GXDg8S0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S0+zcLGZ; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-439a4dec9d5so27712755e9.0;
-        Sat, 22 Feb 2025 04:11:22 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so5277521a12.0;
+        Sat, 22 Feb 2025 04:13:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740226281; x=1740831081; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740226381; x=1740831181; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aNCCiP7RRRUyS4WfOdLncoGS7gW6wazUd+UuIMRSe4A=;
-        b=R0m8KywF5tpMkwJKnPQk6zL4WL9PH2q7torvJKXvOfZo7/pNmkgULGaaw9zlzkhgUs
-         TUuRjRdJ2Imp4Lg9i5W4xuxzJsIvYdp2TuinbBjNZMmYjBFzKloC8dFdCj9JTkQgVb0V
-         HdzRwRGdXttZfuXFS9V4He1lkFXd2A1J7HECfQscIpo3uM0Sxi3bF2kPzPVXqemhEsKq
-         wF6D5p3jLx+GvtVTrJQeqjY6x8ycGpoo+VL7tPJ8S3RxCGkf2bkKcq9nbMI5FOr+FkcV
-         2D/HOjOW+j5ppTyUI+p5DJK57X4dMXDXhKoQW4nt6nbcob8LtMWXYONaTfAehA+la4zk
-         R+yg==
+        bh=UcCs92//+CGxlxHBIWo7ThWL5U5qDI/Ou+tv4w3OPwI=;
+        b=S0+zcLGZkiASyxzyw/AHgAje8mz0+BnTP1DIhJrJvc4gcvIvlXwIdnPfCkcTEBLaUP
+         fnVobN+pzOOgO09XevbBKw4SKrj4Ppuwc+bsElp0P0YrnJ+wh8IKGSawKlLJt9h9JRDx
+         Ao6+LbG2dxGYTRG70cQQShN/Cdekac8h/+VhLYaw51gflH6VEhqpNNV0+Voxs2trui8c
+         7OrUIFtkufGMpz4mstsrLPC93wbV6rFuBoURHAGh0+20GFJy1MZEfL0aSXeWVEN+u6RC
+         sY+6aVs3/W/JsMU49VCEclTGQNFV8CDKJmSOIkND1UnhrQm5+Q6QhiXfPgDMA+Et8/Xh
+         jfIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740226281; x=1740831081;
+        d=1e100.net; s=20230601; t=1740226381; x=1740831181;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aNCCiP7RRRUyS4WfOdLncoGS7gW6wazUd+UuIMRSe4A=;
-        b=r+biJhGf9iC1y70N7xR9eCWsTRfwHbFl5sit4EK/9yn3g3fQDcVtpGJ63OYDapMewh
-         N04+f2iiNgGXWDJd7no7sB2eNkMiLjEPDm2I/mvcgFUVH5WTfSUe3EDtEHUSb/+zGCjO
-         noU3IRrQFNWIU7rxHXq/VDxYltZwSXR72zUGVBaYf1gHt7Q+oG1KaXUmN5NlqZClKGpP
-         0z9ZNk7cRwQJ4BgQYeZC/Ikdxvxtwm2Y06bPveDkNdlp2ny4ycbhyFYswKBlQRXqOvXy
-         oe/o1Q5vzs2UOsHv6rkkMTcorxeTyWe6QmtatSXhmGTS9U2cv2D0TOI4tHxAcCLnK/W6
-         wq7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ2+S5PpivZvw2Ry2Uld9DnMeUbiJQOLqLsYeodzGerZsutF4o29trlEQVBYkqOUxe1pLYeBPosNqH@vger.kernel.org, AJvYcCXR5pZgDi+TXgTiGkwA/f0TLcVQ0V11BZidbLvDYPD2mFcciRRjySKGUwYOXsw5LrzUa/wHyh2RaMAiXTnm@vger.kernel.org, AJvYcCXVwKGxrNJKIqcxIQmBPh7kHISqx6jvaQ0ISytsOY0dfNWDCSGQ5cF61zYZMc0YHnlvimseGzWKxOzFors=@vger.kernel.org, AJvYcCXmm0bn3E3+sB24TnC3OP4OzQUTtYkIzVYrE0i09/H5zDcFS8YY9pJu/+AuFUAUsre1yg3FQzah1Eip@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx7G+2X+YGNo6tmh2miNVpGUw2QBPgClJHLQaZWX0W3nKVczqk
-	6d5DgRVSgOzVTI5BzNuSpyR6gU3uQvxTIua4ICjV2AT8PapTLH9M9AQUoz8tPdL41oZoMdcYtUF
-	vYPPSRibPlKVdT4f1FuPl9iGEiLQ=
-X-Gm-Gg: ASbGnctBrSMij1HlUYlNkQHfKmSeVAEnQnJJfLeUYJPnrHQDwcZOjQ0OG0JY3LlcVue
-	TC9lArsF8h4DNvNxY6Iy0q4VD30ZM8CHvA8ZQURfeLBlZZx9kve9Pgvi8nYH8oQDnU5oeUu32rB
-	1lEHdVinlL
-X-Google-Smtp-Source: AGHT+IFH+v891imgr4v4woH90dELrHFhYpZLGiD6se33nDibAnm06EzmlPNU+a6OdoEHBxYADPJA99dPusBeaFT3bq0=
-X-Received: by 2002:a05:600c:1d88:b0:439:8bc3:a6a3 with SMTP id
- 5b1f17b1804b1-439af7fa4dbmr55192325e9.3.1740226280795; Sat, 22 Feb 2025
- 04:11:20 -0800 (PST)
+        bh=UcCs92//+CGxlxHBIWo7ThWL5U5qDI/Ou+tv4w3OPwI=;
+        b=nQfpa34Q1zIIWJ0Oqq1e8x/dFtoOQLvrfemJPPotVuWNMtN13v6dA7Y3Z5l2T3idpo
+         MiMwUmR1LNoRqTGPmYYKE6IZjwFsI3suXcdvvm2/d5ccGhtGLSqeX4RzYnctLI0a4FCj
+         MKuy9mR2oxsQbwQjoEgMXYoxCdlwqBNHVKNXuAdpHcGVUCdTfqqw7b7cGBweh4E/YBmj
+         LWHCsL7LVJadfdmRgyuqOLpL+5mSutP+nsyFqw2gmmuVewzgU5QTdvGscjAJHLMeFg06
+         Y7jukNcKq8l378tbf/NoGs9M2+GO7SmDjzzyOmMhGlyty8W/RwrJLmSduCr/PvVuVt2w
+         jCBA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyh1NLsE+NjAIJv8BldjAqaPQL/LrY5x9MBH2H3lCKla220xxNw4/XnHrdOS89aCKRVMMSFCcYQytn8oBRvQcZ@vger.kernel.org, AJvYcCWi74tXedOlDqc2vOJQvf3E5/fCzvNU6UxfRjrqAv/gMzz0RrglJzaKSz97EBO2+jElq7RHdSNpq1JG/HAS@vger.kernel.org, AJvYcCXq4Ukwmo8Fq49L1pc6OVBGMYFkAT833C1YRPBVo12ZVX9XIAhJv1SZ6iCP0dqVfzF2LukCeuiIgTOIaeDw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxrQkOpmxivwYfEpdrKO2etsK72DELm/8B16IPF8kltccp8plD
+	9E9QrDgEarXTrghkYaKsViAKXL6pjPO7eBTtu5k4HYZPm+CWtgIOwvpsF9z4mJDmSR3pF80hxaQ
+	60DRvUp2JlPjUQldngyPnPQOnXqwVuP3mdzg=
+X-Gm-Gg: ASbGnctvkN/jM76to0qxS6aSxXjefAdT50p/uTYp+33UCs+ADmrbBdzAvMcc9fhHsoC
+	MJ5jd6ckf1XHXOe4Dj7AI6Q2GWwLN6f9tjYJg3iRwg9IG/xn/QLSf8vv1OCX33vcUSFZFTw++J7
+	RznG5G+w==
+X-Google-Smtp-Source: AGHT+IGVFDoKMuSJlmbG3dDfeHZVI4UMPL3h12SNa7oIv7JVKBH7eWOsn2mydhYqH2cx8FkD/b6rPUf1AbJwjVPFnwU=
+X-Received: by 2002:a05:6402:27cc:b0:5e0:752a:1c7c with SMTP id
+ 4fb4d7f45d1cf-5e0a11fff09mr10005828a12.1.1740226381108; Sat, 22 Feb 2025
+ 04:13:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250215103159.106343-1-clamor95@gmail.com> <20250215103159.106343-3-clamor95@gmail.com>
- <20250216145445.1278b6ae@jic23-huawei> <CAPVz0n1529ydFRHn9N3jEsS8Rhdf-c4xECkMd9TDczzBTNuJzA@mail.gmail.com>
- <20250217142433.12183a17@jic23-huawei> <CAPVz0n23XYG4R6JhMd9qOoKW-PbJk53j-A3iRgb-znLHt5hm8w@mail.gmail.com>
- <20250222120537.13d2998e@jic23-huawei>
-In-Reply-To: <20250222120537.13d2998e@jic23-huawei>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Sat, 22 Feb 2025 14:11:09 +0200
-X-Gm-Features: AWEUYZmt-0lFojV2uIbd5MnBI_kZ9O9BNsVpC_4D6Kv_RxzPIftV4C4KQaaXLuw
-Message-ID: <CAPVz0n04RCb9DWVScBR00Zk+PQBwpnjKSbig2D6yr0-hoej1kQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>, Matti Vaittinen <mazziesaccount@gmail.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Emil Gedenryd <emil.gedenryd@axis.com>, 
-	Arthur Becker <arthur.becker@sentec.com>, Mudit Sharma <muditsharma.info@gmail.com>, 
-	Per-Daniel Olsson <perdaniel.olsson@axis.com>, Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>, 
-	Ivan Orlov <ivan.orlov0322@gmail.com>, David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org
+References: <20231112095353.579855-1-debug.penguin32@gmail.com>
+ <gfnn2owle4abn3bhhrmesubed5asqxdicuzypfrcvchz7wbwyv@bdyn7bkpwwut> <202502210936.8A4F1AB@keescook>
+In-Reply-To: <202502210936.8A4F1AB@keescook>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sat, 22 Feb 2025 13:12:47 +0100
+X-Gm-Features: AWEUYZkrczdGvPossTY-laNaH0XG4wYU8BX1rt6xqTV7TvImEDyhx208Ptv2FVQ
+Message-ID: <CAGudoHHB6CsVntmBTgXd_nP727eGg6xr_cPe2=p6FyAN=rTvzw@mail.gmail.com>
+Subject: Re: [PATCH] qnx4: fix to avoid panic due to buffer overflow
+To: Kees Cook <kees@kernel.org>
+Cc: Ronald Monthero <debug.penguin32@gmail.com>, al@alarsen.net, gustavoars@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-=D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:05 Jona=
-than Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+On Fri, Feb 21, 2025 at 6:38=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
 >
-> On Mon, 17 Feb 2025 16:32:33 +0200
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
->
-> > =D0=BF=D0=BD, 17 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:24 =
-Jonathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > >
-> > > Hi,
-> > >
-> > > > > > +static int al3000a_read_raw(struct iio_dev *indio_dev,
-> > > > > > +                         struct iio_chan_spec const *chan, int=
- *val,
-> > > > > > +                         int *val2, long mask)
-> > > > > > +{
-> > > > > > +     struct al3000a_data *data =3D iio_priv(indio_dev);
-> > > > > > +     int ret, gain;
-> > > > > > +
-> > > > > > +     switch (mask) {
-> > > > > > +     case IIO_CHAN_INFO_RAW:
-> > > > > > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DAT=
-A, &gain);
-> > > > > > +             if (ret < 0)
-> > > > > > +                     return ret;
-> > > > > > +
-> > > > > > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK];
-> > > > >
-> > > > > I may have misinterpreted the other thread.  IS this value in lux=
-?
-> > > > > If it is make this channel IIO_CHAN_INFO_PROCESSED instead.
-> > > > >
-> > > >
-> > > > This is actually a really good hint, I will check if this works out
-> > > > and if yes, then definitely will use it. Thank you.
-> > >
-> > > From your other reply it seems we have no idea of the correct scaling=
-.
-> > > If that is the case, then channel type should be IIO_INTENSITY as
-> > > I assume we also have no idea if the light sensitivity curve is
-> > > matched to that required for illuminance (which approximates the
-> > > sensitivity of the human eye). Various datasheets provide completely
-> > > garbage conversion formulas btw so even if we have data this can
-> > > be problematic. One recent sensor was using a green filter and
-> > > saying illuminance in lux was 1.2 * green which was assuming their
-> > > own definition of white light.
-> > >
-> > > Jonathan
+> On Fri, Feb 21, 2025 at 03:51:23PM +0100, Mateusz Guzik wrote:
+> > On Sun, Nov 12, 2023 at 07:53:53PM +1000, Ronald Monthero wrote:
+> > > qnx4 dir name length can vary to be of maximum size
+> > > QNX4_NAME_MAX or QNX4_SHORT_NAME_MAX depending on whether
+> > > 'link info' entry is stored and the status byte is set.
+> > > So to avoid buffer overflow check di_fname length
+> > > fetched from (struct qnx4_inode_entry *)
+> > > before use in strlen to avoid buffer overflow.
 > > >
 > >
-> > Then why IIO_LIGHT exists at all? If you state that datasheets provide
-> > garbage formulas and sensors cannot be trusted and all is around human
-> > eye, then why IIO_LIGHT is still the case? I did not recall any
-> > drivers for human eyes (thank god). Please be more consistent. Thank
+> > Inspired by removals of reiserfs and sysv I decided to try to whack
+> > qnx4.
 >
-> It exists because some sensors do this correctly, or at least a good
-> approximation to the standard sensitivity curves.  This is done two
-> ways.
->
-> 1. Good light frequency filtering in front of the sensor to compensate
->    for the difference in sensitivity between the measuring element
->    and that the standard curves.  CIE1931 (there are a few other standard=
-s
->    but they are close enough that we don't care).
->    https://en.wikipedia.org/wiki/Illuminance
-> 2. Multiple sensing elements. A common reason for this is to remove
->    bit of infrared that we don't want. Often the calculation is a
->    non linear combination of the various sensor outputs. Such a driver
->    usually presents several IIO_INTENSITY channels and a calculated
->    IIO_LIGHT channel.
->
-> In both cases the datasheet tends to include a comparison the the
-> CIE1931 etc standards. There will be small differences but that is
-> very different from taking a sensor that is only sensitive to green
-> and weighting it which is the example I gave above.
->
-> These sensors will compensate for the different sensivity
-> of the human eye to different wavelengths.  E.g. if you
-> think blue and green light LEDs have the same brightness then
-> the sensor will give close to the same output.
->
-> Anyhow, light sensors are a hole I have gone far too deep in over
-> the years. Key is some manufacturers provide insufficient information
-> or take the view it is a problem for the integrator of the sensor
-> to deal with. For those we do not pretend to know the answer and
-> use intensity channels instead.
+> I have no strong opinion here beyond just pointing out that it appears
+> that the qnx4 fs is still extant in the world. QNX itself is still alive
+> and well and using this filesystem based on what I can find.
 >
 
-This is quite an explicit explanation. Thank you.
+I'm aware.
 
-> Jonathan
->
->
-> > you
-> >
->
+However, we reached a point where should someone need to access a
+now-removed filesystem, they can spin up a VM with an older system to
+do it (including with one of the myriad Linux distro releases).
+Suppose support disappears tomorrow. You still have something like
+debian which will have a kernel with the module for several years. But
+suppose you are years down the road and all the Linux distros which
+had it are past EOL and you still need it. For the purpose of reading
+the sucker, you can still use them.
+
+So I don't believe this will cut anyone off of transferring data out
+of a filesystem which got whacked upstream. That's concerning old
+filesystems in general.
+
+As for qnx4 in particular, should you git log on it, you will find the
+support is read-only. And should you read between the commits (if you
+will) I am not at all convinced even that was high quality to begin
+with -- looks like an abandoned WIP.
+
+General tune is not holding the codebase hostage to obsolete (and
+probably not at all operational) components. If in doubt, prune it.
+
+This reminded me of a funny remark made by someone else concerning
+removal of drivers for stale hardware. It was in the lines of "if you
+ask if anyone is still using it, someone will respond they have an old
+machine in their garage which they were totally going to boot up this
+weekend. if you just remove it, nobody will ever notice".
+
+If it was not for the aforementioned bugfix, I would be sending a
+removal instead.
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
