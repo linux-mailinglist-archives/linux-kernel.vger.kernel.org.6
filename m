@@ -1,138 +1,195 @@
-Return-Path: <linux-kernel+bounces-526958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E486A405AC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:42:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C706FA405AD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF48D427990
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:42:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D81E703109
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181D21F236B;
-	Sat, 22 Feb 2025 05:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279C31F7561;
+	Sat, 22 Feb 2025 05:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="acyaR94y"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ggntqJcR"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FC0770E2
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 05:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CCC770E2;
+	Sat, 22 Feb 2025 05:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740202927; cv=none; b=lKk0vRqL1zvG0ANNx2frMY077wlAnZ/SlCUc7YUueZQhAYoz37Or982G3vJ8ajzR/QIInQm8WP36JgfZkum82/S34wAU1rszcvPJjQWbyF7kI4UxHGi983v+aZbeud3FSd4vs8dXRigWMI+HPwZT/Dm/rEvF4RwhTcZFmiLhTqQ=
+	t=1740203056; cv=none; b=eXl+93ybzaKRKKbOOY5Rho+D/zVFAyma31r/H+E2uTiuLgoTXf0HqweIy2RserTr2Vw6CjXkg+nN1zSflv4XsgeLTfdrZdv4zj0QKMEhGvhDgTwMdr/MQD6QyUJxJugZxOdpN1oqjoYh/n7xgg+etsXHe7waqfXsH2Gf8l52XRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740202927; c=relaxed/simple;
-	bh=TaGr45ZFclvincgO0zONNx/QRaeaWR653etDcTdQiZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MU+dPqI47tdZV0yFRFuo625RoUCLsyud37I3EBc2Giotif5Ewj7DoCTMoImCY0U5hJm/Rre7Bjd4tio0FN3ssEu4jrdfAajFSQ2Ep+fKWVCR0J1Uj4MbRULeMaQ1hKH78lwHqMRF88Xm2Anm9eiy9LXfPLdbmVxTF6+B9GmDXKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=acyaR94y; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54605bfcc72so4400064e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 21:42:05 -0800 (PST)
+	s=arc-20240116; t=1740203056; c=relaxed/simple;
+	bh=nkYM4x72HyPUHZHb8VHdX3lyx1EuaOkY2lCZ2Fwejl4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=m2/cjec+0M4FPi8Rq1KpLCGxX/kebl/FPsAqNTYdeT8NsPZKMa22+DC7H7t7g6RDI1qg7/z3FZl730xNuNkYphU8r/EOISwqMvuQQAvsyEhDl0i7rSezmTNAOFBTcHmiG2wtXVKGZJPZeq60BNGBJ0RyNJqp6QgGYVo6Y8oYUWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ggntqJcR; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-221057b6ac4so54288155ad.2;
+        Fri, 21 Feb 2025 21:44:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740202924; x=1740807724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vO61PwMr9fG3YaV/tA/ZETRTgpImj80gIG6et6cmRFA=;
-        b=acyaR94yB+afjgLP6hPa31FmY1MYjt0eUy1Uhdvwqgny8sYiLhmHUr90qz5CpAAeD+
-         RNLW7BrfLcLBeZBtJNWHbz0qQs10E0LvsavmUFHoga9L+2KVDuEsMmOiFeG/A/wUOi9Q
-         a2+elLw/VM4Yh/yOcLrSvxpuVKD17JaTypXIHNRn0aGCBLG7YhgjZMapN8kha6eUp7HO
-         lHTzFqJviye4oBPNT7qEaZAmi2QFW84xppnAwL7wYNqn7sgxeORbZAI2gvO1kBvWu4hF
-         xqT0iDyx2ynhrt5DXEMkp7x7+0lps/6XLeEzTemo/I+vGBIizLYtrRGOMJd0lTDFg51y
-         e3fQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740202924; x=1740807724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740203054; x=1740807854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vO61PwMr9fG3YaV/tA/ZETRTgpImj80gIG6et6cmRFA=;
-        b=Gi7bjp3fLP7EjvzKXCmA73NC1UNXij9COpI32CneCL1h7XgwfQkF49w0IoPLzf3lrb
-         WHnWJudYJsyvbBK11fJlEgCuVy2fs03u5x4fcTZDUvGceeaUSO5ELoV/ydynGUCG+4mR
-         AjGmb83Ie/J3WfQByfp2pB3itmZW7qvHI/X/9ZAnPepoAbvYbTV2Hg9Jrqqc2RXy3U7x
-         pdyvC/yrdWvrBYa0VCoNv1zmoZQZAKp4RRWJk9DoeBerfqoqpsQvPEJ0vZP/I+aNo8j3
-         0voCQKtpDANfVMa6L5YATittCUdPTxAWBZnvb/WiWlsNBsvFadOR+jNOZzdl6+gf1mMr
-         2T/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXv0yZYiOSJrIzLxiWDNZcr5mqvjPiKy9b2Ppte6YUxx9QD81vfxLHNOeoJljuyV+F2baXgAJCvq0a22Rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtPL7f9nBzwH+tqN6Ssj0yNMPRsquwGOzKGrkSyp16HQE7przz
-	IR9TD60hV5+62Cq14kL4BugkG1Wbm12CLkRxIf81k7lYHZ5xBpSPXaai69cNQ0U=
-X-Gm-Gg: ASbGncsFHk+lo/OS+fwyjmCjzYlWa4rJXgFeKV8wZKRDy2+rOGPjmYR+YFAZ3dSUBf/
-	YlD04O9KQg7WPlC/Dkxb3bwxoGE2agdQmedLT8i6c2jIOBIi5RY5mHdYaNw2li831Cj6akmMkIA
-	SbvLKIfJ05098k53smizVI3IlTqH2sigD6VNk5SR2giI7lUJSP823uz36krWZTsxH5Za2krNU/o
-	fRIJUic7baz4s/w8hw+y9VdJqJ7y5kDmIjmo/eEPNgRYa7vGM/fsPa+y/PiybK7CCTCbxXyHu7e
-	UFF1OhU8LAb2Lm4T8Q8kq/IccMtbuzzsq5otD8ozx4LZMIqgzpYzlmKBVqJKsBZzfgpNGiKxXh7
-	hCisRaA==
-X-Google-Smtp-Source: AGHT+IGiIeRReqCJe8XcAs+P8MFQu4S5iiJzOGajXPXAgfgMiOHfmVTqn9FGs7qnDVSijblMJUCdaA==
-X-Received: by 2002:a05:6512:2387:b0:545:9e4:e823 with SMTP id 2adb3069b0e04-546e58bacd7mr3221825e87.16.1740202923578;
-        Fri, 21 Feb 2025 21:42:03 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54527244fd7sm2580680e87.12.2025.02.21.21.42.01
+        bh=JN6tg9jMolK9FtqTyHhvnK6PuO8bN0pSfEHBvSTQ+04=;
+        b=ggntqJcR/mnOE8docqt4SI91ylMcJ4Fvnx2WaOc0UZLOvQQF1w0kNsF/T0+WEEbO0/
+         KWLCK3heI27pAh6NC5JHSCctOIiw/e5Jycu+BNlVHxLYbhmIvBegmwTCU+gKecNWT+Ih
+         IVzsCC3aTE+sX1bd8KdXhtayJwJGlaqaNfcSibLqhhLXD859eW/rdB7ly8Wu8l8aVs6k
+         VBr7QfxsT5JkrxodDesnZGhhueJzEBdH/TxnFIc8YKZadnMPEcjrn5lY4lK55VUIDAIj
+         wFjVkwNFP5ebd4tjrLmewQ2XGcW7DK+lE/kzxZRLQPq616cu1T9xYeEykydb/Jj2Cqav
+         L1xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740203054; x=1740807854;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JN6tg9jMolK9FtqTyHhvnK6PuO8bN0pSfEHBvSTQ+04=;
+        b=hOtMU/d3PahM8SE/NrhDvZj8+IIyovWvBHT7ZwwJAsljYFmSjNYSk3yr8HFFAjISs7
+         J8W4QPskeYRVteYJUFwyONN/q3QEmsyu+ae1YMsFfbN1Dx395yS9BRU906TT1C55AdZJ
+         U96c7qJaW3CqWDAwqhejiCfAmzJFgwiiWZKbevZB8qKWZ4zE8E0moNANXYDo5N2izaeU
+         eY5F11nSiWQyRdcKgdVKGzFAX6UUW4yjjG7s7qwYHnKKvS/O7PbzQZzvq2Y4GI2oOO4T
+         C1jQOrKlwt+Vpa7uwcuNZGabnmlJDKpOe4TEzLiAr/wLjBpInwJalXx2FUjpEdrtfeB/
+         Nc2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVekdBH/1+7H3Rh8ZOBgSOk12E0L873zZq8vNAdBSfU7fkOH3ja+8LA3gqsKOlFIz4Wwe9oKEoNvY0h0TP9@vger.kernel.org, AJvYcCW3wkDg7HaiHVKYsY5SarO5UeaZ6YLiHZNDjGfD7ATn4yVghjor7U6NmzNfJAZWDphRwKXJvYCNoCgzp6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz50AGU09GdopFfzhfYqktVmr3LILAjT3WEvJMdKI3vLubIqsQa
+	i0SjwEubIZJdiCbACpmRij23zez77sN8BRfFG1/YUjjfNen5ZjYwYmbr8Q==
+X-Gm-Gg: ASbGnctIvAtp9xSVqvnm5juBh6mlcZWpJaBrB4GrevH8wAgTAr3ouif/7iPfqRJY+ol
+	j4HUreL5UsrF/hjnVnWHM8VhMjOwhGUyODzCGWNAQPT1dWfEW4Jx/TpIVJ9WsDgoENnWFeYVgld
+	SSUC+8sMs9jgP9NNhaL6Zw877oS2pQ1j914gV3so57j+JJ2xj841jeUeTy4O5kSgP7Usm5QrlJT
+	5jHQ42mFoMzcqJpwNYBYym/IHgM1hfJyiJAW7mcBO/0ntJ0k2THrT0cL/ZwH1OK6Ei73HvWgiY1
+	wafSohVrFEyXvr2ighGdpgzFqwEFSDkVWJtMuo/lvg0K+gycXiTVJ4mBz+jSHGE7UGNVrkFDWdg
+	V697T5ecv/YgePUq9gi3zuFo=
+X-Google-Smtp-Source: AGHT+IGvHwEGKp8bifeL0bm86Y95OmaukWAjfaQ8nmw/WGiKd2nKCTPuumT5A8GKXjkriJdOPJ7zsg==
+X-Received: by 2002:a17:902:da8f:b0:220:fe50:5b44 with SMTP id d9443c01a7336-221a1103431mr100803975ad.31.1740203054179;
+        Fri, 21 Feb 2025 21:44:14 -0800 (PST)
+Received: from DESKTOP-NBGHJ1C.flets-east.jp (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5364351sm146183165ad.76.2025.02.21.21.44.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 21:42:02 -0800 (PST)
-Date: Sat, 22 Feb 2025 07:41:59 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
-	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
-	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
-	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 drm-dp 5/8] drm/hisilicon/hibmc: Getting connector
- info and EDID by using AUX channel
-Message-ID: <4dsv4ks7nfy2ywcv6rukm243rywt7ynaso6sckpfg4vyzluwez@nvxzkjpjckiy>
-References: <20250222025102.1519798-1-shiyongbang@huawei.com>
- <20250222025102.1519798-6-shiyongbang@huawei.com>
+        Fri, 21 Feb 2025 21:44:13 -0800 (PST)
+From: Ryo Takakura <ryotkkr98@gmail.com>
+To: hamzamahfooz@linux.microsoft.com
+Cc: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	decui@microsoft.com,
+	gregkh@linuxfoundation.org,
+	haiyangz@microsoft.com,
+	jani.nikula@intel.com,
+	jfalempe@redhat.com,
+	joel.granados@kernel.org,
+	john.ogness@linutronix.de,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	pmladek@suse.com,
+	ryotkkr98@gmail.com,
+	wei.liu@kernel.org
+Subject: Re: [PATCH RFC] panic: call panic handlers before panic_other_cpus_shutdown()
+Date: Sat, 22 Feb 2025 14:44:05 +0900
+Message-Id: <20250222054405.298294-1-ryotkkr98@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z7juu2YMiVfYm7ZM@hm-sls2>
+References: <Z7juu2YMiVfYm7ZM@hm-sls2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222025102.1519798-6-shiyongbang@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Feb 22, 2025 at 10:50:58AM +0800, Yongbang Shi wrote:
-> From: Baihan Li <libaihan@huawei.com>
-> 
-> Add registering drm_aux and use it to get connector edid with drm
-> functions. Add ddc channel in connector initialization to put drm_aux
-> in drm_connector. And also add detect callback to detect connector
-> befored call connector_get_modes.
-> 
-> Signed-off-by: Baihan Li <libaihan@huawei.com>
-> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-> ---
-> ChangeLog:
-> v2 -> v3:
->   - Capitalized EDID and AUX, suggested by Dmitry Baryshkov.
-> v1 -> v2:
->   - deleting type conversion, suggested by Dmitry Baryshkov.
->   - deleting hibmc_dp_connector_get_modes() and using drm_connector_helper_get_modes(), suggested by Dmitry Baryshkov.
-> ---
->  drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c   |  3 +-
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 33 ++++++++++++++++---
->  .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  5 +++
->  3 files changed, 35 insertions(+), 6 deletions(-)
-> 
->  
->  static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
->  	.get_modes = hibmc_dp_connector_get_modes,
-> +	.detect_ctx = drm_connector_helper_detect_from_ddc,
+On Fri, 21 Feb 2025 16:23:07 -0500, Hamza Mahfooz wrote:
+>On Fri, Feb 21, 2025 at 11:23:28AM +0900, Ryo Takakura wrote:
+>> On Thu, 20 Feb 2025 17:53:00 -0500, Hamza Mahfooz wrote:
+>> >Since, the panic handlers may require certain cpus to be online to panic
+>> >gracefully, we should call them before turning off SMP. Without this
+>> >re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
+>> >vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
+>> >is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
+>> >crash_smp_send_stop() before the vmbus channel can be deconstructed.
+>> >
+>> >Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+>> >---
+>> > kernel/panic.c | 4 ++--
+>> > 1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> >diff --git a/kernel/panic.c b/kernel/panic.c
+>> >index fbc59b3b64d0..9712a46dfe27 100644
+>> >--- a/kernel/panic.c
+>> >+++ b/kernel/panic.c
+>> >@@ -372,8 +372,6 @@ void panic(const char *fmt, ...)
+>> > 	if (!_crash_kexec_post_notifiers)
+>> > 		__crash_kexec(NULL);
+>> > 
+>> >-	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>> >-
+>> > 	printk_legacy_allow_panic_sync();
+>> 
+>> I think printk_legacy_allow_panic_sync() is placed after 
+>> panic_other_cpus_shutdown() so that it flushes the stored 
+>> cpus backtraces as described [0].
+>> 
+>> > 	/*
+>> >@@ -382,6 +380,8 @@ void panic(const char *fmt, ...)
+>> > 	 */
+>> > 	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+>> > 
+>> >+	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>> >+
+>> 
+>> So maybe panic_other_cpus_shutdown() should be palced after 
+>> atomic_notifier_call_chain() along with printk_legacy_allow_panic_sync()
+>> like below?
+>> 
+>> ----- BEGIN -----
+>> diff --git a/kernel/panic.c b/kernel/panic.c
+>> index d8635d5cecb2..7ac40e85ee27 100644
+>> --- a/kernel/panic.c
+>> +++ b/kernel/panic.c
+>> @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
+>>         if (!_crash_kexec_post_notifiers)
+>>                 __crash_kexec(NULL);
+>> 
+>> -       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>> -
+>> -       printk_legacy_allow_panic_sync();
+>> -
+>>         /*
+>>          * Run any panic handlers, including those that might need to
+>>          * add information to the kmsg dump output.
+>>          */
+>>         atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+>> 
+>> +       panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+>> +
+>> +       printk_legacy_allow_panic_sync();
+>> +
+>>         panic_print_sys_info(false);
+>> 
+>>         kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
+>> ----- END -----
+>
+>Ya, that looks fine to me, that's actually how I had it initally, but I
+>wasn't sure if it had to go before the panic handlers. So, I erred on
+>the side of caution.
 
-I think a proper .detect callback should be reading sink_count. Most
-likely it will work though.
+I see, sorry that I was only speaking in relation to stored backtraces.
+It seems that printk_legacy_allow_panic_sync() is placed before 
+atomic_notifier_call_chain() so that it can handle flushing before calling
+any panic handlers as described [0].
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+I'm not really familar with the problems associated with panic handlers
+so I hope maybe John and Petr can help on this matter...
 
+Sincerely,
+Ryo Takakura
 
->  };
->  
+>BR,
+>Hamza
 
--- 
-With best wishes
-Dmitry
+[0] https://lore.kernel.org/lkml/ZeHSgZs9I3Ihvpye@alley/
 
