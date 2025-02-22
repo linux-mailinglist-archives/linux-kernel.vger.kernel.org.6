@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-527335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD17A409D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:18:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31553A409D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8E33189BBC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:18:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BD09189BC24
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BD0190468;
-	Sat, 22 Feb 2025 16:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB3913D539;
+	Sat, 22 Feb 2025 16:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L+dcY7gP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="je+VGqDg"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6061C11CAF
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A1E11CAF
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740241123; cv=none; b=qgGA7Zuu6omAZsrtANGhhFSe0BvGoyfdkKYrBaK467RsaovEzhK0etk9qNNkI4nMzxtTa4peEvN9xkoyCcP9vUaP5trqLk083JWM6xhsvqpo4w9c/LBrAtiVgYeXCqEeMArGNyGUqpHbz6R/hMX5QUfkaTa2NP9B1KByX6xwzsM=
+	t=1740241182; cv=none; b=ugKuTp/XlRnUNgsceC9oPIRyCT6PBMlmWvs6gguATSrmmuM4GHubAMWeoWVaEp+QSKTAXPxmA8Q2I1T3vABAtCTcHAy5jRwvE95+eqgKGyhaBVeF8J0nzftAz+a0D+KUS/KC9soF1J3dCX/Y9gVWtLJjbDM7htLKKt+oT1qHMCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740241123; c=relaxed/simple;
-	bh=Bqm+1bktPRMG2h6RktV6hW9ZUKR0RlFbE8gXvmEOUBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hf7YPSIXdwPg9BJq4yhNtS5eV2EXKRbXHKmQHRQJk9rNWurU0ULWKkk1j3LdLA9w4vOF00C1RecK7BlX6AYNpaoeTvy68soK3M5a7O1qL9ljn21riuqen7N0U6b1lAZIM2w9rSaS8VsHkPtZbsgvdK8+0+L43IYGqhVZCd8VDVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L+dcY7gP; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740241121; x=1771777121;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Bqm+1bktPRMG2h6RktV6hW9ZUKR0RlFbE8gXvmEOUBQ=;
-  b=L+dcY7gP1k8Vorc31BCseLil6BatP66dL1Inbf2h8fxJuEZq1qAN/MAF
-   hzSFXtTVrJv93+SCgcCPfnnx7RYe4MBhK1jMwe64HqBS5QTKRxPU+fccQ
-   UdBvJMMmEzOjAcIMQJwpESEOiG8RxseIwjhE6TpfB8TQ/rdjyXtLSR6Md
-   /tpe+gFn00A144X1TLZzv9xZyCokHbVKmmqy1jUW69XAJUmtwVrB8JS/h
-   IOSoEaHDE7FB1iwzdlBwhWYFLQc25kiKcvtYca6ZzrBa7S7NUWN4NSbJl
-   1pP4ATpRinrq4AuoMiwcSMyjF96cvcPjm/2ZPLs+9cudlteb4t15hS6gu
-   g==;
-X-CSE-ConnectionGUID: oyRjyZTSTDemfIAIwUn8HA==
-X-CSE-MsgGUID: fToUYeWFTAqZdVc65dHnDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="51672086"
-X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
-   d="scan'208";a="51672086"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 08:18:40 -0800
-X-CSE-ConnectionGUID: xxvwIezFS+SueIyk9k3Lbg==
-X-CSE-MsgGUID: T2lD4t/qQPy2ueZKyY7AIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
-   d="scan'208";a="146486192"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 22 Feb 2025 08:18:39 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tlsD6-0006hY-2l;
-	Sat, 22 Feb 2025 16:18:36 +0000
-Date: Sun, 23 Feb 2025 00:18:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nava kishore Manne <nava.manne@xilinx.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Moritz Fischer <mdf@kernel.org>,
-	Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
-Subject: drivers/fpga/versal-fpga.c:78:34: warning: 'versal_fpga_of_match'
- defined but not used
-Message-ID: <202502230042.owPXHbB7-lkp@intel.com>
+	s=arc-20240116; t=1740241182; c=relaxed/simple;
+	bh=wGJeKwXEQnAOaYDwP4JZG1Pxz540yOM14ypcDN69CfE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VokMEX4dIAFAsFV5X9DWsyHQjew/xfpfGxc1fataUAUYBRFJ7SUluIWNE8OM3ppNBMTlSe99wSXkRfiSJ1o6qbB4Y0InuGargCIW0mkJ4VRDjHzP9dYnNj78t1AB3J7ZgBrCKgDqjbG/6opL0xpEvDCPSV7x7ElaQYFsnZOu1OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=je+VGqDg reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id A911940E01AD;
+	Sat, 22 Feb 2025 16:19:34 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sLJ7bO-Z9SZM; Sat, 22 Feb 2025 16:19:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740241170; bh=3c6QLrQOPMg4gJUMnvvUhkC8BZW8S7qXs09rUpcW/W8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=je+VGqDgPUeJKKE+49xZd7iT3AI8eVDYVvU2BjhZ6xZ55sF1YWtjo55DS9fA2H5Ms
+	 WBHxh3A3Z0pz1QWtFCBG/M5dAvaZBk3LYHJMGEj60xS5WeqFVbdpTJpM2gW/BcFVxC
+	 ZzUcnDZBF+i/tyDEhzL8DFcdVRnkUGxXDhKvF2UF7sIiOeS2ouXgUO7iN9j4/Bbo3Y
+	 VD5UVFMFyZKS+y6e3bQgeo7xDiu1ywROr4twPPzYFoKeou4A0WmZLXRexGxmdTE7jW
+	 I4ttWCqHmzYXqYC1bytwSz3aq8irro63NDXkqVRnpYGFJyd86OH3B6RsTZO/MERYHZ
+	 JlI/Frm7G/2kCJbAQwtrKk9paIhk+GaBYwmfKebhZMiD/I2KI9hMjMXh4C+MsqSVsZ
+	 fZbPVNx8pYwMnfoBqBzXs2f6sOubVujKF6NqSXHs4j3l72kmfh5E3pFz9vW1C9mPed
+	 In10JgkKh3o6GlzjCqlFWX1KQx+Q6dl5g30y0m9/qk7vyIrtVT/uF8hCb8tQMTuYQG
+	 87AL208rIUtPvwLgy+7aYc2zrE44EBeBYkaCp2GEXQ6/hp7e/pGeqqITt4Vd3owuhO
+	 o61TrvKn2JqUoVk4uJpBz3OlTOIB+Dz6dp2utYeyjllQkvnVgWdS3e9daD4drtSEmZ
+	 Zn0uA3GJfoPed3DLEvGy0KEU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 60C6940E016E;
+	Sat, 22 Feb 2025 16:19:13 +0000 (UTC)
+Date: Sat, 22 Feb 2025 17:19:08 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: Oleksandr Natalenko <oleksandr@natalenko.name>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com
+Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
+Message-ID: <20250222161908.GDZ7n4_I-t2BSg52X4@fat_crate.local>
+References: <20250221005345.2156760-1-riel@surriel.com>
+ <5861243.DvuYhMxLoT@natalenko.name>
+ <eb2feccb1874399699731aa9f16049a375b0f9a9.camel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <eb2feccb1874399699731aa9f16049a375b0f9a9.camel@surriel.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nava,
+On Sat, Feb 22, 2025 at 11:05:41AM -0500, Rik van Riel wrote:
+> It's crashing when writing the value to the
+> invlpgb_count_max variable.
+>=20
+> This would be because:
+> 1) invlpgb_count_max is marked __ro_after_init, making
+>    it read-only after the system has finished booting, but
+> 2) get_cpu_cap gets run at resume and CPU hotplug time!
 
-FYI, the error/warning still remains.
+Yet another side effect of us reading CPUID gazillion times. /facepalm.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ff202c5028a195c07b16e1a2fbb8ca6b7ba11a1c
-commit: 01c54e628932c655e4cd2c6ed0cc688ec6e6f96b fpga: versal-fpga: Add versal fpga manager driver
-date:   3 years, 7 months ago
-config: sh-randconfig-r023-20230105 (https://download.01.org/0day-ci/archive/20250223/202502230042.owPXHbB7-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502230042.owPXHbB7-lkp@intel.com/reproduce)
+> Borislav, do you prefer I move the initialization of=C2=A0
+> invlpgb_count_max back to where it was before, or get
+> rid of the __ro_after_init thing?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502230042.owPXHbB7-lkp@intel.com/
+You probably could move it back to where it was - cpu_detect_tlb_amd - an=
+d
+leave it __ro_after_init because cpu_detect_tlb() is run on the BSP only =
+so
+I'm guessing resume doesn't bootstrap that thing...
 
-All warnings (new ones prefixed by >>):
+Thx.
 
->> drivers/fpga/versal-fpga.c:78:34: warning: 'versal_fpga_of_match' defined but not used [-Wunused-const-variable=]
-      78 | static const struct of_device_id versal_fpga_of_match[] = {
-         |                                  ^~~~~~~~~~~~~~~~~~~~
+--=20
+Regards/Gruss,
+    Boris.
 
-
-vim +/versal_fpga_of_match +78 drivers/fpga/versal-fpga.c
-
-    77	
-  > 78	static const struct of_device_id versal_fpga_of_match[] = {
-    79		{ .compatible = "xlnx,versal-fpga", },
-    80		{},
-    81	};
-    82	MODULE_DEVICE_TABLE(of, versal_fpga_of_match);
-    83	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://people.kernel.org/tglx/notes-about-netiquette
 
