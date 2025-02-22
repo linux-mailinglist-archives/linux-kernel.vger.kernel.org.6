@@ -1,134 +1,217 @@
-Return-Path: <linux-kernel+bounces-527388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74673A40A96
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:20:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64779A40A9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 18:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E1E7AC9D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2583B5D78
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2157B1B2186;
-	Sat, 22 Feb 2025 17:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F06201025;
+	Sat, 22 Feb 2025 17:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MhigRMYK"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AW/05HQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEE9130AC8
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 17:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB444C7C;
+	Sat, 22 Feb 2025 17:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740244806; cv=none; b=cMyKoyeLyAjbIamy2yZua3FvrvD76Qmgig5Z9Sc2Pyklv0jnQiUshN/zEOHwEdskhkgApLmaMBspNpS0ngzqnX0eHto+9YAcnqyVRXkrNh1IVcNlGRCNszw3RataHzSc/n5jP0ULGOzsf0yry8aEqgAg1H3PAM4WYsMKM/KdN4s=
+	t=1740245149; cv=none; b=ZDPiR2IHGFsov9nXrQkSxB6sPLb37/d1Rg8qoWDlg+MxRVI5Wy4Zqy5h78HrUPfkJD5+IvQm2mMip3SoXS94ErmFGsz4tuEE2wge9WZdYO584lyBhpPZ1d4A/razd7VySjMveupETu8psoIKESNUIHmMlff3FaUjfJhFzRJCpCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740244806; c=relaxed/simple;
-	bh=aA8xlusdxINetCnqLAKfRVb0p1j5MRYEmGHFMK/LDNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rN8f6oPoAbKT/+V01LaMeFFN2czmAIGMwnioHsn7vY0fr8HJ7iXDZlzkPf/n4MfQlwNrYXQ56WP/KK+uCEKAkWuGA6U/hYNVdJOvPLuqlNdVzI43T5Ebmu/KC5rhuwnlDILmg6BdyZDGKEyMn+B7eqgefoef9tSVuvw5OcQAT5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MhigRMYK; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5462a2b9dedso3656559e87.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:20:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740244802; x=1740849602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e3PyMY7ETLfzGJmNaB6aZaX0aC+cfjCRc3HqGVEYblQ=;
-        b=MhigRMYKziPxme8XXkYtYR8dtkFjmsiyTMHxhjo7yl0vRGrs3zR4TDI/9MrfNgLzqM
-         7eApOUKOQrZ1UJuBQd3JkLAOZdBPilwRm4KbzuUA3mkvcR6Bu99J/WaXGa9vei0b7WfA
-         ZwIM6W5CapM5l6ZC9JrY7Ma/DKpwhYRpMAS/yCuiJRSQZ7RfLfPew+Sz/9/gsAsEsxxK
-         lh3SYTZpU74ubi8g8uP/N4sZd97Bq6/lcyyLSnCjYe5FyhG2x6CykFtLMOsVFnMXmBoh
-         YcYLMkXN/BLZq7V5Nxla6EM4P4FPEo6k5a1ZNFIp+2rfP31/KiBrpO4DAYKHujdM6qFO
-         8auA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740244802; x=1740849602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e3PyMY7ETLfzGJmNaB6aZaX0aC+cfjCRc3HqGVEYblQ=;
-        b=XTq7eK7I3R+BkFaNn8VcYAbfOM99eqGU4Q7zBgMyGcBIg/Hbg2ayjO4xg+hOqiDVQq
-         kvy08kxH5lrYfZKDTyzWH2cgrXTUAc/oqJErvz4Ek+f/D3rIOD07gQF7gQMX3oyMqPyt
-         tL2DemMoZ/AoYtx6CVUma7kJgfPkmtQsLXXdf+QkiPq4zGvr5sS7LgJ9rLFg+uMPgoIs
-         60Dhpl8zQbDPsRZHdUHMpNDoSRyF1HBLnSxWfc3StHDsfKCKZG6zJdgxp9DUIpk09P17
-         ytSRMUQBREz3WUF3KTcMCAmoFAtEupmpWOQbfa3Mr0XWX/5ry+HZPCOAZ6jQ4KwWeF4d
-         mu6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWdr7xp5Zp/DMEkzedU/tU6wwhmnWkVxY/QqkcyeeZu5MbHuBmOLNqHjvmTK7uQiESvkIWiGQdz1RSeaxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOBpqjxpy5tbx8lMhOBafyMDihsA2mJCq/lKQmdiRbM1xK2UCk
-	oLyq02f6ArXlRhEkfFAqHgsFgOo0qqdor9X/LAiaa8mM+Zc0Y00FSJ5HktYFs8j4WK+zuffQdeO
-	j7WJtFUoHeavlMsOSRdjfGuAGcuZp+/eBCVU=
-X-Gm-Gg: ASbGnctbVM5UBzV3SjwzTR1FMLaVpbABvKH7elLB1DsS6/mXYOr87lnib+iQcQWurhR
-	177t3S8tAsU62xowyXVAFDLf14kApi0FG0vFWEq5JJ3A/MS/ApCMBcPepD6mS80f9bcUUvJ9zQz
-	pgxyjEWEo=
-X-Google-Smtp-Source: AGHT+IE/FZvw3/VM+wGOh7qRebtqxFj4oAyJsrL3WYhsS8fTAnUQTp+Yx2DAqLG8PV6TEfOWvnL9TwBOsKuQhmWcV0c=
-X-Received: by 2002:a05:6512:2310:b0:545:16a5:10f5 with SMTP id
- 2adb3069b0e04-548391452b5mr2550836e87.30.1740244801904; Sat, 22 Feb 2025
- 09:20:01 -0800 (PST)
+	s=arc-20240116; t=1740245149; c=relaxed/simple;
+	bh=fx3DRTGRkmKbnCXlKZ+ZwK/6h3hhdblLg2AxFF2wD44=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hKYbDryJVhN9wt2PIdtOaG/YueoV9QhPSYtO0pboY4Zpv4rLkXDxjiPvz1xnqGIHujyLRRk6uRf166jBosaQ1yE9PfhhtU4X1Ijbu46Z46HdFlF+D4qMFs7jJ+16v3It9nyB38SNVY9O0bSd1sgqVkX3sNr4ViGq61kJUNq2R10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AW/05HQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42F9EC4CED1;
+	Sat, 22 Feb 2025 17:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740245148;
+	bh=fx3DRTGRkmKbnCXlKZ+ZwK/6h3hhdblLg2AxFF2wD44=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=AW/05HQj1cqYDn0v6OshMq3HXaCIsSmiZJfuXWKkuTBSnKiKRpt4EYiZZrZc937H4
+	 VQMK67wpWr2WRUM/iz2FJnQiciJxIqe3WTrlR6cKX3HAeSpNgaN0OxmHuhCojWmBme
+	 qKAidpYlyNCgX4fGQhszSBH3b6MUwDoyR1nSpQV/hq/gySmIlfIZGkCJLUmHzISdAZ
+	 dE5Xptv+JeDCLapSokeNN8AOXGxY5ohkNjQ0RPeDTPTcgNj7fsCAArHAd+CE5mgCzI
+	 ONx4ZZLLNShIB8ePk8logz262hSp7a12efV9y6nToPrYyrCqcjdJYHOIQJ1M3sEPFQ
+	 b4DE9uxTgRD7Q==
+Date: Sat, 22 Feb 2025 17:25:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
+ Hunter <jonathanh@nvidia.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
+ <mazziesaccount@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
+ <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
+ Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
+ <perdaniel.olsson@axis.com>, Subhajit Ghosh
+ <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
+ David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
+ sensor
+Message-ID: <20250222172536.5fb73658@jic23-huawei>
+In-Reply-To: <CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
+References: <20250217140336.107476-1-clamor95@gmail.com>
+	<20250217140336.107476-3-clamor95@gmail.com>
+	<20250222125335.177fc746@jic23-huawei>
+	<CAPVz0n3YHgct6x_3-mhzmTOTejLj19xDLm9C8Dqe-GHv8fJBrA@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222160850.505274-1-shikemeng@huaweicloud.com> <20250222160850.505274-2-shikemeng@huaweicloud.com>
-In-Reply-To: <20250222160850.505274-2-shikemeng@huaweicloud.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Sun, 23 Feb 2025 01:19:45 +0800
-X-Gm-Features: AWEUYZk1ynD35897TpB1IPblW6vptdQImUZiwCcYnnAFD6T3Jhk7QLCtyqLTdNM
-Message-ID: <CAMgjq7Axk-rh+3hMpSisxKRU6W1tApgVA1H5zswC7z0q-t0-eg@mail.gmail.com>
-Subject: Re: [PATCH 1/6] mm: swap: avoid losting cluster in swap_reclaim_full_clusters()
-To: Kemeng Shi <shikemeng@huaweicloud.com>, akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 22, 2025 at 3:12=E2=80=AFPM Kemeng Shi <shikemeng@huaweicloud.c=
-om> wrote:
->
-> If no swap cache is reclaimed, cluster taken off from full_clusters list
-> will not be put in any list and may not be reused. Do relocate_cluster
-> for such cluster to fix the issue.
->
-> Fixes: 3b644773eefda ("mm, swap: reduce contention on device lock")
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> ---
->  mm/swapfile.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/mm/swapfile.c b/mm/swapfile.c
-> index 34baefb000b5..e5f58ab86329 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -861,6 +861,10 @@ static void swap_reclaim_full_clusters(struct swap_i=
-nfo_struct *si, bool force)
->                         offset++;
->                 }
->
-> +               /* in case no swap cache is reclaimed */
-> +               if (ci->flags =3D=3D CLUSTER_FLAG_NONE)
-> +                       relocate_cluster(si, ci);
-> +
->                 unlock_cluster(ci);
->                 if (to_scan <=3D 0)
->                         break;
-> --
-> 2.30.0
+On Sat, 22 Feb 2025 14:56:41 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
 
-Thanks. A little nick pick, "losting" is not a word, I think you mean "leak=
-ing".
+> =D1=81=D0=B1, 22 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 14:53 Jo=
+nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Mon, 17 Feb 2025 16:03:35 +0200
+> > Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+> > =20
+> > > AL3000a is a simple I2C-based ambient light sensor, which is
+> > > closely related to AL3010 and AL3320a, but has significantly
+> > > different way of processing data generated by the sensor.
+> > >
+> > > Tested-by: Robert Eckelmann <longnoserob@gmail.com>
+> > > Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > Reviewed-by: David Heidelberg <david@ixit.cz> =20
+> >
+> > Whilst I am confused by earlier statements about not
+> > having information on the conversion to illuminance values, I'm
+> > going to assume the look up table in here is based on some
+> > reasonable data from somewhere and hence that this is a sensor
+> > with appropriate filtering of the light to be able to do a non linear
+> > conversion from the value read and standard light curves.
+> >
+> > As such the IIO_LIGHT channel type is fine for this device.
+> > =20
+>=20
+> Thank you, but IIO_INTENSITY may be proper channel as well, after your
+> explanations. If you wish, I may upload v5 with swapping LIGHT with
+> INTENSITY.
 
-And BTW maybe it's better to describe the result of this leak in a bit
-more details, "cluster leaking from lists" and "will not be reused"
-looked a bit scary at a glance to me. But realizing it's full
-clusters, they will be moved back to a list if any slots on them are
-freed, so the worst result is inefficiently reclaiming of HAS_CACHE
-slots, we didn't really lose these clusters.
+Where does the lux_table set of values come from?
+That seems to be key question for this driver.
 
-We do need to fix it though. So other than the commit summary and
-message nitpick:
+>=20
+> > Applied patches 1 and 2 to the togreg branch of iio.git.
+> > Note that I'll initially push this out as testing to allow
+> > the autobuilders to see if they can find any issues that we missed.
+> > Patch 3 will need to go via the appropriate SoC tree as normal.
+> >
+> > Jonathan
+> > =20
+> > > ---
+> > >  drivers/iio/light/Kconfig   |  10 ++
+> > >  drivers/iio/light/Makefile  |   1 +
+> > >  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 220 insertions(+)
+> > >  create mode 100644 drivers/iio/light/al3000a.c
+> > >
+> > > diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
+> > > index 29ffa8491927..37f83e1d8893 100644
+> > > --- a/drivers/iio/light/Kconfig
+> > > +++ b/drivers/iio/light/Kconfig
+> > > @@ -43,6 +43,16 @@ config ADUX1020
+> > >        To compile this driver as a module, choose M here: the
+> > >        module will be called adux1020.
+> > >
+> > > +config AL3000A
+> > > +     tristate "AL3000a ambient light sensor"
+> > > +     depends on I2C
+> > > +     help
+> > > +       Say Y here if you want to build a driver for the Dyna Image A=
+L3000a
+> > > +       ambient light sensor.
+> > > +
+> > > +       To compile this driver as a module, choose M here: the
+> > > +       module will be called al3000a.
+> > > +
+> > >  config AL3010
+> > >       tristate "AL3010 ambient light sensor"
+> > >       depends on I2C
+> > > diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
+> > > index f14a37442712..03f10786273a 100644
+> > > --- a/drivers/iio/light/Makefile
+> > > +++ b/drivers/iio/light/Makefile
+> > > @@ -7,6 +7,7 @@
+> > >  obj-$(CONFIG_ACPI_ALS)               +=3D acpi-als.o
+> > >  obj-$(CONFIG_ADJD_S311)              +=3D adjd_s311.o
+> > >  obj-$(CONFIG_ADUX1020)               +=3D adux1020.o
+> > > +obj-$(CONFIG_AL3000A)                +=3D al3000a.o
+> > >  obj-$(CONFIG_AL3010)         +=3D al3010.o
+> > >  obj-$(CONFIG_AL3320A)                +=3D al3320a.o
+> > >  obj-$(CONFIG_APDS9300)               +=3D apds9300.o
+> > > diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
+> > > new file mode 100644
+> > > index 000000000000..e2fbb1270040
+> > > --- /dev/null
+> > > +++ b/drivers/iio/light/al3000a.c
+> > > @@ -0,0 +1,209 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +#include <linux/array_size.h>
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/device.h>
+> > > +#include <linux/err.h>
+> > > +#include <linux/i2c.h>
+> > > +#include <linux/mod_devicetable.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/pm.h>
+> > > +#include <linux/regmap.h>
+> > > +#include <linux/regulator/consumer.h>
+> > > +#include <linux/types.h>
+> > > +
+> > > +#include <linux/iio/iio.h>
+> > > +
+> > > +#define AL3000A_REG_SYSTEM           0x00
+> > > +#define AL3000A_REG_DATA             0x05
+> > > +
+> > > +#define AL3000A_CONFIG_ENABLE                0x00
+> > > +#define AL3000A_CONFIG_DISABLE               0x0b
+> > > +#define AL3000A_CONFIG_RESET         0x0f
+> > > +#define AL3000A_GAIN_MASK            GENMASK(5, 0)
+> > > +
+> > > +/*
+> > > + * These are pre-calculated lux values based on possible output of s=
+ensor
+> > > + * (range 0x00 - 0x3F)
+> > > + */
+> > > +static const u32 lux_table[] =3D {
+> > > +     1, 1, 1, 2, 2, 2, 3, 4,                                 /* 0 - =
+7 */
+> > > +     4, 5, 6, 7, 9, 11, 13, 16,                              /* 8 - =
+15 */
+> > > +     19, 22, 27, 32, 39, 46, 56, 67,                         /* 16 -=
+ 23 */
+> > > +     80, 96, 116, 139, 167, 200, 240, 289,                   /* 24 -=
+ 31 */
+> > > +     347, 416, 499, 600, 720, 864, 1037, 1245,               /* 32 -=
+ 39 */
+> > > +     1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,         /* 40 -=
+ 47 */
+> > > +     6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,    /* 48 -=
+ 55 */
+> > > +     27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* 56 -=
+ 63 */
+> > > +}; =20
+> > =20
 
-Reviewed-by: Kairui Song <kasong@tencent.com>
 
