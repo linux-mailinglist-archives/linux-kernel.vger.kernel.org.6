@@ -1,161 +1,195 @@
-Return-Path: <linux-kernel+bounces-527143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806D0A407DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:27:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3989A407DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3E817ED83
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:27:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A39DD17E959
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:29:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74D20A5E1;
-	Sat, 22 Feb 2025 11:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228A120A5E2;
+	Sat, 22 Feb 2025 11:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJKGy3qn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gggUN6ho"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DE34207A03;
-	Sat, 22 Feb 2025 11:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6ACF2066C8;
+	Sat, 22 Feb 2025 11:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740223657; cv=none; b=BfFivVdhKBFl5C4r73Uze/pcipxpKvL7klwI27eMeqtlNp2RmghZLm9Ck1Y0hEwD85c1L1rZwgBgIuTKQk42OJh43blARQuxVYCY6KPvMXzjL6+TWkfAYv66RglMkZKu8aLVZkSH0TopEjYln9vi93c/MFSYlQKZ0LZPrGxi/Qg=
+	t=1740223753; cv=none; b=p3D8HM/hG6Tl3ZxsIZMmYZpAaIHMVYbCT7x6GRbfUKs0R0nx4M7zsPTnogxfIH7TkC4BYgA4sXLDPK3lzU3DnHk0D0Kl4NNtZmbGxY74xtYoxmobDoPRcd2wTXo1nhgUduvsPqsRIyDWTLTys5az/b5+1ED4onRscKVTsbdbgkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740223657; c=relaxed/simple;
-	bh=WxrDsmMBLtsWhAj3vyvEabkkXnfwKlhdJ9w+mMMtKY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=G7Qh+6TPi08Pn6P+YNVlu7NhkRv038i1MgElYM5LI+s60EEY4XVnd4Z9I7mD82i1ZdFnxI1XsVySgGd//QEQB7Izrcx/HoDG4yWdMDP6raGWllhT2HzpK3i1FBaTGe8Ss0PLpkF3vd6nsoUNTJeNpNrAJayw813HzTbWrkpmC3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJKGy3qn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 211DFC4CED1;
-	Sat, 22 Feb 2025 11:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740223656;
-	bh=WxrDsmMBLtsWhAj3vyvEabkkXnfwKlhdJ9w+mMMtKY8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=iJKGy3qnJfjsy4/+L1Zetu6p7YcZ+eNuPCwAW/aGB1O1I/VIUgytZvcRlrQweRN6y
-	 kUoIxeovt1Jyi8fqYp4Nk29affseuzW/lmRv42jaIIIQIRLxumB7hZKRHA1RuNGfZk
-	 cYxN2PhhkEhGH9qYIeR2gXnrPBwOuLtUllVpPIwn6Zx2nGm28Ve1d6iuUbJFVp3o95
-	 zlxl8zD4Yu/GmvBcTVM4m+vbBjRSgxA+jEEC0oxghBSLfqiA7W0Ydhhz0kw+9XnaVn
-	 FN3H/AxVxt1msDU3Jp96LxhWAf/2qitm19t1mCraBjWQKgjsqaWM4A6jJmxu4OA9gq
-	 rJsulp2aEL9cQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v8 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <a2579353-9249-44d1-8f43-9064beaa109c@proton.me> (Benno Lossin's
-	message of "Sat, 22 Feb 2025 09:37:53 +0000")
-References: <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
-	<20250218-hrtimer-v3-v6-12-rc2-v8-2-48dedb015eb3@kernel.org>
-	<1id7is_U22yzuGODgkUIoB5AFM6snF9CPu7F_sY7Mfkn3EwQRPfjB5JNkRFYu6DX1N8X_OQvdEB2BT-l3rFhwg==@protonmail.internalid>
-	<df748ac2-3551-460f-a16f-85d805671a3f@proton.me>
- <87a5afhdq0.fsf@kernel.org>
-	<875xl3fvtm.fsf@kernel.org>
-	<uoEWs3I3Cf4H5QBXCk4i1-gCs_nR7fJAX7z9JyvaEIP_yrPckvsgcC8fWctvwPY91ZLOwk041dhytXFtSwDFOA==@protonmail.internalid>
-	<841150db-2f92-4cfe-bb1f-29b34b4662c1@proton.me>
- <87o6yveble.fsf@kernel.org>
-	<F4gUtoGlotAjPGDTRJvfEZqfyEhkp35fCC1sKMtlXKMm8PQV_hNIsNz6ZOE1OcRmNTQU36vvHXTynOZ5LxSJbw==@protonmail.internalid>
-	<a2579353-9249-44d1-8f43-9064beaa109c@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sat, 22 Feb 2025 12:27:22 +0100
-Message-ID: <87mseecj8l.fsf@kernel.org>
+	s=arc-20240116; t=1740223753; c=relaxed/simple;
+	bh=3HcOk7KIE2X2SrurKPz1ZC+4TT9eXp5Ic6dRS70PdAU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ql6H67QIg388FgXgxCgejAyoK1xjNwxl7OQz0orxq3EzeCUq0P6QbqHLpiVIe13+D1FiRfJ9R54HlqaX3BXhKUDhx9SaDwL1E7VBa7bQjdGaEMGvfBPvUcIX7qhNMrkAA/ePUu2azpHwbGFajSrLzJtsWI2GjmcF4PMfUyyBdhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gggUN6ho; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so4775240a91.1;
+        Sat, 22 Feb 2025 03:29:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740223751; x=1740828551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QECQwJDGEx9XpEmKOp8AR9iu2sg3HSyCp2tf6Nxzees=;
+        b=gggUN6hocVdl6Bpo7sklTOVMEtfYRPEnCtJ8R8J8VX6RdUbnVwCLk9Zm/mPKL7myTc
+         iG/oPyTCwl4PvahO7+TZEgQOHk08IfEHWzOYejGlWZifjKbz2S8CD26E8uPea1l3bJIs
+         oTSf5lAHp9zmeUO+3VxaM/B+jGuoUZ/cY2l9jH5KGDbTRijOD1zXgeLSlJ6fag0iBELQ
+         npfCKCwZL0gu+z9+OFWyZRVnORLVuWqejzpPHFp/YCbNL9LtQ69UnnNJYbvljaIINTyP
+         ScsShpqYR/+o/TpxlPw+X65VcIV6EJ+ka3vYy5UvUJbjXuIEkQTdxtGJYWiH2DDZg26L
+         xDJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740223751; x=1740828551;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QECQwJDGEx9XpEmKOp8AR9iu2sg3HSyCp2tf6Nxzees=;
+        b=Pcx/Hdd6O92Uay5vujzDSE9Rc8WPQlZkl6NZJ8qTV4G+ZBa8VEfF3TkNEOawTCAMDu
+         Fr4mNiH1MjXWWsmn31IWRBQs2cJGGfvr+S6kXtLzXvvqZj3iJaU1H+FwQR4lxsGwjkfm
+         +T7QfAj5l1tz1wx+0wCLoKCUySGKPilWACjyuFvZT/GoE9ODr9g7Tsg97Z2G+EdPpBuP
+         donyOHphO9bOTpHXHNCNdSStyqTsrxixHt2Dbf4lxz4qCOnsapq9RUnUBMLcjrhJzbqJ
+         9wup8hRZ8OZJmDBHybE2bWZUEuWfA5bF/4fltuVZIfJdBYn3dJ7/u360gEGh7BbllnHx
+         BKHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXchjxbdXFUUEoj9w29FyZ4d8JsTu6io4viwOYE3pLcEwoBAL7IdBAmmWar5dy4NmvevL5WvI5eug==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqu2a/4Z7yMhFQUap4Uuh0lCLQ9rtn2AWn0sALZnXvfe27ZBWj
+	PMqX2z+9bWEN25OGnsWKU3cxg/gKo0IFtS+gKXjUl/vsIB1hQgw1
+X-Gm-Gg: ASbGncu9RHovIGmBYEith9kBxZ0GrdfztXugur1WQSf2kOprwU6ehSqEwZ7lItncegy
+	NZn/APKE+AH+hRyC5qhUCEwe+tl+UMBI1levUL+rp2WnuSNTcNHyZlb1obiMF5HBNaxcDCvJSFF
+	FvX4EyONB39LBlAWxcciQtJUCZ0J5/Yk+Dnb3guBlo/5NEtysi9NcXlyMsf+S3kzZV1E0yCDgO4
+	rqbsFYo1eo4pCbajW0aPIxx/fvfuPDXLqLl1zKlo6/EBrnbPtfJ6JbkstN0Pn1SpMKChr9awoIz
+	/xa3iX0OQ6LBnCnomGlOkBl7
+X-Google-Smtp-Source: AGHT+IHTV4Fc835gBSr+KiZgTLVuCJR5c6HcR46bp0C4GHKJwo3ghQR31BLbPSzmwrvQLxMk4KDyfA==
+X-Received: by 2002:a05:6a00:2ea9:b0:730:8d25:4c24 with SMTP id d2e1a72fcca58-73426cb1d46mr10451331b3a.10.1740223750960;
+        Sat, 22 Feb 2025 03:29:10 -0800 (PST)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-addee79a984sm12381005a12.32.2025.02.22.03.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 03:29:10 -0800 (PST)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: sebastian.reichel@collabora.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	mitltlatltl@gmail.com
+Subject: Re: [PATCH v3 5/6] power: supply: add Huawei Matebook E Go psy driver
+Date: Sat, 22 Feb 2025 19:27:24 +0800
+Message-ID: <20250222112724.336033-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <m2dy2vhvw7rhexvzkkloelgkcdcq6ci2ot54mdffpvosvagf64@usdxy2cnjeua>
+References: <m2dy2vhvw7rhexvzkkloelgkcdcq6ci2ot54mdffpvosvagf64@usdxy2cnjeua>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
-
-> On 21.02.25 13:17, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>
->>> On 21.02.25 11:15, Andreas Hindborg wrote:
->>>> Andreas Hindborg <a.hindborg@kernel.org> writes:
->>>>
->>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>>
->>>>>> On 18.02.25 14:27, Andreas Hindborg wrote:
->>>>>>> +pub trait HrTimerCallback {
->>>>>>> +    /// The type whose [`RawHrTimerCallback::run`] method will be invoked when
->>>>>>> +    /// the timer expires.
->>>>>>> +    type CallbackTarget<'a>: RawHrTimerCallback;
->>>>>>> +
->>>>>>> +    /// This type is passed to the timer callback function. It may be a borrow
->>>>>>> +    /// of [`Self::CallbackTarget`], or it may be `Self::CallbackTarget` if the
->>>>>>> +    /// implementation can guarantee exclusive access to the target during timer
->>>>>>
->>>>>> Technically "exclusive" access is correct if the `CallbackTarget` is
->>>>>> `Pin<&Self>`, since you will get exclusive access to a `Pin<&Self>`, but
->>>>>> it might confuse people, because there can be multiple `Pin<&Self>`. So
->>>>>> I would just drop the word "exclusive" here.
->>>>>
->>>>> Yes, maybe it should be "shared or exclusive access, depending on the type"?
->>>>>
->>>>>>
->>>>>>> +    /// handler execution.
->>>>>>> +    type CallbackTargetParameter<'a>;
->>>>>>
->>>>>> Also why can't this type be an associated type of `HrTimerPointer`?
->>>>>> Since this seems to always be constrained in the impls of
->>>>>> `RawHrTimerCallback`.
->>>>>
->>>>> That might be a nice improvement, I'll try that out.
->>>>
->>>> Looking closer at this, I don't see how to achieve this. We need access
->>>> to the type here, because it is used in the signature of `run`.
->>>> `HrTimerCallback` has no bounds on it, and that is nice. If we want to
->>>> move these associated types, we have to introduce a bound here.
->>>>
->>>> We need to be generic over the type of the parameter to `run`, and by
->>>> the time the user implements this trait, the type must be known and so
->>>> the user has to specify somehow.
->>>
->>> I think if you put the associated type on the `RawHrTimerCallback`
->>> trait, it should work.
->>
->> What would be the signature of `HrTimerCallback::run` in that case?
+On Sat, Feb 22, 2025 at 6:22 AM Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+> On Fri, Feb 21, 2025 at 02:01:04PM +0800, Pengyu Luo wrote:
+> > On Fri, Feb 21, 2025 at 9:33 AM Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+> > > On Thu, Feb 20, 2025 at 02:43:20PM +0800, Pengyu Luo wrote:
+> > > > On Thu, Feb 20, 2025 at 8:24 AM Sebastian Reichel <sebastian.reichel@collabora.com> wrote:
+> > > > > On Tue, Jan 14, 2025 at 01:51:27AM +0800, Pengyu Luo wrote:
+> > > > > > On the Huawei Matebook E Go tablet the EC provides access to the adapter
+> > > > > > and battery status. Add the driver to read power supply status on the
+> > > > > > tablet.
+> > > > > >
+> > > > > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+> > > > > > ---
+> > > > > >  .../ABI/testing/sysfs-class-power-gaokun      |  47 ++
+> > > > > >  drivers/power/supply/Kconfig                  |  10 +
+> > > > > >  drivers/power/supply/Makefile                 |   1 +
+> > > > > >  drivers/power/supply/huawei-gaokun-battery.c  | 548 ++++++++++++++++++
+> > > > > >  4 files changed, 606 insertions(+)
+> > > > > >  create mode 100644 Documentation/ABI/testing/sysfs-class-power-gaokun
+> > > > > >  create mode 100644 drivers/power/supply/huawei-gaokun-battery.c
+> > > > > >
+> > > > > > diff --git a/Documentation/ABI/testing/sysfs-class-power-gaokun b/Documentation/ABI/testing/sysfs-class-power-gaokun
+> > > > > > new file mode 100644
+> > > > > > index 000000000..b1eb9e8d7
+> > > > > > --- /dev/null
+> > > > > > +++ b/Documentation/ABI/testing/sysfs-class-power-gaokun
+> > > > > > @@ -0,0 +1,47 @@
+> > > > > > +What:                /sys/class/power_supply/gaokun-ec-battery/smart_charge
+> > > > > > +Date:                January 2025
+> > > > > > +KernelVersion:       6.12
+> > > > > > +Contact:     Pengyu Luo <mitltlatltl@gmail.com>
+> > > > > > +Description:
+> > > > > > +             This entry allows configuration of smart charging behavior with
+> > > > > > +             four parameters. The format is: <mode> <delay> <start> <stop>.
+> > > > > > +
+> > > > > > +             - mode: Defines the charging mode (1 or 4). Mode 4 enables delay,
+> > > > > > +                     while mode 1 does not.
+> > > > > > +             - delay: Specifies the delay in hours (non-negative). This is
+> > > > > > +                     only used when 'mode' is set to 4.
+> > > > > > +             - start: The battery percentage at which charging starts (0-100).
+> > > > > > +             - stop: The battery percentage at which charging stops (1-100).
+> > > > > > +
+> > > > > > +              When the laptop is connected to a power adapter, it starts
+> > > > > > +              charging if the battery level is below the 'start' value. It
+> > > > > > +              continues charging until the battery reaches the 'stop' level.
+> > > > > > +              If the battery is already above the 'stop' level, charging is
+> > > > > > +              paused.
+> > > > > > +
+> > > > > > +              When the power adapter is always connected, charging will
+> > > > > > +              begin if the battery level falls below 'start', and charging
+> > > > > > +              will stop once the battery reaches 'stop'.
+> > > > > > +
+> > > > > > +              If mode is set to 4, the above charging mode will only occur
+> > > > > > +              after the specified delay in hours. If mode is 1, there is
+> > > > > > +              no delay.
+> > > > > > +
+> > > > > > +             Access: Read, Write
+> > > > > > +
+> > > > > > +             Valid values:
+> > > > > > +                     - mode: integer value (1 or 4)
+> > > > > > +                     - delay: integer value, delay in hours (non-negative)
+> > > > > > +                     - start: integer value, battery percentage (0-100)
+> > > > > > +                     - stop: integer value, battery percentage (1-100)
+> > > > >
+> > > > > There are common properties for start and stop charging percentage,
+> > > > > which should be used:
+> > > > >
+> > > > > * POWER_SUPPLY_PROP_CHARGE_CONTROL_START_THRESHOLD
+> > > > > * POWER_SUPPLY_PROP_CHARGE_CONTROL_END_THRESHOLD
+> > > > >
+> > > >
+> > > > Agree, but at least, we should pass delay, start, end. EC only
+> > > > providedone interface to set mode and delay, that requires 4
+> > > > arguments, we can handle it with 3 arguments, as you suggested
+> > > > below. but if we treat start and end separated, then if we want
+> > > > to set smart charge, we set start, set end, set delay(read start
+> > > > read end, then set them again). It is a bit redundant.
+> > >
+> > > Yes, if these are separate properties you won't get atomic updates.
+> > > But is that really a problem? Using the standard properties means
+> > > that you get UI support in the future. I know at least the GNOME
+> > > people are working on this.
+> > >
+> >
+> > On my another x86_64 device with end threshold supported, KDE Plasma
+> > supports showing this as
+> >
+> > > Battery is configured to charge up to aproximately <value>%
+> >
+> > it doesn't support setting things. So, can I keep passing delay, start,
+> > end when setting, but also setting start and end as battery properties?
 >
->     /// Implemented by structs that can be the target of a timer callback.
->     pub trait HrTimerCallback {
->         /// The type whose [`RawHrTimerCallback::run`] method will be invoked when
->         /// the timer expires.
->         type CallbackTarget: RawHrTimerCallback;
+> No? Why should we create a custom sysfs ABI (which also breaks the
+> one value per file rule), if we already have a standard ABI?
 >
->         /// Called by the timer logic when the timer fires.
->         fn run(this: <Self::CallbackTarget as RawHrTimerCallback>::CallbackTargetParameter<'_>)
->         where
->             Self: Sized;
->         // also, why does this Sized bound exist here?
->     }
->
-> That should work, but now the names seem a bit long... How about:
-> - CallbackTarget -> Pointer
->   - and then you can also call this the "smart pointer whose `run`
->     method will be invoked when..." in the docs
-> - CallbackTargetParameter -> CallbackParameter
 
-Right, that works. I thought you wanted to move both the associated
-types.
+I got it, I will follow it. Since V4, I had dropped this driver to
+focus on upstreaming the base EC driver, once the base driver is
+upstreamed, I will send the new version of battery driver.
 
-
-Best regards,
-Andreas Hindborg
-
-
-
+Best wishes,
+Pengyu
 
