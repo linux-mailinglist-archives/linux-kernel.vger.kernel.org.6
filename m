@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-527050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A6EA406C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED4F8A406C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:19:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A08419E02C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802DA3BB699
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BF32207DE4;
-	Sat, 22 Feb 2025 09:19:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9946D207679;
+	Sat, 22 Feb 2025 09:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZyOhyyv"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAjVtJe0"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10599207658;
-	Sat, 22 Feb 2025 09:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C78206F21;
+	Sat, 22 Feb 2025 09:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740215957; cv=none; b=mFi0txVPJ++9BrJbB2ljuFfh2PXxcJkW74mvxndU5gXVGzghE/0Gq2yPeoNDIZnNTj8qUB0jzANm0K5rRZV7/9VwUmct5A4m7Nf3Re4bfiECz0LJoakbfEpk3Mle/bGUOeHEMfZsR9as/GPmPjnjymA3eF/5WJEuZzXDfQhg9N4=
+	t=1740215956; cv=none; b=etSiSHFv/l0uD3bXfEbjta4H3Uvn4KB5LJ6IcdH/m3xf8D+mteOFsMBtuMJf9K0ksBnGUS/zKAuZtkLqUr1V6nl9R6+quKtih0CQeHwBce49Nz6poFNd2UbUwoBdvBMX5v48ch6z6ufv1pGdsV0jpG179AfjDXR6aG29/Ahz2Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740215957; c=relaxed/simple;
-	bh=I+Hu4DmnujOxNtjjtyFf0/ct07Cish9O0boxecFj94I=;
+	s=arc-20240116; t=1740215956; c=relaxed/simple;
+	bh=1H0fcjZ59e5m2Wwr+sCq68rVcNKl1r6ctu9g3xbBDDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RWumRDfBEhY49KA270USWGHBZ3EyI4dW/wViK6AWgVNE2d6wu9J+3CFVYfwSFqpyU4C634sRNfWHPPoesFggre7OfFs8s6/XSyqeOYuFsanuEUz5ydkMzfdmmK2ld9pc0opNOzvTZB49q/MJDss3SW+Zl3QaVkUeYSEbQa+OEKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZyOhyyv; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=N53Jq0oRR37UJnKGgpvCTtxR5W6EdmmBtRFNOZW8WFTsH6MfDf9rY7tnt1MbDPABab4C13nDtFaEbSumh24takw+kbc8wJGAMa3z/Ji4oefPVsQA1RSH/Dbsg/IN7Tojyut4hvd565vClfiEBmXsE1VipJ7MDyeUrOxlIS7tlFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAjVtJe0; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so5875797a91.1;
-        Sat, 22 Feb 2025 01:19:15 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fbf77b2b64so5918499a91.2;
+        Sat, 22 Feb 2025 01:19:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740215955; x=1740820755; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740215954; x=1740820754; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ebN4cyzthHKaQm0kA6H3sa8m+6Zvx+02vow0Fqtwzi0=;
-        b=KZyOhyyvbBNcZc4oxSFxpEFucRD5yq3s0U1OM2YfGL9wgD9NpNoguVIWIYIjmpb2fD
-         ceHRBX3R1WkjnbRpoLrugI6HbHCKv4tOXLzyFF0NUTANeGNdNHdOeAV0QlEO7l+HcxC0
-         QSXMOCt+AHpSkluUY9iHjKL4fkHqiH7Em3iPzAeQa+w6HhOnqprbR4C6vE+AvNPKPVBO
-         n6RuaZJqM3e0vn4SBYulRrKtxgg2SisIOVf8wVRvu3m+LPKybAsib5XAxnpS425w30Jm
-         ns6YNOBhjrV1RYvEArKiN9F1f+GLH8mqEIyw3AzbaRkJliiaE5h7wp8w4A0VYRfSHve4
-         ACIw==
+        bh=arSSywPBAqrtMA/12WOxSIM6m3MIN4jFYb5tokjbeI4=;
+        b=fAjVtJe06cpogUy+1FHV50X2W30/UxAIvns1/ViV4JgmUs+aOvlahO/lhvNDZpXPgB
+         zE2EkFi8vNTuhUcDlQCXb44DwxM0zYdOUSpCUQCjs0wRfpfFskJM5eep9sem9EMhd8fB
+         9+Latt+03qlI14+D1FTlWYkk5L3bMSzDIQS8nLLuZ6ctUKFXCSMvzWyoqg6Zq+Dy7C9I
+         VnK33CrehyByLcpkBnjw8SdR8FIvhsXlPArZsGaNspdLOeuKnKOVEqzwzXjIlyLvz6U6
+         t3x6lui3AlkIdQvbqNJhej05oHCsalbkzzgn1IswIDRykv3v+kykDZ+5B8L4I/ax9a8h
+         hNow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740215955; x=1740820755;
+        d=1e100.net; s=20230601; t=1740215954; x=1740820754;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ebN4cyzthHKaQm0kA6H3sa8m+6Zvx+02vow0Fqtwzi0=;
-        b=t5FJOTd36R8q+k+E+ZnVX6pte5yGCuXvuuvJCUcOhUJxlehEDqJXJkb5nAIOcfSo+s
-         JjyM9pWkwNALaX7fMl1U2pAXVAB8kDRAk6Iesvh5i53X7sVa1TSpb08ZXKYe6iWIJmDf
-         OmByl4Lvw83Gc1qUqRLYU+9oZAcCRFdRVbK0T2Hdn7RGLACD/kpKY0FLHcKSeDwIT03s
-         pD10yOqCcLkgDX5NuMVjQDGtUkJb/bqkIWqQXTeEkgmTCqTXyXOVwEzMWjtPuT5HwGT0
-         QFKJKy04vDNpQTJEcFnQtHPF68EeEoQitnjKhzMd4vEcWrK5UHd4rFMsiV7ZpzkfVQfH
-         NIpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUYRloMWb1IS4D6me2UgNuy7sq+URLyZHAm4X2altg37UWxigPsba7pmlbKvomOqtO77KGCs6Rusd7CisirIg==@vger.kernel.org, AJvYcCXe1JuIB17wAV1M54WekYCqw8m5FH5PWUkCIFfoXbW7w11vpE/LYZnZTv/FAMJsuEgiDGI3w1wtnvW2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbovhuoEqXaA03e7nUtazmWu/+SD568/HCGYzlpH+dMoL7MVQ+
-	332kuqhIa7fsNDZ18lXaRMrO0Jeea+qD97/KinR6zvp7Z004RyCp
-X-Gm-Gg: ASbGnctvf3YihWB12b6RySRSgxlU2qhamqMQrDdNZSIJcWFwvtTmL/csdaFyw3KeMZu
-	Oer31nh3I2HvPRcvZNaxHctzGA9dewP0PLsluo6f0jEY56aK4iMVaT/nr00JEB6Syj28JHFbvX+
-	27tD17XevSeaq+R/GEkGRKH/vWn1pu9puXOAwO5aGGuxzWpkzSxt/Q+lNtgWFv12G74W4GVLY6J
-	B4YPafDZmmVF55Lh7wQNd/z7CWya5qxk38AMWt4NqkZs4Xd8lp0i54ABsK7ZAp8BuTKBVWIN93H
-	+dyg5YOAyuTJIGNj5waDXCRo4Q==
-X-Google-Smtp-Source: AGHT+IFnPcE/P+j0slY93PwlWMJpK4tnReFB0rvawpdG0W7f5OuQwXBT72N1VBMFdr831Cun3CxxzA==
-X-Received: by 2002:a05:6a00:98f:b0:732:1eb2:7bf3 with SMTP id d2e1a72fcca58-73426d9f1abmr11386853b3a.21.1740215955108;
-        Sat, 22 Feb 2025 01:19:15 -0800 (PST)
+        bh=arSSywPBAqrtMA/12WOxSIM6m3MIN4jFYb5tokjbeI4=;
+        b=YKz0Kj9/L3oSczOHw+kRtSbfj0xdTe3McBHuNZM2oXsNboYz3LYSjlz8rq27/W6vkk
+         YIYqtTTiCcqy6NerwcB8js53/lBvUlfxeh7NJsOctf3FMOAii6xAMEIEZ0vVlv88QQfx
+         tnMnrozCCaDGZXPVjlygo4ESXs4qnUMSqxYBwIF76yDDqFJfK2oeOoRXb+P1d8oLFmn/
+         B+Z+1i45L8MtwYPkOFDkFedbB7t/bGsSFKOYKMx6Slju2qXYrCpY1nDDN7fYN/zpsuh/
+         ZsruT5++8oKrI9uG3mRua2Kv4GV8EOMh+qaaNGed9br8JlXkp3Tzb/16f9KiBtFKPbXF
+         3j3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUyOSQSMUzU2IRoIDcBtA6YSfhjUF4PTQlmOtjX90HIlNqNToHWg7/0M7jGdM0GB7kjyhO36krFMYfa@vger.kernel.org, AJvYcCVxBcRpmzP3sC84e9y9nVw43ezzaOEuFMb+KaayvM37wvrehUxpMo97xKLhBWivwrV6lIqtN1LFyln9nUwtgw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyDsmk1Ayjgp6OQ9xrAXICpjuBeapRo/Madi/o7dKY+JBG3g/H
+	P12HahUHvKNofSaq2ALMzT/qdheTULjPpO1LgWGWolSj0ysMMaSD
+X-Gm-Gg: ASbGncvmw05DdKb2BkhkwrZLoXujCWEOXnDxp38ZDgMo1AZwHEVgB/zQ+SDulZ9/BIg
+	zYKcKMGzeH2A4aktrCjRbFhe/+yy+DmZ7X8Z+3VBORl12JycOZegQAw2AY2VXC9KDCOyxKh/FhV
+	xnFVxzFvRMS7OsH2X2/qh6ESqAd7VRnkQ4x2BkNmFHnsbP1QQfESai/BUi1kmxZRlo/d2VQUNnv
+	bUpNwe7JVIRAzEBGiOGf5gHq5MaOB7rQlHnDepYQ6FkQMOPDaCwhRHxC6Y2iflLw9q6Mx4JtaZi
+	mjxhZTjakXK7REUl1V8xBYuPug==
+X-Google-Smtp-Source: AGHT+IHL3fDQk9Pp/3H+yX5WF7dXe/HQfFbAD4mwCOURPeue7PPNy5SO2roanyZd7Nvyx3WYhAm6ng==
+X-Received: by 2002:a05:6a00:464e:b0:732:a24:7354 with SMTP id d2e1a72fcca58-73426c84381mr8960226b3a.4.1740215953718;
+        Sat, 22 Feb 2025 01:19:13 -0800 (PST)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73266fd6438sm13727366b3a.142.2025.02.22.01.19.10
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-add2e0ad0dfsm13375942a12.78.2025.02.22.01.19.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 01:19:11 -0800 (PST)
+        Sat, 22 Feb 2025 01:19:10 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id C1F1542D904A; Sat, 22 Feb 2025 16:19:07 +0700 (WIB)
+	id DD1B042D904B; Sat, 22 Feb 2025 16:19:07 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -80,11 +80,10 @@ To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 Cc: Kent Overstreet <kent.overstreet@linux.dev>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Joshua Ashton <joshua@froggi.es>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH 2/4] Documentation: bcachefs: casefolding: Fix dentry/dcache considerations section
-Date: Sat, 22 Feb 2025 16:18:51 +0700
-Message-ID: <20250222091853.16487-3-bagasdotme@gmail.com>
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 3/4] Documentation: bcachefs: casefolding: Use bullet list for dirent structure
+Date: Sat, 22 Feb 2025 16:18:52 +0700
+Message-ID: <20250222091853.16487-4-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250222091853.16487-1-bagasdotme@gmail.com>
 References: <20250222091853.16487-1-bagasdotme@gmail.com>
@@ -94,55 +93,36 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2040; i=bagasdotme@gmail.com; h=from:subject; bh=I+Hu4DmnujOxNtjjtyFf0/ct07Cish9O0boxecFj94I=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOk7p5pxXb58Vrpml8XMFa9nrFzFVDrd1HUex88v0S8bF tvxTjqwqaOUhUGMi0FWTJFlUiJf0+ldRiIX2tc6wsxhZQIZwsDFKQAT2VzMyHBx7ovrKzd/ielg XuyRk/YtdfcLTQZGbs/U38UdDM9Dp/Ay/Hdcy/P7T61c8M+fWU6B4Zs7etjznytvsmRtt9Zxzch p4QAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1311; i=bagasdotme@gmail.com; h=from:subject; bh=1H0fcjZ59e5m2Wwr+sCq68rVcNKl1r6ctu9g3xbBDDI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOk7p5pt9mu6c27pRc+j2Z/9m9fGFDG4VUZekVPUvpiUy uukHfK/o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABOp8mNk2NWk8uCPsfzn47ND E8S+6jUpW7r7GUVev3H2j++t+/kdTIwMJ34uPPKjPW/b5nCb9Uduif8+6jepa7LYdYGgSYkZG1Y rMgAA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Sphinx reports htmldocs warnings on dentry/dcache section:
+The doc lists dirent structure for both regular and casefolded names,
+yet it is written (and rendered) as long paragraph instead.
 
-Documentation/filesystems/bcachefs/casefolding.rst:75: WARNING: Title underline too short.
-
-dentry/dcache considerations
---------- [docutils]
-Documentation/filesystems/bcachefs/casefolding.rst:84: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
-
-Fix the section by:
-
-* Extending the section underline to match the section title length;
-* Separating problem list from surrounding paragraphs.
+Write the structure list as bullet list.
 
 Fixes: bc5cc09246c5 ("bcachefs: bcachefs_metadata_version_casefolding")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/linux-next/20250221161911.2d16138b@canb.auug.org.au/
-Closes: https://lore.kernel.org/linux-next/20250221162135.79be0147@canb.auug.org.au/
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/filesystems/bcachefs/casefolding.rst | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/filesystems/bcachefs/casefolding.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/filesystems/bcachefs/casefolding.rst b/Documentation/filesystems/bcachefs/casefolding.rst
-index 1c385b6d21a0a8..d5861b44463576 100644
+index d5861b44463576..ba5de97d155ffa 100644
 --- a/Documentation/filesystems/bcachefs/casefolding.rst
 +++ b/Documentation/filesystems/bcachefs/casefolding.rst
-@@ -73,15 +73,17 @@ any encodings than a single UTF-8 version. When future encodings are desirable,
- they will be added trivially using the opts mechanism.
+@@ -30,8 +30,8 @@ name with the regular name in the dirent.
  
- dentry/dcache considerations
-----------
-+----------------------------
+ The structure looks like this:
  
- Currently, in casefolded directories, bcachefs (like other filesystems) will not cache
- negative dentry's.
+-Regular:    [dirent data][regular name][nul][nul]...
+-Casefolded: [dirent data][reg len][cf len][regular name][casefolded name][nul][nul]...
++* Regular:    [dirent data][regular name][nul][nul]...
++* Casefolded: [dirent data][reg len][cf len][regular name][casefolded name][nul][nul]...
  
- This is because currently doing so presents a problem in the following scenario:
-+
-  - Lookup file "blAH" in a casefolded directory
-  - Creation of file "BLAH" in a casefolded directory
-  - Lookup file "blAH" in a casefolded directory
-+
- This would fail if negative dentry's were cached.
- 
- This is slightly suboptimal, but could be fixed in future with some vfs work.
+ (Do note, the number of NULs here is merely for illustration; their count can
+ vary per-key, and they may not even be present if the key is aligned to
 -- 
 An old man doll... just what I always wanted! - Clara
 
