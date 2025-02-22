@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-527312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93C1BA40984
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:34:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F25A40986
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05EE702039
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:33:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AA04702B6E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A821922F6;
-	Sat, 22 Feb 2025 15:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MOG+FDbt"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E3A19D092;
+	Sat, 22 Feb 2025 15:36:30 +0000 (UTC)
+Received: from mail.muc.de (mail.muc.de [193.149.48.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FE12D05E;
-	Sat, 22 Feb 2025 15:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1583224
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.149.48.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740238443; cv=none; b=oPCR1PplZMihq+d2GyF18MMuk8OJ+8VsR9912ak/jwCejHeDpW8tJfR2t/LEKY6EjeNFJoTzB1M0VYLf2nnsMWDQD7IjuSNoh6Bruu5v22FuKqMg+jdOJsZMkG8JS9gf+1gdNqN+tIl0FWdzRdOGgWG9yFsMnU5QrUL5evpqjs8=
+	t=1740238589; cv=none; b=nCmvC6u5IK8BgZc7MddhzUbI5uV1RU22XJ4YIxYoSoP4pndOysCVBG59Mngdv/zCW6/uaA7fk9CHwPeL79ARGJw6hfuirR+dcZk/Gb5kMysX7m2S3rDxqOzEDkadH/bvBFcyPpcODrSZYUJYuXqJkiori0xJ8YRIK40wL7fojss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740238443; c=relaxed/simple;
-	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mupnQuvItKuosIWN1d0oJzXK9ObU7VwhlZ4qNYBNu+T9+VyA5EvAyrawuRS3uEkl0VhCVar1P2+SXUNimfdarr/5CJppQL9S3TVPiMHkogmJdvzmptVByi5cBvqRgyx0TLXbVUxuhhnA+ZNhIl9zE3wnfxg6rjrJ3knikK3v4sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MOG+FDbt; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740238438;
-	bh=gselFHu7vsy5BNx95BjFIuNv6dddMJLzHfF5VzpKKco=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MOG+FDbtPgNtTCXWLsDR0WErdiDmJBrbvkPx/oyOxKBzM2BF1qO9GiVRudGyfGRrU
-	 oVYvPqcOGoMlkz5kBl7m3K2ZR2Tl8wZTk4k8HztAxW/vT8bwGAsHBOQLU7dY11A+nx
-	 nv/aG5trfKKT10BLAqG2abLALJSBSx6zosgUxWacb1xLvZJo2jkZkZn79xbj4lIVwc
-	 drL8Rqp93ZwIsN1u7hSdIu1tqeE4FcYBQ40+cDSkX2XT3G28qAo8QdokB4BMRIqWY/
-	 VrqEIxObqoN6Vit0/jkh7sdRcYdgWchQf+vxFijSCKwYdJYNqRMjqDGyQDw9dHJKFb
-	 LAatvEy8LUP8w==
-Received: from [192.168.1.90] (unknown [188.27.58.83])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9B3AA17E00BD;
-	Sat, 22 Feb 2025 16:33:58 +0100 (CET)
-Message-ID: <aca747a9-5244-4535-bc22-976ed4a1dc3b@collabora.com>
-Date: Sat, 22 Feb 2025 17:33:57 +0200
+	s=arc-20240116; t=1740238589; c=relaxed/simple;
+	bh=q0sYhvG6QRBlTbAt5UtgA6djZsVa50a/93MMrD9O110=;
+	h=Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:From; b=s+d+eIaKCPjkruszkAV7cpJ+auRhNvsV4CVLQTRRVgBZp2jVNvrABkhfGW2CarHr9yf9zKQDKkLP16pcueM8i6PPuwrIaaBLwowg1z2a/s54FeP0S43+WRQP2K8uJw18DApxZ3JpexgfcU/lQE6dqvexOlORfCJOSeCsR1qNTKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de; spf=pass smtp.mailfrom=muc.de; arc=none smtp.client-ip=193.149.48.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=muc.de
+Received: (qmail 28437 invoked by uid 3782); 22 Feb 2025 16:36:13 +0100
+Received: from muc.de (pd953a520.dip0.t-ipconnect.de [217.83.165.32]) (using
+ STARTTLS) by colin.muc.de (tmda-ofmipd) with ESMTP;
+ Sat, 22 Feb 2025 16:36:12 +0100
+Received: (qmail 10943 invoked by uid 1000); 22 Feb 2025 15:36:12 -0000
+Date: Sat, 22 Feb 2025 15:36:12 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+  linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: More than 256/512 glyphs on the Liinux console
+Message-ID: <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: check for disabled clock-provider in
- of_clk_get_hw_from_clkspec
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
- sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- liujianfeng1994@gmail.com, sebastian.reichel@collabora.com
-References: <20250220225448.2763166-1-heiko@sntech.de>
-Content-Language: en-US
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-In-Reply-To: <20250220225448.2763166-1-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022243-street-joylessly-6dfa@gregkh>
+X-Submission-Agent: TMDA/1.3.x (Ph3nix)
+From: Alan Mackenzie <acm@muc.de>
+X-Primary-Address: acm@muc.de
 
-Hi,
+Hello, Greg.
 
-On 2/21/25 12:54 AM, Heiko Stuebner wrote:
-> of_clk_get_hw_from_clkspec checks all available clock-providers by
-> compairing their of-nodes to the one from the clkspec. If no matching
-> clock-provider is found, the function returns EPROBE_DEFER to cause a
-> re-check at a later date.
-> 
-> If a matching clock-provider is found, a authoritative answer can be
+Thanks for the reply.
 
-Nit: s/a authoritative/an authoritative/
+On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
+> On Fri, Feb 21, 2025 at 03:35:59PM +0000, Alan Mackenzie wrote:
 
-> retrieved from it whether the clock exists or not.
-> 
-> This does not take into account that the clock-provider may never appear,
-> because it's node is disabled. This can happen for example when a clock
-> is optional, provided by a separate block which just never gets enabled.
-> 
-> One example of this happening is the rk3588's VOP, which has optional
-> additional display-clock-supplies coming from PLLs inside the hdmiphy
-> blocks. These can be used for better rates, but the system will also
-> work without them.
-> 
-> The problem around that is described in the followups to:
-> https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
-> 
-> As we already know the of-node of the presumed clock-provider, just add
-> a check via of_device_is_available whether this is a "valid" device node.
-> This prevents ethernal defer-loops.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  drivers/clk/clk.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index cf7720b9172f..50faafbf5dda 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
->  	if (!clkspec)
->  		return ERR_PTR(-EINVAL);
->  
-> +	/* Check if node in clkspec is in disabled/fail state */
-> +	if (!of_device_is_available(clkspec->np))
-> +		return ERR_PTR(-ENOENT);
-> +
->  	mutex_lock(&of_clk_mutex);
->  	list_for_each_entry(provider, &of_clk_providers, link) {
->  		if (provider->node == clkspec->np) {
+> > Dear Linux Maintainers,
 
-Without this patch applied, when disabling hdmi0 and hdptxphy0 nodes on
-Rock5B, rockchip-drm module fails to probe and hdmi1 output cannot be
-used anymore:
+> > The Linux console is currently restricted to 256/512 glyphs, the VGA
+> > standard from the 1980s.  I would like that restriction to be lifted, and
+> > believe that many other console users would agree.
 
-rockchip-drm display-subsystem: [drm] *ERROR* failed to get pll_hdmiphy0
+> First off, why?
 
-After applying the patch, I confirm the error is gone and hdmi1 is
-functional again.  Hence,
+I use the console as my primary means of interacting with my PC, and in
+recent years have become increasingly irritated by the appearance of
+Ufffd in place of, for example, eastern European characters in people's
+names.  I've often wished "somebody" would fix this.  In the end, that
+somebody had to be me.
 
-Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+But I think you are also asking why I use the console at all.  That's a
+fair question which I'll try to answer.
 
-Thanks,
-Cristian
+For pure text work (such as hacking code, reading emails), the main
+alternative is a GUI such as X-Windows (or Wayland).  These insert
+several layers of "fat" between the user and the "muscle" of the kernel.
+
+Like many drivers of modern cars, who would dearly love to get rid of
+electronic this and that, electric mirror adjustment, electric window
+opening and so on, I need a simple uncluttered environment.  I want to
+drive a speedboat, not a luxury yacht.
+
+All the features of GUI systems take up space on the screen, thus
+reducing the space available for the user's work.  All these systems
+"steal" key sequences from application programs, making them less
+useful.  For example <alt>-<tab> is a useful key sequence in Emacs,
+provided it is running on the console.  In text work, I have absolutely
+no use for scroll bars, menus, window decorations, and the like - they
+just get in the way.
+
+The console is a stable interface.  My use of it has barely changed in
+around 25 years.  By contrast, GUI environments are continually
+changing, forcing users to spend time learning new features and
+(arbitrarily) changed existing features.  I don't like this.
+
+The console is also rock-solid reliable - just as other parts of the
+kernel are.  X-Windows, for example is not so reliable.  Back in
+December, the root partition on my new Gentoo system became full.  This
+prevented X from even starting.  With the console (and a rescue CD) I
+was able to recover the situation.
+
+> What about the move to get rid of the vt code entirely, ....
+
+Getting rid of the vt code would be a Bad Thing.  People depend on it.
+What is the alternative?
+
+> .... if you do that, can't you get proper glyphs with the drm
+> subsystem?
+
+I don't know.  I've looked briefly at fbterm, a terminal which uses drm.
+It steals key sequences too, some of which are needed in Emacs.
+Although not as bad as GUIs, it puts awkward layers between the user and
+Linux too.
+
+I think using drm in place of fbterm.c and bitblit.c would need a lot of
+design and implementation work.  The change I'm proposing barely changes
+the design at all.
+
+> Doing huge changes for a subsystem that almost everyone agrees should
+> only be kept around for legacy reasons is a rough undertaking.
+
+Isn't there a principle in Linux that preserving existing user
+interfaces is of utmost importance?
+
+> <snip>
+
+> > I would very much like further to develop and to refine this code to the
+> > point where it is suitable for inclusion in the mainline kernel.  What do
+> > you say?
+
+> Only you can decide what you want to work on.  If you have working
+> patches, and submit them so that they can be reviewed, we'll be glad to
+> do so.
+
+As I've already written, I've got working code, but it needs refinement
+before I submit it.  Otherwise reviewers would likely reject it for
+"inessential" reasons like code formatting.  This will likely take me
+several days.
+
+What is the best way of submitting such a large patch (~3,500 lines)?  I
+committed it to my own local git repository in three main stages (around
+equal size), and have applied corrections after rebasing and the odd bug
+fix.
+
+> But again, you are going to have to answer the reason "why" first.
+
+I hope this email goes some way towards this.
+
+> thanks,
+
+> greg k-h
+
+Thank you too!
+
+-- 
+Alan Mackenzie (Nuremberg, Germany).
 
