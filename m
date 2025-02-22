@@ -1,202 +1,148 @@
-Return-Path: <linux-kernel+bounces-527221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6047A40899
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:13:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B86A40895
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24B607ACA76
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:12:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1256F3A438B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F36E207DE5;
-	Sat, 22 Feb 2025 13:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0BD207A35;
+	Sat, 22 Feb 2025 13:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="gTKOoqjo"
-Received: from mail-m3278.qiye.163.com (mail-m3278.qiye.163.com [220.197.32.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jfl9Jmf/"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348CC1B2182;
-	Sat, 22 Feb 2025 13:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877428494;
+	Sat, 22 Feb 2025 13:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740229989; cv=none; b=V0ZEhMdoFOR24OcrAEBUq8PYBQeucXon7mVjQgIXGuVPcbbwIpdNoPcW/plztGBKyiQXFVyJrH5hSXi1FAcG06nFcZcHnUKliDnYMg8b55ZGjL3hwY5i0hIf4EgtZVHGAdfchKMOjHzBOZdRdagBeBl64g0LHOASE8zMLLYFdCQ=
+	t=1740229470; cv=none; b=qc5hLDfHneOIbw4I1ByH4SW5Z3yiRCoMnMdvygLTNLVnE3JAqyPsDHj2MeeAA/hPerQu8TLk3yLSbDid+bT0RCuZpyC152jq58VpL/Srd9+LIbU2cwOZScjxYalqRtcbYvMBkNXaJF/uf8HOVYsDgk+j2Bf5vbwz6xdibxlbSHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740229989; c=relaxed/simple;
-	bh=Rx/6+HUXxBmrnqVvIGBM2Tk5eSZ0r/3y2PGuz6akjn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iw9j5wV4n2Rx1WQ9dyTi83HneUbU6t9X4zVLsUmcLfgrG4fhqnj2UGxKyT/ucWHRH75ApQje4mmzD918u+XUZqEynszqa9mu4BCIRxn1Z6h5tJODZz03iU1Xr37/GLqDQm1LB/580PHURAgpt/0XBpVRX7SrLzhTTJuZ+JrEbtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=gTKOoqjo; arc=none smtp.client-ip=220.197.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id bdb96d2d;
-	Sat, 22 Feb 2025 19:57:15 +0800 (GMT+08:00)
-Message-ID: <eb46b2d8-a170-4813-963d-8509089f72fa@rock-chips.com>
-Date: Sat, 22 Feb 2025 19:57:15 +0800
+	s=arc-20240116; t=1740229470; c=relaxed/simple;
+	bh=CBfymnCcB17kUdICHcQ/09wwscvMW2UVOaYcXpoZ4ks=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RSQH/kL08DI+urAo8JLbloadAgTJUn2JS+5So1XZ6wFfSR3k70fLEoohzIirzBMYUlAyYc/QUcMBW0viCOCUlrbFumXcl/om09a3T2SR9rZOWAVbKHkhYp70BBbp4VAu+wtP7Ah50ME6NojST/VjFzGJq8GlGhavqRYLwVe4UcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jfl9Jmf/; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22134a64d8cso7436485ad.3;
+        Sat, 22 Feb 2025 05:04:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740229469; x=1740834269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CBfymnCcB17kUdICHcQ/09wwscvMW2UVOaYcXpoZ4ks=;
+        b=Jfl9Jmf/0sb+Kl/vuwglR2iINIDSSUPVhXHeL2Tughix5m1LrzybmVoteyMWgS9v2p
+         4h6yMIpRdjiwrQ5v94J2vOMC9ULb1XtzrWDVk7LHCRQh1UL310EVMfcbBRcPZil5J6Ur
+         MZa6EZMpg/X7pvnKXUXj7p9xrGbwVoj9t1pb5n9gy/X65ZBNYuksZJunozDR49Jlyjjp
+         Wsaege/DVO9qorls7QAu7xyTIVnuQulRNNBzP+8r64er1Kknm4E+PKEgU8IC8+OsQ+m/
+         oCP7TP9mmB8nw4UvZO4EHBrlibfqy4N2Bkk2w0v9yS27A048vusqm/+UgCU45402deLg
+         RM4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740229469; x=1740834269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CBfymnCcB17kUdICHcQ/09wwscvMW2UVOaYcXpoZ4ks=;
+        b=KASJnLXiSg9AoFNDlIX6oVt7qZxzUoK5xtirXE67ykV46stRO8vmX67ldF5Oj5ivt4
+         hT+mlpcOGEZkWDWIeqPmh0hhIT14g7C0CV2hLsA+ay6dypw260LN7AvtBWyi8z3m9Gax
+         nPVmH/ieRcoLQLCcbybAz2o5+g8Y9No1mRlVGaomNRWo46jKQhCq0F+IXEprPIK5yp5t
+         LsFM6hWAKr+Zym0mFvkP+yHWtO5fLHNeDgQS7JP5GCNMIWGSsv10MTXZfakGkAAhidwc
+         KLaOKNqsS3DDNmHG5JxbKHp4e2hjuNQVaot6M1uDk5PgusXSXIRehc77P48A4fiWVIdY
+         8AFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUO1XyOP645e+5Vk2cOFqACtDTn89bXbblukJ8AaNFQJJzZm3QZvcjWmLMdkouD4nVisBFpIAhrz5kj6BCnyRg=@vger.kernel.org, AJvYcCXfRxn5hiVo8/UngQL6/fWiWcyd88NSGL9gpNkwgOJ7EsoeMNBy77H+17sA9F4UgTtCoJje2QSEXzTmroU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG0MdRe0lxCxdlFNO7HQuvUzlFAd0h+sqwD5PNA9/62A8DxqQy
+	figHhxIp/vK2ZCeyuhCDcDs6SkD9+wPVnqGRrnQLfqgt1wQVqRXBYF3z2ogfzumEP2WTSP3wT2n
+	szbgGU1nhrZjPc/gL+TaiKI2vWMs=
+X-Gm-Gg: ASbGncvIkB59C+ZdluAUjSQLRG2fSFif49pbIuZA2mm0nhD+DHfHtkye9/vB1i15+KS
+	DJEXgY+99aN2ZNGHyeocRPKcrec8eiGDWvfRMw0Tk3pJenWN+tnn4fA3fSzVD6uDAfFFX5rKeOA
+	31ysPVpNg=
+X-Google-Smtp-Source: AGHT+IHMRA+PnHU3dE1lHiEiPxP2f7T5v6bGxqdbiEPyBDOSpaNkhfTf5Z1uGA6jrhap6zkUtujoedsO8rPxOHN/mAU=
+X-Received: by 2002:a17:902:d58c:b0:215:a57e:88d6 with SMTP id
+ d9443c01a7336-2219fec4ee6mr41354585ad.0.1740229468697; Sat, 22 Feb 2025
+ 05:04:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 08/14] drm/rockchip: analogix_dp: Add support to get
- panel from the DP AUX bus
-To: Lucas Stach <l.stach@pengutronix.de>, heiko@sntech.de
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- rfoss@kernel.org, vkoul@kernel.org, sebastian.reichel@collabora.com,
- cristian.ciocaltea@collabora.com, dmitry.baryshkov@linaro.org,
- andy.yan@rock-chips.com, hjc@rock-chips.com, algea.cao@rock-chips.com,
- kever.yang@rock-chips.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org
-References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
- <20250123100747.1841357-9-damon.ding@rock-chips.com>
- <cfc5b39e21fb214c53fda3276847b8e235af818f.camel@pengutronix.de>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <cfc5b39e21fb214c53fda3276847b8e235af818f.camel@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0odQ1ZCQ09CGEhCQ0tMTklWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a952d84d7db03a3kunmbdb96d2d
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Njo6HDo6IzISGR8CThJLNRoh
-	GU8aCwhVSlVKTE9LSUlOT0hMSUlKVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPSk5JNwY+
-DKIM-Signature:a=rsa-sha256;
-	b=gTKOoqjoAKeFhXf1a8vmXg379vWYpEnKYnWD8KI0jK15KYdeKWwgwvp3kY0GK0x79LyCoTpcw+VSZq059SK53WSlCuP5TJKbYlTRYmQRY19EDQdLxuTeMVNBb+bqPTib5svQpS9eeXAMEptvdCAFFK74gn2utyUTVoD/0KO+uqw=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=wGmhqrAjYzagqI94aWqLld2LAsNs8E1/VGtS52n0S4U=;
-	h=date:mime-version:subject:message-id:from;
+References: <aIJ0ymzdUceCN05hwJpth4erH5u2SHYzYl52wGeT3uiO9bdk92ZkEmEEq9a9NXsInJYSz9uziwq-1fvdsXoeDA==@protonmail.internalid>
+ <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
+ <877c5mci3p.fsf@kernel.org> <5kF-NYTBZbEqnnQud5LKnRXO0lfM0i6I2PoeFrpKDhCYwUuk_bG2Li1T1Nuv82r3VFD8adTcdx7yenXSIfTwmw==@protonmail.internalid>
+ <Z7eYp_vZo5yDVOdI@pavilion.home> <87frk7hera.fsf@kernel.org> <Z7hheOSAuKdhq-1C@pavilion.home>
+In-Reply-To: <Z7hheOSAuKdhq-1C@pavilion.home>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 14:04:16 +0100
+X-Gm-Features: AWEUYZmi0olrnUbV-pHkmUPEUfk9IaPB-HHAp78OseSSS51sgFBiFuULXVitU2c
+Message-ID: <CANiq72mpYoig2Ro76K0E-sUtP31fW+0403zYWd6MumCgFKfTDQ@mail.gmail.com>
+Subject: Re: [PATCH v8 00/14] hrtimer Rust API
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Miguel Ojeda <ojeda@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, 
+	Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lucas,
+On Fri, Feb 21, 2025 at 12:20=E2=80=AFPM Frederic Weisbecker
+<frederic@kernel.org> wrote:
+>
+> I was thinking the patchset would be better routed towards the Rust tree?
+>
+> How do you guys proceed usually with bindings tree maintainance?
 
-On 2025/2/8 3:42, Lucas Stach wrote:
-> Hi Damon,
-> 
-> Am Donnerstag, dem 23.01.2025 um 18:07 +0800 schrieb Damon Ding:
->> Move drm_of_find_panel_or_bridge() a little later and combine it with
->> component_add() into a new function rockchip_dp_link_panel(). The function
->> will serve as done_probing() callback of devm_of_dp_aux_populate_bus(),
->> aiding to support for obtaining the eDP panel via the DP AUX bus.
->>
->> If failed to get the panel from the DP AUX bus, it will then try the other
->> way to get panel information through the platform bus.
->>
-> The changes in this patch effectively revert 86caee745e45
-> ("drm/rockchip: analogix_dp: allow to work without panel"). Please
-> correct this in the next revision of this patchset.
-> 
-> Regards,
-> Lucas
-> 
+So far, what we have been doing is ask maintainers, first, if they
+would be willing take the patches themselves -- they are the experts
+of the subsystem, know what changes are incoming, etc. Some subsystems
+have done this (e.g. KUnit). That is ideal, because the goal is to
+scale and allows maintainers to be in full control.
 
-Oh, I see. I will fix it in the next version.
+Of course, sometimes maintainers are not fully comfortable doing that,
+since they may not have the bandwidth, or the setup, or the Rust
+knowledge. In those cases, we typically ask if they would be willing
+to have a co-maintainer (i.e. in their entry, e.g. like locking did),
+or a sub-maintainer (i.e. in a new entry, e.g. like block did), that
+would take care of the bulk of the work from them.
 
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->>
->> ---
->>
->> Changes in v4:
->> - Use done_probing() to call drm_of_find_panel_or_bridge() and
->>    component_add() when getting panel from the DP AUX bus
->>
->> Changes in v5:
->> - Use the functions exported by the Analogix side to get the pointers of
->>    struct analogix_dp_plat_data and struct drm_dp_aux.
->> - Use dev_err() instead of drm_err() in rockchip_dp_poweron().
->>
->> Changes in v6:
->> - Keep drm_err() in rockchip_dp_poweron()
->> - Pass 'dp' in drm_...() rather than 'dp->drm_dev'
->> ---
->>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   | 37 ++++++++++++++-----
->>   1 file changed, 28 insertions(+), 9 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> index 13f32aeea7ca..004b1b68d1cf 100644
->> --- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> +++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
->> @@ -393,11 +393,27 @@ static const struct component_ops rockchip_dp_component_ops = {
->>   	.unbind = rockchip_dp_unbind,
->>   };
->>   
->> +static int rockchip_dp_link_panel(struct drm_dp_aux *aux)
->> +{
->> +	struct analogix_dp_plat_data *plat_data = analogix_dp_aux_to_plat_data(aux);
->> +	struct rockchip_dp_device *dp = pdata_encoder_to_dp(plat_data);
->> +	int ret;
->> +
->> +	ret = drm_of_find_panel_or_bridge(dp->dev->of_node, 1, 0, &plat_data->panel, NULL);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = component_add(dp->dev, &rockchip_dp_component_ops);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return ret;
->> +}
->> +
->>   static int rockchip_dp_probe(struct platform_device *pdev)
->>   {
->>   	struct device *dev = &pdev->dev;
->>   	const struct rockchip_dp_chip_data *dp_data;
->> -	struct drm_panel *panel = NULL;
->>   	struct rockchip_dp_device *dp;
->>   	struct resource *res;
->>   	int i;
->> @@ -407,10 +423,6 @@ static int rockchip_dp_probe(struct platform_device *pdev)
->>   	if (!dp_data)
->>   		return -ENODEV;
->>   
->> -	ret = drm_of_find_panel_or_bridge(dev->of_node, 1, 0, &panel, NULL);
->> -	if (ret < 0 && ret != -ENODEV)
->> -		return ret;
->> -
->>   	dp = devm_kzalloc(dev, sizeof(*dp), GFP_KERNEL);
->>   	if (!dp)
->>   		return -ENOMEM;
->> @@ -434,7 +446,6 @@ static int rockchip_dp_probe(struct platform_device *pdev)
->>   
->>   	dp->dev = dev;
->>   	dp->adp = ERR_PTR(-ENODEV);
->> -	dp->plat_data.panel = panel;
->>   	dp->plat_data.dev_type = dp->data->chip_type;
->>   	dp->plat_data.power_on = rockchip_dp_poweron;
->>   	dp->plat_data.power_off = rockchip_dp_powerdown;
->> @@ -450,9 +461,17 @@ static int rockchip_dp_probe(struct platform_device *pdev)
->>   	if (IS_ERR(dp->adp))
->>   		return PTR_ERR(dp->adp);
->>   
->> -	ret = component_add(dev, &rockchip_dp_component_ops);
->> -	if (ret)
->> -		return ret;
->> +	ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), rockchip_dp_link_panel);
->> +	if (ret) {
->> +		if (ret != -ENODEV) {
->> +			drm_err(dp, "failed to populate aux bus : %d\n", ret);
->> +			return ret;
->> +		}
->> +
->> +		ret = rockchip_dp_link_panel(analogix_dp_get_aux(dp->adp));
->> +		if (ret)
->> +			return ret;
->> +	}
->>   
->>   	return 0;
->>   }
-> 
-> 
-> 
+I think that is a nice middle-ground -- the advantage of doing it like
+that is that you get the benefits of knowing best what is going on
+without too much work (hopefully), and it may allow you to get more
+and more involved over time and confident on what is going on with the
+Rust callers, typical issues that appear, etc. Plus the sub-maintainer
+gets to learn more about the subsystem, its timelines, procedures,
+etc., which you may welcome (if you are looking for new people to get
+involved).
 
-Best regards
-Damon
+I think that would be a nice middle-ground. As far as I understand,
+Andreas would be happy to commit to maintain the Rust side as a
+sub-maintainer (for instance). He would also need to make sure the
+tree builds properly with Rust enabled and so on. He already does
+something similar for Jens. Would that work for you?
 
+You could take the patches directly with his RoBs or Acked-bys, for
+instance. Or perhaps it makes more sense to take PRs from him (on the
+Rust code only, of course), to save you more work. Andreas does not
+send PRs to anyone yet, but I think it would be a good time for him to
+start learning how to apply patches himself etc.
+
+If not, then the last fallback would be putting it in the Rust tree as
+a sub-entry or similar.
+
+I hope that clarifies (and thanks whatever you decide!).
+
+Cheers,
+Miguel
 
