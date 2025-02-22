@@ -1,123 +1,116 @@
-Return-Path: <linux-kernel+bounces-527295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B82A4094F
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:04:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 621C4A4094E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90AD1753FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:03:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 433037AB38D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFF4199934;
-	Sat, 22 Feb 2025 15:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6AC1D5AA7;
+	Sat, 22 Feb 2025 15:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyc6i1Cc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dDneDw4O"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286EE2E40E;
-	Sat, 22 Feb 2025 15:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB8019D084
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740236618; cv=none; b=SKARndgJPnT/Zvo3YfAGn0nQ3o2aF5ZkJs06RE0Pp0osbeeGNTEyESBLMW+5fE1v+QVge3OVb6OW/8ps01BoJrt1taK5bOR/0JQvufrQOKLuY9P98oeJQw3kelcSykyS99m+vmb3+KH7QtTyFPIeoNB62kCKbR+owho0NsafOD8=
+	t=1740236630; cv=none; b=qRWkv7wGaVQ5WgGB1SUT3+zQksft5/arlekHw2EQGQWnV6s2ynYUlzzPZs7BJV2CDyFrpHFBzwxmHOpLpiBseFmaRiiOvUx0ZXd/TDgMyjU6LRsM1Ogs81yOathuhmFrlkXY8E6/3ax5cQ8bwmywCPjOstyeVOzfsFK59FXH4hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740236618; c=relaxed/simple;
-	bh=0Gbj5Q16AxCucUHa4V+FVAa8ClryIt98kxjbCLFCYzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3Ih5jfTE6xdYq9CSQveqEws8BKp9uoIoNh5/w4D/yhNkzUVcMvVv43wL+ZfDX66JZfiUxxsfxU0FBtO48hCHoFgSpedwOb0PcXfIvQ2HgKYqycPbHEpIw6hiqhv1CFG7er29yhrnjCDqMM9uFErL7/sBsrlz9TQnalkwp0vHA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyc6i1Cc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00BB1C4CED1;
-	Sat, 22 Feb 2025 15:03:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740236617;
-	bh=0Gbj5Q16AxCucUHa4V+FVAa8ClryIt98kxjbCLFCYzw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=nyc6i1CcD7C2Kb1UkIpGD9eUc5EmpMTjguRgnIdrYxYb1+1qe8Y8xkiUqyIDlWZyY
-	 kJ6ia2bd2qHXfWTI6p3pGql9y7rTavoqLm9ZWC4YsdZ0XcJa99psgCVUTNQWK1FPSR
-	 sLt5brQZhegxWUT8aY+nuh5phTKTN751H6OFyiItnop/0IbhwMfJoWcTrDL6v0t6aY
-	 EmvhbJ5+o3wntvTLK0Nhev8tVA2eQwy0zlRZuJOEUG7u2G1z8VHWvAUzrGRT2glgFP
-	 XCImhnFBvHDsGkIkP37Pbv48v2x5OHbCOzO8icpOu59B9A/2vOK9/kmPSck2o0I7Dw
-	 bSxe2OII589ZQ==
-Date: Sat, 22 Feb 2025 15:03:29 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- cosmin.tanislav@analog.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] iio: accel: adxl367: fix setting odr for
- activity time update
-Message-ID: <20250222150329.66d6e79b@jic23-huawei>
-In-Reply-To: <20250221203352.41941-1-l.rubusch@gmail.com>
-References: <20250221203352.41941-1-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740236630; c=relaxed/simple;
+	bh=kPNPLou+FgmzvO1cy0TDusxy2DcTdZeiwQPQcVKNWQI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tP9EqYoOCCCibnuO0eY5VTZxfQiqU7j8C+gn2e+3OmZOcFio3iCseJaeeIeyPW+06QKPd32lrrVVeTkW346sWpvzznMf4ufzTz6iqY5Z3VjpnJrT4IFcT7O0rhWBM/7MA/DfhMrhYSbNou1+5kpx2YH/Hq3gI+v+0wL0GxXmhjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dDneDw4O; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 22 Feb 2025 10:03:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740236625;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n2fx+V6MOFz4dl61jiVYfggTt1KOJsIBw37HV+8BuLk=;
+	b=dDneDw4OLoPce16o1fWZ6PzClFRUnwADAvcfy9fvSbp+DD4HHKyPT1svcYNWWzTU4jO5Nr
+	sI7S5hTinnI0qMRTASqeN6B91XCzOYYlclEdz2xSrSgo+8v6eSQLEZHmJvLiNAmi+NFDKi
+	xnxTLR6OvmHX5Y/Q/KN2Xkht2zxt2wI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Theodore Ts'o <tytso@mit.edu>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, Christoph Hellwig <hch@infradead.org>, 
+	rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Greg KH <gregkh@linuxfoundation.org>, David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, 
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <2cbxfvvsau5sobm3zo5ds7u26jeiskxs6cavp5a7hbokjisobi@2ybqbl6iry6k>
+References: <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <b0a8ee53b767b7684de91eeb6924ecdf5929d31e.camel@HansenPartnership.com>
+ <CANiq72nnnOsGZDrPDm8iWxYn2FL=wJqx-P8aS63dFYez3_FEOg@mail.gmail.com>
+ <a627845f73f2f7bedc7a820cfdf476be9993e30f.camel@HansenPartnership.com>
+ <CANiq72m5KB-X1zck1E43yffXOTeD4xRmZgDx_oUiNwR941ce0w@mail.gmail.com>
+ <20250219170623.GB1789203@mit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219170623.GB1789203@mit.edu>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 21 Feb 2025 20:33:52 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Fix setting the odr value to update activity time based on frequency
-> derrived by recent odr, and not by obsolete odr value.
+On Wed, Feb 19, 2025 at 12:06:23PM -0500, Theodore Ts'o wrote:
+> On Wed, Feb 19, 2025 at 05:44:16PM +0100, Miguel Ojeda wrote:
+> > Hmm... I am not sure exactly what you mean here. Are you referring to
+> > Wedson's FS slides from LSF/MM/BPF? i.e are you referring to Rust
+> > signatures?
+> > 
+> > If yes, those signatures are manually written, they are not the
+> > generated bindings. We typically refer to those as "abstractions", to
+> > differentiate from the generated stuff.
 > 
-> The [small] bug: When _adxl367_set_odr() is called with a new odr value,
-> it first writes the new odr value to the hardware register
-> ADXL367_REG_FILTER_CTL.
-> Second, it calls _adxl367_set_act_time_ms(), which calls
-> adxl367_time_ms_to_samples(). Here st->odr still holds the old odr value.
-> This st->odr member is used to derrive a frequency value, which is
-> applied to update ADXL367_REG_TIME_ACT. Hence, the idea is to update
-> activity time, based on possibilities and power consumption by the
-> current ODR rate.
-> Finally, when the function calls return, again in _adxl367_set_odr() the
-> new ODR is assigned to st->odr.
-> 
-> The fix: When setting a new ODR value is set to ADXL367_REG_FILTER_CTL,
-> also ADXL367_REG_TIME_ACT should probably be updated with a frequency
-> based on the recent ODR value and not the old one. Changing the location
-> of the assignment to st->odr fixes this.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Fixes tag?
+> The problem with the bindings in Wedson's FS slides is that it's
+> really unreasonable to expect C programmers to understand them.  In my
+> opinion, it was not necessarily a wise decision to use bindings as
+> hyper-complex as a way to convince C developers that Rust was a net
+> good thing.
 
-Otherwise looks good to me.
+You keep talking about how the problem was Wedson's talk, but really the
+problem was you derailing because you were freaking out over something
+you didn't understand.
 
-> ---
->  drivers/iio/accel/adxl367.c | 10 +++-------
->  1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/iio/accel/adxl367.c b/drivers/iio/accel/adxl367.c
-> index add4053e7a02..0c04b2bb7efb 100644
-> --- a/drivers/iio/accel/adxl367.c
-> +++ b/drivers/iio/accel/adxl367.c
-> @@ -601,18 +601,14 @@ static int _adxl367_set_odr(struct adxl367_state *st, enum adxl367_odr odr)
->  	if (ret)
->  		return ret;
->  
-> +	st->odr = odr;
-> +
->  	/* Activity timers depend on ODR */
->  	ret = _adxl367_set_act_time_ms(st, st->act_time_ms);
->  	if (ret)
->  		return ret;
->  
-> -	ret = _adxl367_set_inact_time_ms(st, st->inact_time_ms);
-> -	if (ret)
-> -		return ret;
-> -
-> -	st->odr = odr;
-> -
-> -	return 0;
-> +	return _adxl367_set_inact_time_ms(st, st->inact_time_ms);
->  }
->  
->  static int adxl367_set_odr(struct iio_dev *indio_dev, enum adxl367_odr odr)
+The example was fine. It wasn't overly complicated.
 
+You've been an engineer for decades, taking in and digesting new
+information about complex systems is something we have to do on a
+regular basis. A little new syntax shouldn't be giving you that much
+trouble; come on.
+
+> I do understand (now) what Wedson was trying to do, was to show off
+> how expressive and powerful Rust can be, even in the face of a fairly
+> complex interface.  It turns out there were some good reasons for why
+> the VFS handles inode creation, but in general, I'd encourage us to
+> consider whether there are ways to change the abstractions on the C
+> side so that:
+
+It wasn't a "gentle introduction to Rust" talk. You can get that
+anywhere.
+
+It was a talk _specific to the VFS_, so "how does Rust cope with core
+VFS interfaces" was precisely the point of the talk.
+
+If you wanted to take up that much time in our presentation, you
+should've prepared a bit better by aquiring at least a bit of
+familiarity with Rust syntax beforehand. You shouldn't need to be
+spoonefed, the rest of us have done that on our own time.
+
+Just please try to have some etiquette.
 
