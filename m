@@ -1,113 +1,98 @@
-Return-Path: <linux-kernel+bounces-527062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B883A406EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:31:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A593EA406E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F04913BF5C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23C119C6DC3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E462063F4;
-	Sat, 22 Feb 2025 09:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2950206F3F;
+	Sat, 22 Feb 2025 09:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="eoR+hgdD"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGXNIDYW"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD11EF0BC
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 09:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D613E1D7E42;
+	Sat, 22 Feb 2025 09:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216655; cv=none; b=TUTawUu5PUOXxeGLESOYR3yHE19cx0MeJnyBrT6T/LiIHSRuXdjscTYsPJpEfHaJp4rMQuxgaWozY07Mtky0aB4CwbKOEGhBH8L8itB9+2kvW6oetHjECLujnoS4ezHGjimmPLt6PFNOojhWnKpUfjjKAC7NCOFNMGdCGSVjUMs=
+	t=1740216651; cv=none; b=ji9uw2lNvUEZ+1odszT/gdzxL2Ga8/93AnBZ0irdHSup0edxCAAOwj7GDx3r6uVvH3mBBvJ1U6OeO+bPnEQP6Iv1f4cmQrCyfrREv2mHETkc8rbjiiKHsJ30vEbze+aXem82KHw/rQYYbHMNlUz7F/TVsgHxASnrt7gjgzQ6TEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216655; c=relaxed/simple;
-	bh=YEOVvgmg7FxOvmZafWS72ZewGgi0VB1w/eqX5SfWyn8=;
+	s=arc-20240116; t=1740216651; c=relaxed/simple;
+	bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKCF9WK5GNwnyyCpoqKVcOmpckgJxaFCyCaKaPQz7JMeLDh9rKiKv3AIWwkTGn4GjtgIJd/A7MKnMZHwmjq8bT5ymBJbwt/u/Dpd6RlfZoqWPYZCfRcbYs/j63DPwGGxKeixQ4s2wOAijR59ehB1y/aytjxgOTYPLFSElTTLmr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=eoR+hgdD; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=gwvH
-	R2pWT+FEQ338AH8GO4XbPqa1gdPGQfyRRNgfKy8=; b=eoR+hgdDrmxsFOnAZasD
-	YbaD8lYfrfItqfoeQfuyVjnQRwMt8HfvkD7q7TAI2W83FKcC/GdSXIGULUw+D9X0
-	mQUxR+fZBB6Tqwyj58VEIqmDN6Fp5OU1lp3oNzAJl7a9v81ccou4ZsUqsgIgARO/
-	Om+cNnutkEXcRfh7uwQQjlcVorwuiXdCakUq6ZAJ6lpl9uGnLsagciFfsLhQilYP
-	FbF/+ei9Co4T4mCxSY1B8Ucn0oRA89p9hIbl7uD1gCKkXgj6roEB1KaDahm+awHH
-	TiaX5cRUZx5M386kg65W7e0wzGFDSUtc3Tf6DfVnhtUXs6JFmP2MGrf5jgND8k0l
-	Lg==
-Received: (qmail 1532662 invoked from network); 22 Feb 2025 10:30:41 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Feb 2025 10:30:41 +0100
-X-UD-Smtp-Session: l3s3148p1@AeG9wrcualltKPLt
-Date: Sat, 22 Feb 2025 10:30:41 +0100
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Su Hui <suhui@nfschina.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: core: Allocate temporary client dynamically
-Message-ID: <Z7mZQRQhis-DHRFP@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Su Hui <suhui@nfschina.com>, linux-i2c@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176.git.geert+renesas@glider.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnPWFx29SiXXsYf/qprXLuB0Qq3UduzdndG1Zm2tH0avuLZYPS5NEw2mzzJE8uKtVnRvHsLG1Gw9jWBJINkjB2lDbp+szCV1dkhQl6U9k4kegXvb7Wn3o8Dc4dRulEtyuz80qICUHOAd4WX4CgiusJpw14HyelJTyCmaeF6ocEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WGXNIDYW; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-220f4dd756eso58735985ad.3;
+        Sat, 22 Feb 2025 01:30:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740216649; x=1740821449; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
+        b=WGXNIDYWSpRntp9kA1YnO+pZu25Mdpx8/yKZwg1/HPakvl0RIz/4VAJQZmpc+nh+cC
+         SHMpof9ZIFbk0QbMqCwZ+qLbACwwvERfeCtemmeNM5UjnldtzrIsrANVZ0EmpKssV/Lk
+         0VRqbb6cIwaUJsW3TyDU+eJR9Ym+tJruJicb00oi9Muq3OoJYBSEUDlaJ/NtBjDjjwlr
+         KFQ9kOIGUxAfYCU3dx+szaYKfe7tB2NVdnITeUaY5v2oW7ue0dOhhTvxwlbzf0yM0C+L
+         rtR96DFXDYLtqpUcMrhlJ5D+kICGgI6LiknkCUXEOs6yrdH/vEGKAu885xqOrzVAlV1k
+         7kSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740216649; x=1740821449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hXAr6oIEi+/PIbCR5b0ihPtXixUgLNht0f3STJblDVk=;
+        b=Xcx73cclWYbAN9xpMXJwAc9/8PHuykPTU7U1UrxF2/3zIEOmZ4cACk9cE/xZqOihxO
+         UQZy02w+o+0zxod/wPtczL0QOfQjqmevzmt1kpqaCl0XVx+pOH9cV2KQobt9jDwz8vY6
+         +IKypOYNddMwHxcnSTUevwy4U7dMNQsdfHE+rSXjVmwnT8OzbCITYCZ3M9yHh4r1Hh4e
+         bKv9w/3Xk16q5DPbmwaMfR/raM08s1oXenPj8bwCAWF7e5ksjWKY9vLoGhwFB6G219MG
+         sowdhc3wZBzfeho94r2vwNTAhbahk45pwEHP1XeKGmffddef3H2chlwIFladHgTGYmJy
+         gKqw==
+X-Forwarded-Encrypted: i=1; AJvYcCX6/FMn9AVCVZyAbzpiOpjGaOngVmkejlII3DlyCVQKOaW2kQYhtIv/rs3pWrRWSwKPl3rzBgATuNcxuuY=@vger.kernel.org, AJvYcCXF/+pdgE9CyNlwED2X1HYPO3Lhs3UAgkVyVeu+lO1Qb4aXMtDjaOm8KseUmE2177V9nej/6PTXv9IOddr/QTpa@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZFgducslNIR1VfL5ryn8FF+5CIpzjAIRy0N+OrhJMHFp4RsK3
+	8mkYIBSF5m8domjBmNXRMXfclmtzbevZqCHtrcJByyJybzRYc5m0
+X-Gm-Gg: ASbGncvv+dDCs60BvB25RPvwf/zGvvBCI2qf8Fa8AW2Ae2+15LCvfPqGTno26154rHp
+	eeNxXbsdG4FNP3rgKdD88IQb7WWaWIUgjOHBsl72yTaIsHoxHPENjlNjK6QVScBgmVyQivv0iGG
+	URsboUxGfoNiOkrlZnea/odN+wzW5XUTBEsjdznJkQh1p+WRyVrrVcvb5oPZm83QgiSr/Xhttqv
+	/rKaCQzkSC0oDf1IsqF16opND/yXdKIkMhZ7JTH/etiwbyaUNBCJhuCorVpzwW57JA1TJOFg8tm
+	aMj7RbpJJzFTYkYgM89TRzZnFHorRY8ooXaYZN1UBraxo1OT
+X-Google-Smtp-Source: AGHT+IHdUVu20s80g9zpUNttiyeCSlx4ll29y5Rr7CdK3ZqQIPl/f/zJ6Puh0U3kaJqAewMl+0S1jQ==
+X-Received: by 2002:a17:903:178b:b0:21f:140e:2929 with SMTP id d9443c01a7336-2219ff4e2f6mr101409025ad.15.1740216649065;
+        Sat, 22 Feb 2025 01:30:49 -0800 (PST)
+Received: from ritvikos.localdomain ([49.36.192.173])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fcb8351600sm4025373a91.0.2025.02.22.01.30.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 01:30:48 -0800 (PST)
+Received: by ritvikos.localdomain (Postfix, from userid 1000)
+	id 55655ED9143; Sat, 22 Feb 2025 15:00:44 +0530 (IST)
+Date: Sat, 22 Feb 2025 15:00:44 +0530
+From: Ritvik Gupta <ritvikfoss@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH] selftests/mount: Explicitly define buffer size
+Message-ID: <Z7mZRO0eCwRU2JhG@ritvikos>
+References: <20250222081711.48208-1-ritvikfoss@gmail.com>
+ <2025022257-easter-shower-61df@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZHZrXgIteYPz54AL"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f9aa39362e918b62aec0567f899b37d8d3c44710.1740064176.git.geert+renesas@glider.be>
+In-Reply-To: <2025022257-easter-shower-61df@gregkh>
 
-
---ZHZrXgIteYPz54AL
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Feb 20, 2025 at 04:12:12PM +0100, Geert Uytterhoeven wrote:
-> drivers/i2c/i2c-core-base.c: In function =E2=80=98i2c_detect.isra=E2=80=
-=99:
-> drivers/i2c/i2c-core-base.c:2544:1: warning: the frame size of 1312 bytes=
- is larger than 1024 bytes [-Wframe-larger-than=3D]
->  2544 | }
->       | ^
->=20
-> Fix this by allocating the temporary client structure dynamically, as it
-> is a rather large structure (1216 bytes, depending on kernel config).
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-As Arnd mentioned, this is basically a revert of 735668f8e5c9.
-Applied to for-current, thanks!
-
-
---ZHZrXgIteYPz54AL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme5mT0ACgkQFA3kzBSg
-KbaGeA/9EzW9yZgoVWRbjzsIqng4h3fukQzyBUnluiM+YzmOy0i0OJAjZaoE//zp
-NESGZlGIrG7UjTT+FV0GKfCQIOdxx5Tn/fsBIvBeCf0C1JDS2F3EDwdG1/OMGZP8
-U0bSIfcE7RPagY/PXQgOCTAhhn2Jq5rZ1EjAgv47jCz0kzhctBu0QhclV0MvULVV
-New4PLP/CcgslnZXHSbdL8vQNvb6QaDD2RkUrET5FVk1iSCbOiPGzKMTG7+pFxPQ
-n+l1mAHwKqxi5eqBnmZp8873FINQE57jHl+pmBp/Kldf1XGNb5fleCyvB+W7Fea7
-CvdtbaCTsJ9unJRTdTS5MS+3DFYLToO+SahMEhnml55PGTrS5GFT804S/abeieei
-TOMa4eI8iC2Uqso0x9eZaWohKVqpdKQK26lK1bDFRbbB4URz2KWrDBA4pN3q0U5g
-s7KPQftTsU4F8+zUz8LMOhvD7biJZplSTyWXt52BULJJYLNt2KBxtx1IGje309jX
-PQtVvdljbqraqGvuUBPvhBUsMCaM3Uzb1+KoSaAK8V/0xpkrx1eBQ7SRDSxu0bHd
-7wi75h6HXeFnaJUnjh5SFNt7AJPnvw1y7LBg7FuqbBrZQ/umdOlEi+SfxnsXvovc
-ggn8i6yFwtz+HZEnh8IalNWnNX2BG3Apjb8lEMEuUZuM48hgTTQ=
-=96CV
------END PGP SIGNATURE-----
-
---ZHZrXgIteYPz54AL--
+Got it :)
+Thanks for reviewing!
+Regards Ritvik
 
