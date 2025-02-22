@@ -1,252 +1,156 @@
-Return-Path: <linux-kernel+bounces-527361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D453A40A47
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:49:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4EF1A40A45
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EE373ABF03
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9323017E8FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB7E20125F;
-	Sat, 22 Feb 2025 16:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E9312D758;
+	Sat, 22 Feb 2025 16:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a6oC30cj"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+LNQ+Rt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284253D984
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0807378F30;
+	Sat, 22 Feb 2025 16:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740242858; cv=none; b=lzBxc5PlI00NrXfhQ5NkgB1GckSpooRZraTPCb7DRuvnWGZCzcZxNYhim88vjQybh4N/71cq170oCVgkLpu23Fyk/3BXr3nt32+W1d5c4eNghpAWwup8i4NojTDgxSJfID+WFp1FUjsXUvfSOIVtE4eUcMOSs9brL801AXQEU4g=
+	t=1740242887; cv=none; b=d/xCCg7/kW83QGf+vdTNdRlKC1G3fjYSb1dSU070aafSZV/G5pzPxGfsMtFTiltPWVy23S5FnmblJib8qcnWvPDV/E+Pl21Ppljyr+aKHpgcg4rDGb3rLq99nYaE3b93psasfiFj42Sag40KwK1VnkBJznfXO6zE3DCisBlVs5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740242858; c=relaxed/simple;
-	bh=xkRFKhnFEnAD58kFXG3gKfKhJMfoPrLt7gh+o9s6UKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hy5fnEai2lUH2blzGUqpcQNfkJvvXaSAuQDYPyNojo8fcaOYT78qM927o+Er2IsK1pQ8JQYTr50yETT8HL6EQ9b16W5WEYw3KPLcS8RI/OeC8ZGiebkyQhbxmcCVWaRIqfjb8GUHN8Yv2v6BQo6U8EvgsKBRxcS4X6IZPKD+szc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a6oC30cj; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c2a87378so53784055ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 08:47:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740242856; x=1740847656; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=zJ7NQVTPXTDow2MBFx4sxVbqLZ6Sf0I/R5YTNHSvMMk=;
-        b=a6oC30cjXe7cBQQ01oSJlogHV84zCeph/LUBkdyEhOfIUfMFIVM1cPJQznCuLZPUA1
-         9s7yRmMh1vvydOERrfaoEvm9EuhxFUlMR0Rj2ZhGnHqCYJHGrI4ERSTligomx4xLsrFB
-         5Ll+Ubi0HNgJi+VSSOISSzcCDB4C1NI9G3o6SZnp3N3J+chrm+t9cTpFS3NWvKUyidcX
-         +uEK2A9pgyFqS6IXXX+fbjGli6C8AMTCwgXkAjMcDdFGbXFu9D/Dn7mcsyj1CiUEUdyk
-         NjNDXcRAGGA3EtG+0/1wzqTyn/tA/q91g+/xnij/167VxBFQSIVKMl7lhEjcxDPezfqm
-         o4Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740242856; x=1740847656;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zJ7NQVTPXTDow2MBFx4sxVbqLZ6Sf0I/R5YTNHSvMMk=;
-        b=KeCPPG8r/V2jARN5FrhXizzKEdzdHkQPoiWNWgKn5u405gnewQ1fKWkRO2wB3IHWA7
-         SW0HlWzwqZlbN4lLpH5RkCGhjdzv3A0juFBVOHIg4+wMwJDCkp2zpdSwWh3l9r7cepmD
-         Z4kt2NnProK5aW7ECKYm8Z/s+m28S1YqDhOhmesNqJnoCSMMLYcVYUG7M+7ilcSzrhXS
-         h7FK8FzE6umhlp6aMytdGQv8Z8NizMJXYkM9NzXoaVgYZqRE/vAnoFigJnZdY4wPDBkV
-         PgeImUr+f76tGisf17FjkFBOwIVcOSUD2t128KeuFwEi8ketnRhJUuXuR7lQ9ccP/vO8
-         AeUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhVcThYXYN1JedssSfVIhNb57Pyd2wHu4EEpAJpmWo85yVZzQXj8E6OfvfFFJKbxiTZjOUfEBfQITUJx4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyff8KjoFEcem5TfmHek/08YJ5hX/NhPp+zuuw6fEZH4pp+jd1A
-	6ShiOu1/4Lsaw8ppDdFkA2ejEYOIsyeeDrsqEtDrYDqDogbwSa3jjX13wI128Q==
-X-Gm-Gg: ASbGncvgFurMPp+bxlCromUSWxqLxqG5eRlbqAocLd8IqriTdBQYqE7cLNFLqUnvqCO
-	Av+AkhoHe8DPg+enacnNxCWOuali+QqJS7nsf8RxCKirRil8LwMc/D/Ggbt+zanfGDaAY5UqwIc
-	dfueuks9wyVNU4t+0zqRhPRasSd2/pGALOT14tvf8MCJtCXV25yMUj74R4O4/IKfOGhxz8Sf1Qw
-	JsDLwwlrCjIEOuxFsUIpA3usX45rRrNwqRmjegKCCav8ijVok1NVGq97HzFbtNylkrbkKeUoroO
-	9bSbAASnYqcihfcf/AKT4cW7C6kJTMeVr8W3dA==
-X-Google-Smtp-Source: AGHT+IG8mfk9DVO07sEMYxIy/TppsA1X7fgCLQ8dMAl2olyAokABZhmYBGxDPvxrOxubVbPS/Lfn3Q==
-X-Received: by 2002:a17:902:e812:b0:21f:4c8b:c4de with SMTP id d9443c01a7336-221a119192fmr118946245ad.42.1740242856520;
-        Sat, 22 Feb 2025 08:47:36 -0800 (PST)
-Received: from thinkpad ([120.60.135.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491f7sm152955845ad.38.2025.02.22.08.47.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 08:47:36 -0800 (PST)
-Date: Sat, 22 Feb 2025 22:17:30 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mrinmay Sarkar <quic_msarkar@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 4/8] dt-bindings: PCI: qcom-ep: consolidate DMA vs
- non-DMA usecases
-Message-ID: <20250222164730.kelz4csyvd46onyx@thinkpad>
-References: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
- <20250221-sar2130p-pci-v3-4-61a0fdfb75b4@linaro.org>
+	s=arc-20240116; t=1740242887; c=relaxed/simple;
+	bh=MNqeln3VUkNUMvXFamT92OsGm8gYf6TpxgYBqet6w3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UKSuaOqFyTaR1llZCksUAAxv5+R/9bG1eQyV9qnfESF0CEXOlWtJVuSpA9X7KkxOLeNkhaRRJIzFn29LV3EMnA+4azKyLDYGT+kqgBT/RZPoTrALkhYxs2vv80ZCiSS1EJVFWi5Hm2X48tINAbtWwHut7V0b+lQybYjzCexy0xU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+LNQ+Rt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE30C4CED1;
+	Sat, 22 Feb 2025 16:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740242886;
+	bh=MNqeln3VUkNUMvXFamT92OsGm8gYf6TpxgYBqet6w3I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=g+LNQ+Rt6GNGW/rZCLD4s7ivITJorUX2uUsQcWHYOVgHODkVvz8WRgpnSczHu2A6H
+	 X7cUx7U2gzvOI4jlqiC8lCOUGBm2/ILcjBZQGTNw8XfqypYCoxGZgj/jOPl97+uNf3
+	 hydT8nMNbtqLx0y63rjJH7AA1lo6zloGej59zU3pMHTTdnfD9UBAa45fphLPnRYv8C
+	 s+8CKb6rqrkAAmxvjFliZq6Ecm8LoZ7Ie7guQR8hRzkdk5yAcTPtcLNiP5gX7YDgnW
+	 Ia5tQ9gVcR7z9T0VlAxKcsx+abUCbb5FenevUiqQ2rcBZcWT9AJemvmGhjHX0Sun/F
+	 agze0wqy+kzXA==
+Date: Sat, 22 Feb 2025 16:47:59 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 01/14] iio: backend: add support for filter config
+Message-ID: <20250222164759.5e98cefd@jic23-huawei>
+In-Reply-To: <20250220135429.8615-2-antoniu.miclaus@analog.com>
+References: <20250220135429.8615-1-antoniu.miclaus@analog.com>
+	<20250220135429.8615-2-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250221-sar2130p-pci-v3-4-61a0fdfb75b4@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 21, 2025 at 05:52:02PM +0200, Dmitry Baryshkov wrote:
-> On Qualcomm platforms here are two major kinds of PCIe EP controllers:
-> ones which use eDMA and IOMMU and the ones which do not (like SDX55 /
-> SDX65). It doesn't make sense to c&p similar properties all over the
-> place. Merge these two usecases into a single conditional clause.
+On Thu, 20 Feb 2025 15:54:11 +0200
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+
+> Add backend support for filter enable/disable.
+> This setting can be adjusted within the IP cores interfacing devices.
+
+Hi Antoniu,
+
+Please add some details on what this filtering actually is.
+There are lots of possibilities. I'm not sure why you'd have
+just an enable on the backend rather than a richer set of controls?
+
+Thanks,
+
+Jonathan
+
+
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 > ---
->  .../devicetree/bindings/pci/qcom,pcie-ep.yaml      | 68 +++++++++++-----------
->  1 file changed, 35 insertions(+), 33 deletions(-)
+>  drivers/iio/industrialio-backend.c | 26 ++++++++++++++++++++++++++
+>  include/linux/iio/backend.h        |  6 ++++++
+>  2 files changed, 32 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> index d22022ff2760c5aa84d31e3c719dd4b63adbb4cf..2c1918ca30dcfa8decea684ff6bfe11c602bbc7e 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-ep.yaml
-> @@ -131,6 +131,7 @@ required:
+> diff --git a/drivers/iio/industrialio-backend.c b/drivers/iio/industrialio-backend.c
+> index d4ad36f54090..ffafe7c73508 100644
+> --- a/drivers/iio/industrialio-backend.c
+> +++ b/drivers/iio/industrialio-backend.c
+> @@ -778,6 +778,32 @@ static int __devm_iio_backend_get(struct device *dev, struct iio_backend *back)
+>  	return 0;
+>  }
 >  
->  allOf:
->    - $ref: pci-ep.yaml#
+> +/**
+> + * iio_backend_filter_enable - Enable filter
+> + * @back: Backend device
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_filter_enable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, filter_enable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_enable, "IIO_BACKEND");
 > +
->    - if:
->        properties:
->          compatible:
-> @@ -140,9 +141,43 @@ allOf:
->      then:
->        properties:
->          reg:
-> +          minItems: 6
->            maxItems: 6
->          reg-names:
-> +          minItems: 6
->            maxItems: 6
-> +        interrupts:
-> +          minItems: 2
-> +          maxItems: 2
-> +        interrupt-names:
-> +          minItems: 2
-> +          maxItems: 2
-> +        iommus: false
-> +    else:
-> +      properties:
-> +        reg:
-> +          minItems: 7
-> +          maxItems: 7
-> +        reg-names:
-> +          minItems: 7
-> +          maxItems: 7
-> +        interrupts:
-> +          minItems: 3
-> +          maxItems: 3
-> +        interrupt-names:
-> +          minItems: 3
-> +          maxItems: 3
-> +      required:
-> +        - iommus
+> +/**
+> + * iio_backend_filter_disable - Disable filter
+> + * @back: Backend device
+> + *
+> + * RETURNS:
+> + * 0 on success, negative error number on failure.
+> + */
+> +int iio_backend_filter_disable(struct iio_backend *back)
+> +{
+> +	return iio_backend_op_call(back, filter_disable);
+> +}
+> +EXPORT_SYMBOL_NS_GPL(iio_backend_filter_disable, "IIO_BACKEND");
 > +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sdx55-pcie-ep
-> +    then:
-> +      properties:
->          clocks:
->            items:
->              - description: PCIe Auxiliary clock
-> @@ -161,11 +196,6 @@ allOf:
->              - const: slave_q2a
->              - const: sleep
->              - const: ref
-> -        interrupts:
-> -          maxItems: 2
-> -        interrupt-names:
-> -          maxItems: 2
-> -        iommus: false
->  
->    - if:
->        properties:
-> @@ -175,12 +205,6 @@ allOf:
->                - qcom,sm8450-pcie-ep
->      then:
->        properties:
-> -        reg:
-> -          minItems: 7
-> -          maxItems: 7
-> -        reg-names:
-> -          minItems: 7
-> -          maxItems: 7
->          clocks:
->            items:
->              - description: PCIe Auxiliary clock
-> @@ -201,14 +225,6 @@ allOf:
->              - const: ref
->              - const: ddrss_sf_tbu
->              - const: aggre_noc_axi
-> -        interrupts:
-> -          minItems: 3
-> -          maxItems: 3
-> -        interrupt-names:
-> -          minItems: 3
-> -          maxItems: 3
-> -      required:
-> -        - iommus
->  
->    - if:
->        properties:
-> @@ -218,12 +234,6 @@ allOf:
->                - qcom,sa8775p-pcie-ep
->      then:
->        properties:
-> -        reg:
-> -          minItems: 7
-> -          maxItems: 7
-> -        reg-names:
-> -          minItems: 7
-> -          maxItems: 7
->          clocks:
->            items:
->              - description: PCIe Auxiliary clock
-> @@ -238,14 +248,6 @@ allOf:
->              - const: bus_master
->              - const: bus_slave
->              - const: slave_q2a
-> -        interrupts:
-> -          minItems: 3
-> -          maxItems: 3
-> -        interrupt-names:
-> -          minItems: 3
-> -          maxItems: 3
-> -      required:
-> -        - iommus
->  
->  unevaluatedProperties: false
->  
-> 
-> -- 
-> 2.39.5
-> 
+>  /**
+>   * iio_backend_ddr_enable - Enable interface DDR (Double Data Rate) mode
+>   * @back: Backend device
+> diff --git a/include/linux/iio/backend.h b/include/linux/iio/backend.h
+> index e45b7dfbec35..7987d9f1cdb3 100644
+> --- a/include/linux/iio/backend.h
+> +++ b/include/linux/iio/backend.h
+> @@ -100,6 +100,8 @@ enum iio_backend_interface_type {
+>   * @read_raw: Read a channel attribute from a backend device
+>   * @debugfs_print_chan_status: Print channel status into a buffer.
+>   * @debugfs_reg_access: Read or write register value of backend.
+> + * @filter_enable: Enable filter.
+> + * @filter_disable: Disable filter.
+>   * @ddr_enable: Enable interface DDR (Double Data Rate) mode.
+>   * @ddr_disable: Disable interface DDR (Double Data Rate) mode.
+>   * @data_stream_enable: Enable data stream.
+> @@ -150,6 +152,8 @@ struct iio_backend_ops {
+>  					 size_t len);
+>  	int (*debugfs_reg_access)(struct iio_backend *back, unsigned int reg,
+>  				  unsigned int writeval, unsigned int *readval);
+> +	int (*filter_enable)(struct iio_backend *back);
+> +	int (*filter_disable)(struct iio_backend *back);
+>  	int (*ddr_enable)(struct iio_backend *back);
+>  	int (*ddr_disable)(struct iio_backend *back);
+>  	int (*data_stream_enable)(struct iio_backend *back);
+> @@ -190,6 +194,8 @@ int iio_backend_data_sample_trigger(struct iio_backend *back,
+>  int devm_iio_backend_request_buffer(struct device *dev,
+>  				    struct iio_backend *back,
+>  				    struct iio_dev *indio_dev);
+> +int iio_backend_filter_enable(struct iio_backend *back);
+> +int iio_backend_filter_disable(struct iio_backend *back);
+>  int iio_backend_ddr_enable(struct iio_backend *back);
+>  int iio_backend_ddr_disable(struct iio_backend *back);
+>  int iio_backend_data_stream_enable(struct iio_backend *back);
 
--- 
-மணிவண்ணன் சதாசிவம்
 
