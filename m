@@ -1,137 +1,288 @@
-Return-Path: <linux-kernel+bounces-527153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24F5A407ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:37:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D46FA407E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58FD19C4F41
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:38:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB733BD228
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FEB20B7F7;
-	Sat, 22 Feb 2025 11:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A45A9209693;
+	Sat, 22 Feb 2025 11:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnTcM0Zg"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="CgW4dc8x"
+Received: from prime.voidband.net (prime.voidband.net [199.247.17.104])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E756020AF62
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49AC6FC3
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.247.17.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224240; cv=none; b=j2JZSfc/YJ+WvXbzrSah+3gPYbV1XM7O5+BYbtPxaUr8XxpvJJfy6rNGZrC4Xu35wgZ1gkKTF/Cu0MHPalpcMHpR516A2+0AnobTazKyhISoX+idq2S/DBV1r2/C1NhxjNRynUoO3L8+iUYi3+CCcINiy8OXWSZ2qNRzEoZMaXY=
+	t=1740224210; cv=none; b=NMZ2KcTh01jY0WeAU2XCBRZ7T/QGXsUKVrbIqnLnQN7D/WgrrNUCMdOsP9Ahap96mNzyPCQSQsJDnP+YNvA1v5pieamHNBKGZer5Ez9+STUgIP/zvcoFvAGbSdEGoX3+kHYQ0dB6xzVn04GRcdOS19GspA30C1ZyzW8u3jRksXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224240; c=relaxed/simple;
-	bh=vycBcYDrBDVOei3loymV0QktvZaM3LRUV+IoroMJxes=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p0fot58ULLRb1TNPNZDq64w8BJvpskqSP8oHiT16E6tIOGE1+2RsPsHrhQWWQaJfirIm+PV+L/ihC3zzgNvLwGh4kWxoaoOe/+vvP63lsnKhd/ctI45qlNDklwvDkoK6PWtclCxIYrytS1CUHTRZTgh7zYnyFEL4vHUbNQ+z0R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GnTcM0Zg; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5de8e26f69fso496559a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:37:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740224237; x=1740829037; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+TIM9U75umqUIBuvTyU4QEuOihhyR+UUhXilGv0cqhk=;
-        b=GnTcM0Zg4gIQUbbYZANMkZl/8bB44gJ81LpKysTzbdUFJG1D+3HCLZW68BEewO7rck
-         EHALkYpE2+yJu0mKZwrM3qnEeKKEjcwAjaE//mJ6IEGKT+NtRMs6QoWtPFUdMsxntj0s
-         NKItQcuK5ctY6g0Jn7QdWN/BrkIFIr5ksge4Jt59d92C/35qxrrvtX5l8D2WzTXybXEy
-         ozaOVqPbNS1miT1OBWeeoJwtenRJ+vVCXyPr9/dMlz4kUgoHrRBBUgzsUCg4INawDRi4
-         mhJcReXRN9tD+GevBaaOTlzUC8uCdpwUsgRlRrEJxgUGBmpNqOxCv01cMQIB3GpKxT+U
-         qZ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740224237; x=1740829037;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+TIM9U75umqUIBuvTyU4QEuOihhyR+UUhXilGv0cqhk=;
-        b=fDiwlpTB2rWYlBodmmkmDRDXTrMsLE7ZYKlMSUL1bkeJ5OM14NIK80GjGIBxpRIFT3
-         lj+FPw7IWlg+EDg+pFhwXdmHQCaTJyzpF8QTKr9nxTbsm0iTQALwXHjqp09J5lvW+3cP
-         Wojw2126BX/LcRoWACR9A+BOC8YZbFuHKUAklHFwBjHQMoJH2NYUotWzrka6Sp2CG9By
-         946CAU9MdVDV2IfPEy+YuXDs5Eounw01P4XJafpDG6Um0o8zsxW76RCvu+N+lLf9qz/o
-         yatNzJEyjpVHijaTYYdPuz2uPrl/uMqLaT02rWTBjFmsh4cVkMpHyl9yHsWM1ejuPj3o
-         A4Nw==
-X-Gm-Message-State: AOJu0YxjeIMI0Jl8/cVCQUzKWRoXqjDkdxFzHneI7o30lS5T2/z8d/Yg
-	yfZ2vXnGN82pBM+SjGAQ70TZApyskxA5cHFuyGBR4/PJNGeMTJczBdwtLmOCJe8=
-X-Gm-Gg: ASbGncsaKXeZE0Vzc8e8US3zwSM5JABi0+e+MrfPlfCIbwlLa60nrXrrJcdNpg9Kgzh
-	kpn/dje4dqaPA0b8JkvkXud8W4IBaDBQhdIGn9R67nat48kAVlrcEcKPbjzOM/bBDvV7fvLkfEP
-	T6r9Nfja8DPv/lZZl8fkbcY/TkZdov3KYKEE+K1jMK+PEfBC64DPPRzySgTrpj11LZQtPARiVxq
-	Fizu6MpwDkjuEorEXewHS3xTH2iJbyWB+A1aKcH0iaRvQURwugaVRS3oX2WJxdBkF7/JQDWUTbW
-	csKz4GzTJZ0WaMw875+mmCBXnEZW5xdkNIqgdVAkUM3WyusK2X0ZfJVMXFm7+gcBod9x0GZx0dg
-	f
-X-Google-Smtp-Source: AGHT+IFXcNBp7scYJMpdtyrRaoJElrLOkHIu6Bt7e25+0sgqaHIuEsh74MKOorpZTNnliwmkTEwegA==
-X-Received: by 2002:a05:6402:210e:b0:5e0:7afe:4e06 with SMTP id 4fb4d7f45d1cf-5e0b7248542mr2267379a12.10.1740224237452;
-        Sat, 22 Feb 2025 03:37:17 -0800 (PST)
-Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d369esm15011493a12.37.2025.02.22.03.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 03:37:15 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sat, 22 Feb 2025 12:36:21 +0100
-Subject: [PATCH 5/5] mailbox: arm_mhuv2: Constify amba_id table
+	s=arc-20240116; t=1740224210; c=relaxed/simple;
+	bh=RQUwl6i6MCv7DWVhyufNd2qXBCIjWoJzvjgbz67kYyo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LpnrkF6IBUaudIMELXJpWywf5ze9CRqLJ3TskyaA+oV+febEjiNvpmN0rpnTGIhC/sHt+OJRiwTogtaH3O407GO5dpjO+PE/PMckD4jP2WpDVEqpdXrSUh4bYTmoz0IC89RXzMlBzC9YRj5jRVpstxjerd5YYUIvXmsUcYu1McE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name; spf=pass smtp.mailfrom=natalenko.name; dkim=pass (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b=CgW4dc8x; arc=none smtp.client-ip=199.247.17.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=natalenko.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=natalenko.name
+Received: from spock.localnet (unknown [212.20.115.26])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by prime.voidband.net (Postfix) with ESMTPSA id B590E6168430;
+	Sat, 22 Feb 2025 12:36:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+	s=dkim-20170712; t=1740224205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yMowdD31+N5Yry4py2pgTOlFubTMO0/Sn3pXYQDcq1M=;
+	b=CgW4dc8x19IJOXZgTudrQ6td+3EWFR6m9DcjmPi97BBBbKGTjdLOv1zRpJEmkyQFcdsb6/
+	qmeLJG4h8sUgUe2DNMAllSRiEbAVpVFnrgAWse2A0uVuFyD3eNrRw7iNTlBBqgZesdrKj6
+	vNF4k/Qu1CkhKy40VAl75Q/8dMRl4Po=
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: x86@kernel.org, Rik van Riel <riel@surriel.com>
+Cc: linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+ dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+ jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+ Manali.Shukla@amd.com
+Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
+Date: Sat, 22 Feb 2025 12:36:32 +0100
+Message-ID: <4630159.LvFx2qVVIh@natalenko.name>
+In-Reply-To: <5861243.DvuYhMxLoT@natalenko.name>
+References:
+ <20250221005345.2156760-1-riel@surriel.com>
+ <5861243.DvuYhMxLoT@natalenko.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-mailbox-const-arm-id-v1-5-d60589215a24@linaro.org>
-References: <20250222-mailbox-const-arm-id-v1-0-d60589215a24@linaro.org>
-In-Reply-To: <20250222-mailbox-const-arm-id-v1-0-d60589215a24@linaro.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>, 
- Viresh Kumar <viresh.kumar@linaro.org>, 
- Tushar Khandelwal <Tushar.Khandelwal@arm.com>
-Cc: linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=760;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=vycBcYDrBDVOei3loymV0QktvZaM3LRUV+IoroMJxes=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnubbdH0IVAxX/lVa5nVioFlJWqFxG8dcYvFyy9
- clhmynByl+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7m23QAKCRDBN2bmhouD
- 16x1D/9L+7znzwSB9tnw+emL6TBRxRIpy5qdvIxCkDbWnuU2kutSjwNXndliB/3mrBhd6+H1FF4
- BMakdLWpqzmzV2VlnOxwk4kYKUfSwUXtTsE7DjgC73S7dhPzGQybbfAOWzAGfGH1YFKZ70LHkgU
- wOKf1ckjJupaeUTGjmEvWzA7lPHkg/y8GlY8MiUD/zA6ZwlgIiHxWSf8kyHH2RIV5UBCJIv9RmO
- cjRq/iMGuAsEZ4sO0GPNzKD+5IRhTvoMdknxXio/Tu+qL/9WJT1HfJghPxd7L22twtplfPSTt1N
- vG3uBsbYUzszRtxJVG7RKWzaV2Ofo6f2z7N0uA9T+Cejk8+8zL51LN05Di/T/MF/CMykGM9fDU0
- 0PZMxtfpQBhliNWj/7qWw+DPZtNRBYQflMhyXFG8z2JSUr5sO//rM3VVLDDq23uPfmszP6Ac1U0
- xYsjb9NNel+JhYBi2DCW0vI+COQMG93bVGQT9bSPXHeUNECD3dKQtX/5CpD3PdqdDdw48c707HF
- hFdVGc6oL/SIgH9bUHeDp2xPfkrG4u25NWXVEgnO2SkBOW6r6/Z1fLAyULXITh0ATgL7F8mFGIW
- UKNoLek7/kXFGjTdmz4HYuf/ptpoWgNPs//paCOo9ymLJzXWRnQYqefMDF3w64T9IVTQ3NBN+7s
- bWuo6zDdskayQmA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Type: multipart/signed; boundary="nextPart2356740.ElGaqSPkdT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-'struct amba_id' table is not modified so can be changed to const for
-more safety.
+--nextPart2356740.ElGaqSPkdT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+To: x86@kernel.org, Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v12 00/16] AMD broadcast TLB invalidation
+Date: Sat, 22 Feb 2025 12:36:32 +0100
+Message-ID: <4630159.LvFx2qVVIh@natalenko.name>
+In-Reply-To: <5861243.DvuYhMxLoT@natalenko.name>
+MIME-Version: 1.0
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/mailbox/arm_mhuv2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On sobota 22. =C3=BAnora 2025 12:29:54, st=C5=99edoevropsk=C3=BD standardn=
+=C3=AD =C4=8Das Oleksandr Natalenko wrote:
+> Hello.
+>=20
+> On p=C3=A1tek 21. =C3=BAnora 2025 1:52:59, st=C5=99edoevropsk=C3=BD stand=
+ardn=C3=AD =C4=8Das Rik van Riel wrote:
+> > Add support for broadcast TLB invalidation using AMD's INVLPGB instruct=
+ion.
+> >=20
+> > This allows the kernel to invalidate TLB entries on remote CPUs without
+> > needing to send IPIs, without having to wait for remote CPUs to handle
+> > those interrupts, and with less interruption to what was running on
+> > those CPUs.
+> >=20
+> > Because x86 PCID space is limited, and there are some very large
+> > systems out there, broadcast TLB invalidation is only used for
+> > processes that are active on 3 or more CPUs, with the threshold
+> > being gradually increased the more the PCID space gets exhausted.
+> >=20
+> > Combined with the removal of unnecessary lru_add_drain calls
+> > (see https://lkml.org/lkml/2024/12/19/1388) this results in a
+> > nice performance boost for the will-it-scale tlb_flush2_threads
+> > test on an AMD Milan system with 36 cores:
+> >=20
+> > - vanilla kernel:           527k loops/second
+> > - lru_add_drain removal:    731k loops/second
+> > - only INVLPGB:             527k loops/second
+> > - lru_add_drain + INVLPGB: 1157k loops/second
+> >=20
+> > Profiling with only the INVLPGB changes showed while
+> > TLB invalidation went down from 40% of the total CPU
+> > time to only around 4% of CPU time, the contention
+> > simply moved to the LRU lock.
+> >=20
+> > Fixing both at the same time about doubles the
+> > number of iterations per second from this case.
+> >=20
+> > Some numbers closer to real world performance
+> > can be found at Phoronix, thanks to Michael:
+> >=20
+> > https://www.phoronix.com/news/AMD-INVLPGB-Linux-Benefits
+> >=20
+> > My current plan is to implement support for Intel's RAR
+> > (Remote Action Request) TLB flushing in a follow-up series,
+> > after this thing has been merged into -tip. Making things
+> > any larger would just be unwieldy for reviewers.
+> >=20
+> > v12:
+> >  - make sure "nopcid" command line option turns off invlpgb (Brendan)
+> >  - add "noinvlpgb" kernel command line option
+> >  - split out kernel TLB flushing differently (Dave & Yosry)
+> >  - split up the patch that does invlpgb flushing for user processes (Da=
+ve)
+> >  - clean up get_flush_tlb_info (Boris)
+> >  - move invlpgb_count_max initialization to get_cpu_cap (Boris)
+> >  - bunch more comments as requested
+>=20
+> Somehow, this iteration breaks resume from S3. I can see it even in a QEM=
+U VM:
 
-diff --git a/drivers/mailbox/arm_mhuv2.c b/drivers/mailbox/arm_mhuv2.c
-index cff7c343ee082a6dcfaaf3633ee2f0e090b702e9..f035284944c05643f40ba55399a2dd34088d1e28 100644
---- a/drivers/mailbox/arm_mhuv2.c
-+++ b/drivers/mailbox/arm_mhuv2.c
-@@ -1107,7 +1107,7 @@ static void mhuv2_remove(struct amba_device *adev)
- 		writel_relaxed(0x0, &mhu->send->access_request);
- }
- 
--static struct amba_id mhuv2_ids[] = {
-+static const struct amba_id mhuv2_ids[] = {
- 	{
- 		/* 2.0 */
- 		.id = 0xbb0d1,
+Can also reproduce this by simply offlining/onlining a CPU via `/sys/device=
+s/system/cpu/cpuX/online`.
 
--- 
-2.43.0
+>=20
+> ```
+> [   24.373391] ACPI: PM: Low-level resume complete
+> [   24.373929] ACPI: PM: Restoring platform NVS memory
+> [   24.375024] Enabling non-boot CPUs ...
+> [   24.375777] smpboot: Booting Node 0 Processor 1 APIC 0x1
+> [   24.376463] BUG: unable to handle page fault for address: ffffffffa3ba=
+4d60
+> [   24.377383] #PF: supervisor write access in kernel mode
+> [   24.377912] #PF: error_code(0x0003) - permissions violation
+> [   24.378413] PGD 25427067 P4D 25427067 PUD 25428063 PMD 8000000024c001a1
+> [   24.379020] Oops: Oops: 0003 [#1] PREEMPT SMP NOPTI
+> [   24.379503] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Kdump: loaded Not tai=
+nted 6.14.0-pf0 #1 161e4891fb5044b2d7438cd1852eeaac0cdffab5
+> [   24.380650] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS u=
+nknown 02/02/2022
+> [   24.381400] RIP: 0010:get_cpu_cap+0x39b/0x4f0
+> [   24.381810] Code: 08 c7 44 24 08 00 00 00 00 48 8d 4c 24 0c e8 3c 00 0=
+4 00 90 8b 44 24 04 89 43 64 0f b7 44 24 0c 83 c0 01 81 7b 24 09 00 00 80 <=
+66> 89 05 0e ab 8b 01 0f 86 18 fd ff ff c7 44 24 14 00 00 00 00 4c
+> [   24.383629] RSP: 0000:ffffafbec00efe70 EFLAGS: 00010012
+> [   24.384155] RAX: 0000000000000001 RBX: ffff8b3fbcb19020 RCX: 000000000=
+0001001
+> [   24.384862] RDX: 0000000000000000 RSI: ffffafbec00efe74 RDI: ffffafbec=
+00efe78
+> [   24.385603] RBP: ffffafbec00efe88 R08: ffffafbec00efe70 R09: ffffafbec=
+00efe7c
+> [   24.386318] R10: 0000000000002430 R11: ffff8b3fa5428000 R12: ffffafbec=
+00efe8c
+> [   24.387014] R13: ffffafbec00efe84 R14: ffffafbec00efe80 R15: ffffafbec=
+00efe70
+> [   24.387713] FS:  0000000000000000(0000) GS:ffff8b3fbcb00000(0000) knlG=
+S:0000000000000000
+> [   24.388502] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   24.389074] CR2: ffffffffa3ba4d60 CR3: 0000000025422000 CR4: 000000000=
+0350ef0
+> [   24.389769] Call Trace:
+> [   24.390020]  <TASK>
+> [   24.392234]  identify_cpu+0xd4/0x890
+> [   24.392593]  identify_secondary_cpu+0x12/0x40
+> [   24.393032]  smp_store_cpu_info+0x49/0x60
+> [   24.393430]  start_secondary+0x7f/0x140
+> [   24.393810]  common_startup_64+0x13e/0x141
+> [   24.394218]  </TASK>
+>=20
+> $ scripts/faddr2line arch/x86/kernel/cpu/common.o get_cpu_cap+0x39b
+> get_cpu_cap+0x39b/0x500:
+> get_cpu_cap at =E2=80=A6/arch/x86/kernel/cpu/common.c:1063
+>=20
+> 1060         if (c->extended_cpuid_level >=3D 0x80000008) {
+> 1061                 cpuid(0x80000008, &eax, &ebx, &ecx, &edx);
+> 1062                 c->x86_capability[CPUID_8000_0008_EBX] =3D ebx;
+> 1063                 invlpgb_count_max =3D (edx & 0xffff) + 1;
+> 1064         }
+> ```
+>=20
+> Any idea what I'm looking at?
+>=20
+> Thank you.
+>=20
+> > v11:
+> >  - resolve conflict with CONFIG_PT_RECLAIM code
+> >  - a few more cleanups (Peter, Brendan, Nadav)
+> > v10:
+> >  - simplify partial pages with min(nr, 1) in the invlpgb loop (Peter)
+> >  - document x86 paravirt, AMD invlpgb, and ARM64 flush without IPI (Bre=
+ndan)
+> >  - remove IS_ENABLED(CONFIG_X86_BROADCAST_TLB_FLUSH) (Brendan)
+> >  - various cleanups (Brendan)
+> > v9:
+> >  - print warning when start or end address was rounded (Peter)
+> >  - in the reclaim code, tlbsync at context switch time (Peter)
+> >  - fix !CONFIG_CPU_SUP_AMD compile error in arch_tlbbatch_add_pending (=
+Jan)
+> > v8:
+> >  - round start & end to handle non-page-aligned callers (Steven & Jan)
+> >  - fix up changelog & add tested-by tags (Manali)
+> > v7:
+> >  - a few small code cleanups (Nadav)
+> >  - fix spurious VM_WARN_ON_ONCE in mm_global_asid
+> >  - code simplifications & better barriers (Peter & Dave)
+> > v6:
+> >  - fix info->end check in flush_tlb_kernel_range (Michael)
+> >  - disable broadcast TLB flushing on 32 bit x86
+> > v5:
+> >  - use byte assembly for compatibility with older toolchains (Borislav,=
+ Michael)
+> >  - ensure a panic on an invalid number of extra pages (Dave, Tom)
+> >  - add cant_migrate() assertion to tlbsync (Jann)
+> >  - a bunch more cleanups (Nadav)
+> >  - key TCE enabling off X86_FEATURE_TCE (Andrew)
+> >  - fix a race between reclaim and ASID transition (Jann)
+> > v4:
+> >  - Use only bitmaps to track free global ASIDs (Nadav)
+> >  - Improved AMD initialization (Borislav & Tom)
+> >  - Various naming and documentation improvements (Peter, Nadav, Tom, Da=
+ve)
+> >  - Fixes for subtle race conditions (Jann)
+> > v3:
+> >  - Remove paravirt tlb_remove_table call (thank you Qi Zheng)
+> >  - More suggested cleanups and changelog fixes by Peter and Nadav
+> > v2:
+> >  - Apply suggestions by Peter and Borislav (thank you!)
+> >  - Fix bug in arch_tlbbatch_flush, where we need to do both
+> >    the TLBSYNC, and flush the CPUs that are in the cpumask.
+> >  - Some updates to comments and changelogs based on questions.
+> >=20
+> >=20
+> >=20
+>=20
+>=20
+>=20
+
+
+=2D-=20
+Oleksandr Natalenko, MSE
+--nextPart2356740.ElGaqSPkdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEZUOOw5ESFLHZZtOKil/iNcg8M0sFAme5tsAACgkQil/iNcg8
+M0vckg//QzzLbzZgVuw+RAazI0uv0qTdmpxqdl6uOTZKJVyV3ePBCMEaD3nQyJMu
+MrL3NFnj6piuNlsMh0Melx0DACW7JoJtQNzXATOil6HbQ7e3iMPLr4nUVCdjqEKP
+wy3/HQpaXs/2NSdUZBEv/IqPeazqCvIBOZ3ENNg1cq9Lni8kojYJL2OVo/2XwgoP
+dYZEIzTvzRaj4Gje7NmSa1T93K8yLKTZS5jMV97NSCmKxiq2VxXEkqwIDvhoNmU0
+C4Gi8X81QRHhUyRQOiJWdLFre9nDMfkzhryj87LJ8XFcxxwhsFVVygBchkmnQzFr
+06PdyjoBVlUeZTEPgnuu8mRH/GJO6PCX/FyZD6UgofsyIsVaQsSxrjgmEm1lDUsQ
+3Elqxbpp/005gICK6mdglVPq2b5TOYKx0ySLAh/TQgYUShjBysm5ajrv7zBPRIvH
+rCU3fa+qpbkRkP2xOCs+r6/XOvEhVDZ1nAzGQR9TNeLjyen5Eyyrg5wJojbR4jbt
+5+8BeJTj68PPCHt6BR5TTxiOhhxD4qRPw6Tl5vVFdeJo6wRnvKbR5hoy9tpjKudS
+PMhdp/x1DlUEgCQI8WbNeh7KQHAI21zQq10QfsULWCkCm31BgvgWvMQ3cQs3R6jB
+r8uBzLDnyupYcGgGD+qg08vX69xJzEGcyxRyGwtQWuapquDM7EQ=
+=dmfm
+-----END PGP SIGNATURE-----
+
+--nextPart2356740.ElGaqSPkdT--
+
+
 
 
