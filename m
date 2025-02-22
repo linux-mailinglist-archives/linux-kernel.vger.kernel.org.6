@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-527498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD944A40BE1
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC214A40BE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B87C17AA2B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:33:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7707AC2BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4D32045A1;
-	Sat, 22 Feb 2025 22:34:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E854204590;
+	Sat, 22 Feb 2025 22:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EMfJd4Wm"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="2FVqp01P"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF7215697B
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 22:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649912AF04;
+	Sat, 22 Feb 2025 22:37:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740263674; cv=none; b=SDiPKDyPw5Wkw0/iizjJgRh5ztXGdsvf+OyvAik92Khbac8BfynOxQXJoxWBDIr9SOR7n070IeeEZyqJv27qej/IL3w5b4UpBsGkTJlBBgu4dXNXNucM6tW4FwfDcf31OpCydXTgTkDDUVzMgbDMW2kASItfvC+ogNFeSAT9aP8=
+	t=1740263873; cv=none; b=nxq+ZcW2h2f9/jFjfU9WdS0i1ye0a3gzTuwoqhSe6GjJh6sWcRF/CXeqVp47D3Duo8oE3rQIYeOsnfwn+ORRoRhaq2peJ76/YS9ZTZmo9R8BFCagone8ZWD0BR7A/CEJnaoyAoYoG9rSixSMtKuDngIiXY+UHbANoq0IjSBG3U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740263674; c=relaxed/simple;
-	bh=0hr85pkL7Ye5HeamuLzT9NILODAgeGan/2o8QZI7s+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdZVQfU3d78yaPD2VGR04JvMFCPPLQbe7EFWrLP2tsnil7Ivfm0t+rEDkhWU9sW0IYZRmmzJbbVcrTGN00fN4Q7n/6/iqE1VLGX6xxqMIXTl3w3du+MOofs/mhuU9ToJE0s0YsOEN3gxv5xHNYxq6cXaH0ZLNrZOhawoJIredwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EMfJd4Wm; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 17:34:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740263659;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w0vWcP6cra3WOAKc6I6ZYhWIX6wVwAh8l3udOd0fVrA=;
-	b=EMfJd4WmS3g23ekm9bkyCbwN6Zk2yVrGgXVh9mkDrn8hPg1kJGEgmqwdG+mLt2FNFegbp5
-	NAaZSYdCK5yhfDXKgUDi8rI3MQV0t5S3l75JOSem+B6NFk5joTsIKQb8Q1eiwC/P1xv4cJ
-	JahzHz8LpvjUqqhq96x1kKwfzlJFj7Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, 
-	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
-	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
-	gregkh@linuxfoundation.org, hch@infradead.org, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <ngxypsinp2xnhc3yhg57c4sram5i6vbophgjakoyk32yb3sabs@dg6ne6jbuale>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo>
- <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
- <6EFFB41B-9145-496E-8217-07AF404BE695@zytor.com>
- <c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
- <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
+	s=arc-20240116; t=1740263873; c=relaxed/simple;
+	bh=0LcO31T+f5RdJjXLyY8cCqbfbF00bXtgTsBHBhv45A8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rUtf0fqIuDhJzvDFoNSu6urQpcv7aHM6asbiuQJNcABPW7OjYmeCQIcKL/WVgAMClOenUL3qyksVBX3TRjdYg/fWRqgmyC0O+zLlmB4L9eWKtjcdzyBviwxBcSgRJXWT5lzQCbyXg1tCK38ObEfngkkUHIwU5aFM2kCiNjXsEbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=2FVqp01P; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OnNwP7mpVN7zXhPE9vJ/xWGv1zj1DccbezxtZx8sRBU=; b=2FVqp01PBKuoNTsqpzT9a0qVJV
+	G3QUGO/WP9lVGZkYEizeFgE8Y1QtXmFVmRQ6U7ui+ordMWasogTovwY0sJG/pUczGPi4Wskv9GEKj
+	t3FAig77PYjR7F7E8v/bKCn4kH8C86YC7mneIaTgI2zjstgWPCLePtrr9+EEWSicrra3sZdD/I9Xl
+	nlZklOPzophBA0MFiPGEOBv/UaQAaI/DXxZgKv56ocJ1F0nAIEOSR/Ayd4VcF2RVrFmPq0Ol9Px9A
+	0OyTybdHcUQFtDdRxYGVVtto9zF9+fDn1P7fMqpaYoY+Vf038317rM4zmkKpdu19ZzrjlC9FKPiOB
+	Ib4ZXsfg==;
+Received: from i53875a10.versanet.de ([83.135.90.16] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tly7x-00048S-Dp; Sat, 22 Feb 2025 23:37:41 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujianfeng1994@gmail.com,
+	sebastian.reichel@collabora.com,
+	cristian.ciocaltea@collabora.com,
+	heiko@sntech.de
+Subject: [PATCH v2] clk: check for disabled clock-provider in of_clk_get_hw_from_clkspec
+Date: Sat, 22 Feb 2025 23:37:33 +0100
+Message-ID: <20250222223733.2990179-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Sat, Feb 22, 2025 at 01:46:33PM -0800, Linus Torvalds wrote:
-> On Sat, 22 Feb 2025 at 13:22, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> >
-> > Power hungry and prone to information leaks, though.
-> 
-> The power argument is bogus.
-> 
-> The fact is, high performance is <i>always</i> "inefficient". Anybody
-> who doesn't understand that doesn't understand reality.
+of_clk_get_hw_from_clkspec checks all available clock-providers by
+compairing their of-nodes to the one from the clkspec. If no matching
+clock-provider is found, the function returns EPROBE_DEFER to cause a
+re-check at a later date.
 
-It depends entirely on what variable you're constrained on. When you're
-trying to maximize power density, you probably will be inefficient
-because that's where the easy tradeoffs are. E.g. switching from aerobic
-respiration to anaerobic, or afterburners.
+If a matching clock-provider is found, an authoritative answer can be
+retrieved from it whether the clock exists or not.
 
-But if you're already maxxed out power density, then your limiting
-factor is your ability to reject heat. High power electric moters aren't
-inefficient for the simple reason that if they were, they'd melt. RC
-helicopter motors hit power densities of 5-10 kw/kg, with only air
-cooling, so either they're 95%+ efficient or they're a puddle of molten
-copper.
+This does not take into account that the clock-provider may never appear,
+because it's node is disabled. This can happen for example when a clock
+is optional, provided by a separate block which just never gets enabled.
 
-CPUs are significatly more in the second category than the first - we're
-capped on power in most applications and transistors aren't going to get
-meaningfully more efficient barring something radical happening.
+One example of this happening is the rk3588's VOP, which has optional
+additional display-clock-supplies coming from PLLs inside the hdmiphy
+blocks. These can be used for better rates, but the system will also
+work without them.
 
-> The VLIW people have proclaimed the same efficiency advantages for
-> decades. I know. I was there (with Peter ;), and we tried. We were
-> very very wrong.
+The problem around that is described in the followups to:
+https://lore.kernel.org/dri-devel/20250215-vop2-hdmi1-disp-modes-v1-3-81962a7151d6@collabora.com/
 
-If we ever get a chance I want to hear stories :)
+As we already know the of-node of the presumed clock-provider, just add
+a check via of_device_is_available whether this is a "valid" device node.
+This prevents eternal defer-loops.
 
-> The vogue thing now is to talk about explicit parallelism, and just
-> taking lots of those lower-performance (but thus more "efficient" -
-> not really: they are just targeting a different performance envelope)
-> cores perform as well as OoO cores.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Tested-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+changes in v2:
+- add received Reviewed and Tested tags
+- fix two spelling issues (Cristian and Sebastian)
 
-Those are not terribly interesting to me. Useful to some people, sure,
-but any idiot can add more and more cores (and leave it to someone else
-to deal with Amdahl's law). I actually do care about straight line
-performance...
+ drivers/clk/clk.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-> It's not like VLIW hasn't been around for many decades. And there's a
-> reason you don't see it in GP CPUs.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index cf7720b9172f..50faafbf5dda 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5258,6 +5258,10 @@ of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
+ 	if (!clkspec)
+ 		return ERR_PTR(-EINVAL);
+ 
++	/* Check if node in clkspec is in disabled/fail state */
++	if (!of_device_is_available(clkspec->np))
++		return ERR_PTR(-ENOENT);
++
+ 	mutex_lock(&of_clk_mutex);
+ 	list_for_each_entry(provider, &of_clk_providers, link) {
+ 		if (provider->node == clkspec->np) {
+-- 
+2.47.2
 
-It's also been the case more than once in technology that ideas appeared
-and were initially rejected, and it took decades for the other pieces to
-come together to make them practical. Especially when those ideas were
-complex when they were first come up with - Multics, functional
-programming (or Algol 68 even bofer that).
-
-That's especially the case when one area has been stagnet for awhile. We
-were stuck on x86 for a long time, and now we've got ARM which still
-isn't _that_ different from x86. But now it's getting easier to design
-and fab new CPUs, and the software side of things has gotten way easier,
-so I'm curious to see what's coming over the next 10-20 years.
 
