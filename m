@@ -1,188 +1,203 @@
-Return-Path: <linux-kernel+bounces-527209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B62A40877
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:54:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58FAA4087B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 561D37AE893
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD462702A35
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A1B20AF87;
-	Sat, 22 Feb 2025 12:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8913520B7EF;
+	Sat, 22 Feb 2025 12:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yk+Z3hC5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nVR/IZd2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KiEZZDKz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0D20766E;
-	Sat, 22 Feb 2025 12:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C9820B1F3;
+	Sat, 22 Feb 2025 12:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740228829; cv=none; b=sypta5uWovgcI6m8Y7Aras6lcvu5WXk+S25LZYQUoCdnpiTjevRLVDoNyyvTPqSQDjfymIAlY0C5UA8G4th/2vK0fDAUfePXFyuIM2zc1N7qQ6FxXWOCRIvS8BwfO9bha0avOI1MvwN9IZDekkvyjp7eaaw/g5nWn/MQDBukv7A=
+	t=1740228832; cv=none; b=G+KEwSnnl2CrLRKuONYaPhNKyffD98tQ3qTlsKb1CSo519btoa+ZW+0eA7rXfEjs7YrTLp/C43GdJTmzRdHjN7SvBtt9JVM/Dhyf2RR8ZimFSmVRMUQX2hcX08gMf9w/cCS3DHxWI+YVLN6vNZJTxw50jnl07gWwvEeVNIyz8/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740228829; c=relaxed/simple;
-	bh=oqJN/sPCZaLoAPPOe7uUHklrzuH3yr710lMdVhi0Qno=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HvHYjBKFctNw7uPJ5EosFlPARhbceqQDvnlKyS9sPsh+SYfiPzkATAo9BTvVo9hZS8NKOZzu5AJdb9bADZjGQsHTk78X1q7O8wOj382v3qIrQ9HEL8pa94vCf/RVfJCsY2bqkUwVFL46AwmDpTWsv4/uQaG28qpKSeejtEDOufo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yk+Z3hC5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F202C4CED1;
-	Sat, 22 Feb 2025 12:53:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740228828;
-	bh=oqJN/sPCZaLoAPPOe7uUHklrzuH3yr710lMdVhi0Qno=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yk+Z3hC5KOE/6MsFx/Z5x2/LnU8vjW5lliJTA2N77BSWBAp6SRN8rnN8efyMb5RkE
-	 zeaupHTMirYMfIyJX8fL6kGp9FieZ+gkX6SnDfPEQQH0mW5HhdPHh9KzNF7GxGtBvx
-	 qF/Mp2wXMPDL+RXIMBQjey4Iop8jHsrpNmufli8OgVk+8Wu5xlnd6fhRloSte4K/84
-	 iH5KWKD1APqjU7+ql+wAAkfKVeu0vJSBfHw5b+Y/oc3m/6BlDeCbGmkkz46aXSxqJG
-	 8qbzIfpYXDPPWFqLtxRgZrfPY9lprNizet8sOfJ/NVuoME9pQauqaZjwHklSEvdIyl
-	 QNR4Ck8t6VZUA==
-Date: Sat, 22 Feb 2025 12:53:35 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250222125335.177fc746@jic23-huawei>
-In-Reply-To: <20250217140336.107476-3-clamor95@gmail.com>
-References: <20250217140336.107476-1-clamor95@gmail.com>
-	<20250217140336.107476-3-clamor95@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740228832; c=relaxed/simple;
+	bh=L1knR7GIQWVoG2PfV1JvkIg4O0LBpw2QsRKIWO/o/P8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=MumYuuuN8WlFraGZC0WBIUdyx+UXAay7URqigsrJDOhpDrzxpexa2tGd9wIW/8PeZekU9RoDsZP5z3wL+OVCiFniELjXbmz7WTFfC7JOVhhAxEi0ftX+0VC17qXFY6ZEcQgyY3qK5TmouXTlwKiNJBv7FtReaD57gZSKG9IDUd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nVR/IZd2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KiEZZDKz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 22 Feb 2025 12:53:45 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740228829;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cg4MSwr1dT0WuWhj7qydt+5DTPpVq3l1eqBmhgLtmoU=;
+	b=nVR/IZd2NUhLjve1UOtFrDFeS1TyVT1XTr2SZD0uDhTCNWkohmYDDVoAK0JpK2qw6FJoir
+	eylisTuOtcDJgFf2zxWBEWFRqrtbn3I7/JL2C5CLdc+w/r1I3sVKYSkiZxTcFve3YGi/nx
+	GyFUztrC/ywHCP9O1XOOwY5OV2WD6Husm8HRpK1S1ctU7LUhr4yz0TX4zqZHXrzblJUReJ
+	qBEsth9hGVwnl3MEdfGMkJSe0dBZqBv34i/75duHf+DcZ3bc9oOKk4FqGPcAN7jZ/RhdvC
+	Y1QuoMiUVbJJsw4xhLzRIh7H/0OvrUNG6DqTyUSbQO9B5x9NrkEtSDkb+VWryg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740228829;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cg4MSwr1dT0WuWhj7qydt+5DTPpVq3l1eqBmhgLtmoU=;
+	b=KiEZZDKzFyWE1TVBNujHZR5zYPShcszWc4NZFsuJFZIuHTVM/KQHc3TwdxJB4AC4o5uuCS
+	n6EBD1cFJcywneBg==
+From: "tip-bot2 for Li RongQing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/core] perf/x86/intel/bts: Allocate bts_ctx only if necessary
+Cc: Li RongQing <lirongqing@baidu.com>, Ingo Molnar <mingo@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250122074103.3091-1-lirongqing@baidu.com>
+References: <20250122074103.3091-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Message-ID: <174022882578.10177.16512176167468920583.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 16:03:35 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+The following commit has been merged into the perf/core branch of tip:
 
-> AL3000a is a simple I2C-based ambient light sensor, which is
-> closely related to AL3010 and AL3320a, but has significantly
-> different way of processing data generated by the sensor.
-> 
-> Tested-by: Robert Eckelmann <longnoserob@gmail.com>
-> Tested-by: Antoni Aloy Torrens <aaloytorrens@gmail.com>
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> Reviewed-by: David Heidelberg <david@ixit.cz>
+Commit-ID:     3acfcefa795c6cfb08c68467060bd7aa30557077
+Gitweb:        https://git.kernel.org/tip/3acfcefa795c6cfb08c68467060bd7aa30557077
+Author:        Li RongQing <lirongqing@baidu.com>
+AuthorDate:    Wed, 22 Jan 2025 15:41:03 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sat, 22 Feb 2025 13:43:35 +01:00
 
-Whilst I am confused by earlier statements about not
-having information on the conversion to illuminance values, I'm
-going to assume the look up table in here is based on some
-reasonable data from somewhere and hence that this is a sensor
-with appropriate filtering of the light to be able to do a non linear
-conversion from the value read and standard light curves.
+perf/x86/intel/bts: Allocate bts_ctx only if necessary
 
-As such the IIO_LIGHT channel type is fine for this device.
+Avoid unnecessary per-CPU memory allocation on unsupported CPUs,
+this can save 12K memory for each CPU
 
-Applied patches 1 and 2 to the togreg branch of iio.git.
-Note that I'll initially push this out as testing to allow
-the autobuilders to see if they can find any issues that we missed.
-Patch 3 will need to go via the appropriate SoC tree as normal.
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Adrian Hunter <adrian.hunter@intel.com>
+Acked-by: Kan Liang <kan.liang@linux.intel.com>
+Link: https://lore.kernel.org/r/20250122074103.3091-1-lirongqing@baidu.com
+---
+ arch/x86/events/intel/bts.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-Jonathan
-
-> ---
->  drivers/iio/light/Kconfig   |  10 ++
->  drivers/iio/light/Makefile  |   1 +
->  drivers/iio/light/al3000a.c | 209 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 220 insertions(+)
->  create mode 100644 drivers/iio/light/al3000a.c
-> 
-> diff --git a/drivers/iio/light/Kconfig b/drivers/iio/light/Kconfig
-> index 29ffa8491927..37f83e1d8893 100644
-> --- a/drivers/iio/light/Kconfig
-> +++ b/drivers/iio/light/Kconfig
-> @@ -43,6 +43,16 @@ config ADUX1020
->  	 To compile this driver as a module, choose M here: the
->  	 module will be called adux1020.
->  
-> +config AL3000A
-> +	tristate "AL3000a ambient light sensor"
-> +	depends on I2C
-> +	help
-> +	  Say Y here if you want to build a driver for the Dyna Image AL3000a
-> +	  ambient light sensor.
-> +
-> +	  To compile this driver as a module, choose M here: the
-> +	  module will be called al3000a.
-> +
->  config AL3010
->  	tristate "AL3010 ambient light sensor"
->  	depends on I2C
-> diff --git a/drivers/iio/light/Makefile b/drivers/iio/light/Makefile
-> index f14a37442712..03f10786273a 100644
-> --- a/drivers/iio/light/Makefile
-> +++ b/drivers/iio/light/Makefile
-> @@ -7,6 +7,7 @@
->  obj-$(CONFIG_ACPI_ALS)		+= acpi-als.o
->  obj-$(CONFIG_ADJD_S311)		+= adjd_s311.o
->  obj-$(CONFIG_ADUX1020)		+= adux1020.o
-> +obj-$(CONFIG_AL3000A)		+= al3000a.o
->  obj-$(CONFIG_AL3010)		+= al3010.o
->  obj-$(CONFIG_AL3320A)		+= al3320a.o
->  obj-$(CONFIG_APDS9300)		+= apds9300.o
-> diff --git a/drivers/iio/light/al3000a.c b/drivers/iio/light/al3000a.c
-> new file mode 100644
-> index 000000000000..e2fbb1270040
-> --- /dev/null
-> +++ b/drivers/iio/light/al3000a.c
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +#include <linux/array_size.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/i2c.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/pm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/types.h>
-> +
-> +#include <linux/iio/iio.h>
-> +
-> +#define AL3000A_REG_SYSTEM		0x00
-> +#define AL3000A_REG_DATA		0x05
-> +
-> +#define AL3000A_CONFIG_ENABLE		0x00
-> +#define AL3000A_CONFIG_DISABLE		0x0b
-> +#define AL3000A_CONFIG_RESET		0x0f
-> +#define AL3000A_GAIN_MASK		GENMASK(5, 0)
-> +
-> +/*
-> + * These are pre-calculated lux values based on possible output of sensor
-> + * (range 0x00 - 0x3F)
-> + */
-> +static const u32 lux_table[] = {
-> +	1, 1, 1, 2, 2, 2, 3, 4,					/* 0 - 7 */
-> +	4, 5, 6, 7, 9, 11, 13, 16,				/* 8 - 15 */
-> +	19, 22, 27, 32, 39, 46, 56, 67,				/* 16 - 23 */
-> +	80, 96, 116, 139, 167, 200, 240, 289,			/* 24 - 31 */
-> +	347, 416, 499, 600, 720, 864, 1037, 1245,		/* 32 - 39 */
-> +	1495, 1795, 2155, 2587, 3105, 3728, 4475, 5373,		/* 40 - 47 */
-> +	6450, 7743, 9296, 11160, 13397, 16084, 19309, 23180,	/* 48 - 55 */
-> +	27828, 33408, 40107, 48148, 57803, 69393, 83306, 100000 /* 56 - 63 */
-> +};
-
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 8f78b0c..8e09319 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -36,7 +36,7 @@ enum {
+ 	BTS_STATE_ACTIVE,
+ };
+ 
+-static DEFINE_PER_CPU(struct bts_ctx, bts_ctx);
++static struct bts_ctx __percpu *bts_ctx;
+ 
+ #define BTS_RECORD_SIZE		24
+ #define BTS_SAFETY_MARGIN	4080
+@@ -231,7 +231,7 @@ bts_buffer_reset(struct bts_buffer *buf, struct perf_output_handle *handle);
+ 
+ static void __bts_event_start(struct perf_event *event)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	struct bts_buffer *buf = perf_get_aux(&bts->handle);
+ 	u64 config = 0;
+ 
+@@ -260,7 +260,7 @@ static void __bts_event_start(struct perf_event *event)
+ static void bts_event_start(struct perf_event *event, int flags)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	struct bts_buffer *buf;
+ 
+ 	buf = perf_aux_output_begin(&bts->handle, event);
+@@ -290,7 +290,7 @@ fail_stop:
+ 
+ static void __bts_event_stop(struct perf_event *event, int state)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 
+ 	/* ACTIVE -> INACTIVE(PMI)/STOPPED(->stop()) */
+ 	WRITE_ONCE(bts->state, state);
+@@ -305,7 +305,7 @@ static void __bts_event_stop(struct perf_event *event, int state)
+ static void bts_event_stop(struct perf_event *event, int flags)
+ {
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	struct bts_buffer *buf = NULL;
+ 	int state = READ_ONCE(bts->state);
+ 
+@@ -338,7 +338,7 @@ static void bts_event_stop(struct perf_event *event, int flags)
+ 
+ void intel_bts_enable_local(void)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	int state = READ_ONCE(bts->state);
+ 
+ 	/*
+@@ -358,7 +358,7 @@ void intel_bts_enable_local(void)
+ 
+ void intel_bts_disable_local(void)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 
+ 	/*
+ 	 * Here we transition from ACTIVE to INACTIVE;
+@@ -450,7 +450,7 @@ bts_buffer_reset(struct bts_buffer *buf, struct perf_output_handle *handle)
+ int intel_bts_interrupt(void)
+ {
+ 	struct debug_store *ds = this_cpu_ptr(&cpu_hw_events)->ds;
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	struct perf_event *event = bts->handle.event;
+ 	struct bts_buffer *buf;
+ 	s64 old_head;
+@@ -518,7 +518,7 @@ static void bts_event_del(struct perf_event *event, int mode)
+ 
+ static int bts_event_add(struct perf_event *event, int mode)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(&bts_ctx);
++	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	struct hw_perf_event *hwc = &event->hw;
+ 
+@@ -605,6 +605,10 @@ static __init int bts_init(void)
+ 		return -ENODEV;
+ 	}
+ 
++	bts_ctx = alloc_percpu(struct bts_ctx);
++	if (!bts_ctx)
++		return -ENOMEM;
++
+ 	bts_pmu.capabilities	= PERF_PMU_CAP_AUX_NO_SG | PERF_PMU_CAP_ITRACE |
+ 				  PERF_PMU_CAP_EXCLUSIVE;
+ 	bts_pmu.task_ctx_nr	= perf_sw_context;
 
