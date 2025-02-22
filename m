@@ -1,238 +1,192 @@
-Return-Path: <linux-kernel+bounces-527473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 195ACA40B9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:51:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FAA7A40B9E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4CE3B999D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:50:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7956D7AD28F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C5D203706;
-	Sat, 22 Feb 2025 20:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A71920371C;
+	Sat, 22 Feb 2025 20:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PdOKQzon"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hzvN6XoC"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC121D63D3
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 20:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715F6202C39;
+	Sat, 22 Feb 2025 20:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740257457; cv=none; b=HmCaGJgR+85FXIChbMSJbE9NZIp5F934gGNYAozsxSJ7gB1arci3e4jcWrqsiV1/b8HTKRGpvELpgXSMr8XVzCc4sJydGM/4rB6JRlaGKEanXo06dgp/LT9OipnCNBd4HWzgrZk6IihToqDoY8g7mHnCspPHV8MB7ylcKzlzJTk=
+	t=1740257701; cv=none; b=Ka6R5hW0UR0NMj5U5KJzgJTDQs1BLtxYBRNMlDruLIXEUIeuGG9fFWrdoFHv6lBFxPfOrIPjMkI/lJoh3u1o3GvnMQeuco9PGenqVKfypRcDyhxgAL+v4dk9Apd4fDpjTRGIzD25PcFMlWMpP9pHqT3L7jvd1J/ssDtOSIRxw5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740257457; c=relaxed/simple;
-	bh=dtlTCU44P7vL0Y4EJxOORC0Bq2K1kuHwGKufH530DZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OXO5E+xzl+okH0HfUuINDExxrWqF0S2ZastFKhYW3/n6Jtd32F1mCaEnmdNXWjPIMhkVCpiJ8VSIekmKrsaqPAiVpJanoeX+fVfNxdoejiv+UhsrudMmmkpxxhKPd9c9JvmCPI8k3atsQhLDfZ/L9RluyBmyPiL56M/cd9uLmCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PdOKQzon; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sat, 22 Feb 2025 20:50:41 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740257452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hxr90hVqPs+v3paDE+X67taGS7gRPBKzkTMGj794hsM=;
-	b=PdOKQzon6jaK391OKe9pL6bi8y4QTvP0T4IjYJ0fgu0RuKSs/heiUWDd2Rm9/TJZasjS9M
-	FEhR63nCiNBIjXCLBORIPpT6Gdoh74NkM2y+aoe0MxOCFaiGDiGknd6WxN7jMDmP6PNMpY
-	8YgU6TOtIAN6Sdv605vvN9iJSMgybvY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Parav Pandit <parav@mellanox.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] RDMA/core: fix a NULL-pointer dereference in
- hw_stat_device_show()
-Message-ID: <Z7o4ofdXZ-6w-jO0@google.com>
-References: <20250221020555.4090014-1-roman.gushchin@linux.dev>
- <CY8PR12MB71958C150D7604EAD4463F4ADCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
- <Z7gARTF0mpbOj7gN@google.com>
- <CY8PR12MB7195F3ACB8CFA05C4B8D26D3DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
- <Z7gF3UC7PvVxeRcq@google.com>
- <CY8PR12MB7195D93F387845E0A7314C34DCC72@CY8PR12MB7195.namprd12.prod.outlook.com>
- <Z7jb1z8WSllnFFyX@google.com>
- <CY8PR12MB7195D4AD9844C91313955AFCDCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740257701; c=relaxed/simple;
+	bh=iyj/RWNW0z1QisL95Uk/XOY7VdhZ8WzFbkNS2sGCmtM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Mlk4dIpltk95rQpQ7mXDUeNhPRVLaXO8VCCB5lNRZV3kfJXAJSq9ARbtd98k+llNSaBMVu3iP017QzhbAGdaIJeEY+4xc0GFO2o/77ZrJYehch2q/A5/kMARz09A1o93j9SzHYM7mVcH8f3xMPtUMZ/H2y5Z+FdXZ6TGNZ8yozI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hzvN6XoC; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 51MKsVvb3810618
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Sat, 22 Feb 2025 12:54:31 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 51MKsVvb3810618
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1740257672;
+	bh=iyj/RWNW0z1QisL95Uk/XOY7VdhZ8WzFbkNS2sGCmtM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=hzvN6XoC8+bbRgrhLeh8EDDTRyv+650KdHpz+DbBFhXVDD26AMcu3IsRg4CTNtMON
+	 gZbSLfkbY+vZ6DqGnKF8ssHNV24zR0ys/DGxj0ekSE1TdJaIKeAHwqKx3a+IGpKYKt
+	 B5o+x+SHHKu+igr8Ny8Es7vH6O6AhvFQlXzwNZB1gmf36ToTa6C63QXF+4CNry2J3J
+	 swu+zKzy/sdCWYYJTeInIJ6yZsnJRj+4xXUyZtMgz6ji5+GzttFSwGA/ZaUFkR2lMG
+	 X7dqOP8uPZlb3UvKm0tk/9x4NJChFCZ4zhMkwum9SR9zKsN5/Ez4RywnFMieGpA8ty
+	 c/It6vQwxzGVg==
+Date: Sat, 22 Feb 2025 12:54:31 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>,
+        airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com,
+        ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org,
+        ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
+        miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+User-Agent: K-9 Mail for Android
+In-Reply-To: <yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com> <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com> <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c> <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com> <yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
+Message-ID: <6EFFB41B-9145-496E-8217-07AF404BE695@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR12MB7195D4AD9844C91313955AFCDCC62@CY8PR12MB7195.namprd12.prod.outlook.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 22, 2025 at 06:36:46PM +0000, Parav Pandit wrote:
-> Hi Roman,
-> 
-> > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > Sent: Saturday, February 22, 2025 1:33 AM
-> > 
-> > On Fri, Feb 21, 2025 at 08:03:33AM +0000, Parav Pandit wrote:
-> > > > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > > > Sent: Friday, February 21, 2025 10:20 AM
-> > > >
-> > > > On Fri, Feb 21, 2025 at 04:34:25AM +0000, Parav Pandit wrote:
-> > > > >
-> > > > > > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > > > > > Sent: Friday, February 21, 2025 9:56 AM
-> > > > > >
-> > > > > > On Fri, Feb 21, 2025 at 03:14:16AM +0000, Parav Pandit wrote:
-> > > > > > >
-> > > > > > > > From: Roman Gushchin <roman.gushchin@linux.dev>
-> > > > > > > > Sent: Friday, February 21, 2025 7:36 AM
-> > > > > > > >
-> > > > > > > > Commit 54747231150f ("RDMA: Introduce and use
-> > > > > > > > rdma_device_to_ibdev()") introduced rdma_device_to_ibdev()
-> > > > > > > > helper which has to be used to obtain an ib_device pointer
-> > > > > > > > from a
-> > > > device pointer.
-> > > > > > > >
-> > > > > > >
-> > > > > > > > hw_stat_device_show() and hw_stat_device_store() were missed.
-> > > > > > > >
-> > > > > > > > It causes a NULL pointer dereference panic on an attempt to
-> > > > > > > > read hw counters from a namespace, when the device structure
-> > > > > > > > is not embedded into the ib_device structure.
-> > > > > > > Do you mean net namespace other than default init_net?
-> > > > > > > Assuming the answer is yes, some question below.
-> > > > > > >
-> > > > > > > > In this case casting the device pointer into the ib_device
-> > > > > > > > pointer using container_of() is wrong.
-> > > > > > > > Instead, rdma_device_to_ibdev() should be used, which uses
-> > > > > > > > the
-> > > > > > > > back- reference (container_of(device, struct ib_core_device,
-> > > > > > > > dev))-
-> > > > >owner.
-> > > > > > > >
-> > > > > > > > [42021.807566] BUG: kernel NULL pointer dereference, address:
-> > > > > > > > 0000000000000028 [42021.814463] #PF: supervisor read access
-> > > > > > > > in kernel mode [42021.819549] #PF: error_code(0x0000) -
-> > > > > > > > not-present page [42021.824636] PGD 0 P4D 0 [42021.827145]
-> > > > > > > > Oops: 0000 [#1] SMP PTI [42021.830598] CPU: 82 PID: 2843922
-> > > > > > > > Comm: switchto-
-> > > > defaul Kdump:
-> > > > > > loaded
-> > > > > > > > Tainted: G S      W I        XXX
-> > > > > > > > [42021.841697] Hardware name: XXX [42021.849619] RIP:
-> > > > > > > > 0010:hw_stat_device_show+0x1e/0x40 [ib_core] [42021.855362]
-> > > > > > > > Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f
-> > > > > > > > 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7
-> > > > > > > > f0 fa ff ff <48> 8b
-> > > > > > > > 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
-> > > > > > > > [42021.873931]
-> > > > > > > > RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287 [42021.879108]
-> > RAX:
-> > > > > > > > ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
-> > > > > > > > [42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI:
-> > > > > > > > ffff940c7517aef0 [42021.893230] RBP: ffff97fe90f03e70 R08:
-> > > > > > > > ffff94085f1aa000 R09: 0000000000000000 [42021.900294] R10:
-> > > > > > > > ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
-> > > > > > > > [42021.907355]
-> > > > > > > > R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15:
-> > > > > > > > ffff94085f1aa000 [42021.914418] FS:  00007fda1a3b9700(0000)
-> > > > > > GS:ffff94453fb80000(0000)
-> > > > > > > > knlGS:0000000000000000 [42021.922423] CS:  0010 DS: 0000 ES:
-> > > > > > > > 0000
-> > > > > > CR0:
-> > > > > > > > 0000000080050033 [42021.928130] CR2: 0000000000000028
-> > CR3:
-> > > > > > > > 00000042dcfb8003 CR4: 00000000003726f0 [42021.935194] DR0:
-> > > > > > > > 0000000000000000 DR1: 0000000000000000 DR2:
-> > > > 0000000000000000
-> > > > > > > > [42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0
-> > DR7:
-> > > > > > > > 0000000000000400 [42021.949324] Call Trace:
-> > > > > > > > [42021.951756]  <TASK>
-> > > > > > > > [42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
-> > > > > > > > [42021.959030] [<ffffffff86c58468>] ? __die+0x78/0xc0
-> > > > > > > > [42021.963874]
-> > > > > > [<ffffffff86c9ef75>] ?
-> > > > > > > > page_fault_oops+0x2b5/0x3b0 [42021.969749]
-> > [<ffffffff87674b92>] ?
-> > > > > > > > exc_page_fault+0x1a2/0x3c0 [42021.975549]  [<ffffffff87801326>]
-> > ?
-> > > > > > > > asm_exc_page_fault+0x26/0x30 [42021.981517]
-> > > > > > > > [<ffffffffc0775680>]
-> > > > ?
-> > > > > > > > __pfx_show_hw_stats+0x10/0x10 [ib_core] [42021.988482]
-> > > > > > > > [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40
-> > > > > > > > [ib_core] [42021.995438]  [<ffffffff86ac7f8e>]
-> > > > > > > > dev_attr_show+0x1e/0x50 [42022.000803]  [<ffffffff86a3eeb1>]
-> > > > > > > > sysfs_kf_seq_show+0x81/0xe0 [42022.006508]
-> > > > > > > > [<ffffffff86a11134>] seq_read_iter+0xf4/0x410 [42022.011954]
-> > > > > > > > [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0 [42022.017058]
-> > > > > > > > [<ffffffff869f50ee>] ksys_read+0x6e/0xe0 [42022.022073]
-> > > > > > > > [<ffffffff8766f1ca>]
-> > > > > > > > do_syscall_64+0x6a/0xa0 [42022.027441]  [<ffffffff8780013b>]
-> > > > > > > > entry_SYSCALL_64_after_hwframe+0x78/0xe2
-> > > > > > > >
-> > > > > > > > Fixes: 54747231150f ("RDMA: Introduce and use
-> > > > > > > > rdma_device_to_ibdev()")
-> > > > > > > Commit eb15c78b05bd9 eliminated hw_counters sysfs directory
-> > > > > > > into the
-> > > > > > net namespace.
-> > > > > > > I don't see it created in any other net ns other than init_net
-> > > > > > > with kernel
-> > > > > > 6.12+.
-> > > > > > >
-> > > > > > > I am puzzled. Can you please explain/share the reproduction
-> > > > > > > steps for
-> > > > > > generating above call trace?
-> > > > > >
-> > > > > > Hi Parav!
-> > > > > >
-> > > > > > This bug was spotted in the production on a small number of
-> > > > > > machines. They were running a 6.6-based kernel (with no changes
-> > > > > > around this code). I don't have a reproducer (and there is no
-> > > > > > simple way for me to reproduce the problem), but I've several
-> > > > > > core dumps and from inspecting them it was clear that a
-> > > > > > ib_device pointer obtained in hw_stat_device_show() was wrong.
-> > > > > > At the same time the ib_pointer obtained in the way
-> > > > > > rdma_device_to_ibdev() works was
-> > > > correct.
-> > > > > >
-> > > > > I just tried reproducing now on 6.12+ kernel manually.
-> > > >
-> > > > Can you, please, share your steps? Or try the 6.6 kernel?
-> > > >
-> > > $ rdma system show to display 'netns shared'.
-> > > $ ip netns add foo
-> > > $ ip netns exec foo bash
-> > > $ attempt to access the hw counters from the foo net namespace.
-> > 
-> > Ok, it worked well. The following commands
-> > 
-> >   $ ip netns add foo
-> >   $ ip netns exec foo bash
-> >   $ cat /sys/class/infiniband/mlx4_0/hw_counters/*
-> > 
-> > cause a panic on a vanilla v6.12.9 without my changes and work perfectly fine
-> > with my patch.
-> > 
-> I dig further and I see the issue. Its not the per port counter.
-> It's the per device counter which got broken by commit 467f432a521a2.
-> It introduced the device counter unintentionally in non init net.
-> And we need to fix that (instead of allowing it and opening more holes).
-> I replied with more details to Jason G in previous reply.
-> Please take a look.
+On February 22, 2025 12:00:04 PM PST, Kent Overstreet <kent=2Eoverstreet@li=
+nux=2Edev> wrote:
+>On Sat, Feb 22, 2025 at 11:18:33AM -0800, Linus Torvalds wrote:
+>> On Sat, 22 Feb 2025 at 10:54, Kent Overstreet <kent=2Eoverstreet@linux=
+=2Edev> wrote:
+>> >
+>> > If that work is successful it could lead to significant improvements =
+in
+>> > code generation, since aliasing causes a lot of unnecessary spills an=
+d
+>> > reloads - VLIW could finally become practical=2E
+>>=20
+>> No=2E
+>>=20
+>> Compiler people think aliasing matters=2E It very seldom does=2E And VL=
+IW
+>> will never become practical for entirely unrelated reasons (read: OoO
+>> is fundamentally superior to VLIW in general purpose computing)=2E
+>
+>OoO and VLIW are orthogonal, not exclusive, and we always want to go
+>wider, if we can=2E Separately, neverending gift that is Spectre should b=
+e
+>making everyone reconsider how reliant we've become on OoO=2E
+>
+>We'll never get rid of OoO, I agree on that point=2E But I think it's
+>worth some thought experiments about how many branches actually need to
+>be there vs=2E how many are there because everyone's assumed "branches ar=
+e
+>cheap! (so it's totally fine if the CPU sucks at the alternatives)" on
+>both the hardware and software side=2E
+>
+>e=2Eg=2E cmov historically sucked (and may still, I don't know), but a _l=
+ot_
+>of branches should just be dumb ALU ops=2E I wince at a lot of the
+>assembly I see gcc generate for e=2Eg=2E short multiword integer
+>comparisons, there are a ton of places where it'll emit 3 or 5 branches
+>where 1 is all you need if we had better ALU primitives=2E
+>
+>> Aliasing is one of those bug-bears where compiler people can make
+>> trivial code optimizations that look really impressive=2E So compiler
+>> people *love* having simplistic aliasing rules that don't require real
+>> analysis, because the real analysis is hard (not just expensive, but
+>> basically unsolvable)=2E
+>
+>I don't think crazy compiler experiments from crazy C people have much
+>relevance, here=2E I'm talking about if/when Rust is able to get this
+>right=2E
+>
+>> The C standards body has been much too eager to embrace "undefined beha=
+vior"=2E
+>
+>Agree on C, but for the rest I think you're just failing to imagine what
+>we could have if everything wasn't tied to a language with
+>broken/missing semantics w=2Er=2Et=2E aliasing=2E
+>
+>Yes, C will never get a memory model that gets rid of the spills and
+>reloads=2E But Rust just might=2E It's got the right model at the referen=
+ce
+>level, we just need to see if they can push that down to raw pointers in
+>unsafe code=2E
+>
+>But consider what the world would look like if Rust fixes aliasing and
+>we get a microarchitecture that's able to take advantage of it=2E Do a
+>microarchitecture that focuses some on ALU ops to get rid of as many
+>branches as possible (e=2Eg=2E min/max, all your range checks that don't
+>trap), get rid of loads and spills from aliasing so you're primarily
+>running out of registers - and now you _do_ have enough instructions in
+>a basic block, with fixed latency, that you can schedule at compile time
+>to make VLIW worth it=2E
+>
+>I don't think it's that big of a leap=2E Lack of cooperation between
+>hardware and compiler folks (and the fact that what the hardware people
+>wanted was impossible at the time) was what killed Itanium, so if you
+>fix those two things=2E=2E=2E
+>
+>> The kernel basically turns all that off, as much as possible=2E Overflo=
+w
+>> isn't undefined in the kernel=2E Aliasing isn't undefined in the kernel=
+=2E
+>> Things like that=2E
+>
+>Yeah, the religion of undefined behaviour in C has been an absolute
+>nightmare=2E
+>
+>It's not just the compiler folks though, that way of thinking has
+>infected entirely too many people people in kernel and userspace -
+>"performance is the holy grail and all that matters and thou shalt shave
+>every single damn instruction"=2E
+>
+>Where this really comes up for me is assertions, because we're not
+>giving great guidance there=2E It's always better to hit an assertion tha=
+n
+>walk off into undefined behaviour la la land, but people see "thou shalt
+>not crash the kernel" as a reason not to use BUG_ON() when it _should_
+>just mean "always handle the error if you can't prove that it can't
+>happen"=2E
+>
+>> When 'integer overflow' means that you can _sometimes_ remove one
+>> single ALU operation in *some* loops, but the cost of it is that you
+>> potentially introduced some seriously subtle security bugs, I think we
+>> know it was the wrong thing to do=2E
+>
+>And those branches just _do not matter_ in practice, since if one side
+>leads to a trap they're perfectly predicted and to a first approximation
+>we're always bottlenecked on memory=2E
+>
 
-I can prepare a patch like this, but I'm slightly worried about hiding
-previously exposed counters. I don't think it's a problem for us (even though
-I'm not 100% sure), but technically it can be seen as breaking the API.
+VLIW and OoO might seem orthogonal, but they aren't =E2=80=93 because they=
+ are trying to solve the same problem, combining them either means the OoO =
+engine can't do a very good job because of false dependencies (if you are s=
+cheduling molecules) or you have to break them instructions down into atoms=
+, at which point it is just a (often quite inefficient) RISC encoding=2E In=
+ short, VLIW *might* make sense when you are statically scheduling a known =
+pipeline, but it is basically a dead end for evolution =E2=80=93 so unless =
+you can JIT your code for each new chip generation=2E=2E=2E
 
-How about merging 2 patches: my original patch which fixes the memory corruption
-and a separate patch which hides those counters from non-init namespace?
-The first can be safely propagated towards stable trees.
-
-I'll prepate the second patch soon.
-
-Thanks!
+But OoO still is more powerful, because it can do *dynamic* scheduling=2E =
+A cache miss doesn't necessarily mean that you have to stop the entire mach=
+ine, for example=2E
 
