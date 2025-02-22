@@ -1,118 +1,163 @@
-Return-Path: <linux-kernel+bounces-527087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832B2A40727
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:52:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91098A4072A
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41047706373
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B278D19C6E1C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 132231E990D;
-	Sat, 22 Feb 2025 09:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB810207A3A;
+	Sat, 22 Feb 2025 09:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUb8T5z0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GUY1MgXT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA5C207A3F;
-	Sat, 22 Feb 2025 09:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9FD207657;
+	Sat, 22 Feb 2025 09:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740217802; cv=none; b=N9HKf71kdiujin/O0VBm0wYH9lC7yuC4Wq+fvzIosidvCETcuFI+VTwppeW/DzKJ6VinJaSJ7iRO+WezarNHn5p4rbnRCAscyg4yy8roVmZzL7aDUAUCemPiYVS8/mw9xPibsZojNtMjlC0enQFv0VKd6HKggdeELR2N2H9Q23A=
+	t=1740217929; cv=none; b=NYyoajpWdMUJCOrj09Sog8nQPQ4sKx2/yDChfHvQqBvYemaVzdFo7SHOeGU69ffxFVb0jEuIo624vjZc8rE2p4bNBjwaIi6oMDXXdqYIop3hXW+OniuJxW0j0UW3q72BXbWD98mR/sKCyv1UP6zcl5NKLVhau2r/pV6YYNATAW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740217802; c=relaxed/simple;
-	bh=93+PXTcdrckZb/2Nnne1jF/O10OyK0HSaybtl4UJ5hA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jeXSGnXGwL+6QpTrsKr3oyt8qA7OXP+L2xYe2rbinaqGyxYWOHqk1hwjp69UXag6NDCxHlkbNuAJoRNHAOcY9x+JYbwjk/NQzk2L/sEC1qJPOsso+DPXRmat2OVqt3vfNkyrP5qnAfWimvOVCgEhV8kK+/P0zKzYDoQ2G3cjqEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUb8T5z0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 5D934C4CEEF;
-	Sat, 22 Feb 2025 09:50:02 +0000 (UTC)
+	s=arc-20240116; t=1740217929; c=relaxed/simple;
+	bh=sOMAW8cG2GfHTMf3SqhYwuELAxdo/LpQe+CzmYleSzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Um55cbTQP/oOyKCkTWiWCbac6mg8L8tmWqdTJjeyChbJXOUSPliR/rEhKhtnyJvh3lb0M0b1wMa47CVlTU+8JIK3M3gcSoOIg0p+jSRhxDhJdzXsxteifCKwqxkJ0jpxsrt+NqhbUVMTL5S+Ld/TB7syU3Zrmf/QBCcDQECcCok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GUY1MgXT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED33C4CED1;
+	Sat, 22 Feb 2025 09:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740217802;
-	bh=93+PXTcdrckZb/2Nnne1jF/O10OyK0HSaybtl4UJ5hA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BUb8T5z0tb0zj9lYbiAg8nCjTUfSGkmRTdGKFgoEy4xvYoJa9dSVTwycj2WHkzy3V
-	 7Zst8V6naVDR8lYPZD8C8Qx5xj6B1zEYpL3XFQ793OUnLgM5jFMdXEMRGlYYP6flBw
-	 k3o71qwBxfnH4unSIZP4CiZPTUInir8pmLLnzLYVf3jgyHAymBOa0cKv3rdTX2oZX7
-	 9mL7WsyGmrBFUSVdn/qNYvmNWR0M4LPjEuAT6FwnzJqyHEajX+fvwhLtpI9SMGQOL5
-	 598JD9usVYyvyOgZir1wzlb+rAJOLVk26AFKPikfYUz+UBI7VLoyBlL5SP1QRDLVV1
-	 6DW8V+EoeHbGQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C60C021B2;
-	Sat, 22 Feb 2025 09:50:02 +0000 (UTC)
-From: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
-Date: Sat, 22 Feb 2025 10:49:34 +0100
-Subject: [PATCH net-next v5 7/7] net: tn40xx: add pci-id of the
- aqr105-based Tehuti TN4010 cards
+	s=k20201202; t=1740217929;
+	bh=sOMAW8cG2GfHTMf3SqhYwuELAxdo/LpQe+CzmYleSzQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GUY1MgXTQOyriPbV/qtpWcFe/zUFNbZsRzCUsO+DL+/ONDosFOp5Wv+v9VoJcCSTQ
+	 cM8bbgL7lymsXxTvauGMSdITHAdJNNx4OQRMYM5ho/UCe8SYg47VmVun/oLExAFUqz
+	 Es8SENLFtVwyPhklAdLAZsto3ryONIkUQgtBatV3OSEcvWQ+JgkItLVHkL1fYknYw3
+	 R5pe9YpD3HjDIVbjlW0N+3BLna9ZeMUtT5WQfzRn94ASJpyjuwwfO0UpWi9tgvDDBy
+	 a5ctJFgKuJkv4MZYRpNYnEINiUzgAAsFmbxMt7jYXUJl+MhSpwOgNQ1TTFGzKkUY96
+	 +R8/9iNO90A2A==
+Message-ID: <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
+Date: Sat, 22 Feb 2025 10:52:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+To: Haylen Chu <heylenay@4d2.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
+ Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
+ Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
+ <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
+ <Z7BTVu10EKHMqOnJ@ketchup>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z7BTVu10EKHMqOnJ@ketchup>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-tn9510-v3a-v5-7-99365047e309@gmx.net>
-References: <20250222-tn9510-v3a-v5-0-99365047e309@gmx.net>
-In-Reply-To: <20250222-tn9510-v3a-v5-0-99365047e309@gmx.net>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Hans-Frieder Vogt <hfdevel@gmx.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740217800; l=1329;
- i=hfdevel@gmx.net; s=20240915; h=from:subject:message-id;
- bh=dE9RmcpNBtcvMxg1vX89VIDp9W8qYafc8S1ojRZqfFQ=;
- b=Jca7171c2uczNOMWGlSjnywuy7MH4h3qJirWdBJgy1NgIZl6wUT0ArOXOYPo6xeFox8EG50uG
- FBwaZOTvq9KCcieSWwSm6BiO+AnNBJqM4JsTOcpkAzU+wp5SYbs5IE2
-X-Developer-Key: i=hfdevel@gmx.net; a=ed25519;
- pk=s3DJ3DFe6BJDRAcnd7VGvvwPXcLgV8mrfbpt8B9coRc=
-X-Endpoint-Received: by B4 Relay for hfdevel@gmx.net/20240915 with
- auth_id=209
-X-Original-From: Hans-Frieder Vogt <hfdevel@gmx.net>
-Reply-To: hfdevel@gmx.net
 
-From: Hans-Frieder Vogt <hfdevel@gmx.net>
+On 15/02/2025 09:41, Haylen Chu wrote:
+> 
+>>> 	};
+>>>
+>>> For the other two clock controllers (APBS and APBC), syscons are really
+>>> unnecessary and it's simple to fold them.
+>>
+>>
+>> I don't follow. Do we talk about children or syscon compatible?
+> 
+> APBS region contains only clock (PLL) bits and APBC region contains only
+> reset and clock bits, so I was thinking about dropping the syscon nodes
+> and changing their compatible to spacemit,k1-plls and
+> spacemit,k1-cru-apbc.
+> 
+> In summary, my plan is,
+> 
+> - For MPMU, APMU and APBC region, keep the binding in soc/spacemit.
+>   They'll be reset, clock and power controllers, with compatible
+>   "spacemit,k1-syscon-*".
+> - For APBS region, write a new binding clock/spacemit,k1-plls, as it
+>   contains only PLL-related bits. It acts as clock controller.
+> - All split children will be eliminated, there'll be only four device
+>   nodes, one for each region, matching the datasheet.
+> - Put all clock-related binding definition of SpacemiT K1 in
+>   dt-bindings/clock/spacemit,k1-ccu.h
+> 
+> Is it fine for you?
+> 
 
-Add the PCI-ID of the AQR105-based Tehuti TN4010 cards to allow loading
-of the tn40xx driver on these cards. Here, I chose the detailed definition
-with the subvendor ID similar to the QT2025 cards with the PCI-ID
-TEHUTI:0x4022, because there is a card with an AQ2104 hiding amongst the
-AQR105 cards, and they all come with the same PCI-ID (TEHUTI:0x4025). But
-the AQ2104 is currently not supported.
+That did not explain hardware to me. You assume that some way, maybe
+through magical crystal ball, I know your hardware and will tell you
+what to do.
 
-Signed-off-by: Hans-Frieder Vogt <hfdevel@gmx.net>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
----
- drivers/net/ethernet/tehuti/tn40.c | 4 ++++
- 1 file changed, 4 insertions(+)
+No.
 
-diff --git a/drivers/net/ethernet/tehuti/tn40.c b/drivers/net/ethernet/tehuti/tn40.c
-index a4dd04fc6d89e7f7efd77145a5dd883884b30c4b..aaad40c916ef83f457e1b5983c01dff2de148fea 100644
---- a/drivers/net/ethernet/tehuti/tn40.c
-+++ b/drivers/net/ethernet/tehuti/tn40.c
-@@ -1835,6 +1835,10 @@ static const struct pci_device_id tn40_id_table[] = {
- 			 PCI_VENDOR_ID_ASUSTEK, 0x8709) },
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4022,
- 			 PCI_VENDOR_ID_EDIMAX, 0x8103) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4025,
-+			 PCI_VENDOR_ID_TEHUTI, 0x3015) },
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_TEHUTI, 0x4025,
-+			 PCI_VENDOR_ID_EDIMAX, 0x8102) },
- 	{ }
- };
- 
+I have dozens of other patches in my inbox. It's you who should explain
+the hardware in simple, concise way so we can judge whether DT
+description is correct.
 
--- 
-2.47.2
+Again: define what is the actual device, what is its address space, what
+are its possible *separate* and *distinctive* children.
 
-
+Best regards,
+Krzysztof
 
