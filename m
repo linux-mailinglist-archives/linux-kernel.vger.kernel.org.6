@@ -1,221 +1,145 @@
-Return-Path: <linux-kernel+bounces-527120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1CEA4079D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:49:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ECDFA407A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB4A4251EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:48:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 230313BBFD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360A020896C;
-	Sat, 22 Feb 2025 10:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F57316F0FE;
+	Sat, 22 Feb 2025 10:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="HzjEUkHq";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="0xpAi6Of"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Ao4p1n4T"
+Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E23F16F0FE;
-	Sat, 22 Feb 2025 10:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D66DC2080D6
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740221326; cv=none; b=UVFCGdcBMVdRKsAmSVNoDDHBL7hMpZnfzNdrJm30PGGmKHYfd7ch5FtlJTJfGHjfOux4flWH3ugBJdjpdodH1PuzRx5k3y62ezEC5PvTmpyBjJOLdnOHzYLbMoLz1NDCBbReTpzCtwhXRml9ZL/WPWHzWq9+KfnrEkebFKLqKGY=
+	t=1740221525; cv=none; b=XJGbGLALWRKf/P2v2lsbTTDuHuiUnA6DD+FBhMu8WrhGrTe8S/RwPb56mFcZnOtZcbPHTFi8LkDKEFwiL/ociA+97kUVIf+RaTu6QnYbIVTa8U6Fe5DYgLn9YV0xPERSteLySbhCYg7vsP/TD55VKE0PGB5b162I6xFXglTwg1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740221326; c=relaxed/simple;
-	bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlZjUw/DADfyuYmlxajZu6t48Oc2Kpr37vm6T0hp6wYEvzl2tn3FK3HP0dg0PxtIJd10N9dwFNJ3Mx5QD5P9rV9caXBWlDG1ky9bYv56udWAE4nFT34oEa+pJfPDeH3Na4fPgosYYiqT9659sMr2WUZeKBDQzjDszexJoZqYHoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=HzjEUkHq; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=0xpAi6Of; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 9C190122FE22;
-	Sat, 22 Feb 2025 02:48:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740221322; bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HzjEUkHqYogZ4w4yPtviWueYx3hvNn9UNpccS9i/tP9tyGV1Z4Qww4PGQxXBhYLmn
-	 OuFgUUK7Tr3rTe9gF7sYohMdKKmUZoqQNn25sxgGu8kLYsaoRj2A7YYOFXErvmJUfF
-	 AQbUm+Ory1Et5e/yiqd2y+eIZOe+ZloZsNqAEiELT/myB/Ze8bKM9kl9IkZhdY1wQg
-	 jdv5p0krxErHwv8215mOwWfAP/p8co//eXlbtH1H2ecY9XuI3O0WnLAffPiJOal3MA
-	 WHErU5lEI0Mu8qH77YSYQ0O1vja2q+lF9heApJY1FjZDt2DkiF21iVsHelrWtq48DY
-	 SoZIfYI1NO9Zg==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id iDt5bERNoadS; Sat, 22 Feb 2025 02:48:36 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.34])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 197FE122FE21;
-	Sat, 22 Feb 2025 02:48:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740221316; bh=K6Nyh2RaPue8OIU5uYXZtZdm/qdGvXvMpPEc6QdZmgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0xpAi6Of6hQKz9iujbvRVBr3slZR+xJVJAu0zPYmyLnY7SzjI1s7DSDt7gOjoGho7
-	 YDJiMQZoRd/yVZQeHZhFeY8PuDcK8bhtqjE3IU6NoYh3Cz42WuhCFxIi+Bv10Ace1l
-	 hw5MxLUb3rm9RWOd3WL8bZ5Rxe2OM4F+1x9mb5iyCVN5iyjkNe/JqoRYgA3sQ0I1dR
-	 2cwbR/RHg/w5We67fqS3fkxegj2WMvyNzEYGWuEf3od5VzhTe0tSrqxFSwYaAul6Jn
-	 jKzbI9RjkJsfrtrvzdtX9xIvutwypw/i6w8XGuimC7ey7T7oi2rG8R808ZbKR2GFXi
-	 lxTxErqCfPQ6w==
-Date: Sat, 22 Feb 2025 10:48:22 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alex Elder <elder@riscstar.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <Z7mrdrACFp3m-7sy@ketchup>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-4-heylenay@4d2.org>
- <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup>
- <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup>
- <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
+	s=arc-20240116; t=1740221525; c=relaxed/simple;
+	bh=Ytjx5IaKFk1D/yhTaHPuuZcMJMTW1vj3cyaFkvR9PvQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lqs4Zx0SyZpy3Gm/OSOhrEakzu6cIaxnamzYZjNt7FZRq0s9xDMSxT/7DP+CINyHbXyuCUnRV9dLpJdwJpKLD64KpHCmeOfAFYszSvZQVr/q6CW1/ibfBnm7nsYOvCDgkkt9iL8HcyLqXyaQ2+eU6xqfH19NBwzdT0lk5gUpwF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Ao4p1n4T; arc=none smtp.client-ip=17.58.6.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=rgvQfOLC7f+M02f6hvzxNZIZUkpYeai7A7dWzk8uoIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=Ao4p1n4TrSRRxXxkSH05UqzT/HgGCVsxu62sY49QJR1PuEtvfkjoljG6DYIsPV1Jo
+	 Uoed4vqcpZcyby4LnXmShg/OPtqYjLumfWHHUDlYfNqQ6dQN22Ftnqmx6O36rZw4pn
+	 Zow40fUE1JPdJ6sCCjY/WYjE+FPhsJ3Qn3uALPQJvHkyeXkgHkQYcEmil8PulKL+fJ
+	 fUkhds+oHSvwMCTYtsOSOPQcBSN/J5AwXkpjyTyw6eT8WOu4oEaeNQASEoQIT4MOfi
+	 C0yQ4S9F9AXSKb3ZkHgdSRi1KtFKXciIEp5TNHrDn78nvw5GkDRlcaWTiJS2gmJ4GI
+	 tcmo7WXp+ddNA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 56304180100;
+	Sat, 22 Feb 2025 10:51:42 +0000 (UTC)
+Message-ID: <a2cf1f09-83d7-402b-94c1-88feec10a513@icloud.com>
+Date: Sat, 22 Feb 2025 18:51:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH *-next 00/18] Remove weird and needless 'return' for void
+ APIs
+To: Johannes Berg <johannes@sipsolutions.net>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Nick Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ "David S. Miller" <davem@davemloft.net>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+ Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-mtd@lists.infradead.org
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <20250221110042.2ec3c276@hermes.local>
+ <9af9413b7ab41c6b2db5f862d0fa50e9de279d67.camel@sipsolutions.net>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <9af9413b7ab41c6b2db5f862d0fa50e9de279d67.camel@sipsolutions.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: f652v4ma64Vm3Io7f6-KRKFfH-wFIu9m
+X-Proofpoint-GUID: f652v4ma64Vm3Io7f6-KRKFfH-wFIu9m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-22_04,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 spamscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2308100000 definitions=main-2502220087
 
-On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
-> On 22/02/2025 00:40, Alex Elder wrote:
-> > I have a general proposal on how to represent this, but I'd
-> > like to know whether it makes sense.  It might be what Krzysztof
-> > is suggesting, but in any case, I hope this representation would
-> > work, because it could simplify the code, and compartmentalizes
-> > things.
-> > 
-> > Part of what motivates this is that I've been looking at the
-> > downstream reset code this week.  It contains a large number of
-> > register offset definitions identical to what's used for the
-> > clock driver.  The reset driver uses exactly the same registers
-> > as the clock driver does.  Downstream they are separate drivers,
-> > but the clock driver exports a shared spinlock for both drivers
-> > to use.
-> > 
-> > These really need to be incorporated into the same driver for
-> > upstream.
+On 2025/2/22 03:36, Johannes Berg wrote:
+> On Fri, 2025-02-21 at 11:00 -0800, Stephen Hemminger wrote:
+>> Is this something that could be done with a coccinelle script?
+>>
+> Almost enough to do this:
 > 
-> Why? First, it is not related to the topic here at all. You can design
-> drivers as you wish and still nothing to do with discussion about binding.
-> Second, different subsystems justify different drivers and Linux handles
-> this well already. No need for custom spinlock - regmap already does it.
+> @@
+> identifier fn;
+> expression E;
+> @@
+> void fn(...)
+> {
+> ...
+> -return
+> E;
+> }
 > 
 > 
-> > 
-> > The clock code defines four distinct "units" (a term I'll use
-> > from here on; there might be a better name):
-> >    MPMU  Main Power Management Unit
-> >    APMU  Application Power Management Unit
-> >    APBC  APB Clock
-> >    APBS  APB Spare
-> > 
-> > The reset code defines some of those, but doesn't use APBS.
-> > It also defines three more:
-> >    APBC2 Another APB Clock
-> >    RCPU  Real-time CPU?
-> >    RCPU2 Another Real-time CPU
-> > 
-> > Each of these "units" has a distinct I/O memory region that
-> > contains registers that manage the clocks and reset signals.
-> 
-> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
-> 1+2? But previous statements were saying these are intermixed?
-> 
-> " I'll make APMU/MPMU act as a whole device"
+> It takes a long time to run though, and does some wrong things as well:
+> if the return is in the middle of the function, it still matches and
+> removes it erroneously.
 
-My reply seems somehow misleading. The statement means I will merge the
-children with the syscon into one devicetree node, which applies for
-both APMU and MPMU. I wasn't going to say that APMU and MPMU are
-intermixed.
+if return is in the middle, we may need to convert the return statement
+in to two statement as [PATCH 18/18] does:
+https://lore.kernel.org/all/20250221-rmv_return-v1-18-cc8dff275827@quicinc.com/
 
-As Alex said, all these units have their own distinct and separate MMIO
-regions.
+namely, Convert  "return func(...);" to "func(...); return;"
 
-> > 
-> > I suggest a single "k1-clocks" device be created, which has
-> 
-> For four devices? Or for one device?
+C spec such as C17 have this description about return
+statement:
+6.8.6.4:
+A return statement with an expression shall not appear in a function
+whose return type is void. A return statement without an expression
+shall only appear in a function whose return type is void.
 
-By Alex's example, I think he means a device node taking all these
-distinct MMIO regions as resource.
 
-	clock {
-		compatible = "spacemit,k1-clocks";
+so, do we need to treat "return void function in void function" as
+bad code style and make coccinelle script check this bad usage?
 
-		reg = <0x0 0xc0880000 0x0 0x2050>,
-		      <0x0 0xc0888000 0x0 0x30>,
-		      <0x0 0xd4015000 0x0 0x1000>,
-		      <0x0 0xd4050000 0x0 0x209c>,
-		      <0x0 0xd4090000 0x0 0x1000>,
-		      <0x0 0xd4282800 0x0 0x400>,
-		      <0x0 0xf0610000 0x0 0x20>;
-		reg-names = "rcpu",
-			    "rcpu2",
-			    "apbc",
-			    "mpmu",
-			    "apbs",
-			    "apmu",
-			    "apbc2";
 
-		/* ... */
-	};
 
-> No, it's again going to wrong direction. I already said:
-> 
-> "You need to define what is the device here. Don't create fake nodes ust
-> for your drivers. If registers are interleaved and manual says "this is
-> block APMU/MPMU" then you have one device, so one node with 'reg'."
-> 
-> So what is the device here? Can you people actually answer?
-> 
 
-I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
-related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
-sure they're standalone blocks with distinct and separate MMIO regions,
-this could be confirmed by the address mapping[1].
 
-> 
-> > access to all of the I/O address ranges.  And then within
-> > the DT node for that device there is a sub-node for the
-> 
-> Uh, confusing. You said there is one device for all the clocks, so if
-> there is one device so also one device node. No children.
-> 
-> Maybe you have more devices but none of you is explaining the hardware
-> that way. Mixing talk about drivers is really not helping.
-> 
->
-> 
-> 
-> Best regards,
-> Krzysztof
-
-Best regards,
-Haylen Chu
-
-[1]: https://developer.spacemit.com/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg
 
