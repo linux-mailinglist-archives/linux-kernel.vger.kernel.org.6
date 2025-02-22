@@ -1,192 +1,166 @@
-Return-Path: <linux-kernel+bounces-526985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3C7A405EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:39:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E478CA405F1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 07:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B02CA3BE059
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:37:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEBB13BBF7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 06:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02090200112;
-	Sat, 22 Feb 2025 06:37:40 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B97A72EB10;
-	Sat, 22 Feb 2025 06:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB07E1FFC69;
+	Sat, 22 Feb 2025 06:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARAGUNuL"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C4DB2EB10;
+	Sat, 22 Feb 2025 06:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740206259; cv=none; b=OnFCs4sha1IzqF76kBdOiuRZ+ElHWLLx0gns7i71vUePostWI8ILEg+XherjduqFM3d2UsRYa0MV9JMSNcEN9YoqvhUE7Y/uUBaiwK8lEqEipUTWorL4/bfLqbhYRfccfrxOzoHjS1V8SJTPGdLFt7IkF44dWTP5jEI+j2Ic7G4=
+	t=1740206528; cv=none; b=HUNNyyWI1zfiBNV8XUQH73Jnt6orPICq8ricHEkcXkg2Urk6NH0UZo+zIbrIY+3dVwVsYOM8M3lUgoKIugvPJSiXCtTMHMB8jgf9zS9xvtAjYsVsCr4qOTZRfaYuM2Kg+LFP6Wf+KB3j/B9Rw3YqVQyn+mb6XdQIAR8d72vIt9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740206259; c=relaxed/simple;
-	bh=swLoCvJQnqrFGFthTxPH8lzA9/e2VWZZg3VqNHBeVmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZt6jfFfiNDCdvPQPx9y/5rq+nrSqyHVBreeGTNE8nSGuUbuimURciSZYdsmfZwjPOAMESHwYk8JLpMcwcTsFdDTKZTdLWJ7dgwzREN6dIGx83OLuRHWHYG9wg76GLOEqO5uVhGe6aD0upiDMQHiJma/HOH1oCSEEaRKKdkc5cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 51M6bUeU012004;
-	Sat, 22 Feb 2025 07:37:30 +0100
-Date: Sat, 22 Feb 2025 07:37:30 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Engelhardt <ej@inai.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        rust-for-linux <rust-for-linux@vger.kernel.org>,
-        David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-        ksummit@lists.linux.dev
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <20250222063730.GB11482@1wt.eu>
-References: <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh>
- <2nn05osp-9538-11n6-5650-p87s31pnnqn0@vanv.qr>
- <2025022052-ferment-vice-a30b@gregkh>
- <9B01858A-7EBD-4570-AC51-3F66B2B1E868@zytor.com>
- <n05p910s-r5o3-0n36-5s44-qr769prp69r5@vanv.qr>
- <20250221183437.1e2b5b94@pumpkin>
- <CAHk-=wjF0wjD4ko7MgrZ1wBZ9QOrQd_AnyhDDUJQ1L5+i-o22A@mail.gmail.com>
- <20250221214501.11b76aa8@pumpkin>
- <20250222063210.GA11482@1wt.eu>
+	s=arc-20240116; t=1740206528; c=relaxed/simple;
+	bh=cnfG0hIgMPJ02Llcutcw46/+Ww+e021KFIks/90nkEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O2OISd8XUBlvo6pNM+JpNyOfg28J7D3JT8haLwv0dkH/qR9O3Ub+wmnxdlTwXaJm31KO9BoyHTnJxrJghGBfQMOQIVecc95pIv4D7f/iN0GZyirjEU0fqQC45bvk13GORqIiOXVHZKu/vfD9yORT5quvj2T1ydfLaBfxukh4vfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ARAGUNuL; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-520b58510c7so748498e0c.0;
+        Fri, 21 Feb 2025 22:42:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740206525; x=1740811325; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSaxQxuNaNvr7jWVenpv73vu1UWmnwa+JPv741TO9K8=;
+        b=ARAGUNuLhaIJfVeTBfsDWAK0HRuqdPhI0m1XfR4lOyRCYR8gyDrtotWuXffuM3qGrY
+         hgFUewbA+nHuArMPESBQNsW7mfqRpfUTsc1AmKHECdj35BMRlVrBg8vHt6IZVoaNN1uI
+         LnoH/XQzwzsjF8ObyP55Xfvl8KSrpIg1r6jOhO7Xt7cHQfwZ6UWGIY7jL2W4qsJKnbzg
+         sFTyJi6PLirn8Ihzwa7LVuXFNHxulH5Idh0siZH7zKvnGy+oFTLfrLfoGG2VrvBRhizA
+         /wsLjkpRoj9IXqoprGn3naZpnNBtbFlvolgAVy2R35aaJ6zQtZJY3MZOad629e5DNk2y
+         X2eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740206525; x=1740811325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oSaxQxuNaNvr7jWVenpv73vu1UWmnwa+JPv741TO9K8=;
+        b=Ll5T1Am1yHLm88/HALUcPnwAMvgQ9Vrrmfo7lz+AVkP4dZbI3ML67e+CNgwGd4qHQG
+         o2FnRFYYQspoH/c4y13jZCZ+jyIxTt9bq5QNCBjbmzpXeRhbvFlDObIdc36ceVUTdT4T
+         EE/ozFyf4sTmTLWzoDoCF4oiF8lLtX79fX/+MAXekVdbIWBQzm1zDCUMwSenY8Iqzgbc
+         fdIqaE+C5YF+wI2sGsY6j8BntlowE0FbamXtqvCFm8zIBT9tD171UMZj0hGUjoamKgiC
+         /T9c++vfXZpGyvtIgsEd0IPSL+uu0u1qjwJoxToiLfYRNLD+iI3nzDwq6R4FMaL0Lire
+         6LJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQ2ycSxr+x9j+ciWMPsX8EBm+MsoXsImX4VD8FmhznXwI1qSwwLChilxHgLaq0dnVC8b2Y++OgN2K8vgw=@vger.kernel.org, AJvYcCXCI94qODCLxPWiNEZxt0omMP7XawNk8hUk+90zz8GvtZe6f3AWKsxQV5aKA8LriySB286gcoOyFRpbyZO1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlvy4Juq7bZTJ4zlhWSbaGPeY4w6Uvoo3ZNNNxmxv2+mQQEWFa
+	O/y2HlFbsZLntfH3zZtD42bhf/kokZqyuFcNRBPNPkHnwIJEQHe9sM5/V97LAYykXQDyhVTGmjS
+	0fLKMlyF0Yy7jT+6qs8R3YF5890c=
+X-Gm-Gg: ASbGnctbE2zx3r4eB6GYQ9QGx6uLgj8f/Q8xVLjTdzj3HEBfZqgy/zsGtda/gWGVTqd
+	qpZMCONi7J1jdsPVZVeZzWwB2Okxy9UF0XWA8awPA8US8ZpWfCWdYc11NaX2YTQJauE1N76G6gR
+	z5IA7fTH0=
+X-Google-Smtp-Source: AGHT+IEUveAywgoWbMJcZ+6O4ktIym5ZwsXDVoeqsKfYbVBdGQ5yMATuk52cuIBEm+9iE2WyJ3mwLcLO0F2UQof7bng=
+X-Received: by 2002:a05:6122:2027:b0:516:240b:58ff with SMTP id
+ 71dfb90a1353d-521ee290f48mr3236184e0c.5.1740206525299; Fri, 21 Feb 2025
+ 22:42:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222063210.GA11482@1wt.eu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <Z2_lAGctG0DDSCIH@gondor.apana.org.au> <SJ0PR11MB5678851E3E6BA49A99D8BAE2C9102@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkatpOaortT8Si5GfxprvgPR+bzxwTSOR0rsaRUstdqNMQ@mail.gmail.com>
+ <SJ0PR11MB5678034533E3FAD7B16E2758C9112@SJ0PR11MB5678.namprd11.prod.outlook.com>
+ <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
+ <Z3yMNI_DbkKBKJxO@gondor.apana.org.au> <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
+ <Z7F1B_blIbByYBzz@gondor.apana.org.au> <Z7dnPh4tPxLO1UEo@google.com>
+ <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com> <Z7lv6JLax4S8vTtD@gondor.apana.org.au>
+In-Reply-To: <Z7lv6JLax4S8vTtD@gondor.apana.org.au>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sat, 22 Feb 2025 19:41:54 +1300
+X-Gm-Features: AWEUYZlmcDguna01sojniDrQEtisK2vBnZybWqL2k4nT4V6CyMWa08LH70YV7m4
+Message-ID: <CAGsJ_4yAQxjTnSALZHAJZDdUnXKAYFvQCcjQjHiQSUip6cJGKg@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
+ compress/decompress batching.
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 22, 2025 at 07:32:10AM +0100, Willy Tarreau wrote:
-> On Fri, Feb 21, 2025 at 09:45:01PM +0000, David Laight wrote:
-> > On Fri, 21 Feb 2025 11:12:27 -0800
-> > Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > 
-> > > On Fri, 21 Feb 2025 at 10:34, David Laight <david.laight.linux@gmail.com> wrote:
-> > > >
-> > > > As Linus said, most modern ABI pass short structures in one or two registers
-> > > > (or stack slots).
-> > > > But aggregate returns are always done by passing a hidden pointer argument.
-> > > >
-> > > > It is annoying that double-sized integers (u64 on 32bit and u128 on 64bit)
-> > > > are returned in a register pair - but similar sized structures have to be
-> > > > returned by value.  
-> > > 
-> > > No, they really don't. At least not on x86 and arm64 with our ABI.
-> > > Two-register structures get returned in registers too.
-> > > 
-> > > Try something like this:
-> > > 
-> > >   struct a {
-> > >         unsigned long val1, val2;
-> > >   } function(void)
-> > >   { return (struct a) { 5, 100 }; }
-> > > 
-> > > and you'll see both gcc and clang generate
-> > > 
-> > >         movl $5, %eax
-> > >         movl $100, %edx
-> > >         retq
-> > > 
-> > > (and you'll similar code on other architectures).
-> > 
-> > Humbug, I'm sure it didn't do that the last time I tried it.
-> 
-> You have not dreamed, most likely last time you tried it was on
-> a 32-bit arch like i386 or ARM. Gcc doesn't do that there, most
-> likely due to historic reasons that couldn't be changed later,
-> it passes a pointer argument to write the data there:
-> 
->   00000000 <fct>:
->      0:   8b 44 24 04             mov    0x4(%esp),%eax
->      4:   c7 00 05 00 00 00       movl   $0x5,(%eax)
->      a:   c7 40 04 64 00 00 00    movl   $0x64,0x4(%eax)
->     11:   c2 04 00                ret    $0x4
-> 
-> You can improve it slightly with -mregparm but that's all,
-> and I never found an option nor attribute to change that:
-> 
->   00000000 <fct>:
->      0:   c7 00 05 00 00 00       movl   $0x5,(%eax)
->      6:   c7 40 04 64 00 00 00    movl   $0x64,0x4(%eax)
->      d:   c3                      ret
-> 
-> ARM does the same on 32 bits:
-> 
->   00000000 <fct>:
->      0:   2105            movs    r1, #5
->      2:   2264            movs    r2, #100        ; 0x64
->      4:   e9c0 1200       strd    r1, r2, [r0]
->      8:   4770            bx      lr
-> 
-> I think it's simply that this practice arrived long after these old
-> architectures were fairly common and it was too late to change their
-> ABI. But x86_64 and aarch64 had the opportunity to benefit from this.
-> For example, gcc-3.4 on x86_64 already does the right thing:
-> 
->   0000000000000000 <fct>:
->      0:   ba 64 00 00 00          mov    $0x64,%edx
->      5:   b8 05 00 00 00          mov    $0x5,%eax
->      a:   c3                      retq
->   
-> So does aarch64 since the oldest gcc I have that supports it (linaro 4.7):
-> 
->   0000000000000000 <fct>:
->      0:   d28000a0        mov     x0, #0x5                        // #5
->      4:   d2800c81        mov     x1, #0x64                       // #100
->      8:   d65f03c0        ret
-> 
-> For my use cases I consider that older architectures are not favored but
-> they are not degraded either, while newer ones do significantly benefit
-> from the approach, that's why I'm using it extensively.
-> 
-> Quite frankly, there's no reason to avoid using this for pairs of pointers
-> or (status,value) pairs or coordinates etc. And if you absolutely need to
-> also support 32-bit archs optimally, you can do it using a macro to turn
-> your structs to a larger register and back:
-> 
->   struct a {
->           unsigned long v1, v2;
->   };
-> 
->   #define MKPAIR(x) (((unsigned long long)(x.v1) << 32) | (x.v2))
->   #define GETPAIR(x) ({ unsigned long long _x = x; (struct a){ .v1 = (_x >> 32), .v2 = (_x)}; })
-> 
->   unsigned long long fct(void)
->   {
->           struct a a = { 5, 100 };
->           return MKPAIR(a);
->   }
-> 
->   long caller(void)
->   {
->           struct a a = GETPAIR(fct());
->           return a.v1 + a.v2;
->   }
-> 
->   00000000 <fct>:
->      0:   b8 64 00 00 00          mov    $0x64,%eax
->      5:   ba 05 00 00 00          mov    $0x5,%edx
->      a:   c3                      ret
-> 
->   0000000b <caller>:
->      b:   b8 69 00 00 00          mov    $0x69,%eax
->     10:   c3                      ret
-> 
-> But quite frankly due to their relevance these days I don't think it's
-> worth the effort.
+On Sat, Feb 22, 2025 at 7:34=E2=80=AFPM Herbert Xu <herbert@gondor.apana.or=
+g.au> wrote:
+>
+> On Sat, Feb 22, 2025 at 07:26:43PM +1300, Barry Song wrote:
+> >
+> > After reviewing the zRAM code, I don't see why zram_write_page() needs
+> > to rely on
+> > comp_len to call write_incompressible_page().
+> >
+> > zram_write_page()
+> > {
+> >         ret =3D zcomp_compress(zram->comps[ZRAM_PRIMARY_COMP], zstrm,
+> >                              mem, &comp_len);
+> >         kunmap_local(mem);
+> >
+> >         if (unlikely(ret)) {
+> >                 zcomp_stream_put(zstrm);
+> >                 pr_err("Compression failed! err=3D%d\n", ret);
+> >                 return ret;
+> >         }
+> >
+> >         if (comp_len >=3D huge_class_size) {
+> >                 zcomp_stream_put(zstrm);
+> >                 return write_incompressible_page(zram, page, index);
+> >         }
+> > }
+>
+> Surely any compression error should just be treated as an
+> incompressible page?
 
-Update: I found in my code a comment suggesting that it works when using
--freg-struct (which is in fact -freg-struct-return) which works both on
-i386 and ARM. I just didn't remember about this and couldn't find it when
-looking at gcc docs.
+probably no, as an incompressible page might become compressible
+after changing an algorithm. This is possible, users may swith an
+algorithm to compress an incompressible page in the background.
 
-Willy
+Errors other than dst_buf overflow are a completely different matter
+though :-)
+
+>
+> I mean we might wish to report unusual errors in case the
+> admin or developer can do something about it, but for the
+> system as a whole it should still continue as if the page
+> was simply incompressible.
+>
+> > As long as crypto drivers consistently return -ENOSP or a specific erro=
+r
+> > code for dst_buf overflow, we should be able to eliminate the
+> > 2*PAGE_SIZE buffer.
+>
+> Yes we could certainly do that.
+>
+> Cheers,
+> --
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+>
+
+Thanks
+barry
 
