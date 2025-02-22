@@ -1,121 +1,155 @@
-Return-Path: <linux-kernel+bounces-526822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F86A403D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:07:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25EE1A403DD
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 573633BC3AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:07:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D0A7A53AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA3C3232;
-	Sat, 22 Feb 2025 00:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4840E7494;
+	Sat, 22 Feb 2025 00:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2FMtFgT"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3VDXjXhl"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 228E6800;
-	Sat, 22 Feb 2025 00:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2842BEC4
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 00:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740182830; cv=none; b=m0fdv8woe1ervBxEyUtByS9O5aZsni3Uxf+KFdAhLA1Cc/ujrU1ETWl6Boxa7lpd78j/s60mw9k6+9/+MtPhZR3IJFldGa45FJxhmp6o+YDp6oCPxmujshKpb749BBlJCjqCZecWPDinRAhcOaEvFq9j2KKY4E3xSJTRf+3JTIc=
+	t=1740182937; cv=none; b=ZBGx4M84osTSPA6k1afXoPXB7kHwjS2HULfK1Kr90hE0ZgXXc9OoyXuylM8tDVXHgyOxVtvANz7feX1+/IDnbp82EXoHQ0vZzr1/7Ri9/VQSUBsdLS6sB2gRy1NoNsa8yey97AymcDPOnyoXZ7wQ0nbJo+rbpf3MguCKeauL11s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740182830; c=relaxed/simple;
-	bh=7z9nzAGaM/cFnXC/bQkRf8mSWYPHlouc0LSnV+HXSGs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sazGoiCKseh7QqFhxlVtKLJrdVbmWm58nm9+UK5rdyEJjUqN4RNtBbRtTSRIuI/PZtdE1kOs1I/+gJGob1/VTuGIVITSXUtrCM3h5RO/bRpeU+TrtI4AZcHlixXiFp6+PmqzmT7hvoFdH7EBdHK4Cvz89RAejPgst6vPtgW3orc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2FMtFgT; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so5372112a91.3;
-        Fri, 21 Feb 2025 16:07:08 -0800 (PST)
+	s=arc-20240116; t=1740182937; c=relaxed/simple;
+	bh=PdvNIGHQi28mOeEpG9qqj09SgaiMTVaG11C/XJdJ5Ik=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D4qFIoY5puwgJXJk6Y2uxMiYaCAuKbdIYsbpDpxJ7xC7pHh3YMvEJP0rnO0shLJ2q1CRAp00TzxrCI6CR9zktAPX7kXgybQxN7POIvsJd/dMcOrlTZCGzv2bG45B3D5LBBkVkUjYdeS9eChhTJ6H9eid/jKZW+7B3fneqJX8O7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3VDXjXhl; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22117c396baso31575ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:08:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740182828; x=1740787628; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MswCAZSr11JhdHu1wpbuxpiR6tFA6D+Bi7/K0hdahk0=;
-        b=W2FMtFgT2X4ovTbDwUJUnI+rDnt/qemVXusabFUq0pmX+WdJkoN41nGnsKpaOjHAsm
-         RmhNu8ixPXcW18iO7XxF2NnthSCxppK/yi9TeMxGCxu2WCPVkwcf+6hhNOMRB4I74OA3
-         Qc9AXlQioNZ2DFIBCO1lvKEgtUTV243MoV1zONLQnv5eL81dfRWCazF64D/ZuvFrI0IN
-         NEAHB5yh2XO0KM1IuFkIWzosBFG4XCdp/M5i3zDxH7uAQ96numVmW0RduqnUie1J5tG0
-         JPTF7PqajQm5RsUemvGaaNC7YtB3tgD/GwMSA+Bn7SepYn+9pIzOE4jAkgpFh0rMIxgg
-         WBmQ==
+        d=google.com; s=20230601; t=1740182935; x=1740787735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1LxlF2XPfvnxZQ102MjlGXWCnz/+GLqNslH9rkDQj9E=;
+        b=3VDXjXhlKsicl4qvrvmhgcf/JPDjS7t0lstX2si0dOioTTINRnLZ++N6fd2KYYNDc0
+         SFiHoKRCtBaQLLCxluInYkdOF3IxNoQ9rVMhKcQIlq5kVy1AjxIcjBFqB6lNlpLqKJxT
+         xYfoofA9msgYYOvQeILwWGSFaHeSvfv+9Gm6hmzbspC+2vPKOBGv02yL0y3BiqVunMQO
+         VZCffSrv70KHqgPTCJ07a35xTnPsPsdEk5mZPocr/BTO3HCB/J5qHiem9GuRZn3gqnlU
+         uEUoOd6/GNpxnVSTlA4BMdvErAFf1OBBougXgugYMpsV0YiUfotm1K05msjIWtD9vsg8
+         hosA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740182828; x=1740787628;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MswCAZSr11JhdHu1wpbuxpiR6tFA6D+Bi7/K0hdahk0=;
-        b=wkryXBEzVYq+bc7Y94j1Weuasdw/sMBB24z//VD7JVzmHJYPWaEc1n58rh/qTsggvs
-         UzTkBRT6+0si50W9HB++lBvAPPJ+wMz1rIzRe0LOh6DUILW1Y51pdbrYBndJlAf79BK6
-         oLOg01J12XEOLySaAcur22y0mtd6kiGiXSyjmITUPxz5mHdGISO24ECpEZ6TqOW9Zp2G
-         deZGwJUwiZk2w72ZBC/65h4DZTIaOhYlVIHKM/82HwYMkh9uuXz2yThnmQctZlcJO/Q/
-         JVeOiAetBqh25uddbkEa3PWc7sfYu4lo9IXgfXgVFI1NURwaAmbJJ/EG0fF9umUPvtDW
-         XTpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUERFO0W6Wyhpbgos1l9l1946ouQrVMhfwtpFMr9Qxn4r9+8MbTyDlfOD6oFER3Wvp3zGTrtTyXRbRP1o+a@vger.kernel.org, AJvYcCX8t1EVxl5HftqpAML+d/dlyfBOsMpqfaEefPWeBD7ww9Tq1S43eJ7ZcuL7q6yqU6FVno+XfZRSpDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKQwp0TcUVGuXpivSbo84PngB1uTDP9lDlE/3gIhr4E5BRpnCe
-	iqnukgZaBs0rQwphrEARpwH3OSDg699zcJpV8WYpr2tsuNpK6cSL
-X-Gm-Gg: ASbGncuASms2rHhqHSyZSoH2hb1b3T1fazp//zFjutR8pKtNUTy7nDmpvvyNvNy3bRg
-	U/UyDx9Or1abqC/g1RtOHMayX3LvEqCGVoOHhJ/SNp4+/+uf8ipIRekjc3AtbhGBlms7CXNLLtD
-	06d+oR7tR3z3GwDwzbdC7GCTyzf/tnXz5C3yGxgVvC3AwhlCEoVTlFERPbc0HivQHE+PHynMpYJ
-	YO88WLCNiWEKH1aseKWOakZNoklbBIO4/vBf/AH6/1evJux8Pzw/ixd8085M6+CFe6GXbbXXSIa
-	V/Jz4+Iv9v+vU+ghz/i5aQ==
-X-Google-Smtp-Source: AGHT+IE+JUzncJ3icMuuqbvaTXRAsotDNDLEJLaGIzMZ36tKqpWXYEDIxlg16w83TwVii4xDF7xHAw==
-X-Received: by 2002:a05:6a00:3d0a:b0:730:888a:251d with SMTP id d2e1a72fcca58-73426d9ee22mr8844925b3a.20.1740182828276;
-        Fri, 21 Feb 2025 16:07:08 -0800 (PST)
-Received: from dev.. ([2804:14d:887:95a9:5a0c:64ab:937e:e751])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73261ca7831sm13053223b3a.104.2025.02.21.16.07.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Feb 2025 16:07:07 -0800 (PST)
-From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-X-Google-Original-From: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
-To: airlied@gmail.com,
-	simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	corbet@lwn.net
-Cc: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] drm-vm-bind-locking: grammar fixing
-Date: Fri, 21 Feb 2025 21:06:42 -0300
-Message-ID: <20250222000654.137621-1-leofthirata@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1740182935; x=1740787735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1LxlF2XPfvnxZQ102MjlGXWCnz/+GLqNslH9rkDQj9E=;
+        b=Aye6HdBHe1dxD9DtnJFYhQER9JHtjz/r4I5jM9l2B/4nEsGKrAY818J4nU3qg1msGV
+         22eW1jdqhYqv066pZnwVjCc//Lcz5JvxoAw0GOlP6ZlbDPXRoYsHlXjxoNmvOYvjfKlX
+         g5nkVMciF0k7UTA2L2hVIIvhFCwFmb1Ts7V001Rm1C8HghB1a6sxa9I9CNFIymQxXWSu
+         VvRYCZ14Ycb3GCCib4gD5pLqgQuFGLbzbAKXlGB4B0vJgsDShbY9Nky+3nR0rza/Bkp+
+         vccDz2zUfk1u4hAdPIDd1ITF3gb0PckdlYn1s7v1Aj7g01NNwt5mbKVKtHExcs8sa07A
+         8t6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKyojU7JoCtwUuulYkDdT2xOcrM4ovOxNJmHA+f0UQ7aaq22FzCp36flXIdOOz2qTwzU0ZKfCUkRQWm9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzerjH1I2NbYXFFyu2a2v6ro1PVMsrIMLZlJbBoAS4Z5KJBWhf9
+	0ec17olLJdYkK1ntkmdFF55f3LBtkbuBeBvj+HsJ5SdM/VPbFgmcoBMqOUWOuFrNF2OJ+yJpzuv
+	L4MYhHxDtypsNsdX10peqTIiEknq/2If+KsRJ
+X-Gm-Gg: ASbGnct/tW0j4o/HGOwnwSSAQ+UpnAHZuHXE0rMJoFPQNts31239+2jwsHVCth7MzKn
+	DqvvNVEHUgg/tPdXRt81uAUNLzpD0ILUSkhTzMCkdNWoQmDUp7FZmulsuWuaERbXz4xCMbInqiT
+	MnbmQ4gIs=
+X-Google-Smtp-Source: AGHT+IFs8OSDbikLuc4z8Je8QeS+ag2Wiy+VmDy4SB3aG6a3gth4nejCH8UkdT2ijydQhcSXWuEfpYlNQX3au+sfJ1A=
+X-Received: by 2002:a17:902:e852:b0:216:6dab:8042 with SMTP id
+ d9443c01a7336-221b9d2e706mr1003815ad.12.1740182935131; Fri, 21 Feb 2025
+ 16:08:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250220020914.895431-1-almasrymina@google.com>
+ <20250220020914.895431-10-almasrymina@google.com> <Z7eKHlA0rCF2Wgxb@mini-arch>
+In-Reply-To: <Z7eKHlA0rCF2Wgxb@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 21 Feb 2025 16:08:42 -0800
+X-Gm-Features: AWEUYZmBWXmjjwtaXgQB3UGLCCYTeJGLoZajHgAmTK8d-xFcEm-al47z60fCJhk
+Message-ID: <CAHS8izPA2eQ251-whnsT7ghG01c0e=tERL4Cwg1tBr+ZfVNHpA@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 9/9] selftests: ncdevmem: Implement devmem TCP TX
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixes grammar issues in the VM_BIND locking documentation:
-- Corrects adverb "also" positioning in the sentence.
+Hi Stan,
 
-Signed-off-by: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
----
- Documentation/gpu/drm-vm-bind-locking.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you very much for testing. I was wondering/worried that there
+will be some churn in getting the test working on both our setups.
+It's not unheard of I think because your ncdevmem changes had to go
+through a couple of iterations to work for our slightly different
+setups, but do bear with me. Thanks!
 
-diff --git a/Documentation/gpu/drm-vm-bind-locking.rst b/Documentation/gpu/drm-vm-bind-locking.rst
-index a345aa513d12..05d1a4e0d754 100644
---- a/Documentation/gpu/drm-vm-bind-locking.rst
-+++ b/Documentation/gpu/drm-vm-bind-locking.rst
-@@ -362,7 +362,7 @@ while processing each item:
- 
- Due to the additional locking and atomic operations, drivers that *can*
- avoid accessing the gpu_vm's list outside of the dma_resv lock
--might want to avoid also this iteration scheme. Particularly, if the
-+might also want to avoid this iteration scheme. Particularly, if the
- driver anticipates a large number of list items. For lists where the
- anticipated number of list items is small, where list iteration doesn't
- happen very often or if there is a significant additional cost
--- 
-2.43.0
+On Thu, Feb 20, 2025 at 12:01=E2=80=AFPM Stanislav Fomichev
+<stfomichev@gmail.com> wrote:
+> > @@ -25,18 +25,36 @@ def check_rx(cfg) -> None:
+> >      require_devmem(cfg)
+> >
+> >      port =3D rand_port()
+> > -    listen_cmd =3D f"./ncdevmem -l -f {cfg.ifname} -s {cfg.v6} -p {por=
+t}"
+> > +    listen_cmd =3D f"{cfg.bin_local} -l -f {cfg.ifname} -s {cfg.v6} -p=
+ {port}"
+> >
+> >      with bkg(listen_cmd) as socat:
+> >          wait_port_listen(port)
+> > -        cmd(f"echo -e \"hello\\nworld\"| socat -u - TCP6:[{cfg.v6}]:{p=
+ort}", host=3Dcfg.remote, shell=3DTrue)
+> > +        cmd(f"echo -e \"hello\\nworld\"| socat -u - TCP6:{cfg.v6}:{por=
+t},bind=3D{cfg.remote_v6}:{port}", host=3Dcfg.remote, shell=3DTrue)
+>
+> IPv6 address need to be wrapped into [], so has to be at least:
+>         socat -u - TCP6:[{cfg.v6}]:{port},bind=3D[{cfg.remote_v6}]:{port}
+>
 
+Yeah, I will need to propagate the ncdevmem ipv4 support to devmem.py
+in the future, but unnecessary for this series. Will do.
+
+> But not sure why we care here about bind address here, let the kernel
+> figure out the routing.
+>
+
+I will need to add this in the future to support my 5-tuple flow
+steering setup in the future, but it is indeed unnecessary for this
+series. Additionally the bind in the check_tx test is unnecessary,
+removed there as well. Lets see if it works for you.
+
+> Also, seems like "bkg(listen_cmd)" needs to be "bkg(listen_cmd,
+> exit_wait=3DTrue)", otherwise sometimes I see racy empty result.
+
+It passes for me with/without, but also fine, will do!
+
+Thanks again for testing!
+
+--=20
+Thanks,
+Mina
 
