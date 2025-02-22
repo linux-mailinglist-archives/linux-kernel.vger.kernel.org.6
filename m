@@ -1,62 +1,60 @@
-Return-Path: <linux-kernel+bounces-527181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8AFA4082A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:03:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1963A4082C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FEB9702BE7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D16704186
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:05:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB86207E0A;
-	Sat, 22 Feb 2025 12:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2059520AF6C;
+	Sat, 22 Feb 2025 12:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgS0F/pr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INii8xYY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ED12066D9
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 12:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0FD19D8AC;
+	Sat, 22 Feb 2025 12:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740225797; cv=none; b=BUop6M0EYelz1JZptzJCk6S/UIW5+YGyUV0lXfcU8UAAa5YOSlp4CzZSa4ze2WxKGAKa6UnH9JW0WL3W9rHUodsQ4EORaNieD5OBGRIW17j+i1e3QYbG1fvZI4uiNi6x1sWk1DIrMadlE4kJw3+TQZaXsrjfEu+DxFhKv9VIK2A=
+	t=1740225927; cv=none; b=PuTAXXRMhI3dte9xGNsbvRU5ia8c3pBxl3FGNvof0a+mO50tmCABZy99BpCUjZuxS7cvUBFM4Ma91sirKr/2rMIreC1SXIWotJlHNePusQzQumHwCmpmhjCO/zRQXwQzq78BqImD0b8w/BWYmrac1JZTVeVvRWHxPa3Zh9zg86Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740225797; c=relaxed/simple;
-	bh=JKuPKfP/+zE/C/l49mh6YZeCh+XMEiC/388ZHcb86Og=;
+	s=arc-20240116; t=1740225927; c=relaxed/simple;
+	bh=AvbO5/5GTYZnYvRAUft9DyG/18ymXgC3kPeuTPaKuI0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EmCSKXXhLzoMHSS4ikfJC0B7NTqHgXy+yqxmmEYZJFHjSoPKg2eyeNgPhEvA4civfOEniPEYa+yaq8lZkEEchIqSthPQv74fUF3PQ4kO4VRjFLg6+adUfqkB7UY4u8K3lGn015nj/XchdvTCittnD3wXRWOuwSHgCum19iQbqos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgS0F/pr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14366C4CED1;
-	Sat, 22 Feb 2025 12:03:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MizViB+9kRJ5w0ZocXsXe7FToOzW0OFCC7o3YrDiYlttjxv97a7bBrMjkwUxje3pLGwh6bOYzb+20QtMTYe5/4J5zmp2WjBfjkfVMAzt6yCoareTtmCksRUoj3LKa7Gw+QjqSp7oszxOToWI1WFLbksflIiNS2ZvnDsWYdclemM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INii8xYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AEE9C4CED1;
+	Sat, 22 Feb 2025 12:05:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740225796;
-	bh=JKuPKfP/+zE/C/l49mh6YZeCh+XMEiC/388ZHcb86Og=;
+	s=k20201202; t=1740225926;
+	bh=AvbO5/5GTYZnYvRAUft9DyG/18ymXgC3kPeuTPaKuI0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TgS0F/prLCu/5Oq38bHZA14MZZsaJ/DPrALJr/HZ6fVxD9isTWho+/sxA56rIvzjg
-	 aO4LFom9m5yOuTU8ecpHGxWFFohoU0c+6/ae76eO0G2m5fm1JTvPVPuU2s1KnZBV0a
-	 NgN/o+UwG5zKIjFQ4GAh6vQbOOz9/zmXPx942l2Iy7F6k66NDnpBDcog+47k1cjaeS
-	 SslV39c/juXRXZe0rdy56KH7CrsPKpoLu3ijNIHBfTNE4zi02cE//QokSRW/jrSx+2
-	 svFz3UBQGtsLy8NUWXS081Y6q52mxUvd5pxOUvZRnxZhx42IBJ7sKBThTVIha34X6V
-	 ufjdG5PrmUAtQ==
-Date: Sat, 22 Feb 2025 13:03:07 +0100
+	b=INii8xYY+1RfV8oNF/8uhHfZOeG2G+2beEP208/OrWyKS6Vu9JRlM5R1f0jTyU8wF
+	 FPB9LDo153HAZF0AOVY7/G1jpIlGe8237KK/wKxbTnAJskL03zN6pyp5HefBud4Wwm
+	 CsThjQmHppffyFTLW9hzoMcLzDSas+gBh+wUK44azftJtitB4X1tlTmObHz1CWBF1d
+	 Ms6zv6+jFon5I9xbeYIl81D2daPLr1+5GOLR37QuOSNvVAhZBaU6Yd19puPoeHY0oj
+	 tcAY8lgtJqUz8/CS5EsrVVZgXtqRPXWUaIcRixha5OhH3YM86J+EBASUKNrvnQhOPc
+	 krP+CEjNctZRA==
+Date: Sat, 22 Feb 2025 13:05:15 +0100
 From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [RFC PATCH 1/2] x86/relocs: Improve diagnostic for rejected
- absolute references
-Message-ID: <Z7m8-4X0DnPVn-SZ@gmail.com>
-References: <20250127114334.1045857-4-ardb+git@google.com>
- <20250127114334.1045857-5-ardb+git@google.com>
- <CAHk-=wgD1TGxZPC0yoiVJb3qDN9vDpzNkcW1z17+6mk_Rh+iFg@mail.gmail.com>
- <CAMj1kXGfgxBM5DJ6vwwGvqPs9hH57h-G4w=-bF51+7cckayPGA@mail.gmail.com>
- <Z6CPFv_ye8aSf320@gmail.com>
- <CAMj1kXHi63vHS7EuZE-frb-nf8P9RV=dPyFR+UU9=NaCHvP=MA@mail.gmail.com>
- <Z7m8i8YC7Mltqcpz@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	peterz@infradead.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, shakeel.butt@linux.dev,
+	rppt@kernel.org, liam.howlett@oracle.com, surenb@google.com,
+	kees@kernel.org, jannh@google.com
+Subject: Re: [PATCH v2] mm,procfs: allow read-only remote mm access under
+ CAP_PERFMON
+Message-ID: <Z7m9e-oR4rLIiDGm@gmail.com>
+References: <20250127222114.1132392-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,33 +63,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7m8i8YC7Mltqcpz@gmail.com>
+In-Reply-To: <20250127222114.1132392-1-andrii@kernel.org>
 
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+* Andrii Nakryiko <andrii@kernel.org> wrote:
 
-> So after another 2 weeks there's been no new upstream regressions I'm 
-> aware of, so - knock on wood - it seems we can leave the die() in 
-> place?
+> It's very common for various tracing and profiling toolis to need to
+> access /proc/PID/maps contents for stack symbolization needs to learn
+> which shared libraries are mapped in memory, at which file offset, etc.
+> Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless we
+> are looking at data for our own process, which is a trivial case not too
+> relevant for profilers use cases).
 > 
-> But could we perhaps make it more debuggable, should it trigger - 
-> such as not removing the relevant object file and improving the 
-> message? I.e. make the build failure experience Linus had somewhat 
-> more palatable...
+> Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
+> discover memory layout of another process: it allows to fully control
+> arbitrary other processes. This is problematic from security POV for
+> applications that only need read-only /proc/PID/maps (and other similar
+> read-only data) access, and in large production settings CAP_SYS_PTRACE
+> is frowned upon even for the system-wide profilers.
+> 
+> On the other hand, it's already possible to access similar kind of
+> information (and more) with just CAP_PERFMON capability. E.g., setting
+> up PERF_RECORD_MMAP collection through perf_event_open() would give one
+> similar information to what /proc/PID/maps provides.
+> 
+> CAP_PERFMON, together with CAP_BPF, is already a very common combination
+> for system-wide profiling and observability application. As such, it's
+> reasonable and convenient to be able to access /proc/PID/maps with
+> CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
+> 
+> For procfs, these permissions are checked through common mm_access()
+> helper, and so we augment that with cap_perfmon() check *only* if
+> requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn't be
+> permitted by CAP_PERFMON. So /proc/PID/mem, which uses
+> PTRACE_MODE_ATTACH, won't be permitted by CAP_PERFMON, but
+> /proc/PID/maps, /proc/PID/environ, and a bunch of other read-only
+> contents will be allowable under CAP_PERFMON.
+> 
+> Besides procfs itself, mm_access() is used by process_madvise() and
+> process_vm_{readv,writev}() syscalls. The former one uses
+> PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PERFMON
+> seems like a meaningful allowable capability as well.
+> 
+> process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level of
+> permissions (though for readv PTRACE_MODE_READ seems more reasonable,
+> but that's outside the scope of this change), and as such won't be
+> affected by this patch.
+> 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 
-For example, the new message is far better, even when combined with a 
-die() build failure:
-
--                       die("Absolute reference to symbol '%s' not permitted in .head.text\n",
--                           symname);
--                       break;
-+                       fprintf(stderr,
-+                               "Absolute reference to symbol '%s+0x%lx' detected in .head.text (0x%lx).\n"
-+                               "This kernel might not boot.\n",
-+                               symname, rel->r_addend, offset);
-
-as it points out that the underlying bug might result in an unbootable 
-kernel image. So the user at least knows what the pain is about ...
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
 Thanks,
 
