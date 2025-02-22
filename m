@@ -1,123 +1,121 @@
-Return-Path: <linux-kernel+bounces-527244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17719A408D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:50:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B93A408D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:51:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9887716A0F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:49:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A3219C1235
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D113137C37;
-	Sat, 22 Feb 2025 13:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E041448E3;
+	Sat, 22 Feb 2025 13:51:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1MFNhuq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBU8AN+2"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E82F1F5EA
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 13:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4493535949;
+	Sat, 22 Feb 2025 13:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740232194; cv=none; b=RGeyH/EdFvhlv4T870L+TboCOq1msk7u/SgPtxNMHKkLaPL9+6O7cQ4Hffqvy9JmDk5GYSdtvlUP9L1xcAsBFWZNPiqXnpFawp7W0KPM/qMLhFEdgfFquk65kyqTDfsrlf4RKSvBdSEvsDyV8BswRsT0Pi/uoEKtJ4BQfKUXXec=
+	t=1740232271; cv=none; b=GsEnd/wJER8T5VjmwZmecav5r/+/1iw9I0b03F+DlWABu6o0eYH5PhpBRT4mYTq+y7Dz6o6891KSXZaqgHl0ZfVMrjsDy/dRxGI3bqAkyYAPu2oTg8EZDxGrIOYABkBZ9aB/qtjwhNFDEqnz303kcmeY5KW6Z/yQKgrTiSijGcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740232194; c=relaxed/simple;
-	bh=VposXv0Ap7G54Q5mhaCAseLW8Esk1U9gJmZoNAIYLWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UXpTUO8TgepsuUcSz6LrGwr/Umz3uThLOpgyrBSKSYUy907LdJlU2jrhQuHZfMW8ze+hbvKE3zXv2cmh2iT/a+UTQo/E/lNQigg/I/Ptkl3HrHY24/LAmeExYJtZrLU5wckdtVCe0I78AvNezOVjkEUF/A6tOdTW+X0L1B1NE38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1MFNhuq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B208C4CED1;
-	Sat, 22 Feb 2025 13:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740232193;
-	bh=VposXv0Ap7G54Q5mhaCAseLW8Esk1U9gJmZoNAIYLWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M1MFNhuqlszHqu1Mp0512tim5Hknt+uJ2QA5xDsl30rkuUzuWUL5dyDfqNZXmKJpN
-	 mv8AzheuE/jA61Dxs8/6GGSjmOSNLtOK8xPcNNTyRwsqyhN2rpc+SjaR4Ti/P+evYg
-	 sXYkZTub6ul8uypyMi5Kn5l/5TjT8pGPvz6F+Y3q3VqusfUqhkAQyBkH18ejaYLBpi
-	 6Py5BL4hU179V4noB6akNleAb4h0bDiLFUN/M++8VnfVZaxuFuzNWn9iAUi1f+NG7B
-	 fp7z1nFRwGguSThKKWSdCGUNafG8noab6sXuQoHvkRqhSi0mtuKd3EbPh3eQxBMWii
-	 Uiv4mQQPcIuiQ==
-Date: Sat, 22 Feb 2025 14:49:44 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Tom Lendacky <thomas.lendacky@amd.com>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [RFC PATCH 1/2] x86/relocs: Improve diagnostic for rejected
- absolute references
-Message-ID: <Z7nV-CBlYKzA8ROV@gmail.com>
-References: <20250127114334.1045857-4-ardb+git@google.com>
- <20250127114334.1045857-5-ardb+git@google.com>
- <CAHk-=wgD1TGxZPC0yoiVJb3qDN9vDpzNkcW1z17+6mk_Rh+iFg@mail.gmail.com>
- <CAMj1kXGfgxBM5DJ6vwwGvqPs9hH57h-G4w=-bF51+7cckayPGA@mail.gmail.com>
- <Z6CPFv_ye8aSf320@gmail.com>
- <CAMj1kXHi63vHS7EuZE-frb-nf8P9RV=dPyFR+UU9=NaCHvP=MA@mail.gmail.com>
- <Z7m8i8YC7Mltqcpz@gmail.com>
- <Z7m8-4X0DnPVn-SZ@gmail.com>
- <CAMj1kXHu6yUXoGQJCqfZyBeyvSQ+8k9QEQgJJb1au3P76851Bg@mail.gmail.com>
+	s=arc-20240116; t=1740232271; c=relaxed/simple;
+	bh=7XvebaarfPWYMLZS8DRSVmQKGFCvLowf4P4Z/yIOI4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ieByRL9Jc/VB7kIpWaDvprDtGmAyGvvh8UZlxLLOY9Kbae46f4ImoDQwUkZOxRzGs5v6TrRflB68g9SYuvEjluhFXoduhcGo867CahkrtpK9YiWCCwpwMJu8NWWeYznqrMCJrxSdmAdVIIMfSrAWkS0zpbGsn/wjFCvGTPnfWWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBU8AN+2; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-548043a912fso344628e87.2;
+        Sat, 22 Feb 2025 05:51:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740232267; x=1740837067; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7XvebaarfPWYMLZS8DRSVmQKGFCvLowf4P4Z/yIOI4A=;
+        b=MBU8AN+2XkRKQ9cCFmyFfUlbI5GaEYHFtF4tkcgBAE8MXy+YR8/zsoPGXy6Bg9G5dV
+         cJ37MoBpZth4O+lXgej8KZ27jDKiqzoPT/2bAYMIMSh2sGgcNKocPnoUoHHwuXchd62E
+         MsRf16xMYtuSvsXeRIh61fuhySoLOBtqpr8QHWwQ012jN/b25oWQzAhBcFIOMq+mkjAs
+         TaEVnonGNnatMf57xHRnQPksQ2QP1NMljdIp/nfd86Rc2X+EWi64ZJzxOUBnosZVVuLl
+         UMZ3PvYaUrf4gg8vgNABndA0smDYeFFiOINfJ4dIFYT8kW28zSfPlzN9jmsQjEOzmd0/
+         sN2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740232267; x=1740837067;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7XvebaarfPWYMLZS8DRSVmQKGFCvLowf4P4Z/yIOI4A=;
+        b=PJezCn2aGoTKItK0R6XINKGqPiKB5uLyBznqu1S3D1AGIDdKy9lo34eGa57Z67wFwP
+         G4FqFHDtG8yBPJMyKPzM5/L7lB+p05Ivgc1FEQocQzW05OqZc7JTLpSA1Jv6qXqjAhS7
+         kFf3MxoNaGo/bsf7LQd+1mFB6RN79d9SVvpzqHIjbb7+q8eG8gTrYoj1Ybu9wEv1NLAE
+         z8PNz19nOw7vWOOAE8cdE84oJ7C8mmO++djEtyFuwixxT56+kes9mByhB1gMFH0ByRa1
+         d0+EfbymJv7HKd0E0rTnj+/5u0Bw1MZGPvQXiBQIBdOCbvZR/OaaSvXzCC+hKOZ3Ur8E
+         5a3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVib9HqF9j1wYHiFbPMTzib7wuGiWs8t8KstUWA64pEkciGi1GLGKzJxv+RaY6TUVp2VaYRZbhoCqGhCxsL6+U=@vger.kernel.org, AJvYcCW0dOHO3/+ZJbuC0Pwzr6zOyyFbhV9oz0Fim7Kv09LJB0bt7NwTROcbueFxGaX/6vpxnF5Q0hAcOUNNhu4=@vger.kernel.org, AJvYcCXwUznJOPFWzxxJpe99IjugZXr3gt6mc8QpJkAKZ/Svval8WOeXXY2o0cp3wqFn9PG+BTVrgctYyNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBKQsUwfMAIXlr78a16I5Bfq6xxgNC7Nhy5oWxMKn6ejJFEu0P
+	5aQ6ZWmMrZb5yo0fwgQsaN6FDD34JZKINocPnn84L6HZBZMsfPWMVl7QX6yvMNwdxqppuE2JHtN
+	b356RL8FqKnd5AB1idCuIODWiSKo=
+X-Gm-Gg: ASbGncsdLxioemT6qRS5J5Q3nBE8SKKntps+13yyDaWdgtLfM7m6LvajajzTtemtMRY
+	m3xNWjw8pVok0hMzClm9SKCRX1oFuELpmDdzcH0z8CfpUOowGjeA/qxb5dvsFC+RcqGRWaOEHiz
+	4hFdPHSsI=
+X-Google-Smtp-Source: AGHT+IEiprFzehPTOxru2M93tQg4m3wL/6UlJh/OyAX0ySYI2kjESez6vGmCeLbUDX5qhzIjXc8BWzRwjAt+mbpFnZk=
+X-Received: by 2002:a05:651c:1b14:b0:307:2aea:559a with SMTP id
+ 38308e7fff4ca-30a59997932mr9566891fa.9.1740232267051; Sat, 22 Feb 2025
+ 05:51:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHu6yUXoGQJCqfZyBeyvSQ+8k9QEQgJJb1au3P76851Bg@mail.gmail.com>
+References: <20250221205649.141305-1-yury.norov@gmail.com> <20250221205649.141305-3-yury.norov@gmail.com>
+In-Reply-To: <20250221205649.141305-3-yury.norov@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 14:50:50 +0100
+X-Gm-Features: AWEUYZkMOIblNgQKZQV0DVwztTF32mbQDrM8xd4mK5hBqeEGuus0sxvxiKDGStk
+Message-ID: <CANiq72=ctKoDz+Kf7UFBTD-oF17cTHBcrkNN_5cqxQeK609OVA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] MAINTAINERS: add rust bindings entry for bitmap API
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>, 
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, 
+	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Jason Gunthorpe <jgg@nvidia.com>, John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 21, 2025 at 9:57=E2=80=AFPM Yury Norov <yury.norov@gmail.com> w=
+rote:
+>
+> Bitmap developers do their best to keep the API stable. When API or
+> user-visible behavior needs to be changed such that it breaks rust,
+> bitmap and rust developers collaborate as follows:
 
-* Ard Biesheuvel <ardb@kernel.org> wrote:
+If I understand correctly, you are proposing to a "temporarily stable
+API", i.e. to add new APIs while keeping old ones for a bit until the
+Rust side updates to the new one (including perhaps workarounds in the
+helpers when needed). Is that correct?
 
-> On Sat, 22 Feb 2025 at 13:03, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > > So after another 2 weeks there's been no new upstream regressions I'm
-> > > aware of, so - knock on wood - it seems we can leave the die() in
-> > > place?
-> > >
-> > > But could we perhaps make it more debuggable, should it trigger -
-> > > such as not removing the relevant object file and improving the
-> > > message? I.e. make the build failure experience Linus had somewhat
-> > > more palatable...
-> >
-> > For example, the new message is far better, even when combined with a
-> > die() build failure:
-> >
-> > -                       die("Absolute reference to symbol '%s' not permitted in .head.text\n",
-> > -                           symname);
-> > -                       break;
-> > +                       fprintf(stderr,
-> > +                               "Absolute reference to symbol '%s+0x%lx' detected in .head.text (0x%lx).\n"
-> > +                               "This kernel might not boot.\n",
-> > +                               symname, rel->r_addend, offset);
-> >
-> > as it points out that the underlying bug might result in an unbootable
-> > kernel image. So the user at least knows what the pain is about ...
-> >
-> 
-> Ultimately, it is the die() that results in vmlinux to be deleted. And
-> this is actually a result of the slightly dubious way the
-> Makefile.postlink logic works: usually, artifacts are created once by
-> the Makefile rule that defines how they are built, and if that rule
-> fails, no output is produced but the input is preserved. In the
-> vmlinux case, the file is modified by a separate rule that executes
-> Makefile.postlink in an entirely separate make invocation, which
-> splits off the static ELF relocations, using vmlinux both as input and
-> output.
-> 
-> I can have a stab at fixing that instead. That way, we can use the
-> improved diagnostic message, and leave the die() in place without it
-> resulting in vmlinux to be deleted.
+In other words, while the entry is about the helpers file, the policy
+is about all APIs (since some APIs are called directly), right?
 
-This sounds like the right approach to me too!
+(Up to you, Viresh et al., of course, i.e. I am just trying to follow)
 
-Thanks,
+Thanks!
 
-	Ingo
+Cheers,
+Miguel
 
