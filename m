@@ -1,50 +1,77 @@
-Return-Path: <linux-kernel+bounces-527015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401A4A40636
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:09:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8603A40639
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:11:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1363A543D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385D419C618F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 08:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660112063D0;
-	Sat, 22 Feb 2025 08:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vmktNmA5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1935F2063E3;
+	Sat, 22 Feb 2025 08:11:30 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A0C1DE4E5;
-	Sat, 22 Feb 2025 08:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D251DE4E5;
+	Sat, 22 Feb 2025 08:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740211735; cv=none; b=FS/aYB8s/HBEiueTqqRGoA9xHPfjGIkY5BUPomL4nUsg/9yFbNP5iQl9h6UCtz+vTVIgsaRNUjpwEfrHhGUM5IM/LE06L6/I7JSw9nHb+TiDld3ZK+UGBkGsWhUamcVxdHO//PkNgA2m6vYos/kiOgShmk6lKO0JnSeEZvzc/c4=
+	t=1740211889; cv=none; b=LeGvnsztiOqy3isQLthvYSTL+TQfo6f6KAr7DIz+0wkQdw7qLYlwW+FWYDTnNqoyhHvnsUHO/bjoktZyQQf9AEm8NEPktW6bYZ2vtyCp6zGZNRO7koyKD7B6TrrhnqsO+Cz4h5ac9Pcr5kCDXyqbq+7wDqPyoi/0md4E1OcjTpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740211735; c=relaxed/simple;
-	bh=mf/JTrPZ+rYMGB4XLBDIdkYNsIeKmoMH80r1sTWDbsU=;
+	s=arc-20240116; t=1740211889; c=relaxed/simple;
+	bh=ZOpwXjS9KeIhE21B+gBzXojUKxFIqvEi76/ClH7gJFI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lte+9u+W5Lw6sEBPWeVZ++arFSqFBOfUT9Qphsh2f1W4cGMdumuJz/a250AxgyKSgO7qkaJcSer9DpOZDQjwhZX5POSrCSjuY3HnG/Px8OKYHFBnAIJtBrkNlaRs+sMhXTwI64RLlGrtLjLpislmAfROqtOl4wBl3PhLnwKHM/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vmktNmA5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C633CC4CED1;
-	Sat, 22 Feb 2025 08:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740211735;
-	bh=mf/JTrPZ+rYMGB4XLBDIdkYNsIeKmoMH80r1sTWDbsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vmktNmA5Y8sq5TSOuSyFkq7ld17bFcARcbrU1mR1gI2HLUMj7+XxyI/XW8fpdcR+h
-	 8v5lIuk510x5R7pjgifib798czYR9MB89Lw60prdhTl5nu+7oRJ0lvz22RzqfxxvpF
-	 aUAWnNVdu5pzaxBtEyLl1GXaG9JbpMUerasxt4J8=
-Date: Sat, 22 Feb 2025 09:07:47 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ravi Kumar kairi <kumarkairiravi@gmail.com>
-Cc: parthiban.veerasooran@microchip.com, christian.gromm@microchip.com,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Cleanup of most_video_dev structure
-Message-ID: <2025022236-april-defensive-8855@gregkh>
-References: <20250221163444.57492-1-kumarkairiravi@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nl0ceyoZLMNVW/MGZEpyzLmV0ak9GvlAvlXhKDwMf/j/774EeWYF64pUMv0IaqbvL+tP35RoEWNrEm8KoS/KDsniqQJKRcC1h7bScPiNmBTJB2KabNRtXIpXbT6W0atieb7aFC8SDQ2vuPlzw+RAnAfF1sl6uLo/F4YrnrHaCCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2211acda7f6so63572595ad.3;
+        Sat, 22 Feb 2025 00:11:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740211887; x=1740816687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6/vYTezKRiz0FWfXEhILnceO9ruDUuvvR8Zl89UQ1OY=;
+        b=TArXKY8ogEjmLkH0j9s8K6Xk03ycIb1+ngzSreQlbK1BegETeE3e5j7q1RvT0UwVVd
+         RzGaSBVzG8L2cG7VbBgbbGsLNYCu4RHRpz32lIxxjAjarPY/Zw1N/JBsNr3z5BKRNmyB
+         bhcOPutasXMkIJdqmjq2bTuuC0sleMidBERLpgCM0guB3KaJsJQs9S95737JdzEwqPmH
+         tRijrKr/As7bv/W0wKY/skscq/sLv4TZGlQeYa45MbhA4MqPTc/sTzKWpq2g197ovsGX
+         xe8YwXI5Kr5Pb0vMOKKZKNuAWiDsXnpgc5MwrmcmWOVH8vKooPtYyPn6sth8vd+udBNA
+         zxGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUITD9w1BZBWZjaoNlTYkjpvUISB/HDLufL/MCK0zY7jcxzwux3idtT68vnkvFVETvK1yZ0ayT0uhs9@vger.kernel.org, AJvYcCUpkY9EKIp9Xec2EqYSxhYLDdJKVwQdqpb1guobP0w4hxzDqugiOzfC1I6xTOFUumEw+snhYYEUwVCN@vger.kernel.org, AJvYcCXzY808bRkuMbusQXE7dRl+F7UIijxg/7Dss+hbA9YFE1xREig20h6AB/347i5kXhke7Ie0W3hCeLBAfpCF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPQM5/x0RycQIXkBctUQPA6esRhL13vbfjFA0dvyQct/aHRaUW
+	AJVQGfFd4U42goBhEomEfQqKkoHREfphFfI6iGokqpiFzVDjPyCqwRlo4uMZ
+X-Gm-Gg: ASbGnct3kEfKg58ZwaLqziI3xCWXwD7ft1O2YXV+t4KDcG1kvLFn1JC8sMCHwdOXEG4
+	rc/w5lcFTCUm9rVfj0LH2/am/EkmCGS2i6SiN7ZgMd2PK3zJnItDYwACYY/KxKPT78LbbuvfiL3
+	v7sgpmk8gmU71vNEel5z6vNNZJB3aRjRUted+0Yd8qPKhwTzNzW1Jhbo1CxlND39FdGTkORj8Sn
+	oG31sdRuMna+/2uDUPxxy80fGCcUYV8diDBXDVdBy464EeFxPSWYSUzAT2+GxOfCDn3UzfC8L3v
+	KmPnUK9mcJRiW/E4Tla5mKuFoVFRaXNXjmo/S2rNWdoWf5cJSBaTPS7tnFB7
+X-Google-Smtp-Source: AGHT+IF7FXrvfwa9/zGSAfB1z2DwXRu20PoXhBh4tgOozFuik5hPpvLwKCt3cLxdgEq93hZB8iQhkQ==
+X-Received: by 2002:a05:6a00:c92:b0:732:1840:8389 with SMTP id d2e1a72fcca58-73426aeb741mr8918405b3a.0.1740211887503;
+        Sat, 22 Feb 2025 00:11:27 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73271a02648sm12317180b3a.107.2025.02.22.00.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 00:11:26 -0800 (PST)
+Date: Sat, 22 Feb 2025 17:11:25 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: j.ne@posteo.net
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	=?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] dt-bindings: pci: Convert fsl,mpc83xx-pcie to YAML
+Message-ID: <20250222081125.GD1158377@rocinante>
+References: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,50 +80,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221163444.57492-1-kumarkairiravi@gmail.com>
+In-Reply-To: <20250220-ppcyaml-pci-v3-1-ca94a4f62a85@posteo.net>
 
-On Fri, Feb 21, 2025 at 10:04:24PM +0530, Ravi Kumar kairi wrote:
-> From: Ravi Kumar Kairi <kumarkairiravi@gmail.com>
-> 
-> This patch series removes unused synchronization primitives from
-> struct most_video_dev.
-> 
-> Ravi Kumar Kairi (2):
->   staging: most: Remove unused mutex from most_video_dev
->   staging: most: Remove unused spinlock from most_video_dev
-> 
->  drivers/staging/most/video/video.c | 3 ---
->  1 file changed, 3 deletions(-)
-> 
-> -- 
-> 2.48.1
-> 
+Hello,
 
-Hi,
+> Formalise the binding for the PCI controllers in the Freescale MPC8xxx
+> chip family. Information about PCI-X-specific properties was taken from
+> fsl,pci.txt. The examples were taken from mpc8315erdb.dts and
+> xpedite5200_xmon.dts.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Applied to dt-bindings, thank you!
 
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+	Krzysztof
 
