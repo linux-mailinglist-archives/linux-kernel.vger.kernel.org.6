@@ -1,161 +1,121 @@
-Return-Path: <linux-kernel+bounces-526931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF42EA40543
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:12:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C320AA40545
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDD023B7535
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FA019E039B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 03:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73BD71FF7B0;
-	Sat, 22 Feb 2025 03:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCF01EA7C1;
+	Sat, 22 Feb 2025 03:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ebfUbpyT"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BFF6v7+A"
+Received: from mail-pj1-f65.google.com (mail-pj1-f65.google.com [209.85.216.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2550A2C182;
-	Sat, 22 Feb 2025 03:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CA17E765
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740193906; cv=none; b=MbiddbISsJk6LL2UUyIvbyQQxbr2u2PsezoPkdUhYGnoH2Cl+RiUYwMZmY8O6yvYF7QLmYjGOo4zvBTEjIL6ngKA0lE2uLH3sdubJH0YBb8jY6gMZNQOXUwzVnt7hLtJH3uynHMZbAX8/Wjly695VJyx9VwVGFnenimhXizpKlY=
+	t=1740194437; cv=none; b=m9rpfV4tqBhyYY/vcab67pIP0Hs43LIc8uWt5OVytrp2rx9w6ktDZplHzvSzvS27mAkrEmP9/+On/vFGPy2DMnsdZhWPX57m3NEQ+Vwg2Q1Fa0tJIVb0g4q+vnx7ckOp9pQvjIaqavx+nBqpfrSWnmj5mqYdSrpVAakd+6ZfFaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740193906; c=relaxed/simple;
-	bh=KH25QPo6a/QgEaHyS8kxRvjT9HJEzZrDsb3ku2utXMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6N4nkmwxb1E4uDXTMQLObp71mdqkm3ale4kPjnjC7WffAEzI9r+Dt6YlzN/gOBCf86OvNo8RicqNo1HxHEviyxImk8Rzdwu9/Vn6TNcMdWpBypWdEcBiRonu0bo400LnDu1y8ZcDXOA2xYdJk0ROFFv3hakc4dHTedLaXpf8pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ebfUbpyT; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1740194437; c=relaxed/simple;
+	bh=8PxINupFkXLQzH9KQ4YNnlllIZhtJ4r/402cEm/Jfuk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jTVe7cgcAOJxh4fzlcV6U06wjxhbXCXo6jx0VgsFNrRvnbgN2Uhg0FY/aWBVhmsPdUPRTHIL4lln96s2/+LQUIgj8D0cfZmie+NsKZw784RsNpMqCXq4d7SafS0aWX3ucOyhUYFibsvwGQzZKpargdGsTypLVUO/GmhzEQ9aFKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BFF6v7+A; arc=none smtp.client-ip=209.85.216.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4397e5d5d99so17102735e9.1;
-        Fri, 21 Feb 2025 19:11:44 -0800 (PST)
+Received: by mail-pj1-f65.google.com with SMTP id 98e67ed59e1d1-2fc3027c7aeso5597431a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 19:20:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740193903; x=1740798703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740194435; x=1740799235; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eWeCVs/LUULbQLdaOp27Hroq5hpYWQynHTMF6/hHolU=;
-        b=ebfUbpyTrBTkYEPG9zk9AZU/A4bjMEADN+VhDn4fk7c2MpuJXfBoii9JA0dCBVb3gI
-         wlY5r61YAjkiOnd05WZhqcJnQDnPJ8Zwmk1xqAJO5a1Q+Xp4q4Vgt5rSSFTOgf7Bah18
-         TfawXA3PLfykwEO86S3L3ttAfaUzds7zt+7tfa2lYuD12753CSvRYrxAG4z+u0wWx5fO
-         bBeRY8vgF1A2qnKhJP7WmWx4tdnH2zYelAq7v22a9j7TLF81+xLpN++CFc9wlrBLPxkD
-         82hHJQxlqtE702eIFH0jYxfwRQHyGDAPO5rAHSahpC4xhra/eqyFQ+X04Frjgh1gcuNK
-         m2UQ==
+        bh=/u1P0vtgbpIVz3dLfer3gUHcSU9SobBAe0V92OSJW+M=;
+        b=BFF6v7+AHVcSeGbB/OtzJUFoMyjbPC27HZUt5yZoPWn3z/m+qlqJz76bn84ip57TR5
+         /ZY/IMYyHsz6gCsSQ3rshnXr8+ZRqWpvqLjtXbD2xJiNzFxLKPGNnnr/Htjsi6BVwFe/
+         p/7cdzuin3PUxS5GzDVWsHl2mVeiP51GMfbiNnJ2n/1CvOABRKW9v9O9N8+GwRRQjZV8
+         8bp/lIoOWiYmJc+p7+9jBncgMwLi6HzKq/HtrqJGeTQhhzPLtctKJqcGmkG9w8GU8L8g
+         jhGWZeehlM/EA8v/QmLiujXyDiI1ZcAj3Xp5pSw2SRueKecAaSrlAGrgL6WmtMIss4E2
+         1mGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740193903; x=1740798703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740194435; x=1740799235;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eWeCVs/LUULbQLdaOp27Hroq5hpYWQynHTMF6/hHolU=;
-        b=gVlgtGREwzRnv+hp77T0PhTB8XzH+/OG4OHbSA3lddIvItw/qtBlSMZ50zTr+k1DpQ
-         vUiXyv36oHgeUPCVptv7Bs9UkpUW+8q/zEzN6LLDqbuXqpDxCkdUmzD8DthY6oZEQFm6
-         7vfwAmZ7dTpRmN0rsz5fGq1zFpWH/CgZW2RwsLJR6WAQIsoKh7x/n5Z+lj08VeyXDCZQ
-         HPwLLO/gpBudD4oaXAWE7xM+6bEVNSSaotCVX6ogqe9Ffm/kJGIKun8JkDFK1htfeqp1
-         LNNg6/3M0ALxhsx48r0iiExtJKpWQRI7PH/2vkdBol0C/uepAx/QQIg+lHO8Xz/XwHHa
-         Ar+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWvBIJODktbiCxE4Aknbu170trGyWjbC5vK2o2J1HbCQts8Sq+kGgCGizMddJXGvusuTxdpndZX7s1IuSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0y25HaAJNBhpfORCZwMofcyaHGxeMs8GLYajU76PDNONRlpxC
-	hP//eEch7qyBGBv+ZpZ5WNaCakwRhv4Rvh2WHM7mvq4ApifOTEJF1MhHq4tV+uVw1zJTfyGKYLk
-	sGsIo99pUvrjchISPWJnt4N1kBFU=
-X-Gm-Gg: ASbGnctqbnwYsZTx9f4UWlq0YXarXE8G6zf+2gXlhMjj2psIZ+Grm5Enjc5iDn5KaHy
-	VS4CiQuAricccZyaSYiWKqWiE8Sjy/QuCobR0SOHRNWvWdvL1ONf0QMQnEIAyVImK+w1B3IUSGT
-	BFDMoocjI7oenKdxmHEpztoTs=
-X-Google-Smtp-Source: AGHT+IFHd4FjvQqCrCtKgqnPKpghXHhZlzz58QS00WpJ2p2XRTL9M2RMPB6SCT69PYsT5XfrlmC6wGcJGaq0WN+opd4=
-X-Received: by 2002:a5d:5350:0:b0:38f:2a84:7542 with SMTP id
- ffacd0b85a97d-38f6e97af1emr3987132f8f.28.1740193903162; Fri, 21 Feb 2025
- 19:11:43 -0800 (PST)
+        bh=/u1P0vtgbpIVz3dLfer3gUHcSU9SobBAe0V92OSJW+M=;
+        b=pHQtCTWI4PCrkEHLLs6xB9ZmVsGwvaL0Ybm9+pCITjDUw3BOrLuRd7sPvuu8JN20j/
+         QVSZ7wTbHdqxKMQCAp2KfoS2INO0eI2Agw/+o8HXZnnHPnqP0lg0lLqn5vne29j1CMSV
+         sEPmmUZZBaBJl5rNG97wK2iIGyWEUUzn3bm1DTNeAqGhZQxpR5QVnQthfUCM1hc6QI7n
+         6RnIAK29lrSl5bOqUni69wVBrP2QcHZ/JWNHp/uCjMXuXCwjN8zy6efQNBwpiPBRgEuN
+         RF84pinj8cuKGdiVYXP56OhjCv7SdK+vmr3k5ItRmkpRUhy+KqKpqQBWHfc9a7i9G3Ba
+         +6iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkR6rz01IzBw5tRjqPe44ee5lo0zkDp/F3hJIPYB12kwl2cNTCJbVMQoNRXc+Wry48R+chvTV8HtNU/Aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIuLghGh43+lXp75u6fOv96r/LPOeo/bciHh3W9Ebly2741tzz
+	DKfI6LNZviVs75/wU39u/VtS12N8SaH4mG77LMG8TaETyPRrGIBA
+X-Gm-Gg: ASbGnct2SggnZCJG0PQeTziBZnQtDsintcO9PS19COcEsD3zG9L8UDlLFEGzi89K7Zh
+	aCk/wrjbeN+7hSSDNufqb11UBcyJ829vtV7pAJKMidcp4I3WMWXMmYHQ6/TMDnvXb6+3jkXCX/4
+	3axscrPApJKVK1hnNGvqXZ0EpV6L1oIMbUQwaKykYsILG69I35zkqy6VWt6UMnZRtxYT58oIUss
+	gsMYe0XX77K1vk+/5Vz77/6awYX8u4vnCRmoVij/j1Be9BGrXHIhLa18j6jZ+BcOFEo0dBz496A
+	De3lp9N11rwJLT2JMVVVqH0ZCdy7E4EocBG8dK9cfIxoF3I55e4w9zc=
+X-Google-Smtp-Source: AGHT+IE/CRf3uhTQuGbhoi15zplnNKI7HnC9iDTMtXe2Wsuv8NtZvruo9BnyAXbYTtAaiiO5tmvxQA==
+X-Received: by 2002:a17:90b:548f:b0:2ee:5958:828 with SMTP id 98e67ed59e1d1-2fce86adf6cmr9576269a91.9.1740194435570;
+        Fri, 21 Feb 2025 19:20:35 -0800 (PST)
+Received: from localhost.localdomain ([2408:80e0:41fc:0:fe2d:0:2:6253])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5585708sm144568895ad.217.2025.02.21.19.20.32
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 21 Feb 2025 19:20:35 -0800 (PST)
+From: zihan zhou <15645113830zzh@gmail.com>
+To: qyousef@layalina.io
+Cc: 15645113830zzh@gmail.com,
+	bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	juri.lelli@redhat.com,
+	linux-kernel@vger.kernel.org,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com
+Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks getting an extra tick
+Date: Sat, 22 Feb 2025 11:19:46 +0800
+Message-Id: <20250222031945.67519-1-15645113830zzh@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <20250210230500.53mybtyvzhdagot5@airbuntu>
+References: <20250210230500.53mybtyvzhdagot5@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1740009184.git.yepeilin@google.com> <e2eb5c6912f292ed229aa4fb14e42d7f4c2f8571.1740009184.git.yepeilin@google.com>
-In-Reply-To: <e2eb5c6912f292ed229aa4fb14e42d7f4c2f8571.1740009184.git.yepeilin@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 21 Feb 2025 19:11:32 -0800
-X-Gm-Features: AWEUYZlZHAk5-Pi4bkDG584UOJ60mu8CwbUKbEyBXUnO5vXzR3fB-Zakai_-2X0
-Message-ID: <CAADnVQ+bJwwYKCU-HRWdgdfpc4pETxsVFtBOKAvfzLrR0Xvs4A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 6/9] arm64: insn: Add load-acquire and
- store-release instructions
-To: Peilin Ye <yepeilin@google.com>
-Cc: bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
-	Xu Kuohai <xukuohai@huaweicloud.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	David Vernet <void@manifault.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
-	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 5:21=E2=80=AFPM Peilin Ye <yepeilin@google.com> wro=
-te:
->
-> Add load-acquire ("load_acq", LDAR{,B,H}) and store-release
-> ("store_rel", STLR{,B,H}) instructions.  Breakdown of encoding:
->
->                                 size        L   (Rs)  o0 (Rt2) Rn    Rt
->              mask (0x3fdffc00): 00 111111 1 1 0 11111 1  11111 00000 0000=
-0
->   value, load_acq (0x08dffc00): 00 001000 1 1 0 11111 1  11111 00000 0000=
-0
->  value, store_rel (0x089ffc00): 00 001000 1 0 0 11111 1  11111 00000 0000=
-0
->
-> As suggested by Xu [1], include all Should-Be-One (SBO) bits ("Rs" and
-> "Rt2" fields) in the "mask" and "value" numbers.
->
-> It is worth noting that we are adding the "no offset" variant of STLR
-> instead of the "pre-index" variant, which has a different encoding.
->
-> Reference: Arm Architecture Reference Manual (ARM DDI 0487K.a,
->            ID032224),
->
->   * C6.2.161 LDAR
->   * C6.2.353 STLR
->
-> [1] https://lore.kernel.org/bpf/4e6641ce-3f1e-4251-8daf-4dd4b77d08c4@huaw=
-eicloud.com/
->
-> Signed-off-by: Peilin Ye <yepeilin@google.com>
-> ---
->  arch/arm64/include/asm/insn.h |  8 ++++++++
->  arch/arm64/lib/insn.c         | 29 +++++++++++++++++++++++++++++
->  2 files changed, 37 insertions(+)
->
-> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.=
-h
-> index 2d8316b3abaf..39577f1d079a 100644
-> --- a/arch/arm64/include/asm/insn.h
-> +++ b/arch/arm64/include/asm/insn.h
-> @@ -188,8 +188,10 @@ enum aarch64_insn_ldst_type {
->         AARCH64_INSN_LDST_STORE_PAIR_PRE_INDEX,
->         AARCH64_INSN_LDST_LOAD_PAIR_POST_INDEX,
->         AARCH64_INSN_LDST_STORE_PAIR_POST_INDEX,
-> +       AARCH64_INSN_LDST_LOAD_ACQ,
->         AARCH64_INSN_LDST_LOAD_EX,
->         AARCH64_INSN_LDST_LOAD_ACQ_EX,
-> +       AARCH64_INSN_LDST_STORE_REL,
->         AARCH64_INSN_LDST_STORE_EX,
->         AARCH64_INSN_LDST_STORE_REL_EX,
->         AARCH64_INSN_LDST_SIGNED_LOAD_IMM_OFFSET,
+> Yes. The minimum bar of modern hardware is higher now. And generally IMHO this
+> value depends on workload. NR_CPUs can make an overloaded case harder, but it
+> really wouldn't take much to saturate 8 CPUs compared to 2 CPUs. And from
+> experience the larger the machine the larger the workload, so the worst case
+> scenario of having to slice won't be in practice too much different. Especially
+> many programmers look at NR_CPUs and spawn as many threads..
+> 
+> Besides with EAS we force packing, so we artificially force contention to save
+> power.
+> 
+> Dynamically depending on rq->hr_nr_runnable looks attractive but I think this
+> is a recipe for more confusion. We sort of had this with sched_period, the new
+> fixed model is better IMHO.
 
-Xu, Puranjay, other arm experts,
-
-Please help review these patches.
+Hi, It seems that I have been thinking less about things. I have been re
+reading these emails recently. Can you give me the LPC links for these
+discussions? I want to relearn this part seriously, such as why we don't
+dynamically adjust the slice.
 
 Thanks!
 
