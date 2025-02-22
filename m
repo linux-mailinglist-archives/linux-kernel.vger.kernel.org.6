@@ -1,393 +1,304 @@
-Return-Path: <linux-kernel+bounces-526889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8213AA404D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:45:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDFDCA404DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489AB44052E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:44:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D1B53ADC51
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B0B1FBEB3;
-	Sat, 22 Feb 2025 01:43:54 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D2116C69F;
+	Sat, 22 Feb 2025 01:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XqDqk4GX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99381E376E;
-	Sat, 22 Feb 2025 01:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 346393D69;
+	Sat, 22 Feb 2025 01:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740188633; cv=none; b=YRKwAYys4asqrCDgIfFJunagGXZBc4llxRfIRXshKbpjAEc+QsbV+YfVEGL5DWNM4JBVDmUycX9OsiKrtkI/V2D6jIi86ne3K7zbj5NZjIZfR7sR1jBaF1sfUF8lAPKbfB2JhtClImHgxG0cWfX3+4rlK1vSmSyzNhrFiaCoo8I=
+	t=1740188786; cv=none; b=omVtbdw3lU8fH/UOaLIbeh/r8Sotvouol8YSwNQFSvbIfIR3KA0lyJehXhCDlsmvZJsLQ2CmU3Y1/mppWfZMKJK02S1yjesW76UXm8K8O/HCol9cQPfN+4I4KFsZDdp98bqg1jbKmABF8Jleytga9Dlo9rXyTJdKwjf6/uXt/EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740188633; c=relaxed/simple;
-	bh=VWc+giNU0hRQ4gfPjhz8oaNz8blMvEj95HURSnl/VTg=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GkzeR+6VFgrktT+GhNa4TbqZFAg4HTT0qhSEDDN432id4shRxQYyDUeGowiQNp58rUrCFnYGZzOoRdUhrU7OVDOgUGlm7Rlsz/JKvIv20VMA+z4JkQoIQmPP6pXOSAhgHeJ/OuphrDH3SqJ6OyWZgT5FXzD7s1KykPFt07VgBAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z08sZ3ltXz4f3jt4;
-	Sat, 22 Feb 2025 09:43:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DD7161A058E;
-	Sat, 22 Feb 2025 09:43:46 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCH61_QK7lnBhkkEg--.14192S3;
-	Sat, 22 Feb 2025 09:43:46 +0800 (CST)
-Subject: Re: [PATCH 12/12] badblocks: use sector_t instead of int to avoid
- truncation of badblocks length
-To: Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
- song@kernel.org, colyli@kernel.org, dan.j.williams@intel.com,
- vishal.l.verma@intel.com, dave.jiang@intel.com, ira.weiny@intel.com,
- dlemoal@kernel.org, yanjun.zhu@linux.dev, kch@nvidia.com, hare@suse.de,
- zhengqixing@huawei.com, john.g.garry@oracle.com, geliang@kernel.org,
- xni@redhat.com, colyli@suse.de
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250221081109.734170-1-zhengqixing@huaweicloud.com>
- <20250221081109.734170-13-zhengqixing@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f013c2e1-adc0-9a09-67b3-e07f89f936e7@huaweicloud.com>
-Date: Sat, 22 Feb 2025 09:43:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740188786; c=relaxed/simple;
+	bh=5hbl0iY/AwHPJ3D/xmZWi99MZ3YMif+kqtuav306xJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EzlWwnFGq8Jg3xSMfsBwW2IXoBDMFsAQqINwLdBmOotfNMesVCR+DcHSfEsW4YZSGt5bOWLZ+6omwKYSm+/pN4RBSac5sBeCTBhb6j5ziMDiWMEPCBgc+J0lUgBNH5PND6ojv1X5xcZdGch83qdOGhQt9y/ho4W7qLObkLy9u7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XqDqk4GX; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740188784; x=1771724784;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=5hbl0iY/AwHPJ3D/xmZWi99MZ3YMif+kqtuav306xJI=;
+  b=XqDqk4GXe5tzO0Ht66GQwHpiabTrSlmoxd+Zcl23punW+EyigOBW1wCn
+   tWqtTCqgJJsOGeKwuNIVpgtKXVTuxLXxAmaq3KrXIsZf32Ncsw8gNjp+U
+   5w7umVs0FGxjFOvh0/ghsI+SsXLWR0uxY5d8qWmWSTLWxh4cLHZ+xmjbC
+   I2IjB4sBisgSrVi7IbgD4Pxynq6PnxGfZZcCQljJC1c+ZH6FwkCuRbFG+
+   KgwP1NI4iWJqnyukGF+Af2hskLSkTzM1UFES54u35mhj1afESDr7mkgsx
+   oKhvwu5+Xc86Y1zvM0JdsGK9ftl/2EiDOrCByIXxkSpqGoFIG+2yy1yUE
+   A==;
+X-CSE-ConnectionGUID: lg3RyVQgTuebbdrN+StcNg==
+X-CSE-MsgGUID: YEJgWjNjR9WqAOSTBWS//A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52449003"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="52449003"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 17:46:24 -0800
+X-CSE-ConnectionGUID: HlC75RP8TQui6Mno0TPsbw==
+X-CSE-MsgGUID: 1lJwbhgaRbuS1OM8OxX1SA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,306,1732608000"; 
+   d="scan'208";a="120621593"
+Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 17:46:20 -0800
+From: Binbin Wu <binbin.wu@linux.intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org
+Cc: rick.p.edgecombe@intel.com,
+	kai.huang@intel.com,
+	adrian.hunter@intel.com,
+	reinette.chatre@intel.com,
+	xiaoyao.li@intel.com,
+	tony.lindgren@intel.com,
+	isaku.yamahata@intel.com,
+	yan.y.zhao@intel.com,
+	chao.gao@intel.com,
+	linux-kernel@vger.kernel.org,
+	binbin.wu@linux.intel.com
+Subject: [PATCH v3 00/16] KVM: TDX: TDX interrupts
+Date: Sat, 22 Feb 2025 09:47:41 +0800
+Message-ID: <20250222014757.897978-1-binbin.wu@linux.intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250221081109.734170-13-zhengqixing@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH61_QK7lnBhkkEg--.14192S3
-X-Coremail-Antispam: 1UD129KBjvJXoWfJr1Uur1ftFy8Gr48JFyDGFg_yoWkuw1Upa
-	1DJa4ftryUWF1rW3WUZayq9r1F934ftFWUKrWUW345WF97K3s7tF1kXFyYqFyq9F13Grn0
-	va1Y9rW3ua4kKrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9ab4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJr
-	UvcSsGvfC2KfnxnUUI43ZEXa7IU0s2-5UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2025/02/21 16:11, Zheng Qixing Ð´µÀ:
-> From: Zheng Qixing <zhengqixing@huawei.com>
-> 
-> There is a truncation of badblocks length issue when set badblocks as
-> follow:
-> 
-> echo "2055 4294967299" > bad_blocks
-> cat bad_blocks
-> 2055 3
-> 
-> Change 'sectors' argument type from 'int' to 'sector_t'.
-> 
-> This change avoids truncation of badblocks length for large sectors by
-> replacing 'int' with 'sector_t' (u64), enabling proper handling of larger
-> disk sizes and ensuring compatibility with 64-bit sector addressing.
-> 
-> Fixes: 9e0e252a048b ("badblocks: Add core badblock management code")
-> Signed-off-by: Zheng Qixing <zhengqixing@huawei.com>
-> ---
->   block/badblocks.c             | 20 ++++++++------------
->   drivers/block/null_blk/main.c |  2 +-
->   drivers/md/md.h               |  6 +++---
->   drivers/md/raid1-10.c         |  2 +-
->   drivers/md/raid1.c            |  4 ++--
->   drivers/md/raid10.c           |  8 ++++----
->   drivers/nvdimm/nd.h           |  2 +-
->   drivers/nvdimm/pfn_devs.c     |  7 ++++---
->   drivers/nvdimm/pmem.c         |  2 +-
->   include/linux/badblocks.h     |  8 ++++----
->   10 files changed, 29 insertions(+), 32 deletions(-)
-> 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> diff --git a/block/badblocks.c b/block/badblocks.c
-> index 8f057563488a..14e3be47d22d 100644
-> --- a/block/badblocks.c
-> +++ b/block/badblocks.c
-> @@ -836,7 +836,7 @@ static bool try_adjacent_combine(struct badblocks *bb, int prev)
->   }
->   
->   /* Do exact work to set bad block range into the bad block table */
-> -static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +static bool _badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->   			   int acknowledged)
->   {
->   	int len = 0, added = 0;
-> @@ -956,8 +956,6 @@ static bool _badblocks_set(struct badblocks *bb, sector_t s, int sectors,
->   	if (sectors > 0)
->   		goto re_insert;
->   
-> -	WARN_ON(sectors < 0);
-> -
->   	/*
->   	 * Check whether the following already set range can be
->   	 * merged. (prev < 0) condition is not handled here,
-> @@ -1048,7 +1046,7 @@ static int front_splitting_clear(struct badblocks *bb, int prev,
->   }
->   
->   /* Do the exact work to clear bad block range from the bad block table */
-> -static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
-> +static bool _badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
->   {
->   	struct badblocks_context bad;
->   	int prev = -1, hint = -1;
-> @@ -1171,8 +1169,6 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
->   	if (sectors > 0)
->   		goto re_clear;
->   
-> -	WARN_ON(sectors < 0);
-> -
->   	if (cleared) {
->   		badblocks_update_acked(bb);
->   		set_changed(bb);
-> @@ -1187,8 +1183,8 @@ static bool _badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
->   }
->   
->   /* Do the exact work to check bad blocks range from the bad block table */
-> -static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -			    sector_t *first_bad, int *bad_sectors)
-> +static int _badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +			    sector_t *first_bad, sector_t *bad_sectors)
->   {
->   	int prev = -1, hint = -1, set = 0;
->   	struct badblocks_context bad;
-> @@ -1298,8 +1294,8 @@ static int _badblocks_check(struct badblocks *bb, sector_t s, int sectors,
->    * -1: there are bad blocks which have not yet been acknowledged in metadata.
->    * plus the start/length of the first bad section we overlap.
->    */
-> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -			sector_t *first_bad, int *bad_sectors)
-> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +			sector_t *first_bad, sector_t *bad_sectors)
->   {
->   	unsigned int seq;
->   	int rv;
-> @@ -1340,7 +1336,7 @@ EXPORT_SYMBOL_GPL(badblocks_check);
->    *  true: success
->    *  false: failed to set badblocks (out of space)
->    */
-> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->   		   int acknowledged)
->   {
->   	return _badblocks_set(bb, s, sectors, acknowledged);
-> @@ -1361,7 +1357,7 @@ EXPORT_SYMBOL_GPL(badblocks_set);
->    *  true: success
->    *  false: failed to clear badblocks
->    */
-> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors)
-> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors)
->   {
->   	return _badblocks_clear(bb, s, sectors);
->   }
-> diff --git a/drivers/block/null_blk/main.c b/drivers/block/null_blk/main.c
-> index 623db72ad66b..6e7d80b6e92b 100644
-> --- a/drivers/block/null_blk/main.c
-> +++ b/drivers/block/null_blk/main.c
-> @@ -1302,7 +1302,7 @@ static inline blk_status_t null_handle_badblocks(struct nullb_cmd *cmd,
->   {
->   	struct badblocks *bb = &cmd->nq->dev->badblocks;
->   	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->   
->   	if (badblocks_check(bb, sector, nr_sectors, &first_bad, &bad_sectors))
->   		return BLK_STS_IOERR;
-> diff --git a/drivers/md/md.h b/drivers/md/md.h
-> index 923a0ef51efe..6edc0f71b7d4 100644
-> --- a/drivers/md/md.h
-> +++ b/drivers/md/md.h
-> @@ -266,8 +266,8 @@ enum flag_bits {
->   	Nonrot,			/* non-rotational device (SSD) */
->   };
->   
-> -static inline int is_badblock(struct md_rdev *rdev, sector_t s, int sectors,
-> -			      sector_t *first_bad, int *bad_sectors)
-> +static inline int is_badblock(struct md_rdev *rdev, sector_t s, sector_t sectors,
-> +			      sector_t *first_bad, sector_t *bad_sectors)
->   {
->   	if (unlikely(rdev->badblocks.count)) {
->   		int rv = badblocks_check(&rdev->badblocks, rdev->data_offset + s,
-> @@ -284,7 +284,7 @@ static inline int rdev_has_badblock(struct md_rdev *rdev, sector_t s,
->   				    int sectors)
->   {
->   	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->   
->   	return is_badblock(rdev, s, sectors, &first_bad, &bad_sectors);
->   }
-> diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
-> index 4378d3250bd7..62b980b12f93 100644
-> --- a/drivers/md/raid1-10.c
-> +++ b/drivers/md/raid1-10.c
-> @@ -247,7 +247,7 @@ static inline int raid1_check_read_range(struct md_rdev *rdev,
->   					 sector_t this_sector, int *len)
->   {
->   	sector_t first_bad;
-> -	int bad_sectors;
-> +	sector_t bad_sectors;
->   
->   	/* no bad block overlap */
->   	if (!is_badblock(rdev, this_sector, *len, &first_bad, &bad_sectors))
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 8beb8cccc6af..0b2839105857 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1537,7 +1537,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   		atomic_inc(&rdev->nr_pending);
->   		if (test_bit(WriteErrorSeen, &rdev->flags)) {
->   			sector_t first_bad;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->   			int is_bad;
->   
->   			is_bad = is_badblock(rdev, r1_bio->sector, max_sectors,
-> @@ -2886,7 +2886,7 @@ static sector_t raid1_sync_request(struct mddev *mddev, sector_t sector_nr,
->   		} else {
->   			/* may need to read from here */
->   			sector_t first_bad = MaxSector;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->   
->   			if (is_badblock(rdev, sector_nr, good_sectors,
->   					&first_bad, &bad_sectors)) {
-> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-> index 7ed933181712..a8664e29aada 100644
-> --- a/drivers/md/raid10.c
-> +++ b/drivers/md/raid10.c
-> @@ -747,7 +747,7 @@ static struct md_rdev *read_balance(struct r10conf *conf,
->   
->   	for (slot = 0; slot < conf->copies ; slot++) {
->   		sector_t first_bad;
-> -		int bad_sectors;
-> +		sector_t bad_sectors;
->   		sector_t dev_sector;
->   		unsigned int pending;
->   		bool nonrot;
-> @@ -1438,7 +1438,7 @@ static void raid10_write_request(struct mddev *mddev, struct bio *bio,
->   		if (rdev && test_bit(WriteErrorSeen, &rdev->flags)) {
->   			sector_t first_bad;
->   			sector_t dev_sector = r10_bio->devs[i].addr;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->   			int is_bad;
->   
->   			is_bad = is_badblock(rdev, dev_sector, max_sectors,
-> @@ -3413,7 +3413,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
->   				sector_t from_addr, to_addr;
->   				struct md_rdev *rdev = conf->mirrors[d].rdev;
->   				sector_t sector, first_bad;
-> -				int bad_sectors;
-> +				sector_t bad_sectors;
->   				if (!rdev ||
->   				    !test_bit(In_sync, &rdev->flags))
->   					continue;
-> @@ -3609,7 +3609,7 @@ static sector_t raid10_sync_request(struct mddev *mddev, sector_t sector_nr,
->   		for (i = 0; i < conf->copies; i++) {
->   			int d = r10_bio->devs[i].devnum;
->   			sector_t first_bad, sector;
-> -			int bad_sectors;
-> +			sector_t bad_sectors;
->   			struct md_rdev *rdev;
->   
->   			if (r10_bio->devs[i].repl_bio)
-> diff --git a/drivers/nvdimm/nd.h b/drivers/nvdimm/nd.h
-> index 5ca06e9a2d29..cc5c8f3f81e8 100644
-> --- a/drivers/nvdimm/nd.h
-> +++ b/drivers/nvdimm/nd.h
-> @@ -673,7 +673,7 @@ static inline bool is_bad_pmem(struct badblocks *bb, sector_t sector,
->   {
->   	if (bb->count) {
->   		sector_t first_bad;
-> -		int num_bad;
-> +		sector_t num_bad;
->   
->   		return !!badblocks_check(bb, sector, len / 512, &first_bad,
->   				&num_bad);
-> diff --git a/drivers/nvdimm/pfn_devs.c b/drivers/nvdimm/pfn_devs.c
-> index cfdfe0eaa512..8f3e816e805d 100644
-> --- a/drivers/nvdimm/pfn_devs.c
-> +++ b/drivers/nvdimm/pfn_devs.c
-> @@ -367,9 +367,10 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->   	struct nd_namespace_common *ndns = nd_pfn->ndns;
->   	void *zero_page = page_address(ZERO_PAGE(0));
->   	struct nd_pfn_sb *pfn_sb = nd_pfn->pfn_sb;
-> -	int num_bad, meta_num, rc, bb_present;
-> +	int meta_num, rc, bb_present;
->   	sector_t first_bad, meta_start;
->   	struct nd_namespace_io *nsio;
-> +	sector_t num_bad;
->   
->   	if (nd_pfn->mode != PFN_MODE_PMEM)
->   		return 0;
-> @@ -394,7 +395,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->   		bb_present = badblocks_check(&nd_region->bb, meta_start,
->   				meta_num, &first_bad, &num_bad);
->   		if (bb_present) {
-> -			dev_dbg(&nd_pfn->dev, "meta: %x badblocks at %llx\n",
-> +			dev_dbg(&nd_pfn->dev, "meta: %llx badblocks at %llx\n",
->   					num_bad, first_bad);
->   			nsoff = ALIGN_DOWN((nd_region->ndr_start
->   					+ (first_bad << 9)) - nsio->res.start,
-> @@ -413,7 +414,7 @@ static int nd_pfn_clear_memmap_errors(struct nd_pfn *nd_pfn)
->   			}
->   			if (rc) {
->   				dev_err(&nd_pfn->dev,
-> -					"error clearing %x badblocks at %llx\n",
-> +					"error clearing %llx badblocks at %llx\n",
->   					num_bad, first_bad);
->   				return rc;
->   			}
-> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-> index d81faa9d89c9..43156e1576c9 100644
-> --- a/drivers/nvdimm/pmem.c
-> +++ b/drivers/nvdimm/pmem.c
-> @@ -249,7 +249,7 @@ __weak long __pmem_direct_access(struct pmem_device *pmem, pgoff_t pgoff,
->   	unsigned int num = PFN_PHYS(nr_pages) >> SECTOR_SHIFT;
->   	struct badblocks *bb = &pmem->bb;
->   	sector_t first_bad;
-> -	int num_bad;
-> +	sector_t num_bad;
->   
->   	if (kaddr)
->   		*kaddr = pmem->virt_addr + offset;
-> diff --git a/include/linux/badblocks.h b/include/linux/badblocks.h
-> index 8764bed9ff16..996493917f36 100644
-> --- a/include/linux/badblocks.h
-> +++ b/include/linux/badblocks.h
-> @@ -48,11 +48,11 @@ struct badblocks_context {
->   	int		ack;
->   };
->   
-> -int badblocks_check(struct badblocks *bb, sector_t s, int sectors,
-> -		   sector_t *first_bad, int *bad_sectors);
-> -bool badblocks_set(struct badblocks *bb, sector_t s, int sectors,
-> +int badblocks_check(struct badblocks *bb, sector_t s, sector_t sectors,
-> +		    sector_t *first_bad, sector_t *bad_sectors);
-> +bool badblocks_set(struct badblocks *bb, sector_t s, sector_t sectors,
->   		   int acknowledged);
-> -bool badblocks_clear(struct badblocks *bb, sector_t s, int sectors);
-> +bool badblocks_clear(struct badblocks *bb, sector_t s, sector_t sectors);
->   void ack_all_badblocks(struct badblocks *bb);
->   ssize_t badblocks_show(struct badblocks *bb, char *page, int unack);
->   ssize_t badblocks_store(struct badblocks *bb, const char *page, size_t len,
-> 
+Hi,
+
+This patch series introduces the support of interrupt handling for TDX
+guests, including virtual interrupt injection and VM-Exits caused by
+vectored events.
+
+This patch set is one of several patch sets that are all needed to provide
+the ability to run a functioning TD VM.  We think this is in pretty good
+shape at this point and ready for handoff to Paolo.
+
+
+Base of this series
+===================
+This series is based on kvm-coco-queue up to the end of "TD vcpu
+enter/exit", plus one later section. Stack is:
+ - '3bd69dc8a4a9 ("KVM: x86: Add a switch_db_regs flag to handle TDX's
+   auto-switched behavior")'.
+ - v3 of "KVM: TDX: TDX hypercalls may exit to userspace".
+
+
+Notable changes since v2 [1]
+============================
+Clear vcpu->arch.nmi_injected right after writing to PEND_NMI.  From KVM's
+perspective, NMI injection is completed right after writing to PEND_NMI.
+KVM doesn't care whether an NMI is injected by the TDX module or not.
+As a result, patch "KVM: TDX: Complete interrupts after TD exit" is not
+needed and dropped.
+
+Add some description in the changelog of "KVM: TDX: Add support for find
+pending IRQ in a protected local APIC" about why KVM skips checking pending
+RVI for non-HALTED cases.
+
+Use kvm_x86_call(protected_apic_has_interrupt)(v) instead of
+static_call(kvm_x86_protected_apic_has_interrupt)(v)
+
+Others are minor changes related to code style, e.g., removing white spaces
+and fixing alignment issue.
+
+
+Virtual interrupt injection
+===========================
+Non-NMI Interrupt
+-----------------
+TDX supports non-NMI interrupt injection only by posted interrupt. Posted
+interrupt descriptors (PIDs) are allocated in shared memory, KVM can update
+them directly. To post pending interrupts in the PID, KVM can generate a
+self-IPI with notification vector prior to TD entry.
+TDX guest status is protected, KVM can't get the interrupt status of TDX
+guest. In this series, assumes interrupt is always allowed. A later patch
+set will have the support for TDX guest to call TDVMCALL with HLT, which
+passes the interrupt block flag, so that whether interrupt is allowed in
+HLT will checked against the interrupt block flag.
+
+NMI
+---
+KVM can request the TDX module to inject a NMI into a TDX vCPU by setting
+the PEND_NMI TDVPS field to 1. Following that, KVM can call TDH.VP.ENTER to
+run the vCPU and the TDX module will attempt to inject the NMI as soon as
+possible.
+PEND_NMI TDVPS field is a 1-bit filed, i.e. KVM can only pend one NMI in
+the TDX module. Also, TDX doesn't allow KVM to request NMI-window exit
+directly. When there is already one NMI pending in the TDX module, i.e. it
+has not been delivered to TDX guest yet, if there is NMI pending in KVM,
+collapse the pending NMI in KVM into the one pending in the TDX module.
+Such collapse is OK considering on X86 bare metal, multiple NMIs could
+collapse into one NMI, e.g. when NMI is blocked by SMI.  It's OS's
+responsibility to poll all NMI sources in the NMI handler to avoid missing
+handling of some NMI events. More details can be found in the changelog of
+the patch "KVM: TDX: Implement methods to inject NMI".
+
+SMI
+---
+TDX doesn't support system-management mode (SMM) and system-management
+interrupt (SMI) in guest TDs because TDX module doesn't provide a way for
+VMM to inject SMI into guest TD or switch guest vCPU mode into SMM. Handle
+SMI request as what KVM does for CONFIG_KVM_SMM=n, i.e. return -ENOTTY,
+and add KVM_BUG_ON() to SMI related OPs for TD.
+
+INIT/SIPI event
+----------------
+TDX defines its own vCPU creation and initialization sequence including
+multiple SEAMCALLs.  Also, it's only allowed during TD build time. Always
+block INIT and SIPI events for the TDX guest.
+
+
+VM-Exits caused by vectored event
+=================================
+NMI
+-----------------------
+Just like the VMX case, NMI remains blocked after exiting from TDX guest
+for NMI-induced exits [*], handle VM-Exit caused by NMIs within
+tdx_vcpu_enter_exit(), i.e., handled before leaving the safety of noinstr.
+
+[*]: Old TDX modules may have a bug which makes NMI unblocked after exiting
+from TDX guest for NMI-induced exits.  This could potentially lead to
+nested NMIs: a new NMI arrives when KVM is manually calling the host NMI
+handler.  This is an architectural violation, but it doesn't have real harm
+until FRED is enabled together with TDX (for non-FRED, the host NMI handler
+can handle nested NMIs).  Given this is rare to happen and has no real
+harm, ignore this for the initial TDX support.
+For the new TDX modules that fixed the bug, NMIs are blocked after exiting
+from TDX guest for NMI-induced exits, which is the default behavior and no
+"opt-in" is needed. This is aligned with the suggestion made by Sean [2].
+
+External Interrupt
+------------------
+Similar to the VMX case, external interrupts are handled in
+.handle_exit_irqoff() callback.
+
+Exception
+---------
+Machine check, which is handled in the .handle_exit_irqoff() callback, is
+the only exception type KVM handles for TDX guests. For other exceptions,
+because TDX guest state is protected, exceptions in TDX guests can't be
+intercepted. TDX VMM isn't supposed to handle these exceptions. Exit to
+userspace with KVM_EXIT_EXCEPTION If unexpected exception occurs.
+
+SMI
+---
+In SEAM root mode (TDX module), all interrupts are blocked. If an SMI
+occurs in SEAM non-root mode (TD guest), the SMI causes VM exit to TDX
+module, then SEAMRET to KVM. Once it exits to KVM, SMI is delivered and
+handled by kernel handler right away.
+An SMI can be "I/O SMI" or "other SMI".  For TDX, there will be no I/O SMI
+because I/O instructions inside TDX guest trigger #VE and TDX guest needs
+to use TDVMCALL to request VMM to do I/O emulation.
+For "other SMI", there are two cases:
+- MSMI case.  When BIOS eMCA MCE-SMI morphing is enabled, the #MC occurs in
+  TDX guest will be delivered as an MSMI.  It causes an
+  EXIT_REASON_OTHER_SMI VM exit with MSMI (bit 0) set in the exit
+  qualification.  On VM exit, TDX module checks whether the "other SMI" is
+  caused by an MSMI or not.  If so, TDX module marks TD as fatal,
+  preventing further TD entries, and then completes the TD exit flow to KVM
+  with the TDH.VP.ENTER outputs indicating TDX_NON_RECOVERABLE_TD.  After
+  TD exit, the MSMI is delivered and eventually handled by the kernel
+  machine check handler (7911f14 x86/mce: Implement recovery for errors in
+  TDX/SEAM non-root mode), i.e., the memory page is marked as poisoned and
+  it won't be freed to the free list when the TDX guest is terminated.
+  Since the TDX guest is dead, follow other non-recoverable cases, exit to
+  userspace.
+- For non-MSMI case, KVM doesn't need to do anything, just continue TDX
+  vCPU execution.
+
+
+Repos
+=====
+Due to "KVM: VMX: Move common fields of struct" in "TDX vcpu enter/exit" v2
+[3], subsequent patches require changes to use new struct vcpu_vt, refer to
+the full KVM branch below.
+
+It requires TDX module 1.5.06.00.0744 [4], or later as mentioned in [3].
+A working edk2 commit is 95d8a1c ("UnitTestFrameworkPkg: Use TianoCore
+mirror of subhook submodule").
+
+The full KVM branch is here:
+https://github.com/intel/tdx/tree/tdx_kvm_dev-2025-02-21
+
+A matching QEMU is here:
+https://github.com/intel-staging/qemu-tdx/tree/tdx-qemu-wip-2025-02-18
+
+
+Testing 
+=======
+It has been tested as part of the development branch for the TDX base
+series. The testing consisted of TDX kvm-unit-tests and booting a Linux
+TD, and TDX enhanced KVM selftests.
+
+[1] https://lore.kernel.org/kvm/20250211025828.3072076-1-binbin.wu@linux.intel.com 
+[2] https://lore.kernel.org/kvm/Z0T_iPdmtpjrc14q@google.com
+[3] https://lore.kernel.org/kvm/20250129095902.16391-1-adrian.hunter@intel.com
+[4] https://github.com/intel/tdx-module/releases/tag/TDX_1.5.06
+
+Binbin Wu (2):
+  KVM: TDX: Enforce KVM_IRQCHIP_SPLIT for TDX guests
+  KVM: VMX: Move emulation_required to struct vcpu_vt
+
+Isaku Yamahata (11):
+  KVM: TDX: Disable PI wakeup for IPIv
+  KVM: VMX: Move posted interrupt delivery code to common header
+  KVM: TDX: Implement non-NMI interrupt injection
+  KVM: TDX: Wait lapic expire when timer IRQ was injected
+  KVM: TDX: Implement methods to inject NMI
+  KVM: TDX: Handle SMI request as !CONFIG_KVM_SMM
+  KVM: TDX: Always block INIT/SIPI
+  KVM: TDX: Force APICv active for TDX guest
+  KVM: TDX: Add methods to ignore virtual apic related operation
+  KVM: TDX: Handle EXCEPTION_NMI and EXTERNAL_INTERRUPT
+  KVM: TDX: Handle EXIT_REASON_OTHER_SMI
+
+Sean Christopherson (3):
+  KVM: TDX: Add support for find pending IRQ in a protected local APIC
+  KVM: x86: Assume timer IRQ was injected if APIC state is protected
+  KVM: VMX: Add a helper for NMI handling
+
+ arch/x86/include/asm/kvm-x86-ops.h |   1 +
+ arch/x86/include/asm/kvm_host.h    |   1 +
+ arch/x86/include/asm/posted_intr.h |   5 +
+ arch/x86/include/uapi/asm/vmx.h    |   1 +
+ arch/x86/kvm/irq.c                 |   3 +
+ arch/x86/kvm/lapic.c               |  14 +-
+ arch/x86/kvm/lapic.h               |   2 +
+ arch/x86/kvm/smm.h                 |   3 +
+ arch/x86/kvm/vmx/common.h          |  71 ++++++++
+ arch/x86/kvm/vmx/main.c            | 260 ++++++++++++++++++++++++++---
+ arch/x86/kvm/vmx/nested.c          |   2 +-
+ arch/x86/kvm/vmx/posted_intr.c     |   9 +-
+ arch/x86/kvm/vmx/posted_intr.h     |   2 +
+ arch/x86/kvm/vmx/tdx.c             | 132 ++++++++++++++-
+ arch/x86/kvm/vmx/tdx.h             |   5 +
+ arch/x86/kvm/vmx/vmx.c             | 113 +++----------
+ arch/x86/kvm/vmx/vmx.h             |   1 -
+ arch/x86/kvm/vmx/x86_ops.h         |  12 ++
+ arch/x86/kvm/x86.c                 |   6 +
+ 19 files changed, 523 insertions(+), 120 deletions(-)
+
+-- 
+2.46.0
 
 
