@@ -1,119 +1,112 @@
-Return-Path: <linux-kernel+bounces-527465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2BF4A40B86
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:03:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 377D4A40B88
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A45D7A9EDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F15188DE76
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24B6202C55;
-	Sat, 22 Feb 2025 20:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1879A202F61;
+	Sat, 22 Feb 2025 20:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="Ph4CAjkV"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="2bEvC5IS";
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="WdoPDvm8"
+Received: from haruka.juszkiewicz.com.pl (haruka.juszkiewicz.com.pl [185.243.53.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F591EEA43;
-	Sat, 22 Feb 2025 20:02:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B0E1EE013;
+	Sat, 22 Feb 2025 20:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.243.53.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740254573; cv=none; b=r7vANk9zHta6figvjL2FcgQeLEht2usfXg8ix/1I3uDVISkwLacdsYIzaxbkkV6EEZTmywgEE47R/HU1fE3mQBJoePai7uj4DTC8l4oTUNUGhMO298erNyvvT70Z+QrIMAT8kdFDVLCSiKLTKlVVlEaQ8F95U0p9oniCA35coMU=
+	t=1740255243; cv=none; b=jbb5y5FUtik+PiINEKYipAv29AqyCKC7Ct/cHWIr6iFBEW8jbNr5XiHbjyMsaUTwTEntPfIa3dVKCTiHMD89CRtB9fm4j3VH4DoI50SxezatOQtuoGCUYw3orjc26rx3dawNnp8paFH8N9bmKwJFZsss2LkSQgNfNvoIoll2DiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740254573; c=relaxed/simple;
-	bh=1ysXJ9tNqbTNnC5MOSLRwjUBTc9Nx5MfsWwXFqejhwo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JVj91VDU06gXpqcJWfwXbBp3jd1Bosy/Kd0ziURaeD2aOjHtYS+Uu9iP1zFMxkliViLSQCxUyjo9g1I5aXFr+GBBZnGEH17/tjKrMv5jO/fPFlfXkxLFNoof80qnKZ1gfDvWiTZ3F8r8cV/Wdhd6gSGct72eqcDa4jD+DeoXLhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=Ph4CAjkV; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z0dFz1w3Zz9t1g;
-	Sat, 22 Feb 2025 21:02:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1740254567;
+	s=arc-20240116; t=1740255243; c=relaxed/simple;
+	bh=EOIAAhnvAqcJAfcBLWXpvJ03F0LkIj4if1vHn1h9A1U=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nriX2mslQV1a5jpd05Ajbyiiy27PU4r8ppHwtZBAIOhp4NEYmz33KjPr778yjOtIhIrNzH6nWWPy9rq6p0vOtPhU01ZJdkR2WgnZ1VbRrgKZwZIzssxQOgAHG5sQb/raczLXPRUHF8vRK72Yc6VvGGiFg2dvI0+fTaP2t3X7Q4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl; spf=pass smtp.mailfrom=juszkiewicz.com.pl; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=2bEvC5IS; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=WdoPDvm8; arc=none smtp.client-ip=185.243.53.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juszkiewicz.com.pl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=juszkiewicz.com.pl;
+	s=mail; t=1740254719;
+	bh=EOIAAhnvAqcJAfcBLWXpvJ03F0LkIj4if1vHn1h9A1U=;
+	h=Date:To:Cc:References:Subject:From:In-Reply-To:From;
+	b=2bEvC5ISzbx28STGms+5ITnG1jt2OPnuqY7nEjUja7+h2liMiezlffSZuUWyp9FOX
+	 E/8sDUfbuNZHlrflSJM364ctRAIAiwxrQcQBJAgLpAtOITNac8g4G4WZW4jc0BwzMf
+	 SJh3sDd9RSnD9vw0J3s3U8QI6k2UQJ3qu1WBeowBaL9LJ2zpHzpQRUSb4kCaNumFSM
+	 KGHH+3XNIMdrfpdkcnkRh1B1tQhoBaHCUnns7GSwvYh0dY18+r+OjPb702nw+Ygh8O
+	 /nclNCCrweu/6+RGrccjFmHgzDlYzeU+eGC2sXmGEDCOJ3/kI5Vqt39+dkkO/+ZmSX
+	 r4/NwKu5FBPXg==
+Received: from utena.juszkiewicz.com.pl (utena.juszkiewicz.com.pl [158.101.208.177])
+	by haruka.juszkiewicz.com.pl (Postfix) with ESMTPSA id 8A28522AAC;
+	Sat, 22 Feb 2025 21:05:19 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3ED1341E75;
+	Sat, 22 Feb 2025 21:05:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juszkiewicz.com.pl;
+	s=mail; t=1740254718;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Z6djf3boNN959313q2ECyr8yAQbh1eNxQmRkyyOk0VU=;
-	b=Ph4CAjkV2ku4zIUUVJ93F6Rk2zWDvDGXMfwgZSgQxikk3uZ/N1ZeuYD/txQK+F+XihyTqn
-	DJAOkqG7WjFjD3fedGfCn/x45DDMyJ2T2852uMukJ4HITLn+qGzAuo9PP/JZA0WztDdub7
-	0ihldMq4ihrL4SBGqXyWM6PZgRlZWsLjuM3z3Cw3t4ud232skCEH7bOQ0YAxMhnJP3XKWz
-	mVzGqpq9Zmh2cmk8S/A5wU9e46AEpra7peKnc+41sDBUdZP6bNe6LS7/zjlH59EoKivysj
-	xVwStx+UesTGcJIbs2+oCE8W9pXFb8oi8Sjx57mrzHn0pgB25QxmQtnAhtAdvg==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Sat, 22 Feb 2025 15:02:42 -0500
-Subject: [PATCH] thermal/debugfs: replace kzalloc() with kcalloc() in
- thermal_debug_tz_add()
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WfeTFtl8ycLeQAXrwF465oXgTTKRj57NhCJsCxPUGYw=;
+	b=WdoPDvm8HKFKuut/56zMqqOEsGVIZHXtc3/BZ/250odZuxi2gGjWiYrVZkTYDbxDItcBaH
+	taBshndSUM7s/2PAnNp0oJx+zZtZkx7127+QrHC7gZtiz9R881bAZnT7Ooio8tBrKkMY+F
+	zxaiOPY8/eomQeddNgxUbIs9yYSGpMysOqzLMrpnZZTbOZ4yohNyd9HfCJT9exCLMcVyPz
+	99EFrocwU2bFXWn+Ggr+QH4C7vwOrniG7bVegfWDEplgsXJNAx7Z8jJkTd+XKq2MOpZt+Q
+	Fkk0pEQD2MILDwuilgt8VkknH6OtoV6nK2xy66dP1txokwplJYg90dICVzH0TA==
+Message-ID: <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
+Date: Sat, 22 Feb 2025 21:05:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+To: peter.chen@cixtech.com
+Cc: arnd@arndb.de, catalin.marinas@arm.com, cix-kernel-upstream@cixtech.com,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, fugang.duan@cixtech.com,
+ krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org, will@kernel.org
+References: <20250220084020.628704-7-peter.chen@cixtech.com>
+Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+From: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <20250220084020.628704-7-peter.chen@cixtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-thermal_kcalloc-v1-1-9f7a747fbed7@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAGEtumcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMj3ZKM1KLcxJz47OTEnJz8ZF0LC8OU5DTTJHPzJAsloK6CotS0zAq
- widGxtbUAOmYgfGEAAAA=
-X-Change-ID: 20250222-thermal_kcalloc-881dcf5b77b8
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=1ysXJ9tNqbTNnC5MOSLRwjUBTc9Nx5MfsWwXFqejhwo=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeHBPL1NUWlpJbS9QMWJkeVV2V1gzRys0cXJ6clBNM1dUCnVqS24rUVRuRnVGWFVuZWNI
- Ny9yS0dWaEVPTmlrQlZUWlBtZm81ejJVSE9Hd3M2L0xrMHdjMWlaUUlZd2NIRUsKd0VTK0JESXk
- vTmJjRWI3UzJYaXU2SlRTeFFZT0UvTW5UdGs0Ujd3My9JL1BjcWF5Qm8vcmF4ais2WVhNYXJ4eA
- p1MDN2K0pQSDRVY3Rpcjh6NTM3emNOMWZ3eTgvUTdrcjNvR0pFd0JwaTB2cQo9azhudAotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+X-Last-TLS-Session-Version: TLSv1.3
 
-We are trying to get rid of all multiplications from allocation
-functions to prevent integer overflows[1]. Here the multiplication is
-obviously safe, but using kcalloc() is more appropriate and improves
-readability. This patch has no effect on runtime behavior.
+> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+> new file mode 100644
+> index 000000000000..d98735f782e0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+> @@ -0,0 +1,264 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright 2025 Cix Technology Group Co., Ltd.
+> + *
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
 
-Link: https://github.com/KSPP/linux/issues/162 [1]
-Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+[..]
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
----
- drivers/thermal/thermal_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	arch_timer: timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> +			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> +		clock-frequency = <1000000000>;
+> +		interrupt-parent = <&gic>;
+> +		arm,no-tick-in-suspend;
+> +	};
 
-diff --git a/drivers/thermal/thermal_debugfs.c b/drivers/thermal/thermal_debugfs.c
-index c800504c3cfe0ea3b4a51286f348dd5802e1898f..60ee6c366998e26447a0b985112f578ba8757f17 100644
---- a/drivers/thermal/thermal_debugfs.c
-+++ b/drivers/thermal/thermal_debugfs.c
-@@ -876,7 +876,7 @@ void thermal_debug_tz_add(struct thermal_zone_device *tz)
- 
- 	tz_dbg->tz = tz;
- 
--	tz_dbg->trips_crossed = kzalloc(sizeof(int) * tz->num_trips, GFP_KERNEL);
-+	tz_dbg->trips_crossed = kcalloc(tz->num_trips, sizeof(int), GFP_KERNEL);
- 	if (!tz_dbg->trips_crossed) {
- 		thermal_debugfs_remove_id(thermal_dbg);
- 		return;
-
----
-base-commit: 5cf80612d3f72c46ad53ef5042b4c609c393122f
-change-id: 20250222-thermal_kcalloc-881dcf5b77b8
-
-Best regards,
--- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
-
+This is not Arm v8.0 SoC so where is non-secure EL2 virtual timer?
 
