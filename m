@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-527509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E493A40C23
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:36:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D02A40C24
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E112E19C04AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B67188A31D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35737204C31;
-	Sat, 22 Feb 2025 23:34:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD9E204590;
+	Sat, 22 Feb 2025 23:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJ0JYvrD"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="WbiGCYE9"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9182CCDB;
-	Sat, 22 Feb 2025 23:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DD478F2F
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 23:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740267287; cv=none; b=ZWWIx2jPYvcq2P+7oQ8HzOThG/erNsdzOb7C0gKWabV2coB7d8feDfB5nXv9B4XIBHxlwq3KKosuDya3MzjMDsnq2MUY0sx85d4EEVQjlR4cZGgi3+D1QA5KpnUV1q07nsvzGd4ZuWtzrm0S+h3SXeCH/NF10bEU466sgV5XV50=
+	t=1740267399; cv=none; b=q68Flql+0yNMBZeCQKPNe8Dv+qmOfAeZuIkyp3ifM/45j7I/hMe0T/4SGFiLfbMLc78pedJJpQDHWVQgHxKNy77A3y+7/C5vaWa460VoRnKpJH8CtF8XfjCDA5hGeme8reiy3N5Jn611nqxbCCayLf3PxIZ+Sv75h1VYcVsD/8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740267287; c=relaxed/simple;
-	bh=tU3r286zfMEzp509S4Nwj3oJKm1dT+refdlYwbG487A=;
+	s=arc-20240116; t=1740267399; c=relaxed/simple;
+	bh=W77SzvNr8H94Le/8syWHtp6x1tP/j8+S2D0g+SvSY34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUwUNNBwqopGMGpW7m1Ck0xXq1SZ6SCi+kApeoh+49uD0UFqcshtcFgLXIhHY3FZDwbtGu3ExnZcMBMQUDzmK1ZDcLYuAfgf+NpsSJbfVMWi0zFAcpzB9E80ZelLoub1mI+gIcnmd5CGsGpCw8C/DIN+qCm8mgw/LvfuyOOrHTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJ0JYvrD; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6fb3a611afdso27781647b3.0;
-        Sat, 22 Feb 2025 15:34:45 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLl0ttce1P1fIYoS/7LymbKtZm0gYiyVu+wyXQ+qYM0YIzNxJT0o0TNA8AwY2db+n8RjOA93juLvpmoFnYJXSAIT2v5fk93xXfLoKg0JtyeTnr40NxJJuePpYSbECEl58iIg898C8jaDB6nQKYIsjDSS/DxBpPv6RPTnh5vSPkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=WbiGCYE9; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abbda4349e9so472267566b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740267285; x=1740872085; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/2b+ymF1Y/6cEr1vN13eZ8XRTQyUDfjNMs7g+mlMvUo=;
-        b=PJ0JYvrDMtayd5cj2X8RdD2q9bDoJnbxlR5f5gYsgYZv80WdqOIvb8MYx3t0C/G8S8
-         6DOMkZz1jcdZ6BGWSi+GvWYS5QnSDLqw9yBusc8XxnC28oXSoupoatwYmMDcfwZuRkvC
-         No2XDBHCgroAP3cy3SLqFVkvl6FE4gzVanDSnTct4YxZ3ixz4IapuTf/DONM7o/xDrJe
-         oEsX/UDjcZRhoilZkbBtgixOQKKUuFyNPNrFcIyVII1PibrPcx4kfW2l1/W80TN/qAHc
-         WEgx3ya8Akg2350xhj8AXvs536ZVvf5kPtg1/ZOYNwYiheisWVmDd/yvhdexcPvC0YJc
-         qgaA==
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740267395; x=1740872195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nAoIPctK3fqHVAiWghtoRIf/lTgRwx6zOokplaufCs0=;
+        b=WbiGCYE9d+PS7J9ytGMU3nffnXz+nh+/DeMQEel3tYddZVCTunPzYewVxjneGAPxAs
+         rrsdbFect/Qy00OSb8F5uyTQgkGMV35PYSxbgc6bqyL25IpsfcFbN47Zp2KcYCnTZOTx
+         3vFbsgys2mXLxiy+daDH+suC6E+FK/L25P5m5zBg9+NQ4CcT9JWJNvRKz1zr37WBmo4d
+         YFUJ6vEhnraTGEHxpYew/q4ExE6S/ju+2vdsZhfL89COQtvAIPj1SDVYiAinmwp5WEeT
+         7a8HYzm5qCVrXrvlffjQMJLkdlYqtZLT5ynDfN7GzSAlWmxfiNh9Q1KsjeVA7VHczC1R
+         pS3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740267285; x=1740872085;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2b+ymF1Y/6cEr1vN13eZ8XRTQyUDfjNMs7g+mlMvUo=;
-        b=q4IizJKroa0SSbnkTmcfEv2AohMOAzEj4CiX0hPMMv0q5yNT4hLUpNXOPROzNQdcDW
-         WL7BjVrD3mOV4O0MOhJtCRyA6v9+pPUUa/A/yOh9muoo72MLYDBcATw2kBNpKhW6Vt/A
-         mF2N1JkY9JrCp3eKSIqj7bFyr90PTROrOxKGVJlP5N/fLinEsxOzpOfTAWIYL74ZosVj
-         HqZ4QJKGaZ1YZZIfh75mJ06l3SlXcmzK3MYtXdrV0G+vpeD1B1GzwvKmEANMvLL6lDAE
-         +AeURuZ4zgEkOmiGQJE/QSCzUjwV8fS8/8O96OQWes4FoSDUyJ18h07t9MYbGOiIY9SV
-         Lw7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVIQNTmT6lQHeO2nrzmIA3OA/jIDiB/YPKPH7IAdbJAQ/4fse/uevtFk5kNzwmZN2RqgC+4+mn/jII=@vger.kernel.org, AJvYcCVUuJ4L3mWc/YVXOwnygoE3oPEnklwMH1Xh+PqeA+jo/kVg5kobsgR7giSN+wlY+JhBa2CnmSejfDERFt4=@vger.kernel.org, AJvYcCVnzIJnyNvaHqjyQfiYYT/LohQBZAigApzHkim/ZL2xS4CtCKmp8xk1NimeiBgToTX/5hqWOvb+AFJy9ZjitME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBwvnYTjklJsiHLf9mA1aB/lq4Ohz0r3aE2XjB/ny+TaYhgmxK
-	2HbuuKqjDLuh2lF7PVeAiopVn3xyjQttEjWWKSgXDbbSbPTX3IJt
-X-Gm-Gg: ASbGncuVLD6G8JWXa5zX8Uz+B3Sj2gVI/MBBlkJ8Z6rI5dMIvaZk09EgXxRXcpqFHdE
-	XfI/nteTCqCNJLTg2cr17nxY+hR7mMvcCZv1joCo1z/tMeyTmYywkUYUHVbUIqeauuOlGPNBpxv
-	mK+Br1Mp2qcVkKqjLd9RgnAJ/MFZnBEyNpjM71V9Bdv1aCIbSMD0CRkbGoC1H38Nt/4IJf9qglc
-	Y5oExWQjhhzxm66kC2EZEySEU4Yhb0feH6Ad+3tAvnwDgG0eqClhqg7ghAZU+QmUlOVwgIoAVPZ
-	8ALNTFyQPdNxLRtEJkXrWrM0CRGIR/x9/wFEHfty7+r57bc/nJUKdZ/rFrdisA==
-X-Google-Smtp-Source: AGHT+IFX+yydMfA2KvN3qR8wwEAWMY6dCzO7XD1Jpai1WZCyjR83OHW/VfW2eSTH7oe0ieczq9aNOA==
-X-Received: by 2002:a05:690c:6c8e:b0:6fb:9389:3cde with SMTP id 00721157ae682-6fbcc1ffb02mr73850507b3.3.1740267284829;
-        Sat, 22 Feb 2025 15:34:44 -0800 (PST)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6fce175d7c7sm4656927b3.80.2025.02.22.15.34.42
+        d=1e100.net; s=20230601; t=1740267395; x=1740872195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nAoIPctK3fqHVAiWghtoRIf/lTgRwx6zOokplaufCs0=;
+        b=pUW+W2XS7cug9DncBN2kSkNNG4QqShUzoR6OUoOhhxOCFnswYWTbcejoqdOm5r1oTt
+         LuUxFlAFwdzBL7951M6+fCwGds3nFkmw2IvIyoImZPoCdLt8X32wvDECOR+FK6kY1QJP
+         JyPZ1J86IStt47EV3UnZmetwdIIcuIjX2Sq30Nw3YDFTzEDRdC/54KnHXv5xNyn1oh7O
+         oKL32nxTyp2MzXHs96VX3nJCA/LQjsJpmk0kZ56xgPOU+lrw4GutIhJxjEoL/ctKF36g
+         s01ixtLjHRo5XI8LUE6apylfROx7lPadRSJNoEFey06/IScBWAG+iJWIv3s1IhlMdHlC
+         JOlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKxu5TC3OA0yrppM9f6aJknsfwHyYJ94Ke9+ymzbU2nWB8add7NNUo5y6c2yvJNIpN1VdcMd7FAGNvbUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP40xJrAaZ5vqMyPG+hIWLwcUX/mb00b5i6QO5EghxzsiTekd1
+	JbydoKJFG0tOI8kDMsVcEflGhuwfdUl9dUvk1lqukpUY3hiERe4k6YFNYEWJWJ8=
+X-Gm-Gg: ASbGnct2eNr8YzzJDGnJAQSpKKWjTfREyFEkZdNHeIPFBGsPiesuI3iK4uhmCeKMkni
+	a1xvy+vLTrWmRGaXpOCbRRd5VlNATYkHJ6hx60BJNZvD7DP313ekzdovjWc5xKjClhQbnTdRIBM
+	p4wI8NzXRTf7Bj7TRngr3o/8asaPeGPoelNRUxNyuCHaxfvR1KfU/vXjhdiobxA/WoXzf11jiFP
+	TzzepZ90pILb3lhMfKA3Kpz2xzAdV0USHUxKT/sycyZID3UPRo2Y+TJAoyhrX17OkVYNaWV7PNy
+	4l0sC90NXbLAKrlCDNYU
+X-Google-Smtp-Source: AGHT+IHJTaLwjzt/tiwaKac4ucEvj/k85eCD9iv3ov8InRawXZEDewkDilxI++U5Ru1O3FUU+cAW9Q==
+X-Received: by 2002:a17:907:7754:b0:ab7:e811:de86 with SMTP id a640c23a62f3a-abc0d9ca365mr628075866b.13.1740267394918;
+        Sat, 22 Feb 2025 15:36:34 -0800 (PST)
+Received: from airbuntu ([46.186.201.36])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9a65bea0sm1252192366b.46.2025.02.22.15.36.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 15:34:43 -0800 (PST)
-Date: Sat, 22 Feb 2025 18:34:42 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Danilo Krummrich <dakr@redhat.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
-	Erik Schilling <erik.schilling@linaro.org>,
-	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>,
-	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
-	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] MAINTAINERS: add rust bindings entry for bitmap API
-Message-ID: <Z7pfBoXDoH5x-MEq@thinkpad>
-References: <20250221205649.141305-1-yury.norov@gmail.com>
- <20250221205649.141305-3-yury.norov@gmail.com>
- <CANiq72=ctKoDz+Kf7UFBTD-oF17cTHBcrkNN_5cqxQeK609OVA@mail.gmail.com>
+        Sat, 22 Feb 2025 15:36:34 -0800 (PST)
+Date: Sat, 22 Feb 2025 23:36:27 +0000
+From: Qais Yousef <qyousef@layalina.io>
+To: Xuewen Yan <xuewen.yan@unisoc.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, ke.wang@unisoc.com, di.shen@unisoc.com,
+	xuewen.yan94@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sched/uclamp: Add uclamp_is_used() check before
+ enable it
+Message-ID: <20250222233627.3yx55ks5lnq3elby@airbuntu>
+References: <20250213091554.2593-1-xuewen.yan@unisoc.com>
+ <20250213091554.2593-2-xuewen.yan@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,41 +91,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=ctKoDz+Kf7UFBTD-oF17cTHBcrkNN_5cqxQeK609OVA@mail.gmail.com>
+In-Reply-To: <20250213091554.2593-2-xuewen.yan@unisoc.com>
 
-On Sat, Feb 22, 2025 at 02:50:50PM +0100, Miguel Ojeda wrote:
-> On Fri, Feb 21, 2025 at 9:57 PM Yury Norov <yury.norov@gmail.com> wrote:
-> >
-> > Bitmap developers do their best to keep the API stable. When API or
-> > user-visible behavior needs to be changed such that it breaks rust,
-> > bitmap and rust developers collaborate as follows:
+On 02/13/25 17:15, Xuewen Yan wrote:
+> Because the static_branch_enable() would get the cpus_read_lock(),
+> and sometimes users may frequently set the uclamp value of tasks,
+> and the uclamp_validate() would call the static_branch_enable()
+> frequently, so add the uclamp_is_used() check to prevent calling
+> the cpus_read_lock() frequently.
+
+FWIW original patch was doing such check but it was taken out after review
+comments.
+
+Is something like below completely broken instead? I think uclamp usage isn't
+unique but haven't really audited the code to see if there are similar users.
+
+I think it is a valid pattern to allow and the expectation was there shouldn't
+be side effect of calling this repeatedly.
+
+Good catch by the way.
+
+--->8---
+
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index d9c822bbffb8..17583c98c447 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -214,6 +214,13 @@ EXPORT_SYMBOL_GPL(static_key_enable_cpuslocked);
+
+ void static_key_enable(struct static_key *key)
+ {
++       STATIC_KEY_CHECK_USE(key);
++
++       if (atomic_read(&key->enabled) > 0) {
++               WARN_ON_ONCE(atomic_read(&key->enabled) != 1);
++               return;
++       }
++
+        cpus_read_lock();
+        static_key_enable_cpuslocked(key);
+        cpus_read_unlock();
+@@ -239,6 +246,13 @@ EXPORT_SYMBOL_GPL(static_key_disable_cpuslocked);
+
+ void static_key_disable(struct static_key *key)
+ {
++       STATIC_KEY_CHECK_USE(key);
++
++       if (atomic_read(&key->enabled) > 0) {
++               WARN_ON_ONCE(atomic_read(&key->enabled) != 1);
++               return;
++       }
++
+        cpus_read_lock();
+        static_key_disable_cpuslocked(key);
+        cpus_read_unlock();
+
+--->8---
+
 > 
-> If I understand correctly, you are proposing to a "temporarily stable
-> API", i.e. to add new APIs while keeping old ones for a bit until the
-> Rust side updates to the new one (including perhaps workarounds in the
-> helpers when needed). Is that correct?
-
-Yes. Keeping them under CONFIG_RUST for a while, or moving directly to
-rust helpers would be an option.
-
-> In other words, while the entry is about the helpers file, the policy
-> is about all APIs (since some APIs are called directly), right?
-
-Yes, it's about all functions used by rust. I can underline it in
-the commit message. 
- 
-> (Up to you, Viresh et al., of course, i.e. I am just trying to follow)
-
-What I want to make clear to my contributors is that lack of proficiency
-in rust will never become a problem for them. If they have an improvement
-that may break something on rust side, there will be someone who will take
-care of it - this way or another.
-
-I think rust developers need similar guarantees form rust maintainers:
-there will be a rust engineer who will keep the bindings on rust side in
-a good shape. Viresh, as per my understanding, has committed on that.
-
-Thanks,
-Yury
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+>  kernel/sched/syscalls.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index 456d339be98f..d718fddadb03 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -368,7 +368,8 @@ static int uclamp_validate(struct task_struct *p,
+>  	 * blocking operation which obviously cannot be done while holding
+>  	 * scheduler locks.
+>  	 */
+> -	static_branch_enable(&sched_uclamp_used);
+> +	if (!uclamp_is_used())
+> +		static_branch_enable(&sched_uclamp_used);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.25.1
+> 
 
