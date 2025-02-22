@@ -1,122 +1,164 @@
-Return-Path: <linux-kernel+bounces-527100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB23A40751
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:14:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D271EA40753
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:15:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B117FEE5
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8DE19C2E5B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B696207E0C;
-	Sat, 22 Feb 2025 10:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267CF207676;
+	Sat, 22 Feb 2025 10:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E0xbOLPR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z74TsqYt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bluz4G5Q"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A593A20766E;
-	Sat, 22 Feb 2025 10:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20C6207A14
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740219269; cv=none; b=HLxKPDO0PKCwa4LpjbJCpQFjRuEgaOl6imvrzmy5jHWcdVFIuWi+qqFOiNPUAcyZbpLrPYzn6/BB+YMaTnuqk/4GCrYWd7H4yRF9KZ2ch3jSMbxvqwsJLhsaYDETZlEro+XlrXZVvh5Wlniuxm8CkOFRxy02ZE3aGdylYi9tUL8=
+	t=1740219312; cv=none; b=o7OHsk+V3RkwB2y7ZBAyD6qMXjWdClnqHq7dItST2Ke3f+aJt1N0NVj1ViWTwbo+7vdmD15E5MmVYJVxqmi2i0AONvw50sqrKQjRyoFxRg8iSz4DuKvxpo3Y29dV3JEEyvx/1YPJ6qiJMONzJ+N4tt6LNuSqqllM3rzde9gxnrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740219269; c=relaxed/simple;
-	bh=ygaPhnEWXxg0PTIQSnFt/u2T3zJiHAt9hR7zOE9Myuo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SflJThYgdUAK1XP1AAmE2Tk2Ph+dTBnkhkvnTIcKNiTl0p9OI0+qxt4hfPyrfn4KfdPFgxpdtCmMEtOUC+uw4e19WrwERiccYJ2iDDq9+X9bbtPPG9L1FEgmqgy6Z5Q7aZQgjg/WZE9PeqnMmA5Yf3U8+Aid1woJV00jw/G837E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E0xbOLPR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z74TsqYt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740219265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NYt57ZYgbjy6ej8hXDty7Cfp9Tf5nA32oYEo7YLt3U4=;
-	b=E0xbOLPRJ+XD/M3Ao9By6szoKCsyLxcxtVTGsSbhAcE5NU1NK5C2+Dfl+zJ4+rpk8p2vce
-	IgpgL+eLpTnyqk83xyrJHvEqqHTXl3g07KURIn1lsZ0aq6OKRUYTD54okHfdjXqNbDsSjC
-	8vSMloBPM2AV4QgA0stwUEWMG6uZx3A9biypqi3p4tS6E2BLtlPpYMDvXniwVQOifJQaz1
-	6Qig6O/uBgxjjBbGrOo71YvA2kL4peLeza5WOnn/Kdf4/Lf3rBALBWYLzmAVI3S8o31rMK
-	Fy+Fe19AlwTl2IsoJXlYAVNRDdBMW1sP8B0maDlcTMTjaB57ZbWi7eIerkehlg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740219265;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NYt57ZYgbjy6ej8hXDty7Cfp9Tf5nA32oYEo7YLt3U4=;
-	b=z74TsqYtERi/FO28k1WNxuOk/eCrttvKrCalx/NPgzVgRgvry4d1qCKiaSmbcNlhBsMonW
-	bE0L5AunrFXssYCw==
-To: Xi Ruoyao <xry111@xry111.site>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?=
- <thomas.weissschuh@linutronix.de>, "James E.J. Bottomley"
- <James.Bottomley@HansenPartnership.com>, Helge
- Deller <deller@gmx.de>, Andy Lutomirski <luto@kernel.org>, Vincenzo
- Frascino <vincenzo.frascino@arm.com>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Catalin
- Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Theodore
- Ts'o <tytso@mit.edu>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Russell King <linux@armlinux.org.uk>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Michael Ellerman
- <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
- Madhavan
- Srinivasan <maddy@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann
- <arnd@arndb.de>, Guo Ren <guoren@kernel.org>
-Cc: linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- loongarch@lists.linux.dev, linux-s390@vger.kernel.org,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arch@vger.kernel.org, Nam Cao <namcao@linutronix.de>,
- linux-csky@vger.kernel.org
-Subject: Re: [PATCH v3 09/18] riscv: vdso: Switch to generic storage
- implementation
-In-Reply-To: <1adbf1603237b654a2948ae13692c6b6db0ab7eb.camel@xry111.site>
-References: <20250204-vdso-store-rng-v3-0-13a4669dfc8c@linutronix.de>
- <20250204-vdso-store-rng-v3-9-13a4669dfc8c@linutronix.de>
- <1adbf1603237b654a2948ae13692c6b6db0ab7eb.camel@xry111.site>
-Date: Sat, 22 Feb 2025 11:14:23 +0100
-Message-ID: <87a5aegubk.ffs@tglx>
+	s=arc-20240116; t=1740219312; c=relaxed/simple;
+	bh=laF4/XnL/qkbifVudoGlkJAriRJ32QfxmlcyuLQ/Y70=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HZGNxQElGJjZ7O4n2pC+4f1IJGMZH5dVOYWfGhD2clnFvc9ca/02WHlnIHcMp2IDSORgEMSeuLhoTqCHS5EnX7GHM32SK2ogtem1+fCHs38V7/2FLy1Q7IfSIzNaaoT0/8jcTVPHUskxz4mDqP14xFfrf9Nw0OJJorSIKLgwj9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bluz4G5Q; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740219311; x=1771755311;
+  h=date:from:to:cc:subject:message-id;
+  bh=laF4/XnL/qkbifVudoGlkJAriRJ32QfxmlcyuLQ/Y70=;
+  b=Bluz4G5QVTl5ah9QfqUdI4/TH7o3cyTqqB8h/ey7xmO2SNzVVNrMhtfN
+   2xZSw4iF5MtG/l/3UzLjKb/h9OGNU14PXCQJsNfVNIsrxxqFlAdvens4e
+   HBUCE7XCrg428SrHIHZaAcxYq/JD14ipNubVO9DD1gj4usEejkjrr203j
+   9Nz0N31GU1lzp7L8fxVrdON0n5SPiObfoNh10XGuCOSGysi801DN8hZm3
+   /ogPtnNyI+Z6erhQDU19zn36pmhsc3LJTV76L15rVFqmKtTYAxMezR+VH
+   cUJYpzJe5Qa7rmOzR6IhT902xZacZMCOIHRSrjeubMuTNCbaZczaCPH6i
+   Q==;
+X-CSE-ConnectionGUID: gybAXISlQZidndCm7UIZNg==
+X-CSE-MsgGUID: Rv8MithoRFqeRFuYp95L/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11352"; a="58583882"
+X-IronPort-AV: E=Sophos;i="6.13,307,1732608000"; 
+   d="scan'208";a="58583882"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 02:15:10 -0800
+X-CSE-ConnectionGUID: yw3A/R7nTcaMVCCG1UsjZA==
+X-CSE-MsgGUID: Cy7bBhiIQ2K4cXRhzNkJLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120840848"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa005.jf.intel.com with ESMTP; 22 Feb 2025 02:15:09 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tlmXK-0006Td-2G;
+	Sat, 22 Feb 2025 10:15:06 +0000
+Date: Sat, 22 Feb 2025 18:14:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:irq/urgent] BUILD SUCCESS
+ e9a48ea4d90be251e0d057d41665745caccb0351
+Message-ID: <202502221848.pObSk2G6-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 22 2025 at 16:17, Xi Ruoyao wrote:
-> On Tue, 2025-02-04 at 13:05 +0100, Thomas Wei=C3=9Fschuh wrote:
->> The generic storage implementation provides the same features as the
->> custom one. However it can be shared between architectures, making
->> maintenance easier.
->>=20
->> Co-developed-by: Nam Cao <namcao@linutronix.de>
->> Signed-off-by: Nam Cao <namcao@linutronix.de>
->> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
-> I made a RISC-V vDSO getrandom implementation on top of this and it
-> works fine.  I'll submit it when this is merged.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/urgent
+branch HEAD: e9a48ea4d90be251e0d057d41665745caccb0351  irqchip/qcom-pdc: Workaround hardware register bug on X1E80100
 
-You can submit it right now. If it's reviewed and if Jason agrees, this
-can be merged through the timers/vdso branch on top of the pending
-changes.
+elapsed time: 1470m
 
-Thanks for testing it!
+configs tested: 72
+configs skipped: 1
 
-       tglx
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+alpha                           allyesconfig    gcc-14.2.0
+arc                  randconfig-001-20250221    gcc-13.2.0
+arc                  randconfig-002-20250221    gcc-13.2.0
+arm                  randconfig-001-20250221    gcc-14.2.0
+arm                  randconfig-002-20250221    clang-19
+arm                  randconfig-003-20250221    gcc-14.2.0
+arm                  randconfig-004-20250221    clang-21
+arm64                randconfig-001-20250221    clang-15
+arm64                randconfig-002-20250221    clang-21
+arm64                randconfig-003-20250221    clang-21
+arm64                randconfig-004-20250221    gcc-14.2.0
+csky                 randconfig-001-20250221    gcc-14.2.0
+csky                 randconfig-002-20250221    gcc-14.2.0
+hexagon                         allmodconfig    clang-21
+hexagon                         allyesconfig    clang-18
+hexagon              randconfig-001-20250221    clang-21
+hexagon              randconfig-002-20250221    clang-21
+i386       buildonly-randconfig-001-20250221    gcc-12
+i386       buildonly-randconfig-002-20250221    gcc-12
+i386       buildonly-randconfig-003-20250221    gcc-12
+i386       buildonly-randconfig-004-20250221    gcc-12
+i386       buildonly-randconfig-005-20250221    clang-19
+i386       buildonly-randconfig-006-20250221    clang-19
+loongarch            randconfig-001-20250221    gcc-14.2.0
+loongarch            randconfig-002-20250221    gcc-14.2.0
+m68k                             allnoconfig    gcc-14.2.0
+mips                             allnoconfig    gcc-14.2.0
+nios2                            allnoconfig    gcc-14.2.0
+nios2                randconfig-001-20250221    gcc-14.2.0
+nios2                randconfig-002-20250221    gcc-14.2.0
+openrisc                        allyesconfig    gcc-14.2.0
+parisc                          allmodconfig    gcc-14.2.0
+parisc                          allyesconfig    gcc-14.2.0
+parisc               randconfig-001-20250221    gcc-14.2.0
+parisc               randconfig-002-20250221    gcc-14.2.0
+powerpc              randconfig-001-20250221    clang-21
+powerpc              randconfig-002-20250221    clang-21
+powerpc              randconfig-003-20250221    clang-17
+powerpc64            randconfig-001-20250221    clang-21
+powerpc64            randconfig-002-20250221    clang-21
+powerpc64            randconfig-003-20250221    clang-19
+riscv                randconfig-001-20250221    clang-21
+riscv                randconfig-002-20250221    clang-21
+s390                            allmodconfig    clang-19
+s390                            allyesconfig    gcc-14.2.0
+s390                 randconfig-001-20250221    gcc-14.2.0
+s390                 randconfig-002-20250221    gcc-14.2.0
+sh                              allmodconfig    gcc-14.2.0
+sh                               allnoconfig    gcc-14.2.0
+sh                              allyesconfig    gcc-14.2.0
+sh                   randconfig-001-20250221    gcc-14.2.0
+sh                   randconfig-002-20250221    gcc-14.2.0
+sparc                           allmodconfig    gcc-14.2.0
+sparc                            allnoconfig    gcc-14.2.0
+sparc                randconfig-001-20250221    gcc-14.2.0
+sparc                randconfig-002-20250221    gcc-14.2.0
+sparc64              randconfig-001-20250221    gcc-14.2.0
+sparc64              randconfig-002-20250221    gcc-14.2.0
+um                              allmodconfig    clang-21
+um                              allyesconfig    gcc-12
+um                   randconfig-001-20250221    gcc-12
+um                   randconfig-002-20250221    gcc-12
+x86_64                           allnoconfig    clang-19
+x86_64     buildonly-randconfig-001-20250221    gcc-12
+x86_64     buildonly-randconfig-002-20250221    clang-19
+x86_64     buildonly-randconfig-003-20250221    clang-19
+x86_64     buildonly-randconfig-004-20250221    clang-19
+x86_64     buildonly-randconfig-005-20250221    clang-19
+x86_64     buildonly-randconfig-006-20250221    clang-19
+x86_64                             defconfig    gcc-11
+xtensa               randconfig-001-20250221    gcc-14.2.0
+xtensa               randconfig-002-20250221    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
