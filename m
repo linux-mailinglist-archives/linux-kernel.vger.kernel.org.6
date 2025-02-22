@@ -1,194 +1,186 @@
-Return-Path: <linux-kernel+bounces-527145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B7FA407E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:31:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51762A407E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5F03BE822
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5EF19C4F40
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:36:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5920A5D8;
-	Sat, 22 Feb 2025 11:31:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBFB20A5DE;
+	Sat, 22 Feb 2025 11:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLklE7wg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ABVOlES/";
+	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ujfBiNk5"
+Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACA16FC3;
-	Sat, 22 Feb 2025 11:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554C36FC3;
+	Sat, 22 Feb 2025 11:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740223880; cv=none; b=k5b4/urrsD2j8wbpbTYKhNnVCu3wAt+XBgGS44+rftBtxvso3xKqD1F04z/ztMTJyemtDZa91wpfvi2zHuaD3L9a8c+TWhS8uK+rJCHAMohqmqgnnuFEhda6d7KM53hn3hg9UWpo5rNAlz7zLDRpK1nUcMIM/UnXuKtzwCQRmLg=
+	t=1740224181; cv=none; b=exn47O3uYRyGiG16ZW3SHRXR6p/6/RYW3qMKIcJvYxtijmL8H7CMDoKeklbakgdJX9oZn+3GohIRc1rKua+mSBrQw9rc8DPEI+bd3LlWdUBKh2XKQ9bbbsxlp1uljPR4/2yJrtXoOgMWQn9pdgCXlLxqGtqmPG7NlkroXs6pQ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740223880; c=relaxed/simple;
-	bh=cSwTYLOvKfcUp265iaxx2WMETmG/vPuRTNnqNn2a1Ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rAa/csuDH5nwiHN5q5WQ7KnJ3YZrnl2crN0ruNgILbLqHM/SmgWI/k7PeqiI5Sey/3sjkDM/HDwWeHXb0yCC0xCZWqeSF23drmYRmGC9C2iBxnMuz217+mVmnzKu80i8sZSSCrdqLj9sH2NKYLD3r0v6S4kh5z97EFVhOunTHZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLklE7wg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 869EAC4CED1;
-	Sat, 22 Feb 2025 11:31:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740223880;
-	bh=cSwTYLOvKfcUp265iaxx2WMETmG/vPuRTNnqNn2a1Ec=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XLklE7wgVc28ln6v7NmWTimdBKKVmCp8Z+Pdx7my2rjmHseqgRUnTzj+PUR93fP9g
-	 WivrgtGpbFsr/+7ioyPY1HbokDCeaFuDDJ/Ar/qua1RbwsOlx/X4bbWoDyyVpoxNM7
-	 DeBUCN2grvMXcLv1NMKioWQ0WzH10CC3E8P4/jbf+NixiQ6WvDbobyxHcbfwJHOeJJ
-	 Rkyw03yR09FUz7cWeRQrxlojPdm7sRDcslZi1Sq62fkKjb2mfJK5ZxIkFm096Odp37
-	 MrXvPe7RKAqpa+K5e6HmsLw9iiYv4gSRQnkXhvDp+hfpXW+4WRyAuUjyhaFH3/gZEs
-	 QCPVahq/ySZVQ==
-Date: Sat, 22 Feb 2025 11:31:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Marcelo Schmitt
- <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, lars@metafoo.de,
- corbet@lwn.net
-Subject: Re: [PATCH v3 1/1] Documentation: iio: Add ADC documentation
-Message-ID: <20250222113111.4886d3e7@jic23-huawei>
-In-Reply-To: <Z7ZDzg0KHZhfiLo3@debian-BULLSEYE-live-builder-AMD64>
-References: <c21b89367510c3d56d8d17adc24b46c7c63a14b2.1738759798.git.marcelo.schmitt@analog.com>
-	<5084aed7-1b39-4cbd-b136-610bceb05c92@baylibre.com>
-	<Z7ZDzg0KHZhfiLo3@debian-BULLSEYE-live-builder-AMD64>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740224181; c=relaxed/simple;
+	bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOnCQixG19Lf3WZlQmm9f6ozYVICcTXt3i8EJRL0uLP236aTqGMcgfbXHG3xSInEXqA+RUYefQ3B3i5sYBRiIJcdfc+5ZMh+kb2u8aulLKmCfsO2xkQceCGKAjNZojr5Al4i6PRylwOmChgrkh2nX9Gs8K9AJJQCaSpTwdSFUPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ABVOlES/; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ujfBiNk5; arc=none smtp.client-ip=5.78.89.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
+Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
+	by bayard.4d2.org (Postfix) with ESMTP id 5ED23122FE26;
+	Sat, 22 Feb 2025 03:36:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1740224177; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ABVOlES/GvScXjONNVDQvu/S0Hs0wPhbGU2RDAYy2cEeih5WIoQHqUmafU13fxDFu
+	 YsWFXJluYDlaEhjHUYJtm2u/bMA+KvTfONDIopxwdKbEsNXl97hmYRAj+c2EU+Hw3p
+	 aedeLCEuNoaB0KPVlAkQ7MYLSueCdk9AD24hVdyeB8ILjIz+UYi6NcQ+cBwz+nZ3B5
+	 rufn8cDIc5M/ZRIN1c1aQh0Bo731er7upOX6k9iMX7l3fRbu1OlRImXED2Fh7wYcTZ
+	 m6Bv/z5YeJlkg0VNvaVFDSz/rgmlcKN7K5jzF/dAIfusm/7qdgudQVhZFY23ha9iDJ
+	 eIMiVIe5K6luw==
+X-Virus-Scanned: amavisd-new at 4d2.org
+Received: from bayard.4d2.org ([127.0.0.1])
+ by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id g1TN3FBn8qRe; Sat, 22 Feb 2025 03:36:13 -0800 (PST)
+Received: from ketchup (unknown [183.217.80.34])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: heylenay@4d2.org)
+	by bayard.4d2.org (Postfix) with ESMTPSA id A95BC122FE25;
+	Sat, 22 Feb 2025 03:36:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
+	t=1740224173; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ujfBiNk57CUKu+M7ljRJ0+19wzyuQi2TwhupqBRWE2X11DD7xojiJc8aH0nGqrQoO
+	 TRAGFEfGaWX/oiqAjv1Es0p6ALLAmtUospfJZV4CkJPT5E82aSN/F9LTdzFPP8ZDhf
+	 3qJlfAh1xm2cinokwTI4NuRutnBj7HD1c0v+GB69Enj4+A6qJ/3bbmh5Z0MUnbRyfA
+	 oLSLnZU+Gfebcy1tEnnKWUyi2SoCuZzL3zf0snIAMOy+Af/Vh+P462eOicyqiuPPZ/
+	 gsNYyP+yc0R/g2KdgmZ6Utb9q+qkFadB29zPBxIPZdkKhBlsWhX1k82nPc8YyvHejt
+	 Wo/go59RUiKOA==
+Date: Sat, 22 Feb 2025 11:36:00 +0000
+From: Haylen Chu <heylenay@4d2.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
+Message-ID: <Z7m2oNXbwJ06KtLQ@ketchup>
+References: <20250103215636.19967-2-heylenay@4d2.org>
+ <20250103215636.19967-4-heylenay@4d2.org>
+ <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
+ <Z6rdBhQ7s2ReOgBL@ketchup>
+ <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
+ <Z63T_EDvXiuRQbvb@ketchup>
+ <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
+ <Z7BTVu10EKHMqOnJ@ketchup>
+ <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
 
-On Wed, 19 Feb 2025 17:49:18 -0300
-Marcelo Schmitt <marcelo.schmitt1@gmail.com> wrote:
-
-> A very slow re-spin time from my side but here we go ...
-> I addressed most of the suggestions and am about to send a v4.
-> Replying inline to the points I disagree with.
-> 
-> Thanks,
-> Marcelo
-> 
-> On 02/05, David Lechner wrote:
-> > On 2/5/25 6:53 AM, Marcelo Schmitt wrote:  
-> > > ADC inputs can be classified into a few different types according to how
-> > > they measure the input signal, how restrained the signal is, and number of
-> > > input pins. Even though datasheets tend to provide many details about their
-> > > inputs and measurement procedures, it may not always be clear how to model
-> > > those inputs into IIO channels.
-> > > 
-> > > For example, some differential ADCs can have their inputs configured into
-> > > pseudo-differential channels. In that configuration, only one input
-> > > connects to the signal of interest as opposed to using two inputs of a
-> > > differential input configuration. Datasheets sometimes also refer to
-> > > pseudo-differential inputs as single-ended inputs even though they have
-> > > distinct physical configuration and measurement procedure.
-> > > 
-> > > Document consolidated ADC input types and how they are usually described
-> > > and supported in device tree and IIO, respectively.
-> > > 
-> > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > ---  
-> ...
-> > > +There are three general types of ADC inputs (single-ended, differential,
-> > > +pseudo-differential) and two possible polarities (unipolar, bipolar). The input
-> > > +type (single-ended, differential, pseudo-differential) is one channel
-> > > +characteristic, and is completely independent of the polarity (unipolar,
-> > > +bipolar) aspect. A comprehensive article about ADC input types (on which this
-> > > +doc is heavily based on) can be found at
-> > > +https://www.analog.com/en/resources/technical-articles/sar-adc-input-types.html.  
+On Sat, Feb 22, 2025 at 10:52:02AM +0100, Krzysztof Kozlowski wrote:
+> On 15/02/2025 09:41, Haylen Chu wrote:
 > > 
-> > It could be worth reiterating here that although there are 3 different input
-> > types, in IIO, differential is only a bool, so there is no special distinction
-> > between single-ended and pseduo-differential (other than possibly having a
-> > common mode voltage input). And unipolar/bipolar is only considered on the
-> > difference between the two inputs and not the individual input, so in IIO there
-> > is no special distinction between bipolar and true biploar - they are modeled
-> > the same.  
-> For v4, I'll be mentioning the differential field meaning and the bipolar / true
-> bipolar (in)disctinction in other subsections bellow. Hope that will make those
-> points more clear.
-> 
-> ...
-> > > +1.2 Differential channels
-> > > +-------------------------
-> > > +  
+> >>> 	};
+> >>>
+> >>> For the other two clock controllers (APBS and APBC), syscons are really
+> >>> unnecessary and it's simple to fold them.
+> >>
+> >>
+> >> I don't follow. Do we talk about children or syscon compatible?
 > > 
-> > Suggest to insert here:
-> >   
-> > > +A differential voltage measurement,  
+> > APBS region contains only clock (PLL) bits and APBC region contains only
+> > reset and clock bits, so I was thinking about dropping the syscon nodes
+> > and changing their compatible to spacemit,k1-plls and
+> > spacemit,k1-cru-apbc.
 > > 
-> > sometimes also called "fully differential" or "true differential",  
-> 
-> I think adding that would make the sentence harder to read and somewhat incorrect.
-> The differential measurement has to do with how the ADC takes the input signals
-> into account to generate an output code. The "true differential" has to do with
-> the expected limits for the input signals. Fully differential input is yet
-> another thing that I've been avoiding to describe because I think those can be
-> supported as differential bipolar channels.
-> 
-> >   
-> > > digitizes the voltage level at the positive
-> > > +input (IN+) relative to the negative input (IN-) over the -VREF to +VREF span.
-> > > +In other words, a differential channel measures the potential difference between
-> > > +IN+ and IN-, which is often denoted by the IN+ - IN- formula.
-> > > +  
-> ...
-> > > +1.2.2 Differential Unipolar Channels
-> > > +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > > +
-> > > +For **differential unipolar** channels,   
+> > In summary, my plan is,
 > > 
-> > I think it would be nice to have a short first paragraph that just says that
-> > this configuration is quite unusual and that the difference would have to always
-> > be positive. Then follow with the rest of the info for the curious in a separate
-> > paragraph. Then it will be easy for those not interested in the unusual case to
-> > skip over that part.  
-> 
-> I think, reordering would make the explanation harder to follow.
-> Even though currently not using those exact words, it can be inferred that the
-> difference is expected to be always positive:
-> "IN+ is allowed to swing with the measured analog signal and the input setup must
-> guarantee IN+ will not go below IN- (nor IN- will raise above IN+)"
-> The last phrase also somewhat hints that the differential unipolar setup is not usual.
-> "Thus, differential unipolar setups can often be supported as pseudo-differential
-> unipolar channels."
-> 
-> >   
-> > > the analog voltage at the positive input
-> > > +must also be higher than the voltage at the negative input. Thus, the actual
-> > > +input range allowed to a differential unipolar channel is IN- to +VREF. Because
-> > > +IN+ is allowed to swing with the measured analog signal and the input setup must
-> > > +guarantee IN+ will not go below IN- (nor IN- will raise above IN+), most
-> > > +differential unipolar channel setups have IN- fixed to a known voltage that does
-> > > +not fall within the voltage range expected for the measured signal. That leads
-> > > +to a setup that is equivalent to a pseudo-differential channel. Thus,
-> > > +differential unipolar setups can often be supported as pseudo-differential
-> > > +unipolar channels.  
+> > - For MPMU, APMU and APBC region, keep the binding in soc/spacemit.
+> >   They'll be reset, clock and power controllers, with compatible
+> >   "spacemit,k1-syscon-*".
+> > - For APBS region, write a new binding clock/spacemit,k1-plls, as it
+> >   contains only PLL-related bits. It acts as clock controller.
+> > - All split children will be eliminated, there'll be only four device
+> >   nodes, one for each region, matching the datasheet.
+> > - Put all clock-related binding definition of SpacemiT K1 in
+> >   dt-bindings/clock/spacemit,k1-ccu.h
 > > 
-> > I think we should just leave out the sentence about being supported as pseudo-
-> > differential. There is already a different section that describes that and it
-> > would be simpler to just stick with describing the fully differential case here.
-> > The differential bipolar section also only describes the fully differential case
-> > so mentioning pseduo-differential here seems inconsistent.  
+> > Is it fine for you?
+> > 
 > 
-> I also disagree with that one. A differential unipolar setup is uncommon
-> (at least) so the mention of pseduo-differential is to point to what would be
-> the usual way of supporting those input configurations. Differential bipolar
-> inputs are common so no need to mention other input types when talking about
-> differential bipolar.
+> That did not explain hardware to me.
+
+Sorry if my replies haven't made things clear. I'm goint to make a
+(hopefully) more clear conclusion,
+
+> You assume that some way, maybe
+> through magical crystal ball, I know your hardware and will tell you
+> what to do.
+>
+> No.
 > 
-> Though, I'm fine with changing the explanations if Jonathan prefers so.
+> I have dozens of other patches in my inbox. It's you who should explain
+> the hardware in simple, concise way so we can judge whether DT
+> description is correct.
+> 
+> Again: define what is the actual device, what is its address space, what
+> are its possible *separate* and *distinctive* children.
 
-Generally I'm of the view that getting some good docs in place is more important
-than necessarily getting the perfect ones.  So where I don't feel strongly
-(which I think applies to the remaining discussion) I go with the author choice.
+The series covers four seperate blocks,
 
-Jonathan
+- Application Power Manage Unit, APMU
+- Main Power Manage Unit, MPMU
+- APB Bus Clock Unit, APBC
+- APB Spare, APBS
 
+they're clearly separate blocks and have their own distinct, separate
+address spaces, confirmed by the Address Mapping section in the TRM[1].
 
+These four blocks provide hardware bits for three purposes: power
+management, reset signals and clocks. Not every block is capable of all
+the three functionalities,
+
+- APMU, MPMU: power, reset, clock
+- APBC: clock, reset
+- APBS: clock
+
+Reset and clock bits, if present, always stay in the same register.
+Power management bits stay in others. These two types of registers
+interleave if present in the same block (APMU and MPMU case).
+
+These blocks have no child: power, clock and reset definitions differ
+from block to block, no reusable nodes could be split from them.
+
+Hope this conclusion will help the reviewing. Please tell if something
+is unclear.
+
+> 
+> Best regards,
+> Krzysztof
+
+Thanks,
+Haylen Chu
+
+[1]: https://developer.spacemit.com/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg
 
