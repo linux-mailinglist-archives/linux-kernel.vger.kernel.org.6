@@ -1,126 +1,181 @@
-Return-Path: <linux-kernel+bounces-526841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9743FA40438
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:34:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4A4A4043E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:34:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81555420F9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:34:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8F377AF405
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593183BBC5;
-	Sat, 22 Feb 2025 00:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EAC481C4;
+	Sat, 22 Feb 2025 00:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OUaLZ8oR"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpS0MyCr"
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755E638DFC
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 00:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7875435948;
+	Sat, 22 Feb 2025 00:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740184453; cv=none; b=dM9ZR5xULcYLF0myXqc8Nw8PMurqtOLbEBzWVz1XPNrLc7RdKLwzPt36EcMLLMQl8pJnaRkg/yQPoh3QAb/uimf9QmDhGXp0+NjRWd3UAN9WvXTq4QHBYA+mlSa8cMpyvH/VtMTQFhNjp2FFo2zgPGuu5ofdawqopMUrjk1o3R8=
+	t=1740184470; cv=none; b=eQFWJoXPhrZDlmgsRazDD9Sdk/PqQYIzj2Z95723rvXa2Eaq24H+Jfeap1U9TPKO0EIX97JWliCNRFwjPT5Nao0Oogdk7bJKGUO9Wui4vT480GqaVkHq2Oqxn5KUOHQFtDdGTeMRLMoJt+bSyquC5/FqeqZdUHThFjspP6iXxPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740184453; c=relaxed/simple;
-	bh=VBQHljTSYFVCaj1bbqPfTOtZckZuFzfefk82naOnO1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pgB9Aa4MFSsxZeqNhYj0iBUIDZhM2RzE1ofgaLq4R6oTi0LjKXv+lbz2sKffcyVEGuqNNKy5YrvworrcjBuiPfmeZZ6VmLeXaVtBt2y9pQ41xw0sCDQQwPDtx2fN2D1/tLjHXekd3WIb7PVwupz5Ba2Fq4bJTr47/QIE1qkcplE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OUaLZ8oR; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6f6ae4846c7so23301327b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 16:34:11 -0800 (PST)
+	s=arc-20240116; t=1740184470; c=relaxed/simple;
+	bh=f1vgxh32DbPx0po+Ss3wIsjqVbC9YsEogM1Sg6vonzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbiRR/VsW9G830I8U6kCm0/EXISbhwjHaou3t8B0gqXiOlkLPSH6gWfVlBgeJxAUorCzoRnedRawDi+Py+1/f5xyUKUuYlvLNIqk+XC+1SLsNbF2pN47zWeaXaslMxjXJVsxUTEoudgn6KIj7JeIokROSxGCRY7jh0Opk14NjQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bpS0MyCr; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c04df48a5bso282431385a.2;
+        Fri, 21 Feb 2025 16:34:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740184450; x=1740789250; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vwm1CmURc5ve7fRU7CIVjr3XJe8XTIamKjt5b8I2oxA=;
-        b=OUaLZ8oRu1P66C9ZZZkX3ynr5GVCRqOCfxm+eS10iyjZ/PQSQVzJcOLZ6xUj2SVdYN
-         M4K8v7SJJNGtsVfIa8UAf/TytFgQB7jB17v0YqxAZeaJ0z7poxTRKJtsLNNfDGLEzCtl
-         seyhz1IBRRwX+if/gK7lWjT9j8r22Ve4Q5tw8y7tH4v0VO86On+zdAarH3tOUkuAZpC+
-         42QHcKAyfH9frZU0Zmd2KD7X742j4GBihhNWnbrr+XZUDJUe8nnJrCAFuMuLqqZIBe++
-         7xlE0daBQ4baD0AJRZFXYr9quFZHlK3q3UVtm8HMqcrK9PO0mdFobh1wMMbzoIxycBMQ
-         K8pg==
+        d=gmail.com; s=20230601; t=1740184467; x=1740789267; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wStl+6IKZhys/kjLjbrppMxAjOWicsS14gQYbb4jIcI=;
+        b=bpS0MyCrrB1IGS7WfgjfJgh7Vo2IK+mRjTRBay3745x9LiBgHSJF1uN2yAlnUvVj77
+         hYunKAJSdyDCT0EIVxiCoVoxRJg7G+yKRV73CQXyGB36LHTHFOyFSmYe1NvduHYrt4vZ
+         9eheBCmP57Bkjnc+sOAzGLAUllVcIrA/4vUXTDsDL+TbJbkECdzWsI0TuudfUtlZzfOn
+         sJkE7FCJSaVswye3nckiYf+RNsy8KU5ZaSBCFQnzLUuN8pae3dbe2RzX3Amqw2jqiYV0
+         w51FkwzVoF7qfqFAfixlYLIBMvKQE33BSUbOWm6ezf97lBFlslFtYiGtBOy/HddqRd85
+         dfUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740184450; x=1740789250;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vwm1CmURc5ve7fRU7CIVjr3XJe8XTIamKjt5b8I2oxA=;
-        b=dBxgFJsVA0J8FmSV0hTFOGoSo4E4ESDuqg1wo4GBdcI4g0srT8XAxOwe5uI7sfE39G
-         UUcvTAFyE31n6snBBzrq8kdtM9WC2hQskR4xgOaq7ytzLu6QUqZbsy/NfnZKxc5o18cR
-         dDmCp8ltB9wWWJe8Aoy8DOXabCS+k/kBfmsp19iQr0JbZgbax7YpISsE9ZrmYl349iWY
-         g9wzf0i9BbRd4rcwbIj65fvHSHIkGx7LLv3khZP7VE5B2eT6WOGL+OgZCVoCJIhhb/be
-         D1csfv5S85QoPqfn1gd7ct6xq5VfL//DFPkQ09dKIr0l6Vl80W37uMT+93g9SEek8Xg9
-         RhEA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0H4qsE9viZUr33yQi2JzVBc+oJ8+djcyHaJEq/ieik1Waxz7xWYxWujiCvjNv8Wl8htbraHdh/YI42Lw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTE3sdP1ua6hKHK9Lqqr8XGMj5b3KepiSLfTu+IYEEUf8XvcyY
-	U61WPhnDs8mLhQHUFycQdhvmMKVpg1x0QgjkopQEIwilJGGZcoGFRNaX8Z5S1L5e90NRmaAu4YV
-	xUKI40HvsZPJB7vw80uvB5fPxq1/gv60uY6Xe
-X-Gm-Gg: ASbGncvOwNSJ1TpLteZbm1ocI/jGhi1HWetvTnBxufQNYiDVLL8vnTynnHEnd+tD4Rc
-	TdIrdaWnDUEG9XmicVaZpHdYb2cPyb+eaZyveLXXf4nb+gjkoztaisqKuH6Pgiox5+x0xInXgry
-	2VIXQUaHM=
-X-Google-Smtp-Source: AGHT+IHU8mqrXQveakYlLhZ7AQnDt8Huldya+naR0jPDiYuZo2FksnUyR3yBLKwefOB052PduAKRpiO/vKqO0ObiYCs=
-X-Received: by 2002:a05:690c:3506:b0:6f6:c937:2cf4 with SMTP id
- 00721157ae682-6fbcc81835dmr37934927b3.23.1740184450404; Fri, 21 Feb 2025
- 16:34:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740184467; x=1740789267;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wStl+6IKZhys/kjLjbrppMxAjOWicsS14gQYbb4jIcI=;
+        b=q1eTdgK5kFZwbn2PsdG2oMZKGz5V5k80pCiY+uJOpZLRnrPS6ef6h112uAj5kdnfGJ
+         IedxldjT0h0n3cvs8BSMSNADFFlKtzOwx0I+p/haTBUPR761/SHyF3yZxTwZaOBfN8FY
+         /05uCrE2mQ4CY2fRK/wpl3mV8eOSSPLyc20W16OGInknr8ppiVCvBKTsfQMsoenVj+qm
+         +e+nQiJcWN3UF3noLjieEVPc67IotBMLCdcD9aH50U/CrEUCn48I6T6NjdW7NQ6JSLlz
+         Rmtje1LWWujEr2g0WYTWcM1BduvPS76+xMYxNt9PJd+5eubVt52aJMqr4N4qyYW8lbW1
+         XmSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVbehary3H7ORD0XigFbrjo8d4is2E5aBAHSTVOSLFQPPhVh/rdz0MsOHumLH2fgKB6mR8Tta/Sa8Qq@vger.kernel.org, AJvYcCWDKo8F5womTlHrlP1BnHWbMnsZtzULCKW4QqXcix3id1MQt9oUG830h36Js4DL2pi6nxNFHOKs69Sc8oYu@vger.kernel.org, AJvYcCXkEJpSSYaGDagGXWUeW6IBgi0LhOX5xupr+gtB60XZH/P50GbrBYAmgoRhH+1K06F/1F129x4ap+c1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEhgvTvP94B25VzP0SGjiRAi/0ev9k/qkTVcgMnPR5/WrVIzeK
+	20okYuvx80eKhp3Gnv/SxMbJ0fGYsGnh586BUqnjMDeoHrSuiQDf
+X-Gm-Gg: ASbGncvg9O6CatkW+yyFlec16T7XrdSgEh6z9Znb0e+2KFHM0GZXLRe20LSqKT5ZVG4
+	IKyFSPz2u05nf1C3+j4xw0bNxXCS7LnbSW22b19l9s1qHvTiyo7fAGl2TMJj0gYopkh0LM2UJU8
+	Df0FBIGgzSFmpYbhSilU6BiqZv5fGd+ibFJEUSTgS0cjt4/+iUmOF2ZVLFIiabNMCCir5yCmt3t
+	l8OIh6IzaTv+0VJInnBbCYSrzWRQivbHid7AdcF3CFxglAHvwCfgHcByIgVQRDo0n/8DtFmA8BH
+	NQ==
+X-Google-Smtp-Source: AGHT+IFHrDz0qc8zD5XdcpfmhF3hdDGMdxF6JouYGWlJZR7lIXsOACUUisCSrhGBpwJguI83XxPhyw==
+X-Received: by 2002:a05:620a:1910:b0:7c0:ad3e:84a7 with SMTP id af79cd13be357-7c0cef1255amr657209885a.26.1740184467296;
+        Fri, 21 Feb 2025 16:34:27 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c09619fbfesm721817485a.18.2025.02.21.16.34.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 21 Feb 2025 16:34:26 -0800 (PST)
+Date: Sat, 22 Feb 2025 08:34:10 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>, 
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
+Message-ID: <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
+References: <20250221013758.370936-1-inochiama@gmail.com>
+ <20250221013758.370936-2-inochiama@gmail.com>
+ <20250221-cavalier-cramp-6235d4348013@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org> <20250221.ahB8jei2Chie@digikod.net>
-In-Reply-To: <20250221.ahB8jei2Chie@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Feb 2025 19:33:59 -0500
-X-Gm-Features: AWEUYZkJvdf7eQZPTJrwhKnqZP-Y8wnVSUpipQ3Me6WvrrB1wQej040Y9lsHrww
-Message-ID: <CAHC9VhSnP=j_T30ctVmzQ8TwhD6YFcrWhLbqa_oG3WSAPUPOaA@mail.gmail.com>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-To: Andrey Albershteyn <aalbersh@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
-	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221-cavalier-cramp-6235d4348013@spud>
 
-On Fri, Feb 21, 2025 at 10:08=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
->
-> It looks security checks are missing.  With IOCTL commands, file
-> permissions are checked at open time, but with these syscalls the path
-> is only resolved but no specific access seems to be checked (except
-> inode_owner_or_capable via vfs_fileattr_set).
+On Fri, Feb 21, 2025 at 05:01:41PM +0000, Conor Dooley wrote:
+> On Fri, Feb 21, 2025 at 09:37:55AM +0800, Inochi Amaoto wrote:
+> > The pcie controller on the SG2044 is designware based with
+> > custom app registers.
+> > 
+> > Add binding document for SG2044 PCIe host controller.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >  .../bindings/pci/sophgo,sg2044-pcie.yaml      | 125 ++++++++++++++++++
+> >  1 file changed, 125 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > new file mode 100644
+> > index 000000000000..040dabe905e0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > @@ -0,0 +1,125 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/pci/sophgo,sg2044-pcie.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: DesignWare based PCIe Root Complex controller on Sophgo SoCs
+> > +
+> > +maintainers:
+> > +  - Inochi Amaoto <inochiama@gmail.com>
+> > +
+> > +description: |+
+> > +  SG2044 SoC PCIe Root Complex controller is based on the Synopsys DesignWare
+> > +  PCIe IP and thus inherits all the common properties defined in
+> > +  snps,dw-pcie.yaml.
+> > +
+> > +allOf:
+> > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: sophgo,sg2044-pcie
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: Data Bus Interface (DBI) registers
+> > +      - description: iATU registers
+> > +      - description: Config registers
+> > +      - description: Sophgo designed configuration registers
+> > +
+> > +  reg-names:
+> > +    items:
+> > +      - const: dbi
+> > +      - const: atu
+> > +      - const: config
+> > +      - const: app
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: core clk
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: core
+> > +
+> > +  dma-coherent: true
+> 
+> Why's this here? RISC-V is dma-coherent by default, with dma-noncoherent
+> used to indicate systems/devices that are not.
+> 
+> Cheers,
+> Conor.
+> 
 
-Thanks for reviewing the patch and catching this Micka=C3=ABl.  I agree
-with the hooks identified and their placement; it should be fairly
-straightforward with only a few lines added in each case.
+The PCIe is dma coherent, but the SoC itself is marked as
+dma-noncoherent. So I add dma-coherent to the binding. I
+wonder whether dma-coherent is necessary even in this case?
 
---=20
-paul-moore.com
+Regards,
+Inochi
 
