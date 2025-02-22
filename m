@@ -1,49 +1,51 @@
-Return-Path: <linux-kernel+bounces-526942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BCCA40569
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC5C3A4056B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 05:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D967A9D5A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:15:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F86C7003AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 04:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3239C200130;
-	Sat, 22 Feb 2025 04:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B6720100D;
+	Sat, 22 Feb 2025 04:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFiMixKH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G297iUlI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8655742056;
-	Sat, 22 Feb 2025 04:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8907ABA2D;
+	Sat, 22 Feb 2025 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740197754; cv=none; b=kz3+TlGFTrX9gT76gS/92b4T/NRy5s/sjsIUi3n3x8qrT/AwJ0Vsz5t4h2WVv5aH97Z47mbackO9OaIscwBY3RvREgHlgKUPkHU1vVtmi8A/1Ai7MHFrcsph8CA5GxIRf8MVaodi9sXi0oU9T8vN7PRhDIMAYpv2GTY70huXPDY=
+	t=1740197866; cv=none; b=L0uMYTUfKacqz28yRJ/qtBT3bPFey+rv78wTnr/+PlbRSWWsUHjzkal7kqm8r4wZwsO16LQYZpztM5HSXVznHKFiZGNJ8LNq4T7n2hNXhcwmYbErP06Kk+ysQZDwHpkYC9xcp1hF9iXy8M9PszzGAdK+FNLPb8c0iLz1WRFyO8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740197754; c=relaxed/simple;
-	bh=b7GfZVqCRhoo2YiBZC3bMTnTDWqBFTfV4/SwsxGvyac=;
+	s=arc-20240116; t=1740197866; c=relaxed/simple;
+	bh=XGzj2md212LaOjPHOjWC7GnDU4NWo1XIpaMinL5/MHY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIlzGG8vVxf/OnebW7L3VXS/9iCjKIoC86krWUzMx1hStZLBjvPlFj6gH5rkFnI7vO2Zi/jolYyd5nTuuzZCVqUsmUsCvG+Bj7Edp21VZJntHm3V+91Ar7mlPlP6A0/KNTvh6Ab5riwM/zjYgf5t+FK1ruC5tO0/jlSmNMFbfzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFiMixKH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3691C4CEE0;
-	Sat, 22 Feb 2025 04:15:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPqRJEEL+AeSiOjXxpgiV/LaG2l0TEvSysg7/YfcZbyybROgz749mlJ37+DXZ1KHw9sdsjopHilKWDJ7zSwi8Hs43wkLxjrP6+d0EQoS+KJRI2k26o/hZE+iEU9sn5sBF4xig1J/GOE2NEUzHLJ/I3Hqq8r/YWKQiA/blqx2P5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G297iUlI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE36C4CED1;
+	Sat, 22 Feb 2025 04:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740197753;
-	bh=b7GfZVqCRhoo2YiBZC3bMTnTDWqBFTfV4/SwsxGvyac=;
+	s=k20201202; t=1740197865;
+	bh=XGzj2md212LaOjPHOjWC7GnDU4NWo1XIpaMinL5/MHY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OFiMixKH8ctM6uKAfkDmQrd1pCRKTfPZmEAG0Cn4ebfzejyH95cCWujgkkVQT+YjU
-	 NsOvVCltar8ry74Di/UcpRDiMhdwG6vebDIoEpzwfbbT5q4b6ALq98Wqrq0cJXiwHA
-	 4DvckMGvyGTH+41jyvWTGAO87kT0eTKVbITuct1uZ5PSrWARWBZNGCP9PO/Qs9A4xg
-	 h4AYC57d8230HlG+4hy2aIts/R5oFi5Oo5mPrI+PAcg48m7zcfA1mnTy2aZ7u6S71r
-	 BQQJvtj4iFZMdlnEPg8xxuovPErDY6KLLdyEwXONiVlPXlnNtd0EEdCjw2XeYIbsY3
-	 qR+jiNt+uTGsA==
-Date: Sat, 22 Feb 2025 06:15:47 +0200
+	b=G297iUlISYs8cijPfToFlxvk0zIc+29EfqwR34hgjXrhP0cBDkrCmaIoljJY5lPrI
+	 ciPJvilarAmN/o/o3A3+XacaAyvugBtbIwY5bs/V3kpt/nvnkmqGh42zAyBLRvOOG7
+	 QTWdwOrzXeDvsB2C+OkJJGxvZeCELeS1ExzgshM/2RrYe1GJUZMb3ShWLj0xjMocza
+	 QmIEf4uTJTkVeSQrrY1VdP7j3tnar+CorCL1woKfV2j2w9s9OoOA5ggggEZ1IuVOjB
+	 5xyTjP5BZag24NPuSoBt8HU2eewnuimxnMC2bMaRFugFhwNlXneHnQOfk82bUYjYJC
+	 /PyPfad30TMAg==
+Date: Sat, 22 Feb 2025 06:17:41 +0200
 From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
 	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
 	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
@@ -57,42 +59,43 @@ Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
 	Danilo Krummrich <dakr@kernel.org>,
 	Roland Xu <mu001999@outlook.com>, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] rust: workqueue: define built-in bh queues
-Message-ID: <Z7lPcy6mgOVSFhZr@kernel.org>
+Message-ID: <Z7lP5VA374-TuNZz@kernel.org>
 References: <20250221223533.158959-1-hamzamahfooz@linux.microsoft.com>
+ <CANiq72nsDgRJeKk=B7C9Zo7HL12az+ZLR27qxckqi5H=cmuV5w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221223533.158959-1-hamzamahfooz@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72nsDgRJeKk=B7C9Zo7HL12az+ZLR27qxckqi5H=cmuV5w@mail.gmail.com>
 
-On Fri, Feb 21, 2025 at 05:35:31PM -0500, Hamza Mahfooz wrote:
-> We provide these methods because it lets us access these queues from
-> Rust without using unsafe code.
+On Fri, Feb 21, 2025 at 11:45:38PM +0100, Miguel Ojeda wrote:
+> On Fri, Feb 21, 2025 at 11:36 PM Hamza Mahfooz
+> <hamzamahfooz@linux.microsoft.com> wrote:
+> >
+> > We provide these methods because it lets us access these queues from
+> > Rust without using unsafe code.
+> >
+> > Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
 > 
-> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> Cc'ing WORKQUEUE -- thanks!
 
-Just getting familiar how code testing and reviews go with Rust code,
-as I might put out even a driver at some point of time, so let's give
-this a shot :-)
+Not meaning to complain but it by practical has no commit message.
 
-Using 1st person plural is usually almost a cardinal sin almost and is
-somewhat exhausting to read. "These methods" refer to nothing and the
-commit message does not educate me why the accessors are needed.
+Does not meet any quality standards in that area tbh. In order to
+make Rust more appealing you really should pay more attention to
+this. 
 
-It should be IMHO language agnostic that commit message is more
-important than the source code. It weights now even more than ever
-before because it is also AI acid test. The current commit message
-is as good as it did not exist at all.
+I learned absolutely nothing from this.
 
-Based on these conclusions I'd start the commit message by saying
-that "Provide safe accessors to the workqueue bottom-halves."
+> 
+> Cheers,
+> Miguel
+> 
 
-Then add another sentence on why they are required (i.e. who will
-be  the caller for these).
-
-BR, Jarkko 
+BR, Jarkko
 
