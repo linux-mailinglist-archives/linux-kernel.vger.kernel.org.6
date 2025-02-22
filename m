@@ -1,127 +1,78 @@
-Return-Path: <linux-kernel+bounces-527448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7712EA40B63
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:20:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 413C6A40B67
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA0D4420DDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 920C91885607
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:22:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEAD20FAA2;
-	Sat, 22 Feb 2025 19:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E61A20E33F;
+	Sat, 22 Feb 2025 19:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="C8qqaaTN"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuxHFaTn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD6920AF98;
-	Sat, 22 Feb 2025 19:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270314B95A;
+	Sat, 22 Feb 2025 19:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740251999; cv=none; b=Z6ukhAloRbU7XavlqbSkI+FMwvQ7dauZ1oyGsSYWVXHFbqz9i19eK2NZKbOWUvlebaUcUdq52ww8naBRT44ZD65VknRzrTq0o+rUbkMdGO98Oqg17GgKkW1NNVc92TY/uAZ5Ya12OlOcm6N2TyO+rvQ4/yVaCJfM4xg5ZfIOG6E=
+	t=1740252162; cv=none; b=lmpuEpXoCsOnIftQ/a3U1i9vmpf58eOZPXnwCepOpYTTDj/AykZNe3Z8NF5vhk6BuqnlLGgEtiI9OG/obFE61ua9Ym4FSCFmG8jtb1KYKnov9J4NpBYOoiGXKM/auGaIxy3OmgHtU09ZuG1EH6mC+Lued+GLMh4IFOMGsuTT48k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740251999; c=relaxed/simple;
-	bh=yOvvdjiU0jdJ3UdjDOTfD6mRKuTsj9mR2aIGQknKyaM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=o15aigJER+IRWLi82L7P9/BAQjCXjpyDUlfqlVG+abV8KvIMsvbTVBDLrHRmFiOFHyH2Mea12kTTWd5QmO39T2ugbcKv3j9jFQuiZju80Gc7aT5WTlV5xcMBKS8hqXtF1Q8ZSfXfKuQ1BvDIJ8vWebg9s8zmQiywS4RumglsA3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=C8qqaaTN; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z0cJM2lr7z9snx;
-	Sat, 22 Feb 2025 20:19:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1740251987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=5b6ehKCWNH72ToV9CKBN72vhsFPXWtjWbIceXxBIUQg=;
-	b=C8qqaaTNpnIbwIbem6hbEmowvFzu34PishhG4VM6bU1Q0Ku6S15gIiyKty38oofGAozrRs
-	YrXzjmDm12VvU9q8rOujPZfvAQe1H22HGWI4E4WHelfbUasdCVKAFkwaMP/0fzpqx0DNZ7
-	qxX7J9EgnXI2gP2mRnA0/XxiIgKvduVx+YbJW82TNoBz80BW2NPndLEBvwrrm6mm+v6EGt
-	TLE1udKEtDLHbLNmi4t+bkp5AXp1qKeS4LAh18nAAPofWp2LGJiEPpxYi3OrCzc1YR4bRs
-	9NPbAD8lEWbzlrc2cnVRv/N/jcWzOS9z51Djx1JkW5TWLkKfoi6odcRa5sldzQ==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Sat, 22 Feb 2025 14:19:43 -0500
-Subject: [PATCH] mtd: rawnand: use kcalloc() instead of kzalloc()
+	s=arc-20240116; t=1740252162; c=relaxed/simple;
+	bh=ONQY9nvvsPGrxR/sZC8rgOJHJjFV5kP+o6rFhNEDB+Y=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IIfhqhvb93pxts+0BHOt5yARoxmpoDr1sjFs9lAhIUAOvDR1p7HiLi1aOFaa2FM52ZuPi5YdB5UTo+lfYRxApuQ1177NaDDRn4h1wZ77erQVJ1T65f9xnirBchgmcDEDckA0avdWwnBfdt/3fCPHdxFjot1g8SP8piKAjliY5uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuxHFaTn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDBEEC4CED1;
+	Sat, 22 Feb 2025 19:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740252160;
+	bh=ONQY9nvvsPGrxR/sZC8rgOJHJjFV5kP+o6rFhNEDB+Y=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=SuxHFaTnVZErxjMLIoJ8DJ1rUF57UjBphPXxlTfIEH7r4kU6O1ncYBUdqSBpxiFpS
+	 VPJhW5CdAWlMTdwqoxsEr8XTpiWzVRCtnUH8eE4Eq2R3JqWypyvfpblRpE6qLxtltL
+	 j1PKyrv1pYUC/XidlsefQTvscA+cWmUkgXAPm0jaEgFtKzF7Ydn+Uaf7DYz4n+3nWY
+	 fIrjTmpGBvaWB/QXcPjcNu8IAn6NAB2m1K0P9IgHN/GdjnWMcDbUOnKm04Eq5Rb2oN
+	 uu/pgZeRwOcMWqFHWuEHBbyRkh+hq8QVImo4jxUoTLdq1Xh8KKAXpkU67brtcaiDAK
+	 uQA8KDMsnoULw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 341F1380CEF9;
+	Sat, 22 Feb 2025 19:23:13 +0000 (UTC)
+Subject: Re: [GIT PULL] s390 updates for 6.14-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <your-ad-here.call-01740181568-ext-2995@work.hours>
+References: <your-ad-here.call-01740181568-ext-2995@work.hours>
+X-PR-Tracked-List-Id: <linux-s390.vger.kernel.org>
+X-PR-Tracked-Message-Id: <your-ad-here.call-01740181568-ext-2995@work.hours>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-5
+X-PR-Tracked-Commit-Id: c3a589fd9fcbf295a7402a4b188dc9277d505f4f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: cd59f1d80a6d01326e37318218a072a46899d237
+Message-Id: <174025219181.2429034.9993177131152894805.pr-tracker-bot@kernel.org>
+Date: Sat, 22 Feb 2025 19:23:11 +0000
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Heiko Carstens <hca@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-mtd-nand-kzalloc-v1-1-fbb41db6fd8e@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAE4jumcC/x3MQQ5AMBBA0avIrE1SgwRXEYtqBxOUtCJC3F1j+
- Rb/PxDYCwdokgc8nxJkcxFZmoCZtBsZxUYDKSoVEeF6WHTaWZxvvSybQaqNUVWWVz0VELPd8yD
- Xv2y79/0Aw7Y8gGIAAAA=
-X-Change-ID: 20250222-mtd-nand-kzalloc-29cc08138b24
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1676;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=yOvvdjiU0jdJ3UdjDOTfD6mRKuTsj9mR2aIGQknKyaM=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeHBPOVM5ai9XOTIzbnYvUHlpOTNtQmJML0NsMlZVUzNOClZleVhiY2VlMHJCN3J2OUZl
- ZDZPVWhZR01TNEdXVEZGbHY4NXlta1BOV2NvN1B6cjBnUXpoNVVKWkFnREY2Y0EKVENUZ0E4UC9
- 6S0NjL0djdGgyMGNMSyt6Q3kvMGxQdHlZNVBJeHlYQlA5dkVuWVhMUk96RkdQNTdtOTI5R1RIRg
- pvdittMHNFZGJXZkxObXl1WGNvZkdIRlBndDh6M2FScmtqOHpBS2tHU2RNPQo9dDFVRQotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
-X-Rspamd-Queue-Id: 4Z0cJM2lr7z9snx
 
-We are trying to get rid of all multiplications from allocation
-functions to prevent integer overflows[1]. Here the multiplication is
-obviously safe, but using kcalloc() is more appropriate and improves
-readability. This patch has no effect on runtime behavior.
+The pull request you sent on Sat, 22 Feb 2025 00:46:08 +0100:
 
-Link: https://github.com/KSPP/linux/issues/162 [1]
-Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-5
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
----
- drivers/mtd/nand/raw/nand_base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/cd59f1d80a6d01326e37318218a072a46899d237
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index 53e16d39af4bf95c16505e0b528da1f3ba832010..13e4060bd1b6a1a360d430260b881edc8a3abeff 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -1833,7 +1833,7 @@ int nand_readid_op(struct nand_chip *chip, u8 addr, void *buf,
- 
- 		/* READ_ID data bytes are received twice in NV-DDR mode */
- 		if (len && nand_interface_is_nvddr(conf)) {
--			ddrbuf = kzalloc(len * 2, GFP_KERNEL);
-+			ddrbuf = kcalloc(2, len, GFP_KERNEL);
- 			if (!ddrbuf)
- 				return -ENOMEM;
- 
-@@ -2203,7 +2203,7 @@ int nand_read_data_op(struct nand_chip *chip, void *buf, unsigned int len,
- 		 * twice.
- 		 */
- 		if (force_8bit && nand_interface_is_nvddr(conf)) {
--			ddrbuf = kzalloc(len * 2, GFP_KERNEL);
-+			ddrbuf = kcalloc(2, len, GFP_KERNEL);
- 			if (!ddrbuf)
- 				return -ENOMEM;
- 
+Thank you!
 
----
-base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
-change-id: 20250222-mtd-nand-kzalloc-29cc08138b24
-
-Best regards,
 -- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
