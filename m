@@ -1,192 +1,164 @@
-Return-Path: <linux-kernel+bounces-526906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC7EA404FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:51:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A0FA40502
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 02:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B32E317D3EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB1B19E477D
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BBD20767E;
-	Sat, 22 Feb 2025 01:47:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C25773451;
+	Sat, 22 Feb 2025 01:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cHplnZpb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ecvcVJv9"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9500E20766A;
-	Sat, 22 Feb 2025 01:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14F128382
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 01:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740188838; cv=none; b=QuLuHIKyvFErmRsFA51J8D7ijq7me4VhgbXTG+rYABIcWPqu9+g/Qq552QZX82yjrF5nIH/9uj246oEqmAKhnoUfujE6SBkPgpzt8Ui/PEv007M3UGIoRCRGpaiBJR3vrGXkW+KP6KluIZVqByzb9KcFMDMTa7nKCYhkOMGVMGE=
+	t=1740189101; cv=none; b=urLw8MkAGYVtDkHsbaKXWLyyR3qNkGggUIV11wxcAozfzfauruJFzk76g4gU1Qe4g5IlrH2a/VAvx3J67vHh8eZeHgcbLvHJtQke7AFZJTC/yd5NwaCXxl8PqzR5iZcsbGYkL46HIWx1mU9y9BY3v29vBKtxyp24doycODPEZ9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740188838; c=relaxed/simple;
-	bh=J2sIVb+E0KESOFxsXNIk/sv4uLCGBRMwRyAKo+HWNqo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AdPMsyHUpOSRKLZ6Liv0yy29B6J5VQm2wTG8J7Qt1L+32KWfXRN5yGEeG+KTIP41NCqm5lFugUHnXA90ezGHiPiuf3Wpmz2xRK6ZHengz0mxnuBnPNCNIAvr97L6dkX/jBJfsEvtRC7kK8EBe9LCKhMBBTgiqRZjIY7kPoxV2pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cHplnZpb; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740188837; x=1771724837;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=J2sIVb+E0KESOFxsXNIk/sv4uLCGBRMwRyAKo+HWNqo=;
-  b=cHplnZpb6FOZQmDw6b0iGtcg7qjjBLaFygWCYOh3pJNHzS6902lbmT8/
-   7b0+t2MnnSlSz1yeEdBzi5ldECZabFfZldcqVIblV5SfDVhOSmX/Uwy14
-   eLm481gyt3GxdtCFgI2rciffBC59zGRxn2jrqytiPx3/qmzF5mHHmcd8K
-   +EAqgT704DVPI16GhCBoTnkdz/r9e+THqy375CU2UIq3g1daxPvtYYZIM
-   uyTjATDxhYlEftQvVYQ6nFck4nGslLT7fqPbWbBQ+3bxN3lqt66BvNKNm
-   fdsedUhEirXw+7DTc9W/i34s7hFiUcu4X1aSB80vQRNPAR5pobcGmqJBU
-   w==;
-X-CSE-ConnectionGUID: fe6iK7X2T8i1QYVjbMomtg==
-X-CSE-MsgGUID: KsCZSZBQTCKZHPXUPyrUBg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52449079"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="52449079"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 17:47:16 -0800
-X-CSE-ConnectionGUID: RGnKI1A0SIKwNi07XZ22uQ==
-X-CSE-MsgGUID: vyikwM8nSL2IS5vjzSzT0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,306,1732608000"; 
-   d="scan'208";a="120621747"
-Received: from litbin-desktop.sh.intel.com ([10.239.156.93])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Feb 2025 17:47:13 -0800
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com,
-	kvm@vger.kernel.org
-Cc: rick.p.edgecombe@intel.com,
-	kai.huang@intel.com,
-	adrian.hunter@intel.com,
-	reinette.chatre@intel.com,
-	xiaoyao.li@intel.com,
-	tony.lindgren@intel.com,
-	isaku.yamahata@intel.com,
-	yan.y.zhao@intel.com,
-	chao.gao@intel.com,
-	linux-kernel@vger.kernel.org,
-	binbin.wu@linux.intel.com
-Subject: [PATCH v3 16/16] KVM: TDX: Handle EXIT_REASON_OTHER_SMI
-Date: Sat, 22 Feb 2025 09:47:57 +0800
-Message-ID: <20250222014757.897978-17-binbin.wu@linux.intel.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250222014757.897978-1-binbin.wu@linux.intel.com>
-References: <20250222014757.897978-1-binbin.wu@linux.intel.com>
+	s=arc-20240116; t=1740189101; c=relaxed/simple;
+	bh=b/wCdmMliqE07gTjcVqKdmn4h1VhcVtYzWKk7Ib2gis=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccEVbhW+w9z5N2/bs6l8xJlR2pPeL+Pf9NEZW1gbOTHJnGC6Ccq7DoiBsz+npKwX3CZRmw/IsCCNAPjyRMKL015LvtpylspzzyrpcByaWDgOBSWYMXK8f5zsI+v7hk1VfJ121ceu6vSgmB6bNFmvNULdkJPpjQWkUq341lNeUZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ecvcVJv9; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22104c4de96so48458565ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 21 Feb 2025 17:51:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740189099; x=1740793899; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bha+1AwEm87+wTDNDH+caF+yfplFmYnHclPIveYfWAQ=;
+        b=ecvcVJv9LVPT0YklwYr6vYCC/8JRmm8gLXgmNdPv2uo/mG71uEU+DbJ0p+Stga4iXB
+         tRmbZYIRuU1vIvplHdnzFeVcHIDN1IslEJfXuYgh58Me2vmHEnx87FO5H5SiYV02OdUV
+         SCg6N6F07ZU2TQspJvdAUZTLwPmTOEWRbqwow=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740189099; x=1740793899;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bha+1AwEm87+wTDNDH+caF+yfplFmYnHclPIveYfWAQ=;
+        b=NxQE/KYlArP6eoeLHNsSURMTOxArrCosLCqO3iKWtX5JPypB38FhkLufIAYGnnyz9E
+         +8K+YAPPh1lK7nwrSBAtEvdAaCaQGNIkt7ghaRyw0QNKCBchviE6cGommn8AfeXQy3Pl
+         xyPhCJO1ZOLq672QDe0TRIpoHFbnKKXhC5bcwTuWEzx8bsIcMBrn6ItSuxyWRuYhtQyQ
+         KTcwdbW4ylkYL4fbi9gQUqzOoovLNQRKEHZG5BWpAWtl6LmmoOfGgI4BKpAE8K5mTr8Z
+         bMo/i/exJNtEn03uoG1TFdDbS0RgGyJV1PEmB565O61IN5sbPT3PCr2Zqan+UzNYDHKP
+         7EMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrXdzyIB/MHpH/TqsPSZ537NBHjaHQxtfYQ3kVBm6za12rK3BoPMrfl3XM0oLUhZ86UjdPMMjeGlLXCjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6qYasz0rq03acl5atgQA/ULZ/sBKuazhj/+wyYGVWmPlD6tJL
+	xiYvd1sH7e9FdNsyLRKNa1/PdlDtOeG2TUzY0LtF8LeHD+t4lURYhDkcX/o7cA==
+X-Gm-Gg: ASbGncuhLgtItWGqGa296euze/V+ZKJtbMihanVDcWbjp6CfHwFHcmUKM6fwP4Lyn9z
+	yRmu/KbY2C59JzJPtJwsgHioIlGBgzeT76dOm/pStVZIuaAmwBiv7YUQkBGmuiE2OCtI7mf4ZZh
+	hHsXqj6BYlj2fuaur13zVfefjoiBMzjia/PYs0GCkdnENVr5ukBN3OauC+kRivxVREriHBNihzN
+	dFAqnVzSUx2W1y7Gdrt+GHxSFJ1pFSmZJGq8MkksO1HAVDQJKee/rwNnKCRSfQ+y/sYqxsM8EL6
+	N0eUTRsDMfZS5MVdlGeSrp9ZiTYdKIM0hjucQJt1NGZ2ByRYZ1AXyPddYfzA6y/j
+X-Google-Smtp-Source: AGHT+IFQyCCmTk5w1MoV+somoLERcOrpGo8lL2HFayqWLgHH5Imn3/GOjNna8e6kg5FpReH7HQUnQQ==
+X-Received: by 2002:a17:903:2342:b0:216:6901:d588 with SMTP id d9443c01a7336-2219ff565d8mr81388185ad.15.1740189099244;
+        Fri, 21 Feb 2025 17:51:39 -0800 (PST)
+Received: from localhost ([2a00:79e0:2e14:7:cfe4:a8ae:32fb:3c84])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2213394d6c8sm89030505ad.181.2025.02.21.17.51.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Feb 2025 17:51:38 -0800 (PST)
+Date: Fri, 21 Feb 2025 17:51:36 -0800
+From: Brian Norris <briannorris@chromium.org>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Ajay Agarwal <ajayagarwal@google.com>,
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+	"jic23@kernel.org" <jic23@kernel.org>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>
+Subject: Re: PM runtime_error handling missing in many drivers?
+Message-ID: <Z7ktqHxIhp90jLxi@google.com>
+References: <4ca77763-53d0-965a-889e-be2eafadfd2f@intel.com>
+ <1937b65c-36c0-5475-c745-d7285d1a6e25@suse.com>
+ <CAJZ5v0j0mgOcfKXRzyx12EX8CYLzowXrM8DGCH9XvQGnRNv0iw@mail.gmail.com>
+ <5c37ee19-fe2c-fb22-63a2-638e3dab8f7a@suse.com>
+ <CAJZ5v0ijy4FG84xk_n8gxR_jS0xao246eVbnFj-dXzwz=8S9NQ@mail.gmail.com>
+ <Z6lzWfGbpa7jN1QD@google.com>
+ <Z6vNV8dDDPdWUKLS@google.com>
+ <CAJZ5v0i83eJWV_kvWxZvja+Js3tKbrwZ8rVVGn7vR=0qLf1mtw@mail.gmail.com>
+ <Z7ZYEp4oqPs12vsP@google.com>
+ <50de9721-2dd8-448b-8c11-50b3923450f6@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50de9721-2dd8-448b-8c11-50b3923450f6@suse.com>
 
-From: Isaku Yamahata <isaku.yamahata@intel.com>
+Hi Oliver,
 
-Handle VM exit caused by "other SMI" for TDX, by returning back to
-userspace for Machine Check System Management Interrupt (MSMI) case or
-ignoring it and resume vCPU for non-MSMI case.
+On Thu, Feb 20, 2025 at 10:30:34AM +0100, Oliver Neukum wrote:
+> On 19.02.25 23:15, Brian Norris wrote:
+> > On Wed, Feb 12, 2025 at 08:29:34PM +0100, Rafael J. Wysocki wrote:
+> > > The reason why runtime_error is there is to prevent runtime PM
+> > > callbacks from being run until something is done about the error,
+> > > under the assumption that running them in that case may make the
+> > > problem worse.
+> > 
+> > What makes you think it will make the problem worse? That seems like a
+> > rather large assumption to me. What kind of things do you think go
+> > wrong, that it requires the framework to stop any future attempts? Just
+> > spam (e.g., logging noise, if -EIO is persistent)? Or something worse?e
+> 
+> suspend() is three operations, potentially
+> 
+> a) record device state
+> b) arm remote wakeup
+> c) transition to a lower power state
+> 
+> I wouldn't trust a device to perform the first two steps
+> without error handling either. It is an unnecessary risk.
 
-For VMX, SMM transition can happen in both VMX non-root mode and VMX
-root mode.  Unlike VMX, in SEAM root mode (TDX module), all interrupts
-are blocked. If an SMI occurs in SEAM non-root mode (TD guest), the SMI
-causes VM exit to TDX module, then SEAMRET to KVM. Once it exits to KVM,
-SMI is delivered and handled by kernel handler right away.
+I'm not sure I fully understand what you're saying. I'm not saying
+drivers shouldn't handle errors. I'm just saying I don't see why the
+framework should decide, "fail once and you're out."
 
-An SMI can be "I/O SMI" or "other SMI".  For TDX, there will be no I/O SMI
-because I/O instructions inside TDX guest trigger #VE and TDX guest needs
-to use TDVMCALL to request VMM to do I/O emulation.
+Do you think (a) or (b) will fail silently if retried after a failed
+operation? And what's the consequence?
 
-For "other SMI", there are two cases:
-- MSMI case.  When BIOS eMCA MCE-SMI morphing is enabled, the #MC occurs in
-  TDX guest will be delivered as an MSMI.  It causes an
-  EXIT_REASON_OTHER_SMI VM exit with MSMI (bit 0) set in the exit
-  qualification.  On VM exit, TDX module checks whether the "other SMI" is
-  caused by an MSMI or not.  If so, TDX module marks TD as fatal,
-  preventing further TD entries, and then completes the TD exit flow to KVM
-  with the TDH.VP.ENTER outputs indicating TDX_NON_RECOVERABLE_TD.  After
-  TD exit, the MSMI is delivered and eventually handled by the kernel
-  machine check handler (7911f145de5f x86/mce: Implement recovery for
-  errors in TDX/SEAM non-root mode), i.e., the memory page is marked as
-  poisoned and it won't be freed to the free list when the TDX guest is
-  terminated.  Since the TDX guest is dead, follow other non-recoverable
-  cases, exit to userspace.
-- For non-MSMI case, KVM doesn't need to do anything, just continue TDX
-  vCPU execution.
+> > But anyway, I don't think I require asymmetry; I'm just more interested
+> > in unnecessary non-functionality. (Power inefficiency is less important,
+> > as in the worst case, we can at least save our data, reboot, and try
+> > again.)
+> 
+> You are calling for asymmetry ;-)
 
-Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
-Co-developed-by: Binbin Wu <binbin.wu@linux.intel.com>
-Signed-off-by: Binbin Wu <binbin.wu@linux.intel.com>
-Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
----
-TDX interrupts v3:
- - No change.
+Actually, you were the one who proposed asymmetry :) My concern is
+asymmetric, but the solution doesn't have to be. For example, we could
+remove runtime_error entirely, or else make it some kind of
+ratelimited/backoff state.
 
-TDX interrupts v2:
- - No change.
+Anyway, I appreciate that Rafael has helped improve the situation a bit
+([PATCH v1] PM: runtime: Unify error handling during suspend and
+resume). At least it gives us a tool to achieve what we want: ensure
+that retriable failures produce -EBUSY or -EAGAIN. I'll have to give it
+a whirl.
 
-TDX interrupts v1:
- - Squashed "KVM: TDX: Handle EXIT_REASON_OTHER_SMI" and
-   "KVM: TDX: Handle EXIT_REASON_OTHER_SMI with MSMI". (Chao)
- - Rewrite the changelog.
- - Remove the explicit call of kvm_machine_check() because the MSMI can
-   be handled by host #MC handler.
- - Update comments according to the code change.
----
- arch/x86/include/uapi/asm/vmx.h |  1 +
- arch/x86/kvm/vmx/tdx.c          | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
+But I'm still wary that there are corner cases where other errors may
+appear, and yet retrying is indeed the best option. And I'm not
+confident that foisting the burden back onto the driver ("just scatter
+pm_runtime_set_suspended() any time you might have fixed something") is
+a practical approach either.
 
-diff --git a/arch/x86/include/uapi/asm/vmx.h b/arch/x86/include/uapi/asm/vmx.h
-index 6a9f268a2d2c..f0f4a4cf84a7 100644
---- a/arch/x86/include/uapi/asm/vmx.h
-+++ b/arch/x86/include/uapi/asm/vmx.h
-@@ -34,6 +34,7 @@
- #define EXIT_REASON_TRIPLE_FAULT        2
- #define EXIT_REASON_INIT_SIGNAL			3
- #define EXIT_REASON_SIPI_SIGNAL         4
-+#define EXIT_REASON_OTHER_SMI           6
- 
- #define EXIT_REASON_INTERRUPT_WINDOW    7
- #define EXIT_REASON_NMI_WINDOW          8
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index 2eed02dec17b..ea5b26872e68 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -1747,6 +1747,27 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
- 		return tdx_emulate_io(vcpu);
- 	case EXIT_REASON_EPT_MISCONFIG:
- 		return tdx_emulate_mmio(vcpu);
-+	case EXIT_REASON_OTHER_SMI:
-+		/*
-+		 * Unlike VMX, SMI in SEAM non-root mode (i.e. when
-+		 * TD guest vCPU is running) will cause VM exit to TDX module,
-+		 * then SEAMRET to KVM.  Once it exits to KVM, SMI is delivered
-+		 * and handled by kernel handler right away.
-+		 *
-+		 * The Other SMI exit can also be caused by the SEAM non-root
-+		 * machine check delivered via Machine Check System Management
-+		 * Interrupt (MSMI), but it has already been handled by the
-+		 * kernel machine check handler, i.e., the memory page has been
-+		 * marked as poisoned and it won't be freed to the free list
-+		 * when the TDX guest is terminated (the TDX module marks the
-+		 * guest as dead and prevent it from further running when
-+		 * machine check happens in SEAM non-root).
-+		 *
-+		 * - A MSMI will not reach here, it's handled as non_recoverable
-+		 *   case above.
-+		 * - If it's not an MSMI, no need to do anything here.
-+		 */
-+		return 1;
- 	default:
- 		break;
- 	}
--- 
-2.46.0
+> If you fail to resume, you will need to return an error. The functions
+> are just not equal in terms of consequences. We don't resume for fun.
+> We do, however, suspend just because a timer fires.
 
+Agreed.
+
+Brian
 
