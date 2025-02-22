@@ -1,171 +1,128 @@
-Return-Path: <linux-kernel+bounces-527340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A68A409FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:25:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5291FA40A13
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 17:30:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E7C173010
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:25:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F087519C04D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341681FC118;
-	Sat, 22 Feb 2025 16:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E246200100;
+	Sat, 22 Feb 2025 16:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B4vBWhy+"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hx7NJJgY"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5D71547D2;
-	Sat, 22 Feb 2025 16:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E9F13C81B;
+	Sat, 22 Feb 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740241527; cv=none; b=CqFp20YjzYlcYDhymtPwwa624QJs3RZScUwFcsSObD5XE9VHreU5MvPEpj8WVtrJHQi1a63gEghd0k3NrfApXawg5ZO2C57L7+444gHgFrPjSRC+Md6ivMCecNGhnpQIIz76a3XG4H1CMbblA3bS+krCMh6Mkj7KxXUVCivt0VA=
+	t=1740241838; cv=none; b=erjNHKbPdVos6SsZh/MCE5EEeL78Fu5XKYO1Xux8kd3c8uGHajAhRCthdKt6ujgV7+P/c0Nq5JJgpNXzwGBpP9C9x3DTM6Kgel+4v/EDPyb/qpcDlNs4NJL7bV7mJg4zwQ3ss8qKVVzmYWdH3YYIrYAQ5ZVCZJs9p0P7RzQb4g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740241527; c=relaxed/simple;
-	bh=zL+LhfxbnRmEVhAa1wVr9ILgzHuLe3gxMbsTA9Jzypg=;
+	s=arc-20240116; t=1740241838; c=relaxed/simple;
+	bh=TAgYvz4shjowE9LUaXwmfu6VLlUHFIppKrAy2sqc/g4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PM+EFJVB03kkrkSy/P8E+zIt6d6PHZPswM9ObrfKTJzvGUHj9c0BUwmXQCi7HG5UM+Gi6EMw9SdrOOe4Xa0KFI3yfuGtc58tjdL6x6gUJ+lH9UImkSl0XvAIqwg6j/9dBBIoxdm8+oyO8/lVOqepq8jqjMeYM7m3jRD0uohBL8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B4vBWhy+; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c0bb7328fbso327414685a.2;
-        Sat, 22 Feb 2025 08:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740241525; x=1740846325; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eaLmw/zuUJQPU9jiW+lco631RQaNkAStz0tuGq6zmmY=;
-        b=B4vBWhy+3BmIPlqHULJpSs1NiYVaspgR9AbSwq5MobQ91KI4TBLtH22VELoky6ierF
-         K6Kf04RsbCpgLDmb05SJ0ruNUnjHi8ntKokTify189x77B48GfElWaoHYiVFBUZOaYAz
-         /CYRjE1lGQxOazLt8iNmln1+VZLnJGZ33OavgylG7byLz411vefs9m4gf7PLCCqfZoGZ
-         JTBeV069gl6VR7YwZRdcYPe1PJFCbBRRrBl8xc5du/lZ0HxpjQfCSRx7/tF653N9TbOU
-         GH1mZLt0RxwOXoOD7xwmwLIlumntxYECeTpsRNh7BCFPHfL3yaR9+rkQmXS+0nLR+++/
-         ypEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740241525; x=1740846325;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eaLmw/zuUJQPU9jiW+lco631RQaNkAStz0tuGq6zmmY=;
-        b=uEAWfAdlu/xaxzhwCm1nPKPCp22kTTQIoG3X5xkQgfAWjQ4OH9/bwSaUQKScEC2T/n
-         xME/9qa0c7Gxkts1w1HKtRzgM7cv89VcYAtoaJWLJDXBiVyvvh9FUJ3upLQP1mPVBgjy
-         nMtaYrZ8PinJ9KijLxR8ziQ/JVKvmkzgssrSu3rnXvKeOe2kckLdwIFqq0t8Sk9yH4t+
-         0Mo2DihzBuyeblgUcolQ+e8kzbICDgEAf94NdhuCpXOnQ1WOIlV9YCtdldapCRCHv1ic
-         dppkIoD4kTIOnNU+VXvP8rKRT7gRV2jft/nx1YXwlGenojCCCwt2c6fnQEm68AOvU6HB
-         /f9g==
-X-Forwarded-Encrypted: i=1; AJvYcCUnGIV50PJ67GDnG2fiu/7f0gy/6InA231ZbAVU3NGUWeTS3VI1XHQFIN80iF7+gvCvx4fAHtbpBKmf8E7D@vger.kernel.org, AJvYcCXW+rrSqxjkGQQyzeGAh8a1coNK76bJJ/pYvp8wn4chhHZLEXftdHF4zUoBiaF8y/yaIKDH0B5yCwY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYCm/bKbSHK+NB32RxnJif1iXmPjl4DGnh8J3a8Q/P6JgnPFku
-	JaStEakXtjXLxMx60cjxImWnFowJSenYzRDz/REqrWWaqnNvCspa
-X-Gm-Gg: ASbGncvSdIIXXaZITxnavo4Pn3sRyLVXI91p6NExUlEnbZebx8awqgOmC0tQxgmc5LY
-	eBxW1xb8ufei8ZNTcC24ImkFLoA3Cfeu8niaJSLtbGgnMf8dSqKWiG/7lM/GCUr4d/RGzGhHmwh
-	cWtKwpGyYJ22ajF5AjrN1Hnfbjvk4XZWz4lU7DSSiLSxq2QYnHviJlagrBjNAXiHlEp16AEu5w0
-	iJqFEZS8TjGmY/UnmPP1rmEzszxMQEqoMrCdX44onfC+Xo7+RQHfflcgONjPU8aOqDVMBp68ZOG
-	M4ilJr6PyOkkNEdb3PPb4iU0+pPHnoykz/ym25CdNmWphbdrZFP/
-X-Google-Smtp-Source: AGHT+IGETAROiyYxSv8uuhKgoh2sBA7FeH8Wc56J8yhcnhIttmfFPAeCpRfh3GCcsCtDm0I7H/xhGg==
-X-Received: by 2002:a05:620a:269b:b0:7c0:b9bf:9c21 with SMTP id af79cd13be357-7c0cef108ccmr830180885a.34.1740241524564;
-        Sat, 22 Feb 2025 08:25:24 -0800 (PST)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0a178fc35sm716278685a.102.2025.02.22.08.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 08:25:23 -0800 (PST)
-Date: Sat, 22 Feb 2025 11:25:21 -0500
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] iio: imu: bmi270: move private struct declaration to
- source file
-Message-ID: <mtmwjyo2jd5pmne4od6fsq3qkhh7smeafviu3bhjoafpv55dur@seepjddh4y7z>
-References: <20250219-bmi270-irq-v1-0-145d02bbca3b@gmail.com>
- <20250219-bmi270-irq-v1-1-145d02bbca3b@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G8g8YD4Elcn4eEZsyYNSMGN9JeOg4cyUN5yIqAfQajNCA1bI+mOr6999ZIMcG0KGPK/WfP1xP155/Ib8QP5uYnpmA3KOXAAnLN6VYkgMghzODaQI/j+upBoL7lpKPEr4Zpt3MpIXTe9iOLa4aQxMjEkQQgRgK2Q+PZLF9EM7PiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hx7NJJgY; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EB66A40E0177;
+	Sat, 22 Feb 2025 16:30:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id inoskxphGDnD; Sat, 22 Feb 2025 16:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740241828; bh=GdarmdPYfhonxFe3eVsstixOM9edVzaHcDHd3EvNNVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hx7NJJgY74w3Yljy5RVXfBe9WIWZvtVAXM2saN2/A1odl5GsyR7DrmTj47+jNteJY
+	 nUUvoRw5BGY3ro/CUdojMu76zw4aTzcg2yIlM/CnyC2Rzh9RotNmVSKFnjdbBGnF7l
+	 vfGM030nM2HKT/muJ4wz6ynW8DTVsMWNtPsnkabDJyWzMUECPbJrheQKGiyQEBNM0A
+	 yqmR4iIdOP4JcEM+Zv58h3lGf55BdiyxDF9Cm6mU8/rQ6DQzi4aQzZh6p7vdgKCGUO
+	 Z0Mvp5NKD6roBJfTD++UmQj7bun218DcjwIo6vm/yVlrzuydN4sdW3WjLPzhzVxALW
+	 nWCCDtfUk6dnv+H2WOcdmqdJbBbrDMP9szCg3bJTaVGw9utmTh5b7y45Ym73IbdfJh
+	 TUywyY8XClcO/qgxBjEOCH1EcuO2qhacEphb+PbSiIytNj8AjLDkGi+iwBmHRZYbWi
+	 VJRpt4HdZHzzJVN4K3B9RhMFHM8/0nA4bC6b15JHC4Mbd/FE3952lEI6CsPdyL+AQP
+	 Jx6dorcQfOlUiOWywjfsyYorXWe2C1+264SeKeir0zH566Ae0ao/9fmKBpK0UpxFbB
+	 g363BrXjAYZfl/FU9NdtjXCoFDJ3Gi29FwwbQFXoUgNU9ovCIhkGFDdkpWeFZQNbcW
+	 cb4lqgDyh1wCucKf15Rwui9c=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A55E340E0176;
+	Sat, 22 Feb 2025 16:30:11 +0000 (UTC)
+Date: Sat, 22 Feb 2025 17:30:01 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, will@kernel.org,
+	peterz@infradead.org, yury.norov@gmail.com,
+	akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
+	brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com
+Subject: Re: [PATCH v5 5/5] x86/cpufeatures: Add the CPU feature bit for MSR
+ immediate form instructions
+Message-ID: <20250222163001.GUZ7n7iRc88PTMQi9_@fat_crate.local>
+References: <20250106070727.3211006-1-xin@zytor.com>
+ <20250106070727.3211006-6-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250219-bmi270-irq-v1-1-145d02bbca3b@gmail.com>
+In-Reply-To: <20250106070727.3211006-6-xin@zytor.com>
 
-On Wed, Feb 19, 2025 at 08:54:45PM -0300, Gustavo Silva wrote:
-> The device's private data struct is currently declared in the header
-> file, but it does not need to be exposed there. Move it to the driver's
-> core source file to avoid unnecessary #include directives or forward
-> declarations in the header.
+On Sun, Jan 05, 2025 at 11:07:27PM -0800, Xin Li (Intel) wrote:
+> The immediate form of MSR access instructions are primarily motivated by
+> performance, not code size: by having the MSR number in an immediate, it
+> is available *much* earlier in the pipeline, which allows the hardware
+> much more leeway about how a particular MSR is handled.
 > 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-Acked-by: Alex Lanzano <lanzano.alex@gmail.com>
-> ---
->  drivers/iio/imu/bmi270/bmi270.h      | 17 +----------------
->  drivers/iio/imu/bmi270/bmi270_core.c | 15 +++++++++++++++
->  2 files changed, 16 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
-> index fdfad5784cc52043475b6816286619fac5824684..d94525f6aee85f21cc9e9ae1bc9c1db0dc00b927 100644
-> --- a/drivers/iio/imu/bmi270/bmi270.h
-> +++ b/drivers/iio/imu/bmi270/bmi270.h
-> @@ -6,22 +6,6 @@
->  #include <linux/regmap.h>
->  #include <linux/iio/iio.h>
+> Add a new CPU feature word for CPUID.7.1.ECX and then the CPU feature bit
+> for MSR immediate form.
+
+Nope, scattered.c.
+
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index d5985e8eef29..59aa04915032 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -5,7 +5,7 @@
+>  /*
+>   * Defines x86 CPU feature bits
+>   */
+> -#define NCAPINTS			22	   /* N 32-bit words worth of info */
+> +#define NCAPINTS			23	   /* N 32-bit words worth of info */
+>  #define NBUGINTS			2	   /* N 32-bit bug flags */
 >  
-> -struct device;
-> -struct bmi270_data {
-> -	struct device *dev;
-> -	struct regmap *regmap;
-> -	const struct bmi270_chip_info *chip_info;
-> -
-> -	/*
-> -	 * Where IIO_DMA_MINALIGN may be larger than 8 bytes, align to
-> -	 * that to ensure a DMA safe buffer.
-> -	 */
-> -	struct {
-> -		__le16 channels[6];
-> -		aligned_s64 timestamp;
-> -	} data __aligned(IIO_DMA_MINALIGN);
-> -};
-> -
->  struct bmi270_chip_info {
->  	const char *name;
->  	int chip_id;
-> @@ -32,6 +16,7 @@ extern const struct regmap_config bmi270_regmap_config;
->  extern const struct bmi270_chip_info bmi260_chip_info;
->  extern const struct bmi270_chip_info bmi270_chip_info;
+>  /*
+> @@ -476,6 +476,9 @@
+>  #define X86_FEATURE_AMD_HETEROGENEOUS_CORES (21*32 + 6) /* Heterogeneous Core Topology */
+>  #define X86_FEATURE_AMD_WORKLOAD_CLASS	(21*32 + 7) /* Workload Classification */
 >  
-> +struct device;
->  int bmi270_core_probe(struct device *dev, struct regmap *regmap,
->  		      const struct bmi270_chip_info *chip_info);
->  
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> index 464dcdd657c4ba27fdb7620c80e9f05e2a831910..9f24d4044ed6f00f67fd3a8f5adda821c3140a18 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_core.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> @@ -78,6 +78,21 @@
->  #define BMI260_INIT_DATA_FILE "bmi260-init-data.fw"
->  #define BMI270_INIT_DATA_FILE "bmi270-init-data.fw"
->  
-> +struct bmi270_data {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	const struct bmi270_chip_info *chip_info;
-> +
-> +	/*
-> +	 * Where IIO_DMA_MINALIGN may be larger than 8 bytes, align to
-> +	 * that to ensure a DMA safe buffer.
-> +	 */
-> +	struct {
-> +		__le16 channels[6];
-> +		aligned_s64 timestamp;
-> +	} data __aligned(IIO_DMA_MINALIGN);
-> +};
-> +
->  enum bmi270_scan {
->  	BMI270_SCAN_ACCEL_X,
->  	BMI270_SCAN_ACCEL_Y,
-> 
-> -- 
-> 2.48.1
-> 
+> +/* Intel-defined CPU features, CPUID level 0x00000007:1 (ECX), word 22 */
+> +#define X86_FEATURE_MSR_IMM		(22*32+ 5) /* "msr_imm" MSR immediate form instructions */
+
+Also no "msr_imm": Documentation/arch/x86/cpuinfo.rst
+
+In any case, this patch doesn't belong in this set.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
