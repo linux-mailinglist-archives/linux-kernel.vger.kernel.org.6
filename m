@@ -1,182 +1,130 @@
-Return-Path: <linux-kernel+bounces-527139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9240A407D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:16:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ACCA40869
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24CB319C73E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:15:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0041A701DF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B875220AF72;
-	Sat, 22 Feb 2025 11:15:25 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D628C20AF7E;
+	Sat, 22 Feb 2025 12:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="ENxxpIdc"
+Received: from mail-m3281.qiye.163.com (mail-m3281.qiye.163.com [220.197.32.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F01B200B89
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0202066CC;
+	Sat, 22 Feb 2025 12:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740222925; cv=none; b=hpq2oDRK55FH1xAroHGKigZ4woxjR0x+0ewWyseOceScLx8M4Bwa+LUVmgWXWecwfY2ft/0PBY2yVWnjoFQrtkUwOb/HEITLBaHedWsXz23iHnmmJ3VumLJNhKICETKJm05mcnX4VTYMR/rkPYDYN8zRv+2yj7P73KdNImRv0OA=
+	t=1740228095; cv=none; b=jcPyKd5YQOCc+NmVgTG7BtysjOttbqWBn2DkB7TQJrAqIOS2dodWN8QRYsLa2Q3DC8KGjkTSlUel1uHKw1vywkjZ8dR+9Jj6LXqYDxeg9GeEAwkHQasDcFvhOD70HpU6z1NyWAhLCPkUSaa0S2/1wGadz5jMTqJoKceLNU4Ot0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740222925; c=relaxed/simple;
-	bh=fx1lNOH/9HvFUyGcUkYX/YojoqiUdfqXj3m5lzbHBAQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z92L3kB3hQPIy3zPQPxDpNho+SOBoqHM+3dfajYW4+MWOIiDf5cvLcJKDDuiqDn/PqdhSZUov5iPVfj6YCRglbmhp/vJkTjAI11b76BYZlOSGtwK5JUiGsiaANdO25ofblU+vYgtFY72FVne23YccJTLW3QowL9Tnce5PWvSweU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z0PWY23jBz1HKdZ;
-	Sat, 22 Feb 2025 19:13:45 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7D8F3180216;
-	Sat, 22 Feb 2025 19:15:18 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 22 Feb
- 2025 19:15:17 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <Dave.Martin@arm.com>, <james.morse@arm.com>
-CC: <bobo.shaobowang@huawei.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <jonathan.cameron@huawei.com>
-Subject: [PATCH mpam mpam/snapshot/v6.14-rc1 v2 5/5] arm_mpam: Automatically synchronize the configuration of all sub-monitoring groups
-Date: Sat, 22 Feb 2025 19:24:48 +0800
-Message-ID: <20250222112448.2438586-6-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250222112448.2438586-1-zengheng4@huawei.com>
-References: <20250222112448.2438586-1-zengheng4@huawei.com>
+	s=arc-20240116; t=1740228095; c=relaxed/simple;
+	bh=6yispmSF8NEHuiD6p8lfFKKzPSmXUg+uCfdj0up52oo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=bKHW0f7TJBwFFQAtHBHkz0Bs09tmWyxpHCYwtliZevuf/Saz4raps1WIgeEJA83QzicisHOjLYQ7x5/mKYKp7so2LMpN7Gyrwk/ZnTWLT9KcZ4pGu5aairsqm72p5BzpTCPz5td7IDBXbocIvEBJbiyr4+wQfhiyLV+bhDEhMuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=ENxxpIdc; arc=none smtp.client-ip=220.197.32.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id bdb51f7f;
+	Sat, 22 Feb 2025 19:25:41 +0800 (GMT+08:00)
+Message-ID: <799ccbd2-0c3b-4a55-b47e-1899975c4020@rock-chips.com>
+Date: Sat, 22 Feb 2025 19:25:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v6 08/14] drm/rockchip: analogix_dp: Add support to get
+ panel from the DP AUX bus
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ rfoss@kernel.org, vkoul@kernel.org, sebastian.reichel@collabora.com,
+ cristian.ciocaltea@collabora.com, l.stach@pengutronix.de,
+ dmitry.baryshkov@linaro.org, andy.yan@rock-chips.com, hjc@rock-chips.com,
+ algea.cao@rock-chips.com, kever.yang@rock-chips.com,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
+ <20250123100747.1841357-9-damon.ding@rock-chips.com>
+ <3340006.44csPzL39Z@diego>
+Content-Language: en-US
+In-Reply-To: <3340006.44csPzL39Z@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQktJTlZCTR8fSEgaTx5MHh5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a952d67f14803a3kunmbdb51f7f
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NhQ6Agw6HDIKER8cNz4OTxY2
+	SFEaFA5VSlVKTE9LSUlITk9ISktIVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFKQ0pPNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=ENxxpIdc+fRY3imBB4Fvef5vOGZG6fA5wJ7ZQJ3/Q4CHHOsDZlC+5/w3k4E3rp5BOTyNBD/acHQvH9bxtM6Ew6mLSBkk31732mwP2INmd+pp5ON4Wv4pZ1/ZSYTKU/EsXsoRaBhyh7otaP6W3DmyJLjc4G1myUF7V4vX7iQqVTg=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=4IlcUWxsBK99tkFDt+EwbEGgFcki2T86lZTSUVVIHWQ=;
+	h=date:mime-version:subject:message-id:from;
 
-After the system expands the narrow-partid feature and statically assigns
-all (req)PARTIDs to each control group, the following scenarios require
-configuration synchronization operations:
+Hi Heiko,
 
-  1. MSCs that support narrow-partid need to establish a mapping between
-     reqPARTID and intPARTID after creating a new monitoring group.
-  2. MSCs that do not support narrow-partid need to synchronize the
-     configuration of sub-monitoring groups after users update the control
-     group configuration.
+On 2025/1/31 4:33, Heiko Stübner wrote:
+> Hi Damon,
+> 
+> Am Donnerstag, 23. Januar 2025, 11:07:41 MEZ schrieb Damon Ding:
+>> Move drm_of_find_panel_or_bridge() a little later and combine it with
+>> component_add() into a new function rockchip_dp_link_panel(). The function
+>> will serve as done_probing() callback of devm_of_dp_aux_populate_bus(),
+>> aiding to support for obtaining the eDP panel via the DP AUX bus.
+>>
+>> If failed to get the panel from the DP AUX bus, it will then try the other
+>> way to get panel information through the platform bus.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>>
+>> ---
+> 
+>> @@ -450,9 +461,17 @@ static int rockchip_dp_probe(struct platform_device *pdev)
+>>   	if (IS_ERR(dp->adp))
+>>   		return PTR_ERR(dp->adp);
+>>   
+>> -	ret = component_add(dev, &rockchip_dp_component_ops);
+>> -	if (ret)
+>> -		return ret;
+>> +	ret = devm_of_dp_aux_populate_bus(analogix_dp_get_aux(dp->adp), rockchip_dp_link_panel);
+> 
+> This causes an undefined-reference error, so you probably need something like:
+> 
+> diff --git a/drivers/gpu/drm/rockchip/Kconfig b/drivers/gpu/drm/rockchip/Kconfig
+> index f9cbbb40b36f..fa946a809858 100644
+> --- a/drivers/gpu/drm/rockchip/Kconfig
+> +++ b/drivers/gpu/drm/rockchip/Kconfig
+> @@ -8,6 +8,7 @@ config DRM_ROCKCHIP
+>          select DRM_PANEL
+>          select VIDEOMODE_HELPERS
+>          select DRM_ANALOGIX_DP if ROCKCHIP_ANALOGIX_DP
+> +       select DRM_DISPLAY_DP_AUX_BUS if ROCKCHIP_ANALOGIX_DP
+>          select DRM_DW_HDMI if ROCKCHIP_DW_HDMI
+>          select DRM_DW_HDMI_QP if ROCKCHIP_DW_HDMI_QP
+>          select DRM_DW_MIPI_DSI if ROCKCHIP_DW_MIPI_DSI
+> 
+> 
+> 
+> 
+> 
 
-In __write_config(), we synchronize a control group's configuration to each
-sub-monitoring group.
+Yeah, I will add a new separate commit to do it in the next version.
 
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/platform/arm64/mpam/mpam_devices.c  | 26 ++++++++++++++++++---
- drivers/platform/arm64/mpam/mpam_internal.h |  3 +++
- drivers/platform/arm64/mpam/mpam_resctrl.c  |  7 +++++-
- 3 files changed, 32 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/platform/arm64/mpam/mpam_devices.c b/drivers/platform/arm64/mpam/mpam_devices.c
-index a1efd08eb914..6bcab7223b38 100644
---- a/drivers/platform/arm64/mpam/mpam_devices.c
-+++ b/drivers/platform/arm64/mpam/mpam_devices.c
-@@ -1535,6 +1535,7 @@ static void mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
- 	u32 pri_val = 0;
- 	u16 cmax = MPAMCFG_CMAX_CMAX;
- 	u16 bwa_fract = MPAMCFG_MBW_MAX_MAX;
-+	u16 intpartid = req2intpartid(partid);
- 	struct mpam_msc *msc = ris->vmsc->msc;
- 	struct mpam_props *rprops = &ris->props;
- 	u16 dspri = GENMASK(rprops->dspri_wd, 0);
-@@ -1545,8 +1546,14 @@ static void mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
- 
- 	if (mpam_has_feature(mpam_feat_partid_nrw, rprops)) {
- 		mpam_write_partsel_reg(msc, INTPARTID,
--				       MPAMCFG_INTPARTID_INTERNAL | partid);
--		__mpam_intpart_sel(ris->ris_idx, partid, msc);
-+				       MPAMCFG_INTPARTID_INTERNAL |
-+				       intpartid);
-+
-+		/* Already finish mapping reqPARTID to intPARTID */
-+		if (partid != intpartid)
-+			goto out;
-+
-+		__mpam_intpart_sel(ris->ris_idx, intpartid, msc);
- 	}
- 
- 	if (mpam_has_feature(mpam_feat_cpor_part, rprops)) {
-@@ -1606,6 +1613,7 @@ static void mpam_reprogram_ris_partid(struct mpam_msc_ris *ris, u16 partid,
- 
- 	mpam_quirk_post_config_change(ris, partid, cfg);
- 
-+out:
- 	mutex_unlock(&msc->part_sel_lock);
- }
- 
-@@ -3066,9 +3074,21 @@ struct mpam_write_config_arg {
- 
- static int __write_config(void *arg)
- {
-+	int closid_num = resctrl_arch_get_num_closid(NULL);
- 	struct mpam_write_config_arg *c = arg;
-+	u32 reqpartid, req_idx;
-+
-+	/* This partid should be in the range of intPARTIDs */
-+	WARN_ON_ONCE(c->partid >= closid_num);
- 
--	mpam_reprogram_ris_partid(c->ris, c->partid, &c->comp->cfg[c->partid]);
-+	/* Synchronize the configuration to each sub-monitoring group. */
-+	for (req_idx = 0; req_idx < get_num_reqpartid_per_closid();
-+	     req_idx++) {
-+		reqpartid = req_idx * closid_num + c->partid;
-+
-+		mpam_reprogram_ris_partid(c->ris, reqpartid,
-+					 &c->comp->cfg[c->partid]);
-+	}
- 
- 	return 0;
- }
-diff --git a/drivers/platform/arm64/mpam/mpam_internal.h b/drivers/platform/arm64/mpam/mpam_internal.h
-index 7bc4694df23a..9c9c5587cfb2 100644
---- a/drivers/platform/arm64/mpam/mpam_internal.h
-+++ b/drivers/platform/arm64/mpam/mpam_internal.h
-@@ -768,4 +768,7 @@ static inline void mpam_resctrl_teardown_class(struct mpam_class *class) { }
-  */
- #define MSMON_CAPT_EVNT_NOW    BIT(0)
- 
-+u32 req2intpartid(u32 reqpartid);
-+u32 get_num_reqpartid_per_closid(void);
-+
- #endif /* MPAM_INTERNAL_H */
-diff --git a/drivers/platform/arm64/mpam/mpam_resctrl.c b/drivers/platform/arm64/mpam/mpam_resctrl.c
-index af314f6df13e..d55ed48d1939 100644
---- a/drivers/platform/arm64/mpam/mpam_resctrl.c
-+++ b/drivers/platform/arm64/mpam/mpam_resctrl.c
-@@ -186,6 +186,11 @@ static u32 get_num_reqpartid(void)
- 	return mpam_partid_max + 1;
- }
- 
-+u32 get_num_reqpartid_per_closid(void)
-+{
-+	return get_num_reqpartid() / resctrl_arch_get_num_closid(NULL);
-+}
-+
- u32 resctrl_arch_system_num_rmid_idx(void)
- {
- 	u8 closid_shift = fls(mpam_pmg_max);
-@@ -211,7 +216,7 @@ static u32 rmid2pmg(u32 rmid)
- 	return rmid & pmg_mask;
- }
- 
--static u32 req2intpartid(u32 reqpartid)
-+u32 req2intpartid(u32 reqpartid)
- {
- 	u8 intpartid_shift = fls(mpam_intpartid_max);
- 	u32 intpartid_mask = ~(~0 << intpartid_shift);
--- 
-2.25.1
+Best regards
+Damon
 
 
