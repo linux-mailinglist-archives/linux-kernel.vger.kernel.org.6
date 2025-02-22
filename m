@@ -1,99 +1,179 @@
-Return-Path: <linux-kernel+bounces-527290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47E0A4093E
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:55:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17F01A4093F
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 15:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C44551895C29
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7937010A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 14:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657DA19CCFA;
-	Sat, 22 Feb 2025 14:54:37 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26E19AD93;
+	Sat, 22 Feb 2025 14:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWoCIZef"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9AF142659;
-	Sat, 22 Feb 2025 14:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83A713E02D;
+	Sat, 22 Feb 2025 14:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740236077; cv=none; b=rB2ZcurfzkT07tCNHJ/vNmvLDfFeI+6+xLqFDIWJR5KBZ434RspPAAARfEArPtSwcj1SXH1bFiR8tKjWPsF4kyvbTAXx72e3phNNRQpF9x4qSZzhiRcVV1WT7ghnpWBwjQRyZrFON7Hsb1C6K77L06VHgXahmoBfdJNaHTx+wgw=
+	t=1740236329; cv=none; b=Ti8eQmh6IKviO8GNAlicjJMpI/oZZEtn1bNInFVYnQDRbRc9ih5+U7nwMmBy7dv+z/VrP7ovjFiS8oAic19QI09f6TUBly+dlJI8jX9Jeo/OTFkn3VPEIGxk4GWy2kJi0diaQvREnZBw1krDwOjebbYgKy8yS/0lzWlquUvU65c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740236077; c=relaxed/simple;
-	bh=wFRIOhN8f54UOmSpVLzQUjFObfT62f4uBOp9rdRPjM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDdQ/w45Dl46EBzYadgvj39B+mw+OrBWPpxXIkDpT7c0wJP9j+rvk2N1QcWH/AJPl4ZMcoDjZYed9Bg+Q0DjMSFm+54wJPOcLFh4Zhiacdv864qMU6gBlJ2pcjt984aMBGDxthNMjk/sDbpKm74U5RUJ35vSN6lOGP0r8e24VBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fcf3a69c3cso1968232a91.1;
-        Sat, 22 Feb 2025 06:54:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740236074; x=1740840874;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vA5/nqMv/eBlFbHP5T9UBQnGk4nkRjHxb3y15HJQWJQ=;
-        b=OiMiUizNEqV1Z4DOixiivOuvk7r+GcNmts9nXIuJxscCl3xLrsnR3jkv0nKBVHXhNA
-         CB5C172EcvIXUHLX+A7H0BMKqs/O00gT9hJ9dkQ3mnsRgVQPGbxjm8lCwJZ7iivJPDwx
-         cwp+1xlYzhRlmMECFjuS39AAwv5EsXEy0osIq/4cDpJBZHApFgUP/kbiiN1Hd5W0b2Mo
-         dFFPYzROpAL8Bu6IyCz1dKP9BLFQYkt2kpoOqyvtTodQYXSdi49aOy9mRadoBV9AwK5B
-         BQpjfZSPCLDGrdvFYcadmS+GsVSictaKy43RAIXS4aZY5gcnlC3qFIASFMZaxGHzjOpq
-         mRVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIWWuwftaN7YiKqQ9L3QCzmL1t8fr8Zj+iRT0JHM0W3SeV935X7hchxyunX4Senlc6kI3+JypP17Iw/aQ=@vger.kernel.org, AJvYcCXeArrq9hxNbGdxzGmSHugyUeCrOfYGjJdwO3GlrN+7FDTPjbpskxHlpVzZ+O/8bp53+GPL+TgIRw1+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb7b8f594DqSCBF4A8OX9bRmQHMByitBy3heuBSt5Os0N6C11R
-	Tm87isGujis7glu8qETEtfK7P81lAwIMtJf2hNxrtzAD4AiPrgeF
-X-Gm-Gg: ASbGncu8DmhgAn1lzw6WwxYDipXk5/VILOgvryqUgzpdSFF2OFmvYN10z78vLLneJym
-	A3ceKaySBVTjaj5zJ2XJQ1uAvBBBdbW5zBPaf+I4bNs9rr+7KlYCaDG1bquT8G5isdK622mcBv1
-	wk+tkuA3qsvIvJiabgnFJX0JsX7CrR1Jem7e+iCyn22kc00PVbj6wp/C+WZI3q+HYeCOWgEvnhx
-	sGk76koe+yf35fduxKza8ACpyDI6275XlzBV0KAbmo6C5Ga9PX8chtxzkhweF1q1XGFtkPNZ9+l
-	yclUphp8y2N2Vmk0YikkfKLGUAKpbb8HdkOuVOrDXcHvv3+jbykEifdfDhct
-X-Google-Smtp-Source: AGHT+IHUI0k4pMWsMmk0OZ4kpv15Z43iCUVKsblHbmUu13QKzoj43eE5QFnPj/vglT7QCP9opAh61g==
-X-Received: by 2002:a17:90b:1a88:b0:2f9:c144:9d13 with SMTP id 98e67ed59e1d1-2fce7af3f1cmr12851514a91.24.1740236074464;
-        Sat, 22 Feb 2025 06:54:34 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2fceb10fb2csm3175218a91.34.2025.02.22.06.54.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 06:54:33 -0800 (PST)
-Date: Sat, 22 Feb 2025 23:54:32 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Hans Zhang <18255117159@163.com>
-Cc: jingoohan1@gmail.com, shradha.t@samsung.com,
-	manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, Frank.Li@nxp.com,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rockswang7@gmail.com, Niklas Cassel <cassel@kernel.org>
-Subject: Re: [v4] PCI: dwc: Add the debugfs property to provide the LTSSM
- status of the PCIe link
-Message-ID: <20250222145432.GB3735810@rocinante>
-References: <20250222143335.221168-1-18255117159@163.com>
+	s=arc-20240116; t=1740236329; c=relaxed/simple;
+	bh=TpfFFU0H5oykoaqQnQwvxN9UPAcGES3SZeFaw9UbrBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T5aaiNx40Jdojt3vG/0QXlS9aT/rrLdJCY+YiFYuoVP+71/EwVkYO7dR2nry6o/UrsL7C/H4xx1wCC+p1wL9xzv4ptMQeqDPp+xZgipB/BPzmb8opoGEX/9sPzJSVGUh0HLj2REXyUHur62yW39XUgisHC3UUQUY1xtfWOtIZlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWoCIZef; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02D69C4CED1;
+	Sat, 22 Feb 2025 14:58:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740236329;
+	bh=TpfFFU0H5oykoaqQnQwvxN9UPAcGES3SZeFaw9UbrBk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rWoCIZefOU1UO3nUnPJlW//N842UPntwc1saI3CZZ//rlYphI0/FEff+RwcQyjygs
+	 AaulvRAyWA5dXFMgSl/KaY+N2lhMGEZ3ocZT2rDUVxPSBES+fN2tZM8QuzlFxzYSx8
+	 sJ+plnhCyV4gC290Hu6wlPFSYrkM5QExlXU/t1zXqIvCe+GFhIi9g1rWgcZcdsE4vq
+	 4wJGeT468KKTB/9x+u3H94xKLVmvlyyifFqRenvLD2G32RAb4ugNnYxvTkW6xG4WFB
+	 aknUBAvZXLa0da6/geedGAy87CFyt/YcqvjUeRHxxQMHhzcXbdFK5+cpUx+zkidr/O
+	 5i06gZK5x3qzg==
+Date: Sat, 22 Feb 2025 14:58:41 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Trevor Gamblin
+ <tgamblin@baylibre.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: ad4695: fix out of bounds array access
+Message-ID: <20250222145841.06b3417c@jic23-huawei>
+In-Reply-To: <20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-1-57fef8c7a3fd@baylibre.com>
+References: <20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-0-57fef8c7a3fd@baylibre.com>
+	<20250218-iio-adc-ad4695-fix-out-of-bounds-array-access-v1-1-57fef8c7a3fd@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222143335.221168-1-18255117159@163.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Tue, 18 Feb 2025 17:17:45 -0600
+David Lechner <dlechner@baylibre.com> wrote:
 
-[...]
-> +What:		/sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
-> +Date:		February 2025
-> +Contact:	Hans Zhang <18255117159@163.com>
-> +Description:	(RO) Read will return the current value of the PCIe link status raw value and
-> +		string status.
+> Fix some out of bounds array access of st->channels_cfg in the ad4695
+> driver. This array only has elements for voltage channels, but it was
+> also being accessed for the temperature channel in a few cases causing
+> reading past the end of the array.
+> 
+> In some cases, this was harmless because the value was read but not
+> used. However, the in_temp_sampling_frequency attribute shares code
+> with the in_voltageY_sampling_frequency attributes and was trying to
+> read the oversampling ratio from the st->channels_cfg array. This
+> resulted in a garbage value being used in the calculation and the
+> resulting in_temp_sampling_frequency value was incorrect.
+> 
+> To fix, make sure we always check that we are dealing with a voltage
+> channel before accessing the st->channels_cfg array and use an
+> oversampling ratio of 1 for the temperature channel (multiplicative
+> identity value) since that channel doesn't support oversampling.
+> 
+> Fixes: 67d63185db79 ("iio: adc: ad4695: add offload-based oversampling support")
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+This got a little fiddly as I applied the iio_device_claim_direct() patch
+first and that includes making use of osr in calibbias for the voltage
+channel. I switched that back to accessing it via cfg-> now there isn't a convenient
+global copy in read_raw()
 
-The description could be refined a bit to make it easier to read.  But this
-is not a blocked and the changes otherwise look good.
 
-Thank you Niklas for testing!
+So with that tweak both patches applied to the togreg branch of iio.git
 
-I will pick this up if there are no objections.
+Thanks,
 
-	Krzysztof
+Jonathan
+
+> ---
+>  drivers/iio/adc/ad4695.c | 24 +++++++++++++++++++-----
+>  1 file changed, 19 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad4695.c b/drivers/iio/adc/ad4695.c
+> index 3a1a6f96480fd383d32397f4d3c979069111c5c9..8721cbd2af34c53f0cea32e307b9ef2da46b0cfb 100644
+> --- a/drivers/iio/adc/ad4695.c
+> +++ b/drivers/iio/adc/ad4695.c
+> @@ -1035,12 +1035,14 @@ static int ad4695_read_raw(struct iio_dev *indio_dev,
+>  {
+>  	struct ad4695_state *st = iio_priv(indio_dev);
+>  	const struct iio_scan_type *scan_type;
+> -	struct ad4695_channel_config *cfg = &st->channels_cfg[chan->scan_index];
+> -	unsigned int osr = st->channels_cfg[chan->scan_index].oversampling_ratio;
+> +	struct ad4695_channel_config *cfg;
+>  	unsigned int reg_val;
+>  	int ret, tmp;
+>  	u8 realbits;
+>  
+> +	if (chan->type == IIO_VOLTAGE)
+> +		cfg = &st->channels_cfg[chan->scan_index];
+> +
+>  	scan_type = iio_get_current_scan_type(indio_dev, chan);
+>  	if (IS_ERR(scan_type))
+>  		return PTR_ERR(scan_type);
+> @@ -1169,6 +1171,10 @@ static int ad4695_read_raw(struct iio_dev *indio_dev,
+>  		}
+>  	case IIO_CHAN_INFO_SAMP_FREQ: {
+>  		struct pwm_state state;
+> +		unsigned int osr = 1;
+> +
+> +		if (chan->type == IIO_VOLTAGE)
+> +			osr = cfg->oversampling_ratio;
+>  
+>  		ret = pwm_get_state_hw(st->cnv_pwm, &state);
+>  		if (ret)
+> @@ -1261,7 +1267,10 @@ static int ad4695_write_raw(struct iio_dev *indio_dev,
+>  {
+>  	struct ad4695_state *st = iio_priv(indio_dev);
+>  	unsigned int reg_val;
+> -	unsigned int osr = st->channels_cfg[chan->scan_index].oversampling_ratio;
+> +	unsigned int osr = 1;
+> +
+> +	if (chan->type == IIO_VOLTAGE)
+> +		osr = st->channels_cfg[chan->scan_index].oversampling_ratio;
+>  
+>  	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+>  		switch (mask) {
+> @@ -1361,7 +1370,10 @@ static int ad4695_read_avail(struct iio_dev *indio_dev,
+>  		},
+>  	};
+>  	struct ad4695_state *st = iio_priv(indio_dev);
+> -	unsigned int osr = st->channels_cfg[chan->scan_index].oversampling_ratio;
+> +	unsigned int osr = 1;
+> +
+> +	if (chan->type == IIO_VOLTAGE)
+> +		osr = st->channels_cfg[chan->scan_index].oversampling_ratio;
+>  
+>  	switch (mask) {
+>  	case IIO_CHAN_INFO_CALIBSCALE:
+> @@ -1713,7 +1725,7 @@ static int ad4695_probe_spi_offload(struct iio_dev *indio_dev,
+>  
+>  	for (i = 0; i < indio_dev->num_channels; i++) {
+>  		struct iio_chan_spec *chan = &st->iio_chan[i];
+> -		struct ad4695_channel_config *cfg = &st->channels_cfg[i];
+> +		struct ad4695_channel_config *cfg;
+>  
+>  		/*
+>  		 * NB: When using offload support, all channels need to have the
+> @@ -1734,6 +1746,8 @@ static int ad4695_probe_spi_offload(struct iio_dev *indio_dev,
+>  		if (chan->type != IIO_VOLTAGE)
+>  			continue;
+>  
+> +		cfg = &st->channels_cfg[i];
+> +
+>  		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+>  		chan->info_mask_separate_available |=
+>  			BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO);
+> 
+
 
