@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-526854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-526855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A300A40469
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:52:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3094BA40475
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 01:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 566BC1897406
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:52:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D95421CE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 00:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2308278F32;
-	Sat, 22 Feb 2025 00:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC37DA6D;
+	Sat, 22 Feb 2025 00:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p/4zBEGc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKVrPf1P"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF385383;
-	Sat, 22 Feb 2025 00:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B3FB663;
+	Sat, 22 Feb 2025 00:57:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740185534; cv=none; b=E/PvmA/UWBxpbF6h2ZlDyyQPuldsxAahOR1LrnWDmQKLliAwIOTiIlczsvIx/JTUpBSuewTuYkDRihgzVn4GrSa3LNMqfUBJlFtCw+LdCvseBVyuNmTVGEBIVMTV6dIouTsUADFAC7W8KIbryUvZeAs5EFuk3k8kuOajSIb1wuM=
+	t=1740185848; cv=none; b=VgN6EireX1NpjB1z+KbbP3uR3kIHBiPXUxVwFeI3ie1gcnDUirm5oOXqsbWq/bTxAh5RJdD2iF1xe96cOQxJ/ngbvW0flcjxHiDEcwJVdSIFbkqTf890iXC850ZPP8E6hYlea3XXXKt3InfVuZdYOJEcg9Ow6eM3iSHgS374BV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740185534; c=relaxed/simple;
-	bh=p3Z3OV/D1L8Z9Gx0KgTb3RoA/MWjnp5ufzpx82ZXlAY=;
+	s=arc-20240116; t=1740185848; c=relaxed/simple;
+	bh=I8vbpVgLCG8niJZmpLp3ylZ/cFF0g23l4NoZUlXPx5s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dDRQ2dw0SbIbb60hDAn0O//L5+Zk92zAtAx8BPRJAb4hz70jmK2lPg+NcRPzlNXVcmQuutyeRmuy6FYFH4/1U8CuCUmWCk/vlTakC8axe41o6qFcB0Iy4EKtM+PRw79ofXH3YXqJKRFwncjcsKMsKS32jLSJnUPocp/jjEuHpc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p/4zBEGc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFBAC4CED6;
-	Sat, 22 Feb 2025 00:52:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ocMSLLlHQWzOxkFlDmQl2A/YT9LBVn8Ehk0Xo1hJpGechZH5zmWSmdOQGeWNHfyLzydzuiMre0XcioFkKwFeBCXzT72GVNePIO5XrjTo8aapB2XCARw1LZVV1H6jfM556OCN4azqYA3BzG9VquNQNO3qz9YxkBJPu9gICoVgqkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKVrPf1P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 059D2C4CED6;
+	Sat, 22 Feb 2025 00:57:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740185533;
-	bh=p3Z3OV/D1L8Z9Gx0KgTb3RoA/MWjnp5ufzpx82ZXlAY=;
+	s=k20201202; t=1740185848;
+	bh=I8vbpVgLCG8niJZmpLp3ylZ/cFF0g23l4NoZUlXPx5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p/4zBEGccczupXg+ewnuC2hmKWM51kfTF8QiA4iFGnRal5FHNFJqV8wMSXJ18KAtw
-	 tn33Agh3zexCGhuX3CsOPomkhn0VwSKAz0YU4rdubFJmHbTo2wK0LA0jAPvVgOMIh4
-	 pawPurfCNhx1I2mHL75wLEeDgSprjbrf6wsg/KBTIZVjqlYxN7orliHxhPqi+hf2Mn
-	 eQTYsRpi8qn6kgn8WqurZ11sNWX1S1FUDyglLOjPMK3aVJOIwtPkD2TGS6KQAr3glL
-	 oCWclS46Owqda/sRAEd4SAz9KxvnUg7l7Lxjii5OZ0KaVt5oZjQjBWJzgN5wxZE1hB
-	 Q3XF8ExgcWUxw==
+	b=GKVrPf1PsJZemT331Lf/SDeCrxsNR38QpDgh9aOw4y4IbeNxtyOnF4xMUaR/2jjyH
+	 yzFFXNrxQ1yYVMBCcEDDLBuY2Cyb7Fb9JXd7Cr/65zlWucWFZ63FhDQponsIfL5ido
+	 RoE6tagmeijZHDNynVt9ZftxfpAHcH+gLcq6tqWSZ8sz/JLlN7F3xxKID2+UlZxDBp
+	 YHBzTVa9ruynTLyvMLvdFTKt/pRNvLb/IYL6tNit4u7i5jjxkARh+UiQb32futfWc1
+	 fwj/UCr3lU4TQlChJzeselbiD29zDv/041WIvw7SP5mcZyBRDpkZfqe9VHu7SUVZ9k
+	 yTjjm8Arr5xgg==
 From: Kees Cook <kees@kernel.org>
-To: "Gustavo A . R . Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org,
-	Lukas Bulwahn <lbulwahn@redhat.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>
 Cc: Kees Cook <kees@kernel.org>,
-	kernel-janitors@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
-Date: Fri, 21 Feb 2025 16:52:08 -0800
-Message-Id: <174018552604.3367606.18022424280657472316.b4-ty@kernel.org>
+	oliver.sang@intel.com,
+	oe-lkp@lists.linux.dev,
+	lkp@intel.com
+Subject: Re: [PATCH] selftets: lib: remove reference to prime_numbers
+Date: Fri, 21 Feb 2025 16:57:07 -0800
+Message-Id: <174018582427.3369509.6023266709728991391.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
-References: <20250217100643.20182-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20250217-fix-prime-numbers-v1-1-eb0ca7235e60@gmail.com>
+References: <20250217-fix-prime-numbers-v1-1-eb0ca7235e60@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,20 +64,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Mon, 17 Feb 2025 11:06:43 +0100, Lukas Bulwahn wrote:
-> Commit db6fe4d61ece ("lib: Move KUnit tests into tests/ subdirectory") adds
-> a file entry to the non-existing file scripts/test_fortify.sh. Probably,
-> this entry intends to refer to ./lib/test_fortify/test_fortify.sh, though.
-> As that file is already covered by the entry lib/test_fortify/*, there is
-> no need for a separate file entry. So, drop the unnecessary file entry to
-> the test_fortify script.
+On Mon, 17 Feb 2025 08:30:44 -0500, Tamir Duberstein wrote:
+> Remove a leftover shell script reference from commit 313b38a6ecb4
+> ("lib/prime_numbers: convert self-test to KUnit").
 > 
-> [...]
+> 
 
-Applied to for-next/move-kunit-tests, thanks!
+I fixed the Subject typos and applied to for-next/move-kunit-tests,
+thanks!
 
-[1/1] MAINTAINERS: adjust entries in FORTIFY_SOURCE and KERNEL HARDENING
-      https://git.kernel.org/kees/c/ee0445d6b6e9
+[1/1] selftets: lib: remove reference to prime_numbers
+      https://git.kernel.org/kees/c/03d0e920d775
 
 Take care,
 
