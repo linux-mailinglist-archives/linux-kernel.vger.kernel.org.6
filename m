@@ -1,168 +1,146 @@
-Return-Path: <linux-kernel+bounces-527183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76B9A40831
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:05:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D9F5A40833
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 13:09:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDF5D19C6490
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:06:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B6BF424A39
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E9A20AF74;
-	Sat, 22 Feb 2025 12:05:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6821720AF69;
+	Sat, 22 Feb 2025 12:09:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JryyxsrO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="FxPsKjHD"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B42207A3F;
-	Sat, 22 Feb 2025 12:05:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8E5207A3F;
+	Sat, 22 Feb 2025 12:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740225950; cv=none; b=IWoOojjM/av90IEQJSQZuJ8CUqHafSDhTu1lI8rh0Kwp2l7E9yg7R5YIn+QKERVHm5pEO7xFcQtwx7cvL1M3hgAbY+hxQJ0Hp+vILHKUoq0b392es2V6uW0E9K4C4s19KpscZbm8l0A2okVmBHOAm1f4x8EKbgbdfIzqB2G4AdI=
+	t=1740226185; cv=none; b=ndOiOxLNxC9YNB9HSpK2+vbOdROW5dnzZ2Arc1VGpkKAsog/Wh3GG91+9cK/IdcB/H4xAmTd6iAcTBBMJmcXy9vCAWeqmM73vX8eXcPoE3nAKD2sAwb/CgR12swhKx/AWg+YObhozs135+yPgPbtcl7ImSJOPA3DUYJGcq62b5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740225950; c=relaxed/simple;
-	bh=S4WNPvUzEd747Q4bqxEodcOBXf04/ZRutTnpWea1NVg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s0wZpNYitaTWtw3yqHFLioUk/i88H86JbKCd77ky8M+T7/jcUl3fY36YrPBZyqJ/lSeJ8XS5tb0s6CJWkr2tS7aTLH+v21AqFitNhREiUeIr9Y8vXfhCuXUyR2K+26nztzy28l3FsMLdzYoeIplZeZxbM3VBaRSf990zhGarCKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JryyxsrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93032C4CED1;
-	Sat, 22 Feb 2025 12:05:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740225950;
-	bh=S4WNPvUzEd747Q4bqxEodcOBXf04/ZRutTnpWea1NVg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JryyxsrOeM6YnZ0MK7+e+OJnT3oVhSlMBUtvted2tjsEhNkQ2wtBsYYWV2tN12Pjn
-	 rZOWyEpgAQhB6fNYKJgXh+fv1iulirE2RX91WtylxmS39UtiCJ5BO6MWH1fsX/VBWn
-	 qXQQVaRdwtCFtQ9OjAS/VWdMYG41C+G0o2m/i4onUwCmTtM1sIBltWn+ZWZ3DkVYSs
-	 TtCXlIC16GgYD8zW6e1KJg5ibz92XEGT6TzTz1QMKiB12S4xUevz0wiOEGcM50kDcL
-	 VNub+GdP8hUrQaSSKo7GWzQ/U7qL/wvYJ+6yOGAEi/yB3lgfBmDDUaMkaCpmsU8Zqg
-	 r71tEKkkBy/MQ==
-Date: Sat, 22 Feb 2025 12:05:37 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Jonathan
- Hunter <jonathanh@nvidia.com>, Javier Carrasco
- <javier.carrasco.cruz@gmail.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Emil Gedenryd
- <emil.gedenryd@axis.com>, Arthur Becker <arthur.becker@sentec.com>, Mudit
- Sharma <muditsharma.info@gmail.com>, Per-Daniel Olsson
- <perdaniel.olsson@axis.com>, Subhajit Ghosh
- <subhajit.ghosh@tweaklogic.com>, Ivan Orlov <ivan.orlov0322@gmail.com>,
- David Heidelberg <david@ixit.cz>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] iio: light: Add support for AL3000a illuminance
- sensor
-Message-ID: <20250222120537.13d2998e@jic23-huawei>
-In-Reply-To: <CAPVz0n23XYG4R6JhMd9qOoKW-PbJk53j-A3iRgb-znLHt5hm8w@mail.gmail.com>
-References: <20250215103159.106343-1-clamor95@gmail.com>
-	<20250215103159.106343-3-clamor95@gmail.com>
-	<20250216145445.1278b6ae@jic23-huawei>
-	<CAPVz0n1529ydFRHn9N3jEsS8Rhdf-c4xECkMd9TDczzBTNuJzA@mail.gmail.com>
-	<20250217142433.12183a17@jic23-huawei>
-	<CAPVz0n23XYG4R6JhMd9qOoKW-PbJk53j-A3iRgb-znLHt5hm8w@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740226185; c=relaxed/simple;
+	bh=hNzbpZUaacYbwAfzJgcJiA0cKgHDn8Zk5gmPryinfII=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=VB49taLvb+0V58Fu3cTwJg6w212NgR0pUQBsNR+Tw3SoQKgoXSAMDvNzUP0TwAfKMRvI816zM7XrQ1Vp/R6g9MbrepPoka769YzGDseFKaJmeCdta5fxocykvBYcMb5v5ZKy9JJxcemDlXWTjYzvy+PXCP0kSCRoc+cgLAeA/Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=FxPsKjHD; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 67FBE25EAA;
+	Sat, 22 Feb 2025 13:09:35 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id mClZSRCY7MoH; Sat, 22 Feb 2025 13:09:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740226171; bh=hNzbpZUaacYbwAfzJgcJiA0cKgHDn8Zk5gmPryinfII=;
+	h=Date:From:Subject:To:Cc;
+	b=FxPsKjHDrwF3QYzKWci48q8djTQNoAldfP6SdhzR37oHoH6bNeW7axNi8xj9GJC/Y
+	 Ir2cYyLN8kZmXsVmlrGu8LhjAX6Zm3qX6/UDL/QC4cGYDmHmMjhaJ3WCdZOSuK6HIG
+	 amcvCZuTWuYaJQqNAsg95OHboX9/zop6RWimyvDKkrZXOIR4Lp4NDhJunnDZWfWsMb
+	 Q5GuULuYmARTLeabp36qUhsxL8rgrt52yLM+pjhMDHJq8/O/6bdfJgQgRG/TQGPEZt
+	 +Idsv3BznNSKVq5wy7kGtsiT2aE3j9bXH5zwYAQiU/mO1khx+SMZNp5ubthwLcaDXQ
+	 sBqXheDcoigKg==
+Message-ID: <ef950304-0e98-4c91-8fa1-d236cbb782b8@disroot.org>
+Date: Sat, 22 Feb 2025 13:09:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: NoisyCoil <noisycoil@disroot.org>
+Subject: FTBFS: Rust firmware abstractions in current stable (6.13.4) on arm64
+ with rustc 1.85.0
+To: stable@vger.kernel.org
+Cc: regressions@lists.linux.dev, ojeda@kernel.org, alex.gaynor@gmail.com,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 17 Feb 2025 16:32:33 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+Hi!
 
-> =D0=BF=D0=BD, 17 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:24 Jo=
-nathan Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> >
-> > Hi,
-> > =20
-> > > > > +static int al3000a_read_raw(struct iio_dev *indio_dev,
-> > > > > +                         struct iio_chan_spec const *chan, int *=
-val,
-> > > > > +                         int *val2, long mask)
-> > > > > +{
-> > > > > +     struct al3000a_data *data =3D iio_priv(indio_dev);
-> > > > > +     int ret, gain;
-> > > > > +
-> > > > > +     switch (mask) {
-> > > > > +     case IIO_CHAN_INFO_RAW:
-> > > > > +             ret =3D regmap_read(data->regmap, AL3000A_REG_DATA,=
- &gain);
-> > > > > +             if (ret < 0)
-> > > > > +                     return ret;
-> > > > > +
-> > > > > +             *val =3D lux_table[gain & AL3000A_GAIN_MASK]; =20
-> > > >
-> > > > I may have misinterpreted the other thread.  IS this value in lux?
-> > > > If it is make this channel IIO_CHAN_INFO_PROCESSED instead.
-> > > > =20
-> > >
-> > > This is actually a really good hint, I will check if this works out
-> > > and if yes, then definitely will use it. Thank you. =20
-> >
-> > From your other reply it seems we have no idea of the correct scaling.
-> > If that is the case, then channel type should be IIO_INTENSITY as
-> > I assume we also have no idea if the light sensitivity curve is
-> > matched to that required for illuminance (which approximates the
-> > sensitivity of the human eye). Various datasheets provide completely
-> > garbage conversion formulas btw so even if we have data this can
-> > be problematic. One recent sensor was using a green filter and
-> > saying illuminance in lux was 1.2 * green which was assuming their
-> > own definition of white light.
-> >
-> > Jonathan
-> > =20
->=20
-> Then why IIO_LIGHT exists at all? If you state that datasheets provide
-> garbage formulas and sensors cannot be trusted and all is around human
-> eye, then why IIO_LIGHT is still the case? I did not recall any
-> drivers for human eyes (thank god). Please be more consistent. Thank
-
-It exists because some sensors do this correctly, or at least a good
-approximation to the standard sensitivity curves.  This is done two
-ways.
-
-1. Good light frequency filtering in front of the sensor to compensate
-   for the difference in sensitivity between the measuring element
-   and that the standard curves.  CIE1931 (there are a few other standards
-   but they are close enough that we don't care).
-   https://en.wikipedia.org/wiki/Illuminance
-2. Multiple sensing elements. A common reason for this is to remove
-   bit of infrared that we don't want. Often the calculation is a
-   non linear combination of the various sensor outputs. Such a driver
-   usually presents several IIO_INTENSITY channels and a calculated
-   IIO_LIGHT channel.
-
-In both cases the datasheet tends to include a comparison the the
-CIE1931 etc standards. There will be small differences but that is
-very different from taking a sensor that is only sensitive to green
-and weighting it which is the example I gave above.
-
-These sensors will compensate for the different sensivity
-of the human eye to different wavelengths.  E.g. if you
-think blue and green light LEDs have the same brightness then
-the sensor will give close to the same output.
-
-Anyhow, light sensors are a hole I have gone far too deep in over
-the years. Key is some manufacturers provide insufficient information
-or take the view it is a problem for the integrator of the sensor
-to deal with. For those we do not pretend to know the answer and
-use intensity channels instead.
-
-Jonathan
+The Rust firmware abstractions FTBFS on arm64 and current stable 
+(6.13.4) when compiled with rustc 1.85.0:
 
 
-> you
->=20
+```
+   RUSTC L rust/kernel.o
+error[E0308]: mismatched types
+   --> rust/kernel/firmware.rs:20:14
+    |
+20 |         Self(bindings::request_firmware)
+    |         ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn pointer, found 
+fn item
+    |         |
+    |         arguments to this function are incorrect
+    |
+    = note: expected fn pointer `unsafe extern "C" fn(_, *const i8, _) -> _`
+                  found fn item `unsafe extern "C" fn(_, *const u8, _) 
+-> _ {request_firmware}`
+note: tuple struct defined here
+   --> rust/kernel/firmware.rs:14:8
+    |
+14 | struct FwFunc(
+    |        ^^^^^^
 
+error[E0308]: mismatched types
+   --> rust/kernel/firmware.rs:24:14
+    |
+24 |         Self(bindings::firmware_request_nowarn)
+    |         ---- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected fn 
+pointer, found fn item
+    |         |
+    |         arguments to this function are incorrect
+    |
+    = note: expected fn pointer `unsafe extern "C" fn(_, *const i8, _) -> _`
+                  found fn item `unsafe extern "C" fn(_, *const u8, _) 
+-> _ {firmware_request_nowarn}`
+note: tuple struct defined here
+   --> rust/kernel/firmware.rs:14:8
+    |
+14 | struct FwFunc(
+    |        ^^^^^^
+
+error[E0308]: mismatched types
+   --> rust/kernel/firmware.rs:64:45
+    |
+64 |         let ret = unsafe { func.0(pfw as _, name.as_char_ptr(), 
+dev.as_raw()) };
+    |                            ------           ^^^^^^^^^^^^^^^^^^ 
+expected `*const i8`, found `*const u8`
+    |                            |
+    |                            arguments to this function are incorrect
+    |
+    = note: expected raw pointer `*const i8`
+               found raw pointer `*const u8`
+
+error: aborting due to 3 previous errors
+
+For more information about this error, try `rustc --explain E0308`.
+```
+
+
+This is because rustc 1.85 (now stable) switched core::ffi::c_char from 
+i8 to u8 on arm64 and other platforms [1], and because current stable 
+still uses rustc's core's instead of the custom ffi integer types like 
+6.14 will. Looking for other i8's in *.rs files tells me only the QR 
+code panic screen should be affected in addition to the firmware 
+abstractions, and that was already reported in [2].
+
+A simple fix would be to switch i8 to u8 in `struct FwFunc`, but that 
+breaks rustc <= 1.84 so I guess a more robust solution is needed.
+
+Cheers!
+
+
+[1] https://github.com/rust-lang/rust/pull/132975
+[2] 
+https://lore.kernel.org/all/20250120124531.2581448-1-linkmauve@linkmauve.fr/
 
