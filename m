@@ -1,188 +1,114 @@
-Return-Path: <linux-kernel+bounces-527458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E4AA40B7A
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:40:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88784A40B7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 20:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D15EF176B7D
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:40:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E06A3BB958
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 19:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0993A202C2A;
-	Sat, 22 Feb 2025 19:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C34201026;
+	Sat, 22 Feb 2025 19:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="ESwFJlcP"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXDLaZTt"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643A1145B16;
-	Sat, 22 Feb 2025 19:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740253234; cv=pass; b=H0EbW+viqApwEk/Mdqx3Uh0W4Vsukr8LK8JgcFMhCXM35OPPP5boOkBGSDpJ1SXuHtVfztjp4av+b6gQ67q4YHpznwXZ0n2ap0OpONtyA/UkQJwy/9hxcR8k0P7REohKFDo6/uFFRtfo+eKSLKgLwphq8E8RZjHedx+2PfIAHc8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740253234; c=relaxed/simple;
-	bh=W6mUPuXHEaLn50tK+gfcBT0rcpWaJhQUu4tC4s0k9AA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HseojT24RgLIyx6UKKZ/tkU1oQpYA5u3ALqTHnW44gUz24HuLkMY5eT1/UCv4n3sKN7mAeV7wuT81tUgf2UL9MEz6mQTOHDuy12AYkEFO2OdZJaaXTtsuBMN6PfxebTMNP5a/7uENVCjNkUnuX6sghSioDFrfQd55bKL7UI+khA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=ESwFJlcP; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740253208; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cFnaziYWq8fuZZEXH1iBEDweFg5S6T67NZoO81cinSccE64MTJBbctAyb8bnPLklT/eRdZlAOSRyj7aCM6TU2O0bluoE5etkMyZdybhL8vC4Vx5rb/ShV9OPg7X6ibnj+f+Hqkp1ICGvH2/jOWTacu6WJq3/dg4ClUSElBr9+Ws=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740253208; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=9Q5/IToFSpLyjKOQVtxgtX4PEL1BIaHLOTx1ZNWW4Gk=; 
-	b=G18wN3hUGXgh9LTKrulbMNWB7jXwheceVc+DSfyqpKoweDiBnLJr3LsdejfUYwLHRHtyZkfwktm15BKB5ecO8N2kgrExIr6sK5d5e5pJDLEHoqecw7pY/lsD3RQS4yBMK8m8MSV7DSjkFP9PTEIQtmzDGkK6S0sk09LW9MocK5M=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740253208;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=9Q5/IToFSpLyjKOQVtxgtX4PEL1BIaHLOTx1ZNWW4Gk=;
-	b=ESwFJlcPlHbE5YWxrX9bfBGcQnc++mRPdz2TCEoLy79MKxLrJH8D+9cBJYoHPacO
-	Ew1odUZ2cBVKLDBX77pa4qhtMCKsyTmrEvEnTrS5nXvzyAWbCExOBfvUAcYTOSMJuUJ
-	kl8Ypfr5AQh1FCTI0TQap8+91G/oBwO98B6xjKIM=
-Received: by mx.zohomail.com with SMTPS id 1740253204933761.5026406092906;
-	Sat, 22 Feb 2025 11:40:04 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Date: Sat, 22 Feb 2025 20:39:57 +0100
-Subject: [PATCH] ASoC: es8328: fix route from DAC to output
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A98820101A;
+	Sat, 22 Feb 2025 19:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740253326; cv=none; b=nn8EwwlUwGae2IlVJkgMKkW5bXzNOzNCbgYkXqFr5O46q5Dhfic4lwOgFWuybHpSX21baD17Wq/Tp6gXsgDJJ9RLp4ftsEo4Eaw3fvVawKsy+hHlzD69HUJ0/c3Q8TGEtpdu0ATgKTDmcmAjIoyeEqIEbUSnA4qyhSFJX+og9bI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740253326; c=relaxed/simple;
+	bh=kITtiZ18+LO+sCHEc5eH+N7HF/ZLQrNdJwvZ+WL3fX8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Glw+r71ATdKj+hHg1olWVKlrYo8EVD57+SvgJmRkWEZjMvGmpR4NSBawk40zB4E77eSvhnboEKjE5PtE6vo6wlOMcCzr1oQOGcxeuD76EfGvRwpvtRW47wnnpeFVXfGXhw3s+2c9lCkFstsXNFd7UEXIbc9XJmtJ9ZDbs08TNhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXDLaZTt; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc92215d15so839082a91.1;
+        Sat, 22 Feb 2025 11:42:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740253324; x=1740858124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4CRvgQmR5ivMD1h4F3gokRfm2MjjJsLjsc4JEynmsAM=;
+        b=BXDLaZTtHvHRDxmFZhi9jc6pdzgKdjDudEfPmnlB0E/O/c/IAGockZIlRQ3lzeGMzn
+         i2EjRHQWo3N4+5V0p0sreIPIuSJwWbuA6ZVZ2bUbCR+Cd6qcCYySP3B7JHq5hgawO9Gs
+         YWwiXOWvpY2EYBbBiYzF9C2YdSkpQNQ/C0GyYT84hjhiJeJwgA8nL7I948gxUVEESKAc
+         xqlTevwNV9EdotmNwmz4MM6vekZ0+CKVvGoaSlCPlMfGVO3Ro9Khqimnf7t3ro3J8f1a
+         layDQ4Q9fqZTZjbk/tFSuX1cXUD4x6ZSY86Vnj0cmHZsKFVDVrzvU7+zdbvvPeOGjLFw
+         80lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740253324; x=1740858124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4CRvgQmR5ivMD1h4F3gokRfm2MjjJsLjsc4JEynmsAM=;
+        b=Apn2Qq39yinnElYwSmbxw9f+3GfgV9TfsgE83q5Qkvy/sSgARkFMXzn++TZQZDel+/
+         phXjWIkVZNP3xFKI52pZ5x5ZuaOHcG0A0coCwGskSgsoozaxAnOmbhKw8Nfz/LBX96go
+         IIYd91XIADTDWggnWHEYZgwimfT/y0MkP9wDl8DkTTR5Hro3x85373ZIXd1LVKOb7s1t
+         lkwMKadZ6ClEp1ne7TIgeGNE6nYBKfu/qFxLfsCTMrL+jU3/hCol8xh95shzFkTdhGXk
+         4JqqTZFOMCMVc1K3Fp7Z7TGFA9boRHec88Qu/HWQi4frCaihJKVDi3Q6lTIpfhl+PIoK
+         E05w==
+X-Forwarded-Encrypted: i=1; AJvYcCUI/wR23H58G3m1wHe2mkNmPkWNtX14bA0GSAaZdFQJ+itUvsROou5F2eH9mnAvPIaj0Aqh/jwIf2bPeTs=@vger.kernel.org, AJvYcCWSsg1cdSLpA8lC6P1ADtUXDv/YoLxtIcT5wfU+5Zuj1kTV9AYciABx926bRvLTbx5xji2BHoH+guPXkJvMy48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwATmFDQ7g5/K9jQf7c9WC3UkgiUTe0MTcZwFYZowH3G8q7a60P
+	uqwGwLM1PV1LdQAx9oQlViDMXoHJjhknleslf7xG80PpFsn7AmEEdcbChyPBRw6vpaFY16j3130
+	DouY0l5LUngBRaFYQbdWAAg8INs4=
+X-Gm-Gg: ASbGncuJY3ti5c58ZQ4srWhCYeyJEXUghBuZuZWC6twhxtZdhSeYuADyG99Il1LrJDQ
+	DFYymxCikdyYSyxK/dJWfsBNKc0ozcfOcQbzFGfZfo2c/aDHDKnWPDpuCIYODoNPRpu76sryLMT
+	o8SiPMAwU=
+X-Google-Smtp-Source: AGHT+IFgZq6EtapkL/u2tRyEnlmt3/Ly4MJg608kxKvNn8pDExIg8vwxtxcox28h6NSfSKflN7BU/IAH6EaBRdtBdDc=
+X-Received: by 2002:a17:90b:3907:b0:2fc:f63:4b6a with SMTP id
+ 98e67ed59e1d1-2fce75f086bmr4985795a91.0.1740253324455; Sat, 22 Feb 2025
+ 11:42:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250222-es8328-route-bludgeoning-v1-1-99bfb7fb22d9@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAAwoumcC/x2MQQqAIBAAvxJ7bsG2Ausr0SFzs4XQ0Iog+nvSc
- WBmHkgchRP0xQORL0kSfIaqLGBeJ+8YxWYGUtQqIkJOuiaNMZwHo9lO6zh48Q6VafRsyHZZg5z
- vkRe5//Uwvu8HX8cqHWoAAAA=
-X-Change-ID: 20250222-es8328-route-bludgeoning-0b48cb2d9022
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Sean Cross <xobs@kosagi.com>
-Cc: kernel@collabora.com, Mark Brown <broonie@linaro.org>, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-X-Mailer: b4 0.14.2
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+In-Reply-To: <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 20:41:52 +0100
+X-Gm-Features: AWEUYZlCk95OYeQYgvv-2CpvGrLCm3JCYmLm7qyKFLs0_jdzIIGhbSshJZkxX-8
+Message-ID: <CANiq72mdzUJocjXhPRQEEdgRXsr+TEMt99V5-9R7TjKB7Dtfaw@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	torvalds@linux-foundation.org, airlied@gmail.com, boqun.feng@gmail.com, 
+	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
+	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Ralf Jung <post@ralfj.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ES8328 codec driver, which is also used for the ES8388 chip that
-appears to have an identical register map, claims that the output can
-either take the route from DAC->Mixer->Output or through DAC->Output
-directly. To the best of what I could find, this is not true, and
-creates problems.
+On Sat, Feb 22, 2025 at 7:54=E2=80=AFPM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> I believe (Miguel was talking about this at one of the conferences,
+> maybe he'll chime in) that there was work in progress to solidify the
+> aliasing and ownership rules at the unsafe level, but it sounded like it
+> may have still been an area of research.
 
-Without DACCONTROL17 bit index 7 set for the left channel, as well as
-DACCONTROL20 bit index 7 set for the right channel, I cannot get any
-analog audio out on Left Out 2 and Right Out 2 respectively, despite the
-DAPM routes claiming that this should be possible. Furthermore, the same
-is the case for Left Out 1 and Right Out 1, showing that those two don't
-have a direct route from DAC to output bypassing the mixer either.
+Not sure what I said, but Cc'ing Ralf in case he has time and wants to
+share something on this (thanks in advance!).
 
-Those control bits toggle whether the DACs are fed (stale bread?) into
-their respective mixers. If one "unmutes" the mixer controls in
-alsamixer, then sure, the audio output works, but if it doesn't work
-without the mixer being fed the DAC input then evidently it's not a
-direct output from the DAC.
+From a quick look, Tree Borrows was submitted for publication back in Novem=
+ber:
 
-ES8328/ES8388 are seemingly not alone in this. ES8323, which uses a
-separate driver for what appears to be a very similar register map,
-simply flips those two bits on in its probe function, and then pretends
-there is no power management whatsoever for the individual controls.
-Fair enough.
+    https://jhostert.de/assets/pdf/papers/villani2024trees.pdf
+    https://perso.crans.org/vanille/treebor/
 
-My theory as to why nobody has noticed this up to this point is that
-everyone just assumes it's their fault when they had to unmute an
-additional control in ALSA.
-
-Fix this in the es8328 driver by removing the erroneous direct route,
-then get rid of the playback switch controls and have those bits tied to
-the mixer's widget instead, which until now had no register to play
-with.
-
-Fixes: 567e4f98922c ("ASoC: add es8328 codec driver")
-Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
----
-I've tested this patch on an ArmSoM Sige5 board, with an ongoing port of
-its CPU-side SAI driver. While there are some other factors that lead to
-me being puzzled, a good day or so was lost to the DAPM graph not making
-any sense. The board uses an ES8388, which appears to be the only
-ES8328-like on the market at the moment, so I couldn't test it with the
-actual ES8328. However, their register listings from their datasheets
-look the same, so I'd be surprised if they differed in this regard.
----
- sound/soc/codecs/es8328.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
-index f3c97da798dc8e4af72a90588a7f7995fd2e11e4..76159c45e6b52e71925bac4913b1d4da8d9127a3 100644
---- a/sound/soc/codecs/es8328.c
-+++ b/sound/soc/codecs/es8328.c
-@@ -233,7 +233,6 @@ static const struct snd_kcontrol_new es8328_right_line_controls =
- 
- /* Left Mixer */
- static const struct snd_kcontrol_new es8328_left_mixer_controls[] = {
--	SOC_DAPM_SINGLE("Playback Switch", ES8328_DACCONTROL17, 7, 1, 0),
- 	SOC_DAPM_SINGLE("Left Bypass Switch", ES8328_DACCONTROL17, 6, 1, 0),
- 	SOC_DAPM_SINGLE("Right Playback Switch", ES8328_DACCONTROL18, 7, 1, 0),
- 	SOC_DAPM_SINGLE("Right Bypass Switch", ES8328_DACCONTROL18, 6, 1, 0),
-@@ -243,7 +242,6 @@ static const struct snd_kcontrol_new es8328_left_mixer_controls[] = {
- static const struct snd_kcontrol_new es8328_right_mixer_controls[] = {
- 	SOC_DAPM_SINGLE("Left Playback Switch", ES8328_DACCONTROL19, 7, 1, 0),
- 	SOC_DAPM_SINGLE("Left Bypass Switch", ES8328_DACCONTROL19, 6, 1, 0),
--	SOC_DAPM_SINGLE("Playback Switch", ES8328_DACCONTROL20, 7, 1, 0),
- 	SOC_DAPM_SINGLE("Right Bypass Switch", ES8328_DACCONTROL20, 6, 1, 0),
- };
- 
-@@ -336,10 +334,10 @@ static const struct snd_soc_dapm_widget es8328_dapm_widgets[] = {
- 	SND_SOC_DAPM_DAC("Left DAC", "Left Playback", ES8328_DACPOWER,
- 			ES8328_DACPOWER_LDAC_OFF, 1),
- 
--	SND_SOC_DAPM_MIXER("Left Mixer", SND_SOC_NOPM, 0, 0,
-+	SND_SOC_DAPM_MIXER("Left Mixer", ES8328_DACCONTROL17, 7, 0,
- 		&es8328_left_mixer_controls[0],
- 		ARRAY_SIZE(es8328_left_mixer_controls)),
--	SND_SOC_DAPM_MIXER("Right Mixer", SND_SOC_NOPM, 0, 0,
-+	SND_SOC_DAPM_MIXER("Right Mixer", ES8328_DACCONTROL20, 7, 0,
- 		&es8328_right_mixer_controls[0],
- 		ARRAY_SIZE(es8328_right_mixer_controls)),
- 
-@@ -418,19 +416,14 @@ static const struct snd_soc_dapm_route es8328_dapm_routes[] = {
- 	{ "Right Line Mux", "PGA", "Right PGA Mux" },
- 	{ "Right Line Mux", "Differential", "Differential Mux" },
- 
--	{ "Left Out 1", NULL, "Left DAC" },
--	{ "Right Out 1", NULL, "Right DAC" },
--	{ "Left Out 2", NULL, "Left DAC" },
--	{ "Right Out 2", NULL, "Right DAC" },
--
--	{ "Left Mixer", "Playback Switch", "Left DAC" },
-+	{ "Left Mixer", NULL, "Left DAC" },
- 	{ "Left Mixer", "Left Bypass Switch", "Left Line Mux" },
- 	{ "Left Mixer", "Right Playback Switch", "Right DAC" },
- 	{ "Left Mixer", "Right Bypass Switch", "Right Line Mux" },
- 
- 	{ "Right Mixer", "Left Playback Switch", "Left DAC" },
- 	{ "Right Mixer", "Left Bypass Switch", "Left Line Mux" },
--	{ "Right Mixer", "Playback Switch", "Right DAC" },
-+	{ "Right Mixer", NULL, "Right DAC" },
- 	{ "Right Mixer", "Right Bypass Switch", "Right Line Mux" },
- 
- 	{ "DAC DIG", NULL, "DAC STM" },
-
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250222-es8328-route-bludgeoning-0b48cb2d9022
-
-Best regards,
--- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-
+Cheers,
+Miguel
 
