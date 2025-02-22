@@ -1,186 +1,138 @@
-Return-Path: <linux-kernel+bounces-527146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51762A407E7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:36:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DB0DA407E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:37:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5EF19C4F40
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:36:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0056619C4E3E
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBFB20A5DE;
-	Sat, 22 Feb 2025 11:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E41EE20A5D8;
+	Sat, 22 Feb 2025 11:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ABVOlES/";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="ujfBiNk5"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2HrigOm"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554C36FC3;
-	Sat, 22 Feb 2025 11:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FBA206F3B
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 11:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740224181; cv=none; b=exn47O3uYRyGiG16ZW3SHRXR6p/6/RYW3qMKIcJvYxtijmL8H7CMDoKeklbakgdJX9oZn+3GohIRc1rKua+mSBrQw9rc8DPEI+bd3LlWdUBKh2XKQ9bbbsxlp1uljPR4/2yJrtXoOgMWQn9pdgCXlLxqGtqmPG7NlkroXs6pQ/A=
+	t=1740224228; cv=none; b=OfcyWeCfqJ/FN4Bkb65xFsv08jIaGU4d8Felz+Q/FZ7dQz1lgBSOwbpS2RPjmnHHj3qz6kUTYVGKo+8NI6xP3rEv3qIQT/dhq3F2eWvzAekCSbKPyJXWh14JjunrM2FOGVrXaQgqM11jlxlfhv+tYLlJYZsjp3/XetY3MXWA6Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740224181; c=relaxed/simple;
-	bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KOnCQixG19Lf3WZlQmm9f6ozYVICcTXt3i8EJRL0uLP236aTqGMcgfbXHG3xSInEXqA+RUYefQ3B3i5sYBRiIJcdfc+5ZMh+kb2u8aulLKmCfsO2xkQceCGKAjNZojr5Al4i6PRylwOmChgrkh2nX9Gs8K9AJJQCaSpTwdSFUPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ABVOlES/; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=ujfBiNk5; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 5ED23122FE26;
-	Sat, 22 Feb 2025 03:36:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740224177; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABVOlES/GvScXjONNVDQvu/S0Hs0wPhbGU2RDAYy2cEeih5WIoQHqUmafU13fxDFu
-	 YsWFXJluYDlaEhjHUYJtm2u/bMA+KvTfONDIopxwdKbEsNXl97hmYRAj+c2EU+Hw3p
-	 aedeLCEuNoaB0KPVlAkQ7MYLSueCdk9AD24hVdyeB8ILjIz+UYi6NcQ+cBwz+nZ3B5
-	 rufn8cDIc5M/ZRIN1c1aQh0Bo731er7upOX6k9iMX7l3fRbu1OlRImXED2Fh7wYcTZ
-	 m6Bv/z5YeJlkg0VNvaVFDSz/rgmlcKN7K5jzF/dAIfusm/7qdgudQVhZFY23ha9iDJ
-	 eIMiVIe5K6luw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id g1TN3FBn8qRe; Sat, 22 Feb 2025 03:36:13 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.34])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id A95BC122FE25;
-	Sat, 22 Feb 2025 03:36:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740224173; bh=SOwH0X3o/HhmS2t6HTuMd4f+rDYK0rxVnzjVPLbUQq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ujfBiNk57CUKu+M7ljRJ0+19wzyuQi2TwhupqBRWE2X11DD7xojiJc8aH0nGqrQoO
-	 TRAGFEfGaWX/oiqAjv1Es0p6ALLAmtUospfJZV4CkJPT5E82aSN/F9LTdzFPP8ZDhf
-	 3qJlfAh1xm2cinokwTI4NuRutnBj7HD1c0v+GB69Enj4+A6qJ/3bbmh5Z0MUnbRyfA
-	 oLSLnZU+Gfebcy1tEnnKWUyi2SoCuZzL3zf0snIAMOy+Af/Vh+P462eOicyqiuPPZ/
-	 gsNYyP+yc0R/g2KdgmZ6Utb9q+qkFadB29zPBxIPZdkKhBlsWhX1k82nPc8YyvHejt
-	 Wo/go59RUiKOA==
-Date: Sat, 22 Feb 2025 11:36:00 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <Z7m2oNXbwJ06KtLQ@ketchup>
-References: <20250103215636.19967-2-heylenay@4d2.org>
- <20250103215636.19967-4-heylenay@4d2.org>
- <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup>
- <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup>
- <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
+	s=arc-20240116; t=1740224228; c=relaxed/simple;
+	bh=engwHYjDHUvj5xuN0uVA1wy0mwimzTOyn6troBr6yjE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kjnspymg6mlF6jM5UJNQCEz88/rBDVbtIrT3gBct9i4uJYWcRagrqahTyHXQcUMvSfrnib9SlEVJaJ4WUd2pUPEr88obDOu/YlMebEUJwZ/6YUMWZj96UDFLEQS02d5LtS1XvRGwZVfHRji91VbU8Pw5beYcefThLTQnHDc0KJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2HrigOm; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ded500589aso520963a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 03:37:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740224224; x=1740829024; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=B/Sh5oQxHFbDw+IPrUqtkewc2J8yrZ1ZQ0Og1f9xPRU=;
+        b=j2HrigOmj/KNTv2NX1UfXkwhHi9cl7wFECX0fqy6durlh7oZwnZRmcuHw4yUj7OdA2
+         mqpPZaOmYpg47NU/5yWjYm2FYMfKTIeQNzfvVXJw/R1NQOsv9Mo8IWR/x84fFUYV2VYS
+         45omuJaD0c5FUi0S2v5zJ6iZIpGjpUNq6NdqnOF7B70c3PO+v1jGiIw3dBBShkTVo2O+
+         ET3wQjDB/JNPiXkrqRjaNS/Lcr4XhH+BF1GWn34JC7dWUcYOnaQSJLy34CQpD4gGE1z2
+         9O1THgCFVT9kCOWKHa/ejly8qExdJxBQ2taq6l+Pbw9ZlZygwK+ISvByZ9i59tXw3WDO
+         U6Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740224224; x=1740829024;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B/Sh5oQxHFbDw+IPrUqtkewc2J8yrZ1ZQ0Og1f9xPRU=;
+        b=LKvW8dD6mhDFPJF/JV5EWlphEY5qhwbLjQ4Mc+v2go4Za1R00lXppTVA5CAz7q3CIX
+         ud8rl09joH82GMd/sM/rmKNlBBx02dS47y6amoiAjgavqSQtHX1wFvtstQwESwKX0fBv
+         U1Zq5EpAd5+IbmyefFqOvhAACPaq/YX+oPrK1XaLMPOGlbDJTBrkxlVGVEVRRaEFtT7x
+         cwtrD6wbqfnQ9xQ47Cq68i0Whpo3pU0cI0EGy7uYV3uxtkVOcE/D85sDEn6Ilttvw/K4
+         br3U1pREo9NV/gQjvVXwqRsf32GWU09zT+Wy4mGi3EFgUjVU1HIc9Ibh7nXAmSfDfpO/
+         ychw==
+X-Gm-Message-State: AOJu0YzP4i63fQ8mOVuJbWTmHc1vbOa8EiERymvp7VG3fxr8CZUMV0ih
+	w2ajWuS0UCZ0KeT0GzNdR65S3igXT+MCUC8i+g7wIjuvC1vGsOxXlc3vEj47sTs=
+X-Gm-Gg: ASbGncvjIjozqYRVJQrvtBHGG+dmMTB3hv6mw1agcIbh6X8Dmk2Xq8OUI7XMbpverWa
+	1wmgO93/wz/V5Ac0c0/A/MjoUmkEDklYuftSuRKcICNo8tKahL3EhtqQDxqq4RaSNbtmfPaDRkb
+	zLnMPs1ja3+xKWTnfoNwfraa3WgaS90tFEVgYsMSC6iI9YDDWy35WXQOMuJui3a0fppLLsLZ5uU
+	M+ywIx5oXHEKCCuJCqNhCLH12w0M15GEhrexLUAGTosO4W6Rm9FcLdj3TA2yKNyTyWzaFSvN5wJ
+	+uiSXUH0EeXW9o7glFfquuf+zc9G01rsi44P4L4SNTux0yGFJdDjazsxsxoJjoy7xZ7IzGcGNa0
+	5
+X-Google-Smtp-Source: AGHT+IEtxaVNbvHvTozfZ7ub06KTWPC+g4j6jyXuZK4fTJ+jxnn3KqwwZBisoJEqObnGkUswxOnUZA==
+X-Received: by 2002:a05:6402:34c6:b0:5e0:8275:e9dc with SMTP id 4fb4d7f45d1cf-5e0b70bc3c3mr2106285a12.1.1740224224515;
+        Sat, 22 Feb 2025 03:37:04 -0800 (PST)
+Received: from [127.0.1.1] (78-11-220-99.static.ip.netia.com.pl. [78.11.220.99])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece1d369esm15011493a12.37.2025.02.22.03.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 03:37:03 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/5] mailbox: Minor const fixes
+Date: Sat, 22 Feb 2025 12:36:16 +0100
+Message-Id: <20250222-mailbox-const-arm-id-v1-0-d60589215a24@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3e196e9c-c942-4026-8d6c-69c9930bebd5@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALC2uWcC/x2M0QpAQBAAf0X7bOssh/yKPJyz2OJOd5KSf3d5n
+ JqZByIH4Qhd9kDgS6J4l6DIM7CrcQujTImBFGlFRLgb2UZ/o/UunmjCngRsyrrUVWsVNxpSegS
+ e5f63/fC+H2ZSaEJmAAAA
+X-Change-ID: 20250222-mailbox-const-arm-id-7363548c0e75
+To: Jassi Brar <jassisinghbrar@gmail.com>, 
+ Viresh Kumar <viresh.kumar@linaro.org>, 
+ Tushar Khandelwal <Tushar.Khandelwal@arm.com>
+Cc: linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=762;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=engwHYjDHUvj5xuN0uVA1wy0mwimzTOyn6troBr6yjE=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnubaxJ15rCOHU00Kk3RjDpaoIZjoY3QbFDRMn7
+ jXWdgWaQdGJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ7m2sQAKCRDBN2bmhouD
+ 19RuD/0avAOcnkXWQnKEHI53LRU6CRIzjH/67r6txmXxfeugRMjSbmgoyjjjTGV2Di36U/m/Ox7
+ KZ8567iNVnBUNpMX7R+c8+gEqEm4K/6xmf4lf/40+ahD18dbGd1B4zHSCQw6jrzZIIA8vXJDeNe
+ OQUQQpemmYhpiucjuZ0ZW74oBc3w/HDQUe32Kckf9Xa5c1bvh14dUnjhXGki3aS5VhVMTqUboaR
+ jbyHQslQjS5F1S8zRHfSUwEXDzCOS58sWG74Wix99mqgK0heNuRmTi4v3Ukr7zmbEmThYYGqPYM
+ yI4gG13aPL1OBSM0OycImyLjI4vwSlCLqyx+A2+dspDvEtgoweBAmixVnG3V8ykWtQ6MY5zr9Qj
+ rT24gwjrc7K0qqFq7i+g+P/4o5wAJ+vkPKT7rmGqVY4PBsoGp9LMmYt9bDHrSbdATAazSMY+Pf4
+ i1fSbDTR48PTodrLVoCXnbYHOmxZ3wEKOFol8igADUvj47hvCki8WBLFQR4CuyyQd1k59TfPN6S
+ wtO0ul1V6V8XnonqEzDkPulECk1bP3elAf03R6XME9Wog+BxB+1kRwWFp/CDe42ECjbUTunaQjA
+ QoJ3Qf17oT0PFzmgnO/fFuBp8XAfBUX13SXP0PpRLCkn8Y3ATnzLcUABq/8uJxMoBZ4RCndNwZf
+ 04+3ZCf4gKNNp4w==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-On Sat, Feb 22, 2025 at 10:52:02AM +0100, Krzysztof Kozlowski wrote:
-> On 15/02/2025 09:41, Haylen Chu wrote:
-> > 
-> >>> 	};
-> >>>
-> >>> For the other two clock controllers (APBS and APBC), syscons are really
-> >>> unnecessary and it's simple to fold them.
-> >>
-> >>
-> >> I don't follow. Do we talk about children or syscon compatible?
-> > 
-> > APBS region contains only clock (PLL) bits and APBC region contains only
-> > reset and clock bits, so I was thinking about dropping the syscon nodes
-> > and changing their compatible to spacemit,k1-plls and
-> > spacemit,k1-cru-apbc.
-> > 
-> > In summary, my plan is,
-> > 
-> > - For MPMU, APMU and APBC region, keep the binding in soc/spacemit.
-> >   They'll be reset, clock and power controllers, with compatible
-> >   "spacemit,k1-syscon-*".
-> > - For APBS region, write a new binding clock/spacemit,k1-plls, as it
-> >   contains only PLL-related bits. It acts as clock controller.
-> > - All split children will be eliminated, there'll be only four device
-> >   nodes, one for each region, matching the datasheet.
-> > - Put all clock-related binding definition of SpacemiT K1 in
-> >   dt-bindings/clock/spacemit,k1-ccu.h
-> > 
-> > Is it fine for you?
-> > 
-> 
-> That did not explain hardware to me.
+Just few improvements.
 
-Sorry if my replies haven't made things clear. I'm goint to make a
-(hopefully) more clear conclusion,
+Best regards,
+Krzysztof
 
-> You assume that some way, maybe
-> through magical crystal ball, I know your hardware and will tell you
-> what to do.
->
-> No.
-> 
-> I have dozens of other patches in my inbox. It's you who should explain
-> the hardware in simple, concise way so we can judge whether DT
-> description is correct.
-> 
-> Again: define what is the actual device, what is its address space, what
-> are its possible *separate* and *distinctive* children.
+---
+Krzysztof Kozlowski (5):
+      mailbox: pl320-ipc: Drop unused xxx_destination functions
+      mailbox: pl320-ipc: Constify amba_id table
+      mailbox: arm_mhu: Constify amba_id table
+      mailbox: arm_mhu_db: Constify amba_id table
+      mailbox: arm_mhuv2: Constify amba_id table
 
-The series covers four seperate blocks,
+ drivers/mailbox/arm_mhu.c    |  2 +-
+ drivers/mailbox/arm_mhu_db.c |  2 +-
+ drivers/mailbox/arm_mhuv2.c  |  2 +-
+ drivers/mailbox/pl320-ipc.c  | 14 +-------------
+ 4 files changed, 4 insertions(+), 16 deletions(-)
+---
+base-commit: 8936cec5cb6e27649b86fabf383d7ce4113bba49
+change-id: 20250222-mailbox-const-arm-id-7363548c0e75
 
-- Application Power Manage Unit, APMU
-- Main Power Manage Unit, MPMU
-- APB Bus Clock Unit, APBC
-- APB Spare, APBS
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-they're clearly separate blocks and have their own distinct, separate
-address spaces, confirmed by the Address Mapping section in the TRM[1].
-
-These four blocks provide hardware bits for three purposes: power
-management, reset signals and clocks. Not every block is capable of all
-the three functionalities,
-
-- APMU, MPMU: power, reset, clock
-- APBC: clock, reset
-- APBS: clock
-
-Reset and clock bits, if present, always stay in the same register.
-Power management bits stay in others. These two types of registers
-interleave if present in the same block (APMU and MPMU case).
-
-These blocks have no child: power, clock and reset definitions differ
-from block to block, no reusable nodes could be split from them.
-
-Hope this conclusion will help the reviewing. Please tell if something
-is unclear.
-
-> 
-> Best regards,
-> Krzysztof
-
-Thanks,
-Haylen Chu
-
-[1]: https://developer.spacemit.com/documentation?token=LzJyw97BCipK1dkUygrcbT0NnMg
 
