@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-527172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3203AA40817
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:52:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F0CA40818
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 12:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3069419C648C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:52:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9480C7ABC6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC8820AF71;
-	Sat, 22 Feb 2025 11:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545E320ADD5;
+	Sat, 22 Feb 2025 11:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1MnTsDy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kl850M0g"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA8A0207E18;
-	Sat, 22 Feb 2025 11:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708AF1FA16B;
+	Sat, 22 Feb 2025 11:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740225110; cv=none; b=dk6WsQaVHxULKJxMuEcbHhhAj4VDCQzmqtATicjsLx6KyswiVv7lHney3N+hNZgO9bva8FE4CjbskxhrvT5TGL8F942kmCdRLuJVxuKverHqqjn2KgGHYAFZMtMT0kyL/23d1aJ3uMCA2Wkcl4rXz0JMa/bQdc2h/zWHJeotLdo=
+	t=1740225207; cv=none; b=j+5g/n1O7BraCBc2XtyuRBdK5r4UMjyyVoEeUiXelnIeyKPeO3SxLv0/LACWJGmhjq4YTQRxQrExWyuYhD+zQNzvX+Dt0c9mf5WVWQFvCLeXLKUpl+SzF275dRQx3pIwYfEvQsbGq2NhqtCySo4E0EJskrr/Zr90bPXp88oXvPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740225110; c=relaxed/simple;
-	bh=sifDgvYlQN5FrcMLya3et5Zf5/0nSv8Le44LEJPVOBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=shNkUiBwM7bgvrzzsNqRxg64nN8kBD60uOhi6zD3gD6zYalEittS98h9akF7uXtGeQYm/nw85HAXlO7gOmdr/zP/WAzMnk4rjFBhOzfXMU2kf5Wv1YQw1azZsuR5w4bAvPnn519gDKTmhP+56C3VLm59Zz4twBxqTRDabPWlnV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1MnTsDy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD18CC4CED1;
-	Sat, 22 Feb 2025 11:51:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740225110;
-	bh=sifDgvYlQN5FrcMLya3et5Zf5/0nSv8Le44LEJPVOBY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=o1MnTsDy7B2ADdlQeonDeLn/bPpPFyOtYvttzKdblxFD2XxoY7ShPnHXf3XPJ2Cxd
-	 tPSR6pQspqTlbXMcbM3c5gCwkD2tdh3CkJhCc1Kk++fCG0bVcIYy1qIKjN7s/IpaZk
-	 9WZyTjucoFNU8hg+r8vAs9hSg6cXKhyQiY/REj9Qkb9Q0zfp2in7aegcZpi/HtRKUl
-	 OAeM5BZnhLowo6McrOfKl45uhs4OlzKy4EiIbQsXV0rEu+57oXYB5WdDWtaXP+K672
-	 x5kmB5UkDMg7YZEDbIpRlZVdnMG5xUYcEWVbedH7CkU08KVsQ9fuNt7cehavP1i9Tl
-	 MiXi1OF+BQ3/Q==
-Date: Sat, 22 Feb 2025 11:51:34 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich <Michael.Hennerich@analog.com>, Ulf Hansson
- <ulf.hansson@linaro.org>, Peter Rosin <peda@axentia.se>, Andrew Lunn
- <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
- netdev@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-sound@vger.kernel.org
-Subject: Re: [PATCH v3 10/15] iio: resolver: ad2s1210: use bitmap_write
-Message-ID: <20250222115134.7379f785@jic23-huawei>
-In-Reply-To: <4052fd7b-dd8c-4a5a-8f82-dd515de14d20@baylibre.com>
-References: <20250210-gpio-set-array-helper-v3-0-d6a673674da8@baylibre.com>
-	<20250210-gpio-set-array-helper-v3-10-d6a673674da8@baylibre.com>
-	<4052fd7b-dd8c-4a5a-8f82-dd515de14d20@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740225207; c=relaxed/simple;
+	bh=Ywa8seRgiXJKAoc3NuNrg+fonkZ9rGkNq5KSYrwrmWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AVQQcV/owQjwOxBA9rCDiuH1h5bnh5QjyHRAcMox36PF2V4ojpouzFlUG8dYglSsqKxqBfejW+/BN9a5vyawcRlQjWbSnH4z7r8ry7AsL+4yv0w0AlJ8eMkTSWLSvlUNj0EOdtuu3YmF3C76PYybazUJ/hDMtoyn6KoUVNCXoxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kl850M0g; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so767584a91.3;
+        Sat, 22 Feb 2025 03:53:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740225205; x=1740830005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ywa8seRgiXJKAoc3NuNrg+fonkZ9rGkNq5KSYrwrmWA=;
+        b=Kl850M0gpyZ/hFLJjyrsfXTO+72Id7BOMQ3l714x2gQJ7X99m4v/4XgGEFxhCZPseq
+         V0z/fT6indjAbJWD+3nZq4LIazaBfWrITzwsUzXHBMn2Ce9hy7YUnLenCEpG26ZEp2zs
+         Pd82fANjPm4SLbeRLrTIVlovVzGRVAh6AYDd7MA/wYfpnIvXpafb4EnS5q8Y3Gr9jKok
+         e1+9FYdDCOzOMLtWaB7Ky5NLtfc4oZgKyYvGOg+KJHYvO5Z+fK0L1p71etB/VVuj72U/
+         EzHYrF7l70mwQ2WSdhJ9OEIMTxCXqwPNvzEaL1JDR2yQiIKju77H/0Blw19ex91Tz1+e
+         VBYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740225205; x=1740830005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ywa8seRgiXJKAoc3NuNrg+fonkZ9rGkNq5KSYrwrmWA=;
+        b=FXBD7CrMohXVyZPfCXR1eXfVgZUknq49OH4qZBwI4SM82f0y19HKcsFQbnd/rvi01d
+         8lgLz8V7APsoaelSgTJNh4/l0i5UBfRQMDZTwGLNywEBgGh1dzWbH/P3ZEljS5rdFU9v
+         mX+NM0O2BIJRtNSgkZGMZ6yT+U3ZiMNjBEqmdp5wTl0qjzFTtqUv/J5lGO+oSfa7BXzU
+         f/pxh14JgC25edO6EjubKUwJP50M8fp2rUZ0KdwGtNCMCU3n/CVEgV9YF2H/cxb3FHJc
+         Cdux3VV2grUCsBRNwtKH8P66BSBhSlr2xL7pYDlAVcmWp16yjykBlvQeY4j4NxH2IMTR
+         lfuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsaWtrvQD99G4dRkhvG7J8DqA2ZJwlrkmny0e1a3XcX+id94t2Sg4UyBPT3SZ5d9HntBRFu0kNDTPgd6kmA0M=@vger.kernel.org, AJvYcCUvtdCs6J0QwmwdISnKVt39xUEAj4SM2wy21O/rReZ8G7SeMgoL8VhGQ3HJ85isROs//M0fVR2JNy1v1/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtBmDGY0s2j+s7TM0358yo+UM9mUUQWf/qg5QmmvM+5xjklv4k
+	AWOOAHDb+pypjoR4mkySrBq6tl0Gd+Ks636GttMPzwBiG41iSUmP40L/Xm2ALTBG0xcBLkPEBnj
+	x9EZ5A31onaLGG44YS72oa5SHq/Y=
+X-Gm-Gg: ASbGnctRYdvXEGjMG/CzaH2xzgrn6NN65TBWzfOr5xVWwD4BHfDVm3PjQl58bSBqrtO
+	CTgADwXKqzDvis/0g16VyHeXZh8ozyNP3wrlSOuCTlzAyfRZ3c8qslBv7IyIU/OgU3bY6WW7Cqx
+	0zmNGeA2M=
+X-Google-Smtp-Source: AGHT+IHWmt4RTi2qau5wn0wDQz+aqI9/+srVZOUk/gunDyRzExzVvDc1QfC7JM/S9mOB0zaIP6O1zXz6kjfUASOXH1I=
+X-Received: by 2002:a17:90b:3a81:b0:2ee:b665:12ce with SMTP id
+ 98e67ed59e1d1-2fce789cc70mr4290451a91.1.1740225205477; Sat, 22 Feb 2025
+ 03:53:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250221223533.158959-1-hamzamahfooz@linux.microsoft.com> <Z7lPcy6mgOVSFhZr@kernel.org>
+In-Reply-To: <Z7lPcy6mgOVSFhZr@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 22 Feb 2025 12:53:13 +0100
+X-Gm-Features: AWEUYZm_OGFROdvVMkCAYnPd0bj7BM5p5R_V6-j5E5w23_iwWVGJInQD7LkMDAY
+Message-ID: <CANiq72ktfkBLyVxx9-4UJZuvk5QdLpR9iP5R7BA6MUtx0KNKUQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: workqueue: define built-in bh queues
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Wedson Almeida Filho <walmeida@microsoft.com>, 
+	Nell Shamrell-Harrington <nells@linux.microsoft.com>, Dirk Behme <dirk.behme@gmail.com>, 
+	Konstantin Andrikopoulos <kernel@mandragore.io>, Danilo Krummrich <dakr@kernel.org>, Roland Xu <mu001999@outlook.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Feb 2025 14:54:53 -0600
-David Lechner <dlechner@baylibre.com> wrote:
+On Sat, Feb 22, 2025 at 5:15=E2=80=AFAM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+>
+> Using 1st person plural is usually almost a cardinal sin almost and is
+> somewhat exhausting to read.
 
-> On 2/10/25 4:33 PM, David Lechner wrote:
-> > Replace bitmap array access with bitmap_write.
-> > 
-> > Accessing the bitmap array directly is not recommended and now there is
-> > a helper function that can be used.
-> > 
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > ---
-> >  drivers/iio/resolver/ad2s1210.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/iio/resolver/ad2s1210.c b/drivers/iio/resolver/ad2s1210.c
-> > index 7f18df790157f1e411fb70de193a49f0677c999f..04879e6d538bce664469c5f6759d8b1cedea16e9 100644
-> > --- a/drivers/iio/resolver/ad2s1210.c
-> > +++ b/drivers/iio/resolver/ad2s1210.c
-> > @@ -46,6 +46,7 @@
-> >   */
-> >  
-> >  #include <linux/bitfield.h>
-> > +#include <linux/bitmap.h>
-> >  #include <linux/bits.h>
-> >  #include <linux/cleanup.h>
-> >  #include <linux/clk.h>
-> > @@ -180,7 +181,7 @@ static int ad2s1210_set_mode(struct ad2s1210_state *st, enum ad2s1210_mode mode)
-> >  	if (!gpios)
-> >  		return mode == st->fixed_mode ? 0 : -EOPNOTSUPP;
-> >  
-> > -	bitmap[0] = mode;
-> > +	bitmap_write(bitmap, mode, 0, 2);
-> >  
-> >  	return gpiod_multi_set_value_cansleep(gpios, bitmap);
-> >  }
-> > @@ -1470,7 +1471,7 @@ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
-> >  			return dev_err_probe(dev, -EINVAL,
-> >  				      "requires exactly 2 resolution-gpios\n");
-> >  
-> > -		bitmap[0] = st->resolution;
-> > +		bitmap_write(bitmap, st->resolution, 0, 2);
-> >  
-> >  		ret = gpiod_multi_set_value_cansleep(resolution_gpios, bitmap);
-> >  		if (ret < 0)
-> >   
-> 
-> There is actually a bug here pointed out in a similar patch. bitmap_write()
-> only modifies the bitmap, so this introduces an unintialized use bug. [1]
-> Here, we only use the bits that we set, so runtime behavior would not actually
-> be buggy but still best to fully initialize the memory.
-> 
-> I'm a bit surprised that my local compiler and iio/testing both didn't catch that
-> since GCC 14 caught it in the other driver.
-> 
-> [1]: https://lore.kernel.org/linux-gpio/20250217132152.29d86d6c@jic23-huawei/T/#m3163d2c5db5b7376504d8ad6f23716f1119de761
-> 
-> The fix is simple, we can zero-initialize the bitmap.
-Ignore previous. I'm looking at wrong branch. I can tweak this just fine.
-Done so and tree pushed out.
+Using "we" is far from a "cardinal sin" -- even key maintainers use it
+sometimes.
 
-> 
-> diff --git a/drivers/iio/resolver/ad2s1210.c b/drivers/iio/resolver/ad2s1210.c
-> index 04879e6d538b..ab860cedecd1 100644
-> --- a/drivers/iio/resolver/ad2s1210.c
-> +++ b/drivers/iio/resolver/ad2s1210.c
-> @@ -176,7 +176,7 @@ struct ad2s1210_state {
->  static int ad2s1210_set_mode(struct ad2s1210_state *st, enum ad2s1210_mode mode)
->  {
->  	struct gpio_descs *gpios = st->mode_gpios;
-> -	DECLARE_BITMAP(bitmap, 2);
-> +	DECLARE_BITMAP(bitmap, 2) = { };
->  
->  	if (!gpios)
->  		return mode == st->fixed_mode ? 0 : -EOPNOTSUPP;
-> @@ -1427,7 +1427,7 @@ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
->  	struct device *dev = &st->sdev->dev;
->  	struct gpio_descs *resolution_gpios;
->  	struct gpio_desc *reset_gpio;
-> -	DECLARE_BITMAP(bitmap, 2);
-> +	DECLARE_BITMAP(bitmap, 2) = { };
->  	int ret;
->  
->  	/* should not be sampling on startup */
-> 
+Yes, commits should be generally written using the imperative,
+especially for the sentence about the actual change itself, but it is
+more natural in some cases to use "we".
 
+> "These methods" refer to nothing
+
+"These methods" refer to the ones added in the commit -- that seems clear t=
+o me.
+
+They are not "methods", though (that is wrong), but apart from that, I
+am not sure what the issue is with those two words.
+
+To be clear, this does not mean the commit message is good -- I agree
+that it should provide more justification.
+
+Cheers,
+Miguel
 
