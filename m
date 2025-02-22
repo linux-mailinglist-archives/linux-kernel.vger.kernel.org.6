@@ -1,108 +1,98 @@
-Return-Path: <linux-kernel+bounces-527477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60793A40BA7
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:05:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F32F4A40BA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32FF16F319
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:05:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83CD83B9FB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5077520409D;
-	Sat, 22 Feb 2025 21:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CD76204594;
+	Sat, 22 Feb 2025 21:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcZNEgNo"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finder.org header.i=@finder.org header.b="qDpxXn63"
+Received: from greenhill.hpalace.com (greenhill.hpalace.com [192.155.80.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430FB1F0E47;
-	Sat, 22 Feb 2025 21:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218DA2036F0;
+	Sat, 22 Feb 2025 21:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.155.80.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740258313; cv=none; b=HhHQCvYiiCZCWNzleLega83QojMDCJPFmUTz6pZ7JsHiYDT7X4snNE3nmYh9tyDIK8TIY+dUhDFsrR4LFMBDbvYVVJqXXn2z5eY3GuwYOUGCEAC3n2plzBCou+SIUWn8jcb3vQ5swaUiWRxrKlQ2dqUWUlD+CRojnp2xi0+Cr9U=
+	t=1740258827; cv=none; b=Z5VOubBsVF23iM7UYwC+ioRhXRAcgk7LOUVB7An62UXbZRm9V5sDzJCvpd5wbsLHVM4kIXLIi2iOnIT467Nj2+8yK4S/CntXaz+wVcDRrBhnz51Q7pZQdlqH3Pt2WNxgLQDGwRiOm33MOmuCsspOomYbH0nt83wT4KCR6Re9Sz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740258313; c=relaxed/simple;
-	bh=kTTR6w28623z2PdahaVhPCG4rhr00t5rKMg7pVg8rzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f/7Jr9QCBzXkF9bIhvwHitrLSFofNsf0lPP5ZcQ/z0RD6mk32p8PgcAtr4KbngaWqVmTANZbhKhxnWx18rEy4AjHDpG7qyHMlEgNr5M+Z6jrDA4K1Wf/0kxKTE5X81kqqyTcSfQydEqgwTRN5QTpAX3EQg3KJIYunGND+Mi1N+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcZNEgNo; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4720cfc35e9so56488811cf.2;
-        Sat, 22 Feb 2025 13:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740258310; x=1740863110; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=GDNb8wB+xziXZf1Q+Ps5i32BsrwEBQPG7WlZhBCnMwg=;
-        b=DcZNEgNoPm2sizI4Wkty19e3xgHKj4Qrb82/WOOoZjmLL+tNxtO6+/cnsvsZb/lfrs
-         Ghy46+90rdJDgcaP5QR3okknLo12SPAdfCc7XBA6eEWwBcST7OfCllkuViOMQNAurx/q
-         yER/JEi8YDh1jL8FRZK9EYvbB7+nyxReEMNyc/iO9TA8O42zOsS13z3XuyvY0V17/Ry/
-         wbzzhU3dHi5wOF3r9oTnqFaYv9iSeMDHTASgJ5kzzx6+URCJp1ABRq87shFa6WJUgXA+
-         jrfkj/8rDMHBRTaTiVEdCRO/KOaQAlNCjOpAavZsKL1B3tDV2RWNmufNXa4pa4TOMLVj
-         pnqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740258310; x=1740863110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDNb8wB+xziXZf1Q+Ps5i32BsrwEBQPG7WlZhBCnMwg=;
-        b=k8AQ/NOMLB9qUIiyIOt97FBh1YQRDj4eemi1bzNvxTElxuYAj8iqx/tnalWIjtcJoW
-         HgTydv+mu0rMWtNMZNTQBggPtcXOwqomDdi23INSLYQcPo9BA/dwN/EpbAlMvCqmxjz7
-         pItmy9gQ/zHCbNTye2j8s3/7TQYsnjxV0MvnOgYv2zq9Ydws9l6od/b3RSutj8bMfaLc
-         ooawH2zic0h1joEk7dIUuEEufDFgqB2yrLKAOGs3k7vguc4AQy4rYE+mu/c8TosI/svv
-         tyq4ms7y1Z2RyryvGQD4HV8XB2DngHwKGvojmqaSK1pYrA7seX4PQSkFulZfFjxtY/Qv
-         f13g==
-X-Forwarded-Encrypted: i=1; AJvYcCUnk32nmmKtf9lF34EWIgVg2L1mXRLYGxvyIHMcfiQG0yZ03DGtdfXUfxJZ/EQOMwkz3BtLt+D83XE=@vger.kernel.org, AJvYcCWzYp1h4nRnWyC8LxQlyP9pItRw8tpvGUOZ57VD0vNyt37QlMCRLWWogdff89lB3wHqhAKsCmZgcmrzGzx0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3lNtvBMp+c0uHawr2Ua/KeFKTdIoEGjz2YptP61Otk5h87LBQ
-	MJMdX2etAscH+CuzMrzOX7/8U7bu0pLgZzzmBDtV4XhpMQaNOURF
-X-Gm-Gg: ASbGncuONUxbInc652VnRPRrhn8V8Bv8NomYPgiceUXamYDCkPtfnH3XS08UveEUla3
-	fq10zLnnbtYHyDBAZQNsZiCxhqtxq5Q1ix7IavazYmVnsAwx/S6RY0F2jOXqbs90t/39JJy3Ktw
-	NVd1ezt6Qt/bnyRfFYbnYxxzYVMd5dxLwweOeW9QvtWWnOqWnLRjojuSorfwJlrmy4YepWJVScc
-	Xd5RbC56wN15vWKxD0N15dt2gyPq5fH0hCwhjdKIFTE4qM7I0EBIT2HfgzCiJqHoyBBlJrbVksU
-	3xxKqye2gqNWlalTkAojlZsPaUbEqMTD0pGunpeS/yR9z4MBfPuQ
-X-Google-Smtp-Source: AGHT+IHClFK4sot491eQ6FRxRejgHZy1N6FGOSlejiy1SySAtWdidtx39cNvfdCiVsZbY3u7E8qa5Q==
-X-Received: by 2002:ac8:598f:0:b0:472:99b:4d75 with SMTP id d75a77b69052e-472228c95e5mr107993081cf.16.1740258310055;
-        Sat, 22 Feb 2025 13:05:10 -0800 (PST)
-Received: from VM-Arch (ool-1826d901.dyn.optonline.net. [24.38.217.1])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-472042563edsm55544171cf.2.2025.02.22.13.05.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 13:05:09 -0800 (PST)
-Date: Sat, 22 Feb 2025 16:05:07 -0500
-From: Alex Lanzano <lanzano.alex@gmail.com>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] iio: imu: bmi270: add support for data ready
- interrupt trigger
-Message-ID: <l2ir6hzh2e7f76hfeigzxwy4mvgireggmrq4advwq6hcw2txtx@jqaqgoz57ygh>
-References: <20250219-bmi270-irq-v1-0-145d02bbca3b@gmail.com>
- <20250219-bmi270-irq-v1-3-145d02bbca3b@gmail.com>
+	s=arc-20240116; t=1740258827; c=relaxed/simple;
+	bh=o/x1hdw9Aw2nr0C9JEL0Jjs2LvEUh9Qcolc273fdpRI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=p5igNrIcovJd4s9yBa2rDYWmUFlyriSeXc9hSU3EvU6g/5LDMWXhn74au3sXzC1LFIe+FIjuV1f4IoVt/AAIZSecVkJ/sA+Z23q9SkoTvyDltLJyoKv67zOMUDaxSEGkEKBAm3kNgzY9HsaqiyaACPqDgvgxWnQ1oBbNUhDupic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=finder.org; spf=pass smtp.mailfrom=finder.org; dkim=pass (2048-bit key) header.d=finder.org header.i=@finder.org header.b=qDpxXn63; arc=none smtp.client-ip=192.155.80.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=finder.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finder.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=finder.org; s=2018;
+	t=1740258470; bh=o/x1hdw9Aw2nr0C9JEL0Jjs2LvEUh9Qcolc273fdpRI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=qDpxXn633joOKC7+I1+WrBmclkSJNJW2m9HDYu8NfPQoHsEzTG30f0cDXZEfWCcOP
+	 9YVuUbhnoMisR76s/WG9sgv650ctiCMZx/zIV2ncsteTMd7/QQIL3Z0E0gKCWFxNv9
+	 dZbtHRKo55Hb/YNG9DWKXJ4qMe5gGJj7KjGCkEEaVrikPub7krsIz9NdoqQi2giNEv
+	 NxBY3tQM3ghlOIuxvyVxcqSmiuNCT2tPVjKRSiiEwc1a2woWxEEcGh7HIhNfQdfg2m
+	 EwDWKi1SjQ5tkmJtaGAP59BZAnYfjRvZ7PeGkp159sCz+EVeUykEKXNzWGUCAC51GF
+	 EahrsjSRMNXTQ==
+Received: from mail.finder.org (unknown [192.155.80.58])
+	by greenhill.hpalace.com (Postfix) with ESMTPSA id AA819129F;
+	Sat, 22 Feb 2025 21:07:50 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250219-bmi270-irq-v1-3-145d02bbca3b@gmail.com>
+Date: Sat, 22 Feb 2025 13:07:50 -0800
+From: Jared Finder <jared@finder.org>
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+Cc: hanno@hboeck.de, kees@kernel.org, gnoack@google.com,
+ gregkh@linuxfoundation.org, jannh@google.com, jirislaby@kernel.org,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, stable@vger.kernel.org
+Subject: Re: [PATCH v2] tty: Permit some TIOCL_SETSEL modes without
+ CAP_SYS_ADMIN
+In-Reply-To: <20250221.0a947528d8f3@gnoack.org>
+References: <202501100850.5E4D0A5@keescook>
+ <cd83bd96b0b536dd96965329e282122c@finder.org>
+ <20250221.0a947528d8f3@gnoack.org>
+Message-ID: <491f3df9de6593df8e70dbe77614b026@finder.org>
+X-Sender: jared@finder.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 08:54:47PM -0300, Gustavo Silva wrote:
-> The BMI270 sensor provides two interrupt pins that can be used for
-> different interrupt sources, including a data ready signal. Add support
-> for configuring one the pins as a trigger source.
+On 2025-02-20 16:10, Günther Noack wrote:
 > 
-> The interrupt pin can be configured with various options: active high or
-> low, push-pull or open-drain, and latched or non-latched.
+> Jared, can you please confirm whether Emacs works now with this patch
+> in the kernel?
 > 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+> I am asking this because I realized that the patch had a bug.  We are
+> erring in the "secure" direction, but not all TIOCL_SELMOUSEREPORT
+> invocations work without CAP_SYS_ADMIN.
 
-Most of this patch seems to based off of the implementation done in
-bmi323. Double checked the relevant registers in the datasheet. All
-looks correct.
+I confirmed that Emacs worked fine with 6.14-rc1.  My understanding is 
+that the Emacs process relies only on TIOCL_SELPOINTER which it needs to 
+do to draw the mouse pointer after Emacs' redisplay.  It's fine for 
+TIOCL_SELMOUSEREPORT to not work in an unpriviliged Emacs.
 
-Acked-by: Alex Lanzano <lanzano.alex@gmail.com
+> If this specific selection mode is not needed by Emacs, I think *the
+> best thing would be to keep it guarded by CAP_SYS_ADMIN, after all*.
+
+This sounds good to me.
+
+Reading over a documentation proposal for TIOCL_SELMOUSEREPORT 
+(https://lkml.org/lkml/2020/7/6/249), I can not imagine how a userspace 
+program that was not acting as the mouse daemon could successfully use 
+SELMOUSEREPORT as the mouse daemon will be fighting with it.  Any 
+legitimate setting of mouse state (for example, setting the mouse x/y 
+coordinate) would need to be done with the mouse daemon in the loop, in 
+which case the mouse daemon might as well send the message itself.
+
+   -- MJF
 
