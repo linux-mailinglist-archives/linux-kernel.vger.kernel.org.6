@@ -1,210 +1,292 @@
-Return-Path: <linux-kernel+bounces-527486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1850A40BC0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 470ECA40BC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:31:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B31FC3BC805
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:29:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72ABB189A327
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 21:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02E0204686;
-	Sat, 22 Feb 2025 21:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C5A2040A8;
+	Sat, 22 Feb 2025 21:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jan/Xnq3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DgUFUwKY"
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122C878F4E;
-	Sat, 22 Feb 2025 21:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43768828;
+	Sat, 22 Feb 2025 21:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740259766; cv=none; b=nZLZeadS71pV6AEp7+XX946dpIkTWaebJJzhqPRfUuSXJk3QkfLag8rssResIVcB5gyK4oO6WSqK+jHFmzZ7SunlA7Xolg2hafL1nQ04v4cFbamzaVhg9G69rGpuyjvRGeRzPHqGgy1EhzGTcycZQ2jukuxPCB66pJvPnIDeJ4Y=
+	t=1740259911; cv=none; b=VAgfaHjwbwWoUPlku0ADc23rjozEodKtT5x8jSBHJUO5kBiF1srxw2y1citUr7QYXXG0z871zone2VE2d/LxAO0MexKiF5TW3plsPQcm17hhFPUGiaFXb9d3PNECCEcqFDhGnfrw1BNXkjX3gay+XSbKA/I4Tt9oNXZXl1kO30s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740259766; c=relaxed/simple;
-	bh=TllmLDgpVZV8wSTC1mL6JVYDxhCEWNP7L7AL2Er9Ad0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1Bli1bdtLj0kC1zrKYPUXntc3yhPA3V4UJRiKE4W2XrYOAXAGOay021cPpFNGngLLFYJTV2w6jBpZ3G6qaHKWtyEtn2AFTbzI+GAfa0trRocUFMLXnX4n4K2v4DKEiF2omMn6eeKGFp+M6ufnaltKvJRRBVv0wYaHdtluzfZvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jan/Xnq3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34CCBC4CED1;
-	Sat, 22 Feb 2025 21:29:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740259765;
-	bh=TllmLDgpVZV8wSTC1mL6JVYDxhCEWNP7L7AL2Er9Ad0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jan/Xnq3CwBQY9BWH8PIIPcBxphq40Ypfi9YsXB/s4j8LhmevzWv5X6iTIn1ICviq
-	 zkNrdwrCB2v17wJq1rC9hYldSoR85BrwShhdJA00CtmgGNPkWbksKg0dpFbj2+tsYj
-	 i9trkB1jdvWH6r21lSnJj2Pb/bvBNTjmkVfg6B4JfITNb6VnZGocMnsSF0huDr73ne
-	 EzAck27i1nq3AndfDfcXdHdXb0qE0GwI5xcgf7Izh5+PEdb8iMoDY3H7zQ/1bNGGGQ
-	 VMbPo1eU4v2Z3d7q2JFS7BVDd4Dktm9V7C3zq9tYIZ25+ZNEs8KyxnSh/httd/GKa2
-	 2kRNMs3vHJgDA==
-Date: Sat, 22 Feb 2025 22:29:22 +0100
-From: Daniel Gomez <da.gomez@kernel.org>
-To: Lucas De Marchi <lucas.demarchi@intel.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
-	linux-modules@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, iovisor-dev <iovisor-dev@lists.iovisor.org>, 
-	gost.dev@samsung.com
-Subject: Re: [PATCH 2/2] moderr: add module error injection tool
-Message-ID: <vo4aommlbguz7kll5svvgbodykxx7chywhf2wz5bbz4mibvver@cxrceuzt3dzw>
-References: <CGME20250122131159eucas1p17693e311a9b7674288eb3c34014b6f2c@eucas1p1.samsung.com>
- <20250122-modules-error-injection-v1-0-910590a04fd5@samsung.com>
- <20250122-modules-error-injection-v1-2-910590a04fd5@samsung.com>
- <CAADnVQJ8tYSx-ujszq54m2XyecoJUgQZ6HQheTrohhfQS6Y9sQ@mail.gmail.com>
- <Z5lEoUxV4fBzKf4i@bombadil.infradead.org>
- <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
+	s=arc-20240116; t=1740259911; c=relaxed/simple;
+	bh=2dCxHSAWl+CcfaKV37MRjFIhjVKyunjoPYxzCkxTIrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U4Rwl4iauvxvnZQlDFOFVoyCWxebpRrvvv5qFhYpYWJxlXGM4manFa7Rz1yceQI52e8p/AIyQ4UszP2fUVbreyu4oJt9jzogOqHxj5fIzAvS89gXdIuE9616MJ6Frt8Ly4JueMPVi/q4CQUF4A20dh8KSVWyNISese3//QzhCKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DgUFUwKY; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-868ddc4c6b6so934618241.2;
+        Sat, 22 Feb 2025 13:31:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740259908; x=1740864708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OFl0XQfY5EgWWOaf98TRRQVcDwnlYMlHf963+xnJa3Q=;
+        b=DgUFUwKYuf2AyMgH6unkOZd73qQCNtd83cW9oxLjeJqZuSBamFz4+alu6JiMAhWq1U
+         fHLEGj2SMPkNWZ89x9/jIh18N9hbAEpV+uS5rkXXzibwUOxdUWe/nOvPO2bB2ZWgBat3
+         MB3WhYABb51UqGKxoeqr5G6NiYLJd3dmgmNW8ROIbTVKwwaPTjcZJgJ2mSRxedtriMzU
+         wkhUOB7mT1ISYJtiYM1K/yym7ks0szSvoDbg/pwIXRd5iBQ4ip8t8cV/JxXxnCQCW5HF
+         ju52b5NUHPPLMbdIBC4hounSvYXThzNzKk6R08UKGzpvD4FderVpAk8JpeCQs2MkkzK7
+         TPHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740259908; x=1740864708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OFl0XQfY5EgWWOaf98TRRQVcDwnlYMlHf963+xnJa3Q=;
+        b=GGm3UU6UvsBq+neWv7rkxBVwD6qzbENgPe1c+iAujBS4ivnIwCgjVSOICCztJLqG8S
+         SHX/qMXufUdwAmS//EDuFdyBVUrgq0EXrJfgec4Vi2PB6A+gAgN/gLmZqdD2ZAuN6Gvt
+         YKdxlSGsHyI4j9Jba9ROwsO8UdRObCOPRQYIfx32CTYdXdV/NP6yob+VZMjqN7QPg5f0
+         aSgUzgc1x48UTM6V2cezrFX3IQHlXZU56aKUJLnLUtKddLqtSuwoPBJb/Pc6gqmwahoW
+         5apIqh0aQm/L1WnhyQsm1NpVHlAA1IZLX861WE0j6XdqbPbFts44JMUDJltHfHgbMm2G
+         wABg==
+X-Forwarded-Encrypted: i=1; AJvYcCUM0ovHkNno3TuIq0TtM/Rs6twzMAoOQKNtvQJ3v9T3aqJUQxNLOjWxTMNK3llBTSPbG9a7lE4NYgAvCmw=@vger.kernel.org, AJvYcCX7RDZ7nPOK+YEhjLc+3esbrknRjMVCGZxsh4kpsThOi3vUhZaKuh4IhmRE+aglt1bXHybDMyMM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGmF0OGibSg3Lm7/USvYxMyane838wu52n/VlJUP2Emc2sc75b
+	KnEp6muiwqib1nwt8MoJ83QJF9snGurZMSC2CGOBRz4WCyBlF7HVUdhVZBgU+Lql27LW6B37wZ0
+	MhmpFyv/3Qz6tPbIaKr16BqkVt4k=
+X-Gm-Gg: ASbGncsu604RFE/Pzp+umaYPxrzsLoI+P/SKJv9x3k43v8FN4PYzq1NcrTAWHKV7i08
+	h8HZgVnPr77rEM4iK1cdvCaRpdaOp2bHIrVPqPIw8Zq6T/RucpcBfTFQ91DyjsqMsqzLwKmZlPM
+	79QwDmrWc=
+X-Google-Smtp-Source: AGHT+IHoyujMRhEdPKxeKf2mWlugvpAIglgbKM2uZWU15AhMHrumLw69+SgSol8v/MwdrCrAt4+D0bU4BZUUTD2wt7o=
+X-Received: by 2002:a05:6122:2529:b0:51b:b750:8303 with SMTP id
+ 71dfb90a1353d-521ee49c7fbmr3952395e0c.11.1740259908445; Sat, 22 Feb 2025
+ 13:31:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <qnfhjhyqlagmrmk3dwfb2ay37ihi6dlkzs67bzxpu7izz6wqc5@aiohaxlgzx5r>
+References: <69dbca2b-cf67-4fd8-ba22-7e6211b3e7c4@redhat.com>
+ <20250220092101.71966-1-21cnbao@gmail.com> <Z7e7iYNvGweeGsRU@x1.local>
+ <CAGsJ_4zXMj3hxazV1R-e9kCi_q-UDyYDhU6onWQRtRNgEEV3rw@mail.gmail.com> <Z7fbom4rxRu-NX81@x1.local>
+In-Reply-To: <Z7fbom4rxRu-NX81@x1.local>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 23 Feb 2025 10:31:37 +1300
+X-Gm-Features: AWEUYZno13prQTj8vWDPxZEpQGT6slHD7oIiAxSZ34dWeJnuJMR5z9qAQPqbza0
+Message-ID: <CAGsJ_4xb_FoH+3DgRvV7OkkbZqZKiubntPtR25mqiHQ7PLVaNQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters swapcache
+To: Peter Xu <peterx@redhat.com>
+Cc: david@redhat.com, Liam.Howlett@oracle.com, aarcange@redhat.com, 
+	akpm@linux-foundation.org, axelrasmussen@google.com, bgeffon@google.com, 
+	brauner@kernel.org, hughd@google.com, jannh@google.com, 
+	kaleshsingh@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	lokeshgidra@google.com, mhocko@suse.com, ngeoffray@google.com, 
+	rppt@kernel.org, ryan.roberts@arm.com, shuah@kernel.org, surenb@google.com, 
+	v-songbaohua@oppo.com, viro@zeniv.linux.org.uk, willy@infradead.org, 
+	zhangpeng362@huawei.com, zhengtangquan@oppo.com, yuzhao@google.com, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 19, 2025 at 02:17:48PM +0100, Lucas De Marchi wrote:
-> On Tue, Jan 28, 2025 at 12:57:05PM -0800, Luis Chamberlain wrote:
-> > On Wed, Jan 22, 2025 at 09:02:19AM -0800, Alexei Starovoitov wrote:
-> > > On Wed, Jan 22, 2025 at 5:12 AM Daniel Gomez <da.gomez@samsung.com> wrote:
-> > > >
-> > > > Add support for a module error injection tool. The tool
-> > > > can inject errors in the annotated module kernel functions
-> > > > such as complete_formation(), do_init_module() and
-> > > > module_enable_rodata_after_init(). Module name and module function are
-> > > > required parameters to have control over the error injection.
-> > > >
-> > > > Example: Inject error -22 to module_enable_rodata_ro_after_init for
-> > > > brd module:
-> > > >
-> > > > sudo moderr --modname=brd --modfunc=module_enable_rodata_ro_after_init \
-> > > > --error=-22 --trace
-> > > > Monitoring module error injection... Hit Ctrl-C to end.
-> > > > MODULE     ERROR FUNCTION
-> > > > brd        -22   module_enable_rodata_after_init()
-> > > >
-> > > > Kernel messages:
-> > > > [   89.463690] brd: module loaded
-> > > > [   89.463855] brd: module_enable_rodata_ro_after_init() returned -22,
-> > > > ro_after_init data might still be writable
-> > > >
-> > > > Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
-> > > > ---
-> > > >  tools/bpf/Makefile            |  13 ++-
-> > > >  tools/bpf/moderr/.gitignore   |   2 +
-> > > >  tools/bpf/moderr/Makefile     |  95 +++++++++++++++++
-> > > >  tools/bpf/moderr/moderr.bpf.c | 127 +++++++++++++++++++++++
-> > > >  tools/bpf/moderr/moderr.c     | 236 ++++++++++++++++++++++++++++++++++++++++++
-> > > >  tools/bpf/moderr/moderr.h     |  40 +++++++
-> > > >  6 files changed, 510 insertions(+), 3 deletions(-)
-> > > 
-> > > The tool looks useful, but we don't add tools to the kernel repo.
-> > > It has to stay out of tree.
-> > 
-> > For selftests we do add random tools.
-> > 
-> > > The value of error injection is not clear to me.
-> > 
-> > It is of great value, since it deals with corner cases which are
-> > otherwise hard to reproduce in places which a real error can be
-> > catostrophic.
-> > 
-> > > Other places in the kernel use it to test paths in the kernel
-> > > that are difficult to do otherwise.
-> > 
-> > Right.
-> > 
-> > > These 3 functions don't seem to be in this category.
-> > 
-> > That's the key here we should focus on. The problem is when a maintainer
-> > *does* agree that adding an error injection entry is useful for testing,
-> > and we have a developer willing to do the work to help test / validate
-> > it. In this case, this error case is rare but we do want to strive to
-> > test this as we ramp up and extend our modules selftests.
-> > 
-> > Then there is the aspect of how to mitigate how instrusive code changes
-> > to allow error injection are. In 2021 we evaluated the prospect of error
-> > injection in-kernel long ago for other areas like the block layer for
-> > add_disk() failures [0] but the minimal interface to enable this from
-> > userspace with debugfs was considered just too intrusive.
-> > 
-> > This effort tried to evaluate what this could look like with eBPF to
-> > mitigate the required in-kernel code, and I believe the light weight
-> > nature of it by just requiring a sprinkle with ALLOW_ERROR_INJECTION()
-> > suffices to my taste.
-> > 
-> > So, perhaps the tools aspect can just go in:
-> > 
-> > tools/testing/selftests/module/
-> 
-> but why would it be module-specific? Based on its current implementation
-> and discussion about inject.py it seems to be generic enough to be
-> useful to test any function annotated with ALLOW_ERROR_INJECTION().
+On Fri, Feb 21, 2025 at 2:49=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Fri, Feb 21, 2025 at 01:07:24PM +1300, Barry Song wrote:
+> > On Fri, Feb 21, 2025 at 12:32=E2=80=AFPM Peter Xu <peterx@redhat.com> w=
+rote:
+> > >
+> > > On Thu, Feb 20, 2025 at 10:21:01PM +1300, Barry Song wrote:
+> > > > 2. src_anon_vma and its lock =E2=80=93 swapcache doesn=E2=80=99t re=
+quire it=EF=BC=88folio is not mapped=EF=BC=89
+> > >
+> > > Could you help explain what guarantees the rmap walk not happen on a
+> > > swapcache page?
+> > >
+> > > I'm not familiar with this path, though at least I see damon can star=
+t a
+> > > rmap walk on PageAnon almost with no locking..  some explanations wou=
+ld be
+> > > appreciated.
+> >
+> > I am observing the following in folio_referenced(), which the anon_vma =
+lock
+> > was originally intended to protect.
+> >
+> >         if (!pra.mapcount)
+> >                 return 0;
+> >
+> > I assume all other rmap walks should do the same?
+>
+> Yes normally there'll be a folio_mapcount() check, however..
+>
+> >
+> > int folio_referenced(struct folio *folio, int is_locked,
+> >                      struct mem_cgroup *memcg, unsigned long *vm_flags)
+> > {
+> >
+> >         bool we_locked =3D false;
+> >         struct folio_referenced_arg pra =3D {
+> >                 .mapcount =3D folio_mapcount(folio),
+> >                 .memcg =3D memcg,
+> >         };
+> >
+> >         struct rmap_walk_control rwc =3D {
+> >                 .rmap_one =3D folio_referenced_one,
+> >                 .arg =3D (void *)&pra,
+> >                 .anon_lock =3D folio_lock_anon_vma_read,
+> >                 .try_lock =3D true,
+> >                 .invalid_vma =3D invalid_folio_referenced_vma,
+> >         };
+> >
+> >         *vm_flags =3D 0;
+> >         if (!pra.mapcount)
+> >                 return 0;
+> >         ...
+> > }
+> >
+> > By the way, since the folio has been under reclamation in this case and
+> > isn't in the lru, this should also prevent the rmap walk, right?
+>
+> .. I'm not sure whether it's always working.
+>
+> The thing is anon doesn't even require folio lock held during (1) checkin=
+g
+> mapcount and (2) doing the rmap walk, in all similar cases as above.  I s=
+ee
+> nothing blocks it from a concurrent thread zapping that last mapcount:
+>
+>                thread 1                         thread 2
+>                --------                         --------
+>         [whatever scanner]
+>            check folio_mapcount(), non-zero
+>                                                 zap the last map.. then m=
+apcount=3D=3D0
+>            rmap_walk()
+>
+> Not sure if I missed something.
+>
+> The other thing is IIUC swapcache page can also have chance to be faulted
+> in but only if a read not write.  I actually had a feeling that your
+> reproducer triggered that exact path, causing a read swap in, reusing the
+> swapcache page, and hit the sanity check there somehow (even as mentioned
+> in the other reply, I don't yet know why the 1st check didn't seem to
+> work.. as we do check folio->index twice..).
+>
+> Said that, I'm not sure if above concern will happen in this specific cas=
+e,
+> as UIFFDIO_MOVE is pretty special, that we check exclusive bit first in s=
+wp
+> entry so we know it's definitely not mapped elsewhere, meanwhile if we ho=
+ld
+> pgtable lock so maybe it can't get mapped back.. it is just still tricky,
+> at least we do some dances all over releasing and retaking locks.
+>
+> We could either justify that's safe, or maybe still ok and simpler if we
+> could take anon_vma write lock, making sure nobody will be able to read t=
+he
+> folio->index when it's prone to an update.
 
-Right, but inject.py is based on the old/deprecated Python eBPF/BCC
-infrastructure (although I think it's still a working and maintained tool based
-on commit history). However, as I noted in the cover letter, I think it would be
-useful to port it to use libbpf instead.
+What prompted me to do the former is that folio_get_anon_vma() returns
+NULL for an unmapped folio. As for the latter, we need to carefully evaluat=
+e
+whether the change below is safe.
 
-> 
-> As xe driver maintainer, it may be interesting to use such a tool:
-> 
-> 	$ git grep ALLOW_ERROR_INJECT -- drivers/gpu/drm/xe | wc -l  	23
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -505,7 +505,7 @@ struct anon_vma *folio_get_anon_vma(const struct
+folio *folio)
+        anon_mapping =3D (unsigned long)READ_ONCE(folio->mapping);
+        if ((anon_mapping & PAGE_MAPPING_FLAGS) !=3D PAGE_MAPPING_ANON)
+                goto out;
 
-I was wondering if users of ALLOW_ERROR_INJECTION() still depend on inject.py
-tool, or other tools were used. Or perhaps all are using debugfs?
+-       if (!folio_mapped(folio))
++       if (!folio_mapped(folio) && !folio_test_swapcache(folio))
+                goto out;
 
-> 
-> How does this approach compare to writing the function name on debugfs
-> (the current approach in xe's testsuite)?
-> 
-> 	fail_function @ https://docs.kernel.org/fault-injection/fault-injection.html#fault-injection-capabilities-infrastructure
-> 	https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/intel/xe_fault_injection.c?ref_type=heads#L108
+        anon_vma =3D (struct anon_vma *) (anon_mapping - PAGE_MAPPING_ANON)=
+;
+@@ -521,7 +521,7 @@ struct anon_vma *folio_get_anon_vma(const struct
+folio *folio)
+         * SLAB_TYPESAFE_BY_RCU guarantees that - so the atomic_inc_not_zer=
+o()
+         * above cannot corrupt).
+         */
 
-IMHO and looking at the references above, looks "simpler" to handle these cases
-in eBPF. Specially because the error injection logic does not have to live along
-with the code but in a separate tool. Link from Luis [0] (also [1]) is a good
-example of when debugfs may be seen a bit too intrusive and how eBPF may resolve
-the problems maintainers have.
+-       if (!folio_mapped(folio)) {
++       if (!folio_mapped(folio) && !folio_test_swapcache(folio)) {
+                rcu_read_unlock();
+                put_anon_vma(anon_vma);
+                return NULL;
 
-[1] https://lore.kernel.org/all/20210512064629.13899-1-mcgrof@kernel.org/
 
-In summary, a function annotated with the error injection tag can modify
-its return value in eBPF code by using the bpf_override_return() helper. The
-logic for deciding when to inject the error is likely similar to the current
-implementation in debugfs. This can be seen in patch 2, file tools/bpf/
-moderr/moderr.bpf.c where error is injected based on module name and target
-function.
+The above change, combined with the change below, has also resolved the mTH=
+P
+-EBUSY issue.
 
-> 
-> If you decide to have the tool to live somewhere else, then kmod repo
-> could be a candidate. Although I think having it in kernel tree is
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index e5718835a964..1ef991b5c225 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1333,6 +1333,7 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+                pte_unmap(&orig_src_pte);
+                pte_unmap(&orig_dst_pte);
+                src_pte =3D dst_pte =3D NULL;
++               folio_wait_writeback(src_folio);
+                err =3D split_folio(src_folio);
 
-Thanks Lucas.
+                if (err)
+                        goto out;
+@@ -1343,7 +1344,7 @@ static int move_pages_pte(struct mm_struct *mm,
+pmd_t *dst_pmd, pmd_t *src_pmd,
+                goto retry;
+        }
 
-> simpler maintenance-wise.
+-       if (!src_anon_vma && pte_present(orig_src_pte)) {
++       if (!src_anon_vma) {
+                /*
+                 * folio_referenced walks the anon_vma chain
+                 * without the folio lock. Serialize against it with
 
-I agree with you that having the tool (or maybe tools if we decide to split) in
-tree it may be easier and may be a way to showcase its usage more effectively.
 
-> 
-> Lucas De Marchi
-> 
-> > 
-> > [0] https://www.spinics.net/lists/linux-block/msg68159.html
-> > 
-> >  Luis
+split_folio() returns -EBUSY if the folio is under writeback or if
+folio_get_anon_vma() returns NULL.
+
+I have no issues with the latter, provided the change in folio_get_anon_vma=
+()
+is safe, as it also resolves the mTHP -EBUSY issue.
+
+We need to carefully consider the five places where folio_get_anon_vma() is
+called, as this patch will also be backported to stable.
+
+  1   2618  mm/huge_memory.c <<move_pages_huge_pmd>>
+             src_anon_vma =3D folio_get_anon_vma(src_folio);
+
+   2   3765  mm/huge_memory.c <<__folio_split>>
+             anon_vma =3D folio_get_anon_vma(folio);
+
+   3   1280  mm/migrate.c <<migrate_folio_unmap>>
+             anon_vma =3D folio_get_anon_vma(src);
+
+   4   1485  mm/migrate.c <<unmap_and_move_huge_page>>
+             anon_vma =3D folio_get_anon_vma(src);
+
+   5   1354  mm/userfaultfd.c <<move_pages_pte>>
+             src_anon_vma =3D folio_get_anon_vma(src_folio);
+
+>
+> Thanks,
+>
+> --
+> Peter Xu
+>
+
+Thanks
+barry
 
