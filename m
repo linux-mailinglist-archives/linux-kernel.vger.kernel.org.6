@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-527123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF4D6A407AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:55:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A47A407B3
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 11:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 738353BF05C
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:55:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C968019C7102
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9168F20967B;
-	Sat, 22 Feb 2025 10:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E661220A5D5;
+	Sat, 22 Feb 2025 10:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WO8IAsj8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b="UBjpuwuv"
+Received: from polaris.svanheule.net (polaris.svanheule.net [84.16.241.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E335A205E04;
-	Sat, 22 Feb 2025 10:55:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915C8209F4E
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 10:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.241.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740221739; cv=none; b=P+wXBXTnh6muspZ29HWuSxRb0URWhh59JF5wMFHRxUaCZcTSK6K13eSWS2dTHC4S+zQi7XbvcP+owpYGcvGJuU3t7aHYJWLfQAt2dOwXpfwWFaHWvOgJeDfmJLGveUKdP1JMnTDLttZMli8vPS700FDDe5BR6nS5XzibHmqFw9g=
+	t=1740221862; cv=none; b=MdN0m+4RsInxjme4n+K4Qyeeh1uz+sDn+A3ZuMJbEoSgXrPB29CN0YQlRzhQRtszmNxW63kJGebB/eP1VUXolVJ4BiQE6JnBH5FJ772g0lzJTA92+uY9YaC5O3Mq3KpwGcCs8E3ZNzL4v3l6KtGrdCQyhFo9ENgu15SFb6Ggzrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740221739; c=relaxed/simple;
-	bh=HXs9JbXk1u5xijbf9v5HKzJe7RtgOvczylsEDgmhHzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIX+LNqABYjYE7QWFqTNRzp1JBuHYEFYdo/g5auFCyEK3aEjzSyLXxPEoNFTc/nDmWvGD2Khtf539JTxkZmKz7WVibTjGk2wVWdqU3ZcT/BtQ1nP/BHZvd0nQ8K2+9qIFyb/5s7CTyUR+dIgsYW7jidsdjsogL/cR35hPZemNGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WO8IAsj8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC28C4CED1;
-	Sat, 22 Feb 2025 10:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740221738;
-	bh=HXs9JbXk1u5xijbf9v5HKzJe7RtgOvczylsEDgmhHzw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WO8IAsj8tlqCB+WCZPxFHHRNrxvMQfFVk9ZLHmvMRHg+ZjitGg2/ZZcAxOAgqzFSR
-	 ymAha4h4Nn5whSay4KFm47HxE5FdFaWWeWyeSNU1D6XzKYnTJocQNRqoASHF6FhzVf
-	 C0WFtidl2FTxSmCd+N+7C9Y0YrX+hEtmsjcVBBzRzVb9oWs8WMkIbzt6qO1QM9rpZp
-	 bzQffuae9Uh/Klvx2ASL3hS5SLwMD/hPXlIIfqBpNiWe6+AlwA6ImH5f0KEQC12DLG
-	 9krKGqE6W9cpk5PJ/iVSPgjJSD17+zSaEhydeMVNUYBkLQqDzEgLIBmziD+uOkpbhH
-	 0GsvjqMsRp/Tw==
-Message-ID: <d9eff439-27ae-4555-a0c5-21acdf60d321@kernel.org>
-Date: Sat, 22 Feb 2025 11:55:29 +0100
+	s=arc-20240116; t=1740221862; c=relaxed/simple;
+	bh=JVxlEJht2x5RnrXe4+WJyXGYRUS9jHA+W18zxZ2QD0A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hDSAx60691wes/JQnF8802KZMWfr90rM1hBB5JxveG/CxZRRo1IUEpw/l1p/r62eNJ9SeyRAoGflDrJI5Ds18FPGdCEOZ09ZtLanD+E8jyOUJSE4EwsXpsvq9WguU5cx2FVueUxFDrvLV7QbP1z+Z+0GKgNg+vAq52+oh6nSMEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net; spf=pass smtp.mailfrom=svanheule.net; dkim=pass (2048-bit key) header.d=svanheule.net header.i=@svanheule.net header.b=UBjpuwuv; arc=none smtp.client-ip=84.16.241.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svanheule.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svanheule.net
+Received: from [192.168.90.187] (unknown [94.110.49.146])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sander@svanheule.net)
+	by polaris.svanheule.net (Postfix) with ESMTPSA id 74ADE5C0430;
+	Sat, 22 Feb 2025 11:57:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svanheule.net;
+	s=mail1707; t=1740221852;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JVxlEJht2x5RnrXe4+WJyXGYRUS9jHA+W18zxZ2QD0A=;
+	b=UBjpuwuv87ExHHcV6HC+rinBCYljQ32a3tDSvwugfMzVfNBoBIFvm0UYJTel7A7ciWm8SI
+	nRQIPaCwBFg0IP5G31OINfGMqU9E5zfHGNq/8BoImjdQ+HKvQjTtVB1iXIa6qnHmKBwUaZ
+	OTfrAlPpUtka0IOcnCZqpZBgLA/c7pMt+9MTbIjS/SXcASL/u2wd+Hqq0WSbK7WU9ZvJVR
+	0ck5h/LiO/VSczk6UVB/h66Gvs9+vhcWhVN/o22cGTNvxXIVy4CIm4LMDdOtMt+wt/6eGN
+	S0JVE8MAfJDKFP0Etfjj2JeOCxMikoCmViW9h11Km+POZJ3mmzzcoBj/4ProvA==
+Message-ID: <c758dab6497284a6eb5b962c1b0d4619d4fb322e.camel@svanheule.net>
+Subject: Re: [PATCH 0/9] mips: dts: Split Realtek devicetrees
+From: Sander Vanheule <sander@svanheule.net>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>, Chris Packham
+ <chris.packham@alliedtelesis.co.nz>, 	devicetree@vger.kernel.org,
+ linux-mips@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Sat, 22 Feb 2025 11:57:30 +0100
+In-Reply-To: <Z7ibXewhvwU1d1G3@alpha.franken.de>
+References: <20250119183424.259353-1-sander@svanheule.net>
+	 <Z7ibXewhvwU1d1G3@alpha.franken.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] coresight-tnoc: add node to configure flag type
-To: Yuanfang Zhang <quic_yuanfang@quicinc.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@quicinc.com, linux-kernel@vger.kernel.org,
- coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- kernel@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250221-trace-noc-driver-v1-0-0a23fc643217@quicinc.com>
- <20250221-trace-noc-driver-v1-4-0a23fc643217@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250221-trace-noc-driver-v1-4-0a23fc643217@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 21/02/2025 08:40, Yuanfang Zhang wrote:
-> +
-> +static ssize_t flag_type_show(struct device *dev,
-> +			      struct device_attribute *attr,
-> +			      char *buf)
-> +{
-> +	struct trace_noc_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +
-> +	return sysfs_emit(buf, "%u\n", drvdata->flag_type);
-> +}
-> +static DEVICE_ATTR_RW(flag_type);
-> +
->  static struct attribute *trace_noc_attrs[] = {
->  	&dev_attr_flush_req.attr,
->  	&dev_attr_flush_status.attr,
-> +	&dev_attr_flag_type.attr,
+Hi Thomas,
 
-Where is the ABI documentation?
+On Fri, 2025-02-21 at 16:27 +0100, Thomas Bogendoerfer wrote:
+> On Sun, Jan 19, 2025 at 07:34:15PM +0100, Sander Vanheule wrote:
+> > This patch series intends to clean up the base includes, shared between
+> > hardware devicetrees. To get rid of some dtbs_check warnings, some cpu
+> > clock prorerties are also modified.
+> >=20
+> > To indicate why the split-up is required, the series concludes with
+> > adding some CPU peripherals to rtl838x.dtsi, which are then used to add
+> > a gpio-restart for the Cisco SG220-26P.
+> >=20
+> > Sander Vanheule (9):
+> > =C2=A0 mips: dts: realtek: Decouple RTL930x base DTSI
+> > =C2=A0 mips: dts: realtek: Clean up CPU clocks
+> > =C2=A0 mips: dts: realtek: Add address to SoC node name
+> > =C2=A0 mips: dts: realtek: Fold rtl83xx into rtl838x
+> > =C2=A0 mips: dts: realtek: Add SoC IRQ node for RTL838x
+> > =C2=A0 mips: dts: realtek: Correct uart interrupt-parent
+> > =C2=A0 mips: dts: realtek: Replace uart clock property
+> > =C2=A0 mips: dts: realtek: Add RTL838x SoC peripherals
+> > =C2=A0 mips: dts: realtek: Add restart to Cisco SG220-26P
+> >=20
+> > =C2=A0arch/mips/boot/dts/realtek/cisco_sg220-26.dts |=C2=A0 10 +-
+> > =C2=A0arch/mips/boot/dts/realtek/rtl838x.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 111 +++++++++++++-
+> > =C2=A0arch/mips/boot/dts/realtek/rtl83xx.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 59 --------
+> > =C2=A0arch/mips/boot/dts/realtek/rtl930x.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 | 136 +++++++++++-------
+> > =C2=A04 files changed, 202 insertions(+), 114 deletions(-)
+> > =C2=A0delete mode 100644 arch/mips/boot/dts/realtek/rtl83xx.dtsi
+>=20
+> series applied to mips-next
 
-Best regards,
-Krzysztof
+Thanks!
+
+Best,
+Sander
 
