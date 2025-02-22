@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-527497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD002A40BDF
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:33:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD944A40BE1
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 23:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFE963BC910
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:33:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B87C17AA2B6
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 22:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8112045B7;
-	Sat, 22 Feb 2025 22:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4D32045A1;
+	Sat, 22 Feb 2025 22:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mr3h8kQQ"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EMfJd4Wm"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D0B28382;
-	Sat, 22 Feb 2025 22:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF7215697B
+	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 22:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740263595; cv=none; b=B1qvFq4FzcJIti58ibm4FKmsw5xo8dv7gxyymVobYwfgUArvck65Q2+Escpv23xyebPKZaHGagtwJ0UxGhsvYl/pAEWetutkPghvALRzzC+HYqmyKIwrhMXWtgm3hVLUSMOn/CK6ZVJ0qZUYV7Qe//orOeDoqpOTEuQjZcG2rHw=
+	t=1740263674; cv=none; b=SDiPKDyPw5Wkw0/iizjJgRh5ztXGdsvf+OyvAik92Khbac8BfynOxQXJoxWBDIr9SOR7n070IeeEZyqJv27qej/IL3w5b4UpBsGkTJlBBgu4dXNXNucM6tW4FwfDcf31OpCydXTgTkDDUVzMgbDMW2kASItfvC+ogNFeSAT9aP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740263595; c=relaxed/simple;
-	bh=RLWtNXs9ysLMMKwXmAdPY6LGztPL9sdx0oXS8oi8GVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hbT4yFc5fjbC3uUdkQIzPtXrUedxx5/+S6nkaJhHE1SaDcmUpRyD5edSSz7qpypoWDw0u0X/pm6XkX4PZiC0xJdHfrKlVv61YvMBWQwijS/ZDsAey4hPf17Je0/p2tRG2LIaf4C+3ppr+0AOitGWtTWDUu/tflHfwifN7bgTHvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mr3h8kQQ; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5fa8fa48ee5so903784eaf.2;
-        Sat, 22 Feb 2025 14:33:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740263593; x=1740868393; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OpmUdkAFvr/HHT7ByhYr326xu17suEKWbKWkF/nbpCQ=;
-        b=Mr3h8kQQgZsadqJ+xZPeu5Ub/e/4bZElWyfmKLAbIrjXTVHacNMPH77xIvHEP5xBe1
-         r3oNZ3TkspKugW6EhLNW00Tv94/K54O8CbtNZlmb6LR6xy5hUlxXqTo6SkHCJKa8hOAv
-         hZYmGS6KfJfsYVj72lIqdlL2VPsyVBxLUgDecVcf5meAto+gB1oq1BMol5uEbQaJf0Fk
-         172Htm+h1SY9GUDQUrh4ch60AJMKGk9yULFI9OjCsLHjTqZJrLcFQXPukpG6rqb06mEF
-         m3hIuz1eFsDybIHJ7TS3WNyUNzQJpcA5+P/tJAoHPhjhyFVNJ1x4fys7UhKyDz3zl1qI
-         /8rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740263593; x=1740868393;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpmUdkAFvr/HHT7ByhYr326xu17suEKWbKWkF/nbpCQ=;
-        b=VdTaaVZSAj1bAAOrCjmYfv4QP0/BHL5XVGebA0P8LkE1SxdCYMEAupQcJQDNnvAt6P
-         y8pr+i3MDS9++nA5LkjMpQuEgkUtpmxnO1IgcBpfLf5DdzrAL+SKMy4fc4r5Fe17ElUx
-         5/u75BZwP7ShFO4VjP+jV0oAKTDTgMryYcbK/OK9H2y5TclsXGEJjHkR72jIooJRslVA
-         Pkrd1+uMBWcaEhLHIIC70anESl+k+oCsU3SNZkHF7hC8lrkyypPsucYyZfXuuqQCXizL
-         huihfikbSrdnzMLU1sgo43rQO3/tFq6l31m2r6L4Lxr3/l3Uu0doaDHoSoi/s9cZdbDN
-         kM4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVdJRgg3z15ibH1+PFsWfDgbjV9r1nRmpN8lXlfccUkPdcvKAgiNG8MBDIOrmvSljgQSgpClzBcaw==@vger.kernel.org, AJvYcCW4nQfgTNOVwxS8Xen7R99ihV2XRg6Ku2lWiF36eyvqrqZzOuMXvfGQSUlHaCoJVKyKqMC0mP0zunFvYZM3@vger.kernel.org, AJvYcCXXUCFiGfmd0OkKVjpvdNwIsuS23xRWRygW9UShq11ktfwc8WRvXDXQ9OuP7JsaPayqro9Ty4FQ0q4n4AWrDQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2tudhZ2b+9s6f01KHnd7BfzCH7tn6dgOiCZNFfthO0wjFOU6c
-	8mfUgZ25pTQMWHyeE1Ajk2+FKzPsAXGXpf7LS6PZEB/mgcfR1RWd
-X-Gm-Gg: ASbGncsc3nBnSD8h7P9lCLs6YlZohlZNmmNlD/SJhnNc2mVcfo7S0o1hog1j3eV8YAK
-	oaQjfogdG1Z2ITrdiAFjAVsWolruJNFov7nmC8NnHswnZzbYAvvEdIyKrMMeVOAfoyZC/GkDBjw
-	sbMzhaLgbNAPdglxaUALLrrUh8nZ1kS0SO8YlEOITMPVeywCmfweQE1P62No9fU+bDFixa2nYmj
-	Dqu6TAMiv8ocQ6xQX47Wc/vxy1VLx7erUHH2/KV6q7BBacnV8oAviP8cEywymNFmiP3CHjdki+G
-	hWakfNTpJZX7cCmV9UvOnmCBPVhtbCTiDUF2c6lqAiL73lwrTWnuRFoeuelfwcp+JOly9+W7aeK
-	TVqo6oV573OOfWA==
-X-Google-Smtp-Source: AGHT+IEt4I20z57w2RykjGAqyFdMYoecevd276qdDBpBuzxP63YseJKRAHVSAehXQCSvmiFxAVIACA==
-X-Received: by 2002:a05:6808:1920:b0:3f4:435:cb0e with SMTP id 5614622812f47-3f4246b695emr8093156b6e.9.1740263592796;
-        Sat, 22 Feb 2025 14:33:12 -0800 (PST)
-Received: from ?IPV6:2603:8080:1b00:3d:9800:76a6:5d39:1458? ([2603:8080:1b00:3d:9800:76a6:5d39:1458])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3f3ff911a99sm3093693b6e.33.2025.02.22.14.33.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Feb 2025 14:33:11 -0800 (PST)
-Message-ID: <cda3cf68-6ed1-4e06-b29a-ce5aee34ec20@gmail.com>
-Date: Sat, 22 Feb 2025 16:33:08 -0600
+	s=arc-20240116; t=1740263674; c=relaxed/simple;
+	bh=0hr85pkL7Ye5HeamuLzT9NILODAgeGan/2o8QZI7s+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdZVQfU3d78yaPD2VGR04JvMFCPPLQbe7EFWrLP2tsnil7Ivfm0t+rEDkhWU9sW0IYZRmmzJbbVcrTGN00fN4Q7n/6/iqE1VLGX6xxqMIXTl3w3du+MOofs/mhuU9ToJE0s0YsOEN3gxv5xHNYxq6cXaH0ZLNrZOhawoJIredwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EMfJd4Wm; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 22 Feb 2025 17:34:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740263659;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w0vWcP6cra3WOAKc6I6ZYhWIX6wVwAh8l3udOd0fVrA=;
+	b=EMfJd4WmS3g23ekm9bkyCbwN6Zk2yVrGgXVh9mkDrn8hPg1kJGEgmqwdG+mLt2FNFegbp5
+	NAaZSYdCK5yhfDXKgUDi8rI3MQV0t5S3l75JOSem+B6NFk5joTsIKQb8Q1eiwC/P1xv4cJ
+	JahzHz8LpvjUqqhq96x1kKwfzlJFj7Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, 
+	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <ngxypsinp2xnhc3yhg57c4sram5i6vbophgjakoyk32yb3sabs@dg6ne6jbuale>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo>
+ <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <yuwkqfbunlymofpd4kpqmzpiwbxxxupyj57tl5hblf7vsvebhm@ljz6u26eg5ft>
+ <6EFFB41B-9145-496E-8217-07AF404BE695@zytor.com>
+ <c3spwcoq7j4fx5yg4l7njeiofhkaasbknze3byh4dl45yeacvr@rb6u6j5kz7oe>
+ <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <9a930d23-25e5-4d36-9233-bf34eb377f9b@bsbernd.com>
- <216baa7e-2a97-4f12-b30a-4e21b4696ddd@bsbernd.com>
- <CAOQ4uxgNyKL9-PqDPjZsXum-1+YNwOcj=jhGCYmhrhr2JcCjNw@mail.gmail.com>
-Content-Language: en-US
-From: Moinak Bhattacharyya <moinakb001@gmail.com>
-In-Reply-To: <CAOQ4uxgNyKL9-PqDPjZsXum-1+YNwOcj=jhGCYmhrhr2JcCjNw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi0UmOAhyDjOeCJcL7eEt+ygKnMqtx+RcHtzZGd7OY4Kw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Sat, Feb 22, 2025 at 01:46:33PM -0800, Linus Torvalds wrote:
+> On Sat, 22 Feb 2025 at 13:22, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > Power hungry and prone to information leaks, though.
+> 
+> The power argument is bogus.
+> 
+> The fact is, high performance is <i>always</i> "inefficient". Anybody
+> who doesn't understand that doesn't understand reality.
 
-> Without CONFIG_FUSE_PASSTHROUGH, fuse/passthrough.c
-> is compiled out, so the check cannot be moved into fuse_backing_*
-> we'd need inline helpers that return -EOPNOTSUPP when
-> CONFIG_FUSE_PASSTHROUGH is not defined.
-> I don't mind, but I am not sure this is justified (yet).
-Sent out a review for this. IMO even without multiple use sites, the 
-static inline helper method seems cleaner to me. I'm ok if we don't want 
-it, but I really do think it would make our lives easier.
+It depends entirely on what variable you're constrained on. When you're
+trying to maximize power density, you probably will be inefficient
+because that's where the easy tradeoffs are. E.g. switching from aerobic
+respiration to anaerobic, or afterburners.
+
+But if you're already maxxed out power density, then your limiting
+factor is your ability to reject heat. High power electric moters aren't
+inefficient for the simple reason that if they were, they'd melt. RC
+helicopter motors hit power densities of 5-10 kw/kg, with only air
+cooling, so either they're 95%+ efficient or they're a puddle of molten
+copper.
+
+CPUs are significatly more in the second category than the first - we're
+capped on power in most applications and transistors aren't going to get
+meaningfully more efficient barring something radical happening.
+
+> The VLIW people have proclaimed the same efficiency advantages for
+> decades. I know. I was there (with Peter ;), and we tried. We were
+> very very wrong.
+
+If we ever get a chance I want to hear stories :)
+
+> The vogue thing now is to talk about explicit parallelism, and just
+> taking lots of those lower-performance (but thus more "efficient" -
+> not really: they are just targeting a different performance envelope)
+> cores perform as well as OoO cores.
+
+Those are not terribly interesting to me. Useful to some people, sure,
+but any idiot can add more and more cores (and leave it to someone else
+to deal with Amdahl's law). I actually do care about straight line
+performance...
+
+> It's not like VLIW hasn't been around for many decades. And there's a
+> reason you don't see it in GP CPUs.
+
+It's also been the case more than once in technology that ideas appeared
+and were initially rejected, and it took decades for the other pieces to
+come together to make them practical. Especially when those ideas were
+complex when they were first come up with - Multics, functional
+programming (or Algol 68 even bofer that).
+
+That's especially the case when one area has been stagnet for awhile. We
+were stuck on x86 for a long time, and now we've got ARM which still
+isn't _that_ different from x86. But now it's getting easier to design
+and fab new CPUs, and the software side of things has gotten way easier,
+so I'm curious to see what's coming over the next 10-20 years.
 
