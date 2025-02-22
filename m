@@ -1,122 +1,91 @@
-Return-Path: <linux-kernel+bounces-527055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0F1A406D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:26:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45D35A406AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 10:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F00C319C6066
-	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:25:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA9C819C3991
+	for <lists+linux-kernel@lfdr.de>; Sat, 22 Feb 2025 09:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E563A207653;
-	Sat, 22 Feb 2025 09:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9435D2066FE;
+	Sat, 22 Feb 2025 09:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MG81fplp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443812066C6;
-	Sat, 22 Feb 2025 09:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jQrp7i0f"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BACF1FF7BE;
+	Sat, 22 Feb 2025 09:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740216333; cv=none; b=QjVYOgAGYW24eGu8+R+gfhCN2Cq7+yMilrMBd3dBc1v3czolDX710a461rBWj4toO5AjWiGx+onZ1hNaEkPEepyHgV1plSiwPelKb7R6MEVvM/6YUsNXln1FLlsmUKchOWDuIclCSnibtpmjNJzKwvpOBK6c6+lFRyNYR8f7bpU=
+	t=1740215245; cv=none; b=IVSIx8SLom/XjXf2QTKfJ7iqvUGxGX61gn4AQFROBMAwu0GS4350ZNXVODDzTCB1eKPIYkllJm9/HR+QPrwflgkWOyKh9iEVdlmwJM1VsDyL9fxJZPJJtHYyNwcnfGrU8kmY8RGPWChw+RrDfK0XkAAHdjZyB124AsU/6/wG6Lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740216333; c=relaxed/simple;
-	bh=56hDo32Azb2ahbyNFuHrL/IGY3jiwnJ7XKs0zeaPLXA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ItHqEPXSFfJgsWXWWEw4tO55FT92r5aqVNMC7/qRKGQBgBjuNRpx9RRtX2Bm5YlGhldYupWGTCIRndbgPIhOPN2xtdJ8e1FNeeU3IVKoIwBX8PfS5EOB7n+Ixbb/uDc0S1LbhSRSrWSfiuku3ML0ERePDz/Kn9XAkq3CmyaUtxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MG81fplp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1056C4CED1;
-	Sat, 22 Feb 2025 09:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740216332;
-	bh=56hDo32Azb2ahbyNFuHrL/IGY3jiwnJ7XKs0zeaPLXA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MG81fplpFrsuDjg3WTz0jxHwueyoxNfjF4uKD6V0q2v05PQLkIXqjRgb/YMy+oQlw
-	 iATZasoPsLb2y+5xa6e5cugeRiUzD2D5oyUtRJCxaD5Fjw51+nhhyzvhaKQpJK4eBs
-	 5EKtZo25IiwPPER++nRnpdBWSIqxueH4w5OhbZkSO4hJweK6acRZ7jVRY/4l1bZtOK
-	 eFHtRhgiBYl75vX9kbMiMod8EuWCt2rMie51f6Edp0+XvbvMFGshi9x/QUOnPSYTBP
-	 ByjbOI1RRLBo4VFw5uaXFVwkf6b5qc5ie4rC2hyBgy7MeEnjAfNd++zaTJHux9I7T3
-	 VPnMp+2oYN5Pw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Masahiro Yamada"
- <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
-  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
- <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
- <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v7 0/6] rust: extend `module!` macro with integer
- parameter support
-In-Reply-To: <F882BB02-A795-4F79-A2AF-CBA9608470A5@collabora.com> (Daniel
-	Almeida's message of "Fri, 21 Feb 2025 12:45:48 -0300")
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
-	<UymzM42tyVZD_DUcMoDIfNqTrk-B7QbvdKTEvMOjrOtwnqYN7v1fK2dLnKnGAyND_6LOE4bhRxwzd1GH9SqrLQ==@protonmail.internalid>
-	<F882BB02-A795-4F79-A2AF-CBA9608470A5@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Sat, 22 Feb 2025 09:49:13 +0100
-Message-ID: <874j0me54m.fsf@kernel.org>
+	s=arc-20240116; t=1740215245; c=relaxed/simple;
+	bh=zjYc2Ie2/4kmumpOTQmy43l6IPouj3d+7Il32MfM+Ik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nWdNT9vT3Qkb63ug3euhbR8VkXh3hMYPZBPzM/lNmLgIyz8gGdJrhkGx+SDYsGsxcYXCwL61nRQFOY4WpoFtppRQmdnc3izk2/84Givzr6OAjSQq/pCHsCz+T5ywvVlRK9zPunErM4wcxZyUY+Zq3UWYuqRcR/Y19qEaem4g/F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jQrp7i0f; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=5WsUmyuRPcbB5IqUP9yGlRIPUiXsRxJ+yOeFKDF2Uhc=;
+	b=jQrp7i0fN7LcLmrMQgBE+aDL+TzGDL6+mkUjdKX1gLw5dJJ0X95rplCpiOAFYB
+	KtNXh235hWYK/I9jdfqurJosG5PP4+sHT6Ay0vnCa0n5wkB0Ifqnr4UWbX92pXjm
+	jHo25K/tBNu2b3j6B+LiluLeq1Yle5MPOX5zT8Qo9BWHw=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgA3fu6bk7lnFOKNCQ--.22045S3;
+	Sat, 22 Feb 2025 17:06:36 +0800 (CST)
+Date: Sat, 22 Feb 2025 17:06:34 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	linux@ew.tq-group.com, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] arm: dts: mba6ul: change sound card model name
+Message-ID: <Z7mTmtEIKRlQ9cpF@dragon>
+References: <20250120132503.556547-1-alexander.stein@ew.tq-group.com>
+ <20250120132503.556547-3-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250120132503.556547-3-alexander.stein@ew.tq-group.com>
+X-CM-TRANSID:Mc8vCgA3fu6bk7lnFOKNCQ--.22045S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr43uF43XrWfWw48Zr1xuFg_yoW3JFc_AF
+	Z3J3WDJws8Za1rCw1F9r4YgrZa9ws7XFnrGr13WwnxX3WFyan5GFs0qrySyw1Uua90g345
+	Cr9aqw4v93yjkjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0eHq3UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQj7ZWe5h8snTQAAs-
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+On Mon, Jan 20, 2025 at 02:25:00PM +0100, Alexander Stein wrote:
+> From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+> 
+> The card name for ALSA is generated from the model name string and
+> is limited to 16 characters. Use a shorter name to prevent cutting the
+> name.
+> 
+> Since nearly all starter kit mainboards for i.MX based SoM by TQ-Systems
+> use the same codec with the same routing on board it is a good idea to
+> use the same mode name for the sound card. This allows sharing a default
+> asound.conf in BSP over all the kits.
+> 
+> Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-> Hi Andreas,
->
->> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> This series extends the `module!` macro with support module parameters. =
-It
->> also adds some string to integer parsing functions and updates `BStr` wi=
-th
->> a method to strip a string prefix.
->>
->> This series stated out as code by Adam Bratschi-Kaye lifted from the ori=
-ginal
->> `rust` branch [1].
->>
->> After a bit of discussion on v3 about whether or not module parameters
->> is a good idea, it seems that module parameters in Rust has a place
->> in the kernel for now. This series is a dependency for `rnull`, the Rust
->> null block driver [2].
->>
->
-> ```
-> $ sudo modprobe rust_minimal test_parameter=3D2
-> [  251.384125] rust_minimal: Rust minimal sample (init)
-> [  251.384600] rust_minimal: Am I built-in? false
-> [  251.385010] rust_minimal: My parameter: 2
-> ```
->
-> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
->
-> IMHO, this is slightly confusing, since the parameter is named
-> =E2=80=9Ctest_parameter=E2=80=9D, but you=E2=80=99re printing =E2=80=9CMy=
- parameter=E2=80=9D.
+Applied 1 ~ 3 with changing subjects "ARM: dts: ...".
 
-You are right, let's change that to "test_parameter: ".
-
-
-Best regards,
-Andreas Hindborg
-
-
+Shawn
 
 
