@@ -1,62 +1,57 @@
-Return-Path: <linux-kernel+bounces-527527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 007D1A40C59
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:19:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD3CA40C5A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:19:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E8557A6E80
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:18:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087CF1895591
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B968847C;
-	Sun, 23 Feb 2025 00:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137C81FDA;
+	Sun, 23 Feb 2025 00:19:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Oy+Un3XV"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bCAlKTiO"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B991FDA;
-	Sun, 23 Feb 2025 00:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D42CA52;
+	Sun, 23 Feb 2025 00:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740269959; cv=none; b=T4KQ8IngdLThVZvPhBRzNiv9JEcydiN5hu8H9nfV7AgdTDu7671q/ml0wNkFp40y5BdNHlZ+Txf3gUQT335YRfN0dqnET9w4+ROKbdAJ+3hGnmbMsKQQH4QcoTZ9lbx+Hwekky+wn9OpHv3gwvYNv6R7hrWHleJvSK8eAO1bbMQ=
+	t=1740269990; cv=none; b=Ve0tsXXPDPewAgDrS6Z9p+vkCNfuLnRRwM/JwUHSFgBHWDfEeJaGr8mwzoCpOBpVwuJqrLr3HiDtIjCooxnWNOazb5fIwAn+8sV1J7GCdQGJCGcdnqcaoezw9hs9B0kbq6dWb8hyqzc4vpmPb9XhNo0iLux6elTrJ+PhCpifpPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740269959; c=relaxed/simple;
-	bh=1QnKUgdCE88C85NWfcFRtBJ0gf73IhCGIt9jdDAqSgM=;
+	s=arc-20240116; t=1740269990; c=relaxed/simple;
+	bh=ttpei0CTJwf9mFqTMoTLWxmzKFMlrjTM6z1mU+GejGI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L3QpbGpVhlFa0wg/LaTBKQanshBqaUkEoltu9gFUpK5g8HuF7SViNA0egV62xWL7lz8SOGq57TkLia8ENSj7iB9KiF67gNRhAQdgT0Vn8erAF/jFuwfXSuM63NzpgeXjTj2jnUx8qKO1z554scTAVxI4aSQS0YAX3s0wHsL2WUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Oy+Un3XV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X4invFkt085GdRdNZcmr3hjreaj/LTQt5B32EC7GIHk=; b=Oy+Un3XVgh8E0/1V/vQj3NL3VA
-	ocOh36PTyAEMktFV+R0ks0K8w6mMIs2ID+71u5mE0Bxs9s6wl72F0TapUveMEPUTINtOk5b3Y9SKZ
-	bk11+N9pNHmYx8sg4z9UfrDDuS7SX2EAHzLOdca4Ote3a27WBtqL3/TrdgxR3HUBAiw6Vj1bE9ctp
-	d7NyjyNfb44W9zMQAFMLLC74mkjw/qGxI5YzUx29J4cV3tNi7gGXE0aZJ2La5odd1GgpwBxMelcR2
-	W/pahyGrnLGXnt5DiOYeFSp5S2bFQ7md6r6PNRrgTI13wu0esdeku2V20rgybzzFH1Mq9AuLm/5q4
-	2X2vC0Iw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tlziD-00000005hSM-2lLs;
-	Sun, 23 Feb 2025 00:19:13 +0000
-Date: Sun, 23 Feb 2025 00:19:13 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Kees Cook <kees@kernel.org>,
-	Ronald Monthero <debug.penguin32@gmail.com>, al@alarsen.net,
-	gustavoars@kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] qnx4: fix to avoid panic due to buffer overflow
-Message-ID: <20250223001913.GQ1977892@ZenIV>
-References: <20231112095353.579855-1-debug.penguin32@gmail.com>
- <gfnn2owle4abn3bhhrmesubed5asqxdicuzypfrcvchz7wbwyv@bdyn7bkpwwut>
- <202502210936.8A4F1AB@keescook>
- <CAGudoHHB6CsVntmBTgXd_nP727eGg6xr_cPe2=p6FyAN=rTvzw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQFnjhcnz3pM2uO4DddMFT7vBcz8QBIqHJsStcPhOWZMeQk743mByE/qRyuyxJOv2BhHQoR0a7D76EyhSLJ8W1kP+yPp3dKR0fqKkpTI8/sOefp524ErVDY6jGI9iJBI7EHqj5Q0u7svtCX05NtTtKzeWLSq5cEj/KPOw7JIEOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bCAlKTiO; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 22 Feb 2025 19:19:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740269985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jlL2mb66tqt9VKll+fCmLoFBo/AMjLtJs7I7sdBGVFE=;
+	b=bCAlKTiOsll53nHxgYXw1Hxh6MUAI6jL+TqWD0CaOcCYOl69d8KDcQs1lvFpc4ex5f79T8
+	IdcoIVXNJK/jTptXsuYwyiQkeX9AR7OtOot6t4UW27NWM5FdqYglg2qFDNkqU0N9hdoL27
+	B8tfPWryWXwiJGvevR7ZSnOzkav3SEA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, maple-tree@lists.infradead.org, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>
+Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
+Message-ID: <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,15 +60,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGudoHHB6CsVntmBTgXd_nP727eGg6xr_cPe2=p6FyAN=rTvzw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Feb 22, 2025 at 01:12:47PM +0100, Mateusz Guzik wrote:
+On Fri, Feb 14, 2025 at 05:27:36PM +0100, Vlastimil Babka wrote:
+> - Cheaper fast paths. For allocations, instead of local double cmpxchg,
+>   after Patch 5 it's preempt_disable() and no atomic operations. Same for
+>   freeing, which is normally a local double cmpxchg only for a short
+>   term allocations (so the same slab is still active on the same cpu when
+>   freeing the object) and a more costly locked double cmpxchg otherwise.
+>   The downside is the lack of NUMA locality guarantees for the allocated
+>   objects.
 
-> General tune is not holding the codebase hostage to obsolete (and
-> probably not at all operational) components. If in doubt, prune it.
+Is that really cheaper than a local non locked double cmpxchg?
 
-What exactly is being held hostage, though?  Do we have an API change
-that gets blocked just by the old filesystems and if so, which one
-it is?
+Especially if you now have to use pushf/popf...
+
+> - kfree_rcu() batching and recycling. kfree_rcu() will put objects to a
+>   separate percpu sheaf and only submit the whole sheaf to call_rcu()
+>   when full. After the grace period, the sheaf can be used for
+>   allocations, which is more efficient than freeing and reallocating
+>   individual slab objects (even with the batching done by kfree_rcu()
+>   implementation itself). In case only some cpus are allowed to handle rcu
+>   callbacks, the sheaf can still be made available to other cpus on the
+>   same node via the shared barn. The maple_node cache uses kfree_rcu() and
+>   thus can benefit from this.
+
+Have you looked at fs/bcachefs/rcu_pending.c?
 
