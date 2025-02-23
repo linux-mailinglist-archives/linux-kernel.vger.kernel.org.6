@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-527581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E39A40CD7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:32:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E425DA40CDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:40:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118F617BF95
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:32:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5DA3BF99E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6011B2182;
-	Sun, 23 Feb 2025 05:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09071D8E1A;
+	Sun, 23 Feb 2025 05:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="G/HqlDrL"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B36B64A;
-	Sun, 23 Feb 2025 05:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bb8cRfOI"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945852AE97;
+	Sun, 23 Feb 2025 05:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740288719; cv=none; b=LeHapN3R8m1FzBBDxiwGRXM9nF8PGvSkLRXNIuQkndDm6lbLlhlEa+pEIJJOevQtBBep/ALbuU1xIIBRriaUjKoVJuxpDN0COIVDsiDT+RngRP7EbcuEmkCHg4THufNZbrlYj8hcp0mjMrdsYn6MkpTLqv+5aa98mMWMRgxzeao=
+	t=1740289206; cv=none; b=nZ0XCYtUbr3duyG6WA8YzcJdMuHK3v2hJh2Qcz7BPX0ejQLPsSYXteu5KDLFYTWxlmpP6a/Vc9dw2xp5SFLUE/qaAP1dTFLdefdJgZYqfpix8V26GLdBde8f1l9LyH9qU7v0hNPSVDlJtH8UbHKf5h/N2nfDnf4gQIJKkxBQqLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740288719; c=relaxed/simple;
-	bh=vQEE+ALA8+X2nmKLCIo6hihuAO4bZj34XMzDPEDCe5g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kdNdxmHgBHe7IRpP3UZBBRiCUnVEJGgzOe19Yy0YfDpWkzoTZxeQaWVT0KiqEkR8q0a1Kf/Crd4hlUlc8ELVuPIubwX1bFpWSPTqfExy42KgqyqvrNd739iYHxnLTSyEJkr3ndcNFy5H7JVFtxJ2r3whe7LHAagkuk1fihvW3KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=G/HqlDrL; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
-	Content-Type; bh=lFjRKICRGEf1Ot0OXpxrVo8Wu4CzLQ6I016czoi9BtY=;
-	b=G/HqlDrLGDxHsca9zWPhCk6uJXAJsVJM3wRGhHju+l5Bg2mHuX+Fbv1ki0jabs
-	hY0xqN9xDH+2EJpEd9tliDedfJOzxwbgx26Spp5JqczVz3Cw5pRuBsMgVpmaZ2Tm
-	loja4jte8udasei2ztUSfQshP3NUno0pv8xM5mu5zRt48=
-Received: from [192.168.71.44] (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wD3H_eJsrpnxfn8NQ--.51161S2;
-	Sun, 23 Feb 2025 13:30:50 +0800 (CST)
-Message-ID: <3b540c87-1d55-4289-b347-6bc2da49f407@163.com>
-Date: Sun, 23 Feb 2025 13:30:48 +0800
+	s=arc-20240116; t=1740289206; c=relaxed/simple;
+	bh=GWnXskB+Vnogo6jwBuCS8eCJI1+64mIPToLBsPkUOtc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MvVIGzbkdCJ4hYIIb6ZrhKEQlSvK9Q4q6VdzGO1Na1Cg7kyxvKfBSlnf3X9C3Oh0iKncJ6wTy3AQRUiM/0f5RKr8VAkyn6W0IRr/9JB6z1CtMWxXxU6vSfSaPAsgJZSyjO+jPqIzyjCv/ZAg5KhIswznkvvq4gX9oxZ+0jLgEUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bb8cRfOI; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so6908280a91.3;
+        Sat, 22 Feb 2025 21:40:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740289204; x=1740894004; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BfvuWvSB4FrYuL3Q9W8pUmNF8XrVHM6syd74IbIbqmI=;
+        b=bb8cRfOIDBvRVwrkc9TaYxxGtTt+onBQv/sYuOod8yGAkMJYKmvTU9pXIURG2Rlltc
+         fr0XdS1tgECDQxtQ0iyDi8P/uxdhqItpiaNxVbwXLIhMX0gioC8y0oq4f8o7xS8gDvs9
+         1FX/IrQcPjGHzA2RRLnT0XkYZBbmVDm/obzWO7nOdQZHu284Dj4ATSyOrhhUXQYekUjT
+         d89daMHeSySrTnSa5KG9jZZbhUuqk4LYQ9FHtUNilHZ8ZTbrdgBW+Hm1nYK8l99PkZRL
+         TytJvcEHRdhgRSe2k512oVSCjUWbLQ5LFc4szZH5BiWBiWmVFvXYMvXMKABdBuHE3Ko8
+         KaYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740289204; x=1740894004;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BfvuWvSB4FrYuL3Q9W8pUmNF8XrVHM6syd74IbIbqmI=;
+        b=oAZu5paSMBx3dEiX4JCrHWrqNQt4MWB2fBIwC/8yeZuimINvPX8U6eoaBo0yes3eVq
+         t1m0vsCi6l09RwFiFY5Aygx2RnYzlN6B2O5TDN4Ediv+ZqKzRqI9xNmZlDne3ZYROxZa
+         fB+sX1iLESgy0vEV6IdMCY6h5MXWWKCkobWb6kGhOUtoSKmNgSjoNvbLLBk2JTm+eIWC
+         /ZTNlRo2IUm5wD9sBVO69m/reLgCrhlaiF7tODz5YKPtc/tIAOPg32Hq7hANNyZ4thHu
+         WRHtC2ZUcYn/rMrrkMlTDhy1ZQxSG7R5PO8EyLaAw2HunYU9z4pCiwwkgW7ldI9dWejY
+         B3hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDeSUCbGq/Xb/DiHb9YOf33AC+Z28GLKtCpZdiyaSDbu1cGtAZGeF1ktTKgExzWD3JRv4WvfEg@vger.kernel.org, AJvYcCWM6jsqKq7Z6hKQ7lB3QJ6hiyqO1SdFuGnlq0+jPuNfaMsTFW9vJ1M43nLdjyCvttrAL8YAKh9AL2Px1NXF@vger.kernel.org, AJvYcCXQ0Y0KNZf+Hmh0Oexb1EZPgkXYgFsiJq14pz0n/BTzSX+hRicKXylHCTbTOBPzJIA5zzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUi7aczZQcm/364mgozTY01aj28TxnbuxBKEBrE555UiQ6APP5
+	fQVtw9Bs1oAWwld5MxEujwDf+s8hYi8ZgIM328pV9SDNSNqFy4od
+X-Gm-Gg: ASbGncuX1T9NmlQAeXz9ylfHGMADYDGXFd51N+rHuN90UMp150at/RWDwBk9+ykt83T
+	j0jyWUo7qpCj/IE2wAGbI8emo/h6ftZcPr+O7lVJM0dd3X0eImjRgS0reVY7oBLJl1gyCZgUvyj
+	VyhRlIwc46Y5bP9eNqGpBIaN9cRfRtxnwZiBODSfdr1m2C4/7hmctSOd1ghdqI7aYM4azit54Nv
+	UcgoOqZ76/hnTd+DkCciAGw7Ub9nfM6mm21sWBWC69/2bMLNG7Owyp9ckUbio6rkTai4aOnzcWX
+	kxAInh0HVnv+rRs9hhp8S8Y=
+X-Google-Smtp-Source: AGHT+IEsyitKBEB+TjtOIJ7j0ghQQ1PUySgYsjd6ENH+ooYHWDcum4IoJa9MuHEv9g0sOVIJCIQYCA==
+X-Received: by 2002:a05:6a20:8403:b0:1ee:efa5:6573 with SMTP id adf61e73a8af0-1eef52c9981mr17773167637.8.1740289203622;
+        Sat, 22 Feb 2025 21:40:03 -0800 (PST)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73261ca7831sm15022814b3a.104.2025.02.22.21.39.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 21:40:03 -0800 (PST)
+Date: Sun, 23 Feb 2025 13:39:47 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, Przemek Kitszel
+ <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Simon Horman <horms@kernel.org>, Russell
+ King <linux@armlinux.org.uk>, Alexei Starovoitov <ast@kernel.org>, Daniel
+ Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Russell King
+ <rmk+kernel@armlinux.org.uk>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Serge Semin <fancer.lancer@gmail.com>, Xiaolei Wang
+ <xiaolei.wang@windriver.com>, Suraj Jaiswal <quic_jsuraj@quicinc.com>, Kory
+ Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>, Jesper
+ Nilsson <jesper.nilsson@axis.com>, Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>, Kunihiko Hayashi
+ <hayashi.kunihiko@socionext.com>, Vinicius Costa Gomes
+ <vinicius.gomes@intel.com>, intel-wired-lan@lists.osuosl.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v5 1/9] net: ethtool: mm: extract stmmac
+ verification logic into common library
+Message-ID: <20250223133947.00002f06@gmail.com>
+In-Reply-To: <20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+References: <20250220025349.3007793-1-faizal.abdul.rahim@linux.intel.com>
+	<20250220025349.3007793-2-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v4] PCI: dwc: Add the debugfs property to provide the LTSSM
- status of the PCIe link
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: jingoohan1@gmail.com, shradha.t@samsung.com, lpieralisi@kernel.org,
- kw@linux.com, robh@kernel.org, bhelgaas@google.com, Frank.Li@nxp.com,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- rockswang7@gmail.com, Niklas Cassel <cassel@kernel.org>
-References: <20250222143335.221168-1-18255117159@163.com>
- <20250222163909.mmjvnlsituqrrocf@thinkpad>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <20250222163909.mmjvnlsituqrrocf@thinkpad>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3H_eJsrpnxfn8NQ--.51161S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Wr4rWFy8Ww45CrykXr43Jrb_yoWDWFXE9r
-	Wjy393AFy3JFs8AF90k34fXr9rX3s7Wr17KrnFg34Fqa4DXF43GFykArWxZFWxG3WkWrnI
-	yry3GFW5KryDZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbkpnPUUUUU==
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwT8o2e6o8LmawAAsl
 
+On Wed, 19 Feb 2025 21:53:41 -0500, Faizal Rahim <faizal.abdul.rahim@linux.intel.com> wrote:
 
+> @@ -1258,23 +1236,8 @@ static int stmmac_set_mm(struct net_device *ndev, struct ethtool_mm_cfg *cfg,
+>  	if (err)
+>  		return err;
+>  
+> -	/* Wait for the verification that's currently in progress to finish */
+> -	timer_shutdown_sync(&fpe_cfg->verify_timer);
+> -
+> -	spin_lock_irqsave(&fpe_cfg->lock, flags);
+> -
+> -	fpe_cfg->verify_enabled = cfg->verify_enabled;
+> -	fpe_cfg->pmac_enabled = cfg->pmac_enabled;
+> -	fpe_cfg->verify_time = cfg->verify_time;
+> -	fpe_cfg->tx_enabled = cfg->tx_enabled;
+> -
+> -	if (!cfg->verify_enabled)
+> -		fpe_cfg->status = ETHTOOL_MM_VERIFY_STATUS_DISABLED;
+> -
+> +	ethtool_mmsv_set_mm(&priv->fpe_cfg.mmsv, cfg);
+>  	stmmac_fpe_set_add_frag_size(priv, frag_size);
+> -	stmmac_fpe_apply(priv);
 
-On 2025/2/23 00:39, Manivannan Sadhasivam wrote:
->> +
->> +What:		/sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
->> +Date:		February 2025
->> +Contact:	Hans Zhang <18255117159@163.com>
->> +Description:	(RO) Read will return the current value of the PCIe link status raw value and
->> +		string status.
-> 
-> 'Read will return the current PCIe LTSSM state in both string and raw value.'
-> 
->>   
->> +char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm)
-> 
-> const char *dw_pcie_ltssm_string()
-> 
->> +{
->> +	char *str;
-> 
-> const char *
-> 
->> +
->> +	switch (ltssm) {
->> +#define DW_PCIE_LTSSM_NAME(n) case n: str = #n; break
->> @@ -683,6 +714,8 @@ static inline enum dw_pcie_ltssm dw_pcie_get_ltssm(struct dw_pcie *pci)
->>   	return (enum dw_pcie_ltssm)FIELD_GET(PORT_LOGIC_LTSSM_STATE_MASK, val);
->>   }
->>   
->> +char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm);
-> 
-> const char *dw_pcie_ltssm_string()
+Well, I would prefer keeping stmmac_fpe_set_add_frag_size() before
+ethtool_mmsv_set_mm(), but not after, the VERIFY process should be
+triggered after all the parameters are set.
 
-These recommendations will be changed in the next version.
-
-Thank you very much Mani.
-
-Best regards
-Hans
+> -
+> -	spin_unlock_irqrestore(&fpe_cfg->lock, flags);
+>  
+>  	return 0;
+>  }
 
 
