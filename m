@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-527782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C44A40F6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:20:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C81FAA40F71
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF653B2CF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:19:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 396D63B6529
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEFF20AF64;
-	Sun, 23 Feb 2025 15:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D30D20AF7E;
+	Sun, 23 Feb 2025 15:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OOAgIvY6"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="dla8E8dk"
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356C41FDA7A
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 15:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FF326AF3;
+	Sun, 23 Feb 2025 15:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740323993; cv=none; b=OTJJsvKZ0oabItTnkz5rVJaZxW9wtSVdDwMJI9KrUJJoTyk8OAcuO1FiEHkdbfG4XP1eJJ/MB6/smMTQM9iy6zo305KAeksFgoEszvyyjFBZnzFhF7B6c73VMDF7XvLMhlhj/Fewdk5WntjaiPO4i1fpSyTWbBKkR8SGpz8rcVk=
+	t=1740324568; cv=none; b=hyQueAA2eTP3tyzXVZcmyiumfPabBpImpjU5sxWnXaBMH2DbwFc95s4AxChL1zQWAc8hCdtQBw7JLzfeAt1dxZwqWfx1FdxkdDGwfnJZe0wj6/4//hS2YnQIGVCfLwTzF4T6OxUTuWRR/Bhz0+dRo6t6bUn+uF3uY1KVq3fmYfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740323993; c=relaxed/simple;
-	bh=T/2xb7muvL55Dk7o59poGR1yUA8xbheTCRauo126IEQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nuvuvhCJqu584OzVp0OkGXsQr3yVMRjJSmIma6rsluGLhfQiHg4FzkdwXKQ9fxwSp1k+N2fKUY/O7K7pHGMNdFrnoVi5SStR8stCxv2nuMSEaiK03V/2+dLSe9rTo4ZjDNFGw8OEorggTn7Owq96xSukjoZqTrekzfMqjZHoqPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OOAgIvY6; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--krakauer.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2210305535bso120144045ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 07:19:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740323991; x=1740928791; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovxXS/6Fh7CBfimDBUGP6a/bz+MG/2ipqKfqnHfFW1U=;
-        b=OOAgIvY6Oubh3wbdSnoLehXz6d+U2U0gcgSZEszxDCn6GkGIUnDHbxGLxCYOsSJImu
-         0ejljuAR4L3L/+snnvxlCvA9zjQksk1QRrsYo2tgMImy2ryZulVvhNJIgOWrG30PHFnH
-         sb60wmXPPfWrjGhQchBGl1Pmu4juPOnYNRPAAW2Y3wwcwdoYi5uwWwSj++MzR09+y01v
-         ITw+NEQ9pQKZW/+hBiG0GBufU2ljAz6MO1tRpi05xw1DgcCqUT8SqNOAoaRzRUDVj71W
-         G9KOVrhOs+eAaXqUn6TQZ4ziDD44pqqgoSoJP8UIDEL3ubvE9wuq3OyTaW75H/CrKX5U
-         H0jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740323991; x=1740928791;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ovxXS/6Fh7CBfimDBUGP6a/bz+MG/2ipqKfqnHfFW1U=;
-        b=YRDSOn/lxSZRe52ysiNzcHlLx+vq6111LoN1WAT7GT7l9n+Iw7j014WwOY8nABCfVm
-         hHkvzx1eMEWGwYacgN2ss4Y+oNPiowdcjeANH+693nkUYttiwZkaDtwgyRCtz6EBJtJH
-         q9PiFSiLHMb3d7SCpM06no3YDCM2A2oLg1p95kOoBD2AkIO2q599F0XR9OLjtiudTxLn
-         sR6wVRmAopnO7KGtuSj9H5iagNpapOTgOnsKdkg1NiRYgswun5nz9lDa7YffBcQlB0KH
-         kmB+oMzDdtMr1/QeDOg3g8Zqiatn7MkmTx85deY2flZIYM1MPxojblpVr1fzdh2moE8p
-         fjfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGT6dVexmK78wfkzf39AJIHuO5Xm48K6ypcPrpQBO9NrpcVcxFS74LQsumZOTpNrsmaPcCVmm/0iBmQ+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr2zMWhBxmVGrJWu8yddze+xONzX+crlVklHeAinxxzOdohhNu
-	s+HvW8Bg804zOSm8afqS0e4mzy/nYrn305UvDaTENqsFEBx/K63BkACVaDFXfDHEVi84bFDYZvG
-	PauqfRzQi
-X-Google-Smtp-Source: AGHT+IHKSrqSq31ICSQXXKKaZjDLG3cawrFG5g1v+7iLBFT2U5yOgUgrXrTyro+FOIcaeKsHyqZNWPF5+0Q6TA==
-X-Received: from pjbee16.prod.google.com ([2002:a17:90a:fc50:b0:2fa:15aa:4d1e])
- (user=krakauer job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:c94d:b0:216:3d72:1712 with SMTP id d9443c01a7336-221a118cc5emr167376045ad.48.1740323991538;
- Sun, 23 Feb 2025 07:19:51 -0800 (PST)
-Date: Sun, 23 Feb 2025 07:19:49 -0800
-In-Reply-To: <20250220170409.42cce424@kernel.org>
+	s=arc-20240116; t=1740324568; c=relaxed/simple;
+	bh=hN7DZ9oLfkraNLNI5u4MTj4WoyJjFliLGCQi+3yJ2kc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fp/YXzXW4BZ16A3E6aa9rFf0LTVLeM0eocsrG3Bv+R5/KeIQMWqiFdSULL04MD3lPha959nPPzXZVd+DwNqaPP1M5CF7DgsgqqKDpmXMQl7ibutT/3+rHyEdSZMnXuXW7eLfz20ObbUF4/nmAgAkFELo0KKC/jyQWzTc7RIMPyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=dla8E8dk; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1740324557; bh=hN7DZ9oLfkraNLNI5u4MTj4WoyJjFliLGCQi+3yJ2kc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=dla8E8dkJPoZDFQlxhvpcCJvubg+X44jV2yRz9wQ267cH9CqTMsMT/UTyKLQGm25t
+	 eW8zwFE7QkVVpZ0d06dMd4Ty6sg+CvHQbINoQJ5ELCFD4ftaaLMx08WWqYwVlyi6RD
+	 YRPMxtazghT9NvVxiViyHjE6dlCppgtE4ErlsMU4=
+Message-ID: <89cbb27e-414a-472f-8664-db5b4d37ddc1@lucaweiss.eu>
+Date: Sun, 23 Feb 2025 16:29:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250220170409.42cce424@kernel.org>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250223151949.1886080-1-krakauer@google.com>
-Subject: [PATCH] selftests/net: deflake GRO tests and fix return value and output
-From: Kevin Krakauer <krakauer@google.com>
-To: kuba@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	krakauer@google.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	shuah@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH 2/4] dt-bindings: display: panel: Add Himax HX83112B
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250222-fp3-display-v1-0-ccd812e16952@lucaweiss.eu>
+ <20250222-fp3-display-v1-2-ccd812e16952@lucaweiss.eu>
+ <20250223-tricky-saffron-rattlesnake-aaad63@krzk-bin>
+Content-Language: en-US
+From: Luca Weiss <luca@lucaweiss.eu>
+In-Reply-To: <20250223-tricky-saffron-rattlesnake-aaad63@krzk-bin>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Thanks for the review! I'll split this up. Do you think it's better as two
-patchsets -- one for stability/deflaking, one for return value and output
-cleanup -- or as a single patchset with several commits?
+Hi Krzysztof,
 
-> To be clear - are you running this over veth or a real device?
+On 23-02-2025 12:54 p.m., Krzysztof Kozlowski wrote:
+> On Sat, Feb 22, 2025 at 06:58:05PM +0100, Luca Weiss wrote:
+>> Himax HX83112B is a display driver IC used to drive LCD DSI panels.
+>> Describe it and the Fairphone 3 panel from DJN using it.
+>>
+>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+>> ---
+>>   .../bindings/display/panel/himax,hx83112b.yaml     | 75 ++++++++++++++++++++++
+>>   1 file changed, 75 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..e6bd4b33d40be98e479d84617aea6d2af0df70e4
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+>> @@ -0,0 +1,75 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/panel/himax,hx83112b.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Himax HX83112B-based DSI display panels
+>> +
+>> +maintainers:
+>> +  - Luca Weiss <luca@lucaweiss.eu>
+>> +
+>> +description:
+>> +  The Himax HX83112B is a generic DSI Panel IC used to control
+>> +  LCD panels.
+>> +
+>> +allOf:
+>> +  - $ref: panel-common.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    contains:
+>> +      const: djn,fairphone-fp3-panel
+> 
+> Why no himax,hx83112b fallback?
 
-Over a veth.
+While this is the driver IC for this panel, I don't think there's any 
+"generic" init sequence that can successfully configure this panel, so 
+generic hx83112b driver could work I'd say.
 
->> Set the device's napi_defer_hard_irqs to 50 so that GRO is less likely
->> to immediately flush. This already happened in setup_loopback.sh, but
->> wasn't added to setup_veth.sh. This accounts for most of the reduction
->> in flakiness.
->
->That doesn't make intuitive sense to me. If we already defer flushes
->why do we need to also defer IRQs?
+Regards
+Luca
 
-Yep, the behavior here is weird. I ran `gro.sh -t large` 1000 times with each of
-the following setups (all inside strace to increase flakiness):
+> 
+> Best regards,
+> Krzysztof
+> 
 
-- gro_flush_timeout=1ms, napi_defer_hard_irqs=0  --> failed to GRO 29 times
-- gro_flush_timeout=5ms, napi_defer_hard_irqs=0  --> failed to GRO 45 times
-- gro_flush_timeout=50ms, napi_defer_hard_irqs=0 --> failed to GRO 35 times
-- gro_flush_timeout=1ms, napi_defer_hard_irqs=1  --> failed to GRO 0 times
-- gro_flush_timeout=1ms, napi_defer_hard_irqs=50 --> failed to GRO 0 times
-
-napi_defer_hard_irqs is clearly having an effect. And deferring once is enough.
-I believe that deferring IRQs prevents anything else from causing a GRO flush
-before gro_flush_timeout expires. While waiting for the timeout to expire, an
-incoming packet can cause napi_complete_done and thus napi_gro_flush to run.
-Outgoing packets from the veth can also cause this: veth_xmit calls
-__veth_xdp_flush, which only actually does anything when IRQs are enabled.
-
-So napi_defer_hard_irqs=1 seems sufficient to allow the full gro_flush_timeout
-to expire before flushing GRO.
 
