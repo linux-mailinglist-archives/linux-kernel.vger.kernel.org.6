@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-527684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 283A8A40E2C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:55:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB87DA40E30
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2DC7AB86C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:54:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 505A53B1B2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:02:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EA22AF19;
-	Sun, 23 Feb 2025 10:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FF9204F79;
+	Sun, 23 Feb 2025 11:02:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="TIc8+i4n"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J/V4EFkj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1F2046B1;
-	Sun, 23 Feb 2025 10:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77DE28382
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 11:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740308114; cv=none; b=OnlZbQyz3QT9i5RIshmUqSZ6fVQrCAWfjH7gaAgIwlUycXKEkMSaMMj5BoVpXYyNwMKcEgdl0xId0qVrQx2wxxdkctQETCCJXHlZR53HTIBshb5x3Z3z4wRyx0lhIppT80ep1AGg87jPtMWWsm+lIuRLYa78eLHjMgNoPLRqPj0=
+	t=1740308549; cv=none; b=cLUqD8yQtR/fobtU0JiphOYz8qqJU6yiU01/cgE1BF6l4HuaOcq4bz2080GVfxaBDO+eaGCIKKGGRBu4I4pkVVTAtpN1v7LKQ7UKYjxvA6i6/amBTmMwar5PHCiKksyn8teggUVKb+8rrgwvrgKFauu+fTZf8KXBVHuZpPAWcuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740308114; c=relaxed/simple;
-	bh=q+XKvnoPYXVMw3lt5027W6PxhHtQyOx1spmmaf15AQM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oD38SUKcikReLCCBJssblz7xkrI/x8Jf7iEj4HMqU6Cb8LDYKaXWPAcF/KYh3NcNGXDGS6fQt7am+QaUkOcYLtCQcJIBUwMlk5rN0Bq9hvZqQ4iw9cPQHYgEt96lUn2JhH+CuSifhtOYxuhJXAZ9UX9AO5R/Ay6JcJb04KAZhWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=TIc8+i4n; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1740308105; x=1740567305;
-	bh=ftzWwZe5dgJ/2krdr+BnmHjM/Of8UIn31pqhWbkUW0w=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=TIc8+i4nJO4GaclByTGBjPsuhaA1wqdCDfdcFs6d22nhJbCAIDlyvsoA6yvtiS14L
-	 +LQu+NNL6H76fvUJL0IT58ZiOiCPmeY94l55YR8q7ZSY+NcrG+Uo3CJzctLQhfzIoc
-	 MBZZKpWH2KJj+ZihjO9zuJQDjucCgkAF6cVjSm86hs9lonDN9P/Y0rhwbWFfeNk03J
-	 2Ld9HW8CY0UDhElS44ZP1LFiWPEfKFy4AkZWhR5r22xHfDSH2GAGtvPCAudURLcWh6
-	 AYBLsEGfLJND3rneszZDnUDcAQSivOuHR6mMOZBrhlN5mATrsjFtCV4MYNq9flmbq8
-	 sFWx//4ZhNSAQ==
-Date: Sun, 23 Feb 2025 10:54:59 +0000
-To: Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
-Message-ID: <f834d8bf-3860-4087-937d-d9937c1be3f2@proton.me>
-In-Reply-To: <20250223072114.3715-1-boqun.feng@gmail.com>
-References: <20250223072114.3715-1-boqun.feng@gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 41ca317b5d80adbd5557b5012302b0a3c5eb8c34
+	s=arc-20240116; t=1740308549; c=relaxed/simple;
+	bh=ujHLAB81bLDG1rFjYTdk8D4Cj+5uJUkDjmnklWgTiik=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TzY3ye1RcBzPLhKXd7Wg+i5mu6ERL20D9pgeO4m6ZBAiFtDPbF9EQu2y75Vmn9HgVf2MIE0KjRqHzeVYtkr15XY75OIQ0Ju0p8Ooj0GCLH3xZz9N5EspZQC5kmE7XmZUYjfjYgH20/CkZ9rH1mgOj4ksHMyI18A2XL7k+wrCdmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J/V4EFkj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740308545;
+	bh=ujHLAB81bLDG1rFjYTdk8D4Cj+5uJUkDjmnklWgTiik=;
+	h=From:Subject:Date:To:Cc:From;
+	b=J/V4EFkj7fkhmQYQbOzNAV2yL40vgJCy4A2toGa8Q/dE3HefV2Yyu4ydtHlls222Y
+	 3Fs1BNuUnL19atnl1HV96ZSmRtBwCm4v8xGz4eEW848feY5gauMhm1bmTuLlzh4lAs
+	 bxair9Nf1NxHuRETdf/bpvRzqVo4mvR95wJElcdU3eshtZ8QQfXirv0vp4eiOg8oXH
+	 jtFNoB9X2QyU0nb5AXZKAMIOnjHzSpZ/VzknIdCZsVjtfI888FtZ0w5ah8+VnLxnPd
+	 DnyfsxN2+EDTLSrseGM5neMhExRo215BSXqjapmxB1CyA9rk0MGqohrQJ3jlxfiJoO
+	 +CFpWGy4TxVEA==
+Received: from localhost (unknown [188.27.58.83])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 8FB6717E0199;
+	Sun, 23 Feb 2025 12:02:25 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH v3 0/8] phy: rockchip: samsung-hdptx: Support high color
+ depth management
+Date: Sun, 23 Feb 2025 13:02:07 +0200
+Message-Id: <20250223-phy-sam-hdptx-bpc-v3-0-66a5c8e68327@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAC8Au2cC/23NUQuDIBDA8a8SPu+GXaVsT/seYw+mNoVK0ZAi+
+ u6zYDBG3NP/4H63kqiD1ZHci5UEnWy0bsxRXQoijRjfGqzKTZBiXSJl4M0CUQxglJ9maL2EqqW
+ NZMhZpzjJdz7ozs6H+XzlNjZOLizHi1Tu26/GT7RUAgVaSdS1Yorf+EO6vhetC+Iq3UB2MeGPU
+ uKZgllpuGYcJc9T/yvbtn0A3SXvX/wAAAA=
+X-Change-ID: 20241206-phy-sam-hdptx-bpc-3b05c6276fd7
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>
+Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+X-Mailer: b4 0.14.2
 
-On 23.02.25 08:21, Boqun Feng wrote:
-> To provide examples on usage of `Guard::lock_ref()` along with the unit
-> test, an "assert a lock is held by a guard" example is added.
->=20
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+This series relies on the new HDMI PHY configuration options [1] (patch
+included here for convenience) to provide high color depth management
+for rockchip-samsung-hdptx, and to introduce a proper solution to setup
+the TMDS character rate on this PHY.
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+[1] https://lore.kernel.org/lkml/d1cff6c03ec3732d2244022029245ab2d954d997.1734340233.git.Sandor.yu@nxp.com/
 
-> ---
-> This depends on Alice's patch:
->=20
-> =09https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a@=
-google.com/
->=20
-> I'm also OK to fold this in if Alice thinks it's fine.
->=20
->  rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->=20
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index 3701fac6ebf6..6d868e35b0a3 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for G=
-uard<'_, T, B> {}
->=20
->  impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
->      /// Returns the lock that this guard originates from.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// The following example shows how to use [`Guard::lock_ref()`] to =
-assert the corresponding
-> +    /// lock is held.
-> +    ///
-> +    /// ```
-> +    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backen=
-d, Guard, Lock}};
-> +    ///
-> +    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lo=
-ck<T, B>) {
-> +    ///     // Address-equal means the same lock.
-> +    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
-> +    /// }
-> +    ///
-> +    /// // Creates a new lock on stack.
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Changes in v3:
+- Rebased series onto next-20250221 and fixed several conflicts due to
+  the recently introduced eDP support
+- Link to v2: https://lore.kernel.org/r/20241212-phy-sam-hdptx-bpc-v2-0-57e672c7c7c4@collabora.com
 
-I would be inclined to write "new lock on the stack.", but maybe that is
-incorrect.
+Changes in v2:
+- Added new patches providing a bug fix and several driver cleanups and
+  improvements
+- Link to v1: https://lore.kernel.org/r/20241207-phy-sam-hdptx-bpc-v1-0-03c2e4d6d797@collabora.com
 
 ---
-Cheers,
-Benno
+Cristian Ciocaltea (7):
+      phy: hdmi: Add color depth configuration
+      phy: rockchip: samsung-hdptx: Fix clock ratio setup
+      phy: rockchip: samsung-hdptx: Drop unused lcpll_config
+      phy: rockchip: samsung-hdptx: Setup TMDS char rate via phy_configure_opts_hdmi
+      phy: rockchip: samsung-hdptx: Add high color depth management
+      phy: rockchip: samsung-hdptx: Cleanup internal rate handling
+      phy: rockchip: samsung-hdptx: Avoid Hz-hHz unit conversion overhead
 
-> +    /// stack_pin_init!{
-> +    ///     let l =3D new_spinlock!(42)
-> +    /// }
-> +    ///
-> +    /// let g =3D l.lock();
-> +    ///
-> +    /// // `g` originates from `l`.
-> +    /// assert_held(&g, &l);
-> +    /// ```
->      pub fn lock_ref(&self) -> &'a Lock<T, B> {
->          self.lock
->      }
-> --
-> 2.39.5 (Apple Git-154)
->=20
+Sandor Yu (1):
+      phy: Add HDMI configuration options
+
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 163 +++++++++++-----------
+ include/linux/phy/phy-hdmi.h                      |  21 +++
+ include/linux/phy/phy.h                           |   7 +-
+ 3 files changed, 111 insertions(+), 80 deletions(-)
+---
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+change-id: 20241206-phy-sam-hdptx-bpc-3b05c6276fd7
 
 
