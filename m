@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-527947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BEA1A4118C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD778A4118D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E160D3AB75A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4570E3AA98E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B2523A987;
-	Sun, 23 Feb 2025 20:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76EA523A9A5;
+	Sun, 23 Feb 2025 20:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Grn9UCA4"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lmnsaeOC"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E916E5383
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0514323A99B
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740342440; cv=none; b=I7dauiup5pv21tPjIwkKpUyvyhtAlJaDzqNcV9tDTqS7425fjsKte9whqXIJbJFKRC4Z+ujziTE6oss5Eteb0JMoH5SOixggYqDAKAUNGaVDER9R9I549NfC+vYx9MGlaJQNj4h/Idx/w4hxvwG+4DEuKHtfnRTx4OIJ9SqRGt4=
+	t=1740342512; cv=none; b=XUuGAexOB8LoD2PwfRak7+SU1s89c+p5WdsJRYhyAuRsR8wxtF9i+NalGQINczlMGngljra6SI6LQPlRIdU5VnboSm25osXYtdYANN3guBLOyDla2PeqD3OnnWeatXAfdA5Xjz3AZR1QI4ATeMdjONm9OUs6rvDlu05wlbAzXog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740342440; c=relaxed/simple;
-	bh=aSVtieW9RVdJOGDeuNvcbe7wuEnIjpJIvPBzTalgqxU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h6kQ/LZevbNhEiAjMUltPGlOH2RcOWZRENxj0IjJ8RUOM3UdBaOIxQukqihBEZPqOqHzfrxTC/pothrGeuGP4ZuqevIj5e17cWgvOGB4zjL1AKjU/BO0itWN/rppeygfLoUGf4aC8vGLOs1IKnAF8GL0+Mdov4L4vSOazpEEqCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Grn9UCA4; arc=none smtp.client-ip=91.218.175.186
+	s=arc-20240116; t=1740342512; c=relaxed/simple;
+	bh=ZsyIOeqWzbiuVffyIlUl3buQFn2ktrEOdiAIjlUKOYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PyjUp7ICOLAj9csUUtBsV62YvxJWgb4jg+xta4zYnWMjD7rj2UrN8pyntKWBc282p/fBSVDyA8BSDUxYKLR4VHeyGivUb4eTI134luSlPJRrYgNMm6L85HyaAKjjnUevq6Z3ETA5NJNnEARCUwFLM9wZ1lbM2JF518RdUubVXrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lmnsaeOC; arc=none smtp.client-ip=95.215.58.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740342425;
+	t=1740342508;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=0USvQ7FVPeZTKZG3dsxNELU1WFbDxidjBds5ni6CECQ=;
-	b=Grn9UCA4xs+RKrV+Wzwvawz+9F+P1A3oivfEgZ0MimJPO+InJAKiaF4yrdaGQLLSZIV3tT
-	D2Gqr77bGsfM5CXJYPYf0aDUGtROmioyAWw6Ee3SnVlhiSWagya34aMH5ojE7S+g+5plBE
-	Yw+yb1rzV2QsSLJg8fjGwPumGL0Y5K4=
+	bh=+zTJ3hkU+s+DVpC9GLX4g3ZeOAZuzC6afimUtBs/oto=;
+	b=lmnsaeOC9S8BAtthK/cic5Jq9HPDXa7zl2UuyMUWHwgbLUPq7Cs05LchrCjy2DEn+6dRch
+	LEfwgj8nAy2sRTzEzDjvqVQRFs9KyO+6XM07cqypLKtDxuaocjVK85fEZNZS14V+kfK3l5
+	9r3CN++W2BpuMHOKh2M1vd1M7PQeyYo=
 From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Liam Girdwood <lgirdwood@gmail.com>,
-	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+To: Herve Codina <herve.codina@bootlin.com>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
 	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Peter Zijlstra <peterz@infradead.org>
+	Takashi Iwai <tiwai@suse.com>
 Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	sound-open-firmware@alsa-project.org,
 	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: SOF: Intel: hda-dai: Remove unnecessary bool conversion
-Date: Sun, 23 Feb 2025 21:25:45 +0100
-Message-ID: <20250223202547.1795-2-thorsten.blum@linux.dev>
+Subject: [PATCH] ASoC: fsl: fsl_qmc_audio: Remove unnecessary bool conversions
+Date: Sun, 23 Feb 2025 21:27:41 +0100
+Message-ID: <20250223202741.1916-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,26 +65,35 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Remove the unnecessary bool conversion and simplify the code.
+Remove unnecessary bool conversions and simplify the code.
 
 Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- sound/soc/sof/intel/hda-dai.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/fsl/fsl_qmc_audio.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sof/intel/hda-dai.c b/sound/soc/sof/intel/hda-dai.c
-index da12aabc1bb8..883d0d3bae9e 100644
---- a/sound/soc/sof/intel/hda-dai.c
-+++ b/sound/soc/sof/intel/hda-dai.c
-@@ -318,7 +318,7 @@ static int __maybe_unused hda_dai_trigger(struct snd_pcm_substream *substream, i
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 		ret = hda_link_dma_cleanup(substream, hext_stream, dai,
--					   cmd == SNDRV_PCM_TRIGGER_STOP ? false : true);
-+					   cmd != SNDRV_PCM_TRIGGER_STOP);
- 		if (ret < 0) {
- 			dev_err(sdev->dev, "%s: failed to clean up link DMA\n", __func__);
- 			return ret;
+diff --git a/sound/soc/fsl/fsl_qmc_audio.c b/sound/soc/fsl/fsl_qmc_audio.c
+index e257b8adafe0..b2979290c973 100644
+--- a/sound/soc/fsl/fsl_qmc_audio.c
++++ b/sound/soc/fsl/fsl_qmc_audio.c
+@@ -892,7 +892,7 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
+ 		qmc_soc_dai_driver->playback.channels_max = count > 1 ? count : nb_tx_ts;
+ 	}
+ 	qmc_soc_dai_driver->playback.formats = qmc_audio_formats(nb_tx_ts,
+-								 count > 1 ? true : false);
++								 count > 1);
+ 
+ 	qmc_soc_dai_driver->capture.channels_min = 0;
+ 	qmc_soc_dai_driver->capture.channels_max = 0;
+@@ -901,7 +901,7 @@ static int qmc_audio_dai_parse(struct qmc_audio *qmc_audio, struct device_node *
+ 		qmc_soc_dai_driver->capture.channels_max = count > 1 ? count : nb_rx_ts;
+ 	}
+ 	qmc_soc_dai_driver->capture.formats = qmc_audio_formats(nb_rx_ts,
+-								count > 1 ? true : false);
++								count > 1);
+ 
+ 	qmc_soc_dai_driver->playback.rates = snd_pcm_rate_to_rate_bit(tx_fs_rate);
+ 	qmc_soc_dai_driver->playback.rate_min = tx_fs_rate;
 -- 
 2.48.1
 
