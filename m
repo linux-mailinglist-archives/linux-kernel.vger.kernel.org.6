@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-527875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EC1A410C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:20:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C61A410C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2220F3B493D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F8F3B48A2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D8A1632C8;
-	Sun, 23 Feb 2025 18:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C881632C8;
+	Sun, 23 Feb 2025 18:21:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="oc3P/TjG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiowGIuI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5305D8F0;
-	Sun, 23 Feb 2025 18:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DD95D8F0;
+	Sun, 23 Feb 2025 18:21:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740334815; cv=none; b=VuvxfwP5VnaetUw+byW3Vv1Hviwa7ZB8sE/pdI2teipz6dqNODDO8CD3VpavihJqTG4tNXRKm4kU2tY/rrLk9dfsugXfhCAe722avJWA5EmHBJiE4AZKKvLie2zbBxH6gBkudmkhSMhoPbobd7yDHzdcH12y94oKUhZCSKg8bek=
+	t=1740334911; cv=none; b=Rhy+VoPpitEJft83+q/+D+UfTkC8ubqTE5HfeKI6PIoTR8+cStjg4yMYV2kqW2NOwTeLJqpkMAYcd3vE2fncKvBozVAwA5sluUkHfNjkadE6nvrK8vwO612FYMne31ko8dQjDlKjzxk3+zeNMy2bpj3eUwvyZzIN2QWib4MjE+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740334815; c=relaxed/simple;
-	bh=HBp4QA1jlzDHb6KvcKL52rItPm2mUXcyrVknpGq1yIs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUXU8Uh9Obf5ODVO/5pI1yjntJWTo5ok6avIZfGemU47aHw0mwAIJ6C+Kb+Se3E27F+Sng8z+8kxl+MSM8TJLycX1ctOJ5qLWfOfy+aPVaafL2XHLgsoES7e923Anmdhtb1Chc5f683HHVoLDcLKK4eE430n9O5G3DH0FrkAYgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=oc3P/TjG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 14AAA496;
-	Sun, 23 Feb 2025 19:18:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740334726;
-	bh=HBp4QA1jlzDHb6KvcKL52rItPm2mUXcyrVknpGq1yIs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oc3P/TjGjXw9OuGLRhGu7f0SHOSAVSpSb1DNpwpw2AQSXpGBQ2ZSqHvaRrrxy3rTA
-	 jnQaYPjku9uFO2axV7zDgvUTAXU75LxodJtyUwn68dpF0LWilEM9ToHXVEP7HaymgD
-	 vnQpmR/NOvA6xrGqN7ScaxivGwVBSkIjFZ3SWhHk=
-Date: Sun, 23 Feb 2025 20:19:55 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/18] media: rzg2l-cru: csi2: Make system clock
- optional for RZ/V2H(P) SoC
-Message-ID: <20250223181955.GD8330@pendragon.ideasonboard.com>
-References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
- <20250221155532.576759-10-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1740334911; c=relaxed/simple;
+	bh=hX21RRCdHcmtevTEY/0MHphIOvrmRXOBbps5idnyQNI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jz2AEjMnn5l21OcYXTHZPx+g/f9H4sX0tHtGEN1AaycFaA0PKtN15FUGNspg6zDHYSUz/rLZZyxd6RwZKHisli/jpfopIok2xkrzeraL7SmMI0zdAM2FVio/iRZKQuDoGOa6mM3gRRs2qeAkboXFseCDNiV9VzFULcHyZ4qVCmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiowGIuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E996BC4CEDD;
+	Sun, 23 Feb 2025 18:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740334911;
+	bh=hX21RRCdHcmtevTEY/0MHphIOvrmRXOBbps5idnyQNI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iiowGIuIDXtTQTbuVAJ68xzPMAdlC7KLflejQdX2wExYEj5+5qMQbEhRWeanOANhv
+	 7T5i+bYbJafXKqvp1lidtr+QvIr6Wqob/Aify46n5r22tbNug9Ax27cLezRK8U1tk9
+	 D8L6F5vyJPxpyvSDwruePpT0+G3nIqVvq9vevlosJsXUfYlJ3Pmlg/OR4umWDdD508
+	 jsOGZLPZX/rvVVEDz2KKmOxWcqkX/3frC4DQw09afRVfnrRAfpPCF+sciZW+s0atXG
+	 CpbdREtvlIXGsKGkPFkDOsXHeW5egDk0z45mxgVIUwjCSZZdti+JiHUnqzGPX4BA9+
+	 o7cupBHXIw2aw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tmGbs-00760q-JL;
+	Sun, 23 Feb 2025 18:21:48 +0000
+Date: Sun, 23 Feb 2025 18:21:48 +0000
+Message-ID: <87o6ys1pz7.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: kvm: ptdump: Initialize .owner fields of kvm_*_operations
+In-Reply-To: <20250223150844.628175-1-salah.triki@gmail.com>
+References: <20250223150844.628175-1-salah.triki@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250221155532.576759-10-tommaso.merciai.xr@bp.renesas.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: salah.triki@gmail.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Tommaso,
-
-Thank you for the patch.
-
-On Fri, Feb 21, 2025 at 04:55:23PM +0100, Tommaso Merciai wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sun, 23 Feb 2025 15:08:44 +0000,
+Salah Triki <salah.triki@gmail.com> wrote:
 > 
-> The RZ/V2H(P) SoC does not provide a `system` clock for the CSI-2
-> interface. To accommodate this, use `devm_clk_get_optional()` instead
-> of `devm_clk_get()` when retrieving the clock.
+> Initialize .owner fields of kvm_ptdump_guest_fops,
+> kvm_pgtable_range_fops and kvm_pgtable_levels_fops to THIS_MODULE in
+> order to prevent unloading the module while these operations are still
+> in use.
 
-The clock shouldn't be optional. On all SoCs but V2H it should remain
-mandatory, and on V2H you shouldn't call clk_get() at all.
+Colour me curious, but what module are we talking about here?
 
-I'd recommend adding a flag to the rzg2l_csi2_info structure.
-
-> This patch is in preparation for adding support for RZ/V2H(P) SoC.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
->  drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> index 3a4e720ba732..771fa35558be 100644
-> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> @@ -796,7 +796,7 @@ static int rzg2l_csi2_probe(struct platform_device *pdev)
->  		return dev_err_probe(dev, PTR_ERR(csi2->presetn),
->  				     "Failed to get cpg presetn\n");
->  
-> -	csi2->sysclk = devm_clk_get(dev, "system");
-> +	csi2->sysclk = devm_clk_get_optional(dev, "system");
->  	if (IS_ERR(csi2->sysclk))
->  		return dev_err_probe(dev, PTR_ERR(csi2->sysclk),
->  				     "Failed to get system clk\n");
+	M.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Without deviation from the norm, progress is not possible.
 
