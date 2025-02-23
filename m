@@ -1,121 +1,142 @@
-Return-Path: <linux-kernel+bounces-527790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58766A40F7E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:40:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBA5A40F95
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F156189219E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19A63BA901
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE47620A5E7;
-	Sun, 23 Feb 2025 15:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA82320B210;
+	Sun, 23 Feb 2025 15:42:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O1bisBn+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fw1OHCpV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5szSUvM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672FE206F22;
-	Sun, 23 Feb 2025 15:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8F1C84B7;
+	Sun, 23 Feb 2025 15:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740325201; cv=none; b=XHtbcNb3CE3Xw8G1JfgDah1BqKa0mlc3CjBB6tjTd5KHc2E1cZihOqNjexccevgMfTRAZBjXwhKcEtya9KtsN1zlbsokZuPhh2Z9uw8cgadNkE1sIiuULYC9jLH8rgabwLxXxxhdQcLJNt4izEMf5oXpHnCHj63u2v+j+nOEgQs=
+	t=1740325359; cv=none; b=E1cxURl+xUVgAFnjxVm0FwWfOqXjaqFJAG0syZtsUtsjnvoDbkr/R1XaTgNX34oiZjUYSord4nXj8u60FdFFTG0p1cp3+75RoV+4bleUeTCCrnz1QapEEdxbAsiiJO/L6y4Om33CbkkouGuWxwzDjhdcAUsas4nALhog/2LkEEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740325201; c=relaxed/simple;
-	bh=o1KAnzyr/r8zygz0CfuqfjBWWpnHmJ+6FyBZSYP5l8k=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qQrb3roiuAu86JZF/ipOQWhGc2J81d1O77qFSBOYQGlADKp55rCteKuRzDD3zrEdyvOvmAlZROTzCrHjqsZk1E0eQ6a2nVrk1DiM5haC95xHv+jfM78bNbXMrAILblZqTSVSkORG26qaOhoSmjkReFBndnl1+jIOYwi93q2eKfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O1bisBn+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fw1OHCpV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sun, 23 Feb 2025 15:39:46 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740325190;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95z+XIIsekQNPOf30IF1xYSNUZIumS/XKig5mUGkkak=;
-	b=O1bisBn+3u821WYHGp5O5Xuh2ItDL14qtav2GgabY7pnJrwLsQ6bMLDWO2X42dq21vlFI0
-	i5/bq7WWwpeL03cF5LmlA5EMCkZtbwQKcE+NTxgreTP4ucNSzrKaeXshmtchma4wG+YnHv
-	9ZmP6djyLmrngHuzdHN3z3j9XN3BavAbAH4nujYmEBo491PvXKYNrpo73YMzwdRjmwktze
-	kO4LV/8i92UZ2LklY0upU+Xqkxd5bAcjcl0z74mZAcAeCedTzpwtd/7+4Qatvrb2B/S/jv
-	y2ICio63zPUE/Eexhva/+7xFvb3PUacajnFpTHHZGu5CGXeVPH0ZNyzoOLU+Og==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740325190;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95z+XIIsekQNPOf30IF1xYSNUZIumS/XKig5mUGkkak=;
-	b=fw1OHCpVz332UiCuD55Qucmj16JJEGD9/mhB3w/4seRagrgTjnj1CDsfnpkzyDzOZZg/H8
-	LD4kc/w0OSsC01BA==
-From: "tip-bot2 for Randy Dunlap" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/usercopy: Fix kernel-doc func param name in
- clean_cache_range()'s description
-Cc: Randy Dunlap <rdunlap@infradead.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250111063333.911084-1-rdunlap@infradead.org>
-References: <20250111063333.911084-1-rdunlap@infradead.org>
+	s=arc-20240116; t=1740325359; c=relaxed/simple;
+	bh=8+pwvoCO29+tN6SmiHDXBT+PJZXfOEBCeBttdnD66aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qusKH8HuVgt47TbxVBM993QO/NF3oRGF9XMB32seWhJpU+rakoEb92RiDE/vL25mCPrs3GzToBe+FYHBpqjLojNLKfpza3lu2UNVfUPNHv+EnxpdQyuI9bg894y0d49mVF1x5FjLIu6EMNq2exgs75ziMlPtFunRaGtHLq98k90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5szSUvM; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740325357; x=1771861357;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8+pwvoCO29+tN6SmiHDXBT+PJZXfOEBCeBttdnD66aQ=;
+  b=E5szSUvMhpVBBwUn1JaaxOrvaHoYfD0p6YBzVlx+MQcmO39785A3LJys
+   fj9KMr9sucZjf/PuRewPUUcwxTggTTt0wVJdtfunckRNLAot1pl3WM5UY
+   1lLJkdcpLW86WQGf2kGx8e6q6SX+AcbTm8vDsv44nIeFsnoWDV9RUhAjf
+   7AYsi4wvXxnFdNZQyTq4gVwtAgyduDxqI8HD8oSTwct/gt14IYnBLx2Rv
+   Huqt7LquwX3n08ltfCzT637/FQsQP3kDNQr4JL7xyawIwcyjqXaBRMLE8
+   elX5dxMdTq8Loj2EyXbgb/p1wToFp7+nu4uCxoHtO9cfO2lNqrqZGDQ3/
+   Q==;
+X-CSE-ConnectionGUID: vDLGwwB1Q4u2dCA4EN3dcQ==
+X-CSE-MsgGUID: LCyubUPpQ86Uk1m3+7vHmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="40322634"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40322634"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 07:42:36 -0800
+X-CSE-ConnectionGUID: ie024MwDQfKjNN6NhjokKg==
+X-CSE-MsgGUID: ZEeRozSKRYqk9l320S6kTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="120934044"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 07:42:34 -0800
+Date: Sun, 23 Feb 2025 17:42:31 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Ajay Agarwal <ajayagarwal@google.com>,
+	Brian Norris <briannorris@google.com>
+Subject: Re: [PATCH v1] PM: runtime: Unify error handling during suspend and
+ resume
+Message-ID: <Z7tB5wshbGtO6LGg@black.fi.intel.com>
+References: <1922654.tdWV9SEqCh@rjwysocki.net>
+ <Z7rPOt0x5hWncjhr@black.fi.intel.com>
+ <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174032518667.10177.8688571407789662677.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com>
 
-The following commit has been merged into the x86/cleanups branch of tip:
+On Sun, Feb 23, 2025 at 01:56:07PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Feb 23, 2025 at 8:33 AM Raag Jadav <raag.jadav@intel.com> wrote:
+> >
+> > On Thu, Feb 20, 2025 at 09:18:23PM +0100, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > There is a confusing difference in error handling between rpm_suspend()
+> > > and rpm_resume() related to the special way in which the -EAGAIN and
+> > > -EBUSY error values are treated by the former.  Also, converting
+> > > -EACCES coming from the callback to an I/O error, which it quite likely
+> > > is not, may confuse runtime PM users a bit.
+> > >
+> > > To address the above, modify rpm_callback() to convert -EACCES coming
+> > > from the driver to -EAGAIN and to set power.runtime_error only if the
+> > > return value is not -EAGAIN or -EBUSY.
+> > >
+> > > This will cause the error handling in rpm_resume() and rpm_suspend() to
+> > > work consistently, so drop the no longer needed -EAGAIN or -EBUSY
+> > > special case from the latter and make it retry autosuspend if
+> > > power.runtime_error is unset.
+> > >
+> > > Link: https://lore.kernel.org/linux-pm/20220620144231.GA23345@axis.com/
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/base/power/runtime.c |   34 ++++++++++++++++++----------------
+> > >  1 file changed, 18 insertions(+), 16 deletions(-)
+> > >
+> > > --- a/drivers/base/power/runtime.c
+> > > +++ b/drivers/base/power/runtime.c
+> > > @@ -448,8 +448,13 @@
+> > >               retval = __rpm_callback(cb, dev);
+> > >       }
+> > >
+> > > -     dev->power.runtime_error = retval;
+> > > -     return retval != -EACCES ? retval : -EIO;
+> > > +     if (retval == -EACCES)
+> > > +             retval = -EAGAIN;
+> >
+> > While this is one way to address the problem, are we opening the door
+> > to changing error codes when convenient? This might lead to different
+> > kind of confusion from user standpoint.
+> 
+> Are you saying that if a mistake was made sufficiently long ago, it
+> can't be fixed any more because someone may be confused?
 
-Commit-ID:     51184c3c96a19b5143710ef91426e311f4364bac
-Gitweb:        https://git.kernel.org/tip/51184c3c96a19b5143710ef91426e311f4364bac
-Author:        Randy Dunlap <rdunlap@infradead.org>
-AuthorDate:    Fri, 10 Jan 2025 22:33:33 -08:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Sun, 23 Feb 2025 11:52:48 +01:00
+Nothing against the fix but "sufficiently long ago" is why we might
+have users that rely on it. As long as we don't break anything I don't
+see a problem.
 
-x86/usercopy: Fix kernel-doc func param name in clean_cache_range()'s description
+Messing with error codes is usually received with mixed feelings and
+coming across such a code raises more questions than answers. Perhaps a
+small explanation might do the trick?
 
-Use @addr instead of @vaddr in the kernel-doc comment for
-clean_cache_range() to eliminate warnings:
-
-  arch/x86/lib/usercopy_64.c:29: warning: Function parameter or struct member 'addr' not described in 'clean_cache_range'
-  arch/x86/lib/usercopy_64.c:29: warning: Excess function parameter 'vaddr' description in 'clean_cache_range'
-
-Fixes: 0aed55af8834 ("x86, uaccess: introduce copy_from_iter_flushcache for pmem / cache-bypass operations")
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250111063333.911084-1-rdunlap@infradead.org
----
- arch/x86/lib/usercopy_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-index e9251b8..654280a 100644
---- a/arch/x86/lib/usercopy_64.c
-+++ b/arch/x86/lib/usercopy_64.c
-@@ -18,7 +18,7 @@
- #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
- /**
-  * clean_cache_range - write back a cache range with CLWB
-- * @vaddr:	virtual start address
-+ * @addr:	virtual start address
-  * @size:	number of bytes to write back
-  *
-  * Write back a cache range using the CLWB (cache line write back)
+Raag
 
