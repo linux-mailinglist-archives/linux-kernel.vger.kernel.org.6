@@ -1,55 +1,94 @@
-Return-Path: <linux-kernel+bounces-527652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FD8A40DC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:50:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F900A40DC9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978187AB820
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:49:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F21D17AB8E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587712036F0;
-	Sun, 23 Feb 2025 09:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2FC203719;
+	Sun, 23 Feb 2025 09:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MUrgKJvn"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kJLbt2Js";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xsxgmOz/";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fo/IjFYR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zsjMbEHO"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D81DDC12;
-	Sun, 23 Feb 2025 09:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D341D1DDC12
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 09:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740304234; cv=none; b=ZH20BqOaxhqkj6GiNgXgWOIGPuLouJ4dosQgq+l77gdlvXeKDW2luHAdyhHdBhcHNr9yzjQDdPKnqz13CV/xBKC+9qs96YrNkg1N7L2fIiQv5tggD/+ARk/dcTD2XKcrl8QoYo4KJYT8+7uk+8r+y6J3ED0IQHC5J3Uu0weanMg=
+	t=1740304253; cv=none; b=knKibSLcNmf0Xc4KAJgBZ7R8Mk3H0ByNKTryrrsSY0xb4rAF7pirOViqz0jYO8LPs/I7+D0BFvZ85QHSNG/3DcyX3pNEhk2BO0ALd9sC2A1yWE1i5/Z5IYY1HdBePkMy4kPjuQ7iECnkbuq4DhK71hn//v0j3yACLKU7u4lL6XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740304234; c=relaxed/simple;
-	bh=d58RwVa7DbcO1qKm0r+LcPPaDjg73Am3OIA+pp6DxJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sF4Xx2yWSYyuYIuKU+a7Fu2xmIJVZAVqyxYejSmmCkuHkKX/I3VMsrxj1FYxYxP8bBUWZw0smen3/cTONlYyjCjo1PKs3l7A/euz0UTNP2k5KQJOzJ3+PjuDukKFpniQe82AbeVdkrr3sHfaswNDGnXVurHq5NmZLvX/wS/QXTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MUrgKJvn; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740304218; x=1740909018; i=markus.elfring@web.de;
-	bh=uNqtagFfaX+k1TuZfiWllVGWvAnzX37lvyjkNmWZte8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MUrgKJvnzf8bl89mBXk5+a6sYHhBCdm/CbvdYwA/gAlYSkF42N0tsuTCi190Ycwb
-	 joYGEspNS+fL16QoyidqL6tOBXrRcNfFDtU57gDS6J87HucPdFV8YHWu1uQG+3qk5
-	 1BXo4H43AoRrC46G38VZiWN3RM37/QjlDoxSOoW+vaOjY6kyypc7fNS0PmfMQ4q6M
-	 GgYVTvXggPwyuCTz8kzlwbmeJG14+9Co4lk1Fawa7clMF9kIdBDvVFC2P8VQARoUh
-	 ifgFfyZp9tXBk6D0VUtyGUTIzBZT2zRkoHSEYGwGEplIfJ+zKixc1BmpcPntmOypF
-	 MnSPXtjUeiH84Kca3w==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.18]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOUxo-1txcWq2vV8-00Wa8T; Sun, 23
- Feb 2025 10:50:18 +0100
-Message-ID: <c8cb0a78-c547-41dc-ac35-d569c57ebe3c@web.de>
-Date: Sun, 23 Feb 2025 10:50:08 +0100
+	s=arc-20240116; t=1740304253; c=relaxed/simple;
+	bh=T9pnBacHbZ6P1TFzHIAAhpyq5oJlCwPOvblWHdk1Yhs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BbUPbEjJRDSjgQwNvlgURERGOtIBm6s6N9aKhmdW04gvEMM4ungJkjCNRHh05xy4G8iAlEjNxSpCJyvp7ZAo5lrTG3iejiVBQEJ+wvbe7SwzjNab9E6vGkTOfqIXfL1JPQKRYR5CDrBJzfJmOpDn9WJAZVnjs/b2NcXFm/cInIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kJLbt2Js; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xsxgmOz/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fo/IjFYR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zsjMbEHO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E5E7D1F37E;
+	Sun, 23 Feb 2025 09:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740304250; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djse259YTnhDms5McSAmpRcrWC+2iQCSXuUmQU1/lDo=;
+	b=kJLbt2JsMqy8skemnQUIO3cn2f38jvDaXfV2zZoUuTt8Et2JJ1lFffHiCBaPRTwFdwUB8v
+	AjX9v53rfiQ3JK9F4BXnhH9RBZj9N0STMpHFeLllI3mLExqnGkmjnoIKS9otK93jG+ogQp
+	hYFtpwV+N0f3lNU3Q56oFLFO1Vd0UtY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740304250;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djse259YTnhDms5McSAmpRcrWC+2iQCSXuUmQU1/lDo=;
+	b=xsxgmOz/UaN6Bp3jyOFIvTswSpdb1CXE5hw4JAUPnzWQEaufLDK/sK5+wVvunA23rKANoc
+	AzT6KYTOFmfaOwBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740304249; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djse259YTnhDms5McSAmpRcrWC+2iQCSXuUmQU1/lDo=;
+	b=fo/IjFYRrNwTS0Gs2LfcRHQMN1T7cnM4/leNUw61kEhw6Xxma7lUENxYFKe1U5PZHT57P4
+	XWxHU5KCCafomZu8T0m37mHCaloESNPpjpmqae/lUFuW+0SG8IAoCkq4pcoEFMiklIT+ln
+	Ik/CYPWf9JjsRZnALOfZWChoZZA9vR0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740304249;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=djse259YTnhDms5McSAmpRcrWC+2iQCSXuUmQU1/lDo=;
+	b=zsjMbEHOSR2EljAZ369HEjeCvKDF/L1YBLsjWaAKN45tfUO5t5PC9hUVQb3E0LLY2CwpMR
+	eao2x1pkLzG2JNAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8A2213A42;
+	Sun, 23 Feb 2025 09:50:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2RQULnjvumfFCgAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Sun, 23 Feb 2025 09:50:48 +0000
+Message-ID: <e6dc990a-81bb-4185-848e-4202aa7bb839@suse.de>
+Date: Sun, 23 Feb 2025 11:50:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,90 +96,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2?] ASoC: q6dsp: q6apm: replace kzalloc() with kcalloc()
- in q6apm_map_memory_regions()
-To: Ethan Carter Edwards <ethan@ethancedwards.com>,
- linux-sound@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Takashi Iwai <tiwai@suse.com>
-References: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
+From: Stanimir Varbanov <svarbanov@suse.de>
+Subject: Re: [PATCH v5 -next 07/11] PCI: brcmstb: Adjust PHY PLL setup to use
+ a 54MHz input refclk
+To: Bjorn Helgaas <helgaas@kernel.org>, Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250221213311.GA362736@bhelgaas>
+Content-Language: en-US
+In-Reply-To: <20250221213311.GA362736@bhelgaas>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rYfx/2i6V4IQ3Dw4RZIfxE9GJ1AH7VPLFCjjLUor9tddYNk4qf4
- iR936YWJXwQd3oOEGiX+aBc0Vp+qvfEnlIhqn4CqP3xhrSD9qo8QFD1dYP+nA4tfpqUS24t
- hjmGFdu/eHaXNsOPMC8iSSebejS+z80IEnt6oJasWJ+zkDJThr/aoJRgiSlPcJG5ET+ztBc
- LAr8LbKkCaQZIcUBmKxaQ==
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,broadcom.com,linutronix.de,kernel.org,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:frMgY1647xs=;/6lsbY/b9/Ua30DHNQG4CgdhlcX
- xHZHCdor/0mLXZXYLmpmCujHrSgZnHpfzzwFNqe61jwJfFCLE/D4r6MeJDOhl+ITz+U871kge
- +w82eon+5hQy1gWoa4f0YJAjXSInBmncXldm1xfZf1ut5JwLtnjDcQP8JNFgZkhzR4BmOq89p
- KUf22pKeCdMuxP7e08ThjEB/R89F7wDL35d6id7YCs+1/cyQwYeoGKX5dEvUt3dEimXIPCigP
- AdUWNVrC2dvI2sh2vX+uIKy0Uq8iSZPWgAeEhqbicUTsQZBuFCfjbcg5CoVIPb7JWJTDxpM/U
- PwRNU1DyrJbfrFaGyGS+wH9tWPckM9no+EoulC5s6TBCRkaWRvpRmFFj2Ip9qUMuQLQUvHsGA
- Ln7L1HroGOT3wCQFELsnHAwr0WObQ/mnVck1RvxId415T1wREz1UflTYvYhgJs0LjIYL3fuWy
- Yh8W/dY3wGZ0gqhj7X5CLnngZH42hGyXnPbGVpe+t2tliRmL+HJGTa7wP2Q580iSwBu9G5wdT
- jTmVhv7UQMa3yybacDsRH3csuaVEXIIigUpaKHdn/cCLI4gzgEPJ9J2exGQOgJChx+rxIVKK6
- V3pjQ4e1HchVSBuJIhu2dy+b8exO66mNaGjL82lHtJDJEUPmKLpHkQQI/DzB1I/NvTeYgu7Sp
- FdnRkv7dKDZ6BCZ3cNHPaNROBgIGUFp5Em+zTFmjhHG0xfSB7AZikrwybNRp2khS31L6TiSpv
- K97TaIEkp64XITs7dgqIerOrFR/8WOQa6CRex8/yhWhzbXckm7HsJkM5kEu68vR8q2EpY393E
- ijU6iRg2oidTgdz3+gtgI5o/Kq6WxW/lLnoW2eTc2Zug+zS/L2Q5QmNkbK3RCSJ2enikZVQez
- Lh5mU15nM/ttRlnMkHmKMZR6do9H9rIajkCIV8N/Qfc1cSVxNfM9X1FW/drYp80Yka7WvVkWO
- Qw9VDWsLfQpa38/GxMy4k3Dm40CBSo/3g34ZGCn3iSoi/zmAnnSBwoI2PAtkdrhgjUlrYbEg/
- 3b5jiGnUTt4TaRDeuQ7O5LVbUe2jnB/uSiIPxRsBBxd8VmIO5Bbo9tM4H73ZTadAN7/4fQo66
- j7UK65xNgJWjw9usG9b7zdC4YfJlchcB2WTtTFEUeCikL7vfVSD+AabrZabRWj1tGYzYbd1P9
- ZABRPqwOp9ZYGqGNjn1D7JQAT4IwpuZ9jO0ZCXRyhu7m2x2jnNBJMS5uZUGMPyNrGLvqMcDpu
- j6Z1TIbffqX5fVM11kKf0CIBNnK/fROC6/3QnXAeQn0IhQU7bVK57quPHr/Hfp7vrsOtiN50l
- TvKnMUe7SeVDJLMXbP69JYZOct2a6pTjOp5PJkfSakLCLi91YV4cEqE8LmXyYUJUqt7fRbhGY
- VtIgY2UePs9cRdexwKBohYNiI1bhLNrK4ZVqin1Bqr17LEIcRxL5r4/ofE6HTetmrTRMiZ4bo
- NDhnLHN/iKnwrjSakBIaCvIsjxJk=
 
-=E2=80=A6
-> We are trying to get rid of all multiplications from allocation
-> functions to prevent integer overflows[1]. =E2=80=A6
+Hi Bjorn,
 
-Is an imperative wording more desirable for such a change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
+On 2/21/25 11:33 PM, Bjorn Helgaas wrote:
+> On Mon, Jan 20, 2025 at 03:01:15PM +0200, Stanimir Varbanov wrote:
+>> The default input reference clock for the PHY PLL is 100Mhz, except for
+>> some devices where it is 54Mhz like bcm2712C1 and bcm2712D0.
+>>
+>> To implement this adjustments introduce a new .post_setup op in
+>> pcie_cfg_data and call it at the end of brcm_pcie_setup function.
+>>
+>> The bcm2712 .post_setup callback implements the required MDIO writes that
+>> switch the PLL refclk and also change PHY PM clock period.
+>>
+>> Without this RPi5 PCIex1 is unable to enumerate endpoint devices on
+>> the expansion connector.
+> 
+> This makes it sound like this patch should be reordered before "[PATCH
+> v5 -next 06/11] PCI: brcmstb: Add bcm2712 support".
+> 
+> We don't really want a driver to claim a bcm2712 controller before
+> it's able to enumerate devices, because that would break bisection
+> through this.
 
+I absolutely agree with you in regards to bisect-ability. But to satisfy
+this I have to squash "Adjust PHY PLL ..." into "PCI: brcmstb: Add
+bcm2712 support" to avoid a warning about not used function. If that
+works I'll send a new rebased controller/brcmstb version (v6).
 
-=E2=80=A6
-> ---
->  sound/soc/qcom/qdsp6/q6apm.c | 2 +-
-=E2=80=A6
+~Stan
 
-How do you think about to improve your version management?
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n780
-
-
-=E2=80=A6
-> +++ b/sound/soc/qcom/qdsp6/q6apm.c
-> @@ -230,7 +230,7 @@ int q6apm_map_memory_regions(struct q6apm_graph *gra=
-ph, unsigned int dir, phys_a
->  		return 0;
->  	}
->
-> -	buf =3D kzalloc(((sizeof(struct audio_buffer)) * periods), GFP_KERNEL)=
-;
-> +	buf =3D kcalloc(periods, sizeof(struct audio_buffer), GFP_KERNEL);
-=E2=80=A6
-
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.14-rc3#n941
-
-
-How do you think about to increase the application of scope-based resource=
- management?
-
-Regards,
-Markus
 
