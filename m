@@ -1,310 +1,176 @@
-Return-Path: <linux-kernel+bounces-527766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EDAA40F3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D1D8A40F3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C3A16F1A4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:19:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CDD8188B9D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01F220A5E8;
-	Sun, 23 Feb 2025 14:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A14D206F09;
+	Sun, 23 Feb 2025 14:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AGl6xubp"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D3A207675;
-	Sun, 23 Feb 2025 14:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHG5OOj8"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 402CB26AF3;
+	Sun, 23 Feb 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740320359; cv=none; b=WcPC93F57bIKmE86Kd+rieXqQU0CxCqy/5F0jjXuZPj7PVkcT4cwCUqquYyU1wR1e6ZOgXp/R2Sdra7bYvB8TF3CiKzSRxOXOdK1pqQHARkfdXlKY6c5qJoMReX3ku6uMV7jH8kyDTu2pyc/N8WBONGUA+egDny8j/C9aPzQ1ts=
+	t=1740320356; cv=none; b=Z4TFvaBsPwboqF8I2wOcnWQGThROEXaLwSPVlASm9fZCZ4bjOWBzHY0oLyK2ELsPNddPELisx9QvwFHAzanDqXSUqoqvvgioVcVL0pUwPjO0Ca5m3LHfCIAw93+eR6plLJvjCy5AUzF0dJ8We16mr54pH1zIZ+1DQ/AuV+QAfgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740320359; c=relaxed/simple;
-	bh=kNKBDuIesTBaWDrZ1NvmJmMdqeLV9g4WjMA+rQ8sRK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dOB7WHianQ5vbJV9/t9YGd0GQ/6zPE2ketQhMMyUa1EVamhC9bOqOaEYj9DLt3X1U/c1zfcBnFP2yMLH+wykz0b/BR8sblrqPzeXps9eQ6Kc5ZDazm94r5SmuF7C5fu/sbpZoSGyxdpgvDvjnwYrw7tIH8r+2WFI0LltVEx4I7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AGl6xubp; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=SMVQm
-	XxKMe0hlDoTLh2BasHIi8/EVJ8OxJWjuErZy2c=; b=AGl6xubptnDDxWWdbhP1h
-	DbfV8ftRo1pJPeR0VOw4u7NgVbAuzNPJ07IGF8XMFZSRoNsJNkjT65eKVPM/OEEV
-	iZaZJZf6/Rwh8t89LkCLujDaHbn6k6rQjRLT76mMJ6sArFu7u+T/NOO94BJYxJi4
-	yJWZIv9CrpGgzAgj7kybK4=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wA37z1LLrtnze69OA--.39119S2;
-	Sun, 23 Feb 2025 22:18:51 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: jingoohan1@gmail.com,
-	shradha.t@samsung.com
-Cc: manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	robh@kernel.org,
-	bhelgaas@google.com,
-	Frank.Li@nxp.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	rockswang7@gmail.com,
-	Hans Zhang <18255117159@163.com>,
-	Niklas Cassel <cassel@kernel.org>
-Subject: [v5] PCI: dwc: Add the debugfs property to provide the LTSSM status of the PCIe link
-Date: Sun, 23 Feb 2025 22:18:48 +0800
-Message-Id: <20250223141848.231232-1-18255117159@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740320356; c=relaxed/simple;
+	bh=LuZNJruL3UThU6C3fLXq587WB7mNECeN2IMcN7cT0rM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8jsSpSoFfa/alD/z1wiPkwpRrahzdax7NqeU0lHJv+n4oURmelX8Jb8k98nAAbmvoY2gpyN7jciHePHkvSINjDWzVNLO9qpvXEULHrAcnxHCpBKYxX3YIzqpFJyzCbQw3OAYB9/fEOymxLBm4E1ABmJVYib7xbc9AVOpvLGLvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHG5OOj8; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-38f265c6cb0so1747960f8f.2;
+        Sun, 23 Feb 2025 06:19:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740320352; x=1740925152; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xnxh1Cm176lLJ2V7DKKw9R4VayIb0E3sW44cPE3xIR8=;
+        b=VHG5OOj8Df1BWRlFjvpwTX7zDzFtmrJd7u3bQkXg14zy2YzBRY/p9HKx09PUREe2Xv
+         khvgEND6LK/pemdNakowtmhMCIXWFF/PZSRMF44pUQCapBdemi2rcwbM7TXBp9qgKNQH
+         J1rZ9e4q1dXDjGJ28XaxUHNHD+5Ebaww0SNBD6DP/kj3ieJyCGDZUpj/o3k/eScPMF6Q
+         0JCgB8oGzVdF0ZK3U3uG1gAFQ1ij7JcFXXOtg2pwqRSp9EBfNeCtU2+/VITBAlLj+3zn
+         Ft+c06XraUVNDg+CkAkqReyTMEKJjssmAawWnxmh0G+osTx1uwvxlkPP3ltjxMBC7CeW
+         2X1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740320352; x=1740925152;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xnxh1Cm176lLJ2V7DKKw9R4VayIb0E3sW44cPE3xIR8=;
+        b=dXel2ll1PWXMRBjFOmzF+upl7dAwGeZsAuGgTWshYBId868CReJvFldrRWqv2/aC1V
+         xB+PvGwN1lI0CXqXiXRWpwwrZGoeNSDoO2gX5Nde8aGZGGLqHJ5hL3odWs0emgzz2Mvw
+         hdDsMosg977XqESKIhGc5f5pdhjb0QVP+KiLLwPObRLZ5gZNGK0oaH0h41+loV5HtzQn
+         m7Qu6rJ+ifYNsFRyLEiWielolfaNIjwnPca7iYtImhBtC2zRBkbc14CQDleAy0ZW6lbd
+         ddWCqYSUnqOulGo7X1BFffnB8qySdbIDUNB02zFz19FX5QDbAwXb2bO9nJDbFE4H1xiG
+         rQZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5iRSDQ23c8Rte6oamfBe8W9NEm1Obq0kDCKOG9RzlCYirQAY65h1UJODfgXDbqh6PCH7aTS84BDizZix9@vger.kernel.org, AJvYcCVRNNAkF7PWIP5juHSRi3bvVyBijGBqRULealX+yWyE66X805y8T4NTp5e8XGKpPDnR6pQ6xQKfO+pY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9DCn0VhmV4aWJNae7vy3cKBR9T16aaUXKRYJQ0jAdrWIsqQvf
+	ww3w+l7uvCHxxytHyYSSKkxgFRLnbTvfKAjq9CtPpo+1GyO2xoPqtk7fUPL7Pg7ggWIG7UKwlPN
+	taOAwuqIckMZs5T5L7cW3PHMKeAg=
+X-Gm-Gg: ASbGncscaGYak6HihzGdQ+s6FZMcVVmvrLW/6rdDTqh1ssLCwSWAXsFL9h24UUNI2yB
+	PAW4ajZAmK9cCKHrwtqvcQhVJbSQUFgyY4Vtb6GQ0pANRtd3jaDkG+nHX+i4MQ587Kh5kmuWzbQ
+	OEuxkXuQHC
+X-Google-Smtp-Source: AGHT+IG8qLBGBeQq8XnAK7zUoJ+gAUZKnUrwGwfw3w9JHdIDJuCBqeOPp1ldtANXvqMRYy2pjmznSfQYfvqxzRcC1o4=
+X-Received: by 2002:a5d:5985:0:b0:38f:4808:b9f with SMTP id
+ ffacd0b85a97d-38f7085c617mr8237045f8f.47.1740320352293; Sun, 23 Feb 2025
+ 06:19:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wA37z1LLrtnze69OA--.39119S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWfGr47ur1fAFyUuryfZr1UZFb_yoWkJr4fpa
-	yrAFWFyF42vr1aya13G3W8ZF45Kan3AF1q9wsrC3yxXa4Iy3WDWrs5tw4jkr97Jr47Gr13
-	Jw13AF1kGr18J3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zK9akbUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDxH8o2e7Jr1-hgAAs-
+References: <20250219083724.56945-1-clamor95@gmail.com> <20250219083724.56945-2-clamor95@gmail.com>
+ <20250223-giga-moose-of-abundance-8e5b9f@krzk-bin> <CAPVz0n1v1BissCuD0DCmQHbr7O_Uymt-ZebXE=37jgjzj7wM0A@mail.gmail.com>
+ <dc883484-1557-4c30-b1f2-dc98e9faebde@kernel.org>
+In-Reply-To: <dc883484-1557-4c30-b1f2-dc98e9faebde@kernel.org>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Sun, 23 Feb 2025 16:19:01 +0200
+X-Gm-Features: AWEUYZm231wQDZv7xelIFAwWLdRXnu2BHB0xljENQF-8tSv7p03-xh7b6u4-pTk
+Message-ID: <CAPVz0n1PVfXdvLGZMk32C0-d-QwLTsgGbNm3PTzbA03EgJvhYA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] dt-bindings: extcon: Document Maxim MAX14526 MUIC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the debugfs property to provide a view of the current link's LTSSM
-status from the root port device.
+=D0=BD=D0=B4, 23 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 16:13 Krzy=
+sztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On 23/02/2025 12:51, Svyatoslav Ryhel wrote:
+> > =D0=BD=D0=B4, 23 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 13:38 =
+Krzysztof Kozlowski <krzk@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> On Wed, Feb 19, 2025 at 10:37:23AM +0200, Svyatoslav Ryhel wrote:
+> >>> Add bindings for Maxim MAX14526 MicroUSB Integrated Circuit.
+> >>>
+> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> >>> ---
+> >>>  .../bindings/extcon/maxim,max14526.yaml       | 46 +++++++++++++++++=
+++
+> >>>  1 file changed, 46 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,ma=
+x14526.yaml
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max14526.=
+yaml b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
+> >>> new file mode 100644
+> >>> index 000000000000..87cf7fd19ee9
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
+> >>> @@ -0,0 +1,46 @@
+> >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >>> +%YAML 1.2
+> >>> +---
+> >>> +$id: http://devicetree.org/schemas/extcon/maxim,max14526.yaml#
+> >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >>> +
+> >>> +title: Maxim MAX14526 MicroUSB Integrated Circuit (MUIC)
+> >>> +
+> >>> +maintainers:
+> >>> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> >>> +
+> >>> +properties:
+> >>> +  compatible:
+> >>> +    const: maxim,max14526-muic
+> >>
+> >> Is it something more than muic? Why different filename than compatible=
+?
+> >>
+> >
+> > No it is only MUIC, nothing more. How to adjust it then?
+>
+> Compatible should be only "maxim,max14526".
+>
 
-  /sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
+Fair
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
-Tested-by: Niklas Cassel <cassel@kernel.org>
----
-Changes since v4:
-https://lore.kernel.org/linux-pci/20250222143335.221168-1-18255117159@163.com/
 
-- Change the return value of function dw_ltssm_sts_string from char *
-  to const char *.
-- Modify the Description of the Document.
+> >
+> >>> +
+> >>> +  reg:
+> >>> +    maxItems: 1
+> >>> +
+> >>> +  interrupts:
+> >>> +    maxItems: 1
+> >>
+> >> This looks incomplete. Missing ports/connector.
+> >>
+> >
+> > It does not support OF graph model. I might look into adding this
+>
+> You mean driver, but I mean hardware. Hardware is connected to USB
+> socket one one side and to USB controller on other. At least, it might
+> be more.
+>
 
-Changes since v3:
-https://lore.kernel.org/linux-pci/20250214144618.176028-1-18255117159@163.com/
+Yes, I mean driver BUT we are talking not about the extcon itself but
+about an abstraction of its connections. Anyway. I can model it in
+graph form, but its links do not support graph type of connection
+since extcon device class framework provides only getting it by
+phandle. Moreover, tegra usb controller supports extcon link only in
+form of phandles. How to model this?
 
-- My v4 patch is updated to the latest based on Shradha's v7 patch.
-- Submissions based on the following v7 patches:
-https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-2-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-3-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-4-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-5-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-6-shradha.t@samsung.com/
-
-Changes since v2:
-https://lore.kernel.org/linux-pci/20250206151343.26779-1-18255117159@163.com/
-
-- Git pulls the latest code and fixes conflicts.
-- Do not place into sysfs node as recommended by maintainer. Shradha-based patch
-  is put into debugfs.
-- Submissions based on the following v6 patches:
-https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-2-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-3-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-4-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-5-shradha.t@samsung.com/
-
-Changes since v1:
-https://lore.kernel.org/linux-pci/20250123071326.1810751-1-18255117159@163.com/
-
-- Do not place into sysfs node as recommended by maintainer. Shradha-based patch
-  is put into debugfs.
-- Submissions based on the following v5 patches:
-https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-2-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-3-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-4-shradha.t@samsung.com/
-https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-5-shradha.t@samsung.com/
----
- Documentation/ABI/testing/debugfs-dwc-pcie    |  5 ++
- .../controller/dwc/pcie-designware-debugfs.c  | 29 +++++++++++
- .../pci/controller/dwc/pcie-designware-host.c | 50 +++++++++++++++++++
- drivers/pci/controller/dwc/pcie-designware.h  | 33 ++++++++++++
- 4 files changed, 117 insertions(+)
-
-diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
-index 650a89b0511e..8245261506bc 100644
---- a/Documentation/ABI/testing/debugfs-dwc-pcie
-+++ b/Documentation/ABI/testing/debugfs-dwc-pcie
-@@ -142,3 +142,8 @@ Description:	(RW) Some lanes in the event list are lane specific events. These i
- 		events 1) - 11) and 34) - 35).
- 		Write lane number for which counter needs to be enabled/disabled/dumped.
- 		Read will return the current selected lane number. Lane0 is selected by default.
-+
-+What:		/sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
-+Date:		February 2025
-+Contact:	Hans Zhang <18255117159@163.com>
-+Description:	(RO) Read will return the current PCIe LTSSM state in both string and raw value.
-diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-index dca1e9999113..39487bd184e1 100644
---- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-@@ -533,6 +533,33 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
- 	return ret;
- }
- 
-+static int dwc_pcie_ltssm_status_show(struct seq_file *s, void *v)
-+{
-+	struct dw_pcie *pci = s->private;
-+	enum dw_pcie_ltssm val;
-+
-+	val = dw_pcie_get_ltssm(pci);
-+	seq_printf(s, "%s (0x%02x)\n", dw_ltssm_sts_string(val), val);
-+
-+	return 0;
-+}
-+
-+static int dwc_pcie_ltssm_status_open(struct inode *inode, struct file *file)
-+{
-+	return single_open(file, dwc_pcie_ltssm_status_show, inode->i_private);
-+}
-+
-+static const struct file_operations dwc_pcie_ltssm_status_ops = {
-+	.open = dwc_pcie_ltssm_status_open,
-+	.read = seq_read,
-+};
-+
-+static void dwc_pcie_ltssm_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
-+{
-+	debugfs_create_file("ltssm_status", 0444, dir, pci,
-+			    &dwc_pcie_ltssm_status_ops);
-+}
-+
- void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
- {
- 	dwc_pcie_rasdes_debugfs_deinit(pci);
-@@ -560,5 +587,7 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
- 	if (ret)
- 		dev_dbg(dev, "RASDES debugfs init failed\n");
- 
-+	dwc_pcie_ltssm_debugfs_init(pci, dir);
-+
- 	return 0;
- }
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index 2081e8c72d12..cbe9cdbde79f 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -418,6 +418,56 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
- 	}
- }
- 
-+const char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm)
-+{
-+	const char *str;
-+
-+	switch (ltssm) {
-+#define DW_PCIE_LTSSM_NAME(n) case n: str = #n; break
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_QUIET);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_ACT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_ACTIVE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_COMPLIANCE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_CONFIG);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_PRE_DETECT_QUIET);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_WAIT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LINKWD_START);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LINKWD_ACEPT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LANENUM_WAI);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LANENUM_ACEPT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_COMPLETE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_IDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_LOCK);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_SPEED);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_RCVRCFG);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_IDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L0);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L0S);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L123_SEND_EIDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L1_IDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L2_IDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L2_WAKE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED_ENTRY);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED_IDLE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_ENTRY);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_ACTIVE);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_EXIT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_EXIT_TIMEOUT);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_HOT_RESET_ENTRY);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_HOT_RESET);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ0);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ1);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ2);
-+	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ3);
-+	default:
-+		str = "DW_PCIE_LTSSM_UNKNOWN";
-+		break;
-+	}
-+
-+	return str + strlen("DW_PCIE_LTSSM_");
-+}
-+
- int dw_pcie_host_init(struct dw_pcie_rp *pp)
- {
- 	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index 7f9807d4e5de..00c32fa1b151 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -330,9 +330,40 @@ enum dw_pcie_ltssm {
- 	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
- 	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
- 	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
-+	DW_PCIE_LTSSM_POLL_ACTIVE = 0x2,
-+	DW_PCIE_LTSSM_POLL_COMPLIANCE = 0x3,
-+	DW_PCIE_LTSSM_POLL_CONFIG = 0x4,
-+	DW_PCIE_LTSSM_PRE_DETECT_QUIET = 0x5,
- 	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
-+	DW_PCIE_LTSSM_CFG_LINKWD_START = 0x7,
-+	DW_PCIE_LTSSM_CFG_LINKWD_ACEPT = 0x8,
-+	DW_PCIE_LTSSM_CFG_LANENUM_WAI = 0x9,
-+	DW_PCIE_LTSSM_CFG_LANENUM_ACEPT = 0xa,
-+	DW_PCIE_LTSSM_CFG_COMPLETE = 0xb,
-+	DW_PCIE_LTSSM_CFG_IDLE = 0xc,
-+	DW_PCIE_LTSSM_RCVRY_LOCK = 0xd,
-+	DW_PCIE_LTSSM_RCVRY_SPEED = 0xe,
-+	DW_PCIE_LTSSM_RCVRY_RCVRCFG = 0xf,
-+	DW_PCIE_LTSSM_RCVRY_IDLE = 0x10,
- 	DW_PCIE_LTSSM_L0 = 0x11,
-+	DW_PCIE_LTSSM_L0S = 0x12,
-+	DW_PCIE_LTSSM_L123_SEND_EIDLE = 0x13,
-+	DW_PCIE_LTSSM_L1_IDLE = 0x14,
- 	DW_PCIE_LTSSM_L2_IDLE = 0x15,
-+	DW_PCIE_LTSSM_L2_WAKE = 0x16,
-+	DW_PCIE_LTSSM_DISABLED_ENTRY = 0x17,
-+	DW_PCIE_LTSSM_DISABLED_IDLE = 0x18,
-+	DW_PCIE_LTSSM_DISABLED = 0x19,
-+	DW_PCIE_LTSSM_LPBK_ENTRY = 0x1a,
-+	DW_PCIE_LTSSM_LPBK_ACTIVE = 0x1b,
-+	DW_PCIE_LTSSM_LPBK_EXIT = 0x1c,
-+	DW_PCIE_LTSSM_LPBK_EXIT_TIMEOUT = 0x1d,
-+	DW_PCIE_LTSSM_HOT_RESET_ENTRY = 0x1e,
-+	DW_PCIE_LTSSM_HOT_RESET = 0x1f,
-+	DW_PCIE_LTSSM_RCVRY_EQ0 = 0x20,
-+	DW_PCIE_LTSSM_RCVRY_EQ1 = 0x21,
-+	DW_PCIE_LTSSM_RCVRY_EQ2 = 0x22,
-+	DW_PCIE_LTSSM_RCVRY_EQ3 = 0x23,
- 
- 	DW_PCIE_LTSSM_UNKNOWN = 0xFFFFFFFF,
- };
-@@ -683,6 +714,8 @@ static inline enum dw_pcie_ltssm dw_pcie_get_ltssm(struct dw_pcie *pci)
- 	return (enum dw_pcie_ltssm)FIELD_GET(PORT_LOGIC_LTSSM_STATE_MASK, val);
- }
- 
-+const char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm);
-+
- #ifdef CONFIG_PCIE_DW_HOST
- int dw_pcie_suspend_noirq(struct dw_pcie *pci);
- int dw_pcie_resume_noirq(struct dw_pcie *pci);
-
-base-commit: ff202c5028a195c07b16e1a2fbb8ca6b7ba11a1c
-prerequisite-patch-id: c153d1c334b19796f686e3a143e0e4ad0c22f373
-prerequisite-patch-id: 871aa1f094627d0e0cb4c89bea577e901bbc7b6a
-prerequisite-patch-id: 54b27bf41a444283be102709e2f8a7d1fdac456a
-prerequisite-patch-id: 95d8a6c78c32f2ea79ad967c134c881f9f3e0931
-prerequisite-patch-id: 751ccbe84a18d85c2beeec19f2d1d429569960d2
--- 
-2.25.1
-
+> > though it is just a single port.
+>
+>
+>
+>
+> Best regards,
+> Krzysztof
 
