@@ -1,52 +1,88 @@
-Return-Path: <linux-kernel+bounces-527568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B2FA40CAC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:03:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F164A40CB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A2B7A7B21
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:02:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E492017BFAE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F8E1D6DB4;
-	Sun, 23 Feb 2025 04:03:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1826F1C860F;
+	Sun, 23 Feb 2025 04:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ZEx5XNFT"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F861F5EA;
-	Sun, 23 Feb 2025 04:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lVmSGP37"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B3A81362;
+	Sun, 23 Feb 2025 04:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740283416; cv=none; b=PZZk/yhAgPGKRGd/GIknptJGPwnrCZNiF4tpqXI0se53K0VV40+Zqu4Lu+168mD9Z22GS5jfiQk6l92Z245DK9hvUlIg6eOuM2iIOrX2huFm+ujlDsMlVh2ZJL+jEU4lDZZL8UGc6Qvc6oke9doTxKNnyTKkrPKuHyhPmCsylyU=
+	t=1740284669; cv=none; b=nrUP+SOCGGUAl7K5Zjt2Z0S963eZkISicyLjvRLgduocjYEZD146vZpdeNR82cCxnwUci86/IkI+pj9VPXh4EfkOaRf333ISzmN62Zg5/iJdxCVGShp6koF57X+V1t6Q8WtmLDXqKCD+c1pg6RisAaO+Rt/XenVPlYngIS65k/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740283416; c=relaxed/simple;
-	bh=nfWXgAqEYJpJZrZYKtP2v1+tL0HqoQwQS+EghXX7mHs=;
+	s=arc-20240116; t=1740284669; c=relaxed/simple;
+	bh=4utJuDlOsvUYHCnvQ6QA0Gjx0TL5LAtKGca9nQJw+lQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApPkEVXP3Yg0Tv3jrrpWb+MfT9JDqa33gIEqy60hsH+hMumD8rBfL+zw6jVp9eJlbVPti1ux4GYl4u5FpbFmnpwbOb841d2de5X3lHLYrPx81VA2InP1HALI35aynXRu2hhF73OGNzznyaiZrivlZN8QxleXRwXR4Rjo/cqqKQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ZEx5XNFT; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=JIgRN+3XWpbCfDnE3nN0Ey2Rm2UwEB6WW3O8E2/greM=;
-	b=ZEx5XNFTiFbr2pRhIM56TXOExKvgiNVvoa9/oTHwGTqtXcxtydYDRufHTk9p+1
-	K8/+114z56brO9VRWxiou3kcDvtHJBpgyNA83/HvdBdysTotDNrtm2cYFDO8zRLG
-	O7g5v61Mwp4PcQZuRXoffIT1hcQkIU6n54GdxFmZ3ZYv0=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAHj_D0nbpnJRTGCQ--.24347S3;
-	Sun, 23 Feb 2025 12:03:01 +0800 (CST)
-Date: Sun, 23 Feb 2025 12:03:00 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Mathew McBride <matt@traverse.com.au>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH] arm64: dts: freescale: ten64: add usb hub definition
-Message-ID: <Z7qd9GPGM8+NBioH@dragon>
-References: <20250129045352.10728-1-matt@traverse.com.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEFwhbWYAT0fPTmBeASAdnoWIfB4p8Q84HtAl8DQYO5248/GKKa1ds+C6oh+kU8BHrg7twrlW6CLkw1JHGOkNQhTVy18gSZcG8jGvhVIuLa4g5zcIa6jh01q233QXQwmLbveFjOpkgsW95tCUkWrh2Xt2rQ9FDdZIpEdjWRBO5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lVmSGP37; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22100006bc8so58266125ad.0;
+        Sat, 22 Feb 2025 20:24:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740284667; x=1740889467; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4utJuDlOsvUYHCnvQ6QA0Gjx0TL5LAtKGca9nQJw+lQ=;
+        b=lVmSGP373YuY3CxVFhKk64ZjJwI/Qk45kHaE/B+EGACqTttPSUvUQ3ncVIWAoKHR6n
+         +QOXeuTOF2Ufv69A05VGJsKpvBcbPheBoLUil8mC8WYyp7QXHVtHXqD3zOvghA/pSDa4
+         WKG7xuuQKp9k6OzvaDfx3xLTbWQ2+Q4uxjt41gyHGd49HSh5OgZ2u6Gz5Gm4BqQU1myJ
+         BSXASkuDPqXDm/Wvx36mQX46iVVZ8IrpIO117ANCGXg021CoJGLx76n09aHLvqhND9bv
+         fM/HuJwwIw54QMyrIZbyiPSnD0AflUACnBDZu4Hj9YOHGshKf8Q7iyswS937z5huCWRl
+         mk1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740284667; x=1740889467;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4utJuDlOsvUYHCnvQ6QA0Gjx0TL5LAtKGca9nQJw+lQ=;
+        b=UhbYozASBg8bJY3IEenqcnI93MBLHzhlNpJ8qfVh4nG5VIj4o11mjnUY7M1hgHdL3v
+         yiG8s72q2w+VThcWXQHcdNg74WJvoeYN3+LyLb3dD1EVb3t6eSJA1YeVmhfZ7druCO96
+         d6h9H6sFCIm2Pyyi/mdpR9L2nX1TsnXilAuGB4d0IrrwU1hDUNKRzIFqoqloEQyer0EI
+         s8Neq2HKQN15VegCKdQ83jASN5mYBAOwHS6+qbqeoHBjVILd+9sAlLXs4h7BA5w8VagO
+         mqB/ywUcniWpcF2C7xcYewO7xibNbJte+YcBqmMHMVEh9rUyQygQinOfr6k4u8VbOt0u
+         6Fog==
+X-Forwarded-Encrypted: i=1; AJvYcCUXhJJT3NKwcuXFdffhgVc1c2a/e6uinApYId5krZgADxncRNhfoxKzPIR1BvH3QGa0a559wkMmoqonDYLjSjv9@vger.kernel.org, AJvYcCWs1IezDfPxbywSD50lNap0cT7Jt2cjCLBLarSX5qZWRpSzUI/kZOWrdIiAAVblttRYBZC7UcRjWQtmbYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmtjeE27Fp8tqCJcNtrfNJNjMxy3j8azw/bcE/umbo+jlWLDzj
+	ue10g0ravJm8QkcpUzbel8mNaYHWwHWunrLza8q4eWh1AMptQ9Nh
+X-Gm-Gg: ASbGncsK1v1BqswrtyK90L5NlU/S4S4K/TBUGme6KLqHz5vqWKLEQr02Lw32nxyc5rV
+	1Eq+OEbB9WE/NCYa/al0Nse3jIjbLBrxG53N4k7aema9DPSNE0Bc6GQYaCNPFLnIj0zia0L/6jM
+	XTOH1iJhc4XzFwSJFOfVg4GQcY81gwy/hZHrVL/IoqxQoF3d3qwZBWNJryIRLV2/YUgmZ1A65vk
+	bU1H0QBdS/eKpvncv92IBrKB0GSaHIqmZxhpQOg6eqbxDEWvXr5VvvjIMABcx9j2CElHQPHdpqm
+	ETRxsz4U2s10RjGJcNcw8yyJ/Tv2ZYZVQq/hGmSKILC6ixk6
+X-Google-Smtp-Source: AGHT+IETNzBByeQOq7EpOZLfBRs/ixt5hXArruM21mHPF3nbXPJTnmlS5y+q4HGQ3M6zAW3jcsqWZA==
+X-Received: by 2002:a17:902:fc48:b0:21f:61a5:67a5 with SMTP id d9443c01a7336-2219ffdde5fmr151052365ad.42.1740284667039;
+        Sat, 22 Feb 2025 20:24:27 -0800 (PST)
+Received: from ritvikos.localdomain ([2405:201:5501:4115:b161:5a88:9ecd:1b07])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d7c6f419sm155327335ad.200.2025.02.22.20.24.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 20:24:26 -0800 (PST)
+Received: by ritvikos.localdomain (Postfix, from userid 1000)
+	id 99211ED9140; Sun, 23 Feb 2025 09:51:12 +0530 (IST)
+Date: Sun, 23 Feb 2025 09:51:12 +0530
+From: Ritvik Gupta <ritvikfoss@gmail.com>
+To: Seyediman Seyedarab <imandevel@gmail.com>
+Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2] selftests/mount: Close 'fd' when write fails
+Message-ID: <Z7qiOE3EXo8BtdY8@ritvikos>
+References: <20250222114709.50011-1-ritvikfoss@gmail.com>
+ <20250222121249.50588-1-ritvikfoss@gmail.com>
+ <zshes4xtyir7zrrybeqj2amrxyctwqnuvx2tqyktv4vsfstxqi@pvdq2rb5m47j>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,118 +91,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250129045352.10728-1-matt@traverse.com.au>
-X-CM-TRANSID:Ms8vCgAHj_D0nbpnJRTGCQ--.24347S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFyUGr45JF1rCr1DKr4fuFg_yoW5XF4kp3
-	Z8ursrCrs5XFy7t3W2gF1xtFZ8Ww4rKF93Zr98Jr4UAryDuasrKrnFkr43uF1UXF18Cw4a
-	vF4DZry2kFnIg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UoMKZUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBX7ZWe5p-zUGwABsE
+In-Reply-To: <zshes4xtyir7zrrybeqj2amrxyctwqnuvx2tqyktv4vsfstxqi@pvdq2rb5m47j>
 
-On Wed, Jan 29, 2025 at 03:53:52PM +1100, Mathew McBride wrote:
-> A device tree binding for the Microchip USB5744 hub controller
-> was added in commit 02be19e914b8 ("dt-bindings: usb: Add support
-> for Microchip usb5744 hub controller").
-> 
-> U-Boot will consume this binding in order to perform the
-> necessary actions to enable the USB hub ports over I2C.
-> (We previously used our own out-of-tree driver for
-> this task)
-> 
-> The Ten64 board does not have any switchable supplies
-> for the voltage rails utilized by the USB5744, so a
-> pair of dummy supplies have been added to facilitate
-> operation with U-Boot's hub driver.
-> 
-> Signed-off-by: Mathew McBride <matt@traverse.com.au>
-> ---
->  .../boot/dts/freescale/fsl-ls1088a-ten64.dts  | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dts b/arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dts
-> index bc0d89427fbe5..fc15c83d222f6 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a-ten64.dts
-> @@ -87,6 +87,22 @@ sfp_xg1: dpmac1-sfp {
->  		los-gpios = <&sfpgpio 7 GPIO_ACTIVE_HIGH>;
->  		maximum-power-milliwatt = <2000>;
->  	};
-> +
-> +	usb1v2_supply: regulator {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usbhub_1v2";
-> +		regulator-min-microvolt = <1200000>;
-> +		regulator-max-microvolt = <1200000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	system3v3_supply: regulator {
+Yes, the kernel will handle the 'fd' cleanup automatically, but
+the existing implementation already closes it before exiting.
+However, in case where write fails, its unhandled.
+This patch addresses that gap :)
 
-Same node name for two regulators above?  Won't kernel complain?
+Nevertheless it's subjective indeed.
+Thanks for reviewing!
 
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "system_3v3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +		regulator-always-on;
-> +	};
->  };
->  
->  /* XG1 - Upper SFP */
-> @@ -231,6 +247,12 @@ at97sc: tpm@29 {
->  		compatible = "atmel,at97sc3204t";
->  		reg = <0x29>;
->  	};
-> +
-> +	usbhub: usb-hub@2d {
-> +		compatible = "microchip,usb5744";
-> +		reg = <0x2d>;
-> +	};
-> +
->  };
->  
->  &i2c2 {
-> @@ -378,10 +400,33 @@ partition@9400000 {
->  	};
->  };
->  
-> +/* LS1088A USB Port 0 - direct to bottom USB-A port */
->  &usb0 {
->  	status = "okay";
->  };
->  
-> +/* LS1088A USB Port 1 - to Microchip USB5744 USB Hub */
->  &usb1 {
-> +	#address-cells = <1>;
-> +	#size-cells = <0>;
-> +
-
-Nit: unnecessary newline
-
-Shawn
-
->  	status = "okay";
-> +
-> +	hub_2_0: hub@1 {
-> +		compatible = "usb424,2744";
-> +		reg = <1>;
-> +		peer-hub = <&hub_3_0>;
-> +		i2c-bus = <&usbhub>;
-> +		vdd-supply = <&system3v3_supply>;
-> +		vdd2-supply = <&usb1v2_supply>;
-> +	};
-> +
-> +	hub_3_0: hub@2 {
-> +		compatible = "usb424,5744";
-> +		reg = <2>;
-> +		peer-hub = <&hub_2_0>;
-> +		i2c-bus = <&usbhub>;
-> +		vdd-supply = <&system3v3_supply>;
-> +		vdd2-supply = <&usb1v2_supply>;
-> +	};
->  };
-> -- 
-> 2.45.1
-> 
-
+Regards
+Ritvik
 
