@@ -1,85 +1,180 @@
-Return-Path: <linux-kernel+bounces-527716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418D5A40E77
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:47:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E61E5A40E87
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44257AA693
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:46:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 452253B38BD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFC205E35;
-	Sun, 23 Feb 2025 11:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6hIdrU4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC0B205E3C;
+	Sun, 23 Feb 2025 11:50:18 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF71FCF54;
-	Sun, 23 Feb 2025 11:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7EB1FCCF7;
+	Sun, 23 Feb 2025 11:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740311252; cv=none; b=SZYIqf6lna8KRRbmvm9n8M40xu4phJsGVsJR+EXn3U/MlOJ3xISE+p3SOhzj9Z3Xaf5VlU84s0nikpshJareWNZvbKXWa5lz0DewJ09Ty+acgcZhiOkb4WbaBASu2PP1HuTOjaW1HWj+4yLw4iJQQsbT/oUHqFkkwQ2tGlsrmuk=
+	t=1740311417; cv=none; b=lYm9r/MRlls/I6LnN92HpjAFvgijeJRNit2jk0Lr76RHGPiXr9NsI9B19ssjQAOf2RHJLL7qBtYDje/PPyg/aeQUSmCS3DXfYoOne3vgiKhIQ6Z3ad4HBh6nTKUGzLq8PHlHOmpiOF/5wTaLkX1Iu+wccGr5ygHtW6xLYilUt54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740311252; c=relaxed/simple;
-	bh=c4aBh0SYBAutVvanVxoT09U90yHT1CI9HJ/ZAilY5pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHj00b4bkzKyEv9PecVjoiaFm+LIygsRfdpyFNJVnE/4jNN2UZAvkeujYagxquNp6Hnd+Ipos6gzNwyt1dRYP8BWfkN8MvlrR4VwXCUNN1qte0SPZbzOHIlZTcySUbohbKBujIkpK/nnEO9LIJphXf8OrWeJe5iXcElOkFdBq3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6hIdrU4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3B5AC4CEDD;
-	Sun, 23 Feb 2025 11:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740311252;
-	bh=c4aBh0SYBAutVvanVxoT09U90yHT1CI9HJ/ZAilY5pw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d6hIdrU4aGsFHMMbxt1e9/3Y0ICd4bfWi47R5Uug8BSA/kXMSRCX/EC9EBIX5UAXG
-	 wZMAjExlH1Nyj42BjFD4Ugzxw+Vj9xckTxsnHtxaw/WyZeETnHy//jyUeOv4E2SaxA
-	 pmA/At6I4FTTbqRtU19T5ZKg5i2K7YvonGYCX4eQTQY6ecbWowqRNB/gnLcQQBLy/A
-	 sDDXxfvevXqY7hGH26jvPfeECvlD/beQoi3rc3yn7s/1iIQqHRSZJTwW3OoRUGyMlV
-	 oDFmIa4TReSq41pgSUls1VpcL4rPUKA7QK2gHOfU9aisL0iqhNs8O2iTxu0wuMKUOY
-	 pol7tTiEHedLw==
-Date: Sun, 23 Feb 2025 12:47:29 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Ming Qian <ming.qian@nxp.com>
-Subject: Re: [PATCH 1/2] media: dt-bindings: nxp,imx8-jpeg: Add compatible
- strings for IMX95 JPEG
-Message-ID: <20250223-military-garrulous-toucan-c9a410@krzk-bin>
-References: <20250221-95_jpeg-v1-0-053decdb452c@nxp.com>
- <20250221-95_jpeg-v1-1-053decdb452c@nxp.com>
+	s=arc-20240116; t=1740311417; c=relaxed/simple;
+	bh=3eCCx4Y0IbvgrAHrne90VeddDkI4NvjGwcjNSwycqT4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Ad5M5VTrm2xns686/OGy9aarCQAcqUmzq1kRhjXt6UgR/QhmR8NoteP/Qw5EiEL2DMgD9eZN/w3uwg/E44m1Zi7qwKEAXgvL1h65ocW4H/i/L3/SWXA8ObaZe7Cz++LwXdKIQexbzj81uqalcEO+4xxzbyGbrLqUkQMD5mhIRMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from [127.0.0.1] (unknown [180.172.118.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id A2057342FA9;
+	Sun, 23 Feb 2025 11:50:08 +0000 (UTC)
+From: Yixun Lan <dlan@gentoo.org>
+Subject: [PATCH v6 0/4] riscv: spacemit: add gpio support for K1 SoC
+Date: Sun, 23 Feb 2025 19:49:31 +0800
+Message-Id: <20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250221-95_jpeg-v1-1-053decdb452c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEsLu2cC/2XQTU7DMBAF4KtEXmNkj/+z4h6IRWxPUotSFyeNQ
+ FXvjpMKSNTljPQ9v/GVjFgSjqRtrqTgnMaUT3XQTw0Jh+40IE2xzgQYSGbBUiboO6fDOWWque8
+ d9I4JCKSCc8E+fa1hr2/3ueDnpWZO9yXx3Yg05I+PNLWNiAaiZqLrOwM1WzGOjhmNGDVHpgQXw
+ mFvybZL29QmigE39w5l2Y+0z5cS8HikVllruwjcxa6dOVl6HNI45fK93lhXS5H1HMfk9pyZU0Y
+ 1M4AeMXTIXgY8TTk/5zKsOTP8WV4f2FmoFqyUso8APMQHKzYW1M6KxRrvjZeSRw0PVv7a+kXAd
+ 7ZeQKWWPDgVGHfywap/u3za1qq1sxYYBBqvzc7ebrcfzIYGQR0CAAA=
+X-Change-ID: 20240828-03-k1-gpio-61bf92f9032c
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>
+Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
+ Jesse Taube <mr.bossman075@gmail.com>, 
+ Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+ Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
+ Yixun Lan <dlan@gentoo.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4121; i=dlan@gentoo.org;
+ h=from:subject:message-id; bh=3eCCx4Y0IbvgrAHrne90VeddDkI4NvjGwcjNSwycqT4=;
+ b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnuwtfg/am9C+hwF64sZ4DvTz/KGpjKdI7T/+j8
+ fmHkIKFwHaJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZ7sLX18UgAAAAAAuAChp
+ c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
+ CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277Vs3D/sFNIBtvDd+LTxtWW
+ Rlqz2AXrdu8ZGOu00/lzbbZOSPCb3Hw77q7VpEB1zp7ArGZ5NgFGZ5sMs8sH+p/BzltNXKC5vko
+ XFOFxJDsXV989LiqtQGpqoODq8hpRG2pZ01uBC3y7iDSyLZwENwvCHZ1YptHo7OtQp5WReW1Uxz
+ lBiKWhAtYr4TjgPIg5WcLcAohxQiNBb/czIyr1AhOa5npt7RlPr9gusRv6jdcmMZlkzu/1rIXHC
+ +Rz3z6FYpiLILtjF3haAcVbZHSO4tOJtYtqslEQ8WUpoMLxF+WivRUG5dOr5lnJOuIswLy6TVf2
+ rTgJVg/OjdEhvHKJxQqM15gTMNU2QDy1PqSTI81VETFMz2PLwIfYLNKyrqpQMZ8fwtysQU6jcFs
+ Hc2WIZXknaZ5RwtC3gT8cfmBMzyFz6TG7+Mym4cltuSMHNzt/kjzw3xAN2H3BADO2qohn7dJR2R
+ B/AhuQXdnKwwm/Qv0HC9MMrJ61fwHZh7clp8Q/SPl4pzQJ6HYz8k3l+QuXTQPyAw7wVyh74OF1L
+ 5NFATEI7ZFeIepQKLhmmIyJeEdS4KjCPUaQIjw1LqSkdoPq4pJbZ+dlQCug2cuaDQNJdtQYa1YN
+ 48+Lc11EflehFYmD3FF2lx6P5Nwm/nYBRUed2YwGHE+s2OKBxrPYKjMEbzmrSRdvKxGA==
+X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
+ fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
 
-On Fri, Feb 21, 2025 at 12:48:18PM -0500, Frank Li wrote:
-> Add compatible strings "nxp,imx95-jpgdec" and "nxp,imx95-jpgenc", which
-> are backward compatible with "nxp,imx8qxp-jpgdec" and
-> "nxp,imx8qxp-jpegenc". i.MX95 just need one power domain which combine
-> wrap and all slots together. Reduce minItems of power-domains to 1 for
-> i.MX95 and keep the same restriction for others.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/media/nxp,imx8-jpeg.yaml   | 28 +++++++++++++++++++---
->  1 file changed, 25 insertions(+), 3 deletions(-)
+The gpio controller of K1 support basic GPIO functions,
+which capable of enabling as input, output. It can also be used
+as GPIO interrupt which able to detect rising edge, falling edge,
+or both. There are four GPIO ports, each consisting of 32 pins and
+has indepedent register sets, while still sharing IRQ line and clocks.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+The GPIO controller request the clock source from APBC block,
+In this series, I haven't added the clock support, but plan
+to fix it after clock driver is merged.
+
+Due to first three GPIO ports has interleave register settings, some
+resources (IRQ, clock) are shared by all pins.
+
+The GPIO docs of K1 SoC can be found here, chapter 16.4 GPIO [1]
+
+Note, this patch is rebased to v6.14-rc1.
+
+This patch series has been tested on Bananapi-F3 board,
+with following GPIO cases passed:
+ 1) gpio input
+ 2) gpio output - set to high, low
+ 3) gpio interrupt - rising trigger, falling trigger, both edge trigger
+
+This version should resolve DT related concern in V4, and register each bank as
+indepedent gpio chip in driver, no more sub children gpio DT node needed.
+
+One problem is still not resolved, the interrupt cells parsing isn't corect.
+but it works if request gpio irq via gpiod_get() + gpiod_to_irq()
+
+Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf [1]
+Link: https://lore.kernel.org/all/20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org [2]
+Link: https://lore.kernel.org/all/20241016-02-k1-pinctrl-v5-0-03d395222e4f@gentoo.org/ [3]
+Link: https://lore.kernel.org/all/20250218-gpio-ranges-fourcell-v1-0-b1f3db6c8036@linaro.org [4]
+Signed-off-by: Yixun Lan <dlan@gentoo.org>
+---
+Changes in v6:
+- rebase to threecell gpio patch which proposed by LinusW at [4], 
+  drop unneeded *xlate(), *add_pin_range() function
+- add SPACEMIT prefix to macro
+- adjust register comments
+- drop 'index' member, instead calculate from offset
+- add IRQCHIP_SKIP_SET_WAKE as gpio doesn't support irq wake up
+- drop #ifdef CONFIG_OF_GPIO
+- move interrupt mask disabling/enabling into irq_*mask()
+- Link to v5: https://lore.kernel.org/r/20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org
+
+Changes in v5:
+- export add_pin_range() from gpio core, support to add custom version
+- change to 3 gpio cells, model to <bank number>, <bank offset>, <gpio flag>
+- fold children DT nodes into parent
+- Link to v4: https://lore.kernel.org/r/20250121-03-k1-gpio-v4-0-4641c95c0194@gentoo.org
+
+Changes in v4:
+- gpio: re-construct gpio as four independent ports, also leverage gpio mmio API
+- gpio interrupt: convert to generic gpio irqchip
+- Link to v3: https://lore.kernel.org/r/20241225-03-k1-gpio-v3-0-27bb7b441d62@gentoo.org
+
+Changes in v3:
+- dt: drop ranges, interrupt-names property
+- Link to v2: https://lore.kernel.org/r/20241219-03-k1-gpio-v2-0-28444fd221cd@gentoo.org
+
+Changes in v2:
+- address dt-bindings comments, simplify example
+- rebase to 6.13-rc3 
+- Link to v1: https://lore.kernel.org/r/20240904-03-k1-gpio-v1-0-6072ebeecae0@gentoo.org
+
+---
+Yixun Lan (4):
+      dt-bindings: gpio: spacemit: add support for K1 SoC
+      gpio: spacemit: add support for K1 SoC
+      riscv: dts: spacemit: add gpio support for K1 SoC
+      riscv: dts: spacemit: add gpio LED for system heartbeat
+
+ .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml |  81 ++++++
+ arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts    |  11 +
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi       |   3 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi               |  15 ++
+ drivers/gpio/Kconfig                               |   8 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-spacemit-k1.c                    | 277 +++++++++++++++++++++
+ 7 files changed, 396 insertions(+)
+---
+base-commit: 3d72d603afa72082501e9076eed61e0531339ef8
+change-id: 20240828-03-k1-gpio-61bf92f9032c
+prerequisite-change-id: 20250217-gpio-ranges-fourcell-85888ad219da:v1
+prerequisite-patch-id: 9d4c8b05cc56d25bfb93f3b06420ba6e93340d31
+prerequisite-patch-id: a166abd76d3f29768856440830c081bf40511a98
 
 Best regards,
-Krzysztof
+-- 
+Yixun Lan
 
 
