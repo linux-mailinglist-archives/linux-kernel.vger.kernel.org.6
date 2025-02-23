@@ -1,120 +1,183 @@
-Return-Path: <linux-kernel+bounces-527867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192D5A4109F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:00:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36186A410A6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 747A11896891
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:00:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FE3188992D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D94276C61;
-	Sun, 23 Feb 2025 18:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A7415747C;
+	Sun, 23 Feb 2025 18:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UHMr/ZnM"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eHGwCXnx"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7C1A29A
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB70D7081A;
+	Sun, 23 Feb 2025 18:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740333626; cv=none; b=VBJNUwNMEjj4RhcgZRRg4GLE3MlEnaIQXnJPWQmyWIfmuTn8u1iRkZ+ThRdOp18BO+hHFFj7GBW/CtsrbWL0QVpasyDJx85cTZp9a57KBBDfDflWeE9oWdThhZwE6HXJgyQywksbQ+t81V9lFbAKRE3qSZBeytYmb/9iSFh/ekk=
+	t=1740333830; cv=none; b=gq6OLWdahS1qpS8ZSGbe+0AZIexM5G4MywIOB66+KK0SyNmxk1PHYn4DhtYcA6D0TsNR5zjr3KngMTjkX7DQDqoQn/23SZ14APlB7GpAw8WLyzMvkgiMwZPAbz81BgrdM22wIH7YVoqHvtAK11TsQoaNiMICOsdHeQkwBpDy0RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740333626; c=relaxed/simple;
-	bh=+Im9YRI6ErMSvFn5MHRlPyI+Z6fjw8UDU9XqeX8HDNk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YcMzwwsMx/BG8IjmvA5sbCw74kw45xKlLeabdNVVdRbTnEwUenhD1LLJho3i17rPrVBXqqUVgwuD0E4cGOSQriwnEAAbEQNxy4lrudryKeRIE/cP56k8ktkJbwwSabLg0AZ3eBkrhY1AR0WXZ+/V8A41PJEP3j/UmeUg7DgHJZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UHMr/ZnM; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbda4349e9so530210066b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:00:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740333622; x=1740938422; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NxydFcyecz+dL8dA6dKLJ6I5K7PWZLIULBL5ZZCIwI=;
-        b=UHMr/ZnMed2uTUJ+Vc0F/6A5jzeH14xiXEsaRAcqzq/dBrZL63q7TAkN/J5igchaOr
-         q3txk39zr0fD+jsGuxm46S5WywvYnX0/sQWKmSXVvbxsjOMz/PRtu3TR2m3B47y8S2Tc
-         csgeWLmUDtFk8y4M95x3YvKAd1JV2wJ2RpOf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740333622; x=1740938422;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+NxydFcyecz+dL8dA6dKLJ6I5K7PWZLIULBL5ZZCIwI=;
-        b=t9XjaARJCjtxPQBZgtzKBuLURJyw72kX98iF33IaPtsWuScVLFOC0x83Ithn6LXiWj
-         UAR4qi5sGMqEtNu/qnbqqjab0+WCyO96lqgZjzJA6YfFSS4CpuapSTn/XlgIfMTD9E7Y
-         vaHXb+nZk9TvgWSymlHGdyZXJLrcP4gHt2gPxTyJnGujd+oFFc4McnCiesV0SgmMH/U7
-         9zgwm48bS04YM8u572UWncHlFhcug/qRQcxZqQNDLcgHqYAIfUt1fQxy3AOeeN/68Uce
-         fZ2zW7Yy82XXzxAxAHeRXAFxr4gYEH/QFjbUas4IlxB8P/aDV1K9Y8HaLT6gWbnOybMC
-         43lA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrbbtWeEqW37PYPjiaSe4PY5AqhuT3AaUgGB8jXvXVdekuJW2yd7rBIEgC10RxqVRhKIY0/Qgh/bvFwnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0To5iypl1Y1yrP9Zk4ZREU3t4Rn3emDbbMLtTej+mR32lfxDz
-	ySogaW8OXh3gY2SyG+7LZ8K9yzVF0lKRGn0UcqIA27GZ8qeli3rhe/LHeCXd/bdFXn2bU3mHFEw
-	Kjq4=
-X-Gm-Gg: ASbGncvl7xp3zrfm2hwqd504g45lBwM5TWypQ04nrOwer3NtillKZBgBz7w/JQOafx2
-	CebJOaPJFf6QsqPyqUBlutOICimkikGZO61sMdf6zGzfzTNyDUjhAF911zN+yWNZbnUKxsW9m3u
-	qDklYLfqZWikbpqxaIPhe7ZlS+jGVgwKsMyDOtT7egK/D0xQ3zzEnbvTRIN9E4Lets6Vhkt1P2b
-	heNRomJy/Cab0lExhzowKY91VnucHLX9Fc8zY4knsqehivx1riCJXA7aVTUo51zbSm6PAJWkPT/
-	tgKLVyN4DQKS/BGAthTi08206WAmUi4igiWtmejVlJAYtJK3DPnFgmlIrxLlDTYjj0p8kZuJrcF
-	W
-X-Google-Smtp-Source: AGHT+IFBwF4m5G/GC676PSICx9J7l68mR7tUJV3C+7QD6RTHJ9/h67yQndwo4rKTbn7c4b1ou8Frkg==
-X-Received: by 2002:a17:907:780e:b0:abb:e7b0:5442 with SMTP id a640c23a62f3a-abc0da2209fmr794544266b.26.1740333622531;
-        Sun, 23 Feb 2025 10:00:22 -0800 (PST)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8190d15esm1608330866b.16.2025.02.23.10.00.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 10:00:21 -0800 (PST)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaeec07b705so587589366b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:00:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV28v0nGy+L4HccQy1MXv+dLERKRgXLAOhNNugH07wLG0VIKS4Q8/eI3UNAzygxTaZNx2Lsxt7SLgc+f0U=@vger.kernel.org
-X-Received: by 2002:a17:907:7855:b0:abb:b092:dade with SMTP id
- a640c23a62f3a-abc0de0de6dmr826265366b.38.1740333621436; Sun, 23 Feb 2025
- 10:00:21 -0800 (PST)
+	s=arc-20240116; t=1740333830; c=relaxed/simple;
+	bh=vHoTYqH5kYLdCvoAFtXVHET6Lr3U8dENcUD3HaYCcZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=flQ8VSf2KEBAkuDXTNU36XkrkVviaOxD764pT9lmP0XxEi8eRbA0sEG8m3sOYaLMjABU6dUPCSX3acR9Vwy1PeLoTFeVzIFlLcfH7RJbd6mQcLYLJQ1bGE1gUjyJ7UhmE60oAJ373Qfl33RUWOVC09viDKHeLP2T0x2AEXjbW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=eHGwCXnx; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56592496;
+	Sun, 23 Feb 2025 19:02:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740333741;
+	bh=vHoTYqH5kYLdCvoAFtXVHET6Lr3U8dENcUD3HaYCcZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eHGwCXnxIBw6QRhY2zd1Ly9pL5XvMggWiB/ic03NPfxDJk0V4Lb/Md/lW6Arekk6p
+	 mlDk9Msq7eM41N7Px1H5K0NcWrYHD4RIpvHaXg1aixW2v3uE7kf91/ESk16VfaF39Y
+	 yHilU8aQvTSzkpIq46v2pa/EnC1kDRXfvjRWm+Y0=
+Date: Sun, 23 Feb 2025 20:03:30 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <20250223180330.GC15078@pendragon.ideasonboard.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <Z7bO1jT2onZFZwgH@infradead.org>
+ <CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com>
+ <Z7hulnJ4fwslRILy@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222190623.262689-1-brgerst@gmail.com> <Z7rsOVaxhfCJdn2P@gmail.com>
-In-Reply-To: <Z7rsOVaxhfCJdn2P@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 23 Feb 2025 10:00:05 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjSoFLsyU4Hz6BzoRGTWh_HqEo2fm2T8jvvEnAHB_i5Ag@mail.gmail.com>
-X-Gm-Features: AWEUYZmkWtQN0emdD6fXYlBuFTpr99EzxM5WZ_clbHIOYHajIVT9p5DwRNI9oCA
-Message-ID: <CAHk-=wjSoFLsyU4Hz6BzoRGTWh_HqEo2fm2T8jvvEnAHB_i5Ag@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Add a percpu subsection for hot data
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z7hulnJ4fwslRILy@pollux>
 
-On Sun, 23 Feb 2025 at 01:37, Ingo Molnar <mingo@kernel.org> wrote:
->
-> This can also be a drawback if it's abused by random driver code - so I
-> think it should at minimum be documented to be used by core & arch
-> code. Maybe add a build #error too if it's defined in modular code?
+On Fri, Feb 21, 2025 at 01:16:22PM +0100, Danilo Krummrich wrote:
+> On Thu, Feb 20, 2025 at 04:39:58PM -0800, Linus Torvalds wrote:
+> > Honestly, what you have been doing is basically saying "as a DMA
+> > maintainer I control what the DMA code is used for".
+> > 
+> > And that is not how *any* of this works.
+> > 
+> > What's next? Saying that particular drivers can't do DMA, because you
+> > don't like that device, and as a DMA maintainer you control who can
+> > use the DMA code?
+> 
+> [...]
+> 
+> > So let me be very clear: if you as a maintainer feel that you control
+> > who or what can use your code, YOU ARE WRONG.
+> 
+> When I added you to the original thread [1], it was exactly to get some
+> clarification on this specific point.
+> 
+> In my perception, a lot (if not all) of the subsequent discussions evolved
+> around different aspects, while this specific one is not even limited to Rust in
+> the kernel.
+> 
+> Hence, I'm happy to see this clarified from your side; it was still a remaining
+> concern from my side, regardless of whether the PR in question will make it or
+> not.
+> 
+> However, I also want to clarify that I think that maintainers *do* have a veto
+> when it comes to how the API they maintain is used in the kernel. For instance,
+> when an API is abused for things it has not been designed for, which may hurt
+> the kernel as a whole.
 
-Yes, please.
+I've been thinking this through over the weekend, and I see an elephant
+in the room that makes me feel uncomfortable.
 
-Everybody always thinks that *their* code is the most important code,
-so making it easy for random filesystems or drivers to just say "this
-is my hot piece of data" needs to be avoided.
+Three important statements have been made on the topic of rust for
+Linux. I'm going to include some quotes below, alongside with how I
+understand them. My understanding may be wrong, please let me know when
+that's the case.
 
-That is also an argument for having the final size be asserted to be
-smaller than one cacheline.
+- No maintainer is forced to deal with rust code at the time being.
 
-Because I do think that the patches look fine, but it's too much of an
-invitation for random developers to go "Oh, *MY* code deserves a hot
-marker".
+  This was mentioned multiple times in different forms, for instance by
+  Miguel in [1] as
 
-           Linus
+  "Some subsystems may decide they do not want to have Rust code for the
+  time being, typically for bandwidth reasons. This is fine and
+  expected."
+
+  or by Linus in [2] as
+
+  > You don't have to like Rust. You don't have to care about it. That's
+  > been made clear pretty much from the very beginning, that nobody is
+  > forced to suddenly have to learn a new language, and that people who
+  > want to work purely on the C side can very much continue to do so.
+
+- No maintainer can (ab)use their power by nacking rust abstractions for
+  the API their maintains.
+
+  This was made clear by Linus in [2]:
+
+  > So let me be very clear: if you as a maintainer feel that you
+  > control who or what can use your code, YOU ARE WRONG.
+
+- Breaking compilation of rust code in a released kernel is not allowed.
+
+  This statement is less clear in my opinion. It's made by Miguel in [1]:
+
+  "The usual kernel policy applies. So, by default, changes should not
+  be introduced if they are known to break the build, including Rust.
+
+  However, exceptionally, for Rust, a subsystem may allow to temporarily
+  break Rust code. The intention is to facilitate friendly adoption of
+  Rust in a subsystem without introducing a burden to existing
+  maintainers who may be working on urgent fixes for the C side. The
+  breakage should nevertheless be fixed as soon as possible, ideally
+  before the breakage reaches Linus."
+
+  The "ideally" in the last sentence is a subtle but important detail.
+
+  Then we had some patches that broke the -next rust build and were
+  dropped from v6.14, as mentionned in [3]. Greg
+
+  > > Regardless of holidays, you seem to be saying that Linus should
+  > > have accepted Andrew's PR and left rust with build failures?
+  >
+  > I can't answer for Linus, sorry.  But a generic "hey, this broke our
+  > working toolchain builds" is something that is much much much
+  > different than "an api changed so I now have to turn off this driver
+  > in my build" issue.
+
+  I haven't found a clear statement from Linus on this topic.
+
+Those three statements can't all be true together, we can at best have
+two. I would like to understand which one we will drop first, and I
+believe many other developers and maintainers are wondering the same.
+
+[1] https://rust-for-linux.com/rust-kernel-policy
+[2] https://lore.kernel.org/all/CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com/
+[3] https://lore.kernel.org/all/2025013148-reversal-pessimism-1515@gregkh/
+
+> But as mentioned previously, I do not think that this veto can be justified with
+> personal preference, etc.
+> 
+> - Danilo
+> 
+> [1] https://lore.kernel.org/lkml/Z5qeoqRZKjiR1YAD@pollux/
+
+-- 
+Regards,
+
+Laurent Pinchart
 
