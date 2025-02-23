@@ -1,113 +1,86 @@
-Return-Path: <linux-kernel+bounces-527617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE478A40D56
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:11:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B84DA40D58
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E5FE17B048
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF8661719E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2B011DACA1;
-	Sun, 23 Feb 2025 08:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CAA1FCD14;
+	Sun, 23 Feb 2025 08:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b="WWaxrVTl"
-Received: from mailrelay.tugraz.at (mailrelay.tugraz.at [129.27.2.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D813161FFE;
-	Sun, 23 Feb 2025 08:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.27.2.202
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="RCtDqBhC"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C832AF0E;
+	Sun, 23 Feb 2025 08:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740298266; cv=none; b=KyfRU40w9wpluTbFPt3jA8DSdhfh/kuKbUXrRsv7+ef+osZI6WjZZJhgHx+XGmnK4ZnDZetZ+GQE/ulzQ6j9tM5HUbRNNY1MaJG3lFnKKrwCAsRW5GxUfRfgvlAsr26Gj0fLLAGZoIKu/RJD+A88LtC0KGEri3Qwg/ERAE1Qb4M=
+	t=1740298492; cv=none; b=kEoccMryL34peuY5uO8aTwsbYMRi6Qx59AM7tacBY7zEe/fPwWedFoa2R3sbp1HUtC4MGy5jiMIqB5QaCN3+LVeiJmpwzlzrpSKbTJOQ4L0BL64bhmHUGuXpFI5M0z/gnxDAbGEFBAWr4h2D+1ft9vIFTQhY8sY0II6K9PI/w+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740298266; c=relaxed/simple;
-	bh=FO+ewNzs077bRy2Y7BPoaLABNBn813HrzRSMC+/zC0k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jH+zAWGSNMzTWzui5KXLtx0k5Y0UoNHEgd8aoWj4/kBu+p/93lkd50lapaAlUIUZ+1WVNqN8mlxb44WiCAU3sejTINfaNhPsXxYiWgFrugzcfVaoaisQITaZuoIeWj1WJwYLkClMm4b6xKBpDrUThTlOFEM1u6X3qEfOteRfvic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at; spf=pass smtp.mailfrom=tugraz.at; dkim=pass (1024-bit key) header.d=tugraz.at header.i=@tugraz.at header.b=WWaxrVTl; arc=none smtp.client-ip=129.27.2.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tugraz.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tugraz.at
-Received: from vra-172-163.tugraz.at (vra-172-163.tugraz.at [129.27.172.163])
-	by mailrelay.tugraz.at (Postfix) with ESMTPSA id 4Z0xPt52wlz3wPk;
-	Sun, 23 Feb 2025 09:10:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tugraz.at;
-	s=mailrelay; t=1740298243;
-	bh=LMpP0PNtOPYY2TeGglWfTOfZrmn0PHBp00YQa8N0dVk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=WWaxrVTlShi5aCaXfkcSEkDelV6036VV/oNtbKakqH03VZVZYTc3GFTPaFa99E4el
-	 ZUAraMwFNo4xw9OMfOsfxb1kb3gugsitbKKxS84yJVUcBerX5HOFCJHl4mIdozvyv/
-	 +K9dPq1pzYQ04yJ4MfUZBxhYyD5/PFVg2BotrTHQ=
-Message-ID: <06a07d325f7555c3dc72e4aac90580541ca61697.camel@tugraz.at>
-Subject: Re: Rust kernel policy
-From: Martin Uecker <uecker@tugraz.at>
-To: Piotr =?UTF-8?Q?Mas=C5=82owski?= <piotr@maslowski.xyz>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Boqun Feng <boqun.feng@gmail.com>,
-  "H. Peter Anvin" <hpa@zytor.com>, Miguel Ojeda
- <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- rust-for-linux <rust-for-linux@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>, 
- linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Date: Sun, 23 Feb 2025 09:10:41 +0100
-In-Reply-To: <D7ZDF8NZGPS3.3QBMAVC1NTUDM@maslowski.xyz>
-References: 
-	<CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
-	 <Z7SwcnUzjZYfuJ4-@infradead.org>
-	 <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
-	 <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
-	 <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
-	 <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com>
-	 <Z7VKW3eul-kGaIT2@Mac.home> <2025021954-flaccid-pucker-f7d9@gregkh>
-	 <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
-	 <2025022024-blooper-rippling-2667@gregkh>
-	 <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
-	 <D7ZDF8NZGPS3.3QBMAVC1NTUDM@maslowski.xyz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740298492; c=relaxed/simple;
+	bh=EsSDH5RDWjgl+Q0mmtZhHUdhAQy1893oIm7uW2kYDbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NJKPpGV+DlSL0602aGG0WIuMgUcr5cO/zgS+866TbwS9dFfBJ09No0p9V+CsivZqAl0yZrG8oVp46rjBV/CF1njvOVMLaANyOl8fMN8exVCIYBNWy0FNTb198U/yjOlTJaaOcgH14zhQ/rN6XiXFDRt6KJL1Wwlj0Ec+zLMdtNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=RCtDqBhC; arc=none smtp.client-ip=220.197.32.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=n3SRU/TDBo/tfOH6JoaPn06v8I/Q1ljpHPKh21D3Jgw=;
+	b=RCtDqBhCNuIrI9hy8GZFB1a0sHFGaDzajlFD8ozBMopzGI7CR/9wG3aUu/LHLd
+	0ouIQ679RbCOxLaOnRVbggWzKKP6jwSmP9r6nVDCLqs2bbJEinA5pqJ356RjVYtU
+	SfvLyTPKzL+nPQ6NszY8LSkEnekdnKoWPjHBUGiKxN3zo=
+Received: from dragon (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgB339XU2Lpn4weMCQ--.22264S3;
+	Sun, 23 Feb 2025 16:14:14 +0800 (CST)
+Date: Sun, 23 Feb 2025 16:14:12 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, francesco.dolcini@toradex.com,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] arm64: dts: freescale:
+ imx8mm/imx8mp-verdin-dahlia: add Microphone Jack to sound card
+Message-ID: <Z7rY1DCwS3RjjS9s@dragon>
+References: <20250217145744.179213-1-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TUG-Backscatter-control: G/VXY7/6zeyuAY/PU2/0qw
-X-Spam-Scanner: SpamAssassin 3.003001 
-X-Spam-Score-relay: 0.0
-X-Scanned-By: MIMEDefang 2.74 on 129.27.10.116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250217145744.179213-1-eichest@gmail.com>
+X-CM-TRANSID:M88vCgB339XU2Lpn4weMCQ--.22264S3
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyrKF13GFWfWw4xtFWDArb_yoWxKFb_Wa
+	n7CF1kJr1ktFsrG345Gr45Ja1I9ay8AryrWryDWFZ2v348Ja4rZ3s8KFn5WF1Uta929F47
+	Zw15XFsI9rWa9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0kR67UUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEhD8ZWe6kuHc6AABsA
 
-Am Sonntag, dem 23.02.2025 um 00:42 +0100 schrieb Piotr Mas=C5=82owski:
-> On Thu Feb 20, 2025 at 9:57 AM CET, Martin Uecker wrote:
-...
->=20
-> Oh, and once again: I am sure you knew all of this. It's just that a lot
-> of people reading these threads think adding a few annotations here and
-> there will be enough to achieve a similar level of safety | robustness
-> as what newly-designed languages can offer.
+On Mon, Feb 17, 2025 at 03:56:39PM +0100, Stefan Eichenberger wrote:
+> This patch series adds a Microphone Jack to the simple-audio-card of the
+> Verdin iMX8MM and iMX8MP Dahlia carrier board device trees to separate
+> the microphone and headphone functions.
+> 
+> This resolves the following boot-time kernel log message, which
+> indicated a conflict when the microphone and headphone functions were
+> not separated:
+>   debugfs: File 'Headphone Jack' in directory 'dapm' already present!
+> 
+> Stefan Eichenberger (2):
+>   arm64: dts: freescale: imx8mp-verdin-dahlia: add Microphone Jack to
+>     sound card
+>   arm64: dts: freescale: imx8mm-verdin-dahlia: add Microphone Jack to
+>     sound card
 
-I have been looking at programming languages, safety,=C2=A0
-and type theory for a long time, even before Rust existed.
-I heard all these arguments and I do not believe that we=C2=A0
-need (or should use) a newly-designed language.
-
-(Of course, adding annotations would not usually be enough,
-one often would have to refactor the code a bit, but if
-it is already well designed, not too much)
-
-But while I would love discussing this more, I do not=C2=A0
-think this is the right place for these discussion nor
-would it be insightful in the current situation.
-
-In any case, there is so much existing C code that
-it should be clear that we also have to do something
-about it.  So I do not think the question is even that
-relevant.=20
-
-
-Martin
-
-
+Applied both, thanks!
 
 
