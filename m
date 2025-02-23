@@ -1,229 +1,137 @@
-Return-Path: <linux-kernel+bounces-527864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F4F8A41095
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:53:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AD9A4109A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 694F917480B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D59D174BA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:54:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2B1D2F50;
-	Sun, 23 Feb 2025 17:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0E8155CBD;
+	Sun, 23 Feb 2025 17:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YN86qMYM"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhMQcmO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403042770B
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795AD2770B;
+	Sun, 23 Feb 2025 17:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740333208; cv=none; b=Ld3dUUWQUZ6OwnBaTaG/b+PPCFI9pRheQBsUc7RBLz5hW3iM3k4tmlsF3fd28ZlajaWw4UYfCPGi2uBP8E5eo9S02v6b4y7aLl9Ti2qdkprzHzkQOsykZNI3pwrUEB6W+nFJHvVzqa40Jo6fJAnbOCILoBjdNlGErd373OtAG9g=
+	t=1740333272; cv=none; b=jD0cK8GHjZOIqaXjrViix7+I9MD7EnTUHlfjbV4TWKDqqvx+t5nwx3r0MbSbdpIiBQz/HfB/xdeq2vuxDwGdOSLhyD+xi4quIca+67Ttc+v7onWnfjMdtZj9KY3n4rCiy6RVVsFbfUpevTzdVAy/b2QAGshukaV5f1O9Htr35f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740333208; c=relaxed/simple;
-	bh=HBJEMCaKI0H/esE4FLgB93h8z5b8F4J8jS+u9rIdLU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WE8nuer48Veb70Uk4QINSPnCYwGopWv/IZjBRBvHXhl+VtNYWiHFX10HWudaoa8JpcacBnPMiSX/HTccFGP0pDqKHYLwEW4zp+R1szcFm21PCronysRqBaT9wrDy9zCEPTtJxw8ZsdaVt8NRDa2qzJFJEXwoMqVbN60JeaeHZnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YN86qMYM; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30737db1ab1so28513621fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 09:53:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740333204; x=1740938004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JBbVLznRp3wr0ziewh2y83BSDd6c32bl40jV+ZXyexQ=;
-        b=YN86qMYMEXthyzYkaQfNdZ925HdEGApHXX65FEUtXPs7kuvNM78X5iqFuWkv/S06hu
-         xZh3ZSk4A1r3Uqg+pgpxYjjvJlhR7w2gjbtES782xsZJ/gUwlobD1LYkwDpsYUdk9OFw
-         pDWAsQ2tg+aoTwgMAYX9gjaFZn9RuiQr+Y32qxiDZ/aCPlSgQ+COzuxTwjELPC/Idzwr
-         zruYf6EKY6VKxqPJVc2+4lmPt+k9KsGgWbBl4GHekEFUVD/0ss3kbqxp1ULi+VyIfLzX
-         TBo735xXG27iOJv9QoXp/BxHCjqWheRs8omDtxeFB+nnwJIm3lLpn/OEVCMt1n3RbVFl
-         +RSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740333204; x=1740938004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JBbVLznRp3wr0ziewh2y83BSDd6c32bl40jV+ZXyexQ=;
-        b=BFTxBpkRetpX0nencqkpHkUuj7QEROnxLHyoG6zBnZx0zTGvL1GQfolEoN5ce52b0N
-         kBKGeXlkBVKxgH/ZxaLuqUVASJ+XIqm2WMGBlMd6+j9j31uMqxNHD3x0pmFiwo9UI0ql
-         1mybcWKV6UT1+Twk/izMxGtdlGlZNEDwGNklH9LQC5jo4R6IwPP2TP3BlxiIq0K8BImU
-         wPN7CRJDmPKyabdLiCjjZoTlz/Z0SJoKIm7pR01ijS5qLpHFLHXzUjcHSJ0R7FAC5uK0
-         rc+BTvHIa57uIppQqti+J9duAvdhD30XTRjffdACNK/OHqwnmYlqmFa9t9nEkxNp7zCx
-         3UFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXljCvmNOBHGfZ0TGd6WdaYv7LulpTBaZvYIoeJdEqOWKcTRatrzBsNtiUH5m01lEGyIcIBhVMqsfJmY9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzcTf46XtOMO4nYFKy5C1x5tTGtINe/X2OzjWOmK+xfvifAXTY
-	m/Mykk7bhftlgSEB04UeH++e8quNc8wOA/zdOMFxOtV0lo1B2niCXVP4x8mfpIG/a1Xt/Xcs+XQ
-	3vmX2WDzEgNBT8Om+/pPs6ywb9fqVnfgdZMM=
-X-Gm-Gg: ASbGncsu2IT1zD5lIPxZHloVxWOgwf32yIb5hDzN17QwPDOh49Dy4oVTMdPlJG/D49I
-	AnvuSSt5aPJyhyKhwpKUtg1Gh07J0sTnT7aXD1Aq5mvrVLuX0//7XQMQUuAzavcxTtwqyx0ACBC
-	CVO6Tc6Bk=
-X-Google-Smtp-Source: AGHT+IEH5vgzsoTHwYY3yT0gALB3H55PMPk2C7NUO9KIbuEMH6aHmjmjN9ZABpY1z8174RDjCcd+TTBPEihhynwDUDg=
-X-Received: by 2002:a2e:9497:0:b0:309:269e:3ac7 with SMTP id
- 38308e7fff4ca-30a5b18af54mr37509581fa.11.1740333203810; Sun, 23 Feb 2025
- 09:53:23 -0800 (PST)
+	s=arc-20240116; t=1740333272; c=relaxed/simple;
+	bh=9iFdhdTQZ2gneruKLG7YkE93h9YE3aeXMlyNM4pD9u8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIP0V28ztaYO0Pj+kdmGfGGgsK1xuJl5JcFehJrNXHyCyk9tOWV8NmXBbUiUUi0tWPJ3O1bUaOrlMXDHFyStDTBS5bU2269qSwuh6t+I+RzLar9YzMHG7sKBomMzAsxuHZ9nuOrMs55e/LbumMWognPb42q563CgT9FFACazUNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhMQcmO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 009D7C4CEDD;
+	Sun, 23 Feb 2025 17:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740333271;
+	bh=9iFdhdTQZ2gneruKLG7YkE93h9YE3aeXMlyNM4pD9u8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jhMQcmO5owvm412qh9aUibQCAE5R3H0Y3labMbi96L/jt2+CCd3WvH8UF16mZ5MQB
+	 Op9z/uv4OxpBHVLnUkOdjvePsC4VrM+yzCROUe68AVgBUrv7w2DmJHs4xbHfzB8QpG
+	 Ozv4nty8IY+SrpRbBFPQHCs0ru5G1hevXj0yQo/cLPvQgyoOxJf1iid9sarJrcIcRd
+	 eCJ2zlHemard7aIoWHBWDMYtSOYnbGfGHmDHpa7KlLg3WtovNvwgZK8HmKTQRBnOID
+	 k675DyqrTrGHvR6fyQY78uyW/dVn8TdfgorHiV6DURp3ebpe+dlJCScpuL1M0bgk3c
+	 jWSaiEQEmv7uA==
+Date: Sun, 23 Feb 2025 19:54:07 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Dave Young <dyoung@redhat.com>, Alexander Graf <graf@amazon.com>,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
+	Philipp Rudo <prudo@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+Message-ID: <Z7tgvwRkV-GAtBL_@kernel.org>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
+ <Z7WJD6eBLuIRnLwk@kernel.org>
+ <CALu+AoSaEthfed1NOYPiQgm_g-dhibVMRAp0+=_+9qTT4_x=tg@mail.gmail.com>
+ <d8c43707-65a2-4176-85e2-acdb4c9d16ad@amazon.com>
+ <CALu+AoR0BbmbZeOkLU55OpD8kxGsVnFs+pXgEC9Y_MpB4=GMvQ@mail.gmail.com>
+ <Z7dbxJNxlW2EA_aa@tuxmaker.boeblingen.de.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1738717785.im3r5g2vxc.none.ref@localhost> <1738717785.im3r5g2vxc.none@localhost>
- <25e2d5e4-8214-40de-99d3-2b657181a9fd@linux.alibaba.com> <5dd39b03-c40e-4f34-bf89-b3e5a12753dc@linux.alibaba.com>
- <CAK1f24ni707gcGpYKXqsb9XHxjx3froLs3DzVqkkNZdca_pw4Q@mail.gmail.com> <e7b276eb-960a-4e05-9f84-6152de9ac2ea@linux.alibaba.com>
-In-Reply-To: <e7b276eb-960a-4e05-9f84-6152de9ac2ea@linux.alibaba.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 24 Feb 2025 01:53:07 +0800
-X-Gm-Features: AWEUYZmOsMq7PEhlCoRG0Qy5DuQaQVGhhSIFYh_ZOZErn8gQjwRsWidGarZLfn8
-Message-ID: <CAMgjq7CNVrQFBozKfZyvXX9w6HqAEH6eSN+ZQFaerbueyyqArw@mail.gmail.com>
-Subject: Re: Hang when swapping huge=within_size tmpfs from zram
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc: Lance Yang <ioworker0@gmail.com>, linux-mm@kvack.org, 
-	Daniel Gomez <da.gomez@samsung.com>, Barry Song <baohua@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Matthew Wilcox <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "ziy@nvidia.com" <ziy@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7dbxJNxlW2EA_aa@tuxmaker.boeblingen.de.ibm.com>
 
-On Fri, Feb 7, 2025 at 3:24=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> On 2025/2/5 22:39, Lance Yang wrote:
-> > On Wed, Feb 5, 2025 at 2:38=E2=80=AFPM Baolin Wang
-> > <baolin.wang@linux.alibaba.com> wrote:
-> >> On 2025/2/5 09:55, Baolin Wang wrote:
-> >>> Hi Alex,
-> >>>
-> >>> On 2025/2/5 09:23, Alex Xu (Hello71) wrote:
-> >>>> Hi all,
-> >>>>
-> >>>> On 6.14-rc1, I found that creating a lot of files in tmpfs then dele=
-ting
-> >>>> them reliably hangs when tmpfs is mounted with huge=3Dwithin_size, a=
-nd it
-> >>>> is swapped out to zram (zstd/zsmalloc/no backing dev). I bisected th=
-is
-> >>>> to acd7ccb284b "mm: shmem: add large folio support for tmpfs".
-> >>>>
-> >>>> When the issue occurs, rm uses 100% CPU, cannot be killed, and has n=
-o
-> >>>> output in /proc/pid/stack or wchan. Eventually, an RCU stall is
-> >>>> detected:
-> >>>
-> >>> Thanks for your report. Let me try to reproduce the issue locally and
-> >>> see what happens.
-> >>>
-> >>>> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> >>>> rcu:     Tasks blocked on level-0 rcu_node (CPUs 0-11): P25160
-> >>>> rcu:     (detected by 10, t=3D2102 jiffies, g=3D532677, q=3D4997 ncp=
-us=3D12)
-> >>>> task:rm              state:R  running task     stack:0     pid:25160
-> >>>> tgid:25160 ppid:24309  task_flags:0x400000 flags:0x00004004
-> >>>> Call Trace:
-> >>>>    <TASK>
-> >>>>    ? __schedule+0x388/0x1000
-> >>>>    ? kmem_cache_free.part.0+0x23d/0x280
-> >>>>    ? sysvec_apic_timer_interrupt+0xa/0x80
-> >>>>    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-> >>>>    ? xas_load+0x12/0xc0
-> >>>>    ? xas_load+0x8/0xc0
-> >>>>    ? xas_find+0x144/0x190
-> >>>>    ? find_lock_entries+0x75/0x260
-> >>>>    ? shmem_undo_range+0xe6/0x5f0
-> >>>>    ? shmem_evict_inode+0xe4/0x230
-> >>>>    ? mtree_erase+0x7e/0xe0
-> >>>>    ? inode_set_ctime_current+0x2e/0x1f0
-> >>>>    ? evict+0xe9/0x260
-> >>>>    ? _atomic_dec_and_lock+0x31/0x50
-> >>>>    ? do_unlinkat+0x270/0x2b0
-> >>>>    ? __x64_sys_unlinkat+0x30/0x50
-> >>>>    ? do_syscall_64+0x37/0xe0
-> >>>>    ? entry_SYSCALL_64_after_hwframe+0x50/0x58
-> >>>>    </TASK>
-> >>>>
-> >>>> Let me know what information is needed to further troubleshoot this
-> >>>> issue.
-> >>
-> >> Sorry, I can't reproduce this issue, and my testing process is as foll=
-ows:
-> >> 1. Mount tmpfs with huge=3Dwithin_size
-> >> 2. Create and write a tmpfs file
-> >> 3. Swap out the large folios of the tmpfs file to zram
-> >> 4. Execute 'rm' command to remove the tmpfs file
-> >
-> > I=E2=80=99m unable to reproduce the issue as well, and am following ste=
-ps similar
-> > to Baolin's process:
-> >
-> > 1) Mount tmpfs with the huge=3Dwithin_size option and enable swap (usin=
-g
-> > zstd/zsmalloc without a backing device).
-> > 2) Create and write over 10,000 files in the tmpfs.
-> > 3) Swap out the large folios of these tmpfs files to zram.
-> > 4) Use the rm command to delete all the files from the tmpfs.
-> >
-> > Testing with both 2MiB and 64KiB large folio sizes, and with
-> > shmem_enabled=3Dwithin_size, but everything works as expected.
->
-> Thanks Lance for confirming again.
->
-> Alex, could you give more hints on how to reproduce this issue?
->
+On Thu, Feb 20, 2025 at 05:43:48PM +0100, Alexander Gordeev wrote:
+> On Thu, Feb 20, 2025 at 09:49:52AM +0800, Dave Young wrote:
+> > On Wed, 19 Feb 2025 at 21:55, Alexander Graf <graf@amazon.com> wrote:
+> > > >>> What architecture exactly does this KHO work fine?   Device Tree
+> > > >>> should be ok on arm*, x86 and power*, but how about s390?
+> > > >> KHO does not use device tree as the boot protocol, it uses FDT as a data
+> > > >> structure and adds architecture specific bits to the boot structures to
+> > > >> point to that data, very similar to how IMA_KEXEC works.
+> > > >>
+> > > >> Currently KHO is implemented on arm64 and x86, but there is no fundamental
+> > > >> reason why it wouldn't work on any architecture that supports kexec.
+> > > > Well,  the problem is whether there is a way to  add dtb in the early
+> > > > boot path,  for X86 it is added via setup_data,  if there is no such
+> > > > way I'm not sure if it is doable especially for passing some info for
+> > > > early boot use.  Then the KHO will be only for limited use cases.
+> > >
+> > >
+> > > Every architecture has a platform specific way of passing data into the
+> > > kernel so it can find its command line and initrd. S390x for example has
+> > > struct parmarea. To enable s390x, you would remove some of its padding
+> > > and replace it with a KHO base addr + size, so that the new kernel can
+> > > find the KHO state tree.
+> > 
+> > Ok, thanks for the info,  I cced s390 people maybe they can provide inputs.
+> 
+> If I understand correctly, the parmarea would be used for passing the
+> FDT address - which appears to be fine. However, s390 does not implement
+> early_memremap()/early_memunmap(), which KHO needs.
 
-Hi Baolin,
-
-I can reproduce this issue very easily with the build linux kernel
-test, and the failure rate is very high. I'm not exactly sure this is
-the same bug but very likely, my test step:
-
-1. Create a 10G ZRAM device and set up SWAP on it.
-2. Create a 1G memcg, and spawn a shell in it.
-3. Mount tmpfs with huge=3Dwithin_size, and then untar linux kernel
-source code into it.
-4. Build with make -j32 (higher or lower job number may also work),
-the build will always fall within 10s due to file corrupted.
-
-After some debugging, the reason is in shmem_swapin_folio, when swap
-cache is hit `folio =3D swap_cache_get_folio(swap, NULL, 0);` sets folio
-to a 0 order folio, then the following shmem_add_to_page_cache will
-insert a order 0 folio overriding a high order entry in shmem's
-xarray, so data are lost. Swap cache hit could be due to many reasons,
-in this case it's the readahead.
-
-One quick fix is just always split the entry upon shmem fault of 0
-order folio like this:
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 4ea6109a8043..c8e5c419c675 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2341,6 +2341,10 @@ static int shmem_swapin_folio(struct inode
-*inode, pgoff_t index,
-                }
-        }
-
-+       /* Swapin of 0 order folio must always ensure the entries are split=
- */
-+       if (!folio_order(folio))
-+               shmem_split_large_entry(inode, index, swap, gfp);
-+
- alloced:
-        /* We have to do this with folio locked to prevent races */
-        folio_lock(folio);
-
-And Hi Alex, can you help confirm if the above patch fixes your reported bu=
-g?
-
-If we are OK with this, this should be merged into 6.14 I think, but
-for the long term, it might be a good idea to just share a similar
-logic of (or just reuse) __filemap_add_folio for shmem?
-__filemap_add_folio will split the entry on insert, and code will be
-much cleaner.
+KHO uses early_memremap()/early_memunmap() because it parses FDT before
+phys_to_virt() is available on arm64 and x86. AFAIU on s390 phys_to_virt()
+can be used at setup_arch() time, so it shouldn't be a problem to add
+appropriate wrappers.
+ 
+-- 
+Sincerely yours,
+Mike.
 
