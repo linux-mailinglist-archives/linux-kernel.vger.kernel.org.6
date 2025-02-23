@@ -1,192 +1,130 @@
-Return-Path: <linux-kernel+bounces-527858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659C2A4108C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:44:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01509A4108F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:48:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9D5C3B8B61
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:42:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA3A7A7315
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3750F1632C7;
-	Sun, 23 Feb 2025 17:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860EC15573F;
+	Sun, 23 Feb 2025 17:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTNKRxuF"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="A+c6bIUT"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD07158558;
-	Sun, 23 Feb 2025 17:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96DB8494;
+	Sun, 23 Feb 2025 17:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740332560; cv=none; b=H1Lsqrj9Sp2MqvTCHhijBVzTnOp1AaJkGhA/vDNQFdQF7mSj5KgaKP3K+/wHo6DdtcIUgkGhRG8Vs+vp7P14y7OBs+ZuckRMbuDQOnB1HxUODNXA6ulfua8W0N7KJnBBaM/yInZVwgygczWaL+uUgCLW2+XLAf5SrcI9YiXupMo=
+	t=1740332911; cv=none; b=C9k2HsvQciNZw9jeSy4trg9ohv7EPJWSCWZTdTbt6+r0LHVYuOQNqpmydaueqR/qhDoIJ+Jy+msRB9dOFsB/KGxoELnbgHA/wJlBiKNvdGFhfpACkpi0UtCZazKXlf/ofLtEZkV0mkUd/+VzkCRRwAcZ4VgdCRMc3OBus+oJGzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740332560; c=relaxed/simple;
-	bh=Z9EHzj/9TMsdRybcSGrBxIUApr0DZUACq6j0urRmUsI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c8n0xGKRPP8MTgE2ZOoBm1aHoKOB5en2Z/V1deuQydnN5SYL43DnE4xy+L6Fx5NCLUKfgOdp6ifp1pwBXllt1niI86oX6tHt2ielitdjIK16hu8OyxmvB84OnLlbmRMYqgKj6glzfGaLkMT+1Qd8fAE9VYNHjjeXY+LhZyA365c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTNKRxuF; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so5693450a91.1;
-        Sun, 23 Feb 2025 09:42:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740332558; x=1740937358; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+/OYTmylIIw4plgNkwf6eTBea+h42xj2aKz3F23uVE=;
-        b=HTNKRxuFGVXCH9RPih7FnU9R/H/7CSE1NcztR7wsptyPWhAt0FDsuDvUXdhJdRBBH3
-         b9Dc6zI3tCBW2z9kZkSdg9t1dM+gPJwfFg65msFM3msM8ntNK5uE1T85FfXnSDQpWtvK
-         JQeZglVg7cc0c1kCeHtiHqJLbZetWAX+s+w+LDWmvIxXgDQf8YyYsE74f9W5PfDN+FLG
-         Mi5MaSwINNPe8vy38hyR0vwGnPZ2HeJJA0v+6ZphQi1hl1v/BCOnVrhw0SqwziFBebUr
-         LH4ioYwcZ44us9jp1fFobmdk5p5w5KSrMwtAcpmhhOSj4/Zt04duK3XqLlzBNIXMIJfK
-         cRbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740332558; x=1740937358;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A+/OYTmylIIw4plgNkwf6eTBea+h42xj2aKz3F23uVE=;
-        b=AbInw6iqCgHWUORgAjUvitGsXynWq4HGLHwly6Be+nrvZHkYquWcSWe2B3uJP3PeLR
-         ceskmiTNACUcIi6G65dB4kBfkrnZhVzoTZaZp7zTHx0FVsf/ICLpvanhqu43xh7RvCHy
-         FLUkJPvi3EO6EaKDebZ5WUEULzi4pHAlcvDAGKvwLlL7vjt7B+uQmBzWohBP0ugmPhkI
-         PzjMmRPbX+ZlSLgCwVAFxIKzZqG3KtjertIFIxqvU7okJl1mTKJ+0uXOU6Mk1Lrm7IX+
-         /4e+ekgeKEMlpVhb1CYNPleRNP3LwNWEBqcg6WFmkOfFElvyxk313/NsZq7lnWd6sYfa
-         SZqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEtm0okF8lPMV7Mp+S+bFOWeddkjT8ibIYZvz/GUQzsZrQQ5bEXPbW0uXI3mvLcsawb/gWXVfk7Mh1TivsJYQ=@vger.kernel.org, AJvYcCWhdcIsQq/KTxnwRVq+FFW6aPAnKwTtsviSYvgiidcE1rC2gx6+B5UtiXf1gWaqIZJeMA0doqT3fybcNI8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6CjsXitkycjbGwnDgP6bg6YvKE19YgHcEBDo/lZv2S7XhtZqm
-	IPLTg/S2armU6nOEi4z7Fg6A7hxLfOU/kgiXrXd4q+jPAdA0vIvv
-X-Gm-Gg: ASbGncu2DcgwlpuPqP0VcYEAsuUHQn+8DJ1owGN9zuWrO+SNY/BEW0EInlayzglMlGK
-	AMziKfRDQuUtHQc0/LQIxrvaa/L27HTT/pxcjwOzzo5E4tLHOJFpD2ewvTNiNK9NrMdJ6fR2426
-	Oj52rbXfjjguLoVRygLr9TYv6GDY4Vlqp+t2HQuQi1SezD5+z/vcNiWxuCz366PO9ZsqdfznG6s
-	zBl8vT2sp8Tuaabn3+hZhGC2EIP2xCIO7bRbsUWGLKx6ST3TItoTle+rii1JuT/7wSL3akcOHTb
-	i8T8lO1ZjfaJkPJzZUqb2xGcyQDrTu888Q==
-X-Google-Smtp-Source: AGHT+IE7wAeQ0OmTe+ASeV4iyklAhyLabEc7dmvwMoDTWTlzoTjT9dcAh0mXSC4no787TtfbCR7Fxw==
-X-Received: by 2002:a05:6a21:9218:b0:1ee:cb08:d0a8 with SMTP id adf61e73a8af0-1eef3cb91d7mr19610972637.21.1740332558209;
-        Sun, 23 Feb 2025 09:42:38 -0800 (PST)
-Received: from linuxsimoes.. ([177.21.141.136])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5aa21bbfsm17433834a12.74.2025.02.23.09.42.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 09:42:37 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	tmgross@umich.edu,
-	walmeida@microsoft.com
-Cc: trintaeoitogc@gmail.com,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
-Date: Sun, 23 Feb 2025 14:42:05 -0300
-Message-Id: <20250223174205.48404-3-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250223174205.48404-1-trintaeoitogc@gmail.com>
-References: <20250223174205.48404-1-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1740332911; c=relaxed/simple;
+	bh=4UfjUJVL6EGOGnDUASk7Nk6gGEAoFTxt9I7cD5xuAAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ewOtT35QfryLimUJrH4JlHnfYUyXc2GMF3/CfDQAIgHr/xOx22G4AM+eW8oooIC9OUJcYoXri7FMC5imlwEYtluFieuBQmZmhasdxZTWPIR3xrvRUa8KpzW+ZVKoIf3AzbVfCRb1JWnG651SVSpXUMII8Y4K8xmPLTzs/UcPoYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=A+c6bIUT; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 62C27442F5;
+	Sun, 23 Feb 2025 17:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740332901;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a8SI281pF8B6bZMdoiNrxB/0tFzMYpuiEuhF5KU39lQ=;
+	b=A+c6bIUTGIy2tZN6SLMAazGaMk5mxEQeuxJurJ8N8SKOFW1gexpDjxUXoVp5vHsiq+Wsvv
+	bfvQHGVWzdRlp7tVdpJpvkWKax8tWZ9c56EVek/uI2riSEw8HlvxRtL3Z1dbRXruX+trkk
+	7rtHQl/eQCm1K+RhrJDcVIUGvETWKmHV6OStyfx8v/1gSlRSI+txzY+/QADJNz6htWfUwq
+	e1/GSMCPP+OtuTUr7oSFAvlfvxNafxZ2Q3qnRBz39DcUXYeLVPc2lxqd8QpHc/FNlSQPyo
+	ilr5B0UvXL/v+7lzdi6EnP7dReKuuX6cgflTnU40BXhiGBPf8l2xZimmqPHVmQ==
+Date: Sun, 23 Feb 2025 18:48:18 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Florian Fainelli <f.fainelli@gmail.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Simon Horman
+ <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, Antoine
+ Tenart <atenart@kernel.org>, Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <20250223184818.1d3f7e7b@fedora.home>
+In-Reply-To: <Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+	<Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejieegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtt
+ hhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Implement a check to ensure that the author, firmware, and alias fields
-of the module! macro are properly formatted.
+Hi Russell
 
-* If the array contains more than one value, enforce vertical
-  formatting.
-* If the array contains only one value, it may be formatted on a single
-  line
+On Sun, 23 Feb 2025 17:40:37 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- scripts/checkpatch.pl | 43 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+> On Sun, Feb 23, 2025 at 06:28:45PM +0100, Maxime Chevallier wrote:
+> > Hi everyone,
+> > 
+> > Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" designed to
+> > access SFP modules downstream. These controllers are actually SMBus controllers
+> > that can only perform single-byte accesses for read and write.  
+> 
+> This goes against SFF-8472, and likely breaks atomic access to 16-bit
+> PHY registers.
+> 
+> For the former, I quote from SFF-8472:
+> 
+> "To guarantee coherency of the diagnostic monitoring data, the host is
+> required to retrieve any multi-byte fields from the diagnostic
+> monitoring data structure (e.g. Rx Power MSB - byte 104 in A2h, Rx
+> Power LSB - byte 105 in A2h) by the use of a single two-byte read
+> sequence across the 2-wire interface."
+> 
+> So, if using a SMBus controller, I think we should at the very least
+> disable exporting the hwmon parameters as these become non-atomic
+> reads.
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 7b28ad331742..54e1893d13aa 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2775,6 +2775,9 @@ sub process {
- 	$realcnt = 0;
- 	$linenr = 0;
- 	$fixlinenr = -1;
-+
-+	my %array_parse_module;
-+
- 	foreach my $line (@lines) {
- 		$linenr++;
- 		$fixlinenr++;
-@@ -3567,6 +3570,46 @@ sub process {
- # ignore non-hunk lines and lines being removed
- 		next if (!$hunk_line || $line =~ /^-/);
- 
-+# check if the field is about author, firmware or alias from module! macro and find malformed arrays
-+		my $inline = 0;
-+		my $key = "";
-+		my $add_line = $line =~ /^\+/;
-+
-+		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
-+			$inline = 1;
-+			$array_parse_module{$1} = 1;
-+		}
-+
-+		my @keys = keys %array_parse_module;
-+		if (@keys) {
-+			$key = $keys[0];
-+		}
-+
-+		if ($add_line && $key) {
-+			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+
-+			my $counter = () = $line =~ /"/g;
-+			my $more_than_one = $counter > 2;
-+			if ($more_than_one) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer each array element on a separate line\n". $herevet);
-+			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer declare ] on the same line\n" . $herevet);
-+			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after the last value and before ]\n" . $herevet);
-+			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after [\n" . $herevet);
-+			}
-+		}
-+
-+		#END OF ANALYZE FIELD
-+		if ($line =~ /\]/) {
-+			delete $array_parse_module{$key};
-+		}
-+
- #trailing whitespace
- 		if ($line =~ /^\+.*\015/) {
- 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
--- 
-2.34.1
+That makes sense to me, it's best-effort at that point :)
+
+> Whether PHY access works correctly or not is probably module specific.
+> E.g. reading the MII_BMSR register may not return latched link status
+> because the reads of the high and low bytes may be interpreted as two
+> seperate distinct accesses.
+> 
+> In an ideal world, I'd prefer to say no to hardware designs like this,
+> but unfortunately, hardware designers don't know these details of the
+> protocol, and all they see is "two wire, oh SMBus will do".
+
+On that particular PHY I'm mentionning, the feature really is advertised
+to HW designers as "you connect that TWI to your SFP cage and you're
+good". I was very surprised as well when digging deeper and figuring
+that not only it's SMBus, and worse, 1-byte accesses only... However
+there are already some HW out there with this feature in use. If this
+is OK for you to accept that as a "best effort, degraded mode as
+there's no hwmon", that's already great :)
+
+Thanks for being so quick !
+
+Maxime
 
 
