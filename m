@@ -1,183 +1,116 @@
-Return-Path: <linux-kernel+bounces-527868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36186A410A6
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:06:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51692A410C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FE3188992D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C691893625
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A7415747C;
-	Sun, 23 Feb 2025 18:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eHGwCXnx"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A471624D2;
+	Sun, 23 Feb 2025 18:21:19 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB70D7081A;
-	Sun, 23 Feb 2025 18:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBE35D8F0;
+	Sun, 23 Feb 2025 18:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740333830; cv=none; b=gq6OLWdahS1qpS8ZSGbe+0AZIexM5G4MywIOB66+KK0SyNmxk1PHYn4DhtYcA6D0TsNR5zjr3KngMTjkX7DQDqoQn/23SZ14APlB7GpAw8WLyzMvkgiMwZPAbz81BgrdM22wIH7YVoqHvtAK11TsQoaNiMICOsdHeQkwBpDy0RA=
+	t=1740334878; cv=none; b=mLXGdYs81B8TcmCm1mM/EJ8r3bGtuZwfhJaEqvYpXPb4Q01WqXYFOjCw4K/+wBPj0ZGcgz5AlnX2EK8wmdJeBHMsCA0WtsDm9Cst78ul+VE0KoXAOha2Zz2Qvd5K1LPTZ+ZQuebcLKbx4ce7VupoqABF5L+J3qMtCYKDYGOakWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740333830; c=relaxed/simple;
-	bh=vHoTYqH5kYLdCvoAFtXVHET6Lr3U8dENcUD3HaYCcZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=flQ8VSf2KEBAkuDXTNU36XkrkVviaOxD764pT9lmP0XxEi8eRbA0sEG8m3sOYaLMjABU6dUPCSX3acR9Vwy1PeLoTFeVzIFlLcfH7RJbd6mQcLYLJQ1bGE1gUjyJ7UhmE60oAJ373Qfl33RUWOVC09viDKHeLP2T0x2AEXjbW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=eHGwCXnx; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56592496;
-	Sun, 23 Feb 2025 19:02:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740333741;
-	bh=vHoTYqH5kYLdCvoAFtXVHET6Lr3U8dENcUD3HaYCcZA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eHGwCXnxIBw6QRhY2zd1Ly9pL5XvMggWiB/ic03NPfxDJk0V4Lb/Md/lW6Arekk6p
-	 mlDk9Msq7eM41N7Px1H5K0NcWrYHD4RIpvHaXg1aixW2v3uE7kf91/ESk16VfaF39Y
-	 yHilU8aQvTSzkpIq46v2pa/EnC1kDRXfvjRWm+Y0=
-Date: Sun, 23 Feb 2025 20:03:30 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	rust-for-linux <rust-for-linux@vger.kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
-	ksummit@lists.linux.dev
-Subject: Re: Rust kernel policy
-Message-ID: <20250223180330.GC15078@pendragon.ideasonboard.com>
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org>
- <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <Z7bO1jT2onZFZwgH@infradead.org>
- <CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com>
- <Z7hulnJ4fwslRILy@pollux>
+	s=arc-20240116; t=1740334878; c=relaxed/simple;
+	bh=naByVkUiz/GQlhP55+XLPPUFw52CHqfSQjnK+2OSx2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HF0boOTZlfCuvC+mTWu+Kz7uTTsaBG9AN2RFZo+AFXHUBVOO0LJmut243ZgWDgpnctqmfAiVOiOZXpZ9vlz6HjWvewQXBF1e5FInsFvLFACmDppySQMMP18GWAfJpMjAaHhru5kONL7Iv4jokzHZHoax3sQ195PMZfBy6lwoi/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.151.162) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 23 Feb
+ 2025 21:05:49 +0300
+Message-ID: <3315dad1-52a8-4ae7-be65-6b9ccf3dfbfe@omp.ru>
+Date: Sun, 23 Feb 2025 21:05:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7hulnJ4fwslRILy@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: olpi: Remove unused otg_ulpi_create
+To: <linux@treblig.org>, <gregkh@linuxfoundation.org>,
+	<linux-usb@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>
+References: <20250223160602.91916-1-linux@treblig.org>
+Content-Language: en-US
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+In-Reply-To: <20250223160602.91916-1-linux@treblig.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 02/23/2025 17:49:06
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 191206 [Feb 23 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 51 0.3.51
+ 68896fb0083a027476849bf400a331a2d5d94398
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.151.162 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info:
+	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
+X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.151.162
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 02/23/2025 17:52:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 2/23/2025 2:52:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Fri, Feb 21, 2025 at 01:16:22PM +0100, Danilo Krummrich wrote:
-> On Thu, Feb 20, 2025 at 04:39:58PM -0800, Linus Torvalds wrote:
-> > Honestly, what you have been doing is basically saying "as a DMA
-> > maintainer I control what the DMA code is used for".
-> > 
-> > And that is not how *any* of this works.
-> > 
-> > What's next? Saying that particular drivers can't do DMA, because you
-> > don't like that device, and as a DMA maintainer you control who can
-> > use the DMA code?
+On 2/23/25 7:06 PM, linux@treblig.org wrote:
+
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
+> otg_ulpi_create() has been unused since 2022's
+> commit 8ca79aaad8be ("ARM: pxa: remove unused pxa3xx-ulpi")
+> 
+> Remove it.
+> 
+> The devm_ variant is still used.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/usb/phy/phy-ulpi.c | 23 -----------------------
+
+   Probably s/olpi/ulpi/ in the subject then?
+
+>  include/linux/usb/ulpi.h   |  9 ---------
+>  2 files changed, 32 deletions(-)
 > [...]
-> 
-> > So let me be very clear: if you as a maintainer feel that you control
-> > who or what can use your code, YOU ARE WRONG.
-> 
-> When I added you to the original thread [1], it was exactly to get some
-> clarification on this specific point.
-> 
-> In my perception, a lot (if not all) of the subsequent discussions evolved
-> around different aspects, while this specific one is not even limited to Rust in
-> the kernel.
-> 
-> Hence, I'm happy to see this clarified from your side; it was still a remaining
-> concern from my side, regardless of whether the PR in question will make it or
-> not.
-> 
-> However, I also want to clarify that I think that maintainers *do* have a veto
-> when it comes to how the API they maintain is used in the kernel. For instance,
-> when an API is abused for things it has not been designed for, which may hurt
-> the kernel as a whole.
+MBR, Sergey
 
-I've been thinking this through over the weekend, and I see an elephant
-in the room that makes me feel uncomfortable.
-
-Three important statements have been made on the topic of rust for
-Linux. I'm going to include some quotes below, alongside with how I
-understand them. My understanding may be wrong, please let me know when
-that's the case.
-
-- No maintainer is forced to deal with rust code at the time being.
-
-  This was mentioned multiple times in different forms, for instance by
-  Miguel in [1] as
-
-  "Some subsystems may decide they do not want to have Rust code for the
-  time being, typically for bandwidth reasons. This is fine and
-  expected."
-
-  or by Linus in [2] as
-
-  > You don't have to like Rust. You don't have to care about it. That's
-  > been made clear pretty much from the very beginning, that nobody is
-  > forced to suddenly have to learn a new language, and that people who
-  > want to work purely on the C side can very much continue to do so.
-
-- No maintainer can (ab)use their power by nacking rust abstractions for
-  the API their maintains.
-
-  This was made clear by Linus in [2]:
-
-  > So let me be very clear: if you as a maintainer feel that you
-  > control who or what can use your code, YOU ARE WRONG.
-
-- Breaking compilation of rust code in a released kernel is not allowed.
-
-  This statement is less clear in my opinion. It's made by Miguel in [1]:
-
-  "The usual kernel policy applies. So, by default, changes should not
-  be introduced if they are known to break the build, including Rust.
-
-  However, exceptionally, for Rust, a subsystem may allow to temporarily
-  break Rust code. The intention is to facilitate friendly adoption of
-  Rust in a subsystem without introducing a burden to existing
-  maintainers who may be working on urgent fixes for the C side. The
-  breakage should nevertheless be fixed as soon as possible, ideally
-  before the breakage reaches Linus."
-
-  The "ideally" in the last sentence is a subtle but important detail.
-
-  Then we had some patches that broke the -next rust build and were
-  dropped from v6.14, as mentionned in [3]. Greg
-
-  > > Regardless of holidays, you seem to be saying that Linus should
-  > > have accepted Andrew's PR and left rust with build failures?
-  >
-  > I can't answer for Linus, sorry.  But a generic "hey, this broke our
-  > working toolchain builds" is something that is much much much
-  > different than "an api changed so I now have to turn off this driver
-  > in my build" issue.
-
-  I haven't found a clear statement from Linus on this topic.
-
-Those three statements can't all be true together, we can at best have
-two. I would like to understand which one we will drop first, and I
-believe many other developers and maintainers are wondering the same.
-
-[1] https://rust-for-linux.com/rust-kernel-policy
-[2] https://lore.kernel.org/all/CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com/
-[3] https://lore.kernel.org/all/2025013148-reversal-pessimism-1515@gregkh/
-
-> But as mentioned previously, I do not think that this veto can be justified with
-> personal preference, etc.
-> 
-> - Danilo
-> 
-> [1] https://lore.kernel.org/lkml/Z5qeoqRZKjiR1YAD@pollux/
-
--- 
-Regards,
-
-Laurent Pinchart
 
