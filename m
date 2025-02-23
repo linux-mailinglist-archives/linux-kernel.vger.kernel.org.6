@@ -1,118 +1,88 @@
-Return-Path: <linux-kernel+bounces-527722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB42DA40E97
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:51:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A287CA40E94
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D455B3B5FD3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBC80178957
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A002207DFF;
-	Sun, 23 Feb 2025 11:50:42 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25594207DE2;
+	Sun, 23 Feb 2025 11:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4JfxVLF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694592066C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 747412066D4;
 	Sun, 23 Feb 2025 11:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740311441; cv=none; b=CpkJ1YvurP833qn9GWc56ueRcPBrHQwpeDGjYJIp52VQYKOdfNPAYhZR8GW0FnCkQXZFEAwoUXhLPymqkr1BLw8q+7kBLea/U7VNGBoTbHFRsQsW0R1vE0xigFiCIeShrtgBwy/WPfI2hxnbtfbHoHAftRAf6m7cqmu2alZs0fQ=
+	t=1740311440; cv=none; b=eoJA7otMJ/dWua73IeCSO8FAVhin4tm20zNUB4yowosG516rdvteQ5XLKzqjFeYebZryndDHX0ASMs+ojtafkIY7aThp8icEFDQ+28TrIcmo5MddaMFPlkk+mBzYXOEP8ZWj+kCdEwi9OkX/BRD7kwbUF/eg3P2Ctr/PLufxq7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740311441; c=relaxed/simple;
-	bh=Npl1hf2K8C0HFRJz0IJdWyuqL8ZWAqWbXOrkZ95CiDc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pNuAPqqDOWpM9FEgXkdsRpykew0VfolCfmqXkoyJ+L/GedcEQO6+++5A7nOk+ErU0bqW8uZWsIgTaTc3De+WkG4IvS99QAQak86ODiItOJnnrshz2f66bgE583XFX1QI+o7GltHY1AZlCIglyXeN1AlTdRLeMDvRaZSbFdTT3/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from [127.0.0.1] (unknown [180.172.118.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 6C23534317F;
-	Sun, 23 Feb 2025 11:50:34 +0000 (UTC)
-From: Yixun Lan <dlan@gentoo.org>
-Date: Sun, 23 Feb 2025 19:49:35 +0800
-Subject: [PATCH v6 4/4] riscv: dts: spacemit: add gpio LED for system
- heartbeat
+	s=arc-20240116; t=1740311440; c=relaxed/simple;
+	bh=hQuSDA97lCMpIvGvsB8HeScp/fD9G2ojAxcjSBtTtvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UaImvoRR3GLFc4+yt1LKauMgraC6lVuzc7JNZPHHSH7s9XiPa/e63MsQzlZgRMzmYnhAs4IjtYUcPEZa+BkqEedsMHMrZC48k1zRVFAJQRTqUIG5Q9oAY91taWZ8289H8lbrJLb+4QuybEmbrFTHJAGvBLf7MPYeikRTMH6MNzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4JfxVLF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45362C4CEDD;
+	Sun, 23 Feb 2025 11:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740311439;
+	bh=hQuSDA97lCMpIvGvsB8HeScp/fD9G2ojAxcjSBtTtvE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S4JfxVLFiQ5Pu4uqfbL4ygsTH66+gFhJth7YPlh9QN0QceaaE2aPQpUicIj4MMCwa
+	 sKkauQBx+HFu+amvbQycxlZmjlfa6gtOfysMB0g2V/KUqF4lzJ0ukL/gzfqkcYPPbN
+	 L0rsjNgkXy/VLptBrRy7MSMRAr8ixcZtXymJZ5/SklwZX6BrGusFwVAnYDg7JVE/41
+	 TlVVbITRFRS0sSKhIkLoiI8ifqNebhUACfnpDG0KXHNXG9el+xGN02q6mdaiwV3vKC
+	 JZHlW/Ja4AXac+IR6Tq7YVv0RLm/FZJtcVykoN9jfH+aN34v9D5/w0hzJQjHXxsh8q
+	 PzYto0djL2jMg==
+Date: Sun, 23 Feb 2025 12:50:37 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: bus: add documentation for the IMX
+ AIPSTZ bridge
+Message-ID: <20250223-ambrosial-macaw-of-imagination-dce169@krzk-bin>
+References: <20250221191909.31874-1-laurentiumihalcea111@gmail.com>
+ <20250221191909.31874-2-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250223-03-k1-gpio-v6-4-db2e4adeef1c@gentoo.org>
-References: <20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org>
-In-Reply-To: <20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Yangyu Chen <cyy@cyyself.name>, Jisheng Zhang <jszhang@kernel.org>, 
- Jesse Taube <mr.bossman075@gmail.com>, 
- Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev, 
- Yixun Lan <dlan@gentoo.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=866; i=dlan@gentoo.org;
- h=from:subject:message-id; bh=Npl1hf2K8C0HFRJz0IJdWyuqL8ZWAqWbXOrkZ95CiDc=;
- b=owEBzQIy/ZANAwAKATGq6kdZTbvtAcsmYgBnuwtstaTnHcyIlwwJ1iQoDw5MUSJCELE0FaGxn
- vbar+q+U+KJApMEAAEKAH0WIQS1urjJwxtxFWcCI9wxqupHWU277QUCZ7sLbF8UgAAAAAAuAChp
- c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0QjVCQUI4QzlDMzF
- CNzExNTY3MDIyM0RDMzFBQUVBNDc1OTREQkJFRAAKCRAxqupHWU277Tv7D/9QYZOiFPN/p0YDxm
- YMTwB+gLp77a+Pk/aTBd3Q1BBFDUSeh/QqIgL7JVqcXppSrsbCd8AgOxI38PhMy7/P3smmDwXeh
- rvM9uD6zCgNaGLxtZb0Q1N49aBbKSW0o7SAkn4rBOuq3sy/v1G4yJ3jn+fPhKEyuhk++Qr1MqhI
- c2qqWBMieiX+y9ImTan1SUG/PFwEC4QAujuxihknhm80+p1Yazk5Kv9+JC8R8bG3eEDCK2By5Gy
- o05qVWDOAkSYjRzU5mLL1UCbStLV/eqv92zRI2cf4UY8ny61mAZrxnv1cLiGCNB7O+3L2fk2hvR
- txkoYbKmS0omARR3IPUi8EbsTKmJv9aNcoT2ZEUvt95za/myl+el38ZhvdBqCDVfk2HsvBF02f8
- xqeZ/UVjvIrJxRmhINQ9sQDZOGX4wylCH/aEEYSD25uMF48buXyFyn7zRzAKzF8Od/nJIGPpTHG
- GWbw110Bx7pXyFkDAUzE8z6+JWGzHXxafVTzZOK0UiuRsGvMXAWkd8a2Ol4ts1fIw4ldyWHBVwN
- tyOv9K77nMGDcYdsM6b0WD/m9tMVQoQ/BmLxsnuSmhIxAdZTA+68tBipCHjszxZrNGQWZLYVHHm
- xTesnw9RD00Dk8VVrxcu4PUQvfBLLwH0nOX2fToDArsBz8mP0Uvdu4OFVVws0dOWBXNw==
-X-Developer-Key: i=dlan@gentoo.org; a=openpgp;
- fpr=50B03A1A5CBCD33576EF8CD7920C0DBCAABEFD55
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221191909.31874-2-laurentiumihalcea111@gmail.com>
 
-Leverage GPIO to support system LED to indicate activity of CPUs.
+On Fri, Feb 21, 2025 at 02:19:05PM -0500, Laurentiu Mihalcea wrote:
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: fsl,imx8mp-aipstz
+> +      - const: simple-bus
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
 
-Signed-off-by: Yixun Lan <dlan@gentoo.org>
----
- arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+That's not a simple bus anymore. simple-bus does not have reg. Neither
+power domain really, because this means children depends on this device,
+so again: not simple.
 
-diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-index 1d617b40a2d51ee464b57234d248798aeb218643..816ef1bc358ec490aff184d5915d680dbd9f00cb 100644
---- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-+++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-@@ -17,6 +17,17 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0";
- 	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			label = "sys-led";
-+			gpios = <&gpio K1_GPIO(96) GPIO_ACTIVE_HIGH>;
-+			linux,default-trigger = "heartbeat";
-+			default-state = "on";
-+		};
-+	};
- };
- 
- &uart0 {
-
--- 
-2.48.1
+Best regards,
+Krzysztof
 
 
