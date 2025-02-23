@@ -1,180 +1,144 @@
-Return-Path: <linux-kernel+bounces-527612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2300DA40D4B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:50:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0A9A40D4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C61137AC52E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7ED3A0712
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491A41FC111;
-	Sun, 23 Feb 2025 07:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Q5BIonN3"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2071.outbound.protection.outlook.com [40.107.92.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E511FC7C8;
+	Sun, 23 Feb 2025 07:52:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1021C84C8
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 07:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740297034; cv=fail; b=fq3tHbDq/U8C5bcWOEqJrJ8QUX9/DuRzzsVWvt2PhZERGE6g5TEyOKZv1NSuESTwdA5rt+BaknDY8jWqkY1W+bDhc6DsNQ2xBxMi5pJ/9sph0eTb3es1kLoyZe9ypKa1PnLmVdCLsoL1tsuSGhGr54ut7PUp1gJboU7To51HBjw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740297034; c=relaxed/simple;
-	bh=3tnreYlnJmurzlt2HZWx/tXQyMSjg3iKnYvToA8oHWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=RT72z8bOqbd5r20YqsVjQ9RSXCK925tli2KW2zEgQuFIYVJCcE8Aza8Yy3w7lLNJypo5p32UHSTY5QJUcVRYaKA3PvjwWPpE6ftqftT8CENnmIkjHhu17pjHr7fpkxYtWoJN30uFP73fiX1JQjXwtRvbNBgFlzrA991ily+YMus=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Q5BIonN3; arc=fail smtp.client-ip=40.107.92.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nuoD/v5ROHeERSBz1VZUZuRmMICktiIkz+J0w8miS5ydco5BdbYlecNCz+St6ROpJdmeZqPuKzhhR9Nxjbe88l5NFmcB/8MAyUAbZmobAdifwNSrrZyVOOTlrnZwkaU56fiZSuE4GJ42BKEL5P0xKQd12KxhzhGjEeU3C58GmtUc18C/G2vDXI4dyAjYFYKcAPz0wDGG02iCq1A2C+ZsSVtGmysuZM028kD0A+buhqmHlUFxKK0fLI3V8y0LnED0TCzyF1gi4hnsH7VxBYlFaI3C2HEK+85qmYLn2+FYp4JCZWAuur1dU3ccTw7S3ihbPX18qNMrVXnBpP2AyN81oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qR599w1Y3BjSCZqEondhZZEicM1S4k8aD5E3OApuEa4=;
- b=Bc8fEU8NJLeP+R7H0qI3PVT97wUNBAjyBWNTbkdpeVJjqge3uTbso52+pZuNtg6ciNwLa70f2S6Sa/CKa0ceLkjWRSeCUgz58mb6gPqUUeOxwau7UUZfDFCmsefp6FCKQvCIjnQssLsR5mu9WaIfoPu4foMZgfJWi1aMAQ/nbOlIkBh8aYPzbZ2qtyeiKz7DdvLWejaBfZEpOkT5gCJ75W0OlNAvb9YGcCNzZc/C4rghZbkTS/M3Zz0BI44WJurenMe6BfTN7Oct2JMIKN1mlXow/S5DK0cxmLK/KK4/FG892SBDfDVQUkFH/kQzDMzH/GeIaQB0pdJyn4ru9I3oXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qR599w1Y3BjSCZqEondhZZEicM1S4k8aD5E3OApuEa4=;
- b=Q5BIonN33cXgrf0faYkX3nfUbVo9Xpjg5TWKcl9J0YwIl++y2rNBOS8eWamL1rVPUq9aeBYZt9K/Pn/flCv1p+i+HKV0jCrcyrtvqBNN2TcgLDjV/mk9tHvbmDpbyO2Ml0PCS+heYc3fMQ0dP527zByvP74WvFYWoy9bQ118KSEY3YPzkh8fgkdMekMRi2kJCj02CadozSaUupnSGIwf3eMK9DthwGJEGy4z0tLA8qQNU54zyPd0TqydAYPDCjPln0aFUSuU1HV6RTeU8nQZzjKPDHO0o0vOtbV19PDZNrm2mC5Hogc/cyER0xSR+O1q6neua5YJgNvY2pQt+KWvFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
- by SA3PR12MB9091.namprd12.prod.outlook.com (2603:10b6:806:395::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Sun, 23 Feb
- 2025 07:50:21 +0000
-Received: from CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
- ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8466.016; Sun, 23 Feb 2025
- 07:50:19 +0000
-Date: Sun, 23 Feb 2025 08:50:15 +0100
-From: Andrea Righi <arighi@nvidia.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Qais Yousef <qyousef@layalina.io>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Stultz <jstultz@google.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
-Message-ID: <Z7rTNxHcXWizV3lq@gpd3>
-References: <20250210001915.123424-1-qyousef@layalina.io>
- <20250212145054.GA1965539@joelnvbox>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212145054.GA1965539@joelnvbox>
-X-ClientProxiedBy: LO0P123CA0006.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:354::8) To CY5PR12MB6405.namprd12.prod.outlook.com
- (2603:10b6:930:3e::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A77181FC0E5
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 07:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740297125; cv=none; b=M018whv5BaRadaUJiLWIk0LEHaP47VKgDAeO1Faq1oOEWMO4tKCmQ9nsABHUjeOKJEA5D3SOKcKX6uC4kFZ/js3Q9GxOcg5XYa6MlYkggmdzSK8+Mg1FGhyb6mAbPYxA9NeI0AoTYRq91Yf2RNE8QBlLjhLkFECATQWwrqd8Nns=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740297125; c=relaxed/simple;
+	bh=NkN36S6nBiBoWbo3lRSuMSmUSEF41SNwR0YIJ9Kxv+k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PoXFFjEG4ncRmi0xVmWTAJMzxPMZccIiQQSXe2T8C/9sStlEhV6XFOrX749cScMxg+v8sdWrLI0+JZjlBDq0UlZN7Bw4neqDf09n4sBk4IvSn0HGDxXHODCh3T19NxOniGuY2Eq/TBduskCjzf3Qxg6aOV9OVvh39fvWsQELWLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-855b610548dso625062139f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 23:52:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740297122; x=1740901922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6MAJEXPqg1sySv3CL5RwaQRLT8TlVCC7fj/5gPZqxJw=;
+        b=bSl510HD7mCpAhmuM+jxn27JOca6TYIBHJjLlGtiog5uH0h37zYK9GCuo6zsJAs3TN
+         BVqu6K9z7bOvpyXzRFmXwg0gBDwiDtqRm0HqsNdP6eniWymDB7U1CEinjm3xwvEQQcyj
+         BoENMZX/zhH2Mr19roXlRSAPAtKNkJ5gRk7Ae+Kdr6rBnKLRKS+d9LZojM3bCteBj0gg
+         4TFwiALsN52AGuquqo1eC5ulYHeKZ/0uDe9xhlOpjnCRAhAfxTn1ESp4FTRMm3ebVEsE
+         h5KcANxGocLvKaU5QWKz1i4UziEDzvR/eDTx8hOgp3HkyHTa4yXiJItUCV0x6gtxwiI8
+         6QDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdFuPHFeiyikH7E2i5Wuf6WmhGjKTxPthbqjjw9KQu0UgNJNjkTyQjCfJvWRfZAjJSXRknlsmIaxBR9Xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkqcflS9K8yI+2jaBjPNvpXo06/chwK1u9JD0tPugeaCpggtjd
+	BQ1YZduVNjAxh0V4Zl2sWaFrqfJceAJsc9rck1ogVkZrtngFUsF3LoSyKhE6T8VBYjzbuDKY80k
+	poI7Zif6RGuD+UfBOxPNeKpd3KAFlmRiPm03SEniMvW4Xg4rJEAgEvW4=
+X-Google-Smtp-Source: AGHT+IGrCVCI85W3JotzjLrIbt4AKRVysVe2gZ8H+hFSNyuHSNrfvwjGCEGhY6ByUyQPTBw9uFXoYIU++hTgjxNE6H9AXi5NF4kC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|SA3PR12MB9091:EE_
-X-MS-Office365-Filtering-Correlation-Id: c61b7687-ea7f-4bf9-421b-08dd53deb818
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?i1Y1FljLey+LPS2pzuBUs5hEWkawlZTnUtyQ4rBYylQ7cFI9lM5+EOeCy2D5?=
- =?us-ascii?Q?HGNZ61iMHrpZIL2RobZgtAiToyhr6rZS4fi8Ky6v7Ip63lHt5P5EUSYrdhss?=
- =?us-ascii?Q?yMNqtZw7xs6kCjoaCysmDkSbEq0YPRL4EMpESqurL/FpsvdDhXR5gBTefj6I?=
- =?us-ascii?Q?WslR6PkLKzitLwFFVZYhkltXNLckl6ouWbD1QbKgt/NZoZgGCO73Kpbjz8vg?=
- =?us-ascii?Q?8Z7MhaB/EFLaf01oE82fxM315Y+qYieOBbIDa4qIXnP14SGEiKllauqLLZmN?=
- =?us-ascii?Q?G+sQ8WMgyP2fI8BQr+rSBjPBdUFLxvbSnKs4HUvKHqrji7S3FgCMKGOOs+aX?=
- =?us-ascii?Q?/Hh6Moh/i928k5qR0eZHZ5dClsNNA/VoUQsuP55pp8XByLm8WDAzqONsXjsI?=
- =?us-ascii?Q?ChJqPslaCQStRp4yxrTjy6U4fxNTUYZ5i7PwsjCrCy26LAI17H3sZV6yg6CU?=
- =?us-ascii?Q?1juS19wqMXnQQzRaUox/fMuPmi+VkLvLyvt3JYlMSdb7jBTLHaNuY89POGsq?=
- =?us-ascii?Q?kOQmQnw4wLIg1U8UPvazNChiG8983EY9IzO3v84XoY8g2+uIwXjAXQ6/CizB?=
- =?us-ascii?Q?rdnAOboI/KIXENjE0rS0a8pzkvKzkZn9rltpsAb9q9HW1qaQGYGCAwirHLVc?=
- =?us-ascii?Q?zydLuWgY7Sv5L/ALVRpTqJnUs5mPK2SP0p5lOYGeuK5VxmwrVFR+MebnEvLl?=
- =?us-ascii?Q?Y1M4/x8DEaG0kkZIDMJVMCSw1oryxS+yuX291da8X9Y1g1Mb5CzRxLutNXpn?=
- =?us-ascii?Q?OcCO+dZdsuPYK68usqiW9Wjbjl/RilCz2n8kIDphMMLVLqjIUdHRpTxBjrkI?=
- =?us-ascii?Q?RoVAN5YFE6ewfS2r0c3r+mP66BHNXNhoXePbNKvJ8/Cwl0HdeWLfuTKongcM?=
- =?us-ascii?Q?ql4U3tuwIanfhvEfcWktzedj6CKTB9KYTaYeRiT8I+K4k8aKT1bmgKqpL0j+?=
- =?us-ascii?Q?nS+15/d95Xj9kCnjNHcPBnivPgcKO7fsWuRIpq33+0nJjI/zJ2h7scjA2Plg?=
- =?us-ascii?Q?tYi2XzMQKVqRt7HXkR3q3Z2Rx/Utub4r6RrA56XgYX0OSpZqBulKIwvCPT4X?=
- =?us-ascii?Q?opaGjMCyZvPtd9mjZfKjgeZ2ek3voEYddn4rcav1EIeU7gyLbu7rjVjBSEou?=
- =?us-ascii?Q?CYZ438ZY+cTWT/FmpbUx+FIrvi2rII1tqR7SbFxyPAGsGWyQJARhN+smrPBH?=
- =?us-ascii?Q?99RkHVyrbb08FMzXc9kZarQgZ7E3sHkaRZkY8uIIUaazIpVGgiBJ0xrExTU5?=
- =?us-ascii?Q?1n6H6KaCT5tfypl7LfchzoRXmdJQpNxwDVv+89cRr+4Po6uIkkDBpkNKMeTh?=
- =?us-ascii?Q?76C0xDT7Sji1ScIe1s+H6H0a0MNriQk0JOEKojEFffPBysekgMAHemxGQC05?=
- =?us-ascii?Q?Rsp4/nCRIMT5OMBISK61FGiTacKC?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8EROcBPv/oD2XbgEi9uSbPSNmeQAbCLQ8jJbQB6Zuoh5KaLn7N/CUPOhgx4Y?=
- =?us-ascii?Q?OrcpJ9sSu6o9uQgZf+iXAvnL/BtQq1Z3QwO77Xs/idX5JkeUSH9PhoyfFBVV?=
- =?us-ascii?Q?LNb7I997rQzDSy5ZGRw8FQBE/LBSbYC7wvZ9F8emI1pHVVTZBot87fG1NY4u?=
- =?us-ascii?Q?ZdMUvbPywpZuYJ5+90cZ4cBYrZNstw59XLyujl57R73kwsntTHJDxG275UW3?=
- =?us-ascii?Q?ifrMmqVRwMvQeRZqS/5GMcbJ2IkD4fPQahIxErB8vOCR/sT3Nl2HFAPnWSHy?=
- =?us-ascii?Q?9jpNTyttG5t8EUD+2ymfE4o+CIV1dQY12GqMk+JPU2yPmAhH9tY8dzqZbGz1?=
- =?us-ascii?Q?gaz6XRl1rWiMBHOdRGLoCEBhf6FNS1JNErnj2IIYEIzDpyyNgejC6zuH9vLH?=
- =?us-ascii?Q?wWblDLXdNOBa0HNlAEJKj9KT3RPekMo1LY782aau0l8cD3npnu2S8tTSSHkR?=
- =?us-ascii?Q?hwO6kSzPCDz5B+UIQ6cmHe/LFArJ/LfF2Is8ggwnDepTKrktKMCsewjP/R63?=
- =?us-ascii?Q?4kboAimrqn6vtg4F9m4GCEEjWth9pi8jPEXOPAPbgVKesXRQUKnCF+tKtN5S?=
- =?us-ascii?Q?c5R9OzfYAwLOLfYPHZMC6ELWDkFPGejHiN8laI553u3fmSicFtvzShnVk6B3?=
- =?us-ascii?Q?joMlDGcPdYmxFWhjHsByw0f+KjPq5Ipjqp7p07OfniQv6F8F6IXLquOZEqZm?=
- =?us-ascii?Q?nSE4QG0RTmEHpyxK3jIPUBKmCeAaRwsbKzA/zGfjH9fgmNoCiQxjpz5EUOsW?=
- =?us-ascii?Q?E+7j3nZ1UvHAe8P5a3XT3OCTT5+JIWv1Qn8D2ayOcXXnxUaPLU1aaWEkKpIn?=
- =?us-ascii?Q?PoYVn85rflx0PtZi9HRfQ9jboGmrr4H7/+i7O00oMSO/ySy2Dsp5pp86dxY5?=
- =?us-ascii?Q?MDEzwDPRgs1TmEN/UjK/b2+QJ3qWtHt6vGbhvS5L8YT4uzlGF0p1h0UDjC07?=
- =?us-ascii?Q?O45EykpT/4y8wSEoaD5RLeAd4+buiOV4gc2iKpc0iD1vPTAZoq8hs9pC2fdD?=
- =?us-ascii?Q?VJisfUixctUN2d0wdNg8tgV9btCcUJs2MRkIF2fc5oqY8dBgW3/bY8BqTET1?=
- =?us-ascii?Q?HW61sWg1+GqZ84/Flfir3CsJYkkDDNP+8nxX2kikcuxJqwhvC/yXsZJawG78?=
- =?us-ascii?Q?bKizCGC/j06OP4FpaBwNuoSC9WRfpayMca9EfCyALmp7tscpNS9PWSWTFSsQ?=
- =?us-ascii?Q?EJilBJtG1pEfgQxE4a8hH1N6feo4tLaCY9jAj7BRU4qVB1+WtfODeByGKfmA?=
- =?us-ascii?Q?mBB5mNUIbpJwDiGrMdmBJAHRKalYAvTqssEHbdab063eGaG/OhWHXZZ5LT65?=
- =?us-ascii?Q?Q+838BzeHUKnIkyprWZG/VVx4u/KxfdYoHjfBOrtVk+r2RxFGVtzm5ZGwYFL?=
- =?us-ascii?Q?bgUpTVzb0Q1w4XB0kXzN0GTe13V1s4Nw/E63nruPASE0CxbelP2e9H3EP/D6?=
- =?us-ascii?Q?LEIsyQHtix2rOs17h3ufYaOQhbFWC8heG3ORwoVXD1zs7UiuLiOnfIAaEJtK?=
- =?us-ascii?Q?qjiCi6pQjEkU7bGJCbihrk1olgG24ALszlxPjvgXA/hXXDh0yGN6VtPJfImm?=
- =?us-ascii?Q?nszUN3bmoksAanQ7TlxhfaPpgS4EiikwkO5TjZlh?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c61b7687-ea7f-4bf9-421b-08dd53deb818
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2025 07:50:19.4708
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f7VPlcOchzl1cU+HcF34IA89zDS9ZjyCxp9kEfW7XbKTEohjopCS501bBGr6dO8Mlv06gfzqRWql+Tisc6l+KQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB9091
+X-Received: by 2002:a05:6e02:13a4:b0:3d0:123e:fbdd with SMTP id
+ e9e14a558f8ab-3d2cae8a7b4mr86227915ab.11.1740297122777; Sat, 22 Feb 2025
+ 23:52:02 -0800 (PST)
+Date: Sat, 22 Feb 2025 23:52:02 -0800
+In-Reply-To: <20250223073007.2673-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bad3a2.050a0220.bbfd1.0010.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
+From: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 12, 2025 at 09:50:54AM -0500, Joel Fernandes wrote:
-> On Mon, Feb 10, 2025 at 12:19:15AM +0000, Qais Yousef wrote:
-...
-> > I believe HZ_250 was the default as a trade-off for battery power
-> > devices that might not be happy with frequent TICKS potentially draining
-> > the battery unnecessarily. But to my understanding the current state of
-> 
-> Actually, on x86, me and Steve did some debug on Chromebooks and we found
-> that HZ_250 actually increased power versus higher HZ. This was because
-> cpuidle governor changes C states on the tick, and by making it less
-> frequent, the CPU could be in a shallow C state for longer.
+Hello,
 
-FWIW, I found the same about power consumption when we decided to switch to
-CONFIG_HZ=1000 in the Ubuntu kernel:
-https://discourse.ubuntu.com/t/enable-low-latency-features-in-the-generic-ubuntu-kernel-for-24-04/42255
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: ODEBUG bug in release_nodes
 
--Andrea
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff888112274300 object type: work_struct hint: steam_work_unregister_cb+0x0/0x180 drivers/hid/hid-steam.c:870
+WARNING: CPU: 1 PID: 36 at lib/debugobjects.c:612 debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
+Modules linked in:
+CPU: 1 UID: 0 PID: 36 Comm: kworker/1:1 Not tainted 6.14.0-rc3-syzkaller-00295-g27102b38b8ca-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
+Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 54 48 8b 14 dd c0 d4 47 87 41 56 4c 89 e6 48 c7 c7 40 c9 47 87 e8 df e1 c0 fe 90 <0f> 0b 90 90 58 83 05 f6 7f d8 07 01 48 83 c4 18 5b 5d 41 5c 41 5d
+RSP: 0018:ffffc90000267208 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff813f4dd9
+RDX: ffff888102ed57c0 RSI: ffffffff813f4de6 RDI: 0000000000000001
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8747cfe0
+R13: ffffffff87274240 R14: ffffffff85a7ab00 R15: ffffc90000267318
+FS:  0000000000000000(0000) GS:ffff8881f5900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f8542fc7bac CR3: 0000000116b54000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
+ debug_check_no_obj_freed+0x4b7/0x600 lib/debugobjects.c:1129
+ slab_free_hook mm/slub.c:2284 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kfree+0x2e1/0x480 mm/slub.c:4757
+ release_nodes+0x11e/0x240 drivers/base/devres.c:506
+ devres_release_group+0x1be/0x2a0 drivers/base/devres.c:689
+ hid_device_remove+0x107/0x260 drivers/hid/hid-core.c:2774
+ device_remove+0xc8/0x170 drivers/base/dd.c:567
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
+ device_del+0x396/0x9f0 drivers/base/core.c:3854
+ hid_remove_device drivers/hid/hid-core.c:2953 [inline]
+ hid_destroy_device+0x19c/0x240 drivers/hid/hid-core.c:2975
+ usbhid_disconnect+0xa0/0xe0 drivers/hid/usbhid/hid-core.c:1458
+ usb_unbind_interface+0x1e2/0x960 drivers/usb/core/driver.c:458
+ device_remove drivers/base/dd.c:569 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:561
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
+ device_del+0x396/0x9f0 drivers/base/core.c:3854
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2316
+ hub_port_connect drivers/usb/core/hub.c:5373 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5673 [inline]
+ port_event drivers/usb/core/hub.c:5833 [inline]
+ hub_event+0x1bed/0x4f40 drivers/usb/core/hub.c:5915
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+Tested on:
+
+commit:         27102b38 Merge tag 'v6.14-rc3-smb3-client-fix-part2' o..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=142d5fdf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28127f006c1c31ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=0154da2d403396b2bd59
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=170157f8580000
+
 
