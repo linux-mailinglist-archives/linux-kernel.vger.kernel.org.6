@@ -1,154 +1,324 @@
-Return-Path: <linux-kernel+bounces-527598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31832A40D07
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:51:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B5EA40D0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9697A3BDF91
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:51:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E015317A2CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974121D7E47;
-	Sun, 23 Feb 2025 06:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49DE51DB127;
+	Sun, 23 Feb 2025 06:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mys2WTGj"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="JxEDmKei"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFD14414
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 06:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0804414;
+	Sun, 23 Feb 2025 06:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740293476; cv=none; b=cya/jhJQrMESedxA3e1iqnKCo/ekFK5zvDBk7fWQgotePwIixAue8DdlT+Hf1u2ZpwACR/yQT/ac/jEaS+HfV0tHZRQ8NR84KsY7nRGSywSkIG3VgwrupFa7nGuNl56ZWK1+AsI38p1LKcL0wyShj03yc4XwQklaZjfVs2fy8mY=
+	t=1740293739; cv=none; b=Bzvvqo3HM+rfVQayJtBI+PlvPm8+ckzEYKtMo0OPrUVxyQhENmsFcDnP0M56g6gvcgzvh+K8ZoY/0DHKQGmQSEo4aneQQD7MlCq6Ty/1CUA0+4uIEDrSzfTQy7VJ2+qsVMpcXWyIj9/SCZd/RfzJshBcjgMxl99XaJdEu3akERI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740293476; c=relaxed/simple;
-	bh=TiTiQy9fLGmd0hKyx7X3r4Y22u/yWIg9kNt45XGhIDE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pgRLkc6sXkRUAcFrRg3tH7bpl+6mHcTFmFzb2p1g1Etde71bnQ812Pb8YSKwMZXnWeaNLJZkD/IvQ04e2EERuqRgsAyF5FHUIKhEqoCF2aGMHCwUWTDPxh/rKE6QSRWsH4YfcJzdnBfM7J68B8cui9WXklPC8ImSuYe6v2sx6TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mys2WTGj; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-438a39e659cso21663675e9.2
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 22:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740293472; x=1740898272; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wf9IOjBQ3147jp76ze9JeJiEVzCwi5QU/DzJ1ulfNfM=;
-        b=mys2WTGjkxKOrEjE4CfxHyRXqoBMKQHQ57+ZVcCnEfqOTL+Il4mLp4k6XXVY2ahMfO
-         jJpfAkqBHqJYv2l/uY6A1w93G2uG/GJDvL/Ksg0TC2jSo7NAzdpiKlZsXxIMatmUYJrE
-         M7hWGOJJ8hJrevo8N80E6Na+stdgmJgKw7x1uN9+DuWmWvZBdWZ5zhqyhCFjPdADRkcy
-         CBmQq4FIyus/KEnAOEOzlJbB0iPYXM/NM4+6RSpPBWyw1DCvnK3epvS8J7rxwV0o69bw
-         gYx33vmlLIxxnhE2BI3rbyEYDIS9SDHyJLdPPm3qQUcbuzyHMPQ/oEwYfbZnNmAHUmke
-         5N9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740293472; x=1740898272;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wf9IOjBQ3147jp76ze9JeJiEVzCwi5QU/DzJ1ulfNfM=;
-        b=aN5H/hm/aXKlHMMV4/TkisL62CLlKbdE9KpdXbMSuSf8o4WN6n6UrZkIeRXLYOFA7s
-         fqwwoNJWM0OoACxDZ2rSuJvv3avREU2w5XItFUqJNLpLegMh/IxyoEoKWVQa771w3mlT
-         u5okEr48ksfQYKDORe0s5FxoK0tTX9XX0VoNz0tre8VKifupRzNyfn4iJdbusCpm8jTH
-         xAzaXIi/VRpmvm3EHYZ5Ip3kuS+5wk1lykRLsHimi9CR5R0fVJvAP+JAtj+idlix6mXz
-         HasUfthj+SOcWxW26TKkrzvMPWY7sbaC7vFZJGZZRiObWpPUfieAiIcZZ6HoLQ/gNfAJ
-         4TIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1pHKxE/N6cQI5l6YUgqhWSe59Sw3so/H0mVtXFA8m+fYWCmt3lO3QLX7lFwTEW3lVNrYeBBwOeiTSONo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeNZLjJLp74aQQsBeYmh1uNeFfYKPI9tv7d4nqcbF2qXW39C4L
-	rUIHxhOe2+LkDXrcbJtdBDBQ73qHoByL5gAufxLC3EfW16klI7C2cw0qjfhvZHU=
-X-Gm-Gg: ASbGncsSLhAqp3t9aqeY7VvrXQZitlpO0GqddIU4YEftJCQ2RcVWeAGXQyULrxV0TD9
-	Ijs6EeCTc1Mqc5AODLMhgV6lpu0nYXYlO6etVzT+ObqnQ0YMmTTaYy4GFNQXyHW/WuBwX5hb6fC
-	x/olwUBe32zvUq/x58jPqhiGa/is7z5I7osKlpHgnjZaHiEQRR7CX31r70rtytm1iKRPWjoHaXM
-	s9BBJkgj0uWrNU+j2I298/u63ige54hbEjKwLOFC8rRqwB69w4ogyWxBeLWN4mfz2bkLdvVOxA9
-	78ZwjDiDHnN9/Fe5GkP9S7hLsEcwhC0ewpOKMZbqpH4K57y+scJC3Asvc8Pq88Xe/pXlPVftYWG
-	EdkNelw==
-X-Google-Smtp-Source: AGHT+IE0OLuFGVI5dKmS0jsudLxiGBBLypYvwDHB/8sXl1IwFDl/fYKFthNKHHKb91Nism9Vcl2cbA==
-X-Received: by 2002:a05:6000:1541:b0:38d:d767:364 with SMTP id ffacd0b85a97d-38f70789915mr6307201f8f.13.1740293472502;
-        Sat, 22 Feb 2025 22:51:12 -0800 (PST)
-Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4491sm27673755f8f.7.2025.02.22.22.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 22:51:12 -0800 (PST)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Sun, 23 Feb 2025 06:51:10 +0000
-Subject: [PATCH v2] mtd: spi-nor: explicitly include <linux/math64.h>
+	s=arc-20240116; t=1740293739; c=relaxed/simple;
+	bh=QmOR/YrUzzwsYy7T54Gep40GJD5nY3nQaIVBiQTDYps=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jBdcAkegM1u2k3jY2QJFf5uiUWNyGvEMUinF+5L7LFlL0E51uYIW6HEAKBF+Qe+2RANYhOszvJALh4ZuaKgL4Mn3JbLtZbHF4/f5XKRccvEOFNd3tP9c2efdQpzENXHvtnh3Lq7Jiv+dLpqPKWj6nfHjg9lcXSACW8HwcnvEA+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=JxEDmKei; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=TrabOqtRhfI4L6MXAwrxdsN96HvSybcOUIqp0rTlZoc=; b=JxEDmKeiwKhrw9Z+o5YxLxPgBR
+	HoAWaqs0VwTbUwWImyM85VEknbl3XBCiRR+CuNJC3et+XS4tr+jnqXLqK3yuAKrxLGqGckJdxuDfw
+	4IRxi8oaKf4lJlevnGmYIZfG8cn2dwTOWyaYWrNaRiTpcsY8MmQkfKvya6UjwAB6uQKfXo92f/goA
+	sLaTQNN+AdfMQ+PyA8rVzBdTFF2tJZIztCcnQcU8XMga3T13zHS5Q0TEBLhCWkGazq6oR/IT3qESg
+	t4HYM/FrZ2RWok66dvs2Vc+2n9iEaLKHn6YCf6GHE2tW1t1oY4qumB6/VDa7uQti4PaKmSw2vlTtF
+	iL2+dx+w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tm5tc-000ycI-0E;
+	Sun, 23 Feb 2025 14:55:25 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 23 Feb 2025 14:55:24 +0800
+Date: Sun, 23 Feb 2025 14:55:24 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Nitin Gupta <nitingupta910@gmail.com>,
+	Richard Purdie <rpurdie@openedhand.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>,
+	Dave Rodgman <dave.rodgman@arm.com>
+Subject: [PATCH] lib/lzo: Avoid output overruns when compressing
+Message-ID: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250223-snor-math64-v2-1-6f0313eea331@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAF7FumcC/23MQQ6CMBCF4auQWVvDTKEQV97DsKi0wiTakilpN
- IS7W1m7/F/yvg2SF/YJLtUG4jMnjqEEnSoYZxsmr9iVBqqprYm0SiGKetl1No3qXe+Mu1NnG4L
- yWMQ/+H1ot6H0zGmN8jnwjL/1v5NRoerHzrQaEXVrrk8OVuI5ygTDvu9fjVi/6acAAAA=
-To: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Tudor Ambarus <tudor.ambarus@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740293471; l=1527;
- i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=TiTiQy9fLGmd0hKyx7X3r4Y22u/yWIg9kNt45XGhIDE=;
- b=GxCTwY5144l5jdjB8PIutHJngVtP8t9EQD7nJx+bWJHmycy0DqOZGDxZz+oDmfaV9Sj16C3RN
- XIfg3gXJFhOAXSUF7RmsdyyTKrdyVT9ySxayHZGhCMbD0pxxSkuZrsd
-X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
- pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-swp and otp drivers use div_u64 and div64_u64 and rely on implicit
-inclusion of <linux/math64.h>.
+The compression code in LZO never checked for output overruns.
+Fix this by checking for end of buffer before each write.
 
-It is good practice to directly include all headers used, it avoids
-implicit dependencies and spurious breakage if someone rearranges
-headers and causes the implicit include to vanish.
+Fixes: 64c70b1cf43d ("Add LZO1X algorithm to the kernel")
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 
-Include the missing header.
-
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
-Changes in v2:
-- fix typo in commit message s/if/of/.
-- Link to v1: https://lore.kernel.org/r/20250223-snor-math64-v1-1-8c7653111356@linaro.org
----
- drivers/mtd/spi-nor/otp.c | 1 +
- drivers/mtd/spi-nor/swp.c | 1 +
- 2 files changed, 2 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/otp.c b/drivers/mtd/spi-nor/otp.c
-index 9a729aa3452d..7d0b145d78d8 100644
---- a/drivers/mtd/spi-nor/otp.c
-+++ b/drivers/mtd/spi-nor/otp.c
-@@ -6,6 +6,7 @@
+diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
+index 47d6d43ea957..5d2f2f851694 100644
+--- a/lib/lzo/lzo1x_compress.c
++++ b/lib/lzo/lzo1x_compress.c
+@@ -18,10 +18,10 @@
+ #include <linux/lzo.h>
+ #include "lzodefs.h"
+ 
+-static noinline size_t
++static noinline int
+ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+-		    unsigned char *out, size_t *out_len,
+-		    size_t ti, void *wrkmem, signed char *state_offset,
++		    unsigned char **out, unsigned char *op_end,
++		    size_t *tp, void *wrkmem, signed char *state_offset,
+ 		    const unsigned char bitstream_version)
+ {
+ 	const unsigned char *ip;
+@@ -30,8 +30,9 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 	const unsigned char * const ip_end = in + in_len - 20;
+ 	const unsigned char *ii;
+ 	lzo_dict_t * const dict = (lzo_dict_t *) wrkmem;
++	size_t ti = *tp;
+ 
+-	op = out;
++	op = *out;
+ 	ip = in;
+ 	ii = ip;
+ 	ip += ti < 4 ? 4 - ti : 0;
+@@ -116,25 +117,41 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		if (t != 0) {
+ 			if (t <= 3) {
+ 				op[*state_offset] |= t;
++				if (!HAVE_OP(4))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				COPY4(op, ii);
+ 				op += t;
+ 			} else if (t <= 16) {
++				if (!HAVE_OP(1))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				*op++ = (t - 3);
++				if (!HAVE_OP(16))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				COPY8(op, ii);
+ 				COPY8(op + 8, ii + 8);
+ 				op += t;
+ 			} else {
+ 				if (t <= 18) {
++					if (!HAVE_OP(1))
++						return LZO_E_OUTPUT_OVERRUN;
+ 					*op++ = (t - 3);
+ 				} else {
+ 					size_t tt = t - 18;
++					if (!HAVE_OP(1))
++						return LZO_E_OUTPUT_OVERRUN;
+ 					*op++ = 0;
+ 					while (unlikely(tt > 255)) {
+ 						tt -= 255;
++						if (!HAVE_OP(1))
++							return LZO_E_OUTPUT_OVERRUN;
+ 						*op++ = 0;
+ 					}
++					if (!HAVE_OP(1))
++						return LZO_E_OUTPUT_OVERRUN;
+ 					*op++ = tt;
+ 				}
++				if (!HAVE_OP(t))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				do {
+ 					COPY8(op, ii);
+ 					COPY8(op + 8, ii + 8);
+@@ -151,6 +168,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		if (unlikely(run_length)) {
+ 			ip += run_length;
+ 			run_length -= MIN_ZERO_RUN_LENGTH;
++			if (!HAVE_OP(4))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			put_unaligned_le32((run_length << 21) | 0xfffc18
+ 					   | (run_length & 0x7), op);
+ 			op += 4;
+@@ -243,10 +262,14 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		ip += m_len;
+ 		if (m_len <= M2_MAX_LEN && m_off <= M2_MAX_OFFSET) {
+ 			m_off -= 1;
++			if (!HAVE_OP(2))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = (((m_len - 1) << 5) | ((m_off & 7) << 2));
+ 			*op++ = (m_off >> 3);
+ 		} else if (m_off <= M3_MAX_OFFSET) {
+ 			m_off -= 1;
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			if (m_len <= M3_MAX_LEN)
+ 				*op++ = (M3_MARKER | (m_len - 2));
+ 			else {
+@@ -254,14 +277,22 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 				*op++ = M3_MARKER | 0;
+ 				while (unlikely(m_len > 255)) {
+ 					m_len -= 255;
++					if (!HAVE_OP(1))
++						return LZO_E_OUTPUT_OVERRUN;
+ 					*op++ = 0;
+ 				}
++				if (!HAVE_OP(1))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				*op++ = (m_len);
+ 			}
++			if (!HAVE_OP(2))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = (m_off << 2);
+ 			*op++ = (m_off >> 6);
+ 		} else {
+ 			m_off -= 0x4000;
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			if (m_len <= M4_MAX_LEN)
+ 				*op++ = (M4_MARKER | ((m_off >> 11) & 8)
+ 						| (m_len - 2));
+@@ -282,11 +313,17 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 				m_len -= M4_MAX_LEN;
+ 				*op++ = (M4_MARKER | ((m_off >> 11) & 8));
+ 				while (unlikely(m_len > 255)) {
++					if (!HAVE_OP(1))
++						return LZO_E_OUTPUT_OVERRUN;
+ 					m_len -= 255;
+ 					*op++ = 0;
+ 				}
++				if (!HAVE_OP(1))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				*op++ = (m_len);
+ 			}
++			if (!HAVE_OP(2))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = (m_off << 2);
+ 			*op++ = (m_off >> 6);
+ 		}
+@@ -295,14 +332,16 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
+ 		ii = ip;
+ 		goto next;
+ 	}
+-	*out_len = op - out;
+-	return in_end - (ii - ti);
++	*out = op;
++	*tp = in_end - (ii - ti);
++	return LZO_E_OK;
+ }
+ 
+ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
+ 		     unsigned char *out, size_t *out_len,
+ 		     void *wrkmem, const unsigned char bitstream_version)
+ {
++	unsigned char * const op_end = out + *out_len;
+ 	const unsigned char *ip = in;
+ 	unsigned char *op = out;
+ 	unsigned char *data_start;
+@@ -326,14 +365,17 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
+ 	while (l > 20) {
+ 		size_t ll = min_t(size_t, l, m4_max_offset + 1);
+ 		uintptr_t ll_end = (uintptr_t) ip + ll;
++		int err;
++
+ 		if ((ll_end + ((t + ll) >> 5)) <= ll_end)
+ 			break;
+ 		BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
+ 		memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
+-		t = lzo1x_1_do_compress(ip, ll, op, out_len, t, wrkmem,
+-					&state_offset, bitstream_version);
++		err = lzo1x_1_do_compress(ip, ll, &op, op_end, &t, wrkmem,
++					  &state_offset, bitstream_version);
++		if (err != LZO_E_OK)
++			return err;
+ 		ip += ll;
+-		op += *out_len;
+ 		l  -= ll;
+ 	}
+ 	t += l;
+@@ -342,20 +384,32 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
+ 		const unsigned char *ii = in + in_len - t;
+ 
+ 		if (op == data_start && t <= 238) {
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = (17 + t);
+ 		} else if (t <= 3) {
+ 			op[state_offset] |= t;
+ 		} else if (t <= 18) {
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = (t - 3);
+ 		} else {
+ 			size_t tt = t - 18;
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = 0;
+ 			while (tt > 255) {
+ 				tt -= 255;
++				if (!HAVE_OP(1))
++					return LZO_E_OUTPUT_OVERRUN;
+ 				*op++ = 0;
+ 			}
++			if (!HAVE_OP(1))
++				return LZO_E_OUTPUT_OVERRUN;
+ 			*op++ = tt;
+ 		}
++		if (!HAVE_OP(t))
++			return LZO_E_OUTPUT_OVERRUN;
+ 		if (t >= 16) do {
+ 			COPY8(op, ii);
+ 			COPY8(op + 8, ii + 8);
+@@ -368,6 +422,8 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
+ 		} while (--t > 0);
+ 	}
+ 
++	if (!HAVE_OP(3))
++		return LZO_E_OUTPUT_OVERRUN;
+ 	*op++ = M4_MARKER | 1;
+ 	*op++ = 0;
+ 	*op++ = 0;
+diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
+index c94f4928e188..4d5a1b58a4a0 100644
+--- a/lib/lzo/lzo1x_decompress_safe.c
++++ b/lib/lzo/lzo1x_decompress_safe.c
+@@ -21,7 +21,6 @@
+ #include "lzodefs.h"
+ 
+ #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
+-#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
+ #define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
+ #define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
+ #define TEST_LB(m_pos)  if ((m_pos) < out) goto lookbehind_overrun
+diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
+index b60851fcf6ce..8b1a46993acf 100644
+--- a/lib/lzo/lzodefs.h
++++ b/lib/lzo/lzodefs.h
+@@ -19,6 +19,7 @@
   */
+ #define LZO_VERSION 1
  
- #include <linux/log2.h>
-+#include <linux/math64.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/spi-nor.h>
- 
-diff --git a/drivers/mtd/spi-nor/swp.c b/drivers/mtd/spi-nor/swp.c
-index e48c3cff247a..9c9328478d8a 100644
---- a/drivers/mtd/spi-nor/swp.c
-+++ b/drivers/mtd/spi-nor/swp.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2005, Intec Automation Inc.
-  * Copyright (C) 2014, Freescale Semiconductor, Inc.
-  */
-+#include <linux/math64.h>
- #include <linux/mtd/mtd.h>
- #include <linux/mtd/spi-nor.h>
- 
-
----
-base-commit: 03e7bb864d9a9efca02743d4a9fab8f3d0b00407
-change-id: 20250223-snor-math64-8d8d6db27a42
-
-Best regards,
++#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
+ #define COPY4(dst, src)	\
+ 		put_unaligned(get_unaligned((const u32 *)(src)), (u32 *)(dst))
+ #if defined(CONFIG_X86_64) || defined(CONFIG_ARM64)
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
