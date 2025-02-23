@@ -1,96 +1,153 @@
-Return-Path: <linux-kernel+bounces-527799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36C6A40F97
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:45:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A56A40F9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:46:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C173A6CA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D6B1895E1E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD56F54769;
-	Sun, 23 Feb 2025 15:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E45433CE;
+	Sun, 23 Feb 2025 15:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCtnGQRB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HoT5oSl7"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990717D2;
-	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A6817D2;
+	Sun, 23 Feb 2025 15:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740325532; cv=none; b=JYqOW10R8KH7mJXhItBkjETtBKqHGYzQHYXwtdnNCCtYk1I2AfFrkN8ltAs5gBjtH+jN+Zn7I9MssQglgu+hp8K/SYr7SNY5YvwdeyoLCJ9/OGc5NXjW8IAogHtVrMF0wwY0Q7PfS7bmkZHhCwxpVEdvYyLZJnguA4lJU1vRFDc=
+	t=1740325597; cv=none; b=pdZSaxxj+chiJRfC6dUQaY/COj8durBZ0vSUEN19LYGilZUXsDdf4a1+ockfS9Cjxat8fx8XQGkPlj+X4ZFkvzI3ysJmjZVRrH1OXBHsiqbrc0S5c69Q5zq5ahU6Vo7WOp6C5s+7P+ZQJW6NCs0uE5ZeUJtgaBxQLODDbtIvcxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740325532; c=relaxed/simple;
-	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UdP7tViDO6fg3eCPb6b0HE5/hbGS+wxcucxmcss0RUbcuuC6vygrjT1moSEWqUTS8/Hf6G2RNsk6GIU8iKMHcNbADUTSD+wp5V5XkuJWKOZBCESr7xSYeUYyn0i9FU7CNUgWH5tT/Kd0xEAgdIM1UYV5udh52DgzBQs3g/ALzkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCtnGQRB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B128C4CEDD;
-	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740325530;
-	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gCtnGQRB93IVr5xoC+Y9aqkyT2Da66sbYPg5tlOexCaL+X66C5hrOLKP8Uh4AlyUg
-	 CEvFRlD4xgqZkvteDGw70NVG48LK/Ao1R1Ho/YQOeiQvzc7MRq76Bh+2EAxpIEzSjh
-	 ZmlDxgOdRYhagWgVMpzdRfqbNxMkZFh5Ga7bDv9qD/dxjn20UkZBe6SjTHdXeFxfmZ
-	 FjLvjJtjKVR0F+6A6bkSE/LHdW+yokJoU29olVgqiBIQk10+eBQU2Mb/QkSrSBjLJw
-	 m6Dkt6Nu2UDLl8JizT071BmQ2bqMpmNzx+CDRk8GMN8whmPctyid+VN8Nh/aRupdHY
-	 j6aokvNpOsntg==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso33914741fa.3;
-        Sun, 23 Feb 2025 07:45:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW6Pi4CYrYDgE6wgqIwEyPZxB1t438pDFKXrZu99uVTy/iCsVgQ/JENS7HFSzIkI68EMA+msk3tyirYoqwf@vger.kernel.org, AJvYcCX86skN5vD5Oifa3afzAj7owJC7+jXds6ROpYVcscI/n3Yx1g4sQAV+8kmgT7VI9vMOwEpIAX3GCblHAxdVEQ==@vger.kernel.org, AJvYcCXZa5ixDkM+QmlHt3Kef+gbHA2IiWcnWAQKEwRrosBw7fQjzx7bm1Q8Na0P+lFFrZq80wuT04lLygc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCktxkdx03BJOP0UUnXa9Gmd1Hn7fSgoQ060oe9OxoR2olFMjk
-	25hzTz+1l79kr8rKLgjou+4Hk74OUsBjsIGc22uAUyABMMsxGK5HJNB6zcL8NqbxcVQZUq0TRsY
-	irJB/zp/hD1HIa9lEhixRD+jXAfo=
-X-Google-Smtp-Source: AGHT+IFPMG1zOPXS0E5ESbB2FCi44a1GD+soKxuNdFM7CWZAbww6yk48RaVa8jHEiiIG+yMbKGz+XJIMUJAv4H6qa4s=
-X-Received: by 2002:a05:6512:ba5:b0:543:9a61:a2e5 with SMTP id
- 2adb3069b0e04-54838ef78cemr4226110e87.23.1740325528840; Sun, 23 Feb 2025
- 07:45:28 -0800 (PST)
+	s=arc-20240116; t=1740325597; c=relaxed/simple;
+	bh=XBHaJozJe19Ofq8z+znyq0y1bg7oHV7bsZ5RaX/NEv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kli8Qyhpvxplt4LExDuRLeUqmyUGxgJhLhigWvmEbNxvIFFnsTpHpNwJpm529rXC3hY4vDvW4wiEbjAM49M0tzku2p4Gzek7rTWXmDyEGtVS5qelTyWPOyGD12tyA+qnuSjum7NDfDxVF59kqi4ARrmbhkD9OSOR8op6mGQgTtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HoT5oSl7; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D929D4DC;
+	Sun, 23 Feb 2025 16:45:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740325508;
+	bh=XBHaJozJe19Ofq8z+znyq0y1bg7oHV7bsZ5RaX/NEv0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HoT5oSl71mfaPgy6gFBV+8/jFn5dJPUHB75LW/AVc47H8DWrhy2VuuBaA+hDBOwFx
+	 JDkejo9y8hBuEiuln2yaJc1Q9Q8Se20XXyGCL6C36IlejRrqD7bgYvcwCIT9o32vCh
+	 P1TMl2SFRAsqUgRAlqLSZeGlSLtDv1rchyeKMJAE=
+Date: Sun, 23 Feb 2025 17:46:17 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH v3 1/6] media: uvcvideo: Keep streaming state in the file
+ handle
+Message-ID: <20250223154617.GB27463@pendragon.ideasonboard.com>
+References: <20250206-uvc-granpower-ng-v3-0-32d0d7b0c5d8@chromium.org>
+ <20250206-uvc-granpower-ng-v3-1-32d0d7b0c5d8@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
-In-Reply-To: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 23 Feb 2025 16:45:17 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
-X-Gm-Features: AWEUYZlq56gSuDcK4AMca3N4fpNm-cMsBQvbloeKgU8qj87zK9lNdlTlqURLZ-8
-Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
-Subject: Re: [syzbot] [efi?] [fs?] BUG: unable to handle kernel paging request
- in efivarfs_pm_notify
-To: syzbot <syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com>
-Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250206-uvc-granpower-ng-v3-1-32d0d7b0c5d8@chromium.org>
 
-#syz test:
-git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+Hi Ricardo,
 
---- a/fs/efivarfs/super.c
-+++ b/fs/efivarfs/super.c
-@@ -367,6 +367,8 @@ static int efivarfs_fill_super(struct super_block
-*sb, struct fs_context *fc)
-        if (err)
-                return err;
+Thank you for the patch.
 
-+       register_pm_notifier(&sfi->pm_nb);
-+
-        return efivar_init(efivarfs_callback, sb, true);
- }
+On Thu, Feb 06, 2025 at 07:47:00PM +0000, Ricardo Ribalda wrote:
+> Add a variable in the file handle state to figure out if a camera is in
+> the streaming state or not.
 
-@@ -552,7 +554,6 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
+s/\n/ / (and reflow) or s/$/\n/ depending on what you meant.
 
-        sfi->pm_nb.notifier_call = efivarfs_pm_notify;
-        sfi->pm_nb.priority = 0;
--       register_pm_notifier(&sfi->pm_nb);
+> This variable will be used in the future for power management policies.
+> 
+> Now that we are at it, make use of guards to simplify the code.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_v4l2.c | 15 +++++++++++----
+>  drivers/media/usb/uvc/uvcvideo.h |  1 +
+>  2 files changed, 12 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 93c6cdb23881..856eaa23e703 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -835,11 +835,17 @@ static int uvc_ioctl_streamon(struct file *file, void *fh,
+>  	if (!uvc_has_privileges(handle))
+>  		return -EBUSY;
+>  
+> -	mutex_lock(&stream->mutex);
+> +	guard(mutex)(&stream->mutex);
+> +
+> +	if (handle->is_streaming)
+> +		return 0;
+> +
+>  	ret = uvc_queue_streamon(&stream->queue, type);
+> -	mutex_unlock(&stream->mutex);
+> +	if (!ret)
+> +		handle->is_streaming = true;
+>  
+>  	return ret;
 
-        return 0;
- }
+Now that you use a mutex guard, you can write
+
+	if (ret)
+		return ret;
+
+	handle->is_streaming = true;
+	return 0;
+
+apart from that,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> +
+>  }
+>  
+>  static int uvc_ioctl_streamoff(struct file *file, void *fh,
+> @@ -851,9 +857,10 @@ static int uvc_ioctl_streamoff(struct file *file, void *fh,
+>  	if (!uvc_has_privileges(handle))
+>  		return -EBUSY;
+>  
+> -	mutex_lock(&stream->mutex);
+> +	guard(mutex)(&stream->mutex);
+> +
+>  	uvc_queue_streamoff(&stream->queue, type);
+> -	mutex_unlock(&stream->mutex);
+> +	handle->is_streaming = false;
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 5e388f05f3fc..bc87e1f2c669 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -618,6 +618,7 @@ struct uvc_fh {
+>  	struct uvc_streaming *stream;
+>  	enum uvc_handle_state state;
+>  	unsigned int pending_async_ctrls;
+> +	bool is_streaming;
+>  };
+>  
+>  struct uvc_driver {
+
+-- 
+Regards,
+
+Laurent Pinchart
 
