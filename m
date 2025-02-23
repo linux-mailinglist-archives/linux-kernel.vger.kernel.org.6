@@ -1,117 +1,146 @@
-Return-Path: <linux-kernel+bounces-527601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07202A40D32
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:00:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8737A40D35
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E1A17B173
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:00:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A94E17B545
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BD81DF993;
-	Sun, 23 Feb 2025 07:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2741FBEBF;
+	Sun, 23 Feb 2025 07:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ClrkNPvV"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="MMKZcMPv"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A153FB3B;
-	Sun, 23 Feb 2025 07:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA802111
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 07:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740294020; cv=none; b=FbR/4w3lqH+Yv/fcb4Os7NHI79pjH0zTgh3dFP5aKyIg1VfZENuGUjwHCQ5E6WV3zYWWqXzqC2tbMRSWERkPRnIjQ23zuXz7Qq3iCbmiwF/hWt6pPndLkRICXzynwlLBG/8UOWK0N6ErJp2Se/6ZCqQGSIbTF6etnOWW1tRYJKY=
+	t=1740294771; cv=none; b=DgUlHf+2n8Vv9p7X3LIdJFsHhzFiOEAj3cjBbb4Z/3C5aetEJueOJXDJ4OjvwPb98oaWQr2zFhrQSfEN6PS0QSqF8N9oyz35HkNVHCjggtkCYdcqIRV4j8NP7Rea72GpfzIXrv6nwEicAXYxs56rsZxARJFIg/50dDUXscUpCEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740294020; c=relaxed/simple;
-	bh=ib5TwWcaRw9LUXjvbripaiMLqsuKJwTrOTJaR27F0So=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JoURGiZjqnI9JE1P2pwy5az9xmOA9Ex8E73hLWupao0ac4jjwQCurZ/Jb3I+jq/UtAA7NFMQsYYSdeKOPA6H78vffhd5qTscLyv+DTSYYIWSSBrYAVbEuk00bbpq0EmD8C3/nbrXdnn5GG5FxqkPHuNju5Xgy5UODdiOjwGpRZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ClrkNPvV; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0ba9825e9so218413085a.0;
-        Sat, 22 Feb 2025 23:00:17 -0800 (PST)
+	s=arc-20240116; t=1740294771; c=relaxed/simple;
+	bh=cpcCvhPWrr9JwQoBY8+5sHgrVGVMUj1p6Vb2eP3M79A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RI/K1NUzodHzc+GrA8tN1sLpsYZGsJFoXrsXfH6s/NaE94zsxDBzCcZqDKrLBJNzN1WqsY1iVKkaIEFqdycciq2qMWBSNagmfptU1xlObhLwISiLHeoXPSJ028DLTRYTU9CyJCQjF64kgXo1U9LtR2LDbs8s8BOt4yJz7zW6pWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=MMKZcMPv; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6fb8de54da9so20770417b3.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 23:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740294016; x=1740898816; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0AsXxvvW3BkHd5vCQu8R0wvKfYc8SOGl6m/u1V38cEI=;
-        b=ClrkNPvV0lLKTo28cvSRMLF35s0L3WuJAveGNhAz5VWTzPOLHatl6IWMAXeeMsyicq
-         pk9KgeLg6RsMib53Ox05N8rDDt3yuoJHWs3wWGUS0rhKGT17gs3alTNaPcm39/gnKxZR
-         zXZXqo8kycj8wuNyVEFyOp5t5LKqjQDGPak42TuWtvFP2341W3heoQZSqJtCf4Lxn14J
-         Ter9Wfukoz8bqyA8/r7Shi82tLnB+vv9FbON1eVLkvTR/dGkjIvK6uhCfjd4MtIAmuSt
-         SlvxGhOPwe1BZ0jpGd9rc0H2k0K5LXwVY2ORNSM2GSnAb2nrI2wYBx4SDQ6ePe+LlN7H
-         pPnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740294016; x=1740898816;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=tenstorrent.com; s=google; t=1740294768; x=1740899568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0AsXxvvW3BkHd5vCQu8R0wvKfYc8SOGl6m/u1V38cEI=;
-        b=gbeC/0+DaKPiMK55gU4SBhwnwsnyUu95L1LrSsl0Ct3NQnKT0WgwC7kKW02fpFiZH8
-         AtPuXxf7/Qxtuc1xX+XbsSOjDZdYcYq3dfxEalmFslCjs98YUCK6CLIc2SdDHui9vsuH
-         2/jlToAS9J//SbNMqfQqDF+cN11yVDt83JpVHDgIbwRmbVbHM/kWP56Ypw+a3sEtyLuk
-         J/u8l3/NE24IuEH/JDWCIQbvrmpSRrTOvdK8oOkk9w/PloTjUF8NdfoklyMJRnULCeB6
-         CI7/GQlkYN13OO3+sDvt18y+4tN4GV2Lis8fuTzMkpuqpzAjC2oRh+DPLukKPkHJsv9d
-         Xqiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVK7y5GIq+Zcoo1V8+qt0jBmblJ4PEORIyp6rOCg47pDpCWxW9INVCWjTCSUktLhkJp3g8SwmlzIYgrRL3Kl3zh@vger.kernel.org, AJvYcCVnZqjXmejpYzbtroEJUhmiIfjQn5u/kjCUQzX9wFQ50RucAHrlECbTtbTi8LasQPMg5DkdHx291m733kk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw03lUV5C0bbV4ECdwVx6xmUOp+xq9SH+fIlq6NglwzAin22LdS
-	Et7XPKxuQjJJbWdeaQ7BHYhRMaMBly07o09wZiZ5slU1OJ58Xt5HqBMFf3rj
-X-Gm-Gg: ASbGncty8XA1bSMO5ne4AhPvtus+J4kiYXOMdAXHdQQII19GLWdhr/uWGVohDJF4l3B
-	/SZcOLr9jfYNine8AGnWFqU7nHejmuOGOwnKJAB8uWM1ss7ohSzAkSrKx0Pa0vausmlFqfZj2zm
-	J3n9IYaDPUwqjRTN63WFXPVSdnbYEizAORhEZYnFgJVFqrE6Faatfd12i9KtVwvHfByp+m6zPAT
-	3F40hWuOpNGl/2yo+M47b2dGhyULVzuf3wI0s0Pgppkoig9FsukvCVvgt61cm0bf9wngEMIU8XM
-	iefC2X7FJiLs3GfD5lozPPY3RHuUidJ+WxeRYrDmI2RaL1z54HmxO7Ujkj6zYQQGiJ3Sb4e/c7Q
-	cwdWE4+p8hTB3
-X-Google-Smtp-Source: AGHT+IGI0f0oWVpNg7tVGkpoHA4BuZEzcJvgGOpydcBOqIapcgvSQZaqqHx7a34SYNJMw+t7zyS87w==
-X-Received: by 2002:a05:620a:4083:b0:7b6:d5b2:e6d with SMTP id af79cd13be357-7c0cef539efmr1335787185a.35.1740294016626;
-        Sat, 22 Feb 2025 23:00:16 -0800 (PST)
-Received: from localhost (bras-base-toroon0648w-grc-10-142-198-73-227.dsl.bell.ca. [142.198.73.227])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c0b46649d3sm581990085a.32.2025.02.22.23.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 23:00:16 -0800 (PST)
-Date: Sun, 23 Feb 2025 02:01:10 -0500
-From: Seyediman Seyedarab <imandevel@gmail.com>
-To: Ritvik Gupta <ritvikfoss@gmail.com>
-Cc: shuah@kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2] selftests/mount: Close 'fd' when write fails
-Message-ID: <5lkv3sotpv6pvs63gds5crwkrvs5xjtdkjmjcnzrc3c6d5s2wg@gzzfvghkp2qm>
-References: <20250222114709.50011-1-ritvikfoss@gmail.com>
- <20250222121249.50588-1-ritvikfoss@gmail.com>
- <zshes4xtyir7zrrybeqj2amrxyctwqnuvx2tqyktv4vsfstxqi@pvdq2rb5m47j>
- <Z7qiOE3EXo8BtdY8@ritvikos>
+        bh=ldzcQVZLNCUbBkmkSbK9JX+buCbspNWQzfPcTiRZxPU=;
+        b=MMKZcMPvO0GQ+Wxye0F1P53ihXO9+jce13xxv+lMtFwTqld/KfL+9zMjO2m7BEHPLO
+         a3Tu0sMSoS0V8wglHDf3UmM4mcAm5bh/+IOpLopVaKPTLYqjZ3eqGwv/gmb1YQ/3w+RC
+         VLIQt+afgz2P6ULiPIpDiJkOKLvALIB31k4dlionRJESd2RIzkxucGLUX48zzV9G4YTy
+         5zBe7R5JlHhILG19OEXSkPYCJ2aNLA+Tgz7017zvGqwv249W20KFrB9An5CBpAjztLJP
+         Uf4w7jcc5k+CDGD9p2aeWmVEiD2Vtjv5+Ai/fJD/RJAeRtx26lD9gAc1eQeLz4iUh0lH
+         Li1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740294768; x=1740899568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ldzcQVZLNCUbBkmkSbK9JX+buCbspNWQzfPcTiRZxPU=;
+        b=dwCYoR9u9Rjdm+3FEMlyJ+cgDBRqCgL1irZ/cs5oWnrn+1FNNTK9fPfRQyKsnIws+G
+         guAjST2guG0VHsa22FjYTW/YbrP0LgaLdh+KTp0B26LJJL7crkkeo2MrDGCTcVGvxfVP
+         M2Xl6frVH3QchK+JOD1uZOxBeNU1CjER11RGkx3P8u/ThrPSV8ENNA06lWpwUe45VUBc
+         0j8a1YvMtUNTCv+KPgrdQ8RWZl/l3IW/CLFbnyt2QqOAE3JhP+eABpmPoApFQGZdToav
+         vIUGNZe1w5npgchEWf749evUc/LcFBghQRWIWeaUI4GWmr0dN7xLj1IFt5j7rjgHKSoD
+         tV2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3NzULyeEhserqwjXp/7EhtvoCmKAkZ5OJz3CroKSgP+H3STb1KtLq9zHzEW+nMPMZWkMiWfBratRnZUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUbBoqUqGbXDYJ502Cxclwj/dw0uWxp2yTROUyAz/ZZe0tV7k4
+	7q2h2Ay8TK6dDZ36P2NxMWcELBLuBmkMPgY2eHWH8EF1EUkv4jNybHbS2qytg3rcpSdTpc12Ide
+	HRS8kYcbXySqofAt6VTzYMqCIN+3cG8VVHdvNaQ==
+X-Gm-Gg: ASbGnctRpdwPSjWEYGq0lMjCRqJbLKhg+/VibnoM9e59t/7SvzO92Tg4S0XR7dPpLAT
+	pVUddiXmJm7ijlmFqYltu5Rgqaywu3o8bJxRKEOMgfrrbwuYBjJaaVhnxbT7tKEzcfMLEP1XjIy
+	hWia+b5DOfFF/aDJVgTe6ONJmTfve+C3PtlQ==
+X-Google-Smtp-Source: AGHT+IErv7QjZvqwZj7xwVFEty3DyOMgQT39nCw3foX+DTo4lf4iob2nS49dT5fKuofFWcZyAoIBII3K1uxoegJ4n5M=
+X-Received: by 2002:a05:690c:7401:b0:6ee:8363:96d3 with SMTP id
+ 00721157ae682-6fbcc372266mr78832957b3.27.1740294767658; Sat, 22 Feb 2025
+ 23:12:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7qiOE3EXo8BtdY8@ritvikos>
+References: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
+In-Reply-To: <20250221000924.734006-1-cyrilbur@tenstorrent.com>
+From: Anton Blanchard <antonb@tenstorrent.com>
+Date: Sun, 23 Feb 2025 18:12:36 +1100
+X-Gm-Features: AWEUYZl2UnE5I4LEXGNcBcYyg7ug4nKfYel88Patux_dppHJ-4gcND83DtzAV8E
+Message-ID: <CAN7m+mC18ch=+iqJxarc-Xi_W9hZZkHD-p7ZthXqH9CwDtsqKA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] riscv: uaccess: optimizations
+To: Cyril Bur <cyrilbur@tenstorrent.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, charlie@rivosinc.com, jrtc27@jrtc27.com, 
+	ben.dooks@codethink.co.uk, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, jszhang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/02/23 09:51AM, Ritvik Gupta wrote:
-> Yes, the kernel will handle the 'fd' cleanup automatically, but
-> the existing implementation already closes it before exiting.
-> However, in case where write fails, its unhandled.
-> This patch addresses that gap :)
-> 
-> Nevertheless it's subjective indeed.
-> Thanks for reviewing!
-> 
-> Regards
-> Ritvik
+Hi Cyril,
 
-The current implementation doesn't close the fd before calling
-the die() function. It only closes fd before returning because
-vmaybe_write_file() doesn't necessarily exit the process. It
-only exits in failure cases, including failures when closing
-the file itself. I think the close() failure path might have
-caused some confusion.
+On Fri, Feb 21, 2025 at 11:09=E2=80=AFAM Cyril Bur <cyrilbur@tenstorrent.co=
+m> wrote:
+> This series tries to optimize riscv uaccess by allowing the use of
+> user_access_begin() and user_access_end() which permits grouping user acc=
+esses
+> and avoiding the CSR write penalty for each access.
 
-Cheers,
-Seyediman
+I tested this on the upcoming Tenstorrent Ascalon CPU using a simple
+microbenchmark (getdents64() on a directory with 10 files in it) and it was
+significantly faster (over 40%). This came from both a reduction in
+instruction count as well as a reduction in sstatus CSR writes.
+
+It would be great if we could get this merged considering x86, arm64 and
+POWER are exploiting this optimisation already.
+
+Thanks,
+Anton
+
+> The error path can also be optimised using asm goto which patches 3 and 4
+> achieve. This will speed up jumping to labels by avoiding the need of an
+> intermediary error type variable within the uaccess macros
+>
+> I did read the discussion this series generated. It isn't clear to me
+> which direction to take the patches, if any.
+>
+> V2:
+> I've taken on this series as there isn't any response from Jisheng. No
+> significant changes other than build fixes.
+> - Fixes build breakage in patch 3 to do with not having used 'goto' keywo=
+rd.
+> - Fixes build breakage in patch 4 on 32bit not having delcared __ptr in t=
+he
+>   macro.
+>
+> V3:
+> Significant commit message rewrites.
+>  - Corrected the justification for patch 2
+>  - Better explained/justified patches 3 and 4
+> Minor code changes for legibility and more comments.
+>
+> Jisheng Zhang (4):
+>   riscv: implement user_access_begin() and families
+>   riscv: uaccess: use input constraints for ptr of __put_user()
+>   riscv: uaccess: use 'asm goto' for put_user()
+>   riscv: uaccess: use 'asm_goto_output' for get_user()
+>
+>  arch/riscv/include/asm/uaccess.h | 205 +++++++++++++++++++++++--------
+>  1 file changed, 152 insertions(+), 53 deletions(-)
+>
+> --
+> 2.34.1
+>
+>
 
