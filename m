@@ -1,207 +1,138 @@
-Return-Path: <linux-kernel+bounces-527803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A1A40FA3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:06:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58562A40FA6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC1D17382F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:06:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B16C173821
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F670831;
-	Sun, 23 Feb 2025 16:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C417083A;
+	Sun, 23 Feb 2025 16:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rbkWhbAh"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="RxLrC+au"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B260F2F5A;
-	Sun, 23 Feb 2025 16:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59511757F3;
+	Sun, 23 Feb 2025 16:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740326754; cv=none; b=oEHufYdlyLKRZHQX3V8jYHl+Mo113bFwTXz1hYgzk61j50YiYmyOgrADfdoZHhA4DJssLTj6V2Ge2kApqv9ScV40hq9uShEn8pJq2jVCfXzS9lE2tJ+kc9KVWsOk5xVSXEM6F8lmdTCVHLrklY1vJioObiX9wwRkM7YIpTlwwkk=
+	t=1740326777; cv=none; b=ljDxNadzZ6UnkPG1bMetOnmfbeXjjv3ZwOWr74Z22TO3mlOoTq0YAl6Sau3OIOz9I67rDaIgnZ/ngXNI4wu1Rtxmhz71wQ/UyBdcVgKoGIcsKVo463ojmGTMSWGkTiZbzg1E5FWkbiLZHRFIAZmLVxPX7MsjfLqKIO2Qys054Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740326754; c=relaxed/simple;
-	bh=noOQpBDX7pxxQQTJmwMwR6yAbD+J86E38UthTfV6NUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIcf2jkOUg5WLFhsiFSypciBSXigRe4KoY/P+TYcHoC2BqC11hzJaLibMadntjS699Iv/KWMVTPAN3iJBm3KHAyxTyvINpOYfXNxtKZR47yOKsjHzgGRi1XIDVvvY8w849FfPQ3aDklQN0BTfUl+I+sx93NqdoX+FUmsIX++hkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rbkWhbAh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 50640496;
-	Sun, 23 Feb 2025 17:04:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740326665;
-	bh=noOQpBDX7pxxQQTJmwMwR6yAbD+J86E38UthTfV6NUg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rbkWhbAhDcYglJ2Q+7ehG6AqgkhTbK3spYr0i0GiXGknVkONXVKPxUrPPrinYlfnZ
-	 kLCdyZFKoxZ5BD6VlGDaJOVPqJ444tA3W+55ZTiDxIYCWutZS/rqPQAXJRivo58KyU
-	 9OCAI6/e8pAlU+/jLNFkWjXEplsRh/nnnLZ2DGyA=
-Date: Sun, 23 Feb 2025 18:05:34 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: Re: [PATCH v3 2/6] media: uvcvideo: Move
- usb_autopm_(get|put)_interface to status_get
-Message-ID: <20250223160534.GC27463@pendragon.ideasonboard.com>
-References: <20250206-uvc-granpower-ng-v3-0-32d0d7b0c5d8@chromium.org>
- <20250206-uvc-granpower-ng-v3-2-32d0d7b0c5d8@chromium.org>
+	s=arc-20240116; t=1740326777; c=relaxed/simple;
+	bh=0+Nvn8cX6GI4R1DniyFi3unyhSBXeHvaoQlWCJNx56g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q9zKgyk/T+i2Kvp9M3jTkquQucu08w7kWD0JlFr5BKaYCDJUWxamvi/TZdPfH61TidUQzACfF6TKTOySulvDWxpimH5F9gXAfk1WBuA4LUBhCMnzdgE5ZQmdgVAHclX8/S9li72VkzePKLIsAr8SCPke6zQ0gnwFZzO0Ru70xXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=RxLrC+au; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=1znzIw5Ur+KNtuAQFIn0e9fm114BbhJeBjBikMs86rQ=; b=RxLrC+aui/e9VrGv
+	naL6Girhfd7EA9uioNfjOuZ4X5PenPiEvlOpM66l99rmdnRPNmOhUsq6vO4cESC+9fEOmDxlwBqRF
+	eVOZiGnM/8+Mq7B4Dkz5znqTYMPXXOXcVTMLZHfsYNBIULQnCDK22rbBn5QlS+Ys/EsSz2HSRpKHb
+	+UIFclrUm4Rt7mUO9lTU1VnHKm+HN6ItEbp4fZGv0ZOoc38Fm2zZTEbuk1GjXtFNbYGbe0QKRidiO
+	Zw77MBXbTfTJSQqTjg0KcyRX8bp8/G3uTtv095li8HuAbqSUmyX4OaFug6MDRoL6sDDmUPJQ1+vWV
+	dHTorL7tuq6IUTm5RQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tmEUU-000C2n-24;
+	Sun, 23 Feb 2025 16:06:02 +0000
+From: linux@treblig.org
+To: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] usb: olpi: Remove unused otg_ulpi_create
+Date: Sun, 23 Feb 2025 16:06:02 +0000
+Message-ID: <20250223160602.91916-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250206-uvc-granpower-ng-v3-2-32d0d7b0c5d8@chromium.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Ricardo,
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Thank you for the patch.
+otg_ulpi_create() has been unused since 2022's
+commit 8ca79aaad8be ("ARM: pxa: remove unused pxa3xx-ulpi")
 
-On Thu, Feb 06, 2025 at 07:47:01PM +0000, Ricardo Ribalda wrote:
-> Right now PM operations are always called at the same locations as
-> uvc_status_(get|put).
-> 
-> Combine them into uvc_status_(get|put). This simplifies the current
-> code and future PM changes in the driver.
-> 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_status.c | 38 +++++++++++++++++++++++++++++++++-----
->  drivers/media/usb/uvc/uvc_v4l2.c   | 11 +----------
->  2 files changed, 34 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
-> index ee01dce4b783..caa673b0279d 100644
-> --- a/drivers/media/usb/uvc/uvc_status.c
-> +++ b/drivers/media/usb/uvc/uvc_status.c
-> @@ -382,7 +382,7 @@ void uvc_status_suspend(struct uvc_device *dev)
->  		uvc_status_stop(dev);
->  }
->  
-> -int uvc_status_get(struct uvc_device *dev)
-> +static int _uvc_status_get(struct uvc_device *dev)
+Remove it.
 
-s/_uvc_status_get/__uvc_status_get/
+The devm_ variant is still used.
 
->  {
->  	int ret;
->  
-> @@ -399,13 +399,41 @@ int uvc_status_get(struct uvc_device *dev)
->  	return 0;
->  }
->  
-> -void uvc_status_put(struct uvc_device *dev)
-> +int uvc_status_get(struct uvc_device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = usb_autopm_get_interface(dev->intf);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = _uvc_status_get(dev);
-> +
-> +	if (ret)
-> +		usb_autopm_put_interface(dev->intf);
-> +
-> +	return ret;
-> +}
-> +
-> +static int _uvc_status_put(struct uvc_device *dev)
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/usb/phy/phy-ulpi.c | 23 -----------------------
+ include/linux/usb/ulpi.h   |  9 ---------
+ 2 files changed, 32 deletions(-)
 
-s/_uvc_status_put/__uvc_status_put/
-
-But unless you need to call this function in subsequent patches in the
-series, I would merge it with uvc_status_put(). I think the same could
-be done for get() too.
-
->  {
->  	guard(mutex)(&dev->status_lock);
->  
->  	if (dev->status_users == 1)
->  		uvc_status_stop(dev);
-> -	WARN_ON(!dev->status_users);
-> -	if (dev->status_users)
-> -		dev->status_users--;
-> +
-> +	if (WARN_ON(!dev->status_users))
-> +		return -EIO;
-
-That's a change in behaviour that should be at least explained in the
-commit message.
-
-> +
-> +	dev->status_users--;
-> +	return 0;
-> +}
-> +
-> +void uvc_status_put(struct uvc_device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = _uvc_status_put(dev);
-> +	if (!ret)
-> +		usb_autopm_put_interface(dev->intf);
->  }
-> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> index 856eaa23e703..5d4e967938af 100644
-> --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> @@ -636,20 +636,13 @@ static int uvc_v4l2_open(struct file *file)
->  	stream = video_drvdata(file);
->  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
->  
-> -	ret = usb_autopm_get_interface(stream->dev->intf);
-> -	if (ret < 0)
-> -		return ret;
-> -
->  	/* Create the device handle. */
->  	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
-> -	if (handle == NULL) {
-> -		usb_autopm_put_interface(stream->dev->intf);
-> +	if (!handle)
->  		return -ENOMEM;
-> -	}
->  
->  	ret = uvc_status_get(stream->dev);
->  	if (ret) {
-> -		usb_autopm_put_interface(stream->dev->intf);
->  		kfree(handle);
->  		return ret;
->  	}
-> @@ -685,8 +678,6 @@ static int uvc_v4l2_release(struct file *file)
->  	file->private_data = NULL;
->  
->  	uvc_status_put(stream->dev);
-> -
-> -	usb_autopm_put_interface(stream->dev->intf);
-
-This isn't right. The usb_autopm_get_interface() and
-usb_autopm_put_interface() calls here are not mean to support UVC status
-operation only. Sure, the patch doesn't introduce an issue as such, but
-it bundles two things that are not related in a way that is confusing.
-
-I expect that the code will improve in subsequent patches and the reason
-will become clear, but at least the commit message here really needs to
-explain why there's a temporary step backwards. Ideally the series
-should be reorganized to avoid this.
-
->  	return 0;
->  }
->  
-
+diff --git a/drivers/usb/phy/phy-ulpi.c b/drivers/usb/phy/phy-ulpi.c
+index e683a37e3a7a..4df63e67bb37 100644
+--- a/drivers/usb/phy/phy-ulpi.c
++++ b/drivers/usb/phy/phy-ulpi.c
+@@ -255,29 +255,6 @@ static void otg_ulpi_init(struct usb_phy *phy, struct usb_otg *otg,
+ 	otg->set_vbus	= ulpi_set_vbus;
+ }
+ 
+-struct usb_phy *
+-otg_ulpi_create(struct usb_phy_io_ops *ops,
+-		unsigned int flags)
+-{
+-	struct usb_phy *phy;
+-	struct usb_otg *otg;
+-
+-	phy = kzalloc(sizeof(*phy), GFP_KERNEL);
+-	if (!phy)
+-		return NULL;
+-
+-	otg = kzalloc(sizeof(*otg), GFP_KERNEL);
+-	if (!otg) {
+-		kfree(phy);
+-		return NULL;
+-	}
+-
+-	otg_ulpi_init(phy, otg, ops, flags);
+-
+-	return phy;
+-}
+-EXPORT_SYMBOL_GPL(otg_ulpi_create);
+-
+ struct usb_phy *
+ devm_otg_ulpi_create(struct device *dev,
+ 		     struct usb_phy_io_ops *ops,
+diff --git a/include/linux/usb/ulpi.h b/include/linux/usb/ulpi.h
+index 5050f502c1ed..4b651065738a 100644
+--- a/include/linux/usb/ulpi.h
++++ b/include/linux/usb/ulpi.h
+@@ -49,19 +49,10 @@
+ /*-------------------------------------------------------------------------*/
+ 
+ #if IS_ENABLED(CONFIG_USB_ULPI)
+-struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
+-					unsigned int flags);
+-
+ struct usb_phy *devm_otg_ulpi_create(struct device *dev,
+ 				     struct usb_phy_io_ops *ops,
+ 				     unsigned int flags);
+ #else
+-static inline struct usb_phy *otg_ulpi_create(struct usb_phy_io_ops *ops,
+-					      unsigned int flags)
+-{
+-	return NULL;
+-}
+-
+ static inline struct usb_phy *devm_otg_ulpi_create(struct device *dev,
+ 						   struct usb_phy_io_ops *ops,
+ 						   unsigned int flags)
 -- 
-Regards,
+2.48.1
 
-Laurent Pinchart
 
