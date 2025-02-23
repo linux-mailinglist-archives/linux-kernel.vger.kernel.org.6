@@ -1,158 +1,130 @@
-Return-Path: <linux-kernel+bounces-527629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8D3A40D73
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:49:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D82BA40D77
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 015A2176386
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:48:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D092F177AE2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78581FCFEE;
-	Sun, 23 Feb 2025 08:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5D31FFC42;
+	Sun, 23 Feb 2025 08:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ocFPuMo5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oa1RRCeT"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0452F3B;
-	Sun, 23 Feb 2025 08:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E101FFC47
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740300517; cv=none; b=nDepkFm64C5CDUYtQN72Cr2+QpJ+WPsItKNFVZ02dj5B1qbJW1DB1s5UMaQq3r6nK4CCwLc/6/g5q+NpojeETxf37DNz5fVG4C+L5Wk9jCKT6oa6L+zOQHAp73SuA9uL1f/ME5w1XgPuXxqqp1o2pbhqI584Lk76hHBqEVo+E5o=
+	t=1740300521; cv=none; b=INcAGTWLf28d+PGA6bOrW79BEIzI71kQJOMHQoT+dEc0JVUNvcvlLZIYpayhOE0Zt3IJ+8ny7b+FyZBU8zzJo0WzEfDFlYOb624pq9yulmklc6HWjdTZkMubb0lhtr9o2ZECMHX+FLzznBza16zlbjHcj+Q1X4wtSQoBGRn4br4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740300517; c=relaxed/simple;
-	bh=rpycrvI3qn3Uju8hG/7fBkNu9SyGAvQZz4fJVKKo618=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bfwcnU+AzpgflQTu1OczWAhSaQJEr0nsF9y/cTC9o9TwtMHZYbG67ukMPFV4Kfad8g0o9HguSmI44TEsNfJM1ncpUUqmZTxbyCi3ZSDpf1vFecPJuU7pNbbtjMksbxRhp1oi5HTHctm3fQZzzfdLuGwRUCrfkjtFfLPH+nRaDIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ocFPuMo5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BB1C4CEDD;
-	Sun, 23 Feb 2025 08:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740300516;
-	bh=rpycrvI3qn3Uju8hG/7fBkNu9SyGAvQZz4fJVKKo618=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ocFPuMo57XeN+YARf2FrCJOl+ICeBvFFMdK+9vaccbcNaaTvgc81Gad/7ZJyajjgi
-	 wrmj4zmNCTPN2DzIpRw5IVJpD3PYmhFEUZ4BJZKjHfXrVpuE9fo3ozATZE9uP8c+sz
-	 6tW11VKmmq3tijy3YL2TQsE0WPD25xI5uMWh6hk3QCxE6Xgf7EQHgrtPcrXAMBmkVg
-	 n3U2n1GZ+6Iod5UZ60GJIDwhviGaTyUaQPiY6u0kKFqnXDDlesR0egJGXZPI7R0UQE
-	 8TEQH47Be59z30TuolBOHSTMMORfSq5tjXJd2FRWMOcdZsyWjF/DxeS6l2Pz1z5ut4
-	 vxz3zoVC2Zp8g==
-Message-ID: <a8ad3469-f170-4af0-abaf-d34c60e4df52@kernel.org>
-Date: Sun, 23 Feb 2025 09:48:31 +0100
+	s=arc-20240116; t=1740300521; c=relaxed/simple;
+	bh=+7919dOQBB3+WgCkCin1yQ23DH3tjM2O4NIeDEogr9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBgfqCgIPZTLWczPBxvJGiuu5W6qTouG+JD0WB5qVip4POpNDUZKEcVtlJJcKa668uu8deGNVFv5lJfLmu5UXEIhy1oPJhbYTRThZ6FnMk72W7rYKhuC7TauwTc1AEczVrmxLChIqb9llA2YForAS3iH6qWi4jjuy9RFqcoZRDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oa1RRCeT; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso5932900a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:48:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740300519; x=1740905319; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HLG/P3HTzRFYQapMafxrub71Ti6CdsNnJQqCNZ/cZgE=;
+        b=Oa1RRCeTxcredr6ZUWzmlrXUrOIjr2Jem2fs+UR8ILBiOekN3MsUIYbTUuMNx/p69n
+         UijK5OyJiHVjIxdpWmB6rJfaI14lKkcW2nPoE2rOy5DBzOgDI8sjM9+uenGUC2H4wWde
+         KpaOHfyP2yqCDql1cENVv00DMCOAQx/iwz41PBRPTl9jctLOcEE3TgYy4p3zMKThLU32
+         p6PKWK0wXVFxdRiuBmLGv02p2usevjSM9fKEpjU05J2m1kbXzoYstO+Fq2VsScYx9WF+
+         WcQrPjnun1ksznAHNwdxVI1w08sWnguJXORpC1jxfn1CwDAClsOQruYcTPEVuHkTLIBZ
+         4dFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740300519; x=1740905319;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLG/P3HTzRFYQapMafxrub71Ti6CdsNnJQqCNZ/cZgE=;
+        b=K/ghTQcIRfH6MVupVbpwl1m1iJhSLLaNAlTtRgcjt1ehbxHlwL48E1VRg9j/LNtz/L
+         0kZO7bj/T38ME1OCAwsI/zedFJfdCXw0o3kfgWwrEpV+wp19Y++31PXLFb4qQ8vs7VYi
+         v87i7ILmNPrGq6qtUPefJX79nhrq6baJ5MeMHBH37FnpGqkXFvLAZs8eyv7w3L6+1PIe
+         NLdlx71aKYCSloJsZm4P6Wt9cEfwFztk+P2wKNDgK3ww+jMDmnagtAccBxVEG+nttFSn
+         E7YBaAnTmqn9KvknWBQO9qTKKKZfP6uRkYxwmCeOVSSNa3L7Ls679HqZwweYrHkZJiOA
+         1dvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrH5QJFzxkbolk28entnC8yyBlSq6aYs41XXQvyl9/T9YeW0X6BACNz1T4q3808nd7hm+CkW0N8AbkVkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrxeIIZcbzRKK5yyA5tQOJMkXE/l2E3xU7NgHnzkvZvNTLjxyq
+	HJpr30nj/Q+6dP8LETBvxc63RVDiw01t+ntjTXHgZ4Q/AvaJ6q/QxWbpfYi2wA==
+X-Gm-Gg: ASbGncuLKpixpCPY+ZRUHQ0xnTrYqFYijnordEIxp7SDmHc8GLPFwZuoaYF5d/scTIk
+	hzAQ39j1DxxDc6511M9lwRMps1czS2wqISB0jXRWsW3sVCoMQ3A+yt4Y5J6wrvjMILBN+WYarne
+	1JIpuARocGFMMzU5sNJ+aRomFQvGo5wGpQsEhJMN/yGE0w+NQpyT/6knTPxD6LfQtGJB+IYs3Lt
+	rvchVwuq9FLHmWBkEvPvdAZEZ6aFJNWIZYHmB7z8MyE/9qEKeu/zPKer1ID3DEj07f1AWW4Db7/
+	ezehKQcPLzAvXsX7kUWKs6NqiEHhH12zyh7/5Fo=
+X-Google-Smtp-Source: AGHT+IH0QRS5i9KETlG0jB7271dzRb/nop2A5bMYeO5KDf0OX2iwJSjXN/fAmn1BxWyAb/yXgomY4g==
+X-Received: by 2002:a17:90b:52cf:b0:2fa:6793:e860 with SMTP id 98e67ed59e1d1-2fccbfbc738mr24120841a91.0.1740300519252;
+        Sun, 23 Feb 2025 00:48:39 -0800 (PST)
+Received: from thinkpad ([220.158.156.216])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb10fab1sm4240658a91.32.2025.02.23.00.48.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 00:48:38 -0800 (PST)
+Date: Sun, 23 Feb 2025 14:18:33 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mrinmay Sarkar <quic_msarkar@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 6/8] PCI: dwc: pcie-qcom-ep: enable EP support for
+ SAR2130P
+Message-ID: <20250223084833.xdckixxfezlwovgw@thinkpad>
+References: <20250221-sar2130p-pci-v3-0-61a0fdfb75b4@linaro.org>
+ <20250221-sar2130p-pci-v3-6-61a0fdfb75b4@linaro.org>
+ <20250222165038.eyausqiccrivkv5t@thinkpad>
+ <48B09581-F4AA-4196-8445-1E02041915AF@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: reset: Add Armada8K reset controller
-To: Wilson Ding <dingwei@marvell.com>, Rob Herring <robh@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "andrew@lunn.ch" <andrew@lunn.ch>,
- "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
- "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- Sanghoon Lee <salee@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>
-References: <20250220232527.882888-1-dingwei@marvell.com>
- <20250220232527.882888-2-dingwei@marvell.com>
- <20250221-icy-flounder-of-potency-ee1a05@krzk-bin>
- <20250221234041.GA387671-robh@kernel.org>
- <BY3PR18MB4673F55565B70458E1F3F9A6A7C62@BY3PR18MB4673.namprd18.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <BY3PR18MB4673F55565B70458E1F3F9A6A7C62@BY3PR18MB4673.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <48B09581-F4AA-4196-8445-1E02041915AF@linaro.org>
 
-On 22/02/2025 21:57, Wilson Ding wrote:
-
->>>> +  offset:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    description: Offset in the register map for the gpio registers
->>>> + (in bytes)
->>>
->>> That's neither correct nor needed. Your device knows ofsset based on
->>> the compatible.
->>
->> Or use 'reg'.
->>
->> But really, just add #reset-cells to the parent node. There's no need for a child
->> node here. The parent needs a specific compatible though.
->>
+On Sat, Feb 22, 2025 at 08:06:02PM +0200, Dmitry Baryshkov wrote:
+> On 22 February 2025 18:50:38 EET, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> >On Fri, Feb 21, 2025 at 05:52:04PM +0200, Dmitry Baryshkov wrote:
+> >> Enable PCIe endpoint support for the Qualcomm SAR2130P platform. It is
+> >> impossible to use fallback compatible to any other platform since
+> >> SAR2130P uses slightly different set of clocks.
+> >> 
+> >
+> >Still, why do you want the compatible to be added to the driver? It shall be
+> >defined in the binding with the respective clock difference. Driver should just
+> >work with the fallback compatible.
 > 
-> I am not inventing the 'offset' property. I just tried to follow the other existing
-> sub-nodes under the same parent node (system-controller). The mvebu-gpio
-> driver also uses 'offset' instead of 'reg' for the syscon device (see below). But it
-
-
-You never answered why do you need offset and why it cannot work without.
-
-> seems also not correct from your point of view. Now, I am a bit confused what
-> should be the right scheme for the Armada's system-controller, including GPIO
-> and Reset controller. And dt_binding_check complains "system-controller@
-> 440000:  compatible: ['syscon', 'simple-mfd'] is too short". Can you point me
-> any  reference for me to fix these issues.
-
-See all other syscon devices. 'git grep simple-mfd' or for syscon
-
-
+> Well, per my understanding (or according  to my feeling) different set of clocks means that they are not completely compatible. An Ack from DT maintainers supports this.
 > 
-> CP110_LABEL(syscon0): system-controller@440000 {
-> 	compatible = "syscon", "simple-mfd";
-> 	reg = <0x440000 0x1000>;
 
+Hmm. Thinking more, I tend to agree. Let's be as it is.
 
-Best regards,
-Krzysztof
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
