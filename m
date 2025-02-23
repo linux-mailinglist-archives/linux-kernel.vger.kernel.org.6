@@ -1,146 +1,101 @@
-Return-Path: <linux-kernel+bounces-527637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA414A40D8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD9DA40D90
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B539F17991A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:03:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B034D179BFA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846F6200BB3;
-	Sun, 23 Feb 2025 09:03:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="UP91jSsr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ozyeWCSV"
-Received: from flow-a6-smtp.messagingengine.com (flow-a6-smtp.messagingengine.com [103.168.172.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B851FDE15;
+	Sun, 23 Feb 2025 09:06:45 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD831D89F8;
-	Sun, 23 Feb 2025 09:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51042868B
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 09:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740301397; cv=none; b=O9I7yH9uKq2R1og6M9vt7EHo5REw6slKcsMcb6F9UZDsp/qN8Xc5PNDzBLuV5Lw3nY2HiXYR94DZp3jKr4uy/21PJuzmG6BvRgKmdOEyQmwN6KQruMY0ypIw7L8sOqnOpK8RR5CW275p6pXXgmQ15zv9VY1Lpaf10YVwz2sGhp0=
+	t=1740301605; cv=none; b=sKad16xu7T+KKIFe1ioaZ8m0J8TuZVIP1WM2a3Z9bu9PWSiJuaQXHOuV9nJ+6LippxIXNPCG6HGhukSbLteOmvjsjCpsGsmJ06qtXijZIVLnJ2tvfhause+xF00nKjsokXvUIBbyJpbEm7KgUNMo9uuQXWJ4TzyYIAnEJQJCPj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740301397; c=relaxed/simple;
-	bh=fCEcMc7RMUMnSFEpm2pdzeZjD2OWZZgNfbMOgPYCsEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VpUGgSvLp4AN+1fzDvPncVsetqj0Y0RLLvZnMd8DdRC34K0GXuAbI5TGmKz2q4XOKST+VWBhin3MNANrfqBb5WHtESCHzjGXoHlQ38U7OCWPZz1C3mS9OYeOq7TdgWdFMFr682GkkAY7JshnQenfQ5gQnXbHjV8NUpXvJMSL0kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=UP91jSsr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ozyeWCSV; arc=none smtp.client-ip=103.168.172.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailflow.phl.internal (Postfix) with ESMTP id 68ABD200D15;
-	Sun, 23 Feb 2025 04:03:13 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-13.internal (MEProxy); Sun, 23 Feb 2025 04:03:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1740301393; x=1740308593; bh=rR0lG1HqwL
-	HdKmh1L1Q+3HA+XJIsSU89HsqNgZSMZYY=; b=UP91jSsrK21sGc1fKzC0Xubvi/
-	Px4QjbV6BgKX2of72GCoI1++xhm58Y90bUtAlQ8BbromQukfP7uRjf+QBosA4tKU
-	xjNVvZlyxAYwOg6qUGA14YxpESaNeXo++GKCMa4ZVkPxYgTiL/34P0HXI5P9QB5Q
-	hRNCaCh3kHcJt5kZceiqMlJhsarUcbc7BPUZVF6e/RFvumm1S/qyvuHBKOy0SQSL
-	cTxOZlG6l8J8AhLzPmZVZqGgE8p876szBPfQ6yJET1S3b/5J491YdjOBZHNefgIU
-	epYvEHMx9EdFtPqr6EZT/K0DkwavXSKyBQYMff8efUrsI6lzy4+seUPKdMlQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1740301393; x=1740308593; bh=rR0lG1HqwLHdKmh1L1Q+3HA+XJIsSU89Hsq
-	NgZSMZYY=; b=ozyeWCSVrq6ZeFCaCQrEBXXOybLROwbF7zB4axtI05UnC8bMek/
-	HplkY+Yvidoj+m8cI1r4lRSwj9ZTJ7TaZqHt3HMlT4PIflL+DlVGoN5K1oCG8aUz
-	p3F9I69j3MnwgJyvJzTSxQabyUBOzBhPMlK28TqnxjcRrKc30e93jAjx8kwUhAwD
-	3Zyj1O3z02AAVqY37WA7wMAFH4ZFwzdoXYjR+3riyStqb67uD6p9j0ByZkOcC+59
-	uBAaryvqNyaDSmPXMMRmkluf8DVrYM5VyyRDPL/eo6mY45RZdsFB8QX5Inuyrd9P
-	AG8VzmK4W5axKyqv2tT30XAg+H2GfBS0ylw==
-X-ME-Sender: <xms:T-S6Z2C_xYV3bNnptucocY4qCtKeewxrsC0NAgKeJtJHQOEnAvf_IA>
-    <xme:T-S6ZwjYmJMzaRjxL0LrFwxA-ln-OAx4dKP6-Z6hCSL2O4048xGhSw4v0UFmtDOeC
-    3B0MlGpmv5vJ4UGKGA>
-X-ME-Received: <xmr:T-S6Z5mD6zi27a04xfe7S4HaT139eF6aNHYgTPpzBta_8Oc-LAlDN2BGuz2sAmgbwgWzae5WkzIuim3CprI_Zam768WV9ky-65U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejheegtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttdej
-    necuhfhrohhmpeflrghnnhgvucfirhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqne
-    cuggftrfgrthhtvghrnhepudefhfehudetjeeutdfhvefhtdeltdfgheefkeefleegveev
-    tedtveelfffhiedtnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgv
-    thdpnhgspghrtghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hfnhhklhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhvvghnsehs
-    vhgvnhhpvghtvghrrdguvghvpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvg
-    highdrihhopdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodguth
-    eskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
-    pdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpth
-    htohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:T-S6Z0zqcRiXeOlqKx8mmZ-1komXthg5pod44TaAINRYJcNV8t5iTw>
-    <xmx:T-S6Z7TOVONgPflH1HKdseNAh33d0XxwpGvUFdpRLFugHALGbaLAcQ>
-    <xmx:T-S6Z_ZWqCOWzXqX9ZYAAtiduWdDKEfNkz9cFA_BldrCFC1LmRChjA>
-    <xmx:T-S6Z0ScM17wGYjATkl3QKYgA9tAn_PeJErj30vEXjLZkqKlK1MzRw>
-    <xmx:UeS6Z1nV0QWUnynP-qzHUMWNgfwJNKMvjNTeFFlmE23wPF3FtzGIHOd8>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Feb 2025 04:03:11 -0500 (EST)
-Date: Sun, 23 Feb 2025 10:03:09 +0100
-From: Janne Grunau <j@jannau.net>
-To: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-media@vger.kernel.org, imx@lists.linux.dev,
-	Eileen Yoon <eyn@gmx.com>, Asahi Lina <lina@asahilina.net>
-Subject: Re: [PATCH 4/5] media: apple: Add Apple ISP driver
-Message-ID: <20250223090309.GA430621@robin.jannau.net>
-References: <20250219-isp-v1-0-6d3e89b67c31@gmail.com>
- <20250219-isp-v1-4-6d3e89b67c31@gmail.com>
- <20250219113422.GA26386@robin.jannau.net>
- <CAMT+MTR4yPzC-NBLT6uLhveHFDWpwwn=hUzU6=WDc73+UVEMwQ@mail.gmail.com>
+	s=arc-20240116; t=1740301605; c=relaxed/simple;
+	bh=midBqKvE5BR/GgmwE1mXEQMqgCvLwyQHB0vRxcA+brs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mExi9xy9MUq+1feGJYpnT3pxWf3uqFuYseIddcfvl4rDhebVHhjRRk707NH5/dR+/Dnx+swLSwD5V6DqxaeDU+8d+N9Sl1ESpxyF0ou+oQzHXRhKuC8TdTtxpD+RSdFdtsj3hLSGMnepWii+zurIvCvW3rdRCpacNXvZnil0SWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.71.168])
+	by sina.com (10.185.250.24) with ESMTP
+	id 67BAE48800001817; Sun, 23 Feb 2025 17:04:11 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 26210310748389
+X-SMAIL-UIID: E66A617CB0D242ADBA69091F6EF8F0A3-20250223-170411-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
+Date: Sun, 23 Feb 2025 17:03:57 +0800
+Message-ID: <20250223090358.2692-1-hdanton@sina.com>
+In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMT+MTR4yPzC-NBLT6uLhveHFDWpwwn=hUzU6=WDc73+UVEMwQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 09:48:30AM +0100, Sasha Finkelstein wrote:
-> On Wed, 19 Feb 2025 at 12:34, Janne Grunau <j@jannau.net> wrote:
-> > > +     while (maps < end) {
-> > > +             maps++;
-> > > +             maps = of_translate_dma_region(dev->of_node, maps, &heap_base,
-> > > +                                            &heap_size);
-> > > +     }
-> >
-> > The hand-rolled reserved memory parsing looks like it can be replaced
-> > with of_iommu_get_resv_region();
+On Sat, 22 Feb 2025 09:01:23 -0800
+> syzbot found the following issue on:
 > 
-> I have looked into it, and `of_iommu_get_resv_region` does the wrong
-> thing. We fill out `reg`, and it grabs that instead of `iommu-addresses`.
+> HEAD commit:    0a86e49acfbb dt-bindings: usb: samsung,exynos-dwc3 Add exy..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c02ba4580000
 
-Downstream commit 704ace01cd3c4 [0] ("iommu: Add IOMMU_RESV_TRANSLATED
-for non 1:1 mapped reserved regions") adds device virtual addresses to
-struct iommu_resv_region. Sorry for the added dependency but it is
-required anyway for the isp to work.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-ciao Janne
-
-[0] https://github.com/AsahiLinux/linux/commit/704ace01cd3c423b1e2492f0777d9c4c0f3404d8
+--- x/drivers/hid/hid-steam.c
++++ y/drivers/hid/hid-steam.c
+@@ -618,6 +618,8 @@ static void steam_input_close(struct inp
+ 	unsigned long flags;
+ 	bool set_lizard_mode;
+ 
++	if (dev->going_away)
++		return;
+ 	if (!(steam->quirks & STEAM_QUIRK_DECK)) {
+ 		spin_lock_irqsave(&steam->lock, flags);
+ 		set_lizard_mode = !steam->client_opened && lizard_mode;
+@@ -1086,6 +1088,11 @@ static void steam_work_unregister_cb(str
+ 	connected = steam->connected;
+ 	spin_unlock_irqrestore(&steam->lock, flags);
+ 
++	if (opened) {
++		steam_sensors_unregister(steam);
++		steam_input_unregister(steam);
++		opened = false;
++	}
+ 	if (connected) {
+ 		if (opened) {
+ 			steam_sensors_unregister(steam);
+@@ -1340,6 +1347,7 @@ static void steam_remove(struct hid_devi
+ 	hid_hw_close(hdev);
+ 	hid_hw_stop(hdev);
+ 	steam_unregister(steam);
++	disable_work_sync(&steam->unregister_work);
+ }
+ 
+ static void steam_do_connect_event(struct steam_device *steam, bool connected)
+--
 
