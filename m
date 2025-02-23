@@ -1,142 +1,96 @@
-Return-Path: <linux-kernel+bounces-527798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBA5A40F95
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:45:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E36C6A40F97
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:45:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F19A63BA901
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:42:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5C173A6CA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA82320B210;
-	Sun, 23 Feb 2025 15:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD56F54769;
+	Sun, 23 Feb 2025 15:45:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E5szSUvM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCtnGQRB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CC8F1C84B7;
-	Sun, 23 Feb 2025 15:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0990717D2;
+	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740325359; cv=none; b=E1cxURl+xUVgAFnjxVm0FwWfOqXjaqFJAG0syZtsUtsjnvoDbkr/R1XaTgNX34oiZjUYSord4nXj8u60FdFFTG0p1cp3+75RoV+4bleUeTCCrnz1QapEEdxbAsiiJO/L6y4Om33CbkkouGuWxwzDjhdcAUsas4nALhog/2LkEEU=
+	t=1740325532; cv=none; b=JYqOW10R8KH7mJXhItBkjETtBKqHGYzQHYXwtdnNCCtYk1I2AfFrkN8ltAs5gBjtH+jN+Zn7I9MssQglgu+hp8K/SYr7SNY5YvwdeyoLCJ9/OGc5NXjW8IAogHtVrMF0wwY0Q7PfS7bmkZHhCwxpVEdvYyLZJnguA4lJU1vRFDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740325359; c=relaxed/simple;
-	bh=8+pwvoCO29+tN6SmiHDXBT+PJZXfOEBCeBttdnD66aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qusKH8HuVgt47TbxVBM993QO/NF3oRGF9XMB32seWhJpU+rakoEb92RiDE/vL25mCPrs3GzToBe+FYHBpqjLojNLKfpza3lu2UNVfUPNHv+EnxpdQyuI9bg894y0d49mVF1x5FjLIu6EMNq2exgs75ziMlPtFunRaGtHLq98k90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E5szSUvM; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740325357; x=1771861357;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=8+pwvoCO29+tN6SmiHDXBT+PJZXfOEBCeBttdnD66aQ=;
-  b=E5szSUvMhpVBBwUn1JaaxOrvaHoYfD0p6YBzVlx+MQcmO39785A3LJys
-   fj9KMr9sucZjf/PuRewPUUcwxTggTTt0wVJdtfunckRNLAot1pl3WM5UY
-   1lLJkdcpLW86WQGf2kGx8e6q6SX+AcbTm8vDsv44nIeFsnoWDV9RUhAjf
-   7AYsi4wvXxnFdNZQyTq4gVwtAgyduDxqI8HD8oSTwct/gt14IYnBLx2Rv
-   Huqt7LquwX3n08ltfCzT637/FQsQP3kDNQr4JL7xyawIwcyjqXaBRMLE8
-   elX5dxMdTq8Loj2EyXbgb/p1wToFp7+nu4uCxoHtO9cfO2lNqrqZGDQ3/
-   Q==;
-X-CSE-ConnectionGUID: vDLGwwB1Q4u2dCA4EN3dcQ==
-X-CSE-MsgGUID: LCyubUPpQ86Uk1m3+7vHmw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="40322634"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="40322634"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 07:42:36 -0800
-X-CSE-ConnectionGUID: ie024MwDQfKjNN6NhjokKg==
-X-CSE-MsgGUID: ZEeRozSKRYqk9l320S6kTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="120934044"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 07:42:34 -0800
-Date: Sun, 23 Feb 2025 17:42:31 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Oliver Neukum <oneukum@suse.com>,
-	Ajay Agarwal <ajayagarwal@google.com>,
-	Brian Norris <briannorris@google.com>
-Subject: Re: [PATCH v1] PM: runtime: Unify error handling during suspend and
- resume
-Message-ID: <Z7tB5wshbGtO6LGg@black.fi.intel.com>
-References: <1922654.tdWV9SEqCh@rjwysocki.net>
- <Z7rPOt0x5hWncjhr@black.fi.intel.com>
- <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com>
+	s=arc-20240116; t=1740325532; c=relaxed/simple;
+	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UdP7tViDO6fg3eCPb6b0HE5/hbGS+wxcucxmcss0RUbcuuC6vygrjT1moSEWqUTS8/Hf6G2RNsk6GIU8iKMHcNbADUTSD+wp5V5XkuJWKOZBCESr7xSYeUYyn0i9FU7CNUgWH5tT/Kd0xEAgdIM1UYV5udh52DgzBQs3g/ALzkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCtnGQRB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B128C4CEDD;
+	Sun, 23 Feb 2025 15:45:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740325530;
+	bh=QFi71j3t7L8FalzRGOLODni9crxX2Z9gNtF3Bz8Bfls=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gCtnGQRB93IVr5xoC+Y9aqkyT2Da66sbYPg5tlOexCaL+X66C5hrOLKP8Uh4AlyUg
+	 CEvFRlD4xgqZkvteDGw70NVG48LK/Ao1R1Ho/YQOeiQvzc7MRq76Bh+2EAxpIEzSjh
+	 ZmlDxgOdRYhagWgVMpzdRfqbNxMkZFh5Ga7bDv9qD/dxjn20UkZBe6SjTHdXeFxfmZ
+	 FjLvjJtjKVR0F+6A6bkSE/LHdW+yokJoU29olVgqiBIQk10+eBQU2Mb/QkSrSBjLJw
+	 m6Dkt6Nu2UDLl8JizT071BmQ2bqMpmNzx+CDRk8GMN8whmPctyid+VN8Nh/aRupdHY
+	 j6aokvNpOsntg==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso33914741fa.3;
+        Sun, 23 Feb 2025 07:45:30 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW6Pi4CYrYDgE6wgqIwEyPZxB1t438pDFKXrZu99uVTy/iCsVgQ/JENS7HFSzIkI68EMA+msk3tyirYoqwf@vger.kernel.org, AJvYcCX86skN5vD5Oifa3afzAj7owJC7+jXds6ROpYVcscI/n3Yx1g4sQAV+8kmgT7VI9vMOwEpIAX3GCblHAxdVEQ==@vger.kernel.org, AJvYcCXZa5ixDkM+QmlHt3Kef+gbHA2IiWcnWAQKEwRrosBw7fQjzx7bm1Q8Na0P+lFFrZq80wuT04lLygc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCktxkdx03BJOP0UUnXa9Gmd1Hn7fSgoQ060oe9OxoR2olFMjk
+	25hzTz+1l79kr8rKLgjou+4Hk74OUsBjsIGc22uAUyABMMsxGK5HJNB6zcL8NqbxcVQZUq0TRsY
+	irJB/zp/hD1HIa9lEhixRD+jXAfo=
+X-Google-Smtp-Source: AGHT+IFPMG1zOPXS0E5ESbB2FCi44a1GD+soKxuNdFM7CWZAbww6yk48RaVa8jHEiiIG+yMbKGz+XJIMUJAv4H6qa4s=
+X-Received: by 2002:a05:6512:ba5:b0:543:9a61:a2e5 with SMTP id
+ 2adb3069b0e04-54838ef78cemr4226110e87.23.1740325528840; Sun, 23 Feb 2025
+ 07:45:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com>
+References: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
+In-Reply-To: <67bafe23.050a0220.bbfd1.0017.GAE@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 23 Feb 2025 16:45:17 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
+X-Gm-Features: AWEUYZlq56gSuDcK4AMca3N4fpNm-cMsBQvbloeKgU8qj87zK9lNdlTlqURLZ-8
+Message-ID: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
+Subject: Re: [syzbot] [efi?] [fs?] BUG: unable to handle kernel paging request
+ in efivarfs_pm_notify
+To: syzbot <syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com>
+Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Feb 23, 2025 at 01:56:07PM +0100, Rafael J. Wysocki wrote:
-> On Sun, Feb 23, 2025 at 8:33 AM Raag Jadav <raag.jadav@intel.com> wrote:
-> >
-> > On Thu, Feb 20, 2025 at 09:18:23PM +0100, Rafael J. Wysocki wrote:
-> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > >
-> > > There is a confusing difference in error handling between rpm_suspend()
-> > > and rpm_resume() related to the special way in which the -EAGAIN and
-> > > -EBUSY error values are treated by the former.  Also, converting
-> > > -EACCES coming from the callback to an I/O error, which it quite likely
-> > > is not, may confuse runtime PM users a bit.
-> > >
-> > > To address the above, modify rpm_callback() to convert -EACCES coming
-> > > from the driver to -EAGAIN and to set power.runtime_error only if the
-> > > return value is not -EAGAIN or -EBUSY.
-> > >
-> > > This will cause the error handling in rpm_resume() and rpm_suspend() to
-> > > work consistently, so drop the no longer needed -EAGAIN or -EBUSY
-> > > special case from the latter and make it retry autosuspend if
-> > > power.runtime_error is unset.
-> > >
-> > > Link: https://lore.kernel.org/linux-pm/20220620144231.GA23345@axis.com/
-> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > ---
-> > >  drivers/base/power/runtime.c |   34 ++++++++++++++++++----------------
-> > >  1 file changed, 18 insertions(+), 16 deletions(-)
-> > >
-> > > --- a/drivers/base/power/runtime.c
-> > > +++ b/drivers/base/power/runtime.c
-> > > @@ -448,8 +448,13 @@
-> > >               retval = __rpm_callback(cb, dev);
-> > >       }
-> > >
-> > > -     dev->power.runtime_error = retval;
-> > > -     return retval != -EACCES ? retval : -EIO;
-> > > +     if (retval == -EACCES)
-> > > +             retval = -EAGAIN;
-> >
-> > While this is one way to address the problem, are we opening the door
-> > to changing error codes when convenient? This might lead to different
-> > kind of confusion from user standpoint.
-> 
-> Are you saying that if a mistake was made sufficiently long ago, it
-> can't be fixed any more because someone may be confused?
+#syz test:
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
 
-Nothing against the fix but "sufficiently long ago" is why we might
-have users that rely on it. As long as we don't break anything I don't
-see a problem.
+--- a/fs/efivarfs/super.c
++++ b/fs/efivarfs/super.c
+@@ -367,6 +367,8 @@ static int efivarfs_fill_super(struct super_block
+*sb, struct fs_context *fc)
+        if (err)
+                return err;
 
-Messing with error codes is usually received with mixed feelings and
-coming across such a code raises more questions than answers. Perhaps a
-small explanation might do the trick?
++       register_pm_notifier(&sfi->pm_nb);
++
+        return efivar_init(efivarfs_callback, sb, true);
+ }
 
-Raag
+@@ -552,7 +554,6 @@ static int efivarfs_init_fs_context(struct fs_context *fc)
+
+        sfi->pm_nb.notifier_call = efivarfs_pm_notify;
+        sfi->pm_nb.priority = 0;
+-       register_pm_notifier(&sfi->pm_nb);
+
+        return 0;
+ }
 
