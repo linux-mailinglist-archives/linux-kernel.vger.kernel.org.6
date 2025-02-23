@@ -1,159 +1,121 @@
-Return-Path: <linux-kernel+bounces-527846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6ECA41070
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:30:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA34A41074
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD61172897
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:30:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4904B3B0D45
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D204C13F434;
-	Sun, 23 Feb 2025 17:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D861552FA;
+	Sun, 23 Feb 2025 17:33:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPkGyD6b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="fWBE9ylN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E84D78F3B
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740331827; cv=none; b=Glh3T1PjWP4fIPtFFO6x0JhPECbeCp3/mN1QYDo1BUbIFjXyWv9UlwksTf/z9S/OhE83seTn9cHadruwOOvRQ33WIS53wJNl4hPHMd0w+2rCwWdCchVUIdkKeR3L1LOiMih3DRCQWcsWGHNMxZ7n24a/G9UC5AAUW/oY3Hr5zAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740331827; c=relaxed/simple;
-	bh=TGFFOYxjKUrF3bfDOR+Uvj+CkPssQarIDqNrdXi+08g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bNHYDZOwTM4cpzWjP1uzRovsGUsSIEtjEy4d2weMRy8zg1fjNXz+ArzUEFacNGetkV+53jMU5zwr0l1QLoCEoZwZ0zCAZBG34+jVOXQc1uV+yFagF9KZr7+irpevXsQHMrQYKKAtgpOUcshVxXd7ToOvt11dXO6EVrJlVRgiVZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPkGyD6b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D077C4CEEC
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:30:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740331827;
-	bh=TGFFOYxjKUrF3bfDOR+Uvj+CkPssQarIDqNrdXi+08g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jPkGyD6b9qk+z9lV4zz346iystVlMCHkb8LKQpe5OjP52O8krLhGak5FaiJwIT0mx
-	 PCsG6Nfz7lsm/LqzEDAqYwW6idmspFcl2vd04W5kUIvtbZmoRK+mbjUVt0EcO+t3x9
-	 Km5G5374zzwswx51q7m9ZehXlfqHSVHdSBt6kyuQmksU59DdBskwCeuqDpupauu8Hf
-	 rflHBD1n9uf6EDuz6U4FMPpL+o0FpO3ryGSUc115Rvi5oEcllneWNAz7DdH6Rs85Us
-	 7I01Pe9Oyoz2UoHXtjvKuLAQdjHsjkkL4dTidVPMf6poKUmKxi2/nzA+FzuARiJR2C
-	 yhwupJcQvKngg==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30737db1aa9so35076711fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 09:30:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVe1GL783BCKV8oYDRdGqvBZwy2zeSLavWEP+pEsjOwP8yhiZGcUw+PuJq7xLJxXwXWHRQrRezPs06SlII=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWgveveGGhHbJfg81fSAPoOaPUNP5UVxmrMGLMKaelyml8GR7v
-	SD7dKnKV991a8r7GmEKMKziqVXJMJefvt9uXah6vL6a+3tnDvsZC4vB89bBHb0kB+EYW+O03fv9
-	xollv2MMlCcgg+hV1kjcG2B9BR3k=
-X-Google-Smtp-Source: AGHT+IF0D9Du/RqVs2ixIckZ39RhvabP4gu0eSkxGrMjGUFWTZDpRkqjN8NNWA/0SnCKnMCKni8qU7DChgKeOtZxhbw=
-X-Received: by 2002:a05:6512:68e:b0:545:f1d:6f2c with SMTP id
- 2adb3069b0e04-54838ee8fa6mr3623883e87.18.1740331825279; Sun, 23 Feb 2025
- 09:30:25 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6382343169;
+	Sun, 23 Feb 2025 17:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740332008; cv=pass; b=Ecy7VK5hp58o69snWQ7VAJHJmz5ekSYhHevE10AXrRBD73f3SSTq0p9f2aNI4aiHh6YAKPHKEOgNKnn5DhnIhXDl0kM2XLqimzm8J2zj9pdJuZ3+FCwMLp6vkTU/RdqT7Q9A43xDxmXo7pevRiAxD4OOE2Itw2t3H0PYoaVULjE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740332008; c=relaxed/simple;
+	bh=7YBv4TV4OSCYMGU9/JN624saPQbxk1vUOER1vqH+wYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZJSnOxwh5ZUO4FR3wGt6UWaYKX9KmK5L90Dd3mpu+4wjIpIBGm1z3aeL1RYdAq/It4pxavDUMzUYzm1YB1xtYJKzDTziDDsbToGko+ZvjLicByAChe5I+NtI7NcRaiiV9mjZanlhL2bejeNoQWc2PvJhaS5FmP/4WZ60pg0oSpE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=fWBE9ylN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740331969; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=T9rWQhq4pOc3cOvsHa8dBE03CcGE4KzFGBfq7DxuwtcDucdk2TKD/h0xAD+YVHVPrqVb87cJT6vbH+7yf+07IhU+lPWbZXrAP91o+fLM5oGVmop0/sXoPqlpuRiEySzhTKHAoL8bVDf8TEI3wkfq4wAT0lDq41BgQzfN2E7xQaA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740331969; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ksDagsXbRnqXqY/SM85Of5WqOjgwoOYDeKarCY0Qk/4=; 
+	b=EGwsMKLiD6pBmFCMdVNrNnK0yE703AnHB3Cxq1VdISIfAaUgacdL7mzIaTuDJcsIl8l+QGBQqjuMVJpSxdTzzQgGH1x9aSAPwTHt2OQaz0sA3XCmMLA3rwog0ckNmr0+hkIM+qeaQctTQyZNWfNmiI3PrthTuUVi8wdfAA3Qjj4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740331969;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=ksDagsXbRnqXqY/SM85Of5WqOjgwoOYDeKarCY0Qk/4=;
+	b=fWBE9ylNW6noQ0TZq7GkHvNN6ocTY46SB1tJcmSyliSfH618uIY8I8JJKMs/O2nU
+	u7kqHIWClcTZ4EiNr3DKVSrLr7z6PKrxxQkz8MgJZBH7OILw8llf40bZknaJ9fA78ui
+	3zLJ4SKlqIg//oId26n1DyhTeBedX6/pYQFuU8Jk=
+Received: by mx.zohomail.com with SMTPS id 1740331967674656.6122354976713;
+	Sun, 23 Feb 2025 09:32:47 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Tim Surber <me@timsurber.de>
+Subject: [PATCH v8 1/6] MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
+Date: Sun, 23 Feb 2025 20:30:14 +0300
+Message-ID: <20250223173019.303518-2-dmitry.osipenko@collabora.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
+References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222190623.262689-1-brgerst@gmail.com> <Z7rsOVaxhfCJdn2P@gmail.com>
- <CAMj1kXE51FSYQ6prL7M5vfy1KjJGiBAre3CH3G-L3CQj9YSq9A@mail.gmail.com>
- <CAFULd4YHj_Y7B4B8Mz5rwm3uB5GS=BhQny_eFhSSkdi=qg+qcA@mail.gmail.com> <CAMzpN2hYex-uuAZPZfA_8wz5t0Vn5hPcvi+2=aNbfc1POKyq=A@mail.gmail.com>
-In-Reply-To: <CAMzpN2hYex-uuAZPZfA_8wz5t0Vn5hPcvi+2=aNbfc1POKyq=A@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 23 Feb 2025 18:30:13 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXE0N=yw9tmrHwiDGwmEk+8J6_5YHYsy-eWvyAUeK+rjxA@mail.gmail.com>
-X-Gm-Features: AWEUYZkNee6wEQk3gEmpPWGnEHp09Hyt_gG_qblKUNF9_CeF_Exg1-Qriq1lMIo
-Message-ID: <CAMj1kXE0N=yw9tmrHwiDGwmEk+8J6_5YHYsy-eWvyAUeK+rjxA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Add a percpu subsection for hot data
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, 23 Feb 2025 at 18:25, Brian Gerst <brgerst@gmail.com> wrote:
->
-> On Sun, Feb 23, 2025 at 5:30=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
-rote:
-> >
-> > On Sun, Feb 23, 2025 at 11:20=E2=80=AFAM Ard Biesheuvel <ardb@kernel.or=
-g> wrote:
-> > >
-> > > On Sun, 23 Feb 2025 at 10:37, Ingo Molnar <mingo@kernel.org> wrote:
-> > > >
-> > > >
-> > > > * Brian Gerst <brgerst@gmail.com> wrote:
-> > > >
-> > > > > Add a new percpu subsection for data that is frequently accessed =
-and
-> > > > > exclusive to each processor.  This is intended to replace the pcp=
-u_hot
-> > > > > struct on X86, and is available to all architectures.
-> > > > >
-> > > > > The one caveat with this approach is that it depends on the linke=
-r to
-> > > > > effeciently pack data that is smaller than machine word size.  Th=
-e
-> > > > > binutils linker does this properly:
-> > > > >
-> > > > > ffffffff842f6000 D __per_cpu_hot_start
-> > > > > ffffffff842f6000 D softirq_pending
-> > > > > ffffffff842f6002 D hardirq_stack_inuse
-> > > > > ffffffff842f6008 D hardirq_stack_ptr
-> > > > > ffffffff842f6010 D __ref_stack_chk_guard
-> > > > > ffffffff842f6010 D __stack_chk_guard
-> > > > > ffffffff842f6018 D const_cpu_current_top_of_stack
-> > > > > ffffffff842f6018 D cpu_current_top_of_stack
-> > > > > ffffffff842f6020 D const_current_task
-> > > > > ffffffff842f6020 D current_task
-> > > > > ffffffff842f6028 D __preempt_count
-> > > > > ffffffff842f602c D cpu_number
-> > > > > ffffffff842f6030 D this_cpu_off
-> > > > > ffffffff842f6038 D __x86_call_depth
-> > > > > ffffffff842f6040 D __per_cpu_hot_end
-> > > > >
-> > > > > The LLVM linker doesn't do as well with packing smaller data obje=
-cts,
-> > > > > causing it to spill over into a second cacheline.
-> > > >
-> > > > ... now it's linker-ordered. But on the other hand that can be an
-> > > > advantage too: the linker will try to (or at least has a chance to)
-> > > > order the fields optimally for cache density, while the hand-packin=
-g
-> > > > always has the potential to bitrot without much of an outside,
-> > > > actionable indicator for the bitrot.
-> > > >
-> > >
-> > > The linker will need some help here - by default, it just emits these
-> > > variables in the order they appear in the input.
-> > >
-> > > If we emit each such variable 'foo' into .data..hot.foo, and define
-> > > the contents of the section as
-> > >
-> > > *(SORT_BY_ALIGNMENT(.data..hot.*))
-> > >
-> > > we should get optimal packing as long as the alignment of these
-> > > variables does not exceed their size.
-> >
-> > Is it possible to warn/error when data is spilled over the cache line?
-> > Previously, there was:
-> >
-> > -static_assert(sizeof(struct pcpu_hot) =3D=3D 64);
-> >
-> > that failed the build in this case.
->
-> I think it should be a warning and not an error.  If it does spill
-> into a second cacheline the kernel will still boot and function
-> properly so it's not a fatal error, it just could hit performance a
-> bit.  By decentralizing this it does make it harder to account for
-> size, especially with conditional builds.  Unfortunately, the linker
-> script language does not have a WARNING() counterpart to ASSERT().
->
+From: Shreeya Patel <shreeya.patel@collabora.com>
 
-Why should it even be a warning? What is the problem if the build in
-question has two cachelines worth of hot per-CPU data?
+Add an entry for Synopsys DesignWare HDMI Receiver Controller
+Driver.
+
+Reviewed-by: Christopher Obbard <chris.obbard@collabora.com>
+Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+---
+ MAINTAINERS | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2286200b355b..1bb6a54e41c6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22952,6 +22952,14 @@ F:	drivers/net/pcs/pcs-xpcs.c
+ F:	drivers/net/pcs/pcs-xpcs.h
+ F:	include/linux/pcs/pcs-xpcs.h
+ 
++SYNOPSYS DESIGNWARE HDMI RX CONTROLLER DRIVER
++M:	Shreeya Patel <shreeya.patel@collabora.com>
++L:	linux-media@vger.kernel.org
++L:	kernel@collabora.com
++S:	Maintained
++F:	Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
++F:	drivers/media/platform/synopsys/hdmirx/*
++
+ SYNOPSYS DESIGNWARE I2C DRIVER
+ M:	Jarkko Nikula <jarkko.nikula@linux.intel.com>
+ R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+-- 
+2.48.1
+
 
