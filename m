@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel+bounces-527621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D664A40D5E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:18:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE405A40D61
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:21:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9FD03BE0F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:17:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24727189CE8F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B87D1FCCE0;
-	Sun, 23 Feb 2025 08:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE761FCF5F;
+	Sun, 23 Feb 2025 08:21:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jnFE7BXY"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45011C84C2;
-	Sun, 23 Feb 2025 08:17:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RhPPoWxu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4081F2C56;
+	Sun, 23 Feb 2025 08:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740298681; cv=none; b=OUqZDe7VnF2h2v+4Y4t/nh2w0yKYxnPT6uYPmPyhbrIX7ZFU17jE5BxYQgnUywtAspsoNwYk6CaK61d4vsyxA0LNalHycAZW0+mjnqOTaLMYEwIWO7Wk7ADG/ZRhMjnPRKl27bJ8VtoucDjp8UX05IhQ1ZFkv4PTQbhv3HHeHWo=
+	t=1740298899; cv=none; b=fEy1qzOLvUViNnwfihYzkQ1ONjxMAMx0enmbJbIAOrtxobQVexfc3vMZG9Q/mQHnsRwq7V/goq8zR+2p265zn6gI51WXqWoFoaAe4VjjH898hfffoZvPDbsMJOmIYHI2DUHIL4xlFXDKLR7O7Te0UyhyzifDOzHR19fbt2QlROQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740298681; c=relaxed/simple;
-	bh=JnJaxXszhEapJdtvEBPiLgNWovhW80GOTeW5EX3OIu0=;
+	s=arc-20240116; t=1740298899; c=relaxed/simple;
+	bh=90wQ+ltilL4gvTyMoe64RHL4T1bK+YyA9wK24My8hOU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l382nN9uH8/tl3kx+wgLSZy3ucuMswGDNlghRwfcC3tNwalvvtufiK6M6NNutrB/Fzhqd+7AVMr6U8XqNc8fgvEOFvuzsmnX3HdVaGNGLxGKfGWm4XJzNC7ERQD/3cQN8ZdTSsLO2PoVGUf6jczlFPfrrI6pbEjb6QRr8OzyVbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jnFE7BXY; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=CAIATOjAFIlfdECkmuMV7fShBSNKlp8OzqEdVUlOvEk=;
-	b=jnFE7BXYztlYs6iPiIaO4A08FKdJVr3Ra2nY7ZcQtPdFJ9u+1YhyPNmMPf8t+W
-	xmM/xFOKCsPRnu7viACG8RlzaPfov26+LXlTnt3gwP2iODm1C2vwsZqHNB7ojkEI
-	PXAclUfi3w0dKoM2T7DwxDtOJhREunkvZnpJHKtzoyP6E=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgAnso2N2bpnXhGMCQ--.21668S3;
-	Sun, 23 Feb 2025 16:17:19 +0800 (CST)
-Date: Sun, 23 Feb 2025 16:17:17 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Andrej Picej <andrej.picej@norik.com>
-Cc: shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH v3 00/15] Update PHYTEC's i.MX8MM DTSs
-Message-ID: <Z7rZjdXwN2W+Y2Bd@dragon>
-References: <20250218074156.807214-1-andrej.picej@norik.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dwU2RM/mRX7WX8MFUk4Ac4XNbAThpygBkuq6rWoJPlQ1h39Ksyg8zBPaI2L19DWZ7ZMgXalw7ij/Awi14DpMgAbmMyOXcKEFGJgkiRx1Lg365a5A8n4nGcQtwUoZYxUnfoCjn7WkS4oRu3+p5aFDxglygCOziV2iGUrtFsNYX7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RhPPoWxu; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740298897; x=1771834897;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=90wQ+ltilL4gvTyMoe64RHL4T1bK+YyA9wK24My8hOU=;
+  b=RhPPoWxurSLhnAX8Bdu7fmhPvu1b0XEpbt0Ua7y3J8WEXgjhON/yTjpF
+   rk1iGmUkEapLQYOhUrYfR4waPpnzLLhKcfR7AERkK+p29y5F+at0/Xifi
+   uIJk3NOGxUMNxYbQ0SSWLySJEeldrKnz8ahvyiFdq5RLYarb6YQlkeVwN
+   T2LY4WuxmEsd4HUebP1ZhSr/yAas6wa7yOA3xyWspth4w6svmr6Q5DHR7
+   shr/CiUco7dYvvNUgq2IQMeZbjcCGDQPgeTwK9Jr05x8ZYNpvS/8yHqdl
+   eYDZdTPWE5v93j8EmN70pfSsqA37SB30eLKp4zFk7dv7z1o9eqMQ84Q5X
+   w==;
+X-CSE-ConnectionGUID: oQ2Hp60cRTmtVjfL+oywbg==
+X-CSE-MsgGUID: o8nC5pA4SACeBd3vhI/SHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="51709928"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="51709928"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 00:21:36 -0800
+X-CSE-ConnectionGUID: MhJcB458TdmF83dgqq/7yg==
+X-CSE-MsgGUID: KIBtOcOFSxa6B4eHiNDYsA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116282573"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 23 Feb 2025 00:21:32 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm7Ew-0007DH-22;
+	Sun, 23 Feb 2025 08:21:30 +0000
+Date: Sun, 23 Feb 2025 16:21:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yafang Shao <laoar.shao@gmail.com>, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, jolsa@kernel.org, jpoimboe@kernel.org,
+	peterz@infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Yafang Shao <laoar.shao@gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/3] objtool: Copy noreturns.h to
+ include/linux
+Message-ID: <202502231624.0BVpxwbg-lkp@intel.com>
+References: <20250223062735.3341-2-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +83,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218074156.807214-1-andrej.picej@norik.com>
-X-CM-TRANSID:M88vCgAnso2N2bpnXhGMCQ--.21668S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWrZrWUuF1xGF18ur15KFWrAFb_yoW8Jr1DpF
-	W7X347KrWDtr48uF1DXanrtay5G34UGF13uFy5ArWvv34qyFy3AF45Kry5Wr4UGr129FZY
-	yF47GFyDCa4rXrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzc_fUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERX8ZWe6kszsgQAAsz
+In-Reply-To: <20250223062735.3341-2-laoar.shao@gmail.com>
 
-On Tue, Feb 18, 2025 at 08:41:41AM +0100, Andrej Picej wrote:
-> Andrej Picej (3):
->   arm64: dts: imx8mm-phycore-som: Fix bluetooth wakeup source
->   arm64: dts: imx8mm-phyboard-polis: Set RTC as wakeup-source
->   arm64: dts: imx8mm-phygate-tauri-l: Set RTC as wakeup-source
-> 
-> Dominik Haller (1):
->   arm64: dts: imx8mm-phycore-som: Add overlay for rproc
-> 
-> Janine Hagemann (1):
->   arm64: dts: imx8mm-phyboard-polis: Add overlay for PEB-EVAL-01
-> 
-> Teresa Remmet (5):
->   arm64: dts: imx8mm-phycore-som: Keep LDO3 on in suspend
->   arm64: dts: imx8mm-phycore-som: Remove magic-packet property
->   arm64: dts: imx8mm-phyboard-polis: Add support for PEB-AV-10
->   arm64: dts: imx8mm-phycore-som: Add no-eth phy overlay
->   arm64: dts: imx8mm-phycore-som: Add overlay to disable SPI NOR flash
-> 
-> Yannic Moog (3):
->   arm64: dts: imx8mm-phycore-som: add descriptions to nodes
->   arm64: dts: imx8mm-phyboard-polis: add RTC description
->   arm64: dts: imx8mm: move bulk of rtc properties to carrierboards
-> 
-> Yashwanth Varakala (2):
->   arm64: dts: imx8mm-phycore-som: Assign regulator for dsi to lvds
->     bridge
->   arm64: dts: imx8mm-phyboard-polis: Assign missing regulator for
->     bluetooth
+Hi Yafang,
 
-Applied all, thanks!
+kernel test robot noticed the following build errors:
 
+[auto build test ERROR on bpf-next/master]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Yafang-Shao/objtool-Copy-noreturns-h-to-include-linux/20250223-143010
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250223062735.3341-2-laoar.shao%40gmail.com
+patch subject: [PATCH v2 bpf-next 1/3] objtool: Copy noreturns.h to include/linux
+reproduce: (https://download.01.org/0day-ci/archive/20250223/202502231624.0BVpxwbg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231624.0BVpxwbg-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+   make[2]: *** [scripts/Makefile.build:102: scripts/mod/devicetable-offsets.s] Error 1
+   make[2]: Target 'scripts/mod/' not remade because of errors.
+   make[1]: *** [Makefile:1263: prepare0] Error 2
+>> diff: tools/tools/objtool/noreturns.h: No such file or directory
+   Warning: Kernel ABI header at 'tools/tools/objtool/noreturns.h' differs from latest version at 'tools/objtool/noreturns.h'
+   make[3]: *** [Makefile:70: tools/objtool/objtool-in.o] Error 1
+   make[3]: Target 'all' not remade because of errors.
+   make[2]: *** [Makefile:73: objtool] Error 2
+   make[1]: *** [Makefile:1430: tools/objtool] Error 2
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
