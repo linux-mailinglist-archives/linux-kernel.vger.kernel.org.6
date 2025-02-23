@@ -1,137 +1,118 @@
-Return-Path: <linux-kernel+bounces-527853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3062A41086
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:36:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3828A41088
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0D81895AD5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:34:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D723A9648
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A49190052;
-	Sun, 23 Feb 2025 17:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEEB15573F;
+	Sun, 23 Feb 2025 17:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="TGDv9Lfb"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="CE3fL50F"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68941607B4;
-	Sun, 23 Feb 2025 17:33:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740332031; cv=pass; b=KK8T90Kj8CUFwGDfnHnVPLuRorZQeUQdR1YKqNjmw3ps+Ndh8L28Oh4wCdNz88bRhliyIjJVqNswc97bY6KKw6G9OMNTBxCjRUGLAdTrIGdIp3OeNbv9zhOEq/YTARCwWvHEcq0SDndbuHToxhh90+m0oHNgnKWxVjCpDxAvlCc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740332031; c=relaxed/simple;
-	bh=9e1rDRhjtWx8RcwMZlExf40SAo2UlhVvfwW0sy8Zjso=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NTPoVfUc+8ZUKi4nRFIVohPbLTk7+935UapHr3clkx/Bb1hUR9u9Ut25pDpZqLk1BnW8ZbTIMNZngtnwIG/ltjQjH9FATJrWjNXDlSCDslMSr4MADm6IxQ0qoQYOXjt0XFG103eZIEWQTSFZIgC4Yl9lGEv1GSB3zD48HsrWQT0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=TGDv9Lfb; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740331995; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GV71px/iMtYpz1fgoqWPtAUFHFgH6bMWXkyCPwKgRpUT7nr07DNRsA8mAM38B6Q7HdZZQGKZyFQ+2efUfcgVLIyDyr1VGrlYiOriOR7pHEMFuRwdvRa7qrClkYVTkxYnQU5tJmweb9YP0PiaN/QuxSvY6ye2xzYLHysmDuZKyOk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740331995; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=iIPCjPu2+AmsIf/cCFUaH7Ayf0dQa1TgmFz1djm75zk=; 
-	b=BSyfbf3GB65cWAV4fisJfbpZGMl2Xh4TnWz1AyjBgBYzQ9EX38LNlI0wf0cz0BZILi7ERKXRR4BIvcTtvCcYiRDdTpdSsB9YuiOcugRt9MQ/dnIXQO4eUseA3UZU2OxLwGHr7edkSVA5HfgXXpjoy7QsdnwG4L4048+hn0Fpjmo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740331995;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=iIPCjPu2+AmsIf/cCFUaH7Ayf0dQa1TgmFz1djm75zk=;
-	b=TGDv9LfbbRPyY8nX2VtbtTGpDgTE4lIbdW8M26iAETvejqQjr4k1BUU/P5vUj59s
-	fB2Rr04I507sSirguQhVXPla3ehZIfRZ9VGIa0Gab+Dk4lOlvqLoGaKojiGEunU0a3U
-	M1svlHLdg7nnA3CohGQmLznBPo9tfRkeYpx3YDtM=
-Received: by mx.zohomail.com with SMTPS id 1740331994974877.7597302947063;
-	Sun, 23 Feb 2025 09:33:14 -0800 (PST)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Shreeya Patel <shreeya.patel@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	jose.abreu@synopsys.com,
-	nelson.costa@synopsys.com,
-	shawn.wen@rock-chips.com,
-	nicolas.dufresne@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Tim Surber <me@timsurber.de>
-Subject: [PATCH v8 6/6] arm64: dts: rockchip: Enable HDMI receiver on rock-5b
-Date: Sun, 23 Feb 2025 20:30:19 +0300
-Message-ID: <20250223173019.303518-7-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
-References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C02F1A95C;
+	Sun, 23 Feb 2025 17:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740332453; cv=none; b=G9B1ytcK/6BugBOCBcWa7LyJq94RRk5WOeIdUuIPkuM1+CyaL9HOOpw8JTQ0RVfXZacpE0f747CvK5MQZF5G5Uo1nnUutI94cI7v8c2XGDyV6uAX6jM9aW/DN5ix5MrQCmft8Tz0pfkV8uLmU7DNllVFhwawDhL4sKjWOwaK4+A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740332453; c=relaxed/simple;
+	bh=0+pak3Wc6pxZcsmj/iYEn4UcN835LNASJKuqfMubFsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiwx0q3OhRkP5MuUJ8T1Sl2X5Z9fGqRlwUwk8XJ4eqC5oZfRO1Hph6XK9Kxqq/ExNSG2qBKAuidVs1p6XG3GbgEjGctIR6g1NozMjQ0TAw3u+9hztaLVvqD5OULdJYw5jrovBVFasvvvGG5MwXE3VQtIsXxO1YeMO0rKyDQq9m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=CE3fL50F; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0iNFIrb2QkfLvHmeZSAzyRRdfOTZD7hIHYVlu83O1xk=; b=CE3fL50F0JyA086RS6aS8EfJym
+	6Frf1jk05XL2ekvkiTH+hbRgZrPXQ7/waMlfjoFe1VMmNscjQ9p4khnZJ/yS9PIG44xJwUeMXAssI
+	WnK+FqBdI17jsMOvBvTInGLgXffZpHdMV4B9e9WYR5tNt6x4nLfhd81n5HP7/lJTyONTnoB5fYOVF
+	ljIgr37j+xsYaX6yxlBA5bWBUhdG6zpPFtwbUOLEX4nrkW3gyIYXYMPkAuaKdkqtaCWLQjxYjhvY8
+	M0OfaRWXHYLSob5q6DNytyTDyQS8WPGCmYzapWO24wEH8NzlwZ7f0N8BFrq9PV6NMeksXvmQBZ7Gx
+	aj8h6t0w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52820)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tmFy5-0003cr-2g;
+	Sun, 23 Feb 2025 17:40:41 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tmFy1-0004AN-2j;
+	Sun, 23 Feb 2025 17:40:37 +0000
+Date: Sun, 23 Feb 2025 17:40:37 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Sun, Feb 23, 2025 at 06:28:45PM +0100, Maxime Chevallier wrote:
+> Hi everyone,
+> 
+> Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" designed to
+> access SFP modules downstream. These controllers are actually SMBus controllers
+> that can only perform single-byte accesses for read and write.
 
-The Rock 5B has a Micro HDMI port, which can be used for receiving
-HDMI data. This enables support for it.
+This goes against SFF-8472, and likely breaks atomic access to 16-bit
+PHY registers.
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- .../arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+For the former, I quote from SFF-8472:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-index d597112f1d5b..377824e69e20 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
-@@ -220,6 +220,18 @@ hdmi0_out_con: endpoint {
- 	};
- };
- 
-+&hdmi_receiver_cma {
-+	status = "okay";
-+};
-+
-+&hdmi_receiver {
-+	status = "okay";
-+	hpd-gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
-+	pinctrl-0 = <&hdmim1_rx_cec &hdmim1_rx_hpdin &hdmim1_rx_scl &hdmim1_rx_sda &hdmirx_hpd>;
-+	pinctrl-names = "default";
-+	memory-region = <&hdmi_receiver_cma>;
-+};
-+
- &hdptxphy_hdmi0 {
- 	status = "okay";
- };
-@@ -377,6 +389,12 @@ &pcie3x4 {
- };
- 
- &pinctrl {
-+	hdmirx {
-+		hdmirx_hpd: hdmirx-5v-detection {
-+			rockchip,pins = <1 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
- 	hym8563 {
- 		hym8563_int: hym8563-int {
- 			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_none>;
+"To guarantee coherency of the diagnostic monitoring data, the host is
+required to retrieve any multi-byte fields from the diagnostic
+monitoring data structure (e.g. Rx Power MSB - byte 104 in A2h, Rx
+Power LSB - byte 105 in A2h) by the use of a single two-byte read
+sequence across the 2-wire interface."
+
+So, if using a SMBus controller, I think we should at the very least
+disable exporting the hwmon parameters as these become non-atomic
+reads.
+
+Whether PHY access works correctly or not is probably module specific.
+E.g. reading the MII_BMSR register may not return latched link status
+because the reads of the high and low bytes may be interpreted as two
+seperate distinct accesses.
+
+In an ideal world, I'd prefer to say no to hardware designs like this,
+but unfortunately, hardware designers don't know these details of the
+protocol, and all they see is "two wire, oh SMBus will do".
+
 -- 
-2.48.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
