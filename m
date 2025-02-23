@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-527964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D85A411BC
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:55:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146D6A411C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:57:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC524170704
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:55:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08FCB170CA3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B418A1E491B;
-	Sun, 23 Feb 2025 20:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9343523F409;
+	Sun, 23 Feb 2025 20:57:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="PmrwQkAY"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fw5yLIDP"
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A214F23F277
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093311E491B;
+	Sun, 23 Feb 2025 20:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740344106; cv=none; b=f8rb4WKgZXEVsAY7IsyvZJRm01fwUc/qPxAJQ/ZafaFZMWYZ+rXGOXA/p6OvQtDyy+OoNYWQiNfc5A5JMLVt8M03VFtxZLjASmC5AzEq7LXU8dGJRkxWK46TA27IIRok5A2b2hbl7Pf4/IbGDMcg0HmcC/1LYtHXz0MY13UWCRU=
+	t=1740344264; cv=none; b=bEa4cI7V21hPsfZT6FmMAeQwm6dliwjKVx4sE21e33b1fN+pbFefRZyU0wIP8nwn052VACJnQyVcksJJCP8CHokNvFKSGbE5aAILFq7VuGbu/2ocAuvxP8nb5MLJIatTyv8oC5JLmzh1MFU/Mo11tteixYYeXDM0YfSVqfHAAZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740344106; c=relaxed/simple;
-	bh=MoZxjt4ef3Mj3OXxJKq8t0ru2Cygtk+5sJUMMXPFdxU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sHbhmPnvONHfT70r/ZwwPq2ynxg7dtfvtTLgC8kFweHpJsgbojxOZAmGBQth9UGQxbhx+EY4ZMdaMD4WAgmI52le21GcV8JFdUgKr6JDuimf0llT/NP5zHRByK7/b5vgEqMv4HNijOuBY74xBVjJrCspy5A9z7Di+/yoE027kDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=PmrwQkAY; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CEE1B2C019A;
-	Mon, 24 Feb 2025 09:54:55 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1740344095;
-	bh=MoZxjt4ef3Mj3OXxJKq8t0ru2Cygtk+5sJUMMXPFdxU=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-	b=PmrwQkAYca4y7ARWTFV0hXwsTQLP7eISGxUILlqEUpLQ/5miv5mUjcqsA/IkgGULL
-	 gTHANEzB9Nhza29HHhU3MrNEmmowJt0HS/OJEHFawJQlLdThSFeDgcevDIhQmC7ftO
-	 aMPqxiHsaKSuJSIA9U5dE/aSSVWpRrO3s8vjJdstEDGSExuz4RyWWJrpmsWEIIg1t/
-	 yQIu6/3ivXu+qHNKVSfDAC/rw6rJZIbo3T6Q7rUwrrOw2UdWNeYZtYD5nfkKAVBv3Z
-	 1mFqlh3xawe5c67MZl1ar9FtgGhMhoP5S+gJinu/mOPlA/78u5EmxLj5aSxI5OHxJw
-	 foWMTrHAGN0YQ==
-Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B67bb8b1f0000>; Mon, 24 Feb 2025 09:54:55 +1300
-Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
- svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 24 Feb 2025 09:54:55 +1300
-Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
- svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
- 15.02.1544.014; Mon, 24 Feb 2025 09:54:55 +1300
-From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Tony O'Brien
-	<Tony.OBrien@alliedtelesis.co.nz>
-CC: "pavel@kernel.org" <pavel@kernel.org>, "lee@kernel.org" <lee@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>, Ben Hoelker
-	<Ben.Hoelker@alliedtelesis.co.nz>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings:leds: Add function define for POE
-Thread-Topic: [PATCH] dt-bindings:leds: Add function define for POE
-Thread-Index: AQHbfbJsYgR4pybhekSIhRE+6tZISrNEHtqAgAWB6YCAAMJBgIAKMguA
-Date: Sun, 23 Feb 2025 20:54:55 +0000
-Message-ID: <7a6c287c-45f6-4193-a29a-6c6a29eee3e4@alliedtelesis.co.nz>
-References: <20250213005841.4143929-1-tony.obrien@alliedtelesis.co.nz>
- <20250213005841.4143929-2-tony.obrien@alliedtelesis.co.nz>
- <20250213-successful-pronghorn-of-dignity-83facb@krzk-bin>
- <31bc5340976761dbf3653ed2802a8988e07b18d5.camel@alliedtelesis.co.nz>
- <7462bb47-01ff-45d7-9cbc-24b8da7f7a1d@kernel.org>
-In-Reply-To: <7462bb47-01ff-45d7-9cbc-24b8da7f7a1d@kernel.org>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3BD283E3C9AD9343A2B709F977717A74@alliedtelesis.co.nz>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1740344264; c=relaxed/simple;
+	bh=EAKiTpYYnVeZO3LS28nMWr+d+FH/vhJSlPIVTjf+Hqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N9TFivhYyk85TDKDH7h4qDZ1tPwBd2Es6vn4RsLeAq5NRYaOzFm3/84lzVYpnyW++n/b075Ao8921nvPz9+zpKNY5YofflhVLjcWODWKqlWZ6vPtuNqoiMgrjlfc8AZLyZhqPVCEQ9nfruDYyIK13l55vzM9HW5fQheJT5BKxQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fw5yLIDP; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-8622c3be2f4so959337241.1;
+        Sun, 23 Feb 2025 12:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740344261; x=1740949061; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EAKiTpYYnVeZO3LS28nMWr+d+FH/vhJSlPIVTjf+Hqo=;
+        b=Fw5yLIDPH+mbHesse+AjGnMOSVvdbl3gK7r+F2tKrxc5JHZSMS5afXpOCpEhU3q2Qm
+         C2ePAu8mhpfcnc/6cxP8QjsJf4pjceO33QwB8+KrKWMrqAxjM42h4Ot9ZrneF0I5n3Ky
+         dfEmmt1OER6O8F1ZS88/X4PbYoP97ZqrG4YcKifI8qB7ZCDSxAZWQWDnELzMyNa43z6T
+         VZ6yGeaD9FU3r6+XGdSAHN2VoCOx7srP+oP7pVGMgNKyEXipP+lXCkqNMzK3L2urboR2
+         ohZ/F/Y6XtCNyuloGMEo4Igfau/w56Zl1b9+6/M+RpdN42vvYk4uUd5tMPAu77Jy0qhx
+         M0jQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740344261; x=1740949061;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EAKiTpYYnVeZO3LS28nMWr+d+FH/vhJSlPIVTjf+Hqo=;
+        b=Z8nlPcmOcuXGi4XAkJ0pwe8MkoLJBsux31SVRlxuMApZe/Lc8lJ21JijNk6SkE9VM6
+         m/cMnTyGQYsunC7nO4iGUTyxSkzneFeDTqx11s/UaYjW6CHquNH8vebn6Fa4dj0kArQR
+         4eoxv6CmZbs7cNiGiJyqGC/Sl4eL6VaZ1+jSVkMS2rJJbeKIzJQtZ5apqnkA39tb0ulI
+         fm57weTidoWtdNJPvHBQXa7CYG0J48D6NkKP2eiw4Yq3DCqZV9mkn3RNxto1pe+NnVcu
+         vuqkZLi39LkPJfnRzWdC6FAcFpdgj+R29bVXy8TVm2PcH5aZ2rUHZNnPXsRE7pd9iteu
+         e+fA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhybHgFAN5LMSOciadqo+ACPIZeaW/jAYwMiKmufE7r/Mi3vKGI7WDUX8PbkgeY57elhxSvDv2HjA8@vger.kernel.org, AJvYcCUy70/7Ynmkaf8gMMGDcZlO1CqnQn3I9h3cKtZ+04re+yXJewH6nKWECK8Q2t0VJoFQ40RHD8pMJFQjSFI=@vger.kernel.org, AJvYcCW3JWj1fhLQ2MQIFUQ6mRM816nj7AfWHUw30nqjppScwY6jICr+DreLUgc8Jp99EICAYz/dBgCB0l4RzUj1U8NAxk8=@vger.kernel.org, AJvYcCXq+mzVALpE/P++YH0ZWT/9vnCgtV47mUauTZvvk9lJOrut7uz1XXvAcdyUDyTWn3ZLK9l3o/SSUZTWvNw7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyaPSMWOkYT3hkPqN9fh58sroWij0L4h3O9GVineLO/7oJLk5s
+	gUV3D9xUBB182cCi48WK/7YaCiuh6dYAyzHAktGSyuiEEdzTgOWS63C+Kxp3mBij91/VzSLI+Ir
+	1vPOmUkwmfJiZucZcmHMKyJUoANo=
+X-Gm-Gg: ASbGnctT1mzcmSz/JruTrX3JUczM73Ac1OUqeJxLdId77n/jmLg0AswIdyX2vSP2kMp
+	p0jDs0P1A9wQa+i3BWN8xQ/fgH2oX0DkZwudUQXz7BNaadBJKtW3KORFKa2llh9Y2y/9N5028c0
+	BlvRDxfDCo5hbi7Oc7Jmbq/smdRbRXhuOawyw3UGR7
+X-Google-Smtp-Source: AGHT+IGeFCjx69zKMnS5an7ZsypoU4EhpN2SqDf/S+KSnnPpvbMah+83e5k82NyMDYuPskzDFQ1yzACH+uFeBoXm72o=
+X-Received: by 2002:a05:6102:5125:b0:4bb:bf49:9088 with SMTP id
+ ada2fe7eead31-4bfc02231f9mr4875201137.16.1740344260843; Sun, 23 Feb 2025
+ 12:57:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67bb8b1f a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=75chYTbOgJ0A:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=ng1ljuFFI0ieGqgL9r8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
+References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250221155532.576759-10-tommaso.merciai.xr@bp.renesas.com> <20250223181955.GD8330@pendragon.ideasonboard.com>
+In-Reply-To: <20250223181955.GD8330@pendragon.ideasonboard.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Sun, 23 Feb 2025 20:57:14 +0000
+X-Gm-Features: AWEUYZky0_229ambfWsVcJLM4pj4rdD8SEpYiK-r-awHmSdcJRMIEb31CrqaLW4
+Message-ID: <CA+V-a8t3VeK9vuw7k_gbJ=wQAbJHWnvOkZ1xU-k3pc8QdLWiqw@mail.gmail.com>
+Subject: Re: [PATCH v2 09/18] media: rzg2l-cru: csi2: Make system clock
+ optional for RZ/V2H(P) SoC
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-SGkgS3J6eXN6dG9mLA0KDQpPbiAxNy8wMi8yMDI1IDIyOjEzLCBLcnp5c3p0b2YgS296bG93c2tp
-IHdyb3RlOg0KPiBPbiAxNi8wMi8yMDI1IDIyOjM3LCBUb255IE8nQnJpZW4gd3JvdGU6DQo+PiBI
-aSBLcnp5c3p0b2YgLQ0KPj4NCj4+PiBXaGVyZSBkaWQgdGhlc2UgdHdvIHJldmlld3MgaGFwcGVu
-Pw0KPj4gVGhleSB3ZXJlIGluLWhvdXNlIHJldmlld3MuICBQbGVhc2UgZmVlbCBmcmVlIHRvIHJl
-bW92ZSB0aGVtIGZyb20gdGhlDQo+PiBwYXRjaC4NCj4+DQo+Pj4gV2hlcmUgaXMgYW55IHVzZXIg
-b2YgdGhpcz8NCj4+IFdlIGFyZSBhZGRpbmcgS2VybmVsIGNvbnRyb2wgb2YgUG9FIExFRHMgYW5k
-IHRob3VnaHQgdGhpcyBtaWdodCBiZQ0KPj4gdXNlZnVsIHRvIG90aGVycywgbWF5YmUgdGhvc2Ug
-d29ya2luZyBvbiBuZXRkZXYsIG9yIGFueW9uZSBpbXBsZW1lbnRpbmcNCj4+IFBvRSBvbiB0aGVp
-ciBkZXZpY2VzLiAgQWxzbywgdGhlIEtlcm5lbCA+PiBEb2NzID4+IExFRHMgcGFnZSBzdGF0ZXM6
-DQo+PiAiSWYgcmVxdWlyZWQgY29sb3Igb3IgZnVuY3Rpb24gaXMgbWlzc2luZywgcGxlYXNlIHN1
-Ym1pdCBhIHBhdGNoIHRvDQo+PiBsaW51eC1sZWRzQHZnZXIua2VybmVsLm9yZyIsIHdoaWNoIGlz
-IGluY2x1ZGVkIGhlcmUuDQo+IFlvdSBkaWQgbm90IGFuc3dlcjogd2hlcmUgaXMgdGhlIHVzZXI/
-IEJ5ICJ3ZSBhcmUgYWRkaW5nIiB5b3UgbWVhbg0KPiBkb3duc3RyZWFtPw0KDQpJdCdzIGRvd25z
-dHJlYW0uIE9uZSBvZiBvdXIgUG9FIHN3aXRjaGVzIGluIGRldmVsb3BtZW50IHdoaWNoIHVzZXMg
-YSANCnBjYTk1NTIgTEVEIGNvbnRyb2xsZXIuIEkgc3VnZ2VzdGVkIHRvIFRvbnkgdGhhdCB3ZSBn
-ZXQgdGhpcyB1cHN0cmVhbSBhcyANCkkga25vdyB0aGVyZSBpcyBzb21lIHdvcmsgZ29pbmcgb24g
-dG8gc3VwcG9ydCBQb0UgUFNFcyBpbiBuZXRkZXYuIEkgZGlkIA0Kd29uZGVyIGlmIHdlIHdhbnRl
-ZCB0byBtYWtlIHRoaXMgbW9yZSBzcGVjaWZpYyBpLmUuIGhhdmUgInBzZSIgYW5kICJwZCIgDQph
-cyBkaWZmZXJlbnQgZnVuY3Rpb25zIGJ1dCBzb21ldGhpbmcgbGlrZSAicG9lIiBzZWVtZWQgZmlu
-ZSBhcyB5b3UncmUgDQpub3QgZ29pbmcgdG8gaGF2ZSBzb21ldGhpbmcgdGhhdCBpcyBib3RoIGEg
-UFNFIGFuZCBhIFBEIG9uIHRoZSBzYW1lIHBvcnQuDQoNCg==
+Hi Laurent,
+
+Thank you for the review.
+
+On Sun, Feb 23, 2025 at 6:20=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Tommaso,
+>
+> Thank you for the patch.
+>
+> On Fri, Feb 21, 2025 at 04:55:23PM +0100, Tommaso Merciai wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > The RZ/V2H(P) SoC does not provide a `system` clock for the CSI-2
+> > interface. To accommodate this, use `devm_clk_get_optional()` instead
+> > of `devm_clk_get()` when retrieving the clock.
+>
+> The clock shouldn't be optional. On all SoCs but V2H it should remain
+> mandatory, and on V2H you shouldn't call clk_get() at all.
+>
+> I'd recommend adding a flag to the rzg2l_csi2_info structure.
+>
+Agreed, in this case dtbs_check will not catch this issue if we pass
+"video" and "apb" clocks.
+
+Cheers,
+Prabhakar
 
