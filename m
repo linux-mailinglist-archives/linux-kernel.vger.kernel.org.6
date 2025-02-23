@@ -1,75 +1,109 @@
-Return-Path: <linux-kernel+bounces-527797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2196CA40F90
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:43:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAE16A40F7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:39:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 628691898E41
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:42:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B73B416AB9E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCDC20C494;
-	Sun, 23 Feb 2025 15:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E445A20AF82;
+	Sun, 23 Feb 2025 15:39:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ekcyK6do"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NP1pT+OB"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A278A20C485
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 15:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106FD1FDA7A;
+	Sun, 23 Feb 2025 15:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740325313; cv=none; b=mQ3nF5Q1mNQ4hZ1RV3fvFjH7kqmsIJOL+sHzaXcH1W4zmr0Fdh20HoGnetxytGejxOhI9+mgNqUOY4d/2ddzSHSYuG1aEv4+0BieUb/pFYa9uvpf/HaEYEPl48A1xK7HPMG/Cf8auennXirhHkDIZ2WEi2yOp3oeArkg2/ZDgOo=
+	t=1740325165; cv=none; b=KI1gkdgw+gbqr6vnRjn4ianzU/NnPcByjsg2DRN61raEVkp8Wx5vSnWEPmtlkq5atUZs18prLtLfzdpXxUKupFo1SSBYbMr8Wa4QKDlujAC0eiW/xNe2QcxHWCP9l7EFy0KrzNfBYqIFvpn02a6r8XbMaBNHPtlh5I+Vb5G6U+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740325313; c=relaxed/simple;
-	bh=ZGGr8CpUC2KsJpl4JTjnc3CvTn1h9z7S+oOYdP7bE20=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mTUP6BR7WM6ko4mEioWEdMBQ2H7erQ+mvq81WmIVe1xqHePY+FQNO3w40BV1Va8aOti5ZY085i3NqYpRvMGpILgca5b9mIsb2ni0eQUj3Wm7+HuzP6Fh1vyvitkDd+9CTnOQDzQxqP6lvSYX6QbfpTzNAgQKgXe/PoG8C0piDS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ekcyK6do; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740325310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qvywjBt9qiVEE9rGZyn5DkXXMEjJbM4TB/T7cbHYBEo=;
-	b=ekcyK6doPUsgd4oGouRVmFk54JqHpXUzte+i/MqkMb7rxnppRJuSDxvELwS+aRRVsAtqOQ
-	FfFt9NAc/sxlpJT0i+z2rEaAZJqjd+urSzU0mYIR9DNArw/fRWPqLC9SsdeGjZsajZEg1I
-	xdApWG14J80Nx1CWd2aIYffpFNH5yzc=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-191-B0X9Vo8lOo6-dJW4ojwo4g-1; Sun,
- 23 Feb 2025 10:41:47 -0500
-X-MC-Unique: B0X9Vo8lOo6-dJW4ojwo4g-1
-X-Mimecast-MFC-AGG-ID: B0X9Vo8lOo6-dJW4ojwo4g_1740325304
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9510519783BA;
-	Sun, 23 Feb 2025 15:41:44 +0000 (UTC)
-Received: from server.redhat.com (unknown [10.72.112.28])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1EEEE1800359;
-	Sun, 23 Feb 2025 15:41:39 +0000 (UTC)
-From: Cindy Lu <lulu@redhat.com>
-To: lulu@redhat.com,
-	jasowang@redhat.com,
-	mst@redhat.com,
-	michael.christie@oracle.com,
-	sgarzare@redhat.com,
+	s=arc-20240116; t=1740325165; c=relaxed/simple;
+	bh=3qU4GtJTsGQwbFsusLCPsAZ3tv5n7AUPfNKXFNRGBgw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=d9p5BMzQsXsdGeogW7TsL+yVZPaVbTVsSKG/P0koxVO3Hij0Hv9mFw7QCMPcjZSF/2Yam1rS3ggITjcPTmJrFhpqZC/q4VJ5Xybc6+Y1uPtZR//WTk3pBFbQW4eCwG88k0Lwiajfc2v+KT0efUgRyOLLgXvtSsGb5lQskAjzsoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NP1pT+OB; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-221050f3f00so79806095ad.2;
+        Sun, 23 Feb 2025 07:39:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740325163; x=1740929963; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5c5MN4s2WfRcbWBk7ANZ07wregEvdSHL/lHz2WKEa6g=;
+        b=NP1pT+OBFuiSjFyx4sW8W561RknQysE+SX4pQnlqoAhHdmNB9OGLu+rdjvAadCfhF5
+         jTN4DMFcW0ZIEpTL13G4WQ5Y+kSN2+WOccFOMvs4I25VoEzPOKE/+xoDFKpOuiFw94Q9
+         ANzVSdaA6gs4ls+y6LC4TISrZzajNbntBWLv34TOX8TnQNFEDO/wROAXOP1NJMfSe9AQ
+         R7DwljMTb57tFFhY+EQWWCxBkasmznNozLOUiY9h757SuL43bvm5GIoZedbeF5MUVGOw
+         RwjC2nns+tRxyqKW8CaiyzrUj4tonVVg9GFoQaGEb3yh5skeEA9QkPaS+kWfdSeANzwt
+         dKhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740325163; x=1740929963;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5c5MN4s2WfRcbWBk7ANZ07wregEvdSHL/lHz2WKEa6g=;
+        b=SWAFVszOv+jsmokqZX6I8Uo6oj2HyJzpKuYos6j8h0RyHOHV6S+hZu21ai1sMVASfs
+         d0P/+oe8EB0ITMO5DoegzMPdSA2zVW1InITcxIWb1iGtyeHu4cI+YuLv1G6elFTZfq0V
+         uPH4poTfKWOZzGyiMcC+FXspadvyA3ihl567FxN4o6mdc4jiPRS22KkO5PCht+c3U1yX
+         wtJdhDzfxlJEf+PZsQLesgeoai/GUj9tyOv3iI/SGTu9gDhVe9nNYayP7becasbdwJLv
+         L/FiuEEup1wkeZyAH86m1zIzq1R2hW1r598iLG7ywa/7pEJpW4nyx9MsbiNkuPS0pgNV
+         CSPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUi7oxlf2tNfUNCkvj7fiHEkiWQFns0PfKg56/C/A2Y9i6c2747UmYogNhii3R2Nv8e0hBW/j1+7ZI47Kk=@vger.kernel.org, AJvYcCV7m7uPP1ebyJ1YnIYixntaGrNhqlIh8uDCHkN1LKkv9gcX+75alupesZgIdBv8ub7KxLCmlsQ0rrXrjP+xKX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrmgyUbakSdjfViL4m6UOaRTQhD4pF0+2UhjOYMQhM5tBdBJq7
+	N4kLcP6Wu+FMXdkPliWX7nF8/zoCFBJihEzFWfS5ypJpVZdqWKWC
+X-Gm-Gg: ASbGncseBgRQio/cQWEz9EyUY7F+uHr2oQc+z9u5A5pICTGhPbdZrA/rOnM1BApbDor
+	4OkECK11JopWXgDglqnYu+xQy0J7uVInLRkhNuUO0Xm9AABzBWN4WMez8f55YaUGVHdohXYqZI3
+	n0dSGVSG9yXCVvMd99/9cqkLzZG8shqlW5r6px7x1ju3WER2gQeZ+Xt8GWfywJzbhxbOuGDxbYR
+	jBgWt0R6lWG5UAkZt7lOZ80s1pRV3q4dc8fbVhBVrCuVnyT8QhC3hNHKJzF0M2M7uXBGYvfaQn3
+	WGrQP+fMQxzA1XR2EnC8Hftkwex2jCNwng==
+X-Google-Smtp-Source: AGHT+IGRwX1ZKSDq2cEEEEKtOYGsDnq5Gxg85Qb+/LLJNGyy9n9RrWySUHGtnQjbIbggkTPbM6ICHw==
+X-Received: by 2002:a17:902:cec1:b0:21f:55e:ed71 with SMTP id d9443c01a7336-2219ff31895mr191972235ad.5.1740325163182;
+        Sun, 23 Feb 2025 07:39:23 -0800 (PST)
+Received: from linuxsimoes.. ([177.21.141.136])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2217a2fefbcsm69818235ad.116.2025.02.23.07.39.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 07:39:22 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: joe@perches.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
 	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v6 6/6] vhost: Add check for inherit_owner status
-Date: Sun, 23 Feb 2025 23:36:21 +0800
-Message-ID: <20250223154042.556001-7-lulu@redhat.com>
-In-Reply-To: <20250223154042.556001-1-lulu@redhat.com>
-References: <20250223154042.556001-1-lulu@redhat.com>
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V4 2/2] checkpatch: throw error for malformed arrays
+Date: Sun, 23 Feb 2025 12:39:13 -0300
+Message-Id: <20250223153913.10846-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <3ccc3d3e756e82af53b4f75c4ab9cc99e555da1a.camel@perches.com>
+References: <3ccc3d3e756e82af53b4f75c4ab9cc99e555da1a.camel@perches.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,35 +111,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-The VHOST_NEW_WORKER requires the inherit_owner
-setting to be true. So we need to add a check for this.
+Joe Perches <joe@perches.com> wrote:
+> Poor email subject.
+Okay, I will improve this
 
-Signed-off-by: Cindy Lu <lulu@redhat.com>
----
- drivers/vhost/vhost.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> Convert all the messages.  Use consistent style.
+Yes, my bad. This was is disatention.
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 45d8f5c5bca9..26da561c6685 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1017,6 +1017,13 @@ long vhost_worker_ioctl(struct vhost_dev *dev, unsigned int ioctl,
- 	switch (ioctl) {
- 	/* dev worker ioctls */
- 	case VHOST_NEW_WORKER:
-+		/*
-+		 * vhost_tasks will account for worker threads under the parent's
-+		 * NPROC value but kthreads do not. To avoid userspace overflowing
-+		 * the system with worker threads inherit_owner must be true.
-+		 */
-+		if (!dev->inherit_owner)
-+			return -EFAULT;
- 		ret = vhost_new_worker(dev, &state);
- 		if (!ret && copy_to_user(argp, &state, sizeof(state)))
- 			ret = -EFAULT;
--- 
-2.45.0
+Sending a v5...
 
+Thanks,
+Guilherme
 
