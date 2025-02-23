@@ -1,148 +1,159 @@
-Return-Path: <linux-kernel+bounces-527839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81192A4105E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:16:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EED6A41066
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:22:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF57B3B6C86
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:16:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8FC3AC47A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:22:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB5EB644;
-	Sun, 23 Feb 2025 17:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5111487DC;
+	Sun, 23 Feb 2025 17:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gIkQ6i6A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+IvhCl0h";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="gIkQ6i6A";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+IvhCl0h"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJB5tKNH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2435E1BC3C
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D430622071;
+	Sun, 23 Feb 2025 17:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740330969; cv=none; b=b+Dq35AwfWhck92ksvz5D13xWj+9H6HhhNamD0Jff8pjdB/K8nyudzoEj8jHkS8A3PbFAweVS4DKAJ0sYrTmqN1wySPtysnjsEQvqD95DA5mszrjaEdkwyfudi8OY1R/tbpf9X2J/ITtbQrh0gkt4fFudhJr1jRqoj+pdyYAYH8=
+	t=1740331343; cv=none; b=aTbj0PXl4C5OuQxDNVS6LFd1VbT7AK7uCerXy3zLk+bIKak4TE5t7SP5B5PacwSfMY5unh8zSTfjiF4oj6LqKN9GMD6N/z6GCT8d8RoZu9FvFuKcav3DoYOJud0+CObkwpnKsu4ndgqTDafVGP60JDtwMd4JaX855/nLp1Xu0yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740330969; c=relaxed/simple;
-	bh=M5pgP1bN6qBtfo3sR6fQ82Rlj0cf53KcExt4eoDeXbQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yzn1Nmb+OXIrn0VkT5UoRXGtjTuUuj8yPdISYmqDKPAgnCiks9w63bd7gVnF20cvKgtYlWckhrK7XzwW533OF2cu04P68zOPc15p/2C+Vhhr9bAqLlTNw1J4gVzxUSHT4TIulBJO9GvWTO6jcyjVuuS2nQS7yQP5c+BwyZej16o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gIkQ6i6A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+IvhCl0h; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=gIkQ6i6A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+IvhCl0h; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 21E0E1F383;
-	Sun, 23 Feb 2025 17:16:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740330965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fiAikQSOSk3s/Fif0Xp5rDIilzpBMg+58DLENFRdZFY=;
-	b=gIkQ6i6AY6HzdFuZ68tk/okSaJJKL3z/NBMxG7pMPWnJQ6uPylH3+qJv6NrLNhvpQsZ1Nl
-	xuU4uJRWx+mwl7/IOHSroe6RHq9WRm0F7uJRqFvHUR1IrVj77825sBhlhT44Hi0823CB3q
-	07MGB++Ng67vyDJISRj3BoICzK7MMjc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740330965;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fiAikQSOSk3s/Fif0Xp5rDIilzpBMg+58DLENFRdZFY=;
-	b=+IvhCl0h+IoiiM0dcTHlOdrqzdnay2fHWj1tqdamBaP/bxUbHeI2/xHKoNE5BskhuQ9HSt
-	szrkfZIZXMnDH1Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=gIkQ6i6A;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+IvhCl0h
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740330965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fiAikQSOSk3s/Fif0Xp5rDIilzpBMg+58DLENFRdZFY=;
-	b=gIkQ6i6AY6HzdFuZ68tk/okSaJJKL3z/NBMxG7pMPWnJQ6uPylH3+qJv6NrLNhvpQsZ1Nl
-	xuU4uJRWx+mwl7/IOHSroe6RHq9WRm0F7uJRqFvHUR1IrVj77825sBhlhT44Hi0823CB3q
-	07MGB++Ng67vyDJISRj3BoICzK7MMjc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740330965;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fiAikQSOSk3s/Fif0Xp5rDIilzpBMg+58DLENFRdZFY=;
-	b=+IvhCl0h+IoiiM0dcTHlOdrqzdnay2fHWj1tqdamBaP/bxUbHeI2/xHKoNE5BskhuQ9HSt
-	szrkfZIZXMnDH1Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A62A213A53;
-	Sun, 23 Feb 2025 17:16:04 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WIn9JNRXu2dtcAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 23 Feb 2025 17:16:04 +0000
-Date: Sun, 23 Feb 2025 18:16:03 +0100
-Message-ID: <87plj8zing.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Russell King <linux@armlinux.org.uk>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ALSA: arm: aaci: Constify amba_id table
-In-Reply-To: <20250222114129.162794-1-krzysztof.kozlowski@linaro.org>
-References: <20250222114129.162794-1-krzysztof.kozlowski@linaro.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1740331343; c=relaxed/simple;
+	bh=ikthoz7q6na/BgPcgPu7Oys3XOFB7HVKetzGLYnw3Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iI+MvaIq8RCGm2CabFFtlaqnHRN+PsBJ2AXJBUOe5Mi2OUw3HaFJRXq6lD43xsqMjPFt9Ed2q7u01+fz4l6p20jC+qm9jKRK63CxDPD9xnHkPnVKqXnj5AnfSvc1rdV1/naaMispG5pA+m6BdWMRrqZgwx7Lp7b1sbdzxqfeS3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJB5tKNH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3A6C4CEDD;
+	Sun, 23 Feb 2025 17:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740331342;
+	bh=ikthoz7q6na/BgPcgPu7Oys3XOFB7HVKetzGLYnw3Gg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJB5tKNH71oIJPN+zlqlFAeA/eHt/H7sM0lPHD5hxOzMwMBILHKf5Qwux9yg8T17U
+	 lHhfMEJjbDmABJqxPojrfKylUBDbugpOvVdrgulnFdb72r+3H8LQIAk3CtbhZByKle
+	 0NWjFUa4N/GZnHC+GP/YKyk4XaXXsG6UR9gaGKZpxQxrzncg5u4T9pF6yY7ZfVkq8D
+	 b0GVnfRGXbPshcVKJzhDLNoMqv4D++EtPhNw40755C1lkqYEkQKO2OjIJta7i2tNKw
+	 57UC63+6sX9qTXWy3bVVklOlgQ02jUJFbIKdoR2AwcyP4DIIMEiexPXZ/5kuXhiVsV
+	 tBJF7pnEU3mLQ==
+Date: Sun, 23 Feb 2025 09:22:20 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Ruiwu Chen <rwchen404@gmail.com>,
+	Joel Granados <joel.granados@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
+	keescook@chromium.org, zachwade.k@gmail.com
+Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
+Message-ID: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
+References: <virvi6vh663p5ypdjr2v2fr3o77w5st3cagr4fe6z7nhhqehc6@xb7nqlop6nct>
+ <20250222084513.15832-1-rwchen404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 21E0E1F383
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222084513.15832-1-rwchen404@gmail.com>
 
-On Sat, 22 Feb 2025 12:41:29 +0100,
-Krzysztof Kozlowski wrote:
+On Sat, Feb 22, 2025 at 04:45:13PM +0800, Ruiwu Chen wrote:
+> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
+> but there is no interface to enable the message, only by restarting
+> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
+> enabled the message again.
 > 
-> 'struct amba_id' table is not modified so can be changed to const for
-> more safety.
+> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+
+You are overcomplicating things, if you just want to re-enable messages
+you can just use:
+
+-		stfu |= sysctl_drop_caches & 4;
++		stfu = sysctl_drop_caches & 4;
+
+The bool is there as 4 is intended as a bit flag, you can can figure
+out what values you want and just append 4 to it to get the expected
+result.
+
+  Luis
+
+> ---
+> v2: - updated Documentation/ to note this new API.
+>     - renamed the variable.
+>     - rebase this on top of sysctl-next [1].
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Applied now.  Thanks.
-
-
-Takashi
+>  Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
+>  fs/drop_caches.c                        | 11 +++++++----
+>  2 files changed, 17 insertions(+), 5 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
+> index f48eaa98d22d..ef73d36e8b84 100644
+> --- a/Documentation/admin-guide/sysctl/vm.rst
+> +++ b/Documentation/admin-guide/sysctl/vm.rst
+> @@ -266,7 +266,16 @@ used::
+>  	cat (1234): drop_caches: 3
+>  
+>  These are informational only.  They do not mean that anything is wrong
+> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
+> +with your system.
+> +
+> +To disable informational::
+> +
+> +	echo 4 > /proc/sys/vm/drop_caches
+> +
+> +To enable informational::
+> +
+> +	echo 0 > /proc/sys/vm/drop_caches
+> +
+>  
+>  enable_soft_offline
+>  ===================
+> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> index 019a8b4eaaf9..a49af7023886 100644
+> --- a/fs/drop_caches.c
+> +++ b/fs/drop_caches.c
+> @@ -57,7 +57,7 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  	if (ret)
+>  		return ret;
+>  	if (write) {
+> -		static int stfu;
+> +		static bool silent;
+>  
+>  		if (sysctl_drop_caches & 1) {
+>  			lru_add_drain_all();
+> @@ -68,12 +68,15 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+>  			drop_slab();
+>  			count_vm_event(DROP_SLAB);
+>  		}
+> -		if (!stfu) {
+> +		if (!silent) {
+>  			pr_info("%s (%d): drop_caches: %d\n",
+>  				current->comm, task_pid_nr(current),
+>  				sysctl_drop_caches);
+>  		}
+> -		stfu |= sysctl_drop_caches & 4;
+> +		if (sysctl_drop_caches == 0)
+> +			silent = true;
+> +		else if (sysctl_drop_caches == 4)
+> +			silent = false;
+>  	}
+>  	return 0;
+>  }
+> @@ -85,7 +88,7 @@ static const struct ctl_table drop_caches_table[] = {
+>  		.maxlen		= sizeof(int),
+>  		.mode		= 0200,
+>  		.proc_handler	= drop_caches_sysctl_handler,
+> -		.extra1		= SYSCTL_ONE,
+> +		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= SYSCTL_FOUR,
+>  	},
+>  };
+> -- 
+> 2.27.0
+> 
 
