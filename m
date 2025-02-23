@@ -1,154 +1,125 @@
-Return-Path: <linux-kernel+bounces-527732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD56A40EC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:06:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F03DA40EC4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8A017789A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:06:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 712971897DEE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE1420550B;
-	Sun, 23 Feb 2025 12:06:46 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B590420550B;
+	Sun, 23 Feb 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vIAypmjN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30ED820127E;
-	Sun, 23 Feb 2025 12:06:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C59C1C860A;
+	Sun, 23 Feb 2025 12:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740312406; cv=none; b=cp7EL2TfkOjMjMkh9U+ni+6Au+qKd+odb/6PTO39+Ekfk1ZefTDwN8+zsaUxe62sAfrmjLslBJrL1rjyLBO7SDgqOo6IRnUrCl2p+WeGFI2cQCCFUvjBFVUIH79SzNOTiwQxU+89PFSw7YjPWIU4zdR+fbQao5R9qWI3E85W4nI=
+	t=1740312448; cv=none; b=FYnnxTnc5DBrEpgxPQ8mVGRJXdLgvy13Ha+zSM3RvTqk0E8f/zd3etUnUCHsO7oYWu2h5J3l7q82qYb4hRcQnyJRF1qSo6LPocqHh6lpJxyYgJxwjxIfU09fnGAjgVeADSGJ5LJ/aY4+Np/oxmlcOPtZ7AsNxko/1VMxzP+KDzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740312406; c=relaxed/simple;
-	bh=L853LGGQMzlJq6txYGySmcOYQdIGRGwO5NgCBY5oOwU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d09BXRfXb5I0/Rk4Amxo80JgFfrn09I+i/vklZPZJsB8/dLVrKse9InsAcR27D5TmpS0mqRABFibWACjhx6rjr915ZWbrFvHfEaOdy6Nbs+GPchMLoJNsn421QXPG0b2KWYGFFIqft4px5A8VwAiYEBUeSFD9gWiYjGlkVZ43/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [180.172.118.52])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 987443431E1;
-	Sun, 23 Feb 2025 12:06:43 +0000 (UTC)
-Date: Sun, 23 Feb 2025 12:06:38 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Alex Elder <elder@kernel.org>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	spacemit@lists.linux.dev, Conor Dooley <conor.dooley@microchip.com>,
-	Alex Elder <elder@riscstar.com>
-Subject: Re: [PATCH v3] pinctrl: spacemit: enable config option
-Message-ID: <20250223120638-GYA39613@gentoo>
-References: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
+	s=arc-20240116; t=1740312448; c=relaxed/simple;
+	bh=Sm+mRekMzUNTulNeP4v+I6Npn9Dw9WcZsjSEZZcv2EE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EfCHO8WNSTm4AZlHglyHuE50RSo+leh0QK00YZ8CshsFuee0c8MYgCUaDgfnOoqvSDskb8BHi5AsUMB/c3oUe2FuXVsbLe1LmGXegJgGu0ZHSfTVkY0w4BWiZxwRoAbDi8/smr/ymF3EErdJkWxdmi4dqUGppIq/fh1mdSCiK/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vIAypmjN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59A92C4CEDD;
+	Sun, 23 Feb 2025 12:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740312447;
+	bh=Sm+mRekMzUNTulNeP4v+I6Npn9Dw9WcZsjSEZZcv2EE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=vIAypmjN5R1Ttb3QZypNq3IyIMO7V+xSVdpwOq+igljr2/oJWSkBTlSvKLGfvgJ1j
+	 lSG0XTgOGKGt3zWSNyJN+0Q6xNm5Y0NbBaAmW6/qeIs3rovziU67t+F4KoRg1ttkDH
+	 gokwJfoxvYWqZXh27V/I95uhgo3oQOwnx29VsXDhcyXXDWh54aMCUvMkWCR2JcIQ7c
+	 hUriy7nIbubcUCswPrL+CGL23yWQhZA1C7m0Ky9yOuZbGyJ/ojPUTDcj0v6P1Hgbs8
+	 +JtTetjXRlDayMzMvA1q3+Fwtuns6u91PH5seeUCLvH/qA/BG6V5pNSwkRI5HrO3qi
+	 n2uXKDPYDzkoA==
+Date: Sun, 23 Feb 2025 13:07:24 +0100
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.14-rc4
+Message-ID: <Z7sPfKmfDJzXOPrs@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Rosin <peda@axentia.se>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="U0vdQbNUIwWVkzvD"
+Content-Disposition: inline
+
+
+--U0vdQbNUIwWVkzvD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250218-k1-pinctrl-option-v3-1-36e031e0da1b@gentoo.org>
 
-Hi Linus Walleij:
+The following changes since commit 0ad2507d5d93f39619fc42372c347d6006b64319:
 
-On 08:31 Tue 18 Feb     , Yixun Lan wrote:
-> Pinctrl is an essential driver for SpacemiT's SoC,
-> The uart driver requires it, same as sd card driver,
-> so let's enable it by default for this SoC.
-> 
-> The CONFIG_PINCTRL_SPACEMIT_K1 isn't enabled when using
-> 'make defconfig' to select kernel configuration options.
-> This result in a broken uart driver where fail at probe()
-> stage due to no pins found.
-> 
+  Linux 6.14-rc3 (2025-02-16 14:02:44 -0800)
 
-Can you take this patch via pinctrl fixes tree? if possible in this cycle
+are available in the Git repository at:
 
-> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
-> Reported-by: Alex Elder <elder@kernel.org>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Tested-by: Alex Elder <elder@riscstar.com>
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
-> This should fix problem that CONFIG_PINCTRL_SPACEMIT_K1 is not enabled
-> when using make defconfig, thus fail to initilize uart driver which requst
-> pins during probe stage.
-> ---
-> Changes in v3:
-> - switch PINCTRL_SPACEMIT_K1 from tristate to bool
-> - Link to v2: https://lore.kernel.org/r/20250212-k1-pinctrl-option-v2-1-bde7da0bc0d9@gentoo.org
-> 
-> Changes in v2:
-> - set default as y
-> - Link to v1: https://lore.kernel.org/r/20250207-k1-pinctrl-option-v1-1-e8a7e4d8404f@gentoo.org
-> ---
->  arch/riscv/Kconfig.socs               | 1 +
->  drivers/pinctrl/spacemit/Kconfig      | 3 ++-
->  drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
->  3 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> index 1916cf7ba450ec9958265de2ca41dc504d4d2f7c..17606940bb5239d0fdfc6b5aefb50eeb982d14aa 100644
-> --- a/arch/riscv/Kconfig.socs
-> +++ b/arch/riscv/Kconfig.socs
-> @@ -26,6 +26,7 @@ config ARCH_SOPHGO
->  
->  config ARCH_SPACEMIT
->  	bool "SpacemiT SoCs"
-> +	select PINCTRL
->  	help
->  	  This enables support for SpacemiT SoC platform hardware.
->  
-> diff --git a/drivers/pinctrl/spacemit/Kconfig b/drivers/pinctrl/spacemit/Kconfig
-> index 168f8a5ffbb952cbeae3e3401c11149558e0a84b..a2f98b3f8a75580d2d157008997cc48f42a89368 100644
-> --- a/drivers/pinctrl/spacemit/Kconfig
-> +++ b/drivers/pinctrl/spacemit/Kconfig
-> @@ -4,9 +4,10 @@
->  #
->  
->  config PINCTRL_SPACEMIT_K1
-> -	tristate "SpacemiT K1 SoC Pinctrl driver"
-> +	bool "SpacemiT K1 SoC Pinctrl driver"
->  	depends on ARCH_SPACEMIT || COMPILE_TEST
->  	depends on OF
-> +	default y
->  	select GENERIC_PINCTRL_GROUPS
->  	select GENERIC_PINMUX_FUNCTIONS
->  	select GENERIC_PINCONF
-> diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> index a32579d736130c80bd12f0f9d8b3b2f69c428b3d..59fd555ff38d4453f446263a8fdb4a61faf63cfc 100644
-> --- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-> +++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> @@ -1044,7 +1044,7 @@ static struct platform_driver k1_pinctrl_driver = {
->  		.of_match_table		= k1_pinctrl_ids,
->  	},
->  };
-> -module_platform_driver(k1_pinctrl_driver);
-> +builtin_platform_driver(k1_pinctrl_driver);
->  
->  MODULE_AUTHOR("Yixun Lan <dlan@gentoo.org>");
->  MODULE_DESCRIPTION("Pinctrl driver for the SpacemiT K1 SoC");
-> 
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250207-k1-pinctrl-option-de5bdfd6b42e
-> 
-> Best regards,
-> -- 
-> Yixun Lan
-> 
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.14-rc4
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+for you to fetch changes up to 781813db7909d945c33d3b035822225f3598774d:
+
+  i2c: core: Allocate temporary client dynamically (2025-02-22 10:27:37 +0100)
+
+----------------------------------------------------------------
+i2c-for-6.14-rc4
+
+Revert one cleanup which turned out to eat too much stack space
+
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      i2c: core: Allocate temporary client dynamically
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Guenter Roeck (1):
+      (Rev.) i2c: core: Allocate temporary client dynamically
+
+Su Hui (1):
+      (Rev.) i2c: core: Allocate temporary client dynamically
+
+ drivers/i2c/i2c-core-base.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+--U0vdQbNUIwWVkzvD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAme7D3sACgkQFA3kzBSg
+KbYXkA//UAVOW6SZfLaTuqt9jMkq1mINn8pM454BD4AQBJi4/Z9zoh7EWSnuZUK1
+yZtsScp1Qv7lN2QmcSih8ttAd7ASRduHAqgQ9mN8I0k4pbQBV9l+2AXCyisjQA8Y
+oCQOVDSAkk9OXUTHNKb8UqnIyQ/RsBoQlGBf72Re70ZAA/5HygsN9wrnZ9DBjQgT
+C2mqYsfO2dwYCzGUU5yHc2AGaKpHAM1u9QzHZzmdNrXeYMnDgTgvA2LhzBOjbOKe
+fqDfP4gRyU4MZIAKLousWZFC5ziOOQY+fpmAOMuQHWSkMNqs0Pj63KJeWjZyS0j/
+4ig2FnviIKKx7ZJKSdQcg3QR/VWX6bEfP7x7tLKHEzDMA4oWqEmjrdedLWYDBwDB
+z+tb3FaYoHl3OB1GO58SIccO8SMQwof2hdbdyht2ohxtQ6jf08m7YExi3iBXB6FW
+6iiEZTeZmVsnu9HncQN9vPdK7KNUcyJ9LKh/vcE7EHGl8e4pUK8N8pilSXmGDB0g
+IiPmbIKJnzgpGcjvL5CbYFeBUtIYXQsVoGBrQDu1oGQ63v12sjRqIvibUuH/ESy2
+RRa1R1aa3+9iJyZnMsLnaPVS+/J/TEQ1GtYuksashkg9X42KMP/pMpNoW2+/NLF5
+SQ8f69+4SIVGJ/ZbeGk4h6LLXCdW5c4HqebLgH61oL80vTx40kY=
+=WuEZ
+-----END PGP SIGNATURE-----
+
+--U0vdQbNUIwWVkzvD--
 
