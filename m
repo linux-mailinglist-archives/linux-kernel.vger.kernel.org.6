@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-527709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E270A40E65
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:38:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CE9DA40E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB4CC18982AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D6177860
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA7B205514;
-	Sun, 23 Feb 2025 11:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkuTutRc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC819205500;
+	Sun, 23 Feb 2025 11:40:02 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FAF3D984;
-	Sun, 23 Feb 2025 11:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB273D984
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 11:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740310732; cv=none; b=N5OrwCbUFmXwihxKj5KRZXVFrqtmhkonObMtxNqGzUJrPbXx8eIQfJJVN5USUuHYQOfyqF74bEso5B44f6Jli9UuXLFukOiIlulIVinegX4+I6bIo0DggySqTfswL1zRxrt/ih8wrxoQK548ZBapDOzfa07DBFpkkxfPzieqAbo=
+	t=1740310802; cv=none; b=rHG45lWECqbe8dAxQDMTF5dUAjS7GMVqmbsoArBLdrX6ns5sK4px7Jsk+ArEerS2UL4hrRaLA4SI3wDIDDcSPf/HqOUgeQHYIPRJ7QqwnUyqNkKizm/+mySLa3ExBJhn3NTW9qW4GArUI0RELuM798aoLf6I9BN1yfR5b4xRRRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740310732; c=relaxed/simple;
-	bh=gpP8cwsxtmk0q4mENMr1x0oK+YyGLi2s0eO2oYF6cAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i9fkRIMLBzmcOWvLnXEh5IyLvD6nCYCZwum6ls9OPJ5e6/87TYI/qGaTWtz7ogOQD6yDcbeT5hvRhokzQpHIUyQfXXtVwC0goOEm13QIGpxzLfiqS12jGmf8DRvUZvYDXYFU/Fg8l9Ry+NC9RjumClxFZwxe5MQHbiRI8Mk0wHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkuTutRc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F732C4CEDD;
-	Sun, 23 Feb 2025 11:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740310732;
-	bh=gpP8cwsxtmk0q4mENMr1x0oK+YyGLi2s0eO2oYF6cAk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SkuTutRcvdJjKsBA6foDYHl+srMDZFJvmRUz0fSuIButzOvDgBNbxqfdHa0T/TUgT
-	 ehrZnYLCf8ElkxU6eXcEXWpmUCnNn7N4Z5vxCOdTVc47Msh6iCIPc++sVPPlfDbgZE
-	 5OE0c+Id+YFMhA2nCUVV+SVu/mNQi5w7lICgmtTsZ+h291lZYRwaAw72Gmp6ewLD72
-	 ddAMbCr+JYiv/fJqAoZJAh2n+409A6kmGu8ZE3vJW4p8fTC5etBJ8G5JvrGYfbGpOy
-	 jLsBRNHYTzgfpgQJj52otUpo8kuyRn+cjdelSl1BoaNJLQhZ1s9PS1aFyfe5JgEzXT
-	 AE0jfoJReP2tw==
-Date: Sun, 23 Feb 2025 12:38:49 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] dt-bindings: extcon: Document Maxim MAX14526 MUIC
-Message-ID: <20250223-giga-moose-of-abundance-8e5b9f@krzk-bin>
-References: <20250219083724.56945-1-clamor95@gmail.com>
- <20250219083724.56945-2-clamor95@gmail.com>
+	s=arc-20240116; t=1740310802; c=relaxed/simple;
+	bh=OLIy4modDSwY3TLo69aA3bPaHuOWulX6JyVnqWabyew=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=oTveudbPvqlT+fhkeon4BsJt1tVS0FXpT59ru3+77zfLq/MXYME8YjiO7MrKWtNVNuMCjZCvWvzX7mAqFYhn8sgZapwgcatgmXwXvXRQ9EhQbto3rlGJHFZMpFymPdj/1x0M23abSV3FwXkrRU+oxySmZlfI1zo7hw5gWIG7Ir8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.60])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67BB090600002354; Sun, 23 Feb 2025 19:39:53 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 7799558913409
+X-SMAIL-UIID: 540D98BAF7024E3789ED395CA9A91436-20250223-193953-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
+Date: Sun, 23 Feb 2025 19:39:40 +0800
+Message-ID: <20250223113941.2735-1-hdanton@sina.com>
+In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250219083724.56945-2-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 19, 2025 at 10:37:23AM +0200, Svyatoslav Ryhel wrote:
-> Add bindings for Maxim MAX14526 MicroUSB Integrated Circuit.
+On Sat, 22 Feb 2025 09:01:23 -0800
+> syzbot found the following issue on:
 > 
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> ---
->  .../bindings/extcon/maxim,max14526.yaml       | 46 +++++++++++++++++++
->  1 file changed, 46 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
-> new file mode 100644
-> index 000000000000..87cf7fd19ee9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/extcon/maxim,max14526.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX14526 MicroUSB Integrated Circuit (MUIC)
-> +
-> +maintainers:
-> +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max14526-muic
+> HEAD commit:    0a86e49acfbb dt-bindings: usb: samsung,exynos-dwc3 Add exy..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c02ba4580000
 
-Is it something more than muic? Why different filename than compatible?
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-
-This looks incomplete. Missing ports/connector.
-
-Best regards,
-Krzysztof
-
+--- x/drivers/hid/hid-steam.c
++++ y/drivers/hid/hid-steam.c
+@@ -618,6 +618,8 @@ static void steam_input_close(struct inp
+ 	unsigned long flags;
+ 	bool set_lizard_mode;
+ 
++	if (dev->going_away)
++		return;
+ 	if (!(steam->quirks & STEAM_QUIRK_DECK)) {
+ 		spin_lock_irqsave(&steam->lock, flags);
+ 		set_lizard_mode = !steam->client_opened && lizard_mode;
+@@ -1086,6 +1088,11 @@ static void steam_work_unregister_cb(str
+ 	connected = steam->connected;
+ 	spin_unlock_irqrestore(&steam->lock, flags);
+ 
++	if (opened) {
++		steam_sensors_unregister(steam);
++		steam_input_unregister(steam);
++		opened = false;
++	}
+ 	if (connected) {
+ 		if (opened) {
+ 			steam_sensors_unregister(steam);
+@@ -1330,7 +1337,6 @@ static void steam_remove(struct hid_devi
+ 	cancel_delayed_work_sync(&steam->mode_switch);
+ 	cancel_work_sync(&steam->work_connect);
+ 	cancel_work_sync(&steam->rumble_work);
+-	cancel_work_sync(&steam->unregister_work);
+ 	hid_destroy_device(steam->client_hdev);
+ 	steam->client_hdev = NULL;
+ 	steam->client_opened = 0;
+@@ -1340,6 +1346,7 @@ static void steam_remove(struct hid_devi
+ 	hid_hw_close(hdev);
+ 	hid_hw_stop(hdev);
+ 	steam_unregister(steam);
++	flush_work(&steam->unregister_work);
+ }
+ 
+ static void steam_do_connect_event(struct steam_device *steam, bool connected)
+--
 
