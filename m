@@ -1,182 +1,166 @@
-Return-Path: <linux-kernel+bounces-527983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38113A411FF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:08:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E186BA41202
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39697A1EF1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:06:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68C817240C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C70203710;
-	Sun, 23 Feb 2025 22:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91170200138;
+	Sun, 23 Feb 2025 22:17:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=LIVE.CO.UK header.i=@LIVE.CO.UK header.b="Nafe+4k0"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03olkn2036.outbound.protection.outlook.com [40.92.57.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irodU3KO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71114EEDE;
-	Sun, 23 Feb 2025 22:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.57.36
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740348466; cv=fail; b=YfVIngIakh6N+AhKisFId+6moTA/S+s/X0KX59aSmkm8IIHEDtRkCTQiQyaELdtRFi7SJNtqe5QRWpeo25Sg54ahLGSsFD9a/SOOBTZGv7i3GiJ0LrwPvoF+A70eyyej2M3PvTvcxoU5AWckVc0xsFh0W+yt6QcHJ4v1xvfsArQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740348466; c=relaxed/simple;
-	bh=lsPYDRcbfYid7OxvKWUlzDz1/FhLndayVms5NR1hk5Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:MIME-Version; b=EwfIT0GIpLkzVZ2lhaaY9S5599bgWFXZIN/sRXA3ZhapxPh/sW3W9MDStReBigykG7+BNxJ7krmYAhjBrwB5uSLBxGJX2+WJRsCJq2BgO+QBGma8j7SnJ6MTD8LyUHckh2y2vJZ2g8wErIsm3c65BlruwC92gVVBwfetGuDiHK4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.co.uk; spf=pass smtp.mailfrom=live.co.uk; dkim=pass (2048-bit key) header.d=LIVE.CO.UK header.i=@LIVE.CO.UK header.b=Nafe+4k0; arc=fail smtp.client-ip=40.92.57.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.co.uk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w+xhsSWIXCS1pEaVVR1GJPPWUDvmYdnVWIHTd8Cxp3LP8o9GkPYA9+vhUGK3eHBtz3G2/4hXwDcp2iQ3KLEQIP6Qr68TXRiXW6WHoYhGnspsT42k5wmj7EewhkR4fop7y9SQdNt9lkM+t1dGo284kn7AkXuolH/w4esB4vvR146x+DbV8v1uAptwsek7iOhvE1ENVEqVdj7Y0YAmG279fy5GNK23cTI5+wzqGDkE1DInJMxSWvQgnW4MrdZ+7udF/iTs3KA3oEzrgHhSYKrvXVRoaFYhEzwwpZRzG1YP4uGS25GvU8/41sbdZFRT4luqpJlXVnX1R2JimRB7mdg+ww==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zrHoDS/9Lifa87FFtg0El0zyPxyAcmDrVJfFKIzn4GU=;
- b=XCyE9zGkyguYuUeSFSwqY391uHwFrML/NVbpS1KAO6ttBNZ/I6q2IxxxnFk+oSh3ZYdMtzQFcnwL5fvCPviGz0FwYNvINQzLGlS7Wf+FUwLu3y7vucrH63QzDuyE69lg4+xWhxe6i+/CkaaKQByjAOwWgNW8YwYEKt3HINnmWa4ifpbjkeXz6IQwQC0vtv5yFTkBYc5PXNS+DeULixaLvqpxN36dNEMcvRfBY9FO+EeB+ccaBNMbrRzp+rdVm4FHOC4hRKU1G8YeUlQwIw8AcN2O5LA/Z0neBvG9AhQ4ECLQFvV8J7G91x5XBhERkCux5NJKKceRIeHuiMpNr7VI8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=LIVE.CO.UK;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zrHoDS/9Lifa87FFtg0El0zyPxyAcmDrVJfFKIzn4GU=;
- b=Nafe+4k07ajVa6d5hxqY8FxCCAiNhRb+SXlqv/EvNyZL0sMCWCaEdDLgRJ78p3l4JBjdBBozKQH19e/ytimf78cQ7yBKjENkVTgmZEtci4W4l0/EyE6nQZd976bxtWbHLgWaO6m9d0UMU2k/8q1gunJDvRnAg77/pHrFMKJNBrByzasILbV4sMb+xrJz4FjANH25YP2nXupAa3h2FTtmetbJupAE2xnqU9f1G82xX12qzv1d7BOojNEcbFA6FyqbJ5Bxs6zsmyYVipEuw/6s9j1n61l2Hm0ZEij5SacpvqSxzXSpTlUHtEfhqRPt3qmrghUPnmEOHkd9rdr/U8cNkA==
-Received: from DB7PR02MB3802.eurprd02.prod.outlook.com (2603:10a6:5:3::15) by
- DU5PR02MB10550.eurprd02.prod.outlook.com (2603:10a6:10:51a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Sun, 23 Feb
- 2025 22:07:41 +0000
-Received: from DB7PR02MB3802.eurprd02.prod.outlook.com
- ([fe80::879f:859:ac4c:9963]) by DB7PR02MB3802.eurprd02.prod.outlook.com
- ([fe80::879f:859:ac4c:9963%5]) with mapi id 15.20.8466.016; Sun, 23 Feb 2025
- 22:07:41 +0000
-Date: Sun, 23 Feb 2025 22:07:38 +0000
-From: Cameron Williams <cang1@live.co.uk>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [PATCH] tty: serial: 8250: Add some more device IDs
-Message-ID:
- <DB7PR02MB380295BCC879CCF91315AC38C4C12@DB7PR02MB3802.eurprd02.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-ClientProxiedBy: LO4P265CA0111.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c3::11) To DB7PR02MB3802.eurprd02.prod.outlook.com
- (2603:10a6:5:3::15)
-X-Microsoft-Original-Message-ID: <Z7ucKgeWUNPkiujp@CHIHIRO>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A621804A;
+	Sun, 23 Feb 2025 22:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740349037; cv=none; b=gGNfX7vJE77zyDlH5L8FDMQzN0LYE7zPwdKDFmOSaDu0UTKjAHCs+J9LqBjDXIkkfdqcQaXbS+fh6eU7G90tymn//VV7PhqA6Z+DRKKRe6ZcN1FVj9eDrLjI3HQLq1byL1HOhtWu4RS4Jy3GqdtVcQTuPWQpjayH8z+jcmGvAaY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740349037; c=relaxed/simple;
+	bh=9bL/hNqAXKBz1zAhIeNb/hVycnTaqKHOdQWTKZfYha8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNZ81OBypuZjujQuwXN4OosmyfOyX1egMR+J0UpeIzKs4CcS6MRR2bTCEv5bfKYd80fGCy3l8peL/o2+ynaR1WeA2xmTC1PjnNLkurA4cEpt0YQfZZRcIbjI3D7kS3aoF6CElalIvkhIszqc9dsIM8EAvBoaNbL3TnKphFRMYKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irodU3KO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235F0C4CEDD;
+	Sun, 23 Feb 2025 22:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740349036;
+	bh=9bL/hNqAXKBz1zAhIeNb/hVycnTaqKHOdQWTKZfYha8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=irodU3KO+15KNqa+f4QHCEssjq305N3d7Wwj6uFhNXWPmcXQ95dR0EpPD4Ng4HQRw
+	 yKxM7JOEYIs7yL0Bvf/APokBkm1bquT2M45DHk4t5ynEw/zp4AC8OJE+oYFqUiRJUu
+	 hzXuLBjBnyMjCDladscPWMS4Gg9N7LtZWgeTvyAtTiOtmYsWhJTW0hszHeMgHL0j9S
+	 2muv7WIWv3I7/7TYW84jhmxih2iNFTlcMnMCD1xth88u2xO+x/zaT1evTc4EYsQBKj
+	 o7rzTOzG1fMsUOpd9jbhU/mNcvPgs5hdl7yxBIBFcEb19fdpMUvTnv44fFZ7zJK48k
+	 iGquL07EzECow==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	netdev@vger.kernel.org,
+	Breno Leitao <leitao@debian.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Francois Romieu <romieu@fr.zoreil.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Joe Damato <jdamato@fastly.com>
+Subject: [PATCH net v2] net: Handle napi_schedule() calls from non-interrupt
+Date: Sun, 23 Feb 2025 23:17:08 +0100
+Message-ID: <20250223221708.27130-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR02MB3802:EE_|DU5PR02MB10550:EE_
-X-MS-Office365-Filtering-Correlation-Id: 054d38cf-c877-4def-ed10-08dd54567dcd
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|7092599003|19110799003|15080799006|5072599009|8060799006|6090799003|461199028|5062599005|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5VX0dcKzZGVNSVRAFFalF6VurfLsidKj/iQEoyAM84iObuUg7oST4ZA1g+ep?=
- =?us-ascii?Q?TnmJdzMKoRTXuKKGU3CBKrEldEBSzYkD0iBU/wMQXyJfR/lsZMUkRUEnQH7K?=
- =?us-ascii?Q?V5/7TJKhKJzU4oQxnLO9gaY6nuuA/FsqzN0WThWK/A5GpH0FR7Xaip5dmZwf?=
- =?us-ascii?Q?Y5maNmWoI1Lyn+FwoUfzcU2fvkPzCxEwNT6dL7Ys1ZaMhkuDMWpiw3YXXwDx?=
- =?us-ascii?Q?z54zkEh2F1xLG6UejhQUvpOwqsSZsBYFTYSTFsvAdBz3j0NNrwXrxvZS8R4f?=
- =?us-ascii?Q?oL5XC8iVtvTS0MOUgeit14MZ2mN85lNxoO5pgDIOo+CAbYoPxS/mYAhUG53K?=
- =?us-ascii?Q?09gcVB+Fxa7LhwcNAaLN/AX1wwWA07vxfF8ZzTFmadi3zGn83LNcsNQa1fnI?=
- =?us-ascii?Q?SkgtH06EeDjm37LmrB28lMgQ/qtCx6yScj8lGjiQCSbgrfYS6q1TmUbjj+ip?=
- =?us-ascii?Q?TWmk7GTwh41iXf7V3Cw6qvS2l5Vi10Sez8dLSDQYSYtEnTfQN6dsn8PDrQW1?=
- =?us-ascii?Q?/ya2zsWuRj9G4i62+IVKfZww5mMjPIHZB+YOxGc4c0OHV8lNiem8M2hLLn0T?=
- =?us-ascii?Q?bAJwJY04klEmBK7v9odCe+f5zzwwfwkRA95WX/RPrlr3qyRrJ5z9l2Y1Yg+8?=
- =?us-ascii?Q?85loWEzzV/qtG9k9HOAebNXC7s5Zw0M1MPhXle5rjCa5t2oRc89iBx90EWsy?=
- =?us-ascii?Q?BOK8cy+1lqgwc4QfYYgThOuP0T8LL+9hPKR57gFGLvsf+QT64sSwPqzDcDl/?=
- =?us-ascii?Q?pDf3x9FXjGMtSIItCUkRuGaU5IBgaZ9Lr/QZxOoKVhK305GpPBZoaOr79Eqg?=
- =?us-ascii?Q?BAhndVosIxwdUGCW/RK+Zy82ZQ/14Moqv/eScW1Aqzq15Jh3XfxhcBoqSlZB?=
- =?us-ascii?Q?wPSUoBseQ4Pwlb4Urcmyupfi5dIOkuRuJQisnCk3BIS9hoHBjO8ED8Q9UMho?=
- =?us-ascii?Q?94N/wx7rKjXQTImxXtolJ5D7uwPalXFYiUP+uutxUK4FsaekjSJSLiiyLC4f?=
- =?us-ascii?Q?a1pyC01R7lh/T1J2ODake/rBOuWNRqbQPG5k8WxPjPxp/pQjB0ukLu/svlyV?=
- =?us-ascii?Q?nCxSWXghWsti/IPVCSE8wtY3Gjy+dkpo8mOagoBjUJltWUCz3In2YPqimEGq?=
- =?us-ascii?Q?p6niSAY0A5B3tl7i1Il91vYwNjiJtR8SXw=3D=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MLsWIN98CabZ7if4zu7vfapW3acetGKun7CEQwNagFwlLJYOlQMKtd+lPOsE?=
- =?us-ascii?Q?R6uBUbccAoaI9XKAyMmcQjol+XeFniIIvorsp5/AgnzSd//Kfjxtrwb/zGbz?=
- =?us-ascii?Q?vm//7UYGFDSrQHVM26viXg+yoBKBOXyXz73sKn5uk1xt1SZQ4LD+egLzYaUl?=
- =?us-ascii?Q?LJ8g9od+LMDtx07wo1VygIIcEiraiXjmfiBiqDJhtizpJ+i3RqlSMk+JQpRS?=
- =?us-ascii?Q?bR+kC2JAEhhcA01YP3zHdloSC4TFZhmZf1rvzW0PNQqcgBJMBD8MsgSLCSZ4?=
- =?us-ascii?Q?H8ChAdxWMVxk2WLBuJchOraNVjvDfS7iRj1sTHDdj2gh26q7drFM+0mKtqq3?=
- =?us-ascii?Q?ceBojcueNtKNq+GmoKCsZAG8lopj4T7NlKAgLQPHin1v+Af2fBMlJVzrwpuE?=
- =?us-ascii?Q?JDmAkc4fmn66I1ezwTbBMVegLHQqAeFburXtMybV5gSVWWnB9/BGWAKlbDUs?=
- =?us-ascii?Q?ggxoiG8a7idvZVB1GS4uydM1Y3uIraA7E7+i5VgFeJneo13w18TqMvMw3ksr?=
- =?us-ascii?Q?YQO8ijhibDazhs99rdmnnHaS8CUFbAZ2ATpH+FHGCcdJxjFRN6Z4sFWD2VoV?=
- =?us-ascii?Q?JpronkhYY2Oqm+8r8XL9KsObtoAV7brVY1rQSABRJRn6hqqHnk28PyEbN3Kg?=
- =?us-ascii?Q?H4sq38PICaaFsXFlsJQ6XMs8DaZUmb1psRoqs6BnPTZxkVv41fIqMbN18yQo?=
- =?us-ascii?Q?LH3JhXblx7ySI3yUcxcfsor5RAyLz5kurg0klc6xlAyZHyHlQAQTIYOlvtBE?=
- =?us-ascii?Q?e49eETAFx27fisWiJMViozzaKaQXrOp6RF8ofXvikKn7vuqvVFwR1uilsS5j?=
- =?us-ascii?Q?/igYCQT0POJuH/HMI6BXRwxeJXVx3SBYanuTEPosa/IpnRVLQAIFrW3RHU5L?=
- =?us-ascii?Q?0yQ6JASXGnWtajoWuflk87g36snB0z5IUWpFPsSI/McuHjMFun3PGfPAHVu+?=
- =?us-ascii?Q?vPmrncIBsxV9xhfu0jhDMOkyz7D4XT3NN9N5uwOn3BWSu4CE6eqUP0sZAkQa?=
- =?us-ascii?Q?Va7WcUgIWfz2brfUA8/1W0KfBn6xvR/U2kBSwk0PxKzT5wOKcCT8O6BP1t8S?=
- =?us-ascii?Q?vtXBF2rRTRW5zirdjK4+avwau2/InJOgYl4N0PGwKib0ADEy1SfjNLEyprRd?=
- =?us-ascii?Q?8CFYEyNG7VZShIgFxMRLiWsHLXJF9N7iuivbi9Bw2zWCDWh9vx0pSacmLyvt?=
- =?us-ascii?Q?jz7Kvg5X418N9HnZymX7g/eOtzp9XfFOn/nkvChy95psA2I9RrL6gvsbXw0?=
- =?us-ascii?Q?=3D?=
-X-OriginatorOrg: sct-15-20-7828-19-msonline-outlook-12d23.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 054d38cf-c877-4def-ed10-08dd54567dcd
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR02MB3802.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2025 22:07:41.6886
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR02MB10550
+Content-Transfer-Encoding: 8bit
 
-These card IDs got missed the first time around.
+napi_schedule() is expected to be called either:
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Cameron Williams <cang1@live.co.uk>
+* From an interrupt, where raised softirqs are handled on IRQ exit
+
+* From a softirq disabled section, where raised softirqs are handled on
+  the next call to local_bh_enable().
+
+* From a softirq handler, where raised softirqs are handled on the next
+  round in do_softirq(), or further deferred to a dedicated kthread.
+
+Other bare tasks context may end up ignoring the raised NET_RX vector
+until the next random softirq handling opportunity, which may not
+happen before a while if the CPU goes idle afterwards with the tick
+stopped.
+
+Such "misuses" have been detected on several places thanks to messages
+of the kind:
+
+	"NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
+
+For example:
+
+       __raise_softirq_irqoff
+        __napi_schedule
+        rtl8152_runtime_resume.isra.0
+        rtl8152_resume
+        usb_resume_interface.isra.0
+        usb_resume_both
+        __rpm_callback
+        rpm_callback
+        rpm_resume
+        __pm_runtime_resume
+        usb_autoresume_device
+        usb_remote_wakeup
+        hub_event
+        process_one_work
+        worker_thread
+        kthread
+        ret_from_fork
+        ret_from_fork_asm
+
+And also:
+
+* drivers/net/usb/r8152.c::rtl_work_func_t
+* drivers/net/netdevsim/netdev.c::nsim_start_xmit
+
+There is a long history of issues of this kind:
+
+	019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
+	330068589389 ("idpf: disable local BH when scheduling napi for marker packets")
+	e3d5d70cb483 ("net: lan78xx: fix "softirq work is pending" error")
+	e55c27ed9ccf ("mt76: mt7615: add missing bh-disable around rx napi schedule")
+	c0182aa98570 ("mt76: mt7915: add missing bh-disable around tx napi enable/schedule")
+	970be1dff26d ("mt76: disable BH around napi_schedule() calls")
+	019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
+	30bfec4fec59 ("can: rx-offload: can_rx_offload_threaded_irq_finish(): add new  function to be called from threaded interrupt")
+	e63052a5dd3c ("mlx5e: add add missing BH locking around napi_schdule()")
+	83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule")
+	bd4ce941c8d5 ("mlx4: Invoke softirqs after napi_reschedule")
+	8cf699ec849f ("mlx4: do not call napi_schedule() without care")
+	ec13ee80145c ("virtio_net: invoke softirqs after __napi_schedule")
+
+This shows that relying on the caller to arrange a proper context for
+the softirqs to be handled while calling napi_schedule() is very fragile
+and error prone. Also fixing them can also prove challenging if the
+caller may be called from different kinds of contexts.
+
+Therefore fix this from napi_schedule() itself with waking up ksoftirqd
+when softirqs are raised from task contexts.
+
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Reported-by: Jakub Kicinski <kuba@kernel.org>
+Reported-by: Francois Romieu <romieu@fr.zoreil.com>
+Closes: https://lore.kernel.org/lkml/354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de/
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Francois Romieu <romieu@fr.zoreil.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- drivers/tty/serial/8250/8250_pci.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ net/core/dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
-index df4d0d832..37a5df725 100644
---- a/drivers/tty/serial/8250/8250_pci.c
-+++ b/drivers/tty/serial/8250/8250_pci.c
-@@ -5253,6 +5253,14 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 		PCI_ANY_ID, PCI_ANY_ID,
- 		0, 0,
- 		pbn_b2_2_115200 },
-+	{       PCI_VENDOR_ID_INTASHIELD, 0x0BA2,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_2_115200 },
-+	{       PCI_VENDOR_ID_INTASHIELD, 0x0BA3,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_2_115200 },
- 	/*
- 	 * Brainboxes UC-235/246
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 80e415ccf2c8..5c1b93a3f50a 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -4693,7 +4693,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
+ 	 * we have to raise NET_RX_SOFTIRQ.
  	 */
-@@ -5373,6 +5381,14 @@ static const struct pci_device_id serial_pci_tbl[] = {
- 		PCI_ANY_ID, PCI_ANY_ID,
- 		0, 0,
- 		pbn_b2_4_115200 },
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0C42,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_4_115200 },
-+	{	PCI_VENDOR_ID_INTASHIELD, 0x0C43,
-+		PCI_ANY_ID, PCI_ANY_ID,
-+		0, 0,
-+		pbn_b2_4_115200 },
- 	/*
- 	 * Brainboxes UC-420
- 	 */
+ 	if (!sd->in_net_rx_action)
+-		__raise_softirq_irqoff(NET_RX_SOFTIRQ);
++		raise_softirq_irqoff(NET_RX_SOFTIRQ);
+ }
+ 
+ #ifdef CONFIG_RPS
 -- 
 2.48.1
 
