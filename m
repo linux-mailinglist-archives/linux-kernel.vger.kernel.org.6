@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-527757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006D9A40F22
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:41:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087C2A40F25
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:42:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC63175376
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:41:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C7C71898A39
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2E4207DEF;
-	Sun, 23 Feb 2025 13:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A17207DFF;
+	Sun, 23 Feb 2025 13:42:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oBlq8azH"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VOvT3YKM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A268205E31;
-	Sun, 23 Feb 2025 13:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6E205E31;
+	Sun, 23 Feb 2025 13:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740318056; cv=none; b=tpHOAIbuau7V45JTNMW9d047HQn068giE64GpmymOoFqExy8vGOHn3NpdOgFnAHUVw0E7YQwNd/nf/CXnz5GUELCl29jGqxUQZxasjv7G/OKwMxyts246QtAtPJhaVFYVWRYxmYgZCa9mnpqvjzG+k6v16w/NWUNAP7zdurVtH4=
+	t=1740318149; cv=none; b=rw0DngkZVOb0ryH1LUwhDABF06ilt78T11MXjHNBnx9ia3yHif3ANEBjS0qHWc3KAsO6KoR682ykhLCrVOeF3a9NO2czQJZQrC6hzVTNyDc44RQSu27agoWwfBapXh2tUclTZgqhxcYEGyfqXPTMx1UyZqWnvuTMyBrpmpbZFAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740318056; c=relaxed/simple;
-	bh=hcf7+7C3MEhs4rmBsctVJxr+hv1xZgTKJoSQHXSsCz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WV0D8lQZ7Hd4npYIfgk3UhS/GCVH9g+RnbdxNracDuJoaJSTfVA+AS2uICpGQCDNd0CdZITV/wPpOG5TzX3SqeMTlk/x4J8btn8gDPH7fVta7MZuHaYPQflQoBvnfW2lQgZrashtTxBM6cy465yIIxv4mqPmCfVvxvN3hh0bpvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oBlq8azH; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D908844388;
-	Sun, 23 Feb 2025 13:40:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740318045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K6bIJuULWhsZxJCwa0hMVmk2iWw7cX6L/3fW6XmaZJY=;
-	b=oBlq8azH+BF3Jjf44h2fXFP4YWqwNaegZtOSOGTfSqIOT1AFfSfYqFmyz5BobJH+FtwYxX
-	7rUdaZtPc/VvY69ZzMXGzrvYXIwY2/SSLKHiIIchfSsW1sRCgkLv2NAQuQ8bMTw2Y+g/0r
-	WoTcPJ5UU2/7+qzv/EsMrNX0aohLiMbKuVMkn16JUdTb5jQwX3VQL6ZTv1dl9vl3DsdfAu
-	gcIZy5TWsnQU1dUPVNKhJiwHoutc5YyMTCH3KwfwUFaSUF0tVh7/lr4Rt035QzlGD5jdgQ
-	ioXiVTa6R6kIl+KSX1yjoJJYSPXoBm3rhqwgPtbU3jB1X0wM22iqVIuDVHTkUg==
-Date: Sun, 23 Feb 2025 14:40:41 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: kernel test robot <lkp@intel.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
- <hkallweit1@gmail.com>, oe-kbuild-all@lists.linux.dev,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next 08/13] net: phy: phy_caps: Introduce
- link_caps_valid
-Message-ID: <20250223144041.1bf253ca@fedora.home>
-In-Reply-To: <202502231409.QTfXTqrD-lkp@intel.com>
-References: <20250222142727.894124-9-maxime.chevallier@bootlin.com>
-	<202502231409.QTfXTqrD-lkp@intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740318149; c=relaxed/simple;
+	bh=jwn6l1jyxsK/cyBjr2VSFnuiR+pFjsZ0dp+FXBN4EKk=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=KVWh9EjNZKi0hhYlmxsE5sStXoil1tahyRAEoseb8Y3z12ZFd7E83aV2jW4amXfdZBXKag6Pwu0DvZIpGH7p7YOY0rhOmCyGI4keeCE73jm0fZ+Aro4ZlaO5VYoWKocMlBVyeN0lpMKjHUMoOhtppFD2foxTY6pn5z6xkWy3Yy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VOvT3YKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40BD3C4CEDD;
+	Sun, 23 Feb 2025 13:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740318148;
+	bh=jwn6l1jyxsK/cyBjr2VSFnuiR+pFjsZ0dp+FXBN4EKk=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=VOvT3YKM+eQXCjRRFCLOAagcaYsSs5wa1B8tqegM6X9ADvs0gZKCNKE+rZilru1J/
+	 i4DJn5BI6aHcO5IgQcZpbDb86ceSV3Ggq+usy+L1e/99m6F71L3OhOCCjHMK0IBHDr
+	 V5HpUmjnaQ9lPJY1VfK1J6F0MiedheykIXvVwKK+WIjB+zFay5LaliiRTDZG4Y3bfR
+	 1BvnlL02+nVY7f+gORG02yX3dXP65Z2XJ3K4pSb8tNAkpbAMlS8y385ce2gv4xzoTy
+	 o5vwp7Hui2MHDxOt5YJFkGdrZfPxAz+27/uVLfIvoPTJkwUA/uvDubZ+6NJwivYpM9
+	 +1jPMY8oF0sHw==
+Date: Sun, 23 Feb 2025 07:42:26 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejheeliecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgesk
- hgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+ linux-samsung-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, linux-phy@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Abel Vesa <abel.vesa@linaro.org>, linux-kernel@vger.kernel.org
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
+Message-Id: <174031814650.3676571.3567229546810248196.robh@kernel.org>
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
 
-On Sun, 23 Feb 2025 14:38:46 +0800
-kernel test robot <lkp@intel.com> wrote:
 
-> >> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'speed' not described in 'phy_caps_valid'
-> >> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'duplex' not described in 'phy_caps_valid'
-> >> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'linkmodes' not described in 'phy_caps_valid'  
+On Sun, 23 Feb 2025 14:22:22 +0200, Ivaylo Ivanov wrote:
+> The Exynos2200 SoC has a USB controller PHY, which acts as an
+> intermediary between a USB controller (typically DWC3) and other PHYs
+> (UTMI, PIPE3). Add a dt-binding schema for it.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
 > 
 
-Ah indeed, I'm missing the kdoc description here.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Meh and the commit title should be :
+yamllint warnings/errors:
 
-	net: phy: phy_caps: Introduce phy_caps_valid
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dts:18:18: fatal error: dt-bindings/clock/samsung,exynos2200-cmu.h: No such file or directory
+   18 |         #include <dt-bindings/clock/samsung,exynos2200-cmu.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-I'll wait a bit for reviews and fix that in the next round.
+doc reference errors (make refcheckdocs):
 
-Thanks mister robot,
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com
 
-Maxime
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
