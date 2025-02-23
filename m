@@ -1,67 +1,72 @@
-Return-Path: <linux-kernel+bounces-527661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78571A40DF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:00:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBB07A40DF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BA43B4067
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 499623B5C8C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04722036F0;
-	Sun, 23 Feb 2025 10:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272192040B7;
+	Sun, 23 Feb 2025 10:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+MF4zLJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="klePPZ19"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2BE1FC7F8
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED071FECC5
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740304837; cv=none; b=Wtu5caxrvCJmZyBgx3IorPueRSpiO4wU+tujCypL9T/rTZ3akEnStqHZEfM6H8B1Yq//xzYaUcsZ41VTCxmOc8Il/0hMTxS0h71aRuxTP8g46S2wXJfMkIRSJxd9hfKpgKqMI86yTe2aBJo/ViivX60X2IF7vZVtrH17DXmvalM=
+	t=1740305166; cv=none; b=ryzd10BB7L8Y91HdGWR4XKFONvBNXmxefu2AhA+2GaD6YaM2miW3+Mwvl4X1p2KRuf6EQzQ5ZplDtE/ilJgSpu99TOlYTS2Kh14Wtmowi8CaHYJSJ5dhb6ZvfsUGp4bO0RCiGIXtJOXee6XXbmlBUHb/ANFfx0jMN9KUXjPybhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740304837; c=relaxed/simple;
-	bh=pmcHYHCiNgsF3nHoAFCcHPhsEZjhrg+MxkpBr1R1+NY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isAB3cjVXl9Zu3rM0UJDxdOfw1d5XfCwrkRYYcnbowV5H+GVUwaUz0VPmC5Jz8b+63Q5RzW2Bdyqem7/y7HB5eyXgjj9d+EU0CHUmUvmVvpyZo7ApfdQgVihbSdxIEt/WOtTSQicwlACMch1Vq5UedbHzYy/PJAPrms8RbnyO3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+MF4zLJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79A1AC4CEDD;
-	Sun, 23 Feb 2025 10:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740304836;
-	bh=pmcHYHCiNgsF3nHoAFCcHPhsEZjhrg+MxkpBr1R1+NY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N+MF4zLJ24fBk4xLtjB7/tA6boqFKtcLqL/am6lrHygi3nHeBTwU5SWMkJSTj6Vd0
-	 UTsWnUpe1nDES2SKqIeDmfjn3E1E6FueOIL1Yd2wcdrQzw0N6V/+SBpOLCKz6M3N9R
-	 rkme7Q41U7t2jdJ8nKehvnAMG3vGb4YK0zy4YL8QhpWYL6a8drxWeYpwFUcmWvEAIY
-	 EWsTIQjTY34fiDALkKSZBjawlfI1IHWliw3VbQCnLroCWPVg9pXg4Nv9VBs+P6srXO
-	 Jy2Pk1NJNn5ZHrCbCxjDwrrdnfsBRQsKr+gpipH9iRyeYjrwvruJts7YZTzD9ESbX3
-	 sIaEwx/tUrHNw==
-Date: Sun, 23 Feb 2025 11:00:26 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Stultz <jstultz@google.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
-Message-ID: <Z7rxuqIB38Wv557A@gmail.com>
-References: <20250210001915.123424-1-qyousef@layalina.io>
- <20250212145054.GA1965539@joelnvbox>
- <Z7rTNxHcXWizV3lq@gpd3>
+	s=arc-20240116; t=1740305166; c=relaxed/simple;
+	bh=mIkg58bP3ZttohB6szAjmVd8vHLH49ckFoTYnDbM1gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=e/kbdm0lRYAqHGO1HCfxEhka31JpyHw339ZoqQq+hmbEZOAhFj3KrPB/fYDysmrmBu0vEMKyExpgG637iYln+OyWG+VIccS8xm0RRNPjuZh2T0NCNnU4SSlJwZNZmKIZbsvt8Hm1it/DE0UK9aaK9mMyn3MxI/bz9wBRF/ZopQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=klePPZ19; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740305164; x=1771841164;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=mIkg58bP3ZttohB6szAjmVd8vHLH49ckFoTYnDbM1gE=;
+  b=klePPZ19IcsvvXgy305wAIyReKvtIWsS8f9oWm3EEXQumye6V8iPmTsO
+   /1F7QxcoX5JKEn18j7oO81CZyX4n6up/GxUZDNSZpl37v+7Iv1kM10LC+
+   2gTvs3PkDB2DmHmnLkUpUAXAnHy8OljsVe3j+/iS7WPC4XD1/WHiIescZ
+   XCqdacijqdjYR7nwubrx5NTeqeRe+SMv2NNHvtAN57HKIzROoK9S7OKFo
+   cC0PZLK+fhtjIgXKTNQ6c9m74hNGOG6hFrmXvmoNOstAOYNg4oy77fA97
+   K52iFUBz6baSwqkV0s+R91v9QXiaM2x4F1O258OnhMp7+5X76Zr7Iln1U
+   w==;
+X-CSE-ConnectionGUID: cdRHcmc1TLuEafh0MryfYg==
+X-CSE-MsgGUID: VlxFzuHlTM+CDKXDvRXEVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="40311232"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40311232"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 02:06:04 -0800
+X-CSE-ConnectionGUID: iBVXPPvPQVOgwMAzYF1VRA==
+X-CSE-MsgGUID: mq8XCqr9SnC1vE7AdWnEwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="139017928"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa002.fm.intel.com with ESMTP; 23 Feb 2025 02:06:03 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm8s4-0007Fz-1r;
+	Sun, 23 Feb 2025 10:06:00 +0000
+Date: Sun, 23 Feb 2025 18:05:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vishal Sagar <vishal.sagar@amd.com>
+Subject: zynqmp_dp_audio.c:undefined reference to `snd_pcm_hw_constraint_step'
+Message-ID: <202502231732.itTkOr6v-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,36 +75,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7rTNxHcXWizV3lq@gpd3>
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   27102b38b8ca7ffb1622f27bcb41475d121fb67f
+commit: 3ec5c15793051c9fe102ed0674c7925a56205385 drm: xlnx: zynqmp_dpsub: Add DP audio support
+date:   9 weeks ago
+config: arm64-randconfig-r133-20250223 (https://download.01.org/0day-ci/archive/20250223/202502231732.itTkOr6v-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250223/202502231732.itTkOr6v-lkp@intel.com/reproduce)
 
-* Andrea Righi <arighi@nvidia.com> wrote:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231732.itTkOr6v-lkp@intel.com/
 
-> On Wed, Feb 12, 2025 at 09:50:54AM -0500, Joel Fernandes wrote:
-> > On Mon, Feb 10, 2025 at 12:19:15AM +0000, Qais Yousef wrote:
-> ...
-> > > I believe HZ_250 was the default as a trade-off for battery power
-> > > devices that might not be happy with frequent TICKS potentially draining
-> > > the battery unnecessarily. But to my understanding the current state of
-> > 
-> > Actually, on x86, me and Steve did some debug on Chromebooks and we found
-> > that HZ_250 actually increased power versus higher HZ. This was because
-> > cpuidle governor changes C states on the tick, and by making it less
-> > frequent, the CPU could be in a shallow C state for longer.
-> 
-> FWIW, I found the same about power consumption when we decided to switch to
-> CONFIG_HZ=1000 in the Ubuntu kernel:
-> https://discourse.ubuntu.com/t/enable-low-latency-features-in-the-generic-ubuntu-kernel-for-24-04/42255
+All errors (new ones prefixed by >>):
 
-The "HZ=1000 reduces power consumption or keeps it the same" is 
-actually a pretty good argument to change the default to HZ=1000.
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o: in function `zynqmp_dp_startup':
+>> zynqmp_dp_audio.c:(.text+0xb8): undefined reference to `snd_pcm_hw_constraint_step'
+   aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o: in function `zynqmp_audio_init':
+>> zynqmp_dp_audio.c:(.text+0x8c0): undefined reference to `devm_snd_soc_register_component'
+>> aarch64-linux-ld: zynqmp_dp_audio.c:(.text+0x920): undefined reference to `devm_snd_dmaengine_pcm_register'
+   aarch64-linux-ld: zynqmp_dp_audio.c:(.text+0x978): undefined reference to `devm_snd_dmaengine_pcm_register'
+>> aarch64-linux-ld: zynqmp_dp_audio.c:(.text+0xab4): undefined reference to `devm_snd_soc_register_card'
+>> aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x308): undefined reference to `snd_soc_info_volsw'
+>> aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x310): undefined reference to `snd_soc_get_volsw'
+>> aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x318): undefined reference to `snd_soc_put_volsw'
+   aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x358): undefined reference to `snd_soc_info_volsw'
+   aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x360): undefined reference to `snd_soc_get_volsw'
+   aarch64-linux-ld: drivers/gpu/drm/xlnx/zynqmp_dp_audio.o:(.rodata+0x368): undefined reference to `snd_soc_put_volsw'
 
-These experiments and numbers (if any) should be incorporated in the 
-changelog prominently - as actual data and the Kconfig decisions made 
-by major distros will, most of the time, be superior to meta analysis 
-that seems to be the changelog right now.
-
-Thanks,
-
-	Ingo
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
