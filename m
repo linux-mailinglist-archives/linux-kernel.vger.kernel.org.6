@@ -1,111 +1,82 @@
-Return-Path: <linux-kernel+bounces-527977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7BE2A411EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:34:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B50A411F4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:39:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BCB3B2391
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670F21886BF9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DD51FF7D0;
-	Sun, 23 Feb 2025 21:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mCLOJ+Pl"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923052D05E;
-	Sun, 23 Feb 2025 21:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AAC200B8A;
+	Sun, 23 Feb 2025 21:39:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D3715CD74
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:39:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740346453; cv=none; b=ZuN7LDU2bdZZMiNuU3Ao7Kn+URtfk/673h2TiBchuQNazsMrI6jf8ryrJwlnHuepeeoGx1ika82xNTHBgKnMdPjzkHvUMpJBfCQhcXgGFCmBOpe+NMIbWYUOvkCYqRzPg4KYp45EqABaCzQXgW2QJe8a4l0ySX5L0mIJRxNqUrU=
+	t=1740346771; cv=none; b=EW2VIGNyHf6rPa9xrMaQQmWecyC9gnt5PChEwoW3g3MyWmYQ4KOuEYwbelLLXJHl4qv8Jly+5ReZH1SIMzZ3X/8eiUW51og8mE902QT/BTPM6I1tJx7Z1/m33JQq4sisAvvVam2eb+jaybVu+FyOGC3XPUgfdRk2+bdUhMeRo8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740346453; c=relaxed/simple;
-	bh=HC8gUekt+1KIO21xATs4gveN37D3ua2UYLw0vMtIKgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rMQryqvj1mIv6dvvRNQcVD7mQaxcce5MTkeNbTs6y5z5REIJxKybf2wyW39EzpvjCByNs906Yq4Yh9R+YHqKEI7H+JROdYmZgQa024FdMZcxNUW52uI46CFUllEfh3Tg311cMABXfo6DEqXue4hPJMBeVJRiwL+9OrQZPTKq5i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mCLOJ+Pl; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740346447;
-	bh=scMzv/urRxu87ZCPVY4iTqmJd43dmaeSt6UOv6dZP44=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mCLOJ+Pl7Z9UPbuP4rNMIi1hTBTnOb6lELP+867TAgJCdGvftgFhwJUgWIuxZqAmc
-	 xCD5heBykMt/HSALqxENABrhbXteekrAsOTqS0wvlhiuRDmtiuL/wqs+93ptjFH36o
-	 qhIY/eK+BC5ozIrfHknU22a5NuSYPdXqcBzQaQJWjj6pCFSkhGRyUQP5E2v7YBN6nm
-	 86JxTFeRLHsilYENnTCtksLwi9EN5DIIAOzx2M3oAiQ5u8C9NYWen5SrrWdm3sHKIX
-	 86uM7ItdYrf0/2awXuBN6hMH2W5azODnpg4fcHIOLgEC58LhF98k5g8UFMYnBn1pO1
-	 UWZI495lfMpiQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1HDv3kcrz4wbx;
-	Mon, 24 Feb 2025 08:34:07 +1100 (AEDT)
-Date: Mon, 24 Feb 2025 08:34:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the gpio-intel tree
-Message-ID: <20250224083406.6174f821@canb.auug.org.au>
+	s=arc-20240116; t=1740346771; c=relaxed/simple;
+	bh=7mVDemT51tXPsrP8f5Z8C7i0wWS/Vt4TBwX8weE0Er4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNXSbhpzQP3vHB5U2Cl6Z7GP5rOjjhL2/365c4Mpnps0uliBTazqlgHya9mFUGjlPOZCDdaiI84ma0fgH+K+DYA5eihbJJGsQKAvd9dgEd9cz8EPrAcl5ph3AphNg8B5T4wxtjnv7lKDn8pGvFj7FhuKaMqeXcdFQnL7HyOFDyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D39D16F2;
+	Sun, 23 Feb 2025 13:39:39 -0800 (PST)
+Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A73B23F6A8;
+	Sun, 23 Feb 2025 13:39:21 -0800 (PST)
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+	linux-kernel@vger.kernel.org,
+	Andrei Homescu <ahomescu@google.com>
+Subject: [PATCH] firmware: arm_ffa: Skip the first/partition ID when parsing vCPU list
+Date: Sun, 23 Feb 2025 21:39:09 +0000
+Message-Id: <20250223213909.1197786-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/jlrok+CgIf4odDD9qBWI22P";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/jlrok+CgIf4odDD9qBWI22P
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The FF-A notification id list received in response to the call
+FFA_NOTIFICATION_INFO_GET is encoded as: partition ID followed by 0 or
+more vCPU ID. The count includes all of them.
 
-Hi all,
+Fix the issue by skipping the first/partition ID so that only the list
+of vCPU IDs are processed correctly for a given partition ID. The first/
+partition ID is read before the start of the loop.
 
-Commits
+Fixes: 3522be48d82b ("firmware: arm_ffa: Implement the NOTIFICATION_INFO_GET interface")
+Reported-by: Andrei Homescu <ahomescu@google.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/firmware/arm_ffa/driver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  b16e9f8547a3 ("input: ipaq-micro-keys: use devm_kmemdup_array()")
-  67b12cda28e1 ("input: sparse-keymap: use devm_kmemdup_array()")
-  5f95e8d0be63 ("iio: adc: xilinx-xadc-core: use devm_kmemdup_array()")
-  18c4aec76056 ("pinctrl: pxa2xx: use devm_kmemdup_array()")
-  d7f6555aec79 ("pinctrl: tangier: use devm_kmemdup_array()")
-  6e1bba1140a9 ("pinctrl: cherryview: use devm_kmemdup_array()")
-  af946f612dfe ("pinctrl: baytrail: copy communities using devm_kmemdup_arr=
-ay()")
-  85ab35bae5ac ("pinctrl: intel: copy communities using devm_kmemdup_array(=
-)")
-  4c176c256dd9 ("devres: Introduce devm_kmemdup_array()")
-  d7a76a31c46e ("err.h: move IOMEM_ERR_PTR() to err.h")
+diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
+index 31832af7a7bb..f63e3b0eed16 100644
+--- a/drivers/firmware/arm_ffa/driver.c
++++ b/drivers/firmware/arm_ffa/driver.c
+@@ -1012,7 +1012,7 @@ static void ffa_notification_info_get(void)
+ 			}
+ 
+ 			/* Per vCPU Notification */
+-			for (idx = 0; idx < ids_count[list]; idx++) {
++			for (idx = 1; idx < ids_count[list]; idx++) {
+ 				if (ids_processed >= max_ids - 1)
+ 					break;
+ 
+-- 
+2.34.1
 
-are missing a Signed-off-by from their committer.
-
-Also, these have been merged into the battery tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/jlrok+CgIf4odDD9qBWI22P
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme7lE4ACgkQAVBC80lX
-0Gzrzwf9EXzu0OcCsZt1qpVAkGL4oaVMtXxxVvuTo9KPZ1EpwRZMXQSMRAXrETKa
-a44/kYt+BaFdUatU/M8C+2NBznAMjWrb+rUiwGnPZDtDlTEmk7odj4WDpbL2njyv
-nvzRUPXeRHsThrwbz0+pfXYNc+Qwbti+FoIcaC91TkVM5Br5oXz8CTtkKcOkYxcb
-+qlnO006JW/RHmsf4bDop1qd1N7r3kqY+VUjUVHxR9ONsHQ5FffO0RPBtcHse0zC
-gMxk8KRs5P66AyfZIpHqJW3WFAuIzeaRxMvoSr9zZmUeNl120EOnkyoULj/frw1C
-3bMGcvpz1TJjxdLErqt3hka8hTweVQ==
-=nBZ0
------END PGP SIGNATURE-----
-
---Sig_/jlrok+CgIf4odDD9qBWI22P--
 
