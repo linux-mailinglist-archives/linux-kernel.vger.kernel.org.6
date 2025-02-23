@@ -1,161 +1,121 @@
-Return-Path: <linux-kernel+bounces-527579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7A0A40CD0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:15:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57689A40CD5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:27:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BA6F3BF33F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:15:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6C7A189CDF4
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A21D8E1A;
-	Sun, 23 Feb 2025 05:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 849D71C84BD;
+	Sun, 23 Feb 2025 05:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E5zUpp+G"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EmaKKQTD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2079B1DC99C;
-	Sun, 23 Feb 2025 05:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39534545
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 05:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740287706; cv=none; b=XoKG1IXELN3gCh/W51L03tUPNRa8QcU0rm3iBKHA9oxoDldZBpP0dK8aLAThzBCJLjsAfp+7jABUg2stpYZH0878h7bG4g+n4hU8+RmayE6g+v5nKTxpcyPkW8+VnX0ZFSKQWNge9wOgOZGHno//cGxv9xeLm2HznS3EZOZoUn4=
+	t=1740288471; cv=none; b=rjmakO6K9c+D9coUNiqI2I4DvnzeXFE9EOMhehqd2XPcrhKmk78okPp+p+8BoefxRsPI5lApLbZx20NCjgnJ3bt2OY1UTQ0uOnUJDShEGISLk0U/5ayVhoi5FqQWw/LfKH+mm0IjWuKlZNoDOG8FFkw3sSrgnno32z0AN8MessM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740287706; c=relaxed/simple;
-	bh=BNM5ii68EENqtMZC3EcZR7Hqtlk/UcgKmWx49cXZGYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jDQWWnITVxJ3AUCHpf88gFplFuxar7//Hi6fwDzJG6JRec71lVqawJgXF+B4qyjpXdU7IDrYcK7GTPn25V/Pb3rQNIPAoSYd0J8mMhU1/rYizrIxfREGGPk/OhofIIo7cJ3BePyx11VhIoMpc3Gd6c+UJsNcxqe6URAhC7z8UJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E5zUpp+G; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-471fe5e0a80so29448291cf.1;
-        Sat, 22 Feb 2025 21:15:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740287704; x=1740892504; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yOEt6QZskOkWnzsAtQRMjy5DMtIL4TXxTfDJML0AUCI=;
-        b=E5zUpp+GjU7chk8MKxdfmX+KvXwWk2rvW8pqJ43PyIof401p0VO/Qmi50t+pLWu/3+
-         PAYYwyvqwvMb0oDBR+yxsnRqIOgGnlRQ9BSiNX1BSQ9FA/A0RoW2tT2rjiG7qa2mhVTv
-         N9dyQvLJV40fXArAPt9RIYkmFXKta6PnUfqck3tUy6Dv59HzqutAmXJ735kewu+KzSL2
-         ao5lvieKHxn7Bwy32rq2BY82HAEEc28/dda+s05+Tw99DbBPyRyNfIhY08/yuPRDM5iP
-         xMIhEKqnC5kLXD3pBzbYKI98yc7hdvgolEK828PEj3VJI9u/4+eDqoLmarabDTGeiQI8
-         Ezng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740287704; x=1740892504;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yOEt6QZskOkWnzsAtQRMjy5DMtIL4TXxTfDJML0AUCI=;
-        b=eUR6kL7Wv6sMQnhZBK1vHs4iHGWV82mfkwMx7Eb0v7ck78RKNMaW/C6hnFdxiQFk/Z
-         3mCeX9BBtuWLzXKxx1yd2kX3Yn4CCgLbOveEhXuWtqOcU6AxTWZAlWXNBDxGDNpIg46H
-         bNvGrd1PA9FP2kx82OpeKHBMSs49sm/FbJVPa0fMTFEKKvPtXh0OuRQ59eK0gxNhLK0e
-         zXhN76xNCKpDtSj4r6RgH+BCMki42ajSc9Hrsk6ISsjE4ixnxLXGzMn2xXQ+bMyRgis/
-         Vy28R4LZzytyBJ3kFb8YsXCdbamgFS5rACqtg4UAV9LvvB4LMOHipoZDkJpCRYmyBfLu
-         thDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhY27one7Ld0ubcNFx3LqG6r3Wx1IyPav/MMqHytE+E+FKKlCo5tPoyfrzHLGqax8q9V2gx+yQXs51CpQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdOHpgcUbPcJd7US/1uoCdEqEy3Vj3R/NKb/Qn7b9aC8oDEJ24
-	cYn1H4XpQaQZCYKEbTEvSXvV4k8OtWCKBr6HbpXHUqe7X6anoRdW1W7nSFJ1
-X-Gm-Gg: ASbGncsj6X5Odp2MD3X5f6Khfvmq3G3t0OvMTWa+VJYAMuoyG3QxjUoDLUPI47SSl6H
-	gjQGVMMJJXeRTtm8I0qjv3WUSvTbDE1EkB9+nMxxmoueRy35AusANxIulbxGIp4jdzs4Kv2/ccY
-	pKwAS5gfRlzkbSach0pku24AleZIeS8DrNhvhjrQsaGo5N1zhgRWXOKXROY4fXWQdHnAkF9B2gU
-	GgAHr2wooKn36vOeOyK50e2DiLr22IJPv4L0yQ73Arx3S5pq0CDNpGUavZqHISTzLrJcMZguWhE
-	c//lWdzMr0qRCc28rE0A9PnhVxkzhb1fDW1/LUiJvQC9AYgJWYCGTlFOEdPssg7/
-X-Google-Smtp-Source: AGHT+IFSgzxVEIKH51qETsyKXMx5jVGe8cyHVu2Zll8/c6M65UGMoj61TchBOfxsy3iarPKzMWQcBQ==
-X-Received: by 2002:a05:622a:306:b0:472:996:3bf with SMTP id d75a77b69052e-4722491fb99mr91136891cf.48.1740287703657;
-        Sat, 22 Feb 2025 21:15:03 -0800 (PST)
-Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:104d:377c:5733:f5b0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d784e99sm118544836d6.28.2025.02.22.21.15.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 21:15:02 -0800 (PST)
-From: adamsimonelli@gmail.com
-To: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Adam Simonelli <adamsimonelli@gmail.com>
-Subject: [PATCH v3 2/2] tty: Change order of ttynull to be linked sooner if enabled as a console.
-Date: Sun, 23 Feb 2025 00:14:41 -0500
-Message-ID: <20250223051441.1861603-3-adamsimonelli@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250223051441.1861603-1-adamsimonelli@gmail.com>
-References: <20250223051441.1861603-1-adamsimonelli@gmail.com>
+	s=arc-20240116; t=1740288471; c=relaxed/simple;
+	bh=ZoFMidOYBshnEsnzIKH5pW7glP8uk+guezRItblF2Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wsdla1R/0bhFHWY6EBFKU6ixH32tgtJdmZ4Vc5NN+2wFd7GkqG4kpXxmHZtYQPc/s6G1m8DKZeVP5tniDQfDWf7TCsxaPuKSfzRQ1K0Bov8m1PxQbY6pghxYzoKyPkbakLp0aoDylw4gbo2UlwvcHILaRLPdoGI9AwTbUUWyPsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EmaKKQTD; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740288470; x=1771824470;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZoFMidOYBshnEsnzIKH5pW7glP8uk+guezRItblF2Ys=;
+  b=EmaKKQTDP7TVqARWgE9p0Z+O5lSUSfmco2NMQ/lE+X3WJCntZNM55aY+
+   RxSqkJBEnQsUfh60zmCfAIrSH/FYoVY8an2makRcyo2mcW9DoLTM7cSkQ
+   I5uNug9tZl4COMRq9c+EAFnu6NOExzqvJBnSBgWoip8HJW97L20WbVxdc
+   SOee5/cD1FDHGMO09wAVU+H18l1kPxNcyf7ofWTx1JVF7RtaiUp+K8Odo
+   4jG7LVyIlsER8heAZDv9evNvr182s3Jz2BBzP2WVhXW4lPJMrLXsOXmve
+   erLJU4HEpsDi++OrT7jlXKWDwD4kfa1EZ3KSFdCdKPOPJB+L/Fsftg4rC
+   w==;
+X-CSE-ConnectionGUID: F6rcsylpRzGLN/Vev/j3Cg==
+X-CSE-MsgGUID: k/2bozEzST2vXdm9u744Tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52494653"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="52494653"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 21:27:49 -0800
+X-CSE-ConnectionGUID: MDi6dxZtSu61rtEuamNdDw==
+X-CSE-MsgGUID: 5Ce2PjiPSwG7ocpbQD3+mw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="116261630"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 22 Feb 2025 21:27:45 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm4Wl-00079L-0b;
+	Sun, 23 Feb 2025 05:27:43 +0000
+Date: Sun, 23 Feb 2025 13:26:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org,
+	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	liangjian010@huawei.com, chenjianmin@huawei.com,
+	lidongming5@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	shenjian15@huawei.com, shaojijie@huawei.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+Message-ID: <202502231304.BCzV4Y8D-lkp@intel.com>
+References: <20250222025102.1519798-8-shiyongbang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222025102.1519798-8-shiyongbang@huawei.com>
 
-From: Adam Simonelli <adamsimonelli@gmail.com>
+Hi Yongbang,
 
-If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-will become the default primary console device, based on the link order.
+kernel test robot noticed the following build errors:
 
-Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-if CONFIG_VT is disabled, the default console device falls back to
-/dev/ttyS0 instead of /dev/tty.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.14-rc3 next-20250221]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This could cause issues in user space, and hardware problems:
+url:    https://github.com/intel-lab-lkp/linux/commits/Yongbang-Shi/drm-hisilicon-hibmc-Restructuring-the-header-dp_reg-h/20250222-110052
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250222025102.1519798-8-shiyongbang%40huawei.com
+patch subject: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug detect of irq feature
+config: arm64-randconfig-004-20250223 (https://download.01.org/0day-ci/archive/20250223/202502231304.BCzV4Y8D-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 204dcafec0ecf0db81d420d2de57b02ada6b09ec)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502231304.BCzV4Y8D-lkp@intel.com/reproduce)
 
-1. The user space issues include the case where  /dev/ttyS0 is
-disconnected, and the TCGETS ioctl, which some user space libraries use
-as a probe to determine if a file is a tty, is called on /dev/console and
-fails. Programs that call isatty() on /dev/console and get an incorrect
-false value may skip expected logging to /dev/console
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231304.BCzV4Y8D-lkp@intel.com/
 
-2. The hardware issues include the case if a user has a science instrument
-or other device connected to the /dev/ttyS0 port, and they were to upgrade
-to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-sent to the device connected to /dev/ttyS0 unless they edit their kernel
-command line manually.
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-is not dependant on hardware configuration by default, and avoid
-unexpected new behavior on devices connected to the /dev/ttyS0 serial
-port.
+>> ERROR: modpost: "drm_client_init" [drivers/gpu/drm/hisilicon/hibmc/hibmc-drm.ko] undefined!
+>> ERROR: modpost: "drm_client_register" [drivers/gpu/drm/hisilicon/hibmc/hibmc-drm.ko] undefined!
+>> ERROR: modpost: "drm_client_release" [drivers/gpu/drm/hisilicon/hibmc/hibmc-drm.ko] undefined!
 
-Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
----
- drivers/tty/Makefile | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 07aca5184a55..1a1051ecb1af 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
- obj-$(CONFIG_N_GSM)		+= n_gsm.o
- 
- obj-y				+= vt/
-+#If ttynull is configured to be a console by default, ensure that it is linked
-+#earlier before a real one is selected.
-+obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
-+
- obj-$(CONFIG_HVC_DRIVER)	+= hvc/
- obj-y				+= serial/
- obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
-@@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
- obj-$(CONFIG_NOZOMI)		+= nozomi.o
-+
-+#If ttynull is enabled, but not as a boot console, it is linked and used later
-+#after the real ones.
-+ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
- obj-$(CONFIG_NULL_TTY)	        += ttynull.o
-+endif
-+
- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
- obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
- obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
