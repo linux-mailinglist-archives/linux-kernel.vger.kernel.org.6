@@ -1,176 +1,159 @@
-Return-Path: <linux-kernel+bounces-527893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DE1A410F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:51:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AC4A410FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04561731D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:51:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43D81889894
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796EF17B505;
-	Sun, 23 Feb 2025 18:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D121547C5;
+	Sun, 23 Feb 2025 18:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AC8V4qpt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="L5U9B+/d"
+Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05F4CA64;
-	Sun, 23 Feb 2025 18:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B508177104;
+	Sun, 23 Feb 2025 18:58:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740336708; cv=none; b=YZVHLO6XfIE3HCdazNCRg6Jd3T5iAgw9l2vcUGlgvS0ZY2T/emR98rTsiVT0G9agi1HMxJTuV67j5NwA+RybxPC+Qw4zDVCMt5d3TLPrcj+N7IfviP1/VdSn2G1PY/sQ3q9bCDzBfqNbWApNXU2vfG2zMhINi/nc07/RIT6V0o8=
+	t=1740337131; cv=none; b=fY+aF1kwSEBqYCT+BXuKEsDbqEhI5BtVxWlMhGkBJR2sSmQc/2FCXpfhFDuc5NpcnlhjffvERaBEFfIVP3UzMmWE1GK8LjqDsRbYEc+TKY8U02YwU+DLkwQTTFjSy/nOsx4h4EGBHdbX2NP1uaidztKIOEgHZcad+IIpHTXKzUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740336708; c=relaxed/simple;
-	bh=tco7lF+ns8c6//J7LH3Pw1kK1mQ+wFDcdS7oH71ovZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P33rLOOFhG+hiP7u+BmtHHzqp8uVWYe82Enc5cvw5pxIDBISig2UFS/U8JKJBNW4quEDXDxZU+1wG+SlElut35RMBKXzh0c8GZLKkonQhV70JJCIOJNLBVmOVMU8Zk7ClYtZk5RyAk0wnBh1NxBY+/13iP5XiqrS+At87DMzUEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AC8V4qpt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFCCAC4CEDD;
-	Sun, 23 Feb 2025 18:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740336708;
-	bh=tco7lF+ns8c6//J7LH3Pw1kK1mQ+wFDcdS7oH71ovZU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AC8V4qptb+AtjX51lQpQkK+feFUMV6tEPciZsc50vgPEZZgXJ1Mr4Wzt7gW7ncRVo
-	 Pt9qf6/7Xj1nucn97rkBAvcg1gvIbSBfi4vLWNYW1Bti3Pp9XJRm1yUzDZOyQsQked
-	 X34aOkKQ9k+9y02frKQDZp3NLs+3NcckJUmxCX9gLcUhTieOhWf166eJVGsyLSlOR9
-	 lWRj/Ck4JYsdvBrvGHwpNQCWs/LyFm4bpcEkILuW9yIPoYj373AD5iOcoPBVBLranD
-	 XyPmKBdMuZXi/JeAzNVhBDavpPR/JhEriZkg8Hu83FZNMSODeSrM13Nax7awzelSqN
-	 yk0gFpZg0lLSA==
-Date: Sun, 23 Feb 2025 20:51:27 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Pasha Tatashin <pasha.tatashin@soleen.com>,
-	linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 05/14] kexec: Add Kexec HandOver (KHO) generation
- helpers
-Message-ID: <Z7tuL-FInR7KLD1l@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-6-rppt@kernel.org>
- <20250210202220.GC3765641@nvidia.com>
- <CA+CK2bBBX+HgD0HLj-AyTScM59F2wXq11BEPgejPMHoEwqj+_Q@mail.gmail.com>
- <20250211124943.GC3754072@nvidia.com>
- <CA+CK2bAEnaPUJmd3LxFwCRa9xWrSJ478c4xisvD4pwvNMiTCgA@mail.gmail.com>
- <20250211163720.GH3754072@nvidia.com>
- <20250212152336.GA3848889@nvidia.com>
- <Z6zOqtaLQwnIWl2E@kernel.org>
- <20250212174303.GU3754072@nvidia.com>
+	s=arc-20240116; t=1740337131; c=relaxed/simple;
+	bh=T/i0wd7pY9AM9U2Gjkvm6/4Px9O+/PKhiATyW2/HyO4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=u7kTkX3vy1MnF5NHUYjMSxRlPH/i1j3fTsNRAzyLyrqJtlHXRB2W6NqV8s7v07qi4WqCws7uqOoFQEFur1s7iifyB+imOK9gAchl1D4KFZwY0pQ+HNpEs7tdTTly/Cnnd5sGG5NoHdzLGoTFoOCSdG1rvZePIHsGloYUnza05x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=L5U9B+/d; arc=none smtp.client-ip=5.75.144.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
+Received: from [192.168.34.162] (254C2546.nat.pool.telekom.hu [37.76.37.70])
+	by mail.mainlining.org (Postfix) with ESMTPSA id 4A0A1BBAA8;
+	Sun, 23 Feb 2025 18:58:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
+	s=psm; t=1740337122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zaXf5MCmGpuyyWzfFp16biEz+9yDLux8KpdR9j4m6Jo=;
+	b=L5U9B+/dapPQYi4n0ioQ37XJFWPJh304l4WLy0WPkbM4lbSZMcSDJnpVlrmkpR3FGCb+Fz
+	utf7zFSz5qpCh7pH4mbN/Ea2j1gtjaFacnDjr3pquRU52Ut7xrjtnNPYBjsWmmAR3rGJYP
+	K/R0kvtq07edKKr0dybTkkjmFVQizi+sfZbQiVr/ztmIVS+JOqmEx/ekKVHEmqTEqaaV6i
+	vDvNFz7Blov2tY/wBJCHTOU8raH8/g7T0HzIA66z22mYxzUBovhNvp7tHnx+222vefSDgz
+	4eTsAcxU7bz99gruVQbFB3z7+JDRV0sH+RIAr0skgEOR1uBi0q2373L4sI8qSw==
+From: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+Subject: [PATCH v2 0/8] Initial support of MSM8937 and Xiaomi Redmi 3S
+Date: Sun, 23 Feb 2025 19:57:45 +0100
+Message-Id: <20250223-msm8937-v2-0-b99722363ed3@mainlining.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250212174303.GU3754072@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKlvu2cC/z3MQQrCMBCF4auUWRtJpmhaV95DuijJpB0wiSQSl
+ JK7Gwu6/B+Pb4NMiSnDpdsgUeHMMbTAQwdmncNCgm1rQIkniUoKn/0w9logDuSkNT2ZEdr7kcj
+ xa5duU+uV8zOm9w4X9V1/hvobRQkptEVN9qydlsPVzxzuHDgsx5gWmGqtHwxwOV2jAAAA
+X-Change-ID: 20250210-msm8937-228ef0dc3ec9
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephan Gerhold <stephan@gerhold.net>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, iommu@lists.linux.dev, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>, 
+ Daniil Titov <daniilt971@gmail.com>, Dang Huynh <danct12@riseup.net>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Adam Skladowski <a39.skl@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740337120; l=2490;
+ i=barnabas.czeman@mainlining.org; s=20240730; h=from:subject:message-id;
+ bh=T/i0wd7pY9AM9U2Gjkvm6/4Px9O+/PKhiATyW2/HyO4=;
+ b=Ja7IFMF2IgPzZfg01b6Q//9RwjfYAB1g/J8vWC2E37bbxEosbYVQPXM1amALNgJ8YjTAFL0jd
+ irC6xuog25IAJd2mbAInnQW9h3f7PIEcTclZrYKQSNHWoc2BrCZWPST
+X-Developer-Key: i=barnabas.czeman@mainlining.org; a=ed25519;
+ pk=TWUSIGgwW/Sn4xnX25nw+lszj1AT/A3bzkahn7EhOFc=
 
-On Wed, Feb 12, 2025 at 01:43:03PM -0400, Jason Gunthorpe wrote:
-> On Wed, Feb 12, 2025 at 06:39:06PM +0200, Mike Rapoport wrote:
-> 
-> > As I've mentioned off-list earlier, KHO in its current form is the lowest
-> > level of abstraction for state preservation and it is by no means is
-> > intended to provide complex drivers with all the tools necessary.
-> 
-> My point, is I think it is the wrong level of abstraction and the
-> wrong FDT schema. It does not and cannot solve the problems we know we
-> will have, so why invest anything into that schema?
+This patch series add initial support for MSM8937 SoC
+and Xiaomi Redmi 3S (land).
 
-Preserving a lot of random pages spread all over the place will be a
-problem no matter what. With kho_preserve_folio() the users will still need
-to save physical address of that folio somewhere, be it FDT or some binary
-structure that FDT will point to. So either instead of "mem" properties we'll
-have "addresses" property or a pointer to yet another page that should be
-preserved and, by the way, "mem" may come handy in this case :)
+The series is extending the MSM8917 gcc and pinctrl drivers
+because they are sibling SoCs.
+MSM8937 have 4 more A53 cores and have one more dsi port then
+MSM8917.
+It implements little-big architecture and uses Adreno 505.
 
-I don't see how the "mem" property contradicts future extensions and for
-simple use cases it is already enough. The simple reserve_mem use case in
-this patchset indeed does not represent the complexity of a driver, but
-it's still useful, at least for the ftrace folks. And reserve_mem is just
-fine with "mem" property.
- 
-> I think the scratch system is great, and an amazing improvement over
-> past version. Upgrade the memory preservation to match and it will be
-> really good.
-> 
-> > What you propose is a great optimization for memory preservation mechanism,
-> > and additional and very useful abstraction layer on top of "basic KHO"!
-> 
-> I do not see this as a layer on top, I see it as fundamentally
-> replacing the memory preservation mechanism with something more
-> scalable.
+Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+---
+Changes in v2:
+- drop applied patches
+- drop gcc schema commits infavor of a new schema for gcc-msm8937
+- document always on clock for adreno 505/506/510
+- msm8937:
+  - set cache size
+  - rename cpu labels
+  - fix style issues addressed by review
+- msm8937-xiaom-land:
+  - remove unused serial0 alias
+  - remove regulator-always-on from pm8937_l6
+  - add blue indicator led for aw2013
+- Link to v1: https://lore.kernel.org/r/20250211-msm8937-v1-0-7d27ed67f708@mainlining.org
 
-There are two parts to the memory preservation: making sure the preserved
-pages don't make it to the free lists and than restoring struct
-page/folio/memdesc so that the pages will look the same way as when they
-were allocated.
+---
+Adam Skladowski (1):
+      dt-bindings: drm/msm/gpu: Document AON clock for A505/A506/A510
 
-For the first part we must memblock_reserve(addr, size) for every preserved
-range before memblock releases memory to the buddy.
-I did an experiment and preserved 1GiB of random order-0 pages and measured
-time required to reserve everything in memblock.
-kho_deserialize() you suggested slightly outperformed
-kho_init_reserved_pages() that parsed a single "mem" property containing
-an array of <addr, size> pairs. For more random distribution of orders and
-more deep FDT the difference or course would be higher, but still both
-options sucked relatively to a maple tree serialized similarly to your
-tracker xarray.
+Barnabás Czémán (4):
+      dt-bindings: clock: qcom: Add MSM8937 Global Clock Controller
+      dt-bindings: iommu: qcom,iommu: Add MSM8937 IOMMU to SMMUv1 compatibles
+      dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+      arm64: dts: qcom: Add Xiaomi Redmi 3S
 
-For the restoration of the struct folio for multiorder folios the tracker
-xarray is a really great fit, but again, it does not contradict having
-"mem" properties. And the restoration of struct folio does not have to
-happen very early, so we'd probably want to run it in parallel, somewhat
-like deferred initialization of struct page.
- 
-> > But I think it will be easier to start with something *very simple* and
-> > probably suboptimal and then extend it rather than to try to build complex
-> > comprehensive solution from day one.
-> 
-> But why? Just do it right from the start? I spent like a hour
-> sketching that, the existing preservation code is also very simple,
-> why not just fix it right now?
+Dang Huynh (2):
+      pinctrl: qcom: msm8917: Add MSM8937 wsa_reset pin
+      arm64: dts: qcom: Add initial support for MSM8937
 
-As I see it, we can have both. "mem" property for simple use cases, or as a
-partial solution for complex use cases and tracker you proposed for
-preserving the order of the folios.
+Daniil Titov (1):
+      clk: qcom: gcc: Add support for Global Clock controller found on MSM8937
 
-And as another optimization we may want a maple tree for coalescing as much
-as possible to reduce amount of memblock_reserve() calls.
- 
-> Jason
+ Documentation/devicetree/bindings/arm/qcom.yaml    |    7 +
+ .../bindings/clock/qcom,gcc-msm8937.yaml           |   73 +
+ .../devicetree/bindings/display/msm/gpu.yaml       |    6 +-
+ .../devicetree/bindings/iommu/qcom,iommu.yaml      |    1 +
+ arch/arm64/boot/dts/qcom/Makefile                  |    1 +
+ arch/arm64/boot/dts/qcom/msm8937-xiaomi-land.dts   |  408 ++++
+ arch/arm64/boot/dts/qcom/msm8937.dtsi              | 2149 ++++++++++++++++++++
+ drivers/clk/qcom/Kconfig                           |    6 +-
+ drivers/clk/qcom/gcc-msm8917.c                     |  617 +++++-
+ drivers/pinctrl/qcom/Kconfig.msm                   |    4 +-
+ drivers/pinctrl/qcom/pinctrl-msm8917.c             |    8 +-
+ include/dt-bindings/clock/qcom,gcc-msm8917.h       |   17 +
+ 12 files changed, 3285 insertions(+), 12 deletions(-)
+---
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+change-id: 20250210-msm8937-228ef0dc3ec9
 
+Best regards,
 -- 
-Sincerely yours,
-Mike.
+Barnabás Czémán <barnabas.czeman@mainlining.org>
+
 
