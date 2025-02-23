@@ -1,90 +1,104 @@
-Return-Path: <linux-kernel+bounces-527811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5D5A40FBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:29:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E14A40FBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D8C3B8A72
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:28:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670041894B32
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4B384037;
-	Sun, 23 Feb 2025 16:29:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8973186334;
+	Sun, 23 Feb 2025 16:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW7/guI7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225EA70825
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 16:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6793EEA8;
+	Sun, 23 Feb 2025 16:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740328144; cv=none; b=q+k7bC+cBeVQ5UiezflAyeiesNKdNVPnBNoaGN2J+Clnzpr6Unhl0WXGIKfCjWhw69Cwc/hP/JivkjM04cTwbv8mWC66CSrtwnan8QzIZ6HTWN5RJLs85Oo6JARL7TpYrdBaTykRvt65PZlJFKRlmeT05ouuKk08ZrlFmdIqgew=
+	t=1740328236; cv=none; b=n3Sv7Eumzbv0dyFEbc27werQamUVeJkJiZbPO0vCUHBXuWABwPUhWlHGa+GixkdzE9CRgXDwuILzyJmXAGnjYKnbQb7oDSDFEvQE16pQiU7t/8bkheh1yyI9J/eHmizRfSu3vQJPDL5tzJl+gKaR95PLJd4zDKwl0/DZu8hwBpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740328144; c=relaxed/simple;
-	bh=BJJMIAODFBZ2zV28pMTXGqIeFv9HDdzI5mGygrT99MQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=LlxDBTAjtgZaovsKA1eZkMHGp/I5snisGS0893ZKy6+MhaNafAyhWQ+J8sCgJVOIsetQOUf++hhu3Qf/p0nTNWfshP/lYLGh45FZRnRnOM0MJFAW+GbygMtfCZAQFq30HsmNrT5cNowjHW0M39RcfT/C6HvQT5TaZ++3kfRn4Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b6d933baso82021385ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:29:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740328142; x=1740932942;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qePKE6DKwAycNvqydZPkWZJjbpYUhcvm8VYZZd2e7n8=;
-        b=QflPZ2N2jhug6RYngBdWGW++tiBn7JlDwJ0jvwjI9iywKPHwhYk+tvjXL57kqKFHfZ
-         nTqU9PbIkxXiECp5I4NBiX7urZpCffA0rnzQotL9nOly2ZALKYG/q4rJZ7ypNyDgtvZS
-         A3mjpjKtQDvPoJMi873UeGYdNPrRWoEKtS/L7pYcTTxS/EPj3IdiMaVmCOsLcUkiMDmm
-         7nCEe9f5nDkQ8qZLhwk0jvUR9gqp3oj1mtRJTCGn1W+29ACisaTDtl+itk5ZxVkQillj
-         Ttbg9y1r81ObegkOlulHw+iJFtSHGvVZIa9WK2kmLzo/XCBnWAXPZyn8n2mCZP6IwDBz
-         /KAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpmxSzxuaF7mRP2kBkAYYwy/qFNJ3LsTPcDnlw3if4S4h9a1T+VGGFNuvczlOXXCZY6V2MGKaP14jKkJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdPa318bEQesQ9KMcPEnto/8Hb/PeRc3gOuhbKiHKgDTki+a7x
-	NdVsP1SE8zH7HDytLQEkFeJnKWrIL5o+yADeDibOSMckf40s9X8lKkx07ZERFmrVFgoeqBGOAqW
-	+IpMBMSWK5/8PjbCRfKE7Cwt/XKJlDrsvb8z7dbwksE24wOe9SftC+ug=
-X-Google-Smtp-Source: AGHT+IF6ncIokCXD/xSm4YeShFCIAC7B7m+EQVnJ7HuY8dQfDkKW8DFwMJjcCjPOGWK9RChupBmxaF8xlmmMNx5tXa4n6XlTSQkl
+	s=arc-20240116; t=1740328236; c=relaxed/simple;
+	bh=QfKdiEk49aDWt010gngXbc3vJUxTK0YB03j5djAbuSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nlqv7LgwCj8zMgssetHyffn7XpzQmEoqSuRy8YsiML7j9hZNtlr6yHy1sjv3WJk0JQbzAyPEJQ3CvevAhMV5fW4P7BOy8Q2a3F8gOs5cdUrl8z3SDylfwY/0v9g84hQG8l18HUjbXYbNTqykGwV4+94gDU80+Yyq+ok7J+AY/0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW7/guI7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82E5C4CEDD;
+	Sun, 23 Feb 2025 16:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740328235;
+	bh=QfKdiEk49aDWt010gngXbc3vJUxTK0YB03j5djAbuSM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SW7/guI7iN1/8drBB39h5FaVJkqRojBn31+ZtOaZr/aaBcQue6cIy5785HZ3oXljI
+	 LlOBYYxYWKHKcJWFJdxoV3zXYKpE0BLR8pTvle0s8Ja5wcFDTffbOAoHN6L5d7Rw+9
+	 tqADmqonQH4E9OrvZhopW7RHnGAfOAMS0eoLk11Ofps6vd0nyRaWzA1M95vScL8NMV
+	 vFgfnLj5JyEn2y+1mSDcxfSoEFbrVrAumZlqbQzYbURtpuiK/h71NvTqXe8PFG7gcg
+	 sAxp72j1ftLeBSd+AZBa+NZ6AiqjX43hcWKBlATuc5AJocQ+atufejV26yCkg1sv90
+	 LEF5z7wRlxjeA==
+Date: Sun, 23 Feb 2025 16:30:18 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
+ <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
+ Carrasco <javier.carrasco.cruz@gmail.com>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev
+Subject: Re: [PATCH v3 6/9] iio: adc: rzg2l_adc: Use adc-helpers
+Message-ID: <20250223163018.2c0290e8@jic23-huawei>
+In-Reply-To: <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
+References: <cover.1739967040.git.mazziesaccount@gmail.com>
+	<25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3092:b0:3d0:21aa:a756 with SMTP id
- e9e14a558f8ab-3d2cae4c215mr112255575ab.5.1740328142383; Sun, 23 Feb 2025
- 08:29:02 -0800 (PST)
-Date: Sun, 23 Feb 2025 08:29:02 -0800
-In-Reply-To: <CAMj1kXE1WgFkP5RG-VhC_P-gMDtyipW7nvE+i+JBSWXW1bqbhg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bb4cce.050a0220.bbfd1.0032.GAE@google.com>
-Subject: Re: [syzbot] [efi?] [fs?] BUG: unable to handle kernel paging request
- in efivarfs_pm_notify
-From: syzbot <syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com>
-To: ardb@kernel.org, jk@ozlabs.org, linux-efi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 19 Feb 2025 14:31:38 +0200
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
+> drivers avoid open-coding the for_each_node -loop for getting the
+> channel IDs. The helper provides standard way to detect the ADC channel
+> nodes (by the node name), and a standard way to convert the "reg",
+> "diff-channels", "single-channel" and the "common-mode-channel" to
+> channel identification numbers used in the struct iio_chan_spec.
+> Furthermore, the helper checks the ID is in range of 0 ... num-channels.
+> 
+> The original driver treated all found child nodes as channel nodes. The
+> new helper requires channel nodes to be named channel[@N]. This should
+> help avoid problems with devices which may contain also other but ADC
+> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
+> string didn't reveal any in-tree .dts with channel nodes named
+> othervice. Also, same grep shows all the .dts seem to have channel IDs
+> between 0..num of channels.
+> 
+> Use the new helper.
+> 
+> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Reported-by: syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com
-Tested-by: syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com
+I should have read on.  Definitely more convincing with these usecases.
+however drag them to start of series.  Better to add infrastructure
+so some use and then on to your new driver.
 
-Tested on:
+Looks good to me.
 
-commit:         ec7518a8 efivarfs: Defer PM notifier registration unti..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git urgent
-console output: https://syzkaller.appspot.com/x/log.txt?x=15dfc7a4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3a97cba3fb7e034
-dashboard link: https://syzkaller.appspot.com/bug?extid=00d13e505ef530a45100
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+Jonathan
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
 
