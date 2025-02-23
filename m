@@ -1,133 +1,134 @@
-Return-Path: <linux-kernel+bounces-528000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519DAA4124E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:45:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A235EA4127E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4438D1723A9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:45:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199C31893F5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE29020013A;
-	Sun, 23 Feb 2025 23:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1C811187;
+	Mon, 24 Feb 2025 00:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/AP4ldu"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=buserror.net header.i=@buserror.net header.b="1+v+ww0e"
+Received: from baldur.buserror.net (baldur.buserror.net [165.227.176.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8592410E4;
-	Sun, 23 Feb 2025 23:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5908410F2;
+	Mon, 24 Feb 2025 00:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.176.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740354351; cv=none; b=FeleJf1IJ2o8wOpuD3k5YJWX4Y3Xn6zgpeBF3JX2/OnEBLGGmlSujVjFYSaJ2Nv4XXnap49xH/t9wJbUnccYQn+CnfG3vEjDQL/zeA1yZL0MDSGw52AxLsIs2oHyYttzSX2hF8KdtL77ogeGkaO/DyY01HJ+IykbLcw5NNxw/O8=
+	t=1740356859; cv=none; b=uymgHnBJHXgpsiIOlqEA0P+rUfsq+R+sVf3WEi+je3Kmw0SvY5ul85WVegA47Bq2HxTxB5fwtYUUKk7HcK3N6VhNoJ6mKc4aGp0NSUsMg2hnzfIK/sF7mmN8sGOJY6PRu/hgB2tqDU/A3Yt0uOLIaXu4ELK7vDhD72VQa75NzHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740354351; c=relaxed/simple;
-	bh=wY1xWMM/k5JTNZ/FzkmzKc7FAYv1gWfhj4nswE3dxFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g4T4lh1BqQejX8NAAU0CR8mlzw1De3W7sF+HoQQnoZkvLkOCiOpn0dwTpSc0ZZc3R2qlpyUe/VgJG8clH9+9EntugSbGCGrcF5NqSKbAZaOUgC1yVDs725vM8pd5rddO8Mza6J/o7GMfRdf2+cSrpPKSKPRRUSa47dxlFmUgCcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/AP4ldu; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e05717755bso5841568a12.0;
-        Sun, 23 Feb 2025 15:45:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740354348; x=1740959148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sCP1rbXh4MlA1hNlKO2PRwztVgKcVUG68KyRAFF7PGU=;
-        b=K/AP4lduUdvGm7okk/tuuB0fRszGs3vOmXFEaAkQaN+Isczo4TZHW5BCzlxCzo3/AE
-         4KBOYZfxoafW9H3Gdn8vO6ExuwRfeCBpFRZLeZ3G8IZg52EFXk+1ZmGyKGJVIwtr1SQS
-         98SEgfA2aWOfs2dq4KmFORVYwQQYnB2oa3GZZrJaTNnQHr07RcJrWQBdQWbieB5PvIHb
-         6pqfWz7qyK3RjEjWIZNvK4d69+iRYrimvsjifWOvLbcspi74bmt49AiAPnNoel4Nkqjt
-         lkroIMesrymypH2LgK7VJhscxQ07sPCrvwwN97ix9ZU6ftNrgpa/D5C30AaMw2V9F4iv
-         k37w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740354348; x=1740959148;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sCP1rbXh4MlA1hNlKO2PRwztVgKcVUG68KyRAFF7PGU=;
-        b=b74ww3qYhWh6cqz9VBAusH+ZD5lt/bxIuWP2IQe0qvrvn8rJJM81ODpK7e2XLwi4wb
-         yzQ1obVZqzOXybwN/907HNd5JLMorEDAedQlH8pRPiv5ZIC/phdnJniRW9mFHSakLTVW
-         8TmU12pFm21R0uiqUHkiitFZjts1S+6SVIjv2+L62tYTStzfDGtFOmG0wr5gUW5eTV3f
-         +b539GEVYXmebuuLq9aUSn3tHTQQkoS9bCmikPkKjnEvJ+yW67k2zCpLaxBmAnzlpMS7
-         Y5tzdmnZaRBawxCGi5NhvS1IjiFfsl6cfyz459CoDXbdYAabWq9diWOpBU0CeFTdW1Sj
-         Ve9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwrk4qRXJB5db+y8O5j+ctgSS3G8SiKJsbVhkNlXQkiXTKy5p8mjpuJDHeJkRi3ulHSxMi7KTKElX9ss0=@vger.kernel.org, AJvYcCXW4caBOuXIXjgoznAZnzCDX03kA0dclzDy2Uu7fCrsLWlsZyw+H6cgEdllKIiZyZMs2lItJuSnwDui@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR2cCDZ+qLH+uKPv02DQHz7/6aQZul/qozt/apD/jtHbWBKOrN
-	2PpwOekCYFyn5LC6XMHmmkZtjvrGviTLC7FSiqJA/JUfClvzZIlp
-X-Gm-Gg: ASbGnctnd0TMUstY+2rGE7DAkF4SNetK1C+tdCebSm8xoBn2XCzCeJ9baYLcOSgn3BQ
-	+uvcH9ButKuwFldcdvvpU6yNhoilG/RBZPDUbcKOn35Ybi3hy2CwxadKCduoVsUgsorCivqTU+o
-	X9m3OWZmRHbxgyynMUGibRFKTnTk8jYkCacGb4RqZu59boa2m/S56/tCeoyyelMwxwx9q/ASJzU
-	xavozqHYKAsziixoKyLqeW4CG467uHeln+QBsRFW4xyZ3e3viJetMe9lZ3aEoFz0VKqxs0F1zZL
-	pivcvGVTuOSbaFjaVwqO51h2JSmGgTruAGe97N6qLos=
-X-Google-Smtp-Source: AGHT+IH5JTIGwwSbS6Io23GNPvRRsNaxcEO37VuXDdJwJd+0n+ZiS9fQzLm+6Ov5yiWBfEV2hyojwA==
-X-Received: by 2002:a17:907:6d07:b0:abb:c394:63ee with SMTP id a640c23a62f3a-abc09e2c50amr1043158766b.55.1740354347437;
-        Sun, 23 Feb 2025 15:45:47 -0800 (PST)
-Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb72b519c5sm1736839066b.173.2025.02.23.15.45.46
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 23 Feb 2025 15:45:47 -0800 (PST)
-Date: Mon, 24 Feb 2025 00:45:42 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] usb: xhci: Unify duplicate inc_enq() code
-Message-ID: <20250224004542.5861d4dc@foxbook>
-In-Reply-To: <d59a6694-e0e7-46b7-874e-0c6acd8c9126@linux.intel.com>
-References: <20250220234355.2386cb6d@foxbook>
-	<20250220234719.5dc47877@foxbook>
-	<d59a6694-e0e7-46b7-874e-0c6acd8c9126@linux.intel.com>
+	s=arc-20240116; t=1740356859; c=relaxed/simple;
+	bh=0I41af2cJ7npBQ2S28LqxW7YvzWA+DEHxxUd9YrgFBM=;
+	h=Date:From:To:Cc:Message-ID:References:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:Subject; b=djVL+SNZzn9QmYIFpAjt0JLWLDKExawg8yyex9nWgt6ssDR1usHF7303q5SWKhWb4jHKO8GHGsUJ3YlRr0qnhJ7RPpTzwVYV21fmPcHFfQ1fq5vGcaORSEiIGqZnln93Y0LudmBzJyCPYvcFGKBEBb0t63f7s1oXpMrgEAfGWGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buserror.net; spf=pass smtp.mailfrom=buserror.net; dkim=pass (2048-bit key) header.d=buserror.net header.i=@buserror.net header.b=1+v+ww0e; arc=none smtp.client-ip=165.227.176.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buserror.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buserror.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=buserror.net; s=rsa_sel; h=Subject:In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description;
+	bh=ESEjuP0qNKG7M31LDxN5dSH9PUQiZX8A161LNfHK2gs=; b=1+v+ww0eli53gNR6dEhBDOqi2B
+	mrW7UtVHR4Yzh81YhZxcdbGJtdQbX0Wu/Ew7/1BUBebZUQQ8ArhhfBhL/GJ0C1qpVgStWr8RVCCMk
+	5GjYDXmpB2WORXvs59CtqCoEoNWh+fxUYKMgEsuxU7LV9qRHumXtRtcbpHRb61IuAQ/ildErwsOAH
+	FJyH0AnNYosXBzEa8H9KKSFQM3sQ0+8qXyzLk8KIPl1Zb7H+jvVMtD6XvhIgW+7dEPA8EtsmFO/jE
+	/4gfAdWIyG1k5Utcfe66gKke/O3HjMVSXUFscRPdrWWMViDr399GxelCcOF1PMttz5jRwigl2yYHE
+	PoRjdYtQ==;
+Received: from oss by baldur.buserror.net with local (Exim 4.96)
+	(envelope-from <oss@buserror.net>)
+	id 1tmLfR-00ELyd-2y;
+	Sun, 23 Feb 2025 17:45:50 -0600
+Date: Sun, 23 Feb 2025 17:45:49 -0600
+From: Crystal Wood <oss@buserror.net>
+To: Rob Herring <robh@kernel.org>
+Cc: j.ne@posteo.net, devicetree@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Message-ID: <Z7uzLeXiXIdVYNM5@buserror.net>
+References: <20250207-ppcyaml-v2-0-8137b0c42526@posteo.net>
+ <20250207-ppcyaml-v2-9-8137b0c42526@posteo.net>
+ <Z6kQpuQf5m-bXTyt@buserror.net>
+ <20250210215324.GA1040564-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250210215324.GA1040564-robh@kernel.org>
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Rcpt-To: robh@kernel.org, j.ne@posteo.net, devicetree@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org, linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
+X-SA-Exim-Mail-From: oss@buserror.net
+X-Spam-Level: 
+X-Spam-Report: 
+	*  -15 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
+	* -0.0 NO_RELAYS Informational: message was not relayed via SMTP
+Subject: Re: [PATCH v2 09/12] dt-bindings: memory-controllers: Convert
+ fsl,elbc to YAML
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 
-On Fri, 21 Feb 2025 16:54:11 +0200, Mathias Nyman wrote:
-> On 21.2.2025 0.47, Michal Pecio wrote:
-> > Remove a block of code copied from inc_enq(). As often happens, the
-> > two copies have diverged somewhat - in this case, inc_enq() has a
-> > bug where it may leave the chain bit of a link TRB unset on a
-> > quirky HC. Fix this. Remove the pointless 'next' variable which
-> > only aliases ring->enqueue.  
+On Mon, Feb 10, 2025 at 03:53:24PM -0600, Rob Herring wrote:
+> Generally, if a bus has control registers or resources like clocks, then 
+> we tend not to call them 'simple-bus'. And '"specific-bus", 
+> "simple-bus"' gives some problems around what driver if any do you 
+> bind to. 
+
+Isn't the general idea that you bind to the first one in the list that
+you have a driver for, since it goes from most to least specific?
+
+> If you have chip selects, then you have config registers for those. 
+> Not really "simple" if you ask me. That being said, you could keep 
+> 'simple-bus' here. I would tend to err on making the schema match the 
+> actual .dts rather than updating the .dts files on older platforms like 
+> these.
+
+By that definition I wonder how much truly qualifies.  Even with
+IMMR/CCSR, firmware needs to at least set the base register (which is
+itself inside CCSR, so there's no way to avoid relying on knowledge of
+what the firmware did, except on 8xx).  Though I acknowledge that eLBC is
+a stretch, with FCM and UPM being exceptions.  FCM didn't exist in the
+original LBC, and UPM was... kind of considered a fringe use case
+until someone hooked NAND up to it.  :-P
+
+The point back then wasn't that such registers don't exist, but that the
+OS can use the devices without having to care.  But of course, there's
+subjectivity there about what the OS might care about (e.g. UPM).
+
+FWIW, on these chips (especially the later ones) there were all sorts of
+things (in general, not specifically LBC-related) that firmware had to
+set up to present a coherent system to the OS.  Not all the choices made
+there were great, but if we tried to describe all the gory details from
+the start I'm sure we would have made an even bigger mess of it.
+
+> > For non-NAND devices this bus generally meets the definition of "an
+> > internal I/O bus that cannot be probed for devices" where "devices on the
+> > bus can be accessed directly without additional configuration
+> > required".  NAND flash is an exception, but those devices have
+> > compatibles that are specific to the bus controller.
 > 
-> The linnk TRB chain bit should be set when the ring is created, and
-> never cleared on those quirky hosts.
+> NAND bindings have evolved quite a bit if you haven't been paying 
+> attention.
 
-OK, I see, there is stuff in xhci-mem.c. I'll remove the above text
-and any code which touches the bit on quirky HCs.
+I haven't, as I acknowledged... but I was describing how eLBC does it,
+and just meant that we're not binding to drivers that don't know about
+the bus in that case.  The NAND control registers are part of eLBC/IFC,
+not a separate block (the reg in the NAND node itself is just the SRAM
+used as a buffer).  I'm not sure what that would be expected to look like
+these days.
 
-Speaking of which, I have some evidence that NEC uPD720200 has the
-exact same bug as AMD, namely after a Missed Service Error near the
-end of a segment it fetches TRBs out of bounds and trips the IOMMU
-or stops with Ring Underrun. Link chain quirk seems to fix it.
-
-> maybe
-> 
-> if (trb_is_link(ring->enqueue) && (chain || more_trbs_coming))
-> 	inc_eng_past_link(xhci, ring, chain);
-> 
-> Avoids calling inc_enq_past_link() every time we increase enqueue,
-> and explains why we call it.
-
-I can do that too. By the way, do we actually want this while loop in
-inc_enq_past_link() at all? Currently links only exist at the end of a
-segment and always point to the beginning of the next segment.
-
-I noticed that per xHCI 4.11.7, "Software shall not define consecutive
-Link TRBs within a TD". I suppose "consecutive" means "one pointing to
-another". And if it's prohibited inside a TD, it will likely always be
-easier to avoid doing it at all than try to manage special cases.
-
-Regards,
-Michal
+-Crystal
 
