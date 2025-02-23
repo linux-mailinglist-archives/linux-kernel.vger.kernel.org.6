@@ -1,507 +1,592 @@
-Return-Path: <linux-kernel+bounces-527552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69224A40C90
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:34:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13288A40C91
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833F516CABB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261733B8B52
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE560134D4;
-	Sun, 23 Feb 2025 02:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2C715E97;
+	Sun, 23 Feb 2025 02:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MmrATjMR"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JkfZf6Tz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2500D5227
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 02:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C421818EB0
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 02:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740278015; cv=none; b=ksTkAIeGeALQZ3WIjDft1OFLd1nevgRTb5x+2gAt1PCP8ARSjti/XmxnmlwMHEsCqnJB357mLv01ZYdv56XDQOk7ObnI0CJES8aKuqmZdsxsda7kK0oiql3CJrwuofkGkOOwLXg/RYTzBXFmEHi+fzENGcS6RhevbC6GeERRTqE=
+	t=1740278316; cv=none; b=WdAC6XRBVQ2AgDTQipQ1kz3jgKaV+aVgg4nt+pMiNRj6pSIQH3l0ALIxsfsmj0yRUiX/kP3yPuXVWmw1Pu7kqG+wpjJEduEoVisE3WUbxpnVe1/hg5KKbFevZoZaY54RdWEEaHh8tTbEiHKKCWTrZNmJxVMjjgE3wl3ixe77w7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740278015; c=relaxed/simple;
-	bh=tmAyXGex6RhU4wP0NDzfInOTk+r2jAUWvsBVSgMuNeU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9UnhS2Kr99swU80KOTv8BNJsd6bZR/5cZ82+3A78uU7QeqlOJbwCwPSrd3zoFTTntuSDBd4ibrkfvQ7+43bUwnFM3yCsnNZPWK6fmDr0IHguLRuPGx2BHUV9ABbQZ4XY+XqWuze6ruqXv6EVnWO/jkXCJJlB8wY/JVr1O5mTfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MmrATjMR; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-472098e6e75so235671cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 18:33:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740278012; x=1740882812; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WSj9GP1d8XWYgpE9Ac+Ecoi7aYqhEle0Xlq1f/D5dZE=;
-        b=MmrATjMRyQ47Dj8mUEfVju8bIk20YAIFy058Fy8kEohRCqIdHl2O32rGLm3C/RqO84
-         N8DLC2y1CYRqXQKsENYW21dFQSHtmcIyzafXOwScO9n2sPgA4HTAx1I3oVN7iGJ6p85V
-         54921LnoXsoFzWDV+3YG+CSmscXpTeTCxI6pMi+kKgWTKH/wQPMq9u84WFFJaW72zPQP
-         eOneUMkRz4pDewjyaWbt7j559hUkueV3wkbTLEZ1RLSTx1oGHOdDNgqN7VndTQIk+4G1
-         0KS8Eqhu6c3dtsXJQT255lXaZ9FcXhcV+aA8eE1cOIcIgRyV6T5zuqwVwDy+QRd0QLnj
-         ZiOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740278012; x=1740882812;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WSj9GP1d8XWYgpE9Ac+Ecoi7aYqhEle0Xlq1f/D5dZE=;
-        b=MUi8ENCzKy2Hvac2qlL9Ou5rHU17aeDZ7L1g3f/7rUljwPJ1O1S1VfWBxgahRhXn0o
-         UcR79aPSVw28HwOSqWtGTFdhecmdQ+vgiPC2cbPvYaZgpZCX5m7C3YvJA9CCGqJQFhkA
-         ccnZRi5ieVPgRDE45gIw5CdvoghPs+ZQVj+/1uPPgZY0ML/ARJaf/rQajcqRWs3P93um
-         IHDlXUIMDDYfjvhDZ31x0Fp2FcSfi7iC9m+yci0CLr+5JGlHeT94/+1c0hHWKO1vS8SU
-         +8THrAShf5xmHjodtBNjcm4xQuKhF1bBcw7klBK+I2m7Zzzn8uF73APtH5+VgZnMEciD
-         n17w==
-X-Forwarded-Encrypted: i=1; AJvYcCUa/40h+V3rVQ6uElxvcqGBgwoVdSp5Gvox89Gk8uNUmHC1XGWDNgtVPJCM4mPp88+nzUbnaQWOmumXWo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrVLk5F/WtYu4egKSpADPdBVpsV/5pfZRIlHUGf1ziTzLuE71B
-	LRGOcsLy/VyX7oPdq+oN4xw1tTK2Lpz2bZCsjA/XYQgvBumGGOecKq6JPpDTaQ3fIP4NYKR9t/k
-	igwYciz7yIYw5hZfEvRskESGFgVWOK1azc9S1aF/8OStJofaEgreQ
-X-Gm-Gg: ASbGncvfIzup5sA9nhCYpGfsYf+A5LYW4mSgGJBHIK4BdMMEiW6Ks4Tqu4IMfnk4WFu
-	nvRwp6hG/lK30ulTd+vxuVJ/VLyhUnHP5VDMkqO87BhqRcfTgMW15nOf7NHG6uChVwhUvKqWavt
-	vZ35T1W5s=
-X-Google-Smtp-Source: AGHT+IEppLjtYdAFjvlkukOC/jwGq/ljjBXjwRnu2q+hPcfFhpmhwybwFTynciwADSRgXkd7A3tpPjJlBLJkmbijUh0=
-X-Received: by 2002:a05:622a:3cd:b0:471:9ece:b13b with SMTP id
- d75a77b69052e-47234b4f60amr2676031cf.1.1740278011571; Sat, 22 Feb 2025
- 18:33:31 -0800 (PST)
+	s=arc-20240116; t=1740278316; c=relaxed/simple;
+	bh=S993aO0lPq9eGzaN4mLxcXDahWBfLMnTB5ZO38BjZ/E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=otr1hywRdCzEFg3l3LT/imD6C9lAqB2iZH4QolHoNO8mFyiik3iMDpvHnJVUKrr3e/k2gIOazUTdzNvQlpaAf5Trf5C04dSi/Gpu2PrrYTOCwUAuuq0nVPf6kuth4kGfB9mmYXTUbVKsx7Rkj6ffr71VtnI70DTPRQsgDJbG88Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JkfZf6Tz; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740278315; x=1771814315;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=S993aO0lPq9eGzaN4mLxcXDahWBfLMnTB5ZO38BjZ/E=;
+  b=JkfZf6TzDaobFGudR1sKzsQ9PEeBhBkz04aI+JGA7zfCV5A9L5oPFcI1
+   Jf+LDt5A/v1HTm/c6UXpI1EzUxAOO1vmU6zKBR8ha87gpaA/QR5sJKkrj
+   nwVSaXu/CKPaDk2eoy3o+mtLvlQ1mdKrGIhz0JZZcn8w+b23Mai4kIyiz
+   k2m51xWFdn2PqLU2RMzd2tOf2g0JvM3pA057MTaM1U4x2JLB1kt5/ZcMy
+   pKJJhNKBGoUYliaZUdwrWTnruA6FXLrEJGoF/ep3S55o+cImUANqc36+i
+   SKt12cJoXqDnDNkPTEeLDHgSG2hB4STfTh8L00QuENe28E6GAmhQJi01W
+   A==;
+X-CSE-ConnectionGUID: KaNc7snVSHKO1ALQsqKX4g==
+X-CSE-MsgGUID: sfmpEGTHRYqUOXBZNawYjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="43892415"
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="43892415"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 18:38:34 -0800
+X-CSE-ConnectionGUID: IoYCu70tQBeguqJI7pdWhw==
+X-CSE-MsgGUID: Q8EjMMJHQBKR9viUiIjpWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="146629535"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 22 Feb 2025 18:38:31 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm1ss-00074d-33;
+	Sun, 23 Feb 2025 02:38:23 +0000
+Date: Sun, 23 Feb 2025 10:38:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wupeng Ma <mawupeng1@huawei.com>, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, david@redhat.com, kasong@tencent.com,
+	ryan.roberts@arm.com, chrisl@kernel.org,
+	huang.ying.caritas@gmail.com, schatzberg.dan@gmail.com,
+	baohua@kernel.org, hanchuanhua@oppo.com, willy@infradead.org,
+	mawupeng1@huawei.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
+ found during do_swap_page
+Message-ID: <202502231018.gCTScklR-lkp@intel.com>
+References: <20250222024617.2790609-1-mawupeng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz> <20250214-slub-percpu-caches-v2-5-88592ee0966a@suse.cz>
-In-Reply-To: <20250214-slub-percpu-caches-v2-5-88592ee0966a@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sat, 22 Feb 2025 18:33:20 -0800
-X-Gm-Features: AWEUYZnP93sWzD1RjU5sHg7X_s4QtECm9lIkbUx8vkBfv4DWYmyuj81qIuEQ_lM
-Message-ID: <CAJuCfpHW02L=uZkfpPz_-L4Em6DoTHQVC36+=c7ymgPHRu2Njg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 05/10] slab: switch percpu sheaves locking to localtry_lock
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@linux.com>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
-	maple-tree@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222024617.2790609-1-mawupeng1@huawei.com>
 
-On Fri, Feb 14, 2025 at 8:27=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> Instead of local_lock_irqsave(), use localtry_trylock() when potential
-> callers include irq context, and localtry_lock() otherwise (such as when
-> we already know the gfp flags allow blocking).
->
-> This should reduce the locking (due to irq disabling/enabling) overhead.
-> Failing to use percpu sheaves in an irq due to preempting an already
-> locked user of sheaves should be rare so it's a favorable tradeoff.
->
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Hi Wupeng,
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+kernel test robot noticed the following build errors:
 
-> ---
->  mm/slub.c | 122 ++++++++++++++++++++++++++++++++++++++------------------=
-------
->  1 file changed, 76 insertions(+), 46 deletions(-)
->
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 40175747212fefb27137309b27571abe8d0966e2..3d7345e7e938d53950ed0d6ab=
-e8eb0e93cf8f5b1 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -450,7 +450,7 @@ struct slab_sheaf {
->  };
->
->  struct slub_percpu_sheaves {
-> -       local_lock_t lock;
-> +       localtry_lock_t lock;
->         struct slab_sheaf *main; /* never NULL when unlocked */
->         struct slab_sheaf *spare; /* empty or full, may be NULL */
->         struct slab_sheaf *rcu_free;
-> @@ -2529,16 +2529,19 @@ static struct slab_sheaf *alloc_full_sheaf(struct=
- kmem_cache *s, gfp_t gfp)
->
->  static void __kmem_cache_free_bulk(struct kmem_cache *s, size_t size, vo=
-id **p);
->
-> -static void sheaf_flush_main(struct kmem_cache *s)
-> +/* returns true if at least partially flushed */
-> +static bool sheaf_flush_main(struct kmem_cache *s)
->  {
->         struct slub_percpu_sheaves *pcs;
->         unsigned int batch, remaining;
->         void *objects[PCS_BATCH_MAX];
->         struct slab_sheaf *sheaf;
-> -       unsigned long flags;
-> +       bool ret =3D false;
->
->  next_batch:
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               return ret;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->         sheaf =3D pcs->main;
->
-> @@ -2549,14 +2552,18 @@ static void sheaf_flush_main(struct kmem_cache *s=
-)
->
->         remaining =3D sheaf->size;
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         __kmem_cache_free_bulk(s, batch, &objects[0]);
->
->         stat_add(s, SHEAF_FLUSH_MAIN, batch);
->
-> +       ret =3D true;
-> +
->         if (remaining)
->                 goto next_batch;
-> +
-> +       return ret;
->  }
->
->  static void sheaf_flush(struct kmem_cache *s, struct slab_sheaf *sheaf)
-> @@ -2593,6 +2600,8 @@ static void rcu_free_sheaf_nobarn(struct rcu_head *=
-head)
->   * Caller needs to make sure migration is disabled in order to fully flu=
-sh
->   * single cpu's sheaves
->   *
-> + * must not be called from an irq
-> + *
->   * flushing operations are rare so let's keep it simple and flush to sla=
-bs
->   * directly, skipping the barn
->   */
-> @@ -2600,9 +2609,8 @@ static void pcs_flush_all(struct kmem_cache *s)
->  {
->         struct slub_percpu_sheaves *pcs;
->         struct slab_sheaf *spare, *rcu_free;
-> -       unsigned long flags;
->
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       localtry_lock(&s->cpu_sheaves->lock);
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         spare =3D pcs->spare;
-> @@ -2611,7 +2619,7 @@ static void pcs_flush_all(struct kmem_cache *s)
->         rcu_free =3D pcs->rcu_free;
->         pcs->rcu_free =3D NULL;
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         if (spare) {
->                 sheaf_flush(s, spare);
-> @@ -4554,10 +4562,11 @@ static __fastpath_inline
->  void *alloc_from_pcs(struct kmem_cache *s, gfp_t gfp)
->  {
->         struct slub_percpu_sheaves *pcs;
-> -       unsigned long flags;
->         void *object;
->
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               return NULL;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         if (unlikely(pcs->main->size =3D=3D 0)) {
-> @@ -4590,7 +4599,7 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gf=
-p)
->                         }
->                 }
->
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->
->                 if (!can_alloc)
->                         return NULL;
-> @@ -4612,7 +4621,11 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t g=
-fp)
->                 if (!full)
->                         return NULL;
->
-> -               local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +               /*
-> +                * we can reach here only when gfpflags_allow_blocking
-> +                * so this must not be an irq
-> +                */
-> +               localtry_lock(&s->cpu_sheaves->lock);
->                 pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->                 /*
-> @@ -4646,7 +4659,7 @@ void *alloc_from_pcs(struct kmem_cache *s, gfp_t gf=
-p)
->  do_alloc:
->         object =3D pcs->main->objects[--pcs->main->size];
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         stat(s, ALLOC_PCS);
->
-> @@ -4658,12 +4671,13 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cach=
-e *s, size_t size, void **p)
->  {
->         struct slub_percpu_sheaves *pcs;
->         struct slab_sheaf *main;
-> -       unsigned long flags;
->         unsigned int allocated =3D 0;
->         unsigned int batch;
->
->  next_batch:
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               return allocated;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         if (unlikely(pcs->main->size =3D=3D 0)) {
-> @@ -4683,7 +4697,7 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache =
-*s, size_t size, void **p)
->                         goto do_alloc;
->                 }
->
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->
->                 /*
->                  * Once full sheaves in barn are depleted, let the bulk
-> @@ -4701,7 +4715,7 @@ unsigned int alloc_from_pcs_bulk(struct kmem_cache =
-*s, size_t size, void **p)
->         main->size -=3D batch;
->         memcpy(p, main->objects + main->size, batch * sizeof(void *));
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         stat_add(s, ALLOC_PCS, batch);
->
-> @@ -5121,13 +5135,14 @@ static void __slab_free(struct kmem_cache *s, str=
-uct slab *slab,
->   * The object is expected to have passed slab_free_hook() already.
->   */
->  static __fastpath_inline
-> -void free_to_pcs(struct kmem_cache *s, void *object)
-> +bool free_to_pcs(struct kmem_cache *s, void *object)
->  {
->         struct slub_percpu_sheaves *pcs;
-> -       unsigned long flags;
->
->  restart:
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               return false;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         if (unlikely(pcs->main->size =3D=3D s->sheaf_capacity)) {
-> @@ -5162,7 +5177,7 @@ void free_to_pcs(struct kmem_cache *s, void *object=
-)
->                         struct slab_sheaf *to_flush =3D pcs->spare;
->
->                         pcs->spare =3D NULL;
-> -                       local_unlock_irqrestore(&s->cpu_sheaves->lock, fl=
-ags);
-> +                       localtry_unlock(&s->cpu_sheaves->lock);
->
->                         sheaf_flush(s, to_flush);
->                         empty =3D to_flush;
-> @@ -5170,17 +5185,27 @@ void free_to_pcs(struct kmem_cache *s, void *obje=
-ct)
->                 }
->
->  alloc_empty:
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->
->                 empty =3D alloc_empty_sheaf(s, GFP_NOWAIT);
->
->                 if (!empty) {
-> -                       sheaf_flush_main(s);
-> -                       goto restart;
-> +                       if (sheaf_flush_main(s))
-> +                               goto restart;
-> +                       else
-> +                               return false;
->                 }
->
->  got_empty:
-> -               local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +               if (!localtry_trylock(&s->cpu_sheaves->lock)) {
-> +                       struct node_barn *barn;
-> +
-> +                       barn =3D get_node(s, numa_mem_id())->barn;
-> +
-> +                       barn_put_empty_sheaf(barn, empty, true);
-> +                       return false;
-> +               }
-> +
->                 pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->                 /*
-> @@ -5209,9 +5234,11 @@ void free_to_pcs(struct kmem_cache *s, void *objec=
-t)
->  do_free:
->         pcs->main->objects[pcs->main->size++] =3D object;
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         stat(s, FREE_PCS);
-> +
-> +       return true;
->  }
->
->  static void __rcu_free_sheaf_prepare(struct kmem_cache *s,
-> @@ -5270,9 +5297,10 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void =
-*obj)
->  {
->         struct slub_percpu_sheaves *pcs;
->         struct slab_sheaf *rcu_sheaf;
-> -       unsigned long flags;
->
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               goto fail;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         if (unlikely(!pcs->rcu_free)) {
-> @@ -5286,16 +5314,16 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void=
- *obj)
->                         goto do_free;
->                 }
->
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->
->                 empty =3D alloc_empty_sheaf(s, GFP_NOWAIT);
->
-> -               if (!empty) {
-> -                       stat(s, FREE_RCU_SHEAF_FAIL);
-> -                       return false;
-> -               }
-> +               if (!empty)
-> +                       goto fail;
-> +
-> +               if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +                       goto fail;
->
-> -               local_lock_irqsave(&s->cpu_sheaves->lock, flags);
->                 pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->                 if (unlikely(pcs->rcu_free))
-> @@ -5311,19 +5339,22 @@ bool __kfree_rcu_sheaf(struct kmem_cache *s, void=
- *obj)
->         rcu_sheaf->objects[rcu_sheaf->size++] =3D obj;
->
->         if (likely(rcu_sheaf->size < s->sheaf_capacity)) {
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->                 stat(s, FREE_RCU_SHEAF);
->                 return true;
->         }
->
->         pcs->rcu_free =3D NULL;
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         call_rcu(&rcu_sheaf->rcu_head, rcu_free_sheaf);
->
->         stat(s, FREE_RCU_SHEAF);
-> -
->         return true;
-> +
-> +fail:
-> +       stat(s, FREE_RCU_SHEAF_FAIL);
-> +       return false;
->  }
->
->  /*
-> @@ -5335,7 +5366,6 @@ static void free_to_pcs_bulk(struct kmem_cache *s, =
-size_t size, void **p)
->  {
->         struct slub_percpu_sheaves *pcs;
->         struct slab_sheaf *main;
-> -       unsigned long flags;
->         unsigned int batch, i =3D 0;
->         bool init;
->
-> @@ -5358,7 +5388,9 @@ static void free_to_pcs_bulk(struct kmem_cache *s, =
-size_t size, void **p)
->         }
->
->  next_batch:
-> -       local_lock_irqsave(&s->cpu_sheaves->lock, flags);
-> +       if (!localtry_trylock(&s->cpu_sheaves->lock))
-> +               goto fallback;
-> +
->         pcs =3D this_cpu_ptr(s->cpu_sheaves);
->
->         if (unlikely(pcs->main->size =3D=3D s->sheaf_capacity)) {
-> @@ -5389,13 +5421,13 @@ static void free_to_pcs_bulk(struct kmem_cache *s=
-, size_t size, void **p)
->                 }
->
->  no_empty:
-> -               local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +               localtry_unlock(&s->cpu_sheaves->lock);
->
->                 /*
->                  * if we depleted all empty sheaves in the barn or there =
-are too
->                  * many full sheaves, free the rest to slab pages
->                  */
-> -
-> +fallback:
->                 __kmem_cache_free_bulk(s, size, p);
->                 return;
->         }
-> @@ -5407,7 +5439,7 @@ static void free_to_pcs_bulk(struct kmem_cache *s, =
-size_t size, void **p)
->         memcpy(main->objects + main->size, p, batch * sizeof(void *));
->         main->size +=3D batch;
->
-> -       local_unlock_irqrestore(&s->cpu_sheaves->lock, flags);
-> +       localtry_unlock(&s->cpu_sheaves->lock);
->
->         stat_add(s, FREE_PCS, batch);
->
-> @@ -5507,9 +5539,7 @@ void slab_free(struct kmem_cache *s, struct slab *s=
-lab, void *object,
->         if (unlikely(!slab_free_hook(s, object, slab_want_init_on_free(s)=
-, false)))
->                 return;
->
-> -       if (s->cpu_sheaves)
-> -               free_to_pcs(s, object);
-> -       else
-> +       if (!s->cpu_sheaves || !free_to_pcs(s, object))
->                 do_slab_free(s, slab, object, object, 1, addr);
->  }
->
-> @@ -6288,7 +6318,7 @@ static int init_percpu_sheaves(struct kmem_cache *s=
-)
->
->                 pcs =3D per_cpu_ptr(s->cpu_sheaves, cpu);
->
-> -               local_lock_init(&pcs->lock);
-> +               localtry_lock_init(&pcs->lock);
->
->                 nid =3D cpu_to_mem(cpu);
->
->
-> --
-> 2.48.1
->
+[auto build test ERROR on akpm-mm/mm-everything]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Wupeng-Ma/mm-swap-Avoid-infinite-loop-if-no-valid-swap-entry-found-during-do_swap_page/20250222-105637
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250222024617.2790609-1-mawupeng1%40huawei.com
+patch subject: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry found during do_swap_page
+config: x86_64-buildonly-randconfig-003-20250223 (https://download.01.org/0day-ci/archive/20250223/202502231018.gCTScklR-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502231018.gCTScklR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231018.gCTScklR-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/smp.h:12,
+                    from include/linux/kernel_stat.h:5,
+                    from mm/memory.c:42:
+   mm/memory.c: In function 'do_swap_page':
+>> mm/memory.c:4404:31: error: implicit declaration of function '_swap_info_get' [-Werror=implicit-function-declaration]
+    4404 |                 if (unlikely(!_swap_info_get(entry)))
+         |                               ^~~~~~~~~~~~~~
+   include/linux/compiler.h:32:55: note: in definition of macro '__branch_check__'
+      32 |                         ______r = __builtin_expect(!!(x), expect);      \
+         |                                                       ^
+   mm/memory.c:4404:21: note: in expansion of macro 'unlikely'
+    4404 |                 if (unlikely(!_swap_info_get(entry)))
+         |                     ^~~~~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/_swap_info_get +4404 mm/memory.c
+
+  4322	
+  4323	/*
+  4324	 * We enter with non-exclusive mmap_lock (to exclude vma changes,
+  4325	 * but allow concurrent faults), and pte mapped but not yet locked.
+  4326	 * We return with pte unmapped and unlocked.
+  4327	 *
+  4328	 * We return with the mmap_lock locked or unlocked in the same cases
+  4329	 * as does filemap_fault().
+  4330	 */
+  4331	vm_fault_t do_swap_page(struct vm_fault *vmf)
+  4332	{
+  4333		struct vm_area_struct *vma = vmf->vma;
+  4334		struct folio *swapcache, *folio = NULL;
+  4335		DECLARE_WAITQUEUE(wait, current);
+  4336		struct page *page;
+  4337		struct swap_info_struct *si = NULL;
+  4338		rmap_t rmap_flags = RMAP_NONE;
+  4339		bool need_clear_cache = false;
+  4340		bool exclusive = false;
+  4341		swp_entry_t entry;
+  4342		pte_t pte;
+  4343		vm_fault_t ret = 0;
+  4344		void *shadow = NULL;
+  4345		int nr_pages;
+  4346		unsigned long page_idx;
+  4347		unsigned long address;
+  4348		pte_t *ptep;
+  4349	
+  4350		if (!pte_unmap_same(vmf))
+  4351			goto out;
+  4352	
+  4353		entry = pte_to_swp_entry(vmf->orig_pte);
+  4354		if (unlikely(non_swap_entry(entry))) {
+  4355			if (is_migration_entry(entry)) {
+  4356				migration_entry_wait(vma->vm_mm, vmf->pmd,
+  4357						     vmf->address);
+  4358			} else if (is_device_exclusive_entry(entry)) {
+  4359				vmf->page = pfn_swap_entry_to_page(entry);
+  4360				ret = remove_device_exclusive_entry(vmf);
+  4361			} else if (is_device_private_entry(entry)) {
+  4362				struct dev_pagemap *pgmap;
+  4363				if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
+  4364					/*
+  4365					 * migrate_to_ram is not yet ready to operate
+  4366					 * under VMA lock.
+  4367					 */
+  4368					vma_end_read(vma);
+  4369					ret = VM_FAULT_RETRY;
+  4370					goto out;
+  4371				}
+  4372	
+  4373				vmf->page = pfn_swap_entry_to_page(entry);
+  4374				vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+  4375						vmf->address, &vmf->ptl);
+  4376				if (unlikely(!vmf->pte ||
+  4377					     !pte_same(ptep_get(vmf->pte),
+  4378								vmf->orig_pte)))
+  4379					goto unlock;
+  4380	
+  4381				/*
+  4382				 * Get a page reference while we know the page can't be
+  4383				 * freed.
+  4384				 */
+  4385				get_page(vmf->page);
+  4386				pte_unmap_unlock(vmf->pte, vmf->ptl);
+  4387				pgmap = page_pgmap(vmf->page);
+  4388				ret = pgmap->ops->migrate_to_ram(vmf);
+  4389				put_page(vmf->page);
+  4390			} else if (is_hwpoison_entry(entry)) {
+  4391				ret = VM_FAULT_HWPOISON;
+  4392			} else if (is_pte_marker_entry(entry)) {
+  4393				ret = handle_pte_marker(vmf);
+  4394			} else {
+  4395				print_bad_pte(vma, vmf->address, vmf->orig_pte, NULL);
+  4396				ret = VM_FAULT_SIGBUS;
+  4397			}
+  4398			goto out;
+  4399		}
+  4400	
+  4401		/* Prevent swapoff from happening to us. */
+  4402		si = get_swap_device(entry);
+  4403		if (unlikely(!si)) {
+> 4404			if (unlikely(!_swap_info_get(entry)))
+  4405				/*
+  4406				 * return VM_FAULT_SIGBUS for invalid swap entry to
+  4407				 * avoid infinite #PF.
+  4408				 */
+  4409				ret = VM_FAULT_SIGBUS;
+  4410			goto out;
+  4411		}
+  4412	
+  4413		folio = swap_cache_get_folio(entry, vma, vmf->address);
+  4414		if (folio)
+  4415			page = folio_file_page(folio, swp_offset(entry));
+  4416		swapcache = folio;
+  4417	
+  4418		if (!folio) {
+  4419			if (data_race(si->flags & SWP_SYNCHRONOUS_IO) &&
+  4420			    __swap_count(entry) == 1) {
+  4421				/* skip swapcache */
+  4422				folio = alloc_swap_folio(vmf);
+  4423				if (folio) {
+  4424					__folio_set_locked(folio);
+  4425					__folio_set_swapbacked(folio);
+  4426	
+  4427					nr_pages = folio_nr_pages(folio);
+  4428					if (folio_test_large(folio))
+  4429						entry.val = ALIGN_DOWN(entry.val, nr_pages);
+  4430					/*
+  4431					 * Prevent parallel swapin from proceeding with
+  4432					 * the cache flag. Otherwise, another thread
+  4433					 * may finish swapin first, free the entry, and
+  4434					 * swapout reusing the same entry. It's
+  4435					 * undetectable as pte_same() returns true due
+  4436					 * to entry reuse.
+  4437					 */
+  4438					if (swapcache_prepare(entry, nr_pages)) {
+  4439						/*
+  4440						 * Relax a bit to prevent rapid
+  4441						 * repeated page faults.
+  4442						 */
+  4443						add_wait_queue(&swapcache_wq, &wait);
+  4444						schedule_timeout_uninterruptible(1);
+  4445						remove_wait_queue(&swapcache_wq, &wait);
+  4446						goto out_page;
+  4447					}
+  4448					need_clear_cache = true;
+  4449	
+  4450					memcg1_swapin(entry, nr_pages);
+  4451	
+  4452					shadow = get_shadow_from_swap_cache(entry);
+  4453					if (shadow)
+  4454						workingset_refault(folio, shadow);
+  4455	
+  4456					folio_add_lru(folio);
+  4457	
+  4458					/* To provide entry to swap_read_folio() */
+  4459					folio->swap = entry;
+  4460					swap_read_folio(folio, NULL);
+  4461					folio->private = NULL;
+  4462				}
+  4463			} else {
+  4464				folio = swapin_readahead(entry, GFP_HIGHUSER_MOVABLE,
+  4465							vmf);
+  4466				swapcache = folio;
+  4467			}
+  4468	
+  4469			if (!folio) {
+  4470				/*
+  4471				 * Back out if somebody else faulted in this pte
+  4472				 * while we released the pte lock.
+  4473				 */
+  4474				vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
+  4475						vmf->address, &vmf->ptl);
+  4476				if (likely(vmf->pte &&
+  4477					   pte_same(ptep_get(vmf->pte), vmf->orig_pte)))
+  4478					ret = VM_FAULT_OOM;
+  4479				goto unlock;
+  4480			}
+  4481	
+  4482			/* Had to read the page from swap area: Major fault */
+  4483			ret = VM_FAULT_MAJOR;
+  4484			count_vm_event(PGMAJFAULT);
+  4485			count_memcg_event_mm(vma->vm_mm, PGMAJFAULT);
+  4486			page = folio_file_page(folio, swp_offset(entry));
+  4487		} else if (PageHWPoison(page)) {
+  4488			/*
+  4489			 * hwpoisoned dirty swapcache pages are kept for killing
+  4490			 * owner processes (which may be unknown at hwpoison time)
+  4491			 */
+  4492			ret = VM_FAULT_HWPOISON;
+  4493			goto out_release;
+  4494		}
+  4495	
+  4496		ret |= folio_lock_or_retry(folio, vmf);
+  4497		if (ret & VM_FAULT_RETRY)
+  4498			goto out_release;
+  4499	
+  4500		if (swapcache) {
+  4501			/*
+  4502			 * Make sure folio_free_swap() or swapoff did not release the
+  4503			 * swapcache from under us.  The page pin, and pte_same test
+  4504			 * below, are not enough to exclude that.  Even if it is still
+  4505			 * swapcache, we need to check that the page's swap has not
+  4506			 * changed.
+  4507			 */
+  4508			if (unlikely(!folio_test_swapcache(folio) ||
+  4509				     page_swap_entry(page).val != entry.val))
+  4510				goto out_page;
+  4511	
+  4512			/*
+  4513			 * KSM sometimes has to copy on read faults, for example, if
+  4514			 * page->index of !PageKSM() pages would be nonlinear inside the
+  4515			 * anon VMA -- PageKSM() is lost on actual swapout.
+  4516			 */
+  4517			folio = ksm_might_need_to_copy(folio, vma, vmf->address);
+  4518			if (unlikely(!folio)) {
+  4519				ret = VM_FAULT_OOM;
+  4520				folio = swapcache;
+  4521				goto out_page;
+  4522			} else if (unlikely(folio == ERR_PTR(-EHWPOISON))) {
+  4523				ret = VM_FAULT_HWPOISON;
+  4524				folio = swapcache;
+  4525				goto out_page;
+  4526			}
+  4527			if (folio != swapcache)
+  4528				page = folio_page(folio, 0);
+  4529	
+  4530			/*
+  4531			 * If we want to map a page that's in the swapcache writable, we
+  4532			 * have to detect via the refcount if we're really the exclusive
+  4533			 * owner. Try removing the extra reference from the local LRU
+  4534			 * caches if required.
+  4535			 */
+  4536			if ((vmf->flags & FAULT_FLAG_WRITE) && folio == swapcache &&
+  4537			    !folio_test_ksm(folio) && !folio_test_lru(folio))
+  4538				lru_add_drain();
+  4539		}
+  4540	
+  4541		folio_throttle_swaprate(folio, GFP_KERNEL);
+  4542	
+  4543		/*
+  4544		 * Back out if somebody else already faulted in this pte.
+  4545		 */
+  4546		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd, vmf->address,
+  4547				&vmf->ptl);
+  4548		if (unlikely(!vmf->pte || !pte_same(ptep_get(vmf->pte), vmf->orig_pte)))
+  4549			goto out_nomap;
+  4550	
+  4551		if (unlikely(!folio_test_uptodate(folio))) {
+  4552			ret = VM_FAULT_SIGBUS;
+  4553			goto out_nomap;
+  4554		}
+  4555	
+  4556		/* allocated large folios for SWP_SYNCHRONOUS_IO */
+  4557		if (folio_test_large(folio) && !folio_test_swapcache(folio)) {
+  4558			unsigned long nr = folio_nr_pages(folio);
+  4559			unsigned long folio_start = ALIGN_DOWN(vmf->address, nr * PAGE_SIZE);
+  4560			unsigned long idx = (vmf->address - folio_start) / PAGE_SIZE;
+  4561			pte_t *folio_ptep = vmf->pte - idx;
+  4562			pte_t folio_pte = ptep_get(folio_ptep);
+  4563	
+  4564			if (!pte_same(folio_pte, pte_move_swp_offset(vmf->orig_pte, -idx)) ||
+  4565			    swap_pte_batch(folio_ptep, nr, folio_pte) != nr)
+  4566				goto out_nomap;
+  4567	
+  4568			page_idx = idx;
+  4569			address = folio_start;
+  4570			ptep = folio_ptep;
+  4571			goto check_folio;
+  4572		}
+  4573	
+  4574		nr_pages = 1;
+  4575		page_idx = 0;
+  4576		address = vmf->address;
+  4577		ptep = vmf->pte;
+  4578		if (folio_test_large(folio) && folio_test_swapcache(folio)) {
+  4579			int nr = folio_nr_pages(folio);
+  4580			unsigned long idx = folio_page_idx(folio, page);
+  4581			unsigned long folio_start = address - idx * PAGE_SIZE;
+  4582			unsigned long folio_end = folio_start + nr * PAGE_SIZE;
+  4583			pte_t *folio_ptep;
+  4584			pte_t folio_pte;
+  4585	
+  4586			if (unlikely(folio_start < max(address & PMD_MASK, vma->vm_start)))
+  4587				goto check_folio;
+  4588			if (unlikely(folio_end > pmd_addr_end(address, vma->vm_end)))
+  4589				goto check_folio;
+  4590	
+  4591			folio_ptep = vmf->pte - idx;
+  4592			folio_pte = ptep_get(folio_ptep);
+  4593			if (!pte_same(folio_pte, pte_move_swp_offset(vmf->orig_pte, -idx)) ||
+  4594			    swap_pte_batch(folio_ptep, nr, folio_pte) != nr)
+  4595				goto check_folio;
+  4596	
+  4597			page_idx = idx;
+  4598			address = folio_start;
+  4599			ptep = folio_ptep;
+  4600			nr_pages = nr;
+  4601			entry = folio->swap;
+  4602			page = &folio->page;
+  4603		}
+  4604	
+  4605	check_folio:
+  4606		/*
+  4607		 * PG_anon_exclusive reuses PG_mappedtodisk for anon pages. A swap pte
+  4608		 * must never point at an anonymous page in the swapcache that is
+  4609		 * PG_anon_exclusive. Sanity check that this holds and especially, that
+  4610		 * no filesystem set PG_mappedtodisk on a page in the swapcache. Sanity
+  4611		 * check after taking the PT lock and making sure that nobody
+  4612		 * concurrently faulted in this page and set PG_anon_exclusive.
+  4613		 */
+  4614		BUG_ON(!folio_test_anon(folio) && folio_test_mappedtodisk(folio));
+  4615		BUG_ON(folio_test_anon(folio) && PageAnonExclusive(page));
+  4616	
+  4617		/*
+  4618		 * Check under PT lock (to protect against concurrent fork() sharing
+  4619		 * the swap entry concurrently) for certainly exclusive pages.
+  4620		 */
+  4621		if (!folio_test_ksm(folio)) {
+  4622			exclusive = pte_swp_exclusive(vmf->orig_pte);
+  4623			if (folio != swapcache) {
+  4624				/*
+  4625				 * We have a fresh page that is not exposed to the
+  4626				 * swapcache -> certainly exclusive.
+  4627				 */
+  4628				exclusive = true;
+  4629			} else if (exclusive && folio_test_writeback(folio) &&
+  4630				  data_race(si->flags & SWP_STABLE_WRITES)) {
+  4631				/*
+  4632				 * This is tricky: not all swap backends support
+  4633				 * concurrent page modifications while under writeback.
+  4634				 *
+  4635				 * So if we stumble over such a page in the swapcache
+  4636				 * we must not set the page exclusive, otherwise we can
+  4637				 * map it writable without further checks and modify it
+  4638				 * while still under writeback.
+  4639				 *
+  4640				 * For these problematic swap backends, simply drop the
+  4641				 * exclusive marker: this is perfectly fine as we start
+  4642				 * writeback only if we fully unmapped the page and
+  4643				 * there are no unexpected references on the page after
+  4644				 * unmapping succeeded. After fully unmapped, no
+  4645				 * further GUP references (FOLL_GET and FOLL_PIN) can
+  4646				 * appear, so dropping the exclusive marker and mapping
+  4647				 * it only R/O is fine.
+  4648				 */
+  4649				exclusive = false;
+  4650			}
+  4651		}
+  4652	
+  4653		/*
+  4654		 * Some architectures may have to restore extra metadata to the page
+  4655		 * when reading from swap. This metadata may be indexed by swap entry
+  4656		 * so this must be called before swap_free().
+  4657		 */
+  4658		arch_swap_restore(folio_swap(entry, folio), folio);
+  4659	
+  4660		/*
+  4661		 * Remove the swap entry and conditionally try to free up the swapcache.
+  4662		 * We're already holding a reference on the page but haven't mapped it
+  4663		 * yet.
+  4664		 */
+  4665		swap_free_nr(entry, nr_pages);
+  4666		if (should_try_to_free_swap(folio, vma, vmf->flags))
+  4667			folio_free_swap(folio);
+  4668	
+  4669		add_mm_counter(vma->vm_mm, MM_ANONPAGES, nr_pages);
+  4670		add_mm_counter(vma->vm_mm, MM_SWAPENTS, -nr_pages);
+  4671		pte = mk_pte(page, vma->vm_page_prot);
+  4672		if (pte_swp_soft_dirty(vmf->orig_pte))
+  4673			pte = pte_mksoft_dirty(pte);
+  4674		if (pte_swp_uffd_wp(vmf->orig_pte))
+  4675			pte = pte_mkuffd_wp(pte);
+  4676	
+  4677		/*
+  4678		 * Same logic as in do_wp_page(); however, optimize for pages that are
+  4679		 * certainly not shared either because we just allocated them without
+  4680		 * exposing them to the swapcache or because the swap entry indicates
+  4681		 * exclusivity.
+  4682		 */
+  4683		if (!folio_test_ksm(folio) &&
+  4684		    (exclusive || folio_ref_count(folio) == 1)) {
+  4685			if ((vma->vm_flags & VM_WRITE) && !userfaultfd_pte_wp(vma, pte) &&
+  4686			    !pte_needs_soft_dirty_wp(vma, pte)) {
+  4687				pte = pte_mkwrite(pte, vma);
+  4688				if (vmf->flags & FAULT_FLAG_WRITE) {
+  4689					pte = pte_mkdirty(pte);
+  4690					vmf->flags &= ~FAULT_FLAG_WRITE;
+  4691				}
+  4692			}
+  4693			rmap_flags |= RMAP_EXCLUSIVE;
+  4694		}
+  4695		folio_ref_add(folio, nr_pages - 1);
+  4696		flush_icache_pages(vma, page, nr_pages);
+  4697		vmf->orig_pte = pte_advance_pfn(pte, page_idx);
+  4698	
+  4699		/* ksm created a completely new copy */
+  4700		if (unlikely(folio != swapcache && swapcache)) {
+  4701			folio_add_new_anon_rmap(folio, vma, address, RMAP_EXCLUSIVE);
+  4702			folio_add_lru_vma(folio, vma);
+  4703		} else if (!folio_test_anon(folio)) {
+  4704			/*
+  4705			 * We currently only expect small !anon folios which are either
+  4706			 * fully exclusive or fully shared, or new allocated large
+  4707			 * folios which are fully exclusive. If we ever get large
+  4708			 * folios within swapcache here, we have to be careful.
+  4709			 */
+  4710			VM_WARN_ON_ONCE(folio_test_large(folio) && folio_test_swapcache(folio));
+  4711			VM_WARN_ON_FOLIO(!folio_test_locked(folio), folio);
+  4712			folio_add_new_anon_rmap(folio, vma, address, rmap_flags);
+  4713		} else {
+  4714			folio_add_anon_rmap_ptes(folio, page, nr_pages, vma, address,
+  4715						rmap_flags);
+  4716		}
+  4717	
+  4718		VM_BUG_ON(!folio_test_anon(folio) ||
+  4719				(pte_write(pte) && !PageAnonExclusive(page)));
+  4720		set_ptes(vma->vm_mm, address, ptep, pte, nr_pages);
+  4721		arch_do_swap_page_nr(vma->vm_mm, vma, address,
+  4722				pte, pte, nr_pages);
+  4723	
+  4724		folio_unlock(folio);
+  4725		if (folio != swapcache && swapcache) {
+  4726			/*
+  4727			 * Hold the lock to avoid the swap entry to be reused
+  4728			 * until we take the PT lock for the pte_same() check
+  4729			 * (to avoid false positives from pte_same). For
+  4730			 * further safety release the lock after the swap_free
+  4731			 * so that the swap count won't change under a
+  4732			 * parallel locked swapcache.
+  4733			 */
+  4734			folio_unlock(swapcache);
+  4735			folio_put(swapcache);
+  4736		}
+  4737	
+  4738		if (vmf->flags & FAULT_FLAG_WRITE) {
+  4739			ret |= do_wp_page(vmf);
+  4740			if (ret & VM_FAULT_ERROR)
+  4741				ret &= VM_FAULT_ERROR;
+  4742			goto out;
+  4743		}
+  4744	
+  4745		/* No need to invalidate - it was non-present before */
+  4746		update_mmu_cache_range(vmf, vma, address, ptep, nr_pages);
+  4747	unlock:
+  4748		if (vmf->pte)
+  4749			pte_unmap_unlock(vmf->pte, vmf->ptl);
+  4750	out:
+  4751		/* Clear the swap cache pin for direct swapin after PTL unlock */
+  4752		if (need_clear_cache) {
+  4753			swapcache_clear(si, entry, nr_pages);
+  4754			if (waitqueue_active(&swapcache_wq))
+  4755				wake_up(&swapcache_wq);
+  4756		}
+  4757		if (si)
+  4758			put_swap_device(si);
+  4759		return ret;
+  4760	out_nomap:
+  4761		if (vmf->pte)
+  4762			pte_unmap_unlock(vmf->pte, vmf->ptl);
+  4763	out_page:
+  4764		folio_unlock(folio);
+  4765	out_release:
+  4766		folio_put(folio);
+  4767		if (folio != swapcache && swapcache) {
+  4768			folio_unlock(swapcache);
+  4769			folio_put(swapcache);
+  4770		}
+  4771		if (need_clear_cache) {
+  4772			swapcache_clear(si, entry, nr_pages);
+  4773			if (waitqueue_active(&swapcache_wq))
+  4774				wake_up(&swapcache_wq);
+  4775		}
+  4776		if (si)
+  4777			put_swap_device(si);
+  4778		return ret;
+  4779	}
+  4780	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
