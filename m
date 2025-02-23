@@ -1,88 +1,61 @@
-Return-Path: <linux-kernel+bounces-527585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B54FCA40CE7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:04:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFDA40CEA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347F83B3EC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B8A3B4F58
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B3C19C542;
-	Sun, 23 Feb 2025 06:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD481C860A;
+	Sun, 23 Feb 2025 06:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="MKTy7aBm"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4770C28F4;
-	Sun, 23 Feb 2025 06:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ivsPA/lQ"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A47A10A3E;
+	Sun, 23 Feb 2025 06:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740290688; cv=none; b=bGz0HzZCGpjIDDnTk5zEMWx5DK8iB0COvlyPxNimeAjPyNG56kera9dn6TYjjsQNzbZrQ7KrDjCVOlLz5WjCzBftgqlu/Wix2KeucV00R8TPpC+lPzj6QuiAKKGzBtCS1C4Ow8pGP+lbZDIr7VqsRSLfOI+6qkCBEFictgS53m4=
+	t=1740291098; cv=none; b=nIeR1MhAL9Yt0R+6iy3lAuAShIfo6GudCWtk2MbE8meMav/6AmH/IiL7r2tVweqqi6tQuAd8zzeLnj64R1dU44hiqCfXrZHLgtqKLhghiVB+lSR/yYgoKKm+9gCBnTmaeso3YL3pF767srl4wtS2UUNMuldhL/CMHmLi0fqPf9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740290688; c=relaxed/simple;
-	bh=n0O1JZZjjleF6676nwLMFsaML3VzH9LfZzFJ/eiegKQ=;
+	s=arc-20240116; t=1740291098; c=relaxed/simple;
+	bh=Jn9Meso2LWjBuECA8Jb9aB5l1UPTW7cHi1W2fgrXJrE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TzlledwPdI/7UfVkJm7X2bWAP18v1N/GP2qnJUO7Ik+se81vZZz6BmnDPvRi1z9Z7QejFf2NiZy7ZPZLDptm2VIu6+ESoTeFzaevukxqddMYQgG8DZ7XMrz2JZJsZ9OUNTYbiFVzHMoKxCnxtJ1zznBdBZBq+yH3HTyHt5/ZpYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=MKTy7aBm; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=3W1TQW4sSxEmiuPUJLAn0b3rBebiDRQeiRiov06/Av8=; b=MKTy7aBmtB7kQBNQV7/Q9qv6er
-	g/xNMQpxPp+ZrND/VH1Uq7EF6dk4MmdcgbwVIpYZm2WEa/rA14FFIYfQ2ouy2ePX1Ddwg4E/frzPz
-	wYxsaafZvZhllGQcbkfgSHFSxQGeGmiOcXzTPtSlBLhEFmg6QO/54OOgLYI0DRWBe46o/xdNiiIn/
-	2cAWDZ0KQx4cJH8s/OJagImw+4TaE7dT2GzkSAlKER7m3rDGpEUcsZHtfrzr4xJAd3Zn6uVuFYce4
-	ScIkQfnKyYP43o7bxZnQB3uMnPSiaZsnjh3imfHFlQ4q18ryEgpppxyToTjMDGHRIQewhWcEff8X/
-	+B3HMwzw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tm56K-000yJc-0D;
-	Sun, 23 Feb 2025 14:04:29 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 23 Feb 2025 14:04:28 +0800
-Date: Sun, 23 Feb 2025 14:04:28 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Barry Song <21cnbao@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
- compress/decompress batching.
-Message-ID: <Z7q6bCF-RjPXSpIx@gondor.apana.org.au>
-References: <Z7dnPh4tPxLO1UEo@google.com>
- <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
- <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
- <lu3j2kr3m2b53ze2covbywh6a7vvrscbkoplwnq4ov24g2cfso@572bdcsobd4a>
- <Z7poTnlv-1DStRZQ@gondor.apana.org.au>
- <u7t7gibspxu3lujdl4hambr72qd6o5u33udbojihngznlyistk@gmyyhwjuiwxc>
- <Z7qNf4NerHrflmfV@gondor.apana.org.au>
- <cxspxz5jeiigd34cl7x3asyx4lowefjpffj3ip4mwpxdwh34e6@xzpqbmlihbcg>
- <Z7qYUCAqh2YFQ908@gondor.apana.org.au>
- <o7qvt25dxoxcxj5ec2tbf5y5nopi4mkiuklo63rnyc7bldxwdm@2l5lkllmaynk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/XzmDOEuDoqnqiL8fjlUr6MDnYrvAQJmyc4yBi7AbeCfiIy5Ub8edEjokf70U9Ch7vIFkNCwiqrYz2H5kxpoH/tvfQ20adp1z+YzOdx2mQim9ilP3Q/ybe2pnqaGjODTBoScq4PN7INi4CnyhcaZJw1AbTqsyLOysrymtlysuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ivsPA/lQ; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=rO+gRo73pxHWZnf3Uevq5TM1eEuO1YJeFmYf2Fpyzak=;
+	b=ivsPA/lQcPO96FCaMKFp2KwNIZiIoIl5AgVI/wN/oiTkk0oAQ3etIpaRpAx34C
+	O9+y0SlDo8OdYTyCll6j+EwqwbCYfDlx//oo5X+n29K25rTXf4QiED5Z4wZACnZ/
+	niNLTK8PP2pykN5p1Xvj5BAR8Sjkp5h7uNN7WOnUbQoFw=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCnSlrXu7pnhEaeCQ--.22694S3;
+	Sun, 23 Feb 2025 14:10:33 +0800 (CST)
+Date: Sun, 23 Feb 2025 14:10:31 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Larisa Grigore <larisa.grigore@oss.nxp.com>
+Cc: Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	s32@nxp.com, clizzi@redhat.com, aruizrui@redhat.com,
+	eballetb@redhat.com
+Subject: Re: [PATCH v2 1/2] arm64: dts: s32g: add the eDMA nodes
+Message-ID: <Z7q711GJZWOp0j+0@dragon>
+References: <20250203080919.1814455-1-larisa.grigore@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,30 +64,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <o7qvt25dxoxcxj5ec2tbf5y5nopi4mkiuklo63rnyc7bldxwdm@2l5lkllmaynk>
+In-Reply-To: <20250203080919.1814455-1-larisa.grigore@oss.nxp.com>
+X-CM-TRANSID:Mc8vCgCnSlrXu7pnhEaeCQ--.22694S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsR6wDUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiERj8ZWe6ksyM4wAAs8
 
-On Sun, Feb 23, 2025 at 01:02:41PM +0900, Sergey Senozhatsky wrote:
->
-> if I understood it correctly.  Which would make it: return 0 on success
-> or -ENOSPC otherwise.  So if crypto API wants consistency and return -ENOSPC
-> for buffer overruns, then for lz4/lz4hc it also becomes binary: either 0 or
-> -ENOSCP.  Current -EINVAL return looks better to me, both for deflate and
-> for lz4/lz4hc.  -ENOSPC is an actionable error code, a user can double the
-> dst_out size and retry compression etc., while in reality it could be some
-> SW/HW issue that is misreported as -ENOSPC.
+On Mon, Feb 03, 2025 at 10:09:19AM +0200, Larisa Grigore wrote:
+> Add the two eDMA nodes in the device tree in order to enable the probing
+> of the S32G2/S32G3 eDMA driver.
+> 
+> Signed-off-by: Larisa Grigore <larisa.grigore@oss.nxp.com>
 
-When you're compressing you're trying to make it smaller.  It's
-always better to not compress something rather than doubling the
-buffer on ENOSPC.
+Applied, thanks!
 
-In any case, no software compression algorithm should ever fail
-for a reason other than ENOSPC.
-
-Hardware offload devices can fail of course.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
