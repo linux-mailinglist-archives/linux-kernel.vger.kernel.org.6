@@ -1,136 +1,157 @@
-Return-Path: <linux-kernel+bounces-527625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24DF4A40D6A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:40:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C2A40D6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:45:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C053B671B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA33189761D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C9C1FCCFA;
-	Sun, 23 Feb 2025 08:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF241FF1BF;
+	Sun, 23 Feb 2025 08:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TFlyGYS/"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ok2I9KKY"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CD01FCCF7
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36527456
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740300039; cv=none; b=D28zIOHVZS02Bc9tbSEwOQksG4UTLCkFne7W9xpIqG+AK9IIENoAt8Kr3z6eynqxQe3pL0KUIee9raI8VOcRn/cOMSyk2hbIjm9awMo1MxCmq3lbGMeWTv2TVhS0SMPg7esK94I7tPLfWehI/MeOwqp7U+BGP0m+bmCo9ekL0G0=
+	t=1740300303; cv=none; b=OwcerEMIpCBskNP/q3Hps1i/v382weJ3HzJRfrTcyu8o79Sw1dQFFAYWy3lTccm1fdedHh6bjshtU6Cx5A7UKrx1I+afGcTN6xdmm/H9n5BJ2Q5jHf5z+O1/a+TY1e/dScXzOaugsaqaAP94jkCo/WujLR8QAli3uCtUYcwtr38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740300039; c=relaxed/simple;
-	bh=VMZP75rhMsZKP1h7w7GGsRJbBi7X8HJDlzKN8uf2Gog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgD9uFnF1Sm9l10HkEw2rWykzhGsGQiGo5d+cpZX3ZiBQgJDo4dzSgCoWJsj955dJpDlYH9YNyGRShtBU2hTr6SrZdBA+bhvp562ySXetYaiEXq/LDzuZpwYLWB3cFkOAj/MzjX1vZEspN60qL4/h8oHMXKgn6jglyspfMnaEec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TFlyGYS/; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-221057b6ac4so64141775ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:40:38 -0800 (PST)
+	s=arc-20240116; t=1740300303; c=relaxed/simple;
+	bh=SZ0T2q3XF4HYP7TyrzVin4FMdnP0hClGKE3eWmTxdnE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DKGECEMYNulkGqvM94tYQpQ2g/mcs382xh70PuJcEnQk1O1MFX7CaMxIb9axc0qm9D9//Nz46Ufdl54SI3pBrcG1R1sQvBIUorFam8RV0OTM90JbVDdXWoUBJhbCXLauyQW9YZkE50hWIBa8NVZqn0mzwd+LhlI0EQFCRlXuG/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ok2I9KKY; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc92215d15so953357a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740300037; x=1740904837; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9gpSGM5f9xtZjGEJveZ4GrzDJH1nRyp6hOrbTNY7Eg=;
-        b=TFlyGYS/cq84tJNGn64sC1f7sOES00p4HxprGHbRt5UM8okRfDV/XbvYyBLP4v6cDN
-         sMz+Uhs2cpC6Zgzcfjx7RYayAKPm4BuVUgZgne5GK+FX23wZmabtYhGrQTwg4LeDTOSJ
-         bt9MTaIfB0fB5a/y/hUT9d66O1gLTVgtg3J9Q=
+        d=bytedance.com; s=google; t=1740300300; x=1740905100; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=oJJTF3HYuaSbL/88LkGxzdFLu+BfzcO92rEBv37Veyg=;
+        b=Ok2I9KKY2WSQlplpLeo2/IdTD4sCe8C0jbIxohBVerKSS7G8yh07OiIHGmBlPKnSal
+         CNX65Kms81JUB7uv4t8ojiPIF9c+J2kxL7Vtq/yc+BbSBo24oirKtdldbnv9in+deHOz
+         DqjP3ch6IqkY2+aQ2Mk4hM5hhe14AaK7mX1lakKiQuxpasT6Po89nRfCHR4mJSjKzCck
+         paJqGjlRM0kriruv3qgyAoMhmPUl1/X/FB0k8VuAdJC1yj/Cfuo4qxzvbcsi7DIJbx70
+         aXCc6gQua3tHrSyrqTH4HWhH8bsvkcC67SXBlO12BNs+DgAjNu8ym8pzZM1CaH8rqk9f
+         qe8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740300037; x=1740904837;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R9gpSGM5f9xtZjGEJveZ4GrzDJH1nRyp6hOrbTNY7Eg=;
-        b=tuMGUOsRc+ljiX4CKWGuGdFB27a9vUh5J1ipndivIu3oxi1Cz42ndYR8dM9cIFgPiS
-         tb+xiT3W0v9XytpJlpbAKLeBTkYf/gbLXU0Sxz/yRLq6/3M5KW9+1OxHKKV9nXD86uT+
-         Jyo+WxeGH8bCgn8l1RyxJ2bPc7wm5aH3zjbkGeoPOuBOAD8qtFKcKtCtDjgX9Rz2NSGq
-         Cur06qahU6VX9x+jnxRUIJ8V8JXMezyGe4LcNjQW0CoymJtFlkQ0HWSfX6X2pXnYmJiV
-         VqRYmBenwQyp4TKGl2s2QKYd0uK35Ym9BKa+k2hUrdBxSJOv2CQ27roQYva1UjZtPeuM
-         qH9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmjuYwpTKzrEDIfCNO2H1frJhr4ogMfVBmoXvx0NZGwTn+QjvfZ119u8n9CgIj64TKeh+fOBqFgZZ0iBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdPG1/WuAaJBsYAmYnCtrWudlBRjH9wdfEkj3UmQKxx50xDbMW
-	3U25p/KVL77dUE9ThSTxSb6mrfWyS5/NGEPAPk1xrQQ+peeRmIeY0KNED64eKA==
-X-Gm-Gg: ASbGncsVZjeQHgkjuB3T7hHJ6rqKQjoYPxjwwSxM04EjQgKokzJmFe2xVSh6ka8IR4K
-	GwzjMmb6rqC2nax2ixy1DJZKzrZNppw931USbkXJ5P9fMiUYRXkXoSyVDdveSLPUpeDf2tP3q9d
-	FqLKRvGwA9Njdju6k/IYkqVgVH34GJ1/N5LXDssayLDfNutHRkqZbDN2S0DufFmTVTuoUKOg1Sp
-	WMFUNdbzd3sOaiP9bqZjVsUl1GpzSj9ZXuCvhY28v8lk8AaF3vkmG3M9/ZjvSx3eu6vrxLUJ5ij
-	D/1Io8bweagWNQ55biY29amn4Gd/MA==
-X-Google-Smtp-Source: AGHT+IHs2bEHHbTZeDzqZuSxzKMbqBVzBNfFwOrRXpSuEs7ai1npp6AoUs79mcwT90M7ZwcPaU4GMQ==
-X-Received: by 2002:a05:6a00:c81:b0:725:9f02:489a with SMTP id d2e1a72fcca58-73426d72880mr13450744b3a.17.1740300037559;
-        Sun, 23 Feb 2025 00:40:37 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:7eae:f032:eb08:bb00])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73266fd6438sm15247420b3a.142.2025.02.23.00.40.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 00:40:37 -0800 (PST)
-Date: Sun, 23 Feb 2025 17:40:31 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitin Gupta <nitingupta910@gmail.com>, 
-	Richard Purdie <rpurdie@openedhand.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>, Dave Rodgman <dave.rodgman@arm.com>
-Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
-Message-ID: <hymyvszwshcvqngjlomeyltmpghx6gges76muaz23a6cit5oe2@eas2xjgfynnu>
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
+        d=1e100.net; s=20230601; t=1740300300; x=1740905100;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oJJTF3HYuaSbL/88LkGxzdFLu+BfzcO92rEBv37Veyg=;
+        b=d7Yq4H8PgZom7vD+5BmL7ghs9OiPb5jwrbU6dqviuUIAaZkMnoTdUfaKCTphYz5jZp
+         oIc0Jv4LcEL/4gU5q3GSieL1eMqUucreJVqNk7MQmteqyt90PSljCPkeYwkxD7jZ6R3w
+         DVYgy1SHKeNQ3MBWQXvNpjlDlBxuzq4ay/ePNly3Mik3h+Nqn0JccFADgOrMlzaML7gr
+         CgGPVWlOPCj7jtNcpG8RCZqHkXxeWaBPldxiaRtMXdWw7xgKVwgjYEZ0Ha0DHs7vIJsq
+         M2BD5gHc4+GGjY4HIpUg2H5MYQpA6DWmQbhEnUF250dpe8NCi56wB5SQ5PYX9UKolXBl
+         732Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWu/Jxwnnk0I/feqylzaaUSjWAL+fy7NDWANPCIXSkF++Ocjj0CRR7D9XmQ7O3Dycv51WWHv2+nb2gChiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmqfHHxyct0RPDdBjKqyWhCYhMNyDfXBZymxWd15Qyxpl/7f9K
+	Y0/g4LeoPkjFFrhKdvOuNkihARhyBpA4NEBtD/8nxY2Mn9UJpR8R5JAx318vOOQ=
+X-Gm-Gg: ASbGncvkfk5lZnNUmXmdwPMqX6/UeczYB7s2GmmV5PiTZXoMxqj2UVo9c7pwMSIF2RC
+	AnIu4jOoP97WAaaBrXJpI5Q4mK+zL38Z8Ck53g/LeXPEEMBUzDoNbNr3zU/EtzdwYgMY42conKc
+	sBuZBSUpDf9j9il2gAqNlzMMvekEzUOM/e6CEXo/YyN/nS+8EVTwq0l3Xx8Z9NY3HJKQU6afQ7y
+	9KX31t7bQHsBnrESLXGzLN32hr7GKk4byI35PbMeoZsKb9jC+JWEn8ieIJ2ZUmUi9giKbyPyWsE
+	eUH57RDjPO508y9BdQQ5pVz1aE7LVd2rbQdfPMU7IhniFA0XRK/mmpG5MfolNojTDwyam+FzPqz
+	+ugnU5RuOpnzByQ==
+X-Google-Smtp-Source: AGHT+IETX0ESoUIAgtzt1KCCNBxjuoR/U//Uk3J5qXSI+DLh2497upcZ2d6dyrwQTH19/4XOyyyhKg==
+X-Received: by 2002:a17:903:294e:b0:216:42fd:79d8 with SMTP id d9443c01a7336-2219ffd8076mr60802665ad.12.1740300299881;
+        Sun, 23 Feb 2025 00:44:59 -0800 (PST)
+Received: from [10.200.58.71] (151.240.142.34.bc.googleusercontent.com. [34.142.240.151])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d7a540aasm158706295ad.245.2025.02.23.00.44.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Feb 2025 00:44:59 -0800 (PST)
+Message-ID: <9d9d7432-9a5d-4216-ac53-a0f333a35d8f@bytedance.com>
+Date: Sun, 23 Feb 2025 16:44:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Re: [PATCH 2/2] sched/fair: Fix premature check of
+ WAKEUP_PREEMPTION
+Content-Language: en-US
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Josh Don <joshdon@google.com>, Tianchen Ding <dtcccc@linux.alibaba.com>,
+ "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
+ <20250221111226.64455-3-wuyun.abel@bytedance.com>
+ <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
+ <6097164a-aa99-4869-b666-9dc7018c1f96@bytedance.com>
+ <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
+From: Abel Wu <wuyun.abel@bytedance.com>
+In-Reply-To: <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On (25/02/23 14:55), Herbert Xu wrote:
-[..]
->  		} else if (m_off <= M3_MAX_OFFSET) {
->  			m_off -= 1;
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			if (m_len <= M3_MAX_LEN)
->  				*op++ = (M3_MARKER | (m_len - 2));
->  			else {
-[..]
->  		} else {
->  			m_off -= 0x4000;
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			if (m_len <= M4_MAX_LEN)
->  				*op++ = (M4_MARKER | ((m_off >> 11) & 8)
->  						| (m_len - 2));
+Hi Madadi,
 
-Made me wonder if HAVE_OP() in these two cases should have been
-under if, but it covers both if and else branches, so it's all
-right.
+On 2/23/25 2:16 AM, Madadi Vineeth Reddy Wrote:
+> On 21/02/25 21:27, Abel Wu wrote:
+>> On 2/21/25 7:49 PM, Vincent Guittot Wrote:
+>>> On Fri, 21 Feb 2025 at 12:12, Abel Wu <wuyun.abel@bytedance.com> wrote:
+>>>>
+>>>> Idle tasks are by definition preempted by non-idle tasks whether feat
+>>>> WAKEUP_PREEMPTION is enabled or not. This isn't true any longer since
+>>>
+>>> I don't think it's true, only "sched_idle never preempts others" is
+>>> always true but sched_feat(WAKEUP_PREEMPTION) is mainly there for
+>>> debug purpose so if WAKEUP_PREEMPTION is false then nobody preempts
+>>> others at wakeup, idle, batch or normal
+>>
+>> Hi Vincent, thanks for your comment!
+>>
+>> The SCHED_IDLE "definition" of being preempted by non-idle tasks comes
+>> from commit 6bc912b71b6f ("sched: SCHED_OTHER vs SCHED_IDLE isolation")
+>> which said:
+>>
+>>      - no SCHED_IDLE buddies
+>>      - never let SCHED_IDLE preempt on wakeup
+>>      - always preempt SCHED_IDLE on wakeup
+>>      - limit SLEEPER fairness for SCHED_IDLE
+>>
+>> and that commit let it be preempted before checking WAKEUP_PREEMPTION.
+>> The rules were introduced in 2009, and to the best of my knowledge there
+>> seemed no behavior change ever since. Please correct me if I missed
+>> anything.
+> 
+> As Vincent mentioned, WAKEUP_PREEMPTION is primarily for debugging. Maybe
+> it would help to document that SCHED_IDLE tasks are not preempted by non-idle
+> tasks when WAKEUP_PREEMPTION is disabled. Otherwise, the intent of having no
+> preemptions for debugging would be lost.
+> 
+> Thoughts?
 
-[..]
-> +++ b/lib/lzo/lzo1x_decompress_safe.c
-> @@ -21,7 +21,6 @@
->  #include "lzodefs.h"
->  
->  #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
-> -#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
->  #define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
->  #define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
+I am not sure I really understand the purpose of this debug feature.
+If it wants to provide a way to check whether a performance degrade of
+certain workload is due to overscheduling or not, then do we really
+care about performance of SCHED_IDLE workloads and why?
 
-A bit of a pity that NEED_OP() with "goto output_overrun" is only
-for decompression.  It looks equally relevant to the compression
-path.  I'm not insisting on doing something similar in compression
-tho.
+IMHO preempting SCHED_IDLE before WAKEUP_PREEMPTION is to preserve the
+IDLE semantics trying to behave like real idle task. It is somehow
+weird to me that we treat sched-idle cpus as idle while don't let the
+non-idle tasks run immediately on sched-idle cpus on debug case.
 
-Overall this look right, and kudos to Herbert for doing this.
+Thanks,
+	Abel
 
-I did some testing (using my usual zram test scripts, but modified
-zram to allocate only one physical page for comp buf and to check
-for overrun ret status).  Haven't noticed any problems.
-
-FWIW
-Reviewed-and-tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
