@@ -1,320 +1,480 @@
-Return-Path: <linux-kernel+bounces-527564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA0F5A40CA7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:47:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E05A40CA8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:54:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27D407A6A00
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:46:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610D4169065
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C531946AA;
-	Sun, 23 Feb 2025 03:47:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536531C84B2;
+	Sun, 23 Feb 2025 03:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J5fMxjjo"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E56EEA8
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 03:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7CD1A7AFD
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 03:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740282426; cv=none; b=bIiSFCX92XkN9LvqBQSMiarCIOE/d5bPNETr1Wdl+uHLEZ1XzrCNV92+A1c1diiiTUtyDcb1MszqOmFTQ6WyuVapv0nDUXE4NoL9vopvPjwN8tsoA/jEbDp2requNM65nBvm7zx7iK9dfw8alzKyt2HxOsbefwCi6mF0oIk9D2w=
+	t=1740282871; cv=none; b=NtSgf0R/9ecJFd7QBt6FHE3PgvM/K4JfhWq1espRsVCeFAAwtxRbIA2VVO5YRDt/HUY1HyqI0x7AiwcS/RDidhglA0yliP2SSq0LRsutceWFHgWE+Zgm3CDeosXtgDSbMc11T8Q1xhwXFoUcgUa1shHhKj4OV+uRbOx5uvfSgcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740282426; c=relaxed/simple;
-	bh=2EdI0KCQqF6g/OFk03vtubaIGea39PksXCqOPqLqk4c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ugTy5lAtEHCqDpaEKbWW720aTwrb6JbzR/LYy3piEOwhCRP/s5r6yaz3UV39EcAPB3y40WbY4apu8onJC5/QnD1Nn8w6HRyoMV7+LV/BxvrBIF2cRfLDHQ6JkrjaGrfNp9a/yYH3UeAmUyVS89wC3dmL+mXR0Ha1clx5KCfCju4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d2ab0fbab2so24316895ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 19:47:03 -0800 (PST)
+	s=arc-20240116; t=1740282871; c=relaxed/simple;
+	bh=ike0CfGi5urRmFh3JV9PFznqmWVdj47h1rGQ0qcsCJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8pt+4tj/UCzzFg7tVfEVD7xJZYg72VDs1n0I+nPR+M1a3oTXDPaKdMjS27GYDQZnIwBpSzfNlsN2m892ZrtbhACl3YjiJhfXgWRoMupn0h+yN2BsMHWkVN7f4uBlGdE3mzQp9rLOgsBX7mkBggmGRMpJDgwFB3wWeSZBwgVU2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J5fMxjjo; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-471fbfe8b89so304371cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 19:54:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740282868; x=1740887668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B0nSO1c3fd2Ur1OxULz13YnVJpfc0yq8AOQyEMdJoK4=;
+        b=J5fMxjjo0uc1n9TvrtMvYMGdoPx1IPa5dxWYk61XqujS8g/Y03jAXYEvXIDB++kFNa
+         TiCDhMTHM4986RqnWbxEE2eLKj58PCU+kaIu/NHUNY5vJOgJKHd9QKq6UQ2nJ7+diEZP
+         neD5pvpqwewx0o5TBYs1RbrGLCTNrF54/cQegqLPYpz81UPLkRno3UqtbNOXXUkl4MJE
+         sPr3lctQk0eQ4NSQlDf6j9Po1dqcPZWXvTZ0RI4TQSHCuhU8qN/GUZ/LHxhFCHn//TBh
+         slwijnZydquDW6nmSMD47Ick+rnfeUxXRUIKriyVhfmdw8TohXRwHhqkG3rxSpE5JiuU
+         TccA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740282423; x=1740887223;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RTmkIvPw29XEaR2h/FAlLV+AdeSbeFhGWiCSFb8tdoc=;
-        b=xBGX3Irym1JlrzZIr7jkDY5BYnLC90PT7xXqvRpC3QILYeR4xAdJrjTIZduZJGCv70
-         PjByWnBuo9kE51rAU930UMbCx435nwByTVJRv3XqGy9vvmTZqp+qy+favbgGBSY8hvkI
-         fLSGZk2xdcy16LNNERJCiYAa5VUfE3ejXdn58he/5e6jrGnSm1P7QV+ka6zDH7TGvmZ9
-         /l3S+DOQql5xazl1o0hHOHvytscUHOpnIudl1BU7fgGItwmhI6vyAgAVtCCktJl+HbAM
-         4EXGJLRMCTqSLicya6pFV4V6EZT1TOT6QFURmXPajwCRzTZv6Gt2vusCQwnUeZNwZbIw
-         Kb4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsW3PQkIr2uM1ZTBrJkufhYbnpZQcUQ14hb2Af98EzfWUgfogeVKaC7CbxSX/j/XTBT41+5n4MhPoocSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKzZ+Npzlm3cgKV8jhpLWAgnVt+1QV97YAmCeEOl+Szv4ddSPK
-	hd346z5uNyCLtbsDI1a9NFBCKQZ8vRDBfFgkup1RVTEdfM4ERJ0fnWZk9LrawcgODs57ScY63c3
-	XKjzqQ65HoHa7X+/wDDWKtRWDZUok/81RIg86iSOb83XqpT8c0EmnWRY=
-X-Google-Smtp-Source: AGHT+IFd5AjIpJUI5BLR9cdJvhcSulMjU+wJFFcpjjkZqvldaLJDdPVXAwLdvq5WfDrA21+wV8QqAZb1DFNBuJzHc9sE7YXJMrfK
+        d=1e100.net; s=20230601; t=1740282868; x=1740887668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B0nSO1c3fd2Ur1OxULz13YnVJpfc0yq8AOQyEMdJoK4=;
+        b=OtUlg3rxzcFgiUQaXXxINot0TFa7/g0yFGF958SLHoe8eK2bos63DiUnXX3JiFwOD0
+         wpMyDrEFqSDg5TcEU0C/K1ClDU15efdZTvm1x7BiGsupLPZfnPnXODmDvc8FFyUZdWg6
+         af5hVTKroYcshAPdNYK+IutOUajU5zhKXV+2SEYZfdu2es9k4ZbuFzm5+60l71G1pISp
+         jQJfY0i8JExO9RT6Ss8c1m2fp3/nPMF1f5th9HENXASJ/TIi7QbRtuJg8qCpqe3t5mFg
+         X7QJ2ERXghPrixRaNmE+WGeqdC5EYwfjfqa3DFisfQJEWdEVQ2hIh0UL2cKVoeLx34Hd
+         oz3w==
+X-Forwarded-Encrypted: i=1; AJvYcCU48F3de4twi9KXz8NpMd9NF5hTwDpTp6Kte1FN86uXUqQPg5L4/eKIIR5CWHpbwVPpulNIlC5uXvtUcNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAWoeLkqYUHk4a0FkKQB8u4Cki+OYODmzwacLcXAnNhCnmDJju
+	3GJwUNvYHDr0b6WGX7xHU1OSIJcrQIzeJUVSs3MVabOf69LQl5oTcXaqxC6pB95exErB/s0tM8o
+	Q7hVNe7ZO3OVue3z9LfJaKzpAqNnyd5hWY/dY
+X-Gm-Gg: ASbGncsId6BQABUrO8GynJUgRWdiCl6GoSJ9e8VA6pz64tbgkUsTMrmyviPb2AyMzZv
+	2LZHGOsWWMDAcRdxjfc6wdJgqFp7ls10J3Isie/6TJy5E7r2j4tRdQlHG7K1tCMbeHBv4pw5Xyo
+	wdq0oSy+s=
+X-Google-Smtp-Source: AGHT+IHCvJLsK6BH1IIT3R+ZUJXiZdlmR5iea+Se/wuqlM+1bRMx3iydASbGDGvT0dMZePrd1j4z9L+7A9Um7FBSS8M=
+X-Received: by 2002:a05:622a:2c3:b0:467:8416:d99e with SMTP id
+ d75a77b69052e-47234ccbea7mr2852941cf.21.1740282867599; Sat, 22 Feb 2025
+ 19:54:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2413:b0:3d0:ca2:156d with SMTP id
- e9e14a558f8ab-3d2caf04813mr87527015ab.14.1740282423044; Sat, 22 Feb 2025
- 19:47:03 -0800 (PST)
-Date: Sat, 22 Feb 2025 19:47:03 -0800
-In-Reply-To: <20250223025417.2617-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67ba9a37.050a0220.bbfd1.000b.GAE@google.com>
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-From: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz> <20250214-slub-percpu-caches-v2-6-88592ee0966a@suse.cz>
+In-Reply-To: <20250214-slub-percpu-caches-v2-6-88592ee0966a@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Sat, 22 Feb 2025 19:54:16 -0800
+X-Gm-Features: AWEUYZkbYKX9QYk3tUuMLicF1BLkdly-1ypdQcA3Vjgwc1PDjcQUVaRf-l4aB_A
+Message-ID: <CAJuCfpEBqfhaCQnZFKFkNRhXe0z1k0ZBTDw5BXr=Zu9_s0TfkQ@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 06/10] slab: sheaf prefilling for guaranteed allocations
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org, 
+	maple-tree@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Feb 14, 2025 at 8:27=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> Add functions for efficient guaranteed allocations e.g. in a critical
+> section that cannot sleep, when the exact number of allocations is not
+> known beforehand, but an upper limit can be calculated.
+>
+> kmem_cache_prefill_sheaf() returns a sheaf containing at least given
+> number of objects.
+>
+> kmem_cache_alloc_from_sheaf() will allocate an object from the sheaf
+> and is guaranteed not to fail until depleted.
+>
+> kmem_cache_return_sheaf() is for giving the sheaf back to the slab
+> allocator after the critical section. This will also attempt to refill
+> it to cache's sheaf capacity for better efficiency of sheaves handling,
+> but it's not stricly necessary to succeed.
+>
+> kmem_cache_refill_sheaf() can be used to refill a previously obtained
+> sheaf to requested size. If the current size is sufficient, it does
+> nothing. If the requested size exceeds cache's sheaf_capacity and the
+> sheaf's current capacity, the sheaf will be replaced with a new one,
+> hence the indirect pointer parameter.
+>
+> kmem_cache_sheaf_size() can be used to query the current size.
+>
+> The implementation supports requesting sizes that exceed cache's
+> sheaf_capacity, but it is not efficient - such sheaves are allocated
+> fresh in kmem_cache_prefill_sheaf() and flushed and freed immediately by
+> kmem_cache_return_sheaf(). kmem_cache_refill_sheaf() might be expecially
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in steam_input_close
+s/expecially/especially
 
-==================================================================
-BUG: KASAN: slab-use-after-free in steam_input_close+0x13b/0x150 drivers/hid/hid-steam.c:621
-Read of size 8 at addr ffff888135dc7130 by task acpid/2828
+> ineffective when replacing a sheaf with a new one of a larger capacity.
+> It is therefore better to size cache's sheaf_capacity accordingly.
 
-CPU: 0 UID: 0 PID: 2828 Comm: acpid Not tainted 6.14.0-rc3-syzkaller-00293-g5cf80612d3f7-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0xc3/0x670 mm/kasan/report.c:521
- kasan_report+0xd9/0x110 mm/kasan/report.c:634
- steam_input_close+0x13b/0x150 drivers/hid/hid-steam.c:621
- input_close_device+0x21f/0x290 drivers/input/input.c:654
- evdev_close_device drivers/input/evdev.c:405 [inline]
- evdev_release+0x350/0x400 drivers/input/evdev.c:447
- __fput+0x3ff/0xb70 fs/file_table.c:464
- __fput_sync+0xa1/0xc0 fs/file_table.c:550
- __do_sys_close fs/open.c:1580 [inline]
- __se_sys_close fs/open.c:1565 [inline]
- __x64_sys_close+0x86/0x100 fs/open.c:1565
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f31902de0a8
-Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff1432be88 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00007fff1432c118 RCX: 00007f31902de0a8
-RDX: 0000000000000000 RSI: 000000000000001e RDI: 000000000000000a
-RBP: 000000000000000a R08: 0000000000000008 R09: 00007fff1432bff8
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff1432bff8
-R13: 0000000000000040 R14: 00007fff1432c0f8 R15: 00007fff1432bff8
- </TASK>
+If support for sizes exceeding sheaf_capacity adds much complexity
+with no performance benefits, I think it would be ok not to support
+them at all. Users know the capacity of a particular kmem_cache, so
+they can use this API only when their needs are within sheaf_capacity,
+otherwise either size the sheaf appropriately or use slab bulk
+allocation.
 
-Allocated by task 2803:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x8f/0xa0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4294 [inline]
- __kmalloc_node_track_caller_noprof+0x20b/0x4c0 mm/slub.c:4313
- alloc_dr drivers/base/devres.c:119 [inline]
- devm_kmalloc+0xa5/0x260 drivers/base/devres.c:843
- devm_kzalloc include/linux/device.h:328 [inline]
- steam_probe+0x132/0x1060 drivers/hid/hid-steam.c:1240
- __hid_device_probe drivers/hid/hid-core.c:2713 [inline]
- hid_device_probe+0x349/0x700 drivers/hid/hid-core.c:2750
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x114b/0x1a70 drivers/base/core.c:3665
- hid_add_device+0x374/0xa60 drivers/hid/hid-core.c:2896
- usbhid_probe+0xd32/0x1400 drivers/hid/usbhid/hid-core.c:1431
- usb_probe_interface+0x300/0x9c0 drivers/usb/core/driver.c:396
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x114b/0x1a70 drivers/base/core.c:3665
- usb_set_configuration+0x10cb/0x1c50 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0xb1/0x110 drivers/usb/core/generic.c:250
- usb_probe_device+0xec/0x3e0 drivers/usb/core/driver.c:291
- call_driver_probe drivers/base/dd.c:579 [inline]
- really_probe+0x23e/0xa90 drivers/base/dd.c:658
- __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
- driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
- __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
- bus_for_each_drv+0x157/0x1e0 drivers/base/bus.c:462
- __device_attach+0x1e8/0x4b0 drivers/base/dd.c:1030
- bus_probe_device+0x17f/0x1c0 drivers/base/bus.c:537
- device_add+0x114b/0x1a70 drivers/base/core.c:3665
- usb_new_device+0xd09/0x1a20 drivers/usb/core/hub.c:2663
- hub_port_connect drivers/usb/core/hub.c:5533 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5673 [inline]
- port_event drivers/usb/core/hub.c:5833 [inline]
- hub_event+0x2e58/0x4f40 drivers/usb/core/hub.c:5915
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
- kthread+0x3af/0x750 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-Freed by task 2803:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x37/0x50 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2353 [inline]
- slab_free mm/slub.c:4609 [inline]
- kfree+0x294/0x480 mm/slub.c:4757
- release_nodes+0x11e/0x240 drivers/base/devres.c:506
- devres_release_group+0x1be/0x2a0 drivers/base/devres.c:689
- hid_device_remove+0x107/0x260 drivers/hid/hid-core.c:2774
- device_remove+0xc8/0x170 drivers/base/dd.c:567
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
- device_del+0x396/0x9f0 drivers/base/core.c:3854
- hid_remove_device drivers/hid/hid-core.c:2953 [inline]
- hid_destroy_device+0x19c/0x240 drivers/hid/hid-core.c:2975
- usbhid_disconnect+0xa0/0xe0 drivers/hid/usbhid/hid-core.c:1458
- usb_unbind_interface+0x1e2/0x960 drivers/usb/core/driver.c:458
- device_remove drivers/base/dd.c:569 [inline]
- device_remove+0x122/0x170 drivers/base/dd.c:561
- __device_release_driver drivers/base/dd.c:1273 [inline]
- device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
- bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
- device_del+0x396/0x9f0 drivers/base/core.c:3854
- usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
- usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2316
- hub_port_connect drivers/usb/core/hub.c:5373 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5673 [inline]
- port_event drivers/usb/core/hub.c:5833 [inline]
- hub_event+0x1bed/0x4f40 drivers/usb/core/hub.c:5915
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
- kthread+0x3af/0x750 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+Reviewed-by: Suren Baghdasaryan <surenb@google.com>
 
-Last potentially related work creation:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0x9b/0xb0 mm/kasan/generic.c:548
- insert_work+0x36/0x230 kernel/workqueue.c:2183
- __queue_work+0x97e/0x1080 kernel/workqueue.c:2339
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2390
- hid_hw_close+0xaf/0xe0 drivers/hid/hid-core.c:2415
- drop_ref+0x186/0x390 drivers/hid/hidraw.c:360
- hidraw_release+0x3e6/0x560 drivers/hid/hidraw.c:384
- __fput+0x3ff/0xb70 fs/file_table.c:464
- task_work_run+0x14e/0x250 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x24e/0x260 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ---
+>  include/linux/slab.h |  16 ++++
+>  mm/slub.c            | 227 +++++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 243 insertions(+)
+>
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 0e1b25228c77140d05b5b4433c9d7923de36ec05..dd01b67982e856b1b02f4f0e6=
+fc557726e7f02a8 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -829,6 +829,22 @@ void *kmem_cache_alloc_node_noprof(struct kmem_cache=
+ *s, gfp_t flags,
+>                                    int node) __assume_slab_alignment __ma=
+lloc;
+>  #define kmem_cache_alloc_node(...)     alloc_hooks(kmem_cache_alloc_node=
+_noprof(__VA_ARGS__))
+>
+> +struct slab_sheaf *
+> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int s=
+ize);
+> +
+> +int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +               struct slab_sheaf **sheafp, unsigned int size);
+> +
+> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +                                      struct slab_sheaf *sheaf);
+> +
+> +void *kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *cachep, gfp_=
+t gfp,
+> +                       struct slab_sheaf *sheaf) __assume_slab_alignment=
+ __malloc;
+> +#define kmem_cache_alloc_from_sheaf(...)       \
+> +                       alloc_hooks(kmem_cache_alloc_from_sheaf_noprof(__=
+VA_ARGS__))
+> +
+> +unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf);
+> +
+>  /*
+>   * These macros allow declaring a kmem_buckets * parameter alongside siz=
+e, which
+>   * can be compiled out with CONFIG_SLAB_BUCKETS=3Dn so that a large numb=
+er of call
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 3d7345e7e938d53950ed0d6abe8eb0e93cf8f5b1..c1df7cf22267f28f743404531=
+bef921e25fac086 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -443,6 +443,8 @@ struct slab_sheaf {
+>         union {
+>                 struct rcu_head rcu_head;
+>                 struct list_head barn_list;
+> +               /* only used for prefilled sheafs */
+> +               unsigned int capacity;
+>         };
+>         struct kmem_cache *cache;
+>         unsigned int size;
+> @@ -2735,6 +2737,30 @@ static int barn_put_full_sheaf(struct node_barn *b=
+arn, struct slab_sheaf *sheaf,
+>         return ret;
+>  }
+>
+> +static struct slab_sheaf *barn_get_full_or_empty_sheaf(struct node_barn =
+*barn)
+> +{
+> +       struct slab_sheaf *sheaf =3D NULL;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&barn->lock, flags);
+> +
+> +       if (barn->nr_full) {
+> +               sheaf =3D list_first_entry(&barn->sheaves_full, struct sl=
+ab_sheaf,
+> +                                       barn_list);
+> +               list_del(&sheaf->barn_list);
+> +               barn->nr_full--;
+> +       } else if (barn->nr_empty) {
+> +               sheaf =3D list_first_entry(&barn->sheaves_empty,
+> +                                        struct slab_sheaf, barn_list);
+> +               list_del(&sheaf->barn_list);
+> +               barn->nr_empty--;
+> +       }
+> +
+> +       spin_unlock_irqrestore(&barn->lock, flags);
+> +
+> +       return sheaf;
+> +}
+> +
+>  /*
+>   * If a full sheaf is available, return it and put the supplied empty on=
+e to
+>   * barn. We ignore the limit on empty sheaves as the number of sheaves d=
+oesn't
+> @@ -4831,6 +4857,207 @@ void *kmem_cache_alloc_node_noprof(struct kmem_ca=
+che *s, gfp_t gfpflags, int nod
+>  }
+>  EXPORT_SYMBOL(kmem_cache_alloc_node_noprof);
+>
+> +
+> +/*
+> + * returns a sheaf that has least the requested size
+> + * when prefilling is needed, do so with given gfp flags
+> + *
+> + * return NULL if sheaf allocation or prefilling failed
+> + */
+> +struct slab_sheaf *
+> +kmem_cache_prefill_sheaf(struct kmem_cache *s, gfp_t gfp, unsigned int s=
+ize)
+> +{
+> +       struct slub_percpu_sheaves *pcs;
+> +       struct slab_sheaf *sheaf =3D NULL;
+> +
+> +       if (unlikely(size > s->sheaf_capacity)) {
+> +               sheaf =3D kzalloc(struct_size(sheaf, objects, size), gfp)=
+;
+> +               if (!sheaf)
+> +                       return NULL;
+> +
+> +               sheaf->cache =3D s;
+> +               sheaf->capacity =3D size;
 
-Second to last potentially related work creation:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0x9b/0xb0 mm/kasan/generic.c:548
- insert_work+0x36/0x230 kernel/workqueue.c:2183
- __queue_work+0x97e/0x1080 kernel/workqueue.c:2339
- queue_work_on+0x11a/0x140 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- schedule_work include/linux/workqueue.h:723 [inline]
- steam_client_ll_open+0xab/0xf0 drivers/hid/hid-steam.c:1145
- hid_hw_open+0xe2/0x170 drivers/hid/hid-core.c:2392
- hidraw_open+0x274/0x7e0 drivers/hid/hidraw.c:308
- chrdev_open+0x237/0x6a0 fs/char_dev.c:414
- do_dentry_open+0x6cb/0x1390 fs/open.c:956
- vfs_open+0x82/0x3f0 fs/open.c:1086
- do_open fs/namei.c:3830 [inline]
- path_openat+0x1e88/0x2d80 fs/namei.c:3989
- do_filp_open+0x20c/0x470 fs/namei.c:4016
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1428
- do_sys_open fs/open.c:1443 [inline]
- __do_sys_openat fs/open.c:1459 [inline]
- __se_sys_openat fs/open.c:1454 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1454
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+After reviewing the code I would advocate that we support only shaves
+of s->sheaf_capacity, unless we have a real usecase requiring
+sheaf->capacity !=3D s->sheaf_capacity.
 
-The buggy address belongs to the object at ffff888135dc7000
- which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 304 bytes inside of
- freed 1024-byte region [ffff888135dc7000, ffff888135dc7400)
+> +
+> +               if (!__kmem_cache_alloc_bulk(s, gfp, size,
+> +                                            &sheaf->objects[0])) {
+> +                       kfree(sheaf);
+> +                       return NULL;
+> +               }
+> +
+> +               sheaf->size =3D size;
+> +
+> +               return sheaf;
+> +       }
+> +
+> +       localtry_lock(&s->cpu_sheaves->lock);
+> +       pcs =3D this_cpu_ptr(s->cpu_sheaves);
+> +
+> +       if (pcs->spare) {
+> +               sheaf =3D pcs->spare;
+> +               pcs->spare =3D NULL;
+> +       }
+> +
+> +       if (!sheaf)
+> +               sheaf =3D barn_get_full_or_empty_sheaf(pcs->barn);
+> +
+> +       localtry_unlock(&s->cpu_sheaves->lock);
+> +
+> +       if (!sheaf) {
+> +               sheaf =3D alloc_empty_sheaf(s, gfp);
+> +       }
+> +
+> +       if (sheaf && sheaf->size < size) {
+> +               if (refill_sheaf(s, sheaf, gfp)) {
+> +                       sheaf_flush(s, sheaf);
+> +                       free_empty_sheaf(s, sheaf);
+> +                       sheaf =3D NULL;
+> +               }
+> +       }
+> +
+> +       if (sheaf)
+> +               sheaf->capacity =3D s->sheaf_capacity;
+> +
+> +       return sheaf;
+> +}
+> +
+> +/*
+> + * Use this to return a sheaf obtained by kmem_cache_prefill_sheaf()
+> + * It tries to refill the sheaf back to the cache's sheaf_capacity
+> + * to avoid handling partially full sheaves.
+> + *
+> + * If the refill fails because gfp is e.g. GFP_NOWAIT, the sheaf is
+> + * instead dissolved
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x135dc0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x200000000000040(head|node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000040 ffff888100041dc0 ffffea000460f200 dead000000000002
-raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 0200000000000040 ffff888100041dc0 ffffea000460f200 dead000000000002
-head: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
-head: 0200000000000003 ffffea0004d77001 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 3037, tgid 3037 (syz-executor), ts 50506887177, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0xe76/0x2b90 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x21c/0x2290 mm/page_alloc.c:4739
- alloc_pages_mpol+0xe7/0x410 mm/mempolicy.c:2270
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab mm/slub.c:2587 [inline]
- new_slab+0x23d/0x330 mm/slub.c:2640
- ___slab_alloc+0xc41/0x1670 mm/slub.c:3826
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- __do_kmalloc_node mm/slub.c:4293 [inline]
- __kmalloc_noprof+0x154/0x4d0 mm/slub.c:4306
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- ip6t_alloc_initial_table+0x6c/0x7b0 net/ipv6/netfilter/ip6_tables.c:40
- ip6table_filter_table_init+0x1c/0xa0 net/ipv6/netfilter/ip6table_filter.c:41
- xt_find_table_lock+0x2dc/0x520 net/netfilter/x_tables.c:1260
- xt_request_find_table_lock+0x28/0xf0 net/netfilter/x_tables.c:1285
- get_info+0x13d/0x490 net/ipv6/netfilter/ip6_tables.c:979
- do_ip6t_get_ctl+0x176/0x10b0 net/ipv6/netfilter/ip6_tables.c:1668
- nf_getsockopt+0x79/0xe0 net/netfilter/nf_sockopt.c:116
- ipv6_getsockopt+0x1f7/0x280 net/ipv6/ipv6_sockglue.c:1493
-page_owner free stack trace missing
+Refilling the sheaf here assumes that in the future we are more likely
+to allocate than to free objects or shrink the slab. If the reverse is
+true then it would make sense to flush the sheaf and add it as an
+empty one into the barn. The fact that flushing can't fail would be
+another advantage... We don't know the future but should we be
+predicting a more costly case?
 
-Memory state around the buggy address:
- ffff888135dc7000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888135dc7080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888135dc7100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                     ^
- ffff888135dc7180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888135dc7200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+> + */
+> +void kmem_cache_return_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +                            struct slab_sheaf *sheaf)
+> +{
+> +       struct slub_percpu_sheaves *pcs;
+> +       bool refill =3D false;
+> +       struct node_barn *barn;
+> +
+> +       if (unlikely(sheaf->capacity !=3D s->sheaf_capacity)) {
+> +               sheaf_flush(s, sheaf);
+> +               kfree(sheaf);
+> +               return;
+> +       }
+> +
+> +       localtry_lock(&s->cpu_sheaves->lock);
+> +       pcs =3D this_cpu_ptr(s->cpu_sheaves);
+> +
+> +       if (!pcs->spare) {
+> +               pcs->spare =3D sheaf;
+> +               sheaf =3D NULL;
+> +       } else if (pcs->barn->nr_full >=3D MAX_FULL_SHEAVES) {
+> +               /* racy check */
+> +               barn =3D pcs->barn;
+> +               refill =3D true;
+> +       }
+> +
+> +       localtry_unlock(&s->cpu_sheaves->lock);
+> +
+> +       if (!sheaf)
+> +               return;
+> +
+> +       /*
+> +        * if the barn is full of full sheaves or we fail to refill the s=
+heaf,
+> +        * simply flush and free it
+> +        */
+> +       if (!refill || refill_sheaf(s, sheaf, gfp)) {
+> +               sheaf_flush(s, sheaf);
+> +               free_empty_sheaf(s, sheaf);
+> +               return;
+> +       }
+> +
+> +       /* we racily determined the sheaf would fit, so now force it */
+> +       barn_put_full_sheaf(barn, sheaf, true);
+> +}
+> +
+> +/*
+> + * refill a sheaf previously returned by kmem_cache_prefill_sheaf to at =
+least
+> + * the given size
+> + *
+> + * the sheaf might be replaced by a new one when requesting more than
+> + * s->sheaf_capacity objects if such replacement is necessary, but the r=
+efill
+> + * fails (with -ENOMEM), the existing sheaf is left intact
+> + */
+> +int kmem_cache_refill_sheaf(struct kmem_cache *s, gfp_t gfp,
+> +                           struct slab_sheaf **sheafp, unsigned int size=
+)
+> +{
+> +       struct slab_sheaf *sheaf;
+> +
+> +       /*
+> +        * TODO: do we want to support *sheaf =3D=3D NULL to be equivalen=
+t of
+> +        * kmem_cache_prefill_sheaf() ?
+> +        */
+> +       if (!sheafp || !(*sheafp))
+> +               return -EINVAL;
+> +
+> +       sheaf =3D *sheafp;
+> +       if (sheaf->size >=3D size)
+> +               return 0;
+> +
+> +       if (likely(sheaf->capacity >=3D size)) {
+> +               if (likely(sheaf->capacity =3D=3D s->sheaf_capacity))
+> +                       return refill_sheaf(s, sheaf, gfp);
+> +
+> +               if (!__kmem_cache_alloc_bulk(s, gfp, sheaf->capacity - sh=
+eaf->size,
+> +                                            &sheaf->objects[sheaf->size]=
+)) {
+> +                       return -ENOMEM;
+> +               }
+> +               sheaf->size =3D sheaf->capacity;
+> +
+> +               return 0;
+> +       }
+> +
+> +       /*
+> +        * We had a regular sized sheaf and need an oversize one, or we h=
+ad an
+> +        * oversize one already but need a larger one now.
+> +        * This should be a very rare path so let's not complicate it.
+> +        */
+> +       sheaf =3D kmem_cache_prefill_sheaf(s, gfp, size);
 
+WIth all the above I think you always end up refilling up to
+sheaf->capacity. Not sure if we should mention that in the comment for
+this function because your statement about refilling to at least the
+given size is still correct.
 
-Tested on:
-
-commit:         5cf80612 Merge tag 'x86-urgent-2025-02-22' of git://gi..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=14d87498580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=28127f006c1c31ee
-dashboard link: https://syzkaller.appspot.com/bug?extid=0154da2d403396b2bd59
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14ea5fdf980000
-
+> +       if (!sheaf)
+> +               return -ENOMEM;
+> +
+> +       kmem_cache_return_sheaf(s, gfp, *sheafp);
+> +       *sheafp =3D sheaf;
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Allocate from a sheaf obtained by kmem_cache_prefill_sheaf()
+> + *
+> + * Guaranteed not to fail as many allocations as was the requested size.
+> + * After the sheaf is emptied, it fails - no fallback to the slab cache =
+itself.
+> + *
+> + * The gfp parameter is meant only to specify __GFP_ZERO or __GFP_ACCOUN=
+T
+> + * memcg charging is forced over limit if necessary, to avoid failure.
+> + */
+> +void *
+> +kmem_cache_alloc_from_sheaf_noprof(struct kmem_cache *s, gfp_t gfp,
+> +                                  struct slab_sheaf *sheaf)
+> +{
+> +       void *ret =3D NULL;
+> +       bool init;
+> +
+> +       if (sheaf->size =3D=3D 0)
+> +               goto out;
+> +
+> +       ret =3D sheaf->objects[--sheaf->size];
+> +
+> +       init =3D slab_want_init_on_alloc(gfp, s);
+> +
+> +       /* add __GFP_NOFAIL to force successful memcg charging */
+> +       slab_post_alloc_hook(s, NULL, gfp | __GFP_NOFAIL, 1, &ret, init, =
+s->object_size);
+> +out:
+> +       trace_kmem_cache_alloc(_RET_IP_, ret, s, gfp, NUMA_NO_NODE);
+> +
+> +       return ret;
+> +}
+> +
+> +unsigned int kmem_cache_sheaf_size(struct slab_sheaf *sheaf)
+> +{
+> +       return sheaf->size;
+> +}
+>  /*
+>   * To avoid unnecessary overhead, we pass through large allocation reque=
+sts
+>   * directly to the page allocator. We use __GFP_COMP, because we will ne=
+ed to
+>
+> --
+> 2.48.1
+>
 
