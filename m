@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-527952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5809EA4119E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:30:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8926CA411A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:31:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D543B51C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:29:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C93B188E51A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3129023F421;
-	Sun, 23 Feb 2025 20:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF29523CF08;
+	Sun, 23 Feb 2025 20:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EMu3xoiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="z3zJpBih"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A6623F27B;
-	Sun, 23 Feb 2025 20:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E3A76C61;
+	Sun, 23 Feb 2025 20:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740342546; cv=none; b=PPIqhKQ9wy/00Q8g63NplijlLRKkc15Hcqawnm/8y8a1dubMFYVeIK6DZCpCW87Id4Ki8orWFFknYMvqhSSXu3qGUN0KLQTOvnpTCHen0wXl4Jfz4doM7HMwRuaoj/R94VDXBcbBRHIaXgkpclt+PF8iNnnMEF3hVDhDe3TRvvA=
+	t=1740342680; cv=none; b=o5aBPUQquZU94bWM0LuquipoO7e8OgTpzdAfGE9iGrsyv2XA0MD9q+dVhYpHfQziwezIyZBJEIoV6XqplFZnisfH96ucj3AqsUJn3m78i9TNUErGd9maCbtqPIfoWY6bP0WLPAacFR9BF8YJHb/29RndnTwER1JMLPBFd4OkvaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740342546; c=relaxed/simple;
-	bh=gcpP4QAXBjl72D8XNOpucie4qYX2x+ECVvClPZgS6JU=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=tEahlqRbfY0AB6Ue7f3ODE0L+sQfH5XTTpTEixYzvUII0oEMfhjN2bjsk3MgpXQt+W5Dw92DGCPWojcWgY/woKCLeGwo3GzCpLDoZY7INFxISMLJZcV5tmnjpUJ+yJH92IN3BOP8KBKYuKu6iZorHDRfX4QB4mL7PU8p3wO66FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EMu3xoiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2E73C4CEEC;
-	Sun, 23 Feb 2025 20:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740342545;
-	bh=gcpP4QAXBjl72D8XNOpucie4qYX2x+ECVvClPZgS6JU=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=EMu3xoiLvSz5FypZw6ueucOe00lB8KncS2CE02T5OjC8mVvXz6a8uxzU1unXSzQ+U
-	 uOiJMnp/2wqBkyPTTGrrYAg05DpHCDSI0jlyEgAMSJ1w0XcnbmaxTLEe+j11iaU5wR
-	 2rmKsjnNtsUxIDTD5YAck8JTsHpQiRuVv/hWlludlLkmVzDn2nKgLWG9/DWvgk+XCt
-	 N45rI6zpJXVcAcMnHmrRFJSrll0R/2l0Q6UBGdukOauKZn2TBjIhAm2YHTu5Hm8C36
-	 PH07XFD6CIyPS3+MAeAtilUvkoXM/DqkqdhIHKdgIfPEiOoKxcJNgSsT5ByYUYg4k5
-	 C+DfEaIfSLWbA==
-Date: Sun, 23 Feb 2025 14:29:04 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740342680; c=relaxed/simple;
+	bh=2SRBcMj9JIMeyK5vmbaEgk30kVYy8n/NU4yA3uMiuEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UpY5rgRDQx7MSp8TD1uJY2YfTn81FhsKP8FsDLBoMGHV1tI2FWF8fJzIP49SeFJc0vzY1kotIOHZboD86jzLIUDPTubcOH9tuU8dBLlG5ivGgskSN32D11d8DEowzuTZJMZM/osSuHtZxaXCfiHVVtAbV7Bn7/QSqq2IJsHD5kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=z3zJpBih; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=/fYo2p8XtniofyUH/iizmuKJSZUYgRd5Be3P1t8VfvM=; b=z3zJpBihYZCDmS2PL9GNWwHwkl
+	0FCmVbABqzaF/MQufl+Idg5yK0s5EdfRr7zgP5JJZyy94cOMZwGJl4ma08xBWetgIueBMDCnoNw/M
+	MlQl2CGF7ohnOG7N0KGwYIoia+G1vm5KtSJo99xy/NXx0vRVHdqP7niuSGpeR8+dBh4KXLOj5f0Yc
+	ik441t8DBYFJO3eN9cSG1kIvlrbRY+BC+nf54uO6cAeEFuKIPPHFeywe6U4A/FF+Vtv4PLbO6pSCu
+	wcWxgiwsvLLkQfjTh7xSvLW4DKZH2XbKJBx6utQzJxGUHaCDzwUMA7GIBzYRcriummORbTX60XETx
+	f89fspZQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59580)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tmId0-0003xe-0u;
+	Sun, 23 Feb 2025 20:31:06 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tmIcv-0004HQ-27;
+	Sun, 23 Feb 2025 20:31:01 +0000
+Date: Sun, 23 Feb 2025 20:31:01 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+ <87r03otsmm.fsf@miraculix.mork.no>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Robin Murphy <robin.murphy@arm.com>, Konrad Dybcio <konradybcio@kernel.org>, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Sean Paul <sean@poorly.run>, 
- Stephen Boyd <sboyd@kernel.org>, Joerg Roedel <joro@8bytes.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, Simona Vetter <simona@ffwll.ch>, 
- Maxime Ripard <mripard@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Linus Walleij <linus.walleij@linaro.org>, Lee Jones <lee@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, linux-gpio@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, linux-clk@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Rob Clark <robdclark@gmail.com>, Will Deacon <will@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
- Stephan Gerhold <stephan@gerhold.net>, iommu@lists.linux.dev, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
-In-Reply-To: <20250223-msm8937-v2-7-b99722363ed3@mainlining.org>
-References: <20250223-msm8937-v2-0-b99722363ed3@mainlining.org>
- <20250223-msm8937-v2-7-b99722363ed3@mainlining.org>
-Message-Id: <174034253945.156304.15112460035182362046.robh@kernel.org>
-Subject: Re: [PATCH v2 7/8] dt-bindings: arm: qcom: Add Xiaomi Redmi 3S
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87r03otsmm.fsf@miraculix.mork.no>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
+On Sun, Feb 23, 2025 at 07:37:05PM +0100, Bj�rn Mork wrote:
+> As for Russel's comments regarding atomic reads, I'm hoping for the
+> pragmatic approach and allow all possible features over SMBus. It's not
+> like we have the option of using i2c on a host which only supports
+> SMBus.  My experience is that both hwmon and phy access works pretty
+> well with SMBus byte accesses.
 
-On Sun, 23 Feb 2025 19:57:52 +0100, Barnabás Czémán wrote:
-> Document Xiaomi Redmi 3S (land).
-> Add qcom,msm8937 for msm-id, board-id allow-list.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
+The pragmatic approach is to avoid using things that are unsafe (and
+thus unreliable.) As I said, disabling hwmon makes sense because you
+don't want to read the 16-bit values non-atomically and end up with
+scrambled readings that then trigger alarms because they've exceeded
+the thresholds.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Merely proving that "oh look it works because I can read stuff"
+doesn't address my point.
 
-yamllint warnings/errors:
+SMBus being used is as bad as all those crappy SFP modules out there
+that don't conform to the SFP MSA but claim they do. It's just yet
+another hardware designer cocking the design up in a way that makes
+SFPs unreliable. Unfortunately, there's not much that we can do to
+influence that, but not publishing stuff that's ultimately unreliable
+helps to make the issue known.
 
-dtschema/dtc warnings/errors:
+So, not only do I think that hwmon should be disabled if using SMBus,
+but I also think that the kernel should print a warning that SMBus is
+being used and therefore e.g. copper modules will be unreliable. We
+don't know how the various firmwares in various microprocessors that
+convert I2C to MDIO will behave when faced with SMBus transfers.
 
+All in all, I'm not happy with this, and I do wish hardware designers
+would get a clue.
 
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250223-msm8937-v2-7-b99722363ed3@mainlining.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
