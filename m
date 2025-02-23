@@ -1,160 +1,143 @@
-Return-Path: <linux-kernel+bounces-527594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8F48A40CF8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:28:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43576A40CFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:39:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE08C1884F2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:28:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2195B17ACC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE71DD0F6;
-	Sun, 23 Feb 2025 06:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E641DB13E;
+	Sun, 23 Feb 2025 06:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSP9OXe0"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LDtaXut0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF2813C81B;
-	Sun, 23 Feb 2025 06:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EF4156F41;
+	Sun, 23 Feb 2025 06:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740292096; cv=none; b=OmxUB6VAjqmIhQSITreCXUTc5FDH7txvS4wBZl5K3PI9MwzHEWEbkW+4+cieQx5iElwvSGO+NRkbcuHWgfNojZyAFpzX1Mr8GTvZOkTkcVEiXw53nwYBuMbFGQxTGp039agBpcQQgBWXkyoVik/HbQyc/JlTPI8xLra380hQdGk=
+	t=1740292758; cv=none; b=SSEIPxBO9wsPCkHq8BgQbC+5/yoPqfo1jHfhT6aGdXmBS67Nk/mXy1C9jfFWxikO4ZzXeB0QInB4AVsqd5JVmLbC4StS7r685d95j8nYPTlAqu2Dm/hIjwsgGQvkBM9k+4aEYDBRWRXprZPZtxemkZ1A59SY4OtK0pyGSE9/vk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740292096; c=relaxed/simple;
-	bh=xMenmQOXZeusaB2wAk1sFb3rrJm7D9hxPzbSjCDRiX0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OsGWaU93OCnTRQP/ReyksuEK4AX15520KrupLBUnCIsSSg3uVwjUl5718ubupgQs0Oxwe9Jt8pb7k0xB/0X8c6New1/9n+EKe7GomQH+nJuM0lIBC5VvUNhwNf3TNnwzPxvqTRdwToHwI5tohVZFeleP4Iuiab2v8hVsp4/3Bcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LSP9OXe0; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c8cf98bbso77506865ad.1;
-        Sat, 22 Feb 2025 22:28:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740292094; x=1740896894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Z50XpjZEy8SN1i3++1YEiQp8KHLYIK68Kyf7nn6t1w=;
-        b=LSP9OXe04DLNau81yWY5V1/8NT+DbtCievhEgkleUjJqhzyjH1iIyIjJstQXiVQQ2Q
-         27tfdFXJpTTrTo+XHlOCp/Q919b6iwKy9Z8Iz0CykgGPi8K52QxKYwY74srXPELlvB80
-         C2Hlh4U9mnMGuwcIgwMgHQ3sjUmyMWBmPD1xsd1oxgl7QsVIKdS7FjIpCfJW60uHnOQk
-         zciiZRXwXIA2ojCfRugePzYzT2FtLiVc/AflIk8M6IUcNwMYkbUIWad0HNkqij4YKmu3
-         j1EXHiNkuJqIEjQ8LcZZ+jaXHETnloFa5gDbsc3zVpTqZylIOEwxvfXRu++DNyoufrEB
-         fBkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740292094; x=1740896894;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Z50XpjZEy8SN1i3++1YEiQp8KHLYIK68Kyf7nn6t1w=;
-        b=GpFL0XmEYDqQmX7Fh++CyXsAbihAYJ2Ey268BRmWvUwUpRTtPYqAvEIg5uquIEWVRH
-         n8gmxwN+UyTwRZl/6K/wiFeYzLWWBNEQPN5AFybd3QT6oL6WmtgyTFzCQ4ls323goi9k
-         whl/VBSkq+wfGpcWPRIdVSSEqhxYYfe58ef42Od220OEZDnom9t92d09keq09faliOr4
-         +mjwxfZkwwMFtY/6U3asCZBkdUSx4HYT5EMpgPdX2Lo9G3Qz06VZsszNsQPJwE8PPenf
-         9duRTv80Jc2Ic2YqSHNc25JJuQwHoi2ghQmtNHaMO//XFoS+h8tYt9bDZiqwOZHTYSx7
-         D0rA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqHpuFDZ0fmxIhRmvMp5Le3T/xND65q6WBYfwh5sDissNwTxSFrSADWmqJrMV0LccmzQNS67M0NF3/tGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRitxMdGXIRhg5dTouFM1H5ybP44s41g9d8EOFpZkKoqBXSu9a
-	84f6oMrHJJTSv/PC9SGuf9pLDW1IehNvmdUNzTIHdSf1foM7TQjPROW0kwzj2Y8=
-X-Gm-Gg: ASbGnculmHXYNp6F+tCnzimy0fos290SCzzTVMc0JnUG/T4oXWcVnJ5g/s9oBtvemOT
-	d2COU76SSASiS3/UKUfwwV2Sh0/ZzpJWh8/hH6rLE9KI8+Mm7q5Pat8qK19dJsvk/RQC/TBLyOu
-	GRjjRGuoC9p44t0y704FJSXtx4iwPvWRfMjzjMrSbSR0b9/xAkKplw7VqOms16rKjA8VawJfqXa
-	MFkA8ehBECq9C84O/OHwSh6nqiqaC8fJ0K0P6juO1/GvEa/YjTsYyjxVpX3Zt0flYpv6UVSb7Y8
-	aMdwtz2koQuNQYp/dQ6asqhwHFPmQ8AZLGopTUEsEvva86c0kX0=
-X-Google-Smtp-Source: AGHT+IHckbejzyjx5+RLDqT6zfJmvmrq5p1M/D47jZFVL70rwbbhadQxp1Z4pVDLigM0MuhS3f9fbQ==
-X-Received: by 2002:a05:6a00:847:b0:72d:9cbc:730d with SMTP id d2e1a72fcca58-73426cee82dmr13524379b3a.11.1740292093959;
-        Sat, 22 Feb 2025 22:28:13 -0800 (PST)
-Received: from localhost.localdomain ([39.144.244.105])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732521b82b3sm16693128b3a.92.2025.02.22.22.28.06
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sat, 22 Feb 2025 22:28:13 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	jpoimboe@kernel.org,
-	peterz@infradead.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH v2 bpf-next 3/3] selftests/bpf: Add selftest for attaching fexit to __noreturn functions
-Date: Sun, 23 Feb 2025 14:27:35 +0800
-Message-Id: <20250223062735.3341-4-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
-In-Reply-To: <20250223062735.3341-1-laoar.shao@gmail.com>
-References: <20250223062735.3341-1-laoar.shao@gmail.com>
+	s=arc-20240116; t=1740292758; c=relaxed/simple;
+	bh=I+4KPvRzypPtuDrJMCOOp4HSPrPDgHBgGBkD6P6VHUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2iJvnF9zyU3zdz9GfiFACvgl5zs28oGBf//ULYS7Q8kMHLE2Wp+Ha3MIHpTpnkVsQiaJYC/IFsxFVVgJVOLXRsg+gbAJuFelhEqrxL+D75fpvxTBzI/Y0DrsSp4USy/yrE4tpD5aHkLcZcJl5F1gsb/lCkEA3ITDvxNKw/K804=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LDtaXut0; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740292757; x=1771828757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I+4KPvRzypPtuDrJMCOOp4HSPrPDgHBgGBkD6P6VHUI=;
+  b=LDtaXut0yFZzr0DFoGMduGECsxn21PFszWURTI4IMCiPngIzlHJqL2qm
+   2c91xkuH0orN7la+sUWHwYwjdDS+maFbKNy54IeR79X0SUlT9EKyeuddI
+   o2sVIPTgodYHv66oKxQssGKDsMHtD1+LiZF6MsFxU+koqxYXSjhnapEuf
+   /V2F5r1RhbYaJj3lRnYliuqUrMev5iUviumhPc2pfgwR9T7drtsCUZS4C
+   pRuxxbRerpIlBzqqRFKvA3praAYyHVsHVX26lzZXh/GJ4hUBeKeWjevl0
+   A0YC+Vg5dIUePbNHqJtMxojh1E6udOML/j7m6lBgLWQH78MTfmADd8u8z
+   w==;
+X-CSE-ConnectionGUID: dH928nDoSxOqM4521yTauQ==
+X-CSE-MsgGUID: deh/3TVlRTCiiYkV3TUraQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="44849615"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="44849615"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 22:39:16 -0800
+X-CSE-ConnectionGUID: 5uG0uvraSIuqsYe9IW/NcQ==
+X-CSE-MsgGUID: ia23rpyKQ7SEVYI3PsLXiw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="115719579"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 22 Feb 2025 22:39:11 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm5ds-0007Al-2M;
+	Sun, 23 Feb 2025 06:39:08 +0000
+Date: Sun, 23 Feb 2025 14:38:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 08/13] net: phy: phy_caps: Introduce
+ link_caps_valid
+Message-ID: <202502231409.QTfXTqrD-lkp@intel.com>
+References: <20250222142727.894124-9-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222142727.894124-9-maxime.chevallier@bootlin.com>
 
-The reuslt:
+Hi Maxime,
 
-  $ tools/testing/selftests/bpf/test_progs --name=fexit_noreturns
-  #99/1    fexit_noreturns/noreturns:OK
-  #99      fexit_noreturns:OK
-  Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- .../selftests/bpf/prog_tests/fexit_noreturns.c    |  9 +++++++++
- .../testing/selftests/bpf/progs/fexit_noreturns.c | 15 +++++++++++++++
- 2 files changed, 24 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
- create mode 100644 tools/testing/selftests/bpf/progs/fexit_noreturns.c
+[auto build test WARNING on net-next/main]
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c b/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
-new file mode 100644
-index 000000000000..568d3aa48a78
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/fexit_noreturns.c
-@@ -0,0 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include "fexit_noreturns.skel.h"
-+
-+void test_fexit_noreturns(void)
-+{
-+	RUN_TESTS(fexit_noreturns);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/fexit_noreturns.c b/tools/testing/selftests/bpf/progs/fexit_noreturns.c
-new file mode 100644
-index 000000000000..a8d25b21f7c2
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/fexit_noreturns.c
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+SEC("fexit/do_exit")
-+__failure __msg("Attaching fexit to __noreturn functions is rejected.")
-+int BPF_PROG(noreturns)
-+{
-+	return 0;
-+}
+url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-Chevallier/net-phy-Extract-the-speed-duplex-to-linkmode-conversion-from-phylink/20250222-223310
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20250222142727.894124-9-maxime.chevallier%40bootlin.com
+patch subject: [PATCH net-next 08/13] net: phy: phy_caps: Introduce link_caps_valid
+config: x86_64-buildonly-randconfig-004-20250223 (https://download.01.org/0day-ci/archive/20250223/202502231409.QTfXTqrD-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502231409.QTfXTqrD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231409.QTfXTqrD-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'speed' not described in 'phy_caps_valid'
+>> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'duplex' not described in 'phy_caps_valid'
+>> drivers/net/phy/phy_caps.c:152: warning: Function parameter or struct member 'linkmodes' not described in 'phy_caps_valid'
+
+
+vim +152 drivers/net/phy/phy_caps.c
+
+   147	
+   148	/**
+   149	 * phy_caps_valid() - Validate a linkmodes set agains given speed and duplex
+   150	 */
+   151	bool phy_caps_valid(int speed, int duplex, const unsigned long *linkmodes)
+ > 152	{
+   153		int capa = speed_duplex_to_capa(speed, duplex);
+   154	
+   155		if (capa < 0)
+   156			return false;
+   157	
+   158		return linkmode_intersects(link_caps[capa].linkmodes, linkmodes);
+   159	}
+   160	
+
 -- 
-2.43.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
