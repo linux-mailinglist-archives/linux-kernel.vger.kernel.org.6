@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-527763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAB5DA40F33
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:13:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 968DEA40F37
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9661884170
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27DA1888E98
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E772080C3;
-	Sun, 23 Feb 2025 14:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D322080E1;
+	Sun, 23 Feb 2025 14:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W6qFzTEM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hk382ROu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D056F8460;
-	Sun, 23 Feb 2025 14:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB878460;
+	Sun, 23 Feb 2025 14:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740320012; cv=none; b=g79uUoLBYfA7e2Ha5XbJBajI3o7GVoyl8LDM1wfDz14m6BRsl9MnShAEDEFAn3Cu9p0xJ1FhK2SMCzhMaBfunyTxba3A3H8hrS3bbmgh76X8ZztZfh132pBhYjxJYxpOv/ZSx7qIVnPj2eZ/DBhCeU/iJgQfUXFD00fxslXQnzA=
+	t=1740320086; cv=none; b=gV/ly6NzzOrh2+dyZtuMLoDTQeYrXLBNKeDcE2cvkC+WCmcEG+qm+75aEVZwCWRzNnCDFp+0BAiMuS1Hd7Dd7gpvIS6UqDje4XjqEr/RmJ+VU2pMffo6lkXbvYPQ8BjoFXyLDA8J6B6jSkKzyZhDRGacEod8rqLDv0JwsdHVuW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740320012; c=relaxed/simple;
-	bh=V2s0le4R3f3g8VVf2gJOIbxBct0113kzg5vxClVLWS8=;
+	s=arc-20240116; t=1740320086; c=relaxed/simple;
+	bh=HgHLy86KRNyFbsaYavBMwLup/kMpfRHr2v8NrXSfXGQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c0gnyY20hAs3bFHF9tlh0Zsu8NP66HBiLEkChB4mD3fZvHoEKY/vPBNLU0YK4d/TmzeFERmmP199mwBEUiXdwFDqZ1z/S3pdvLot7rXp8u8YlbUDVcr23jKQH2SHJP3m+Okup3EWkKGvam5yErAWcxF5AL1ZmKFjlu9WxrodSVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W6qFzTEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D7AC4CEDD;
-	Sun, 23 Feb 2025 14:13:28 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=a8rpnf9+oDbABGzQL7K2mE8wxdfhaGeAet6cXY+idEX0LSgSFmFl3qXHeQrSA+/d5Sd/rF35ZDArqFpeeo4WoeknoHBtzhJDMLb6Fpe1rubO4eXKHLvBi2IWa3S6HpDoRD668oc83euA5QsvT3+Maoow5qIMtjvtHJdRaKKDlpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hk382ROu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7789DC4CEDD;
+	Sun, 23 Feb 2025 14:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740320011;
-	bh=V2s0le4R3f3g8VVf2gJOIbxBct0113kzg5vxClVLWS8=;
+	s=k20201202; t=1740320086;
+	bh=HgHLy86KRNyFbsaYavBMwLup/kMpfRHr2v8NrXSfXGQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W6qFzTEMJUIxiedTv9QfEyv98dU+hMjGmkN9cRNmOAIzRvsw2toJ5jVvm+hy7YEQV
-	 Pu2THuCsa0Pt3EU2kpdxs0Nc1/9Jd+DbjOpd5U9OKQFFgUwcwYLfUzCDs9CQ6l8B4W
-	 SfWWKIzss4zC0vL4HTdDXOPEFSI1moGDGUKbzqrScMk/7K2VOSaDQF0FHFVTZRtffz
-	 7uIemEGaHzcjsm6zg4R4MCOSsGmTL7DSmXKPyVZ1we+p6zYGYe1tq+3l6t3kwksLim
-	 Mq7DI0Smiupnb+qGfg7gEXn/CqMNEv9A+B3urvP9GFNPFszAwIahcdjqqrDlTF0oZP
-	 /F1TtdLH9vvXg==
-Message-ID: <dc883484-1557-4c30-b1f2-dc98e9faebde@kernel.org>
-Date: Sun, 23 Feb 2025 15:13:26 +0100
+	b=Hk382ROuvLA/5m/y0ZtixhVKUqRRj/upCE62Mai0QQ5eEIBLLxDRcyYnSUcCOgHLK
+	 l3AeI8/yTedxISVIASjbg4VrUoTIuzqDVSRrig4BrPp20iuplEWEFEorWkQEY74M0E
+	 BRSD1ICujRW3aPM/MBfS6aeg7KEZeUj9EUFFaRlvwsUXyYCl9G/gq9fHqHIgN4YS7x
+	 syYO5zXknERDjEyr7//ittqlcvoLDamRQhRfItFU6Rgx/LgxktUyekPdw+m2uAQOu/
+	 oUaoCBdujc7sr+3z97cWpvEpbqoRdcAbgqKZ9VLYzoaReMOKYksQ2t8xaFGoFd2j9N
+	 9Ya6ft+AMC1iA==
+Message-ID: <2b0500e7-70e2-4bfe-ae72-ebab0f060eeb@kernel.org>
+Date: Sun, 23 Feb 2025 15:14:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: extcon: Document Maxim MAX14526 MUIC
+Subject: Re: [PATCH v1 1/2] dt-bindings: power: supply: Document Maxim MAX8971
+ charger
 To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Rob Herring <robh@kernel.org>,
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250219083724.56945-1-clamor95@gmail.com>
- <20250219083724.56945-2-clamor95@gmail.com>
- <20250223-giga-moose-of-abundance-8e5b9f@krzk-bin>
- <CAPVz0n1v1BissCuD0DCmQHbr7O_Uymt-ZebXE=37jgjzj7wM0A@mail.gmail.com>
+ <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250221095943.57297-1-clamor95@gmail.com>
+ <20250221095943.57297-2-clamor95@gmail.com>
+ <20250223-daft-amethyst-pogona-e9edcc@krzk-bin>
+ <CAPVz0n0-6ea0mzWig-gPx+8fuPgM7iWkZpnpMnp-9+Lq5oCdDw@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,72 +105,148 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CAPVz0n1v1BissCuD0DCmQHbr7O_Uymt-ZebXE=37jgjzj7wM0A@mail.gmail.com>
+In-Reply-To: <CAPVz0n0-6ea0mzWig-gPx+8fuPgM7iWkZpnpMnp-9+Lq5oCdDw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 23/02/2025 12:51, Svyatoslav Ryhel wrote:
-> нд, 23 лют. 2025 р. о 13:38 Krzysztof Kozlowski <krzk@kernel.org> пише:
+On 23/02/2025 12:56, Svyatoslav Ryhel wrote:
+> нд, 23 лют. 2025 р. о 13:43 Krzysztof Kozlowski <krzk@kernel.org> пише:
 >>
->> On Wed, Feb 19, 2025 at 10:37:23AM +0200, Svyatoslav Ryhel wrote:
->>> Add bindings for Maxim MAX14526 MicroUSB Integrated Circuit.
+>> On Fri, Feb 21, 2025 at 11:59:42AM +0200, Svyatoslav Ryhel wrote:
+>>> Add bindings for Maxim MAX8971 charger.
 >>>
 >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
 >>> ---
->>>  .../bindings/extcon/maxim,max14526.yaml       | 46 +++++++++++++++++++
->>>  1 file changed, 46 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
+>>>  .../bindings/power/supply/maxim,max8971.yaml  | 133 ++++++++++++++++++
+>>>  1 file changed, 133 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
 >>>
->>> diff --git a/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
+>>> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
 >>> new file mode 100644
->>> index 000000000000..87cf7fd19ee9
+>>> index 000000000000..26b37e6f662f
 >>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
->>> @@ -0,0 +1,46 @@
+>>> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+>>> @@ -0,0 +1,133 @@
 >>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 >>> +%YAML 1.2
 >>> +---
->>> +$id: http://devicetree.org/schemas/extcon/maxim,max14526.yaml#
+>>> +$id: http://devicetree.org/schemas/power/supply/maxim,max8971.yaml#
 >>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>> +
->>> +title: Maxim MAX14526 MicroUSB Integrated Circuit (MUIC)
+>>> +title: Maxim MAX8971 IC charger
 >>> +
 >>> +maintainers:
 >>> +  - Svyatoslav Ryhel <clamor95@gmail.com>
 >>> +
+>>> +description:
+>>> +  The MAX8971 is a compact, high-frequency, high-efficiency switch-mode
+>>> +  charger for a one-cell lithium-ion (Li+) battery.
+>>> +
 >>> +properties:
 >>> +  compatible:
->>> +    const: maxim,max14526-muic
->>
->> Is it something more than muic? Why different filename than compatible?
->>
-> 
-> No it is only MUIC, nothing more. How to adjust it then?
-
-Compatible should be only "maxim,max14526".
-
-
-> 
+>>> +    const: maxim,max8971
 >>> +
 >>> +  reg:
 >>> +    maxItems: 1
 >>> +
 >>> +  interrupts:
 >>> +    maxItems: 1
+>>> +
+>>> +  extcon:
+>>> +    description:
+>>> +      Special device used to detect type of plug.
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
 >>
->> This looks incomplete. Missing ports/connector.
+>> You rather miss proper connector or ports. Which device pins are
+>> describbed here?
 >>
 > 
-> It does not support OF graph model. I might look into adding this
+> This is an optional phandle to extcon, which can detect plug type. If
 
-You mean driver, but I mean hardware. Hardware is connected to USB
-socket one one side and to USB controller on other. At least, it might
-be more.
+I know what is this, you just wrote. extcon property is not allowed anymore.
 
-> though it is just a single port.
+> extcon is provided, charger then can change its setup to better
+> provide supply to the battery. If no extcon is provided, device itself
+> can detect only the fact of charger without details about type.
 
 
-
+> 
+>>
+>>> +
+>>> +  maxim,fcharge-current-limit-microamp:
+>>> +    description:
+>>> +      Fast-Charge current limit
+>>> +    minimum: 250000
+>>> +    default: 500000
+>>> +    maximum: 1550000
+>>> +
+>>> +  maxim,fcharge-timer-hours:
+>>> +    description: |
+>>> +      Fast-Charge timer in hours. Setting this value 3 and lower or 11 and
+>>> +      higher will disable Fast-Charge timer.
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    default: 5
+>>> +
+>>> +  maxim,fcharge-rst-threshold-high:
+>>> +    description:
+>>> +      Set Fast-Charge reset threshold to -100 mV
+>>> +    type: boolean
+>>> +
+>>> +  maxim,in-current-limit-microamp:
+>>> +    description:
+>>> +      Input current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>> +
+>>> +  maxim,topoff-timer-minutes:
+>>> +    description:
+>>> +      Top-Off timer minutes
+>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>> +    enum: [0, 10, 20, 30, 40, 50, 60, 70]
+>>> +    default: 30
+>>> +
+>>> +  maxim,topoff-current-threshold-microamp:
+>>> +    description:
+>>> +      Top-Off current threshold
+>>> +    enum: [50000, 100000, 150000, 200000]
+>>> +    default: 50000
+>>> +
+>>> +  maxim,fcharge-usb-current-limit-microamp:
+>>> +    description:
+>>> +      Fast-Charge USB current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>> +
+>>> +  maxim,fcharge-ac-current-limit-microamp:
+>>> +    description:
+>>> +      Fast-Charge AC current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>> +
+>>> +  maxim,usb-in-current-limit-microamp:
+>>> +    description:
+>>> +      USB Input current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>> +
+>>> +  maxim,ac-in-current-limit-microamp:
+>>> +    description:
+>>> +      AC Input current limit
+>>> +    minimum: 100000
+>>> +    default: 500000
+>>> +    maximum: 1500000
+>>
+>> For all or most of these you miss monitored batter.
+>>
+> 
+> This is a charger, it does not monitor battery. There is a fuel gauge
+> for that or a battery monitor.
+> 
+What does charger charge? Battery or something else?
 
 Best regards,
 Krzysztof
