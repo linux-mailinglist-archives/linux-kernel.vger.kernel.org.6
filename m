@@ -1,241 +1,238 @@
-Return-Path: <linux-kernel+bounces-527878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E93EBA410C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:22:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE47CA410CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF19E1717AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:22:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2423AADE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2309B1607B7;
-	Sun, 23 Feb 2025 18:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1703F1714B7;
+	Sun, 23 Feb 2025 18:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jA8fP4bQ"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cHKEEDtM"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8944A5D8F0
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4AA5D8F0;
+	Sun, 23 Feb 2025 18:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740334943; cv=none; b=jOhqk4IKoQbILVrAFDlaxUDMPEbzWjLrjvrPqbu005h9U4anzirKz9HNOEaUcM2Ks15FaeDO3zT/BWsj5wFLAWCPAhJlCsHoLhZZpBzBGjWI/LnRMBmHHEsGeUPo3iIFw6r2FzoU9e0RtP96tJzb1pGN8Gv+7djKeDmhyxZ3MMw=
+	t=1740335069; cv=none; b=o9thgT5WsIQWmbdrbj2Lhhk4oKFpHH/U2ipce2qlBUYylG7C/iBSSYoEOe6gXiRUPU4E7DRNO2GCc7VF2ZG/IsCUy9QVkA0LAXrp0R5bTVZocrzpAaWPfC3ZuUgkGvEOoDKWttiluby5NxYTShZbQPhhkjZp2iF1mXZKbUYHps4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740334943; c=relaxed/simple;
-	bh=7/LYCeGe9K2+aYsUfMlLC5PRXMCPm+Dst9VX+KWQRiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jUfFbBKRP7hqG5gg+5Zfa6XIV0wMvuVcyABUT4oztSw3+6MsTwkOrQkQEbczmk5s4vw1dc/JVaTTS9NRNwcu+MEqJqqTRp7zECIY9iVw3XtPGTvQCDi85+EK78tIN0iYbzrOkH4wUQatQ4dzP6H0H6pswizTRulIEyepnv6DX2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jA8fP4bQ; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30a2dfcfd83so35767251fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:22:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740334939; x=1740939739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yAMj3CJr0eyOhuiIvatbgsXBCE3tisydD/SwTS+kILw=;
-        b=jA8fP4bQRw3uLDCs/Ghh/kDl+k5g35ODxgnjk3bcs2OYD7dmbto5akYSVzenln8WAA
-         DEuEvHZRcy4inkRmOshcyvrt4KCnBPgey+GHT0FGyj7tpRLIRRiE1TXjEXe33cRsbpnJ
-         MYvBgu27/8s440t9bvR9gtAsU68+eUvvLFOyEtAuhrGrJXmnjPrdTirv3Ic9D/gVqOAa
-         c/oIuBjAZw4AxvIqi+Zb2Ar3CMXEQZgrK7orXKtkHDSgqlxqETyA8xKMAvz0r6/u0DrF
-         UCcE9xTKH1hzZl3p37Osz0n4QImtot+wZMYXAEIcVb67ddCLm7buW4fFkVEzNxCo03nv
-         fmTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740334939; x=1740939739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yAMj3CJr0eyOhuiIvatbgsXBCE3tisydD/SwTS+kILw=;
-        b=T6Z98LQWEOIgrJ61+vSUDSXmr1DmxzzmcQ6sF+IhmskP4DRLyN9xeuAUQHCFwfNWMA
-         AMUTTYqQB5ANFXkh961w9DV0YXj5S08euWR63em87H59LhN8JWQRZF2OiJlNxHMW0uSu
-         D1HSRfnnjaG60myyulRogMKgse/wxflwYUghyGvP/QECFopabwqk8/M+8RzWftvOJSHn
-         ZRyfs5FZ4//XQf3J2mth52T60i1iDAWNTwo2wCyAkQ2MLO+26ohElQJAZpujI6x2hMi0
-         TrIXcF1e55TZ4SF/7jxR9cq7otF40dn+w3meLcpMbYMBADQGH1JJoPKE/YqP+Ckl8LTB
-         ZJHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUwEVcCf86OsgXY9h7RyGEV/5DVPSZd59oitjjPfebEx7gH198Bfi5EG1hPR86Twydl54L07yUHazXh9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe+RN7h3f0KZfvNxJvrR3bI9zso6bkWHm187ET+iYEFqEGqtt7
-	Fr7juQ3b3l4IIpZcH7PAHCPfGnwkOSoxx6ZnSeXk0m9XYCI4n10hKEe2pw34IqjWkZIVt6JbLff
-	mmm6zpqeeaNUIifQJQ/3s0Hho1RU=
-X-Gm-Gg: ASbGncvvCE/lvmv6qHLe24jJRT3leY2ABcnNDFuPGB4Mco7eVEs/Gu+/4QhhunmfQLE
-	qNcgrNhcvHA9ADpLEY+7mE+hvowYtSboNzlbglYWkjVB7MKn7teC5xGnVPe2NmlSoYHa0/ORoHb
-	YkxsKiDTQ=
-X-Google-Smtp-Source: AGHT+IFL91UEj1E4npQkqa08kCZcmPohOg1WSdSwo6GID2lgmHBnReo0wU2ueSqavxTwwjzy/xB4TxuC0PahKqH+YpU=
-X-Received: by 2002:a2e:9c8d:0:b0:306:10d6:28ab with SMTP id
- 38308e7fff4ca-30a5985e2a2mr32932371fa.5.1740334939366; Sun, 23 Feb 2025
- 10:22:19 -0800 (PST)
+	s=arc-20240116; t=1740335069; c=relaxed/simple;
+	bh=QdqvULVPP8/Hc1uZ9F+Q2qdyZ1vh1liZamlcqjcH9UA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qo40xNTVrjvPdpTkeem8ceHSWJ22Hd1vw409u5RRfHgMkc8y6xbXfsQLHIKailJ/C3tv//yTn/bjH/dofwNjleH+qT3vc7S40Xsw0KJDJR58UsGG//MPWYzDfl5SeFUM1OPiEzJuEqbYyxR0hKRmwqLGtGDrq/QzAbxJxXml8Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cHKEEDtM; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1791D496;
+	Sun, 23 Feb 2025 19:23:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740334980;
+	bh=QdqvULVPP8/Hc1uZ9F+Q2qdyZ1vh1liZamlcqjcH9UA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cHKEEDtM3unUpRvIT+22uto80EmkFe+akzfks4VIELr5AUaKg3236VKMPouk5Ofz6
+	 dPvmZJrULKd/H9bJk6HfMLnkNb53vdA76O1fMRc3w0dPlY0J8xJJQkC0PSIF49TAhv
+	 nbYx9FntW+QURsoIVFOtDQFpJ/OTbmZ17/AVhhHY=
+Date: Sun, 23 Feb 2025 20:24:09 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/18] media: rzg2l-cru: csi2: Add support for
+ RZ/V2H(P) SoC
+Message-ID: <20250223182409.GE8330@pendragon.ideasonboard.com>
+References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250221155532.576759-11-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1738717785.im3r5g2vxc.none.ref@localhost> <1738717785.im3r5g2vxc.none@localhost>
- <25e2d5e4-8214-40de-99d3-2b657181a9fd@linux.alibaba.com> <5dd39b03-c40e-4f34-bf89-b3e5a12753dc@linux.alibaba.com>
- <CAK1f24ni707gcGpYKXqsb9XHxjx3froLs3DzVqkkNZdca_pw4Q@mail.gmail.com>
- <e7b276eb-960a-4e05-9f84-6152de9ac2ea@linux.alibaba.com> <CAMgjq7CNVrQFBozKfZyvXX9w6HqAEH6eSN+ZQFaerbueyyqArw@mail.gmail.com>
-In-Reply-To: <CAMgjq7CNVrQFBozKfZyvXX9w6HqAEH6eSN+ZQFaerbueyyqArw@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Mon, 24 Feb 2025 02:22:03 +0800
-X-Gm-Features: AWEUYZmES3RFfQbRyxkw5Oy4WSTKFulXiOgte4CoFIeasX2d5vPqD2AHskJwtkQ
-Message-ID: <CAMgjq7DY_C+-rfFiM7=jdRAdCX7Gv17cRMyDpuc3_36bePURww@mail.gmail.com>
-Subject: Re: Hang when swapping huge=within_size tmpfs from zram
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, "Alex Xu (Hello71)" <alex_y_xu@yahoo.ca>
-Cc: Lance Yang <ioworker0@gmail.com>, linux-mm@kvack.org, 
-	Daniel Gomez <da.gomez@samsung.com>, Barry Song <baohua@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Matthew Wilcox <willy@infradead.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "ziy@nvidia.com" <ziy@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221155532.576759-11-tommaso.merciai.xr@bp.renesas.com>
 
-On Mon, Feb 24, 2025 at 1:53=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> On Fri, Feb 7, 2025 at 3:24=E2=80=AFPM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
-> >
-> > On 2025/2/5 22:39, Lance Yang wrote:
-> > > On Wed, Feb 5, 2025 at 2:38=E2=80=AFPM Baolin Wang
-> > > <baolin.wang@linux.alibaba.com> wrote:
-> > >> On 2025/2/5 09:55, Baolin Wang wrote:
-> > >>> Hi Alex,
-> > >>>
-> > >>> On 2025/2/5 09:23, Alex Xu (Hello71) wrote:
-> > >>>> Hi all,
-> > >>>>
-> > >>>> On 6.14-rc1, I found that creating a lot of files in tmpfs then de=
-leting
-> > >>>> them reliably hangs when tmpfs is mounted with huge=3Dwithin_size,=
- and it
-> > >>>> is swapped out to zram (zstd/zsmalloc/no backing dev). I bisected =
-this
-> > >>>> to acd7ccb284b "mm: shmem: add large folio support for tmpfs".
-> > >>>>
-> > >>>> When the issue occurs, rm uses 100% CPU, cannot be killed, and has=
- no
-> > >>>> output in /proc/pid/stack or wchan. Eventually, an RCU stall is
-> > >>>> detected:
-> > >>>
-> > >>> Thanks for your report. Let me try to reproduce the issue locally a=
-nd
-> > >>> see what happens.
-> > >>>
-> > >>>> rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > >>>> rcu:     Tasks blocked on level-0 rcu_node (CPUs 0-11): P25160
-> > >>>> rcu:     (detected by 10, t=3D2102 jiffies, g=3D532677, q=3D4997 n=
-cpus=3D12)
-> > >>>> task:rm              state:R  running task     stack:0     pid:251=
-60
-> > >>>> tgid:25160 ppid:24309  task_flags:0x400000 flags:0x00004004
-> > >>>> Call Trace:
-> > >>>>    <TASK>
-> > >>>>    ? __schedule+0x388/0x1000
-> > >>>>    ? kmem_cache_free.part.0+0x23d/0x280
-> > >>>>    ? sysvec_apic_timer_interrupt+0xa/0x80
-> > >>>>    ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-> > >>>>    ? xas_load+0x12/0xc0
-> > >>>>    ? xas_load+0x8/0xc0
-> > >>>>    ? xas_find+0x144/0x190
-> > >>>>    ? find_lock_entries+0x75/0x260
-> > >>>>    ? shmem_undo_range+0xe6/0x5f0
-> > >>>>    ? shmem_evict_inode+0xe4/0x230
-> > >>>>    ? mtree_erase+0x7e/0xe0
-> > >>>>    ? inode_set_ctime_current+0x2e/0x1f0
-> > >>>>    ? evict+0xe9/0x260
-> > >>>>    ? _atomic_dec_and_lock+0x31/0x50
-> > >>>>    ? do_unlinkat+0x270/0x2b0
-> > >>>>    ? __x64_sys_unlinkat+0x30/0x50
-> > >>>>    ? do_syscall_64+0x37/0xe0
-> > >>>>    ? entry_SYSCALL_64_after_hwframe+0x50/0x58
-> > >>>>    </TASK>
-> > >>>>
-> > >>>> Let me know what information is needed to further troubleshoot thi=
-s
-> > >>>> issue.
-> > >>
-> > >> Sorry, I can't reproduce this issue, and my testing process is as fo=
-llows:
-> > >> 1. Mount tmpfs with huge=3Dwithin_size
-> > >> 2. Create and write a tmpfs file
-> > >> 3. Swap out the large folios of the tmpfs file to zram
-> > >> 4. Execute 'rm' command to remove the tmpfs file
-> > >
-> > > I=E2=80=99m unable to reproduce the issue as well, and am following s=
-teps similar
-> > > to Baolin's process:
-> > >
-> > > 1) Mount tmpfs with the huge=3Dwithin_size option and enable swap (us=
-ing
-> > > zstd/zsmalloc without a backing device).
-> > > 2) Create and write over 10,000 files in the tmpfs.
-> > > 3) Swap out the large folios of these tmpfs files to zram.
-> > > 4) Use the rm command to delete all the files from the tmpfs.
-> > >
-> > > Testing with both 2MiB and 64KiB large folio sizes, and with
-> > > shmem_enabled=3Dwithin_size, but everything works as expected.
-> >
-> > Thanks Lance for confirming again.
-> >
-> > Alex, could you give more hints on how to reproduce this issue?
-> >
->
-> Hi Baolin,
->
-> I can reproduce this issue very easily with the build linux kernel
-> test, and the failure rate is very high. I'm not exactly sure this is
-> the same bug but very likely, my test step:
->
-> 1. Create a 10G ZRAM device and set up SWAP on it.
-> 2. Create a 1G memcg, and spawn a shell in it.
-> 3. Mount tmpfs with huge=3Dwithin_size, and then untar linux kernel
-> source code into it.
-> 4. Build with make -j32 (higher or lower job number may also work),
-> the build will always fall within 10s due to file corrupted.
->
-> After some debugging, the reason is in shmem_swapin_folio, when swap
-> cache is hit `folio =3D swap_cache_get_folio(swap, NULL, 0);` sets folio
-> to a 0 order folio, then the following shmem_add_to_page_cache will
-> insert a order 0 folio overriding a high order entry in shmem's
-> xarray, so data are lost. Swap cache hit could be due to many reasons,
-> in this case it's the readahead.
->
-> One quick fix is just always split the entry upon shmem fault of 0
-> order folio like this:
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 4ea6109a8043..c8e5c419c675 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2341,6 +2341,10 @@ static int shmem_swapin_folio(struct inode
-> *inode, pgoff_t index,
->                 }
->         }
->
-> +       /* Swapin of 0 order folio must always ensure the entries are spl=
-it */
-> +       if (!folio_order(folio))
-> +               shmem_split_large_entry(inode, index, swap, gfp);
+Hi Tommaso,
+
+Thank you for the patch.
+
+On Fri, Feb 21, 2025 at 04:55:24PM +0100, Tommaso Merciai wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> The D-PHY on the RZ/V2H(P) SoC is different from the D-PHY on the RZ/G2L
+> SoC. To handle this difference, function pointers for D-PHY enable/disable
+> have been added, and the `struct rzg2l_csi2_info` pointer is passed as OF
+> data.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> ---
+>  .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   | 94 +++++++++++++++++++
+>  1 file changed, 94 insertions(+)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> index 771fa35558be..cd452c84f101 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
+> @@ -85,6 +85,15 @@
+>  					 CSIDPHYSKW0_UTIL_DL2_SKW_ADJ(1) | \
+>  					 CSIDPHYSKW0_UTIL_DL3_SKW_ADJ(1))
+>  
+> +/* DPHY registers on RZ/V2H(P) SoC */
+> +#define CRUm_S_TIMCTL			0x41c
+> +#define CRUm_S_TIMCTL_S_HSSETTLECTL(x)	((x) << 8)
 > +
->  alloced:
->         /* We have to do this with folio locked to prevent races */
->         folio_lock(folio);
->
-> And Hi Alex, can you help confirm if the above patch fixes your reported =
-bug?
->
-> If we are OK with this, this should be merged into 6.14 I think, but
-> for the long term, it might be a good idea to just share a similar
-> logic of (or just reuse) __filemap_add_folio for shmem?
-> __filemap_add_folio will split the entry on insert, and code will be
-> much cleaner.
+> +#define CRUm_S_DPHYCTL_MSB		0x434
+> +#define CRUm_S_DPHYCTL_MSB_DESKEW	BIT(1)
+> +
+> +#define CRUm_SWAPCTL			0x438
+> +
+>  #define VSRSTS_RETRIES			20
+>  
+>  #define RZG2L_CSI2_MIN_WIDTH		320
+> @@ -139,6 +148,30 @@ struct rzg2l_csi2_timings {
+>  	u32 max_hsfreq;
+>  };
+>  
+> +struct rzv2h_csi2_s_hssettlectl {
+> +	unsigned int hsfreq;
+> +	u16 s_hssettlectl;
+> +};
+> +
+> +static const struct rzv2h_csi2_s_hssettlectl rzv2h_s_hssettlectl[] = {
+> +	{   90,  1 }, {  130,  2 }, {  180,  3 },
+> +	{  220,  4 }, {  270,  5 }, {  310,  6 },
+> +	{  360,  7 }, {  400,  8 }, {  450,  9 },
+> +	{  490, 10 }, {  540, 11 }, {  580, 12 },
+> +	{  630, 13 }, {  670, 14 }, {  720, 15 },
+> +	{  760, 16 }, {  810, 17 }, {  850, 18 },
+> +	{  900, 19 }, {  940, 20 }, {  990, 21 },
+> +	{ 1030, 22 }, { 1080, 23 }, { 1120, 24 },
+> +	{ 1170, 25 }, { 1220, 26 }, { 1260, 27 },
+> +	{ 1310, 28 }, { 1350, 29 }, { 1400, 30 },
+> +	{ 1440, 31 }, { 1490, 32 }, { 1530, 33 },
+> +	{ 1580, 34 }, { 1620, 35 }, { 1670, 36 },
+> +	{ 1710, 37 }, { 1760, 38 }, { 1800, 39 },
+> +	{ 1850, 40 }, { 1890, 41 }, { 1940, 42 },
+> +	{ 1980, 43 }, { 2030, 44 }, { 2070, 45 },
+> +	{ 2100, 46 },
+> +};
+> +
+>  static const struct rzg2l_csi2_timings rzg2l_csi2_global_timings[] = {
+>  	{
+>  		.max_hsfreq = 80,
+> @@ -427,6 +460,58 @@ static int rzg2l_csi2_mipi_link_disable(struct rzg2l_csi2 *csi2)
+>  	return 0;
+>  }
+>  
+> +static int rzv2h_csi2_dphy_disable(struct rzg2l_csi2 *csi2)
+> +{
+> +	int ret;
+> +
+> +	/* Reset the CRU (D-PHY) */
+> +	ret = reset_control_assert(csi2->cmn_rstb);
+> +	if (ret)
+> +		return ret;
+> +
+> +	csi2->dphy_enabled = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int rzv2h_csi2_dphy_enable(struct rzg2l_csi2 *csi2)
+> +{
+> +	unsigned int i;
+> +	u16 hssettle;
+> +	int mbps;
+> +
+> +	mbps = rzg2l_csi2_calc_mbps(csi2);
+> +	if (mbps < 0)
+> +		return mbps;
+> +
+> +	csi2->hsfreq = mbps;
+> +
+> +	rzg2l_csi2_write(csi2, CRUm_SWAPCTL, 0);
+> +
 
-Some extra comments for above patch: If it raced with another split,
-or the entry used for swap cache lookup is wrongly aligned due to
-large entry, the shmem_add_to_page_cache below will fail with -EEXIST
-and try again. So that seems to be working well in my test.
+Maybe move this after the error check below to avoid writing any
+register if an error occurs.
+
+> +	for (i = 0; i < ARRAY_SIZE(rzv2h_s_hssettlectl); i++) {
+> +		if (csi2->hsfreq <= rzv2h_s_hssettlectl[i].hsfreq)
+> +			break;
+> +	}
+> +
+> +	if (i == ARRAY_SIZE(rzv2h_s_hssettlectl))
+> +		return -EINVAL;
+> +
+> +	hssettle = rzv2h_s_hssettlectl[i].s_hssettlectl;
+> +	rzg2l_csi2_write(csi2, CRUm_S_TIMCTL,
+> +			 CRUm_S_TIMCTL_S_HSSETTLECTL(hssettle));
+> +
+> +	if (csi2->hsfreq > 1500)
+> +		rzg2l_csi2_set(csi2, CRUm_S_DPHYCTL_MSB,
+> +			       CRUm_S_DPHYCTL_MSB_DESKEW);
+> +	else
+> +		rzg2l_csi2_clr(csi2, CRUm_S_DPHYCTL_MSB,
+> +			       CRUm_S_DPHYCTL_MSB_DESKEW);
+> +
+> +	csi2->dphy_enabled = true;
+> +
+> +	return 0;
+> +}
+> +
+>  static int rzg2l_csi2_mipi_link_setting(struct v4l2_subdev *sd, bool on)
+>  {
+>  	struct rzg2l_csi2 *csi2 = sd_to_csi2(sd);
+> @@ -900,12 +985,21 @@ static const struct dev_pm_ops rzg2l_csi2_pm_ops = {
+>  		       rzg2l_csi2_pm_runtime_resume, NULL)
+>  };
+>  
+> +static const struct rzg2l_csi2_info rzv2h_csi2_info = {
+> +	.dphy_enable = rzv2h_csi2_dphy_enable,
+> +	.dphy_disable = rzv2h_csi2_dphy_disable,
+> +};
+
+Move this just after rzv2h_csi2_dphy_enable().
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+> +
+>  static const struct rzg2l_csi2_info rzg2l_csi2_info = {
+>  	.dphy_enable = rzg2l_csi2_dphy_enable,
+>  	.dphy_disable = rzg2l_csi2_dphy_disable,
+>  };
+>  
+>  static const struct of_device_id rzg2l_csi2_of_table[] = {
+> +	{
+> +		.compatible = "renesas,r9a09g057-csi2",
+> +		.data = &rzv2h_csi2_info,
+> +	},
+>  	{
+>  		.compatible = "renesas,rzg2l-csi2",
+>  		.data = &rzg2l_csi2_info,
+
+-- 
+Regards,
+
+Laurent Pinchart
 
