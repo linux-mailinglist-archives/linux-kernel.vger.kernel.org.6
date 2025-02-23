@@ -1,229 +1,254 @@
-Return-Path: <linux-kernel+bounces-527761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E87FA40F2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:57:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58844A40F31
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:09:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15F3216DB2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:57:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AE0D1894BBE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8938E207DF6;
-	Sun, 23 Feb 2025 13:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8D22080FD;
+	Sun, 23 Feb 2025 14:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ew9H1koW"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C7A206F3A;
-	Sun, 23 Feb 2025 13:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="bNtkXg5z"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360E31EA91;
+	Sun, 23 Feb 2025 14:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740319072; cv=none; b=eA6U+9tVC0X9pcSThsQ1ksuOKmbzom5xKoxWT3COit/FFidKFd120/AWUeMxtBkODPNw3XDGScEHa1ioMO22RVDVv3i/FaoboUJ/QYsxdGPowrx7m3H05BOhdaELWASSOkmysijCuV1caWlF2ZNGKJIsfOYZkfMSI6JFtxPlsBs=
+	t=1740319782; cv=none; b=pAxzF5TncFGARJLmoYZfmzM50oDEYFRT3pVcH3R2aQk3Tv872X4vYJNNVi/8pnX10jEmo3YQqEJCkszVyYo83aee0x++Qzome094qZmkr+r6j7pxwUFovT6mLj4oQ50ygCkw4nEp6J7wWpghU1fFENf2sV2+I85H6jM6D153PI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740319072; c=relaxed/simple;
-	bh=ZyHtNtWQADT7GuU59EQCgspTrupUtGtb4AIJ02QtMao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D3fH0KcY52zvpZ0w690Ou2PGyc/nqhAgb3NQBwByHU3Ar0jHYpXypf44u4Pzica++g6eXrDCl/bxo/n4zaWWeu/gKzYMEJTFICJ70IWgXSfHCNzFNcmw5xNvnGiZ7E+sZY0C6kEx2BRzYE15D0oLbNRu+RsSpmjs9c2kYT9EgJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ew9H1koW; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-38f2b7ce2e5so2030971f8f.2;
-        Sun, 23 Feb 2025 05:57:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740319069; x=1740923869; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=irpvSqgjgTj5pR4QAa0LXMYagaabjkDRM99tvNprbEE=;
-        b=Ew9H1koWksvwyGq5CWrTUw3X/R5rKcBmBOpouy1GOeVNKuz9PWM/qooHQOJEAck76p
-         yzdoitNa/L7JkjSYc4FOobD+deoLkWuJm+6//ykYPu+66exN6SpjnZJ00NSe+CPMmGOS
-         qTHrxvFWiKGaN6Wl7ANLLlljctQ2+WlsMamJRLfHGBNE1lo5bBhKTiIePpuee7piVaau
-         bu/r/i7Y3zGAnef+NUjrtJKxIBMwAUSWnStdan1XIEY3oNEbmArVBt+U9evhhoTTB3xn
-         UWNOJoO//dRaen3yceWBBOYs+8d3rImWmWQMCMTclgHXD7wMaKsdtj+q7GyTb3Xc0gAO
-         ZlwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740319069; x=1740923869;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=irpvSqgjgTj5pR4QAa0LXMYagaabjkDRM99tvNprbEE=;
-        b=k97RL58gVUDlMuZRaYsdjQ8O2WgEPTV7R6oNJoK8tQna6iOFQViadzRKcLALuB7/b2
-         XU0RvyZ4A0w4OZYN5n/B8qX4tFXJk/OAX00D1c66k5akVAe6sB7nez1k/FGyjJsyJasH
-         j+Nz5MTbUP4ilmTgIxH+msuAQaYP4CRp3yfPHF9V+i7vafuY0xsa+HUunhKGEpL3TKP3
-         lJ5WKthtgqec8+gpQ4akzr4iQjYesGnnYh05sd742GNMn20VvI//PuoleYGhtroXFLfA
-         d8wX9iAIEgwgnKUa5NUNNl3FgH+yncTqDB0qTNYn8FGqXVTeETfqipgaoRp8dDU/toCI
-         JIgw==
-X-Forwarded-Encrypted: i=1; AJvYcCURcqHcu28oi++FxjFAVG6ZI/TfA/DK9ylQLETGbYejGcvsEXOt6QMuIqTB50iKntpjJArVFUbLT1YnFRRE@vger.kernel.org, AJvYcCW7S34nVf3vGbyZFGFpGjW369ssDvjzPhr5KLoVA/CFh1NkBmmqcfQAozRsz0NQt+mzneoWmARA4zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQPt44AIBYRhirifaJzbJ6wtr41jHZhHWvH+AANIsB5X9t5uE+
-	sI4hF3DpAH2jSztHaLfd5gX8bLsmcCkAWTmqHY/BwCF5lazUB8dq
-X-Gm-Gg: ASbGncvIZVh9fua5y/nlqfyVhUme1rdtgu/19o7Gv3pNmYnGZ0b7StvEiG4U2j+7Lns
-	HCg01AK/0cEpUZ7yxQOEG/SJLoMeHRTXRRZi6lt+pHV+VKwc2yqrEmCcngLTzdvMrdu0NV33Vdu
-	p5O5V6rct483apf7LC3OZvOkoim9uEIpNUbl3GGe0GlN6pJdLFQChhl+z5xFp4LkseSByrdwT62
-	/dShZA62/ZRgIt6b44U1UX2RndUxZZMVxkAFXu/a1NSbugTtZtV4nTBPrkPz60tKcMvHmIeUO+7
-	EmUTemr3yLobMQASrbkOAcxyO64tUVR37yPI6FywurCDfUFN/Inqhj3ZTL5cMnh/l1efOSFC5m5
-	dqA==
-X-Google-Smtp-Source: AGHT+IGEeE9J4uj+DGWwC9Wbtpp9SyskHFPKyeD+C5P4aQJjEmUKEGcNWd3Du/ly0SHMEDli0b4+Wg==
-X-Received: by 2002:a5d:588c:0:b0:38d:ddf2:afea with SMTP id ffacd0b85a97d-38f6e95f301mr7975856f8f.13.1740319068981;
-        Sun, 23 Feb 2025 05:57:48 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b031c5casm78071995e9.39.2025.02.23.05.57.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 05:57:47 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
- "moderated list:ARM/Allwinner sunXi SoC support"
- <linux-arm-kernel@lists.infradead.org>,
- "open list:ARM/Allwinner sunXi SoC support" <linux-sunxi@lists.linux.dev>,
- open list <linux-kernel@vger.kernel.org>,
- Philippe Simons <simons.philippe@gmail.com>
-Cc: Philippe Simons <simons.philippe@gmail.com>,
- Andre Przywara <andre.przywara@arm.com>
-Subject:
- Re: [PATCH v3 1/1] clk: sunxi-ng: h616: Reparent GPU clock during frequency
- changes
-Date: Sun, 23 Feb 2025 14:57:46 +0100
-Message-ID: <2716580.BddDVKsqQX@jernej-laptop>
-In-Reply-To: <3297157.aV6nBDHxoP@jernej-laptop>
-References:
- <20250220113808.1122414-1-simons.philippe@gmail.com>
- <20250220113808.1122414-2-simons.philippe@gmail.com>
- <3297157.aV6nBDHxoP@jernej-laptop>
+	s=arc-20240116; t=1740319782; c=relaxed/simple;
+	bh=Tuy6ZRZZJMj3eG/Uc0+v7cff3ZdO6cto9jj9yQbFOqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uii2a2NDtEeNz2N4kfeqmYJPl8kwME9YbUj0kYAZefwcE5M002Biq9reOs7rpJph1pihcm0p0oqp0p5Dh31d1LDPFn8lKFdbV96gT9mYHH11LemuSp8gouwbqAGGscMYZChKpQ0YOSG3Qd679Ek2wweCoc0bTQ3mhasvNallPG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=bNtkXg5z; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 20B802054933; Sun, 23 Feb 2025 06:09:33 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 20B802054933
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740319773;
+	bh=ItXlD3FPKXjM0BLMc+8bcAHrN0z2a8g1C9WcpDUzmCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bNtkXg5zXYeBvdrEYsl7uOtzZoHZcnEBIeILLfKHRFRV2c9EBFKyMFe2YCifR4/6w
+	 /utqzaY7uohvXExHSi7+eOcabPH2WrL3rna/FeriLtDSdoQFgCRj39gfuKz2mXH4mh
+	 Jkw9b2WxJsKe9fLS4MxrBjq+U39UcBwYfL5eptvs=
+Date: Sun, 23 Feb 2025 06:09:33 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ssengar@microsoft.com" <ssengar@microsoft.com>
+Subject: Re: [PATCH] fbdev: hyperv_fb: Allow graceful removal of framebuffer
+Message-ID: <20250223140933.GA16428@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739611240-9512-1-git-send-email-ssengar@linux.microsoft.com>
+ <SN6PR02MB4157813782C1D9E6D1225582D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20250222172715.GA28061@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SN6PR02MB4157F6CF7CACF45C398933C4D4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB4157F6CF7CACF45C398933C4D4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Dne =C4=8Detrtek, 20. februar 2025 ob 16:41:54 Srednjeevropski standardni =
-=C4=8Das je Jernej =C5=A0krabec napisal(a):
-> Dne =C4=8Detrtek, 20. februar 2025 ob 12:38:08 Srednjeevropski standardni=
- =C4=8Das je Philippe Simons napisal(a):
-> > The H616 manual does not state that the GPU PLL supports
-> > dynamic frequency configuration, so we must take extra care when changi=
-ng
-> > the frequency. Currently any attempt to do device DVFS on the GPU lead
-> > to panfrost various ooops, and GPU hangs.
-> >=20
-> > The manual describes the algorithm for changing the PLL
-> > frequency, which the CPU PLL notifier code already support, so we reuse
-> > that to reparent the GPU clock to GPU1 clock during frequency
-> > changes.
-> >=20
-> > Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
-> > Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu-sun50i-h616.c | 36 +++++++++++++++++++++++++-
-> >  1 file changed, 35 insertions(+), 1 deletion(-)
->=20
-> Changelog is missing here. What's changed?
->=20
-> In any case, this patch isn't useful on its own. What about PPU and GPU D=
-T node?
+On Sat, Feb 22, 2025 at 08:16:53PM +0000, Michael Kelley wrote:
+> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, February 22, 2025 9:27 AM
+> > 
+> > On Wed, Feb 19, 2025 at 05:22:36AM +0000, Michael Kelley wrote:
+> > > From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, February 15,
+> > 2025 1:21 AM
+> > > >
+> > > > When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
+> > > > release the framebuffer forcefully. If this framebuffer is in use it
+> > > > produce the following WARN and hence this framebuffer is never released.
+> > > >
+> > > > [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_info.c:70
+> > framebuffer_release+0x2c/0x40
+> > > > < snip >
+> > > > [   44.111289] Call Trace:
+> > > > [   44.111290]  <TASK>
+> > > > [   44.111291]  ? show_regs+0x6c/0x80
+> > > > [   44.111295]  ? __warn+0x8d/0x150
+> > > > [   44.111298]  ? framebuffer_release+0x2c/0x40
+> > > > [   44.111300]  ? report_bug+0x182/0x1b0
+> > > > [   44.111303]  ? handle_bug+0x6e/0xb0
+> > > > [   44.111306]  ? exc_invalid_op+0x18/0x80
+> > > > [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
+> > > > [   44.111311]  ? framebuffer_release+0x2c/0x40
+> > > > [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
+> > > > [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
+> > > > [   44.111323]  device_remove+0x40/0x80
+> > > > [   44.111325]  device_release_driver_internal+0x20b/0x270
+> > > > [   44.111327]  ? bus_find_device+0xb3/0xf0
+> > > >
+> > > > Fix this by moving the release of framebuffer to fb_ops.fb_destroy function
+> > > > so that framebuffer framework handles it gracefully
+> > >
+> > > These changes look good for solving the specific problem where
+> > > the reference count WARN is produced. But there is another
+> > > problem of the same type that happens when doing unbind
+> > > of a hyperv_fb device that is in use (i.e., /dev/fb0 is open and
+> > > mmap'ed by some user space program).
+> > >
+> > > For this additional problem, there are three sub-cases,
+> > > depending on what memory gets mmap'ed into user space.
+> > > Two of the three sub-cases have a problem.
+> > >
+> > > 1) When Hyper-V FB uses deferred I/O, the vmalloc dio memory
+> > > is what get mapped into user space. When hyperv_fb is unbound,
+> > > the vmalloc dio memory is freed. But the memory doesn't actually
+> > > get freed if it is still mmap'ed into user space. The deferred I/O
+> > > mechanism is stopped, but user space can keep writing to the
+> > > memory even though the pixels don't get copied to the actual
+> > > framebuffer any longer.  When the user space program terminates
+> > > (or unmaps the memory), the memory will be freed. So this case
+> > > is OK, though perhaps a bit dubious.
+> > >
+> > > 2) When Hyper-V FB is in a Gen 1 VM, and the frame buffer size
+> > > is <= 4 MiB, a normal kernel allocation is used for the
+> > > memory that is mmap'ed to user space. If this memory
+> > > is freed when hyperv_fb is unbound, bad things happen
+> > > because the memory is still being written to via the user space
+> > > mmap. There are multiple "BUG: Bad page state in process
+> > > bash  pfn:106c65" errors followed by stack traces.
+> > >
+> > > 3) Similarly in a Gen 1 VM, if the frame buffer size is > 4 MiB,
+> > > CMA memory is allocated (assuming it is available). This CMA
+> > > memory gets mapped into user space. When hyperv_fb is
+> > > unbound, that memory is freed. But CMA complains that the
+> > > ref count on the pages is not zero. Here's the dmesg output:
+> > >
+> > > [  191.629780] ------------[ cut here ]------------
+> > > [  191.629784] 200 pages are still in use!
+> > > [  191.629789] WARNING: CPU: 3 PID: 1115 at mm/page_alloc.c:6757
+> > free_contig_range+0x15e/0x170
+> > >
+> > > Stack trace is:
+> > >
+> > > [  191.629847]  ? __warn+0x97/0x160
+> > > [  191.629849]  ? free_contig_range+0x15e/0x170
+> > > [  191.629849]  ? report_bug+0x1bb/0x1d0
+> > > [  191.629851]  ? console_unlock+0xdd/0x1e0
+> > > [  191.629854]  ? handle_bug+0x60/0xa0
+> > > [  191.629857]  ? exc_invalid_op+0x1d/0x80
+> > > [  191.629859]  ? asm_exc_invalid_op+0x1f/0x30
+> > > [  191.629862]  ? free_contig_range+0x15e/0x170
+> > > [  191.629862]  ? free_contig_range+0x15e/0x170
+> > > [  191.629863]  cma_release+0xc6/0x150
+> > > [  191.629865]  dma_free_contiguous+0x34/0x70
+> > > [  191.629868]  dma_direct_free+0xd3/0x130
+> > > [  191.629869]  dma_free_attrs+0x6b/0x130
+> > > [  191.629872]  hvfb_putmem.isra.0+0x99/0xd0 [hyperv_fb]
+> > > [  191.629874]  hvfb_remove+0x75/0x80 [hyperv_fb]
+> > > [  191.629876]  vmbus_remove+0x28/0x40 [hv_vmbus]
+> > > [  191.629883]  device_remove+0x43/0x70
+> > > [  191.629886]  device_release_driver_internal+0xbd/0x140
+> > > [  191.629888]  device_driver_detach+0x18/0x20
+> > > [  191.629890]  unbind_store+0x8f/0xa0
+> > > [  191.629891]  drv_attr_store+0x25/0x40
+> > > [  191.629892]  sysfs_kf_write+0x3f/0x50
+> > > [  191.629894]  kernfs_fop_write_iter+0x142/0x1d0
+> > > [  191.629896]  vfs_write+0x31b/0x450
+> > > [  191.629898]  ksys_write+0x6e/0xe0
+> > > [  191.629899]  __x64_sys_write+0x1e/0x30
+> > > [  191.629900]  x64_sys_call+0x16bf/0x2150
+> > > [  191.629903]  do_syscall_64+0x4e/0x110
+> > > [  191.629904]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> > >
+> > > For all three cases, I think the memory freeing and iounmap() operations
+> > > can be moved to the new hvfb_destroy() function so that the memory
+> > > is cleaned up only when there aren't any users. While these additional
+> > > changes could be done as a separate patch, it seems to me like they are all
+> > > part of the same underlying issue as the reference count problem, and
+> > > could be combined into this patch.
+> > >
+> > > Michael
+> > >
+> > 
+> > Thanks for your review.
+> > 
+> > I had considered moving the entire `hvfb_putmem()` function to `destroy`,
+> > but I was hesitant for two reasons:
+> > 
+> >   1. I wasn’t aware of any scenario where this would be useful. However,
+> >      your explanation has convinced me that it is necessary.
+> >   2. `hvfb_release_phymem()` relies on the `hdev` pointer, which requires
+> >      multiple `container_of` operations to derive it from the `info` pointer.
+> >      I was unsure if the complexity was justified, but it seems worthwhile now.
+> > 
+> > I will move `hvfb_putmem()` to the `destroy` function in V2, and I hope this
+> > will address all the cases you mentioned.
+> > 
+> 
+> Yes, that's what I expect needs to happen, though I haven't looked at the
+> details of making sure all the needed data structures are still around. Like
+> you, I just had this sense that hvfb_putmem() might need to be moved as
+> well, so I tried to produce a failure scenario to prove it, which turned out
+> to be easy.
+> 
+> Michael
 
-In the light of separate PPU & GPU DT series, this patch is gtg.
-
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-
-Best regards,
-Jernej
-=20
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi=
-=2Dng/ccu-sun50i-h616.c
-> > index 190816c35..6050cbfa9 100644
-> > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-> > @@ -328,10 +328,16 @@ static SUNXI_CCU_M_WITH_MUX_GATE(gpu0_clk, "gpu0"=
-, gpu0_parents, 0x670,
-> >  				       24, 1,	/* mux */
-> >  				       BIT(31),	/* gate */
-> >  				       CLK_SET_RATE_PARENT);
-> > +
-> > +/*
-> > + * This clk is needed as a temporary fall back during GPU PLL freq cha=
-nges.
-> > + * Set CLK_IS_CRITICAL flag to prevent from being disabled.
-> > + */
-> > +#define SUN50I_H616_GPU_CLK1_REG        0x674
-> >  static SUNXI_CCU_M_WITH_GATE(gpu1_clk, "gpu1", "pll-periph0-2x", 0x674,
-> >  					0, 2,	/* M */
-> >  					BIT(31),/* gate */
-> > -					0);
-> > +					CLK_IS_CRITICAL);
-> > =20
-> >  static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
-> >  		      0x67c, BIT(0), 0);
-> > @@ -1120,6 +1126,19 @@ static struct ccu_pll_nb sun50i_h616_pll_cpu_nb =
-=3D {
-> >  	.lock		=3D BIT(28),
-> >  };
-> > =20
-> > +static struct ccu_mux_nb sun50i_h616_gpu_nb =3D {
-> > +	.common		=3D &gpu0_clk.common,
-> > +	.cm		=3D &gpu0_clk.mux,
-> > +	.delay_us	=3D 1, /* manual doesn't really say */
-> > +	.bypass_index	=3D 1, /* GPU_CLK1@400MHz */
-> > +};
-> > +
-> > +static struct ccu_pll_nb sun50i_h616_pll_gpu_nb =3D {
-> > +	.common		=3D &pll_gpu_clk.common,
-> > +	.enable		=3D BIT(29),	/* LOCK_ENABLE */
-> > +	.lock		=3D BIT(28),
-> > +};
-> > +
-> >  static int sun50i_h616_ccu_probe(struct platform_device *pdev)
-> >  {
-> >  	void __iomem *reg;
-> > @@ -1170,6 +1189,14 @@ static int sun50i_h616_ccu_probe(struct platform=
-_device *pdev)
-> >  	val |=3D BIT(0);
-> >  	writel(val, reg + SUN50I_H616_PLL_AUDIO_REG);
-> > =20
-> > +	/*
-> > +	 * Set the input-divider for the gpu1 clock to 3, to reach a safe 400=
- MHz.
-> > +	 */
-> > +	val =3D readl(reg + SUN50I_H616_GPU_CLK1_REG);
-> > +	val &=3D ~GENMASK(1, 0);
-> > +	val |=3D 2;
-> > +	writel(val, reg + SUN50I_H616_GPU_CLK1_REG);
-> > +
-> >  	/*
-> >  	 * First clock parent (osc32K) is unusable for CEC. But since there
-> >  	 * is no good way to force parent switch (both run with same frequenc=
-y),
-> > @@ -1190,6 +1217,13 @@ static int sun50i_h616_ccu_probe(struct platform=
-_device *pdev)
-> >  	/* Re-lock the CPU PLL after any rate changes */
-> >  	ccu_pll_notifier_register(&sun50i_h616_pll_cpu_nb);
-> > =20
-> > +	/* Reparent GPU during GPU PLL rate changes */
-> > +	ccu_mux_notifier_register(pll_gpu_clk.common.hw.clk,
-> > +				  &sun50i_h616_gpu_nb);
-> > +
-> > +	/* Re-lock the GPU PLL after any rate changes */
-> > +	ccu_pll_notifier_register(&sun50i_h616_pll_gpu_nb);
-> > +
-> >  	return 0;
-> >  }
-> > =20
-> >=20
->=20
->=20
->=20
->=20
->=20
+I will add this in V2 as well. But I have found an another issue which is
+not very frequent.
 
 
+[  176.562153] ------------[ cut here ]------------
+[  176.562159] fb0: fb_WARN_ON_ONCE(pageref->page != page)
+[  176.562176] WARNING: CPU: 50 PID: 1522 at drivers/video/fbdev/core/fb_defio.c:67 fb_deferred_io_mkwrite+0x215/0x280
+
+<snip>
+
+[  176.562258] Call Trace:
+[  176.562260]  <TASK>
+[  176.562263]  ? show_regs+0x6c/0x80
+[  176.562269]  ? __warn+0x8d/0x150
+[  176.562273]  ? fb_deferred_io_mkwrite+0x215/0x280
+[  176.562275]  ? report_bug+0x182/0x1b0
+[  176.562280]  ? handle_bug+0x133/0x1a0
+[  176.562283]  ? exc_invalid_op+0x18/0x80
+[  176.562284]  ? asm_exc_invalid_op+0x1b/0x20
+[  176.562289]  ? fb_deferred_io_mkwrite+0x215/0x280
+[  176.562291]  ? fb_deferred_io_mkwrite+0x215/0x280
+[  176.562293]  do_page_mkwrite+0x4d/0xb0
+[  176.562296]  do_wp_page+0xe8/0xd50
+[  176.562300]  ? ___pte_offset_map+0x1c/0x1b0
+[  176.562304]  __handle_mm_fault+0xbe1/0x10e0
+[  176.562307]  handle_mm_fault+0x17f/0x2e0
+[  176.562309]  do_user_addr_fault+0x2d1/0x8d0
+[  176.562314]  exc_page_fault+0x85/0x1e0
+[  176.562318]  asm_exc_page_fault+0x27/0x30
+
+Looks this is because driver is unbind still Xorg is trying to write
+to memory which is causing some page faults. I have confirmed PID 1522
+is of Xorg. I think this is because we need to cancel the framebuffer
+deferred work after flushing it.
+
+After adding the below in hvfb_remove I don't see this issue anymore.
+Although as the issue is not very frequent I am not 100% sure.
+
+	cancel_delayed_work_sync(&info->deferred_work);
+
+If you think this is reasonable I can add this as well in V2.
 
 
+- Saurabh
 
