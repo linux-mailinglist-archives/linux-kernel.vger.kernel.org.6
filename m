@@ -1,171 +1,189 @@
-Return-Path: <linux-kernel+bounces-527604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6788AA40D3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:19:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32317A40D3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:21:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42E1F3BEC5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:19:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3643F3BED10
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 07:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6291FC0E9;
-	Sun, 23 Feb 2025 07:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B353C1FC0F7;
+	Sun, 23 Feb 2025 07:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CT/8dlH4"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWndDyuO"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770E02BAF7;
-	Sun, 23 Feb 2025 07:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C442BAF7;
+	Sun, 23 Feb 2025 07:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740295184; cv=none; b=ejrSoliO2yTCF9ILQEZMrBi+KdNnksRuWmrH3Bt/xq8AAqd9Xup4lr9QDnsDc2Z6b23w8ADT+MlCoUFJLauf2ZHhO9pIygPlBPhQ2h8AdsvHxZweLBIsFVFswtpYotleWVsuAlFO69YnMEU2o+mQxhrBgvuDvpF754N4iSD5hOA=
+	t=1740295287; cv=none; b=h1JpOtYrrwAoR7DJhXkX+aZ6n5tCPIezMus6Q6xpuuum8+Je/TXyYiM4CueuqudbBpYF/qvoEWawUtXR6ONzswfwxzXfksistY6Kmp2UTn9PvUMMGSRALAzN/sZ8P9oubNwAwzSVAv7WEPelQrKjqhldT1+OwNkPVYaNBwjpjZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740295184; c=relaxed/simple;
-	bh=3s//kK1v5HwrGxA4bxbPTKrcj8IMbSIhu0XLaPZ8Qro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MPOzUDIiZ2ZqLivlkaYMcS0scLUBcqvvhwjnXgPldlk9VbNwppduG2PPfSsNYilh2P2k3PnjiDVTTO0ixmCTRsMl3p1NCW4pVAEDP/e96b7dMoVVqjouR608vgeg7OtHVrl34rLdkag4NOwMpFVVRaDFwpRFMmw7hFX6TNfuYcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CT/8dlH4; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51N3K4RL027970;
-	Sun, 23 Feb 2025 07:19:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dij0yI
-	Yzj4zL8CNIMdW5A046jovSl4+qz20bZoGhC8M=; b=CT/8dlH4Z2r3fDdhgg40PQ
-	D2n0qHlz+RVESvzoW4ovZvXrA0HKakRbc3zQQsdxeYNLCUYJOqGO9ZrG7sQGoXD5
-	1nrR63sH0fZrn0XTh2H8d5mGvltZ6KyO9oO51KFGDj0fIz/33PSSP5lf6lirAeeX
-	E8B45GUStlU72sTzSg+zZBv2DLiDWGe7s8TOet9uFXC3RyPDymOF55+rx1kxEazv
-	6FP//DrSnEPpz6AwiV/s/LMPcxgxdcQbl92btgaTaEGvuI3KH2P4+gQQDgZO9uIi
-	5l5ok4M21iYGB/yoJmT0o5YmatAndr7FXDWtGqnPCwQTc1XxIAyyUCL2JWe0M4sw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ysr9rw2g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Feb 2025 07:19:18 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51N7JI3C011010;
-	Sun, 23 Feb 2025 07:19:18 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44ysr9rw2d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Feb 2025 07:19:18 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51N4vCvS012597;
-	Sun, 23 Feb 2025 07:19:16 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ys9y1byp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Feb 2025 07:19:16 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51N7JG3a24052284
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 23 Feb 2025 07:19:16 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 316FF58055;
-	Sun, 23 Feb 2025 07:19:16 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3C3DC58043;
-	Sun, 23 Feb 2025 07:19:11 +0000 (GMT)
-Received: from [9.43.34.198] (unknown [9.43.34.198])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun, 23 Feb 2025 07:19:10 +0000 (GMT)
-Message-ID: <3eaea922-0c78-414b-9609-abda0c97a13a@linux.ibm.com>
-Date: Sun, 23 Feb 2025 12:49:09 +0530
+	s=arc-20240116; t=1740295287; c=relaxed/simple;
+	bh=3jZbuwkJgzGSSTQV5KGdMIZ3VaKpP+yPtQuraumG5QA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=merRNEIRx9p2pUERjnlt9TfKqQj8i9EKquiw2avSgP5+JxdeehogZwcIBUwL/IaxF7XchlpxlgBXqy7GwL9BQ/xW8gZSPSa4526iksMdhEbBXR4C+0WsOx1KzGTS69VQeRsVF7bVCQTOzHnyJ9rFOpQPB9V5HtyIHow6+xBsImg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWndDyuO; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e66b4607d2so14914756d6.3;
+        Sat, 22 Feb 2025 23:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740295284; x=1740900084; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4WDu3dM6wbrCY7yXYo8u+7QWo/aMwG/WBfalcegkkRA=;
+        b=YWndDyuO9YHfTuOUguZvmJGvTCMtZoz0XAhKkVuPsi+sDlcylM5KOehdNUIWDCBqEC
+         b70MiBILQMMJR1OY815s3diujHVqX8UxtTSNruj3clJIQecRZ/mLBLPfFq2viOo8GBg5
+         m0r3OwmG6fq0Eb+1ZP9pFzVOvcEG7v+oY3p+sslFbxmfqaMMMA1KCAEYVEAe/fC85fEJ
+         1L5ai59v0jX5xaUdAcFonyApt3QnZbYDJeffcI56GXlWqJzEQLtc2l8AcHvhPKX4+upc
+         1YQYi8icq1Ki9mkM4OoqBjBXpojoMjjd/hq+Y3Ai3mMPPHTkiWZ0Fm/SgWoYXBruoDtS
+         VlGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740295284; x=1740900084;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:feedback-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4WDu3dM6wbrCY7yXYo8u+7QWo/aMwG/WBfalcegkkRA=;
+        b=IURTViRc2uu4vX0Fv/s0pVuIq/hgdP2YqGBy0+tRheqW1cSJjLUfjRhBYDbBIxSh/c
+         Hw2c1q9FFb0KmJAH8K8fqn7YmHe5I2aDVoy0hyRM49RzwoTn6aMZtoVxhHHeNEZzUY9R
+         LXbbKhZUJyyTRO4L5FaHV/2ZKz7coWQ6KQs+YHjqp4RFGMWuKONkLhh2Bre3zOka2rKr
+         rc0Tam09TA7C9ycUxZZCPwm9cHZ7Bhr4FPhsb/p2TCyGxvKwYGglEl1UjFZKZe9EjWdM
+         WvxDZQ5EllcdT9R5ltUHQHx2fBQWiR1BoNNtc4oY08wCAtmDVHKkGENQtTTUgLfHc5x7
+         pyMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVi9Qb7wsbVE8bSqdrLhvp3qLgrsSqWpvEcGgWCkmVat6rFlUBhh10FgimZpLzynW1u1nkhxndzayTcZBRuyw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw46GMbFJL4RJhiz/NQVHvZ085A5YsmN2fTp4LiqCbQjQR0uMAP
+	Tofdb7mbR30G8FUAzKzxojd9itcUnP4F9pXfKBqoPe2CZCWU2uQh
+X-Gm-Gg: ASbGncvpSlc26mcy6CjyhKJv2UBPNtdnpoyTRwCkfXrM88V3vuJSxaHNO9wpxPH7Ncw
+	m+DtwUYycMRABAp/G/3M0QqgIzOpKXBDz7gDAW+PoxDhfIczYx7LVDlV/lzlQv2Ww6p4AyoMqnd
+	C+CbyMxTI01H7l8OMYnLKjPf/3XVvCqLWm5n1FNCiCx5mbLQ5D9iShGMLlqhsSjU981Cg3kR6CI
+	Wg7P2w8QwMG3ipcGniXzqO9E4CBm2LzzwvwFHS+r2Z86Ma7imENTcplIjae30VWQCQLZ0gqG49e
+	7cvn3FmaTfO7opFfE+uE8SUucMPPDM1ePQFni0//5foTbfPlUcTROx4F2reB9H/vz3eboFks6dY
+	Z5MXYqjyFL9IP4bhf
+X-Google-Smtp-Source: AGHT+IG9DGA3rwxRHTD6TCcsTbXqv71BbA4XhOZj7XWRORb3wAxH5tcojO8kcnnnEiUHkXhnox27pA==
+X-Received: by 2002:a05:6214:d8a:b0:6e4:3f59:56c9 with SMTP id 6a1803df08f44-6e6ae7f9799mr125688676d6.17.1740295284207;
+        Sat, 22 Feb 2025 23:21:24 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0abf8a181sm690405285a.16.2025.02.22.23.21.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 23:21:23 -0800 (PST)
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 07AAF1200043;
+	Sun, 23 Feb 2025 02:21:23 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Sun, 23 Feb 2025 02:21:23 -0500
+X-ME-Sender: <xms:csy6Z1AUOG_CrCMurDM-5yG7-hE6tI--ap593tLwttnUDQSyaAkfWg>
+    <xme:csy6Zzii1h7Js3zPZaOK5aAYxYATMZkDPRG6YQFrQzfUcCaarzyPddzmszx_PLFL8
+    WzRoXn0lnofELuKYw>
+X-ME-Received: <xmr:csy6Zwm6IQr5AGkzPk0yIGo3yVbrAoRMpHzVW7dLjI_lLlZb7SyMXXRx9w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejhedulecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
+    hfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtg
+    homheqnecuggftrfgrthhtvghrnhepgeegueekgefhvedukedtveejhefhkeffveeufedu
+    iedvleetledtkeehjefgieevnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlh
+    hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhm
+    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekhe
+    ehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghm
+    vgdpnhgspghrtghpthhtohepudehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehruhhsthdqfhhorhdqlhhinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehpvghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhn
+    ghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepsghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmpdhrtghpthht
+    oheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepohhjvggurgeskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdr
+    tghomh
+X-ME-Proxy: <xmx:csy6Z_y3rzC6Kv29H-FTsQyVkE8Axdq93n5Fl7BrBDhgBRjKa-uAqg>
+    <xmx:csy6Z6SCsfpEgPp_wBT1UVn7Q9K5_vUjREAxKIG0hLyv947h8scWow>
+    <xmx:csy6ZyaUCmHq_O78wRofnMI1nH60sTCOhe3Behc8KJo_GAv97bZdQw>
+    <xmx:csy6Z7TJQMzB3RGvXj7s_mt4TGXvK8TwBBl2JXVqDt6VMfcn6aG0Bg>
+    <xmx:csy6Z4Bmbj8xp914wuWSM0NXSkgEoG8WmlRABIV7bifz1GV9tL0l6o3Y>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 23 Feb 2025 02:21:22 -0500 (EST)
+From: Boqun Feng <boqun.feng@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>
+Subject: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
+Date: Sat, 22 Feb 2025 23:21:14 -0800
+Message-Id: <20250223072114.3715-1-boqun.feng@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/topology: replace kzalloc() with kcalloc() in
- sched_init_numa()
-To: Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        Markus Elfring <Markus.Elfring@web.de>,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <20250222-sched-kcalloc-v1-1-4dee15fd8241@ethancedwards.com>
-Content-Language: en-US
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20250222-sched-kcalloc-v1-1-4dee15fd8241@ethancedwards.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: hHOPWLPOYiaij2BIl7zKRnHgDr42fKQe
-X-Proofpoint-GUID: 1qsb0fS9nhYsqnZlMJuPL_Eq6iwjelU6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-23_02,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 suspectscore=0
- mlxlogscore=999 clxscore=1011 mlxscore=0 lowpriorityscore=0 malwarescore=0
- phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502230052
+Content-Transfer-Encoding: 8bit
 
-Hi Ethan,
+To provide examples on usage of `Guard::lock_ref()` along with the unit
+test, an "assert a lock is held by a guard" example is added.
 
-On 23/02/25 01:16, Ethan Carter Edwards wrote:
-> We are trying to get rid of all multiplications from allocation
-> functions to prevent integer overflows[1]. Here the multiplication is
-> obviously safe, but using kcalloc() is more appropriate and improves
-> readability. This patch has no effect on runtime behavior.
-> 
-> Link: https://github.com/KSPP/linux/issues/162 [1]
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
-> 
-> Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
-> ---
->  kernel/sched/topology.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index c49aea8c10254dec985bba47b18f61be954d23f6..b4539b29fb36f6b2f0c5ca310620ebda29755e5c 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1918,7 +1918,7 @@ void sched_init_numa(int offline_node)
->  	 */
->  	sched_domains_numa_levels = 0;
->  
-> -	masks = kzalloc(sizeof(void *) * nr_levels, GFP_KERNEL);
-> +	masks = kcalloc(nr_levels, sizeof(void *), GFP_KERNEL);
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+---
+This depends on Alice's patch:
 
-Even though an overflow is very unlikely here, using kcalloc() improves
-readability and adds a safeguard since its built-in overflow check has
-minimal overhead.
+	https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a@google.com/
 
-Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+I'm also OK to fold this in if Alice thinks it's fine.
 
-Thanks,
-Madadi Vineeth Reddy
+ rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
->  	if (!masks)
->  		return;
->  
-> @@ -1927,7 +1927,7 @@ void sched_init_numa(int offline_node)
->  	 * CPUs of nodes that are that many hops away from us.
->  	 */
->  	for (i = 0; i < nr_levels; i++) {
-> -		masks[i] = kzalloc(nr_node_ids * sizeof(void *), GFP_KERNEL);
-> +		masks[i] = kcalloc(nr_node_ids, sizeof(void *), GFP_KERNEL);
->  		if (!masks[i])
->  			return;
->  
-> 
-> ---
-> base-commit: 5cf80612d3f72c46ad53ef5042b4c609c393122f
-> change-id: 20250222-sched-kcalloc-1d5acea7249b
-> 
-> Best regards,
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 3701fac6ebf6..6d868e35b0a3 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for Guard<'_, T, B> {}
+ 
+ impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
+     /// Returns the lock that this guard originates from.
++    ///
++    /// # Examples
++    ///
++    /// The following example shows how to use [`Guard::lock_ref()`] to assert the corresponding
++    /// lock is held.
++    ///
++    /// ```
++    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backend, Guard, Lock}};
++    ///
++    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
++    ///     // Address-equal means the same lock.
++    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
++    /// }
++    ///
++    /// // Creates a new lock on stack.
++    /// stack_pin_init!{
++    ///     let l = new_spinlock!(42)
++    /// }
++    ///
++    /// let g = l.lock();
++    ///
++    /// // `g` originates from `l`.
++    /// assert_held(&g, &l);
++    /// ```
+     pub fn lock_ref(&self) -> &'a Lock<T, B> {
+         self.lock
+     }
+-- 
+2.39.5 (Apple Git-154)
 
 
