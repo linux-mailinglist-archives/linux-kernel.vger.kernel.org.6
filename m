@@ -1,118 +1,113 @@
-Return-Path: <linux-kernel+bounces-527538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7ABA40C6F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:57:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F66A40C72
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F5B417D323
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:57:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE16189FEC0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBA8944F;
-	Sun, 23 Feb 2025 00:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC512BA38;
+	Sun, 23 Feb 2025 00:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ICWIIQTQ"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=empx@gmx.de header.b="TeOHdiiH"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31115134AB;
-	Sun, 23 Feb 2025 00:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06C2747F;
+	Sun, 23 Feb 2025 00:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740272214; cv=none; b=WwWwVPa3UqlYY6QAwtCQM0xlTRUA1NcC5CEgs+lntfvvWPeM38uhv+NUKKKVXLeHU0L8Y9WgEuXtI8XYeykVhW1aVUP8r7fqWBQkXYzSfP7xaIBFkgbQgv5Bt8+kTnsX1ayypzYi6Wk548OpbPvYG98MTyQd9iuF2UwQGh9Q5ok=
+	t=1740272258; cv=none; b=N25I/zkv9Wh1+kKMbLwJ5DBGWQBKvFFFsBixl5K+KV0cS8HkxuEQlhyY8vmCLvn0aNDtbmwokUc0oF9qcPp5478ILqGAzC3uNgDiYzhaNVJyC148ybZJDqNdp6+F4imhKDuMUoi5/BJaiYZ06gPD7J37ODPHw1+y/0GTb62vDqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740272214; c=relaxed/simple;
-	bh=sUoPOiUsPKDOnzSM8Kwc5Sif5rmasA2GBktgXEXWC64=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Afy1+0S+Ii0vbQ9SwPRDZzQTEYmt/gsr1hBRgyT16uvo2XNWqPVTnyUHmK6yhDEEZOZrq4+I2V6/3oZasO/bLEH6csFfQ2jzfFHVvjbZNdL5ONliaaY5UbRQGnf8LjxUcyn8TeO2pvC7/9zBhFc1OoVg+PBUBwwakHqAuugbRa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ICWIIQTQ; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=peTQ7d1ZtaITlpYSBR71h0WdnxHH1GpW/3CR8RaPHbc=; b=ICWIIQTQXyHE9sL4
-	VPEyemZpfGUA3LtcSPI44uUMgXDWKe0G+dPq1GkoX0k2RVSQzdLBZXUsqRaIj4ubEmpQ0M6HO7cL1
-	2QpBtUdbocMLsyPT/WnusPq8Cw7NTe9h+Xnj6ZchTvJH5ZYrb/J/24Mp8gQ+kedd09wMxTPZdmDig
-	1APz68VPlZ5ZIkHL5OrUAUJSd7DByavY57BdbFqr0if/XhsNqkuwsbC8lH1UoNKokfWTgtHy3mVhM
-	l3mqrTYcxAXyr9F/n+Ce0Gr1h/KySl8LImzmq8mOl9nc3W0bHQpKV3nX5UeNQm1Qe+9jkq9A67uwY
-	b3KArQxTEW0BqBKdbQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tm0IZ-0008TO-0S;
-	Sun, 23 Feb 2025 00:56:47 +0000
-From: linux@treblig.org
-To: bbrezillon@kernel.org,
-	arno@natisbad.org,
-	schalla@marvell.com
-Cc: herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] crypto: octeontx - Remove unused function otx_cpt_eng_grp_has_eng_type
-Date: Sun, 23 Feb 2025 00:56:46 +0000
-Message-ID: <20250223005646.86675-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740272258; c=relaxed/simple;
+	bh=24FyHwbbtE3R+lcYLPvbsuj0Xvo9HyC6yPeoSp7wSMg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=GQoqOybBWk9oQS1HVmh1v2/wiX6gCteCz0ftvibmIL5LpAbUDwIC2Erj+bzePr9hf7J6Ejuasx5nenlAmCsZEd11zwHYh7C2oXlkqTxsraq0Afwq26bOLkU9+t9Bsnp1HFOaG7iZ85WxH1OFJppT2fRX4t3o/HXjb/vsr89qcXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=empx@gmx.de header.b=TeOHdiiH; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1740272253; x=1740877053; i=empx@gmx.de;
+	bh=24FyHwbbtE3R+lcYLPvbsuj0Xvo9HyC6yPeoSp7wSMg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=TeOHdiiHiOcNLJiRtN1KTU/bi3/vIrBftOSRR1e+jpZ7SN3urD3HDZPmpWRp/GS7
+	 n1j2EMxjI4ki3CLJgLMbZbqvp+4T0SsGW/xPUBvL4hSenPeIV8INhWqMFsv0kaQrZ
+	 PI+nFgPPEtl8uE5D/uM8GhMdJAxPFQjGzit0jSXICg5nFRQpqHlziRYu18DoTYwub
+	 FWsVv60rHEOEOIbhn8LKvRtUL7wUh+DIpB/ZKWh1jYWpDKJ/7SQC/X758+f0P0aY7
+	 tKrHyUOuIdqt4wKPiGHHQKnzqhKn9AjEcd9Q/bkSpWxixo4kInymsw/f8zaSSRHxo
+	 mANJKXMEoP6QRWpOAg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from ep.spdns.de ([185.94.38.157]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MF3DW-1tWYtR3LCK-00CT7a; Sun, 23
+ Feb 2025 01:57:33 +0100
+Received: from [192.168.0.50] (M1.ep.spdns.de [192.168.0.50])
+	by ep.spdns.de (Postfix) with ESMTP id F13BE1695492;
+	Sun, 23 Feb 2025 01:57:31 +0100 (CET)
+Message-ID: <6ae5e229-c440-4522-a9d9-7581a7e0ce1b@gmx.de>
+Date: Sun, 23 Feb 2025 01:57:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: sashal@kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, hkallweit1@gmail.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ nic_swsd@realtek.com, pabeni@redhat.com, stable@vger.kernel.org
+References: <ZrkqNUHo5rGKtbf3@sashalap>
+Subject: Re: [PATCH AUTOSEL 6.10 03/27] r8169: remove detection of chip
+ version 11 (early RTL8168b)
+Content-Language: en-US
+From: =?UTF-8?Q?Michael_Pfl=C3=BCger?= <empx@gmx.de>
+In-Reply-To: <ZrkqNUHo5rGKtbf3@sashalap>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:m/H3/ycIJkKhix3kp/7EI2Al0yXtcINkCPsd8yM8fV+dZ5MKXSm
+ v21VFFNPwokF1tFN6mLkTMQkWaBPpRaqvu9LNDxUl8X24apc+cAg87at27SdmdoQ4o6uLXb
+ LpyOfh1XYbRLyINVbg2BX/ekvAzGVna/aP+dQHfRmsGKpcb1IIyjPkAMY2GZakAsfSDOVB5
+ scECA9cIhIEGlMxv5PxBA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gsRDtAsX0Fs=;DAQCA6NFkp0a2N1jp3LC/UmwSrv
+ oUeJu1TemMoW1qEd32mu1pr657s5bhBmLTg8MdXEiq5DzrysM4N+fGjqFa1MoP5H2E7sfvcjY
+ l7GGtcl8C4kxxXLS5oOuEW28sPovU1fHRvDbfufoYC0Cvysb2cjM4Gq0CNO93z1UK3Qpa+q5m
+ R1ooPxQJQDojYd/ZYNaOmxe1kectjqp69c2LZzKXd7wQJXllTD+BPI/jy0ApGuC6G4sy1agJB
+ gJUurGog/yejQtmsZeUnJfb/AhY4p4PoVThCW029P5rf05CUXE9ZvMeK/3lHxNxyCn2upaEtm
+ Wuqi8WnT0mhYYLzY/Xml/wQFjmn+WPyCudegyxZHm7Jv6e7dbMSd9ypaBT0+eiziG3fMPCbNL
+ 347Hhx59RVfNz7f5WlNme35qAQ+xzOp7hCkqggdbTIIkQu5A1RjfomYHFlbDbx0cD+k0lh0bE
+ +qYhc91tcgVor5+r7kvvdprH+DHIKpsdVrj+FB2y/zHoU3d70rxh1v6hShm7zv998qzBZoomx
+ QEAz+qI74k3sJ3sBdR8vU/LLVlYU1dzmxm0mmJ6hTNN8TmkdGKf2VMXCfsMA5jJcBSFPhQXXM
+ BzyPlbTrcC9Hvq16ORbAOZIcVwAfgL7CUPM98B2g+hAJRA5mDoN6TveJQrdfYiIaushy99qnE
+ saiyUmSd/TujoKD1R0hn8JCn0SlGMXniHbLTL8G6FOoIb2KAtrOchDrj/++T4+AT5fcf2DFj5
+ +S0nPh/xQEuZgvn2wwKWkXZHA5Wd2hsHNRIBaYjdfPcw2hKTDWiaq74wJP+smMW/0tz7z0bMD
+ 7gXlt0iAzacN+lzNY2pnJr9ChcmyuFcj/j2bcSvi9ewzJTPyAYDYuZ9RoQt9g2SlUkyfcSey1
+ 3Cc7S0MRDe8u7iIiw9+q7OFKq9XhwxX3vOQlO6wi1MAriUjCnEoqIB3cf3AJHewNFZSLW98LP
+ ABUwxQ5tp3Jgn27zi8PpVXmW/1Hk7Dy36SSBkTn7I1A5AuFxcodTdKANSUiKWTHLZnQbkpWMZ
+ 5XSd0+Z8RgNxKcx1r9qf+24aLuxi5rtOzvXX9QcJHONsH+w6hqN4iCoFizSNGdSgTGfKF9EHE
+ bGJngaDutqtAKApY/0I/36iV6bnQ3aM/JX6faTuI6YCN0IfjNcH8uCAzo6tJCxjEVQolH93r/
+ GwA5rjao3B75C37unZROXAgUAR651aEL0SBv8GftHVkgkbzz9YnGXbjYr6ZMhoHptQKBAzjbL
+ htsLqmhLGky+CUQtU1sZtK/9CENeGHU8SuHY2Gx7kxEM+4ggNeBtjCQWqopfk18hBp5H9jn7L
+ qnFbhOCFFEIHj27pMh3QBzp4Jb6IKogH8PsadxlvG/BrHkfjpNyvDWL7jqXPQFVrSsWrFJz0R
+ 9A3xX+gTwTjr+YE5pmWXY+WGpfEIRa+MI0onQ=
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+ > Indeed, I ended up dropping from the wrong local branch yesterday
 
-otx_cpt_eng_grp_has_eng_type() was added in 2020 by
-commit d9110b0b01ff ("crypto: marvell - add support for OCTEON TX CPT
-engine")
-but has remained unused.
+So it looks like the patch was kept in stable because i hit the problem
+now after upgrading from kernel 6.9 to 6.13. It's a PCIe card which was
+cheaply available in europe so it wouldn't surprise me if some more of
+these are around and in use. So, can we keep supporting that chip and
+revert the change, or do i have to get a new card?
 
-Remove it.
+Regards,
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c | 11 -----------
- drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h |  2 --
- 2 files changed, 13 deletions(-)
-
-diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-index c4250e5fcf8f..9472798678f9 100644
---- a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-+++ b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.c
-@@ -505,17 +505,6 @@ int otx_cpt_uc_supports_eng_type(struct otx_cpt_ucode *ucode, int eng_type)
- }
- EXPORT_SYMBOL_GPL(otx_cpt_uc_supports_eng_type);
- 
--int otx_cpt_eng_grp_has_eng_type(struct otx_cpt_eng_grp_info *eng_grp,
--				 int eng_type)
--{
--	struct otx_cpt_engs_rsvd *engs;
--
--	engs = find_engines_by_type(eng_grp, eng_type);
--
--	return (engs != NULL ? 1 : 0);
--}
--EXPORT_SYMBOL_GPL(otx_cpt_eng_grp_has_eng_type);
--
- static void print_ucode_info(struct otx_cpt_eng_grp_info *eng_grp,
- 			     char *buf, int size)
- {
-diff --git a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
-index 8620ac87a447..df79ee416c0d 100644
---- a/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
-+++ b/drivers/crypto/marvell/octeontx/otx_cptpf_ucode.h
-@@ -174,7 +174,5 @@ int otx_cpt_try_create_default_eng_grps(struct pci_dev *pdev,
- void otx_cpt_set_eng_grps_is_rdonly(struct otx_cpt_eng_grps *eng_grps,
- 				    bool is_rdonly);
- int otx_cpt_uc_supports_eng_type(struct otx_cpt_ucode *ucode, int eng_type);
--int otx_cpt_eng_grp_has_eng_type(struct otx_cpt_eng_grp_info *eng_grp,
--				 int eng_type);
- 
- #endif /* __OTX_CPTPF_UCODE_H */
--- 
-2.48.1
+Michael
 
 
