@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-527675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E05A40E13
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:32:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB43A40E16
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA398189B2DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:33:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D945A7ABDBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5902020468B;
-	Sun, 23 Feb 2025 10:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF80D204F63;
+	Sun, 23 Feb 2025 10:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PJu2gik0"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+gd4JXl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2D61EB36;
-	Sun, 23 Feb 2025 10:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B791FCFC6;
+	Sun, 23 Feb 2025 10:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740306765; cv=none; b=O34EGB0NF5CsGfVwgByvmF9OOLBL6WGiObtS/Y9UnZ2VP73XdlPaE0ZBnWCF0ohCyDLAi9VUR8doBE2xn3HnqD22vOJg0hId8zk4vfibbjAji6vt9wvkw0LEm0VxhPqY2Ol8AWXfIfTo7zEJPP9TnomM98Xu7HUqvgMysBjwffY=
+	t=1740306799; cv=none; b=FY0O8E4Zp8N4kr5yoh2dFx+A6X2ekDmonuG9Sts8WNcMoNGvydjYUt1lSr24Oa7vq00pS1RTsL+hbRxSubUV/rkDNo4esdVPWzAe7h/3jSGXhvJtA8gaRlS2bZlU6mvuEfty3Rcl5wHSN5nCBXHjTe+09wXR8C+EVUknA4LXlyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740306765; c=relaxed/simple;
-	bh=UeSf7qZC3uC+4elUHoxZwfMIm5R2qsKyGGBBhDQVbTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jbdOCgMBUIeaBp6ImMjBPYThf1hSkDHjpb7hRUw2Gth+Q5vO+Ef4BULiJMT+bvHiOonUS8x0BE4VZcIPHmwsMmYEQ93jE+Ib4gGtCqXTK4YspOWGIYOlwG4rZnaXuL2SGwDVBd20/e7bBRJxkkgYSFaF17V8UG+dyzA7VNltCTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PJu2gik0; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C30043317;
-	Sun, 23 Feb 2025 10:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740306755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3q8V+cm8pIkEgY8WNYRuv1HhLOCUVuFOZ7NL4x+JRvA=;
-	b=PJu2gik02LsnUsoTvziJ0WU+C7YYrfTfpv4qiGLeG4lV/hz3f1REW+aKTVJKdNgZ4qyaqa
-	FPYvCWviN3Vq0QEyp3Wk5OwGyDrNaZXKBdtYdj73/VWi0RWk6jeSIi0Y9OuplS+G4BwmaY
-	kgL/7pzrLp+gEuaBi0/mLCS428JAQaYXnT3wVlAV8J0K6BNEmQsIec6uZKwHBq2ClJUStX
-	LlcYSIZF96a7YLBswGAg5PJRgAi4kILQ7GR+g5y+/t43ECpdnEmRFJbBO18zhf8q22f8Fb
-	sl3vWCF2CaG2+O3jiINfvWnLgNADVXy8EZx9Had0oUgdKREYQcxMyCC26oYavQ==
-Date: Sun, 23 Feb 2025 11:32:32 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
-Cc: hfdevel@gmx.net, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
- <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, FUJITA
- Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 4/7] net: phy: aquantia: add essential
- functions to aqr105 driver
-Message-ID: <20250223113232.3092a990@fedora.home>
-In-Reply-To: <20250222-tn9510-v3a-v5-4-99365047e309@gmx.net>
-References: <20250222-tn9510-v3a-v5-0-99365047e309@gmx.net>
-	<20250222-tn9510-v3a-v5-4-99365047e309@gmx.net>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740306799; c=relaxed/simple;
+	bh=FLirW3ftLfXRJNxdSRNnrqsyTaGJiadECUqG3czTtBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AlwDJTyxq9qgO1U/Er72aIT6vliph4P3l87BdqQ67WWUVnzIOsC8yk3uCkxeU7/SVK5JKqEMrN7OVlb0JG/j5Sgz8MKFDGHvtvs+bwdcVBhRqvQrdBqnbPDV4OYetbqon//w6aNHlSrNyUfpoR4IZPIoYLEHLsCUA89BRv7IsCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+gd4JXl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC8DC4CEDD;
+	Sun, 23 Feb 2025 10:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740306797;
+	bh=FLirW3ftLfXRJNxdSRNnrqsyTaGJiadECUqG3czTtBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V+gd4JXlabh+DhfEPBhrqC28xt0zFouB40fJznlRA8WX25vNK4NpubB/XTu9wdohm
+	 TUGFxqw3M5vfgiYGMVDeJw93JSRd0+pzHg6bwb+p0POjtkPZpR5FBWvKR2IvCGFgaL
+	 qvfBnula+H7SpAGtgz43ix3B2A63IznR0saRl7T6fbhv1GcpsyGBhmvHW1cTVA244W
+	 rg87/ohN6zauB+kSi9VAq9DWeT/OGUIZPAGBc9I5O/Be2KEd2VuJDI+LjdGCFO5oUG
+	 k/iZVR2YHYsJobPDLZlBWjG6i258UqwoEIDZWqNSALq65CSxUM4RClCltHUPSDyfQ4
+	 ml4X5nhorGRMQ==
+Date: Sun, 23 Feb 2025 11:33:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] pinctrl: samsung: add support for exynos7870
+ pinctrl
+Message-ID: <20250223-peculiar-coati-of-gallantry-6556ee@krzk-bin>
+References: <20250219-exynos7870-pinctrl-v2-0-1ff9b10bf913@disroot.org>
+ <20250219-exynos7870-pinctrl-v2-3-1ff9b10bf913@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejheehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopeguvghvnhhulhhlodhhfhguvghvvghlrdhgmhigrdhnvghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhfhguvghvvghlsehgmhigrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnn
- hdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219-exynos7870-pinctrl-v2-3-1ff9b10bf913@disroot.org>
 
-Hi,
+On Wed, Feb 19, 2025 at 12:18:59AM +0530, Kaustabh Chakraborty wrote:
+ +
+> +/* pin banks of exynos7870 pin-controller 2 (ESE) */
+> +static const struct samsung_pin_bank_data exynos7870_pin_banks2[] __initconst = {
+> +	EXYNOS7870_PIN_BANK_EINTG(5, 0x000, "gpc7", 0x00),
+> +};
+> +
+> +/* pin banks of exynos7870 pin-controller 3 (FSYS) */
+> +static const struct samsung_pin_bank_data exynos7870_pin_banks3[] __initconst = {
+> +	EXYNOS7870_PIN_BANK_EINTG(3, 0x000, "gpr0", 0x00),
+> +	EXYNOS7870_PIN_BANK_EINTG(8, 0x020, "gpr1", 0x04),
+> +	EXYNOS7870_PIN_BANK_EINTG(2, 0x040, "gpr2", 0x08),
+> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x060, "gpr3", 0x0c),
+> +	EXYNOS7870_PIN_BANK_EINTG(6, 0x080, "gpr4", 0x10),
+> +};
+> +
+> +/* pin banks of exynos7870 pin-controller 4 (MIF) */
+> +static const struct samsung_pin_bank_data exynos7870_pin_banks4[] __initconst = {
+> +	EXYNOS7870_PIN_BANK_EINTG(2, 0x000, "gpm0", 0x00),
+> +};
+> +
+> +/* pin banks of exynos7870 pin-controller 5 (NFC) */
+> +static const struct samsung_pin_bank_data exynos7870_pin_banks5[] __initconst = {
+> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x000, "gpc2", 0x00),
+> +};
+> +
+> +/* pin banks of exynos7870 pin-controller 6 (TOP) */
+> +static const struct samsung_pin_bank_data exynos7870_pin_banks6[] __initconst = {
+> +	EXYNOS7870_PIN_BANK_EINTG(4, 0x000, "gpb0", 0x00),
 
-On Sat, 22 Feb 2025 10:49:31 +0100
-Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
-wrote:
+Why do you need this new macro? Isn't this the same as existing
+exynos8895? Maybe just rename exynos8895 driver bits/structs/types into
+7870?
 
-> From: Hans-Frieder Vogt <hfdevel@gmx.net>
-> 
-> This patch makes functions that were provided for aqr107 applicable to
-> aqr105, or replaces generic functions with specific ones. Since the aqr105
-> was introduced before NBASE-T was defined (or 802.3bz), there are a number
-> of vendor specific registers involved in the definition of the
-> advertisement, in auto-negotiation and in the setting of the speed. The
-> functions have been written following the downstream driver for TN4010
-> cards with aqr105 PHY, and use code from aqr107 functions wherever it
-> seemed to make sense.
-> 
-> Signed-off-by: Hans-Frieder Vogt <hfdevel@gmx.net>
-> ---
->  drivers/net/phy/aquantia/aquantia_main.c | 242 ++++++++++++++++++++++++++++++-
->  1 file changed, 240 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> index 86b0e63de5d88fa1050919a8826bdbec4bbcf8ba..38c6cf7814da1fb9a4e715f242249eee15a3cc85 100644
-> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> @@ -33,6 +33,9 @@
->  #define PHY_ID_AQR115C	0x31c31c33
->  #define PHY_ID_AQR813	0x31c31cb2
->  
-> +#define MDIO_AN_10GBT_CTRL_ADV_LTIM		BIT(0)
+Best regards,
+Krzysztof
 
-This is a standard C45 definition, from :
-45.2.7.10.15 10GBASE-T LD loop timing ability (7.32.0)
-
-So if you need this advertising capability, you should add that in the
-generic definitions for C45 registers in include/uapi/linux/mdio.h
-
-That being said, as it looks this is the first driver using this
-feature, do you actually need to advertise Loop Timing ability here ?
-I guess it comes from the vendor driver ?
-
-Thanks,
-
-Maxime
 
