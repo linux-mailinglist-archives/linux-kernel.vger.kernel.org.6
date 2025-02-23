@@ -1,125 +1,122 @@
-Return-Path: <linux-kernel+bounces-527771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 948ECA40F46
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:33:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFBD3A40F49
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:35:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A949167340
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43121188B9CA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA92207E00;
-	Sun, 23 Feb 2025 14:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="onCGxQtW"
-Received: from out203-205-221-231.mail.qq.com (out203-205-221-231.mail.qq.com [203.205.221.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ECF2080D4;
+	Sun, 23 Feb 2025 14:35:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37312AF04
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 14:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED971DB548;
+	Sun, 23 Feb 2025 14:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740321220; cv=none; b=cnNCAcO6J6WLjKx+LFsQ7JJktS1I5MXoOgFqeGipJyZnx8jBTDMklfdo7/BwVuCvGq6wpRgX7xDq/MRZjCsZ7pGRjO9ZqpGZcbnWC0QHUiw/7LpS/GojFj1jpAcP2HOEiQt8UyLWRSoviVu4w38jsmv6wbd/BefNhNA6PYWFnYU=
+	t=1740321341; cv=none; b=rHFGFOq5QieKLSmkZbQdJ7KcsPeQp251iRKfF5a509KecwtKK5CyW4rBk0+niFsZdhwC23inRI9FkNOwOZZxq0RXQOfo0ogkjHgN1/9k4ddsGmrCrAQI22bGU9NEOp03VnVILCRSCUM9AlnI4bBmVB0q0yMEHTrl9jqmZzY6yRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740321220; c=relaxed/simple;
-	bh=4LYCqximZy+Pa6ZXAw6ugta2CFF5G4dzzhuMMfYA8uw=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=izLyxZqsLUnUFNJPtaoHTwgwC4ZPYYuvSuLEl1akLsg73sNrR08mhSFLClaNzgc2bMAzDIW20+P6crd5w3Zlho7n1FxDKuwT05FReJrLQJs0Gj7iL2jaDk5C/YJOmWhlRH99AzK5OiYd5bucrW+IWJ+PsxRIZhwr+jwBop7mo8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=onCGxQtW; arc=none smtp.client-ip=203.205.221.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740321214; bh=4ehgIESXH6cBFpBIB2idD5osE/i2AyX+jsHczH7hll4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=onCGxQtWJmoEieQHTq57VUn7sAtuIspHnUUVwcNUUvakJgvr+Av5yaxAF/+R8F1ul
-	 soLcDzwzOjFz2fajSHkbdSTT4W7ZHB/qjFFgJ4E/N5aBdXIpQc7jdJG28IGvj6nlnn
-	 PMxeW3BGc978t2L3bvfzLiiQoWSWu1B0YW4rPLKI=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id 7D6270CB; Sun, 23 Feb 2025 22:31:22 +0800
-X-QQ-mid: xmsmtpt1740321082tf3ppkaq6
-Message-ID: <tencent_383767B76C06D3F379C37E296A63A0045205@qq.com>
-X-QQ-XMAILINFO: Nr8YfRCXK4tZH5q/lpMLZoZz5DhyOn24j04komkTrESfIvnRmRoMx8pxNYwY1P
-	 gB41Grknr0hP1RCqfsl7HhA58TCt6fo+x4ezWVuHStr3RYtHvvJ21vr/qnh3a8XRbIdXTtoc1Glu
-	 g2LRZZXr99QoN1kV33M9ASvdLsI4avFYEC7TNGXc+/q0wJO7p7FpfBudDR2r4olD3sXxWdxJVlGC
-	 0020nJzrAYHcM7Ou/2Mnn4dWf3NtejTnHlfgEI0tGIzmRLOMlWfYgjrlIBX68jpfktiy2SwIUSOs
-	 i42YC2IBT7RmtXxwxbqOtICY6PB9xdz9ZnT7nHN3BkmADiskJG++JwIC8sh7rlFCaInoZYIWe0Je
-	 rlTcol5jJOiqmvcany+y5081x0zyhjHPitjceTponyiie3pjI2Hn0mSG/Hz5aq62R4POocxRm0FU
-	 t1K6nUgXqvNubj9vSZCLmNibqg0a8gA+MczEQtoFsxoA2O/4j+sZ/xpWW0RmT9c+aPMqxI7g5r03
-	 s0IrINKPHiB7lwRupStjTsNZNa0AZ2XZgBkOJn5sILoe3pxHXU3/+Y+D4B1vo6dnJQANdr8BVMNe
-	 m8FjliOFfYmu0AgUqdouOzjRWbZwND8VvsA0k0FWFhMAr3//lbZgq5q6tw4e41XBxqL8Iq4lNF3a
-	 0yxzAfUPGPeaKBv4QcLeatzxOpDjrrWVW8ub6aQZcmliBXtJ00DVAtrNiFZ22vOdkrnC5XPsstTA
-	 z7GqrGNRx7dtxSrsae9nGABxxuAx6XmUuLj84Qki903W4UxzEw4uEzWM/3/P4m0pp5sjhdbz3UQr
-	 9n06+EiL0nZoxbJ/bTpdTpavFT4ogzqYHEvsFeP243MHJccg8lSUD4hyyJMKF58XQ+QEGsl8UXcd
-	 8cPtuPlAje8CcjhhnC+WlnFJ5EmzcqVvwQOQR8dwT4VVJop1O9s/skyI1NQcG8twjTmJyGIN203i
-	 Z/PmhMpgCGG3AjkkkfBkirdlqgXtm0Fqu2kA+bGdU=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-Date: Sun, 23 Feb 2025 22:31:22 +0800
-X-OQ-MSGID: <20250223143121.558336-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
-References: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
+	s=arc-20240116; t=1740321341; c=relaxed/simple;
+	bh=S/4W+YLqPBFiEMJLqaBlV8vLZnmayjH5UEE/GmTDXs8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o80eMAaOTnLvVvuPRzH1dKbtA51A+hDJJUn5HPwMibineACgoJTfXk7VTDOPNzcjqtLtbHkTgs59ivuRlaueRKwdmR1T1xn+A/geFZmeQWGIz7KPrrA9CApGrprBJajYjxbu1sz4OZZhdfy90NHXFKSZ4qASxxRa1SdMP7TWmto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 85DA2B81D9;
+	Sun, 23 Feb 2025 14:34:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf10.hostedemail.com (Postfix) with ESMTPA id 06E672F;
+	Sun, 23 Feb 2025 14:34:35 +0000 (UTC)
+Message-ID: <3ccc3d3e756e82af53b4f75c4ab9cc99e555da1a.camel@perches.com>
+Subject: Re: [PATCH V5 2/2] checkpatch: throw error for malformed arrays
+From: Joe Perches <joe@perches.com>
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
+ a.hindborg@kernel.org, 	alex.gaynor@gmail.com, aliceryhl@google.com,
+ apw@canonical.com, arnd@arndb.de, 	aswinunni01@gmail.com, axboe@kernel.dk,
+ benno.lossin@proton.me, 	bhelgaas@google.com, bjorn3_gh@protonmail.com,
+ boqun.feng@gmail.com, 	dakr@kernel.org, dwaipayanray1@gmail.com,
+ ethan.twardy@gmail.com, 	fujita.tomonori@gmail.com, gary@garyguo.net,
+ gregkh@linuxfoundation.org, 	lukas.bulwahn@gmail.com, ojeda@kernel.org,
+ pbonzini@redhat.com, tmgross@umich.edu, 	walmeida@microsoft.com
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Sun, 23 Feb 2025 06:34:35 -0800
+In-Reply-To: <20250223002119.2432-3-trintaeoitogc@gmail.com>
+References: <20250223002119.2432-1-trintaeoitogc@gmail.com>
+	 <20250223002119.2432-3-trintaeoitogc@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Stat-Signature: h7z75neheimcbby7aqpuc9hsqhew13ss
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 06E672F
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/Uyv2/o6G5DO6f9Ko/Le6bwc4zAd8K2bA=
+X-HE-Tag: 1740321275-503264
+X-HE-Meta: U2FsdGVkX1/56NPq0mWbL0T1zCvh170oWjpbgD9WjUhsFmy+assQ+cqrGuankm2LejnpLxfbjYLpVQGO9S414dH/kNy6WEcC67zyyzeDsqdbtSrdzpZiq9Po4QjKGu6ruBo9isdoUpidFucXaoYOTKzGRldT9eFA/F7lAhkPmzeqJdrBddM/acCYgODZuVQRRzUOVbjDyOmpmj3wYyCmPNaLqJ5VaIXHkAupcfzh6U5pLlTcz72hi7eTspERHmFVc2ev/iGZ+XYUJXZLoyMBUyLIpgX552+o84RfiDD6x6RnqHbqyNrTjE4E2I8q13KM
 
-#syz test
+On Sat, 2025-02-22 at 21:21 -0300, Guilherme Giacomo Simoes wrote:
+> Implement a check to ensure that the author, firmware, and alias fields
+> of the module! macro are properly formatted.
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index c9e65e9088b3..cf7a74343454 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -596,6 +596,7 @@ static int steam_input_open(struct input_dev *dev)
- 	unsigned long flags;
- 	bool set_lizard_mode;
- 
-+	printk("steam: %p, %s\n", steam, __func__);
- 	/*
- 	 * Disabling lizard mode automatically is only done on the Steam
- 	 * Controller. On the Steam Deck, this is toggled manually by holding
-@@ -1086,6 +1087,10 @@ static void steam_work_unregister_cb(struct work_struct *work)
- 	connected = steam->connected;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
-+	printk("steam: %p, client_hdev: %p, opened: %d, connected: %d, %s\n", steam, steam->client_hdev, opened, connected, __func__);
-+	if (!steam->client_hdev)
-+		return;
-+
- 	if (connected) {
- 		if (opened) {
- 			steam_sensors_unregister(steam);
-@@ -1153,11 +1158,10 @@ static void steam_client_ll_close(struct hid_device *hdev)
- 	struct steam_device *steam = hdev->driver_data;
- 
- 	unsigned long flags;
--	bool connected;
- 
- 	spin_lock_irqsave(&steam->lock, flags);
--	steam->client_opened--;
--	connected = steam->connected && !steam->client_opened;
-+	if (steam->client_opened > 0)
-+		steam->client_opened--;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
- 	schedule_work(&steam->unregister_work);
-@@ -1322,6 +1326,7 @@ static void steam_remove(struct hid_device *hdev)
- {
- 	struct steam_device *steam = hid_get_drvdata(hdev);
- 
-+	printk("steam: %p, hid device is group steam %d, %s\n", steam, hdev->group == HID_GROUP_STEAM, __func__);
- 	if (!steam || hdev->group == HID_GROUP_STEAM) {
- 		hid_hw_stop(hdev);
- 		return;
+Poor email subject.
+
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -3567,6 +3570,46 @@ sub process {
+>  # ignore non-hunk lines and lines being removed
+>  		next if (!$hunk_line || $line =3D~ /^-/);
+> =20
+> +# check if the field is about author, firmware or alias from module! mac=
+ro and find malformed arrays
+> +		my $inline =3D 0;
+> +		my $key =3D "";
+> +		my $add_line =3D $line =3D~ /^\+/;
+> +
+> +		if ($line =3D~ /\b(authors|alias|firmware)\s*:\s*\[/) {
+> +			$inline =3D 1;
+> +			$array_parse_module{$1} =3D 1;
+> +		}
+> +
+> +		my @keys =3D keys %array_parse_module;
+> +		if (@keys) {
+> +			$key =3D $keys[0];
+> +		}
+> +
+> +		if ($add_line && $key) {
+> +			my $herevet =3D "$here\n" . cat_vet($rawline) . "\n";
+> +
+> +			my $counter =3D () =3D $line =3D~ /"/g;
+> +			my $more_than_one =3D $counter > 2;
+> +			if ($more_than_one) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer each array element on a separate line\n". $herevet);
+> +			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =3D~ /"/) =
+{
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer declare ] on the same line\n$herevet");
+
+Convert all the messages.  Use consistent style.
+
+> +			} elsif (!$inline && $line =3D~ /\]/ && $line =3D~ /\"/) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer a new line after the last value and before ]\n" . $here=
+vet);
+> +			} elsif ($inline && $line =3D~ /,/ && $line !~ /\]/) {
+> +				WARN("ARRAY_MODULE_MACRO",
+> +				     "Prefer a new line after [\n$herevet");
+
+twice.
 
 
