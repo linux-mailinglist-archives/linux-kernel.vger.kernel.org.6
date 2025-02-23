@@ -1,90 +1,146 @@
-Return-Path: <linux-kernel+bounces-527651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC546A40DC3
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:44:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FD8A40DC6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:50:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB74B16EE25
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:43:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978187AB820
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D4320371A;
-	Sun, 23 Feb 2025 09:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587712036F0;
+	Sun, 23 Feb 2025 09:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bd/NuYoH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MUrgKJvn"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97C21C84BA;
-	Sun, 23 Feb 2025 09:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D81DDC12;
+	Sun, 23 Feb 2025 09:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740303826; cv=none; b=g6wvZEqlblIAldbzzQ0vJZiKclENfnPISqsYXFBhJphf4UK2IixUpm7nuVXSRf/UsIbO6LRJZ6Dt2VIr8zxHIIzPh74oCGEx5tAlf6izo0sLjfSfG/WlbdyHErVoJRQqUa5C3d9zHHJ4j4oEfw3ZsnD4PRujp3GdrwMh5bYqWc4=
+	t=1740304234; cv=none; b=ZH20BqOaxhqkj6GiNgXgWOIGPuLouJ4dosQgq+l77gdlvXeKDW2luHAdyhHdBhcHNr9yzjQDdPKnqz13CV/xBKC+9qs96YrNkg1N7L2fIiQv5tggD/+ARk/dcTD2XKcrl8QoYo4KJYT8+7uk+8r+y6J3ED0IQHC5J3Uu0weanMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740303826; c=relaxed/simple;
-	bh=ivkyYIRjD3iDkUC0J1Fw+YA3hXSkIW5vFdgvdSMRqk0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=kVCrM05tVnXx6rfXwd3UKQqnFzjgFf5GY8YrqwHP/X4r05Rxr54dsv53czql0HCH34MWxOtikQMtN5A1C87u8UzB9Sun+qh3nFAeiHus4dmSASdxyz84sDQn9g/XJw43VjPmXvRC4sgigK/pYggz8WJzp+X8FQFDUmMXASrpwRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bd/NuYoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE6CC4CEDD;
-	Sun, 23 Feb 2025 09:43:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740303826;
-	bh=ivkyYIRjD3iDkUC0J1Fw+YA3hXSkIW5vFdgvdSMRqk0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Bd/NuYoH12fJ5181S4Yt+eoA+il9FpikOq2cULXtuJJNNshxHeb+DSiFD63DWci17
-	 7C6FNkS9yHwT1auHE1s+1woSjRJSObTH6pUGtW1ebfv1xL676F8M/7Pe8e5AqklZFW
-	 5NzoGO3B16gJK3qiNNZ+XjSUQqZEnsp/G3NaJ6ThACdeEUVN3qwQPLe/Yf4QHsOmai
-	 atCpWfZiZXXBYm7RbHvHncKfbLODbqT8tUPxINmMOVtPVfgfbKoVceUefiKrpT6Jw0
-	 yo8YjG1hTXch1tciP5m26w78pmsZelS5/wA056038irYjhVzyIIITlLuJMLrZXZDd4
-	 +q/zF4F54kkzQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-Cc: Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
- Saeed Mahameed <saeedm@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250219085808.349923-1-tariqt@nvidia.com>
-References: <20250219085808.349923-1-tariqt@nvidia.com>
-Subject: Re: [PATCH mlx5-next 0/2] mlx5-next updates 2025-02-19
-Message-Id: <174030382258.497750.8800825927872509906.b4-ty@kernel.org>
-Date: Sun, 23 Feb 2025 04:43:42 -0500
+	s=arc-20240116; t=1740304234; c=relaxed/simple;
+	bh=d58RwVa7DbcO1qKm0r+LcPPaDjg73Am3OIA+pp6DxJ8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sF4Xx2yWSYyuYIuKU+a7Fu2xmIJVZAVqyxYejSmmCkuHkKX/I3VMsrxj1FYxYxP8bBUWZw0smen3/cTONlYyjCjo1PKs3l7A/euz0UTNP2k5KQJOzJ3+PjuDukKFpniQe82AbeVdkrr3sHfaswNDGnXVurHq5NmZLvX/wS/QXTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MUrgKJvn; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740304218; x=1740909018; i=markus.elfring@web.de;
+	bh=uNqtagFfaX+k1TuZfiWllVGWvAnzX37lvyjkNmWZte8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=MUrgKJvnzf8bl89mBXk5+a6sYHhBCdm/CbvdYwA/gAlYSkF42N0tsuTCi190Ycwb
+	 joYGEspNS+fL16QoyidqL6tOBXrRcNfFDtU57gDS6J87HucPdFV8YHWu1uQG+3qk5
+	 1BXo4H43AoRrC46G38VZiWN3RM37/QjlDoxSOoW+vaOjY6kyypc7fNS0PmfMQ4q6M
+	 GgYVTvXggPwyuCTz8kzlwbmeJG14+9Co4lk1Fawa7clMF9kIdBDvVFC2P8VQARoUh
+	 ifgFfyZp9tXBk6D0VUtyGUTIzBZT2zRkoHSEYGwGEplIfJ+zKixc1BmpcPntmOypF
+	 MnSPXtjUeiH84Kca3w==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.18]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MOUxo-1txcWq2vV8-00Wa8T; Sun, 23
+ Feb 2025 10:50:18 +0100
+Message-ID: <c8cb0a78-c547-41dc-ac35-d569c57ebe3c@web.de>
+Date: Sun, 23 Feb 2025 10:50:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2?] ASoC: q6dsp: q6apm: replace kzalloc() with kcalloc()
+ in q6apm_map_memory_regions()
+To: Ethan Carter Edwards <ethan@ethancedwards.com>,
+ linux-sound@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Takashi Iwai <tiwai@suse.com>
+References: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:rYfx/2i6V4IQ3Dw4RZIfxE9GJ1AH7VPLFCjjLUor9tddYNk4qf4
+ iR936YWJXwQd3oOEGiX+aBc0Vp+qvfEnlIhqn4CqP3xhrSD9qo8QFD1dYP+nA4tfpqUS24t
+ hjmGFdu/eHaXNsOPMC8iSSebejS+z80IEnt6oJasWJ+zkDJThr/aoJRgiSlPcJG5ET+ztBc
+ LAr8LbKkCaQZIcUBmKxaQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:frMgY1647xs=;/6lsbY/b9/Ua30DHNQG4CgdhlcX
+ xHZHCdor/0mLXZXYLmpmCujHrSgZnHpfzzwFNqe61jwJfFCLE/D4r6MeJDOhl+ITz+U871kge
+ +w82eon+5hQy1gWoa4f0YJAjXSInBmncXldm1xfZf1ut5JwLtnjDcQP8JNFgZkhzR4BmOq89p
+ KUf22pKeCdMuxP7e08ThjEB/R89F7wDL35d6id7YCs+1/cyQwYeoGKX5dEvUt3dEimXIPCigP
+ AdUWNVrC2dvI2sh2vX+uIKy0Uq8iSZPWgAeEhqbicUTsQZBuFCfjbcg5CoVIPb7JWJTDxpM/U
+ PwRNU1DyrJbfrFaGyGS+wH9tWPckM9no+EoulC5s6TBCRkaWRvpRmFFj2Ip9qUMuQLQUvHsGA
+ Ln7L1HroGOT3wCQFELsnHAwr0WObQ/mnVck1RvxId415T1wREz1UflTYvYhgJs0LjIYL3fuWy
+ Yh8W/dY3wGZ0gqhj7X5CLnngZH42hGyXnPbGVpe+t2tliRmL+HJGTa7wP2Q580iSwBu9G5wdT
+ jTmVhv7UQMa3yybacDsRH3csuaVEXIIigUpaKHdn/cCLI4gzgEPJ9J2exGQOgJChx+rxIVKK6
+ V3pjQ4e1HchVSBuJIhu2dy+b8exO66mNaGjL82lHtJDJEUPmKLpHkQQI/DzB1I/NvTeYgu7Sp
+ FdnRkv7dKDZ6BCZ3cNHPaNROBgIGUFp5Em+zTFmjhHG0xfSB7AZikrwybNRp2khS31L6TiSpv
+ K97TaIEkp64XITs7dgqIerOrFR/8WOQa6CRex8/yhWhzbXckm7HsJkM5kEu68vR8q2EpY393E
+ ijU6iRg2oidTgdz3+gtgI5o/Kq6WxW/lLnoW2eTc2Zug+zS/L2Q5QmNkbK3RCSJ2enikZVQez
+ Lh5mU15nM/ttRlnMkHmKMZR6do9H9rIajkCIV8N/Qfc1cSVxNfM9X1FW/drYp80Yka7WvVkWO
+ Qw9VDWsLfQpa38/GxMy4k3Dm40CBSo/3g34ZGCn3iSoi/zmAnnSBwoI2PAtkdrhgjUlrYbEg/
+ 3b5jiGnUTt4TaRDeuQ7O5LVbUe2jnB/uSiIPxRsBBxd8VmIO5Bbo9tM4H73ZTadAN7/4fQo66
+ j7UK65xNgJWjw9usG9b7zdC4YfJlchcB2WTtTFEUeCikL7vfVSD+AabrZabRWj1tGYzYbd1P9
+ ZABRPqwOp9ZYGqGNjn1D7JQAT4IwpuZ9jO0ZCXRyhu7m2x2jnNBJMS5uZUGMPyNrGLvqMcDpu
+ j6Z1TIbffqX5fVM11kKf0CIBNnK/fROC6/3QnXAeQn0IhQU7bVK57quPHr/Hfp7vrsOtiN50l
+ TvKnMUe7SeVDJLMXbP69JYZOct2a6pTjOp5PJkfSakLCLi91YV4cEqE8LmXyYUJUqt7fRbhGY
+ VtIgY2UePs9cRdexwKBohYNiI1bhLNrK4ZVqin1Bqr17LEIcRxL5r4/ofE6HTetmrTRMiZ4bo
+ NDhnLHN/iKnwrjSakBIaCvIsjxJk=
+
+=E2=80=A6
+> We are trying to get rid of all multiplications from allocation
+> functions to prevent integer overflows[1]. =E2=80=A6
+
+Is an imperative wording more desirable for such a change description?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
 
 
-On Wed, 19 Feb 2025 10:58:06 +0200, Tariq Toukan wrote:
-> This series contains mlx5 shared updates as preparation for upcoming
-> features.
-> 
-> Regards,
-> Tariq
-> 
-> Patrisious Haddad (1):
->   net/mlx5: Change POOL_NEXT_SIZE define value and make it global
-> 
-> [...]
+=E2=80=A6
+> ---
+>  sound/soc/qcom/qdsp6/q6apm.c | 2 +-
+=E2=80=A6
 
-Applied, thanks!
+How do you think about to improve your version management?
+https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
+viously+submitted+patch%22
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n780
 
-[1/2] net/mlx5: Add new health syndrome error and crr bit offset
-      https://git.kernel.org/rdma/rdma/c/531ca2b9a215d0
-[2/2] net/mlx5: Change POOL_NEXT_SIZE define value and make it global
-      https://git.kernel.org/rdma/rdma/c/80df31f384b414
 
-Best regards,
--- 
-Leon Romanovsky <leon@kernel.org>
+=E2=80=A6
+> +++ b/sound/soc/qcom/qdsp6/q6apm.c
+> @@ -230,7 +230,7 @@ int q6apm_map_memory_regions(struct q6apm_graph *gra=
+ph, unsigned int dir, phys_a
+>  		return 0;
+>  	}
+>
+> -	buf =3D kzalloc(((sizeof(struct audio_buffer)) * periods), GFP_KERNEL)=
+;
+> +	buf =3D kcalloc(periods, sizeof(struct audio_buffer), GFP_KERNEL);
+=E2=80=A6
 
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/coding-style.rst?h=3Dv6.14-rc3#n941
+
+
+How do you think about to increase the application of scope-based resource=
+ management?
+
+Regards,
+Markus
 
