@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-527910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A92A41132
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:04:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2102CA41134
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D38727AB8EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:02:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6090D1890DD6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:03:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80A20E337;
-	Sun, 23 Feb 2025 18:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9972020E702;
+	Sun, 23 Feb 2025 18:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eS7BxmcT"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L1bQxXoL"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF7820E011
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526A420E037
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740337178; cv=none; b=FtFn3Wjo2D3C+E5/WHkP/uNSdjQ8bhvBoJAiE7pf8TRG1AH6UOgNjYJwHiHv60Z7oJj60uqWmyL7y75ay6zY8Mqlxnnc5+B0JgLr3OdAwCUPKepOGN4EjKjhj7tejA5eZv10svjEQjkHirEv9vpmrhEjika1T8GNBCgtbesgYgM=
+	t=1740337179; cv=none; b=SQ0lwj8ze8CN6UKa35+EetngqZ9iZMnbMtvickJbZklfKKc3e8JCSek+baUetb80aG8vf1HHkpVGUEjqFdFUztbjBlJ0dPjoUGxCwewFyCwDCZO4jUQ7tIWgRqW9p0JICwu/XHxThoJ+44A5VTd6ECRqQtxQ64JCKa2m7qaiu8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740337178; c=relaxed/simple;
-	bh=6eScQ+yILkmrR5/v9Ls6gwtXx6JH8fWeq4Wm72IvMxc=;
+	s=arc-20240116; t=1740337179; c=relaxed/simple;
+	bh=xXpFiA/NyUpbzOvlTbdhsbIOHNibM6ftIRafynCnP+E=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=L4uNnRl9HzoBL7ons/+yjppVJcCB7e9ONRy4zsxmDLn2CvFkTLput17Yc5Hd4AWBu2MBRvSTLHvmuSXMKHsjYh4768whToFB0CpP2Vh7liteWk5oTf+6p9IunjN1n+Z5rYji9deK3mu9109815RohV2KqYm5NUXsR6v0T3VJ4UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eS7BxmcT; arc=none smtp.client-ip=209.85.222.179
+	 In-Reply-To:To:Cc; b=neGfMMRM/4T3Fk8K/qysqWGaM8I+0xhU2+T6GPkLkGWEJKvzPiRIGeNQ3qoVb6hUBjq0/uPUd1wTk2Lwg6I3ilpl9qBf9aGuMZTwNZFO5u9MPOkF8YiHvgp5kLlioe4LbxIjdMk+htprsnlkWpXPBpJMippVwoNWrxGrrr0WkCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L1bQxXoL; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c0b9f35dc7so533694685a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:59:37 -0800 (PST)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471f2e1bea9so37231321cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740337176; x=1740941976; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1740337177; x=1740941977; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XqSkdPwdXz1L9xwrOG1KS2QGCidHxC0xW5jcZHcDLmY=;
-        b=eS7BxmcT7MFxFMy8QvB0dLbA0M9nZZCgk6zYXvcIuqS4SFmqv8J5WdQMnJiX2FuJoQ
-         sP4UewsEdToJcHo0mpLMZ0/VlObfb5sxbvECEoBczm0vM7aWFp7xyJvkkQq2YSHLZnV2
-         3T+7/spu4St5ZStxQTaD6Gwp9cmVRkFUtP+hU=
+        bh=/iyWdZqEotC84XlO1OAQy2WGSlw/iOHY1m4U05QqJMk=;
+        b=L1bQxXoLt2OtRdRHXyaQPEmo2MINA6Zg9ZFb3/iKlX9xOfCpAh/23q/FU/ZTMwtylx
+         LOQ4G1n3csGuaqvZJ+qXylJezC8oG9eZsDigh+nnhgX4tMzL8KuPuC+K9sZzb6Jx3DBB
+         3uZn/idSkZ/5Q7Qzq/Hkf92p8S1rudjutMxfw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740337176; x=1740941976;
+        d=1e100.net; s=20230601; t=1740337177; x=1740941977;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XqSkdPwdXz1L9xwrOG1KS2QGCidHxC0xW5jcZHcDLmY=;
-        b=W23s9MXtQ5KhxFcDzNO7rpgLrSepp2J1nWxuByKfVzideVqBNnXvxsmxI3IGVoYuB0
-         lnjw1OlCpHtA5JaW7ET/XkQEs1mBcGYEUUk8JhtPnf/g+33WjzaLFzj+NnNPKRAYojqO
-         RlAFE1NunhJADRoseAo1LlFSvDnVhhn9C5rYFvWvltpZh/yixgaYoR4jCoH6LFwSgyg6
-         rArNgT7qLivO14Qd3//K1PRfPkVTqGloUEYNCFnOEkiBIlVb3VGb50MzEbYZCsQwhkI+
-         QnNs8Aj7hrRXA5wHmZqVn7X7h8DliYf8U30K7YvmJYX/h7pVAGNuM96PqgzLLJovEvkx
-         ik3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFjoQ1ATqrTQYgopkghP2mFuVzYBKi9wbMiTpt+0cXPpXqDTKKR3yU+BYfE9EhZnfI/QRxQFSHdjMz45Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOaMKXGmHCHGHEk/V8PZJPAaBGujF7KJoJFcP1G3g8w2Yed5Fk
-	FJes081DS6iEsBOKkzSeHvurWr5IcWZYvOQ4l0B1gzhwvl1Y24FnbUqkFjXIXA==
-X-Gm-Gg: ASbGncuGTViTPAzz2a7k+Vw2Ygxqy5/Vacn+UoQDQJ5HtbX8SgUbwEiC+XMjn2RCLgU
-	q/T9F1Bh7TUGpHzGHSkhuTpwNigwkon03FGGt/TC/AWaxX8I1XkBonRebuqxH+8n6Tli9y1ByoW
-	93AbctlJmI33swFxe0/gOclhoKdiqCppQNV2FfITCXaTQMMK3O3IaHsHb8C/4nxX4Rrs6SDGKkQ
-	rIH1vnifpf/e/p2B3PA5qT+1au0fxX/dIInKxlcYMd12TNj9Z6yqHurPQpMRz19wIKDnem55eRQ
-	pOA1nIiSO9JQcE2juqW2vrQyMDMgy/PklAMNCjmrBI8Iad418m9z6l7+SroqeMxCTXzTcuqoJJf
-	1ADw=
-X-Google-Smtp-Source: AGHT+IFnnjBZgIrWZHVi+Chtu9HWxFVqKZWb2RhLpbJR73isjU+nhyv6klkh0PJNTJcvUMHxLxjZcQ==
-X-Received: by 2002:a05:620a:2b97:b0:7c0:874f:c87 with SMTP id af79cd13be357-7c0cef6475dmr1731625685a.35.1740337176294;
-        Sun, 23 Feb 2025 10:59:36 -0800 (PST)
+        bh=/iyWdZqEotC84XlO1OAQy2WGSlw/iOHY1m4U05QqJMk=;
+        b=d6VsDB2eBIFXKS8ASMyUxkx/EPFAwSByUT2885U7h5MR3c11vtsp//yqkiKHzIFl3O
+         30U2fkt5gBOnjSy8Q9N7Q6zRnK0XQ97sNnzEzY2w5zIa0YIHJxLyG/SLP6hE0m2iem8c
+         KWNAZRdLCI0u2n5lYWQSmZrTmhONLHGJ5We6s9eSgFhiz3j/I6eKEdPjwI0DMQrtgitB
+         PULs7F4fdgZvWEgeNRxZeLaP60qxSuqu4f5q6ubwvBzYaDZeGFKa03T/w/CJfsBBLsrk
+         k0a+nHQ+/yl4pMaSsYNeUvkH6qEyhr4aCge1RQVdn8q5xkMe07r2oLoWcI4FCGoF4Ad2
+         DJBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUu+njTrxI3tigxuFiFvAYP+biAGVdIsh69IPdtaLuOAywMStH+RUJxIv37krWyMsMli+A5+CzT+BSPXis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ1UTWDdgT38DyvgWwHZPxXRqxD00/p2Wp2z5ikRLbGcIdfCI5
+	HG8do/+jjl09cDZJt8ADx9FN90XDAdy/A+ij3c4sCItcCf/uk7LMgjwLthIusw==
+X-Gm-Gg: ASbGncvItTNShX+yTCbxK18DzW5W8BouV5oYzQIhqw3Bc7dCWbUqQoDa9y8AX4mAM3H
+	UH9LSFCKd5M3xtYjCt8b1p8Jv40Pg9SxuTW1IBt8EUz3ZEcGGqACL/ceyKWzhAOU0ZqFSFwzBJt
+	OEd0I07B4w4F3S86bQ+BHrMXF5OWYeNtaeGDxF/qDFpaBzlZsMxBVl5mIZWFHGuhaTxlIOR/HNa
+	uSSlgdbLjuxKU5V8QVFK7RrcfuAMEcRkxNKecOFn4y0eEX/R2ApMs6GaeRKM0IH6E6CksF6FgHc
+	z/uXhjOkEXCxx8MiBZ9HG8UqKW+yT01cWuZfINnJONHMF4LPXKBrtOVcMTiXr26O+4ih7ztw1hc
+	LI8Q=
+X-Google-Smtp-Source: AGHT+IFmA5F6ZvDlLt6gf9is1F56bMr6yT4/exI4Bz1fcJqcD+qyUMAxAufOoGLCX4weML9wR0ltAg==
+X-Received: by 2002:a05:6214:daf:b0:6e4:4331:aad9 with SMTP id 6a1803df08f44-6e6ae7c96e2mr137768826d6.2.1740337177325;
+        Sun, 23 Feb 2025 10:59:37 -0800 (PST)
 Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bf81253sm894052885a.47.2025.02.23.10.59.34
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bf81253sm894052885a.47.2025.02.23.10.59.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 10:59:34 -0800 (PST)
+        Sun, 23 Feb 2025 10:59:36 -0800 (PST)
 From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Sun, 23 Feb 2025 18:58:10 +0000
-Subject: [PATCH v3 07/12] media: v4l2: Remove vidioc_queryctrl callback
+Date: Sun, 23 Feb 2025 18:58:11 +0000
+Subject: [PATCH v3 08/12] media: v4l2: Remove vidioc_g_ctrl callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250223-queryctrl-v3-7-4292911cab6b@chromium.org>
+Message-Id: <20250223-queryctrl-v3-8-4292911cab6b@chromium.org>
 References: <20250223-queryctrl-v3-0-4292911cab6b@chromium.org>
 In-Reply-To: <20250223-queryctrl-v3-0-4292911cab6b@chromium.org>
 To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
@@ -96,65 +96,65 @@ Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
 X-Mailer: b4 0.13.0
 
 All the drivers either use the control framework or provide a
-vidioc_query_ext_ctrl. We can remove this callback to reduce the
-temptation of new drivers to implement it.
+vidioc_g_ext_ctrls callback. We can remove this callback.
+
+Thanks for your service!
 
 Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- drivers/media/v4l2-core/v4l2-dev.c   | 3 +--
+ drivers/media/v4l2-core/v4l2-dev.c   | 2 +-
  drivers/media/v4l2-core/v4l2-ioctl.c | 2 --
  include/media/v4l2-ioctl.h           | 4 ----
- 3 files changed, 1 insertion(+), 8 deletions(-)
+ 3 files changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-index 252308a67fa8..5267a0686400 100644
+index 5267a0686400..068ee67cd574 100644
 --- a/drivers/media/v4l2-core/v4l2-dev.c
 +++ b/drivers/media/v4l2-core/v4l2-dev.c
-@@ -572,8 +572,7 @@ static void determine_valid_ioctls(struct video_device *vdev)
- 	   and that can't be tested here. If the bit for these control ioctls
- 	   is set, then the ioctl is valid. But if it is 0, then it can still
- 	   be valid if the filehandle passed the control handler. */
--	if (vdev->ctrl_handler || ops->vidioc_queryctrl ||
--	    ops->vidioc_query_ext_ctrl)
-+	if (vdev->ctrl_handler || ops->vidioc_query_ext_ctrl)
+@@ -576,7 +576,7 @@ static void determine_valid_ioctls(struct video_device *vdev)
  		__set_bit(_IOC_NR(VIDIOC_QUERYCTRL), valid_ioctls);
  	if (vdev->ctrl_handler || ops->vidioc_query_ext_ctrl)
  		__set_bit(_IOC_NR(VIDIOC_QUERY_EXT_CTRL), valid_ioctls);
+-	if (vdev->ctrl_handler || ops->vidioc_g_ctrl || ops->vidioc_g_ext_ctrls)
++	if (vdev->ctrl_handler || ops->vidioc_g_ext_ctrls)
+ 		__set_bit(_IOC_NR(VIDIOC_G_CTRL), valid_ioctls);
+ 	if (vdev->ctrl_handler || ops->vidioc_s_ctrl || ops->vidioc_s_ext_ctrls)
+ 		__set_bit(_IOC_NR(VIDIOC_S_CTRL), valid_ioctls);
 diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index deed2b44ee18..48ddeb01e70a 100644
+index 48ddeb01e70a..d6af0ab0d7ea 100644
 --- a/drivers/media/v4l2-core/v4l2-ioctl.c
 +++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2294,8 +2294,6 @@ static int v4l_queryctrl(const struct v4l2_ioctl_ops *ops,
- 		return v4l2_queryctrl(vfh->ctrl_handler, p);
+@@ -2378,8 +2378,6 @@ static int v4l_g_ctrl(const struct v4l2_ioctl_ops *ops,
+ 		return v4l2_g_ctrl(vfh->ctrl_handler, p);
  	if (vfd->ctrl_handler)
- 		return v4l2_queryctrl(vfd->ctrl_handler, p);
--	if (ops->vidioc_queryctrl)
--		return ops->vidioc_queryctrl(file, fh, p);
- 	if (!ops->vidioc_query_ext_ctrl)
+ 		return v4l2_g_ctrl(vfd->ctrl_handler, p);
+-	if (ops->vidioc_g_ctrl)
+-		return ops->vidioc_g_ctrl(file, fh, p);
+ 	if (ops->vidioc_g_ext_ctrls == NULL)
  		return -ENOTTY;
  
 diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-index bdbb7e542321..013996c33a9e 100644
+index 013996c33a9e..4d69128023f8 100644
 --- a/include/media/v4l2-ioctl.h
 +++ b/include/media/v4l2-ioctl.h
-@@ -193,8 +193,6 @@ struct v4l2_fh;
-  *	:ref:`VIDIOC_G_OUTPUT <vidioc_g_output>` ioctl
-  * @vidioc_s_output: pointer to the function that implements
+@@ -195,8 +195,6 @@ struct v4l2_fh;
   *	:ref:`VIDIOC_S_OUTPUT <vidioc_g_output>` ioctl
-- * @vidioc_queryctrl: pointer to the function that implements
-- *	:ref:`VIDIOC_QUERYCTRL <vidioc_queryctrl>` ioctl
   * @vidioc_query_ext_ctrl: pointer to the function that implements
   *	:ref:`VIDIOC_QUERY_EXT_CTRL <vidioc_queryctrl>` ioctl
-  * @vidioc_g_ctrl: pointer to the function that implements
+- * @vidioc_g_ctrl: pointer to the function that implements
+- *	:ref:`VIDIOC_G_CTRL <vidioc_g_ctrl>` ioctl
+  * @vidioc_s_ctrl: pointer to the function that implements
+  *	:ref:`VIDIOC_S_CTRL <vidioc_g_ctrl>` ioctl
+  * @vidioc_g_ext_ctrls: pointer to the function that implements
 @@ -461,8 +459,6 @@ struct v4l2_ioctl_ops {
- 	int (*vidioc_s_output)(struct file *file, void *fh, unsigned int i);
- 
  		/* Control handling */
--	int (*vidioc_queryctrl)(struct file *file, void *fh,
--				struct v4l2_queryctrl *a);
  	int (*vidioc_query_ext_ctrl)(struct file *file, void *fh,
  				     struct v4l2_query_ext_ctrl *a);
- 	int (*vidioc_g_ctrl)(struct file *file, void *fh,
+-	int (*vidioc_g_ctrl)(struct file *file, void *fh,
+-			     struct v4l2_control *a);
+ 	int (*vidioc_s_ctrl)(struct file *file, void *fh,
+ 			     struct v4l2_control *a);
+ 	int (*vidioc_g_ext_ctrls)(struct file *file, void *fh,
 
 -- 
 2.48.1.601.g30ceb7b040-goog
