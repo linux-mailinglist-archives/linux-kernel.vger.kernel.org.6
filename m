@@ -1,212 +1,133 @@
-Return-Path: <linux-kernel+bounces-527999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CDCA41249
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:44:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519DAA4124E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A66C18927DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4438D1723A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4628B2080E1;
-	Sun, 23 Feb 2025 23:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE29020013A;
+	Sun, 23 Feb 2025 23:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f7W5rXcZ"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/AP4ldu"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43671DDE9
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8592410E4;
+	Sun, 23 Feb 2025 23:45:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740354236; cv=none; b=MFnS4T07/DcSyFdC9dsA4oCqzVgIr5lE1nNVZBOlyFEzBuHIqCYjXhcrELvlAbXK1AhqCRNiyn24F5tpsLyJ9orqxAsVsy9xuuOo/oJGC7/WB706gOpFB1Dw5QapxUCn4Mtrv5Y6Xk1nPPT7XkUcFlQbBPmavoVeHOL4Tkyy/cc=
+	t=1740354351; cv=none; b=FeleJf1IJ2o8wOpuD3k5YJWX4Y3Xn6zgpeBF3JX2/OnEBLGGmlSujVjFYSaJ2Nv4XXnap49xH/t9wJbUnccYQn+CnfG3vEjDQL/zeA1yZL0MDSGw52AxLsIs2oHyYttzSX2hF8KdtL77ogeGkaO/DyY01HJ+IykbLcw5NNxw/O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740354236; c=relaxed/simple;
-	bh=deTx+omgnbLOs8r75CSTqyV8OyfmK0sMG1fGy+1WAXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpM+b24KeMn9YqHz7ywe/y24FC2Ugdn2DY7MnuWRX1TW8Fbwyzgu76Nf1vomMXe4U01lpkpUufn5XWwOc13JOjvB4bn/2aoy5HB1RkPaQfXVGDjqETfLLpMMk0pXAMBXfEToiudQPfgpgZMa0SNf9LhzQZkj+ia8vo6x/7lG3l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f7W5rXcZ; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54622829175so3668898e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 15:43:54 -0800 (PST)
+	s=arc-20240116; t=1740354351; c=relaxed/simple;
+	bh=wY1xWMM/k5JTNZ/FzkmzKc7FAYv1gWfhj4nswE3dxFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g4T4lh1BqQejX8NAAU0CR8mlzw1De3W7sF+HoQQnoZkvLkOCiOpn0dwTpSc0ZZc3R2qlpyUe/VgJG8clH9+9EntugSbGCGrcF5NqSKbAZaOUgC1yVDs725vM8pd5rddO8Mza6J/o7GMfRdf2+cSrpPKSKPRRUSa47dxlFmUgCcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/AP4ldu; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e05717755bso5841568a12.0;
+        Sun, 23 Feb 2025 15:45:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740354233; x=1740959033; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=28j2oUhHrE0UtIm5Z7Iu9myzi6x7Y72gOBfh9gvCc7A=;
-        b=f7W5rXcZfjbLnPu9d2Fjv268Mx56fiFxIf7KMch/7XYFz5jSR8G6VpdD5oxO6TSti9
-         ZgLPrEdkKf/2JBZMhBv5BHOrjyvIJu/pNsEr+wS7t1ujiDfvJlNEaXJkNEhbTxX2AmvU
-         rQhc657cnWk/CH4/Qie0Vk4zZFHb5F3QdHhX/nOpjlkVkstIRXLcPryCBD+ONifqrpN2
-         YZH3dPrWnt4R/Z9SD4yh2wFoV+1vJRRw5mmBgP3kuw0Ej9Dp2AFyUJRpeitI1PCOYRac
-         IHO31DPVQImRqq3/jEt8OkWGH3CdKhuMp4mnco9zXXwD75m4U1hu7NUon02d3SKAOcZJ
-         5tWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740354233; x=1740959033;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740354348; x=1740959148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=28j2oUhHrE0UtIm5Z7Iu9myzi6x7Y72gOBfh9gvCc7A=;
-        b=uWvBbtRarEcV/UqfykzQqMcIzEVTA3gse3Fi5N+X7XQPUX0pokBEwVqT8zyu6bESuC
-         mZns04PEHSQbljDvUvK7x5EuyGFGLVOs1eP6ru0pG6MBRevqQ53gi4zkZYzocvgB/u3v
-         hsG0kFnYz3F8hNOrxOA2GEI48zZeCQ3ZiNDpkjyLJwj/+DeUfa9R/VDUsnZHgbq2fqXY
-         rK1/2vXqZ/Nty4noVp8jccLhnSI6xJGgiT6XY7mv8iukW/6rdNFT9vLy7UqhnpRwvdYd
-         LhPxAa3aMg7QycimUB6Bwj3a4hjqKtCDeOb8CLdNpcSHQpPGfUMatsONyVuAe3k0uxo0
-         6f/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXoC5ZaMXD0GIU0dgdzxeM/rZdOH+rcBR5zKtIDitR63m5Npvor0Y4LkW9qqIM3tqDeVor+IjR+OL5BO7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOSLDjbip7BeIfkwU5lDgLeeN3CGA+Pa7085qTLHS4Cnfqjt3Q
-	rpsh7U4nvZeytGXyp7ZkEcazzkU8pLDcbhpRZ52kSKmHISvX/oumnuqCkVPEIrk=
-X-Gm-Gg: ASbGnculbM1weRaSrhJXjIXx/JS0rE9FgQ73sp3Zl/RG9yuSwRSZrlGeJ0722yBOkwI
-	JOk/+tF0nzhQ2mRmfY8tmA5GpA8E43tSHuersJdDDyf5LYsSrSaO3wzA9ObuP4LuryDa2VVQ13B
-	ZPa6+CS8Rp+p3FkPmTdO30aS6Bk5uPiTkzoSdoVCAyMM+aqiLjbRrPctX3uHZU7ynjYKbns/xnn
-	Ff5c2IWUoHRGH/s/kQ5qIri/AT+DgaaN/IJZ/LoFIdC1CYwm7CVb5PTHixr5bRyphCXoW0R4sO5
-	iEEdoDWmCDzoodRInq0jhzIgIqzEj5DlMc5ujUTJgA7uvuSHIopPKs8mHLoho7imSMiu1huweWZ
-	X36noAQ==
-X-Google-Smtp-Source: AGHT+IHqDyDmO/r2yjSG30eHo/aZTvnzBBS3IoH2SUfydcMTabalwcojF162vAWAlTXJ3voBa2nsQQ==
-X-Received: by 2002:a05:6512:308a:b0:545:296e:ac28 with SMTP id 2adb3069b0e04-54839144ee2mr4857016e87.24.1740354232909;
-        Sun, 23 Feb 2025 15:43:52 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54526741fe5sm3065509e87.90.2025.02.23.15.43.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 15:43:51 -0800 (PST)
-Date: Mon, 24 Feb 2025 01:43:49 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: phy: snps-eusb2: add exynos2200
- support
-Message-ID: <4tvpl3pujnuw2qjwu7f7ryrr5dndxow7srkkp2223wmexr23bi@7nmgrpq6znpg>
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-3-ivo.ivanov.ivanov1@gmail.com>
+        bh=sCP1rbXh4MlA1hNlKO2PRwztVgKcVUG68KyRAFF7PGU=;
+        b=K/AP4lduUdvGm7okk/tuuB0fRszGs3vOmXFEaAkQaN+Isczo4TZHW5BCzlxCzo3/AE
+         4KBOYZfxoafW9H3Gdn8vO6ExuwRfeCBpFRZLeZ3G8IZg52EFXk+1ZmGyKGJVIwtr1SQS
+         98SEgfA2aWOfs2dq4KmFORVYwQQYnB2oa3GZZrJaTNnQHr07RcJrWQBdQWbieB5PvIHb
+         6pqfWz7qyK3RjEjWIZNvK4d69+iRYrimvsjifWOvLbcspi74bmt49AiAPnNoel4Nkqjt
+         lkroIMesrymypH2LgK7VJhscxQ07sPCrvwwN97ix9ZU6ftNrgpa/D5C30AaMw2V9F4iv
+         k37w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740354348; x=1740959148;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sCP1rbXh4MlA1hNlKO2PRwztVgKcVUG68KyRAFF7PGU=;
+        b=b74ww3qYhWh6cqz9VBAusH+ZD5lt/bxIuWP2IQe0qvrvn8rJJM81ODpK7e2XLwi4wb
+         yzQ1obVZqzOXybwN/907HNd5JLMorEDAedQlH8pRPiv5ZIC/phdnJniRW9mFHSakLTVW
+         8TmU12pFm21R0uiqUHkiitFZjts1S+6SVIjv2+L62tYTStzfDGtFOmG0wr5gUW5eTV3f
+         +b539GEVYXmebuuLq9aUSn3tHTQQkoS9bCmikPkKjnEvJ+yW67k2zCpLaxBmAnzlpMS7
+         Y5tzdmnZaRBawxCGi5NhvS1IjiFfsl6cfyz459CoDXbdYAabWq9diWOpBU0CeFTdW1Sj
+         Ve9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWwrk4qRXJB5db+y8O5j+ctgSS3G8SiKJsbVhkNlXQkiXTKy5p8mjpuJDHeJkRi3ulHSxMi7KTKElX9ss0=@vger.kernel.org, AJvYcCXW4caBOuXIXjgoznAZnzCDX03kA0dclzDy2Uu7fCrsLWlsZyw+H6cgEdllKIiZyZMs2lItJuSnwDui@vger.kernel.org
+X-Gm-Message-State: AOJu0YzR2cCDZ+qLH+uKPv02DQHz7/6aQZul/qozt/apD/jtHbWBKOrN
+	2PpwOekCYFyn5LC6XMHmmkZtjvrGviTLC7FSiqJA/JUfClvzZIlp
+X-Gm-Gg: ASbGnctnd0TMUstY+2rGE7DAkF4SNetK1C+tdCebSm8xoBn2XCzCeJ9baYLcOSgn3BQ
+	+uvcH9ButKuwFldcdvvpU6yNhoilG/RBZPDUbcKOn35Ybi3hy2CwxadKCduoVsUgsorCivqTU+o
+	X9m3OWZmRHbxgyynMUGibRFKTnTk8jYkCacGb4RqZu59boa2m/S56/tCeoyyelMwxwx9q/ASJzU
+	xavozqHYKAsziixoKyLqeW4CG467uHeln+QBsRFW4xyZ3e3viJetMe9lZ3aEoFz0VKqxs0F1zZL
+	pivcvGVTuOSbaFjaVwqO51h2JSmGgTruAGe97N6qLos=
+X-Google-Smtp-Source: AGHT+IH5JTIGwwSbS6Io23GNPvRRsNaxcEO37VuXDdJwJd+0n+ZiS9fQzLm+6Ov5yiWBfEV2hyojwA==
+X-Received: by 2002:a17:907:6d07:b0:abb:c394:63ee with SMTP id a640c23a62f3a-abc09e2c50amr1043158766b.55.1740354347437;
+        Sun, 23 Feb 2025 15:45:47 -0800 (PST)
+Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb72b519c5sm1736839066b.173.2025.02.23.15.45.46
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Sun, 23 Feb 2025 15:45:47 -0800 (PST)
+Date: Mon, 24 Feb 2025 00:45:42 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] usb: xhci: Unify duplicate inc_enq() code
+Message-ID: <20250224004542.5861d4dc@foxbook>
+In-Reply-To: <d59a6694-e0e7-46b7-874e-0c6acd8c9126@linux.intel.com>
+References: <20250220234355.2386cb6d@foxbook>
+	<20250220234719.5dc47877@foxbook>
+	<d59a6694-e0e7-46b7-874e-0c6acd8c9126@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223122227.725233-3-ivo.ivanov.ivanov1@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 23, 2025 at 02:22:21PM +0200, Ivaylo Ivanov wrote:
-> Exynos 2200 makes use of the Synposys eUSB2 IP, so document it in the
-> binding. Unlike the currently documented Qualcomm SoCs, it doesn't provide
-> reset lines for reset control and uses more clocks.
+On Fri, 21 Feb 2025 16:54:11 +0200, Mathias Nyman wrote:
+> On 21.2.2025 0.47, Michal Pecio wrote:
+> > Remove a block of code copied from inc_enq(). As often happens, the
+> > two copies have diverged somewhat - in this case, inc_enq() has a
+> > bug where it may leave the chain bit of a link TRB unset on a
+> > quirky HC. Fix this. Remove the pointless 'next' variable which
+> > only aliases ring->enqueue.  
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov@gmail.com>
-> ---
->  .../bindings/phy/snps,eusb2-phy.yaml          | 64 +++++++++++++++++--
->  1 file changed, 57 insertions(+), 7 deletions(-)
+> The linnk TRB chain bit should be set when the ring is created, and
+> never cleared on those quirky hosts.
+
+OK, I see, there is stuff in xhci-mem.c. I'll remove the above text
+and any code which touches the bit on quirky HCs.
+
+Speaking of which, I have some evidence that NEC uPD720200 has the
+exact same bug as AMD, namely after a Missed Service Error near the
+end of a segment it fetches TRBs out of bounds and trips the IOMMU
+or stops with Ring Underrun. Link chain quirk seems to fix it.
+
+> maybe
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> index 22c77968f..f4164db71 100644
-> --- a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
-> @@ -23,6 +23,7 @@ properties:
->                - qcom,x1e80100-snps-eusb2-phy
->            - const: qcom,sm8550-snps-eusb2-phy
->        - const: qcom,sm8550-snps-eusb2-phy
-> +      - const: samsung,exynos2200-snps-eusb2-phy
->  
->    reg:
->      maxItems: 1
-> @@ -31,12 +32,12 @@ properties:
->      const: 0
->  
->    clocks:
-> -    items:
-> -      - description: ref
-> +    minItems: 1
-> +    maxItems: 3
->  
->    clock-names:
-> -    items:
-> -      - const: ref
-> +    minItems: 1
-> +    maxItems: 3
->  
->    resets:
->      maxItems: 1
-> @@ -58,11 +59,60 @@ required:
->    - compatible
->    - reg
->    - "#phy-cells"
-> -  - clocks
-> -  - clock-names
-
-Why? Clocks are required in both if clauses.
-
->    - vdd-supply
->    - vdda12-supply
-> -  - resets
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,sm8550-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +
-> +        clocks:
-> +          items:
-> +            - description: ref
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
-> +
-> +      required:
-> +        - clocks
-> +        - clock-names
-> +        - resets
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - samsung,exynos2200-snps-eusb2-phy
-> +
-> +    then:
-> +      properties:
-> +
-> +        clocks:
-> +          items:
-> +            - description: Reference clock
-> +            - description: Bus (APB) clock
-> +            - description: Control clock
-> +
-> +        clock-names:
-> +          items:
-> +            - const: ref
-> +            - const: bus
-> +            - const: ctrl
-> +
-> +      required:
-> +        - clocks
-> +        - clock-names
->  
->  additionalProperties: false
->  
-> -- 
-> 2.43.0
+> if (trb_is_link(ring->enqueue) && (chain || more_trbs_coming))
+> 	inc_eng_past_link(xhci, ring, chain);
 > 
+> Avoids calling inc_enq_past_link() every time we increase enqueue,
+> and explains why we call it.
 
--- 
-With best wishes
-Dmitry
+I can do that too. By the way, do we actually want this while loop in
+inc_enq_past_link() at all? Currently links only exist at the end of a
+segment and always point to the beginning of the next segment.
+
+I noticed that per xHCI 4.11.7, "Software shall not define consecutive
+Link TRBs within a TD". I suppose "consecutive" means "one pointing to
+another". And if it's prohibited inside a TD, it will likely always be
+easier to avoid doing it at all than try to manage special cases.
+
+Regards,
+Michal
 
