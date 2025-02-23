@@ -1,88 +1,60 @@
-Return-Path: <linux-kernel+bounces-527960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C889EA411B4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:45:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF62CA411B7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3C81707EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCED0189161D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74BA82405F5;
-	Sun, 23 Feb 2025 20:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238A31FDA6F;
+	Sun, 23 Feb 2025 20:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PCuXQ6ne"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZcqU6b25"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415FA23F417;
-	Sun, 23 Feb 2025 20:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65AC846F
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740343513; cv=none; b=pThUVKfytCoVwugHFuVKgyjQw11QpQq/6hygLd8uS8FPRbzaN87xSeEUXjnmEgX9sOna2FwHcQm+IU5PYAi6j8VAGOUBNtcmV0jmEgS81E+y4wRqqGgf5XxHL9iiwXsGVybOCAccyT/UXyLsD0QL98+ygziQk8mDjS4PqjeBH8Q=
+	t=1740343615; cv=none; b=IYd9uarTIATPyEfiaEQEdtAbAXe6G8xTEeExfRVvDBNmJ7otOXwMulN3XKTMpzugH9VscYiAkw5TzcNJZYKcUzWNgdJo8t3lerNyKts91bKFGhFwOJ6uyX7vZV9qp3tVTiwlABJzt2fD++9DSdupRwHj8JXb9BvXImSr5nCj/fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740343513; c=relaxed/simple;
-	bh=BNM5ii68EENqtMZC3EcZR7Hqtlk/UcgKmWx49cXZGYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HXZNGW8TJ5uO2timIsVHOwwpMWRdj5KwwdN8CeTeXTOflBO2kkvAL8kHXwu2IsO6wmALHUZ1YYMvwAjaHt3TOuDCLM+O2F7UhPZkqd0APMp2KJZlCA0K+Tt+gf6qhoBSTeypI0cVvoJNehYMOLMU7RqNBPKOOiNr9s7G9Uo6iaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PCuXQ6ne; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c0b9f35dc7so542178885a.2;
-        Sun, 23 Feb 2025 12:45:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740343510; x=1740948310; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yOEt6QZskOkWnzsAtQRMjy5DMtIL4TXxTfDJML0AUCI=;
-        b=PCuXQ6neMDFJqP6LWzJTBNB9+XiNo4SEtfXZmkr6gcbjygOkMQIuTf2Y6VKk+IK/tA
-         Lm0z+gKS/4TWFeXSIQxv/xVxvHqel88ebUxuCU3h4OHZWu879pNTLcSDwOdHZbM/WnL+
-         s1N/gscPgbP/6xa1VvgUY+ggOOcNdE1MjzxfLN1XzblZXO9+ycQPHxfrUxUM/9imrjZy
-         iy8aQDOMc0+Uha4Ac3BtDnUFQCq58a7s+B2bIJ9FILp4hkrwKP/LGJIafTzmsfsMVn+G
-         UkMjaD5oVFUlrps9AjKE7u1W0vNuL0U9e3OSGxAAuISL7T9OXzavntbyBGsYcyGqJglk
-         VBcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740343510; x=1740948310;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yOEt6QZskOkWnzsAtQRMjy5DMtIL4TXxTfDJML0AUCI=;
-        b=CQczyZ/64jmEJN56alZ+1RiLxHo4VeDINTWlRZL3R0i86aLC4n70wFxgyNJURDblyz
-         T2fj8LqYc/c7rr/AzTRQN4ff16qwcM9akEzeApHDLxU3BQW+7uBBXGKvUydhA4aVQFa1
-         XnqHvedlKL0WdTr05yb7lQGpTxsKQH6r0c6cBWsEKK0tDLtEDrAlyRrumBgaRGPmSwjF
-         /KBe0rtcChYodosVLEnvadQDXm8fGdmUydCT+ppQktIPAJQG0+3CeQIMwkj5Q+W51dT3
-         aqhptkN1MbwMsLuUmp+KjpP5/LCpibFhN53lwnOkE1yzjFdFXPi9imxzt6sWei5Ra9JW
-         03YQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWsaHmTMBHodnZimkCJymvs3Z8aeT4XvAt/CpEFjBoIVvcari56g3axUF9Li3vOkTQ2EhQTqEs3uXwUzJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkMQCMUpG/feIw5FLgo9iLNXQUPr0ZOXMMqwy2n02ToSxnyPrN
-	2Y1GgIet60t6G8MZdDYfZPUAtges/r+9nMyM6WijZ9gDmfPkt87Fz0pdS77H
-X-Gm-Gg: ASbGnctfQzKA9JnWRWvimsDGmCLN1eiEx4MTQnq4nX5y0bafhT0qTwB5VoQBpV9T0qy
-	U5nS3VUym9dmF/OoTD9g3XlL/qv1SsxBRdMWGCjg583zrR1mhBU3oFpDD5KTCik+0VGRcaJ/Jvm
-	KwC0WCVqtzOyR6VjCeD+0n4fKfh7xceWBfc6Y1YHOLH8gA+8PMjU25OIfZaN2NurYG9XvjMYX8k
-	lvDJBASoQxYsNl0HyYgm9kjOHiEDbSBlaSnX0DvtyJV4/wA54QSAg2s/PavclRe2UaZtccRO6pl
-	LD36YjXc51F0pDIN1HbM6gH6d49/huYOlM6PXcLwXWySGuRE3m/a0dJBHS8ZUQc=
-X-Google-Smtp-Source: AGHT+IHXRQ494cpE7pvjPu8VGGB1mntTUdIj+4+cFv8YRHij7fyQGz7S/oxdPJUIeeHAQeVXFVmP7w==
-X-Received: by 2002:a05:620a:44c4:b0:7c0:a70e:b936 with SMTP id af79cd13be357-7c0ceeeb6e2mr1791319385a.8.1740343510445;
-        Sun, 23 Feb 2025 12:45:10 -0800 (PST)
-Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:7a4:75e2:6847:49c9])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bc8819bsm919914085a.74.2025.02.23.12.45.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 12:45:09 -0800 (PST)
-From: adamsimonelli@gmail.com
-To: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Adam Simonelli <adamsimonelli@gmail.com>
-Subject: [PATCH v4 2/2] tty: Change order of ttynull to be linked sooner if enabled as a console.
-Date: Sun, 23 Feb 2025 15:44:56 -0500
-Message-ID: <20250223204456.1913392-3-adamsimonelli@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250223204456.1913392-1-adamsimonelli@gmail.com>
-References: <20250223204456.1913392-1-adamsimonelli@gmail.com>
+	s=arc-20240116; t=1740343615; c=relaxed/simple;
+	bh=yiBlED7Er+79WUdSAwX3nMETMxNgXccfcRJLbl9a+3U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rsxlmNnfc3n2BGI7Y4lK4kG35EaKlXRIvJbxqQxaGnPrhjOW2ypbZ46cA/PTlYdKjy4ZKjSTHs5FbClGM3xuUYuVzRJwMO3UdDoKU7+b/WXYO8SNLat5EGrzPc8HW4IrbL5LB5qWPGW39spZLl9bjUhAkxJU7wtfTzJfSghzw8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZcqU6b25; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740343601;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=08QzHP3bP7KO+u09LJ+0D9dSqxkLj1k8AYQJMF6TyWY=;
+	b=ZcqU6b25GdDRR4L8CfFzuPIVYtHztbmotSU/lX9mDicghWIXYEZfd9mipMGjO1gE10uoTW
+	B/b1H3xvPaJ4lt7VWdHDq4QDKB16AAVOs/lhi6nL/6P0kLCXHZX0H/DaTYGVt37NYEsHRu
+	q8ayk9YW2SajD7rhuhOiI4xgTTM9g/Q=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Kees Cook <kees@kernel.org>,
+	linux-sctp@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] sctp: Remove unused payload from sctp_idatahdr
+Date: Sun, 23 Feb 2025 21:45:07 +0100
+Message-ID: <20250223204505.2499-3-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,72 +62,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Adam Simonelli <adamsimonelli@gmail.com>
+Remove the unused payload array from the struct sctp_idatahdr.
 
-If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-will become the default primary console device, based on the link order.
-
-Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-if CONFIG_VT is disabled, the default console device falls back to
-/dev/ttyS0 instead of /dev/tty.
-
-This could cause issues in user space, and hardware problems:
-
-1. The user space issues include the case where  /dev/ttyS0 is
-disconnected, and the TCGETS ioctl, which some user space libraries use
-as a probe to determine if a file is a tty, is called on /dev/console and
-fails. Programs that call isatty() on /dev/console and get an incorrect
-false value may skip expected logging to /dev/console
-
-2. The hardware issues include the case if a user has a science instrument
-or other device connected to the /dev/ttyS0 port, and they were to upgrade
-to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-sent to the device connected to /dev/ttyS0 unless they edit their kernel
-command line manually.
-
-The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-is not dependant on hardware configuration by default, and avoid
-unexpected new behavior on devices connected to the /dev/ttyS0 serial
-port.
-
-Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+Cc: Kees Cook <kees@kernel.org>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/tty/Makefile | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ include/linux/sctp.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-index 07aca5184a55..1a1051ecb1af 100644
---- a/drivers/tty/Makefile
-+++ b/drivers/tty/Makefile
-@@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
- obj-$(CONFIG_N_GSM)		+= n_gsm.o
+diff --git a/include/linux/sctp.h b/include/linux/sctp.h
+index 836a7e200f39..0b0228578153 100644
+--- a/include/linux/sctp.h
++++ b/include/linux/sctp.h
+@@ -239,7 +239,6 @@ struct sctp_idatahdr {
+ 		__u32 ppid;
+ 		__be32 fsn;
+ 	};
+-	__u8 payload[0];
+ };
  
- obj-y				+= vt/
-+#If ttynull is configured to be a console by default, ensure that it is linked
-+#earlier before a real one is selected.
-+obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
-+
- obj-$(CONFIG_HVC_DRIVER)	+= hvc/
- obj-y				+= serial/
- obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
-@@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
- obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
- obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
- obj-$(CONFIG_NOZOMI)		+= nozomi.o
-+
-+#If ttynull is enabled, but not as a boot console, it is linked and used later
-+#after the real ones.
-+ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
- obj-$(CONFIG_NULL_TTY)	        += ttynull.o
-+endif
-+
- obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
- obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
- obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+ struct sctp_idata_chunk {
 -- 
-2.45.2
+2.48.1
 
 
