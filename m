@@ -1,91 +1,207 @@
-Return-Path: <linux-kernel+bounces-527802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 001A7A40FA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7A1A40FA3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B278A16B655
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:58:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DC1D17382F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147DB70813;
-	Sun, 23 Feb 2025 15:58:08 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6F670831;
+	Sun, 23 Feb 2025 16:05:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rbkWhbAh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C52442AAF
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 15:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B260F2F5A;
+	Sun, 23 Feb 2025 16:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740326287; cv=none; b=BiEGSL2YJMo9Zj+7aiXuM0pngCU4aN+bbZ6H87grqkqm7hoYCjY3B+Nkjfrx502dEN7IoRex7HJKNk6BLMAUJAlDzvMvsIV2mx2gjVbBQCsVjiy0Wd2vrBLVljbnlr5UK6ApFDN8gVUXIIgQz7U4oXCMgUClM2OVFMBPEcmXGoc=
+	t=1740326754; cv=none; b=oEHufYdlyLKRZHQX3V8jYHl+Mo113bFwTXz1hYgzk61j50YiYmyOgrADfdoZHhA4DJssLTj6V2Ge2kApqv9ScV40hq9uShEn8pJq2jVCfXzS9lE2tJ+kc9KVWsOk5xVSXEM6F8lmdTCVHLrklY1vJioObiX9wwRkM7YIpTlwwkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740326287; c=relaxed/simple;
-	bh=CEvphsc2E/R5iTREyGDwJ+DBlFN5f9hpVolHGcFMNQo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=BKwenNrlLi/L9BjsvsTKyEN8qOIJGL6VYL8BIFLX5+UyHVso/P4ioa1iLntPGZ+ohMzFqZ4of9xZY4OmigBb3RGQtTaOsI0Jrau8hZYGg2EhyWjfYeiD39rxAb6iF9s03b5xTtKf+U5cxvK/BHm+23WHllv3KsbwXeb4uIm1RDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b1e1e89fso27497625ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 07:58:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740326285; x=1740931085;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EgB9+fNCSp76PfETamdpndoQ+g56KwwlJiC9JLaUFxY=;
-        b=NMchcUZAv72OOhFsBgdvxEWPYcDJQR9MQh43+Z/vwQsEagV6BJjdgKhLBlK1p8FwYn
-         qpZ3OupBxFMsyebpqeU6TCY9zcrztA/IHJ+J56XQFgjaiXGMeMHSSsdJ2j60VbTii094
-         tTl0fUaKHxF32eWJ/qFIOs8c7DB/P2eUi99zgr2ilO+z93xXcqnx9Qz056Uf/dOJxpWh
-         HU+G8QkWXncnNCQ+UX43A5FEBZ/9JnxExnJHy7jlXcPuigc3K1eEfoiQmFQFFdr7+Ysv
-         ueELXqEm/MeNbUec1qzm+cW968X8h1dusGpVD+3AWlYAbCon9XrbYeqhOGhaWJmAB6e3
-         Dkvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXAu0f5R8odSNlfqJERHuKUuWLp40kUcaaJUKwAvg5ij8CDvNO7fPknOyHzlXEv3YBKckWMAi+kD95pyoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTmw+RRE8PRvNlFaPtWP789h4Pf6QKrjK8sN8+0/DPoSl5X0zZ
-	dFydDjt8ym1rrmIrMORddAOe+RqGVVpXBkJUQ0+1DtCXGc4ljjr4qx1EsPt7a1BFAOrq9gflgvn
-	ZeGJ5MNm+Ju//C+c3pL5Gfm9akKuagXKRM9/RcLIu+wC/UdMO6k1QIAU=
-X-Google-Smtp-Source: AGHT+IEf48EhhTca6NrDfMe6cgbGuj+dvNOVO9lGR88kP0GA1oZuJvG6WTTigu5HZaNxLPIiiaFOqJNHzdrbAeoRcCdqQPRZ48UX
+	s=arc-20240116; t=1740326754; c=relaxed/simple;
+	bh=noOQpBDX7pxxQQTJmwMwR6yAbD+J86E38UthTfV6NUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XIcf2jkOUg5WLFhsiFSypciBSXigRe4KoY/P+TYcHoC2BqC11hzJaLibMadntjS699Iv/KWMVTPAN3iJBm3KHAyxTyvINpOYfXNxtKZR47yOKsjHzgGRi1XIDVvvY8w849FfPQ3aDklQN0BTfUl+I+sx93NqdoX+FUmsIX++hkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rbkWhbAh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 50640496;
+	Sun, 23 Feb 2025 17:04:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740326665;
+	bh=noOQpBDX7pxxQQTJmwMwR6yAbD+J86E38UthTfV6NUg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rbkWhbAhDcYglJ2Q+7ehG6AqgkhTbK3spYr0i0GiXGknVkONXVKPxUrPPrinYlfnZ
+	 kLCdyZFKoxZ5BD6VlGDaJOVPqJ444tA3W+55ZTiDxIYCWutZS/rqPQAXJRivo58KyU
+	 9OCAI6/e8pAlU+/jLNFkWjXEplsRh/nnnLZ2DGyA=
+Date: Sun, 23 Feb 2025 18:05:34 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: Re: [PATCH v3 2/6] media: uvcvideo: Move
+ usb_autopm_(get|put)_interface to status_get
+Message-ID: <20250223160534.GC27463@pendragon.ideasonboard.com>
+References: <20250206-uvc-granpower-ng-v3-0-32d0d7b0c5d8@chromium.org>
+ <20250206-uvc-granpower-ng-v3-2-32d0d7b0c5d8@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26d:0:b0:3d1:9992:bf11 with SMTP id
- e9e14a558f8ab-3d2cb52e5a5mr100678235ab.21.1740326285480; Sun, 23 Feb 2025
- 07:58:05 -0800 (PST)
-Date: Sun, 23 Feb 2025 07:58:05 -0800
-In-Reply-To: <CAMj1kXG1mhe1_eB0oeWukpA_FMTzH5F6zFFszpDTr_x2smvzig@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bb458d.050a0220.bbfd1.0031.GAE@google.com>
-Subject: Re: [syzbot] [efi?] [fs?] BUG: unable to handle kernel paging request
- in efivarfs_pm_notify
-From: syzbot <syzbot+00d13e505ef530a45100@syzkaller.appspotmail.com>
-To: ardb@kernel.org, jk@ozlabs.org, linux-efi@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250206-uvc-granpower-ng-v3-2-32d0d7b0c5d8@chromium.org>
 
-Hello,
+Hi Ricardo,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Thank you for the patch.
 
-failed to apply patch:
-checking file fs/efivarfs/super.c
-patch: **** unexpected end of file in patch
+On Thu, Feb 06, 2025 at 07:47:01PM +0000, Ricardo Ribalda wrote:
+> Right now PM operations are always called at the same locations as
+> uvc_status_(get|put).
+> 
+> Combine them into uvc_status_(get|put). This simplifies the current
+> code and future PM changes in the driver.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_status.c | 38 +++++++++++++++++++++++++++++++++-----
+>  drivers/media/usb/uvc/uvc_v4l2.c   | 11 +----------
+>  2 files changed, 34 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+> index ee01dce4b783..caa673b0279d 100644
+> --- a/drivers/media/usb/uvc/uvc_status.c
+> +++ b/drivers/media/usb/uvc/uvc_status.c
+> @@ -382,7 +382,7 @@ void uvc_status_suspend(struct uvc_device *dev)
+>  		uvc_status_stop(dev);
+>  }
+>  
+> -int uvc_status_get(struct uvc_device *dev)
+> +static int _uvc_status_get(struct uvc_device *dev)
 
+s/_uvc_status_get/__uvc_status_get/
 
+>  {
+>  	int ret;
+>  
+> @@ -399,13 +399,41 @@ int uvc_status_get(struct uvc_device *dev)
+>  	return 0;
+>  }
+>  
+> -void uvc_status_put(struct uvc_device *dev)
+> +int uvc_status_get(struct uvc_device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = usb_autopm_get_interface(dev->intf);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = _uvc_status_get(dev);
+> +
+> +	if (ret)
+> +		usb_autopm_put_interface(dev->intf);
+> +
+> +	return ret;
+> +}
+> +
+> +static int _uvc_status_put(struct uvc_device *dev)
 
-Tested on:
+s/_uvc_status_put/__uvc_status_put/
 
-commit:         a1c24ab8 Merge branch 'for-next/el2-enable-feat-pmuv3p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6b108de97771157
-dashboard link: https://syzkaller.appspot.com/bug?extid=00d13e505ef530a45100
-compiler:       
-userspace arch: arm64
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17fe06e4580000
+But unless you need to call this function in subsequent patches in the
+series, I would merge it with uvc_status_put(). I think the same could
+be done for get() too.
 
+>  {
+>  	guard(mutex)(&dev->status_lock);
+>  
+>  	if (dev->status_users == 1)
+>  		uvc_status_stop(dev);
+> -	WARN_ON(!dev->status_users);
+> -	if (dev->status_users)
+> -		dev->status_users--;
+> +
+> +	if (WARN_ON(!dev->status_users))
+> +		return -EIO;
+
+That's a change in behaviour that should be at least explained in the
+commit message.
+
+> +
+> +	dev->status_users--;
+> +	return 0;
+> +}
+> +
+> +void uvc_status_put(struct uvc_device *dev)
+> +{
+> +	int ret;
+> +
+> +	ret = _uvc_status_put(dev);
+> +	if (!ret)
+> +		usb_autopm_put_interface(dev->intf);
+>  }
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 856eaa23e703..5d4e967938af 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -636,20 +636,13 @@ static int uvc_v4l2_open(struct file *file)
+>  	stream = video_drvdata(file);
+>  	uvc_dbg(stream->dev, CALLS, "%s\n", __func__);
+>  
+> -	ret = usb_autopm_get_interface(stream->dev->intf);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	/* Create the device handle. */
+>  	handle = kzalloc(sizeof(*handle), GFP_KERNEL);
+> -	if (handle == NULL) {
+> -		usb_autopm_put_interface(stream->dev->intf);
+> +	if (!handle)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	ret = uvc_status_get(stream->dev);
+>  	if (ret) {
+> -		usb_autopm_put_interface(stream->dev->intf);
+>  		kfree(handle);
+>  		return ret;
+>  	}
+> @@ -685,8 +678,6 @@ static int uvc_v4l2_release(struct file *file)
+>  	file->private_data = NULL;
+>  
+>  	uvc_status_put(stream->dev);
+> -
+> -	usb_autopm_put_interface(stream->dev->intf);
+
+This isn't right. The usb_autopm_get_interface() and
+usb_autopm_put_interface() calls here are not mean to support UVC status
+operation only. Sure, the patch doesn't introduce an issue as such, but
+it bundles two things that are not related in a way that is confusing.
+
+I expect that the code will improve in subsequent patches and the reason
+will become clear, but at least the commit message here really needs to
+explain why there's a temporary step backwards. Ideally the series
+should be reorganized to avoid this.
+
+>  	return 0;
+>  }
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
 
