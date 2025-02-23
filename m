@@ -1,88 +1,94 @@
-Return-Path: <linux-kernel+bounces-527750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94FB0A40F02
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:35:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 045B3A40ECD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A3CB7AABB7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:34:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C676E7A6BB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9ED205E3E;
-	Sun, 23 Feb 2025 12:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4192066FF;
+	Sun, 23 Feb 2025 12:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSUWxEww"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dS0stnC6"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79591E480;
-	Sun, 23 Feb 2025 12:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40551C84CA;
+	Sun, 23 Feb 2025 12:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740314136; cv=none; b=N3I+SUHzWVwVEtW1JWQWseAKWbqph/RKnDp1Qz82bAgd3QEgIchbM6imNXI9XIaTePRoMl4E/yTUsBFMqMO0OMzSYoEXSfjYw1WRN42dvxuaPgq8ykGzsxwzyXJneOUfn0yd6W7uJi/EHV3bNQyGLUSvYpC1uc8dgz+wQC2rlD8=
+	t=1740313355; cv=none; b=LFd4qff6hBWDztmpAJFRhTdTY4oZ8w6/H27oRACitvh1K85KQPJW6unCHAbVfIzXfQOgS7gl50FJmvac3KRX25pyD4o41wbf21ZV0tROSnTm7RU9P+UbLBFO7uBJ7sv5Cp101sbXiKCuIEMkiyeuOFpeHE+MzEbJpUosaFOmdG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740314136; c=relaxed/simple;
-	bh=+b9ofa6YsjjD0JjRWiGhXtR7RuKkJpyR717mcFrJAjI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oUgbAFn42Z0yHjLz9C+zqetYjUgls/eHij+HeSyb4yFOLJx90qpiiXvs2KmEo0mQR/yp/t1ZzYZYpk+Tp+iFwx9pcFx6vDrtvt0b7yl0powipTCwR9Yka7UAT4XNjFb+Bi7UePx4jAcCET7svWgRxxNnwfsXihsgp+GG8Tpb4zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSUWxEww; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1740313355; c=relaxed/simple;
+	bh=ArZJRBd/4pbxz5g/Vwcsz0/TlDZxkfebjhAuZq4kED4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VDgBzoOU76/hIh9MVUTNPi0EDqT3blkSU6Q3/QEpQX0n9pzciwmpqrHqXJJCa7V15V7cCoIHb7XmrFtw5wlx7nRtSrbucO0QnpjAqGxl7oSfVkzduKpamXQ6CkFEGMGUwsXF1iCALi9BHkR9Dm2EcdYpswBdi7yM6E6KlsD/nsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dS0stnC6; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abbd96bef64so578698866b.3;
-        Sun, 23 Feb 2025 04:35:34 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f2f783e4dso3080062f8f.3;
+        Sun, 23 Feb 2025 04:22:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740314133; x=1740918933; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740313352; x=1740918152; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TLE5QRlgSqhogEgkoGJ4zyn6Ko/y3vd8C0Jq9omSNas=;
-        b=hSUWxEwwd0M0kRQ1NFKJvBjkRXW/pGfqCHzHPUZC1Oo2ZH/sinfIDGHpfUwO4esMlF
-         MWFZLTyNQ/AldFBAVbmxwTlG0Nde9+dZ4v/kVI52HW6r0tmr/Qo5QQKheSYyoZtDYNA2
-         wtIfk2pRM+k64WGjnWfBg5MuNfgYgfVEn/b0ibJZeTl2DixV/LLRz9oKBd1WnJuJ9gIp
-         e5/D91o8jWk86VRSlrqaeE7xvzhzxc2OiopS1UQk9HnuagArRNrohRCwVkDGZLeou+KN
-         XP66Iu2Y86akjyKou//vhN0YJ8cds8TGTdE6Esrc+XcZQ7tT7ELoJ2B6no5sdfyFukpO
-         VPBQ==
+        bh=FKPUmtrZifzHzdD4ujiZUV2ha0V1EuD2HhlEVPXjoTI=;
+        b=dS0stnC6stPwvjTN6IjPm5jDe1p8gbxsSIZcHbbjZw8npGOmkAWc8nK9ATgOkDCmSy
+         DeYDDGFgyNXIeytI/2uwyXW91UZ/MTURa174WzUwv9nz96WX+l7w/53CHqGDXhCbcahn
+         oCicchPuCT3u0sAmqbhJKUuqohJTihX59ZGjDPvRE7I3YzyCnME9Jh7RMSTxNI76FHeQ
+         ruScFFAuG0kh6D78yQ7SiodR8i8vddPsU/tJsWWun32nEcz6MhL2DJ5TWzeZl9F9daBV
+         lJp8pMye/Ro6VigjtapqmgxQ7oW9IDLseAeaFK5oXBZDkD77hq7DgMtjedgdHKpn8Hor
+         VqsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740314133; x=1740918933;
+        d=1e100.net; s=20230601; t=1740313352; x=1740918152;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TLE5QRlgSqhogEgkoGJ4zyn6Ko/y3vd8C0Jq9omSNas=;
-        b=j41YvURJpQCqTS+7BZ2KeARibXQ7/paCf72pinA+yuwZrDgcqb6NOhUv3QXltggDqm
-         d5IHPjxQDWH/IwwvLFwD/4pClngSrt2Tw7vncF2FmS5pREaHkIsOPUDR/u/alOZykuSl
-         eAgYIqRUK5DRwXiUOFaLCetACnT0iuWScD1TTeOnILXuncNCldRUWQtE2uRy3aDOSg/n
-         lGMl13Bc1HYJguyNY+fJfK/oFESiNnIEPJeAoCuHS2ZizURDNOXYz8OsmEc++XHEEVIB
-         jEw44/44DKqYK9wzg0/w0xgQcaKKbHDc/JrhbCVV22s2FBRrwqAR4neYENE9H12fC0ET
-         TlLw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuDDjS/WEWpV7/i60XcgojHM/aqvgczKKmIAVuWq36OCmkAbzn0ZFaHzs5SIFuI2IyLigHMuSO+88V9Jb4@vger.kernel.org, AJvYcCX52Ytmno6ij1e1uAR+ESPylOqGX7DgwicdI3N0V9PC6Amw/WMae1963TbWyTGLSbW7TBj40o1VjVLC@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEzaZWuA5el1m7cMRO7HBNOW1VSBbtDcyKHyvwwaNpZ/BTaFb8
-	AGQrjI0+aOh3ofpcKDSkJ8I34FU//sBly7WKdWhqqvPIuGj6fNQxhhBo7LMT
-X-Gm-Gg: ASbGncsx2QKa+J+xEKvgkAJCcPka8CZF/TelvO/pNSE671e+coj998l7WRiMIK/AA3y
-	oZdJLrhb9rkyY/xv8FUWTlFDtzm9OsxecYxHB5XDEyVDDTG7sGkqud5ZI4hxQWDUoPoKnC6WNdr
-	bjXTdyqXMhlB9ZDnre8lWevqKpmhaxs+Pd4T9nVgIkqu5CEkxk7+NXa6Nevhh15UaTokTxkc5Nx
-	tRmCk9u3kthAH3lFmwWqmu2aBYSBY7t3r5zturCGPJjeqLUGqz7GDseOz7XJWnJWRZbAPxPDdYG
-	WMOEbcK4hDracZwasKmVEi3HTmCKOx3bXPWst5Q=
-X-Google-Smtp-Source: AGHT+IFUfiW1GQDllxCKAXgvBAa6DM3kms//5wkJayxFfKOqMm0f7VR/HR8dda+cBQ6ZDNh4uZKJLg==
-X-Received: by 2002:a17:906:3087:b0:ab7:da56:af9f with SMTP id a640c23a62f3a-abc09d33a64mr885264066b.49.1740314132874;
-        Sun, 23 Feb 2025 04:35:32 -0800 (PST)
-Received: from localhost.localdomain ([165.51.10.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53280ee4sm2020878666b.78.2025.02.23.04.35.29
+        bh=FKPUmtrZifzHzdD4ujiZUV2ha0V1EuD2HhlEVPXjoTI=;
+        b=Lqd598CksVqF31CjfagecYu0qwQOxJV8Iy4hnmG7BxXhl5obv+P5c+jc6z4isSDNK5
+         rFlXdfujraMBw/D2tYTtNPkzxHddKjrJ7jU+Tz7fUpXiM8bnRkAfp0Ps6jndHduFnKW/
+         zMqbouHCu2LpXS56OBJJf3QnmPXmJ/X0AZSNpaU33F86BoYNQV7aroNTaJFMzrIBK7nv
+         LQCP4pZBcv64zObrAamcJhHFid8ICWopfAMxk1hc/9cgIEex/kiOAABvgRmC/ds/dOOU
+         eNFcIu6TolPQCWP0CAxwZZEmnsymNgOgaBOOdmjdcAkFut2nehQnatleJGHp0Ex0Mu/N
+         jmQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVEiCRA/Gs4te+KcExmsZ3iGG6P/Tw/4f52vfyW5OvO3m6I+vz3cLoHoiCUDEeKsh3npkfYWvQA50s0V4fF@vger.kernel.org, AJvYcCWabAXLxTxr/eX4Kqu9RU2t1t+wLb8tNsIdQEAamqll8z48FMnSNAbXqdVwg/b0z41Ojlb8Eb08e/hW@vger.kernel.org, AJvYcCWkq8vnq3sub0oo5kpCR42hYictLJlX+OC4mUX+vhew2QGodsPor+82I/3jvtVqvIrxJQgCh06TadULAVcTS+YlTsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5jtw+E8kFiiN5Wa1NvGstllhqB8K9FixwLDdFXJ3Z2hxXslY5
+	eb9CAD9E3y1l6zYzTUTMCD1EDkWtzoggHnK5emUFF+sU5V2e7fHa
+X-Gm-Gg: ASbGncu6yZqT4jM5ZFkqlAE5k4X7zVORg6WYBShT8JPRNSsPpYu90x05AHnOgX8QVBQ
+	cL+GfFJP+sOBzRCfmcCkvFV7rrmqGmB9mNF9oidOUAqwQGRetZ41Kp5oLVwsViz3YRP70uw5OUh
+	IQJWk3RNwCA288ZNarBsrU83uW/3oUAlr3UW3iGDtKFJjBZsrRU+qFhQq74KNMAaDrQe/46GbQ2
+	VOKX4SuUbJx+/SwH9t68yJTQP2InjfMEUQ13A9hTZu5M+lGOybFGdIucKx2w8SDM7pTV6miZWzZ
+	axlJedlczWKhx1vL6zLYR5wH1Rv1fapx81CFIXTMcSdZJJT0CFBBM/FBUfU7/JcCHz4W+f8SIzy
+	fcA==
+X-Google-Smtp-Source: AGHT+IFF0Ys8iFbS9iVVaNpCOkfbWSsfnV1SQ/+3vlRrKKwWO9igs5LmwE4oSfElk+6OGzdggA5aVA==
+X-Received: by 2002:a5d:64ec:0:b0:385:fa26:f0d9 with SMTP id ffacd0b85a97d-38f6e4be4c1mr7603763f8f.0.1740313350463;
+        Sun, 23 Feb 2025 04:22:30 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8602sm29611608f8f.94.2025.02.23.04.22.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 04:35:31 -0800 (PST)
-From: Salah Triki <salah.triki@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
+        Sun, 23 Feb 2025 04:22:30 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Salah Triki <salah.triki@gmail.com>
-Subject: [PATCH] gpio: gpio-stmpe: Use str_hi_lo() helper in stmpe_dbg_show_one()
-Date: Sun, 23 Feb 2025 13:19:31 +0100
-Message-Id: <20250223121931.579031-1-salah.triki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: [PATCH v2 0/8] phy: samsung: add Exynos2200 SNPS eUSB2 driver
+Date: Sun, 23 Feb 2025 14:22:19 +0200
+Message-ID: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,45 +97,112 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove hard-coded strings by using str_hi_lo() helper function.
+Hey folks,
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
----
- drivers/gpio/gpio-stmpe.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+In the vendor kernel, everything is handled in a single phy driver,
+with helpers for functions outside it. Clocks and regulators are
+specified and enabled in one node, which makes it difficult to
+separate what clocks and regulators go where without access to
+schematics or TRMs. The following gates are defined for USB:
 
-diff --git a/drivers/gpio/gpio-stmpe.c b/drivers/gpio/gpio-stmpe.c
-index 222279a9d82b..bd4122a6f670 100644
---- a/drivers/gpio/gpio-stmpe.c
-+++ b/drivers/gpio/gpio-stmpe.c
-@@ -15,7 +15,7 @@
- #include <linux/platform_device.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
--
-+#include <linux/string_choices.h>
- /*
-  * These registers are modified under the irq bus lock and cached to avoid
-  * unnecessary writes in bus_sync_unlock.
-@@ -283,7 +283,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 	if (dir) {
- 		seq_printf(s, " gpio-%-3d (%-20.20s) out %s",
- 			   gpio, label ?: "(none)",
--			   val ? "hi" : "lo");
-+			   str_hi_lo(val));
- 	} else {
- 		u8 edge_det_reg;
- 		u8 rise_reg;
-@@ -352,7 +352,7 @@ static void stmpe_dbg_show_one(struct seq_file *s,
- 
- 		seq_printf(s, " gpio-%-3d (%-20.20s) in  %s %13s %13s %25s %25s",
- 			   gpio, label ?: "(none)",
--			   val ? "hi" : "lo",
-+			   str_hi_lo(val),
- 			   edge_det_values[edge_det],
- 			   irqen ? "IRQ-enabled" : "IRQ-disabled",
- 			   rise_values[rise],
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBSUBCTL_APB_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBDPPHY_CTRL_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBDPPHY_TCA_APB_CLK
+
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USBLINK_ACLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_USB32DRD_REF_CLK_40
+
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_EUSB_CTRL_PCLK
+CLK_BLK_HSI0_UID_USB32DRD_IPCLKPORT_I_EUSB_APB_CLK
+CLK_BLK_HSI0_UID_AS_APB_EUSBPHY_HSI0_IPCLKPORT_PCLKM
+CLK_BLK_HSI0_UID_RSTNSYNC_CLK_HSI0_EUSB_IPCLKPORT_CLK
+
+The vendor kernel specifies 4 regulators, 2 of which are for eUSB
+and the other 2 for the repeater. The rest of the PHYs and the dwc3
+controller are on a single power domain (hsi0), so they're most likely
+sharing power rails.
+
+From what I've managed to understand, this SoC has 3 PHYs for USB:
+ - a synopsys eusb2 phy
+ - a synposys combophy for usbdp and superspeed
+ - a usbcon phy, which acts as a "controller" for the other 2 phys
+
+As Qualcomm is also using the eUSB2 IP, the approach taken here is to
+rename the driver so that it can be used by other SoC vendors as well
+while keeping compatibles SoC-vendor prefixed (different vendors have
+different implementations of the IP with different register maps),
+add support for exynos2200 in it and introduce a new USBCON phy driver,
+modelled to take phandles to eUSB2 (and in the future, USBDP).
+
+A new USBDP driver will be added later on, so that pipe3 and super-speed
+can be configured.
+
+The USBCON binding includes a header from the clocks [1] patchset.
+
+Bindings have been tested:
+$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j4 dt_binding_check DT_SCHEMA_FILES="Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml"
+  SCHEMA  Documentation/devicetree/bindings/processed-schema.json
+/home/ivaylo/linux-devices/s22/linux/for-upstream/linux-next/Documentation/devicetree/bindings/iio/light/brcm,apds9160.yaml: ps-cancellation-current-picoamp: missing type definition
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  DTEX    Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dts
+  DTC [C] Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.example.dtb
+
+ivaylo@ivaylo-T580:~/linux-devices/s22/linux/for-upstream/linux-next$ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j4 dt_binding_check DT_SCHEMA_FILES="Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml"
+  CHKDT   ./Documentation/devicetree/bindings
+  LINT    ./Documentation/devicetree/bindings
+  DTC [C] Documentation/devicetree/bindings/phy/snps,eusb2-phy.example.dtb
+
+Best regards,
+Ivaylo
+
+Changes in v2:
+USBCON changes:
+- drop unused header includes
+- sanitize the binding
+- proper init and exit power management
+- shorten some variables
+- unrelax reads and writes
+- update commit description
+- remodel to take other phys
+- drop specified regulators as these are for the repeater
+- make the kconfig description better
+- general cleanup
+EUSB2 changes:
+- merge the previous separate driver into the qualcomm one
+- drop the previous model of taking usbcon phandle
+
+[1] https://lore.kernel.org/all/20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com/
+
+Ivaylo Ivanov (8):
+  dt-bindings: phy: rename qcom,snps-eusb2-phy binding to snps,eusb2-phy
+  dt-bindings: phy: snps-eusb2: add exynos2200 support
+  dt-bindings: phy: add samsung,exynos2200-usbcon-phy schema file
+  phy: move phy-qcom-snps-eusb2 out of its vendor sub-directory
+  phy: phy-snps-eusb2: make repeater optional
+  phy: phy-snps-eusb2: make reset control optional
+  phy: phy-snps-eusb2: add support for exynos2200
+  phy: samsung: add Exynos2200 usb phy controller
+
+ .../phy/samsung,exynos2200-usbcon-phy.yaml    |  76 ++
+ ...nps-eusb2-phy.yaml => snps,eusb2-phy.yaml} |  70 +-
+ drivers/phy/Kconfig                           |   8 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/phy-snps-eusb2.c                  | 677 ++++++++++++++++++
+ drivers/phy/qualcomm/Kconfig                  |   9 -
+ drivers/phy/qualcomm/Makefile                 |   1 -
+ drivers/phy/qualcomm/phy-qcom-snps-eusb2.c    | 442 ------------
+ drivers/phy/samsung/Kconfig                   |  12 +
+ drivers/phy/samsung/Makefile                  |   1 +
+ drivers/phy/samsung/phy-exynos2200-usbcon.c   | 250 +++++++
+ 11 files changed, 1085 insertions(+), 462 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+ rename Documentation/devicetree/bindings/phy/{qcom,snps-eusb2-phy.yaml => snps,eusb2-phy.yaml} (57%)
+ create mode 100644 drivers/phy/phy-snps-eusb2.c
+ delete mode 100644 drivers/phy/qualcomm/phy-qcom-snps-eusb2.c
+ create mode 100644 drivers/phy/samsung/phy-exynos2200-usbcon.c
+
 -- 
-2.34.1
+2.43.0
 
 
