@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-527626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7C2A40D6C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:45:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09719A40D6D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFA33189761D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A23BE166
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF241FF1BF;
-	Sun, 23 Feb 2025 08:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0741FCFE2;
+	Sun, 23 Feb 2025 08:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Ok2I9KKY"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="R217fZy0"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB36527456
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EE31FC0E6
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740300303; cv=none; b=OwcerEMIpCBskNP/q3Hps1i/v382weJ3HzJRfrTcyu8o79Sw1dQFFAYWy3lTccm1fdedHh6bjshtU6Cx5A7UKrx1I+afGcTN6xdmm/H9n5BJ2Q5jHf5z+O1/a+TY1e/dScXzOaugsaqaAP94jkCo/WujLR8QAli3uCtUYcwtr38=
+	t=1740300368; cv=none; b=WvqeDRZPWBlAkTBB0PAcXx55moA7inLbz8WsSgfer+IDbh5RJk1lDcmenuFn0KGJSdmZ/so7bgl/ji9PZc7FIGyuU1YwH29tSMDczu9MC8GdDkBojbb1RI5zFe6Op7nLliCqo/zeoAOpQRGQ/OJeThvkby0VqD5toxOowmyaIWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740300303; c=relaxed/simple;
-	bh=SZ0T2q3XF4HYP7TyrzVin4FMdnP0hClGKE3eWmTxdnE=;
+	s=arc-20240116; t=1740300368; c=relaxed/simple;
+	bh=DhOhL98HKSlfxfm8aXGegeM9ziARLp58xw8GPE0QOZc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DKGECEMYNulkGqvM94tYQpQ2g/mcs382xh70PuJcEnQk1O1MFX7CaMxIb9axc0qm9D9//Nz46Ufdl54SI3pBrcG1R1sQvBIUorFam8RV0OTM90JbVDdXWoUBJhbCXLauyQW9YZkE50hWIBa8NVZqn0mzwd+LhlI0EQFCRlXuG/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Ok2I9KKY; arc=none smtp.client-ip=209.85.216.51
+	 In-Reply-To:Content-Type; b=SCj+AeLKZ6KyBaZJ4EJjU7PVKbTSvPEaE989IzREhS1n4mbzVbFNZZ0JYfIn3oKQT0z64WnzDZ+WnW8i9zYLiSbWQ5FQeUERXp74nPEuvGJkPbBB7V/7kXfD/Uh9b3gD+vZgYo6LAjxYic3eh0jjZ3s+TVX73gIhaWLVadso4d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=R217fZy0; arc=none smtp.client-ip=209.85.216.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc92215d15so953357a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:45:00 -0800 (PST)
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so950156a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:46:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740300300; x=1740905100; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1740300361; x=1740905161; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=oJJTF3HYuaSbL/88LkGxzdFLu+BfzcO92rEBv37Veyg=;
-        b=Ok2I9KKY2WSQlplpLeo2/IdTD4sCe8C0jbIxohBVerKSS7G8yh07OiIHGmBlPKnSal
-         CNX65Kms81JUB7uv4t8ojiPIF9c+J2kxL7Vtq/yc+BbSBo24oirKtdldbnv9in+deHOz
-         DqjP3ch6IqkY2+aQ2Mk4hM5hhe14AaK7mX1lakKiQuxpasT6Po89nRfCHR4mJSjKzCck
-         paJqGjlRM0kriruv3qgyAoMhmPUl1/X/FB0k8VuAdJC1yj/Cfuo4qxzvbcsi7DIJbx70
-         aXCc6gQua3tHrSyrqTH4HWhH8bsvkcC67SXBlO12BNs+DgAjNu8ym8pzZM1CaH8rqk9f
-         qe8Q==
+        bh=fARdZemRNN4lIMHQeupATWlyXvjiZ5YaX4PJLgbPEck=;
+        b=R217fZy0n3Uv0Fn4vHfYMWpugEqxtbZV3AI4khEaszSZLjjufEzPf5S9/ne17K98Ha
+         c7qY+XbzniT6BEXfncMpP35RzixuhjWT5TlChhF+UteDAfH93viI3QzmjxPFY9aOmUZM
+         nyHHNwIks98UMDD9B1eRGG8OwYyeCFgpieikD3wuT5GnkIAJXWM3vYgO5ATlvMDytUxj
+         bOG7Xm3bSDXAIDNR0Rk+KsY0CIIlDlVzhO+YIF1s4mw5ATM2EpNW9l1IF3JL9HOvrNAE
+         IpywWUbgXY35ItT6tojOR4KWJl2NIP31gOiRUL6pBJNwNdNy+oiwzCoX1etedFVuzJVK
+         OK6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740300300; x=1740905100;
+        d=1e100.net; s=20230601; t=1740300361; x=1740905161;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oJJTF3HYuaSbL/88LkGxzdFLu+BfzcO92rEBv37Veyg=;
-        b=d7Yq4H8PgZom7vD+5BmL7ghs9OiPb5jwrbU6dqviuUIAaZkMnoTdUfaKCTphYz5jZp
-         oIc0Jv4LcEL/4gU5q3GSieL1eMqUucreJVqNk7MQmteqyt90PSljCPkeYwkxD7jZ6R3w
-         DVYgy1SHKeNQ3MBWQXvNpjlDlBxuzq4ay/ePNly3Mik3h+Nqn0JccFADgOrMlzaML7gr
-         CgGPVWlOPCj7jtNcpG8RCZqHkXxeWaBPldxiaRtMXdWw7xgKVwgjYEZ0Ha0DHs7vIJsq
-         M2BD5gHc4+GGjY4HIpUg2H5MYQpA6DWmQbhEnUF250dpe8NCi56wB5SQ5PYX9UKolXBl
-         732Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWu/Jxwnnk0I/feqylzaaUSjWAL+fy7NDWANPCIXSkF++Ocjj0CRR7D9XmQ7O3Dycv51WWHv2+nb2gChiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmqfHHxyct0RPDdBjKqyWhCYhMNyDfXBZymxWd15Qyxpl/7f9K
-	Y0/g4LeoPkjFFrhKdvOuNkihARhyBpA4NEBtD/8nxY2Mn9UJpR8R5JAx318vOOQ=
-X-Gm-Gg: ASbGncvkfk5lZnNUmXmdwPMqX6/UeczYB7s2GmmV5PiTZXoMxqj2UVo9c7pwMSIF2RC
-	AnIu4jOoP97WAaaBrXJpI5Q4mK+zL38Z8Ck53g/LeXPEEMBUzDoNbNr3zU/EtzdwYgMY42conKc
-	sBuZBSUpDf9j9il2gAqNlzMMvekEzUOM/e6CEXo/YyN/nS+8EVTwq0l3Xx8Z9NY3HJKQU6afQ7y
-	9KX31t7bQHsBnrESLXGzLN32hr7GKk4byI35PbMeoZsKb9jC+JWEn8ieIJ2ZUmUi9giKbyPyWsE
-	eUH57RDjPO508y9BdQQ5pVz1aE7LVd2rbQdfPMU7IhniFA0XRK/mmpG5MfolNojTDwyam+FzPqz
-	+ugnU5RuOpnzByQ==
-X-Google-Smtp-Source: AGHT+IETX0ESoUIAgtzt1KCCNBxjuoR/U//Uk3J5qXSI+DLh2497upcZ2d6dyrwQTH19/4XOyyyhKg==
-X-Received: by 2002:a17:903:294e:b0:216:42fd:79d8 with SMTP id d9443c01a7336-2219ffd8076mr60802665ad.12.1740300299881;
-        Sun, 23 Feb 2025 00:44:59 -0800 (PST)
+        bh=fARdZemRNN4lIMHQeupATWlyXvjiZ5YaX4PJLgbPEck=;
+        b=U6nAkH89dJoYHL58jquGxuVEWC15eg9PH0FbrYutHkpmlyDwl7QBXtCJp3p35Qfcts
+         RCP8dLp7Pf5e+9Ibe8b1cEPQK1gUb+WhoH1LjeClu4hS1au1S6neDG6WayKwpImUoUlZ
+         pBTp3RbEdKZSJsj4uoKyzonDkNePy3ka6I+Z6oUqmxT+3k21My8xtFOR+boJYh3JvMiL
+         ceyyK8b9m2Pu0CP4sTLoi/P/g4ZN5hLI7N4mEtbNwM5CJQ1M/Os9e0/K8JkircyNrRk+
+         Rv+OfalkpGDuJW7CmuRRYGO7mjU/Ji3QZ/jW5KoJDyTu1Bsv+QEtWHynRyQ2rvoR2i3F
+         QGTQ==
+X-Gm-Message-State: AOJu0YxFO6Ltxm6qbiHF4QC85GFJcrkxpg7wkz47Yfc+LhSWdizZFcj3
+	ASUSluFGGLoMI0ybYqjNDvvCQfpZU/VOlr3EbxJm9hZFp3jX/vF9Vbv4buh3reQ=
+X-Gm-Gg: ASbGncsbXYGbVh6XCzor4vPGKdvh1v/CL+MwS1cqS4bfTbkCU1QfCQ6GMPg9BjwBocB
+	oFCYX1N1SmS4c9s8k6qGYVVgsp8FU+7ZhAHkjQa1qO2iqiKo0CiWbraU8wQW8cS2PbZnwTl4161
+	5HegmL4oTgueNwpkk9uIMjNqSYiRqMtN79ghfMQxeuZQ7mbQKQ7aPSp/xyIFqC8bJgubHHFKWfj
+	DXVy+bX37VaH4e0xmVcOeoJL6ALpHkt9dzXATKQwgxFowGEIumLyIXY4oOTninxQ7ZqBgF5nEmr
+	rUObK06DWkmYnuOaFB08ue5DE8zlOiFw9cJAE3EnjZUa2Qcc4LwKktQIopkRSbHGWiSHOzGHs/L
+	FKXJMxVG8ZhOwbg==
+X-Google-Smtp-Source: AGHT+IFlxEBLplToG+esywlhszEAaN3NlRVA8UQFP2sp4KwEIOoPwUTT/OJPy59g2TIJ3AJgF1Xuvg==
+X-Received: by 2002:a05:6a00:190f:b0:730:8a0a:9f0f with SMTP id d2e1a72fcca58-73426dd835emr5886263b3a.7.1740300361273;
+        Sun, 23 Feb 2025 00:46:01 -0800 (PST)
 Received: from [10.200.58.71] (151.240.142.34.bc.googleusercontent.com. [34.142.240.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d7a540aasm158706295ad.245.2025.02.23.00.44.55
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm13932582b3a.107.2025.02.23.00.45.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 00:44:59 -0800 (PST)
-Message-ID: <9d9d7432-9a5d-4216-ac53-a0f333a35d8f@bytedance.com>
-Date: Sun, 23 Feb 2025 16:44:52 +0800
+        Sun, 23 Feb 2025 00:46:00 -0800 (PST)
+Message-ID: <e7a81f13-6f09-4a7a-9d85-0ba4885442bc@bytedance.com>
+Date: Sun, 23 Feb 2025 16:45:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,77 +80,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [PATCH 2/2] sched/fair: Fix premature check of
- WAKEUP_PREEMPTION
+Subject: Re: Re: [PATCH 1/2] sched/fair: Do not let idle entities preempt
+ others
 Content-Language: en-US
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Cc: "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
  Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
  Dietmar Eggemann <dietmar.eggemann@arm.com>,
  Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Josh Don <joshdon@google.com>, Tianchen Ding <dtcccc@linux.alibaba.com>,
- "open list:SCHEDULER" <linux-kernel@vger.kernel.org>
+ Mel Gorman <mgorman@suse.de>, Josh Don <joshdon@google.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Tianchen Ding <dtcccc@linux.alibaba.com>
 References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
- <20250221111226.64455-3-wuyun.abel@bytedance.com>
- <CAKfTPtBzsX6GKZP_NGTONrkp96qx9uOHr0+XG7tC6ELy4tbHBg@mail.gmail.com>
- <6097164a-aa99-4869-b666-9dc7018c1f96@bytedance.com>
- <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
+ <20250221111226.64455-2-wuyun.abel@bytedance.com>
+ <e7c4d27f-6b98-4cd6-85b8-9c4672acdef4@linux.ibm.com>
 From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <e1cfabab-1326-4cd8-a8a4-4b3fc4c1f7ec@linux.ibm.com>
+In-Reply-To: <e7c4d27f-6b98-4cd6-85b8-9c4672acdef4@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Madadi,
-
-On 2/23/25 2:16 AM, Madadi Vineeth Reddy Wrote:
-> On 21/02/25 21:27, Abel Wu wrote:
->> On 2/21/25 7:49 PM, Vincent Guittot Wrote:
->>> On Fri, 21 Feb 2025 at 12:12, Abel Wu <wuyun.abel@bytedance.com> wrote:
->>>>
->>>> Idle tasks are by definition preempted by non-idle tasks whether feat
->>>> WAKEUP_PREEMPTION is enabled or not. This isn't true any longer since
->>>
->>> I don't think it's true, only "sched_idle never preempts others" is
->>> always true but sched_feat(WAKEUP_PREEMPTION) is mainly there for
->>> debug purpose so if WAKEUP_PREEMPTION is false then nobody preempts
->>> others at wakeup, idle, batch or normal
->>
->> Hi Vincent, thanks for your comment!
->>
->> The SCHED_IDLE "definition" of being preempted by non-idle tasks comes
->> from commit 6bc912b71b6f ("sched: SCHED_OTHER vs SCHED_IDLE isolation")
->> which said:
->>
->>      - no SCHED_IDLE buddies
->>      - never let SCHED_IDLE preempt on wakeup
->>      - always preempt SCHED_IDLE on wakeup
->>      - limit SLEEPER fairness for SCHED_IDLE
->>
->> and that commit let it be preempted before checking WAKEUP_PREEMPTION.
->> The rules were introduced in 2009, and to the best of my knowledge there
->> seemed no behavior change ever since. Please correct me if I missed
->> anything.
+On 2/23/25 1:48 AM, Madadi Vineeth Reddy Wrote:
+> On 21/02/25 16:42, Abel Wu wrote:
+>> A task with SCHED_IDLE policy doesn't preempt others by definition, and
+>> the semantics are intended to be preserved when extending to cgroups
+>> introduced in commit 304000390f88 ("sched: Cgroup SCHED_IDLE support").
 > 
-> As Vincent mentioned, WAKEUP_PREEMPTION is primarily for debugging. Maybe
-> it would help to document that SCHED_IDLE tasks are not preempted by non-idle
-> tasks when WAKEUP_PREEMPTION is disabled. Otherwise, the intent of having no
-> preemptions for debugging would be lost.
+> [snip]
 > 
-> Thoughts?
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 1c0ef435a7aa..4340178f29b7 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -8778,12 +8778,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>>   	pse_is_idle = se_is_idle(pse);
+>>   
+>>   	/*
+>> -	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
+>> -	 * in the inverse case).
+>> +	 * Preempt an idle entity in favor of a non-idle entity.
+>>   	 */
+>>   	if (cse_is_idle && !pse_is_idle)
+>>   		goto preempt;
+> 
+> This patch doesn't apply cleanly on top of tip/sched/core because of the
+> commit f553741ac8c0 ("sched: Cancel the slice protection of the idle entity").
+> Please rebase it.
 
-I am not sure I really understand the purpose of this debug feature.
-If it wants to provide a way to check whether a performance degrade of
-certain workload is due to overscheduling or not, then do we really
-care about performance of SCHED_IDLE workloads and why?
+Will rebase. Thanks!
 
-IMHO preempting SCHED_IDLE before WAKEUP_PREEMPTION is to preserve the
-IDLE semantics trying to behave like real idle task. It is somehow
-weird to me that we treat sched-idle cpus as idle while don't let the
-non-idle tasks run immediately on sched-idle cpus on debug case.
-
-Thanks,
-	Abel
+> 
+> Thanks,
+> Madadi Vineeth Reddy
+> 
+>> -	if (cse_is_idle != pse_is_idle)
+>> +
+>> +	/*
+>> +	 * IDLE entities do not preempt others.
+>> +	 */
+>> +	if (unlikely(pse_is_idle))
+>>   		return;
+>>   
+>>   	/*
+> 
 
 
