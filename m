@@ -1,132 +1,152 @@
-Return-Path: <linux-kernel+bounces-527572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3F5A40CB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:44:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF22A40CBD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAA188B16C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6C63BED01
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7DA1C84C8;
-	Sun, 23 Feb 2025 04:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374031C84CB;
+	Sun, 23 Feb 2025 04:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TSodocoZ"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdeojEYG"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C7D376F1
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 04:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ECA2111;
+	Sun, 23 Feb 2025 04:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740285874; cv=none; b=Zn1AQLXW6JNBpSr4Of0lflIciIkaB+LRf80mQWkxIKFYDcWPCnr/qy2fPa6Z+peTKFstgBPGC89dDVsdTJgY5T/GgAt4FJGsO1kvS/Ei1zxP+JKBJepiF0AAEc3wbjT9SpoHRYggd701quSluVyacwWTDfKf/Oxo5QCV0CPYhMw=
+	t=1740286613; cv=none; b=mAevNnKnX8bjJcgCfboSRup5IG8xqqqPBCbF13SqLwKrjfZMEcauFMd+XB3QgntvGymYt9FDBMUQKmuMXafaP085G5G+K1mPlVpaA3XwYaAInWURCroK80BPaL9tSoUOg4aBfBF4ID2C08t+iRP0683pP8bqPAcdqtSknHQlv4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740285874; c=relaxed/simple;
-	bh=/qwbvaYkyJw5YF01fMDSuEqzTdDeyNg91pSNk7wuNiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=We4Yw3MaHJY7GJoBvGiWC9Y4Tt4FepFhIoblk4n7sPdUSV27QxY4uynQRrlzHNUIlvsxi+G83TBxaw7Xl7DGkyPLjqMLykWC1w7MBR9U8DONkTOzvJkwCGXnUwj2Z8WPTWERxsKQV0AWrWNVCl4rD1beF+8mwM+t7LXozHfhe5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TSodocoZ; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-471f1dd5b80so167161cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 20:44:32 -0800 (PST)
+	s=arc-20240116; t=1740286613; c=relaxed/simple;
+	bh=qOtmpq6Kn/bx68wjyPlHMVkHYUO4AaaQVZr5vaOzrJY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SBZZkQutFcrgyjEzwvKXs9q1Wc8oMC2PTnmkVVVuo0ajxulZRhCo40rV3FvDVDQIKTWgqzWJ2YPPaZlg4N1vzVeU8hCq5rY3aG+JP/erMZ9ZBOeV6tnGzvLB2VRdu7lBdjfjOjds2GLLwYy6GkNrKXBqULMNODYoce3Ld/c9m8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdeojEYG; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c08f9d0ef3so215371985a.2;
+        Sat, 22 Feb 2025 20:56:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740285871; x=1740890671; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740286611; x=1740891411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lcGUFpbUyOauzWV1lBBOTXy0eRR4JvnEyo1klZZ4Yko=;
-        b=TSodocoZL9n9hVRa8hAM4Td1os2cq9lySQ8NhJW85a+82Qq2QKa8UqVafbC4/EI5Rb
-         8JQcxIIFpp3xUV9zuUle42FT6DWlFDqJchfVdAFZvFrj49qmy+wukEx8O31NjvQbQMtv
-         FjiFwlpEuhKOfgUbqJrj38iUtPBRmmjJUtCBkWNtzB3b8t4FWjEprTQJcng8WP68sAsn
-         BcreLgpBDEpErlzc+Lap+NcrYwzOlWObdJDGLLbXcbVN3LIGqLcVdPgYclWUsuhnq+b2
-         sl9Swk7THjxqalm5dnVNPIkCMQ21ChOEfqfWS8Fj7z+IujmsAeXs+l3avu3uvlAN1l/b
-         F+dg==
+        bh=7DVe9AIae0UBiMWAPJhlgjyvPeRD+ylP6Mta15Skotg=;
+        b=VdeojEYGv/CFcZ6pfOjbcTm1xSfTbqdjK4ANLjMwtd3zaHPTlkVoFJZHHWb/bHT+/S
+         8Pd4nlTvCOoGwaZXmQEH3+BsT2BSpGRtMc0Gr3Zq0eJllqyLNhLRtoRQW6mbD+2vgepG
+         ZClEA0HznZftglLGWEqilYvBX3xOzBpj6Ui4ByTStozeS5ujHv+WPNmBNpv1ST9QPTR3
+         /+9QfLLf/XiNs3vUvGd14iMjJ37YOcqwhuCJZ1NEv+OysGkL/DDWpXR6CLcWdldrkedB
+         6v8NcD4OUqydr1FnnL6Y6vijOA0NhvM+CXcPbxephwuk/Lqp9wMTCQ+iONJ17J2Vksbq
+         Vz6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740285871; x=1740890671;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740286611; x=1740891411;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lcGUFpbUyOauzWV1lBBOTXy0eRR4JvnEyo1klZZ4Yko=;
-        b=iyALCgzKb2l2YNJLPn9RWOebrKaHZDaJ0qH0EN9Atroy0zvX/NhiKePkSnL+7HfnHS
-         /Wgn3lNgExYYCyPq5XqfGNzkdH5yYoLpBYzNiiGDhlyfWMOi14T0NauWFRnJ8+uzoygF
-         E+LCIsB8W6sGVh77JROXLA1t/KCb1xTvX3A7fK2/OfF1m/c3y5EQWohn5DkmwcX9cFZV
-         9umgcuVi+Ae21ha3evKyCkuHXjH6qTNOtQEoUjM1vmZLRhEgkz8jHTgexuW4PWDTm7q6
-         ZH/lerVQL0HOzI9S7FBJWm42/xELfC5w1mg/ARycoHdN3kfnYm9t55aN4+xHYES+D4AE
-         CRYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLRunp+n9DzQZ6cD3x1xo3mlJX18rL2EBWatK1EreCRH+Dk/0HXtDLOwxt3fB7t9xsUJzsj5SqMxEeyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1FxEC9ZdzoOxnGFaT0Goc1LxlRjgtlOe/YDjVFGIzj37Efi5t
-	8MYDAK8MjK3dXcMRQU/A6FGFCtzBETU2l1WKks2/CAd6WHB403k/RlRuNprxy+3Uunja4DZ6cVr
-	Al0b+9JIgrUrxZ5unsh8eKPib1weBkZ7E1D4O
-X-Gm-Gg: ASbGncscLxKwcIwE3u3gLurWjANaLuQOsx8oDCP2Og9HaGxNpSAy2yCsnpowlOHWmeS
-	UOtWjI2r3I7k2ykxzEGhgeW6DkD/Ogr3E/gYdnXcg5MQf+mvQ4hXutz/AfXKMbUEvdfUnBgy4R3
-	7fqyfpVv4=
-X-Google-Smtp-Source: AGHT+IGb46tw+pVZwQoU1jpISG40+sgx+NO0UEx1OrIl6UCn0VBop6mZKH/321hTah7c9P/9I7sBTdiVFXoipsZ/N+o=
-X-Received: by 2002:ac8:44d2:0:b0:471:f8af:3231 with SMTP id
- d75a77b69052e-47234ccbf1dmr2354891cf.19.1740285871140; Sat, 22 Feb 2025
- 20:44:31 -0800 (PST)
+        bh=7DVe9AIae0UBiMWAPJhlgjyvPeRD+ylP6Mta15Skotg=;
+        b=PhNCw2MZk64Ku2pIyCdFjyFVhtz3ldkD981AKHboM9Bk+6h9Xq4pJ8KOBvSY4HoU5f
+         pSqG8GyzcqviTPiUcLq6YrEjK7l/d5iStNJk213WEhQ3sBZrcZPPnevUsjUnZ7yI6Kgn
+         gx1twmlzXCCu+RayNBdcR3HmEjNct+KiwIjNlMhXIaosB8b6r3wSTa35WDyDHe0nbh1Y
+         RAt/vPVDcM7EGVI2P3Q5Ls8Nf5Pjl0W7pTZiUAwXVmYo7a9ItIK1XjbgMD5FlEZ072da
+         24jHYnYKi8L7ebzT9bGAaKAMqFMeHK4t04vs761/rk2/7lihgaUFbmN60f3hcfeYJ4xA
+         OzSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVS05E1xLkgelltBSb7qXGZ8XgqXSgjXRj/WlNr3V6v+y60buOKhK8R27vtP1uKhZKoql6Rxv1QQjnSb40=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3E1ybYBhE9ArpVpZ3PfQbkqYs0+HKeQd91oee6UiThhLXgDFg
+	2C47OxIzzm3FkBud7CXWBjSP4A6wPG7DzQmP6/ApQEYfjNrtiP5d
+X-Gm-Gg: ASbGncs859HvF6vhXZbP3T8Fh/C+UJ0/DHHDpig3RKfWUsjfAc4DltA1shmE1Al0BeX
+	I6JJFnQ2Z+gGr8MyD3Q1xOJP37Hf/7Tp57QidMccDFTFNTVr9rH46JFJtHO4wppNUd//kt6GJ+f
+	rnArKxsWtIMfc5SkpGSHBDMYAkiTiDC5Q6cOPHATGZC6t3qN1d3DOj0f7Oy4ZVBKVw8KSWu7+YP
+	aZEOO838mx1zeZvUFmtxJC+lbCTOHQRI9HRpRQO3JqyyT0xsba0RWCj7dVAov0bpXQLNbGKm0cO
+	6mrTvIVsywkjdECXnZFx33ymLOSzdSkIJE2EYXjybCVpQ4s=
+X-Google-Smtp-Source: AGHT+IGbd646ykaMg1S0WZNg+V+zr5Lv3mEvm4mIw5xeadGijDjJjMn247ac93CQKG451CQiCGoO6g==
+X-Received: by 2002:ad4:5bae:0:b0:6d8:8a60:ef2c with SMTP id 6a1803df08f44-6e6ae7cae9fmr120114636d6.2.1740286610890;
+        Sat, 22 Feb 2025 20:56:50 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:104d:377c:5733:f5b0])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d7791cdsm117409616d6.9.2025.02.22.20.56.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 20:56:49 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 2/2] tty: Change order of ttynull to be loaded sooner.
+Date: Sat, 22 Feb 2025 23:56:47 -0500
+Message-ID: <8413152.MhkbZ0Pkbq@nerdopolis2>
+In-Reply-To: <2025021957-babble-delivery-3035@gregkh>
+References:
+ <20250217040748.2017975-1-adamsimonelli@gmail.com>
+ <20250217040748.2017975-3-adamsimonelli@gmail.com>
+ <2025021957-babble-delivery-3035@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz> <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
-In-Reply-To: <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sat, 22 Feb 2025 20:44:20 -0800
-X-Gm-Features: AWEUYZlMNaCB-YHC0BCj5Vx7RBKFda56BzAx84KjKhycsml2Uuiq9n6JJUULhdc
-Message-ID: <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, Feb 22, 2025 at 4:19=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Fri, Feb 14, 2025 at 05:27:36PM +0100, Vlastimil Babka wrote:
-> > - Cheaper fast paths. For allocations, instead of local double cmpxchg,
-> >   after Patch 5 it's preempt_disable() and no atomic operations. Same f=
-or
-> >   freeing, which is normally a local double cmpxchg only for a short
-> >   term allocations (so the same slab is still active on the same cpu wh=
-en
-> >   freeing the object) and a more costly locked double cmpxchg otherwise=
-.
-> >   The downside is the lack of NUMA locality guarantees for the allocate=
-d
-> >   objects.
->
-> Is that really cheaper than a local non locked double cmpxchg?
+On Wednesday, February 19, 2025 9:03:08 AM EST Greg Kroah-Hartman wrote:
+> On Sun, Feb 16, 2025 at 11:07:48PM -0500, adamsimonelli@gmail.com wrote:
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> > 
+> > If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
+> > will become the default primary console device, based on the load order.
+> 
+> You mean "link order" right?
+Yeah, I'm sorry, I will change that.
+> 
+> > Users and distributions that are migrating away from CONFIG_VT will
+> > benefit from this as /dev/console would not suddenly become /dev/ttyS0
+> > which could otherwise cause some user space behavior changes, namely the
+> > TCGETS ioctl failing, which causes libc's isatty() to incorrectly return
+> > false when /dev/ttyS0 is disabled, and will prevent a device that is
+> > connected to a user's /dev/ttyS0 to suddenly start getting kernel log
+> > messages.
+> 
+> I'm sorry, but I can not parse that very long sentance.  If CONFIG_VT is
+> not enabled, this isn't going to change anything with ttynull, it will
+> just happen to have this console loaded before all others, right?
+> 
+> Which implies that this might break existing systems when this loads
+> before the expected platform-specific drivers.  Was this tested on those
+> systems?
+> 
+OK, next version of the patch, I think the commit message should be more more
+clear I hope.
+> > 
+> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+> > ---
+> >  drivers/tty/Makefile | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+> > index 07aca5184a55..03bb47e11e1c 100644
+> > --- a/drivers/tty/Makefile
+> > +++ b/drivers/tty/Makefile
+> > @@ -11,6 +11,8 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
+> >  obj-$(CONFIG_N_GSM)		+= n_gsm.o
+> >  
+> >  obj-y				+= vt/
+> > +obj-$(CONFIG_NULL_TTY)		+= ttynull.o
+> 
+> If you are going to rely on link order here, and HAVE to have this above
+> all other consoles, please document it as such so that people have a
+> hint as to why you are doing this in the file so it dosn't change again.
+> 
+> thanks,
+> 
+OK. I will add some comments
+> greg k-h
+> 
 
-Don't know about this particular part but testing sheaves with maple
-node cache and stress testing mmap/munmap syscalls shows performance
-benefits as long as there is some delay to let kfree_rcu() do its job.
-I'm still gathering results and will most likely post them tomorrow.
 
->
-> Especially if you now have to use pushf/popf...
->
-> > - kfree_rcu() batching and recycling. kfree_rcu() will put objects to a
-> >   separate percpu sheaf and only submit the whole sheaf to call_rcu()
-> >   when full. After the grace period, the sheaf can be used for
-> >   allocations, which is more efficient than freeing and reallocating
-> >   individual slab objects (even with the batching done by kfree_rcu()
-> >   implementation itself). In case only some cpus are allowed to handle =
-rcu
-> >   callbacks, the sheaf can still be made available to other cpus on the
-> >   same node via the shared barn. The maple_node cache uses kfree_rcu() =
-and
-> >   thus can benefit from this.
->
-> Have you looked at fs/bcachefs/rcu_pending.c?
+
+
 
