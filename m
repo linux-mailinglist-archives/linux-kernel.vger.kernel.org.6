@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-527673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4932A40E0F
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:30:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E05A40E13
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:32:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1B5178D1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:30:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA398189B2DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:33:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1031FCFC6;
-	Sun, 23 Feb 2025 10:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5902020468B;
+	Sun, 23 Feb 2025 10:32:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FfiY1u4/"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="PJu2gik0"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07CD3BBC9
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC2D61EB36;
+	Sun, 23 Feb 2025 10:32:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740306633; cv=none; b=ZAjrq0qbCX61WtSnx1ZoTva7bW4ZiuDgMUNLQvER1PQJLvep+cjWMfV65aJ26NreLc0gdt5qp+npPyK/Esa2HJk07kJYZMsttOJauuojO7drUd7YjpEq5kZnjE1KP8rRXDlVJhpISLNgCKweYJP6Nn+KwBLtAKc/bhz1Kp1Hn0E=
+	t=1740306765; cv=none; b=O34EGB0NF5CsGfVwgByvmF9OOLBL6WGiObtS/Y9UnZ2VP73XdlPaE0ZBnWCF0ohCyDLAi9VUR8doBE2xn3HnqD22vOJg0hId8zk4vfibbjAji6vt9wvkw0LEm0VxhPqY2Ol8AWXfIfTo7zEJPP9TnomM98Xu7HUqvgMysBjwffY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740306633; c=relaxed/simple;
-	bh=Dl3+yp1j0uUvvHMrDFjfGrvoQEGFpkBAjD03AHpfzR4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RTnl3c6prcJdBUZXlTHzHBcoVvjXHt+N0I5zPTnwh30LEr7p3GoxI7ImU74YTQfH3xuLekJ/42LSvaYLXMjhhMpzTmx/n58vH9q7Mcq0YFFQ9CEK862p27+ztzwe+opaAwgOLSRWNm3scbU7IQteDd0VN+qkxgRXIKZYPDkgFRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FfiY1u4/; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30a2f240156so34709121fa.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 02:30:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740306630; x=1740911430; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ODMDkk1m488I/kgMYHn95DzHCtQtRSd4ouwlxgKanNI=;
-        b=FfiY1u4/GwdZ06mEpMJcixmF50VidEBvTAdoG5kZAX4lfAlAntJ8SiytA3FsZAn0sP
-         cWGMxcpWS+XdajVqfIXGiresz83dCwMauK/lIT68v6jQjJOkEPTBZTdTSepkhRXCDIMQ
-         C/boxUQF4R0HZWnk4fIEo16pXhIW8G4QnBxBzGLcGX9kMYdC4fHZsAKwcOtjmyHtqR4a
-         ASu+JN4agISrBUcQrJaPOO0AMywzXeZgmMWB02C6Qu7aRbrAv2btCEOyvExTuRoTmjNT
-         VtHhLSBDakUq2Encnu/HzuuE0SVNKVah15YLJNDhs/wYA4lwdc14okYlvve4UwgwqNvK
-         e8qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740306630; x=1740911430;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ODMDkk1m488I/kgMYHn95DzHCtQtRSd4ouwlxgKanNI=;
-        b=YBmcrWyNUyfkDBsBp58PIoftxxsvzL2dQUGah3aczjYbDrdl7fpafGQXZdM6oh7DM+
-         AkBmWi7n6Fd+47Cip2VXHIEL7C8FlK9bbXZh44Og37hM4lbIdmjOhpO3mKS/CkatVJ4U
-         +lbLfHR6XoWVjPZaFfjOE1rRM7OgTR4wTQxFDOnX/HHvYYsZgPVpgt63TLh9ERj4Mg7O
-         F7EiN6S2rS8iZu4kwhdQ9mPf22sjKhbJDZDv10mCvyRv3EyzNZlftnkxb91L1+0rWTjn
-         AVVkMaDKu7n9Fbts028zXOiP0L/Kb7vqmO2NMI2XHbgLzxi8zy/P9noMKKRsKoEm61pl
-         fJzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtE/Csh+m9q0ttc5XLVOoELGnA6cR5KxQcmrEhxEsjJMju0RXmKktQbcTADrdwwr/UzpnnC3oa2x0Ns3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz77Lc/itg1nl5hWmAjccgsRkrTdJDX5nZdIbopEzbkOlStbxSA
-	G/H4XcASlwu0wsC6th7QUVvq03isszfvrtEq7wz2uLb/rvHJCO2B34fULzmnAsESWxfzeRkcqXl
-	lv3HL2T53mAEOGvUFz1dkDw3H9WQhv6QM
-X-Gm-Gg: ASbGncvs+j9gMhJ9i/S01xoojaCnV5d9LWcFKCKCR1mqzLRRNzyndG1y3S/LZpnIQSS
-	TZO+HlDclUuIMjY6Knd0RE3OMuJS+qK01wcczR4ePtmxuF1COzeTPeKsDGpE0CUme7v5qZKqjz8
-	pbh7ZMjjE=
-X-Google-Smtp-Source: AGHT+IEn3yXpJN3oWq6fjW/Z7CfWG/d7IDCNCinIwV0tQKFT0G7j8rAfBkFndEMu7Jy55BUncmFzYHPLP1jQt0gPQzE=
-X-Received: by 2002:a2e:8649:0:b0:309:1c07:4a69 with SMTP id
- 38308e7fff4ca-30a598ebd72mr29398591fa.22.1740306629392; Sun, 23 Feb 2025
- 02:30:29 -0800 (PST)
+	s=arc-20240116; t=1740306765; c=relaxed/simple;
+	bh=UeSf7qZC3uC+4elUHoxZwfMIm5R2qsKyGGBBhDQVbTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jbdOCgMBUIeaBp6ImMjBPYThf1hSkDHjpb7hRUw2Gth+Q5vO+Ef4BULiJMT+bvHiOonUS8x0BE4VZcIPHmwsMmYEQ93jE+Ib4gGtCqXTK4YspOWGIYOlwG4rZnaXuL2SGwDVBd20/e7bBRJxkkgYSFaF17V8UG+dyzA7VNltCTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=PJu2gik0; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C30043317;
+	Sun, 23 Feb 2025 10:32:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740306755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3q8V+cm8pIkEgY8WNYRuv1HhLOCUVuFOZ7NL4x+JRvA=;
+	b=PJu2gik02LsnUsoTvziJ0WU+C7YYrfTfpv4qiGLeG4lV/hz3f1REW+aKTVJKdNgZ4qyaqa
+	FPYvCWviN3Vq0QEyp3Wk5OwGyDrNaZXKBdtYdj73/VWi0RWk6jeSIi0Y9OuplS+G4BwmaY
+	kgL/7pzrLp+gEuaBi0/mLCS428JAQaYXnT3wVlAV8J0K6BNEmQsIec6uZKwHBq2ClJUStX
+	LlcYSIZF96a7YLBswGAg5PJRgAi4kILQ7GR+g5y+/t43ECpdnEmRFJbBO18zhf8q22f8Fb
+	sl3vWCF2CaG2+O3jiINfvWnLgNADVXy8EZx9Had0oUgdKREYQcxMyCC26oYavQ==
+Date: Sun, 23 Feb 2025 11:32:32 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
+Cc: hfdevel@gmx.net, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, FUJITA
+ Tomonori <fujita.tomonori@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 4/7] net: phy: aquantia: add essential
+ functions to aqr105 driver
+Message-ID: <20250223113232.3092a990@fedora.home>
+In-Reply-To: <20250222-tn9510-v3a-v5-4-99365047e309@gmx.net>
+References: <20250222-tn9510-v3a-v5-0-99365047e309@gmx.net>
+	<20250222-tn9510-v3a-v5-4-99365047e309@gmx.net>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222190623.262689-1-brgerst@gmail.com> <Z7rsOVaxhfCJdn2P@gmail.com>
- <CAMj1kXE51FSYQ6prL7M5vfy1KjJGiBAre3CH3G-L3CQj9YSq9A@mail.gmail.com>
-In-Reply-To: <CAMj1kXE51FSYQ6prL7M5vfy1KjJGiBAre3CH3G-L3CQj9YSq9A@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Sun, 23 Feb 2025 11:30:24 +0100
-X-Gm-Features: AWEUYZnbvIXbr9WMQ5_iOuutv4mVYXIK-z-udLZmvYW3hGIfk9jasWTMXN-dREY
-Message-ID: <CAFULd4YHj_Y7B4B8Mz5rwm3uB5GS=BhQny_eFhSSkdi=qg+qcA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Add a percpu subsection for hot data
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejheehlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopeguvghvnhhulhhlodhhfhguvghvvghlrdhgmhigrdhnvghtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhfhguvghvvghlsehgmhigrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnn
+ hdrtghhpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Sun, Feb 23, 2025 at 11:20=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
-rote:
->
-> On Sun, 23 Feb 2025 at 10:37, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Brian Gerst <brgerst@gmail.com> wrote:
-> >
-> > > Add a new percpu subsection for data that is frequently accessed and
-> > > exclusive to each processor.  This is intended to replace the pcpu_ho=
-t
-> > > struct on X86, and is available to all architectures.
-> > >
-> > > The one caveat with this approach is that it depends on the linker to
-> > > effeciently pack data that is smaller than machine word size.  The
-> > > binutils linker does this properly:
-> > >
-> > > ffffffff842f6000 D __per_cpu_hot_start
-> > > ffffffff842f6000 D softirq_pending
-> > > ffffffff842f6002 D hardirq_stack_inuse
-> > > ffffffff842f6008 D hardirq_stack_ptr
-> > > ffffffff842f6010 D __ref_stack_chk_guard
-> > > ffffffff842f6010 D __stack_chk_guard
-> > > ffffffff842f6018 D const_cpu_current_top_of_stack
-> > > ffffffff842f6018 D cpu_current_top_of_stack
-> > > ffffffff842f6020 D const_current_task
-> > > ffffffff842f6020 D current_task
-> > > ffffffff842f6028 D __preempt_count
-> > > ffffffff842f602c D cpu_number
-> > > ffffffff842f6030 D this_cpu_off
-> > > ffffffff842f6038 D __x86_call_depth
-> > > ffffffff842f6040 D __per_cpu_hot_end
-> > >
-> > > The LLVM linker doesn't do as well with packing smaller data objects,
-> > > causing it to spill over into a second cacheline.
-> >
-> > ... now it's linker-ordered. But on the other hand that can be an
-> > advantage too: the linker will try to (or at least has a chance to)
-> > order the fields optimally for cache density, while the hand-packing
-> > always has the potential to bitrot without much of an outside,
-> > actionable indicator for the bitrot.
-> >
->
-> The linker will need some help here - by default, it just emits these
-> variables in the order they appear in the input.
->
-> If we emit each such variable 'foo' into .data..hot.foo, and define
-> the contents of the section as
->
-> *(SORT_BY_ALIGNMENT(.data..hot.*))
->
-> we should get optimal packing as long as the alignment of these
-> variables does not exceed their size.
+Hi,
 
-Is it possible to warn/error when data is spilled over the cache line?
-Previously, there was:
+On Sat, 22 Feb 2025 10:49:31 +0100
+Hans-Frieder Vogt via B4 Relay <devnull+hfdevel.gmx.net@kernel.org>
+wrote:
 
--static_assert(sizeof(struct pcpu_hot) =3D=3D 64);
+> From: Hans-Frieder Vogt <hfdevel@gmx.net>
+> 
+> This patch makes functions that were provided for aqr107 applicable to
+> aqr105, or replaces generic functions with specific ones. Since the aqr105
+> was introduced before NBASE-T was defined (or 802.3bz), there are a number
+> of vendor specific registers involved in the definition of the
+> advertisement, in auto-negotiation and in the setting of the speed. The
+> functions have been written following the downstream driver for TN4010
+> cards with aqr105 PHY, and use code from aqr107 functions wherever it
+> seemed to make sense.
+> 
+> Signed-off-by: Hans-Frieder Vogt <hfdevel@gmx.net>
+> ---
+>  drivers/net/phy/aquantia/aquantia_main.c | 242 ++++++++++++++++++++++++++++++-
+>  1 file changed, 240 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index 86b0e63de5d88fa1050919a8826bdbec4bbcf8ba..38c6cf7814da1fb9a4e715f242249eee15a3cc85 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -33,6 +33,9 @@
+>  #define PHY_ID_AQR115C	0x31c31c33
+>  #define PHY_ID_AQR813	0x31c31cb2
+>  
+> +#define MDIO_AN_10GBT_CTRL_ADV_LTIM		BIT(0)
 
-that failed the build in this case.
+This is a standard C45 definition, from :
+45.2.7.10.15 10GBASE-T LD loop timing ability (7.32.0)
 
-Uros.
+So if you need this advertising capability, you should add that in the
+generic definitions for C45 registers in include/uapi/linux/mdio.h
+
+That being said, as it looks this is the first driver using this
+feature, do you actually need to advertise Loop Timing ability here ?
+I guess it comes from the vendor driver ?
+
+Thanks,
+
+Maxime
 
