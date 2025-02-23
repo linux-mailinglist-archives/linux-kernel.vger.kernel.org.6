@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-527976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C471A411EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:30:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BE2A411EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:34:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 908B01732B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BCB3B2391
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9115A2405F5;
-	Sun, 23 Feb 2025 21:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50DD51FF7D0;
+	Sun, 23 Feb 2025 21:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="V9OUaemJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mCLOJ+Pl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AD713E40F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923052D05E;
+	Sun, 23 Feb 2025 21:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740346202; cv=none; b=Gp/32l8ZnYdMlM3jPL4Jyq8V++4TTtvJO1vaaThcV7EcAyXEqSAUQ8r0YiFZD9Lj1ywW6xIaimscr2i4tRYAswVs1diilOj2hhGUgt1WlhhxoxHusrlV1/ygvl2JbayZ8Hn/8zNv4EFNzFb2QXT8TNfSduJqNU79LIc7j3EFvdA=
+	t=1740346453; cv=none; b=ZuN7LDU2bdZZMiNuU3Ao7Kn+URtfk/673h2TiBchuQNazsMrI6jf8ryrJwlnHuepeeoGx1ika82xNTHBgKnMdPjzkHvUMpJBfCQhcXgGFCmBOpe+NMIbWYUOvkCYqRzPg4KYp45EqABaCzQXgW2QJe8a4l0ySX5L0mIJRxNqUrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740346202; c=relaxed/simple;
-	bh=4L6DSnz+tObCW4PmaZf0qwsIRphrsUwyuTj7I/5cLps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKi/4ZV3GHr8DGLM6HKg/jfpgqj3/z2ZcrFxGwV1Vblq42zujWc/xWB3ooxft8UukP80RA/NgpBGdB1DKhX/4DRO2XP1N6HnCQegfb22ni/tuq1fxTvu229QQ4IHwWfB5pSzZ1+osn2bo8NNMJWDD5TjF2BtMa/OZ786XmvOJoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=V9OUaemJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0763A40E015D;
-	Sun, 23 Feb 2025 21:29:51 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id v_c-veJ0AqzT; Sun, 23 Feb 2025 21:29:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740346186; bh=Hc5yFnWzGsBkVlSfIJPlvS3P8iZU5vXLB7RJIiiBjqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V9OUaemJc87wfNuIjd9bU7Iofvv3ddC/4iSPzhbvs5V81SMejlNpNYYYB5COvgIAX
-	 tE4IXdHQSCD4e24o7cyfGd1cq9wKlgpPPUbjOad1OIjCqZd+Uajf5ZPWM8hGtBSuGF
-	 BdhIJtUu7XWmcCsTEkXd3RSy2EcWnksAJ1CNTlHHCvjNds5aHBeRleZqSPwYKbc4zH
-	 IBOFfL6nEJabZd6aDI8BqTrOBg5dDj5lPTLTUE/I6h92uZrWr3gEDPfSJAVPshdcsV
-	 GfVryXs58xTwe9gWgCsVl9YohDEKT22UjvF6kehkJfjJrhRHIK9FNgAsUnGFoMF/9Y
-	 JwoU9YDMWO6qagpT4Sro+S+7j/gKQo/BRsqOB5cujalqWyCPPIabMClt+0gvbqzKQQ
-	 SEG0SU/se6QA1B9ywek+DLTqZ+sIGZ1LCFzDRBiR0frhMcVJyIS4NWu/hiQP2Jo2JN
-	 rcWYTXj1u/SeIfI7qKmINukDBNTMmsAvQGusdY9WYeXaU10qssMxJBAI6PyE9lHY1N
-	 7clkgiQSjltofzEcUfNKYRmZCZ36ZeFMtgM/b9SSVKIXn/Lhcrz1ikz+qEQ10XPAex
-	 vjJSdJGBy1P3Fj8qVu6WzBkEwapOn7pFsH4/yMCVf2sKlxUC2lqWqA1YcLBFKkjIYs
-	 gRuFfuLDSiI6vhoWRa6GQ7Hc=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	s=arc-20240116; t=1740346453; c=relaxed/simple;
+	bh=HC8gUekt+1KIO21xATs4gveN37D3ua2UYLw0vMtIKgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rMQryqvj1mIv6dvvRNQcVD7mQaxcce5MTkeNbTs6y5z5REIJxKybf2wyW39EzpvjCByNs906Yq4Yh9R+YHqKEI7H+JROdYmZgQa024FdMZcxNUW52uI46CFUllEfh3Tg311cMABXfo6DEqXue4hPJMBeVJRiwL+9OrQZPTKq5i4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mCLOJ+Pl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740346447;
+	bh=scMzv/urRxu87ZCPVY4iTqmJd43dmaeSt6UOv6dZP44=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mCLOJ+Pl7Z9UPbuP4rNMIi1hTBTnOb6lELP+867TAgJCdGvftgFhwJUgWIuxZqAmc
+	 xCD5heBykMt/HSALqxENABrhbXteekrAsOTqS0wvlhiuRDmtiuL/wqs+93ptjFH36o
+	 qhIY/eK+BC5ozIrfHknU22a5NuSYPdXqcBzQaQJWjj6pCFSkhGRyUQP5E2v7YBN6nm
+	 86JxTFeRLHsilYENnTCtksLwi9EN5DIIAOzx2M3oAiQ5u8C9NYWen5SrrWdm3sHKIX
+	 86uM7ItdYrf0/2awXuBN6hMH2W5azODnpg4fcHIOLgEC58LhF98k5g8UFMYnBn1pO1
+	 UWZI495lfMpiQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 87DD240E01A3;
-	Sun, 23 Feb 2025 21:29:29 +0000 (UTC)
-Date: Sun, 23 Feb 2025 22:29:17 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v13 14/14] x86/mm: add noinvlpgb commandline option
-Message-ID: <20250223212917.GAZ7uTLZL7ygSHayYh@fat_crate.local>
-References: <20250223194943.3518952-1-riel@surriel.com>
- <20250223194943.3518952-15-riel@surriel.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1HDv3kcrz4wbx;
+	Mon, 24 Feb 2025 08:34:07 +1100 (AEDT)
+Date: Mon, 24 Feb 2025 08:34:06 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the gpio-intel tree
+Message-ID: <20250224083406.6174f821@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250223194943.3518952-15-riel@surriel.com>
+Content-Type: multipart/signed; boundary="Sig_/jlrok+CgIf4odDD9qBWI22P";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sun, Feb 23, 2025 at 02:49:04PM -0500, Rik van Riel wrote:
-> Add a "noinvlpgb" commandline option to disable AMD
-> broadcast TLB flushing at boot time.
+--Sig_/jlrok+CgIf4odDD9qBWI22P
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-See if clearcpuid= works too pls.
+Hi all,
 
--- 
-Regards/Gruss,
-    Boris.
+Commits
 
-https://people.kernel.org/tglx/notes-about-netiquette
+  b16e9f8547a3 ("input: ipaq-micro-keys: use devm_kmemdup_array()")
+  67b12cda28e1 ("input: sparse-keymap: use devm_kmemdup_array()")
+  5f95e8d0be63 ("iio: adc: xilinx-xadc-core: use devm_kmemdup_array()")
+  18c4aec76056 ("pinctrl: pxa2xx: use devm_kmemdup_array()")
+  d7f6555aec79 ("pinctrl: tangier: use devm_kmemdup_array()")
+  6e1bba1140a9 ("pinctrl: cherryview: use devm_kmemdup_array()")
+  af946f612dfe ("pinctrl: baytrail: copy communities using devm_kmemdup_arr=
+ay()")
+  85ab35bae5ac ("pinctrl: intel: copy communities using devm_kmemdup_array(=
+)")
+  4c176c256dd9 ("devres: Introduce devm_kmemdup_array()")
+  d7a76a31c46e ("err.h: move IOMEM_ERR_PTR() to err.h")
+
+are missing a Signed-off-by from their committer.
+
+Also, these have been merged into the battery tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jlrok+CgIf4odDD9qBWI22P
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme7lE4ACgkQAVBC80lX
+0Gzrzwf9EXzu0OcCsZt1qpVAkGL4oaVMtXxxVvuTo9KPZ1EpwRZMXQSMRAXrETKa
+a44/kYt+BaFdUatU/M8C+2NBznAMjWrb+rUiwGnPZDtDlTEmk7odj4WDpbL2njyv
+nvzRUPXeRHsThrwbz0+pfXYNc+Qwbti+FoIcaC91TkVM5Br5oXz8CTtkKcOkYxcb
++qlnO006JW/RHmsf4bDop1qd1N7r3kqY+VUjUVHxR9ONsHQ5FffO0RPBtcHse0zC
+gMxk8KRs5P66AyfZIpHqJW3WFAuIzeaRxMvoSr9zZmUeNl120EOnkyoULj/frw1C
+3bMGcvpz1TJjxdLErqt3hka8hTweVQ==
+=nBZ0
+-----END PGP SIGNATURE-----
+
+--Sig_/jlrok+CgIf4odDD9qBWI22P--
 
