@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-527663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D7EA40DF5
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:07:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC0BA40DF7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:08:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA813B58AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:06:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 631B53BA6E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBEA2045A5;
-	Sun, 23 Feb 2025 10:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FA22045BC;
+	Sun, 23 Feb 2025 10:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="gdvWJm3i"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2A71FECC5;
-	Sun, 23 Feb 2025 10:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Sx0V7dpm"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99291E871;
+	Sun, 23 Feb 2025 10:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740305216; cv=none; b=qdZ6ciJCFj6v7vMtCh7JzUAo0i642gOn3YUKQbR6uJb27ZQmz5T3J5g8DG8p5qGfaD60A7+Vi0klGEDpK53m3x+84XzYVr8jmZuhFmU8P1tvHGQqHTTJS3lBXfXk4Czn36OWQb6w94ukNDTfvEtpWR75A050VCVckj9uVewfess=
+	t=1740305318; cv=none; b=rC+QCyPomM7XZdeeC2LJZuvHqxkgLXbwyIWmtCv01QX9ixWsC6U2vxLufa92Rn3cBLmvnYz+GF4UBy+i4tfM+WtI1JRhH0btRxq2iSVyXDWPJLO64cORT9pgoz9u9AlVW/mkgxrvNRLFi7vJ12DpWI+8eT76kKmBe54HPBazCy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740305216; c=relaxed/simple;
-	bh=oSy18XAki1+6x8dW7QY7IgnNHl+k43vT3kfv5uUDAF0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=B43s6kQdwK3OFl2TP7bKP8ioXdiYEEQKJKhnk7PeftOI1Sf57g6YVJ67ioysDfLThoyLD3kENrVKebpEa4d4OyW+LihN6hRzX3eSMY17rnCRT9IsuieGiM42L6rzd9UMY9N+dDMdqIoNdcV2TlxneajgIyd8ZtvOXYEvi/V9bSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=gdvWJm3i; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D865840E01AD;
-	Sun, 23 Feb 2025 10:06:48 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ty4w8bSL0XT6; Sun, 23 Feb 2025 10:06:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740305204; bh=2PiOQrVk3cndOooItUZakJvKkilYjGZbUj7JS9r51f4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=gdvWJm3ipC46PpSR0u9Iyff+k+N+fora2pEXxjEOlIiZ79DP1uNlqXnQ/9oyNDWKd
-	 rmh/T/Dm0SZppa/eDkuVCkpv1DFQU9HSHOjvaUVR4e+sJpVl0bRHyLzWVu3roNPX70
-	 JlJPEWqwCBYmOc6+MCdPNmgvrU1CbsE2FDm4SjCII9nRRRtE2g075hvifJ05+tbgGi
-	 C6k0Vc7ICY/SJPWK97XxB1NAsB2DvD2RFCplX2Vao4zY+m8cNyJm/of9XpGcaQ1wuV
-	 3u2o6Cku5s/8LuWB3Kb33u8oQpzMSkCpMcZEmihFHv4CAuc1lZHB8wiMzU8QHQ7znA
-	 7drlzgImxrJkxWGDRFT+7tJZ4thexuvoXDA+nl83VPMK8qXI42Saec/X5Zq2EmWpbj
-	 BRKczwPH/OCb6IJ0xKkUKUTWkUnWNF7QuviS1I42ZZmut9MJT/Kzu5cPsRQ9nTdn6F
-	 MxyXhvWvwXrrIQtMHzKS5oA/CndZT7wQAoNiUF2bbVH96vUq1YKDXSltSGko2iVoiS
-	 k+oww7R0OTiImCd9QVNGF/D258uCIpNFXNZoMgQLS5Q58XQ3drFsJZijD3UJ6rI6q3
-	 oEZuOmtNXxszGKPyzFjCTpr1OJDQF27mluq1euzD7CLX/x3d6cGjiGKMP1UyzSR8j1
-	 HXEdV0i5B6hXwX/bN73kfRXE=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 80B2640E0176;
-	Sun, 23 Feb 2025 10:06:41 +0000 (UTC)
-Date: Sun, 23 Feb 2025 11:06:33 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-edac <linux-edac@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] EDAC/urgent for v6.14-rc4
-Message-ID: <20250223100633.GAZ7rzKTBKLL0-bqMn@fat_crate.local>
+	s=arc-20240116; t=1740305318; c=relaxed/simple;
+	bh=+00dd9r5ABncamWfY/yQJjKxVGD54H6NzQckhYmCPqk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lDd0zLJ4QPvygO03m8odCIR/4P0iho7dIy3opXwv9PKfbVkD5oz4RRBPRSKvVyQ4CNLfHLcjIHRIo+C0Ka4fHxKW+ucKyxXkRT1QVz8zOHJZqT/wlIgtavgyQfDlhXNH35hNKRqZ3j33Czk82cYVpSWljOdrd3SMgmeDZN3DCNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Sx0V7dpm; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=qjFPs
+	7F+XO2HKOCjLIfMrNdfI+E1rn21TAwcThQVHuY=; b=Sx0V7dpmMVrZUXv0rakZC
+	zIjXW0B/u+sl4ab7/wRyY0E+JnewWZ9IHAjKHMth5x5pw41DM2iEbSvmgfgamvar
+	srJxuEXRvzGGY8c7yocIc5e2ZiiYsFtPi3c+08riuylQIDzkFZ1pisAftAy7dmkz
+	KMi+uoOquINEinH7G2tfq4=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnX7t+87pn0ncQOA--.33463S2;
+	Sun, 23 Feb 2025 18:08:02 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: krzk+dt@kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andyshrk@163.com>
+Subject: [PATCH] arm64: dts: rockchip: Enable USB3 OTG on rk3588s Cool Pi 4B
+Date: Sun, 23 Feb 2025 18:07:46 +0800
+Message-ID: <20250223100757.73531-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnX7t+87pn0ncQOA--.33463S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrtryrKr47KF1rZryUtFy3CFg_yoW8JF1fp3
+	srCrW3Jrs3Wr4rAas8tr1Skrs3Aws5JFWfArn3A3ZIyF42g34kZr1rG3s3Zr4YqrW3Gayr
+	CF1vgFy2gF4DtF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pi7KIdUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBj8Xme65IDlCwABsE
 
-Hi Linus,
+Enable USB3 OTG and it's related PHY node. And the PHY will
+also be shared with the upcoming DisplayPort controller.
 
-please pull a single EDAC urgent fix for v6.14-rc4.
-
-Thx.
-
+Signed-off-by: Andy Yan <andyshrk@163.com>
 ---
 
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+ .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.14_rc4
-
-for you to fetch changes up to c158647c107358bf1be579f98e4bb705c1953292:
-
-  EDAC/qcom: Correct interrupt enable register configuration (2025-02-14 20:36:11 +0100)
-
-----------------------------------------------------------------
-- Have qcom_edac use the correct interrupt enable register to configure
-  the RAS interrupt lines
-
-----------------------------------------------------------------
-Komal Bajaj (1):
-      EDAC/qcom: Correct interrupt enable register configuration
-
- drivers/edac/qcom_edac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+index 9c394f733bbf..7faf189c4776 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+@@ -803,6 +803,14 @@ &tsadc {
+ 	status = "okay";
+ };
+ 
++&u2phy0 {
++	status = "okay";
++};
++
++&u2phy0_otg {
++	status = "okay";
++};
++
+ &u2phy2 {
+ 	status = "okay";
+ };
+@@ -832,6 +840,16 @@ &uart9 {
+ 	pinctrl-0 = <&uart9m2_xfer &uart9m2_ctsn>;
+ };
+ 
++&usbdp_phy0 {
++	/*
++	 * USBDP PHY0 is wired to a USB3 Type-A OTG connector. Additionally
++	 * the differential pairs 0+1 and the aux channel are wired to a
++	 * mini DP connector.
++	 */
++	rockchip,dp-lane-mux = <0 1>;
++	status = "okay";
++};
++
+ &usb_host0_ehci {
+ 	status = "okay";
+ };
+@@ -840,6 +858,11 @@ &usb_host0_ohci {
+ 	status = "okay";
+ };
+ 
++&usb_host0_xhci {
++	extcon = <&u2phy0>;
++	status = "okay";
++};
++
+ &usb_host1_ehci {
+ 	status = "okay";
+ };
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
