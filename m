@@ -1,125 +1,94 @@
-Return-Path: <linux-kernel+bounces-527981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED45A411FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:56:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEC0FA411FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 330C73B442D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:55:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A442C170596
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ED123F295;
-	Sun, 23 Feb 2025 21:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Wjpcj9RH"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E522E017;
+	Sun, 23 Feb 2025 22:04:29 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF9E2AF11;
-	Sun, 23 Feb 2025 21:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F4B39FD9;
+	Sun, 23 Feb 2025 22:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740347755; cv=none; b=ljJRVmr/XVljg2eB6QEV4ORA2Z5j/fkO18g+9AThqq4xJIy+ovLiAgf6fl5Saon6Ou6WKo0wizFcT2SMxQL30FANhlbgJIy8ftDHQs5DOWgaQknLr1W+juHSUCoF27WVp3JO0MBX40CWxdnyvfpQAYVGEaCwhjEMaU0kLHvX698=
+	t=1740348268; cv=none; b=tp3cZp7W0Pd/Qihd4O1lKzphhLou/tAPcia1/v1anFGQI/JBU445Vu4EwCcshju6s0Te1cKJwxg0K6d+AxKNG88cr0mSLDynaHMNI3LoAyc0QMU54gEtNYhS6W/Xneh9R+7UQ9Mor7OMNixEdx5Hp/xtT6bEkZ0L/+DNrOGvc0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740347755; c=relaxed/simple;
-	bh=tX0kc8X39jQdhSp33iWrQ3o4fa8zDm23gPF0qSCxCis=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lH1iYcG6bzCOhZzS6NkgCEu+8z5rrNBoNWsZQbyeQwdT18zZDokl2+sSSOSexb0mrFvZdN70xKPUNdTKE6PZOTxieXkH5zsGSUo4G71yN5yq0s5mGI75FUFar5qFWVTzEJz9iHM+U0bypksEQzfdVRulVW605RWQ07gx3SF3yG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Wjpcj9RH; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=TmzNnu9QaYnb7f5vbT+kfkDJykW1ytVc4VptMubFhK4=; b=Wjpcj9RHKpa/JK4F
-	UqiWn6ghsiQPbJJycoT2igtU2cTyv/XwdfJ9I0TwXqV/ThBUlc2SecISL9A0V/JhH8EdzvrpzVIHG
-	cN5eH78Solz11u8aFLV8EIlK+C0jlvHg8tdUgVko5FQYZnyqAEbqrZUOgGEiPKtzYqlMHvhnyN0Yl
-	K4US3UfD0L4E1iVlNuroNgvNLLnpyzf/VXh4PGSKVTo5bf5iewFZUV+srgxZmU8wp0CVxTRZgJo+T
-	WUSHqwHakEpboUMlHRflnS1ts/rogyrx7yStOu2GjuCgKFhpeSEtUKByVRkgBD84UcxXaR3u7W3+a
-	nI+H62uTIWQX3V7Q/A==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tmJwv-000DvC-34;
-	Sun, 23 Feb 2025 21:55:45 +0000
-From: linux@treblig.org
-To: dennis.dalessandro@cornelisnetworks.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] RDMA/hfi1: Remove unused one_qsfp_write
-Date: Sun, 23 Feb 2025 21:55:43 +0000
-Message-ID: <20250223215543.153312-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740348268; c=relaxed/simple;
+	bh=p9IxLekkjWvLHDuZZHTCsKA8qGYl9JXM6hV77OoFUgE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TmvGtrE2usC7LwLcVxW5m58BlFf8VW9v9jAp1KR7KdN21Y/PW8tJmqWr0ST2tivgKg0u1NTzTnZOUZ9coMz706LKd4g5tvEAKvxgo+RkDmkK+wS66KtU5V6nm4wEl83NPSicpbovkBx/H1pSovc0uJP+zNXOQTpqNyhWoouSUOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.2] (ip5f5af2a7.dynamic.kabel-deutschland.de [95.90.242.167])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4ED9661E64788;
+	Sun, 23 Feb 2025 23:04:06 +0100 (CET)
+Message-ID: <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+Date: Sun, 23 Feb 2025 23:04:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux logs new warning `gpio gpiochip0:
+ gpiochip_add_data_with_key: get_direction failed: -22`
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
+ regressions@lists.linux.dev
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de>
+ <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Dear Bortosz,
 
-The last use of one_qsfp_write() was removed in 2016's
-commit 145dd2b39958 ("IB/hfi1: Always turn on CDRs for low power QSFP
-modules")
 
-Remove it.
+Am 23.02.25 um 21:54 schrieb Bartosz Golaszewski:
+> On Fri, Feb 21, 2025 at 10:02 PM Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+>>
+>>> What GPIO driver is it using? It's likely that it's not using the
+>>> provider API correctly and this change uncovered it, I'd like to take
+>>> a look at it and fix it.
+>>
+>> How do I find out? The commands below do not return anything.
+>>
+>>       $ lsmod | grep gpio
+>>       $ lspci -nn | grep -i gpio
+>>       $ sudo dmesg | grep gpio
+>>       [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: get_direction failed: -22
+>>       [Just these lines match.]
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/infiniband/hw/hfi1/qsfp.c | 20 --------------------
- drivers/infiniband/hw/hfi1/qsfp.h |  2 --
- 2 files changed, 22 deletions(-)
+> If you have libgpiod-tools installed, you can post the output of
+> gpiodetect here.
 
-diff --git a/drivers/infiniband/hw/hfi1/qsfp.c b/drivers/infiniband/hw/hfi1/qsfp.c
-index 52cce1c8b76a..3b7842a7f634 100644
---- a/drivers/infiniband/hw/hfi1/qsfp.c
-+++ b/drivers/infiniband/hw/hfi1/qsfp.c
-@@ -404,26 +404,6 @@ int qsfp_write(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
- 	return count;
- }
- 
--/*
-- * Perform a stand-alone single QSFP write.  Acquire the resource, do the
-- * write, then release the resource.
-- */
--int one_qsfp_write(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
--		   int len)
--{
--	struct hfi1_devdata *dd = ppd->dd;
--	u32 resource = qsfp_resource(dd);
--	int ret;
--
--	ret = acquire_chip_resource(dd, resource, QSFP_WAIT);
--	if (ret)
--		return ret;
--	ret = qsfp_write(ppd, target, addr, bp, len);
--	release_chip_resource(dd, resource);
--
--	return ret;
--}
--
- /*
-  * Access page n, offset m of QSFP memory as defined by SFF 8636
-  * by reading @addr = ((256 * n) + m)
-diff --git a/drivers/infiniband/hw/hfi1/qsfp.h b/drivers/infiniband/hw/hfi1/qsfp.h
-index df1389bad86b..5c59d53fcb63 100644
---- a/drivers/infiniband/hw/hfi1/qsfp.h
-+++ b/drivers/infiniband/hw/hfi1/qsfp.h
-@@ -195,8 +195,6 @@ int qsfp_write(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
- 	       int len);
- int qsfp_read(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
- 	      int len);
--int one_qsfp_write(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
--		   int len);
- int one_qsfp_read(struct hfi1_pportdata *ppd, u32 target, int addr, void *bp,
- 		  int len);
- struct hfi1_asic_data;
--- 
-2.48.1
+     $ sudo gpiodetect
+     gpiochip0 [INT344B:00] (152 lines)
 
+(In Debian the package name is *gpiod*.)
+
+
+Kind regards,
+
+Paul
 
