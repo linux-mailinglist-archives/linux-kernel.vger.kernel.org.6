@@ -1,104 +1,106 @@
-Return-Path: <linux-kernel+bounces-527812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E14A40FBF
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:30:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B61A40FC7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670041894B32
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82B8F3B641B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 16:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8973186334;
-	Sun, 23 Feb 2025 16:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F6478F41;
+	Sun, 23 Feb 2025 16:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SW7/guI7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQx642xS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6793EEA8;
-	Sun, 23 Feb 2025 16:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504FAA95C;
+	Sun, 23 Feb 2025 16:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740328236; cv=none; b=n3Sv7Eumzbv0dyFEbc27werQamUVeJkJiZbPO0vCUHBXuWABwPUhWlHGa+GixkdzE9CRgXDwuILzyJmXAGnjYKnbQb7oDSDFEvQE16pQiU7t/8bkheh1yyI9J/eHmizRfSu3vQJPDL5tzJl+gKaR95PLJd4zDKwl0/DZu8hwBpk=
+	t=1740328397; cv=none; b=rfpJjxuF2gaZFJTzwa5Q7L/EM+GflCaVWsXmiMyiQA24AUaM/Vh4QFZWamZfg2OxartCMtu0dktDuVHZBe9I3AqpGD+7rfIsNgwak89qzF6ONkmrqe8G8aPMacBiZkI5V7FGxBp0ZMdY982pFK51WR7zFu7X3mM/XR63aRVd+1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740328236; c=relaxed/simple;
-	bh=QfKdiEk49aDWt010gngXbc3vJUxTK0YB03j5djAbuSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nlqv7LgwCj8zMgssetHyffn7XpzQmEoqSuRy8YsiML7j9hZNtlr6yHy1sjv3WJk0JQbzAyPEJQ3CvevAhMV5fW4P7BOy8Q2a3F8gOs5cdUrl8z3SDylfwY/0v9g84hQG8l18HUjbXYbNTqykGwV4+94gDU80+Yyq+ok7J+AY/0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SW7/guI7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D82E5C4CEDD;
-	Sun, 23 Feb 2025 16:30:26 +0000 (UTC)
+	s=arc-20240116; t=1740328397; c=relaxed/simple;
+	bh=zvz4EMOXlmrWyWitNGnXAQSR2eq+1wAo7RwOrMzxhM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hcJ49MPu30RnOuA/BSd2H76qFN8HKZcy1mCh6xi3bzK5L+jATyVtKqW8431QGZyBEwOS0fO7dZ55ic3rXUT4TrPZ7+98p1Jay/N/Dhut6QXYWlqfx4hO9HnDPoHvsTQ4igYVoBsf6XseUpr9bHmZjL4zMqx7wO8ht7uQ4bMrrbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQx642xS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1871C4CEE4;
+	Sun, 23 Feb 2025 16:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740328235;
-	bh=QfKdiEk49aDWt010gngXbc3vJUxTK0YB03j5djAbuSM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SW7/guI7iN1/8drBB39h5FaVJkqRojBn31+ZtOaZr/aaBcQue6cIy5785HZ3oXljI
-	 LlOBYYxYWKHKcJWFJdxoV3zXYKpE0BLR8pTvle0s8Ja5wcFDTffbOAoHN6L5d7Rw+9
-	 tqADmqonQH4E9OrvZhopW7RHnGAfOAMS0eoLk11Ofps6vd0nyRaWzA1M95vScL8NMV
-	 vFgfnLj5JyEn2y+1mSDcxfSoEFbrVrAumZlqbQzYbURtpuiK/h71NvTqXe8PFG7gcg
-	 sAxp72j1ftLeBSd+AZBa+NZ6AiqjX43hcWKBlATuc5AJocQ+atufejV26yCkg1sv90
-	 LEF5z7wRlxjeA==
-Date: Sun, 23 Feb 2025 16:30:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
- <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>, Javier
- Carrasco <javier.carrasco.cruz@gmail.com>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v3 6/9] iio: adc: rzg2l_adc: Use adc-helpers
-Message-ID: <20250223163018.2c0290e8@jic23-huawei>
-In-Reply-To: <25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
-References: <cover.1739967040.git.mazziesaccount@gmail.com>
-	<25c5d22f6f0cbd1355eee2e9d9103c3ee71cebdc.1739967040.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1740328396;
+	bh=zvz4EMOXlmrWyWitNGnXAQSR2eq+1wAo7RwOrMzxhM8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BQx642xSrYSFMkDtxUusFO9/V6dQ1ON/O8M/s0cjUx7njZBgLxImV87rB09mSCGgY
+	 qezb82iTL8eoW/wpqmMpxBFG0m8+oZRfiDR34fgJpsDWm5NRTWg7djZDnuQXeS49nI
+	 2Shy5/0yP77Y80mZxBS6pMEykcpE5lPSxn2LsuO04hdeHS75Epjh8W0OjdW4h6n4mO
+	 JF66tUz8/DI7tymcUSKpZ/VH2+3/TfqcrQjb9zXIxPrcNCnAgf13+uuBNIsCDfnq4j
+	 CiBnUnAgerP+JkoSZaYofE6Hwq558c+hgNXl1JM5J1MqJen7r1VY4/sIX4KnvDx0f1
+	 gJgBDizdfHHWg==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30613802a59so37232441fa.0;
+        Sun, 23 Feb 2025 08:33:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUtA0Q906DVRbJBQTAJmMok1W3HNKAckH5BrESbyNJBQ0wgJ5M243mfbbkgjiv5wxMS8XjQb3WiBZA02Rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEBex0lfkfu8+8YuDx8cvbs6icWbrAOnOZYP8Lh/3mIl6MHzrG
+	qLRpujV7LzfXp3UP1TEtKXLPUrmC6gsUnDLLhrHCfLqRjFtfWB7ClVeL9lqrhHPCjJkrkzc+uuo
+	ae1xmaBjq2K7czrn0i9DFA8tAz68=
+X-Google-Smtp-Source: AGHT+IHxSfX/n4BVlQUqjsVJAWfnzLoyj+d6hjxzUouO1QEH1K9ZjF6+xy/nfHvk0Tye+ZxZaBnMva9sPzAwLHEKBzg=
+X-Received: by 2002:a2e:9f4a:0:b0:309:1d7b:f027 with SMTP id
+ 38308e7fff4ca-30a59892a72mr34357641fa.9.1740328395018; Sun, 23 Feb 2025
+ 08:33:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250221111516.1468261-1-patrick.rudolph@9elements.com>
+In-Reply-To: <20250221111516.1468261-1-patrick.rudolph@9elements.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sun, 23 Feb 2025 17:33:03 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGCUZi-7Vu097BorRHGv1XmRyky1RVRR8jFehneVDD8bg@mail.gmail.com>
+X-Gm-Features: AWEUYZnhXHQfcl0XFYETRkkokiLSUFI3se8ntOYsRC5VHJ03qUkpOEpZYx2NWhI
+Message-ID: <CAMj1kXGCUZi-7Vu097BorRHGv1XmRyky1RVRR8jFehneVDD8bg@mail.gmail.com>
+Subject: Re: [PATCH] efi/cper: Fix cper_arm_ctx_info alignment
+To: Patrick Rudolph <patrick.rudolph@9elements.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 19 Feb 2025 14:31:38 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Fri, 21 Feb 2025 at 12:15, Patrick Rudolph
+<patrick.rudolph@9elements.com> wrote:
+>
+> According to the UEFI Common Platform Error Record appendix, the
+> processor context information structure is a variable length structure,
+> but "is padded with zeros if the size is not a multiple of 16 bytes".
+>
+> Currently this isn't honoured, causing all but the first structure to
+> be garbage when printed. Thus align the size to be a multiple of 16.
+>
+> Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 
-> The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
-> drivers avoid open-coding the for_each_node -loop for getting the
-> channel IDs. The helper provides standard way to detect the ADC channel
-> nodes (by the node name), and a standard way to convert the "reg",
-> "diff-channels", "single-channel" and the "common-mode-channel" to
-> channel identification numbers used in the struct iio_chan_spec.
-> Furthermore, the helper checks the ID is in range of 0 ... num-channels.
-> 
-> The original driver treated all found child nodes as channel nodes. The
-> new helper requires channel nodes to be named channel[@N]. This should
-> help avoid problems with devices which may contain also other but ADC
-> child nodes. Quick grep from arch/* with the rzg2l_adc's compatible
-> string didn't reveal any in-tree .dts with channel nodes named
-> othervice. Also, same grep shows all the .dts seem to have channel IDs
-> between 0..num of channels.
-> 
-> Use the new helper.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Thanks. Both patched queued up now in efi/urgent
 
-I should have read on.  Definitely more convincing with these usecases.
-however drag them to start of series.  Better to add infrastructure
-so some use and then on to your new driver.
 
-Looks good to me.
-
-Jonathan
-
+> ---
+>  drivers/firmware/efi/cper-arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/cper-arm.c b/drivers/firmware/efi/cper-arm.c
+> index fa9c1c3bf168..f0a63d09d3c4 100644
+> --- a/drivers/firmware/efi/cper-arm.c
+> +++ b/drivers/firmware/efi/cper-arm.c
+> @@ -311,7 +311,7 @@ void cper_print_proc_arm(const char *pfx,
+>         ctx_info = (struct cper_arm_ctx_info *)err_info;
+>         max_ctx_type = ARRAY_SIZE(arm_reg_ctx_strs) - 1;
+>         for (i = 0; i < proc->context_info_num; i++) {
+> -               int size = sizeof(*ctx_info) + ctx_info->size;
+> +               int size = ALIGN(sizeof(*ctx_info) + ctx_info->size, 16);
+>
+>                 printk("%sContext info structure %d:\n", pfx, i);
+>                 if (len < size) {
+> --
+> 2.48.1
+>
 
