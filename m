@@ -1,55 +1,47 @@
-Return-Path: <linux-kernel+bounces-527665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50297A40DF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:11:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8438A40DFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:17:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E77597ABC85
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B6643BC7FE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 10:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB90320468B;
-	Sun, 23 Feb 2025 10:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FC120469F;
+	Sun, 23 Feb 2025 10:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pDAe4ucz"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWQ3uEts"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51DD1E871;
-	Sun, 23 Feb 2025 10:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAEB28F4;
+	Sun, 23 Feb 2025 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740305507; cv=none; b=qY6A7lZIkEPikW1T2SYTQ72n6d9UMdYak8h+fLI1l+oe4JzNNIChvGaatAVn19YhfsDSXIImh3g4Nu6Fr5G5Y4hxAxK1RX14R7G8K1cJ6jI9ukrfJvEuchmezp0Xgk/qDUZpkWjl4YpmK+ocAx+WS/l/nu4dU46ReGE52Gv6y3k=
+	t=1740305822; cv=none; b=KL3BjVcjZwVo3XAMquY9ksNxSgwFv/SsCfbtzpi1DRb2R1/vwaHARPeEomiiWe85MKYGJfpuWBFjP6w3QyuXhWM634S3m+MFp6SmlK/gHy8gKwRCutmuU4DlT/UT9FSvE8GP2xm5EgGlQTONVLV903XCCfW/2PMMoE7fv9cHUNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740305507; c=relaxed/simple;
-	bh=IiJYWfUzjvzO64rFYkVBgyFB2/WFf5T4phOFcLu6ucg=;
+	s=arc-20240116; t=1740305822; c=relaxed/simple;
+	bh=PdL/hRhsO0gx/0YHDB05i2/ZUTqfxN5Dx9Zq0dI5Ayk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RiWgDDf9JCQA/cbeI0UUi8d7g4uyI9uO8cpCYWeIsNx7aP27U9pG3tMEU4Zh877cIj749v4YC2KAw7sx3XF9OAak437fhLpFTmnYXdqE2z2mw8tqn2A1ZAkFp25hWTLOt4kI+bwlEMpH+JenZYc+NnlJOAGaiEXsjgyXmEctFxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pDAe4ucz; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740305497; x=1740910297; i=markus.elfring@web.de;
-	bh=+n81tpsUZjiYF8TyqwTYd0MJyUxrzC5UmrBbfS3jvuk=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pDAe4uczsP/GplF5u56BqD6C71APc1fEGYJhyJEPE0b+2kTqHDoru1cUfHEHD13r
-	 vcTzRtkZZzq2P4nLSDlypQFdJlNlDYhIgD3dj7frFRhQad07p50A8LSxI6LMwAPCB
-	 5Obf1UY3EIuRzhv4PPVsrVClSPo+rC/sBbm4zpOcTsdkFozexB09Fq3Bg/vvWUDXd
-	 NjHyRopkdahaEioZjyNi9pEXJkrtJaR7uQHMUeY9cGwZVpkXViJZ5mPZAaKSi2Efz
-	 KD9m9PrqG6M0LRHgG3KB7E2R07j7L7uVy4Sisl0yuJVqAX8NeGEhByY1VRBOe7rQz
-	 6y/3VBMEYSqcsDvtwg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.18]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MBjMM-1tcDLB1kdA-0017BQ; Sun, 23
- Feb 2025 11:11:37 +0100
-Message-ID: <ebe9e9d5-2058-429e-b733-183c437ba154@web.de>
-Date: Sun, 23 Feb 2025 11:11:35 +0100
+	 In-Reply-To:Content-Type; b=Vzag1kU7m/srMbELJG80UbdzWfRMaWlu76EkJRwM4naS9faPa50QzVs5RGsEg/QxWGf9IkIkFk7fqz1yw7C97vCL9Xfz8e1Waj1E+u3uBWDpYmWGsws2mDn4PX/SE0gxBEQoCWGIpzFbb9r/PlwyOVZNIjl3WkWmVXaDn4BDOFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWQ3uEts; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 060D8C4CEDD;
+	Sun, 23 Feb 2025 10:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740305821;
+	bh=PdL/hRhsO0gx/0YHDB05i2/ZUTqfxN5Dx9Zq0dI5Ayk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NWQ3uEtshzV/EO70tpXYVXFxd+Ztfw4e4tG1xjq/3x2D4LAodKM8jKYzitqsGPJaN
+	 l9F5vjv+bL6SZAaugkuy3R23vRRq387O/Rv9G6VJIGEERNdiloVv4WmqH3gIn33unl
+	 jRAZ0LfUn2Aonl9cB7A/ZAiB4ujD1lfGNMp3/rfsCl77H26Bq1KgW09/r0zcEsTnw0
+	 LsxDpU0U4Cq06daeJ4u/a9VrZ/Wd/xqgRJyMFLuAsd0TcCqytG6c+/1teyCkmuZlwU
+	 FbuaLJXjktcNnz+heNAhkvQbjXE9xGInq/E0QAzOKgXniZ8H8CQGiyyPlWy7UzcaRN
+	 j/ToJXWSx6lnw==
+Message-ID: <38b2f870-9965-4fd7-b9f1-dde8cbeed41e@kernel.org>
+Date: Sun, 23 Feb 2025 11:16:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,86 +49,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4?] thermal/debugfs: replace kzalloc() with kcalloc() in
- thermal_debug_tz_add()
-To: Ethan Carter Edwards <ethan@ethancedwards.com>, linux-pm@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba
- <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>
-References: <20250222-thermal_kcalloc-v1-1-9f7a747fbed7@ethancedwards.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250222-thermal_kcalloc-v1-1-9f7a747fbed7@ethancedwards.com>
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: add Exynos2200 SoC
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250215115433.161091-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250215115433.161091-2-ivo.ivanov.ivanov1@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250215115433.161091-2-ivo.ivanov.ivanov1@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Ky02Zy49vEaQHUodvPB1zMlzETqh0IZFLRVNj+LsxYYM+qgqmx9
- Fi9pnUT6BChB4qVrV/EQcZk/NPM/f8ZULPfMAexBem6Po99MoZSpkjOux4Lj/heJqyMIH70
- PbhCMMw/R2VeA0cLMZqmeFE9K95PqTu/uJay/WVW5RVlGaUAOmpxSoDgTagnUOgbhJC2npb
- qLSUqrX9IUKCTtn3tUyyA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:66X98Lpb8ZY=;tAWMZY7AGEJNEZudrGY34EyO07c
- ON30F9mdVqIUBHfIvPnqOfXRcGCCRwU36UNJ3A3bZQxxSNbDs6jN8YbeyOyeQNygp6RrLasum
- quAkmwYXGX6QaTRJWxo6euC0QvEUiXpV714h/frms+jJASQGuIzd6E/XKSLmefZNyFkWROB9Z
- 6eZ4W8uRnveh5IIxXV4CuPHLfhH6B36ewl7AW/QEL82n/C+6VDObj+q9YBA5gwvFYnFgqLyJS
- NsyVPxXvPpaTDBEJFebMZ8i7yG8Hb25fwYbN5XeW6e3Alh11ClF8ORXOF+g6tRCG9g5dVOYeV
- CgHweCJsPcbXqLXSCReFW7WlRs1GfPiDD8qe3As+x3BwMSpIJfVmOYQ1yffZuRytxvDx5qG8L
- fp1djDM62JXlHhR4Yrx5JEahJhcEPIIiZ5dKTmH3a/9+G73qVaHPssndD/vrondMLMbVhDcIS
- alsQ2v7vpuwTAWaPjdM+hqgwQO9EDxTSR/CRPFoa9Wie1CHfcn0y01j/LnlwtPjih4zK4UDgj
- VGlX9XgQmT20jR1NRti2dEE7udbQlcXVeG65mZlxP0XphpXI7VUmtqWF84kVA5o0a5U6vLfyR
- IKqabwC8fwZFXqOgdjxgEFgCA3+12G19bj018M6JFgclZZtdtJ04OgJf0mdmWdyA2v/unSEOP
- 75xthdz2mEzbojY1xM/xTPadhM9d6jzSpRQ5xkV/8HVgR0L80qqntGjfdb3e4x1ygWTYuGI+i
- qyoBaE/pTxv8/BP0uCfgzKpDJjOyru9yg8sbNgJRY7gC2RbUJglAjbaHPebrhg45XYonhekkF
- wH2JO8Z/NvQ8hBVZD/J4i/INOcLcljyHd7YSuggP4ZIMontuz0oZo7YucuNO8nQW7ZOSrFPCo
- sbqJzu3QwIUlhRLxw9Tok9Nk5h7eaJDZfj5RFHrWvVyuGBHsXcKQth7ml/OvuZ5NetgsbTX9I
- +ylfsvUnPTUqkMEDGjT7pj/OPPT7y5jlLYNH8r17NrjH8b0KSHUr9qQhoCy9pY1+HvhTqDPKs
- 9JfZthAQUr+YVcVFhjwuGcXIxACvhFEtwmZrld/P/STa+M8b2ja68TWyA0mFcu8PjSRmkL4Nb
- gOIC/GBv871Inyxu4FKJgqNYzCQsCeqkiFH9Tvw/wnIOpDcVfQgr1MHvft4DhWn2DYsTFc1Q/
- D8NF5vNs4Oinw8zFF1FapAvkKO2wCyfGNaMfRE4TyAnpkZx64cyFbfDLG+jFJAw+9yzGVvKHD
- zqyZAjNnd8LWrLcCLVppb7O3YATmd8Uqo3emA7J2DGdXGPcRAErhLebawYfaP1lkIjXHMVqmL
- 6NvNo4qNO8IjweQZ5XlgJBt1C5Cdo48lvzvgaB51Ggzn/T3Ss31ydc4s/J7btMEqXEur75v76
- APIpNMH50SN29rMBWsHoxFCKQdVmPnBRHwcA+rBFqQt3duyz7YCNryzhZ7EGh8G+pDpYvzwul
- h5A9ohgXvcWBL7oDOmjpNhWpYMxE=
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> We are trying to get rid of all multiplications from allocation
-> functions to prevent integer overflows[1]. =E2=80=A6
-
-Is an imperative wording more desirable for such a change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n94
-
-
-=E2=80=A6
+On 15/02/2025 12:54, Ivaylo Ivanov wrote:
+> Provide dt-schema documentation for Exynos2200 SoC clock controller.
+> Add device tree clock binding definitions for the following CMU blocks:
+> - CMU_ALIVE
+> - CMU_CMGP
+> - CMU_HSI0
+> - CMU_PERIC0/1/2
+> - CMU_PERIS
+> - CMU_TOP
+> - CMU_UFS
+> - CMU_VTS
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
->  drivers/thermal/thermal_debugfs.c | 2 +-
-=E2=80=A6
-
-How do you think about to improve your version management?
-https://lore.kernel.org/all/?q=3D%22This+looks+like+a+new+version+of+a+pre=
-viously+submitted+patch%22
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.14-rc3#n780
+>  .../clock/samsung,exynos2200-clock.yaml       | 247 ++++++++++
+>  .../dt-bindings/clock/samsung,exynos2200.h    | 431 ++++++++++++++++++
 
 
-=E2=80=A6
-> +++ b/drivers/thermal/thermal_debugfs.c
-> @@ -876,7 +876,7 @@ void thermal_debug_tz_add(struct thermal_zone_device=
- *tz)
->
->  	tz_dbg->tz =3D tz;
->
-> -	tz_dbg->trips_crossed =3D kzalloc(sizeof(int) * tz->num_trips, GFP_KER=
-NEL);
-> +	tz_dbg->trips_crossed =3D kcalloc(tz->num_trips, sizeof(int), GFP_KERN=
-EL);
-=E2=80=A6
+Let's unify the naming from now on to match compatible:
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.14-rc3#n941
+samsung,exynos2200-cmu.yaml
+amsung,exynos2200-cmu.h
 
-Regards,
-Markus
+
+Best regards,
+Krzysztof
 
