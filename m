@@ -1,227 +1,98 @@
-Return-Path: <linux-kernel+bounces-527972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CDEA411E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:21:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3818AA411E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:24:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164A43B06AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467C71894B13
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D780323F43C;
-	Sun, 23 Feb 2025 21:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961A723F41E;
+	Sun, 23 Feb 2025 21:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ts6My25l"
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eV7f3SUp"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8BC20ADF8;
-	Sun, 23 Feb 2025 21:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77D91E868;
+	Sun, 23 Feb 2025 21:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740345708; cv=none; b=vF+UMI9h2MZ6Oa2LjJXeyCYb2KgIEWwvk3BNUJIN3X6uiZONW3W4Aq080N0AxuMvbObCGyxDvnxjbeXUAPznNBYq8xvZTaWZZf2QmVCHdIHGK+D2dC7AVKb5Uaomn5j0S6IrQaUDSgj5tnndZZH7i+OSJcdFvMvqscpt3ItBTSI=
+	t=1740345844; cv=none; b=qNNpdwHaaeX+WpEjoW/6a1swcRYd4tgasuLITFr5Kb/jxhDUU370TUzrBL7kMhOjWO8nZcMbQD6CXaxVAm54oEwUrA6frla1VONM0Kg8OCLnz+cur2dskigD+P+rNhzBgP9tuL0eLlJNsBT5TWs+5UdsMvxr8H07ZeSDRE9HsrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740345708; c=relaxed/simple;
-	bh=4MPyHLg1PUiEgT+/eV9nkN34BEBnWtZpbAaAvTGCLSo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gnur+VEQA9SQD2hkas0quuZx1s32242HXIH6iMA29sjFsQ4OEKwFy4Vj5Wig6Bz9SC6muXXgvutghFNh0tnE6gpDlOD4BC5Y0BJLtgtm3t8nswsub59yxOd08OSCnoLC5aOBRV/e3GMhwyENjUOFQqqS4mO/lfGidnh/uGtfU7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ts6My25l; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso2771985e0c.3;
-        Sun, 23 Feb 2025 13:21:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740345705; x=1740950505; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBuXrfUVfKwZXTUYtgJPlx2Gd+bNM+T6uLhpE4q8yOQ=;
-        b=Ts6My25lMA8ZMkCybd6RPHqH1CPdiKSaUv9j35JOAHIRlPJCh9yiWlzM8XY0cN5dMM
-         SW5wTnBF45/M7uFqVkMhoOoKI//F1Y4zh4LzAiv+LSlqv4nK1z5lbIO+oyJOTf2sc+SH
-         GuaZvKuC0+O3Hm/3VFGawevNE/Xgnlcwe57yG8pmTXSUSNA+U4K5LKE4g4xV2K2JCIhN
-         wNVyaEHfZ1MhXrQ9MWCalcuM74i+tCgLOH6dT3Ej9zt5ZBwYcE8H7V/NF36ODTkw5eql
-         3wgjONxrUnzRGaMYufWRSxfGu25uo8yKBk1b2RBCkR5iQYGrsxk8umC9qTWxXQTpRG4Y
-         4vPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740345705; x=1740950505;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBuXrfUVfKwZXTUYtgJPlx2Gd+bNM+T6uLhpE4q8yOQ=;
-        b=rLuO1Z0rLAo4GRSfAXZd+UVj+s+tKM0UZRsoqtQ9erghg5EjNsgzYg5HKrD7bEe0pR
-         gJ04WGshL6bQa6Ft85SXDiJ16jVs8Ip9HyvwWOh+IfnuDVG6m/TXGq0h+god8wNKR8CB
-         6pitldxTq0p550q0R1bpBDDY2Fp1Ay1TJFPkhghQ+rXVGHouW6Ann+ADBJPVd03iZPX0
-         LstfjhLtsamgEVD0KMVJ3PbYxPV7qdqWGo9DNYmKtwtc28t7ua1vaNxvn5ooWFDX29WR
-         cQa8BeqLhmK4Geqnk6bdaGOeOi6wRjk1R5dNM6/XTKC8ksc7LQvlynOehpPWVs2j4Ixq
-         QNGw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYGrfXM+QJByBLMlJ/DwY89CUIRWp5CES6Bxpc1DnORR4Fmtzrk7p0IfbBhjRNdX11yFA4cCfuohRW9pOP3WkyVqg=@vger.kernel.org, AJvYcCWPrK47UE0Ut+NQdXWdTOqS1s8cigZmBfkFdeGpcmraP2bnmebvEM3n6BW4tU0fWBnGzQ07XS2Pi99utds=@vger.kernel.org, AJvYcCWoxTB62vI5PAJec2mgc+nIgcIM38p5ygae6ioLoVrG1VuqKeDVwBlfozav2p4//1OC1hjEDNZb5B2o4UAb@vger.kernel.org, AJvYcCXG7d+rkPUN2vIp35ki8NgFW1j5YWYeWv4B0xLoaak/vPw5s7C7Hx2Jz2i9iXw17S8Vy6iZxrEc+ief@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzUZJ10GgXFq2P/WXGiyrQuuusIDvCcpVa8dLUWiLKxE3uT8FD
-	iTvdTqvnuQPT6xkOk8LfQmbwf3TG20K+FfzqE+huVjuU8EUUkxo5bb+IaAiw2koYU4QVzOZXjho
-	dagdF9yI/ytkiTo4XnISC6cqdq3c=
-X-Gm-Gg: ASbGnctvd6dImDClS4aDDkcmxp8BoTfSfLPak0XAtjvpef74yPiYrzq0tBk50tY/X2H
-	7kWugkJxdMaaKYUtoGhfICxJ/Zqqz+Se5WxRd2oRyWZR2gyE4qDaI/nLINQgznh675iWEhWx6Lb
-	Mk8l3K7/Tn9m2HmMooNFgay4yw7X0kM1ZVhFOrsCuf
-X-Google-Smtp-Source: AGHT+IEOs/xQxx2Tg76N4mJB7eD4q9K5mp6fsTe/dqlBC7qgszPTQemqpVKxg6o6oFTTe/Imh33pW0u1H2BiXvQlViI=
-X-Received: by 2002:a05:6122:6589:b0:520:64ea:c474 with SMTP id
- 71dfb90a1353d-521efbb5975mr5325014e0c.5.1740345705375; Sun, 23 Feb 2025
- 13:21:45 -0800 (PST)
+	s=arc-20240116; t=1740345844; c=relaxed/simple;
+	bh=RyXTgCMHhAPtmnpxzabRSY1se+g8Vct1Vnsa1vl01xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VY0w7lqMyZAHEO5PZxfjeH8APQsckD2bq99rE2hPJBpjVn8opaXQPQvRvuH6SL9qTCyRhEiYUG67sJnkgbG2vOd4P5Wu2OWpbDiOTz0woSc35kUNPJJ/nXJvFnGaxP//5OggY01dUgeNnRrdAZc9q5vwxjRnT1xHm2n2UKac6no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eV7f3SUp; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740345831;
+	bh=3VSf9QUqjBcJCEaeR3x6UJzruM1MQMs8aYbTAevaJDw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=eV7f3SUpybRNAvXI20c76mnOuS9ELHMHOqDONLcdx2axa9XRE44CQ4iSaTg6UqWMI
+	 E1OuVIgy7PIxJMsEbOOOyrO+627kiCxdooWBpGaIeT3xO5/H2u7DNk4jmLeNtp9hTR
+	 WdS+DTpV+bruZ9cXs780x1tXsQaep9xkTfch2BgSkWr4lhJKiusgWd2TY4VInIygfO
+	 g216qmLY7eOWCjvVr1k3iNWYJs1Zzr8SQaPgGaykCMTdw1rPsPsnuikdO/jnUprL75
+	 Fx5aM2giif4caOwrGdxTPNPaPM4xDOfii2H7Qu6hjjmt7ChT8kr/7dpR5wPG822Seu
+	 rGc6rKavrFXfg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1H132sS2z4wcj;
+	Mon, 24 Feb 2025 08:23:51 +1100 (AEDT)
+Date: Mon, 24 Feb 2025 08:23:32 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal =?UTF-8?B?S291dG7DvQ==?= <mkoutny@suse.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the mm tree
+Message-ID: <20250224082332.3a45e550@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
- <20250221155532.576759-9-tommaso.merciai.xr@bp.renesas.com> <20250223181754.GC8330@pendragon.ideasonboard.com>
-In-Reply-To: <20250223181754.GC8330@pendragon.ideasonboard.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sun, 23 Feb 2025 21:21:18 +0000
-X-Gm-Features: AWEUYZmsnButfBYwSu61ebuC9L_6y38ami8pS7K43TCQiuqIXpWn5k8A5Gu7hGo
-Message-ID: <CA+V-a8sMLC6f2-1tL9cRdLLPsJtv82TiW8MzJ5+1QKnppCSJ_A@mail.gmail.com>
-Subject: Re: [PATCH v2 08/18] media: rzg2l-cru: csi2: Introduce SoC-specific
- D-PHY handling
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, 
-	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/4aCirJAqwvnm3Ki8HHbfF=U";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/4aCirJAqwvnm3Ki8HHbfF=U
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+Hi all,
 
-Thank you for the review.
+Commit
 
-On Sun, Feb 23, 2025 at 6:18=E2=80=AFPM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Tommaso,
->
-> Thank you for the patch.
->
-> On Fri, Feb 21, 2025 at 04:55:22PM +0100, Tommaso Merciai wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > In preparation for adding support for the RZ/V2H(P) SoC, where the D-PH=
-Y
-> > differs from the existing RZ/G2L implementation, introduce a new
-> > rzg2l_csi2_info structure. This structure provides function pointers fo=
-r
-> > SoC-specific D-PHY enable and disable operations.
-> >
-> > Modify rzg2l_csi2_dphy_setting() to use these function pointers instead=
- of
-> > calling rzg2l_csi2_dphy_enable() and rzg2l_csi2_dphy_disable() directly=
-.
-> > Update the device match table to store the appropriate function pointer=
-s
-> > for each compatible SoC.
-> >
-> > This change prepares the driver for future extensions without affecting
-> > the current functionality for RZ/G2L.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > ---
-> >  .../platform/renesas/rzg2l-cru/rzg2l-csi2.c   | 24 ++++++++++++++++---
-> >  1 file changed, 21 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c b/dr=
-ivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > index 4ccf7c5ea58b..3a4e720ba732 100644
-> > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-csi2.c
-> > @@ -107,6 +107,7 @@ struct rzg2l_csi2 {
-> >       void __iomem *base;
-> >       struct reset_control *presetn;
-> >       struct reset_control *cmn_rstb;
-> > +     const struct rzg2l_csi2_info *info;
-> >       struct clk *sysclk;
-> >       struct clk *vclk;
-> >       unsigned long vclk_rate;
-> > @@ -123,6 +124,11 @@ struct rzg2l_csi2 {
-> >       bool dphy_enabled;
-> >  };
-> >
-> > +struct rzg2l_csi2_info {
-> > +     int (*dphy_enable)(struct rzg2l_csi2 *csi2);
-> > +     int (*dphy_disable)(struct rzg2l_csi2 *csi2);
-> > +};
->
-> Unless you'll need to add non-function fields later, I'd name the
-> structure rzg2l_csi2_phy_ops.
->
-As based on the feedback on patch 09/18 I will keep the struct name as is.
+  6799f20bc8b2 ("pid: optional first-fit pid allocation")
 
-> > +
-> >  struct rzg2l_csi2_timings {
-> >       u32 t_init;
-> >       u32 tclk_miss;
-> > @@ -360,9 +366,9 @@ static int rzg2l_csi2_dphy_setting(struct v4l2_subd=
-ev *sd, bool on)
-> >       struct rzg2l_csi2 *csi2 =3D sd_to_csi2(sd);
-> >
-> >       if (on)
-> > -             return rzg2l_csi2_dphy_enable(csi2);
-> > +             return csi2->info->dphy_enable(csi2);
-> >
-> > -     return rzg2l_csi2_dphy_disable(csi2);
-> > +     return csi2->info->dphy_disable(csi2);
-> >  }
-> >
-> >  static int rzg2l_csi2_mipi_link_enable(struct rzg2l_csi2 *csi2)
-> > @@ -772,6 +778,10 @@ static int rzg2l_csi2_probe(struct platform_device=
- *pdev)
-> >       if (!csi2)
-> >               return -ENOMEM;
-> >
-> > +     csi2->info =3D of_device_get_match_data(dev);
-> > +     if (!csi2->info)
-> > +             return dev_err_probe(dev, -EINVAL, "Failed to get OF matc=
-h data\n");
-> > +
-> >       csi2->base =3D devm_platform_ioremap_resource(pdev, 0);
-> >       if (IS_ERR(csi2->base))
-> >               return PTR_ERR(csi2->base);
-> > @@ -890,8 +900,16 @@ static const struct dev_pm_ops rzg2l_csi2_pm_ops =
-=3D {
-> >                      rzg2l_csi2_pm_runtime_resume, NULL)
-> >  };
-> >
-> > +static const struct rzg2l_csi2_info rzg2l_csi2_info =3D {
-> > +     .dphy_enable =3D rzg2l_csi2_dphy_enable,
-> > +     .dphy_disable =3D rzg2l_csi2_dphy_disable,
-> > +};
->
-> I'd recommend moving this just below the definition of the
-> rzg2l_csi2_dphy_enable() function.
->
-Ok.
+is missing a Signed-off-by from its author.
 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->
-> > +
-> >  static const struct of_device_id rzg2l_csi2_of_table[] =3D {
-> > -     { .compatible =3D "renesas,rzg2l-csi2", },
-> > +     {
-> > +             .compatible =3D "renesas,rzg2l-csi2",
-> > +             .data =3D &rzg2l_csi2_info,
-> > +     },
-> >       { /* sentinel */ }
-> >  };
-> >  MODULE_DEVICE_TABLE(of, rzg2l_csi2_of_table);
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
-Chers,
-Prabhakar
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4aCirJAqwvnm3Ki8HHbfF=U
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme7kdQACgkQAVBC80lX
+0GwO8Af+J9wr6Fre0ybKu8jqk+c53NA7Mankb2H5vKqTJX9XAf++4WSBx7Fj2Fyy
+tphk1dR6FvEbS1iAB6YJLFzaJvP35Mgy/T3Zg7gf6L8SeM2OLMpVptwrE16060QG
+aLDP8yxJXq4FrJ9zBMPGfftK+xAXP22uENFB6mbvmOkFbxQyWtbdtrGRylzqSN2y
+d/xdKNj3wOcDOg+VIFLB15I7JPXsmhPDAtJnm/8eCzgELitbxN+/lyZOF++xt5bc
+ogOGBPepd+q7F7kKI0lfkFCu/ETMddZRN86bnKyJDUD9eCDSdHmu984KEs9x2sVi
+XDOcLM72xjN397YPz+hU+DrEtgmfCg==
+=OIDg
+-----END PGP SIGNATURE-----
+
+--Sig_/4aCirJAqwvnm3Ki8HHbfF=U--
 
