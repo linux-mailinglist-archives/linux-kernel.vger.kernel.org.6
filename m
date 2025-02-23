@@ -1,73 +1,77 @@
-Return-Path: <linux-kernel+bounces-527845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B56A4106D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:29:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733FFA41073
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A202172A70
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:29:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D76C87A6C8D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712F41624D2;
-	Sun, 23 Feb 2025 17:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CCB1632C7;
+	Sun, 23 Feb 2025 17:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YRfopree"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="B7W/+SpZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8036C149DE8;
-	Sun, 23 Feb 2025 17:29:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740331743; cv=none; b=eBo3FVT07CKEljq/q+xHCYNl13QSXOjyJkCQzCX/I2TIiLj4b0es/+JWP1aFVJBkJyzUR8yjQrqD6YuisBB5/WTIZ/EmHQC4M4Wce53NMsY6Q2ZXs1ksr0QHl0HczsH4HpgxnAOD5A6tqprI+Lec69R2JklQE13CZWXZ7r019X4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740331743; c=relaxed/simple;
-	bh=BW3DDuqZiHsjcbxGEIk99Sonwsq4aL+p0A6Q/4Q1Xlo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q+dK7rL+RhKTlU3w6t75/KldqY6GO0MCe9rSKBmpgjwTDcJR/4HSbavQiwVvLAm1XDcvGbKHLCU3Jfa4EHN4955L89tUfbJi/ro1Bei3H0xK1W6jF5e86A1PV8kFxcdIYhiRmS/3H9ZbsXGiK2xvHois9/xBHyTflXh3XfnZW44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YRfopree; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B7E80441CA;
-	Sun, 23 Feb 2025 17:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740331733;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ff9eLwxVsbvGI5eKtwskzCJhsb7wrf72ez0rChYwt7Y=;
-	b=YRfopree+8fDurMTg6SISS6KLW5jQqC3127jw+0+f+UmqcG8R5JwRi4357WyjiXTIM3ivB
-	xyQVurFU0cLd3+Bdheel0bmOKxHp6AineOxDUF4uxETV3OmYjXOVpcviIIEAaGQ34MC5Ww
-	I60sLJ+qNB20Wo5ZVw6uZ9ni62p/7mtI7cOh1+y5BjzHREg+zZyZDB+KDjaP5YPEyRoO8b
-	8B0EKx4NuPQN9BaYQl0uIqZBniQWSArBhvJtQUgstdp7gB1nVSvi/QnZ0Hdvf1JyX+j66r
-	j7hCwsQ1jyZWRnTchaXFAFKzVA8sMD5SuAcqVUNqg4jFnXrbQ5d6drk+OuPg7Q==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2892757F3;
+	Sun, 23 Feb 2025 17:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740332009; cv=pass; b=emi4FSln/SvmBVjfQ6gkYBWNGWUMeuTHpRbRQPUQU6zTPygMTig7z1d0ekeKrjTu0REUuLN5kjfScXvEs8e7VyF/p0Oki1lmSZqojVqFfR9B/Cd6tas/hQEHvEF1MnGMTSNVyc4jAnIR19/3d+Xik5xeWMs/e2eDKGTRGH7IL3o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740332009; c=relaxed/simple;
+	bh=ZXoXAjv7CNswJQNtuLWj9tP8lIgH4LPk0fTJj4FCx1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WWCGrcjogLFSxB867w2Et7G/BKD2JB295sj5igN+PUx2s0ivXhdlUaBQ8W8woFsevtdTXh2CpdOVySgAy+p2060GEnLsVOP0Ie9V1MJob0RwwvXlacrs3HyD699aRmFp0j3SEq7puuuAAQ2cbF6o4/83yPkXnYWRc0Q0Rg6t8HE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=B7W/+SpZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740331968; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nOjodT985gU5kg5bYhEW7ae04E0TH7ZbeHYf3oX/ZjNwag1gcvRPvcp7rRwZujjMkEhMMu141OJaEgCyeUi9GZcbfi5tRpOrdq9JI5zFKcBFLTQya2rN/8H/7Qm4B9dNjjUZlG1AGmv00OeJ4QlOotqvLbDb71sLHUYor7IffFw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740331968; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=oxKZzwVgf57rSFzAyeuzIWY440JypzeG2B7CBwptYss=; 
+	b=gyW7mbf5dw52DH0343aIXJEDAQ2rX24plyDq4Dd538d8z24ftn188I0WcPQ48FX8FmlinQLrFq0IkFdxpcUjYA9FYdvO5Qz0u3Ay90ZFHtY9IhorvuX1+6Pn1uMvoVsG0lNcSc38o2F8a7DQth26dDcwfZROVhOemQB9mBzWbBI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740331968;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=oxKZzwVgf57rSFzAyeuzIWY440JypzeG2B7CBwptYss=;
+	b=B7W/+SpZEcq+PRzHhqrpn0s2R4jrw6lbGWuGWKTSgv/oQACKG2aEQaLn4rL4oHTC
+	Ac8b01FLn679rEHnFKnqeDRbb1LdXxZayHUE7FzuMEgEKZHFDjSABmgl5zYtG4xCCAo
+	ypH1XetoDhX6dDNOFqx6bN+fWbHCwMv1bvrNWXxI=
+Received: by mx.zohomail.com with SMTPS id 1740331963042189.7734892212876;
+	Sun, 23 Feb 2025 09:32:43 -0800 (PST)
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	jose.abreu@synopsys.com,
+	nelson.costa@synopsys.com,
+	shawn.wen@rock-chips.com,
+	nicolas.dufresne@collabora.com,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	=?UTF-8?q?Marek=20Beh=C3=BAn?= <kabel@kernel.org>
-Subject: [PATCH net-next 2/2] net: mdio: mdio-i2c: Add support for single-byte SMBus operations
-Date: Sun, 23 Feb 2025 18:28:47 +0100
-Message-ID: <20250223172848.1098621-3-maxime.chevallier@bootlin.com>
+	linux-rockchip@lists.infradead.org,
+	Tim Surber <me@timsurber.de>
+Subject: [PATCH v8 0/6] Add Synopsys DesignWare HDMI RX Controller
+Date: Sun, 23 Feb 2025 20:30:13 +0300
+Message-ID: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,138 +79,320 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejieeggecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeevgedtffelffelveeuleelgfejfeevvdejhfehgeefgfffvdefteegvedutefftdenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgri
- igvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+X-ZohoMailClient: External
 
-PHYs that are within copper SFP modules have their MDIO bus accessible
-through address 0x56 (usually) on the i2c bus. The MDIO-I2C bridge is
-desgned for 16 bits accesses, but we can also perform 8bits accesses by
-reading/writing the high and low bytes sequentially.
+This series implements support for the Synopsys DesignWare
+HDMI RX Controller, being compliant with standard HDMI 1.4b
+and HDMI 2.0.
 
-This commit adds support for this type of accesses, thus supporting
-smbus controllers such as the one in the VSC8552.
+Features that are currently supported by the HDMI RX driver
+have been tested on rock5b board using a HDMI to micro-HDMI cable.
+It is recommended to use a good quality cable as there were
+multiple issues seen during testing the driver.
 
-This was only tested on Copper SFP modules that embed a Marvell 88e1111
-PHY.
+Please note the below information :-
+* HDMIRX driver now only works with the opensource TF-A.
+* We have tested the working of OBS studio with HDMIRX driver and
+there were no issues seen.
+* We tested and verified the support for interlaced video.
+* We tested capturing of YUV formats.
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To test the HDMI RX Controller driver, following example commands can be used :-
+
+root@debian-rockchip-rock5b-rk3588:~#  v4l2-ctl --stream-mmap \
+--stream-count=100 --stream-to=/home/hdmiin4k.raw
+
+root@debian-rockchip-rock5b-rk3588:~# ffmpeg -f rawvideo -vcodec rawvideo \
+-s 1920x1080 -r 60 -pix_fmt bgr24 -i /home/hdmiin4k.raw output.mkv
+
+CEC compliance test results :-
+
+* https://gitlab.collabora.com/-/snippets/380
+* https://gitlab.collabora.com/-/snippets/381
+
+Following is the v4l2-compliance test result :-
+
+root@debian-rockchip-rock5b-rk3588:~# v4l2-compliance -d /dev/video1
+v4l2-compliance 1.29.0-5326, 64 bits, 64-bit time_t
+v4l2-compliance SHA: 77f5df419204 2025-02-07 08:59:59
+
+Compliance test for snps_hdmirx device /dev/video1:
+
+Driver Info:
+        Driver name      : snps_hdmirx
+        Card type        : snps_hdmirx
+        Bus info         : platform:fdee0000.hdmi_receiver
+        Driver version   : 6.14.0
+        Capabilities     : 0x84201000
+                Video Capture Multiplanar
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04201000
+                Video Capture Multiplanar
+                Streaming
+                Extended Pix Format
+
+Required ioctls:
+        test VIDIOC_QUERYCAP: OK
+        test invalid ioctls: OK
+
+Allow for multiple opens:
+        test second /dev/video1 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK
+        test VIDIOC_DV_TIMINGS_CAP: OK
+        test VIDIOC_G/S_EDID: OK
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 4 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test CREATE_BUFS maximum buffers: OK
+        test VIDIOC_REMOVE_BUFS: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+        test blocking wait: OK
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test MMAP (no poll, REQBUFS): OK                  
+        test MMAP (select, REQBUFS): OK                   
+        test MMAP (epoll, REQBUFS): OK                    
+        test MMAP (no poll, CREATE_BUFS): OK              
+        test MMAP (select, CREATE_BUFS): OK               
+        test MMAP (epoll, CREATE_BUFS): OK                
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for snps_hdmirx device /dev/video1: 57, Succeeded: 57, Failed: 0, Warnings: 0
+
 ---
- drivers/net/mdio/mdio-i2c.c | 79 ++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/mdio/mdio-i2c.c b/drivers/net/mdio/mdio-i2c.c
-index da2001ea1f99..202f486e71f1 100644
---- a/drivers/net/mdio/mdio-i2c.c
-+++ b/drivers/net/mdio/mdio-i2c.c
-@@ -106,6 +106,62 @@ static int i2c_mii_write_default_c22(struct mii_bus *bus, int phy_id, int reg,
- 	return i2c_mii_write_default_c45(bus, phy_id, -1, reg, val);
- }
- 
-+static int smbus_byte_mii_read_default_c22(struct mii_bus *bus, int phy_id,
-+					   int reg)
-+{
-+	struct i2c_adapter *i2c = bus->priv;
-+	union i2c_smbus_data smbus_data;
-+	int val = 0, ret;
-+
-+	if (!i2c_mii_valid_phy_id(phy_id))
-+		return 0;
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_READ, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	val = ((smbus_data.byte & 0xff) << 8);
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_READ, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	val |= (smbus_data.byte & 0xff);
-+
-+	return val;
-+}
-+
-+static int smbus_byte_mii_write_default_c22(struct mii_bus *bus, int phy_id,
-+					    int reg, u16 val)
-+{
-+	struct i2c_adapter *i2c = bus->priv;
-+	union i2c_smbus_data smbus_data;
-+	int ret;
-+
-+	if (!i2c_mii_valid_phy_id(phy_id))
-+		return 0;
-+
-+	smbus_data.byte = ((val & 0xff00) >> 8);
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_WRITE, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+	if (ret < 0)
-+		return ret;
-+
-+	smbus_data.byte = val & 0xff;
-+
-+	ret = i2c_smbus_xfer(i2c, i2c_mii_phy_addr(phy_id), 0,
-+			     I2C_SMBUS_WRITE, reg,
-+			     I2C_SMBUS_BYTE_DATA, &smbus_data);
-+
-+	return ret < 0 ? ret : 0;
-+}
-+
- /* RollBall SFPs do not access internal PHY via I2C address 0x56, but
-  * instead via address 0x51, when SFP page is set to 0x03 and password to
-  * 0xffffffff.
-@@ -378,13 +434,26 @@ static int i2c_mii_init_rollball(struct i2c_adapter *i2c)
- 		return 0;
- }
- 
-+static bool mdio_i2c_check_functionality(struct i2c_adapter *i2c,
-+					 enum mdio_i2c_proto protocol)
-+{
-+	if (i2c_check_functionality(i2c, I2C_FUNC_I2C))
-+		return true;
-+
-+	if (i2c_check_functionality(i2c, I2C_FUNC_SMBUS_BYTE_DATA) &&
-+	    protocol == MDIO_I2C_MARVELL_C22)
-+		return true;
-+
-+	return false;
-+}
-+
- struct mii_bus *mdio_i2c_alloc(struct device *parent, struct i2c_adapter *i2c,
- 			       enum mdio_i2c_proto protocol)
- {
- 	struct mii_bus *mii;
- 	int ret;
- 
--	if (!i2c_check_functionality(i2c, I2C_FUNC_I2C))
-+	if (!mdio_i2c_check_functionality(i2c, protocol))
- 		return ERR_PTR(-EINVAL);
- 
- 	mii = mdiobus_alloc();
-@@ -395,6 +464,14 @@ struct mii_bus *mdio_i2c_alloc(struct device *parent, struct i2c_adapter *i2c,
- 	mii->parent = parent;
- 	mii->priv = i2c;
- 
-+	/* Only use SMBus if we have no other choice */
-+	if (i2c_check_functionality(i2c, I2C_FUNC_SMBUS_BYTE_DATA) &&
-+	    !i2c_check_functionality(i2c, I2C_FUNC_I2C)) {
-+		mii->read = smbus_byte_mii_read_default_c22;
-+		mii->write = smbus_byte_mii_write_default_c22;
-+		return mii;
-+	}
-+
- 	switch (protocol) {
- 	case MDIO_I2C_ROLLBALL:
- 		ret = i2c_mii_init_rollball(i2c);
+InfoFrame debugfs example output:-
+
+# edid-decode -c -I /sys/kernel/debug/v4l2/fdee0000.hdmi_receiver/infoframes/avi
+edid-decode InfoFrame (hex):
+
+82 02 0d b1 12 28 84 00 00 00 00 00 00 00 00 00
+00
+
+----------------
+
+HDMI InfoFrame Checksum: 0xb1
+
+AVI InfoFrame
+  Version: 2
+  Length: 13
+  Y: Color Component Sample Format: RGB
+  A: Active Format Information Present: Yes
+  B: Bar Data Present: Bar Data not present
+  S: Scan Information: Composed for an underscanned display
+  C: Colorimetry: No Data
+  M: Picture Aspect Ratio: 16:9
+  R: Active Portion Aspect Ratio: 8
+  ITC: IT Content: IT Content (CN is valid)
+  EC: Extended Colorimetry: xvYCC601
+  Q: RGB Quantization Range: Limited Range
+  SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
+  YQ: YCC Quantization Range: Limited Range
+  CN: IT Content Type: Graphics
+  PR: Pixel Data Repetition Count: 0
+  Line Number of End of Top Bar: 0
+  Line Number of Start of Bottom Bar: 0
+  Pixel Number of End of Left Bar: 0
+  Pixel Number of Start of Right Bar: 0
+
+----------------
+
+edid-decode 1.29.0-5326
+edid-decode SHA: 77f5df419204 2025-02-07 08:59:59
+
+AVI InfoFrame conformity: PASS
+
+---
+
+Changes in v8 :-
+- Changed HPD logic as was requested by Hans Verkuil. HPD handling
+  is now decoupled from HDMI plugin/out events and works independently
+  from 5v status.
+- Bumped number of EDID blocks from 2 to 4 as was requested by
+  Hans Verkuil and verified that reading 3/4 EDID blocks from transmitter
+  works properly.
+- Made few extra minor cleanup/improvements to the driver code
+
+Changes in v7 :-
+- Changed InfoFrame debugfs to return truncated payload data
+- Updated cover-letter example stream capture cmdline with a minimized
+  and cleaned version of the cmdline
+- Added AVI InfoFrame example output to the cover-letter
+
+Changes in v6 :-
+- Driver now keeps HPD low instead of zeroing EDID when EDID-clearing is
+  invoked and when default EDID usage is disabled in the kernel config
+- Added InfoFrame debugfs support
+- Added another code comment clarifying validation of timing values
+- Rebased on top of recent media-next tree
+
+Changes in v5 :-
+- Fix the interrupt IRQ number in the dt-bindings and device tree
+- Add alignment property to ensure hdmi-receiver-cma
+  starts at a 64KB-aligned address
+- Change the MODULE_DESCRIPTION
+- Add VIDEO_SYNOPSYS_HDMIRX as prefix to the default edid config
+- Drop the enabling of default edid in the Kconfig
+- Replace the default EDID with hdmi-4k-300mhz EDID produced
+  by v4l2-ctl tool for better compatibility with various HDMI
+  cables and adapters
+- Rework the write_edid and set_edid functions
+- During format change, retrieve the current pixel format,
+  color depth, and AVI infoframe details instead of only
+  detecting the format
+- Improve the logging mechanism and delays in the
+  hdmirx_wait_signal_lock function
+- Fix the 4K@60 capturing for RGB format
+- Document what hdmirx_check_timing_valid function does
+- Rework the hdmirx_get_detected_timings function
+- Fix the NV16/24 size image value
+- Add the implementation from Benjamin Hoff to expose the
+  ITC type to v4l2
+- Remove all the firmware related code
+
+Changes in v4 :-
+- Remove DTS changes included in the device tree patch
+- Remove the hdmi rx pin info as it's already present
+in the rk3588-base-pinctrl.dtsi
+- Create a separate config option for selecting the EDID
+and enable it by default
+- Improve the comment related to DV timings and move it
+to the side of hdmirx_get_detected_timings
+- Add 100ms delay before pulling the HPD high
+- Do not return the detected timings from VIDIOC_G_DV_TIMINGS
+- Drop the bus info from hdmirx_querycap
+- If *num_planes != 0 then return 0 in hdmirx_queue_setup
+- Set queue->min_queued_buffers to 1
+- Drop q->allow_cache_hints = 0; as it's always 0 by default
+- Add a comment for q->dma_attrs = DMA_ATTR_FORCE_CONTIGUOUS;
+- Drop .read = vb2_fop_read as it's not supported by driver
+- Remove redundant edid_init_data_600M
+- Make HPD low when driver is loaded
+- Add support for reading AVI Infoframe
+- Remove msg_len checks from hdmirx_cec_transmit
+- Add info about the CEC compliance test in the cover letter
+- Add arbitration lost status
+- Validate the physical address inside the EDID
+
+Changes in v3 :-
+- Use v4l2-common helpers in the HDMIRX driver
+- Rename cma node and phandle names
+- Elaborate the comment to explain 160MiB calculation
+- Move &hdmi_receiver_cma to the rock5b dts file
+- Add information about interlaced video testing in the
+cover-letter
+
+Changes in v2 :-
+- Fix checkpatch --strict warnings
+- Move the dt-binding include file changes in a separate patch
+- Add a description for the hardware in the dt-bindings file
+- Rename resets, vo1 grf and HPD properties
+- Add a proper description for grf and vo1-grf phandles in the
+bindings
+- Rename the HDMI RX node name to hdmi-receiver
+- Include gpio header file in binding example to fix the
+dt_binding_check failure
+- Move hdmirx_cma node to the rk3588.dtsi file
+- Add an entry to MAINTAINERS file for the HDMIRX driver
+
+Sebastian Reichel (2):
+  arm64: defconfig: Enable Synopsys HDMI receiver
+  arm64: dts: rockchip: Enable HDMI receiver on rock-5b
+
+Shreeya Patel (4):
+  MAINTAINERS: Add entry for Synopsys DesignWare HDMI RX Driver
+  dt-bindings: media: Document bindings for HDMI RX Controller
+  arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+  media: platform: synopsys: Add support for HDMI input driver
+
+ .../bindings/media/snps,dw-hdmi-rx.yaml       |  132 +
+ MAINTAINERS                                   |    8 +
+ .../dts/rockchip/rk3588-base-pinctrl.dtsi     |   14 +
+ .../arm64/boot/dts/rockchip/rk3588-extra.dtsi |   57 +
+ .../boot/dts/rockchip/rk3588-rock-5b.dts      |   18 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/media/platform/Kconfig                |    1 +
+ drivers/media/platform/Makefile               |    1 +
+ drivers/media/platform/synopsys/Kconfig       |    3 +
+ drivers/media/platform/synopsys/Makefile      |    2 +
+ .../media/platform/synopsys/hdmirx/Kconfig    |   27 +
+ .../media/platform/synopsys/hdmirx/Makefile   |    4 +
+ .../platform/synopsys/hdmirx/snps_hdmirx.c    | 2747 +++++++++++++++++
+ .../platform/synopsys/hdmirx/snps_hdmirx.h    |  394 +++
+ .../synopsys/hdmirx/snps_hdmirx_cec.c         |  284 ++
+ .../synopsys/hdmirx/snps_hdmirx_cec.h         |   44 +
+ 16 files changed, 3737 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/snps,dw-hdmi-rx.yaml
+ create mode 100644 drivers/media/platform/synopsys/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Kconfig
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/Makefile
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx.h
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.c
+ create mode 100644 drivers/media/platform/synopsys/hdmirx/snps_hdmirx_cec.h
+
 -- 
 2.48.1
 
