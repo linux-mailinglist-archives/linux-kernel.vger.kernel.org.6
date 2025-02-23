@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-527627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09719A40D6D
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:46:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E03D4A40D6F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:46:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766A23BE166
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CF161899D0F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0741FCFE2;
-	Sun, 23 Feb 2025 08:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B481FDA63;
+	Sun, 23 Feb 2025 08:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="R217fZy0"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFbaoZJN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EE31FC0E6
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189491DB125;
+	Sun, 23 Feb 2025 08:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740300368; cv=none; b=WvqeDRZPWBlAkTBB0PAcXx55moA7inLbz8WsSgfer+IDbh5RJk1lDcmenuFn0KGJSdmZ/so7bgl/ji9PZc7FIGyuU1YwH29tSMDczu9MC8GdDkBojbb1RI5zFe6Op7nLliCqo/zeoAOpQRGQ/OJeThvkby0VqD5toxOowmyaIWw=
+	t=1740300389; cv=none; b=QrrDuZHnlC9rYmZ3slbkwqRG6t2zDe/cTIS54p2yKHwQNEUOOyS26fbKByVCvOHz4F8oxCDKFC0T+rZJb8+dJcwalQVfvnvtg1w7FgORDfXDI1dmkbcc6mpTK0ofioQ9OwpHU/MTewHcR2LucgGOe5WCiKhEvhTsP+f9ZrHyteg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740300368; c=relaxed/simple;
-	bh=DhOhL98HKSlfxfm8aXGegeM9ziARLp58xw8GPE0QOZc=;
+	s=arc-20240116; t=1740300389; c=relaxed/simple;
+	bh=0RaAMpQoMMIAtos2wWNjuemUUO6cn0qCxmF+EkB+HFM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SCj+AeLKZ6KyBaZJ4EJjU7PVKbTSvPEaE989IzREhS1n4mbzVbFNZZ0JYfIn3oKQT0z64WnzDZ+WnW8i9zYLiSbWQ5FQeUERXp74nPEuvGJkPbBB7V/7kXfD/Uh9b3gD+vZgYo6LAjxYic3eh0jjZ3s+TVX73gIhaWLVadso4d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=R217fZy0; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fc317ea4b3so950156a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:46:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740300361; x=1740905161; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fARdZemRNN4lIMHQeupATWlyXvjiZ5YaX4PJLgbPEck=;
-        b=R217fZy0n3Uv0Fn4vHfYMWpugEqxtbZV3AI4khEaszSZLjjufEzPf5S9/ne17K98Ha
-         c7qY+XbzniT6BEXfncMpP35RzixuhjWT5TlChhF+UteDAfH93viI3QzmjxPFY9aOmUZM
-         nyHHNwIks98UMDD9B1eRGG8OwYyeCFgpieikD3wuT5GnkIAJXWM3vYgO5ATlvMDytUxj
-         bOG7Xm3bSDXAIDNR0Rk+KsY0CIIlDlVzhO+YIF1s4mw5ATM2EpNW9l1IF3JL9HOvrNAE
-         IpywWUbgXY35ItT6tojOR4KWJl2NIP31gOiRUL6pBJNwNdNy+oiwzCoX1etedFVuzJVK
-         OK6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740300361; x=1740905161;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fARdZemRNN4lIMHQeupATWlyXvjiZ5YaX4PJLgbPEck=;
-        b=U6nAkH89dJoYHL58jquGxuVEWC15eg9PH0FbrYutHkpmlyDwl7QBXtCJp3p35Qfcts
-         RCP8dLp7Pf5e+9Ibe8b1cEPQK1gUb+WhoH1LjeClu4hS1au1S6neDG6WayKwpImUoUlZ
-         pBTp3RbEdKZSJsj4uoKyzonDkNePy3ka6I+Z6oUqmxT+3k21My8xtFOR+boJYh3JvMiL
-         ceyyK8b9m2Pu0CP4sTLoi/P/g4ZN5hLI7N4mEtbNwM5CJQ1M/Os9e0/K8JkircyNrRk+
-         Rv+OfalkpGDuJW7CmuRRYGO7mjU/Ji3QZ/jW5KoJDyTu1Bsv+QEtWHynRyQ2rvoR2i3F
-         QGTQ==
-X-Gm-Message-State: AOJu0YxFO6Ltxm6qbiHF4QC85GFJcrkxpg7wkz47Yfc+LhSWdizZFcj3
-	ASUSluFGGLoMI0ybYqjNDvvCQfpZU/VOlr3EbxJm9hZFp3jX/vF9Vbv4buh3reQ=
-X-Gm-Gg: ASbGncsbXYGbVh6XCzor4vPGKdvh1v/CL+MwS1cqS4bfTbkCU1QfCQ6GMPg9BjwBocB
-	oFCYX1N1SmS4c9s8k6qGYVVgsp8FU+7ZhAHkjQa1qO2iqiKo0CiWbraU8wQW8cS2PbZnwTl4161
-	5HegmL4oTgueNwpkk9uIMjNqSYiRqMtN79ghfMQxeuZQ7mbQKQ7aPSp/xyIFqC8bJgubHHFKWfj
-	DXVy+bX37VaH4e0xmVcOeoJL6ALpHkt9dzXATKQwgxFowGEIumLyIXY4oOTninxQ7ZqBgF5nEmr
-	rUObK06DWkmYnuOaFB08ue5DE8zlOiFw9cJAE3EnjZUa2Qcc4LwKktQIopkRSbHGWiSHOzGHs/L
-	FKXJMxVG8ZhOwbg==
-X-Google-Smtp-Source: AGHT+IFlxEBLplToG+esywlhszEAaN3NlRVA8UQFP2sp4KwEIOoPwUTT/OJPy59g2TIJ3AJgF1Xuvg==
-X-Received: by 2002:a05:6a00:190f:b0:730:8a0a:9f0f with SMTP id d2e1a72fcca58-73426dd835emr5886263b3a.7.1740300361273;
-        Sun, 23 Feb 2025 00:46:01 -0800 (PST)
-Received: from [10.200.58.71] (151.240.142.34.bc.googleusercontent.com. [34.142.240.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73271a02648sm13932582b3a.107.2025.02.23.00.45.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 00:46:00 -0800 (PST)
-Message-ID: <e7a81f13-6f09-4a7a-9d85-0ba4885442bc@bytedance.com>
-Date: Sun, 23 Feb 2025 16:45:54 +0800
+	 In-Reply-To:Content-Type; b=sJClfVVJbAXKR5+dXmm+dVVWCfwFhhdCRNxxfjyTZFLBiNAoRelrf/vJgak6msMTIBLPDS0JWdJj0ii6zoUBAKOgE7l+Bv8skL98/KlSc4q6RfYApov40ZIvhHqU8oKFUDpMAzLaHBCXs49ExQKj6ABhNz1yAEocmvllSpSrMXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFbaoZJN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E3CC4CEDD;
+	Sun, 23 Feb 2025 08:46:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740300388;
+	bh=0RaAMpQoMMIAtos2wWNjuemUUO6cn0qCxmF+EkB+HFM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tFbaoZJNL4cgXw4FX2l82CP89M+V4sPB0gBJoIHY/f3dFqQ16XRiXwE4pqggDFhZi
+	 0OeTKLCR/1UoOIWMnLJxXrh7Ao71EVc+sG3bVcFCrXarDap0VEEdEAN+Ssyp9pudWP
+	 yp2g7NiXgBxSTi4GzMkPofCxAbYNlp21l/5qvrgyjI724FyoK+K5y7MVEnjhNL0tdM
+	 OGnnxbdcZEMB83a/bxp51EQMJAKh3jzCWH7NWOieRsblAFSCdcb9lvCIQMBQiX5T7v
+	 DhqRZ9iSnO+IiJFOhKKNJ/aTD2+hzTMG4DVRoKWH2r6y7tvPkXmFwsuhaOmkUWugLL
+	 o/NUfZSnFQAgw==
+Message-ID: <50acb698-c32c-4276-90d2-46ee9de7bfe9@kernel.org>
+Date: Sun, 23 Feb 2025 09:46:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,69 +49,116 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Re: [PATCH 1/2] sched/fair: Do not let idle entities preempt
- others
+Subject: Re: [EXTERNAL] Re: [PATCH v2 2/4] dt-bindings: cp110: Document the
+ reset controller
+To: Wilson Ding <dingwei@marvell.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "andrew@lunn.ch" <andrew@lunn.ch>,
+ "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+ "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ Sanghoon Lee <salee@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>
+References: <20250220232527.882888-1-dingwei@marvell.com>
+ <20250220232527.882888-3-dingwei@marvell.com>
+ <20250221-huge-able-ostrich-5c70cd@krzk-bin>
+ <BY3PR18MB4673E3FA63FA85F1C11E68F0A7C62@BY3PR18MB4673.namprd18.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-Cc: "open list:SCHEDULER" <linux-kernel@vger.kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Josh Don <joshdon@google.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Tianchen Ding <dtcccc@linux.alibaba.com>
-References: <20250221111226.64455-1-wuyun.abel@bytedance.com>
- <20250221111226.64455-2-wuyun.abel@bytedance.com>
- <e7c4d27f-6b98-4cd6-85b8-9c4672acdef4@linux.ibm.com>
-From: Abel Wu <wuyun.abel@bytedance.com>
-In-Reply-To: <e7c4d27f-6b98-4cd6-85b8-9c4672acdef4@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <BY3PR18MB4673E3FA63FA85F1C11E68F0A7C62@BY3PR18MB4673.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 2/23/25 1:48 AM, Madadi Vineeth Reddy Wrote:
-> On 21/02/25 16:42, Abel Wu wrote:
->> A task with SCHED_IDLE policy doesn't preempt others by definition, and
->> the semantics are intended to be preserved when extending to cgroups
->> introduced in commit 304000390f88 ("sched: Cgroup SCHED_IDLE support").
+On 22/02/2025 22:02, Wilson Ding wrote:
 > 
-> [snip]
 > 
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 1c0ef435a7aa..4340178f29b7 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -8778,12 +8778,15 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->>   	pse_is_idle = se_is_idle(pse);
->>   
->>   	/*
->> -	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
->> -	 * in the inverse case).
->> +	 * Preempt an idle entity in favor of a non-idle entity.
->>   	 */
->>   	if (cse_is_idle && !pse_is_idle)
->>   		goto preempt;
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Friday, February 21, 2025 12:47 AM
+>> To: Wilson Ding <dingwei@marvell.com>
+>> Cc: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; linux-arm-
+>> kernel@lists.infradead.org; andrew@lunn.ch; gregory.clement@bootlin.com;
+>> sebastian.hesselbarth@gmail.com; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; p.zabel@pengutronix.de; Sanghoon Lee
+>> <salee@marvell.com>; Geethasowjanya Akula <gakula@marvell.com>
+>> Subject: [EXTERNAL] Re: [PATCH v2 2/4] dt-bindings: cp110: Document the
+>> reset controller
+>>
+>> On Thu, Feb 20, 2025 at 03: 25: 25PM -0800, Wilson Ding wrote: > Add reset-
+>> controller sub-node into the system controller node, and > document the
+>> supported reset lines. > > Signed-off-by: Wilson Ding
+>> <dingwei@ marvell. com> > 
+>> On Thu, Feb 20, 2025 at 03:25:25PM -0800, Wilson Ding wrote:
+>>> Add reset-controller sub-node into the system controller node, and
+>>> document the supported reset lines.
+>>>
+>>> Signed-off-by: Wilson Ding <dingwei@marvell.com>
+>>> ---
+>>>  .../arm/marvell/cp110-system-controller.txt   | 43 +++++++++++++++++++
+>>
+>> NAK.
+>>
+>> You already got feedback that TXT bindings are not accepted.
+>>
 > 
-> This patch doesn't apply cleanly on top of tip/sched/core because of the
-> commit f553741ac8c0 ("sched: Cancel the slice protection of the idle entity").
-> Please rebase it.
+> I am not trying to use this TXT for dt-binding. But as you can see this file
+> describes all the sub-nodes details, such as mpps, clocks information. So
+> that I add the reset line info here. If this is not the right place, where shall
+> I put this information. I wonder if you are asking to convert this txt into
+> yaml.
+You just duplicated the YAML binding in TXT. If you wanted to reference
+the child, you would say something that there is a reset device in
+binding foo.yaml.
 
-Will rebase. Thanks!
+But yeah, ideally this entire binding should be also converted to DT
+Schema / YAML.
 
-> 
-> Thanks,
-> Madadi Vineeth Reddy
-> 
->> -	if (cse_is_idle != pse_is_idle)
->> +
->> +	/*
->> +	 * IDLE entities do not preempt others.
->> +	 */
->> +	if (unlikely(pse_is_idle))
->>   		return;
->>   
->>   	/*
-> 
-
+Best regards,
+Krzysztof
 
