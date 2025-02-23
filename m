@@ -1,152 +1,180 @@
-Return-Path: <linux-kernel+bounces-527573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CF22A40CBD
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:57:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40F3A40CC2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6C63BED01
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0642D17CAFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374031C84CB;
-	Sun, 23 Feb 2025 04:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8231C8609;
+	Sun, 23 Feb 2025 05:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdeojEYG"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0t1HU3dc"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12ECA2111;
-	Sun, 23 Feb 2025 04:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740286613; cv=none; b=mAevNnKnX8bjJcgCfboSRup5IG8xqqqPBCbF13SqLwKrjfZMEcauFMd+XB3QgntvGymYt9FDBMUQKmuMXafaP085G5G+K1mPlVpaA3XwYaAInWURCroK80BPaL9tSoUOg4aBfBF4ID2C08t+iRP0683pP8bqPAcdqtSknHQlv4s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740286613; c=relaxed/simple;
-	bh=qOtmpq6Kn/bx68wjyPlHMVkHYUO4AaaQVZr5vaOzrJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SBZZkQutFcrgyjEzwvKXs9q1Wc8oMC2PTnmkVVVuo0ajxulZRhCo40rV3FvDVDQIKTWgqzWJ2YPPaZlg4N1vzVeU8hCq5rY3aG+JP/erMZ9ZBOeV6tnGzvLB2VRdu7lBdjfjOjds2GLLwYy6GkNrKXBqULMNODYoce3Ld/c9m8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VdeojEYG; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c08f9d0ef3so215371985a.2;
-        Sat, 22 Feb 2025 20:56:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740286611; x=1740891411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DVe9AIae0UBiMWAPJhlgjyvPeRD+ylP6Mta15Skotg=;
-        b=VdeojEYGv/CFcZ6pfOjbcTm1xSfTbqdjK4ANLjMwtd3zaHPTlkVoFJZHHWb/bHT+/S
-         8Pd4nlTvCOoGwaZXmQEH3+BsT2BSpGRtMc0Gr3Zq0eJllqyLNhLRtoRQW6mbD+2vgepG
-         ZClEA0HznZftglLGWEqilYvBX3xOzBpj6Ui4ByTStozeS5ujHv+WPNmBNpv1ST9QPTR3
-         /+9QfLLf/XiNs3vUvGd14iMjJ37YOcqwhuCJZ1NEv+OysGkL/DDWpXR6CLcWdldrkedB
-         6v8NcD4OUqydr1FnnL6Y6vijOA0NhvM+CXcPbxephwuk/Lqp9wMTCQ+iONJ17J2Vksbq
-         Vz6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740286611; x=1740891411;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7DVe9AIae0UBiMWAPJhlgjyvPeRD+ylP6Mta15Skotg=;
-        b=PhNCw2MZk64Ku2pIyCdFjyFVhtz3ldkD981AKHboM9Bk+6h9Xq4pJ8KOBvSY4HoU5f
-         pSqG8GyzcqviTPiUcLq6YrEjK7l/d5iStNJk213WEhQ3sBZrcZPPnevUsjUnZ7yI6Kgn
-         gx1twmlzXCCu+RayNBdcR3HmEjNct+KiwIjNlMhXIaosB8b6r3wSTa35WDyDHe0nbh1Y
-         RAt/vPVDcM7EGVI2P3Q5Ls8Nf5Pjl0W7pTZiUAwXVmYo7a9ItIK1XjbgMD5FlEZ072da
-         24jHYnYKi8L7ebzT9bGAaKAMqFMeHK4t04vs761/rk2/7lihgaUFbmN60f3hcfeYJ4xA
-         OzSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVS05E1xLkgelltBSb7qXGZ8XgqXSgjXRj/WlNr3V6v+y60buOKhK8R27vtP1uKhZKoql6Rxv1QQjnSb40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3E1ybYBhE9ArpVpZ3PfQbkqYs0+HKeQd91oee6UiThhLXgDFg
-	2C47OxIzzm3FkBud7CXWBjSP4A6wPG7DzQmP6/ApQEYfjNrtiP5d
-X-Gm-Gg: ASbGncs859HvF6vhXZbP3T8Fh/C+UJ0/DHHDpig3RKfWUsjfAc4DltA1shmE1Al0BeX
-	I6JJFnQ2Z+gGr8MyD3Q1xOJP37Hf/7Tp57QidMccDFTFNTVr9rH46JFJtHO4wppNUd//kt6GJ+f
-	rnArKxsWtIMfc5SkpGSHBDMYAkiTiDC5Q6cOPHATGZC6t3qN1d3DOj0f7Oy4ZVBKVw8KSWu7+YP
-	aZEOO838mx1zeZvUFmtxJC+lbCTOHQRI9HRpRQO3JqyyT0xsba0RWCj7dVAov0bpXQLNbGKm0cO
-	6mrTvIVsywkjdECXnZFx33ymLOSzdSkIJE2EYXjybCVpQ4s=
-X-Google-Smtp-Source: AGHT+IGbd646ykaMg1S0WZNg+V+zr5Lv3mEvm4mIw5xeadGijDjJjMn247ac93CQKG451CQiCGoO6g==
-X-Received: by 2002:ad4:5bae:0:b0:6d8:8a60:ef2c with SMTP id 6a1803df08f44-6e6ae7cae9fmr120114636d6.2.1740286610890;
-        Sat, 22 Feb 2025 20:56:50 -0800 (PST)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:104d:377c:5733:f5b0])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d7791cdsm117409616d6.9.2025.02.22.20.56.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 20:56:49 -0800 (PST)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 2/2] tty: Change order of ttynull to be loaded sooner.
-Date: Sat, 22 Feb 2025 23:56:47 -0500
-Message-ID: <8413152.MhkbZ0Pkbq@nerdopolis2>
-In-Reply-To: <2025021957-babble-delivery-3035@gregkh>
-References:
- <20250217040748.2017975-1-adamsimonelli@gmail.com>
- <20250217040748.2017975-3-adamsimonelli@gmail.com>
- <2025021957-babble-delivery-3035@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F0817588;
+	Sun, 23 Feb 2025 05:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740287244; cv=fail; b=H422mhzevTzu+YM/F1bSuxkDVVU5eOrm85ICrs9Amc8bTSyDj15SLPa4Kia7UmJPr+VFh00a5DKv0bqGbCd5VOTp0QDhIdiIGl5y6U70G/43INe3LJjz4gPZDcx/SjKkAwq/AdJFcOKcD0lv+T1GOXd0JYbQee6ntreWAZ/Nv94=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740287244; c=relaxed/simple;
+	bh=cLYU7Opx+syvUIaMku/z7nW/2PBkhk8xPSx6s3laUyU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Is8He/qxQoyseqEWvDZsfDjyP7MHEyI2JLAsdmTSKyaam2xGalqnEE1+WEyMzFTJJfakUZBJ5/mFU62PY1kdZLzPs2/D/UaJPwQHzN1ssyxjnCeYGsoNtgoYEZLBg1E3gu4TEeE/va6tzYOwqpEYu6df0JNwoFOkvy7A5RuM/IQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0t1HU3dc; arc=fail smtp.client-ip=40.107.92.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FCqX75ODNOZ3b35XqxRKYvC+z+qgmT6DnkR352TnAmAtjkrY19PwxzJ6loQfJIJHsRzvHcmO6Onu0qz4XQwuFezQ/VWgdLrBcj/JfPAfO1zexPNz70uKHUEHLca2AOtLYGsQ9liLMFG24s4u3ns/TUZ3Vag6T+WT/aOZD47CPy1eRLfBzO7RU/MZaLfA9wkQg/14JlB2w82vNly1tJyMCti582niPPqk3L6FkaLoedVVB1Jg1+u2e0iUAAQHiwrPwov0hUgTkNj/Qt4fAsFhtDQc+MAsSTB0aWJUvIEvaMapELz+gY1lALThq5FsH0ew+gfK9Hg5F6bp/3+C823l1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=inQ+5QPTfvstZ78gK5507J/61Ig09sGIxO8Ibpb8+vY=;
+ b=ljXzmP0HllQD+/X0ksaNudMMZVx2UFbunLxwYSycSAr9lL2svUyMGZy6+1OFAOZa01S6Pm/5+pcGiwUKQzAOvH9bC+btkTspwJFYuCgRtVrR8WWoU5bTdjs3JfnPAoeMxBcRz5y7DtBsyaEb6FZQn7uLI/SLzBLMMEUChy/+ry4ckefbnGBbqQ3T4BFIEo7/K+pZnkKRtvS98P7ZkuhMLru2H9HkN4S5jMrBHtpEAJNU9HRlHcLmwxOYC3+HZdBT9rBs4KY9f3NA6dloElCJxxPZvjBV9Pmpt5G4LTk2Lo+n71u0ouft6KLKczRNAwMR//zsSUofZFJeAmajdQELmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=inQ+5QPTfvstZ78gK5507J/61Ig09sGIxO8Ibpb8+vY=;
+ b=0t1HU3dceNkHXnWKANN63yPilxbcgwqCP7J/WsYplJ1vqxxvzr+jgYLy2cv2xgOHmPwWrH4ruxrwZCr8M2s6I/zzeD/PJCgeoAvd9NoUlgUtIQIBLWDTJnSihYIxy5R/IjBBuGYS8z1fx2Qx61/xX3ZKLOHx1Hf7d3BCHlBubX0=
+Received: from MW2PR16CA0015.namprd16.prod.outlook.com (2603:10b6:907::28) by
+ SJ1PR12MB6172.namprd12.prod.outlook.com (2603:10b6:a03:459::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.15; Sun, 23 Feb
+ 2025 05:07:13 +0000
+Received: from MWH0EPF000989EB.namprd02.prod.outlook.com
+ (2603:10b6:907:0:cafe::30) by MW2PR16CA0015.outlook.office365.com
+ (2603:10b6:907::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.19 via Frontend Transport; Sun,
+ 23 Feb 2025 05:07:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989EB.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Sun, 23 Feb 2025 05:07:12 +0000
+Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 22 Feb
+ 2025 23:07:11 -0600
+From: Ashish Kalra <Ashish.Kalra@amd.com>
+To: <bhelgaas@google.com>, <ilpo.jarvinen@linux.intel.com>,
+	<alex.williamson@redhat.com>
+CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] PCI: fix bug introduced in pci_save_pcix_state()
+Date: Sun, 23 Feb 2025 05:07:00 +0000
+Message-ID: <20250223050700.4635-1-Ashish.Kalra@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989EB:EE_|SJ1PR12MB6172:EE_
+X-MS-Office365-Filtering-Correlation-Id: 31ae347e-726f-49a4-d694-08dd53c7eeff
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/SenL+zAXANmng8eEc9gkqn1qLblO7B3RAF3moQtgMF/YPuAnL1R3IuwAvjO?=
+ =?us-ascii?Q?ZrbVHKjstLYmq5AoR5dzlMXrEZkEhCnzO9NBcNiMGyhKNFqIq4Bh8hF/gAzT?=
+ =?us-ascii?Q?6UMKHpmmocCbyue3llvnyG+YMpSWLBbwXRCEIsfNew26HJuGWMazsg4UcdtW?=
+ =?us-ascii?Q?5pBtzH3/TLs+bN5ugWRsJL+hjXS4A2RyMjd80qr20R7bFoG5qDapJ1k88YMk?=
+ =?us-ascii?Q?u8TNoATOmpBpduzan62Nii9DClbSreUtHRqrLPr6cxKyUxTuoCurDCqk8vm+?=
+ =?us-ascii?Q?75A6fP5EoQ0csNoEZ0S06meeETRYirV1c9XhOCyM2g4S383lvQlmcY6FttWi?=
+ =?us-ascii?Q?mUuIZlcU2i5uM8O0lFM7KFdJH1QLFMa3tvXlT8d5kTp4xCbTz02T0xOca3uU?=
+ =?us-ascii?Q?xyDkw/I5AAKdWyvlvjkknYaqHDxLZPxGcU3OZc4KaZX7l4MtkXPt6RWjH4HF?=
+ =?us-ascii?Q?MKBkWSPTr6ImC2HSByOEHaE7pnb+vMfM4NLnifFYKD1RO75uYipBFanB1KGh?=
+ =?us-ascii?Q?+QWx4mPSPTOvn75sHMwmgkqJyZRzBaVzohZOgluBw3htwGlAi42e4BReLgIK?=
+ =?us-ascii?Q?jlxsBNg8QPZAWzOmaVKgUla+pZQqDe/ybSjYy8ic/oMu5+DvtxI5wJDTTzKh?=
+ =?us-ascii?Q?c6KlgbBtDfser3oPiW0po1iNL0d3MSw6oUHJq43bsDVIvk6I3ZP2VIvzCZl3?=
+ =?us-ascii?Q?60L/lwGJoNMNUVRlkUQon0r/hZhtD0h4CT2gd0qIpG2bnuzZqCZF2YusEIJZ?=
+ =?us-ascii?Q?Q+yl9zxsGEZwmDeDijAtW1CJITRRd7eqEMiiul9gDW8mz5UvscfRQVNH3ccs?=
+ =?us-ascii?Q?JCy7jTq1UOry2scLt3D/1ncdc9q69EvjmhvJKwW79vIS6QxQW1DJK4EGMLdI?=
+ =?us-ascii?Q?VCR2F4Pf1+dNv0CnBrP0GFUQP+xRMqx6yvZ2mlEqUnvP1WAhZRRE2PUfnSfI?=
+ =?us-ascii?Q?4SiDsSH1qDxKx2mD0CRLz/vYgxIYL2UzlqIPOGdD1c2DdBKrMG4XdIPaiM8o?=
+ =?us-ascii?Q?Um6+7g6mJ11pntt5+rNwKxeC1nDrnUdpXPoydZ8JIe/ntNIo1RDQVIFhI6hn?=
+ =?us-ascii?Q?iH7pD8I9wvXp99U1PqgUSSgr/idilhynt88PEVxHmlyDoj59E+jao7kIUc/V?=
+ =?us-ascii?Q?dOqvNovSy9lN7DHoVyd1Gkt6B5/4nHCA25NtDphT+TrLPegqY76ws9uBhWhL?=
+ =?us-ascii?Q?oSuxmcbpWp21m+h617Oox2HKKlx3JLE8uFuYk7DJvw/g1uqMGWd/YG5IRJGg?=
+ =?us-ascii?Q?+nC2Itf4TjLRvVpg59Dl+7icSchPzqXMy8DS5FWq70eANj0o6yt5NG9appmA?=
+ =?us-ascii?Q?d6vutntTaodsCyXs58weZEdjQyIXvF4qNTv7Ebot3Db0MXv4gloYarTKv3aN?=
+ =?us-ascii?Q?NHD58PQq80sI+apJjixyn1tGIBiJtqtGIPul8Dl4g1b2aNcEHeMWm2Vy4NIL?=
+ =?us-ascii?Q?5Uyw6CPV8PPRPclN4nBWCAQIqJTWXumExgcrZQQvg7HFhfE7XCwtbSYPF2aq?=
+ =?us-ascii?Q?QGvCqVGopwxQVIo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Feb 2025 05:07:12.8257
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31ae347e-726f-49a4-d694-08dd53c7eeff
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989EB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6172
 
-On Wednesday, February 19, 2025 9:03:08 AM EST Greg Kroah-Hartman wrote:
-> On Sun, Feb 16, 2025 at 11:07:48PM -0500, adamsimonelli@gmail.com wrote:
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > 
-> > If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-> > will become the default primary console device, based on the load order.
-> 
-> You mean "link order" right?
-Yeah, I'm sorry, I will change that.
-> 
-> > Users and distributions that are migrating away from CONFIG_VT will
-> > benefit from this as /dev/console would not suddenly become /dev/ttyS0
-> > which could otherwise cause some user space behavior changes, namely the
-> > TCGETS ioctl failing, which causes libc's isatty() to incorrectly return
-> > false when /dev/ttyS0 is disabled, and will prevent a device that is
-> > connected to a user's /dev/ttyS0 to suddenly start getting kernel log
-> > messages.
-> 
-> I'm sorry, but I can not parse that very long sentance.  If CONFIG_VT is
-> not enabled, this isn't going to change anything with ttynull, it will
-> just happen to have this console loaded before all others, right?
-> 
-> Which implies that this might break existing systems when this loads
-> before the expected platform-specific drivers.  Was this tested on those
-> systems?
-> 
-OK, next version of the patch, I think the commit message should be more more
-clear I hope.
-> > 
-> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> > ---
-> >  drivers/tty/Makefile | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-> > index 07aca5184a55..03bb47e11e1c 100644
-> > --- a/drivers/tty/Makefile
-> > +++ b/drivers/tty/Makefile
-> > @@ -11,6 +11,8 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
-> >  obj-$(CONFIG_N_GSM)		+= n_gsm.o
-> >  
-> >  obj-y				+= vt/
-> > +obj-$(CONFIG_NULL_TTY)		+= ttynull.o
-> 
-> If you are going to rely on link order here, and HAVE to have this above
-> all other consoles, please document it as such so that people have a
-> hint as to why you are doing this in the file so it dosn't change again.
-> 
-> thanks,
-> 
-OK. I will add some comments
-> greg k-h
-> 
+From: Ashish Kalra <ashish.kalra@amd.com>
 
+For PCIe devices which don't have PCI_CAP_ID_PCIX, this change in
+pci_save_pcix_state() causes pci_save_state() to return -ENOMEM error
+and causes e1000e driver probe to fail as follows:
+..
+[   15.891676] e1000e: Copyright(c) 1999 - 2015 Intel Corporation.
+[   15.921816] e1000e 0000:21:00.0: probe with driver e1000e failed with error -12
+...
 
+Fixes: 7d90d8d2bb1b ("PCI: Avoid pointless capability searches")
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+---
+ drivers/pci/pci.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index ccd029339079..685463ea392b 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -1743,14 +1743,14 @@ static int pci_save_pcix_state(struct pci_dev *dev)
+ 	struct pci_cap_saved_state *save_state;
+ 	u8 pos;
+ 
+-	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
+-	if (!save_state)
+-		return -ENOMEM;
+-
+ 	pos = pci_find_capability(dev, PCI_CAP_ID_PCIX);
+ 	if (!pos)
+ 		return 0;
+ 
++	save_state = pci_find_saved_cap(dev, PCI_CAP_ID_PCIX);
++	if (!save_state)
++		return -ENOMEM;
++
+ 	pci_read_config_word(dev, pos + PCI_X_CMD,
+ 			     (u16 *)save_state->cap.data);
+ 
+-- 
+2.34.1
 
 
