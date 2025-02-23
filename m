@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-527539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F66A40C72
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:57:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3968A40C75
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE16189FEC0
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D7007AB7CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC512BA38;
-	Sun, 23 Feb 2025 00:57:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28473944F;
+	Sun, 23 Feb 2025 01:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=empx@gmx.de header.b="TeOHdiiH"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7dq70mq"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06C2747F;
-	Sun, 23 Feb 2025 00:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E201417E;
+	Sun, 23 Feb 2025 01:04:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740272258; cv=none; b=N25I/zkv9Wh1+kKMbLwJ5DBGWQBKvFFFsBixl5K+KV0cS8HkxuEQlhyY8vmCLvn0aNDtbmwokUc0oF9qcPp5478ILqGAzC3uNgDiYzhaNVJyC148ybZJDqNdp6+F4imhKDuMUoi5/BJaiYZ06gPD7J37ODPHw1+y/0GTb62vDqw=
+	t=1740272645; cv=none; b=Q5OT0UC1WIBaZS5ifpQaBnOYG6RTQmqG1Bfm0MgPYgmjRXmcviZPw8BkZVWkQ4NU78fw0iB3tFfgB15s4GZUteWhVUdOGUCeH0K+0SIQ86O5Bh5VtDkjzgeX1IKoTJ23BBCIE5yKBhanyimle9HGhCRZOsCFLK8Ek5bJwHW5I2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740272258; c=relaxed/simple;
-	bh=24FyHwbbtE3R+lcYLPvbsuj0Xvo9HyC6yPeoSp7wSMg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=GQoqOybBWk9oQS1HVmh1v2/wiX6gCteCz0ftvibmIL5LpAbUDwIC2Erj+bzePr9hf7J6Ejuasx5nenlAmCsZEd11zwHYh7C2oXlkqTxsraq0Afwq26bOLkU9+t9Bsnp1HFOaG7iZ85WxH1OFJppT2fRX4t3o/HXjb/vsr89qcXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=empx@gmx.de header.b=TeOHdiiH; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1740272253; x=1740877053; i=empx@gmx.de;
-	bh=24FyHwbbtE3R+lcYLPvbsuj0Xvo9HyC6yPeoSp7wSMg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=TeOHdiiHiOcNLJiRtN1KTU/bi3/vIrBftOSRR1e+jpZ7SN3urD3HDZPmpWRp/GS7
-	 n1j2EMxjI4ki3CLJgLMbZbqvp+4T0SsGW/xPUBvL4hSenPeIV8INhWqMFsv0kaQrZ
-	 PI+nFgPPEtl8uE5D/uM8GhMdJAxPFQjGzit0jSXICg5nFRQpqHlziRYu18DoTYwub
-	 FWsVv60rHEOEOIbhn8LKvRtUL7wUh+DIpB/ZKWh1jYWpDKJ/7SQC/X758+f0P0aY7
-	 tKrHyUOuIdqt4wKPiGHHQKnzqhKn9AjEcd9Q/bkSpWxixo4kInymsw/f8zaSSRHxo
-	 mANJKXMEoP6QRWpOAg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ep.spdns.de ([185.94.38.157]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MF3DW-1tWYtR3LCK-00CT7a; Sun, 23
- Feb 2025 01:57:33 +0100
-Received: from [192.168.0.50] (M1.ep.spdns.de [192.168.0.50])
-	by ep.spdns.de (Postfix) with ESMTP id F13BE1695492;
-	Sun, 23 Feb 2025 01:57:31 +0100 (CET)
-Message-ID: <6ae5e229-c440-4522-a9d9-7581a7e0ce1b@gmx.de>
-Date: Sun, 23 Feb 2025 01:57:32 +0100
+	s=arc-20240116; t=1740272645; c=relaxed/simple;
+	bh=Ww/0bc1JUCYTULToRkhYf+3soQdu3u5h08izRnjSRK4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AsGYC9KJ8aD02jRQW+aiE6to9NQiek9WeA4zyAgWrZjadQCtojttXa6jyFOfPz+Xw9mWSF9zGEK0DKDXCs5nM48+Uki31pz89MezoLIShw3dkta+7xVKlYVHNoGeebncG5dMP9/RHqLH8cas0Vk3PNVgYUdXnpy3e3AaDAbChqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7dq70mq; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so3795554e87.1;
+        Sat, 22 Feb 2025 17:04:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740272642; x=1740877442; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=x8C1J25Jqyjs/L9E7dRONPDUFFLo3QFIy3Cj8CV+5hA=;
+        b=f7dq70mqA+QQPiLDqTxMC07xglZIEOWuAKB4O+KQJIBS9wSz7lmtHIM0R45Pf/OxH5
+         sBYfZ53qid3fnzDdua6Q3GTHjN0C496XOIUIJfuceg3cj9//k76/U59hnIna36j5IY32
+         DyG31wGdP8e/dqyIeMDMqe5ZSR5mLX1GvRUWXCpLL2jHl3jXvBDCqEl9IFysWOHSiqw/
+         n7XmUUYEE3mZtv0D0U3HKw0iGisJL0Zyw/riwyqpXV13pQOIUINNt9v5AsR1GSDOZM3J
+         njnXf+3HuxWpE7IdfSpI2uYb4h03LzZ0/zlrN9/gIw9CxrNbG74cO1Cfl+Mfd7AlQ1lq
+         e4ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740272642; x=1740877442;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x8C1J25Jqyjs/L9E7dRONPDUFFLo3QFIy3Cj8CV+5hA=;
+        b=gwgvcjiU7gFbiTegQBEW0I8RDLOtgIyUF7JmvneVa9le6EAjs3s0ZpWSjT3FFWibmm
+         EnV2dBlfyPlc1rAhOE5vyO0Rz7Is/gAHH5GXnc16k+3iMYELpHT2STGJHL9uO+mDbF7/
+         jkpDPR58N/oxylsRyZWiDvsA+x6wZ/EY5GHQOw5/f2MOj6YeDkgHSh2wc2D+Vg0/cS7F
+         3s+CkwQSm4sFGQkTovzIuQArvizfjhY1O7cQG9pdJXLJyskT9bUDVh/i+jsMcl0LZKNn
+         1cyU8rwZjNbb33muccNUFJq+968qWYh2m2uOx+EmQJ8yjZpTx/y5CfrkA8l48fuzRlCw
+         CYzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQpMPwlz0L8u0AW771sSVV57ShXiddoC2mffgXammgAPmBJB3QhyU4Ch17jwAvxXR37wLjMDOOIJrD@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE3RH/UYmSwGLSAovNDxxZ5DJW5uwO8c8P5P9GMLj4I+Ge8swy
+	QTJ2IHjmxlt4mOYib+3SNcXJhn/CNDGfjZf2ctFFrujm3j61BnIWKz2pnhPFmsekRpMUszHdGCi
+	l9rNUjgTs5WxIgeXcRsBbsyin7704bQCs
+X-Gm-Gg: ASbGncvZDnRG7ZtigDLWzfhvzpj5PZOkx2I5U2AOKhi/rA8GDdV5mSHJuNcd633deQY
+	26rGS2d8MmfD1E4GfpoAc2IMnDC2EeroUImb+VQaPZGhlI/u/5yBgg7KBypfAvSfmrXJ831xxkI
+	b/5wnq
+X-Google-Smtp-Source: AGHT+IHvPaRlIiVJP2tOoyKtiXyxVs0f5xua03Gz0EDSPoMxjtF0NP9789bfP25QA3+vmVegvODjKgnCdVTmetU+Q9E=
+X-Received: by 2002:a05:6512:2212:b0:545:54b:6a0e with SMTP id
+ 2adb3069b0e04-54838f7ac9amr3704277e87.48.1740272641695; Sat, 22 Feb 2025
+ 17:04:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: sashal@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, hkallweit1@gmail.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- nic_swsd@realtek.com, pabeni@redhat.com, stable@vger.kernel.org
-References: <ZrkqNUHo5rGKtbf3@sashalap>
-Subject: Re: [PATCH AUTOSEL 6.10 03/27] r8169: remove detection of chip
- version 11 (early RTL8168b)
-Content-Language: en-US
-From: =?UTF-8?Q?Michael_Pfl=C3=BCger?= <empx@gmx.de>
-In-Reply-To: <ZrkqNUHo5rGKtbf3@sashalap>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:m/H3/ycIJkKhix3kp/7EI2Al0yXtcINkCPsd8yM8fV+dZ5MKXSm
- v21VFFNPwokF1tFN6mLkTMQkWaBPpRaqvu9LNDxUl8X24apc+cAg87at27SdmdoQ4o6uLXb
- LpyOfh1XYbRLyINVbg2BX/ekvAzGVna/aP+dQHfRmsGKpcb1IIyjPkAMY2GZakAsfSDOVB5
- scECA9cIhIEGlMxv5PxBA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gsRDtAsX0Fs=;DAQCA6NFkp0a2N1jp3LC/UmwSrv
- oUeJu1TemMoW1qEd32mu1pr657s5bhBmLTg8MdXEiq5DzrysM4N+fGjqFa1MoP5H2E7sfvcjY
- l7GGtcl8C4kxxXLS5oOuEW28sPovU1fHRvDbfufoYC0Cvysb2cjM4Gq0CNO93z1UK3Qpa+q5m
- R1ooPxQJQDojYd/ZYNaOmxe1kectjqp69c2LZzKXd7wQJXllTD+BPI/jy0ApGuC6G4sy1agJB
- gJUurGog/yejQtmsZeUnJfb/AhY4p4PoVThCW029P5rf05CUXE9ZvMeK/3lHxNxyCn2upaEtm
- Wuqi8WnT0mhYYLzY/Xml/wQFjmn+WPyCudegyxZHm7Jv6e7dbMSd9ypaBT0+eiziG3fMPCbNL
- 347Hhx59RVfNz7f5WlNme35qAQ+xzOp7hCkqggdbTIIkQu5A1RjfomYHFlbDbx0cD+k0lh0bE
- +qYhc91tcgVor5+r7kvvdprH+DHIKpsdVrj+FB2y/zHoU3d70rxh1v6hShm7zv998qzBZoomx
- QEAz+qI74k3sJ3sBdR8vU/LLVlYU1dzmxm0mmJ6hTNN8TmkdGKf2VMXCfsMA5jJcBSFPhQXXM
- BzyPlbTrcC9Hvq16ORbAOZIcVwAfgL7CUPM98B2g+hAJRA5mDoN6TveJQrdfYiIaushy99qnE
- saiyUmSd/TujoKD1R0hn8JCn0SlGMXniHbLTL8G6FOoIb2KAtrOchDrj/++T4+AT5fcf2DFj5
- +S0nPh/xQEuZgvn2wwKWkXZHA5Wd2hsHNRIBaYjdfPcw2hKTDWiaq74wJP+smMW/0tz7z0bMD
- 7gXlt0iAzacN+lzNY2pnJr9ChcmyuFcj/j2bcSvi9ewzJTPyAYDYuZ9RoQt9g2SlUkyfcSey1
- 3Cc7S0MRDe8u7iIiw9+q7OFKq9XhwxX3vOQlO6wi1MAriUjCnEoqIB3cf3AJHewNFZSLW98LP
- ABUwxQ5tp3Jgn27zi8PpVXmW/1Hk7Dy36SSBkTn7I1A5AuFxcodTdKANSUiKWTHLZnQbkpWMZ
- 5XSd0+Z8RgNxKcx1r9qf+24aLuxi5rtOzvXX9QcJHONsH+w6hqN4iCoFizSNGdSgTGfKF9EHE
- bGJngaDutqtAKApY/0I/36iV6bnQ3aM/JX6faTuI6YCN0IfjNcH8uCAzo6tJCxjEVQolH93r/
- GwA5rjao3B75C37unZROXAgUAR651aEL0SBv8GftHVkgkbzz9YnGXbjYr6ZMhoHptQKBAzjbL
- htsLqmhLGky+CUQtU1sZtK/9CENeGHU8SuHY2Gx7kxEM+4ggNeBtjCQWqopfk18hBp5H9jn7L
- qnFbhOCFFEIHj27pMh3QBzp4Jb6IKogH8PsadxlvG/BrHkfjpNyvDWL7jqXPQFVrSsWrFJz0R
- 9A3xX+gTwTjr+YE5pmWXY+WGpfEIRa+MI0onQ=
+From: Steve French <smfrench@gmail.com>
+Date: Sat, 22 Feb 2025 19:03:50 -0600
+X-Gm-Features: AWEUYZmcAFT_HHCXcLlLwztRGdcQHKqiB_hfEPVxR6scXfJzJCZpneQBnBNvKkw
+Message-ID: <CAH2r5mt2PEH5ZOR6YP8wNSkaQGrAy0FJJB7bPT5VPxb3-kTAkg@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fix
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
- > Indeed, I ended up dropping from the wrong local branch yesterday
+Please pull the following changes since commit
+e9a8cac0bf895efe0bc7b11d174e8dae9b195da8:
 
-So it looks like the patch was kept in stable because i hit the problem
-now after upgrading from kernel 6.9 to 6.13. It's a PCIe card which was
-cheaply available in europe so it wouldn't surprise me if some more of
-these are around and in use. So, can we keep supporting that chip and
-revert the change, or do i have to get a new card?
+  Merge tag 'v6.14-rc3-smb3-client-fixes' of
+git://git.samba.org/sfrench/cifs-2.6 (2025-02-20 08:59:00 -0800)
 
-Regards,
+are available in the Git repository at:
 
-Michael
+  git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc3-smb3-client-fix-part2
 
+for you to fetch changes up to 860ca5e50f73c2a1cef7eefc9d39d04e275417f7:
+
+  smb: client: Add check for next_buffer in
+receive_encrypted_standard() (2025-02-20 12:10:39 -0600)
+
+----------------------------------------------------------------
+SMB client fix
+- Fix potential null pointer dereference
+----------------------------------------------------------------
+Haoxiang Li (1):
+      smb: client: Add check for next_buffer in receive_encrypted_standard()
+
+ fs/smb/client/smb2ops.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+
+-- 
+Thanks,
+
+Steve
 
