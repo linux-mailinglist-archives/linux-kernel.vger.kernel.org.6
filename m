@@ -1,74 +1,81 @@
-Return-Path: <linux-kernel+bounces-527990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED302A41210
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:41:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2670A4122D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FA91723FA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4345B3AB297
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C07A205AAF;
-	Sun, 23 Feb 2025 22:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0358204C26;
+	Sun, 23 Feb 2025 23:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W23+HYN7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GH+/GYpV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057F710A3E
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35FB1C863A
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740350458; cv=none; b=gErVqmYlIz6+WKGqox0BKjkPIjYJfu6Q0cNMBt87k0LP7Lso2TxiZubVMaJaFjmb+StFlHiLz1ps55ZDnJk8UnutX7+2miwOilSj3T/OFT8bUms2OHcSHnWxULOFDDu2Uhb41T6b6FLvT/euXFJ2tM6JDzsYZVD1V0B3fukTi8U=
+	t=1740352188; cv=none; b=lEgH9oeV9wKWazegh8yog8OfXROm9ZKp4uB7c2sAUn6Kc5NtlxQyv5/2yQ/MnYJopsxjhnA5fcLE1BHWfjJP0ydEwibELm9WSmsJyLwuym7/YdQm5VLVY/c3TbapEwIte1soSrYNrrtOSITItQTxsJDtgwyTwWnNhXyEtuEYnY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740350458; c=relaxed/simple;
-	bh=0nuSDhuzFLm64k3Idwk2BhZz2ij8tq5LOr86gPWatK4=;
+	s=arc-20240116; t=1740352188; c=relaxed/simple;
+	bh=/etoAdx0C4MyBW5FOEp4CL7fGOnAi3a+SCK47+Omde8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ILg3MuzKApN7HopYz1ODw5ay+zBmS4mvoz5+hb6a0nKPpKBfoM1qbT9+jmstZIpg8HsRT4vDD4eJzwI6xmZLQHNp93SX3jkRDPjPDauIsigsN4VbUZbR8JIcG+pig0A8U/2encsRVMwb3hqn7WbulCI5H2qBzU9HX/iARZ4BQNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W23+HYN7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740350454;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zfK2feKYUeIxgFLS+BzcteAF/4eQOCID9AREDiJXLHU=;
-	b=W23+HYN7NGVUhDiLDaGR4Smkcb84aQ5mXQeomBDUXwWUQ1+pTPqmFl9Re1nWVQksMA6rRf
-	ibOoI5QtSMQp9ypMmcD+ukviWmVgpT8opKyWFkIwBIjvf5YBjGLnbjngZK7D2MMCcKFW1e
-	K051oU7spDEw1YVAjw8/EDnCSjTokZ4=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-LcYiULkSP7qmVnFgDhgLBw-1; Sun,
- 23 Feb 2025 17:40:51 -0500
-X-MC-Unique: LcYiULkSP7qmVnFgDhgLBw-1
-X-Mimecast-MFC-AGG-ID: LcYiULkSP7qmVnFgDhgLBw_1740350450
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EF43F18EB2C6;
-	Sun, 23 Feb 2025 22:40:49 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.42])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3569A1800877;
-	Sun, 23 Feb 2025 22:40:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 23 Feb 2025 23:40:20 +0100 (CET)
-Date: Sun, 23 Feb 2025 23:40:15 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] task_work: Consume only item at a time while invoking
- the callbacks.
-Message-ID: <20250223224014.GC23282@redhat.com>
-References: <20250221170530.L3yMvO0i@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHgz1UnXYzPhhgJSgrIxNLvrTqc4Vubl5q1znM7tTJv49ypv0nmuxEOG0TWqMRu/L7XuqaExThGqbKyTDQyGMSN+JV+PipVhPHQRLs2ZBuIHrEI2co7muEiQ2lP9xFaWcanUkplTSWm7fpfRVeahcYDjWQSOeQCv5Q6WqQJg+Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GH+/GYpV; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740352187; x=1771888187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/etoAdx0C4MyBW5FOEp4CL7fGOnAi3a+SCK47+Omde8=;
+  b=GH+/GYpVVg4AFVaRHJQ9rNw/I0VH7LzC5e6AUjGFFiWa7Ef6bGhamlOC
+   5PHLiHIUam3pQ2l7Va/EgbM1aFcJaxiZ5e7RDtzRon8cEHQOIJoxIHkTX
+   mJTP6DJXk+G6RdA9brQORyyWw36f//EWHDRPTi1VmbmA1bmT1odltOz8f
+   n6Dno5+XyeXfGbwHPG+XbnLNVDfKjauYOnoeNthWz4EaEhzC2Tb6+F4ad
+   4jlwjiXuPojyXfZQ6ni9EPFDwybhSxrapl9fXhojsV8RhrnCXnhQ647ui
+   4SH8Rubxr2gSOP/gfaaEKEm9h+SRzWHz4aUw7Lw2a68O2DXy4qRADCxwc
+   A==;
+X-CSE-ConnectionGUID: XeEDiCz9SMuF2pQZoFMMVg==
+X-CSE-MsgGUID: JNja1g2eSJGFnC5vm5rr+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="41362409"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="41362409"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 15:09:46 -0800
+X-CSE-ConnectionGUID: tpxN0n8yTtOpkyhKwvobMQ==
+X-CSE-MsgGUID: NWgQYDqbQeyrjWwteCCA6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="116377073"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 23 Feb 2025 15:09:41 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tmL6Q-0007eV-2a;
+	Sun, 23 Feb 2025 23:09:38 +0000
+Date: Mon, 24 Feb 2025 07:08:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rik van Riel <riel@surriel.com>, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	bp@alien8.de, peterz@infradead.org, dave.hansen@linux.intel.com,
+	zhengqi.arch@bytedance.com, nadav.amit@gmail.com,
+	thomas.lendacky@amd.com, kernel-team@meta.com, linux-mm@kvack.org,
+	akpm@linux-foundation.org, jackmanb@google.com, jannh@google.com,
+	mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org,
+	Rik van Riel <riel@surriel.com>
+Subject: Re: [PATCH v13 08/14] x86/mm: global ASID context switch & TLB flush
+ handling
+Message-ID: <202502240650.kzshiji7-lkp@intel.com>
+References: <20250223194943.3518952-9-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,102 +84,191 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221170530.L3yMvO0i@linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250223194943.3518952-9-riel@surriel.com>
 
-Well... I won't really argue because I can't suggest a better fix at
-least right now. Most probably never.
+Hi Rik,
 
-However, let me say that this patch doesn't make me happy ;) See below.
+kernel test robot noticed the following build errors:
 
-On 02/21, Sebastian Andrzej Siewior wrote:
->
-> Oleg pointed out that this might be problematic if one closes 2.000.000
-> files at once. While testing this scenario by opening that many files
-> following by exit() to ensure that all files are closed at once, I did
-> not observe anything outside of noise.
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/x86/mm tip/master linus/master v6.14-rc4 next-20250221]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-and this probably means that we can revert c82199061009 ("task_work: remove
-fifo ordering guarantee") and restore the fifo ordering which IMO makes much
-more sense.
+url:    https://github.com/intel-lab-lkp/linux/commits/Rik-van-Riel/x86-mm-consolidate-full-flush-threshold-decision/20250224-035335
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20250223194943.3518952-9-riel%40surriel.com
+patch subject: [PATCH v13 08/14] x86/mm: global ASID context switch & TLB flush handling
+config: x86_64-buildonly-randconfig-004-20250224 (https://download.01.org/0day-ci/archive/20250224/202502240650.kzshiji7-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250224/202502240650.kzshiji7-lkp@intel.com/reproduce)
 
-But:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502240650.kzshiji7-lkp@intel.com/
 
-> Fixes: c5d93d23a2601 ("perf: Enqueue SIGTRAP always via task_work.")
+All errors (new ones prefixed by >>):
 
-Yes. So, to fix this specific problem in perf this patch changes task_work.c
+   In file included from <command-line>:
+   arch/x86/include/asm/tlbflush.h: In function 'in_asid_transition':
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:522:23: note: in definition of macro '__compiletime_assert'
+     522 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:542:9: note: in expansion of macro '_compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:522:23: note: in definition of macro '__compiletime_assert'
+     522 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:542:9: note: in expansion of macro '_compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:522:23: note: in definition of macro '__compiletime_assert'
+     522 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:542:9: note: in expansion of macro '_compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:522:23: note: in definition of macro '__compiletime_assert'
+     522 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:542:9: note: in expansion of macro '_compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |                            ^~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:522:23: note: in definition of macro '__compiletime_assert'
+     522 |                 if (!(condition))                                       \
+         |                       ^~~~~~~~~
+   include/linux/compiler_types.h:542:9: note: in expansion of macro '_compiletime_assert'
+     542 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
+      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
+         |         ^~~~~~~~~~~~~~~~~~
+   include/asm-generic/rwonce.h:49:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
+      49 |         compiletime_assert_rwonce_type(x);                              \
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/linux/compiler_types.h:498:27: note: in definition of macro '__unqual_scalar_typeof'
+     498 |                 _Generic((x),                                           \
+         |                           ^
+   include/asm-generic/rwonce.h:50:9: note: in expansion of macro '__READ_ONCE'
+      50 |         __READ_ONCE(x);                                                 \
+         |         ^~~~~~~~~~~
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+   In file included from ./arch/x86/include/generated/asm/rwonce.h:1,
+                    from include/linux/compiler.h:354,
+                    from include/linux/build_bug.h:5,
+                    from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/swait.h:5,
+                    from include/linux/completion.h:12,
+                    from include/linux/crypto.h:15,
+                    from arch/x86/kernel/asm-offsets.c:9:
+>> arch/x86/include/asm/tlbflush.h:253:43: error: 'mm_context_t' has no member named 'asid_transition'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                                           ^
+   include/asm-generic/rwonce.h:44:73: note: in definition of macro '__READ_ONCE'
+      44 | #define __READ_ONCE(x)  (*(const volatile __unqual_scalar_typeof(x) *)&(x))
+         |                                                                         ^
+   arch/x86/include/asm/tlbflush.h:253:22: note: in expansion of macro 'READ_ONCE'
+     253 |         return mm && READ_ONCE(mm->context.asid_transition);
+         |                      ^~~~~~~~~
+   make[3]: *** [scripts/Makefile.build:102: arch/x86/kernel/asm-offsets.s] Error 1 shuffle=3847572294
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=3847572294
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=3847572294
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:251: __sub-make] Error 2 shuffle=3847572294
+   make: Target 'prepare' not remade because of errors.
 
-And after this change we can never enforce a "clear" ordering, fifo or even lifo.
-The ordering is simply "unpredictable/random".
 
-I'll try to find and read the previous discussions tomorrow, but iirc Frederic
-had another solution?
+vim +253 arch/x86/include/asm/tlbflush.h
 
-Oleg.
+   247	
+   248	static inline bool in_asid_transition(struct mm_struct *mm)
+   249	{
+   250		if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
+   251			return false;
+   252	
+ > 253		return mm && READ_ONCE(mm->context.asid_transition);
+   254	}
+   255	
 
-> --- a/kernel/task_work.c
-> +++ b/kernel/task_work.c
-> @@ -194,7 +194,7 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
->  void task_work_run(void)
->  {
->  	struct task_struct *task = current;
-> -	struct callback_head *work, *head, *next;
-> +	struct callback_head *work, *head;
->
->  	for (;;) {
->  		/*
-> @@ -202,17 +202,7 @@ void task_work_run(void)
->  		 * work_exited unless the list is empty.
->  		 */
->  		work = READ_ONCE(task->task_works);
-> -		do {
-> -			head = NULL;
-> -			if (!work) {
-> -				if (task->flags & PF_EXITING)
-> -					head = &work_exited;
-> -				else
-> -					break;
-> -			}
-> -		} while (!try_cmpxchg(&task->task_works, &work, head));
-> -
-> -		if (!work)
-> +		if (!work && !(task->flags & PF_EXITING))
->  			break;
->  		/*
->  		 * Synchronize with task_work_cancel_match(). It can not remove
-> @@ -220,13 +210,24 @@ void task_work_run(void)
->  		 * But it can remove another entry from the ->next list.
->  		 */
->  		raw_spin_lock_irq(&task->pi_lock);
-> +		do {
-> +			head = NULL;
-> +			if (work) {
-> +				head = READ_ONCE(work->next);
-> +			} else {
-> +				if (task->flags & PF_EXITING)
-> +					head = &work_exited;
-> +				else
-> +					break;
-> +			}
-> +		} while (!try_cmpxchg(&task->task_works, &work, head));
->  		raw_spin_unlock_irq(&task->pi_lock);
->
-> -		do {
-> -			next = work->next;
-> -			work->func(work);
-> -			work = next;
-> +		if (!work)
-> +			break;
-> +		work->func(work);
-> +
-> +		if (head)
->  			cond_resched();
-> -		} while (work);
->  	}
->  }
-> --
-> 2.47.2
->
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
