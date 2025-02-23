@@ -1,100 +1,162 @@
-Return-Path: <linux-kernel+bounces-527744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 035CAA40EED
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:26:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D339A40EF2
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 13:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0108189AAA4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A8D77AA340
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ABF206F09;
-	Sun, 23 Feb 2025 12:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE752063C8;
+	Sun, 23 Feb 2025 12:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="eRTbiZ7C"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 913861FDA86
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 12:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gorM4qOW"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BCB2AD1C;
+	Sun, 23 Feb 2025 12:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740313452; cv=none; b=FmQbw/3rj9yrDRPVopNcRBdCHFbuZqIRO7+JBnhGBfphOTE3eDWA4r/dHawsEWyV01Xni91GkxJifiUF+OewCtdBeT4U7yuced0b6Rt1CCQUe0Jqo61fxkwRAX+/Fp5jdxxgG9Risq5ebLmHT1dtWk6W9utgwbwBoqkjtFkuJF4=
+	t=1740313850; cv=none; b=ja/f0yyL5vfQqs9JU90RJZBaQKm5tmdib4ZrJqTJ9bBxQHmjRb1O2bsfsRjro+1JXWigDKDHEPrlbrcEWHRVBjPP1OWtomKoZJ7fe2fN2009K9qhZE8cM+rpr01ueZBYFvLMg9OBN3YlRSnpry9xkZjpeMgOqMa6qAH1jzxSCos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740313452; c=relaxed/simple;
-	bh=SAtjKJzWIpJyRrFIuLsbqjKbdqlRUwzMsn7039kipes=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kjFq05uPpZNwsZMJ1dbDQELsxkArg0nZWjQbQg005AGcptG6hCLkAPtfythAQcy+eyoY7eJHKKzZkYjERglgUg1TFbwFNaUcoqqHCT5XMjNqA9aqZWSXPxU2RX1xBvmM8G2We0YlP5t1DmGrwwHnAGNzbBbUfHOPYTHmhhOAPO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=eRTbiZ7C; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=snjxivABr1OyDqYb2NVPxunB52diksXhIJ5NrLLPtwA=;
-	b=eRTbiZ7C2HzhplWvs668ZS3GL4umJm5x5LFASkoRGSETScNulnTjRECIP0N2qg
-	LJjI6/yLL6PMYe+JlohMdMxDdVmqHgYcs0gZQvAkH4G1m3innCX8fH44Vsh6zIYZ
-	T3hF4SScFaLi4FR8iEYTSyqXI1z3qju5RjMO1iamFp4TI=
-Received: from dragon (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgBHbxscE7tnTfSOCQ--.21898S3;
-	Sun, 23 Feb 2025 20:22:54 +0800 (CST)
-Date: Sun, 23 Feb 2025 20:22:51 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Mark Brown <broonie@kernel.org>, soc@lists.linux.dev,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1740313850; c=relaxed/simple;
+	bh=ikLoAe4mqVpFAFpnUnV85cz1XltN39PolBkyuiIc+Vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sHLXaPGjLyf/aE8DSVgpWgvaGdRTE6T08Gpu2h4JN5rLqg+6eSVAaYS062tgaCLgZhJGy27HqazMV/d56Gj803BYlKDmCTElzXI4bsNgeRDEIEqZus53ImYtEEkwFoVFov91IYJhUODZt8OyGpgQTbfR+XYibbX664qjQnMYWyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gorM4qOW; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso35271315e9.1;
+        Sun, 23 Feb 2025 04:30:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740313847; x=1740918647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eXqHi+96U8DE66IBSv5ozW+UKbtywue+9B2TMWS46o8=;
+        b=gorM4qOWWnRjZi7/VJNzQfK4TuVNIgKZx4pJwdwSRnC6jSa402g05Tj6owZOroqJDF
+         Mvtey8Z/jFacxb54Lu9Sid9YztKfyvVxCErCWvXGFDc+srfp0qLy27FL0aBtKwhqzk13
+         F1cxhIP9czJVea8M06jqcO4tTF7h1nadvi6wnwSSAGNQU62apHpvOQLC8EWDypBRJDe/
+         pJM9ZOgLD+LTaJQrT+qr+ba7aIYmJ9b2OCSXxCQM4KaZOyy6HGLDBabwsw8P352vxI7T
+         o+bAUCAFNcFaYgSHsef/W9AZHKt9yHNTxs1R52K8krqy5nZUsP+LrAlaV2H6fFoGLk6j
+         2I+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740313847; x=1740918647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eXqHi+96U8DE66IBSv5ozW+UKbtywue+9B2TMWS46o8=;
+        b=p5YCBhQzFyU79RL+G6zpOiiodyxuRZTfTNqAKuV/x9nbGv82HO+x4JsYbEM0JljrWF
+         QohnxYuytxDMTgJToJpkoDaDBPH/cyeXQcbX7gcj2HtOIvtbDu35saZidz0e4cboNKir
+         yN7uKZBhdBmiDK5r2qErHAbgPP1yF0TWA0ILlcQ+/1ZLJ7gKQWuc0fJGHOuCZrERZDMb
+         OvXXaQI1DeT/ys9HXVfcn5HHM8BSWi+oCn0FdGCXVDxNsqte8DQLWItTxKRX1zR+w4GE
+         RGiTxggIdStWCHu5GqRd+0eGmcTd8cvSF06d/Is1xWId04mcl9AJVcBEcq2hFH0E/qEz
+         ANMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ6ZWtDsVCLsvhxLTdxZQqju3QYMCZ6Rjh8M9wC9Jinl9ITi7EmCfb+6ddjFiTimx6wD9jVyKKJzqhe789@vger.kernel.org, AJvYcCWYT+vKulfkLfDmWIQ0NX1B26mmK685zfLQyA0Avb3XA9dhCHb7/Xy7v4caqdBvUiIwHK+GR76DxeG8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWAK++axlcu76U0sqQ65+wC+8oDjihJ50q8FouwWJPQ4CexNbt
+	6u6tUsZnVArRDn0rS9WW816SSr1b+fnpwBwC6qcmbkaKjajl24Ei
+X-Gm-Gg: ASbGncuUVtoGYO3/PPh4mPW4W6lHnoFGDLiLR/j2SfKHDghFAUSg2e0g0hUKynTcDVW
+	MJ2usi31cNg/F+qwxV7zK/xBGDGflOKKa74lnbb1fCfc6/OmPOF6ayBc1gR/BwSIlxebZqfEip1
+	dWsg6EOjGaXNSGhcK/IOt8aplHQQbqlDZE3H7uIK///eUIPV5I36JuUyvGJIl5vD30PAO+mwm4n
+	5LnSYGQ8UAwnYbunBEOP+PSsGgBjzY8p3H7Jz+bHO6H9z8DoTUKLgxc32k6M56UlXlvhAdz7VBN
+	58iizlUesVrdIIC34lG9j9UX9rjBmCAF9sNF6ZyOcGLj4EIu949Ia43F8T49ciVsVDyOrMoXI+p
+	ycQ==
+X-Google-Smtp-Source: AGHT+IHG4/4YB1K+lr5+3mLAj1UHPyPnxgbTM9pHrmIXg39uKwLK46eTLD1PeNVsgfYMaSy2k340EA==
+X-Received: by 2002:a05:600c:4f88:b0:439:96aa:e502 with SMTP id 5b1f17b1804b1-439ae1e6a2fmr90254375e9.12.1740313846813;
+        Sun, 23 Feb 2025 04:30:46 -0800 (PST)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b030b2c8sm77061935e9.25.2025.02.23.04.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 04:30:46 -0800 (PST)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH resend] firmware: imx: IMX_SCMI_MISC_DRV should depend on
- ARCH_MXC
-Message-ID: <Z7sTG4yMsek11nLe@dragon>
-References: <9638976432d8dfcb0c4df9d454b661f9022a2d7b.1738766259.git.geert+renesas@glider.be>
- <Z7rMdg7+m6qa0Hft@dragon>
- <CAMuHMdW=ZH7D+m54rh-25nFShCYhRhEjkjaB1LtOrRF5RyrXiQ@mail.gmail.com>
+Subject: [PATCH v2 0/4] arm64: dts: exynos: add initial support for Samsung Galaxy S22+
+Date: Sun, 23 Feb 2025 14:30:40 +0200
+Message-ID: <20250223123044.725493-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW=ZH7D+m54rh-25nFShCYhRhEjkjaB1LtOrRF5RyrXiQ@mail.gmail.com>
-X-CM-TRANSID:M88vCgBHbxscE7tnTfSOCQ--.21898S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur45ur18tFW3AFWUGFykZrb_yoWDGwbEyr
-	4vkw1DC345GryDCF1qgr1avr17t3y2qFWYq3s5Ga17WayfXayDAFn5CrWfAwnakay0gF1a
-	krnIqrnYk34aqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUnI38UUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgH8ZWe63ifITQAAsr
+Content-Transfer-Encoding: 8bit
 
-+ Uwe
+Hey folks,
 
-On Sun, Feb 23, 2025 at 09:29:29AM +0100, Geert Uytterhoeven wrote:
-> Hi Shawn,
-> 
-> On Sun, 23 Feb 2025 at 08:21, Shawn Guo <shawnguo2@yeah.net> wrote:
-> > On Wed, Feb 05, 2025 at 03:41:43PM +0100, Geert Uytterhoeven wrote:
-> > > The i.MX System Controller Management Interface firmware is only present
-> > > on Freescale i.MX SoCs.  Hence add a dependency on ARCH_MXC, to prevent
-> > > asking the user about this driver when configuring a kernel without
-> > > Freescale i.MX platform support.
-> > >
-> > > Fixes: 514b2262ade48a05 ("firmware: arm_scmi: Fix i.MX build dependency")
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Thanks for the patch, Geert!  But I have just picked up the change from
-> > Uwe [1].
-> 
-> Thanks, but mine has been upstream since Friday ;-)
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=be6686b823b30a69b1f71bde228ce042c78a1941
+This patchset adds device tree files for Exynos 2200 and Samsung
+Galaxy S22+.
 
-Ah, Arnd beat me to it.  Thanks for information!
+Exynos 2200 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy S22
+(r0s), S22+ (g0s), S22 Ultra (b0s) Add minimal support for that SoC,
+including psci, pmu, chipid, architecture timer and mct, pinctrl,
+clocks and usb.
 
-Shawn
+The devices using this SoC suffer from an issue caused by the stock
+Samsung bootloader, as it doesn't configure CNTFRQ_EL0. Hence it's
+needed to hardcode the adequate frequency in the timer node,
+otherwise the kernel panics.
+
+Another issue is that cpu2 and cpu3 fail to come up consistently, which
+leads to a hang later in the boot process. As A510 cores are clustered
+by two, it makes sense for both of these cpus to fail if there is a
+power issue. Disable them until the problem is figured out.
+
+Samsung Galaxy S22+ (SM-S906B), codenamed g0s, is a mobile phone from
+2022. It features 8GB RAM, 128/256GB UFS 3.1, Exynos 2200 SoC and a
+1080x2340 Dynamic AMOLED display.
+
+Further platform support will be added over time.
+
+I expect [1], [2], [3], [4], [5], [6] to be merged before this patchset
+because it relies on the aforementioned series for drivers and device
+tree bindings.
+
+[1] https://lore.kernel.org/all/20250215112716.159110-1-ivo.ivanov.ivanov1@gmail.com/
+[2] https://lore.kernel.org/all/20250215113248.159386-1-ivo.ivanov.ivanov1@gmail.com/
+[3] https://lore.kernel.org/all/20250223115601.723886-1-ivo.ivanov.ivanov1@gmail.com/
+[4] https://lore.kernel.org/all/20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com/
+[5] https://lore.kernel.org/all/20250215123453.163434-1-ivo.ivanov.ivanov1@gmail.com/
+[6] https://lore.kernel.org/all/20250215123922.163630-1-ivo.ivanov.ivanov1@gmail.com/
+
+Best regards,
+Ivaylo
+
+Changes in v2:
+- mention the board codename in the first patch's commit message
+- make all reg values hex in device trees
+- reorder usb_con above usb_dwc3
+- drop regulators for usb_con
+- remodel usb_con_phy to take usb_hsphy phandle
+- include MAINTAINERS patch in this patchset
+
+Ivaylo Ivanov (4):
+  dt-bindings: arm: samsung: document g0s board binding
+  arm64: dts: exynos: add initial support for exynos2200 SoC
+  arm64: dts: exynos: add initial support for Samsung Galaxy S22+
+  MAINTAINERS: add entry for Samsung Exynos2200 SoC
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |    6 +
+ MAINTAINERS                                   |   12 +
+ arch/arm64/boot/dts/exynos/Makefile           |    1 +
+ arch/arm64/boot/dts/exynos/exynos2200-g0s.dts |  175 ++
+ .../boot/dts/exynos/exynos2200-pinctrl.dtsi   | 1765 +++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi    |  560 ++++++
+ 6 files changed, 2519 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-g0s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos2200.dtsi
+
+-- 
+2.43.0
 
 
