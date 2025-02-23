@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-527772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBD3A40F49
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:35:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8321DA40F4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 15:36:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43121188B9CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7464B171998
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 14:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5ECF2080D4;
-	Sun, 23 Feb 2025 14:35:41 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8348D20967B;
+	Sun, 23 Feb 2025 14:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LKlyMevr"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED971DB548;
-	Sun, 23 Feb 2025 14:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF2C1DB548;
+	Sun, 23 Feb 2025 14:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740321341; cv=none; b=rHFGFOq5QieKLSmkZbQdJ7KcsPeQp251iRKfF5a509KecwtKK5CyW4rBk0+niFsZdhwC23inRI9FkNOwOZZxq0RXQOfo0ogkjHgN1/9k4ddsGmrCrAQI22bGU9NEOp03VnVILCRSCUM9AlnI4bBmVB0q0yMEHTrl9jqmZzY6yRo=
+	t=1740321404; cv=none; b=dU/OC44E2gosOuWKxbD1jsox2kGgM3+Uu+cZaFDzvCS2ntIDJyszf373Wl7AWsTylwWNDfL3K8rh4bfvu7j/DIvRhu3zRjs6meZe/iZr+MX0MZboDjYDq/1ZEGc1ghBdGjSJPxI9mEyfgvsArOFnbw/k8HWFUO7/00aSqmrKxXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740321341; c=relaxed/simple;
-	bh=S/4W+YLqPBFiEMJLqaBlV8vLZnmayjH5UEE/GmTDXs8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o80eMAaOTnLvVvuPRzH1dKbtA51A+hDJJUn5HPwMibineACgoJTfXk7VTDOPNzcjqtLtbHkTgs59ivuRlaueRKwdmR1T1xn+A/geFZmeQWGIz7KPrrA9CApGrprBJajYjxbu1sz4OZZhdfy90NHXFKSZ4qASxxRa1SdMP7TWmto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 85DA2B81D9;
-	Sun, 23 Feb 2025 14:34:42 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf10.hostedemail.com (Postfix) with ESMTPA id 06E672F;
-	Sun, 23 Feb 2025 14:34:35 +0000 (UTC)
-Message-ID: <3ccc3d3e756e82af53b4f75c4ab9cc99e555da1a.camel@perches.com>
-Subject: Re: [PATCH V5 2/2] checkpatch: throw error for malformed arrays
-From: Joe Perches <joe@perches.com>
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
- a.hindborg@kernel.org, 	alex.gaynor@gmail.com, aliceryhl@google.com,
- apw@canonical.com, arnd@arndb.de, 	aswinunni01@gmail.com, axboe@kernel.dk,
- benno.lossin@proton.me, 	bhelgaas@google.com, bjorn3_gh@protonmail.com,
- boqun.feng@gmail.com, 	dakr@kernel.org, dwaipayanray1@gmail.com,
- ethan.twardy@gmail.com, 	fujita.tomonori@gmail.com, gary@garyguo.net,
- gregkh@linuxfoundation.org, 	lukas.bulwahn@gmail.com, ojeda@kernel.org,
- pbonzini@redhat.com, tmgross@umich.edu, 	walmeida@microsoft.com
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 23 Feb 2025 06:34:35 -0800
-In-Reply-To: <20250223002119.2432-3-trintaeoitogc@gmail.com>
-References: <20250223002119.2432-1-trintaeoitogc@gmail.com>
-	 <20250223002119.2432-3-trintaeoitogc@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740321404; c=relaxed/simple;
+	bh=2KgC6MCkhEmpH6nWjdCdSB0RNj3vB2gXxjeLT9L1Qrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHDFxwF+oUyDWMZWxVAJEOQkYPj0YyZ6e4tZvn8FU59sv/Fm/cLLW4i7BYsJkNk0DBJirxSMq7VlivAW/l9DjTNybVsYcwk3KMTcfOsH+zRCto8b0FO8sgrAikghro5876489ldRRlyJ52iH6AJTYd6kWMjwP7URwgZi67W8vqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=LKlyMevr; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id E27A7496;
+	Sun, 23 Feb 2025 15:35:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740321308;
+	bh=2KgC6MCkhEmpH6nWjdCdSB0RNj3vB2gXxjeLT9L1Qrc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LKlyMevr/vwdDIMzahaxunZdjm20vY6ZsDLplhgn55UbpAQ6PS8QmrL8x1W2LkEad
+	 EayCHb2Geo4pQ3TGDpP+wH5OHfvQYFkV3qpFLgvA9fpkZJm5LZhM06HtzIWRAdpq1z
+	 IkIiZN7pPxz1ckKcjmBpMErn5Ru6Re6TGOTFLi38=
+Date: Sun, 23 Feb 2025 16:36:17 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] media: uvcvideo: Fix deferred probing error
+Message-ID: <20250223143617.GA27463@pendragon.ideasonboard.com>
+References: <20250129-uvc-eprobedefer-v1-1-643b2603c0d2@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Stat-Signature: h7z75neheimcbby7aqpuc9hsqhew13ss
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 06E672F
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1/Uyv2/o6G5DO6f9Ko/Le6bwc4zAd8K2bA=
-X-HE-Tag: 1740321275-503264
-X-HE-Meta: U2FsdGVkX1/56NPq0mWbL0T1zCvh170oWjpbgD9WjUhsFmy+assQ+cqrGuankm2LejnpLxfbjYLpVQGO9S414dH/kNy6WEcC67zyyzeDsqdbtSrdzpZiq9Po4QjKGu6ruBo9isdoUpidFucXaoYOTKzGRldT9eFA/F7lAhkPmzeqJdrBddM/acCYgODZuVQRRzUOVbjDyOmpmj3wYyCmPNaLqJ5VaIXHkAupcfzh6U5pLlTcz72hi7eTspERHmFVc2ev/iGZ+XYUJXZLoyMBUyLIpgX552+o84RfiDD6x6RnqHbqyNrTjE4E2I8q13KM
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250129-uvc-eprobedefer-v1-1-643b2603c0d2@chromium.org>
 
-On Sat, 2025-02-22 at 21:21 -0300, Guilherme Giacomo Simoes wrote:
-> Implement a check to ensure that the author, firmware, and alias fields
-> of the module! macro are properly formatted.
+Hi Ricardo,
 
-Poor email subject.
+Thank you for the patch.
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3567,6 +3570,46 @@ sub process {
->  # ignore non-hunk lines and lines being removed
->  		next if (!$hunk_line || $line =3D~ /^-/);
-> =20
-> +# check if the field is about author, firmware or alias from module! mac=
-ro and find malformed arrays
-> +		my $inline =3D 0;
-> +		my $key =3D "";
-> +		my $add_line =3D $line =3D~ /^\+/;
-> +
-> +		if ($line =3D~ /\b(authors|alias|firmware)\s*:\s*\[/) {
-> +			$inline =3D 1;
-> +			$array_parse_module{$1} =3D 1;
-> +		}
-> +
-> +		my @keys =3D keys %array_parse_module;
-> +		if (@keys) {
-> +			$key =3D $keys[0];
-> +		}
-> +
-> +		if ($add_line && $key) {
-> +			my $herevet =3D "$here\n" . cat_vet($rawline) . "\n";
-> +
-> +			my $counter =3D () =3D $line =3D~ /"/g;
-> +			my $more_than_one =3D $counter > 2;
-> +			if ($more_than_one) {
-> +				WARN("ARRAY_MODULE_MACRO",
-> +				     "Prefer each array element on a separate line\n". $herevet);
-> +			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =3D~ /"/) =
-{
-> +				WARN("ARRAY_MODULE_MACRO",
-> +				     "Prefer declare ] on the same line\n$herevet");
+On Wed, Jan 29, 2025 at 12:39:46PM +0000, Ricardo Ribalda wrote:
+> uvc_gpio_parse() can return -EPROBE_DEFER when the GPIOs it depends on
+> have not yet been probed. This return code should be propagated to the
+> caller of uvc_probe() to ensure that probing is retried when the required
+> GPIOs become available.
+> 
+> Currently, this error code is incorrectly converted to -ENODEV,
+> causing some internal cameras to be ignored.
+> 
+> This commit fixes this issue by propagating the -EPROBE_DEFER error.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 2886477ff987 ("media: uvcvideo: Implement UVC_EXT_GPIO_UNIT")
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_driver.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+> index a10d4f4d9f95..73a7f23b616c 100644
+> --- a/drivers/media/usb/uvc/uvc_driver.c
+> +++ b/drivers/media/usb/uvc/uvc_driver.c
+> @@ -2253,9 +2253,10 @@ static int uvc_probe(struct usb_interface *intf,
+>  	}
+>  
+>  	/* Parse the associated GPIOs. */
+> -	if (uvc_gpio_parse(dev) < 0) {
+> +	ret = uvc_gpio_parse(dev);
+> +	if (ret < 0) {
+>  		uvc_dbg(dev, PROBE, "Unable to parse UVC GPIOs\n");
+> -		goto error;
+> +		goto error_retcode;
+>  	}
+>  
+>  	dev_info(&dev->udev->dev, "Found UVC %u.%02x device %s (%04x:%04x)\n",
+> @@ -2328,9 +2329,11 @@ static int uvc_probe(struct usb_interface *intf,
+>  	return 0;
+>  
+>  error:
+> +	ret = -ENODEV;
+> +error_retcode:
 
-Convert all the messages.  Use consistent style.
+This isn't very nice. Could we instead also propagate error codes from
+other locations in the uvc_probe() function ? If you want to minimize
+changes, you can initialize ret to -ENODEV, and turn the (ret < 0) check
+for uvc_gpio_parse() to a (ret) check.
 
-> +			} elsif (!$inline && $line =3D~ /\]/ && $line =3D~ /\"/) {
-> +				WARN("ARRAY_MODULE_MACRO",
-> +				     "Prefer a new line after the last value and before ]\n" . $here=
-vet);
-> +			} elsif ($inline && $line =3D~ /,/ && $line !~ /\]/) {
-> +				WARN("ARRAY_MODULE_MACRO",
-> +				     "Prefer a new line after [\n$herevet");
+>  	uvc_unregister_video(dev);
+>  	kref_put(&dev->ref, uvc_delete);
+> -	return -ENODEV;
+> +	return ret;
+>  }
+>  
+>  static void uvc_disconnect(struct usb_interface *intf)
+> 
+> ---
+> base-commit: c4b7779abc6633677e6edb79e2809f4f61fde157
+> change-id: 20250129-uvc-eprobedefer-b5ebb4db63cc
 
-twice.
+-- 
+Regards,
 
+Laurent Pinchart
 
