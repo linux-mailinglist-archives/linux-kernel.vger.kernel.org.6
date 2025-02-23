@@ -1,78 +1,196 @@
-Return-Path: <linux-kernel+bounces-527574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B891A40CC1
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:06:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90D17A40CCB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 06:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E761189AB3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:06:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC02C7A37F6
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 05:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E521C84A7;
-	Sun, 23 Feb 2025 05:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058B61CEEBB;
+	Sun, 23 Feb 2025 05:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPxAdGWw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAI47qC/"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0DC17588;
-	Sun, 23 Feb 2025 05:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C871728F4;
+	Sun, 23 Feb 2025 05:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740287198; cv=none; b=Rv2U12ev/p0Ko89WiG32CMecwrsGHFW/icaLI7AjzOI1AY+UlwfnP6sE4qtHkZEDutYKXgL2C4rg9WCmZ4IjE2BYViTiiis0WWJ1ZHQnveP+tJe2GwXYnxNaJXn68BcHoaYGy/auUan6SG4kYUrzalyYXkDpAvU6/Uht0p08qqA=
+	t=1740287334; cv=none; b=q8cBWWXns5QkG5FTIxSiujv6iPZE4SbdRkpDue5JOyuNphTq45irjtsteZBgOjKv1LDQMJt3O68B8tdXXi9nlq8t/v8Zm0tue8wwTHJSY2JuAL0ZHOMznkGQffjKYbPz2YeD+tstWJXVi2oHoiE/bSrrkp4farcVMVLm5bBYseQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740287198; c=relaxed/simple;
-	bh=/iIwbLBtSDsMUiEMtyBHxF0frGs1Ws4+F3xd/zDNKCs=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=O+ajDy6DBdy3p05ae+iHG2zMLl/FiD/Eg7Lehs2XXE4CiRUoh6Bt8Snj8pwVsI42ekyIoVwIfDdGfdGtW6gafp/84zb1ehbBYR58zTMzTDkTqKtcK0ULVtxLTnvgIWYa2PBIHG/A4jAprGN+eFbrpZ4pBu+XqVDAS4N0+K8ZPFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPxAdGWw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA024C4CEDD;
-	Sun, 23 Feb 2025 05:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740287197;
-	bh=/iIwbLBtSDsMUiEMtyBHxF0frGs1Ws4+F3xd/zDNKCs=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nPxAdGWwE8hwX6UjXoJmQk6/mwEi5B0iuw6j9+Rch36xPitvsCH/HtNzvvjvGr7PA
-	 mf//G3AF6lAoEpXhaH9I6pnVGTCuOMkwKOSABYIwmfTsw9fMlTUl2myQ6ryDlX0OXx
-	 SMCJBREjhVbdhAWx11LHcL/W7mWDkMPALPkNDX9fWJcIYXsvL5UexL8L7HToVqz16x
-	 7WFiGztf4WuE3zrlWQLl/2kTmxb/5NfrjmuSgYLv5fpf3q72u5v5SJ+X4mSH+eVZha
-	 +9mN5d+h/p5cYwVNNh37CBiWe+kYCQXRcoEYR8D3gKU5ovG0RNgwFnbE16eVKt9Gc9
-	 ytF+uaTyM37xw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D9A380CEFA;
-	Sun, 23 Feb 2025 05:07:10 +0000 (UTC)
-Subject: Re: [GIT PULL] smb3 client fix
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mt2PEH5ZOR6YP8wNSkaQGrAy0FJJB7bPT5VPxb3-kTAkg@mail.gmail.com>
-References: <CAH2r5mt2PEH5ZOR6YP8wNSkaQGrAy0FJJB7bPT5VPxb3-kTAkg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-cifs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mt2PEH5ZOR6YP8wNSkaQGrAy0FJJB7bPT5VPxb3-kTAkg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc3-smb3-client-fix-part2
-X-PR-Tracked-Commit-Id: 860ca5e50f73c2a1cef7eefc9d39d04e275417f7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 27102b38b8ca7ffb1622f27bcb41475d121fb67f
-Message-Id: <174028722886.2494983.11827241303854655021.pr-tracker-bot@kernel.org>
-Date: Sun, 23 Feb 2025 05:07:08 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+	s=arc-20240116; t=1740287334; c=relaxed/simple;
+	bh=zdbGVk0R4XP2am+HV/vSLFiwL4kfVsz30joW2BNMsVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q+ngDYbOhte3HYUPgAuabUC2Qj5ZD/+JM4I+5gmjNpYWF0iSwBMxBTc9YG3DOzVHlS62ata1tDncmcyh8Lhf4S9Cl74DACz5IFE6E99O4r2LHOkKEyYFYB+L16BT49Lnm5vwBX3SYlhPUIxDUqGVS3giFx1QiU7L4qx/sAQXMuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAI47qC/; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-46fd4bf03cbso55500481cf.0;
+        Sat, 22 Feb 2025 21:08:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740287331; x=1740892131; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bBH0TwUlKOyjmVBKqs8V0ejTvT1+7RXd2Ev7u2AJBD4=;
+        b=AAI47qC/duhVVoMlyv/GviE/UsLUE5K3oW1Fv+YOLMRz5Tkg6P9YBqLsvSfME7AOqP
+         TYeZkkllUmoGRZU+tb+hC3fdpv5PPGWcyWh+xq+lEjcVN2EIyepRPShvMPVFaYhWWpml
+         XJoa9ncGpdOyZoZGFnSa8Ul68YIkphSpuAw2jQiso87Y2yYzN1Xzks1UkSzVhuCheVuo
+         pAtkFioDUkb4BTfBtk+KfppJaPIez8TZWG1mhx3ypX6/0g9wepViYkSXdvHX9NcwrU1+
+         e5WFHqmKDRBUPasjyRZLEslU/hWSixCc3NwgN6uf8yYk6TMW4M8syfSiV/qnyznCFdo8
+         En4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740287331; x=1740892131;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bBH0TwUlKOyjmVBKqs8V0ejTvT1+7RXd2Ev7u2AJBD4=;
+        b=jv4f4SnYwnr64rR1hF8Cu/CJdesI7Ck0noMLr/7E1jlv78aJqjaHMFOOLWQOEjoO8q
+         sxGQBsTZUE8JzJV0yKVn191qCs6me57PZLqbrcQuhPPkezytCWBVK87FtKsN3iM82oFq
+         6IJgH4x5DNELU1XbCyN+Ho4neXaT0RwVLE1Xr6SXsjLWPVFHXE/NBpnWM8pW46i3AstN
+         4dJ/lTp7fkXXia78uLJdUTLq4qeKdh+rzIBMeLFer0J7ukvsQhszOYrZIGhhhH2NFwml
+         kMazVgFdYC6k1bxFNwAEQlrm+ra2O9A6ZqgjHCNHG51qflyXjWAQtIBy8M2Mol5Fk6VW
+         hr9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXrTXWz8fJREFIR/OELz5jALKdfBDuLMCjlhdaegGks+/ZANr+k+Lp3y9KBV/v7e4hGfWI53knCbA0o0Hs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOsmDHnhgh391CEc+2knAro1GEBLPcVlX5U0RDFfUYWgXzOZzY
+	UrFc6Ue71b33Xh00QZtTVoTvHS5JexxM8VAnCnSYXuQyuhZQAj0d
+X-Gm-Gg: ASbGncuS3+YNQsPHCSGY47Bnk75KGesn/2UzNdVPosF3ub7J1SVEGcFPBSvHbERmbh+
+	wXwEcPqMDwM7Ws/klFZ0J0dgswFDMXfW2YI9Tc3s5JyiPW43NTrQcdhuVyiWiR5ZSsCXCZAoA6B
+	NWHckT+a+ZVCsPUL0HWdy51M9FjzeS/BA0tTVxXJFFNDXXVusnSr1b9tFosPOdDbIoM2RVkxAPK
+	JEC4E7coLvgW38qVNo7iH5FbnZeekzfGKjOyL32O8vZ61yAUegyuo4Mp3WbyPBpQkhX37w90zRJ
+	iAFPAD6YCQTVe3EKhZww6sl1GtWXQiKWl48iCIgUCeYqL8c=
+X-Google-Smtp-Source: AGHT+IFyUwylJsYT2gX4dxbJLOwg/LHqmtz1YQPSMcqi+w4DIwzS+SUSfRN9sXGT2i1e09QdqdNsKA==
+X-Received: by 2002:a05:622a:18a1:b0:472:fa0:2b83 with SMTP id d75a77b69052e-472227591c6mr129311731cf.0.1740287331636;
+        Sat, 22 Feb 2025 21:08:51 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:104d:377c:5733:f5b0])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-471f2b0476dsm75728701cf.28.2025.02.22.21.08.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 22 Feb 2025 21:08:50 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>
+Subject:
+ Re: [PATCH v2 1/2] ttynull: Add an option to allow ttynull to be used as a
+ console device
+Date: Sun, 23 Feb 2025 00:08:49 -0500
+Message-ID: <4305907.CQOukoFCf9@nerdopolis2>
+In-Reply-To: <2025021920-uproot-antsy-e2c7@gregkh>
+References:
+ <20250217040748.2017975-1-adamsimonelli@gmail.com>
+ <20250217040748.2017975-2-adamsimonelli@gmail.com>
+ <2025021920-uproot-antsy-e2c7@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-The pull request you sent on Sat, 22 Feb 2025 19:03:50 -0600:
+On Wednesday, February 19, 2025 9:00:07 AM EST Greg Kroah-Hartman wrote:
+> On Sun, Feb 16, 2025 at 11:07:47PM -0500, adamsimonelli@gmail.com wrote:
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> > 
+> > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
+> > initialized by console_initcall() and selected as a possible console
+> > device.
+> > 
+> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+> > ---
+> >  drivers/tty/Kconfig   | 18 +++++++++++++++++-
+> >  drivers/tty/ttynull.c | 16 +++++++++++++++-
+> >  2 files changed, 32 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/tty/Kconfig b/drivers/tty/Kconfig
+> > index 63a494d36a1f..afe4e7722d4c 100644
+> > --- a/drivers/tty/Kconfig
+> > +++ b/drivers/tty/Kconfig
+> > @@ -383,7 +383,23 @@ config NULL_TTY
+> >  	  available or desired.
+> >  
+> >  	  In order to use this driver, you should redirect the console to this
+> > -	  TTY, or boot the kernel with console=ttynull.
+> > +	  TTY, boot the kernel with console=ttynull, or enable
+> > +	  CONFIG_NULL_TTY_CONSOLE.
+> > +
+> > +	  If unsure, say N.
+> > +
+> > +config NULL_TTY_CONSOLE
+> > +        bool "Supports /dev/ttynull as a console automatically"
+> > +        depends on NULL_TTY=y && !VT_CONSOLE
+> > +	help
+> > +	  Say Y here if you want the NULL TTY to be used as a /dev/console
+> > +	  device.
+> > +
+> > +	  This is useful for userspace applications that expect a working
+> > +	  console device, without changing the kernel boot options, such as a
+> > +	  distribuition or environment that historically had CONFIG_VT_CONSOLE
+> > +	  enabled, and have now disabled it, but still need /dev/console to be
+> > +	  working for userspace applications.
+> >  
+> >  	  If unsure, say N.
+> >  
+> > diff --git a/drivers/tty/ttynull.c b/drivers/tty/ttynull.c
+> > index 6b2f7208b564..8ba629ae426b 100644
+> > --- a/drivers/tty/ttynull.c
+> > +++ b/drivers/tty/ttynull.c
+> > @@ -57,6 +57,10 @@ static struct tty_driver *ttynull_device(struct console *c, int *index)
+> >  static struct console ttynull_console = {
+> >  	.name = "ttynull",
+> >  	.device = ttynull_device,
+> > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > +	.index = -1,
+> > +	.flags = CON_PRINTBUFFER,
+> > +#endif
+> 
+> There's no way to do this without #ifdef in the .c files?
+> 
+> >  };
+> >  
+Maybe IS_ENABLED() is better?  
+> >  static int __init ttynull_init(void)
+> > @@ -90,10 +94,20 @@ static int __init ttynull_init(void)
+> >  	}
+> >  
+> >  	ttynull_driver = driver;
+> > -	register_console(&ttynull_console);
+> > +	if (!console_is_registered(&ttynull_console))
+> > +		register_console(&ttynull_console);
+> > +
+> 
+> Why do you register this twice?
+I thought I had to add that in the console_initcall function because other
+drivers seem to have that.
+I want it to still work when it is just CONFIG_NULL_TTY without
+CONFIG_NULL_TTY_CONSOLE, so I will guard both with console_is_registered
+> 
+> > +	return 0;
+> > +}
+> >  
+> > +#ifdef CONFIG_NULL_TTY_CONSOLE
+> > +static int __init ttynull_register(void)
+> > +{
+> > +	register_console(&ttynull_console);
+> 
+> Here, why is this registered again?
+> 
+> You should only have to do this once, and not need to check before
+> trying again, right?
+> 
+> thanks,
+> 
+OK, I will guard both. 
+> greg k-h
+> 
 
-> git://git.samba.org/sfrench/cifs-2.6.git tags/v6.14-rc3-smb3-client-fix-part2
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/27102b38b8ca7ffb1622f27bcb41475d121fb67f
 
-Thank you!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
