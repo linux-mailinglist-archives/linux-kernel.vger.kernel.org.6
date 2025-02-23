@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-527957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0676FA411AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0B1A411B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:45:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 694B27A636B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109553B5490
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 20:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C45123A9BC;
-	Sun, 23 Feb 2025 20:38:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D7423F409;
+	Sun, 23 Feb 2025 20:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GFavm7qc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O2gn1knU"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCX/fPUg"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CBB146D59
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427EF23F26D;
+	Sun, 23 Feb 2025 20:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740343117; cv=none; b=Wqa0irLxacHaDtpbKIJyZjtdhiXWw5oQwmVRAoQo5CsPVsEM97KUKCL1dS0pTqvWYVu5fwLKBdQ9vY4xT2yr3K26Ym3V+0xzlvBtrLjvUR8GsJZnfRCMwpgKax/rirzqk0XMO/BCMkOEZk1NpjtcG9Nk8E9ADSZz13z5ZpEwi/Q=
+	t=1740343505; cv=none; b=mfI/YMEfDMq2Xxu0pEuC57coZNGeSAqsFcMaWJ3TENJyvEczhYxV4K9l5YtD6w2IQMe1jC2ggLTvcn1vs+XhSxOzE4bWlMUNhoPvCvLau4C5LWDKDDyIXFuCmwwgueBJcolU9bfMnmAr5Iy3AWiwIgQ06/FHqqAVUWeBN5a2SwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740343117; c=relaxed/simple;
-	bh=veaE5wmZnE3tPlToa+LP0A62kR+RPbOAUXst3QSuQzo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IXNL5JY9DstAHA9pcM9zjzsTCCekMwzvudc0LuKDpZ5VG0PXJGFO5CO0FxE8/QargmVqmj7l3/NFSQX/24sE8pIfy4TfsfjbetZ3DNTYy+u268PwDK+9AUcva6ySTFVZN33dYCXorBc7TXhdjM3LYChw1aYFYRaHq8f3koh3gn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GFavm7qc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O2gn1knU; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 5832211400EF;
-	Sun, 23 Feb 2025 15:38:33 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-11.internal (MEProxy); Sun, 23 Feb 2025 15:38:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740343113;
-	 x=1740429513; bh=5AkbcJFFUnBwFfNbXXb8Zk7BLBCtTFKVq5k01FwVtTg=; b=
-	GFavm7qc3GYeRtUS5MHk2SxYQnXMwmYCewBUlqLuScBNEkpJwzlbuY5yKapRjCMH
-	X30uFdIe4wLAXsjFWKx8kHwEwFnlX3mdlZ9dt6CE5D9RbTYXv5vzt0deK+2ZGb3n
-	Z+BKr7wHQayigxTNyRTfSin/JmKHFEG5X+OiZMmlPW6Yv99EsvGL0Pg7MsgSaBAZ
-	kGoHW+98d6dGbUvmD39zpGeZZZMMbhNuX1WhW9wz2IhjJQRhfvkuVM8p8qYi6O3S
-	KVCCgtQ82yO1oSv1VEQW2LNj3GmCiFvUm94aq2YC5hdtThgjmRj+d7K7rbCUTQrA
-	HL7Edy8TfeM/9elkoGovjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740343113; x=
-	1740429513; bh=5AkbcJFFUnBwFfNbXXb8Zk7BLBCtTFKVq5k01FwVtTg=; b=O
-	2gn1knUDqErNxvpmJ/qOiDOttYuWsczHVilogUKNcSRTCvExARUhvqhm8u1bpHRo
-	/xt5uusBpv0xd6CBa44O9jvq+67SXt/rCULrmTxRbJxq8RIsGVQnGEspXr8lTK+o
-	vUbL+F34fOI5s/Q38xM2UCcgTKj3ObsrirajbCanY9Z6LXz+39JjfQGfOKYg40s9
-	M26XHVfi2J0Zlb6iybUHO2J2IWVGEpZwLPEWt3ZoH36Bc03CG9WS+xRlWPotQP33
-	tjX0ap96GXMObkqZKiqX7EZzN/yD9ob1OtSbXAwulUyWs5rbyxIftwjojz/TgDzL
-	mR0C/vwLzMRNh2xnO265w==
-X-ME-Sender: <xms:SIe7Z4uWXVaDvn-FTBE27PtkVcf01Iqmcr78n2P_TDpnIiBhg68iew>
-    <xme:SIe7Z1cXNHU5EYy8r1G0NW37t2IFEPutbiDyetiNbXbw6vkcY6eEJdGZEm3gfNxQB
-    6ByOGPMGoohZ70zu9k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejieekfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpeeijeejledvvefghfegjeeugfeggfduudettdeg
-    vddtgeetvefhhfelgeeivdegjeenucffohhmrghinhepuggvsghirghnrdhorhhgpdhosh
-    hmohgtohhmrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedpmhhoug
-    gvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrfhhorhhgvgesghhnuhhmohhnkhhsrdho
-    rhhgpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorh
-    hgpdhrtghpthhtohepuggrvhhiugesrhhofigvthgvlhdrtghomhdprhgtphhtthhopehl
-    ihhnuhigsehtrhgvsghlihhgrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvg
-    hlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:SIe7ZzxyuqHHxM4GNfXzij40w1k43PecX-yLtb6BlSoT13FT96Zcaw>
-    <xmx:SIe7Z7P3N_vwO9o6TWoxNteNh6YZTTZjbvSbWD7LSM6AuzfhuHYSGw>
-    <xmx:SIe7Z48Npw553dSKbI5Kb3kLg0YNE8fG2kMytEvaLm2OCEiPBla6bQ>
-    <xmx:SIe7ZzXcCVZvu285gC0cVqOIuNXO6PeIWIaT4IpZLdbQWs-42-Di-A>
-    <xmx:SYe7Z8YMo2aEgGudwCEB6JugjTp9rGLywLEJSxKx-eSa9AMzDARKwzLj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B31012220072; Sun, 23 Feb 2025 15:38:32 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1740343505; c=relaxed/simple;
+	bh=VKiUNQ2fDZY1Fc7UEMBZsZJoSXJqwzwBzeotQgNOV5U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H3fGpyVjFYKAGn4PVp1Q9LRDDrZAb5hDc3vXCinMwO6kLgn1DkhknF2O+45VMc1DIrzz6Vxuq4lYZve0cs9Cdc29xhTVlw+HZn/5xN7v6/mY/m100T0QaSDqH2/q6/emMI52v+Q14IwRSX+EL4dl7ncEdzaeXgDpV40VYXKT7Oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCX/fPUg; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c0848d475cso539027385a.2;
+        Sun, 23 Feb 2025 12:45:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740343503; x=1740948303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=V4of6Ve3wlgZEj+NyYh0JA2Po9Z6Yz7tIkuR6jnr7d8=;
+        b=UCX/fPUg3KR7NM1H+xJcK9jJDgt459SjgBOwZ7xs90ilBeDBIVssg4RfOit7XhsUQ1
+         Fap8FTKgStOhsgdHP+zWgGKWzrHUJ41JkZa5qviplwCNbHWk6nhEzoB0jdN23pP4CReh
+         IYKuc+KEzw0VTxi8+6Pvixs3XsQVwg655lr+/mrtluo9n8maCUr8/RKTRl7EMDKibCbu
+         F/la2b+ec6yCnHZ0zy6E8RjAn5jHSUfyKpGPoGpqXk6QRZShmE8yjAEWWlqUfJ+br/qi
+         46pP9iW7MpRq8+9oHFMBgDZgi/A76z9W2LkZroMc7GC3BXGHzdkfqUHQZ8ojjMhqQqDJ
+         AzBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740343503; x=1740948303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=V4of6Ve3wlgZEj+NyYh0JA2Po9Z6Yz7tIkuR6jnr7d8=;
+        b=OvMWQCfG2rW6yYRC6f9G6ie7og6mGyPkzVvO6WCPesEXaa/TgVZdTTjMJ0MG6nAmsM
+         ReNrPPn46KSH+fLpj7TT3yuKPGtHEqeTHvdrYfkChNTPZAWfSj5tFv0eTX7EsM7nDIXJ
+         ZUeYf2yxvvhbCnS6dTAtNS4KAH8fqwhQDwMDFiAtw6tPhi7e/BSghj+kBwYD6Mx7E0OV
+         YR46m7FXGtBetE7ij5xe222EzC5pqtAHKMs3oLuApCuKDBT7D5ykhcCJzMO8c+pqQ/fO
+         T7tfiyGIeUjbZeiWkuc3B3M5aHtHg6E3VdWjPboHgEUhaAsYcZtkyRvytorUiiR/8J3e
+         Mkbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMTla/f1rDWNIKy+/h+6dLTWedn16gkNlJjNQxLUQ1JASiz010ssxyCX6h8HPSMf4LsXkMhgir2N95GJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybHsVM1HRiMLhlA4y3+BAY6A4ybwu3fd6arvsijgtyg3HkLDf1
+	QJVxj9wIfN9bwDA1TWzJNghInIr5hZ5RsEyF4gXCIGMlAl/v2Qb2qCTIjYVa
+X-Gm-Gg: ASbGncs/mUqfVmDLZNvMhh8YhMGztfOKBmES90MXJXHDrGgr7nq/nid3N86I/nQSMGD
+	sjUoIzQC6beEgWjaiaQG/5/bVq3ARPtn2nevbsOlmdgydxcsPR4OJ89dETQ99GcEfKjFNGjZSMV
+	BEbbJ4v0GTV6xgH1XGHFnaBZpIlIXxYr+nrWLd11GCfFdyd3z5uMFKisg9qsfFPndpUUYLRSKaD
+	FmXj40ZzfmhBikwNPq0+h0dMlrlZfdAmhLHioHWrmsAvNv2KsvuU1ukiLaP0/SAazjHa7yR7qgw
+	rLwhhb+Fm8TQkKrhfGRJnKHYxKVaYr7zVzk+O/gWmvhjy5W0dhrdxLWlTPo+E58=
+X-Google-Smtp-Source: AGHT+IE4DeN2LSuvO+8yQTZ73arJ2wgyunYxWSisttFaNN/ZKuhdzEXOBziL9q1eBD9jSzbb/i+Ykw==
+X-Received: by 2002:a05:620a:2915:b0:7c0:b3cd:9bc6 with SMTP id af79cd13be357-7c0ceef82famr1452715485a.18.1740343502899;
+        Sun, 23 Feb 2025 12:45:02 -0800 (PST)
+Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:7a4:75e2:6847:49c9])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bc8819bsm919914085a.74.2025.02.23.12.45.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 12:45:01 -0800 (PST)
+From: adamsimonelli@gmail.com
+To: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Adam Simonelli <adamsimonelli@gmail.com>
+Subject: [PATCH v4 0/2] Optionally allow ttynull to be selected as a default console
+Date: Sun, 23 Feb 2025 15:44:54 -0500
+Message-ID: <20250223204456.1913392-1-adamsimonelli@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 23 Feb 2025 21:38:12 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: linux <linux@treblig.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, david@rowetel.com,
- "Harald Welte" <laforge@gnumonks.org>
-Message-Id: <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
-In-Reply-To: <Z7tZhYET41DAoHVf@gallifrey>
-References: <Z7tZhYET41DAoHVf@gallifrey>
-Subject: Re: users of drivers/misc/echo ?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025, at 18:23, Dr. David Alan Gilbert wrote:
-> Hi,
->   I can't see anything that uses drivers/misc/echo - should it go or
-> is there something out of tree using it?
->
->   I see where Greg moved it from staging into the main kernel
-> but am not seeing anything include the headers or call any of the symbols.
+From: Adam Simonelli <adamsimonelli@gmail.com>
 
-Good catch!
+When switching to a CONFIG_VT=n world, at least on x86 systems,
+/dev/console becomes /dev/ttyS0. This can cause some undesired effects.
+/dev/console's behavior is now tied to the physical /dev/ttyS0, which when
+disconnected can cause isatty() to fail when /dev/ttyS0 is disconnected,
+and users who upgrade to a theoretical vt-less kernel from their
+distribution who have a device such as a science instrument connected to
+their /dev/ttyS0 port will suddenly see it receive kernel log messages.
 
-I don't see any in-tree users for it either, but I found one
-project using the exported symbols, and there is a debian
-package for it as well:
+When the new CONFIG_NULL_TTY_CONSOLE option is turned on, this will allow
+the ttynull device to be leveraged as the default console. Distributions
+that had CONFIG_VT turned on before will be able to leverage this option
+to where /dev/console is still backed by a psuedo device, avoiding these
+issues, without needing to enable the entire VT subsystem.
 
-https://tracker.debian.org/pkg/osmocom-dahdi-linux
-https://gitea.osmocom.org/retronetworking/dahdi-linux/src/branch/master/drivers/dahdi/dahdi_echocan_oslec.c#L34
+v2:
+    rebase
 
-With our normal rules, we should just remove it as there is no
-way to use the code without external modules, but I don't know
-how we even got to this state.
+v3:
+    Clarify commit messages.
 
-Adding Harald to Cc, might know more about it.
+    Guard the all the register_console()s in ttynull to prevent it from being
+    registered twice.
 
-       Arnd
+    Only change the link order if CONFIG_NULL_TTY_CONSOLE is enabled, otherwise
+    use the existing order for ttynull if only CONFIG_NULL_TTY is enabled.
+
+    Document why the link order changes in the drivers/tty/Makefile file.
+
+    Replace #ifdefs
+
+v4:
+    Remember to actually include the changes to v3 in the cover letter.
+
+Adam Simonelli (2):
+  ttynull: Add an option to allow ttynull to be used as a console device
+  tty: Change order of ttynull to be linked sooner if enabled as a
+    console.
+
+ drivers/tty/Kconfig   | 15 ++++++++++++++-
+ drivers/tty/Makefile  | 10 ++++++++++
+ drivers/tty/ttynull.c | 20 +++++++++++++++++++-
+ 3 files changed, 43 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2
+
 
