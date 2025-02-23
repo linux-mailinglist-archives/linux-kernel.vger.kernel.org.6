@@ -1,82 +1,101 @@
-Return-Path: <linux-kernel+bounces-527978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B50A411F4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:39:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21DF4A411F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:43:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 670F21886BF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDD416F047
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 21:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AAC200B8A;
-	Sun, 23 Feb 2025 21:39:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D3715CD74
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A38C23F277;
+	Sun, 23 Feb 2025 21:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="VXHMR+T2"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 885AB288DA;
+	Sun, 23 Feb 2025 21:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740346771; cv=none; b=EW2VIGNyHf6rPa9xrMaQQmWecyC9gnt5PChEwoW3g3MyWmYQ4KOuEYwbelLLXJHl4qv8Jly+5ReZH1SIMzZ3X/8eiUW51og8mE902QT/BTPM6I1tJx7Z1/m33JQq4sisAvvVam2eb+jaybVu+FyOGC3XPUgfdRk2+bdUhMeRo8w=
+	t=1740346992; cv=none; b=HmddjJ9FBSQh/s7Hz54QXsZb1rb+5LAonYLNSg9iPSxFAybO1Pm1tAkFWXtF3gJPe+eAYKzMMQChe1l0rAtdNrzPzsqVurOIn8GWYbEYoEM12taW9v2bnfh0GFVvDpk5fNp5bkdNeUFhxW1zvWxGlzgIFkymJRl5AVUSaLmJlZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740346771; c=relaxed/simple;
-	bh=7mVDemT51tXPsrP8f5Z8C7i0wWS/Vt4TBwX8weE0Er4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uNXSbhpzQP3vHB5U2Cl6Z7GP5rOjjhL2/365c4Mpnps0uliBTazqlgHya9mFUGjlPOZCDdaiI84ma0fgH+K+DYA5eihbJJGsQKAvd9dgEd9cz8EPrAcl5ph3AphNg8B5T4wxtjnv7lKDn8pGvFj7FhuKaMqeXcdFQnL7HyOFDyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D39D16F2;
-	Sun, 23 Feb 2025 13:39:39 -0800 (PST)
-Received: from usa.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A73B23F6A8;
-	Sun, 23 Feb 2025 13:39:21 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	linux-kernel@vger.kernel.org,
-	Andrei Homescu <ahomescu@google.com>
-Subject: [PATCH] firmware: arm_ffa: Skip the first/partition ID when parsing vCPU list
-Date: Sun, 23 Feb 2025 21:39:09 +0000
-Message-Id: <20250223213909.1197786-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1740346992; c=relaxed/simple;
+	bh=YiCbKAMI8ItG8w1Xt7VwuCUfo3aw4uZjliERsHSzwpY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKMhTXqhD7ooHHDmkSgvA/rK7CWgWHhQp0xWACPsYgoE1VYrjxf5HYBfqAMhRH6CdFPHwPK7CgDxqekVOC4NfQGc+CM5CI776u5u9av7zbUjWmI6EUahhd0w8qzWBq1uNewRAElwKLbBykTFQlS3BR2Co2H9pYPm9hRf2igHNas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=VXHMR+T2; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=wqhPYelRI9w8kPH+DxFgKT67v+9/rXFIBWG/hG5C3TQ=; b=VXHMR+T2i1Nl3z8k
+	h2nQplqOMz5KQo+TP3TlXDxfwu/I+T/Lj+N9ZAA0rezbkBusLv2tMAFxyKEdOwAqZDYPxLYRELXf1
+	Ov1iM9oB+aoARdQwsGA4JRGQJHsnjB2R150tErOCRCLvr8ErpW+EEJpBRPoKiQAHDx6/DUrtj5cMi
+	EG8E5CZNJx1F6POpHHRbceOz45jvTEfbCNq7W4pKPuGJ8nebjbjwhV91XjqLmvnxLTBOc78/VLMa6
+	ik5zEMoX97SuOSg7Cf/bamEFRap1wu5VwY1VKuZZ5ih+uSvn/aAMn45DQ4JoR821Ia/G1EV+fFtCE
+	sUxxsXCA0E4zws2j+w==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tmJke-000Drl-2H;
+	Sun, 23 Feb 2025 21:43:04 +0000
+Date: Sun, 23 Feb 2025 21:43:04 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Sergey Shtylyov <s.shtylyov@omp.ru>
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: olpi: Remove unused otg_ulpi_create
+Message-ID: <Z7uWaAmPPTZD05k-@gallifrey>
+References: <20250223160602.91916-1-linux@treblig.org>
+ <3315dad1-52a8-4ae7-be65-6b9ccf3dfbfe@omp.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <3315dad1-52a8-4ae7-be65-6b9ccf3dfbfe@omp.ru>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:42:30 up 291 days,  8:56,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-The FF-A notification id list received in response to the call
-FFA_NOTIFICATION_INFO_GET is encoded as: partition ID followed by 0 or
-more vCPU ID. The count includes all of them.
+* Sergey Shtylyov (s.shtylyov@omp.ru) wrote:
+> On 2/23/25 7:06 PM, linux@treblig.org wrote:
+> 
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > 
+> > otg_ulpi_create() has been unused since 2022's
+> > commit 8ca79aaad8be ("ARM: pxa: remove unused pxa3xx-ulpi")
+> > 
+> > Remove it.
+> > 
+> > The devm_ variant is still used.
+> > 
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  drivers/usb/phy/phy-ulpi.c | 23 -----------------------
+> 
+>    Probably s/olpi/ulpi/ in the subject then?
 
-Fix the issue by skipping the first/partition ID so that only the list
-of vCPU IDs are processed correctly for a given partition ID. The first/
-partition ID is read before the start of the loop.
+Oops, thanks!
 
-Fixes: 3522be48d82b ("firmware: arm_ffa: Implement the NOTIFICATION_INFO_GET interface")
-Reported-by: Andrei Homescu <ahomescu@google.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/firmware/arm_ffa/driver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Dave
 
-diff --git a/drivers/firmware/arm_ffa/driver.c b/drivers/firmware/arm_ffa/driver.c
-index 31832af7a7bb..f63e3b0eed16 100644
---- a/drivers/firmware/arm_ffa/driver.c
-+++ b/drivers/firmware/arm_ffa/driver.c
-@@ -1012,7 +1012,7 @@ static void ffa_notification_info_get(void)
- 			}
- 
- 			/* Per vCPU Notification */
--			for (idx = 0; idx < ids_count[list]; idx++) {
-+			for (idx = 1; idx < ids_count[list]; idx++) {
- 				if (ids_processed >= max_ids - 1)
- 					break;
- 
+> >  include/linux/usb/ulpi.h   |  9 ---------
+> >  2 files changed, 32 deletions(-)
+> > [...]
+> MBR, Sergey
+> 
 -- 
-2.34.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
