@@ -1,112 +1,95 @@
-Return-Path: <linux-kernel+bounces-527520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C39A40C43
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:59:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91A5A40C4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EC9B189DAF2
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:00:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4074F7ABF89
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 00:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02D778F2F;
-	Sat, 22 Feb 2025 23:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BEB623B0;
+	Sun, 23 Feb 2025 00:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="HMMaV2Ty"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="mOKFcCHn"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AF7204686
-	for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 23:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55EC173
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740268789; cv=none; b=lymISMprY25DuYYNHxBJLgHBZf8IVclCT3cMxO5c7xJJQ4pxIcAUxF9aCXd5RmHczgr7/nd2VmanUuspQjma3hgjRN5k/qMscecIm0HlVmeeFYd1uUlnqTED//4DDy7Oq9ZRjRxMP7RwUU6OWgKEUeVs7tc9Zu1b9to8L3BaWww=
+	t=1740269041; cv=none; b=o/YGqG7rwd8UsEA9ytKYfbSFIQad72Us98R2iaZ1uRpe42dPaX5bmOvN504RCQXig/MrWhsbqpGsbImz0Vt8SaCtB34MOSmT/lSkopaN97u3UFyNyzr9BHIE7DlrAqMPXBUabB4PGku+4a2PQK2V2UHREhf/ro7p/9ZnC4kCj74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740268789; c=relaxed/simple;
-	bh=BC1VikLvaQ+wmk7I7O5kqTkttd71b1FW4KIkZw3Br0c=;
+	s=arc-20240116; t=1740269041; c=relaxed/simple;
+	bh=xbhd1vIniw5dlIi5MuetY2VBB6uB4CtAu44S678U88E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vt/SWKy5GxtA6KTeDu7qTRBKeeeQJlBZ7JfPkBoTp7Kns15ZdpqXpHozt456YzhediXQjXHHLOeQc76YQZ+Jhma9fPDJFrXiIk+j3DT1JlsXjtwZ7n8lGzraDaB6JbAWeXZ3HlyhMPR9mlGs/s6YJ+IFuuIb91MSahV5iRJlXdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=HMMaV2Ty; arc=none smtp.client-ip=209.85.208.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=adfYGAusAGlD/eeAJwtNLId6vcUmw5Uf+3AAmdUJ2jFxVbL/zuqeb6caKT1t5gpsc0BPuFsmuHo+zpOPw0lUY0Ve1qdiW4Q+7A6FbDIquG1JTSdXyil9O0rvPAfOseK7h6qECTEKN9DJhGMjjYh6oMaqxwimAmdZOnldQHUT6CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=mOKFcCHn; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so7938953a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 15:59:46 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ab7430e27b2so530515666b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 16:03:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740268785; x=1740873585; darn=vger.kernel.org;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740269038; x=1740873838; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
-        b=HMMaV2Tynj3BGowSvfj9cHuQoVqAX/HkWUxJOH1zJzPICzw+fYsk5FE2gDA8+fRDnL
-         7fE5yb8roH+HqCw9DVVnqwxvBeHhldTN9xIxZBed2j/r0Jz0sKJblk+ersgetj7Qze3a
-         4YNeiSn8CtZ1JM92TtHW7UPt6eISGPCqjITB7leBAq8I8yAHxwWvx3+I4cU3vju75b77
-         Bw5weGObOTNk5aC6kYtV2psXM3aC3pVXtia3Uq4RboDgGSeQVswCxAESKKAhiaUJTi1n
-         n/CKj8G1ubmFZ8URoI4I9nEeY8XXu8xtLCYjRSmIdkXfEnRpP+dybVt9Bu+o4GJyoWjj
-         /isA==
+        bh=4LUUt0pnX00zf1HcZ8kQqou3gDEYCTh7HwQ/hK/Ge/A=;
+        b=mOKFcCHnMjjtrxXAKND4DjOI5AX/47hkEQU88UB0gPTIJqprlgdaYZPAEiSQDqmHb4
+         eAGLshFpd5pEr+KPqur9S/jk+MWs1F7NtUTZ0SVPosy6MIlD7/2UIyCbse3XvCaWCmqc
+         mgPDKMBKDfQOiei33By6lZ/BDErRYuB+LopqOVtREp1OeuxW7lpvqehOeG0dIL+AIwFo
+         axrqvavGsjD8PQ76dodJKnV7t+4nAEl0RCMC3qdefey7SUGmsElEEYTrtvlRj0guNiO+
+         RBBCR7ngir55FymILTR6VymPNtH6WVw4KO8NkpsLDa8pBcYSYvV56r3n3NJWlFLN/Kp3
+         R33w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740268785; x=1740873585;
+        d=1e100.net; s=20230601; t=1740269038; x=1740873838;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Lu2LoNkT4EDP4h3CKy4CP8LgrHHyNd0iD27ycNO3cNY=;
-        b=lbSZLDwvRHJEsKFEoMnegmhDyW4JqOY8sCVNagoau7ZL8DYLWl32+fXAkdKH4cVCs4
-         B6oPHUkVsXoeLjhtTbm/eYp0QMR9OVV2KZtD0gDaNELnSUybo7s2U4mAK7DQFRI8B1fm
-         1DQZvQX8mzsbiVmMqJDEP6uMSHkYJpq6E9JUEHjR37tgJxJfRl5tQhkoMSmhltYlq6NT
-         zKfKRibqozkOr3v4OBRaTy/3z+c7wDv0pciP9AbOD9OnvKcYrJL73MgTbpSBq3Su8vT8
-         nToVx7jS8E60leUtFRAlXjxS2lt5z8jFW8WMo9O1nV9vTkj8DJOhF+MVdPcO31ZRjVjB
-         N34g==
-X-Forwarded-Encrypted: i=1; AJvYcCUq1VCxS7o2uVIuIZedc7CMyLcM0p5Wke2Bx30lDkWZI3B2df5R7Mkh+kpQfdM6NPxnFgZeGOdUFVLltRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhdsiTEK8dEfNFAWELzh/2KG3bZY8dpagE4dPBh/oG6Rj1+Lew
-	4/5RwbNgUgp8i7CnTAzjaquTI3KSXgAmNfHgexcKDTghP79Fpu53+qAwkdYw3nY=
-X-Gm-Gg: ASbGnctPRQQhYR3fEoc6fYCdfub+/LCWExoHRmvZTt4A/ZBS7nz7SmabN7Iffa+jxpc
-	Ge7t5zD+YKD7l23WEUQzfm9/UODhtKdsRZSvrTW8Z6QUCTX4zskpLSLh82Hg5uAWnhZAx4UuxJM
-	wFeovZC+S4qz9MJCSt6tz1a09hp5cHkjQM/v79sZE/dc1rWcUPiVJKlWRQK0HH/mQufwrreqAZ2
-	/+R6vAGzAuSm1uYge0EtQY6UYkhNTi+ef7CU7n/9BjThmr1IgeG3hn3pwZ6nD0e6J4OQM1Gj6ml
-	8wqvxExruQo+s5VwjQ/t
-X-Google-Smtp-Source: AGHT+IEwAuQGxMOVSUtusVjN0BopgUdnw2fnKA4dzOqvUMZKdjWs0Zk6qVmFxkFPYOp6ZdBA7ynXRg==
-X-Received: by 2002:a17:907:7fa7:b0:abb:d334:73e7 with SMTP id a640c23a62f3a-abc0ae910a4mr749202366b.14.1740268785510;
-        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
+        bh=4LUUt0pnX00zf1HcZ8kQqou3gDEYCTh7HwQ/hK/Ge/A=;
+        b=MwiipdaU8C/p94OzTemjbhuXRzekNbZ6ZSNj94Uh56m73hIKkWrpaO7ZFCVrFXIfLg
+         iQeleWI31YrbTJm9pf6ngXOao6NL3+wZMDhUv7Vq4DXYWYqpFIwHYfMXTlTgEqZiAvbJ
+         RQdkbP1+5hvirxM8pQwNjtbaBmb34Ren5zBKgAbzXGxN2Jt2mqEfxwcu3Pkg502VYfQ/
+         g3FQT1GonloIW+BkBtpnfXzD6VGN7OM1w66Y/Z2dGPI8unMTCKQeF3G9hUyIAnVMzvRb
+         U4NdU9N5fFsYDTi8coz3Iz82n1apsjRhpjXz9nTpul97YBmK7zHgmtCXlaKHvXhe2c1B
+         V22w==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7Ru9cCyAi2HhcANac4TuzJnmdWBj6Vf4Ew5tTpxn/lENikq79RjQGroL+MkEp2fIj3kknK409HJfpJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz04rVB2Xo0M5os5lwpjI+Xk14q3rQIg7eHBwlui6PuMSdpBRrA
+	W90fO3Wp+wk2ZrWh3eU7Nab4B0bpQcnGxE77tFs9/hDNbB23Gdn/6lUmWwzuzJM=
+X-Gm-Gg: ASbGnculiNJV8lqFf3AsKDWMK6oFuHBougIoeCrTBpnCtzWk/WgxnRuCDoYbOuIfGDT
+	7h2T6NKonOIU+FpUFlHkmwKpyw83V5hp5NQefEDNqXTclMJi4zi1//5aUeM4YmwPDjyd1x5+tKI
+	arHIGbmvIwJMsCUWDc1wSl+JCgdh8mwrYlPnHEVn1Xu81SaXzEaEUGiBdryRIXvL7ZLKEP2/aNc
+	/fjYw4i6bdpftljYyAwLqjzWSwwUsRh6mZ3O/T3zkTPrnrgO9bMuezMHFpYC9gRpq4eXG3HDtYE
+	czFdSwVJRUMYqutLZGPK
+X-Google-Smtp-Source: AGHT+IFlsdbxEyAvhf/3tNnJQ0FtJe91bnosTyxBkr8GjcmYiyBU50dJsfVDnmOUvWRS9Xuvx5zwfg==
+X-Received: by 2002:a17:907:6d05:b0:abc:a40:4192 with SMTP id a640c23a62f3a-abc0d994e7cmr788310766b.9.1740269038057;
+        Sat, 22 Feb 2025 16:03:58 -0800 (PST)
 Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb8209a2cbsm1458407366b.133.2025.02.22.15.59.40
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb94329614sm1321959766b.180.2025.02.22.16.03.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 15:59:45 -0800 (PST)
-Date: Sat, 22 Feb 2025 23:59:36 +0000
+        Sat, 22 Feb 2025 16:03:57 -0800 (PST)
+Date: Sun, 23 Feb 2025 00:03:51 +0000
 From: Qais Yousef <qyousef@layalina.io>
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
+To: Ingo Molnar <mingo@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Vincent Guittot <vincent.guittot@linaro.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
 	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <20250222235936.jmyrfacutheqt5a2@airbuntu>
-References: <5a36a2e8-bd78-4875-9b9e-814468ca6692@arm.com>
- <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <20250216163340.ttwddti5pzuynsj5@airbuntu>
- <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
+	Christian Loehle <christian.loehle@arm.com>,
+	Hongyan Xia <hongyan.xia2@arm.com>,
+	John Stultz <jstultz@google.com>, Anjali K <anjalik@linux.ibm.com>,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8] sched: Consolidate cpufreq updates
+Message-ID: <20250223000351.xg53osxswsxxohye@airbuntu>
+References: <20250209235204.110989-1-qyousef@layalina.io>
+ <Z7igK4w4PW1T_PCw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -115,74 +98,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
+In-Reply-To: <Z7igK4w4PW1T_PCw@gmail.com>
 
-On 02/17/25 15:52, Juri Lelli wrote:
-> On 16/02/25 16:33, Qais Yousef wrote:
-> > On 02/13/25 07:20, Juri Lelli wrote:
-> > > On 12/02/25 19:22, Dietmar Eggemann wrote:
-> > > > On 11/02/2025 11:42, Juri Lelli wrote:
-> > > 
-> > > ...
-> > > 
-> > > > > What about we actually ignore them consistently? We already do that for
-> > > > > admission control, so maybe we can do that when rebuilding domains as
-> > > > > well (until we find maybe a better way to deal with them).
-> > > > > 
-> > > > > Does the following make any difference?
-> > > > 
-> > > > It at least seems to solve the issue. And like you mentioned on irc, we
-> > > > don't know the bw req of sugov anyway.
-> > > > 
-> > > > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
-> > > > 
-> > > > dl_rq[0]:
-> > > >   .dl_nr_running                 : 0
-> > > >   .dl_bw->bw                     : 996147
-> > > >   .dl_bw->total_bw               : 0       <-- !
-> > > > 
-> > > > IMHO, people who want to run serious DL can always check whether there
-> > > > are already these infrastructural DL tasks or even avoid schedutil.
-> > > 
-> > > It definitely not ideal and admittedly gross, but not worse than what we
-> > > are doing already considering we ignore sugovs at AC and the current
-> > > bandwidth allocation its there only to help with PI. So, duck tape. :/
-> > > 
-> > > A more proper way to work with this would entail coming up with sensible
-> > > bandwidth allocation for sugovs, but that's most probably hardware
-> > > specific, so I am not sure how we can make that general enough.
-> > 
-> > I haven't been following the problem closely, but one thing I was considering
-> > and I don't know if it makes sense to you and could help with this problem too.
-> > Shall we lump sugov with stopper class or create a new sched_class (seems
-> > unnecessary, I think stopper should do)? With the consolidate cpufreq update
-> > patch I've been working on Vincent raised issues with potential new ctx switch
-> > and to improve that I needed to look at improving sugov wakeup path. If we
-> > decouple it from DL I think that might fix your problem here and could allow us
-> > to special case it for other problems like the ones I faced more easily without
-> > missing up with DL.
-> > 
-> > Has the time come to consider retire the simple solution of making sugov a fake
-> > DL task?
+On 02/21/25 16:47, Ingo Molnar wrote:
 > 
-> Problem is that 'ideally' we would want to explicitly take sugovs into
-> account when designing the system. We don't do that currently as a
-> 'temporary solution' that seemed simpler than a proper approach (started
-> wondering if it's indeed simpler). So, not sure if moving sugovs outside
-> DL is something we want to do.
+> * Qais Yousef <qyousef@layalina.io> wrote:
+> 
+> > ---
+> >  include/linux/sched/cpufreq.h    |   4 +-
+> >  kernel/sched/core.c              | 116 +++++++++++++++++++++++++++--
+> >  kernel/sched/cpufreq_schedutil.c | 122 +++++++++++++++++++------------
+> >  kernel/sched/deadline.c          |  10 ++-
+> >  kernel/sched/fair.c              |  84 +++++++++------------
+> >  kernel/sched/rt.c                |   8 +-
+> >  kernel/sched/sched.h             |   9 ++-
+> >  kernel/sched/syscalls.c          |  30 ++++++--
+> >  8 files changed, 266 insertions(+), 117 deletions(-)
+> 
+> The changelog is rather long, and the diffstat is non-trivial.
+> 
+> Could you please split this up into multiple patches?
 
-Okay I see. The issue though is that for a DL system with power management
-features on that warrant to wake up a sugov thread to update the frequency is
-sort of half broken by design. I don't see the benefit over using RT in this
-case. But I appreciate I could be misguided. So take it easy on me if it is
-obviously wrong understanding :) I know in Android usage of DL has been
-difficult, but many systems ship with slow switch hardware.
+Sure. I did consider that but what stopped me is that I couldn't see how
+I could break them into independent patches. A lot of corner cases needed to be
+addressed and if I moved them to their own patches I'd potentially break
+bisectability of this code. If this is not a problem then I can see how I can
+do a better split. If it is a problem, I'll still try to think it over but it
+might require a bit of stretching. But I admit I didn't try to think it over
+that hard.
 
-How does DL handle the long softirqs from block and network layers by the way?
-This has been in a practice a problem for RT tasks so they should be to DL.
-sugov done in stopper should be handled similarly IMHO. I *think* it would be
-simpler to masquerade sugov thread as irq pressure.
+Thanks!
 
-You can use the rate_limit_us as a potential guide for how much bandwidth sugov
-needs if moving it to another class really doesn't make sense instead?
+--
+Qais Yousef
 
