@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-527715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10263A40E74
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:46:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 418D5A40E77
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC75C7AA15E
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44257AA693
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C155D205E0A;
-	Sun, 23 Feb 2025 11:46:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFC205E35;
+	Sun, 23 Feb 2025 11:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NUeCqCFf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6hIdrU4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212932045B9;
-	Sun, 23 Feb 2025 11:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66FF71FCF54;
+	Sun, 23 Feb 2025 11:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740311195; cv=none; b=Zezp0zTT+e74njCZJNFJf/trWirk4LxBgG3T/YgxLHYLpzLdl5WCahbh7JifNOqznBNX/WP7W4CAgzVhn3ARx3R2J8Ojq1vxxns/aIVPUSNzryGJ+flBljGt7sxL/DuMcXLNMMLeSGXLzLDyp1JYZ9zTU1ATFYcOnDQ3dwN1MUI=
+	t=1740311252; cv=none; b=SZYIqf6lna8KRRbmvm9n8M40xu4phJsGVsJR+EXn3U/MlOJ3xISE+p3SOhzj9Z3Xaf5VlU84s0nikpshJareWNZvbKXWa5lz0DewJ09Ty+acgcZhiOkb4WbaBASu2PP1HuTOjaW1HWj+4yLw4iJQQsbT/oUHqFkkwQ2tGlsrmuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740311195; c=relaxed/simple;
-	bh=xn/fx26pwoqWOzHZwiclK7+vo5qQdQsI57ke18rHGlo=;
+	s=arc-20240116; t=1740311252; c=relaxed/simple;
+	bh=c4aBh0SYBAutVvanVxoT09U90yHT1CI9HJ/ZAilY5pw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bIZ6oLR9lFVdHWDyCvHrbSO6vMcXMVXMDcvPGtTRbx7M6+2NyZiAh8FZe6Fcg45ZsxnMnouWiseHvpoSEJJM1zbHYlJp+syesEphlvAKnsslI1znPcH8dYePbmu+1ixXbezzeBNep8/7NbZmhdWQgphcXm30+Do/k6KT8ZARVfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NUeCqCFf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA217C4CEDD;
-	Sun, 23 Feb 2025 11:46:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHj00b4bkzKyEv9PecVjoiaFm+LIygsRfdpyFNJVnE/4jNN2UZAvkeujYagxquNp6Hnd+Ipos6gzNwyt1dRYP8BWfkN8MvlrR4VwXCUNN1qte0SPZbzOHIlZTcySUbohbKBujIkpK/nnEO9LIJphXf8OrWeJe5iXcElOkFdBq3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6hIdrU4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3B5AC4CEDD;
+	Sun, 23 Feb 2025 11:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740311194;
-	bh=xn/fx26pwoqWOzHZwiclK7+vo5qQdQsI57ke18rHGlo=;
+	s=k20201202; t=1740311252;
+	bh=c4aBh0SYBAutVvanVxoT09U90yHT1CI9HJ/ZAilY5pw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NUeCqCFf3KTJJ1EV8KCOcwQuntZ2Mvb7lerpk6L0dlg1RzE5ihETBQePlMpURPglS
-	 tuTX1FplO6IOsrCVrTdwkNZsSXjH6jUQajbEB8AHu/fHfdBYhCZDEu/rw5cp+Waljs
-	 WbuL4w86Wy7weQE83EUjAyiPDYmqB+MlB/dVQo8SDAwAo2GiMMUTXO1LTQnvb13oxg
-	 4ZIcH7wKChyzopg1cdxWGRDnjvhWX/wWE1Pj5LIu+Ud2ZNuuznM3TERaf8pQTQ+vBP
-	 F28Krt7f0CrLX13b6VvFqEaZlEpIX2Vte+T8H2q3prnf1ZO0u8t9cr+zhMPP7KUjVy
-	 rrZSfOJvNH25Q==
-Date: Sun, 23 Feb 2025 12:46:31 +0100
+	b=d6hIdrU4aGsFHMMbxt1e9/3Y0ICd4bfWi47R5Uug8BSA/kXMSRCX/EC9EBIX5UAXG
+	 wZMAjExlH1Nyj42BjFD4Ugzxw+Vj9xckTxsnHtxaw/WyZeETnHy//jyUeOv4E2SaxA
+	 pmA/At6I4FTTbqRtU19T5ZKg5i2K7YvonGYCX4eQTQY6ecbWowqRNB/gnLcQQBLy/A
+	 sDDXxfvevXqY7hGH26jvPfeECvlD/beQoi3rc3yn7s/1iIQqHRSZJTwW3OoRUGyMlV
+	 oDFmIa4TReSq41pgSUls1VpcL4rPUKA7QK2gHOfU9aisL0iqhNs8O2iTxu0wuMKUOY
+	 pol7tTiEHedLw==
+Date: Sun, 23 Feb 2025 12:47:29 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: wangweidong.a@awinic.com
-Cc: lgirdwood@gmail.com, broonie@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, perex@perex.cz, tiwai@suse.com, 
-	rf@opensource.cirrus.com, jack.yu@realtek.com, ivprusov@salutedevices.com, 
-	zhoubinbin@loongson.cn, quic_pkumpatl@quicinc.com, paulha@opensource.cirrus.com, 
-	nuno.sa@analog.com, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, yijiangtao@awinic.com
-Subject: Re: [PATCH V1 1/2] ASoC: dt-bindings: Add schema for "awinic,aw88166"
-Message-ID: <20250223-manipulative-hornet-of-swiftness-dae16f@krzk-bin>
-References: <20250221102623.369435-1-wangweidong.a@awinic.com>
- <20250221102623.369435-2-wangweidong.a@awinic.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev, 
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Ming Qian <ming.qian@nxp.com>
+Subject: Re: [PATCH 1/2] media: dt-bindings: nxp,imx8-jpeg: Add compatible
+ strings for IMX95 JPEG
+Message-ID: <20250223-military-garrulous-toucan-c9a410@krzk-bin>
+References: <20250221-95_jpeg-v1-0-053decdb452c@nxp.com>
+ <20250221-95_jpeg-v1-1-053decdb452c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,19 +63,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221102623.369435-2-wangweidong.a@awinic.com>
+In-Reply-To: <20250221-95_jpeg-v1-1-053decdb452c@nxp.com>
 
-On Fri, Feb 21, 2025 at 06:26:22PM +0800, wangweidong.a@awinic.com wrote:
-> From: Weidong Wang <wangweidong.a@awinic.com>
+On Fri, Feb 21, 2025 at 12:48:18PM -0500, Frank Li wrote:
+> Add compatible strings "nxp,imx95-jpgdec" and "nxp,imx95-jpgenc", which
+> are backward compatible with "nxp,imx8qxp-jpgdec" and
+> "nxp,imx8qxp-jpegenc". i.MX95 just need one power domain which combine
+> wrap and all slots together. Reduce minItems of power-domains to 1 for
+> i.MX95 and keep the same restriction for others.
 > 
-> Add the awinic,aw88166 property to support the aw88166 chip.
-> 
-> Signed-off-by: Weidong Wang <wangweidong.a@awinic.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  Documentation/devicetree/bindings/sound/awinic,aw88395.yaml | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/media/nxp,imx8-jpeg.yaml   | 28 +++++++++++++++++++---
+>  1 file changed, 25 insertions(+), 3 deletions(-)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
