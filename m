@@ -1,113 +1,162 @@
-Return-Path: <linux-kernel+bounces-527555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5166A40C95
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:46:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD29A40C96
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:50:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A6AA7ACBCE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99ED51899FB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A0B13AC1;
-	Sun, 23 Feb 2025 02:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF8D224B26;
+	Sun, 23 Feb 2025 02:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="xYX9Z940"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dl63xP+6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 154618836;
-	Sun, 23 Feb 2025 02:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FED612B63
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 02:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740278792; cv=none; b=FSSsxYoj7w79SwG99vUD77PVVpyhCdSj4mz/m/o5eWoStuBAcgctU4ebevDmh5FT7nQW8Fc2wTKJ452MgZ83hnuWv0ZQZYc5weZMp4aF228fTVqDdn7hkMqF/DiOOiW7BVe1V0ayYrSa6nWj0TPpJ3YgYfXqX/NflSkiE2cx4C0=
+	t=1740279045; cv=none; b=ZQOKAP+sN6HfsqZIB2RkE5ISJrcc6Je3O2vJ7fkHg0aOm07BVGlO2dRvj4wru41WEY0Tors5QfIdaBSPRyYhnAdMuKlbHpUOx3BdN18nSnXXuuiC8UIuEDu2KDpunJe4QnqGN39ADvGRWfDp3eN4oQWTyejYizGe2M3eM+svoQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740278792; c=relaxed/simple;
-	bh=dhYI81vtV3obBhOyd6vtWZA2PuYEd7yu7su4Ec03D9Y=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=H04cWDWYZiQq25L5Z7llP2KJgoTwSO8KKW+RqUVNfX9OOhVhWWnpsNW6e+fd1NDkeUIKQMANw3jYlHIOZImsQkoCU4HFo5Aklr2uPK0lHM7O7lIUxwM4EFxxeDPzgW5bwhnJr8CjB0cktYzJ8+Xj8kjZqASdGVhPvl8a169AAQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=xYX9Z940; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F49C4CED1;
-	Sun, 23 Feb 2025 02:46:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1740278791;
-	bh=dhYI81vtV3obBhOyd6vtWZA2PuYEd7yu7su4Ec03D9Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=xYX9Z940qj9qMlHFAeliNqDDjM6RMZ1xSMUkk8IKicYPc2dqCJMOkZoj1GRFQGNsC
-	 pRhoTTAlfDqhTITuQ1z5B0hn6FNgDQKP+FGR7hWVCjOzXxNenojgwlU5y0+v0q6fg0
-	 4X5q7lbo6B4Hxq2jEL/IK0PHv4/w6yaQbTRgHsKk=
-Date: Sat, 22 Feb 2025 18:46:30 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Thomas Prescher <thomas.prescher@cyberus-technology.de>
-Cc: "willy@infradead.org" <willy@infradead.org>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>, "corbet@lwn.net" <corbet@lwn.net>,
- "muchun.song@linux.dev" <muchun.song@linux.dev>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: hugetlb: add hugetlb_alloc_threads cmdline
- option
-Message-Id: <20250222184630.1f25865325eced9b0f37eb85@linux-foundation.org>
-In-Reply-To: <eeb9d580a41cb314aba6ad21e751b506dc9cc434.camel@cyberus-technology.de>
-References: <20250221-hugepage-parameter-v1-0-fa49a77c87c8@cyberus-technology.de>
-	<20250221-hugepage-parameter-v1-1-fa49a77c87c8@cyberus-technology.de>
-	<Z7iFHkybeT4v8Jbo@casper.infradead.org>
-	<eeb9d580a41cb314aba6ad21e751b506dc9cc434.camel@cyberus-technology.de>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740279045; c=relaxed/simple;
+	bh=4bapoUa3z5kP8XByBORFOsPXb2dQ02c6LZ4udsbBB+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AsOq3Bv2fHTfhInhTFlZK6YY8L7dIY50m1LW8YDpxqHLl8E+KrRetBUd4CGTjq9oDYmQGHbL2jYs5Iu2gDU6X2E9TaVO0Ez0P3W1dlf6wlgklSw2NgZENPUp7DlfL1IjLnMPAlJVvqMSO0q1GDSFCNc0vYwl48l+qeJbAHN6GbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dl63xP+6; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740279043; x=1771815043;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4bapoUa3z5kP8XByBORFOsPXb2dQ02c6LZ4udsbBB+g=;
+  b=dl63xP+65Ub+ZlfF3D+BnZ3EGzqYKCEJg+lidoXynJiBzqJEBYxxIjZ9
+   6xClBBqzFULXpLEAub1UJtSa5lc3gvCMMrhonl+Y/eo8sAZ6l9+MNQGTP
+   9uuSh0JPYZRpU8unDrky7vo7yK0cPWWcYbYE6IZs0fB+0jRuNztNlqrRD
+   hXpppYtLSOHZAzmRA1TAqzGRT8Q2ZllWEyhCyA8ZSY0UP7bUhkkA0PK5u
+   3mkokNsuU6Q86VkBGy52fZllTrJ64FI7sTMi6JWqdwcFu1Cw+s3wXP6vA
+   nki14E4bEr8vgxccubtEiqCRbJ3SlViFPdRx2If9+m2AVJspDzfs5Osrd
+   w==;
+X-CSE-ConnectionGUID: bng04GXfSMee2nR6Blbsfg==
+X-CSE-MsgGUID: Tto74qq9St6Wrb4PZIaB9g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11353"; a="44970567"
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="44970567"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Feb 2025 18:50:43 -0800
+X-CSE-ConnectionGUID: Qh1bAEI2TweUvEVWQTH1TA==
+X-CSE-MsgGUID: YRD8cyHGQ4KYF7PO7uBheg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,308,1732608000"; 
+   d="scan'208";a="115689239"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 22 Feb 2025 18:50:41 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tm24k-00075C-26;
+	Sun, 23 Feb 2025 02:50:38 +0000
+Date: Sun, 23 Feb 2025 10:50:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alice Ryhl <aliceryhl@google.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: rust/helpers/io.c:12:10: error: passing 'volatile void *' to
+ parameter of type 'void *' discards qualifiers
+Message-ID: <202502231029.mBK5dkZJ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 21 Feb 2025 14:16:31 +0000 Thomas Prescher <thomas.prescher@cyberus=
--technology.de> wrote:
+Hi Danilo,
 
-> On Fri, 2025-02-21 at 13:52 +0000, Matthew Wilcox wrote:
-> > I don't think we should add a command line option (ie blame the
-> > sysadmin
-> > for getting it wrong).=A0 Instead, we should figure out the right
-> > number.
-> > Is it half the number of threads per socket?=A0 A quarter?=A0 90%?=A0 I=
-t's
-> > bootup, the threads aren't really doing anything else.=A0 But we
-> > should figure it out, not the sysadmin.
->=20
-> I don't think we will find a number that delivers the best performance
-> on every system out there. With the two systems we tested, we already
-> see some differences.
->=20
-> The Skylake servers have 36 threads per socket and deliver the best
-> performance when we use 8 threads which is 22%. Using more threads
-> decreases the performance.
->=20
-> On Cascade Lake with 48 threads per socket, we see the best performance
-> when using 32 threads which is 66%. Using more threads also decreases
-> the performance here (not included in the table obove). The performance
-> benefits of using more than 8 threads are very marginal though.
->=20
-> I'm completely open to change the default so something that makes more
-> sense. From the experiments we did so far, 25% of the threads per node
-> deliver a reasonable good performance. We could still keep the
-> parameter for sysadmins that want to micro-optimize the bootup time
-> though.
+FYI, the error/warning still remains.
 
-I'm all for auto-tuning but yeah, for a boot-time thing like this we
-require a boot-time knob.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5cf80612d3f72c46ad53ef5042b4c609c393122f
+commit: ce30d94e6855a4f6dc687f658e63c225fcc1d690 rust: add `io::{Io, IoRaw}` base types
+date:   9 weeks ago
+config: um-randconfig-r113-20250223 (https://download.01.org/0day-ci/archive/20250223/202502231029.mBK5dkZJ-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 204dcafec0ecf0db81d420d2de57b02ada6b09ec)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250223/202502231029.mBK5dkZJ-lkp@intel.com/reproduce)
 
-As is often (always) the case, the sad thing is that about five people
-in the world know that this exists.  How can we tell our users that
-this new thing is available and possibly useful to them?  We have no
-channel.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502231029.mBK5dkZJ-lkp@intel.com/
 
-Perhaps in your [2/2] we could be noisier? =20
+All errors (new ones prefixed by >>):
 
-	HugeTLB: allocation took 4242ms with hugepage_alloc_threads=3D42
+   ***
+   *** Rust bindings generator 'bindgen' < 0.69.5 together with libclang >= 19.1
+   *** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/2824),
+   *** unless patched (like Debian's).
+   ***   Your bindgen version:  0.65.1
+   ***   Your libclang version: 21.0.0
+   ***
+   ***
+   *** Please see Documentation/rust/quick-start.rst for details
+   *** on how to set up the Rust support.
+   ***
+   In file included from rust/helpers/helpers.c:10:
+   In file included from rust/helpers/blk.c:3:
+   In file included from include/linux/blk-mq.h:5:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:8:
+   In file included from include/linux/cacheflush.h:5:
+   In file included from arch/um/include/asm/cacheflush.h:4:
+   In file included from arch/um/include/asm/tlbflush.h:9:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from rust/helpers/helpers.c:17:
+>> rust/helpers/io.c:12:10: error: passing 'volatile void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
+      12 |         iounmap(addr);
+         |                 ^~~~
+   arch/um/include/asm/io.h:19:42: note: passing argument to parameter 'addr' here
+      19 | static inline void iounmap(void __iomem *addr)
+         |                                          ^
+   1 warning and 1 error generated.
+   make[3]: *** [scripts/Makefile.build:194: rust/helpers/helpers.o] Error 1
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+>> rust/helpers/io.c:12:10: error: passing 'volatile void *' to parameter of type 'void *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+   arch/um/include/asm/io.h:19:42: note: passing argument to parameter 'addr' here
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   make[3]: *** [rust/Makefile:330: rust/bindings/bindings_helpers_generated.rs] Error 101
+   make[3]: *** Deleting file 'rust/bindings/bindings_helpers_generated.rs'
+   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+   make[3]: Target 'rust/' not remade because of errors.
+   make[2]: *** [Makefile:1269: prepare] Error 2
+   make[1]: *** [Makefile:251: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:251: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
 
-and with a facility level higher than KERN_DEBUG (can/should we use
-pr_foo() here, btw?).  That should get people curious and poking around
-in the documentation and experimenting.
+
+vim +12 rust/helpers/io.c
+
+     9	
+    10	void rust_helper_iounmap(volatile void __iomem *addr)
+    11	{
+  > 12		iounmap(addr);
+    13	}
+    14	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
