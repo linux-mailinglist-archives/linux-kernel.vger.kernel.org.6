@@ -1,140 +1,103 @@
-Return-Path: <linux-kernel+bounces-527558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137C4A40C99
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 657AAA40C9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:04:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A44E166497
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8019B171079
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B006B288DA;
-	Sun, 23 Feb 2025 02:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Eu4l0o0p"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9542AE8C;
+	Sun, 23 Feb 2025 03:04:16 +0000 (UTC)
+Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 013D822612;
-	Sun, 23 Feb 2025 02:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168E03211
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 03:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740279190; cv=none; b=a6OeV1Pi0jyws6oioWyDHmxpJDXK0cQcdMiTGqwKUF5T0WSH5mu/aPg0teqjOBmbSFkSKglqNhLcwpXuAtnyvnbIs4I+/a2GIy9hznQnGMz6VVHYnRgsRB2MOrVQ8XNivxz2cG+up4BOtPWA7tDsLozYkAIpHJYapPOGMflGOYM=
+	t=1740279856; cv=none; b=e7Zt/CUe9NTA0m/NFAQo8cDlaGyV8mRjQQY+BbPc+lCb5SLCI3RLm00VR67BPhgBmMkJzyLsNOCTcYDzyjibfw4gShqts2mDqig9KGhIxxcw3Mfm45Ek2VeoBqezL7HOskmeJ82/KY+dCL1GK2BtYteqWoAE9oReMq5PzPmxYI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740279190; c=relaxed/simple;
-	bh=obMnHjuKzoUq/iZrkus0UZUPE91NLD1g1Z0/24mGcfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AY4ONKL/S1wDg5t8CLcVEyybkcLtYR/9UOq+Fhxcyck6H9FHgHF/OqqbN1It7eWVbpfN+PtUvr+zZYsf9VSk3dGTEBxw7f/BIJ2x3sPtcT5AsJEOu/Ejykzfb6CXvIgXNrjFUgbhQZTawdfcpnsSyx5idEUSDjMITJ8v64D4jIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Eu4l0o0p; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=WsIJTTYLHxjcB204NYnG7rDohCeWBbckZrZozEyvyPk=; b=Eu4l0o0pBFvhjtYPG2ZpXhUe53
-	SGdEdleh3upbVMP49bq/03pc41Zw1b/8vHOfKR4sfsba0ZvwqltJ62Vgd1rgpdjv0JkJHMepJCbH5
-	f1QFXZiQ2iiLZv4jFuLGbNWFcS/6egCAZ1c1gA1g2ze5Tq2MjO08D8l190KaIZhcCXj2DzQxU+SrS
-	TGNSDqkhRXVHWywbqqdjVQiJEHklqzCoyQ/6lw6TU9/Y4jBc5Y75rcjEgxePWi9W4/mWvb//hkMLh
-	WMH+jxHUHrSnQWiydiLyOO1A+L0ecpIjN46Gj+iVhBSEXmr5HYnW5NB7i7r8wNowEp8CKdwJHVO4z
-	YsgvF6AQ==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tm26p-000xMg-16;
-	Sun, 23 Feb 2025 10:52:48 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 23 Feb 2025 10:52:47 +0800
-Date: Sun, 23 Feb 2025 10:52:47 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Barry Song <21cnbao@gmail.com>, Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	"Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v5 02/12] crypto: acomp - Define new interfaces for
- compress/decompress batching.
-Message-ID: <Z7qNf4NerHrflmfV@gondor.apana.org.au>
-References: <CAJD7tkbRHkb7Znzto6=RRDQA9zXZSva43GukhBEfjrgm1qOxHw@mail.gmail.com>
- <Z3yMNI_DbkKBKJxO@gondor.apana.org.au>
- <CAJD7tkaTuNWF42+CoCLruPZks3F7H9mS=6S74cmXnyWz-2tuPw@mail.gmail.com>
- <Z7F1B_blIbByYBzz@gondor.apana.org.au>
- <Z7dnPh4tPxLO1UEo@google.com>
- <CAGsJ_4yVFG-C=nJWp8xda3eLZENc4dpU-d4VyFswOitiXe+G_Q@mail.gmail.com>
- <dhj6msbvbyoz7iwrjnjkvoljvkh2pgxrwzqf67gdinverixvr5@e3ld7oeketgw>
- <lu3j2kr3m2b53ze2covbywh6a7vvrscbkoplwnq4ov24g2cfso@572bdcsobd4a>
- <Z7poTnlv-1DStRZQ@gondor.apana.org.au>
- <u7t7gibspxu3lujdl4hambr72qd6o5u33udbojihngznlyistk@gmyyhwjuiwxc>
+	s=arc-20240116; t=1740279856; c=relaxed/simple;
+	bh=nFJOgHjZ/C15HHyUUvUbqP3vs9RuYGp0BbHxqJds6So=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fxSE8IEBUpc29QpMjD0mXA9cLFPnx9zdOXkC6kLa3CbMMZw26ZwtrbAiOPdzSOHAf0lTP0Ta9k7ZNIMixlkdieZKtNMKZOQ132D3PfTexEzxVQq/+mmyTtgIqtPh9jLXI7P6MEmY22B79FoS6Zfk2/6S9gWecAV9sWUR/ssi1hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.68.60])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67BA8DE300001EB3; Sun, 23 Feb 2025 10:54:30 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2321688913523
+X-SMAIL-UIID: 49433830E50740C28B5D7CCAD58D1252-20250223-105430-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
+Date: Sun, 23 Feb 2025 10:54:16 +0800
+Message-ID: <20250223025417.2617-1-hdanton@sina.com>
+In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <u7t7gibspxu3lujdl4hambr72qd6o5u33udbojihngznlyistk@gmyyhwjuiwxc>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 11:09:32AM +0900, Sergey Senozhatsky wrote:
->
-> Right, for lzo/lzo-rle we need a safety page.
-
-We should fix it because it's a security hole for anyone who calls
-it through the Crypto API.
-
-> It also seems that there is no common way of reporting dst_but overflow.
-> Some algos return -ENOSPC immediately, some don't return anything at all,
-> and deflate does it's own thing - there are these places where they see
-> they are out of out space but they Z_OK it
+On Sat, 22 Feb 2025 09:01:23 -0800
+> syzbot found the following issue on:
 > 
-> if (s->pending != 0) {
-> 	flush_pending(strm);
-> 	if (strm->avail_out == 0) {
-> 		/* Since avail_out is 0, deflate will be called again with
-> 		 * more output space, but possibly with both pending and
-> 		 * avail_in equal to zero. There won't be anything to do,
-> 		 * but this is not an error situation so make sure we
-> 		 * return OK instead of BUF_ERROR at next call of deflate:
-> 		 */
-> 		s->last_flush = -1;
-> 		return Z_OK;
-> 	}
-> }
+> HEAD commit:    0a86e49acfbb dt-bindings: usb: samsung,exynos-dwc3 Add exy..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c02ba4580000
 
-Z_OK is actually an error, see crypto/deflate.c:
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
 
-	ret = zlib_deflate(stream, Z_FINISH);
-	if (ret != Z_STREAM_END) {
-		ret = -EINVAL;
-		goto out;
-	}
-
-We could change this to ENOSPC for consistency.
-
-If you do find anything that returns 0 through the Crypto API please
-let me know.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--- x/drivers/hid/hid-steam.c
++++ y/drivers/hid/hid-steam.c
+@@ -1086,15 +1086,14 @@ static void steam_work_unregister_cb(str
+ 	connected = steam->connected;
+ 	spin_unlock_irqrestore(&steam->lock, flags);
+ 
++	if (opened) {
++		steam_sensors_unregister(steam);
++		steam_input_unregister(steam);
++	}
+ 	if (connected) {
+-		if (opened) {
+-			steam_sensors_unregister(steam);
+-			steam_input_unregister(steam);
+-		} else {
+-			steam_set_lizard_mode(steam, lizard_mode);
+-			steam_input_register(steam);
+-			steam_sensors_register(steam);
+-		}
++		steam_set_lizard_mode(steam, lizard_mode);
++		steam_input_register(steam);
++		steam_sensors_register(steam);
+ 	}
+ }
+ 
+@@ -1340,6 +1339,7 @@ static void steam_remove(struct hid_devi
+ 	hid_hw_close(hdev);
+ 	hid_hw_stop(hdev);
+ 	steam_unregister(steam);
++	disable_work_sync(&steam->unregister_work);
+ }
+ 
+ static void steam_do_connect_event(struct steam_device *steam, bool connected)
+--
 
