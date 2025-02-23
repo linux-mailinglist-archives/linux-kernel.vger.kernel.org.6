@@ -1,143 +1,185 @@
-Return-Path: <linux-kernel+bounces-527993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56221A4123E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:22:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0159FA41243
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:32:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4288717043B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:22:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C90A3A3111
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9031E2036FE;
-	Sun, 23 Feb 2025 23:22:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C28F2046A4;
+	Sun, 23 Feb 2025 23:32:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="ovT+WVlw"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWFEwJMk"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30892155A2F
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:21:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCC913B58F;
+	Sun, 23 Feb 2025 23:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740352920; cv=none; b=ktlNt8qbfNJ/uFpw1x9Zi8tPnBdhUeIzidEZbOIPpfEP33Hs4oN7k4RC1GaCvPDsRaPC0g0VRkBWnL9JgSFCzfvMD3kyEQjzZPbll7h7sBuSJNUa2RjWB+D2UWzoznPISSbJCrRNZ4EPv97vTxJcCVTU2wJX//bvkQda+UM4x5o=
+	t=1740353525; cv=none; b=cI9ymu9EYQwztXrcFAw9dE8Kyv4e13ag/zVNSnRX5iGgQjlN1mL3jxg9OupaTTZ3qbTeFQPBSgTJ7NtGT7TRh23NIoGTT7HAGg2i8QZM3IFNlTRc9pVwEm792SLGDJAplEGchrJe7bORJTi92RaPQXyWYHIvSDt7Z1UURwk5fYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740352920; c=relaxed/simple;
-	bh=YUpIX3p5KAT012WNBeDY80poqUUYGkSnPO+1asqVCz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lEteIJZexyGSOIPo4lrnoW9eP6Db9PWnyodLc5chK/4R3yTsgz14/NMadHDW/X0KyX4D++CxPxNd1ZH3ed2jVbH5eB8uyjkHAit2l8tg/9ZxVtWKi9VW9Et4jEaDFdPbgH4JaD0+kQDmsC/iIxan0bsANE+z+Ekv3p8bnPKkfpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=ovT+WVlw; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f24fc466aso2916089f8f.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 15:21:57 -0800 (PST)
+	s=arc-20240116; t=1740353525; c=relaxed/simple;
+	bh=9SzP/lO9Oz47p1WDXAFv3n6XXzHZVzHB28BymtT8unw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=KeK0m0Ia3uSgEDxilCDJGpOxkJdmg4/vizf81l9r1poFugu0ec721v/GLRY9POSocHvUmV2P+7ntObIk+HqkQgGFORhYOo62Q8hV5f8jno8agzPtOge0evNXzw7YYLLSplYy/fz/1CB6Kx7l9vzNEr2+2u8HHDdP7VeOgaUez0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWFEwJMk; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fc1c80cdc8so5889886a91.2;
+        Sun, 23 Feb 2025 15:32:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740352916; x=1740957716; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3948LJQT8mXQGK1uSw5EWn56hLyOoSGn19GgIOUKWtg=;
-        b=ovT+WVlwupMs/zwlyvVd4n751muoE/CiGnSraD5WTJYsRbUMOIOGtNw5sSN4ctAEGK
-         eWynzqR/OkWhlYVlyz0Gu53fp0IziU9KiqOMGKNVlePTgdWlCNCv0xtwqtKZuC8DOYql
-         DUvjVC6X/F8+xmgWcrD8OwtVKzP9FifrzJW3B7PZQWjoqeBfhL9lUtqziaRt+5feYW1D
-         Ngztk/rJU94OAo61da+dSUr/gQHXEKQRNCfFCzRmlr0i+MAUmxebUDgyKS+tHSx7hK8W
-         65b1XPsz61QhO9fvwEByW5ZgiR2Sf/dvGN4Xg3wScUyvsa+RBngFolP1Wg21MEjcRtAE
-         8mYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740352916; x=1740957716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740353523; x=1740958323; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3948LJQT8mXQGK1uSw5EWn56hLyOoSGn19GgIOUKWtg=;
-        b=MKq3XRdyB8wPrnXkmNKEHOl1+MRJJz43gBNux/vZq71dEUlzioN/rWe0N5df0zul/2
-         3H11KHFsZn2B/XZwWqDc38U2pSQO+1uVPOOj7yzziV5OLjOFQOQPyGZcE/ptYu+aAAN5
-         LqfB0SzVgsOo+TxTKJxR/oFAnc8L3HqbLDOkHsWNtL1m2x3Yd4dXnEhsX84FJ6lRQWMQ
-         0bF5byix5nqzLJklF2iUCNtwv5foa1yCkqnBWaANrMSrOYFTWNlv1FHRg/32FSsDk7OY
-         CdtdJQVVCvsXgZcx7tEXZM1frwmicu7uhRZfy1Cq9ovMCseiLHFL8psF6xBy4ja1z0+6
-         5VNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXB9uvzC67lxarBX2FVq+vgbyBlQqANktGBR14E1JdEbVOcmpueGGEg+SQFUc20V3MbRgAE8vThX823AFY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWD1yR6Wj8dQ7ZJHZuwfRgPlt2w6dsen5pswY1swWR28eq+xre
-	FcM5DITPYITNv0II5UgwhiOUV44JZ1rG1r53jJ0CVxw3PqOBb/NgxRWeVCPbslM=
-X-Gm-Gg: ASbGncs6pwkj0K02qh6w9ah6rhOQvhBYXcWLkYtGlcZSjb/oB4gvYMvTh4+PAwiVwpi
-	DRaUpixYdcM4H8oI16LX/5BNfs5K+IqdL/AsB+RqhF1UdxSxvsq6gq9GergdjyA6PWauzn8gl9Z
-	x3dg7Kx31zkrBtzpiUgP/Slg8NeG3IX8qgBYqmeHRe3dLabIXSLHYgJFqeMMytTF+d+j40aRz5v
-	SZU2epmTlcYl3iIvY+psyKhEDcVI7eQywzDnHZuK49opPRb0EzaCgXHO3QYFIMcpd43jAf+aZvM
-	Tg4QSGksTCAQt4Q32wO7
-X-Google-Smtp-Source: AGHT+IF/4LqtEeT+DONh96owC4K16mDeErj+C54WXDJj+XOfUMwszVF3GcC+Ead7Ayo982nBvK1xcA==
-X-Received: by 2002:a5d:452f:0:b0:38d:d274:4533 with SMTP id ffacd0b85a97d-38f7087d88cmr6419397f8f.55.1740352916373;
-        Sun, 23 Feb 2025 15:21:56 -0800 (PST)
-Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8121sm29536254f8f.88.2025.02.23.15.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 15:21:56 -0800 (PST)
-Date: Sun, 23 Feb 2025 23:21:51 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Andrea Righi <arighi@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Stultz <jstultz@google.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
-Message-ID: <20250223232151.xtsobtuoaofotrxx@airbuntu>
-References: <20250210001915.123424-1-qyousef@layalina.io>
- <20250212145054.GA1965539@joelnvbox>
- <Z7rTNxHcXWizV3lq@gpd3>
- <Z7rxuqIB38Wv557A@gmail.com>
+        bh=cY/FjH8ifVrO4AXW9HJfHpvRmVFP8k+aKW+4qs+JeF4=;
+        b=XWFEwJMk5v4WT29u/V6mGJEuY6hJJR9jemIwiL3X0jXedrfF2eAQ6QRMD0hWWmZtTM
+         vCEhGKhFvuLPQhjlrXT/dp0yh0IJk9Wt5p2qQAWPNNhOuSOlnixAgIF4EYH81RW+BBnY
+         PU3D3HDd9N1BX5ZQDiHdo8ehJqtNCjleUj5eLZItVoBLHkwSlAUvePPwk3ng2Edxmgnc
+         m6IkiDUP6JgmRc5+ukkHQ2/lpOEjZuASdd4N2EZbKzQhtv8w4fXA2IWl74toz30CZS+f
+         Sl0suI6pINNwazeZ3Ch2XYH+9sImL39vdg0mxmiPNLhoOSRuoO3kbkscj+KX3NnyVIZ0
+         Si7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740353523; x=1740958323;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cY/FjH8ifVrO4AXW9HJfHpvRmVFP8k+aKW+4qs+JeF4=;
+        b=DOb2jrVGXRA9Tepw0r9FKqzyIkCkym5loTEoEfAcIU3pJ6/Bz2Uwevh98g5K0HK+J/
+         f3Fu1qmTRa7KEzZ+aSosdIxbGXATatwl3v56EqQ1fwVdWdQjpqPNrj1fqk8jbNOgVO99
+         eqoBYsvx13gDlpROtThjm6Aat5jSXZ/f2fywd1fmkLZwWr3K7pi1MZfBrzYEgnGTJQod
+         fyeoolMC37UFKpAHVP0orCs0JjUbdfgw6ov2AocTMNPFsGW+yVka9TRCHVRdB5LZqori
+         /xPcpUcZfTKPyJSKoUTcDIVm5bQA6yJfKiaG1oqsh8J4IMEYpeVW1SXB7hMtupBBgiwq
+         szbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpUItu+PJnJVqYxf6Cy/+uCdAfrEf0hrkL/v0g7wDosxJyIgkAU/WUqYLh+ViaZQupXrpC0BtS5nXkcXs=@vger.kernel.org, AJvYcCWjGDKz9+tH06ueMTcK87k3vQlQcLKNDDO7R6FbpmqlDZb5o7c+QbQ2c7i3gVl3qQfeZRGCeo8XZ8v3JzUxeA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuOCNIjQVx0mokjAa5DQRXT1Brlc5huIv61OktzilRaudKVyT+
+	GPL7VucMYiKmj+tc2xFnlv3dlN9TVV9EhQpMVzUU75aBNqbKYEcMEAdZhWDB
+X-Gm-Gg: ASbGncuuBIqmOoKnu1TGx94eMDZYUPdrPv/3Sooi+qNyjckDkeX1mNeP1nibbBdGfQH
+	SLTyV8KO+nX7PAKP64YHDnTQKtHiwGmJAg54IzaJkBDdvj7U2uZ+zTKlIvuHnXsJAztNGFF+6L0
+	IsdF9EjqcU3mvKGgcqjZ3ZVMk4xA/QKyj/EFC+BD0ssXAqWx8NIJi4gI6WFTVGzsC8t8+3F80rI
+	Fg9eBkwQDM2cnLu4TxjI7EUMaEseyLwMv28oHzz1MWr0yFOSHwAheOdl7sX2bE28X0d5QWsx/IA
+	FUjTHh+wVOnQDyWK5MtyUMRYgouok3EIBxpII/rsKb7oFQvI
+X-Google-Smtp-Source: AGHT+IEZaCc7mLw+80g8Jz/kMgvS1gsDVAhNQEI/CkIHmF8ulm2CfeFAyRuF0ozUizRn4JTp1yw7lQ==
+X-Received: by 2002:a17:90b:17cd:b0:2ee:8aa7:94a0 with SMTP id 98e67ed59e1d1-2fce7b04fc2mr16642616a91.32.1740353523482;
+        Sun, 23 Feb 2025 15:32:03 -0800 (PST)
+Received: from smtpclient.apple ([2601:645:4300:5ca0:1452:c642:288f:cb14])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02df30sm5182530a91.3.2025.02.23.15.32.02
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 23 Feb 2025 15:32:02 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7rxuqIB38Wv557A@gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: Rust kernel policy
+From: comex <comexk@gmail.com>
+In-Reply-To: <D7ZDF8NZGPS3.3QBMAVC1NTUDM@maslowski.xyz>
+Date: Sun, 23 Feb 2025 15:31:51 -0800
+Cc: Martin Uecker <uecker@tugraz.at>,
+ Greg KH <gregkh@linuxfoundation.org>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ rust-for-linux <rust-for-linux@vger.kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ David Airlie <airlied@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ ksummit@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E0BD1BDB-0EBC-4E27-9324-7CA70ACE194B@gmail.com>
+References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
+ <Z7SwcnUzjZYfuJ4-@infradead.org>
+ <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
+ <326CC09B-8565-4443-ACC5-045092260677@zytor.com>
+ <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
+ <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home>
+ <2025021954-flaccid-pucker-f7d9@gregkh>
+ <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
+ <2025022024-blooper-rippling-2667@gregkh>
+ <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
+ <D7ZDF8NZGPS3.3QBMAVC1NTUDM@maslowski.xyz>
+To: =?utf-8?Q?Piotr_Mas=C5=82owski?= <piotr@maslowski.xyz>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-On 02/23/25 11:00, Ingo Molnar wrote:
-> 
-> * Andrea Righi <arighi@nvidia.com> wrote:
-> 
-> > On Wed, Feb 12, 2025 at 09:50:54AM -0500, Joel Fernandes wrote:
-> > > On Mon, Feb 10, 2025 at 12:19:15AM +0000, Qais Yousef wrote:
-> > ...
-> > > > I believe HZ_250 was the default as a trade-off for battery power
-> > > > devices that might not be happy with frequent TICKS potentially draining
-> > > > the battery unnecessarily. But to my understanding the current state of
-> > > 
-> > > Actually, on x86, me and Steve did some debug on Chromebooks and we found
-> > > that HZ_250 actually increased power versus higher HZ. This was because
-> > > cpuidle governor changes C states on the tick, and by making it less
-> > > frequent, the CPU could be in a shallow C state for longer.
-> > 
-> > FWIW, I found the same about power consumption when we decided to switch to
-> > CONFIG_HZ=1000 in the Ubuntu kernel:
-> > https://discourse.ubuntu.com/t/enable-low-latency-features-in-the-generic-ubuntu-kernel-for-24-04/42255
+> On Feb 22, 2025, at 3:42=E2=80=AFPM, Piotr Mas=C5=82owski =
+<piotr@maslowski.xyz> wrote:
+>=20
+> I'm sure you already know this, but the idea of safety in Rust isn't
+> just about making elementary language constructs safe. Rather, it is
+> primarily about designing types and code in such a way one can't "use
+> them wrong=E2=80=9D.
 
-Thanks for sharing the data Andrea!
+And importantly, it=E2=80=99s very hard to replicate this approach in C, =
+even in a hypothetical =E2=80=98C + borrow checker=E2=80=99, because C =
+has no generic types.  Not all abstractions need generics, but many do.
 
-> 
-> The "HZ=1000 reduces power consumption or keeps it the same" is 
-> actually a pretty good argument to change the default to HZ=1000.
-> 
-> These experiments and numbers (if any) should be incorporated in the 
-> changelog prominently - as actual data and the Kconfig decisions made 
-> by major distros will, most of the time, be superior to meta analysis 
-> that seems to be the changelog right now.
+Rust has Option<T>.  C has null, and you manually track which pointers =
+can be null.
 
-I will update the commit message to incorporate data and the feedback received.
+Rust has Result<T, E>.  Kernel C has ERR_PTR, and you manually track =
+which pointers can be errors.
 
-Thanks!
+Rust has Arc<T> and Box<T> and &T and &mut T to represent different =
+kinds of ownership.  C has two pointer types, T * and const T *, and you =
+manually track ownership.
 
---
-Qais Yousef
+Rust has Vec<T> and &[T] to represent arrays with dynamic length.  C has =
+pointers, and you manually keep the pointer and length together.
+
+Rust has Mutex<T> (a mutex along with a mutex-protected value of type =
+T), and MutexGuard<T> (an object representing the fact that a mutex is =
+currently locked).  C has plain mutexes, and you manually track which =
+mutexes protect what data, along with which mutexes are currently =
+locked.
+
+Each of these abstractions is simple enough that it *could* be bolted =
+onto C as its own special case.  Clang has tried for many.  In place of =
+Option<T>, Clang added _Nullable and _Nonnull annotations to pointer =
+types.  In place of Arc<T>/Box<T>, Clang added ownership attributes [1]. =
+ In place of &[T], Clang added __counted_by / bounds-safety mode [2].  =
+In place of Mutex<T>, Clang added a whole host of mutex-tracking =
+attributes [3].
+
+But needing a separate (and nonstandard) compiler feature for every =
+abstraction you want to make really cuts down on flexibility.  Compare =
+Rust for Linux, which not only uses all of that basic vocabulary (with =
+the ability to make Linux-specific customizations as needed), but also =
+defines dozens of custom generic types [4] as safe wrappers around =
+specific Linux APIs, forming abstractions that are too codebase-specific =
+to bake into a compiler at all.
+
+This creates an expressiveness gap between C and Rust that cannot be =
+bridged by safety attributes.  Less expressiveness means more need for =
+runtime enforcement, which means more overhead.  That is one of the =
+fundamental problems that will face any attempt to implement =E2=80=98safe=
+ C=E2=80=99.
+
+(A good comparison is Clang=E2=80=99s upcoming bounds-safety feature.  =
+It=E2=80=99s the most impressive iteration of =E2=80=99safe C=E2=80=99  =
+I=E2=80=99ve seen so far.  But unlike Rust, it only protects against =
+indexing out of bounds, not against use-after-frees or bad casts.  A C =
+extension protecting against those would have to be a lot more invasive. =
+ In particular, focusing on spatial safety dodges many of the cases =
+where generics are most important in Rust.  But even then, bounds-safety =
+mode requires lots of annotations in order to bring overhead down to =
+acceptable levels.)
+
+[1] =
+https://clang.llvm.org/docs/AttributeReference.html#ownership-holds-owners=
+hip-returns-ownership-takes-clang-static-analyzer
+[2] https://clang.llvm.org/docs/BoundsSafety.html
+[3] https://clang.llvm.org/docs/ThreadSafetyAnalysis.html
+[4] =
+https://github.com/search?q=3Drepo%3Atorvalds%2Flinux+%2F%28%3F-i%29struct=
++%5B%5E+%5C%28%5D*%3C.*%5BA-Z%5D.*%3E%2F+language%3ARust&type=3Dcode =
+(requires GitHub login, sorry)=
 
