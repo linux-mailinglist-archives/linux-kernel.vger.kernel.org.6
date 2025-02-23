@@ -1,163 +1,422 @@
-Return-Path: <linux-kernel+bounces-527633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46F5A40D80
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:53:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E314A40D82
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:54:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F6A53B0A86
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:53:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F2B1895154
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD881FF7DB;
-	Sun, 23 Feb 2025 08:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368021FF7DF;
+	Sun, 23 Feb 2025 08:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tK2mXp5W";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6FKQwyRr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tK2mXp5W";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6FKQwyRr"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FX7D8WK3"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADAB1FCFEE
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5921FDA63
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740300795; cv=none; b=aqjc+X5br07CIZ71fzduYoc8jxANcKMkvlkadYTcDRfQC/bIlH6uCCI54KidIOmCeYRQyo/Cl9/ZBrdRI5B2zeKlU5MQhS/SqpDVnNEF6+UPcVP3yQsAw8hdkARZM7GsFUmgq+YLoMp91XFezE841w+XPxvyUJSG/sZwur+eNHQ=
+	t=1740300825; cv=none; b=KzyvpZ8X6M+Yk0uDp6++wVryE95PEhkExaZUjKOFs3I0TiePP+33hA5v317VMmCQ/u5KWMveqNb4220x2AfwA4aelhrNzylHQ0ZAvujsVQWuLRoapMBN5yIZUOX0IY0TLHjnTv0ileDztws++qCNDWsfb6gQtO9ycvIIw7HcOTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740300795; c=relaxed/simple;
-	bh=kXabbZuH8nmvuZUugWPRsrzpUzlR5tkZghkl9EnKBLQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=gPTcjFItXRzjY3/GQ3a3wLeH/xA/M7KO0kdLUB9sOVYIv3FYD92NTAgl9iFbWnkmDSH9/OUdmnRtRzVf6T0+E/OuvE3o/xDhgKWJGrbKTR8mGUWgg3rv15x32CUeQg9tYEkb6OoZKjUucwDTdQImvM+/VYq5BbS5001ne6bcVJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tK2mXp5W; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6FKQwyRr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tK2mXp5W; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6FKQwyRr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 92F0C1F383;
-	Sun, 23 Feb 2025 08:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740300791; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=Z2Aurb0tFrAght4VDTSh5xS+Dxx12mfI5R7RQ6P2LuM=;
-	b=tK2mXp5WQhS8hglQ8zv/5LoaER1lb8K5+GoCMyWq4au1BsMY8fmlFjSP+5JeK5dG58fpXU
-	GByXpHPSuKMr4YRnSq6uuEZXgSSXvNqtwMgl53yO8Musllgav6buhaM31pE0TSTLYvJP7Q
-	XrkOIEVmTHqDDLMRY3v1TAyAoN575NY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740300791;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=Z2Aurb0tFrAght4VDTSh5xS+Dxx12mfI5R7RQ6P2LuM=;
-	b=6FKQwyRrHfhAENwuKYDKWYzpRwJcloUwGZNVaRRiwDQQLzNLaT70+uOe1rPfaAe1rT1yZ6
-	PD2cyVxYeb8K06Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740300791; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=Z2Aurb0tFrAght4VDTSh5xS+Dxx12mfI5R7RQ6P2LuM=;
-	b=tK2mXp5WQhS8hglQ8zv/5LoaER1lb8K5+GoCMyWq4au1BsMY8fmlFjSP+5JeK5dG58fpXU
-	GByXpHPSuKMr4YRnSq6uuEZXgSSXvNqtwMgl53yO8Musllgav6buhaM31pE0TSTLYvJP7Q
-	XrkOIEVmTHqDDLMRY3v1TAyAoN575NY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740300791;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=Z2Aurb0tFrAght4VDTSh5xS+Dxx12mfI5R7RQ6P2LuM=;
-	b=6FKQwyRrHfhAENwuKYDKWYzpRwJcloUwGZNVaRRiwDQQLzNLaT70+uOe1rPfaAe1rT1yZ6
-	PD2cyVxYeb8K06Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 25C5F13A39;
-	Sun, 23 Feb 2025 08:53:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DZS8BffhumfUewAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Sun, 23 Feb 2025 08:53:11 +0000
-Date: Sun, 23 Feb 2025 09:53:10 +0100
-Message-ID: <874j0lvy89.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: regressions@lists.linux.dev,
-    linux-fsdevel@vger.kernel.org,
-    stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [REGRESSION] Chrome and VSCode breakage with the commit b9b588f22a0c
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1740300825; c=relaxed/simple;
+	bh=kaO4m8IWQkKU3HGciEEc1UMPAVK0wdyopUtB7E2ue1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8NSs5i61cAHgdnqSzA4KJuEMJj7mJPJWLLD7REsR2TWZPFwSIFbAMSm0IxvqeL5lopj655zZoyeC73g67TcRqezPg5D9u4HuIdfbphLuv9Zd8t/eNG/l/iyB5Uxa9vhmHQoqP7Ds67aF7PF/EPxrwzpPEuAY3+OwJgsZKNetzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FX7D8WK3; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-221206dbd7eso69227725ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:53:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740300822; x=1740905622; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ad9dzdTy8RTwSvQ6ETQBmoHLcKIOzrrIpSyMRpInjto=;
+        b=FX7D8WK3+Spw6+AXJ4oo6omu94tdyuxbwaQ2+LaEI/4bYTDuU93rUvBiUw6VPDSdLK
+         9v2ZwWUsU9iqLumBz3JjGVssd1vH0vpYWAskbNsVdnAiEHwJ7OULfdBRot2AIgILaiuv
+         ha5W5X28tNERA6xYwHMwtXAc3ceBY5ZQ/xLG2zHmJF8Q50ZTLMB+DVyGrE10B2bhfw1u
+         Iu66TKGQ1DoAdF8CaqGFw14txXecaDRe2pkNUVuefIgfnue9oGNRoHlggtIrzTKNE5qh
+         D4GNvA+i2M+O4gh1KMpaWCFZEqxW8Zu3Z7gO38nLE+HjfgLaBlJUZinN71gi5K0BY0ta
+         J7SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740300822; x=1740905622;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ad9dzdTy8RTwSvQ6ETQBmoHLcKIOzrrIpSyMRpInjto=;
+        b=LygTW4MPm0pYN9eWm/TDCMGXfBh41swBHu7rLPTjB/sQU/SgVO5od70kplwNORcOcd
+         T/St4lIuMvSXcmuvifBOWullHYwVsliYQvBTy0iFB9H3baDGWEBClhUN2WhGlHcYC/hG
+         eaWA8vtecVvnlUf4qykj16UDYfq1Df1TliCCoL8jQHGtkVXopHQeTkvdQRzOXulICueg
+         R9ieExLc62JlQXFvEtoNPAeWRMdo3cfhyOCjeWP2q1ahUsxc7iEJ0tJ5Nd8EDuAZXuGV
+         gmPWe98LqIWa01HeaPF+8VuHFLv93CxzTCzpuqEiOBg1Y2JE2JDwdr5OcqvKs5NxqBTf
+         xx6g==
+X-Gm-Message-State: AOJu0Yyj2WgmPSidVdIN4myW54H9/DMzuBvoZaIh7AKdwfObfYVfU8/R
+	f12ClcEHqC94Y/xtTJzLe0o4VsIgzhzbL8ffkL0r0+RPOjxpi9RNE/UQ68xgYQ==
+X-Gm-Gg: ASbGncvfLcRs0+h194GuTGXp78XyB4ecMRY3Lq5P4xqbZ1eSvPZsG0F9o5tj2F4CQea
+	2KcIaWGP1FpUqvJueqnIhxU3LhCppgfX3mZPYfyoYD0Ep6Xt69cv9z/aEFi2r/2+tHqk/71fmXl
+	GplTbgDNOgCNChh9GKCYYuT6PK+YXQeiIend5uGNfQZU5Yxy2yfhGE4nRawffMOcG5VG2b+PSUc
+	SRUlm38BYauick1IH6z5UeoyjK5hJi+C6xr4NYzg8G0LBCv9fP3s72Tews6a9CeRvRJNpV6g1c+
+	X8xHhB4KtGeWb7MW2T5I2bjhcxbQWQ5IcCHrI4w=
+X-Google-Smtp-Source: AGHT+IEz7p5KlVP+Ilo+be7FWF08jgj28/sTosNcYmT3M/2Xud7EjsRe7o7bLRLnPa/TUc1mn9/r5g==
+X-Received: by 2002:a17:902:da8c:b0:220:c813:dfcb with SMTP id d9443c01a7336-2219ffa7c51mr132859635ad.39.1740300822494;
+        Sun, 23 Feb 2025 00:53:42 -0800 (PST)
+Received: from thinkpad ([220.158.156.216])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5364351sm161848705ad.76.2025.02.23.00.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 00:53:41 -0800 (PST)
+Date: Sun, 23 Feb 2025 14:23:34 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@Huawei.com,
+	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
+Message-ID: <20250223085334.l22epoycjhwqbtkd@thinkpad>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
+ <20250221131548.59616-5-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250221131548.59616-5-shradha.t@samsung.com>
 
-[ resent due to a wrong address for regression reporting, sorry! ]
+On Fri, Feb 21, 2025 at 06:45:47PM +0530, Shradha Todi wrote:
+> Add support to provide error injection interface to userspace. This set
+> of debug registers are part of the RASDES feature present in DesignWare
+> PCIe controllers.
+> 
+> Signed-off-by: Shradha Todi <shradha.t@samsung.com>
 
-Hi,
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-we received a bug report showing the regression on 6.13.1 kernel
-against 6.13.0.  The symptom is that Chrome and VSCode stopped working
-with Gnome Scaling, as reported on openSUSE Tumbleweed bug tracker
-  https://bugzilla.suse.com/show_bug.cgi?id=1236943
+- Mani
 
-Quoting from there:
-"""
-I use the latest TW on Gnome with a 4K display and 150%
-scaling. Everything has been working fine, but recently both Chrome
-and VSCode (installed from official non-openSUSE channels) stopped
-working with Scaling.
-....
-I am using VSCode with:
-`--enable-features=UseOzonePlatform --enable-features=WaylandWindowDecorations --ozone-platform-hint=auto` and for Chrome, I select `Preferred Ozone platform` == `Wayland`.
-"""
+> ---
+>  Documentation/ABI/testing/debugfs-dwc-pcie    |  70 ++++++++
+>  .../controller/dwc/pcie-designware-debugfs.c  | 165 +++++++++++++++++-
+>  2 files changed, 233 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
+> index e8ed34e988ef..6ee0897fe753 100644
+> --- a/Documentation/ABI/testing/debugfs-dwc-pcie
+> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
+> @@ -11,3 +11,73 @@ Contact:	Shradha Todi <shradha.t@samsung.com>
+>  Description:	(RW) Write the lane number to be checked as valid or invalid. Read
+>  		will return the status of PIPE RXVALID signal of the selected lane.
+>  		The default selected lane is Lane0.
+> +
+> +What:		/sys/kernel/debug/dwc_pcie_<dev>/rasdes_err_inj/<error>
+> +Date:		Feburary 2025
+> +Contact:	Shradha Todi <shradha.t@samsung.com>
+> +Description:	rasdes_err_inj is the directory which can be used to inject errors in the
+> +		system. The possible errors that can be injected are:
+> +
+> +		1) TLP LCRC error injection TX Path - tx_lcrc
+> +		2) 16b CRC error injection of ACK/NAK DLLP - b16_crc_dllp
+> +		3) 16b CRC error injection of Update-FC DLLP - b16_crc_upd_fc
+> +		4) TLP ECRC error injection TX Path - tx_ecrc
+> +		5) TLP's FCRC error injection TX Path - fcrc_tlp
+> +		6) Parity error of TSOS - parity_tsos
+> +		7) Parity error on SKPOS - parity_skpos
+> +		8) LCRC error injection RX Path - rx_lcrc
+> +		9) ECRC error injection RX Path - rx_ecrc
+> +		10) TLPs SEQ# error - tlp_err_seq
+> +		11) DLLPS ACK/NAK SEQ# error - ack_nak_dllp_seq
+> +		12) ACK/NAK DLLPs transmission block - ack_nak_dllp
+> +		13) UpdateFC DLLPs transmission block - upd_fc_dllp
+> +		14) Always transmission for NAK DLLP - nak_dllp
+> +		15) Invert SYNC header - inv_sync_hdr_sym
+> +		16) COM/PAD TS1 order set - com_pad_ts1
+> +		17) COM/PAD TS2 order set - com_pad_ts2
+> +		18) COM/FTS FTS order set - com_fts
+> +		19) COM/IDL E-idle order set - com_idl
+> +		20) END/EDB symbol - end_edb
+> +		21) STP/SDP symbol - stp_sdp
+> +		22) COM/SKP SKP order set - com_skp
+> +		23) Posted TLP Header credit value control - posted_tlp_hdr
+> +		24) Non-Posted TLP Header credit value control - non_post_tlp_hdr
+> +		25) Completion TLP Header credit value control - cmpl_tlp_hdr
+> +		26) Posted TLP Data credit value control - posted_tlp_data
+> +		27) Non-Posted TLP Data credit value control - non_post_tlp_data
+> +		28) Completion TLP Data credit value control - cmpl_tlp_data
+> +		29) Generates duplicate TLPs - duplicate_dllp
+> +		30) Generates Nullified TLPs - nullified_tlp
+> +
+> +		(WO) Write to the attribute will prepare controller to inject the respective
+> +		error in the next transmission of data. Parameter required to write will
+> +		change in the following ways:
+> +
+> +		i) Errors 9) - 10) are sequence errors. The write command for these will be
+> +
+> +			echo <count> <diff> > /sys/kernel/debug/dwc_pcie_<dev>/rasdes_err_inj/<error>
+> +
+> +			<count>
+> +				Number of errors to be injected
+> +			<diff>
+> +				The difference to add or subtract from natural sequence number to
+> +				generate sequence error. Range (-4095 : 4095)
+> +
+> +		ii) Errors 23) - 28) are credit value error insertions. Write command:
+> +
+> +			echo <count> <diff> <vc> > /sys/kernel/debug/dwc_pcie_<dev>/rasdes_err_inj/<error>
+> +
+> +			<count>
+> +				Number of errors to be injected
+> +			<diff>
+> +				The difference to add or subtract from UpdateFC credit value.
+> +				Range (-4095 : 4095)
+> +			<vc>
+> +				Target VC number
+> +
+> +		iii) All other errors. Write command:
+> +
+> +			echo <count> > /sys/kernel/debug/dwc_pcie_<dev>/rasdes_err_inj/<error>
+> +
+> +			<count>
+> +				Number of errors to be injected
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> index 3887a6996706..b7260edd2336 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> @@ -17,6 +17,20 @@
+>  #define PIPE_DETECT_LANE		BIT(17)
+>  #define LANE_SELECT			GENMASK(3, 0)
+>  
+> +#define ERR_INJ0_OFF			0x34
+> +#define EINJ_VAL_DIFF			GENMASK(28, 16)
+> +#define EINJ_VC_NUM			GENMASK(14, 12)
+> +#define EINJ_TYPE_SHIFT			8
+> +#define EINJ0_TYPE			GENMASK(11, 8)
+> +#define EINJ1_TYPE			BIT(8)
+> +#define EINJ2_TYPE			GENMASK(9, 8)
+> +#define EINJ3_TYPE			GENMASK(10, 8)
+> +#define EINJ4_TYPE			GENMASK(10, 8)
+> +#define EINJ5_TYPE			BIT(8)
+> +#define EINJ_COUNT			GENMASK(7, 0)
+> +
+> +#define ERR_INJ_ENABLE_REG		0x30
+> +
+>  #define DWC_DEBUGFS_BUF_MAX		128
+>  
+>  /**
+> @@ -33,6 +47,72 @@ struct dwc_pcie_rasdes_info {
+>  	struct mutex reg_event_lock;
+>  };
+>  
+> +/**
+> + * struct dwc_pcie_rasdes_priv - Stores file specific private data information
+> + * @pci: Reference to the dw_pcie structure
+> + * @idx: Index to point to specific file related information in array of structs
+> + *
+> + * All debugfs files will have this struct as its private data.
+> + */
+> +struct dwc_pcie_rasdes_priv {
+> +	struct dw_pcie *pci;
+> +	int idx;
+> +};
+> +
+> +/**
+> + * struct dwc_pcie_err_inj - Store details about each error injection supported by DWC RASDES
+> + * @name: Name of the error that can be injected
+> + * @err_inj_group: Group number to which the error belongs to. Value can range from 0 - 5
+> + * @err_inj_type: Each group can have multiple types of error
+> + */
+> +struct dwc_pcie_err_inj {
+> +	const char *name;
+> +	u32 err_inj_group;
+> +	u32 err_inj_type;
+> +};
+> +
+> +static const struct dwc_pcie_err_inj err_inj_list[] = {
+> +	{"tx_lcrc", 0x0, 0x0},
+> +	{"b16_crc_dllp", 0x0, 0x1},
+> +	{"b16_crc_upd_fc", 0x0, 0x2},
+> +	{"tx_ecrc", 0x0, 0x3},
+> +	{"fcrc_tlp", 0x0, 0x4},
+> +	{"parity_tsos", 0x0, 0x5},
+> +	{"parity_skpos", 0x0, 0x6},
+> +	{"rx_lcrc", 0x0, 0x8},
+> +	{"rx_ecrc", 0x0, 0xb},
+> +	{"tlp_err_seq", 0x1, 0x0},
+> +	{"ack_nak_dllp_seq", 0x1, 0x1},
+> +	{"ack_nak_dllp", 0x2, 0x0},
+> +	{"upd_fc_dllp", 0x2, 0x1},
+> +	{"nak_dllp", 0x2, 0x2},
+> +	{"inv_sync_hdr_sym", 0x3, 0x0},
+> +	{"com_pad_ts1", 0x3, 0x1},
+> +	{"com_pad_ts2", 0x3, 0x2},
+> +	{"com_fts", 0x3, 0x3},
+> +	{"com_idl", 0x3, 0x4},
+> +	{"end_edb", 0x3, 0x5},
+> +	{"stp_sdp", 0x3, 0x6},
+> +	{"com_skp", 0x3, 0x7},
+> +	{"posted_tlp_hdr", 0x4, 0x0},
+> +	{"non_post_tlp_hdr", 0x4, 0x1},
+> +	{"cmpl_tlp_hdr", 0x4, 0x2},
+> +	{"posted_tlp_data", 0x4, 0x4},
+> +	{"non_post_tlp_data", 0x4, 0x5},
+> +	{"cmpl_tlp_data", 0x4, 0x6},
+> +	{"duplicate_dllp", 0x5, 0x0},
+> +	{"nullified_tlp", 0x5, 0x1},
+> +};
+> +
+> +static const u32 err_inj_type_mask[] = {
+> +	EINJ0_TYPE,
+> +	EINJ1_TYPE,
+> +	EINJ2_TYPE,
+> +	EINJ3_TYPE,
+> +	EINJ4_TYPE,
+> +	EINJ5_TYPE,
+> +};
+> +
+>  static ssize_t lane_detect_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+>  {
+>  	struct dw_pcie *pci = file->private_data;
+> @@ -93,6 +173,63 @@ static ssize_t rx_valid_write(struct file *file, const char __user *buf, size_t
+>  	return lane_detect_write(file, buf, count, ppos);
+>  }
+>  
+> +static ssize_t err_inj_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
+> +{
+> +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
+> +	struct dw_pcie *pci = pdata->pci;
+> +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> +	u32 val, counter, vc_num, err_group, type_mask;
+> +	int val_diff = 0;
+> +	char *kern_buf;
+> +
+> +	err_group = err_inj_list[pdata->idx].err_inj_group;
+> +	type_mask = err_inj_type_mask[err_group];
+> +
+> +	kern_buf = memdup_user_nul(buf, count);
+> +	if (IS_ERR(kern_buf))
+> +		return PTR_ERR(kern_buf);
+> +
+> +	if (err_group == 4) {
+> +		val = sscanf(kern_buf, "%u %d %u", &counter, &val_diff, &vc_num);
+> +		if ((val != 3) || (val_diff < -4095 || val_diff > 4095)) {
+> +			kfree(kern_buf);
+> +			return -EINVAL;
+> +		}
+> +	} else if (err_group == 1) {
+> +		val = sscanf(kern_buf, "%u %d", &counter, &val_diff);
+> +		if ((val != 2) || (val_diff < -4095 || val_diff > 4095)) {
+> +			kfree(kern_buf);
+> +			return -EINVAL;
+> +		}
+> +	} else {
+> +		val = kstrtou32(kern_buf, 0, &counter);
+> +		if (val) {
+> +			kfree(kern_buf);
+> +			return val;
+> +		}
+> +	}
+> +
+> +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + ERR_INJ0_OFF + (0x4 * err_group));
+> +	val &= ~(type_mask | EINJ_COUNT);
+> +	val |= ((err_inj_list[pdata->idx].err_inj_type << EINJ_TYPE_SHIFT) & type_mask);
+> +	val |= FIELD_PREP(EINJ_COUNT, counter);
+> +
+> +	if (err_group == 1 || err_group == 4) {
+> +		val &= ~(EINJ_VAL_DIFF);
+> +		val |= FIELD_PREP(EINJ_VAL_DIFF, val_diff);
+> +	}
+> +	if (err_group == 4) {
+> +		val &= ~(EINJ_VC_NUM);
+> +		val |= FIELD_PREP(EINJ_VC_NUM, vc_num);
+> +	}
+> +
+> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + ERR_INJ0_OFF + (0x4 * err_group), val);
+> +	dw_pcie_writel_dbi(pci, rinfo->ras_cap_offset + ERR_INJ_ENABLE_REG, (0x1 << err_group));
+> +
+> +	kfree(kern_buf);
+> +	return count;
+> +}
+> +
+>  #define dwc_debugfs_create(name)			\
+>  debugfs_create_file(#name, 0644, rasdes_debug, pci,	\
+>  			&dbg_ ## name ## _fops)
+> @@ -107,6 +244,11 @@ static const struct file_operations dbg_ ## name ## _fops = {	\
+>  DWC_DEBUGFS_FOPS(lane_detect);
+>  DWC_DEBUGFS_FOPS(rx_valid);
+>  
+> +static const struct file_operations dwc_pcie_err_inj_ops = {
+> +	.open = simple_open,
+> +	.write = err_inj_write,
+> +};
+> +
+>  static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
+>  {
+>  	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> @@ -116,10 +258,11 @@ static void dwc_pcie_rasdes_debugfs_deinit(struct dw_pcie *pci)
+>  
+>  static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  {
+> -	struct dentry *rasdes_debug;
+> +	struct dentry *rasdes_debug, *rasdes_err_inj;
+>  	struct dwc_pcie_rasdes_info *rasdes_info;
+> +	struct dwc_pcie_rasdes_priv *priv_tmp;
+>  	struct device *dev = pci->dev;
+> -	int ras_cap;
+> +	int ras_cap, i, ret;
+>  
+>  	ras_cap = dw_pcie_find_rasdes_capability(pci);
+>  	if (!ras_cap) {
+> @@ -133,6 +276,7 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  
+>  	/* Create subdirectories for Debug, Error injection, Statistics */
+>  	rasdes_debug = debugfs_create_dir("rasdes_debug", dir);
+> +	rasdes_err_inj = debugfs_create_dir("rasdes_err_inj", dir);
+>  
+>  	mutex_init(&rasdes_info->reg_event_lock);
+>  	rasdes_info->ras_cap_offset = ras_cap;
+> @@ -142,7 +286,24 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  	dwc_debugfs_create(lane_detect);
+>  	dwc_debugfs_create(rx_valid);
+>  
+> +	/* Create debugfs files for Error injection subdirectory */
+> +	for (i = 0; i < ARRAY_SIZE(err_inj_list); i++) {
+> +		priv_tmp = devm_kzalloc(dev, sizeof(*priv_tmp), GFP_KERNEL);
+> +		if (!priv_tmp) {
+> +			ret = -ENOMEM;
+> +			goto err_deinit;
+> +		}
+> +
+> +		priv_tmp->idx = i;
+> +		priv_tmp->pci = pci;
+> +		debugfs_create_file(err_inj_list[i].name, 0200, rasdes_err_inj, priv_tmp,
+> +				    &dwc_pcie_err_inj_ops);
+> +	}
+>  	return 0;
+> +
+> +err_deinit:
+> +	dwc_pcie_rasdes_debugfs_deinit(pci);
+> +	return ret;
+>  }
+>  
+>  void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
+> -- 
+> 2.17.1
+> 
 
-Surprisingly, the bisection pointed to the backport of the commit
-b9b588f22a0c049a14885399e27625635ae6ef91 ("libfs: Use d_children list
-to iterate simple_offset directories").
-
-Indeed, the revert of this patch on the latest 6.13.4 was confirmed to
-fix the issue.  Also, the reporter verified that the latest 6.14-rc
-release is still affected, too.
-
-For now I have no concrete idea how the patch could break the behavior
-of a graphical application like the above.  Let us know if you need
-something for debugging.  (Or at easiest, join to the bugzilla entry
-and ask there; or open another bug report at whatever you like.)
-
-BTW, I'll be traveling tomorrow, so my reply will be delayed.
-
-
-thanks,
-
-Takashi
-
-#regzbot introduced: b9b588f22a0c049a14885399e27625635ae6ef91
-#regzbot monitor: https://bugzilla.suse.com/show_bug.cgi?id=1236943
+-- 
+மணிவண்ணன் சதாசிவம்
 
