@@ -1,159 +1,78 @@
-Return-Path: <linux-kernel+bounces-527840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EED6A41066
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:22:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A750A41067
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:23:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8FC3AC47A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:22:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90286189365C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5111487DC;
-	Sun, 23 Feb 2025 17:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1D786AE3;
+	Sun, 23 Feb 2025 17:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJB5tKNH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="TGLyQF86"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D430622071;
-	Sun, 23 Feb 2025 17:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A028722071
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740331343; cv=none; b=aTbj0PXl4C5OuQxDNVS6LFd1VbT7AK7uCerXy3zLk+bIKak4TE5t7SP5B5PacwSfMY5unh8zSTfjiF4oj6LqKN9GMD6N/z6GCT8d8RoZu9FvFuKcav3DoYOJud0+CObkwpnKsu4ndgqTDafVGP60JDtwMd4JaX855/nLp1Xu0yo=
+	t=1740331403; cv=none; b=kQWvFkkE6oqkjNnOMbdIY1jF6FWNdWZk+/q4mhmoOXSgP6fIOtvPZPgv6h/ruLQYOCYdt0RXOgnH7fwFMx6NWjy2bJlEWK38R1uf4JU23BPQMQk6EUUplQwjZgYm/a73Y/P6pECcB6m7gRWE1YbyZoyAiBT0AZZbLEYQwzAe9iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740331343; c=relaxed/simple;
-	bh=ikthoz7q6na/BgPcgPu7Oys3XOFB7HVKetzGLYnw3Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iI+MvaIq8RCGm2CabFFtlaqnHRN+PsBJ2AXJBUOe5Mi2OUw3HaFJRXq6lD43xsqMjPFt9Ed2q7u01+fz4l6p20jC+qm9jKRK63CxDPD9xnHkPnVKqXnj5AnfSvc1rdV1/naaMispG5pA+m6BdWMRrqZgwx7Lp7b1sbdzxqfeS3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJB5tKNH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3A6C4CEDD;
-	Sun, 23 Feb 2025 17:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740331342;
-	bh=ikthoz7q6na/BgPcgPu7Oys3XOFB7HVKetzGLYnw3Gg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LJB5tKNH71oIJPN+zlqlFAeA/eHt/H7sM0lPHD5hxOzMwMBILHKf5Qwux9yg8T17U
-	 lHhfMEJjbDmABJqxPojrfKylUBDbugpOvVdrgulnFdb72r+3H8LQIAk3CtbhZByKle
-	 0NWjFUa4N/GZnHC+GP/YKyk4XaXXsG6UR9gaGKZpxQxrzncg5u4T9pF6yY7ZfVkq8D
-	 b0GVnfRGXbPshcVKJzhDLNoMqv4D++EtPhNw40755C1lkqYEkQKO2OjIJta7i2tNKw
-	 57UC63+6sX9qTXWy3bVVklOlgQ02jUJFbIKdoR2AwcyP4DIIMEiexPXZ/5kuXhiVsV
-	 tBJF7pnEU3mLQ==
-Date: Sun, 23 Feb 2025 09:22:20 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Ruiwu Chen <rwchen404@gmail.com>,
-	Joel Granados <joel.granados@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, corbet@lwn.net, viro@zeniv.linux.org.uk,
-	keescook@chromium.org, zachwade.k@gmail.com
-Subject: Re: [PATCH v2] drop_caches: re-enable message after disabling
-Message-ID: <Z7tZTCsQop1Oxk_O@bombadil.infradead.org>
-References: <virvi6vh663p5ypdjr2v2fr3o77w5st3cagr4fe6z7nhhqehc6@xb7nqlop6nct>
- <20250222084513.15832-1-rwchen404@gmail.com>
+	s=arc-20240116; t=1740331403; c=relaxed/simple;
+	bh=QUsRh1nNKsaGpisE5qYQAN8G+m4Dt7dYGrysT4Q8aOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CSemf2v5/g4C2ZWP53jRlG9sb1M8xUU+ewatMRcPhXV0fVZZOMeb4tu3CLN3qwS7Q70FoVEUYJlIX/cRW/aMbAsK4XKLc5g0sW/HX1ToUCDULW7m/3qLwnTeoMBZmYsFwMumfwbHwL+eFQRqvhgktfMkO02LALPK2mgPwJrvUvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=TGLyQF86; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=K6AjRKXMcIWJMvCoVF/pqk8NG+bDe1Eyhn9FmQ6hkCw=; b=TGLyQF86q3y0kgmA
+	7kDjnh+juTG/N01uKOSWcTy0oc4muCtkAKxQ5BKJlXty/c9GyfqgzJm58bsslgaHiuzgAk3iOEUuq
+	nn7CvoA2FfHKj+Ehpt833jax9ZwYihwYMEglRJy3/6eB7DBXoNGQkpJYtJPrguKmgIXcYf9Xb1EjX
+	+CEDY6PKdFBv/BAceSnoSBOUnWA9IdnfOA+9juTTfJ+3D8Z7HT9RkHTyP2OxACDG8ysVIqicqhQHQ
+	huVn+sXgMd9fQvgzaXIETmyCZvZyTLbAKsPnrZky/IVNZp70/B0PN2XTiownrQR5QhDe+w2T2yvkC
+	gjqOnhjTFHudNJkWxw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tmFhF-000CQ8-2E;
+	Sun, 23 Feb 2025 17:23:17 +0000
+Date: Sun, 23 Feb 2025 17:23:17 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: arnd@arndb.de, gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org, david@rowetel.com
+Subject: users of drivers/misc/echo ?
+Message-ID: <Z7tZhYET41DAoHVf@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250222084513.15832-1-rwchen404@gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 17:19:52 up 291 days,  4:33,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Sat, Feb 22, 2025 at 04:45:13PM +0800, Ruiwu Chen wrote:
-> When 'echo 4 > /proc/sys/vm/drop_caches' the message is disabled,
-> but there is no interface to enable the message, only by restarting
-> the way, so add the 'echo 0 > /proc/sys/vm/drop_caches' way to
-> enabled the message again.
-> 
-> Signed-off-by: Ruiwu Chen <rwchen404@gmail.com>
+Hi,
+  I can't see anything that uses drivers/misc/echo - should it go or
+is there something out of tree using it?
 
-You are overcomplicating things, if you just want to re-enable messages
-you can just use:
+  I see where Greg moved it from staging into the main kernel
+but am not seeing anything include the headers or call any of the symbols.
 
--		stfu |= sysctl_drop_caches & 4;
-+		stfu = sysctl_drop_caches & 4;
-
-The bool is there as 4 is intended as a bit flag, you can can figure
-out what values you want and just append 4 to it to get the expected
-result.
-
-  Luis
-
-> ---
-> v2: - updated Documentation/ to note this new API.
->     - renamed the variable.
->     - rebase this on top of sysctl-next [1].
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next
-> 
->  Documentation/admin-guide/sysctl/vm.rst | 11 ++++++++++-
->  fs/drop_caches.c                        | 11 +++++++----
->  2 files changed, 17 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> index f48eaa98d22d..ef73d36e8b84 100644
-> --- a/Documentation/admin-guide/sysctl/vm.rst
-> +++ b/Documentation/admin-guide/sysctl/vm.rst
-> @@ -266,7 +266,16 @@ used::
->  	cat (1234): drop_caches: 3
->  
->  These are informational only.  They do not mean that anything is wrong
-> -with your system.  To disable them, echo 4 (bit 2) into drop_caches.
-> +with your system.
-> +
-> +To disable informational::
-> +
-> +	echo 4 > /proc/sys/vm/drop_caches
-> +
-> +To enable informational::
-> +
-> +	echo 0 > /proc/sys/vm/drop_caches
-> +
->  
->  enable_soft_offline
->  ===================
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index 019a8b4eaaf9..a49af7023886 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -57,7 +57,7 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  	if (ret)
->  		return ret;
->  	if (write) {
-> -		static int stfu;
-> +		static bool silent;
->  
->  		if (sysctl_drop_caches & 1) {
->  			lru_add_drain_all();
-> @@ -68,12 +68,15 @@ static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  			drop_slab();
->  			count_vm_event(DROP_SLAB);
->  		}
-> -		if (!stfu) {
-> +		if (!silent) {
->  			pr_info("%s (%d): drop_caches: %d\n",
->  				current->comm, task_pid_nr(current),
->  				sysctl_drop_caches);
->  		}
-> -		stfu |= sysctl_drop_caches & 4;
-> +		if (sysctl_drop_caches == 0)
-> +			silent = true;
-> +		else if (sysctl_drop_caches == 4)
-> +			silent = false;
->  	}
->  	return 0;
->  }
-> @@ -85,7 +88,7 @@ static const struct ctl_table drop_caches_table[] = {
->  		.maxlen		= sizeof(int),
->  		.mode		= 0200,
->  		.proc_handler	= drop_caches_sysctl_handler,
-> -		.extra1		= SYSCTL_ONE,
-> +		.extra1		= SYSCTL_ZERO,
->  		.extra2		= SYSCTL_FOUR,
->  	},
->  };
-> -- 
-> 2.27.0
-> 
+Dave
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
