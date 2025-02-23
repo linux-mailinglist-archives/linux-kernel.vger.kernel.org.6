@@ -1,167 +1,97 @@
-Return-Path: <linux-kernel+bounces-527984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E186BA41202
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:17:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56387A41205
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 23:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68C817240C
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:17:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DE4C7A9069
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 22:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91170200138;
-	Sun, 23 Feb 2025 22:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irodU3KO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB20186330;
+	Sun, 23 Feb 2025 22:20:30 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A621804A;
-	Sun, 23 Feb 2025 22:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB63513635E
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740349037; cv=none; b=gGNfX7vJE77zyDlH5L8FDMQzN0LYE7zPwdKDFmOSaDu0UTKjAHCs+J9LqBjDXIkkfdqcQaXbS+fh6eU7G90tymn//VV7PhqA6Z+DRKKRe6ZcN1FVj9eDrLjI3HQLq1byL1HOhtWu4RS4Jy3GqdtVcQTuPWQpjayH8z+jcmGvAaY=
+	t=1740349230; cv=none; b=dVUwuE/9ZR5mOke80X5haBGZDJ1SF0voXJYMgsuDg4ibGVWsRYXg0mX0Qpgy8QhplI+MngS9h/Vs2mb9Q+kwBk0hzJKOFXnZSopViqhIpCiCGP83u7xddktd9xH6IeLRFqad75tx+1Mb5OODfzBM1jj7iUTv2nsnGsFS8m65PBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740349037; c=relaxed/simple;
-	bh=9bL/hNqAXKBz1zAhIeNb/hVycnTaqKHOdQWTKZfYha8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNZ81OBypuZjujQuwXN4OosmyfOyX1egMR+J0UpeIzKs4CcS6MRR2bTCEv5bfKYd80fGCy3l8peL/o2+ynaR1WeA2xmTC1PjnNLkurA4cEpt0YQfZZRcIbjI3D7kS3aoF6CElalIvkhIszqc9dsIM8EAvBoaNbL3TnKphFRMYKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irodU3KO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 235F0C4CEDD;
-	Sun, 23 Feb 2025 22:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740349036;
-	bh=9bL/hNqAXKBz1zAhIeNb/hVycnTaqKHOdQWTKZfYha8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=irodU3KO+15KNqa+f4QHCEssjq305N3d7Wwj6uFhNXWPmcXQ95dR0EpPD4Ng4HQRw
-	 yKxM7JOEYIs7yL0Bvf/APokBkm1bquT2M45DHk4t5ynEw/zp4AC8OJE+oYFqUiRJUu
-	 hzXuLBjBnyMjCDladscPWMS4Gg9N7LtZWgeTvyAtTiOtmYsWhJTW0hszHeMgHL0j9S
-	 2muv7WIWv3I7/7TYW84jhmxih2iNFTlcMnMCD1xth88u2xO+x/zaT1evTc4EYsQBKj
-	 o7rzTOzG1fMsUOpd9jbhU/mNcvPgs5hdl7yxBIBFcEb19fdpMUvTnv44fFZ7zJK48k
-	 iGquL07EzECow==
-From: Frederic Weisbecker <frederic@kernel.org>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>,
-	netdev@vger.kernel.org,
-	Breno Leitao <leitao@debian.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Francois Romieu <romieu@fr.zoreil.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Joe Damato <jdamato@fastly.com>
-Subject: [PATCH net v2] net: Handle napi_schedule() calls from non-interrupt
-Date: Sun, 23 Feb 2025 23:17:08 +0100
-Message-ID: <20250223221708.27130-1-frederic@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740349230; c=relaxed/simple;
+	bh=4q+jpYig8+lGmn0wOK0GfqUH3CgPPbw/JiQVIVEvhEE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=NSDTMQG7RloOeJzCXnI6QwU5mgG3lHDIQGiO2z7YfH0hM6oEyzE4UcrpcRka4UfaS3ByPWDGi3sC4ji1QqEztn2T6vHefiKfQe7j4rqS8QkLUDl2qoWHoNhL3MZZb5D2dot5Uv410/cqaINovnPagM1xWR8JuwLlINRHHgwznRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d2a40e470fso29977195ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 14:20:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740349228; x=1740954028;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mS1ypvNRaPahBWxFrx6PlbD10RNfGLusDYKckKCNbJQ=;
+        b=paUhOQBMa/iBDrRYixwg9C2DQgFGwgjprk40IcB7ZH0DWH7lsrMcj4yOrlwzTzFiCu
+         QB4eCa4eBLxc3+qru+4jEcKS4Npm5Ahl0CovRa1AlO1ILQT35tcO9sevAl2ZS1qVcD/Z
+         j8OOE8uvmjeHVyBILBwOudqeA+PPE/BrQ/v1ALa34sMquGnupfcaSJSSObng59LPL12w
+         0iWwyS6vi3vlE3FGkyQCElz4BrMDK6SPRUWfuhPuVkk+af8rBklSnGZ1Decm4gqimTn/
+         vgt0QxDw7b5/wJv4kCpOn3TdhD0VbqCuXYFC8LxTcBUcbCbcS60gteNIHIvnHUrM4cx4
+         TqaQ==
+X-Gm-Message-State: AOJu0YyyGCvhQ79ygM35vBEganCUJz6JU1SJKlK4vsn/4BpaTHzLi9+T
+	a+6C176rf2+Rdcm+ia9g0ZYR9UOHppTfNDDvW63BzhuFnQ2cOH9zoU6MhoqHcAceNlH0nghyYFC
+	Z2SEVYzELFhc9jfUphvfjEjeX9dhrMLEjY0s8EpvywLnFuJHMJbmmiWE=
+X-Google-Smtp-Source: AGHT+IGQqcaW4Hu1YQC7Fp50SrwGoWLTurWsEPiiey8K4lpKcyZU6Y9+fHhmn5Tx372K/FSdOrLJ2IIN5VP0GgJ7mHenujBZqrTq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1448:b0:3d0:10a6:99b9 with SMTP id
+ e9e14a558f8ab-3d2cae474a7mr93378615ab.3.1740349228258; Sun, 23 Feb 2025
+ 14:20:28 -0800 (PST)
+Date: Sun, 23 Feb 2025 14:20:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bb9f2c.050a0220.bbfd1.003e.GAE@google.com>
+Subject: [syzbot] Monthly netfs report (Feb 2025)
+From: syzbot <syzbot+list734458d14554b90e6367@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-napi_schedule() is expected to be called either:
+Hello netfs maintainers/developers,
 
-* From an interrupt, where raised softirqs are handled on IRQ exit
+This is a 31-day syzbot report for the netfs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/netfs
 
-* From a softirq disabled section, where raised softirqs are handled on
-  the next call to local_bh_enable().
+During the period, 4 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 3 have already been fixed.
 
-* From a softirq handler, where raised softirqs are handled on the next
-  round in do_softirq(), or further deferred to a dedicated kthread.
+Some of the still happening issues:
 
-Other bare tasks context may end up ignoring the raised NET_RX vector
-until the next random softirq handling opportunity, which may not
-happen before a while if the CPU goes idle afterwards with the tick
-stopped.
+Ref Crashes Repro Title
+<1> 49      Yes   INFO: task hung in netfs_retry_writes
+                  https://syzkaller.appspot.com/bug?extid=666a9cb4c41986207cdf
+<2> 10      Yes   WARNING in netfs_writepages
+                  https://syzkaller.appspot.com/bug?extid=06023121b0153752a3d3
+<3> 4       Yes   INFO: task hung in pipe_write (6)
+                  https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
 
-Such "misuses" have been detected on several places thanks to messages
-of the kind:
-
-	"NOHZ tick-stop error: local softirq work is pending, handler #08!!!"
-
-For example:
-
-       __raise_softirq_irqoff
-        __napi_schedule
-        rtl8152_runtime_resume.isra.0
-        rtl8152_resume
-        usb_resume_interface.isra.0
-        usb_resume_both
-        __rpm_callback
-        rpm_callback
-        rpm_resume
-        __pm_runtime_resume
-        usb_autoresume_device
-        usb_remote_wakeup
-        hub_event
-        process_one_work
-        worker_thread
-        kthread
-        ret_from_fork
-        ret_from_fork_asm
-
-And also:
-
-* drivers/net/usb/r8152.c::rtl_work_func_t
-* drivers/net/netdevsim/netdev.c::nsim_start_xmit
-
-There is a long history of issues of this kind:
-
-	019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
-	330068589389 ("idpf: disable local BH when scheduling napi for marker packets")
-	e3d5d70cb483 ("net: lan78xx: fix "softirq work is pending" error")
-	e55c27ed9ccf ("mt76: mt7615: add missing bh-disable around rx napi schedule")
-	c0182aa98570 ("mt76: mt7915: add missing bh-disable around tx napi enable/schedule")
-	970be1dff26d ("mt76: disable BH around napi_schedule() calls")
-	019edd01d174 ("ath10k: sdio: Add missing BH locking around napi_schdule()")
-	30bfec4fec59 ("can: rx-offload: can_rx_offload_threaded_irq_finish(): add new  function to be called from threaded interrupt")
-	e63052a5dd3c ("mlx5e: add add missing BH locking around napi_schdule()")
-	83a0c6e58901 ("i40e: Invoke softirqs after napi_reschedule")
-	bd4ce941c8d5 ("mlx4: Invoke softirqs after napi_reschedule")
-	8cf699ec849f ("mlx4: do not call napi_schedule() without care")
-	ec13ee80145c ("virtio_net: invoke softirqs after __napi_schedule")
-
-This shows that relying on the caller to arrange a proper context for
-the softirqs to be handled while calling napi_schedule() is very fragile
-and error prone. Also fixing them can also prove challenging if the
-caller may be called from different kinds of contexts.
-
-Therefore fix this from napi_schedule() itself with waking up ksoftirqd
-when softirqs are raised from task contexts.
-
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Reported-by: Jakub Kicinski <kuba@kernel.org>
-Reported-by: Francois Romieu <romieu@fr.zoreil.com>
-Closes: https://lore.kernel.org/lkml/354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de/
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Francois Romieu <romieu@fr.zoreil.com>
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- net/core/dev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 80e415ccf2c8..5c1b93a3f50a 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4693,7 +4693,7 @@ static inline void ____napi_schedule(struct softnet_data *sd,
- 	 * we have to raise NET_RX_SOFTIRQ.
- 	 */
- 	if (!sd->in_net_rx_action)
--		__raise_softirq_irqoff(NET_RX_SOFTIRQ);
-+		raise_softirq_irqoff(NET_RX_SOFTIRQ);
- }
- 
- #ifdef CONFIG_RPS
--- 
-2.48.1
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
