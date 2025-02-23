@@ -1,137 +1,151 @@
-Return-Path: <linux-kernel+bounces-527865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AD9A4109A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:54:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C987A4109D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:56:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D59D174BA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893C51895AAB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 17:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0E8155CBD;
-	Sun, 23 Feb 2025 17:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93FC156677;
+	Sun, 23 Feb 2025 17:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jhMQcmO5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="UAcVW5eY"
+Received: from smtp.smtpout.orange.fr (smtp-76.smtpout.orange.fr [80.12.242.76])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795AD2770B;
-	Sun, 23 Feb 2025 17:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A248815D1;
+	Sun, 23 Feb 2025 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740333272; cv=none; b=jD0cK8GHjZOIqaXjrViix7+I9MD7EnTUHlfjbV4TWKDqqvx+t5nwx3r0MbSbdpIiBQz/HfB/xdeq2vuxDwGdOSLhyD+xi4quIca+67Ttc+v7onWnfjMdtZj9KY3n4rCiy6RVVsFbfUpevTzdVAy/b2QAGshukaV5f1O9Htr35f4=
+	t=1740333357; cv=none; b=V8oZ7gFXU+NLqHnocUl66uRm2ej/CS5MbsqcahHUKQU1R5hug+Fn0hrLvm+51IqC9zBk+hnP9yJPbb27y++z4T1wOTwfcnOuJ4JwpZWeqNv71acZifMm0VXYvMfjYlt+vT+5p9Zjbe7pvlTSPjPre5Op9g7s4S8XbtksHcT9s2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740333272; c=relaxed/simple;
-	bh=9iFdhdTQZ2gneruKLG7YkE93h9YE3aeXMlyNM4pD9u8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIP0V28ztaYO0Pj+kdmGfGGgsK1xuJl5JcFehJrNXHyCyk9tOWV8NmXBbUiUUi0tWPJ3O1bUaOrlMXDHFyStDTBS5bU2269qSwuh6t+I+RzLar9YzMHG7sKBomMzAsxuHZ9nuOrMs55e/LbumMWognPb42q563CgT9FFACazUNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jhMQcmO5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 009D7C4CEDD;
-	Sun, 23 Feb 2025 17:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740333271;
-	bh=9iFdhdTQZ2gneruKLG7YkE93h9YE3aeXMlyNM4pD9u8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jhMQcmO5owvm412qh9aUibQCAE5R3H0Y3labMbi96L/jt2+CCd3WvH8UF16mZ5MQB
-	 Op9z/uv4OxpBHVLnUkOdjvePsC4VrM+yzCROUe68AVgBUrv7w2DmJHs4xbHfzB8QpG
-	 Ozv4nty8IY+SrpRbBFPQHCs0ru5G1hevXj0yQo/cLPvQgyoOxJf1iid9sarJrcIcRd
-	 eCJ2zlHemard7aIoWHBWDMYtSOYnbGfGHmDHpa7KlLg3WtovNvwgZK8HmKTQRBnOID
-	 k675DyqrTrGHvR6fyQY78uyW/dVn8TdfgorHiV6DURp3ebpe+dlJCScpuL1M0bgk3c
-	 jWSaiEQEmv7uA==
-Date: Sun, 23 Feb 2025 19:54:07 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Dave Young <dyoung@redhat.com>, Alexander Graf <graf@amazon.com>,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org,
-	Philipp Rudo <prudo@redhat.com>, Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-Message-ID: <Z7tgvwRkV-GAtBL_@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <CALu+AoRMQyRDFS_4L0KQkmrFT_S+yk=uZ-Mqt86JQYKKnj-5Ug@mail.gmail.com>
- <Z7WJD6eBLuIRnLwk@kernel.org>
- <CALu+AoSaEthfed1NOYPiQgm_g-dhibVMRAp0+=_+9qTT4_x=tg@mail.gmail.com>
- <d8c43707-65a2-4176-85e2-acdb4c9d16ad@amazon.com>
- <CALu+AoR0BbmbZeOkLU55OpD8kxGsVnFs+pXgEC9Y_MpB4=GMvQ@mail.gmail.com>
- <Z7dbxJNxlW2EA_aa@tuxmaker.boeblingen.de.ibm.com>
+	s=arc-20240116; t=1740333357; c=relaxed/simple;
+	bh=BTbID0THI6s3PoeAeD0pO4w2T1yv9jSev5ASf56zXUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g2I+BgfHeSW0xS7cKB2+OU79lGpV0xAVIPloGuS3HAiZ31Kd1kLJ1Y0ylHhVE/0AvqCWhVBBUC/hMZwoZ6wiMijHyGC5CoUM93OzXqlavM6HO4th+Xu1R1Gy7nX5nncAFFVYt5CYYrginLZX5N/qo7l4ypGmp1sm/NOU7L72Kjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=UAcVW5eY; arc=none smtp.client-ip=80.12.242.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mGBYtahoV2PZMmGBctmSWh; Sun, 23 Feb 2025 18:54:46 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740333286;
+	bh=5bcIn2euEhstjs3cIQxm4V7rjLzP65GLYsksBTypYt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=UAcVW5eYbQTubiwlBFI5YDqjbsh4A/6H/ONbTE6N6YmgCCnAbFKt3pLnd1JjpQj0I
+	 S5xkcynu8Z1wu0uwViuzEOXKAbAP0qojuSegpIOJi4HiNBUXpCn/tP8AUcKwS0FK/2
+	 IvHCWlNRmV8IbgwBSOS6xCyshPmLlTDQHxAnTOhbWWw2DRgvm/dq5st/XS6OfDql6Y
+	 Ozv2iX+MkSVWQ9S//mQe3e40q+HGB7faEC3l/nbnbiTndUxG0vrbrChOy5z6kKP+hk
+	 EzZNuAXDzY2yjW6x8GVB98kWifElDTDzBeqw973DbQXQJEx1zmlJ9VHm597nbIqjaV
+	 a9NPVqokxd6Dw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 23 Feb 2025 18:54:46 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <88b02c37-6741-459b-b966-d6d58d1f9b6f@wanadoo.fr>
+Date: Sun, 23 Feb 2025 18:54:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7dbxJNxlW2EA_aa@tuxmaker.boeblingen.de.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
+ <20250223173019.303518-5-dmitry.osipenko@collabora.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250223173019.303518-5-dmitry.osipenko@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 20, 2025 at 05:43:48PM +0100, Alexander Gordeev wrote:
-> On Thu, Feb 20, 2025 at 09:49:52AM +0800, Dave Young wrote:
-> > On Wed, 19 Feb 2025 at 21:55, Alexander Graf <graf@amazon.com> wrote:
-> > > >>> What architecture exactly does this KHO work fine?   Device Tree
-> > > >>> should be ok on arm*, x86 and power*, but how about s390?
-> > > >> KHO does not use device tree as the boot protocol, it uses FDT as a data
-> > > >> structure and adds architecture specific bits to the boot structures to
-> > > >> point to that data, very similar to how IMA_KEXEC works.
-> > > >>
-> > > >> Currently KHO is implemented on arm64 and x86, but there is no fundamental
-> > > >> reason why it wouldn't work on any architecture that supports kexec.
-> > > > Well,  the problem is whether there is a way to  add dtb in the early
-> > > > boot path,  for X86 it is added via setup_data,  if there is no such
-> > > > way I'm not sure if it is doable especially for passing some info for
-> > > > early boot use.  Then the KHO will be only for limited use cases.
-> > >
-> > >
-> > > Every architecture has a platform specific way of passing data into the
-> > > kernel so it can find its command line and initrd. S390x for example has
-> > > struct parmarea. To enable s390x, you would remove some of its padding
-> > > and replace it with a KHO base addr + size, so that the new kernel can
-> > > find the KHO state tree.
-> > 
-> > Ok, thanks for the info,  I cced s390 people maybe they can provide inputs.
+Le 23/02/2025 à 18:30, Dmitry Osipenko a écrit :
+> From: Shreeya Patel <shreeya.patel@collabora.com>
 > 
-> If I understand correctly, the parmarea would be used for passing the
-> FDT address - which appears to be fine. However, s390 does not implement
-> early_memremap()/early_memunmap(), which KHO needs.
+> Add initial support for the Synopsys DesignWare HDMI RX
+> Controller Driver used by Rockchip RK3588. The driver
+> supports:
+>   - HDMI 1.4b and 2.0 modes (HDMI 4k@60Hz)
+>   - RGB888, YUV422, YUV444 and YCC420 pixel formats
+>   - CEC
+>   - EDID configuration
+> 
+> The hardware also has Audio and HDCP capabilities, but these are
+> not yet supported by the driver.
+> 
+> Co-developed-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Dingxian Wen <shawn.wen@rock-chips.com>
+> Signed-off-by: Shreeya Patel <shreeya.patel@collabora.com>
+> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 
-KHO uses early_memremap()/early_memunmap() because it parses FDT before
-phys_to_virt() is available on arm64 and x86. AFAIU on s390 phys_to_virt()
-can be used at setup_arch() time, so it shouldn't be a problem to add
-appropriate wrappers.
- 
--- 
-Sincerely yours,
-Mike.
+Hi,
+
+> +	hdmirx_dev->dev = dev;
+> +	dev_set_drvdata(dev, hdmirx_dev);
+> +
+> +	ret = hdmirx_parse_dt(hdmirx_dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = hdmirx_setup_irq(hdmirx_dev, pdev);
+> +	if (ret)
+> +		return ret;
+
+ From here, should of_reserved_mem_device_release() be called in the 
+error handling path, as done in the remove function?
+
+> +
+> +	hdmirx_dev->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(hdmirx_dev->regs))
+> +		return dev_err_probe(dev, PTR_ERR(hdmirx_dev->regs),
+> +				     "failed to remap regs resource\n");
+
+...
+
+> +static const struct of_device_id hdmirx_id[] = {
+> +	{ .compatible = "rockchip,rk3588-hdmirx-ctrler" },
+> +	{ },
+
+Unneeded trailing comma after a terminator.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, hdmirx_id);
+
+...
+
+> +	ret = cec_register_adapter(cec->adap, cec->dev);
+> +	if (ret < 0) {
+> +		dev_err(cec->dev, "cec register adapter failed\n");
+> +		cec_unregister_adapter(cec->adap);
+
+Is it needed to call cec_unregister_adapter() when 
+cec_register_adapter() fails?
+
+> +		return NULL;
+> +	}
+> +
+> +	irqs = CECTX_LINE_ERR | CECTX_NACK | CECRX_EOM | CECTX_DONE;
+> +	hdmirx_cec_write(cec, CEC_INT_MASK_N, irqs);
+> +
+
+CJ
+
 
