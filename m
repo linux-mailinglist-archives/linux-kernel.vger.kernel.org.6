@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-527700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5DABA40E49
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:31:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15FEA40E4B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:31:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A1C176FDE
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC3D177006
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF3C205E3E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FA72063C5;
 	Sun, 23 Feb 2025 11:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VVmqJyzQ"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9261FFC6D;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JQeth/Oj"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD8A202F97;
 	Sun, 23 Feb 2025 11:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740310284; cv=none; b=Q7/zRVZ2nSBzeK1Qkb54yAyrMg3xH2zCunjFVDe34AdHZZ8n5tbyW4DtkrbtScEM4yrKbNSmA/aj+5ozuVDZsF6kv9DT7PD/pkbu+u8EAvy2+f/7DYpSDojgKV7JB4Zq7LdcLqv3OU6CgtrJYZ22pgbgqWqyqeYUsH8OHz8hq3c=
+	t=1740310284; cv=none; b=gMWA8pEtCb4xs/EtZY/TBTqloykOPPjPag/CcwixLpTnCDYkfwHSwkDfQe+V4ev0oDoNxkOJ3VIhPakkr+C09I5yUsYc4i+CTk7vgIqz3SPVHyic6fdNyNMulrlzgAdS+9DuR6CDyIVdP899hXuSOGClTnwr2yAVZofOxD4LS48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740310284; c=relaxed/simple;
-	bh=snprIamXvsTMrdnSU3SXP4U8J12bV9/w6EC0/NXObe0=;
+	bh=hVMu8VtGeKrTwSBZVq1KuB7zMqYJFmxDJUTXP0RlTpA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uZWxtfnFVy43lZi8n+knnOM5qHTdhd3uedDwAEPcszAp+mdQ4V5zrmbEoROXZi3PN6YHAxbZNjGjUE8NEqZXbd2LRk/SLOJnF1ngTNBRNbghLsLQ/HYParuRJCXRfwYuVZxwLEJ6Or/+TXiI3oFl08UaI4LHxMvtHL5RsvXvGgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VVmqJyzQ; arc=none smtp.client-ip=117.135.210.5
+	 MIME-Version; b=eHTBnc8dApaqGaxwOFflYF2uei7btzIKLiohdmZdxyKplFoAtQk4U5l7kIshXOb9IFFjjrQAW/9cuFyoWMqVQddumc+pOs/Y4fiARnes3p5iztESdCl1nrhDY6Fra5ca/RVOyLnWgJzfKbBwUT7fLUn9bOqXmWTVUnKIzCfT/Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JQeth/Oj; arc=none smtp.client-ip=117.135.210.3
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=vmnv2
-	MhbHUJhpP+7UCIFUQTwEEWv5QErRDdciQ4T95E=; b=VVmqJyzQ+OBTXAwtKh6dy
-	SAB5iOxlJf3AWx1AQCgxIGqVukVC+ytt1gR7heJ6BLZO23TWPB1sUx82TU9Jd8u/
-	tmvpMDNYBCpp1oyLxXUWL1UajWdBB4CP27iGMS0P7MyDj5lyxyCn9490+IQyGTs5
-	e8nFt643mou9w/XzZoHW3c=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=EHczv
+	SSk5h351i00BwsKZf8PI4LoDDRa7hJpbsRqGqM=; b=JQeth/Oj8PqnJ/7Xc69V8
+	0q18sNMHKMpvnUHYpbvxUtKPRNab5OxjRFaduMGS25RZDFYBUkPemhCsT5rY5oPJ
+	Jl1yfxCIdEm2/jiLsUeVLytyJV5pVsvDPf6ZRRxTzQfNHVbZo7w6fosQoE2MYI3Z
+	Ny/WRhY1UlO9DuTaUv4oZQ=
 Received: from ProDesk.. (unknown [])
-	by gzsmtp4 (Coremail) with SMTP id PygvCgBHWqbdBrtnleHpAg--.47651S7;
-	Sun, 23 Feb 2025 19:30:48 +0800 (CST)
+	by gzsmtp4 (Coremail) with SMTP id PygvCgBHWqbdBrtnleHpAg--.47651S8;
+	Sun, 23 Feb 2025 19:30:49 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -53,9 +53,9 @@ Cc: hjc@rock-chips.com,
 	robh@kernel.org,
 	sebastian.reichel@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH 5/6] arm64: dts: rockchip: Add DP1 for rk3588
-Date: Sun, 23 Feb 2025 19:30:28 +0800
-Message-ID: <20250223113036.74252-6-andyshrk@163.com>
+Subject: [PATCH 6/6] arm64: dts: rockchip: Enable DisplayPort for rk3588s Cool Pi 4B
+Date: Sun, 23 Feb 2025 19:30:29 +0800
+Message-ID: <20250223113036.74252-7-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250223113036.74252-1-andyshrk@163.com>
 References: <20250223113036.74252-1-andyshrk@163.com>
@@ -66,66 +66,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PygvCgBHWqbdBrtnleHpAg--.47651S7
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZrWDCry7tFWfJw17JFWxCrg_yoW8Xw1xpw
-	nrurZ3Wry8WFy2q39xt3s5Xr95A3Z5Aa9rKr1xGa4UKr1Sqryqkr1a9rn3Ca4UXr4UXwsF
-	kF43Jry8KFsFvaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:PygvCgBHWqbdBrtnleHpAg--.47651S8
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ur48WF43Jw4ktFWxJw4fZrb_yoW8WFykp3
+	ZxArsYgFs7urW7t3s5tF4xJFs8Ars5ua97Jr13Za43KFW7W3s5t34fGw1vyrWYvF4fX3yr
+	tr1kXasF93WDXaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UXjjkUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqBT8Xme7BHQlkgAAsF
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hv8Xme6-oyBhQAAsA
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-The DP1 is compliant with the DisplayPort Specification
-Version 1.4, and share the USBDP combo PHY1 with USB 3.1
-HOST1 controller.
+Enable the Mini DisplayPort on this board.
+Note that ROCKCHIP_VOP2_EP_DP0 is defined as 10 in dt-binding header,
+but it will trigger a dtc warning like "graph node unit address error,
+expected "a"" if we use it directly after endpoint, so we use "a"
+instead here.
 
 Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 ---
 
- .../arm64/boot/dts/rockchip/rk3588-extra.dtsi | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 37 +++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-index 4a950907ea6f..427d2a39f79a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi
-@@ -135,6 +135,36 @@ i2s10_8ch: i2s@fde00000 {
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+index e892dd7c91aa..0f58eb56557f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+@@ -39,6 +39,18 @@ chosen {
+ 		stdout-path = "serial2:1500000n8";
  	};
  
-+	dp1: dp@fde60000 {
-+		compatible = "rockchip,rk3588-dp";
-+		reg = <0x0 0xfde60000 0x0 0x4000>;
-+		interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH 0>;
-+		clocks = <&cru PCLK_DP1>, <&cru CLK_AUX16M_1>,
-+			 <&cru CLK_DP1>, <&cru MCLK_I2S8_8CH_TX>,
-+			 <&cru MCLK_SPDIF5_DP1>;
-+		clock-names = "apb", "aux", "hdcp", "i2s", "spdif";
-+		assigned-clocks = <&cru CLK_AUX16M_1>;
-+		assigned-clock-rates = <16000000>;
-+		resets = <&cru SRST_DP1>;
-+		phys = <&usbdp_phy1 PHY_TYPE_DP>;
-+		power-domains = <&power RK3588_PD_VO0>;
-+		#sound-dai-cells = <0>;
-+		status = "disabled";
++	dp-con {
++		compatible = "dp-connector";
++		label = "DP OUT";
++		type = "mini";
 +
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			dp1_in: port@0 {
-+				reg = <0>;
-+			};
-+
-+			dp1_out: port@1 {
-+				reg = <1>;
++		port {
++			dp_con_in: endpoint {
++				remote-endpoint = <&dp0_out_con>;
 +			};
 +		};
 +	};
 +
- 	pcie3x4: pcie@fe150000 {
- 		compatible = "rockchip,rk3588-pcie", "rockchip,rk3568-pcie";
- 		#address-cells = <3>;
+ 	hdmi-con {
+ 		compatible = "hdmi-connector";
+ 		type = "d";
+@@ -220,6 +232,24 @@ &gpu {
+ 	status = "okay";
+ };
+ 
++&dp0 {
++	status = "okay";
++	pinctrl-0 = <&dp0m0_pins>;
++	pinctrl-names = "default";
++};
++
++&dp0_in {
++	dp0_in_vp2: endpoint {
++		remote-endpoint = <&vp2_out_dp0>;
++	};
++};
++
++&dp0_out {
++	dp0_out_con: endpoint {
++		remote-endpoint = <&dp_con_in>;
++	};
++};
++
+ &hdmi0 {
+ 	status = "okay";
+ };
+@@ -889,3 +919,10 @@ vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+ 		remote-endpoint = <&hdmi0_in_vp0>;
+ 	};
+ };
++
++&vp2 {
++	vp2_out_dp0: endpoint@a {
++		reg = <ROCKCHIP_VOP2_EP_DP0>;
++		remote-endpoint = <&dp0_in_vp2>;
++	};
++};
 -- 
 2.34.1
 
