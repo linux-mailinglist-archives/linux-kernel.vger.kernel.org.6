@@ -1,109 +1,199 @@
-Return-Path: <linux-kernel+bounces-527710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE9DA40E66
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:40:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDD7A40E6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:43:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9D6177860
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:40:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50D13189872C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC819205500;
-	Sun, 23 Feb 2025 11:40:02 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E49205E0A;
+	Sun, 23 Feb 2025 11:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJ6VPz88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB273D984
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 11:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F3B3D984;
+	Sun, 23 Feb 2025 11:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740310802; cv=none; b=rHG45lWECqbe8dAxQDMTF5dUAjS7GMVqmbsoArBLdrX6ns5sK4px7Jsk+ArEerS2UL4hrRaLA4SI3wDIDDcSPf/HqOUgeQHYIPRJ7QqwnUyqNkKizm/+mySLa3ExBJhn3NTW9qW4GArUI0RELuM798aoLf6I9BN1yfR5b4xRRRM=
+	t=1740311007; cv=none; b=rOfdbS0vOWuN7qIT6ngymylblem7Qjokrr9LCXQ50JklE4EXZbhgJ20VGwfh+D4WNXrqiUl3Auv54pDiNNgDOos4uMfBBF+CApLhLr/dLQBUi8LVtnC1mkj4GNPuG/jDzQwhcVfs1g7mpN+8WAQ18iDsGDRZqUO7vZ8WiceuIAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740310802; c=relaxed/simple;
-	bh=OLIy4modDSwY3TLo69aA3bPaHuOWulX6JyVnqWabyew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oTveudbPvqlT+fhkeon4BsJt1tVS0FXpT59ru3+77zfLq/MXYME8YjiO7MrKWtNVNuMCjZCvWvzX7mAqFYhn8sgZapwgcatgmXwXvXRQ9EhQbto3rlGJHFZMpFymPdj/1x0M23abSV3FwXkrRU+oxySmZlfI1zo7hw5gWIG7Ir8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.68.60])
-	by sina.com (10.185.250.23) with ESMTP
-	id 67BB090600002354; Sun, 23 Feb 2025 19:39:53 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7799558913409
-X-SMAIL-UIID: 540D98BAF7024E3789ED395CA9A91436-20250223-193953-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-Date: Sun, 23 Feb 2025 19:39:40 +0800
-Message-ID: <20250223113941.2735-1-hdanton@sina.com>
-In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1740311007; c=relaxed/simple;
+	bh=IKhhqryuBfV/Cv7HQRNKLiIF7nYqzYVmpwNqrbzEeS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iH0QZy1CpGAYYirRGAdgAHBZHEGvo/XQflwpwOPai7pn/cuEwpoWPZlALs+uAu0taUJA7tvC2cTAXHqsSv0iCWEv+eJnePog/i+DKTQ1L3pipsRyU4yqdqfCAQkioMI+UBkVHxT2e5eyaXFea5K5G4dhqP70Bc0Catv3dvG50j4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJ6VPz88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFDCC4CEDD;
+	Sun, 23 Feb 2025 11:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740311006;
+	bh=IKhhqryuBfV/Cv7HQRNKLiIF7nYqzYVmpwNqrbzEeS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JJ6VPz88sURDWm2dRfdYqNEUv5+bqSCNLAp39DFxzosQTDbPtg9RIssS48opgme92
+	 cZq4BTfAqOdP8UBXfMeNahtGXDlB299m4HB0RyJUGoLyNFiRzqT4yJlDo+9j+mn97e
+	 zgx9FnbpcnQV5zy3XMEARJ2KMEvQkTiH3fTBta+eEUlg/qLy5zS61mJzs5kzbfbOZz
+	 mOx89mfpErdbQb4IP2EvOyWx13jk7h3k1NaWe5NMnWTbv3gfFA+lDYuv8B+Plhe2ml
+	 R4BP6bYiwBkWRCpgjh/eSeqQv2Y2kPPSC1Ah7Q2txOMF+IVgE0lPyoilahKtf38WfT
+	 ccrymsct5H4MQ==
+Date: Sun, 23 Feb 2025 12:43:23 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: power: supply: Document Maxim
+ MAX8971 charger
+Message-ID: <20250223-daft-amethyst-pogona-e9edcc@krzk-bin>
+References: <20250221095943.57297-1-clamor95@gmail.com>
+ <20250221095943.57297-2-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221095943.57297-2-clamor95@gmail.com>
 
-On Sat, 22 Feb 2025 09:01:23 -0800
-> syzbot found the following issue on:
+On Fri, Feb 21, 2025 at 11:59:42AM +0200, Svyatoslav Ryhel wrote:
+> Add bindings for Maxim MAX8971 charger.
 > 
-> HEAD commit:    0a86e49acfbb dt-bindings: usb: samsung,exynos-dwc3 Add exy..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c02ba4580000
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../bindings/power/supply/maxim,max8971.yaml  | 133 ++++++++++++++++++
+>  1 file changed, 133 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> new file mode 100644
+> index 000000000000..26b37e6f662f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
+> @@ -0,0 +1,133 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/supply/maxim,max8971.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim MAX8971 IC charger
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +
+> +description:
+> +  The MAX8971 is a compact, high-frequency, high-efficiency switch-mode
+> +  charger for a one-cell lithium-ion (Li+) battery.
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max8971
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  extcon:
+> +    description:
+> +      Special device used to detect type of plug.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+You rather miss proper connector or ports. Which device pins are
+describbed here?
 
---- x/drivers/hid/hid-steam.c
-+++ y/drivers/hid/hid-steam.c
-@@ -618,6 +618,8 @@ static void steam_input_close(struct inp
- 	unsigned long flags;
- 	bool set_lizard_mode;
- 
-+	if (dev->going_away)
-+		return;
- 	if (!(steam->quirks & STEAM_QUIRK_DECK)) {
- 		spin_lock_irqsave(&steam->lock, flags);
- 		set_lizard_mode = !steam->client_opened && lizard_mode;
-@@ -1086,6 +1088,11 @@ static void steam_work_unregister_cb(str
- 	connected = steam->connected;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
-+	if (opened) {
-+		steam_sensors_unregister(steam);
-+		steam_input_unregister(steam);
-+		opened = false;
-+	}
- 	if (connected) {
- 		if (opened) {
- 			steam_sensors_unregister(steam);
-@@ -1330,7 +1337,6 @@ static void steam_remove(struct hid_devi
- 	cancel_delayed_work_sync(&steam->mode_switch);
- 	cancel_work_sync(&steam->work_connect);
- 	cancel_work_sync(&steam->rumble_work);
--	cancel_work_sync(&steam->unregister_work);
- 	hid_destroy_device(steam->client_hdev);
- 	steam->client_hdev = NULL;
- 	steam->client_opened = 0;
-@@ -1340,6 +1346,7 @@ static void steam_remove(struct hid_devi
- 	hid_hw_close(hdev);
- 	hid_hw_stop(hdev);
- 	steam_unregister(steam);
-+	flush_work(&steam->unregister_work);
- }
- 
- static void steam_do_connect_event(struct steam_device *steam, bool connected)
---
+
+> +
+> +  maxim,fcharge-current-limit-microamp:
+> +    description:
+> +      Fast-Charge current limit
+> +    minimum: 250000
+> +    default: 500000
+> +    maximum: 1550000
+> +
+> +  maxim,fcharge-timer-hours:
+> +    description: |
+> +      Fast-Charge timer in hours. Setting this value 3 and lower or 11 and
+> +      higher will disable Fast-Charge timer.
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 5
+> +
+> +  maxim,fcharge-rst-threshold-high:
+> +    description:
+> +      Set Fast-Charge reset threshold to -100 mV
+> +    type: boolean
+> +
+> +  maxim,in-current-limit-microamp:
+> +    description:
+> +      Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,topoff-timer-minutes:
+> +    description:
+> +      Top-Off timer minutes
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum: [0, 10, 20, 30, 40, 50, 60, 70]
+> +    default: 30
+> +
+> +  maxim,topoff-current-threshold-microamp:
+> +    description:
+> +      Top-Off current threshold
+> +    enum: [50000, 100000, 150000, 200000]
+> +    default: 50000
+> +
+> +  maxim,fcharge-usb-current-limit-microamp:
+> +    description:
+> +      Fast-Charge USB current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,fcharge-ac-current-limit-microamp:
+> +    description:
+> +      Fast-Charge AC current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,usb-in-current-limit-microamp:
+> +    description:
+> +      USB Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+> +
+> +  maxim,ac-in-current-limit-microamp:
+> +    description:
+> +      AC Input current limit
+> +    minimum: 100000
+> +    default: 500000
+> +    maximum: 1500000
+
+For all or most of these you miss monitored batter.
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+
+Missing allOf with ref to power supply.
+
+> +additionalProperties: false
+
+unevaluatedProperties instead, see other bindings.
+
+Best regards,
+Krzysztof
+
 
