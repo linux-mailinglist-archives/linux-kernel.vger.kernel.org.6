@@ -1,354 +1,678 @@
-Return-Path: <linux-kernel+bounces-527559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6B1A40C9A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:59:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1911A40C9F
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 04:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D37253B470A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:58:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2963A7AB55E
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 03:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EE425776;
-	Sun, 23 Feb 2025 02:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOZXfYOK"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9796F3A8C1;
+	Sun, 23 Feb 2025 03:09:32 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46EE212B63
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 02:58:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5EB928F4;
+	Sun, 23 Feb 2025 03:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740279538; cv=none; b=TPJV8O+7H6cSiQxeHfJZWqGPjPcj/4Zqta+wIYRXt/MoBAoosW+kQceqAjNcVr4pc0m1ubOAA5mpHOkDCFKpDxO3O2ivzQZaOAICWpXeGVpiRsoKG2GfLPgmzzyFcDKLxwIh9ptTZ+RuYhE/3Te/ipdSW8RMHFV3ExbWaVmER7I=
+	t=1740280171; cv=none; b=RVPb5OSWG9zuucJ8s8xJ37S8CZ1zu7rPJPNlGVtYBzzNM9k3kAeLgAkr0ikq22rviGbxjUya9wtP7s3hZp9dpLNsdO4B5WNhKX70z5mHJY251c/RshSLqrb3FIdHIIw/5q2vOR0d3mKiNgZIN5zXBjUPL7qpEZi5b+XlvFsyozk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740279538; c=relaxed/simple;
-	bh=w3A30DjE6TWpPsXjAU8fnisrHJgOiMN5kemzptoG7e4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MiFnCeYNqAGew/M88zG6jmL9WmDA1yHXH8L7W4P3Fhdqsg+t7Xk8f7MkLME4PaLpBFLdZHfvBz0fsuPJ/DQOiedRyYS6+z1roYxC0nUdP/y4yh2ElwzjgIP8TdinvOHlbURlfOz381iSd9yxgU7QK+0VLqXqVnMmp/ReakgAxqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOZXfYOK; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so4508071a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 18:58:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740279534; x=1740884334; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vHGCvVM4HKZP86uO3YLiJHYWtb3Zrh0goabjnV8ABus=;
-        b=QOZXfYOKC8W/W74xiCmmzKts1+FLPH5WmFbAmgUzK3L/URShkzndonzIAKBYEQuWxT
-         WikgANbGtCtXuelmd5fXzwj6g/br01VFS1dKGM9Z8UAfPv4FMxNrejpcIUrgNknmozgE
-         QIdKfjxgXqDg2PqXaolaU96k8yXORWpAy52+lOWoGl8Xl1YvPx1K0oOmtyD4Ibu++YMA
-         QDzZih669WxCBO7Y/ayheSPXnflOa3NyE2l7f0cQHiOiso6/3Hqno61j3CjLX+B4bMEy
-         ilSTmvxeBYaXfrkJ9I62k8LJEmDY+Avv5/oUPDeZQ55VF7hO0NzrqQUaKouFBMwBt/92
-         eDqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740279534; x=1740884334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vHGCvVM4HKZP86uO3YLiJHYWtb3Zrh0goabjnV8ABus=;
-        b=qkzY0hSCI0F32n3nU4L9MzqHlUs/0anubKjYIXenxQ/PveGyw1rNexzuyETvRqcs43
-         jKCgUsAomNnX8fPD2AlCiHPhIyUOkUZWIRLsj1W+k2hZAFHw9irGwI8zACgvWR3p7Sqr
-         HWxXy91p7RVJCerSej75lzGB5t3GUlHbQsBAGu7CKvCXKprWPPRqMk+AUTpVayunSuqJ
-         ow/v8hCwvcJbk6tZDSrslsfTSp/HakOXLqrKyk34Lxzwk4fM4TCUNGjNkuQMuPLs3syC
-         oJDXI6o0NEjVblkeGq4JgyyEvTiZlHkXCC+MHqA4OCjqOKc1H3B0st3oJL089p2fWLTl
-         5mcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUb92MGMZCy85cK/Em5haWr8l+uDFZPkFvpPCd+jDjBQdEMIcl7Fsoe+xGJv2qgXcQdA05WxZ2I0nTZUTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQMMvpIGLjvuQNXWXibKXaTbyBrBuUbQx2eeC39Qfxbj1J0sOl
-	m76SMdI5ZW0/8/r91eN91oW4ABH0SOy/TX/jOC43U91Icbz0cRmQB2mYlxLlU9i7r0QOX7HFqkj
-	Oq6ylEi8jqB/GDufY/JSfZgONpeg=
-X-Gm-Gg: ASbGncuRoOHm/6QGrN5Dcd9zFdjxRoHCraMBtSk5v09zevU/hZwAlsv09C7T4bqIyjF
-	pIZN2LlNtJuTCRmZNsntcO6D6lW1HYuOkJ/4X/EErkZDHCuVrQ9MhpPceZic2uKxJc39c8S2NQR
-	3yVgOFkDBGxw==
-X-Google-Smtp-Source: AGHT+IFldNxjNaVfnTLz6b97WZhagJ1NzizVXg4HdNxA5ZwXSTH4jQuldVkHpklFnf9EAh3T7OVLb1hWOCa5inYfauU=
-X-Received: by 2002:a05:6402:1ec8:b0:5e0:6770:2b6a with SMTP id
- 4fb4d7f45d1cf-5e0b72268a2mr8039452a12.23.1740279534332; Sat, 22 Feb 2025
- 18:58:54 -0800 (PST)
+	s=arc-20240116; t=1740280171; c=relaxed/simple;
+	bh=FaCIUZ+zIC7FWegxjAWM73imTbhyiSB3/WkIHbXrads=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qWEnjv9aKZRCTP4yHl4WJmIgyw6iW8sOLpycQFm4+RP6xYppFM470hpETn2wZEUzDwTXCHQ8RLmHQoXN1LMomxW0EIbakpMlEGu/y93Wq7LYPHQ1KZgfldqX90vAWDzhbhWyNCWl7kMRuLvJEfACx+nnWpYl3Xobjdm5mZJU/Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [180.172.118.52])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id 828D2343208;
+	Sun, 23 Feb 2025 03:09:28 +0000 (UTC)
+Date: Sun, 23 Feb 2025 03:09:17 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Alex Elder <elder@ieee.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	Jesse Taube <mr.bossman075@gmail.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev
+Subject: Re: [PATCH v5 3/5] gpio: spacemit: add support for K1 SoC
+Message-ID: <20250223030917-GYA33864@gentoo>
+References: <20250217-03-k1-gpio-v5-0-2863ec3e7b67@gentoo.org>
+ <20250217-03-k1-gpio-v5-3-2863ec3e7b67@gentoo.org>
+ <8dd08731-8f50-4599-8d18-873b7f594dee@ieee.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174018982058.2766225.1721562132740498299.stgit@mhiramat.tok.corp.google.com>
- <174018983078.2766225.824985516904203702.stgit@mhiramat.tok.corp.google.com>
-In-Reply-To: <174018983078.2766225.824985516904203702.stgit@mhiramat.tok.corp.google.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Sun, 23 Feb 2025 10:58:17 +0800
-X-Gm-Features: AWEUYZmlwJ00_l5kH7U9Uj78Q7AGifCMyBGlE3UvPh61VMizZZeVaqQSJZCDSxg
-Message-ID: <CAK1f24=erjdUzFvCYUFr3L0Yq+bGC8iRmFMstAWd9QSsG98vWg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
-	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa <tfiga@chromium.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8dd08731-8f50-4599-8d18-873b7f594dee@ieee.org>
 
-On Sat, Feb 22, 2025 at 10:03=E2=80=AFAM Masami Hiramatsu (Google)
-<mhiramat@kernel.org> wrote:
->
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->
-> The "hung_task" shows a long-time uninterruptible slept task, but most
-> often, it's blocked on a mutex acquired by another task. Without
-> dumping such a task, investigating the root cause of the hung task
-> problem is very difficult.
->
-> This introduce task_struct::blocker_mutex to point the mutex lock
-> which this task is waiting for. Since the mutex has "owner"
-> information, we can find the owner task and dump it with hung tasks.
->
-> Note: the owner can be changed while dumping the owner task, so
-> this is "likely" the owner of the mutex.
->
-> With this change, the hung task shows blocker task's info like below;
->
->  INFO: task cat:115 blocked for more than 122 seconds.
->        Not tainted 6.14.0-rc3-00003-ga8946be3de00 #156
->  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message=
-.
->  task:cat             state:D stack:13432 pid:115   tgid:115   ppid:106  =
-  task_flags:0x400100 flags:0x00000002
->  Call Trace:
->   <TASK>
->   __schedule+0x731/0x960
->   ? schedule_preempt_disabled+0x54/0xa0
->   schedule+0xb7/0x140
->   ? __mutex_lock+0x51b/0xa60
->   ? __mutex_lock+0x51b/0xa60
->   schedule_preempt_disabled+0x54/0xa0
->   __mutex_lock+0x51b/0xa60
->   read_dummy+0x23/0x70
->   full_proxy_read+0x6a/0xc0
->   vfs_read+0xc2/0x340
->   ? __pfx_direct_file_splice_eof+0x10/0x10
->   ? do_sendfile+0x1bd/0x2e0
->   ksys_read+0x76/0xe0
->   do_syscall_64+0xe3/0x1c0
->   ? exc_page_fault+0xa9/0x1d0
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->  RIP: 0033:0x4840cd
->  RSP: 002b:00007ffe99071828 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
->  RDX: 0000000000001000 RSI: 00007ffe99071870 RDI: 0000000000000003
->  RBP: 00007ffe99071870 R08: 0000000000000000 R09: 0000000000000000
->  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
->  R13: 00000000132fd3a0 R14: 0000000000000001 R15: ffffffffffffffff
->   </TASK>
->  INFO: task cat:115 is blocked on a mutex likely owned by task cat:114.
->  task:cat             state:S stack:13432 pid:114   tgid:114   ppid:106  =
-  task_flags:0x400100 flags:0x00000002
->  Call Trace:
->   <TASK>
->   __schedule+0x731/0x960
->   ? schedule_timeout+0xa8/0x120
->   schedule+0xb7/0x140
->   schedule_timeout+0xa8/0x120
->   ? __pfx_process_timeout+0x10/0x10
->   msleep_interruptible+0x3e/0x60
->   read_dummy+0x2d/0x70
->   full_proxy_read+0x6a/0xc0
->   vfs_read+0xc2/0x340
->   ? __pfx_direct_file_splice_eof+0x10/0x10
->   ? do_sendfile+0x1bd/0x2e0
->   ksys_read+0x76/0xe0
->   do_syscall_64+0xe3/0x1c0
->   ? exc_page_fault+0xa9/0x1d0
->   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->  RIP: 0033:0x4840cd
->  RSP: 002b:00007ffe3e0147b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
->  RDX: 0000000000001000 RSI: 00007ffe3e014800 RDI: 0000000000000003
->  RBP: 00007ffe3e014800 R08: 0000000000000000 R09: 0000000000000000
->  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
->  R13: 000000001a0a93a0 R14: 0000000000000001 R15: ffffffffffffffff
->   </TASK>
->
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Hi Alex:
 
-Nice. I just tried it out, and it works as expected. The overhead is
-almost nothing based on my micro-benchmark ;)
+thanks for the review
 
-Tested-by: Lance Yang <ioworker0@gmail.com>
+On 11:27 Fri 21 Feb     , Alex Elder wrote:
+> On 2/17/25 6:57 AM, Yixun Lan wrote:
+> > Implement GPIO functionality which capable of setting pin as
+> > input, output. Also, each pin can be used as interrupt which
+> > support rising, failing, or both edge type trigger.
+> > 
+> > Signed-off-by: Yixun Lan <dlan@gentoo.org>
+> 
+> This looks nicer!
+> 
+> I have some more comments, but they're pretty minor.
+> 
+> > ---
+> >   drivers/gpio/Kconfig            |   8 +
+> >   drivers/gpio/Makefile           |   1 +
+> >   drivers/gpio/gpio-spacemit-k1.c | 376 ++++++++++++++++++++++++++++++++++++++++
+> >   3 files changed, 385 insertions(+)
+> > 
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> > index add5ad29a673c09082a913cb2404073b2034af48..eaae729eec00a3d6d2b83769aed3e2b0ca9927e5 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -655,6 +655,14 @@ config GPIO_SNPS_CREG
+> >   	  where only several fields in register belong to GPIO lines and
+> >   	  each GPIO line owns a field with different length and on/off value.
+> >   
+> > +config GPIO_SPACEMIT_K1
+> > +	bool "SPACEMIT K1 GPIO support"
+> > +	depends on ARCH_SPACEMIT || COMPILE_TEST
+> > +	depends on OF_GPIO
+> > +	select GPIOLIB_IRQCHIP
+> > +	help
+> > +	  Say yes here to support the SpacemiT's K1 GPIO device.
+> > +
+> >   config GPIO_SPEAR_SPICS
+> >   	bool "ST SPEAr13xx SPI Chip Select as GPIO support"
+> >   	depends on PLAT_SPEAR
+> > diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> > index af3ba4d81b583842893ea69e677fbe2abf31bc7b..6709ce511a0cf10310a94521c85a2d382dcfa696 100644
+> > --- a/drivers/gpio/Makefile
+> > +++ b/drivers/gpio/Makefile
+> > @@ -156,6 +156,7 @@ obj-$(CONFIG_GPIO_SIOX)			+= gpio-siox.o
+> >   obj-$(CONFIG_GPIO_SL28CPLD)		+= gpio-sl28cpld.o
+> >   obj-$(CONFIG_GPIO_SLOPPY_LOGIC_ANALYZER) += gpio-sloppy-logic-analyzer.o
+> >   obj-$(CONFIG_GPIO_SODAVILLE)		+= gpio-sodaville.o
+> > +obj-$(CONFIG_GPIO_SPACEMIT_K1)		+= gpio-spacemit-k1.o
+> >   obj-$(CONFIG_GPIO_SPEAR_SPICS)		+= gpio-spear-spics.o
+> >   obj-$(CONFIG_GPIO_SPRD)			+= gpio-sprd.o
+> >   obj-$(CONFIG_GPIO_STMPE)		+= gpio-stmpe.o
+> > diff --git a/drivers/gpio/gpio-spacemit-k1.c b/drivers/gpio/gpio-spacemit-k1.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..f72511b5ab8f8f0b1d1c9e89d2f9ca07b623a866
+> > --- /dev/null
+> > +++ b/drivers/gpio/gpio-spacemit-k1.c
+> > @@ -0,0 +1,376 @@
+> > +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> > +/*
+> > + * Copyright (C) 2023-2025 SpacemiT (Hangzhou) Technology Co. Ltd
+> > + * Copyright (C) 2025 Yixun Lan <dlan@gentoo.org>
+> > + */
+> > +
+> > +#include <linux/io.h>
+> > +#include <linux/init.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pinctrl/pinctrl.h>
+> > +#include <linux/property.h>
+> > +#include <linux/seq_file.h>
+> > +#include <linux/module.h>
+> > +
+> > +#include "gpiolib.h"
+> > +
+> > +/* register offset */
+> 
+> The comments are great, but I think I'd like to see them be abbreviated
+> further and added to the right of the definitions, if you can do that.
+> 
+> I think you can drop "GPIO" and "register" in each one of them, and
+> that might get you close to an 80 column limit.  See what you can do.
+> 
+sure, I can do this
+> > +/* GPIO port level register */
+> 
+> I think the port level register is read-only, and you didn't include
+> that annotation.
+> 
+right, I will add that annotation
+> > +#define GPLR		0x00
+> > +/* GPIO port direction register - R/W */
+> > +#define GPDR		0x0c
+> > +/* GPIO port set register - W */
+> > +#define GPSR		0x18
+> > +/* GPIO port clear register - W */
+> > +#define GPCR		0x24
+> > +/* GPIO port rising edge register R/W */
+> > +#define GRER		0x30
+> > +/* GPIO port falling edge register R/W */
+> > +#define GFER		0x3c
+> > +/* GPIO edge detect status register - R/W1C */
+> > +#define GEDR		0x48
+> > +/*  GPIO (set) direction register - W */
+> 
+> Delete the extra space above.
+> 
+will do
+> > +#define GSDR		0x54
+> > +/* GPIO (clear) direction register - W */
+> > +#define GCDR		0x60
+> > +/* GPIO (set) rising edge detect enable register - W */
+> > +#define GSRER		0x6c
+> > +/* GPIO (clear) rising edge detect enable register - W */
+> > +#define GCRER		0x78
+> > +/* GPIO (set) falling edge detect enable register - W */
+> > +#define GSFER		0x84
+> > +/* GPIO (clear) falling edge detect enable register - W */
+> > +#define GCFER		0x90
+> > +/* GPIO interrupt mask register, 0 disable, 1 enable - R/W */
+> > +#define GAPMASK		0x9c
+> > +
+> > +#define NR_BANKS		4
+> > +#define NR_GPIOS_PER_BANK	32
+> > +
+> > +#define to_spacemit_gpio_bank(x) container_of((x), struct spacemit_gpio_bank, gc)
+> > +
+> > +struct spacemit_gpio;
+> > +
+> > +struct spacemit_gpio_bank {
+> > +	struct gpio_chip		gc;
+> > +	struct spacemit_gpio		*sg;
+> > +	void __iomem			*base;
+> > +	u32				index;
+> 
+> You almost never use the index field.  It could easily be
+> computed rather than stored:
+> 
+> static u32 spacemit_gpio_bank_index(struct spacemit_gpio_bank *gb)
+> {
+> 	return (u32)(gb - gb->sg->sgb);
+> }
+> 
+ok
+> > +	u32				irq_mask;
+> > +	u32				irq_rising_edge;
+> > +	u32				irq_falling_edge;
+> > +};
+> > +
+> > +struct spacemit_gpio {
+> > +	struct	device			*dev;
+> > +	struct	spacemit_gpio_bank	sgb[NR_BANKS];
+> > +};
+> > +
+> > +static irqreturn_t spacemit_gpio_irq_handler(int irq, void *dev_id)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = dev_id;
+> > +	unsigned long pending;
+> > +	u32 n, gedr;
+> > +
+> > +	gedr = readl(gb->base + GEDR);
+> > +	if (!gedr)
+> > +		return IRQ_NONE;
+> > +	writel(gedr, gb->base + GEDR);
+> > +
+> > +	gedr = gedr & gb->irq_mask;
+> > +	if (!gedr)
+> > +		return IRQ_NONE;
+> > +
+> > +	pending = gedr;
+> 
+> Instead, do:
+> 
+> 	pending = gedr & gb->irq_mask;
+> 	if (!pending)
+> 		return IRQ_NONE;
+> 
+good suggestion
+> > +	for_each_set_bit(n, &pending, BITS_PER_LONG)
+> > +		handle_nested_irq(irq_find_mapping(gb->gc.irq.domain, n));
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static void spacemit_gpio_irq_ack(struct irq_data *d)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(d);
+> > +
+> > +	writel(BIT(irqd_to_hwirq(d)), gb->base + GEDR);
+> > +}
+> > +
+> > +static void spacemit_gpio_irq_mask(struct irq_data *d)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(d);
+> > +	u32 bit = BIT(irqd_to_hwirq(d));
+> > +
+> > +	gb->irq_mask &= ~bit;
+> 
+> This is a minor suggestion, and I'm not sure how much difference
+> it makes.  But here (and one or two more times below) you could
+> avoid the writel() calls if you know the particular IRQ was
+> already disabled.  (Maybe that won't ever happen?)
+> 
+pratically, this should be called once irq unmasked (in pair),
+besides, it won't worth to do the optimization as not called frequently
 
-Thanks,
-Lance
+> 	if (!(gb->irq_mask & bit))
+> 		return;
+> 
+> 	gb->irq_mask &= !bit;
+> 	...
+> 
+> This should work because in spacemit_gpio_add_bank() you reset
+> all the IRQ state and disable all IRQs, so the cached copy of
+> the irq_mask and the rising and falling edge masks should match
+> reality.
+> 
+> > +
+> > +	if (bit & gb->irq_rising_edge)
+> > +		writel(bit, gb->base + GCRER);
+> > +
+> > +	if (bit & gb->irq_falling_edge)
+> > +		writel(bit, gb->base + GCFER);
+> > +}
+> > +
+> > +static void spacemit_gpio_irq_unmask(struct irq_data *d)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(d);
+> > +	u32 bit = BIT(irqd_to_hwirq(d));
+> > +
+> 
+> 
+> Same thought here.
+> 
+> 	if (gb->irq_mask & bit)
+> 		return;
+> 
+> > +	gb->irq_mask |= bit;
+> > +
+> > +	if (bit & gb->irq_rising_edge)
+> > +		writel(bit,  gb->base + GSRER);
+> > +
+> > +	if (bit & gb->irq_falling_edge)
+> > +		writel(bit, gb->base + GSFER);
+> > +}
+> > +
+> > +static int spacemit_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(d);
+> > +	u32 bit = BIT(irqd_to_hwirq(d));
+> > +
+> 
+> Same thought in this function, although it gets a little
+> messier looking.
+> 
+> > +	if (type & IRQ_TYPE_EDGE_RISING) {
+> > +		gb->irq_rising_edge |= bit;
+> > +		writel(bit, gb->base + GSRER);
+> > +	} else {
+> > +		gb->irq_rising_edge &= ~bit;
+> > +		writel(bit, gb->base + GCRER);
+> > +	}
+> 
+> Otherwise:
+> 
+>      if (type & IRQ_TYPE_EDGE_RISING)
+> 	gb->irq_rising_edge |= bit;
+>      else
+> 	gb->irq_rising_edge &= ~bit;
+>      writel(bit, gb->base + GSRER);
+> 
+no, it's two different registers: GSRER vs GCRER
+> and again below.
+> 
+> > +
+> > +	if (type & IRQ_TYPE_EDGE_FALLING) {
+> > +		gb->irq_falling_edge |= bit;
+> > +		writel(bit, gb->base + GSFER);
+> > +	} else {
+> > +		gb->irq_falling_edge &= ~bit;
+> > +		writel(bit, gb->base + GCFER);
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> You added this function in version 5 of the series.  Please call
+> attention to additions (or removals) like this in your cover page,
+> and/or in notes at the top of this patch.
+> 
+ok
+> > +static void spacemit_gpio_irq_print_chip(struct irq_data *data, struct seq_file *p)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = irq_data_get_irq_chip_data(data);
+> > +
+> > +	seq_printf(p, "%s-%d", dev_name(gb->gc.parent), gb->index);
+> 
+> Does this look like "gpiochip2-15" or something?  I wasn't able
+> to find it in the debugfs file system.
+> 
+it shows in /proc/interrupts once irq registered..
+something will look like this - d4019000.gpio-$index
 
-> ---
->  Changes in v3:
->   - Add RCU_LOCKDEP_WARN() to ensure rcu_read_lock() is held.
->   - Cleanup code to make it fail-fast and add brace to
->     for_each_process_thread().
->   - Change the message to "likely owned" instead of "owned".
->  Changes in v2:
->   - Introduce CONFIG_DETECT_HUNG_TASK_BLOCKER for this feature.
->   - Introduce task_struct::blocker_mutex to point the mutex.
->   - Rename debug_mutex_get_owner() to mutex_get_owner().
->   - Remove unneeded mutex_waiter::mutex.
-> ---
->  include/linux/mutex.h  |    2 ++
->  include/linux/sched.h  |    4 ++++
->  kernel/hung_task.c     |   36 ++++++++++++++++++++++++++++++++++++
->  kernel/locking/mutex.c |   14 ++++++++++++++
->  lib/Kconfig.debug      |   10 ++++++++++
->  5 files changed, 66 insertions(+)
->
-> diff --git a/include/linux/mutex.h b/include/linux/mutex.h
-> index 2bf91b57591b..2143d05116be 100644
-> --- a/include/linux/mutex.h
-> +++ b/include/linux/mutex.h
-> @@ -202,4 +202,6 @@ DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), m=
-utex_unlock(_T))
->  DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
->  DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) =3D=3D 0)
->
-> +extern unsigned long mutex_get_owner(struct mutex *lock);
-> +
->  #endif /* __LINUX_MUTEX_H */
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 9632e3318e0d..0cebdd736d44 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1217,6 +1217,10 @@ struct task_struct {
->         struct mutex_waiter             *blocked_on;
->  #endif
->
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +       struct mutex                    *blocker_mutex;
-> +#endif
-> +
->  #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
->         int                             non_block_count;
->  #endif
-> diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-> index 04efa7a6e69b..ccd7217fcec1 100644
-> --- a/kernel/hung_task.c
-> +++ b/kernel/hung_task.c
-> @@ -93,6 +93,41 @@ static struct notifier_block panic_block =3D {
->         .notifier_call =3D hung_task_panic,
->  };
->
-> +
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +static void debug_show_blocker(struct task_struct *task)
-> +{
-> +       struct task_struct *g, *t;
-> +       unsigned long owner;
-> +       struct mutex *lock;
-> +
-> +       RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
-> +
-> +       lock =3D READ_ONCE(task->blocker_mutex);
-> +       if (!lock)
-> +               return;
-> +
-> +       owner =3D mutex_get_owner(lock);
-> +       if (unlikely(!owner)) {
-> +               pr_err("INFO: task %s:%d is blocked on a mutex, but the o=
-wner is not found.\n",
-> +                       task->comm, task->pid);
-> +               return;
-> +       }
-> +
-> +       /* Ensure the owner information is correct. */
-> +       for_each_process_thread(g, t) {
-> +               if ((unsigned long)t =3D=3D owner) {
-> +                       pr_err("INFO: task %s:%d is blocked on a mutex li=
-kely owned by task %s:%d.\n",
-> +                               task->comm, task->pid, t->comm, t->pid);
-> +                       sched_show_task(t);
-> +                       return;
-> +               }
-> +       }
-> +}
-> +#else
-> +#define debug_show_blocker(t)  do {} while (0)
-> +#endif
-> +
->  static void check_hung_task(struct task_struct *t, unsigned long timeout=
-)
->  {
->         unsigned long switch_count =3D t->nvcsw + t->nivcsw;
-> @@ -152,6 +187,7 @@ static void check_hung_task(struct task_struct *t, un=
-signed long timeout)
->                 pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_sec=
-s\""
->                         " disables this message.\n");
->                 sched_show_task(t);
-> +               debug_show_blocker(t);
->                 hung_task_show_lock =3D true;
->
->                 if (sysctl_hung_task_all_cpu_backtrace)
-> diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-> index b36f23de48f1..6a543c204a14 100644
-> --- a/kernel/locking/mutex.c
-> +++ b/kernel/locking/mutex.c
-> @@ -72,6 +72,14 @@ static inline unsigned long __owner_flags(unsigned lon=
-g owner)
->         return owner & MUTEX_FLAGS;
->  }
->
-> +/* Do not use the return value as a pointer directly. */
-> +unsigned long mutex_get_owner(struct mutex *lock)
-> +{
-> +       unsigned long owner =3D atomic_long_read(&lock->owner);
-> +
-> +       return (unsigned long)__owner_task(owner);
-> +}
-> +
->  /*
->   * Returns: __mutex_owner(lock) on failure or NULL on success.
->   */
-> @@ -180,6 +188,9 @@ static void
->  __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
->                    struct list_head *list)
->  {
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +       WRITE_ONCE(current->blocker_mutex, lock);
-> +#endif
->         debug_mutex_add_waiter(lock, waiter, current);
->
->         list_add_tail(&waiter->list, list);
-> @@ -195,6 +206,9 @@ __mutex_remove_waiter(struct mutex *lock, struct mute=
-x_waiter *waiter)
->                 __mutex_clear_flag(lock, MUTEX_FLAGS);
->
->         debug_mutex_remove_waiter(lock, waiter, current);
-> +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
-> +       WRITE_ONCE(current->blocker_mutex, NULL);
-> +#endif
->  }
->
->  /*
-> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-> index 1af972a92d06..91dfd8c10fbb 100644
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1260,6 +1260,16 @@ config BOOTPARAM_HUNG_TASK_PANIC
->
->           Say N if unsure.
->
-> +config DETECT_HUNG_TASK_BLOCKER
-> +       bool "Dump Hung Tasks Blocker"
-> +       depends on DETECT_HUNG_TASK
-> +       default y
-> +       help
-> +         Say Y here to show the blocker task's stacktrace who acquires
-> +         the mutex lock which "hung tasks" are waiting.
-> +         This will add overhead a bit but shows suspicious tasks and
-> +         call trace if it comes from waiting a mutex.
-> +
->  config WQ_WATCHDOG
->         bool "Detect Workqueue Stalls"
->         depends on DEBUG_KERNEL
->
+> > +}
+> > +
+> > +static struct irq_chip spacemit_gpio_chip = {
+> > +	.name		= "k1-gpio-irqchip",
+> > +	.irq_ack	= spacemit_gpio_irq_ack,
+> > +	.irq_mask	= spacemit_gpio_irq_mask,
+> > +	.irq_unmask	= spacemit_gpio_irq_unmask,
+> > +	.irq_set_type	= spacemit_gpio_irq_set_type,
+> > +	.irq_print_chip	= spacemit_gpio_irq_print_chip,
+> > +	.flags		= IRQCHIP_IMMUTABLE,
+> 
+> Last time your flags value was IRQCHIP_SET_WAKE.  Why the change?
+> 
+I was about to check this..
+
+the gpio controller doesn't support irq wake up,
+I will add this flag in next version
+
+> > +	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+> > +};
+> > +
+> 
+> Maybe you could add a comment indicating that gpiospec->args[]
+> will contain:
+> 0:  bank index
+> 1:  GPIO offset within the bank
+> 2:  flags
+> 
+> (And the GPIO chip instance number as Linus suggested.)
+> 
+please ignore, I will drop this function as LinusW promote this
+to gpio core
+> > +static int spacemit_gpio_xlate(struct gpio_chip *gc,
+> > +			       const struct of_phandle_args *gpiospec, u32 *flags)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = gpiochip_get_data(gc);
+> > +	struct spacemit_gpio *sg = gb->sg;
+> > +
+> 
+> Get rid of the above blank line.
+> 
+> > +	int i;
+> > +
+> 
+> I'm not sure the context in which this runs.  Can it be given
+> arbitrary content from a DTB?  Mainly I'm interested to know
+> whether any of these checks can be eliminated.  If it's called
+> while parsing a DTB I can see why you'd need to verify all
+> input values for validity.
+> 
+> > +	if (gc->of_gpio_n_cells != 3)
+> > +		return -EINVAL;
+> > +
+> > +	if (gpiospec->args_count < gc->of_gpio_n_cells)
+> > +		return -EINVAL;
+> > +
+> > +	i = gpiospec->args[0];
+> > +	if (i >= NR_BANKS)
+> > +		return -EINVAL;
+> > +
+> > +	if (gc != &sg->sgb[i].gc)
+> > +		return -EINVAL;
+> > +
+> > +	if (gpiospec->args[1] >= gc->ngpio)
+> > +		return -EINVAL;
+> > +
+> > +	if (flags)
+> > +		*flags = gpiospec->args[2];
+> > +
+> > +	return gpiospec->args[1];
+> > +}
+> > +
+> > +static int spacemit_add_pin_range(struct gpio_chip *gc)
+> > +{
+> > +	struct spacemit_gpio_bank *gb;
+> > +	struct of_phandle_args pinspec;
+> > +	struct pinctrl_dev *pctldev;
+> > +	struct device_node *np;
+> > +	int ret, trim;
+> > +
+> > +	np = dev_of_node(&gc->gpiodev->dev);
+> > +	if (!np)
+> > +		return 0;
+> > +
+> > +	gb = to_spacemit_gpio_bank(gc);
+> > +
+> > +	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
+> > +					       gb->index, &pinspec);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	pctldev = of_pinctrl_get(pinspec.np);
+> > +	of_node_put(pinspec.np);
+> > +	if (!pctldev)
+> > +		return -EPROBE_DEFER;
+> > +
+> > +	/* Ignore ranges outside of this GPIO chip */
+> > +	if (pinspec.args[0] >= (gc->offset + gc->ngpio))
+> > +		return -EINVAL;
+> > +
+> > +	if (pinspec.args[0] + pinspec.args[2] <= gc->offset)
+> > +		return -EINVAL;
+> > +
+> 
+> I would do the following test earlier.
+> 
+ditto, ignore this, as move to gpio core
+> > +	if (!pinspec.args[2])
+> > +		return -EINVAL;
+> > +
+> > +	/* Trim the range to fit this GPIO chip */
+> > +	if (gc->offset > pinspec.args[0]) {
+> > +		trim = gc->offset - pinspec.args[0];
+> > +		pinspec.args[2] -= trim;
+> > +		pinspec.args[1] += trim;
+> > +		pinspec.args[0] = 0;
+> > +	} else {
+> > +		pinspec.args[0] -= gc->offset;
+> > +	}
+> > +	if ((pinspec.args[0] + pinspec.args[2]) > gc->ngpio)
+> > +		pinspec.args[2] = gc->ngpio - pinspec.args[0];
+> > +
+> > +	ret = gpiochip_add_pin_range(gc,
+> > +				     pinctrl_dev_get_devname(pctldev),
+> > +				     pinspec.args[0],
+> > +				     pinspec.args[1],
+> > +				     pinspec.args[2]);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return 0;
+> 
+> Just do this:
+> 
+>      return  gpiochip_add_pin_range(gc, pinctrl_dev_get_devname(pctldev),
+> 				   pinspec.args[0], pinspec.args[2]);
+> 
+> > +}
+> > +
+> > +static int spacemit_gpio_add_bank(struct spacemit_gpio *sg,
+> > +				  void __iomem *regs,
+> > +				  int index, int irq)
+> > +{
+> > +	struct spacemit_gpio_bank *gb = &sg->sgb[index];
+> > +	struct gpio_chip *gc = &gb->gc;
+> > +	struct device *dev = sg->dev;
+> > +	struct gpio_irq_chip *girq;
+> > +	void __iomem *dat, *set, *clr, *dirin, *dirout;
+> > +	int ret, bank_base[] = { 0x0, 0x4, 0x8, 0x100 };
+> > +
+> > +	gb->index = index;
+> > +	gb->base = regs + bank_base[index];
+> > +
+> > +	dat	= gb->base + GPLR;
+> > +	set	= gb->base + GPSR;
+> > +	clr	= gb->base + GPCR;
+> > +	dirin	= gb->base + GCDR;
+> > +	dirout	= gb->base + GSDR;
+> > +
+> > +	/* This registers 32 GPIO lines per bank */
+> > +	ret = bgpio_init(gc, dev, 4, dat, set, clr, dirout, dirin,
+> > +			 BGPIOF_UNREADABLE_REG_SET | BGPIOF_UNREADABLE_REG_DIR);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to init gpio chip\n");
+> > +
+> > +	gb->sg = sg;
+> > +
+> > +	gc->label		= dev_name(dev);
+> > +	gc->request		= gpiochip_generic_request;
+> > +	gc->free		= gpiochip_generic_free;
+> > +	gc->ngpio		= NR_GPIOS_PER_BANK;
+> > +	gc->base		= -1;
+> > +
+> > +#ifdef CONFIG_OF_GPIO
+> 
+> Why are these lines conditionally defined?  Is it intended
+> to allow CONFIG_COMPILE_TEST to work?  Your Kconfig states
+> that this *depends on* OF_GPIO, so this is probably not
+> needed.
+> 
+> You don't define spacemit_gpio_xlate() earlier conditionally.
+> Nor spacemit_add_pin_range().
+> 
+make sense, I will drop this #ifdef
+> > +	gc->of_xlate		= spacemit_gpio_xlate;
+> > +	gc->of_add_pin_range	= spacemit_add_pin_range;
+> > +	gc->of_gpio_n_cells	= 3;
+> > +#endif
+> > +
+> > +	girq			= &gc->irq;
+> > +	girq->threaded		= true;
+> > +	girq->handler		= handle_simple_irq;
+> > +
+> > +	gpio_irq_chip_set_chip(girq, &spacemit_gpio_chip);
+> > +
+> > +	/* Clear Edge Detection Settings */
+> > +	writel(0x0, gb->base + GRER);
+> > +	writel(0x0, gb->base + GFER);
+> > +	/* Clear and Disable Interrupt */
+> > +	writel(0xffffffff, gb->base + GCFER);
+> > +	writel(0xffffffff, gb->base + GCRER);
+> 
+> It seems that GAPMASK is an overall interrupt mask register.
+> I assume that means that by writing 0 here, no interrupts
+> of any kind will be generated for any of the 32 GPIO ports.
+> 
+yes
+
+> If that's true, I would write this first, *then* disable
+> the rising and falling edge detection interrupts, *then*
+> clear any pending interrupts.
+> 
+ok, I will take your suggestion, this is more strict
+
+> Are there any interrupt types other than rising and falling
+> edge?  Does this just provide an atomic way to disable both
+only two types, rising, falling, and both can be enabled simultaneously
+(there is no level trigger interrupt)
+
+> types at once?  If there are no other interrupt types maybe
+> this could be used rather than disabling both types
+> separately using GCFER etc. in spacemit_gpio_irq_*mask().
+> 
+you are right, I think we can do this
+
+> 					-Alex
+> 
+> > +	writel(0, gb->base + GAPMASK);
+> > +
+> > +	ret = devm_request_threaded_irq(dev, irq, NULL,
+> > +					spacemit_gpio_irq_handler,
+> > +					IRQF_ONESHOT | IRQF_SHARED,
+> > +					gb->gc.label, gb);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "failed to register IRQ\n");
+> > +
+> > +	ret = devm_gpiochip_add_data(dev, gc, gb);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "failed to add gpio chip\n");
+> > +
+> > +	/* Eable Interrupt */
+> > +	writel(0xffffffff, gb->base + GAPMASK);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int spacemit_gpio_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct spacemit_gpio *sg;
+> > +	struct resource *res;
+> > +	void __iomem *regs;
+> > +	int i, irq, ret;
+> > +
+> > +	sg = devm_kzalloc(dev, sizeof(*sg), GFP_KERNEL);
+> > +	if (!sg)
+> > +		return -ENOMEM;
+> > +
+> > +	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
+> > +	if (IS_ERR(regs))
+> > +		return PTR_ERR(regs);
+> > +
+> > +	irq = platform_get_irq(pdev, 0);
+> > +	if (irq < 0)
+> > +		return irq;
+> > +
+> > +	sg->dev	= dev;
+> > +
+> > +	for (i = 0; i < NR_BANKS; i++) {
+> > +		ret = spacemit_gpio_add_bank(sg, regs, i, irq);
+> > +		if (ret)
+> > +			return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static const struct of_device_id spacemit_gpio_dt_ids[] = {
+> > +	{ .compatible = "spacemit,k1-gpio" },
+> > +	{ /* sentinel */ }
+> > +};
+> > +
+> > +static struct platform_driver spacemit_gpio_driver = {
+> > +	.probe		= spacemit_gpio_probe,
+> > +	.driver		= {
+> > +		.name	= "k1-gpio",
+> > +		.of_match_table = spacemit_gpio_dt_ids,
+> > +	},
+> > +};
+> > +module_platform_driver(spacemit_gpio_driver);
+> > +
+> > +MODULE_AUTHOR("Yixun Lan <dlan@gentoo.org>");
+> > +MODULE_DESCRIPTION("GPIO driver for SpacemiT K1 SoC");
+> > +MODULE_LICENSE("GPL");
+> > 
+> 
+
+-- 
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
