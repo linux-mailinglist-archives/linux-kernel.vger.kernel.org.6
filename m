@@ -1,116 +1,203 @@
-Return-Path: <linux-kernel+bounces-527876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51692A410C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:21:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F6C3A410AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:09:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C691893625
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:21:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9238C1888374
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A471624D2;
-	Sun, 23 Feb 2025 18:21:19 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7E6158558;
+	Sun, 23 Feb 2025 18:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bjgz+UQ3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBE35D8F0;
-	Sun, 23 Feb 2025 18:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B603A8F7;
+	Sun, 23 Feb 2025 18:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740334878; cv=none; b=mLXGdYs81B8TcmCm1mM/EJ8r3bGtuZwfhJaEqvYpXPb4Q01WqXYFOjCw4K/+wBPj0ZGcgz5AlnX2EK8wmdJeBHMsCA0WtsDm9Cst78ul+VE0KoXAOha2Zz2Qvd5K1LPTZ+ZQuebcLKbx4ce7VupoqABF5L+J3qMtCYKDYGOakWI=
+	t=1740334155; cv=none; b=UHv84ffB2INpFx8fsjAdK0PxiKnQs8feM3+tUC6r4oRTQ2gOfnYAI93jMqt8eR2pVkb7afifEU032v1g8tw4T1P5IQ5Go3DoOwsPvKxYfZqF3yySaZapQmpf6ILPt9NTT162HZoFCR5c4d9mtOfolZ/vAAjZJ9eTizbDkeY0tRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740334878; c=relaxed/simple;
-	bh=naByVkUiz/GQlhP55+XLPPUFw52CHqfSQjnK+2OSx2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HF0boOTZlfCuvC+mTWu+Kz7uTTsaBG9AN2RFZo+AFXHUBVOO0LJmut243ZgWDgpnctqmfAiVOiOZXpZ9vlz6HjWvewQXBF1e5FInsFvLFACmDppySQMMP18GWAfJpMjAaHhru5kONL7Iv4jokzHZHoax3sQ195PMZfBy6lwoi/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.2.102] (213.87.151.162) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Sun, 23 Feb
- 2025 21:05:49 +0300
-Message-ID: <3315dad1-52a8-4ae7-be65-6b9ccf3dfbfe@omp.ru>
-Date: Sun, 23 Feb 2025 21:05:47 +0300
+	s=arc-20240116; t=1740334155; c=relaxed/simple;
+	bh=8If/he3/Ufb6GzxJlC5qz9jCuFjwtlLMYqI6GW25NbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ci5ij13q1LlTO65W3kxKpJHKoPArPjdxSH5v07djSbWXcxvGWet9x22x0GdPG1KmjM0oZnhkakTVR2hr/FPCPO38+1B8THuM49F4ePrluWjUSNcaPRdi8/D0YmUo7aPWO90EeOZbEgi2ZSEi0c1qgRfP9EntZWwME+sht4jjQpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bjgz+UQ3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9692A496;
+	Sun, 23 Feb 2025 19:07:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740334066;
+	bh=8If/he3/Ufb6GzxJlC5qz9jCuFjwtlLMYqI6GW25NbY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bjgz+UQ3nJWuDXXgPd1/MRjVDFRw/W8WNEIcvAZXX5Flkac5RP/C/KqIn/keWllIA
+	 RnS0trk+8BJp623yWJQWB+HRjZ7sYbHD/1DHajRmQo1iSlSDcSvTKCmVMtCt45XjOM
+	 N/T5bq9N32lNSuXpDa03FhKUhYRC+32x7+oHF9Co=
+Date: Sun, 23 Feb 2025 20:08:55 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
+	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 01/18] media: dt-bindings: renesas,rzg2l-csi2:
+ Document Renesas RZ/V2H(P) SoC
+Message-ID: <20250223180855.GD15078@pendragon.ideasonboard.com>
+References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250221155532.576759-2-tommaso.merciai.xr@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: olpi: Remove unused otg_ulpi_create
-To: <linux@treblig.org>, <gregkh@linuxfoundation.org>,
-	<linux-usb@vger.kernel.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <20250223160602.91916-1-linux@treblig.org>
-Content-Language: en-US
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-In-Reply-To: <20250223160602.91916-1-linux@treblig.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 02/23/2025 17:49:06
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 191206 [Feb 23 2025]
-X-KSE-AntiSpam-Info: Version: 6.1.1.11
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 51 0.3.51
- 68896fb0083a027476849bf400a331a2d5d94398
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 213.87.151.162 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: {Tracking_ip_hunter}
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.151.162
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 02/23/2025 17:52:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 2/23/2025 2:52:00 PM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250221155532.576759-2-tommaso.merciai.xr@bp.renesas.com>
 
-On 2/23/25 7:06 PM, linux@treblig.org wrote:
+Hi Tommaso,
 
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Thank you for the patch.
+
+On Fri, Feb 21, 2025 at 04:55:15PM +0100, Tommaso Merciai wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> otg_ulpi_create() has been unused since 2022's
-> commit 8ca79aaad8be ("ARM: pxa: remove unused pxa3xx-ulpi")
+> The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
+> found on the Renesas RZ/G2L SoC, with the following differences:
+> - A different D-PHY
+> - Additional registers for the MIPI CSI-2 link
+> - Only two clocks
 > 
-> Remove it.
+> Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
+> SoC.
 > 
-> The devm_ variant is still used.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 > ---
->  drivers/usb/phy/phy-ulpi.c | 23 -----------------------
+> Changes since v1:
+>  - Dropped empty line as suggested by LPinchart
+>  - Fixed minItems into else conditional block as suggested by RHerring
+> 
+>  .../bindings/media/renesas,rzg2l-csi2.yaml    | 59 ++++++++++++++-----
+>  1 file changed, 44 insertions(+), 15 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> index 7faa12fecd5b..1d7784e8af16 100644
+> --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> @@ -17,12 +17,14 @@ description:
+>  
+>  properties:
+>    compatible:
+> -    items:
+> -      - enum:
+> -          - renesas,r9a07g043-csi2       # RZ/G2UL
+> -          - renesas,r9a07g044-csi2       # RZ/G2{L,LC}
+> -          - renesas,r9a07g054-csi2       # RZ/V2L
+> -      - const: renesas,rzg2l-csi2
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r9a07g043-csi2 # RZ/G2UL
+> +              - renesas,r9a07g044-csi2 # RZ/G2{L,LC}
+> +              - renesas,r9a07g054-csi2 # RZ/V2L
+> +          - const: renesas,rzg2l-csi2
+> +      - const: renesas,r9a09g057-csi2 # RZ/V2H(P)
+>  
+>    reg:
+>      maxItems: 1
+> @@ -31,16 +33,24 @@ properties:
+>      maxItems: 1
+>  
+>    clocks:
+> -    items:
+> -      - description: Internal clock for connecting CRU and MIPI
+> -      - description: CRU Main clock
+> -      - description: CRU Register access clock
+> +    oneOf:
+> +      - items:
+> +          - description: Internal clock for connecting CRU and MIPI
+> +          - description: CRU Main clock
+> +          - description: CRU Register access clock
+> +      - items:
+> +          - description: CRU Main clock
+> +          - description: CRU Register access clock
+>  
+>    clock-names:
+> -    items:
+> -      - const: system
+> -      - const: video
+> -      - const: apb
+> +    oneOf:
+> +      - items:
+> +          - const: system
+> +          - const: video
+> +          - const: apb
+> +      - items:
+> +          - const: video
+> +          - const: apb
+>  
+>    power-domains:
+>      maxItems: 1
+> @@ -48,7 +58,7 @@ properties:
+>    resets:
+>      items:
+>        - description: CRU_PRESETN reset terminal
+> -      - description: CRU_CMN_RSTB reset terminal
+> +      - description: CRU_CMN_RSTB reset terminal or D-PHY reset
 
-   Probably s/olpi/ulpi/ in the subject then?
+I'd mention which SoCs these apply to:
 
->  include/linux/usb/ulpi.h   |  9 ---------
->  2 files changed, 32 deletions(-)
-> [...]
-MBR, Sergey
+      - description:
+          CRU_CMN_RSTB reset terminal (all but RZ/V2H) or D-PHY reset (RZ/V2H)
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+>  
+>    reset-names:
+>      items:
+> @@ -101,6 +111,25 @@ required:
+>    - reset-names
+>    - ports
+>  
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,r9a09g057-csi2
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 2
+> +        clock-names:
+> +          maxItems: 2
+> +    else:
+> +      properties:
+> +        clocks:
+> +          minItems: 3
+> +        clock-names:
+> +          minItems: 3
+> +
+>  additionalProperties: false
+>  
+>  examples:
+
+-- 
+Regards,
+
+Laurent Pinchart
 
