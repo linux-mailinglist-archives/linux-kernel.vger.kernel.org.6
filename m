@@ -1,78 +1,145 @@
-Return-Path: <linux-kernel+bounces-527542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C27A40C7B
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:20:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE56A40C7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C717017DC35
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 794F11886A2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7FBA42;
-	Sun, 23 Feb 2025 01:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Vx+OKc8d"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CAFB674;
+	Sun, 23 Feb 2025 01:24:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F52B171C9;
-	Sun, 23 Feb 2025 01:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906B980B
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 01:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740273632; cv=none; b=LopmEaenxlgDKF8MhPaQKEWpKK9Hmlu5lRIl7zSV0YpXz3n2oYS1VIcnyNSPZURJyDRe5y67eumlaV6pDtAM3JhNNRWM5DCxCJBC28gRha37I3UDBK1/hxziw5mMK24j1RfRgjTI5CNuLdZ9HF2WHyiCJABuEH/h3GzvY71P1Sc=
+	t=1740273846; cv=none; b=a2AilnJUgT0OZulYhXguD0jM9c7WLc4MiL7srjI3HBwehKCypuzGZCg46lYmcxXKWX/nsRTLXeduaFAHYEVQ6H4/UIGV0eaIUncfeHl7ZgtN57WTjeqQU5KkDD01P8nxZ8Oq1KBSmMB/GzT3wSeC6EEEGuAW6AMtDlejzNYMsxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740273632; c=relaxed/simple;
-	bh=x219kO9/TY6esmGdDOm2ZSMAJh5cKoy0bTXUTRMdpi0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jrMqQjvg73hzy04IQ6eJx1NWpHK9pd6jZLlBvz0VtPYc/YzC4juyUwozfGnpm/YOOHuRUz89ee7mpLVm3nxPtTT4j3R/Gg/BSiaKKvJF2VYMlRvfwg2gSvjr6kxmSM+C2b4X2woEtEh3WIvQXH/bNiQeoTNnGdtoTar2Uv6JAoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Vx+OKc8d; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 7C9A725BD1;
-	Sun, 23 Feb 2025 02:20:27 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id n66v7EwL05kj; Sun, 23 Feb 2025 02:20:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1740273623; bh=x219kO9/TY6esmGdDOm2ZSMAJh5cKoy0bTXUTRMdpi0=;
-	h=Date:From:Subject:To:Cc;
-	b=Vx+OKc8dTwitGMgNarf5gOllSDkihJeUlTgc3HO/QKGcsNXRrS04qi96TZGFVyT93
-	 14y9TgCkMxyLrC/SO5gxq1nY/Q27ijzQbk9ciM87nWuj9TPXIoIsWUAY1Ag70ogI9f
-	 SEfhiLoM8y+xV9Jec9/69NM1DuuB1+2PGRqmhQP47wg3uJezPxfptUbzXxcnliVpUa
-	 FWoI4x+8Cye7GAaZbhcCFYaYpWUs8SnXImgwLL4AsKUj0rnuaN6N1b4jh7hsZFilI8
-	 5cca66mjpsMcBOuQ18bvtSJR3Brs9FOihnEqIK1u6+aXlvKNTsHNifAfEz9xkH8r99
-	 /1qrY94yOYx0g==
-Message-ID: <bfd2258b-9bbe-42e6-89aa-1bd77a58983b@disroot.org>
-Date: Sun, 23 Feb 2025 02:20:21 +0100
+	s=arc-20240116; t=1740273846; c=relaxed/simple;
+	bh=bwN4CfvrjsEhFIGXHEdQqWflWGNZqQORjdnkguCjYGs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=L7MLaWwF5FGwPkzo5zOkT0FUg+/0x1ZN/8WxoJv+Bu1HITj4SfVUMoOOu2B7qObmGvwjRivSS0WGvBQSPe2eiX270gWXEBgKZs1o++GKPi4NU2EDpJPQ5pWkhhK8rH43nYp7UgHHpDHQoARhCvrfXIw8tNvvsGfKapl7xeSBH6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-855a5457169so638798239f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 22 Feb 2025 17:24:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740273843; x=1740878643;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vhoqh6p2D/HpDTlnd+AWsV5r2ghuXuNOOaK67cnPH+M=;
+        b=NVIh8S6RzRdoiJOD0B2AFXLqPN1gp2aWX/L6+w1sjrnSlpPjkUCECknkyOpPw7CdbN
+         DjNmHiCrORvGYf2S3sJ3KW7KlUArJQuGBBvf2YdGz2ApJ3DW3XhtvdFm7wS2noYZ7VUA
+         WuYslQ+Cf+TiNWY+n+m4T9nUzB/A8IV4/tTNa58iCVkz6EW+3xa0P1XyOJnw1zkO9orY
+         m1d+7btCWkERBL7dYqVZbzyAA/bd5zQZpfQSjTDZ/+yabSPrkFMt1ME2PsF3Ljc4Cw/Y
+         /1VsqN3gKg32pb3Q67VlHjNorlQZvwbM2/hz26bVXz+3ivIAY/5+3VggANVP3ynUjoTt
+         Hb6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXrBRWfDzucIBkR6jsHP/S/6oBftY9lvuKPkWixVsC2ezbuwZboSBCsCJGmtbfOGREI9O0k8aJXoVmKeBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSNw4H5bpTqQimBXC6RNW5qLYUpECF8+IvzLKJC2aUweCyQe1s
+	5MTIVJiFH4tJZ2qa4dSxo1zgepFrGHJ6EsS0qRVyV8zg78GBawyKFO8uu2c/EFcPmpuLdvaxeqA
+	qFIq9gXLGmacHG7ROFv2O2h1HyplnPn6FYYtrByYbBTDZ/L1CZwTN6Ak=
+X-Google-Smtp-Source: AGHT+IGBuVROsOaD2ibtnRLj0C2TuJm41ZvPjTTMK+B85j7rx4mUa8qgpe83Rbmn5Kes2hvlbO0XJxxiicY83QAlSgC6RCMz9zYR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: NoisyCoil <noisycoil@disroot.org>
-Subject: Please backport "drm: select DRM_KMS_HELPER from
- DRM_GEM_SHMEM_HELPER" to 6.13.x
-To: stable@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:164f:b0:3d2:aa73:7b76 with SMTP id
+ e9e14a558f8ab-3d2cb457b93mr70705195ab.9.1740273843647; Sat, 22 Feb 2025
+ 17:24:03 -0800 (PST)
+Date: Sat, 22 Feb 2025 17:24:03 -0800
+In-Reply-To: <20250223002744.2585-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ba78b3.050a0220.bbfd1.0008.GAE@google.com>
+Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
+From: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello.
+Hello,
 
-The build (actually, linking) failure described in [1] affects current 
-stable (6.13.4). Could the commit that fixes it in mainline, namely, 
-c40ca9ef7c5c9bbb0d2f7774c87417cc4f1713bf ("drm: select DRM_KMS_HELPER 
-from DRM_GEM_SHMEM_HELPER") be backported to 6.13.x, please?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: ODEBUG bug in release_nodes
 
-Thank you.
+hid-steam 0003:28DE:1102.012F: Steam Controller 'XXXXXXXXXX' disconnected
+------------[ cut here ]------------
+ODEBUG: free active (active state 0) object: ffff88811f475b00 object type: work_struct hint: steam_work_unregister_cb+0x0/0x180 drivers/hid/hid-steam.c:868
+WARNING: CPU: 1 PID: 24 at lib/debugobjects.c:612 debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
+Modules linked in:
+CPU: 1 UID: 0 PID: 24 Comm: kworker/1:0 Not tainted 6.14.0-rc3-syzkaller-00293-g5cf80612d3f7-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Workqueue: usb_hub_wq hub_event
+RIP: 0010:debug_print_object+0x1a2/0x2b0 lib/debugobjects.c:612
+Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 54 48 8b 14 dd c0 d4 47 87 41 56 4c 89 e6 48 c7 c7 40 c9 47 87 e8 df e1 c0 fe 90 <0f> 0b 90 90 58 83 05 f6 7f d8 07 01 48 83 c4 18 5b 5d 41 5c 41 5d
+RSP: 0018:ffffc9000019f208 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff813f4dd9
+RDX: ffff888101e90000 RSI: ffffffff813f4de6 RDI: 0000000000000001
+RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8747cfe0
+R13: ffffffff87274240 R14: ffffffff85a7aab0 R15: ffffc9000019f318
+FS:  0000000000000000(0000) GS:ffff8881f5900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c007c44020 CR3: 0000000108ff0000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __debug_check_no_obj_freed lib/debugobjects.c:1099 [inline]
+ debug_check_no_obj_freed+0x4b7/0x600 lib/debugobjects.c:1129
+ slab_free_hook mm/slub.c:2284 [inline]
+ slab_free mm/slub.c:4609 [inline]
+ kfree+0x2e1/0x480 mm/slub.c:4757
+ release_nodes+0x11e/0x240 drivers/base/devres.c:506
+ devres_release_group+0x1be/0x2a0 drivers/base/devres.c:689
+ hid_device_remove+0x107/0x260 drivers/hid/hid-core.c:2774
+ device_remove+0xc8/0x170 drivers/base/dd.c:567
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
+ device_del+0x396/0x9f0 drivers/base/core.c:3854
+ hid_remove_device drivers/hid/hid-core.c:2953 [inline]
+ hid_destroy_device+0x19c/0x240 drivers/hid/hid-core.c:2975
+ usbhid_disconnect+0xa0/0xe0 drivers/hid/usbhid/hid-core.c:1458
+ usb_unbind_interface+0x1e2/0x960 drivers/usb/core/driver.c:458
+ device_remove drivers/base/dd.c:569 [inline]
+ device_remove+0x122/0x170 drivers/base/dd.c:561
+ __device_release_driver drivers/base/dd.c:1273 [inline]
+ device_release_driver_internal+0x44a/0x610 drivers/base/dd.c:1296
+ bus_remove_device+0x22f/0x420 drivers/base/bus.c:579
+ device_del+0x396/0x9f0 drivers/base/core.c:3854
+ usb_disable_device+0x36c/0x7f0 drivers/usb/core/message.c:1418
+ usb_disconnect+0x2e1/0x920 drivers/usb/core/hub.c:2316
+ hub_port_connect drivers/usb/core/hub.c:5373 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5673 [inline]
+ port_event drivers/usb/core/hub.c:5833 [inline]
+ hub_event+0x1bed/0x4f40 drivers/usb/core/hub.c:5915
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
 
-[1] 
-https://lore.kernel.org/all/20250121-greedy-flounder-of-abundance-4d2ee8-mkl@pengutronix.de/
+Tested on:
+
+commit:         5cf80612 Merge tag 'x86-urgent-2025-02-22' of git://gi..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=13a7b498580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=28127f006c1c31ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=0154da2d403396b2bd59
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16745fdf980000
+
 
