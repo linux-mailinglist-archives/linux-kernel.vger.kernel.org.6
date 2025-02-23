@@ -1,242 +1,201 @@
-Return-Path: <linux-kernel+bounces-527693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1F9A40E34
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:03:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA43AA40E3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 12:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB0D37AC379
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:02:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26723BE91B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 11:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1722080C1;
-	Sun, 23 Feb 2025 11:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4238E205AA0;
+	Sun, 23 Feb 2025 11:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="cXVP6LIR"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiZFE3S0"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D9206F22
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 11:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0802D1632DD;
+	Sun, 23 Feb 2025 11:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740308556; cv=none; b=krII5g+KzzYJ1+MRL3wVtjgw7zsECzUOOuzfzBpwMrIlz5xDCrowItAzJdvp0DnCDEOl39roBJHZ80qWt3EDE0sk3Hivcac0zgDYtJJMaztLSjd2byhT4jqMRKJ0G8R9/pu4cY87kqrGLb13hJaCmGlHQEEgew3ZM8ysc5n/F/k=
+	t=1740308634; cv=none; b=lKrof09iYHaGBqVaAqRnHTOfhkM4kTGbmXlq3lwR50cFJ8xzjBcr8I9INo73WaSk1pzmnyQHx3ZxWaCyncH8xVPv0qc3wih4lnmkLTCaVC/zgBJwKzaxWc8g1wkdUeAOh/sRaOH1SgvrWDysnY1A2glfHKj+A+bkHuaFVmjVZMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740308556; c=relaxed/simple;
-	bh=OixaKCYI+zZ7pHBGcv4bDQvYd77BgWqW1bdYwXbp3Gw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e7I7wMo9jjJVU/zKGUeTnVrqgRM7RYvXfwNNrLp8Z8q+6SRpHfPXl7sopzKDdwXQHYf8VexDZ36Mosa34edBKG2S26dzPDcJ1/I/AnuTS948psPP7Ck7qaE9S16o2OLBX210P4rfBEHxsSJ0N1hX5XgztLSPKWvdssHfC9F2W5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=cXVP6LIR; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740308552;
-	bh=OixaKCYI+zZ7pHBGcv4bDQvYd77BgWqW1bdYwXbp3Gw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cXVP6LIRbZgzRfytxHXs44IUk3ZX4sDMe/v/NU+HnckIuh0K/hyamRajv2S12fj9J
-	 KCczFt5C5sDTvAJbZURo7ticlNOsg4NPRPknhaMiDGFuLPzBzCqCBdj0Kyh6Fizplj
-	 avySUdQUX8U9yF42QDA5F+8BX6JMHhLnE380v2M3y9zHelLF6yQT9FHtn2jouILuQi
-	 Kh9KZl9uJAFNhs6F9ham/thBiLiO0Z4W9B/BjcZ/WH1gDWzrAsXCi4YplPjcgoolqW
-	 57CTzctAjCkSRhEBWqPRT8SqehqgkSZC6vB1mpVxXur7TbKu50XXlomubbDwSgoQu9
-	 VO44q3fECQM0g==
-Received: from localhost (unknown [188.27.58.83])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 76B0C17E0CFA;
-	Sun, 23 Feb 2025 12:02:32 +0100 (CET)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Sun, 23 Feb 2025 13:02:15 +0200
-Subject: [PATCH v3 8/8] phy: rockchip: samsung-hdptx: Avoid Hz-hHz unit
- conversion overhead
+	s=arc-20240116; t=1740308634; c=relaxed/simple;
+	bh=bAQ5hGSGVZ89re8ji1HvlmJKiFzkDdDEirHv7CVdNPk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vb+HJqhlKPzkWE6rYPxyjaNAWg7cf87dfOsOqxOGR4x58DCn270zUWuVO3qHGvBqLcBcr1Gd6fNr+bAQWDp0e8DIUhXbF6R7OKEjKc1pQOG0dymQIfsrj1t+yoYAxZCjIzFMwLg/VV+8KnLf4gJzSghYXKCPVF2KK2CXFKP6CqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiZFE3S0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220f048c038so66143955ad.2;
+        Sun, 23 Feb 2025 03:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740308632; x=1740913432; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=OLEuWjtyWikPu3nVb2TAxeXog5UNG8nNjnvu0n/sL0A=;
+        b=AiZFE3S0magWmaEQ3bwjNY9RIliq6z+R8eh+gjuJbMpPpXpBfXrEzHvnleayfdMG4y
+         GJTxRbo6O0d8fMwnsxHX9E4zXmMaddePBlwm4Il5KGZnmjqzINgJQeZemJjn65hMMEUs
+         5xwsQJm9cYfkHq3unTWbgvicPnavai5IYxFvZNVpRloKGp4Dct5t9HGYJLgzxRl+JAQj
+         1oBw1vpTHC5XlcwD3m69eOoFMA36Wceqzt/U3mr30bH2ZOdrCMN3orwVP23OQfh3YFhW
+         JyR4iDEq1iYfoqa89qi3m0ItYQrDFv79JQ3z0LWui3w5H8032lI+CMhOepsvlN2P7bTm
+         qx8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740308632; x=1740913432;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OLEuWjtyWikPu3nVb2TAxeXog5UNG8nNjnvu0n/sL0A=;
+        b=Sui5hOb130AxS50VW/ZWuvkkbPpmFkwD23jv8tLjYdGwYg4QatN272Vjn4zBLMxjfy
+         BJD5aEcchN6l9BCKk1PCK8aqF+bTTfYbGl5FwkdmRpC+U9C/E2ZyO9J16m2bTrrzEEoP
+         L8/4Xx+gClSK/ElWJIn0+vBDsMEJtw6VtF8Ep7YQ7nZ7HfRG828XOvX/p0WFYMFCOqw9
+         ujvmUX2xbW1LULRGFp9Fzn4sJpLpke9jX4ZYTsFobbbBME0ry8GnvXXLkto1qvoHCxUs
+         ymYqV54f4tX8KhIbTOlDzHsmgg82flROChmTVchmRfhsoiUO13QXeMweae7JH7lvUxry
+         F/eg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeFHzZcbvR52XuVMgsyEC5mRH3a5H+LyaDgnbh5GHqWeaxfly6VaqMKA1WPv3Z10YT2qr8oc8ZtboM@vger.kernel.org, AJvYcCWjyo0k6j5hjI/gUN6+DC9Xhu+bEo7ag59tNz+5dZn68Q54y5EuWjLjd38OFt2R4PvdijDc2LYOVgN6OUbobg==@vger.kernel.org, AJvYcCXqvhiFmPdWIjpbgJH5LPU7UcylsA5N6/TInuUW5Gx5F8R2fXPEZlECgg2dXcBK0ikGE4469He7B3FMSHgU@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkJLRY7JMw79oFXdxv0QVX3zI2TnaWVfW8pnwz3lw9QAbrVip7
+	B1dphDuLuNuWZoj0eHojbgThkxMllhbDjf3nhcVwOS2UOsQoRB+l
+X-Gm-Gg: ASbGncuRq8IgYhKtzRFXvTXQkvz5vFzlOYWmEBFmCqAemHsln98scTu3Om+kkacMawv
+	lH/TlErO//qJMreJaVK7ax7SveXMVQNoQbRq9ah/hHTX/UaG+NZoIsCo76Lhdk1ZClg1oC5ox4T
+	D0dL9e2e+VjqKIpiEuoG8Co3tsWiGiT8hFimc+3mxRcQTCzB/Efw1uLbJYULU+hzFKc18tzdmNd
+	JwHjXekUNsnYWXm3K2xtFOth4FCqXwbpMSjAb2GYUhL3lEZWtLgwF25SPYQQ9SdD9/tt+U6G4cj
+	wnKifWwJo6qeKC6vcUJytM30
+X-Google-Smtp-Source: AGHT+IF/S9i2gZR0+7cEDMzQQLWBfZXv/3CjHSKq5MWnCtcsprzNBcrfoWf3kZ0bhlkDcYXumvgx/w==
+X-Received: by 2002:a17:903:2290:b0:21f:3e2d:7d41 with SMTP id d9443c01a7336-2219ff33565mr162373505ad.11.1740308632124;
+        Sun, 23 Feb 2025 03:03:52 -0800 (PST)
+Received: from nuvole.. ([144.202.86.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5591e97sm161685045ad.244.2025.02.23.03.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 03:03:51 -0800 (PST)
+From: Pengyu Luo <mitltlatltl@gmail.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Pengyu Luo <mitltlatltl@gmail.com>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sc8280xp: Fix clock for spi0 to spi7
+Date: Sun, 23 Feb 2025 19:01:51 +0800
+Message-ID: <20250223110152.47192-1-mitltlatltl@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250223-phy-sam-hdptx-bpc-v3-8-66a5c8e68327@collabora.com>
-References: <20250223-phy-sam-hdptx-bpc-v3-0-66a5c8e68327@collabora.com>
-In-Reply-To: <20250223-phy-sam-hdptx-bpc-v3-0-66a5c8e68327@collabora.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>
-Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Maxime Ripard <mripard@kernel.org>, kernel@collabora.com, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-The ropll_tmds_cfg table used to identify the configuration params for
-the supported rates expects the search keys - bit_rate field - to be
-provided in hHz rather than Hz (1 hHz = 100 Hz).  This requires multiple
-conversions between these units being performed at runtime.
+Enabling spi6 caused boot loop on my device(Huawei Matebook E Go),
 
-Improve implementation clarity and efficiency by consistently using the
-Hz units throughout driver's internal data structures and functions.
+	&spi6 {
+		pinctrl-0 = <&spi6_default>;
+		pinctrl-names = "default";
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+		status = "okay";
+	};
+
+After looking into this, I found the clocks for spi0 to spi7 are
+wrong, we can derive the correct clocks from the regular pattern
+between spi8 to spi15, spi16 to spi23. Or we can verify it according
+to the hex file of BSRC_QSPI.bin(From windows driver qcspi8280.cab)
+
+000035d0: 0700 4445 5649 4345 0001 000a 005c 5f53  ..DEVICE.....\_S
+000035e0: 422e 5350 4937 0003 0076 0001 000a 0043  B.SPI7...v.....C
+000035f0: 4f4d 504f 4e45 4e54 0000 0008 0000 0000  OMPONENT........
+00003600: 0000 0000 0003 0017 0001 0007 0046 5354  .............FST
+00003610: 4154 4500 0000 0800 0000 0000 0000 0000  ATE.............
+00003620: 0300 3d00 0100 1400 4449 5343 4f56 4552  ..=.....DISCOVER
+00003630: 4142 4c45 5f50 5354 4154 4500 0100 0600  ABLE_PSTATE.....
+00003640: 434c 4f43 4b00 0100 1700 6763 635f 7175  CLOCK.....gcc_qu
+00003650: 7076 335f 7772 6170 305f 7336 5f63 6c6b  pv3_wrap0_s6_clk
+
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 61 +++++++++++------------
- 1 file changed, 30 insertions(+), 31 deletions(-)
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index fdac60bb87510002626735e0e9f18ad5de9a6642..991ff4a2e7613dd4bb2c9cf5443d44794d0eb752 100644
---- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-+++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -330,7 +330,7 @@ enum dp_link_rate {
- };
- 
- struct ropll_config {
--	u32 bit_rate;
-+	u32 rate;
- 	u8 pms_mdiv;
- 	u8 pms_mdiv_afc;
- 	u8 pms_pdiv;
-@@ -418,45 +418,45 @@ struct rk_hdptx_phy {
- };
- 
- static const struct ropll_config ropll_tmds_cfg[] = {
--	{ 5940000, 124, 124, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 594000000, 124, 124, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 3712500, 155, 155, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 371250000, 155, 155, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 2970000, 124, 124, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 297000000, 124, 124, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1620000, 135, 135, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 4, 0, 3, 5, 5, 0x10,
-+	{ 162000000, 135, 135, 1, 1, 3, 1, 1, 0, 1, 1, 1, 1, 4, 0, 3, 5, 5, 0x10,
- 	  1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1856250, 155, 155, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 185625000, 155, 155, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1540000, 193, 193, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 193, 1, 32, 2, 1,
-+	{ 154000000, 193, 193, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 193, 1, 32, 2, 1,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1485000, 0x7b, 0x7b, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 4, 0, 3, 5, 5,
-+	{ 148500000, 0x7b, 0x7b, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 4, 0, 3, 5, 5,
- 	  0x10, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1462500, 122, 122, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 244, 1, 16, 2, 1, 1,
-+	{ 146250000, 122, 122, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 244, 1, 16, 2, 1, 1,
- 	  1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1190000, 149, 149, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 149, 1, 16, 2, 1, 1,
-+	{ 119000000, 149, 149, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 149, 1, 16, 2, 1, 1,
- 	  1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1065000, 89, 89, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 89, 1, 16, 1, 0, 1,
-+	{ 106500000, 89, 89, 1, 1, 3, 1, 1, 1, 1, 1, 1, 1, 89, 1, 16, 1, 0, 1,
- 	  1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 1080000, 135, 135, 1, 1, 5, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-+	{ 108000000, 135, 135, 1, 1, 5, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
- 	  0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 855000, 214, 214, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 214, 1, 16, 2, 1,
-+	{ 85500000, 214, 214, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 214, 1, 16, 2, 1,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 835000, 105, 105, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 42, 1, 16, 1, 0,
-+	{ 83500000, 105, 105, 1, 1, 5, 1, 1, 1, 1, 1, 1, 1, 42, 1, 16, 1, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 928125, 155, 155, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 92812500, 155, 155, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 742500, 124, 124, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
-+	{ 74250000, 124, 124, 1, 1, 7, 1, 1, 1, 1, 1, 1, 1, 62, 1, 16, 5, 0,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 650000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
-+	{ 65000000, 162, 162, 1, 1, 11, 1, 1, 1, 1, 1, 1, 1, 54, 0, 16, 4, 1,
- 	  1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 337500, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
-+	{ 33750000, 0x70, 0x70, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 0x2, 0, 0x01, 5,
- 	  1, 1, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 400000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-+	{ 40000000, 100, 100, 1, 1, 11, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
- 	  0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 270000, 0x5a, 0x5a, 1, 1, 0xf, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
-+	{ 27000000, 0x5a, 0x5a, 1, 1, 0xf, 1, 1, 0, 1, 0, 1, 1, 0x9, 0, 0x05, 0,
- 	  0x14, 0x18, 1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
--	{ 251750, 84, 84, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 168, 1, 16, 4, 1, 1,
-+	{ 25175000, 84, 84, 1, 1, 0xf, 1, 1, 1, 1, 1, 1, 1, 168, 1, 16, 4, 1, 1,
- 	  1, 0, 0x20, 0x0c, 1, 0x0e, 0, 0, },
- };
- 
-@@ -902,10 +902,10 @@ static void rk_hdptx_phy_disable(struct rk_hdptx_phy *hdptx)
- 	regmap_write(hdptx->grf, GRF_HDPTX_CON0, val);
- }
- 
--static bool rk_hdptx_phy_clk_pll_calc(unsigned int data_rate,
-+static bool rk_hdptx_phy_clk_pll_calc(unsigned long rate,
- 				      struct ropll_config *cfg)
- {
--	const unsigned int fout = data_rate / 2, fref = 24000;
-+	const unsigned int fout = rate / 200, fref = 24000;
- 	unsigned long k = 0, lc, k_sub, lc_sub;
- 	unsigned int fvco, sdc;
- 	u32 mdiv, sdiv, n = 8;
-@@ -975,16 +975,16 @@ static bool rk_hdptx_phy_clk_pll_calc(unsigned int data_rate,
- }
- 
- static int rk_hdptx_ropll_tmds_cmn_config(struct rk_hdptx_phy *hdptx,
--					  unsigned int rate)
-+					  unsigned long rate)
- {
- 	const struct ropll_config *cfg = NULL;
- 	struct ropll_config rc = {0};
- 	int i;
- 
--	hdptx->rate = rate * 100;
-+	hdptx->rate = rate;
- 
- 	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
--		if (rate == ropll_tmds_cfg[i].bit_rate) {
-+		if (rate == ropll_tmds_cfg[i].rate) {
- 			cfg = &ropll_tmds_cfg[i];
- 			break;
- 		}
-@@ -1122,7 +1122,7 @@ static int rk_hdptx_phy_consumer_get(struct rk_hdptx_phy *hdptx)
- 	} else {
- 		rate = hdptx->tmds_char_rate ?: hdptx->rate;
- 		if (rate) {
--			ret = rk_hdptx_ropll_tmds_cmn_config(hdptx, rate / 100);
-+			ret = rk_hdptx_ropll_tmds_cmn_config(hdptx, rate);
- 			if (ret)
- 				goto dec_usage;
- 		}
-@@ -1833,18 +1833,17 @@ static unsigned long rk_hdptx_phy_clk_recalc_rate(struct clk_hw *hw,
- static long rk_hdptx_phy_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- 					unsigned long *parent_rate)
- {
--	u32 bit_rate = rate / 100;
- 	int i;
- 
- 	if (rate > HDMI20_MAX_RATE)
- 		return rate;
- 
- 	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
--		if (bit_rate == ropll_tmds_cfg[i].bit_rate)
-+		if (rate == ropll_tmds_cfg[i].rate)
- 			break;
- 
- 	if (i == ARRAY_SIZE(ropll_tmds_cfg) &&
--	    !rk_hdptx_phy_clk_pll_calc(bit_rate, NULL))
-+	    !rk_hdptx_phy_clk_pll_calc(rate, NULL))
- 		return -EINVAL;
- 
- 	return rate;
-@@ -1865,7 +1864,7 @@ static int rk_hdptx_phy_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 		rate = hdptx->tmds_char_rate;
- 	}
- 
--	return rk_hdptx_ropll_tmds_cmn_config(hdptx, rate / 100);
-+	return rk_hdptx_ropll_tmds_cmn_config(hdptx, rate);
- }
- 
- static const struct clk_ops hdptx_phy_clk_ops = {
-
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+index a0ef8778b..3c0ce6855 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+@@ -1260,7 +1260,7 @@ spi0: spi@980000 {
+ 				reg = <0 0x00980000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S0_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S0_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1292,7 +1292,7 @@ spi1: spi@984000 {
+ 				reg = <0 0x00984000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S1_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S1_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1324,7 +1324,7 @@ spi2: spi@988000 {
+ 				reg = <0 0x00988000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S2_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S2_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1370,7 +1370,7 @@ spi3: spi@98c000 {
+ 				reg = <0 0x0098c000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S3_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S3_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1402,7 +1402,7 @@ spi4: spi@990000 {
+ 				reg = <0 0x00990000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S4_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S4_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1434,7 +1434,7 @@ spi5: spi@994000 {
+ 				reg = <0 0x00994000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S5_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S5_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1466,7 +1466,7 @@ spi6: spi@998000 {
+ 				reg = <0 0x00998000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S6_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S6_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 607 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
+@@ -1498,7 +1498,7 @@ spi7: spi@99c000 {
+ 				reg = <0 0x0099c000 0 0x4000>;
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				clocks = <&gcc GCC_QUPV3_WRAP2_S7_CLK>;
++				clocks = <&gcc GCC_QUPV3_WRAP0_S7_CLK>;
+ 				clock-names = "se";
+ 				interrupts = <GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>;
+ 				power-domains = <&rpmhpd SC8280XP_CX>;
 -- 
 2.48.1
 
