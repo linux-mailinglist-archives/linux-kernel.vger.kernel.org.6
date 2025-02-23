@@ -1,168 +1,109 @@
-Return-Path: <linux-kernel+bounces-527889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8E9A410E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:32:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F80A410EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 19:34:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E61587A3210
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:31:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB32D3AB1D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 18:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C3917C7C4;
-	Sun, 23 Feb 2025 18:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A01547E2;
+	Sun, 23 Feb 2025 18:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Enu4E3fK"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nelr3CD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4E712DD8A
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4602E8C11;
+	Sun, 23 Feb 2025 18:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740335531; cv=none; b=oygIXCIncWtci0wzzUF33F79FB1VcRzMi5G5vEikb2iN5rUkR5LrAx2Rgo+L9Y54JqWn1DroXLvyxJI9OBsUY6FLwxu74YmAOA8BJEJvRdot+WnF+hOjC0VT+QG2ihs3288VjfprpVyub9neYRBso7T9hxHH0nY7z0sGKA6uPqo=
+	t=1740335648; cv=none; b=BWtUiftb/Pl46vWVrRobNkLvC2VSacNhTE4Dzt4tf2ktRA1emN82oeV/HyhmWPru0VCQS+ShH7FsP4Ubwd9jt5H09b5zVxOaefN8jN7F0XqlOBgD5RoLrko+HeYn4lvvstftPKCJYvlhP2OzGCZgWVTVZX9UKp5hHajyV+1syv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740335531; c=relaxed/simple;
-	bh=F16gjWpfzILm5UlOwuP2B/0g3980gm949Ip5/wshaZM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DhvjX9cE6JUX85tBZLkGRjjkNkX8nvBtWU2CzLyLcXlLEg0F/F0H5TlXcqww1KyeT4BcNAB2oPntt/RBX5pkWaVoPxouqZmcBkpp8xL7EqVQTlPX3BLA0HJTTNg4QOmP94fPms86eB4rKqSgTSabBMaQxIU9MmwqUt3T8XdzO7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Enu4E3fK; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abba1b74586so556761966b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740335528; x=1740940328; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TcuxBHhEa12WEoosMAkaHe0om9pJLB2v6SQU4kBUAzc=;
-        b=Enu4E3fKlTtoNzbrJIGZ66Bab7/81XXpCSfkUUtO4gHWsUTNioWVW33512Smxpf2aw
-         X5EynUed4N7Fa5x8cB5uUuoUuLWoc9x+Z5e7L+5IYvJtGCzQBD+vKXsYt4oVOgjn3AmK
-         SHw8sxkOaR7wr5kPfTP8M8LkrI+/4dSPtp398=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740335528; x=1740940328;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TcuxBHhEa12WEoosMAkaHe0om9pJLB2v6SQU4kBUAzc=;
-        b=LeB2V0IZEAI5yuSFUkX8pKaHQs9AbYLxYczTceOMBy+fHWV7rZ+MX/jAfDTg7cx4Xp
-         ZcSznQXt+e6scvGe3kyrad3vlY6sgNRrX6a7YJ/OGPNY0Ejkm/t+rX4P4JuL8KK86RrP
-         uB4Ej6CFfwzFCJ9cRXmJJAYVsqWN0hTfiNb6nrFIvIHsC0ryesc2+x5sADivZwoyqh6V
-         3tAp4QWe7YllSPtCs58kQEwSLu/2jjGXkw+F46EJ/WICFAfEvDT1j3otkYza9bT7hW8j
-         eEcDZ6WxpdJ3Kj2HWHoXioVErY8vi7I81wLycEWaUJujISmtlsoUdDr6F1wJP/2mMloM
-         OAuA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnYkU+B90D2vW/dYF+JN3x+bnLhniw+n4hbXNs31ivgkpJrzMft6iQB+dZ4TLn6IkQvLkaiqH6ah2aLG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxayzYg5Qrzvg5YyB23xg+R2RVK+TmP+xcw+TqbGPPX+t1iG0he
-	hGZViH92QoVc3YEDbYFhEm4JhjwLVwzWcuuuy5VMbXtmjeDjjD7X3v/qRdHA5JG0NOMzaPOzGu5
-	ZtJU=
-X-Gm-Gg: ASbGncuPJ6UGZk1Gjw56YceshxbzR2rMXnhqQVxElT53M3uYgdu/Yj2JHxSmI1ItEQa
-	0HfqEkpcDSgFdJc/55RiwlqR2eb10Q357vmQXJVY45D7uCZyul6hpYGyC/2NJkZJXs6Y/twvKh3
-	0MFFsEGA9qm9LL+kuhDdAgzIrD3e85DiDEnqAY2pUIQrYqrbjOhD0fgxFzDl/587R7ORIo1N7Om
-	ij5JdWlWWtnp6ZZq520D9WI6YhPEhdb4FBw4qL37fP4ITv/pbEh3nteEQJ4PT3fNXzzE9aOkOhI
-	sMb21bI4EcH35uw5PtzM2lv2neMGuYMKWRfowPMs04r8rlLDEeY3IiFRXHIyf3YdDs/dCGRHTLI
-	Y
-X-Google-Smtp-Source: AGHT+IHwl21ga2QVXOubK6IJ50lga/afqKwqYD4YmD9ir5JeOUVzHZydd1Dwr7FS/O3o4nlmU0WiBg==
-X-Received: by 2002:a17:907:7715:b0:abb:e7ed:d603 with SMTP id a640c23a62f3a-abc099b83d5mr1039685666b.9.1740335527626;
-        Sun, 23 Feb 2025 10:32:07 -0800 (PST)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb989d89edsm1414361366b.81.2025.02.23.10.32.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 10:32:06 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so6176659a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 10:32:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXoVoNAdlsuDqizUDrlTiQ7okXdp686gmkUKs5NZlW9EnRwEZAo8mBGfbAkJNjQDaVbPEFjELrVpovFE1A=@vger.kernel.org
-X-Received: by 2002:a17:906:6a10:b0:ab7:76d7:dcb with SMTP id
- a640c23a62f3a-abc09a97b01mr1026613166b.28.1740335526003; Sun, 23 Feb 2025
- 10:32:06 -0800 (PST)
+	s=arc-20240116; t=1740335648; c=relaxed/simple;
+	bh=0pSzTfWTwkHzlF+kAjOQWSUAirh8DuiwUvvvbBFi1sA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBmKEiL+PJsm5MYJymfa1/sHaNsNLFpbF+blHFzz1zs6EtGo5cJB5lvczTUI7K5zJs3YwvB1dYenvlXGqaGifUfTrfseyAdsUaznoxSD2yufCbfW5inRGLWCa7jqZseJ2L4ef0BUgxtIJAalkju+G67cEf9jf9Oz4arigZ6hmY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nelr3CD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EB28C4CEDD;
+	Sun, 23 Feb 2025 18:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740335647;
+	bh=0pSzTfWTwkHzlF+kAjOQWSUAirh8DuiwUvvvbBFi1sA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nelr3CD67d9LL4SO7tJkKJt5qfwIeku+GPQTSikN94GKUbcCyiyX5Ry3ZMtyjShy1
+	 ZyvNC2WY9DrLURf9V6d/OQGwKNtO27HBdimPZmqbVI0xlPs6VM33ddmMiFdam7c1LY
+	 7CI0a66sXI4letQjIgzKL59wY+L6jITKu/fMQ2KCRv/9L4q8yjq03FV8Ab35Jg4cc2
+	 mWfk6D05RB8Ut+tGd7kEMn0MXMjdkyCQ5iZtrCQaAk/zSCPCFpv3nXTVpDEZAE3p2J
+	 GKQNAq5QWlppuD7anD9/l/bj3IwpkKnFQzAdyaEbdaD3gK6xweX8AZlgyQVxlZN6Ml
+	 W647zcNFDxEQA==
+Date: Sun, 23 Feb 2025 19:33:56 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-efi@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] x86: Add CONFIG_KERNEL_UNCOMPRESSED support
+Message-ID: <Z7tqFCo4smCysrfQ@gmail.com>
+References: <20250121-kernel-compress-fast-v1-1-fa693b6167d4@google.com>
+ <CAMj1kXF-GSB9Ty7X1h4u1uA6qhO1Y1UvVrNF=R+hk3PENRz7WA@mail.gmail.com>
+ <CAG48ez2hVHk-C4XAGW2GieHZ9JAF0RrFfpZF7XhYc80pznMwbA@mail.gmail.com>
+ <CAMj1kXFT6wkP=eRemR1Y=C-fk2VxNurLHMy74VRFLNmx6NkOAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <Z7bO1jT2onZFZwgH@infradead.org> <CAHk-=wgLbz1Bm8QhmJ4dJGSmTuV5w_R0Gwvg5kHrYr4Ko9dUHQ@mail.gmail.com>
- <Z7hulnJ4fwslRILy@pollux> <20250223180330.GC15078@pendragon.ideasonboard.com>
-In-Reply-To: <20250223180330.GC15078@pendragon.ideasonboard.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 23 Feb 2025 10:31:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wie_Winz7CtRCM62S2b1pWKN2Jt2wdGHgFBv=aBU8qwqg@mail.gmail.com>
-X-Gm-Features: AWEUYZmAe5aQKMqbMOvhjrLvqPDF0CXPi8iaHSYLNnVAdHMEHMUU3HW0e3qcqRo
-Message-ID: <CAHk-=wie_Winz7CtRCM62S2b1pWKN2Jt2wdGHgFBv=aBU8qwqg@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Christoph Hellwig <hch@infradead.org>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMj1kXFT6wkP=eRemR1Y=C-fk2VxNurLHMy74VRFLNmx6NkOAA@mail.gmail.com>
 
-On Sun, 23 Feb 2025 at 10:03, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
->   > I can't answer for Linus, sorry.  But a generic "hey, this broke our
->   > working toolchain builds" is something that is much much much
->   > different than "an api changed so I now have to turn off this driver
->   > in my build" issue.
->
->   I haven't found a clear statement from Linus on this topic.
->
-> Those three statements can't all be true together, we can at best have
-> two. I would like to understand which one we will drop first, and I
-> believe many other developers and maintainers are wondering the same.
 
-This is literally why linux-next exists. It's where breakage is
-supposed to be found.
+* Ard Biesheuvel <ardb@kernel.org> wrote:
 
-And guys, you have to realize that there is no such thing as "works
-every time". Just this merge window, we had a case where I didn't pull
-some stuff because it broke 'bindgen', and the reason was simply that
-not a lot of people seem to be running the rust builds on linux-next.
-But realistically, my normal build testing has had rust enabled for
-the last year or so, and that was literally the first time something
-like this happened.
+> > But I wasn't sure how to wire that up in a nice way. I guess the 
+> > nicest option would be to create a separate kconfig variable for 
+> > the compression level to use for any cmd_lz4/cmd_lz4_with_size 
+> > invocations in the build process; and then maybe only make this 
+> > option visible if LZ4 is selected as kernel compression method?
+> >
+> > Another option would be to create a new option in the "Kernel 
+> > compression mode" choice menu with a name like "LZ4 (fast)", turn 
+> > CONFIG_KERNEL_LZ4 into an internal flag that is selected by both 
+> > LZ4 variants shown in the choice menu, and duplicate some of the 
+> > make rules, but that seems overly complicated.
+> >
+> 
+> I didn't realise that KERNEL_UNCOMPRESSED already exists and you are 
+> just wiring it up for x86. But I still think that we should avoid 
+> that, not only because it is yet another bzImage format but also 
+> because I still see a 3x size reduction even with the fastest 
+> setting.
+> 
+> I think adding one Kconfig symbol that depends on KERNEL_LZ4 and 
+> switches from -9 to -1 for LZ4 only is reasonable.
 
-So be realistic: can rust cause toolchain problems? Sure.
+Maybe a CONFIG_COMPRESS_FAST option that maps to and enables the 
+current fastest compressor? Then we can also add LZ4_FAST and map it to 
+it. (And if a future fastest compressor is added it can change this 
+mapping.) Or something like that?
 
-But we have that issue - and we've had it *much*more* - with the
-regular C side too. We have those kinds of issues pretty much every
-single release, and it's usually "this doesn't build on some esoteric
-architecture that people don't test any more".
+And if there's still a measurable difference in total build time (say 
+larger than 1%) from doing it all uncompressed, then I think we should 
+go with Jann's original patch that hooks up zero-compression on x86. It 
+doesn't look overly complicated.
 
-For example, this merge window I did have that unusual "this doesn't
-work for my rust build" situation, but that one was caught and fixed
-before the merge window even closed. Guess what *wasn't* caught, and
-then wasn't fixed until -rc3? A bog-standard build error on the
-esoteric platform called "i386".
+Thanks,
 
-Yes, linux-next is supposed to catch interactions between different
-development trees. And yes, various build bots test different
-configurations. But nothing is ever perfect, and you really shouldn't
-expect it to be.
-
-At the same time, people harping on some rust issues seem to do so not
-because rust is any worse, but because they have internalized our
-*normal* issues so much that they don't even think about them. EVERY
-SINGLE RELEASE Guenter Rockl sends out his test-results for -rc1, and
-EVERY SINGLE RELEASE we have new failed tests and most of the time we
-have several build errors too.
-
-Guys and gals - this is *normal*. You should expect it. Breakage
-happens. All the time. And that has nothing to do with Rust. It has to
-do with the fact that we are doing software development.
-
-Ask yourself: how many problems has rust caused you in the last year?
-I'm claiming that the main problem has been people who have been
-forthing at the mouth, not the actual rust support.
-
-So next time you want to write an email to complain about rust
-support: take a look in the mirror.
-
-Is the problem actually the rust code causing you issue, or is the
-problem between the keyboard and the chair, and you just want to vent?
-
-                 Linus
+	Ingo
 
