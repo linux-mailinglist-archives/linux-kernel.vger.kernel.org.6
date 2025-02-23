@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-527624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50517A40D65
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:29:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DF4A40D6A
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 09:40:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1964B7AB926
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C053B671B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 08:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F13D1FCCF7;
-	Sun, 23 Feb 2025 08:29:49 +0000 (UTC)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C9C1FCCFA;
+	Sun, 23 Feb 2025 08:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TFlyGYS/"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B018E1DAC81
-	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CD01FCCF7
+	for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 08:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740299389; cv=none; b=QJBJ5t5ke8msj/7BglKst/pK5O51Ieb9yqeswkk2KsDRSxZNLELyh3yJxvj2kWEje79l64x9bYsiKpDiMxQKk2Ma2uuudu1txVl2dfpsjYtT8PJMPHvO9JSu/GS8gi/VfXGXd4d7+Xx1KNFqvBoygBnDbpeIQVJNFcYJi6h5yvA=
+	t=1740300039; cv=none; b=D28zIOHVZS02Bc9tbSEwOQksG4UTLCkFne7W9xpIqG+AK9IIENoAt8Kr3z6eynqxQe3pL0KUIee9raI8VOcRn/cOMSyk2hbIjm9awMo1MxCmq3lbGMeWTv2TVhS0SMPg7esK94I7tPLfWehI/MeOwqp7U+BGP0m+bmCo9ekL0G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740299389; c=relaxed/simple;
-	bh=oDgntAFl6wS5FYg9pbhP/ZNsiY3sual3N75erMlK6Ds=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PxedD950h0AA0i6JgM7MoP44qjDPmXMpKGhp9OLfrxObaRLWxvfCJNTWwnSquzps1Te/yt0Ozx+wci/3pbALo8hH6brzWfzYPocsWE5vtMYAeyMiYTZZNgKU1+q7vQyN7LnlTMYEbedJcby7rqYpejCgkYHCvDpEhqsqP/TfRn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-866e8ca2e07so841510241.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:29:46 -0800 (PST)
+	s=arc-20240116; t=1740300039; c=relaxed/simple;
+	bh=VMZP75rhMsZKP1h7w7GGsRJbBi7X8HJDlzKN8uf2Gog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgD9uFnF1Sm9l10HkEw2rWykzhGsGQiGo5d+cpZX3ZiBQgJDo4dzSgCoWJsj955dJpDlYH9YNyGRShtBU2hTr6SrZdBA+bhvp562ySXetYaiEXq/LDzuZpwYLWB3cFkOAj/MzjX1vZEspN60qL4/h8oHMXKgn6jglyspfMnaEec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TFlyGYS/; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-221057b6ac4so64141775ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:40:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740300037; x=1740904837; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=R9gpSGM5f9xtZjGEJveZ4GrzDJH1nRyp6hOrbTNY7Eg=;
+        b=TFlyGYS/cq84tJNGn64sC1f7sOES00p4HxprGHbRt5UM8okRfDV/XbvYyBLP4v6cDN
+         sMz+Uhs2cpC6Zgzcfjx7RYayAKPm4BuVUgZgne5GK+FX23wZmabtYhGrQTwg4LeDTOSJ
+         bt9MTaIfB0fB5a/y/hUT9d66O1gLTVgtg3J9Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740299384; x=1740904184;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8ki/B4ELY4rZob+oGFNIp8+cpQQDcjVNezaRSiDE1TE=;
-        b=DBMxVqM+agiXMhzEcahKyT548M6ezUtPRklIR4j8d0ijVzDKujw4CBPerPB4a37VCE
-         Cykw2BGaf25CsX2E9N3TRb1ecDc4NRYDQyOGoqxyUpgsnT4DuSpmaL+u1SV6XyIfdiDS
-         pb1MtzwfW0W/961TIR4/5E3bIca2W1QAlb2P0RkbLb+cSrktR9cYQgrvxr7k8WEJDiXI
-         C/+zfp7KJ6GAz85m8PSF4QsUsoiPsXLVJiXtgNUF/W7c2nD6h3f1EYd666PBFmNBPhos
-         fPnNboHA5g2BNIR2hlyDL0aTfuaFvNRlL3c85lsyweO1cM6K6pBukxnW6Pb14y2xk8Ri
-         7oow==
-X-Forwarded-Encrypted: i=1; AJvYcCUlvCnYkKy8GcNe7WLsY0RAeZ+NbAQCbgSNqPoX07tPUnlbvOrW3Y/Toz2r6tKlL6vjRQvUUviyQeILrXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqkOJcqSn9qGCfXoYRzLjH0cksPQySEBonWp6SLtVXfLSkXOPk
-	+13e2UZUh+u1QkZIm7qEVvWslum3oRjG+voJwSIQW6vYEjbPI/Z2D7VhtRSD
-X-Gm-Gg: ASbGnctXdPmtf0xiEHW1S1MxigX9WjS920tsVWlyLlHsJEzatygFMw/75I076CTtE4d
-	AZQ/S0wF7wpEMa5IV+btNNnQbQTysp8m6GFBSgaTD7AXgw2sYVe0V2uoroaGpHzYIL+GnuEXfSk
-	A3XY+IpuoSYRWF17QHnTFl2q15B9mtVU7XnE2USlScFxPeFIS3v7OMVMsrZjGRbOtvZjRy16rJ4
-	TyirYOm/8XNNhM3tx/jHHxnt6yZaIpB7u7+Ovk346ecs0sAfzSedAErMdYJTN/ittWGSkY7pwHK
-	1rQl44G6hA826E7o8s0E9BNDyIgFZnpH+oL3LBpDGfXyKK9KozwHL8vSjM4CjZ3L
-X-Google-Smtp-Source: AGHT+IHkUH8sb0dB+i2YqPnNBakB9BImL2pKzhtFwDq07xf6d8Ad3F8FkU4Sq77rtTSBnOenTkjCcQ==
-X-Received: by 2002:a05:6122:659d:b0:51f:3eee:89f4 with SMTP id 71dfb90a1353d-521ee468b8fmr3910671e0c.9.1740299382720;
-        Sun, 23 Feb 2025 00:29:42 -0800 (PST)
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52093cc9f02sm4084572e0c.9.2025.02.23.00.29.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 00:29:42 -0800 (PST)
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4bbbaef28a5so1121870137.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 00:29:42 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXFUymzks8xd0F7NU3MX//TI47gDW9QeeZZgueotJlvMk5965X2lzs1j4gZ34TX4GOQC8MeEkQmk4fFD0o=@vger.kernel.org
-X-Received: by 2002:a05:6102:f9a:b0:4bb:eb4a:fa03 with SMTP id
- ada2fe7eead31-4bfc01cf2d4mr5204466137.23.1740299382047; Sun, 23 Feb 2025
- 00:29:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740300037; x=1740904837;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=R9gpSGM5f9xtZjGEJveZ4GrzDJH1nRyp6hOrbTNY7Eg=;
+        b=tuMGUOsRc+ljiX4CKWGuGdFB27a9vUh5J1ipndivIu3oxi1Cz42ndYR8dM9cIFgPiS
+         tb+xiT3W0v9XytpJlpbAKLeBTkYf/gbLXU0Sxz/yRLq6/3M5KW9+1OxHKKV9nXD86uT+
+         Jyo+WxeGH8bCgn8l1RyxJ2bPc7wm5aH3zjbkGeoPOuBOAD8qtFKcKtCtDjgX9Rz2NSGq
+         Cur06qahU6VX9x+jnxRUIJ8V8JXMezyGe4LcNjQW0CoymJtFlkQ0HWSfX6X2pXnYmJiV
+         VqRYmBenwQyp4TKGl2s2QKYd0uK35Ym9BKa+k2hUrdBxSJOv2CQ27roQYva1UjZtPeuM
+         qH9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmjuYwpTKzrEDIfCNO2H1frJhr4ogMfVBmoXvx0NZGwTn+QjvfZ119u8n9CgIj64TKeh+fOBqFgZZ0iBs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdPG1/WuAaJBsYAmYnCtrWudlBRjH9wdfEkj3UmQKxx50xDbMW
+	3U25p/KVL77dUE9ThSTxSb6mrfWyS5/NGEPAPk1xrQQ+peeRmIeY0KNED64eKA==
+X-Gm-Gg: ASbGncsVZjeQHgkjuB3T7hHJ6rqKQjoYPxjwwSxM04EjQgKokzJmFe2xVSh6ka8IR4K
+	GwzjMmb6rqC2nax2ixy1DJZKzrZNppw931USbkXJ5P9fMiUYRXkXoSyVDdveSLPUpeDf2tP3q9d
+	FqLKRvGwA9Njdju6k/IYkqVgVH34GJ1/N5LXDssayLDfNutHRkqZbDN2S0DufFmTVTuoUKOg1Sp
+	WMFUNdbzd3sOaiP9bqZjVsUl1GpzSj9ZXuCvhY28v8lk8AaF3vkmG3M9/ZjvSx3eu6vrxLUJ5ij
+	D/1Io8bweagWNQ55biY29amn4Gd/MA==
+X-Google-Smtp-Source: AGHT+IHs2bEHHbTZeDzqZuSxzKMbqBVzBNfFwOrRXpSuEs7ai1npp6AoUs79mcwT90M7ZwcPaU4GMQ==
+X-Received: by 2002:a05:6a00:c81:b0:725:9f02:489a with SMTP id d2e1a72fcca58-73426d72880mr13450744b3a.17.1740300037559;
+        Sun, 23 Feb 2025 00:40:37 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:7eae:f032:eb08:bb00])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73266fd6438sm15247420b3a.142.2025.02.23.00.40.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 00:40:37 -0800 (PST)
+Date: Sun, 23 Feb 2025 17:40:31 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Nitin Gupta <nitingupta910@gmail.com>, 
+	Richard Purdie <rpurdie@openedhand.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	"Markus F.X.J. Oberhumer" <markus@oberhumer.com>, Dave Rodgman <dave.rodgman@arm.com>
+Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
+Message-ID: <hymyvszwshcvqngjlomeyltmpghx6gges76muaz23a6cit5oe2@eas2xjgfynnu>
+References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9638976432d8dfcb0c4df9d454b661f9022a2d7b.1738766259.git.geert+renesas@glider.be>
- <Z7rMdg7+m6qa0Hft@dragon>
-In-Reply-To: <Z7rMdg7+m6qa0Hft@dragon>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Sun, 23 Feb 2025 09:29:29 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW=ZH7D+m54rh-25nFShCYhRhEjkjaB1LtOrRF5RyrXiQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmS7rXgq0ILXCQzgoTNJCt0MsAd5CmZz4lNsRJMvj13mGrXdUP0DGSg_yA
-Message-ID: <CAMuHMdW=ZH7D+m54rh-25nFShCYhRhEjkjaB1LtOrRF5RyrXiQ@mail.gmail.com>
-Subject: Re: [PATCH resend] firmware: imx: IMX_SCMI_MISC_DRV should depend on ARCH_MXC
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Mark Brown <broonie@kernel.org>, soc@lists.linux.dev, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
 
-Hi Shawn,
+On (25/02/23 14:55), Herbert Xu wrote:
+[..]
+>  		} else if (m_off <= M3_MAX_OFFSET) {
+>  			m_off -= 1;
+> +			if (!HAVE_OP(1))
+> +				return LZO_E_OUTPUT_OVERRUN;
+>  			if (m_len <= M3_MAX_LEN)
+>  				*op++ = (M3_MARKER | (m_len - 2));
+>  			else {
+[..]
+>  		} else {
+>  			m_off -= 0x4000;
+> +			if (!HAVE_OP(1))
+> +				return LZO_E_OUTPUT_OVERRUN;
+>  			if (m_len <= M4_MAX_LEN)
+>  				*op++ = (M4_MARKER | ((m_off >> 11) & 8)
+>  						| (m_len - 2));
 
-On Sun, 23 Feb 2025 at 08:21, Shawn Guo <shawnguo2@yeah.net> wrote:
-> On Wed, Feb 05, 2025 at 03:41:43PM +0100, Geert Uytterhoeven wrote:
-> > The i.MX System Controller Management Interface firmware is only present
-> > on Freescale i.MX SoCs.  Hence add a dependency on ARCH_MXC, to prevent
-> > asking the user about this driver when configuring a kernel without
-> > Freescale i.MX platform support.
-> >
-> > Fixes: 514b2262ade48a05 ("firmware: arm_scmi: Fix i.MX build dependency")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Thanks for the patch, Geert!  But I have just picked up the change from
-> Uwe [1].
+Made me wonder if HAVE_OP() in these two cases should have been
+under if, but it covers both if and else branches, so it's all
+right.
 
-Thanks, but mine has been upstream since Friday ;-)
+[..]
+> +++ b/lib/lzo/lzo1x_decompress_safe.c
+> @@ -21,7 +21,6 @@
+>  #include "lzodefs.h"
+>  
+>  #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
+> -#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
+>  #define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
+>  #define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=be6686b823b30a69b1f71bde228ce042c78a1941
+A bit of a pity that NEED_OP() with "goto output_overrun" is only
+for decompression.  It looks equally relevant to the compression
+path.  I'm not insisting on doing something similar in compression
+tho.
 
-Gr{oetje,eeting}s,
+Overall this look right, and kudos to Herbert for doing this.
 
-                        Geert
+I did some testing (using my usual zram test scripts, but modified
+zram to allocate only one physical page for comp buf and to check
+for overrun ret status).  Haven't noticed any problems.
 
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+FWIW
+Reviewed-and-tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
