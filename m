@@ -1,128 +1,78 @@
-Return-Path: <linux-kernel+bounces-527541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-527542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB99A40C79
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:20:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C27A40C7B
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 02:20:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B17EA7AC87A
-	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C717017DC35
+	for <lists+linux-kernel@lfdr.de>; Sun, 23 Feb 2025 01:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BACB67F;
-	Sun, 23 Feb 2025 01:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7FBA42;
+	Sun, 23 Feb 2025 01:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dGRXnAqP"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Vx+OKc8d"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C43380B;
-	Sun, 23 Feb 2025 01:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F52B171C9;
+	Sun, 23 Feb 2025 01:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740273606; cv=none; b=efkXy3XHZAwaBeCN93i8F2wfXE0b2ohMejfpXWZlyq+7b2Nx6r5TwEdyNxvN0FOvFvBSWqm4tlShQX6NEAPX1i79MTOhdoGjAt3lwUaP/p7hVLP1y03znPTqRsQHVh5krP6W76wUqWUSVvSwODsKz48ipsSAWGw0sL2WL4TTrE0=
+	t=1740273632; cv=none; b=LopmEaenxlgDKF8MhPaQKEWpKK9Hmlu5lRIl7zSV0YpXz3n2oYS1VIcnyNSPZURJyDRe5y67eumlaV6pDtAM3JhNNRWM5DCxCJBC28gRha37I3UDBK1/hxziw5mMK24j1RfRgjTI5CNuLdZ9HF2WHyiCJABuEH/h3GzvY71P1Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740273606; c=relaxed/simple;
-	bh=1Ag3yiNkTYSiiXOUq2O4eAczAUnCaTPGnKXkanJ5QQQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f76EFKuADSuX2yLBXfz1YS9ntB0cpSdbvoW1p1aY/nhD3OiKk2FPS26NMoKeP39cN3tNiDG3tC5q2hPsl/xfBzYkqjI5oEJqXa7Y5us4GZ3TUxxlPlllVzMfejBOUZo0KB9OkdPVyKwSz/wkoCplMPO1SppxuxCCzXr7pBUu/c8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dGRXnAqP; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6ddcff5a823so27723586d6.0;
-        Sat, 22 Feb 2025 17:20:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740273604; x=1740878404; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5/E8h6tPt70jBikyge4qsbuUL7f0EA3xrxeSF/10MbI=;
-        b=dGRXnAqPG3gHMw0AnLTN/8OjgCM+dDs5B42iwhWtaVTx8Webr+EllzB4ZunbyABxEC
-         U8GK4/jQWSyCoZNp4xXs0bu6T6AIeOFnNaT6Rsa64HiV0MFJ2N4usPMYzY1TNIjF7ELp
-         6mxtbO2zOfX5MkEpgBVp4mGaxuDfhMzYRIAx3J2C1yKFtV2/vo+hLzVranC4G4bKMMCp
-         E2AITD5JQxgWDcWLvBlZdOQVNeK/DDF//kobGiYR8qntegRIEETRQv0d3NiPk5uGPjLZ
-         f7aNAA/ai/oDhaVXyfw/bkURwSf50Du0iM5MqEsSUL5Uda2jJZqMPUw5gWVzd0Jwutbm
-         OH2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740273604; x=1740878404;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5/E8h6tPt70jBikyge4qsbuUL7f0EA3xrxeSF/10MbI=;
-        b=p+rjBaZ2pqhqJrrVeq4bHoYJAuvsdG7UyeYHlypJV0gSKMfegLU215WZa36x3uhLhf
-         B5WqEK9qlrbJR5dl0+ffjjC2qyBRFTgPV/umpctxeq2UUewKcbY+dUvRsZvE7pD5TLVu
-         5hNqp6BOnPoWMaWuOq56rpIzWRaHFzlXngYwm+ImR8HyqeJd44dKasia82Spgb2vg4+e
-         eXQFwldHyMmAM39AMN3WK52vK8Smn1ldd3rFr2N4f9HYYXuyUtFzNH4DzQCVrQhrgwTb
-         zo95zXQEzQWaXAJmeM58h1zPY4Nlos+960gwjXcEaSQSCqYwSzg8jZi8Ethfzk8aAVZs
-         dCWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVn/Bp5h8gIu3LOncHRpsEe2Oj5LqQ8vMCgLcPKGzd22WwIVKmJU9U2XusUAUGdV0+Mol6tgI9WHdumClky@vger.kernel.org, AJvYcCWaR8k8GZffk9psOl3mk/V6l7UsOyHcOC/gdzqPhqZ3Icn9nSKn23wl8vn9y8uGKfxP5ns6xYDmqO+slng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN72UAQerz7MG1uNM5Vf8HsaWqVgZ9OUbN8S598+pr2qOHUohf
-	D17LtSf+gbFKluHPgj/r7qVsJ9FcQvJ7IHNGKqH4da/fXYNV6ZIa
-X-Gm-Gg: ASbGncuVxMgc7kEANt1cTqE/2ewSm/VfYNTsmwBV6fWfTfPMjF8imQ3Qdhwv5sq3Xyg
-	W9B/PswUygvpuJm7qtnAKGTDM+Srh8Han3DWw2RuOBX+gF0WLbJ2uzn+FfYbAtRYhmnfC/zCQhy
-	IXuRRvqhQEzPFgYwRh/G4yfLzvrC0XeJl2RMMkWuYBmvA/3uNaXHuXL2J8iHS6r1/ihp9nWAkKz
-	Fyhzxd9+B3AnHQIHTQsnR4BT7EyHYNnB2QEPix7O4TLjuOhMmAuYs7AYnq3wpcQc1Df2D3bdLew
-	Gw==
-X-Google-Smtp-Source: AGHT+IGltQ6nyO2jkep3dzWPjLm1uU24Rp2OlIoDOrD5tZZ4WHRwWqt/UMOUxzmAGpbVsv+jxTZ4LQ==
-X-Received: by 2002:a05:6214:d8a:b0:6e6:5bc0:1521 with SMTP id 6a1803df08f44-6e6ae7f870fmr119198646d6.17.1740273604178;
-        Sat, 22 Feb 2025 17:20:04 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-471f2b0476dsm74440991cf.28.2025.02.22.17.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 22 Feb 2025 17:20:03 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Inochi Amaoto <inochiama@gmail.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH] kbuild: install-extmod-build: Fix build when specifying KBUILD_OUTPUT
-Date: Sun, 23 Feb 2025 09:19:43 +0800
-Message-ID: <20250223011944.902904-1-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740273632; c=relaxed/simple;
+	bh=x219kO9/TY6esmGdDOm2ZSMAJh5cKoy0bTXUTRMdpi0=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=jrMqQjvg73hzy04IQ6eJx1NWpHK9pd6jZLlBvz0VtPYc/YzC4juyUwozfGnpm/YOOHuRUz89ee7mpLVm3nxPtTT4j3R/Gg/BSiaKKvJF2VYMlRvfwg2gSvjr6kxmSM+C2b4X2woEtEh3WIvQXH/bNiQeoTNnGdtoTar2Uv6JAoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Vx+OKc8d; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 7C9A725BD1;
+	Sun, 23 Feb 2025 02:20:27 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id n66v7EwL05kj; Sun, 23 Feb 2025 02:20:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740273623; bh=x219kO9/TY6esmGdDOm2ZSMAJh5cKoy0bTXUTRMdpi0=;
+	h=Date:From:Subject:To:Cc;
+	b=Vx+OKc8dTwitGMgNarf5gOllSDkihJeUlTgc3HO/QKGcsNXRrS04qi96TZGFVyT93
+	 14y9TgCkMxyLrC/SO5gxq1nY/Q27ijzQbk9ciM87nWuj9TPXIoIsWUAY1Ag70ogI9f
+	 SEfhiLoM8y+xV9Jec9/69NM1DuuB1+2PGRqmhQP47wg3uJezPxfptUbzXxcnliVpUa
+	 FWoI4x+8Cye7GAaZbhcCFYaYpWUs8SnXImgwLL4AsKUj0rnuaN6N1b4jh7hsZFilI8
+	 5cca66mjpsMcBOuQ18bvtSJR3Brs9FOihnEqIK1u6+aXlvKNTsHNifAfEz9xkH8r99
+	 /1qrY94yOYx0g==
+Message-ID: <bfd2258b-9bbe-42e6-89aa-1bd77a58983b@disroot.org>
+Date: Sun, 23 Feb 2025 02:20:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: NoisyCoil <noisycoil@disroot.org>
+Subject: Please backport "drm: select DRM_KMS_HELPER from
+ DRM_GEM_SHMEM_HELPER" to 6.13.x
+To: stable@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since commit 5f73e7d0386d ("kbuild: refactor cross-compiling
-linux-headers package"), the linux-headers pacman package fails
-to build when "O=" is set. The build system complains:
+Hello.
 
-/mnt/chroot/linux/scripts/Makefile.build:41: mnt/chroots/linux-mainline/pacman/linux-upstream/pkg/linux-upstream-headers/usr//lib/modules/6.14.0-rc3-00350-g771dba31fffc/build/scripts/Makefile: No such file or directory
+The build (actually, linking) failure described in [1] affects current 
+stable (6.13.4). Could the commit that fixes it in mainline, namely, 
+c40ca9ef7c5c9bbb0d2f7774c87417cc4f1713bf ("drm: select DRM_KMS_HELPER 
+from DRM_GEM_SHMEM_HELPER") be backported to 6.13.x, please?
 
-This is because the "srcroot" variable is set to "." and the
-"build" variable is set to the absolute path. This makes the
-"src" variables point to wrong directory.
+Thank you.
 
-Change the "build" variable to a relative path to "." to
-fix build.
 
-Fixes: 5f73e7d0386d ("kbuild: refactor cross-compiling linux-headers package")
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- scripts/package/install-extmod-build | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-index 2966473b4660..c0357ba2ff72 100755
---- a/scripts/package/install-extmod-build
-+++ b/scripts/package/install-extmod-build
-@@ -63,7 +63,7 @@ if [ "${CC}" != "${HOSTCC}" ]; then
- 	# Clear VPATH and srcroot because the source files reside in the output
- 	# directory.
- 	# shellcheck disable=SC2016 # $(MAKE) and $(build) will be expanded by Make
--	"${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC='"${CC}"' VPATH= srcroot=. $(build)='"${destdir}"/scripts
-+	"${MAKE}" run-command KBUILD_RUN_COMMAND='+$(MAKE) HOSTCC='"${CC}"' VPATH= srcroot=. $(build)='"$(realpath --relative-base=. ${destdir})"/scripts
- 
- 	rm -f "${destdir}/scripts/Kbuild"
- fi
--- 
-2.48.1
-
+[1] 
+https://lore.kernel.org/all/20250121-greedy-flounder-of-abundance-4d2ee8-mkl@pengutronix.de/
 
