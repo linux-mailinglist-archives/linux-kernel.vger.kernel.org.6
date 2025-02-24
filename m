@@ -1,98 +1,122 @@
-Return-Path: <linux-kernel+bounces-530275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39901A43146
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:49:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5B7A4314F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA66173293
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99F341883350
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8D720CCF3;
-	Mon, 24 Feb 2025 23:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE63207E1F;
+	Mon, 24 Feb 2025 23:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="GUCUJCV7"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dm8LqU+Q"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E698020C037;
-	Mon, 24 Feb 2025 23:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334221DB375;
+	Mon, 24 Feb 2025 23:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740440953; cv=none; b=HWCCJjW10wFXBne5jbQj4+URk5+uWyJQj34TgvVAwA++/IqizfUgnJYL3exuD+fRN1YwAn6kL8BTPooJablIzF7PY1g0sWlC2P+YoQWc5gY+Wl8VY+dZYAvv5+1nRgm2v7/lMEnZ68dLJNeIolSUP6hc69mhiOiGghFeObE2P68=
+	t=1740441016; cv=none; b=Xiq05BDRk6Uro40bw9in878kLiQtTntxS9aLeyPAqTonj6EIzd27U8KlFyXJATPwjq/QhXTDJF8yO+BfY/9wmHuF3MnLiHJ9CrHFQX+6+HkEvDBeH33VpDlUrTQZY8LNYseS7SSafjvkkeJ3/Co+fA5XJXylkXkXIUzjZuBiudM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740440953; c=relaxed/simple;
-	bh=bSZ1BbEYc5oTKZWo6TwEiFHmEdVxTC2MtfdfcPQcJIE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iFRLbrzfszfZctBWcotadjFphwtcFNHQl8ekAW9OGNRE1aVKmVsVmYzV02XeD4x2bFJShlyLJssnL3FSy13er+2hZtiJhdjJY3qDr1Z4W1B2UFB40B+MD6rIlElOkhgQPhbHDbDtIt3goWqJLrEZd9Cudqod336se2iLdVlaqEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=GUCUJCV7; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CBF4D48EBA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1740440951; bh=pHGnij/eQmKrMRgKcJ0yPzwB3EItplvkoxWR3vEZS0M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GUCUJCV71P0WD5pGzeQ6pnT03wD/CWTLelZENJYTf2t2PdgTk2KFIb2Ypg582Z2ne
-	 Dkrv0sH6cV2iTw9w5UtDnkb3acQcUFtwTyKfMje711n0J7/2APZdWZYl0h60nKMA24
-	 JNJDa38zvOpWLFOOYqBm+PVSWazh6Mi1OjlXXTvvsN1Z3ovEHLk4xwka4Gn2R8AumJ
-	 7XXe5JtmG87omImTS+j3Rpm3SYTnIGW+JzXwqFg/I8l7zuozaSYc86KKftKV+Qayx0
-	 B4AhEQHrwwYN92Gf939Kk8AF9xStt2YN7jkgWk3jtuejtV5ABrzCLEfXEBy9AuJyNo
-	 C2+bSGF8eSZAg==
-Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id CBF4D48EBA;
-	Mon, 24 Feb 2025 23:49:10 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
- List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
- <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, "Gustavo A. R.
- Silva" <mchehab+huawei@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bingbu
- Cao <bingbu.cao@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Kees Cook <mchehab+huawei@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Takashi Sakamoto
- <o-takashi@sakamocchi.jp>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- linux-arch@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
- linux1394-devel@lists.sourceforge.net
-Subject: Re: [PATCH v2 00/39] Implement kernel-doc in Python
-In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
-References: <cover.1740387599.git.mchehab+huawei@kernel.org>
-Date: Mon, 24 Feb 2025 16:49:10 -0700
-Message-ID: <87msea29ah.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1740441016; c=relaxed/simple;
+	bh=B8KYFDFY6aAz9K22ud6BAB+fiNsY/XqDHGMOB2c15xI=;
+	h=Message-ID:Date:Content-Type:MIME-Version:From:To:Cc:Subject; b=ZQgvGTDa7QOIrPNvASL/9wUtSAVkmLwwa6PBo7KfuhdgkHyqtJtdP3WzkFSc+RXJvjdbfJVmUCx1667am+L03bIEs1fjccmNHHdqdFf8FJ0EYUkxEtkg8thMIR2UHT8tPqTrFecd+/DmBDhK97MzjuXGpysxn4z8DD5vNOD3B2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dm8LqU+Q; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-472242b0da5so38543751cf.1;
+        Mon, 24 Feb 2025 15:50:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740441014; x=1741045814; darn=vger.kernel.org;
+        h=subject:cc:to:from:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LNfkARXli3uVvFnrZ1vZRAcjsGQLR8DVcO+Dhioc7z8=;
+        b=Dm8LqU+QZCrIhJHQ8o6g6G3FfFrp5JQSa7DWoMcSqsvF0ydca0rW/CuFst8EHT+J8F
+         SyO88moCa0ZKmY9BOdNrJkjwQojJ3ARekKK8aLosY5lYzypEaF1EdkFoMxIBaaUvRkuf
+         e3FthLumApvnu4RNHGJZ2gQAT2zvVpc1lfIHH0qVuAcvX1X3jdf6wa9qxVh5c2qptZt0
+         XYyJx3V0BjdvT+o5sV2ojEABfjJKXBCqz351o9952XDijv2JhJPDQGa2temnPJVI8iCq
+         LYur9S4KxVBzxSkragZ3+HdZghKMANjIT3sc/L9t8h2dVPEXAGcgfALO8IafHt+4t8aw
+         uYLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740441014; x=1741045814;
+        h=subject:cc:to:from:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LNfkARXli3uVvFnrZ1vZRAcjsGQLR8DVcO+Dhioc7z8=;
+        b=csoFU4XOwI9gMxwvNVk1S+30KFs5cYKCJQ/2tC/kYjdxYHTMZOJm28FyCcI7xsSE6d
+         DWfAFfXPsSOJlvsTQZcdACIDpOl5nVk7nhamrM/zzBI/+Z6kFF/dnJPYx5PQyt24a8Jv
+         nFH1UZw4oZ5fjU/Vdgq+FZm8hBItHoakBz2yJILBj2yqvtY1sk3vuQE2L88ZKWhGUm0U
+         DF7C1Z4SKHtS2GUFBQpOKhbq06ocR6FJ7G1sDgZXtMF050wzohRs0v1i7bNkyNbotRUv
+         3CYkJCxTtUKYIln1HFhFVoImvdAxLXwPdO5SenBIr/XL3tHPAJ6BXgbGtu+pV8f2KZOJ
+         ms9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVJmPe7X2H6W7YfakRZutV+bNtRmiRFiioIkrejY38WF2BaK558W6MeVsUB3oLVxKiImLvmZLiXfXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVlOxQvKTlblMwLEE0O0fil805ELwdCeVwxf3k7rAKm9aW+xM/
+	Sl1dTH9+WANJnaESB8aYkxJDUdIJyy2btEaRmvKYHsHxlRUB0WkN5mZBweE23jowaQ==
+X-Gm-Gg: ASbGncvO4z4v6ktd3GyFjco2ANbRh7IdAJf2oEvIeX5wanqG5O7pP0YCqvgLSV1xZPh
+	rT8Tgcd2wXbz2x9mD4FxQEUjIODG2WBduBmDlz1b9+O7C8704VO6/R/YkdrlxBc6JvlxPDV6ez2
+	99JfQTrS4jq6atRecs7FC8mleoaK1+NP8bOA166JXVQM2bwGxUoYMsCNta9Dwjn4s/BfQ3BwdnZ
+	A29LUV4dQx3KN1K27n3lkc0RXuhHvZzPLu1hDRNZ+f6xBbC7xRf3cJHu4CI3hq0FdDbPjp/uzI8
+	ovB/HpndbIGdqJOnaWfbxpX0sadLvpVYrfn7Bdst+ws/bN6nU1a24J1xDrbeAjwdTL8=
+X-Google-Smtp-Source: AGHT+IFEpnzcYWehzDJLiUmDa43uEZj2rwjWrAvQaC9BmR0P6FPz7VDzsr6K09MY8ZmNZeqrdpFfPw==
+X-Received: by 2002:ac8:5b91:0:b0:472:133f:93ae with SMTP id d75a77b69052e-47222965e5emr198262081cf.48.1740441013701;
+        Mon, 24 Feb 2025 15:50:13 -0800 (PST)
+Received: from [127.0.1.1] (c-73-123-232-110.hsd1.ma.comcast.net. [73.123.232.110])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47378084493sm2539351cf.70.2025.02.24.15.50.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 15:50:13 -0800 (PST)
+Message-ID: <67bd05b5.c80a0220.205997.19df@mx.google.com>
+Date: Mon, 24 Feb 2025 15:50:13 -0800 (PST)
+Content-Type: multipart/mixed; boundary="===============2672866445194770799=="
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: gshahrouzi@gmail.com
+To: linux-kernel@vger.kernel.org
+Cc: trivial@kernel.org, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, linux-doc@vger.kernel.org,
+ corbet@lwn.net
+Subject: [PATCH] Docs/arch/arm64: Fix spelling in amu.rst
 
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+--===============2672866445194770799==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 
-> Hi Jon,
->
-> This changeset contains the kernel-doc.py script to replace the verable
-> kernel-doc originally written in Perl. It replaces the first version and the
-> second series I sent on the top of it.
+>From 748db76c8e9f6e5906be0033dcdec9bb5749b303 Mon Sep 17 00:00:00 2001
+From: Gabriel <gshahrouzi@gmail.com>
+Date: Mon, 24 Feb 2025 18:09:26 -0500
+Subject: [PATCH] Docs/arch/arm64: Fix spelling in amu.rst
 
-I've sent minor comments on a couple of the patches.  The new version
-works for me, I can't find any real problems with it.
+Change though to through.
 
-Here's the question: what were your thoughts on when to do this?  I can
-certainly take the initial fixup patches and get them out of your queue,
-but at some point there will be a need to dive into the deep end.  I'm
-just a bit leery of doing that as we head toward -rc5...  what do you
-think of "just after the merge window"?
+Signed-off-by: Gabriel <gshahrouzi@gmail.com>
+---
+ Documentation/arch/arm64/amu.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm definitely looking forward to no longer having to bash my head
-against the Perl version...
+diff --git a/Documentation/arch/arm64/amu.rst b/Documentation/arch/arm64/amu.rst
+index 01f2de2b0450..ac1b3f0e211d 100644
+--- a/Documentation/arch/arm64/amu.rst
++++ b/Documentation/arch/arm64/amu.rst
+@@ -80,7 +80,7 @@ bypass the setting of AMUSERENR_EL0 to trap accesses from EL0 (userspace) to
+ EL1 (kernel). Therefore, firmware should still ensure accesses to AMU registers
+ are not trapped in EL2/EL3.
+ 
+-The fixed counters of AMUv1 are accessible though the following system
++The fixed counters of AMUv1 are accessible through the following system
+ register definitions:
+ 
+  - SYS_AMEVCNTR0_CORE_EL0
+-- 
+2.45.2
 
-Thanks,
 
-jon
+--===============2672866445194770799==--
 
