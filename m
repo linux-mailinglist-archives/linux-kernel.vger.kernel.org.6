@@ -1,137 +1,132 @@
-Return-Path: <linux-kernel+bounces-528290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26FABA415D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:05:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E42A415F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 566B13B5D6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 352423A9D66
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43405241688;
-	Mon, 24 Feb 2025 07:04:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0601B2405FC;
+	Mon, 24 Feb 2025 07:08:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DQvVUuRc"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g69gmnio"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DAC241679
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B3D1A072C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380644; cv=none; b=Vrw47mt9gPVbADay/JrJ27vc+p+f8gEaxEwFlM/GWjIe0hmOI4ibB/NU1TY2o5OAlw2VsvT+jrqzLTPADLmBVrwaovGBF/AHopGfxWZSfMwEHymUG1+Coi8909Rof0NlppYv4PkH9aC6fkEJDnv/8NFOFDjLaeyg0N2k1YW8F6U=
+	t=1740380894; cv=none; b=Rn4nvotp86vqmyEx6+z7nZuNlsfcMnaj6VTV8wjnxK5a4C6rL5ObQ1u9unSuVqspjtzyfPI4Pt9LUBdcnOTDDO6Frcrpsx9kGl6W86GgfsIZWUbY9oDzDjJj/OLN8v/llKvMcKXCqjQBK3aquKdUMPFXusLnHP7gOOusqLd0gGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380644; c=relaxed/simple;
-	bh=8AyV0e0qRbEmKU/uCI50pjnIFt3/6pXpYJ2kgM0yvh0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pYf5HHuPkvd5sD2/s59SAhf2jZk94GR5N7bdXPyQUTnp/Fo280uxP2MEzqTr/er9MO/dzplUCXU7AiNteXkwGgPJTjJcDXlUQGfHRH6vzFzxySwvV4cRUgKxSXXWrA4YhNqr4ZV542DFsKI21jp0bbkcP1DS9qjRNI/3umx1ZNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DQvVUuRc; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c0a1c4780bso423519285a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:04:02 -0800 (PST)
+	s=arc-20240116; t=1740380894; c=relaxed/simple;
+	bh=D4wLLgrYQC2p5XS8UXuh/JEsZVCdzI0S58liw4qrKEM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EXf3lS+wDfdIcWcHGGlsQ2uMoNo28o/0znBggvEMHTstktJV5HDD0759XLkoJg1oDhd+909q80I/KgzvayAwVeJSiAXrON0PucqEVRipr4lQAhPaTa16q9PPnrV7b+eBYEGZViyrxuLfnmkmLylKK7fB3laRZqg5X+yiqakhlyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g69gmnio; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2f44353649aso5916437a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:08:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740380642; x=1740985442; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5q6OzdDXgwAQxAxBQA745WK29nT03MLnpLkJ+gh1wVI=;
-        b=DQvVUuRc07ODeb9F6NLOEkVhpDBAPELeUDxv+/BT3zMQuczi/VtdxMCERZa4NWORux
-         I2WC3lDXCpx78wv7fLDoffJLGT+xxOta8dX9OR6Fxf6qi5FjYlU+JUIyJKlspy9hoblF
-         dWeVt9pkXzmPifK0T1ZLsqAFBXBNAWGHm5m54=
+        d=gmail.com; s=20230601; t=1740380892; x=1740985692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qxr0BX9H2rSmbWDcp3ROXus3wNk/eFLtrEBXawMvsMk=;
+        b=g69gmnioI+rbq1PrHwpr2lWC6IPS5kKvnTYT8gR/GeEEq7e+pZUAukBu61AZd57sxk
+         Fb7iNUwWWiMC00uQIO6/iRjRxjuniVdFmhzFuT/yWBtB8dpVAc0EqjFdY40sT/4Yl/Wz
+         DIyX1NAg+c0U3sOdk+YhbuJs8qjEgYXNQtHD8neLQxZGwsoeDvFw66yTooPARapxnvEA
+         3HGUdw+WDYW5jfY+8T4i8A3KisoxRCrOlUlu+1U+Q98Sgx0kImuJPmPexfMqeHTO0tiU
+         MOkkZxkEk1YjiRKMW7chVVX86uY6PE7nhQ1Tlrr2RySf+xVmTLL3quCQ33ra57ogKDdv
+         LzIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740380642; x=1740985442;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5q6OzdDXgwAQxAxBQA745WK29nT03MLnpLkJ+gh1wVI=;
-        b=MA4xKtDh9xe+q9sBTfNsCXoSnQYoY9BGXgch+ksGyAnT3NynECCNsgZTeBhTzl0VF6
-         vCn78qfTBn4UoRaGCxEKASzIkVoBg8N8Gcj1mrS/BbfGGaCNJn+bDfLQYcj09NjIfFvB
-         foFuifzWE82RlI6c4QrtyGbdXUztMUix1xiCEpkxNu4Pfh3pzTCKA+pI7ceuzE3gwz2L
-         4zaJW5s9Wss4Kl5F0fmMRt1ZZZhZuSJydcQp7ylqvetfGxdMaYloo4zKzEVOb/cEspej
-         ruZc52gaI/DgHOkFcf2sl8WhoPyZlKp6hFjyiwGBOmqsuBPrl5Vvzm71c/wt9irtkt7q
-         spfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMecajiWkQ8sWZbeQ4apDYHTXbq+r48QPlUSubH9CK+vQfTj+sDBkOO8uz4aYZ6uVSlDuMLPyfGJRoyxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjapLFCSK0fkKMKfeNSp4IlTJYGz2H/Yn8xD1Eh5PDsO/xEHuu
-	Gvy+7otS4VeF08zZw/6kTa+tKMb4+uaPfQwWzqEiXYWmPW8yfqtCSe9QiwT0Nw==
-X-Gm-Gg: ASbGncs2OUu9bQvu6/wO5bi7WlEWXvm4RO8DLjQaXP6WmVPg7S54Aq15pebkZh+2RJE
-	BHpXtJUxJ8JZ/ow/wnlIbLfKIg/BtWEY46Ax92OqNiNsqZca3pC/Bf/RbImTM4QD5lgV7uZa8o8
-	X0FaFW5rRBiI82wObG7e74B9jY9dSaLlwsdV2jgP2LLFn0FXUOQFCvrm7uhD3LFbl36gkROo+B3
-	SGhL+8fIOVdzz+CFiXXZr5iRuKhoK2CMctGWOz9lwqq1fCN+kIGbP62NDXWGSq+IZ4iaTEILQ/x
-	wKa+4qgrO5bTZhkwSNwGHYxtxpiyMFizn1N4tZMA180gnA3JHyCBxfzTW4HFZbn7jCv+jhUMplu
-	qfd4=
-X-Google-Smtp-Source: AGHT+IHgxFsGJ5AGKD2il9LAdTDxMgGFCz1Kjs7fo9qIU1XdeZFdKJmn66/YwmftLgDLOc15f+yjhQ==
-X-Received: by 2002:a05:620a:8006:b0:7c0:8175:3651 with SMTP id af79cd13be357-7c0cef5333fmr1704029285a.43.1740380641946;
-        Sun, 23 Feb 2025 23:04:01 -0800 (PST)
-Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c09bf81253sm977920485a.47.2025.02.23.23.03.59
+        d=1e100.net; s=20230601; t=1740380892; x=1740985692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qxr0BX9H2rSmbWDcp3ROXus3wNk/eFLtrEBXawMvsMk=;
+        b=qAxf9Dka2Qm+87swAehc2/HcMg7c9282RD9CGIlTN1V2hZ7HYi6+lsOWhrZWViFxpI
+         7hkihSIU66Ek3uEnoOOHTX+nwNtOSvSKnax8zkNkaJZ6PevUe/icQNLdGNHzgyV/bfDC
+         fMiEw/ksQ3lh6wMcs4lervAlPDjeufwoSGHWDVyLerNouTmL144UdCVHcVptTRSBggGk
+         LRSledERfM6KI2Dz3wYjcVoaadR91N0WNclrrMkLJqCfiAIGkVh13w3zMfqckIXB64Ig
+         sPAPOsRnKgzNfndGc4K4QvTnPPoO2ePtqfypAyUYLjozQ/JMiojbf+BTfy8RM+s1A7so
+         yRqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCJpbcJr+sX7bUxGPWZTxIQohCAqaPbp9mA2mbZSTauULK+UNf4FZiBQUqwsVZLSPSNHYpwWA/I0JE/iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbfsSZkeCT583CIW/GqMNbFnCznvDNMYq/XCkmJgvhZawmRYYd
+	1YmcQQKmoa09YO4qF0CswoYQz0Iz52Sm1hvgVZvXeya9CFE9vjk5
+X-Gm-Gg: ASbGnctbCsYQqPwGRo8d7IVNTb5kbA5LWOLOgtk/wzACIp/69UM72d16ShiE2AgqBS/
+	tOgdyw2uFAbotqAON3lXGF/UCdE3fKTbCdIB19ghQF4UTkF2/oxewDkpARD618qvDz9JDPoo90i
+	2HlLZd4rCf+ZStKS1PV48GuyaRg+hY82hMM0RIGWquP7xwWW0xk5GDZa/BabPn159jVEUdUtuun
+	EvOf5xJXxSOWG/8U7BVzJ0JZf0SbfIxtNDppfh6eEbujQGVaVm+gOu18z7zrbjN4zNhw+jF15g1
+	7EaMKurWiHVffO5fORmKxO2Gd6EDEcw4bVpQDZZtNmXXfPZHQQ==
+X-Google-Smtp-Source: AGHT+IE12ag80ZRwCsA8RWfy0RerhyEUSGbdICvUoSLmgC26GQaUksr40TeMICBEdVbulyqrGW+PGA==
+X-Received: by 2002:a17:90b:1f8c:b0:2f6:dcc9:38e0 with SMTP id 98e67ed59e1d1-2fce75de292mr24578360a91.0.1740380892356;
+        Sun, 23 Feb 2025 23:08:12 -0800 (PST)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb05109dsm5741070a91.15.2025.02.23.23.08.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 23:04:00 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 24 Feb 2025 07:03:55 +0000
-Subject: [PATCH v2 2/2] media: nuvoton: Fix reference handling of ece_pdev
+        Sun, 23 Feb 2025 23:08:11 -0800 (PST)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id A2E84800D4;
+	Mon, 24 Feb 2025 15:18:18 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>
+Subject: [PATCH v5 0/2] Add support for read retry
+Date: Mon, 24 Feb 2025 15:03:47 +0800
+Message-Id: <20250224070349.446739-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-nuvoton-v2-2-8faaa606be01@chromium.org>
-References: <20250224-nuvoton-v2-0-8faaa606be01@chromium.org>
-In-Reply-To: <20250224-nuvoton-v2-0-8faaa606be01@chromium.org>
-To: Joseph Liu <kwliu@nuvoton.com>, Marvin Lin <kflin@nuvoton.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Marvin Lin <milkfafa@gmail.com>, linux-media@vger.kernel.org, 
- openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
-When we obtain a reference to of a platform_device, we need to release
-it via put_device.
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Found by cocci:
-./platform/nuvoton/npcm-video.c:1677:3-9: ERROR: missing put_device; call of_find_device_by_node on line 1667, but without a corresponding object release within this function.
-./platform/nuvoton/npcm-video.c:1684:3-9: ERROR: missing put_device; call of_find_device_by_node on line 1667, but without a corresponding object release within this function.
-./platform/nuvoton/npcm-video.c:1690:3-9: ERROR: missing put_device; call of_find_device_by_node on line 1667, but without a corresponding object release within this function.
-./platform/nuvoton/npcm-video.c:1694:1-7: ERROR: missing put_device; call of_find_device_by_node on line 1667, but without a corresponding object release within this function.
+When the host ECC fails to correct the data error of NAND device,
+there's a special read for data recovery method which can be setup
+by the host for the next read. There are several retry levels that
+can be attempted until the lost data is recovered or definitely
+assumed lost.
 
-Instead of manually calling put_device, use the __free macros.
+For more detailed information, please refer to the link below:
+Link: https://www.macronix.com/Lists/Datasheet/Attachments/9034/MX35LF1G24AD,%203V,%201Gb,%20v1.4.pdf
 
-Cc: stable@vger.kernel.org
-Fixes: 46c15a4ff1f4 ("media: nuvoton: Add driver for NPCM video capture and encoding engine")
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/nuvoton/npcm-video.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v5:
+* rebase on nand/next
 
-diff --git a/drivers/media/platform/nuvoton/npcm-video.c b/drivers/media/platform/nuvoton/npcm-video.c
-index 0547f119c38f..7a9d8928ae40 100644
---- a/drivers/media/platform/nuvoton/npcm-video.c
-+++ b/drivers/media/platform/nuvoton/npcm-video.c
-@@ -1669,6 +1669,7 @@ static int npcm_video_ece_init(struct npcm_video *video)
- 			dev_err(dev, "Failed to find ECE device\n");
- 			return -ENODEV;
- 		}
-+		struct device *ece_dev __free(put_device) = &ece_pdev->dev;
- 
- 		regs = devm_platform_ioremap_resource(ece_pdev, 0);
- 		if (IS_ERR(regs)) {
-@@ -1683,7 +1684,7 @@ static int npcm_video_ece_init(struct npcm_video *video)
- 			return PTR_ERR(video->ece.regmap);
- 		}
- 
--		video->ece.reset = devm_reset_control_get(&ece_pdev->dev, NULL);
-+		video->ece.reset = devm_reset_control_get(ece_dev, NULL);
- 		if (IS_ERR(video->ece.reset)) {
- 			dev_err(dev, "Failed to get ECE reset control in DTS\n");
- 			return PTR_ERR(video->ece.reset);
+v4:
+* If set_read_retry fails, it should back to read_retry level 0
+
+v3:
+* If set_read_retry fails, it should return an error
+
+v2:
+* Remove fixups
+* Remove the function of init_read_retry
+
+Cheng Ming Lin (2):
+  mtd: spi-nand: Add read retry support
+  mtd: spi-nand: macronix: Add support for read retry
+
+ drivers/mtd/nand/spi/core.c     | 35 ++++++++++++++-
+ drivers/mtd/nand/spi/macronix.c | 79 ++++++++++++++++++++++++++-------
+ include/linux/mtd/spinand.h     | 15 +++++++
+ 3 files changed, 112 insertions(+), 17 deletions(-)
 
 -- 
-2.48.1.601.g30ceb7b040-goog
+2.25.1
 
 
