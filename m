@@ -1,237 +1,152 @@
-Return-Path: <linux-kernel+bounces-528685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D70A41A9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:18:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82617A41AA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:19:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CDBF3AC178
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:18:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62D87188D019
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B697A24C692;
-	Mon, 24 Feb 2025 10:18:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB2F250BEF;
+	Mon, 24 Feb 2025 10:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="niCjXbTi";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="UkjrEQil"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQ7qbVcc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC5D24A07C;
-	Mon, 24 Feb 2025 10:18:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2081B2505AE;
+	Mon, 24 Feb 2025 10:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392285; cv=none; b=ugtgZX16ZOjmaOFtDZD/7Sp8981KZBDzZs9mv2uasIu1cdcJ27A6asHYQZiASZLCq7ZD0j+fd/VMeJ7/Po397OffWmmlmdk+aMrL2JHXsLnZ2J+riUqleHYhKTHh/6qfpXGsie7V/vpnKk53BvMtiop28wF1vtTp7n6vsjIvEHE=
+	t=1740392301; cv=none; b=SOxUI1ZfEbIiAAxeh4ZyIV7Vlqu9YNPrJuYiJpFZtDeyRZFGOr/7K2tegDMMWcg1b2RE0fpR3c4FcGn06nSrZ8Cb/RquZJrPVQWmxHiodqc6N3KkQruRIjsSd4kmp0cWyCUqP8sn4ezK5v39QQlVMWrTTtr9Dm+BqOCuoUEXflI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392285; c=relaxed/simple;
-	bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6iGFTLhWyOp4ZJ8P2hvNGbG/aPHnn5OO4etjxbb1MXCRkyhYy6TU94q2Wk4pg4WSTBon77ua4ha9z+TVJmPLjipSub6Abtg4+QUr575zQiQE/OaACx3oQXmnL8/M1WjGVvZb0mesGu3tfvoAH0F1R+YjdvwPed5dTVydpYklKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=niCjXbTi; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=UkjrEQil; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 52D4D122FE23;
-	Mon, 24 Feb 2025 02:17:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740392276; bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=niCjXbTievjPfp2HmOums4MrUOg/tOro7gx/TCt7XJ2cPvwaMrZykwcckHHr0zJuG
-	 p9xSjwlq7D713ed9/6aXE4x6EDZ/ym1Z+pP7cVdK/zk1dRqMZjPbxnHAnRGtk3iotm
-	 XAEkIJ0aQ/Qkfref1IT+bVBZZT0QbM7QCjp47jQXdoOvFjhUmqSYNbNEroo9E4MFV1
-	 srPvEaBJ4dmpjRr5NJaaJazeMJREqJSZZILgGxjo/XY6fce5oAfHPdVVjLd08rSADt
-	 cIog1Xr8aUwP6vVrE2pFBkQH1CM0xlFwVbmEDzo2T4PUeDFm3lafA1b9icW3CZr25S
-	 BQ848tOhqzc+Q==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id zq8oGhaoyk3h; Mon, 24 Feb 2025 02:17:54 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.34])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id D9D65122FE21;
-	Mon, 24 Feb 2025 02:17:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1740392274; bh=Lwv+SdLlgCCVTrLfdebdm1ZrgIaYP0UgzwvumboP/Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UkjrEQilES+wAWOqAgIE+CWAGiRh2WE8Z77le9pWr5tgNy1pWWbTyvFrFuLig7CnF
-	 dyklHRklhPKiGkBC4LE6uYN+Rl0kydApuUOx4z+Z7LJpzk2udQKSZbeIGhkNZwg0jy
-	 9aDvewbfZHh8T4ZBHNmauBCB//kbGb41vZo9tvBDP8ob6o8J4J7cS/Q/o6GqPIP7Tk
-	 DT5ea06zULyMSIjah2/ojuRxiDYZP9KzU6IgCNnGOpNy5JImavBQtP+Rl042DCMURl
-	 qZyAc5btfGtkVngR4Qcf1rNwimx5rW5utOUyUm+S8G0DjcrYcxmmkpMkFs8No+GFT9
-	 sBeXApdL2iOjQ==
-Date: Mon, 24 Feb 2025 10:17:40 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Alex Elder <elder@riscstar.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>,
-	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	Guodong Xu <guodong@riscstar.com>
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-Message-ID: <Z7xHRAFE4-QEA6PO@ketchup>
-References: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup>
- <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup>
- <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org>
- <Z7mrdrACFp3m-7sy@ketchup>
- <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org>
+	s=arc-20240116; t=1740392301; c=relaxed/simple;
+	bh=abYpGJceAD3EWQoYhHyvYfDR0LC7tOZMSQeXe5yUffk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KuDIj/VgoaDmbeHX81y9llGh6VPJgw1jKMvZukmVvF7q1p+Fjyr0hqdk4qBP0Bq8A8ljPWBBIEO7BMjq09hdqRayUGc/oXURROJNHmJOLvbAN0t/ae+jPoMBwjfUc1wx1chmcI6u+ywZaKNRduJpjqjPPt2TJ7LofOEwxNY+esE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQ7qbVcc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A301DC4CED6;
+	Mon, 24 Feb 2025 10:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740392300;
+	bh=abYpGJceAD3EWQoYhHyvYfDR0LC7tOZMSQeXe5yUffk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JQ7qbVccMQiOhl2+V1MSPxzMkd0JfYgWnav1xNtM+KAsnL7IO7muDWhK78b4Prhzi
+	 vwYgZK60fZTnmZBlbofYA57a0yNAygO64VHCPimtYekTcetoSbEwhfF7P0vid1b7du
+	 GKNQgpxqTrFaRPhyg11Q2jKSIf/HwPFWSI2a0Og+aZ6YogxCWsgvYXLzM17uy/n2+q
+	 Yk1dVlr5HbOOxvkGV7dTDG2SpkqlntKxILYvP+/X6LGVua06LA73xNJbPAmN4ajaz+
+	 DCLcMSR3ZEE7Kqb477K42cCucm23yRljE8XsyXSA8namU48+7fBEB4UVNxKySTeF3u
+	 6W0iAHLZX6fpA==
+Message-ID: <ed8f7aee-e5be-453c-b324-e59e90ecee77@kernel.org>
+Date: Mon, 24 Feb 2025 11:18:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] dt-bindings: qcom: geni-se: Rename qcom,geni-se.yaml
+ to qcom,geni-se-qup.yaml
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
+References: <20250221085439.235821-1-quic_vdadhani@quicinc.com>
+ <49fc59ed-9d09-46bd-9ca6-99d3445221f7@kernel.org>
+ <f3349d2a-7eba-4865-9b58-0b2e7e57cc92@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f3349d2a-7eba-4865-9b58-0b2e7e57cc92@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Feb 22, 2025 at 12:50:13PM +0100, Krzysztof Kozlowski wrote:
-> On 22/02/2025 11:48, Haylen Chu wrote:
-> > On Sat, Feb 22, 2025 at 10:59:09AM +0100, Krzysztof Kozlowski wrote:
-> >> On 22/02/2025 00:40, Alex Elder wrote:
-> >>> I have a general proposal on how to represent this, but I'd
-> >>> like to know whether it makes sense.  It might be what Krzysztof
-> >>> is suggesting, but in any case, I hope this representation would
-> >>> work, because it could simplify the code, and compartmentalizes
-> >>> things.
-> >>>
-> >>> Part of what motivates this is that I've been looking at the
-> >>> downstream reset code this week.  It contains a large number of
-> >>> register offset definitions identical to what's used for the
-> >>> clock driver.  The reset driver uses exactly the same registers
-> >>> as the clock driver does.  Downstream they are separate drivers,
-> >>> but the clock driver exports a shared spinlock for both drivers
-> >>> to use.
-> >>>
-> >>> These really need to be incorporated into the same driver for
-> >>> upstream.
-> >>
-> >> Why? First, it is not related to the topic here at all. You can design
-> >> drivers as you wish and still nothing to do with discussion about binding.
-> >> Second, different subsystems justify different drivers and Linux handles
-> >> this well already. No need for custom spinlock - regmap already does it.
-> >>
-> >>
-> >>>
-> >>> The clock code defines four distinct "units" (a term I'll use
-> >>> from here on; there might be a better name):
-> >>>    MPMU  Main Power Management Unit
-> >>>    APMU  Application Power Management Unit
-> >>>    APBC  APB Clock
-> >>>    APBS  APB Spare
-> >>>
-> >>> The reset code defines some of those, but doesn't use APBS.
-> >>> It also defines three more:
-> >>>    APBC2 Another APB Clock
-> >>>    RCPU  Real-time CPU?
-> >>>    RCPU2 Another Real-time CPU
-> >>>
-> >>> Each of these "units" has a distinct I/O memory region that
-> >>> contains registers that manage the clocks and reset signals.
-> >>
-> >> So there are children - mpmu, apmu, apbclock, apbspare, apbclock2, rcpu
-> >> 1+2? But previous statements were saying these are intermixed?
-> >>
-> >> " I'll make APMU/MPMU act as a whole device"
-> > 
-> > My reply seems somehow misleading. The statement means I will merge the
-> > children with the syscon into one devicetree node, which applies for
-> > both APMU and MPMU. I wasn't going to say that APMU and MPMU are
-> > intermixed.
-> > 
-> > As Alex said, all these units have their own distinct and separate MMIO
-> > regions.
-> > 
-> >>>
-> >>> I suggest a single "k1-clocks" device be created, which has
-> >>
-> >> For four devices? Or for one device?
-> > 
-> > By Alex's example, I think he means a device node taking all these
-> > distinct MMIO regions as resource.
+On 24/02/2025 09:47, Viken Dadhaniya wrote:
 > 
 > 
-> You still do not answer about the hardware: how many devices is there?
-
-In my understanding, the series covers four devices, APBC, APMU, MPMU
-and APBS, each comes with its separate MMIO region and is clearly
-described in the datasheet. I stated this in the later part of the
-reply,
-
-> > For APBC, MPMU, APBS and APMU, I'm pretty
-> > sure they're standalone blocks with distinct and separate MMIO regions,
-> > this could be confirmed by the address mapping[1].
-
-Thus I don't agree on Alex's solution, since it creates fake devices not
-mentioned by the datasheet (spacemit,k1-clocks and all its children in
-the example devicetree).
-
-> > 
-> > 	clock {
-> > 		compatible = "spacemit,k1-clocks";
-> > 
-> > 		reg = <0x0 0xc0880000 0x0 0x2050>,
-> > 		      <0x0 0xc0888000 0x0 0x30>,
-> > 		      <0x0 0xd4015000 0x0 0x1000>,
-> > 		      <0x0 0xd4050000 0x0 0x209c>,
-> > 		      <0x0 0xd4090000 0x0 0x1000>,
-> > 		      <0x0 0xd4282800 0x0 0x400>,
-> > 		      <0x0 0xf0610000 0x0 0x20>;
-> > 		reg-names = "rcpu",
-> > 			    "rcpu2",
-> > 			    "apbc",
-> > 			    "mpmu",
-> > 			    "apbs",
-> > 			    "apmu",
-> > 			    "apbc2";
-> > 
-> > 		/* ... */
-> > 	};
-> > 
-> >> No, it's again going to wrong direction. I already said:
-> >>
-> >> "You need to define what is the device here. Don't create fake nodes ust
-> >> for your drivers. If registers are interleaved and manual says "this is
-> >> block APMU/MPMU" then you have one device, so one node with 'reg'."
-> >>
-> >> So what is the device here? Can you people actually answer?
-> >>
-> > 
-> > I'm not sure about the apbc2, rcpu and rcpu2 regions; they aren't
-> > related to the thread, either. For APBC, MPMU, APBS and APMU, I'm pretty
-> > sure they're standalone blocks with distinct and separate MMIO regions,
-> > this could be confirmed by the address mapping[1].
+> On 2/21/2025 5:05 PM, Krzysztof Kozlowski wrote:
+>> On 21/02/2025 09:54, Viken Dadhaniya wrote:
+>>> The qcom,geni-se.yaml file describes the Qualcomm Universal Peripheral
+>>> (QUP) wrapper and the common entities required by QUP to run any Serial
+>>> Engine (SE) as I2C, SPI, UART, or I3C protocol.
+>>>
+>>> Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml to better reflect its
+>>> association with QUP (Qualcomm Universal Peripheral) and the compatible
+>>> string.
+>>>
+>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+>>> ---
+>>>   .../soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml}       | 2 +-
+>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>   rename Documentation/devicetree/bindings/soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml} (98%)
+>>>
+>>
+>> That's just churn for no real gain. Not even tested churn.
 > 
-> They were brought here to discuss for some reason. Long discussions,
-> long emails, unrelated topics like hardware or different devices - all
-> this is not making it easier for me to understand.
->
-> Best regards,
-> Krzysztof
+> That's just churn for no real gain.
+> 
+> We made this change based on below plan, we think this will be helpful.
+> 
+> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml. Reason at 2 below.
 
-By the way, I made a summary on the hardware covered by this series in
-one of my earlier reply[1]. Could you please comment further on my
-proposal[2] according it, or pointing out anything that's unclear or
-missing? It will be helpful for things to improve.
+There is no reason 2 at this point. You split your patchsets
+incorrectly. At this point this is churn, without gain. No users of this
+rename, no benefits.
 
-Thanks,
-Haylen Chu
+> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (spi, 
+> i2c, uart) nodes. This will be helpful for the shared schema in the 
+> ongoing changes 
 
-[1]: https://lore.kernel.org/all/Z7m2oNXbwJ06KtLQ@ketchup/
-[2]: https://lore.kernel.org/all/Z7BTVu10EKHMqOnJ@ketchup/
+Then post it, instead of sending something which makes no sense on its own.
+
+
+Best regards,
+Krzysztof
 
