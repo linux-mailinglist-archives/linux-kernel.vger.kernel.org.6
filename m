@@ -1,190 +1,143 @@
-Return-Path: <linux-kernel+bounces-529487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D0ACA426E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:52:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D41A426F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E91443AAF46
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:44:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887613B3193
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1BD25B669;
-	Mon, 24 Feb 2025 15:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F251125EFBE;
+	Mon, 24 Feb 2025 15:45:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i3VXofvz"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="Yugd5ZV7"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7410825A635;
-	Mon, 24 Feb 2025 15:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D877425EFAB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740411883; cv=none; b=V1YpzxgMKjmTRvkAGCGmk6Re+LWyrGr/fvt8Gz3mpute/t3WTNY8Ndoui/KzggNZ72roomw1h2zV16o9P/6X13dPpODtBahWUkNcP1tf20nKJ2V1/GEIYqvio/iXjyznQZPvRsOpvTixZqoe8+c+F0zvz+xcVMJUKyR7/YSm5og=
+	t=1740411940; cv=none; b=sa8dJKi+vfCeb53qoc/HjG+vZ4ykP71ljW3WZSpmiw+22Zr4f9ZZQG21aBcsPl86yi8BeM1mIZURpXVKw4n+rI7tuJfyUt1skvBLjZkSz7qEq6MCKP4Po/b51fbIwdGeXt/E89tVTUbXHK4Kn2hhwloXUKds0GNBYvzntaKY4E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740411883; c=relaxed/simple;
-	bh=J+gl8zI+aOkzWMZcWBYieBoghSBOVNuSVtqd/1Ru9AE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSTmAbFd5mv+j1H4pZEWt0fs15CLspamZ4cGh6QeN4z1ifb9pR/MaLs5XysHsMP/0CqEoMiDBKjfYFTOwDpwL9KVjVHbgUREZNBHxBOmiMvqEDpoYRA1SF9nSv1VtmVFpaVd9Hnfi2uJtTQdauiL8X+AZO95NW3oONJojcbCCfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i3VXofvz; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e672a21b9dso46261216d6.1;
-        Mon, 24 Feb 2025 07:44:41 -0800 (PST)
+	s=arc-20240116; t=1740411940; c=relaxed/simple;
+	bh=QR8PQ2mLsQpUR1F0fq8t6LeA0WbrKQ2TFmOHo4xz3F8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mAcdKLmOBnPqvhnBvbOL45PonVgaByoHsZZrToV5d2sf3iG24WiSFS0iykQXWqfaoRD2TtFe+zqqxu/UptDkJs5JSxbKNCRdMdEnuSAhRzOc1lFhd63VyR6tZiSzWl1ZtE4SveYrcoFWelivIUw598Py9SN0PbGvKjsGrDRjZow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=Yugd5ZV7; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22100006bc8so79505695ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:45:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740411880; x=1741016680; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+        d=scylladb.com; s=google; t=1740411938; x=1741016738; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DHPZQvko/HffTgoOSPKfEHyGmWWc1I8vABPxbSEtw8s=;
-        b=i3VXofvzc7dc8Km2ojzRFazHP+1ui5J9uy9pfLhPYKkgG/7fjsoYRTMgpB3cCTrg4I
-         4m3Cg1tztrrSl3BN9MXoxdl50EMWxvMaOoEkzVF7egeOnO1RevC3D9hUds5e2L/eyWXD
-         RrKGNjiF5rsUEOG0SnBxLLsR6MxDPOy9cFPmfotSOEYYuhb3Z/mZAkZfS6ml+p4X3U6p
-         faaRozPE3kNvb7bxia8yzeAJMXDmUPER+GJwVywcHgNr10JEkMBB1VxQ7s9e+VnP3XnC
-         w09Pm6gAc+JJwzX7IQZr9K4SfHdt06zf+cZ0KX8BP61Wgu2ZG+H1o+IFYWzKB3vwHnSW
-         nEjw==
+        bh=2vpFPjAJvV1xY/hqE7tYkEGP8ugx8Y4/2E/Q9/wCmV8=;
+        b=Yugd5ZV79CI63ZzMcsB6uxbKKBpJC60ivCFpRse/Xso+Y0KDYMfDVDp4lAh/ZRSJTT
+         YpBJgCS6qpdr1y7g9yZZwYPPhLyKFK7Vi7njJIJfdm6DQPJEliuwBKqMLKtIftTAAg7v
+         rQWfMy6i+kecNIUhnWet+GYCx8a2pcngGD0lmvD5iqebmITIm9+MK5O+AnInaQuqQHIS
+         t1KjUdDIPYto8hFfRHZdtoLJhHnomPwDUbFHZXKa9uHR6W7NP+TueShtMpTX8xEg2Qkw
+         oK9uxHX7xKAD+2IPX46ruh1GZAtTBLtUuD8sI+KT0P/jMWnwQrVbuY+3R8wrW+RMVDMK
+         cIYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740411880; x=1741016680;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740411938; x=1741016738;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DHPZQvko/HffTgoOSPKfEHyGmWWc1I8vABPxbSEtw8s=;
-        b=s4s2dhLVk1XIBu+2pXkQrItBTjJ+AhYYG7XPP0X/k8Nehyo7SxkBk9mdNRYXwX70i4
-         LbxWFNE823OQn/7wvZYbfjyDi6rHMWLiaQUD0gODg9//FHb25+09wDTj/ysKK+BIsCCb
-         jWuVCLbKYaj+XI0FKxZITbc5A92D7W/TjHTaNxvy8y9aOPgv5VQu9URFJ9djLJuICyQN
-         WYhZkIrj8lQh4gVh0M3Rrf70ztp6lVkSGKIyQydGBo/lV/mY2HgdMTMQs5vEodYJ57SA
-         t+rJcBySAZFi93i4IeitZIgoyRYDEEOPjSpb0wMIbICfnGcgF60+Vg/3yF73X9cAslmt
-         srRg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5k1NZcSwZ0uBtf18M70SbBz4Ml6HkvB9gzYGOS750SZHqux/VlAdorhyVDzPa8bn9kx/Wx2/gSbAp95boaJc=@vger.kernel.org, AJvYcCWOhapKRyDrzqEM32r9G77NaPEVDkU3blLVz699mDrtNu1IULJ0Ngo2Y17Da9baGeWfJtAM4ZwvwsSh+0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA7vtV2g/G5vSiAXY5cUmtvthJjSHRId1L18ayPF7eA2o4CNoq
-	62NU9a1OfP6nSH5JnvKW44FQsDL4f4HIOKCxmSsMBqf2B1eA3arn
-X-Gm-Gg: ASbGncvhvBKH+cZ2Zqj+y46KLlpJZZXeK3CIzB+LVMezaHmqEc43oBytVlQ8QYyt2Dm
-	hdv58jg3vK9CaRpvQZGbMAHIgBVBnNNGrQ4ajOrk8I2siGDaX1mVmGhYP9WcK8nDE4PP1pwDUuV
-	Iszee6oTSlTDZQdIzKa2JZyfAJwli1izhBNuCZD3V3O1+tgwXMyweZUiHDFHapnWTn2IMFPgENh
-	642y81yabJTCIZaSuo5nrMhIsD0tpxWV4xmEWhvhpU/HvBzBZEhAkPcZPAQ5ygLEuHjtPOQZH8j
-	UUKaZ+fXGGClOSZIi6BN0Q66EOsFqrLxmDES/w6zo7pF2kBDHmIy40ARbyBWgUhJdRXaEO3/jcG
-	H43EF6G00UcuhlmEG
-X-Google-Smtp-Source: AGHT+IH8t1y3bfSFEhxMCATproIIJBMxamHpMvdXNg9UJaxjYm4rH8D5pHTYcmAQFUC39/JTbfmjIA==
-X-Received: by 2002:a05:6214:d0b:b0:6e6:68d6:3932 with SMTP id 6a1803df08f44-6e6ae9bf220mr177810886d6.40.1740411880220;
-        Mon, 24 Feb 2025 07:44:40 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e65d779400sm134505366d6.7.2025.02.24.07.44.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 07:44:39 -0800 (PST)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 2C5AC1200066;
-	Mon, 24 Feb 2025 10:44:39 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 24 Feb 2025 10:44:39 -0500
-X-ME-Sender: <xms:55O8Z9ELV-I0YlEj3pqeYjUkTsgMeviHFeymAbk3eCRZwtK_4T3PdA>
-    <xme:55O8ZyXqT_4m09g2oOP2oWeolhT_oOJddEfgxBAJA8ZyzdMJGvV8mNCuaayTrnJ-u
-    37suDFaZXrJJHDVBA>
-X-ME-Received: <xmr:55O8Z_JH4PtijRtauVF3n3SlA6AmIgumHvum4wY3UZXnRvYv3xjdY5ucMg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejledujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepjeetffeiheduffdvjedtudegfedvfedtkefg
-    gedtuddttdekfeeliefhkeetfeeinecuffhomhgrihhnpehruhhsthdqfhhorhdqlhhinh
-    hugidrtghomhdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfr
-    rghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsoh
-    hnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhg
-    peepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedvtd
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtph
-    htthhopegrnhhnrgdqmhgrrhhirgeslhhinhhuthhrohhnihigrdguvgdprhgtphhtthho
-    pehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlih
-    hnuhhtrhhonhhigidruggvpdhrtghpthhtohepuggrkhhrsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    epghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhes
-    phhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:55O8ZzF6HTO2igzUUaAxmnVvqgDv070-qpT9Z_r1URiUF-mxv3TUPA>
-    <xmx:55O8ZzXRxJ4JdvixC6uZfLDdciqEd35XD3L8HEVTou6ns7PCoBUVAQ>
-    <xmx:55O8Z-NNhcGuOmlPlEKLKVaOrwxKnr6X7qpx_0H8qx24MrRu4Nn_WA>
-    <xmx:55O8Zy2tnUO4gnEeVd95YM7GZ3QB-NBrLBQL9aCa93P5PUi6jv2e2Q>
-    <xmx:55O8ZwX35ScX_WIZJkyL_Iu9g8HjxDpPaMimO-prm2JYDed94-plSjwl>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 10:44:38 -0500 (EST)
-Date: Mon, 24 Feb 2025 07:44:37 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v9 13/13] rust: hrtimer: add maintainer entry
-Message-ID: <Z7yT5XU5gAm0ZCZD@Mac.home>
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
- <20250224-hrtimer-v3-v6-12-rc2-v9-13-5bd3bf0ce6cc@kernel.org>
+        bh=2vpFPjAJvV1xY/hqE7tYkEGP8ugx8Y4/2E/Q9/wCmV8=;
+        b=g7GCtMzWshyGkj6WYgFSpeiC64E5f7WJFFXRvIEfAYq3w1hDyIE+V6hzg8FKr+qZyL
+         Z+xQVR1VDFuE4OiimLAuMPxKUMOIGFRN7lEj9Z1wgHnWgbW7okIowrwXA4jX+HfuAnF4
+         1DYJfKx5Um24NPM90LCHq7mo7P9jDets3gkPEkeNcKRehoWyaO+/1MCrzXTvlzGAfLvi
+         xXHxpVlHTxfn73rIo4cUcyiPR0kC7NPzJusKDCTuklWppHsWztJLPD+QTNhDZjosJJTv
+         8YtUwJU8bywzComPAqQHK6LuG4i6efGt6QoY8PP5Hn6ISbk21xoVtyc/GP/CWnzoYTXq
+         D77A==
+X-Forwarded-Encrypted: i=1; AJvYcCVIcKdbV5nEI5tQfnG9SBlif60Iw7pNeq4r0PeJl2zQAD4ykgQ+bc32drWcp8/N8OTW7HAhO6hkd74jKYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuz8s+7pvQJJWoGqYuDM/n3SZTCSXsT3eol83+WPu3TmNxZLMF
+	gCL+JnHEShZBENeLz0Zt3ZxoOxlyst6KQoU/6S4sWllSX/Ibi9CL+4YBsKy7rRGp4e1QlcvSxty
+	a/vV9vd0VNd1W+sXGAIi6kEHDSV4/YzQ3zQ4W4/CzkVuZVU17Qceb6G3+aYxTLv+/diQvfXBMMu
+	hI3gAztpsYKoZU/YIiPHx7cRG2U4XY9K74ZBy10OPRKf4p2poXWQm+48vUCv4lNZ068CEobl+qZ
+	y5ZR1baTMwzNSj76VtfCCzFD5bdme9+bB/U65rKoqVsSNT6mPW2NoGd14NYvmkkPjAEYGQKhdDc
+	iYZcTz8Xn90s9OQYk8ZyewSP10uLxLJMaE5zBBJuupllqFkXGhXUqNAyQxeuaXHdtlCC98i+Ajw
+	MlUpVeTuf/3b6iThlZeF5YKosAAojgoh2BA==
+X-Gm-Gg: ASbGnctTNbFqwEQBOZ2LJr4zUZERJ74gYX3sPO5Wsmm1j1+okGF0q7slvgwjYJw9zbA
+	RpQc9kx6wbaB/OJYHBwQ2uWIOed/Qwz3FbursYpbcY+XOHEESh93f/AV5RLb4JmYCD1g0P1UZJD
+	5femvGGLpulge0+PcerbeJsg==
+X-Google-Smtp-Source: AGHT+IEcQNiAKMUbPh0M58vsweOlxgosMhBo5YTURrJtkfwHfEjps5PLHRpPddIOGjzbuxIf2pQa9/eWZhn97IwVteY=
+X-Received: by 2002:a17:90a:d60b:b0:2fa:e9b:33b3 with SMTP id
+ 98e67ed59e1d1-2fce77a646dmr21092693a91.6.1740411938036; Mon, 24 Feb 2025
+ 07:45:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-13-5bd3bf0ce6cc@kernel.org>
+References: <20250224081328.18090-1-raphaelsc@scylladb.com>
+ <20250224141744.GA1088@lst.de> <Z7yRSe-nkfMz4TS2@casper.infradead.org>
+In-Reply-To: <Z7yRSe-nkfMz4TS2@casper.infradead.org>
+From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
+Date: Mon, 24 Feb 2025 12:45:21 -0300
+X-Gm-Features: AWEUYZl1jANUANFo8W3Lf3P8R8iIFWcreRO9Y0ZcM5Jd0irI990vkN6P7vCMcpk
+Message-ID: <CAKhLTr1s9t5xThJ10N9Wgd_M0RLTiy5gecvd1W6gok3q1m4Fiw@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, djwong@kernel.org, 
+	Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-CLOUD-SEC-AV-Sent: true
+X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
+X-CLOUD-SEC-AV-Sent: true
+X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On Mon, Feb 24, 2025 at 01:03:47PM +0100, Andreas Hindborg wrote:
-> Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. Also
-> add Boqun Feng as reviewer.
-> 
-> Acked-by: Boqun Feng <boqun.feng@gmail.com>
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+On Mon, Feb 24, 2025 at 12:33=E2=80=AFPM Matthew Wilcox <willy@infradead.or=
+g> wrote:
+>
+> On Mon, Feb 24, 2025 at 03:17:44PM +0100, Christoph Hellwig wrote:
+> > On Mon, Feb 24, 2025 at 05:13:28AM -0300, Raphael S. Carvalho wrote:
+> > > +           if (err) {
+> > > +                   /* Prevents -ENOMEM from escaping to user space w=
+ith FGP_NOWAIT */
+> > > +                   if ((fgp_flags & FGP_NOWAIT) && err =3D=3D -ENOME=
+M)
+> > > +                           err =3D -EAGAIN;
+> > >                     return ERR_PTR(err);
+> >
+> > I don't think the comment is all that useful.  It's also overly long.
+> >
+> > I'd suggest this instead:
+> >
+> >                       /*
+> >                        * When NOWAIT I/O fails to allocate folios this =
+could
+> >                        * be due to a nonblocking memory allocation and =
+not
+> >                        * because the system actually is out of memory.
+> >                        * Return -EAGAIN so that there caller retries in=
+ a
+> >                        * blocking fashion instead of propagating -ENOME=
+M
+> >                        * to the application.
+> >                        */
+>
+> I don't think it needs a comment at all, but the memory allocation
+> might be for something other than folios, so your suggested comment
+> is misleading.
 
-Frederic, since you've reviewed the series, and we certainly need your
-expertise here, do you want to be an reviewer in this maintainer entry
-(to watch how we are doing maybe ;-))?
-
-Thanks!
-
-Regards,
-Boqun
-
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-> ---
->  MAINTAINERS | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 896a307fa065..60fa77c41b3f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -10355,6 +10355,16 @@ F:	kernel/time/timer_list.c
->  F:	kernel/time/timer_migration.*
->  F:	tools/testing/selftests/timers/
->  
-> +HIGH-RESOLUTION TIMERS [RUST]
-> +M:	Andreas Hindborg <a.hindborg@kernel.org>
-> +R:	Boqun Feng <boqun.feng@gmail.com>
-> +L:	rust-for-linux@vger.kernel.org
-> +S:	Supported
-> +W:	https://rust-for-linux.com
-> +B:	https://github.com/Rust-for-Linux/linux/issues
-> +F:	rust/kernel/time/hrtimer.rs
-> +F:	rust/kernel/time/hrtimer/
-> +
->  HIGH-SPEED SCC DRIVER FOR AX.25
->  L:	linux-hams@vger.kernel.org
->  S:	Orphan
-> 
-> -- 
-> 2.47.0
-> 
-> 
+Isn't it all in the context of allocating or adding folio? The reason
+behind a comment is to prevent movements in the future that could
+cause a similar regression, and also to inform the poor reader that
+might be left wondering why we're converting -ENOMEM into -EAGAIN with
+FGP_NOWAIT. Can it be slightly adjusted to make it more correct? Or
+you really think it's better to remove it completely?
 
