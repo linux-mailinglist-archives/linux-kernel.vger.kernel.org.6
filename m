@@ -1,106 +1,125 @@
-Return-Path: <linux-kernel+bounces-528596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D10BA4197C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:49:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40136A41985
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:51:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED87188D8AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:49:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063B5188DC92
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F23245035;
-	Mon, 24 Feb 2025 09:49:45 +0000 (UTC)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B591924A050;
+	Mon, 24 Feb 2025 09:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RiEEbV6J"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E059118DF7C;
-	Mon, 24 Feb 2025 09:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7337E1A08C5;
+	Mon, 24 Feb 2025 09:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390584; cv=none; b=OA+GagE8r6GyNExUT0bX1SNvebEDrkiRp0jRml7MTKIumkDsSyCGxfIkr9JRrJDWgsFvc6sow+iFyTZ2ZrbIHnD7ivFjsgfy8H5mBAwF2e/MbvnMzsu2Ac0qgpyMb9vIQ3M9JkxLocSkl7ShXWojU2nZ/FcIs/zB8i3AY7f65wc=
+	t=1740390653; cv=none; b=fGRoK+ym206urYFTQeEAgwQ57bCzltpmneUcYD8bdnOJPmsrWhaYBJT6/48OuFzbbZE72iCGZE/nLKQrneslP/fFsQmt9kUH8klICfpwcGUEbiYaIIF9pNy1kCZXwdbugLVhWyWEENngvoKlVgmkyFP0FezK9tdZbotMGHeyCPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390584; c=relaxed/simple;
-	bh=wKP0ZvtqVEvnjUag7mIqTFU0dDxFIM3oPXIrJHQBtqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JJgU9JfcZmYzTxDIafoIMRoDYQI/3ox4hkmT0f4CuF7JyjkAKrGXz5pv6qPpjj0FTIBa4K2msfPEIxdQuVjKxTU0HDa38uXEgCSs/Pwnd1YeA9osjiCDI2Czu+XS5xCK2LSb5mxjtgfNwFpcIFiqeSNHuhv/RFAwVw37FfOyx/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4bfb4853c29so1003452137.0;
-        Mon, 24 Feb 2025 01:49:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740390581; x=1740995381;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tchK2LqxovqryZGaaL7rRkpuuWybVSfdD8fFD9c89Mo=;
-        b=iiZ6WJ+mpfUlnZ+elO9XOvyJFGvckrJC5B/MZFEO+sVrB0o0nKy8dGmc8T4/5qnjZn
-         Qzn0/eB2a4lgPDV26uKXEVlbYILIW1VrwyksedCyI0fZY+uNk708Vy/9QCeH6R/a5Uj9
-         JAjkhgskRVGYIUA//S9QThqwel01rty6xYTuVptO7uTFXh/MYKdQztq+o9OQZ0ov5DiZ
-         CG9h9biAIFflgtjQxGdAHyjRBxDnRf8XsoNssA4rr+wEdEczFotmxJqX6p21mxltJ/ou
-         H7cg5t7NcxhMM8AoKvLIN0UD5ZkX2N8lK1hWkzdJScXQhCWiY+mvcdCchuO4APYCWfkI
-         EU9A==
-X-Forwarded-Encrypted: i=1; AJvYcCUigpJIORAeA1XJMltfVGcJIrBNZ6o/RQplgm5r7OwekPKz8fkYSLxwXjUovOkc4/NZdwz6KwP5@vger.kernel.org, AJvYcCWFyZwnxvlc+uXIEIOzHE9me8vknMj9aDo/fs2/xIESMvTQcCDZ1Zp4i/AjRozVWFpTbYLcvQnjH+ZeE+/ikl+JZfA=@vger.kernel.org, AJvYcCWrj+T5GyB9B3G55/16taW8TarY+XMbkJN2zGu3OQnnDX6/dZzZt5WZTrqikRddWJjYPGNZyo/pSd5CZwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzd1foGwoxdDpYACiv5ZU1+F+ND08wcQMYaajw9HWfMizKnC6Q
-	mqpAKytCVDtLdVpsPIwG4rT5oqc2g+AVeOhO1Vx1PLqv40RFh4qUP1XiVm7v2LU=
-X-Gm-Gg: ASbGncsAmBoM4xi0+glWKntPfkFZSxlsFG4o1LlLfmzp+Q5c/xxZ/EvplWdiToieuGS
-	9RDxLIPRyc9I8GS5CiEccQscvp6jaFvdGbjf9sfSKEi9PE0S4hndBiDsiI1GTnMP44sQYf+ldvs
-	eZ7K2lGu1wUzUR0rGPuKkQMzSLQZP2J4hCU9RZ5bl/CFdbxlj8/WhCzImc9adCqcQzBk2mAOlYE
-	KJvg3u50K3Vq2cykzQsw1/rFd0zugWNsGLyYWNGscqoyaCT5TzMerIX8SyID5LcLc+3egOGhS85
-	sbZJ5rH7BiojAenrX8dmYYKWvvtfYhz387NDsVFtJAeYZxqQov3/79WTKQPU6DxG
-X-Google-Smtp-Source: AGHT+IFUjUydf/NzLTZgweIG/o4kP8kO5SHNRltzfEDjwz0NZmtsP9UoA46G3kfUHaRcxb5MnXmcUQ==
-X-Received: by 2002:a05:6102:50ab:b0:4bb:d394:46b5 with SMTP id ada2fe7eead31-4bfc003eae0mr5668969137.1.1740390580688;
-        Mon, 24 Feb 2025 01:49:40 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4be4d833cd5sm3224631137.13.2025.02.24.01.49.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 01:49:40 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-86718c2c3b9so1067204241.2;
-        Mon, 24 Feb 2025 01:49:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUPtjNqpRgkxp3wOGVeZ6PN/RPTnJKJ2uifCbYaOTAze1q+xXsmoPIYgijTYd06a0YzeWyj3Kd7mUJ+5+A=@vger.kernel.org, AJvYcCWQxq0xJSpKLwgbQs3PCbHrPGotntZSEb1HqjaXyAbc0UJw1yXDZrdeFDehAJ9kASs0Q8chHfBd@vger.kernel.org, AJvYcCWrBTmxOZLJ4GvKXtmkp9rStCBJOZxuqgvcR9Mgj3xfbm7FWH1O7Xyhz1UByiQAMM6+oPHk3F3hf9uordPnxYstGIw=@vger.kernel.org
-X-Received: by 2002:a05:6102:442c:b0:4b2:9eeb:518f with SMTP id
- ada2fe7eead31-4bfc00c0415mr5871994137.10.1740390580092; Mon, 24 Feb 2025
- 01:49:40 -0800 (PST)
+	s=arc-20240116; t=1740390653; c=relaxed/simple;
+	bh=5fU2PZlxklOXAz3WBOD3tBxeCI7SfU36BEOyoLnQRhs=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=FpNbglTPRBHvGoGrdJsmLz1gKCtO6VBk2iCayefEm3Yik1jfI8iblOvwuurLI+tNTWYjHk8d74Kht1jqgSd1jAz398W0Fl7nBQzOetQnw3x14Z3946/jHNUawWbLX0qcT9niJoPZvva/6X+qZ/IsOiU/6Zpky1Bdz6ey1MEdfLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RiEEbV6J; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9axRw001740;
+	Mon, 24 Feb 2025 09:50:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=MmofVo7qfx/rrCa9A/0teO
+	rGqwTLjT9i0k2n9oXMAi0=; b=RiEEbV6JuH8XfDcP6gR1gu74INYjUi2iovAS3v
+	HcwQpItNTGB5wrOv59dwWCwUYbTfFlq21zUBB3UuszqbH6IrgMSx55ap5C7j/UzO
+	9n3OZr/ZSO3oiQax7AQRTu3DNnu+lFDrsDv5liGhEUqXp9/Jvhw0UqmdTaV/+Ojf
+	A0Q0lce/cg04hxgCxkXIx3H/IZZHK/T0kJKInn6j7kq/3ZrlxwTq1B9Y917sGONA
+	eRuQutAflNIG1Q2yTIRPwbCJoaoApQmlC5lF5ODA/V0uxhUdVW1pmlfGm/AScoOg
+	Ge/oLOy0OzhqVkiVZJnhQfwiIv1kn+ojPK/REbTUB4L08DYw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xncqrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 09:50:42 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O9ofW2001478
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 09:50:41 GMT
+Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Feb 2025 01:50:37 -0800
+From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Subject: [PATCH 0/2] Enable TRNG for QCS615 Platform
+Date: Mon, 24 Feb 2025 15:20:07 +0530
+Message-ID: <20250224-enable-trng-for-qcs615-v1-0-3243eb7d345a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223233613.100518-2-thorsten.blum@linux.dev>
-In-Reply-To: <20250223233613.100518-2-thorsten.blum@linux.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Feb 2025 10:49:28 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXnxwvU48VGoWQOwOEnM81apbpPq-mzqUD4PiBJnodD7A@mail.gmail.com>
-X-Gm-Features: AWEUYZmvyxjROFgMbBy9Q2nVsAqCQOrnswnulEcgmrRf2UVfxaewQk6ZOtbA8LM
-Message-ID: <CAMuHMdXnxwvU48VGoWQOwOEnM81apbpPq-mzqUD4PiBJnodD7A@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: ethernet: renesas: rcar_gen4_ptp: Remove
- bool conversion
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAM9AvGcC/x3MMQqAMAxA0atIZgNtRQWvIg5tjBqQqqmIIN7d4
+ viG/x9IrMIJuuIB5UuSbDHDlgXQ4uPMKGM2OONq41yFHH1YGU+NM06b4kGpsTW2piEiW9ngW8j
+ xrjzJ/Y/74X0/zjORiWgAAAA=
+X-Change-ID: 20250223-enable-trng-for-qcs615-706ccc131ba7
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinaba
+ Rakshit" <quic_arakshit@quicinc.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lRQc1G4nKaHz4cbAmy--T9EBqr7w83z6
+X-Proofpoint-GUID: lRQc1G4nKaHz4cbAmy--T9EBqr7w83z6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=528 bulkscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1011
+ priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502240071
 
-On Mon, 24 Feb 2025 at 00:37, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> Remove the unnecessary bool conversion and simplify the code.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Add device-tree nodes to enable TRNG for QCS615
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch series depends on the below patch series:
+https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/ - Reviewed
 
-Gr{oetje,eeting}s,
+Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+---
+Abhinaba Rakshit (2):
+      dt-bindings: crypto: qcom,prng: document QCS615
+      arm64: dts: qcom: qcs615: add TRNG node
 
-                        Geert
+ Documentation/devicetree/bindings/crypto/qcom,prng.yaml | 1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi                    | 5 +++++
+ 2 files changed, 6 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250223-enable-trng-for-qcs615-706ccc131ba7
 
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Abhinaba Rakshit <quic_arakshit@quicinc.com>
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
