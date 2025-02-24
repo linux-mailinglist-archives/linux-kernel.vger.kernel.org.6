@@ -1,80 +1,102 @@
-Return-Path: <linux-kernel+bounces-528144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4913BA41419
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:37:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609FAA4141F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E17216E86F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:37:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4547C172431
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E931A9B3F;
-	Mon, 24 Feb 2025 03:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24ED1A9B2C;
+	Mon, 24 Feb 2025 03:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Qnsup52z"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j8TUACTx"
+Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C785619F48D;
-	Mon, 24 Feb 2025 03:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D6FF510;
+	Mon, 24 Feb 2025 03:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740368220; cv=none; b=seuMsiq8EhIuWEGQCiOwzbpVmrL9xifc2vjUJi7/UOikYZ70Em5tMTfJV/dIHt+CcmkUOsyo3ACro5N0zs9Nuw0fXgFdhgXK8w/SOxzCevVNYmyM0png6Blv9QP5XCBFT56Hq+XlWU+igLqzfzXhm9MvoWqYCsu85RKywJN11gU=
+	t=1740368334; cv=none; b=r4dd6v92RD8PVJOkYTvrwDMQXn1JxjsGJlEtCDG6A8CQzGBXlZ71e3k4/IwN94EiRtH5jm0d5u80jn4nxmxWaXy0QfmY4QVjWV7jqrinb8sKBmDGU/BXAiEANF81qbk23D3G8GNGqMchL2dqq1v7Z5rwCnV3p7NudlobLX7DhcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740368220; c=relaxed/simple;
-	bh=2MghzfEybTbaDT4h1UamnJYUFiO/it1dwZvswctKrog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mz0QefHZLIuC708q3oZdPLxibB1Rczek2TQ1/7qeUA2x68k6LX2uY3vay/OhEIDQo4ghyuq5Wh9vksjppePtwzR0uHezdh8xL4P0RcSKZjo75KO8TwJMIV26ER8EhRYJ6SAUIUJashH6VncQwKGB6qnml1uhFWGRfP7/zCi6ssY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Qnsup52z; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=YpNO+c6fto5jPuYraaG0BE3x8Zo7nWvaRTcmjs1cjT4=; b=Qnsup52zYs7E/uQUFhfzcvWcHU
-	y06TZe1GmAzZudryWxeREUkDQmBTHVX1IkECBHazLH5ivrukhyAlF/vMPFiVjQXGQq+NUMFRUgjuN
-	1peD8ni1drEoz4ibG1hHU7MQ924FovjnCH6nsOrUmshuEZM75RFLNJS3vpU8mpm75qDU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tmPGz-00H1nK-MA; Mon, 24 Feb 2025 04:36:49 +0100
-Date: Mon, 24 Feb 2025 04:36:49 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 2/2] net: mdio: mdio-i2c: Add support for
- single-byte SMBus operations
-Message-ID: <4ff4113d-f97d-4d40-bd7e-cdba6f30b6ee@lunn.ch>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
- <20250223172848.1098621-3-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1740368334; c=relaxed/simple;
+	bh=khPyexFgRrzKD4aS8Pr7cyj242wf3EyCfCMQCvtoNiQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oTX/5Re2T/rSEoN/98oNCO1cXvdiBkyj+3swhJspLkz/eFBDmnyHAhuqJ6hDCzW1WvUcAaJy1hPmnx4DSimhFCTT5lmwwq5Mf2dUSH0VBj+iDERRF//XfDo75UrotadMljC3sf0PAnrlIfoaTYsnODEmFzrwriqsF+HiEWby47I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j8TUACTx; arc=none smtp.client-ip=115.124.30.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740368321; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=zDYrXQDA4qm9LJorA4fiBczFbRiFUQ1RGHOU5r99wBQ=;
+	b=j8TUACTxtSTK/lxfzbqGXTay5cMBroXpK5kHDpL6xiUdM2+D7FsIw7sIYt2K6M5lJKl50KfyPkT/XAm4n+5oO20yBiMxR6IkSafHa7cBl25kLaz8pkk39KwKtrE8YKbwEcm/h4wPZ5//Brfa2cOJP9h7G7E3yZTlzfSyceT6IEk=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQ1w.6n_1740368318 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 24 Feb 2025 11:38:39 +0800
+Message-ID: <fc8788ca-ffef-4166-a8d0-4c5748003de2@linux.alibaba.com>
+Date: Mon, 24 Feb 2025 11:38:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223172848.1098621-3-maxime.chevallier@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] PCI: hotplug: Add a generic RAS tracepoint for hotplug
+ event
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com,
+ naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com,
+ mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com,
+ rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20250115013753.49126-1-xueshuai@linux.alibaba.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250115013753.49126-1-xueshuai@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> This was only tested on Copper SFP modules that embed a Marvell 88e1111
-> PHY.
 
-Does the Marvell PHY datasheet say what happens when you perform 8 bit
-accesses to 16 bit registers, such at the BMSR?
 
-	Andrew
+在 2025/1/15 09:37, Shuai Xue 写道:
+> Hotplug events are critical indicators for analyzing hardware health,
+> particularly in AI supercomputers where surprise link downs can
+> significantly impact system performance and reliability.
+> 
+> To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
+> tracepoint for hotplug event to help healthy check, and generate
+> tracepoints for pcie hotplug event. Add enum pci_hotplug_event in
+> include/uapi/linux/pci.h so applications like rasdaemon can register
+> tracepoint event handlers for it.
+> 
+> The output like below:
+> 
+> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
+> $ cat /sys/kernel/debug/tracing/trace_pipe
+>      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
+> 
+>      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
+> 
+> Suggested-by: Lukas Wunner <lukas@wunner.de>
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+> Reviewed-by: Lukas Wunner <lukas@wunner.de>
+> ---
+> changes since v5:
+> - move define of enum to include/uapi/linux/pci.h
+
+Hi, Bjorn,
+
+As this patch missed v6.13, should I rebase on pci/main (v6.14-rc1)?
+
+Thanks.
+Shuai
+
 
