@@ -1,121 +1,111 @@
-Return-Path: <linux-kernel+bounces-528674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C07A7A41A96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:18:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D48A41A9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:18:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5469A17246E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:16:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C0E189002E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7D12512DB;
-	Mon, 24 Feb 2025 10:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1EB24C66A;
+	Mon, 24 Feb 2025 10:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qf/VzE6g";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zBT+udGT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B56224F5A4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TIj9PGJi"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D661A0BCD;
+	Mon, 24 Feb 2025 10:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392130; cv=none; b=uiL+c6kzRf+Z6yJwZQPtVY+Vu+N3EqFQQXetG4D8OZEqL9TXfRVgwA80JMQutIwl7S6dkIRaGMGrvZROh/wuULXRlt8czBs1cdW8G17HOC91k3x3NFV1NW9ibKpvWR4BX8C2cbP8yA9r8THHzzmL9AlWzABv8Se+D1NqQRlzBz0=
+	t=1740392202; cv=none; b=l2ny6jLHLIlVam2gw2I31afypjxLqL3/tDybE8OANnHau5gCyleNuApVwYvtmE0GXu5BoJvLGH+qvJ7PsaPidhwmBqtgldYUXIiIY4Stmn6YFsQYnd1KiMckNfJ9TFR78MUGEEe8MDP/kHRL7m160rCaUnzrrLWYd34TCIanlNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392130; c=relaxed/simple;
-	bh=YuCCqu2WJyvGIMJolIDYCOzTiBIB7QWQZ3Kkw08rbs0=;
-	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=XGS0wJVGccy8MlXsdUCP+3E5MJhF4Yl4H1zPt3ZKu1WYXXlkNH07NsIJTANTleDiS/TZpY42zksGCyZ6DoSFEODxOIXyjjCOuIirrDAi/4Vl/l9j/SXtcjH/HXEvOHTCjiujclmF/AB98tw/nNa20Ply1tUONsVeTGnhTqhpDew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qf/VzE6g; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zBT+udGT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20250224101343.145414888@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740392127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=06e/nLkYRQzPGWTt39F2KrcgBwQj9ajKa6Dm+qJCWzw=;
-	b=qf/VzE6goSJCERBuFz1Y/5vwJX9qrf09SzHBhUOJF+ZmgTYg7tLnXGdGg3wOX5ii5lcpft
-	A7cQMw5DBDukhHXHXZgxE9u67xDIdc3SWBmIYlkckzJjVmOJ87w8/FqspqDfmLZuvJZuUI
-	CmXWrDdjRTzQ7UlVMMUnzsTRifQ/FDS3zbWee+OHtWhuGjSfxtAkWwANF5OYKcXrLV6bFP
-	5Rntb4AshqL1DPy2pwXLqjpfd7nw9w+HzPIBmceg502RU6hRU/tPz/A2MeckJfhG60VFpG
-	PAnGhPIWSJeHjFa5N9DyZFwVhonFA8zBWhzAkZ7sr8OpYpEL5bmSvpaY8rJRoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740392127;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=06e/nLkYRQzPGWTt39F2KrcgBwQj9ajKa6Dm+qJCWzw=;
-	b=zBT+udGTCIOKpU92GttOixVsjED9IeuN4yqvOITytL3SjA7jVlePLCaCPFVA1vIe1jdiO/
-	/R9ZcU4dcc3IxoBA==
-From: Thomas Gleixner <tglx@linutronix.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Benjamin Segall <bsegall@google.com>,
- Eric Dumazet <edumazet@google.com>,
- Andrey Vagin <avagin@openvz.org>,
- Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: [patch 03/11] posix-timers: Cleanup includes
-References: <20250224095736.145530367@linutronix.de>
+	s=arc-20240116; t=1740392202; c=relaxed/simple;
+	bh=bmzP7DZYL5PU6Z8gYL3j8sFt9WnzcGSW4w4BWbHWCNc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tqUebHw80yo9Cb7EDWRXjoelum0YDGJx/3jH6n1Qv8ntw6YRwwhDVFaxvL6HaREyuL3TbXSE+Uf4cURNgg1+TOCXDMZqiJwd8RUYdLuNvaVW8NfmOduC0VLq+s2QLfPH2xrqejmqVRYrbBcvPsnpmx5LmPT03yYaZFlZm90ITbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TIj9PGJi; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=2oNUH
+	JB8g4nEbc2gNF1Ap4/gs+R1vgOD/JaR77WeBAY=; b=TIj9PGJifE7aVbz93cRvx
+	Ts90s4p4h6HSqsagsDQqZprmZ4Eu39a70Jw2Y7M+NjImctrmzZ29Gmup8PIzgk94
+	pkUWl6ZzDXj+mBZQ6wf83xzfO5bmsrgxTfFTOJojIyHkqRwJ9OdTidMIvJnZ4gUk
+	zkEYYw6CnMGS1jdx+QyQ7c=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCHzCnBRrxnlq0pOQ--.38564S4;
+	Mon, 24 Feb 2025 18:15:30 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: andy@kernel.org,
+	geert@linux-m68k.org,
+	haoxiang_li2024@163.com,
+	u.kleine-koenig@pengutronix.de,
+	erick.archer@outlook.com,
+	ojeda@kernel.org,
+	w@1wt.eu,
+	poeschel@lemonage.de
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v2] auxdisplay: hd44780: Fix an API misuse in hd44780.c
+Date: Mon, 24 Feb 2025 18:15:27 +0800
+Message-Id: <20250224101527.2971012-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Feb 2025 11:15:26 +0100 (CET)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wCHzCnBRrxnlq0pOQ--.38564S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr4xWFW3Jr4fKF1fXw4ktFb_yoW8JFy8pF
+	srWayFka18JF1UWa4DKw1xXFy5G398Aa4q9ry2k3s3ury5JF97tw15AryjgrsIgFyfW3W2
+	qFnFqrWIyFs7AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pREoGPUUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0gn9bme8PuRYhAADsW
 
-Remove pointless includes and sort the remaining ones alphabetically.
+Variable allocated by charlcd_alloc() should be released
+by charlcd_free(). The following patch changed kfree() to
+charlcd_free() to fix an API misuse.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 ---
- kernel/time/posix-timers.c |   26 ++++++++++----------------
- 1 file changed, 10 insertions(+), 16 deletions(-)
+Changes in v2:
+- Merge the two patches into one.
+- Modify the patch description.
+Sorry Geert, I didn't see your reply until after I sent the
+second patch. I've merged the two patches into one, hoping
+to make your work a bit easier! Thanks a lot!
+---
+ drivers/auxdisplay/hd44780.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -9,28 +9,22 @@
-  *
-  * These are all the functions necessary to implement POSIX clocks & timers
-  */
--#include <linux/mm.h>
--#include <linux/interrupt.h>
--#include <linux/slab.h>
--#include <linux/time.h>
--#include <linux/mutex.h>
--#include <linux/sched/task.h>
--
--#include <linux/uaccess.h>
--#include <linux/list.h>
--#include <linux/init.h>
-+#include <linux/compat.h>
- #include <linux/compiler.h>
- #include <linux/hash.h>
-+#include <linux/hashtable.h>
-+#include <linux/init.h>
-+#include <linux/interrupt.h>
-+#include <linux/list.h>
-+#include <linux/nospec.h>
- #include <linux/posix-clock.h>
- #include <linux/posix-timers.h>
-+#include <linux/sched/task.h>
-+#include <linux/slab.h>
- #include <linux/syscalls.h>
--#include <linux/wait.h>
--#include <linux/workqueue.h>
--#include <linux/export.h>
--#include <linux/hashtable.h>
--#include <linux/compat.h>
--#include <linux/nospec.h>
-+#include <linux/time.h>
- #include <linux/time_namespace.h>
-+#include <linux/uaccess.h>
+diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
+index 0526f0d90a79..9d0ae9c02e9b 100644
+--- a/drivers/auxdisplay/hd44780.c
++++ b/drivers/auxdisplay/hd44780.c
+@@ -313,7 +313,7 @@ static int hd44780_probe(struct platform_device *pdev)
+ fail3:
+ 	kfree(hd);
+ fail2:
+-	kfree(lcd);
++	charlcd_free(lcd);
+ fail1:
+ 	kfree(hdc);
+ 	return ret;
+@@ -328,7 +328,7 @@ static void hd44780_remove(struct platform_device *pdev)
+ 	kfree(hdc->hd44780);
+ 	kfree(lcd->drvdata);
  
- #include "timekeeping.h"
- #include "posix-timers.h"
+-	kfree(lcd);
++	charlcd_free(lcd);
+ }
+ 
+ static const struct of_device_id hd44780_of_match[] = {
+-- 
+2.25.1
 
 
