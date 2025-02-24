@@ -1,318 +1,200 @@
-Return-Path: <linux-kernel+bounces-528078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DE6A41345
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:16:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAFE6A41340
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:16:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571543B47D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B311C16A553
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7268A1A2642;
-	Mon, 24 Feb 2025 02:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622FF70824;
+	Mon, 24 Feb 2025 02:16:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TJhwS24S";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A6Be75Fa";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ydQyDmiV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yuMUTFV0"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LEFfPGci"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96BD1A2391
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D6C4A1D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740363369; cv=none; b=SqbUkTc2/NC0+wSY//st3BwPvpqmk9uZ6/sAZoOE3Id35+pfHOKYg9pUS4grXOCWgvd0Q7PgouYATSacjrypCAh78tejfoQ3yQTpgMHOo4bsGaiV6Jt7QGl3mnWNri8NQzcyj+A/XaYNbW5xKNEN4QsOSeA+0qtGi/+Ea31gf3c=
+	t=1740363362; cv=none; b=upRbMGHKp8yuKtE1SSAtaekWuyFCiIFhTSZHZLzAPfUIIZmnIsN7eJYR9J7nNmmRQEWiZf32RgL8X0iKQ2eVqU4lfiw2bUh81Tp5MlPs1IGqACjuKeJ1OED+lLjkoDYlAZwVuldDloYdarKUYOiYyRzZE4AsgIagiWBvMrXZaMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740363369; c=relaxed/simple;
-	bh=Ep+X9XjGf0KEz3knwsUPCrCNl9zqnpIpzHfGD7xmYCM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=MXe+8VExclLaoJ8WWech34FAeVvkEXaiXUNfUyh93t9FWxuUokAUOu8SPfy9s+hbXTaL85b+xVuC961VS1V946qaUyCRxksTSQhd+E471UAudNN8Hl17cFAgDeOY12WZjXRUlHDqcevFK37ROHifZKY1EKK5mK7PSb0tNi1WYIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TJhwS24S; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A6Be75Fa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ydQyDmiV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yuMUTFV0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E08631F383;
-	Mon, 24 Feb 2025 02:16:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740363364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T0XU/jY9pM6hRfc5jDpaHNFY3lMux4D8b8TnNfADYII=;
-	b=TJhwS24SBCPn8uHLQMAaZMNKACkeAz5nGvwTRb/ZFi4FvT8egjSQNIw6pGLX4nKLDFJdNu
-	Di2NxtX/uCYED3BN/6lcLet2dVcZmkejVQNUG+diwl6Ta3cZxD8IptmVbNvQlrbuJdjsK9
-	HokWiljdsTPjgv/MFSFL8r1YcgsRBEk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740363364;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T0XU/jY9pM6hRfc5jDpaHNFY3lMux4D8b8TnNfADYII=;
-	b=A6Be75Fa9qOImDuIL57kE/hgZeLA6lSOZxSQ1AfJd/UCu0IjSwVCZx/m3Jo8yOCXShnat+
-	VN/yItAh0ka6RSAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740363363; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T0XU/jY9pM6hRfc5jDpaHNFY3lMux4D8b8TnNfADYII=;
-	b=ydQyDmiVnLzvCJaKzvYG7FC/8rJrilZxPHGTyKwP04R9DSd23ZyXL4h9xhQ/2WI2l7QA4z
-	97O3mCqyyzURIsFZDRWfQOREInAqF6C99nXKfbQU4qyQeg1aoJCUtu2Tt5TlnOvysyRk6z
-	had3ih7EUaCcVih2jc5Q4Y6pps+lUIk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740363363;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T0XU/jY9pM6hRfc5jDpaHNFY3lMux4D8b8TnNfADYII=;
-	b=yuMUTFV0ahLgEUoZVyc90tDjPbh75oBpWHQWmEvY7gjQ2f0skvykMdQ1CwfaF2bS743Byt
-	MqtbQAV62ZjH0JDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93C55136B3;
-	Mon, 24 Feb 2025 02:15:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VvI4ElvWu2dvdAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 02:15:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740363362; c=relaxed/simple;
+	bh=OZ57DLeYVQeJBZ23OF+2av3NRPTTcBQrLC0nD0ukQeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iVdQUnDHYUqidHs2jna3BsyqZt+mK28EeXz/oGaI0S2Q7LgyoFTj455qHPGWCro109Jnt68+KsLqWzaqb3qyn9xbcbAHVeVA3viUPa19+cy9ix+hh9CC6q+viYq/HJ9Fu9yAPJkXYqbpVX4aw4BkGd8zmA+7n/ECqJng4nffxdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LEFfPGci; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-54529eeb38aso3293929e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740363359; x=1740968159; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=03x282i+KbbFm+Sge0tO2WLnHAQK0oVCuq/xqv36OUQ=;
+        b=LEFfPGcibYjFE+fnCpGXD7hL9icA/ceC87fkmVC3CoUEob/BGRMZrwoWjLwuw1hGLd
+         efG6fosuLwBRiB4JDudlxtRaRsQimXtGfiCXnPBU/bXgqj5GHsZUbV5To45s2fQjFzNo
+         4Ug3i+hXn/wP6ABaG6UAvUfh/xCxG+ifDHEAU0J96uhx0/DxYHawLoZ2uW8YX7FozJm6
+         u7WQyArwZdxYiTkunrIi8lSbh8G/VDYc/GjbpkpLBQM7qRfFb6lfrnZT4+2P1YtLmGnr
+         EwG8XMRhnySMWN1d4yS3ciTkf3xyY42ywhnewYW2K6UBUKZmf52zrMhLVktawtz0Utpd
+         R60Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740363359; x=1740968159;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=03x282i+KbbFm+Sge0tO2WLnHAQK0oVCuq/xqv36OUQ=;
+        b=mDkSPEFHFckB8P4lnbVEuECkXGKU/q2MnWKCh3zEsaYbnBJFnN71M4c9lgS2OoV0R3
+         muLDtRWP3bYwq9DHr+214RTIOojnJ5SmjvRvDJ1DNm+fdvhC1Fiqo5x6iu0GiVvQ4ENo
+         fTyZd0tCDk+a5cwKkAV5sPZa0hSZ2MXH8QAjT5rM4Ar5Jkfg56nXkU1jCCv7vtecveQO
+         1IyGoRuyXdSc0jNdgmYTVCRjgMZrc4wiPzLV0xZsxVWFuH5oVVpCe3XJiM9QAje1DfjA
+         ONf9jaaoMASOtJKxDS77V7DhSDvkHVNNgoHYXQwal26LKoCWgedLSQA6UmYLo8NTd183
+         qqLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWoKqHzwWo4qh52c2j5zenFcI7xsW1EcigSjt6IfNh33fRgWYvw3LTC1goLCQ+zZrO9LGlDlp4BuiYgwmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzegkALfVjivo0bmPzId66K9LfNfv++p0RadHi21s8tPms0M/lo
+	w1cnTkE6yfQRFur/lbpdxYw6jooopEjt3+QHPB+AUpMcCNRFjgTbOloiXvE0El0=
+X-Gm-Gg: ASbGncs4mzLekUC9WmIrQknEO4On6IoZMScl681uHpNi9TPQSs9M2nWAz3Mgv2r3wN5
+	WhhM4qmXPvbcP/UfXPK89Y54axNZjL0e0G4KpRCbyF5PTeEzf6ogEDn6Dt5AVqRirox37SJj4Av
+	U/JSb9saGS1DmHmYr6Y76TD+Wuno4hMDudxyRVZc89hWXnBJpHvFNUsLRrECsG8PjmV6p4RGzJ9
+	IsVJ6147BDX6iZTPAG2GVY4B72Le31EAEp6RQX8hlJHvGrI0D1Nu61K5iijLv0Kw6h+uPHuDeMB
+	th3VM2xj8whtJaIJnDJ8htW1WlQVQ1ATegaJRWaVlkF4hfqY0YG2TVNw8KxjDUxB5uk40xGWfZt
+	MthLRLw==
+X-Google-Smtp-Source: AGHT+IFD8yCSJdHxEzXcKOScOwjk4piZVuSgJw/kfPjGZPJZeEQwe/7hrMUi7SPPp71EVSbw+qv4rA==
+X-Received: by 2002:a05:6512:3094:b0:545:f0a:bf50 with SMTP id 2adb3069b0e04-54838f5b86emr4428391e87.35.1740363358410;
+        Sun, 23 Feb 2025 18:15:58 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54526745abcsm3068485e87.252.2025.02.23.18.15.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 18:15:57 -0800 (PST)
+Date: Mon, 24 Feb 2025 04:15:54 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 drm-dp 3/8] drm/hisilicon/hibmc: Add dp serdes cfg in
+ dp process
+Message-ID: <scjsgypzxx7pkd255qf3t45nnqytp7q2urdvwo6zdffubawsa3@p6duklhgw3rv>
+References: <20250222025102.1519798-1-shiyongbang@huawei.com>
+ <20250222025102.1519798-4-shiyongbang@huawei.com>
+ <d77bfuqor2rsd5tg4abywkckiqwy7j5xr43p73to2ofwpirws3@4m4g7hkvji2a>
+ <c9d59963-2ebd-4a6f-bdff-1616ed8afec0@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>
-Cc: "brauner@kernel.org" <brauner@kernel.org>,
- "idryomov@gmail.com" <idryomov@gmail.com>, "Xiubo Li" <xiubli@redhat.com>,
- "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
- "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
- "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
- "anna@kernel.org" <anna@kernel.org>,
- "jlayton@kernel.org" <jlayton@kernel.org>,
- "miklos@szeredi.hu" <miklos@szeredi.hu>,
- "trondmy@kernel.org" <trondmy@kernel.org>,
- "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
- "jack@suse.cz" <jack@suse.cz>, "richard@nod.at" <richard@nod.at>,
- "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
- "tom@talpey.com" <tom@talpey.com>,
- "senozhatsky@chromium.org" <senozhatsky@chromium.org>,
- "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
- "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
- "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
- "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>
-Subject: Re:  [PATCH 3/6] ceph: return the correct dentry on mkdir
-In-reply-to: <e77d268e129b8002e894fc7c16ae0e2faa1cd8dd.camel@ibm.com>
-References: <>, <e77d268e129b8002e894fc7c16ae0e2faa1cd8dd.camel@ibm.com>
-Date: Mon, 24 Feb 2025 13:15:48 +1100
-Message-id: <174036334830.74271.5394074407973955108@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,gmail.com,redhat.com,oracle.com,sipsolutions.net,szeredi.hu,cambridgegreys.com,suse.cz,nod.at,zeniv.linux.org.uk,talpey.com,chromium.org,vger.kernel.org,lists.linux.dev,lists.infradead.org];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[noble.neil.brown.name:mid,imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c9d59963-2ebd-4a6f-bdff-1616ed8afec0@huawei.com>
 
-On Fri, 21 Feb 2025, Viacheslav Dubeyko wrote:
-> On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
-> > ceph already splices the correct dentry (in splice_dentry()) from the
-> > result of mkdir but does nothing more with it.
-> >=20
-> > Now that ->mkdir can return a dentry, return the correct dentry.
-> >=20
-> > Signed-off-by: NeilBrown <neilb@suse.de>
-> > ---
-> >  fs/ceph/dir.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-> > index 39e0f240de06..c1a1c168bb27 100644
-> > --- a/fs/ceph/dir.c
-> > +++ b/fs/ceph/dir.c
-> > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *=
-idmap, struct inode *dir,
-> >  	struct ceph_client *cl =3D mdsc->fsc->client;
-> >  	struct ceph_mds_request *req;
-> >  	struct ceph_acl_sec_ctx as_ctx =3D {};
-> > +	struct dentry *ret =3D NULL;
->=20
-> I believe that it makes sense to initialize pointer by error here and always
-> return ret as output. If something goes wrong in the logic, then we already=
- have
-> error.
+On Sat, Feb 22, 2025 at 06:32:35PM +0800, Yongbang Shi wrote:
+> > On Sat, Feb 22, 2025 at 10:50:56AM +0800, Yongbang Shi wrote:
+> > > From: Baihan Li <libaihan@huawei.com>
+> > > 
+> > > Add dp serdes cfg in link training process, and related adapting
+> > > and modificating. Change some init values about training,
+> > > because we want completely to negotiation process, so we start with
+> > > the maximum rate and the electrical characteristic level is 0.
+> > > 
+> > > Signed-off-by: Baihan Li <libaihan@huawei.com>
+> > > Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+> > > ---
+> > > ChangeLog:
+> > > v2 -> v3:
+> > >    - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
+> > >    - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
+> > > v1 -> v2:
+> > >    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+> > > ---
+> > >   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  5 ++-
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 ++++++++++++++++---
+> > >   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  1 +
+> > >   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.h    |  6 ++++
+> > >   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   |  8 ++---
+> > >   6 files changed, 43 insertions(+), 11 deletions(-)
+> > > 
+> > Mostly LGTM.
+> > 
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
+> > > index 812d0794543c..e0537cc9af41 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.h
+> > > @@ -4,12 +4,15 @@
+> > >   #ifndef DP_SERDES_H
+> > >   #define DP_SERDES_H
+> > > +#include "dp_comm.h"
+> > No, please include it directly, where required. This simplifies possible
+> > inter-header dependencies.
+> 
+> Okay.
+> 
+> 
+> > > +
+> > >   #define HIBMC_DP_HOST_OFFSET		0x10000
+> > >   #define HIBMC_DP_LANE0_RATE_OFFSET	0x4
+> > >   #define HIBMC_DP_LANE1_RATE_OFFSET	0xc
+> > >   #define HIBMC_DP_LANE_STATUS_OFFSET	0x10
+> > >   #define HIBMC_DP_PMA_LANE0_OFFSET	0x18
+> > >   #define HIBMC_DP_PMA_LANE1_OFFSET	0x1c
+> > > +#define HIBMC_DP_HOST_SERDES_CTRL	0x1f001c
+> > >   #define HIBMC_DP_PMA_TXDEEMPH		GENMASK(18, 1)
+> > >   /* dp serdes TX-Deempth Configuration */
+> > > @@ -24,6 +27,9 @@
+> > >   #define DP_SERDES_VOL2_PRE1		0x4500
+> > >   #define DP_SERDES_VOL3_PRE0		0x600
+> > >   #define DP_SERDES_BW_8_1		0x3
+> > > +#define DP_SERDES_BW_5_4		0x2
+> > > +#define DP_SERDES_BW_2_7		0x1
+> > > +#define DP_SERDES_BW_1_62		0x0
+> > >   #define DP_SERDES_DONE			0x3
+> > > diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > index e6de6d5edf6b..67d39e258cac 100644
+> > > --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
+> > > @@ -28,9 +28,7 @@
+> > >   #include "hibmc_drm_drv.h"
+> > >   #include "hibmc_drm_regs.h"
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL		0x1f001c
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL_VAL		0x8a00
+> > > -#define HIBMC_DP_HOST_SERDES_CTRL_MASK		0x7ffff
+> > > +#include "dp/dp_serdes.h"
+> > >   DEFINE_DRM_GEM_FOPS(hibmc_fops);
+> > > @@ -122,8 +120,8 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+> > >   	}
+> > >   	/* if DP existed, init DP */
+> > > -	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
+> > > -	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
+> > > +	ret = readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL);
+> > > +	if (ret) {
+> > Why?
+> 
+> Becuase this is a serdes deempth configuration which is changed if we start cfg serdes.
+> The HIBMC_DP_HOST_SERDES_CTRL_VAL is default value, but we may change it. We can just
+> check if it is not zero. If it's not zero, it has dp block and we can init it.
 
-I'm not certain that I understand, but I have made a change which seems
-to be consistent with the above and included it below.  Please let me
-know if it is what you intended.
+=> commit message, please.
 
->=20
-> >  	int err;
-> >  	int op;
-> > =20
-> > @@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
- *idmap, struct inode *dir,
-> >  	    !req->r_reply_info.head->is_dentry)
-> >  		err =3D ceph_handle_notrace_create(dir, dentry);
-> >  out_req:
-> > +	if (!err && req->r_dentry !=3D dentry)
-> > +		/* Some other dentry was spliced in */
-> > +		ret =3D dget(req->r_dentry);
-> >  	ceph_mdsc_put_request(req);
-> >  out:
-> >  	if (!err)
-> > +		/* Should this use 'ret' ?? */
->=20
-> Could we make a decision should or shouldn't? :)
-> It looks not good to leave this comment instead of proper implementation. D=
-o we
-> have some obstacles to make this decision?
+> 
+> 
+> > >   		ret = hibmc_dp_init(priv);
+> > >   		if (ret)
+> > >   			drm_err(dev, "failed to init dp: %d\n", ret);
+> > > -- 
+> > > 2.33.0
+> > > 
 
-I suspect we should use ret, but I didn't want to make a change which
-wasn't directly required by my needed.  So I highlighted this which
-looks to me like a possible bug, hoping that someone more familiar with
-the code would give an opinion.  Do you agree that 'ret' (i.e.
-->r_dentry) should be used when ret is not NULL?
-
->=20
-> >  		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-> >  	else
-> >  		d_drop(dentry);
-> >  	ceph_release_acl_sec_ctx(&as_ctx);
-> > -	return ERR_PTR(err);
-> > +	if (err)
-> > +		return ERR_PTR(err);
-> > +	return ret;
->=20
-> What's about this?
->=20
-> return err ? ERR_PTR(err) : ret;
-
-We could do that, but you said above that you thought we should always
-return 'ret' - which does make some sense.
-
-What do you think of the following alternate patch?
-
-Thanks,
-NeilBrown
-
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 39e0f240de06..d2e5c557df83 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *idma=
-p, struct inode *dir,
- 	struct ceph_client *cl =3D mdsc->fsc->client;
- 	struct ceph_mds_request *req;
- 	struct ceph_acl_sec_ctx as_ctx =3D {};
-+	struct dentry *ret;
- 	int err;
- 	int op;
-=20
-@@ -1116,32 +1117,32 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *id=
-map, struct inode *dir,
- 		      ceph_vinop(dir), dentry, dentry, mode);
- 		op =3D CEPH_MDS_OP_MKDIR;
- 	} else {
--		err =3D -EROFS;
-+		ret =3D ERR_PTR(-EROFS);
- 		goto out;
- 	}
-=20
- 	if (op =3D=3D CEPH_MDS_OP_MKDIR &&
- 	    ceph_quota_is_max_files_exceeded(dir)) {
--		err =3D -EDQUOT;
-+		ret =3D ERR_PTR(-EDQUOT);
- 		goto out;
- 	}
- 	if ((op =3D=3D CEPH_MDS_OP_MKSNAP) && IS_ENCRYPTED(dir) &&
- 	    !fscrypt_has_encryption_key(dir)) {
--		err =3D -ENOKEY;
-+		ret =3D ERR_PTR(-ENOKEY);
- 		goto out;
- 	}
-=20
-=20
- 	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
- 	if (IS_ERR(req)) {
--		err =3D PTR_ERR(req);
-+		ret =3D ERR_CAST(req);
- 		goto out;
- 	}
-=20
- 	mode |=3D S_IFDIR;
- 	req->r_new_inode =3D ceph_new_inode(dir, dentry, &mode, &as_ctx);
- 	if (IS_ERR(req->r_new_inode)) {
--		err =3D PTR_ERR(req->r_new_inode);
-+		ret =3D ERR_CAST(req->r_new_inode);
- 		req->r_new_inode =3D NULL;
- 		goto out_req;
- 	}
-@@ -1165,15 +1166,23 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *id=
-map, struct inode *dir,
- 	    !req->r_reply_info.head->is_target &&
- 	    !req->r_reply_info.head->is_dentry)
- 		err =3D ceph_handle_notrace_create(dir, dentry);
-+	ret =3D ERR_PTR(err);
- out_req:
-+	if (!IS_ERR(ret) && req->r_dentry !=3D dentry)
-+		/* Some other dentry was spliced in */
-+		ret =3D dget(req->r_dentry);
- 	ceph_mdsc_put_request(req);
- out:
--	if (!err)
--		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
--	else
-+	if (!IS_ERR(ret)) {
-+		if (ret)
-+			ceph_init_inode_acls(d_inode(ret), &as_ctx);
-+		else
-+			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
-+	} else {
- 		d_drop(dentry);
-+	}
- 	ceph_release_acl_sec_ctx(&as_ctx);
--	return ERR_PTR(err);
-+	return ret;
- }
-=20
- static int ceph_link(struct dentry *old_dentry, struct inode *dir,
-
+-- 
+With best wishes
+Dmitry
 
