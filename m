@@ -1,338 +1,388 @@
-Return-Path: <linux-kernel+bounces-528683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E367EA41AB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:20:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3918DA41A91
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:17:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D30163ABD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 979A1188FB5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21ECF2505C1;
-	Mon, 24 Feb 2025 10:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6D5255E3D;
+	Mon, 24 Feb 2025 10:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ah1lQ5x3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bhp9f0Nx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a/RDzYeK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E754917557C;
-	Mon, 24 Feb 2025 10:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392175; cv=fail; b=SVzqIIz1PishtGtZPMKuZD2NCc7xZlmEywsine3moqBKYa79MJjY+KW0/+2V/2NtrVBaKpuiUAYtn2RipwmuMBYq0Pgl8ojTiDborbeOtc5ZnvqU3rExFQIGZ//fQaNktsFaWPijBDOhf+jGTmyF1DSvwy346ETBhkxwOEk5l9k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392175; c=relaxed/simple;
-	bh=QpviWaTc92ljMKYlE7SAni0hfsU4XCK3nF0Zu3FePnk=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VsyrGweUAfWIs9G0ZskTinjNu2L4F3nLNVTBt8tcXsb/w48Gr8MgI5QyjBshA9k7vctVYJRimRhm8h8DA+zS1n5SRurP5Vk0CnVv9ptWuF2eTC/CwXCSITAfHa/YFQpg7WZ5qhDx9ZbRxF2kznaHH9oF9wo2cE5+UV6MQR+yGEs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ah1lQ5x3; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740392173; x=1771928173;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=QpviWaTc92ljMKYlE7SAni0hfsU4XCK3nF0Zu3FePnk=;
-  b=ah1lQ5x3q0egAI67dKIm9n+r/PMXIPEMqSAOgyf533JfJfJSJ/atUEkk
-   MvRjXIZY2LEoaq4rlhXtP1yLjVyWJ0YHnMMdwTwhIqe043zKBOBknG+Ci
-   IiFRa0zVrAkJ8uOQGSRnvgIRp7UMDkzLWVVET9wLcX2ELuoJSsEMSXlnU
-   f3RUYlYUIXXcvqPXniFnKA4t4LFz3SlhycvDS9PLHtUSUgtY1Lx0noRJ5
-   9+fv2L8gxOfevgwtGGQoIAOOM4QybK+LVAqfWtBC3bFjz/+caOIIndtTI
-   4bAdxVLkc3BgBH3ia2PrYIZ5sk1B+zRBZf2RjtavQ0p3XMId8pSLCdCkD
-   A==;
-X-CSE-ConnectionGUID: 55hW/k2gTyyXUbArFGAZjQ==
-X-CSE-MsgGUID: XNzXkkRdT/CVvXLPCNTuAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="43969637"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="43969637"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:16:12 -0800
-X-CSE-ConnectionGUID: Cs9WO3XcToSQ8LN/J3LF6Q==
-X-CSE-MsgGUID: sJuXH1nORP21orkOJb8hgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116036509"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Feb 2025 02:16:04 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 24 Feb 2025 02:15:42 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 02:15:42 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.173)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 24 Feb 2025 02:15:42 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N9DF6EqZZUHyIfNUuuG2q8VumtkH06fxLoCwqhqlsxbtarSnx7d2ghV5mmnsFjFUdUhKABP0b9XsobD0eHPCfcQuE6x5RMmyZCW7Uo/gDZX+9OO+fa70tDNp8INC6LZaWeIZqk/l6VUkemxMJWc5T8LDtQEhfqyjAgqAifvnr55WArHQijy4L21YWNn7ktU9eWndaKpwpgjrRaUDaQ+D88QtvJbAWYe8ysZLICNr/TBKjVpmLHhLJYIoSEu6tG2EFFO3VgmyovyMS98Kj/b/DVyyKgMCtwoIXLONNdDw49oBWYT6KuC2w9QMYequwj4lHAFcPx8BXjoi92p2xXqYnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/pOJz1SvPSMOXrHV1KQ7zupj1S5GEzG8vEB80OhcarI=;
- b=hBWypcc+ynLcA31nv0XhtTOLHYASdTwtX/mWe6YxzZHvryVgHU26WE3/ta9KrhhX1XoxpgTvY/heJEX2b/G94uO4mKIodSUc5h0BK72dHiBKphyfYAhYS7FCXAxbe6KoMkoMaQz8C/3KLqDaBNg93b3ezFs3HVc7GNLSYFZNfAxAlzvgXxQqpDVb0LkoCEHA8cvWd88O8gHj0ueyZB22VR+6xjzbkYgb/JVcvQMEDLVuyF3b8KhIaO4JAd7D17A17p082wt+JXfbcST5laM9bLj0afXjJslYpP/RePWtRgr1iVbH/M0Jsj4t40e5jS8jLYocDTZgleDXYPRlYIsmvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by BY1PR11MB8077.namprd11.prod.outlook.com (2603:10b6:a03:527::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Mon, 24 Feb
- 2025 10:15:40 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 10:15:40 +0000
-Message-ID: <0f3cd937-8a10-47c3-8016-4ff7f31e506b@intel.com>
-Date: Mon, 24 Feb 2025 11:15:33 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next v2 1/2] devlink: add whole device devlink instance
-To: Jacob Keller <jacob.e.keller@intel.com>, Jakub Kicinski <kuba@kernel.org>,
-	Jiri Pirko <jiri@resnulli.us>
-CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, Cosmin Ratiu <cratiu@nvidia.com>, Tariq Toukan
-	<tariqt@nvidia.com>, <netdev@vger.kernel.org>, Konrad Knitter
-	<konrad.knitter@intel.com>, <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn
-	<andrew@lunn.ch>, <linux-kernel@vger.kernel.org>, ITP Upstream
-	<nxne.cnse.osdt.itp.upstreaming@intel.com>, Carolina Jubran
-	<cjubran@nvidia.com>
-References: <20250219164410.35665-1-przemyslaw.kitszel@intel.com>
- <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
- <20250220174512.578eebe8@kernel.org>
- <2a8a5ef5-af9f-4c16-887b-514b614b8c80@intel.com>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <2a8a5ef5-af9f-4c16-887b-514b614b8c80@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MI2P293CA0003.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::16) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26EA6253F37
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740392138; cv=none; b=cjxBWL8BvJXE0ue5XVNEDQ7Xl4ZeeB2RPqNG70OtKnfUupUALv598P419XPJnHzdL9OQMsLpE7Vn0ZwUEnJSZR3DX8NZNXawoUrWijGS1fg/mdXYbjKtfBA8CdTAGPPrgaB18RitmurISsmldgAXdS3Icq0MYSvTsKANWUa4daY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740392138; c=relaxed/simple;
+	bh=/4NjpeCdAWUpCFrAtqNBXVrIQ+zOZYg+DCrp4786Rxk=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=AJ8TC9UsRGi6VlQEFyLaTX4CCupoSS8YmmtFqx2xHhcG5aC2R/wVyVEsKtnb0ZXAaXLyV3by37Kkpdq6haXbzOcLIIIAlyuk/9ERwqJY5nJEPK4IJSIV5lsdtDjqjP08kKm1hktv4IR1y1UudVrzkX0XZ6zT+Zbpz00K70dBxQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bhp9f0Nx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a/RDzYeK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250224101343.410413967@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740392134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=5DEumkcfOiCiC9+0uSiJuG2GsO94gV682DPkool2oDw=;
+	b=Bhp9f0NxnB9K2+YGRu6a75Cf0171wqnd2+43WQg7M3gdhiL69L7XDvGivoGR3MtPymvlEH
+	J4OnYjd0OJKJvgNnW1Xg6q7AvJZ7rC7QX3SCrbgupTCR+dSDJlyx4Ij+sGciorRe/WToBN
+	JTtbS5pAfKL6WMAypB0Ob5DasCFsFdeqejajY6LoWxseFLWgo15iWqQ6jlZ9rGUob4V6ln
+	ht46frbI7PGQAYUzKx1T3il7/6XuQ9xMf1PzkvH3EdUa9jol6VxVG9zJps5Snsf56n8QWn
+	vPh7V7NpcpVmP/H2EEsXANGmHMPNHTVPIEHjVdV9iQOGTTNDJlAMIR/kKCX8kw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740392134;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=5DEumkcfOiCiC9+0uSiJuG2GsO94gV682DPkool2oDw=;
+	b=a/RDzYeKqWY+LcFuoguYdA6cLNulOB+t0eEX30h6+TgKjtjTYYrw0bV2mA/OqicQ05xGJ4
+	Q290LH//ExkizfCw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Benjamin Segall <bsegall@google.com>,
+ Eric Dumazet <edumazet@google.com>,
+ Andrey Vagin <avagin@openvz.org>,
+ Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [patch 07/11] posix-timers: Improve hash table performance
+References: <20250224095736.145530367@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|BY1PR11MB8077:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fbd0196-0f8d-4c1e-1f32-08dd54bc305a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?MkdsZlRQUk4wWnVlamE1RmsvRnYrb0d6dVB0aGZJNXgxdFk1ME5tOTNvc0t3?=
- =?utf-8?B?b1N3VEJERTBaSTh1MXN1My9BNm9QMndSRG92UmpTWk1MRG0yeVZ6d3JkRlYx?=
- =?utf-8?B?d2xsaVBCSnlLc1I3blpMb2tQUDVFUmxwTHQ2cTZTTWUyUjJ0TzhjanNwazM3?=
- =?utf-8?B?TTBkS1dmNzY2WTJZMGVQTnBuOGJqT0F1OFRvY2QwNVhJekpCdDBpWXlEZGhZ?=
- =?utf-8?B?T0hoaUZhSE1welFEWWdhTndjVUNRSUZMUmdyNXNOOVptektiTGEweFRLb3dz?=
- =?utf-8?B?b3RxZnVUdzJ2RlNSYWVqMUlsN0RHU3E4NkVzZmRJekdjNFpieWl4MTVUSGcy?=
- =?utf-8?B?STNLdVJ1VERqcy9qS2t1bklZSFFMTTk5eW00RnYrbldaQkc4Z2pXaXNFM1VF?=
- =?utf-8?B?cXYzaG0veEFzTWVFMWFQWXNGLzR2VldoVmlsZ1dNWXhPMnh1UUMyb3ZDUkhv?=
- =?utf-8?B?WXQ2NXB4bS9zanA1Ky9zL01jRTk3K2dzQ2V1ckNObkZqdExBbFFiNTkvS0lp?=
- =?utf-8?B?MlpnYlh4ZFQ2SzM3VWpXZTRNNUE5KzJWbStIb3JnbUQxOXJiSFE3Tk8vbjZ2?=
- =?utf-8?B?TlU5ME5yZGkwSzRYRlgwN0JyUXRSZkpCbUlnWjlGaTA4cGU5VnhzbE9mYVgy?=
- =?utf-8?B?dXRWODFXNU42SEdmbXF3c3J4TWk0Y0ZKb0JQNWtMR2VXajBERVNRc2hPb3Zi?=
- =?utf-8?B?ZU5MTXJWbVljWUh1eURWeEpmVk8xWEVmYnhJb2k3NW9NUFVZUjUwb3NxMDBh?=
- =?utf-8?B?M0FTN3l5Mi9GQzJLK2t0TFRISDVEeDhIeUZoVG5VeUpyOXY3SXhoVk1JS2R5?=
- =?utf-8?B?MXdrMXFhTWpwQWY1UlZ3QUFKRG1Jb1htMDgrV0dKalYzTURzNkdVYnd1SFhI?=
- =?utf-8?B?SFovMitYRG9VVktyY3Ruak1wZ0FUUGhBSEU0TDhBUzFuQWFra0VjSlpiRU1P?=
- =?utf-8?B?UmtPenVDUXNHd2RCVFo4L1FRTDJvNlltaFNQZmQrZkZYMkJXMHVnV1QwY3lh?=
- =?utf-8?B?Qy9NSEVubXY2NHY2QW5YYjVsVTRDcm5Na2VacXU1K1VPR2VmLzh3NERJOVU2?=
- =?utf-8?B?aTBmK1NHWHdWdndOL28zRmhQZjlYeGRRYk51bGFtUTR5OXRJUUpmSlF6WHEx?=
- =?utf-8?B?UUNBODlzMVNGd3FZdElWWEwweExQV20yNHVETDB6Z1Vibk1TUnB3bDhSSWdY?=
- =?utf-8?B?aEd6SmJCYmx3WXc2T3VEcGgyWkdIanBqaDdLcDVCZU1Lc3JjWFowM2t2alFV?=
- =?utf-8?B?TjFKSURFR2tNZ2pkUnlsdWp0clE3Q2k4SGt3WmlocVREQWZmRGlMZ1M1RlVX?=
- =?utf-8?B?K0lrcmk2MTFDYjdJbHdqb1V1clBMNGlvS3BkMitndDEybDlUcXp2V1E2Y3Nn?=
- =?utf-8?B?LzVnQXpSYWxWWmd3WVkxSHd1VVRpQ0N6eDVrOVVSQkJnblc5Z25oV3NuOEYy?=
- =?utf-8?B?QTdMTUNmTUY4MDhqWktWdGtIdXMwaWRHWk96eS9sdUdWalR3OSthcTV3TWtD?=
- =?utf-8?B?VU1jcnpXTjlsZmxFU1dycENDN2pKbC91cTRBOWtORlZtTlZqMnVKTm5jbUl5?=
- =?utf-8?B?K3hGUmJLZm9WVkZXYlFYU1FBNGN6dXhoMU1PRHFwRXlYbEhUK2RmWjBnazBn?=
- =?utf-8?B?UGZiQkRhUDZlUEYxRSt4R1p2Ryt6YklmVHd3aXNEVkt2NDB2T1JDMEVaamhU?=
- =?utf-8?B?MytJQW45SFdSeDN0dEYwdjdpY2RzZFg0VC85Kzk1TmNiNkxRNmpoNDBTVVFy?=
- =?utf-8?B?OTBWdk9XaWdsMWJLYXc1a3JWRFd2Q1dETEp5Tnc4RzkraStlM0k4L1MzTEx3?=
- =?utf-8?B?NEtYek84Ti9UWk9IUUkvbGNLRWtFZHVWaWhqTWdhTEN6NUJFZlZPSVpLaDk1?=
- =?utf-8?Q?opc8jNYzXejkm?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TDdMckRnTjduZ3crYm9HNUJiRnVLaGE3dzBpNld6NThrNmt1UGhLTWhtc2tV?=
- =?utf-8?B?ZWdPQWRSMHpHVEdmeWJMWnlKUXUzQjhjT2M1UmRSZU8zSThYRmdMOUlxUkhF?=
- =?utf-8?B?eExOeE5LWVB1MWVPZ0ZiZlllcExKME5UaU5MS1krYzU4RXE2eU8wbk5aa2J4?=
- =?utf-8?B?Vjh1M0R5M3pNdXlVV1RaQnkxL3pTeUFFYmpnTi95UDN2dkpheS83dmZpRlJx?=
- =?utf-8?B?TU91VVJmWkxWWjNoK3VjekYvbG1MNmRQbXAyQ0xIeW5wRXB1bFFncVhodTA5?=
- =?utf-8?B?aWtTSTlnUlBaUG5odERxOEVBMytrNHUra0xhVE1BR3ppU2o1RGppRkl2OU1q?=
- =?utf-8?B?VzJHbzNNaEhsR3E3TEhtbmk4aHNvcUk2TVFBQjlobGZXWlc3ZVNzQ1dEcGVH?=
- =?utf-8?B?anRkYXNpbXNOMFl0anNkUmc5UDVrVHFNWWRoQXlxY3VQcHJhdUhBWkZ6Tk4x?=
- =?utf-8?B?U2JnZjJ3aENzRlNsbCtnczVnVmhLNTZxeWxtT2NaZlBpejlmNE84MzVwV0M0?=
- =?utf-8?B?clRhUUxqZDM0bjNrc0Rud3FjQnRQWVNWdFJNY1hoRm8vb0MxYVVOMDVyaWF0?=
- =?utf-8?B?TGM3TmpJNkFTVE5kc1JzY3Mrb1VvZ0g1TTZ3M3VKTk0wTUIwem5aeU9iVEtF?=
- =?utf-8?B?NER3ZlpXWEI1YlZHZkxaV1pycnRXM21jZEcybEgzK1Jmb1lBWW5KdXBvcXda?=
- =?utf-8?B?bnBKQzVBSlV6MnRZZmRKbWZDUzdiTExESmRSbTRnQ2M4UFY2M2EvY1lqNERv?=
- =?utf-8?B?eEszdlkvd3BPYll5Z0pvT1F5NFUxTVN2Z0s3M3JDMG1hTkNyYkEraTQvelNr?=
- =?utf-8?B?Z1pQZTdER3p3cUlwVDkrUkxXM2JvajF3bkZrMURVOHNLdk5JdHdPajdkNkpn?=
- =?utf-8?B?MXZIeFZHdG9kVXVKVHZxdGY5ODVjT01OVFdGWldUdWN6ckh3TW5DMy8xakp1?=
- =?utf-8?B?R2R1L1Z1RFlsUDJhZ0UxSllvc0VocWdHQXZhUzhOaHhHTHJaV3NOSmZCYW1x?=
- =?utf-8?B?WnZKZnc2dWJHVFcwMWt5NWVlTmdYNko1MWd2WXlWZDZCYjN0TmluVW1QVjZp?=
- =?utf-8?B?bUsvQ2QyZHlITmhiUkc2Vkd5M3BrSC9la0ttQjE5QkdXLzZyTTZCakxubGlI?=
- =?utf-8?B?cmpWWVpjR2NpZE93UHJzc21oc0ZxZkdOYlYwZ1p6UDdzMDh4YThXanNpUjQx?=
- =?utf-8?B?NWVIcU5FT2x3KzVUMzF2WU5WSndBbFQ3OFQrUEc2bDZRWEZuN3p4eXpvUTVC?=
- =?utf-8?B?Y1g4ejIyWGdTK0FUZnJJeGxpOGpyb24wM0FVTVpPMGVGblpxU0lEZHczOGpZ?=
- =?utf-8?B?N1Zkclc0WkhkZmxmR29lMTd5d0MxL1QweURKdzdzNzMyY3dqYXlybFpoc1Y2?=
- =?utf-8?B?aE05T0VpZGpQUHJHbVpvK2dDb1JyQnVUUXIvNHp3b1JQL3RBT1JXRmx1aDVp?=
- =?utf-8?B?U3BpQ1lUNURNckZhMER4UHA0bkZHNU1vRmYxWS9UKzFqbk5QaHQ5KzF6UUNB?=
- =?utf-8?B?VTBJbExXTFJGekVmVEhuNk9yTzFQbUZ1RkJnenNnL3JyaWhOZVFhUjFTUzUy?=
- =?utf-8?B?RjI2TjhQb3huUjZlRGtUWm9ieTRJY2EwQ2dXNVozN1A1QnFya2theHd4ZzYx?=
- =?utf-8?B?VGNTWktDYWVrcXYxMzBkSTNjRHhua3B5dy9vWUFka3VTOEFNcXRmalZXc1NG?=
- =?utf-8?B?UjNtczRSSldjdlExVmtZR1RGWWRuVmtDcHcwWUNEOFlBbWE4ajNOQ29Temc0?=
- =?utf-8?B?QWZQYlFjRStSZGJnY3VreXV0RStHWkw2RDQzOGJPdXA3OWtMTndHUTc0TUcw?=
- =?utf-8?B?TTNITlN2ckM3TFVnd2FHNFFBRmNvYm5vOFBlY0czQ2RkZU5TOERjNEZFVUdy?=
- =?utf-8?B?ZndsNkpKZERLdW80ejVoRnVMbklObFhqdFFNWmZoMEVBNDZ6dDRKclhmaUFC?=
- =?utf-8?B?UlpZa2ZRRzlkb3I5YzZ3eVUxWE9zWlZJTXRuYzR4OVlOTkNkN0Z6ZTVUN1dI?=
- =?utf-8?B?SXhlSDIwRkJMRmRNRmtGRW9EWmZieDVtaitvVUVzbnVYeTdjcFpjdDBrMU44?=
- =?utf-8?B?V3ovQlpQUjVkeVJSUFV3S0pNTURGVEFMeEttUHlRekpSQitjQnBmRVcvMlAw?=
- =?utf-8?B?cXZGc3NsbThyaDdXdDdyN0NzVFJkcnZXNG5IRSswdzgrNjNvSEszN1h0N0gx?=
- =?utf-8?B?UXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fbd0196-0f8d-4c1e-1f32-08dd54bc305a
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 10:15:40.0019
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fDayY6AMs6ndq8rnsgF3yNjdweZPBqdwP7UWtJymTRUhJUOQtBCbmRsza2v5ND+QeYhFs9rfY3z4OT/wF+iLvOP+vVZV9K3Yf3gDMeCMubM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8077
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 24 Feb 2025 11:15:33 +0100 (CET)
 
-On 2/21/25 23:50, Jacob Keller wrote:
-> 
-> 
-> On 2/20/2025 5:45 PM, Jakub Kicinski wrote:
->> On Wed, 19 Feb 2025 17:32:54 +0100 Przemek Kitszel wrote:
->>> Add a support for whole device devlink instance. Intented as a entity
->>> over all PF devices on given physical device.
->>>
->>> In case of ice driver we have multiple PF devices (with their devlink
->>> dev representation), that have separate drivers loaded. However those
->>> still do share lots of resources due to being the on same HW. Examples
->>> include PTP clock and RSS LUT. Historically such stuff was assigned to
->>> PF0, but that was both not clear and not working well. Now such stuff
->>> is moved to be covered into struct ice_adapter, there is just one instance
->>> of such per HW.
->>>
->>> This patch adds a devlink instance that corresponds to that ice_adapter,
->>> to allow arbitrage over resources (as RSS LUT) via it (further in the
->>> series (RFC NOTE: stripped out so far)).
->>>
->>> Thanks to Wojciech Drewek for very nice naming of the devlink instance:
->>> PF0:		pci/0000:00:18.0
->>> whole-dev:	pci/0000:00:18
->>> But I made this a param for now (driver is free to pass just "whole-dev").
->>
->> Which only works nicely if you're talking about functions not full
->> separate links :) When I was thinking about it a while back my
+Eric and Ben reported a significant performance bottleneck on the global
+hash, which is used to store posix timers for lookup.
 
-that's why I have make the name as a param, instead letting devlink
-infer it
+Eric tried to do a lockless validation of a new timer ID before trying to
+insert the timer, but that does not solve the problem.
 
-I admit that with ice/e800 we could have done better with splitting
-into devlink and devlink port parts at beginning, but with growing
-complexities of devices, we are going to hit the "we need something
-above" issue anyway.
+For the non-contended case this is a pointless exercise and for the
+contended case this extra lookup just creates enough interleaving that all
+tasks can make progress.
 
->> intuition was that we should have a single instance, just accessible
->> under multiple names. But I'm not married to that direction if there
->> are problems with it.
->>
-> 
-> I would also prefer to see a single devlink instance + one port for each
-> function. I think thats the most natural fit to how devlink works, and
-> it gives us a natural entry point for "whole device" configuration. It
-> also limits the amount of duplicate data, for example "devlink dev info"
-> reports once for each function.
-> 
-> 
-> The main things I think this causes problems for are:
-> 
-> 1) PCIe direct assignment with IOV
-> 
-> This could be an issue in cases where someone assigns only one function
-> to a VM. The VM would only see one function and the functions outside
-> the VM would not interact with it. IMHO this is not a big deal as I
-> think simply assigning the entire device into the VM is more preferable.
-> 
-> We also already have this issue with ice_adapter, and we've seen that we
-> need to do this in order to make the device and software function
-> properly. Assigning single functions does not make much sense to me. In
-> addition, there is SR-IOV if you want to assign a portion of the device
-> to a VM.
-> 
-> 2) locking may get complicated
-> 
+There are actually two real solutions to the problem:
 
-if any driver would go the "plain devlink" + "port devlink" route,
-the devl_lock(devlink) and devl_lock(devlink_port) should be enough
+  1) Provide a per process (signal struct) xarray storage
 
-> If we have entry point which needs to interact with ice_pf data the
-> locking could get a little complicated, but I think this is also an
-> issue we can solve with ice_adapter, as a natural place to put
-> whole-device functionality.
-> 
-> I have also investigated in the past if it was possible to make the PCI
-> bus subsystem wrap the functions together somehow to represent them to
-> the host as a sort of pseudo "single-function" even tho the hardware is
-> multi-function. This seemed like a natural way to prevent direct
-> assignment of the whole device.. but I was never able to figure out how
-> to even start on such a path.
+  2) Implement a smarter hash like the one in the futex code
 
-I get that the general sentiment is to "leave the complexities to the
-driver/other layers", but it was based on reading only limited amount
-of internal (non networking) mailing lists.
+#1 works perfectly fine for most cases, but the fact that CRIU enforced a
+   linear increasing timer ID to restore timers makes this problematic.
 
-It will be great when devlink will be finally used by non networking
-drivers :)
+   It's easy enough to create a sparse timer ID space, which amounts very
+   fast to a large junk of memory consumed for the xarray. 2048 timers with
+   a ID offset of 512 consume more than one megabyte of memory for the
+   xarray storage.
 
-> 
->>> $ devlink dev # (Interesting part of output only)
->>> pci/0000:af:00:
->>>    nested_devlink:
->>>      pci/0000:af:00.0
->>>      pci/0000:af:00.1
+#2 The main advantage of the futex hash is that it uses per hash bucket
+   locks instead of a global hash lock. Aside of that it is scaled
+   according to the number of CPUs at boot time.
 
-BTW, I have local version that adds SR-IOV VF's devlink instances
-as nested ones to PF ones:
-pci/0000:af:00.1:
-   nested_devlink:
-     pci/0000:af:05.0
+Experiments with artifical benchmarks have shown that a scaled hash with
+per bucket locks comes pretty close to the xarray performance and in some
+scenarios it performes better.
 
->>>      pci/0000:af:00.2
->>>      pci/0000:af:00.3
->>>      pci/0000:af:00.4
->>>      pci/0000:af:00.5
->>>      pci/0000:af:00.6
->>>      pci/0000:af:00.7
->>
->> Could you go into more details on what stays on the "nested" instances
->> and what moves to the "whole-dev"? Jiri recently pointed out to y'all
->> cases where stuff that should be a port attribute was an instance
->> attribute.
+Test 1:
 
-My initial assumption was that everything stays as-is
+     A single process creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
 
-> 
-> I suspect this is a case of "we have separate devlink instances per
-> function, so we just put it in the devlink".
+            mainline        Eric   newhash   xarray
+create         23 ms       23 ms      9 ms     8 ms
+getoverrun     14 ms       14 ms      5 ms     4 ms
 
-That's true that our 1:1 mapping of PF:devlink made this naively obvious
+Test 2:
 
-moving almost all the stuff we now have under "PF" devlink into devlink
-port instances is likely too much of uAPI change, but let's make the
-question vocal: should we?
+     A single process creates 50000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
+
+            mainline        Eric   newhash   xarray
+create         98 ms      219 ms     20 ms    18 ms
+getoverrun     62 ms       62 ms     10 ms     9 ms
+
+Test 3:
+
+     A single process creates 100000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
+
+            mainline        Eric   newhash   xarray
+create        313 ms      750 ms     48 ms    33 ms
+getoverrun    261 ms      260 ms     20 ms    14 ms
+
+Erics changes create quite some overhead in the create() path due to the
+double list walk, as the main issue according to perf is the list walk
+itself. With 100k timers each hash bucket contains ~200 timers, which in
+the worst case need to be all inspected. The same problem applies for
+getoverrun() where the lookup has to walk through the hash buckets to find
+the timer it is looking for.
+
+The scaled hash obviously reduces hash collisions and lock contention
+significantly. This becomes more prominent with concurrency.
+
+Test 4:
+
+     A process creates 63 threads and all threads wait on a barrier before
+     each instance creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them. The threads are pinned on
+     seperate CPUs to achive maximum concurrency. The numbers are the
+     average times per thread:
+
+            mainline        Eric   newhash   xarray
+create     180239 ms    38599 ms    579 ms   813 ms
+getoverrun   2645 ms     2642 ms     32 ms     7 ms
+
+Test 5:
+
+     A process forks 63 times and all forks wait on a barrier before each
+     instance creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them. The processes are pinned on
+     seperate CPUs to achive maximum concurrency. The numbers are the
+     average times per process:
+
+            mainline        eric   newhash   xarray
+create     157253 ms    40008 ms     83 ms    60 ms
+getoverrun   2611 ms     2614 ms     40 ms     4 ms
+
+So clearly the reduction of lock contention with Eric's changes makes a
+significant difference for the create() loop, but it does not mitigate the
+problem of long list walks, which is clearly visible on the getoverrun()
+side because that is purely dominated by the lookup itself. Once the timer
+is found, the syscall just reads from the timer structure with no other
+locks or code paths involved and returns.
+
+The reason for the difference between the thread and the fork case for the
+new hash and the xarray is that both suffer from contention on
+sighand::siglock and the xarray suffers additionally from contention on the
+xarray lock on insertion.
+
+The only case where the reworked hash slighly outperforms the xarray is a
+tight loop which creates and deletes timers.
+
+Test 4:
+
+     A process creates 63 threads and all threads wait on a barrier before
+     each instance runs a loop which creates and deletes a timer 100000
+     times in a row. The threads are pinned on seperate CPUs to achive
+     maximum concurrency. The numbers are the average times per thread:
+
+            mainline        Eric   newhash   xarray
+loop	    5917  ms	 5897 ms   5473 ms  7846 ms
+
+Test 5:
+
+     A process forks 63 times and all forks wait on a barrier before each
+     each instance runs a loop which creates and deletes a timer 100000
+     times in a row. The processes are pinned on seperate CPUs to achive
+     maximum concurrency. The numbers are the average times per process:
+
+            mainline        Eric   newhash   xarray
+loop	     5137 ms	 7828 ms    891 ms   872 ms
+
+In both test there is not much contention on the hash, but the ucount
+accounting for the signal and in the thread case the sighand::siglock
+contention (plus the xarray locking) contribute dominantly to the overhead.
+
+As the memory consumption of the xarray in the sparse ID case is
+significant, the scaled hash with per bucket locks seems to be the better
+overall option. While the xarray has faster lookup times for a large number
+of timers, the actual syscall usage, which requires the lookup is not an
+extreme hotpath. Most applications utilize signal delivery and all syscalls
+except timer_getoverrun(2) are all but cheap.
+
+So implement a scaled hash with per bucket locks, which offers the best
+tradeoff between performance and memory consumption.
+
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/time/posix-timers.c |  101 ++++++++++++++++++++++++++++++---------------
+ 1 file changed, 69 insertions(+), 32 deletions(-)
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -12,10 +12,10 @@
+ #include <linux/compat.h>
+ #include <linux/compiler.h>
+ #include <linux/hash.h>
+-#include <linux/hashtable.h>
+ #include <linux/init.h>
+ #include <linux/interrupt.h>
+ #include <linux/list.h>
++#include <linux/memblock.h>
+ #include <linux/nospec.h>
+ #include <linux/posix-clock.h>
+ #include <linux/posix-timers.h>
+@@ -40,8 +40,18 @@ static struct kmem_cache *posix_timers_c
+  * This allows checkpoint/restore to reconstruct the exact timer IDs for
+  * a process.
+  */
+-static DEFINE_HASHTABLE(posix_timers_hashtable, 9);
+-static DEFINE_SPINLOCK(hash_lock);
++struct timer_hash_bucket {
++	spinlock_t		lock;
++	struct hlist_head	head;
++};
++
++static struct {
++	struct timer_hash_bucket	*buckets;
++	unsigned long			bits;
++} __timer_data __ro_after_init __aligned(2*sizeof(long));
++
++#define timer_buckets	(__timer_data.buckets)
++#define timer_hashbits	(__timer_data.bits)
+ 
+ static const struct k_clock * const posix_clocks[];
+ static const struct k_clock *clockid_to_kclock(const clockid_t id);
+@@ -63,16 +73,16 @@ static struct k_itimer *__lock_timer(tim
+ 
+ static int hash(struct signal_struct *sig, unsigned int nr)
+ {
+-	return hash_32(hash32_ptr(sig) ^ nr, HASH_BITS(posix_timers_hashtable));
++	return hash_32(hash32_ptr(sig) ^ nr, timer_hashbits);
+ }
+ 
+ static struct k_itimer *posix_timer_by_id(timer_t id)
+ {
+ 	struct signal_struct *sig = current->signal;
+-	struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
++	struct timer_hash_bucket *bucket = &timer_buckets[hash(sig, id)];
+ 	struct k_itimer *timer;
+ 
+-	hlist_for_each_entry_rcu(timer, head, t_hash) {
++	hlist_for_each_entry_rcu(timer, &bucket->head, t_hash) {
+ 		/* timer->it_signal can be set concurrently */
+ 		if ((READ_ONCE(timer->it_signal) == sig) && (timer->it_id == id))
+ 			return timer;
+@@ -91,11 +101,13 @@ static inline struct signal_struct *posi
+ 	return (struct signal_struct *)(val & ~1UL);
+ }
+ 
+-static bool posix_timer_hashed(struct hlist_head *head, struct signal_struct *sig, timer_t id)
++static bool posix_timer_hashed(struct timer_hash_bucket *bucket, struct signal_struct *sig,
++			       timer_t id)
+ {
++	struct hlist_head *head = &bucket->head;
+ 	struct k_itimer *timer;
+ 
+-	hlist_for_each_entry_rcu(timer, head, t_hash, lockdep_is_held(&hash_lock)) {
++	hlist_for_each_entry_rcu(timer, head, t_hash, lockdep_is_held(&bucket->lock)) {
+ 		if ((posix_sig_owner(timer) == sig) && (timer->it_id == id))
+ 			return true;
+ 	}
+@@ -106,34 +118,34 @@ static int posix_timer_add(struct k_itim
+ {
+ 	struct signal_struct *sig = current->signal;
+ 
+-	/*
+-	 * FIXME: Replace this by a per signal struct xarray once there is
+-	 * a plan to handle the resulting CRIU regression gracefully.
+-	 */
+ 	for (unsigned int cnt = 0; cnt <= INT_MAX; cnt++) {
+ 		/* Get the next timer ID and clamp it to positive space */
+ 		unsigned int id = (atomic_inc_return(&sig->next_posix_timer_id) - 1) & INT_MAX;
+-		struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
++		struct timer_hash_bucket *bucket = &timer_buckets[hash(sig, id)];
+ 
+-		spin_lock(&hash_lock);
+-		if (!posix_timer_hashed(head, sig, id)) {
++		scoped_guard (spinlock, &bucket->lock) {
+ 			/*
+-			 * Set the timer ID and the signal pointer to make
+-			 * it identifiable in the hash table. The signal
+-			 * pointer has bit 0 set to indicate that it is not
+-			 * yet fully initialized. posix_timer_hashed()
+-			 * masks this bit out, but the syscall lookup fails
+-			 * to match due to it being set. This guarantees
+-			 * that there can't be duplicate timer IDs handed
+-			 * out.
++			 * Validate under the lock as this could have raced
++			 * against another thread ending up with the same
++			 * ID, which is highly unlikely, but possible.
+ 			 */
+-			timer->it_id = (timer_t)id;
+-			timer->it_signal = (struct signal_struct *)((unsigned long)sig | 1UL);
+-			hlist_add_head_rcu(&timer->t_hash, head);
+-			spin_unlock(&hash_lock);
+-			return id;
++			if (!posix_timer_hashed(bucket, sig, id)) {
++				/*
++				 * Set the timer ID and the signal pointer to make
++				 * it identifiable in the hash table. The signal
++				 * pointer has bit 0 set to indicate that it is not
++				 * yet fully initialized. posix_timer_hashed()
++				 * masks this bit out, but the syscall lookup fails
++				 * to match due to it being set. This guarantees
++				 * that there can't be duplicate timer IDs handed
++				 * out.
++				 */
++				timer->it_id = (timer_t)id;
++				timer->it_signal = (struct signal_struct *)((unsigned long)sig | 1UL);
++				hlist_add_head_rcu(&timer->t_hash, &bucket->head);
++				return id;
++			}
+ 		}
+-		spin_unlock(&hash_lock);
+ 		cond_resched();
+ 	}
+ 	/* POSIX return code when no timer ID could be allocated */
+@@ -388,9 +400,11 @@ void posixtimer_free_timer(struct k_itim
+ 
+ static void posix_timer_unhash_and_free(struct k_itimer *tmr)
+ {
+-	spin_lock(&hash_lock);
+-	hlist_del_rcu(&tmr->t_hash);
+-	spin_unlock(&hash_lock);
++	unsigned int idx = hash(posix_sig_owner(tmr), tmr->it_id);
++	struct timer_hash_bucket *bucket = &timer_buckets[idx];
++
++	scoped_guard (spinlock, &bucket->lock)
++		hlist_del_rcu(&tmr->t_hash);
+ 	posixtimer_putref(tmr);
+ }
+ 
+@@ -1549,3 +1563,26 @@ static const struct k_clock *clockid_to_
+ 
+ 	return posix_clocks[array_index_nospec(idx, ARRAY_SIZE(posix_clocks))];
+ }
++
++static int __init posixtimer_init(void)
++{
++	unsigned long i, size;
++	unsigned int shift;
++
++	if (IS_ENABLED(CONFIG_BASE_SMALL))
++		size = 512;
++	else
++		size = roundup_pow_of_two(512 * num_possible_cpus());
++
++	timer_buckets = alloc_large_system_hash("posixtimers", sizeof(*timer_buckets),
++						size, 0, 0, &shift, NULL, size, size);
++	size = 1UL << shift;
++	timer_hashbits = ilog2(size);
++
++	for (i = 0; i < size; i++) {
++		spin_lock_init(&timer_buckets[i].lock);
++		INIT_HLIST_HEAD(&timer_buckets[i].head);
++	}
++	return 0;
++}
++core_initcall(posixtimer_init);
+
 
