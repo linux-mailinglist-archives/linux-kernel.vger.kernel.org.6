@@ -1,231 +1,383 @@
-Return-Path: <linux-kernel+bounces-528100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017E5A41385
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:27:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1641DA41392
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FC4173934
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30AE63B32D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D520242936;
-	Mon, 24 Feb 2025 02:22:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38C201A840E;
+	Mon, 24 Feb 2025 02:26:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTIdZnLC"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="39Ac9zHp"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C06F241C87;
-	Mon, 24 Feb 2025 02:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B447C1A3174
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740363769; cv=none; b=i9D3NoZk1FrM7o/PtsdPN9RuN+k6PYGYiM2X3gcxe5uqs8KWu6m0D/6RZ68PmcDZIITdz9gFl0TwkIgtb7DwCuV4ccFNaj0vnxbtbXeGLYiTt5bm5Wtpi78EYIlUOoBvbhamUCecT/E5rb8aeOaBcPL9YHO+6CRJa+qFoNg9FnA=
+	t=1740364010; cv=none; b=oyMTdhXYIPcBu5TMBN+fFuvwSF/3qwOyu1hEa5QFy/A0EDIPTpnm5Z2vHy7dgDTD/b4vRYXX9Q2OY7aH5k6kevN1RKn9jw1HVSydhnhyR6wcBVMgM0XGcbs5teBnVXp1817MfBHZEUzbJsYQ6SoLGd6tfmehAMJROIvhu4iSdyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740363769; c=relaxed/simple;
-	bh=Z7wcVTQ2PMbca+VamTK60Bfots1ruiWDLXTJSx+zoDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DRTRyZMb1krESw/GuSAbqsndk2fl0cAlweIjuj9p6XKtHVPoKgWHb1XGMzUR3Kf8p+jAWpnNTsG64IbEDSIUtEMbTwOSGAe9YKES9jXdBbM6bPy/tW7LMwRJaWDKliYmcvYJief5dBti/G/Wz/cBiYAZmOGfr+Jpc+wci64me1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTIdZnLC; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-47210ab1283so57654981cf.1;
-        Sun, 23 Feb 2025 18:22:47 -0800 (PST)
+	s=arc-20240116; t=1740364010; c=relaxed/simple;
+	bh=r3dI7WiEKrFqvpwa8Xutcga0Pq3D9iRGQ2iWtyXOVYM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=AGgFyogzpdu3BwfwFNN4nyPP+2/9i2+PHmd1ska0ajZZx2xItEJRBlD/r1H7BqvIEsHKKGKChHMLGksMWQVNzy32LinqtPX3xPagLmeCGd2bqdmzXki+/6OmEl4myyJlFuUUKIHcZkvwuB3r+BqbdOy7yqTg/YfipI9SGZOnKvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=39Ac9zHp; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chharry.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220cb5924a4so3929535ad.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740363767; x=1740968567; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:from:to:cc:subject
+        d=google.com; s=20230601; t=1740364008; x=1740968808; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Meuv+MydLFL2FaXVwlNSjl8ifFrRUaf5oa8eloYWNAY=;
-        b=UTIdZnLC/We+kcPwiP+quF3DmhU7+nqO6mZukeiFLr/z0iFRtVbn8yd1MHijbCSxcj
-         EDxrxCfWN8rNocFsx4xt06RT+34A1t0EeoA+PDp4tPiN1hBK1P86ZNUK9Tclu3W9pAQZ
-         1nIyzFNG2Y3V6fBmMedi8pvBcPCqNAnRBQl2Eobnt6nMul63IaydXeI4gV2r8ViCE1RO
-         1AIjLR8MUBLDS2AXE+jvS2lWqGxA8/i68rF5QdZiTAbtYjs0ZEF70yBGAuawzuxQbYgA
-         jiY8mOfxJhujYHpoa2fNetkSeirlMuY/1bgHg7CmZ6XWmFw5i0CdusBg3m1l/CiLh15X
-         iudA==
+        bh=LhuIV3j7oQrzKR61zcRCUAWXcpdxwySje2S75gCH1tg=;
+        b=39Ac9zHpnAvwe/EUiw18MjzUCVHBH8XbGmx9dKlT+abcfCl6PryiyQgpDWM689rQku
+         GFwGwIM+R4UTXcQSFXdd1NEstAyejHy1/XfT6JvE+sgTfJbPkwUP9iAMOMAjT4H8OXqr
+         KCEZ+7M1TWZ+MN+k3/It4eFwqZp0Gi4gD6oifTmqE4aUxP+N3G+O3cCgn/KKyG8ILU+S
+         aBsOXPY2tMq6bFeAIpkujfKcakYLt34D7PUkQ5T89oQX1jalZgTo5PPgHxKyalMchmS3
+         vCwS+Noe4p2KgRnkeb4kNRdSnaQqzrREy3C1N5Z0YXJjyU3UBklPNCKtqoav1JF/2WHg
+         yHvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740363767; x=1740968567;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:feedback-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1740364008; x=1740968808;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Meuv+MydLFL2FaXVwlNSjl8ifFrRUaf5oa8eloYWNAY=;
-        b=BoemCvro8iGuVbkte5zGSW4mLaTpJJvqZBXQUaWDOQEd3uTe5NYbfkVLYcBekVdofz
-         ovtbhSSbP+VQH3FPMHwRi56onZIsNWajGqMRhp+8LR+37/LeTduDo0ZopZsbNQ5NGC8c
-         PgV0PefAd1zegVR8DWFVg/QrX2F1dxqz5eH10JAFm08c2e1b7Ia0hr00Eg9e2leuSUCe
-         noP5DZxkIN+MvO8rVniHHo6tVtBFA00jRyWsOOPPs2HoUDEwppD5DxyY2grL4pmJN2XH
-         tKrfOY4AaI5CPbtkFh+cDWkoBh4rxQjM2cV65otETw3V9LIu467mWJSlVBl3XcBaUISW
-         SEPg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nohnHBZH8xsO5AyH6umHDefn6FRH0Eo17QAs6M1kq7QaieJBfKXMYWLYBbQEj2K9fUg=@vger.kernel.org, AJvYcCUGywl/xdpWZmvl/G32A7kNc6iqpAjGNHc5lrK1KA2yHVulytKP3QcYqV+gkeZ1No8A9IbCYq5IdTSDG45yng2p@vger.kernel.org, AJvYcCXsnEDSpVA6W0NBvNxITCtIeMuiIY1HRsy0fKvtXpdJDCY06GvsHpfFERuyAbNEkgofRDMpDOAjPCI+Vfmm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNrfqKPNF95weA39UXJlbmZ3qYLkZfAJ5CoprvPhkcgTIzSDdm
-	QuNn05tdGf5w+70kXSVGe37GDT5LTqfL1SvNwco4VlzupcuYJmCU
-X-Gm-Gg: ASbGnctVTHvrE2GE706rYrp+LlRPNE0GFG3fN7g45tytpv0cUvpFLHQy4a+hY6/AOsp
-	cYejlhe8//T31lNDC0Qb3BMWDOn8eFigXJSN69fHOUCYLzyVJ8rxD7Y0REPAdZdd3hIFfrd0E7I
-	hS+VSLWnfvG0gZ5LouRbWSOmZf0PHU1nzACgBe66IBlBe8GYLiKOeFFc4BZp6Mj2diRtBgqN66n
-	tmSElMaZrFceAOghW1afa1YHTucr9o7yq1+Ti9QbGVLlpzGOSMD4RpGIobhqEBBk8QBkU71mon1
-	eH6QjAB4SnrXT/JAUZXJRiyVPaabJGP9YR+wWTFZGZfBfPo5TtSed7fBxdbgBA14JfkiomSrKPY
-	rLPkGSSDOScL5beOm
-X-Google-Smtp-Source: AGHT+IFiS5JCKSf9kpXYqQvd4C20SO9WeFyiqD0ODJRSs4FwlxUKUEaIQb+jwmPk1FCG3Lz3izvoTA==
-X-Received: by 2002:ac8:5804:0:b0:472:9ea:887b with SMTP id d75a77b69052e-472228b3738mr106238181cf.10.1740363766868;
-        Sun, 23 Feb 2025 18:22:46 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4720b1fe010sm59942551cf.60.2025.02.23.18.22.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 18:22:46 -0800 (PST)
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id F0E6C1200043;
-	Sun, 23 Feb 2025 21:22:45 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Sun, 23 Feb 2025 21:22:45 -0500
-X-ME-Sender: <xms:9de7Z12BqK5IrljMNDM7sTYH_Ov-Mww0KRbBZNpXNcXYe2sixSc4Nw>
-    <xme:9de7Z8G-qvGv8OFLGT1xSM_yo7VoNRI1lqWthXCu_elKjrvM1MbdgwWV1ZT8FwcsE
-    INA5mhUMhtxRgjJOg>
-X-ME-Received: <xmr:9de7Z172YHx5a9dFi1P9kIMyg__JoT0EW5US61bLg9k1E5zNbifIeKdVBg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejjeehgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhepgeeljeeitdehvdehgefgjeevfeejjeekgfev
-    ffeiueejhfeuiefggeeuheeggefgnecuvehluhhsthgvrhfuihiivgepieenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedukedpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgtuhesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehjihgrnhhgshhhrghnlhgrihesghhmrghilhdrtghomhdprhgt
-    phhtthhopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhshh
-    esjhhoshhhthhrihhplhgvthhtrdhorhhgpdhrtghpthhtoheprhhoshhtvgguthesghho
-    ohgumhhishdrohhrghdprhgtphhtthhopehmrghthhhivghurdguvghsnhhohigvrhhsse
-    gvfhhfihgtihhoshdrtghomhdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepnhgvvghrrghjrdhuphgrughhhigrhieskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepjhhovghlsehjohgvlhhfvghrnhgrnhguvghsrdhorhhg
-X-ME-Proxy: <xmx:9de7Zy3GLPromVxSeDY5Lh-a-P5jsYXhNoBFXNXnDIbnrGbNmfVwXg>
-    <xmx:9de7Z4GT3LJg4lyWowvF-2v_j7BTp-GaC7geaE9dQ1arq78N8ydZjQ>
-    <xmx:9de7Zz9QQ6750j2DHLsB5q1NhQ-4fj0Hxy0xfRdNsj6TTPfL0MgGSQ>
-    <xmx:9de7Z1lWc7tQ8cSD1v95A1jLM6Zez9iuQQagy29AJK-rVZWDNZoLxw>
-    <xmx:9de7Z8GGbECcBovdM_fDdAnqeRoHdZ0NVNRe8QhUbsOaN6eKlN-UFM-t>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Feb 2025 21:22:45 -0500 (EST)
-From: Boqun Feng <boqun.feng@gmail.com>
-To: rcu@vger.kernel.org
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	bpf@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>
-Subject: [PATCH rcu 20/20] srcu: Make SRCU-fast also be NMI-safe
-Date: Sun, 23 Feb 2025 18:22:14 -0800
-Message-Id: <20250224022214.12037-21-boqun.feng@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250224022214.12037-1-boqun.feng@gmail.com>
-References: <20250224022214.12037-1-boqun.feng@gmail.com>
+        bh=LhuIV3j7oQrzKR61zcRCUAWXcpdxwySje2S75gCH1tg=;
+        b=pJ24BFQnVfCmrQDKhMjZJetFojkXBteSW7W6NGH2XMOZwSJyIbjNrelt8nArB1I7e/
+         Wh2Zkt2oMUenz462oF8DOPhsyHF1aFBgP8y408zYNu+joANl/MurTokb+471XffeufZ0
+         RPsncEmw9rZH3ABRZzKUuSRnUpjUPQIHQBpsuM0C35Ya8/Qn0K66nUjJxI1R6IVbLam7
+         oUv/0J7PfgMULmDBglm7mjXKnRwdPhR0pag3iPZHmzAWZE+1g0eH6RVN0bTd09WYdq2+
+         huiCGC8swdHjMzzkm5TF+iTYhPINuk9cty9dkeiPXIdyUAhb0od21IaynXFS4BR9w4fe
+         An3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXCAHf28CPiTx4Mbsj1rA3OrIRVLJioikTsTZ85hgu2eHp/DFjZfd687LBuSelEr9RdGmz9h4zmOjiJ8bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9YtwnALLMNVluvAHmEAykEZ7azdjsfqcBP4Ui4dAyAPZrXZJx
+	3jC5+hZZfjUi1Ef+KgL1tCW3KRpHkgYAoZXQhN5Nsgwa9/eZDJPK7rzfwNlUzcPL07DG2fri9LT
+	DAgRn+w==
+X-Google-Smtp-Source: AGHT+IFZnn3FBdzh9D5B9RxsJfGUyqMzvkNo7PGV4SVPFh2QI3ZjakDkbKiu4nAUhfLmmp/1KDcEqC4BYEw2
+X-Received: from plblc12.prod.google.com ([2002:a17:902:fa8c:b0:215:5322:d126])
+ (user=chharry job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e5cc:b0:21f:1202:f2f5
+ with SMTP id d9443c01a7336-2219ff3353bmr161316925ad.8.1740364007568; Sun, 23
+ Feb 2025 18:26:47 -0800 (PST)
+Date: Mon, 24 Feb 2025 10:24:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
+Message-ID: <20250224022447.1141413-1-chharry@google.com>
+Subject: [PATCH] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
+From: Hsin-chen Chuang <chharry@google.com>
+To: linux-bluetooth@vger.kernel.org, luiz.dentz@gmail.com, 
+	gregkh@linuxfoundation.org
+Cc: chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: "Paul E. McKenney" <paulmck@kernel.org>
+From: Hsin-chen Chuang <chharry@chromium.org>
 
-BPF uses rcu_read_lock_trace() in NMI context, so srcu_read_lock_fast()
-must be NMI-safe if it is to have any chance of addressing RCU Tasks
-Trace use cases.  This commit therefore causes srcu_read_lock_fast()
-and srcu_read_unlock_fast() to use atomic_long_inc() instead of
-this_cpu_inc() on architectures that support NMIs but do not have
-NMI-safe implementations of this_cpu_inc().  Note that both x86 and
-arm64 have NMI-safe implementations of this_cpu_inc(), and thus do not
-pay the performance penalty inherent in atomic_inc_long().
+Automatically configure the altsetting for USER_CHANNEL when a SCO is
+connected or disconnected. This adds support for the USER_CHANNEL to
+transfer SCO data over USB transport.
 
-It is tempting to use this trick to fold srcu_read_lock_nmisafe()
-into srcu_read_lock(), but this would need careful thought, review,
-and performance analysis.  Though those smp_mb() calls might well make
-performance a non-issue.
-
-Reported-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control USB alt setting")
+Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
 ---
- include/linux/srcutree.h | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-index bdc467efce3a..8bed7e6cc4c1 100644
---- a/include/linux/srcutree.h
-+++ b/include/linux/srcutree.h
-@@ -231,17 +231,24 @@ static inline struct srcu_ctr __percpu *__srcu_ctr_to_ptr(struct srcu_struct *ss
-  * srcu_struct.  Returns a pointer that must be passed to the matching
-  * srcu_read_unlock_fast().
-  *
-- * Note that this_cpu_inc() is an RCU read-side critical section either
-- * because it disables interrupts, because it is a single instruction,
-- * or because it is a read-modify-write atomic operation, depending on
-- * the whims of the architecture.
-+ * Note that both this_cpu_inc() and atomic_long_inc() are RCU read-side
-+ * critical sections either because they disables interrupts, because they
-+ * are a single instruction, or because they are a read-modify-write atomic
-+ * operation, depending on the whims of the architecture.
-+ *
-+ * This means that __srcu_read_lock_fast() is not all that fast
-+ * on architectures that support NMIs but do not supply NMI-safe
-+ * implementations of this_cpu_inc().
-  */
- static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct *ssp)
- {
- 	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
+ drivers/bluetooth/btusb.c | 224 +++++++++++++++++++++++++++++++-------
+ 1 file changed, 186 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index de3fa725d210..dfb0918dfe98 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -854,6 +854,11 @@ struct qca_dump_info {
+ #define BTUSB_ALT6_CONTINUOUS_TX	16
+ #define BTUSB_HW_SSR_ACTIVE	17
  
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_lock_fast().");
--	this_cpu_inc(scp->srcu_locks.counter); /* Y */
-+	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-+		this_cpu_inc(scp->srcu_locks.counter); /* Y */
-+	else
-+		atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  /* Z */
- 	barrier(); /* Avoid leaking the critical section. */
- 	return scp;
- }
-@@ -252,15 +259,22 @@ static inline struct srcu_ctr __percpu *__srcu_read_lock_fast(struct srcu_struct
-  * different CPU than that which was incremented by the corresponding
-  * srcu_read_lock_fast(), but it must be within the same task.
-  *
-- * Note that this_cpu_inc() is an RCU read-side critical section either
-- * because it disables interrupts, because it is a single instruction,
-- * or because it is a read-modify-write atomic operation, depending on
-- * the whims of the architecture.
-+ * Note that both this_cpu_inc() and atomic_long_inc() are RCU read-side
-+ * critical sections either because they disables interrupts, because they
-+ * are a single instruction, or because they are a read-modify-write atomic
-+ * operation, depending on the whims of the architecture.
-+ *
-+ * This means that __srcu_read_unlock_fast() is not all that fast
-+ * on architectures that support NMIs but do not supply NMI-safe
-+ * implementations of this_cpu_inc().
-  */
- static inline void __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
- {
- 	barrier();  /* Avoid leaking the critical section. */
--	this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
-+	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-+		this_cpu_inc(scp->srcu_unlocks.counter);  /* Z */
-+	else
-+		atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  /* Z */
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "RCU must be watching srcu_read_unlock_fast().");
++struct sco_handle_list {
++	struct list_head list;
++	u16 handle;
++};
++
+ struct btusb_data {
+ 	struct hci_dev       *hdev;
+ 	struct usb_device    *udev;
+@@ -920,6 +925,9 @@ struct btusb_data {
+ 	int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+ 
+ 	struct qca_dump_info qca_dump;
++
++	/* Records the exsiting SCO handles for HCI_USER_CHANNEL */
++	struct list_head sco_handle_list;
+ };
+ 
+ static void btusb_reset(struct hci_dev *hdev)
+@@ -1113,6 +1121,131 @@ static inline void btusb_free_frags(struct btusb_data *data)
+ 	spin_unlock_irqrestore(&data->rxlock, flags);
  }
  
++static void btusb_sco_handle_list_clear(struct list_head *list)
++{
++	struct sco_handle_list *entry, *n;
++
++	list_for_each_entry_safe(entry, n, list, list) {
++		list_del(&entry->list);
++		kfree(entry);
++	}
++}
++
++static struct sco_handle_list *btusb_sco_handle_list_find(
++	struct list_head *list,
++	u16 handle)
++{
++	struct sco_handle_list *entry;
++
++	list_for_each_entry(entry, list, list)
++		if (entry->handle == handle)
++			return entry;
++
++	return NULL;
++}
++
++static int btusb_sco_handle_list_add(struct list_head *list, u16 handle)
++{
++	struct sco_handle_list *entry;
++
++	if (btusb_sco_handle_list_find(list, handle))
++		return -EEXIST;
++
++	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
++	if (!entry)
++		return -ENOMEM;
++
++	entry->handle = handle;
++	list_add(&entry->list, list);
++
++	return 0;
++}
++
++static int btusb_sco_handle_list_del(struct list_head *list, u16 handle)
++{
++	struct sco_handle_list *entry;
++
++	entry = btusb_sco_handle_list_find(list, handle);
++	if (!entry)
++		return -ENOENT;
++
++	list_del(&entry->list);
++	kfree(entry);
++
++	return 0;
++}
++
++static void btusb_sco_conn_change(struct btusb_data *data, struct sk_buff *skb)
++{
++	struct hci_event_hdr *hdr = (void *) skb->data;
++	struct hci_dev *hdev = data->hdev;
++
++	if (hci_skb_pkt_type(skb) != HCI_EVENT_PKT || skb->len < sizeof(*hdr))
++		return;
++
++	switch (hdr->evt) {
++	case HCI_EV_DISCONN_COMPLETE: {
++		struct hci_ev_disconn_complete *ev =
++			(void *) skb->data + sizeof(*hdr);
++		u16 handle;
++
++		if (skb->len != sizeof(*hdr) + sizeof(*ev) || ev->status)
++			return;
++
++		handle = __le16_to_cpu(ev->handle);
++		if (btusb_sco_handle_list_del(&data->sco_handle_list,
++					      handle) < 0)
++			return;
++
++		bt_dev_info(hdev, "disabling SCO");
++		data->sco_num--;
++		data->air_mode = HCI_NOTIFY_DISABLE_SCO;
++		schedule_work(&data->work);
++
++		break;
++	}
++	case HCI_EV_SYNC_CONN_COMPLETE: {
++		struct hci_ev_sync_conn_complete *ev =
++			(void *) skb->data + sizeof(*hdr);
++		unsigned int notify_air_mode;
++		u16 handle;
++
++		if (skb->len != sizeof(*hdr) + sizeof(*ev) || ev->status)
++			return;
++
++		switch (ev->air_mode) {
++		case BT_CODEC_CVSD:
++			notify_air_mode = HCI_NOTIFY_ENABLE_SCO_CVSD;
++			break;
++
++		case BT_CODEC_TRANSPARENT:
++			notify_air_mode = HCI_NOTIFY_ENABLE_SCO_TRANSP;
++			break;
++
++		default:
++			return;
++		}
++
++		handle = __le16_to_cpu(ev->handle);
++		if (btusb_sco_handle_list_add(&data->sco_handle_list,
++					      handle) < 0) {
++			bt_dev_err(hdev, "failed to add the new SCO handle");
++			return;
++		}
++
++		bt_dev_info(hdev, "enabling SCO with air mode %u",
++			    ev->air_mode);
++		data->sco_num++;
++		data->air_mode = notify_air_mode;
++		schedule_work(&data->work);
++
++		break;
++	}
++	default:
++		break;
++	}
++}
++
+ static int btusb_recv_event(struct btusb_data *data, struct sk_buff *skb)
+ {
+ 	if (data->intr_interval) {
+@@ -1120,6 +1253,10 @@ static int btusb_recv_event(struct btusb_data *data, struct sk_buff *skb)
+ 		schedule_delayed_work(&data->rx_work, 0);
+ 	}
+ 
++	/* Configure altsetting for HCI_USER_CHANNEL on SCO dis/connected */
++	if (hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
++		btusb_sco_conn_change(data, skb);
++
+ 	return data->recv_event(data->hdev, skb);
+ }
+ 
+@@ -1919,44 +2056,6 @@ static void btusb_stop_traffic(struct btusb_data *data)
+ 	usb_kill_anchored_urbs(&data->ctrl_anchor);
+ }
+ 
+-static int btusb_close(struct hci_dev *hdev)
+-{
+-	struct btusb_data *data = hci_get_drvdata(hdev);
+-	int err;
+-
+-	BT_DBG("%s", hdev->name);
+-
+-	cancel_delayed_work(&data->rx_work);
+-	cancel_work_sync(&data->work);
+-	cancel_work_sync(&data->waker);
+-
+-	skb_queue_purge(&data->acl_q);
+-
+-	clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
+-	clear_bit(BTUSB_BULK_RUNNING, &data->flags);
+-	clear_bit(BTUSB_INTR_RUNNING, &data->flags);
+-	clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
+-
+-	btusb_stop_traffic(data);
+-	btusb_free_frags(data);
+-
+-	err = usb_autopm_get_interface(data->intf);
+-	if (err < 0)
+-		goto failed;
+-
+-	data->intf->needs_remote_wakeup = 0;
+-
+-	/* Enable remote wake up for auto-suspend */
+-	if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
+-		data->intf->needs_remote_wakeup = 1;
+-
+-	usb_autopm_put_interface(data->intf);
+-
+-failed:
+-	usb_scuttle_anchored_urbs(&data->deferred);
+-	return 0;
+-}
+-
+ static int btusb_flush(struct hci_dev *hdev)
+ {
+ 	struct btusb_data *data = hci_get_drvdata(hdev);
+@@ -2327,6 +2426,51 @@ static void btusb_work(struct work_struct *work)
+ 	}
+ }
+ 
++static int btusb_close(struct hci_dev *hdev)
++{
++	struct btusb_data *data = hci_get_drvdata(hdev);
++	int err;
++
++	BT_DBG("%s", hdev->name);
++
++	if (hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
++		btusb_sco_handle_list_clear(&data->sco_handle_list);
++		data->sco_num = 0;
++		if (data->isoc_altsetting != 0)
++			btusb_switch_alt_setting(hdev, 0);
++	}
++
++	cancel_delayed_work(&data->rx_work);
++	cancel_work_sync(&data->work);
++	cancel_work_sync(&data->waker);
++
++	skb_queue_purge(&data->acl_q);
++
++	clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
++	clear_bit(BTUSB_BULK_RUNNING, &data->flags);
++	clear_bit(BTUSB_INTR_RUNNING, &data->flags);
++	clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
++
++	btusb_stop_traffic(data);
++	btusb_free_frags(data);
++
++	err = usb_autopm_get_interface(data->intf);
++	if (err < 0)
++		goto failed;
++
++	data->intf->needs_remote_wakeup = 0;
++
++	/* Enable remote wake up for auto-suspend */
++	if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
++		data->intf->needs_remote_wakeup = 1;
++
++	usb_autopm_put_interface(data->intf);
++
++failed:
++	usb_scuttle_anchored_urbs(&data->deferred);
++	return 0;
++}
++
+ static void btusb_waker(struct work_struct *work)
+ {
+ 	struct btusb_data *data = container_of(work, struct btusb_data, waker);
+@@ -3782,6 +3926,8 @@ static int btusb_probe(struct usb_interface *intf,
+ 	data->udev = interface_to_usbdev(intf);
+ 	data->intf = intf;
+ 
++	INIT_LIST_HEAD(&data->sco_handle_list);
++
+ 	INIT_WORK(&data->work, btusb_work);
+ 	INIT_WORK(&data->waker, btusb_waker);
+ 	INIT_DELAYED_WORK(&data->rx_work, btusb_rx_work);
+@@ -4117,6 +4263,8 @@ static void btusb_disconnect(struct usb_interface *intf)
+ 	hdev = data->hdev;
+ 	usb_set_intfdata(data->intf, NULL);
+ 
++	btusb_sco_handle_list_clear(&data->sco_handle_list);
++
+ 	if (data->isoc) {
+ 		device_remove_file(&intf->dev, &dev_attr_isoc_alt);
+ 		usb_set_intfdata(data->isoc, NULL);
 -- 
-2.39.5 (Apple Git-154)
+2.48.1.601.g30ceb7b040-goog
 
 
