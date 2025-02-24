@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-528351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE06A416CE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:01:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFED1A416CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AF171575
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:01:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E83A1895E0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929E7282EE;
-	Mon, 24 Feb 2025 08:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100A624167B;
+	Mon, 24 Feb 2025 08:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KapILkno"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rMBG1MHy"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197A527453
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961921411DE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384094; cv=none; b=fh4G2WQomnHFRa0ctc1+E+H7fwlRpMrj+BgkgtMOhnsf4kbSzL5qyRHguK4M5mlDdJEHLu1IZWg/YRQzVx5x34TPMs1xsQkH8fzAIU0hWajioozN6+Byc2oX7n1lif8ZwXG8dk1019wBTqSPiXBGxTyJX0llN0qJ4pqjOdPG+UY=
+	t=1740384095; cv=none; b=RYa1JW2uimqFsZVo3AaOnZKMEqgHRUGvHXWdhFVmL6awNlUtPQkYX45BjxkTYLnCaDhyMlO0AaSHnBnZ0OrbSgpjooZEyfWWhhl4G2zJKdBIX2RbrNY8pAit9yG46WFoJazi9fXbB5rmnaA6akkC5XQ+O104WxfOM6iTkCnWai0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384094; c=relaxed/simple;
-	bh=oRQzRk5xTUcaDM5dqPMGTeTs7TwHysSopVPkeUpXl7I=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nRmxJPm6C6AnAHRropa3RABUASQeoohhhnMLxWpNb8GoVxfJFDvC78mbiUhFYUdivjUiguOYsn/g0jSJ8V9oSN3MN5RAM7gcYFdk0qhklXnM33b2cOSHdt/I4B9MJ4vA3XP05ExDyLbIIl09j3L5JltBzmqLuC1TZ1ewlAzwzpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KapILkno; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1740384095; c=relaxed/simple;
+	bh=fLnEiSETJ8+PZ13rLV26ADkS/jCTNTqwXysxo5sNB1Y=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=i0IBvhZSrwvvFgus/B3Vma3kIOdl+/N7rTKMiN0XhOIYDVyIwCVsQGVE+Y65S6PA1L9lmKbub6fjR5UtpW9AWhLXAMVOkJC4RcJqP1ptmGyXIQKjjlT0J7qmVc7hhBMt3CfZ+idwqme3nV7hDFsX9av2tqVAY6xEJmMmZ1QV1ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rMBG1MHy; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so1423255e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:01:31 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-439ac3216dcso21455005e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:01:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740384090; x=1740988890; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zcxQ5Im6UgvOQisVqwrBvBr+aTDn+0rM0hX5qHkX9dI=;
-        b=KapILknoX6Bgz+vWT064hKVNmv345vC7x95p7+mQ12xaqCGP4KoMjYsyCrPkciObnl
-         4bmdIyrXqZ2uk0NWF7Ptgc5fOzSLlL2BWQGqCjEq/ZngVOBg3S97xxtzcjZ/FThX5b82
-         uQcfNRQTU7uHI/DFuoakCDTEf8FpLOFN6pJacNaOriI54k85ldGd9hmnIFHFPUrmGZoh
-         wg08oiFKzGPftWu2FJhSEOSVZxWsIRlBd+eJKsPD2H3qUbyODvjngDMNK1yxhhW2LFnM
-         bchH1YTyhjFuPb/3eDtp4sMnxBJzARTBGW6ROTFYRDzjZbaiDmi028+E6epML8znmcRs
-         096Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740384090; x=1740988890;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1740384092; x=1740988892; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zcxQ5Im6UgvOQisVqwrBvBr+aTDn+0rM0hX5qHkX9dI=;
-        b=oad7GE8L//qZMrdpDG5rYwQ8W6ythpab+4rZ9Rwrg55tf0slW6RkvtlYy0dZ9Q2dkl
-         CrZ3DMrxK27EbO+9Xkhb9qBRO1uJtuA1B/7m/jDuMsvUbNLfNHe7aUUay60vlOOk7pF0
-         iRLoj8oNvTAGBKcK0z9eKbd61MTp1+QIWNeX8Jm8f79Q77Qpj/QefTguNJ6YCNcIpyU8
-         teqNBx2f1PXFp5YMTz4teVpokHPeLKcCMFt5ZZZ5sYq3gNsD7ssgsOa6lFUp1Nj06MD6
-         Pm7OPV+tgM6QapgAHZWguEAnObEaKgoeb7PfOWVW+opjEBYATmSfjTrmp9Bb7LlKV53P
-         p7Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuigS/pj4oADQqLU2MewrbA1NGMAncITeb2rgG2YcfZzRKaYq6JxSC9kxMZwSIfhXdHUmm+NSOtlSg3m4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFo6XSPgAtLPIk71rjmK5j+O+DE2tZqWFWWbgWisR4U5imPTz0
-	qnAZT+9CC2ms2ahqgz9U+1Jzj+YPb9nLVtMt1N939TB4D1yVKJyBDBYF6cnwamw=
-X-Gm-Gg: ASbGnctM9+XWXy5Tte7W5Gj4+xPdHKR/6Bh9tViMxqsxg8G3Vt+fgQ6CUMwId8SeMqt
-	krNIH/4s/kmp7cP6MVa6Is89Vr+v7o0MXQtwfR13nH1gX3XaT3zHBaD9YdTxhUU0J2MMT0dmyz6
-	//uOYzzhvYC90Jk0wQ5h1pcIz2B4fUQUrOOZ0QSfNuE8IKT5nOXAeJonGPt/jgePicMIgFD4j85
-	IPJWAHN8TkVNpuKFU4K4Dk76F7pfPlV19MDNg7aKLPmDIuhFVrtCjVNQniSRtqAuBVapXaVIfch
-	2LEiQMO+dECy8I664TmoI1YKkoXDw2AznsOqQAUsq+5Z/2+55jx7ez0+DhdHrds+RdDnumM/yf1
-	PRTCxfQ==
-X-Google-Smtp-Source: AGHT+IEQEeyrw3EzcFeKThOAVt50oI16dNJaA/e4rE8vh2rZw03bfg7CZZRU42r2tScBKfk4Ik5kSg==
-X-Received: by 2002:a05:600c:1d29:b0:439:9377:fa17 with SMTP id 5b1f17b1804b1-439ae1f4d07mr102577595e9.18.1740384090295;
-        Mon, 24 Feb 2025 00:01:30 -0800 (PST)
+        bh=VDvEBdyqb+LCUK8JJ/EhfQ/X2vzVVFCo3S0RnsiF8pI=;
+        b=rMBG1MHytDMvfXTMelHJoNkoKbwfUApbDVwznlrfRZhea2Xjbqjg8Zfk2btKCCOaol
+         yyKcI28Mabj6BEsYixaDDxzgEJk7h3AHBL0QGggrTLQAkcyrhAwUI0fyBwaVL+U+OeoF
+         9wmHM3y0TmXvc1KBme4KmlNeeDW1d+o9wkEYMTeQ1R8eYlL9PbEylsvFGUweze0bSImR
+         EOr7DQsmi5YPR9ZnnRSKJzHC2UwRNYXw72ConwO18fCeTKjie+My5JQq0tgzjpYXftrc
+         309WA8pXgiVdTHHs0YoGmh3SXCd8RrGzn2ZsohrGjNClStPyk1VR/YuKAhddSEu+uaTg
+         EMZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740384092; x=1740988892;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VDvEBdyqb+LCUK8JJ/EhfQ/X2vzVVFCo3S0RnsiF8pI=;
+        b=YBnRRyBZHTvLot4vSXS04sexg//uWDEt6POQEKuJnl8zP/3EpnnfkSvBXSK5JkjImv
+         w3sMmZ1EzUmAiYcxyfavWkJIZOvdtqAv6i0l7BxJtPWO8gTe2UzF2RVOpBNOi6OwthPG
+         xxO0AknT4V3Y3x3FukbZaLGu38pqDPq9fI8vfGm+4o80GUEofoBkGenLZ9V7c2SPiINf
+         TWJf2MEzdHcvHCPi4errGD8UEKrNM+5//QuZEJZQic19hYPQ3ruNbzjFMU86DKdIqjhd
+         WJ9Z+DJ7ld9T7k98q9aiNBkWA/mpYiZz+decyYLnOwdIVlv7AojpTBIzbL9RQfiADrjt
+         aN9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUGdp7v5BwfutS5HgxKhb0dLnsASyFGjLBmkmE2MTELzNeU//Ce82zg9za/ay+Q/5dDLjTd9lOJztClcTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0ZBLEWgpfwi5ktQxK7FPMB6feEgnuguyCugbROMV1613EgofI
+	eN4ZNVJ+0Ka5Tujok/xyvRVnTgjLt3mhDuSWKuBQGL/U4TgcaunJOXRHqLW9lXc=
+X-Gm-Gg: ASbGncu+k3suX2r4YL+fnURc1LBU+S2x6q/wLeDUE0lzfdqTFnuC8fDn09tJp0ujg+F
+	qTawhDuGMuoafwslqVXNcoBlv9KTUJgdD5IDzSS3sx6sbHi7QhyUeGeaqtwsF3puO0SGZey6g8G
+	cioj3uXY7gLQBJwjLovEi7ZG0e6eIyZrfh8gublwZVsh4MG/CPmRgkgkdCs1ApuVeEUN3G0320Q
+	UZ8rCRFPWozCIRHTGbM4HQImvzCdsbIrRbEJTGj+wZQJ1ndDqKHmjhN5tdY2KIyGgpSJ3SQMYwt
+	rNnhvC/YtRA4jbi5Rp5uY47Y1TdlhnOsAcUT1wazf4S/lzyNlpux4v0O74MZ416/+gMAKxq56t6
+	WtA+pkA==
+X-Google-Smtp-Source: AGHT+IE4ZDfn8IZlrI1hvBZaxOYiDGG0nYOPyFk3VkBXJ9hbsd17nkiDUQ2UUuMCC3IuQ80wYzn30w==
+X-Received: by 2002:a05:600c:4f92:b0:439:9377:fa22 with SMTP id 5b1f17b1804b1-439aeb3453dmr95707715e9.18.1740384091916;
+        Mon, 24 Feb 2025 00:01:31 -0800 (PST)
 Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b0367533sm97690395e9.27.2025.02.24.00.01.29
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b0367533sm97690395e9.27.2025.02.24.00.01.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 00:01:29 -0800 (PST)
+        Mon, 24 Feb 2025 00:01:31 -0800 (PST)
 From: Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH 0/3] firmware: samsung: add ACPM debugfs support
-Date: Mon, 24 Feb 2025 08:01:21 +0000
-Message-Id: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
+Date: Mon, 24 Feb 2025 08:01:22 +0000
+Subject: [PATCH 1/3] firmware: exynos-acpm: rename exynos-acpm.h to
+ exynos-acpm-xfer.h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,9 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAFEnvGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyND3cTkglzdlNSk0vS0Yt0UQ0uzFAOLVDMTMyMloJaCotS0zAqwcdG
- xtbUA9QyMw14AAAA=
+Message-Id: <20250224-acpm-debugfs-v1-1-2418a3ea1b17@linaro.org>
+References: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
+In-Reply-To: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Alim Akhtar <alim.akhtar@samsung.com>
 Cc: andre.draszik@linaro.org, peter.griffin@linaro.org, 
@@ -93,50 +95,78 @@ Cc: andre.draszik@linaro.org, peter.griffin@linaro.org,
  linux-arm-kernel@lists.infradead.org, 
  Tudor Ambarus <tudor.ambarus@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740384089; l=1478;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740384089; l=2304;
  i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
- bh=oRQzRk5xTUcaDM5dqPMGTeTs7TwHysSopVPkeUpXl7I=;
- b=1GPC+AlVrtrDlXyCWt4XXvvUJ+mIw/T4ANo17j4HAMMd79u31gNY//b6q4lBP2v9rVAu+EB+W
- OQODBr0ljjYAzDnslBcQAMWVTXD5G4t+vNS28bvHbt8GTSFQI3av81S
+ bh=fLnEiSETJ8+PZ13rLV26ADkS/jCTNTqwXysxo5sNB1Y=;
+ b=3T+7vTI0DjoqdFOzA1ETT/a2YAOdtQrNmTHKgkHboovpHfmPcXLCAGDs1fKlPZGN1M4U2WRzg
+ ZwS4rhbBJLnDhj8MJEGz0gLckLiY937y7lH/k1/+7pa1o+7yd1Nce7y
 X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
  pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-The ACPM firmware saves debug information to SRAM. Add debugfs entries
-in order to expose the ACPM logs.
-
-acpm_framework/logb_gprio_level controls the ACPM print verbosity to
-the SRAM log buffer. It encodes a 64 bit value, 4 bits for each of the
-16 Plugin IDs, with verbosity levels from 0xf (log error) to
-0x0 (log debug).
-
-acpm_framework/log_level has a maximum value of 2 and controls which
-SRAM log buffers are printed.
-
-Finally, acpm_framework/acpm_debug_cmd provides a way to issue
-ACPM DEBUG commands to the firmware.
-
-Add ACPM debugfs support with the above capabilities.
+Rename header file to better indicate what it is used for.
+This is a preparation patch, as exynos-acpm.h will be later on
+introduced and included between the core driver and its debugfs
+logging feature.
 
 Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
-Tudor Ambarus (3):
-      firmware: exynos-acpm: rename exynos-acpm.h to exynos-acpm-xfer.h
-      firmware: exynos-acpm: move common structures to exynos-acpm.h
-      firmware: samsung: add ACPM debugfs support
+ drivers/firmware/samsung/exynos-acpm-pmic.c                    | 2 +-
+ drivers/firmware/samsung/{exynos-acpm.h => exynos-acpm-xfer.h} | 6 +++---
+ drivers/firmware/samsung/exynos-acpm.c                         | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
- drivers/firmware/samsung/Makefile              |   1 +
- drivers/firmware/samsung/exynos-acpm-debugfs.c | 359 +++++++++++++++++++++++++
- drivers/firmware/samsung/exynos-acpm-pmic.c    |   2 +-
- drivers/firmware/samsung/exynos-acpm-xfer.h    |  23 ++
- drivers/firmware/samsung/exynos-acpm.c         |  61 ++---
- drivers/firmware/samsung/exynos-acpm.h         |  95 ++++++-
- 6 files changed, 485 insertions(+), 56 deletions(-)
----
-base-commit: f4d315a1f9d8fcaf608f283f01ce4d66160f44a1
-change-id: 20250221-acpm-debugfs-d196d08e6462
+diff --git a/drivers/firmware/samsung/exynos-acpm-pmic.c b/drivers/firmware/samsung/exynos-acpm-pmic.c
+index 85e90d236da2..9ad4cb82fae1 100644
+--- a/drivers/firmware/samsung/exynos-acpm-pmic.c
++++ b/drivers/firmware/samsung/exynos-acpm-pmic.c
+@@ -9,7 +9,7 @@
+ #include <linux/ktime.h>
+ #include <linux/types.h>
+ 
+-#include "exynos-acpm.h"
++#include "exynos-acpm-xfer.h"
+ #include "exynos-acpm-pmic.h"
+ 
+ #define ACPM_PMIC_CHANNEL		GENMASK(15, 12)
+diff --git a/drivers/firmware/samsung/exynos-acpm.h b/drivers/firmware/samsung/exynos-acpm-xfer.h
+similarity index 79%
+rename from drivers/firmware/samsung/exynos-acpm.h
+rename to drivers/firmware/samsung/exynos-acpm-xfer.h
+index 2d14cb58f98c..0b76a270b773 100644
+--- a/drivers/firmware/samsung/exynos-acpm.h
++++ b/drivers/firmware/samsung/exynos-acpm-xfer.h
+@@ -4,8 +4,8 @@
+  * Copyright 2020 Google LLC.
+  * Copyright 2024 Linaro Ltd.
+  */
+-#ifndef __EXYNOS_ACPM_H__
+-#define __EXYNOS_ACPM_H__
++#ifndef __EXYNOS_ACPM_XFER_H__
++#define __EXYNOS_ACPM_XFER_H__
+ 
+ struct acpm_xfer {
+ 	const u32 *txd;
+@@ -20,4 +20,4 @@ struct acpm_handle;
+ int acpm_do_xfer(const struct acpm_handle *handle,
+ 		 const struct acpm_xfer *xfer);
+ 
+-#endif /* __EXYNOS_ACPM_H__ */
++#endif /* __EXYNOS_ACPM_XFER_H__ */
+diff --git a/drivers/firmware/samsung/exynos-acpm.c b/drivers/firmware/samsung/exynos-acpm.c
+index a85b2dbdd9f0..3c14afc89fd7 100644
+--- a/drivers/firmware/samsung/exynos-acpm.c
++++ b/drivers/firmware/samsung/exynos-acpm.c
+@@ -27,7 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ 
+-#include "exynos-acpm.h"
++#include "exynos-acpm-xfer.h"
+ #include "exynos-acpm-pmic.h"
+ 
+ #define ACPM_PROTOCOL_SEQNUM		GENMASK(21, 16)
 
-Best regards,
 -- 
-Tudor Ambarus <tudor.ambarus@linaro.org>
+2.48.1.601.g30ceb7b040-goog
 
 
