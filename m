@@ -1,166 +1,108 @@
-Return-Path: <linux-kernel+bounces-529659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA5FA4295D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:21:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55F2A42912
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:14:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFF3B7A7897
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:19:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16C131713AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476FD265CAB;
-	Mon, 24 Feb 2025 17:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBDA262D37;
+	Mon, 24 Feb 2025 17:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="FUDrhTvW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Sio8wCHU"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B5C263F54;
-	Mon, 24 Feb 2025 17:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417573; cv=none; b=taQ6AGA7jpizzbmr3cyL5OYBTQ4ma3DGza7NDnMj0OpnwQOnfJIztD5KBZmZdSgjT7ifwYCcO5AmETBv6r0GmqNowNlRbCRPkABNjh04v+J/6lpnwJuutL3Qx1GoezAXFYkBx0hzHeS95N7uOFIdeieOi0jX8pJ2hp7rfv0pb5w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417573; c=relaxed/simple;
-	bh=YVrfmmpuiZl97lPSQ+Q4oYh5oqB3+D2NaV+FRnSnx34=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iHomqysS4Z8ZzpNtanNZqM3uHpk4bdcV+e9UlpuvZ5FPcTi2/SowQP79Rid4BMeTn5vs4f7Xi7C8lnqAaNK4K539ernIsSjlSY9iqFx/A/psSbGotvj2ob7Pi/vry99V7hPa5rhT+Pxqk6D/TkNCrcL+Ljddq4rXX+y3rdJWWxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=FUDrhTvW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OCixFa013141;
-	Mon, 24 Feb 2025 18:18:53 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=GTr3MiF+X8E++5/d1k9zNi
-	whyWX8NQucbTgDgyPXgzM=; b=FUDrhTvWnYasctYRtyGBXE9jaB4Bb2fd9efqkz
-	U0icqpJMn4T+2PKvta5rvS3Ovu1JM0cXFy/eTYjh9gqTWmAyR6fyvovwYnJgbFWM
-	bg2RG0PdeEvQs4Cn/iABWV+uMzcoJLfYZ6ovLb9eJcVs8nKsW0ksVFFeYn0Qz1x6
-	pHGP5gRfJLlC4sVthXChcXruHPGgvIT5xI/q4+xDG8jTA5vYzPYDTJf2si1s2Yug
-	GoQuKbknH2VNCz5CJwmkqQPyAJzlR2KFA34H0LMECIX9l5XGM8KE/dHZO4NiJF9a
-	GGtSSqKkrJazdZsg9JOgyjN8h7BhRHZtORuRJIxQ985ml4Tg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44y6t20jjm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 18:18:53 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3B60640044;
-	Mon, 24 Feb 2025 18:17:49 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BC8145387F7;
-	Mon, 24 Feb 2025 18:07:40 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
- (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 18:07:40 +0100
-Received: from localhost (10.252.23.75) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 18:07:40 +0100
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-To: <wbg@kernel.org>
-CC: <alexandre.torgue@foss.st.com>, <olivier.moysan@foss.st.com>,
-        <fabrice.gasnier@foss.st.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH] counter: stm32-lptimer-cnt: fix error handling when enabling
-Date: Mon, 24 Feb 2025 18:06:57 +0100
-Message-ID: <20250224170657.3368236-1-fabrice.gasnier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11C525485D;
+	Mon, 24 Feb 2025 17:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740416886; cv=pass; b=UDBtoaUtUytZHNHWib26UGcdZL2QZkGyceXeKTPgebpOd7axLlnzxrKxxnudNW+70vQQZfPrupvgq+aWjdyblLvBZPWFIM8KToE10Ad+/zEDvq6Imim2wtwa+PPVcWYsWrYPZs3eMr8GQkjICYfpHy2MVX3YfB7jpIM/jsQgh8Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740416886; c=relaxed/simple;
+	bh=DreFK2+rMKeK54uU7Vp+JKJV5knSDkDL5Ya0Zl9TWiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZTqOLz9H8H9QlUUVqLAWHVAqkGFQqBpsDhMYh75LyvlN/KTUi2/Kmfpq9Akk3qH+VO+5xNEx9oO/IKSRNlnL+lY2PyGEOobC2Edkx4+HUI6l95ZT0vk2jImFkj6WjKj+2yTwOW7WGc8kzMlXpzepyBCT41FSZ2jvAcNLL2iNjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Sio8wCHU; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740416861; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=cQsG9W64Zk2OKPd85hxSBf3MoJiTODMBTu4S6CnPlWuor7IGgJIcWNndNYTukQzzy5BIS7ko8YZuDAuCpYJal2IXzhCTBaWol/+/qQWufRn4WPQ3FoxqUTMqRthnnunXMY1EDYsQ8Ni6IH0bH9RmjXJ9VJ1ZuwMHsguCwu5Lhv8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740416861; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=sEPEAsu37A1qIiTQHKAj9euGoglZkXFnn7bkzdjcrRE=; 
+	b=foLWPn7DIDy5HLGjNjLotNo9FeEe+uTIuAE0AjTgPX0e3wNcpU2CZSVQ+/Zn5+0V8pQkjdAozQeO9kl+ZXiYapXqxsRO/XcfP63G8q6yGydmhZue7i7pZGXZucZvt3Q/OBFQJbuWCyKqFQbJVdslHBIIzEzcXuNdG2hefJhxmqw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740416861;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=sEPEAsu37A1qIiTQHKAj9euGoglZkXFnn7bkzdjcrRE=;
+	b=Sio8wCHUmuVQl6YhlW1D/0pbEkzPpmY28SSltsg2poGIlD72ugcjNeHS5lZoUKZd
+	QvtXgPe3rWf/YjlVpGqgYacgKRrF0vd5WXdwYWJ5j2AJntdbB83gK8shcCflxeOwNMU
+	rjwmLAt4nqsVMBGOEy+2FNQqstP3/I8o5MKOondc=
+Received: by mx.zohomail.com with SMTPS id 17404168592031017.3373094891671;
+	Mon, 24 Feb 2025 09:07:39 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id AC79518067D; Mon, 24 Feb 2025 18:07:34 +0100 (CET)
+Date: Mon, 24 Feb 2025 18:07:34 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Andy Yan <andyshrk@163.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v2 0/2] Rockchip W552793DBA-V10 panel support
+Message-ID: <psmfw2znti3luu6pjyi5g22bgvylcb5lms22yakfkshnol4v4y@bhzvqjbgzhep>
+References: <20250207-raydium-rm67200-v2-0-1fdc927aae82@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_08,2025-02-24_02,2024-11-22_01
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20250207-raydium-rm67200-v2-0-1fdc927aae82@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
 
-In case the stm32_lptim_set_enable_state() fails to update CMP and ARR,
-a timeout error is raised, by regmap_read_poll_timeout. It may happen,
-when the lptimer runs on a slow clock, and the clock is gated only
-few times during the polling.
+Hi,
 
-Badly, when this happen, STM32_LPTIM_ENABLE in CR register has been set.
-So the 'enable' state in sysfs wrongly lies on the counter being
-correctly enabled, due to CR is read as one in stm32_lptim_is_enabled().
+On Fri, Feb 07, 2025 at 05:21:46PM +0100, Sebastian Reichel wrote:
+> This has been tested in combination with the series from Heiko St=FCbne=
+r
+> enabling DSI support for the RK3588 [0] (DSI controller support has bee=
+n
+> merged already, only the PHY support is missing) on the RK3588 EVB1.
+>=20
+> [0] https://lore.kernel.org/linux-rockchip/20241203164934.1500616-1-hei=
+ko@sntech.de/
+>=20
+> Changes since PATCHv1:
+>  * https://lore.kernel.org/all/20241210164333.121253-1-sebastian.reiche=
+l@collabora.com/
+>  * move additionalProperties below required in the DT binding
+>  * collect Reviewed-by from Krzysztof Kozlowski, Andy Yan and Jessica Z=
+hang
+>  * improve Kconfig help text
+>=20
+> Thanks for having a look.
 
-To fix both issues:
-- enable the clock before writing CMP, ARR and polling ISR bits. It will
-avoid the possible timeout error.
-- clear the ENABLE bit in CR and disable the clock in the error path.
+I believe this has all necessary Reviewed-by tags. Can somebody
+merge it please? :)
 
-Fixes: d8958824cf07 ("iio: counter: Add support for STM32 LPTimer")
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
----
- drivers/counter/stm32-lptimer-cnt.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+Greetings,
 
-diff --git a/drivers/counter/stm32-lptimer-cnt.c b/drivers/counter/stm32-lptimer-cnt.c
-index cf73f65baf60..b249c8647639 100644
---- a/drivers/counter/stm32-lptimer-cnt.c
-+++ b/drivers/counter/stm32-lptimer-cnt.c
-@@ -58,37 +58,43 @@ static int stm32_lptim_set_enable_state(struct stm32_lptim_cnt *priv,
- 		return 0;
- 	}
- 
-+	ret = clk_enable(priv->clk);
-+	if (ret)
-+		goto disable_cnt;
-+
- 	/* LP timer must be enabled before writing CMP & ARR */
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_ARR, priv->ceiling);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_CMP, 0);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	/* ensure CMP & ARR registers are properly written */
- 	ret = regmap_read_poll_timeout(priv->regmap, STM32_LPTIM_ISR, val,
- 				       (val & STM32_LPTIM_CMPOK_ARROK) == STM32_LPTIM_CMPOK_ARROK,
- 				       100, 1000);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
- 	ret = regmap_write(priv->regmap, STM32_LPTIM_ICR,
- 			   STM32_LPTIM_CMPOKCF_ARROKCF);
- 	if (ret)
--		return ret;
-+		goto disable_clk;
- 
--	ret = clk_enable(priv->clk);
--	if (ret) {
--		regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
--		return ret;
--	}
- 	priv->enabled = true;
- 
- 	/* Start LP timer in continuous mode */
- 	return regmap_update_bits(priv->regmap, STM32_LPTIM_CR,
- 				  STM32_LPTIM_CNTSTRT, STM32_LPTIM_CNTSTRT);
-+
-+disable_clk:
-+	clk_disable(priv->clk);
-+disable_cnt:
-+	regmap_write(priv->regmap, STM32_LPTIM_CR, 0);
-+
-+	return ret;
- }
- 
- static int stm32_lptim_setup(struct stm32_lptim_cnt *priv, int enable)
--- 
-2.25.1
-
+-- Sebastian
 
