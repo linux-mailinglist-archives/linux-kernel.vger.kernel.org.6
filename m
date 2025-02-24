@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-529284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F7D5A42297
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:13:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442EAA4227D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:10:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA9F1891BDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:09:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D6F77A9524
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12D925A2CF;
-	Mon, 24 Feb 2025 14:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555A613C809;
+	Mon, 24 Feb 2025 14:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFfsv1Ow"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="jmEONay1";
+	dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b="q6yWtIK0"
+Received: from haruka.juszkiewicz.com.pl (haruka.juszkiewicz.com.pl [185.243.53.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4F8191493;
-	Mon, 24 Feb 2025 14:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E9E6F30F;
+	Mon, 24 Feb 2025 14:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.243.53.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405923; cv=none; b=clv6Z9htUEgF7kejIjL0CX0oiXsG9am9dJE1YSsnsa8K+7/uk58f06Te03DqlSZwj7bzoizqHRIBEs+MJYVSN2w0ykfBbszg9Or2E7CIgMhxx8dGlWsPQyD9KtBRuTFDwKHJmdc3EDvY6kBTOQw7gNywWLeDPpXOVmVDlR3ZA+c=
+	t=1740405996; cv=none; b=pCsiH6Sc/xHv7urX5hZvh5jYxHgYOyWMqYq0VFuEPKKp7P3vNdlITu2nTazMltsb2E9FeROmKvW4x2NDCiOh4CUu97pQPVhJffPyXtXtAXiT/ITx4oBoN8WXMnOdVfwjcm60ISsnx2KsDQjqszO3f/+rMlPFEQW3Mb95wONwLj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405923; c=relaxed/simple;
-	bh=yaaa9DErqlOYGiiygCaNCc4wZLpOdhOh1CUotZF4UGo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rz1gJ5D0UBa6Qk7l2m1e3IDSc5TM9+hYhtIrrDddcoduQp3XhT6FLPM1p/cXSdvVoFoKO8QX2Z9db80PzKqxRLFTH4AYny1rx5a0H1CDO1eeNZBrnPL+0zQePm8snDgQKBbUZsPhTnEoctoJ30RF+aqF3QKzmFZMLNRAcDqq0Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFfsv1Ow; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38532C4CEE6;
-	Mon, 24 Feb 2025 14:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740405923;
-	bh=yaaa9DErqlOYGiiygCaNCc4wZLpOdhOh1CUotZF4UGo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=AFfsv1Owz3nA3xcFyVinBg8oGSoPrfQCtuFHU9NMmxE4MzSx92nI9Y9hhWG4urdLd
-	 cJWR3y6nEXZemMBO1SxNoID4e3CbW7Gfl3yB81uuW4k5u7MIPZ2rsZc+9Bj27ljCG+
-	 WKwHfaAixtdnK+u0grbFNNTu2c/tkpkbAuoaaD5njlIjkO31cQJM/xqLflqBx5tgOc
-	 lh+HvfpOSxdLL8qoNfMzAo8LvzjC6RQpfRwUtW6OgwOU1NZR8+3dqw3xB9PjmBfGD9
-	 COAKXHp2yejCCJcqd3g5qXqmT5NTLgU9ypaIqpKoePmb7B3w56zpYJeok6yPAjXjft
-	 loFSHzf23v51w==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Jiawen Wu <jiawenwu@trustnetic.com>,
-	Mengyuan Lou <mengyuanlou@net-swift.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net: wangxun: fix LIBWX dependencies
-Date: Mon, 24 Feb 2025 15:05:06 +0100
-Message-Id: <20250224140516.1168214-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740405996; c=relaxed/simple;
+	bh=Rrh8Qdukg1Q9sg3ZBF4IlAc2JjQo/OBav10chUu9xTM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iq0uf1XSafbhqJ6HtuZg5owzLGwlHI1XmyxouxM+6ib9e1hmJ6F+L4uIXWpwW83ybT+BTKc+QcREpSNgkYVhJfY+IhM69W1ESIg+G68dw1Yz1SoXEToyBg/d9EAqQkqB/6i1lRbyg5NLy30/YOUZAszVFX1lBT8qm37IuTziMpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl; spf=pass smtp.mailfrom=juszkiewicz.com.pl; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=jmEONay1; dkim=pass (2048-bit key) header.d=juszkiewicz.com.pl header.i=@juszkiewicz.com.pl header.b=q6yWtIK0; arc=none smtp.client-ip=185.243.53.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=juszkiewicz.com.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juszkiewicz.com.pl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=juszkiewicz.com.pl;
+	s=mail; t=1740405986;
+	bh=Rrh8Qdukg1Q9sg3ZBF4IlAc2JjQo/OBav10chUu9xTM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jmEONay1YjesVmD43PDrADy6n0HTW47o9x/t2XoS4fWW1zGbhByHn22DUKQK94k3Z
+	 grozc7DqlfBRUrY4nfTMcPJSf3onQTZfmkrSDSIXbIlsxOik88OeM8V5q6R97aTP6/
+	 KM8Jp221QRGMYKWF5nVYzUD2kswWG7qAIEV5hPtz8YwYVQ8jI+Pg82qwnU8Ijf/dUw
+	 I60JUZl/OaHZ+NKK1ms9wy514tv3c0i98UwrRqvUTBzuHCdU1XHpjD/6+VbLokH7ps
+	 xeY8zPvO/7qalHjAVzy1xansu1NrGrP7Panrqoikstya4xlmaVbtnUALhozrpefRid
+	 Sw80RGdW3Q2iA==
+Received: from utena.juszkiewicz.com.pl (utena.juszkiewicz.com.pl [158.101.208.177])
+	by haruka.juszkiewicz.com.pl (Postfix) with ESMTPSA id C9FBB22AA6;
+	Mon, 24 Feb 2025 15:06:26 +0100 (CET)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 87B9442007;
+	Mon, 24 Feb 2025 15:06:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juszkiewicz.com.pl;
+	s=mail; t=1740405985;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PcZ9xPvGi8ims+c2/a8qp2K7FN14062QE/zaFsTfD44=;
+	b=q6yWtIK0uB1F4ZZabwBCXXsjWOOxOlW2t+fe5bRDcn+aEtpmpYzdN9GOra+KUrMNU4m+dj
+	G/2r1WlUJ3bnZTWdKLmuOwEva3zTlbKW94+y102nG4cujngUUMe1DeXF2zSFsh3i9vJHF8
+	Q7IAOd+GezO7T1OhRYFnPbmPaHHYaYCMPuZUpniC6QmIjbYkC/eugwRz3NVsf6jTcijiJ8
+	VCXx9bpSbythjTjNBO7tZ6zLS3CCZ5rqoyX+KXRIZcc5SHmLcNCiKV5aatu7RjoeBMBnH/
+	bod68heInTNHMp57SExUN/MBLBAhxDgesmqCoHBiIUoiY9W8z9hEGcq0pONU0Q==
+Message-ID: <7f673cea-8d85-404a-b380-4282c0e3c0ad@juszkiewicz.com.pl>
+Date: Mon, 24 Feb 2025 15:06:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+To: Peter Chen <peter.chen@cixtech.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Fugang Duan <fugang.duan@cixtech.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "will@kernel.org" <will@kernel.org>
+References: <20250220084020.628704-7-peter.chen@cixtech.com>
+ <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
+ <Z7xZwGTIKgj9_zNZ@nchen-desktop>
+From: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <Z7xZwGTIKgj9_zNZ@nchen-desktop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Arnd Bergmann <arnd@arndb.de>
+W dniu 24.02.2025 o 12:36, Peter Chen pisze:
+> On 25-02-23 04:05:10, Marcin Juszkiewicz wrote:
+>>
+>>> diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+>>> new file mode 100644
+>>> index 000000000000..d98735f782e0
+>>> --- /dev/null
+>>> +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+>>> @@ -0,0 +1,264 @@
+>>> +// SPDX-License-Identifier: BSD-3-Clause
+>>> +/*
+>>> + * Copyright 2025 Cix Technology Group Co., Ltd.
+>>> + *
+>>> + */
+>>> +
+>>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>>
+>> [..]
+>>
+>>> +     arch_timer: timer {
+>>> +             compatible = "arm,armv8-timer";
+>>> +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+>>> +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+>>> +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+>>> +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+>>> +             clock-frequency = <1000000000>;
+>>> +             interrupt-parent = <&gic>;
+>>> +             arm,no-tick-in-suspend;
+>>> +     };
+>>
+>> This is not Arm v8.0 SoC so where is non-secure EL2 virtual timer?
+> 
+> It is the Arm v9 SoC and back compatible with Arm v8.
 
-Selecting LIBWX requires that its dependencies are met first:
+Arm SoC has several timer interrupts:
 
-WARNING: unmet direct dependencies detected for LIBWX
-  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
-  Selected by [y]:
-  - TXGBE [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && COMMON_CLK [=y] && I2C_DESIGNWARE_PLATFORM [=y]
-ld.lld-21: error: undefined symbol: ptp_schedule_worker
->>> referenced by wx_ptp.c:747 (/home/arnd/arm-soc/drivers/net/ethernet/wangxun/libwx/wx_ptp.c:747)
->>>               drivers/net/ethernet/wangxun/libwx/wx_ptp.o:(wx_ptp_reset) in archive vmlinux.a
+PPI 10: Non-secure EL2 physical timer interrupt
+PPI 11: Virtual timer interrupt
+PPI 12: Non-secure EL2 virtual timer
+PPI 13: Secure physical timer interrupt
+PPI 14: Non-secure physical timer interrupt
 
-Add the smae dependency on PTP_1588_CLOCK_OPTIONAL to the two driver
-using this library module.
+You mention 10, 11, 13, 14 only like your SoC would be plain old Arm 
+v8.0 one (Cortex-A53/A72).
 
-Fixes: 06e75161b9d4 ("net: wangxun: Add support for PTP clock")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/net/ethernet/wangxun/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
-index 6b60173fe1f5..47e3e8434b9e 100644
---- a/drivers/net/ethernet/wangxun/Kconfig
-+++ b/drivers/net/ethernet/wangxun/Kconfig
-@@ -26,6 +26,7 @@ config LIBWX
- config NGBE
- 	tristate "Wangxun(R) GbE PCI Express adapters support"
- 	depends on PCI
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select LIBWX
- 	select PHYLINK
- 	help
-@@ -43,6 +44,7 @@ config TXGBE
- 	depends on PCI
- 	depends on COMMON_CLK
- 	depends on I2C_DESIGNWARE_PLATFORM
-+	depends on PTP_1588_CLOCK_OPTIONAL
- 	select MARVELL_10G_PHY
- 	select REGMAP
- 	select PHYLINK
--- 
-2.39.5
-
+Sky1 (CP/CA/CS8180) is Arm v9 so should also list PPI 12 which came with 
+VHE (Virtualization host extensions) which is mandatory for each Arm cpu 
+v8.1 or above (and is implemented in A520/A720 cores).
 
