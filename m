@@ -1,324 +1,295 @@
-Return-Path: <linux-kernel+bounces-530076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED77A42E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:03:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD14A42E8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE943B2AC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:02:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC68417855A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0555A1917D6;
-	Mon, 24 Feb 2025 21:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8EE2196C7C;
+	Mon, 24 Feb 2025 21:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F2vcrkhJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZkYF3d2d"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2063.outbound.protection.outlook.com [40.107.93.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC03210FB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430975; cv=none; b=G9qeM8buURs7ILrFN3cMvPSCvuDJz95SP5/w3bVh1/iJdgF/TetiCaoKrYj149SXTFso5RONsFCSiewJe75KT16/6dmi48sS3ANbpq5V/hkC6R44B5X3h7sHmzR7USBc5tE3kymK2nq9HNZ6yRZhN8Qd6u/+oVt617VDL7ue6UA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430975; c=relaxed/simple;
-	bh=jrRlas3sR28nhO1StZe2efTCXjXjKEzGdCiq1JvIBDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WW3Zh/GPTjjBEeHBAMXVt79VFTfvUobSB5iut9Yq3UcCIiOcENS3fMhm/ZyPd7FZkPTkLKpW0kK0YBLAt9AvnnxF7Jj+GSJdSPWrK3VytPdjwdd0xaqvN/OsLh473qULmU+2rv+lXmOlEkNKaMi/OOjFXOC3OFUFVu/MOr7InIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F2vcrkhJ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740430971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3dbboeKWPl1cjoSZgYSulAmSpYK3PjpAQTkZ7zdmf3s=;
-	b=F2vcrkhJTrwr1GYqu9g1EoEXhMnV2g0TMXLUFCCWI/DZSomq+1CwuimTERuzdVE36/nM3i
-	ZcjuuD8xMzWo0c7ypat9byd6fXlXx0jf86WdApULIr6MBBCqm8kBx15cEUCjECA2RX31xS
-	mqI94s+TWZI/vKfgfdY4YHVbFnalY0s=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-439-hOy1krniNCKwnaYQ16saRw-1; Mon, 24 Feb 2025 16:02:50 -0500
-X-MC-Unique: hOy1krniNCKwnaYQ16saRw-1
-X-Mimecast-MFC-AGG-ID: hOy1krniNCKwnaYQ16saRw_1740430969
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f2cefb154so3660263f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:02:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740430969; x=1741035769;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3dbboeKWPl1cjoSZgYSulAmSpYK3PjpAQTkZ7zdmf3s=;
-        b=OUZgf8JjX5BTSWUxbucO/m2vFSesqPqauFiP+jdxBTw9AExt+BYoI6nKp70YlRONuO
-         G25zfjzg22xi6ucky7726yXeQaqvJIBLxFsaTdbZWRj3yBzB5JoCLGVhACJHmwrCnl+Q
-         QbWfrQJhdkB8jzIUotGeFAbVEz+6fkROsdE2dN4+zc1GmmYYe8HXS3fLWPtC4W9JalXB
-         oVKxgidSbdzbQgkmnyubPnaVNe7dfJzV2Yfc457g8mDCmXa3yRwCRcj61mM6dUMBGbKU
-         c3ZxxSPQggWpWDFDMSWBU8E3EsaLohQQr6B7yN1B+gfVWHyPPQpFx31RgPRkqCTlxZrM
-         pb1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVVPfRG9Hto1uqUiOGQ9mfITnEfzZhBcewQF1iO0StfFyfQlLnCWhC+1WJYoTFrSp1g/5j0WL+e6psss3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyERVQTAHDsCZOuHKiUcxltg9FCQfTne5AiDUnJDR+Frbg9+24i
-	E+aO70jnPuZgMLWcE93LNI4LHYgqCgUmCZb/6krfYGNyh1LckgV8ZRtC5w4oI5eqKHz2jRvOoaM
-	xJOWzXtIOwE9fwPc7AQ01acS2pioYh1woPGxIpc+27ETj1/BeDZW04nbR+bvo2Q==
-X-Gm-Gg: ASbGncsSW7teyoq8rdmNz4z0FA0V8Lz6eKHtPhsFWf6wLZ/CYMuREs7XeB9tW/tCKhV
-	2Ov1OCRyYDRRvNbc9xeyXxjM0MfP0HmSuSQUDk61UHN3nOsb8yjJ1RpRT/XOQAFy9anej9STo39
-	w4p4HIhTqZeJlGc0WAGMVxJXSnCySc08UI4HVTqRSpf6tX62BM2y2vJTvpBRMeGKXFW6hzapwLR
-	amc3GQrme2+eHehg5OCo4mhE+mlMkvrEbF/okp164doLa8RaVmgdjFNHm3WMg4b8JddK5EhZ8Am
-	YEiNVxZgXpK8xaYmcv6UdBoMMn31uA36IfAiwjpADw4Xd4vbCoacgoRbme7p7uBo8hlc0WUYevp
-	6zEaAey0LAyVu4SnppWUdXZbfeZO/p4CLtj3mliuQYCs=
-X-Received: by 2002:a5d:5254:0:b0:38e:65d8:b677 with SMTP id ffacd0b85a97d-38f6f05183bmr11712828f8f.33.1740430968912;
-        Mon, 24 Feb 2025 13:02:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEwnjhXnr514/DED6xj7P4paRvrIZHceGnHUX+kXTLuAQZyzQbefHRr5wLPrc8a//y+OvLr7w==
-X-Received: by 2002:a5d:5254:0:b0:38e:65d8:b677 with SMTP id ffacd0b85a97d-38f6f05183bmr11712783f8f.33.1740430968473;
-        Mon, 24 Feb 2025 13:02:48 -0800 (PST)
-Received: from ?IPV6:2003:cb:c735:1900:ac8b:7ae5:991f:54fc? (p200300cbc7351900ac8b7ae5991f54fc.dip0.t-ipconnect.de. [2003:cb:c735:1900:ac8b:7ae5:991f:54fc])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd882af4sm116185f8f.47.2025.02.24.13.02.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 13:02:47 -0800 (PST)
-Message-ID: <8a5e94a2-8cd7-45f5-a2be-525242c0cd16@redhat.com>
-Date: Mon, 24 Feb 2025 22:02:45 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE531F5FA;
+	Mon, 24 Feb 2025 21:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740431007; cv=fail; b=SfkalLS1F/c3M61D3EK2/3M0PQNMSDo+kDSRvvFxZ4L6w8/wVcvBmz2ionnZnAiPvP1nuh1/NuxJc2u0OkTcfPGHbbCFBrMTdYb0TE2wo2cCJ1VQiYCIACaOPnu0jNoXgcZPCxL70bTofq11iunTl/cFxJyUh14wCJ/yA3YQR5w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740431007; c=relaxed/simple;
+	bh=T4bM/N1mzlDJtzTe58Ixs7/YQ9D3cR1h/iZTdzlRJ9c=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=QttFvbXpg2VgDTyFbSq+1xNZ3wyFgfgLc6xIQOLVVgmfi0XKFInRquoyjsplHaAVpXNqO4QncmmpAvrHwDARta/q+/j43Hy8smRpDA4qUfd+vmrfSVHXkX1MgedLzS939Fw1/SfbNuBhMIoqSI+4CkAn0CotpxI04rvY+OW7Pyw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZkYF3d2d; arc=fail smtp.client-ip=40.107.93.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Rtj3vTjzmxPNnLTJkQNmdcGNVNKCGm7jkQ5HKOCUlX8/TYGG+kgRyT2SK4x2fnxWnhZt453D6+KhIppU9revXz6KH3AMLNy6CXYqocrwL5LTgBEY4ON5/pdJWGRXJ9uWvKj+tmug3UeC/9PzCdPbLIG6YG5g/s8YIgLfvrNQHG8v68FPFaG3ZX/edQDOFk7L2iJPmJCf24R5TinbvLjI3IPYG/DckRhDn2BYl0Fe12mkgBS74qizRYz0+MFnaNwsoKYRaIvLszpeaXkD4MJjAxV04fTxOwxZS8wmPDuZfZYGLi4P+kShKUaPkGyflzXbZ6IkDkQsTbH+8U4/a9RVww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RFZFWBF/vUAv7pI9XEu3QHhRL3zGwnM6Ii2zCydY13M=;
+ b=NNIGofwx8sIrBkBQWS9adNF8JhXxZQ6kkLG+4/C7Be+4M32K54kPrJwaOEXqRICmZW9/STUwH+eYGV9BTa08iuxTMbn9P3eyft9LU3s/BiCF9wLl8bo1ZxOrhFqWbYeWfZahjU7Qwi/EdP5B5ogPO8Td9XWXO3eEuzvRXrlmxjfQuQRDN8c6/APQs3+mQBTXgiPh5kYzymRppKFDhkOgC/QsLEE1rcaNtfh02sTOBFdhxCH0Bqg33aFdV4eURxUODwS2uIKQ4UcCHKpjyFWXTrmSOvHAaeYyk9olSJvwkETiPUQMolj1BG82ORQkoP4Pr25uaCRJejmizfNHxa+njQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RFZFWBF/vUAv7pI9XEu3QHhRL3zGwnM6Ii2zCydY13M=;
+ b=ZkYF3d2d3mzhQ/9SFMthSecXzMv0hH408fZaqMx95+gBoYDCAwRQlyYg7t9j68m4Ibp6ZHrtwWQbi7fwuWQQVxi7HmebS65yWtH6ZxaKfbQRQih4lWGO8d88jhaB8FfQ2BS/s9F3TusG6MQ/LUiC8dK+1fdEOxpSZqqhazLYETw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by BN5PR12MB9462.namprd12.prod.outlook.com (2603:10b6:408:2ac::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 21:03:18 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8466.020; Mon, 24 Feb 2025
+ 21:03:18 +0000
+Message-ID: <4e762d94-97d4-2822-4935-2f5ab409ab29@amd.com>
+Date: Mon, 24 Feb 2025 15:03:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>,
+ Alexey Kardashevskiy <aik@amd.com>
+References: <20250219012705.1495231-1-seanjc@google.com>
+ <20250219012705.1495231-4-seanjc@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 03/10] KVM: SVM: Terminate the VM if a SEV-ES+ guest is
+ run with an invalid VMSA
+In-Reply-To: <20250219012705.1495231-4-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0228.namprd04.prod.outlook.com
+ (2603:10b6:806:127::23) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 16/20] fs/proc/page: remove per-page mapcount
- dependency for /proc/kpagecount (CONFIG_NO_PAGE_MAPCOUNT)
-To: Zi Yan <ziy@nvidia.com>, linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Tejun Heo <tj@kernel.org>,
- Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- Muchun Song <muchun.song@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- owner-linux-mm@kvack.org
-References: <20250224165603.1434404-1-david@redhat.com>
- <20250224165603.1434404-17-david@redhat.com>
- <D80YSXJPTL7M.2GZLUFXVP2ZCC@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <D80YSXJPTL7M.2GZLUFXVP2ZCC@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|BN5PR12MB9462:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebbb19ff-ad5c-484a-9c9e-08dd5516a9a6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S3MyZ29nWmhIem82RFVCSHFTZldFSkRzSjNIL0dmSC9Fa24xSUo1UUh0N2c2?=
+ =?utf-8?B?S0Fka25xNm1QRC90VVlGeUt5Y2ZhWmlMakVxUm03dWRiT2tUVzNyc29sdmFQ?=
+ =?utf-8?B?eWpHeDB3MGRTRzVGdFZEZTBmZFlOZ0Y3dlNud0czekVnS2dBaUVxTmlLOVB4?=
+ =?utf-8?B?N1dXRTN4Q2FGMHI3MDVVd1BBWEU2dUticmJrdDRqL3A0NG02NGRoNU9wOElo?=
+ =?utf-8?B?U1pvQ2xoWXVyZnBKN0hWWG1QZ1JoUFhKbmJxQnNleVlvaTNqRWwwbmNVRXhh?=
+ =?utf-8?B?QzNJUnhPY1JmSzBEaVVyVFVNL3hxVXUwa25zbnVTMXJWTjFiKzFiTGhiMnow?=
+ =?utf-8?B?ZWdRMUVoSWt0SGloSHdHb1BFeUdDU1RIMzZrNjdjdzgxVDc3MlBxSm9hY0t4?=
+ =?utf-8?B?cHVtL1dxL0ZKRGR6UjVMdlVNQWoxS3RveS9qZjMzVFpFTnJKVVpXU3JTU0hF?=
+ =?utf-8?B?QjNyNlRFMVNVL0kwQUF5OXhvL3FKQ2F6WjRRK1c5eU1UR3EyREVUbDhsVFcv?=
+ =?utf-8?B?UStaYTMyUVRrM1V5eHBlSXJsUGJwLzFWekNXTFFEWXI0MDNhVUdhWThhU2hK?=
+ =?utf-8?B?R0NIVU0rNzFGcUN4N201T0pnellFM0Faek5XUlBmSGhxNitUaVRBaXdocjhj?=
+ =?utf-8?B?ZVlMb3hoZm1uZkJ2MlFaUVRVN2VVWDlCUFpQSklqamx2WlJQNEpMVVFFK3A2?=
+ =?utf-8?B?VHZRd2dKSjdoajRCQ2NCcFJqbnhNYUlxWXZOM1V0Q3M2VUZqTjMya2ZSdm1E?=
+ =?utf-8?B?cnBMazlKTGJBSVdFa1VldUdwSG9VQ1hONDBtN0xkQ1JvbnVTNkVoMFhGeFVZ?=
+ =?utf-8?B?NkhkZEI3RGdkcDIrM3RKK1hacDRCSW1CUEMwREVPUDVDb1haSXp1WEMrYUlz?=
+ =?utf-8?B?MHBMM2hTa1dGbER4emh1bytnWVRXOWpjSnd4QjV5TDB4eVJNeXlrWnIzOXlO?=
+ =?utf-8?B?VWtPL1QzQWczRms4N0RUdkhvcGxncTlvMzNEK3UzZU5SNmU0dXhIQ2t3bTJt?=
+ =?utf-8?B?WEpuTHpXbkk3NHZzSkN5VnVCbnRyTEdIWHQ1L1dRNnhJZEVSYjN4TVpEbDVl?=
+ =?utf-8?B?S2hqT0I2L0h0UitsMHpiem9na3Nrd1lZSkpKbnp3QU9ocVlzWDd1VjVjMGc0?=
+ =?utf-8?B?ZnVBQmZnK1V6U1JtZEEvNlk0ODRKazdvRzZmS3pYaW01cDM2QkcwSHYzN3BJ?=
+ =?utf-8?B?NThyc2drbldCVllHMXNOMDdDR1ZnbTlFM0dDUDdJdHRhS2VoRXYrOUlUWkVj?=
+ =?utf-8?B?WklHbURWWVNDalJ0bGVlZm9BQkNRM3VtYTZqOTZyeXFIWERiM2RMM3daczhC?=
+ =?utf-8?B?ejZoUWF0QmRNb3ZXVUZ5dEZUUkxYb1hYN2o3bWJ3TUhvUlowUDdERlFkOFc5?=
+ =?utf-8?B?SFp2UnNKdFpKR3dVU3UvYWJJVTJNd1E5SGM3aUQyMXVMN2dqZ3hQQnRJVi9y?=
+ =?utf-8?B?UWxsTURPVy9ZaGl6bXB6NjV5TVpQdGxLWnd5TEh1bzZ5QUhLWUZzdnhBaWU2?=
+ =?utf-8?B?U3hrTGptYklHVnRlaEJpZTFmbmFhR0wwVTdNRWtQREFDekVSMWVKNE10aE53?=
+ =?utf-8?B?MHZwY1BnNlVGS1dvYmlvTFVWYlVLUCtOVEltRVVKb1oyc1ROMDJ4d0w1ZXlm?=
+ =?utf-8?B?ZVBCTnB5Vy9tUWlSblRqWjZHSG8vZkVoMEk5WkxtWWZVdTVYdnNET2dLenZ5?=
+ =?utf-8?B?ZFdNUHIxVVRoMndNVUs0bHJrVzA4THp5c2FjbUFXOU1WQzMvc29ObkQzNWI5?=
+ =?utf-8?B?WHhmSTVKYW9XWDBSNnVmRGs5ZmtFejhUcnlTYVo0R0xjRVErSXQ2VENpajdO?=
+ =?utf-8?B?TldjbFNwbFgza1FnRHpVUFJFeHI5eTZUdWsyMWlRSFRXTFlTeStjYzVZTjVR?=
+ =?utf-8?Q?pB2J1haGVCEcd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TWgzU2UvaHZHc2RES1RCYkNHbWxEdUNNd21WUzBTTEFzWG00NTBzQ1dQWks4?=
+ =?utf-8?B?NkJhcTdwSVZLT0QxemYrTXhZMW5MMzlwazd1RmxiRzAwdlA1WGNqUTlWZkl5?=
+ =?utf-8?B?ZUJlNDFwR3NvNTk3ZDRlMU1kRzdjaENRSnRIeFp3UkpodHk2ekNXSnNDK3R1?=
+ =?utf-8?B?OElUM0JDOXBtL0RpZ1k1WFNSQ2N0dTRWSGVYUnMrNUNHRk0zeGRnWHB1S0NQ?=
+ =?utf-8?B?WkhOTWpYSFdoL2cvd1RVY0hjaUk0Mk13OTFLYjNtcWRVMURCbWlNMlExZUNu?=
+ =?utf-8?B?Y3dwekFYZ3grREFuZDJIZC8wWmwxN1JvRUpBNm4wdjBEb0w3V2xBSjhsSDlN?=
+ =?utf-8?B?bHJpNUw3ZkFmTmlGTUxTMFZtS2hVWGhLSjBZZFpjUkloczV3QVN6Sk1qTHNW?=
+ =?utf-8?B?V1ZpdnRHTjYvOWQ0RGtaRVIwQW9yRjliUU5QMzJJemZZMk94THJ5U2pIeUxI?=
+ =?utf-8?B?K0pmK2J0VHl4TkhlK29JSzNKdFFnZ3NwVmpyZ255SWFhMjBWSWRXb3dvZ1Z4?=
+ =?utf-8?B?enFONCtSc2RDYTltQmZkNzY3WHVwQU1qT1Nva0diN2lQUXlBNWp2T3JNSmdX?=
+ =?utf-8?B?b0x2M2tKK29iaGZGYzRxSTg3b0dOdExvcDFXL0YzamhQUmxNM21KZHdGcE9k?=
+ =?utf-8?B?U1d0TE9GTmxra0JTVS80UnFzdnVPd3p3R0xzQVhWdDBtTzRaUDhYL1c1R2xI?=
+ =?utf-8?B?MzNNTkVOdm5RSzhxelFQOWFQZWMyWFRmTDc5TU1OTkhjRXJtNDRVMEhmS1VK?=
+ =?utf-8?B?T3FkejRMd2NyVHlzc1UvanQ2N2tZQm9UeDJMd1lybVpaL0JVSkl5V3U4ck9H?=
+ =?utf-8?B?VVU3QUpaeFgyOUs2OG5aWEJUblArZHI4RFc2K0pHRGwyOGlqY2xrblhSL3dG?=
+ =?utf-8?B?anF3SzJQWXV3YytpVWtPQkFDMXVaOHlydXNROVZVdTFQVElmUU1DWCtTY2dP?=
+ =?utf-8?B?ZVdWT0hwMk8wc0RXQkxhS1cycG5jR1dPTUg0VTNYc05laURGc1Rvby9MbkFM?=
+ =?utf-8?B?bzZKYmlPS0FIZ2xpajhoU0hJLzNxV3YzandsOFJXak0xRTh2RG9HK1c1R1NW?=
+ =?utf-8?B?amlibTA5dndJTzBwZTJyc3NkWHZtU3lTTWg2TkErNm9oSzMvKzk4U0VnWTk5?=
+ =?utf-8?B?ZTFTT3AwNFR0NTNqbDdNUTFpMjBQMTF4RnVlaW9sb245VVJsaWR0eXhISXdF?=
+ =?utf-8?B?ZStvY00wL2k4dDIzS0JOcGZuU0xiUGlWeWVqS0YxUTBvbDRGZ3BmdmRCOVp0?=
+ =?utf-8?B?eFg3dm9RV3pucUpMczZLeUFBRkp3UUQvYTRsYSt3d0l5amExRnNMZVVQZzVX?=
+ =?utf-8?B?RXpkQVorRTRPeGl0ZjNFRm12Y2Jpc2FWUWRFRE0rSmErdGJXUDlIRFZOWUZz?=
+ =?utf-8?B?amkzZDd6VDk1bDhVcUhCQkFSVy9BVUlsU3pGVTE4SS9DQVMrVjBnYU40dXVu?=
+ =?utf-8?B?MUozTzJ6cmt3ME5BN1F2UzdvNVZnZ2pTTHRDWHVscm0yeW9MVkJmSmJ3cjJI?=
+ =?utf-8?B?ZlpmV3VSeXBmbzAzSEh5ZXg3V0tjTUxtOVZEUnRwR2g3MVJPU090bnozQTlC?=
+ =?utf-8?B?UWVlWWhIekpKTTJIMkFTdG1QVU8vS253MHgrMXkwUTBZS2trSlNhTE1yVFZh?=
+ =?utf-8?B?aHZ1aWlTbkFoT1ZxbEh0S3Z0aVZXQWZRSkVrRUZ6eGFEWE1oTHo1ZlZLWlVN?=
+ =?utf-8?B?Z1lKWWU3SmJGYkZRUGhvQXh3MWMzQ3p1VXI0eXl1Yk1WVVlaQlIxWG92dUpv?=
+ =?utf-8?B?YzFYRWgxKytDbHRnWWZmY1FmREdCYzBXUjNRYWRUeU1zc2FQNkNTVktxK1c5?=
+ =?utf-8?B?NVNzZXFMaXZkRW5wcVJIRmxKektpZXN2aVlLQ0U5Z2dhamlGMlN2Ym41YWti?=
+ =?utf-8?B?L242WHR2bWFydGZvcjdydTFJZ3B3Q0VMSm1WYm5mYmE1WlVJS3lQYjhnV2Fi?=
+ =?utf-8?B?ZG4vcFlENCtDMm9saEoySjlkSElTUGRPcDF3MVFKMDQwV2hGZkptUGhzRmIw?=
+ =?utf-8?B?aU44MHl5RFgzaEt3TVZNMHNFc0dXd0dCdXVkZlIwMk1XZnZ4YW9hRzFMbnhR?=
+ =?utf-8?B?L3NYd0xtSmlhZTg5bnE1MlBFWnpLQmhGOVk4TzAyL1Z2WlNRTXNKQUFXbGpT?=
+ =?utf-8?Q?AIziHoM9IDHh6f6O1PmDYfF7B?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebbb19ff-ad5c-484a-9c9e-08dd5516a9a6
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 21:03:18.1914
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MvxCiiRfcBAGmXLIferagJek72bmzGERMsRtpn0wkLOasZv3JRdSqgZbauu6d1DKOybW2wNCEIKiaPlRD583/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN5PR12MB9462
 
-On 24.02.25 21:40, Zi Yan wrote:
-> On Mon Feb 24, 2025 at 11:55 AM EST, David Hildenbrand wrote:
->> Let's implement an alternative when per-page mapcounts in large folios
->> are no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
->>
->> For large folios, we'll return the per-page average mapcount within the
->> folio, except when the average is 0 but the folio is mapped: then we
->> return 1.
->>
->> For hugetlb folios and for large folios that are fully mapped
->> into all address spaces, there is no change.
->>
->> As an alternative, we could simply return 0 for non-hugetlb large folios,
->> or disable this legacy interface with CONFIG_NO_PAGE_MAPCOUNT.
->>
->> But the information exposed by this interface can still be valuable, and
->> frequently we deal with fully-mapped large folios where the average
->> corresponds to the actual page mapcount. So we'll leave it like this for
->> now and document the new behavior.
->>
->> Note: this interface is likely not very relevant for performance. If
->> ever required, we could try doing a rather expensive rmap walk to collect
->> precisely how often this folio page is mapped.
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   Documentation/admin-guide/mm/pagemap.rst |  7 +++++-
->>   fs/proc/internal.h                       | 31 ++++++++++++++++++++++++
->>   fs/proc/page.c                           | 19 ++++++++++++---
->>   3 files changed, 53 insertions(+), 4 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
->> index caba0f52dd36c..49590306c61a0 100644
->> --- a/Documentation/admin-guide/mm/pagemap.rst
->> +++ b/Documentation/admin-guide/mm/pagemap.rst
->> @@ -42,7 +42,12 @@ There are four components to pagemap:
->>      skip over unmapped regions.
->>   
->>    * ``/proc/kpagecount``.  This file contains a 64-bit count of the number of
->> -   times each page is mapped, indexed by PFN.
->> +   times each page is mapped, indexed by PFN. Some kernel configurations do
->> +   not track the precise number of times a page part of a larger allocation
->> +   (e.g., THP) is mapped. In these configurations, the average number of
->> +   mappings per page in this larger allocation is returned instead. However,
->> +   if any page of the large allocation is mapped, the returned value will
->> +   be at least 1.
->>   
->>   The page-types tool in the tools/mm directory can be used to query the
->>   number of times a page is mapped.
->> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
->> index 1695509370b88..16aa1fd260771 100644
->> --- a/fs/proc/internal.h
->> +++ b/fs/proc/internal.h
->> @@ -174,6 +174,37 @@ static inline int folio_precise_page_mapcount(struct folio *folio,
->>   	return mapcount;
->>   }
->>   
->> +/**
->> + * folio_average_page_mapcount() - Average number of mappings per page in this
->> + *				   folio
->> + * @folio: The folio.
->> + *
->> + * The average number of present user page table entries that reference each
->> + * page in this folio as tracked via the RMAP: either referenced directly
->> + * (PTE) or as part of a larger area that covers this page (e.g., PMD).
->> + *
->> + * Returns: The average number of mappings per page in this folio. 0 for
->> + * folios that are not mapped to user space or are not tracked via the RMAP
->> + * (e.g., shared zeropage).
->> + */
->> +static inline int folio_average_page_mapcount(struct folio *folio)
->> +{
->> +	int mapcount, entire_mapcount;
->> +	unsigned int adjust;
->> +
->> +	if (!folio_test_large(folio))
->> +		return atomic_read(&folio->_mapcount) + 1;
->> +
->> +	mapcount = folio_large_mapcount(folio);
->> +	entire_mapcount = folio_entire_mapcount(folio);
->> +	if (mapcount <= entire_mapcount)
->> +		return entire_mapcount;
->> +	mapcount -= entire_mapcount;
->> +
->> +	adjust = folio_large_nr_pages(folio) / 2;
-
-Thanks for the review!
-
+On 2/18/25 19:26, Sean Christopherson wrote:
+> Terminate the VM if userspace attempts to run an SEV-SNP (or -ES) vCPU
+> that has an invalid VMSA.  With SNP's AP Create/Destroy hypercalls, it's
+> possible for an SNP vCPU to end up with an invalid VMSA, e.g. through a
+> deliberate Destroy or a failed Create event.  KVM marks the vCPU HALTED so
+> that *KVM* doesn't run the vCPU, but nothing prevents a misbehaving VMM
+> from manually making the vCPU RUNNABLE via KVM_SET_MP_STATE.
 > 
-> Is there any reason for choosing this adjust number? A comment might be
-> helpful in case people want to change it later, either with some reasoning
-> or just saying it is chosen empirically.
-
-We're dividing by folio_large_nr_pages(folio) (shifting by 
-folio_large_order(folio)), so this is not a magic number at all.
-
-So this should be "ordinary" rounding.
-
-Assume nr_pages = 512.
-
-With 255 we want to round down, with 256 we want to round up.
-
-255 / 512 = 0 :)
-256 / 512 = 0 :(
-
-Compared to:
-
-(255 + (512 / 2)) / 512 = (255 + 256) / 512 = 0 :)
-(256 + (512 / 2)) / 512 = (256 + 256) / 512 = 1 :)
-
+> Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kvm/svm/sev.c | 18 +++++++++++++++---
+>  arch/x86/kvm/svm/svm.c |  7 +++++--
+>  arch/x86/kvm/svm/svm.h |  2 +-
+>  3 files changed, 21 insertions(+), 6 deletions(-)
 > 
->> +	return ((mapcount + adjust) >> folio_large_order(folio)) +
->> +		entire_mapcount;
->> +}
->>   /*
->>    * array.c
->>    */
->> diff --git a/fs/proc/page.c b/fs/proc/page.c
->> index a55f5acefa974..4d3290cc69667 100644
->> --- a/fs/proc/page.c
->> +++ b/fs/proc/page.c
->> @@ -67,9 +67,22 @@ static ssize_t kpagecount_read(struct file *file, char __user *buf,
->>   		 * memmaps that were actually initialized.
->>   		 */
->>   		page = pfn_to_online_page(pfn);
->> -		if (page)
->> -			mapcount = folio_precise_page_mapcount(page_folio(page),
->> -							       page);
->> +		if (page) {
->> +			struct folio *folio = page_folio(page);
->> +
->> +			if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT)) {
->> +				mapcount = folio_precise_page_mapcount(folio, page);
->> +			} else {
->> +				/*
->> +				 * Indicate the per-page average, but at least "1" for
->> +				 * mapped folios.
->> +				 */
->> +				mapcount = folio_average_page_mapcount(folio);
->> +				if (!mapcount && folio_test_large(folio) &&
->> +				    folio_mapped(folio))
->> +					mapcount = 1;
-> 
-> This should be part of folio_average_page_mapcount() right?
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 6c6d45e13858..e14a37dbc6ea 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3452,10 +3452,21 @@ void sev_es_unmap_ghcb(struct vcpu_svm *svm)
+>  	svm->sev_es.ghcb = NULL;
+>  }
+>  
+> -void pre_sev_run(struct vcpu_svm *svm, int cpu)
+> +int pre_sev_run(struct vcpu_svm *svm, int cpu)
+>  {
+>  	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+> -	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
+> +	struct kvm *kvm = svm->vcpu.kvm;
+> +	unsigned int asid = sev_get_asid(kvm);
+> +
+> +	/*
+> +	 * Terminate the VM if userspace attempts to run the vCPU with an
+> +	 * invalid VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after
+> +	 * an SNP AP Destroy event.
+> +	 */
+> +	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa)) {
+> +		kvm_vm_dead(kvm);
+> +		return -EIO;
+> +	}
 
-No, that's not desired.
+If a VMRUN is performed with the vmsa_pa value set to INVALID_PAGE, the
+VMRUN will fail and KVM will dump the VMCB and exit back to userspace
+with KVM_EXIT_INTERNAL_ERROR.
 
-> Otherwise, the comment on folio_average_page_mapcount() is not correct,
-> since it can return 0 when a folio is mapped to user space.
+Is doing this preferrable to that? If so, should a vcpu_unimpl() message
+be issued, too, to better identify the reason for marking the VM dead?
 
-It's misleading. I'll clarify the comment, probably simply saying:
+>  
+>  	/* Assign the asid allocated with this SEV guest */
+>  	svm->asid = asid;
+> @@ -3468,11 +3479,12 @@ void pre_sev_run(struct vcpu_svm *svm, int cpu)
+>  	 */
+>  	if (sd->sev_vmcbs[asid] == svm->vmcb &&
+>  	    svm->vcpu.arch.last_vmentry_cpu == cpu)
+> -		return;
+> +		return 0;
+>  
+>  	sd->sev_vmcbs[asid] = svm->vmcb;
+>  	svm->vmcb->control.tlb_ctl = TLB_CONTROL_FLUSH_ASID;
+>  	vmcb_mark_dirty(svm->vmcb, VMCB_ASID);
+> +	return 0;
+>  }
+>  
+>  #define GHCB_SCRATCH_AREA_LIMIT		(16ULL * PAGE_SIZE)
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index b8aa0f36850f..46e0b65a9fec 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -3587,7 +3587,7 @@ static int svm_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+>  	return svm_invoke_exit_handler(vcpu, exit_code);
+>  }
+>  
+> -static void pre_svm_run(struct kvm_vcpu *vcpu)
+> +static int pre_svm_run(struct kvm_vcpu *vcpu)
+>  {
+>  	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, vcpu->cpu);
+>  	struct vcpu_svm *svm = to_svm(vcpu);
+> @@ -3609,6 +3609,8 @@ static void pre_svm_run(struct kvm_vcpu *vcpu)
+>  	/* FIXME: handle wraparound of asid_generation */
+>  	if (svm->current_vmcb->asid_generation != sd->asid_generation)
+>  		new_asid(svm, sd);
+> +
+> +	return 0;
+>  }
+>  
+>  static void svm_inject_nmi(struct kvm_vcpu *vcpu)
+> @@ -4231,7 +4233,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+>  	if (force_immediate_exit)
+>  		smp_send_reschedule(vcpu->cpu);
+>  
+> -	pre_svm_run(vcpu);
+> +	if (pre_svm_run(vcpu))
+> +		return EXIT_FASTPATH_EXIT_USERSPACE;
 
-Returns: The average number of mappings per page in this folio.
+Since the return code from pre_svm_run() is never used, should it just
+be a bool function, then?
 
-Thanks!
+Thanks,
+Tom
 
--- 
-Cheers,
-
-David / dhildenb
-
+>  
+>  	sync_lapic_to_cr8(vcpu);
+>  
+> diff --git a/arch/x86/kvm/svm/svm.h b/arch/x86/kvm/svm/svm.h
+> index 5b159f017055..e51852977b70 100644
+> --- a/arch/x86/kvm/svm/svm.h
+> +++ b/arch/x86/kvm/svm/svm.h
+> @@ -713,7 +713,7 @@ void avic_refresh_virtual_apic_mode(struct kvm_vcpu *vcpu);
+>  
+>  /* sev.c */
+>  
+> -void pre_sev_run(struct vcpu_svm *svm, int cpu);
+> +int pre_sev_run(struct vcpu_svm *svm, int cpu);
+>  void sev_init_vmcb(struct vcpu_svm *svm);
+>  void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
+>  int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port, int in);
 
