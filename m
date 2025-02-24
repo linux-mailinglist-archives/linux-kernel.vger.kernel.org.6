@@ -1,122 +1,182 @@
-Return-Path: <linux-kernel+bounces-528576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B0FA41949
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:36:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B59FA4194B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:37:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774013A2B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAC7C3A6D9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15FA242936;
-	Mon, 24 Feb 2025 09:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NMEWlje+"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8894E2441B4;
+	Mon, 24 Feb 2025 09:36:20 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951F078F2E;
-	Mon, 24 Feb 2025 09:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117351898ED;
+	Mon, 24 Feb 2025 09:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389738; cv=none; b=H+D31FrldFAyAb4PtEbEXc8mDZIOfhHhijFNPtdoQGwTwga8oVwmZk+jYzwUDTnYvzdLFNU4XZtgKNzemQW/ILXPt3axcDUvRyh+jgpoqAdi4fwCxF5PMjXOwzj+td16/N/gueWPKuytMM0rZDGKx11zYD9BTRAoOKp7nGTbJB0=
+	t=1740389780; cv=none; b=rDefUWjcpjz7P8+0bRUrHO+TIwH6R3IbDjCfKycjzQUR3ANTPHveKMFCJhXFhIJPw2eAZqzo8986HwV6aM1dWPvaukHJEHfsdzUgqmgPdyFRFAEgKdB4AQKi8tBOPS5p/AbY+goMB9MLqVXRGJTJfdDr2b3DKdL0CzxweurghcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389738; c=relaxed/simple;
-	bh=Lfq2WCwQwVV2cU+ktpJpJCAIJ0AqM3fPlCTamF5mHIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PYeKdBKC6+W+TJBVr39y26vaqod5HYrRFwcWDUPhMb83u84Q/1XPHDIObR9Zkop2E7ou9yRgET4XhFqQCken5ixp7CpdIvkK/CxA6POa6I9b6p/IR17c4AwhSqC9JxLZO89ZHa7zGUSpYjSXVLu5VpqDlMCY9qwXWkN4LlU6MiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NMEWlje+; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C1DD843209;
-	Mon, 24 Feb 2025 09:35:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740389728;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pGa772eSKIEFLSlSRxRncn+1VapD5h+fpWIguQax5B0=;
-	b=NMEWlje+MruUWah4Nc7CnSF6Nt3IE69a3glvct/Gr3o32wxgxXI+VHY6zGpICn7Q09iV+w
-	JGZl9w3wWpUkEu8f4anxjpuS6sYs3MIVwc1iHXLDGZvMKENDNfXFyRwgFjbgk/zCeU6i/f
-	rIzFOFIRFw0t4CpmzjoKniE5iEesvBT0NYVJVCLDjEf8eJn05t4mAcwlA/c/wGoUngY17P
-	nEMFVvBUqKQheisDp2x7+uLDBiHtUvJI+XWXw//b4d1cZOWFB/WIRk7trq0bH3+5ZSJ0RC
-	gd8jzMi99EYisT/Qz8SFsPs3MFTgA7qtzfSdygcOGRkC4pHXl0jBWXMYrmEYAA==
-Date: Mon, 24 Feb 2025 10:35:26 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>, Andrew Lunn <andrew@lunn.ch>,
- davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
- Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Message-ID: <20250224103526.5164e637@fedora>
-In-Reply-To: <Z7wyFolx3q6ACUHO@shell.armlinux.org.uk>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-	<87r03otsmm.fsf@miraculix.mork.no>
-	<Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
-	<3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
-	<87ikozu86l.fsf@miraculix.mork.no>
-	<Z7wyFolx3q6ACUHO@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740389780; c=relaxed/simple;
+	bh=pR4xtu7lvxep+GCFaglWEbG+d31fXeEcuVIUZfNfe8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o2UHcJgvZqgCBEBbmk7J5GVOtKToEAOq3tVg2947g3UZZ/D6CHr4BjNJJlVku2rpSqZc4IZAArPQfR1evCeI61gq3EiCcTAWKeIuj7ZOlPlasXk5CnErgyOoR46Rjji6F3DowWbzmA5mRsvsnwlaxSDDgTZY1Y/zGbRvz8bY2ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z1b9j4MPbzvWqv;
+	Mon, 24 Feb 2025 17:32:25 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 214CD140257;
+	Mon, 24 Feb 2025 17:36:09 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 24 Feb 2025 17:36:08 +0800
+Message-ID: <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+Date: Mon, 24 Feb 2025 17:36:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfefgffgtdfhgffhvdfhhffhteeutdektefghfetveehheejjefgudeiudehudenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegsjhhorhhnsehmohhrkhdrnhhopdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgo
- hhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepemh100012.china.huawei.com (7.202.181.97) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-On Mon, 24 Feb 2025 08:47:18 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+Hi Jonh,
 
-> On Mon, Feb 24, 2025 at 08:13:22AM +0100, Bj=C3=B8rn Mork wrote:
-> > Andrew Lunn <andrew@lunn.ch> writes:
-> >  =20
-> > >> So, not only do I think that hwmon should be disabled if using SMBus,
-> > >> but I also think that the kernel should print a warning that SMBus is
-> > >> being used and therefore e.g. copper modules will be unreliable. We
-> > >> don't know how the various firmwares in various microprocessors that
-> > >> convert I2C to MDIO will behave when faced with SMBus transfers. =20
-> > >
-> > > I agree, hwmon should be disabled, and that the kernel should printing
-> > > a warning that the hardware is broken and that networking is not
-> > > guaranteed to be reliable. =20
-> >=20
-> > What do you think will be the effect of such a warning?  Who is the
-> > target audience?
-> >=20
-> > You can obviously add it, and I don't really care.  But I believe the
-> > result will be an endless stream of end users worrying about this scary
-> > warning and wanting to know what they can do about it.  What will be
-> > your answer? =20
->=20
-> ... which is good, because it raises the visibility of crap hardware
-> and will make people think twice about whether to purchase it, thus
-> penalising (a little) the sales of badly designed hardware.
+On 2025/2/24 16:29, John Garry wrote:
+> On 21/02/2025 01:59, yangxingui wrote:
+>> Hi, John
+>>
+>> On 2025/2/21 1:35, John Garry wrote:
+>>> On 20/02/2025 13:05, Xingui Yang wrote:
+>>>
+>>> -john.garry@huawei.com (this has not worked in over 2 years ...)
+>> Sorry, I used the wrong one.
+>>>
+>>>> the SAS controller determines the disk to which I/Os are delivered 
+>>>> based
+>>>> on the port id in the DQ entry when SATA disk directly connected.
+>>>>
+>>>> When many phys were disconnected immediately and connected again during
+>>>> I/O sending and port id of phys were changed and used by other link, 
+>>>> I/O
+>>>> may be sent to incorrect disk and data inconsistency on the SATA 
+>>>> disk may
+>>>
+>>>
+>>> So is the disk reported gone (from libsas point-of-view) after you 
+>>> unplug? If not, why not?
+>>
+>> The problem may occur in a scenario where multiple SATA disks are 
+>> inserted almost at the same time. When phy reset is executed in error 
+>> processing, other phys are also up, which may cause the hw port id 
+>> corresponding to the phy to change. The log is as follows:
+>>
+>> [ 4588.608924] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy2 
+>> link_rate=10(sata)
+>> [ 4588.609039] sas: phy-8:2 added to port-8:4, phy_mask:0x4 
+>> (5000000000000802)
+>> [ 4588.609267] sas: DOING DISCOVERY on port 4, pid:69294
+>> [ 4588.609276] hisi_sas_v3_hw 0000:b4:02.0: dev[13:5] found
+>> [ 4588.671362] sas: ata40: end_device-8:4: dev error handler
+>> [ 4588.846387] hisi_sas_v3_hw 0000:b4:02.0: phydown: phy2 
+>> phy_state=0xc3 // phy2's hw port id assign by chip is released
+>> [ 4588.846393] hisi_sas_v3_hw 0000:b4:02.0: ignore flutter phy2 down
+>> [ 4588.919837] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy3 
+>> link_rate=10(sata) // phy3 is assigned the hw port id previously used 
+>> by phy2
+>> [ 4589.029656] hisi_sas_v3_hw 0000:b4:02.0: phyup: phy2 
+>> link_rate=10(sata) // phy2's hw port id is assigned a new one
+>> [ 4589.220662] ata40.00: ATA-9: HUH721010ALE600, T3C0, max UDMA/133
+>> [ 4589.220666] ata40.00: 19532873728 sectors, multi 0: LBA48 NCQ 
+>> (depth 32), AA
+>> [ 4589.233022] ata40.00: configured for UDMA/133
+>>
+>> In view of the situation corresponding to the above log, the 
+>> hisi_sas_port.id corresponding to phy2 has not been updated, and the 
+>> old port id is still used, which will cause the IO delivered to phy2 
+>> to be abnormally delivered to the disk of phy3.
+>>
+>> After force phy, the chip will check whether the phy information 
+>> matches the port id and intercept this abnormal IO.
+>>
+> 
+> 
+> So do you mean that all IO to this disk will error? If yes, then this is 
+> good.
+Yes, IO error or IO result does not meet expectations. As shown in the 
+log below, due to an abnormal port ID, the SNs of the two disks read are 
+the same.
 
-It's also going to allow users to understand a bit more why all
-features aren't available. Plugging modules in a true i2c connected
-cage will report all the features, while plugging on an smbus cage will
-cause the use of a degraded mode. Not only for hwmon, but as Russell
-specifies, I doubt all SFP PHY will behave exactly the same...
+[448000.504979] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 link_rate=10(sata)
+[448000.505070] sas: phy-10:1 added to port-10:1, phy_mask:0x2 
+(5000000000000a01)
+[448000.505247] sas: DOING DISCOVERY on port 1, pid:2239187
+[448000.505255] hisi_sas_v3_hw 0000:d4:02.0: dev[2:5] found
+[448000.505274] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+[448000.505295] sas: ata31: end_device-10:0: dev error handler
+[448000.505299] sas: ata32: end_device-10:1: dev error handler
+[448001.300517] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy1 phy_state=0x1 
+  // phy1's hw port id released
+[448001.300522] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy1 down
+[448001.436187] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
+link_rate=10(sata) // phy2 occupies the hardware port ID of phy1
+[448001.608766] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
+link_rate=10(sata) // phy1 was assigned a new hardware port ID
+[448001.775605] ata32.00: ATA-11: WUH721816ALE6L4, PCGAW660, max UDMA/133
+[448002.159364] sas: phy-10:2 added to port-10:2, phy_mask:0x4 
+(5000000000000a02)
+[448002.159575] sas: DOING DISCOVERY on port 2, pid:2239187
+[448002.159581] hisi_sas_v3_hw 0000:d4:02.0: dev[3:5] found
+[448002.159602] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+[448002.159623] sas: ata31: end_device-10:0: dev error handler
+[448002.159633] sas: ata32: end_device-10:1: dev error handler
+[448002.159636] sas: ata33: end_device-10:2: dev error handler
+[448002.393349] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy2 phy_state=0x3
+[448002.393354] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy2 down
+[448002.684937] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 link_rate=10(sata)
+[448002.851639] ata33.00: ATA-11: WUH721816ALE6L4, PCGAW660, max UDMA/133
+[448002.851644] ata33.00: 31251759104 sectors, multi 0: LBA48 NCQ (depth 32)
 
-I'll respin without hwmon and with the warning then.
+> 
+> But I still don't like the handling in this patch. If we get a phy up, 
+> then the directly-attached disk ideally should be gone already, so 
+> should not have to do this handling.
+There is no problem when the disk is removed. The current problem is 
+that multiple phy up at the same time. When one of the phys up and 
+enters error handler to execute hardreset, the phy will down and then 
+up. other phy up will probably occupy the hw port id of the previous phy 
+which do hardreset in EH.
 
-Maxime
+Thanks,
+Xingui
 
