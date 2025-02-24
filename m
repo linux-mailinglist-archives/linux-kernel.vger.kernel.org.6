@@ -1,188 +1,140 @@
-Return-Path: <linux-kernel+bounces-529108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5FCCA41FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:03:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B66A41FD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:03:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7889C1636B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:59:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106C71644D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E4223373E;
-	Mon, 24 Feb 2025 12:59:35 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0978323BCF9;
+	Mon, 24 Feb 2025 13:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjqkHba0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B6F10F2;
-	Mon, 24 Feb 2025 12:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609A0205AAF;
+	Mon, 24 Feb 2025 13:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401975; cv=none; b=WlYXL7j05ftsQavUiiW0phvtRrQSMm3MIWALwg3ZXyIJ4wG26UBh2Yi99sav54GOc/PJNTXYfZ9Vwj8QfXLCquPcdbjs5rXJlwRDxtZQKzgZybJmgrWjq4VcGkBGtIkKfuEa1mvKUOHW0q0ryhY41/Tn37dsSTsGKtD23v+JAyI=
+	t=1740402024; cv=none; b=T6WYaI/iZT7ysQJuhmAnq00HuOuOUcosMqeR224TUZdYoVOqdnz5fQ00sfDWfdXspCnrXqEizQtPqFtbSBawNanfZAkInuNuf6Rx5lPpQ4lpOB/Vfs+sAML5bZQuehxsM9vuBriEBe63HEr0E3b97oWG7Qa9XN5VDuqlQ60jAIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401975; c=relaxed/simple;
-	bh=cmw+oD3Yrv54lHLTwZhEC54nKJJHqCcOOFHA0zyda1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oqJHwnWJPzJNKQNXI8CjyBeZEYMbLCkFiQH42oRu3DqlEhUGvLrNYXBHR9PhyKv3LcQ+TOW9TtC96pLB9q936/udH2Gx45XQabYOd3BNjJs/LYffZPSf0eCb/xakFPeFvXqog3Y8O/OJCd1PjU1sqDcS6QbnkFnTiTedOYpmEy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-51eb18130f9so1005565e0c.3;
-        Mon, 24 Feb 2025 04:59:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740401972; x=1741006772;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QTQnMpdUnv7pSZnMJlyG0p78QjlYP/5DALh1843MbRw=;
-        b=nkzP5xTFkmrzBDJKqxXJ+7o/MuP4knon17xcg+jF6FmStv+SqoHSgWWobeLqiBvDny
-         MnJXgSOgku9/b0tDIrRwIfdXRx+zugB1Db75aJMDE8RUtH9b6w5hTvYbBfHNzBnncV9Y
-         4CeyJXsXq1cmrEFFcshKlT5ire89eSH8LjvBV6G4ity0/1pW6oIHeUNkf5SkqBnYtEjX
-         iyz8yjHB7K13+Jvhtz6leE8FdRnLrSmX6tMg0+JvN0r/YvQZb4rIBpOPHR71SqjLQZEb
-         RSoIZstqFdhrENjOXyGVBcLYANJAzivNdQ/WgC8g1wt25Jl/9h+afyyUED/WQ+/bo1Ti
-         jPXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUQXc/CqTKEqI/K5hPG7rBm9Ik8WjCsrLlPE+bCRwkJ1GSqVlaklVSGP0scIS9WrTFudWaCTlem0G+vSU=@vger.kernel.org, AJvYcCWLGxago/WLoAn7yiw8Qf1g2YoCP1HygHqt31sXx0Rza1K4Z7ByS18l162BAiSUrmHliiTfZJqDK5FILRDSQ7ARYCo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEajVQgKNlWDoM8X45PkSQxIAdSIBsjyEQuiUA8uNL72WBzXhX
-	NiVownhecvrzXHPbZKFHiPngL0ryUgaPuhjjsen5c02lXrLcqemZiKx842mJVvc=
-X-Gm-Gg: ASbGnctlSf+qKQ8CmMP2uD/KaBVggtSNhkjJggdM1kjz70a7X//auFYz1WGMRV3GFKE
-	lCvCFX2ah1iPbYKZu+ANDUPd95iOtVNZaYxHq0Q24hLKtsCrmHQB9apznW25AwiMcIsmFghJ1S9
-	nsP3yGsRTMDHX0GQs+3lu6z4Fj/Y+2aXXYLvoidjW+7DpQWBKCdNd0lG+zh+fIhZDbXKcFbVAV2
-	1yV1jFsTwilvdr45QP8dtLckRI/xcv2tFqmNV461F4lrP/beWbE6jHsLRBAunsplZFNWP/+lyzd
-	8gN1cCHGPTAdU2N54brVZpiX1G408/cmcG5I1kC0EqwnIGMkL+Bg0fqqbB77/U5A
-X-Google-Smtp-Source: AGHT+IHtQxlMgKNqiDW9ry1rSEYERhBrcvYD8G8EaKMI/kC4VAOv/SlEGKhHsL0Sy6w67oACdjgdpQ==
-X-Received: by 2002:a05:6122:3c94:b0:518:791a:3462 with SMTP id 71dfb90a1353d-521ee45c3e6mr4688801e0c.9.1740401971866;
-        Mon, 24 Feb 2025 04:59:31 -0800 (PST)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520be32e8c0sm3050262e0c.38.2025.02.24.04.59.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 04:59:31 -0800 (PST)
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4be5033a2cbso1860863137.1;
-        Mon, 24 Feb 2025 04:59:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU9QfnnCBxC0hTZ3CMDefDfWZD/Re2VDy+Ce7unR8I0zGE+RVAt70SThWD3qNlNeNXi5KJVvozf4vVl6z8=@vger.kernel.org, AJvYcCWv1VpQxumu4cgURifjkubedzbWtZ7ihRy/Fuc68yq96POZS6ThzsbzhWE1F5aql5dGBFxT9mnLGmD0tGqPp7qOulM=@vger.kernel.org
-X-Received: by 2002:a05:6102:3588:b0:4ba:9abf:800f with SMTP id
- ada2fe7eead31-4bfc0086088mr5446644137.6.1740401971451; Mon, 24 Feb 2025
- 04:59:31 -0800 (PST)
+	s=arc-20240116; t=1740402024; c=relaxed/simple;
+	bh=ZkYg8riK3g+YIJUhasp+/tnIiDVINYAMP80vM8syvUI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mH9durmViLEP2a9VXD5Py1EUHFnZR4+VvGSviFaJAwJOar78BGTKhHpu2gNQ18k8PqRbETISABD8tR9kKAjXIpKgqMd9Pg7YVvJBcieHJm4KE8oXlRLoqku6joLaa4P5JsdarbETIv9VAY51f90tw+Izr8P07rpbcYp8FZe+G7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjqkHba0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7240DC4CED6;
+	Mon, 24 Feb 2025 13:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740402023;
+	bh=ZkYg8riK3g+YIJUhasp+/tnIiDVINYAMP80vM8syvUI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EjqkHba0WU1jmT/H2NcmNT7qlZFOYr+PgMuGNJ6cSz7SGMl+qqQSfu5/be83sOU5l
+	 J5c1alTfOsnp8FAFII+rCxK2HJsUJcWF8FtXbUcHYjvDRXZZwbFGCMnTmJkf9UDVZH
+	 coiCFAWI49hV8N0X0TmjlvKPktaMXY4dIZm3o0M8pcxowUUZYWZBQKGoGTIB5xhmy5
+	 ppB3ta5CtIA/t7Se2zAZPKni3Q/0Fl589D4zIe6Fpj0kqVP9w1TpZ18Tk8VJw9uJeE
+	 Y7L8bxn36NecDspSKFIosnqLOSwe9mthHWu0lWWP2MrdNScZt25Z0k+pDXsL2ZR6ID
+	 49lrz6VYXWMaA==
+Message-ID: <870ae0a7-dc04-4ae2-8485-df9db23db697@kernel.org>
+Date: Mon, 24 Feb 2025 15:00:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-5-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250220150110.738619-5-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Feb 2025 13:59:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUpNJiaGf3OTaSjjh4SA+nXODQj38P1-M0gG2mnxC_zLw@mail.gmail.com>
-X-Gm-Features: AWEUYZmF1ZoTHCf6CoUcoKQLNfCs0at94EyuNhWx6ksve-l25vhlA8AXwydxfCc
-Message-ID: <CAMuHMdUpNJiaGf3OTaSjjh4SA+nXODQj38P1-M0gG2mnxC_zLw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/7] irqchip/renesas-rzv2h: Add rzv2h_icu_register_dma_req_ack()
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 4/5] net: ethernet: ti: am65_cpsw: move
+ am65_cpsw_put_page() out of am65_cpsw_run_xdp()
+To: Simon Horman <horms@kernel.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Siddharth Vadapalli <s-vadapalli@ti.com>,
+ Md Danish Anwar <danishanwar@ti.com>, srk@ti.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250217-am65-cpsw-zc-prep-v1-0-ce450a62d64f@kernel.org>
+ <20250217-am65-cpsw-zc-prep-v1-4-ce450a62d64f@kernel.org>
+ <20250218180340.GF1615191@kernel.org>
+Content-Language: en-US
+From: Roger Quadros <rogerq@kernel.org>
+In-Reply-To: <20250218180340.GF1615191@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Fabrizio,
 
-On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> On the Renesas RZ/V2H(P) family of SoCs, DMAC IPs are connected
-> to the Interrupt Control Unit (ICU).
-> For DMA transfers, a request number and an ack number must be
-> registered with the ICU, which means that the DMAC driver has
-> to be able to instruct the ICU driver with the registration of
-> such ids.
->
-> Export rzv2h_icu_register_dma_req_ack() so that the DMA driver
-> can register both ids in one go.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
-> v3->v4:
-> * No change.
-> v2->v3:
-> * Replaced rzv2h_icu_register_dma_req_ack with
->   rzv2h_icu_register_dma_req_ack() in changelog.
-> * Added dummy for rzv2h_icu_register_dma_req_ack().
-> * Added Rb Thomas.
 
-Thanks for the update!
-
-> --- a/drivers/irqchip/irq-renesas-rzv2h.c
-> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-
-> @@ -94,6 +110,45 @@ struct rzv2h_icu_priv {
->         raw_spinlock_t                  lock;
->  };
->
-> +void rzv2h_icu_register_dma_req_ack(struct platform_device *icu_dev, u8 dmac_index, u8 dmac_channel,
-> +                                   u16 req_no, u8 ack_no)
-> +{
-> +       struct rzv2h_icu_priv *priv = platform_get_drvdata(icu_dev);
-> +       u32 icu_dmackselk, dmaack, dmaack_mask;
-> +       u32 icu_dmksely, dmareq, dmareq_mask;
-> +       u8 k, field_no;
-> +       u8 y, upper;
-> +
-> +       if (req_no >= RZV2H_ICU_DMAC_REQ_NO_MIN_FIX_OUTPUT)
-> +               req_no = RZV2H_ICU_DMAC_REQ_NO_DEFAULT;
-
-What is the purpose of this check?
-The hardware register field size is 10 bits, so I think it is better
-to just limit it to 0x3ff.
-Checking for RZV2H_ICU_DMAC_REQ_NO_MIN_FIX_OUTPUT means you will have to
-update this check when a new SoC supports higher values than 0x1b5.
-
-> +
-> +       if (ack_no >= RZV2H_ICU_DMAC_ACK_NO_MIN_FIX_OUTPUT)
-> +               ack_no = RZV2H_ICU_DMAC_ACK_NO_DEFAULT;
-
-What is the purpose of this check?
-There are only 23 DMACKSELk registers, so using
-RZV2H_ICU_DMAC_ACK_NO_DEFAULT = 0x7f will write beyond the last
-register below. And drivers/dma/sh/rz-dmac.c does call this
-function with req_no = RZV2H_ICU_DMAC_REQ_NO_DEFAULT and ack_no =
-RZV2H_ICU_DMAC_ACK_NO_DEFAULT...
-
-> +
-> +       y = dmac_channel / 2;
-> +       upper = dmac_channel % 2;
-> +
-> +       dmareq = ICU_DMAC_PREP_DMAREQ(req_no, upper);
-> +       dmareq_mask = ICU_DMAC_DMAREQ_MASK(upper);
-> +
-> +       k  = ack_no / 4;
-> +       field_no = ack_no % 4;
-> +
-> +       dmaack_mask = ICU_DMAC_DACK_SEL_MASK(field_no);
-> +       dmaack = ICU_DMAC_PREP_DACK_SEL(ack_no, field_no);
-> +
-> +       guard(raw_spinlock_irqsave)(&priv->lock);
-> +
-> +       icu_dmksely = readl(priv->base + ICU_DMkSELy(dmac_index, y));
-> +       icu_dmksely = (icu_dmksely & ~dmareq_mask) | dmareq;
-> +       writel(icu_dmksely, priv->base + ICU_DMkSELy(dmac_index, y));
-> +
-> +       icu_dmackselk = readl(priv->base + ICU_DMACKSELk(k));
-> +       icu_dmackselk = (icu_dmackselk & ~dmaack_mask) | dmaack;
-> +       writel(icu_dmackselk, priv->base + ICU_DMACKSELk(k));
-> +}
-> +EXPORT_SYMBOL_GPL(rzv2h_icu_register_dma_req_ack);
-> +
->  static inline struct rzv2h_icu_priv *irq_data_to_priv(struct irq_data *data)
+On 18/02/2025 20:03, Simon Horman wrote:
+> On Mon, Feb 17, 2025 at 09:31:49AM +0200, Roger Quadros wrote:
+>> This allows us to re-use am65_cpsw_run_xdp() for zero copy
+>> case. Add AM65_CPSW_XDP_TX case for successful XDP_TX so we don't
+>> free the page while in flight.
+>>
+>> Signed-off-by: Roger Quadros <rogerq@kernel.org>
+> 
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+>> ---
+>>  drivers/net/ethernet/ti/am65-cpsw-nuss.c | 13 ++++++++-----
+>>  1 file changed, 8 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> 
+> ...
+> 
+>> @@ -1230,9 +1230,6 @@ static int am65_cpsw_run_xdp(struct am65_cpsw_rx_flow *flow,
+>>  		ndev->stats.rx_dropped++;
+>>  	}
+>>  
+>> -	page = virt_to_head_page(xdp->data);
+>> -	am65_cpsw_put_page(flow, page, true);
+>> -
+>>  	return ret;
+> 
+> It seems that before and after this patch ret is always initialised to
+> AM65_CPSW_XDP_CONSUMED and never changed. So it can be removed.
+> 
+> Given that with this patch the function only returns after the switch
+> statement, I think this would be a nice follow-up.
+> 
+> diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> index 20a4fc3e579f..4052c9153632 100644
+> --- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> +++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
+> @@ -1172,7 +1172,6 @@ static int am65_cpsw_run_xdp(struct am65_cpsw_rx_flow *flow,
 >  {
->         return data->domain->host_data;
+>  	struct am65_cpsw_common *common = flow->common;
+>  	struct net_device *ndev = port->ndev;
+> -	int ret = AM65_CPSW_XDP_CONSUMED;
+>  	struct am65_cpsw_tx_chn *tx_chn;
+>  	struct netdev_queue *netif_txq;
+>  	int cpu = smp_processor_id();
+> @@ -1228,9 +1227,8 @@ static int am65_cpsw_run_xdp(struct am65_cpsw_rx_flow *flow,
+>  		fallthrough;
+>  	case XDP_DROP:
+>  		ndev->stats.rx_dropped++;
+> +		return AM65_CPSW_XDP_CONSUMED;
+>  	}
+> -
+> -	return ret;
+>  }
+>  
+>  /* RX psdata[2] word format - checksum information */
+> 
+> ...
 
-Gr{oetje,eeting}s,
-
-                        Geert
+Thank you for this suggestion. I will add this cleanup in my next set of patches.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+cheers,
+-roger
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
