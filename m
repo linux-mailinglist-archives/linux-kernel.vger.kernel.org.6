@@ -1,182 +1,280 @@
-Return-Path: <linux-kernel+bounces-530008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907DDA42D98
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:21:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42103A42DCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 006327A6E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:20:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12ED07A4940
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617B1242911;
-	Mon, 24 Feb 2025 20:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A624291E;
+	Mon, 24 Feb 2025 20:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bmWbPwxQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="r1LWAxau"
+Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1067B266196;
-	Mon, 24 Feb 2025 20:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0926AFB;
+	Mon, 24 Feb 2025 20:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428411; cv=none; b=p7UYe2EWLWy24W+bKPOFk6y3pS0/FGE/edmBt2vYiIvdycxsqWoTq7jdfZwlu7i0MeNZJuVYMMe7mQWl1ys2oRZz8x+HwdnvbWWpH9JMOEml9wTtHKbU/HQ8Tk995yuQxjhWjKJd+VNBeOQJ/UAqmpq9gEpSCez+B91VucexYzc=
+	t=1740428976; cv=none; b=GSDZxMYFUcZIVUSAGkNXW+jeFPSAIaJgdRgCgCJeqrtmaG+utyqXIvrh9k/efNtQDNEOcSaDqu/ZQUb1POJeP+YiOAqA9hPJW6anD+2ypNmYoF5evGtoKkTYiC6E4lv1UrLNbIhMB47UTLosBMLeyPx1tJlp8MCAN06jMxUhm78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428411; c=relaxed/simple;
-	bh=WiLiBj0SJRFxfxK31XdalHPJfovGc7Rsw7QaWrP0nVU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oLsGtVaxpwvOuOVseSQ2pkmMexU4T0qnvHhgJzZ5ydK6yGSNzWgpZrIkEPwvbZsgRS/2jE+a4JDORFKAqIcPPrVJuNouVsPNCxbsLs0zMVCPn2dgvi7IXFPlPhNVAVC+d4dHDt3X9uEUXD8H4HCv5t5+Q5TAUhMTjoam6jQgjOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bmWbPwxQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.1.103] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 20780E62;
-	Mon, 24 Feb 2025 21:18:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740428314;
-	bh=WiLiBj0SJRFxfxK31XdalHPJfovGc7Rsw7QaWrP0nVU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=bmWbPwxQHixWMcoOldCF4PIntnRHDcoVoHtEqZBqdN8XLcWZgjfnaHN5XSI73YuqO
-	 dg2A1feTHBzacGUlrO1XFKR+y6NhRd7atOFeETWmcqczIuY4XEmRZpZb8syYfPLxAu
-	 +GfzFDNnkDAiQ64/iiwkkQKxb4nAm1BdT4UKO1pY=
-From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Date: Mon, 24 Feb 2025 21:19:46 +0100
-Subject: [PATCH v2 6/6] media: vsp1: rwpf: Support operations with IIF
+	s=arc-20240116; t=1740428976; c=relaxed/simple;
+	bh=0+5ylH1RpEMxad2fU57+zr3KWtLmylDPnzNe+ClA5vo=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=nm7TNtxBmO8mX18YfDNEJMJNEPjNRPmt0q/FxtMvQ29z6wpFL+kh4UhDb5k+6uNHdPalIPGrVmYr+VR4Jc2NgKY3nSbJ639jnaIh0f4UmwYOmSzD/2qTf+SmQFhLD4JHLkv3Snj4JUTCaTvkaMwsRi6po3nL8uy5qQaYRZhWHOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=r1LWAxau; arc=none smtp.client-ip=80.12.242.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mevztE6C3KGvrmew2tsEVG; Mon, 24 Feb 2025 21:20:16 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740428416;
+	bh=zXvGjak3HqVlV81qtbZ7PYjHL81uIlDbJz0ggojYpY8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=r1LWAxauFhYfUxEL9mkYC5X/vQmAnYURZZy2xWKN49VQZxmw42GDRGUkn5aD8Khot
+	 BF/3RfdCIurvlhZGfoX4qZhMQiUyyGAB3zDWXaK3bFQR3WYQeQgnMyo2PwYk+Hw5zf
+	 sAdUm8CcFVNDPGPetowSfkypjllAD3/BZco9yblhm7j82m3yrDj4iMDtbfePj0ezy1
+	 EoCGzg2geQKtcBZuyXXXqzO6c2LtWjzdj5twfKbo5GGLWP7xJArGEpjywtyWwDlGTF
+	 GVGTd9QTJDdvgMHegqpgrbXw07rhegTDNJ2AQLmXPgq8RGIB2ILVlYLAyzXg+HjxO8
+	 ferPrBGilLmMw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 24 Feb 2025 21:20:16 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <614644f9-71f7-41af-af90-7ae892581646@wanadoo.fr>
+Date: Mon, 24 Feb 2025 21:20:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-v4h-iif-v2-6-0305e3c1fe2d@ideasonboard.com>
-References: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
-In-Reply-To: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-X-Mailer: b4 0.15-dev-1b0d6
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4208;
- i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
- bh=WiLiBj0SJRFxfxK31XdalHPJfovGc7Rsw7QaWrP0nVU=;
- b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnvNRsit80a6Z3tyW/pK842HRUMRIMrv3YdA6vJ
- quy39XlfIeJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ7zUbAAKCRByNAaPFqFW
- PLorD/49Lh2mL+vg/uPNKWD/OcVw/XdyZfm2bG5clJDF1yVfzWUeH8Fif5OVEOsuznC3Fit3tfo
- 5vidnyF/8ufolJInIj6aZSoQ5f32tXLjeGqJzZwyoWDj9G0r77xb2ntj+fxtijsTsrW7bOf8z1z
- FM76ALLboU7EPobWE93jD1l7rVC8FaoRmcI5dVAR0qbi2OtIeM0HzKNHuwcaiCTiA7i+ItHwlhM
- fXAoPs5DbrKJGrKp001wKyxiGHPVKZ6SJWEsHozSSsJXu0O9yn9EIP8xRFPh0dvkVlB6Rbtw6J/
- T+CKzRAuE0iMgHGIVqlN3IGeMm5oNsREq7YRO/IG/P/ue/7nv4FhcMBjJ3Vd/opU5SSsr88Hlc1
- BjWPWKss/fELlMwXpkU3UkLLsmU54dU+dVP9Mykm9r/UDb5ujq/GxO3+p0wnfUrazDByJa1fByA
- t6AaM4aaGFhO4r72tiYbv79gQRSEHu8wcQ4hQ/dt1J2atxbGlXclaeJvOg5pPGU+UdZFql0W6wW
- YKTkSEdsVjQbaUC0wG3zyvlU9YeFAgBVd8u5Bc47/9GEPZZJGnQFBCh93NXHU/gf6NP3nO8aAOr
- +YeOzSwVu8MyKfiEnWCh4Vj+Kx6sk5c27HyWCEdDI50oD4M7y7NO9d92WY+oLeYmsOeBPYFHj+O
- LDB20kPNd2l6kbg==
-X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
- fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] mfd: max77759: add Maxim MAX77759 core mfd driver
+References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
+ <20250224-max77759-mfd-v1-4-2bff36f9d055@linaro.org>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ gustavoars@kernel.org, kees@kernel.org, kernel-team@android.com,
+ krzk+dt@kernel.org, lee@kernel.org, linus.walleij@linaro.org,
+ linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peter.griffin@linaro.org, robh@kernel.org,
+ srinivas.kandagatla@linaro.org, tudor.ambarus@linaro.org,
+ willmcvicker@google.com
+In-Reply-To: <20250224-max77759-mfd-v1-4-2bff36f9d055@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-When the RPF/WPF units are used for ISP interfacing through
-the IIF, the set of accessible registers is limited compared to
-the regular VSPD operations.
+Le 24/02/2025 à 11:28, André Draszik a écrit :
+> The Maxim MAX77759 is a companion Power Management IC for USB Type-C
+> applications with Battery Charger, Fuel Gauge, temperature sensors, USB
+> Type-C Port Controller (TCPC), NVMEM, and additional GPIO interfaces.
+> 
+> Fuel Gauge and TCPC have separate and independent I2C addresses,
+> register maps, and interrupt lines and are therefore excluded from the
+> MFD core device driver here.
+> 
+> The GPIO and NVMEM interfaces are accessed via specific commands to the
+> built-in microprocessor. This driver implements an API that client
+> drivers can use for accessing those.
 
-Support ISP interfacing in the rpf and wpf drivers by checking if
-the pipe features an IIF instance and writing only the relevant
-registers.
+Hi,
 
-Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
----
- drivers/media/platform/renesas/vsp1/vsp1_rpf.c | 11 +++++++++--
- drivers/media/platform/renesas/vsp1/vsp1_wpf.c | 14 ++++++++++----
- 2 files changed, 19 insertions(+), 6 deletions(-)
+...
 
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
-index e10ed836153633c4fe27224d0df39c77d4c8ab89..dae94129a105a646917353dba0181f9c93327132 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_rpf.c
-@@ -84,7 +84,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
- 	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
- 	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
- 
--	infmt = VI6_RPF_INFMT_CIPM
-+	infmt = (pipe->iif ? 0 : VI6_RPF_INFMT_CIPM)
- 	      | (fmtinfo->hwfmt << VI6_RPF_INFMT_RDFMT_SHIFT);
- 
- 	if (fmtinfo->swap_yc)
-@@ -98,7 +98,7 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
- 	vsp1_rpf_write(rpf, dlb, VI6_RPF_INFMT, infmt);
- 	vsp1_rpf_write(rpf, dlb, VI6_RPF_DSWAP, fmtinfo->swap);
- 
--	if (entity->vsp1->info->gen == 4) {
-+	if (entity->vsp1->info->gen == 4 && !pipe->iif) {
- 		u32 ext_infmt0;
- 		u32 ext_infmt1;
- 		u32 ext_infmt2;
-@@ -174,6 +174,13 @@ static void rpf_configure_stream(struct vsp1_entity *entity,
- 		       (left << VI6_RPF_LOC_HCOORD_SHIFT) |
- 		       (top << VI6_RPF_LOC_VCOORD_SHIFT));
- 
-+	/* No further configuration for VSPX. */
-+	if (pipe->iif) {
-+		/* VSPX wants alpha_sel to be set to 0. */
-+		vsp1_rpf_write(rpf, dlb, VI6_RPF_ALPH_SEL, 0);
-+		return;
-+	}
-+
- 	/*
- 	 * On Gen2 use the alpha channel (extended to 8 bits) when available or
- 	 * a fixed alpha value set through the V4L2_CID_ALPHA_COMPONENT control
-diff --git a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
-index f176750ccd9847fdb8d51f7f51a6bd5092b70197..88db60596f0f2f459eddbbc2ea7247620d675dd8 100644
---- a/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
-+++ b/drivers/media/platform/renesas/vsp1/vsp1_wpf.c
-@@ -247,8 +247,11 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	sink_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SINK);
- 	source_format = v4l2_subdev_state_get_format(state, RWPF_PAD_SOURCE);
- 
--	/* Format */
--	if (!pipe->lif || wpf->writeback) {
-+	/*
-+	 * Format configuration. Skip for IIF (VSPX) or if the pipe doesn't
-+	 * write to memory.
-+	 */
-+	if (!pipe->iif && (!pipe->lif || wpf->writeback)) {
- 		const struct v4l2_pix_format_mplane *format = &wpf->format;
- 		const struct vsp1_format_info *fmtinfo = wpf->fmtinfo;
- 
-@@ -291,7 +294,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	 * Sources. If the pipeline has a single input and BRx is not used,
- 	 * configure it as the master layer. Otherwise configure all
- 	 * inputs as sub-layers and select the virtual RPF as the master
--	 * layer.
-+	 * layer. For VSPX configure the enabled sources as masters.
- 	 */
- 	for (i = 0; i < vsp1->info->rpf_count; ++i) {
- 		struct vsp1_rwpf *input = pipe->inputs[i];
-@@ -299,7 +302,7 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 		if (!input)
- 			continue;
- 
--		srcrpf |= (!pipe->brx && pipe->num_inputs == 1)
-+		srcrpf |= (pipe->iif || (!pipe->brx && pipe->num_inputs == 1))
- 			? VI6_WPF_SRCRPF_RPF_ACT_MST(input->entity.index)
- 			: VI6_WPF_SRCRPF_RPF_ACT_SUB(input->entity.index);
- 	}
-@@ -316,6 +319,9 @@ static void wpf_configure_stream(struct vsp1_entity *entity,
- 	vsp1_dl_body_write(dlb, VI6_WPF_IRQ_ENB(index),
- 			   VI6_WPF_IRQ_ENB_DFEE);
- 
-+	if (pipe->iif)
-+		return;
-+
- 	/*
- 	 * Configure writeback for display pipelines (the wpf writeback flag is
- 	 * never set for memory-to-memory pipelines). Start by adding a chained
+> +int max77759_maxq_command(struct max77759_mfd *max77759_mfd,
+> +			  const struct max77759_maxq_command *cmd,
+> +			  struct max77759_maxq_response *rsp)
+> +{
+> +	DEFINE_FLEX(struct max77759_maxq_response, _rsp, rsp, length, 1);
+> +	int ret;
+> +	static const unsigned int timeout_ms = 200;
+> +
+> +	if (cmd->length > MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX)
+> +		return -EINVAL;
+> +
+> +	/* rsp is allowed to be NULL. In that case we do need a temporary. */
+> +	if (!rsp)
+> +		rsp = _rsp;
+> +
+> +	BUILD_BUG_ON(MAX77759_MAXQ_OPCODE_MAXLENGTH
+> +		     != MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX);
+> +	if (!rsp->length || rsp->length > MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX)
+> +		return -EINVAL;
+> +
+> +	guard(mutex)(&max77759_mfd->maxq_lock);
+> +
+> +	reinit_completion(&max77759_mfd->cmd_done);
+> +
+> +	/* write the opcode and data */
+> +	ret = regmap_bulk_write(max77759_mfd->regmap_maxq,
+> +				MAX77759_MAXQ_REG_AP_DATAOUT0, cmd->cmd,
+> +				cmd->length);
+> +	if (!ret && cmd->length < MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX) {
+> +		/* writing the last byte triggers MaxQ */
+> +		ret = regmap_write(max77759_mfd->regmap_maxq,
+> +				   MAX77759_MAXQ_REG_AP_DATAOUT32, 0);
+> +	}
+> +	if (ret)
+> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
 
--- 
-2.48.1
+Maybe regmap_get_device(max77759_mfd->regmap_maxq) could be assigned to 
+a variable to simplify its usage?
+
+> +			 "write data failed: %d\n", ret);
+> +	if (ret)
+> +		return ret;
+
+Merge with the if (ret) just above? (as done a few lines below)
+
+> +
+> +	/* wait for response from MaxQ */
+> +	if (!wait_for_completion_timeout(&max77759_mfd->cmd_done,
+> +					 usecs_to_jiffies(timeout_ms))) {
+> +		dev_err(regmap_get_device(max77759_mfd->regmap_maxq),
+> +			"timed out waiting for data\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	ret = regmap_bulk_read(max77759_mfd->regmap_maxq,
+> +			       MAX77759_MAXQ_REG_AP_DATAIN0,
+> +			       rsp->rsp, rsp->length);
+> +	if (ret) {
+> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
+> +			 "read data failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * As per the protocol, the first byte of the reply will match the
+> +	 * request.
+> +	 */
+> +	if (rsp->rsp[0] != cmd->cmd[0]) {
+> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
+> +			 "unexpected opcode response for %#.2x: %*ph\n",
+> +			 cmd->cmd[0], (int)rsp->length, rsp->rsp);
+> +		return -EIO;
+> +	}
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int max77759_probe(struct i2c_client *client)
+> +{
+> +	struct regmap *regmap_top;
+> +	unsigned int pmic_id;
+> +	int ret;
+> +	struct irq_data *irq_data;
+> +	struct max77759_mfd *max77759_mfd;
+> +	unsigned long irq_flags;
+> +	struct regmap_irq_chip_data *irq_chip_data_pmic;
+> +
+> +	regmap_top = devm_regmap_init_i2c(client, &max77759_regmap_config_top);
+> +	if (IS_ERR(regmap_top))
+> +		return dev_err_probe(&client->dev, PTR_ERR(regmap_top),
+> +				     "regmap init failed\n");
+> +
+> +	ret = regmap_read(regmap_top, MAX77759_PMIC_REG_PMIC_ID, &pmic_id);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "Unable to read Device ID\n");
+> +
+> +	if (pmic_id != MAX77759_PMIC_REG_PMIC_ID_MAX77759)
+> +		return dev_err_probe(&client->dev, -ENODEV,
+> +				     "Unsupported Device ID %#.2x (%d)\n",
+> +				     pmic_id, pmic_id);
+> +
+> +	irq_data = irq_get_irq_data(client->irq);
+> +	if (!irq_data)
+> +		return dev_err_probe(&client->dev, -EINVAL,
+> +				     "Invalid IRQ: %d\n", client->irq);
+> +
+> +	max77759_mfd = devm_kzalloc(&client->dev, sizeof(*max77759_mfd),
+> +				    GFP_KERNEL);
+> +	if (!max77759_mfd)
+> +		return -ENOMEM;
+> +
+> +	max77759_mfd->regmap_top = regmap_top;
+> +	devm_mutex_init(&client->dev, &max77759_mfd->maxq_lock);
+
+Error handling?
+
+> +
+> +	i2c_set_clientdata(client, max77759_mfd);
+
+Harmless, but is it needed? (there is no i2c_get_clientdata() in the flile)
+
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(max77759_i2c_subdevs); ++i) {
+
+Unusual. Maybe declare 'i' at the beginning of the function?
+
+> +		ret = max77759_create_i2c_subdev(client,
+> +						 max77759_mfd,
+> +						 &max77759_i2c_subdevs[i]);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
+> +	irq_flags |= irqd_get_trigger_type(irq_data);
+> +
+> +	ret = devm_regmap_add_irq_chip(&client->dev, max77759_mfd->regmap_top,
+> +				       client->irq, irq_flags, 0,
+> +				       &max77759_pmic_irq_chip,
+> +				       &irq_chip_data_pmic);
+> +	if (ret)
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "Failed to add IRQ chip\n");
+> +
+> +	/* INTSRC - MaxQ & children */
+> +	ret = max77759_add_chained_maxq(client, max77759_mfd,
+> +					irq_chip_data_pmic);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* INTSRC - topsys & children */
+> +	ret = max77759_add_chained_topsys(client, max77759_mfd,
+> +					  irq_chip_data_pmic);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* INTSRC - charger & children */
+> +	ret = max77759_add_chained_charger(client, max77759_mfd,
+> +					   irq_chip_data_pmic);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
+> +				    max77759_cells, ARRAY_SIZE(max77759_cells),
+> +				    NULL, 0,
+> +				    regmap_irq_get_domain(irq_chip_data_pmic));
+> +}
+> +
+> +static const struct i2c_device_id max77759_i2c_id[] = {
+> +	{ "max77759", 0 },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, max77759_i2c_id);
+> +
+> +static const struct of_device_id max77759_of_id[] = {
+> +	{ .compatible = "maxim,max77759", },
+> +	{},
+
+Unneeded trailing comma after a terminator.
+Maybe { }  to match the style used in max77759_i2c_id?
+
+> +};
+> +MODULE_DEVICE_TABLE(of, max77759_of_id);
 
 
