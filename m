@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-529527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E92A0A42751
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:06:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3A46A42784
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A43FC7A87A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1A233A518F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8804726158D;
-	Mon, 24 Feb 2025 16:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945562627F2;
+	Mon, 24 Feb 2025 16:06:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QluamRV4"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pDs1C4yW"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D7C260A2F;
-	Mon, 24 Feb 2025 16:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C7D261398
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740413187; cv=none; b=JHv7s2rV2sk4fkuBltCQBH6RXF/UMBK6j9P5RG9+IdQMKmSymHRC8GtmI7B4rQ3/yQF6o2Z/KiUGLLzZkFA4TUPDe3fOHAhDBShtEbpds3HAantqykCPNSrp8b7EB5V7SkAG9Hd49Swm9YJSKmxkzwjhqCnstz4LbCuB3DxOZtc=
+	t=1740413188; cv=none; b=Sb+ghgi8I2HWhNHJh5u62vO5fC8dZp4FpZrpOjnAUE73ryRCH+DAhzX9NaiLZ1lnIXvONJwVjnwcMj1jo9/CLrrjaVWGwfUMXpXo5nzmKEnyQsxKvDNv9hTXibQUq86/q2zz4H4CdfgvUVGr1r94wrsvxwBBDZBQqy3C37b8m78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740413187; c=relaxed/simple;
-	bh=hn2GItTCSbefNTcILUqmrK0WUi0Y5xp8BAXpMWN4sRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J5Hof0BVZqXgB+4Yhi+ILfq0xsVIYbiHYgU/1O+w8j8F91/XgmyRl/ocHu3I5dRoDyc5CZ8J1ZH8J5e7m8/d39ymW52bWvEbj4J9/cwGmelzeIw0iooxGoGPxbmgA+GbU74BdhsfFRUyroPTUU0MCx1lQp5Gs7OgVTCTgrtqjiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QluamRV4; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72722d2717aso1235050a34.2;
-        Mon, 24 Feb 2025 08:06:26 -0800 (PST)
+	s=arc-20240116; t=1740413188; c=relaxed/simple;
+	bh=1lPb0mbbK1/GgDpWpIsiTfo1oZzYm3txjSj9Ii8DEzI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=igckd3WDNcg2Pbu+/Ek/wUnwFy8B7Jkf8T5BUsqOM5r0+AB9GqMlIbLYxVvvz0s9rP665i+fxMIrybJEZzDO4QAcFa5iT0KaMvGStimZommkObxm0fzfqdPzIwqbSgPIWDj4tLduxxHfGEYzSxCsobUwDX3kF3Ug8cV4dAGPs0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pDs1C4yW; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-438a39e659cso29971125e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:06:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740413185; x=1741017985; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=A+v75veikEqjUToerkHNWQgY+17ObWVQx/28Sr6yLy8=;
-        b=QluamRV4hKZoPpc3EnuQFw6HzfnmsP3dQ/c8P2RT4n1A+rZo5CxVqaKlI7R8VWlmeg
-         Uo49h2e20/RBttzJlYsXHkt9ZKSSgrFYGfstm79MXBWlx/qRHPD5SWnlEGT08Hy6Jcev
-         9ry1LvOK82In6tlW46C8rud3TYqyiTUvG6BOPd4Aw0DVbK2nqRlfEWXUuJTJTg5uw4SE
-         IQi8vnEHe4bfaKiKwR8wKLFnL2B1/LvfghTQZY4GBFKnBwwb2woBhaE9fRW79la7nPcO
-         Yfj8QpJ+KkcBwxCzXU4C0aI9uBTz+vPScmKU9RJpYVKTStlJuZdY7oJwta9NJHKPQSIB
-         RysA==
+        d=linaro.org; s=google; t=1740413185; x=1741017985; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1lPb0mbbK1/GgDpWpIsiTfo1oZzYm3txjSj9Ii8DEzI=;
+        b=pDs1C4yW1ltaw6oZr1cI1Fn5kVn0Jyy5V5qc2gw1/rYyp3dACXYAqTjI4qtj08oZuo
+         qg0dfIrJTF4YkuHGFd7X96WZoFB5SS8/BTBLYyxgzprzhjbL8NHq6EN9EPQ+g8dru+ir
+         Am0WlThhmUZrsGSqDBxrC8i9ZXy5pFQvcKgDAsDe0gLSa5PjgAeXf4e/H6ilba5w0QS4
+         HemAv4AkxewywSDx3uC1HfFMn9Wn9vUOTHz/DMz97VcXF9ALef7UgYrPe8WNaFU6Tl2U
+         BxFXu/vADIYJ1b7K40fr2OQxWWAN3k5j2NiRne8QQmyZmwfDl/XGLzDhS96Zf4GrBPut
+         Q/kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1740413185; x=1741017985;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A+v75veikEqjUToerkHNWQgY+17ObWVQx/28Sr6yLy8=;
-        b=v8+IxSSD6KMXS0II5zefnmRbt8lALC/hmvQ3I2vi1MOY7ESwkr7kPQDxOuh3kDCkLj
-         HltMXwsY0e4/cV3HhT9cITrqSOoeTN3BCD7GlSfg35JY9umkYURIC48CO116Tnj34wrT
-         2c18/zIA2E9Cxep56jc06XOSNd1xlRIMUm6DCRNXX6didUMiz1X6scAOPCWY8TeNWyVW
-         E2mwg7Kev/g0cxlUK/005dYBeFyCuGeq/uvybK//oFbgKX65u1eOCV+ARGg3yqm8xMmW
-         dpOe8AhBV6IrBKm0+TfIOvhxFKMhYU/d7LU28NZB5Q2EF472NL3R6SX6x09UhsrmNQPz
-         bhzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/W6Pgr5I/+wSrR/QQTj1O0gMw2vi6+wbTzV9GoygoG75WTQGpbwGVK3pvsjzDRW39p8OM+SI/QztkLlUmhQ==@vger.kernel.org, AJvYcCVjqtc+kho84b9Kr9fAhI4ZNBD2Dwn7aMOoXEnQ2DaIw1EeTRY2Y1qO/1qGvejX+QueuYUq7+LIAdOMcE2d@vger.kernel.org, AJvYcCXS4fTsUVI7bIUEaIN7ZksG5K6Bw1jbDkf1+ojF5d4ig5oeWnmEPfPHEIvu+dIliQXCoQiKkhNFyw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwS02b8mTzvnDrmy0u8TGeUjmGkOx6K1dmJSeQezv1q8CJcNq2
-	GDVpgLkahKWZG88FMC5wGeTsOoFPtL4KLPjFi8a029W6PH1WZ0jydjQch/LDz7g=
-X-Gm-Gg: ASbGnctPRCssgAuzU5W4tlIGVqifh46RvQowkgyKYGY48jCigKFEW9ui0lET1SXOAxK
-	2IBGLQ5X5JdQWz1RYXfeAoTTQ5QShVS0zwQTrjYvgDsDbuRYNvfr20xreDhEhkj/OlCjhnZfq3J
-	wkX6HPs/8q9ygNsPiGTHLJkxHPzOrUGc/6jAkRHDlaBbMNXTExpfO0q70DxmZdWZoRjCYocjnxu
-	zA1pz7uPYHQS2VlBhb56ZfatVYdUieyTRUTtj0bO0ywUBwoL+teMrhzOXkoAl3XC1mG+uv48sWD
-	s/nQrr5OPi2dy691wZ8scQw5HoM/lJcGlhWPQIOZBGZlR+Xjxu0uyDSRCq33PyDJ5zpsswFxO+x
-	bq7ubUJ4oBb5/CQ==
-X-Google-Smtp-Source: AGHT+IHVRHpjiMtIlbK0jNEIyLVuWSPhJVxhMvPRiCadwpmq+CIakKL3TutajtIwg9wK6MhYPu93fA==
-X-Received: by 2002:a05:6830:2108:b0:727:4494:3d62 with SMTP id 46e09a7af769-7274c17ee7bmr10702521a34.2.1740413185356;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1lPb0mbbK1/GgDpWpIsiTfo1oZzYm3txjSj9Ii8DEzI=;
+        b=d5Zd3zEfeZ+gqmrpgut7/NLTzlfNUGLMzrya7Y7N4Ju88oSqUkuG7/YavbfZLSFpHR
+         FzxYDrs4vwA1HQLZw2VSdWxGURlu7leSNvpiKrC3NwHlf9cNosLAMCWpZuz81wO3ghMm
+         d65MTKj/s25pvvQpagtzqOrhFBwZdSAlEEADRedfbArfaMQOzPkMALLc/NYU5BA0R58a
+         PN0sPCrMKjo61MVCG7ZjKd9JX5ApfpjaAI3tdcDBSn0o1P4RzIDQBTSWgC236gAHXHoY
+         wDuV3vo36WRdsp8OLQjnmqlIT3qjRbkpWeqzzvHELbTRctqR9dWVA+Tul3tGu15nmmy5
+         OOsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtUtgrirCSfiXuQt1whzne0/Fyg81e+GWlrTp2txaoBdodg2urIqtuiJbtqh1mrvtC67EqO1TP9phtvf8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7x9CRMPZEUAE66FfXfr44JHodTYWkV5G997SgKWvLoBauvP9/
+	m8AhgGkI6mnmUZ8nlOC9tgQ5iLwnWydXEOTS9ijGvvLQ/+bG77xU3cBc5JzP4ae23MQRuFJInQI
+	74FA=
+X-Gm-Gg: ASbGncuFkio1OBCJrK2RZ0kg7vtbxJkPAPSdCRRz41N/Qtqjw9NbFaM716R9i0oWdg3
+	bJYp8c4kYINvYWZeAm/z2PDCFcZlAeWEFSMcWHN2UTahtqbUm40NTylFWmF49f+eK07T+QV6lGx
+	xaQTUqiDgq/u7hqtsf3L9yBUlTB0V3F7pniXmerSEY4tZHVMB/gh/9kDAx9iQPYszVUJv5g99RW
+	4/NavHiyWPi95oNFOKKwUTN+KfCtBpSsL5nP+EHO63CfIIbAg3SwNS1tDlCpFJK80fUGEOf//ku
+	KAs4xz8qzq/TqaRxsuNBrpwpEnoZUQ==
+X-Google-Smtp-Source: AGHT+IHDjbFd0e/4R4E/diPCOLxfh+kIt1RSnJVnG9lafyp0jKqqhyRxDcGuBARHUlScjPzrgRWSCA==
+X-Received: by 2002:a05:6000:1845:b0:38f:4f07:fabf with SMTP id ffacd0b85a97d-38f70865357mr11686766f8f.53.1740413185111;
         Mon, 24 Feb 2025 08:06:25 -0800 (PST)
-Received: from ?IPV6:2603:8080:1b00:3d:6189:2749:3932:810b? ([2603:8080:1b00:3d:6189:2749:3932:810b])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7273233206fsm3077434a34.57.2025.02.24.08.06.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 08:06:23 -0800 (PST)
-Message-ID: <8e0597b9-d8a9-4d11-8209-ab0f41e94799@gmail.com>
-Date: Mon, 24 Feb 2025 10:06:20 -0600
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259f8602sm32844514f8f.94.2025.02.24.08.06.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 08:06:24 -0800 (PST)
+Message-ID: <93f69c1442bf3c5c53a581ac27c6b7f7dd733c0d.camel@linaro.org>
+Subject: Re: [PATCH 3/6] dt-bindings: nvmem: add max77759 binding
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
+ Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Mon, 24 Feb 2025 16:06:23 +0000
+In-Reply-To: <20250224153820.GB3137990-robh@kernel.org>
+References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
+	 <20250224-max77759-mfd-v1-3-2bff36f9d055@linaro.org>
+	 <20250224153820.GB3137990-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd@bsbernd.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
- <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
- <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
- <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
- <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
- <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
- <2d9f56ae-7344-4f82-b5da-61522543ef4f@bsbernd.com>
- <CAOQ4uxjhi_0f4y5DgrQr+H01j4N7d4VRv3vNidfNYy-cP8TS4g@mail.gmail.com>
- <CAJfpegv=3=rfxPDTP3HhWDcVJZrb_+ti7zyMrABYvX1w668XqQ@mail.gmail.com>
-Content-Language: en-US
-From: Moinak Bhattacharyya <moinakb001@gmail.com>
-In-Reply-To: <CAJfpegv=3=rfxPDTP3HhWDcVJZrb_+ti7zyMrABYvX1w668XqQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
+On Mon, 2025-02-24 at 09:38 -0600, Rob Herring wrote:
+> On Mon, Feb 24, 2025 at 10:28:51AM +0000, Andr=C3=A9 Draszik wrote:
+> > Add the DT binding document for the NVMEM module of the Maxim MAX77759.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0.../bindings/nvmem/maxim,max77759-nvmem.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 50 ++++++++++++++++++++++
+> > =C2=A01 file changed, 50 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvm=
+em.yaml
+> > b/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml
+> > new file mode 100644
+> > index 000000000000..d3b7430ef551
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/nvmem/maxim,max77759-nvmem.yaml
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/nvmem/maxim,max77759-nvmem.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Maxim Integrated MAX77759 Non Volatile Memory
+> > +
+> > +maintainers:
+> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > +
+> > +description: |
+> > +=C2=A0 This module is part of the MAX77759 PMIC. For additional inform=
+ation, see
+> > +=C2=A0 Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
+> > +
+> > +=C2=A0 The MAX77759 is a PMIC integrating, amongst others, Non Volatil=
+e Memory
+> > +=C2=A0 (NVMEM) with 30 bytes of storage which can be used by software =
+to store
+> > +=C2=A0 information or communicate with a boot loader.
+> > +
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759-nvmem
+> > +
+> > +=C2=A0 wp-gpios: false
+> > +
+> > +required:
+> > +=C2=A0 - compatible
+> > +
+> > +allOf:
+> > +=C2=A0 - $ref: nvmem.yaml#
+> > +
+> > +unevaluatedProperties: false
+> > +
+> > +examples:
+> > +=C2=A0 - |
+> > +=C2=A0=C2=A0=C2=A0 nvmem {
+>=20
+> Drop the example here. The MFD binding has a complete one.
 
+Will do
 
-On 2/24/25 6:08 AM, Miklos Szeredi wrote:
+Thanks Rob!
 
-> Right, this would be the least complex solution.   We could also add
-> an ioctl(FUSE_DEV_IOC_LOOKUP_REPLY), which would work with the
-> non-uring API.
-
-Thia would require a major version tick as we can't mantain back compat, 
-unless I'm mistaken? If this is the track we want to take, I'm happy to 
-send out another patchset with such a change. Would also need more 
-extensive hooking into core FUSE request code.
 
