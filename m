@@ -1,134 +1,154 @@
-Return-Path: <linux-kernel+bounces-529077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD692A41F8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:49:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C057A41FA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2515C1668FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0843164794
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17FD23370D;
-	Mon, 24 Feb 2025 12:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CF23BCE8;
+	Mon, 24 Feb 2025 12:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoSca2HW"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tftfdh5x"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B288F4E2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129323373C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401094; cv=none; b=ZZNXCUkE2Nhja0jTlYz4g1nwD0Db2hDajs35LiGiKrOPRTUIpiQxpWZgBVb2zvCHl5bjC+YODRXWZpIPu8MEQ9rMW6e5BvMs+m+7KaKlIitqBv5Tpkac97OYRpB8r6ud1uMCGRYHy7z1FNUVEUrYK0ItsijgY+PI9aQBjo0Trvc=
+	t=1740401205; cv=none; b=n8u0FQ5KYUDsqXlrE2CHZ2pE6vrrIuV5FnVGvVcVxvmFaa3d6N7xjE7ysnGMpKobwGuE92hocBKNwsV54Jy998xYrzFq4rSn5wZcfwHpAAi0VLBFtw/YKW1l5ALAgal+ouUBy084vy+ngJvusHcbXc8b2i3UGlLqGKdJBQKI1tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401094; c=relaxed/simple;
-	bh=uUlJ/YqOHEUEcaQH1p9PSJzfXPsJSMUPR0Rqgv6f4Tw=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=o+61PY9qoOmZL313OxbFEUZagV4cqOwqaeOT574OYw2/U/wLSaxBp1zDTVCgL43dfZTtt3J3+nNqRX6ZE8h1oD6NOAXWytyNBEP4hi5J1fKo3E2XuWJlknh5fp9Hmq1IHoobuU2kr4yXTAo+H31r20u0temIQSq1yuym0M+5Tog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoSca2HW; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abbec6a0bfeso693616066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:44:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740401091; x=1741005891; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uUlJ/YqOHEUEcaQH1p9PSJzfXPsJSMUPR0Rqgv6f4Tw=;
-        b=aoSca2HW+71BCBgDGBcsh7JyuWbq42fq8aKj6T0JTOHaCLdhW3duGz8n0/J2aXiRC0
-         hGbaA9/uzbaPAF+CBHf4KmdQ4dBw7mtn0WmisQXtiA9L1PES9VPsGz7stqUFPYvJ6Ulg
-         eklVnXUMyrKHVyeVLzWxWuHAcE+TsZBG7pQoJjAtnLUhj4S43h/QBaRWwp/m7YA7J6ks
-         JpEw3aK+JQ5/gx6v2aab3nG6S/FfkkB3+9GcfFyXpaCCGsKBc7cLe+Cp7BdmBp0XJlwz
-         21TZqNsFgm3nlvaad7ud9wOZp3wxemLnnwARYGf2AR98836hvXOOuFq60X+MQ+xHqmDb
-         IytA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740401091; x=1741005891;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uUlJ/YqOHEUEcaQH1p9PSJzfXPsJSMUPR0Rqgv6f4Tw=;
-        b=lRpor847jpx0+tBjlyenm9wYzcpjVpXiDm4UUBe23bh0bnIarCOvj2k6xi0G5tI0ar
-         EY5Y6hV9Os/sKl26AduedhxstMe1d1j2SvqjCWuzWSoTDHxW5sGq3Xe8T4RMlNrGERdv
-         CfGXfFctrs1R8Y0BW1yClO33wGi2S1M5VwtLqJn/Y3hhlvciTFjzt8JxEAktyz/BzpVC
-         sfAlXac3D65EUyy87J0d3nBiqBr2YHqcSbuT+kE66lb+qgO1On+7sEC4XEsTudC76uAP
-         JZI9348zpkZ5p6JCljRpUH7LdRZAFypuJKG7+K4Vb4LNc1esGA+mRf5BtmT+++12QKd7
-         v0cw==
-X-Forwarded-Encrypted: i=1; AJvYcCUk4jJBO6/PFbgO8tXfwAGpGJolvfC+35FrsajyWS46Pp8IJkwZsAvZ4g8ge85xrXbAqVPlxLDnmitHqnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvJt2OxL+/C87U4/Hp5JELwhu3rubn0mHpx2QizBn5/p324hml
-	LAxDZHXaBVTcFVbGbPG2MDn1l3eGYmJwyJ8IXztGRVuStCwCV57X
-X-Gm-Gg: ASbGncvK1VEnjQ4+lGYZwKInmg9Jwdq91aRp6cWN05pnkLd/vFHF/lij/lt2s3q+vH1
-	kzzM2ufEKOxasOpREGzxK7YvXXZfq+p/epsrM1CykDn+WyvMBfsK8Pwi2gnD5XHN861IR5Q2GO3
-	k7v13BSb3SybHATpccncVdT7eXB92ga2tOn/DRrgIhjyFAD/LfelYoAmW3Q+ooxnvxGeYk+9vkm
-	zjM6Kk6XeIvi/Ej7ecrlqcM8bFxOPWwd1Waq7UK7OC19leZpspfULIHjM3CwomvpZn71ZcjQdbW
-	lCyFpdqHE890QK6X/dqowfCXuq5pXnTSrMBO5oXYdYe8mxE=
-X-Google-Smtp-Source: AGHT+IEJb/DYjRK1zQULnRrxfy1ILl8jlEBKOOE4wo/W0zWqZBA/YjJvnbL6+997MY2DmHfnXEtzSQ==
-X-Received: by 2002:a17:907:60c8:b0:abe:cbc3:a148 with SMTP id a640c23a62f3a-abecbc3b1c1mr12117666b.50.1740401090165;
-        Mon, 24 Feb 2025 04:44:50 -0800 (PST)
-Received: from smtpclient.apple ([212.59.70.42])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba53280ee4sm2222831766b.78.2025.02.24.04.44.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Feb 2025 04:44:49 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1740401205; c=relaxed/simple;
+	bh=C917u6T4jfg0c9cJ9l1ouE+03Feeq04jBiwMklKuPVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9+J6Zrg/5/UGhWd+o6Wb8sx70dTTLQBnAJDmg+XIzyVfLCckJIJokZ3p9alDTrc50WfObJfbFPV+urTLEO8r0dyYYj4pZ+qeJrZ1w2uMghmZImVLiuh3zbwV3Zv//HtWmzyx9XubzUEBPVKR+qhhlJylotqpBGAbZKrZSH+8UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tftfdh5x; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D4C2140E015F;
+	Mon, 24 Feb 2025 12:46:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zIGJtjT7ztu8; Mon, 24 Feb 2025 12:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740401195; bh=r4zJ7NGL8jaiq+rMES5kwpX3x3oY70MnfLBpgKugJOs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tftfdh5xa8q24B8D7TqVCt5+HY4WFIG5+EFq2AcQmrkMf1YTEPpXCgxqYEneQBBV+
+	 Yy9321QMWpjx0jcPxuUw5s5Xm5B3ndWMkTnAo1RH0+Wk9v99j7seJODYaRlja9s0f8
+	 Op+C9liFejQ4RgHF6J88n/AZfWAkX24yOzE+DRtIztm6DspT1DJ2OhycUZ0JcR322v
+	 xhuetgS++S0I13RUmyhMplVZlxe10Iz0KwFONZ0q1Fg2MTJgqDf8XhuPykkeMlHlbF
+	 P1STo99C8DXzhWLseJCfIYBBnKmP5u/p46+94kqqiJWdpsViWwPAk/f6KfCrVGmsaE
+	 Ew8hAcBbmmI0eurIq7bViT00ynP/oaU2YrTFAWnCAnrobCkVmlRdkcG4NwyCichr/2
+	 vbU0cofcY5PgR/M8cTfHAzZ+tunWlUuVT1eJab7FW2v7UbOdKqG7AJv/ZFcXNppfmq
+	 p/YvTjxLfxIlESNnTvpUkiYdbW+Wfg+odltsFDdblx6V5QvpbdfWc71iS5G5Xkj1lJ
+	 M5U7Cafn//jELR0G8V+CpVgC5+5binv/GhVsJ27eebFc8pAxvr5Q//DWB6pB1E/UZv
+	 k+1SBKEYHH+VvLi0MUMWo2eZ/EQYf5RqdLySJBmmWxopcWJFLJGZJncPft0GsAolr6
+	 dyZgYz6Vq+Sy2/k8Rd20/M1I=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8F56140E01A3;
+	Mon, 24 Feb 2025 12:46:18 +0000 (UTC)
+Date: Mon, 24 Feb 2025 13:46:12 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v13 05/14] x86/mm: use INVLPGB in flush_tlb_all
+Message-ID: <20250224124612.GGZ7xqFMYXmoRXqKdP@fat_crate.local>
+References: <20250223194943.3518952-1-riel@surriel.com>
+ <20250223194943.3518952-6-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [PATCH v13 04/14] x86/mm: use INVLPGB for kernel TLB flushes
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <20250224123142.GFZ7xmruuyrc2Wy0r7@fat_crate.local>
-Date: Mon, 24 Feb 2025 14:44:37 +0200
-Cc: the arch/x86 maintainers <x86@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- peterz@infradead.org,
- Dave Hansen <dave.hansen@linux.intel.com>,
- zhengqi.arch@bytedance.com,
- thomas.lendacky@amd.com,
- kernel-team@meta.com,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- jackmanb@google.com,
- jannh@google.com,
- mhklinux@outlook.com,
- andrew.cooper3@citrix.com,
- Manali.Shukla@amd.com,
- Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <1FC042E2-7210-45F1-A094-40849100F483@gmail.com>
-References: <20250223194943.3518952-1-riel@surriel.com>
- <20250223194943.3518952-5-riel@surriel.com>
- <20250224123142.GFZ7xmruuyrc2Wy0r7@fat_crate.local>
-To: Rik van Riel <riel@surriel.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250223194943.3518952-6-riel@surriel.com>
 
+On Sun, Feb 23, 2025 at 02:48:55PM -0500, Rik van Riel wrote:
+> The flush_tlb_all() function is not used a whole lot, but we might
+> as well use broadcast TLB flushing there, too.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+> Tested-by: Brendan Jackman <jackmanb@google.com>
+> Tested-by: Michael Kelley <mhklinux@outlook.com>
+> ---
+>  arch/x86/mm/tlb.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index 59396a3c6e9c..2d7ed0fda61f 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -1065,6 +1065,16 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+>  }
+>  
+>  
+> +static bool broadcast_flush_tlb_all(void)
 
+broadcast?
 
-> On 24 Feb 2025, at 14:31, Borislav Petkov <bp@alien8.de> wrote:
->=20
-> On Sun, Feb 23, 2025 at 02:48:54PM -0500, Rik van Riel wrote:
->> Use broadcast TLB invalidation for kernel addresses when available.
->>=20
->> Remove the need to send IPIs for kernel TLB flushes.
->>=20
->> Signed-off-by: Rik van Riel <riel@surriel.com>
->> Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
+All those INVLPGB functions have a "invlpgb_" prefix...
 
-Nothing concrete against this patch, but I do not remember reviewing it
-thoroughly, and I do not see that I sent any =E2=80=9CReviewed-by=E2=80=9D=
- tag for it
-before, so please remove it. I only reviewed thoroughly and gave
-=E2=80=9Creviewed-by=E2=80=9D for patch 9.
+In any case, get rid of that function:
 
-[ I would note at this opportunity that while I managed to convince =
-myself
-patch 9 is safe, I personally would have considered taking a more =
-defensive
-approach there. I may reiterate it there. ]
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 2d7ed0fda61f..feaca53b7685 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -1065,16 +1065,6 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
+ }
+ 
+ 
+-static bool broadcast_flush_tlb_all(void)
+-{
+-	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
+-		return false;
+-
+-	guard(preempt)();
+-	invlpgb_flush_all();
+-	return true;
+-}
+-
+ static void do_flush_tlb_all(void *info)
+ {
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
+@@ -1085,9 +1075,11 @@ void flush_tlb_all(void)
+ {
+ 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
+ 
+-	/* First try (faster) hardware-assisted TLB invalidation. */
+-	if (broadcast_flush_tlb_all())
++	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
++		guard(preempt)();
++		invlpgb_flush_all();
+ 		return;
++	}
+ 
+ 	/* Fall back to the IPI-based invalidation. */
+ 	on_each_cpu(do_flush_tlb_all, NULL, 1);
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
