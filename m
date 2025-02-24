@@ -1,176 +1,160 @@
-Return-Path: <linux-kernel+bounces-529809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24749A42B2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:24:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47876A42B49
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1E23B3CFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:24:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D83887ACEB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5292661AE;
-	Mon, 24 Feb 2025 18:22:17 +0000 (UTC)
-Received: from mail.muc.de (mail.muc.de [193.149.48.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC89A2676CB;
+	Mon, 24 Feb 2025 18:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JLb1kTKJ"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0E315B122
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.149.48.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F01ECA64;
+	Mon, 24 Feb 2025 18:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421336; cv=none; b=qOHGvWocoajvgcbt1FSR87J3qBVXcW/SmQlfDkTTIzlocnd4JrU2WzNY3n23QCbiKEnYCYIaGPL0KdlhMCznPFZ1+GoEhTTO8aEQYJACglA7Zo3f4DLdiyM8jV+6hrpc0mvB6fZjIlM2wWFYbCw4EBfq3wL3Vd8p501JW81qwvE=
+	t=1740421346; cv=none; b=nrQ4CBwPAbaTtBwdamMP8MHXckGFPkcG2a7Z2hleOyo0Q3tl8DS12QH5byRzLktR/ajgs0rHEPtPaaWf9fOZ/JIrm0d+9VOyP9aM9R0g9blghJr+xWzXBB5vURsJIPHu+dbVkdQBRxr1FIVvQSJkPj4yArPXS0n277ZOJRHXf3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421336; c=relaxed/simple;
-	bh=LapUr4uhDE8WT47s1iRnSBv3OPnVfs++Nynyc7QEa20=;
-	h=Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To:From; b=kObBd2bzKMIfa6wtKvq7Kd2LcdMcMyrH092uUAi5QuiWMcLWeS4U7TjXM4xVJ3s4nH/C5xqbpxXAnHcZQLV9faJOncacxhg3oG50hxnBrYuucU5Nb1KYpMH0dYDJlA6yvxhu+Ogq6m8GCp5Mk2NDXH6ufKe29UzlVKC0phtT1S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de; spf=pass smtp.mailfrom=muc.de; arc=none smtp.client-ip=193.149.48.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=muc.de
-Received: (qmail 76694 invoked by uid 3782); 24 Feb 2025 19:22:01 +0100
-Received: from muc.de (p4fe15466.dip0.t-ipconnect.de [79.225.84.102]) (using
- STARTTLS) by colin.muc.de (tmda-ofmipd) with ESMTP;
- Mon, 24 Feb 2025 19:22:00 +0100
-Received: (qmail 19105 invoked by uid 1000); 24 Feb 2025 18:22:00 -0000
-Date: Mon, 24 Feb 2025 18:22:00 +0000
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
-  linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: More than 256/512 glyphs on the Liinux console
-Message-ID: <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
-References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
- <2025022243-street-joylessly-6dfa@gregkh>
- <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
- <2025022355-peroxide-defacing-4fa4@gregkh>
+	s=arc-20240116; t=1740421346; c=relaxed/simple;
+	bh=naeVgrzsbRbKEcFwVbhDb2hcvAba94hy6j1nys2AWcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U7vqhpRd5uyqcM1xQ3CJ4/y14d+H3xcQqg5G4ZgcVxZbE0IKiPyMoLildWHEUZWfZ3Fba3nPTuR6HKksZBUMHrjCdpo6JoXf07CaVstJM5mAkWaZMs9uhmWmh2xPW9xzE5sfUXR2D/onxXRyS9PXuRAl+dtzP/39fjNQpZQ/oSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JLb1kTKJ; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7275bc6638bso590239a34.2;
+        Mon, 24 Feb 2025 10:22:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740421343; x=1741026143; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdKEHmyMd5H47y39cmettl3IA1fNENE9xIH3vBcrpPQ=;
+        b=JLb1kTKJkI+L8Ilcpt44MPxoNV8ceYGQ3qdNcS+7zwTMOgfDRWsTZABSR/mcKMZPAd
+         pTV+CQZldqrilgoc8g6b74muU8iLvzFyyC+ZsmHAEgeYEWTN2Lr9KrNAqQvUXcvDAQhT
+         C4wbvweJ6+Rom9UlXMK8XyRzuJGC7yzqN90kesHSqRD7itVfjGyBTBvzWWOai6SYm5aP
+         boTStpR1YeVZrzCEMS89SfGol5nED7kQPuD8m8jnP0fG1iazOkQkIhqWNhadwpR4O7YY
+         DAEohQr7IEYU8xafb9u3FTp+pf0RBL9vTuTilXhLQRpD7kEEEyEcQF0TaKY7Dmjj6QuN
+         PPYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740421343; x=1741026143;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UdKEHmyMd5H47y39cmettl3IA1fNENE9xIH3vBcrpPQ=;
+        b=Bm8XNoT9cH6QvFps+D7nWbDS1wwfgohGya+B9dTEJ0LAQbHXAwSrDkSZ+R1aWXSQVs
+         JmDEF5/xdAY/u26rkP3ovj5hqmEi/Zu9dNCu1OLJN27BYNrvhI+iAR/fVcas1o5DeKyt
+         ZD46oUrsvpv1BtUOXu25mTTJG45D9gwbR6sYlgTxEp7gQKQT4IgLJbm+vxVNS+P+O997
+         ot5zNQhU7XIsIsXj1uxUaD5n9bE37rOAx8R9mKK5zsntrHiX0VV2Ihs7yuiWAlrIFOeE
+         fviX3JrmRwXbOw1HudaF+5ATThD2hdo1yYKVKzs8kjVKERQCgwnKDrfb/7tjBFy8Bs32
+         /URw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjQJDv5/GGLCW7B0R14i/A4vN4BisZ8Dc3YAeews7JcAlPWRDiVYRgypwIlmaDkixNp8m464+1@vger.kernel.org, AJvYcCW3onPoJ+ija7HpfZ/d8ERvje8wt6+pS4WEO9yKrQiT0V5wr0O7et/ZM3izMpIu5+9PRgm6jaFq0IJ+0t4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySxR6pNXB1k2bMHzT6QhRL5GQ3ir1iRZSWdORPCi5cGUHaHguh
+	bvgBI8YBX4OPL9hAbtQByOBb7V/hlfR27HnbGuG+7/idhn3a7gNK
+X-Gm-Gg: ASbGncvRLgC/FU8ntMhilCSlHAy1oj6n3vUl3VJAnv6ef3ut2Wov5gMRHrr5tUkcrZx
+	tB/6kMguzclWeBOvX7Fhx9zlnjhWINhJW4DckbvszUhuvi201Q+//Dq1IlZ1p90klmz7T9ExHpV
+	zntjisANZGKipYy+6jrnI1oSf7xE/3/6XTaBnCqsMlfkR9WHEs6yHLbXjARdN3qhG6ylApDVdm8
+	BjtKZhFZtnaBAovZynndZ6LNLa3WwHTbJj5uoiD+en1x0VxeHi+0Vns6LbwP9AciLbR4qxef+9W
+	huDTEH/ZRyGU81LbxbvEVn0Hzqt3VBF1oNWDHDyi7Q==
+X-Google-Smtp-Source: AGHT+IE8yA1C9t9rSYbPuuyP8P6ehNeV+szdw5a8Yk0mho2cX/JB4I9hh8GU6Uw/l0HXkhoC4wvt/Q==
+X-Received: by 2002:a05:6830:2b14:b0:727:38a3:8a63 with SMTP id 46e09a7af769-7289d15ad9dmr257289a34.21.1740421343508;
+        Mon, 24 Feb 2025 10:22:23 -0800 (PST)
+Received: from [192.168.99.86] ([216.14.52.203])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7273b0d30f7sm2332167a34.59.2025.02.24.10.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 10:22:22 -0800 (PST)
+Message-ID: <226b50e8-0e17-4842-b2f0-c8c84d59177f@gmail.com>
+Date: Mon, 24 Feb 2025 10:22:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025022355-peroxide-defacing-4fa4@gregkh>
-X-Submission-Agent: TMDA/1.3.x (Ph3nix)
-From: Alan Mackenzie <acm@muc.de>
-X-Primary-Address: acm@muc.de
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 000/138] 6.13.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250224142604.442289573@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250224142604.442289573@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello, Greg.
 
-On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
-> On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
-> > On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
 
-[ .... ]
-
-> > But I think you are also asking why I use the console at all.  That's
-> > a fair question which I'll try to answer.
-
-> I'm not disputing using the console, it's the vt layer that I'm talking
-> about.  The DRM developers have the long-term goal of getting rid of
-> CONFIG_VT which will remove a ton of mess that we have overall.
-> DRM-based consoles should provide the same functionality that a vt
-> console does today.  If not, please let them know so that the remaining
-> corner cases can be resolved.
-
-Does a DRM based console exist at the moment?  I spent quite some time
-looking for it yesterday, but found nothing.
-
-[ .... ]
-
-> > > What about the move to get rid of the vt code entirely, ....
-
-> > Getting rid of the vt code would be a Bad Thing.  People depend on it.
-> > What is the alternative?
-
-> The drm console layer.
-
-Again, does it exist yet, or alternatively are there plans to introduce
-it into the kernel in the near future?
-
-> > > .... if you do that, can't you get proper glyphs with the drm
-> > > subsystem?
-
-> > I don't know.  I've looked briefly at fbterm, a terminal which uses drm.
-> > It steals key sequences too, some of which are needed in Emacs.
-> > Although not as bad as GUIs, it puts awkward layers between the user and
-> > Linux too.
-
-> I don't know what fbterm is, sorry.
-
-It's a user level terminal emulator for the framebuffer.  It's not
-important.
-
-> > I think using drm in place of fbterm.c and bitblit.c would need a lot of
-> > design and implementation work.  The change I'm proposing barely changes
-> > the design at all.
-
-> Ok, but we haven't seen the patches to know this :)
-
-> > > Doing huge changes for a subsystem that almost everyone agrees should
-> > > only be kept around for legacy reasons is a rough undertaking.
-
-> > Isn't there a principle in Linux that preserving existing user
-> > interfaces is of utmost importance?
-
-> I agree, keeping the existing ones is key.  You are talking about
-> extending the existing ones in a way that adds additional complexity
-> when there might already be a solution for this for you.  That's why I
-> brought that up.
-
-Where/how can I find the DRM console?
-
-> > As I've already written, I've got working code, but it needs refinement
-> > before I submit it.  Otherwise reviewers would likely reject it for
-> > "inessential" reasons like code formatting.  This will likely take me
-> > several days.
-
-> code formatting is NOT "inessential", please never think that.
-
-However necessary code formatting is (and it is necessary), it doesn't
-form part of the essence of the changes.  I'm sure we're agreed that
-proposed changes are best judged by that essence.  That was all I meant.
-
-> Our brains run on patterns and common code formatting allows us to see
-> the real issues here.  To not follow those formatting rules means we
-> just can't review your code properly.
-
-I understand.
-
-[ .... ]
-
-> > What is the best way of submitting such a large patch (~3,500 lines)?
-> > I committed it to my own local git repository in three main stages
-> > (around equal size), and have applied corrections after rebasing and
-> > the odd bug fix.
-
-> Break down the changes into "one logical change per patch" to make them
-> easy to review.  It's an art form, think about how you want to get to
-> your end result and then take us on a path that is "obvious" to get
-> there over a series of changes.
-
-> Think of it as "showing your work" when solving a math or physics
-> problem that your teacher told you to follow.  No one wants to just see
-> the end result, they have to see all the steps along the way to even
-> begin to understand if the end result is correct or not.
-
-Thanks.  I have a fair amount of work to do to achieve this.
-
-> But again, before doing that work, see how using the drm console works
-> for you, or not.  If not, let us and the drm developers know so that we
-> can work toward solving those issues, as that might actually be easier
-> to do.
-
-I would actually appreciate the work I've done being superfluous.  ;-)
-But where can I find the drm console?
-
+On 2/24/2025 6:33 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.5 release.
+> There are 138 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 26 Feb 2025 14:25:29 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.5-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
+> 
 > thanks,
-
+> 
 > greg k-h
 
-And thank you, too.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
+Tested-by: FLorian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Alan Mackenzie (Nuremberg, Germany).
+Florian
+
 
