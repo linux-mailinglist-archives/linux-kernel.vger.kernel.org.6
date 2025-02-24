@@ -1,74 +1,59 @@
-Return-Path: <linux-kernel+bounces-530210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A8EA43090
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:14:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18DFEA43097
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:20:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E735168BDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD083AD04D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF89820AF77;
-	Mon, 24 Feb 2025 23:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEDD2080CF;
+	Mon, 24 Feb 2025 23:20:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bv668jdT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cPmG9K5U"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E0E207DFF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E72571AD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:20:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740438840; cv=none; b=MO05hKQUVywR7hS0YASb2QthVh5x0ovEvNe0+p0+4C4r3ei1K154yEBWLOYBB9+gOFNuhIxPjb7BtHMwwOMLlqFliNDjqIKm3L96if3KKuzq86gt6K58xc5KZk+0HGOyYd8qVFfqtV1hsN7DnQmtP6UhBshLWRS0uANNIx3GIWE=
+	t=1740439233; cv=none; b=GF4Kzk3SXQc9PdNpIvKoJF/+EVziOs1zEsJk8j2w/Ks6d2MsoCl6Ib13zfacCyJv04nL4b31lpzzWuuAWTV5kCNkyXlxoYIDrfdhirJ5WZOwF7O//gckZgo1y0KoX3omGLs10UeFKCZDHoyZHMH/i88Tgefm9gbVw+1m/Xddjek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740438840; c=relaxed/simple;
-	bh=NU8ghwEnANBw9tGSg50UrMsAD/8B3rrywGZnzLOm4gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rITJe2QlffYc4dvrGUPppSWOMDbPjYS1drIsQP8ueNM0swHFXp84VXJf5EA8PkVY5eyhK13uI9vmpfL18HKQP6vTHTXsdPgfNcV2f+Ig0UoOZ+HFBQYxb0hSk41hllJIhzSobx+ZtJ0McH3M3FI9Wf+mYK/LpbgJAtR6bVH6QMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bv668jdT; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740438838; x=1771974838;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=NU8ghwEnANBw9tGSg50UrMsAD/8B3rrywGZnzLOm4gY=;
-  b=Bv668jdTZPv2HXVTvFxAU6rfJo0COucOhUfZSUNUIomn2P3AqBlFDxiJ
-   EFN1YokTUPa5pL17YE5EwwsWLYTClN8eyFfkkrFr8+Abd+HBhRqwUqjRL
-   ubaGlB0xO6T9+V2NLugOWD+c7FUP9Quih/Qfz2iwaxw7fRRPSqDJa2EfG
-   OZCjWPu9p3lPOR7+cADRBoK6bYKSTbekCLXrrJ2q948y7yYBM5dnCo3fw
-   FtS3AJNp+mSym014lz0vkRYsxr5jH9kF4JJqAKpbVe6IAD56/SUx8T5SJ
-   NlztT2DZGI3VJvaCkroBf2QBvas9/b3YEYgU86vMS7DD8b93Y/FZA+g9N
-   w==;
-X-CSE-ConnectionGUID: BhLOAaArS3qQG1dH5CHpKA==
-X-CSE-MsgGUID: 3oVl04pASJaVXUSmp+/oAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58634885"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="58634885"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 15:13:58 -0800
-X-CSE-ConnectionGUID: hU/VVwovSNO088hCm9pe/A==
-X-CSE-MsgGUID: uIxEa51QSmSQkhF+6sChTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="121298492"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 24 Feb 2025 15:13:55 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tmhe5-0009R5-2D;
-	Mon, 24 Feb 2025 23:13:53 +0000
-Date: Tue, 25 Feb 2025 07:13:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: mm/list_lru.c:552:3-8: WARNING: NULL check before some freeing
- functions is not needed.
-Message-ID: <202502250720.9ueIb7Xh-lkp@intel.com>
+	s=arc-20240116; t=1740439233; c=relaxed/simple;
+	bh=uGUg9O93vy9Ev9YHxD1ZTf3zu1QyYOnOMCtepVXiXAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUgoFWa9lS5MIqUdcRaOpCygugZCe5PlpbMqdD9VDIb+tEJtR9GRIsQ6Gwde53spBlKblXnzViOavSRn3gZZ3CUAA6qknuhjbG+Le3o7wug+Vp5mrvMJwfrMmbwvcv8sIBjoOzUDkMVj/Xb7ELaSnkDb9TSMqVru2tiSAROFG3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cPmG9K5U; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Feb 2025 07:20:08 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740439219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oP6m+hZBnp4KsKQ8t0+lMNt2yjlcdxRzvfcGy4QPDpM=;
+	b=cPmG9K5UMJxjtkuR2qk0Dr4TXTOPwwesMnc33S7MaofFPb2KUWwCSIp7jTAvimriAFQko0
+	GjrW6uij3lDOKmUQ5UfEDS3VFxO4gdmlJdf142KZTgD1IB8V0BFrKunKKz6BXRJ4xv8i+3
+	rssCnKMRVANQsNil1iEleQwTjqQHPBU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jiayuan Chen <jiayuan.chen@linux.dev>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: bpf@vger.kernel.org, netdev@vger.kernel.org, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, horms@kernel.org, 
+	ricardo@marliere.net, viro@zeniv.linux.org.uk, dmantipov@yandex.ru, 
+	aleksander.lobakin@intel.com, linux-ppp@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mrpre@163.com, syzbot+853242d9c9917165d791@syzkaller.appspotmail.com
+Subject: Re: [PATCH net-next v2 1/1] ppp: Fix KMSAN warning by initializing
+ 2-byte header
+Message-ID: <fm6hvchejtwpqp55te7rbiwt6y2pmjywikfdpnfv5ao5otxzm3@yxfem4zhdqkp>
+References: <20250221061219.295590-1-jiayuan.chen@linux.dev>
+ <20250221061219.295590-2-jiayuan.chen@linux.dev>
+ <20250224142644.7c084e9e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,90 +62,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250224142644.7c084e9e@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hi Kairui,
+On Mon, Feb 24, 2025 at 02:26:44PM -0800, Jakub Kicinski wrote:
+> On Fri, 21 Feb 2025 14:12:19 +0800 Jiayuan Chen wrote:
+> > +		/* Check if we should pass this packet.
+> > +		 * BPF filter instructions assume each PPP packet has a 4-byte
+> > +		 * header (e.g., those generated by libpcap), and then default
+> > +		 * to skipping the first 2 bytes at the beginning of the
+> > +		 * instruction. However, we still need to initialize these
+> > +		 * 2-byte new headers to prevent crafted BPF programs from
+> > +		 * reading them which would cause reading of uninitialized
+> > +		 * data. Here, we set the headers according to the RFC 1662.
+> > +		 */
+> > +		*(u16 *)skb_push(skb, 2) = htons(0xff03);
+> 
+> The constant from the RFC deserves a #define or enum.
+> Looks like we may already need it in one other place:
+> 
+> drivers/net/wan/fsl_ucc_hdlc.h:#define DEFAULT_PPP_HEAD    0xff03
+> -- 
+> pw-bot: cr
+Hi Jakub,
 
-First bad commit (maybe != root cause):
+I apologize for the mistake, I've investigated the original maintainer's
+user-space PPP implementation and libpcap's behavior, and found that
+initializing the first byte to 0 or 1 is necessary, it indicates
+direction, which is used in libpcap to distinguish between inbound and
+outbound traffic.
+For more details, please refer to the cover letter of my v3 patch.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-commit: fb56fdf8b9a2f7397f8a83dce50189f3f0cf71af mm/list_lru: split the lock to per-cgroup scope
-date:   4 months ago
-config: mips-randconfig-r052-20250224 (https://download.01.org/0day-ci/archive/20250225/202502250720.9ueIb7Xh-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502250720.9ueIb7Xh-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> mm/list_lru.c:552:3-8: WARNING: NULL check before some freeing functions is not needed.
-
-vim +552 mm/list_lru.c
-
-88f2ef73fd6649 Muchun Song      2022-03-22  508  
-88f2ef73fd6649 Muchun Song      2022-03-22  509  int memcg_list_lru_alloc(struct mem_cgroup *memcg, struct list_lru *lru,
-88f2ef73fd6649 Muchun Song      2022-03-22  510  			 gfp_t gfp)
-88f2ef73fd6649 Muchun Song      2022-03-22  511  {
-88f2ef73fd6649 Muchun Song      2022-03-22  512  	unsigned long flags;
-d70110704d2d52 Muchun Song      2022-03-22  513  	struct list_lru_memcg *mlru;
-28e98022b31efd Kairui Song      2024-11-05  514  	struct mem_cgroup *pos, *parent;
-bbca91cca9a902 Muchun Song      2022-03-22  515  	XA_STATE(xas, &lru->xa, 0);
-88f2ef73fd6649 Muchun Song      2022-03-22  516  
-88f2ef73fd6649 Muchun Song      2022-03-22  517  	if (!list_lru_memcg_aware(lru) || memcg_list_lru_allocated(memcg, lru))
-88f2ef73fd6649 Muchun Song      2022-03-22  518  		return 0;
-88f2ef73fd6649 Muchun Song      2022-03-22  519  
-88f2ef73fd6649 Muchun Song      2022-03-22  520  	gfp &= GFP_RECLAIM_MASK;
-88f2ef73fd6649 Muchun Song      2022-03-22  521  	/*
-88f2ef73fd6649 Muchun Song      2022-03-22  522  	 * Because the list_lru can be reparented to the parent cgroup's
-88f2ef73fd6649 Muchun Song      2022-03-22  523  	 * list_lru, we should make sure that this cgroup and all its
-d70110704d2d52 Muchun Song      2022-03-22  524  	 * ancestors have allocated list_lru_memcg.
-88f2ef73fd6649 Muchun Song      2022-03-22  525  	 */
-28e98022b31efd Kairui Song      2024-11-05  526  	do {
-28e98022b31efd Kairui Song      2024-11-05  527  		/*
-28e98022b31efd Kairui Song      2024-11-05  528  		 * Keep finding the farest parent that wasn't populated
-28e98022b31efd Kairui Song      2024-11-05  529  		 * until found memcg itself.
-28e98022b31efd Kairui Song      2024-11-05  530  		 */
-28e98022b31efd Kairui Song      2024-11-05  531  		pos = memcg;
-28e98022b31efd Kairui Song      2024-11-05  532  		parent = parent_mem_cgroup(pos);
-28e98022b31efd Kairui Song      2024-11-05  533  		while (!memcg_list_lru_allocated(parent, lru)) {
-28e98022b31efd Kairui Song      2024-11-05  534  			pos = parent;
-28e98022b31efd Kairui Song      2024-11-05  535  			parent = parent_mem_cgroup(pos);
-88f2ef73fd6649 Muchun Song      2022-03-22  536  		}
-88f2ef73fd6649 Muchun Song      2022-03-22  537  
-fb56fdf8b9a2f7 Kairui Song      2024-11-05  538  		mlru = memcg_init_list_lru_one(lru, gfp);
-28e98022b31efd Kairui Song      2024-11-05  539  		if (!mlru)
-28e98022b31efd Kairui Song      2024-11-05  540  			return -ENOMEM;
-28e98022b31efd Kairui Song      2024-11-05  541  		xas_set(&xas, pos->kmemcg_id);
-28e98022b31efd Kairui Song      2024-11-05  542  		do {
-bbca91cca9a902 Muchun Song      2022-03-22  543  			xas_lock_irqsave(&xas, flags);
-28e98022b31efd Kairui Song      2024-11-05  544  			if (!xas_load(&xas) && !css_is_dying(&pos->css)) {
-bbca91cca9a902 Muchun Song      2022-03-22  545  				xas_store(&xas, mlru);
-28e98022b31efd Kairui Song      2024-11-05  546  				if (!xas_error(&xas))
-28e98022b31efd Kairui Song      2024-11-05  547  					mlru = NULL;
-bbca91cca9a902 Muchun Song      2022-03-22  548  			}
-bbca91cca9a902 Muchun Song      2022-03-22  549  			xas_unlock_irqrestore(&xas, flags);
-28e98022b31efd Kairui Song      2024-11-05  550  		} while (xas_nomem(&xas, gfp));
-28e98022b31efd Kairui Song      2024-11-05  551  		if (mlru)
-28e98022b31efd Kairui Song      2024-11-05 @552  			kfree(mlru);
-28e98022b31efd Kairui Song      2024-11-05  553  	} while (pos != memcg && !css_is_dying(&pos->css));
-88f2ef73fd6649 Muchun Song      2022-03-22  554  
-bbca91cca9a902 Muchun Song      2022-03-22  555  	return xas_error(&xas);
-88f2ef73fd6649 Muchun Song      2022-03-22  556  }
-60d3fd32a7a9da Vladimir Davydov 2015-02-12  557  #else
-bbca91cca9a902 Muchun Song      2022-03-22  558  static inline void memcg_init_list_lru(struct list_lru *lru, bool memcg_aware)
-60d3fd32a7a9da Vladimir Davydov 2015-02-12  559  {
-60d3fd32a7a9da Vladimir Davydov 2015-02-12  560  }
-60d3fd32a7a9da Vladimir Davydov 2015-02-12  561  
-
-:::::: The code at line 552 was first introduced by commit
-:::::: 28e98022b31efdb8f1ba310d938cd9b97ededfe4 mm/list_lru: simplify reparenting and initial allocation
-
-:::::: TO: Kairui Song <kasong@tencent.com>
-:::::: CC: Andrew Morton <akpm@linux-foundation.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+https://lore.kernel.org/linux-ppp/20250222092556.274267-1-jiayuan.chen@linux.dev/T/#t
 
