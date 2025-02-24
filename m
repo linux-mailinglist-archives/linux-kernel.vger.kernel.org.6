@@ -1,85 +1,67 @@
-Return-Path: <linux-kernel+bounces-529037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F15BA41F18
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:32:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C643A41F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF5118874E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6720D163389
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:30:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA086233705;
-	Mon, 24 Feb 2025 12:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33ABA23370B;
+	Mon, 24 Feb 2025 12:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oGfXPRpo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XE0UiHbI"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9242C219313;
-	Mon, 24 Feb 2025 12:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA750221F28;
+	Mon, 24 Feb 2025 12:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400125; cv=none; b=RgnC3hAQ1nI2QgF4ZtRixyvNC2gBs0NQc7YANX9exNlsscDTNaCBWgvRlQ/Z+gHNgN80+GZ9rvOr8jMZAmLvpOSgUrAm/XzTmMWXIEVTE54NNSBNJNynMzeT/ovXPYz+Bl/bBmBKLsfML0MnpFW/F2EqQ8m5YvtKTNVNXQNB+xU=
+	t=1740400240; cv=none; b=Y7H0eYRMN5QzRnRBxw5IS8TWJJ3AZZ2NAAxkig/LjNxQ+5KhyW+4ovm3XZKtTCchCvdnF/+kWa147TM3h1+yRGuYKziIp60Wv9EWWn3pMbUZFXxnigYZ6wQ3TJv44iPX3avdSxgMFJfxRmbKJr5eu1LXEVDgE7hjh0ZkyeZuBYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400125; c=relaxed/simple;
-	bh=HY86v1D01B8de8bRnCwQfhrLaS7Uve8orhJi2zLc/AQ=;
+	s=arc-20240116; t=1740400240; c=relaxed/simple;
+	bh=KKSDuwiqxV1KoGt8i3X/NyTVkTA4R2O1wM6NK5q9Hlo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HooZWejAdcqPSKjuOOuC3L/uYjb4EhgRdtvwvEcOhwT3yfVtWCZ2lBpeFnhtc1QK7jJuqa+tgWgySZTXrNwyLqIdk/QMZrWsj1odfHc+IO1Pd1lxK0QouOdqGXxAKg2vMAKeyXLosxS8ysq3nlrIq//8FE/uXsGstZa5Sxzf55U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oGfXPRpo; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740400124; x=1771936124;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HY86v1D01B8de8bRnCwQfhrLaS7Uve8orhJi2zLc/AQ=;
-  b=oGfXPRpoazB8Nz67eKcV+7uYQok9c9CXZp+D7vLhxuepnCgePkPabIUK
-   w9hDhHHZ0YA9dNLxueXxUoGd4iRFwmL5oAb/8S54kWhF7ozwPKO1fBsGG
-   6vvMzP8UTVjdyPL/+eVBzSC6rnIGV+A9oRf8Tru1dLIgrtPRLPL/0zfdn
-   5jblIw67GGj6e+mFBVMOSgBP+RGMCf8ydUm1BXLx6e+uBS1My8qLhY66s
-   ScASDymsf8Tvk2aIpFuRJ0LAgMiWihe2Wk/Hx7nD4TpJdsfhcxg0qvukR
-   tERcSe+bZoasfYsywGAGN1G7UxHU3LSMUN8e8ZT3TYIXrvEOn6y2bu2yo
-   Q==;
-X-CSE-ConnectionGUID: yCTWskYVRdS2N99KEKK4QQ==
-X-CSE-MsgGUID: SXdJp0OjTwOUZiEW/45Xtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="52143200"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="52143200"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:28:43 -0800
-X-CSE-ConnectionGUID: 5iuv9pjeSqGU3LIzJDbdHQ==
-X-CSE-MsgGUID: oR1SJYDNStqf2Ekl4VOMnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116532987"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:28:39 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmXZb-0000000Eh02-268V;
-	Mon, 24 Feb 2025 14:28:35 +0200
-Date: Mon, 24 Feb 2025 14:28:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: kernel test robot <lkp@intel.com>, perex@perex.cz, tiwai@suse.com,
-	broonie@kernel.org, lgirdwood@gmail.com, deller@gmx.de,
-	sre@kernel.org, sakari.ailus@linux.intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, jdmason@kudzu.us, fancer.lancer@gmail.com,
-	oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-media@vger.kernel.org, ntb@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 07/13] fbdev: pxafb: use devm_kmemdup_array()
-Message-ID: <Z7xl80RPM6YQgOTj@smile.fi.intel.com>
-References: <20250221165333.2780888-8-raag.jadav@intel.com>
- <202502220449.DvJuMgsL-lkp@intel.com>
- <Z7xQ2y-7U5-OhzhB@smile.fi.intel.com>
- <Z7xW2AIz6vUo6mu-@black.fi.intel.com>
- <Z7xa0cGZvGxsGCrI@smile.fi.intel.com>
- <Z7xkb9m_Qc54znOH@black.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnLdIBivTayOgC0K22V+aPp6ciDNcDZkNTi3MU3+4JTYiotUcXnICpGnQ1Yw8c8urD37KED9lg93j+XEpfnW6k+Umj1m8Aw5VicKeQ38gMyRLqYtz3mBGcQlvFTiQFVznzT1eUn3AKlOlw9mG01A9qlE+/2IQuEFJgKvIrpa0CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XE0UiHbI; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Cuml9pjheHqYp5UhUUUvrYoTl+l5pewIdTK7K+O6jLY=; b=XE0UiHbI+NIl7R3h6OxQ3DfU10
+	Ix069tOLklr23NJKZosDB2SmOQhXvm7k/ZZh6zasd/GGSxP2svaj/BYeGZQ/nr/Z0XLb88n+arXnr
+	OlO7v73KvzzqAob093PbnQ8I6/imQrAKlrUU+Xv7IfiPo2sqQQoLUQ9VBlRZCA7x35nc1Qe+mhxLF
+	16OVZHEIykPkO2SNxwlQmQpKDA7d4n+NQnaQD6UOLVA9ILX4Xsc9ZGPmkUvbNSaDkf72ntJBz9Tej
+	04JgyqD+GGKU6x1nXNxWHCi9pOVJ+EQmHGia8JPGcYNS8+6pF4K8tH/XSUeW0V9k4+RMpnTW0NHF7
+	9+Y+pjPg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmXbF-000000075Wj-27N8;
+	Mon, 24 Feb 2025 12:30:17 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 977BC300164; Mon, 24 Feb 2025 13:30:16 +0100 (CET)
+Date: Mon, 24 Feb 2025 13:30:16 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kuba@kernel.org, kernel-team@meta.com, stable@vger.kernel.org
+Subject: Re: [PATCH] perf: Add RCU read lock protection to perf_iterate_ctx()
+Message-ID: <20250224123016.GA17456@noisy.programming.kicks-ass.net>
+References: <20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,58 +70,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7xkb9m_Qc54znOH@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org>
 
-On Mon, Feb 24, 2025 at 02:22:07PM +0200, Raag Jadav wrote:
-> On Mon, Feb 24, 2025 at 01:41:05PM +0200, Andy Shevchenko wrote:
-> > On Mon, Feb 24, 2025 at 01:24:08PM +0200, Raag Jadav wrote:
-> > > On Mon, Feb 24, 2025 at 12:58:35PM +0200, Andy Shevchenko wrote:
-> > > > On Sat, Feb 22, 2025 at 05:41:24AM +0800, kernel test robot wrote:
-> > > > > Hi Raag,
-> > > > > 
-> > > > > kernel test robot noticed the following build warnings:
-> > > > > 
-> > > > > [auto build test WARNING on b16e9f8547a328b19af59afc213ce323124d11e9]
-> > > > > 
-> > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Raag-Jadav/ASoC-Intel-avs-use-devm_kmemdup_array/20250222-010322
-> > > > > base:   b16e9f8547a328b19af59afc213ce323124d11e9
-> > > > > patch link:    https://lore.kernel.org/r/20250221165333.2780888-8-raag.jadav%40intel.com
-> > > > > patch subject: [PATCH v1 07/13] fbdev: pxafb: use devm_kmemdup_array()
-> > > > > config: arm-randconfig-004-20250222 (https://download.01.org/0day-ci/archive/20250222/202502220449.DvJuMgsL-lkp@intel.com/config)
-> > > > > compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-> > > > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250222/202502220449.DvJuMgsL-lkp@intel.com/reproduce)
-> > > > > 
-> > > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > > the same patch/commit), kindly add following tags
-> > > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202502220449.DvJuMgsL-lkp@intel.com/
-> > > > > 
-> > > > > All warnings (new ones prefixed by >>):
-> > > > > 
-> > > > >    drivers/video/fbdev/pxafb.c: In function 'pxafb_probe':
-> > > > > >> drivers/video/fbdev/pxafb.c:2236:13: warning: unused variable 'i' [-Wunused-variable]
-> > > > >     2236 |         int i, irq, ret;
-> > > > >          |             ^
-> > > > 
-> > > > Ragg, please, fix this, and issue a v2 with the link to fixed PR:
-> > > > https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com.
-> > > 
-> > > Sure, but perhaps wait a few days for review comments.
-> > 
-> > Then perhaps answering to the cover letter that the maintainers who want to
-> > apply should use the updated PR?
+On Fri, Jan 17, 2025 at 06:41:07AM -0800, Breno Leitao wrote:
+> The perf_iterate_ctx() function performs RCU list traversal but
+> currently lacks RCU read lock protection. This causes lockdep warnings
+> when running perf probe with unshare(1) under CONFIG_PROVE_RCU_LIST=y:
 > 
-> Okay, but I'm not sure how this plays out for those who already pulled
-> the old PR, i.e. Sebastian.
+> 	WARNING: suspicious RCU usage
+> 	kernel/events/core.c:8168 RCU-list traversed in non-reader section!!
 > 
-> Anything to worry about here?
+> 	 Call Trace:
+> 	  lockdep_rcu_suspicious
+> 	  ? perf_event_addr_filters_apply
+> 	  perf_iterate_ctx
+> 	  perf_event_exec
+> 	  begin_new_exec
+> 	  ? load_elf_phdrs
+> 	  load_elf_binary
+> 	  ? lock_acquire
+> 	  ? find_held_lock
+> 	  ? bprm_execve
+> 	  bprm_execve
+> 	  do_execveat_common.isra.0
+> 	  __x64_sys_execve
+> 	  do_syscall_64
+> 	  entry_SYSCALL_64_after_hwframe
+> 
+> This protection was previously present but was removed in commit
+> bd2756811766 ("perf: Rewrite core context handling"). Add back the
+> necessary rcu_read_lock()/rcu_read_unlock() pair around
+> perf_iterate_ctx() call in perf_event_exec().
 
-I already informed him and Stephen about a new PR I just sent a few hours ago.
+Hurm, I think it got ripped out because we no longer need to refer that
+perf_event_ctxp[].
 
--- 
-With Best Regards,
-Andy Shevchenko
+Anyway, please write it like so:
 
 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 0f8c55990783..b77f95089d62 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8320,7 +8320,8 @@ void perf_event_exec(void)
+ 
+ 	perf_event_enable_on_exec(ctx);
+ 	perf_event_remove_on_exec(ctx);
+-	perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
++	scoped_guard(rcu)
++		perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
+ 
+ 	perf_unpin_context(ctx);
+ 	put_ctx(ctx);
 
