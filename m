@@ -1,133 +1,183 @@
-Return-Path: <linux-kernel+bounces-529404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B3DA425F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7252A4257B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1563D19E1D7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 901BA189DD0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F99189905;
-	Mon, 24 Feb 2025 15:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F718CC1C;
+	Mon, 24 Feb 2025 15:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="JSJCrmdd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KBJvqddd"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fjbKbzBP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50F38DD8;
-	Mon, 24 Feb 2025 15:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96E189919
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740409230; cv=none; b=EFO8ZbGo9wY25Qgxow872XPlhn1Gw+qtXt8PXp+1N1nfPnH9+g4mzgP2qgGdjUAiG6rRoBwNoHCtBAy6W9jiHrTjRNj87mKKiB/XGh+7gzBfYQfbzq9s1HTyHeJgRIfvY1j1bfCn4hTx8mHGr2tVVQCIKZ7K4APwc3Nk6PPslsM=
+	t=1740409257; cv=none; b=LGd4aNzbZTTZC2lipe0YMh6TA7XTkPBKoXwacDXaEPgqJlyWopUnlWS4RykVht+WDSBY2kXDJrDZzhVUpPymcD/+JAaSbyOTh+6WCjuJdrW7P/xitr3izwFIeETjLiO7TLFTJ2mfdudsFlkdJrB1yKcOQ7XRWHRQxsHg688QwyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740409230; c=relaxed/simple;
-	bh=Hxa8pbq3jaNkyuqDkj4YzOOvo8feC1TgyuBllE+WYYk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uj3qaVihYS8gDeDAaDHTI/AWWlGgZh5RR7gofFsBIvF0uZlU3/JiBkSZ9Sy+G3LvPt5VPNAqDdKfAryJgdqn5jRNAI0a9EJ3m50pZPu1k+dDU8ryWO5sfQakauvN0ejBh96AtSerOmV7/IP0XDpreOaYYBBUcLfTueD5//lQcXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=JSJCrmdd; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KBJvqddd reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1740409227; x=1771945227;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=T6W5ZMpXaDdvfRap/6NIAL55MOOCeVq3QJ0xPOvFRkQ=;
-  b=JSJCrmddb1ewxEIwrA0Y7GpOSgYsDmQxEIGoWSQcjDEZ/0rfAo0ehXe0
-   z1Tw5yst9qVn4uU808eU5hYJe1cZOeByHS7zRj1uzEp6UJJ+uiaRi0Mwb
-   dvh4Qog+ETvOXyvxVim/g5KUbBZZpPrhndmHHgKPhzwMI5g07OG0Xbp8Z
-   gdYuBrvD9O8ut7WYHJMZo7o5Y2GzRGIcRfzscFejKI31IcqTieqSwgKve
-   l0E6otPcDRaBwnmhpXOzPG0v/VDHrGrHm86EPBuW1yii7XjA34LLMdHwl
-   KpkLGzXq0oA85M0WVGUH22Odjo0eSI3lCJoEQuywfBMLiYJmoqhtg7cvV
-   Q==;
-X-CSE-ConnectionGUID: lvFkyRSJSjyP0h7uqar+0g==
-X-CSE-MsgGUID: fM+2bR44QEOqxtSh2K96uQ==
-X-IronPort-AV: E=Sophos;i="6.13,309,1732575600"; 
-   d="scan'208";a="42043004"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Feb 2025 16:00:24 +0100
-X-CheckPoint: {67BC8988-21-C21CC984-D1047F1F}
-X-MAIL-CPID: C40F4806809927EB72D8AB495A33CC91_5
-X-Control-Analysis: str=0001.0A002117.67BC8987.00BB,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A61D016798B;
-	Mon, 24 Feb 2025 16:00:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1740409220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=T6W5ZMpXaDdvfRap/6NIAL55MOOCeVq3QJ0xPOvFRkQ=;
-	b=KBJvqddd7Fo+MyVSzXw/Tg1rWwnj/aVyFzMT45gg9ZcLAMoxBoEzuPGyESCuNI3SsyYyVJ
-	cOIqIrzIVVpHNnH6PTq1iH7gF4u0fbWapn7sbxIP8qabLDZbZ3zBAeH6NPYAOCo02NlfwA
-	zQau4MhcsDYUx8fXYNpmMqsMvGeuu6W/BTtbOa/+oFtKYwPQCH/u9Uz6ARQpGoNmoq99sw
-	aDPAave9zUomXQi7VAUPj8CBDnqJRKIeJRjNHMX3eN7MjcVVX2erH0ruIjMt4t4dknKmpI
-	LA4RjQ84x8NBhTW5MJpuj71d1JCiro1jC6zprU0ty/5jHm/t8IFUVb7pYsDAdA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 1/2] arm64: dts: imx8mp-tqma8mpql-mba8mpxl: change sound card model name
-Date: Mon, 24 Feb 2025 16:00:14 +0100
-Message-ID: <20250224150016.499055-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740409257; c=relaxed/simple;
+	bh=xw3KB9gjyy7jwvn7lKbpsP4JVAclfVpengUyudkK6YQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZ4fGZoAXB9wb50i20ih+flnfUAI3wI+sPTtYaSm7u9Ds5ubpv69quaJpnKVy7CeAsEC4pc8WD4B1Ax8W6te1nSvqXsmelpgP9GuMzDPTnvCQUG7XFgjDRjtxOxMZ1/acM877qp9zbM2//pneLwc+CkGz5Q8NdFWE3hmY3x0laE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fjbKbzBP; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740409256; x=1771945256;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=xw3KB9gjyy7jwvn7lKbpsP4JVAclfVpengUyudkK6YQ=;
+  b=fjbKbzBPEgICZH4reeSkVkXieYz76aqJM0BPcR4E+/CoeqdZyid61KxZ
+   9iWhkUBLJWPBwZws1tmNlxvygXiOYh9LA2FkQPjqHuo69OS7YJ6WAlTpm
+   ulvf7W90gt5E5lU970UN9M8sFCHiFXMENicz5pOQ+Rpdl8glCklFlPZx/
+   caZPydRvbh9eUBlG+sLYaJPZwKtffQCAEgzl/Pfd/PG36t+0SH3EygGjZ
+   wi1C2k5dVYV0xpiIsW1Z8ww9N6eSrfJXRnrcCUhuKR0HK0Pi8gyL+igy0
+   xqhqKzMHx3VMe28klLZ0Fiy8D5lqSwyig5QdFa+uSoSUAdH8ZoFL9Tjh4
+   A==;
+X-CSE-ConnectionGUID: QQ96/rVXTzyw+Omw6LMYXw==
+X-CSE-MsgGUID: AacVyS29QbOhyAkQ2+QIyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40353421"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40353421"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 07:00:55 -0800
+X-CSE-ConnectionGUID: 1nyFkwNrQwyQIVpJqp6H1g==
+X-CSE-MsgGUID: pl7Gd87GRPqSpQTH/LqWJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="115875289"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 07:00:52 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmZww-0000000Ej2f-0MUb;
+	Mon, 24 Feb 2025 17:00:50 +0200
+Date: Mon, 24 Feb 2025 17:00:49 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 1/2] drm/format-helper: Add conversion from XRGB8888
+ to BGR888
+Message-ID: <Z7yJodpB4WAB5oHn@smile.fi.intel.com>
+References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+ <03FA573F-6D01-40E8-A666-CEA17A917036@live.com>
+ <Z7yCLxBN4Cl4btQm@smile.fi.intel.com>
+ <7D98DED5-5B18-4AAE-A347-C880232530B7@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <7D98DED5-5B18-4AAE-A347-C880232530B7@live.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+On Mon, Feb 24, 2025 at 02:54:07PM +0000, Aditya Garg wrote:
+> This conversion helper mimics the existing drm_fb_xrgb8888_to_rgb888 helper
 
-The card name for ALSA is generated from the model name string and
-is limited to 16 characters. Use a shorter name to prevent cutting the
-name.
+Not really. See below.
 
-Since nearly all starter kit mainboards for i.MX based SoM by TQ-Systems
-use the same codec with the same routing on board it is a good idea to
-use the same model name for the sound card. This allows sharing a default
-asound.conf in BSP over all the kits.
+> > On 24 Feb 2025, at 7:59 PM, andriy.shevchenko@linux.intel.com wrote:
+> > On Mon, Feb 24, 2025 at 01:38:32PM +0000, Aditya Garg wrote:
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Changes in v2:
-* Rebased to next-20240224
-* Remove dependency on local patch
+...
 
- arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> >> +static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+> > 
+> > Okay the xrgb8888 is the actual pixel format independently on
+> > the CPU endianess.
+> > 
+> >> +{
+> >> + u8 *dbuf8 = dbuf;
+> >> + const __le32 *sbuf32 = sbuf;
+> > 
+> > But here we assume that sbuf is __le32.
+> > And I think we may benefit from the __be32 there.
+> 
+> So, like drm_fb_xrgb8888_to_rgb888, we are using __le32
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/drm_format_helper.c?h=v6.14-rc4#n657
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-index ae64731266f35..23c612e80dd38 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-@@ -234,7 +234,7 @@ linux,cma {
- 
- 	sound {
- 		compatible = "fsl,imx-audio-tlv320aic32x4";
--		model = "tq-tlv320aic32x";
-+		model = "tqm-tlv320aic32";
- 		audio-cpu = <&sai3>;
- 		audio-codec = <&tlv320aic3x04>;
- 	};
+The rgb888 != bgr888, that's where the byte swapping happens. So, one should
+use __be32 if the other has already been using __le32.
+
+> >> + unsigned int x;
+> >> + u32 pix;
+> >> +
+> >> + for (x = 0; x < pixels; x++) {
+> >> + pix = le32_to_cpu(sbuf32[x]);
+> >> + /* write red-green-blue to output in little endianness */
+> >> + *dbuf8++ = (pix & 0x00ff0000) >> 16;
+> >> + *dbuf8++ = (pix & 0x0000ff00) >> 8;
+> >> + *dbuf8++ = (pix & 0x000000ff) >> 0;
+> > 
+> > pix = be32_to_cpu(sbuf[4 * x]) >> 8;
+> > put_unaligned_le24(pix, &dbuf[3 * x]);
+> 
+> Again, 
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/drm_format_helper.c?h=v6.14-rc4#n664
+
+As per above.
+
+> >> + }
+> > 
+> > Or, after all, this __le32 magic might be not needed at all. Wouldn't the below
+> > be the equivalent
+> > 
+> > static void drm_fb_xrgb8888_to_bgr888_line(void *dbuf, const void *sbuf, unsigned int pixels)
+> > {
+> > unsigned int x;
+> > u32 pix;
+> > 
+> > for (x = 0; x < pixels; x++) {
+> > /* Read red-green-blue from input in big endianess and... */
+> > pix = get_unaligned_be24(sbuf + x * 4 + 1);
+> > /* ...write it to output in little endianness. */
+> > put_unaligned_le24(pix, dbuf + x * 3);
+> > }
+> > }
+> > 
+> > The comments can even be dropped as the code quite clear about what's going on.
+> 
+> These comments are literally rewritten :
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/drm_format_helper.c?h=v6.14-rc4#n663
+> 
+> >> +}
+> > 
+> > But it's up to you. I don't know which solution gives better code generation
+> > either.
+> 
+> I don't really mind any code change tbh, but I’d prefer that as an
+> improvement to existing code, and not a part of this patchset.
+
+Right, but see my argumentation above.
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
