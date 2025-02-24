@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-528502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F33D2A41875
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:12:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EA970A41876
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2522A3B1F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACD43B47B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4D1253B67;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D166B253F37;
 	Mon, 24 Feb 2025 09:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IsrVLo0G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZXBi/n4a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EFCA2475C7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EB224A045;
 	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388143; cv=none; b=FXlvfxN3uMkSSFKDu0WxqRxlSNyzETNZ7YI9HRafT93/b9U6XpDTDGLU5ZXVBrQF6CGJRgL3ZEIgD5qinPyIvGFEhvZ+cByyr6ZlIOMlsnGoXAXBNsluRs0RdooLyfCdM1XqrCy3PTuw26/Cpacz40lf9e9wVq5r0hd1yqjTPfU=
+	t=1740388143; cv=none; b=s022n2eDIHtyl7PmJIM/TCXVRqqdj+CJks1wL7jetV0IzHkYP4k+zj4LC3qs0hkxTv8vADCT90xoENgergMW4CqvXMtMMg3H3sLXJiFZvj8IeFdQ0SRPCNolC/ZdfUMp52ZBDSXyufXPVGotsKPds26KCN/EIy24JSKMCpt6pUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740388143; c=relaxed/simple;
-	bh=IpThprTfJ/pbtHwAeyiILQ0MdhJxWk9SeTU5TEeUoNg=;
+	bh=06ZoIn6KWo8lW7Vli577BGyd08sXznBzolIIOLad8Zg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nc2UDfUjdJjqew/QZcF349bPHo+BIdQqzfd+hTPdP0Dewca04+FyAQz9c19fWfRnch7AQr8yIevUsXLk47auVyXg3qLel03qeeXkzv6g1L23tOzjsA/vkgw0VgXn/s+5NhaRlBU+ZgWADkZiFRZuD8ho9DhX8zYhedwVX1igJuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IsrVLo0G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BD52C116C6;
+	 MIME-Version; b=CCgv7bh3AyUUlc1VOWf05YYqTG4rCnNXU+M/Y9NQwjoe9jPshYvBXFWl9R8y4y5OAQfDQkNvnDsHP9fModSQ4t4eaZc1vljkEFxCUAhI5GQ1kLOISZYtC2R0KOo07UJflFTJxS8T9ac5lAEcazhEMeyE1NGRsaetB4QeG8kJoIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZXBi/n4a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F55DC4CEFE;
 	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740388143;
-	bh=IpThprTfJ/pbtHwAeyiILQ0MdhJxWk9SeTU5TEeUoNg=;
+	bh=06ZoIn6KWo8lW7Vli577BGyd08sXznBzolIIOLad8Zg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IsrVLo0G7Rglf1TxWKWKtqL8JAhipBdKRAcqPlq1E9nn4d8A6eYulJjQRBPVngDak
-	 ly4Xh15mZ5Yj0IJPpPvN5oiv0B5LSrfN2VF7J0ITYlSTyYICP3JyaS1XT9ef5IAdyJ
-	 1QGRcp+2yEkw0PUEb8bg5C4jNp/9M2h81LNlY0bAKJlN9P3JrfvlJ8rExuAoAYbvGX
-	 1L1wScwAV4MS2u0rMcS9o5oNts/aroPlQihN2yPpuDrbRLiDJG8ompRSNFEHHrRTza
-	 jm2dg1s+xaSjtphN8M3pCAFCBVO8FxbW3eHJ8ranRYcuygLgYYG7tcdAUfwXo7ARJv
-	 BzMUZHVsDXY5A==
+	b=ZXBi/n4awk/IrB1CBGqnLwmNIYcwYlqTZgw0S3l4hhlMq5eycVVzXJvAaFJ7s6DTM
+	 RiUzFI7ahxHEY3lrBdeRUXW5BKRUfg0H5dNOGircdaeTpWz+WYfxeMJQAoCM80wRuk
+	 VNHGEiiJburH/kKH+aXbz/OPZMGzEZE4m0WY54llQLdtVI7emWuB+NrJ13L8UVTtk+
+	 Cu7woMbaYVcw90/tHA0cyrJOPv+EQWhJOFqLiJdvS54sCUmzwk2Rjy1e0f1xqZk7+a
+	 WQ6AcTk3cb0CVkXnI4q5xxCACsE2gIzxDb6hiTA679ICnD/q2HJRvJpXjFO/3AuPBW
+	 srD/xv4ffFz8Q==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tmUST-00000003p4e-1JGU;
+	id 1tmUST-00000003p4i-1Pvw;
 	Mon, 24 Feb 2025 10:09:01 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,9 +50,9 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 19/39] scripts/kernel-doc.py: implement support for -no-doc-sections
-Date: Mon, 24 Feb 2025 10:08:25 +0100
-Message-ID: <5292a5419c95f7754706e4d7ee59f74bf8d876b5.1740387599.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 20/39] scripts/kernel-doc.py: fix line number output
+Date: Mon, 24 Feb 2025 10:08:26 +0100
+Message-ID: <7200fc2b7fc32a085cea994822f69a92d0561a29.1740387599.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
 References: <cover.1740387599.git.mchehab+huawei@kernel.org>
@@ -65,110 +65,186 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The venerable kernel-doc Perl script has a number of options that
-aren't properly documented. Among them, there is -no-doc-sections,
-which is used by the Sphinx extension.
+With the Pyhton version, the actual output happens after parsing,
+from records stored at self.entries.
 
-Implement support for it.
+Ensure that line numbers will be properly stored there and
+that they'll produce the desired results at the ReST output.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/kernel-doc.py           | 8 ++++++--
- scripts/lib/kdoc/kdoc_files.py  | 5 +++--
- scripts/lib/kdoc/kdoc_output.py | 7 ++++++-
- 3 files changed, 15 insertions(+), 5 deletions(-)
+ scripts/lib/kdoc/kdoc_output.py | 13 +++++++------
+ scripts/lib/kdoc/kdoc_parser.py | 21 +++++++++++++++++----
+ 2 files changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
-index a687a7abb3b9..d700451e9541 100755
---- a/scripts/kernel-doc.py
-+++ b/scripts/kernel-doc.py
-@@ -164,10 +164,13 @@ def main():
-     sel_mut.add_argument("-s", "-function", "--symbol", action='append',
-                          help=FUNCTION_DESC)
- 
--    # This one is valid for all 3 types of filter
-+    # Those are valid for all 3 types of filter
-     parser.add_argument("-n", "-nosymbol", "--nosymbol", action='append',
-                          help=NOSYMBOL_DESC)
- 
-+    parser.add_argument("-D", "-no-doc-sections", "--no-doc-sections",
-+                        action='store_true', help="Don't outputt DOC sections")
-+
-     parser.add_argument("files", metavar="FILE",
-                         nargs="+", help=FILES_DESC)
- 
-@@ -209,7 +212,8 @@ def main():
- 
-     for t in kfiles.msg(enable_lineno=args.enable_lineno, export=args.export,
-                           internal=args.internal, symbol=args.symbol,
--                          nosymbol=args.nosymbol):
-+                          nosymbol=args.nosymbol,
-+                          no_doc_sections=args.no_doc_sections):
-         msg = t[1]
-         if msg:
-             print(msg)
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 4a6e75dbdbdd..c215ae3047b8 100755
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -237,7 +237,7 @@ class KernelFiles():
-         return self.out_style.msg(fname, name, arg)
- 
-     def msg(self, enable_lineno=False, export=False, internal=False,
--            symbol=None, nosymbol=None):
-+            symbol=None, nosymbol=None, no_doc_sections=False):
-         """
-         Interacts over the kernel-doc results and output messages,
-         returning kernel-doc markups on each interaction
-@@ -256,7 +256,8 @@ class KernelFiles():
-         self.out_style.set_config(self.config)
- 
-         self.out_style.set_filter(export, internal, symbol, nosymbol,
--                                  function_table, enable_lineno)
-+                                  function_table, enable_lineno,
-+                                  no_doc_sections)
- 
-         for fname, arg_tuple in self.results:
-             msg = ""
 diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index 91f6e356d03d..8729dc58e13c 100755
+index 8729dc58e13c..b9b39bc29463 100755
 --- a/scripts/lib/kdoc/kdoc_output.py
 +++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -69,6 +69,7 @@ class OutputFormat:
-         self.symbol = None
-         self.function_table = set()
-         self.config = None
-+        self.no_doc_sections = False
+@@ -254,7 +254,8 @@ class RestFormat(OutputFormat):
+     def print_lineno(self, ln):
+         """Outputs a line number"""
  
-         self.data = ""
+-        if self.enable_lineno and ln:
++        if self.enable_lineno and ln is not None:
++            ln += 1
+             self.data += f".. LINENO {ln}\n"
  
-@@ -76,7 +77,7 @@ class OutputFormat:
-         self.config = config
+     def output_highlight(self, args):
+@@ -357,7 +358,7 @@ class RestFormat(OutputFormat):
+         parameterdescs = args.get('parameterdescs', {})
+         parameterdesc_start_lines = args.get('parameterdesc_start_lines', {})
  
-     def set_filter(self, export, internal, symbol, nosymbol, function_table,
--                   enable_lineno):
-+                   enable_lineno, no_doc_sections):
-         """
-         Initialize filter variables according with the requested mode.
+-        ln = args.get('ln', 0)
++        ln = args.get('declaration_start_line', 0)
  
-@@ -86,6 +87,7 @@ class OutputFormat:
-         """
+         count = 0
+         for parameter in parameterlist:
+@@ -374,11 +375,11 @@ class RestFormat(OutputFormat):
+         if not func_macro:
+             signature += ")"
  
-         self.enable_lineno = enable_lineno
-+        self.no_doc_sections = no_doc_sections
++        self.print_lineno(ln)
+         if args.get('typedef') or not args.get('functiontype'):
+             self.data += f".. c:macro:: {args['function']}\n\n"
  
-         if symbol:
-             self.out_mode = self.OUTPUT_INCLUDE
-@@ -116,6 +118,9 @@ class OutputFormat:
-     def check_doc(self, name):
-         """Check if DOC should be output"""
+             if args.get('typedef'):
+-                self.print_lineno(ln)
+                 self.data += "   **Typedef**: "
+                 self.lineprefix = ""
+                 self.output_highlight(args.get('purpose', ""))
+@@ -433,7 +434,7 @@ class RestFormat(OutputFormat):
+         name = args.get('enum', '')
+         parameterlist = args.get('parameterlist', [])
+         parameterdescs = args.get('parameterdescs', {})
+-        ln = args.get('ln', 0)
++        ln = args.get('declaration_start_line', 0)
  
-+        if self.no_doc_sections:
-+            return False
-+
-         if self.out_mode == self.OUTPUT_ALL:
-             return True
+         self.data += f"\n\n.. c:enum:: {name}\n\n"
  
+@@ -463,7 +464,7 @@ class RestFormat(OutputFormat):
+ 
+         oldprefix = self.lineprefix
+         name = args.get('typedef', '')
+-        ln = args.get('ln', 0)
++        ln = args.get('declaration_start_line', 0)
+ 
+         self.data += f"\n\n.. c:type:: {name}\n\n"
+ 
+@@ -483,7 +484,7 @@ class RestFormat(OutputFormat):
+         purpose = args.get('purpose', "")
+         declaration = args.get('definition', "")
+         dtype = args.get('type', "struct")
+-        ln = args.get('ln', 0)
++        ln = args.get('declaration_start_line', 0)
+ 
+         parameterlist = args.get('parameterlist', [])
+         parameterdescs = args.get('parameterdescs', {})
+diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+index 6d6395e32093..633c95164b0c 100755
+--- a/scripts/lib/kdoc/kdoc_parser.py
++++ b/scripts/lib/kdoc/kdoc_parser.py
+@@ -275,7 +275,7 @@ class KernelDoc:
+         self.entry.brcount = 0
+ 
+         self.entry.in_doc_sect = False
+-        self.entry.declaration_start_line = ln
++        self.entry.declaration_start_line = ln + 1
+ 
+     def push_parameter(self, ln, decl_type, param, dtype,
+                        org_arg, declaration_name):
+@@ -805,8 +805,10 @@ class KernelDoc:
+                                 parameterlist=self.entry.parameterlist,
+                                 parameterdescs=self.entry.parameterdescs,
+                                 parametertypes=self.entry.parametertypes,
++                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+                                 sectionlist=self.entry.sectionlist,
+                                 sections=self.entry.sections,
++                                section_start_lines=self.entry.section_start_lines,
+                                 purpose=self.entry.declaration_purpose)
+ 
+     def dump_enum(self, ln, proto):
+@@ -881,8 +883,10 @@ class KernelDoc:
+                                 module=self.config.modulename,
+                                 parameterlist=self.entry.parameterlist,
+                                 parameterdescs=self.entry.parameterdescs,
++                                parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+                                 sectionlist=self.entry.sectionlist,
+                                 sections=self.entry.sections,
++                                section_start_lines=self.entry.section_start_lines,
+                                 purpose=self.entry.declaration_purpose)
+ 
+     def dump_declaration(self, ln, prototype):
+@@ -1053,8 +1057,10 @@ class KernelDoc:
+                                     parameterlist=self.entry.parameterlist,
+                                     parameterdescs=self.entry.parameterdescs,
+                                     parametertypes=self.entry.parametertypes,
++                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+                                     sectionlist=self.entry.sectionlist,
+                                     sections=self.entry.sections,
++                                    section_start_lines=self.entry.section_start_lines,
+                                     purpose=self.entry.declaration_purpose,
+                                     func_macro=func_macro)
+         else:
+@@ -1066,8 +1072,10 @@ class KernelDoc:
+                                     parameterlist=self.entry.parameterlist,
+                                     parameterdescs=self.entry.parameterdescs,
+                                     parametertypes=self.entry.parametertypes,
++                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+                                     sectionlist=self.entry.sectionlist,
+                                     sections=self.entry.sections,
++                                    section_start_lines=self.entry.section_start_lines,
+                                     purpose=self.entry.declaration_purpose,
+                                     func_macro=func_macro)
+ 
+@@ -1111,8 +1119,10 @@ class KernelDoc:
+                                     parameterlist=self.entry.parameterlist,
+                                     parameterdescs=self.entry.parameterdescs,
+                                     parametertypes=self.entry.parametertypes,
++                                    parameterdesc_start_lines=self.entry.parameterdesc_start_lines,
+                                     sectionlist=self.entry.sectionlist,
+                                     sections=self.entry.sections,
++                                    section_start_lines=self.entry.section_start_lines,
+                                     purpose=self.entry.declaration_purpose)
+             return
+ 
+@@ -1135,6 +1145,7 @@ class KernelDoc:
+                                     module=self.entry.modulename,
+                                     sectionlist=self.entry.sectionlist,
+                                     sections=self.entry.sections,
++                                    section_start_lines=self.entry.section_start_lines,
+                                     purpose=self.entry.declaration_purpose)
+             return
+ 
+@@ -1167,7 +1178,7 @@ class KernelDoc:
+             return
+ 
+         # start a new entry
+-        self.reset_state(ln + 1)
++        self.reset_state(ln)
+         self.entry.in_doc_sect = False
+ 
+         # next line is always the function name
+@@ -1280,7 +1291,7 @@ class KernelDoc:
+             if r.match(line):
+                 self.dump_section()
+                 self.entry.section = self.section_default
+-                self.entry.new_start_line = line
++                self.entry.new_start_line = ln
+                 self.entry.contents = ""
+ 
+         if doc_sect.search(line):
+@@ -1618,7 +1629,9 @@ class KernelDoc:
+             self.dump_section()
+             self.output_declaration("doc", None,
+                                     sectionlist=self.entry.sectionlist,
+-                                    sections=self.entry.sections, module=self.config.modulename)
++                                    sections=self.entry.sections,
++                                    section_start_lines=self.entry.section_start_lines,
++                                    module=self.config.modulename)
+             self.reset_state(ln)
+ 
+         elif doc_content.search(line):
 -- 
 2.48.1
 
