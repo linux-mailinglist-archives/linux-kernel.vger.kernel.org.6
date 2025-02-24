@@ -1,89 +1,83 @@
-Return-Path: <linux-kernel+bounces-529768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB82CA42AB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:09:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B09B1A42B2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:24:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 274A71899C04
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 847FE7AAF92
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F5326656D;
-	Mon, 24 Feb 2025 18:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CEA14012;
+	Mon, 24 Feb 2025 18:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AeCL1aaO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="G02tW++1"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC4A2661B7;
-	Mon, 24 Feb 2025 18:06:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA7C265CC7;
+	Mon, 24 Feb 2025 18:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420376; cv=none; b=MoMDWw0Bjh2b21lgpyqx5zAOgLeYXFd5hX2YFC0J3KiSz8W7UMWwjsX9x25ciFmOTpNrrAG+YJektWM8puudrWUgiQ/cZAUpNfSF7d60n+zdG/quJXgS40FppjeJgxTzAdgaI9rFAKLY7DkS2cSSyPZGjocHBE76lsEbWijn6Fs=
+	t=1740421275; cv=none; b=VptHVG+8mM9p7F1sxqCzli5P/GEeiVy/f63sFWqCMhmSydpadYDjAfBTNb3flnptyrFXtC9cA2gWVppZMMiNVtL2naKfl3RmTfoRbK7iN6FnbwooRNb4D/Tt4xRUUP3h2oBuaveYUS/Wu/rOFlXvIzF1ievbS+EDv+y5uCJZzWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420376; c=relaxed/simple;
-	bh=fLLXimX9ynfgWBIWIxxfLc92QfSdbBwQm11gCIosTSY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mcvl7SnGMBM1d2yVzVNMVo+xC75XqyvHwDCfZjqbd6/FrG2T154qEckEZ+MsvDXmJ93q0JWmgPjB1UCPWmjHy8JX4UIGHaHfuJm8VYqGzizYkAL9WkfEbo1peFc1Lp60nPjOweB292Holn8zIUtnKlreKgSSnTtN8lWRxBUmQTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AeCL1aaO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC5CC4CED6;
-	Mon, 24 Feb 2025 18:06:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740420376;
-	bh=fLLXimX9ynfgWBIWIxxfLc92QfSdbBwQm11gCIosTSY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AeCL1aaOnkeSIok2hceVAi8lIKo0Gd4fEIrcc1zJ5cdsXeHxoXEGWnCJ/hADdqtdK
-	 N2ZDtbNRLQB2sPslywxDh9nlot8TGDfheps9d8+lVu7aAevaB8CNT3G9axE6AMPAX1
-	 crWe0y3wP8oDb5e3mhXjPGN1bKvvrD20v9k4LMywQCaf6DththB+6ElignJRB8oV1B
-	 pDo/yyC7d8EvipgNaI5sMlJcxzGtgPHVOHmXHYNobbLDDbPjUOyJz2aYaBJkvElT0S
-	 ydYJt3RRTKBKERUOZFR/s82jUGV08OaAD98VyZeAEahBrMI5r/UZsfFIQ7YPeGkd9d
-	 bwwgd03l6/Hsg==
-Date: Mon, 24 Feb 2025 18:06:14 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Zhihang Shao <zhihang.shao.iscas@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>, Xiao Wang <xiao.w.wang@intel.com>,
-	Charlie Jenkins <charlie@rivosinc.com>
-Subject: Re: [PATCH 0/4] RISC-V CRC optimizations
-Message-ID: <20250224180614.GA11336@google.com>
-References: <20250216225530.306980-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1740421275; c=relaxed/simple;
+	bh=N/T5IHIQwCEr77i8CTQCQnWFjgaLHWXY7H4FMMhO8NE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=q2LgkzVn8YICyID30vWf2tJ7va+GhYZ6Ol/952KYluKM7eLpGaM3qlyx7KvdKANJVsDDlNYzTnmHZkCZw5rHaEseIYVsh4Efb1KsGq6XUWo+k9P1FSNCD56yDJ059aTAKB1+b7CBvz2AkezlajmcuomKe80+w+nLj86fKsdM8UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=G02tW++1; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id E3DD71F925;
+	Mon, 24 Feb 2025 19:08:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1740420485;
+	bh=1M7f396UBAmCxe+9OoMZbOkwcwDr8nFN1FiAHgkEDKw=; h=From:To:Subject;
+	b=G02tW++1t59ah+gMQCw6rNIexMpCQn4tbkpggdZBESNP314KmWnX6I7l3UfvPON8r
+	 lpwJs4TlO8idH2TYvsuD2TO9WLP23rOniO/1FT+C7+NmADsZC1hu2TXe0JeNFNZ6B3
+	 g2B0+I8G0DggYTAdj5KIxNLGEOvXLda+fTGIq/rnJhIfBA3wzdenzPjK82/sl007Wf
+	 4Fg0gSg1hZdqveaK7+Ag8ZMXWCqFx6pIq07+9Pz3vM2o2ykFACU876TZM5CxUKu7Sx
+	 Q8MycmK8MjAtfanOWyh9D2yeQy8ItI1b5ARx8lUZmNO+/yQIjfYuRiyKF7Xdjb6Jx2
+	 Jly1t9urHxBjg==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Farouk Bouabid <farouk.bouabid@cherry.de>,
+	Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] hwmon: (amc6821) Add PWM polarity configuration with OF
+Date: Mon, 24 Feb 2025 19:07:59 +0100
+Message-Id: <20250224180801.128685-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250216225530.306980-1-ebiggers@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 16, 2025 at 02:55:26PM -0800, Eric Biggers wrote:
-> This patchset is a replacement for
-> "[PATCH v4] riscv: Optimize crct10dif with Zbc extension"
-> (https://lore.kernel.org/r/20250211071101.181652-1-zhihang.shao.iscas@gmail.com/).
-> It adopts the approach that I'm taking for x86 where code is shared
-> among CRC variants.  It replaces the existing Zbc optimized CRC32
-> functions, then adds Zbc optimized CRC-T10DIF and CRC64 functions.
-> 
-> This new code should be significantly faster than the current Zbc
-> optimized CRC32 code and the previously proposed CRC-T10DIF code.  It
-> uses "folding" instead of just Barrett reduction, and it also implements
-> Barrett reduction more efficiently.
-> 
-> This applies to crc-next at
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next.
-> It depends on other patches that are queued there for 6.15, so I plan to
-> take it through there if there are no objections.
-> 
-> Tested with crc_kunit in QEMU (set CONFIG_CRC_KUNIT_TEST=y and
-> CONFIG_CRC_BENCHMARK=y), both 32-bit and 64-bit.  I don't have real Zbc
-> capable hardware to benchmark this on, but the new code should work very
-> well; similar optimizations work very well on other architectures.
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-Any feedback on this series from the RISC-V side?
+Add support for configuring the PWM polarity of the amc6821 fan controller.
 
-- Eric
+Francesco Dolcini (2):
+  dt-bindings: hwmon: amc6821: add PWM polarity
+  hwmon: (amc6821) Add PWM polarity configuration with OF
+
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml     |  8 ++++++++
+ drivers/hwmon/amc6821.c                           | 15 ++++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
+
+-- 
+2.39.5
+
 
