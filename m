@@ -1,116 +1,123 @@
-Return-Path: <linux-kernel+bounces-529158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3DC3A42081
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:25:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE99DA4208F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:27:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044503AA684
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:23:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62813B6A6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A73D24BC09;
-	Mon, 24 Feb 2025 13:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4280C24EF6E;
+	Mon, 24 Feb 2025 13:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PgM0ZJ65"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iS/A260A"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E3E24886A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F82E24886D;
+	Mon, 24 Feb 2025 13:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403388; cv=none; b=BwKVZtZOo1xX17INDGn7bTC2IOAuTdOup4ZKc51n7b7rd05NouEVS1AEifitMjDvrzZ/CXS2sd0P5ELxCNPvaYtqH46TTMNRDtTfcgXBEuypf5LTLVCrdlebaKNZzHLM8M6JYLND7k4llGLs/9dguG+ymaavLndDxngMT49mKGg=
+	t=1740403456; cv=none; b=YOCQspX/5qtQcTBaOdKgwGKyZWnkdinTQy5JbcbWoA1S09d2UgM3lD3u/Cc9kNSsO71eHk6ej7hxBw08DWNSR/b+fxVuQX+Ml+ZSKvaE8SBpPfI6gk9hi2HSfVn8dwrw1a0eVetaM7YXQeiGrue8Y3XU+vMV2tV69I5w6WhQ1R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403388; c=relaxed/simple;
-	bh=ErUgAARBewBWeoNkYTRCi8YwJ8tj34TiI76a1eD/xfM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uUZEOJoAPh+RJHdap0PksGKXT8SB5RVm3sKViAnUrv77AQHaZGxEYo7JWP3V4Z3f9FG70e6l2iyqCcMu92vEyAnW6pd6EDvUB8XVsoCsmEMvqa3ahHSgcBeEUcpRXsahEd4J5sC7s20Um1ntvh3CVlhytMkhhOgxIZ0xilfoNaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PgM0ZJ65; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-307325f2436so42366181fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:23:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740403385; x=1741008185; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ErUgAARBewBWeoNkYTRCi8YwJ8tj34TiI76a1eD/xfM=;
-        b=PgM0ZJ65DY8+yWJKyrJC1HqJYGRmYh/+Vl/BIU+6CXim97WskGLPyHk/wgFy/5fmWL
-         z2gg8US0ww5qmW3y6vnTlwTqdm/BEjVYUf3CYa+X4NSSomIl8qn9tJNV/b1sCzxmU5b+
-         WRxPPQ4gPhQ0HRCoBq7YDeLM76byKfWkaCDSadJY9IQB87fJ412FeMwvMQ/5SJTNwHlx
-         l7NinsUQQh1BHlPzGgriCniCgFAbaTKKtSm0Nk2yK+hBrd1tmZ3iOxlpTctzhTq/seYL
-         2bt5jWXcoFlhTjQi2j0sIcrFYsM3+dB8TvJRSVCmatvOLs00mvU7FDs5WYRD7jp9f0yo
-         R0aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740403385; x=1741008185;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ErUgAARBewBWeoNkYTRCi8YwJ8tj34TiI76a1eD/xfM=;
-        b=se1cH6Ryc0ttBcA4q8ILcfZIVwDeeMEq3x1QSA4uKUcJZmjmdLdWPizr7TwdombOhg
-         KHtrrQfxywkrgrEFofWfGhocCKJKBcUEeEk8y0HX+8MbaeJKXYAaXYejvhBHv4mGRSMS
-         rcwqe902VxdLdRB3EoStWsAYqBmqLvXSxX9x4e1sl1UJUxaMTct3whBl94pdVdP8VEx9
-         g5fGJSVxt0IYIwDqTty2kic/+4d7RhidGjzpygs7EkGBtwk80wY1oqXV42flXzcvupJD
-         wx0ToyeyJ08G6oKkI9GNkyja4aXjU3PBXGjlWF9dNHEJgEZ2zzdcdU3myyr0lllTwurk
-         8KyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPrBEBiQCzmZCxBhTcGDcolq7DNscXraD2eRfxIxwAlBNhEqK+s4itpq2GDaLaKH0AqzoWW3p4iZkE42E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvU1vxmYk7n71OT6FoNYOVC9S4euzNhTMz6VAv0PWEEobtpxLI
-	HFaGigN4C5kH14UQ3OkiEmU6ZNvX/5zqWoiYyfGeUWUjayK1BlkI+Iw5sdA5uFycmTlLk7OTfyU
-	NiBgxAJ1OK/gmeCj+UP/rAZGYbG7BrqGDGQSj
-X-Gm-Gg: ASbGnctCOj5+9936SqyD5zII7HyCSovYPTcTq2QdcH0AN7/mIM1k3xd+ihJdtCKqZoL
-	02eDIvXjQOvxTvPEdeLSGClKWUUmXjOw5gWnYq4BUy8wkKH5qka2TVEX341Ej7b6kkO0rr35L4p
-	+Rx6pDWVU3477GTNzsdm9vxPIYuJ4yrzSdP+IV
-X-Google-Smtp-Source: AGHT+IGQMsq5fi0y5O7l1P+3Gls4exy5iGv73U6ohJfPykTLkpFyKQAln9GpO9U2FD2RKDa6pnnist6aEYYakHyUuaY=
-X-Received: by 2002:a2e:3a12:0:b0:308:f4cc:951b with SMTP id
- 38308e7fff4ca-30a599868e9mr42592141fa.23.1740403384552; Mon, 24 Feb 2025
- 05:23:04 -0800 (PST)
+	s=arc-20240116; t=1740403456; c=relaxed/simple;
+	bh=1k6wjU0I1KWrs2CqF0lxTRBsEKFiGTnFa6NfOjTfvFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ix+LZILOXgXIdW3Q9i/vi8bDakVUz7MhKHmxT0FAGiq6hP3s7WSSx1JE4CTQBfZe49kkzm23B1eqg8j3g6gBqoaTxMiOtnygpm09sbPGxEKUgUpOdPnVzu/JB6qRJHqXkcKhgTR1JHG+pawH8brR1Fe3o6/icglL3E2CShwE+pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iS/A260A; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OwmwOu+Cjzvd/Dyh2oCLg1P9uzBvkTbz8Qibak6RkKs=; b=iS/A260A40VI6SQ9dsr0Pe2Ec0
+	+4I/Bpalp0CX65hp2mHNsbxfdLQ3ZQMp/MO3XTCmulOZ1LdYifv6XmmjBsEkUzc7/Ofye9OegILGU
+	jhMbWZFAabjv9F1E7Tdsq+St//fzgpJbTghlaQ08rLhkZfj4YHNl3RsAgWE0X2VcL1qmU/ZGIqy9s
+	q3djqUzHMEgyRNxqJ4zMlGJrlo+rBDv3+zWiBCnZolwsUOv1flDL0UYKwJjrhfaGLVZBSL82vN7Ui
+	z/ItUQgAbHGrhpvvZGv/LP7zX+kb01JmoNnF7MGJbWqiG9NuEPEKF3SG3il1lVkgYfzh0ukPwqkvp
+	tlhJKBVg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmYR9-00000007Gtp-2twK;
+	Mon, 24 Feb 2025 13:23:55 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B2A18300164; Mon, 24 Feb 2025 14:23:54 +0100 (CET)
+Date: Mon, 24 Feb 2025 14:23:54 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Will Deacon <will@kernel.org>,
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Nick Piggin <npiggin@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Lee Jones <lee@kernel.org>,
+	Thomas Graf <tgraf@suug.ch>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, linux-rdma@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+	iommu@lists.linux.dev, linux-mtd@lists.infradead.org
+Subject: Re: [PATCH *-next 01/18] mm/mmu_gather: Remove needless return in
+ void API tlb_remove_page()
+Message-ID: <20250224132354.GC11590@noisy.programming.kicks-ass.net>
+References: <20250221-rmv_return-v1-0-cc8dff275827@quicinc.com>
+ <20250221-rmv_return-v1-1-cc8dff275827@quicinc.com>
+ <20250221200137.GH7373@noisy.programming.kicks-ass.net>
+ <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739790300.git.dvyukov@google.com> <1f0cd73072eb321fb5f6993cbcb9b2e67ba6355d.1739790300.git.dvyukov@google.com>
- <61d5d657-7d70-4140-9c8e-981e6db8a6f6@intel.com>
-In-Reply-To: <61d5d657-7d70-4140-9c8e-981e6db8a6f6@intel.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 24 Feb 2025 14:22:53 +0100
-X-Gm-Features: AWEUYZme-vEEUn1Sy-5jnhKmmULBqwx0ajAhB8RzxW1Bjmrf1yoFtm_E6zf4_6E
-Message-ID: <CACT4Y+bDz4oSLdy1u9PhS43PGeYE9RbEX7NG-iM-VcvYEWBymw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] selftests/rseq: Add test for rseq+pkeys
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
-	elver@google.com, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8f36be7c-6052-4c5d-85ff-0eed27cf1456@icloud.com>
 
-On Fri, 21 Feb 2025 at 18:24, Dave Hansen <dave.hansen@intel.com> wrote:
->
-> On 2/17/25 03:07, Dmitry Vyukov wrote:
-> > +++ b/tools/testing/selftests/rseq/pkey_test.c
->
-> There's also a:
->
-> tools/testing/selftests/mm/protection_keys.c
->
-> The main thing that will get you is testing with a bunch of different
-> pkey values and also a few different memory types including huge pages.
-> It also keeps an eye on PKRU consistency by keeping a shadow. So if, for
-> instance, the rseq code forgot to restore PKRU, that code would be
-> likely to catch it. It's caught a few bugs during development for me
-> when PKRU was getting wrongly-munged.
->
-> But, I'm not picky about selftests. Any test is better than no test. So,
-> whatever you decide to do:
->
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+On Sat, Feb 22, 2025 at 07:00:28PM +0800, Zijun Hu wrote:
+> On 2025/2/22 04:01, Peter Zijlstra wrote:
+> >>   */
+> >>  static inline void tlb_remove_page(struct mmu_gather *tlb, struct page *page)
+> >>  {
+> >> -	return tlb_remove_page_size(tlb, page, PAGE_SIZE);
+> >> +	tlb_remove_page_size(tlb, page, PAGE_SIZE);
+> >>  }
+> > So I don't mind removing it, but note that that return enforces
+> > tlb_remove_page_size() has void return type.
+> >
+> 
+> tlb_remove_page_size() is void function already. (^^)
 
-I dunno. It also depends on the rseq helper header and helper source
-file that is currently compiled into tests only by rseq Makefile.
-v2 of the test was already checking that the pkey register wasn't messed with.
-But I had to rework the test for v3/v4.
+Yes, but if you were to change that, the above return would complain.
+
+> > It might not be your preferred coding style, but it is not completely
+> > pointless.
+> 
+> based on below C spec such as C17 description. i guess language C does
+> not like this usage "return void function in void function";
+
+This is GNU extension IIRC. Note kernel uses GNU11, not C11
 
