@@ -1,139 +1,144 @@
-Return-Path: <linux-kernel+bounces-528487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04628A41834
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:09:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6386A418AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCEA16F9EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5CED3A3BDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2761946AA;
-	Mon, 24 Feb 2025 09:09:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CECD244EA1;
+	Mon, 24 Feb 2025 09:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hisG+jAm"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="R+QVTnMS"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD727243951;
-	Mon, 24 Feb 2025 09:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0140D260A20;
+	Mon, 24 Feb 2025 09:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388140; cv=none; b=kZmskZi+elgX6e9kUZsJQ3QipZPYuck9rdxmX9hx2Iyytf1Ml+WFfNQoeYDrPfOpLaQk87JcfJ0nCnsYjwvhihwsVO5nK9M2UWmqGY0Y28Rq46tpzRJLF1DZUYC1tmh5QoU71RAD1Ti5ngZj9K0vCeNY7JpNaqv3fLIpHfWivU8=
+	t=1740388177; cv=none; b=Dy6eO1XH4GJqILK9pG9f14tV3jZeB7B5r1OHtDHpccHHdMsiTK0DWaWvQ2eGjtsRVFeM8O+FDbIweaf+Y/fobk0wGuF+E1PE1kGgJ7/tmnl/bwzGBlbkCNjojRzcRnkVkVwTaqUTRh/q1z6l7CK+6lq1bS4Ta5ktjvhhMXUeW2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740388140; c=relaxed/simple;
-	bh=daM8eCpYsb21gX9QsirhUsHYuQ1YdkY3jqPS9x3ir38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cLgpXfyRpRANC3j4lk6XZb7ilVMCLMcYgQtjmqyI8cBYvCxQ6iPhazTNzcVWYwDkMcTI42f9zcY32n7PhJypH6OJPnrKcYyELZw91qING5fw2/LEvjazggqNZOu8f3MgOzQSVjOIn/nVkoGoNQh4KKpMP9H1P5LjkyxXfW9HFt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hisG+jAm; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c089b2e239so447293885a.0;
-        Mon, 24 Feb 2025 01:08:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740388137; x=1740992937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8Z8QEwUCxkupWd1+3HNImprL2CAvRRP+kS3TrK5QZE=;
-        b=hisG+jAm6PXct5rOjPJ5jyYe/mo2VdwwoNh05uC3w5P3vmM8feBCOFNkTnkLrnPyD8
-         rOeBS+G/JVnRfQHZ3Dx/DrgOu7XTICR9JhCudVDgulkd6BQH9p+F+fJQKRpeR/QRWksh
-         6u2MgZYSm1/E6ar8TSDQozfTjhJMmrsBNZvXVG0ZPkQO8ZLZbC/hsqbocAfFflAwDcZT
-         KMo7GRTCfLoIfxN0WI+aEJfUvRjsf4SOjexN4cze7ihHk/999AgaCm5gjNghtmeNhgn3
-         VJhlhGk2EYkIRZ/a0eIm6mo+Sol7SSb0/yI7tLNoX6Y54NpzRfUbyMCFO1iu3Te8loOW
-         hzpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740388137; x=1740992937;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8Z8QEwUCxkupWd1+3HNImprL2CAvRRP+kS3TrK5QZE=;
-        b=oury54QmCepou0UHSdtKhhAEgQyHy5RI+VGM1mk/vvAzA7b0cVmWJQDi7/A+Z5000B
-         SXkRmUKcsriI9jIemrRi9aYVFA+bY8NBvop1GUnXeZH5GAB/0GiR4ws7NvEjbGrALkTM
-         RGe49DUtV1d9v/C5r/Snsl3jtCYU5PbDutx6sHDNHBRswlfMcCHyD7UI896gr5ggsNPc
-         Y3BjGulyrvUjPkqBgauSC972GXMyvv3eot8ryvf2RCpYLxXKnfLt5fWr9sKy0MsfY1eL
-         RjFaLRKQF11/LqxVjici0fE7Jh1+iO9fKg7trck7UbKz/QRAOH8PTejIVSYwqoIYJ8Hk
-         UlyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuVoevrTbnCJml4ORrYKvl1DyrF9jxCfHYGLZaqoKXvdIBzZQXz4TWGqi/CvmanbbxOay84ba9TUq48UlK314=@vger.kernel.org, AJvYcCWm1wmOoLwLehTqM1VopU0GBaW1MgqTFhliJnbSF60zqBkeVFXTtrB2SwbbaEuMdTkr70+OGGUb6DXzfis=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2o1z6Yv31zrGmYquTQhbv1Ze0WCR6+fCtAIfDSV8OqmoZHVEB
-	DE9/OPDHDWdfg1g6T46r0bLZrxB8chjICvUe04iLAJ6cD1iybNGPwjR3a8exOhCfn1n3tcqiDsb
-	O/CdCDDkWrO/qIQMbvxhn8lghpIM=
-X-Gm-Gg: ASbGncsp65fOSPgQV4dOvCqnAF/HDMilH1bPPPDFN1QpmjFA/eowx77/KEOq0koBobt
-	SZgKXcWc+9M9jnaobDnTCTTamUjRU7sEMlBnF6Vu5Hn+RMP6l3656ZyPwbJL2nzjiwmRkhuJHoo
-	OJVgNDsJdN
-X-Google-Smtp-Source: AGHT+IGjG8I5drO+X1eEUiibGtzlCaFmdmDDWxEcy/DATfn0GZv0YcS1x2zAkBvkENKOLf26xD8UR2442xGniu3XVH8=
-X-Received: by 2002:a05:620a:4405:b0:7a8:554:c368 with SMTP id
- af79cd13be357-7c0c2164e93mr2368642885a.6.1740388137584; Mon, 24 Feb 2025
- 01:08:57 -0800 (PST)
+	s=arc-20240116; t=1740388177; c=relaxed/simple;
+	bh=KsX/8SSW+cz7CNwOY/YoaslQjS4o9b23XIs173sPnl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IdI6/uSSZPFrHo594R87ppT2MgLjn15YWm246jZmoANpI2lBgzb78KzH+aSLTmgrfU84RxruIR7kO9Jlnujgr2ay5mtyOLpDA30J6AOGvobv3PagITfeL3mrKr9LdFf0hryOrDxv4UmZFsVYGyc0YBUioWlfsBdCTglJQ4mcE6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=R+QVTnMS; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=5M7Vwq3vPNXFx3Y80ZtwPFH+1emkyTe/+TzCV6/qris=; b=R+QVTnMSw7oi9Bpt0LYcT9UKq4
+	S6qh/hExWGY2MjGrAJXZ/UJskhRHgBhj7NUc8YCb3yyXdogA+XM46XRTwGYtaqlpzCddUycQ8lzsc
+	sEzsEzeaR1HNprpcfA6U1gcWl0A4r2udHsy5rky6or/YSAao6UgyyY10qEc8ZFiX1IPVFvpAWy7qE
+	EOBGQxYwKIh4P4TOHMiTHxf24QgzXBFZQWRYKsdUsFQZZBbe9X3WuP+FDdIivF+dF/rYq7QkMdHcV
+	zwgrnMRfH8orgTr+O/6F04Xv+AyGhBl178+B/g5mZgDJXW1U9WCwepbxYIHlhJIE0X69qJ/C9JGKR
+	lmKWR6uA==;
+Received: from i53875a0d.versanet.de ([83.135.90.13] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tmUSw-0006ts-IJ; Mon, 24 Feb 2025 10:09:30 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Yao Zi <ziyao@disroot.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Yao Zi <ziyao@disroot.org>
+Subject:
+ Re: [PATCH v3 1/5] dt-bindings: clock: Document clock and reset unit of
+ RK3528
+Date: Mon, 24 Feb 2025 10:09:29 +0100
+Message-ID: <49730692.MN2xkq1pzW@diego>
+In-Reply-To: <20250217061142.38480-6-ziyao@disroot.org>
+References:
+ <20250217061142.38480-5-ziyao@disroot.org>
+ <20250217061142.38480-6-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72m-R0tOakf=j7BZ78jDHdy=9-fvZbAT8j91Je2Bxy0sFg@mail.gmail.com>
- <Z7SwcnUzjZYfuJ4-@infradead.org> <CANiq72myjaA3Yyw_yyJ+uvUrZQcSLY_jNp65iKH8Y5xGY5tXPQ@mail.gmail.com>
- <326CC09B-8565-4443-ACC5-045092260677@zytor.com> <CANiq72m+r1BZVdVHn2k8XeU37ZeY6VT2S9KswMuFA=ZO3e4uvQ@mail.gmail.com>
- <a7c5973a-497c-4f31-a7be-b3123bddb6dd@zytor.com> <Z7VKW3eul-kGaIT2@Mac.home>
- <2025021954-flaccid-pucker-f7d9@gregkh> <4e316b01634642cf4fbb087ec8809d93c4b7822c.camel@tugraz.at>
- <2025022024-blooper-rippling-2667@gregkh> <1d43700546b82cf035e24d192e1f301c930432a3.camel@tugraz.at>
- <D7ZDF8NZGPS3.3QBMAVC1NTUDM@maslowski.xyz> <E0BD1BDB-0EBC-4E27-9324-7CA70ACE194B@gmail.com>
-In-Reply-To: <E0BD1BDB-0EBC-4E27-9324-7CA70ACE194B@gmail.com>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Mon, 24 Feb 2025 02:08:45 -0700
-X-Gm-Features: AWEUYZnfy9opWscz-4jFfz1MccFJtXuWWbjaTV1FP0XPTI4GXNbYujZ-2jgW9oU
-Message-ID: <CAFJgqgSCW9XbVYr7yTa47Miax+LGM9jNNE5Yuw1xQE2BZ9gkTQ@mail.gmail.com>
-Subject: Re: Rust kernel policy
-To: comex <comexk@gmail.com>
-Cc: =?UTF-8?Q?Piotr_Mas=C5=82owski?= <piotr@maslowski.xyz>, 
-	Martin Uecker <uecker@tugraz.at>, Greg KH <gregkh@linuxfoundation.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Christoph Hellwig <hch@infradead.org>, 
-	rust-for-linux <rust-for-linux@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, David Airlie <airlied@gmail.com>, 
-	linux-kernel@vger.kernel.org, ksummit@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Sun, Feb 23, 2025 at 4:32=E2=80=AFPM comex <comexk@gmail.com> wrote:
->
-> > On Feb 22, 2025, at 3:42=E2=80=AFPM, Piotr Mas=C5=82owski <piotr@maslow=
-ski.xyz> wrote:
-> >
-> > I'm sure you already know this, but the idea of safety in Rust isn't
-> > just about making elementary language constructs safe. Rather, it is
-> > primarily about designing types and code in such a way one can't "use
-> > them wrong=E2=80=9D.
->
-> And importantly, it=E2=80=99s very hard to replicate this approach in C, =
-even in a hypothetical =E2=80=98C + borrow checker=E2=80=99, because C has =
-no generic types.  Not all abstractions need generics, but many do.
+Am Montag, 17. Februar 2025, 07:11:42 MEZ schrieb Yao Zi:
+> There are two types of clocks in RK3528 SoC, CRU-managed and
+> SCMI-managed. Independent IDs are assigned to them.
+> 
+> For the reset part, differing from previous Rockchip SoCs and
+> downstream bindings which embeds register offsets into the IDs, gapless
+> numbers starting from zero are used.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  .../bindings/clock/rockchip,rk3528-cru.yaml   |  64 +++
+>  .../dt-bindings/clock/rockchip,rk3528-cru.h   | 453 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3528-cru.h   | 241 ++++++++++
+>  3 files changed, 758 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+> new file mode 100644
+> index 000000000000..5a3ec902351c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/rockchip,rk3528-cru.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Rockchip RK3528 Clock and Reset Controller
+> +
+> +maintainers:
+> +  - Yao Zi <ziyao@disroot.org>
+> +
+> +description: |
+> +  The RK3528 clock controller generates the clock and also implements a reset
+> +  controller for SoC peripherals. For example, it provides SCLK_UART0 and
+> +  PCLK_UART0 as well as SRST_P_UART0 and SRST_S_UART0 for the first UART
+> +  module.
+> +  Each clock is assigned an identifier, consumer nodes can use it to specify
+> +  the clock. All available clock and reset IDs are defined in dt-binding
+> +  headers.
+> +
+> +properties:
+> +  compatible:
+> +    const: rockchip,rk3528-cru
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
 
-True, a more expressive and complex language like Rust, C++, Swift,
-Haskell, etc. will typically have better facilities for creating good
-abstractions. That expressiveness has its trade-offs. I do think the
-costs of expressive and complex languages can very much be worth it
-for many different kinds of projects. A rule of thumb may be that a
-language that is expressive and complex, may allow writing programs
-that are simpler relative to if those programs were written in a
-simpler and less expressive language. But one should research and be
-aware that there are trade-offs for a language being expressive and
-complex. In a simplistic view, a language designer will try to
-maximize the benefits from expressiveness of a complex language, and
-try to minimize the costs of that expressiveness and complexity.
+I do think this needs a
+    minItems: 1
+    maxItems: 2
+or similar.
 
-Rust stands out due to its lifetimes and borrow checker, in addition
-to it being newer and having momentum.
+xin24m is the main oscillator everything else is supplied from, so is
+absolutely required, but that gmac0 supply comes from an (probably)
+optional clock supply from a mac phy?
 
-What are the trade-offs of a more complex language? One trade-off is
-that implementing a compiler for the language can be a larger and more
-difficult undertaking than if the language was simpler. As an example,
-to date, there is only one major Rust compiler, rustc, while gccrs is
-not yet ready. Another example is that it can be more difficult to
-ensure high quality of a compiler for a complex language than for a
-simpler language.
+So is possibly not available on a system without ethernet hardware?
 
-Best, VJ.
+
+Heiko
+
+
 
