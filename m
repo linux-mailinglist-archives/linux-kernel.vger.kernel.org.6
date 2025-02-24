@@ -1,117 +1,197 @@
-Return-Path: <linux-kernel+bounces-529096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CEDA41FBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:57:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0181EA41F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:51:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DDCC4423A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ACC31897E73
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D7D23BCE5;
-	Mon, 24 Feb 2025 12:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="crk26qRa"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A0F23BD0A;
+	Mon, 24 Feb 2025 12:50:04 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A312571B6;
-	Mon, 24 Feb 2025 12:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EA8163;
+	Mon, 24 Feb 2025 12:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401393; cv=none; b=eHb0q/quEAtpzxyFbcYcLiCLjefNs32LLuujx7eV54DoKb9CEVS7eKPPxOJpm5W+PNKLxCtFrUFBvGyXx8jyMQm84tIk8SnwyJkPDfxPDJBv5QyByaQk/LhvKmwySYOcIIk42vEcGs+ByAbUt5WqPA+rpnLHXUbFpdNlnDUe85w=
+	t=1740401403; cv=none; b=Va9lmJzjNe0A2zx5q/MIX2ZmWEHzQ0A0qinkEOFXdLVSNMcIrtdh8YhAOSorL+VuPbRgXQS1MeP1CuNMFOF0w17vCvFv8XpKBX7DcoDQjgNLqCzbnJD0tVefqB8ROeUNWFkJRBp+XSfT1m07UrvZhBDq4BGUibzHz0YYMWejn/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401393; c=relaxed/simple;
-	bh=artm3sYYZO++B9Dib2JcPiWfNmKPwS/KGkd1oxsTrP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PDCJQ/pURbC+Yujw/W+kDfvFevdDl0QeAWjbYIB9nnmoJ/90Cto5st9QCxkJY1F03cxYkWfe+d7yT6mHk0G+bNK7EjkG8UbxdTMExD1vz9IxQlBuKOlcypQMHpHyjrIpX4PedY6+TDCAzmdxLWdHqKzpKhfbp8KF0BBJD4HUld0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=crk26qRa; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hJylRD8fzAq3eOuue35FX0OJEQQRNNr5WEQuWoBz8dI=; b=crk26qRaBe6Jax9eNVfq+d5M7I
-	fKReB9gELCq0M7QRT2mRtHODhnfaFYp/cX54b/LqnCx59ypdK1/fw8AQuGKJtMFNN4eblc14CRGOQ
-	F66q9y6ombCeIYf5Afbo4kAcx/qkGpgeDLyjPMwjFAmmMFeC4AZn71rmEvdYEbVH+gQ4nCK6GosD2
-	/f5dPE8zzIO+8zCIw97f983HpA9OQ6dR0ZldLedO+oGJjRJF6dUnGcrKI+PUIduNFWu7KA0ObtaOK
-	6Vfe3QB14s9F89+J9pyy7f9E3Q3Uf4bMqmwItzrcNyR6tQ21Sdi6zIQAF4LXXarVu4R3dTxno9+jX
-	d6R80/Dg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:49744)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tmXtn-0006Gq-2H;
-	Mon, 24 Feb 2025 12:49:27 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tmXtf-00050L-1T;
-	Mon, 24 Feb 2025 12:49:19 +0000
-Date: Mon, 24 Feb 2025 12:49:19 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Rob Herring <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	Kyle Swenson <kyle.swenson@est.tech>,
-	Dent Project <dentproject@linuxfoundation.org>,
-	kernel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 09/12] net: pse-pd: pd692x0: Add support for
- controller and manager power supplies
-Message-ID: <Z7xqz-Z5UhqBQXnc@shell.armlinux.org.uk>
-References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
- <20250218-feature_poe_port_prio-v5-9-3da486e5fd64@bootlin.com>
- <20250224134222.358b28d8@fedora>
+	s=arc-20240116; t=1740401403; c=relaxed/simple;
+	bh=ZdBCdF5KOs1JctRObwGVJkOHnGlGXqRbiACo9SOfprU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g31zbF02UvgCZ6loq4RgN4NXehIFvuNUHXjc+bAsNVkQNrQRG/nWZM6jPcQQw7G6fdZDEAomgl6phlc1YIEHF0OlyPgDrGchIJWagrFMhcfkJ4srjuGFCgPR5u2Wtn9daU3QMiqdqEDRj8u+RJElyQgFa0urNqPS4T59wfbLp0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z1gT108Dcz1ltby;
+	Mon, 24 Feb 2025 20:45:57 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1C17E180069;
+	Mon, 24 Feb 2025 20:49:58 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 24 Feb
+ 2025 20:49:57 +0800
+Message-ID: <5162cd2c-e239-4fc6-b2da-2e2fe087cb1b@huawei.com>
+Date: Mon, 24 Feb 2025 20:49:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224134222.358b28d8@fedora>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/8] Support for autonomous selection in cppc_cpufreq
+To: Pierre Gondois <pierre.gondois@arm.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>, <lenb@kernel.org>,
+	<robert.moore@intel.com>, <viresh.kumar@linaro.org>,
+	<mario.limonciello@amd.com>, <gautham.shenoy@amd.com>, <ray.huang@amd.com>,
+	<acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<linuxarm@huawei.com>, <yumpusamongus@gmail.com>,
+	<srinivas.pandruvada@linux.intel.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <hepeng68@huawei.com>,
+	<fanghao11@huawei.com>
+References: <20250206131428.3261578-1-zhenglifeng1@huawei.com>
+ <0097a9a3-fe61-4200-9a54-5a9c81d3219c@huawei.com>
+ <CAJZ5v0hP9a8g8UR2oPyivP1C65=csR245PSHay+nOx3vkoKoaA@mail.gmail.com>
+ <ddbc0336-9083-4054-8930-c22bd8337488@huawei.com>
+ <828ab846-fe03-4830-a722-a86e57ba89c7@arm.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <828ab846-fe03-4830-a722-a86e57ba89c7@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-On Mon, Feb 24, 2025 at 01:42:22PM +0100, Maxime Chevallier wrote:
-> On Tue, 18 Feb 2025 17:19:13 +0100
-> Kory Maincent <kory.maincent@bootlin.com> wrote:
-> > diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-> > index 44ded2aa6fca..c9fa60b314ce 100644
-> > --- a/drivers/net/pse-pd/pd692x0.c
-> > +++ b/drivers/net/pse-pd/pd692x0.c
-> > @@ -976,8 +976,10 @@ pd692x0_register_managers_regulator(struct pd692x0_priv *priv,
-> >  	reg_name_len = strlen(dev_name(dev)) + 23;
-> >  
-> >  	for (i = 0; i < nmanagers; i++) {
-> > +		static const char * const regulators[] = { "vaux5", "vaux3p3" };
+On 2025/2/24 18:31, Pierre Gondois wrote:
 > 
-> Looks like the 'static' is not needed here :)
+> 
+> On 2/22/25 11:07, zhenglifeng (A) wrote:
+>> On 2025/2/19 3:17, Rafael J. Wysocki wrote:
+>>> On Thu, Feb 13, 2025 at 2:55 AM zhenglifeng (A) <zhenglifeng1@huawei.com> wrote:
+>>>>
+>>>> On 2025/2/6 21:14, Lifeng Zheng wrote:
+>>>>> Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
+>>>>> driver.
+>>>>>
+>>>>> The patch series is organized in two parts:
+>>>>>
+>>>>>   - patch 1-5 refactor out the general CPPC register get and set functions
+>>>>>     in cppc_acpi.c
+>>>>>
+>>>>>   - patches 6-8 expose sysfs files for users to control CPPC autonomous
+>>>>>     selection when supported
+>>>>>
+>>>>> Changelog:
+>>>>>
+>>>>> v5:
+>>>>>
+>>>>>   - add more explanation to the commit logs and comments
+>>>>>   - change REG_OPTIONAL from bin to hex
+>>>>>   - split patch 2 into 3 smaller patches
+>>>>>   - remove CPPC_REG_VAL_READ() and CPPC_REG_VAL_WRITE() macros
+>>>>>   - move the modification part in patch 5 into a separate patch
+>>>>>   - rename the sysfs file from "energy_perf" to
+>>>>>     energy_performance_preference_val
+>>>>>
+>>>>> v4:
+>>>>>
+>>>>>   - add REG_OPTIONAL and IS_OPTIONAL_CPC_REG to judge if a cpc register is
+>>>>>     an optional one
+>>>>>   - check whether the register is optional before CPC_SUPPORTED check in
+>>>>>     cppc_get_reg_val() and cppc_set_reg_val()
+>>>>>   - check the register's type in cppc_set_reg_val()
+>>>>>   - add macros to generally implement registers getting and setting
+>>>>>     functions
+>>>>>   - move some logic codes from cppc_cpufreq.c to cppc_acpi.c
+>>>>>   - replace cppc_get_auto_sel_caps() by cppc_get_auto_sel()
+>>>>>
+>>>>> v3:
+>>>>>
+>>>>>   - change cppc_get_reg() and cppc_set_reg() name to cppc_get_reg_val() and
+>>>>>     cppc_set_reg_val()
+>>>>>   - extract cppc_get_reg_val_in_pcc() and cppc_set_reg_val_in_pcc()
+>>>>>   - return the result of cpc_read() in cppc_get_reg_val()
+>>>>>   - add pr_debug() in cppc_get_reg_val_in_pcc() when pcc_ss_id < 0
+>>>>>   - rename 'cpunum' to 'cpu' in cppc_get_reg_val()
+>>>>>   - move some macros from drivers/cpufreq/cppc_cpufreq.c to
+>>>>>     include/acpi/cppc_acpi.h with a CPPC_XXX prefix
+>>>>>
+>>>>> v2:
+>>>>>
+>>>>>   - fix some incorrect placeholder
+>>>>>   - change kstrtoul to kstrtobool in store_auto_select
+>>>>>
+>>>>> Lifeng Zheng (8):
+>>>>>    ACPI: CPPC: Add IS_OPTIONAL_CPC_REG macro to judge if a cpc_reg is
+>>>>>      optional
+>>>>>    ACPI: CPPC: Optimize cppc_get_perf()
+>>>>>    ACPI: CPPC: Rename cppc_get_perf() to cppc_get_reg_val()
+>>>>>    ACPI: CPPC: Add cppc_set_reg_val()
+>>>>>    ACPI: CPPC: Refactor register value get and set ABIs
+>>>>>    ACPI: CPPC: Modify cppc_get_auto_sel_caps() to cppc_get_auto_sel()
+>>>>>    ACPI: CPPC: Add three functions related to autonomous selection
+>>>>>    cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
+>>>>>
+>>>>>   .../ABI/testing/sysfs-devices-system-cpu      |  54 ++++
+>>>>>   drivers/acpi/cppc_acpi.c                      | 303 +++++++++++-------
+>>>>>   drivers/cpufreq/amd-pstate.c                  |   3 +-
+>>>>>   drivers/cpufreq/cppc_cpufreq.c                | 109 +++++++
+>>>>>   include/acpi/cppc_acpi.h                      |  30 +-
+>>>>>   5 files changed, 372 insertions(+), 127 deletions(-)
+>>>>>
+>>>>
+>>>> Gentle ping.
+>>>
+>>> OK, so I'm wondering how this is related to the patch series at
+>>>
+>>> https://lore.kernel.org/linux-acpi/20250211103737.447704-1-sumitg@nvidia.com/
+>>
+>> This series refactors some cppc_acpi ABIs and supports cppc autonomous
+>> selection with sysfs files in cpufreq policy.  Later, [1] proposed another
+>> design with different user interfaces.We will discuss and reach a consensus
+>> with regard to this.
+>>
+>> However, as mentioned in [1], patch 1-7 in this series (the cppc_acpi part)
+>> are not related to user interfaces, so can be reviewed and applied
+>> separately.  I can also send patch 1-7 as a new thread if preferred.
+>>
+>> [1] https://lore.kernel.org/linux-acpi/20250211103737.447704-1-sumitg@nvidia.com/
+> 
+> I tried the patchset on a platform which doesn't implement CPC and everything worked well.
+> As Lifeng said,
+>   PATCH v5 8/8] cpufreq: CPPC: Support for autonomous selection in cppc_cpufreq
+> seems to be still in discussion, but for patches 1-7 FWIW:
+> 
+> Reviewed-by: Pierre Gondois <pierre.gondois@arm.com>
 
-Have you checked the compiler output before saying that?
+Thank you!
 
-I've seen plenty of instances where "static" should be there but isn't,
-leading to the compiler generating inline code to create the
-array/struct on the stack.
+Regards,
+Lifeng
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> 
+> Regards,
+> Pierre
+> 
+>>
+>>>
+>>>> Attach discussions of previous versions:
+>>>> v1: https://lore.kernel.org/all/20241114084816.1128647-1-zhenglifeng1@huawei.com/
+>>>> v2: https://lore.kernel.org/all/20241122062051.3658577-1-zhenglifeng1@huawei.com/
+>>>> v3: https://lore.kernel.org/all/20241216091603.1247644-1-zhenglifeng1@huawei.com/
+>>>> v4: https://lore.kernel.org/all/20250113122104.3870673-1-zhenglifeng1@huawei.com/
+>>>>
+>>>
+>>
+>>
+> 
+
 
