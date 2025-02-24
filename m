@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-529377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6873AA4240E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:52:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46643A423DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F7917BCD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:43:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F7C3A8A21
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6298218B484;
-	Mon, 24 Feb 2025 14:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E360225A329;
+	Mon, 24 Feb 2025 14:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjd90I9/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJi61wtk"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09E938DD8;
-	Mon, 24 Feb 2025 14:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C691537AC;
+	Mon, 24 Feb 2025 14:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408122; cv=none; b=XCHQBJGvGZIwf+UFHt43LCJ8KRkHcnsc/dgWP71k5bVRki79A9HlocCy7FzTY82l00GzBoj3SKc/B3aID1SlLWpEGwaRkAWB6v3iCEmYGRWcILj+rY/2Zgs6R9MIQV6DyBYYhUhFNx4YVXrZhX0JlWz1c2F4/fm9XWLZ5z6ROWQ=
+	t=1740407599; cv=none; b=ALJJIbBgN95JwCmJhY7Qm3H0SzXi8uWEZHaDdubnQLGORCVKqV70R5kAl9lYsRQS7sUrjSPtCSwqzOpZ02s8d2o9Kz/u9ciZM2j8NnMRvHewEhQ0/nkGRodGbwKUQSfX+HGs/OTPpLEhMaVfVzPbiWqCmbaVxd7PTwuKW4pu7LA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408122; c=relaxed/simple;
-	bh=C82abNrH3ZcypYfQQ4nCqd4+THVXdsD+JjQgHjKZk+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhuqB8hsvGuW5vnSuGnhmiGaDxKUDUW6zYqhQunm+kmxam1rWKHQj1RomWRKy7C6sZ41mjo+g9zovMsxMbIy04lM9hSpRiodepUdpudb7ey6aFm7IHXffyaZ1GN5YPQsuIFi5NthLE4UwKetr6RY4TLDeluGlwNdmjkfQzI9vHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjd90I9/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB43C4CEE8;
-	Mon, 24 Feb 2025 14:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740408122;
-	bh=C82abNrH3ZcypYfQQ4nCqd4+THVXdsD+JjQgHjKZk+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cjd90I9/+wL8z2KK+BOjI9NRv5U8HB+KR3n65ZXqDM5qGx/Rcsy5rrXI7JtVb7r0h
-	 Fhmn7H6CtBCqBolOyRpzoZobWV1lZj+0zS2y+eULpllbYd6k5wXtCLI2h5iZIm0yKE
-	 PijRg7ZpUCUnO1n2jhb0kpWI4Y4ScVWaNMPw+yBvlFLuCWNWdmPIkmWHeRBxKijDG6
-	 +Tdi7Wyjt6k0JhhQUSd66kOsW2EMb7PUwZONeY9bos6MJXjrfZCC4LRbMXmMOmCHlX
-	 +38k9pEld41DUDfDsJSXwvTDRDzgIufun8/DHpJ9kwTizCji6zV+RG/F4mcqe3kVMG
-	 a3ofzWT4ovxQw==
-Date: Mon, 24 Feb 2025 20:11:55 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Kevin Xie <kevin.xie@starfivetech.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	"open list:PCIE DRIVER FOR STARFIVE JH71x0" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1] PCI: starfive: Fix kmemleak in StarFive PCIe driver's
- IRQ handling
-Message-ID: <20250224144155.omzrmls7hpjqw6yl@thinkpad>
-References: <20250208140110.2389-1-linux.amoon@gmail.com>
- <20250210174400.b63bhmtkuqhktb57@thinkpad>
- <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com>
- <20250214060935.cgnc436upawnfzn6@thinkpad>
- <CANAwSgTWa9gwpPhVCYzJM5BL5wUkpB4eyDtX+Vs3SX3a9541wA@mail.gmail.com>
- <CANAwSgRvT-Mqj3XPrME6oKhYmnCUZLnwHfFHmSL=PK+xVLHAqw@mail.gmail.com>
- <20250224080129.zm7fvxermgeyycav@thinkpad>
- <CANAwSgTsp19ri5SYYtD+VOYgBLYg5UqvGRrtNTXOWw7umxGCQg@mail.gmail.com>
- <20250224115452.micfqctwjkt6gwrs@thinkpad>
- <CANAwSgSdEr0X0F1AFAUfJoEjT1a63nj5Ar-ZfmehfhnE0=v+CA@mail.gmail.com>
+	s=arc-20240116; t=1740407599; c=relaxed/simple;
+	bh=wDbiPtUfE3pBD2ibGHCUp1eNQeURYMrRbZBQxQgN6Ek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aRiMoWKXgubt8zQV4uHUQK5mTkQEZyubz2ZNqsVAB8TwY6AvLjzOdv6mqALEknSpyS4AFPsTUYWMkRVc7tZLiRevA48/NsMWHK+0w1O9z/p3CLbtBOo4nK4zT4W2stsBRYP7L2J+bT3199pKibWeG8r3GONZ5Tspb/EWBiV7aAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJi61wtk; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so6599481a12.0;
+        Mon, 24 Feb 2025 06:33:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740407596; x=1741012396; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=35t1hJFOdpa+T0AaHCGkVAi9es9mhFSUPTxVJx4I/9w=;
+        b=FJi61wtkedOmV4HEOK7e2YvQFhSlur5GH0VGy7i/hburgQa4OXk8ji4MavVwe9mQq6
+         qi5IZcKci0aavGMD2ZZUZ8LAVP143hM6S44bVltFvG6A8/pK8FmSFJq/qNwmIDkKJ3BP
+         PlYtJDxQYF3PLMIImcZuRCMTse6+4yZEBH5UxWD1ykpnUdsLNllGuX5+TxqHXcvGLQ4G
+         EyTXJjmL5oo6YRupzgn7kJZnaCuM2nD/yFxJ50FQjSACtdtfg6T2lCADPyBvMp0feCr+
+         WlxyE0A13nrczic2YiBUXS3vUJW/FziPeO1xCjtFch/4cmxld8SadFkoeyKHBsuayG7z
+         ZnOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740407596; x=1741012396;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=35t1hJFOdpa+T0AaHCGkVAi9es9mhFSUPTxVJx4I/9w=;
+        b=hq2GRnbpdas0ytHNEQiBgmXj2W+Exbqxlh7DSsvUKzPp/uwvdcgSrLUAMr3YG/wkEr
+         61MuUugkop058PurZHmsNDKdtE0P52tyS/rY03gsg5GoC08NuvP9z4BL1//zgRWnKh4h
+         R4MXIkzzyTVcNGhVd1e0mHX2Dye+MQIJQh6SkwsZcd0T9wRTNrMuoX9sw8Mfdd1HViQ5
+         1hDpfZceewhPzYizC0gUAOFeromz102aJuPoq7oCVRXvgo74AeBGuMyuQjUn2FebBQQs
+         gBa6K7Sjv3IFyzp+tuHyYeQ0SIfphp4VKpUdc5wWEpW7MUjMn+hYdoKJbW92+EPcF6N3
+         tvcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpYKxOoet6t6qbzV57Rir3J5MQEmGykDXgjrF2PculY22GzhhSVXBGadunty2ze0ZRyB65JyXmeMlL@vger.kernel.org, AJvYcCVsdOaQJFWawiVcGP3pxzqOsm+cim5peB/wHKQa7BI3ONyRc3cJ6WHjiP/FC2HokpcWNyu3kp31kJeLyOfG@vger.kernel.org, AJvYcCW989/cm+xPpYocB88fvxI/9cNNMedLOTBcL6VftzWDMQ8SBtPX0alUYUKb9TB+JGD6oDYerJLgiMm1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK3CEYumjTSNzVjEsu/g61FM/0GxE81tl+uE8doF2Qm68JTYhG
+	mKGi6WUJhJV3dKpZOTJCZtrcSBLaU7R6aWEQHFnxZaCKuvzBxISS
+X-Gm-Gg: ASbGncuQOyEZRYW+ovsQ1hfNO2nW9RHayygwE66H1Ae9n1LEA2rqNxU3OSHWFCrS17W
+	pT/55PHLadaUtT/HTkleqhb/KlHQtY6M/e308IfZ10sZ9TsA6+qG7uaaONcXizMiG77AmKMTz9f
+	XpF7pxW/lVF+vCRbMwI2taMHKa0Z7WBjrHm1TiWlsW4rS0e/0HShiXA5YPpxvhkRbCKklNdh4tJ
+	TFQ0uZe2NOBnipV+eIfalVp/+PKkg7K9GzYxmDUjTJvp/0Ah8K5MwO/8rMJyqNEMNoA6uvmQl7/
+	51ULpUujlRTNBIRIuQ8qzil9x/vzaWq96bS7vkwfOHh62ZkmJJg=
+X-Google-Smtp-Source: AGHT+IEpuzX6lyN2J9M4/ZBYAmLlIpNrQmbES6PeBLBJOGfxNsj0XhIs5KAuBO9sPVp0JF08jFkowg==
+X-Received: by 2002:a05:6402:13c8:b0:5de:d803:31f3 with SMTP id 4fb4d7f45d1cf-5e0b7222fa2mr10839330a12.21.1740407595653;
+        Mon, 24 Feb 2025 06:33:15 -0800 (PST)
+Received: from [192.168.5.199] ([92.120.5.6])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece2721d9sm18891253a12.56.2025.02.24.06.33.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 06:33:14 -0800 (PST)
+Message-ID: <36451a88-bfc6-4402-8e16-890d524a9368@gmail.com>
+Date: Mon, 24 Feb 2025 16:42:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: imx8mp: change AUDIO_AXI_CLK_ROOT
+ freq. to 800MHz
+Content-Language: en-GB
+To: Adam Ford <aford173@gmail.com>
+Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
+ Stephen Boyd <sboyd@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, linux-clk@vger.kernel.org,
+ imx@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Lucas Stach <l.stach@pengutronix.de>
+References: <20250221190929.31469-1-laurentiumihalcea111@gmail.com>
+ <20250221190929.31469-5-laurentiumihalcea111@gmail.com>
+ <CAHCN7xL=QZHs5sD7Ja7pBOcXM8cWVQYe270EizDFN--CH_5+zQ@mail.gmail.com>
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <CAHCN7xL=QZHs5sD7Ja7pBOcXM8cWVQYe270EizDFN--CH_5+zQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgSdEr0X0F1AFAUfJoEjT1a63nj5Ar-ZfmehfhnE0=v+CA@mail.gmail.com>
 
-On Mon, Feb 24, 2025 at 07:33:37PM +0530, Anand Moon wrote:
-> Hi Manivannan
-> 
-> On Mon, 24 Feb 2025 at 17:24, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Mon, Feb 24, 2025 at 03:38:29PM +0530, Anand Moon wrote:
-> > > Hi Manivannan
-> > >
-> > > On Mon, 24 Feb 2025 at 13:31, Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Thu, Feb 20, 2025 at 03:53:31PM +0530, Anand Moon wrote:
-> > > >
-> > > > [...]
-> > > >
-> > > > > Following the change fix this warning in a kernel memory leak.
-> > > > > Would you happen to have any comments on these changes?
-> > > > >
-> > > > > diff --git a/drivers/pci/controller/plda/pcie-plda-host.c
-> > > > > b/drivers/pci/controller/plda/pcie-plda-host.c
-> > > > > index 4153214ca410..5a72a5a33074 100644
-> > > > > --- a/drivers/pci/controller/plda/pcie-plda-host.c
-> > > > > +++ b/drivers/pci/controller/plda/pcie-plda-host.c
-> > > > > @@ -280,11 +280,6 @@ static u32 plda_get_events(struct plda_pcie_rp *port)
-> > > > >         return events;
-> > > > >  }
-> > > > >
-> > > > > -static irqreturn_t plda_event_handler(int irq, void *dev_id)
-> > > > > -{
-> > > > > -       return IRQ_HANDLED;
-> > > > > -}
-> > > > > -
-> > > > >  static void plda_handle_event(struct irq_desc *desc)
-> > > > >  {
-> > > > >         struct plda_pcie_rp *port = irq_desc_get_handler_data(desc);
-> > > > > @@ -454,13 +449,10 @@ int plda_init_interrupts(struct platform_device *pdev,
-> > > > >
-> > > > >                 if (event->request_event_irq)
-> > > > >                         ret = event->request_event_irq(port, event_irq, i);
-> > > > > -               else
-> > > > > -                       ret = devm_request_irq(dev, event_irq,
-> > > > > -                                              plda_event_handler,
-> > > > > -                                              0, NULL, port);
-> > > >
-> > > > This change is not related to the memleak. But I'd like to have it in a separate
-> > > > patch since this code is absolutely not required, rather pointless.
-> > > >
-> > > Yes, remove these changes to fix the memory leak issue I observed.
-> > >
-> >
-> > Sorry, I don't get you. This specific code change of removing 'devm_request_irq'
-> > is not supposed to fix memleak.
-> >
-> > If you are seeing the memleak getting fixed because of it, then something is
-> > wrong with the irq implementation. You need to figure it out.
-> 
-> Declaring request_event_irq in the host controller facilitates the
-> creation of a dedicated IRQ event handler.
-> In its absence, a dummy devm_request_irq was employed, but this
-> resulted in unhandled IRQs and subsequent memory leaks.
 
-What do you mean by 'unhandled IRQs'? There is a dummy IRQ handler invoked to
-handle these IRQs. Even your starfive_event_handler() that you proposed was
-doing the same thing.
+On 21.02.2025 21:37, Adam Ford wrote:
+> On Fri, Feb 21, 2025 at 1:11 PM Laurentiu Mihalcea
+> <laurentiumihalcea111@gmail.com> wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> AUDIO_AXI_CLK_ROOT can't run at currently requested 600MHz w/ its parent
+>> SYS_PLL1 configured at 800MHz. Configure it to run at 800MHz as some
+>> applications running on the DSP expect the core to run at this frequency
+>> anyways. This change also affects the AUDIOMIX NoC.
+> Unless I am missing something, the i.MX 8M Plus Applications Processor
+> Datasheet (rev 2.1)  has a table of frequencies, and
+> AUDIO_AXI_CLK_ROOT is shown to be 600MHz nominal and 800MHz for
+> overdrive.  I agree that it's likely not running at 600MHz now, but
+> 800MHz may be out of spec for people who are using the nominal voltage
+> instead of the overdrive, since overdrive requires higher voltages
+> than the nominal.
+>
+> adam
 
-> Eliminating the dummy code eliminated the memory leak logs.
 
-Sorry, this is not a valid justification. But as I said before, the change
-itself (removing the dummy irq handler and related code) looks good to me as I
-see no need for that. But I cannot accept it as a fix for the memleak.
+You're right, this would not work if someone was using
 
-- Mani
+nominal voltage. Do you have an upstream board in mind/usecase which
 
--- 
-மணிவண்ணன் சதாசிவம்
+works with nominal voltage instead of overdrive? As far as I understood from
+
+Lucas's patch ([1]) there's no upstream board using nominal voltage?
+
+
+CC-ing Lucas on this as his patch ([1]) is similar to this in that they're both
+
+trying to use overdrive clock frequencies in the DTSI and I'd very much like
+
+to have some sort of consistency in the DTSI if possible.
+
+
+
+[1]: https://lore.kernel.org/imx/20250204182737.3361431-1-l.stach@pengutronix.de/
+
 
