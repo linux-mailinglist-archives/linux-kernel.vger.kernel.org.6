@@ -1,305 +1,271 @@
-Return-Path: <linux-kernel+bounces-530220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73AFCA430BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:23:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4988FA430BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896CE19C1187
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:23:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2586217CFC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A033220F089;
-	Mon, 24 Feb 2025 23:22:03 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AB220E31F;
-	Mon, 24 Feb 2025 23:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054920C02C;
+	Mon, 24 Feb 2025 23:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="A67uPgO/"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873C420B80F;
+	Mon, 24 Feb 2025 23:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439322; cv=none; b=cfctbLsi+jrvVwCAGN8VMUzeRBNXDY3yQ/JPIiGxC3ZRjfYl9iTXW/jc1vYTERH7r4TgnohX4kKmkZJx4DSw0w1nYTiNkwp0eo7pzSIE6kwv2LeaIs0+dFBoCzw8yy4ShFft0EC+GhKlw+loPcFbMmkzatKephg9Z8XjZDsQ6KM=
+	t=1740439342; cv=none; b=qyzUqnKRRVK5WvNiUTDxn0ARwU6LHJUsWCcnwkIOWjXGVva0KpTGGx3KinFeWcEnQTVSJlx5cYu2KXMqWbQ2yp4AbcSqZdcFB1+E1Pmdm6G0wgFwkDaB6zqc7a+JGXvcsbUQaM9+wXCauhOxhRQrhKS37x8t1LLinIzXHx31RrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439322; c=relaxed/simple;
-	bh=nnV9DZFOn7haUOjP0I2UK6z0S6sV69e9OGIuX6qRp3k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UngklJzhCvZFEe51ZdBtktbpMVEgSFwVTkQkvnrszTVyijEcAjtjx6R1o+B9bZp6aVatVsPqVAOMdS5WlC6s/+d61rvF7LvoroVC6dlPkq9MGg5m4cDbrbZjJub1PBjuXrN90QobJoc/zZBVDYcCTBPVrkIICl1/deDiS7lAYFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42836C4CEED;
-	Mon, 24 Feb 2025 23:22:02 +0000 (UTC)
-Received: by venus (Postfix, from userid 1000)
-	id 5031F18067F; Tue, 25 Feb 2025 00:21:58 +0100 (CET)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-Date: Tue, 25 Feb 2025 00:21:40 +0100
-Subject: [PATCH 7/7] power: supply: core: convert to fwnnode
+	s=arc-20240116; t=1740439342; c=relaxed/simple;
+	bh=X29q3izbSircPWPMW3fCexEv9C/gusI/5fSDjPCSsF0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=dRuBOi2sUPk9McpjYLnzXNYWXz/4ccsJvQmPSA7Eh1AUW0EqC8bufIxco7ZrDC/KSapbE32ooFq5cNeCjz7LwE3AXzfh6C5tUy9MlgUSPy2AwaIYjm1dArf8p/FUbPuaOC+BMgTKptHgHwB7kMIKcC8H5hNLoK9Cvikw7lDOCkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=A67uPgO/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A89DB203CDE5;
+	Mon, 24 Feb 2025 15:22:19 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A89DB203CDE5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740439339;
+	bh=PGCg6n2Q6WZLrimz+DtE8iD6q+LYJzZzjnV1WXJIGMU=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=A67uPgO/+1Vash+VgNUVaceBsg/GexArtBCVuHxE8ACpVzrz2pN98+Xcn6Tv24C9f
+	 Ksrr6XADjWe9pi9xFXy/83nYiZhMNz2DH0BEiPr4KgD7WAl80TTo69rmmi5IhDvZrK
+	 FcuHnJztFWfI3aKDOM/9KD7bnAJWekyXirTS3SBU=
+Message-ID: <14a199d8-1cf3-49bc-8e0d-92d9c8407b4f@linux.microsoft.com>
+Date: Mon, 24 Feb 2025 15:22:19 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-psy-core-convert-to-fwnode-v1-7-d5e4369936bb@collabora.com>
-References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
-In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Hans de Goede <hdegoede@redhat.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, 
- =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
- Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
- David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
- Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Orson Zhai <orsonzhai@gmail.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, 
- Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- Sebastian Reichel <sebastian.reichel@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7861;
- i=sebastian.reichel@collabora.com; h=from:subject:message-id;
- bh=nnV9DZFOn7haUOjP0I2UK6z0S6sV69e9OGIuX6qRp3k=;
- b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBnvP8Vyowp/5XDLVpgtqLj5BRsrdZ0KwiEX2JvW
- KFTFVKHaPuJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCZ7z/FQAKCRDY7tfzyDv6
- mn5ND/98EYA0PlXxgmLRMa9fPfAg5Ed50YVwJL59fCMW5ha/jRoCUuwVNFTgEC+6hmINGNG8ODN
- +MFwKOrvcRzKBa78Yo7FGxTTN3jWcGKtO1Vu0Na4hnD38OoABDEyOjr4ZegySNLFAgSyBXaaofI
- QA87R2YimROI1m+SCrTz4ZF3u1uQAb+vf94cwmeoGDDOqeL5aqeNcvsr9agGVV5o+t0D6RSo2Vj
- SBcTXQ9GmvPFuesK9AyEcQdpJ15UDGEnY5cKBVYe+BVMLe/LHvjkbTZ3Ws2mYdeg3y0Vo2duFnk
- gPukpCmIyscM4Uj0wBOtORCm/NZXW2021se0PmebPGRuEU8FduzAwCFKbALM+k5bw62sQbyIIth
- IvC69gatLauYVn8B4nZ2O9aSKtVtAZ3T5ZFOetqjqccgIp8cNKA/xJh5S9L0Ba4RgaXEFKBEAZ6
- asgfmoLao5zp6TmU6mBkJoyi5h0POAcgNkz1iNjKVmwkKK5cDDdG6/lXqIiLNyX+GDgNjGFuoF/
- F3Gf/Fj/V7ItLWFT3MhFJG5KMp8+z1u1Nn36xCoDAVeZflHaZRsSfnJGT4WAhdvBnfsRSWBlmw9
- +j4ncNHD8sWlVYRFixjCAobqfNe+Zs0Sgr6h24cHQvOGHgxdXj11oL23OkDyt5DoJEB9hmRmqRl
- 6DswGO0R2FlI/3w==
-X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
- fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v4 1/6] arm64: hyperv: Use SMCCC to detect
+ hypervisor presence
+From: Roman Kisel <romank@linux.microsoft.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: benhill@microsoft.com, bperkins@microsoft.com, sunilmut@microsoft.com,
+ bhelgaas@google.com, Borislav Petkov <bp@alien8.de>,
+ Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley
+ <conor+dt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Dexuan Cui <decui@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, krzk+dt@kernel.org,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ "K. Y. Srinivasan" <kys@microsoft.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Ingo Molnar <mingo@redhat.com>, Rob Herring <robh@kernel.org>,
+ ssengar@linux.microsoft.com, Thomas Gleixner <tglx@linutronix.de>,
+ Wei Liu <wei.liu@kernel.org>, Will Deacon <will@kernel.org>,
+ devicetree@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, x86@kernel.org
+References: <20250212014321.1108840-1-romank@linux.microsoft.com>
+ <20250212014321.1108840-2-romank@linux.microsoft.com>
+ <1b14e3de-4d3e-420c-819c-31ffb2d448bd@app.fastmail.com>
+ <593c22ca-6544-423d-84ee-7a06c6b8b5b9@linux.microsoft.com>
+ <97887849-faa8-429b-862b-daf6faf89481@app.fastmail.com>
+ <6e4685fe-68e9-43bd-96c5-b871edb1b971@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <6e4685fe-68e9-43bd-96c5-b871edb1b971@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Replace any DT specific code with fwnode in the power-supply
-core.
+Hi Arnd,
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+[...]
+
+>> I would suggest moving the UUID values into a variable next
+>> to the caller like
+>>
+>> #define ARM_SMCCC_VENDOR_HYP_UID_KVM \
+>>      UUID_INIT(0x28b46fb6, 0x2ec5, 0x11e9, 0xa9, 0xca, 0x4b, 0x56, 
+>> 0x4d, 0x00, 0x3a, 0x74)
+>>
+>> and then just pass that into arm_smccc_hyp_present(). (please
+>> double-check the endianess of the definition here, I probably
+>> got it wrong myself).
+
+I worked out a variation [1] of the change that you said looked good.
+
+Here, there is a helper macro for creating uuid_t's when checking
+for the hypervisor running via SMCCC to avoid using the bare UUID_INIT. 
+Valiadted with KVM/arm64 and Hyper-V/arm64. Do you think this is a
+better approach than converting by hand?
+
+If that looks too heavy, maybe could leave out converting the expected
+register values to UUID, and pass the expected register values to
+arm_smccc_hyp_present directly. That way, instead of
+
+bool arm_smccc_hyp_present(const uuid_t *hyp_uuid);
+
+we'd have
+
+bool arm_smccc_hyp_present(u32 reg0, u32 reg1, u32 reg2, u32 reg2);
+
+
+Please let me know what you think!
+
+[1]
 ---
- drivers/power/supply/bq2415x_charger.c   |  2 +-
- drivers/power/supply/power_supply_core.c | 65 ++++++++++++++++----------------
- include/linux/power_supply.h             |  2 +-
- 3 files changed, 34 insertions(+), 35 deletions(-)
+  arch/arm64/hyperv/mshyperv.c       | 16 +++++---------
+  drivers/firmware/smccc/kvm_guest.c | 13 +++++------
+  drivers/firmware/smccc/smccc.c     | 19 ++++++++++++++++
+  include/linux/arm-smccc.h          | 35 ++++++++++++++++++++++++++++++
+  4 files changed, 64 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/power/supply/bq2415x_charger.c b/drivers/power/supply/bq2415x_charger.c
-index 9e3b9181ee76a4f473228bba022917677acce256..1ecbca510bba99ee7abcda33a719035adfceeb5f 100644
---- a/drivers/power/supply/bq2415x_charger.c
-+++ b/drivers/power/supply/bq2415x_charger.c
-@@ -1674,7 +1674,7 @@ static int bq2415x_probe(struct i2c_client *client)
- 	/* Query for initial reported_mode and set it */
- 	if (bq->nb.notifier_call) {
- 		if (np) {
--			notify_psy = power_supply_get_by_phandle(np,
-+			notify_psy = power_supply_get_by_phandle(of_fwnode_handle(np),
- 						"ti,usb-charger-detection");
- 			if (IS_ERR(notify_psy))
- 				notify_psy = NULL;
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 0e5fa16fd8f832414f34fae31086128928fa57cc..a01e6e1815da2ac70ce93d8bd5d06517a0eb1082 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -18,7 +18,6 @@
- #include <linux/device.h>
- #include <linux/notifier.h>
- #include <linux/err.h>
--#include <linux/of.h>
- #include <linux/power_supply.h>
- #include <linux/property.h>
- #include <linux/thermal.h>
-@@ -196,24 +195,24 @@ static int __power_supply_populate_supplied_from(struct power_supply *epsy,
- 						 void *data)
- {
- 	struct power_supply *psy = data;
--	struct device_node *np;
-+	struct fwnode_handle *np;
- 	int i = 0;
- 
- 	do {
--		np = of_parse_phandle(psy->dev.of_node, "power-supplies", i++);
--		if (!np)
-+		np = fwnode_find_reference(psy->dev.fwnode, "power-supplies", i++);
-+		if (IS_ERR(np))
- 			break;
- 
--		if (np == epsy->dev.of_node) {
-+		if (np == epsy->dev.fwnode) {
- 			dev_dbg(&psy->dev, "%s: Found supply : %s\n",
- 				psy->desc->name, epsy->desc->name);
- 			psy->supplied_from[i-1] = (char *)epsy->desc->name;
- 			psy->num_supplies++;
--			of_node_put(np);
-+			fwnode_handle_put(np);
- 			break;
- 		}
--		of_node_put(np);
--	} while (np);
-+		fwnode_handle_put(np);
-+	} while (!IS_ERR(np));
- 
- 	return 0;
- }
-@@ -232,16 +231,16 @@ static int power_supply_populate_supplied_from(struct power_supply *psy)
- static int  __power_supply_find_supply_from_node(struct power_supply *epsy,
- 						 void *data)
- {
--	struct device_node *np = data;
-+	struct fwnode_handle *fwnode = data;
- 
- 	/* returning non-zero breaks out of power_supply_for_each_psy loop */
--	if (epsy->dev.of_node == np)
-+	if (epsy->dev.fwnode == fwnode)
- 		return 1;
- 
- 	return 0;
- }
- 
--static int power_supply_find_supply_from_node(struct device_node *supply_node)
-+static int power_supply_find_supply_from_fwnode(struct fwnode_handle *supply_node)
- {
- 	int error;
- 
-@@ -249,7 +248,7 @@ static int power_supply_find_supply_from_node(struct device_node *supply_node)
- 	 * power_supply_for_each_psy() either returns its own errors or values
- 	 * returned by __power_supply_find_supply_from_node().
- 	 *
--	 * __power_supply_find_supply_from_node() will return 0 (no match)
-+	 * __power_supply_find_supply_from_fwnode() will return 0 (no match)
- 	 * or 1 (match).
- 	 *
- 	 * We return 0 if power_supply_for_each_psy() returned 1, -EPROBE_DEFER if
-@@ -262,7 +261,7 @@ static int power_supply_find_supply_from_node(struct device_node *supply_node)
- 
- static int power_supply_check_supplies(struct power_supply *psy)
- {
--	struct device_node *np;
-+	struct fwnode_handle *np;
- 	int cnt = 0;
- 
- 	/* If there is already a list honor it */
-@@ -270,24 +269,24 @@ static int power_supply_check_supplies(struct power_supply *psy)
- 		return 0;
- 
- 	/* No device node found, nothing to do */
--	if (!psy->dev.of_node)
-+	if (!psy->dev.fwnode)
- 		return 0;
- 
- 	do {
- 		int ret;
- 
--		np = of_parse_phandle(psy->dev.of_node, "power-supplies", cnt++);
--		if (!np)
-+		np = fwnode_find_reference(psy->dev.fwnode, "power-supplies", cnt++);
-+		if (IS_ERR(np))
- 			break;
- 
--		ret = power_supply_find_supply_from_node(np);
--		of_node_put(np);
-+		ret = power_supply_find_supply_from_fwnode(np);
-+		fwnode_handle_put(np);
- 
- 		if (ret) {
- 			dev_dbg(&psy->dev, "Failed to find supply!\n");
- 			return ret;
- 		}
--	} while (np);
-+	} while (!IS_ERR(np));
- 
- 	/* Missing valid "power-supplies" entries */
- 	if (cnt == 1)
-@@ -511,14 +510,14 @@ void power_supply_put(struct power_supply *psy)
- EXPORT_SYMBOL_GPL(power_supply_put);
- 
- #ifdef CONFIG_OF
--static int power_supply_match_device_node(struct device *dev, const void *data)
-+static int power_supply_match_device_fwnode(struct device *dev, const void *data)
- {
--	return dev->parent && dev->parent->of_node == data;
-+	return dev->parent && dev_fwnode(dev->parent) == data;
- }
- 
- /**
-  * power_supply_get_by_phandle() - Search for a power supply and returns its ref
-- * @np: Pointer to device node holding phandle property
-+ * @fwnode: Pointer to fwnode holding phandle property
-  * @property: Name of property holding a power supply name
-  *
-  * If power supply was found, it increases reference count for the
-@@ -528,21 +527,21 @@ static int power_supply_match_device_node(struct device *dev, const void *data)
-  * Return: On success returns a reference to a power supply with
-  * matching name equals to value under @property, NULL or ERR_PTR otherwise.
-  */
--struct power_supply *power_supply_get_by_phandle(struct device_node *np,
--							const char *property)
-+struct power_supply *power_supply_get_by_phandle(struct fwnode_handle *fwnode,
-+						 const char *property)
- {
--	struct device_node *power_supply_np;
-+	struct fwnode_handle *power_supply_fwnode;
- 	struct power_supply *psy = NULL;
- 	struct device *dev;
- 
--	power_supply_np = of_parse_phandle(np, property, 0);
--	if (!power_supply_np)
--		return ERR_PTR(-ENODEV);
-+	power_supply_fwnode = fwnode_find_reference(fwnode, property, 0);
-+	if (IS_ERR(power_supply_fwnode))
-+		return ERR_CAST(power_supply_fwnode);
- 
--	dev = class_find_device(&power_supply_class, NULL, power_supply_np,
--				power_supply_match_device_node);
-+	dev = class_find_device(&power_supply_class, NULL, power_supply_fwnode,
-+				power_supply_match_device_fwnode);
- 
--	of_node_put(power_supply_np);
-+	fwnode_handle_put(power_supply_fwnode);
- 
- 	if (dev) {
- 		psy = dev_to_psy(dev);
-@@ -574,14 +573,14 @@ struct power_supply *devm_power_supply_get_by_phandle(struct device *dev,
- {
- 	struct power_supply **ptr, *psy;
- 
--	if (!dev->of_node)
-+	if (!dev_fwnode(dev))
- 		return ERR_PTR(-ENODEV);
- 
- 	ptr = devres_alloc(devm_power_supply_put, sizeof(*ptr), GFP_KERNEL);
- 	if (!ptr)
- 		return ERR_PTR(-ENOMEM);
- 
--	psy = power_supply_get_by_phandle(dev->of_node, property);
-+	psy = power_supply_get_by_phandle(dev_fwnode(dev), property);
- 	if (IS_ERR_OR_NULL(psy)) {
- 		devres_free(ptr);
- 	} else {
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index a785742f97721e7e70d0e4c17a1ded7b985acb6d..9afde8c04efc72691c81a373d8dd03477b4efd7e 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -805,7 +805,7 @@ static inline struct power_supply *power_supply_get_by_name(const char *name)
- { return NULL; }
- #endif
- #ifdef CONFIG_OF
--extern struct power_supply *power_supply_get_by_phandle(struct device_node *np,
-+extern struct power_supply *power_supply_get_by_phandle(struct fwnode_handle *fwnode,
- 							const char *property);
- extern struct power_supply *devm_power_supply_get_by_phandle(
- 				    struct device *dev, const char *property);
+diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+index 16e721d8e5df..b8468bd65ec0 100644
+--- a/arch/arm64/hyperv/mshyperv.c
++++ b/arch/arm64/hyperv/mshyperv.c
+@@ -43,18 +43,12 @@ static bool hyperv_detect_via_acpi(void)
+
+  static bool hyperv_detect_via_smccc(void)
+  {
+-	struct arm_smccc_res res = {};
++	uuid_t hyperv_uuid = HYP_UUID_INIT(ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0,
++		ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1,
++		ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2,
++		ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3);
+
+-	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
+-		return false;
+-	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
+-	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
+-		return false;
+-
+-	return res.a0 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_0 &&
+-		res.a1 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_1 &&
+-		res.a2 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_2 &&
+-		res.a3 == ARM_SMCCC_VENDOR_HYP_UID_HYPERV_REG_3;
++	return arm_smccc_hyp_present(&hyperv_uuid);
+  }
+
+  static int __init hyperv_init(void)
+diff --git a/drivers/firmware/smccc/kvm_guest.c 
+b/drivers/firmware/smccc/kvm_guest.c
+index f3319be20b36..48c3622b2aa6 100644
+--- a/drivers/firmware/smccc/kvm_guest.c
++++ b/drivers/firmware/smccc/kvm_guest.c
+@@ -14,17 +14,14 @@ static DECLARE_BITMAP(__kvm_arm_hyp_services, 
+ARM_SMCCC_KVM_NUM_FUNCS) __ro_afte
+
+  void __init kvm_init_hyp_services(void)
+  {
++	uuid_t kvm_uuid = HYP_UUID_INIT(ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0,
++		ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1,
++		ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2,
++		ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3);
+  	struct arm_smccc_res res;
+  	u32 val[4];
+
+-	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
+-		return;
+-
+-	arm_smccc_1_1_invoke(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
+-	if (res.a0 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_0 ||
+-	    res.a1 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_1 ||
+-	    res.a2 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_2 ||
+-	    res.a3 != ARM_SMCCC_VENDOR_HYP_UID_KVM_REG_3)
++	if (!arm_smccc_hyp_present(&kvm_uuid))
+  		return;
+
+  	memset(&res, 0, sizeof(res));
+diff --git a/drivers/firmware/smccc/smccc.c b/drivers/firmware/smccc/smccc.c
+index a74600d9f2d7..0943abb3f4c9 100644
+--- a/drivers/firmware/smccc/smccc.c
++++ b/drivers/firmware/smccc/smccc.c
+@@ -67,6 +67,25 @@ s32 arm_smccc_get_soc_id_revision(void)
+  }
+  EXPORT_SYMBOL_GPL(arm_smccc_get_soc_id_revision);
+
++bool arm_smccc_hyp_present(const uuid_t *hyp_uuid)
++{
++	struct arm_smccc_res res = {};
++
++	if (arm_smccc_1_1_get_conduit() != SMCCC_CONDUIT_HVC)
++		return false;
++	arm_smccc_1_1_hvc(ARM_SMCCC_VENDOR_HYP_CALL_UID_FUNC_ID, &res);
++	if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
++		return false;
++
++	return ({
++		const uuid_t uuid = HYP_UUID_INIT(res.a0, res.a1, res.a2, res.a3);
++		const bool present = uuid_equal(&uuid, hyp_uuid);
++
++		present;
++	});
++}
++EXPORT_SYMBOL_GPL(arm_smccc_hyp_present);
++
+  static int __init smccc_devices_init(void)
+  {
+  	struct platform_device *pdev;
+diff --git a/include/linux/arm-smccc.h b/include/linux/arm-smccc.h
+index 67f6fdf2e7cd..60be36254364 100644
+--- a/include/linux/arm-smccc.h
++++ b/include/linux/arm-smccc.h
+@@ -7,6 +7,11 @@
+
+  #include <linux/args.h>
+  #include <linux/init.h>
++
++#ifndef __ASSEMBLER__
++#include <linux/uuid.h>
++#endif
++
+  #include <uapi/linux/const.h>
+
+  /*
+@@ -333,6 +338,36 @@ s32 arm_smccc_get_soc_id_version(void);
+   */
+  s32 arm_smccc_get_soc_id_revision(void);
+
++#ifndef __ASSEMBLER__
++
++/**
++ * arm_smccc_hyp_present(const uuid_t *hyp_uuid)
++ *
++ * Returns `true` if the hypervisor advertises its presence via SMCCC.
++ *
++ * When the function returns `false`, the caller shall not assume that
++ * there is no hypervisor running. Instead, the caller must fall back to
++ * other approaches if any are available.
++ */
++bool arm_smccc_hyp_present(const uuid_t *hyp_uuid);
++
++#define HYP_UUID_INIT(r0, r1, r2, r3) \
++	UUID_INIT( \
++		cpu_to_le32(lower_32_bits(r0)), \
++		cpu_to_le32(lower_32_bits(r1)) & 0xffff, \
++		cpu_to_le32(lower_32_bits(r1)) >> 16, \
++		cpu_to_le32(lower_32_bits(r2)) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r2)) >> 8) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r2)) >> 16) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r2)) >> 24) & 0xff, \
++		cpu_to_le32(lower_32_bits(r3)) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r3)) >> 8) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r3)) >> 16) & 0xff, \
++		(cpu_to_le32(lower_32_bits(r3)) >> 24) & 0xff \
++	)
++
++#endif /* !__ASSEMBLER__ */
++
+  /**
+   * struct arm_smccc_res - Result from SMC/HVC call
+   * @a0-a3 result values from registers 0 to 3
+
 
 -- 
-2.47.2
+Thank you,
+Roman
 
 
