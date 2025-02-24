@@ -1,319 +1,229 @@
-Return-Path: <linux-kernel+bounces-528293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD4DCA415F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:09:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29923A415EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 250B47A3E4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:07:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449511899B2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8105F23F262;
-	Mon, 24 Feb 2025 07:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EAC23FC52;
+	Mon, 24 Feb 2025 07:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqJGlLzV"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="G+MClCNk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DAF23A990
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BE02B9B7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380893; cv=none; b=Bl3XQIZlN41O1eoL0VtuQIW5hcpxaEghPzDpyadPB7NUYluKqulAfSJk98m6o3LFnZyeKw+uzl+vB09B6k7I+eUX4606L+9G6BpqHIycgtpKZLzw+Cyax/JvGePKsliv4k0k4j5eKoJTQ1AFha8doKH15A3jsQMs+gcZqDPnGfY=
+	t=1740380697; cv=none; b=ghM1/8PgyqlqkYMMSBpVcvuhFnVHVgG0Kunp8m3gg8KBS9NHEb60na3RZ53toGZZoOrwofQfBaIhtXBMA+OXuqsvRng41kEHfJvvj4R/UFFmaKzU8CVDtOax9IIPDADzp9kNH70EFMwmc7ZhtkiIvu9EhXVJ1wyFDw+EFWiPDEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380893; c=relaxed/simple;
-	bh=ccs5KxPYeFLieKvJ7FDXVStz4gHQqg+xqogF8gSelnY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CJjxT0YJm5rzVzZxiwT8uAULFvHwvhBEeTNFYyGY4zazM3U5ltTIVRJ7tfFsLmGE+URmeJUvq34YQjstihujxMl3T/L5V3Vkol7EtAQvtWmygSjmNpa2XuCrONHwcF19x1a9DSwLEl0e7Ls9NUgpBUX+jldkWcR8eNfB8uV54yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CqJGlLzV; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2fbffe0254fso8258814a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:08:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740380891; x=1740985691; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f5FYO4MnEgAdczm5bGqfGwTqr6ni+nm2y6p6XaFQ6qU=;
-        b=CqJGlLzV2kLjLCC/KTGjvfsEwwptDOfzFcBrU0Egethor5Vt06yYW4DRSTRsMuQocm
-         ZFPITB5mjAVbTDcO68O7JOUeiD5+rM5hL+G9BgWh/1Z/+o9J9TN0DTzEl2hTb4eUAW3U
-         +h3LggDiq2ilCQVTO6jIpbWWlGCJ9KG0f3IV532qZzpVjpMP6duLoMj/EdM8n2ed7gcY
-         tClg/zhI9HewRCuONwL6bcPRo3woVn9DCNMLGsmomM67QwU67bDOxTlMzczgOlaFcuDt
-         dPnz8VOtOYjJyBQUQ/rdZ8Ha48+0dcfQOHJ6Hqmq9ihpQqyXOrDDuzmhPUnxatEgdsRn
-         PymQ==
+	s=arc-20240116; t=1740380697; c=relaxed/simple;
+	bh=y/1clNCL+NS++oBFmjRbg2CcgwGbN/lxf2/nF53Ef0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N1qKooo/tUq5ORcVBSDNxVzDLPh0hTh6jOnDjHoCCVqGrqyGMXPPwbhxSe9k38B7UKjkgNHEZKJKFuWoIEcEvFKlBlkIunYnrIM4CAP9lBOx/VqlsAcPurGViNdyNxzcO6GlA8jeiL0KPZ/FMLnBZ4kVVhocktjeG208HgD04gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=G+MClCNk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51NJvl3k031681
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:04:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5WIheLZ9opmWJFXhXFIzA03DR/ItI8HoBk7UEWH8SJg=; b=G+MClCNkjb73xwPw
+	ZEXpm+ckL5qkTNXzC3PmPQFZtYMluGUvm+kQflVTHB+UYxZBi9uTpL/P5P6WMgVG
+	ahgA+BN/8G7MAIBepOEJi3ifu5POvQxIdBQdIsQSDf6g5GOt95lIIBbX4imqdAFO
+	Xp+B4DZsUmZ3RnCvseDhMmjxui32qVBGdO7KG6a0jyh+osWLZLS2c0efHGCZxEgO
+	4Rp7cc5cy1JbafIdIAlx3TFtsCPG4VizQEPJmtwEfpIidSFhXyRV0dRTjDYsJNke
+	hwynB0Au8EXSOgOC+9d2wZ2UVsRaSAHLPtPpTMS2u9zL8YLVB180kAb0Mc9SDEw7
+	r7/+9w==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgm0ep-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:04:54 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-21f6cb3097bso109886585ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:04:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740380891; x=1740985691;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f5FYO4MnEgAdczm5bGqfGwTqr6ni+nm2y6p6XaFQ6qU=;
-        b=WVtPGeAyEvAcnKXATBGMpu81X43GKiW+Z6temrKffDCCdtkIcZpCL5HbBPm505eTVH
-         7frt4ma5LcCoxqQM9T9NgnW+wf7buTqLt7zaBwD3znbsX1Vbmae7R2GzbEykJPB+MEMB
-         XL36uOj+zacW61p8QXNB9bGgk1e76hc1RcYMx2BiyC5NAgL5/akd34An1QICUFpB8kvy
-         3zjaCOpt6Ls4YhALTmOJZsC8SDL2y1A8Wll6zXH9Z3/rECjvdX+708B1vSCYc7iT1aZC
-         Z0naWr2Qg8690ASc75hsAIavgJ/XghZ8/45Ea9PM+Aacw/Ew0DIzX+kAAyyc805ZXOfm
-         6rJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXymimPAMSHv0U3Z5t9QzjNvBhStLd0PTAjkZNkU++d7G1pfzQL0R7Qp/kHU+Ea8v0wDV9rDJnwnDqw0i0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7OAbrO38iKhlxmR3IemZTnk8mXtQ51ddXjIVKUyqwBO7pZLcx
-	izIjsY/zF9Rsf6D26j9bu9mnKImkXXEp2suRSaVX4tHzAobixvhz
-X-Gm-Gg: ASbGncvap69BdMRYF4zXBoH/rdBSEwEqIDqsGwLvySJ1Uqu+lemFVUKhLpyZ5QgDuUB
-	K5jPe4vjTlDkrC7n+yE1KU5OyPSlCawPsADo6ncVcleTqVhu9E3FfWPrF0VSN3ibg3VDH/BE5u8
-	exUkkcABo18Y93F6EUDbREw0QCNeAXGJyRBF2WDNGA+Tcl5KvAREipkR4veDhAiDBNtDN940J7c
-	GFfBK1vTqCRMlbGBIBgFqFzOen+gtLIM6Cy9KrMecxD7veyFBiYLdZzmVum4Rq+TnsGm5SybMFn
-	xdJt0OtAQO3Td7mvZl3ts7pq0f9tn3gRSlIaxT0LNppLGjiKSQ==
-X-Google-Smtp-Source: AGHT+IF6iAQd9FN+K1KtbbQ8XBRW1HmHqrKJdn+kn4HBTAB2ab+Tb0lVQnMh83irHuxnku8oYwIZoA==
-X-Received: by 2002:a05:6a21:6b01:b0:1ee:d418:f756 with SMTP id adf61e73a8af0-1eef3dd06fbmr22565387637.38.1740380891163;
-        Sun, 23 Feb 2025 23:08:11 -0800 (PST)
-Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73284a7401dsm13214597b3a.134.2025.02.23.23.08.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 23:08:10 -0800 (PST)
-Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
-	by twhmp6px (Postfix) with ESMTPS id B38B780733;
-	Mon, 24 Feb 2025 15:18:18 +0800 (CST)
-From: Cheng Ming Lin <linchengming884@gmail.com>
-To: miquel.raynal@bootlin.com,
-	vigneshr@ti.com,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: richard@nod.at,
-	alvinzhou@mxic.com.tw,
-	leoyu@mxic.com.tw,
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: [PATCH v5 2/2] mtd: spi-nand: macronix: Add support for read retry
-Date: Mon, 24 Feb 2025 15:03:49 +0800
-Message-Id: <20250224070349.446739-3-linchengming884@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250224070349.446739-1-linchengming884@gmail.com>
-References: <20250224070349.446739-1-linchengming884@gmail.com>
+        d=1e100.net; s=20230601; t=1740380693; x=1740985493;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5WIheLZ9opmWJFXhXFIzA03DR/ItI8HoBk7UEWH8SJg=;
+        b=BEiClWukHnLVoG5nwHjmk1wOlHzr5Y7tmQ1oSauAJ2YuK/YcU6YS1UUFSTNtv0B5UC
+         9ThVixNpQhqDHy+vG2tZZpmNK88V9IZLmTsk5/76cQezv06MRSo76C8KWxbFjcM2abjx
+         TJiNqEmBEDKaPuL4UPNQ/JKZxaYthEOzVQYzMphKQM1A/09rBLTVGDzMZqzuODx0oApm
+         iDnmAgA5IzcaJEef9DCKrAOOuI4Hq5f5ceXvNQI+Reoph9YYbGUECC8fq8DJJ/k/A+DE
+         uZRTVvPWmkWUWY0CbqFlkt+IqofGjMCdungjmZEDnlBPqHpWuFAL/xjbRv/3qKWGMi8n
+         MNuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5epa06a+ahdoivjEK+rJ9GrE8Ac/70qXzj0ML9AR3SsDj+uvRDPtNlqvFkXzpG4JuUBakgFiTRNzwdd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6HNCOw7Igsga3GNOZGdFm8BHJiWyTclnuoM4je61Xpp6z0eBt
+	y3S835zJumXO5ySEYv6ziKaFNoMmWFQPcX1Hf+m4LEKdcLiq9jnJwy6n1uioZRuB3g8cLdml9BP
+	1MPbO5hqcSr5zINl3dLnFcGf4w02Cumh0Yt6TV+TqSk+/rH0TfI9SCAy6SvC2BzjTuwFLGh4=
+X-Gm-Gg: ASbGncs5087n4hUb7e5Hz11WanE6TzX25Qu8siwighedoizwecZ3DljG70VUJU4R/3R
+	G0iUThozSO0GfxLDZk6g/R5TVhojPHGklbcbJAI07kKFoJYg+DJQabjcH9DQtQRtXAyawp8oyzi
+	fDu6WFMbHbdKD9503S370kOFvBnQsj7gaj/+fteS/oiPY9rhp6NVY7EBz4jCD1y3WJ9yJ3L/GzJ
+	evFNHonluy7WRMYwu61saptBc/TavRCMejbdv233fwNH2qE/zjre8wj7KX3VYETPa5I+n8IzoOE
+	cIt1fJFyIkoTMaMHP75tjDCGEFs2m79+CX1iNPPHO6Wo
+X-Received: by 2002:a17:902:b205:b0:220:ff3f:6cbc with SMTP id d9443c01a7336-221a1148e8emr150628025ad.34.1740380693150;
+        Sun, 23 Feb 2025 23:04:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEb5MhpjJCIMzKcXsJRwIio6H1DsGvFgoeETQaOrh0qyse+TUhBysl2xMdsD1dadgJePi5zyg==
+X-Received: by 2002:a17:902:b205:b0:220:ff3f:6cbc with SMTP id d9443c01a7336-221a1148e8emr150627665ad.34.1740380692729;
+        Sun, 23 Feb 2025 23:04:52 -0800 (PST)
+Received: from [10.92.199.34] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55866ecsm173253775ad.212.2025.02.23.23.04.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Feb 2025 23:04:52 -0800 (PST)
+Message-ID: <c5bee42e-f914-7fd7-6c72-6c9e760733a3@oss.qualcomm.com>
+Date: Mon, 24 Feb 2025 12:34:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v6 4/4] PCI: dwc: Add support for configuring lane
+ equalization presets
+Content-Language: en-US
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+ <kw@linux.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com
+References: <20250210-preset_v6-v6-0-cbd837d0028d@oss.qualcomm.com>
+ <20250210-preset_v6-v6-4-cbd837d0028d@oss.qualcomm.com>
+ <20250214093414.pvx6nab7ewy4nvzb@thinkpad>
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250214093414.pvx6nab7ewy4nvzb@thinkpad>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: BNjrN988FkDwCH48O-jia7wpHnfBxl9m
+X-Proofpoint-ORIG-GUID: BNjrN988FkDwCH48O-jia7wpHnfBxl9m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_02,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=977 spamscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240050
 
-From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-Add read retry support.
 
-The Special Read for Data Recovery operation is enabled by
-Set Feature function.
+On 2/14/2025 3:04 PM, Manivannan Sadhasivam wrote:
+> On Mon, Feb 10, 2025 at 01:00:03PM +0530, Krishna Chaitanya Chundru wrote:
+>> PCIe equalization presets are predefined settings used to optimize
+>> signal integrity by compensating for signal loss and distortion in
+>> high-speed data transmission.
+>>
+>> Based upon the number of lanes and the data rate supported, write
+>> the preset data read from the device tree in to the lane equalization
+>> control registers.
+>>
+>> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-designware-host.c | 53 +++++++++++++++++++++++
+>>   drivers/pci/controller/dwc/pcie-designware.h      |  3 ++
+>>   include/uapi/linux/pci_regs.h                     |  3 ++
+>>   3 files changed, 59 insertions(+)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> index dd56cc02f4ef..7d5f16f77e2f 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> @@ -507,6 +507,10 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>>   	if (pci->num_lanes < 1)
+>>   		pci->num_lanes = dw_pcie_link_get_max_link_width(pci);
+>>   
+>> +	ret = of_pci_get_equalization_presets(dev, &pp->presets, pci->num_lanes);
+>> +	if (ret)
+>> +		goto err_free_msi;
+>> +
+>>   	/*
+>>   	 * Allocate the resource for MSG TLP before programming the iATU
+>>   	 * outbound window in dw_pcie_setup_rc(). Since the allocation depends
+>> @@ -808,6 +812,54 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
+>>   	return 0;
+>>   }
+>>   
+>> +static void dw_pcie_program_presets(struct dw_pcie_rp *pp, enum pci_bus_speed speed)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	u8 lane_eq_offset, lane_reg_size, cap_id;
+>> +	u8 *presets;
+>> +	u32 cap;
+>> +	int i;
+>> +
+>> +	if (speed == PCIE_SPEED_8_0GT) {
+>> +		presets = (u8 *)pp->presets.eq_presets_8gts;
+>> +		lane_eq_offset =  PCI_SECPCI_LE_CTRL;
+>> +		cap_id = PCI_EXT_CAP_ID_SECPCI;
+>> +		/* For data rate of 8 GT/S each lane equalization control is 16bits wide*/
+>> +		lane_reg_size = 0x2;
+>> +	} else if (speed == PCIE_SPEED_16_0GT) {
+>> +		presets = pp->presets.eq_presets_Ngts[EQ_PRESET_TYPE_16GTS];
+>> +		lane_eq_offset = PCI_PL_16GT_LE_CTRL;
+>> +		cap_id = PCI_EXT_CAP_ID_PL_16GT;
+>> +		lane_reg_size = 0x1;
+>> +	}
+>> +
+>> +	if (presets[0] == PCI_EQ_RESV)
+>> +		return;
+>> +
+>> +	cap = dw_pcie_find_ext_capability(pci, cap_id);
+>> +	if (!cap)
+>> +		return;
+>> +
+>> +	/*
+>> +	 * Write preset values to the registers byte-by-byte for the given
+>> +	 * number of lanes and register size.
+>> +	 */
+>> +	for (i = 0; i < pci->num_lanes * lane_reg_size; i++)
+>> +		dw_pcie_writeb_dbi(pci, cap + lane_eq_offset + i, presets[i]);
+>> +}
+>> +
+>> +static void dw_pcie_config_presets(struct dw_pcie_rp *pp)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	enum pci_bus_speed speed = pcie_link_speed[pci->max_link_speed];
+>> +
+> 
+> Please add a comment stating that the equalization needs to be performed at all
+> lower data rates for each lane.
+> 
+>> +	if (speed >= PCIE_SPEED_8_0GT)
+>> +		dw_pcie_program_presets(pp, PCIE_SPEED_8_0GT);
+>> +
+>> +	if (speed >= PCIE_SPEED_16_0GT)
+>> +		dw_pcie_program_presets(pp, PCIE_SPEED_16_0GT);
+> 
+> I think we need to check 'Link Equalization Request' before performing
+> equalization? This will also help us to warn users if they didn't specify the
+> property in DT if hardware expects equalization.
+> 
+Ok I will add a check in dw_pcie_program_presets() if there is no dt
+property for a particular data rate/speed in next patch.
 
-There are 5 modes for the user to recover the lost data.
+- Krishna Chaitanya.
+> Currently, even if DT specifies equalization presets for 32GT/s, driver is not
+> making use of them.
 
-Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
----
- drivers/mtd/nand/spi/macronix.c | 79 ++++++++++++++++++++++++++-------
- 1 file changed, 64 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
-index 3dc4d63d6832..1ef08ad850a2 100644
---- a/drivers/mtd/nand/spi/macronix.c
-+++ b/drivers/mtd/nand/spi/macronix.c
-@@ -14,6 +14,8 @@
- #define MACRONIX_ECCSR_BF_LAST_PAGE(eccsr) FIELD_GET(GENMASK(3, 0), eccsr)
- #define MACRONIX_ECCSR_BF_ACCUMULATED_PAGES(eccsr) FIELD_GET(GENMASK(7, 4), eccsr)
- #define MACRONIX_CFG_CONT_READ         BIT(2)
-+#define MACRONIX_FEATURE_ADDR_READ_RETRY 0x70
-+#define MACRONIX_NUM_READ_RETRY_MODES 5
- 
- #define STATUS_ECC_HAS_BITFLIPS_THRESHOLD (3 << 4)
- 
-@@ -136,6 +138,23 @@ static int macronix_set_cont_read(struct spinand_device *spinand, bool enable)
- 	return 0;
- }
- 
-+/**
-+ * macronix_set_read_retry - Set the retry mode
-+ * @spinand: SPI NAND device
-+ * @retry_mode: Specify which retry mode to set
-+ *
-+ * Return: 0 on success, a negative error code otherwise.
-+ */
-+static int macronix_set_read_retry(struct spinand_device *spinand,
-+					     unsigned int retry_mode)
-+{
-+	struct spi_mem_op op = SPINAND_SET_FEATURE_OP(MACRONIX_FEATURE_ADDR_READ_RETRY,
-+						      spinand->scratchbuf);
-+
-+	*spinand->scratchbuf = retry_mode;
-+	return spi_mem_exec_op(spinand->spimem, &op);
-+}
-+
- static const struct spinand_info macronix_spinand_table[] = {
- 	SPINAND_INFO("MX35LF1GE4AB",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x12),
-@@ -168,7 +187,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x37, 0x03),
- 		     NAND_MEMORG(1, 4096, 128, 64, 2048, 40, 1, 1, 1),
-@@ -179,7 +200,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF1G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x14, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-@@ -188,7 +211,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF2G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x24, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
-@@ -198,7 +223,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF2G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x64, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -207,7 +234,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4G24AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x35, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
-@@ -217,7 +246,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35LF4G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x75, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -226,7 +257,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &write_cache_variants,
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
--		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
-+		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX31LF1GE4BC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x1e),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
-@@ -270,7 +303,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF4G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xf5, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -280,7 +315,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF4GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xb7, 0x03),
- 		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
-@@ -291,7 +328,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2G14AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa0),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
-@@ -314,7 +353,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT |
- 		     SPINAND_HAS_PROG_PLANE_SELECT_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2G24AD-Z4I8",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xe4, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -324,7 +365,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa6, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
-@@ -335,7 +378,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF2GE4AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0xa2, 0x01),
- 		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
-@@ -366,7 +411,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 					      &update_cache_variants),
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
--				     macronix_ecc_get_status)),
-+				     macronix_ecc_get_status),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF1GE4AD",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x96, 0x03),
- 		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
-@@ -377,7 +424,9 @@ static const struct spinand_info macronix_spinand_table[] = {
- 		     SPINAND_HAS_QE_BIT,
- 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
- 				     macronix_ecc_get_status),
--		     SPINAND_CONT_READ(macronix_set_cont_read)),
-+		     SPINAND_CONT_READ(macronix_set_cont_read),
-+		     SPINAND_READ_RETRY(MACRONIX_NUM_READ_RETRY_MODES,
-+					macronix_set_read_retry)),
- 	SPINAND_INFO("MX35UF1GE4AC",
- 		     SPINAND_ID(SPINAND_READID_METHOD_OPCODE_DUMMY, 0x92, 0x01),
- 		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
--- 
-2.25.1
-
+> - Mani
+> 
 
