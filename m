@@ -1,164 +1,146 @@
-Return-Path: <linux-kernel+bounces-529114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0464A41FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:04:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4EF1A41FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA3587A7BB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002131894ADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4FC23BD18;
-	Mon, 24 Feb 2025 13:03:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6D7A23BCEE;
+	Mon, 24 Feb 2025 13:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/+oUGpR"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="lCe63Zwr"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFBE233736;
-	Mon, 24 Feb 2025 13:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D437B2571CF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402231; cv=none; b=pKpbycOf93GqHok2XTv9djWpPCHpE8JH4vu4YcBYSWM97cDg0A+IpWCWQ9ycRPONPCjw5nZdceAN1VgUXC8MFBTl75Bdo1UQGnzJfWjDC/W2onP657wYdTNkwCBY9MOPJ1o7KMEwcgsmzmEwEAuGJXkSxJxmnK+oLMOXzDdzM/k=
+	t=1740402229; cv=none; b=qwvqosqa/uQZBKVO9ItNtHQ3jRy37qfhSfVtvli3HOzpRI2LBrB3AwIsOtkfCb2lmYbQeEHD4Phzg8VWH1sun+G0k9EeMGJ3bj4q7z2j/SCABLM48Nn8EShrrxJGbTbCm4HQwuE7YBBArchgtvnC7/nDYtyKle29nZFVyZfOiYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402231; c=relaxed/simple;
-	bh=3WH7N5b2mLwHCzKQItZCh++HaF1mtPPWYK1ByZIVs+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JWmg8HILJBrOul0CJ93+GMjwm/iMqrR74rxKEHdvI/eKwFHSGlH+R8WeZq798EHno9z5+xI7y2KONiB6cWd+F0dFCD/hC3TsvMBitCGS5ntRTk+0IojfFv8/yr0BMvdwbHc9HsL1+X9PV2FVLSb17kDWMEC9om80nhJ/m4giIoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/+oUGpR; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c4159f87so59016205ad.0;
-        Mon, 24 Feb 2025 05:03:49 -0800 (PST)
+	s=arc-20240116; t=1740402229; c=relaxed/simple;
+	bh=qlFqtV1owUvfI5AF9z1lusywS8vD/gGpoFaBVAsQwjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hH5+tSgYeqFMYkey+e9EL2xPKSYqYvi/9Xo8ZoG8cHT0CEq4S0NdKj3u9RQKKgeMQ9YCP4Zxw9wQUOlt5pcQ10RCbkUdn+RunR0iVoXjsqsHnmBlAvmO26+kryAtJhfXvNNjzuZyOWPzXX+oqPNcY3dCHlrOoRZixFuAwtEaEYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=lCe63Zwr; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4398ec2abc2so38352945e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740402229; x=1741007029; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2yGA1NhGbMJI9b6zgvWTEkXn51K+UPXbLwr9O6ldtY=;
-        b=i/+oUGpRklwRJKad7O+79a+RVhITSlynGN/s0DpPmv9VHTFwqdaL0Yz3TAq7X/n/s5
-         TUFhcQNgrs5BmKDROtUHVH3+KesqgZPsjos8f7q9Ixs+kplIP7kvgWODMVBPBkv+WUkL
-         4hLTN9OjcO+ty/GZAMmVwLKf3wQYAsX3UQwRJ2A2Cf6gTvcRUT0iyWOD7B4WbsSNED2+
-         ikzL0xE2Xdc8dPn/lhgEqTsLNGT2m7YqcF0+SqQCF1chwaIlCXThWdLUA/Hp+x18vfHs
-         7kbtPQY1nxuKPBvw74LwHwdjw9WQmXOxtWe8cG83bBrspbsZRMvd0AclWeFfF1gs+I16
-         vU4A==
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1740402225; x=1741007025; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QeA0rVRWP3AOYIIlnfHopPlLG74GJ9BReqcR5DIAZMo=;
+        b=lCe63Zwrz6I4iwHN0fQy5Jg70u+ubZS/91e/91TI724GLz/pTpeSSDnLon2lzj8f57
+         SA93dgePOU2hs6B6c15MOIzLk8VmF0Hh8A9jNfn36A3CTcDIzyzLmi+r1judXyiC5Ty5
+         m42295Zd1Z+ngWFiKR3rqMLpk8I7cL3HdJV9MrnI0r/wgQ3NZ0reqBUD28IcxgYMK+IY
+         4a3UQuKgZcyDQv/O/7YapZJWu4UlcUfdbdphRUkF9NjKeMS27OxijOPksh6NjszRbr6b
+         cTiZ1pVxSFo6Oj7NnDJCgENZ3uTPQlnC93vaFlwmURSaF4NKAVYUBTmaCgfScFwkNrva
+         RGbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402229; x=1741007029;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K2yGA1NhGbMJI9b6zgvWTEkXn51K+UPXbLwr9O6ldtY=;
-        b=q1c2tccSRDdtqLVaqRnjmFYJJPfAKkPadHKZp9vL/IArONcjbfhutoiWzEVbz3wuQs
-         Cwrd7qG8lb9i6PvJscp3d4UFY1RM6KUvGWwRKcBdvTsJfUEsKenbLLzrlbaHB+kyQv8m
-         7bI2cRZapv6B7L9miTDrzkeWilc/TARq9nkCJhe/iaetWXC2ZJbSsJq58kxfD3JnTu02
-         bwg/8XCTc/Oc6nc+9xdbTTVZChIz2CxDPWj7wODjRib01BsucIpTtqNarAnPTOBjD+PL
-         oYsTewpZdna9DNJANOAxtjYGbBCaSp1R14JTmHPRehB7uJQYRHATsKbefmn/cSJxyc9k
-         PY1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVucUsqPj73vCOD9pvVsLsMcMAr2Vr2Y4Zhv4sALy1ZnQ1OTTq/4kqL2uuBIEBNrtalpVcQBr05rWZFsKw=@vger.kernel.org, AJvYcCWN6bmGIuim0Uw+8j/lBLZF1NURHgA2pEsCj+j8n+SEmwMaPB3i/9yE5N6K5be8pOTqawNUuIoRFFwIsxd6TdFP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb9x9bSVkfW/kN+o5prFxrubiDmmhnG1PgcBnFJNe8rSP5D9xk
-	EnRL+Tco8OgY+x2hPtVr9+9GhQn1HFFW/YoYl18UDhsdr+jlNjXjzGiVmFjAaFI=
-X-Gm-Gg: ASbGncsanp0CSdllaCE0qiR31/IudHXbK592snE9u2qhCsAOo/0kFBN+z4KoHwXie6u
-	/Ell4r3NKRkP2WPL/2ccCYYhzMnD/hKhdGPFs+Qe2AG53cKcQcAmLJjkw/BbEIDVHP41Mm4TPp2
-	m2tSdkjNM1ZiNdkyKpDsaeE4plzj6prprC1unvgo6K5c8FZgouLXZG8Q6czGc4pxXS8nImIDSS+
-	qncW3wtSjqLQe+M4wJhIDVWY/TiXILaanVA3dXhRiFrtq0mpSiCDxU7GJhzESvFDOrheps7fccJ
-	I5gvU2leeDrEovFe+ngR
-X-Google-Smtp-Source: AGHT+IGgDwE3drF3XPiR4PgO0QiIq/gzYst8UaIiUyo9KJCwD6vSvTrQUc35zV8OFRAWRZHDZB7oIw==
-X-Received: by 2002:a17:903:32c5:b0:21f:658b:8ed5 with SMTP id d9443c01a7336-2219ff30c91mr211707465ad.6.1740402228768;
-        Mon, 24 Feb 2025 05:03:48 -0800 (PST)
-Received: from dev.. ([2804:14d:887:95a9:942:b4ba:d811:bd8e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491besm180097185ad.14.2025.02.24.05.03.45
+        d=1e100.net; s=20230601; t=1740402225; x=1741007025;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QeA0rVRWP3AOYIIlnfHopPlLG74GJ9BReqcR5DIAZMo=;
+        b=Pestx+nYjcU+IhU5BGvZ+XTr06uxy47P+bpyrd56Q1B5H7bLaLgQsBayG8KhML4eLh
+         IGB31jSyZb2nIjvo4I+O9vLAI1BRRQ7XO7Q94EE1LOsFq5vBhMB27M6GYEhe/zoL4WhZ
+         m3HDUlab28/EQr1G+tFrWguwEq2inUjoeWVjyH8d6lV95wZQ8DOS5ki4sj1LlUDkvAd3
+         Db+AyquOk5qrVLr/lneaWhVg3xy7gu7pgJ1VKExEm/WHWNdqmzPfdJyEMvyz6q1UpSZm
+         EymSM1B9alqyQfHubol3mTyjGgSz/hUS7K1pJkvnCrcy/BrXDswx3JIS/ZuM+oo4Pz6s
+         7B2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVqhWvhR5VF0dE0UWFu2CrBJ50Y4QDL/RXO/UZUea1WXvGlYZNxmw3nRkcaz6ECGjqRWOySaqDjbyVVbys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuBYrZ7ODWOP5/Cb+cJM8MEwh8A91mDgZGeYvWtaXRuNe6ebKh
+	ipk5PyRCb1e+6QtiCruKoshDehfK5+lddcAfkvk/kZEwBbE6aq4uruHAuQumKxg=
+X-Gm-Gg: ASbGncvXx/cYI9PVJ0rgivj1Xo4HSBVZurYu6mCCvG0+iQHvCeTwW6wHZDXmKrNQ8K2
+	vUiYsu6wrxC0UZPLnHfgbg5YiwannAaIkjTIkAaenfAK7f+pe7IBAdcA4sxO0PG8KTGBHxl7R32
+	sqLEC9OEsWFlcT9HyZIHLmJiBTFjC90xYRRk22Ud4zctB+MhcwAZEG6705Pk9+MBkZkxIUY2+CI
+	sjBjrFcK7nw+vLonCpfrIWgZhZs9LFcWbhjsbvJjQfG4VPhT6ERTuV/vLAVuc9gA+g3WbJ++pZE
+	6tQmgmPUgweIS2ENxEbT8G1+MMX9C9tCi3hyK30o62pHlgB4cP8s
+X-Google-Smtp-Source: AGHT+IGyB/Rgw0TqA7SsSI5QTcM2agQmllOnJHqgIfcTjpAlHrZGdn38+03L9In2Tf+ef6DQcvVmpA==
+X-Received: by 2002:a05:600c:1552:b0:439:8185:4ad4 with SMTP id 5b1f17b1804b1-439ae22124emr98618985e9.27.1740402224568;
+        Mon, 24 Feb 2025 05:03:44 -0800 (PST)
+Received: from jiri-mlt.client.nvidia.com ([208.127.45.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399c4df982sm135831435e9.1.2025.02.24.05.03.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 05:03:48 -0800 (PST)
-From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
-X-Google-Original-From: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
-To: david@redhat.com,
-	osalvador@suse.de,
-	shuah@kernel.org
-Cc: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH] selftests/memory-hotplug: debugging improvement
-Date: Mon, 24 Feb 2025 10:03:00 -0300
-Message-ID: <20250224130341.10613-1-leofthirata@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Mon, 24 Feb 2025 05:03:43 -0800 (PST)
+Date: Mon, 24 Feb 2025 14:03:39 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, 
+	intel-wired-lan@lists.osuosl.org, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Cosmin Ratiu <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org, 
+	Konrad Knitter <konrad.knitter@intel.com>, Jacob Keller <jacob.e.keller@intel.com>, davem@davemloft.net, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
+	linux-kernel@vger.kernel.org, ITP Upstream <nxne.cnse.osdt.itp.upstreaming@intel.com>, 
+	Carolina Jubran <cjubran@nvidia.com>
+Subject: Re: [RFC net-next v2 1/2] devlink: add whole device devlink instance
+Message-ID: <wf5ugq4h4lv2uic3622xurjbfwf534gj2jx6jbhaxoncingb3z@ceo4xkikjbdn>
+References: <20250219164410.35665-1-przemyslaw.kitszel@intel.com>
+ <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
+ <20250220174512.578eebe8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220174512.578eebe8@kernel.org>
 
-Formats testing messages to improve debugging:
-- Inserts alignment tabs with printf for testing results
-- Changes messages to improve readability and understanding
+Fri, Feb 21, 2025 at 02:45:12AM +0100, kuba@kernel.org wrote:
+>On Wed, 19 Feb 2025 17:32:54 +0100 Przemek Kitszel wrote:
+>> Add a support for whole device devlink instance. Intented as a entity
+>> over all PF devices on given physical device.
+>> 
+>> In case of ice driver we have multiple PF devices (with their devlink
+>> dev representation), that have separate drivers loaded. However those
+>> still do share lots of resources due to being the on same HW. Examples
+>> include PTP clock and RSS LUT. Historically such stuff was assigned to
+>> PF0, but that was both not clear and not working well. Now such stuff
+>> is moved to be covered into struct ice_adapter, there is just one instance
+>> of such per HW.
+>> 
+>> This patch adds a devlink instance that corresponds to that ice_adapter,
+>> to allow arbitrage over resources (as RSS LUT) via it (further in the
+>> series (RFC NOTE: stripped out so far)).
+>> 
+>> Thanks to Wojciech Drewek for very nice naming of the devlink instance:
+>> PF0:		pci/0000:00:18.0
+>> whole-dev:	pci/0000:00:18
+>> But I made this a param for now (driver is free to pass just "whole-dev").
+>
+>Which only works nicely if you're talking about functions not full
+>separate links :) When I was thinking about it a while back my
+>intuition was that we should have a single instance, just accessible
+>under multiple names. But I'm not married to that direction if there
+>are problems with it.
 
-Signed-off-by: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
----
- .../memory-hotplug/mem-on-off-test.sh         | 21 ++++++++++++-------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+I kind of agree. Like multiple channels to one entity, each labeled by a
+different name (handle in devlink case).
 
-diff --git a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-index 611be86eaf3d..7a2eea366c1b 100755
---- a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-+++ b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
-@@ -143,6 +143,11 @@ online_all_offline_memory()
- 	done
- }
- 
-+print_status()
-+{
-+	printf '\t\t%-37s   %12s\n' "$1" "$2"
-+}
-+
- error=-12
- priority=0
- # Run with default of ratio=2 for Kselftest run
-@@ -184,16 +189,16 @@ echo "Test scope: $ratio% hotplug memory"
- # Online all hot-pluggable memory
- #
- hotpluggable_num=`hotpluggable_offline_memory | wc -l`
--echo -e "\t online all hot-pluggable memory in offline state:"
-+echo -e "Changing all OFFLINE hot-pluggable memory blocks to ONLINE:\n"
- if [ "$hotpluggable_num" -gt 0 ]; then
- 	for memory in `hotpluggable_offline_memory`; do
--		echo "offline->online memory$memory"
-+		echo -e "\t\tOFFLINE -> ONLINE memory block ($memory)"
- 		if ! online_memory_expect_success $memory; then
- 			retval=1
- 		fi
- 	done
- else
--	echo -e "\t\t SKIPPED - no hot-pluggable memory in offline state"
-+	echo -e "\t\t SKIPPED - no hot-pluggable memory in OFFLINE state"
- fi
- 
- #
-@@ -201,16 +206,16 @@ fi
- #
- hotpluggable_num=`hotpluggable_online_memory | wc -l`
- target=`echo "a=$hotpluggable_num*$ratio; if ( a%100 ) a/100+1 else a/100" | bc`
--echo -e "\t offline $ratio% hot-pluggable memory in online state"
--echo -e "\t trying to offline $target out of $hotpluggable_num memory block(s):"
-+echo -e "\nOFFLINE $ratio% hot-pluggable memory in ONLINE state ($target memory block(s))"
-+echo -e "Changing $target out of $hotpluggable_num OFFLINE memory block(s) to ONLINE:\n"
- for memory in `hotpluggable_online_memory`; do
- 	if [ "$target" -gt 0 ]; then
--		echo "online->offline memory$memory"
-+		tmp="ONLINE -> OFFLINE memory block (${memory})"
- 		if offline_memory_expect_success $memory &>/dev/null; then
- 			target=$(($target - 1))
--			echo "-> Success"
-+			print_status "$tmp" "[SUCCESS]"
- 		else
--			echo "-> Failure"
-+			print_status "$tmp" "[FAILURE]"
- 		fi
- 	fi
- done
--- 
-2.43.0
-
+>
+>> $ devlink dev # (Interesting part of output only)
+>> pci/0000:af:00:
+>>   nested_devlink:
+>>     pci/0000:af:00.0
+>>     pci/0000:af:00.1
+>>     pci/0000:af:00.2
+>>     pci/0000:af:00.3
+>>     pci/0000:af:00.4
+>>     pci/0000:af:00.5
+>>     pci/0000:af:00.6
+>>     pci/0000:af:00.7
+>
+>Could you go into more details on what stays on the "nested" instances
+>and what moves to the "whole-dev"? Jiri recently pointed out to y'all
+>cases where stuff that should be a port attribute was an instance
+>attribute.
 
