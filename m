@@ -1,121 +1,159 @@
-Return-Path: <linux-kernel+bounces-528262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38E5A41597
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:42:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5874EA41595
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3FA16642B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:42:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBFF188FE18
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012042080D4;
-	Mon, 24 Feb 2025 06:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF22020ADC7;
+	Mon, 24 Feb 2025 06:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7bGiyD9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MfoVZOt6"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953E7207DEF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590B732C85
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740379367; cv=none; b=gXcc4DJrm8cyb+HjTbE+JKp1MXeRE+53t+HFgIOfCcX87CI8KHg5VjoyIfiK62tgD0OWdhGcey+G8VbvncpJj8lKNFC9VTnQ58gopBnohG8fLM773JqlbVepVy/vfegOGwhVd5mPw+F/F9DOptM5Mg9Qjnb3yP/mOxvQXvd8bLU=
+	t=1740379339; cv=none; b=O1CCA3D2vv+jwslcyMeLZziYVr85ayne8pkRClwLbSasrFxJZ4GbQPRWlThBx7VkRHxuYcoT1MjaenoSE57Yjb2fhkM4QwCcmV+fIvQIGkQwFC28fVUNBjjoqsbmO5U7bvoKxTlJ+oenDr28Yx4hPfRbPZAXGrMLyUoJcYj98RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740379367; c=relaxed/simple;
-	bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C9jeapS5fVCSELD/V8OBa3aP/oeCQ89kOsGw9Hx8yz3ehIMZKlLcCzMUPUiVSLtpgQnNzSAGdvUo/0bsBmYGm+W7EaVdNvLiCy4Wvoo/lU1+mZM3bPscdB2/eZ2ekrcu743YSNDoxN2MyC+34CZxrtrf+bs0K3p7f70oOu5AeFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7bGiyD9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740379364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
-	b=h7bGiyD97fFMUzp4lOVFLfffKffqM3cOBVDRVZzhWTD2ypN+uG9guckjUcAmpTLvilIwFL
-	82ZTBPUa2qcCBiq1dM4k7Rx862eMP97FE50Xq4nZ2hRaJ2RtLVKNvh00fh7RyGlIZiDzxH
-	iLDaIhr1+mjARTVXim5GYEpU2xIsYPU=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-438-3af_4m9vO1aLVZ8x-3ZzZQ-1; Mon, 24 Feb 2025 01:42:42 -0500
-X-MC-Unique: 3af_4m9vO1aLVZ8x-3ZzZQ-1
-X-Mimecast-MFC-AGG-ID: 3af_4m9vO1aLVZ8x-3ZzZQ_1740379361
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc5888c192so7929989a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:42:42 -0800 (PST)
+	s=arc-20240116; t=1740379339; c=relaxed/simple;
+	bh=MUfIUGq0ySzAISvgyOFVfUeCEEOxUBftBO46J9gwf9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=csGIN9OwFdnd9IogzeI/StGVvorFItgyionQyRx/y2WNicTyp8pbFnAf9lqkl3jt6K8ADc68dRDK5zpKif/CWLhhyIQsS/oQzGUuwMlDw9XFZLOYbgcEJ90FyTm/aIV5KOusKm6reJISjebSLsJpXcDvs8XdoR9oR46NrEopT0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MfoVZOt6; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22128b7d587so74785515ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:42:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740379335; x=1740984135; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Kq6DmAc1mPgZsYnLbQg4+lsGkwNUTX+i9eYRvcNTn0g=;
+        b=MfoVZOt64k+uHgBnm5k1uxLXN9yjOheACAXckcnkTXvKkXlbb+pXCJJsI7SNufR+Fs
+         mGd11v39ZOqREuUbpP6bPE/yK0ZGlDh7gnV9ramkcGMMKZgTWvKlx7hW2ZfOu98/CbyR
+         e/ioAloT5yPgRdC80uK6ghgvTM6gmSy530+RGOCRJt5A4gc28RdYOahFECxv8VGbmUJN
+         ZC3qNZN2NMeTn54YsYrq9usifV2q6g00EbM4p0x0I7rIP/S0SUwzfxiLN4XZ6uVqsnVs
+         rtLR18IFLV4Jx4C7LafhBUwyLUA5AfEjOj4DpkLOjt1FEYAV1AFa/VLx+YY+oyqeXDx4
+         im6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740379361; x=1740984161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
-        b=wP542ipS45+MZiC8w//810C5+G4NNhTm8kgmMni+xieBbbwwnlX1CgbdWdUXufA8Zr
-         BY6AeY+pBn80QUAk8akLh43XQkbCBEHesFAVby7BiiqIOyFL3Zaa2ca0LfKzM2yR5GD+
-         RLMVeFAIFT7tt6oD17yNoLo3m+l/VBObWeWgbO+TQzyMRpZiF20P5ASvvxpkVjYmkMZm
-         C6rHdrH21IzV8L7wLlZdyqnB2I+32E/iCpL8QNbG9r6g7wHEJttPvgYGzEQ6K8gnvtwa
-         aBQ0dtQENkMdKFLPva3zjaJxMtvhYbw++Xbpo/vAiUPcqK1F7ADUdOxPTGpab4iCK9rH
-         elhw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4SChVUZ9PENzsiFEg5Qg6mdJ+8O0HfQxD6RWrmy/ziaEij4dLKa8AszmJ5uiZp7Jy1U88J8lhNZHmJH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGgopjceY4GKMPDdMpd0f0AFe6TVXOnbXfMxFDCH6Vr4V82DrW
-	Vru1nCvcIJ+nwNO8lCT3od6YnzLKQG/KraylQcJIWIFqRbtsoLUOlN1I9mnbZkEykxjHvfdPoQ2
-	s5a4lCdCq8IBZF2oRC1MdJ8acA5is2r5rzM7Qku5wSrg+vak9ouLW7BaMsDehfdsyu1dr3TtT0/
-	pNKESRoKuU/TBaWDeeLuflQBIyaiKeLBxnUBvN
-X-Gm-Gg: ASbGnctGmHy2u83oyGZw+ss1BI1j4ALFeU6Yg1uUZrkuQDY2URcMJxutG8/4fihGatG
-	1bvA3rITcWAPx8olKRKmV/gRfwZGAultyuG/FZWdZcdp3abazUicVrJiGXx1fBXUPZ9Ue66o=
-X-Received: by 2002:a17:90b:2688:b0:2fa:20f4:d27a with SMTP id 98e67ed59e1d1-2fce77a6382mr22454972a91.7.1740379361492;
-        Sun, 23 Feb 2025 22:42:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEuFD2ecIhUAFhVjxb8VN9DbbzjXzl6lNulCOdvpETmdpzPozqSwQzz5CU4bcDz4WMau0RfbbIjUtCAkxFwf68=
-X-Received: by 2002:a17:90b:2688:b0:2fa:20f4:d27a with SMTP id
- 98e67ed59e1d1-2fce77a6382mr22454953a91.7.1740379361235; Sun, 23 Feb 2025
- 22:42:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740379335; x=1740984135;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kq6DmAc1mPgZsYnLbQg4+lsGkwNUTX+i9eYRvcNTn0g=;
+        b=OECF5QucyidmG2dDiR2mceGX2FuRT1QHy1wAU+s5O0a4lQNUtjdCI28oXIRoeLL54I
+         zAXSuiS8x62GJpdYfCRwoFVT29rc58JgSJt9hJ+cwoK++SoCrU4/mFK5Dut7tPGqLykX
+         +MLNQ0Ya/fK/1Wa6+gKodfkM5nNWgnZZlurlkMp28okQzFDDXHmBdUmdZiBoUcwd131F
+         7qPGi0yKobh01PuUjnladLLYhfw26BHGt1mXTyRVLs03zijfbaUZBWiJpUCA59liB/6f
+         /sAqMBerD0YTiec4IAB5rEZlgHbxpVuQQtz5Ug3VRwFVDgFa3BO3qsZcYdDRnBxLHg0U
+         aQJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHM8IqlUSfEu6kA+w0DTxxVeiP10aW0z071EKAxAlu1PJSkWtEQpA8fYUY37PafsfVjayHjOXM4joQ4G4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT4iwC3aq0dfk5ZPY+AMXcLEW7diwqxoIva3X3vdtUX8xA9Lgq
+	pu3uOGCOR3jBqzThmi7f5Hq+hAN+9B6RXTJkeKbLZGOh9GKxqmnsUFMraAV8YQ==
+X-Gm-Gg: ASbGncugGmXyeXHxErd1fV/QnsjumkDuQ+Gfv6jQfbYYKimuHlV8eoKgafoIjcEMbT7
+	bs/rOZshs2cH4L3Kgj8U11fSVzBiK+JmyHtF/+eKIxuo73+ilQL05dTRUyL4Pmc9EPbm2JAkcHy
+	H4jNhRKaiktXhMJ4nth6xyaMqGgqiV1gqmk0bQI6LIXnasVYSxrrsIXLyCc5fouxlWmis+affXr
+	Kb4KR9srPOAy1qF9bOrxfeENd/HpGaojYvoXigAi7GKk50RJF2lUpDRir3VJYbKvXYU2hF0Iz7j
+	vxDTcg9RPA1EiAVd1yQx2FqyZ9nBEoNjOLcH
+X-Google-Smtp-Source: AGHT+IEwF+vLY+LCfHIZyqyr7Gb87PMyqsVhLzbCXy50uOwdx1qsfBGxMboeEHIMM+6rTzgy8eBxrg==
+X-Received: by 2002:a05:6a20:d491:b0:1ee:c463:23cf with SMTP id adf61e73a8af0-1eef3c770c6mr22195316637.13.1740379335667;
+        Sun, 23 Feb 2025 22:42:15 -0800 (PST)
+Received: from thinkpad ([36.255.17.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb5870e862sm18223894a12.44.2025.02.23.22.42.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 22:42:15 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:12:09 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Sai Krishna Musham <sai.krishna.musham@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com,
+	bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: xilinx-cpm: Add reset-gpios for
+ PCIe RP PERST#
+Message-ID: <20250224064209.h7te3o3vhcf33alh@thinkpad>
+References: <20250224063046.1438006-1-sai.krishna.musham@amd.com>
+ <20250224063046.1438006-2-sai.krishna.musham@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221170626.261687-1-eperezma@redhat.com> <20250221170626.261687-2-eperezma@redhat.com>
- <CACGkMEurYAGHx1FF5YgS=T-4CDY8dn4B2sQJB_ojRxDdiqB2YQ@mail.gmail.com>
-In-Reply-To: <CACGkMEurYAGHx1FF5YgS=T-4CDY8dn4B2sQJB_ojRxDdiqB2YQ@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Mon, 24 Feb 2025 07:42:04 +0100
-X-Gm-Features: AWEUYZnuYDjmdyQD3CYZL5hzzrYfofHBj4VHCbCLQNKiTNY5xfwbgaR5pmNcLH8
-Message-ID: <CAJaqyWc6M+1dkLSMuGwauUKEOoaC-VfW5Ofn6JwYtnKYB-yjRw@mail.gmail.com>
-Subject: Re: [RFC v2 1/5] vduse: add virtio_fs to allowed dev id
-To: Jason Wang <jasowang@redhat.com>
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Hanna Reitz <hreitz@redhat.com>, linux-kernel@vger.kernel.org, 
-	German Maglione <gmaglione@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, yama@redhat.com, Vivek Goyal <vgoyal@redhat.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, mst@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250224063046.1438006-2-sai.krishna.musham@amd.com>
 
-On Mon, Feb 24, 2025 at 2:57=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
-ote:
->
-> On Sat, Feb 22, 2025 at 1:06=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > A VDUSE device that implements virtiofs device works fine just by
-> > adding the device id to the whitelist.
-> >
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > Acked-by: Jason Wang <jasowang@redhat.com>
-> > ---
->
-> Let's separate this from this series.
->
+On Mon, Feb 24, 2025 at 12:00:45PM +0530, Sai Krishna Musham wrote:
+> Introduce `reset-gpios` property to enable GPIO-based control of
+> the PCIe RP PERST# signal, generating assert and deassert signals.
+> 
+> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
+> ---
+> This patch depends on the following patch series.
+> https://lore.kernel.org/all/20250217072713.635643-2-thippeswamy.havalige@amd.com/
+> ---
+>  .../devicetree/bindings/pci/xilinx-versal-cpm.yaml          | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> index b63a759ec2d7..293ed36d0cea 100644
+> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> @@ -33,6 +33,9 @@ properties:
+>        - const: cpm_csr
+>      minItems: 2
+>  
+> +  reset-gpios:
+> +    description: GPIO used as PERST# signal. Please refer to pci.txt.
+> +
+>    interrupts:
+>      maxItems: 1
+>  
+> @@ -63,6 +66,7 @@ properties:
+>  required:
+>    - reg
+>    - reg-names
+> +  - reset-gpios
 
-Right, actually I should have said this series should be applied on
-top of this sent patch:
+This is an ABI break. If you make it required now, old DTS will be broken.
 
-https://lore.kernel.org/lkml/CAJaqyWdC-Tte+ao6pk22fq-mUym8C9guQFThSnG5gMxWN=
-qWyXw@mail.gmail.com/T/
+>    - "#interrupt-cells"
+>    - interrupts
+>    - interrupt-map
+> @@ -99,6 +103,7 @@ examples:
+>                         reg = <0x0 0xfca10000 0x0 0x1000>,
+>                               <0x6 0x00000000 0x0 0x10000000>;
+>                         reg-names = "cpm_slcr", "cfg";
+> +                       reset-gpios = <&gpio1 38 0x01>;
 
+Please use proper defines in include/dt-bindings/gpio/gpio.h for the GPIO
+polarity.
+
+>                         pcie_intc_0: interrupt-controller {
+>                                 #address-cells = <0>;
+>                                 #interrupt-cells = <1>;
+> @@ -127,6 +132,7 @@ examples:
+>                               <0x06 0x00000000 0x00 0x1000000>,
+>                               <0x00 0xfce20000 0x00 0x1000000>;
+>                         reg-names = "cpm_slcr", "cfg", "cpm_csr";
+> +                       reset-gpios = <&gpio1 38 0x01>;
+
+Same here.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
