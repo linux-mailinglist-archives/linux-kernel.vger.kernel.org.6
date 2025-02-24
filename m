@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-528439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2AD8A417B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:45:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB498A417B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AD4A1890A92
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:45:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE87A1890C19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E5D21D3C9;
-	Mon, 24 Feb 2025 08:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5932821D3EB;
+	Mon, 24 Feb 2025 08:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VtP9LqDu"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYoysyTF"
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6020E21D018
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25BE21D3D0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386740; cv=none; b=AKant4ltg3DZ5q8ZRhCRSxDWKO8zdPzWNl/5XlCzXP0oeWVNJgfob7HX3fhDKkX7GPf4BmiHlAG1LL6K/C34N3TZ0F+S2pK5Jpow3QkVOgMdNC0UKOW0z+9iCtV8NUDd9y1yN7Ax6eSU9+7x4YQsZvPBDtdDzajK9TuE8OlVKow=
+	t=1740386742; cv=none; b=i+7Tb6Qc2WWGUkUfJ4GNAlmK1rUj/QvBogn3lb/szip24OHNY8N5QAvNkRiuZTQ8dC0tLIsdTqMGgiJNCAcsqQOhhqCXuJZY/8ZQrF9v+pxl56blCvg3uMhRBMClcPju1pGk0947w8ywVZR6Ek3F2c6GUZOgK7JYEn5cffV1wpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386740; c=relaxed/simple;
-	bh=6GQcXVe2SCy/A7R9Dn8Z5XgQUnXLIPESvvaPTN/8lhk=;
+	s=arc-20240116; t=1740386742; c=relaxed/simple;
+	bh=BLHeMe+3TTjPUWwgCHBuZW58e2Lj5qXGFdx+y/AyKtE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SndITBd89UM9aTZmZX+OWjf+c6TA/c5G8GK9/b5rq9wVo6wDGzQ1HxMqLRP81Q5c6Q355AUAyAkOlXvL/YVb6oLxjuVehFpXdoPNsrhHkWeDHuWL/5Ik6GX7cx4Gy886iRTD5EPOOyYlTp25gCuC0vOX0zXlgOZ0lfO/AXZU1sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VtP9LqDu; arc=none smtp.client-ip=209.85.218.74
+	 To:Cc:Content-Type; b=Wu16QdZ7RCK0uApYHJZVkEUu1A+NoMy75dIavFHoF/dkbsI5Mm2/HRGEcoLooGWIrHJCROzQMTlsFItR5wpkUjs6Qe5D6vfd2N7Nt6XlDU7DOGf7cM8sLclM7iTSozwncOETffcPHmo95rZCRcW6U21kA5QkQCQJcsF0vOeGius=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYoysyTF; arc=none smtp.client-ip=209.85.208.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-abb4d3ef1a7so349856866b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:45:38 -0800 (PST)
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5dedd3ee338so6277000a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:45:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740386737; x=1740991537; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740386739; x=1740991539; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3mGUzlKU/88ScEoKu5QKXimL46RVCUcRx5GeW41a5LQ=;
-        b=VtP9LqDuxePPrPapWBhU6u3Nh6Z3UATUNNoTwPkxNYnF0BdL1biSDxtAg2NtMSBaSL
-         4lgYhD+NarS8hqnonZvKqfPHAhBjn6Q8iIuO1zq6WMLgJsa74gX3OMXMrJ+e85pA5kDb
-         +DqshtgMHO4y3iy6YFa7gs88T5IAZRECmJisyzJOi73mWo4H2v2w6nXtGWGIDnKf6Twi
-         nJEIrf6qWZN5bWvvmrrjmscI/Vrx8D31csMmNwqN+SI2YprHkBkClInpZzy2cIOpkFVw
-         r2gLWXGJ3SGBbz+UyTdO/MgDmHob37MC5zkMI4gfWTM/It8GdRLoXi7fTPiPu3VYAjKL
-         QmaA==
+        bh=3zXF2piNTepx0Zg/2eVcKc5ldHZcK58aUvEjPlpIgpc=;
+        b=VYoysyTFhFUygj+PYbw74A3vjo3VvUXkyRCpzXwwe287qKyn2dYkP65BTf/xYayhLE
+         2TkWYh0JBOaoAUFe7SsY+ZIvix/ZEGjmlM/bg/BMsSr5Qyv7fNj7YUwzetjEi4zMWXYY
+         8LPWiEH9g1gJMMwsxu0hmoaLJh6NNwMn3WgTsF5clW4Nu22E0jxyOTaxDg3MNIh1Gpuz
+         FXcYB3yuo427ZPOIW+eB+1q1lmAbvnuPcx5PfZWQbFUWR9JjjN3045cqVqzI5rip8Rzg
+         AV5a3afnIHOH3r02NIyBeXOVzO1bL3IOgii4xbmNlRlSNhKPfBPAWNuDTDfWvD1AA3d2
+         OxzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740386737; x=1740991537;
+        d=1e100.net; s=20230601; t=1740386739; x=1740991539;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3mGUzlKU/88ScEoKu5QKXimL46RVCUcRx5GeW41a5LQ=;
-        b=BRgy4KWas+8TGjYprg8+UhPj81Oz8ux3DHqGorKuBfMh2XRvFSbr4FCbUUntPGFOXz
-         W8q0aF4AUnv1LzLNyh5oKYZSP/lGDOlB03kn7L4x6YyeaN5jaj6o29Gohjt3AYy6Ddu5
-         EAIHg4O0LL8D1s6+7OT+KacRHwiG0GSp/PS7aVdu3iFfSFtQ6kI/7LBdo+ZHdGZGWa2y
-         zDVjJNL6/kFuQ9kzd3b/p4Uf1Cxv9w8fw0azpFjzHS1b8CM65J3IW5pPQXd3hwo99/nG
-         bJxW586eIYP8eQ07SjAPkuqV6aitmscNiXSEnkbs0M9my5P2+NRhuco/ApJCO2BuhOHT
-         aOxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJMBM2DeIWkiIhYMECE9TBmDMbRtc0O9kz5EknFj7eXHSrqKrdnfmnBdcbMAQbWtazdXN6mNtIiV0FFPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9S7QVOtr6rSiGL8VGTpPTJzwdCbgsxpJp27nXAl54WD/XcebS
-	TFYQq/qYFnv+5PUQT2DArFR6kkOabMLHk8x4Kv0CpkcX6MPKyORj1bfDriERHeZE9FSYP1rnxwU
-	GQ8fZig==
-X-Google-Smtp-Source: AGHT+IFukiwuqJxcfOF08YHnGZAmuqGLDYsPVBtSaYDroQXCGE5fxa9Wcxt1IHW+nQHGDLsYZPveaU//aLN+
-X-Received: from ejcrt7.prod.google.com ([2002:a17:907:8947:b0:abb:910b:456d])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:c456:b0:abc:269d:d534
- with SMTP id a640c23a62f3a-abc269dd58dmr789993966b.40.1740386736737; Mon, 24
- Feb 2025 00:45:36 -0800 (PST)
-Date: Mon, 24 Feb 2025 09:45:25 +0100
+        bh=3zXF2piNTepx0Zg/2eVcKc5ldHZcK58aUvEjPlpIgpc=;
+        b=w7Msa0JLAmi6Lymm9TRycghillMZHGVm0QWD/5XRBt/SZYc1Ml8zqPKXasYYEZIhTp
+         NUe5yVzXwru10kECg0fIMgW21CJ+je6rsIMuyueULhJwLDFM6KDOU4kvPJc4PAgtU31L
+         ZPOS3+dDrRmD/T+LaVb647NHC4gfuf2LdpuEzY49Jq4HbJM6JeO7dHKTdwFM0QdallLd
+         scLN03SpYcREdxg/ptHUBR9ThneuuW6Nkh+kl6R9Tnkn/ZIFFyijEGsKzOXr9EP+tEIp
+         v7NswBnKSQUFAhasgq4o9kxyin73o9vuxuw50AsR9CmtMVyWtwg80Yu5EnbfFBc5ZdK6
+         uf/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeGGlkwQOLGknU+0xz6E4xH+nta7Nnp/49LX/Tjslzs5hSooQF6LHOrnE5ULklqSDxgHuvdRGiTeDjjR4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN7DWZJngCOrFJpg3VCuM/YYlyvsax9QFu9UzlbL0JMXLe5v1Z
+	u/uXK1KZrHVTX2mHY6/ngpvJ9p7gAOPJYXRRgV7xPTSdeJQ12TArPhanx8W+SLz2Z6+2sdMeh4F
+	32Dc4Gg==
+X-Google-Smtp-Source: AGHT+IGotoXsPbtymb0eBRMPCvN6au2B0HnC7Uy7NlhHpxM0D6D1UHiCRGgBBydFx3vW7kWX3pfcicgFvSZs
+X-Received: from edzg17.prod.google.com ([2002:a05:6402:911:b0:5dc:df94:8dd0])
+ (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:13d2:b0:5de:39fd:b2f5
+ with SMTP id 4fb4d7f45d1cf-5e0b70b5f43mr11779456a12.1.1740386739344; Mon, 24
+ Feb 2025 00:45:39 -0800 (PST)
+Date: Mon, 24 Feb 2025 09:45:26 +0100
 In-Reply-To: <cover.1740386567.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,27 +73,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1740386567.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <de940218d0a59fd930ec244d87f2375b16a7815a.1740386567.git.dvyukov@google.com>
-Subject: [PATCH v2 1/3] syscall_user_dispatch: Allow allowed range wrap-around
+Message-ID: <d11d91e0c27ef78affcef06e00d1cf4cd8747fcc.1740386567.git.dvyukov@google.com>
+Subject: [PATCH v2 2/3] selftests: Fix errno checking in syscall_user_dispatch test
 From: Dmitry Vyukov <dvyukov@google.com>
 To: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
 	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com
 Cc: Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-There are two possible scenarios for syscall filtering:
- - having a trusted/allowed range of PCs, and intercepting everything else
- - or the opposite: a single untrusted/intercepted range and allowing
-   everything else
-The current implementation only allows the former use case due to
-allowed range wrap-around check. Allow the latter use case as well
-by removing the wrap-around check.
-The latter use case is relevant for any kind of sandboxing scenario,
-or monitoring behavior of a single library. If a program wants to
-intercept syscalls for PC range [START, END) then it needs to call:
-prctl(..., END, -(END-START), ...);
-which sets a wrap-around range that excludes everything
-besides [START, END).
+Successful syscalls don't change errno, so checking errno is wrong
+to ensure that a syscall has failed. For example for the following
+sequence:
+
+	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
+	EXPECT_EQ(EINVAL, errno);
+	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel);
+	EXPECT_EQ(EINVAL, errno);
+
+only the first syscall may fail and set errno, but the second may succeed
+and keep errno intact, and the check will falsely pass.
+Or if errno happened to be EINVAL before, even the first check may falsely
+pass.
+
+Also use EXPECT/ASSERT consistently. Currently there is an inconsistent mix
+without obvious reasons for usage of one or another.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
@@ -105,55 +108,83 @@ Cc: Gregory Price <gregory.price@memverge.com>
 Cc: Marco Elver <elver@google.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- kernel/entry/syscall_user_dispatch.c | 9 +++------
- kernel/sys.c                         | 6 ++++++
- 2 files changed, 9 insertions(+), 6 deletions(-)
+ .../syscall_user_dispatch/sud_test.c          | 30 +++++++++----------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/entry/syscall_user_dispatch.c b/kernel/entry/syscall_user_dispatch.c
-index 5340c5aa89e7d..a0659f0515404 100644
---- a/kernel/entry/syscall_user_dispatch.c
-+++ b/kernel/entry/syscall_user_dispatch.c
-@@ -37,6 +37,7 @@ bool syscall_user_dispatch(struct pt_regs *regs)
- 	struct syscall_user_dispatch *sd = &current->syscall_dispatch;
- 	char state;
+diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+index d975a67673299..b0969925ec64c 100644
+--- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
++++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+@@ -86,55 +86,53 @@ TEST(bad_prctl_param)
  
-+	/* Note: this check form allows for range wrap-around. */
- 	if (likely(instruction_pointer(regs) - sd->offset < sd->len))
- 		return false;
+ 	/* Invalid op */
+ 	op = -1;
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &sel);
+-	ASSERT_EQ(EINVAL, errno);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &sel));
++	EXPECT_EQ(EINVAL, errno);
  
-@@ -80,13 +81,9 @@ static int task_set_syscall_user_dispatch(struct task_struct *task, unsigned lon
- 		break;
- 	case PR_SYS_DISPATCH_ON:
- 		/*
--		 * Validate the direct dispatcher region just for basic
--		 * sanity against overflow and a 0-sized dispatcher
--		 * region.  If the user is able to submit a syscall from
--		 * an address, that address is obviously valid.
-+		 * Note: we don't check and allow arbitrary values for
-+		 * offset/len in particular to allow range wrap-around.
- 		 */
--		if (offset && offset + len <= offset)
--			return -EINVAL;
+ 	/* PR_SYS_DISPATCH_OFF */
+ 	op = PR_SYS_DISPATCH_OFF;
  
- 		/*
- 		 * access_ok() will clear memory tags for tagged addresses
-diff --git a/kernel/sys.c b/kernel/sys.c
-index cb366ff8703af..666322026ad72 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2735,6 +2735,12 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 		error = (current->flags & PR_IO_FLUSHER) == PR_IO_FLUSHER;
- 		break;
- 	case PR_SET_SYSCALL_USER_DISPATCH:
-+		/*
-+		 * Sign-extend len for 32-bit processes to allow region
-+		 * wrap-around.
-+		 */
-+		if (in_compat_syscall())
-+			arg4 = (long)(s32)arg4;
- 		error = set_syscall_user_dispatch(arg2, arg3, arg4,
- 						  (char __user *) arg5);
- 		break;
+ 	/* offset != 0 */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, 0);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, 0));
+ 	EXPECT_EQ(EINVAL, errno);
+ 
+ 	/* len != 0 */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0));
+ 	EXPECT_EQ(EINVAL, errno);
+ 
+ 	/* sel != NULL */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel));
+ 	EXPECT_EQ(EINVAL, errno);
+ 
+ 	/* Valid parameter */
+-	errno = 0;
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, 0x0);
+-	EXPECT_EQ(0, errno);
++	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, 0x0));
+ 
+ 	/* PR_SYS_DISPATCH_ON */
+ 	op = PR_SYS_DISPATCH_ON;
+ 
+ 	/* Dispatcher region is bad (offset > 0 && len == 0) */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+ 	EXPECT_EQ(EINVAL, errno);
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
+ 	EXPECT_EQ(EINVAL, errno);
+ 
+ 	/* Invalid selector */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1);
+-	ASSERT_EQ(EFAULT, errno);
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1));
++	EXPECT_EQ(EFAULT, errno);
+ 
+ 	/*
+ 	 * Dispatcher range overflows unsigned long
+ 	 */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel);
+-	ASSERT_EQ(EINVAL, errno) {
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
++	EXPECT_EQ(EINVAL, errno) {
+ 		TH_LOG("Should reject bad syscall range");
+ 	}
+ 
+ 	/*
+ 	 * Allowed range overflows usigned long
+ 	 */
+-	prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel);
+-	ASSERT_EQ(EINVAL, errno) {
++	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
++	EXPECT_EQ(EINVAL, errno) {
+ 		TH_LOG("Should reject bad syscall range");
+ 	}
+ }
 -- 
 2.48.1.601.g30ceb7b040-goog
 
