@@ -1,111 +1,110 @@
-Return-Path: <linux-kernel+bounces-529193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C13BBA420EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:41:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9140A42179
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:44:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33F7F17AA37
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277313B8E3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277C8248876;
-	Mon, 24 Feb 2025 13:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED0924EF67;
+	Mon, 24 Feb 2025 13:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZecWuJRU"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1qIi2DA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4B243369
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C5E24BBF3;
+	Mon, 24 Feb 2025 13:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404191; cv=none; b=FMI5KCUmqARhA78wMfte9Luu46PlXvCjsss2spBVyv7GY5nlO0Yj/y/CFxkNj4Z3iLku21fFT5pm2Bz8fsj+9SThx2BP6Lyo8OwEPlFcaNGwLlumwILl/1MP+T7i7xfjdQDPcYS5rHPquDGegbZV+2fsu6tmySa4ngpOwoWKoY8=
+	t=1740404194; cv=none; b=O8eVEhAlhYfVaHsyWL/w5x1Xdhdwtn9a1V/co+dj6c4YcZUUrp9SgO7GGDzrdHQ5XS8CSsCWkU/8E2O5wkgJNqTW5JIOIVtax5/dwnzGrG7XDxNg2eVaORgf3GjPb3imtSjSIBKoWrSe2pazI2yckWwc+dhFbH5W/s6QWKdfmKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404191; c=relaxed/simple;
-	bh=mQ/E9GJHlsbL+anTuSZ6BQz3/aW5axOVMMuBQiddEJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uqdl5GeEJ1UQuxns1frBJuP+hjldG1Vjl5g1ASaVs43Js1XyNllqCkt3ksBXiIp9nFu5SNvwa9JEhUoscYXCHWjv8+7pNRZtvgnmBjHhZM9Pz1pppW4qFAplAaY6QCOlVwiDA65K9LlyEPsa7qi9nBua1cJocf/jvwM8G/lZalo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ZecWuJRU; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e41e17645dso46263286d6.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:36:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1740404189; x=1741008989; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pX15D6Bceu4RJAPP2hZ7qecAD4Jjx++qSJOO1ZCwVUg=;
-        b=ZecWuJRU7qxjiEFZR9/rkkxTLiAlum7vg/g3X/hgERSabO05RmqJ/ml3AhV9/Bjlfa
-         D3dpi/otYOsTDTuP0ukQcm4iHmkMro8zMFvP8iS4oI1+vjQj9ff7X4Cct7yLeYwXiQ0x
-         uZxWx+2p0Hel/LHU53vL72D/IqNJj+jKB572I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740404189; x=1741008989;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pX15D6Bceu4RJAPP2hZ7qecAD4Jjx++qSJOO1ZCwVUg=;
-        b=biT6K19l1U5q4oL5olww4QFIN69Dklf9jL0MhVWLGDNla7oMuwN0HSSaG6/L0cLF8a
-         TcVSNEMQIRxfBe7RvuQDIks2ZBodsAWwpkvDNK6jY1uWIQWpMmIMz+rYIq35c5vd8N4u
-         ACnio2WSiC1pR8+MfUu4lON7ra591nJliNOqRQjfjwksm01uEWM9AarSOnC/meMyk0ac
-         oCewyb/6DpDLtJbY7DlRLUi1G5OnimJhG2FB15a8eiuy0v0HjUxIHaQRhOGg/fpOPgiH
-         aDVZQ/hXDPiSkg7/F1x6q+b+UrA77vZClHv4s02QzmfwjldSVel5ucP4dgRfdB+HW4Zx
-         Mb6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWwCSaxqIX08sLXinNyKbnwEXiyp3qtNE6GeZqlPXA7aAaZ9JRLkBPJv763JEfduoFV24ODapq+RR5WTtw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5n79qDeEJsWvkHmks0kxzo3tO4tkr+KpNmoZWYtpewqEDSMU8
-	WbM7KCDcO27kzx5rN1fBMNsnGgt80to81ds6hm1Q5L/hXi86lp8DuQQm0dT8ix8Kaa2J2fNmJJz
-	LyMlhfR3ziABgbMj1Jc//IwdXPQLmDCAPgijwu7T9BRGz1fLWriA=
-X-Gm-Gg: ASbGncsSCUjD8XvvYHg6w6+G5+DGXvEuqICFCL0iPhkrMtrn7mIdN98SadgxvE2a2d6
-	Zm7dUyDuP8u0ey3LFWiUc9elhbsRrmOP6GEAt5lRA0Pr9pkDrVaaHTjtTPh/kjv2cAOtzhK6YEA
-	frTyvL0P15
-X-Google-Smtp-Source: AGHT+IHEguL2LQC+mE/wN2ZbrNSS9mGqTel4hxm0Ns+rj0C3I1UDfr222KhMLimcBgeKtOSbiaXheQP3swC7hn9oWCc=
-X-Received: by 2002:a05:6214:29e1:b0:6e6:61a5:aa4c with SMTP id
- 6a1803df08f44-6e6ae98e884mr171019236d6.31.1740404188955; Mon, 24 Feb 2025
- 05:36:28 -0800 (PST)
+	s=arc-20240116; t=1740404194; c=relaxed/simple;
+	bh=VhFuW1YX+WDguNbx1Pqhdgwyq1wth1UVzs2bcOFTY6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gs8X8VW//irdQ4FqWcmlvjSqmbIxPQX4i2vbp3PumsdBPCQC/OMIBLTiNoTy88iLP4XA4fydK8FDDJD6Pa59gICoPINvAbeNQ7SvTDf88+fdHm7LX5U49416rSJXNgx46uvCOraOb2+daIM3ppojJQVbBFgAR7tmQ3DpnJwBeXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1qIi2DA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DC5C4CED6;
+	Mon, 24 Feb 2025 13:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740404193;
+	bh=VhFuW1YX+WDguNbx1Pqhdgwyq1wth1UVzs2bcOFTY6s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G1qIi2DAwoQ/P1Re3G3WBaoT1KaYq+h3Yy0OxGNJWSsO8k5Nle1HFV3fXkLVu/7ol
+	 bRA4ewU6jH6usaAvxmTaUuBSmVSNpymyu4x1NqhaaYH1buNB9MpXaSFUfjdCZkESxW
+	 50IkRrzj1TRwCFjbO8EJUiNbwIcB0qNs3m9/uaTSJa8Ef09V2g3Vvp0cz9cCNmKd/g
+	 OfS0xiMSu4egIuoxXWwz9QziulS0mWQ5FVPvuq9qw2yQucnPyey5OaOlgRl9c/PL+f
+	 Em5/L/SKjsRvBpAMG7u68U98/CwIzi7gciO4gyYX9C+NsYuwpfEtBfdUHtvnb//cUB
+	 d7S9jQngIHsIw==
+Date: Mon, 24 Feb 2025 13:36:27 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Steev Klimaszewski <steev@kali.org>
+Cc: Alexey Klimov <alexey.klimov@linaro.org>,
+	srinivas.kandagatla@linaro.org, lgirdwood@gmail.com,
+	krzysztof.kozlowski@linaro.org, perex@perex.cz, tiwai@suse.com,
+	jdelvare@suse.com, linux@roeck-us.net, linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: codecs: wsa883x: Implement temperature reading
+ and hwmon
+Message-ID: <1a667486-590d-47c9-b23a-069e3d51cb54@sirena.org.uk>
+References: <20250221032141.1206902-1-alexey.klimov@linaro.org>
+ <CAKXuJqj4zKfA4HNNcooG5Ffqi+EKQ1RvuzWndZd=htoatwszOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250130101607.21756-1-luis@igalia.com>
-In-Reply-To: <20250130101607.21756-1-luis@igalia.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 24 Feb 2025 14:36:17 +0100
-X-Gm-Features: AWEUYZnExmcNkU3GwrJRJQ361As8l_tN3AphejCDo4zDTsYm2hrPSZCA-Nr8ou0
-Message-ID: <CAJfpegsrGO25sJe1GQBVe=Ea5jhkpr7WjpQOHKxkL=gJTk+y8g@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] fuse: fix race in fuse_notify_store()
-To: Luis Henriques <luis@igalia.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd@bsbernd.com>, Teng Qin <tqin@jumptrading.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9sSdn6rh6EA/NDBo"
+Content-Disposition: inline
+In-Reply-To: <CAKXuJqj4zKfA4HNNcooG5Ffqi+EKQ1RvuzWndZd=htoatwszOw@mail.gmail.com>
+X-Cookie: Phone call for chucky-pooh.
 
-On Thu, 30 Jan 2025 at 11:16, Luis Henriques <luis@igalia.com> wrote:
->
-> Userspace filesystems can push data for a specific inode without it being
-> explicitly requested.  This can be accomplished by using NOTIFY_STORE.
-> However, this may race against another process performing different
-> operations on the same inode.
->
-> If, for example, there is a process reading from it, it may happen that it
-> will block waiting for data to be available (locking the folio), while the
-> FUSE server will also block trying to lock the same folio to update it with
-> the inode data.
->
-> The easiest solution, as suggested by Miklos, is to allow the userspace
-> filesystem to skip locked folios.
 
-Not sure.
+--9sSdn6rh6EA/NDBo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The easiest solution is to make the server perform the two operations
-independently.  I.e. never trigger a notification from a request.
+On Fri, Feb 21, 2025 at 02:10:44PM -0600, Steev Klimaszewski wrote:
+> Hi Alexey,
+>=20
+> On Thu, Feb 20, 2025 at 9:21=E2=80=AFPM Alexey Klimov <alexey.klimov@lina=
+ro.org> wrote:
+> >
+> > Read temperature of the amplifier and expose it via hwmon interface, wh=
+ich
+> > will be later used during calibration of speaker protection algorithms.
+> > The method is the same as for wsa884x and therefore this is based on
+> > Krzysztof Kozlowski's approach implemented in commit 6b99dc62d940 ("ASo=
+C:
+> > codecs: wsa884x: Implement temperature reading and hwmon").
 
-This is true of other notifications, e.g. doing FUSE_NOTIFY_DELETE
-during e.g. FUSE_RMDIR will deadlock on i_mutex.
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
 
-Or am I misunderstanding the problem?
+--9sSdn6rh6EA/NDBo
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Miklos
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme8ddsACgkQJNaLcl1U
+h9B8igf8DvVM3ehtTA/kt8PFdlYgC7fDa+W9NdQiGnL5dBWxZHkjW/K/+0BdZcLZ
+oUYwbPazrLOk/UNutZEPtmTeA/tsDICgJkRqo4JNr+ieJCYi5cx4ndnC41p9NaN+
+fBJmvIwp5fR3Xf7xqcNUYODzUV4up5UNcSrZ6XLbe7Gu9ARUDnbysW6xiDPrwT5f
+Vs4Dxbebd3DAc6AYaUY/238U7UMIs1grbd3n31BEDpHqARVEacRfrDs3T6HfJMcG
+QYifRzsro6uoZYLyqEQDQ8Arxz5mEXpJBMK1xUdtNPH3qElOLdhR0ilIJlGRmKIH
+fATfb92v3UosKMkBU1NWq2aU3ph4Gg==
+=v9FJ
+-----END PGP SIGNATURE-----
+
+--9sSdn6rh6EA/NDBo--
 
