@@ -1,332 +1,450 @@
-Return-Path: <linux-kernel+bounces-528134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B676A413F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:23:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FD7A413EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B7C17245F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:22:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B48C3A39C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788441B4234;
-	Mon, 24 Feb 2025 03:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C451F60A;
+	Mon, 24 Feb 2025 03:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ATD+jVa7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fS/B//x2"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE051A5B9A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:22:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36D5EACE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740367323; cv=none; b=KJUPmAb0jCRLzbfIYH3SYUS9qEhS5JtXXAY8S5pGCz2kD0KqKMlDmOijzSdWReUHXRJV44UO3QlAE7Acg+Y2qukspyg0hgtlZKM/xvDSozIu84DmLWwwzKOQAlzyEm6dn4VxeaHObqtPsuefVNkzz63QGytQXsmtTwLoiOFaFJM=
+	t=1740367265; cv=none; b=KndGTg9wYr3CnqzB+y8ay/xKnUEDoZgminvwv3mBRk1mw8+W9VVp/yxcqBrJKkwF6+eDEhmytrzQQ2sLNpslQh7fcFTkeaf/JxZPqAVwhErdYOp6L7n76aO6N/UyTuyGtymu00au3u3snL/Fi7ja+wxrr7hKTTdWEOd+RH9RLjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740367323; c=relaxed/simple;
-	bh=gtvQmFMZq96hBKeNoF2V0rliu4QKfGTnrxvFeoQp8Ss=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QI+xgzH6ksZtcgePTXv/FgRlZQ1zitl2Hpa/Us7AXLD+lsURdpBaKM1g5jEooiIfw/ZsavRtKyxyIfGUPikxl1FvSbQqKpn0IGYxuqnFj2Df6TBVexhi4NWF34W5poTLZmWxVoVdkHAGeJiYwHHkXOEgbIaHn3dZIP/rdoxSkBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ATD+jVa7; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740367322; x=1771903322;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=gtvQmFMZq96hBKeNoF2V0rliu4QKfGTnrxvFeoQp8Ss=;
-  b=ATD+jVa784JgKNPocwP0DvSWeip4DRsKwNbdcgZibnkllG3GKR8lXOjC
-   ZQ4sG7BysksbCamkvDxtFHxyKaNYrZX71IUokDkV+RWujy/2UAGsaQP6w
-   sqJ6EUb44R/SwlZnLa0iry8Vx3BnOFGCEzMurrBXLkougZOqIXTDXQt4K
-   eZHMXAWS/KZwE5SEbhUly8Gd9wfLhz7+yzVAkro4lOQUfUwz0EJqWa/av
-   d4afg4ymr/9dYjnWitXCS4GgJGOwmFBLuFNndzUGy6OnIIF5U1W8Hiex+
-   j02sY7BbrczEcKxFtoFTlRmeJldqh7xW498W7ZKYI1xV6zL5JDGoROT2i
-   A==;
-X-CSE-ConnectionGUID: mjqVxB5qToStJx0d01EFPg==
-X-CSE-MsgGUID: H/3XUxImQJ+kI3rnIxIS9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="28706895"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="28706895"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 19:21:56 -0800
-X-CSE-ConnectionGUID: 98GZGlJlThOh0sx475/aTw==
-X-CSE-MsgGUID: /pY/rAzpTNOzD/pMmjuJvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116441906"
-Received: from shanagud-mobl.amr.corp.intel.com (HELO bxing-mobl1.clients.intel.com) ([10.246.117.251])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 19:21:17 -0800
-From: Cedric Xing <cedric.xing@intel.com>
-Date: Sun, 23 Feb 2025 21:20:15 -0600
-Subject: [PATCH v2 4/4] x86/tdx: Expose TDX MRs through TSM sysfs interface
+	s=arc-20240116; t=1740367265; c=relaxed/simple;
+	bh=12UbkbL3ozhmpAXcWhDiB6a+27sLxl6aSj4n9qWN8hc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=af5Gk5UEdxXEz6vC0rKyGr7CLeDhIANz4xx8lhGg/YbNwt7jxekZR+lqNmgw54dG/8vcErwICrjtVJfus0YX5a7W6Xtm7XdZr88j888vbsP3biBO2OZS/SW2UXXUps1OffXRMX0DT4CXBXFEfJz2ylgTMWheFoSO9/Kt3JFI49k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fS/B//x2; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e589c258663so4247494276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 19:21:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740367263; x=1740972063; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jj056RohTndyRUjZE+5/HofNr1PVX5M2m/PLSiWGtqU=;
+        b=fS/B//x2U0Khu1SXSzw/En7lGTsLOs2RynmWlZRSoEEW6Kc10xjF932sWCdAVQE1Gu
+         ogdLAeF+eJsLNXaOoEYqchP+FbVjFgYjvPJ7F1qVan6Umd1Qe0hkhVsGwg2594AoZNST
+         E8FIuL9iLZWB/+paqGqxFUUMkCggWmgZio5LyyVhLJSkgwGAW4VPkIHgHr9VfwdNdfbo
+         WsiNRABMe66qoVzDttF5vFqlTJCkAQdVz1mdSKMX7R95KqyZETmZNplYrlPTxtknZWQN
+         uPiqJrmeYlVAUgx1BBiSJWfSATznEa938KMvJZRv3AVTYbQizGBgqaUILEJqOCossIr5
+         UjCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740367263; x=1740972063;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jj056RohTndyRUjZE+5/HofNr1PVX5M2m/PLSiWGtqU=;
+        b=SVxeqpl092FQQPGL9zTRcS8nD3P1aXZdnQ5qkfcxX0Lp+WR/nkAoTVc1SpJvI7rY9d
+         zNcOSkR4F+7fedatdcbw8aGteIqVIbmueYNFkShomEsi6dEZ1/1EX4OfUJKf50yuxtJF
+         QLpOHl6nyejD2BQEBvnWZ5BCoJD3O3fuUaPsBKD69K7AkEZV5oUcwKnzo7a0mDO/yl2F
+         gyJ1hnXKOq4L7HTUU+Ku7FoEK6TNjsbBoFQcfdZ4nZH0nyg2mV/eXbi5KjTFqLEZW+i0
+         f9UEeKrB1ChOZbNbqcFQ8IpYnDoA/mYs7j9AShthMDWi+/Su1aRs1XCZmA3nDEhTd+dt
+         nSsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1z3251v/0Q9zcoLwBgyzNuXLNsZZAjtyUWgAcw1Z0b/hSnRRwtDaK7MBVJFMrWtASHfiwnqOv7LhDgzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz23UKL/sSHbo1GgiW/R1LY7P8lGGex/71ASI06vaIjued1TMz9
+	Shov2+zPDAGfZ/Y2NrkFSQeCAFKLFaCjhlYsgNpk7VnSv0thkUtUsrOUcRZ/tns6zDDRaqtti1L
+	GtC4UIEnH1XPSoRbgDqnQ3ZQUWev5gw3pI7D3
+X-Gm-Gg: ASbGnctAR8arUMjmBjXlaZfoRS93h0jyhT2aVj/yMNQ/PS+CAuQ0P00itrWrUBrq8Uh
+	N9k8SDwSh6zWx/xyYF0OdFO4aeNnUGsGrxJmjSGQ0Xzuw1J61GnBT1HIcunmwhfTIhuqmxHDpw9
+	b56nRQKgl+
+X-Google-Smtp-Source: AGHT+IGnpdeKq2mo7hAEXDBjgVX9tl9uUGDpTCVsHdsl0G227e7Jqs4YHua8P9eDNAop3fdhmDQOHcglbkMATWuYg98=
+X-Received: by 2002:a05:6902:330e:b0:e5d:d78d:e973 with SMTP id
+ 3f1490d57ef6-e5e24603d97mr7300604276.26.1740367262652; Sun, 23 Feb 2025
+ 19:21:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250223-tdx-rtmr-v2-4-f2d85b0a5f94@intel.com>
-References: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-In-Reply-To: <20250223-tdx-rtmr-v2-0-f2d85b0a5f94@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>, 
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
- Dave Hansen <dave.hansen@linux.intel.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Borislav Petkov <bp@alien8.de>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
- Dionna Amalie Glaze <dionnaglaze@google.com>, 
- James Bottomley <James.Bottomley@HansenPartnership.com>, 
- Dan Middleton <dan.middleton@linux.intel.com>, 
- Mikko Ylinen <mikko.ylinen@linux.intel.com>, 
- Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: b4 0.13.0
+References: <20250224022447.1141413-1-chharry@google.com> <CABBYNZJUd1wU0wyPugz4E_WNQsg9qTJmWdu4k2GvvvgVFG8GPQ@mail.gmail.com>
+In-Reply-To: <CABBYNZJUd1wU0wyPugz4E_WNQsg9qTJmWdu4k2GvvvgVFG8GPQ@mail.gmail.com>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Mon, 24 Feb 2025 11:20:36 +0800
+X-Gm-Features: AWEUYZl51rPOFQXi2SPqEUmqy9Trb-3m1-BiRtYrOmoEmVRAKatwV-oaYNfl08M
+Message-ID: <CADg1FFfMRwrGjWkhqbiZsfwV5p3axz0bqvPu-vNSSFJyObaN5w@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org, gregkh@linuxfoundation.org, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-TDX MRs are made accessible to user mode as files (attributes) in sysfs.
+Hi Luiz,
 
-Below shows the directory structure of TDX MRs inside a TDVM.
+On Mon, Feb 24, 2025 at 10:53=E2=80=AFAM Luiz Augusto von Dentz
+<luiz.dentz@gmail.com> wrote:
+>
+> Hi Hsin-chen,
+>
+> On Sun, Feb 23, 2025 at 9:26=E2=80=AFPM Hsin-chen Chuang <chharry@google.=
+com> wrote:
+> >
+> > From: Hsin-chen Chuang <chharry@chromium.org>
+> >
+> > Automatically configure the altsetting for USER_CHANNEL when a SCO is
+> > connected or disconnected. This adds support for the USER_CHANNEL to
+> > transfer SCO data over USB transport.
+>
+> I guess the tracking of handles is about handling disconnections,
+> right? I wonder if we can get away without doing that, I didn't intend
+> to add a whole bunch of changes in order to switch to the right mode,
+> I get that you may want to disable the isochronous endpoint in case
+> there is no connection, but I guess that only matters if we are
+> talking about power but the impact is probably small so I don't think
+> it is worth it. There is an alternative to match the SCO/eSCO handle
+> via mask, like we do with ISO handles, that is probably a lot cheaper
+> than attempting to add a whole list for tracking handles, but it has
+> the downside that it is vendor/model specific.
 
-/sys/kernel/tsm
-└── tdx
-    ├── mrconfigid
-    │   └── sha384
-    │       └── digest
-    ├── mrowner
-    │   └── sha384
-    │       └── digest
-    ├── mrownerconfig
-    │   └── sha384
-    │       └── digest
-    ├── mrtd
-    │   └── sha384
-    │       └── digest
-    ├── report0
-    ├── reportdata
-    ├── rtmr0
-    │   └── sha384
-    │       └── digest
-    ├── rtmr1
-    │   └── sha384
-    │       └── digest
-    ├── rtmr2
-    │   └── sha384
-    │       └── digest
-    ├── rtmr3
-    │   └── sha384
-    │       └── digest
-    └── servtd_hash
-        └── sha384
-            └── digest
+Yes, that's for handling disconnection. What do you think if we keep
+only one handle in the driver data? That is, assume there's at most
+one SCO connection. Then we don't need a list but just a u16.
 
-The digest attribute/file of each MR contains the MR's current value.
+>
+> > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control =
+USB alt setting")
+> > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+> > ---
+> >
+> >  drivers/bluetooth/btusb.c | 224 +++++++++++++++++++++++++++++++-------
+> >  1 file changed, 186 insertions(+), 38 deletions(-)
+> >
+> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > index de3fa725d210..dfb0918dfe98 100644
+> > --- a/drivers/bluetooth/btusb.c
+> > +++ b/drivers/bluetooth/btusb.c
+> > @@ -854,6 +854,11 @@ struct qca_dump_info {
+> >  #define BTUSB_ALT6_CONTINUOUS_TX       16
+> >  #define BTUSB_HW_SSR_ACTIVE    17
+> >
+> > +struct sco_handle_list {
+> > +       struct list_head list;
+> > +       u16 handle;
+> > +};
+> > +
+> >  struct btusb_data {
+> >         struct hci_dev       *hdev;
+> >         struct usb_device    *udev;
+> > @@ -920,6 +925,9 @@ struct btusb_data {
+> >         int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
+> >
+> >         struct qca_dump_info qca_dump;
+> > +
+> > +       /* Records the exsiting SCO handles for HCI_USER_CHANNEL */
+> > +       struct list_head sco_handle_list;
+> >  };
+> >
+> >  static void btusb_reset(struct hci_dev *hdev)
+> > @@ -1113,6 +1121,131 @@ static inline void btusb_free_frags(struct btus=
+b_data *data)
+> >         spin_unlock_irqrestore(&data->rxlock, flags);
+> >  }
+> >
+> > +static void btusb_sco_handle_list_clear(struct list_head *list)
+> > +{
+> > +       struct sco_handle_list *entry, *n;
+> > +
+> > +       list_for_each_entry_safe(entry, n, list, list) {
+> > +               list_del(&entry->list);
+> > +               kfree(entry);
+> > +       }
+> > +}
+> > +
+> > +static struct sco_handle_list *btusb_sco_handle_list_find(
+> > +       struct list_head *list,
+> > +       u16 handle)
+> > +{
+> > +       struct sco_handle_list *entry;
+> > +
+> > +       list_for_each_entry(entry, list, list)
+> > +               if (entry->handle =3D=3D handle)
+> > +                       return entry;
+> > +
+> > +       return NULL;
+> > +}
+> > +
+> > +static int btusb_sco_handle_list_add(struct list_head *list, u16 handl=
+e)
+> > +{
+> > +       struct sco_handle_list *entry;
+> > +
+> > +       if (btusb_sco_handle_list_find(list, handle))
+> > +               return -EEXIST;
+> > +
+> > +       entry =3D kzalloc(sizeof(*entry), GFP_KERNEL);
+> > +       if (!entry)
+> > +               return -ENOMEM;
+> > +
+> > +       entry->handle =3D handle;
+> > +       list_add(&entry->list, list);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int btusb_sco_handle_list_del(struct list_head *list, u16 handl=
+e)
+> > +{
+> > +       struct sco_handle_list *entry;
+> > +
+> > +       entry =3D btusb_sco_handle_list_find(list, handle);
+> > +       if (!entry)
+> > +               return -ENOENT;
+> > +
+> > +       list_del(&entry->list);
+> > +       kfree(entry);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void btusb_sco_conn_change(struct btusb_data *data, struct sk_b=
+uff *skb)
+> > +{
+> > +       struct hci_event_hdr *hdr =3D (void *) skb->data;
+> > +       struct hci_dev *hdev =3D data->hdev;
+> > +
+> > +       if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT || skb->len < size=
+of(*hdr))
+> > +               return;
+> > +
+> > +       switch (hdr->evt) {
+> > +       case HCI_EV_DISCONN_COMPLETE: {
+> > +               struct hci_ev_disconn_complete *ev =3D
+> > +                       (void *) skb->data + sizeof(*hdr);
+> > +               u16 handle;
+> > +
+> > +               if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->sta=
+tus)
+> > +                       return;
+> > +
+> > +               handle =3D __le16_to_cpu(ev->handle);
+> > +               if (btusb_sco_handle_list_del(&data->sco_handle_list,
+> > +                                             handle) < 0)
+> > +                       return;
+> > +
+> > +               bt_dev_info(hdev, "disabling SCO");
+> > +               data->sco_num--;
+> > +               data->air_mode =3D HCI_NOTIFY_DISABLE_SCO;
+> > +               schedule_work(&data->work);
+> > +
+> > +               break;
+> > +       }
+> > +       case HCI_EV_SYNC_CONN_COMPLETE: {
+> > +               struct hci_ev_sync_conn_complete *ev =3D
+> > +                       (void *) skb->data + sizeof(*hdr);
+> > +               unsigned int notify_air_mode;
+> > +               u16 handle;
+> > +
+> > +               if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->sta=
+tus)
+> > +                       return;
+> > +
+> > +               switch (ev->air_mode) {
+> > +               case BT_CODEC_CVSD:
+> > +                       notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
+> > +                       break;
+> > +
+> > +               case BT_CODEC_TRANSPARENT:
+> > +                       notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANS=
+P;
+> > +                       break;
+> > +
+> > +               default:
+> > +                       return;
+> > +               }
+> > +
+> > +               handle =3D __le16_to_cpu(ev->handle);
+> > +               if (btusb_sco_handle_list_add(&data->sco_handle_list,
+> > +                                             handle) < 0) {
+> > +                       bt_dev_err(hdev, "failed to add the new SCO han=
+dle");
+> > +                       return;
+> > +               }
+> > +
+> > +               bt_dev_info(hdev, "enabling SCO with air mode %u",
+> > +                           ev->air_mode);
+> > +               data->sco_num++;
+> > +               data->air_mode =3D notify_air_mode;
+> > +               schedule_work(&data->work);
+> > +
+> > +               break;
+> > +       }
+> > +       default:
+> > +               break;
+> > +       }
+> > +}
+> > +
+> >  static int btusb_recv_event(struct btusb_data *data, struct sk_buff *s=
+kb)
+> >  {
+> >         if (data->intr_interval) {
+> > @@ -1120,6 +1253,10 @@ static int btusb_recv_event(struct btusb_data *d=
+ata, struct sk_buff *skb)
+> >                 schedule_delayed_work(&data->rx_work, 0);
+> >         }
+> >
+> > +       /* Configure altsetting for HCI_USER_CHANNEL on SCO dis/connect=
+ed */
+> > +       if (hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
+> > +               btusb_sco_conn_change(data, skb);
+>
+> I'd recommend adding a check for Kconfig/module parameter in the if
+> statement so btusb_sco_conn_change only runs on distros with it
+> enabled so we don't risk something not working as expected just
+> because someone decided to open the user channel.
 
-Writing to the digest attribute/file of an RTMR extends the written value
-to that RTMR.
+Sure will add it in the next patch.
 
-The report0 and reportdata attributes offer a simple interface for user
-mode applications to request TDREPORTs. These 2 attributes can be
-enabled/disabled by setting TDX_GUEST_DRIVER_TSM_REPORT to Y/n.
+>
+> >         return data->recv_event(data->hdev, skb);
+> >  }
+> >
+> > @@ -1919,44 +2056,6 @@ static void btusb_stop_traffic(struct btusb_data=
+ *data)
+> >         usb_kill_anchored_urbs(&data->ctrl_anchor);
+> >  }
+> >
+> > -static int btusb_close(struct hci_dev *hdev)
+> > -{
+> > -       struct btusb_data *data =3D hci_get_drvdata(hdev);
+> > -       int err;
+> > -
+> > -       BT_DBG("%s", hdev->name);
+> > -
+> > -       cancel_delayed_work(&data->rx_work);
+> > -       cancel_work_sync(&data->work);
+> > -       cancel_work_sync(&data->waker);
+> > -
+> > -       skb_queue_purge(&data->acl_q);
+> > -
+> > -       clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
+> > -       clear_bit(BTUSB_BULK_RUNNING, &data->flags);
+> > -       clear_bit(BTUSB_INTR_RUNNING, &data->flags);
+> > -       clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
+> > -
+> > -       btusb_stop_traffic(data);
+> > -       btusb_free_frags(data);
+> > -
+> > -       err =3D usb_autopm_get_interface(data->intf);
+> > -       if (err < 0)
+> > -               goto failed;
+> > -
+> > -       data->intf->needs_remote_wakeup =3D 0;
+> > -
+> > -       /* Enable remote wake up for auto-suspend */
+> > -       if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
+> > -               data->intf->needs_remote_wakeup =3D 1;
+> > -
+> > -       usb_autopm_put_interface(data->intf);
+> > -
+> > -failed:
+> > -       usb_scuttle_anchored_urbs(&data->deferred);
+> > -       return 0;
+> > -}
+> > -
+> >  static int btusb_flush(struct hci_dev *hdev)
+> >  {
+> >         struct btusb_data *data =3D hci_get_drvdata(hdev);
+> > @@ -2327,6 +2426,51 @@ static void btusb_work(struct work_struct *work)
+> >         }
+> >  }
+> >
+> > +static int btusb_close(struct hci_dev *hdev)
+> > +{
+> > +       struct btusb_data *data =3D hci_get_drvdata(hdev);
+> > +       int err;
+> > +
+> > +       BT_DBG("%s", hdev->name);
+> > +
+> > +       if (hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
+> > +               btusb_sco_handle_list_clear(&data->sco_handle_list);
+> > +               data->sco_num =3D 0;
+> > +               if (data->isoc_altsetting !=3D 0)
+> > +                       btusb_switch_alt_setting(hdev, 0);
+> > +       }
+> > +
+> > +       cancel_delayed_work(&data->rx_work);
+> > +       cancel_work_sync(&data->work);
+> > +       cancel_work_sync(&data->waker);
+> > +
+> > +       skb_queue_purge(&data->acl_q);
+> > +
+> > +       clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
+> > +       clear_bit(BTUSB_BULK_RUNNING, &data->flags);
+> > +       clear_bit(BTUSB_INTR_RUNNING, &data->flags);
+> > +       clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
+> > +
+> > +       btusb_stop_traffic(data);
+> > +       btusb_free_frags(data);
+> > +
+> > +       err =3D usb_autopm_get_interface(data->intf);
+> > +       if (err < 0)
+> > +               goto failed;
+> > +
+> > +       data->intf->needs_remote_wakeup =3D 0;
+> > +
+> > +       /* Enable remote wake up for auto-suspend */
+> > +       if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
+> > +               data->intf->needs_remote_wakeup =3D 1;
+> > +
+> > +       usb_autopm_put_interface(data->intf);
+> > +
+> > +failed:
+> > +       usb_scuttle_anchored_urbs(&data->deferred);
+> > +       return 0;
+> > +}
+> > +
+> >  static void btusb_waker(struct work_struct *work)
+> >  {
+> >         struct btusb_data *data =3D container_of(work, struct btusb_dat=
+a, waker);
+> > @@ -3782,6 +3926,8 @@ static int btusb_probe(struct usb_interface *intf=
+,
+> >         data->udev =3D interface_to_usbdev(intf);
+> >         data->intf =3D intf;
+> >
+> > +       INIT_LIST_HEAD(&data->sco_handle_list);
+> > +
+> >         INIT_WORK(&data->work, btusb_work);
+> >         INIT_WORK(&data->waker, btusb_waker);
+> >         INIT_DELAYED_WORK(&data->rx_work, btusb_rx_work);
+> > @@ -4117,6 +4263,8 @@ static void btusb_disconnect(struct usb_interface=
+ *intf)
+> >         hdev =3D data->hdev;
+> >         usb_set_intfdata(data->intf, NULL);
+> >
+> > +       btusb_sco_handle_list_clear(&data->sco_handle_list);
+> > +
+> >         if (data->isoc) {
+> >                 device_remove_file(&intf->dev, &dev_attr_isoc_alt);
+> >                 usb_set_intfdata(data->isoc, NULL);
+> > --
+> > 2.48.1.601.g30ceb7b040-goog
+> >
+>
+>
+> --
+> Luiz Augusto von Dentz
 
-Signed-off-by: Cedric Xing <cedric.xing@intel.com>
----
- drivers/virt/coco/tdx-guest/Kconfig     |  24 +++++--
- drivers/virt/coco/tdx-guest/tdx-guest.c | 115 ++++++++++++++++++++++++++++++++
- 2 files changed, 134 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/virt/coco/tdx-guest/Kconfig b/drivers/virt/coco/tdx-guest/Kconfig
-index 22dd59e19431..a1c5e8fdd511 100644
---- a/drivers/virt/coco/tdx-guest/Kconfig
-+++ b/drivers/virt/coco/tdx-guest/Kconfig
-@@ -3,9 +3,23 @@ config TDX_GUEST_DRIVER
- 	depends on INTEL_TDX_GUEST
- 	select TSM_REPORTS
- 	help
--	  The driver provides userspace interface to communicate with
--	  the TDX module to request the TDX guest details like attestation
--	  report.
-+	  The driver provides userspace interface to communicate with the TDX
-+	  module to request the TDX guest details like attestation report.
- 
--	  To compile this driver as module, choose M here. The module will
--	  be called tdx-guest.
-+	  To compile this driver as module, choose M here. The module will be
-+	  called tdx-guest.
-+
-+if TDX_GUEST_DRIVER
-+
-+config TDX_GUEST_DRIVER_TSM_REPORT
-+	bool "tdx-guest: Enable TSM raw TDREPORT interface"
-+	default y
-+	help
-+	  This option adds 2 files, namely report0 and reportdata, to the TSM
-+	  sysfs directory tree (/sys/kernel/tsm/tdx/).
-+
-+	  To request a TDREPORT, set REPORTDATA by writing to
-+	  /sys/kernel/tsm/tdx/reportdata, then read
-+	  /sys/kernel/tsm/tdx/report0.
-+
-+endif
-diff --git a/drivers/virt/coco/tdx-guest/tdx-guest.c b/drivers/virt/coco/tdx-guest/tdx-guest.c
-index 224e7dde9cde..a31fe2098901 100644
---- a/drivers/virt/coco/tdx-guest/tdx-guest.c
-+++ b/drivers/virt/coco/tdx-guest/tdx-guest.c
-@@ -5,6 +5,8 @@
-  * Copyright (C) 2022 Intel Corporation
-  */
- 
-+#define pr_fmt(fmt)			KBUILD_MODNAME ": " fmt
-+
- #include <linux/kernel.h>
- #include <linux/miscdevice.h>
- #include <linux/mm.h>
-@@ -18,6 +20,8 @@
- #include <linux/tsm.h>
- #include <linux/sizes.h>
- 
-+#include <crypto/hash_info.h>
-+
- #include <uapi/linux/tdx-guest.h>
- 
- #include <asm/cpu_device_id.h>
-@@ -304,6 +308,110 @@ static const struct tsm_ops tdx_tsm_ops = {
- 	.report_bin_attr_visible = tdx_report_bin_attr_visible,
- };
- 
-+enum {
-+	TDREPORT_MRSIZE = SHA384_DIGEST_SIZE,
-+
-+	TDREPORT_reportdata = 128,
-+	TDREPORT_tdinfo = 512,
-+	TDREPORT_mrtd = TDREPORT_tdinfo + 16,
-+	TDREPORT_mrconfigid = TDREPORT_mrtd + TDREPORT_MRSIZE,
-+	TDREPORT_mrowner = TDREPORT_mrconfigid + TDREPORT_MRSIZE,
-+	TDREPORT_mrownerconfig = TDREPORT_mrowner + TDREPORT_MRSIZE,
-+	TDREPORT_rtmr0 = TDREPORT_mrownerconfig + TDREPORT_MRSIZE,
-+	TDREPORT_rtmr1 = TDREPORT_rtmr0 + TDREPORT_MRSIZE,
-+	TDREPORT_rtmr2 = TDREPORT_rtmr1 + TDREPORT_MRSIZE,
-+	TDREPORT_rtmr3 = TDREPORT_rtmr2 + TDREPORT_MRSIZE,
-+	TDREPORT_servtd_hash = TDREPORT_rtmr3 + TDREPORT_MRSIZE,
-+};
-+
-+static u8 tdx_mr_report[TDX_REPORT_LEN] __aligned(TDX_REPORT_LEN);
-+
-+#define TDX_MR_(r)	.mr_value = tdx_mr_report + TDREPORT_##r, TSM_MR_(r, SHA384)
-+static const struct tsm_measurement_register tdx_mrs[] = {
-+	{ TDX_MR_(rtmr0) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr1) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr2) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(rtmr3) | TSM_MR_F_RTMR | TSM_MR_F_W },
-+	{ TDX_MR_(mrtd) },
-+	{ TDX_MR_(mrconfigid) },
-+	{ TDX_MR_(mrowner) },
-+	{ TDX_MR_(mrownerconfig) },
-+	{ TDX_MR_(servtd_hash) },
-+#if IS_ENABLED(CONFIG_TDX_GUEST_DRIVER_TSM_REPORT)
-+	{ .mr_value = tdx_mr_report, .mr_size = sizeof(tdx_mr_report),
-+	  .mr_name = "report0", .mr_flags = TSM_MR_F_LIVE | TSM_MR_F_F },
-+	{ .mr_value = tdx_mr_report + TDREPORT_reportdata,
-+	  TSM_MR_(reportdata, SHA512) | TSM_MR_F_W | TSM_MR_F_F },
-+#endif
-+	{}
-+};
-+#undef TDX_MR_
-+
-+static int tdx_mr_refresh(struct tsm_measurement *tmr,
-+			  const struct tsm_measurement_register *mr)
-+{
-+	u8 *reportdata, *tdreport;
-+	int ret;
-+
-+	reportdata = tdx_mr_report + TDREPORT_reportdata;
-+
-+	/*
-+	 * TDCALL requires a GPA as input. Depending on whether this module is
-+	 * built as a built-in (Y) or a module (M), tdx_mr_report may or may
-+	 * not be converted to a GPA using virt_to_phys. If not, a directly
-+	 * mapped buffer must be allocated using kmalloc and used as an
-+	 * intermediary.
-+	 */
-+#if IS_BUILTIN(CONFIG_TDX_GUEST_DRIVER)
-+	tdreport = tdx_mr_report;
-+#else
-+	tdreport = kmalloc(sizeof(tdx_mr_report), GFP_KERNEL);
-+	if (!tdreport)
-+		return -ENOMEM;
-+
-+	reportdata = memcpy(tdreport + TDREPORT_reportdata, reportdata,
-+			    TDX_REPORTDATA_LEN);
-+#endif
-+
-+	ret = tdx_mcall_get_report0(reportdata, tdreport);
-+	if (ret)
-+		pr_err("GetReport call failed\n");
-+
-+#if !IS_BUILTIN(CONFIG_TDX_GUEST_DRIVER)
-+	memcpy(tdx_mr_report, tdreport, sizeof(tdx_mr_report));
-+	kfree(tdreport);
-+#endif
-+
-+	return ret;
-+}
-+
-+static int tdx_mr_extend(struct tsm_measurement *tmr,
-+			 const struct tsm_measurement_register *mr, const u8 *data)
-+{
-+	u8 *buf;
-+	int ret;
-+
-+	buf = kmalloc(64, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	memcpy(buf, data, TDREPORT_MRSIZE);
-+
-+	ret = tdx_mcall_extend_rtmr((u8)(mr - tmr->mrs), buf);
-+	if (ret)
-+		pr_err("Extending RTMR%ld failed\n", mr - tmr->mrs);
-+
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static struct tsm_measurement tdx_measurement = {
-+	.name = "tdx",
-+	.mrs = tdx_mrs,
-+	.refresh = tdx_mr_refresh,
-+	.extend = tdx_mr_extend,
-+};
-+
- static int __init tdx_guest_init(void)
- {
- 	int ret;
-@@ -326,8 +434,14 @@ static int __init tdx_guest_init(void)
- 	if (ret)
- 		goto free_quote;
- 
-+	ret = tsm_register_measurement(&tdx_measurement);
-+	if (ret)
-+		goto unregister_tsm;
-+
- 	return 0;
- 
-+unregister_tsm:
-+	tsm_unregister(&tdx_tsm_ops);
- free_quote:
- 	free_quote_buf(quote_data);
- free_misc:
-@@ -339,6 +453,7 @@ module_init(tdx_guest_init);
- 
- static void __exit tdx_guest_exit(void)
- {
-+	tsm_unregister_measurement(&tdx_measurement);
- 	tsm_unregister(&tdx_tsm_ops);
- 	free_quote_buf(quote_data);
- 	misc_deregister(&tdx_misc_dev);
-
--- 
-2.43.0
-
+--=20
+Best Regards,
+Hsin-chen
 
