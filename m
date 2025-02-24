@@ -1,236 +1,114 @@
-Return-Path: <linux-kernel+bounces-529280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95880A4228D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F7D5A42297
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1D30188FD2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA9F1891BDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70E52561C4;
-	Mon, 24 Feb 2025 14:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12D925A2CF;
+	Mon, 24 Feb 2025 14:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3QVej+E"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFfsv1Ow"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5842561A3;
-	Mon, 24 Feb 2025 14:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4F8191493;
+	Mon, 24 Feb 2025 14:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405887; cv=none; b=ds/6bdu9krUJXXNqL4OnOLP1r+HTLgzXgPob17Arn6Ir0zfNhuMr0LdKk9nPzy8K/RNAfgkuKjWTu2y9woLMLtT7ElQXsPtU5qUtYWnRBmm6Gz3vacetge7hMGa5Nml9ge+yST1xOwlInmijxSE8PVpcM1tbzhjVCL9tacniuaU=
+	t=1740405923; cv=none; b=clv6Z9htUEgF7kejIjL0CX0oiXsG9am9dJE1YSsnsa8K+7/uk58f06Te03DqlSZwj7bzoizqHRIBEs+MJYVSN2w0ykfBbszg9Or2E7CIgMhxx8dGlWsPQyD9KtBRuTFDwKHJmdc3EDvY6kBTOQw7gNywWLeDPpXOVmVDlR3ZA+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405887; c=relaxed/simple;
-	bh=wt1dZX2Kgz4k5MbqpHvvb55cRgHsD3fZPjdzvbscas0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMZ/j3A8COCykRWl7UzKvL2tEsZOBzjLkROGlQOP8aKS9qbOkLFHVt1+oB6US//Nhd3YsRFKHuv7sLtv7vKJt7mF4tP+2dtRq5Fou/aCqa4fVM9wCq3TSsJu2rs0Qg65pvKO5Da3N9XKz1aygUIW36Bohff6T6WVtmoW9Vz78kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3QVej+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C613FC4CEEB;
-	Mon, 24 Feb 2025 14:04:44 +0000 (UTC)
+	s=arc-20240116; t=1740405923; c=relaxed/simple;
+	bh=yaaa9DErqlOYGiiygCaNCc4wZLpOdhOh1CUotZF4UGo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rz1gJ5D0UBa6Qk7l2m1e3IDSc5TM9+hYhtIrrDddcoduQp3XhT6FLPM1p/cXSdvVoFoKO8QX2Z9db80PzKqxRLFTH4AYny1rx5a0H1CDO1eeNZBrnPL+0zQePm8snDgQKBbUZsPhTnEoctoJ30RF+aqF3QKzmFZMLNRAcDqq0Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFfsv1Ow; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38532C4CEE6;
+	Mon, 24 Feb 2025 14:05:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740405886;
-	bh=wt1dZX2Kgz4k5MbqpHvvb55cRgHsD3fZPjdzvbscas0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3QVej+ElgkWSmoU2923NLDFfdOwosVNkseVwHcEvtNvwP8EaiMSCIFMb1YcZRXcH
-	 vWr+8A+HIfjdV+w4lM6Hw96mNeu77eX/fAhXdd3E+Nf08J1+XOzhATP1JfhGZriEUi
-	 1Cc1pXbRrxLnlBY9kgLaqlR9Jb4UzlWN2RUCod2iG34rksF7CvOQDxYM81GIHeSdo9
-	 VbxN9tOzVRm5i7TMSMK00qSgyB2jntWbhh2JghPZriu0qa58itKAHUz4Sjw1voubuV
-	 lUiNH1BwPRl4RBQ0JqVBAVSS0kcjahGxGUcoYboO5MbYEMyhgK/FAH5LtX3h3rYtUZ
-	 HXEUOs9T5+2Aw==
-Date: Mon, 24 Feb 2025 22:04:41 +0800
-From: Coly Li <colyli@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 8/8][next] bcache: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <5pauuhdlh2jaeqixofoips7f4zjl7pcyeykkglkmihsko3cnjy@4cbebl2x3qod>
-References: <cover.1739957534.git.gustavoars@kernel.org>
- <f9f20ad9362972ef920dd9aecd7b98ab345ee866.1739957534.git.gustavoars@kernel.org>
+	s=k20201202; t=1740405923;
+	bh=yaaa9DErqlOYGiiygCaNCc4wZLpOdhOh1CUotZF4UGo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AFfsv1Owz3nA3xcFyVinBg8oGSoPrfQCtuFHU9NMmxE4MzSx92nI9Y9hhWG4urdLd
+	 cJWR3y6nEXZemMBO1SxNoID4e3CbW7Gfl3yB81uuW4k5u7MIPZ2rsZc+9Bj27ljCG+
+	 WKwHfaAixtdnK+u0grbFNNTu2c/tkpkbAuoaaD5njlIjkO31cQJM/xqLflqBx5tgOc
+	 lh+HvfpOSxdLL8qoNfMzAo8LvzjC6RQpfRwUtW6OgwOU1NZR8+3dqw3xB9PjmBfGD9
+	 COAKXHp2yejCCJcqd3g5qXqmT5NTLgU9ypaIqpKoePmb7B3w56zpYJeok6yPAjXjft
+	 loFSHzf23v51w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Jiawen Wu <jiawenwu@trustnetic.com>,
+	Mengyuan Lou <mengyuanlou@net-swift.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: wangxun: fix LIBWX dependencies
+Date: Mon, 24 Feb 2025 15:05:06 +0100
+Message-Id: <20250224140516.1168214-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f9f20ad9362972ef920dd9aecd7b98ab345ee866.1739957534.git.gustavoars@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 08:31:26PM +0800, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Change the type of the middle struct members currently causing trouble
-> from `struct bio` to `struct bio_hdr`.
-> 
-> We also use `container_of()` whenever we need to retrieve a pointer to
-> the flexible structure `struct bio`, through which we can access the
-> flexible-array member in it, if necessary.
-> 
-> With these changes fix 112 of the following warnings:
-> 
-> drivers/md/bcache/bcache.h:233:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:241:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:242:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:308:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:422:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/bcache.h:639:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/journal.h:152:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/md/bcache/journal.h:156:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-Hi Gustavo,
+Selecting LIBWX requires that its dependencies are met first:
 
-each struct bio followed by a struct bio_vec at the location where
-struct bio is embedded into middle of a structure. So the general
-flex-array-in-middle issue doesn't exist here indeed.
+WARNING: unmet direct dependencies detected for LIBWX
+  Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+  Selected by [y]:
+  - TXGBE [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && COMMON_CLK [=y] && I2C_DESIGNWARE_PLATFORM [=y]
+ld.lld-21: error: undefined symbol: ptp_schedule_worker
+>>> referenced by wx_ptp.c:747 (/home/arnd/arm-soc/drivers/net/ethernet/wangxun/libwx/wx_ptp.c:747)
+>>>               drivers/net/ethernet/wangxun/libwx/wx_ptp.o:(wx_ptp_reset) in archive vmlinux.a
 
-I don't suggest to introduce extra complication in bcache code.
+Add the smae dependency on PTP_1588_CLOCK_OPTIONAL to the two driver
+using this library module.
 
-How about to improve the checking script, if there is no following
-struct bio_vec after struct bio, then that should be something really
-suspicious.
+Fixes: 06e75161b9d4 ("net: wangxun: Add support for PTP clock")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/net/ethernet/wangxun/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks.
-
-Coly Li
-
-> ---
->  drivers/md/bcache/bcache.h  |  4 ++--
->  drivers/md/bcache/journal.c | 10 +++++-----
->  drivers/md/bcache/journal.h |  4 ++--
->  drivers/md/bcache/super.c   |  8 +++++---
->  4 files changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-> index 785b0d9008fa..328023e90eb2 100644
-> --- a/drivers/md/bcache/bcache.h
-> +++ b/drivers/md/bcache/bcache.h
-> @@ -305,7 +305,7 @@ struct cached_dev {
->  
->  	struct cache_sb		sb;
->  	struct cache_sb_disk	*sb_disk;
-> -	struct bio		sb_bio;
-> +	struct bio_hdr		sb_bio;
->  	struct bio_vec		sb_bv[1];
->  	struct closure		sb_write;
->  	struct semaphore	sb_write_mutex;
-> @@ -419,7 +419,7 @@ struct cache {
->  	struct cache_set	*set;
->  	struct cache_sb		sb;
->  	struct cache_sb_disk	*sb_disk;
-> -	struct bio		sb_bio;
-> +	struct bio_hdr		sb_bio;
->  	struct bio_vec		sb_bv[1];
->  
->  	struct kobject		kobj;
-> diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-> index 7ff14bd2feb8..2ead129f7758 100644
-> --- a/drivers/md/bcache/journal.c
-> +++ b/drivers/md/bcache/journal.c
-> @@ -36,7 +36,7 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
->  			       unsigned int bucket_index)
->  {
->  	struct journal_device *ja = &ca->journal;
-> -	struct bio *bio = &ja->bio;
-> +	struct bio *bio = container_of(&ja->bio, struct bio, __hdr);
->  
->  	struct journal_replay *i;
->  	struct jset *j, *data = ca->set->journal.w[0].data;
-> @@ -571,7 +571,7 @@ static void btree_flush_write(struct cache_set *c)
->  static void journal_discard_endio(struct bio *bio)
->  {
->  	struct journal_device *ja =
-> -		container_of(bio, struct journal_device, discard_bio);
-> +		container_of(&bio->__hdr, struct journal_device, discard_bio);
->  	struct cache *ca = container_of(ja, struct cache, journal);
->  
->  	atomic_set(&ja->discard_in_flight, DISCARD_DONE);
-> @@ -585,13 +585,13 @@ static void journal_discard_work(struct work_struct *work)
->  	struct journal_device *ja =
->  		container_of(work, struct journal_device, discard_work);
->  
-> -	submit_bio(&ja->discard_bio);
-> +	submit_bio(container_of(&ja->discard_bio, struct bio, __hdr));
->  }
->  
->  static void do_journal_discard(struct cache *ca)
->  {
->  	struct journal_device *ja = &ca->journal;
-> -	struct bio *bio = &ja->discard_bio;
-> +	struct bio *bio = container_of(&ja->discard_bio, struct bio, __hdr);
->  
->  	if (!ca->discard) {
->  		ja->discard_idx = ja->last_idx;
-> @@ -787,7 +787,7 @@ static CLOSURE_CALLBACK(journal_write_unlocked)
->  
->  	for (i = 0; i < KEY_PTRS(k); i++) {
->  		ca = c->cache;
-> -		bio = &ca->journal.bio;
-> +		bio = container_of(&ca->journal.bio, struct bio, __hdr);
->  
->  		atomic_long_add(sectors, &ca->meta_sectors_written);
->  
-> diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
-> index cd316b4a1e95..b4ff5269aee3 100644
-> --- a/drivers/md/bcache/journal.h
-> +++ b/drivers/md/bcache/journal.h
-> @@ -149,11 +149,11 @@ struct journal_device {
->  	atomic_t		discard_in_flight;
->  
->  	struct work_struct	discard_work;
-> -	struct bio		discard_bio;
-> +	struct bio_hdr		discard_bio;
->  	struct bio_vec		discard_bv;
->  
->  	/* Bio for journal reads/writes to this device */
-> -	struct bio		bio;
-> +	struct bio_hdr		bio;
->  	struct bio_vec		bv[8];
->  };
->  
-> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-> index e42f1400cea9..cd1342355cf2 100644
-> --- a/drivers/md/bcache/super.c
-> +++ b/drivers/md/bcache/super.c
-> @@ -337,7 +337,7 @@ static CLOSURE_CALLBACK(bch_write_bdev_super_unlock)
->  void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
->  {
->  	struct closure *cl = &dc->sb_write;
-> -	struct bio *bio = &dc->sb_bio;
-> +	struct bio *bio = container_of(&dc->sb_bio, struct bio, __hdr);
->  
->  	down(&dc->sb_write_mutex);
->  	closure_init(cl, parent);
-> @@ -374,7 +374,7 @@ void bcache_write_super(struct cache_set *c)
->  {
->  	struct closure *cl = &c->sb_write;
->  	struct cache *ca = c->cache;
-> -	struct bio *bio = &ca->sb_bio;
-> +	struct bio *bio = container_of(&ca->sb_bio, struct bio, __hdr);
->  	unsigned int version = BCACHE_SB_VERSION_CDEV_WITH_UUID;
->  
->  	down(&c->sb_write_mutex);
-> @@ -2230,7 +2230,9 @@ static int cache_alloc(struct cache *ca)
->  	__module_get(THIS_MODULE);
->  	kobject_init(&ca->kobj, &bch_cache_ktype);
->  
-> -	bio_init(&ca->journal.bio, NULL, ca->journal.bio.bi_inline_vecs, 8, 0);
-> +	bio_init(container_of(&ca->journal.bio, struct bio, __hdr), NULL,
-> +		 container_of(&ca->journal.bio, struct bio, __hdr)->bi_inline_vecs,
-> +		 8, 0);
->  
->  	/*
->  	 * when ca->sb.njournal_buckets is not zero, journal exists,
-> -- 
-> 2.43.0
-> 
-
+diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
+index 6b60173fe1f5..47e3e8434b9e 100644
+--- a/drivers/net/ethernet/wangxun/Kconfig
++++ b/drivers/net/ethernet/wangxun/Kconfig
+@@ -26,6 +26,7 @@ config LIBWX
+ config NGBE
+ 	tristate "Wangxun(R) GbE PCI Express adapters support"
+ 	depends on PCI
++	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select LIBWX
+ 	select PHYLINK
+ 	help
+@@ -43,6 +44,7 @@ config TXGBE
+ 	depends on PCI
+ 	depends on COMMON_CLK
+ 	depends on I2C_DESIGNWARE_PLATFORM
++	depends on PTP_1588_CLOCK_OPTIONAL
+ 	select MARVELL_10G_PHY
+ 	select REGMAP
+ 	select PHYLINK
 -- 
-Coly Li
+2.39.5
+
 
