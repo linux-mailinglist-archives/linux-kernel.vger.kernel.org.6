@@ -1,262 +1,103 @@
-Return-Path: <linux-kernel+bounces-529106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8E5A41FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:02:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84D8A41FD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:02:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34993AAC5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76D6116974E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9040423BCE8;
-	Mon, 24 Feb 2025 12:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSWDJXed"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B7223BCE5;
+	Mon, 24 Feb 2025 12:58:45 +0000 (UTC)
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6670192B95;
-	Mon, 24 Feb 2025 12:57:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349D10F2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401840; cv=none; b=MSqloXefiWddBmNN+xUScstxDDEj6gih0t5xqltj/X7Q6yfqcCclov5TEdfjXAVET5GkydDT5RRcGPfcIA8rTIULcm3lu0zysPpbwoTNYKDW38QeibMTxcOmpLBFLyaVCDjs/Ly/vVySrs4V42GBVcCsER78h607yAvf+OjX5eY=
+	t=1740401925; cv=none; b=rO79M5OoNy1KGpk6wIx/wVNSS4d4W2jVDHWTWMBoeGRouteZqmFP6xBL9lXK5rjLcIsD4pmn00mofLTfpfxlqctSH2zInBlRMwoykb1QybJ+RdoMOkHYUydl+1byLIg5x7+1bu6fdh27URzP2iF8BIoPV+meMT3JFg3W1hli5Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401840; c=relaxed/simple;
-	bh=FwrrGbodEXZWB1mjRa0Sv3Et/wD31AqFlgcJW4s177g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5Tl40UWdD4KyHdfSrVrl2vsPVvH3UVWck/wxMJiOGA7W8158AzUMz/QrP77nuindBUoY1JpLPu+llmOwcxGvUZ/OW8BfgkKzpp6owK4dH6wOAeQpXN6cfMOwMB5RReUy4227osszKj0Z5xtyCEjZErro8s/mwFnG6HLsciqiE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSWDJXed; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F0A0C4CED6;
-	Mon, 24 Feb 2025 12:57:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740401840;
-	bh=FwrrGbodEXZWB1mjRa0Sv3Et/wD31AqFlgcJW4s177g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oSWDJXedtbGXpoi/WAs0Sh/cv4OCD5pT6OsNjIOMrgxNco2BqCW0XC02ey9XodFiu
-	 OtXNl+QL9E4txiVOl0yRWg5xskmxVfj2/v1z1odzy6UYU3WkdKySKxtelf5/antRYn
-	 BZjpFSFY+OZDA65mO9/q7gphd8qSc4rIAo99nCsWnn9lK2lEQvB094UGSOyS5tTcEU
-	 h34j1rMuQNBXoxLLfEy3dzYYrbUm6AiCyDHoVTqFdS2KACjg2/ZYea1xDlqarziDvN
-	 YHbpeCn4m15UmkISUPcNX5CIL21fvLIFZcWDFqPYU2vznghgoNu4zHo3z4lo+X41Se
-	 V8yjv+9Rs2JyA==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2bcf9d9b60aso634909fac.3;
-        Mon, 24 Feb 2025 04:57:20 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWI2P0P/YfwbspK0E/2nSLnKn0wGP7lezf31dJPI1eqJv+oeQLPjQx5QoN7tPyhEYtomORrCUJ6gd4=@vger.kernel.org, AJvYcCWnQbTHivcWzOHX2zkzOQkg8rjvH1/QNdyyNPAh85lZ9Je9JLM6jJb5xB3NQ+91lyDtTEj8ZMQKlFj2API=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt9Oj868dHKPOZ2piGi+HSY1xr73tRdeDBKzdZq6ahh+E3jPwg
-	eDskmaMLKJ8AzqSXkIf3Q798jCDOD3UCskm4brcaffz6cnv3bOvFJhPRjil1oMHKmlli6GflTzV
-	ga2TvCDFDzccFHTL5vJRKO70HV2E=
-X-Google-Smtp-Source: AGHT+IGXFrjtxiZ3TCpWE6A9is3KPcYc7VLzGi4g9K4ePj9VOS1qVL71VRuXi5hSaFWV49VpegR6ZA4ak7Hc3d0pSD4=
-X-Received: by 2002:a05:6870:9123:b0:296:e6d9:a2e1 with SMTP id
- 586e51a60fabf-2bd5159fcbfmr9326496fac.11.1740401839492; Mon, 24 Feb 2025
- 04:57:19 -0800 (PST)
+	s=arc-20240116; t=1740401925; c=relaxed/simple;
+	bh=iId1Db8PjY2Oaef1qiwFX4D8BeJwIQWLyEI8Zp99plw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2UDKEmtbKUKHBi6by0gTqf+dnzdLqPEBNlLV39K6m3iukcSJkkEc2zppe3bHqHYEDJpw7NEZfDBYITRFVm7LUB55FOaZ92Bzy6Joz2lKQP4Oliskv03CY1EMpCujjpuyD03OcxCiZ5ZogX3WX67sJWG7qZ4/XyP+TExJHg/NrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-113-172.bstnma.fios.verizon.net [173.48.113.172])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 51OCw50M018389
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 07:58:06 -0500
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 3927C2E010B; Mon, 24 Feb 2025 07:58:05 -0500 (EST)
+Date: Mon, 24 Feb 2025 07:58:05 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Ventura Jack <venturajack85@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kent Overstreet <kent.overstreet@linux.dev>,
+        Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com,
+        david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org,
+        hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev,
+        linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+        rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <20250224125805.GA5729@mit.edu>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo>
+ <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4998484.31r3eYUQgx@rjwysocki.net> <86756d5c-ce47-4a91-afff-480b82207516@arm.com>
-In-Reply-To: <86756d5c-ce47-4a91-afff-480b82207516@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 24 Feb 2025 13:57:04 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jHw0h1hOViiZtHwiaFhTZDmKaFpiTVQwu3ACFG5FQbgA@mail.gmail.com>
-X-Gm-Features: AWEUYZmZhfOpNDafqsXpyne7v2es-nkHTxXc2E6tySKlImH-7-C1MwX4svSIfNo
-Message-ID: <CAJZ5v0jHw0h1hOViiZtHwiaFhTZDmKaFpiTVQwu3ACFG5FQbgA@mail.gmail.com>
-Subject: Re: [PATCH v1] cpuidle: menu: Update documentation after previous changes
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Doug Smythies <dsmythies@telus.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
 
-On Mon, Feb 24, 2025 at 1:41=E2=80=AFPM Christian Loehle
-<christian.loehle@arm.com> wrote:
->
-> On 2/20/25 20:13, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > The documentaion of the menu cpuidle governor needs to be updated
-> s/documentaion/documentation/
-> > to match the code bevavior after some changes made recently.
->
-> s/bevavior/behavior/
->
-> >
-> > No functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >  Documentation/admin-guide/pm/cpuidle.rst |   27 ++++++++++++++++------=
------
-> >  drivers/cpuidle/governors/menu.c         |   29 ++++++++++------------=
--------
-> >  2 files changed, 26 insertions(+), 30 deletions(-)
-> >
-> > --- a/Documentation/admin-guide/pm/cpuidle.rst
-> > +++ b/Documentation/admin-guide/pm/cpuidle.rst
-> > @@ -275,20 +275,25 @@
-> >  and variance of them.  If the variance is small (smaller than 400 squa=
-re
-> >  milliseconds) or it is small relative to the average (the average is g=
-reater
-> >  that 6 times the standard deviation), the average is regarded as the "=
-typical
-> > -interval" value.  Otherwise, the longest of the saved observed idle du=
-ration
-> > +interval" value.  Otherwise, either the longest or the shortest (depen=
-ding on
-> > +which one is farther from the average) of the saved observed idle dura=
-tion
-> >  values is discarded and the computation is repeated for the remaining =
-ones.
-> > +
-> >  Again, if the variance of them is small (in the above sense), the aver=
-age is
-> >  taken as the "typical interval" value and so on, until either the "typ=
-ical
-> > -interval" is determined or too many data points are disregarded, in wh=
-ich case
-> > -the "typical interval" is assumed to equal "infinity" (the maximum uns=
-igned
-> > -integer value).
-> > +interval" is determined or too many data points are disregarded.  In t=
-he latter
-> > +case, if the size of the set of data points still under consideration =
-is
-> > +sufficiently large, the next idle duration is not likely to be above t=
-he largest
-> > +idle duration value still in that set, so that value is taken as the p=
-redicted
-> > +next idle duration.  Finally, if the set of data points still under
-> > +consideration is too small, no prediction is made.
-> >
-> > -If the "typical interval" computed this way is long enough, the govern=
-or obtains
-> > -the time until the closest timer event with the assumption that the sc=
-heduler
-> > -tick will be stopped.  That time, referred to as the *sleep length* in=
- what follows,
-> > -is the upper bound on the time before the next CPU wakeup.  It is used=
- to determine
-> > -the sleep length range, which in turn is needed to get the sleep lengt=
-h correction
-> > -factor.
-> > +If the preliminary prediction of the next idle duration computed this =
-way is
-> > +long enough, the governor obtains the time until the closest timer eve=
-nt with
-> > +the assumption that the scheduler tick will be stopped.  That time, re=
-ferred to
-> > +as the *sleep length* in what follows, is the upper bound on the time =
-before the
-> > +next CPU wakeup.  It is used to determine the sleep length range, whic=
-h in turn
-> > +is needed to get the sleep length correction factor.
-> >
-> >  The ``menu`` governor maintains an array containing several correction=
- factor
-> >  values that correspond to different sleep length ranges organized so t=
-hat each
-> > @@ -302,7 +307,7 @@
-> >  The sleep length is multiplied by the correction factor for the range =
-that it
-> >  falls into to obtain an approximation of the predicted idle duration t=
-hat is
-> >  compared to the "typical interval" determined previously and the minim=
-um of
-> > -the two is taken as the idle duration prediction.
-> > +the two is taken as the final idle duration prediction.
-> >
-> >  If the "typical interval" value is small, which means that the CPU is =
-likely
-> >  to be woken up soon enough, the sleep length computation is skipped as=
- it may
-> > --- a/drivers/cpuidle/governors/menu.c
-> > +++ b/drivers/cpuidle/governors/menu.c
-> > @@ -41,7 +41,7 @@
-> >   * the  C state is required to actually break even on this cost. CPUID=
-LE
-> >   * provides us this duration in the "target_residency" field. So all t=
-hat we
-> >   * need is a good prediction of how long we'll be idle. Like the tradi=
-tional
-> > - * menu governor, we start with the actual known "next timer event" ti=
-me.
-> > + * menu governor, we take the actual known "next timer event" time.
-> >   *
-> >   * Since there are other source of wakeups (interrupts for example) th=
-an
-> >   * the next timer event, this estimation is rather optimistic. To get =
-a
-> > @@ -50,30 +50,21 @@
-> >   * duration always was 50% of the next timer tick, the correction fact=
-or will
-> >   * be 0.5.
-> >   *
-> > - * menu uses a running average for this correction factor, however it =
-uses a
-> > - * set of factors, not just a single factor. This stems from the reali=
-zation
-> > - * that the ratio is dependent on the order of magnitude of the expect=
-ed
-> > - * duration; if we expect 500 milliseconds of idle time the likelihood=
- of
-> > - * getting an interrupt very early is much higher than if we expect 50=
- micro
-> > - * seconds of idle time. A second independent factor that has big impa=
-ct on
-> > - * the actual factor is if there is (disk) IO outstanding or not.
-> > - * (as a special twist, we consider every sleep longer than 50 millise=
-conds
-> > - * as perfect; there are no power gains for sleeping longer than this)
-> > - *
-> > - * For these two reasons we keep an array of 12 independent factors, t=
-hat gets
-> > - * indexed based on the magnitude of the expected duration as well as =
-the
-> > - * "is IO outstanding" property.
-> > + * menu uses a running average for this correction factor, but it uses=
- a set of
-> > + * factors, not just a single factor. This stems from the realization =
-that the
-> > + * ratio is dependent on the order of magnitude of the expected durati=
-on; if we
-> > + * expect 500 milliseconds of idle time the likelihood of getting an i=
-nterrupt
-> > + * very early is much higher than if we expect 50 micro seconds of idl=
-e time.
-> > + * For this reason, menu keeps an array of 6 independent factors, that=
- gets
-> > + * indexed based on the magnitude of the expected duration.
-> >   *
-> >   * Repeatable-interval-detector
-> >   * ----------------------------
-> >   * There are some cases where "next timer" is a completely unusable pr=
-edictor:
-> >   * Those cases where the interval is fixed, for example due to hardwar=
-e
-> > - * interrupt mitigation, but also due to fixed transfer rate devices s=
-uch as
-> > - * mice.
-> > + * interrupt mitigation, but also due to fixed transfer rate devices l=
-ike mice.
-> >   * For this, we use a different predictor: We track the duration of th=
-e last 8
-> > - * intervals and if the stand deviation of these 8 intervals is below =
-a
-> > - * threshold value, we use the average of these intervals as predictio=
-n.
-> > - *
-> > + * intervals and use them to estimate the duration of the next one.
-> >   */
->
-> Assuming you fix up the typos in the commit message when applying:
+On Sun, Feb 23, 2025 at 08:30:06AM -0700, Ventura Jack wrote:
+> Rust aliasing:
+> - Is not a keyword.
+> - Applies to certain pointer kinds in Rust, namely
+>     Rust "references".
+>     Rust pointer kinds:
+>     https://doc.rust-lang.org/reference/types/pointer.html
+> - Aliasing in Rust is not opt-in or opt-out,
+>     it is always on.
+>     https://doc.rust-lang.org/nomicon/aliasing.html
+> - Rust has not defined its aliasing model.
+>     https://doc.rust-lang.org/nomicon/references.html
+>         "Unfortunately, Rust hasn't actually
+>         defined its aliasing model.
+>         While we wait for the Rust devs to specify
+>         the semantics of their language, let's use
+>         the next section to discuss what aliasing is
+>         in general, and why it matters."
 
-I will.
+Hmm, I wonder if this is the reason of the persistent hostility that I
+keep hearing about in the Rust community against alternate
+implementations of the Rust compiler, such as the one being developed
+using the GCC backend.  *Since* the aliasing model hasn't been
+developed yet, potential alternate implementations might have
+different semantics --- for example, I suspect a GCC-based backend
+might *have* a way of opting out of aliasing, much like gcc and clang
+has today, and this might cramp rustcc's future choices if the kernel
+were to depend on it.
 
-> Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+That being said, until Rust supports all of the platforms that the
+Linux kernel does has, it means that certain key abstractions can not
+be implemented in Rust --- unless we start using a GCC backend for
+Rust, or if we were to eject certain platforms from our supported
+list, such as m68k or PA-RISC....
 
-Thank you!
+						- Ted
 
