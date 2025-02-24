@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-529755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D35A42A91
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:03:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0DC6A42A92
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:04:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 735E7160139
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 590D97AA935
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EB0265CD8;
-	Mon, 24 Feb 2025 18:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDD4266196;
+	Mon, 24 Feb 2025 18:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BreM1I9O"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iaNFLy0N"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCAE265CC1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F93526618C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420183; cv=none; b=O9ARCDo+zIR8iCy/qAu2mQQpm/YqHZicheu/3+BWa+nO+3XSoB8pQHmVEIn+QD2OpvwZnUODPH9vzzshBeWk5e70melADN63HXYU/4NipySqloZTg7bhZWJB8iV4vSK3jzaKPkN7clGemfMJscpNiLb6VAU/DARGIWyThSuidDQ=
+	t=1740420188; cv=none; b=CrqQ6vKCW+PtcLi1QXuVnycLyTekYtO6ppLDLPEfmIftdiR130JzJnmuoWdfVc+vq2wnPKf2A53zEoRh8uWK5yRy1E/WTLG+hWRJL/gA9TWJJG08IOa3k6B0spIPdbUFr1B7HMMjCXfeGqvV9g2fWjIjBnKU7ccWDF0+4unKZMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420183; c=relaxed/simple;
-	bh=xqToex4VcWxib0ndV9cUtQuDd3ofcz9vQ62tZ39OdXg=;
+	s=arc-20240116; t=1740420188; c=relaxed/simple;
+	bh=5V8CRRxEKwAvlne0up0DL89xDRbM4OY8DNb00/7ZeuQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e9YhiVknSnHKHbPxWhSgf1tdzpvQNmUX+/Ql/mZlkcVGjItBpjufrj0+xy9qS+CGSwKx/DeYI0h2rNJ9CIH3IQ6XhrUIvqQ26lMs8T1T/76cAoVNIduFnrsasA0DQyR3pv/UBOC8WyDAp8nq7jLxcNcR7rux/jaMn5fMvppeYb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BreM1I9O; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=qF40iWXrIJ2fwWNqJsOEXyv2FRAVSQPef+f/ZgoSvbUYVW5PorSRkrSOV9EM94oR/JiEWy54U8TkLKn2Ptl832Uy4QDKRwhAglVTkDg2NGIalnL8SdN83ziQN4S/j2BmOAe1hWkpkGH/znxseeE8kBEoCsYFlXuKvEMcgLvyrQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iaNFLy0N; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2211acda7f6so105731745ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:03:02 -0800 (PST)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220c92c857aso81040795ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:03:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740420182; x=1741024982; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740420185; x=1741024985; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=HFN+prd/q5R/gZ+dsQNPlGWJ7GO+s/LReOSW13ezbxY=;
-        b=BreM1I9O+NMV+eJMqF7OMxGwR5+XMgF5w2c1aHRA5YN8yqbZsnsl6RYGZ0XYexn4iz
-         lN7cIuaqjVZiyrb0xrFXi6E13gVB3sLNxIcizRP6r6lfT1SjTSZOMO+1NZwK1L2/fOTr
-         UTnpRzdc5HfhL0j2jpAE+QXZPbx5Y9R1c6P4l9R0QxXRILSETAOWIolHJDXJsXUllHRT
-         W+dS7mOn7AfScHxmf9SnRYpgJFYxiiEmGmBF4kl+EkdGf42QFpEOz515RRfhzgIGr6SZ
-         O0iY+d89MQsXzLVtGSDmg/cTSTv5/PfKBCjk56lEa3HnxFlfSkvEoGbBa77HoLvaisgG
-         LXxg==
+        bh=XyR+PRc/eBOLkBnPi/9fuJnUVozTaiV4/upc2f3YPZU=;
+        b=iaNFLy0NPfFmaM8jG7VdBO2McQ9kKsJO+uHgYTgWGCjcYMtPZo1zTJNSm8OsmoNiD+
+         r0CYUW+7TS60DsPPhBhMrQqcboIkyrvBplbfV2ZmV2ANH1RMsWpwUm23IPbdRcttbVBo
+         1r+kz2s7bvgDL4aq+pZAm75gcGoXBqCIgXxK8xSqi0CLpN3sRcjwCBE6lXcL4aP5O/c4
+         HKRz8+w1x0PhaYC+WZ7vAc6/Ie/gmc10dqw6Ryeay81KCvuIg1XIV1wF/qlfFmstzCij
+         RfLzjMl1EeINwU7YQv1O1JlRuIz5MZF9BxkDDSQxti6+62EM5UOs5Th9NBMv9k0t0p5m
+         82qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740420182; x=1741024982;
+        d=1e100.net; s=20230601; t=1740420185; x=1741024985;
         h=content-transfer-encoding:mime-version:reply-to:references
          :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HFN+prd/q5R/gZ+dsQNPlGWJ7GO+s/LReOSW13ezbxY=;
-        b=T8MXveT11dxZ57BZb+hJZhrZ/1O9uxVl05ngX7WJenw2/U2SN/U1EWYWQ3C4TderGl
-         zXr6smARdjPtKGoB8WNV7RA/6nJ1sLtsWF4ayBCsFjx+Af1mmtOpgnPDmO4wOk5A0nRd
-         CJgKS5m8sCRHE31ugvv0a7w0bWBlg3pthSVL3/wypcngoc55haCqR1Q/e02svU4hh6GR
-         hLZ5XVClWrs4NzwLMoxQaWtfi47pkF2VQHAQlLtu0vyddHQOqjLpzpSOWK/UZzH1yEIG
-         meaUAsXaFuzfKhduMUBlcKNekfAsKgvrg3UbHpmeHhiJTvY3JVnnRWZkczpUaIGuDubY
-         2xGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtEKYgpNAFbf2U9hd5RuGgVq27Fki7n1bKAg0m7vT25NygD5MiIAAnc4RjsRi3jTWvS0jOJM24no+dTSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk2u2cLV9S7aYxPFSr/3iNumJqDbCJznLB/jpP+WWc4Omp2oX+
-	kVxURfDJLj+6nAj1gt0aYc7jjsRwzRI7biVmoXMdWiowWC1njBWB
-X-Gm-Gg: ASbGncsP9+6sWv+/psskkOgekMfyrEqe4JtTdJ8h+5Ir9W1L4WCZqcuKvtPp8m443rL
-	D2nFciCjRGjQ77sX8yEbraxe3ujpafUYFa8M3N7d/pkk2gLpZ95txY2rqnXVvPjh0Ksbz1vlIH6
-	Ol+Zn06v7gXowiVADdVqZp8X42dY100xI1Z0D3hTpGjjM4zMClJhMeYO49WnTZ50NRqwar8cjuE
-	0L+wZOJThuohX8s3jTARVLvvGheMEM/9eivFfFIOO3vmJhq9Ns+tsaqxX3Gp0cycXd0CUu6V8oW
-	2MIE8Qvy5ys3gHpUJoThk8u4vXbzckVQdT3MsYPOukP7
-X-Google-Smtp-Source: AGHT+IE7STMjzV87+hEURfhIdB6UH8LCMfNhfiVrnK0UHPVcExU8+vGKEEn+3A78YlQKgQnFURWA4g==
-X-Received: by 2002:a17:902:c950:b0:21f:507b:9ad7 with SMTP id d9443c01a7336-2219ff5e619mr252864045ad.25.1740420181541;
-        Mon, 24 Feb 2025 10:03:01 -0800 (PST)
+        bh=XyR+PRc/eBOLkBnPi/9fuJnUVozTaiV4/upc2f3YPZU=;
+        b=CP/C29vsjhXHsKPeSQhwYj2U+lc1rqUL8dqU3WiIW+Ctjq+Xsu+LYos52yaNzy99ri
+         wbSysM+lRi0MA95T2tFbD3A8fUwX97YhnFQ9reQzN/tagmLP7BabUfcxdNS3ETVXm7Hw
+         ldaKBp7X1hk6K2Qly2RiTdEBvPgI5Zzq7de0Vn/BNR++lDnYhtjR9Dihz1mHeKbsZGug
+         774dUa6TiPwPenp2HzzDZkgwYvPmKTSp9oyZW8tyH8U2ef32QRtVd2ZDcoz7pJ7kwVCZ
+         KAFc+K6BGET10x1mon9zS4O7h+fOvsvuiFKpjjuUh/htXePQtr8DD2m4lSWQx4EVxwCz
+         x3Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVS7yEfCxKreEgjk59IVquM3diklS9zy4VkatO1qcqSbUGnvD5cakylE7f3LGphVWGLExlKSns4EK0Zqmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUS6iITMsCY2paO7NdW0wOmP4rZfsEF7LeO7nn9nqKLMgChatY
+	ifaotsUFDoh6P5n8QUcI/G3r1xXYafNdu8HNMRdgDgL1gr5rZDeH
+X-Gm-Gg: ASbGnct9UlNSAk613qQ16+BwExbjP0YhInUfHN49/8s7mHDdupSRizceekrYZ5J64Bw
+	z9LDBddLQ5qv0qGD0czbRKaM+D9o7rmvnqkPv1Z9++i9+lMCYJZe/3ThMSK6Y6by1mre/15nu5R
+	sfsRBsxvbDQGxRns5Sq/LA/IdwccgAXcpS3i9gK20e/3W3DVGCBh5iUmCXkKDtrI0TWL17F3Y4E
+	xH9aYU90E96JimIhWlRldl9a2hh7TAGdJ/OnhCbwc27r9IY0pZU3K8gYmDeUWPkKUYBh6VKlN8G
+	mblUj5VDoDwChG9IEMxKlLNHVHeK0sL9gRxGXj9LuTsT
+X-Google-Smtp-Source: AGHT+IEWFKdxJ4VlDrM+6lJej0/o+uztgn5SKjZ2meUIah0cwkjkOUeetzc3bGXlgudO6SvyG97xhQ==
+X-Received: by 2002:a17:903:2312:b0:221:1eac:bf7a with SMTP id d9443c01a7336-2218c765b1amr310546725ad.24.1740420185393;
+        Mon, 24 Feb 2025 10:03:05 -0800 (PST)
 Received: from KASONG-MC4.tencent.com ([1.203.117.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556e15esm184834695ad.190.2025.02.24.10.02.58
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556e15esm184834695ad.190.2025.02.24.10.03.01
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Feb 2025 10:03:01 -0800 (PST)
+        Mon, 24 Feb 2025 10:03:04 -0800 (PST)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -87,9 +87,9 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Matthew Wilcox <willy@infradead.org>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH v2 3/7] mm, swap: avoid redundant swap device pinning
-Date: Tue, 25 Feb 2025 02:02:08 +0800
-Message-ID: <20250224180212.22802-4-ryncsn@gmail.com>
+Subject: [PATCH v2 4/7] mm, swap: don't update the counter up-front
+Date: Tue, 25 Feb 2025 02:02:09 +0800
+Message-ID: <20250224180212.22802-5-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250224180212.22802-1-ryncsn@gmail.com>
 References: <20250224180212.22802-1-ryncsn@gmail.com>
@@ -104,103 +104,58 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-Currently __read_swap_cache_async() has get/put_swap_device() calls to
-increase/decrease a swap device reference to prevent swapoff. While some
-of its callers have already held the swap device reference, e.g in
-do_swap_page() and shmem_swapin_folio() where __read_swap_cache_async()
-will finally called. Now there are only two callers not holding a swap
-device reference, so make them hold a reference instead. And drop the
-get/put_swap_device calls in __read_swap_cache_async. This should reduce
-the overhead for swap in during page fault slightly.
+The counter update before allocation design was useful to avoid
+unnecessary scan when device is full, so it will abort early if the
+counter indicates the device is full. But that is an uncommon case,
+and now scanning of a full device is very fast, so the up-front update
+is not helpful any more.
+
+Remove it and simplify the slot allocation logic.
 
 Signed-off-by: Kairui Song <kasong@tencent.com>
-Reviewed-by: Baoquan He <bhe@redhat.com>
 ---
- mm/swap_state.c | 14 ++++++++------
- mm/zswap.c      |  6 ++++++
- 2 files changed, 14 insertions(+), 6 deletions(-)
+ mm/swapfile.c | 18 ++----------------
+ 1 file changed, 2 insertions(+), 16 deletions(-)
 
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index a54b035d6a6c..50840a2887a5 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -426,17 +426,13 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		struct mempolicy *mpol, pgoff_t ilx, bool *new_page_allocated,
- 		bool skip_if_exists)
- {
--	struct swap_info_struct *si;
-+	struct swap_info_struct *si = swp_swap_info(entry);
- 	struct folio *folio;
- 	struct folio *new_folio = NULL;
- 	struct folio *result = NULL;
- 	void *shadow = NULL;
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 6f2de59c6355..db836670c334 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1201,22 +1201,10 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+ 	int order = swap_entry_order(entry_order);
+ 	unsigned long size = 1 << order;
+ 	struct swap_info_struct *si, *next;
+-	long avail_pgs;
+ 	int n_ret = 0;
+ 	int node;
  
- 	*new_page_allocated = false;
--	si = get_swap_device(entry);
--	if (!si)
--		return NULL;
+ 	spin_lock(&swap_avail_lock);
 -
- 	for (;;) {
- 		int err;
- 		/*
-@@ -532,7 +528,6 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 	put_swap_folio(new_folio, entry);
- 	folio_unlock(new_folio);
- put_and_return:
--	put_swap_device(si);
- 	if (!(*new_page_allocated) && new_folio)
- 		folio_put(new_folio);
- 	return result;
-@@ -552,11 +547,16 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 		struct vm_area_struct *vma, unsigned long addr,
- 		struct swap_iocb **plug)
- {
-+	struct swap_info_struct *si;
- 	bool page_allocated;
- 	struct mempolicy *mpol;
- 	pgoff_t ilx;
- 	struct folio *folio;
+-	avail_pgs = atomic_long_read(&nr_swap_pages) / size;
+-	if (avail_pgs <= 0) {
+-		spin_unlock(&swap_avail_lock);
+-		goto noswap;
+-	}
+-
+-	n_goal = min3((long)n_goal, (long)SWAP_BATCH, avail_pgs);
+-
+-	atomic_long_sub(n_goal * size, &nr_swap_pages);
+-
+ start_over:
+ 	node = numa_node_id();
+ 	plist_for_each_entry_safe(si, next, &swap_avail_heads[node], avail_lists[node]) {
+@@ -1250,10 +1238,8 @@ int get_swap_pages(int n_goal, swp_entry_t swp_entries[], int entry_order)
+ 	spin_unlock(&swap_avail_lock);
  
-+	si = get_swap_device(entry);
-+	if (!si)
-+		return NULL;
+ check_out:
+-	if (n_ret < n_goal)
+-		atomic_long_add((long)(n_goal - n_ret) * size,
+-				&nr_swap_pages);
+-noswap:
++	atomic_long_sub(n_ret * size, &nr_swap_pages);
 +
- 	mpol = get_vma_policy(vma, addr, 0, &ilx);
- 	folio = __read_swap_cache_async(entry, gfp_mask, mpol, ilx,
- 					&page_allocated, false);
-@@ -564,6 +564,8 @@ struct folio *read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 
- 	if (page_allocated)
- 		swap_read_folio(folio, plug);
-+
-+	put_swap_device(si);
- 	return folio;
+ 	return n_ret;
  }
- 
-diff --git a/mm/zswap.c b/mm/zswap.c
-index ac9d299e7d0c..83dfa1f9e689 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -1051,14 +1051,20 @@ static int zswap_writeback_entry(struct zswap_entry *entry,
- 	struct folio *folio;
- 	struct mempolicy *mpol;
- 	bool folio_was_allocated;
-+	struct swap_info_struct *si;
- 	struct writeback_control wbc = {
- 		.sync_mode = WB_SYNC_NONE,
- 	};
- 
- 	/* try to allocate swap cache folio */
-+	si = get_swap_device(swpentry);
-+	if (!si)
-+		return -EEXIST;
-+
- 	mpol = get_task_policy(current);
- 	folio = __read_swap_cache_async(swpentry, GFP_KERNEL, mpol,
- 				NO_INTERLEAVE_INDEX, &folio_was_allocated, true);
-+	put_swap_device(si);
- 	if (!folio)
- 		return -ENOMEM;
  
 -- 
 2.48.1
