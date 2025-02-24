@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-528491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C562AA41858
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:10:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE208A4186F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:11:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BBAA16CEC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C5411897504
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CF624BBE8;
-	Mon, 24 Feb 2025 09:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35544252905;
+	Mon, 24 Feb 2025 09:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/9u3+jR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsOZrf5n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E760245014;
-	Mon, 24 Feb 2025 09:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8764924503B;
+	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388143; cv=none; b=T1+SzYiNWDbHRWwx2dtxN1T6/XAxaFHLvfwNj/xt0NNZWMzzMgvq82aVrB29Q3M3HPUOwcWPdIDwTHAmmLlp2MIPVu2CmWPcTUS3PdZxuxN1JH4YA+Rh41ldCOuSoXcFHaKI5y8oXWgR0L5ahLTEK8ST3L+HxLZyKjU7TI1zWsg=
+	t=1740388143; cv=none; b=IT8IM52mvbuGeMKLqzWQ1S3E/ycOGrkkb4OFkwHCg5SA4KQSNbwtR+l4MyWr48/DyLoGyH9BJVM+LF43af2itdudyKkFoH5MalWcjNr+gJQUpl69cSqSCvDXnYcEpDQsSUh4ljIbGbnEZe0Z1ukdE9oIgO2IevJ1IFZFcD3AbmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740388143; c=relaxed/simple;
-	bh=dpp4qyIMyF9Zjj8hBit/kiPWhv8Tsh4yLBwdy/oLV7M=;
+	bh=EuSV6D3szJ0VW+HjV2NwWusmhdj/JnS4ByP03OXscaU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jRv5uvk0H6Vs/fT9G479FRsUFKKHxbz0vG0T+7nwE2k+KAkmCdz/Hx8VhIbro8waXarqotTE3SjVDnLHyDuhJQFpxQNZJAW8vNjrcDYrDBfPMk/8rDCxp1FQ09IOUlT2Jolq/5Rq29EN6w5B2e9rj7q5FF777LWXmIpm4TuN+Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/9u3+jR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB1B1C4CEE6;
+	 MIME-Version; b=LIxCofcEr8FMnMIjLnJMndBwuZdElDNiTcGyi+pokhQIbAv7ErONtKXKND6+773/jBVeGzlhzdaRQheCgcuBsd23iOZUtBCjxAcJ19mRjr38pU3HyH1fJqUM1bgTS3yRGJZTbP6Z7r06yuAp0k2fjuBKjHAk7IDGMJv7Cv2wh6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsOZrf5n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0054C4CEEE;
 	Mon, 24 Feb 2025 09:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740388142;
-	bh=dpp4qyIMyF9Zjj8hBit/kiPWhv8Tsh4yLBwdy/oLV7M=;
+	bh=EuSV6D3szJ0VW+HjV2NwWusmhdj/JnS4ByP03OXscaU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=a/9u3+jRgg6iZd8RCVDU+IBEo+pwPqDyjRQVV2RdAGuGPfurluMpA+Y2BBJjlXrWG
-	 7uOAuoV/LB/ccvKauo+xSZ9RLRIYFvUIySR+SdVqXHGJehljnHZ75cCTzzLEMOkgsN
-	 YddazHOJSy9OBTaBlBt6dDDjz/kiE1dCRbm8cLF8rBSWdby1F+U/6SzwsRKV1Ikpe/
-	 3QpPCpmnB2650/O9z7K2Gm7v/aVnLXk1W4Z9h0UFe3e6fGMdOkyMkUNMo4QMJERHbo
-	 uiOnqLOlo9FR1k/ceIZvs5ihY71TM/MRpvLpIa9LUu028gRG7K97RvDUWxSJzj90uN
-	 7K4e7TDpZM9rg==
+	b=bsOZrf5nwEoDs4PAkYNZQTExuSUaayjHTC6H/oIgO/6PMkQD5GWDteUkRDrMDA7ti
+	 sLWAdADhYmAzDLUvKbKdfufuVJ4TgM1a5Gehkwg9GR9FxtQFa7KUJC/e+bNopQdPn/
+	 RA7OxnKnDxGADrYA9n4ufY2b7SMXQ0ydroUcnNIM6TZIBccVkYeMyPdPQ4ZRX89lz3
+	 8gtuKy1z4fsBt4Sx7be61sX8hTBECfUhKjW3fwLTwuJYhGInb1UYl8Szec9uyJFYB6
+	 ll/scl0iG7LEDAgI0ScFz4Ye9s2p0uchmZzO6FQxwTec6WISiUmW+wASWCvZPU8P+k
+	 wFL37vt5In6TA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tmUSS-00000003p3Y-3V3g;
+	id 1tmUSS-00000003p3c-3c3Y;
 	Mon, 24 Feb 2025 10:09:00 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 	Jonathan Corbet <corbet@lwn.net>
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
-	Bingbu Cao <bingbu.cao@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v2 02/39] drivers: media: intel-ipu3.h: fix identation on a kernel-doc markup
-Date: Mon, 24 Feb 2025 10:08:08 +0100
-Message-ID: <96cd1068aa8ec0a072528082670ccb8aa3704f70.1740387599.git.mchehab+huawei@kernel.org>
+	linux1394-devel@lists.sourceforge.net
+Subject: [PATCH v2 03/39] drivers: firewire: firewire-cdev.h: fix identation on a kernel-doc markup
+Date: Mon, 24 Feb 2025 10:08:09 +0100
+Message-ID: <8238bed1c0375e6b389a8cafe1ad99fdeb1cb1f2.1740387599.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
 References: <cover.1740387599.git.mchehab+huawei@kernel.org>
@@ -71,29 +67,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The "Rule" description is part of y_calc parameter. Having a line
-starting at the beginning makes it part of the function description
-instead, which is not the original intent.
+The description of @tstamp parameter has one line that starts at the
+beginning. This moves such line to the description, which is not the
+intent here.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/staging/media/ipu3/include/uapi/intel-ipu3.h | 3 ++-
+ include/uapi/linux/firewire-cdev.h | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/media/ipu3/include/uapi/intel-ipu3.h b/drivers/staging/media/ipu3/include/uapi/intel-ipu3.h
-index 4aa2797f5e3c..8b85524beb59 100644
---- a/drivers/staging/media/ipu3/include/uapi/intel-ipu3.h
-+++ b/drivers/staging/media/ipu3/include/uapi/intel-ipu3.h
-@@ -322,7 +322,8 @@ struct ipu3_uapi_ae_config {
-  *			0: positive, 1: negative, default 0.
-  * @y_calc:	Pre-processing that converts Bayer quad to RGB+Y values to be
-  *		used for building histogram. Range [0, 32], default 8.
-- * Rule:
+diff --git a/include/uapi/linux/firewire-cdev.h b/include/uapi/linux/firewire-cdev.h
+index 1f2c9469f921..05e3aa8fa8bc 100644
+--- a/include/uapi/linux/firewire-cdev.h
++++ b/include/uapi/linux/firewire-cdev.h
+@@ -449,7 +449,8 @@ struct fw_cdev_event_phy_packet {
+  *		which the packet arrived. For %FW_CDEV_EVENT_PHY_PACKET_SENT2 and non-ping packet,
+  *		the time stamp of isochronous cycle at which the packet was sent. For ping packet,
+  *		the tick count for round-trip time measured by 1394 OHCI controller.
+- * The time stamp of isochronous cycle at which either the response was sent for
 + *
-+ *		Rule:
-  *		y_gen_rate_gr + y_gen_rate_r + y_gen_rate_b + y_gen_rate_gb = 32
-  *		A single Y is calculated based on sum of Gr/R/B/Gb based on
-  *		their contribution ratio.
++ *		The time stamp of isochronous cycle at which either the response was sent for
+  *		%FW_CDEV_EVENT_PHY_PACKET_SENT2 or the request arrived for
+  *		%FW_CDEV_EVENT_PHY_PACKET_RECEIVED2.
+  * @data:	Incoming data
 -- 
 2.48.1
 
