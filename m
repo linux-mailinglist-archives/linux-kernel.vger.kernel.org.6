@@ -1,93 +1,113 @@
-Return-Path: <linux-kernel+bounces-529254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32B0BA42266
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:07:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F276A42241
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821FA167A7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C3F189D1CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:01:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158526EB7D;
-	Mon, 24 Feb 2025 14:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E9C6EB7D;
+	Mon, 24 Feb 2025 14:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M1GG7ZIv"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Tqfi03od"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A84A1369B6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7C07083F;
+	Mon, 24 Feb 2025 14:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405666; cv=none; b=cRvDkbAb+K2Zpuo0ssa1IRqQMy5ahknNC4mKyaLdT96kgWIzhjMvbyvWkLaqaO9MRSm9yuIfcwpIJPE9LefREHyOV/ICVfPSYW0qK2z7x3p/afqc56Gg1lxlVu0b9X5rkM0wFIgOu41q26y4BGdGgmhtt/F4cT++wtGtC2zn70M=
+	t=1740405683; cv=none; b=J5zbTYiWI79NVKjF1auL4PYy8hwy1yhBXHdBtKILrSIB2DqHEOHwZVg0SPBJMdQLVRr6EaNmWKJat0hz6Cz3EeY+sqRYGr+s3bFGWtN5dm9m7tkYhFzDNKcX0JsfmNGWceDTwcMKrUONTjnD9oAURNSUfStIqnVxox9K7P2Z1G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405666; c=relaxed/simple;
-	bh=dbw6dXg5TQeVowkeoYcRgmEHG8zpRcSKiLa7Cj4uv/E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pQtg5lFTQ2lZV8o/L2HurKllei6Pb2XxMCQ7d/37e163DOvIKgQ1C15A/StmixWOIG7Jz9jTWYpww4AETa/1twDcAbl/4zf8EoTCT5Rn3ht7adwh7q2x1uveCJoxc7uSnItrqTdHzOy+RChJ3W+5oxnJTRsGDY7+gztWOO8532o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M1GG7ZIv; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740405662;
-	bh=dbw6dXg5TQeVowkeoYcRgmEHG8zpRcSKiLa7Cj4uv/E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=M1GG7ZIv7rz7MMMQd7tgm39CzSeYcobCtvKgXQKcjGYpZvW6Vx7EjKpZqjbfa1oo7
-	 cmDcS9wSJMxNz+GekADGFyfAS6s+p7ksVtm7nn9L9fw3PbkRSKH8MvLiPk1VqjxWTZ
-	 nxIRVhlWiwhG79GGEYgn2wKaJliYaJZYXIWgrDh2wHA1tzRTdC4u7D/Gm0LI1l9vUI
-	 Z41UoW8xIACcsKDa18+jjKpPo2S9ldrSVj/iPKUBy37eqQnBW+3882xcqYJELo//Cx
-	 VGFsAaHfERb/OHLKTmNdVscSwxwc8efuE49Uc7/mm7T+apJQQ86FkPlYy3CB35KGC+
-	 3zHOq3n3fQ3Vg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7A97B17E0DFB;
-	Mon, 24 Feb 2025 15:01:01 +0100 (CET)
-Message-ID: <7dfa6548-c2ad-4492-832d-87dea1ececf5@collabora.com>
-Date: Mon, 24 Feb 2025 15:01:00 +0100
+	s=arc-20240116; t=1740405683; c=relaxed/simple;
+	bh=+AKGTAVxvBd9V/GwcXqWRQnTMOO2sy6yYmow9Aivit4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GH+cPW2TLjDae/9RVHASbuoevhMD/aJW43tAzjHMzY8vEVpGlc6ATRLxzjSqYTY6xzN0ou5pu3WJV2DSlK2CDLGO9GAobjvu4is+ylZAIyP6Y7V8T/OdW2YG+8tg5ZhTrmoU9jCjnVn08XUpVx4DXlD8X8HD2ONeEmGVJinXmiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Tqfi03od; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=g3pKjimdpYHYRgRlkEN2TeR5MtbKLWDqPslqiEwTKl0=; b=Tqfi03odd2+9ApJmXuG5zGIJn1
+	Zow5gKtlUufYs/nsd2wd1D7M1NMeAjhJx2Shk8aM9+oZ3+8CLXQXjVLhEnt1OTlLby5v80W5bCtts
+	CzamauiUl0gsK/XkFcOoy3jCqrOiTVYBZkthwApVgF4LftlsryTI5DC3rCu/FIJI85K87jdLb97Ib
+	rsBJGWAQvN2BQdiqvcgLr7K/SyfqgKW3H/HfW5gxUng30HcW1s91E5pmJMwn5n3QKyUie2hEt3MVW
+	gC9jEtoXGj2j0CMfYdAQUtGmADQk/MQXsYbaaVpteWjSWgRCHLktDSWv8Q5Drbgk3Nr29OMPsnJl/
+	RLTFQgfg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47558)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tmZ1F-0006W1-0p;
+	Mon, 24 Feb 2025 14:01:13 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tmZ1D-000535-1W;
+	Mon, 24 Feb 2025 14:01:11 +0000
+Date: Mon, 24 Feb 2025 14:01:11 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 01/13] net: phy: Extract the speed/duplex to
+ linkmode conversion from phylink
+Message-ID: <Z7x7p3W0ZpkFu44m@shell.armlinux.org.uk>
+References: <20250222142727.894124-1-maxime.chevallier@bootlin.com>
+ <20250222142727.894124-2-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
- <singo.chang@mediatek.com>, Yongqiang Niu <yongqiang.niu@mediatek.com>,
- Sirius Wang <sirius.wang@mediatek.com>,
- Xavier Chang <xavier.chang@mediatek.com>, Fei Shao <fshao@chromium.org>,
- Chen-yu Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250222142727.894124-2-maxime.chevallier@bootlin.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Il 24/02/25 11:50, Jason-JH Lin ha scritto:
-> Add cmdq_gctl_value_toggle() to configure GCE_CTRL_BY_SW and GCE_DDR_EN
-> together in the same GCE_GCTL_VALUE register.
+On Sat, Feb 22, 2025 at 03:27:13PM +0100, Maxime Chevallier wrote:
+> Phylink uses MAC capabilities to represent the Pause, AsymPause, Speed
+> and Duplex capabilities of a given MAC device. These capabilities are
+> used internally by phylink for link validation and get a coherent set of
+> linkmodes that we can effectively use on a given interface.
 > 
-> For the SoCs whose GCE is located in MMINFRA and uses MMINFRA_AO power,
-> this allows it to be written without enabling the clocks. Otherwise, all
-> GCE registers should be written after the GCE clocks are enabled.
-> Move this function into cmdq_runtime_resume() and cmdq_runtime_suspend()
-> to ensure it is called when the GCE clock is enabled.
+> The conversion from MAC capabilities to linkmodes is done in a dedicated
+> function, that associates speed/duplex to linkmodes.
 > 
-> Fixes: 7abd037aa581 ("mailbox: mtk-cmdq: add gce ddr enable support flow")
-> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+> As preparation work for phy_port, extract this logic away from phylink
+> and have it in a dedicated file that will deal with all the conversions
+> between capabilities, linkmodes and interfaces.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Fundamental question: why do you want to extract MAC capabilities from
+phylink?
 
+At the moment, only phylink uses the MAC capabilities (they're a phylink
+thing.) Why should they be made generic, and what use will they be
+applied to as something generic?
 
+If there's no answer for that, then I worry that they'll get abused.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
