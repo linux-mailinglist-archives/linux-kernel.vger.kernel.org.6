@@ -1,92 +1,87 @@
-Return-Path: <linux-kernel+bounces-529562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF385A427E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:27:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07525A427E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDFE3AD4AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:25:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC47188ED73
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D2662627F8;
-	Mon, 24 Feb 2025 16:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700E263C61;
+	Mon, 24 Feb 2025 16:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="etkeSBDc"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k3BX+05g"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938E01A3176;
-	Mon, 24 Feb 2025 16:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAE42638B7;
+	Mon, 24 Feb 2025 16:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740414349; cv=none; b=YrLoLZQWzPLODXmOVzbigYtbq5uKqndtJNanXhy48SzBakAqAvwj1L46j0mi+NR5UjkbKjSK0sC3HbiRmfgmNs+Trgcw/IDlDOHAD9MpZdhN97EbLtxVbG5QeNrblYPAV8/9T+vz1gPFj3bFxvP1OIEyYqMccJwl8/PJLQWIkYc=
+	t=1740414451; cv=none; b=l0f4Jof3RS5NwOl+R+ouGhiuIcs7J1kU3/+tmhqR+XuG/ypshVLMJAoy1keU1i+oA3Yy+PYDsXbr1W2EpAmEH2t0iNc2OckphZdiop0WWvxuNNpJ8wxFLil7yZZsHJmGr5J0nLdFXplWwjNxOqUA4tJJMWpvHR5lygCIt9CtmG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740414349; c=relaxed/simple;
-	bh=qvbnNSdRruQhRk4mgbgR8vrRl+sp/5MPa5t6Nig7i1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iaQ0mpy0ngFFw28uZdewyR7ujInFDWDY3xjdaP2ocrbXNWPLuKTLt+cjypfwv1sayyBaRGGJydnrR169Q1Ozim9t0Emc8m7AwsazZ9sxSuQ2NwF0etH4epR8/hjIrCp1IprnnQtZfBOiXXAX8IuynSm9iKV/dlqXjQFdYA6McZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=etkeSBDc; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1740414451; c=relaxed/simple;
+	bh=t3Gu0ciRIyMj4cPjj4BNyjNGZ9co/1BF+gNvTYUOpQ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZbKtsOXsUZHnX8LLeRVozNwqOA3jzgeVuFjWdE4qzxy69egsPnrFRGVmyuuV9HV6TmJl5ypx+R5CcbdvRbaPlSYqLGg2wrYF2qay+vaOreW5qUmyRB2GdzSEdgR5Y+KiQSETcH2RZsAoJ6cuXcALGy3LrdyUrEZ6In/xkHzi8LI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k3BX+05g; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RiG7Os1LzRvtBRc9A9ciPH//03aOnU7y29MQw49YdE4=; b=etkeSBDcLsAiIlNT9AxClEHsb1
-	BTAPC/kqapVVSvZKca4nASw7bU982HGQiIXBIzt10WGg+i7oyKO343cw7mCt68ptxsfUUc8JsBDxL
-	KzYrt5bvEdqkuK9DL8G1NM52w43XpyOGviFBfTbbBoCtvOLNINxTMcc35QEcRRWR4tt7jQrLw7STi
-	uy/7tA+d3s6X0sEJ4SJlWsuzgBD+mbBYRxCCBDkJqGwgIlYaQe3iM9DdubIE0EgDz+KhVbj4g0Fy4
-	SzVJTEE0pdCA+qqRI1h7YgqH0soeBJn+pI/Fa9dsNEd+IcL66cABvhAiJuwmMj1o2AGaDFyigL5Cq
-	iLXkDAJA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmbH5-00000003DyP-0qcN;
-	Mon, 24 Feb 2025 16:25:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 6DD5530001B; Mon, 24 Feb 2025 17:25:42 +0100 (CET)
-Date: Mon, 24 Feb 2025 17:25:42 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sathvika Vasireddy <sv@linux.ibm.com>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, christophe.leroy@csgroup.eu,
-	npiggin@gmail.com, maddy@linux.ibm.com,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	llvm@lists.linux.dev
-Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call
- warning for bl+mflr pattern
-Message-ID: <20250224162542.GE11590@noisy.programming.kicks-ass.net>
-References: <20250219162014.10334-1-sv@linux.ibm.com>
- <20250220195940.ely2l2fpsozd2tuv@jpoimboe>
- <4bea75bc-d3f6-4972-b644-f9b5a4e8bb77@linux.ibm.com>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=sVVQDLN0Q2KtNevUTUfMdmLyO6qiUhSEqo6fE73BV/g=; b=k3BX+05gy+2CyrEMzBtdJpHXLL
+	VY9FffJFX4RjDXICDgQVqNNXgF65sJGg7Z9RlC98zNXBQ+GtAPPQVzzbXvjLIMRcSZZ9HKM4+ZKCp
+	MA6kUaz9O/ycgj1AecIecKWiJLy+RyeFIsrL9OvMow58NHqLQw+2vF52F5NrgJim0Ji5QfUXdyKxl
+	zBkYD5m59rNqXk2GCssZ2H9I8Nn9iTDF2vZ6N7BnAZy93CIc7honvAR5PfUmbXCjxSkp+OsyvzwTJ
+	HYc7Ie9Wr9Qox2Omo2NHUaD5FPMNUENWvYK3Bl7dD7KCEtbl3A4xTkk901R2UewxVeA0DhR7pqXHy
+	N0cizIqw==;
+Received: from syn-035-131-028-085.biz.spectrum.com ([35.131.28.85] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmbIm-0000000ES4H-2zil;
+	Mon, 24 Feb 2025 16:27:28 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: torvalds@linux-foundation.org
+Cc: m.szyprowski@samsung.com,
+	robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dma-mapping: update MAINTAINERS
+Date: Mon, 24 Feb 2025 08:27:21 -0800
+Message-ID: <20250224162724.349679-1-hch@lst.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4bea75bc-d3f6-4972-b644-f9b5a4e8bb77@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Fri, Feb 21, 2025 at 02:20:41PM +0530, Sathvika Vasireddy wrote:
+Marek has graciously offered to maintain the dma-mapping tree.
 
-> > > @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct objtool_file *file)
-> > >   		reloc = insn_reloc(file, insn);
-> > >   		if (!reloc) {
-> > >   			dest_off = arch_jump_destination(insn);
-> > > +
-> > > +			next_insn = next_insn_same_func(file, insn);
-> > > +			if (next_insn && dest_off == next_insn->offset)
-> > > +				continue;
-> > > +
-> > This won't work on x86, where an intra-function call is converted to a
-> > stack-modifying JUMP.  So this should probably be checked in an
-> > arch-specific function.
-> 
-> Thanks for letting me know, I'll introduce arch_skip_call_warning() to
-> handle architecture specific cases in the next patch I send.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-Can't you detect this pattern in decode and simpy not emit the call
-instruction?
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4ff26fa94895..5434da7a4889 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6879,7 +6879,6 @@ F:	kernel/dma/map_benchmark.c
+ F:	tools/testing/selftests/dma/
+ 
+ DMA MAPPING HELPERS
+-M:	Christoph Hellwig <hch@lst.de>
+ M:	Marek Szyprowski <m.szyprowski@samsung.com>
+ R:	Robin Murphy <robin.murphy@arm.com>
+ L:	iommu@lists.linux.dev
+-- 
+2.45.2
+
 
