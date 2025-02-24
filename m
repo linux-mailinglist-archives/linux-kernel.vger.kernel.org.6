@@ -1,129 +1,129 @@
-Return-Path: <linux-kernel+bounces-529221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A88EA42225
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:57:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347ADA421D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044763A6E90
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318D018835B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEAC248882;
-	Mon, 24 Feb 2025 13:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="g7JUOe4q"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B859157A48;
-	Mon, 24 Feb 2025 13:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1D9248888;
+	Mon, 24 Feb 2025 13:49:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A98B3F9D2;
+	Mon, 24 Feb 2025 13:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404911; cv=none; b=qu1DRRK4FZhyas5v/EP2jYC2c2ngibdOqxPoL1p1D+uMsW3rr96titrEKk6Yc+x9lC5cTCvAMXz6x6lpcpEQpsQrt+B7+zEOrsg6/59UyHSDx0FjahOARlpfR9kT29ZRzYC3brWUNWNGTLa6O2MCJxNWaBckplkBt4rtfha4li8=
+	t=1740404999; cv=none; b=FT9mphIPQAwmKPNmT/uDLaZzeIVcXKYxxap+tNouMF5GDmHXfnl1x66Vqv0EaygHiKfzao8ygN0H3uhAnJQSnYwyfQr5ZGy0nTY74rZJZWGH+abokkCpTb9zwjHfMw386nH8cltODZJiyqTQSuSxNa+I2uz1DUtjekyCXdkOdKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404911; c=relaxed/simple;
-	bh=JRkq7wjYrgvh+yhnqspJzZKgEwp94XGB8+ID6BQtyYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kiLR07Ln4gFj3S+4PQ3YwT/0myvp3ac0DWtxxZJsWSwtaAl9/dQKlZr4m4q5InIiRUC4kc0bJPBfmcI1XgaqxR3F+tobGjTQ7kqswqgyjwbB2WJS+7dJnTPKe30ck/V+ZmDG3PsWUHc7N7gPK3GCkVHmX378AMvnN6hI+/kTwdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=g7JUOe4q; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EQ1Y9woIJ04CcEe49xqkqna1RhXAAY88omG8TRUbg6k=; b=g7JUOe4q43m4jzeSptGOHh9Fxt
-	baNOGbGELH05179VyqTjo+0LLnp9uJ2Ym+FP3yRGxy59ecyCXwfcU0g3f33+ZMXxvk/g5k98J2mCe
-	BHdJFQqj6KOW9+D3U3FFqx6NyWmM2sHBZHfd2DpfsILsGmfxD3byxV+8T5+ZIZ4iNKhCl8/+hwdpD
-	rMrXqBmH8Qh8zzfpyeXF7Lswr4IYul+b+WqV/lTDQgd/+DhgShbpuNuRvUM0uEMDLb+yGcctI1Tpj
-	Qe0xwB5f8L7PErdbzebV7WktTc/Pc24wpsOiGP4Aj+FzcLoeA4WQ//CAmJ5VMPOLo859AzNAj+XQM
-	70CSx78w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40326)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tmYon-0006S9-2z;
-	Mon, 24 Feb 2025 13:48:22 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tmYol-00052k-1c;
-	Mon, 24 Feb 2025 13:48:19 +0000
-Date: Mon, 24 Feb 2025 13:48:19 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Message-ID: <Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
- <87r03otsmm.fsf@miraculix.mork.no>
- <Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
- <3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
- <87ikozu86l.fsf@miraculix.mork.no>
- <7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
+	s=arc-20240116; t=1740404999; c=relaxed/simple;
+	bh=6hZpCix+DxYq3VLHZtaNL3DILryOerY//lnNIpG6/Xs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uWXJsWO3c2Vm34/+I0tAKZDVgCkm0xpC+DMtXgpwswH51+ivAL7fzBQjcd5hAXWsJP4Dfi98k7U4t+Obyg8Au5uSqg/76ZHZvGYgNmjqHT4nPZ2PFKJWM3pPbTIcCOP6c8iZYQaPda1kRVJjAEQ26ZUMWb+woOu1wsLJLSrvvZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3ACCB1515;
+	Mon, 24 Feb 2025 05:50:13 -0800 (PST)
+Received: from [10.163.40.148] (unknown [10.163.40.148])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 00D913F5A1;
+	Mon, 24 Feb 2025 05:49:47 -0800 (PST)
+Message-ID: <137a241a-324a-45a9-a60b-d65f27dc4fc2@arm.com>
+Date: Mon, 24 Feb 2025 19:19:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 5/5] mm: Rename GENERIC_PTDUMP and PTDUMP_CORE
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org
+Cc: steven.price@arm.com, Andrew Morton <akpm@linux-foundation.org>,
+ Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>
+References: <20250217042220.32920-1-anshuman.khandual@arm.com>
+ <20250217042220.32920-6-anshuman.khandual@arm.com>
+ <ba5b12e4-850c-445b-a1b1-0dc5f3905dda@csgroup.eu>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <ba5b12e4-850c-445b-a1b1-0dc5f3905dda@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 02:31:42PM +0100, Andrew Lunn wrote:
-> > What do you think will be the effect of such a warning?  Who is the
-> > target audience?
+
+
+On 2/24/25 17:31, Christophe Leroy wrote:
 > 
-> It will act as a disclaimer. The kernel is doing its best with broken
-> hardware, but don't blame the kernel when it does not work
-> correctly....
-
-Indeed.
-
-> > You can obviously add it, and I don't really care.  But I believe the
-> > result will be an endless stream of end users worrying about this scary
-> > warning and wanting to know what they can do about it.  What will be
-> > your answer?
 > 
-> I agree that the wording needs to be though about. Maybe something
-> like:
+> Le 17/02/2025 à 05:22, Anshuman Khandual a écrit :
+>> Platforms subscribe into generic ptdump implementation via GENERIC_PTDUMP.
+>> But generic ptdump gets enabled via PTDUMP_CORE. These configs combination
+>> is confusing as they sound very similar and does not differentiate between
+>> platform's feature subscription and feature enablement for ptdump. Rename
+>> the configs as ARCH_HAS_PTDUMP and PTDUMP making it more clear and improve
+>> readability.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Marc Zyngier <maz@kernel.org>
+>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>> Cc: Nicholas Piggin <npiggin@gmail.com>
+>> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+>> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+>> Cc: Heiko Carstens <hca@linux.ibm.com>
+>> Cc: Vasily Gorbik <gor@linux.ibm.com>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Ingo Molnar <mingo@redhat.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Cc: linux-doc@vger.kernel.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: kvmarm@lists.linux.dev
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: linux-riscv@lists.infradead.org
+>> Cc: linux-s390@vger.kernel.org
+>> Cc: linux-mm@kvack.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 7612c52e9b1e..5aef2aa4103c 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -43,6 +43,7 @@ config RISCV
+>>       select ARCH_HAS_PMEM_API
+>>       select ARCH_HAS_PREEMPT_LAZY
+>>       select ARCH_HAS_PREPARE_SYNC_CORE_CMD
+>> +    select ARCH_HAS_PTDUMP
 > 
-> This hardware is broken by design, and there is nothing the kernel, or
-> the community can do about it. The kernel will try its best, but some
-> standard SFP features are disabled, and the features which are
-> implemented may not work correctly because of the design errors. Use
-> with caution, and don't blame the kernel when it all goes horribly
-> wrong.
+> Is it OK to drop the 'if MMU' from below ?
 
-I was hoping for something shorter, but I think it needs to be expansive
-so that users can fully understand. Another idea based on your
-suggestion above:
+Sure, will add it back.
 
-"Please note:
-This hardware is broken by design. There is nothing that the kernel or
-community can do to fix it. The kernel will try best efforts, but some
-features are disabled, other features may be unreliable or sporadically
-fail. Use with caution. Please verify any problems on hardware that
-supports multi-byte I2C transactions."
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> 
+>>       select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
+>>       select ARCH_HAS_PTE_SPECIAL
+>>       select ARCH_HAS_SET_DIRECT_MAP if MMU
+>> @@ -112,7 +113,6 @@ config RISCV
+>>       select GENERIC_IRQ_SHOW_LEVEL
+>>       select GENERIC_LIB_DEVMEM_IS_ALLOWED
+>>       select GENERIC_PCI_IOMAP
+>> -    select GENERIC_PTDUMP if MMU
+>>       select GENERIC_SCHED_CLOCK
+>>       select GENERIC_SMP_IDLE_THREAD
+>>       select GENERIC_TIME_VSYSCALL if MMU && 64BIT
 
