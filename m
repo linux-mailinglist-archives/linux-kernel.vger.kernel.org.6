@@ -1,63 +1,62 @@
-Return-Path: <linux-kernel+bounces-529979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159D7A42D36
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:59:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5C5A42D0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:51:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C42C3A7BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:59:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 544DA7AA035
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848C822E017;
-	Mon, 24 Feb 2025 19:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A982063D2;
+	Mon, 24 Feb 2025 19:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lSBGMgSM"
-Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="IJDkqEoo"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6487136327;
-	Mon, 24 Feb 2025 19:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1211A5B8B;
+	Mon, 24 Feb 2025 19:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740427140; cv=none; b=MMTzTDzkMNkmkpruwhb4L5OZyLFr5KVc4AbfCUbqrVvrF/Vj4lSsXnh+NR2/ZM7IUTsIgERd7CoU1x45vU4Md+qDcLRyMJ77TeVC2IuhKQRIojQBnqhj+4Kx7ZM5zhIVL95OjtRiukw4JnPY6jD2/SKDSr39OvAO4Hdy29p4U8A=
+	t=1740426674; cv=none; b=gTd20xvfetnvKK3V3azDiK11q4HfD7wLUcNT+FCJOmYXu5aC9ntb/2Tvw6o8n/85HpLDIjidkqgvMf5mtjrB77eewdVrS21y4F3YA6cp7Vgj8XXP2Xtxd+iCPJnZASZPo+ck8P2vrZfk5MU40pFs8v3MINQ5RxY6yIfflw65/zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740427140; c=relaxed/simple;
-	bh=fWCZLO7EKR4DOPrWOUXgbX4igVnp3NTdUsv32c2M+X0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eK4jc0f++aiL4258pJ88mM7W2MnZTfsYIT005Blcww9IN8CR74OeGkjVNQQJGBvyoLRYDO05nwoEyHIlqHPziouu9B22sifE/i5JPjCQFhWqLug+dN1DbPVCf0+OUrQ1PdjnbGnGctTFZi3nHDukkUtPxQVFNgXiuuA3hYPFrwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lSBGMgSM; arc=none smtp.client-ip=80.12.242.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id meSLt3GDwJyOhmeSPtGswC; Mon, 24 Feb 2025 20:49:38 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740426579;
-	bh=TYkhntDhg6zE2Z9rvZA/FjSywjAnJEg0AG/RXj5Cj1k=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=lSBGMgSMfFY2R+JdkvLMGe2zWfxig9natjAOM4rxrWscn60b5LMO+ZS3u1Xe5Ekev
-	 1CvRH93p4Yd9EpqVtYBGU6Jp4WhutYyiDeJbim0UAq+bamEeDLoIfeGXleFZ9i5eWR
-	 argVhLUHy4C8W7QR24QpctGtYri85t4yoAid5HMWGJ9It5oKL4eOzDXSE7iSEKKEVo
-	 3RU2KCqZBjh1vjdyMbnDyWX3eCo3PM2XQh4RYmdISJilAvW8xQWhRiFrkum9b+anhN
-	 FBOTbRiEt09JWr3T4W3ryk9fr0iGMynSOU3aGeYt3SHKzxLdc7+mjbdpHDvMps5eai
-	 Vw9liiq/fSqGw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Feb 2025 20:49:39 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] thermal: intel: Remove a useless operation in int340x_thermal_zone_add()
-Date: Mon, 24 Feb 2025 20:49:28 +0100
-Message-ID: <cceb7f8864c43f046cf1c19c3bbcc38a7a57adc5.1740426540.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1740426674; c=relaxed/simple;
+	bh=hcgJfw/7wOHsNOEBoUBiG14kJhwqkh4zp5hmxOiaJ5Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WjxnC5oXodltWqnahbyQQ6ZcAMEd7zcrAOaOEMoHF9ap6U5DE92hD3vbkkwFEWFRANwPXMXOXJHtUZviVQrq6ja3x11YYiaSr3bS1XocJFnBct7tGkTvVb8lk7NZkXC17w2qojcdDRcleuHBCNCKhZ4BQVJ1Xy/m6Pj3L7q7TR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=IJDkqEoo; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 3E7B92E092FE;
+	Mon, 24 Feb 2025 21:51:06 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740426668;
+	bh=nV6M1/9xoq45Ft8blytZcpP9OHrrGYYTleMHHH0uXsU=; h=From:To:Subject;
+	b=IJDkqEooTtAATgziBepLyqCS6dKmwyVYUMRq6anzWCL7rqV+st3bao8OfD8Qxfzdd
+	 W3GhAjeKcdHj9f179pyWj4XMKfbyNDhZNR3cMdwrbF/4Mx7e8f6O+kUeZZC8nQKjzh
+	 +A7mjCIF1xz3OLFL8scFFbMZjHGiwAlJVqjwf/sU=
+Authentication-Results: linux1587.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: mario.limonciello@amd.com,
+	mpearson-lenovo@squebb.ca
+Cc: ilpo.jarvinen@linux.intel.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	rafael@kernel.org,
+	hdegoede@redhat.com,
+	me@kylegospodneti.ch,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with multiple
+ handlers
+Date: Mon, 24 Feb 2025 20:50:56 +0100
+Message-ID: <20250224195059.10185-1-lkml@antheas.dev>
 X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,31 +65,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: 
+ <174042666777.337.18039573887564455104@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-'zone_trips' has just been allocated with kzalloc(), so .flags is known to
-be 0. Remove the useless | when assigning THERMAL_TRIP_FLAG_RW_TEMP.
+On the Asus Z13 (2025), a device that would need the amd-pmf quirk that
+was removed on the platform_profile refactor, we see the following output
+from the sysfs platform profile:
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-This was added in commit cca52f696952 ("thermal: intel: Set
-THERMAL_TRIP_FLAG_RW_TEMP directly")
----
- drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+$ cat /sys/firmware/acpi/platform_profile_choices
+balanced performance
 
-diff --git a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
-index 8dca6a6aceca..b43d848e66b8 100644
---- a/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
-+++ b/drivers/thermal/intel/int340x_thermal/int340x_thermal_zone.c
-@@ -143,7 +143,7 @@ struct int34x_thermal_zone *int340x_thermal_zone_add(struct acpi_device *adev,
- 	for (i = 0; i < trip_cnt; i++) {
- 		zone_trips[i].type = THERMAL_TRIP_PASSIVE;
- 		zone_trips[i].temperature = THERMAL_TEMP_INVALID;
--		zone_trips[i].flags |= THERMAL_TRIP_FLAG_RW_TEMP;
-+		zone_trips[i].flags = THERMAL_TRIP_FLAG_RW_TEMP;
- 		zone_trips[i].priv = THERMAL_INT_TO_TRIP_PRIV(i);
- 	}
- 
+I.e., the quiet profile is missing. Which is a major regression in terms of
+power efficiency and affects both tuned, and ppd (it also affected my
+software but I fixed that on Saturday). This would affect any laptop that
+loads both amd-pmf and asus-wmi (around 15 models give or take?).
+
+The problem stems from the fact that asus-wmi uses quiet, and amd-pmf uses
+low-power. While it is not clear to me what the amd-pmf module is supposed
+to do here, and perhaps some autodetection should be done and make it bail,
+if we assume it should be kept, then there is a small refactor that is
+needed to maintain the existing ABI interface.
+
+This is the subject of this patch series.
+
+Essentially, we introduce the concept of a "secondary" handler. Secondary
+handlers work exactly the same, except for the fact they are able to
+receive all profile names through the sysfs interface. The expectation
+here would be that the handlers choose the closest appropriate profile
+they have, and this is what I did for the amd-pmf handler.
+
+In their own platform_profile namespace, these handlers still work normally
+and only accept the profiles from their probe functions, with -ENOSUP for
+the rest.
+
+In the absence of a primary handler, the options of all secondary handlers
+are unioned in the legacy sysfs, which prevents them from hiding each
+other's options.
+
+With this patch series applied, the sysfs interface will look like this:
+
+$ cat /sys/firmware/acpi/platform_profile_choices
+quiet balanced performance
+
+And writing quiet to it results in the profile being applied to both
+platform profile handlers.
+
+$ echo low-power > /sys/firmware/acpi/platform_profile
+bash: echo: write error: Operation not supported
+$ echo quiet > /sys/firmware/acpi/platform_profile
+$ cat /sys/class/platform-profile/platform-profile-*/{name,profile}
+asus-wmi
+amd-pmf
+quiet
+quiet
+
+Agreed ABI still works:
+$ echo quiet > /sys/class/platform-profile/platform-profile-0/profile
+$ echo quiet > /sys/class/platform-profile/platform-profile-1/profile
+bash: echo: write error: Operation not supported
+$ echo low-power > /sys/class/platform-profile/platform-profile-0/profile
+bash: echo: write error: Operation not supported
+$ echo low-power > /sys/class/platform-profile/platform-profile-1/profile
+
+Antheas Kapenekakis (3):
+  ACPI: platform_profile: Add support for secondary handlers
+  ACPI: platform_profile: add all options to amd-pmf as a secondary
+    handler
+  ACPI: platform_profile: Do not hide options missing in secondary
+    handlers
+
+ drivers/acpi/platform_profile.c    | 57 +++++++++++++++++++++++++-----
+ drivers/platform/x86/amd/pmf/spc.c |  3 ++
+ drivers/platform/x86/amd/pmf/sps.c |  8 +++++
+ include/linux/platform_profile.h   |  7 ++++
+ 4 files changed, 67 insertions(+), 8 deletions(-)
+
 -- 
 2.48.1
 
