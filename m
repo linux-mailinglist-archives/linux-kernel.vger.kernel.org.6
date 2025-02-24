@@ -1,225 +1,275 @@
-Return-Path: <linux-kernel+bounces-528564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34858A41914
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:30:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECEAA41924
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B96188A6B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1383A9288
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96804245039;
-	Mon, 24 Feb 2025 09:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E410F24A058;
+	Mon, 24 Feb 2025 09:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hySNSgOG"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2059.outbound.protection.outlook.com [40.107.223.59])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VfSdBJaU"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F256324291B;
-	Mon, 24 Feb 2025 09:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187031A0BCD;
+	Mon, 24 Feb 2025 09:26:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389150; cv=fail; b=paxYlL31Br9zpM+si1pftkoRzU+madoSWuIsN2oDGvuGf/MYRdBwgrmLZQu7IxGiS6dTHcjGS+hVEz/DEVMbH0h+kOCgcub5tu5SVLOPiaeoZgXrWRJpVFCkr9g80kpLGT1F8YQWREL9dQCqaBGpux1PAJvQgbSlBgWzS9/jU+M=
+	t=1740389212; cv=fail; b=JEc7bgTTKdVds1JRlGvsISmNjUgNajfSOvbng0OCNDuGgyoydhFAeMkE7/WCFFRXeWnTPEXWZRoMsb9D6JrA1b1yOdFmpMBOmfXbQDYAG+udEg9LjTT5Jl49HUUDVAzLN5olZ5cEUv47kug0TNnYhBbsoiUg4JEjjBj04aO4908=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389150; c=relaxed/simple;
-	bh=W3DLpqbZMw77+58rx9EJq+nmBVDsdkdonIIbGIOZ3UE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=UYQugMgcvl9K6za/6lsN9ueeNmnocmODJZnMIo0pvayJSCvELusyX1+gGd/BqWW4ma7TWhtyCz4pMSMVBmC8Dd7JBykxFADAfkZMJRa/UUCPRG7/K09TMh1P6E7ZhLD6ce1KFMLC7YcjsACix3rwx1R6Nnu2ztUh1oepJYhptt0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hySNSgOG; arc=fail smtp.client-ip=40.107.223.59
+	s=arc-20240116; t=1740389212; c=relaxed/simple;
+	bh=5UPZVMyGT9kTlopkoDAI+TYe5ZC/ATL4BYNYhXM/RTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EiGLPZyX2Cml2qg+urRGd5r2t0Kq96osxfjzdqTQvLpZB1B52Zd3nFc435fRHIhc2TcvCxgFjjis3dkM3u05A95XQMCOL+ZdlT/HSVgFSUR0c98/ug6pdgUNZc6MZN1jkZ/QqPpIR3nROMjS5y4czTTBozd0sn5Uj7drAFVoH/Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VfSdBJaU; arc=fail smtp.client-ip=40.107.92.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RwPvxsrv/bAxbQEnFjUeRz1ytgyaTumvNNt0Up8eclE+ld99/w1xW9YjOpT2CGoEOT9pQLECeQtZmKTM+TQEnBsmx2lAo9ILTsYhHae2er1WFc8Bb7VL2wDpO6gv3cZYgPsDrUBm/BPXRRJ0FtNw8L8SflJl0Dy8bxPZZlcjMKzH6O/V/GSbB2d5BwuH53+hJPk3rhRIKUzLNNFG1jHATGEa3YDSAn4l33Jycjt2nFESYY9Hytaw03/az9VlRws6ESE7Se8pCUW7yL+CA7TfgQ1L/v+HDMreUkMS33szgfvog2jN+97U43EYSha5gv3P/GhXOBfZ5H+jI+lpBY7hjQ==
+ b=SwOAtiSyEQ2SYVNzs87AwrYbG9Zzw0jnHihP3+EBF1prh1JlnikyfEazLLHuLnGcJR50sNB+ekTsDUAc3p0WE+Iai94OKSxVDNi/Wa698q4lisf2UUcrpw3LNBOabvgHGdJ+y1d4eHmfesyFtpFvxwbRFOi062M70yulS5TTp9k3djCNZwyanpf4syBIUvuflxzzl7Frxr3QzeFEb08jfZ7g0XSJuB3GmS+ma4wo0ywtkr5agKTyny4SBXEwaSWyBHFZupzWXHlnlC1AImAXoHcy5c5lOEoe/9bLe899dLnL3IdMc0RVNBxVxsVJU4ttrka8/apL4xUjKcR6eOSiZA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bWblZzhu1jMVIt/0BcmMgtWrqDFoysatFDFx2GP/rt8=;
- b=kfLpFKE2SenldxHDOKz0rS1tVBWMpR7iTa6kmJi8Mu89f/AMYwECMvIO2R83PJmNSq9FPew55NGkYwfTgVAuGNSFbXZ9CzcRZ1jTWt2u7hwnNNUEDSsccoxVS7pli8ZkIKvcYYoVBvDRSWS6Q0/I9kOftQr4sux9QevlMyhEsmgBUTxOZR6XaiU2SNbrUuUaTQ5IkVNOeKqyqeSIbxYrHUu4FW3jMOv5pUTEwv4RjudgNComAzW4SbozEN8NLXszxrYV6ZTuHhEdb/0wN53OwHL8EOnCAS7F+yj9+OXc3s9RpTTe1LZ0N24ix/UqfC0DeF5j+GPgVr38IrUGslccwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
+ b=Vy+QblMq6pJLNV//3XpmD0kzh4rU9AAE+h1vSgLvtZsgDx7JzxFjbWRHGOY0ApyhGiQkdjZMXzi+npNLGljBEdFIY0qElnTrGDbaUFLM4ZlVCBdxNXIIEzZwwKmphmQ5eBVbCYly83e2/gY0gO1uM/tHpWzdkYKcO1gBdjBmkPABatitOuLxZvOnGQKwlN01p8HYL1/vks0J4iTp/c/NmRZrVJgwFktN6GSju1cHcUyHarO+edMjd4D1g0SNtpSC/mXU0XbybtaR273Lrlp23ufV8JWn0oVB++rD/McmmStOv+x7hjCbtobXn+lobNd5wGLxClEwYYdVrq/X9lkJ/A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bWblZzhu1jMVIt/0BcmMgtWrqDFoysatFDFx2GP/rt8=;
- b=hySNSgOGzVsV1f4Y/viAUp56YRCP7ec3lWFNloH/oNENfZ2aXatKhk1r3qdIKg0u4y0BiScg2mBP2Jlv/p/ITFdeCb+Q4+LFZ7MYvXnkVnax61Xw5LVuGFve+5+1KN+O9Ky8D45sdMVE89A2r0O0Lf7RhqV3pe0e99JFmvsprKQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by DM4PR12MB6590.namprd12.prod.outlook.com (2603:10b6:8:8f::11) with
+ bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
+ b=VfSdBJaUBQgaAks5McUB3e3eQsCxj2o7obPxRixivbD1xowrwDMFqIolA4xT/DuYwpmG7eNqc01FEPqAhcrwbFMm40/nmELPeIi+TnxmR2YaEJDcs8CFpGc6lpl99msD5+uaUOwj6X3DXYdDKgxkCoFIQOVy0Ppi3XcXtw9evv8=
+Received: from MW4PR03CA0215.namprd03.prod.outlook.com (2603:10b6:303:b9::10)
+ by SA1PR12MB6823.namprd12.prod.outlook.com (2603:10b6:806:25e::5) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
- 2025 09:25:42 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8466.015; Mon, 24 Feb 2025
- 09:25:42 +0000
-Message-ID: <32d21c7a-9714-4f53-ad77-22ab81152455@amd.com>
-Date: Mon, 24 Feb 2025 14:55:37 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 19/19] cpufreq/amd-pstate: Drop
- amd_pstate_epp_cpu_offline()
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250219210302.442954-1-superm1@kernel.org>
- <20250219210302.442954-20-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20250219210302.442954-20-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0103.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:9b::15) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 09:26:42 +0000
+Received: from BY1PEPF0001AE16.namprd04.prod.outlook.com
+ (2603:10b6:303:b9:cafe::d) by MW4PR03CA0215.outlook.office365.com
+ (2603:10b6:303:b9::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Mon,
+ 24 Feb 2025 09:26:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BY1PEPF0001AE16.mail.protection.outlook.com (10.167.242.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Mon, 24 Feb 2025 09:26:41 +0000
+Received: from [10.252.195.191] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
+ 2025 03:26:32 -0600
+Message-ID: <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+Date: Mon, 24 Feb 2025 14:56:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+To: Oleg Nesterov <oleg@redhat.com>, Manfred Spraul
+	<manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
+CC: WangYuli <wangyuli@uniontech.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>
+References: <20250102140715.GA7091@redhat.com>
+Content-Language: en-US
+From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+In-Reply-To: <20250102140715.GA7091@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|DM4PR12MB6590:EE_
-X-MS-Office365-Filtering-Correlation-Id: ef0b0336-846a-4b45-fe1a-08dd54b535cb
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE16:EE_|SA1PR12MB6823:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|13003099007|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?M1FocXNnUU1XSVZmMlFaWFVuMEhpMlVFZDhxeDRXM1ZzczZFN1kraGNhcXNF?=
- =?utf-8?B?cXprNmxsUzdxN0h4MjFnbnNiRnhuQmVqNVVhckpWVHg1VVMvR2JMcG4rajMy?=
- =?utf-8?B?VjQwMnFlcndIVENKZXVpUUtBNmxZUkp0RzRQME5yYW1wZzBNZ3EyMVBlQjdi?=
- =?utf-8?B?SVl4RjBaY01FREtFbXA3NlVlcmZzU3hUVXNLZHFPWEhsYk40NXRTT0d4NFFI?=
- =?utf-8?B?Sk5GTW5SL3BHUHZVL09JK3J6NS9ucFY5VW9RUjY5S3lvdHg1YmxxdlJPVzBS?=
- =?utf-8?B?RzlEY01CcUlkbkZFVWYyOVZWRFlSaUtQQkxQR2RkdzRuY1M4bVlnclE3Z3Zt?=
- =?utf-8?B?aWF3NDY4d2p4Z0puZENvWXlNdUdmZmxWczdlSmd4WmpsektXbEtISEV5MEJF?=
- =?utf-8?B?WUxwUGpmaDVocktGc3o0bGVDd3dJKzlWZm9DV1B5VGUwVzgweThUVEwvYXhR?=
- =?utf-8?B?cVBXdkNKREkzRGZvNTFkekJEUTZ5RW5GWm5zSUorV0JDdmhYK2NpQ3pQUDh3?=
- =?utf-8?B?aSswcitFTVExVlRXR1BZVmZxc2ROL3lGTzBLUnI2V1lMNHF6eEZNbXhFZWFS?=
- =?utf-8?B?KzBtL0hMN2Q4V0xFeTduUWNZYzhaUzVWOFlRcFRSN3pyZnJuZG9ieHZ3RFBM?=
- =?utf-8?B?RVV6QXJxZm5OMWptQVNZdVNseTRmc1RJcFkrMzhjcU9NcndQcGlRMWViUTVj?=
- =?utf-8?B?OHhNNlhmeVEzaUQxTGZVT1kyMEptdjRXSGhrTUVDYjdUR0hjQzRWK1FSM1Zw?=
- =?utf-8?B?c01ZWVJNTDg5dnh4V24xc0lYRzlzNUdVVW0zKzYrN29MTlFvUVovN0FoeUtO?=
- =?utf-8?B?eWFxTnFDdFJyc1dLRzA5ODU2V1gydFZweW04akR2RU1ubVJJK3RSQ0FRWXRs?=
- =?utf-8?B?aUtZYnBqZUpJQjZXTlNMdlRDVXEzbkRtbW9kMzU5dmcwWi9NQWZpRGlPek9o?=
- =?utf-8?B?WitOVGNPVFVDdG9xQkNLcitDVCsrQlNiSUV2TWtiVmNFQmRCOU5iK3padmpn?=
- =?utf-8?B?Z2xXbUhnUUg2YWEyYWxqQ0hlNlhxM2NtcldBdEpBRlQzblhsOFBOTzJsR2VP?=
- =?utf-8?B?Yk01Y3hESEdnNjM4WlIwY2pSemk5TWJ2WnFZSThTQUkxMHFwTlpkVWhRN3FU?=
- =?utf-8?B?TW5LNUVtTkJYRVlxZ0R5NGkzY3lOUWQ1WXh5SUNEdWwxalJKSGFwajRqeSs5?=
- =?utf-8?B?UkJDY2lvZmkvbk94NVQwcWk3T05idk1BOFJtdlpPNTFYU3kvMzJrT1k2UU55?=
- =?utf-8?B?a3RVUHBqWU9mM3FqVWVzenlFMTBLbzFkWklBV2xhK0haay9ySXRSN2gxbVlX?=
- =?utf-8?B?QmgrUCswaVRrZGxQSUhCRUdrVjAzNHBRTUNJVXdabWdVbnJPVi92RXJiMmlQ?=
- =?utf-8?B?azdDdGUzYlFPQ29sY0Z5MC95VkcxemVLY0F2cTdRclBMSmZmNGZROU1QTEJC?=
- =?utf-8?B?SVB6YllReHorVnFQakdkdlBCYmlDUGpyUSt0dUd0NzFOcTdTbnM3K1g3L2tu?=
- =?utf-8?B?eEx4Q3R6a1V0Z0pvMThkY0lNNml4SFc5NjdMTW5iQVp6UU9mcWFQVDF2MTZ3?=
- =?utf-8?B?T2tSU2h6YVhieThpWHBSWEttdXBLNnFIWVVlUlFVbmducFFBL3R0K0pJa1pu?=
- =?utf-8?B?czh6ejA5WW5kL2hlMVVjR2cyRE03ZURib2dxOHVRQXVOTmJxc2hnTnJrVG5l?=
- =?utf-8?B?OEpjc01CSTBrRUU4cFJHTVdhTW9KZzNJcTl6VjRBTGl0RENrcGNZT0piUktY?=
- =?utf-8?B?eExLU0xXZGdlWGxBb2lnaDE0VmxtcjdVSjB4ZjBQWDY2SEk0eW8wMGlzSG5q?=
- =?utf-8?B?TGN3ZXA5TEsyVlZUSXpZYjUrUjBEZnNsYnl1c21SWmRVeU1mNXdIRzN5aG9m?=
- =?utf-8?Q?kdW4fHdlF4NhQ?=
+	=?utf-8?B?TDU2VWZCSTlwRkJHdHduRFQ5dnRSRGVCRE9SaG1weEhSVjZqNzdrY2hDbXU1?=
+ =?utf-8?B?VDVIWjBQdUVRUUVwVFlsNTFtVHVUbVZZVmxud0pHZkVHNEFXSlJYaHNoYVJK?=
+ =?utf-8?B?OUFyVFIrZGJxUmFwRm1oeTc3OUxia0xXTlZ4TDdVaHhWTld6RGRSa2VKRHR2?=
+ =?utf-8?B?QUs5TEVoWS92YURxWXN5WkhWVU9oeVJYN2x6am9BbGFJUHp6dXpKQ0tXbGQ0?=
+ =?utf-8?B?NGVxS2tCemZSZFE5aXI3QXI0bnNFZzY0V2JSRGhydzgrRExCWWpnTWJ2cHlB?=
+ =?utf-8?B?Q2s1MzhMMjBEdms3dlZxZ2cwR0xNWXBPNWRuSnQvZGViU0FONDR6cndqVG1t?=
+ =?utf-8?B?ZVpvL1EvK3ZZSEpYbkxhRXo2S2VDd1UwNXdSTUpuWW9rczVmc0NINDZvV1ZP?=
+ =?utf-8?B?ZmRURVovRjArRERtVCtJR2gxdGFuMDE2bHdPcWkxb05pbURYemtPUGl6dmk4?=
+ =?utf-8?B?RDg2a29pbXhUYklLanBKWG4zWGFnYXpGaXdmTHVwNE50cnBJYmY2ak50bWYr?=
+ =?utf-8?B?ZWdjak5xWGVtTjBIZ1AzMW9Edm1udmJKckpuQzZtTWd1Y2Q0M3cwaVEvZkVO?=
+ =?utf-8?B?Q1FxendGUFgxSkl0SGt1NVFHSkYxN3J3Smk0bTVoV054bEFGNUg3KzBpNXIr?=
+ =?utf-8?B?U0JZSFo2Tys4L0xaZHhoUHpJY25NNWt6SUlISUw2Wm5CY1Nqc1AvZS9DTmhw?=
+ =?utf-8?B?Zy9wZXFjTjF0ektPaVdJRU43aTM3eUo0clNyNVlNWmYrNjBuUGtZcVRDRDFk?=
+ =?utf-8?B?V2lXNEt1YnR3ZFRoT0JqZFZzekY1YnNWTnZSMHlPdk5GQ2dvZkNWT1hqUzNy?=
+ =?utf-8?B?RVIra0NBQzN3aGlFTGlLWWJqeFRyUjFBKzNoYmRaa0gwampEY0FPVlNoZFFl?=
+ =?utf-8?B?V0Vwby9oUFNMZVFvam1vMFo3WXpLcGVMLzlkalVKc3ZRR0FtWDRKVXB4Rmw0?=
+ =?utf-8?B?a0hWZmxNWndneTF6eEZTOExBT0QvcFdaU1RtdTZpdU1yTCt1MkJHSU5mZmNz?=
+ =?utf-8?B?T1REdHIwRktXbjhaOHBVSm95QjBMQTYveVVBVXloalNXTjEvaFRxaGtTR0hC?=
+ =?utf-8?B?MUVsUS9zRTJmay8wNU1yQXUwRFkrUVNPWGRPZDJBZXZqQmNiZkNQZm5IZlZM?=
+ =?utf-8?B?MnR4ZG1Uam1GaDh6UWYwdEE3UFh2U25KanEzNks3cEpBV0tvWEZ6U240OCtC?=
+ =?utf-8?B?ZUEvNTB3blp2T2FWRWoxbVhoZTRrZDNoYTRiRG1tbFh0d3Fna2JKNEFTWWZr?=
+ =?utf-8?B?Uk5XekI0dkxiVXZRNS96L1lBeXFqczdVcjA5N0Myd2JDODBVT3JsdXk0Szgr?=
+ =?utf-8?B?VS9iOVlrZEh3ZGlTR1NIWnQxd2c4Q3U2ZnZZdTR4L0VXZCt3MjB2RkRBbVFP?=
+ =?utf-8?B?NGwxVThXeGRMRStSV0xJc3d4VFpmTGtSQldvNjdBZ0h2M3NlWE44amRuMGM2?=
+ =?utf-8?B?SG1iVllXZ25pUGg4aEhReTVYa3RyNEpoek9mbFppcEpDQi9sUkQxZmtpOWIr?=
+ =?utf-8?B?SkdZODFmSndGTlBoR3ovR1BzcW00UU5BK1AycVVOdngzV2FJZis5T3U5Q2ZV?=
+ =?utf-8?B?Q1FIcmd0YUZyNFRnRTdJTjArbllLR0JoNDBKYm05UTVWblVTR2ZacEVvOXJJ?=
+ =?utf-8?B?dGlRQ3g2UUtmNnlJV3kvMlBBOEhyYWhHeGZBZEh6aWE5OVZpcVQwZkk2OUxt?=
+ =?utf-8?B?YmZJdDBPbHM1ZVJtWG9tMWhzWTdBMUt0Q0MrUGxzT2hxMzZRTDZsekdqT1U1?=
+ =?utf-8?B?cUNOYUNPRkl6dDBBdi9QOTZYb0Fid0VBTWdjOE44MjJ6U1ppYVEwWmtwaFFO?=
+ =?utf-8?B?QnNqZDMxTllYZzFzb3RMcjZXd1BBZ3RPNThGTkorSkhtdCtSZGtJVllWYnQ0?=
+ =?utf-8?B?TXF0Q2dwQmRxQ1cyUElZc2xwNGJkNDFNVHJBSlV6Zzl6aWc3Y1FoTW1HS1NJ?=
+ =?utf-8?B?WFVHSDRsL0xOYjZESE1zRDh0ZFNhdGIwRVZLZTNNVW1TRWRHY0V0SWd0K1pN?=
+ =?utf-8?Q?qNrncORf+rcw95s79LJ9v+1qZYMT1o=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eWcvWVo2c21QV0doOVRwdFRVZTJFek8zK1BWNjNrUHpqZi9kUlNxVEdWZnBh?=
- =?utf-8?B?WDMzRUhtd1ZpRGZ4Rk5QQ0JFQ25BdXVhb0RRTmw2QkpTUUFCYXNNQ3g4Ykwy?=
- =?utf-8?B?VjhPdWJtaW9jRUlpQmpiTS9BQVhFL091SCtsK0ZieTR1bDF1ak55Y0hzeDFh?=
- =?utf-8?B?c2NZcm9MbFJPZFpMKzNhaDBESzZTemxtT084WTBURmNFVkQyUVFiSVZ0T0RB?=
- =?utf-8?B?alpTTisxSkJkOTlKdXpreFlUUW5yNmoxam9aOVRscmt6WFJEZGlLelE0bzM5?=
- =?utf-8?B?aTJ0eUt0K05yZFUvQld6TFZGTm11MlJxeFh4UytkUlRtUmJFWUx5YUdMb2tx?=
- =?utf-8?B?dzZSNDlkVm5ZTXJSTEJ1Rm9VaUpRR1UwMWh3RzFMN2JCd1dyaGNZM0xyczVK?=
- =?utf-8?B?UkM4ZlEweXJBekxKTWI4L3ZlZ3dKZUx4MUhnU0xoN21CVkJPV29FeUkvVTY1?=
- =?utf-8?B?ZFZFMGYyYVhUWTV0KzRoa2xQdWN6RHpEY1VWMDhFV0RiUnIzQXJRYUVMYTZ1?=
- =?utf-8?B?TGhqcE9nMWNIbDVuL0xaRFR1UjRCWUtidmRkNGlldTRCcThHRUJLNkF4WXRZ?=
- =?utf-8?B?RkMzQU96UmVSVlBiTHlCR0FYd3RIM3hGWUpKUVJxREdGYzllYVd3UVc4ZVdO?=
- =?utf-8?B?NGRxZlp1TWpXZ0NLYWU0MGNXTHJ2N2FCQXJ2NDNYSVQ3YmdYNkhpNTBJYzh5?=
- =?utf-8?B?aGxjUW1rbGw4Z3JBU09CditlWG5ZZWp0SVRZQ3dVUnh3aER0Qkt6NlExTXJO?=
- =?utf-8?B?UDZ0UnBZdWt6WnIzYlJiTEZMMTAwMktTTUpGdlp2U0xRbmlQcUp5blo0dENS?=
- =?utf-8?B?aitxTlZKa1F6VGltTEpxNXkxRkpiSTBqSkVyL3pqZmQrR3lYbENHT2ZlN2pi?=
- =?utf-8?B?YmV3clZseGtlVjAvcWNoR09yWEVsNUpPbW4vNC94Mm1xUWdIWjhyT0JZdjg0?=
- =?utf-8?B?Z0l6dGZHYkQ5Q2pjMlJKa3FpTXB2ZzlQZW1EVGdXRkk3K2pSM2IwQkFDcHMy?=
- =?utf-8?B?N2V2bml6Tno1KzlzNnpyQXNxZ3NnbjlnZXYrUnVPazVueHlkYkpLdGpZV0N0?=
- =?utf-8?B?RC9iaXByZjJ0NXhGUWUrMnNrTFFuYjBsdVppNXRsaGZIQzlldTV4cldyT0VB?=
- =?utf-8?B?YVhQdkl5Vm4vRUJ1WmRIRnhNK0FpSjlMR3JtREVZUStWd1l0UGxFTitlNFRm?=
- =?utf-8?B?U1NKbTNOdW1OWmFKSytWZ0M4YW5UR3RkWHRScmFwc2xBRDdsRmVVY29yM2NE?=
- =?utf-8?B?SVBHM2MzcWZqWEV1WEJrNzRjcWVLT1lJMisvTmM5QWdWTnhGTDJJN2VYQ09n?=
- =?utf-8?B?VFFQWHRBdFliV3JKanJhNE1saWlZcWgxallBZFVBUzVXOEQyYXYyT0RaNEMy?=
- =?utf-8?B?T1FSbXhHK053NzF4Q2NOSm84aGlCR2diNUdkRHc1blVGLzd5QkhFaTNSRVRh?=
- =?utf-8?B?SDVqZENzbWpJRjRmZm9FbmJLa1hJTGVhRUZpK2RRQUlKSEFpN05lalJGSW1R?=
- =?utf-8?B?cjlZTlBtT2pEYTlrQmd6WjgyV2VtKzVSOWNOaE1uRnp3eFg2Yjh1bGg0RmVx?=
- =?utf-8?B?elduYVh6RnVGZWNKVVRZdDVqZE9ucjA0SVNwR1JxdWxKeTc5VUxuS1I3MjVO?=
- =?utf-8?B?N29UanpydGtDKzJsY2ZSRlVpUC9PdVg0c3VXNndybDE2a0pSOGRYNnJEN3dv?=
- =?utf-8?B?L1I2SXcxdDNtNFdPbG9WdTF3OTl6MTRaL2MzNEV0Z3hjYmVISnNNYjBBVFU4?=
- =?utf-8?B?em9KNkg5V2Z3Q0tHVE5GWGlxRVNsUmZzSjFGSitMNWFJWFJkc1dMRlVBdktk?=
- =?utf-8?B?UHBBNFJDREFlbE1HaUlwT2FLVDQ0c3d5SWtJL250U2prVjZuaUlCWmtzaWhx?=
- =?utf-8?B?V2hFMVFPbUhYYlVJVDY2RXRkNTRjak5JRjk2N2ZwWGZYT1REVEowM04xTEh6?=
- =?utf-8?B?L0k4WmdzYll1d1I5bEtSY3JXZDU2SkhrQkppaEFYMnY4dVhkU1JhTTZRTzVN?=
- =?utf-8?B?UlRwenhnY2FaSnpUYXpZSWhScHFodEZsNFl1c05vM3ZRT3pmWUIveGh1ZGk3?=
- =?utf-8?B?QUo4UU1TSmtEeTArWWZvV1hJMC9QMWFZOGJuTXNXSGZMR2pveWk1MnVNd1Fj?=
- =?utf-8?Q?OMe8YFU5hDRxK9ZjXYRDHqcnO?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(13003099007)(7053199007);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ef0b0336-846a-4b45-fe1a-08dd54b535cb
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 09:25:42.8266
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 09:26:41.4799
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6eFC9agcHbnkTgPVmQ6UT+IZ9YCW6litlo60luE5DQEgUBueeadFNGgfXRO0t+zrM8NgbQ1Vj95OMbtIHJ2zPw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6590
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE16.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6823
 
-On 2/20/2025 2:33 AM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+Hello Oleg,
+
+On 1/2/2025 7:37 PM, Oleg Nesterov wrote:
+> wake_up(pipe->wr_wait) makes no sense if pipe_full() is still true after
+> the reading, the writer sleeping in wait_event(wr_wait, pipe_writable())
+> will check the pipe_writable() == !pipe_full() condition and sleep again.
 > 
-> When the CPU goes offline there is no need to change the CPPC request
-> because the CPU will go into the deepest C-state it supports already.> 
-> Actually changing the CPPC request when it goes offline messes up the
-> cached values and can lead to the wrong values being restored when
-> it comes back.
+> Only wake the writer if we actually released a pipe buf, and the pipe was
+> full before we did so.
 > 
-> Instead if the CPU comes back online let amd_pstate_epp_set_policy()
-> restore it to expected values.
 
-Small suggestion below, apart from that LGTM
+We saw hang in hackbench in our weekly regression testing on mainline 
+kernel. The bisect pointed to this commit.
 
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+This patch avoids the unnecessary writer wakeup but I think there may be 
+a subtle race due to which the writer is never woken up in certain cases.
 
-> 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On zen5 system with 2 sockets with 192C/384T each, I ran hackbench with 
+16 groups or 32 groups. In 1 out of 20 runs, the race condition is 
+occurring where the writer is not getting woken up and the benchmarks 
+hangs. I tried reverting this commit and it again started working fine.
+
+I also tried with
+https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/. After 
+applying this patch, the frequency of hang is reduced to 1 in 100 times, 
+but hang still
+exists.
+
+Whenever I compare the case where was_full would have been set but 
+wake_writer was not set, I see the following pattern:
+
+ret = 100 (Read was successful)
+pipe_full() = 1
+total_len = 0
+buf->len != 0
+
+total_len is computed using iov_iter_count() while the buf->len is the 
+length of the buffer corresponding to tail(pipe->bufs[tail & mask].len).
+Looking at pipe_write(), there seems to be a case where the writer can 
+make progress when (chars && !was_empty) which only looks at 
+iov_iter_count(). Could it be the case that there is still room in the 
+buffer but we are not waking up the writer?
+
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 > ---
->  drivers/cpufreq/amd-pstate.c | 9 +--------
->  1 file changed, 1 insertion(+), 8 deletions(-)
+>   fs/pipe.c | 19 ++++++++++---------
+>   1 file changed, 10 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 408e63aff377a..5068778c1542a 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1610,14 +1610,7 @@ static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
->  
->  static int amd_pstate_epp_cpu_offline(struct cpufreq_policy *policy)
->  {
-> -	struct amd_cpudata *cpudata = policy->driver_data;
-> -	union perf_cached perf = READ_ONCE(cpudata->perf);
-> -
-> -	if (cpudata->suspended)
-> -		return 0;
-> -
-> -	return amd_pstate_update_perf(policy, perf.lowest_perf, 0, perf.lowest_perf,
-> -				      AMD_CPPC_EPP_BALANCE_POWERSAVE, false);
-> +	return 0;
-
-Instead of making it an empty "return 0" function, can we remove this 
-callback altogether? Didnt check if there are any constraints against 
-removing it.
-
->  }
->  
->  static int amd_pstate_epp_suspend(struct cpufreq_policy *policy)
-
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 12b22c2723b7..82fede0f2111 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -253,7 +253,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   	size_t total_len = iov_iter_count(to);
+>   	struct file *filp = iocb->ki_filp;
+>   	struct pipe_inode_info *pipe = filp->private_data;
+> -	bool was_full, wake_next_reader = false;
+> +	bool wake_writer = false, wake_next_reader = false;
+>   	ssize_t ret;
+>   
+>   	/* Null read succeeds. */
+> @@ -264,14 +264,13 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   	mutex_lock(&pipe->mutex);
+>   
+>   	/*
+> -	 * We only wake up writers if the pipe was full when we started
+> -	 * reading in order to avoid unnecessary wakeups.
+> +	 * We only wake up writers if the pipe was full when we started reading
+> +	 * and it is no longer full after reading to avoid unnecessary wakeups.
+>   	 *
+>   	 * But when we do wake up writers, we do so using a sync wakeup
+>   	 * (WF_SYNC), because we want them to get going and generate more
+>   	 * data for us.
+>   	 */
+> -	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
+>   	for (;;) {
+>   		/* Read ->head with a barrier vs post_one_notification() */
+>   		unsigned int head = smp_load_acquire(&pipe->head);
+> @@ -340,8 +339,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   				buf->len = 0;
+>   			}
+>   
+> -			if (!buf->len)
+> +			if (!buf->len) {
+> +				wake_writer |= pipe_full(head, tail, pipe->max_usage);
+>   				tail = pipe_update_tail(pipe, buf, tail);
+> +			}
+>   			total_len -= chars;
+>   			if (!total_len)
+>   				break;	/* common path: read succeeded */
+> @@ -377,7 +378,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   		 * _very_ unlikely case that the pipe was full, but we got
+>   		 * no data.
+>   		 */
+> -		if (unlikely(was_full))
+> +		if (unlikely(wake_writer))
+>   			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+>   		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+>   
+> @@ -390,15 +391,15 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
+>   			return -ERESTARTSYS;
+>   
+> -		mutex_lock(&pipe->mutex);
+> -		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
+> +		wake_writer = false;
+>   		wake_next_reader = true;
+> +		mutex_lock(&pipe->mutex);
+>   	}
+>   	if (pipe_empty(pipe->head, pipe->tail))
+>   		wake_next_reader = false;
+>   	mutex_unlock(&pipe->mutex);
+>   
+> -	if (was_full)
+> +	if (wake_writer)
+>   		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+>   	if (wake_next_reader)
+>   		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+--
+Thanks and Regards,
+Swapnil
 
