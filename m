@@ -1,287 +1,161 @@
-Return-Path: <linux-kernel+bounces-529074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941A3A41F6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:45:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433CDA41F89
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463C57A49F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:42:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38AB1663CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BAD233734;
-	Mon, 24 Feb 2025 12:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XE0BJl0W"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7206D19D8BE;
+	Mon, 24 Feb 2025 12:44:13 +0000 (UTC)
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CCF70830;
-	Mon, 24 Feb 2025 12:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8F9158870;
+	Mon, 24 Feb 2025 12:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400991; cv=none; b=dpxH5j7kk/EeceXCXGuAnGbsNng99xYwsH3CfKF0ToZwLSbH25EjB8Zp95eTkrP6xPtwICshfesxMlVJFklHNourR3eHDq6gUMXATO5PGv/I68mnxwlWbpOwt+nyax21/yj6bEEPcK10fzEWauFuEI/QxCZaYWZ8pccNz9TKlfk=
+	t=1740401053; cv=none; b=uy3sd22X51VJjXOf3WzLoE0/FNePkOnomAPc9B6NZd07RPfoFcXpnVWZ532fOpAbaZAshxeUOR1djFqkqrN/CacHpw5zf90bh81PUkcqA5+MvuYL8sG21odJNDVzmgVuTX3ma55zx2OPAav4p0kV0Tq7t/FRUJO2fe3rm+wnGYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400991; c=relaxed/simple;
-	bh=5bE1sNTKCIcMIFatENWw4OlhtEJZGUhcXJTzBuK9DHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vcc6MWEkgTDGcP0lR93c135qgmi+yv5SaDzayDoCFNYMeau+W3/6COd/6l7AuewuMbiGmIPRNc0BeZPCwinLeWMfc9+W7MKKDH3c1+r572WQR7P8F8tgdwzZqAJ101A45aXXC58nFDd54OfDfneTLTy1dyfQrEgnZsFjlR8PNMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XE0BJl0W; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740400989; x=1771936989;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5bE1sNTKCIcMIFatENWw4OlhtEJZGUhcXJTzBuK9DHE=;
-  b=XE0BJl0W7jAx9zSVUXRlER0+iYRtemOLyFt/82HIrKfAaGV2nek97NAW
-   whP6KAI3kPEpdV/h6mKyMyDewv3gH0JTuBTKujAR3BSQfrEKXs5/SO+wX
-   DE1GL+QMnT9KK1bIW3HDZOd1N3YGSeRpXUhq60CsOTguLEQJ/XjG71YdJ
-   OayZN6ES143wM5ka4dMb11kD6BgFX9E6abmsn6CoFemdsQp4TM623uUIi
-   4XIndeDxrlBlpD/pxElrfH/4Sx8E3hiODNQlXKe3Rl96OKLDcCw5ySx2t
-   maKuOL0zJIExbK6h3O4+lmUHLE2JbOmuVukdaVpRcOU6JwIYP6Hb9kWeX
-   Q==;
-X-CSE-ConnectionGUID: 6Vfi9Uf5R0i2xDWbZWjegw==
-X-CSE-MsgGUID: xjmtmOirRceVahdASA/0wQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="43982314"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="43982314"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:43:08 -0800
-X-CSE-ConnectionGUID: vjFgtAYERzqgYiHCoWu2XA==
-X-CSE-MsgGUID: aGhihvvHTNOeYhbEn9nRsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116677593"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:43:02 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 8314111F944;
-	Mon, 24 Feb 2025 14:42:59 +0200 (EET)
-Date: Mon, 24 Feb 2025 12:42:59 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Michael Riesch <michael.riesch@wolfvision.net>
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 03/11] media: dt-bindings: media: add bindings for
- rockchip rk3568 vicap
-Message-ID: <Z7xpU8yKNKBReage@kekkonen.localdomain>
-References: <20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net>
- <20250219-v6-8-topic-rk3568-vicap-v4-3-e906600ae3b0@wolfvision.net>
- <Z7iJV1rOaqMmcjY7@kekkonen.localdomain>
- <0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net>
+	s=arc-20240116; t=1740401053; c=relaxed/simple;
+	bh=zUibEaqNaWJkz1+FPEIsiT0fEvu7iy7yfzN7V0cnt4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yc/qLp3iVEd2TbpvKY1EQOcG5kAG4bVqoIz9LbLOr+MbJk9pq0IC75lSMqjTuKc7Aj2B6mqgpknDeMl16oBoIHtEXWGQgfJ9wk5IVt3Sr8pHo6PTk4mkPoXO3A3I9B5/l4y1x7h+utWqhWSSSo4wAyHPP/pMC+CnCJgHO2xD688=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-520a473d2adso2795660e0c.2;
+        Mon, 24 Feb 2025 04:44:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740401048; x=1741005848;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kfKRKIWXmuVsvt2Fp1PvbnywriA6811yvZ1y23PVTWo=;
+        b=dLW5fYcFp33r5l4JEDUJJSw8lECEOO1k260gZ7fIkboP9TlodkcnBmKhqZVGlTiXaw
+         kRr4TqpVxAazMRsXTUdh7CKSFL0SuJkivxv90Bm8UJnlJTAbAE7z57z9TjyBe4yw8xbv
+         8hIacQB2rxwSCvukq2h0JkOoZzPPDEcnX5mo+sgXOJTzyJxCo8vaJ1xvsPwyjJb3Dwu7
+         EjbVN/TijztLTQyVVXFuQhi262nKiHLnXSI6TXZqo9e8cI439xROleQscZO1Agarq587
+         SNUHLMWPJed1olC2ClP3M1NnuDxz4W1NFxvFZsexbCk5WMT5AZGQJCXmi5v8cSLVnBhp
+         w1aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBbdT4+ExcnmiOQWrU/VBAtr68zVwPDRdWkyWEmrqdXIpfTzJYKcqTG6NWo8G55NqSKZfa5nQXzX+U@vger.kernel.org, AJvYcCWtXEH/HigNmcaTWOBGhkTiu7L/r7aW5VWbNO327QkzzTgEz/ZTvX2VShOCxYkKlW2qURkr7kJxEecK@vger.kernel.org, AJvYcCXdQV7sC7OVJb8UAzkBClStzsBEi+P5fy5e9ekh3bCp/nG088wglY2K2fr2KVjH/VnKApS7TnFtUkT442gL@vger.kernel.org, AJvYcCXnAP4nd6hf6Me6xrwL9XNPLYTzuUS9wHZD67wZ3htKRITcAaVNFaN6GfCAIYClqgyc45qvZXjySrPETcWPL/DI0P4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxE7c0GDZicQ3WQNrH1o7/QW7KhRYl2SJhn/otF8gGsv7fLClMs
+	BNd6DFlL6lEQq+SmFSwbJXylLoYz7xt08V/inSp0xzTQcvcg5Ezb0M03FZW8n3c=
+X-Gm-Gg: ASbGncv1zO4OJoo+ILZVKryVGjAC8CLCj2Xk++kE28j3LjSQ8GpmUuwIS1rKunP5jUF
+	cp/Tp8mI+D5sxMuJCO+Sj/viz1tmkXRdnfxSY0dysPJThDg/a7ZFFU6smYy/8XFvQ0pLW1lttx0
+	EnbXpyIpIzvPpVRrHFnQg/7gmToo9eiKEjK7Vp0XaEQ/ea34OQH+Mctk6hV9LxE1iqLBn9UmILF
+	hQb9kF2zJIkmv6HXVKe1tCom2C2Zbs7Tc1Aqf2w5S8MAxW6FyISsnXRnFlxRgK2dPG5b4oXSzjS
+	I80pe3OpWmOn0KuQqvevXrygOCcoXyJ5NQfX09aaXRoTfSxRoecBCDP1E8aUBo5z0h/g
+X-Google-Smtp-Source: AGHT+IHwRZmST5ujNiPY8sVjbqeHwaB1rnCTQVyhwmacKrDPFsQvVs1vIx7vAe3rNbzfhYtKTeYFjQ==
+X-Received: by 2002:a05:6122:1b84:b0:520:61ee:c821 with SMTP id 71dfb90a1353d-521ee241e4fmr6776100e0c.3.1740401048579;
+        Mon, 24 Feb 2025 04:44:08 -0800 (PST)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-52085b489bbsm4442325e0c.42.2025.02.24.04.44.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 04:44:08 -0800 (PST)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51eb1818d4fso3123333e0c.1;
+        Mon, 24 Feb 2025 04:44:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUQ49YXWw7HUY6ZvIZ8bF9PESfkwbVgN2hjlQd3kj7KxFdFpMfDx3hGaIcq6QfsG+l02hq6np5uOGZ+@vger.kernel.org, AJvYcCVSQRvRgXQYLt1gosD4RCo6d8HA+qTF1agDFq9KxHTkZbmQK2RJrPYta8cGlI9spgDZCg3i4IRrd6efzJP2IvN0OTc=@vger.kernel.org, AJvYcCVmZhgWDd2sZGUmW/fU6RNZ312qNFjE1FtpV7+69Ge+muf3vOHKOiDQdmhTGUf2ktkN34PXaXZ26Z9Y@vger.kernel.org, AJvYcCXciZhcCMwxnJkjTqcusYMH+1q7nGFvPSaqB3lmTvotlNnsF/V01izvD7bGLvcB6g0tp6BI7rPYVjMMIrop@vger.kernel.org
+X-Received: by 2002:a05:6102:54a6:b0:4bb:e80b:4731 with SMTP id
+ ada2fe7eead31-4bfc023cce0mr6203694137.16.1740401048043; Mon, 24 Feb 2025
+ 04:44:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net>
+References: <20250220150110.738619-1-fabrizio.castro.jz@renesas.com> <20250220150110.738619-4-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250220150110.738619-4-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Feb 2025 13:43:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
+X-Gm-Features: AWEUYZltwujls4aQb_CukANB_WNWYRKY2nodRlJJtmo77HvwChNCoZ7RyAdoUhE
+Message-ID: <CAMuHMdUjDw923oStxqY+1myEePH9ApHnyd7sH=_4SSCnGMr=sw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/7] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
+ family of SoCs
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Michael,
+Hi Fabrizio,
 
-On Mon, Feb 24, 2025 at 11:21:41AM +0100, Michael Riesch wrote:
-> Hi Sakari,
-> 
-> Thanks for the review.
-> 
-> On 2/21/25 15:10, Sakari Ailus wrote:
-> > Hi Michael,
-> > 
-> > Thanks for the update.
-> > 
-> > On Wed, Feb 19, 2025 at 11:16:34AM +0100, Michael Riesch wrote:
-> >> Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
-> >>
-> >> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> >> ---
-> >>  .../bindings/media/rockchip,rk3568-vicap.yaml      | 168 +++++++++++++++++++++
-> >>  MAINTAINERS                                        |   1 +
-> >>  2 files changed, 169 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
-> >> new file mode 100644
-> >> index 000000000000..3dc15efeb32e
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
-> >> @@ -0,0 +1,168 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-vicap.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Rockchip RK3568 Video Capture (VICAP)
-> >> +
-> >> +maintainers:
-> >> +  - Michael Riesch <michael.riesch@wolfvision.net>
-> >> +
-> >> +description:
-> >> +  The Rockchip RK3568 Video Capture (VICAP) block features a digital video
-> >> +  port (DVP, a parallel video interface) and a MIPI CSI-2 port. It receives
-> >> +  the data from camera sensors, video decoders, or other companion ICs and
-> >> +  transfers it into system main memory by AXI bus.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    const: rockchip,rk3568-vicap
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  interrupts:
-> >> +    maxItems: 1
-> >> +
-> >> +  clocks:
-> >> +    items:
-> >> +      - description: ACLK
-> >> +      - description: HCLK
-> >> +      - description: DCLK
-> >> +      - description: ICLK
-> >> +
-> >> +  clock-names:
-> >> +    items:
-> >> +      - const: aclk
-> >> +      - const: hclk
-> >> +      - const: dclk
-> >> +      - const: iclk
-> >> +
-> >> +  rockchip,cif-clk-delaynum:
-> >> +    $ref: /schemas/types.yaml#/definitions/uint32
-> >> +    minimum: 0
-> >> +    maximum: 127
-> >> +    description:
-> >> +      Delay the DVP path clock input to align the sampling phase, only valid
-> >> +      in dual edge sampling mode.
-> > 
-> > I suppose there's further documentation on this somewhere else? A reference
-> > would be nice.
-> 
-> I like your optimism :-) No, I am afraid this single sentence is all the
-> the RK3568 TRM has to say about it. I can add a reference to the TRM
-> page, but everyone who actually follows this reference will be
-> disappointed...
+On Thu, 20 Feb 2025 at 16:01, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
+> The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
+> Renesas RZ/G2L family of SoCs, but there are some differences:
+> * It only uses one register area
+> * It only uses one clock
+> * It only uses one reset
+> * Instead of using MID/IRD it uses REQ NO/ACK NO
+> * It is connected to the Interrupt Control Unit (ICU)
+>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-:-(
+> v1->v2:
+> * Removed RZ/V2H DMAC example.
+> * Improved the readability of the `if` statement.
 
-Is this something that needs to be set? Is there a default, for instance?
+Thanks for the update!
 
-If there's documentation available, it'd be nice to refer to that from
-somewhere, I'm not sure if the driver or DT bindings would be better.
-Probably the driver.
+> --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> @@ -61,14 +66,22 @@ properties:
+>    '#dma-cells':
+>      const: 1
+>      description:
+> -      The cell specifies the encoded MID/RID values of the DMAC port
+> -      connected to the DMA client and the slave channel configuration
+> -      parameters.
+> +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S SoCs, the cell
+> +      specifies the encoded MID/RID values of the DMAC port connected to the
+> +      DMA client and the slave channel configuration parameters.
+>        bits[0:9] - Specifies MID/RID value
+>        bit[10] - Specifies DMA request high enable (HIEN)
+>        bit[11] - Specifies DMA request detection type (LVL)
+>        bits[12:14] - Specifies DMAACK output mode (AM)
+>        bit[15] - Specifies Transfer Mode (TM)
+> +      For the RZ/V2H(P) SoC the cell specifies the REQ NO, the ACK NO, and the
+> +      slave channel configuration parameters.
+> +      bits[0:9] - Specifies the REQ NO
 
-> 
-> >> +
-> >> +  iommus:
-> >> +    maxItems: 1
-> >> +
-> >> +  resets:
-> >> +    items:
-> >> +      - description: ARST
-> >> +      - description: HRST
-> >> +      - description: DRST
-> >> +      - description: PRST
-> >> +      - description: IRST
-> >> +
-> >> +  reset-names:
-> >> +    items:
-> >> +      - const: arst
-> >> +      - const: hrst
-> >> +      - const: drst
-> >> +      - const: prst
-> >> +      - const: irst
-> >> +
-> >> +  rockchip,grf:
-> >> +    $ref: /schemas/types.yaml#/definitions/phandle
-> >> +    description:
-> >> +      Phandle to general register file used for video input block control.
-> >> +
-> >> +  power-domains:
-> >> +    maxItems: 1
-> >> +
-> >> +  ports:
-> >> +    $ref: /schemas/graph.yaml#/properties/ports
-> >> +
-> >> +    properties:
-> >> +      port@0:
-> >> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> >> +        unevaluatedProperties: false
-> >> +        description:
-> >> +          The digital video port (DVP, a parallel video interface).
-> >> +
-> >> +        properties:
-> >> +          endpoint:
-> >> +            $ref: video-interfaces.yaml#
-> >> +            unevaluatedProperties: false
-> >> +
-> >> +            properties:
-> >> +              bus-type:
-> >> +                enum: [5, 6]
-> >> +
-> >> +            required:
-> >> +              - bus-type
-> >> +
-> >> +      port@1:
-> >> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> >> +        unevaluatedProperties: false
-> >> +        description: The MIPI CSI-2 port.
-> >> +
-> >> +        properties:
-> >> +          endpoint:
-> >> +            $ref: video-interfaces.yaml#
-> >> +            unevaluatedProperties: false
-> > 
-> > Don't you need things like data-lanes here? Or is this a single lane
-> > receiver?
-> 
-> This may be a bit confusing, and I probably should extend the
-> description a bit. This port/endpoint faces the MIPI CSI Host, which has
-> its own driver provided in patch 6. The connection in between is a link
-> with some internal format. Hence, no properties required.
-> 
-> This is the same issue as the one discussed in the other thread, since
-> the other end of this connection is discussed there. I'll fix the issue
-> on both ends using Rob's suggestion.
+So REQ_NO is the new name for MID/RID.
 
-If this is some custom interface, you should not say it's MIPI CSI-2
-(even though MIPI CSI-2 data could be transported on top).
+> +      bits[10:16] - Specifies the ACK NO
 
-> >> +                vicap_mipi: port@1 {
-> >> +                    reg = <1>;
-> > 
-> > Where is the endpoint?
-> 
-> I'll add the endpoint in the example.
+This is a new field.
+However, it is not clear to me which value to specify here, and if this
+is a hardware property at all, and thus needs to be specified in DT?
 
-Thank you.
+> +      bit[17] - Specifies DMA request high enable (HIEN)
+> +      bit[18] - Specifies DMA request detection type (LVL)
+> +      bits[19:21] - Specifies DMAACK output mode (AM)
+> +      bit[22] - Specifies Transfer Mode (TM)
+
+These are the same as on other RZ SoCs.
+So wouldn't it be simpler to move ACK NO to the end (iff you need it
+in DT), so the rest of the layout stays the same as on other RZ SoCs?
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Kind regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Sakari Ailus
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
