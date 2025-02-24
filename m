@@ -1,151 +1,175 @@
-Return-Path: <linux-kernel+bounces-530019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B017A42DC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:27:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A287AA42DC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A033B1E70
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:27:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9036D1895997
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C50244EA0;
-	Mon, 24 Feb 2025 20:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8C4263C86;
+	Mon, 24 Feb 2025 20:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Pp0p2S3i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YpCDitiu"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726F24290C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E191A5B8B;
+	Mon, 24 Feb 2025 20:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428845; cv=none; b=VbTiYSGhRIANZeooKUZkEl84ReL3AXdHSjB2UusGn8j3Ar9q5w0cwBKVPTi5tLQoZnus3bB8uQl5lzMLy6fwJw2D5dVdHNzEd22ALfB+WpgFKjG9/u5rdxhS8acdhq3VT34Vo8bzofz4vypYecKAIqEKzuN03/mQwySdB5eZIlw=
+	t=1740428854; cv=none; b=fiEDyLEyzWDj5uCT3xYxoWIaaV3NUHDJSxAkuusNtjTZOlllryVArksBusxdQWV0AV6xotG/NQ9niKjzg6lwSoJ7mopaxD0OtoaRYNTFjg5bAtZpVSVtJz8m57LBh8vRijhxNKRBGtd7LpM0nYP0EPmUJYet1+jXgzyERHcb/04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428845; c=relaxed/simple;
-	bh=VznEzXTNU42ddT4wxfYglEixBZX61SNeGSbkxX/CgPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GWJEdAD9e8Q4to9n5tFJ5kysCnypeXi0fI6obiisjsPVYKezyXo6gkjKvG4q0Obe1LP+RUj1CaYsowL68cwVzgA2iUTj4bZzvhr7QH419ViEf7MbyZTx37AhAVJOxdjILeFM9QTpU8r5+GR0eFnS4zkkQWcP3QZ/DGajvXWWjYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Pp0p2S3i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOJKt013305
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:27:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	U3AJ4m7KBlOuSOpyPe5K7xkoXZDmH3H55Z4ePCDd2A8=; b=Pp0p2S3i/U7h+1kM
-	iBMFsO2s+uO1mabwQh70gcSoMet7kWNsg9rgb64B8njTrs86Lh8vwUbQ9Qq55Ty9
-	c1eUGd6446Fwymq0AiNaKo6pm4i5ejSFtJGQPAS/Ar6eOvD8pNouQsVIkQgdWSnV
-	I40jPYzK5qaJ3Z9AZxBlJKVM16U1UtmU5JajaKQ2qhMaGwi6s/eVn5HIAFhYv/Q+
-	A5Haljs3i4rJ5rUK6VxbZXqiuqhsFljN2HoedQy4idwvk1EdXoa9sgX/nGSTtnEh
-	EyWDkIz6NaednKc1zrdGscQf6CVPVqExkdhkLOYE8zq9unMGGXpzFsMlosezKc3z
-	e9Tjzw==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgph5g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:27:23 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0a42024ffso77830685a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:27:22 -0800 (PST)
+	s=arc-20240116; t=1740428854; c=relaxed/simple;
+	bh=h10XZuVFeGOS+X8KDzOz2Otz9RUUWVYfl6at+9PXAOA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KeuXqwZTQxAFgx675MNZ9p5pu7UPPTp0hFlxhV8Qhabfm4swhZoofgqpl1mz4WPqkOTl2DeNTw+6aOebdGUiE16DL+BdD0Fp2zvLvozSHoj0HGmBwJPHxyUC2jWdOK0EvlFSHfa7sZPS+V4rl7Dse2e8TJ7bt39t5a7MqN1Df8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YpCDitiu; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4be66604050so1451880137.3;
+        Mon, 24 Feb 2025 12:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740428851; x=1741033651; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XEmC/kn2Zh+e/KhqBOkxIA63LvxRFsyvoI5so3k5p1c=;
+        b=YpCDitiuAqLIinzJpznEAw4ixmCt3IcDexdTQ2yUkW5QEBAUVK1YbqvAzNdBMvTYsk
+         wBamYAQZNaJgXj9K6NNrlzoJiY2NcYpTTkUZbRW2RHJVEdYMIekKpxkBDBEV4mBMPXOE
+         BsL0VAJdi/sdzusib563L/jUinmuj1GiBk0h1t2mSaTNoGMeec4lchnqNVGCD3pIt23g
+         HHqAoZyniMcVV9FcQ6z5yLeMmW01D2+wD1hSAszhPGjvS2FqXqs9NjoSqeUgFkbIzgr+
+         WL5kpZjdXsAhOuklfpsLGt/3UxglkqMzj8hkwFOdhp72HgWNLY6vKMAJ9BhbKgeoZPTc
+         KY5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740428842; x=1741033642;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3AJ4m7KBlOuSOpyPe5K7xkoXZDmH3H55Z4ePCDd2A8=;
-        b=NKkf97UWoNe9K946prlml1kVNc9MmY/UoYu4hC74T6XE/mCSO6NgQFUcWeid6TU9Pq
-         unWuAjTxqpx39EA2yibHgNbPQnVsnEQDlN4bknlCHdcRizUBiCS/5sGNYxLqP7Fyj6t2
-         jXkz1fSCKZhFBP9WIuaUwbGNAe6H/9vRWzNCah827zk0UHiUV/dSlF7/73607eL43x5v
-         3s4dw9FrkC6WpW4ZYtphNOuqT3mTzCHMu9VDekm+nG1p+k9AL+mtcphblzt2KYG9CNKY
-         kc9Y3iuXhYSbMd/a1vvDnqozjQHfWOP0Nu13I8n/t+eep9XCKGRMOtlLXWtvKTaZypkc
-         19vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA2XwPCBzKxaILeq1bRjBMaf9AD3TioSX5Tk+0vNDtgDQ7ZVxWgLxQj4Cz3ra04KiYGBSNJ830E0ZKtzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt5tBeATdYemINzRlr4660fWFWMd0aiANW6ekLXo/icBLvHXG7
-	vB5bzZ8VWcZPUHg7duf9L6jFIQObbDgdmXynGXwzQ7WC8onRpDvjDGAyFs/A3JLN15uOiJYYfeF
-	AY/gbuR5PlBr2+p4Q6LTww9YbjEhYltV112rnVXO0ACVt7NBVeM9wMzAqj0iJFgQ=
-X-Gm-Gg: ASbGnctTP4p43u940ib17QoDgBtY6kuFNEn6QViK4c9ZJ6BjlG4LMXeSgreau1uBpPk
-	gA5GgF+KzKCk76ITV1e3zJzFuCUkDWGnEf56zmEaVsJW900Yz1jqtE3de4d54umCigU3kknMTWR
-	4M10VTYgG8Qp/asjRPZPysUxbtJPadkJhYLUTUgOeG1A8pImxndu9316D/DpID04Ufbgxs547ox
-	gX8g7/U5FQPQbrN0w5ipPkMvzkADzWGPfsPAroSCOu8M1yIYh5e/MlmEx4Q9f7+Ytujxb1v8HSQ
-	M6Hbbsfu2ws5QZWNlF/gktnjSI8pK/VBZvAOy4usXLYsejzKROzmhf6DjnR1fmudzJh0oA==
-X-Received: by 2002:a05:6214:21ca:b0:6d8:99b2:63c7 with SMTP id 6a1803df08f44-6e6ae9a12a7mr68994826d6.9.1740428842294;
-        Mon, 24 Feb 2025 12:27:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFEGIu0hTDGUdMHGJYXVXzWBQqkQ0NYTN86e+GcokshmcmZHhKJUOF/l7Lss/BuFaMNPTb8VA==
-X-Received: by 2002:a05:6214:21ca:b0:6d8:99b2:63c7 with SMTP id 6a1803df08f44-6e6ae9a12a7mr68994666d6.9.1740428841949;
-        Mon, 24 Feb 2025 12:27:21 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1d59391sm18357266b.56.2025.02.24.12.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 12:27:21 -0800 (PST)
-Message-ID: <6d1a95a1-0b84-4bc5-9cb0-3cc514d292a6@oss.qualcomm.com>
-Date: Mon, 24 Feb 2025 21:27:19 +0100
+        d=1e100.net; s=20230601; t=1740428851; x=1741033651;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XEmC/kn2Zh+e/KhqBOkxIA63LvxRFsyvoI5so3k5p1c=;
+        b=VbC/4ei1MKxztAq9746DO+0KEoLnrAP82NctfFo67FzYisneCh9NAcKGO0F5wI1Adv
+         GHEr0YlDjWIhzvrcbZBRHoBs0bGvAwkZPDVQb1+sP8/bFEV0t3UvDvkL11Pu5z6Nea42
+         PIXXNlqdT98hBBoI+4RB93BJ+vuD3W9iBaPPcAS1xrIkYH4zD5kNaIgmvHLeFrt86EU5
+         u/gICMX0EYlG/Bxpz6xOFPihAja43Hfw4MHGvjC02pX4YgUfVaU6gJZAzBDzX/EXwfTW
+         lJ1MY1VD25In24rcJ6dNtjoz8WS5UlLxaBvJVv7YkP6/C7BAjp7HLbdmShycI8olm1ja
+         HRxw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZsFKzIwkvER5ft3V2whAFS9SjR+gU9d8ZfNq7/jEHGC8h8sneQIHgzp9crPxiK5fewKLBKUd911+pTGA=@vger.kernel.org, AJvYcCXPGgH5sF0iZENyizchF8ZRniS2BlPTe4PP4bwG3lob1JgIOKmaU3Lapxn2usPfCbnuaCodC75mVo3fXnmU6bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5cWRZmwV4R6kLvUi6xm/dklA1H0pgPvCt5Tile4o0W+rTDuj4
+	53V/MSmFk7byb+6HOR5claKKIvgr6IGZcSC157i1FBTx5mPlC5EFnZnjBxeP7rwclOtQHd1ebRo
+	eIEzqOWOML6V8QUuXh3xxH2Q++8W4RoFwK2U=
+X-Gm-Gg: ASbGncvPrX7rkcppssvPIVqoKwf6EaLmJatbZjQAOxY2s8v98sx8AQBj3LxVy/E8kiL
+	wazEM1u1pphQZUHSlTik/Ny3iNpdE50t6w6VvSa/HA7Ksk+owIigKf8YAxSrWNuBWGNMxn/2/XN
+	w2iXn7UKBsA21q7EUxstY/XFia4jALMMGKR/wdhO7F
+X-Google-Smtp-Source: AGHT+IFEJ8VhdFJGx983dbCOSRUTa1r+mEgXJQjyfnmnU8udNafH9EsY1spL/R4LRNe6zh9h2AVIKwb4mPs7SFIJMh4=
+X-Received: by 2002:a05:6102:a54:b0:4bb:f0aa:b317 with SMTP id
+ ada2fe7eead31-4c00ad349a7mr388924137.9.1740428851234; Mon, 24 Feb 2025
+ 12:27:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sdm632-fairphone-fp3: Add
- firmware-name for adsp & wcnss
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Luca Weiss <luca@lucaweiss.eu>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250222-fp3-remoteprocs-firmware-v1-0-237ed21c334a@lucaweiss.eu>
- <20250222-fp3-remoteprocs-firmware-v1-3-237ed21c334a@lucaweiss.eu>
- <w4l5drhu6exq4jb7x2pisqtkz5ylare7ashsmjjqomv3yetjwj@z3wapq4rkk3u>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <w4l5drhu6exq4jb7x2pisqtkz5ylare7ashsmjjqomv3yetjwj@z3wapq4rkk3u>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: t1yx0Z8rmpYPbqOmR03HAyaHMX8Nfass
-X-Proofpoint-ORIG-GUID: t1yx0Z8rmpYPbqOmR03HAyaHMX8Nfass
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_10,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240129
+References: <2025021954-flaccid-pucker-f7d9@gregkh> <20250221051909.37478-1-felipe.contreras@gmail.com>
+ <Z7gQ3kSeCf7gY1i9@Mac.home> <CAMP44s1Ai5qMU4yV+Rwz4cY869ZA=cxBcTf2wuaUY1oyLKUNCg@mail.gmail.com>
+ <CAPM=9ty9KWFE+AkHi5FDrb8=O5bzbVEroT2fx7jLG5JK6HZ+tg@mail.gmail.com>
+In-Reply-To: <CAPM=9ty9KWFE+AkHi5FDrb8=O5bzbVEroT2fx7jLG5JK6HZ+tg@mail.gmail.com>
+From: Felipe Contreras <felipe.contreras@gmail.com>
+Date: Mon, 24 Feb 2025 14:27:20 -0600
+X-Gm-Features: AQ5f1Jrlgip45JggOoU7MpBqrGSxxSsSYL7JFZ8jQSB0BRa_C93J-emmek_cS9M
+Message-ID: <CAMP44s3DYzwnKbRoiUBAWBVGEc8M78wkkD-DAkJDK=qZmXNtZw@mail.gmail.com>
+Subject: Re: Rust kernel policy
+To: Dave Airlie <airlied@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>, gregkh@linuxfoundation.org, hch@infradead.org, 
+	hpa@zytor.com, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org, 
+	torvalds@linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 24.02.2025 1:17 AM, Dmitry Baryshkov wrote:
-> On Sat, Feb 22, 2025 at 02:00:49PM +0100, Luca Weiss wrote:
->> Set the paths where the device-specific firmware can be found for this
->> device.
->>
->> Fairphone 3 was shipped with secure-boot off so any testkey-signed
->> firmware is accepted.
->>
->> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
->> ---
->>  arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->> index 08ffe77d762c3a97f470efbfb5064282fe2090da..5611209dbfa41d7834af7903535ed3e05604ba63 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->> +++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->> @@ -82,6 +82,8 @@ nfc@28 {
->>  };
->>  
->>  &lpass {
->> +	firmware-name = "qcom/msm8953/fairphone/fp3/adsp.mbn";
-> 
-> If any firmware is okay, wouldn't it be better to use
-> "qcom/msm8953/foo.mbn" ? This way if we get any of the firmware (yeah,
-> I'm a dreamer), then FB3 can pick it up.
+Dave Airlie wrote:
+>
+> On Fri, 21 Feb 2025 at 15:59, Felipe Contreras
+> <felipe.contreras@gmail.com> wrote:
+> >
+> > Boqun Feng wrote:
+> > >
+> > > On Thu, Feb 20, 2025 at 11:19:09PM -0600, Felipe Contreras wrote:
+> > > > Greg KH wrote:
+> > > > > But for new code / drivers, writing them in rust where these types of
+> > > > > bugs just can't happen (or happen much much less) is a win for all of
+> > > > > us, why wouldn't we do this?
+> > > >
+> > > > *If* they can be written in Rust in the first place. You are skipping that
+> > > > very important precondition.
+> > >
+> > > Hmm.. there are multiple old/new drivers (not a complete list) already
+> > > in Rust:
+> >
+> > That is a black swan fallacy. Just because you've seen 4 white swans
+> > that doesn't mean all swans are white.
+> >
+> > > , so is there still a question that drivers can be written in Rust?
+> >
+> > I didn't say no driver can be written Rust, I questioned whether *all*
+> > drivers can be written in Rust.
+> >
+> > People are operating under that assumption, but it isn't necessarily true.
+>
+> That doesn't make sense, like you could make a statement that not all
+> drivers could be written in C, but it would be trash, so why do you
+> think rust is different?
 
-No, the fw may have board/wiring differences encoded inside it
+Because different languages are different?
 
-Konrad
+Just because B is in the same category as A doesn't mean that B can do
+everything A can.
+
+C has had more than 35 years of stability, Rust has had only 10, and
+I've stumbled upon many compatibility issues after it was supposedly
+stable.
+
+Even compiling linux on a compiler other than gcc has been a
+challenge, but somehow getting it to compile on an entirely new
+language would not be a problem?
+
+I find it interesting that most senior linux developers say the same
+thing "I don't know much about Rust", but then they make the
+assumption that everything that can be done in C can be done in Rust.
+Why make that assumption?
+
+Especially when we already know that the Rust for Linux project has
+used many unstable features [1], precisely because compiling for linux
+isn't a walk in the park.
+
+But this is not how logic works. You don't get to say "god exists,
+prove me wrong". Anyone who claims that *all* drivers can be written
+in Rust has the burden of proof. I don't have the burden of proof
+because saying that something isn't necessarily true is the default
+position.
+
+> if you said 100% safe rust I'd agree, but that isn't the goal.
+
+The *only* advantage that has been sold to linux developers is that a
+whole category of bugs would be gone -- that is in fact what Greg was
+arguing, but now you say maybe the code cannot be "100% safe". OK,
+what is the minimum you expect? 80% safe?
+
+But even if a driver is written in 80% safe Rust, that doesn't
+necessarily mean a whole category of bugs is gone for 80% of the code
+because compilers -- like all software -- aren't perfect, and the Rust
+compiler has been known to introduce memory-safety issues in the past.
+
+So who is to say some drivers aren't going to stumble into compiler
+bugs even in "100% safe" Rust code?
+
+I don't understand why I have to explain that theory isn't the same
+thing as practice, I thought the Linux project of all places would get
+that.
+
+[1] https://github.com/Rust-for-Linux/linux/issues/2
+
+-- 
+Felipe Contreras
 
