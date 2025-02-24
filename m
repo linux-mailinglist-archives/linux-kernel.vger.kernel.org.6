@@ -1,147 +1,168 @@
-Return-Path: <linux-kernel+bounces-530044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19BC5A42E14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:40:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C4CA42DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00BA1898A69
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DC80174902
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C20263F2B;
-	Mon, 24 Feb 2025 20:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEA2124500F;
+	Mon, 24 Feb 2025 20:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="pt8ej8hP"
-Received: from mx-rz-1.rrze.uni-erlangen.de (mx-rz-1.rrze.uni-erlangen.de [131.188.11.20])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bKBHwo0J"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D951A262D25;
-	Mon, 24 Feb 2025 20:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A99243398
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740429564; cv=none; b=YPmLqOTDWAKOSjICP/RtUm68OeREyy0sd2RM+uvWqf/3QgOQJukdrxIne8Fj4IXj6uHNb9QZlexGFA89oJEADiJJULiY5o+JTn08DjA/vouazA8EGmuqE25Z2J/qjxsnaPm/UWKg0SpOVBwI8JkK3zsa+0rkuENyokOaLZFex/8=
+	t=1740429388; cv=none; b=e2S0nwbfFgz6POlQQjcSDtbMLYcmZ4DpBUt0d8H7GOf+LAp+jiedowmi5oC9kW4LymFnaYXTW94dUk9YxUR+QJJnuRoWQ13lnwOIGjaKgQ0goLQQjx1g+SeQ1LMkXZWqmf4vF0cH0leVoyFoNTrXTz6bpluF5y6Aw3hECSoXDag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740429564; c=relaxed/simple;
-	bh=ged8Kr5ORY1Pi0XlsRWn8CGHaNjPR+OIU4SpqYx47k0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oPKlFth2f0d2IhChTGAVUcO6LFDiOjRNv90DbEXuy/WR+K7XDW5gmoyZr8JtKO+6ACKTH1/0MxtItE9ULJA+8vGT35pfmsr6hk7TkCmeA51yqKfFWAvQu58RCZKoZi25GmnoSDszvBFjp0YP1dpCwfg9PDG2wcbn6SI9Fzq9y9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=pt8ej8hP; arc=none smtp.client-ip=131.188.11.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z1szD6jmbz8snD;
-	Mon, 24 Feb 2025 21:39:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1740429561; bh=noZHVLSF3h7hKAjQZ/VCvQY0kjlT62H69LdUcMJIhCg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=pt8ej8hPguiGhxOJGWJA3Ym6n6lZSbNUoW5FJ+SRATpnN/AU0tK7udawXe3+ggKUb
-	 tkLqDsyivIPqQbGyI2wJgp+7N1Al7IryPoQ4YxStxXumzUzeEf/i1jPQAQFgoy2Ayw
-	 lyesPhgS5IntM20GnmCB4j7EVfFOPCTMtZLvNWjLYB6vBTlc/BAo6UE6vxoV+/H+fw
-	 PjGLlumxMXsapRBc5ERBIa2mf9ADjbmwDi5VD8XB8slDA/4AmOaiyodPQrJ85Yhsms
-	 Aj0yicrWYelvP8xU7Iq04TJMe7hWwQ4rPzBP4hMziVqpJ9epwVWdTCkiAI1PUaFxYg
-	 rO1G/IaBKjvVg==
-X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:362e:e00:55a6:11d5:2473:17a9
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:362e:e00:55a6:11d5:2473:17a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX19dMwhCmCOPbU26XMvpPI/TJlM0l3YfMgs=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z1sz96rnpz8sns;
-	Mon, 24 Feb 2025 21:39:17 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Luis Gerhorst <luis.gerhorst@fau.de>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [RFC PATCH 4/9] bpf: Return EFAULT on internal errors
-Date: Mon, 24 Feb 2025 21:36:14 +0100
-Message-ID: <20250224203619.594724-5-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224203619.594724-1-luis.gerhorst@fau.de>
-References: <20250224203619.594724-1-luis.gerhorst@fau.de>
+	s=arc-20240116; t=1740429388; c=relaxed/simple;
+	bh=HPkSLGJBYmFJA9mJQQkNICigpu0LI4oAarzVYt68ync=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZTvaHYZT5yiA9LVfhvjoNwVuZGwIQ73D0x/3z7B1Rve6FGLQpwp/Xv6l/F3O4OO3WSnPJNcEluiQgO1r7JqZjo5t4mfgiI/41CKtvYOWoFNEeqbGB4TbcDMn3updmt0z8T6SVlzfh6pqDbzkNULnqzi+DvjgZWq6f5rlM9bRdNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bKBHwo0J; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOSnA009903
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:36:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	4tOgVvKsxWwEOF1c3ZSQHJJ3JdotIQtb1ZA1EsX7Z3s=; b=bKBHwo0JCv5k9xdU
+	jpyA8hLiZ3FPNNG7U+04ow1LbPkBCz/tKkWGYC6sfxOUA0J2FN4BMfU3+9bIYM+W
+	sjmkazAXGQFdQB9ZUqeU1qg9HJl5sV+RnIA/hAl9UF4IKDySYNInitzi8v4n+FSs
+	nvDBZfoWs1IkKs/CDJ8C9xX2VMHft4LvboNmCYz8UjE5PPq9rUefde5+fngl4Dr1
+	+vdAQbHtjWVnW02UdrX5Ks3rwxkiMDk+oL/phcRHOVZcZ7HzIiFxtfFNGazg5t2n
+	LP/69W5mecGjuMp3rMCrxg6aUQwg3Tld/QnjB7DO8YJowEuats0/DoQ0hGP//lqS
+	+g88Fw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xneq5x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:36:25 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-471f842ebcaso12077661cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:36:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740429384; x=1741034184;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4tOgVvKsxWwEOF1c3ZSQHJJ3JdotIQtb1ZA1EsX7Z3s=;
+        b=vfpdCtqySnC+NTxQZ2i+UQNyWm3kUromgEfDXsW3tZX9j3Yt2gwlqVNZpCyZMwNHAB
+         RGwj9MMQmxDwRpO0GF9n/maRt25P/FlBLv3fj7d6Eif5O/h6RPyfkNuiCWGzq9MyWjuk
+         bzh5orMFEO1TEGKh9C8oHmqjA3jvnDpUSm67xM7Mi94WxSRuTQMFQHKHEh9q2Vd9f4c3
+         ybYHbVZsQT2Ff0vJ+kmFYikoaflCrLBkfwz26nInJx5X+Vq24Er03mPygXr6fIpUFpIj
+         Zdk5XX9cVjWnimvbgXsId2XbFm62F/qJUCijjglY86fVZzdcW5xWupElizB8W/RF3dhB
+         FJ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXh828GzfyEFamvyKX2upkUu0BU+tkMCC/W3GVTrzeDY/YskmB6cm213P5Tim8FYUfxZtc0hb+n3Xw5+i0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSSspzjhRnyIqVt07d3QolTGAfen7sS1Abbk1PnvrXogTML1KL
+	Nx5xX2DBq16c/olzN71NQu0S93aFdmzvsElkizVElNTUOgMWc4grInAPgZJF3WkbnCxrFn7o/l9
+	G2cCWaYrMqZBThFFvMy6eVwNDtAGZYj0BSSmmhE3yaIUX0fdg8NTzanGUCTVoDtM=
+X-Gm-Gg: ASbGncs2GLhsr/9UPbOT/L86KD1cANYOqIDGFjDyCqoiLA/gHml6dhnWgLeSvJeRIUR
+	agxowchhmM+VaSS2nPYI3+oL49srnAnRDsQhJpJLMSl83oWMZww2A38eMKrZYfAi/UoPfL/ppeO
+	hd8FBCjc5saQokGNWnAkrvEGjzoPWz/srAy3F3iSC1AOSMrCfVs7iI0oQ/sLRT9kRP9kudRXD+E
+	jsmmMdOWjeDl36pY0XAWwIHkGXMomyO49PYCAxJBq6LWCNuzMYuT84N60gbOBGfSzjs6kvh88Hk
+	eGLVZxBVhC5XAtuh6m9nWUOE3512tJ2Q5hnyuyHnOdpI4WOgs1OpT1a2yFwtgi2TdkTSvQ==
+X-Received: by 2002:a05:6214:300e:b0:6e1:8300:54dd with SMTP id 6a1803df08f44-6e6ae7f3e05mr73462516d6.3.1740429383201;
+        Mon, 24 Feb 2025 12:36:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHsC1gRy/skFV1LRBlwOrK8U0hR8g3pgyqbqXMuy5mkyw16Vqh1ciJdH7RJP6yUYcsCpJE3fg==
+X-Received: by 2002:a05:6214:300e:b0:6e1:8300:54dd with SMTP id 6a1803df08f44-6e6ae7f3e05mr73462386d6.3.1740429382861;
+        Mon, 24 Feb 2025 12:36:22 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e462d92521sm113894a12.81.2025.02.24.12.36.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 12:36:21 -0800 (PST)
+Message-ID: <6980c805-92b8-4011-af94-a701a8218548@oss.qualcomm.com>
+Date: Mon, 24 Feb 2025 21:36:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/3] arm64: dts: qcom: ipq9574: Add SPI nand support
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250224113742.2829545-1-quic_mdalam@quicinc.com>
+ <20250224113742.2829545-2-quic_mdalam@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250224113742.2829545-2-quic_mdalam@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: ozLaDY7hgDnOu9jpmP3v2QiYUW1By4Cz
+X-Proofpoint-GUID: ozLaDY7hgDnOu9jpmP3v2QiYUW1By4Cz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_10,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=898 bulkscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502240132
 
-This prevents us from trying to recover from these on speculative paths
-in the future.
+On 24.02.2025 12:37 PM, Md Sadre Alam wrote:
+> Add SPI NAND support for ipq9574 SoC.
+> 
+> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> ---
+> * Moved changes in ipq9574-rdp-common.dtsi to separate patch
+> 
+> * Prefixed zero for reg address in qpic_bam and qpic_nand
+> 
+> * For full change history, please refer to https://lore.kernel.org/linux-arm-msm/20241120091507.1404368-8-quic_mdalam@quicinc.com/
+> ---
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 28 +++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 942290028972..acbcf507adef 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -447,6 +447,34 @@ tcsr: syscon@1937000 {
+>  			reg = <0x01937000 0x21000>;
+>  		};
+>  
+> +		qpic_bam: dma-controller@7984000 {
+> +			compatible = "qcom,bam-v1.7.0";
 
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
----
- kernel/bpf/verifier.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+v1.7.4
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index d8a95b84c566..03e27b012af3 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -11368,7 +11368,7 @@ static int check_helper_call(struct bpf_verifier_env *env, struct bpf_insn *insn
- 				verbose(env, "verifier internal error:");
- 				verbose(env, "func %s has non-overwritten BPF_PTR_POISON return type\n",
- 					func_id_name(func_id));
--				return -EINVAL;
-+				return -EFAULT;
- 			}
- 			ret_btf = btf_vmlinux;
- 			ret_btf_id = *fn->ret_btf_id;
-@@ -14856,12 +14856,12 @@ static int adjust_reg_min_max_vals(struct bpf_verifier_env *env,
- 	if (WARN_ON_ONCE(ptr_reg)) {
- 		print_verifier_state(env, vstate, vstate->curframe, true);
- 		verbose(env, "verifier internal error: unexpected ptr_reg\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 	if (WARN_ON(!src_reg)) {
- 		print_verifier_state(env, vstate, vstate->curframe, true);
- 		verbose(env, "verifier internal error: no src_reg\n");
--		return -EINVAL;
-+		return -EFAULT;
- 	}
- 	err = adjust_scalar_min_max_vals(env, insn, dst_reg, *src_reg);
- 	if (err)
--- 
-2.48.1
+> +			reg = <0x07984000 0x1c000>;
+> +			interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&gcc GCC_QPIC_AHB_CLK>;
+> +			clock-names = "bam_clk";
+> +			#dma-cells = <1>;
+> +			qcom,ee = <0>;
+> +			status = "disabled";
+> +		};
+> +
+> +		qpic_nand: spi@79b0000 {
+> +			compatible = "qcom,ipq9574-snand";
+> +			reg = <0x079b0000 0x10000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			clocks = <&gcc GCC_QPIC_CLK>,
+> +				 <&gcc GCC_QPIC_AHB_CLK>,
+> +				 <&gcc GCC_QPIC_IO_MACRO_CLK>;
+> +			clock-names = "core", "aon", "iom";
+> +			dmas = <&qpic_bam 0>,
+> +			       <&qpic_bam 1>,
+> +			       <&qpic_bam 2>;
+> +			dma-names = "tx", "rx", "cmd";
 
+Please make clock-names & dma-names a vertical list, like clocks and dmas
+and shift the nodes so that they're sorted by address
+
+Konrad
 
