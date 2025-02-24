@@ -1,158 +1,193 @@
-Return-Path: <linux-kernel+bounces-528313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77F97A41625
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:20:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9499A41629
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6181416C351
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B006916C644
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020D51DAC81;
-	Mon, 24 Feb 2025 07:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D43320AF7D;
+	Mon, 24 Feb 2025 07:21:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kioX8eGa"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jt69pVqr"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9BB1624D2;
-	Mon, 24 Feb 2025 07:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D913C1891AA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381609; cv=none; b=KXxQILe9uFiGxwDTezDKQUgzTBovISBg+kDsL0OaVoWZMg1aW3JsL1JNdcZj8bNP4X1dVm2MxP3f4Qdz1ZxcbtJXDbN/W2ZQ2GxjM2+BbBxA3Ma/OuUEVuOa0rNg/ypTQJ547wEkoRmB6byYCLG+EQ74ALmwWEtiR3gVstC5URQ=
+	t=1740381697; cv=none; b=jzgDXR4IfUWVcz/jDC8PbxEK/n4EdI5tTVtMAmXMtbZfb6p0VfxlZ+4Ddb70hKzrtfNhaeas7NKmn4ZXHVoJED4Waxnk/1TCusIg2nGKywnD89JdbitZLYZ/jrGEBXPiQeHqO2Cm8MObG/LlF78gUcPDhrNm4iogyOmWaEuv1/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381609; c=relaxed/simple;
-	bh=Oafipzm6XGCDRBycB+ux6+bj8zA6/+6fWk2vvae9lW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJYuPr69qYEtNUwUx4lFrXlZfItig0nqr5pUw0CSlcuNc/EtbXtLjuVENz+vDBS5vE3gFiLrgXf3LtSA2eLRV4RHIvKf7rGqDUvj+4BvD9W0PrwhyA7m2oBEfJ06ER3UAAbC+X1IT6cEqv7mVKDZUiCeLk994lsFleyKVpk+Gbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kioX8eGa; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abb7a6ee2deso623216366b.0;
-        Sun, 23 Feb 2025 23:20:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740381606; x=1740986406; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oafipzm6XGCDRBycB+ux6+bj8zA6/+6fWk2vvae9lW0=;
-        b=kioX8eGaOcAG47IwjPY8ABuvzVQQhJjzvYOukEoNP86bAddV/5FUyCvW37hVTt88sK
-         Ia1fsaGL8vJXDflrj2NwtQYKauuqwY1nf/Wi6iYj9d4CCyniX5kKSAfu3H6nQm1AaFNM
-         jhfay+NXquHWAG3z8RtKH2V+b38fsIKcncNO3Y2kQk7O2XtbJAOGW6uQy7VCqURDo/d2
-         CfUEblMd+l+AkomEYE30DU7mFVMO0m3AJ/NtP8OI+jozJeX5oy3f0Iniyf2n8nEsPsNH
-         MDAimYdpcyC7W7iRdud6b0JySpdeKBnAMHz7MfamIjhr+qrFG/5ANeFgx66yhplNYMu7
-         yv0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740381606; x=1740986406;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oafipzm6XGCDRBycB+ux6+bj8zA6/+6fWk2vvae9lW0=;
-        b=gXbJF46lyC2/sdxnZYaoXSVD90HTJjb2DelDM+vCPnV+2zyNwO3gPsljM8TSayga0V
-         1V2cepFvBo099Sydmytg2n/aTQSFN5A3fyrIlE8pphDV1D1sUIYSy2sGLidjCD+4DNNy
-         mcllxIuAhHqz71U4+TKl5Zy6T1HjrbWfvKozCVlcr/g/y8xxkKhuGJrNcJM0lrQOMxKC
-         TetFtw/DuL2BIyzXPfTbItCgu8McpiJG407xOP88ot2bDqCNw2p2pfXlupNIxzYKg7gT
-         FYRP8S0PJIsQH+TMhjVbgf5h/Ymdl+ZBLtJfNS1wmSfuKUMwrvWQ3fVo68XF+sx2A7Zv
-         VysA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZsn7QZnvukOzTgRtxocvmG3Fc37+tQrmD/0szeTVSqc7p3G2nVVIgkIVOFfNRbeirPCRlmM3//ocFYX3y@vger.kernel.org, AJvYcCVX4GNuKvsNEH4iC9gctlQs+Onysp2kbBG3tmIBvhlLJX2evz1GnTH6SkpulYJ4zEDvPoT1HKrcq2einpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCpDlRlR6G/yTuEDN0zQ94a6Alunix7OxR9BTuBxi1krCbbevS
-	H5bwIXmBvdAePf6jhRmcxANLqEiZiw0GrmM0s+hRgE3R1WVmuL1lDFAU8gMpUqF0Y1RRZpBo5Ji
-	9/7UbbiWWADDpuE6j2wvZX7Dnsyg=
-X-Gm-Gg: ASbGnctF+2LntMiUR5IgQYNZMMKn1/5eQHP5C027AKXiQlmfEedGzJSeTbus5fZPNos
-	LbJyQUIZlcMSMGx+rQIxugch2FYwF2EGVp/YN4AHC6poVCi1l7D2Bp1a7BQ31tlblrN5gGCYjir
-	KDC/HlkgVSVg==
-X-Google-Smtp-Source: AGHT+IGRr20D+nYlL7vLzLB1mN9NJEZQKWhzH6eB03dSlbA2B6mRnsJbOsX8KS7nvKXyl15DlDt2/6foE0xae6kMc3E=
-X-Received: by 2002:a17:906:6a11:b0:abb:d349:73b3 with SMTP id
- a640c23a62f3a-abc096e0044mr1164920966b.0.1740381605564; Sun, 23 Feb 2025
- 23:20:05 -0800 (PST)
+	s=arc-20240116; t=1740381697; c=relaxed/simple;
+	bh=Ge1K0ekP0Qup8UdrWDsn33L76A379+px/4IITni0SJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g1k4ErOpyaXRnTcdByZQa2vq8mfyYV9Qh8Wx3ydD3x66nDc5wq05YhXzR40wdbxXGKE+JEPG0U0QVcWtUpzyRjMyNE1neXBRSONWVSTH1fhKCCMLkPPIlcJo+CISue3Brlv3P0jd+L9ug6tIEgBWIInJRyC/mc+1n2eLIE2fDe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jt69pVqr; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 24 Feb 2025 12:50:29 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740381682;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XPoINk1hDVXc0BCmMYLWPaHTV8bhalUYaAUhLHPIwRQ=;
+	b=jt69pVqrB7fUsG+20yVtBzackRI58HxDbJ3Y1A1tOfZxiXAnrr4/FMZoCXfd1EWYRW/whn
+	iH6x6kUQIZIs1KN8bSeIeD18VkBEotLZCozxuoowPpF76KSHOOjWzZUUx12KkItL0m67Pl
+	M31TVTf9oljMOr3JCHLh0OaqhZT7rIo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, 
+	r-donadkar@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+Message-ID: <3fzkpcdjsthw5lbajxp6zyiyejo45rcgt3gwjfu2bub3v3acpa@kow5blexev5u>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250221120337.3920874-1-y-abhilashchandra@ti.com>
+ <20250221120337.3920874-2-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223204456.1913392-1-adamsimonelli@gmail.com>
- <Z7uOsqky4Tw9J6QR@surfacebook.localdomain> <7410687.31r3eYUQgx@nerdopolis2>
-In-Reply-To: <7410687.31r3eYUQgx@nerdopolis2>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Mon, 24 Feb 2025 09:19:29 +0200
-X-Gm-Features: AWEUYZmKNiXteHDqx_3jgRszbpgunyLPcTNFa2QeZzxEJN-VFRbaGn5lZevgluo
-Message-ID: <CAHp75VeBaetiQBykfLk_weBHdzZF1nWp=k8BJu+OKNp6iYRRTg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/2] Optionally allow ttynull to be selected as a
- default console
-To: Adam Simonelli <adamsimonelli@gmail.com>
-Cc: Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ttzzri7jdpw667k3"
+Content-Disposition: inline
+In-Reply-To: <20250221120337.3920874-2-y-abhilashchandra@ti.com>
+X-Migadu-Flow: FLOW_OUT
+
+
+--ttzzri7jdpw667k3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 1/2] dt-bindings: media: cdns,csi2rx.yaml: Add
+ optional interrupts for cdns-csi2rx
+MIME-Version: 1.0
 
-On Mon, Feb 24, 2025 at 2:23=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail=
-.com> wrote:
-> On Sunday, February 23, 2025 4:10:10 PM EST Andy Shevchenko wrote:
-> > Sun, Feb 23, 2025 at 03:44:54PM -0500, adamsimonelli@gmail.com kirjoitt=
-i:
-> > > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > >
-> > > When switching to a CONFIG_VT=3Dn world, at least on x86 systems,
-> > > /dev/console becomes /dev/ttyS0. This can cause some undesired effect=
-s.
-> > > /dev/console's behavior is now tied to the physical /dev/ttyS0, which=
- when
-> > > disconnected can cause isatty() to fail when /dev/ttyS0 is disconnect=
-ed,
-> > > and users who upgrade to a theoretical vt-less kernel from their
-> > > distribution who have a device such as a science instrument connected=
- to
-> > > their /dev/ttyS0 port will suddenly see it receive kernel log message=
-s.
-> > >
-> > > When the new CONFIG_NULL_TTY_CONSOLE option is turned on, this will a=
-llow
-> > > the ttynull device to be leveraged as the default console. Distributi=
-ons
-> > > that had CONFIG_VT turned on before will be able to leverage this opt=
-ion
-> > > to where /dev/console is still backed by a psuedo device, avoiding th=
-ese
-> > > issues, without needing to enable the entire VT subsystem.
-> >
-> > This rings a bell of the following
-> >
-> > https://lore.kernel.org/all/20201111135450.11214-1-pmladek@suse.com/
-> > https://lore.kernel.org/all/20210107164400.17904-1-pmladek@suse.com/
-> > https://lore.kernel.org/all/20210108114847.23469-1-pmladek@suse.com/
-> >
-> > I don't see any mention in the commit message about these, have you stu=
-died the
-> > cases? Will your change anyhow affect the described there?
-> >
-> I did see that sifting through commits, it looks kind of different though=
-, as
-> that was to make ttynull more always on, and if I am understanding it cor=
-rectly
-> it looks more of a last resort? I could be wrong, but I see it was attemp=
-ted
-> and reverted because of conflicts on some hardware platforms?
->
-> The scope with this new patch set is much different, as it has to be manu=
-ally
-> enabled on top of CONFIG_NULL_TTY, rather than assuming CONFIG_NULL_TTY i=
-s
-> enabled, and adding it to the list of preferred consoles. It is more for
-> Desktop configs that are looking to disable CONFIG_VT, but still want
-> /dev/console to not be a physical device by default.
+Hi Abhilash,
 
-Thank you for elaboration. Even if this may be a different case, I
-think it would be nice to have the PRINTK maintainers (who are also
-involved in the console code) blessing before going in.
+Thanks for the patch.
 
-In case of a new version, please summarize above in the commit message.
+On Fri, Feb 21, 2025 at 05:33:36PM +0530, Yemike Abhilash Chandra wrote:
+> The Cadence CSI2RX IP exposes 2 interrupts [0] 12.7 camera subsystem.
+> Enabling these interrupts will provide additional information about a CSI
+> packet or an individual frame. So, add support for optional interrupts
+> and interrupt-names properties.
+>=20
+> [0]: http://www.ti.com/lit/pdf/spruil1
+>=20
+> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>=20
+> Changes in v3:
+> - Address Krzysztof's review comment to drop minItems from the bindings.
+> - Collect Acked-by from Krzysztof.
+>=20
+>  Documentation/devicetree/bindings/media/cdns,csi2rx.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml b/D=
+ocumentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> index 2008a47c0580..e8d7eaf443d1 100644
+> --- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> +++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+> @@ -24,6 +24,14 @@ properties:
+>    reg:
+>      maxItems: 1
+> =20
+> +  interrupts:
+> +    maxItems: 2
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: irq
+> +      - const: error_irq
+> +
 
---=20
-With Best Regards,
-Andy Shevchenko
+If I test these bindings with only one interrupt (error_irq) defined in the=
+=20
+device tree, I get these errors:
+
+  DTC [C] arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb
+/home/darkapex/dev/linux2/out_clang/arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb=
+: csi-bridge@30101000: interrupts: [[0, 187, 4]] is too short
+        from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.ya=
+ml#
+/home/darkapex/dev/linux2/out_clang/arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb=
+: csi-bridge@30101000: interrupt-names:0: 'irq' was expected
+        from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.ya=
+ml#
+/home/darkapex/dev/linux2/out_clang/arch/arm64/boot/dts/ti/k3-am62a7-sk.dtb=
+: csi-bridge@30101000: interrupt-names: ['error_irq'] is too short
+        from schema $id: http://devicetree.org/schemas/media/cdns,csi2rx.ya=
+ml#
+make[1]: Leaving directory '/home/darkapex/dev/linux2/out_clang'
+
+There could be cases where only the error interrupt is integrated by the So=
+C,=20
+and the second interrupt is unconnected. IMHO it would make sense to keep t=
+he=20
+other interrupt optional:
+
+diff --git a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml=20
+b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+index e8d7eaf443d1..054ed4b94312 100644
+--- a/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
++++ b/Documentation/devicetree/bindings/media/cdns,csi2rx.yaml
+@@ -25,12 +25,14 @@ properties:
+     maxItems: 1
+
+   interrupts:
++    minItems: 1
+     maxItems: 2
+
+   interrupt-names:
++    minItems: 1
+     items:
+-      - const: irq
+       - const: error_irq
++      - const: irq
+
+   clocks:
+     items:
+
+>    clocks:
+>      items:
+>        - description: CSI2Rx system clock
+> --=20
+> 2.34.1
+>=20
+
+--ttzzri7jdpw667k3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAme8Hb0ACgkQQ96R+SSa
+cUXXvg/+N/NXP8C4sPmnhkf1V2Dk4s2t+vl3U69CQ7Ymlv7gOWiKL7UmlFIOECh0
+kK76Afep6KS2mewq1tVHw1GluKwoHMufQcKvFuk4FSFSGUR5FNCerD1evUwZ9xt2
+7sfTZjA/VXl4fek+GRIIL9Th1oc8ELEiRhcUGSphtWD6o4B9fA2LX0Gncmz7iO0V
+hm5BrHaa0HOOsdmNH9STjE+LmFFBjeJ6CyqyDeLl4Jgt47OMm1DMKfigSeeIFxpB
+Ua68WzrZM2byPLL+DyOW+58feqSxcpTgw2UIKFznhm7Wy/DNYoPw46wAV/ZMY2Et
+sfycLOQSKArObgvfxTijfKEnLDOEwgFccWCT1+soraDAYJtbK3yqlJTPoDxMLEjH
+2Hwsp+gLJTDM4weDoshQ6rOjLfoz8GBjfaj2iqm6t23rscvU8ncOaFMGwrHX49kw
+YteZjX2fwJVF59kNwx51p0iEbI83+bFf/1UcuUpcuW3750f6EBBlg+EmfcxeR6ol
+eQECOod2v1Hyh+9nDdohVt41xs9kwsZi8I0nrfquzNzPIN7aT5vxOMxjV47VgZqZ
+yykeN7ry5A7azKlz+66AaWrd0iHHwbkbwoD/ruG3LFhOGQHysjld0Y+CXgitToU6
+bf/SoikT3IfUAjFlFo/861QCMmek8CClApY7ZlzGPt2FqWI3/Ms=
+=yOgi
+-----END PGP SIGNATURE-----
+
+--ttzzri7jdpw667k3--
 
