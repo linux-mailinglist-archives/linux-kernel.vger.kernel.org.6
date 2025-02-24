@@ -1,118 +1,185 @@
-Return-Path: <linux-kernel+bounces-530117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67127A42F4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:40:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A276DA42F51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:41:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2CEA3AFE8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0740A1895473
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F511DE3D1;
-	Mon, 24 Feb 2025 21:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672331DF994;
+	Mon, 24 Feb 2025 21:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7WUYRUA"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ex9pL1tb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD2919F48D;
-	Mon, 24 Feb 2025 21:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9231C8630;
+	Mon, 24 Feb 2025 21:41:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433229; cv=none; b=ikPLXdYdjiPzyXQtPvD6A3fqmkFwAjkQB4e8b8aIVpcP2Mqe4v68EA5zSjDsvg4wTqP3+/zzceSu5x53okXqwk3wmD3gwEIPyL10MJHDi0WumXofiIYpxVdzWbYy77OhUiilhRvu6sZAExhbsrLQsFHEEBfXffrjw7TADsY184I=
+	t=1740433267; cv=none; b=JWHc5Cmg1BViFGpHD9E8arjVY5pqBnHl1ZU6oYWfE/pNuq1eWyJahov/zpH37R5TO7+r04AFu3HxEaY4Vhwx1O/pDuDtR3BCKxDyC/Ir7oo4RXjI+sUCuGyBAoDM9GnjmOWHh460QjTcT0vK8qRRkG/zgObwGQURhJdDEJmx/Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433229; c=relaxed/simple;
-	bh=j4TJr5pgfQZCXoZ395gNyQ2FKYY1YCKyx0JpsbK9COw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/LdsVe0X72siOLWHbZOscOhoDiy+XR2ZbfDVddmPLcDTe7ZdM9kG0170Tu2p8fujmsE24XUKA3WAYN+ldPUZ9VYMNR7UJYhM9+tGcSCNU/6a7yVq2Rr3JxkZOYAftiibrKAJF/doWZPynVtH2llnTizE3kgIkRd4lbIZU8GqRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h7WUYRUA; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2fbfe16cbf5so1274124a91.0;
-        Mon, 24 Feb 2025 13:40:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740433227; x=1741038027; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j4TJr5pgfQZCXoZ395gNyQ2FKYY1YCKyx0JpsbK9COw=;
-        b=h7WUYRUABnLY/DSFmypxbLTWjP29TRBDSL1Vt9Sc9nAjwASrWOJNNDT5wAzajUQ53N
-         Nmp+C5GRJaXtsM8uh1O0yWnfdYrrOhd2jn4tjQrT8wR3UUolK6vN0TcXSlFgqej2g0hZ
-         XcxhW4vAMmzOqSXyOngE3IKJyiCCGH4j8PuMRGr2p74w8izQN+NYqTQ5/mcNo+ICmT2h
-         N6NAJMPgl1DxqtTBcwOXTYVvv2GlX3AhcDwgFNWJn2FLhA16BX2wKybvZIUG59cuQl0P
-         p57iHtaEiDvl/TOjlzqJCYQ3nBBvzfzxBJplPc4ZWF91meXQq2PHwPIBzUj1JLtWr0Wp
-         MDtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433227; x=1741038027;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j4TJr5pgfQZCXoZ395gNyQ2FKYY1YCKyx0JpsbK9COw=;
-        b=udHcj/SNRl+EEts6qetvj80mm268tJGpQmvvgr5hrnoXWmQ82Wmd1G8mmHgqVVVPOY
-         s4CQpSySViO/DZ7nkV/9J9Z0IFZuoq5acSyrZX1bhar9NwAOttB7p18pTPktrJUyem3u
-         IW/M3eFk1WUUH606j06EUS+cgi4rd6EnPzpb2uY59rKj7rieDMllqCXnTjMXlq4XVBHI
-         N1ZWZE3c6RdntJw7syina41tnfxTri+UanJIoufb81Wc8Td7aXu0E3auJ5SSGt6Y9D1h
-         bdVztOqiJHwwmMbxmpIWLh1timSsAR2WgmCXN61EQ+icsv09BrFtTMlTgH3j/yEeUaAH
-         zDbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvOQ3t5R5/MBFRB0VhLx4fQtbQe4QF/iRTiHMCZXIFlew16WtZvS7C0+3sS58HdG6wYXd0zLBcioRnROXx6W4=@vger.kernel.org, AJvYcCWZY5hDpaBBBlcXEOS84VS66y0hI5OISLdHjJUdmAntK8RXu6OAtJXohIFxKa58+1fQxYSUHdCGqmw57g8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+4vkcmUWXmjEDELs+JG1I5S2zv5+vzS5wFKHZkkcX2M+csGra
-	0bEBEF0yzSVQNDVl2xn9x6/OzSaeqx0xAJbZtAJhQC0ELUFhlJe8T/SQvS8KM//4PJD3e4K2H1u
-	C5oOqc0XQbPACPggPAus+WyXYhaw=
-X-Gm-Gg: ASbGncs2NGT3S/M8Vy48kdLFFAzhOWvFJKiU1RRBRbQcMrqFE6vnjVJBZG0yCTA3aHC
-	O0hhFARFIil2EC2ACLzJPJlnooPHpg/v3K0qgPfQx0JfnB66lHRCpgUv+dHo5jPzfccX6ldmCNV
-	RHrrJ0cfQ=
-X-Google-Smtp-Source: AGHT+IHKDKiWOu9mfM3EVB8u36Wl3Xtr59WcmIKE2AHgqhD/LAO8Qf2aJ9d3eAU1EfdN4ESJVQm8a1hvFMfytorfMdg=
-X-Received: by 2002:a17:90b:3848:b0:2ee:cbc9:d50b with SMTP id
- 98e67ed59e1d1-2fce7aef973mr9796954a91.4.1740433226744; Mon, 24 Feb 2025
- 13:40:26 -0800 (PST)
+	s=arc-20240116; t=1740433267; c=relaxed/simple;
+	bh=Q+CujMAdg3JdeG0AwSNgh4CB8wuFVGWqju3Cnisvqoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oXetAkOt75cffr8nhAe39TOAkW0HXF4PlkWQrp4j/7tb+oSFV4+y6dvv96Tj6vmEx3EyHKkwqUq49jFs5EeKAHDhItiZ0RHr45W3CkUiUrbFMhwjHu5FOnr/9b6x6LheNe3RoW2kSGfyZyaZ+fNoLPlXxi3NG/khDIH2F7Y2P/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ex9pL1tb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 642C2220;
+	Mon, 24 Feb 2025 22:39:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740433177;
+	bh=Q+CujMAdg3JdeG0AwSNgh4CB8wuFVGWqju3Cnisvqoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ex9pL1tbcP/9cY083eTsnpcO0wzf98asX+w+AW8acupb/SVwqRCSGxLbmDFZ/xewl
+	 f/Jh2aA+64s6hv8ndxkexpeyr+m8Mx2ZuurdIrH6xArS9w05GNb+lrj9C+clo6Olvg
+	 pNJ+ScFu7DYSeoStUg/i1AGBNgaBi84C+5AB8CVE=
+Date: Mon, 24 Feb 2025 23:40:45 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: media: video-interfaces: add support
+ for Virtual Channel IDs
+Message-ID: <20250224214045.GA9516@pendragon.ideasonboard.com>
+References: <20250220230818.275262-1-demonsingur@gmail.com>
+ <20250220230818.275262-2-demonsingur@gmail.com>
+ <Z7g7iCUlsUN2LBIW@kekkonen.localdomain>
+ <aa67bfed-2cdf-452c-bd36-2c5647ae96ed@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com> <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
-In-Reply-To: <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 24 Feb 2025 22:40:14 +0100
-X-Gm-Features: AWEUYZnNdDuBJ43hafoBhgYQAc3j-7xzFPpaDmZnJug_jBLZKCQgmTEDfn3yz6k
-Message-ID: <CANiq72k07kN+x1MV=isMm-WUYrYd4O=6Zc3uACPp_r4JE63t8w@mail.gmail.com>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com, dakr@kernel.org, 
-	robin.murphy@arm.com, daniel.almeida@collabora.com, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, 
-	iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aa67bfed-2cdf-452c-bd36-2c5647ae96ed@gmail.com>
 
-On Mon, Feb 24, 2025 at 9:07=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> I don't think this is good documentation style. I think copy-pasting the
-> first line and second paragraph is better.
+Hi Cosmin,
 
-Yeah, sometimes a bit of duplication is OK.
+On Fri, Feb 21, 2025 at 04:27:55PM +0200, Cosmin Tanislav wrote:
+> On 2/21/25 10:38 AM, Sakari Ailus wrote:
+> > On Fri, Feb 21, 2025 at 01:08:09AM +0200, Cosmin Tanislav wrote:
+> >> Multi-camera systems often have issues with receiving video streams
+> >> from multiple cameras at the same time because the cameras use the same
+> >> Virtual Channel IDs.
+> >>
+> >> CSI bridges might not support remapping the Virtual Channel IDs, making
+> >> it impossible to receive the separate video streams at the same
+> >> time, while the CSI receiver is able to de-mux streams based on VC IDs.
+> >>
+> >> Cameras sometimes have support for changing the VC IDs they output
+> >> themselves.
+> >>
+> >> For a practical example, GMSL2 deserializer chips do not support VC ID
+> >> remapping in tunnel mode, and neither do the serializers. Allowing the
+> >> cameras to have their VC IDs configured would allow multi-camera setups
+> >> to use tunnel mode.
+> > 
+> > We've tried to avoid having virtual channels in firmware and in UAPI,
+> > I'm not yet entirely convinced we need to depart from the established
+> > practices. Let's see. Apart from that, please see my comments below.
+> 
+> Can you think if any other way of handling this? The most useful way
+> would be to have it accessible at runtime so that devices upstream of
+> the cameras could assign the VC IDs dynamically.
+> 
+> This would be useful when having more cameras than the maximum supported
+> number of VC IDs (4, without extended VC IDs), and streaming from them
+> selectively.
+> 
+> For example, for 8 cameras, you'd have to prepare your VC IDs in advance
+> to fit the streaming selection you want to make. If the cameras 0 to 7
+> have the VC IDs 0, 1, 2, 3, 0, 1, 2, 3, you wouldn't be able to stream
+> camera 0 together with camera 4.
+> 
+> Dynamic configuration of the VC IDs would solve that usecase since it
+> would assign VC IDs based on the routed streams.
+> 
+> v4l2_subdev_pad_ops has a .set_frame_desc() that could be used to apply
+> an updated v4l2_mbus_frame_desc, after retrieving it using
+> .get_frame_desc(). Cameras that don't support VC ID remapping would just
+> modify the v4l2_mbus_frame_desc to restore the VC ID to the original one
+> (similar to how set_fmt() can modify the passed in format to what it
+> supports) and the caller would have to handle that situation how it sees
+> fit.
+> 
+> Does that sound better than sticking the VC ID in device tree?
 
-Now, even if we wanted to do something like this, then at the very
-least intra-doc links should be used properly so that people can
-actually jump to the right place in the generated ones.
+I think a VC allocator would be very interesting development. It's
+probably a bit more complex than hardcoding the information in DT, but
+it would also be much nicer :-) I haven't really thought about how this
+could be implemented though, but I'd be happy to discuss it.
 
-Abdiel: in general, please use intra-doc links everywhere where they
-may work -- the patch is missing almost all of them. It helps not just
-readers, but also to keep docs in sync with each other, since you will
-get diagnostics if `rustdoc` finds broken links.
+The timing is slightly unfortunate, as I'll be travelling on weeks 11
+and 12 and will have limited time then, but I'm sure Sakari and Tomi can
+also provide guidelines.
 
-Thanks!
+> >> Add support for specifying these Virtual Channel IDs in Video Interface
+> >> Endpoints. The supported values are 0 to 3, with a maximum of 4 values.
+> >> Although the CSI-2 specification allows for up to 32 virtual channels,
+> >> most hardware doesn't support more than 4. This can be extended later
+> >> if need be.
+> >>
+> >> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> >> ---
+> >>   .../devicetree/bindings/media/video-interfaces.yaml   | 11 +++++++++++
+> >>   1 file changed, 11 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/media/video-interfaces.yaml b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> >> index 038e85b45befa..414b5fa8f3472 100644
+> >> --- a/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> >> +++ b/Documentation/devicetree/bindings/media/video-interfaces.yaml
+> >> @@ -231,6 +231,17 @@ properties:
+> >>         shall be interpreted as 0 (ABC). This property is valid for CSI-2 C-PHY
+> >>         busses only.
+> >>   
+> >> +  vc-ids:
+> > 
+> > Other properties aren't using abbreviations, at least most of them. How
+> > about "virtual-channels"?
+> > 
+> >> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+> >> +    minItems: 1
+> >> +    maxItems: 4
+> > 
+> > Shouldn't this be 32?
+> > 
+> >> +    items:
+> >> +      maximum: 3
+> > 
+> > 31 here, too.
+> > 
+> >> +    description:
+> >> +      An array of Virtual Channel IDs. These are unsigned integers that specify
+> > 
+> > I'd leave out the explanation on the data type. It's redundant.
+> > 
+> >> +      the VC IDs used by the device for its data streams. This property is valid
+> >> +      for MIPI CSI-2 only.
+> >> +
+> >>     strobe:
+> >>       $ref: /schemas/types.yaml#/definitions/uint32
+> >>       enum: [ 0, 1 ]
 
-Cheers,
-Miguel
+-- 
+Regards,
+
+Laurent Pinchart
 
