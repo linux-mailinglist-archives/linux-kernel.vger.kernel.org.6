@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-528168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E6E8A41477
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:20:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87986A4147A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91733B2BDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:19:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0893B2B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:22:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB6F1ACEA7;
-	Mon, 24 Feb 2025 04:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374441A317A;
+	Mon, 24 Feb 2025 04:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="SIGYI9pD"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vEXYWsVN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BA326AF3;
-	Mon, 24 Feb 2025 04:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740370801; cv=pass; b=qfMyVQsam6z3dRVHwdViWRMUABGsyF8ae0P95AQJ9LSF8OmZ7kuksxCOszbRhMSmQB9B9/kpBej4/yY5qGTXOgk+jwDmzbChXM0VcAL/x8zbBU4MmZjhoMA/W4GoR82CWqcIjLbzKLaSJut6FmBvpp5tMp9YYLInNdKtQGaD9jA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740370801; c=relaxed/simple;
-	bh=KvpBrS6TIBDeYs2gxcmcsV16S5YmNRzk55EH1IGQkhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FB3Ip8l18T4vpJpM4TAlOBtpVqs9++dqd99NBIqWlZ7quEgNnf6Auepz/UqaodkS8gy2XG7Hr7ehLraLSB7BVMR53rGmA23ctpCDsLeDiTuI+6ThEHBzAx56GerNypOXj1Vcx6OCq1tQBhk++1bNM7ZavaVJnxG80MbCtpGeZ78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=SIGYI9pD; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740370749; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UAjNen4dEW6JnpcOC6Mf+YxMzDXzamt+sZO0B9Iti4aVH1WNB5ZcTB44337CtWL2LIUtTFvLK5KZ0mDpO9BEa267QSFAiBXcpL6ncpNDypzxKZvdX//MKJTBi3v6FyNG7mxiAYdsG41iFK6zw7Ss1F6pLGmsUqbMD+EDpxoFGD0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740370749; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4ZkwbmlJtwopSPqeSfMDIV4RYNmzpFeckq4z8tSdpLw=; 
-	b=hUIrcAJnWTgpPTuMAdSRUkcITbI8xW5Ra1m0CC/9Zctelb8pi06iIdWoSSpKrV5P+lhK5AScmqWJAOYes1vceEOTuGz1t0HJ2gjm0ICKiM92bH7bxW6iam3u2Eh8VkBZpG9qlZljTH8GxRlk6TrtybUvF4IYOjIpEriRnkK59VI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740370749;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=4ZkwbmlJtwopSPqeSfMDIV4RYNmzpFeckq4z8tSdpLw=;
-	b=SIGYI9pDbacW3G3kg7IVvLcHNtQD8eaLBfcZg1WT1AzVN22iYS5X+dtLvvt2rEOK
-	mFxj1Jz5DZIt+EWl61cHYwZLOMrBVCIgs/wC+1ZNjvGD6ewpmFpjc4Jhkc6xQebDUdj
-	h3tBMqnLfqV3vaYp2Ve7I3NNmJkoIkH4m7BHRFy4=
-Received: by mx.zohomail.com with SMTPS id 1740370748102832.3357248261832;
-	Sun, 23 Feb 2025 20:19:08 -0800 (PST)
-Message-ID: <d13f13ac-1501-4427-b6d3-ee161eeb932a@collabora.com>
-Date: Mon, 24 Feb 2025 07:19:01 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52726AF3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740370939; cv=none; b=jom8meDxksXbmDUS+p3vI6peR7sQ17lOP58x0L5OFL73X4epJwfYUV/Izsg6lCM+w+SmziKV4FG3OAizOrSloNpAwguCJ5976M+9MuxFUmDrram4yi5cLv+8iZfRaJHij8n7yUr1WSJbCU530W0wOA5H0ERDF0QbgUhauZXDgyM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740370939; c=relaxed/simple;
+	bh=N6SyPydiGOD/+ogCvmw7y2AhfQmq28mCwgAz4HdiQR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbuEfzkpnogRzDFDXQCsXWeucMeqeMfolR6u9Hk0kv1C8AXZj24qUuQ1j8AYxzAyU+kVk9bOtM9fJavPr1NZhLUCDvimZ6UjTZAvwQAqwX8ixv7R7PCnLmxXMkak9NyDeLN2XQOhejAtjSyEZiN+CwLQY5zq4D0l+1cX59oLiz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vEXYWsVN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=iaczR1coIXW0K2GHIHJRj7av80M15T1OEBjJcS+PABI=; b=vEXYWsVNZmSC6fJflbK4roRpzw
+	COLzWOzK9Cu+LfmKoID6WpMtt7xfOUn0/Vo58r2NfQ7lkx69qtRCSwBpoXZK4wNgVmHM0x/iQO+12
+	eEArtR/elg9oz3meMrPGoQN3A0fznJvC464+7SwjSIpPj/BThhBdNHkf6RXA5Iw47mCs7T2Ze0ARi
+	PwqN0WJnk2/PQDp3AUXFvuxO4YczRKkBukMXuFPqA8bhzQ+CulUh7coT6TTMgi+z5kTqlA9TJ3VRg
+	wcOlppGvFehzkQ1lNm823O3gSVpAFmOKVc8zXWFWNDFbMNtx4AxcnCAGzd898HuXhVvbhbpf2pp7+
+	+qJb1K3w==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmPyo-00000005nw2-2pFg;
+	Mon, 24 Feb 2025 04:22:06 +0000
+Date: Mon, 24 Feb 2025 04:22:06 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: mawupeng <mawupeng1@huawei.com>
+Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com,
+	kasong@tencent.com, ryan.roberts@arm.com, chrisl@kernel.org,
+	huang.ying.caritas@gmail.com, schatzberg.dan@gmail.com,
+	hanchuanhua@oppo.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
+ found during do_swap_page
+Message-ID: <Z7vz7gBrbtE4foSI@casper.infradead.org>
+References: <20250222024617.2790609-1-mawupeng1@huawei.com>
+ <Z7lIYzLSACbWxlEM@casper.infradead.org>
+ <2c7dfa44-266a-4aa6-9401-7528368f171e@huawei.com>
+ <Z7qK-NFJsqcV0rPw@casper.infradead.org>
+ <CAGsJ_4xHaaf_DHsFZ_zEqEd3Nb9C=7JJjy5gGFo+RhEhQYX_tg@mail.gmail.com>
+ <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/6] media: platform: synopsys: Add support for HDMI
- input driver
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
-References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
- <20250223173019.303518-5-dmitry.osipenko@collabora.com>
- <88b02c37-6741-459b-b966-d6d58d1f9b6f@wanadoo.fr>
- <c30a291b-c81b-4da1-a0ae-270d323b28e3@collabora.com>
- <bc1f5334-b0fb-4e81-979d-feb17886ac40@wanadoo.fr>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <bc1f5334-b0fb-4e81-979d-feb17886ac40@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
 
-On 2/24/25 00:11, Christophe JAILLET wrote:
->>>
->>>> +    ret = cec_register_adapter(cec->adap, cec->dev);
->>>> +    if (ret < 0) {
->>>> +        dev_err(cec->dev, "cec register adapter failed\n");
->>>> +        cec_unregister_adapter(cec->adap);
->>>
->>> Is it needed to call cec_unregister_adapter() when
->>> cec_register_adapter() fails?
->>
->> Yes, it's confusing, but unregister is needed to free the adapter
->> properly, it's prepared to do it. Thanks for the review.
->>
+On Mon, Feb 24, 2025 at 09:27:38AM +0800, mawupeng wrote:
+> On 2025/2/23 14:18, Barry Song wrote:
+> > On Sun, Feb 23, 2025 at 3:42 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >> On Sat, Feb 22, 2025 at 11:59:53AM +0800, mawupeng wrote:
+> >>> On 2025/2/22 11:45, Matthew Wilcox wrote:
+> >>>> On Sat, Feb 22, 2025 at 10:46:17AM +0800, Wupeng Ma wrote:
+> >>>>> Digging into the source, we found that the swap entry is invalid due to
+> >>>>> unknown reason, and this lead to invalid swap_info_struct. Excessive log
+> >>>>> printing can fill up the prioritized log space, leading to the purging of
+> >>>>> originally valid logs and hindering problem troubleshooting. To make this
+> >>>>> more robust, kill this task.
 > 
-> I don't know this API, so you'll get the last word, but
-> cec_unregister_adapter() does not seem to do that many things in such a
-> case, unless I miss something. See [1].
-> 
-> CJ
-> 
-> [1]: https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/media/
-> cec/core/cec-core.c#L370
+> Yes, log flooding is not the main issue here, endless #PF is rather a more serious
+> problem.
 
-On a second look, apparently you're right and
-cec_notifier_cec_adap_unregister() should be used there.
-
--- 
-Best regards,
-Dmitry
+Then don't write the report as if the log flooding is the real problem.
 
