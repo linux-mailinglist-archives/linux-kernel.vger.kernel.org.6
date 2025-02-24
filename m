@@ -1,49 +1,48 @@
-Return-Path: <linux-kernel+bounces-528974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C2A41E87
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:12:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027A5A41E85
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6031118892E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:07:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9ED188B8FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B57F23BCEE;
-	Mon, 24 Feb 2025 12:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB723BCE6;
+	Mon, 24 Feb 2025 12:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+y5KfLQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G43zGPOZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A254FEEB5;
-	Mon, 24 Feb 2025 12:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCA1233739;
+	Mon, 24 Feb 2025 12:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740398767; cv=none; b=AhCHUkUmMgP2C8d3OD77Of3KRcsNt+JbMpxYTAFzzlKlJfVK68lSxXF5R6UUeKDkywtfuXXMAM2K9ofHgIxXn8LtA6gCZiTXGDgVTulAMaiE9rtwuX3aiZwQuVYmkZLrz5mu0M+HWJd6+3775igiU74oNzQx3wAf3LpQWop1m8E=
+	t=1740398762; cv=none; b=uj/odBD+duHtIk40y+2VpqZgti419phKZXXeLprtVJP8i4PTxloB9DcYtm1EhOqSc/hAvFcbFC9n60+4WjJBLfARHTRQsn6Trv6ohTnt5lOLS84AtakFC3weKbbGf6Utr4LYYXgBZNLVOe1S1z31uWBAiPjuSq9elTAcwgw91TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740398767; c=relaxed/simple;
-	bh=DuU3evB+1LgFZLESTxh1PCvMJv87DbYXfEPsG7tHlYM=;
+	s=arc-20240116; t=1740398762; c=relaxed/simple;
+	bh=r22q6T3iTRPtwznESGgzBK1H2yg/6SOqkTHLXaFCMZ0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=k8kZx8OG23pESkOBqFIKnTPf13je73rZOj25ZgoYbA8kUw7ByVvEz3u6/ObVaVk2DvDFabSl//Ne3/eanywBMGF6jhyn70Lo12SGn6WwtCDG/V+KQ1iqIpvSlA7um4VdsAHJEQLiBMXhfeY7snRb28jT4f5Jja51sn0m5b7u0gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+y5KfLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C46C4CEED;
-	Mon, 24 Feb 2025 12:06:02 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=PtGmBnSbNjYReOJwkweD1Z8iOYu+nXCKRg230hTMmDfpNBD2qVsBZ8IFIgSvDf1Fp+d9ScWPLWWTHpy+8tJXUGF0afYo4u2DzFCbzkNov1se8LJRoqbJiDOpkUhEem8+d4SDEe49aOjTUKKLkJ0qKrS6nJgxIYsY19oBG15KUzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G43zGPOZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF338C4CEE9;
+	Mon, 24 Feb 2025 12:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740398767;
-	bh=DuU3evB+1LgFZLESTxh1PCvMJv87DbYXfEPsG7tHlYM=;
+	s=k20201202; t=1740398762;
+	bh=r22q6T3iTRPtwznESGgzBK1H2yg/6SOqkTHLXaFCMZ0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=q+y5KfLQbE29GkzRAHkNCqnV3UHl5zPUNJZMTWNd+ArvI7CoutxD59m6Cay+aOcnl
-	 0+Aa7Pk0f9Qy921VOZNjqawqmd5sXLD3Cu8QHEzSlvyQQndn2peH2LttLCJQkDfSrA
-	 33DueDQQpFbdWI2kqdfttquybWdqXrTDL6ytZgEHeLD9Roj7ndUIyHxhImlvbMpHC+
-	 oP/hxBnhb2TyHNGoWISuxYaaK2ozICbPrHODWTArNuXWM3dER6yv1K3dxSyYZ2ufo9
-	 Q6dilPSIGuvcwcTrHLsCO2xrrfdxMNGxWtl936WLi5dZMPBOjqoOo9evtL0oC3TiWk
-	 p3MJ1kk3YHvQg==
+	b=G43zGPOZLKJL7CjAnhgTGwwQ1aFDZD601rLcEm/8xoaSGsUbBQrfNBWfbfVzD33jS
+	 ghrbfh+ulg3c+DTWC4sJnStQ2RFezaxqjRDIy7D7zxnUjq2DyM7gXWtrAwWT8oPePn
+	 +R1yvTErZVwDShmFamV9k3o7bO1T4IMdsqXc4aDSDYTcYrTinUlPWZgk3fEFn6DiOm
+	 8/Woolj0EiMuMl23eaNwvL9mqjLOehIsFi2OiBlXCKj+dFe/rBfeAvwj/kXp1FwHnV
+	 4fYu5zS5NrcyQVMC7R+wiAxQ3hXFqvBqJnooaPyFTpHNjeRgD73UKpRfhWcyrpFvkI
+	 wFXZItYjM/X5w==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Mon, 24 Feb 2025 13:03:46 +0100
-Subject: [PATCH v9 12/13] rust: hrtimer: add clocksource selection through
- `ClockSource`
+Date: Mon, 24 Feb 2025 13:03:47 +0100
+Subject: [PATCH v9 13/13] rust: hrtimer: add maintainer entry
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,8 +50,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250224-hrtimer-v3-v6-12-rc2-v9-12-5bd3bf0ce6cc@kernel.org>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-hrtimer-v3-v6-12-rc2-v9-13-5bd3bf0ce6cc@kernel.org>
 References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
 In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, 
@@ -69,116 +68,55 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
  Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4207; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=DuU3evB+1LgFZLESTxh1PCvMJv87DbYXfEPsG7tHlYM=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnvGAm1O6CWWrm8R3i5ADwYFUlMwUMBoI623Lcr
- qvSRb+NA4aJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7xgJgAKCRDhuBo+eShj
- dzT5D/4n1CJIE9B6+23HwQi5XXPk9H5DOlzJOy3d1uMdSHNnF6fSRuLfj/WJPoDKA122t7JzQb6
- VbxDLPpa8QWEJafd464zVUVvO0dL/P1e99S0+0MLeWryeoRD7Cd8rImx/5le4GOIknW5ru724L3
- zbM5XKCqROZJOuJEdy6TqiBBSfOJxnKUbHwkYOi8az2BP+nqI85XYmoocz95FBq3UlVX+4Kairb
- Eh1kKe5H7cYAgRDYQaJ14q+OuUmYn90m6zQqrrlOrhFhNusAafAQmz5QHU2sDn/kHCJnY/nqoKx
- DPuw0RsgNHjU8ks3zACL7CHaG6U3PG5eabuzxd+I8t3TH4DhTnkaUYkVMzpOhnwOcamkTDhqrwi
- pfIt89Et3ZfWA1zPLsm/TYGJeD4xq0ocG+OckX8GbKlGab+2GzYFnl1NpVc/BRn3QJWZoi+sjZD
- ovWk5YA1ytGj63sJWOS+qqjo7F2E48AKtAfz/H4q/2Khz+usq1l6R9Auu3VFpre14idhurAJxTY
- mRbiivlO3GfxzikgCR/gjhnRLyFgZtjt3qzmpcueiwwJMSM8EgCT96LL2orYtRjc3IZ5UrWf+9g
- NTLXaHTNIFQ7R4dQdlNywNum4C4fQMh5u12z404YrqgQ5mO5ifbG8OlQ1FAg6+p11IJ8kBq6vlb
- i1e1OOpuwBrVkUw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1044; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=r22q6T3iTRPtwznESGgzBK1H2yg/6SOqkTHLXaFCMZ0=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnvGAnim0wmOoDxbgma7+5R5YqYhB9vpvyTzENt
+ a6C5dHvGdWJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7xgJwAKCRDhuBo+eShj
+ dzNuEACYMCAkXcodBftvIU5ttxbYTan/TCeKQjhiNMzF732OmA3/+SeZ3x3KQ73PZ7M5gs2/aTE
+ gnwQBDSTwI951ld18eiN1aezYvaBVW64omvj0m5QBf//sYTSgX0xmIEyHJ7M94wjLtPKbIAjIIg
+ kAo1dKZ4wBySk1WPfMoWnc+jWA7te1f0aVu5odRmmfxPcgBRFPSFqRux463uifazf+xQy3HDHy0
+ tTVgEd32ri0GXHLERHCiF5Dq4A3uJVvCYIJGwlKAGWGTx7SNu5ZsGiOyKp3X1goGYtUlSZ9nNH7
+ mkPgtsZebQng+8xA9mPLx5ma7/AYdxyNRjGXcERKD4A38nl/OFgV1brQs5RQkZNxWNDGzwIxAtl
+ NBkwtepiNYE59gCyJDlPUm3GRFu7Cnsj+ZRaBAjGZTNA9ojLEp1JJyN8GU6zthTOSeK+SNZjI98
+ nu5Jt0feqvX8Dh2rIuhsn52vqjjjEeW+dFa7hiSvJ39oYauhGWRaah7elZKTABrQXA8G4NgqBRD
+ YABZD/oEEYaaeHCQYHeEkMDJG5jOrsKOtaJTjVwGzm/hp7/Szk22AfSd4n3lbmV2EYjqAYU6JOe
+ HJrGUYciRRWSOE4OgB1/CbNbT9PGHRy4poUCr3+tdKbL4jfvsZDIXGRcGP2FK+GmUFc7nJkjGVG
+ s6l2l47gTJyMlew==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Allow selecting a clock source for timers by passing a `ClockSource`
-variant to `HrTimer::new`.
+Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. Also
+add Boqun Feng as reviewer.
 
+Acked-by: Boqun Feng <boqun.feng@gmail.com>
 Acked-by: Frederic Weisbecker <frederic@kernel.org>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
- rust/kernel/time/hrtimer.rs | 59 +++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 57 insertions(+), 2 deletions(-)
+ MAINTAINERS | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-index 160df73a2d44..77b8748ec29f 100644
---- a/rust/kernel/time/hrtimer.rs
-+++ b/rust/kernel/time/hrtimer.rs
-@@ -93,7 +93,7 @@ unsafe impl<T> Sync for HrTimer<T> {}
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 896a307fa065..60fa77c41b3f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -10355,6 +10355,16 @@ F:	kernel/time/timer_list.c
+ F:	kernel/time/timer_migration.*
+ F:	tools/testing/selftests/timers/
  
- impl<T> HrTimer<T> {
-     /// Return an initializer for a new timer instance.
--    pub fn new(mode: HrTimerMode) -> impl PinInit<Self>
-+    pub fn new(mode: HrTimerMode, clock: ClockSource) -> impl PinInit<Self>
-     where
-         T: HrTimerCallback,
-     {
-@@ -107,7 +107,7 @@ pub fn new(mode: HrTimerMode) -> impl PinInit<Self>
-                     bindings::hrtimer_setup(
-                         place,
-                         Some(T::Pointer::run),
--                        bindings::CLOCK_MONOTONIC as i32,
-+                        clock.into_c(),
-                         mode.into_c(),
-                     );
-                 }
-@@ -468,6 +468,61 @@ fn into_c(self) -> bindings::hrtimer_mode {
-     }
- }
- 
-+/// The clock source to use for a [`HrTimer`].
-+pub enum ClockSource {
-+    /// A settable system-wide clock that measures real (i.e., wall-clock) time.
-+    ///
-+    /// Setting this clock requires appropriate privileges. This clock is
-+    /// affected by discontinuous jumps in the system time (e.g., if the system
-+    /// administrator manually changes the clock), and by frequency adjustments
-+    /// performed by NTP and similar applications via adjtime(3), adjtimex(2),
-+    /// clock_adjtime(2), and ntp_adjtime(3). This clock normally counts the
-+    /// number of seconds since 1970-01-01 00:00:00 Coordinated Universal Time
-+    /// (UTC) except that it ignores leap seconds; near a leap second it is
-+    /// typically adjusted by NTP to stay roughly in sync with UTC.
-+    RealTime,
-+    /// A monotonically increasing clock.
-+    ///
-+    /// A nonsettable system-wide clock that represents monotonic time since—as
-+    /// described by POSIX—"some unspecified point in the past". On Linux, that
-+    /// point corresponds to the number of seconds that the system has been
-+    /// running since it was booted.
-+    ///
-+    /// The CLOCK_MONOTONIC clock is not affected by discontinuous jumps in the
-+    /// system time (e.g., if the system administrator manually changes the
-+    /// clock), but is affected by frequency adjustments. This clock does not
-+    /// count time that the system is suspended.
-+    Monotonic,
-+    /// A monotonic that ticks while system is suspended.
-+    ///
-+    /// A nonsettable system-wide clock that is identical to CLOCK_MONOTONIC,
-+    /// except that it also includes any time that the system is suspended. This
-+    /// allows applications to get a suspend-aware monotonic clock without
-+    /// having to deal with the complications of CLOCK_REALTIME, which may have
-+    /// discontinuities if the time is changed using settimeofday(2) or similar.
-+    BootTime,
-+    /// International Atomic Time.
-+    ///
-+    /// A nonsettable system-wide clock derived from wall-clock time but
-+    /// counting leap seconds. This clock does not experience discontinuities or
-+    /// frequency adjustments caused by inserting leap seconds as CLOCK_REALTIME
-+    /// does.
-+    ///
-+    /// The acronym TAI refers to International Atomic Time.
-+    TAI,
-+}
++HIGH-RESOLUTION TIMERS [RUST]
++M:	Andreas Hindborg <a.hindborg@kernel.org>
++R:	Boqun Feng <boqun.feng@gmail.com>
++L:	rust-for-linux@vger.kernel.org
++S:	Supported
++W:	https://rust-for-linux.com
++B:	https://github.com/Rust-for-Linux/linux/issues
++F:	rust/kernel/time/hrtimer.rs
++F:	rust/kernel/time/hrtimer/
 +
-+impl ClockSource {
-+    fn into_c(self) -> bindings::clockid_t {
-+        match self {
-+            ClockSource::RealTime => bindings::CLOCK_REALTIME as i32,
-+            ClockSource::Monotonic => bindings::CLOCK_MONOTONIC as i32,
-+            ClockSource::BootTime => bindings::CLOCK_BOOTTIME as i32,
-+            ClockSource::TAI => bindings::CLOCK_TAI as i32,
-+        }
-+    }
-+}
-+
- /// Use to implement the [`HasHrTimer<T>`] trait.
- ///
- /// See [`module`] documentation for an example.
+ HIGH-SPEED SCC DRIVER FOR AX.25
+ L:	linux-hams@vger.kernel.org
+ S:	Orphan
 
 -- 
 2.47.0
