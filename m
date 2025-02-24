@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-529429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66179A4261E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:22:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18099A42616
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:21:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1809165FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CF419C1776
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B26158858;
-	Mon, 24 Feb 2025 15:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56D724887A;
+	Mon, 24 Feb 2025 15:14:53 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F19219ADA6;
-	Mon, 24 Feb 2025 15:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D8F2063DD;
+	Mon, 24 Feb 2025 15:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740410091; cv=none; b=CjvNYLHA7hRSkFmKaFAUes5BY9UpIBvYV6vOY1SE+l4tce886j0N7hd14/sYgzS7fvMWpNarVzhlP6OkZ3vTE+aIeio8xfkYBc9ndNTgzLo45Yu9c1atzNGA4T6i636e4+nt6zkl/SYq6CcDh+B1MT/pBj6y6UKY2OeAPmTFT5M=
+	t=1740410093; cv=none; b=dgEWOOau3t9kT34Q+LzMDt8hBhZ/psNFa28rGJTuGXvGMlOtPbmljO1GmcTQ//JgAF5JrKARakxqWXoQCCvAwDVUEjo6H2K2d0IIGOYiJkib/UDqMSt95j7Ria7Z8sTjqBx5UXbY/miU/bKnIK1fN9ffFysRYKKAf/62l6ywrI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740410091; c=relaxed/simple;
-	bh=ZflWSUTHKDDWMgv+3Hc1nDvf5qV9RbPCnE2Gc4hVAMk=;
+	s=arc-20240116; t=1740410093; c=relaxed/simple;
+	bh=jrL58x5+1qj1SLmhLR7yqfFjVyxGRJnP9/fW+NcEZlY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tQVkmOLUhB9SHLM8u/YDezRA2h564Nxbm3jy7L1Tg8d+qQjLE5FKyjqdgb9F8ME5cYGpCQZsg0Vx+rnIffYvLcyBsBbeMb4RC6GmKWZXl+Ez8KX5UeAwBwoSAkQ2DNC5Y0M1M2jb2+nZHoSYJl/JdEGXNYALFBCFRwVVPGhlvnc=
+	 MIME-Version; b=C27HTtkpuETHXNsHTI+YBwhTSW+Qm8Yncq4aMWkLTDHTyetoLqEtcYWyNrL4kdsP+CA2WjT/6NkRFPRpuOaMm5T7h44vyElzJrFLS8C15PboriQ/zf4IPxha1AbOeC9KPu8Iq+v5MoCTc2YOM1rTWQFes471cm2CmgkaVseH8PA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 07B3F1CE0;
-	Mon, 24 Feb 2025 07:15:06 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DBEC2661;
+	Mon, 24 Feb 2025 07:15:08 -0800 (PST)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 97CFB3F6A8;
-	Mon, 24 Feb 2025 07:14:47 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9E8683F6A8;
+	Mon, 24 Feb 2025 07:14:49 -0800 (PST)
 From: Leo Yan <leo.yan@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Mike Leach <mike.leach@linaro.org>,
@@ -45,9 +45,9 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 3/8] coresight: etm4x: Hook pause and resume callbacks
-Date: Mon, 24 Feb 2025 15:14:18 +0000
-Message-Id: <20250224151423.1630639-4-leo.yan@arm.com>
+Subject: [PATCH v1 4/8] coresight: perf: Support AUX trace pause and resume
+Date: Mon, 24 Feb 2025 15:14:19 +0000
+Message-Id: <20250224151423.1630639-5-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224151423.1630639-1-leo.yan@arm.com>
 References: <20250224151423.1630639-1-leo.yan@arm.com>
@@ -59,117 +59,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add callbacks for pausing and resuming the tracer.
+This commit supports AUX trace pause and resume in a perf session for
+Arm CoreSight.
 
-A "paused" flag in the driver data indicates whether the tracer is
-paused.  If the flag is set, the driver will skip starting the hardware
-trace.  The flag is always set to false for the sysfs mode, meaning the
-tracer will never be paused in the case.
+First, we need to decide which flag can indicate the CoreSight PMU event
+has started.  The 'event->hw.state' cannot be used for this purpose
+because its initial value and the value after hardware trace enabling
+are both 0.
+
+On the other hand, the context value 'ctxt->event_data' stores the ETM
+private info.  This pointer is valid only when the PMU event has been
+enabled. It is safe to permit AUX trace pause and resume operations only
+when it is not a NULL pointer.
+
+To achieve fine-grained control of the pause and resume, only the tracer
+is disabled and enabled.  This avoids the unnecessary complexity and
+latency caused by manipulating the entire link path.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- .../coresight/coresight-etm4x-core.c          | 42 ++++++++++++++++++-
- drivers/hwtracing/coresight/coresight-etm4x.h |  2 +
- 2 files changed, 43 insertions(+), 1 deletion(-)
+ .../hwtracing/coresight/coresight-etm-perf.c  | 40 ++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-index 71be566bd117..3a97d81b79db 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-@@ -608,7 +608,8 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
- 		etm4x_relaxed_write32(csa, trcpdcr | TRCPDCR_PU, TRCPDCR);
- 	}
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index ad6a8f4b70b6..29d52386ffbb 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -366,6 +366,18 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+ 			continue;
+ 		}
  
--	rc = etm4_enable_trace_unit(drvdata);
-+	if (!drvdata->paused)
-+		rc = etm4_enable_trace_unit(drvdata);
- done:
- 	etm4_cs_lock(drvdata, csa);
- 
-@@ -866,6 +867,9 @@ static int etm4_enable_perf(struct coresight_device *csdev,
- 	}
- 	drvdata->trcid = (u8)trace_id;
- 
-+	/* Populate pause state */
-+	drvdata->paused = !!READ_ONCE(event->hw.aux_paused);
++		/*
++		 * If AUX pause feature is enabled but the ETM driver does not
++		 * support the operations, clear this CPU from the mask and
++		 * continue to next one.
++		 */
++		if (event->attr.aux_start_paused &&
++		    (!source_ops(csdev)->pause || !source_ops(csdev)->resume)) {
++			dev_err_once(&csdev->dev, "AUX pause is not supported.\n");
++			cpumask_clear_cpu(cpu, mask);
++			continue;
++		}
 +
- 	/* And enable it */
- 	ret = etm4_enable_hw(drvdata);
- 
-@@ -895,6 +899,9 @@ static int etm4_enable_sysfs(struct coresight_device *csdev)
- 	if (ret < 0)
- 		goto unlock_sysfs_enable;
- 
-+	/* Tracer will never be paused in sysfs mode */
-+	drvdata->paused = false;
-+
- 	/*
- 	 * Executing etm4_enable_hw on the cpu whose ETM is being enabled
- 	 * ensures that register writes occur when cpu is powered.
-@@ -1082,10 +1089,43 @@ static void etm4_disable(struct coresight_device *csdev,
- 		coresight_set_mode(csdev, CS_MODE_DISABLED);
+ 		/*
+ 		 * No sink provided - look for a default sink for all the ETMs,
+ 		 * where this event can be scheduled.
+@@ -451,6 +463,15 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
+ 	goto out;
  }
  
-+static int etm4_resume(struct coresight_device *csdev)
++static void etm_event_resume(struct coresight_device *csdev,
++			     struct etm_ctxt *ctxt)
 +{
-+	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct csdev_access *csa = &csdev->access;
-+
-+	if (coresight_get_mode(csdev) != CS_MODE_PERF)
-+		return -EINVAL;
-+
-+	etm4_cs_unlock(drvdata, csa);
-+	etm4_enable_trace_unit(drvdata);
-+	etm4_cs_lock(drvdata, csa);
-+
-+	drvdata->paused = false;
-+	return 0;
-+}
-+
-+static void etm4_pause(struct coresight_device *csdev)
-+{
-+	struct etmv4_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct csdev_access *csa = &csdev->access;
-+
-+	if (coresight_get_mode(csdev) != CS_MODE_PERF)
++	if (!ctxt->event_data)
 +		return;
 +
-+	etm4_cs_unlock(drvdata, csa);
-+	etm4_disable_trace_unit(drvdata);
-+	etm4_cs_lock(drvdata, csa);
-+
-+	drvdata->paused = true;
++	coresight_resume_source(csdev);
 +}
 +
- static const struct coresight_ops_source etm4_source_ops = {
- 	.cpu_id		= etm4_cpu_id,
- 	.enable		= etm4_enable,
- 	.disable	= etm4_disable,
-+	.resume		= etm4_resume,
-+	.pause		= etm4_pause,
- };
+ static void etm_event_start(struct perf_event *event, int flags)
+ {
+ 	int cpu = smp_processor_id();
+@@ -465,6 +486,9 @@ static void etm_event_start(struct perf_event *event, int flags)
+ 	if (!csdev)
+ 		goto fail;
  
- static const struct coresight_ops etm4_cs_ops = {
-diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
-index 1119762b5cec..c3389fdb5d67 100644
---- a/drivers/hwtracing/coresight/coresight-etm4x.h
-+++ b/drivers/hwtracing/coresight/coresight-etm4x.h
-@@ -983,6 +983,7 @@ struct etmv4_save_state {
-  * @state_needs_restore: True when there is context to restore after PM exit
-  * @skip_power_up: Indicates if an implementation can skip powering up
-  *		   the trace unit.
-+ * @paused:	Indicates if the trace unit is paused.
-  * @arch_features: Bitmap of arch features of etmv4 devices.
-  */
- struct etmv4_drvdata {
-@@ -1036,6 +1037,7 @@ struct etmv4_drvdata {
- 	struct etmv4_save_state		*save_state;
- 	bool				state_needs_restore;
- 	bool				skip_power_up;
-+	bool				paused;
- 	DECLARE_BITMAP(arch_features, ETM4_IMPDEF_FEATURE_MAX);
- };
++	if (flags & PERF_EF_RESUME)
++		return etm_event_resume(csdev, ctxt);
++
+ 	/* Have we messed up our tracking ? */
+ 	if (WARN_ON(ctxt->event_data))
+ 		goto fail;
+@@ -550,6 +574,16 @@ static void etm_event_start(struct perf_event *event, int flags)
+ 	return;
+ }
  
++static void etm_event_pause(struct coresight_device *csdev,
++			    struct etm_ctxt *ctxt)
++{
++	if (!ctxt->event_data)
++		return;
++
++	/* Stop tracer */
++	coresight_pause_source(csdev);
++}
++
+ static void etm_event_stop(struct perf_event *event, int mode)
+ {
+ 	int cpu = smp_processor_id();
+@@ -560,6 +594,9 @@ static void etm_event_stop(struct perf_event *event, int mode)
+ 	struct etm_event_data *event_data;
+ 	struct list_head *path;
+ 
++	if (mode & PERF_EF_PAUSE)
++		return etm_event_pause(csdev, ctxt);
++
+ 	/*
+ 	 * If we still have access to the event_data via handle,
+ 	 * confirm that we haven't messed up the tracking.
+@@ -904,7 +941,8 @@ int __init etm_perf_init(void)
+ 	int ret;
+ 
+ 	etm_pmu.capabilities		= (PERF_PMU_CAP_EXCLUSIVE |
+-					   PERF_PMU_CAP_ITRACE);
++					   PERF_PMU_CAP_ITRACE |
++					   PERF_PMU_CAP_AUX_PAUSE);
+ 
+ 	etm_pmu.attr_groups		= etm_pmu_attr_groups;
+ 	etm_pmu.task_ctx_nr		= perf_sw_context;
 -- 
 2.34.1
 
