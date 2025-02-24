@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-529170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB4F0A420A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:31:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3575A420A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:31:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B699189232F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A90631765BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9260623BD0E;
-	Mon, 24 Feb 2025 13:29:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C48248886;
+	Mon, 24 Feb 2025 13:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VKKEziCW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="KhKIvb9Z"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF9824BBF3;
-	Mon, 24 Feb 2025 13:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EADD24169C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403750; cv=none; b=Pfya8cN8C3at3xeM9WGj5IxpKU85nPsJdpN1sWccQWOMTbrH5TifIuZOwsG5HlSw4TE+I4Ol4i/N4VJhn0dd0xkITRpLiy5UeE1XyI/qnZHTQrJwm9JsGba+sizIVct1axu+ScHBG6CeMM8A1Eena7NXb4TktJ5F+r+1UMZtTKM=
+	t=1740403799; cv=none; b=YKacNzvmwoOWppIeX400eRwApXcaLYimTTJ/CwritWI2zZvTzFCIbRILOQlHM3g4bU9TSkvV9UH3tmQWSa5B7dpTRqv1TvL2m2RDVFA3xz35EX3awE59b/fDI8wD0YAjxPgFVfc7ZXXrhbDllxk63EApwNUv0egkHa55I+1hDXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403750; c=relaxed/simple;
-	bh=2gh+0SKB6eYULqFkMFByl++53IUxv4VT6FHUFFS+SVE=;
+	s=arc-20240116; t=1740403799; c=relaxed/simple;
+	bh=slDtCH906N7PpgH3wApVs3Bzv6TSgOrJxd26tIqRjq0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lm76Hf56Fweip2evQ43ejgQSCnSkMD+rHhsLPqaiR7Smgpgz8iRdALrDSf8GnWy8Qq3f+bA44pNABqHLtQKrj4rMZysMNISmLvZHpiPwnx6p9DkI4nfvAww9W5pryekbeeAb3F9ZDLxkTT1k0y9gcy5/WE3y6HW1lpLdc/K9ouM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VKKEziCW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19263C4CEE8;
-	Mon, 24 Feb 2025 13:29:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740403749;
-	bh=2gh+0SKB6eYULqFkMFByl++53IUxv4VT6FHUFFS+SVE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VKKEziCWmiC5gZZnDgJK616eI9Ga/ssByGwITjkZCpEzzZnKrvDBBMZQOg/G+2NdI
-	 HmpJ0NML8Ht00dfZl03yojXc24c3WCOkNt13rYmHN7+l5gBUav1xGClgx+s2EOJ9MU
-	 4wzfCJadTyjJ+/KVExd89W9rnBTJZPCmCq3P4OIV8kzZet4s7Vx3x8+F2THHtNEsNn
-	 ESzZoGpp20e0fhjQnh7TZfyd6kO4QJjm11EpI6ZBKMDhvTEzGanSV/uIOhLMnLNL9p
-	 4BvcyZhZESpm26dTWGe+IT4Z35FRpbkM2/bzWhtXKH5kPELB4NTPKy84bQg7EabVyS
-	 Okc66JUj4vHGQ==
-Message-ID: <03587630-9378-4b67-822a-563379c06655@kernel.org>
-Date: Mon, 24 Feb 2025 14:29:03 +0100
+	 In-Reply-To:Content-Type; b=NZeXTskYf73KFvc1jNbIJcLt8Johrk44JOOZltNtac9Xr9MmBivpjsmmxQeXk0hPTp87qgDsn+Ssm9jmKAbXPQ85e9Q3y/01Qqgmqe9MoLmCxFjqwYFbsvpJ18VpUIvT+gXhEet2tFSRi0XyLLTCHcLh3zSKiWX9NU7ob5MmhHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=KhKIvb9Z; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TNNQD/SLQwg4+HSI7YyhAzrq9gAaQsxuP/bvFj2JKi0=; b=KhKIvb9ZzxC7y3N8MDFX1AKKuI
+	2R0duv2sFx37wVijCSyGjrCD+QL+bkuKwAOStOHfwPAfKLzYcxa2ZbQkWd4wBdtj0fA4ytQwuALYC
+	epVeeSp1/m+ySNaTzkzxOxGXSsJsSRZFatFPJ3b6XhOzKogc3deQtSWs/+n/xJ70bxmrgrsOBvfWR
+	lUoRoTuYF4WgHFl70+nHyACRs26vX3TBk4faxLdZO7QdATzz039oJycz1SyFqBDtVLA6E+EChz3mt
+	I8CiKVGScl7BHSnGa5lIiCRx+bVp0cBGpxHR+QvpF/V6i32QZg8CfLOTECjKpRhkSTw9RrYtFlKfU
+	bJ+D+Gsw==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1tmYWW-00HVPi-M4; Mon, 24 Feb 2025 14:29:34 +0100
+Message-ID: <cfef8bd7-f335-4796-9d4f-93197bb3fc2d@igalia.com>
+Date: Mon, 24 Feb 2025 10:29:26 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,125 +55,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: qcom: geni-se: Rename qcom,geni-se.yaml
- to qcom,geni-se-qup.yaml
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-References: <20250221085439.235821-1-quic_vdadhani@quicinc.com>
- <49fc59ed-9d09-46bd-9ca6-99d3445221f7@kernel.org>
- <f3349d2a-7eba-4865-9b58-0b2e7e57cc92@quicinc.com>
- <ed8f7aee-e5be-453c-b324-e59e90ecee77@kernel.org>
- <428a1384-bc06-4952-a117-d57f5ab6446c@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v5 2/3] drm/sched: Adjust outdated docu for run_job()
+To: phasta@kernel.org, Matthew Brost <matthew.brost@intel.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250220112813.87992-2-phasta@kernel.org>
+ <20250220112813.87992-4-phasta@kernel.org>
+ <12c53d41-21c4-443d-a572-fd22c3cc56ad@igalia.com>
+ <1457e985f88e02cd04b2152d2468a65b7a513e63.camel@mailbox.org>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <428a1384-bc06-4952-a117-d57f5ab6446c@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <1457e985f88e02cd04b2152d2468a65b7a513e63.camel@mailbox.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 24/02/2025 14:25, Viken Dadhaniya wrote:
-> 
-> 
-> On 2/24/2025 3:48 PM, Krzysztof Kozlowski wrote:
->> On 24/02/2025 09:47, Viken Dadhaniya wrote:
->>>
->>>
->>> On 2/21/2025 5:05 PM, Krzysztof Kozlowski wrote:
->>>> On 21/02/2025 09:54, Viken Dadhaniya wrote:
->>>>> The qcom,geni-se.yaml file describes the Qualcomm Universal Peripheral
->>>>> (QUP) wrapper and the common entities required by QUP to run any Serial
->>>>> Engine (SE) as I2C, SPI, UART, or I3C protocol.
->>>>>
->>>>> Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml to better reflect its
->>>>> association with QUP (Qualcomm Universal Peripheral) and the compatible
->>>>> string.
->>>>>
->>>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>>>> ---
->>>>>    .../soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml}       | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>    rename Documentation/devicetree/bindings/soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml} (98%)
->>>>>
->>>>
->>>> That's just churn for no real gain. Not even tested churn.
->>>
->>> That's just churn for no real gain.
->>>
->>> We made this change based on below plan, we think this will be helpful.
->>>
->>> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml. Reason at 2 below.
+Hi Philipp,
+
+On 20/02/25 12:28, Philipp Stanner wrote:
+> On Thu, 2025-02-20 at 10:28 -0300, Maíra Canal wrote:
+>> Hi Philipp,
 >>
->> There is no reason 2 at this point. You split your patchsets
->> incorrectly. At this point this is churn, without gain. No users of this
->> rename, no benefits.
+>> On 20/02/25 08:28, Philipp Stanner wrote:
+>>> The documentation for drm_sched_backend_ops.run_job() mentions a
+>>> certain
+>>> function called drm_sched_job_recovery(). This function does not
+>>> exist.
+>>> What's actually meant is drm_sched_resubmit_jobs(), which is by now
+>>> also
+>>> deprecated.
+>>>
+>>> Remove the mention of the removed function.
+>>>
+>>> Discourage the behavior of drm_sched_backend_ops.run_job() being
+>>> called
+>>> multiple times for the same job.
 >>
->>> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (spi,
->>> i2c, uart) nodes. This will be helpful for the shared schema in the
->>> ongoing changes
+>> It looks odd to me that this patch removes lines that were added in
+>> patch 1/3. Maybe you could change the patchset order and place this
+>> one
+>> as the first.
 >>
->> Then post it, instead of sending something which makes no sense on its own.
+>>>
+>>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>>> ---
+>>>    include/drm/gpu_scheduler.h | 19 +++++++++++++------
+>>>    1 file changed, 13 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/include/drm/gpu_scheduler.h
+>>> b/include/drm/gpu_scheduler.h
+>>> index 916279b5aa00..29e5bda91806 100644
+>>> --- a/include/drm/gpu_scheduler.h
+>>> +++ b/include/drm/gpu_scheduler.h
+>>> @@ -421,20 +421,27 @@ struct drm_sched_backend_ops {
+>>>    
+>>>    	/**
+>>>    	 * @run_job: Called to execute the job once all of the
+>>> dependencies
+>>> -	 * have been resolved. This may be called multiple times,
+>>> if
+>>> -	 * timedout_job() has happened and
+>>> drm_sched_job_recovery() decides to
+>>> -	 * try it again.
+>>> +	 * have been resolved.
+>>> +	 *
+>>> +	 * The deprecated drm_sched_resubmit_jobs() (called from
+>>> +	 * drm_sched_backend_ops.timedout_job()) can invoke this
+>>> again with the
+>>
+>> I think it would be "@timedout_job".
 > 
-> Should I include this change in v3 of the following serial patch?
+> Not sure, isn't referencing in docstrings done with '&'?
+
+`timedout_job` is a member of the same struct, so I believe it should be
+@. But, I'm no kernel-doc expert, it's just my understanding of [1]. If
+we don't use @, it should be at least
+"&drm_sched_backend_ops.timedout_job".
+
+[1] https://docs.kernel.org/doc-guide/kernel-doc.html
+
 > 
-> https://lore.kernel.org/linux-arm-msm/f090d637-1ef1-4967-b5bc-6bfce3d7130e@kernel.org/T/
+>>
+>>> +	 * same parameters. Using this is discouraged because it,
+>>> presumably,
+>>> +	 * violates dma_fence rules.
+>>
+>> I believe it would be "struct dma_fence".
 > 
-> I hope the approach below is fine for you:
+> Well, in this case strictly speaking not IMO, because it's about the
+> rules of the "DMA Fence Subsystem", not about the struct itself.
 > 
-> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml.
+> I'd just keep it that way or call it "dma fence"
+> 
+>>
+>>> +	 *
+>>> +	 * TODO: Document which fence rules above.
+>>>    	 *
+>>>    	 * @sched_job: the job to run
+>>>    	 *
+>>> -	 * Returns: dma_fence the driver must signal once the
+>>> hardware has
+>>> -	 *	completed the job ("hardware fence").
+>>> -	 *
+>>>    	 * Note that the scheduler expects to 'inherit' its own
+>>> reference to
+>>>    	 * this fence from the callback. It does not invoke an
+>>> extra
+>>>    	 * dma_fence_get() on it. Consequently, this callback must
+>>> take a
+>>>    	 * reference for the scheduler, and additional ones for
+>>> the driver's
+>>>    	 * respective needs.
+>>
+>> Would it be possible to add a comment that `run_job()` must check if
+>> `s_fence->finished.error` is different than 0? If you increase the
+>> karma
+>> of a job and don't check for `s_fence->finished.error`, you might run
+>> a
+>> cancelled job.
+> 
+> s_fence->finished is only signaled and its error set once the hardware
+> fence got signaled; or when the entity is killed.
 
-I still do not see any need nor justification for above.
+If you have a timeout, increase the karma of that job with
+`drm_sched_increase_karma()` and call `drm_sched_resubmit_jobs()`, the
+latter will flag an error in the dma fence. If you don't check for it in
+`run_job()`, you will run the guilty job again.
 
-> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (i2c, 
-> spi, uart) nodes.
+I'm still talking about `drm_sched_resubmit_jobs()`, because I'm
+currently fixing an issue in V3D with the GPU reset and we still use
+`drm_sched_resubmit_jobs()`. I read the documentation of `run_job()` and
+`timeout_job()` and the information I commented here (which was crucial
+to fix the bug) wasn't available there.
 
-Look how other common qcom schemas are named :/
+`drm_sched_resubmit_jobs()` was deprecated in 2022, but Xe introduced a
+new use in 2023, for example. The commit that deprecated it just
+mentions AMD's case, but do we know if the function works as expected
+for the other users? For V3D, it does. Also, we need to make it clear 
+which are the dma fence requirements that the functions violates.
 
+If we shouldn't use `drm_sched_resubmit_jobs()`, would it be possible to
+provide a common interface for job resubmission?
 
-Best regards,
-Krzysztof
+Best Regards,
+- Maíra
+
+> 
+> In any case, signaling "finished" will cause the job to be prevented
+> from being executed (again), and will never reach run_job() in the
+> first place.
+> 
+> Correct me if I am mistaken.
+> 
+> Or are you suggesting that there is a race?
+> 
+> 
+> P.
+> 
+>>
+>>> +	 *
+>>> +	 * Return:
+>>> +	 * * On success: dma_fence the driver must signal once the
+>>> hardware has
+>>> +	 * completed the job ("hardware fence").
+>>
+>> A suggestion: "the fence that the driver must signal once the
+>> hardware
+>> has completed the job".
+>>
+>> Best Regards,
+>> - Maíra
+>>
+>>> +	 * * On failure: NULL or an ERR_PTR.
+>>>    	 */
+>>>    	struct dma_fence *(*run_job)(struct drm_sched_job
+>>> *sched_job);
+>>>    
+>>
+> 
+
 
