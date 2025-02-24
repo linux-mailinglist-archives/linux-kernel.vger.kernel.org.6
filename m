@@ -1,90 +1,127 @@
-Return-Path: <linux-kernel+bounces-528169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87986A4147A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:22:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4084A4147E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:40:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0893B2B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1184165670
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374441A317A;
-	Mon, 24 Feb 2025 04:22:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FD91B532F;
+	Mon, 24 Feb 2025 04:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vEXYWsVN"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kizl+SjV"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52726AF3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86DB41A3174
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740370939; cv=none; b=jom8meDxksXbmDUS+p3vI6peR7sQ17lOP58x0L5OFL73X4epJwfYUV/Izsg6lCM+w+SmziKV4FG3OAizOrSloNpAwguCJ5976M+9MuxFUmDrram4yi5cLv+8iZfRaJHij8n7yUr1WSJbCU530W0wOA5H0ERDF0QbgUhauZXDgyM=
+	t=1740371913; cv=none; b=f0m1EFgK0UpNFMj0i5GUKvz8hg0Zo6hGfEMYeABy3hvNTrh1E7y6kJGZAboaaeeVQAryHJO7jwdWQIIYWhZdrxgkUlK1ssOwPQsse5WHtKPHjpEve8Sa9eBxyuYGS1bqUoRI2u88RbFTq2f2DjbqZO53FVV5vPkEvmVy+dVWCh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740370939; c=relaxed/simple;
-	bh=N6SyPydiGOD/+ogCvmw7y2AhfQmq28mCwgAz4HdiQR4=;
+	s=arc-20240116; t=1740371913; c=relaxed/simple;
+	bh=Kxoqux8ig1bneZc8TPbOtwtdCXGrWd1siptghYniyZ8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbuEfzkpnogRzDFDXQCsXWeucMeqeMfolR6u9Hk0kv1C8AXZj24qUuQ1j8AYxzAyU+kVk9bOtM9fJavPr1NZhLUCDvimZ6UjTZAvwQAqwX8ixv7R7PCnLmxXMkak9NyDeLN2XQOhejAtjSyEZiN+CwLQY5zq4D0l+1cX59oLiz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vEXYWsVN; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=iaczR1coIXW0K2GHIHJRj7av80M15T1OEBjJcS+PABI=; b=vEXYWsVNZmSC6fJflbK4roRpzw
-	COLzWOzK9Cu+LfmKoID6WpMtt7xfOUn0/Vo58r2NfQ7lkx69qtRCSwBpoXZK4wNgVmHM0x/iQO+12
-	eEArtR/elg9oz3meMrPGoQN3A0fznJvC464+7SwjSIpPj/BThhBdNHkf6RXA5Iw47mCs7T2Ze0ARi
-	PwqN0WJnk2/PQDp3AUXFvuxO4YczRKkBukMXuFPqA8bhzQ+CulUh7coT6TTMgi+z5kTqlA9TJ3VRg
-	wcOlppGvFehzkQ1lNm823O3gSVpAFmOKVc8zXWFWNDFbMNtx4AxcnCAGzd898HuXhVvbhbpf2pp7+
-	+qJb1K3w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmPyo-00000005nw2-2pFg;
-	Mon, 24 Feb 2025 04:22:06 +0000
-Date: Mon, 24 Feb 2025 04:22:06 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: mawupeng <mawupeng1@huawei.com>
-Cc: 21cnbao@gmail.com, akpm@linux-foundation.org, david@redhat.com,
-	kasong@tencent.com, ryan.roberts@arm.com, chrisl@kernel.org,
-	huang.ying.caritas@gmail.com, schatzberg.dan@gmail.com,
-	hanchuanhua@oppo.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
- found during do_swap_page
-Message-ID: <Z7vz7gBrbtE4foSI@casper.infradead.org>
-References: <20250222024617.2790609-1-mawupeng1@huawei.com>
- <Z7lIYzLSACbWxlEM@casper.infradead.org>
- <2c7dfa44-266a-4aa6-9401-7528368f171e@huawei.com>
- <Z7qK-NFJsqcV0rPw@casper.infradead.org>
- <CAGsJ_4xHaaf_DHsFZ_zEqEd3Nb9C=7JJjy5gGFo+RhEhQYX_tg@mail.gmail.com>
- <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KO4b/FNbpQ8ezNI91m7gUWT8xcm2ydCVn1njwLvC0mibBnAHF0bx3G/dqk/mg+Dzksk/3rG3onQipX+35I3L+Vb3iF8oTZrMEDPf/ijBJABzgyyPKyGTTF+9ur30nkj448ck/5WPKpGJqRwc2fY787zOl7CsxKa+5nWTvi5h0io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kizl+SjV; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-221ac1f849fso211425ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 20:38:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740371911; x=1740976711; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QXOPbjowj6Hzwuap/XS84BFQBW4l8rdr65xne9mv6JE=;
+        b=kizl+SjVEdYyYRBc+wlQ40LGSLSjwyo74CUKXBJYTdQLSFnF1eF2ElZxbaI8cyiv2H
+         iKXCmR1sc2skCyXMiEs3MdQookieYK7/EBInHWlvPT5C6w9HvfnA2bjVRfpcm2dB/PlC
+         jqusrzMadkjxeehlc49pXSVi2cgRs92EY+VeMpFYaQ3PqgXCAzyx4GeD0kTbfVG+FcEC
+         IFbIxzFqvCW/+BUyLaXZPemWIpWDcDlqyrJFIRMj0HKUQmNJdFXdafx1TUHwhGlRiEco
+         GXutFi16dxX625XC5c2xILjip9Vdci3aL2bkBEaM95A0f/E1sSVDhu3PPoiAnFWGjxc6
+         tS+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740371911; x=1740976711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QXOPbjowj6Hzwuap/XS84BFQBW4l8rdr65xne9mv6JE=;
+        b=AWAcZbDFtV6XzK1cA2aw44b5qXAB11LSYVQbyQ8dFbkvV2EQHrp4M26B8Arnruf+9L
+         kN74OMVKTAAVC7d/fYfYHltFFCVWIFbuzxlWhIy6V2UBlzUNKc/O4yqHJ0fVWBO0Tt80
+         w1i9aQbyctFu6PGK2xHNQiXNHYOYmNBuloXMFRrobaJXsXOeMLCndGSnFrWMV8pPi8uP
+         k3o64NdcAz5wWwp0UoyLDbt7AHCdbHt23hdotc6XKUfN3WQ77ICgvEoeb8DwXnEBQxan
+         EfU2WKAx9Xl3ba19FSageKeDn7zTi8dyr/C+dYBabp1cefdctatIzKYVVh5SRk6RdP58
+         uJug==
+X-Forwarded-Encrypted: i=1; AJvYcCWtZGb+gddQwrW/UAuhg0fDUfwMkD+zSrNrvLpZg0sPNneU/1yzQ4qhPdwtKM1jzrSpvxxsKlQ5rI5xJFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUPRn3FSzxvKQbqDKWUAzekZUNSB0ZHmckaiYgBsfjTd9TTKse
+	qF09dEOKlMHl/daSxAWy5APQ6D/qopXcTJN8PZsIlL4prK6nUaxcf5C3t+e/hg==
+X-Gm-Gg: ASbGncsiAhW4v27tIFkRavP68rV19fnWQzvn15f+H4rDewumKErJS/six/PtgAWyF3a
+	YFTRonekBTrL6wkVy8QfWJpqMS4+WqIVk3n3QEXptlost1pfGLavs3uRXhdILnbA6JmRFNqvJuH
+	hYNy7AnZP5LSh7sZNcOPf2bAfcnbcB9RGweODswZXj0ne0CC8YcPvjbPv5jRElsL+0KfaoJl1cO
+	Ab8ecw6gAqc2RfwEb3NRPWF28XlFDpMRgeZnK7Y2E4gJc6f436trIwOq189f+vTFMkmPuoH/5iJ
+	Ww9+AkV2KWWONFIYIU/kbDsssTN68b9WSg2lOSf3XcQY5RIwxTcsTcJdDs/uyyI=
+X-Google-Smtp-Source: AGHT+IEdLGzG2X3YEfsIyog+f9j0aXsArsFeUuMcB+n8G7DuxjBKyqLer9ZGTISS6pMA8Im0wRP9Ug==
+X-Received: by 2002:a17:902:da8c:b0:216:21cb:2e14 with SMTP id d9443c01a7336-2226cc46c3amr2333105ad.21.1740371910429;
+        Sun, 23 Feb 2025 20:38:30 -0800 (PST)
+Received: from google.com (169.224.198.35.bc.googleusercontent.com. [35.198.224.169])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-add540f75f7sm15349070a12.46.2025.02.23.20.38.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 20:38:29 -0800 (PST)
+Date: Mon, 24 Feb 2025 04:38:19 +0000
+From: Pranjal Shrivastava <praan@google.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, corbet@lwn.net, will@kernel.org,
+	joro@8bytes.org, suravee.suthikulpanit@amd.com,
+	robin.murphy@arm.com, dwmw2@infradead.org, baolu.lu@linux.intel.com,
+	shuah@kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-doc@vger.kernel.org,
+	eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+	mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+	smostafa@google.com, ddutile@redhat.com, yi.l.liu@intel.com,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v7 14/14] iommu/arm-smmu-v3: Set MEV bit in nested STE
+ for DoS mitigations
+Message-ID: <Z7v3u55JNDqveAuD@google.com>
+References: <cover.1740238876.git.nicolinc@nvidia.com>
+ <2b088fe8d2c7e692426b0d1f58d4f2c12ecb907e.1740238876.git.nicolinc@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
+In-Reply-To: <2b088fe8d2c7e692426b0d1f58d4f2c12ecb907e.1740238876.git.nicolinc@nvidia.com>
 
-On Mon, Feb 24, 2025 at 09:27:38AM +0800, mawupeng wrote:
-> On 2025/2/23 14:18, Barry Song wrote:
-> > On Sun, Feb 23, 2025 at 3:42 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >> On Sat, Feb 22, 2025 at 11:59:53AM +0800, mawupeng wrote:
-> >>> On 2025/2/22 11:45, Matthew Wilcox wrote:
-> >>>> On Sat, Feb 22, 2025 at 10:46:17AM +0800, Wupeng Ma wrote:
-> >>>>> Digging into the source, we found that the swap entry is invalid due to
-> >>>>> unknown reason, and this lead to invalid swap_info_struct. Excessive log
-> >>>>> printing can fill up the prioritized log space, leading to the purging of
-> >>>>> originally valid logs and hindering problem troubleshooting. To make this
-> >>>>> more robust, kill this task.
+On Sat, Feb 22, 2025 at 07:54:11AM -0800, Nicolin Chen wrote:
+> There is a DoS concern on the shared hardware event queue among devices
+> passed through to VMs, that too many translation failures that belong to
+> VMs could overflow the shared hardware event queue if those VMs or their
+> VMMs don't handle/recover the devices properly.
 > 
-> Yes, log flooding is not the main issue here, endless #PF is rather a more serious
-> problem.
+> The MEV bit in the STE allows to configure the SMMU HW to merge similar
+> event records, though there is no guarantee. Set it in a nested STE for
+> DoS mitigations.
+> 
+> In the future, we might want to enable the MEV for non-nested cases too
+> such as domain->type == IOMMU_DOMAIN_UNMANAGED or even IOMMU_DOMAIN_DMA.
+> 
+> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 1 +
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 2 ++
+>  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         | 4 ++--
+>  3 files changed, 5 insertions(+), 2 deletions(-)
+> 
 
-Then don't write the report as if the log flooding is the real problem.
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
+
+Thanks,
+Praan
 
