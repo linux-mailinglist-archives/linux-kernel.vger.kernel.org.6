@@ -1,209 +1,195 @@
-Return-Path: <linux-kernel+bounces-530126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC1EA42F6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:46:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A593A42F6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46703189BBD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:46:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BFD1761D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A6E1C84B2;
-	Mon, 24 Feb 2025 21:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676A11DE2C1;
+	Mon, 24 Feb 2025 21:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iBJfrgcg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcCZXU3P"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7525227
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB76E1917D0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433578; cv=none; b=BHhalcc+pzdm5M+mZ5JBp8OqiGnx8qmQR5nSNI42vHAB8IpIEnQtyvz7TqDYBzcOWDcGf5mtgyXrNX6YPL4kEpSC2P2aARaYJv7AVkFCFUSemsudyaihSfqcoUPLH3xVdp+x7gR5rjhiC+jPOhBwlObc2cf8hfIYqdyEep6z/kA=
+	t=1740433578; cv=none; b=pE0BHN9BbzXuD7NNr+U+p3spppRPATCgKFnnqVkCpeiMOrPHkG+/32OR0MWOifIbp48G7Ek3IGAEOFCqTF5vY6qpeGvkvmOstmvTHaY8QepZtGhVCibdY1US41LDNDbgJCf8aAoPRzermELWpdidFr9LuhohFPaD0ebIY44Vves=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740433578; c=relaxed/simple;
-	bh=e+kYByMXNeDUALN2Jm62hIYRxASWL87Qinb3VWV2j40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zek0ff24X4RawSQlbuZhEEmqAxvdI9WCrDxhVsGlwi9uaMTUgV3BBGxsu7U1Ao61bBT1iXqweNBd6RVZnWrIuJo1EY8Ox85M/MxXBOAubjCxOwXuQgHL0AyXgG2G9rvxu5E+rZlEmZY037Rmta5DGQ2Huy5zDdNyq+57KcrRJzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iBJfrgcg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740433575;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/djJ+PtX4FDl6jsu51ShmCbl9JrXbgv9LkcxGG2wMj8=;
-	b=iBJfrgcghoMt4jVMUZumxVDUhUa1I0Ax8r99o09wcJ8HEBmm1WOrQdyz1NGw41ktqLjbU8
-	6vPyOrL65yBmFPLJ7A1JwOc7PPKwCrO2djAs8CKevsCq3OwYZxpTx5FUyt67E2jYPOzhDy
-	z1zd2Dtobb4Ij6ulDb18D8EBrK22NOQ=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-364-FCOE6UKtNbuj3xIeUzYY4A-1; Mon, 24 Feb 2025 16:46:14 -0500
-X-MC-Unique: FCOE6UKtNbuj3xIeUzYY4A-1
-X-Mimecast-MFC-AGG-ID: FCOE6UKtNbuj3xIeUzYY4A_1740433573
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5e0573b9f60so3162953a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:46:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433573; x=1741038373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	bh=kFKzAhPmTXXMnWDVyZmQ5/+mLm1vMdPa8LDW37rHS/8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Jo59fm7HPvnGqfhQ0kgyj33v1y9O0vw+2HP8KQ+VgMuwFnw5RLIiAnYb6fFKeUA6KNghcXfAKrWsmq6IqeYhXyPcI72R0H+iTW9ZO6UAwljankWoesIFZw7YikDuZDb0cpDqaya/rTlhu7WRHfy6yVEQ68ouDjC3WnVgbFqNAqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcCZXU3P; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38f2f748128so2210399f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:46:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740433574; x=1741038374; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/djJ+PtX4FDl6jsu51ShmCbl9JrXbgv9LkcxGG2wMj8=;
-        b=GXV3njEknDks1wWZJQU6CS9ZWkOokJppw9U1Oy3I6zQ2dSvSM2yGeLqA2F8tgcRbbl
-         C7M7gxy9NP4bF66yBBD47Pr14NaBHgnLlgBr+cfkqd29eHwE/KksQ5agQa2vWlFjYKoT
-         mVJvkKX4Oze+HzwfQQqopRtMtf0ft3rl7nMH5DieXQGiQEOZYHZh/IPA20ECEZnsAmcq
-         m5R96qs4D+ZwNlqgwS4qBz9AA+WcxxAb3FY2TjHXMBh1xpjKuDew9e3agEuEnbnzZOVk
-         PHbyfh7QAZC0DzKWVwyDBQ6vfNI2470Db+bYXrv1BksXEQDPXibBPTN0+8Pyy8tvgJmg
-         PYzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Fo4cRu5tf+vIvI176FGA7n0AZwA7AxIiqAuEky02GzF1zuuWE4XU2+T3gJ0RqGgucSLZmjSInf2vt+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhwRdasCfKm2OBNbUEEKtSmPxJW8aofjUD72UpO+Nbrsfb+uDO
-	JNpvGo893rqtSE/kevyp4BSMU5IeyDlR7aCWkDmJdKeNCb9YnUqNRglWbB07BmTVwziWBeI65G1
-	nJBt0t7JIRDuFZwiENgTAQXRkSp57Ty8h7DVYEKoKGkAFifz0BbgNR4YDNXDhqA==
-X-Gm-Gg: ASbGnctr2RHIF2zBZmn7Y99vOrWdpetiILJnfoSDPHFx8juSSepIXzGOoR1PBtQz4OJ
-	IysmssUQTNW7p/5L/AETvZYHZBoiGhQsKBIod0zFvAO83P+IlSJEmAtTmvXsU6TQj8vJnHK9MwD
-	QBXM1GKMPkCBWOxU30feWVmcOYAlNiZ/os828s96Bk+o0WlZl6gCOgacgxMMqCyQQJasLrI13kN
-	qu7ZoNg667FLc7KkdVNK8oitGropMcbMxFZjqzxMPkwL0lvs89YCQQY6pyRb6HmGb+GZI+mG9Em
-	clA8heQ2zA==
-X-Received: by 2002:a17:906:399b:b0:abe:cb87:9599 with SMTP id a640c23a62f3a-abecb8796b2mr187043666b.44.1740433572896;
-        Mon, 24 Feb 2025 13:46:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE7OyvLnm+e7goejV5zHakF8+COjfdjxx8Ny74h+t1TgYk1yctpE21hRJ1pnICAkf/LM9wawg==
-X-Received: by 2002:a17:906:399b:b0:abe:cb87:9599 with SMTP id a640c23a62f3a-abecb8796b2mr187042466b.44.1740433572546;
-        Mon, 24 Feb 2025 13:46:12 -0800 (PST)
-Received: from redhat.com ([2a0d:6fc7:441:1929:22c5:4595:d9bc:489e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cd4c23sm28274366b.11.2025.02.24.13.46.10
+        bh=/zz5ds8lRnRaiH9r8UdGpt6YrY5Z2iWTQiQ3X4cCqYo=;
+        b=GcCZXU3P48ZW/7dHBcc+a81vM47dtZWYGmCeJ4+fCVaqTQV+Kt27e3kuvZfYyTdXr8
+         OcbkxYIvIkCMd1O4avSomnv4aoeqk7W2R0ALAGi6UElMWbvuJxIJdF0jMSI0sOSMU4Dy
+         qDeX7Ppx2s4VntZ2fXOF7ACVjTRoVsxmp5U8qHAYiDQQvTLRT/+8TtulVvg52swOVV8j
+         L6Ic76ZRda3cU5srDtNCmRuZDIPPg0gdBFqcOIiJ6p63GLd/iXj+W9l0GFsMHx3O7xEf
+         knQCSl6BpMMp9HrguVgx6F9lpOaAKrRBfXZDveKvUb8XrCbXcQuMeSbkKHORTVFAUxaK
+         aV3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740433574; x=1741038374;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/zz5ds8lRnRaiH9r8UdGpt6YrY5Z2iWTQiQ3X4cCqYo=;
+        b=w1Yz1y0VXbqgiXOo+JB0+Zh+27KXfvxKDDDs5zf71pkMEBAxaNiRTKrjFAOR+MT5P6
+         1P51YWFq6BeALTKi0qfQGqOEw/yrtW0MZvW6TYFuao6T/ZktSG2ryo3nGvXV1q3hS7Pk
+         itEEpO+TbT77Fuuik0eeUQpMKQUjac1fhVt9J0/WYAucj6CezLK8Jnas2GwsoTQVsQHM
+         iAMFRs5KGvMSRD+Cg6200/niG2wrEVNjGUqc3U0Z1thWBXnJLzSCmYCIS+LiyTbHJ8rl
+         ZIRY4ezslIJz714TtdcX+K/iLkoD8WJRX5fzrlbl/qwiTXJVqVB3mL9AoccM0T2KwZyq
+         /fLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXW5Zrv3Eg3aBzUwNFkSzUfbzhtZOT1nmduK1OXQyW8gESeifqS/YBbesTFjwd+lq1lLWCKJ1oHkfvMJRM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVHbiCp7aoTuoBc+B1jMeTff4M5hiq+9GZFtKmQbU395yTBfKV
+	oQnIttc/PiynPfCEE/fD/XBDlMnZop33s9qGNkVkhnRlkNWwyHef
+X-Gm-Gg: ASbGncsU7rYKQWZdOliOsq0rXTc7XbABTcLpJWzdbnCdw0rRlVdVk2PHop1dgz/iRD+
+	hELf8YtMrS0DM9a+heo5VkyO+t02eaw+5h0oAMTFM/nOcEhKaS7Ef/C8PY5OCfEJduuj6r4hFgb
+	jge3Xa+b5HPvuL8XRWkMERMlSkiWQ3INdttQ0TCqNV60YlG+XDhJlkcx/XwfoPE3yaOHglwEpxt
+	4uBTMl2RSqgKhSB6fXf+fAjkQde55Xz4Ukt//QUic1w0MAs/HQ6y/0azVaJSVUeIydGeB+vxuvc
+	oeo6qVFwrxs4A2qaWUgKOOINGOnUuQphqppx0b/ZYvLY7jOXb6Tpo7DxPK02sCf9
+X-Google-Smtp-Source: AGHT+IFY029Ik5cmsibefwaM68QoV1oPyoyiE0W+r/Ksx9leN+tUY5NENUNsCrOL8ol0vtnTFdrfZQ==
+X-Received: by 2002:a05:6000:1789:b0:38f:295e:6331 with SMTP id ffacd0b85a97d-390cc605164mr516806f8f.19.1740433573905;
+        Mon, 24 Feb 2025 13:46:13 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd8e72fcsm185516f8f.80.2025.02.24.13.46.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 13:46:11 -0800 (PST)
-Date: Mon, 24 Feb 2025 16:46:08 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Cindy Lu <lulu@redhat.com>
-Cc: jasowang@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com,
-	linux-kernel@vger.kernel.org,
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
-Message-ID: <20250224164312-mutt-send-email-mst@kernel.org>
-References: <20250223154042.556001-1-lulu@redhat.com>
- <20250223154042.556001-6-lulu@redhat.com>
+        Mon, 24 Feb 2025 13:46:13 -0800 (PST)
+Date: Mon, 24 Feb 2025 21:46:12 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+ scott.d.constable@intel.com, joao@overdrivepizza.com,
+ andrew.cooper3@citrix.com, jpoimboe@kernel.org, jose.marchesi@oracle.com,
+ hjl.tools@gmail.com, ndesaulniers@google.com, samitolvanen@google.com,
+ nathan@kernel.org, ojeda@kernel.org, kees@kernel.org,
+ alexei.starovoitov@gmail.com, mhiramat@kernel.org, jmill@asu.edu
+Subject: Re: [PATCH v4 06/10] x86/traps: Decode LOCK Jcc.d8 #UD
+Message-ID: <20250224214612.5569d62c@pumpkin>
+In-Reply-To: <20250224124200.486463917@infradead.org>
+References: <20250224123703.843199044@infradead.org>
+	<20250224124200.486463917@infradead.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223154042.556001-6-lulu@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-better subject:
+On Mon, 24 Feb 2025 13:37:09 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-vhost: uapi to control task mode (owner vs kthread)
-
-
-On Sun, Feb 23, 2025 at 11:36:20PM +0800, Cindy Lu wrote:
-> Add a new UAPI to enable setting the vhost device to task mode.
-
-better:
-
-Add a new UAPI to configure the vhost device to use the kthread mode
-
-
-> The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
-> to configure the mode
-
-... to either owner or kthread.
-
-
-> if necessary.
-> This setting must be applied before VHOST_SET_OWNER, as the worker
-> will be created in the VHOST_SET_OWNER function
+> Because overlapping code sequences are all the rage.
 > 
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Reviewed-by: Kees Cook <kees@kernel.org>
 > ---
->  drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
->  include/uapi/linux/vhost.h | 18 ++++++++++++++++++
->  2 files changed, 40 insertions(+), 2 deletions(-)
+>  arch/x86/include/asm/bug.h |    2 ++
+>  arch/x86/kernel/traps.c    |   26 +++++++++++++++++++++++---
+>  2 files changed, 25 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index d8c0ea118bb1..45d8f5c5bca9 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev, struct vhost_iotlb *umem)
->  	int i;
->  
->  	vhost_dev_cleanup(dev);
-> -
-> +	dev->inherit_owner = true;
->  	dev->umem = umem;
->  	/* We don't need VQ locks below since vhost_dev_cleanup makes sure
->  	 * VQs aren't running.
-> @@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigned int ioctl, void __user *argp)
->  {
->  	struct eventfd_ctx *ctx;
->  	u64 p;
-> -	long r;
-> +	long r = 0;
->  	int i, fd;
-> +	u8 inherit_owner;
->  
->  	/* If you are not the owner, you can become one */
->  	if (ioctl == VHOST_SET_OWNER) {
->  		r = vhost_dev_set_owner(d);
->  		goto done;
->  	}
-> +	if (ioctl == VHOST_FORK_FROM_OWNER) {
-> +		/*inherit_owner can only be modified before owner is set*/
-> +		if (vhost_dev_has_owner(d)) {
-> +			r = -EBUSY;
-> +			goto done;
-> +		}
-> +		if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
-> +			r = -EFAULT;
-> +			goto done;
-> +		}
-> +		/* Validate the inherit_owner value, ensuring it is either 0 or 1 */
-> +		if (inherit_owner > 1) {
-> +			r = -EINVAL;
-> +			goto done;
-> +		}
-> +
-> +		d->inherit_owner = (bool)inherit_owner;
->  
-> +		goto done;
-> +	}
->  	/* You must be the owner to do anything else */
->  	r = vhost_dev_check_owner(d);
->  	if (r)
-> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> index b95dd84eef2d..8f558b433536 100644
-> --- a/include/uapi/linux/vhost.h
-> +++ b/include/uapi/linux/vhost.h
-> @@ -235,4 +235,22 @@
+> --- a/arch/x86/include/asm/bug.h
+> +++ b/arch/x86/include/asm/bug.h
+> @@ -17,6 +17,7 @@
+>   * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
 >   */
->  #define VHOST_VDPA_GET_VRING_SIZE	_IOWR(VHOST_VIRTIO, 0x82,	\
->  					      struct vhost_vring_state)
+>  #define INSN_ASOP		0x67
+> +#define INSN_LOCK		0xf0
+>  #define OPCODE_ESCAPE		0x0f
+>  #define SECOND_BYTE_OPCODE_UD1	0xb9
+>  #define SECOND_BYTE_OPCODE_UD2	0x0b
+> @@ -26,6 +27,7 @@
+>  #define BUG_UD1			0xfffd
+>  #define BUG_UD1_UBSAN		0xfffc
+>  #define BUG_EA			0xffea
+> +#define BUG_LOCK		0xfff0
+>  
+>  #ifdef CONFIG_GENERIC_BUG
+>  
+> --- a/arch/x86/kernel/traps.c
+> +++ b/arch/x86/kernel/traps.c
+> @@ -97,6 +97,7 @@ __always_inline int is_valid_bugaddr(uns
+>   * If it's a UD1, further decode to determine its use:
+>   *
+>   * FineIBT:      ea                      (bad)
+> + * FineIBT:      0f 75 f9                lock jne . - 6
+                    ^^ nibble swapped
+
+	David
+
+>   * UBSan{0}:     67 0f b9 00             ud1    (%eax),%eax
+>   * UBSan{10}:    67 0f b9 40 10          ud1    0x10(%eax),%eax
+>   * static_call:  0f b9 cc                ud1    %esp,%ecx
+> @@ -106,6 +107,7 @@ __always_inline int is_valid_bugaddr(uns
+>  __always_inline int decode_bug(unsigned long addr, s32 *imm, int *len)
+>  {
+>  	unsigned long start = addr;
+> +	bool lock = false;
+>  	u8 v;
+>  
+>  	if (addr < TASK_SIZE_MAX)
+> @@ -114,12 +116,29 @@ __always_inline int decode_bug(unsigned
+>  	v = *(u8 *)(addr++);
+>  	if (v == INSN_ASOP)
+>  		v = *(u8 *)(addr++);
+> -	if (v == 0xea) {
 > +
-> +/**
-> + * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost device
-> + *
-> + * @param inherit_owner: An 8-bit value that determines the vhost thread mode
-> + *
-> + * When inherit_owner is set to 1:
-> + *   - The VHOST worker threads inherit its values/checks from
-> + *     the thread that owns the VHOST device, The vhost threads will
-> + *     be counted in the nproc rlimits.
-> + *
-> + * When inherit_owner is set to 0:
-> + *   - The VHOST worker threads will use the traditional kernel thread (kthread)
-> + *     implementation, which may be preferred by older userspace applications that
-> + *     do not utilize the newer vhost_task concept.
-> + */
-> +#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
+> +	if (v == INSN_LOCK) {
+> +		lock = true;
+> +		v = *(u8 *)(addr++);
+> +	}
 > +
->  #endif
-> -- 
-> 2.45.0
+> +	switch (v) {
+> +	case 0x70 ... 0x7f: /* Jcc.d8 */
+> +		addr += 1; /* d8 */
+> +		*len = addr - start;
+> +		WARN_ON_ONCE(!lock);
+> +		return BUG_LOCK;
+> +
+> +	case 0xea:
+>  		*len = addr - start;
+>  		return BUG_EA;
+> -	}
+> -	if (v != OPCODE_ESCAPE)
+> +
+> +	case OPCODE_ESCAPE:
+> +		break;
+> +
+> +	default:
+>  		return BUG_NONE;
+> +	}
+>  
+>  	v = *(u8 *)(addr++);
+>  	if (v == SECOND_BYTE_OPCODE_UD2) {
+> @@ -322,6 +341,7 @@ static noinstr bool handle_bug(struct pt
+>  		fallthrough;
+>  
+>  	case BUG_EA:
+> +	case BUG_LOCK:
+>  		if (handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+>  			handled = true;
+>  			break;
+> 
+> 
+> 
 
 
