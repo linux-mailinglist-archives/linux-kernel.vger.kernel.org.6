@@ -1,123 +1,179 @@
-Return-Path: <linux-kernel+bounces-529954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF0BA42CE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:41:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3A0A42CE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A349F177A29
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A295F7A71BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B997020550F;
-	Mon, 24 Feb 2025 19:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF01204F9B;
+	Mon, 24 Feb 2025 19:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ELpyTyVR"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m6Q+tg4/"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C798200138;
-	Mon, 24 Feb 2025 19:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7DD1F3D45
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740426095; cv=none; b=LAvYWZICHALdBMOGJks6oy3HupBsqwg6ZFFMmbMpFvAscXwlN2jMjlyVpAAV+Zjn9CDYUImyisSGKEGGVi9tNoNPkraXHM+wjMGx5DW9JT6KeqjA8e8nKGVdn6QYD0ETAhNn9eYPDZ5AOcQwdgl8XffrY5c06Zr/YphPa2AHoLU=
+	t=1740426164; cv=none; b=YyqOSBvsG47xSGqXdl7aUaEecyMFyXUEdNn8povLPNvfCZZYAckdH7UmxTxXi91isdAwkahP7e2xDz/EjSb2KLAYj0uIa/Hwci+7XjYWbP3EMR9PVppOo3FlCI4+n+oNcF7iOGl6jsQlLhI6RegEon2hRDDtw0eAeaDBMP8a9Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740426095; c=relaxed/simple;
-	bh=pIlWuwhv32Fy8JMLlSg+tD+gTMaQUC3yphF4Z1NQYtA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DTCrC2POp98Bzt+ylqdjfzL4gtsybEuNHCbKqMW3gu+UpV3vhyIeO0La8UTo+CKNaHaYj2PrsntHGphNrJamVwbl5YgjGpna4QKmyypJL3a1HjP5LtupAYeyGvjILmJLB2fq9pYghsrI+ZBmmwJ2ONda1zF5T5tkGDdr/T2vKAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=ELpyTyVR; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-439946a49e1so30191255e9.0;
-        Mon, 24 Feb 2025 11:41:33 -0800 (PST)
+	s=arc-20240116; t=1740426164; c=relaxed/simple;
+	bh=KQ4mgA7vR3HIK5onJDgr5Ls9mIKasO7wOQLm1ymJX6g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y9MNWdleXTe/LnOqnG8ie7oKXZWa/LdaDKjzxfZ7IzmRFy8jADBQo2moPNFEaZDTXZX6vkISbF7ITs7FT+q/T1p5yvhCSNqR9wH5oM7Ch75HzbpboDAMhocN02p64nLHmvSeybfummXUjH5+tojH6LcxrbU1jwzN+7R756XD4H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m6Q+tg4/; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-7231e264735so615100a34.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:42:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740426092; x=1741030892; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B+zMpSCX50TzWUIveAEPWDT1S6dupXFUyCvXOBadv3M=;
-        b=ELpyTyVRwzkwvsp08HkUFAVELXyoQ4yH2MtqDJFbQUVnr+bEO4jjA5WCgG0AzOGk2H
-         L9I9h5HDr7gp54m0kO1Zsl+sH13VbX/3Gx0ivDcg7vTCQ2CDnecLZYsbmuWBF445LQK0
-         sbgrxWcQYUGiDqCeC/wNEkCVvI3IGgsGImF95j8I4kMaYKgg7pmcwhwcu0m7ZZ1en4He
-         v1cR4g0G3IzyR7r/ZvVL9BTKE95BHlDkPq4/WhSnGmS/+WLgDfiqo+uIjk9aUNrZSQNd
-         VUtpTA147nc77oiO7gQ/UIgbdSYFv8rCsybYzI2ty/DfLJnyCgKKPBtdqg2Bt6awo5qu
-         XSTQ==
+        d=chromium.org; s=google; t=1740426162; x=1741030962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Es3p7SgafSY4oLQGoZeThVjJZmm01HoRMAcWvJvl1k=;
+        b=m6Q+tg4/ZQ6BH/dedIRcuBZ86rGrdzQUwpV51ZX6NDCjwCBBhF9ldAC8OXGgbu1tp6
+         B3FDJM9SobG7QBmT9TC7VFeH6wG/in+tu/XXBoHDaJtjY0/kj0xjzK9gJyd0EL/QTLb2
+         nis3tGfRkgNZy9xUwPFgeaLi4oEmKzPLI61aE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740426092; x=1741030892;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B+zMpSCX50TzWUIveAEPWDT1S6dupXFUyCvXOBadv3M=;
-        b=EdF4l6TFly0LnaFoLYIvuzNU5+wPHOojqTwX/ZmLWQKh3fnfWQNd26FCHEWlRm4HY5
-         fyoK9MRH2c3e6JQwuU7YGo6W5+VPMlWFYDXzvVbt6e/+ge7vQC4vmdUUrwXJiZqzzfXI
-         Gmi+RqKJo2xngX29ZL1f1TE40ou5X1SmWocOlPrdrJN3dHUoxwlX6NT2dpxtRenROeYT
-         M8owBBwSDbsMATqlqvZX2nEm4VjpeoevLnYFJcw91WSfQN6nk6EFZxkzQVu2pd2IuEFs
-         Z7uHxCfgn8d4rkgKNijzH9fAgUMJ3mHpmdSKuSf0rTVFh9952bWyaEFwM3jvqQH7HqAn
-         LBsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhS6AHyeUTd8thXPrKEvU/K7Y28dIiyL4gERKSaS+DY5XtNCe/RwfbUiGnzapBRQ+tML+1x+vF@vger.kernel.org, AJvYcCWy0W5vQnURaHCpB0CdYyl4qeygqdSBZA6+Ar0d8XdstwnK9N8V8NOkuWo+eCzK4VTBfiHJlu94lAT/SX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL8lNuj9FL9tBNIG+WlWu+HNV0l3m/GXm1QeLRRezZW8l6bvHI
-	yZ1+aLS07vz/JJEi12G4QD/4PGdXRRRPcXrtT19TbjGX22cpCcg=
-X-Gm-Gg: ASbGncvwik4aKMestZf8NzJLWzGL3RegiRijEn4Ys89Ekys9fWswtwJhXa9PoD6Smct
-	RsaZBy3QcZfarmWblE0DO+qf4NckQRmyYx5XFfIWBDzU8E5OGyqG9b5iwGAIt3hE2DcdobYoNbO
-	H+Uz925xuuAFmt/dLHU1MG0Tmj0Zg5IugLB/PkyF8/BCVwIrLyhpi6lDK5iYgmCOQd/Cm+eUsn5
-	51tktVydigG8kqxrMsKiN18X3jKEAta26s7YYceZmHcVZ8IVgqu3CZyOc+kua17lmAj7BAqeIVI
-	IRjxAsFYgnlTBm+SBjnxiZGdLDntUKeLYW2TyQwpTPgsZt2bWTOcLbJyrf/EP5n4az9t7ATE7fV
-	fumc=
-X-Google-Smtp-Source: AGHT+IE53N4mkXuJ7fLpoJ5n0IdUhAPGRtSiEGaxYfcj5xCF7dklfjhVyZ7U1mE301X83KY4BJJ6Sg==
-X-Received: by 2002:a05:600c:1906:b0:439:8a62:db42 with SMTP id 5b1f17b1804b1-439ae1e62fbmr103998865e9.8.1740426090451;
-        Mon, 24 Feb 2025 11:41:30 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4180.dip0.t-ipconnect.de. [91.43.65.128])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1546fadsm1083775e9.18.2025.02.24.11.41.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 11:41:29 -0800 (PST)
-Message-ID: <5ab54053-bd9f-4481-aa7e-476dac292a30@googlemail.com>
-Date: Mon, 24 Feb 2025 20:41:28 +0100
+        d=1e100.net; s=20230601; t=1740426162; x=1741030962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Es3p7SgafSY4oLQGoZeThVjJZmm01HoRMAcWvJvl1k=;
+        b=i9Y9oPUDOvUSG+ik00AjlfRJQ3Z5JUFpzKlArmSANvU+TNcRTwpRqgRTiIc/eNa6cV
+         fHjDGt1n4QGAPTiCJ9lCjN36sTipJ85ok9dq3YG9QbbCxULhpfxKFFTcrWB/zXTcbiQV
+         7gmkyvX1CbxuUI5XioxXkZVVQ5shujoKhistn9AUSvP+7lVkLuO1JykQwWUYUsc0KFpq
+         TLBvm+qTArEkXZMuUVfebcKVGJtMS4WilXAFNAN3c4cr+w0LY+i2LRRH3SNxy6nDY80D
+         ouCI0nwSO5UWyUqSx3db3CJ5DGV5edR1UaUa9b9SiCAeUCUl2urSWl1ycTJIhCVdqMIe
+         t7sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOsce2Eu2ir5+FmkJAVlW74oYGCVgn9xiyv9//hCzbGyG6+nsLjZn3UuGhGb8ldWBNeT3MILiVwSU7mj4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/fUREDn1zUtZHNCO1P9+W4hrl0U8Ll7og2RBakd6CoKml/8Rs
+	js6fE23sr7COEPP3QqoH/7G/wsVMuYRv2yycg12jn1JrlXnuQ61k0R2C2HkhPT2sk0btM23xTdA
+	3+9mggVSC0+tz7EbfKxRIEwh5vd5/Yd5H9/qL
+X-Gm-Gg: ASbGncutd37yLSne3NozdPHkrOd7gaGqBck7LsVa61ldIubczNSS7XaeluJ12jt1Lat
+	zev3WcmneKgHsd7/NJdPjhV0Cj141cU8ryhVzh0kFGygc/P2cd1RLUm5amq5gG78dtqvEQvdxXm
+	5ugSsF40/3Rpm+fdOrWxCj3nJY969jheCu2cI6
+X-Google-Smtp-Source: AGHT+IHQebWFIc+YbZsrpXi37OAN8G/Vl942Csx4aIQSIGMLUFk3ZZIO2UooV/I8ugypB3Do3y/oUyp5eBDftpI9Je0=
+X-Received: by 2002:a05:6870:6e02:b0:29e:5f79:21b4 with SMTP id
+ 586e51a60fabf-2bd50fb9776mr3779734fac.13.1740426162024; Mon, 24 Feb 2025
+ 11:42:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.6 000/140] 6.6.80-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250224142602.998423469@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250224142602.998423469@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250224174513.3600914-1-jeffxu@google.com> <20250224174513.3600914-2-jeffxu@google.com>
+ <443992d7-f694-4e46-b120-545350a5d598@intel.com> <CABi2SkVKhjShryG0K-NSjjBvGs0UOVsY-6MQVOuQCkfuph5K8Q@mail.gmail.com>
+ <3nxcy7zshqxmjia7y6cyajeoclcxizkrhhsitji5ujbafbvhlu@7hqs6uodor56>
+ <CABi2SkV-RwWjfXZfK4tHzQWG=dCJU7CRGmthSA8vqhHcbeCiQw@mail.gmail.com> <202502241123.D398A24@keescook>
+In-Reply-To: <202502241123.D398A24@keescook>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 24 Feb 2025 11:42:31 -0800
+X-Gm-Features: AWEUYZnIh-aVK2V5D2Z7CSJGHhvBCNIiddlen5uSwHi2kaMpnPPFF88FSIikjiE
+Message-ID: <CABi2SkXLdL37LxLuo+W=rUOrBKfMbxgkkR+s3TqnnS-eAQbakg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header change
+To: Kees Cook <kees@kernel.org>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Dave Hansen <dave.hansen@intel.com>, 
+	akpm@linux-foundation.org, jannh@google.com, torvalds@linux-foundation.org, 
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org, 
+	oleg@redhat.com, avagin@gmail.com, benjamin@sipsolutions.net, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
+	ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 24.02.2025 um 15:33 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.6.80 release.
-> There are 140 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Feb 24, 2025 at 11:25=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Mon, Feb 24, 2025 at 11:10:22AM -0800, Jeff Xu wrote:
+> > On Mon, Feb 24, 2025 at 11:03=E2=80=AFAM Liam R. Howlett
+> > <Liam.Howlett@oracle.com> wrote:
+> > >
+> > > * Jeff Xu <jeffxu@chromium.org> [250224 13:44]:
+> > > > On Mon, Feb 24, 2025 at 10:21=E2=80=AFAM Dave Hansen <dave.hansen@i=
+ntel.com> wrote:
+> > > > >
+> > > > > On 2/24/25 09:45, jeffxu@chromium.org wrote:
+> > > > > > +/*
+> > > > > > + * mseal of userspace process's system mappings.
+> > > > > > + */
+> > > > > > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
+> > > > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_SEALED
+> > > > > > +#else
+> > > > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_NONE
+> > > > > > +#endif
+> > > > >
+> > > > > This ends up looking pretty wonky in practice:
+> > > > >
+> > > > > > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNM=
+AP;
+> > > > > > +     vm_flags |=3D MSEAL_SYSTEM_MAPPINGS_VM_FLAG;
+> > > > >
+> > > > > because MSEAL_SYSTEM_MAPPINGS_VM_FLAG is so much different from t=
+he
+> > > > > other ones.
+> > > > >
+> > > > > Would it really hurt to have
+> > > > >
+> > > > >  #ifdef CONFIG_64BIT
+> > > > >  /* VM is sealed, in vm_flags */
+> > > > >  #define VM_SEALED       _BITUL(63)
+> > > > > +#else
+> > > > > +#define VM_SEALED       VM_NONE
+> > > > >  #endif
+> > > > >
+> > > > > ?
+> > > > >
+> > > > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't part o=
+f
+> > > > the build. This is intentional. Any 32-bit code trying to use the
+> > > > sealing function or the VM_SEALED flag will immediately fail
+> > > > compilation. This makes it easier to identify incorrect usage.
+> > > >
+> > >
+> > > The reason that two #defines are needed is because you can have mseal
+> > > enabled while not sealing system mappings, so for this to be clean we
+> > > need two defines.
+> > >
+> > > However MSEAL_SYSTEM_MAPPINGS_VM_FLAG, is _way_ too long, in my opini=
+on.
+> > > Keeping with "VM_SEALED" I'd suggest "VM_SYSTEM_SEALED".
+> > >
+> > How about MSEAL_SYSTME_MAPPINGS as Kees suggested ?
+> >
+> > The VM_SYSTEM_SEALED doesn't have the MSEAL key or the MAPPING, so it
+> > might take longer for the new reader to understand what it is.
+>
+> I think to address Dave's concern, it should start with "VM_". We use
+> "SEAL" already with VM_SEALED, so the "M" in "MSEAL" may be redundant,
+> and to clarify the system mapping, how avout VM_SEAL_SYSMAP  ? That
+> capture's, hopefully, Dave, Liam, and your thoughts about the naming?
+>
+Liam had a comment in the previous version, asking everything related
+with mseal() to have the MSEAL keyword, that is why KCONFIG change has
+MSEAL.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+How about VM_MSEAL_SYSMAP ?
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+-Jeff
 
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+> --
+> Kees Cook
 
