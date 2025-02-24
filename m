@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-529376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435B7A423E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:50:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6873AA4240E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:52:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 357A0166CBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:43:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5F7917BCD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61781953BD;
-	Mon, 24 Feb 2025 14:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6298218B484;
+	Mon, 24 Feb 2025 14:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UO5sOIvM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qbjrieea"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cjd90I9/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C42713B298;
-	Mon, 24 Feb 2025 14:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09E938DD8;
+	Mon, 24 Feb 2025 14:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408118; cv=none; b=nFX5WKkZOhiX8+uUbeakVLlvwK4v5c7+nbDYVbwjYELf+i2ze382JnBs0WqGXWVLe/CN8Br0n4dHUmH77VjJGk76nKq9iezI0mMDYzA1xPQtuSMQjP2xk0l4+a9+vBHehj4BUAPQkaxCXNms8L8a2zClWm5K6qz+sCojxqO/NCA=
+	t=1740408122; cv=none; b=XCHQBJGvGZIwf+UFHt43LCJ8KRkHcnsc/dgWP71k5bVRki79A9HlocCy7FzTY82l00GzBoj3SKc/B3aID1SlLWpEGwaRkAWB6v3iCEmYGRWcILj+rY/2Zgs6R9MIQV6DyBYYhUhFNx4YVXrZhX0JlWz1c2F4/fm9XWLZ5z6ROWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408118; c=relaxed/simple;
-	bh=gs0CCeRL6myGvXdX8g0juhC+zWs6/HdyuF8Wem9m4SM=;
+	s=arc-20240116; t=1740408122; c=relaxed/simple;
+	bh=C82abNrH3ZcypYfQQ4nCqd4+THVXdsD+JjQgHjKZk+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BvAl2gLHky/X2JQBxCzQagksASqnY2JUB/8KY9vb0zsTkIHOmefnh6X3xznUhbX2wNcl17PZl1uSWmAgrbdT5urizH7w8oFlrTlFXECEwbv7UbcjCuqfr5Rj6NJOpX7BHCiDFTRkmsvMuiwUKY/5xy3vLGnD8bE9AE6RYhIh9Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UO5sOIvM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qbjrieea; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 15:41:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740408114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qst4I5C+fBiRdrcq+Nq/EQ/MFz4i7PJXz7K31DJjAFU=;
-	b=UO5sOIvMo27SCcl5POLOdN17FEhJ0IBgsA7p2uvWdvO68GV/epYCwlnRvfpdIqPfanoye9
-	gDuV2rTCT4L/v0B483f+Tooa9PWQZkflWvhGWMqoV3nDZWR4amjej3fiCwp5aXEV5WeBY/
-	dTRd+htXaG3dKkRlRIsSPgFCsv+Z9AiGAHdGqyVnQUxQ988OfFG1qP9RSFUTwxpypoBXEQ
-	ofjnc7f/5oIyf6Zxyyt5osGbUcVZXBC1bjwVcgJlHXoX/tt1Fy8ZcWa8EX/BdU627zUBeQ
-	mgWZCpskA8Bk7LgEEyif941cqiwtZ7TU7yIo66WCmJVH21A20nbFwExqb8Ybwg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740408114;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qst4I5C+fBiRdrcq+Nq/EQ/MFz4i7PJXz7K31DJjAFU=;
-	b=QbjrieeakqbpTtJLYrgh+XbLfbcXlPWmdp7e1sIe4Vm4Th4/Erub8o+eEw/cokEU7ibNLd
-	UVmELv+QdQLQSXBg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Kees Cook <kees@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
-	Shuah Khan <shuah@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 13/16] selftests: vDSO: parse_vdso: Make compatible with
- nolibc
-Message-ID: <20250224154007-bb3ab855-7a9d-43ba-851c-054a5c4fe324@linutronix.de>
-References: <20250203-parse_vdso-nolibc-v1-0-9cb6268d77be@linutronix.de>
- <20250203-parse_vdso-nolibc-v1-13-9cb6268d77be@linutronix.de>
- <20250222102426.GA13708@1wt.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OhuqB8hsvGuW5vnSuGnhmiGaDxKUDUW6zYqhQunm+kmxam1rWKHQj1RomWRKy7C6sZ41mjo+g9zovMsxMbIy04lM9hSpRiodepUdpudb7ey6aFm7IHXffyaZ1GN5YPQsuIFi5NthLE4UwKetr6RY4TLDeluGlwNdmjkfQzI9vHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cjd90I9/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DB43C4CEE8;
+	Mon, 24 Feb 2025 14:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740408122;
+	bh=C82abNrH3ZcypYfQQ4nCqd4+THVXdsD+JjQgHjKZk+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cjd90I9/+wL8z2KK+BOjI9NRv5U8HB+KR3n65ZXqDM5qGx/Rcsy5rrXI7JtVb7r0h
+	 Fhmn7H6CtBCqBolOyRpzoZobWV1lZj+0zS2y+eULpllbYd6k5wXtCLI2h5iZIm0yKE
+	 PijRg7ZpUCUnO1n2jhb0kpWI4Y4ScVWaNMPw+yBvlFLuCWNWdmPIkmWHeRBxKijDG6
+	 +Tdi7Wyjt6k0JhhQUSd66kOsW2EMb7PUwZONeY9bos6MJXjrfZCC4LRbMXmMOmCHlX
+	 +38k9pEld41DUDfDsJSXwvTDRDzgIufun8/DHpJ9kwTizCji6zV+RG/F4mcqe3kVMG
+	 a3ofzWT4ovxQw==
+Date: Mon, 24 Feb 2025 20:11:55 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Kevin Xie <kevin.xie@starfivetech.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	"open list:PCIE DRIVER FOR STARFIVE JH71x0" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1] PCI: starfive: Fix kmemleak in StarFive PCIe driver's
+ IRQ handling
+Message-ID: <20250224144155.omzrmls7hpjqw6yl@thinkpad>
+References: <20250208140110.2389-1-linux.amoon@gmail.com>
+ <20250210174400.b63bhmtkuqhktb57@thinkpad>
+ <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com>
+ <20250214060935.cgnc436upawnfzn6@thinkpad>
+ <CANAwSgTWa9gwpPhVCYzJM5BL5wUkpB4eyDtX+Vs3SX3a9541wA@mail.gmail.com>
+ <CANAwSgRvT-Mqj3XPrME6oKhYmnCUZLnwHfFHmSL=PK+xVLHAqw@mail.gmail.com>
+ <20250224080129.zm7fvxermgeyycav@thinkpad>
+ <CANAwSgTsp19ri5SYYtD+VOYgBLYg5UqvGRrtNTXOWw7umxGCQg@mail.gmail.com>
+ <20250224115452.micfqctwjkt6gwrs@thinkpad>
+ <CANAwSgSdEr0X0F1AFAUfJoEjT1a63nj5Ar-ZfmehfhnE0=v+CA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250222102426.GA13708@1wt.eu>
+In-Reply-To: <CANAwSgSdEr0X0F1AFAUfJoEjT1a63nj5Ar-ZfmehfhnE0=v+CA@mail.gmail.com>
 
-On Sat, Feb 22, 2025 at 11:24:26AM +0100, Willy Tarreau wrote:
-> On Mon, Feb 03, 2025 at 10:05:14AM +0100, Thomas Wei�schuh wrote:
-> > nolibc does not provide this header, instead its definitions are
-> > available unconditionally.
+On Mon, Feb 24, 2025 at 07:33:37PM +0530, Anand Moon wrote:
+> Hi Manivannan
 > 
-> Please think about reminding which one you're talking about so that a
-> simple "git log" shows what header you're talking about (limits.h)
-> without requiring to also see the patch itself.
+> On Mon, 24 Feb 2025 at 17:24, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > On Mon, Feb 24, 2025 at 03:38:29PM +0530, Anand Moon wrote:
+> > > Hi Manivannan
+> > >
+> > > On Mon, 24 Feb 2025 at 13:31, Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Thu, Feb 20, 2025 at 03:53:31PM +0530, Anand Moon wrote:
+> > > >
+> > > > [...]
+> > > >
+> > > > > Following the change fix this warning in a kernel memory leak.
+> > > > > Would you happen to have any comments on these changes?
+> > > > >
+> > > > > diff --git a/drivers/pci/controller/plda/pcie-plda-host.c
+> > > > > b/drivers/pci/controller/plda/pcie-plda-host.c
+> > > > > index 4153214ca410..5a72a5a33074 100644
+> > > > > --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> > > > > +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> > > > > @@ -280,11 +280,6 @@ static u32 plda_get_events(struct plda_pcie_rp *port)
+> > > > >         return events;
+> > > > >  }
+> > > > >
+> > > > > -static irqreturn_t plda_event_handler(int irq, void *dev_id)
+> > > > > -{
+> > > > > -       return IRQ_HANDLED;
+> > > > > -}
+> > > > > -
+> > > > >  static void plda_handle_event(struct irq_desc *desc)
+> > > > >  {
+> > > > >         struct plda_pcie_rp *port = irq_desc_get_handler_data(desc);
+> > > > > @@ -454,13 +449,10 @@ int plda_init_interrupts(struct platform_device *pdev,
+> > > > >
+> > > > >                 if (event->request_event_irq)
+> > > > >                         ret = event->request_event_irq(port, event_irq, i);
+> > > > > -               else
+> > > > > -                       ret = devm_request_irq(dev, event_irq,
+> > > > > -                                              plda_event_handler,
+> > > > > -                                              0, NULL, port);
+> > > >
+> > > > This change is not related to the memleak. But I'd like to have it in a separate
+> > > > patch since this code is absolutely not required, rather pointless.
+> > > >
+> > > Yes, remove these changes to fix the memory leak issue I observed.
+> > >
+> >
+> > Sorry, I don't get you. This specific code change of removing 'devm_request_irq'
+> > is not supposed to fix memleak.
+> >
+> > If you are seeing the memleak getting fixed because of it, then something is
+> > wrong with the irq implementation. You need to figure it out.
+> 
+> Declaring request_event_irq in the host controller facilitates the
+> creation of a dedicated IRQ event handler.
+> In its absence, a dummy devm_request_irq was employed, but this
+> resulted in unhandled IRQs and subsequent memory leaks.
 
-Ack.
+What do you mean by 'unhandled IRQs'? There is a dummy IRQ handler invoked to
+handle these IRQs. Even your starfive_event_handler() that you proposed was
+doing the same thing.
 
-> BTW, I think that limits.h is common enough that we could probably
-> provide it as well with nolibc to ease porting (and the current patch
-> is a good example of this). Maybe it could simply start by including
-> stdint.h to provide the various limits we rely on. I remember that in
-> the early days of nolibc-test we had to exclude it as well for nolibc.
->
-> What do you think? The less we need to patch programs to insert #ifndef
-> NOLIBC, the better.
+> Eliminating the dummy code eliminated the memory leak logs.
 
-Sounds good, I'll do that for v2.
-Given that any nolibc header always also includes the global nolibc.h,
-I think limits.h can directly include nolibc.h.
- 
-> Cheers,
-> Willy
+Sorry, this is not a valid justification. But as I said before, the change
+itself (removing the dummy irq handler and related code) looks good to me as I
+see no need for that. But I cannot accept it as a fix for the memleak.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
