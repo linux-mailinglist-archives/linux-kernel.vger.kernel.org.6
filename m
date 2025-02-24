@@ -1,182 +1,135 @@
-Return-Path: <linux-kernel+bounces-530001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 682BBA42D84
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:18:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9712A42D8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:20:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C6E16F5E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:18:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC84316FE09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6C2206F16;
-	Mon, 24 Feb 2025 20:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5236024169D;
+	Mon, 24 Feb 2025 20:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiZuQPDU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HN5Oh9ni"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90C9313F43B;
-	Mon, 24 Feb 2025 20:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EC118B464;
+	Mon, 24 Feb 2025 20:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428305; cv=none; b=tOowTLS0mleXH8qxJvx2T5BBPelShDRJg8rXA4HE7GoBQIX3QG8XCSKkcMU8BaGHHFMpWBY/2Y3asfC5aQjzwzaM6gUjgMVnnC/OJ8qU2jFaCFXnZvUeD/8+Mc0iMsXb9KW9ZNXs92q5yVRGMk5KSot0H08eseXBefbw7eJ/fSg=
+	t=1740428401; cv=none; b=IjK9Gbgwmsn2HmX+KzCCD/zjxeM1JXnYTqt6/JCZ3Xg1tTIEaTsBnhgwk6CpucApgj212Y1F9051q989I4xTGtlzLAcyY51T8o/+FKx+IjQFHZLDzEng+KvW+jdgUwy5+SOC6+hz96fQY8cLZv9f78eCMKmNxaUi0llkvoX6Tks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428305; c=relaxed/simple;
-	bh=1g9xLASHldpx7dH0s9gFHvkfuWIB1BBA0agbRxDRicE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+bvlGaFwrO4p1Wiw+bB8zLFDy0yC7cMbU8vHPVDKxda2hdw251zROQcRDBvUTfHojsgiVTKwVStMfR/lIteBzY5MZrXYBlvjqUbJAB534s4BQMVZlyUAh9Q7C0Z29rXaso2pQ6QRezodhkRY9G5YqonWuja5QJsHdZL/Emi92k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiZuQPDU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7A54C4CED6;
-	Mon, 24 Feb 2025 20:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740428305;
-	bh=1g9xLASHldpx7dH0s9gFHvkfuWIB1BBA0agbRxDRicE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YiZuQPDULbpoaBAA/GVXAGVb90WdBtfdP1Krzb1RNuHqDF/K0uWTJKhWt6gM0qAak
-	 JbFGoSTGty1/vPO8jblG9QkYgAZxiV+lBZucxirh50vhOcMTWxV8bMvA1toLILtOjf
-	 8RsR8e6vjyymUyQbLTc9XZ7fFBFlMa+nyG0LQtfFWDyF0Iki6y6usQAjWASLHblcfa
-	 V973X6f0OFZNDuLe9y68dM1GS99eCMC1kT1qksD88bRuzhgSzyadyPRHOatpzdYwQ+
-	 69SA4Br0uO1MnycWL678Q4omDrEhJSwhhv5FLqCspVR2sdrMV1XnInN+vve8OD9LWR
-	 +8l8jYCePFhRQ==
-Date: Mon, 24 Feb 2025 12:18:23 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 1/2] perf stat: Use field separator in the metric header
-Message-ID: <Z7zUDxho5vLa_2fF@google.com>
-References: <20240627200353.1230407-1-namhyung@kernel.org>
- <CAP-5=fWSpM7NL7UjXZBN8WHNAE7hGe1ghQ6_DqFe2VjTCGoA7A@mail.gmail.com>
- <CAM9d7cibrW=K=GZB_zsURB1Ff6Eok7qy3rVt83VVM6pVhv+Agg@mail.gmail.com>
- <CAP-5=fVmybd=WTKS3kvsF+VU_Lrke9hEvNyBtunAHBw-6ViZig@mail.gmail.com>
+	s=arc-20240116; t=1740428401; c=relaxed/simple;
+	bh=0bvGN1vsW4WkjJukPZmqOi/PtlqoDTpb4ZJhb215zHg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NjWKbzzl5RX536h1BCvI/Watm+WntWBMN8GRLNhtYBIopydD+KSf9uqW3wb5XgPSi9HwWgEerTVhQrIeBpowPRZY6C295+s79+5Klq5ILddWSl4DFPsgQq5YRPlostoYhZVqdW/hGZfz9qM2wiqEsd0PQIg9lK4JgMkMUrE4DKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HN5Oh9ni; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.1.103] (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9984C455;
+	Mon, 24 Feb 2025 21:18:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1740428311;
+	bh=0bvGN1vsW4WkjJukPZmqOi/PtlqoDTpb4ZJhb215zHg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=HN5Oh9niUrcMPgOhkCCbqwQYXJa7qIhjK/yF/oyixPGnH6CeQaKPN/a9gwRWzw2eM
+	 6a1W2KFqRkjdkRwteKwAPqNC3jymPQ+JhwcQoMQ4OP8BTCITIH/JU56kcznmcDoYmd
+	 XWk9r5bJ6POqFwlgcwT0bARimzPfr7bgFIDoOgCw=
+From: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Subject: [PATCH v2 0/6] media: renesas: vsp1: Add support for IIF
+Date: Mon, 24 Feb 2025 21:19:40 +0100
+Message-Id: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVmybd=WTKS3kvsF+VU_Lrke9hEvNyBtunAHBw-6ViZig@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFzUvGcC/2XMMQ4CIRCF4atsphYDLGiw8h5mCxYGmUIwYIhmw
+ 93FbS3/l5dvg4qFsMJl2qBgo0o5jZCHCVy06Y6M/GiQXGou5MyaiowoMCu8tyfFndEexvtZMNB
+ 7l27L6Ej1lctnh5v4rf9GE4yz86pQS2PMbMKVPNqa05pt8UeXH7D03r9So9zhpQAAAA==
+X-Change-ID: 20250123-v4h-iif-a1dda640c95d
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+ linux-renesas-soc@vger.kernel.org, 
+ Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>, 
+ =?utf-8?q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>, 
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: b4 0.15-dev-1b0d6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2170;
+ i=jacopo.mondi+renesas@ideasonboard.com; h=from:subject:message-id;
+ bh=0bvGN1vsW4WkjJukPZmqOi/PtlqoDTpb4ZJhb215zHg=;
+ b=owEBbQKS/ZANAwAIAXI0Bo8WoVY8AcsmYgBnvNRr9M4/pE+4J+w4FMek8S8dXsFWo+1EICKVD
+ p5GGHs+QCaJAjMEAAEIAB0WIQS1xD1IgJogio9YOMByNAaPFqFWPAUCZ7zUawAKCRByNAaPFqFW
+ PLLfD/9bZ/kyqI7YXEemxXGLMFi7wdckURrX14JB78mBa2eyOKmzyhfLbLndV/A01HdZ3RduCMh
+ o8+Ow5Zor/R8msYNWurXPnnba1M88zdX7/jDBis4t31yrsl/95wtzsRGxpHIthRgGP5PC3W+uzm
+ LKU+8YlYHZgC9wTzeeM89nlTQKhN21JbBu8DF5hSM1XYmQoaUR99UQaUYT6nITN/GKgookwQ1KY
+ apSvkqRhj3noXgHJne24J1mFG8BpFnjAfDU6NGhSurvk+IEGiYR4Bjf40U5m4sOWxajizqJWg+6
+ Lo266UCeEad0la9KXmIDrWtOA8B2KDLg5t8UDhs+pRvNqqnymSrLRbxIfbNeZPxKLUJZZwcBfY8
+ ST+f60udvTU7flF8OxDYNN/saaNr/Bx/tS74y8Ql17SeZIzjoHq6KDzvUql9Zci20XLaj4FzV1T
+ 4FQztSzapGyDMiGCsXUXPGiXc0CsAcHXUn0PPimSXwzBPir8+Xw+7Zh/CPrQsl0H3cKW3kFv+fH
+ +diBAzy0qNO1R5NV+c8wdyv08NPPfvJGTsuL8wzJd2WzaPoYRkL3Z8dME2HsBKemtAABidrNW6L
+ XnlsKFoVISBOX8IcadjkYyJJ86wqOUta0nN4u3AjEKkuwtQz0vjYt18iLt2pvXrHNGWVGz8xGU3
+ 8gPx8qW0C7JAHgQ==
+X-Developer-Key: i=jacopo.mondi+renesas@ideasonboard.com; a=openpgp;
+ fpr=72392EDC88144A65C701EA9BA5826A2587AD026B
 
-On Mon, Feb 24, 2025 at 10:50:24AM -0800, Ian Rogers wrote:
-> On Thu, Jun 27, 2024 at 3:24 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hi Ian,
-> >
-> > On Thu, Jun 27, 2024 at 1:48 PM Ian Rogers <irogers@google.com> wrote:
-> > >
-> > > On Thu, Jun 27, 2024 at 1:03 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > >
-> > > > It didn't use the passed field separator (using -x option) when it
-> > > > prints the metric headers and always put "," between the fields.
-> > > >
-> > > > Before:
-> > > >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-only true
-> > > >   core,cpus,%  tma_core_bound:     <<<--- here: "core,cpus," but ":" expected
-> > > >   S0-D0-C0:2:10.5:
-> > > >   S0-D0-C1:2:14.8:
-> > > >   S0-D0-C2:2:9.9:
-> > > >   S0-D0-C3:2:13.2:
-> > > >
-> > > > After:
-> > > >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-only true
-> > > >   core:cpus:%  tma_core_bound:
-> > > >   S0-D0-C0:2:10.5:
-> > > >   S0-D0-C1:2:15.0:
-> > > >   S0-D0-C2:2:16.5:
-> > > >   S0-D0-C3:2:12.5:
-> > > >
-> > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > > ---
-> > > >  tools/perf/util/stat-display.c | 37 ++++++++++++++++++++++++++--------
-> > > >  1 file changed, 29 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-> > > > index 91d2f7f65df7..e8673c9f6b49 100644
-> > > > --- a/tools/perf/util/stat-display.c
-> > > > +++ b/tools/perf/util/stat-display.c
-> > > > @@ -47,16 +47,27 @@ static int aggr_header_lens[] = {
-> > > >  };
-> > > >
-> > > >  static const char *aggr_header_csv[] = {
-> > > > -       [AGGR_CORE]     =       "core,cpus,",
-> > > > -       [AGGR_CACHE]    =       "cache,cpus,",
-> > > > -       [AGGR_DIE]      =       "die,cpus,",
-> > > > -       [AGGR_SOCKET]   =       "socket,cpus,",
-> > > > -       [AGGR_NONE]     =       "cpu,",
-> > > > -       [AGGR_THREAD]   =       "comm-pid,",
-> > > > -       [AGGR_NODE]     =       "node,",
-> > > > +       [AGGR_CORE]     =       "core%scpus%s",
-> > > > +       [AGGR_CACHE]    =       "cache%scpus%s",
-> > > > +       [AGGR_DIE]      =       "die%scpus%s",
-> > > > +       [AGGR_SOCKET]   =       "socket%scpus%s",
-> > > > +       [AGGR_NONE]     =       "cpu%s",
-> > > > +       [AGGR_THREAD]   =       "comm-pid%s",
-> > > > +       [AGGR_NODE]     =       "node%s",
-> > > >         [AGGR_GLOBAL]   =       ""
-> > > >  };
-> > > >
-> > > > +static int aggr_header_num[] = {
-> > > > +       [AGGR_CORE]     =       2,
-> > > > +       [AGGR_CACHE]    =       2,
-> > > > +       [AGGR_DIE]      =       2,
-> > > > +       [AGGR_SOCKET]   =       2,
-> > > > +       [AGGR_NONE]     =       1,
-> > > > +       [AGGR_THREAD]   =       1,
-> > > > +       [AGGR_NODE]     =       1,
-> > > > +       [AGGR_GLOBAL]   =       0,
-> > > > +};
-> > > > +
-> > > >  static const char *aggr_header_std[] = {
-> > > >         [AGGR_CORE]     =       "core",
-> > > >         [AGGR_CACHE]    =       "cache",
-> > > > @@ -1185,8 +1196,18 @@ static void print_metric_headers_csv(struct perf_stat_config *config,
-> > > >  {
-> > > >         if (config->interval)
-> > > >                 fputs("time,", config->output);
-> > > > -       if (!config->iostat_run)
-> > > > +       if (config->iostat_run)
-> > > > +               return;
-> > > > +
-> > >
-> > > Having a static count of commas seems somewhat error prone, perhaps:
-> > > ```
-> > > const char *header = aggr_header_csv[config->aggr_mode];
-> > > if (config->csv_sep == ',' || !strchr(header, ',')) {
-> > >   fputs(config->output, header);
-> > > } else {
-> > >   char *tmp = strdup(header);
-> > >   char *p = tmp;
-> > >    while (p && *p) {
-> > >       if (p == ',')
-> > >         *p = config->csv_sep;
-> > >      p++;
-> > >    }
-> > >   fputs(config->output, tmp);
-> > >   free(tmp);
-> > > }
-> > > ```
-> >
-> > Looks good.  But I think we should handle longer separators like -x ":::".
-> > Will do in v2.
-> 
-> Hi Namhyung,
-> 
-> It looks like this has been forgotten. Did you have a v2?
+The IIF (ISP InterFace) is a VSP2 function that reads data from
+external memory using two RPF instances and feed it to the ISP.
 
-It's merged to v6.11, please see
+The IIF support is modeled in the vsp1 driver as a new, simple,
+entity type.
 
-https://lore.kernel.org/linux-perf-users/171994580797.2905908.17252651084023923233.b4-ty@kernel.org/
+IIF is part of VSPX, a version of the VSP2 IP specialized for ISP
+interfacing. To prepare to support VSPX, support IIF first by
+introducing a new entity and by adjusting the RPF/WPF drivers to
+operate correctly when an IIF is present.
 
-Thanks,
-Namhyung
+Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+---
+Changes in v2:
+- Collect tags
+- Address review comments from Laurent, a lot of tiny changes here and
+  there but no major redesign worth an entry in the patchset changelog
+
+---
+Jacopo Mondi (6):
+      media: vsp1: Add support IIF ISP Interface
+      media: vsp1: Clean FRE interrupt status
+      media: vsp1: dl: Use singleshot DL for VSPX
+      media: vsp1: rwpf: Break out format handling
+      media: vsp1: rwpf: Support RAW Bayer and ISP config
+      media: vsp1: rwpf: Support operations with IIF
+
+ drivers/media/platform/renesas/vsp1/Makefile      |   2 +-
+ drivers/media/platform/renesas/vsp1/vsp1.h        |   3 +
+ drivers/media/platform/renesas/vsp1/vsp1_dl.c     |   7 +-
+ drivers/media/platform/renesas/vsp1/vsp1_drv.c    |  14 ++-
+ drivers/media/platform/renesas/vsp1/vsp1_entity.c |   8 ++
+ drivers/media/platform/renesas/vsp1/vsp1_entity.h |   1 +
+ drivers/media/platform/renesas/vsp1/vsp1_iif.c    | 133 ++++++++++++++++++++++
+ drivers/media/platform/renesas/vsp1/vsp1_iif.h    |  26 +++++
+ drivers/media/platform/renesas/vsp1/vsp1_pipe.c   |   1 +
+ drivers/media/platform/renesas/vsp1/vsp1_pipe.h   |   1 +
+ drivers/media/platform/renesas/vsp1/vsp1_regs.h   |   8 ++
+ drivers/media/platform/renesas/vsp1/vsp1_rpf.c    |  18 ++-
+ drivers/media/platform/renesas/vsp1/vsp1_rwpf.c   | 110 ++++++++++++++++--
+ drivers/media/platform/renesas/vsp1/vsp1_wpf.c    |  14 ++-
+ 14 files changed, 327 insertions(+), 19 deletions(-)
+---
+base-commit: b2c4bf0c102084e77ed1b12090d77a76469a6814
+change-id: 20250123-v4h-iif-a1dda640c95d
+
+Best regards,
+-- 
+Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
 
 
