@@ -1,187 +1,190 @@
-Return-Path: <linux-kernel+bounces-528660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B733A41A61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:11:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D55A41A3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:09:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272B73B3EBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:08:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F5657A1FD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D07245037;
-	Mon, 24 Feb 2025 10:08:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAFD288DA;
-	Mon, 24 Feb 2025 10:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1950824A068;
+	Mon, 24 Feb 2025 10:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3eNsTRc"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88993197A8B;
+	Mon, 24 Feb 2025 10:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391704; cv=none; b=n2I6XQCD1YGjV5TBiSCYygd4gRRn7dAkOhkjJeYpdCZB1LXaPyQflcePoEn9eg/H95N/A4oDkDzeH71fC3jtGePh2G9ZeKEl+DGUO9ENbhxzm7Yhe9WscFfkN3HMMjz6hFxoOYrkP8QO2ll5d8V+XLvRkd93+h+X14AoGL0WbGY=
+	t=1740391730; cv=none; b=Ab38uH/ANJ/fxM76Iq1ZO2IJnG/JnV7PuEca8ntAzfrGd3mSfFv+a/8uUzNAOTcASK5btGqLck1UvRJLWQ0mNyREfj2m+9RB8/Flmyt5O/L5lrdr8KmPVlJaf3WvyWe2f2/H7J2IuvEdYXVWp4t7B3tMyIO4yzJFl0bHHYC0hFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391704; c=relaxed/simple;
-	bh=fespLaFMTMql39LCqWfuCJOVabzoi1y/N9PMgXCapXE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIlrxOuB/muEpjjCbWsp//4NkIlrjAZgRNu3rnQw6ayYS6+fEf6/GyKX9XcTfoUP/DaaqTTd/YYHo0BzZx7e6fnoe+N8/o373Dl0ZZvlPha4v1W/DJINEI7KFOdca0GSMFEyQC4puwx+aBO0oebzIWSCTpUx7hCHlUDc/oQldto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 883F51E7D;
-	Mon, 24 Feb 2025 02:08:38 -0800 (PST)
-Received: from [192.168.7.252] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 20F143F673;
-	Mon, 24 Feb 2025 02:08:20 -0800 (PST)
-Message-ID: <58ee2a8d-d3c1-4bc2-92dd-6568f645b01f@arm.com>
-Date: Mon, 24 Feb 2025 10:08:18 +0000
+	s=arc-20240116; t=1740391730; c=relaxed/simple;
+	bh=KoNPKyz/l+4PIEHUeghyq2QWuFg/jPzqOguImorm1vQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tM0/dAsq2Id4vAqunzEu+u/00NuJ90Iu3m1btQA6v0TG4mVvWVBuutLW+kPKheDmodaf/hMntd5HCQdztUVxXdG65Cbqsi4OO9ZgY4xQaQ/hqxkVNlobyPP1vrraKPDm25lKN/2sSktgXz4L+4xp+LDbIrERmQrJMznU1AU/BG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B3eNsTRc; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5ded1395213so7055161a12.2;
+        Mon, 24 Feb 2025 02:08:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740391727; x=1740996527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zSl7SVpv3ZdvG/pUATCrI0YoKzpq2HEPnlV8gsZDiUw=;
+        b=B3eNsTRciFqe1EW3pdnTrgt9mwmLcG615A7nfUw5HDEtJgK0GwIRhMGGCCN5ROsYri
+         WDPiTqrq4YcY6SoBjfESmTuZ+QdZstIkcXs6PjAduOWd3mnTobLFcv/PR8qKHmese2L6
+         4TSyFZ/HYGhT7Vqxg4/2pCrKnCFNhfnIwRNsaeQdRAiodmB933fEl75ibL+tCGRC/O+/
+         5TJdhfkDmOS9wiA/r2nJy6vV7ENqNayQfD0+xxFExrIo0Myk4nv2Im8gapameCNtjBBL
+         8LyIshEhzp8Fw6WgDWbodzNwuHVljSvrEEatKjrxNjqmAaizd9e+W94RlVY55kUuGKGZ
+         v99w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740391727; x=1740996527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zSl7SVpv3ZdvG/pUATCrI0YoKzpq2HEPnlV8gsZDiUw=;
+        b=cTx2Dp+dHjYXt5hLcM6hST5vpWU6ovD8x/8Ypg25A2B9IP0qW53Tt1cGvEyyJdvjo9
+         bTm8v1JTJCVekGrOnX0X1mrbUXo53RozM3A311SLjsAsRGL/gdBEXRqeKnzFxfi3j7wM
+         fose9PGb6gBf9KGSVCZB8W2qQBd2Cp/MmCkNmSriU0AZqnlwMQwG2ZKg6X5AWdkht/2U
+         8G5ljtJu8E98Y5X3HJf1IC657mJKcX/AOg8k+b8XE/imyxCSza5ttB59IYLFHgfhfMm5
+         3srw0I26k3XlzCzh0QJqtULq1UPnWNowB1xQ7rBqrMslSCgchXJ+tDlrbcKOxRuZRzph
+         Be0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVOwBCDVpR6Txu63IfLnSJ7gs3+ZK+aOJ2FmDk2P4ifWik7Jp7qKFfzixGtkQzt3DAMB/kiFqEwUc9K@vger.kernel.org, AJvYcCW+zhhMRgafaXsWg+HG9n/iDgPty+ktA8hlF7b39ml2dI1MOf/5PrPOAGIFTrzkmQ3F380QzdBQod4HUuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0zy67Rj6wYse8kLnJqsQzpcyUUQycD8Yvsnisv/zr/Is9eYb/
+	AVmCKlfyGGOSSLns6cPMLkbMryFRm9ka+u4p8CN20OzbTvToeiW+I4dfUax8Rnhibnk3GF0Si64
+	HXe7XrZvpN0tMS9gnt3vESoUCF7Y=
+X-Gm-Gg: ASbGncvtuENx9y04S5j1/W0MVrXqCSpeFc1j4TT3w9/D70tlJazECFy7cjSpX+lDWie
+	qXVghuoLYQFCMM87CaPC0luBm17DDTdUcg1XRqHyWIEioURc8ljlBO0pI8FdcEDNigMA653VknU
+	ZJY+RX4XA=
+X-Google-Smtp-Source: AGHT+IGeDWpiwwWJWla3HaW7oM4L55n5TbZipzYlv7EfnvAMgjVEH+suSkVYAEe20cor22O/gSx4hsRxasu9gYyNXgg=
+X-Received: by 2002:a17:907:1ca0:b0:ab7:bcf1:264 with SMTP id
+ a640c23a62f3a-abc099b81bfmr1376082066b.5.1740391726541; Mon, 24 Feb 2025
+ 02:08:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/10] arm64: dts: Add Arm Morello support
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
- Sudeep Holla <sudeep.holla@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Will Deacon <will@kernel.org>,
- Jessica Clarke <jrtc27@jrtc27.com>
-References: <20250221180349.1413089-1-vincenzo.frascino@arm.com>
- <Z7jL5wBUJNjOlg4r@J2N7QTR9R3.cambridge.arm.com>
-Content-Language: en-GB
-From: Vincenzo Frascino <vincenzo.frascino@arm.com>
-In-Reply-To: <Z7jL5wBUJNjOlg4r@J2N7QTR9R3.cambridge.arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250208140110.2389-1-linux.amoon@gmail.com> <20250210174400.b63bhmtkuqhktb57@thinkpad>
+ <CANAwSgQ20ANRh9wJ3E-T9yNi=g1g129mXq3cZYvPnK1bMx+w7g@mail.gmail.com>
+ <20250214060935.cgnc436upawnfzn6@thinkpad> <CANAwSgTWa9gwpPhVCYzJM5BL5wUkpB4eyDtX+Vs3SX3a9541wA@mail.gmail.com>
+ <CANAwSgRvT-Mqj3XPrME6oKhYmnCUZLnwHfFHmSL=PK+xVLHAqw@mail.gmail.com> <20250224080129.zm7fvxermgeyycav@thinkpad>
+In-Reply-To: <20250224080129.zm7fvxermgeyycav@thinkpad>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Mon, 24 Feb 2025 15:38:29 +0530
+X-Gm-Features: AWEUYZn-GahK4UXEV5TeUPLgW8tudIzB_lnSgUjj_ww7YjayCEXug59G2a6ICB8
+Message-ID: <CANAwSgTsp19ri5SYYtD+VOYgBLYg5UqvGRrtNTXOWw7umxGCQg@mail.gmail.com>
+Subject: Re: [PATCH v1] PCI: starfive: Fix kmemleak in StarFive PCIe driver's
+ IRQ handling
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Kevin Xie <kevin.xie@starfivetech.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Minda Chen <minda.chen@starfivetech.com>, 
+	"open list:PCIE DRIVER FOR STARFIVE JH71x0" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mark,
+Hi Manivannan
 
-On 21/02/2025 18:54, Mark Rutland wrote:
-> Hi Vincenzo,
-> 
-> On Fri, Feb 21, 2025 at 06:03:39PM +0000, Vincenzo Frascino wrote:
->> The Morello architecture is an experimental extension to Armv8.2-A,
->> which extends the AArch64 state with the principles proposed in
->> version 7 of the Capability Hardware Enhanced RISC Instructions
->> (CHERI) ISA [1].
-> 
-> None of the CHERI stuff is supported upstream, so from upstream's PoV
-> this is a low-volume dev-board/SoC with an experimental ARMv8.2-A CPU.
+On Mon, 24 Feb 2025 at 13:31, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
+> On Thu, Feb 20, 2025 at 03:53:31PM +0530, Anand Moon wrote:
+>
+> [...]
+>
+> > Following the change fix this warning in a kernel memory leak.
+> > Would you happen to have any comments on these changes?
+> >
+> > diff --git a/drivers/pci/controller/plda/pcie-plda-host.c
+> > b/drivers/pci/controller/plda/pcie-plda-host.c
+> > index 4153214ca410..5a72a5a33074 100644
+> > --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> > +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> > @@ -280,11 +280,6 @@ static u32 plda_get_events(struct plda_pcie_rp *po=
+rt)
+> >         return events;
+> >  }
+> >
+> > -static irqreturn_t plda_event_handler(int irq, void *dev_id)
+> > -{
+> > -       return IRQ_HANDLED;
+> > -}
+> > -
+> >  static void plda_handle_event(struct irq_desc *desc)
+> >  {
+> >         struct plda_pcie_rp *port =3D irq_desc_get_handler_data(desc);
+> > @@ -454,13 +449,10 @@ int plda_init_interrupts(struct platform_device *=
+pdev,
+> >
+> >                 if (event->request_event_irq)
+> >                         ret =3D event->request_event_irq(port, event_ir=
+q, i);
+> > -               else
+> > -                       ret =3D devm_request_irq(dev, event_irq,
+> > -                                              plda_event_handler,
+> > -                                              0, NULL, port);
+>
+> This change is not related to the memleak. But I'd like to have it in a s=
+eparate
+> patch since this code is absolutely not required, rather pointless.
+>
+Yes, remove these changes to fix the memory leak issue I observed.
 
-Agreed, I have no plans to upstream Morello support beyond the device tree.
+> >
+> >                 if (ret) {
+> >                         dev_err(dev, "failed to request IRQ %d\n", even=
+t_irq);
+> > +                       irq_dispose_mapping(event_irq);
+>
+> So the issue overall is that the 'devm_request_irq' fails on your platfor=
+m
+> because the interrupts are not defined in DT and then the IRQ is not disp=
+osed in
+> the error path?
+>
+On microchip PCIe driver utilizes interrupt resources from its
+"bridge" and "cntrl"
+components, accessed via ioremap, to handle hardware events.
+These resources are absent in the StarFive PCIe controller.
 
->> This series adds dts support for the Arm Morello System Development
->> Platform.
-> 
-> Do we actually need the dts for this board?
-> 
-> I have one on my desk; it boots vanilla Debian 12 via UEFI + ACPI just
-> fine, with the Debian 6.1.0-13-arm64 kernel.
-> 
-> Is there something that we can only do with the DT? i.e. some
-> functionality that isn't exposed via ACPI?
-> 
-> How do you expect this DT to be used?
-> 
+While the StarFive JH-7110 datasheet [1] indicates support for PME, MSI, an=
+d INT
+messages and specific implementation details for leveraging these interrupt=
+s are
+unavailable.
 
-There are functionalities that are not exposed via ACPI, e.g. gpu, dpu, i2c for
-the phy, etc. My aim to have upstream support for all the hardware exposed by
-the platform.
+As per StarFive JH-7110 Datasheet PCI support [1]
+1 Power Management Event (PME message) =E2=97=A6
+2  MSI (up to 32) and INT message support
 
-Note: This series contains only the basic infrastructure, the plan is add
-progressively more features in the future.
+[1] https://doc-en.rvspace.org/JH7110/PDF/JH7110I_DS.pdf
 
-Vincenzo
+> In that case, none of the error paths below for_each_set_bit() loop is di=
+sposing
+> the IRQs. Also, calling 'irq_dispose_mapping()' only once is not going to
+> dispose all mappings that were created before in the loop.
 
-> Mark.
-> 
->>
->> [1] https://www.morello-project.org/
->>
->> To simplify the testing a linux tree rebased on 6.14-rc4 is accessible
->> at [2].
->>
->> [2] https://codeberg.org/vincenzo/linux/src/branch/morello/dts/v6
->>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
->> Cc: Conor Dooley <conor+dt@kernel.org>
->> Cc: Liviu Dudau <liviu.dudau@arm.com>
->> Cc: Sudeep Holla <sudeep.holla@arm.com>
->> Cc: Lorenzo Pieralisi <lpieralisi@kernel.org> 
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Will Deacon <will@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Jessica Clarke <jrtc27@jrtc27.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->>
->> Changes
->> =======
->> v7:
->>   - Rebased on 6.14-rc4.
->>   - Added review info.
->> v6:
->>   - Introduce arm,morello.yml.
->>   - Split pmu patch.
->>   - Address review comments.
->> v5:
->>   - Add support for fvp.
->>   - Add support for pmu.
->>   - Address review comments.
->>   - Rebase on 6.14-rc1.
->> v4:
->>   - Add cache information.
->>   - Address review comments.
->> v3:
->>   - Address review comments.
->>   - Rebase on 6.13-rc5.
->> v2:
->>   - Addressed review comments.
->>   - Rebased on 6.13-rc4.
->>   - Renamed arm,morello to arm,morello-sdp for clarity.
->>
->> Vincenzo Frascino (10):
->>   arm64: Kconfig: Update description for CONFIG_ARCH_VEXPRESS
->>   dt-bindings: arm: Add Morello compatibility
->>   dt-bindings: arm: Add Morello fvp compatibility
->>   dt-bindings: arm: Add Rainier compatibility
->>   dt-bindings: arm-pmu: Add support for ARM Rainier PMU
->>   perf: arm_pmuv3: Add support for ARM Rainier PMU
->>   arm64: dts: morello: Add support for common functionalities
->>   arm64: dts: morello: Add support for soc dts
->>   arm64: dts: morello: Add support for fvp dts
->>   MAINTAINERS: Add Vincenzo Frascino as Arm Morello Maintainer
->>
->>  .../devicetree/bindings/arm/arm,morello.yaml  |  35 ++
->>  .../devicetree/bindings/arm/cpus.yaml         |   1 +
->>  .../devicetree/bindings/arm/pmu.yaml          |   1 +
->>  MAINTAINERS                                   |   7 +
->>  arch/arm64/Kconfig.platforms                  |   5 +-
->>  arch/arm64/boot/dts/arm/Makefile              |   1 +
->>  arch/arm64/boot/dts/arm/morello-fvp.dts       |  77 +++++
->>  arch/arm64/boot/dts/arm/morello-sdp.dts       | 157 +++++++++
->>  arch/arm64/boot/dts/arm/morello.dtsi          | 323 ++++++++++++++++++
->>  drivers/perf/arm_pmuv3.c                      |   2 +
->>  10 files changed, 606 insertions(+), 3 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/arm/arm,morello.yaml
->>  create mode 100644 arch/arm64/boot/dts/arm/morello-fvp.dts
->>  create mode 100644 arch/arm64/boot/dts/arm/morello-sdp.dts
->>  create mode 100644 arch/arm64/boot/dts/arm/morello.dtsi
->>
->> -- 
->> 2.43.0
->>
-
--- 
-Regards,
-Vincenzo
-
+I was looking at how the IRQ error path will clean up IRQ in case of failur=
+e
+hence, I added this in case of failure to unmap IRQ events,
+I will drop this if not required.
+>
+> - Mani
+>
+Thanks
+-Anand
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
