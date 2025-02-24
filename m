@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-529212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4858A421B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:45:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C90A421D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0385162984
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:44:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12153ADFA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A0F248890;
-	Mon, 24 Feb 2025 13:44:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428E3248885;
+	Mon, 24 Feb 2025 13:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTwl10BO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fnUouyOp"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F0D59B71;
-	Mon, 24 Feb 2025 13:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FE9723372B;
+	Mon, 24 Feb 2025 13:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404646; cv=none; b=Fp11Hm9cvzudiqLoRdkfDUZJzn+9TGgAx+mVvLIlnOmJjKLf3LTMaYeJKZJBpZ4gCjkwQtzDDdTsKAubEI+3ezKyzj7QY422w4Txno9reLVsTPghTRi9GgyzvC+fTI+XKA7Ph7jwU+y2f1yGR24/3PdFznvaJerTQfLnS51LEU8=
+	t=1740404683; cv=none; b=DhNITY3Qa5qigW0yKBWlJjU9KPwlI/eDia8ExqwXm85QxrIlmG1aIb1KVkTICBUDFt8zvS4pedfy3amDSp5BiXqRj1fBh4ZDkm1xiCnbQKzxWwUR1w4uJ+/vGwPVBLejEg6aD48hAGrbKhIXdqMlbR/WJ1bEJRYTsBKig9OBGik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404646; c=relaxed/simple;
-	bh=rVfs2/wZfKjg6Qg51IMEySr29bgkBwjvvO/H4L2lWLw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iYQq+FCMyHZ/syecalD+0d3fTWlxiOnv+ZmjFFbc4f9X7WOtxEBhFqnFIHBZvGyk74j8wIcZgeuU+dN8HmSNWilpZdvmdZIbeaBm9Jqze3bgjLEb0fSxgbMSdgcuojwEovM3LsbdA4G+yL2ZQUx9AIckndafg5HxETl+JgTrbBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTwl10BO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DDBBC4CEE6;
-	Mon, 24 Feb 2025 13:44:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740404645;
-	bh=rVfs2/wZfKjg6Qg51IMEySr29bgkBwjvvO/H4L2lWLw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=eTwl10BOYV2LyLCJDOL6XfdY/rQRILjH31zUnnBRelTxxx3123Ei0+gCO8I6UfcOV
-	 AwEzMvhWNlrueLXqK3rSw+e5J8lDZvoBWc/K834x/gZ32wkBhh+zbtNtaAuwKLlxsJ
-	 x8wR4aiJ8gfQuJWmg20j0Zr7yYamoBKMOVgRTKu4HCsbBTfinhN0sROr1TZ8olq43A
-	 J1hTcBGoENWn4IiqeOdasg+3aYPG9aouiRyGCWW6UFJH90bnrJGC1pVDjCvEbgXYqS
-	 ujQDyM/rztTHRMdy/XKMkISh2de9HcasWMecS1OVkJCFRrt06719tp9MYFItNcNTQJ
-	 XGG/diXrDyrIQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Masahiro Yamada"
- <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
-  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
- <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
- <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
- <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
-  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
- <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
-  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing
- functions
-In-Reply-To: <24221C62-2470-4B03-B39B-58BCDC500D68@collabora.com> (Daniel
-	Almeida's message of "Mon, 24 Feb 2025 10:34:11 -0300")
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
-	<20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org>
-	<VZotdu1M69nw0dml87uPIIA1DETDQf9U-jnVNtPyHO5xOGkqqNvLcZPUnt2lcHCcQJ9KjdPYyHtc31taMMIuAA==@protonmail.internalid>
-	<24221C62-2470-4B03-B39B-58BCDC500D68@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 24 Feb 2025 14:43:53 +0100
-Message-ID: <87y0xvzcdi.fsf@kernel.org>
+	s=arc-20240116; t=1740404683; c=relaxed/simple;
+	bh=ChsQpr6FpnfFUMruwBSOsWL9jwA+YIJCuxM/Udd+VnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UNp65zKQbsQFTBwcC2deAbJ+yQfuwzuZ6xQ3Xn2Fen7SP5I3+cJ96cNtoWf1G4RycAmFBkEI/J8d70vILLXy5pZc82Ij0Q3cM8zm7oQVPAFaYDvRAU0lRmLncUUoVePuS8S5cgoMM+DruH5A2Kxl75msLux6nKSCMLOOcUHRAyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fnUouyOp; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 80E21443ED;
+	Mon, 24 Feb 2025 13:44:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740404674;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gduisQ65ckcL60BLQX/XNFI+VFiFYoC2kP8U8Fmb59o=;
+	b=fnUouyOpgPmeRPmgEGs06nupx3E7oHo1z4CT9wU71pkwuoCZDz9g1v9k837TIAJXohvjJL
+	EsGg0HBhaK8EcjD3WbjbIO02c8tRgVa02e2uUokVEQS2/W49AjC9gQ4SDCBBStSy02ay7t
+	INLIEXLelC1yTqM4kI8uo3tIXRO653y6rkGWWX/0VwEmzFpWAySiUqHB8h6d0iowJbGg7e
+	eHhYG+LlpW9f2Rx/XojkGw4ysoEgJFaUC9jMNqDeTDf38bQLTB8QJg4DURba6P1oWLw5VN
+	jUwEIBhSPCGE7zPx4FaDWw0v+/CApeQ/nHjuG4iBMKreBkUk1wLbbOAN17GBNQ==
+Date: Mon, 24 Feb 2025 14:44:31 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 12/13] net: phy: phylink: Use phy_caps_lookup
+ for fixed-link configuration
+Message-ID: <20250224144431.2dca9d19@kmaincent-XPS-13-7390>
+In-Reply-To: <20250222142727.894124-13-maxime.chevallier@bootlin.com>
+References: <20250222142727.894124-1-maxime.chevallier@bootlin.com>
+	<20250222142727.894124-13-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeelfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduledprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepv
+ gguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+On Sat, 22 Feb 2025 15:27:24 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-> Hi Andreas,
->
->> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> wrote:
->>
->> Add the trait `ParseInt` for parsing string representations of integers
->> where the string representations are optionally prefixed by a radix
->> specifier. Implement the trait for the primitive integer types.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> ---
->> rust/kernel/str.rs | 118 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->> 1 file changed, 118 insertions(+)
->>
->> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
->> index db272d2198fcc..8b0d814b47f52 100644
->> --- a/rust/kernel/str.rs
->> +++ b/rust/kernel/str.rs
->> @@ -945,3 +945,121 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
->> macro_rules! fmt {
->>     ($($f:tt)*) => ( core::format_args!($($f)*) )
->> }
->> +
->> +pub mod parse_int {
->> +    //! Integer parsing functions for parsing signed and unsigned integers
->> +    //! potentially prefixed with `0x`, `0o`, or `0b`.
->> +
->> +    use crate::prelude::*;
->> +    use crate::str::BStr;
->> +    use core::ops::Deref;
->> +
->> +    /// Trait that allows parsing a [`&BStr`] to an integer with a radix.
->> +    ///
->> +    /// [`&BStr`]: kernel::str::BStr
->> +    // This is required because the `from_str_radix` function on the primitive
->> +    // integer types is not part of any trait.
->> +    pub trait FromStrRadix: Sized {
->
-> Is this supposed to be implemented by somebody else? Otherwise we should seal it,
-> perhaps?
+> When phylink creates a fixed-link configuration, it finds a matching
+> linkmode to set as the advertised, lp_advertising and supported modes
+> based on the speed and duplex of the fixed link.
+>=20
+> Use the newly introduced phy_caps_lookup to get these modes instead of
+> phy_lookup_settings(). This has the side effect that the matched
+> settings and configured linkmodes may now contain several linkmodes (the
+> intersection of supported linkmodes from the phylink settings and the
+> linkmodes that match speed/duplex) instead of the one from
+> phy_lookup_settings().
 
-That is a good point. I did not intend for the user to implement this,
-same for `ParseInt`. I will look into sealing them.
+...
 
+> =20
+>  	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+>  	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
+> @@ -588,9 +591,9 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+> =20
+>  	phylink_set(pl->supported, MII);
+> =20
+> -	if (s) {
+> -		__set_bit(s->bit, pl->supported);
+> -		__set_bit(s->bit, pl->link_config.lp_advertising);
+> +	if (c) {
+> +		linkmode_or(pl->supported, pl->supported, match);
+> +		linkmode_or(pl->link_config.lp_advertising,
+> pl->supported, match);
 
-Best regards,
-Andreas Hindborg
+You are doing the OR twice. You should use linkmode_copy() instead.
 
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
