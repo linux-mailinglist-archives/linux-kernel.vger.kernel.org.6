@@ -1,174 +1,183 @@
-Return-Path: <linux-kernel+bounces-528916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B37E1A41DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 351D7A41DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B1017F90D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3CE189643B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F00B260A2E;
-	Mon, 24 Feb 2025 11:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08848264A86;
+	Mon, 24 Feb 2025 11:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S2h0bWvG"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="Lk6Pmg49"
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020132.outbound.protection.outlook.com [52.101.128.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E3F23F419;
-	Mon, 24 Feb 2025 11:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740396997; cv=none; b=IgyNdoXk8f2ii4vqkLq4OH/2UWRhY7QZa0tCLJzbblwnHTkmkraiuUDtKbbKTO1RBRSJxHts9lEJ7eKIAOPnNIc4RAsOcZfiZBp25bZAW5r3dlUXKLILuD+uEXLopjzUh2vVgtVo1iC30rKGQqNpJsZJ+VCktPxn0XidvLYRPYs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740396997; c=relaxed/simple;
-	bh=PSYe6R/xPBasga876FmS8mHT9Zoo5UeLL8SBdjJXyYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=me+EdXZhcikssWO2ffEGlnZ9OGrP19PKcXP6N+dto+850GYIjM+EmwVU8eFskhIX0APhu5PB9ZJAqeHD2/0xfwdsFfZ8aBeGYKckVApWflQ1Tgd5ybKudHgl9tKW5Jb+/USCAn8JC+Ixw744IIlA23N2PbLix96NV+IfR44k8y8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S2h0bWvG; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740396992;
-	bh=PSYe6R/xPBasga876FmS8mHT9Zoo5UeLL8SBdjJXyYU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=S2h0bWvGZ/wrr74QxKpyYx3qf9WQ0JxBIUIjM4IGAT16YoVeJKx1K4amOuK76OY8o
-	 0R6eNuYkJ3ceb2AQZObzCrHaxfifC9fX9LBuHqEOQbwJxdks9F9siUe9k0qFloe+C7
-	 uF3KlDYg3LvWBCNuRgxDfHblWLHi5JCe7B095xMkFnO8xz2u7wxjYxpcyX64pCu/fI
-	 OidgFXAVvWuyE2CnaBc9j1s8nwYW1sbhRhZKwvgjmc0ZHNYa8zycnvM2rogw46y9gh
-	 nd4QIhnLaSMccsOwjs7RRqk/keKhQI4h7jiAy7QtCib6a+/Rct5zI1AvmIWlSVDaej
-	 biIXz6p58xOCw==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id AD4FD17E019E;
-	Mon, 24 Feb 2025 12:36:31 +0100 (CET)
-Date: Mon, 24 Feb 2025 12:36:28 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Florent Tomasin
- <florent.tomasin@arm.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Steven Price <steven.price@arm.com>, Liviu Dudau
- <liviu.dudau@arm.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
- <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin
- Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey
- <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, "T . J .
- Mercier" <tjmercier@google.com>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong
- Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, nd@arm.com, Akash Goel
- <akash.goel@arm.com>
-Subject: Re: [RFC PATCH 0/5] drm/panthor: Protected mode support for Mali
- CSF GPUs
-Message-ID: <20250224123628.52d43b84@collabora.com>
-In-Reply-To: <20250220-strict-cobalt-albatross-6f742e@houat>
-References: <3ykaewmjjwkp3y2f3gf5jvqketicd4p2xqyajqtfnsxci36qlm@twidtyj2kgbw>
-	<1a73c3acee34a86010ecd25d76958bca4f16d164.camel@ndufresne.ca>
-	<ppznh3xnfuqrozhrc7juyi3enxc4v3meu4wadkwwzecj7oxex7@moln2fiibbxo>
-	<9d0e381758c0e83882b57102fb09c5d3a36fbf57.camel@ndufresne.ca>
-	<1f436caa-1c27-4bbd-9b43-a94dad0d89d0@arm.com>
-	<20250205-amorphous-nano-agouti-b5baba@houat>
-	<2085fb785095dc5abdac2352adfb3e1e1c8ae549.camel@ndufresne.ca>
-	<20250207160253.42551fb1@collabora.com>
-	<20250211-robust-lush-skink-0dcc5b@houat>
-	<20250211153223.2fef2316@collabora.com>
-	<20250220-strict-cobalt-albatross-6f742e@houat>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947825A33D;
+	Mon, 24 Feb 2025 11:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740397005; cv=fail; b=mjf7ZI6Jh0ZGgHafqhyGy3Wt85iVF6ViDloWBz/a/5036yiCLyxXOii5bx+eZQZ/M7yH9VL/l1i372x4XtRuMkh+bL2WeMNskH93lT45vKStoVcNR0uf/CbpqhKfQUnHP0swvf73pH72NVtzWvgx6kltc4ErBzNKnQegLqQn3MM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740397005; c=relaxed/simple;
+	bh=XC8PWEUSzSDtEFWuPkhzCcwacSQQ+KxOOJHRxb877bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WuyHpuZzxhP3sTPKFFKQEkX7b13u5Ws3U3jH7Aqrnj61XmVmDI3JoQRbt9avINkahM+rnbHId3ipa2LxPUtSPnAeg5/zcXXpiAWcd8d6EjRHeseJ3NdHWhuZaDMPgjPUhlj56ANM7K+nFYUZGEIKXRQRrGrlInw6YTJBvKhwnVk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=Lk6Pmg49; arc=fail smtp.client-ip=52.101.128.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IMpWF0PFIWn+Y1ZzfP2b9xOzuVQtxPiPCC+F0E9+JwtZnZviLhs2PPovE57uX5Cq1qSg+AaI224yuPFle6kKxUJoTCs2Nhf+2M0AF4oSuNUT0p4l/UgZVRFDHGfVpM2urEUlLbWZvFswkZE76ZLY/L+5FkxHjDyWDSDOR5kLxnu2Lvq7bbNIkGYv3pbgyvhBPFRaD7qtcV8hqckmNBLYQvBy5SoHglUeLre1KA0A82LLEjMci0Y42+DRAOgVx9cg2Wx9wX94vwZ1dquNms20z7a9OtHpaSHU3jxyhiU1GUi+COKkzUvMmZ0yOS5qsWZXNLj7/g8kfkD2REDAfodSaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gt/cmEL9D93k5bWb2cTiqgCz8cZnXiVXnIFSe3vC5VU=;
+ b=eBC0Iytji2tVdIKcwGFtHM2f+2Vgh/RANDP7dh4QtJHMlzPxCx4WI2y9QwNPeqDOkP52GNrxQfrfP0Bb2BuFtsyY7leZU5I0h+SfiWclve+GE2RcL35nNpX1wnM2OoUSeIZUT5NnOlXusYxCXuPRKg7zhRT8ZiKf/pEetB6womZhvDT/7bmJYKNj8bOHk8BIDXs8AKfCX3npwEMnGB62si7Zvs4CTuC4gtD4oG6xFdRTHfg2ONIcWjvsK/gFt9S/j9D/vxOQdLmL2pwbCTZs56XuI5dgBQQRMjNd755izWnDPp0hjgzSk9QtNv4OaVnIbyUC6iu+8betHOkvr/rv0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gt/cmEL9D93k5bWb2cTiqgCz8cZnXiVXnIFSe3vC5VU=;
+ b=Lk6Pmg49+TWGHm6MNJfnFPTeHX4RYsst9eIdDP5fZilF6bAVlCnpEevbcytUJ7RCKYeU8x7y7MAYXQWzYdtRehGAgmJHJ/hUYRNLAAaD6zup3vlRm6gJmcdHHC2l9yE4WvyofrtwpNXeyVO2xr/fMhVvQPRWLDL5x+SmPjLep28IIXme0makG8wXIB5bbuLXv/FtiAFQXFYvp0ibxFPUy9eDfz+cOjj4EoKHYvw55zOj87u+kwKsRrBfrqMNRsxZhOCQhRXpm8Zi1TnzDONOrHkoS95PRO9Qn43clvJRHuiRrltV/5+cLZz/JCeEdN7JAdtInrtZOfmAG4BO5iAgfA==
+Received: from SG2PR03CA0132.apcprd03.prod.outlook.com (2603:1096:4:91::36) by
+ SEZPR06MB5174.apcprd06.prod.outlook.com (2603:1096:101:70::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.12; Mon, 24 Feb 2025 11:36:36 +0000
+Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
+ (2603:1096:4:91:cafe::2c) by SG2PR03CA0132.outlook.office365.com
+ (2603:1096:4:91::36) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.15 via Frontend Transport; Mon,
+ 24 Feb 2025 11:36:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.11 via Frontend Transport; Mon, 24 Feb 2025 11:36:35 +0000
+Received: from nchen-desktop (unknown [172.16.64.25])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id BC6CB4160CA0;
+	Mon, 24 Feb 2025 19:36:33 +0800 (CST)
+Date: Mon, 24 Feb 2025 19:36:32 +0800
+From: Peter Chen <peter.chen@cixtech.com>
+To: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
+Cc: "arnd@arndb.de" <arnd@arndb.de>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	Fugang Duan <fugang.duan@cixtech.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
+Message-ID: <Z7xZwGTIKgj9_zNZ@nchen-desktop>
+References: <20250220084020.628704-7-peter.chen@cixtech.com>
+ <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEZPR06MB5174:EE_
+X-MS-Office365-Filtering-Correlation-Id: a86333e3-0ec7-469e-8b8e-08dd54c77e79
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?IdKrXEFKCLHep0YogcxKC+/ayGc74qXnEbHZvwDuBuk7jr+6omJEG0j0YExN?=
+ =?us-ascii?Q?0ueYt1aLw3t06isU25lEq4IilB0EqG1JdCEfmNb6hVFXveGQLqXBqfuzkTKt?=
+ =?us-ascii?Q?F+hmtvBh+hJBpFZjgF/Ii5Q3JY/g4tnrSwBv6XkHARKLJvm7oSrIR13i/qQB?=
+ =?us-ascii?Q?DBvX5nmP29jg0R+fcCsoOfHmL/3K/tGnuQk6F8jNH7pTPA+k/BCfnhhk+E8l?=
+ =?us-ascii?Q?OtwjXF4aPGxYoi8F6vnw90jMBvQneSQ+83unKJwWW3iYDociM9zaqnjqyJFo?=
+ =?us-ascii?Q?1oRI5py1XAdF1x4PLVzIVBxbI6iBFSQJhYVHmAAp2NnE4TlGt0pRibnTDP8v?=
+ =?us-ascii?Q?3hkDewBFRuYaLJQsWBD8/TRMCwszCgnQqjqbNlHEio2rCVU5GTYg5YdFJYd+?=
+ =?us-ascii?Q?fbchKgMt30DiC1EOZe1Hp80I0ibQhNvIONmiKd86uxD1azqxHFGqmWcf5L4I?=
+ =?us-ascii?Q?edp46PGlL0NQonawRhuHmiL9U0H17hMoFKE7u4ebQDadPjVlD4Qmo2MtlQNi?=
+ =?us-ascii?Q?awUayMP30pE1g7ua9UnRbVUHCfxdxRyPXPDFbZ0YhOG5Z7HiPFcxDZpmgtmC?=
+ =?us-ascii?Q?CGSv2bX4UMid9YtcFUJXNISpmz3kCiWXGWi20wS43GAeUGdi86bXFD0tpgM+?=
+ =?us-ascii?Q?WcG0+qHTRNX0zR5ZsnsJSwYzEq+ficl+SEG1dCp3jSX3OaIbhs8qRAEbV7ts?=
+ =?us-ascii?Q?K3zyQE13s6Hp/A9naBY0PBV8pkHLhudWxNddBxo+XjO0G26KWiDswivWhq17?=
+ =?us-ascii?Q?cWqrVlvRfnk16JbfpFIV0Qq2nyL9nM0QGTZSL3dqm8KQBfIW/3ZkY6m7MldA?=
+ =?us-ascii?Q?Sk3Ir4CzqgHQiM0ggiRPk/UKb+KDHHi/Q3i6IW2TURTCVkpfm7z8S0oL+G96?=
+ =?us-ascii?Q?xHybYL+yQcHLcvyA0yzg6wUCrdtudtko+JMB7q+wgg0MYv5kgBQLQN8VX80a?=
+ =?us-ascii?Q?e2LWFssDbJewDAL7Pho4nG8iXk0XUIdHRkkXzRxXdLjN47OxMkbOP1NOt31D?=
+ =?us-ascii?Q?oJbEHkwRk6SQa4SrR6tJhTA9O8GtDenB8b9WbA7ri7gSOacfQwsU3LBumyHd?=
+ =?us-ascii?Q?U6JE/njoGdWiTwh6cvFKlqCPjr8klGcKyTpLPVaQn5rLutVu4+8tQG7JeRvs?=
+ =?us-ascii?Q?9N6s/pX6GhYWWP2QKLCbyvz9C1HMRUQxmYHxHrzxVlMRqVqN5T6MdvBtqDEh?=
+ =?us-ascii?Q?spQ289gefC2R0OEEl8SQnj1KYMI+T4MD3atGssVVLttC8Zi1WEbkdmkYF7Ud?=
+ =?us-ascii?Q?MybB7mDVSJNUzGE6Ht+l7bDbOLU+3cFSpM0lMFD7oNEeX1FohEWW2b/NZhXa?=
+ =?us-ascii?Q?/f/Ioi0mJ9vjnFu9fmg+V/aEqSyAS1vDmcy4fuyquiRBx/PDkA1uut6uk1m6?=
+ =?us-ascii?Q?ligLrKxyg8RgRve4Fv5LXul8m7/FM+kX61qkLhZhE/W988/JCxP0xoxMjKmV?=
+ =?us-ascii?Q?v72z0V9ak/ncWe4X93nMAvVxAkJwDGCmcP/JdKL3vcRcqrIOBy4KCGv5R3YR?=
+ =?us-ascii?Q?KfRU7IYIZC53Qsw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 11:36:35.1254
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a86333e3-0ec7-469e-8b8e-08dd54c77e79
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CC.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5174
 
-Hi Maxime,
-
-On Thu, 20 Feb 2025 14:32:14 +0100
-Maxime Ripard <mripard@kernel.org> wrote:
-
-> > > > This approach has two downsides though:
-> > > > 
-> > > > 1. We have no way of checking that the memory we're passed is actually
-> > > > suitable for FW execution in a protected context. If we're passed
-> > > > random memory, this will likely hang the platform as soon as we enter
-> > > > protected mode.    
-> > > 
-> > > It's a current limitation of dma-buf in general, and you'd have the same
-> > > issue right now if someone imports a buffer, or misconfigure the heap
-> > > for a !protected heap.
-> > > 
-> > > I'd really like to have some way to store some metadata in dma_buf, if
-> > > only to tell that the buffer is protected.  
-> > 
-> > The dma_buf has a pointer to its ops, so it should be relatively easy
-> > to add an is_dma_buf_coming_from_this_heap() helper. Of course this
-> > implies linking the consumer driver to the heap it's supposed to take
-> > protected buffers from, which is basically the thing being discussed
-> > here :-).  
+On 25-02-23 04:05:10, Marcin Juszkiewicz wrote:
 > 
-> I'm not sure looking at the ops would be enough. Like, you can compare
-> that the buffer you allocated come from the heap you got from the DT,
-> but if that heap doesn't allocate protected buffers, you're screwed and
-> you have no way to tell.
-
-If heap names are unique, the name of the heap should somehow guarantee
-the protected/restricted nature of buffers allocated from this heap
-though. So, from a user perspective, all you have to do is check that
-the buffers you import come from this particular heap you've been
-pointed to. Where we get the heap name from (DT or module param
-passed through a whitelist of protected heap names?) is an
-implementation detail.
-
+> > diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
+> > new file mode 100644
+> > index 000000000000..d98735f782e0
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
+> > @@ -0,0 +1,264 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +/*
+> > + * Copyright 2025 Cix Technology Group Co., Ltd.
+> > + *
+> > + */
+> > +
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
 > 
-> It also falls apart if we have a heap driver with multiple instances,
-> which is pretty likely if we ever merge the carveout heap driver.
-
-What I meant here is that checking that a buffer comes from a
-particular heap is something the heap driver itself can easily do. It
-can be a mix of ops+name check (or ops+property check) if there's
-multiple heaps instantiated by a single driver, of course.
-
-I guess the other option would be to have a protected property at the
-dma_buf level so we don't have to go all the way back to the dma_heap
-to figure it out.
-
+> [..]
 > 
-> > > 
-> > > I suspect you'd also need that if you do things like do protected video
-> > > playback through a codec, get a protected frame, and want to import that
-> > > into the GPU. Depending on how you allocate it, either the codec or the
-> > > GPU or both will want to make sure it's protected.  
-> > 
-> > If it's all allocated from a central "protected" heap (even if that
-> > goes through the driver calling the dma_heap_alloc_buffer()), it
-> > shouldn't be an issue.  
+> > +     arch_timer: timer {
+> > +             compatible = "arm,armv8-timer";
+> > +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
+> > +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
+> > +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
+> > +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
+> > +             clock-frequency = <1000000000>;
+> > +             interrupt-parent = <&gic>;
+> > +             arm,no-tick-in-suspend;
+> > +     };
 > 
-> Right, assuming we have a way to identify the heap the buffer was
-> allocated from somehow. This kind of assumes that you only ever get one
-> source of protected memory, and you'd never allocate a protected buffer
-> from a different one in the codec driver for example.
+> This is not Arm v8.0 SoC so where is non-secure EL2 virtual timer?
 
-Yes, and that's why having the ability to check that a buffer comes
-from a particular heap is key. I mean, we don't necessarily have to
-restrict things to a single heap, it can be a whitelist of heaps we know
-provide protected buffers if we see a value in having multiple
-protected heaps coexisting on a single platform.
+It is the Arm v9 SoC and back compatible with Arm v8.
 
-Regards,
+-- 
 
-Boris
+Best regards,
+Peter
 
