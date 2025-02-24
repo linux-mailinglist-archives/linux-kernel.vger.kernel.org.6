@@ -1,109 +1,129 @@
-Return-Path: <linux-kernel+bounces-529220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FC6A421EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:51:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A88EA42225
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:57:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60B591666AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 044763A6E90
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838AE233720;
-	Mon, 24 Feb 2025 13:48:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B0A2571DA;
-	Mon, 24 Feb 2025 13:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEAC248882;
+	Mon, 24 Feb 2025 13:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="g7JUOe4q"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B859157A48;
+	Mon, 24 Feb 2025 13:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404897; cv=none; b=Czs1Bsv9+Bn/S+4K1yvYU6QIE4yjfq4emaY6pOViPPnjvcF1hYdmZ49pl0oP55zH+g2jKMsmlSthTIIaTN71dTQnLHI12ziK8Fp7elm31AcTew6oA6wm5PfUYUCo4k3gr7pC6HL1GTR6/Qv6tNoGUpz7lxSL7oGlcpTirqV0GTo=
+	t=1740404911; cv=none; b=qu1DRRK4FZhyas5v/EP2jYC2c2ngibdOqxPoL1p1D+uMsW3rr96titrEKk6Yc+x9lC5cTCvAMXz6x6lpcpEQpsQrt+B7+zEOrsg6/59UyHSDx0FjahOARlpfR9kT29ZRzYC3brWUNWNGTLa6O2MCJxNWaBckplkBt4rtfha4li8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404897; c=relaxed/simple;
-	bh=tL1+UhoAB+zhQZj2gjP8iNht2hSkHMqUXIe4VPji8jA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X7hS8hWNe9rQCrr50XOdN1kRmxm+lqU0zX2xnivhksuvYcgQW47505y5iDP+JX2PwBOSQBR/fGSwVF/oX81KkPnZP6euBNHOOb5XIT0qgRPCU3Mq7Vz+Qv2Mm9PKdliM174ul7cgW4UREkK8LFKODERky8IigkLtn89aGec2WwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 990B31515;
-	Mon, 24 Feb 2025 05:48:30 -0800 (PST)
-Received: from [10.163.40.148] (unknown [10.163.40.148])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 716D33F5A1;
-	Mon, 24 Feb 2025 05:48:07 -0800 (PST)
-Message-ID: <acc7eb95-a0d2-4f35-96a8-7a370cc1eff6@arm.com>
-Date: Mon, 24 Feb 2025 19:18:02 +0530
+	s=arc-20240116; t=1740404911; c=relaxed/simple;
+	bh=JRkq7wjYrgvh+yhnqspJzZKgEwp94XGB8+ID6BQtyYY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kiLR07Ln4gFj3S+4PQ3YwT/0myvp3ac0DWtxxZJsWSwtaAl9/dQKlZr4m4q5InIiRUC4kc0bJPBfmcI1XgaqxR3F+tobGjTQ7kqswqgyjwbB2WJS+7dJnTPKe30ck/V+ZmDG3PsWUHc7N7gPK3GCkVHmX378AMvnN6hI+/kTwdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=g7JUOe4q; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EQ1Y9woIJ04CcEe49xqkqna1RhXAAY88omG8TRUbg6k=; b=g7JUOe4q43m4jzeSptGOHh9Fxt
+	baNOGbGELH05179VyqTjo+0LLnp9uJ2Ym+FP3yRGxy59ecyCXwfcU0g3f33+ZMXxvk/g5k98J2mCe
+	BHdJFQqj6KOW9+D3U3FFqx6NyWmM2sHBZHfd2DpfsILsGmfxD3byxV+8T5+ZIZ4iNKhCl8/+hwdpD
+	rMrXqBmH8Qh8zzfpyeXF7Lswr4IYul+b+WqV/lTDQgd/+DhgShbpuNuRvUM0uEMDLb+yGcctI1Tpj
+	Qe0xwB5f8L7PErdbzebV7WktTc/Pc24wpsOiGP4Aj+FzcLoeA4WQ//CAmJ5VMPOLo859AzNAj+XQM
+	70CSx78w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40326)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tmYon-0006S9-2z;
+	Mon, 24 Feb 2025 13:48:22 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tmYol-00052k-1c;
+	Mon, 24 Feb 2025 13:48:19 +0000
+Date: Mon, 24 Feb 2025 13:48:19 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Antoine Tenart <atenart@kernel.org>,
+	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+ <87r03otsmm.fsf@miraculix.mork.no>
+ <Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
+ <3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
+ <87ikozu86l.fsf@miraculix.mork.no>
+ <7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/5] arch/powerpc: Drop GENERIC_PTDUMP from
- mpc885_ads_defconfig
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org
-Cc: steven.price@arm.com, Andrew Morton <akpm@linux-foundation.org>,
- Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>
-References: <20250217042220.32920-1-anshuman.khandual@arm.com>
- <20250217042220.32920-3-anshuman.khandual@arm.com>
- <93e96586-13a2-4800-9dc7-5b35177a328e@csgroup.eu>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <93e96586-13a2-4800-9dc7-5b35177a328e@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-
-
-On 2/24/25 17:34, Christophe Leroy wrote:
+On Mon, Feb 24, 2025 at 02:31:42PM +0100, Andrew Lunn wrote:
+> > What do you think will be the effect of such a warning?  Who is the
+> > target audience?
 > 
+> It will act as a disclaimer. The kernel is doing its best with broken
+> hardware, but don't blame the kernel when it does not work
+> correctly....
+
+Indeed.
+
+> > You can obviously add it, and I don't really care.  But I believe the
+> > result will be an endless stream of end users worrying about this scary
+> > warning and wanting to know what they can do about it.  What will be
+> > your answer?
 > 
-> Le 17/02/2025 à 05:22, Anshuman Khandual a écrit :
->> GENERIC_PTDUMP gets selected on powerpc explicitly and hence can be dropped
->> off from mpc885_ads_defconfig.
->>
->> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
->> Cc: Michael Ellerman <mpe@ellerman.id.au>
->> Cc: Nicholas Piggin <npiggin@gmail.com>
->> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
->> Cc: linuxppc-dev@lists.ozlabs.org
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> Just wondering - Should CONFIG_PTDUMP_DEBUGFS be added instead ?
+> I agree that the wording needs to be though about. Maybe something
+> like:
 > 
-> Yes please do that as a fix to commit e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
+> This hardware is broken by design, and there is nothing the kernel, or
+> the community can do about it. The kernel will try its best, but some
+> standard SFP features are disabled, and the features which are
+> implemented may not work correctly because of the design errors. Use
+> with caution, and don't blame the kernel when it all goes horribly
+> wrong.
 
-Sure, does the following updated commit message look okay ?
+I was hoping for something shorter, but I think it needs to be expansive
+so that users can fully understand. Another idea based on your
+suggestion above:
 
-arch/powerpc: Drop GENERIC_PTDUMP from mpc885_ads_defconfig
+"Please note:
+This hardware is broken by design. There is nothing that the kernel or
+community can do to fix it. The kernel will try best efforts, but some
+features are disabled, other features may be unreliable or sporadically
+fail. Use with caution. Please verify any problems on hardware that
+supports multi-byte I2C transactions."
 
-GENERIC_PTDUMP gets selected on powerpc explicitly and hence can be dropped
-off from mpc885_ads_defconfig. Just add CONFIG_PTDUMP_DEBUGFS instead.
-
-Fixes: e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP")
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-
-> 
->>
->>   arch/powerpc/configs/mpc885_ads_defconfig | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/arch/powerpc/configs/mpc885_ads_defconfig b/arch/powerpc/configs/mpc885_ads_defconfig
->> index 77306be62e9e..ea6f836407d2 100644
->> --- a/arch/powerpc/configs/mpc885_ads_defconfig
->> +++ b/arch/powerpc/configs/mpc885_ads_defconfig
->> @@ -78,4 +78,3 @@ CONFIG_DEBUG_VM_PGTABLE=y
->>   CONFIG_DETECT_HUNG_TASK=y
->>   CONFIG_BDI_SWITCH=y
->>   CONFIG_PPC_EARLY_DEBUG=y
->> -CONFIG_GENERIC_PTDUMP=y
-> 
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
