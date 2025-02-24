@@ -1,288 +1,255 @@
-Return-Path: <linux-kernel+bounces-529924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3975DA42C97
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:20:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42ECBA42C95
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470F7175A2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:18:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07531893746
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373B31FDA6A;
-	Mon, 24 Feb 2025 19:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22D01FCCE0;
+	Mon, 24 Feb 2025 19:19:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LQ48gqHf"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020084.outbound.protection.outlook.com [52.101.191.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+GNEs3a"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3EA11CBE8C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424693; cv=fail; b=Q9wgY8cOo0LtDq3HCbyEsy+x+Kuq0VpIod3EEpq7lhe8WgvZiF+IA+wVNCmtlsXUEZSYk2oIwwIlpg1WSTS1B0EG8hB4/taZNVriL7fL4FN4ib2P1IM41MNzQYWfg81tflCC26UrO/MnvQc9XgITwA/ZFsHr4ei2BfRDDOPGcSY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424693; c=relaxed/simple;
-	bh=GJLF2a88T1ZV7+Dejmk5vdOSztumUYw0lPN/vOvirok=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nj3n30avWujl8xVbe+Q4FwsLE/sDOkLNpRwzhBnMtcQlzXJCPQnxnrUdVMUJwJyyHWxuLoWMO8oi+V0J1zGOBy+bljxWZzxj7UoEldBteppF1e70aS8TYuGkVj9sftpVYiEbAvag5moCVFLbcY/fsdxRTBouwuGUF8fJo3qH6Oo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LQ48gqHf; arc=fail smtp.client-ip=52.101.191.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=m5kQ9SsRnbf/Ezex9Y4sS2l2rRoAEED0/MgqVhA62v2R8hX4gdZgvzK1eCJ485irCii85j/Il7SlW1VJ9MOqNUpPPyR50uuVjyPGAyapeYRyeuYslnlHCvTcm8QcXBGmgy/cqWvitfvWVGnqDTBgqyQJ8lf5n+Wxd4KN8r0OtOybHGVspUI580tYA4V+MuJcGui7axV6+Dj8cYkcdtgQNDNIFGpKRlhRIgqtSDxyYLdI1Gppu3OprsC2KMZDu+VYSIetqQu46AQTgkSbDHqmqUSqeSTlmH+5smEaVQXbattHhwWFiw5l456Pnt1eeC0QoMm0lJ5S6znDI8pM1Y6QPA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k73JqtUI02z+r4fNaMaC3BKLlzSFxs5OZ9ypN5Diq0Q=;
- b=w9dHtpqO+/YD+CbQ2vNnObHXcbQSHEf37ifBI1Vog6zRWc2slEyco6rFxSTcotHz0XdfF6P1bN+flasVQJJmI8r1aZWT/mryyuCJLcLvnKPMcKpqYT0l8wow6Z+aIf+DXXA2GOFNlt3tNhvRYh9qIY15S2WaPiDfnQ6+MdZ0nDfAh7FzVXrm6kPFhb0jNjUB6k9m1MuMibNsCWYVTddPcXVgJvk/Vgip98uzM2POO3CfWOB+ri1BBfZA0/62NlKCL+TnARqDRjubQzWLjDrL7aoMkVZrSbx11eHXKCnvMHWvq3ShiIPXdPtPXdZKbe26blaRYapxQ3Lb6uBacPQe6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k73JqtUI02z+r4fNaMaC3BKLlzSFxs5OZ9ypN5Diq0Q=;
- b=LQ48gqHfm1/H3hypF0jurCZurq7C7x4mbLSsrQyhcpz4SMAn8O4ZCPUvURmFl0rR0zZYB2yunqRcqNoJUogNQbWb2AmXjRGxZp3R3lb9Sq76vaEO7S7Lb1I5DXgTtJv4GY0STYreBa7RRJL7QImxZLxBZQ8nrnjS9Nj7Bw0ztYPqKHKSBkIGh0qp0kb/kQPuNOA33rZdwM+XWDxrVTCHwhtmkMlfDHogjNQASDQs16UZx91Rgt/EnSITDzavbPuGFspoKn1lcW0M1sBPO39a1jgNAg1WTW/r9mvhvO8DIjvEWACLRib8KDKasF2ohBLxRqH7xCSkOnhcHsSeYWhltQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YT5PR01MB11195.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:133::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Mon, 24 Feb
- 2025 19:18:06 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 19:18:06 +0000
-Message-ID: <b18e6478-ef4b-42b3-8cc4-42467b3a0a7f@efficios.com>
-Date: Mon, 24 Feb 2025 14:18:05 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] rseq: Make rseq work with protection keys
-To: Dmitry Vyukov <dvyukov@google.com>, peterz@infradead.org,
- boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
- elver@google.com
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1740403209.git.dvyukov@google.com>
- <4e93f7da6dfa450d488fafa3599306349e6e34e8.1740403209.git.dvyukov@google.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <4e93f7da6dfa450d488fafa3599306349e6e34e8.1740403209.git.dvyukov@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0049.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c00:1::26) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329B01A76AC;
+	Mon, 24 Feb 2025 19:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740424741; cv=none; b=uaNr3sSrCmQPB10JuieZPiJLpg06xf+x+Uqh0ZO/kPUM4YzwdKshSWj/Qoi40S5hQMDZ9fFs1W0+BT7pPhzV51zeB/1MH1PZEyt55BoXFNiD+JBp2rTOkzf1EUBVC4NIuGfA83sEhXdzgxP69JJndPblrYHJfX2g/53kGoIP1pg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740424741; c=relaxed/simple;
+	bh=zGicrtl24qQPtby4+Gn1aiZ7UEI+z5oCfwEpkiJRZfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGvurz+yS/wE/lYogKwmwSgTMgvbguiyJoC1ItPrLz4oEa1xnE97cuIYSHeRY3WahuhFKWe3wCjgDvos0alNpLC8ytupGYd8zzTQbOUSR1h8ga/iwotkERd549zvdWkYJSrCSGMugfugeYncaL3ad+prb9W5Kk9p5XRwPEfw2Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+GNEs3a; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c07b65efeeso466753885a.2;
+        Mon, 24 Feb 2025 11:18:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740424739; x=1741029539; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=p3xHJbLnGcW0HZ1gLOEDktA60F4a1G/C80wkrIEDae8=;
+        b=P+GNEs3aDjpVvXV2tQV01wYdyavVqajt+qWrhJuYq4gDMpMkS8gQNdL1kr8MylB41i
+         HVCfKL3rPATtWbAubgfZLLpU9mzK1XLuqwEPtlNxOjpu/HvobaVoiHMmPb7ZGaOZlvdV
+         iRX1fkEc/VHqyurX1MWoblxfIF6pyHBqcPl4ljq4aTnHBhOKaNbG/r8gW5ziZCG4yfuF
+         T0XjCEaW+jyW8PFaer81hnsenDQv0hO8/N+HjrRSOYiqfexqFeY1sBw7dqo+GoDA1JS8
+         1DvRq51rdp7zf6RYBGCaWgLhVlioLnrTfnMHeo08C6jgqsAqQO9eS0xE1qD2FNiKDXUf
+         /6FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740424739; x=1741029539;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p3xHJbLnGcW0HZ1gLOEDktA60F4a1G/C80wkrIEDae8=;
+        b=XCP93ZmEJgiMAuFM/r2bICqQFN7+oZTxBXGyG0tVhD3QgQppvEE3linZRUrR6MRAwO
+         sKmL2+mEqr0OYF1xSSAmwDYRh6fucXcUFZEiUiXHHVnZ4ckAKbLBweqe/Z7C++GouB7h
+         YzHyskOujwrtL9eAa0GIuS8H+k8tUJ6x382sqiC7a3jvaBxzxk17bZCN+OCaaZtnzZlB
+         IW+6vmZhXOZP5pvoMdiCefiO8/Rc/y9HDH4FtL/U4kQOhCPHJWXk9pWa+DZXQAOJ4qXv
+         Y97KO0VV6kcrEtKMAr7Qf9UuYwdV9yT20VA15MA95pFqs8nZLjpqL/Oy4mC0R2zADeOR
+         SJmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWan8gHVJgyr28vmdwm9P293A66ei01nz/Tj5wwTGPnyC85petM4sgVkfWjja88k9Kufl22T5KWgGKyTc=@vger.kernel.org, AJvYcCVcgDOjlTwgasXeBEtO981rRQ1M6m6sdKqdg0MFBs3LNXCCQLm0jXjgZdmW6JyfSdadpWy3l/4iaGZZyWDHYoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU+xblTw+IFs5xE0Ol6EOWOydnuvlPt9I/unTd0kn+638N8uz1
+	lb5rAJpW9OzvCByMcBbn0vgm2pf9HXuN9oVCoQhEKIUMGKWk6OY+
+X-Gm-Gg: ASbGncsrr/VJTbvTw6su94om00kUmexB2LxqIwDrKhV0UcuTbPjjUeZbVRUKblY2GO4
+	DdyzDLt3n8AjFRIg4US+LNcWCF9ChEBkH2kC56WiCrxFugNsIfsGlDDL8THEs3AoOLnVkea+4bj
+	JZdvIVrqKYBdE9n9FD/ouG+SePQkGVPVvFrFExnEoYRjWgi9vPA2nQQu333kpW0vls4G8on7u/f
+	fcUbxnqUWYz/2C/Mu0dzsO2adZS/5Z0ShhVKYVw4ssjHKhJfblB1nA6iIur6AwrFovHOB6uLjgi
+	J/a7HW9KqqolVuvwdwXHZW9ZDQ4Io9OgKDiaambgAAfvE1oOUM/su4eW6f6/D9YvYm+4HWLfJWP
+	L0YSYcWLiibnzENmZ
+X-Google-Smtp-Source: AGHT+IEASQDgwK1ZCpXCe9rbQcK/QKGxUv8rOGOYKhCC4qMl70AwVXsBR3xHrdxYO4d9XP89MwfjBA==
+X-Received: by 2002:a05:620a:40c7:b0:7c0:c332:1cdb with SMTP id af79cd13be357-7c0cef46051mr1632523585a.38.1740424738790;
+        Mon, 24 Feb 2025 11:18:58 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c23c299f02sm9535185a.6.2025.02.24.11.18.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 11:18:58 -0800 (PST)
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfauth.phl.internal (Postfix) with ESMTP id AE66D1200068;
+	Mon, 24 Feb 2025 14:18:57 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 24 Feb 2025 14:18:57 -0500
+X-ME-Sender: <xms:Ica8Z17AasKq5NcTbY4uHB-bIUFjZCQ85NJQdJXbEgOEXOq57te1xQ>
+    <xme:Ica8Zy545tLxKcyjyliQwTWzlfRdbRpc12OuVNZJJeFXc-pU7_HH8sVGRa4pUlr8k
+    UxRAvsWB6_r-zlzNg>
+X-ME-Received: <xmr:Ica8Z8fX4oEF2nD-eFIeGPFM0aQUCyo-lVQBxWihWjUbzaMymGKcelNuxEc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleeitdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
+    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
+    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
+    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrhhonhhigidruggvpdhr
+    tghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepuggrkh
+    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpth
+    htohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:Ica8Z-IVyt0oJN-CU9v1TyTArH_JuzKQ33Xmo0cCNG5n7zxQ41W4bg>
+    <xmx:Ica8Z5IhUGOgQ6dH-OHjdnoTsnVbFXFo9qBttix5LrQ3J6n8wuBgaQ>
+    <xmx:Ica8Z3wTxlaT9qZ1XIl-qfZODs0m7CLanlJK0YnCs-KHtUojkI32Bw>
+    <xmx:Ica8Z1JFxdjrQ1JS5VLPO6d7G278_DgP35qYCv0Ci7fDFZTgSPnXmg>
+    <xmx:Ica8Z8b8jpR-oWFXD4AvbQ22S1G2pCAT26XQMqLALmV3MY1AWqZojlAB>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Feb 2025 14:18:57 -0500 (EST)
+Date: Mon, 24 Feb 2025 11:18:08 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+Message-ID: <Z7zF8KF9qTCr_n4l@boqun-archlinux>
+References: <Fg4QliwzbHj3m-Fr3ZeUiU11d6Bu-I7w_9xzSsnDlzQtqCkjgqxJpI6_YxuXnB8m0MqESq6V7vK7FhPnEcvGwg==@protonmail.internalid>
+ <20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
+ <874j0j1nv2.fsf@kernel.org>
+ <Z7yUTNEg6gMW0G7b@Mac.home>
+ <CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
+ <Z7ye0MsACNWe7Mbr@Mac.home>
+ <CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
+ <WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
+ <Z7yl-LsSkVIDAfMF@Mac.home>
+ <87msebyxtv.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT5PR01MB11195:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b86273e-5c37-4495-4861-08dd5507f7a2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0l5bno2UGNwVWJ4VFZmbG40OWhPQWEvSTVETmJvZUp3d3phYVFhZlBhMEZH?=
- =?utf-8?B?RFk4NmJUdVFXcGRQcEdMZVhyWFZZVXJlbXV1c2lkaEdOUGNFMW5vdTRRMHdw?=
- =?utf-8?B?eUJQZ0JIa3VwUUEya0VPK2U5VWRZR0d6Sk5KQ29hRFlnLzM2cG1YeEpOaEpC?=
- =?utf-8?B?Z25XQXZkdXZSWmd6bmM1WGpuckhSOGJEMHZQR3h1MFZtVXJSNFFlaERiTUhW?=
- =?utf-8?B?M3FJQkpPSU9rV1A3MkVPTTNFTTdjeXFzMUU0TWo5OFZPTUd4VWo4alE5eFFl?=
- =?utf-8?B?TG9FWHo3d0pYYm9nYjVMT3NESk1XR3prVUZkc3BNSXJUY0NGak1OMEM2d3hw?=
- =?utf-8?B?MzUyYTFacmVLanpZODM4MXNvbjl4Vko4TjNrc3hyRFlHc2VZc28wZDd5YjE3?=
- =?utf-8?B?eHdIejJ0MnlBTXc2VHVjTUNWL2VJU0ZPbE5QZXRmT241TTdtYWtQMzFOaGV3?=
- =?utf-8?B?TWhPYzRyaUU4Q1dRVXFQcndCaE1Xc282YUZwRTAzQ2V4RUczRE5MZDFmcEFP?=
- =?utf-8?B?QnFneWJyNnYzUzN0djZoSG9YTTE4Ykd5aUdYNTdIRFNhR3dUdHJwWFFmR254?=
- =?utf-8?B?Rjk5aEtqQ3ErazBxN3RqWmVGOHIxN3dCUFUzV0FSbUNRWk9uTE1tcjZTcjZL?=
- =?utf-8?B?S3R1NEdOa21xdWZKSk1HanFHWnVaZmp4ZGVKaUQrNnZYVEszYi9FR2o3MUdR?=
- =?utf-8?B?WEFwQkxnbzY2R3N0ZTJOaTlWRVM4b2ZQcmVKZSs1UG5nbDB4TkI3d2x4a0pH?=
- =?utf-8?B?cmgwZlJXMkNMS1RzaXllTUFVa2FxQ1BVSGlJQVh0eGFacUdRSFM2THJsdUpz?=
- =?utf-8?B?VEp6MVhra2ZPL1VLa05JaWZvcjBvUE1jeUQrZXk2bWZHcGpzbEx2Nlo0V1Q0?=
- =?utf-8?B?NXh0Z3ZjNGxEeXJmamVpMEpsN0svb1VjN1FTYlFFL1lYRDJhOFY1WHNXb1Fo?=
- =?utf-8?B?L3VNaFZoWnpMMVVnT0tUYmxHY255NnE1cUZUMjdyZ3AvUkJIQ1BPVCtSSllC?=
- =?utf-8?B?ekI0UWlnWmY5YW94dnUwRFJJeTdFRjgyL1V2d1hsajc3TVJ1a05rSERYeUor?=
- =?utf-8?B?RUkybVhCY2taVnNQbTJhaG8yZ0psbzgvSUllYlBlQnY2Q3lBMzZmVnYvZ1pD?=
- =?utf-8?B?S0tzejBOZ3FpZTQzVU1TZXFhN2o2YTNYcFJKVlpsSHp6eGNFRE5GMTZ4eFhK?=
- =?utf-8?B?MU5WemFUc0NqVzJiNW12dEJTTVBpRDcwNFlGQW83MEZhLzV5YytXMEdqVHFK?=
- =?utf-8?B?Y3lySlRsREdlWEV1M09xWjI2OG9pVmlnSmpsUmFqZi9PYWRiVlo5UFFCajdD?=
- =?utf-8?B?ZjBwWDAySFM4Q2hJanI5OFdKSnVNWUhzcnVXNFBEOHZURmFlOWdNRVk5RFdE?=
- =?utf-8?B?RXQvczJxUGpldVVqM2ZpQ2N3cXErSk1uRmoyU0M1Z0JQQzAzMmFMMzVMOWNZ?=
- =?utf-8?B?NmhoV2ZjOEYzc2RGdDdOZ3M5b05rK3JONTY3SUhvZzBNK3FYZC8vd2xlKzBi?=
- =?utf-8?B?K2JtekliS09mQVpZQTRtRzRWRkZBeC9WbnIyMWZVOTJRK2RUZ0NydlJYU2FJ?=
- =?utf-8?B?bXUxV29oalZ2MElVYnk0alJuRERGdGsrOHJBTTRoN2tPS1FPZWs2dUR2MTc0?=
- =?utf-8?B?TjE5SFpldXFPRmxTbmRxL0EwcXZnakNIM2x5SHNZN2srU2JDY2gvbnFTUkh2?=
- =?utf-8?B?OFhSWUgya1FvOXA2Ny8zWjhXMGljTVBWRis3ajVBWXdHV3pZU2dZQVJTdm11?=
- =?utf-8?B?TlF4OEZQOWt4L3hmMVFVRHloQW43YUlHZ1JaOTZPOXNxNFNwblcvRTVGUG1l?=
- =?utf-8?B?bnRFZEgvb1NVSWlaMUpETjcvUzltc0dhWFVOeExjazNxbW5VMlY5R3dLU0pK?=
- =?utf-8?Q?QC9tfejxaiPO4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M1N2bm5ZTlRjOTZkMTAwRUVaa1g5UDMrRU14RUl5LzZ1YTB1eElZWmNRRW1I?=
- =?utf-8?B?MkdqRUVmZ1FDZC93NHBlOVY4VEJLWlpDelFZS0lLdzRVZnBpbFNWSWh4V0l0?=
- =?utf-8?B?cmdTMFdmZUhtT1V4OW9zdlpjWmhVWTM4citxZTlpeHF6dWJQUlhZRUNzTE5u?=
- =?utf-8?B?elUvaUdmNEtjaUhwc0RxTm5LTEQ3Ni9mTHJuZzhZZmN0UDBDYnZwbWgweEE4?=
- =?utf-8?B?SzlrWDB3R25IQUxQUkkvR0hrSHdkYldsUmFURXZQVERzMnhrYkQyYkdBRTZs?=
- =?utf-8?B?NTZIVk9SNTVJK25NNndWOXd2R05KZENWa2FKd2dUSFM1MjR2N1VlaXd0ZGMv?=
- =?utf-8?B?N21rc0RFK0pNdC9saDErUmJvWkpBQjhLQWhIZHdzcFVyZXhadlYwQTJzSzZu?=
- =?utf-8?B?Y2syODQzQUNIM0NSY1I5UVpOTVdwdVgySU1zMEtPT0pXT0VqL1FaWGwrenVp?=
- =?utf-8?B?QVo4azRKTkNBWENWK1JXTVEvckJTQ3RzL01wdkpOaGNZT2RISnI3cU03REc1?=
- =?utf-8?B?Sm9aS2ZrbklqYXBtc1JDK01CY3pQVktURDdpNzVxU0k5MzNseVV2eVpqNURs?=
- =?utf-8?B?SFFKa3RKWmliVlpFQWxzK2YvTlE2cWNYdE01RzlzWE05cExGZTk4SmFiYS9R?=
- =?utf-8?B?UlQ5cnAySW9HeFA2M1ZzK2t0Vng5cmVaLzBBZkRGTHB3RFNUY3lCVjZFcjlr?=
- =?utf-8?B?MEk0N0ZKeFhuUnVzbFRYV1Z0c0VidGVtazVzWHhQZFVvMER3Nkh6ZGp1NVN4?=
- =?utf-8?B?OFFvbWVkeHJVSHpEemNCdkYrNlF1YlRLVi9NTnBCVnl2blp6aVZVNkEySkxh?=
- =?utf-8?B?QUtRZk9relFWYXRLYWVpeHg4K2NRNlBwM2g0ek1VMUZBK1E1ZE9Xb0lZTCty?=
- =?utf-8?B?UWZsaVlnNHRJc3FHYjN1V3pqVFBEZkxnZGoxZlFUMmhwcUpMMmt2QS9jcTVR?=
- =?utf-8?B?YkEyRjlTSis5UWJ0QWRuOWFrd20xc1FQUU5mSEZvRVNpRzRlWTc3WlgyWlNM?=
- =?utf-8?B?VWo1ZGtTcHFYL25TbExVcGxKakhPMGRVS21ndGhiU2lreFFRNlBseGt5ZExB?=
- =?utf-8?B?T3IwL0RSbzJvVXYvTytoK1FjSXY1VDBGN25yRGZTTEdiUHRodGlmcU5xTWVJ?=
- =?utf-8?B?S3ltMmJXWndnOURobkl0aEcyOW9SRmtQY2Qyc1JML3RCbW1SVW9NbmJQcDNE?=
- =?utf-8?B?MzY4WjIrc2V6eWRIR0U5TmtURDNzTG45VXY5MktLWU1SUUxoZW1nK0hSVHVH?=
- =?utf-8?B?Q0VYWURpekduc2R4bE1KZ1JpdlFxQ0p1dm5KRU9zQUhXcHJESC9CK0c1dGxZ?=
- =?utf-8?B?YnJaSWN1YW5paGR0cmtIZDZqbFZZOFhMSDVVOHBLN25yOFgyMmtQSjNxN3NZ?=
- =?utf-8?B?NkswS05RcUw1NkVmTmtTR0VXb2ZPR0h3OERmL0Rwd0xzNTFRV0VhMVF6Z1Vw?=
- =?utf-8?B?TnEwck9pRzBncGpWZHhqSWkvM1l5cUo4SVVlOTYrYXdGMHhNbjl1MkRWSTR0?=
- =?utf-8?B?N2V1b3ZBSnNhV2VQRVBjN05VU20wSTFldlVwdVBIUVo5b0Y0OWpnMDQrN2p4?=
- =?utf-8?B?Q0RqVzlUSmxjR25PeEUxZ2doMGZLOXZFM2xuYWpkdUYrV01Mb3FKeFB2NWlv?=
- =?utf-8?B?RWxSOGtYcEV5ZzlyVkZYRXJ2akx4cng0ZnlUUVVyQVhHY1Z5VjdzYWdpblBZ?=
- =?utf-8?B?ZFIwanpnNTFqeGpPMTYzT2lPTjlKZ21ZY0U0NTk0NWJmK29TQ1A5MW04ZkEw?=
- =?utf-8?B?YmtyRjFtdG9YSzNuc1JFTkw5WDViT3BCZXl2OVduUVB6QXdXcGloSC9hZ1ZJ?=
- =?utf-8?B?KzFBUktpQWdhY2NSVGpKWGxSMEE1eTY0aGdpdU9SMWRDWXI1aUJnUFpHbzVq?=
- =?utf-8?B?RGlJRVp1bjRRY2lWRWRxVGtlQ2sxMGJTWG9IZXVnZGdqYU03MWVqYUpMSVRT?=
- =?utf-8?B?bFpRejFFbVhVTFU4YnlrSXAxdVIzRytQUUxwYlN2U0w2T2xCM3IrcHg5NVBz?=
- =?utf-8?B?d21NUFZFZXQ1V0ZTZ3FxcGFxa2hSVzV3TmJPVmhPeSs0SUhLcllZTXplT3I1?=
- =?utf-8?B?RGNOZWVleG5NMEtPT205MTlhZ045VUE0ZnM0MnB4RVVOdGVsVVJVZHowa3NK?=
- =?utf-8?B?QWFtVFUxSVJvY25iOU5IL281dVM2RlJHWmJWR2hsbllLenl5R1BzSlBQUmhE?=
- =?utf-8?Q?3qlACFK3w39c95Qp//ERLAA=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b86273e-5c37-4495-4861-08dd5507f7a2
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 19:18:06.5704
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dXyYVUeAGp2xCcVAv34glBUdnBtFGSPLbLU5/z5J7HtA7uptMgQdeeN65Sp2syL7mjwNSDGu/NK+LMvpXCv+2AVNKRnuOIhir4qmrWsrreM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT5PR01MB11195
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87msebyxtv.fsf@kernel.org>
 
-On 2025-02-24 08:20, Dmitry Vyukov wrote:
-> If an application registers rseq, and ever switches to another pkey
-> protection (such that the rseq becomes inaccessible), then any
-> context switch will cause failure in __rseq_handle_notify_resume()
-> attempting to read/write struct rseq and/or rseq_cs. Since context
-> switches are asynchronous and are outside of the application control
-> (not part of the restricted code scope), temporarily switch to
-> pkey value that allows access to the 0 (default) PKEY.
-
-This is a good start, but the plan Dave and I discussed went further
-than this. Those additions are needed:
-
-1) Add validation at rseq registration that the struct rseq is indeed
-    pkey-0 memory (return failure if not).
-
-2) The pkey-0 requirement is only for struct rseq, which we can check
-    for at rseq registration, and happens to be the fast path. For struct
-    rseq_cs, this is not the same tradeoff: we cannot easily check its
-    associated pkey because the rseq_cs pointer is updated by userspace
-    when entering a critical section. But the good news is that reading
-    the content of struct rseq_cs is *not* a fast-path: it's only done
-    when preempting/delivering a signal over a thread which has a
-    non-NULL rseq_cs pointer.
-
-    Therefore reading the struct rseq_cs content should be done with
-    write_permissive_pkey_val(), giving access to all pkeys.
-
-Thanks,
-
-Mathieu
-
+On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
+> "Boqun Feng" <boqun.feng@gmail.com> writes:
 > 
-> Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Fixes: d7822b1e24f2 ("rseq: Introduce restartable sequences system call")
+> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
+> >> On Mon, Feb 24, 2025 at 5:31 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >> >
+> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
+> >> > >
+> >> > > side -- Andreas and I discussed it the other day. The description of
+> >> > > the issue has some lines, but perhaps the commit message could
+> >> >
+> >> > Do you have a link to the issue?
+> >>
+> >> Sorry, I meant "description of the symbol", i.e. the description field
+> >> in the patch.
+> >>
+> >
+> > Oh, I see. Yes, the patch description should provide more information
+> > about what the kconfig means for hrtimer maintainers' development.
 > 
-> ---
-> Changes in v4:
->   - Added Fixes tag
+> Right, I neglected to update the commit message. I will do that if we
+> have another version.
 > 
-> Changes in v3:
->   - simplify control flow to always enable access to 0 pkey
+> >
+> >> > I asked because hrtimer API is always available regardless of the
+> >> > configuration, and it's such a core API, so it should always be there
+> >> > (Rust or C).
+> >>
+> >> It may not make sense for something that is always built on the C
+> >> side, yeah. I think the intention here may be that one can easily
+> >> disable it while "developing" a change on the C side. I am not sure
+> >> what "developing" means here, though, and we need to be careful --
+> >> after all, Kconfig options are visible to users and they do not care
+> >> about that.
+> >>
+> >
+> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily because as
+> > you mentioned below, people can disable Rust entirely during
+> > "developing".
+> >
+> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
+> > config provides hrtimer maintainers a way that they could disable Rust
+> > hrtimer abstraction (while enabling other Rust component) when they're
+> > developing a change on the C side, right? If so, it's hrtimer
+> > maintainers' call, and this patch should provide more information on
+> > this.
+> >
+> > Back to my personal opinion, I don't think this is necessary ;-)
+> > Particularly because I can fix if something breaks Rust side, and I'm
+> > confident and happy to do so for hrtimer ;-)
 > 
-> Changes in v2:
->   - fixed typos and reworded the comment
-> ---
->   kernel/rseq.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
+> As Miguel said, the idea for this came up in the past week in one of the
+> mega threads discussing rust in general. We had a lot of "what happens
+> if I change something in my subsystem and that breaks rust" kind of
+> discussions.
 > 
-> diff --git a/kernel/rseq.c b/kernel/rseq.c
-> index 2cb16091ec0ae..9d9c976d3b78c 100644
-> --- a/kernel/rseq.c
-> +++ b/kernel/rseq.c
-> @@ -10,6 +10,7 @@
->   
->   #include <linux/sched.h>
->   #include <linux/uaccess.h>
-> +#include <linux/pkeys.h>
->   #include <linux/syscalls.h>
->   #include <linux/rseq.h>
->   #include <linux/types.h>
-> @@ -402,11 +403,19 @@ static int rseq_ip_fixup(struct pt_regs *regs)
->   void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->   {
->   	struct task_struct *t = current;
-> +	pkey_reg_t saved_pkey;
->   	int ret, sig;
->   
->   	if (unlikely(t->flags & PF_EXITING))
->   		return;
->   
-> +	/*
-> +	 * Enable access to the default (0) pkey in case the thread has
-> +	 * currently disabled access to it and struct rseq/rseq_cs has
-> +	 * 0 pkey assigned (the only supported value for now).
-> +	 */
-> +	saved_pkey = enable_zero_pkey_val();
-> +
->   	/*
->   	 * regs is NULL if and only if the caller is in a syscall path.  Skip
->   	 * fixup and leave rseq_cs as is so that rseq_sycall() will detect and
-> @@ -419,9 +428,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
->   	}
->   	if (unlikely(rseq_update_cpu_node_id(t)))
->   		goto error;
-> +	write_pkey_val(saved_pkey);
->   	return;
->   
->   error:
-> +	write_pkey_val(saved_pkey);
->   	sig = ksig ? ksig->sig : 0;
->   	force_sigsegv(sig);
->   }
 
+So far we haven't heard such a question from hrtimer maintainers, I
+would only add such a kconfig if explicitly requested.
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> For subsystems where the people maintaining the C subsystem is not the
+> same people maintaining the Rust abstractions, this switch might be
+> valuable. It would allow making breaking changes to the C code of a
+> subsystem without refactoring the Rust code in the same sitting. Rather
+
+That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
+longer-term, more and more people will get more or less Rust knowledge,
+and I'd argue that's the direction we should head to. So my vision is a
+significant amount of core kernel developers would be able to make C and
+Rust changes at the same time. It's of course not mandatory, but it's
+better collaboration.
+
+> than having to disable rust entirely - or going and commenting out lines
+> in the kernel crate - I think it is better to provide an option to just
+> disable building these particular bindings.
+> 
+> This has nothing to do with general policies related to breakage between
+> Rust and C code, and how to fix such breakage in a timely manner. It is
+> simply a useful switch for disabling part of the build so that people
+> can move on with their business, while someone else scrambles to fix
+> whatever needs fixing on the Rust side.
+> 
+
+It's of course up to hrtimer maintainers. But I personally nack this
+kconfig, because it's not necessary, and hrtimer API has been stable for
+a while.
+
+Regards,
+Boqun
+
+> I am of course also available to fix anything that would eventually
+> break. In fact, I expect to be able to catch breakage most of the time
+> automatically and very early by means of automatically monitoring the
+> relevant trees. I do this for block, and it has worked really well since
+> rust code was merged in that subsystem.
+> 
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
+> 
+> 
+> 
 
