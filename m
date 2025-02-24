@@ -1,80 +1,74 @@
-Return-Path: <linux-kernel+bounces-529021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28505A41EE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:27:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFFFA41EE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648B919C1FC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038221885DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5443D233733;
-	Mon, 24 Feb 2025 12:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WgOB4+I0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01453219309;
+	Mon, 24 Feb 2025 12:23:13 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9222192F9;
-	Mon, 24 Feb 2025 12:22:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3762571AD;
+	Mon, 24 Feb 2025 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399738; cv=none; b=b3Q9ZzNiOst/i/Vpt+eTTmhiLQMnl3n7JBmjsl7w5j6j+/Zd/bL6gJq6KiYYYQv2uudDZfRYQEQQdFCUIXl0Fm78s4fxTK7Fo6dWaefj63Q4uEgVoVuAXaIQfR/Ag1OJ51VAWkzd3XVqgHWLHkQAaz5l/10Tzj+34eOYubGdHQc=
+	t=1740399792; cv=none; b=MuF9Kqua7O8YPKWV7GJEzB7rAXeCN6AIWoVSs2qPIxbtdXVNTQAXH1dxrqL5epseKBbrL8Nm7HbsgTHayQ4J8QsesWpn7aC5Z1KO5E++572UNDCi0FguqHpu9CHQFWUWPxZWf8wg6j0UW079BmP2TZJr53h3O5l75q4+mlyjnGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399738; c=relaxed/simple;
-	bh=HFUefC/P5P0u1guY5j9N980bP23neVViId3YrVW8xJ4=;
+	s=arc-20240116; t=1740399792; c=relaxed/simple;
+	bh=CmbC/F96+RPZ1IRVYGWb9VjmvwRIpPJc828eSkvb5ig=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SMqFLvpPAX6/Sicm1H7MYwhSLelFXlvHPaLo9BExiY3/E4tgOU0opjv2Nnfuk1tPH5zzIssdMLOyzKDZF2uqmgTE43LfO8Wo88B015XWhWTwHjrA0enT85HKUuDGu8AthG3W25fZYqANWGogsC6Wb1P5qE5r1EkTRjIrgREujCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WgOB4+I0; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740399736; x=1771935736;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=HFUefC/P5P0u1guY5j9N980bP23neVViId3YrVW8xJ4=;
-  b=WgOB4+I0DzWSlyqMzsmrTdq8bK6COP2BFnsR30cPKNz6l/3yIB4bCiaK
-   tcLmRrZ4xPvlmySdwxyXYaSf1vUJzM4zK8T8Mo0CrPkC+2UFJ8SWSwC9Q
-   B65A/sL1hBAwfkzLPJ3ogL886hTKCrfSdSFt2bZCTpq/OPvv2O1VXM4tL
-   UpGrAlZf7LLffpT58ZiPA+eOOdQF+ugppVdREpXdZQhlAjo+gN/cB2Sq0
-   Zea7KVYs/1+6LmZ549+r/lvD5t1ZELzfpIfhGAtHhexw6EQajYh9+tqHq
-   2m15rACDVR7YESYU+kZhZDxG2/Bq6taKJ1+SeVPLE1wvqnDffzBw98LaV
-   Q==;
-X-CSE-ConnectionGUID: I5OWSUiaQK+WCiEFKwui4A==
-X-CSE-MsgGUID: K3dDzPUQRY+gfIxaAP6rTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="52552225"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="52552225"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:22:15 -0800
-X-CSE-ConnectionGUID: ZrQLmEUcTo+rS7YahFOsHQ==
-X-CSE-MsgGUID: a+u+R8KQQWaj7Y8awt/CjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116034465"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:22:10 -0800
-Date: Mon, 24 Feb 2025 14:22:07 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: kernel test robot <lkp@intel.com>, perex@perex.cz, tiwai@suse.com,
-	broonie@kernel.org, lgirdwood@gmail.com, deller@gmx.de,
-	sre@kernel.org, sakari.ailus@linux.intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, jdmason@kudzu.us, fancer.lancer@gmail.com,
-	oe-kbuild-all@lists.linux.dev, linux-sound@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-media@vger.kernel.org, ntb@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 07/13] fbdev: pxafb: use devm_kmemdup_array()
-Message-ID: <Z7xkb9m_Qc54znOH@black.fi.intel.com>
-References: <20250221165333.2780888-8-raag.jadav@intel.com>
- <202502220449.DvJuMgsL-lkp@intel.com>
- <Z7xQ2y-7U5-OhzhB@smile.fi.intel.com>
- <Z7xW2AIz6vUo6mu-@black.fi.intel.com>
- <Z7xa0cGZvGxsGCrI@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD+BE7G7GHzyb72m+KcbxJ11WCdbfB/GzZKRbJaIrhxdEm3ZQOvIDP95kyLPExIPxWLGaHQma3CbFhZYM1AR1QBOIGFwcnn3DzAIs+clqFTutbulkOPKdCXJaogQH5dam3eJJWYVFua0Wh4LDgdA32FF6k3906HxSIKOg3rBaQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abb86beea8cso777484766b.1;
+        Mon, 24 Feb 2025 04:23:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740399788; x=1741004588;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IkcVWWowe/XlwLesIA74T7Kc+wW9oSTR0kY7TLZNlyE=;
+        b=dBAFaKCz65qtlLj4tsnlg2+94L3RorfWJ98AVikFIpzzLLUZ8x9wGZ33tyM/7Yr1c1
+         KmQl5KFrKu0UE9pwJPid4YreUlK1M9HpMWaznN/IFLZRNjxydB7x84dZ9V0QHeL9yH/Q
+         f1FCaoKGsPe/gdnlf/fjO64MLXFVpII4b6eq2pOOUwleWvV1TIhNO2PNYLAKB0LykzS4
+         OGJf2vNKlLqodyO+NKBqna434rf2HJGIGSJHOm4e+DsImyqkgIpn5R6u12fp9NjSlBkS
+         WvbOKto/U7uzlUyeus851XOaG2+/JeT9XKSYTOVpZ5wT5Sxw032JXrDJqyvgq7RE2Hgo
+         +3Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCW2pwvhCBpFyROHSTQIuf/D91TQOtAAcaZKYcEEfnIndvEkjyC4QJ2XuVX64NG6Cty7lP9ajQRdwmfUBgr5@vger.kernel.org, AJvYcCWhr9j7AmL4vXvo1SIqf8tKS0Xxp9ZOI9zcyBgR8pgATye4lxkVhHa73084H0jUgxeZK0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIi/gE2ueSgmjOaJOXOdXYZgUuKy3fEmSYSFKetVrf6xQeQj6N
+	uJN0I+Yyi15n3nyCFJNebmpWUvgTZZAiQ2d1+UX7475lPhxLAApClK7fNg==
+X-Gm-Gg: ASbGncsJpsW02ooCFua1xenJSVvNxoMF7QgdkutGd/fCoqNBFp9bNvYpKVyovD61q0F
+	+GwKfQlYJfaAL+FqZpCV6wdG+ECTBmr1xfxZcfXITOPl4pOZxVgfV2wsbu+T+Uc/vMWEaqXCgrR
+	Bjd9sI5Kns9d0kTt0HFlw8LcoopEHr82eVEQruhwneB1e4GhV5m2TwlukIrPtJzyPrES3aIxO8a
+	s/SYYxsLmwW0kvn9deu7T3iczbYop19SSBBC3pCDJ8TCsb0ZvBuUWu7vcUXR4XgPuiIbNRbXmkR
+	8q7FoZoepHlXl/fUnA==
+X-Google-Smtp-Source: AGHT+IFjZjKDjN5EXWE+BnTyShdH8rCGFExD7eS7HA3oT4lwQ7KO2yLywocY7OLik5IKwG1XKLh3Ig==
+X-Received: by 2002:a17:907:3f19:b0:ab7:ea47:dee1 with SMTP id a640c23a62f3a-abc09e56c7emr1080435166b.48.1740399787765;
+        Mon, 24 Feb 2025 04:23:07 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbab9e9863sm1436329266b.64.2025.02.24.04.23.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 04:23:07 -0800 (PST)
+Date: Mon, 24 Feb 2025 04:22:23 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	mingo@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH v3 tip/perf/core 2/2] uprobes: SRCU-protect uretprobe
+ lifetime (with timeout)
+Message-ID: <20250224-impressive-onyx-boa-36e85d@leitao>
+References: <20241024044159.3156646-1-andrii@kernel.org>
+ <20241024044159.3156646-3-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,50 +77,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7xa0cGZvGxsGCrI@smile.fi.intel.com>
+In-Reply-To: <20241024044159.3156646-3-andrii@kernel.org>
 
-On Mon, Feb 24, 2025 at 01:41:05PM +0200, Andy Shevchenko wrote:
-> On Mon, Feb 24, 2025 at 01:24:08PM +0200, Raag Jadav wrote:
-> > On Mon, Feb 24, 2025 at 12:58:35PM +0200, Andy Shevchenko wrote:
-> > > On Sat, Feb 22, 2025 at 05:41:24AM +0800, kernel test robot wrote:
-> > > > Hi Raag,
-> > > > 
-> > > > kernel test robot noticed the following build warnings:
-> > > > 
-> > > > [auto build test WARNING on b16e9f8547a328b19af59afc213ce323124d11e9]
-> > > > 
-> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Raag-Jadav/ASoC-Intel-avs-use-devm_kmemdup_array/20250222-010322
-> > > > base:   b16e9f8547a328b19af59afc213ce323124d11e9
-> > > > patch link:    https://lore.kernel.org/r/20250221165333.2780888-8-raag.jadav%40intel.com
-> > > > patch subject: [PATCH v1 07/13] fbdev: pxafb: use devm_kmemdup_array()
-> > > > config: arm-randconfig-004-20250222 (https://download.01.org/0day-ci/archive/20250222/202502220449.DvJuMgsL-lkp@intel.com/config)
-> > > > compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-> > > > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250222/202502220449.DvJuMgsL-lkp@intel.com/reproduce)
-> > > > 
-> > > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > > the same patch/commit), kindly add following tags
-> > > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > > | Closes: https://lore.kernel.org/oe-kbuild-all/202502220449.DvJuMgsL-lkp@intel.com/
-> > > > 
-> > > > All warnings (new ones prefixed by >>):
-> > > > 
-> > > >    drivers/video/fbdev/pxafb.c: In function 'pxafb_probe':
-> > > > >> drivers/video/fbdev/pxafb.c:2236:13: warning: unused variable 'i' [-Wunused-variable]
-> > > >     2236 |         int i, irq, ret;
-> > > >          |             ^
-> > > 
-> > > Ragg, please, fix this, and issue a v2 with the link to fixed PR:
-> > > https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com.
-> > 
-> > Sure, but perhaps wait a few days for review comments.
-> 
-> Then perhaps answering to the cover letter that the maintainers who want to
-> apply should use the updated PR?
+Hello Andrii,
 
-Okay, but I'm not sure how this plays out for those who already pulled
-the old PR, i.e. Sebastian.
+On Wed, Oct 23, 2024 at 09:41:59PM -0700, Andrii Nakryiko wrote:
+>
+> +static struct uprobe* hprobe_expire(struct hprobe *hprobe, bool get)
+> +{
+> +	enum hprobe_state hstate;
+> +
+> +	/*
+> +	 * return_instance's hprobe is protected by RCU.
+> +	 * Underlying uprobe is itself protected from reuse by SRCU.
+> +	 */
+> +	lockdep_assert(rcu_read_lock_held() && srcu_read_lock_held(&uretprobes_srcu));
 
-Anything to worry about here?
+I am hitting this warning in d082ecbc71e9e ("Linux 6.14-rc4") on
+aarch64. I suppose this might happen on x86 as well, but I haven't
+tested.
 
-Raag
+	WARNING: CPU: 28 PID: 158906 at kernel/events/uprobes.c:768 hprobe_expire (kernel/events/uprobes.c:825)
+
+	Call trace:
+	hprobe_expire (kernel/events/uprobes.c:825) (P)
+	uprobe_copy_process (kernel/events/uprobes.c:691 kernel/events/uprobes.c:2103 kernel/events/uprobes.c:2142)
+	copy_process (kernel/fork.c:2636)
+	kernel_clone (kernel/fork.c:2815)
+	__arm64_sys_clone (kernel/fork.c:? kernel/fork.c:2926 kernel/fork.c:2926)
+	invoke_syscall (arch/arm64/kernel/syscall.c:35 arch/arm64/kernel/syscall.c:49)
+	do_el0_svc (arch/arm64/kernel/syscall.c:139 arch/arm64/kernel/syscall.c:151)
+	el0_svc (arch/arm64/kernel/entry-common.c:165 arch/arm64/kernel/entry-common.c:178 arch/arm64/kernel/entry-common.c:745)
+	el0t_64_sync_handler (arch/arm64/kernel/entry-common.c:797)
+	el0t_64_sync (arch/arm64/kernel/entry.S:600)
+
+I broke down that warning, and the problem is on related to
+rcu_read_lock_held(), since RCU read lock does not seem to be held in
+this path.
+
+Reading this code, RCU read lock seems to protect old hprobe, which
+doesn't seem so.
+
+I am wondering if we need to protect it properly, something as:
+
+	@@ -2089,7 +2092,9 @@ static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
+				return -ENOMEM;
+
+			/* if uprobe is non-NULL, we'll have an extra refcount for uprobe */
+	+               rcu_read_lock();
+			uprobe = hprobe_expire(&o->hprobe, true);
+	+               rcu_write_lock();
+
+			/*
+			* New utask will have stable properly refcounted uprobe or
 
