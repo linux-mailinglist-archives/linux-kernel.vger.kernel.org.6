@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-529083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18139A41FA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34892A41FAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93F63A8F09
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52533AE530
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5B524889D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD69E24EF60;
 	Mon, 24 Feb 2025 12:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BMo6Ql1P"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P9azl+wq"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AFC2192EB
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6423372A
 	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401163; cv=none; b=mdeO3/iRw4ySqGPydoFizFl13VSEiEoWmJN0CGin3F40tlRaJzd/gApuXwWkW0W4kuEfCoJPhF5BEYjglKVBXyRVepobC/caf2fBbZ3qtcqEejEbjHL/AsJAU2f25LH1mlqV1ran0Sj8KBO1oKK0TNLCfiE8xqauPoEpR+i8Vk8=
+	t=1740401163; cv=none; b=JdDxTD/ymycn8eqr80joiAvWtgbl62DwZnZ7c03sUfxNQOrRL36t04AF60PI41louZm5i8AFzOlYON4tZt4W83XPtOfVT4JfW9dM0mAYycaJIEyExvKQ48Avapv6PCJVZ2EItMxj8IvlQShyNPYc7/GBfq+hl0BJR3DsL9zqkec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740401163; c=relaxed/simple;
-	bh=Cf8HCTGmOx/qRDAOIVvByhVe67UrJTu9m54l6Wmgn8c=;
+	bh=qiHWEsUFhyrAhvzR/3W2KqNPPoF05MG34ACD4hT96GM=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=c21MDLR0B2a16Gp1QwE+BWRrGtOl69UX9i6bYXH7hSqXQ5Y34CUZ4PqLDdxI7sDO3TTmKRPRqDlWSUcpic35U9rSaTHcbZBRFeHwmHIdytL6KshzeBWw4vdlsBFdfBE4X+7Rz6JwgZIbO7NQ0HmAlfU4hFeZBw1/IynHQSg0X14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BMo6Ql1P; arc=none smtp.client-ip=90.155.92.199
+	 Content-Type; b=UJ6ffqP55UoZRBNSRXfdXqOe+sksGQ4UJ/1FFhIvFaGrVR2NGTWvb/YVjPiPKet8leg1+8uHXBkf2eC2vUevXNtK7rQ8mYWRQ7DKDG4SGbJULVn+SnV4bHF5bG6OcxVt4a768ZHOAVodyqpsdAdweJt0/Qn66Rx2GdOt9Ebof+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P9azl+wq; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Type:MIME-Version:References:
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
 	Subject:Cc:To:From:Date:Message-ID:Sender:Reply-To:Content-Transfer-Encoding:
 	Content-ID:Content-Description:In-Reply-To;
-	bh=EhQ12QSerGcZU41eLzZyyGD3alpvSewb0+Htu+1LdoA=; b=BMo6Ql1P1+eSr7GzOloLqd79f+
-	Mk/REyJk/eAdyQDCYwNhTR18crPfKbkVlyon2879cFiTdCw1KlqGP6B7ljnOIG0Gtz1iVTH9diwNu
-	GnZIeO97DGzysIQqNFJi+8cHKzjOdJENPAVBxXvC+ujP2DulYi+IVqVWEFfBeYM7iKaohMZtjLdeN
-	AkF8cl8Obovhj/JSXKQY3eqGmfI8gDrc9vtdAlcrT4d66W3JHQADx7p6ZqBrTQ3EaCEFbDvhNWOjN
-	Y/jD1WXoGVBjWXaw8jJ+IQxSIR7NdNIf7E5yTrfLqSRfAWrjojM141MAFOYEPbP/gq8etAyqWUomM
-	7hMSpykw==;
+	bh=XBH0IHGZUCGG4OKLWJTsoSfxC5AGMSYb5ZmdUnOdGdE=; b=P9azl+wqq1NuEIBo/OoXMGmsgD
+	SED9BZrXD6cuLTFlqCokO/1VK82YPNcf9wyV+fTFzm/ZC8LIgYSSIPPxC6rCYSLrYUtsF4pP0mE25
+	eWM5vRAEGoCIBzNXnQxli8bHDBadAUf9L/MSc+Rj+1JHRnZXW0MUZFOvvuNZxfsln0AltCgk6v5jC
+	AnKr7Nl6Y39TdU1YO1i9/vJeNRpD2XknSZDWlkwNFMiaE6fR//JUMF6sA7SadHmj/IrHUfptsUjB2
+	glnGf7FPruIUY4L3mffOg07l/eZfbho2ydorJhjsF14ORM/4RuTr3oU531emFueo75JqOBf8ZXvXo
+	38R9zcKg==;
 Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmXqM-00000003C2P-2CgY;
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmXqM-000000079lb-2IxM;
 	Mon, 24 Feb 2025 12:45:54 +0000
 Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 14D3D30078F; Mon, 24 Feb 2025 13:45:54 +0100 (CET)
-Message-ID: <20250224124159.924496481@infradead.org>
+	id 18E6C3007F0; Mon, 24 Feb 2025 13:45:54 +0100 (CET)
+Message-ID: <20250224124200.059556588@infradead.org>
 User-Agent: quilt/0.66
-Date: Mon, 24 Feb 2025 13:37:04 +0100
+Date: Mon, 24 Feb 2025 13:37:05 +0100
 From: Peter Zijlstra <peterz@infradead.org>
 To: x86@kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -68,7 +68,7 @@ Cc: linux-kernel@vger.kernel.org,
  alexei.starovoitov@gmail.com,
  mhiramat@kernel.org,
  jmill@asu.edu
-Subject: [PATCH v4 01/10] x86/cfi: Add warn option
+Subject: [PATCH v4 02/10] x86/ibt: Add exact_endbr() helper
 References: <20250224123703.843199044@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,60 +78,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-Rebuilding with CFI_PERMISSIVE toggled is such a pain, esp. since
-clang is so slow.
+For when we want to exactly match ENDBR, and not everything that we
+can scribble it with.
 
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Kees Cook <kees@kernel.org>
 ---
- arch/x86/kernel/alternative.c |    3 +++
- arch/x86/kernel/cfi.c         |    8 ++++----
- include/linux/cfi.h           |    2 ++
- kernel/cfi.c                  |    4 +++-
- 4 files changed, 12 insertions(+), 5 deletions(-)
+ arch/x86/kernel/alternative.c |   16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 --- a/arch/x86/kernel/alternative.c
 +++ b/arch/x86/kernel/alternative.c
-@@ -1022,6 +1022,9 @@ static __init int cfi_parse_cmdline(char
- 			cfi_mode = CFI_FINEIBT;
- 		} else if (!strcmp(str, "norand")) {
- 			cfi_rand = false;
-+		} else if (!strcmp(str, "warn")) {
-+			pr_alert("CFI mismatch non-fatal!\n");
-+			cfi_warn = true;
- 		} else {
- 			pr_err("Ignoring unknown cfi option (%s).", str);
- 		}
---- a/include/linux/cfi.h
-+++ b/include/linux/cfi.h
-@@ -11,6 +11,8 @@
- #include <linux/module.h>
- #include <asm/cfi.h>
+@@ -863,6 +863,17 @@ __noendbr bool is_endbr(u32 *val)
+ 	return false;
+ }
  
-+extern bool cfi_warn;
++static __noendbr bool exact_endbr(u32 *val)
++{
++	u32 endbr;
 +
- #ifndef cfi_get_offset
- static inline int cfi_get_offset(void)
- {
---- a/kernel/cfi.c
-+++ b/kernel/cfi.c
-@@ -7,6 +7,8 @@
- 
- #include <linux/cfi.h>
- 
-+bool cfi_warn __ro_after_init = IS_ENABLED(CONFIG_CFI_PERMISSIVE);
++	__get_kernel_nofault(&endbr, val, u32, Efault);
++	return endbr == gen_endbr();
 +
- enum bug_trap_type report_cfi_failure(struct pt_regs *regs, unsigned long addr,
- 				      unsigned long *target, u32 type)
- {
-@@ -17,7 +19,7 @@ enum bug_trap_type report_cfi_failure(st
- 		pr_err("CFI failure at %pS (no target information)\n",
- 		       (void *)addr);
++Efault:
++	return false;
++}
++
+ static void poison_cfi(void *addr);
  
--	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE)) {
-+	if (cfi_warn) {
- 		__warn(NULL, 0, (void *)addr, 0, regs, NULL);
- 		return BUG_TRAP_TYPE_WARN;
- 	}
+ static void __init_or_module poison_endbr(void *addr)
+@@ -1427,10 +1438,9 @@ static void poison_cfi(void *addr)
+ bool decode_fineibt_insn(struct pt_regs *regs, unsigned long *target, u32 *type)
+ {
+ 	unsigned long addr = regs->ip - fineibt_preamble_ud2;
+-	u32 endbr, hash;
++	u32 hash;
+ 
+-	__get_kernel_nofault(&endbr, addr, u32, Efault);
+-	if (endbr != gen_endbr())
++	if (!exact_endbr((void *)addr))
+ 		return false;
+ 
+ 	*target = addr + fineibt_preamble_size;
 
 
 
