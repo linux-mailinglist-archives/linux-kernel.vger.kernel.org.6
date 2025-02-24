@@ -1,225 +1,126 @@
-Return-Path: <linux-kernel+bounces-529463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A82A4267D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:39:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C36BAA42680
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7071416B108
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CE75168B3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309425484C;
-	Mon, 24 Feb 2025 15:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223A124EF7D;
+	Mon, 24 Feb 2025 15:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jniKeYp6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n26tiAiP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADAC1A0BD6;
-	Mon, 24 Feb 2025 15:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427424887A;
+	Mon, 24 Feb 2025 15:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740411438; cv=none; b=ieZrBmKOphAp1WjZN+13HMm3XRroKBTbqpYRXrSUnUo/zVze2qH9NfbNapFtSkbT4JukYZJW9XylvtBLIb8zmxEjEYCnogp89T899RottK06kgOJ5dq6wsKisyNZViexYbjDy4GZr51YJUUoHVjuSS5PzJEnVwuqF2s3c/OsnOQ=
+	t=1740411457; cv=none; b=hWf1RBqaN25FiXcHr6maCDfgC5Mz/Mxpo/NnhOOVauGBr5VNm3k52dTfuVlHluQXWx/MCgNdq5ICL2aYCpAnzlQtMeKXAn73jLU22dsQ/uNcPTirdxQuVVpGB1YD3H8lFp71Du+wola+5MX7KOeu+beALe3DaaQL+IjlGaeV3EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740411438; c=relaxed/simple;
-	bh=yhH5CefLifdIL3/VFY7y8OY6C4KGgUDfVENSrOJRD6w=;
+	s=arc-20240116; t=1740411457; c=relaxed/simple;
+	bh=u5QAJ42DRy8ZnhVq2mJsa+QiTU0Mr4iCvNVvkjkRrkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jP0gU2CIBmkdyW/JU142/br9N4P4TYk43/rWT8N8gqrJ0c+Hd6ZNTboePl18Qbf8Mi/sPZ0dhav+WmN4iBRtSZlOwqVo2omQVi8fcs4q1p++XtsSN30Pg6yn1jInRKo8pPGA7dQqRp8NhNm8b7dVZUYWpZ0tcTJeTjVr7rs6SY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jniKeYp6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE423C4CED6;
-	Mon, 24 Feb 2025 15:37:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hYJAy0g7hIE4dDA2ng3NieoUHWRsyEgTY0ztZO4WV8RsV4V3tq+KAwf+AmtQjdExnzph9/jx/nXubi5HifrV+zKeAdFS0/QLldXwLp+8ujN+HOCXwWPil77Xo2xxgHV/2yCCZACqWNqvMAVZiQ2M8rAhGCALZqKNbBUmeq9zZ+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n26tiAiP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12E79C4CED6;
+	Mon, 24 Feb 2025 15:37:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740411437;
-	bh=yhH5CefLifdIL3/VFY7y8OY6C4KGgUDfVENSrOJRD6w=;
+	s=k20201202; t=1740411456;
+	bh=u5QAJ42DRy8ZnhVq2mJsa+QiTU0Mr4iCvNVvkjkRrkA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jniKeYp6f0hbItNPYyxoaqFxMZ9Aj53HJ9oTyPeiazwTL+ROU2sK8joQ/KV8C4Mp4
-	 tCm3xjIy4bvWgF0dOzK1e4un1nopNwXanjWh4or3x1pHyHqU6Pg0p9UCgS+6b6kWca
-	 g8rLJiytSiXNuReVDrW6/rNoP0VNqo3clpNmbfO1HQULGhJfKcDMp+HBOsRNov/nGF
-	 GRIKKvHpkGTyvEPw5ljzs3sew3WHgiM2NhZu9PyezjSDDN0rDNjU9cI6PCMjiQfgAl
-	 LYH9tuSIsHZPhZ7PKBlzkQXShHZfGN71G2a32ahB4vKefeJGfs1oC9eOrNpv2Lk5PD
-	 dPG4MAsMDaTPQ==
-Date: Mon, 24 Feb 2025 09:37:16 -0600
-From: Rob Herring <robh@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
-Message-ID: <20250224153716.GA3137990-robh@kernel.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
- <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
+	b=n26tiAiPA/EnLuWwHHXxJQo0XxQ6+FBmRROtzKyw8CLdXwa+DUo1mj9Y81reXwfVZ
+	 WsGSbBt/XxZBtCP3SjbQaQV0jXl0wUunnuQV+Tav5kL71Bkz4hcCFGRPIIBsNAAAAN
+	 P9zs048qa1Mg83YtIgXR9odTHlLhs6p02flIpiTIRkQdZCL3+tOzQqkkDTI34AlpXZ
+	 gwj7c3LauJTxkhK0uaxhrDDqPFNrPT+XjxpKm/a/R/3PIVSX+/OXHaDyJuxtlDNckI
+	 Zu+f8gLBnxvo1ONE8vsDhNDYeSbcQZfgqXZ4yLzM4l2GnAmsE1jZZVNAar2DCThAVf
+	 zarhrfHExOnzw==
+Date: Mon, 24 Feb 2025 08:37:32 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	kasan-dev@googlegroups.com, Jann Horn <jannh@google.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-nvme@lists.infradead.org,
+	leitao@debian.org
+Subject: Re: [PATCH v2 6/7] mm, slab: call kvfree_rcu_barrier() from
+ kmem_cache_destroy()
+Message-ID: <Z7ySPC32oKBccunx@kbusch-mbp>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+ <20240807-b4-slab-kfree_rcu-destroy-v2-6-ea79102f428c@suse.cz>
+ <Z7iqJtCjHKfo8Kho@kbusch-mbp>
+ <2811463a-751f-4443-9125-02628dc315d9@suse.cz>
+ <Z7xbrnP8kTQKYO6T@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
+In-Reply-To: <Z7xbrnP8kTQKYO6T@pc636>
 
-On Mon, Feb 24, 2025 at 10:28:49AM +0000, André Draszik wrote:
-> Add device tree binding for the Maxim MAX77759 companion PMIC for USB
-> Type-C applications.
+On Mon, Feb 24, 2025 at 12:44:46PM +0100, Uladzislau Rezki wrote:
+> On Fri, Feb 21, 2025 at 06:28:49PM +0100, Vlastimil Babka wrote:
+> > > 
+> > > The warning indicates that this shouldn't be called from a
+> > > WQ_MEM_RECLAIM workqueue. This workqueue is responsible for bringing up
+> > > and tearing down block devices, so this is a memory reclaim use AIUI.
+> > > I'm a bit confused why we can't tear down a disk from within a memory
+> > > reclaim workqueue. Is the recommended solution to simply remove the WQ
+> > > flag when creating the workqueue?
+> > 
+> > I think it's reasonable to expect a memory reclaim related action would
+> > destroy a kmem cache. Mateusz's suggestion would work around the issue, but
+> > then we could get another surprising warning elsewhere. Also making the
+> > kmem_cache destroys async can be tricky when a recreation happens
+> > immediately under the same name (implications with sysfs/debugfs etc). We
+> > managed to make the destroying synchronous as part of this series and it
+> > would be great to keep it that way.
+> > 
+> > >   ------------[ cut here ]------------
+> > >   workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
+> > 
+> > Maybe instead kfree_rcu_work should be using a WQ_MEM_RECLAIM workqueue? It
+> > is after all freeing memory. Ulad, what do you think?
+> > 
+> We reclaim memory, therefore WQ_MEM_RECLAIM seems what we need.
+> AFAIR, there is an extra rescue worker, which can really help
+> under a low memory condition in a way that we do a progress.
 > 
-> The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors,
-> USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> 
-> This describes the core mfd device.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  .../devicetree/bindings/mfd/maxim,max77759.yaml    | 104 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 ++
->  2 files changed, 110 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> new file mode 100644
-> index 000000000000..1efb841289fb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
-> @@ -0,0 +1,104 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
-> +
-> +maintainers:
-> +  - André Draszik <andre.draszik@linaro.org>
-> +
-> +description: |
-> +  This is a part of device tree bindings for the MAX77759 companion Power
-> +  Management IC for USB Type-C applications.
-> +
-> +  The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors, USB
-> +  Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> +
-> +properties:
-> +  compatible:
-> +    const: maxim,max77759
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 2
-> +
-> +  gpio:
-> +    $ref: /schemas/gpio/maxim,max77759-gpio.yaml
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  pmic-nvmem:
+> Do we have a reproducer of mentioned splat?
 
-Just 'nvmem'
+We're observing this happen in production, and I'm trying to get more
+details on what is going on there. The stack trace says that the nvme
+controller deleted a namespace, and it happens to also be the last disk
+that drops the slab's final ref, which deletes the kmem_cache. I think
+this must be part of some automated reimaging process, as the disk is
+immediately recreated followed by a kexec.
 
-> +    $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
-> +
-> +required:
-> +  - compatible
-> +  - interrupts
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        pmic@66 {
-> +            compatible = "maxim,max77759";
-> +            reg = <0x66>;
-> +            interrupts-extended = <&gpa8 3 IRQ_TYPE_LEVEL_LOW>;
-> +
-> +            interrupt-controller;
-> +            #interrupt-cells = <2>;
-> +
-> +            gpio {
-> +                compatible = "maxim,max77759-gpio";
-> +
-> +                gpio-controller;
-> +                #gpio-cells = <2>;
-> +
-> +                interrupt-controller;
-> +                #interrupt-cells = <2>;
-> +            };
-> +
-> +            pmic-nvmem {
-
-nvmem {
-
-> +                compatible = "maxim,max77759-nvmem";
-> +
-> +                nvmem-layout {
-> +                    compatible = "fixed-layout";
-> +                    #address-cells = <1>;
-> +                    #size-cells = <1>;
-> +
-> +                    reboot-mode@0 {
-> +                        reg = <0x0 0x4>;
-> +                    };
-> +
-> +                    boot-reason@4 {
-> +                        reg = <0x4 0x4>;
-> +                    };
-> +
-> +                    shutdown-user-flag@8 {
-> +                        reg = <0x8 0x1>;
-> +                    };
-> +
-> +                    rsoc@10 {
-> +                        reg = <0xa 0x2>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f076360ce3c6..f2c19a1b4c05 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14322,6 +14322,12 @@ F:	Documentation/devicetree/bindings/mfd/maxim,max77714.yaml
->  F:	drivers/mfd/max77714.c
->  F:	include/linux/mfd/max77714.h
->  
-> +MAXIM MAX77759 PMIC MFD DRIVER
-> +M:	André Draszik <andre.draszik@linaro.org>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
-> +
->  MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
->  M:	Javier Martinez Canillas <javier@dowhile0.org>
->  L:	linux-kernel@vger.kernel.org
-> 
-> -- 
-> 2.48.1.658.g4767266eb4-goog
-> 
+Trying to manually recreate this hasn't been successful so far because
+it's never the last disk on my test machines, so I'm always seeing a
+non-zero ref when deleting namespaces from this nvme workqueue.
 
