@@ -1,102 +1,62 @@
-Return-Path: <linux-kernel+bounces-529521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C8BA42768
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:07:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CD41A42755
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 536D63AFAE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B35188EA24
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF4A261399;
-	Mon, 24 Feb 2025 16:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+uvAVqa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F7EE261399;
+	Mon, 24 Feb 2025 16:02:19 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE663DBB6;
-	Mon, 24 Feb 2025 16:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375D03DBB6;
+	Mon, 24 Feb 2025 16:02:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740412911; cv=none; b=jTzLxCNK/+TxOgi1pxt/NEkg54//Ww50SQw5Ac8Ur1/H7AiVSeJ30Nx/68JJAU2RWb0eUx+lxjr82QpJhBY5ORVoyGvrYHLR+x8N5ED92BxNaXCCn/zQOBSEBxIfAk894KqjSvufrcHWjlywIJzMu2f5QLlHUoGt9MHEOSA6PNU=
+	t=1740412939; cv=none; b=bq051w5ItwzzWI24+YJWsYEYSh6hYxYZOCvHrnkoxlZDT4MD8iqMJUWVZu8taqxaFdaY7dGDA/zfiASgWF0WebBfJo0yNkW18suQQqRqDN8aKR3yzfsOrzoqZVKXZnXfLem94k5+4Bw8mJqyPhzhog/p+zzL2aenjn/5Nku9RmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740412911; c=relaxed/simple;
-	bh=+WoLFECrq1/sA7ZSENgjsivk/hBFMJC/CUlRi3UpkAE=;
+	s=arc-20240116; t=1740412939; c=relaxed/simple;
+	bh=KGTWjvtb+6Tnwgqf+kMV6m/4VPxG7L1QgxU5BeApu80=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPbP2DJevhBL8aDWP2Ppnb81iajDXLECjXWFbtyForcu191yMzU6wV8Di1PnD1RMsLqmzNfQHEnIOxwFqIq2bQ49UvcJuswlL3rzlC/eu8lV6tACsFgTvLUybCWAViZDEo66BizHvRIVv/BqnXnMHAbl/syN9Ep3/gjaECEMCr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+uvAVqa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41684C4CED6;
-	Mon, 24 Feb 2025 16:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740412910;
-	bh=+WoLFECrq1/sA7ZSENgjsivk/hBFMJC/CUlRi3UpkAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q+uvAVqazSSrpgiXxIEepHVJjGmULeeVkysSbiiSTe0jGU/UiDHx6XP4sPmOvl6p3
-	 ZXU7RhiyMhb+yUmPUCRSmwhg4s+mbsESANfOhJ4z8h6SGChwzyKIIh1voYGP7XeMAX
-	 crlRMGEx5EbHmxMJ31RkO4lr7Ix1VUhSOly8I7RxGAVxIcGvFEe3E3M1kgxhc5/aq/
-	 IDCLhVJzvEdEn7Mu7Pl9OgL4eQ4s0tSOWmdof+3NRmPWhXiSz7afSSiN5wL3jIagEY
-	 Lof4HgSRu8RI9WYheYcCY/VrJ1L+GpVzuQUPV384yUTx6dUluOKyQl1qJaGqE/X9CU
-	 by7njgZILLqbA==
-Date: Mon, 24 Feb 2025 16:01:46 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the regulator tree
-Message-ID: <7e616125-5909-41fc-a17f-21d07638d72d@sirena.org.uk>
-References: <20250219134354.144eb868@canb.auug.org.au>
- <Z7rcC3YskGoNHdvN@dragon>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PiYUdDUL4qX4s+WAxjLtagKMSMQs+FVjdoDdA6aNreyv5aKfehKz9K2vFZDsCxEy++8sZtJ0r376o3iMdZkWpryvgk9XxqS6BjjZRANdASFZF35Cvd41EyrHGX+yWZXtvsOCjcKL71bOIbAll91GzAueLfzIRyRsnWOhdVtR4kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7B47268BFE; Mon, 24 Feb 2025 17:02:10 +0100 (CET)
+Date: Mon, 24 Feb 2025 17:02:09 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	"Raphael S. Carvalho" <raphaelsc@scylladb.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v2] mm: Fix error handling in __filemap_get_folio()
+ with FGP_NOWAIT
+Message-ID: <20250224160209.GA4701@lst.de>
+References: <20250224081328.18090-1-raphaelsc@scylladb.com> <20250224141744.GA1088@lst.de> <Z7yRSe-nkfMz4TS2@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="zAMhU6Hnw1p6ObYP"
-Content-Disposition: inline
-In-Reply-To: <Z7rcC3YskGoNHdvN@dragon>
-X-Cookie: Phone call for chucky-pooh.
-
-
---zAMhU6Hnw1p6ObYP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <Z7yRSe-nkfMz4TS2@casper.infradead.org>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Sun, Feb 23, 2025 at 04:27:55PM +0800, Shawn Guo wrote:
-> On Wed, Feb 19, 2025 at 01:43:54PM +1100, Stephen Rothwell wrote:
+On Mon, Feb 24, 2025 at 03:33:29PM +0000, Matthew Wilcox wrote:
+> I don't think it needs a comment at all, but the memory allocation
+> might be for something other than folios, so your suggested comment
+> is misleading.
 
-> > The following commit is also in the imx-mxs tree as a different commit
-> > (but the same patch):
-
-> >   b5ec74c2aec7 ("arm64: dts: imx8mp-skov-reva: Use hardware signal for SD card VSELECT")
-
-> Any particular reason you picked this DTS change?  Would you drop it
-> from regulator tree?
-
-My understanding was that these fixes all needed to go together since
-the interface changes were a bit dodgy from an ABI point of view.
-
---zAMhU6Hnw1p6ObYP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme8l+kACgkQJNaLcl1U
-h9DDIgf+IVm2htScAsNPorR/RwcMDREc7S7fxmhKce4+jG9hOhP/vx8oKcSN79ez
-nJjYLkraYlSKB8br+ahBUUxW8G7RfiSAQa8ONM4KWc5LMfhyXKl7Ove1lJ3h3fVd
-+yy2L+N6rlpiV6jigtaHD3r3jylVentu7JbLN+vrsqn+y9Cn+dajP2CJ4W2tNPNy
-gw9Wa8OQM5kYAKNyVn09DOReJ7tzE6pimsi/vN12+ngrozjQR9kMqDYBrB9Fa9Ku
-nSuL8FqJifrsuH3KR/958nDrd5Sz8QavR/abOe5PTtVP0wwNd8vz4V8oX8WrzrN8
-sSefvStuAj31e7UWgApTjlztnMfI8Q==
-=hw8Z
------END PGP SIGNATURE-----
-
---zAMhU6Hnw1p6ObYP--
+Then s/folio/memory/
 
