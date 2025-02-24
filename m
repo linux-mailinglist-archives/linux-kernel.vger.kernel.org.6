@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-528026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DF3A4129D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:28:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B37EA4129C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BAE43AECD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5092216FB14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7474438DE1;
-	Mon, 24 Feb 2025 01:27:29 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067904D8D1;
+	Mon, 24 Feb 2025 01:27:52 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EC12746A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7093FBA7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:27:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740360449; cv=none; b=XuTHnx9QFg0pziXNogrTRC+OdzDWcRy8dcQ3ADU+S5nafn1hnoZ0y49JC5sHeYRo9mv6HrO61JI7yBkve405hFjQX3UPNHHq8hELvOIvXOTAChM18ViibFDzaaHvLZ/SEANoJ/F0jHLFSojoPl7JvbW1ppoprmoOQTmA7iyQz7M=
+	t=1740360471; cv=none; b=pZtR8mGRaYStXH9AHlr7MAyJbh0Csg9VNcYkEqHeSGRRdJr0RrFqF4XI5mxgHt3JcgyM6Ooevd0rD/qfW2ss2sN6w4Oa0VPYorbuTT/p2wnGNuOAc5naP5x8XX91HJpAs9Z5XMVE/IN83B0XLifsoaFZSBjGr4tQtOtOLsxzpZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740360449; c=relaxed/simple;
-	bh=8X/bCZzILqRRaX5wQteNpEGa4Pi7PQjaG0fgtunDdNU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nPLwDPGGXFxQ8pnCSryoaFn4KAbOchNTZfJm6wrUiIXSdLlHgB1lT1axnodKd8J4PTWwsNIN9ICRLXzMMOXG8V8Mvv9/mftkrJAohDGvijZ9ydsa5ldNPrj4zmZGkw7C1Ron6SECl1LO4IsAZsTaq4PM0Fh602ZdmzEyWjfnirA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z1NPj3mXmz4f3jt3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:27:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id EEEC61A058E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:27:21 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP3 (Coremail) with SMTP id _Ch0CgAnesT5yrtnLI6iEg--.54045S2;
-	Mon, 24 Feb 2025 09:27:21 +0800 (CST)
-Subject: Re: [PATCH 0/6] Some random fixes and cleanups to mm/swapfile.c
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kasong@tencent.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250222160850.505274-1-shikemeng@huaweicloud.com>
- <20250222174427.2f7d1df81853fa01fa92eacf@linux-foundation.org>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <880080ee-2a18-826d-51f1-1e8d9552fdde@huaweicloud.com>
-Date: Mon, 24 Feb 2025 09:27:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1740360471; c=relaxed/simple;
+	bh=QPY4XgQVB9l8xhB2+/tvz/LGcHqwb14mQwIL70ewMls=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=L18yw7tUvN1ufKxzJO8fDxVKL1A8pW48ZWWRefUPw7EyXW1wGusD3themSqq3wcsUrtMPyJpk35HzBnkN/iKumfwx8HpTeYcZawprmhJmsUmHoH016XBSkAlfMB5n+6+XwfJKf9nUab0mJEVUrBFX7gpCdgFuKZtoJUBAMhwwBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z1NKl0lMDzHyyC;
+	Mon, 24 Feb 2025 09:23:39 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5791F14034E;
+	Mon, 24 Feb 2025 09:27:40 +0800 (CST)
+Received: from [10.174.178.114] (10.174.178.114) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 24 Feb 2025 09:27:39 +0800
+Message-ID: <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
+Date: Mon, 24 Feb 2025 09:27:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250222174427.2f7d1df81853fa01fa92eacf@linux-foundation.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgAnesT5yrtnLI6iEg--.54045S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrur17Ar4Uur1UGr4xXFy7Jrb_yoWDArc_u3
-	90vr9rK3ZFkrWDCanxGF1Yyr1SkFW09ry5ZryrtryUCryrAFn3Gr4vgr15tr1kJay8trZ8
-	Wr9xXw13Aw10kjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbz8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwmhFDUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla Thunderbird
+CC: <mawupeng1@huawei.com>, <akpm@linux-foundation.org>, <david@redhat.com>,
+	<kasong@tencent.com>, <ryan.roberts@arm.com>, <chrisl@kernel.org>,
+	<huang.ying.caritas@gmail.com>, <schatzberg.dan@gmail.com>,
+	<hanchuanhua@oppo.com>, <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
+ found during do_swap_page
+To: <21cnbao@gmail.com>, <willy@infradead.org>
+References: <20250222024617.2790609-1-mawupeng1@huawei.com>
+ <Z7lIYzLSACbWxlEM@casper.infradead.org>
+ <2c7dfa44-266a-4aa6-9401-7528368f171e@huawei.com>
+ <Z7qK-NFJsqcV0rPw@casper.infradead.org>
+ <CAGsJ_4xHaaf_DHsFZ_zEqEd3Nb9C=7JJjy5gGFo+RhEhQYX_tg@mail.gmail.com>
+From: mawupeng <mawupeng1@huawei.com>
+In-Reply-To: <CAGsJ_4xHaaf_DHsFZ_zEqEd3Nb9C=7JJjy5gGFo+RhEhQYX_tg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
 
 
-on 2/23/2025 9:44 AM, Andrew Morton wrote:
-> On Sun, 23 Feb 2025 00:08:44 +0800 Kemeng Shi <shikemeng@huaweicloud.com> wrote:
+On 2025/2/23 14:18, Barry Song wrote:
+> On Sun, Feb 23, 2025 at 3:42 PM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Sat, Feb 22, 2025 at 11:59:53AM +0800, mawupeng wrote:
+>>>
+>>>
+>>> On 2025/2/22 11:45, Matthew Wilcox wrote:
+>>>> On Sat, Feb 22, 2025 at 10:46:17AM +0800, Wupeng Ma wrote:
+>>>>> Digging into the source, we found that the swap entry is invalid due to
+>>>>> unknown reason, and this lead to invalid swap_info_struct. Excessive log
+>>>>> printing can fill up the prioritized log space, leading to the purging of
+>>>>> originally valid logs and hindering problem troubleshooting. To make this
+>>>>> more robust, kill this task.
+>>>>
+>>>> this seems like a very bad way to fix this problem
+>>>
+>>> Sure, It's a bad way to fix this. Just a proper way to make it more robust?
+>>> Since it will produce lots of invalid and same log?
+>>
+>> We have a mechanism to prevent flooding the log: <linux/ratelimit.h>.
+>> If you grep for 'ratelimit' in include, you'll see a number of
+>> convenience functions exist; not sure whether you'll need to use the raw
+>> ratelilmit stuff, or if you can just use one of the prepared ones.
+>>
 > 
->> This series includes several random fixes and cleanups to the mm/swapfile.c
->> code. The issues were discovered during code review and can only manifest
->> under extremely rare and race-condition scenarios. Further details about
->> each fix can be found in the respective patches. Thanks for your
->> attention!
+> IMHO, I really don’t think log flooding is the issue here; rather, we’re dealing
+> with an endless page fault. For servers, that might mean server is unresponsive
+> , for phones, they could be quickly running out of battery.
+
+Yes, log flooding is not the main issue here, endless #PF is rather a more serious
+problem.
+
 > 
-> Thanks.  I queued the first three patches in mm-hotfixes-stable, as
-> they address post-6.13 issues which should be addressed during this -rc
-> cycle.
+> It’s certainly better to identify the root cause, but it could be due
+> to a bit-flip in
+> DDR or memory corruption in the page table. Until we can properly fix it, the
+> patch seems somewhat reasonable—the wrong application gets killed, it at
+> least has a chance to be restarted by systemd, Android init, etc. A PTE pointing
+> to a non-existent swap file and never being enabled clearly indicates something
+> has gone seriously wrong - either a hardware issue or a kernel bug.
+> At the very least, it warrants a WARN_ON_ONCE(), even after we identify and fix
+> the root cause, as it still enhances the system's robustness.
 > 
-> I queued the other three patches for 6.15-rcX.
+> Gaoxu will certainly encounter the same problem if do_swap_page() executes
+> earlier than swap_duplicate() where the PTE points to a non-existent swap
+> file [1]. That means the phone will heat up quickly.
 > 
-> I corrected the Fixes: hash in [2/6].
+> [1] https://lore.kernel.org/linux-mm/e223b0e6ba2f4924984b1917cc717bd5@honor.com/
 > 
-> I made some changelog alterations, along the lines that Kairui
-> mentioned.  Please check the results and send along any alterations
-> which you feel are desirable.
-> 
-Thanks for correcting the changelog. The results look good to me
-except patch 1 may still need some changelog improvement. Will
-send a v2 of patch 1 soon.
+> Thanks
+> Barry
 
 
