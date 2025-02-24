@@ -1,450 +1,167 @@
-Return-Path: <linux-kernel+bounces-528128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FD7A413EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:21:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35ABDA41414
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:36:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B48C3A39C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:21:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB8516E686
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C451F60A;
-	Mon, 24 Feb 2025 03:21:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BD31A5BAF;
+	Mon, 24 Feb 2025 03:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fS/B//x2"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="TtkboSsl"
+Received: from mail-m49234.qiye.163.com (mail-m49234.qiye.163.com [45.254.49.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36D5EACE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4589F510;
+	Mon, 24 Feb 2025 03:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740367265; cv=none; b=KndGTg9wYr3CnqzB+y8ay/xKnUEDoZgminvwv3mBRk1mw8+W9VVp/yxcqBrJKkwF6+eDEhmytrzQQ2sLNpslQh7fcFTkeaf/JxZPqAVwhErdYOp6L7n76aO6N/UyTuyGtymu00au3u3snL/Fi7ja+wxrr7hKTTdWEOd+RH9RLjg=
+	t=1740368195; cv=none; b=M6ZR5vnXGjL45IEUmDslOhGeKWAoywJTO7pSLXNBIr+GzFoq7r790a05y6bIZ4MMjunfYJVA01N+5SgFPFHBzjirJNf84NWWSxx7mfYaTy5swrHOecx8AjKd3LmGDuDhXjByyBcpKdrk8lzQ1Y01ZKPDmop8vLsi33VjnO3VLEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740367265; c=relaxed/simple;
-	bh=12UbkbL3ozhmpAXcWhDiB6a+27sLxl6aSj4n9qWN8hc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=af5Gk5UEdxXEz6vC0rKyGr7CLeDhIANz4xx8lhGg/YbNwt7jxekZR+lqNmgw54dG/8vcErwICrjtVJfus0YX5a7W6Xtm7XdZr88j888vbsP3biBO2OZS/SW2UXXUps1OffXRMX0DT4CXBXFEfJz2ylgTMWheFoSO9/Kt3JFI49k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fS/B//x2; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e589c258663so4247494276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 19:21:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740367263; x=1740972063; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jj056RohTndyRUjZE+5/HofNr1PVX5M2m/PLSiWGtqU=;
-        b=fS/B//x2U0Khu1SXSzw/En7lGTsLOs2RynmWlZRSoEEW6Kc10xjF932sWCdAVQE1Gu
-         ogdLAeF+eJsLNXaOoEYqchP+FbVjFgYjvPJ7F1qVan6Umd1Qe0hkhVsGwg2594AoZNST
-         E8FIuL9iLZWB/+paqGqxFUUMkCggWmgZio5LyyVhLJSkgwGAW4VPkIHgHr9VfwdNdfbo
-         WsiNRABMe66qoVzDttF5vFqlTJCkAQdVz1mdSKMX7R95KqyZETmZNplYrlPTxtknZWQN
-         uPiqJrmeYlVAUgx1BBiSJWfSATznEa938KMvJZRv3AVTYbQizGBgqaUILEJqOCossIr5
-         UjCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740367263; x=1740972063;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jj056RohTndyRUjZE+5/HofNr1PVX5M2m/PLSiWGtqU=;
-        b=SVxeqpl092FQQPGL9zTRcS8nD3P1aXZdnQ5qkfcxX0Lp+WR/nkAoTVc1SpJvI7rY9d
-         zNcOSkR4F+7fedatdcbw8aGteIqVIbmueYNFkShomEsi6dEZ1/1EX4OfUJKf50yuxtJF
-         QLpOHl6nyejD2BQEBvnWZ5BCoJD3O3fuUaPsBKD69K7AkEZV5oUcwKnzo7a0mDO/yl2F
-         gyJ1hnXKOq4L7HTUU+Ku7FoEK6TNjsbBoFQcfdZ4nZH0nyg2mV/eXbi5KjTFqLEZW+i0
-         f9UEeKrB1ChOZbNbqcFQ8IpYnDoA/mYs7j9AShthMDWi+/Su1aRs1XCZmA3nDEhTd+dt
-         nSsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1z3251v/0Q9zcoLwBgyzNuXLNsZZAjtyUWgAcw1Z0b/hSnRRwtDaK7MBVJFMrWtASHfiwnqOv7LhDgzk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz23UKL/sSHbo1GgiW/R1LY7P8lGGex/71ASI06vaIjued1TMz9
-	Shov2+zPDAGfZ/Y2NrkFSQeCAFKLFaCjhlYsgNpk7VnSv0thkUtUsrOUcRZ/tns6zDDRaqtti1L
-	GtC4UIEnH1XPSoRbgDqnQ3ZQUWev5gw3pI7D3
-X-Gm-Gg: ASbGnctAR8arUMjmBjXlaZfoRS93h0jyhT2aVj/yMNQ/PS+CAuQ0P00itrWrUBrq8Uh
-	N9k8SDwSh6zWx/xyYF0OdFO4aeNnUGsGrxJmjSGQ0Xzuw1J61GnBT1HIcunmwhfTIhuqmxHDpw9
-	b56nRQKgl+
-X-Google-Smtp-Source: AGHT+IGnpdeKq2mo7hAEXDBjgVX9tl9uUGDpTCVsHdsl0G227e7Jqs4YHua8P9eDNAop3fdhmDQOHcglbkMATWuYg98=
-X-Received: by 2002:a05:6902:330e:b0:e5d:d78d:e973 with SMTP id
- 3f1490d57ef6-e5e24603d97mr7300604276.26.1740367262652; Sun, 23 Feb 2025
- 19:21:02 -0800 (PST)
+	s=arc-20240116; t=1740368195; c=relaxed/simple;
+	bh=LOuJmP3uQScRvJ5ZPD10rClOLn9+/7bBpKXhwP0o8sA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eoQxhnKtcWbGKvQQ5Ddi0cPujyrPvyzGOd5w1Sb0xEPJOeY2wH1FVCp3EZTK8iGzKwVsuEVfXaRbqa+KrCeWInrgjCWDQ4kgK7mAByz1OG7rYOo0VmWqYEDC5dbvyJipcOchVRmjooJFS7f/70KcB4cmNvmY1qax0hJMfEzqIaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=TtkboSsl; arc=none smtp.client-ip=45.254.49.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id bf356a8d;
+	Mon, 24 Feb 2025 11:21:02 +0800 (GMT+08:00)
+Message-ID: <731abf8f-b157-47d4-a9e1-9aed6f5b4e37@rock-chips.com>
+Date: Mon, 24 Feb 2025 11:21:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224022447.1141413-1-chharry@google.com> <CABBYNZJUd1wU0wyPugz4E_WNQsg9qTJmWdu4k2GvvvgVFG8GPQ@mail.gmail.com>
-In-Reply-To: <CABBYNZJUd1wU0wyPugz4E_WNQsg9qTJmWdu4k2GvvvgVFG8GPQ@mail.gmail.com>
-From: Hsin-chen Chuang <chharry@google.com>
-Date: Mon, 24 Feb 2025 11:20:36 +0800
-X-Gm-Features: AWEUYZl51rPOFQXi2SPqEUmqy9Trb-3m1-BiRtYrOmoEmVRAKatwV-oaYNfl08M
-Message-ID: <CADg1FFfMRwrGjWkhqbiZsfwV5p3axz0bqvPu-vNSSFJyObaN5w@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, gregkh@linuxfoundation.org, 
-	chromeos-bluetooth-upstreaming@chromium.org, 
-	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/14] Add eDP support for RK3588
+To: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: heiko@sntech.de, robh@kernel.org, conor+dt@kernel.org,
+ algea.cao@rock-chips.com, rfoss@kernel.org, devicetree@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ hjc@rock-chips.com, kever.yang@rock-chips.com, dmitry.baryshkov@linaro.org,
+ vkoul@kernel.org, andy.yan@rock-chips.com, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
+References: <20250123100747.1841357-1-damon.ding@rock-chips.com>
+ <5044FFCB-B325-40D0-BA82-03AF64EAF029@gmail.com>
+ <tg6eyew4qahuxqakmmejne7xx2rkouj6htp55acun4ajz2irz2@vlmvqv3zc5vc>
+ <C81810F2-6E9B-4DCC-85D1-CCB63CBFBFEA@gmail.com>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <C81810F2-6E9B-4DCC-85D1-CCB63CBFBFEA@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtLHlYYHkhNH0oeTh5DHkNWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9535f8f24203a3kunmbf356a8d
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pi46Djo5AjIXNxwdLSo9TD1L
+	FQMwClZVSlVKTE9LSE1MSU1PS09IVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFITExLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=TtkboSslEuG3O6Q33PmEvHv28Jvg5WyhYR2LFUqcKFp4BOeB/mohA8ndDgbxGn5eNvpe7Fkf8HB8qjnmn2aLu9BlykbGs6RCVL395hZUmPJW9eyvlAmbaEAF23buy2DkdSvordvN2UaJJ3yxiUObEM3aHwA/1rf/oZ7kgAjYhgE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=SUWTCb0GbfrLEePUqui3jDgm691jrzdjRDy4hq8S9z0=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi Luiz,
+Hi Piotr,
 
-On Mon, Feb 24, 2025 at 10:53=E2=80=AFAM Luiz Augusto von Dentz
-<luiz.dentz@gmail.com> wrote:
->
-> Hi Hsin-chen,
->
-> On Sun, Feb 23, 2025 at 9:26=E2=80=AFPM Hsin-chen Chuang <chharry@google.=
-com> wrote:
-> >
-> > From: Hsin-chen Chuang <chharry@chromium.org>
-> >
-> > Automatically configure the altsetting for USER_CHANNEL when a SCO is
-> > connected or disconnected. This adds support for the USER_CHANNEL to
-> > transfer SCO data over USB transport.
->
-> I guess the tracking of handles is about handling disconnections,
-> right? I wonder if we can get away without doing that, I didn't intend
-> to add a whole bunch of changes in order to switch to the right mode,
-> I get that you may want to disable the isochronous endpoint in case
-> there is no connection, but I guess that only matters if we are
-> talking about power but the impact is probably small so I don't think
-> it is worth it. There is an alternative to match the SCO/eSCO handle
-> via mask, like we do with ISO handles, that is probably a lot cheaper
-> than attempting to add a whole list for tracking handles, but it has
-> the downside that it is vendor/model specific.
+On 2025/2/14 20:00, Piotr Oniszczuk wrote:
+> 
+> 
+>> Wiadomość napisana przez Sebastian Reichel <sebastian.reichel@collabora.com> w dniu 13 lut 2025, o godz. 18:26:
+>>
+>> Hello Piotr,
+>>
+>>
+>> The RK3588 has two different DP controllers. The one handled in this
+>> series should get the eDP port running, which is routed to the
+>> "eDP Panel" in the block diagram on page 3 of the Rock 5 ITX schematics.
+>> So this series adds support for using "HDMI/eDP TX0" and "HDMI/eDP TX1"
+>> in DP mode.
+>>
+>> The port routed to HDMI0 via RA620 is the other DP controller, which
+>> also exists twice: "TYPEC0/DP0" and "TYPEC1/DP1". This DP controller
+>> is not yet supported upstream and there is no pending patchset. As far
+>> as I know Rockchip plans to work on preparing upstream support for that
+>> soon.
 
-Yes, that's for handling disconnection. What do you think if we keep
-only one handle in the driver data? That is, assume there's at most
-one SCO connection. Then we don't need a list but just a u16.
+Yes, Andy has recently updated the DP controller related patchset:
+https://patchwork.kernel.org/project/linux-rockchip/list/?series=936784
 
->
-> > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to control =
-USB alt setting")
-> > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
-> > ---
-> >
-> >  drivers/bluetooth/btusb.c | 224 +++++++++++++++++++++++++++++++-------
-> >  1 file changed, 186 insertions(+), 38 deletions(-)
-> >
-> > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> > index de3fa725d210..dfb0918dfe98 100644
-> > --- a/drivers/bluetooth/btusb.c
-> > +++ b/drivers/bluetooth/btusb.c
-> > @@ -854,6 +854,11 @@ struct qca_dump_info {
-> >  #define BTUSB_ALT6_CONTINUOUS_TX       16
-> >  #define BTUSB_HW_SSR_ACTIVE    17
-> >
-> > +struct sco_handle_list {
-> > +       struct list_head list;
-> > +       u16 handle;
-> > +};
-> > +
-> >  struct btusb_data {
-> >         struct hci_dev       *hdev;
-> >         struct usb_device    *udev;
-> > @@ -920,6 +925,9 @@ struct btusb_data {
-> >         int oob_wake_irq;   /* irq for out-of-band wake-on-bt */
-> >
-> >         struct qca_dump_info qca_dump;
-> > +
-> > +       /* Records the exsiting SCO handles for HCI_USER_CHANNEL */
-> > +       struct list_head sco_handle_list;
-> >  };
-> >
-> >  static void btusb_reset(struct hci_dev *hdev)
-> > @@ -1113,6 +1121,131 @@ static inline void btusb_free_frags(struct btus=
-b_data *data)
-> >         spin_unlock_irqrestore(&data->rxlock, flags);
-> >  }
-> >
-> > +static void btusb_sco_handle_list_clear(struct list_head *list)
-> > +{
-> > +       struct sco_handle_list *entry, *n;
-> > +
-> > +       list_for_each_entry_safe(entry, n, list, list) {
-> > +               list_del(&entry->list);
-> > +               kfree(entry);
-> > +       }
-> > +}
-> > +
-> > +static struct sco_handle_list *btusb_sco_handle_list_find(
-> > +       struct list_head *list,
-> > +       u16 handle)
-> > +{
-> > +       struct sco_handle_list *entry;
-> > +
-> > +       list_for_each_entry(entry, list, list)
-> > +               if (entry->handle =3D=3D handle)
-> > +                       return entry;
-> > +
-> > +       return NULL;
-> > +}
-> > +
-> > +static int btusb_sco_handle_list_add(struct list_head *list, u16 handl=
-e)
-> > +{
-> > +       struct sco_handle_list *entry;
-> > +
-> > +       if (btusb_sco_handle_list_find(list, handle))
-> > +               return -EEXIST;
-> > +
-> > +       entry =3D kzalloc(sizeof(*entry), GFP_KERNEL);
-> > +       if (!entry)
-> > +               return -ENOMEM;
-> > +
-> > +       entry->handle =3D handle;
-> > +       list_add(&entry->list, list);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int btusb_sco_handle_list_del(struct list_head *list, u16 handl=
-e)
-> > +{
-> > +       struct sco_handle_list *entry;
-> > +
-> > +       entry =3D btusb_sco_handle_list_find(list, handle);
-> > +       if (!entry)
-> > +               return -ENOENT;
-> > +
-> > +       list_del(&entry->list);
-> > +       kfree(entry);
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static void btusb_sco_conn_change(struct btusb_data *data, struct sk_b=
-uff *skb)
-> > +{
-> > +       struct hci_event_hdr *hdr =3D (void *) skb->data;
-> > +       struct hci_dev *hdev =3D data->hdev;
-> > +
-> > +       if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT || skb->len < size=
-of(*hdr))
-> > +               return;
-> > +
-> > +       switch (hdr->evt) {
-> > +       case HCI_EV_DISCONN_COMPLETE: {
-> > +               struct hci_ev_disconn_complete *ev =3D
-> > +                       (void *) skb->data + sizeof(*hdr);
-> > +               u16 handle;
-> > +
-> > +               if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->sta=
-tus)
-> > +                       return;
-> > +
-> > +               handle =3D __le16_to_cpu(ev->handle);
-> > +               if (btusb_sco_handle_list_del(&data->sco_handle_list,
-> > +                                             handle) < 0)
-> > +                       return;
-> > +
-> > +               bt_dev_info(hdev, "disabling SCO");
-> > +               data->sco_num--;
-> > +               data->air_mode =3D HCI_NOTIFY_DISABLE_SCO;
-> > +               schedule_work(&data->work);
-> > +
-> > +               break;
-> > +       }
-> > +       case HCI_EV_SYNC_CONN_COMPLETE: {
-> > +               struct hci_ev_sync_conn_complete *ev =3D
-> > +                       (void *) skb->data + sizeof(*hdr);
-> > +               unsigned int notify_air_mode;
-> > +               u16 handle;
-> > +
-> > +               if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->sta=
-tus)
-> > +                       return;
-> > +
-> > +               switch (ev->air_mode) {
-> > +               case BT_CODEC_CVSD:
-> > +                       notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
-> > +                       break;
-> > +
-> > +               case BT_CODEC_TRANSPARENT:
-> > +                       notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANS=
-P;
-> > +                       break;
-> > +
-> > +               default:
-> > +                       return;
-> > +               }
-> > +
-> > +               handle =3D __le16_to_cpu(ev->handle);
-> > +               if (btusb_sco_handle_list_add(&data->sco_handle_list,
-> > +                                             handle) < 0) {
-> > +                       bt_dev_err(hdev, "failed to add the new SCO han=
-dle");
-> > +                       return;
-> > +               }
-> > +
-> > +               bt_dev_info(hdev, "enabling SCO with air mode %u",
-> > +                           ev->air_mode);
-> > +               data->sco_num++;
-> > +               data->air_mode =3D notify_air_mode;
-> > +               schedule_work(&data->work);
-> > +
-> > +               break;
-> > +       }
-> > +       default:
-> > +               break;
-> > +       }
-> > +}
-> > +
-> >  static int btusb_recv_event(struct btusb_data *data, struct sk_buff *s=
-kb)
-> >  {
-> >         if (data->intr_interval) {
-> > @@ -1120,6 +1253,10 @@ static int btusb_recv_event(struct btusb_data *d=
-ata, struct sk_buff *skb)
-> >                 schedule_delayed_work(&data->rx_work, 0);
-> >         }
-> >
-> > +       /* Configure altsetting for HCI_USER_CHANNEL on SCO dis/connect=
-ed */
-> > +       if (hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
-> > +               btusb_sco_conn_change(data, skb);
->
-> I'd recommend adding a check for Kconfig/module parameter in the if
-> statement so btusb_sco_conn_change only runs on distros with it
-> enabled so we don't risk something not working as expected just
-> because someone decided to open the user channel.
+>>
+> 
+> Oh - this is very valuable info and explains a lot.
+> Thx.
+> 
+>> Note, that the two DisplayPort controllers are completely different.
+>> The HDMI/eDP controller is a design from Analogix and the TypeC/DP
+>> controller is a design from Synopsys.
+>>
+>> P.S.: Heiko merged support for HDMI1 (RK3588 SoC level) recently. So you
+>> should be able to get that running by some DT additions to the Rock 5
+>> ITX board DT with the latest linux-next code :)
+>>
+> 
+> And it works perfectly on all my 3588 bards (including audio and my cec addition)
+> But only on boards using both hdmi tx0 and tx1 to hdmi0/hdmi1 ports.
+> 
+> on rock5 itx:
 
-Sure will add it in the next patch.
+According to the schematic of ROCK 5 ITX, I find the display routes are:
+- DP0 -> TYPEC0 Connector
+- DP1 -> RA620 -> HDMI Connector (Andy's patch series will help it work)
+- HDMI/eDP TX0 -> eDP Panel (This patch series will help it work)
+- HDMI/eDP TX1 -> HDMI Connector
 
->
-> >         return data->recv_event(data->hdev, skb);
-> >  }
-> >
-> > @@ -1919,44 +2056,6 @@ static void btusb_stop_traffic(struct btusb_data=
- *data)
-> >         usb_kill_anchored_urbs(&data->ctrl_anchor);
-> >  }
-> >
-> > -static int btusb_close(struct hci_dev *hdev)
-> > -{
-> > -       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> > -       int err;
-> > -
-> > -       BT_DBG("%s", hdev->name);
-> > -
-> > -       cancel_delayed_work(&data->rx_work);
-> > -       cancel_work_sync(&data->work);
-> > -       cancel_work_sync(&data->waker);
-> > -
-> > -       skb_queue_purge(&data->acl_q);
-> > -
-> > -       clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
-> > -       clear_bit(BTUSB_BULK_RUNNING, &data->flags);
-> > -       clear_bit(BTUSB_INTR_RUNNING, &data->flags);
-> > -       clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
-> > -
-> > -       btusb_stop_traffic(data);
-> > -       btusb_free_frags(data);
-> > -
-> > -       err =3D usb_autopm_get_interface(data->intf);
-> > -       if (err < 0)
-> > -               goto failed;
-> > -
-> > -       data->intf->needs_remote_wakeup =3D 0;
-> > -
-> > -       /* Enable remote wake up for auto-suspend */
-> > -       if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
-> > -               data->intf->needs_remote_wakeup =3D 1;
-> > -
-> > -       usb_autopm_put_interface(data->intf);
-> > -
-> > -failed:
-> > -       usb_scuttle_anchored_urbs(&data->deferred);
-> > -       return 0;
-> > -}
-> > -
-> >  static int btusb_flush(struct hci_dev *hdev)
-> >  {
-> >         struct btusb_data *data =3D hci_get_drvdata(hdev);
-> > @@ -2327,6 +2426,51 @@ static void btusb_work(struct work_struct *work)
-> >         }
-> >  }
-> >
-> > +static int btusb_close(struct hci_dev *hdev)
-> > +{
-> > +       struct btusb_data *data =3D hci_get_drvdata(hdev);
-> > +       int err;
-> > +
-> > +       BT_DBG("%s", hdev->name);
-> > +
-> > +       if (hci_dev_test_flag(hdev, HCI_USER_CHANNEL)) {
-> > +               btusb_sco_handle_list_clear(&data->sco_handle_list);
-> > +               data->sco_num =3D 0;
-> > +               if (data->isoc_altsetting !=3D 0)
-> > +                       btusb_switch_alt_setting(hdev, 0);
-> > +       }
-> > +
-> > +       cancel_delayed_work(&data->rx_work);
-> > +       cancel_work_sync(&data->work);
-> > +       cancel_work_sync(&data->waker);
-> > +
-> > +       skb_queue_purge(&data->acl_q);
-> > +
-> > +       clear_bit(BTUSB_ISOC_RUNNING, &data->flags);
-> > +       clear_bit(BTUSB_BULK_RUNNING, &data->flags);
-> > +       clear_bit(BTUSB_INTR_RUNNING, &data->flags);
-> > +       clear_bit(BTUSB_DIAG_RUNNING, &data->flags);
-> > +
-> > +       btusb_stop_traffic(data);
-> > +       btusb_free_frags(data);
-> > +
-> > +       err =3D usb_autopm_get_interface(data->intf);
-> > +       if (err < 0)
-> > +               goto failed;
-> > +
-> > +       data->intf->needs_remote_wakeup =3D 0;
-> > +
-> > +       /* Enable remote wake up for auto-suspend */
-> > +       if (test_bit(BTUSB_WAKEUP_AUTOSUSPEND, &data->flags))
-> > +               data->intf->needs_remote_wakeup =3D 1;
-> > +
-> > +       usb_autopm_put_interface(data->intf);
-> > +
-> > +failed:
-> > +       usb_scuttle_anchored_urbs(&data->deferred);
-> > +       return 0;
-> > +}
-> > +
-> >  static void btusb_waker(struct work_struct *work)
-> >  {
-> >         struct btusb_data *data =3D container_of(work, struct btusb_dat=
-a, waker);
-> > @@ -3782,6 +3926,8 @@ static int btusb_probe(struct usb_interface *intf=
-,
-> >         data->udev =3D interface_to_usbdev(intf);
-> >         data->intf =3D intf;
-> >
-> > +       INIT_LIST_HEAD(&data->sco_handle_list);
-> > +
-> >         INIT_WORK(&data->work, btusb_work);
-> >         INIT_WORK(&data->waker, btusb_waker);
-> >         INIT_DELAYED_WORK(&data->rx_work, btusb_rx_work);
-> > @@ -4117,6 +4263,8 @@ static void btusb_disconnect(struct usb_interface=
- *intf)
-> >         hdev =3D data->hdev;
-> >         usb_set_intfdata(data->intf, NULL);
-> >
-> > +       btusb_sco_handle_list_clear(&data->sco_handle_list);
-> > +
-> >         if (data->isoc) {
-> >                 device_remove_file(&intf->dev, &dev_attr_isoc_alt);
-> >                 usb_set_intfdata(data->isoc, NULL);
-> > --
-> > 2.48.1.601.g30ceb7b040-goog
-> >
->
->
-> --
-> Luiz Augusto von Dentz
+So the HDMI/eDP TX0 should be enabled as eDP in DTS. Maybe it's just a 
+test to enable both HDMI0 and HDMI1 in the ROCK 5 ITX board?
 
---=20
-Best Regards,
-Hsin-chen
+> With both hdmi tx0 and tx1 enabled in dts it looks like kernel detects hdmi tx0 as connected and tries read edid.
+> As nothing is connected to J11 (eDP con) - i’m getting i2c ddc timeouts
+> [   54.188880] dwhdmiqp-rockchip fde80000.hdmi: i2c read timed out
+> [   54.292207] dwhdmiqp-rockchip fde80000.hdmi: i2c read timed out
+> [   54.395554] dwhdmiqp-rockchip fde80000.hdmi: i2c read timed out
+> 
+
+I think the reason may be that HDMI0 is enabled, and HPD pin of HDMI0 is 
+also configured, but the HPD pin is in an unstable state in the 
+hardware, which is mistakenly detected as connected.
+
+> 
+> disabling hdmi0 makes kernel talking to hdmi1 but with issues:
+> [    0.540446] dwhdmiqp-rockchip fdea0000.hdmi: registered DesignWare HDMI QP I2C bus driver
+> [    0.541230] rockchip-drm display-subsystem: bound fdea0000.hdmi (ops dw_hdmi_qp_rockchip_ops)
+> [    0.542285] [drm] Initialized rockchip 1.0.0 for display-subsystem on minor 0
+> [    0.542933] rockchip-drm display-subsystem: [drm] Cannot find any crtc or sizes
+> [    0.543605] rockchip-drm display-subsystem: [drm] Cannot find any crtc or sizes
+> 
+> and here i’m a bit puzzled as on other 3588 boards (i.e. rock5b) - when i connected monitor to hdmi1 - all works perfectly
+> (kernel, OS and app nicely skipping hdmi0 and talking to actually connected hdmi1 port. all works)
+> 
+> on rock5 itx this not works.
+> 
+> my observations so far are:
+> -on rock5 itx hdmi0 is falsely detected as connected - even when eDP connector (J11) has nothing connected
+> -on rock5 itx disabling hdmi0 in dts breaks hdmi1
+> -on other 3588 (e.g. rock 5b) disabling hdmi0 in dts NOT breaks hdmi1
+> 
+> strange….
+> 
+> 
+
+Best regards
+Damon
+
 
