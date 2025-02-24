@@ -1,149 +1,130 @@
-Return-Path: <linux-kernel+bounces-529654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 589BDA42952
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:20:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B925DA42963
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:21:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF4C1887D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:18:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7F2E188BF43
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E529E263F5B;
-	Mon, 24 Feb 2025 17:18:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F7E1537C8;
-	Mon, 24 Feb 2025 17:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA252627E6;
+	Mon, 24 Feb 2025 17:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X0qlPV1l"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BC7265603
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417489; cv=none; b=niJs3INEYJe8k6Z7mk6WW9LEUPlKwIIlthGRj3ENq0eT7EeuJu6M/ItnMm5zpJ3ZrnEC97cu6D69o3R1vJ7AcCn4guwC4HfOOT7kj45HmsLYJGKsx4xfCf8Jef6G37XybBGfVLi/6jvyukLXyuDSf3MDzXUGfCvMe5aKy9yfWkI=
+	t=1740417571; cv=none; b=EIZqKqlrtPM3zUtrGWuyDmwvADhEd38v/lE46qP4cRCp0699RVWFLxORbjO1GYa1EZv8kq2j+IPF6q8DxR6Rhy0BH5IcHcdS8aR95TvWrxAVpi+V3jiZa0BvOc+JKMNWvlIKHN8yW250uXTGG45SP5N5TKsbZvm4awlPDIVZvaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417489; c=relaxed/simple;
-	bh=Udl67jI1Qm6fATwqGT1fr5PHHdw9h5FVAHOl8ACPIDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UeRrfWNAqexR63utZhiSeTMriJX7h5sPgoNuewQd+5KiyycsnPmrluoJOg8SaY51R0c6zhZ1edU0bAVoL0SIs2I0isu1Lcba4EvL9H5g9akrPDMeyA7tt9ZQMg/4f70WJg+PcT/5f6A5Rv0peQ/efte/CUbKR+KLq1ScvH/fuHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14AA3152B;
-	Mon, 24 Feb 2025 09:18:21 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.51])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBDBF3F5A1;
-	Mon, 24 Feb 2025 09:17:59 -0800 (PST)
-Date: Mon, 24 Feb 2025 17:17:54 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: "Moger, Babu" <babu.moger@amd.com>, corbet@lwn.net, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	tony.luck@intel.com, peternewman@google.com, x86@kernel.org,
-	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
-	mario.limonciello@amd.com, james.morse@arm.com,
-	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
-	eranian@google.com
-Subject: Re: [PATCH v11 22/23] x86/resctrl: Introduce interface to list
- assignment states of all the groups
-Message-ID: <Z7ydx6vfuw8OdJzL@e133380.arm.com>
-References: <cover.1737577229.git.babu.moger@amd.com>
- <52c66bf98480c0ab6bb0f0762497e328fcbdeaac.1737577229.git.babu.moger@amd.com>
- <Z7XiQ+u3Pc+uvJCK@e133380.arm.com>
- <45a0a88a-b31e-447e-9d62-bc0cdedf06f7@amd.com>
- <Z7dN2KpsQjVUb3KR@e133380.arm.com>
- <7802f9e9-9a63-463d-a51e-e9ad0e60f77f@amd.com>
- <Z7ijCphcSM58AqA6@e133380.arm.com>
- <09f2f512-0428-4649-b8ef-33e5a03d5dcb@intel.com>
+	s=arc-20240116; t=1740417571; c=relaxed/simple;
+	bh=YkGfGRHPFOGIrjt7CW0/60RcoF2CYhgcQyUVsVMlKsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KttYDpBTv0jbeVXTzINOvsTnJkibaEfkyvFjEE+1v9l5K5llQ/jZofmaT9Zv9P9KWrVoWoKQjY5uSmgIammt4Rjd1SJ87oTCsCBmKhLhcbCaUow9ie1LoCezA6Jn+Jn0kk+dUMFe4D4PIQQMmhSeZqMzW5T8G2iVeH3Sb6kuyJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X0qlPV1l; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22117c396baso376365ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:19:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740417568; x=1741022368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YkGfGRHPFOGIrjt7CW0/60RcoF2CYhgcQyUVsVMlKsk=;
+        b=X0qlPV1la16N2wIxMgPlQUNfOJW4/YElrqRWi9AAj1U/B/YeYINNNj5tltvzUDOaHc
+         v7YESB7QbhQZKJonqTHW2jiKmaUaNyZBwAHPFwoKwRMspeA7LVc41Yywp8R/qwtZ4R3P
+         b6jlKRpfiEd/d+kOk5eRS0QApvdawvMBpJjaL8XIJJTyiRRG5346yIWE0XOc/eABIVNO
+         IF5geENcRcU8HdffymqXe5lhtYq4lA7Yo3+xzqcUmTZKejGhSCPxkoew7Xtzd4MyPY7q
+         P9+LdiTlIU45uCcWHtgvyLRzqX/HjgbCM6U2nav6EsHM1vu3CroxsH4rNzGfTEKjxHLy
+         EMgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740417568; x=1741022368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YkGfGRHPFOGIrjt7CW0/60RcoF2CYhgcQyUVsVMlKsk=;
+        b=cWEvaHH/EJRf5Qt+aD74yK90Y+lNDA0p8DjDhvz7NbGqqRdFzhWw+9jPLJNJiMsouC
+         3vQAJsiecnHw72jS+7rglG8TGA+kjA+j4/7heII3qV5bd8AYNqYWHslSLHVsuis/XNfA
+         TCxQe/K8GiHvh+drJYZXv/VHSNZTXlzi8v6jFnrDqQDPxr8Z0KM/wrH2SljZnzofNE3a
+         F/fdw0/79NOMDA8TBaKVYk4xU+ZmH9qXtZqEd5mxgedKY03m8Q+2dD/mCgSSLdnfUagB
+         YORFToyG57ik+PReWcVUM4HNLp2wZZm0NN/xM0fA2Ybt5x4MMGrow34f+c2vn2IVP6BW
+         ZkWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXTvq3GKitgumGglyXDykjV/Fhgo6YAudwvmEr2bfTrrvpx0qVZKSMkS7jYZhmS6s6FTIpHKokKynxu/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhZ2em61nzQs3fAmf7oAz9nlqnMIZhA2AaaU7WH9zfWywSQISl
+	ZqXD4vCrvlNM+c/ybceK82atBg+zKkRPd5ajBB5Rmy42Rnbh5OKVFZur5XhwTK2QGWarjwHrZkl
+	d9He8o6gXbsStkdJNtKF/3/OApngSXHuEw1m9
+X-Gm-Gg: ASbGnctRm030m6mKJzQ87BUmgYq7DdLkDN2GhcVrm13dfIKqtEDoh/siV5UdeIQx9rV
+	Dd0D9giXnJdk+D+PmzWn+MBcjV5jnzdAGhYch3sBLPPA6MXF+Qv0RKpheEC5ZM+RaHa9IHH0683
+	8T/FcXEaY=
+X-Google-Smtp-Source: AGHT+IHTAwfAEIHfGaanz2ImJIv6TFBo6hJ0pV+jmXwD7kT/u4LNJh///oPwcVt2cEUyOMZ5KobtdpSb6LmndtBex80=
+X-Received: by 2002:a17:902:db0f:b0:216:7aaa:4c5f with SMTP id
+ d9443c01a7336-22307a2f1ccmr89755ad.3.1740417568009; Mon, 24 Feb 2025 09:19:28
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09f2f512-0428-4649-b8ef-33e5a03d5dcb@intel.com>
+References: <20250222191517.743530-1-almasrymina@google.com>
+ <20250222191517.743530-10-almasrymina@google.com> <Z7ypMjORvm99q6L0@mini-arch>
+In-Reply-To: <Z7ypMjORvm99q6L0@mini-arch>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 24 Feb 2025 09:19:13 -0800
+X-Gm-Features: AWEUYZkSIiPtvI8VObRXZQvcc3R--20e8PUb_X-ZIgU5euHjlp4NxpuUlOVfZXU
+Message-ID: <CAHS8izM9xMqWnJB5Cm=DMMBV1BuUemFjKSv9So8V_xQ8ToTRqA@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 9/9] selftests: ncdevmem: Implement devmem TCP TX
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, virtualization@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, 
+	Harshitha Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 12:10:44PM -0800, Reinette Chatre wrote:
-> Hi Dave,
-> 
-> On 2/21/25 8:00 AM, Dave Martin wrote:
-> > On Thu, Feb 20, 2025 at 03:29:12PM -0600, Moger, Babu wrote:
-> >> Hi Dave,
-> >>
-> >> On 2/20/25 09:44, Dave Martin wrote:
+On Mon, Feb 24, 2025 at 9:15=E2=80=AFAM Stanislav Fomichev <stfomichev@gmai=
+l.com> wrote:
+>
+> On 02/22, Mina Almasry wrote:
+> > Add support for devmem TX in ncdevmem.
+> >
+> > This is a combination of the ncdevmem from the devmem TCP series RFCv1
+> > which included the TX path, and work by Stan to include the netlink API
+> > and refactored on top of his generic memory_provider support.
+> >
+> > Signed-off-by: Mina Almasry <almasrymina@google.com>
+> > Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+>
+> Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+>
+> We need exit_wait=3DTrue for check_rx as well, but I'll send this change
+> separately.
 
-[...]
+Yes, I discovered the same thing, and I have that change locally along
+with some other fix ups I'm readying up for review in a separate
+series.
 
-> >>> But mbm_assign_control data is dynamically generated and potentially
-> >>> much bigger than a typical sysfs file.
-> >>
-> >> I have no idea how to handle this case. We may have to live with this
-> >> problem. Let us know if there are any ideas.
-> > 
-> > I think the current implication is that this will work for now provided
-> > that the generated text fits in a page.
-> > 
-> > 
-> > Reinette, what's your view on accepting this limitation in the interest
-> > of stabilising this series, and tidying up this corner case later?
-> > 
-> > As for writes to this file, we're unlikely to hit the limit unless
-> > there are a lot of RMIDs available and many groups with excessively
-> > long names.
-> 
-> I am more concerned about reads to this file. If only 4K writes are
-> supported then user space can reconfigure the system in page sized
-> portions. It may not be efficient if the user wants to reconfigure the
-> entire system but it will work. The problem with reads is that if
-> larger than 4K reads are required but not supported then it will be
-> impossible for user space to learn state of the system.
-> 
-> We may already be at that limit. Peter described [1] how AMD systems
-> already have 32 L3 monitoring domains and 256 RMIDs. With conservative
-> resource group names of 10 characters I see one line per monitoring group
-> that could look like below and thus easily be above 200 characters:
-> 
-> resgroupAA/mongroupAA/0=tl;1=tl;2=tl;3=tl;4=tl;5=tl;6=tl;7=tl;8=tl;9=tl;10=tl;11=tl;12=tl;13=tl;14=tl;15=tl;16=tl;17=tl;18=tl;19=tl;20=tl;21=tl;22=tl;23=tl;24=tl;25=tl;26=tl;27=tl;28=tl;29=tl;30=tl;31=tl;32=tl
-> 
-> Multiplying that with the existing possible 256 monitor groups the limit
-> is exceeded today.
+Thanks for the reviews!
 
-That's useful to know.  I guess we probably shouldn't just kick this
-issue down the road, then -- at least on the read side (as you say).
-
-> I understand that all domains having "tl" flags are not possible today, but
-> even if that is changed to "_" the resulting display still looks to
-> easily exceed a page when many RMIDs are in use.
-> 
-> > 
-> > This looks perfectly fixable, but it might be better to settle the
-> > design of this series first before we worry too much about it.
-> 
-> I think it fair to delay support of writing more than a page of
-> data but it looks to me like we need a solution to support displaying
-> more than a page of data to user space.
-> 
-> Reinette
-> 
-> [1] https://lore.kernel.org/lkml/20241106154306.2721688-2-peternewman@google.com/
-
-Ack; if I can't find an off-the-shelf solution for this, I'll try to
-hack something as minimal as possible to provide the required
-behaviour, but I won't try to make it optimal or pretty for now.
-
-It has just occurred to be that ftrace has large, multi-line text files
-in sysfs, so I'll try to find out how they handle that there.  Maybe
-there is some infrastructure we can re-use.
-
-Either way, hopefully that will move the discussion forward (unless
-someone else comes up with a better idea first!)
-
-Cheers
----Dave
+--=20
+Thanks,
+Mina
 
