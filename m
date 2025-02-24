@@ -1,159 +1,136 @@
-Return-Path: <linux-kernel+bounces-528147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4268EA4142B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:45:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B3F4A41436
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D61D3A4874
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:43:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E8A16850D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D02161A9B28;
-	Mon, 24 Feb 2025 03:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65AF71A3031;
+	Mon, 24 Feb 2025 03:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QG3Q4vOR"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="heZyASBk"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457431A5BAF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:43:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445D53FBA7;
+	Mon, 24 Feb 2025 03:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740368587; cv=none; b=i4dJklpP46j9gLI94pM45lT0kl0hh48pwG/2ULleHevCnbfhy9YpfklheLDWxxQla5M3K5pE09WhqkTcT306J9YjwiORzGvTkEXz1BCE2wJQKkdXAEJmnERKv9XKKLNzF7/kgpn8ZWUvdL3QHyWszNX1KHVCmfrh5uHk/YheHvA=
+	t=1740368710; cv=none; b=IRu2eTeHg9YXvwoK0Clawpvu2K3CY1GXvW+qdmSPWmPocgTdhIQeKLv8g+UQlMz+SVDaxTdYSjncs1iSxJUghAGvLdahPxt3iuFxzaFniZsCbac/GmmCxskp53elvZNuVl63FOnW6/XTneZQoHNUoYhj48oQXpEYkqcpb73OSX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740368587; c=relaxed/simple;
-	bh=2brXvbSRhDKTumjWNgVlgfbHMSBx/NsSwwhkUiBUAi4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DsK78xHxZv93C+CmN+4UCPLKwV5MM9ktrXmJbknnY7vIi/b1w0p6OTx9xMZN24Qlh4IqG3UCdUulXR8DIEktj8Nez5xwstyxWhazEQvwxBSDDBtz4uARQjd91+PXdASvAl/B+jrNCzkKSL7SEPMVrQREaq1EQnDioXMG1hnqDlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QG3Q4vOR; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-2a8690dcb35so928295fac.3
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 19:43:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1740368583; x=1740973383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EWmyrx22D4RyR4VCDSIk++RqfnUE4ZQz7ryWsBjsG1U=;
-        b=QG3Q4vORUS7dpe5ZAdbJjcYmcXpP4EgNcm1ycatcaQM7bMC69jNebVVMCRfkJcUlAF
-         d7n2LEQQfj+ZgS/QGMHMoKnexOsGcjiHOqIVFnRMdFrrMW5MY4FZl00HS98l5X1ZAfEJ
-         77hZ8SB0Q1D3yz5mdAuDtAFhYrtZrxVw49OsCM5MIS97BgOVC1ieWG5aLrY5xMgiS3MI
-         xiWxUWxFyFwdz0pyJp4+QJaaYeTTMkBhspFGiVZ50qiKM0vZlwIkjLiWh1jtTf1tXqMr
-         Lo2kppAcQAsXCyxqF5aHxgxFHk+awGAZVRUUYWbEa69zX8POuFOTYVqpV2mZaJTkWtt/
-         PT/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740368583; x=1740973383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EWmyrx22D4RyR4VCDSIk++RqfnUE4ZQz7ryWsBjsG1U=;
-        b=LgCpbxcWFRh5ro0oLjXeeiyUrMZpJesaZI+4U2UMR3hVn7LHe+e2BQTg0f4RWU/zM7
-         6jH9Av5Ed0cX1s7JunksimhYJlNtELLVUA55xWnRQhTZoCYO2z6z2HDU7g0zPHsOApQD
-         qwnbSx6jXMT4cBO9dfRL6NNrOgS6sc+mjSnCokweDn+K7ZG9uQsOh9SEnh5e1sTFljtw
-         qT+YbMx+pAbEvSTsADwOsQWiKJXDnbU1IwjzdegE8xjcg8mqzT0upP1UJvyY2k4EXVJI
-         aPKsoDFnfIKGrLS2cMMCb1VBIfEvxdDXOPSQLQTXDEpmR+oGA2I1u4RLl8U9gyVPdOzK
-         pQwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZlBDZB5nZQ/JBBu6NG+J64vdNNMFLZiP7uR2MvxuQdthaZ0gLEVSGBYU2SiK5bCe+V4a85vC+D3wqUfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoAx4USYkMJzsqmH3aSlnH57wkpZM2xnQpQxQbnYe1+5QgmKVy
-	nBypVzDk6nfbRBkQj+kLkyc0UzJque7XejiwNO4vEgUabR36skq+57pd/jUnlwTN5MPYpoHf+k9
-	Vqn8vxFconA9CVkPjd27yx2AoM72dtPwATmiTkoVeBXAZbrpaJf+ukg==
-X-Gm-Gg: ASbGncvSOud4lcFaHL9QkDW6LtfPQ/WOzShQiksRDDNE6g5Jbh/EkdRIYBAflME1UfF
-	bNtk8uOzX/UuOS7xHuqtDReLpcTpB3OViAmQv22HzQGU3DwKKpgTqdYAw6WpyuFDdUV8JAJMoId
-	UIE7T+BHQzOQ==
-X-Google-Smtp-Source: AGHT+IGv99EkJ7MMHfoGHA1P2RRAdF3geIY8k8jLdJmdUqKUmwxzj8cPjmtTfekpYtzSV93z/z3S2U1jmWSLvf+eA2Q=
-X-Received: by 2002:a05:6871:d104:b0:29e:5c94:5b10 with SMTP id
- 586e51a60fabf-2bd50fa5b9cmr9369042fac.34.1740368583214; Sun, 23 Feb 2025
- 19:43:03 -0800 (PST)
+	s=arc-20240116; t=1740368710; c=relaxed/simple;
+	bh=JLsMyQSdWcTRG8EiJgarCIC0qRpuVwqXG2/B2w70LK4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eSbfCZt4fJPksaYbjdvmk2YtGYjgjERUL8Ih7NuOGkZsx3LBwxCrFEU96RQfflfcKVzp0sRDiIGRS9zgqjPBxSHdpPrIx4sYFGsOE6kmVnGaHqm4k4V8rrkUPBIWhG4fMSub3C65Th46Sh5u5pvJc7V2lO3rlB5olNXsN1WKbqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=heZyASBk; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740368702; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=dsOpm0A0/KB032ZLuWE3O79KWWGmWvjEV91Oqu2+0p0=;
+	b=heZyASBkS9PW3yamUL+nq19fb+kIIstg42PaFM/DuvKDJSk399SqZtVhLdQhtxtfY3wvZSjKYYplXmCbMIas6VQ2mYobO2TJ2sRAV1B75rOqa0TN0qMbjNCU4QpuzXFe40PKokX/ek9AI42jO0z21fCJPn06v45nbanG+xq93qA=
+Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQ1w1CO_1740368701 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 24 Feb 2025 11:45:02 +0800
+From: Feng Tang <feng.tang@linux.alibaba.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
+	rafael@kernel.org
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	lkp@intel.com,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Feng Tang <feng.tang@linux.alibaba.com>
+Subject: [PATCH v3 0/4] PCIe hotplug interrupt related fixes 
+Date: Mon, 24 Feb 2025 11:44:56 +0800
+Message-Id: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220101511.37602-1-cuiyunhui@bytedance.com> <622aa790-6560-4be9-bfb4-736809a249bc@linux.intel.com>
-In-Reply-To: <622aa790-6560-4be9-bfb4-736809a249bc@linux.intel.com>
-From: yunhui cui <cuiyunhui@bytedance.com>
-Date: Mon, 24 Feb 2025 11:42:52 +0800
-X-Gm-Features: AWEUYZnZAgZWgpT1jq430siBo66BfD-b8aN1SXFV2Q6cuPz2z7re5pNq-FV4LMY
-Message-ID: <CAEEQ3wm019hEGK=2i+2KF7LVcWr8y9N2uGzF65pfQLurroa+YA@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] iommu/vt-d: fix system hang on reboot -f
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: dwmw2@infradead.org, joro@8bytes.org, will@kernel.org, 
-	robin.murphy@arm.com, iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Baolu,
+Hi all,
 
-On Mon, Feb 24, 2025 at 9:06=E2=80=AFAM Baolu Lu <baolu.lu@linux.intel.com>=
- wrote:
->
-> On 2/20/25 18:15, Yunhui Cui wrote:
-> > When entering intel_iommu_shutdown, system interrupts are disabled,
-> > and the reboot process might be scheduled out by down_write(). If the
-> > scheduled process does not yield (e.g., while(1)), the system will hang=
-.
-> >
-> > Signed-off-by: Yunhui Cui<cuiyunhui@bytedance.com>
-> > ---
-> >   drivers/iommu/intel/iommu.c | 3 ++-
-> >   1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-> > index cc46098f875b..76a1d83b46bf 100644
-> > --- a/drivers/iommu/intel/iommu.c
-> > +++ b/drivers/iommu/intel/iommu.c
-> > @@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
-> >       if (no_iommu || dmar_disabled)
-> >               return;
-> >
-> > -     down_write(&dmar_global_lock);
-> > +     if (!down_write_trylock(&dmar_global_lock))
-> > +             return;
->
-> If system interrupts are disabled here, locking is unnecessary. Hotplug
-> operations depend on interrupt events, so it's better to remove the
-> lock. The shutdown helper then appears like this:
+This patchset tries to address 2 PCIe hotplug interrupt related problems
+we met recently:
 
-Currently, intel_iommu_shutdown() is only called by
-native_machine_shutdown(). The down_write/up operations can be
-removed. Even if there's a hardware access error, IOMMU_WAIT_OP() will
-trigger a panic().
+1. Firmware developers reported that they received two PCIe hotplug commands
+   in very short intervals on an ARM server, which doesn't comply with PCIe
+   spec, and broke their state machine and work flow.
+2. An irq storm bug found when testing "pci=nomsi" case, and the root
+   cause is: 'nomsi' will disable MSI and let devices and root ports use
+   legacy INTX interrupt, and likely make several devices/ports share one
+   interrupt. In the failure case, BIOS doesn't disable the pcie hotplug
+   interrupts, and actually asserts the command-complete interrupt.
 
->
-> void intel_iommu_shutdown(void)
-> {
->          struct dmar_drhd_unit *drhd;
->          struct intel_iommu *iommu =3D NULL;
->
->          if (no_iommu || dmar_disabled)
->                  return;
->
->          /*
->           * System interrupts are disabled when it reaches here. Locking
->           * is unnecessary when iterating the IOMMU list.
->           */
->          list_for_each_entry(drhd, &dmar_drhd_units, list) {
->                  if (drhd->ignored)
->                          continue;
->
->                  iommu =3D drhd->iommu;
->                  /* Disable PMRs explicitly here. */
->                  iommu_disable_protect_mem_regions(iommu);
->                  iommu_disable_translation(iommu);
->          }
-> }
->
-> Does it work for you?
-Yes.
+More details could be found in commit log of patch 2/4 and 4/4. Basically:
+    Patch 0001 moves the PCIe hotplug command waiting funtion from pciehp
+               driver to PCIe port driver for code reuse.
+    Patch 0002 adds the necessary wait for PCIe hotplug command
+    Patch 0003 loose the condition check for interrupt disabling
+    Patch 0004 for msi disabled case, disable PCIe hotplug interrupt in
+               early boot phase 
 
->
-> Thanks,
-> baolu
+Please help to review, thanks!
 
-Thanks,
-Yunhui
+- Feng
+
+Changelog:
+
+  since v2:
+    * Add patch 0001, which move the waiting logic of pcie_poll_cmd from pciehp
+      driver to PCIe port driver for code reuse (Bjorn Helgaas)
+    * Separate Lucas' suggestion out as patch 0003 (Bjorn and Sathyanarayanan)  
+    * Avoid hotplug command waiting for HW without command-complete
+      event support (Bjorn Helgaas)
+    * Fix spell issue in commit log (Bjorn and Markus)
+    * Add cover-letter for whole patchset (Markus Elfring)
+    * Handle a set-but-unused build warning (0Day lkp bot)
+
+  since v1:
+    * Add the Originally-by for Liguang for patch 0002. The issue was found on
+      a 5.10 kernel, then 6.6. I was initially given a 5.10 kernel tar ball
+      without git info to debug the issue, and made the patch. Thanks to Guanghui
+      who recently pointed me to tree https://gitee.com/anolis/cloud-kernel which
+      show the wait logic in 5.10 was originally from Liguang, and never hit
+      mainline.
+    * Make the irq disabling not dependent on wthether pciehp service driver
+      will be loaded (Lukas Wunner) 
+    * Use read_poll_timeout() API to simply the waiting logic (Sathyanarayanan
+      Kuppuswamy)
+    * Fix wrong email address (Markus Elfring)
+    * Add logic to skip irq disabling if it is already disabled.
+
+
+Feng Tang (4):
+  PCI: portdrv: pciehp: Move PCIe hotplug command waiting logic to port
+    driver
+  PCI/portdrv: Add necessary wait for disabling hotplug events
+  PCI/portdrv: Loose the condition check for disabling hotplug
+    interrupts
+  PCI: Disable PCIe hotplug interrupts early when msi is disabled
+
+ drivers/pci/hotplug/pciehp_hpc.c | 38 ++++++------------------
+ drivers/pci/pci.h                |  7 +++++
+ drivers/pci/pcie/portdrv.c       | 50 ++++++++++++++++++++++++++++----
+ drivers/pci/probe.c              |  9 ++++++
+ 4 files changed, 70 insertions(+), 34 deletions(-)
+
+-- 
+2.43.5
+
 
