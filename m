@@ -1,116 +1,165 @@
-Return-Path: <linux-kernel+bounces-530073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA82A42E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:58:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD337A42E76
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:58:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84CC1176BE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE76E3B35C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEDD26560F;
-	Mon, 24 Feb 2025 20:57:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E396F263C6A;
+	Mon, 24 Feb 2025 20:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a9roizhM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8A6264A76;
-	Mon, 24 Feb 2025 20:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="lPItqs9C"
+Received: from mout02.posteo.de (mout02.posteo.de [185.67.36.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06825C6EB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430666; cv=none; b=VUdwpGmCd2TtvF/oEDRIlc5xBEX8HU+TVqCFFJ0RflPgzGmBmXqbS3b0iJ49xCYD+8E5vIE0FTPYfivQVOZ5ZylFpxbnCqKvbDjTY+E3N+vFwJMD40ewTBopv5dWnd3l5HCB3AvgLi792OWnZ63R1n9n0zXPtfQp52deqf7f+Ak=
+	t=1740430705; cv=none; b=dqXXCj54knCauylSPMrSdVZOLgZx6tby7797AQutikOq4sDn0sl5r0KY/HrNKy5TOafCSGvjb/ZVGIa4eNsWCZEyDxkYPv87omBTAByC34iYOfSfS06FKdSUPa/Ad7I2G7eMLJniecTQXQHVt952DJiMGGOoBR5i58fEC5Cx9yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430666; c=relaxed/simple;
-	bh=tHp3CW8WUqBJOuJ+M5ldr4pd47GY+B/nMBanKd5tldo=;
+	s=arc-20240116; t=1740430705; c=relaxed/simple;
+	bh=5NTBVZtPucMG0j4onj8D4B3Tzw8Ztr68uizMJjq18iU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkhFl/cZJJbcJ1OLXxwWs4TrCFBtM48cgdx/j8fyymYsGTtMPsOd8T+WJ/NOptjC9DWIKk9+4Sx4ilgtOWPPwUYVsEQPuZTX/vHTwJC4IwrUmeTP695m9PG3EUEzRRNGPTD3nUJ0REDe9Z61EYsw1S1Aq/Plh4PFVhlYONqWR30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=a9roizhM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2 (unknown [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 1B547203CDE1;
-	Mon, 24 Feb 2025 12:57:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B547203CDE1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740430664;
-	bh=Xuh6Gw8WVBag6u3aATPx+1OicXMDLi528DsAZL28/pQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a9roizhMqR+1018jc5Z9vNNa0fYhQKVbujlDLHaX3mq0rxvAIJ2awA0we5jGyKbLz
-	 v7I66zdrp0b/q1YGhkGQglJ0kQJ5H2add1506CciBN6065ha53/JETOuuETW90tAiV
-	 mCXJ/pQmg7pWakO5YA7VCK9u2hP8e0j5WSWid7RU=
-Date: Mon, 24 Feb 2025 15:57:31 -0500
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jani Nikula <jani.nikula@intel.com>, Baoquan He <bhe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: Re: [PATCH v2] panic: call panic handlers before
- panic_other_cpus_shutdown()
-Message-ID: <Z7zdO6WSoTyrS_B0@hm-sls2>
-References: <20250221213055.133849-1-hamzamahfooz@linux.microsoft.com>
- <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
- <Z7yGv_ZyeyUueXLz@hm-sls2>
- <BN7PR02MB41481BB6067A7265A459AF69D4C02@BN7PR02MB4148.namprd02.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JfnzOkr0irR4rkEupe5T/fN0wdh0B1t8reFalk8A7jF8nrIojL9HMu/iU2aU0IbmvZCjrf26udRmleJsMHgQRf9JZpDYi5GXvTKOnIuCEQcEcBlTcs9gTWrFXh1JeSYt+nep5CjCBO849OEpl5XaSo34WcYo7E3QXEY22klFH6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=lPItqs9C; arc=none smtp.client-ip=185.67.36.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout02.posteo.de (Postfix) with ESMTPS id 37701240104
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:58:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.net; s=2017;
+	t=1740430701; bh=5NTBVZtPucMG0j4onj8D4B3Tzw8Ztr68uizMJjq18iU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:Content-Transfer-Encoding:From;
+	b=lPItqs9CzEX3MHXDUteuWzg/eh47rC4iOuc0Nm5GK65+l2ZAsJ8ft7ZoO8yMutuwx
+	 a7ne/OwJHenS0lA6f0UYTpoGv1sKQCNbpyTamlYIsfoP9kzAXteH9o+oEeF+9MrIET
+	 3d9nnVEKTYM5M9wMFP1Bliy4QS/+FKrHwYQJBjRUjTbteQuqF7GTsKxPqjOyr01nnb
+	 IP4cuiktw+YifxM8GGgqDbleIUbE4OBVgFxqjvU+UPcuPpUd5rsCKk7jQbCFZmnhET
+	 nsZPdYZlionomJXwguYa/TmkvcsDt0X9LRmZshn5E2yv0PWIxRRBqlzfZ4SEeHrkIQ
+	 XM2loQdI6DGYw==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4Z1tP74dwRz9rxD;
+	Mon, 24 Feb 2025 21:58:19 +0100 (CET)
+Date: Mon, 24 Feb 2025 20:58:19 +0000
+From: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>
+To: Rob Herring <robh@kernel.org>
+Cc: =?utf-8?Q?J=2E_Neusch=C3=A4fer?= <j.ne@posteo.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] dt-bindings: net: Convert fsl,gianfar-{mdio,tbi} to
+ YAML
+Message-ID: <Z7zdawaVsQbBML95@probook>
+References: <20250220-gianfar-yaml-v1-0-0ba97fd1ef92@posteo.net>
+ <20250220-gianfar-yaml-v1-1-0ba97fd1ef92@posteo.net>
+ <20250221163651.GA4130188-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <BN7PR02MB41481BB6067A7265A459AF69D4C02@BN7PR02MB4148.namprd02.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250221163651.GA4130188-robh@kernel.org>
 
-On Mon, Feb 24, 2025 at 07:59:28PM +0000, Michael Kelley wrote:
-> From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Monday, February 24, 2025 6:49 AM
+On Fri, Feb 21, 2025 at 10:36:51AM -0600, Rob Herring wrote:
+> On Thu, Feb 20, 2025 at 06:29:21PM +0100, J. Neuschäfer wrote:
+> > Move the information related to the Freescale Gianfar (TSEC) MDIO bus
+> > and the Ten-Bit Interface (TBI) from fsl-tsec-phy.txt to a new binding
+> > file in YAML format, fsl,gianfar-mdio.yaml.
 > > 
-> > On Fri, Feb 21, 2025 at 11:01:09PM +0000, Michael Kelley wrote:
-> > > From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Friday, February
-> > 21, 2025 1:31 PM
-> > > >
-> > > > Since, the panic handlers may require certain cpus to be online to panic
-> > > > gracefully, we should call them before turning off SMP. Without this
-> > > > re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
-> > > > vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
-> > > > is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
-> > > > crash_smp_send_stop() before the vmbus channel can be deconstructed.
-> > >
-> > > Hamza -- what specifically is the problem with the way vmbus_wait_for_unload()
-> > > works today? That code is aware of the problem that the unload response comes
-> > > only on the VMBUS_CONNECT_CPU, and that cpu may not be able to handle
-> > > the interrupt. So the code polls the message page of each CPU to try to get the
-> > > unload response message. Is there a scenario where that approach isn't working?
-> > >
-> > 
-> > It doesn't work on arm64 (if the crashing cpu isn't VMBUS_CONNECT_CPU), it
-> > always ends up at "VMBus UNLOAD did not complete" without fail. It seems
-> > like arm64's crash_smp_send_stop() is more aggressive than x86's.
+> > Signed-off-by: J. Neuschäfer <j.ne@posteo.net>
+> > ---
+[...]
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - fsl,gianfar-tbi
+> > +      - fsl,gianfar-mdio
+> > +      - fsl,etsec2-tbi
+> > +      - fsl,etsec2-mdio
+> > +      - fsl,ucc-mdio
+> > +      - gianfar
 > 
-> FWIW, I tested on a D16plds_v6 arm64 VM in Azure, running Ubuntu 20.04 with
-> a linux-next20252021 kernel. I caused a panic using "echo c >/proc/sysrq-trigger"
-> using "taskset" to make sure the panic is triggered on a CPU other than CPU 0.
-> I didn't see any problem. The panic code path completely quickly, and there were
-> no messages from vmbus_wait_for_unload(), including none of the periodic
-> "Waiting for unload" messages . I tried initiating the panic on several different
-> CPUs (4, 7, and 15) with the same result. I tested with kdump disabled and with
-> kdump enabled, both with no problems.
+> Can you just comment out this to avoid the duplicate issue.
 > 
-> So I think the current vmbus_wait_for_unload() code works on arm64, as least
-> in some ordinary scenarios. Any key differences in the configuration or test
-> environment when you see the "did not complete" message?
+> Though I think if you write a custom 'select' which looks for 
+> 'device_type = "mdio"' with gianfar compatible and similar in the other 
+> binding, then the warning will go away. 
 
-Can you try on a Standard_D16pls_v5 with the stock ubuntu image and
-kernel crash dump (i.e. linux-crashdump) installed and setup?
+I'm not sure how the 'select' syntax works, is there a reference
+document I could read?
 
 > 
-> Michael
+> > +      - ucc_geth_phy
+> > +
+> > +  reg:
+> > +    minItems: 1
+> > +    items:
+> > +      - description:
+> > +          Offset and length of the register set for the device
+> > +
+> > +      - description:
+> > +          Optionally, the offset and length of the TBIPA register (TBI PHY
+> > +          address register). If TBIPA register is not specified, the driver
+> > +          will attempt to infer it from the register set specified (your
+> > +          mileage may vary).
+> > +
+> > +  device_type:
+> > +    const: mdio
+> > +
+> 
+> > +  "#address-cells":
+> > +    const: 1
+> > +
+> > +  "#size-cells":
+> > +    const: 0
+> 
+> These are defined in mdio.yaml, so drop them here.
+
+Will do.
+
+> 
+> > +
+> > +required:
+> > +  - reg
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+> > +
+> > +allOf:
+> > +  - $ref: mdio.yaml#
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - gianfar
+> > +              - ucc_geth_phy
+> > +    then:
+> > +      required:
+> > +        - device_type
+> 
+> Essentially, move this to the 'select' schema and add that property 
+> device_type must be 'mdio'. You won't need it here anymore because it 
+> had to be true for the schema to be applied.
+
+I'll have to read up on how select works.
+
+
+Best Regards,
+J. Neuschäfer
 
