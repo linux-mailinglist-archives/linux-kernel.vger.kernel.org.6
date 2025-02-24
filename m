@@ -1,208 +1,336 @@
-Return-Path: <linux-kernel+bounces-528041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92176A412C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:43:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AD7A412C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0065189499C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:43:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F123D172DF3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CE761581F1;
-	Mon, 24 Feb 2025 01:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E5601624EF;
+	Mon, 24 Feb 2025 01:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sm0z9XSr"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iFWb357t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DFB1624F8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD1F42AF19
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740361394; cv=none; b=Lm9RMpB59KVkvT3GZMNiH589iT87IdU9AiLq2iQquGchmtHVrBE6UCEtVOzwpzw10VM64y1bxGf+mUo0hZeObIpTcNpUpNlzeIxQ9tszo2uhDLgrxcoawWt/qaNrlGLSJH7xtVTKb8KsiSFIDWSNXKKF3S4rH0ZgaxH8lBrebzo=
+	t=1740361501; cv=none; b=mk6i6TeinU+CjhNNB69LwIDNEVutkHZuGdGP4a9miXon8JKgo63KHURN9PS9xkGWwAs3T2+cskhDwVmUdsXPwHpCOVWdM5UQAtwT4BJtyjYU6E4jhJs6x8UW25X06ujV3pNXNuy/xr+QyEvz/rb6sq0awv8zmP7AOSfMYzTsoVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740361394; c=relaxed/simple;
-	bh=vdtp4eQZcAfe4JNSX52sOZpuWEKdb6wt8qJjerVOHDQ=;
+	s=arc-20240116; t=1740361501; c=relaxed/simple;
+	bh=ROt/kKCekqAhb6NgtR+HvYeVGgTyqwp4jif/BNvDLrA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JSTjKaa/WJNAEeXH8Zs5lCJu8Qjvt/aPxxR6vEo8bx+/OgKgtlroNWLCn0mR8RgW7ycXPMJWyVXW9udjsT+a3BLeudJJjFTontp4qAnCzKvvMq0qGnFpm7Hqr/O1FsAhnyKrRqXP33czixizrlI445ktXQ/vDCol65PmdAqBg6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sm0z9XSr; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-471fa3b19bcso309431cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:43:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740361392; x=1740966192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hs4/qefU1QtpU6+89lIxVt3csQSR47g1ulJgvu+2+tI=;
-        b=sm0z9XSr/H9I10CD4fPvS8qlEdMwYoe9SjwkHgjetHeyKp5wAqzpyCjXOLUXPuKdBX
-         JvfdgQljmfsCQkyCBAqbtjgLfrb9dupa0p8sg0McngWTHx4Blz30Kaj4t5Qsk9by8OVH
-         /E/K3DgI8dvPLnwvg/mfNYiSNMTAvEO09NvZ9vqZ9BOhrOdb6mwa8brXSVy1VeNBaBIu
-         K8yPvw4CC87vvWnCB93DapnyaIKXEtORYC2Xp7hRwLwQwdUb/BSdbBg+iN3cVXv1qKPX
-         4sJLgwVXRIvySsx7eK8bBjzaZbJcq1S5VrtRnvP1UQYiyWxjNh3dqK6ZXskLLv3dXFUy
-         muPQ==
+	 To:Cc:Content-Type; b=m5+yMJVdOeopho0esifuABxc5qQgT/MCHmPIiWgvr3TFDLKB/BZgZT65dcjOBG/pVQxd71ks1T9R04cKA3ukGRmigs3WrA8eE5BT5AfY0hC0pqK4HR1kKGHtKyamSlgQyTCjUv5rcuZr5YFh87AdtHp71fDOJ4Ja2ESPUqVKFzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iFWb357t; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740361498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=c9lqHCtMZZ5R8IZL9yYVIqfG02lS0lhbZnyZNMXSQMM=;
+	b=iFWb357t0uT6hweX8/SltdZcu8v4SwozZ9qde/w1ucnWz9UMEwhI6IS0M9YCIVgMB61cka
+	NgLR0MvEFl10ab5Jvu8390AIiLWc58qw2c/Wy3WK3tiXECx48SRndgxBC5pa40KZQ4ZqoA
+	QM3L2EvAL6FCnwpIiKWBEvRd7i1neX8=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-517-EC4kBnRWNtWhtZX2hRlWlg-1; Sun, 23 Feb 2025 20:44:57 -0500
+X-MC-Unique: EC4kBnRWNtWhtZX2hRlWlg-1
+X-Mimecast-MFC-AGG-ID: EC4kBnRWNtWhtZX2hRlWlg_1740361496
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fc4fc93262so8372484a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:44:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740361392; x=1740966192;
+        d=1e100.net; s=20230601; t=1740361495; x=1740966295;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hs4/qefU1QtpU6+89lIxVt3csQSR47g1ulJgvu+2+tI=;
-        b=iLi3R0gZS1WNew6NEenV+lnipdYaVXS2d76tV5fsqZ0mMipUzG4ebCL4r+9C+lfb17
-         76x+iktk282r/Y/5f5T9wRb2j814j5V816vTqFPnp2bBypkVidh3p1lO1R/woKnZ34GA
-         pubZnUWdSxvvxrUBTrgBA2pmI7BjBeDVMIIUA+EV13uT8Nt4oe/ps5Lhncmnz9SLgzV8
-         3Z/zpp4jsbkob0ZahPRVDiSDSbZ9DcVvT7GGWxVWhLJIaozc5XFViCSNYFBr5gyZNkcA
-         tZtceSfEFb70nASR0F27JnXaUfITTJNz0VejMsvhowMFU4UpASB7b/3gzyB9pzKc9NR4
-         yp3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/sbaNs4Cw5ZedfeVIL/nQBNpFGVxAb3+UxRq0PgiNkT/AaXDAMMiUs00x3NM/wIpmo2tLByNS0U4aXCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5x6g33esgMXFJxN4zX8VExoj3AQyK9hK4X2ZD5fiiW6nJ54HE
-	6SYmova1TrsLgUyUWZTAZ+UtUqkRCtb5qSXRAwnbvn7Y6MSwwbdD/MaCahNrHsliOWLeePJtKeS
-	+z/xGuRSesbK5KWtyYBr+cXhi9VhN4lRHB0tM
-X-Gm-Gg: ASbGncsNJL1NHz5stySV4Ym+HhXlM4Hhj0VUuP0c9xJVJdCouAJMcJqt+ME8G1wyAdd
-	vg2uTh2oAdk1AQJ3sL9tUTJef1tBNeG9A4I1P5Xq0myz1BkNDCVrfub3RB8gQVrr1ygl06T1X/6
-	CDSMXlodM=
-X-Google-Smtp-Source: AGHT+IF7PPzw9XcMzPgLGpS7L2yRjtVaj+8b437HR+N/kpecVcMii6hLGNH3rtRgLFLnrd2gUYIVZgktNFtVKAFAVsU=
-X-Received: by 2002:a05:622a:120f:b0:472:744:e271 with SMTP id
- d75a77b69052e-47233587224mr4504221cf.24.1740361391878; Sun, 23 Feb 2025
- 17:43:11 -0800 (PST)
+        bh=c9lqHCtMZZ5R8IZL9yYVIqfG02lS0lhbZnyZNMXSQMM=;
+        b=utX/6egKlKn+526C9usX6vraY8gL18vQOPCmu+vCjGuj9OQ0kE/cInATqbmkSxXcUh
+         CvcpzXygIB1FXPeAAkUegYZK6ImTzrYckqt6+0g3hLbntEEmn0B7++fZJ9ZkYC7MZcaZ
+         PqTzrIegg5Z45DAybDkIQm+rJ02/oRM27bMPfG2mnAIo/M3c8sd3B983vpvQMmdwUoGX
+         zrNTeIe+2652bftXhjRMEGrgGMdaiWYUGH+0S1u3mVRt1oTHl7ReIvJmHLRY3ZNgffeQ
+         Otw21FiDIBZEiBVi8OAe74Kp0sPixA09XM50hwMFRFH2IPkGHz+TggiqQZ8C4iquHnQ4
+         CHMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmNBYvPIWFbEnNFUk/aiCV8jpIpmWtZi7s4iDjpxGS6NdMh69dHAc3kIixwPxFh/OCzt0H1PL/bRNwOVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8VTHlkFZ93393CnEI+heqv5ZWBAvvK17k/dc5fnbQ+Dh7Onxz
+	G+TVwsSxthB9kxLw4Kb5vKgR3VW1aWnrNGRy9d5mydnE2my/Cfj3oCMXMeDakFgjASYu1+jqpzH
+	TYYkM7Z0pf4PC9nhlbDTIAzcXX4EzOx8LluoJC2Iu4Ib61Ig/TXrCAViYW5cR8G+GJKLtgPT+Lx
+	bau8wyotS8DGsXh5PgGkjo/cTxc2gCRv7et5Akbg4ytlOQdg4=
+X-Gm-Gg: ASbGnctiHCdlfxkaYClm4z+l+tPHbp6zCnjd91zcYPVUVnARr9eiZjHOsehys6AzDm5
+	h5Coi1yWebZKomrazkdWTQPSzjzJLV3a+TDNoDaCQNihrh/CM7ZadpJ8LT6qwtrRA7s8R/w3Veg
+	==
+X-Received: by 2002:a17:90b:2d4d:b0:2ee:f550:3848 with SMTP id 98e67ed59e1d1-2fce7699f42mr18043523a91.5.1740361495069;
+        Sun, 23 Feb 2025 17:44:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH03WEjLmvDoT5qvup32c+sEHKZnDhkRywH5c7qogJFIwKUMBOIb7mTmJ6KFgxZ4ezoRXFO9NnnD5eX1vnbi9I=
+X-Received: by 2002:a17:90b:2d4d:b0:2ee:f550:3848 with SMTP id
+ 98e67ed59e1d1-2fce7699f42mr18043491a91.5.1740361494616; Sun, 23 Feb 2025
+ 17:44:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
- <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com> <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
-In-Reply-To: <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sun, 23 Feb 2025 17:43:00 -0800
-X-Gm-Features: AWEUYZmBheVTFZ7LsU1XyyiDk7lQ-8DjR4Kpy3qUz4phiAg_D9I2iBy4_sFiFc8
-Message-ID: <CAJuCfpEQb=ZmTcAvCMNZrD+-r1hkPfqfw-VvDR_X2a5wm=K_ew@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>
+References: <20250223154042.556001-1-lulu@redhat.com> <20250223154042.556001-5-lulu@redhat.com>
+In-Reply-To: <20250223154042.556001-5-lulu@redhat.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 24 Feb 2025 09:44:42 +0800
+X-Gm-Features: AWEUYZmHdhB41i3YJOmI8KaWVoLC4HBbRpKYemT6ZzkL8YZHj56ZsQVVWWGRtl0
+Message-ID: <CACGkMEvhiq2FWKZwPmemCMq-tcS=HG1MCs8Yyoj_EdOdPBQBHQ@mail.gmail.com>
+Subject: Re: [PATCH v6 4/6] vhost: introduce worker ops to support multiple
+ thread models
+To: Cindy Lu <lulu@redhat.com>
+Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
+	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
+	netdev@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 23, 2025 at 5:36=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
+On Sun, Feb 23, 2025 at 11:41=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
 >
-> On Sat, Feb 22, 2025 at 8:44=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> >
-> > On Sat, Feb 22, 2025 at 4:19=E2=80=AFPM Kent Overstreet
-> > <kent.overstreet@linux.dev> wrote:
-> > >
-> > > On Fri, Feb 14, 2025 at 05:27:36PM +0100, Vlastimil Babka wrote:
-> > > > - Cheaper fast paths. For allocations, instead of local double cmpx=
-chg,
-> > > >   after Patch 5 it's preempt_disable() and no atomic operations. Sa=
-me for
-> > > >   freeing, which is normally a local double cmpxchg only for a shor=
-t
-> > > >   term allocations (so the same slab is still active on the same cp=
-u when
-> > > >   freeing the object) and a more costly locked double cmpxchg other=
-wise.
-> > > >   The downside is the lack of NUMA locality guarantees for the allo=
-cated
-> > > >   objects.
-> > >
-> > > Is that really cheaper than a local non locked double cmpxchg?
-> >
-> > Don't know about this particular part but testing sheaves with maple
-> > node cache and stress testing mmap/munmap syscalls shows performance
-> > benefits as long as there is some delay to let kfree_rcu() do its job.
-> > I'm still gathering results and will most likely post them tomorrow.
+> This commit restores the previously removed functions kthread_wakeup and
+> kthread_stop, and introduces a new ops structure to handle worker wakeup,
+> stop, and creation. The function vhost_worker_create initializes these
+> ops pointers based on the inherit_owner value.
 >
-> Here are the promised test results:
->
-> First I ran an Android app cycle test comparing the baseline against shea=
-ves
-> used for maple tree nodes (as this patchset implements). I registered abo=
-ut
-> 3% improvement in app launch times, indicating improvement in mmap syscal=
-l
-> performance.
-> Next I ran an mmap stress test which maps 5 1-page readable file-backed
-> areas, faults them in and finally unmaps them, timing mmap syscalls.
+> Signed-off-by: Cindy Lu <lulu@redhat.com>
 
-I forgot to mention that I also added a 500us delay after each cycle
-described above to give kfree_rcu() a chance to run.
+Patch looks good but I have some some nits:
 
-> Repeats that 200000 cycles and reports the total time. Average of 10 such
-> runs is used as the final result.
-> 3 configurations were tested:
+It might be better to have a separate patch to introduce the ops then
+doing the kthread stuff on top.
+
+> ---
+>  drivers/vhost/vhost.c | 115 +++++++++++++++++++++++++++++++++++-------
+>  drivers/vhost/vhost.h |  12 +++++
+>  2 files changed, 110 insertions(+), 17 deletions(-)
 >
-> 1. Sheaves used for maple tree nodes only (this patchset).
+> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> index adbb957c8b5f..d8c0ea118bb1 100644
+> --- a/drivers/vhost/vhost.c
+> +++ b/drivers/vhost/vhost.c
+> @@ -243,7 +243,7 @@ static void vhost_worker_queue(struct vhost_worker *w=
+orker,
+>                  * test_and_set_bit() implies a memory barrier.
+>                  */
+>                 llist_add(&work->node, &worker->work_list);
+> -               vhost_task_wake(worker->vtsk);
+> +               worker->ops->wakeup(worker);
+>         }
+>  }
 >
-> 2. Sheaves used for maple tree nodes with vm_lock to vm_refcnt conversion=
- [1].
-> This patchset avoids allocating additional vm_lock structure on each mmap
-> syscall and uses TYPESAFE_BY_RCU for vm_area_struct cache.
+> @@ -697,7 +697,7 @@ static void vhost_worker_destroy(struct vhost_dev *de=
+v,
 >
-> 3. Sheaves used for maple tree nodes and for vm_area_struct cache with vm=
-_lock
-> to vm_refcnt conversion [1]. For the vm_area_struct cache I had to replac=
-e
-> TYPESAFE_BY_RCU with sheaves, as we can't use both for the same cache.
+>         WARN_ON(!llist_empty(&worker->work_list));
+>         xa_erase(&dev->worker_xa, worker->id);
+> -       vhost_task_stop(worker->vtsk);
+> +       worker->ops->stop(worker);
+>         kfree(worker);
+>  }
 >
-> The values represent the total time it took to perform mmap syscalls, les=
-s is
-> better.
+> @@ -720,42 +720,123 @@ static void vhost_workers_free(struct vhost_dev *d=
+ev)
+>         xa_destroy(&dev->worker_xa);
+>  }
 >
-> (1)                  baseline       control
-> Little core       7.58327       6.614939 (-12.77%)
-> Medium core  2.125315     1.428702 (-32.78%)
-> Big core          0.514673     0.422948 (-17.82%)
+> +static void vhost_task_wakeup_fn(struct vhost_worker *worker)
+> +{
+> +       return vhost_task_wake(worker->vtsk);
+> +}
+> +
+> +static void vhost_kthread_wakeup_fn(struct vhost_worker *worker)
+> +{
+> +       wake_up_process(worker->kthread_task);
+> +}
+> +
+> +static void vhost_task_stop_fn(struct vhost_worker *worker)
+> +{
+> +       return vhost_task_stop(worker->vtsk);
+> +}
+> +
+> +static void vhost_kthread_stop_fn(struct vhost_worker *worker)
+> +{
+> +       kthread_stop(worker->kthread_task);
+> +}
+> +
+> +static int vhost_task_worker_create_fn(struct vhost_worker *worker,
+> +                                      struct vhost_dev *dev, const char =
+*name)
+> +{
+> +       struct vhost_task *vtsk;
+> +       u32 id;
+> +       int ret;
+> +
+> +       vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_kill=
+ed,
+> +                                worker, name);
+> +       if (!vtsk)
+> +               return -ENOMEM;
+> +
+> +       worker->vtsk =3D vtsk;
+> +       vhost_task_start(vtsk);
+> +       ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_=
+KERNEL);
+> +       if (ret < 0) {
+> +               vhost_task_stop_fn(worker);
+> +               return ret;
+> +       }
+> +       worker->id =3D id;
+> +       return 0;
+> +}
+> +
+> +static int kthread_worker_create_fn(struct vhost_worker *worker,
+
+Let's have a consistent name, e.g vhost_kthread_worker_create.
+
+> +                                   struct vhost_dev *dev, const char *na=
+me)
+> +{
+> +       struct task_struct *task;
+> +       u32 id;
+> +       int ret;
+> +
+> +       task =3D kthread_create(vhost_run_work_kthread_list, worker, "%s"=
+, name);
+> +       if (IS_ERR(task))
+> +               return PTR_ERR(task);
+> +
+> +       worker->kthread_task =3D task;
+> +       wake_up_process(task);
+> +       ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_=
+KERNEL);
+> +       if (ret < 0)
+> +               goto stop_worker;
+> +
+> +       ret =3D vhost_attach_task_to_cgroups(worker);
+> +       if (ret)
+> +               goto stop_worker;
+> +
+> +       worker->id =3D id;
+> +       return 0;
+> +
+> +stop_worker:
+> +       vhost_kthread_stop_fn(worker);
+> +       return ret;
+> +}
+> +
+> +static const struct vhost_worker_ops vhost_task_ops =3D {
+> +       .create =3D vhost_task_worker_create_fn,
+
+I think we can get rid of the fn suffix as "fn".
+
+> +       .stop =3D vhost_task_stop_fn,
+> +       .wakeup =3D vhost_task_wakeup_fn,
+> +};
+> +
+> +static const struct vhost_worker_ops kthread_ops =3D {
+> +       .create =3D kthread_worker_create_fn,
+> +       .stop =3D vhost_kthread_stop_fn,
+> +       .wakeup =3D vhost_kthread_wakeup_fn,
+> +};
+> +
+>  static struct vhost_worker *vhost_worker_create(struct vhost_dev *dev)
+>  {
+>         struct vhost_worker *worker;
+> -       struct vhost_task *vtsk;
+>         char name[TASK_COMM_LEN];
+>         int ret;
+> -       u32 id;
+> +       const struct vhost_worker_ops *ops =3D
+> +               dev->inherit_owner ? &vhost_task_ops : &kthread_ops;
 >
-> (2)                  baseline      control
-> Little core       7.58327       5.141478 (-32.20%)
-> Medium core  2.125315     0.427692 (-79.88%)
-> Big core          0.514673    0.046642 (-90.94%)
+>         worker =3D kzalloc(sizeof(*worker), GFP_KERNEL_ACCOUNT);
+>         if (!worker)
+>                 return NULL;
 >
-> (3)                   baseline      control
-> Little core        7.58327      4.779624 (-36.97%)
-> Medium core   2.125315    0.450368 (-78.81%)
-> Big core           0.514673    0.037776 (-92.66%)
+>         worker->dev =3D dev;
+> +       worker->ops =3D ops;
+>         snprintf(name, sizeof(name), "vhost-%d", current->pid);
 >
-> Results in (3) vs (2) indicate that using sheaves for vm_area_struct
-> yields slightly better averages and I noticed that this was mostly due
-> to sheaves results missing occasional spikes that worsened
-> TYPESAFE_BY_RCU averages (the results seemed more stable with
-> sheaves).
+> -       vtsk =3D vhost_task_create(vhost_run_work_list, vhost_worker_kill=
+ed,
+> -                                worker, name);
+> -       if (!vtsk)
+> -               goto free_worker;
+> -
+>         mutex_init(&worker->mutex);
+>         init_llist_head(&worker->work_list);
+>         worker->kcov_handle =3D kcov_common_handle();
+> -       worker->vtsk =3D vtsk;
+> -
+> -       vhost_task_start(vtsk);
+> +       /*
+> +        * If inherit_owner is true we use vhost_tasks to create
+> +        * the worker so all settings/limits like cgroups, NPROC,
+> +        * scheduler, etc are inherited from the owner. If false,
+> +        * we use kthreads and only attach to the same cgroups
+> +        * as the owner for compat with older kernels.
+> +        */
+
+Is this better to move this to the definition of the inherit_owner?
+
 >
-> [1] https://lore.kernel.org/all/20250213224655.1680278-1-surenb@google.co=
-m/
+> -       ret =3D xa_alloc(&dev->worker_xa, &id, worker, xa_limit_32b, GFP_=
+KERNEL);
+> +       ret =3D ops->create(worker, dev, name);
+>         if (ret < 0)
+> -               goto stop_worker;
+> -       worker->id =3D id;
+> +               goto free_worker;
 >
-> >
-> > >
-> > > Especially if you now have to use pushf/popf...
-> > >
-> > > > - kfree_rcu() batching and recycling. kfree_rcu() will put objects =
-to a
-> > > >   separate percpu sheaf and only submit the whole sheaf to call_rcu=
-()
-> > > >   when full. After the grace period, the sheaf can be used for
-> > > >   allocations, which is more efficient than freeing and reallocatin=
-g
-> > > >   individual slab objects (even with the batching done by kfree_rcu=
-()
-> > > >   implementation itself). In case only some cpus are allowed to han=
-dle rcu
-> > > >   callbacks, the sheaf can still be made available to other cpus on=
- the
-> > > >   same node via the shared barn. The maple_node cache uses kfree_rc=
-u() and
-> > > >   thus can benefit from this.
-> > >
-> > > Have you looked at fs/bcachefs/rcu_pending.c?
+>         return worker;
+>
+> -stop_worker:
+> -       vhost_task_stop(vtsk);
+>  free_worker:
+>         kfree(worker);
+>         return NULL;
+> diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+> index c650c4506c70..029c203147be 100644
+> --- a/drivers/vhost/vhost.h
+> +++ b/drivers/vhost/vhost.h
+> @@ -26,7 +26,18 @@ struct vhost_work {
+>         unsigned long           flags;
+>  };
+>
+> +struct vhost_worker;
+> +struct vhost_dev;
+> +
+> +struct vhost_worker_ops {
+> +       int (*create)(struct vhost_worker *worker, struct vhost_dev *dev,
+> +                     const char *name);
+> +       void (*stop)(struct vhost_worker *worker);
+> +       void (*wakeup)(struct vhost_worker *worker);
+> +};
+> +
+>  struct vhost_worker {
+> +       struct task_struct *kthread_task;
+>         struct vhost_task       *vtsk;
+>         struct vhost_dev        *dev;
+>         /* Used to serialize device wide flushing with worker swapping. *=
+/
+> @@ -36,6 +47,7 @@ struct vhost_worker {
+>         u32                     id;
+>         int                     attachment_cnt;
+>         bool                    killed;
+> +       const struct vhost_worker_ops *ops;
+>  };
+>
+>  /* Poll a file (eventfd or socket) */
+> --
+> 2.45.0
+>
+
+Thanks
+
 
