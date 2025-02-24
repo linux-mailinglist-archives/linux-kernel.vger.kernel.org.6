@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-529188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6E7A420E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:40:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC48DA4232A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 709B3177043
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:35:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 614BF167E03
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1F7248866;
-	Mon, 24 Feb 2025 13:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402F915350B;
+	Mon, 24 Feb 2025 14:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I8XqustC"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="SqKLFB7Y"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720B2243369
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F46B13A244
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404090; cv=none; b=JwSz/eymOyXE0mgpwWXQyq4YWfWG46x9pYF0QK82nTqLuXquinSladU1g/u0fkOUJdV3e+MUkxI6EN+TMJPI8XEyVtGjdKPAQM1bv1BNv04wPPIDcPErYc7zCkYeKDfg4z8cp0tdtqTNNd1tbs9Pgl1TIZkvFT7rySN4d/jiQiA=
+	t=1740407182; cv=none; b=AerYWw5VD60ZWLGfFl6F4XW1xk4yQtQCZUnsVEXPPGPO9BUO6+17EoD2jLB82aChXerbg0y1yrejet7Y/GNDH4AOFZePznOIITD8d1BVJ02/jpN3FAK8119qKcsANo5qhNUpoCJzvgJM88P32xTAKerh6LQvvmixaMUJvQ5gmpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404090; c=relaxed/simple;
-	bh=Rhn6rcgt+b2Y3xo+dMBgT8jo3ndrhfJFJmmDekEusn4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qx3ZqiK7Jn0o2v9tQ2O8CJwpdBGVspMIwPXH2axEUGJF2ko5pwyr6Y7WTgPj2Y9yEoB8IndTrKHZA1ilJZnxhlMMiTjB3g+FPMfVEaYJUjhd1TxgDszUWkVdw6mO7T3NSNQvZo2Nf1KYmwekh7qDY6/33GMBKPCuYlEjrGoS3k8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I8XqustC; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e04064af07so6478746a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:34:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740404087; x=1741008887; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0nBUXsQGkf00giLwEkCMdEpFzz3LUSyvHbOWZAiBTk=;
-        b=I8XqustCX0CdIoKOy7toicpEtxlb08AyLTU5u+tHPnzczGmHUrxcbN28LKw2uqwGOR
-         grDbwXxclM81yn4yw04OS0ZC792TaPrqCjf0ElUCt5vxLoOBi1bSIgWjVR7iVv1LqTpW
-         9oPJWZOaKPNU/HssKOYaO53VRtgaUn9Ms/fsnPbHc35gly5rcXao1RncyBNDIWFSZ/lq
-         tpYVzf5jt30mySRPTIcPlqv+6f4Q1+K5Jidc5aDloErN/Q/q7QGbQctvONz/+8POH9vQ
-         tcn+xi9xGRhAUq6IohIu9heO/2nWNvYuDtAuRNn4U2oTGdC7IxEKh5lXdt7V2YWZ/Dmv
-         BUuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740404087; x=1741008887;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0nBUXsQGkf00giLwEkCMdEpFzz3LUSyvHbOWZAiBTk=;
-        b=Xd/FJA6ZQhk6gkoFiTV320mxWE/TEiVwzr9QL1SIEp9ZSX2aTkBIaeyLZi7z7/4Y74
-         po9J+2MzCqz9HuqU/ZwDkjSBARGo7ecYKvBcCWBuXJwyDxwwgzyJ/a32Whlrw+ivczCP
-         /L3uD1KpdtWEU1OOJIshkdwWjO8+Tlm272XPU8+jgcuSmtRQLAPTdXiaVbaElui7gDvb
-         7JTQSHmR7uyrlLbrpT93MxP5cnorWUOc8M6UFuKXP2rBCYDasV6FrSfyjr9pETlv6I6M
-         H6o91CLEIQ2Z9k7ra1ECDvY/6KPgpwioQwLQffBpZ7+r9bsigE9g2Y9Je3FTZs7XTeV3
-         zLgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXU9140XHfEZ585u7ynUR17msVKHLpf/00ry/ai95nr6r+/VHu65jmQdGAEILHf3MhUJInbM/wUMP7M3d0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtWVOxNEnlfAkyqavciw88X5cXKMgPBAJLDJ9pnsY2VBFCkcb0
-	2HDGMpeKRuQuso12zuDOKYMg+jtzV2VDi22A+G0vltEwg2lAwvyEmINWBGodNkD5kMl0tTIUaqs
-	Aai1YcNqCrWIr9GFlFFQgiecFxPJZj1Whe/70
-X-Gm-Gg: ASbGncuFCA6Y+RRlRrTj2CVjRHv8IrISkbqF6Q+L/OPf9x88OdKSn8Il3LbExsgPMcW
-	/AscmY2RwYQu2FqqowLmwfuha8gP58EFsJM5vIS1nWhN0YI1p091rWB6GsJQ5lbaxJQ2lBOxFGH
-	Py1arVNw==
-X-Google-Smtp-Source: AGHT+IHLeIgPiK1T+sBGjXl7ekMle7VFzxQcJeViGUndm3MTzCMhEw8rC+f/H5pUGcU7eWhtEvHiLutAQjKVaI73a7E=
-X-Received: by 2002:a05:6402:4313:b0:5de:4b81:d3fd with SMTP id
- 4fb4d7f45d1cf-5e0b70fa0efmr12585805a12.13.1740404086583; Mon, 24 Feb 2025
- 05:34:46 -0800 (PST)
+	s=arc-20240116; t=1740407182; c=relaxed/simple;
+	bh=YJn3woxK99j/HYFR7SrHcTgr8jkuAijYmO7yf5S97V8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AeO3+yPQSD+Ji4CDctwl8a4Go2ppDjLkApE+5YVM1ZyHE678yw5qaUXHquUqMcF+PD+uB3zsp4YfIjmzlvq1TgDs1VSpk+J9nbNk+IE2zJtEZ1F8Deg+uffwlGURwSBjNSZmiuwAhXTJrgsoq0mPmiZ5BGK0lp4swL3RITDqCU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=SqKLFB7Y; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202502241335160a5ff2ee132d16c864
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Feb 2025 15:26:11 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=diogo.ivo@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=R1EHSTzEQ92GkWe5nywbq1cueM9EbdwXB/DLHyzBjiE=;
+ b=SqKLFB7YwFbWWuEhr1MCqeKYnEQSz2VXFg7KrCFXnKFuDZY7mSc5YJYSAjU1wQvwlMMJCt
+ fNUnP2QSV6I9EUzxZMEvc5SC3itYYCVA322Y0yr0He0gd13YDjKUYKUVfBI9wU3Gar9Jmkd/
+ shcYOKByKL5tTG/tyK94Pr3Fe/6dmoIUIdMZWFabYfQPz2xhL4ksBMwnVwlTidc9jdC2M7Rc
+ 5w1/rq+g/gke1Wu0E8PBPBaKrgDfjFls5heEdYK9QE1dialj0BEepPoRtGhqcZzfFiWN3lVu
+ AVGC7tefTMsEt9u5fWy2SjZtn268N3cIykNwJOv4uwyE0uNaJniZiucg==;
+Message-ID: <b437f359-912f-4b9f-8de1-9c1122fee26e@siemens.com>
+Date: Mon, 24 Feb 2025 13:35:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224095736.145530367@linutronix.de> <20250224101343.344168498@linutronix.de>
- <20250224132047.GA34233@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250224132047.GA34233@noisy.programming.kicks-ass.net>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 24 Feb 2025 14:34:35 +0100
-X-Gm-Features: AWEUYZlVPW1EZJ-9YsNre8ClJxyG7fwanNIhS16_oDsNW6z9SM6kpPItyvJCaz0
-Message-ID: <CANn89i+6HRUtHchZ9s94ORw=B+CZ2KSU6--M6Tszsb6F0M2Sdg@mail.gmail.com>
-Subject: Re: [patch 06/11] posix-timers: Make signal_struct::next_posix_timer_id
- an atomic_t
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
-	Benjamin Segall <bsegall@google.com>, Andrey Vagin <avagin@openvz.org>, 
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH net-next v3 0/3] net: ti: icssg-prueth: Add native mode
+ XDP support
+To: Meghana Malladi <m-malladi@ti.com>, rogerq@kernel.org,
+ danishanwar@ti.com, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
+ davem@davemloft.net, andrew+netdev@lunn.ch
+Cc: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ u.kleine-koenig@baylibre.com, matthias.schiffer@ew.tq-group.com,
+ dan.carpenter@linaro.org, schnelle@linux.ibm.com, glaroque@baylibre.com,
+ macro@orcam.me.uk, john.fastabend@gmail.com, hawk@kernel.org,
+ daniel@iogearbox.net, ast@kernel.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>
+References: <20250224110102.1528552-1-m-malladi@ti.com>
+Content-Language: en-US
+From: Diogo Ivo <diogo.ivo@siemens.com>
+In-Reply-To: <20250224110102.1528552-1-m-malladi@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328357:519-21489:flowmailer
 
-On Mon, Feb 24, 2025 at 2:20=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Mon, Feb 24, 2025 at 11:15:32AM +0100, Thomas Gleixner wrote:
->
-> > +             unsigned int id =3D (atomic_inc_return(&sig->next_posix_t=
-imer_id) - 1) & INT_MAX;
->
-> How about:
->
->         unsigned int id =3D atomic_fetch_inc(&sig->next_posix_timer_id) &=
- INT_MAX;
+Hi Meghana,
 
-NIce, it seems few calls in net trees could use this as well.
+On 2/24/25 11:00 AM, Meghana Malladi wrote:
+> This series adds native XDP support using page_pool.
+> XDP zero copy support is not included in this patch series.
+> 
+> Patch 1/3: Replaces skb with page pool for Rx buffer allocation
+> Patch 2/3: Adds prueth_swdata struct for SWDATA for all swdata cases
+> Patch 3/3: Introduces native mode XDP support
+> 
+> v2: https://lore.kernel.org/all/20250210103352.541052-1-m-malladi@ti.com/
+> 
+
+Just wanted to let you know that while I don't have access to the SR1.0
+devices at the moment I will have access to them later this week, so I
+will test these changes then.
+
+Best regards,
+Diogo
 
