@@ -1,150 +1,145 @@
-Return-Path: <linux-kernel+bounces-528310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0B5A4161D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:18:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35C3A41621
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1B0E3ADEDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:18:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC807A5611
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638161A5B8B;
-	Mon, 24 Feb 2025 07:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/UICd3i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A711DF963;
+	Mon, 24 Feb 2025 07:19:27 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C019E4414
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230F44414
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381490; cv=none; b=lTacQoYO38qWXaC7A41ING48QNGV7pkxcRc8bbyCXoPsp6XqrvRcWJQ/tF1eYFSzTD/n2romal/FIo/UqpvKhlyPS8QBKe69mIRgmt7e4RFizfBuick85PTSMY5GW2DvVveZkrpCaJSJcro/aKVPyZ+P27dF5C7783SEcG4owzs=
+	t=1740381566; cv=none; b=XoP9UPJcu4y+isVJ+dLzW+rv8PJC3h+I9Dcq+gF5vjDTqpAYLMmP02PHEYYeMstdcahCdOUhcAAH79zL292vBX0pxws47MiZlytjelvXwrjBBjU0Nzbh58i1fJX1pLNMcLVeGY2HGnZLspuM+GSuJ7evDikmFe8AkdyCUvNPnvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381490; c=relaxed/simple;
-	bh=Z81UfZ4/NDXduOdB6SKSlmQaCtS6SqLtjZHi10HVvSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MLCa8gfxYMBjx6uu14/Vfg3zH2zBcRLrQJWWmzzfUgxXZV89rh7evRj5+kerT2jnZ8tyoMMun06aLI1xkSQXT7ynU+iCg+PQV3g+8upwdYQsPZIZyxy8BhPAQWpDamO2XGtugD9RT2Kz9bo9w42TJnhkzGw2w6NI3bNQc/atnns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/UICd3i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F410C4CED6;
-	Mon, 24 Feb 2025 07:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740381490;
-	bh=Z81UfZ4/NDXduOdB6SKSlmQaCtS6SqLtjZHi10HVvSE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b/UICd3ikJtJi3MsIJrk/LkWnRbguGn498qLNIW8Yl0WNWKXF+6arL+iejx9NlMJb
-	 5NxT+15so45RKXMmQkO7ssF7GmDjEr8Z2WWV+eJLqcq+AkZq74kNWAS6u5GFJqVn5v
-	 X2j7Du+cWTuedpnxjapt/cLlul2XbUT5ksYIBf3xarumRYZEJoFCUKQx8sUDu5qqPL
-	 nq9maCn/hW1oox1wAHc5+o4uUhF+7FmqeYqXIxNTq36z1OspjeFnF6jx4wG8FDltM8
-	 AaryBkJeNCJ5eRA6xFs/SumJcLaMpJZ/Usx2d5R1IL3LelQzHzT+h37nMjI4cGxAe+
-	 UU7R0sD5bDICQ==
-Message-ID: <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
-Date: Mon, 24 Feb 2025 08:18:06 +0100
+	s=arc-20240116; t=1740381566; c=relaxed/simple;
+	bh=CIDn+ALP5+YZ3X6AHb4m7RHlrOetynMzlJ3aT6RyU/c=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NFrKEn/V+Y34OwLpJ/FCvs5im3U2cNj227zcvR0yssHgxrhRR75zDoBsoGxEyjFTs4MMsla/EIJ4qxply1hwNWuLLsBz9o4IggvVHYuLyn3Un0o2bGwh5DBgbpQQ4f83GsFjhq095Upei6ppH469NAO/t2VaphrBQtXtXaNPnys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d190ae831fso84869615ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:19:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740381564; x=1740986364;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fDkjI7TZQOqzogc1scedMJVDz11Q7QnC3E+tJ2nX3Is=;
+        b=rNawJ0adXuLSKcM2POCp5HLPqbH9bvzn2K/Uk5bk38rRH5eeKGO4shU2jmbdAowaPa
+         TrSQ00NhwuIiE91TGLjRhcKR7VzO8Gj3q3kwEKBnNt0YPh9DnKSuAS/KZbeytP46GM2J
+         eCiDrtUROS4eyz5v0tfhQJoFbfOUdpp7nklAPUuGEepjfRUbMurEzN3lO3ny4Ag8mkiB
+         rxH4LeS275ORibK7Jefj3h8bE6pwO7RlijbnlGPHEv2LFO/CoiOIXVl+vSYf5mDO4YJa
+         uRA0chq2LNXmrxI8Gv3lAWBEEVqmDEuyKpQ9YmHN+4KzU9UB/eCLKnDHkmJa5LOvipau
+         KFow==
+X-Forwarded-Encrypted: i=1; AJvYcCUcJblY3EoW8sLXSJc6mxbJ2cNPhyQl9F13UUYfUjg7NQUb4aipMG7dlqNLcYZi7FTuGxfVClvHdQ1Kds8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTHmPFden+8bE1H2Uioz+PROqoOJaROpF+mS4X2TiWYo8NuRS4
+	96obsMzyFu1Ye/ZJJ91owesk4VNHIpkwK4PSynl/IPsvLJdZP/1wDRDRHPSsIg2qnS6ZHbwxrYO
+	pXA9hOloAIMUtP+c/m5dB8F3ZUA7TToz0r7jrJJVpS9VCNhH2YH3RW/0=
+X-Google-Smtp-Source: AGHT+IH8trvNnw2ARoTG9a/tL6VFuC6N2KzhOY09N04NajQt3QCDKWffEax/FdEfEEsQiFCKawsZKc30X3+0ccRmy1SN5+F9DPwz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
-To: Uros Bizjak <ubizjak@gmail.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20250129154920.6773-1-ubizjak@gmail.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20250129154920.6773-1-ubizjak@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a67:b0:3d0:3851:c3cc with SMTP id
+ e9e14a558f8ab-3d2caf19e17mr110305335ab.16.1740381564194; Sun, 23 Feb 2025
+ 23:19:24 -0800 (PST)
+Date: Sun, 23 Feb 2025 23:19:24 -0800
+In-Reply-To: <67389a73.050a0220.bb738.000a.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bc1d7c.050a0220.bbfd1.0045.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KMSAN: uninit-value in hci_cmd_complete_evt
+From: syzbot <syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 29. 01. 25, 16:47, Uros Bizjak wrote:
-> The return values of some functions are of boolean type. Change the
-> type of these function to bool and adjust their return values.
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> ---
->   arch/x86/kernel/bootflag.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
-> index 3fed7ae58b60..4d89a2d80d0f 100644
-> --- a/arch/x86/kernel/bootflag.c
-> +++ b/arch/x86/kernel/bootflag.c
-> @@ -20,7 +20,7 @@
->   
->   int sbf_port __initdata = -1;	/* set via acpi_boot_init() */
->   
-> -static int __init parity(u8 v)
-> +static bool __init parity(u8 v)
->   {
->   	int x = 0;
->   	int i;
-> @@ -30,7 +30,7 @@ static int __init parity(u8 v)
->   		v >>= 1;
->   	}
->   
-> -	return x;
-> +	return !!x;
+syzbot has found a reproducer for the following issue on:
 
-This "!!" is unnecessary and only obfuscates the code, right?
+HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13492db0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d66f6f82ee090382
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9a4bedfca6aa9d7fa24
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122c37f8580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10023fdf980000
 
-thanks,
--- 
-js
-suse labs
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a9f22e75faf0/disk-d082ecbc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/336a72a11410/vmlinux-d082ecbc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7180e4935c41/bzImage-d082ecbc.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a9a4bedfca6aa9d7fa24@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in hci_cmd_complete_evt+0xd7b/0xeb0 net/bluetooth/hci_event.c:4226
+ hci_cmd_complete_evt+0xd7b/0xeb0 net/bluetooth/hci_event.c:4226
+ hci_event_func net/bluetooth/hci_event.c:7470 [inline]
+ hci_event_packet+0x11c8/0x1ca0 net/bluetooth/hci_event.c:7525
+ hci_rx_work+0x699/0x1260 net/bluetooth/hci_core.c:4015
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ hci_cmd_complete_evt+0xaf4/0xeb0
+ hci_event_func net/bluetooth/hci_event.c:7470 [inline]
+ hci_event_packet+0x11c8/0x1ca0 net/bluetooth/hci_event.c:7525
+ hci_rx_work+0x699/0x1260 net/bluetooth/hci_core.c:4015
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xc1a/0x1e80 kernel/workqueue.c:3317
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3398
+ kthread+0x6b9/0xef0 kernel/kthread.c:464
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4121 [inline]
+ slab_alloc_node mm/slub.c:4164 [inline]
+ kmem_cache_alloc_node_noprof+0x907/0xe00 mm/slub.c:4216
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:515
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:606
+ alloc_skb include/linux/skbuff.h:1331 [inline]
+ bt_skb_alloc include/net/bluetooth/bluetooth.h:495 [inline]
+ vhci_get_user drivers/bluetooth/hci_vhci.c:487 [inline]
+ vhci_write+0x127/0x900 drivers/bluetooth/hci_vhci.c:607
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xb34/0x1540 fs/read_write.c:679
+ ksys_write+0x240/0x4b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x93/0xe0 fs/read_write.c:739
+ x64_sys_call+0x3161/0x3c30 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5777 Comm: kworker/u9:2 Not tainted 6.14.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Workqueue: hci0 hci_rx_work
+=====================================================
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
