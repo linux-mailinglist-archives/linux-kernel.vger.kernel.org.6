@@ -1,132 +1,206 @@
-Return-Path: <linux-kernel+bounces-530135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3859A42F83
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:51:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C09DFA42F87
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09039189C66C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:51:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A283B1536
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458691DF994;
-	Mon, 24 Feb 2025 21:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A291E3DFD;
+	Mon, 24 Feb 2025 21:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JZVlp5nl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RTijXo78"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A601DE3D9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5484F1DDC37
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433892; cv=none; b=fJFC9nFj8uO2v9fc6ZwdEx2SDGibcfYeEa5hLcnrvZNKbfoAB8s+uZKZVqGz353ucKVuzzdeqW/iOTsfmq1zrh9Q8ClgXFYURsCtfIeVSZIKz7HNVAUy9a4zDUxLjUo484SjF8IVp3LyDpep0FPhCZ/C7I/qUTAu7mNEZdMz++Q=
+	t=1740433932; cv=none; b=YG+bt8udTl3X9AxW95d1AqHYPrPKYClCTsKRzqraoTODv0/aUxcAqOoP4W8d0RDTi4hDmc6u3gRwnlryxPD1PizV03Bz0Bwg8EYL1M+3nr7PCvpEXXY2vLFwbHmmyBX1FIqnih6RD5Ge9PJjskp5lsrYnrNUxS0fF4CejfHI/+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433892; c=relaxed/simple;
-	bh=zkF5hc0cK80WJWcCdicuqbNp3sujPPZYziecsBeVhl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpibdeGSKJ4A2iqOjKKb/bgpbZVhyYvKRIhb17QPyjI4vS8ZgdFl0oVa/ICdjvLHcl8bBJwaeM0j7hsfRmUKQJeSOoUFCP4EeInS6CGJI/blFQXixkMx2FP/ONvUizrxq3vbH3n37MNPCkl28Loat9S3oXd+U+NJJBNfvAXCGr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JZVlp5nl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740433890;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PYw3iOFdpjI7CWdvocKoz0dXbPHM+ovEK+NkNh9AWKc=;
-	b=JZVlp5nl/L3KwPrR31L0KwTI5SVjjsSfCyX5nSlNQRAkh2tjHdjLzeye+MBmwAXFDXdZlt
-	qlFdFTXUgZ8y7WOrorBYZyhG7fdDQ9+aQKzBzSHzrGKIQCqRiouYqb4ojGs2JkuwtMdJYS
-	7UVa3pghAxcAM0Kc9ahq/fqigWJDvAw=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-472-AY_psf_OPV2wHnGsuKwsAA-1; Mon, 24 Feb 2025 16:51:25 -0500
-X-MC-Unique: AY_psf_OPV2wHnGsuKwsAA-1
-X-Mimecast-MFC-AGG-ID: AY_psf_OPV2wHnGsuKwsAA_1740433884
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-abec83a498cso79768966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:51:25 -0800 (PST)
+	s=arc-20240116; t=1740433932; c=relaxed/simple;
+	bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=B2jPzCr9L7euTko5GLscd5W+fuafxMCEmTIWEDbIj9n2sOXU/OVg2/U8soctZX1iWJohkB4BAqa7/UQydLF6ruYCHhLPqYRPBVXRS7WrtFdpaolcKJSE8MPG2fb3rwcqckRIhEs+QNiRJ5PhzmnSWNT/37krU3rYP60MdEX3qYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RTijXo78; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43995b907cfso30397065e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740433928; x=1741038728; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
+        b=RTijXo78K7Nkv6aS8jriXBFtU45mxiRA841f06CFVKYew5ga2WuR8XL/6K05nsw/l3
+         cwmsN4Q42fRCWBz3Oaut7qoUBOqG26O4crrzPnUsmDRwCq6DjZkAHHEPFtajNhYps3i9
+         J9DkOwGW7zJnp53siwqPF8N5IQt+4HKvR/9iPUP2roG0b7kTJKbwMXO3WlPhXFOZAMSZ
+         nss9LCsXb7EZrLZ+Xny7d7HoV/31YXZdlLTrClPiMz4J7ex7sisPprFSwld0qE1SZUwA
+         j2m67KCrtTtHsAGg4ARX62FlqO72YI50tHJhPgzf+R9sHLMll3ufUy7MHmj39cUKvqet
+         2a+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433884; x=1741038684;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PYw3iOFdpjI7CWdvocKoz0dXbPHM+ovEK+NkNh9AWKc=;
-        b=XG6GAoInJ8LMVO/Fstjxq5ZSjsRRcBethazV4XntgCKP/9T5arQ7xutHztTUEp56l7
-         NVXNe28Jz8090T3hV7tDYm26bsyX1ZNfdxJxaB4C9nMRNqkYRCxdAG7YsmNfDN+x0wzo
-         IXiULRTM3xj7h++doLYqZkCy+yAB+lf8r2TgzhnqFluO/Zkv8SusU33GA+NSeHCPKlBU
-         EJHdTXVS8x2gV2ubykSXC2EvhU4X2l0Iu1y93dLbFjImv5Z2OKq/7qYgvYBSPwy8423v
-         SgbmLHhev8lOYF9DN1MXDpx9G2oklrcNHdRO0NNC43GnwRaujIKjv551FFDkwy4xOi+d
-         3OFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVtO5UH0mjj6u3z2Yl0RTEWh8ijN8a87AY5JbaiArzETZANxyYBmGDTtUjVS6YsVC8o1pnvJJ4l/2COfQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/Tb7R1yj1bEl582V8QAcmS4OxcQhdwDQDOQyQs8ceezWNEeR
-	QAZFY7Wzyi0aZ9pweC1TUbfHHfZgGlarvXIpC+E7ALOLfXLtXCYGk57lCK4DtWsuSvACYmIoE2u
-	VqgwUns/dIn96m5tZLiDuB2MGKsXBcOh/+HqhkTi1mdPYEwiHwqxb1ObcbMQw+A==
-X-Gm-Gg: ASbGnctS5MjfdD+jd0uum+TOZw+QYB8pWSp4zCpAXopy9YijYGmPrBR8dI5+1SDJJGG
-	gY0R0iDD6bhsEUhggFiKmNE+7a2BjrwvUPVB3edsaes8HRYBSgo9JQ7Gs9HfasfCOLKb2Hw8UZA
-	F5qm6Akxph/vEzoZKh2WQmGLSyn50vyvKbWyuwHiRpXYpzMAqe2AZX8f6JP14VcrhVQjmkNIrNh
-	X3/JG7UqYdXbUk4SgRxu1U3zzCJqZhL1MimAU7tYs/JhJd9XTCqz338ptxCJfH+qTXtgAbxxoKA
-	ipWmosHPEw==
-X-Received: by 2002:a17:907:86a3:b0:abe:cecc:727 with SMTP id a640c23a62f3a-abececc0781mr173141766b.53.1740433884499;
-        Mon, 24 Feb 2025 13:51:24 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFtaHW83Wgo/05/4WrDIXvGAbbq8f7q4IYZXTHaNGr0H2AqSCU/tm1tMIVm3RT1FmuY14Wc/A==
-X-Received: by 2002:a17:907:86a3:b0:abe:cecc:727 with SMTP id a640c23a62f3a-abececc0781mr173139966b.53.1740433884105;
-        Mon, 24 Feb 2025 13:51:24 -0800 (PST)
-Received: from redhat.com ([2a0d:6fc7:441:1929:22c5:4595:d9bc:489e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2053e88sm26766766b.134.2025.02.24.13.51.22
+        d=1e100.net; s=20230601; t=1740433928; x=1741038728;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
+        b=vmiVuxZ4WPC0vvWtkQwOaqCHXANeIR8Bhtpt3GzOUQeNGqBN4TcfDg82xUmzidbqdW
+         OjY3vPuAJGMXJk1umSXUyhu4KrWC05/GBAFgGVfq0qEUmsHSVGA6wqyycQ1XK21qI/9G
+         XsSfERm8kqGKQkXUjHEiBp5UZqHvrGJvIJG8A1TFITpo4QuU0+lKMByYyuqwfiBDQG/K
+         xwTZQQn++0yIfKWeHS+cXHmtPCkagunawy0ECd928t5r69qvHfgoPubb9R6dOKshXwJQ
+         pexnQz8MIHHjdGTjFwlUjOudEGw7y/rQZf3QDeAxs3WurCsPDlvG0acpZ67AX+E/2WtV
+         sXjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXcuqMh446JmHO9Tg4Y9Jhzdfk8Lnt8uNwBP0kjO/HaWzjUbVUpx8rPG8lbq3xWj7yB2u6UGpiYMr4ClnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd/POz/xTKDlWJey0d+ojBXUfi4FU4ZacJTafcH5op6By22iSb
+	sRy/D+wIOueI9uVKVdRpTHIr1yvfSEL61xf++ppy/5YigfHgCuHawkz4vi5j5+E=
+X-Gm-Gg: ASbGncuTRjkLcJSrs95UjScaUWH9QwwCJW7L/QkXdN+Tr6dp+J5kWUckRzl6W+bHXvB
+	m3gVsnMvY3lqGQQp0Dy0xrT4OBcvqUUBQRCVMRlgYMWydKwoaP08pZ65z/ixUxPp2W7Sm2j/z84
+	i/HOT+mdghm5U3rqRudEB1LMyM7Xi6HHo+4b12QX7x7SuWghbfz7b/tqgbsx7DKbuRKv/W0wVLw
+	dmyYSGgedKAAzOPqxMIKJMe4oCChXTE3Q1J03dUn6MOBfSGFo9WDrtKOZ5uiAJW02LX7/p4P5IG
+	nqVnbSoh+TNw/8OgGv46Q1Cmd/S/Eg==
+X-Google-Smtp-Source: AGHT+IHmJNkurL7RO4E3X7dffqrJqghhJyUiAOpbxbEyAGEjCiGP4Aji7mTnE2UrlwDFQi5MR+cgww==
+X-Received: by 2002:a05:600c:468c:b0:439:a1c7:7b29 with SMTP id 5b1f17b1804b1-43ab0f426c6mr7915255e9.17.1740433928545;
+        Mon, 24 Feb 2025 13:52:08 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd88371asm216037f8f.57.2025.02.24.13.52.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 13:51:23 -0800 (PST)
-Date: Mon, 24 Feb 2025 16:51:20 -0500
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
-Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Hanna Reitz <hreitz@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Jason Wang <jasowang@redhat.com>,
-	German Maglione <gmaglione@redhat.com>, stefanha@redhat.com
-Subject: Re: [PATCH] vduse: add virtio_fs to allowed dev id
-Message-ID: <20250224164956-mutt-send-email-mst@kernel.org>
-References: <20250121103346.1030165-1-eperezma@redhat.com>
+        Mon, 24 Feb 2025 13:52:07 -0800 (PST)
+Message-ID: <854925a6204f36fff6d653bb4a30c55a6adb3aef.camel@linaro.org>
+Subject: Re: [PATCH 2/6] dt-bindings: gpio: add max77759 binding
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
+ Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
+ <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
+ McVicker <willmcvicker@google.com>, kernel-team@android.com,
+ linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
+ linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
+Date: Mon, 24 Feb 2025 21:52:06 +0000
+In-Reply-To: <20250224153858.GC3137990-robh@kernel.org>
+References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
+	 <20250224-max77759-mfd-v1-2-2bff36f9d055@linaro.org>
+	 <20250224153858.GC3137990-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250121103346.1030165-1-eperezma@redhat.com>
 
-On Tue, Jan 21, 2025 at 11:33:46AM +0100, Eugenio Pérez wrote:
-> A VDUSE device that implements virtiofs device works fine just by
-> adding the device id to the whitelist.
-> 
-> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+Hi Rob,
 
+On Mon, 2025-02-24 at 09:38 -0600, Rob Herring wrote:
+> On Mon, Feb 24, 2025 at 10:28:50AM +0000, Andr=C3=A9 Draszik wrote:
+> > Add the DT binding document for the GPIO module of the Maxim MAX77759.
+> >=20
+> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > ---
+> > =C2=A0.../bindings/gpio/maxim,max77759-gpio.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 47 ++++++++++++++++++++++
+> > =C2=A01 file changed, 47 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio=
+.yaml
+> > b/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml
+> > new file mode 100644
+> > index 000000000000..9bafb16ad688
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml
+> > @@ -0,0 +1,47 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/gpio/maxim,max77759-gpio.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Maxim Integrated MAX77759 GPIO
+> > +
+> > +maintainers:
+> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+> > +
+> > +description: |
+> > +=C2=A0 This module is part of the MAX77759 PMIC. For additional inform=
+ation, see
+> > +=C2=A0 Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
+> > +
+> > +=C2=A0 The MAX77759 is a PMIC integrating, amongst others, a GPIO cont=
+roller
+> > +=C2=A0 including interrupt support for 2 GPIO lines.
+> > +
+> > +properties:
+> > +=C2=A0 compatible:
+> > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759-gpio
+> > +
+> > +=C2=A0 "#interrupt-cells":
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+> > +
+> > +=C2=A0 interrupt-controller: true
+> > +
+> > +=C2=A0 interrupts:
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
+>=20
+> You need to define what each interrupt is.
 
-OK, but the commit log really should say why
-you are doing this. And also why is it safe.
+I think maybe the interrupts property is not needed after all:
 
-> ---
->  drivers/vdpa/vdpa_user/vduse_dev.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
-> index 7ae99691efdf..6a9a37351310 100644
-> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> @@ -144,6 +144,7 @@ static struct workqueue_struct *vduse_irq_bound_wq;
->  static u32 allowed_device_id[] = {
->  	VIRTIO_ID_BLOCK,
->  	VIRTIO_ID_NET,
-> +	VIRTIO_ID_FS,
->  };
-> 
->  static inline struct vduse_dev *vdpa_to_vduse(struct vdpa_device *vdpa)
-> --
-> 2.48.1
+The PMIC has one external interrupt line (described by the top-level
+device), and the two interrupts here are just a representation of
+the PMIC's internal status register (i.e. top level interrupt is
+raised when status register for one of the gpio lines changes,
+amongst other things).
+
+The intention is for a gpio driver to just treat and model them as
+cascaded interrupts, but they don't need to be configured in any
+way via device tree, as everything happens internally inside the
+PMIC, there is no board-dependent routing or trigger type possible.
+(Of course, there can be drivers subscribing to one (or both) of the two
+cascaded interrupts here, but that shouldn't matter I believe).
+
+Does that make sense? I added the property because
+Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+says it's a requirement to have an interrupts property, but I
+believe it doesn't actually apply in this case as there's nothing
+than can be configured.
+
+Am I missing something?
+
+Cheers,
+Andre'
+
+>=20
+> > +
+> > +=C2=A0 "#gpio-cells":
+> > +=C2=A0=C2=A0=C2=A0 const: 2
+> > +
+> > +=C2=A0 gpio-controller: true
+> > +
+> > +=C2=A0 gpio-line-names:
+> > +=C2=A0=C2=A0=C2=A0 minItems: 1
+> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
+> > +
+> > +required:
+> > +=C2=A0 - compatible
+> > +=C2=A0 - "#gpio-cells"
+> > +=C2=A0 - gpio-controller
+> > +=C2=A0 - "#interrupt-cells"
+> > +=C2=A0 - interrupt-controller
+> > +
+> > +additionalProperties: false
+> >=20
+> > --=20
+> > 2.48.1.658.g4767266eb4-goog
+> >=20
 
 
