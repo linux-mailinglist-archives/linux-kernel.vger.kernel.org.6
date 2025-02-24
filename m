@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-530226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D75A430CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:26:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B72A430D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1DE03B8C07
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:25:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A023BB49B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEA420C006;
-	Mon, 24 Feb 2025 23:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893D20C03B;
+	Mon, 24 Feb 2025 23:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dtYve8jp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCtP3L+x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C3820B7EE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FD17578
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439460; cv=none; b=Shn9N2TcNWgnx7fHx8c29+OqugAuZQsBNbokEroNXp/xNn2jyBlCYWQ6LFXqTc3H21nhobpKgXRTZT1owpbfmVNl2xLwZqXzXg1P91MrWXpSt0Uttdx3E5EERYbmiiD3aTyMRl+6BsmsWrPXe2l7LBDBseWBv/jjcAFZgezY3ZA=
+	t=1740439526; cv=none; b=p5J6Wifz4WzbT7rlstQ9VjUkRrcsBYdSNkdFWaF4BjHvMWJj+koQcwoken7fEG6Wr6IdJXBxWmP8NOmlzMJUmWCADJt/md+ALFAn+SzaQDgdt1Nx1ld0PPjvaFSZKkFcvCf10shc2sbnEB52bxMKXkKr1iSdl9jZUbK6ri04ZGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439460; c=relaxed/simple;
-	bh=liZJClDZ57UAi5KhIIQIaeSYdVRzqQLW2iGKOlJ3JYo=;
+	s=arc-20240116; t=1740439526; c=relaxed/simple;
+	bh=kOTz7xO+s3wAwc8qd9xAG0S/g7jkuT4sXQvIhyX1rBg=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=p0AcbKRtzutCC+ANdG6ZQOt1ywilWsMGW3jNGqQt/rAM6XvvHAmSVk6Aqzw+slACYnHCeS8zu8IuvxVlOXZyw2tE6ZWBLDX3nyeU1pJ38ZDg7hW8wR9jHTlUwJhyivEXnKOPxaOLW/eovaZhnDDqfQKpt7T+6Fyo67R7NcAgErs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dtYve8jp; arc=none smtp.client-ip=170.10.129.124
+	 Content-Type:MIME-Version; b=VzumagETfc62iYNX/qsbo60W4+zf60zY2hgRS/9NybwII2gfjGA7SN8GR1x6J8J84pUrsxnhkP/tC6hcVxw+Am7dFc1jny6ZTiBGr6cDR8bt+/BEPTj5uhKmzZqz0Zq7x+DAZv2YCjJM+5G3iw+O0BJ0c+1NATbkP+QiVEcPKws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCtP3L+x; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740439454;
+	s=mimecast20190719; t=1740439524;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mIMVxCPn5E2yX2umKUZLQiQJ+2JdVHoZgQHeGBkvrHo=;
-	b=dtYve8jptUsbtkFRLR3hYRHDsAiSsyf7PlOVLCtEOMQ0cLrADwaF+2Xh+JnQTMmAjf7ars
-	WJlQj4XFyz1s0h28ElH4OnxkJIFO4NOYiKAnedKft8C6rLWKcShOpiwbKPZoGgTtHDqmFl
-	tWaPj74YGMR3+n/QFQgz/19awNc7cKM=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=TkPfG0rj6PZbUVhwetU7Cm+EwKa34ZQi/ZiVWaWfxp0=;
+	b=NCtP3L+xLauvzzkqUPS4jqSfL/zTNKKN4VKFwwoklayrvauDGtxamY4Kh5mpMGELfYs8hK
+	wnpuPYJDXROBqrfs1XDzW+uHe+fzcP2LG3WCEQsfWYUR0LdLkm3rlQILoKo9b4+f9UgF+3
+	Gd4kMHxZyPL0wMNT60oTZngRNreyTzg=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-149-WE1s_6tYPa-2fRkiKCR5zw-1; Mon, 24 Feb 2025 18:24:10 -0500
-X-MC-Unique: WE1s_6tYPa-2fRkiKCR5zw-1
-X-Mimecast-MFC-AGG-ID: WE1s_6tYPa-2fRkiKCR5zw_1740439450
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c0a7b2905cso768056085a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:24:10 -0800 (PST)
+ us-mta-416-jtBRswf3MfmO0ygxaNvbTg-1; Mon, 24 Feb 2025 18:25:22 -0500
+X-MC-Unique: jtBRswf3MfmO0ygxaNvbTg-1
+X-Mimecast-MFC-AGG-ID: jtBRswf3MfmO0ygxaNvbTg_1740439522
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-471ea7666c7so88271991cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:25:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740439450; x=1741044250;
+        d=1e100.net; s=20230601; t=1740439522; x=1741044322;
         h=mime-version:user-agent:content-transfer-encoding:organization
          :references:in-reply-to:date:cc:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mIMVxCPn5E2yX2umKUZLQiQJ+2JdVHoZgQHeGBkvrHo=;
-        b=YbH46VO3vs9EQPUvIowJ6/iSgG5SVWY908v8kyqLu44qWrFR7sBUu/+VuNalbXJV2h
-         EuCS05koVcvOt8o7UAUux/a8S+R4tJmx8P1l3Iz+5TUAi1706HzbymB8v8KAO0vFPcRq
-         jO2ZMllyiWj+w33/aapIUoxJ1No0xNpHSQr02JAwC20q3SNfO7R1nWoHIF4NcG2vjatO
-         l6ao7xavhUGBGPje1KEECCM148K+GYmFUJJv+9GXnAjCDZp+NQQ7y1R+6PH8CXMWCHxI
-         OhR9HdQMOtz+31anSyMeCSdbW/Qbq0LZvcvK1on12lSfMm2kKQtu8BaDG3gLsm0SH14L
-         kqSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVK7j1aGAxjlLOKiS0aZKujP6ahKkX3B4N/MhnPRf7+nuDKiXha5wQIW+qX2UUp60fKNrgXHoZG2fQvAzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHkCyLkxNH1D0HkDVkbgfBCBsbdgoWjV2cTKxrfD17K6D1lnC/
-	Jcc3CSIET4BooQldNqsZd2O2tvOsxNLvXSyLSEkuOfdJsJWS+IDVUpHKXeH6205oRZXiH8xPti6
-	CiSl9NmrjKRz5C1WR+GsJMqZHJtXAT5uBf/NF+O8YPTmglk/dMkI3Si38bYqDLg==
-X-Gm-Gg: ASbGncvtZ+vKuw/RJ+P47E7C5SjQZKSN4e6phPWxekzbrdltwxsbKLrNEyo0VXEc7iQ
-	2797UDMezrhrJOH2ElKilAJ85m00HtAD+gCGghrGy16m5eO3SJBralwgGpnH/TNRfykZFQ3nv/H
-	VPlCbExF15/UyIfDkGQM2CCpKCNnSsqFHclgt+WNGcd4V12lzOyOIqi4s5PQy4kXlRbjBSja6UF
-	WJMz4NQQRfeGP8VXA4wwxy4ny5aTY+QxMD/qRRuyUhS0z9XHA1I/SMfXm26w3kfBGm6YqEEmF9O
-	sACqUi7GmhcLBAs1p1SGzg==
-X-Received: by 2002:a05:620a:450e:b0:7c0:c7c3:b877 with SMTP id af79cd13be357-7c23c0397a3mr175547985a.40.1740439450156;
-        Mon, 24 Feb 2025 15:24:10 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNOfaJ8VfqgawVd+DMXCZi7m13UFcEhHnSR4b6Vti7ZUEofpw5HFERxWzh+yNessptdHgc+w==
-X-Received: by 2002:a05:620a:450e:b0:7c0:c7c3:b877 with SMTP id af79cd13be357-7c23c0397a3mr175545885a.40.1740439449824;
-        Mon, 24 Feb 2025 15:24:09 -0800 (PST)
+        bh=TkPfG0rj6PZbUVhwetU7Cm+EwKa34ZQi/ZiVWaWfxp0=;
+        b=QJ604ZF/mGR8SO7kaC8JgX/KwFB0ouug3UD4mqIkCXSEGn9kc3aa8LeDb48MKlo3HK
+         O6yC78fwr+sNX0Jn1M5n77MQUQca5ecjwkELDrbCRS6z4nRkm4Vbjv5pRccTnAvJ7Cli
+         GXSarahkOMFwv3bysatPfAy10K0tN6hUzRlGsk9YNmXFrBZcC8DUXJhG2X3XtXf2+cHL
+         L7v0ECJ9JKVbUQmURVBA4Ev/N+T5LHlMXUVmr9xPSL9XtP1FnY3FYJBUb4kLWVj6WVXC
+         eY0vsPfz1hS13ha4KMfzeRpkj4f7LznXBsJCOmidvEC1rt7jB/zJcsApIfaZnSmBF9kh
+         mTpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXZ3Ez32vtqSymN9s9wpfNoIfC8zkHkprdVPazB+lMb1+0LpGioMxjmmt8IMnY66j8b1Fqu8QAOPays/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0MgpGDp9lKJTKvjh25lcUv7e9W5ouL/buPRdw92jOp0G8JbP7
+	PYpEmybVzGUTv7Hx0qa+irWYwLlS8NgBx61Tfesv9uZHfWjU6dAJOoOmXaGiEXQauizcSTZ371P
+	51juj2Mw403StsNwE6lQRwW48FOfSEUL8eDcZaZch6+S9gwHWo/C7eBn3DgM5NA==
+X-Gm-Gg: ASbGncst78P3LUCwBwe7j7B5la63dKoBhk2uGFbg8SCXeoJk+WY1zgYv2LjTT+k7aBB
+	xNUcCIwY2QAlSESv0tVYDfvu4XAXlQ176N3SBIzakUL9i6XEJgDCKPsGDA4SGBhaVSrtYlejjXW
+	N/phg7R3vITTQwIBtIZSwdaq8+Xj8bvGvlnSdy+x496clr1i45YbdomfDjdP/jEgKVQXvXXt7f/
+	1YrvvREDUBbWqrPC+lkc7f/LDk4dEPYaX1cLWDHaFwrnJTyQ9R/fns7PvkRKYBA8iH5FsRCTzqp
+	DaL3TM0DQ/OzVb2whwxYPQ==
+X-Received: by 2002:a05:622a:c2:b0:472:afc:411b with SMTP id d75a77b69052e-472248d89femr173208011cf.37.1740439522085;
+        Mon, 24 Feb 2025 15:25:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF14f5+d6UomTjbtKVM17Uk0k3qbxzNvyrzqneI1CEg34sy4ZCTlrobMJYQHcvglvMKTxEBCQ==
+X-Received: by 2002:a05:622a:c2:b0:472:afc:411b with SMTP id d75a77b69052e-472248d89femr173207761cf.37.1740439521651;
+        Mon, 24 Feb 2025 15:25:21 -0800 (PST)
 Received: from ?IPv6:2600:4040:5c4c:a000::bb3? ([2600:4040:5c4c:a000::bb3])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c23c329b8esm32303585a.86.2025.02.24.15.24.08
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47378083624sm2283951cf.71.2025.02.24.15.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 15:24:09 -0800 (PST)
-Message-ID: <a3369f1e4e64c71724c972fc79622bcd3287d5d5.camel@redhat.com>
-Subject: Re: [PATCH v9 05/13] rust: hrtimer: add `UnsafeHrTimerPointer`
+        Mon, 24 Feb 2025 15:25:21 -0800 (PST)
+Message-ID: <5be4420b982bca3d94b8de38430ebadfc13ea4cb.camel@redhat.com>
+Subject: Re: [PATCH v9 06/13] rust: hrtimer: add
+ `hrtimer::ScopedHrTimerPointer`
 From: Lyude Paul <lyude@redhat.com>
 To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
  <ojeda@kernel.org>,  Anna-Maria Behnsen <anna-maria@linutronix.de>,
@@ -92,10 +93,10 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
  <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida	
  <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, 
 	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 24 Feb 2025 18:24:07 -0500
-In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-5-5bd3bf0ce6cc@kernel.org>
+Date: Mon, 24 Feb 2025 18:25:19 -0500
+In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-6-5bd3bf0ce6cc@kernel.org>
 References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	 <20250224-hrtimer-v3-v6-12-rc2-v9-5-5bd3bf0ce6cc@kernel.org>
+	 <20250224-hrtimer-v3-v6-12-rc2-v9-6-5bd3bf0ce6cc@kernel.org>
 Organization: Red Hat Inc.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -110,61 +111,64 @@ MIME-Version: 1.0
 Reviewed-by: Lyude Paul <lyude@redhat.com>
 
 On Mon, 2025-02-24 at 13:03 +0100, Andreas Hindborg wrote:
-> Add a trait to allow unsafely queuing stack allocated timers.
+> Add the trait `ScopedHrTimerPointer` to allow safe use of stack allocated
+> timers. Safety is achieved by pinning the stack in place while timers are
+> running.
+>=20
+> Implement the trait for all types that implement `UnsafeHrTimerPointer`.
 >=20
 > Acked-by: Frederic Weisbecker <frederic@kernel.org>
 > Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 > Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
->  rust/kernel/time/hrtimer.rs | 31 +++++++++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
+>  rust/kernel/time/hrtimer.rs | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
 >=20
 > diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
-> index a431c8b728ae..2cb40b011673 100644
+> index 2cb40b011673..64b769ad59cc 100644
 > --- a/rust/kernel/time/hrtimer.rs
 > +++ b/rust/kernel/time/hrtimer.rs
-> @@ -181,6 +181,37 @@ pub trait HrTimerPointer: Sync + Sized {
->      fn start(self, expires: Ktime) -> Self::TimerHandle;
+> @@ -212,6 +212,39 @@ pub unsafe trait UnsafeHrTimerPointer: Sync + Sized =
+{
+>      unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
 >  }
 > =20
-> +/// Unsafe version of [`HrTimerPointer`] for situations where leaking th=
-e
-> +/// [`HrTimerHandle`] returned by `start` would be unsound. This is the =
-case for
-> +/// stack allocated timers.
-> +///
-> +/// Typical implementers are pinned references such as [`Pin<&T>`].
+> +/// A trait for stack allocated timers.
 > +///
 > +/// # Safety
 > +///
-> +/// Implementers of this trait must ensure that instances of types imple=
-menting
-> +/// [`UnsafeHrTimerPointer`] outlives any associated [`HrTimerPointer::T=
-imerHandle`]
-> +/// instances.
-> +pub unsafe trait UnsafeHrTimerPointer: Sync + Sized {
-> +    /// A handle representing a running timer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// If the timer is running, or if the timer callback is executing w=
-hen the
-> +    /// handle is dropped, the drop method of [`Self::TimerHandle`] must=
- not return
-> +    /// until the timer is stopped and the callback has completed.
-> +    type TimerHandle: HrTimerHandle;
+> +/// Implementers must ensure that `start_scoped` does not return until t=
+he
+> +/// timer is dead and the timer handler is not running.
+> +pub unsafe trait ScopedHrTimerPointer {
+> +    /// Start the timer to run after `expires` time units and immediatel=
+y
+> +    /// after call `f`. When `f` returns, the timer is cancelled.
+> +    fn start_scoped<T, F>(self, expires: Ktime, f: F) -> T
+> +    where
+> +        F: FnOnce() -> T;
+> +}
 > +
-> +    /// Start the timer after `expires` time units. If the timer was alr=
-eady
-> +    /// running, it is restarted at the new expiry time.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Caller promises keep the timer structure alive until the timer i=
-s dead.
-> +    /// Caller can ensure this by not leaking the returned [`Self::Timer=
-Handle`].
-> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle;
+> +// SAFETY: By the safety requirement of [`UnsafeHrTimerPointer`], droppi=
+ng the
+> +// handle returned by [`UnsafeHrTimerPointer::start`] ensures that the t=
+imer is
+> +// killed.
+> +unsafe impl<T> ScopedHrTimerPointer for T
+> +where
+> +    T: UnsafeHrTimerPointer,
+> +{
+> +    fn start_scoped<U, F>(self, expires: Ktime, f: F) -> U
+> +    where
+> +        F: FnOnce() -> U,
+> +    {
+> +        // SAFETY: We drop the timer handle below before returning.
+> +        let handle =3D unsafe { UnsafeHrTimerPointer::start(self, expire=
+s) };
+> +        let t =3D f();
+> +        drop(handle);
+> +        t
+> +    }
 > +}
 > +
 >  /// Implemented by [`HrTimerPointer`] implementers to give the C timer c=
