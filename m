@@ -1,114 +1,119 @@
-Return-Path: <linux-kernel+bounces-529714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F6BA42A2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:44:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971F8A42A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15B9D188B313
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED2D3A4227
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E807D264624;
-	Mon, 24 Feb 2025 17:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FF26463B;
+	Mon, 24 Feb 2025 17:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i2NSNRLb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+ULiqkz"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40691BEF81
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FFA170A13
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740418790; cv=none; b=AdgF+ftAxZy4ldn1LHHK4fU8A6B6GFOfExn9bHI0rregezz8aiiP+8nVpS86XfeNSXdpN7GbmYTpTevVsBh/HPmEvzrLwTCgDbgalOzfNXtlrw+OMXELVGFYfPJPG0lmcs9wbcOeeeV0WrfJIyL/b/2BRhuwdlFBmXgc+HaIj/s=
+	t=1740418921; cv=none; b=TS9PPHEOxIQYVB9+DWwlXOZlXr6kOl5Z04AHojC2Aix7+M6a73QvrAi127l1SkwbM08xDe+IIKnSR78knR8iqSqaC6k/FCDp4PJw8kWJlgl2OWLo7xmzNAMbEBOcCN67oC1t/5GEbGA5toG4slPK4mbgtB5CXiTPpg+yZiOw55c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740418790; c=relaxed/simple;
-	bh=4lq1u+Vg4c4+yWArBVNq2YzRcRNdLD4JckKo5A8x8Xs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jXdMSIX9b0f7BFjVOsd6sG4jYHIF3PvLk8UCSGBBsjyJCk6FMAHyqWsAI/Q+/0yu8hphRjr5ePACz5d8bcu05ivijhcyosxYzDsFX8euRibF5FyqRgNkA3ZtZ1x/siNtvcEmh7kpuFToMGxyPEoLYhBeaOM2z0RGFf0PlAzFb1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i2NSNRLb; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740418788; x=1771954788;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4lq1u+Vg4c4+yWArBVNq2YzRcRNdLD4JckKo5A8x8Xs=;
-  b=i2NSNRLbThbRyYlpqHL0YwFhIQfZT19pAbth56cGpKF1VVHz1h5jkXmX
-   /1BTt0avTU+JLpZPn3efhc9cOMPZXTgBiIcZ9jIe9BaauAXjWjbN1kS1L
-   JDlhhOrV8CgzCbyOmqiqu3ztFwIwsJzcNUoj0D93yeTFllB1wjSz2myaO
-   91fPN4suUglhxU+eSrgzp6MR+RII92zhpEDQKr1sjcXW1Xlsk/gUMZ0hS
-   MR+xsR/3/hzV5kJqMq0p7/4zXBjA3yk2qnW1uX5HR1p4KkIU9niqiqHEu
-   VZDNiDlTFxT6FJ4yF1xq/5EwNzbNpyMH4MQ283Iy/TxKyjf9kFFThkhzt
-   Q==;
-X-CSE-ConnectionGUID: +YFWOVryTuy1HXEjRCUQMg==
-X-CSE-MsgGUID: wVbgnliqRju1V5nO1fK5Qw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40895804"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="40895804"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 09:39:48 -0800
-X-CSE-ConnectionGUID: I8c25QPLQdiBkDUpD1m+gA==
-X-CSE-MsgGUID: FwY/wvYIS++TuOGjxFe9Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="116625052"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 24 Feb 2025 09:39:45 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 5845C19E; Mon, 24 Feb 2025 19:39:44 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v1 1/1] x86/mm: Check if PTRS_PER_PMD is defined before use
-Date: Mon, 24 Feb 2025 19:39:40 +0200
-Message-ID: <20250224173940.219820-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.45.1.3035.g276e886db78b
+	s=arc-20240116; t=1740418921; c=relaxed/simple;
+	bh=3IFadXaUYj7sdZ/YoFBbGyfHNpr1yxv29eaIHoixx3w=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R2G2gxpH8dY69tUAvhafKd1UbMjqJoeyglc8y0iieKbsz3YrlQpCyZLwaratckCoWamP+0hkCuU62OWjn7lSMcqoxAneJ3A13yGM16zfA406d4KDvlGzaNaObo9E7G+zIdFzlMcNxpcAIeTXm86o8W15AM4AlauCzTkiUa2zl9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+ULiqkz; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc318bd470so9042578a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:41:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740418919; x=1741023719; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e1EZBmSe2im3juqrZK3CYkAhncBM5TtZhAUdFg3KflY=;
+        b=j+ULiqkzVJUHePkxzUuurPaTkSW8k50eUp1nwfd6iH50R/+0UbpZBByCxvYGL3+ESb
+         lL6r0QWIzUvgOl55jUUxk+/2DhKzCcY2EfOLspVHlxTaomWZT5IP44Roqndyp/9Sloiz
+         5bA0Zj4WeMjKR5+H/GsEvqKjhueQ/hpoW9HP0WjSgEPWPPqS8KsdBMs6GaZ3FAvzPkQd
+         23J4CIz4aeNCbPRvnjffGm5zeGOt06AnW5y5lqMLm/yARDFRGwxYwAAdwc3mXEDzRYj7
+         /7UWlbQwAzK8au19wc9yxOrHO/VDjT9adz7KHNxAvfCsTPiU2tNflbnu4Z0PX3uyCweG
+         J9QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740418919; x=1741023719;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e1EZBmSe2im3juqrZK3CYkAhncBM5TtZhAUdFg3KflY=;
+        b=RypwHtsvwISWGlYUSvISndAsfmzdFd7TvAYx3w+EFWg6pOSPYVK/h64DrDeSExciYI
+         TwxWSWUmx/daClMplaZItGdahOztNVTdvdG+9C4hAdBod1SIjRwDxCxr6pmRpRsmZ3Py
+         NyLmdSs0naS7T5hCQ7yXDTiLLZeb1DDckoe3WEW0otmItNSPyajiTsfWg43VnvBXUxE0
+         A6nu7W5nYEN+PY1wWlg9Uw01KfJN3hEL3b1cJgj5/tTbFiC2p3BK4E/y/pzHGZEe3D/5
+         8Akd6kn6z+PNW79JkspGmQyFk2uJV57In+IrGaEjHdSpG8VPavoGCzGnfoop9BRbnJd2
+         En3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW2OG27JeMTlrCajOCb7xTQ8w32yBHRSaUX0/7UiwjAWQcTzt8HxX2W6qKgug3MpBlhCU0/z0fRo3JEsGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEPb0e3mjIs0BF4274JooBUF21PwNqlMsFTT7RgXTtL946MLS4
+	EmEKZ7Fh9ugHQ9Sd+Peb0ToutlYmUn1WMjQObuQHsNN/zyVodpgAGNTFZ1TyQhyXPc6MF2/arcR
+	Ixg==
+X-Google-Smtp-Source: AGHT+IHFioBGXOxzm41NcBknr4shVziaEDjiaSXZYk4bXNvmJxj5hrZDjUahvq4dTClGOKbh+vDVlxvAwxw=
+X-Received: from pjbpt3.prod.google.com ([2002:a17:90b:3d03:b0:2fc:13d6:b4cb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a41:b0:2f4:47fc:7f18
+ with SMTP id 98e67ed59e1d1-2fce78a2965mr24749658a91.10.1740418919237; Mon, 24
+ Feb 2025 09:41:59 -0800 (PST)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Mon, 24 Feb 2025 09:41:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250224174156.2362059-1-seanjc@google.com>
+Subject: [PATCH] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Compiler is not happy about PTRS_PER_PMD being undefined
+When emulating HLT and a wake event is already pending, explicitly mark
+the vCPU RUNNABLE (via kvm_set_mp_state()) instead of assuming the vCPU is
+already in the appropriate state.  Barring a KVM bug, it should be
+impossible for the vCPU to be in a non-RUNNABLE state, but there is no
+advantage to relying on that to hold true, and ensuring the vCPU is made
+RUNNABLE avoids non-deterministic behavior with respect to pv_unhalted.
 
-In file included from arch/x86/kernel/head_32.S:29:
-arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
-   59 | #if PTRS_PER_PMD > 1
+E.g. if the vCPU is not already RUNNABLE, then depending on when
+pv_unhalted is set, KVM could either leave the vCPU in the non-RUNNABLE
+state (set before __kvm_emulate_halt()), or transition the vCPU to HALTED
+and then RUNNABLE (pv_unhalted set after the kvm_vcpu_has_events() check).
 
-Add a check to make sure PTRS_PER_PMD is defined before use.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202412152358.l9RJiVaH-lkp@intel.com/
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/pgtable_32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/x86.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
-index 7d4ad8907297..3c0523588f59 100644
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -56,7 +56,7 @@ do {						\
-  * With PAE paging (PTRS_PER_PMD > 1), we allocate PTRS_PER_PGD == 4 pages for
-  * the PMD's in addition to the pages required for the last level pagetables.
-  */
--#if PTRS_PER_PMD > 1
-+#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
- #define PAGE_TABLE_SIZE(pages) (((pages) / PTRS_PER_PMD) + PTRS_PER_PGD)
- #else
- #define PAGE_TABLE_SIZE(pages) ((pages) / PTRS_PER_PGD)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 58b82d6fd77c..7f5abdaab935 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -11310,9 +11310,8 @@ static int __kvm_emulate_halt(struct kvm_vcpu *vcpu, int state, int reason)
+ 	++vcpu->stat.halt_exits;
+ 	if (lapic_in_kernel(vcpu)) {
+ 		if (kvm_vcpu_has_events(vcpu))
+-			vcpu->arch.pv.pv_unhalted = false;
+-		else
+-			kvm_set_mp_state(vcpu, state);
++			state = KVM_MP_STATE_RUNNABLE;
++		kvm_set_mp_state(vcpu, state);
+ 		return 1;
+ 	} else {
+ 		vcpu->run->exit_reason = reason;
+
+base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
 -- 
-2.45.1.3035.g276e886db78b
+2.48.1.658.g4767266eb4-goog
 
 
