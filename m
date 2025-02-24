@@ -1,261 +1,132 @@
-Return-Path: <linux-kernel+bounces-530134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E58A42F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:51:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3859A42F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935973B2012
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09039189C66C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:51:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF5C1E0DD8;
-	Mon, 24 Feb 2025 21:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458691DF994;
+	Mon, 24 Feb 2025 21:51:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="kwQY66cv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kcX7lF5f"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JZVlp5nl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7311A2397;
-	Mon, 24 Feb 2025 21:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A601DE3D9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:51:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433882; cv=none; b=KEnRmetni9sYOi70659zGRFgNNxLGn1g7B/ZceJq7LlcUPobxuncpvvSVYLn8Rb18cGRlAL3Eb5kLGdg/1JsWfg4YwcsuNPp4rtMjHneKqOXDAfr5SSbRbTfpzaLqg6TnLjO20pH47IRQK1/EbuWLfhuqr4i73iF2J9W1l1YX+Q=
+	t=1740433892; cv=none; b=fJFC9nFj8uO2v9fc6ZwdEx2SDGibcfYeEa5hLcnrvZNKbfoAB8s+uZKZVqGz353ucKVuzzdeqW/iOTsfmq1zrh9Q8ClgXFYURsCtfIeVSZIKz7HNVAUy9a4zDUxLjUo484SjF8IVp3LyDpep0FPhCZ/C7I/qUTAu7mNEZdMz++Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433882; c=relaxed/simple;
-	bh=pKOREHPDUL0kSXZcEXRWTZPn7l4M29EiusZh8QDLwz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nwv/bk6C+dBXOpvZ2qnY3Ur8eGU5cq7ccaYJYNiL59AlWzAMd0yWs46WdS4hTbCRwzUNpHLTHFlzK59ak4/HX+2BzhMGiWhTsKb25aJjwGsH5ToqhujMME2xWcDSzP5O1C3z4RoAw28dT4Ey3AW3u+lJEjKpd4YcxlR7Drf2DL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=kwQY66cv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kcX7lF5f; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
-	by mailfout.stl.internal (Postfix) with ESMTP id 4BEBE11400A4;
-	Mon, 24 Feb 2025 16:51:19 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-13.internal (MEProxy); Mon, 24 Feb 2025 16:51:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1740433879;
-	 x=1740520279; bh=pKOREHPDUL0kSXZcEXRWTZPn7l4M29EiusZh8QDLwz0=; b=
-	kwQY66cvtIayN/G+uTvBkks0XBStSXLnV5CY1eX8L9rfy9Sclk7HOnNTrOGfscOn
-	/t2tq8hKf9JEBAzv6VUBzpxoGrdmsUJxUKqocMRSmVWQZKroaeOJbfQe2UedNvjZ
-	IbYDKpA+R4n0BuZSC2GldUOIVcUPrsSZOr0jKXEBpm5P/6J5R/ntTnZ5gy39Ix70
-	xy/gJph9QxcwFY7pJdTk1y6KBqqMj8s9dpxktPNbrxh9wp873hmaUx1jXx8QXKq8
-	UURkiMAlp57B9ZuiinYLpLar/GoVkU0N/98p5112kgs93TS36l3hIHBaqn/qC5YG
-	GxKMckm7q9CnwQg34MPqZA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740433879; x=
-	1740520279; bh=pKOREHPDUL0kSXZcEXRWTZPn7l4M29EiusZh8QDLwz0=; b=k
-	cX7lF5fIgmFIVb/61bg+sZhVWPUlGvu3hG46wtekQHDDtfg5OBxQrh2VLqO83fSi
-	uZB8VC4U1SdHRIOVR0ohSPJfa3+za48kGRuoIj49Uu2uPbS9B+C/J2hQhTFTtarm
-	EzFBQ4YOotE9AVh6SAVs2bDK84Qv8GREFMrqnuLLJkClQFMNxIjDwPe348Swr4g6
-	YvYBhesD0wFFbLJPwipIofyh4I4REEKVg4/zXn4QffIJQvmfEVK8raiWxVix3q+s
-	4UXyFXxttC7sFL8J2LE5EwnUeK9j1A9A7E+mozZFd+NRxigHGmLCAqXubVGtP66u
-	zN5TVlfxXYLZe2CkR9vow==
-X-ME-Sender: <xms:1um8ZwvoRkI6-W7BkBl-ChOEym5agx87iaqlo42V48kNmgFSW_x2OQ>
-    <xme:1um8Z9fKxKj-uh5Mxu59116KB7d7gYTKNNRGgg0IG8-DYqHOOp6drcoQhWAc877S_
-    ddEAE2DrXEruWN6bsQ>
-X-ME-Received: <xmr:1um8Z7zfmxEJ4pGwIeeQslRaLBkeMgIuTsdOEd-EN0-jJhBv8IMn6tU_MpNNOgjg4moes5q6JgsNYCzNJw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleeludcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefkuffhvfevffgjfhgtgfgfggesthhqredttder
-    jeenucfhrhhomhepnfhukhgvucflohhnvghsuceolhhukhgvsehljhhonhgvshdruggvvh
-    eqnecuggftrfgrthhtvghrnhepkeefffeujeevueejueegleelhedtgedvledukedttdff
-    hfeifeelvdduheefjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohepuddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmphgvrghrshhonhdqlhgvnhhovh
-    hosehsqhhuvggssgdrtggrpdhrtghpthhtoheplhhkmhhlsegrnhhthhgvrghsrdguvghv
-    pdhrtghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprh
-    gtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhinhhtvghlrdgtohhm
-    pdhrtghpthhtoheplhgvnhgssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdgrtghpihesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehplhgrth
-    hfohhrmhdqughrihhvvghrqdigkeeisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:1um8ZzOXlBgxhzwakuT4e5GIVcS_sWkbdp6PtllB5WTntPVEIiWlNA>
-    <xmx:1um8Zw_3Y9CS4IBcmPJZBk4s6MzYbqNiTSppaP6QmRjw0X8c97sWvg>
-    <xmx:1um8Z7VHQs9kbBA1hOlgwx8uzuCgcMRKliMaNEw0MPCqYFOQ4IxHaQ>
-    <xmx:1um8Z5e3Hk9WxSL-d5xBdllYHegx-oPQQRmAxDhAKLQOhoRLoT5xKg>
-    <xmx:1-m8Zx1rgtRtHlWvtaJsiQwL6ZxOVHO1DWWPxTVy7JFMf_NeNcd6K3eJ>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 16:51:14 -0500 (EST)
-Message-ID: <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
-Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
- multiple handlers
-From: Luke Jones <luke@ljones.dev>
-To: Mark Pearson <mpearson-lenovo@squebb.ca>, Antheas Kapenekakis
-	 <lkml@antheas.dev>, "Limonciello, Mario" <mario.limonciello@amd.com>
-Cc: Ilpo =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>, Len
- Brown <lenb@kernel.org>, "linux-acpi@vger.kernel.org"
- <linux-acpi@vger.kernel.org>, 	linux-kernel@vger.kernel.org,
- "platform-driver-x86@vger.kernel.org"	
- <platform-driver-x86@vger.kernel.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>,  Hans de Goede <hdegoede@redhat.com>,
- me@kylegospodneti.ch
-Date: Tue, 25 Feb 2025 10:51:09 +1300
-In-Reply-To: <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
-References: <20250224195059.10185-1-lkml@antheas.dev>
-	 <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1740433892; c=relaxed/simple;
+	bh=zkF5hc0cK80WJWcCdicuqbNp3sujPPZYziecsBeVhl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpibdeGSKJ4A2iqOjKKb/bgpbZVhyYvKRIhb17QPyjI4vS8ZgdFl0oVa/ICdjvLHcl8bBJwaeM0j7hsfRmUKQJeSOoUFCP4EeInS6CGJI/blFQXixkMx2FP/ONvUizrxq3vbH3n37MNPCkl28Loat9S3oXd+U+NJJBNfvAXCGr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JZVlp5nl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740433890;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PYw3iOFdpjI7CWdvocKoz0dXbPHM+ovEK+NkNh9AWKc=;
+	b=JZVlp5nl/L3KwPrR31L0KwTI5SVjjsSfCyX5nSlNQRAkh2tjHdjLzeye+MBmwAXFDXdZlt
+	qlFdFTXUgZ8y7WOrorBYZyhG7fdDQ9+aQKzBzSHzrGKIQCqRiouYqb4ojGs2JkuwtMdJYS
+	7UVa3pghAxcAM0Kc9ahq/fqigWJDvAw=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-472-AY_psf_OPV2wHnGsuKwsAA-1; Mon, 24 Feb 2025 16:51:25 -0500
+X-MC-Unique: AY_psf_OPV2wHnGsuKwsAA-1
+X-Mimecast-MFC-AGG-ID: AY_psf_OPV2wHnGsuKwsAA_1740433884
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-abec83a498cso79768966b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:51:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740433884; x=1741038684;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PYw3iOFdpjI7CWdvocKoz0dXbPHM+ovEK+NkNh9AWKc=;
+        b=XG6GAoInJ8LMVO/Fstjxq5ZSjsRRcBethazV4XntgCKP/9T5arQ7xutHztTUEp56l7
+         NVXNe28Jz8090T3hV7tDYm26bsyX1ZNfdxJxaB4C9nMRNqkYRCxdAG7YsmNfDN+x0wzo
+         IXiULRTM3xj7h++doLYqZkCy+yAB+lf8r2TgzhnqFluO/Zkv8SusU33GA+NSeHCPKlBU
+         EJHdTXVS8x2gV2ubykSXC2EvhU4X2l0Iu1y93dLbFjImv5Z2OKq/7qYgvYBSPwy8423v
+         SgbmLHhev8lOYF9DN1MXDpx9G2oklrcNHdRO0NNC43GnwRaujIKjv551FFDkwy4xOi+d
+         3OFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXVtO5UH0mjj6u3z2Yl0RTEWh8ijN8a87AY5JbaiArzETZANxyYBmGDTtUjVS6YsVC8o1pnvJJ4l/2COfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yza/Tb7R1yj1bEl582V8QAcmS4OxcQhdwDQDOQyQs8ceezWNEeR
+	QAZFY7Wzyi0aZ9pweC1TUbfHHfZgGlarvXIpC+E7ALOLfXLtXCYGk57lCK4DtWsuSvACYmIoE2u
+	VqgwUns/dIn96m5tZLiDuB2MGKsXBcOh/+HqhkTi1mdPYEwiHwqxb1ObcbMQw+A==
+X-Gm-Gg: ASbGnctS5MjfdD+jd0uum+TOZw+QYB8pWSp4zCpAXopy9YijYGmPrBR8dI5+1SDJJGG
+	gY0R0iDD6bhsEUhggFiKmNE+7a2BjrwvUPVB3edsaes8HRYBSgo9JQ7Gs9HfasfCOLKb2Hw8UZA
+	F5qm6Akxph/vEzoZKh2WQmGLSyn50vyvKbWyuwHiRpXYpzMAqe2AZX8f6JP14VcrhVQjmkNIrNh
+	X3/JG7UqYdXbUk4SgRxu1U3zzCJqZhL1MimAU7tYs/JhJd9XTCqz338ptxCJfH+qTXtgAbxxoKA
+	ipWmosHPEw==
+X-Received: by 2002:a17:907:86a3:b0:abe:cecc:727 with SMTP id a640c23a62f3a-abececc0781mr173141766b.53.1740433884499;
+        Mon, 24 Feb 2025 13:51:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFtaHW83Wgo/05/4WrDIXvGAbbq8f7q4IYZXTHaNGr0H2AqSCU/tm1tMIVm3RT1FmuY14Wc/A==
+X-Received: by 2002:a17:907:86a3:b0:abe:cecc:727 with SMTP id a640c23a62f3a-abececc0781mr173139966b.53.1740433884105;
+        Mon, 24 Feb 2025 13:51:24 -0800 (PST)
+Received: from redhat.com ([2a0d:6fc7:441:1929:22c5:4595:d9bc:489e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2053e88sm26766766b.134.2025.02.24.13.51.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 13:51:23 -0800 (PST)
+Date: Mon, 24 Feb 2025 16:51:20 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>
+Cc: virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Hanna Reitz <hreitz@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Jason Wang <jasowang@redhat.com>,
+	German Maglione <gmaglione@redhat.com>, stefanha@redhat.com
+Subject: Re: [PATCH] vduse: add virtio_fs to allowed dev id
+Message-ID: <20250224164956-mutt-send-email-mst@kernel.org>
+References: <20250121103346.1030165-1-eperezma@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250121103346.1030165-1-eperezma@redhat.com>
 
-On Mon, 2025-02-24 at 15:52 -0500, Mark Pearson wrote:
-> Hi Antheas,
->=20
-> On Mon, Feb 24, 2025, at 2:50 PM, Antheas Kapenekakis wrote:
-> > On the Asus Z13 (2025), a device that would need the amd-pmf quirk
-> > that
-> > was removed on the platform_profile refactor, we see the following
-> > output
-> > from the sysfs platform profile:
-> >=20
-> > $ cat /sys/firmware/acpi/platform_profile_choices
-> > balanced performance
-> >=20
-> > I.e., the quiet profile is missing. Which is a major regression in
-> > terms of
-> > power efficiency and affects both tuned, and ppd (it also affected
-> > my
-> > software but I fixed that on Saturday). This would affect any
-> > laptop that
-> > loads both amd-pmf and asus-wmi (around 15 models give or take?).
-> >=20
-> > The problem stems from the fact that asus-wmi uses quiet, and amd-
-> > pmf uses
-> > low-power. While it is not clear to me what the amd-pmf module is
-> > supposed
-> > to do here, and perhaps some autodetection should be done and make
-> > it bail,
-> > if we assume it should be kept, then there is a small refactor that
-> > is
-> > needed to maintain the existing ABI interface.
-> >=20
-> > This is the subject of this patch series.
-> >=20
-> > Essentially, we introduce the concept of a "secondary" handler.
-> > Secondary
-> > handlers work exactly the same, except for the fact they are able
-> > to
-> > receive all profile names through the sysfs interface. The
-> > expectation
-> > here would be that the handlers choose the closest appropriate
-> > profile
-> > they have, and this is what I did for the amd-pmf handler.
-> >=20
-> > In their own platform_profile namespace, these handlers still work
-> > normally
-> > and only accept the profiles from their probe functions, with -
-> > ENOSUP for
-> > the rest.
-> >=20
-> > In the absence of a primary handler, the options of all secondary
-> > handlers
-> > are unioned in the legacy sysfs, which prevents them from hiding
-> > each
-> > other's options.
-> >=20
-> > With this patch series applied, the sysfs interface will look like
-> > this:
-> >=20
-> > $ cat /sys/firmware/acpi/platform_profile_choices
-> > quiet balanced performance
-> >=20
-> > And writing quiet to it results in the profile being applied to
-> > both
-> > platform profile handlers.
-> >=20
-> > $ echo low-power > /sys/firmware/acpi/platform_profile
-> > bash: echo: write error: Operation not supported
-> > $ echo quiet > /sys/firmware/acpi/platform_profile
-> > $ cat /sys/class/platform-profile/platform-profile-*/{name,profile}
-> > asus-wmi
-> > amd-pmf
-> > quiet
-> > quiet
-> >=20
-> > Agreed ABI still works:
-> > $ echo quiet > /sys/class/platform-profile/platform-profile-
-> > 0/profile
-> > $ echo quiet > /sys/class/platform-profile/platform-profile-
-> > 1/profile
-> > bash: echo: write error: Operation not supported
-> > $ echo low-power > /sys/class/platform-profile/platform-profile-
-> > 0/profile
-> > bash: echo: write error: Operation not supported
-> > $ echo low-power > /sys/class/platform-profile/platform-profile-
-> > 1/profile
-> >=20
->=20
-> I understand where you're coming from with this implementation but my
-> concern is this is making profiles more complicated - and they're
-> already becoming hard to understand (and debug) for users.
->=20
-> I'm not a huge fan of multiple profile handlers, but can see why some
-> people might want them and that they're a valid tool to have
-> (especially given some of the limitations of what platform vendors
-> themselves implement).
->=20
-> In patch #3 it states that 'It is the expectation that secondary
-> handlers will pick the closest profile they have to what was sent'.
-> I'm not convinced that is true, or desired.
->=20
-> e.g. Quiet and low-power are different things and can have different
-> implementations. One is giving you as much power as possible with the
-> fans running below a certain audible level; and one is giving you a
-> system with as low-power consumption as possible, but still be
-> usable. They're admittedly not very different in practice - but they
-> can be different.
->=20
-> Would it be better here to ask AMD to implement a quiet profile
-> (maybe it can be based on low-power, at least initially)?
-> I think that would solve the ASUS issue and not introduce another
-> layer of complexity.
->=20
-> Mark
+On Tue, Jan 21, 2025 at 11:33:46AM +0100, Eugenio Pérez wrote:
+> A VDUSE device that implements virtiofs device works fine just by
+> adding the device id to the whitelist.
+> 
+> Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
 
-Hi Mark,
 
-I've supported over 80 different ASUS laptops in the last 6 years or
-so, I can offer some insight.
+OK, but the commit log really should say why
+you are doing this. And also why is it safe.
 
-Across the entire range (TUF, ROG, Vivobook, Zen) which implements some
-form of "thermal throttle" as it is called in asus-wmi (which is what
-is used by platform_profile) the difference between low-power and quiet
-is very much nil - the "quiet" profile is only a name, and the TDP is
-limited along with fans to match - so the result is "low-power".
-
-As Mario suggests in his reply perhaps an alias would be best, or, as I
-was going to do, simply rename the "quiet" profile in asus-wmi to "low-
-power" as I already did but have not submitted yet due to a large train
-of patches in progress. It's a single line change and nullifies the
-entire issue and this series.
-
-In any case asus handling of platform profile is something I have been
-steadily working on for the last few months for both laptops and
-handhelds and I will have a new patch series coming soon (version 7 of
-previously submitted dealing with this).
-
-This submitted series is a NACK from me.
-
-Cheers,
-Luke.
-
+> ---
+>  drivers/vdpa/vdpa_user/vduse_dev.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_user/vduse_dev.c
+> index 7ae99691efdf..6a9a37351310 100644
+> --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> @@ -144,6 +144,7 @@ static struct workqueue_struct *vduse_irq_bound_wq;
+>  static u32 allowed_device_id[] = {
+>  	VIRTIO_ID_BLOCK,
+>  	VIRTIO_ID_NET,
+> +	VIRTIO_ID_FS,
+>  };
+> 
+>  static inline struct vduse_dev *vdpa_to_vduse(struct vdpa_device *vdpa)
+> --
+> 2.48.1
 
 
