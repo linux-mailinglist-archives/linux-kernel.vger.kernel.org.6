@@ -1,169 +1,189 @@
-Return-Path: <linux-kernel+bounces-528574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EF9A41942
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:35:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26FACA41943
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:36:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48F473A6876
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93BD13A34E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61B32441B4;
-	Mon, 24 Feb 2025 09:32:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3C0242912;
+	Mon, 24 Feb 2025 09:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W0t+e4Of";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yR8svMJ4"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2FA0189912
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F83B1C861E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389579; cv=none; b=hunxXsbeF+DPNhCqTHOluZwdBHtiRULqPql0w88rSf2liIQRA/0OYR1sl0mRw7zwMxjBoz7eMjyyl0H3xl0/WzDqM4ZENX4Q66RdSFlVl/nUabUU4cBN/6GyZ8Og5Mhx0T5LRUuOaZXmgpVWuU2+vwhuvNVovyDgnyAK9chuPFw=
+	t=1740389618; cv=none; b=IWPw3nd1vsQk2a9/MkfhJ3RsxMmaDXlbQZgmMHU+dcM3wqeeiLbUxuF6n2dwlqdwLunM5A4BSuFz4/OaQNgpPNZSpX9ft0yrj7hU8w0yTPXCdftzvhd51iDEQmuA/OEvCY5iFhiFYIt1yJnqeLOEubTw1waO5xqgUn+HyhPg5mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389579; c=relaxed/simple;
-	bh=GJw38/7zb3uA+OAobw5YbPXz0q12/WPSDUd/mmzwGCw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=qNoip7o78O/EB5+inPsHnWdlMV+mpxH/RYXV973toTNkQ6U/pqcKtsiuGcAUBEaVsKqah2gmBuIyznAW6S2qK3RjNGXIXEafnqGs9egJWstV0U05YwD6hdmI/6IJ979+MzbQPbudgzAYsPlm1KJ+9kj8lWhxe6TQoqqUIbfuSWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmUpA-0002iD-0i; Mon, 24 Feb 2025 10:32:28 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmUp9-002ZLh-14;
-	Mon, 24 Feb 2025 10:32:27 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmUp9-0003W5-0p;
-	Mon, 24 Feb 2025 10:32:27 +0100
-Message-ID: <db8dad75c03d747d16cdc67ebbedd5c2f8c27a6d.camel@pengutronix.de>
-Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new register
- mode driver
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, "benh@kernel.crashing.org"
-	 <benh@kernel.crashing.org>, "joel@jms.id.au" <joel@jms.id.au>, 
-	"andi.shyti@kernel.org"
-	 <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org"
-	 <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"andrew@codeconstruct.com.au"
-	 <andrew@codeconstruct.com.au>, "andriy.shevchenko@linux.intel.com"
-	 <andriy.shevchenko@linux.intel.com>, "linux-i2c@vger.kernel.org"
-	 <linux-i2c@vger.kernel.org>, "openbmc@lists.ozlabs.org"
-	 <openbmc@lists.ozlabs.org>, "devicetree@vger.kernel.org"
-	 <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	 <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	 <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 24 Feb 2025 10:32:27 +0100
-In-Reply-To: <OS8PR06MB75413DA9AF08F23506FA6DDBF2C02@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
-	 <20250224055936.1804279-3-ryan_chen@aspeedtech.com>
-	 <ee0f5b583aadb42e7557e1afc49c5b9af594d2c3.camel@pengutronix.de>
-	 <OS8PR06MB75413DA9AF08F23506FA6DDBF2C02@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740389618; c=relaxed/simple;
+	bh=Zcmbwv5uGMx/Ii7EGISedD6hsAoxcOXn58zM4coDStg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NXkmpp0KG22hbXTyFie+pVLGTMaGa6coLCZg8zD3LxkUJWzIoVuKcXyhuv4SR/7RETjiH6WcZEQMheakjWyZ7mh+YgXJhErcraDg61vuwmmwGoKcz+F0OGWnpjoTj1jEvWztX20eU4mh75Tq9qnU6Agi3XBulgFzzceL3l0yJ+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W0t+e4Of; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yR8svMJ4; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740389614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=thD0VAK0LcD2Jy2Le/qOKSZ2u3p8iSZ34jCsDjgTLzc=;
+	b=W0t+e4OfH2lLgfJmjbhfcs7OJS+0zJdvPg8bTjE5j0SJN0LxqMDxnfhHLrFao3J3IvELez
+	2kwg1JqzV43d7bry8hAeGgYlveY+taL5OwiRo5rlmbyNVZxvnnX25evYOissBzlU0uEEsY
+	GjcNcW8fYynFDBQbvZHZL7ozn/wuwE40UUI1Be13wp5d3EQCDqepjyTFp0+gMTOmiEVEEE
+	Ce05X4QuBi8CXO6vkaI/ubdjvLb1mi3Xbx2ciJMBZM1100QDFh04aV82vF54eKgkX1pz3D
+	zlzU/cNyPeTOrKWcA6mfqQtGlKRtzYV1MmloGYC+F/By4DdYl9pxuoGnC7DxMw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740389614;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=thD0VAK0LcD2Jy2Le/qOKSZ2u3p8iSZ34jCsDjgTLzc=;
+	b=yR8svMJ4gaoSuMreVMmCbdKd7GIx/i+9o08tTdf1fdmB6xzY2RIbtZbBrniBqtSvZ2kDqz
+	dTpYND1hWkL4CCDw==
+To: Eric Dumazet <edumazet@google.com>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>, Benjamin Segall
+ <bsegall@google.com>, Eric Dumazet <eric.dumazet@gmail.com>, Eric Dumazet
+ <edumazet@google.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH V2 4/4] posix-timers: Use RCU in posix_timer_add()
+In-Reply-To: <20250219125522.2535263-5-edumazet@google.com>
+References: <20250219125522.2535263-1-edumazet@google.com>
+ <20250219125522.2535263-5-edumazet@google.com>
+Date: Mon, 24 Feb 2025 10:33:33 +0100
+Message-ID: <871pvnheky.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 
-On Mo, 2025-02-24 at 09:04 +0000, Ryan Chen wrote:
-> > Subject: Re: [PATCH v16 2/3] i2c: aspeed: support AST2600 i2c new
-> > register
-> > mode driver
-> >=20
-> > On Mo, 2025-02-24 at 13:59 +0800, Ryan Chen wrote:
-> > > Add i2c new register mode driver to support AST2600 i2c new
-> > > register
-> > > mode. AST2600 i2c controller have legacy and new register mode.
-> > > The
-> > > new register mode have global register support 4 base clock for
-> > > scl
-> > > clock selection, and new clock divider mode. The new register
-> > > mode
-> > > have separate register set to control i2c controller and target.
-> > > This
-> > > patch is for i2c controller mode driver.
-> > >=20
-> > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > > ---
-> > > =C2=A0drivers/i2c/busses/Kconfig       |   11 +
-> > > =C2=A0drivers/i2c/busses/Makefile      |    1 +
-> > > =C2=A0drivers/i2c/busses/i2c-ast2600.c | 1036
-> > > ++++++++++++++++++++++++++++++
-> > > =C2=A03 files changed, 1048 insertions(+)
-> > > =C2=A0create mode 100644 drivers/i2c/busses/i2c-ast2600.c
-> > >=20
-> > [...]
-> > > diff --git a/drivers/i2c/busses/i2c-ast2600.c
-> > > b/drivers/i2c/busses/i2c-ast2600.c
-> > > new file mode 100644
-> > > index 000000000000..bfac507693dd
-> > > --- /dev/null
-> > > +++ b/drivers/i2c/busses/i2c-ast2600.c
-> > > @@ -0,0 +1,1036 @@
-> > [...]
-> > > +static int ast2600_i2c_probe(struct platform_device *pdev) {
-> > > +	struct device *dev =3D &pdev->dev;
-> > > +	struct ast2600_i2c_bus *i2c_bus;
-> > > +	struct resource *res;
-> > > +	u32 global_ctrl;
-> > > +	int ret;
-> > > +
-> > > +	i2c_bus =3D devm_kzalloc(dev, sizeof(*i2c_bus),
-> > > GFP_KERNEL);
-> > > +	if (!i2c_bus)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	i2c_bus->reg_base =3D devm_platform_ioremap_resource(pdev,
-> > > 0);
-> > > +	if (IS_ERR(i2c_bus->reg_base))
-> > > +		return PTR_ERR(i2c_bus->reg_base);
-> > > +
-> > > +	i2c_bus->rst =3D devm_reset_control_get_shared(dev, NULL);
-> > > +	if (IS_ERR(i2c_bus->rst))
-> > > +		return dev_err_probe(dev, PTR_ERR(i2c_bus->rst),
-> > > "Missing reset
-> > > +ctrl\n");
-> > > +
-> > > +	reset_control_deassert(i2c_bus->rst);
-> >=20
-> > No reset_control_assert() in the error paths below? You could get
-> > that and
-> > simplify this by using devm_reset_control_get_shared_deasserted().
-> >=20
-> Sorry, devm_reset_control_get_shared_deasserted is new for me.
-> Do you mean modify by following=20
->=20
-> i2c_bus->rst =3D devm_reset_control_get_shared_deasserted(dev, NULL);
-> if (IS_ERR(i2c_bus->rst))
-> =C2=A0=C2=A0=C2=A0=C2=A0return dev_err_probe(dev, PTR_ERR(i2c_bus->rst), =
-"Missing reset
-> ctrl\n");
->=20
-> - reset_control_deassert(i2c_bus->rst);
+On Wed, Feb 19 2025 at 12:55, Eric Dumazet wrote:
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -125,7 +125,19 @@ static int posix_timer_add(struct k_itimer *timer)
+>  
+>  		head = &posix_timers_hashtable[hash(sig, id)];
+>  
+> +		rcu_read_lock();
+> +		if (posix_timers_find(head, sig, id)) {
+> +			rcu_read_unlock();
+> +			cond_resched();
+> +			continue;
+> +		}
+> +		rcu_read_unlock();
+>  		spin_lock(&hash_lock);
+> +		/*
+> +		 * We must perform the lookup under hash_lock protection
+> +		 * because another thread could have used the same id.
+> +		 * This is very unlikely, but possible.
+> +		 */
+>  		if (!posix_timers_find(head, sig, id)) {
+>  			timer->it_id = (timer_t)id;
+>  			timer->it_signal = (struct signal_struct *)((unsigned long)sig | 1UL);
 
-Yes see [1]. Remove the reset_control_assert() in ast2600_i2c_remove()
-as well.
+So I played with that because I wanted understand what's going on.
 
-[1] https://docs.kernel.org/driver-api/reset.html#c.devm_reset_control_get_=
-shared_deasserted
+Actually this change is just voodoo programming. Why?
 
-regards
-Philipp
+  The only case where this lockless lookup would help is when the timer
+  ID wrapped around and the lookup has to validate a large range of
+  already occupied IDs, but even then the lookup is dropping hash_lock
+  after each ID search. I seriously doubt that this is the case at hand
+  because according to Ben this happens when a process is started or
+  restored, which means there is no timer ID wrap around and therefore
+  no timer ID collision in the process itself.
+
+In fact the extra lookup is counter productive in most cases:
+
+ With a single process, which creates 50000 timers in a loop, this
+ results in:
+
+ [1]        mainline     +lookup
+ create        98 ms      219 ms
+
+ and it gets worse with 100000 timers:
+
+ [2]        mainline     +lookup
+ create       313 ms      650 ms
+
+Why? Because with 100k timers the hash buckets contain ~200 timers each,
+which means in the worst case 200 timers have to be walked and
+checked. Doing this twice obviously at least doubles the time.
+
+Now there is a case where the change improves the situation, but for the
+very wrong reasons:
+
+ A process forks 63 times and all forks wait on a barrier before each
+ instance creates 20000 timers. The processes are pinned on seperate CPUs
+ to achive maximum concurrency. The numbers are the average times per
+ process:
+
+ [3]        mainline     +lookup
+ create    157253 ms    40008 ms
+
+But that improvement has absolutely nothing to do with the timer ID
+collision. The extra lookup (and I verified with tracing) creates just
+enough interleaving so that all CPUs can make progress on the hash lock
+instead of being stuck in a cache line bouncing shitshow. The very same
+can be achieved by:
+
+        ndelay(total_number_of_timers / $CONSTANT);
+
+So, no. This is not a solution. The proper solution is to replace the
+hash by a scaled hash with per hash bucket locks, like we have in the
+futex code already. I've implemented this and the result proves the
+point with the three test cases:
+
+ [1]        mainline     +lookup   scaled hash
+ create        98 ms      219 ms         20 ms
+
+ [2]        mainline     +lookup   scaled hash
+ create       313 ms      650 ms         48 ms
+
+ [3]        mainline     +lookup   scaled hash
+ create    157253 ms    40008 ms         83 ms
+
+This is really only a problem of the hash collisions and the resulting
+list walk length, which is easy to prove by extending the tests above.
+
+After creating the timer and synchronizing again (for the fork case),
+the test invokes timer_getoverrun(2) for all created timers in a loop.
+
+ [1]        mainline     +lookup   scaled hash
+ create        98 ms      219 ms         20 ms
+ getoverrun    62 ms       62 ms         10 ms
+
+ [2]        mainline     +lookup   scaled hash
+ create       313 ms      650 ms         48 ms
+ getoverrun   261 ms      260 ms         20 ms
+
+ [3]        mainline     +lookup   scaled hash
+ create    157253 ms    40008 ms         83 ms
+ getoverrun  2611 ms     2614 ms         40 ms
+
+I picked timer_getoverrun(2) because that's just doing the lookup and
+reading from the k_itimer struct after locking it. So the syscall has no
+contention on the timer lock nor on anything else. According to perf the
+vast majority of time is spent in the list walk to find the timer and of
+course the cache foot print becomes worse the larger the bucket lists
+become.
+
+Let me write proper changelogs and a cover letter and post that stuff.
+
+Thanks,
+
+        tglx
 
