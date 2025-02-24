@@ -1,166 +1,219 @@
-Return-Path: <linux-kernel+bounces-528304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62887A4160D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:15:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B665A41610
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:15:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2C13B42DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:13:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3042B16EDF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C74423FC66;
-	Mon, 24 Feb 2025 07:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4539A240610;
+	Mon, 24 Feb 2025 07:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if8lQvhE"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g2qWAakO"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4A518E377;
-	Mon, 24 Feb 2025 07:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E189F19ABB6;
+	Mon, 24 Feb 2025 07:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381239; cv=none; b=E75O0X0AMUlt1+pNKG0SKogaBNSqc7uoMXfMUEF4aa/GOyF3i0qhZO94b4xEuCUiX9vEpXhz85/Y4LkTtaipJeuH9RbrhyVL0zaY3XDAnYS/r6yM36jnNwww8RdvKYsk8SMghMYe3pfXZhbeu8KYjhw7mBa5+sHXOf1Ky/eiq1Q=
+	t=1740381258; cv=none; b=GoeO7T0KdhWQiUiYKR3sLzjHNGedRuRjLu9OLUOEgR/MgPvD4UaUZdLckZPxVy2jXChArYPX49j5OBlV3ggon57YcJh4rbgO82NwF/NjLdGgm9GSEE5qI//EiJxBz1jM9S8fBxR6SDiW44hZZ36s0XQHtAITEdwOfQkdy85OAtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381239; c=relaxed/simple;
-	bh=bQb2/dc1WzW2BE++gvgsOTmck7L6Nvf4DdHExnkKCCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GQItS5JxsX0RjbknyaG64b+bhrHsVV/iBuzYvOrKJS1onmjfxJlF/9EMpFYCot8cgJmX+wFFDEa/hizuFjKTi+5pbBSuibz9m2bZ9l3q5TRYMh1DLdtenQqqYCen+3o3Rxhm7mUV5V0GacBTt/pRhUkFsGDxY03DXUPkrwuQ36c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if8lQvhE; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1740381258; c=relaxed/simple;
+	bh=3Rp0ZJHnJLGhisTv0hRmULsmiBB0mQ8CzYV+Cnn1s6Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B76RtwO9HdqP4gNqN1/jwmijLf1xt50kadTVlE+6S7ByztmNVH+HQhUjVYn520YhzyvJWu7cW472Q3YQ0dPxIZwh8YdS01lpWGxttSHoABgx0vn/BRLDIXIFtWpkRjqDOa4P8SRk1+OnYLpvjuZ9YPe0FtecU+1FlLE+venpxgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g2qWAakO; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb81285d33so779239366b.0;
-        Sun, 23 Feb 2025 23:13:57 -0800 (PST)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f504f087eso3274562f8f.1;
+        Sun, 23 Feb 2025 23:14:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740381236; x=1740986036; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AhJ1T/fwWWXZEiEbcn+HPev6I/zpx52m+r3y5yvwxno=;
-        b=if8lQvhE8okM+fuHSrY8eK39/VGmeaUcFJrAx40FA4YzbZ6TV7vToKIgU4l23coK/Q
-         VrzWqn21m6/dctQNLrxMp4LcDkQz765JfhmMteSiMx6SCL4EKkmDdTVuzC1Gu2z8nBCN
-         tKiXkowgKLPe0Lni9Z8I69SyYEtZc+tKYTYUJ7oZpuVV3HkOMGWBoZdmYB91P86sh1lg
-         LZpZJodjbKP8Z9aZir9XDgkB+6lRft+JSOFr33rmGbIOhxndwj2XvMJxAhELMcSdrkBC
-         +6J1udlYb0ElWU1ZK/7zJ+HD9HN7ExmRYm/uGJYTPaweCWknBVw/nxVr2/JISmvS8IoN
-         AtAg==
+        d=gmail.com; s=20230601; t=1740381255; x=1740986055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YGDYyJHeIvbN67HiPEdMBYxe4lOwRgtICljAixydSZg=;
+        b=g2qWAakOzAc0FXRbDedFR2IaQMSDAkVoObF/uPWhHu3ikwah0+H8pL5Da8GZYPZYk5
+         Mt8pXhDL0JFOM17QYOHS9s/BzGC3fc4DDuw1kvctad54EQtwB0wwmSyhuQ+YjZYnD8pN
+         0IucSQ0+QNE3ArhI57a+D1hZ4Cc2HrdQANFptbv6GE8BaRv5e14vVFgNkbPxgTELzm9N
+         DQFbnTHv2Qg7c0aEZNTsrKZ6BnHoir1E5kWb/BjIJI6hHtuZiCDGYjGI7jKAZDobPAQe
+         bG5m+o2Q23fXvciXwCn2aHBmt6sP4OGG1qWQuG8oVHp3hXcfj2bTNtlTrrvJbjNnaV75
+         c5EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740381236; x=1740986036;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=AhJ1T/fwWWXZEiEbcn+HPev6I/zpx52m+r3y5yvwxno=;
-        b=ZJTbiE8vByRsWdeg1sNDN5vdOsFl9ptOxR40G3gypNrqSWhNoNwgmlTWRTF5Yj4i47
-         Cy6GpWPuPpRgcnGfkGaKVbcaTvAL5+RotJzm4h3Naw9WapmlOMWs+vsy8LXEYU7gYeIG
-         6dmLgqaqTNH8bX33uQmcONLqqkAIYsBFxGAg54p7V2j6gTUQZMe9jwWNLKO21XCOanNI
-         GdXmszUVgsWyhsP9UCv7lNtZXsqy5cPUFqJy4qfjJXw+UyVdOFnTG6wGMhvxgJx106fI
-         /k4lf3AogfkFoa2Z5FN8VGM5Cy/TKYG3vD8S4UrmTC3Hh3bC+cEbvYmxZrwDCEujydv7
-         bYLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAGs33thR+1rGjZbMInSttBDQF4Rn5nY+chXFVLxXNpiu1/UhSl2G4VMJYTYwTPOGEdQUU8jTPHVv3@vger.kernel.org, AJvYcCV76yqCjfKyycTLXq4ta3cb0s2AvUlllcUlRW8/Jdc4bFbtnnXOOn4Y/YpFhiVhrAPF9WvydtucVYWq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWA1EV3LsOP1LcWRrcoap2jtonB9WhJxnovLd6igmi6zczhkxQ
-	V9vrohrjhNlNbqKm4bgJdn1j2uCuxnRr7OU8GXmDjL1exSu0D6bY
-X-Gm-Gg: ASbGnctQCLMj6W9X3KBWwhn022xzBNMyuyI/7aCrqsbj6SIpKXh+p2bDRU5nq9ET410
-	w9Dhj6mRc2kHnCTMxnkm8Ev5fUIb+AUrzr46sZY7hbYspc/Bdg09eUv7Upn7HazVBM1MSn9GCIM
-	+FEAwt+xurcxE+Uw/lZ3mQZU8XZM4eEhAEq4uKVr/hJiN5YGV4qUwJnaIPMoqY2k0UfYO1zCXZm
-	Q1S1F8Q8y18+y+ht4CWLL9DonS5VusTDuuzJ3GAuAMZ+lESaY8X3S9elFwsotYegvW4WT2kws70
-	WRPGYqBDWy9H02i46uI/z5ZgqQ==
-X-Google-Smtp-Source: AGHT+IFTl/OJwiOMCrQwp/6jVuRvgGddWSjPDFK5GMI5evFJFlBu1ePwDd5puvr/8TxFgsTqVzZxSQ==
-X-Received: by 2002:a17:907:7ea0:b0:ab7:d361:11b4 with SMTP id a640c23a62f3a-abc099b7f3fmr1362031766b.7.1740381235930;
-        Sun, 23 Feb 2025 23:13:55 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbda707e3dsm1034964866b.106.2025.02.23.23.13.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 23 Feb 2025 23:13:55 -0800 (PST)
-Date: Mon, 24 Feb 2025 07:13:55 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 12/14] x86: Add KHO support
-Message-ID: <20250224071355.xsl2dbupda4dhfzl@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-13-rppt@kernel.org>
+        d=1e100.net; s=20230601; t=1740381255; x=1740986055;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YGDYyJHeIvbN67HiPEdMBYxe4lOwRgtICljAixydSZg=;
+        b=gmKW1yeerQl4BUtkmn1uwpJEJhZXRxAug6K8qwvv3GFbfXkLQMcn74dm+Ylg29Fm3l
+         jRvCLgGU5zxC4l6GqfJb8YpL0q0Y1sLskvZITuKgmuQmnLvyGmK3LDPcayTW5cIt2eDu
+         6Je5myK+QooYWQwHfTo0kPe03yUteNKbuI4SSy2Z43+8L8WSAuquKPUzZJtwem61Fwqo
+         45gUUKveWGmUpa26+b6vDeaLp9m/321mETf3aVSX+qe0I+nPzRUPB5n8/eMejMUcJE7D
+         NaNEsBWCqu9+hjtqIoJdKbtt48B2jThwI15UqHs7ni3bL923jGQFQABTO/c6XHzWe8P2
+         5csw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVZvThb7fIVtmaPud1j3x6cXnhZJ5y82pa2qJq+4/4fHJV40EbhnQ54Dt5foUSuxAy4xJw+FIVNGE4v/gCXQ6CJ7g=@vger.kernel.org, AJvYcCVULu76Uc6gtY0iZLOjYt9ktzMa/Rm6fmEoPxI36ew7xxJMwN9dxpirS0QyDMVosDiY21OE9vc06DTI@vger.kernel.org, AJvYcCWpa5IskDSo0NL7yh5PeiPffTE7SrSYIwiyIi+vZdX+tpx3bkPnIjMX0jIaeFBWclSa5y1XJ0oReXm09QQu@vger.kernel.org, AJvYcCX2dF6gjj3YIiOS49yRvJNkJ488iZdkVqwrCqGigaYjUdIdDhkZBgT8SS+D18pewzL2849SCi9ZVGngkJ0YTA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwwuvRWgDniP8YBRt20WoveO7I6oUZx4z0FoQH3BUt1zqv+UY+
+	VAJLYBFmkCdOIcpguThXbPDcqWqIp+U1zfs8WQDt7gn4CVm6iJMJ
+X-Gm-Gg: ASbGncvIn2f8Zkjj+RlATHuP8W1T5ZYndBWB9BZeVWba45FzOKFvX3nAyOlEW17zEWJ
+	nYbB5KE0bEnJBno8IffLtHEy3Y4Yh18UEWpuxhnPi4WJIMy0p6wizKsm0/wuMmEUtSDuM5cVuC0
+	ko3xQcM2gdSb15X0oDqA+0eQ9T9USjKd10TZwuBRQAge5PAo6b7TRXGSWIMBgyTH+PBLlVexSgC
+	t4gLL0Br4TTrMJP3uyFKEJxc8f1nDFLOn/wOPd35kaiKaopJzvtxaPldLtot0Jf9NqV59M6Dgwu
+	r1/CjLPRMUvZfmyAOvyHVxVrPKmSxGXWje1y+pjh
+X-Google-Smtp-Source: AGHT+IGwNUNxA01WRc9bPdVz1GSmsf5EHfuq7knr43OKBQrWqaclxDJN2pEyp9jAXY6JIC3+Wo1lJg==
+X-Received: by 2002:a5d:5885:0:b0:38f:2a32:abbb with SMTP id ffacd0b85a97d-38f7d1ffc25mr4536838f8f.4.1740381254826;
+        Sun, 23 Feb 2025 23:14:14 -0800 (PST)
+Received: from [192.168.43.21] ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399be79d92sm111533745e9.0.2025.02.23.23.14.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Feb 2025 23:14:13 -0800 (PST)
+Message-ID: <3d23ec54-6e55-4ee4-bc1a-179ca97878ef@gmail.com>
+Date: Mon, 24 Feb 2025 09:14:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250206132754.2596694-13-rppt@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] dt-bindings: phy: snps-eusb2: add exynos2200
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-3-ivo.ivanov.ivanov1@gmail.com>
+ <4tvpl3pujnuw2qjwu7f7ryrr5dndxow7srkkp2223wmexr23bi@7nmgrpq6znpg>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <4tvpl3pujnuw2qjwu7f7ryrr5dndxow7srkkp2223wmexr23bi@7nmgrpq6znpg>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 06, 2025 at 03:27:52PM +0200, Mike Rapoport wrote:
->From: Alexander Graf <graf@amazon.com>
-[...]
->diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
->index 82b96ed9890a..0b81cd70b02a 100644
->--- a/arch/x86/kernel/e820.c
->+++ b/arch/x86/kernel/e820.c
->@@ -1329,6 +1329,24 @@ void __init e820__memblock_setup(void)
-> 		memblock_add(entry->addr, entry->size);
-> 	}
-> 
->+	/*
->+	 * At this point with KHO we only allocate from scratch memory.
->+	 * At the same time, we configure memblock to only allow
->+	 * allocations from memory below ISA_END_ADDRESS which is not
->+	 * a natural scratch region, because Linux ignores memory below
->+	 * ISA_END_ADDRESS at runtime. Beside very few (if any) early
->+	 * allocations, we must allocate real-mode trapoline below
->+	 * ISA_END_ADDRESS.
->+	 *
->+	 * To make sure that we can actually perform allocations during
->+	 * this phase, let's mark memory below ISA_END_ADDRESS as scratch
->+	 * so we can allocate from there in a scratch-only world.
->+	 *
->+	 * After real mode trampoline is allocated, we clear scratch
->+	 * marking from the memory below ISA_END_ADDRESS
->+	 */
->+	memblock_mark_kho_scratch(0, ISA_END_ADDRESS);
->+
+On 2/24/25 01:43, Dmitry Baryshkov wrote:
+> On Sun, Feb 23, 2025 at 02:22:21PM +0200, Ivaylo Ivanov wrote:
+>> Exynos 2200 makes use of the Synposys eUSB2 IP, so document it in the
+>> binding. Unlike the currently documented Qualcomm SoCs, it doesn't provide
+>> reset lines for reset control and uses more clocks.
+>>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov@gmail.com>
+>> ---
+>>  .../bindings/phy/snps,eusb2-phy.yaml          | 64 +++++++++++++++++--
+>>  1 file changed, 57 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
+>> index 22c77968f..f4164db71 100644
+>> --- a/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
+>> +++ b/Documentation/devicetree/bindings/phy/snps,eusb2-phy.yaml
+>> @@ -23,6 +23,7 @@ properties:
+>>                - qcom,x1e80100-snps-eusb2-phy
+>>            - const: qcom,sm8550-snps-eusb2-phy
+>>        - const: qcom,sm8550-snps-eusb2-phy
+>> +      - const: samsung,exynos2200-snps-eusb2-phy
+>>  
+>>    reg:
+>>      maxItems: 1
+>> @@ -31,12 +32,12 @@ properties:
+>>      const: 0
+>>  
+>>    clocks:
+>> -    items:
+>> -      - description: ref
+>> +    minItems: 1
+>> +    maxItems: 3
+>>  
+>>    clock-names:
+>> -    items:
+>> -      - const: ref
+>> +    minItems: 1
+>> +    maxItems: 3
+>>  
+>>    resets:
+>>      maxItems: 1
+>> @@ -58,11 +59,60 @@ required:
+>>    - compatible
+>>    - reg
+>>    - "#phy-cells"
+>> -  - clocks
+>> -  - clock-names
+> Why? Clocks are required in both if clauses.
 
-At the beginning of e820__memblock_setup() we call memblock_allow_resize(),
-which means during adding memory region it could double the array. And the
-memory used here is from some region just added.
+Right. And "ref" is a requirement. I'll fix that in the next revision.
 
-But with KHO, I am afraid it would fail?
+Best regards,
+Ivaylo
 
-> 	/* Throw away partial pages: */
-> 	memblock_trim_memory(PAGE_SIZE);
-> 
+>
+>>    - vdd-supply
+>>    - vdda12-supply
+>> -  - resets
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - qcom,sm8550-snps-eusb2-phy
+>> +
+>> +    then:
+>> +      properties:
+>> +        reg:
+>> +          maxItems: 1
+>> +
+>> +        clocks:
+>> +          items:
+>> +            - description: ref
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: ref
+>> +
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>> +        - resets
+>> +
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            enum:
+>> +              - samsung,exynos2200-snps-eusb2-phy
+>> +
+>> +    then:
+>> +      properties:
+>> +
+>> +        clocks:
+>> +          items:
+>> +            - description: Reference clock
+>> +            - description: Bus (APB) clock
+>> +            - description: Control clock
+>> +
+>> +        clock-names:
+>> +          items:
+>> +            - const: ref
+>> +            - const: bus
+>> +            - const: ctrl
+>> +
+>> +      required:
+>> +        - clocks
+>> +        - clock-names
+>>  
+>>  additionalProperties: false
+>>  
+>> -- 
+>> 2.43.0
+>>
 
--- 
-Wei Yang
-Help you, Help me
 
