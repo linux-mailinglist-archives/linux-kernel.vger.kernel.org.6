@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-530098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E670A42EDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:20:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363C1A42F00
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:24:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E8633A6757
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:19:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 601411891E09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0461C862C;
-	Mon, 24 Feb 2025 21:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2021DE89E;
+	Mon, 24 Feb 2025 21:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Rd55fAqS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="F7hu11Ca"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AA31D7E42;
-	Mon, 24 Feb 2025 21:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740431966; cv=none; b=KkCX/wHsFfoTHsif0P3wFYyAMk1Jb/EXFGrx67vOUvbqx/jKDvrM2H2lQeF6zRs8eiPOdiVJz30wLH3yjxZd4InNkuba4GvN+UTMaBnhizoKPecbaJeKCPdcEbk58rpja/ukBZmQDKH56/jaehRnY+rdV9viy7XQQWC62spoo9Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740431966; c=relaxed/simple;
-	bh=YoEVxQm7GUNB/Pace/xv1ua8aa3MZ5wuQD3jL7sthmc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LuOUiO60S6iUWAr2eqH3iri3B72SUPz+e3le3mgwevjkcc5pF1WSFQ0JG1AbTZvDQpI6M4VOIPr5erbNE36Q57AQgNimVW4k6uNuaro/KuXCAzz2UKJIbUv5/B87XWQPDzS1exzmiHj/pBUm0aH/E2BwHoFhCMyJXrDY86QkjU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Rd55fAqS; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-38f3ee8a119so2419631f8f.0;
-        Mon, 24 Feb 2025 13:19:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740431963; x=1741036763; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RpeO2CI36Azm6aM6kCOPxfPUs3dzzjFPJf88qBzpQcg=;
-        b=Rd55fAqSNJ4lxCeUg8wOhHhdTaLqBpdfQ71vyjLVW92O8X0WBnboP3XJKDwOmvYNI1
-         WbJ0BKCPA2JUALL54LECPRDK7pk/g+9yFQk9wsht1TD0oJz+gi+e7EdLDn1jIAmJOMFq
-         E8GTe/xWR2fopiB34sCEpMTXkxPg4EssaZQYJsa4mieWxcbkEUaNIedeiDmfwwAhUCHf
-         EqyCrhNQ5kB15YenQHGwVMPVNhC3Wn338cKio01uaJep9ySlg/LOEc4Qa/Tythxt5h+t
-         hf+dvE8p5c8WGFffTJeRdek8qnWGmuH35thGeHqtA/RlU10+b2oSY9Xzl6CxPQlR6xge
-         wsmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740431963; x=1741036763;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpeO2CI36Azm6aM6kCOPxfPUs3dzzjFPJf88qBzpQcg=;
-        b=ddN+NgXKwvP3L9d08XdB40OOl12ysM/2D2egvHFmlJS5FuHnwLHeS1njPTbWmTIgnA
-         1dXBcCPYAPsnwuBkk/rxyRp8DloJEH/5P9dFzK/4uaerbiL8kWRNBwJFXdY/w1dqNT/f
-         mq7hCEuAJEKSTareEs+B9MnOksYWznC31sIgtrd+/3MXP315vUL1MGKUkdsHvBfDkcQC
-         9skOTA5pRUp0voEd9HVwt8EX1diya/zbLCT5vQa2mQDhlHeFbz2G3Dcvozwz2bjZVogS
-         qRmTkzokmFps5XSc1R25szjJFUc0loOn7jPf2vpUGCFiqtEAXmDUiluAGFpZYa0iHH13
-         dqwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnMTZvC5On/4FRGdoJf+I5IyQKr4QdSE5Ghf6GAsDSgsX/D5Wgw2DWhEKUQlGYQJf4VzlMTyeU@vger.kernel.org, AJvYcCWz8YKvWA1KOnR8Ow4RwPTbd9i9LW7D47rUPqYJvDBLNPLgwupm5uliQ5ycmlUJ/MhECut3cQRohuUO/NE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoBUbPsbsdIzCCiGb92+MpOSwRSGBwDRMy3clgCTQv2bL4WqhY
-	1D5R6HOzNdvQzBvB5qzneM+vuVUK8Gu/gwc0ZP10nzy0XB9K2q0=
-X-Gm-Gg: ASbGncvH3eKvcpI7UU9lnL5NKg8WCCaX2msDYTkbImNpOauu1MIB3hZU6pOvwZs48VX
-	G71iCPVK59iiCtGwITPtr11+YvYFpQkMBQD7BdPmk8xjXm6FZOZz+o/kJXRwN8LFe83RvytUQdS
-	xZ2nFDdexPuviRzvZJJfKvuU5oLIZbv1wDz/2pFcpJ7sTXEZTCcNYU1IthiSE7priq/tMvZX/iD
-	vsY1aDe9Gjc4wm4q7teN3oyyUxYJEOsmfcaHYzhJ5/W+g8S1pWY2EKcxniaQf7kJvnZm+QvA6Uz
-	R1XZYQqrgxj43OGL559zTU0/ELg9h18ZZgKYWaqJnjmP6FmisDRG4rglnszJqnOMMhMnNcJZIlH
-	ktpI=
-X-Google-Smtp-Source: AGHT+IEYsevmMEoA+JE6owr4Lom17EkYScyptZxEaM2HX68zip8SRSjflN6YB00vNtpaXesHEnqkKg==
-X-Received: by 2002:a5d:6d08:0:b0:38f:4531:3989 with SMTP id ffacd0b85a97d-38f7085e028mr12832430f8f.51.1740431963449;
-        Mon, 24 Feb 2025 13:19:23 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4180.dip0.t-ipconnect.de. [91.43.65.128])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd866af3sm154293f8f.2.2025.02.24.13.19.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 13:19:22 -0800 (PST)
-Message-ID: <304185a2-5cd5-44b1-a098-3e193b433657@googlemail.com>
-Date: Mon, 24 Feb 2025 22:19:21 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0221DD874;
+	Mon, 24 Feb 2025 21:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740432206; cv=pass; b=UVmE4vl6/xz45DfxVfR51xXsZd5Gkdh6Eep4U1qHgOhcTpi2nPdIGcXoC9QuzXnOWfrr2xGfhWZkDC/nE1Z2UfttEhJsISJDTYoWjmQTLWpybOlgontpnCOxvupvE+LEcgaOHeTexk9b53YkbgxgXvdUN1quraKKxEPo54DRfkI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740432206; c=relaxed/simple;
+	bh=CiQCFozHRMC5GSFLhzKvrkJ++OZ4CJ/yKjFd6Kp60Pc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=NkwBD3jZRvi4+cpjlitSHezXY8IJielY7bUl9VtBhLTM9enRC5nMzZutpaDKN4DAYlo1SirWcJqXBZXEDDDNleRk1O+KBYQNroatO4h3aYcrR8oY35PPyVFxwynJcU4uZahbqRwC1kob0l9gvlRd1btHtAxwdjTUHH7cLUUA9rs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=F7hu11Ca; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740432158; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ktye3AcPnFCS56IwjIoT21xG1YEXmvOV7hbyNP3D1EiFbiuklctz3VthmOL7GUpkECO3vnyJ/9CycbWAtWSUf3UMdXOcJzJcrnNpfoM5yvhaw6PUJiJe33bvFZfSXfONxVxZY/IhZ83kbPR7k5Lw76Y00xgnMwG1WOTA4SdC/ys=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740432158; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Jwgy8EHw2ByXiT/plCbjBi2u1K3sOMpK7LJiWKz5MpI=; 
+	b=aD7TC7JE5Q/VulEeFl2ZDdxHsZNgzFAv7bV3YuQ+XA62IvmetTyMFKfBqcgCVlQQBeGbzcOHkobUZ9F6jGEG21JffuCnXZPsMu1HjJRZrHTWwHcaPATx2RVj0GKGZKLC39UA43HCuvJJPM+m1mJ1RGP+v70YtA/GwEEIEoSIJo0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740432158;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Jwgy8EHw2ByXiT/plCbjBi2u1K3sOMpK7LJiWKz5MpI=;
+	b=F7hu11CaCZwNU2vKsF/EJ0Xc7AATEwfyQxA+EN9PXrf8wQeoa7iSgpmwHQfuFafy
+	CVeY0A34N02lXenQ9PKKznXT+a2gnZgCoUUW1bXjXFJ0UBU/xWyuO5oGMTwf31TDUZk
+	5v8wVocIVw9MK7kdZ8Tvkfy7gB7NuPE6xoKzhHy0=
+Received: by mx.zohomail.com with SMTPS id 1740432155442578.9933183629962;
+	Mon, 24 Feb 2025 13:22:35 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.13 000/138] 6.13.5-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250224142604.442289573@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250224142604.442289573@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v4 1/4] rust: sync: change `<Arc<T> as
+ ForeignOwnable>::PointedTo` to `T`
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250224-configfs-v4-1-9af9b5e611f6@kernel.org>
+Date: Mon, 24 Feb 2025 18:22:16 -0300
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Joel Becker <jlbec@evilplan.org>,
+ Christoph Hellwig <hch@lst.de>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>,
+ Waiman Long <longman@redhat.com>,
+ Fiona Behrens <me@kloenk.dev>,
+ Charalampos Mitrodimas <charmitro@posteo.net>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B462F0CD-60F2-4494-B1DA-B19A54944EAE@collabora.com>
+References: <20250224-configfs-v4-0-9af9b5e611f6@kernel.org>
+ <20250224-configfs-v4-1-9af9b5e611f6@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-Am 24.02.2025 um 15:33 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.13.5 release.
-> There are 138 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Andreas,
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+> On 24 Feb 2025, at 10:21, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> Using `ArcInner` as `PoinedTo` in the `ForeignOwnable` implementation =
+for
+> `Arc` is a bit unfortunate. Using `T` as `PointedTo` does not remove =
+any
+> functionality, but allows `ArcInner` to be private. Further, it allows
+> downstream users to write code that is generic over `Box` and `Arc`, =
+when
+> downstream users need access to `T` after calling `into_foreign`.
+>=20
+> Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>=20
+> This patch is a dependency for Rust `configfs` abstractions. It allows =
+both
+> `Box` and `Arc` to be used as pointer types in the `configfs` =
+hierarchy.
+> ---
+> rust/kernel/sync/arc.rs | 21 ++++++++++++++++-----
+> 1 file changed, 16 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+> index dfe4abf82c25..3d77a31e116f 100644
+> --- a/rust/kernel/sync/arc.rs
+> +++ b/rust/kernel/sync/arc.rs
+> @@ -143,7 +143,7 @@ pub struct Arc<T: ?Sized> {
+> #[doc(hidden)]
+> #[pin_data]
+> #[repr(C)]
+> -pub struct ArcInner<T: ?Sized> {
+> +struct ArcInner<T: ?Sized> {
+>     refcount: Opaque<bindings::refcount_t>,
+>     data: T,
+> }
+> @@ -345,18 +345,25 @@ pub fn into_unique_or_drop(self) -> =
+Option<Pin<UniqueArc<T>>> {
+>=20
+> // SAFETY: The `into_foreign` function returns a pointer that is =
+well-aligned.
+> unsafe impl<T: 'static> ForeignOwnable for Arc<T> {
+> -    type PointedTo =3D ArcInner<T>;
+> +    type PointedTo =3D T;
+>     type Borrowed<'a> =3D ArcBorrow<'a, T>;
+>     type BorrowedMut<'a> =3D Self::Borrowed<'a>;
+>=20
+>     fn into_foreign(self) -> *mut Self::PointedTo {
+> -        ManuallyDrop::new(self).ptr.as_ptr()
+> +        let this =3D ManuallyDrop::new(self).ptr.as_ptr();
+> +        // SAFETY: `x` is a valid pointer to `Self` so the projection =
+below is
+> +        // in bounds of the allocation.
+> +        unsafe { core::ptr::addr_of_mut!((*this).data) }
+>     }
+>=20
+>     unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
+> +        // SAFETY: We did the reverse offset calculation in =
+`into_foreign`, so
+> +        // the offset calculation below is in bounds of the =
+allocation.
+> +        let inner_ptr =3D unsafe { kernel::container_of!(ptr, =
+ArcInner<T>, data).cast_mut() };
+> +
+>         // SAFETY: The safety requirements of this function ensure =
+that `ptr` comes from a previous
+>         // call to `Self::into_foreign`.
+> -        let inner =3D unsafe { NonNull::new_unchecked(ptr) };
+> +        let inner =3D unsafe { NonNull::new_unchecked(inner_ptr) };
+>=20
+>         // SAFETY: By the safety requirement of this function, we know =
+that `ptr` came from
+>         // a previous call to `Arc::into_foreign`, which guarantees =
+that `ptr` is valid and
+> @@ -365,9 +372,13 @@ unsafe fn from_foreign(ptr: *mut Self::PointedTo) =
+-> Self {
+>     }
+>=20
+>     unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> ArcBorrow<'a, =
+T> {
+> +        // SAFETY: We did the reverse offset calculation in =
+`into_foreign`, so
+> +        // the offset calculation below is in bounds of the =
+allocation.
+> +        let inner_ptr =3D unsafe { kernel::container_of!(ptr, =
+ArcInner<T>, data).cast_mut() };
+> +
+>         // SAFETY: The safety requirements of this function ensure =
+that `ptr` comes from a previous
+>         // call to `Self::into_foreign`.
+> -        let inner =3D unsafe { NonNull::new_unchecked(ptr) };
+> +        let inner =3D unsafe { NonNull::new_unchecked(inner_ptr) };
+>=20
+>         // SAFETY: The safety requirements of `from_foreign` ensure =
+that the object remains alive
+>         // for the lifetime of the returned value.
+>=20
+> --=20
+> 2.47.0
+>=20
+>=20
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>=
 
