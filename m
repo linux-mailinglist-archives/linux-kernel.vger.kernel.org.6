@@ -1,142 +1,133 @@
-Return-Path: <linux-kernel+bounces-528018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D7A41289
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:49:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95AB1A4128C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E491716C840
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A703B3495
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ECA17C79;
-	Mon, 24 Feb 2025 00:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D02B22339;
+	Mon, 24 Feb 2025 01:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBTEXrlR"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WcWh1/27"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F354C8F;
-	Mon, 24 Feb 2025 00:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7F17DA7F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740358145; cv=none; b=Qf92ePc92k3kP9vLZaukyHJJu34RGJzK42QW1yr1U4r8ujA4r5DqfNDPLLLehF/FTKVedkINvYTIGCu6T1pvCwebaNr8CSHUzwMRxZiHtAZqEEW+wEcJ4lYe2aorWBKh1nCfSyCqZX+BgimZQud5Ge9Y6x4n+FbhVeIlzUCwvp0=
+	t=1740359162; cv=none; b=F6/0qz6VhoB6KZTA42hoJuBMm8BRIf1YdRvKtvmOtpbruxsksdwamYQcvwSDNYQwac9nkbJmHZ43KoIY5Nf52zFPpEGslSDg5/gOCqPhFz079BsZZiql8AsB1+vmGjTna8+7iEtEqGb16H/RNYmrjlu7czvg2thPP9MjFsV8iCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740358145; c=relaxed/simple;
-	bh=Jzsw5QO4H3N/xARGLoYmpCSLmmdwVRbyiqi9ZCQ7pEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HY7Xmq3nnL+vZYLyPFebqSfunGeRatIaVZ9dTlgqJvww+aAp9kRNMWSUcPhnOdR4PslbAKLUjCo3hNuaQk//7g1Yo68riwme5GSkGSOJdxnETJ0HqMoWUi6T3zg8NUFzqnUtzaK4IQO1N6fSn8ZrJyvnRrLueHzvCVXD7b80TAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBTEXrlR; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5461a485aa2so3563190e87.2;
-        Sun, 23 Feb 2025 16:49:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740358142; x=1740962942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xt2LkBK0hGIK9sk8aSwFk64Mnli3ElVLH6wep+qNJUU=;
-        b=OBTEXrlRir58G3VJhV3cq11NCguVD+yw86EvrG1zpTYNj6wPyxhXvQyV9MFpy9KqfZ
-         mc+Ym2KiIrSLmmyWG2vW9I+JyMqsuyOVeZ4a4GrFoPKIslR+eBE1knLQyc41ZTfcFk9l
-         lXDQmY7WDy4KANl5V5g1IfV0HbYcnewk1LAUr+gDuLavS8OpbckBzRNMJzMkDSEF9An5
-         TksHMFbCE7V/jivLuu6NJaTs0CNJUcRzQvzIb5v+1II6td9OJ/6sulTl333UBlrFdPr5
-         svrH5sNTTjoQd6g6MtRWBohpkrKjjA9r1NYs2WFAhZmfrB02P2PzYn+X9Ce5D/gOaQOI
-         gHoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740358142; x=1740962942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xt2LkBK0hGIK9sk8aSwFk64Mnli3ElVLH6wep+qNJUU=;
-        b=jRpbRkLlofYLDKbuVQ5L31QXjzuaQeP4RY0rQpH5tRcXlt+2uNpK6FIitIro7FS602
-         UVhRRfHqjnf5D9UTboiRLP5OqGhK8nUsTAHax8s9LKbBMDwDv5dH5zwqL+RPkmnjf9nb
-         uN0mp8WuxSB7XK5avCayGQc6f96gMzlTIqV1XUIhGGYbKWBC4RnqUy22KH/OoFoQ78Rz
-         9vehnsQkIdRF10eR1GYF5gslInopqCVBuGFxT/j1S5iuXushnZbPNg8VUNA0/dzPfv3g
-         k8tPBRyR8lNNgYByDxEAgEZ3o5yibZ3xEWUD4lzilZbf9LQ3kF/ux0VyK25wXcxJ2wfF
-         pB/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVSdtSfs0SIz/KdPd9kkVBYcV4IEKtLYum8brzn1OPDf0N8UZeFynv6QEYe2whSXOcQ6G7o1/XlO7ajgOu1@vger.kernel.org, AJvYcCW8EqnMMDafq1FkqdfB50aJvjfRtUsxsfnZ4IMbaHxUOOLJ9pwuKGQPxmjgwoji5aKKDda1lHoL/R06@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw14NFDFarYPr5pZNa3sAs7Sn3MOw+pf1ks9Y6Dmw33AOgRYcH
-	n1iYGYzS8mpX5ANpkHbtvBSbtktUjcIx4enyl4wm3xY4mRiAE4X6cWDuyfOG16goSBqinR5bPN1
-	lGQKi22ZunuIPjgl56bC1vC+gFJ8=
-X-Gm-Gg: ASbGncuTgTwBgrWYuDTPQX1l1t6y5La23EWStFiZ3fKdLdp21hCooVnTsEyiGpCLdcn
-	P4JX4YGkkF2S7rfzVBYUbSZkofsplHLwvPlfcwEutUeRjYHWLhlTclJn3lesFWd6j1wKJUnZW07
-	UMiTBK+E4=
-X-Google-Smtp-Source: AGHT+IGABZZ8wTkaU/4AVUK8/92+7sI96FBM5IfBG3yrIHEi3ysNTlMQstK0NawrS7rEc19Qt2d5Oj4YJWbMFh3Vpxo=
-X-Received: by 2002:a05:6512:1106:b0:53e:3a7c:c0b5 with SMTP id
- 2adb3069b0e04-54838ee288fmr3802000e87.10.1740358141810; Sun, 23 Feb 2025
- 16:49:01 -0800 (PST)
+	s=arc-20240116; t=1740359162; c=relaxed/simple;
+	bh=oD3Vv1xLKSqblwXCvn7mLey5f49zi8MvqKFaIX/dRQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MxKy6wyUl2BehSmyjuxJO6Dpojd6mSMEXs6MUfgCg3PH3jAX2k3luzPApXM4K+DcouNjcjguI6VrZDc3KRC1XS2KpnWv9VlCGY4ICX3P34e7fqEyVPYqjq03xNv9bnYcCmfxw51U6Lfcg9IpgyHwhyMo3Mr69lkx3bvZXdaZL6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WcWh1/27; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740359160; x=1771895160;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=oD3Vv1xLKSqblwXCvn7mLey5f49zi8MvqKFaIX/dRQg=;
+  b=WcWh1/275rvOMQc33x+B+DGR4moJjBa5zOrnX22lLtBGCCGJzMsjDiJC
+   q5E9EMBK+o01BQz+epM11X42sJaeBLoZyJPTmNdW/K7DlvPHsXquB5f68
+   Ot9e7esetZH14MxI7eZPZEqSQ98SrP/+a0vkOJImAIm/xKl5yjMyTDbT9
+   tmE5GqvTWSRMs3dQJVnt5efKJwDcptbBYxFabn758ioO9VVv1u0lxjxbT
+   zCrwWMJJwHfU7yKtw55aiDAHaOuSsRcJmdrAv8hpnv4vl+nGVxWNxYOZv
+   Rv64HmyA5Ag49dotSD1h5Vzlk+ly3NlBFpJHFc6Ug9ZHwp/oWnELxLOXi
+   g==;
+X-CSE-ConnectionGUID: yVH6bE/6RV6ggdL89hd4PA==
+X-CSE-MsgGUID: AhOcVsqYTPCQroHVYJyZ+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="44882018"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="44882018"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 17:06:00 -0800
+X-CSE-ConnectionGUID: Epy8D3qSQWC3bRgDSjLA2Q==
+X-CSE-MsgGUID: b+C6eWWSRRKUQWmH0oINsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="115887458"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 17:05:59 -0800
+Message-ID: <622aa790-6560-4be9-bfb4-736809a249bc@linux.intel.com>
+Date: Mon, 24 Feb 2025 09:02:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241222145845.23801-1-pali@kernel.org> <20250223222306.plgy3bpy5mjojfve@pali>
-In-Reply-To: <20250223222306.plgy3bpy5mjojfve@pali>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 23 Feb 2025 18:48:50 -0600
-X-Gm-Features: AWEUYZko0ubEJcdQ7txR7GliWeRwpKU887NvYFvgu8t8db5jtuyzTa7hlyTi6R4
-Message-ID: <CAH2r5mv_+ZarrSPEhDjgEYPzqkvdqL-K7NjDsE0sXtrhx65G7A@mail.gmail.com>
-Subject: Re: [PATCH 0/4] cifs: Handle all name surrogate reparse points
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/vt-d: fix system hang on reboot -f
+To: Yunhui Cui <cuiyunhui@bytedance.com>, dwmw2@infradead.org,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250220101511.37602-1-cuiyunhui@bytedance.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20250220101511.37602-1-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Feb 23, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> Hello Steve, I see that you have merged first two changes (1/4 and 2/4)
-> from this patch series, but the remaining (3/4 and 4/4). Is there any
-> reason why 3/4 and 4/4 was not taken?
+On 2/20/25 18:15, Yunhui Cui wrote:
+> When entering intel_iommu_shutdown, system interrupts are disabled,
+> and the reboot process might be scheduled out by down_write(). If the
+> scheduled process does not yield (e.g., while(1)), the system will hang.
+> 
+> Signed-off-by: Yunhui Cui<cuiyunhui@bytedance.com>
+> ---
+>   drivers/iommu/intel/iommu.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index cc46098f875b..76a1d83b46bf 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -2871,7 +2871,8 @@ void intel_iommu_shutdown(void)
+>   	if (no_iommu || dmar_disabled)
+>   		return;
+>   
+> -	down_write(&dmar_global_lock);
+> +	if (!down_write_trylock(&dmar_global_lock))
+> +		return;
 
-Mainly because I wasn't able to easily test it, and didn't get test
-feedback for anyone else
-on those two who had tried it.
+If system interrupts are disabled here, locking is unnecessary. Hotplug
+operations depend on interrupt events, so it's better to remove the
+lock. The shutdown helper then appears like this:
 
-I am ok with looking at them again - and thx for rebasing.   There are
-some of the 41
-patches in your updated cifs branch that do look suitable or rc5
+void intel_iommu_shutdown(void)
+{
+         struct dmar_drhd_unit *drhd;
+         struct intel_iommu *iommu = NULL;
 
+         if (no_iommu || dmar_disabled)
+                 return;
 
-> On Sunday 22 December 2024 15:58:41 Pali Roh=C3=A1r wrote:
-> > Name surrogate reparse point represents another named entity in the sys=
-tem.
-> >
-> > If the name surrogate reparse point is not handled by Linux SMB client
-> > and it is of directory type then treat it as a new mount point.
-> >
-> > Cleanup code for all explicit surrogate reparse points (like reparse
-> > points with tag IO_REPARSE_TAG_MOUNT_POINT) as they are handled by
-> > generic name surrogate reparse point code.
-> >
-> > Pali Roh=C3=A1r (4):
-> >   cifs: Throw -EOPNOTSUPP error on unsupported reparse point type from
-> >     parse_reparse_point()
-> >   cifs: Treat unhandled directory name surrogate reparse points as moun=
-t
-> >     directory nodes
-> >   cifs: Remove explicit handling of IO_REPARSE_TAG_MOUNT_POINT in
-> >     inode.c
-> >   cifs: Improve handling of name surrogate reparse points in reparse.c
-> >
-> >  fs/smb/client/inode.c    | 17 +++++++++++++----
-> >  fs/smb/client/reparse.c  | 24 ++++++++++--------------
-> >  fs/smb/common/smbfsctl.h |  3 +++
-> >  3 files changed, 26 insertions(+), 18 deletions(-)
-> >
-> > --
-> > 2.20.1
-> >
->
+         /*
+          * System interrupts are disabled when it reaches here. Locking
+          * is unnecessary when iterating the IOMMU list.
+          */
+         list_for_each_entry(drhd, &dmar_drhd_units, list) {
+                 if (drhd->ignored)
+                         continue;
 
+                 iommu = drhd->iommu;
+                 /* Disable PMRs explicitly here. */
+                 iommu_disable_protect_mem_regions(iommu);
+                 iommu_disable_translation(iommu);
+         }
+}
 
---=20
+Does it work for you?
+
 Thanks,
-
-Steve
+baolu
 
