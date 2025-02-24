@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-528440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB498A417B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:45:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB0BBA417B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE87A1890C19
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:46:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3AB016F389
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5932821D3EB;
-	Mon, 24 Feb 2025 08:45:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CCD21D3F1;
+	Mon, 24 Feb 2025 08:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VYoysyTF"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mdKiKKOE"
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25BE21D3D0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDCB21D3EE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386742; cv=none; b=i+7Tb6Qc2WWGUkUfJ4GNAlmK1rUj/QvBogn3lb/szip24OHNY8N5QAvNkRiuZTQ8dC0tLIsdTqMGgiJNCAcsqQOhhqCXuJZY/8ZQrF9v+pxl56blCvg3uMhRBMClcPju1pGk0947w8ywVZR6Ek3F2c6GUZOgK7JYEn5cffV1wpA=
+	t=1740386745; cv=none; b=S1iFET/Y9sgWlGKSDkM+D1Julq11sVn0UjiQwdg5ofarCrPKdNqhfl+Z2wf/RN7IHZ6JTo+vafLNGnXNHQepu0pWJeteT5MCIL/17L4w7/8S5sR/89la/a4NTJwciIqcYGwnGE6KLsDAcmFvLW9Ey34JO6Kyhn3vZ2WBUlVzsXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386742; c=relaxed/simple;
-	bh=BLHeMe+3TTjPUWwgCHBuZW58e2Lj5qXGFdx+y/AyKtE=;
+	s=arc-20240116; t=1740386745; c=relaxed/simple;
+	bh=JqtxjAmqxeL0t1hyw/R5nXgv4I20bWPazwl6fujlIAg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wu16QdZ7RCK0uApYHJZVkEUu1A+NoMy75dIavFHoF/dkbsI5Mm2/HRGEcoLooGWIrHJCROzQMTlsFItR5wpkUjs6Qe5D6vfd2N7Nt6XlDU7DOGf7cM8sLclM7iTSozwncOETffcPHmo95rZCRcW6U21kA5QkQCQJcsF0vOeGius=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VYoysyTF; arc=none smtp.client-ip=209.85.208.73
+	 To:Cc:Content-Type; b=dV6CiueTykH5Mx00rFXtlyeedncWuua4H08GaYbjr67aosI0kvBNA4PuhFbMKjZbNDq8K15iUGJRrmOp6glCWBsYbOzs6eFGwG2cmsgurypeyP785n3kkYicJcmsCqxvfIKCqk+nvbuNrPtEm63+55MGjvL5WSluSMu1XGuXCi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mdKiKKOE; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5dedd3ee338so6277000a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:45:40 -0800 (PST)
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-abb87e3a3c9so448049466b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:45:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740386739; x=1740991539; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740386742; x=1740991542; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zXF2piNTepx0Zg/2eVcKc5ldHZcK58aUvEjPlpIgpc=;
-        b=VYoysyTFhFUygj+PYbw74A3vjo3VvUXkyRCpzXwwe287qKyn2dYkP65BTf/xYayhLE
-         2TkWYh0JBOaoAUFe7SsY+ZIvix/ZEGjmlM/bg/BMsSr5Qyv7fNj7YUwzetjEi4zMWXYY
-         8LPWiEH9g1gJMMwsxu0hmoaLJh6NNwMn3WgTsF5clW4Nu22E0jxyOTaxDg3MNIh1Gpuz
-         FXcYB3yuo427ZPOIW+eB+1q1lmAbvnuPcx5PfZWQbFUWR9JjjN3045cqVqzI5rip8Rzg
-         AV5a3afnIHOH3r02NIyBeXOVzO1bL3IOgii4xbmNlRlSNhKPfBPAWNuDTDfWvD1AA3d2
-         OxzA==
+        bh=YQF+iGReGP9xasU6LwNX6rJHJvus8x0KQVBFP1lU99o=;
+        b=mdKiKKOExEcRjNoO/HP8XERRmev69XmLygISob61OBu9VxNDRlohGSc+r8UoR67TRY
+         KlnYi6o0hKbNPEA6Lad9noTiiUMfip1HtWOroz8PGvkRFngGHVTj+DCrzI/fZLRHFVsw
+         f07V1OfyOWCpbnL2oEoQv5HXMtAv4qcAn9xIGVGLGwLogfFwv+Zz1IIW0BVqRX1+QRby
+         E/hcfSJwrM24zq3YA0ir5nBE5asCfBJmwGt9Zckp7/KGRSnFZCL6vtg9Aq0CYZdTfELS
+         bQxCyDQuCXFF9Ak7d7ozvSoOFhBeEitdgxGxZJdyWBdkHbFtywJkYBCsGMHuf3b5tpi6
+         TORQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740386739; x=1740991539;
+        d=1e100.net; s=20230601; t=1740386742; x=1740991542;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3zXF2piNTepx0Zg/2eVcKc5ldHZcK58aUvEjPlpIgpc=;
-        b=w7Msa0JLAmi6Lymm9TRycghillMZHGVm0QWD/5XRBt/SZYc1Ml8zqPKXasYYEZIhTp
-         NUe5yVzXwru10kECg0fIMgW21CJ+je6rsIMuyueULhJwLDFM6KDOU4kvPJc4PAgtU31L
-         ZPOS3+dDrRmD/T+LaVb647NHC4gfuf2LdpuEzY49Jq4HbJM6JeO7dHKTdwFM0QdallLd
-         scLN03SpYcREdxg/ptHUBR9ThneuuW6Nkh+kl6R9Tnkn/ZIFFyijEGsKzOXr9EP+tEIp
-         v7NswBnKSQUFAhasgq4o9kxyin73o9vuxuw50AsR9CmtMVyWtwg80Yu5EnbfFBc5ZdK6
-         uf/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVeGGlkwQOLGknU+0xz6E4xH+nta7Nnp/49LX/Tjslzs5hSooQF6LHOrnE5ULklqSDxgHuvdRGiTeDjjR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN7DWZJngCOrFJpg3VCuM/YYlyvsax9QFu9UzlbL0JMXLe5v1Z
-	u/uXK1KZrHVTX2mHY6/ngpvJ9p7gAOPJYXRRgV7xPTSdeJQ12TArPhanx8W+SLz2Z6+2sdMeh4F
-	32Dc4Gg==
-X-Google-Smtp-Source: AGHT+IGotoXsPbtymb0eBRMPCvN6au2B0HnC7Uy7NlhHpxM0D6D1UHiCRGgBBydFx3vW7kWX3pfcicgFvSZs
-X-Received: from edzg17.prod.google.com ([2002:a05:6402:911:b0:5dc:df94:8dd0])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:13d2:b0:5de:39fd:b2f5
- with SMTP id 4fb4d7f45d1cf-5e0b70b5f43mr11779456a12.1.1740386739344; Mon, 24
- Feb 2025 00:45:39 -0800 (PST)
-Date: Mon, 24 Feb 2025 09:45:26 +0100
+        bh=YQF+iGReGP9xasU6LwNX6rJHJvus8x0KQVBFP1lU99o=;
+        b=IR8ahkeT84mTYCSa+MvIoa1pMfeFRLIYUxlv4GIjC0ScT08ewOHWiqQQEhOXinKHQo
+         lyPBN72rr5788SVDZnJ0vaEbXMqNrZ55oj3g9XV3qDMqjgWHRYz+J6f0nRri5twvqo74
+         sUDmGqEmtFoTx3xSr4/xVrz87ld+WUcHFUvxSU31nffLycWdX9PGdDmaQTOu6435sio2
+         Iyqw4TbUqs47E043WoaJiFIH6fHGtt8xdwAXKTQbOgPdf6N8lX9GxRNdvJ896CxhMlrM
+         33KmfyjlXUpn4rVRqlE32XtO3Wk3CplD5ZyTtJAYQT5QHtXAVLOdbbfr3UDm6NYo6XBs
+         oU5A==
+X-Forwarded-Encrypted: i=1; AJvYcCWrMYD9v31h7H1Ol9NBQPhJZ/pNGjUgPgvVBuJKUwKcXmGmNLvOEtiG7RHh39nqFZJwxxtdl3Y5zEBOxsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzGr8mXwtVXj8ECjmuGA5CsQMgsCumpMmv2lXqw2CnGSOl+Fg4
+	vMYG5Le21Kl8TAOU+xzf0jjT+3sTQVOOKVKlN8sBQbQrMOV6U9SpbdauWzmNH5KIEd+o8rnmuzt
+	LVINHAQ==
+X-Google-Smtp-Source: AGHT+IHMFPc32xzyLN0MXMpMgNHSUKOvg8vmD2KmV10tV25PoTdfS/durnCaw/m++9k3552XpAhboaQR5z+3
+X-Received: from ejcrx14.prod.google.com ([2002:a17:906:8e0e:b0:abb:8131:986b])
+ (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:2801:b0:abc:ca9:45af
+ with SMTP id a640c23a62f3a-abc0ca94fb1mr978372666b.18.1740386741815; Mon, 24
+ Feb 2025 00:45:41 -0800 (PST)
+Date: Mon, 24 Feb 2025 09:45:27 +0100
 In-Reply-To: <cover.1740386567.git.dvyukov@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,30 +73,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1740386567.git.dvyukov@google.com>
 X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <d11d91e0c27ef78affcef06e00d1cf4cd8747fcc.1740386567.git.dvyukov@google.com>
-Subject: [PATCH v2 2/3] selftests: Fix errno checking in syscall_user_dispatch test
+Message-ID: <0804b17f1163640eb830de487ab5fc222829e778.1740386567.git.dvyukov@google.com>
+Subject: [PATCH v2 3/3] selftests: Extend syscall_user_dispatch test to check
+ allowed range
 From: Dmitry Vyukov <dvyukov@google.com>
 To: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
 	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com
 Cc: Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Successful syscalls don't change errno, so checking errno is wrong
-to ensure that a syscall has failed. For example for the following
-sequence:
-
-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
-	EXPECT_EQ(EINVAL, errno);
-	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel);
-	EXPECT_EQ(EINVAL, errno);
-
-only the first syscall may fail and set errno, but the second may succeed
-and keep errno intact, and the check will falsely pass.
-Or if errno happened to be EINVAL before, even the first check may falsely
-pass.
-
-Also use EXPECT/ASSERT consistently. Currently there is an inconsistent mix
-without obvious reasons for usage of one or another.
+Add a test that ensures that PR_SET_SYSCALL_USER_DISPATCH respects
+the specified allowed PC range. The test includes both a continuous
+range and a wrap-around range.
 
 Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
 Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
@@ -107,84 +95,156 @@ Cc: Kees Cook <keescook@chromium.org>
 Cc: Gregory Price <gregory.price@memverge.com>
 Cc: Marco Elver <elver@google.com>
 Cc: linux-kernel@vger.kernel.org
+
 ---
- .../syscall_user_dispatch/sud_test.c          | 30 +++++++++----------
- 1 file changed, 14 insertions(+), 16 deletions(-)
+Changes in v2:
+ - add tests for 0-sized range
+ - change range setup in the test to be fatal
+---
+ .../syscall_user_dispatch/sud_test.c          | 85 ++++++++++++-------
+ 1 file changed, 54 insertions(+), 31 deletions(-)
 
 diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-index d975a67673299..b0969925ec64c 100644
+index b0969925ec64c..302089ccd103c 100644
 --- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
 +++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-@@ -86,55 +86,53 @@ TEST(bad_prctl_param)
+@@ -10,6 +10,8 @@
+ #include <sys/sysinfo.h>
+ #include <sys/syscall.h>
+ #include <signal.h>
++#include <stdbool.h>
++#include <stdlib.h>
  
- 	/* Invalid op */
- 	op = -1;
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &sel);
--	ASSERT_EQ(EINVAL, errno);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0, 0, &sel));
-+	EXPECT_EQ(EINVAL, errno);
- 
- 	/* PR_SYS_DISPATCH_OFF */
- 	op = PR_SYS_DISPATCH_OFF;
- 
- 	/* offset != 0 */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, 0);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, 0));
- 	EXPECT_EQ(EINVAL, errno);
- 
- 	/* len != 0 */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0xff, 0));
- 	EXPECT_EQ(EINVAL, errno);
- 
- 	/* sel != NULL */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, &sel));
- 	EXPECT_EQ(EINVAL, errno);
- 
- 	/* Valid parameter */
--	errno = 0;
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, 0x0);
--	EXPECT_EQ(0, errno);
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x0, 0x0));
- 
+ #include <asm/unistd.h>
+ #include "../kselftest_harness.h"
+@@ -110,31 +112,15 @@ TEST(bad_prctl_param)
  	/* PR_SYS_DISPATCH_ON */
  	op = PR_SYS_DISPATCH_ON;
  
- 	/* Dispatcher region is bad (offset > 0 && len == 0) */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
- 	EXPECT_EQ(EINVAL, errno);
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
- 	EXPECT_EQ(EINVAL, errno);
+-	/* Dispatcher region is bad (offset > 0 && len == 0) */
+-	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+-	EXPECT_EQ(EINVAL, errno);
+-	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
+-	EXPECT_EQ(EINVAL, errno);
++	/* All ranges are allowed */
++	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
++	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
++	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
++	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
  
  	/* Invalid selector */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1);
--	ASSERT_EQ(EFAULT, errno);
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1));
-+	EXPECT_EQ(EFAULT, errno);
+ 	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1));
+ 	EXPECT_EQ(EFAULT, errno);
+-
+-	/*
+-	 * Dispatcher range overflows unsigned long
+-	 */
+-	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
+-	EXPECT_EQ(EINVAL, errno) {
+-		TH_LOG("Should reject bad syscall range");
+-	}
+-
+-	/*
+-	 * Allowed range overflows usigned long
+-	 */
+-	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
+-	EXPECT_EQ(EINVAL, errno) {
+-		TH_LOG("Should reject bad syscall range");
+-	}
+ }
  
- 	/*
- 	 * Dispatcher range overflows unsigned long
- 	 */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel);
--	ASSERT_EQ(EINVAL, errno) {
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
-+	EXPECT_EQ(EINVAL, errno) {
- 		TH_LOG("Should reject bad syscall range");
- 	}
+ /*
+@@ -145,11 +131,13 @@ char glob_sel;
+ int nr_syscalls_emulated;
+ int si_code;
+ int si_errno;
++unsigned long syscall_addr;
  
- 	/*
- 	 * Allowed range overflows usigned long
- 	 */
--	prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel);
--	ASSERT_EQ(EINVAL, errno) {
-+	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
-+	EXPECT_EQ(EINVAL, errno) {
- 		TH_LOG("Should reject bad syscall range");
+ static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
+ {
+ 	si_code = info->si_code;
+ 	si_errno = info->si_errno;
++	syscall_addr = (unsigned long)info->si_call_addr;
+ 
+ 	if (info->si_syscall == MAGIC_SYSCALL_1)
+ 		nr_syscalls_emulated++;
+@@ -172,26 +160,29 @@ static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
+ #endif
+ }
+ 
+-TEST(dispatch_and_return)
++int setup_sigsys_handler(void)
+ {
+-	long ret;
+ 	struct sigaction act;
+ 	sigset_t mask;
+ 
+-	glob_sel = 0;
+-	nr_syscalls_emulated = 0;
+-	si_code = 0;
+-	si_errno = 0;
+-
+ 	memset(&act, 0, sizeof(act));
+ 	sigemptyset(&mask);
+-
+ 	act.sa_sigaction = handle_sigsys;
+ 	act.sa_flags = SA_SIGINFO;
+ 	act.sa_mask = mask;
++	return sigaction(SIGSYS, &act, NULL);
++}
+ 
+-	ret = sigaction(SIGSYS, &act, NULL);
+-	ASSERT_EQ(0, ret);
++TEST(dispatch_and_return)
++{
++	long ret;
++
++	glob_sel = 0;
++	nr_syscalls_emulated = 0;
++	si_code = 0;
++	si_errno = 0;
++
++	ASSERT_EQ(0, setup_sigsys_handler());
+ 
+ 	/* Make sure selector is good prior to prctl. */
+ 	SYSCALL_DISPATCH_OFF(glob_sel);
+@@ -321,4 +312,36 @@ TEST(direct_dispatch_range)
  	}
  }
+ 
++bool test_range(unsigned long offset, unsigned long length)
++{
++	nr_syscalls_emulated = 0;
++	SYSCALL_DISPATCH_OFF(glob_sel);
++	if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
++		abort();
++	SYSCALL_DISPATCH_ON(glob_sel);
++	return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
++}
++
++TEST(dispatch_range)
++{
++	ASSERT_EQ(0, setup_sigsys_handler());
++	ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
++	SYSCALL_DISPATCH_ON(glob_sel);
++	ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
++	TH_LOG("syscall_addr=0x%lx", syscall_addr);
++	EXPECT_FALSE(test_range(syscall_addr, 1));
++	EXPECT_FALSE(test_range(syscall_addr-100, 200));
++	EXPECT_TRUE(test_range(syscall_addr+1, 100));
++	EXPECT_TRUE(test_range(syscall_addr-100, 100));
++	/* Wrap-around tests for everything except for a single PC. */
++	EXPECT_TRUE(test_range(syscall_addr+1, -1));
++	EXPECT_FALSE(test_range(syscall_addr, -1));
++	EXPECT_FALSE(test_range(syscall_addr+2, -1));
++	/* 0-size range does not match anything. */
++	EXPECT_TRUE(test_range(syscall_addr-1, 0));
++	EXPECT_TRUE(test_range(syscall_addr, 0));
++	EXPECT_TRUE(test_range(syscall_addr+1, 0));
++	SYSCALL_DISPATCH_OFF(glob_sel);
++}
++
+ TEST_HARNESS_MAIN
 -- 
 2.48.1.601.g30ceb7b040-goog
 
