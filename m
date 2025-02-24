@@ -1,218 +1,392 @@
-Return-Path: <linux-kernel+bounces-528914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E761A41DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3E4A41C29
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE5FD3BE435
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:51:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEE1E7A6B82
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36644267389;
-	Mon, 24 Feb 2025 11:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A9325A2A6;
+	Mon, 24 Feb 2025 11:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C2jhVj19"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012044.outbound.protection.outlook.com [52.101.66.44])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ua8Wk/NR"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35427267394;
-	Mon, 24 Feb 2025 11:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740396636; cv=fail; b=kneVSx0d/7HgMTX+omGS2ni+UXvVmYwqk09baAw/U3xZguxcJTkjNwo1jQqrnusLctiDgRFCyi8sb46S3gX3gOPkdz/YxPyJg4ZipXHKOXmm9C5hr+EKCkVlPImdSdph8U2NojDFGe1MSb+t1hpSKlqbDMA9RZLuqkquNxhu/IY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740396636; c=relaxed/simple;
-	bh=ppyi+Rg8YGW5kKJxsUK/X5x+gzoC+qeanrrTxHtWTrg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=krRVWhfXd6qL8pspBPhyW5lzYwXwfi8+dC0rvJIyCbzmAjno6WTzXrkWJ2fgkEHuSKB96w5pK8F11p9LPpqkA10N1ESrWvOR28nkUGF3DVo1o8iO4xqoKN6M95AxotkLtV8/n1IIsdFJMy4E1gdeTYrE3bvTBeValMKIG3lHgoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C2jhVj19; arc=fail smtp.client-ip=52.101.66.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=azyn6mVY7IyqdAacoGiVFYzyjcd/Yi8m7KOLWA2fdhTgHYF3G38ExOduEnhePtt/6CdEuwcZC0AVIzrRRcBE4ReLjtqlFKB2r6/bvWV0OGnJ+pfAREaJqBU/27kzIUyPL0w8s3Kx2FwEiJzX2eXnwCOageacWONYLGgxz1bP/Ef/ZECdWUuxJgVkxkEv4hpg17bgLUpQBTO4muJBAE2tfsjqwYxwpXTD0Cu8tmkCAwOAxv0zD1091GCfZSV4fSl85RVLXSkpOK91EUnYbKYBJ3zuOVyCowm0BwTpDRuCZKgoOnb0V1fy7SrJKhjOd9BSqj7ZQs0oMjtIVvvxmbMRXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mIwMgLMMe9NpiZyUBgyHTL9O4AVX8KUHEVRjqz+yruk=;
- b=YU/orPtFU7VXuvLVEbXOj3YaxvKxLDzGNxSvRo/aZWbIc8fR8JFMxjNpy+j8yrStqlJ28U5wLbBodFbNXfmtOwItlM9w8RAkvtMnOZRY59A4u7Fdii5v9t3IAofcT8/bgQvm7NOXbVMfzItU5c4rDX3CFAkWF2h1h4wASkJOqrNqQQ1dUw3Fup8Btm3C4NryG82dY9kRdMtgJ1GAZvYOwEZNI7qo5j6ROH7LqHK2Wz0uxmAKzBtv+TAUGX4Jumf2G4NBnFVvR8Rv03vnPjbv4pZcVbT/8E2BNO4cm345xWCI9UPfj1SApVYu6Ah0NaQCYR7ulx+2qlttMBW/KC+aFQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mIwMgLMMe9NpiZyUBgyHTL9O4AVX8KUHEVRjqz+yruk=;
- b=C2jhVj19hVywhEGJzNFAGJ69WU3XPUWE7lv9VOpCaL7euoy7O1YxYLE0O0EcWWiyciVJ/Bg7s/CWqBLNh3zlhK5CMr/u5F4DkLZDGGY5qVEqDTTJoovTuqt5Jsj3Gnt+f9iOJtPN4Gh1suQvb1bI50qTRDMpWRNRP+Y0MaIh1FXGbVhpqsgndK5gA/MuCf+CNrGAFAl0j3J4TQHadSQiVafjqtp8PPM5gSAPCjMlEsqUMKD838/EG/yMIagWuXGFkNhF0vxbUY5yQM/izABw4ivccphzIfdRb/IC8+dzvtHbJimvoH2wIVPTvFkk/HiifSpuD4KFVzaYFHk7ERkz8w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by DB9PR04MB8346.eurprd04.prod.outlook.com (2603:10a6:10:24d::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 11:30:30 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8466.020; Mon, 24 Feb 2025
- 11:30:30 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	xiaoning.wang@nxp.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: ioana.ciornei@nxp.com,
-	yangbo.lu@nxp.com,
-	michal.swiatkowski@linux.intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH v3 net 8/8] net: enetc: fix the off-by-one issue in enetc_map_tx_tso_buffs()
-Date: Mon, 24 Feb 2025 19:12:51 +0800
-Message-Id: <20250224111251.1061098-9-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250224111251.1061098-1-wei.fang@nxp.com>
-References: <20250224111251.1061098-1-wei.fang@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:4:194::6) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841D51FC0F8;
+	Mon, 24 Feb 2025 11:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740395611; cv=none; b=Z7AIY8uVUCxm9fu7Xut6ITuyGahdwJv3CX4Sda+H9vUJ+YB+HC0WQ3rB1iWfU6phZZZ0u7UekUr/i0JSNhN1dr/gKy+bf4PIoA1ztwwXkFNQGYbOsJKftv3hNCYDmDc9gu+ZURixC/R2mHO581Ed3kS7OujwSEs0oZyZziW0uMw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740395611; c=relaxed/simple;
+	bh=dX8CvM/aLPRaw4WFxsMn8aCteHjX8ekf7fFoUzxCihU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gFNc7o4NPqUqEGPaj63oalkQO9KXwj2zR9leUul5UMscHO4IysY1Kc2Iil86oImm81aseBY63xueywQ+1JtkGT7rYqGL/C/JTIh9J+ei5r1ydKoRyAJlBXUEiK1mYn3qA9Vv+sdvKNOuOh7YX1rwCJ3N8bAWr7iLirnlvVMEwG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ua8Wk/NR; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51OBDKoV1474055
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 24 Feb 2025 05:13:20 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740395600;
+	bh=pQtZo3SIK3aiD8TRehAeANMVimCRRJt+Bvhzi2hA2mM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ua8Wk/NRiGgeBPEOM82LjZqeFMYIkTYzMn4r/i90Kgn5WMgIIJxzjuuaCktiQ7Ae1
+	 mG17TwDO5/Ts+Iv9KNJ4bC55YYs+KD0OmYiVXy2Y1Yrlwsm2Q5ZhYoEc3um2B1nS8V
+	 EXu81y39jM8AW6Jb7kwNbC12Ddp8JcXArjPCS1i0=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51OBDKLI018308;
+	Mon, 24 Feb 2025 05:13:20 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Feb 2025 05:13:19 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Feb 2025 05:13:20 -0600
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51OBDJZT019271;
+	Mon, 24 Feb 2025 05:13:19 -0600
+Date: Mon, 24 Feb 2025 16:43:18 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Robert Nelson <robertcnelson@gmail.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>,
+        Andrew Davis
+	<afd@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, Judith Mendez <jm@ti.com>,
+        Andrei Aldea
+	<a-aldea@ti.com>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Deepak Khatri
+	<lorforlinux@beagleboard.org>,
+        Ayush Singh <ayush@beagleboard.org>
+Subject: Re: [PATCH 2/2] arm64: dts: ti: Add k3-am62-pocketbeagle2
+Message-ID: <20250224111318.3wlbhpm7pggsbqdb@lcpd911>
+References: <20250211181839.1575497-1-robertcnelson@gmail.com>
+ <20250211181839.1575497-2-robertcnelson@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|DB9PR04MB8346:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7cc80953-6044-469a-6079-08dd54c6a516
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|52116014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?vPC/YvxYU3vo2MVcq5BGSGTtjvmJ9Mo0QQALpdcFdBZbvWCPLjmzj6snVjvG?=
- =?us-ascii?Q?r4jXV7wlhT+QzrX+mRaIHaLrbAv2DcW6pjTey32obCe1k3kkOSND4Y8x/5jV?=
- =?us-ascii?Q?nPH/QSBAFhM6tNC15g+GuwHvDWV4VtrSAlCvziTJDdeK0n9tSZZs8BfvHRXg?=
- =?us-ascii?Q?zsXzDzETQ1ds6qTpPu1ofWx/GSgVxPBmNdnlFVCvcgRcLYbb7vNKWmP+h+Kx?=
- =?us-ascii?Q?L+vvVr98k6bkshU8BMsdOBR7GZqCC8f7XOGASV2IWQ+5oUpTtEPaCvlfELRQ?=
- =?us-ascii?Q?NKKrqYsrtq/BqxYg531Nx+YlLJscKVv0tlu4SaQd6p3xsEGOv+FJQU+VAheA?=
- =?us-ascii?Q?TkJDK0W6cMOMnlZ+dkdmcyHkkl6bONUfLuhYFQ/B7sbKVBS8UuDn5nSMG5yi?=
- =?us-ascii?Q?MmME+M3NXiRJeNr+YWep94Og0ngVnIQ2MRPY23Q41ocdDk8XA2qtzMdWzbuI?=
- =?us-ascii?Q?ZD13R8nBM2lCnroXMltDHDgFmqpePpijUTjf0KUu/E88ozH30KFk/e8Dp8Aa?=
- =?us-ascii?Q?Zn0ErEyQSxQdEEasFac7rOibr/M8PJRPqoEyXRC56zJXJDI7H9J8hgMsG1yB?=
- =?us-ascii?Q?Wv3ydaypnkyfEiObEiludIkH33bVSnUGtSN0qH+1jt3v+sMSXpuGLQWj+Nz4?=
- =?us-ascii?Q?5//f0OqNKKtPRYGyZCN5JqMQppBmzkQy2fk3QUA7ws3FtstTwBscOpaR2Fhj?=
- =?us-ascii?Q?AtGkIBUJYCQKQy0TF+Dv5LJO0WojbE9d3Y7wEUKI3c2ciLbUREFOvdODlLtQ?=
- =?us-ascii?Q?kSSIk8mZKnYXft6i4v1CJsUgVjDF7wu3Z486YiZm7phiOyP7NnJ7MMSbGMWN?=
- =?us-ascii?Q?EB3XRYtDUZr0touLtuklMKLh8/KXD3xflhfjL35N0CTHUY/bQl4BXdhj++st?=
- =?us-ascii?Q?UHFfdxn6lOyOsVatPcxOawmGgzse21aR0rnAKWqFW3PKRaW1QHuHHQxweTp0?=
- =?us-ascii?Q?uVXtB62UqopGUm2pgMxzd9XGR8VLL5d3/lR0J9xQhzdw8Ly9vD00dL05k8ic?=
- =?us-ascii?Q?SGSaIb5Kjno9PPHqPj6PkfkwrPzmXrBZEniytxqHB/WL8UCdKEbYStqmlyq6?=
- =?us-ascii?Q?Z2mS1yyjI/MjJgZ1K1oPl1/a+H1NS5kOaVyfSm+go8kK37hIz8uCtun+etGo?=
- =?us-ascii?Q?H50mT6QnFkgYqHxvN2V7LXx4p8HkY9UoPwkBYJiRlbpNPQIb6WezBMX3VuMp?=
- =?us-ascii?Q?TZiIxaERYobMOtE8uz+KAsMavj3Mkx1HXDhRI55vkEL4I3ETk1tyyDZGguYX?=
- =?us-ascii?Q?3Hp5nkbKqw7bTd0u3lNLZyuC6i1aOTCKaApXNl4kfaSto60ex2y3wRZFgGUM?=
- =?us-ascii?Q?j97ljdnfk5KIOHDVnaqnzbHIpCdVBp6sP+9tsCXDQOYLSshuKmXiuamUpE5z?=
- =?us-ascii?Q?XlbCFMf0ro5HL5/GSB/s/bhRlCxW5qO+kE4klxQA93wWUj/XBMfj6V1Knfs3?=
- =?us-ascii?Q?SwvGxJDMJHDdUMyE0GxIikYKbj603CGH?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MBqPLgWdBLaQnuo0lZXpjemJaQBn3o63agJ31i5IvVrS1ROFoqrCLrPB218d?=
- =?us-ascii?Q?06ZNmc6BYaqhOPzXZpz2UH1P27EO63boPBF7iko26FHD/AOHiYbR15NzB30O?=
- =?us-ascii?Q?IDsTWR0HQJBWAW5p7QBeUbhPz8rKitAhIescHj5HN4JLhyYfgBEEDpWf6pW/?=
- =?us-ascii?Q?yzAd3Sw7mlMSEFgYjyofs8OXYosxqvAek6Ba/WHZQeMh4ZTHIo04peSemIFH?=
- =?us-ascii?Q?OFWAkjfpKnRaqDBGYflII/bN+cUgs17vPPEy6xILgu+6va3gdRND0b9j+S+c?=
- =?us-ascii?Q?Rrw73oHq45U3tuU0W7opW5XaTYLxwXrHfyw5QslmvI9loEuUKtaMaibTGK12?=
- =?us-ascii?Q?ncMwYBvKly/ukaEp8A8+TmcFOh3yfb/gyKXVRjSDfhZYecUfO2UPFXeD6od3?=
- =?us-ascii?Q?zqsqeRfKgGzYB6XLMVWOwnMJ5CTMz2aCpVyQCh5IgK6aSID4LGLrEUajaDkb?=
- =?us-ascii?Q?VZmW2XeVscMWejnDfMrOTIqE99PKVDfsMxq6cuCCLKqObO9aYCA5695qJN8c?=
- =?us-ascii?Q?fJIuxMHnpWuL2wPcf2Rx8SU1DUdUl6+L15pdotlhsJA9OTlX6dtuMTY8cCdU?=
- =?us-ascii?Q?5uSw0rzW1gGF0ZPW6vN8yViM4o0RngTE7Yc3D6vFAUbfnexhWEnPjX0IgnTO?=
- =?us-ascii?Q?pziA2HinvjJFTR65NZcV1WfBI+zQM2W70ydC9J3/hkAY8Dfl55yyyoaE0DKU?=
- =?us-ascii?Q?LqZ++fe/odSiEbA06W9+DtJRGUCtCqYW5YZqdCCP7RgmAwAj3yqvRMntIYpu?=
- =?us-ascii?Q?X+a1l9lnaAuGgWk8YHt2ck10sICg8i6xMdewm/GGOzTe412vgqH0Ew9ySYV3?=
- =?us-ascii?Q?sqeer2EO5pFtz9YCTXzqn1O5WI8LcvYI+/6Zk928RsaCRczt77cbJj+8PnoB?=
- =?us-ascii?Q?nXlXpVHwxHZTK7TNFFgoK8NnrApJUgUdOQOUxl+bDxMNyuVVuMF1AB7HaULE?=
- =?us-ascii?Q?ZiurVObjLObDQ7IlCfErF25ZWMhwLnwHs1WSkCVFkaX4sX7NMfjHMYtiUZlG?=
- =?us-ascii?Q?k9g7E0cIhBSfMI/aII4nB1PhdcsC/iAZRlGUEEO4sqYDW/fiRqvOmgdG6xCG?=
- =?us-ascii?Q?5b5yCmrxPvtMviFza3EvKmwPFJj01hWfHVMxwWpOpvymysN37XQPg/L4tnEM?=
- =?us-ascii?Q?lp/8OlEIe0RzOmJ48t0il8mUvKxEpvIUkZsEaCW8VRwJbeibPikjI1z8ND9F?=
- =?us-ascii?Q?a3kEzTHw7RHkmYPF3Uir334rULzXIgNLL/jihVOkwEi+XiaF/3/u8jXIbdMr?=
- =?us-ascii?Q?RBNHyYoZzbe9lO5BYj7LjojDJPGvRx5gBhOW6mh7clB0sSc3td4lG6SuJrAY?=
- =?us-ascii?Q?adZpRHbHioFlisQI7IL+9GRU4ul013ZrYndk6fhD7d7CSjz/R9ULkDmQ82Bo?=
- =?us-ascii?Q?OJjf/EyLEUiVcR5rWbyJkeMJ6ExxgfQAMnE/9rCXysqhQXYF1F3oGw6nWVBk?=
- =?us-ascii?Q?7HHe2ADRF2cJeJtO5+KSpmZKIv3MhtDFByo1Ze1/WCEpNEmKWtvtIZPisDtV?=
- =?us-ascii?Q?AsnjafFycr43nDhVMn9BKUBZcN1QHwMRRrGntPT8tICv8+A7d6NDS+V4HB20?=
- =?us-ascii?Q?katudstPHfBRAk5E4BHaWbaDWTNYlIDJo98OItVn?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7cc80953-6044-469a-6079-08dd54c6a516
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 11:30:30.8698
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vGU6wkn2n9dBILloNF6/XgYu1IQ3MGzetzrifGK3Cc4qp9SNilvzAA+0c38eyp6H1fFIyEyHSWvn6JcP1LQ9tg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8346
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250211181839.1575497-2-robertcnelson@gmail.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-There is an off-by-one issue for the err_chained_bd path, it will free
-one more tx_swbd than expected. But there is no such issue for the
-err_map_data path. To fix this off-by-one issue and make the two error
-handling consistent, the increment of 'i' and 'count' remain in sync
-and enetc_unwind_tx_frame() is called for error handling.
+On Feb 11, 2025 at 12:18:39 -0600, Robert Nelson wrote:
+> BeagleBoard.org PocketBeagle 2 is an upgraded version of the popular
+> PocketBeagle.  It is based on Texas Instruments AM6232 SoC. Its dual
+> A53 cores can provide higher performance than classic PocketBeagle.
 
-Fixes: fb8629e2cbfc ("net: enetc: add support for software TSO")
-Cc: stable@vger.kernel.org
-Suggested-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
----
- drivers/net/ethernet/freescale/enetc/enetc.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+You can say that classic PB was based on AM335 just for more context,
+else it's not clear what the upgrade is w.r.t..
 
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
-index 9801c51b6a59..2106861463e4 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.c
-@@ -859,8 +859,13 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
- 			err = enetc_map_tx_tso_data(tx_ring, skb, tx_swbd, txbd,
- 						    tso.data, size,
- 						    size == data_len);
--			if (err)
-+			if (err) {
-+				if (i == 0)
-+					i = tx_ring->bd_count;
-+				i--;
-+
- 				goto err_map_data;
-+			}
- 
- 			data_len -= size;
- 			count++;
-@@ -889,13 +894,7 @@ static int enetc_map_tx_tso_buffs(struct enetc_bdr *tx_ring, struct sk_buff *skb
- 	dev_err(tx_ring->dev, "DMA map error");
- 
- err_chained_bd:
--	do {
--		tx_swbd = &tx_ring->tx_swbd[i];
--		enetc_free_tx_frame(tx_ring, tx_swbd);
--		if (i == 0)
--			i = tx_ring->bd_count;
--		i--;
--	} while (count--);
-+	enetc_unwind_tx_frame(tx_ring, count, i);
- 
- 	return 0;
- }
+> The new design comes with pre-soldered headers, a 3-pin JST-SH 1.00mm
+> UART debug port, a USB-C port, Texas Instruments MSPM0L1105 Cortex-M0+
+> MCU for ADC, 512MB RAM, and a LiPo Battery charger.
+> 
+> https://www.beagleboard.org/boards/pocketbeagle-2
+> https://openbeagle.org/pocketbeagle/pocketbeagle-
+> 
+> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: Vignesh Raghavendra <vigneshr@ti.com>
+> CC: Nishanth Menon <nm@ti.com>
+> CC: Andrew Davis <afd@ti.com>
+> CC: Roger Quadros <rogerq@kernel.org>
+> CC: Siddharth Vadapalli <s-vadapalli@ti.com>
+> CC: Judith Mendez <jm@ti.com>
+> CC: Andrei Aldea <a-aldea@ti.com>
+> CC: Jason Kridner <jkridner@beagleboard.org>
+> CC: Deepak Khatri <lorforlinux@beagleboard.org>
+> CC: Ayush Singh <ayush@beagleboard.org>
+> ---
+>  arch/arm64/boot/dts/ti/Makefile               |   1 +
+>  .../boot/dts/ti/k3-am62-pocketbeagle2.dts     | 520 ++++++++++++++++++
+>  2 files changed, 521 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
+> 
+> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
+> index 8a4bdf87e2d4..46b9a667bda4 100644
+> --- a/arch/arm64/boot/dts/ti/Makefile
+> +++ b/arch/arm64/boot/dts/ti/Makefile
+> @@ -27,6 +27,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-wifi-yavia.dtb
+>  dtb-$(CONFIG_ARCH_K3) += k3-am62x-phyboard-lyra-gpio-fan.dtbo
+>  dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk.dtb
+>  dtb-$(CONFIG_ARCH_K3) += k3-am62-lp-sk-nand.dtbo
+> +dtb-$(CONFIG_ARCH_K3) += k3-am62-pocketbeagle2.dtb
+>  
+>  # Boards with AM62Ax SoC
+>  dtb-$(CONFIG_ARCH_K3) += k3-am62a7-sk.dtb
+> diff --git a/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts b/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
+> new file mode 100644
+> index 000000000000..ef79bd0bf238
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts
+> @@ -0,0 +1,520 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/*
+> + * https://www.beagleboard.org/boards/pocketbeagle-2
+> + *
+> + * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
+> + * Copyright (C) 2024 Robert Nelson, BeagleBoard.org Foundation
+
+Nit: Please update copyrights.
+
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +#include "k3-am625.dtsi"
+
+Any particular reason we can't inherit from k3-am62x-sk-common.dtsi like
+the SK and LP-SK DTS do?
+
+Also, you're calling out in the commit message that this is based on
+AM6232 - which has only 2 cores right? Do we not want to delete the
+additional 2 cores from the AM625 DT which has 4 cores?
+
+> +
+> +/ {
+> +	compatible = "beagle,am62-pocketbeagle2", "ti,am625";
+> +	model = "BeagleBoard.org PocketBeagle2";
+> +
+> +	aliases {
+> +		serial0 = &wkup_uart0;
+> +		serial1 = &main_uart1;
+> +		serial2 = &main_uart6;
+> +		serial3 = &main_uart3;
+> +		serial4 = &main_uart4;
+> +		serial5 = &main_uart5;
+> +		serial6 = &main_uart2;
+> +		serial7 = &main_uart0;
+> +		mmc0 = &sdhci0;
+> +		mmc1 = &sdhci1;
+> +		usb0 = &usb0;
+> +		usb1 = &usb1;
+> +		i2c0 = &main_i2c0;
+> +		i2c1 = &wkup_i2c0;
+> +		i2c2 = &main_i2c2;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = &main_uart6;
+> +	};
+> +
+> +	memory@80000000 {
+> +		/* 512MB RAM */
+> +		reg = <0x00000000 0x80000000 0x00000000 0x20000000>;
+> +		device_type = "memory";
+> +		bootph-pre-ram;
+> +	};
+> +
+> +	reserved_memory: reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+
+Let's try to follow [1] here and elsewhere
+[1] https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
+
+> +
+> +		secure_tfa_ddr: tfa@9e780000 {
+> +			reg = <0x00 0x9e780000 0x00 0x80000>;
+> +			no-map;
+> +		};
+> +
+> +		secure_ddr: optee@9e800000 {
+> +			reg = <0x00 0x9e800000 0x00 0x01800000>;
+> +			no-map;
+> +		};
+> +
+> +		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9db00000 {
+> +			compatible = "shared-dma-pool";
+> +			reg = <0x00 0x9db00000 0x00 0xc00000>;
+> +			no-map;
+> +		};
+
+Nothing for OPTEE/ M4/ etc...?
+CMA?
+Just trying to compare against sk-common... I understand the DDR is
+smaller but we can't just ignore OPTEE / shared DMA pool right?
+
+> +	};
+> +
+> +	vsys_5v0: regulator-1 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vsys_5v0";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		bootph-all;
+> +	};
+> +
+> +	vdd_3v3: regulator-2 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vdd_3v3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		vin-supply = <&vsys_5v0>;
+> +		regulator-always-on;
+> +		regulator-boot-on;
+> +		bootph-all;
+> +	};
+> +
+> +	vdd_mmc1: regulator-3 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vdd_mmc1";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vdd_3v3_sd_pins_default>;
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		enable-active-high;
+> +		regulator-always-on;
+> +		vin-supply = <&vdd_3v3>;
+> +		gpio = <&main_gpio0 0 GPIO_ACTIVE_HIGH>;
+> +		bootph-all;
+> +	};
+> +
+> +	vdd_sd_dv: regulator-4 {
+> +		compatible = "regulator-gpio";
+> +		regulator-name = "sd_hs200_switch";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&vdd_sd_dv_pins_default>;
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +		vin-supply = <&vdd_3v3>;
+> +		gpios = <&main_gpio1 49 GPIO_ACTIVE_HIGH>;
+> +		states = <1800000 0x0>,
+> +			 <3300000 0x1>;
+> +		bootph-all;
+> +	};
+> +
+> +	adc_vref: regulator-5 {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "default";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +		regulator-boot-on;
+> +	};
+> +
+> +	leds {
+> +		bootph-all;
+
+Is this needed? child nodes seem to have bootph-all already right?
+
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&led_pins_default>;
+> +
+> +		led-1 {
+> +			bootph-all;
+> +			gpios = <&main_gpio0 6 GPIO_ACTIVE_HIGH>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			linux,default-trigger = "heartbeat";
+> +			function = LED_FUNCTION_HEARTBEAT;
+> +			default-state = "on";
+> +		};
+> +
+> +		led-2 {
+> +			bootph-all;
+> +			gpios = <&main_gpio0 5 GPIO_ACTIVE_HIGH>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_DISK_ACTIVITY;
+> +			linux,default-trigger = "mmc1";
+> +		};
+> +
+> +		led-3 {
+> +			bootph-all;
+> +			gpios = <&main_gpio0 4 GPIO_ACTIVE_HIGH>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +		};
+> +
+> +		led-4 {
+> +			bootph-all;
+> +			gpios = <&main_gpio0 3 GPIO_ACTIVE_HIGH>;
+> +			color = <LED_COLOR_ID_GREEN>;
+> +			function = LED_FUNCTION_INDICATOR;
+> +			default-state = "off";
+> +		};
+> +	};
+> +};
+[....]
+> +
+> +&wkup_uart0 {
+> +	/* WKUP UART0 is used by Device Manager firmware */
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&wkup_uart0_pins_default>;
+> +	bootph-all;
+> +	status = "reserved";
+> +};
+
+See things like these you get for free from k3-am62x-sk-common.dtsi ;)
+
+> +
+> +&wkup_i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&wkup_i2c0_pins_default>;
+> +	clock-frequency = <100000>;
+> +	bootph-all;
+
+Child nodes have bootph, no need for their parents to repeat it unless
+you've a good cause.
+
+> +	status = "okay";
+> +
+> +	tps65219: pmic@30 {
+> +		compatible = "ti,tps65219";
+> +		reg = <0x30>;
+> +		buck1-supply = <&vsys_5v0>;
+> +		buck2-supply = <&vsys_5v0>;
+> +		buck3-supply = <&vsys_5v0>;
+> +		ldo1-supply = <&vdd_3v3>;
+> +		ldo2-supply = <&buck2_reg>;
+> +		ldo3-supply = <&vdd_3v3>;
+> +		ldo4-supply = <&vdd_3v3>;
+> +
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pmic_irq_pins_default>;
+> +		interrupt-parent = <&gic500>;
+> +		interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +
+> +		bootph-all;
+> +		system-power-controller;
+> +		ti,power-button;
+[...]
+
+Overall I think the DT needs a bit of revisiting of which nodes to reuse
+from common-DT and what all to delete/ trim. Revisit all the bootph
+properties and remove the redundant one's...
+
 -- 
-2.34.1
-
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
