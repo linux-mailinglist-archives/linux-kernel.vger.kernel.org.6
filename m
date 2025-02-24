@@ -1,160 +1,167 @@
-Return-Path: <linux-kernel+bounces-528445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B2FA417BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:48:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331C4A417C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F4416F4E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501CE18874C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD8323C8C5;
-	Mon, 24 Feb 2025 08:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F6A23C8C9;
+	Mon, 24 Feb 2025 08:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="WA3pmr7Q"
-Received: from mail-m49236.qiye.163.com (mail-m49236.qiye.163.com [45.254.49.236])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="35bQaqVJ"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE58724168A;
-	Mon, 24 Feb 2025 08:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CD520A5EF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386873; cv=none; b=XXXadGOu7cCv7YWB5p2XLMBsc/m97rixkldWe3fWG8r8Onxgj0LT/T6BONp/rRHchbGP3yBeSoId9Gexun2nuC9UDP+k60CWHUq60s5coZWXigOzSE/BNPfiggksBwBuEpHdguubtLebF5sd0HWNqliNhNAzJHQ1uWgUnuhXZrM=
+	t=1740386915; cv=none; b=HY7L2EOdvj5oAum4TGdygcHmfJTOx8FRo4/zNw3LaEnAm+2yo/IlLXLsQslwPnDm1mOmH6cN00N4p6XktB4gDB1XuzSjiFXUTMc1K0Ymc66K5tWoCmnh3yDPpX9EwF0Udj2RDnsPGyQYFnJB+1bFUNeMs28fFdHHaPOPy9TSvpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386873; c=relaxed/simple;
-	bh=HYPzYTRdGvlsjbHeaX9TM/gXHq6UxnWgvSlWzFt18KE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBbQvhTFxuP+nNCiEBXQCa2cWCls0n4PH9jhlBeyFVylVYBuvWzXZEaFApmmSgBpbzP0fFOkqgcFR0yWJ2lBqvAiHzTtEMS5qJOgM7Ji/ZvPDTOxT4PW8+Yt/CgMEM0gxBLsn6rsN80euLjl8xMaM/mR9dGMgZV8UFubcX85GJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=WA3pmr7Q; arc=none smtp.client-ip=45.254.49.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [192.168.60.65] (unknown [103.29.142.67])
-	by smtp.qiye.163.com (Hmail) with ESMTP id bfe5cb08;
-	Mon, 24 Feb 2025 16:47:42 +0800 (GMT+08:00)
-Message-ID: <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
-Date: Mon, 24 Feb 2025 16:47:40 +0800
+	s=arc-20240116; t=1740386915; c=relaxed/simple;
+	bh=7RbjGvmVrtFqA0ZQvxGPPCHbndaFIwxjUK767xQvYow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VuQE1ancriBtHm0Xdcf1+MgNATkgr8pko1YkJRYCj8ApigYDCeGAYbr1ACqmrbZEqsl77qwo2zd1I6sAk89g2t2u/m/Ssj62mX2tuYNfZ3NtxxsH1+ngxPlmVFs1rhHlGAEPfjN3ilYiyZETXQaVqxp+9g2U9EHWTHP+V5rhAmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=35bQaqVJ; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30761be8fa7so38335941fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:48:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740386912; x=1740991712; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4OIur9r2TccLLhBHIsDK1vsWiP0yZKdzQkTaFNLmec=;
+        b=35bQaqVJY4WOdYhQNnSz67aw741QEiREBPYN7xL2yCV+BPd4pm7fAL0YXNGkTP/RpG
+         CRiklOdT07oICU75BVNXX90xKxOL9wwkkpLRkWWBMSg2OlNzBdPt3eJRaMsUiv6/4p5e
+         ny72vDWJlzOrWEgkd1jJRMgavP4zujNZTHSWkHWbbXj//xv4rOeSGAPIjZd/TE9QkRBH
+         3uAh7xgUTVex4HnvqY6Y72+JM0RsxTQRo1xNTpBh1b/yHKi9lyrVI3mog57lOlGhe7aR
+         eOnjgaP8sxrNeqxlisuX+IxlBkz+yCwSZoluobIIUHCYJR6hK9aOdt5kaInk0iaJe7td
+         EzJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740386912; x=1740991712;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M4OIur9r2TccLLhBHIsDK1vsWiP0yZKdzQkTaFNLmec=;
+        b=cqV6ZvkKR1kyKHBEG7w4oJXtTR4f6RvrZ/ZVmILh8bx2ruVDYzcb9lIU4saHdQyDGa
+         qrXCeigWAvGw53Q4dnQSoyEwlBYYJ7vDII91akxQbX5dIQNG+36ntTS/E1U5Ifyb79hr
+         gfrXBOp8xhWvV9rp1OS4xndoodnQYS3dsNBC9IGZOoP9Zh+MHfjhuXCrb5vzNQwmwOHr
+         8Rb0qfVjugUE1CzdkvXK7YlCczOg6sbfWpfH/QqpoC//IKHaeCkOT0cGJBH8lbIN1uki
+         uGisU72rGy4TpXdunSjAxbgX2U+FioAX5KVBTN6nSgOKxy8eFNQBGY2qCbivVVxvdXOQ
+         NJ1A==
+X-Forwarded-Encrypted: i=1; AJvYcCVbvHspggGZ4s5XFO0NE/IykWcU5T1/PJCj7Udn5uFpQlpaFZH/Oo/VsowvVs2DEh0a5SAoQP/61rDcjdg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8oZKxldERt0gqVj7wulIBhc/qN1Cavt3JvRdZQy9ugt0YeLk4
+	xcPsWYHhlC07pMvSaP5A14jdGAj2D0S0lm4QEqC//vhr/FjkUpw7W9L6mzV0YoKaROFAg/PRPih
+	JCixOObYnLkTYKeLCnwmicjxoZO2l8rVBzJAv
+X-Gm-Gg: ASbGncuywFX4q6Yyj9ETft0Nt+khn+J9NahAIseibvVWnN+qxDE4YsSfrvlZ1P1uSvf
+	CAM068IQI8oarDHn2uaIc3QVUsT8Kud0U4a+ZedocTkmaeGaUjhy3T+I8GX+Ft6hstB/wE3d+X2
+	3CxJeETGdc7js4H5LY3+sOoAoYUmg2RmcXiR/GX8nV
+X-Google-Smtp-Source: AGHT+IHoulG8yAuPTtFY5mi/Qv8Hzh39cGA58YppozdQkacVGZqNqCguNZ60Yz072X1oNPnaQgYje/Vw05VduO2Mkq0=
+X-Received: by 2002:a05:6512:238a:b0:545:d7d:ac4a with SMTP id
+ 2adb3069b0e04-54838f5a594mr4606853e87.36.1740386911883; Mon, 24 Feb 2025
+ 00:48:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock, reset: rockchip: Add support
- for rk3562
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org,
- Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
- <20241224092310.3814460-2-kever.yang@rock-chips.com>
- <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
-Content-Language: en-US
-From: Kever Yang <kever.yang@rock-chips.com>
-In-Reply-To: <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSk4fVhgaTE1NSRgeSx4fT1YVFAkWGhdVEwETFh
-	oSFyQUDg9ZV1kYEgtZQVlKS0hVSUJVSk9JVU1MWVdZFhoPEhUdFFlBWU9LSFVKS0lCQ0NMVUpLS1
-	VLWQY+
-X-HM-Tid: 0a953724079603afkunmbfe5cb08
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Mhg6USo6KDITPxMsKzQMHgxR
-	Kx1PC09VSlVKTE9LSENNQ01NQ05NVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlKS0hVSUJVSk9JVU1MWVdZCAFZQUlPTEg3Bg++
-DKIM-Signature:a=rsa-sha256;
-	b=WA3pmr7QT5Hkf9NM5J4r4h5VyGiCXSrAlc66OXg1bmLMCGq8+B/MxJUJuUTBwUobsDxt5vimbfthlLTb8yGUl78OUnFzK+4mK+s/50Qw5ldgbqV+MuwYxHQP3gbV0JmYJr2l6940JfCv8oDALgFpshdtPcSBah52AfMtjoxPQqk=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=dG+gxPUSWpwDoki4eEh/9rwYbhNLk1VbVLvja7f2r94=;
-	h=date:mime-version:subject:message-id:from;
+References: <cover.1739894594.git.dvyukov@google.com> <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
+ <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
+In-Reply-To: <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 24 Feb 2025 09:48:19 +0100
+X-Gm-Features: AWEUYZlAU3W0s0mngiGlITQm0EeoHzeog8X8ALg0WE5m7tuuOWEewj68nHv7K4s
+Message-ID: <CACT4Y+btS62MDJLRToydRfK-QAMBiihv9d7Du=zEf5U_GbiOMg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] selftests: Extend syscall_user_dispatch test to check
+ allowed range
+To: Gregory Price <gourry@gourry.net>
+Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
+	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
+	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
-
-On 2024/12/27 16:28, Krzysztof Kozlowski wrote:
-> On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
->> From: Finley Xiao <finley.xiao@rock-chips.com>
->>
->> Add the dt-bindings header for the rk3562, that gets shared between
->> the clock controller and the clock references in the dts.
->> Add softreset ID for rk3562.
->>
->> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
->> Signed-off-by: Liang Chen <cl@rock-chips.com>
->> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
->> ---
->>
->> Changes in v2:
->> - rename the file to rockchip,rk3562-cru.h
->> - remove CLK_NR_CLKS
->> - add new file for reset ID
->> - update to use dual license
->>
->>   .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
->>   .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
+On Thu, 20 Feb 2025 at 16:17, Gregory Price <gourry@gourry.net> wrote:
 >
-> No, that's not a separate patch. Headers *ALWAYS* go with the bindings
-> patch.
-Will fix.
->>   2 files changed, 737 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
->>   create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
->>
->> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->> new file mode 100644
->> index 000000000000..ad07ad3a12ad
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
->> @@ -0,0 +1,377 @@
->> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-> Why not using license requested by checkpatch?
-
-The checkpatch does not report error/warning for this license, and this 
-is the same as many other SoCs.
-
-Which license is recommend in the header file?
-
+> On Tue, Feb 18, 2025 at 05:04:36PM +0100, Dmitry Vyukov wrote:
+> > diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+> > index b0969925ec64c..fa40e46e6d3e9 100644
+> > --- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+> > +++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
+> ... snip ...
+> > @@ -110,31 +111,15 @@ TEST(bad_prctl_param)
+> >       /* PR_SYS_DISPATCH_ON */
+> >       op = PR_SYS_DISPATCH_ON;
+> >
+> > -     /* Dispatcher region is bad (offset > 0 && len == 0) */
+> > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+> > -     EXPECT_EQ(EINVAL, errno);
+> > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
+> > -     EXPECT_EQ(EINVAL, errno);
+> > +     /* All ranges are allowed */
+> > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
+> > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
 >
->> +/*
->> + * Copyright (c) 2022-2024 Rockchip Electronics Co., Ltd.
->> + * Author: Finley Xiao <finley.xiao@rock-chips.com>
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
->> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3562_H
->> +
->> +/* cru-clocks indices */
->> +
->> +/* cru plls */
->> +#define PLL_APLL			1
-> Start with 0. Your other binding also starts with 0, so be consistent.
-Will fix.
+> A 0 length is ambiguous and nonsensical in every other context, not sure
+> why you'd allow it here.
+
+Yes, but it's also not special in any way. One asks for a range of N
+bytes, one gets a range of N bytes. Works for 0 as well. We can move 0
+to an own special category, and add production code to support that.
+But I don't see strong reasons to do that. It's like it's possible to
+do read/write with 0 bytes to get, well, exactly that.
+How strong do you feel about special casing 0?
+
+> > +bool test_range(unsigned long offset, unsigned long length)
+> > +{
+> > +     nr_syscalls_emulated = 0;
+> > +     if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
+> > +             return false;
 >
->> +#define PLL_GPLL			2
->> +#define PLL_VPLL			3
->> +#define PLL_HPLL			4
->> +#define PLL_CPLL			5
->> +#define PLL_DPLL			6
->> +
->> +/* cru clocks */
-> Missing clock for 7. You are not supposed to have any holes here.
-
-Will fix.
-
-Thanks,
-
-- Kever
-
->> +#define ARMCLK				8
->> +#define CLK_GPU				9
->> +#define ACLK_RKNN			10
-> Best regards,
-> Krzysztof
+> This creates an ambiguous failure state for your test. Is it failing
+> because the range is bad or because you didn't intercept a syscall?
 >
+> Better to be more explicit here. It makes it difficult to understand
+> what each individual test is doing at a glance.
+
+Good point. Done in v2.
+
+> > +     SYSCALL_DISPATCH_ON(glob_sel);
+> > +     return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
+> > +}
+> > +
+> > +TEST(dispatch_range)
+> > +{
+> > +     ASSERT_EQ(0, setup_sigsys_handler());
+> > +     ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
+> > +     SYSCALL_DISPATCH_ON(glob_sel);
+> > +     ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
+> > +     TH_LOG("syscall_addr=0x%lx", syscall_addr);
+> > +     EXPECT_FALSE(test_range(syscall_addr, 1));
+> > +     EXPECT_FALSE(test_range(syscall_addr-100, 200));
+> > +     EXPECT_TRUE(test_range(syscall_addr+1, 100));
+> > +     EXPECT_TRUE(test_range(syscall_addr-100, 100));
+> > +     /* Wrap-around tests for everything except for a single PC. */
+> > +     EXPECT_TRUE(test_range(syscall_addr+1, -1));
+> > +     EXPECT_FALSE(test_range(syscall_addr, -1));
+> > +     EXPECT_FALSE(test_range(syscall_addr+2, -1));
 >
+> If you are planning to include 0 as an allowed length, you need to
+> demonstrate what it does.
+
+Done in v2.
+
+> > +     SYSCALL_DISPATCH_OFF(glob_sel);
+> > +}
+> > +
+> >  TEST_HARNESS_MAIN
+> > --
+> > 2.48.1.601.g30ceb7b040-goog
+> >
 
