@@ -1,130 +1,105 @@
-Return-Path: <linux-kernel+bounces-528347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E93CA416BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:57:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AF9A416C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:59:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26153A8E2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:57:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215113AD548
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4D724166F;
-	Mon, 24 Feb 2025 07:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACDD24168C;
+	Mon, 24 Feb 2025 07:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uEawLfnH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ozlabs.org header.i=@ozlabs.org header.b="ims34gfQ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D728A1898ED;
-	Mon, 24 Feb 2025 07:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786EE23F262;
+	Mon, 24 Feb 2025 07:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740383862; cv=none; b=dJJJr1PmOxlbooRdFXRbMnFreN+TewV0nvYaDryGySl1QgKPAgGuFOmYBEgHV+rzXrX6FwPkJIM7X3MYnFGbR96kclUp4h7239F8QiIoPL/uTpE8Y4cQxW9OEmtpCvZru6L4vekHPbBCOIqGQb4OC3EbvMrRVJHQe2miViewoIQ=
+	t=1740383955; cv=none; b=Jo1Wf697rz058wDGL6vBSiGhYMWPeACRyPrqmuID+wqcpBp/zy++qwXyMGj0CEo4XJprKMmuRQmmdkuWVCSx9vTQ0/1U4KUcItyJougaFelPcS+5EFjl2HysyZlfpxWjlr7aDIwCARK+3ZdbArwQwy5OWaONBOp2WANhCuliajg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740383862; c=relaxed/simple;
-	bh=xjtGRKkld7/ydj8yliJQ0o5T5/qlMxtKbXMn/fRvbdw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G+IM9oIO/YXP5KOOAdZEisoH+iowSJiFrEMmgNGZy0EsV1sFCiVM+rB9zOhIoIMHgcZWHz0Gy2CdqXKFTSo4qV4C/r4iDfqYW4tKC6b5Z4nEtWbJ7pSEOmcyquc1UN35kko3E1PCX75QLT0YYBGb86oyI3JZUCVF3cuWzqogtIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uEawLfnH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0160DC4CEE6;
-	Mon, 24 Feb 2025 07:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740383861;
-	bh=xjtGRKkld7/ydj8yliJQ0o5T5/qlMxtKbXMn/fRvbdw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uEawLfnHWtC9vzMuDjqURQev/lEDQIVftTnCLObR0yBsCjRPjpNszlY3/vpy4Zctw
-	 g4MDCTzV0AZ/r4/cpNhLIZ6eAD7yy4TNXLsWGaV4RjI117LM8mT1wHJfY3o9jtQGfR
-	 x+nVwWhH7n/fP/1q5hD/KfFSPWXr2lkcE97PPmB0Cg/gIQAyMZU32SJEczytd3xZ4O
-	 kk2FyKl/TNErloYF5HGf29Gm8qAKcVyX3IAPWSLdN4rACcfajdhlhTVp+ysELAaGMX
-	 JqUI3fg1YtvMpA3GqiqbRm3XlxNmlZ/faq/XTn3wqT13LpgkBY9Ix6p67A9LWkMpM6
-	 DBHY9WwCIR8rg==
-Message-ID: <144202cc-057c-4a7d-852a-27e979284dd2@kernel.org>
-Date: Mon, 24 Feb 2025 08:57:34 +0100
+	s=arc-20240116; t=1740383955; c=relaxed/simple;
+	bh=KH7gHdSS1itQHQoP3z+uj401oB/rX1ncYfhBdSQWuUg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rxNAG4XkEKg8SXwtLnENY2koC7N6BtJ06hNOVDduKyLxSFtnhNFNtPzY/UgsZDeqxFpfFT+QQE722EWDPKP7lXePBaiwvWFD8V4dFX4SlKexB5HGedPDu0TLMGjlMe0Sq8P3p7dQQODUXVhfCqa/1uLD7hHQ+OI6uSHS8lTwfi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ozlabs.org; spf=pass smtp.mailfrom=ozlabs.org; dkim=pass (2048-bit key) header.d=ozlabs.org header.i=@ozlabs.org header.b=ims34gfQ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ozlabs.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ozlabs.org;
+	s=201707; t=1740383950;
+	bh=KH7gHdSS1itQHQoP3z+uj401oB/rX1ncYfhBdSQWuUg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ims34gfQA1vb1TN04LB3UWi8oHvR4gxRnPiIctjK103CyZjimW58U3jEvwGUiodUv
+	 Za6iGn3q5AdLIxYyGTz781CdTkRRuzvuzvB+jqoRCFNgqP3roPHIeinGtWFwJEKkks
+	 APqv1lGjpK23uVFnzo7nVVS6b3xXCg06P8jTIx1RlPQEEsIl6RAASM53YXWxfxgCPT
+	 YuWYvczKQgqWnAIi87XjLoll+9D2dsL+De6hgIcZaT1OeN4O1e1mvYID5Q0/x192AI
+	 cIKrTswlatGOS2XEjLU/PxGrM3nDGtjSOtqs2L52iQ/z9EMvUaOHQjKU3ndigQC8xz
+	 42ZoJR/u2NoBg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits))
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1Y5l5GVTz4wby;
+	Mon, 24 Feb 2025 18:58:51 +1100 (AEDT)
+Message-ID: <1cebfebb9c205a1ebc5722ca7e3b87339ceb3c79.camel@ozlabs.org>
+Subject: Re: [PATCH 00/17] Introduce and use generic parity32/64 helper
+From: Jeremy Kerr <jk@ozlabs.org>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+ mingo@redhat.com,  bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, joel@jms.id.au,  eajames@linux.ibm.com,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org,  rfoss@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ dmitry.torokhov@gmail.com,  mchehab@kernel.org, awalls@md.metrocast.net,
+ hverkuil@xs4all.nl,  miquel.raynal@bootlin.com, richard@nod.at,
+ vigneshr@ti.com,  louis.peens@corigine.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net,  edumazet@google.com, pabeni@redhat.com,
+ parthiban.veerasooran@microchip.com,  arend.vanspriel@broadcom.com,
+ johannes@sipsolutions.net,  gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, yury.norov@gmail.com,  akpm@linux-foundation.org
+Cc: hpa@zytor.com, alistair@popple.id.au, linux@rasmusvillemoes.dk, 
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com,  kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsi@lists.ozlabs.org,  dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org,  linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org,  oss-drivers@corigine.com,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, 
+ linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw, 
+ Yu-Chun Lin <eleanor15x@gmail.com>
+Date: Mon, 24 Feb 2025 15:58:49 +0800
+In-Reply-To: <20250223164217.2139331-1-visitorckw@gmail.com>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, michal.simek@amd.com,
- bharat.kumar.gogada@amd.com, jingoohan1@gmail.com
-References: <20250224073117.767210-1-thippeswamy.havalige@amd.com>
- <20250224073117.767210-4-thippeswamy.havalige@amd.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250224073117.767210-4-thippeswamy.havalige@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 24/02/2025 08:31, Thippeswamy Havalige wrote:
-> Add support for AMD MDB (Multimedia DMA Bridge) IP core as Root Port.
-> 
-> The Versal2 devices include MDB Module. The integrated block for MDB along
-> with the integrated bridge can function as PCIe Root Port controller at
-> Gen5 32-Gb/s operation per lane.
-> 
-> Bridge supports error and legacy interrupts and are handled using platform
-> specific interrupt line in Versal2.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes:
-> | https://lore.kernel.org/oe-kbuild-all/202502191741.xrVmEAG4-lkp@intel.
-> | com/
-Tags never start with | and are not wrapped. But anyway, robot did not
-report this patch. Drop these.
+Hi Kuan-Wei,
 
-Best regards,
-Krzysztof
+> Several parts of the kernel contain redundant implementations of parity
+> calculations for 32-bit and 64-bit values. Introduces generic
+> parity32() and parity64() helpers in bitops.h, providing a standardized
+> and optimized implementation.=C2=A0=20
+
+More so than __builtin_parity() ?
+
+I'm all for reducing the duplication, but the compiler may well have a
+better parity approach than the xor-folding implementation here. Looks
+like we can get this to two instructions on powerpc64, for example.
+
+Cheers,
+
+
+Jeremy
 
