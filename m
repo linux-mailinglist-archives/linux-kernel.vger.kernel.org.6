@@ -1,339 +1,492 @@
-Return-Path: <linux-kernel+bounces-528922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DCADA41DFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:59:47 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07613A41E11
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:01:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3930C18917C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0114B7A4027
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798FE2192EC;
-	Mon, 24 Feb 2025 11:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6158D267B15;
+	Mon, 24 Feb 2025 11:39:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8Qh68+b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b="mQPmnAHt"
+Received: from enterprise02.smtp.diehl.com (enterprise02.smtp.diehl.com [193.201.238.220])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB472192E5;
-	Mon, 24 Feb 2025 11:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397139; cv=fail; b=beVxiU1GKH7GZ2B56OsALsdAY2O2HJ2shmK8zeXBArM3FffURLehiBQ81p1K2y87gyEFxFd4LIR9xklMPA9qfrrWF8afPvmgXBOJ0CUlgJHkpiEhx/X0ySPvM5oJPwcfwLtmt4CtRYqC53AoJEx11v234L5XFFjur+zaBDoWRgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397139; c=relaxed/simple;
-	bh=Qqvf+6NSqAOmk4TvJhqQleULmwBqIs0qxxIC14EHGl0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fec5YGGMwqZ+20uScgUPaCxf5QBYYOz+kjUFDW54ztm52ubel6XyDFEudjV2lTjnHvqW3NXtK1ZJtArpZ7hKaBpQi0M5e1I0C6aA97fNCcNAWzzuXhfcfRykgtfTgM2oel3HtFvAtpNcvWYb1xXtwqMUwIQkwj35HqTqsQ/9l5I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8Qh68+b; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740397137; x=1771933137;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=Qqvf+6NSqAOmk4TvJhqQleULmwBqIs0qxxIC14EHGl0=;
-  b=U8Qh68+bSzzPsONNYDSTKACTrHwEdieOSOmC7BoEBOshUUDhGMfmzcFs
-   4t3N0z+tGVQ/6TrvrG22uiRunuBIHBcwHjCuiCmNMDWKZi1Ynppm/6dcL
-   NDFy0ErJBKXNyFaBShSKr1zryWze+uG3o/Whef8aUF5OPJEnvqCmh5WMK
-   LAlJrROaIUV/YhbpEMg+JoCwBbZyU35wqUlm8BZ8KmqqYhcG0uJtHp8NF
-   FsS4mv09QNTHB7AeQbFH3uCyQwctI4+UuZkrpj0ro6vsj/GHmQ1ixHZ21
-   S867RxxKuOX8XALwphPhFzIujl26LNOCUaFcEJm3++wiz9KsIZrxK/35b
-   A==;
-X-CSE-ConnectionGUID: jDikmv9AT2erkX2fqiehHQ==
-X-CSE-MsgGUID: mN+pmVeiQTmWkeyEeicOfg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="66519034"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="66519034"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 03:38:54 -0800
-X-CSE-ConnectionGUID: r6NXd4NCQmuXH44bBohxJA==
-X-CSE-MsgGUID: Y8ixK9M6RKOriJwdvT6X+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="146885631"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Feb 2025 03:38:55 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Mon, 24 Feb 2025 03:38:54 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 03:38:54 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 24 Feb 2025 03:38:54 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dvpaByVWJJQ3dvj6fHS7UaeROdvwZxbaWGAdvbsr72dxBhI17ql8Hz+LTGeV0ob4YAAVsE04gFwc1c5iNku8rCzz7Sd8un1zYoB+mLy4gMd3Ri5/CTM/a477J8mDBsCZnObPTuiZ4aycvMwPrTBz/Ownydi33De6g5yJlUOumPLVPvJhr3k1XGT2kLlc+opmNYPCC8ZKUyr9bNClDsIh6dZaoQSgiHmnVY2PSrvTUDbstp3MKy7hZPsi+ACyKyChkzhKC5REX263WU5P3Mw/4CPT1v7tPrPmvPCIMCDMphqO2EfmJpDis9bYfCKpdJDa3lBL1y7dp6TJIytAybfgaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sxtaGZGmA+uSSvDl6sSffrAhbZp44puzW/udaPFupi0=;
- b=PfXf8AXuWTsLBMXtXdfasPS4h4DD13nJhiGgz7R4Lwvt1BwtJ+860jKA6qyW0DXoEixrjQHCyZzCMZPtOELQVtZnrXVC7I8PeV/bXPF9CLwL6LuMImG4HaJCoRpHEOVPXOEKh+ieHXf5COGvZIylrq7Jb8rt7k/8zsuAQ99YVMfbS28qSp86i6OMlIUOgH/EwjmOs0FYk2+j1GrUvw96/UuTzApncc+0kLnuq3BDlgltg3dCe10a+7baI+vjYwv8PV+l1kDkZMAUxkrwU0wl+GVXeGgMXvSHH2ByT+lHsvpDtRWJkXca0kQ/foTBcksN+sAnlAI2F5MSznhceilz9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BYAPR11MB3605.namprd11.prod.outlook.com (2603:10b6:a03:f5::33)
- by DS7PR11MB6150.namprd11.prod.outlook.com (2603:10b6:8:9d::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 11:38:47 +0000
-Received: from BYAPR11MB3605.namprd11.prod.outlook.com
- ([fe80::1c0:cc01:1bf0:fb89]) by BYAPR11MB3605.namprd11.prod.outlook.com
- ([fe80::1c0:cc01:1bf0:fb89%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 11:38:47 +0000
-Message-ID: <96cc48a7-157b-4c42-a7d4-79181f55eed8@intel.com>
-Date: Mon, 24 Feb 2025 13:38:36 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 02/12] KVM: x86: Allow the use of
- kvm_load_host_xsave_state() with guest_state_protected
-To: Xiaoyao Li <xiaoyao.li@intel.com>, <pbonzini@redhat.com>,
-	<seanjc@google.com>
-CC: <kvm@vger.kernel.org>, <rick.p.edgecombe@intel.com>,
-	<kai.huang@intel.com>, <reinette.chatre@intel.com>,
-	<tony.lindgren@linux.intel.com>, <binbin.wu@linux.intel.com>,
-	<dmatlack@google.com>, <isaku.yamahata@intel.com>, <nik.borisov@suse.com>,
-	<linux-kernel@vger.kernel.org>, <yan.y.zhao@intel.com>, <chao.gao@intel.com>,
-	<weijiang.yang@intel.com>
-References: <20250129095902.16391-1-adrian.hunter@intel.com>
- <20250129095902.16391-3-adrian.hunter@intel.com>
- <01e85b96-db63-4de2-9f49-322919e054ec@intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <01e85b96-db63-4de2-9f49-322919e054ec@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: VE1PR03CA0002.eurprd03.prod.outlook.com
- (2603:10a6:802:a0::14) To BYAPR11MB3605.namprd11.prod.outlook.com
- (2603:10b6:a03:f5::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA57525A347
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.201.238.220
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740397142; cv=none; b=UKmZiwUJ9xSmtMElcWdRCLHS05725XKfq0hu+2XfD2BRnlxym6lgBO/DoY9ZlmWjZVPsHfbcuuBkN427ckkk8DthphP4ADA6HefZOwDhWX4ubfvXQ0264N/mVZVVgUuHnsdlYCjUTpmycd2w7+N4ISr+tBeQoaJHCtfSQnPthvs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740397142; c=relaxed/simple;
+	bh=LqZbXuTMhkboreamp4h8WSE+cRi0pv+7LKjzKlr1Te4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YEIF5zuREYh0pMxBumdaCFDJZk0UE+DIzF68LuuFGkHMLVFQGyiAlOBr/bPCFDDVVRj/A/ZI4ZKuReBb/dZ2hYvpqZKzXZFPm5K/zxOqZatj6jb0p6ItHV9HfkSBmepf5QFQBe/VxMLuNkc4QM4yKhHV9gFtsIRcN0CzdyW6U6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com; spf=pass smtp.mailfrom=diehl.com; dkim=pass (2048-bit key) header.d=diehl.com header.i=@diehl.com header.b=mQPmnAHt; arc=none smtp.client-ip=193.201.238.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=diehl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=diehl.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=diehl.com; i=@diehl.com; q=dns/txt; s=default;
+  t=1740397138; x=1771933138;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=BZPqaSUYpMA1gThwSa5jJ17wrHP0TL/fZ/ro4bFKiCA=;
+  b=mQPmnAHt8ZgYL4nOex73KHrSfwcFFbeyJU+mdQLqdSHyhUkzgu4X4Waj
+   mi7E+va3+sZ3PlsRVgaERjZSkseUfA6T3Xs9JIsXXk+HJsZLi0x06cShM
+   CIixcojCGVbqkyTcWI1VCdl9iwQOoo8Z9lYHp3FGGHEs45hqp3uHEs1tl
+   X9/EB7Bow2O1EXiPkUvtoYrSwFLJ+NQypU83KMratsrY3VInxH2PxXmzV
+   91Pv/GfdeowrlwPW2SdrrMtdj79yhjkRHDL1K+awFWFlm8anyIdvabfYO
+   kkHzOt0lmo5wpLr3Pvdab4dPe0Q8pDWR+Ys+hXU4LAOM0CJxxySMEBHfu
+   Q==;
+X-CSE-ConnectionGUID: kEdVPvq8RgqtO8mta0qtvg==
+X-CSE-MsgGUID: /ZrGZRcfSU6K1SJYmYKTAw==
+X-ThreatScanner-Verdict: Negative
+IronPort-Data: A9a23:HpStZKvBtavXIiysSE02wqHPiOfnVHlZMUV32f8akzHdYApBs4E2v
+ jNfGTXfaa7OOz2rZJFrKNbltk0b+s+CkIcnDUA5nZ0HZ2lPqM/IQ8zGNS8cVAvLJJCaQEltt
+ p1PNIGZIJ1rFnLRrEujPrG79SV13v7ZTOGhWbTJMSkhFQVqRnt5gxk6y+VgjtQy0dK3Cg3Qt
+ NmsyyGzEFa9wzp1OWsI6qWF7wtst++t/SgZsVo3ee1RsTcyslFMZH5IDf/pdCuQrvBoNu6mW
+ /6Ri/aw/2qf5AgsEci+k7n9NEYKBbfTJ03U1HMJAqP6010e+SE4l/pmafNZOE0N23DVldwuk
+ tlD7c3qGQtxBO6UEgzVfRlEDzkseupB86TfZ2OgsNeI1EzJdT3nw7J1DU4weooT4aN+CGpF/
+ vEUdXVTMB3Twr7unuP+G+M1jIEtIJO6NYlA4XxuwDqBF8tOfXy4eEm82DMi9Gx23qhzNfbCe
+ 9JLLn1mbR2GeAJOIUwMCZ042uyowXD+aXgEoQ2b/PVnsy2JkgYsleS9PdGQc4HWGoBex02U/
+ mjIpjvyWR1CCbSjJUG+HgSRapXnxmWjML86FKGk7qwtx1aJwioIFxwNTkC6rv//gU75UN5Hb
+ hcZ93dzo6RusRH6FYm4A0S1rTvU5BIWHoEKSbYz4wyDl6GOuF6kblToNQWtHuHKzudtA2RC6
+ 3eJg8/xV3sou6eRD2mC96yPtjK9P24eLSgJaTdBQFpa7YG8q912g0yUEpM/G6O+y434Qzi1m
+ 2yA9nA32LxI1cVWj5jTwby8uN7am3SzZlVzvm3qY1+YAiNFiK+NaYX5tgDXsfsYdN7GEVKLt
+ XZVxJTP5btVUM/SnSGDEblRReH47Pu7azCN2lQH87vNVdiO0yP5IdoAsGkWyGNBaJtslerBO
+ ReL0e9pzMYNeiPsNekvPt7Z5/0ClcDIDc7iWu3fcu1Aa51wcB7v1Cx1bCZ85Ui0+KQXuf95Y
+ MzznfqEVy5AVPw9lmHuHo/x7JdwrswA7TKKLXzE50T/uVauTCb9YasINlKIctc44MusyC3J8
+ 8xSPte90B5WVuvzeEH/qeb/+nhTcBDXrbivwyBmXrbrzjhOQQnNONeIqV8VQLGJqowO/gv+E
+ tNRbWcDoLb3rSWvxQxn8RmPYpu3NXp0hSpT0SDBoT9EcpXsCGqixP53Snc5QVUo3O9OwcBMU
+ eBVQcqZHtMfTyjOoy0Bc5ao+eSOdDzz7e6PFyagcjMwYMY6AQfO4Meicgri9C1IBS2y3Sc8i
+ +T4kFOBB8NTAV05Vq46a9r2p7+1lXQQnuNpGUzTPtRJfEzq/KBmKiHxirk8JMRkxRDrn2PFi
+ FjJWklIzQXLi8gH6vb7v6uKlLr3MLJFPHtfLkrnxKnjYEE2+ULmm+esSt2gcjHaUW7o5KSKa
+ ONTwvz6NvBBl1FP26J4ErB23ec96sHpqrty0AtpBjPIYk6tB7cmJWOJtfSjrYUUnvkJ403vC
+ gTWoYMy1ai1Bf4J2WU5fGINBtlvH9lN8tUOxZzZ+HnH2RI=
+IronPort-HdrOrdr: A9a23:KFXm3q5YaTDQcsSYqQPXwK3XdLJyesId70hD6qm+c3Bom62j5q
+ OTdZsguyMc5Ax6ZJhCo7C90cu7IE80nKQdieIs1NyZMzUO1lHEEL1f
+X-Talos-CUID: 9a23:cDe7g2G4ejfIb6WMqmJk2UIqIt48IkfS1Wv3c0qkAD5wVKOaHAo=
+X-Talos-MUID: 9a23:FAR4vQi4Ys6iaIKTTisln8Mpc/VyzJaUA042rMsl4vKmBClBGAu0k2Hi
+X-IronPort-AV: E=Sophos;i="6.13,309,1732575600"; 
+   d="p7s'346?scan'346,208,346";a="107767368"
+From: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+To: Rodolfo Giometti <giometti@enneenne.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: Re: [PATCH] pps: add epoll support
+Date: Mon, 24 Feb 2025 12:38:50 +0100 (CET)
+Message-ID: <0653b036d2b44d57914f8cb3e405aa0d@diehl.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR11MB3605:EE_|DS7PR11MB6150:EE_
-X-MS-Office365-Filtering-Correlation-Id: 42f4309b-725a-474a-9161-08dd54c7cd1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eVg1c1dJSmZoREZPNXNxd3hrZ0d2NHpjb2pyV3ZyNmhPVnI0bjVXVWtZNGt1?=
- =?utf-8?B?UEtXankwQzRXQWFKRE4ycWFzaHB6Mk9McDVDaEkzalpVcmR2SmJuakYzUFEr?=
- =?utf-8?B?WnhESXU0cWdvTkRWa29XU1hXKys2TkN1eGhxRGZ4SVpGVUhtakJWK3QrMFhr?=
- =?utf-8?B?WVEwKzJMSTNXYnFWRXljZjRWUDFUbG1zSGJHb0tEbWZLYjdKU1dZM09XWk9O?=
- =?utf-8?B?UExvWGxERjZEWE8vclpKcnpPSVFoZTd4M3g2L2pJSDVkZzY4d1R5eW05aWZQ?=
- =?utf-8?B?T0tOaFhBd2d2Mm9HK2V6Mk1tWUR6WERrZkpZQjZuR2liOFkyZnQ2VWt0Zml6?=
- =?utf-8?B?M1pOZXppekpTTXRYd2QwMEFnRzJEUVJMNTN0dVhNMnArT1YzT3k3QkRCMTV4?=
- =?utf-8?B?T3J6MzhiSEo4MGVIMmVRNkYzNGFYV3d4K3QvSTE2V2NuSHVwVUF0YnFRRE1a?=
- =?utf-8?B?VWpIaU9ZOUxicHgzQlU0dWFwVHdSVE9SK0ZGTmoreXVzVkpIUS9QWFAzNHky?=
- =?utf-8?B?MFJhSFpaRmlSNEhTK3A5RmdaMmJwTG5tbG1JeUFnUmsvWUlyUURabUY2eDli?=
- =?utf-8?B?dnE3a3RDOGVieWt6NXZab1U5RElZMFhJaDdCbFBZUEt3RE96alN6SFBHR2Vn?=
- =?utf-8?B?bDZjSFV3eko4Z3ZxMTZNNzhiWFN3VWpiNDkvbzVFSW51ck9nak5Ta3R3TTR6?=
- =?utf-8?B?ck1pYVJqNHFmUElMRXZ1KzIrYjlBNG1CZVBzVlBNenNLNTdYY3BqWmxpK2hD?=
- =?utf-8?B?dUo1Mm5WeDA3SzBZcUt6NUQxdlozV3J2UXZKbVV5bHRHR21kLzRPNkJPU3kz?=
- =?utf-8?B?QkU4NGRmSFRVaXBFWkJGWlpQczVHUnFTUTdlRGhNTzNoV2JrRU40TG5qdjZr?=
- =?utf-8?B?bURMcjJOTHJPemcrQjVaK2szMSt6Q1Z3aG5vc0VBTVlaaWRzZVBsZFpaNWtS?=
- =?utf-8?B?bGpreVlxNUdxcnVEUStnVFN2ZVhvTWplR003K2RBL2NBdGJjWGVmbEpsUjlh?=
- =?utf-8?B?VzE4Kzd3NWZUTVg1T05pWlBDVVhuOFlIaDlrU2ZQZ21hOHZjdk4rUGxqZUdE?=
- =?utf-8?B?M2M3eVJ4TUFiWmcvRUFqRTQ4VFBFNEp5RlJLb1p3Z1JGYWxEcXVPQUNRQXp0?=
- =?utf-8?B?V3ZQYVo1QUpBWlJsRjZxYTlGTHJWbDlyalRxRmtMSFI1NUtPdnJKc0pSbnIv?=
- =?utf-8?B?dXJJZ1FqcTJiZUZhVzIxL05Ed3NjWHRodzI2c3o2dHpSNmtkQTZRYUp2TGts?=
- =?utf-8?B?ZDFqK25vRmZqc3MvZllvVXNJNU9GZXpCT2tXNjdnRW9BKy9Dem8wdWp3ZzVH?=
- =?utf-8?B?L0czV2poNStCbGhyOUliN2xqSVFaMzQ0NXhmb3AydG9Eb2hLUjluRFVRTkdT?=
- =?utf-8?B?YXpMWlFHT2YvbXRnaW5JclJaUVN0dmh6K0plR0VoMi9DTXFXQi91VzlNTWE0?=
- =?utf-8?B?OHNQeS9qS1J2R00rTEoxSXNMMGgxOXllcCt3VGhRQVpJeFY2NktQbkVkUkVm?=
- =?utf-8?B?Z3ArZXhobXRrRFNWaG9kSTZYNGQ5VzYyWlFzKzFDWWUwbFc4Sll2Y1U3YkZw?=
- =?utf-8?B?NkRIdEFSOU1jQ3NBWlFQdE91WXFEelAyRnVmRGV1aXdtREVSdkdjUDBKYWQ5?=
- =?utf-8?B?akdqOEZkZVd2KzJmMHdLMzNkdXlaWW5VblA3UTVpOW5SRkJEaUhuSGM1OXVn?=
- =?utf-8?B?dEtkaVI4eWFuQjJSbmhmWkJFWjRjdE91aEFicExOU1k5Nm9JZC9USjV5RlF5?=
- =?utf-8?B?U0ZMM3MxRzB4VHJCZ3daUWk2RzhjT0dEcUF5NTFVU2M2OFE2QzZlNE1SZG81?=
- =?utf-8?B?RXFpVGxCUlMrdWpYbGRKamdjc1RXUUVqN0NVdXYwUm9mL1FGVDhBRTZuN1lZ?=
- =?utf-8?B?R3krYy9BNnhROWN3WVIvY051V2hVZ0tiRUlYdGczQ3dnUkE9PQ==?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MWVQZnNPUUgyVUpVSjYvRnplV3h4eTlrbTNFOGFPc0ZMaFRmVWE2UWdmOXZO?=
- =?utf-8?B?OE4wMXB2M0tzN0JkTFJBSzB5WU9tNndUazBoLzg2L2t6MGJoVStaNW1RM1FJ?=
- =?utf-8?B?Tk5XSE1DTXYvZ3ROUklQaS9hOHpYc05KTk96TGUxY3dYazBHaUhxa2tXUGpJ?=
- =?utf-8?B?N0dHUUNGYU4zTTBsM0I3Z1lsNEQrWU1QQ0YxOFkzdi9PRmxMWDJSeE1Xb0xO?=
- =?utf-8?B?akJKMy9PNnF1Wkt2SStESkVBeWh5VHJNN09JT0V1MFdUVm9oaDR0Tm1JOHZY?=
- =?utf-8?B?akR3L01sOHBlOTBVb2xNQmpXOWFKQjdzM09IaFBaRXJ5ZlUvNm55YVR0YTBi?=
- =?utf-8?B?UmZ2N2xTQXZtUUdLMnFNVk1RblA2MEozTFh6TTcweGpTTi9nZng3WFE2VnNH?=
- =?utf-8?B?UGk1QjNPRnJaQkdwNFF0Ty9kakFsR2NBSzIzU0k1YmNHK08wOEowUlRJU3Vx?=
- =?utf-8?B?aW1OMEtpNjVwRGV4TUNHVGFjazhrZzJtZDIyR2s0amx6SlJGZzd0RzFENndi?=
- =?utf-8?B?RWF1ZTBpQ1VyV0NGWFg5enhHdXhra0Yya0x2WXNmYWp0R2FuWCtqcGF3Wmc3?=
- =?utf-8?B?dVgrZk1hcXQrTnVxaVFvbnM0MFBacEFUTDVBVVVLdUNNNW1aQlZZSW5rQ0c0?=
- =?utf-8?B?MVB4NS9VTmJsb1ZNRFR4OXJ3aXpZZzIyT0JleTFtMzVQaDNJaTh5djRWMk5o?=
- =?utf-8?B?eWV1ZGpFWkJjTnQ2WGlINCtsL0M3TjF2MUtaS3NWTUR0WE5BcEZ5bTVueTIv?=
- =?utf-8?B?cG9SR3I5T1Azd1JJV1Z0YTFONTlDT3VpT0NSYTJKdDdQWm5GQnZIUTVPeG9X?=
- =?utf-8?B?M1N3T04yNGY4TFowY1lydERENFFDYUFlZy9MWjduN2xMSGttVVBRU24xb2RN?=
- =?utf-8?B?WFVZRFU0eXV3R3FIM2c4bldCQTZ2RFNhL1IzKzBHNmE1NTFqYUJja1VWUlFp?=
- =?utf-8?B?d3hEYzJiUDdneWxzMlJtQVJlUTV4TG1ZanlBOGk5SVdRWXE2aGE3amd4cmli?=
- =?utf-8?B?eWRqbXgzb2JNOFFpU2NUbkIvcEZQVGovYXMxUzVEcnhXMkNuR2hMRTJVcUk5?=
- =?utf-8?B?eGlxWG8xbW55QWRWK0piRVpQM0JhZFRoSmNjYk85KzJDMTROM0xUUlZyWGdD?=
- =?utf-8?B?U2NUc3Q2SldnZHZVUUZsMHB6ZTVoVTh0MkVHdWY5WndKZHI1c2VGNkRBbEFQ?=
- =?utf-8?B?ZytScm1JWXYvNVFISlNYZVlUSGI2dlhBMStEcCtDM2U5TEFQcW9YUmdPVUoy?=
- =?utf-8?B?cUd4OVBpWU5RdzdWT3VRSXFEYmRpSkdCL3dFcFZ1bW1hZkhGVHloVFJ3YlNF?=
- =?utf-8?B?SFNwbHJ2M0JZbHZraVVhQlNvWVhzS0NMRHErd0YxV1B4NFc4OXhaYkQ3bDZi?=
- =?utf-8?B?RWZTWmU3MmFXWTZlVDdnc2tKN0xIcVJFNmVZT0ZzemI1dVVoL25kRVh3L2lq?=
- =?utf-8?B?T2xpTXpIenpjNGpiWWNFaDVMazJVMk1rdVQ3aHlYelRQT1JzT29oUUE2MFlB?=
- =?utf-8?B?Ty8vR3RIZGxoOEwvcm5RcVo5Q0lGbmxkWUZYRElUeDE4Mlk4Y2NvWG1ZVTdO?=
- =?utf-8?B?eDB6eFBod05ITm44akF2SDRlUDg2d2ZJVnJlelNrRCtheUN5YmVkWjNLYTNt?=
- =?utf-8?B?Nnk1MFg4VEZjQXRpWnFWd2JIYmQ0c2ozbFFuQ2p3cVp3bWZhTjcxZGRPZFZM?=
- =?utf-8?B?cVdUM3lFODhab25YWjd6OStqbFlSN3J3SjVoL2U4S2JOWjRYMzhEN2hlMGJr?=
- =?utf-8?B?Zk9VYmQ4WDJNbFVOUnEydGJCS0lXejZUc1VqaEtreklDcEJIRXhta1dWZTJJ?=
- =?utf-8?B?VUVRSWhId05tUGszcmhrNkM5bkd2blU2d3dacWVQOFk0dWd0RDNVOXNjdFB3?=
- =?utf-8?B?QnNGd3h3Z2RMd0o2WHVuOFh5Qm9EOG15MXluL3RDRUR3L3lEVGNLRHdCY1N3?=
- =?utf-8?B?NFpZZnVKMnVKOHd2YlhEdDdLK3lKRnhBWmtIelViY0t3V25BWHdZWGlGT1VO?=
- =?utf-8?B?OWRKSXAydE5OVHFWVThBNTZwZGsyVWRMV1ZjYVk2YXV6K0tySTNEUjhoOUF2?=
- =?utf-8?B?MGxPYnlpZVhNQVFFMnpydUhweHUrdTJaK3BFK29jUDIvbWVacERRNDI5L2tE?=
- =?utf-8?B?REs1WVpjdWVpN3huN0hSbUpwTTBvMWNKcVI1TDNXN1ZJRXhaSk5FZUFEVTBo?=
- =?utf-8?B?M1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42f4309b-725a-474a-9161-08dd54c7cd1e
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3605.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 11:38:47.6725
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZZgXG2tLjQJRvKeTScVli2YxP1nyapdLR9rTiaZ7NuUgZJQtyya9UjrD0u7F+2WxHwWMmLFT2PyaczGhT7bVDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6150
-X-OriginatorOrg: intel.com
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----55641D40FC72EAA65106898A5DCFE30C"
 
-On 20/02/25 12:50, Xiaoyao Li wrote:
-> On 1/29/2025 5:58 PM, Adrian Hunter wrote:
->> From: Sean Christopherson <seanjc@google.com>
->>
->> Allow the use of kvm_load_host_xsave_state() with
->> vcpu->arch.guest_state_protected == true. This will allow TDX to reuse
->> kvm_load_host_xsave_state() instead of creating its own version.
->>
->> For consistency, amend kvm_load_guest_xsave_state() also.
->>
->> Ensure that guest state that kvm_load_host_xsave_state() depends upon,
->> such as MSR_IA32_XSS, cannot be changed by user space, if
->> guest_state_protected.
->>
->> [Adrian: wrote commit message]
->>
->> Link: https://lore.kernel.org/r/Z2GiQS_RmYeHU09L@google.com
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
->> ---
->> TD vcpu enter/exit v2:
->>   - New patch
->> ---
->>   arch/x86/kvm/svm/svm.c |  7 +++++--
->>   arch/x86/kvm/x86.c     | 18 +++++++++++-------
->>   2 files changed, 16 insertions(+), 9 deletions(-)
->>
->> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
->> index 7640a84e554a..b4bcfe15ad5e 100644
->> --- a/arch/x86/kvm/svm/svm.c
->> +++ b/arch/x86/kvm/svm/svm.c
->> @@ -4253,7 +4253,9 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->>           svm_set_dr6(svm, DR6_ACTIVE_LOW);
->>         clgi();
->> -    kvm_load_guest_xsave_state(vcpu);
->> +
->> +    if (!vcpu->arch.guest_state_protected)
->> +        kvm_load_guest_xsave_state(vcpu);
->>         kvm_wait_lapic_expire(vcpu);
->>   @@ -4282,7 +4284,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
->>       if (unlikely(svm->vmcb->control.exit_code == SVM_EXIT_NMI))
->>           kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
->>   -    kvm_load_host_xsave_state(vcpu);
->> +    if (!vcpu->arch.guest_state_protected)
->> +        kvm_load_host_xsave_state(vcpu);
->>       stgi();
->>         /* Any pending NMI will happen here */
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index bbb6b7f40b3a..5cf9f023fd4b 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -1169,11 +1169,9 @@ EXPORT_SYMBOL_GPL(kvm_lmsw);
->>     void kvm_load_guest_xsave_state(struct kvm_vcpu *vcpu)
->>   {
->> -    if (vcpu->arch.guest_state_protected)
->> -        return;
->> +    WARN_ON_ONCE(vcpu->arch.guest_state_protected);
->>         if (kvm_is_cr4_bit_set(vcpu, X86_CR4_OSXSAVE)) {
->> -
->>           if (vcpu->arch.xcr0 != kvm_host.xcr0)
->>               xsetbv(XCR_XFEATURE_ENABLED_MASK, vcpu->arch.xcr0);
->>   @@ -1192,13 +1190,11 @@ EXPORT_SYMBOL_GPL(kvm_load_guest_xsave_state);
->>     void kvm_load_host_xsave_state(struct kvm_vcpu *vcpu)
->>   {
->> -    if (vcpu->arch.guest_state_protected)
->> -        return;
->> -
->>       if (cpu_feature_enabled(X86_FEATURE_PKU) &&
->>           ((vcpu->arch.xcr0 & XFEATURE_MASK_PKRU) ||
->>            kvm_is_cr4_bit_set(vcpu, X86_CR4_PKE))) {
->> -        vcpu->arch.pkru = rdpkru();
->> +        if (!vcpu->arch.guest_state_protected)
->> +            vcpu->arch.pkru = rdpkru();
-> 
-> this needs justification.
+This is an S/MIME signed message
 
-It was proposed by Sean here:
+------55641D40FC72EAA65106898A5DCFE30C
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-	https://lore.kernel.org/all/Z2WZ091z8GmGjSbC@google.com/
+Hi,
 
-which is part of the email thread referenced by the "Link:" tag above
+I tested it today and that patch creates not the expected behavior.
 
-> 
->>           if (vcpu->arch.pkru != vcpu->arch.host_pkru)
->>               wrpkru(vcpu->arch.host_pkru);
->>       }
-> 
-> 
->> @@ -3916,6 +3912,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>           if (!msr_info->host_initiated &&
->>               !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->>               return 1;
->> +
->> +        if (vcpu->arch.guest_state_protected)
->> +            return 1;
->> +
-> 
-> this and below change need to be a separate patch. So that we can discuss independently.
-> 
-> I see no reason to make MSR_IA32_XSS special than other MSRs. When guest_state_protected, most of the MSRs that aren't emulated by KVM are inaccessible by KVM.
+With your patch:
+```
+# cat /sys/class/pps/pps1/assert; PpsPollTest /dev/pps1; cat =
+/sys/class/pps/pps1/assert
+1520599141.381117584#77
+timeout
+timeout
+timeout
+1520599147.529114368#83
+```
 
-Yes, TDX will block access to MSR_IA32_XSS anyway because
-tdx_has_emulated_msr() will return false for MSR_IA32_XSS.
+And pps-ktimer without POLL flag restores current behavor:
 
-However kvm_load_host_xsave_state() is not TDX-specific code and it
-relies upon vcpu->arch.ia32_xss, so there is reason to block
-access to it when vcpu->arch.guest_state_protected is true.
+diff --git a/drivers/pps/clients/pps-ktimer.c =
+b/drivers/pps/clients/pps-ktimer.c
+index d33106bd7..07a804c35 100644
+--- a/drivers/pps/clients/pps-ktimer.c
++++ b/drivers/pps/clients/pps-ktimer.c
+@@ -46,7 +46,7 @@ static struct pps_source_info pps_ktimer_info =3D {
+        .path           =3D "",
+        .mode           =3D PPS_CAPTUREASSERT | PPS_OFFSETASSERT |
+                          PPS_ECHOASSERT |
+-                         PPS_CANWAIT | PPS_TSFMT_TSPEC,
++                         PPS_TSFMT_TSPEC,
+        .owner          =3D THIS_MODULE,
+ };
 
-> 
->>           /*
->>            * KVM supports exposing PT to the guest, but does not support
->>            * IA32_XSS[bit 8]. Guests have to use RDMSR/WRMSR rather than
->> @@ -4375,6 +4375,10 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->>           if (!msr_info->host_initiated &&
->>               !guest_cpuid_has(vcpu, X86_FEATURE_XSAVES))
->>               return 1;
->> +
->> +        if (vcpu->arch.guest_state_protected)
->> +            return 1;
->> +
->>           msr_info->data = vcpu->arch.ia32_xss;
->>           break;
->>       case MSR_K7_CLK_CTL:
-> 
+```
+# cat /sys/class/pps/pps1/mode
+1051
+# cat /sys/class/pps/pps1/assert; PpsPollTest /dev/pps1; cat =
+/sys/class/pps/pps1/assert
+1520598959.622011600#45
+assert: 45
+time: 1520598959.622011600
+assert: 45
+time: 1520598959.622011600
+assert: 45
+time: 1520598959.622011600
+1520598959.622011600#45
+```
+
+The idea is to use poll to wait for the next data become available.
+The should poll work like `wait_event_interruptible(pps->queue, ev !=3D =
+pps->last_ev)`,
+where `poll_wait(file, &pps->queue, wait)` already does the first part,
+but the condition `ev !=3D pps->last_ev` is missing.
+
+Poll shall return 0 if ev =3D=3D ps->last_ev
+and shall return EPOLLIN if ev !=3D ps->last_ev; EPOLLRDNORM is =
+equivalent[^1] so better return both
+
+In case of ioctl(PPS_FETCH) ev is stored on the stack.
+If two applications access one pps device, they both get the right =
+result, because the wait_event uses the ev from their stack.
+To do so with poll() ev needs to be available via file, because every =
+applications opens a sepate file and the file is passed to poll.
+That is what my patch does.
+It adds a per file storage so that poll has the ev value of the last =
+fetch to compare.
+
+If you want to avoid this extra alloc and derefers, we may use file =
+position (file.f_pos) to store last fetched ev value.
+The pps does not provide read/write, so f_pos is unused anyway.
+
+I am a little bit puzzeled about your second diff.
+Every pps client that uses pps_event() supports WAITEVENT, because this =
+is in the generic part.
+To me not using pps_event() but reimplement parts of pps_event() seems =
+to be a bad idea.
+That=E2=80=99s why I thing that this diff is not needed.
+
+Regards, Denis
+
+[^1]: https://man7.org/linux/man-pages/man2/poll.2.html
+
+
+-----Original Message-----
+From: Rodolfo Giometti <giometti@enneenne.com>=20
+Sent: Friday, February 21, 2025 12:40 PM
+To: Denis OSTERLAND-HEIM <denis.osterland@diehl.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pps: add epoll support
+=20
+
+On 21/02/25 11:49, Denis OSTERLAND-HEIM wrote:
+> Hi,
+>=20
+> Okay, if poll is expected to work, than we have a bug.
+> Actually a pretty old one.
+>=20
+> pps_cdev_poll() uncoditionally returns (EPOLLIN | EPOLLRDNORM), which =
+results in poll() will return immediately with data available
+> (EPOLLIN | EPOLLRDNORM).
+> To avoid this, you need conditionally return 0.
+
+I think you are right!
+
+Looking at the code I think the correct patch should be:
+
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 6a02245ea35f..7a52bb9f835b 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -41,7 +41,7 @@ static __poll_t pps_cdev_poll(struct file *file, =
+poll_table *wait)
+
+         poll_wait(file, &pps->queue, wait);
+
+-       return EPOLLIN | EPOLLRDNORM;
++       return pps->info.mode & PPS_CANWAIT ? 0 : EPOLLIN | EPOLLRDNORM;
+  }
+
+  static int pps_cdev_fasync(int fd, struct file *file, int on)
+
+> My patch adds a context per open file to store the last_ev value when =
+ioctl(PPS_FETCH) is invoked and uses this last_ev in poll as
+> condition.
+>=20
+> Sorry, for the missing memset(&fdata, 0, sizeof(fdata)).
+> Intention was set to 0, yes.
+
+OK
+
+> ```c
+> #include <stdio.h>
+> #include =
+<string.h>///home/giometti/Projects/ailux/imx9/linux/linux-imx
+> #include <poll.h>
+> #include <fcntl.h>
+> #include "timepps.h"
+>=20
+> int main(int argc, const char* argv[]) {
+>      struct pollfd instance =3D { .fd =3D open((argc > 1) ? argv[1] : =
+"/dev/pps0", O_RDONLY), .events =3D POLLIN|POLLERR , .revents =3D 0 };
+>      pps_handle_t pps_handle;
+>      static const struct timespec timeout =3D { 0, 0 };
+>      if (time_pps_create(instance.fd, &pps_handle)) {
+>          perror("failed to create pps handle");
+>          return 1;
+>      }
+>      for (int loops =3D 4; --loops; ) {
+>          pps_info_t pps_info;
+>          memset(&pps_info, 0, sizeof(pps_info));
+>          if (!poll(&instance, 1, 2000/*ms*/)) {
+>              printf("timeout");
+>              continue;
+>          }
+>          if ((instance.revents & POLLIN) !=3D POLLIN) {
+>              printf("nothing to read?");
+>              continue;
+>          }
+>          if (time_pps_fetch(pps_handle, PPS_TSFMT_TSPEC, &pps_info, =
+&timeout)) {
+>              perror("failed to fetch");
+>              return 1;
+>          }
+>=20
+>          printf(
+>              "assert: %lu\ntime: %ld.%09ld\n",
+>              pps_info.assert_sequence,
+>              pps_info.assert_tu.tspec.tv_sec,
+>              pps_info.assert_tu.tspec.tv_nsec
+>          );
+>      }
+>      return 0;
+> }
+> ```
+>=20
+> Currently output looks like:
+> ```
+> $ cat /sys/class/pps/pps0/assert; ./test /dev/pps0
+> 1520598954.468882076#60
+> assert: 60
+> time: 1520598954.468882076
+> assert: 60
+> time: 1520598954.468882076
+> assert: 60
+> time: 1520598954.468882076
+> ```
+>=20
+> You see no waits between the loops.
+
+Please, try again with the above patch.
+
+However, before doing the test, you should consider to add this patch =
+too:
+
+diff --git a/drivers/pps/pps.c b/drivers/pps/pps.c
+index 6a02245ea35f..7a52bb9f835b 100644
+--- a/drivers/pps/pps.c
++++ b/drivers/pps/pps.c
+@@ -56,10 +56,13 @@ static int pps_cdev_pps_fetch(struct pps_device =
+*pps, struct=20
+pps_fdata *fdata)
+         int err =3D 0;
+
+         /* Manage the timeout */
+-       if (fdata->timeout.flags & PPS_TIME_INVALID)
+-               err =3D wait_event_interruptible(pps->queue,
++       if (fdata->timeout.flags & PPS_TIME_INVALID) {
++               if (pps->info.mode & PPS_CANWAIT)
++                       err =3D wait_event_interruptible(pps->queue,
+                                 ev !=3D pps->last_ev);
+-       else {
++               else
++                       return -EOPNOTSUPP;
++       } else {
+                 unsigned long ticks;
+
+                 dev_dbg(&pps->dev, "timeout %lld.%09d\n",
+@@ -69,12 +72,15 @@ static int pps_cdev_pps_fetch(struct pps_device =
+*pps, struct=20
+pps_fdata *fdata)
+                 ticks +=3D fdata->timeout.nsec / (NSEC_PER_SEC / HZ);
+
+                 if (ticks !=3D 0) {
+-                       err =3D wait_event_interruptible_timeout(
++                       if (pps->info.mode & PPS_CANWAIT) {
++                               err =3D =
+wait_event_interruptible_timeout(
+                                         pps->queue,
+                                         ev !=3D pps->last_ev,
+                                         ticks);
+-                       if (err =3D=3D 0)
+-                               return -ETIMEDOUT;
++                               if (err =3D=3D 0)
++                                       return -ETIMEDOUT;
++                       } else
++                               return -EOPNOTSUPP;
+                 }
+         }
+
+In fact RFC2783 states:
+
+3.4.3 New functions: access to PPS timestamps
+
+...
+    Support for blocking behavior is an implementation option.  If the
+    PPS_CANWAIT mode bit is clear, and the timeout parameter is either
+    NULL or points to a non-zero value, the function returns an
+    EOPNOTSUPP error.  An application can discover whether the feature =
+is
+    implemented by using time_pps_getcap() to see if the PPS_CANWAIT =
+mode
+    bit is set.
+...
+
+Ciao,
+
+Rodolfo
+
+--=20
+GNU/Linux Solutions                  e-mail: giometti@enneenne.com
+Linux Device Driver                          giometti@linux.it
+Embedded Systems                     phone:  +39 349 2432127
+UNIX programming
+
+------55641D40FC72EAA65106898A5DCFE30C
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIXkgYJKoZIhvcNAQcCoIIXgzCCF38CAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgghPaMIIGpTCCBI2gAwIBAgIUPseeE9qJ+oSdbny5LvEHTpzUCAIw
+DQYJKoZIhvcNAQELBQAwUzELMAkGA1UEBhMCQ0gxFTATBgNVBAoTDFN3aXNzU2ln
+biBBRzEtMCsGA1UEAxMkU3dpc3NTaWduIFJTQSBTTUlNRSBSb290IENBIDIwMjIg
+LSAxMB4XDTI0MDUyODA4NDExMFoXDTM2MDUyODA4NDExMFowUjELMAkGA1UEBhMC
+Q0gxFTATBgNVBAoTDFN3aXNzU2lnbiBBRzEsMCoGA1UEAwwjU3dpc3NTaWduIFJT
+QSBTTUlNRSBNViBJQ0EgMjAyNCAtIDEwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAw
+ggIKAoICAQC6Dz+IfbUsaCl0cWcbnNS1BIaKrdka8ev1Kc1G6OCYH4PMtkZmC6Zo
+nnh/Dl5bOuiH+pMq1fj4BSEkRYTuOGtsWelcf6UNA11KL//zh1enaaNayqqRaCSE
+JTZH+JFb0UJWwO+qGVb1RfHnPXYrI6n8w1chCxL9AibzvsDPR6I37iUwiNo4p6Uo
+aPNAmIncpDIGgTGodkOjjPPbGwYjg58eINT63rqMQASJxUnPPIa0gZRix0NY7A6U
+z8Iv98RbbQy7ZEDvHdLFeVmzl/5TXKbQExfnEpyOjjifWoJ+FeKkEj4O9Ohd/2fg
+HQ6Y+DYwLFbHZPTmDvHQoOSS//V2NBkdnGTsfIcziIH1hypFxR/hqexJ+Da7Z7uN
+jBh2ligdXNHDGMeq640X2WVx0sfSZljxbeknrr3KFfzqfealPps1UI68Q+1iBLl/
+Ep8aZeRmzwCK+ibAPQpKfbxsjd8cBe8FcXaOWU4DjP6YmYy0xMC4vHXr3ZgrHqL9
+8D56InfiYbrBMZp1UKDSzlz/rjXWRmrXnsY5gFU705KWrJu2guSYCrc4InG3Pj+E
+mPmE6Eosikk2wg90nYFxJDM/9dPJnyIw6IdkV6qdrv9h7VKrpLrl22qETWC4/Xfi
+JU7YsY6HFKnpAElKu8t6rUnU5GcwgWjcB+zBfQD1Kt59jlLob2PcDwIDAQABo4IB
+cDCCAWwwXAYIKwYBBQUHAQEEUDBOMEwGCCsGAQUFBzAChkBodHRwOi8vYWlhLnN3
+aXNzc2lnbi5jaC9haXItNGE3ZjE3ODgtMjZiNS00OGVjLWE1NDctYzFjZDBiZjE3
+YzNkMBIGA1UdEwEB/wQIMAYBAf8CAQAwQAYDVR0gBDkwNzAJBgdngQwBBQEBMAkG
+B2eBDAEFAQIwCQYHZ4EMAQUBAzAIBgYEAI96AQMwCgYIYIV0AVkCAQswUQYDVR0f
+BEowSDBGoESgQoZAaHR0cDovL2NybC5zd2lzc3NpZ24uY2gvY2RwLTNlZTU1ZmQ0
+LTU5MzgtNDFlZS04MmRiLTMyMjNhY2VmNWMyMzATBgNVHSUEDDAKBggrBgEFBQcD
+BDAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYEFL+0FkGip5/XTYUBCqFcvtvF0uWU
+MB8GA1UdIwQYMBaAFMwurYmMg+NAoyVppeqSfdI3OsfGMA0GCSqGSIb3DQEBCwUA
+A4ICAQBGpYYvkjNsVP7geKv1jY+KtUNmyx8vlCoOo8tZ5Cc76175ocrVs50lZit+
+nHWXe9Lqnuu1fMo+0jEpgC9dqy6cCxAEgNH5kwbFxXFPHOB/kxMdWubZ1xwcOP2l
+B4ns7Ps9RUGOIcpfuAp2KLYwavjO58g+6FVGhY3R6VAhmNRO6bHhz0wQRwKAZNo2
+GMwYMmxW63mI4bz1JYvCSeZtqZhyxTMDOwEUDdYkxrz3g5gQUoMnrrak1kGRdpFB
+Eefok8aK8ngfwwIgefNBF9BnzoRhlIVrm3//zboqShj4IXqMEUgScWNz2WTjqKaU
+uhLk+MyynNqrbp6EeFZ0BPgA7AfVWevRf4OOCxrH6S4FJtMKmuczZ0wqebTML7Ax
+VtkSqeT7/NBDTh8D8j+HVvHwMi4s+cunS3DMdXE9yzuixlcjfsD/2aS17quE23Qf
+nNESdDy5TUs5Wlm1ClYQ+L1cZGwSwAyqMs9RNg57+gtJu5Uhjn+FGVLndGQgzIor
+/+ynq6KEzN2rhGzLpPHpwUdDoX+YnNlrZpdx/IOgknaSGznJ/mQzA6PjffNS0Fx3
+pqd41QO0uX5HWDFEa/gG0Uo7faymzXFcFb9AKCrKR5Xrd0W+f2U2z/hvC843i9q2
+8CoJ7xRMt0wF8Sun9U278iaLgPNNyCNDJorz9NmIomvT45XK7jCCBe4wggPWoAMC
+AQICEACzBRGxFrSgVlEdfGgfh30wDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMC
+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
+bIRutw/gmkT7b9aP2Wmm3PtjnasrM+RdDlfGKqHkeCR2zkeRDDP2BE2LKc9CFGJB
+PysNjZSVlp5/fxb8atVwVk+TphIHuHjeP+3z/ykiDr64Yq2yjyNlXrWVg2yxju4M
+LdX8wfkCx/uAIlYLACinK+/RATAYz1f3Y+kJ81CQbfFpnFZBRhxjDfj65zxMrWsJ
+ydnoGsZUHt7zXFOQvw7JrFL/X5s7hBv/3uy107vBwcA8Hyw9m3DH/ChBMen6gyy+
+CkNXalP9AOZ66CoEgIE8PfsrzfBVjVxQq2+iQLNlJ8a1r6URPNd5h1YZILBy6yTK
+8tUs5MbM2CjbXAylEC1P02GFKhh/aN0gW5RTRk3vpA64KPQ/ckvUTmHVWONUE9cj
+iE1/MVDuc+tMfQus2HBQ0LH+EKaVZmsA1OEKujelRFleMEpBBWS0fQ+zT2Y4bfPZ
+RB5iQLGLf9hSacG+ib5cid44OL6s9kjzE5+Yy70LNcoHwIaQzqoc6t7sFNVDecMc
+tTbrs+raTu/cOMSc45aEDKXjhYw46cyuLwnY9DauweK3K89jUrCNqNqPwQke6QID
+AQABo4ICCzCCAgcwgbIGCCsGAQUFBwEBBIGlMIGiMEwGCCsGAQUFBzAChkBodHRw
+Oi8vYWlhLnN3aXNzc2lnbi5jaC9haXItMjZhNzFjMDktNDdlYi00NTVhLTliMjgt
+NGJkNzJkZjA5MjhkMFIGCCsGAQUFBzABhkZodHRwOi8vb2NzcC5zd2lzc3NpZ24u
+Y2gvc2lnbi9vY3MtYWFjY2NlZDUtNjZlOC00MDY5LTliMWItZmQyOWFiNzNlZmVj
+MHIGA1UdIARrMGkwCQYHZ4EMAQUBATAIBgYEAI96AQMwUgYIYIV0AVkCAQswRjBE
+BggrBgEFBQcCARY4aHR0cHM6Ly9yZXBvc2l0b3J5LnN3aXNzc2lnbi5jb20vU3dp
+c3NTaWduX0NQU19TTUlNRS5wZGYwUQYDVR0fBEowSDBGoESgQoZAaHR0cDovL2Ny
+bC5zd2lzc3NpZ24uY2gvY2RwLWU5N2YwN2M0LWU2MzQtNGNlYy04ZTJhLTA0YjIw
+YTdhMzBjNTATBgNVHSUEDDAKBggrBgEFBQcDBDAOBgNVHQ8BAf8EBAMCBaAwJAYD
+VR0RBB0wG4EZZGVuaXMub3N0ZXJsYW5kQGRpZWhsLmNvbTAdBgNVHQ4EFgQUcDNC
+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
+
+------55641D40FC72EAA65106898A5DCFE30C--
 
 
