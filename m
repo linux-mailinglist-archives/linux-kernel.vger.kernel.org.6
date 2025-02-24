@@ -1,206 +1,278 @@
-Return-Path: <linux-kernel+bounces-530136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09DFA42F87
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:52:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A02A42F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:53:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52A283B1536
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:52:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40EA63B249F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A291E3DFD;
-	Mon, 24 Feb 2025 21:52:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RTijXo78"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E1D1E3DFD;
+	Mon, 24 Feb 2025 21:53:25 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5484F1DDC37
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:52:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983461DE3D9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433932; cv=none; b=YG+bt8udTl3X9AxW95d1AqHYPrPKYClCTsKRzqraoTODv0/aUxcAqOoP4W8d0RDTi4hDmc6u3gRwnlryxPD1PizV03Bz0Bwg8EYL1M+3nr7PCvpEXXY2vLFwbHmmyBX1FIqnih6RD5Ge9PJjskp5lsrYnrNUxS0fF4CejfHI/+s=
+	t=1740434004; cv=none; b=EWNUCPsam51MWYYHntwzTRnEywse6x/rcYOyf40cqLQLV0xHsiXJbapN075BwTLuMJ+IZhIAxJJF18BNuWPbni3ggmaBpafjCtJxLm934HSdQp0LBAAi8dn2vMwyyrBk5/F+TY5cJB0CoBDyYSsKrAabAIXxQFyn2jMdiTy4Nmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433932; c=relaxed/simple;
-	bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B2jPzCr9L7euTko5GLscd5W+fuafxMCEmTIWEDbIj9n2sOXU/OVg2/U8soctZX1iWJohkB4BAqa7/UQydLF6ruYCHhLPqYRPBVXRS7WrtFdpaolcKJSE8MPG2fb3rwcqckRIhEs+QNiRJ5PhzmnSWNT/37krU3rYP60MdEX3qYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RTijXo78; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43995b907cfso30397065e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:52:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740433928; x=1741038728; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
-        b=RTijXo78K7Nkv6aS8jriXBFtU45mxiRA841f06CFVKYew5ga2WuR8XL/6K05nsw/l3
-         cwmsN4Q42fRCWBz3Oaut7qoUBOqG26O4crrzPnUsmDRwCq6DjZkAHHEPFtajNhYps3i9
-         J9DkOwGW7zJnp53siwqPF8N5IQt+4HKvR/9iPUP2roG0b7kTJKbwMXO3WlPhXFOZAMSZ
-         nss9LCsXb7EZrLZ+Xny7d7HoV/31YXZdlLTrClPiMz4J7ex7sisPprFSwld0qE1SZUwA
-         j2m67KCrtTtHsAGg4ARX62FlqO72YI50tHJhPgzf+R9sHLMll3ufUy7MHmj39cUKvqet
-         2a+g==
+	s=arc-20240116; t=1740434004; c=relaxed/simple;
+	bh=CSm4IKIIGo3NNCfeh6K2j7UriVaFAlPR2aj1b+Nim/E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ivFrNlvB6PANC0tzDz2Ku6hV2BFxjlNNQ6B0H10VKm1yTqsUvm/liC+6gffmfzL3m1Sxfkoo1pl+YJ6z5honguElXf5u7d9x6goLt+r7wmn3NFx4La6M18TsRxMupmJKhHxWKbTRfM2T7Sto470uRTLxcdShg1psa951VVHDo58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b6d933acso44589425ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:53:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433928; x=1741038728;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=1e100.net; s=20230601; t=1740434001; x=1741038801;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=7vTZ4bcifDx0uBbn/YdD+tR5nT8QjS33t2BFPkAir4g=;
-        b=vmiVuxZ4WPC0vvWtkQwOaqCHXANeIR8Bhtpt3GzOUQeNGqBN4TcfDg82xUmzidbqdW
-         OjY3vPuAJGMXJk1umSXUyhu4KrWC05/GBAFgGVfq0qEUmsHSVGA6wqyycQ1XK21qI/9G
-         XsSfERm8kqGKQkXUjHEiBp5UZqHvrGJvIJG8A1TFITpo4QuU0+lKMByYyuqwfiBDQG/K
-         xwTZQQn++0yIfKWeHS+cXHmtPCkagunawy0ECd928t5r69qvHfgoPubb9R6dOKshXwJQ
-         pexnQz8MIHHjdGTjFwlUjOudEGw7y/rQZf3QDeAxs3WurCsPDlvG0acpZ67AX+E/2WtV
-         sXjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcuqMh446JmHO9Tg4Y9Jhzdfk8Lnt8uNwBP0kjO/HaWzjUbVUpx8rPG8lbq3xWj7yB2u6UGpiYMr4ClnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxd/POz/xTKDlWJey0d+ojBXUfi4FU4ZacJTafcH5op6By22iSb
-	sRy/D+wIOueI9uVKVdRpTHIr1yvfSEL61xf++ppy/5YigfHgCuHawkz4vi5j5+E=
-X-Gm-Gg: ASbGncuTRjkLcJSrs95UjScaUWH9QwwCJW7L/QkXdN+Tr6dp+J5kWUckRzl6W+bHXvB
-	m3gVsnMvY3lqGQQp0Dy0xrT4OBcvqUUBQRCVMRlgYMWydKwoaP08pZ65z/ixUxPp2W7Sm2j/z84
-	i/HOT+mdghm5U3rqRudEB1LMyM7Xi6HHo+4b12QX7x7SuWghbfz7b/tqgbsx7DKbuRKv/W0wVLw
-	dmyYSGgedKAAzOPqxMIKJMe4oCChXTE3Q1J03dUn6MOBfSGFo9WDrtKOZ5uiAJW02LX7/p4P5IG
-	nqVnbSoh+TNw/8OgGv46Q1Cmd/S/Eg==
-X-Google-Smtp-Source: AGHT+IHmJNkurL7RO4E3X7dffqrJqghhJyUiAOpbxbEyAGEjCiGP4Aji7mTnE2UrlwDFQi5MR+cgww==
-X-Received: by 2002:a05:600c:468c:b0:439:a1c7:7b29 with SMTP id 5b1f17b1804b1-43ab0f426c6mr7915255e9.17.1740433928545;
-        Mon, 24 Feb 2025 13:52:08 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd88371asm216037f8f.57.2025.02.24.13.52.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 13:52:07 -0800 (PST)
-Message-ID: <854925a6204f36fff6d653bb4a30c55a6adb3aef.camel@linaro.org>
-Subject: Re: [PATCH 2/6] dt-bindings: gpio: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski	 <brgl@bgdev.pl>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Peter Griffin	
- <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, kernel-team@android.com,
- linux-kernel@vger.kernel.org, 	devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, 	linux-hardening@vger.kernel.org
-Date: Mon, 24 Feb 2025 21:52:06 +0000
-In-Reply-To: <20250224153858.GC3137990-robh@kernel.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
-	 <20250224-max77759-mfd-v1-2-2bff36f9d055@linaro.org>
-	 <20250224153858.GC3137990-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        bh=YgU+3s2XffgAkhGqgiW9xHV1qsCRbz4+whll19johCs=;
+        b=lvD78kakb8nrPKOjFnFtdTNZcVXgKTyE+f1xU9uZTMK74hxqQXtqMlB2nTpdfgXjOf
+         4ER85M6iIzWX8L+dpSs5E9INvoIBEcANogY4CpHwca14NbdCDGN9MCC/8gOLNXk179J2
+         pRNllIxXMDVaDR/MLvF5dRnA8BHoLwWiUPdBJvPY/Hq2ErwLzBymz4gjIvMAjgycZGL8
+         dc/0hsdoR2g6pS05gbJb/i0io9kGXv9j0fPviQcq6T/X6WDoVavd2wJYGE0SqJLcRqnV
+         TzfVGWoHJyomic1FrFczer0sHvEbQcFS84R5p1jnuaaEeLk+WVneBGYn8E32yp/cy7Id
+         krHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTOUb4lPcn8XR0mIXCp0ROo7RCzCWStOR6f6DymcFlqGRwlRH/LbjSXUCEQUZE+aSQ9QQcKqP5D9Jcq1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAu8wh3mlbeZ7cFM0DKL1EojAYxsTHSgu0VEh6mdtJFKOpMw22
+	zL16COzLsljXuxfmGmTZTR6eg8QGDzYDG+Dze1LrS8m+PpnZgp9K8zZTD1LV4H2jEjle3ECYMRc
+	YHlgP92Go/8DNCW5SOyf61RTqwViJ4bluD9UmSb6T8SVsflSTz7R0yLU=
+X-Google-Smtp-Source: AGHT+IEmtLyf903MvD/OSUmkRQgWzQpO25kB4MNT8aBNYol/PerpcfmKEXUHgNdJvahMECDsjIU2A/5R2oQqxReJsBZmZooeOJ6j
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1a22:b0:3d0:27f5:1b6c with SMTP id
+ e9e14a558f8ab-3d2cb5151b1mr109586995ab.14.1740434001671; Mon, 24 Feb 2025
+ 13:53:21 -0800 (PST)
+Date: Mon, 24 Feb 2025 13:53:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bcea51.050a0220.bbfd1.0096.GAE@google.com>
+Subject: [syzbot] [crypto?] possible deadlock in crypto_exit_scomp_ops_async
+From: syzbot <syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com>
+To: davem@davemloft.net, herbert@gondor.apana.org.au, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rob,
+Hello,
 
-On Mon, 2025-02-24 at 09:38 -0600, Rob Herring wrote:
-> On Mon, Feb 24, 2025 at 10:28:50AM +0000, Andr=C3=A9 Draszik wrote:
-> > Add the DT binding document for the GPIO module of the Maxim MAX77759.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../bindings/gpio/maxim,max77759-gpio.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 47 ++++++++++++++++++++++
-> > =C2=A01 file changed, 47 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio=
-.yaml
-> > b/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml
-> > new file mode 100644
-> > index 000000000000..9bafb16ad688
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/gpio/maxim,max77759-gpio.yaml
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/gpio/maxim,max77759-gpio.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Maxim Integrated MAX77759 GPIO
-> > +
-> > +maintainers:
-> > +=C2=A0 - Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > +
-> > +description: |
-> > +=C2=A0 This module is part of the MAX77759 PMIC. For additional inform=
-ation, see
-> > +=C2=A0 Documentation/devicetree/bindings/mfd/maxim,max77759.yaml.
-> > +
-> > +=C2=A0 The MAX77759 is a PMIC integrating, amongst others, a GPIO cont=
-roller
-> > +=C2=A0 including interrupt support for 2 GPIO lines.
-> > +
-> > +properties:
-> > +=C2=A0 compatible:
-> > +=C2=A0=C2=A0=C2=A0 const: maxim,max77759-gpio
-> > +
-> > +=C2=A0 "#interrupt-cells":
-> > +=C2=A0=C2=A0=C2=A0 const: 2
-> > +
-> > +=C2=A0 interrupt-controller: true
-> > +
-> > +=C2=A0 interrupts:
-> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
->=20
-> You need to define what each interrupt is.
+syzbot found the following issue on:
 
-I think maybe the interrupts property is not needed after all:
+HEAD commit:    e9a8cac0bf89 Merge tag 'v6.14-rc3-smb3-client-fixes' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b667f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61cbf5ac8a063ad4
+dashboard link: https://syzkaller.appspot.com/bug?extid=1a517ccfcbc6a7ab0f82
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-The PMIC has one external interrupt line (described by the top-level
-device), and the two interrupts here are just a representation of
-the PMIC's internal status register (i.e. top level interrupt is
-raised when status register for one of the gpio lines changes,
-amongst other things).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-The intention is for a gpio driver to just treat and model them as
-cascaded interrupts, but they don't need to be configured in any
-way via device tree, as everything happens internally inside the
-PMIC, there is no board-dependent routing or trigger type possible.
-(Of course, there can be drivers subscribing to one (or both) of the two
-cascaded interrupts here, but that shouldn't matter I believe).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8441f1b50402/disk-e9a8cac0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/65b1f8d2f790/vmlinux-e9a8cac0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1d6f6d8c3d6b/bzImage-e9a8cac0.xz
 
-Does that make sense? I added the property because
-Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-says it's a requirement to have an interrupts property, but I
-believe it doesn't actually apply in this case as there's nothing
-than can be configured.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com
 
-Am I missing something?
+smpboot: CPU 0 is now offline
+crash hp: kexec_trylock() failed, kdump image may be inaccurate
+======================================================
+WARNING: possible circular locking dependency detected
+6.14.0-rc3-syzkaller-00096-ge9a8cac0bf89 #0 Not tainted
+------------------------------------------------------
+kworker/1:1/46 is trying to acquire lock:
+ffffffff8ec41aa8 (scomp_lock){+.+.}-{4:4}, at: crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
 
-Cheers,
-Andre'
+but task is already holding lock:
+ffffe8ffffc21250 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}, at: zswap_cpu_comp_dead+0x80/0x210 mm/zswap.c:885
 
->=20
-> > +
-> > +=C2=A0 "#gpio-cells":
-> > +=C2=A0=C2=A0=C2=A0 const: 2
-> > +
-> > +=C2=A0 gpio-controller: true
-> > +
-> > +=C2=A0 gpio-line-names:
-> > +=C2=A0=C2=A0=C2=A0 minItems: 1
-> > +=C2=A0=C2=A0=C2=A0 maxItems: 2
-> > +
-> > +required:
-> > +=C2=A0 - compatible
-> > +=C2=A0 - "#gpio-cells"
-> > +=C2=A0 - gpio-controller
-> > +=C2=A0 - "#interrupt-cells"
-> > +=C2=A0 - interrupt-controller
-> > +
-> > +additionalProperties: false
-> >=20
-> > --=20
-> > 2.48.1.658.g4767266eb4-goog
-> >=20
+which lock already depends on the new lock.
 
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       acomp_ctx_get_cpu_lock mm/zswap.c:905 [inline]
+       zswap_compress mm/zswap.c:937 [inline]
+       zswap_store_page mm/zswap.c:1462 [inline]
+       zswap_store+0x8fc/0x2690 mm/zswap.c:1571
+       swap_writepage+0x3b6/0x1120 mm/page_io.c:278
+       pageout+0x3b2/0xaa0 mm/vmscan.c:696
+       shrink_folio_list+0x2f7f/0x40c0 mm/vmscan.c:1402
+       evict_folios+0x774/0x1ab0 mm/vmscan.c:4660
+       try_to_shrink_lruvec+0x5a2/0x9a0 mm/vmscan.c:4821
+       shrink_one+0x3e3/0x7b0 mm/vmscan.c:4866
+       shrink_many mm/vmscan.c:4929 [inline]
+       lru_gen_shrink_node mm/vmscan.c:5007 [inline]
+       shrink_node+0x2761/0x3e60 mm/vmscan.c:5978
+       kswapd_shrink_node mm/vmscan.c:6807 [inline]
+       balance_pgdat+0xbab/0x19c0 mm/vmscan.c:6999
+       kswapd+0x590/0xb70 mm/vmscan.c:7264
+       kthread+0x3af/0x750 kernel/kthread.c:464
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (fs_reclaim){+.+.}-{0:0}:
+       __fs_reclaim_acquire mm/page_alloc.c:3853 [inline]
+       fs_reclaim_acquire+0x102/0x150 mm/page_alloc.c:3867
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4066 [inline]
+       slab_alloc_node mm/slub.c:4144 [inline]
+       __kmalloc_cache_node_noprof+0x54/0x420 mm/slub.c:4333
+       kmalloc_node_noprof include/linux/slab.h:924 [inline]
+       __get_vm_area_node+0x101/0x2f0 mm/vmalloc.c:3127
+       __vmalloc_node_range_noprof+0x26a/0x1530 mm/vmalloc.c:3806
+       __vmalloc_node_noprof mm/vmalloc.c:3911 [inline]
+       vmalloc_node_noprof+0x6f/0x90 mm/vmalloc.c:4022
+       crypto_scomp_alloc_scratches crypto/scompress.c:86 [inline]
+       crypto_scomp_init_tfm+0x122/0x270 crypto/scompress.c:107
+       crypto_create_tfm_node+0x100/0x320 crypto/api.c:539
+       crypto_create_tfm crypto/internal.h:120 [inline]
+       crypto_init_scomp_ops_async+0x5d/0x1d0 crypto/scompress.c:217
+       crypto_acomp_init_tfm+0x240/0x2e0 crypto/acompress.c:70
+       crypto_create_tfm_node+0x100/0x320 crypto/api.c:539
+       crypto_alloc_tfm_node+0x102/0x260 crypto/api.c:640
+       zswap_cpu_comp_prepare+0xe2/0x420 mm/zswap.c:834
+       cpuhp_invoke_callback+0x20c/0xa10 kernel/cpu.c:204
+       cpuhp_issue_call+0x1c0/0x980 kernel/cpu.c:2376
+       __cpuhp_state_add_instance_cpuslocked+0x1a4/0x3c0 kernel/cpu.c:2438
+       __cpuhp_state_add_instance+0xd7/0x2e0 kernel/cpu.c:2459
+       cpuhp_state_add_instance include/linux/cpuhotplug.h:387 [inline]
+       zswap_pool_create+0x59a/0x7b0 mm/zswap.c:291
+       __zswap_pool_create_fallback mm/zswap.c:359 [inline]
+       zswap_setup+0x402/0x810 mm/zswap.c:1814
+       zswap_init+0x2c/0x40 mm/zswap.c:1850
+       do_one_initcall+0x128/0x700 init/main.c:1257
+       do_initcall_level init/main.c:1319 [inline]
+       do_initcalls init/main.c:1335 [inline]
+       do_basic_setup init/main.c:1354 [inline]
+       kernel_init_freeable+0x5c7/0x900 init/main.c:1568
+       kernel_init+0x1c/0x2b0 init/main.c:1457
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 (scomp_lock){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3163 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+       validate_chain kernel/locking/lockdep.c:3906 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+       crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
+       crypto_exit_ops crypto/api.c:370 [inline]
+       crypto_destroy_tfm crypto/api.c:681 [inline]
+       crypto_destroy_tfm+0x135/0x2b0 crypto/api.c:668
+       crypto_free_acomp include/crypto/acompress.h:159 [inline]
+       zswap_cpu_comp_dead+0x169/0x210 mm/zswap.c:891
+       cpuhp_invoke_callback+0x528/0xa10 kernel/cpu.c:216
+       __cpuhp_invoke_callback_range+0x101/0x200 kernel/cpu.c:966
+       cpuhp_invoke_callback_range kernel/cpu.c:990 [inline]
+       cpuhp_down_callbacks kernel/cpu.c:1383 [inline]
+       _cpu_down+0x422/0xf20 kernel/cpu.c:1444
+       __cpu_down_maps_locked+0x6c/0x90 kernel/cpu.c:1474
+       work_for_cpu_fn+0x52/0xa0 kernel/workqueue.c:6731
+       process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+       process_scheduled_works kernel/workqueue.c:3317 [inline]
+       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+       kthread+0x3af/0x750 kernel/kthread.c:464
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  scomp_lock --> fs_reclaim --> &per_cpu_ptr(pool->acomp_ctx, cpu)->mutex
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex);
+                               lock(fs_reclaim);
+                               lock(&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex);
+  lock(scomp_lock);
+
+ *** DEADLOCK ***
+
+4 locks held by kworker/1:1/46:
+ #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3211
+ #1: ffffc90000b67d18 ((work_completion)(&wfc.work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3212
+ #2: ffffffff8e060bd0 (cpu_hotplug_lock){++++}-{0:0}, at: cpus_write_lock kernel/cpu.c:508 [inline]
+ #2: ffffffff8e060bd0 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_down+0xe5/0xf20 kernel/cpu.c:1412
+ #3: ffffe8ffffc21250 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}, at: zswap_cpu_comp_dead+0x80/0x210 mm/zswap.c:885
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 46 Comm: kworker/1:1 Not tainted 6.14.0-rc3-syzkaller-00096-ge9a8cac0bf89 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Workqueue: events work_for_cpu_fn
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
+ check_prev_add kernel/locking/lockdep.c:3163 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3282 [inline]
+ validate_chain kernel/locking/lockdep.c:3906 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
+ __mutex_lock_common kernel/locking/mutex.c:585 [inline]
+ __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
+ crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
+ crypto_exit_ops crypto/api.c:370 [inline]
+ crypto_destroy_tfm crypto/api.c:681 [inline]
+ crypto_destroy_tfm+0x135/0x2b0 crypto/api.c:668
+ crypto_free_acomp include/crypto/acompress.h:159 [inline]
+ zswap_cpu_comp_dead+0x169/0x210 mm/zswap.c:891
+ cpuhp_invoke_callback+0x528/0xa10 kernel/cpu.c:216
+ __cpuhp_invoke_callback_range+0x101/0x200 kernel/cpu.c:966
+ cpuhp_invoke_callback_range kernel/cpu.c:990 [inline]
+ cpuhp_down_callbacks kernel/cpu.c:1383 [inline]
+ _cpu_down+0x422/0xf20 kernel/cpu.c:1444
+ __cpu_down_maps_locked+0x6c/0x90 kernel/cpu.c:1474
+ work_for_cpu_fn+0x52/0xa0 kernel/workqueue.c:6731
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
+ process_scheduled_works kernel/workqueue.c:3317 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
+ kthread+0x3af/0x750 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
