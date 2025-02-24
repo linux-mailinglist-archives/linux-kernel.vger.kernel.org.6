@@ -1,186 +1,208 @@
-Return-Path: <linux-kernel+bounces-528381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167B3A4171D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:18:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A8A4172F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:20:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B97B3A5D3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:18:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D651895F1F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2632B155751;
-	Mon, 24 Feb 2025 08:18:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0411C84D0;
+	Mon, 24 Feb 2025 08:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="M3n/wK3S"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BllI6CKN";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hxL6KaR9"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13311FDA;
-	Mon, 24 Feb 2025 08:18:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2C018C337
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740385123; cv=none; b=WN3/GSf88ySUEtZQirdEWLrK+jO6UVxNCIRrEA7qs6YHFwtq+cVBjrmAqJA+wctrx2WJE0vuLkBtQoqfLOpeETycFTPSNPTnPF/6J3l9Z1udrpXaavnexATaPLdbqPWAYGSNbpnOrnJyJP3fJGCBTJHTRTt3BrgYF6SbzzKPezE=
+	t=1740385201; cv=none; b=cNgu31zVcS4zdu0esWYzqJAplAQ4NQbQ350MdRW31Od+BEOQJhY0S2gR8WiTbotqNyIBZOfO1OkEwxxSPDDD4yRHjoH5LJqpkNRK0p0LcVQjIwx9XOJX15+k/lnxjcueoCzXlECRu28XUyMplyUvXvqxpRj8giuBVYDd1+TO03A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740385123; c=relaxed/simple;
-	bh=W5lZdY14/HdzaoveUbN230UTomBrJvRsRjGOsNuyHy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uvfenV19S8o9hQe/IhZeidfkFBjxE7ZYtyKMEXtpUQ3fEdwEJPrea1Hg0VIwlSeJhTT16Kz+cZVZWOaz7b1PK2lOdECXcgoDEEyyf4bSkGtzhC1nz9jBnPsv+oSw0KJ5LVkgc5TvHNwIpj/s4LpmYJumehn+BEmew6fw+xwcl0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=M3n/wK3S; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1740385105; x=1740989905; i=quwenruo.btrfs@gmx.com;
-	bh=n8wsHkddx/G85nADsnXvMHHb2TKzYYRjQ+Xo0MY2eog=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=M3n/wK3SY3qPduvWW06cPc3yA2btZecXk0nv+oXfOl9GPEh6IDvU7V/RpaB6sod9
-	 a4q1+82Vu58chQel4QduXy8eAm29grPmkkQ4QSFom26bwnXAPIp434Sdjs/QvFpqH
-	 N95ZpbyxZclON1m9/6WMYZG+MlRybWgXBbFkjCYMZRgzwXaAuqXp103c5CWKJsgGy
-	 Km9a3woaI57pazfuQlwuO8465oRqDGp82Ji0Y+adBoRmpWxCYnceu5NOlp/F4TUGv
-	 eE8RJpuHTAccGKOI+AwMZJT8qBg+EOO6FEDyIdgGj2QkDLdkR5WCiNC42jepZ46lS
-	 DeokN/ZWotPOiBqrJw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1N4zAy-1tL9j23pDA-00wNxZ; Mon, 24
- Feb 2025 09:18:25 +0100
-Message-ID: <0d9f6477-04c2-486a-ae72-c39b6d235891@gmx.com>
-Date: Mon, 24 Feb 2025 18:48:19 +1030
+	s=arc-20240116; t=1740385201; c=relaxed/simple;
+	bh=aPBmcWzxRZ793+P17lZYUhIEtRt1ahNijA11PsDEAbE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KW/Vq8SHGChRo2cTqUy+5Pi4NUpG+X7q/Y+KPw3CwCIt4H/xMKDfIDnfhQj+gGJ3jBewAMQ/ylpOAtupENicj3AoQ7aI16mLCpZWtAxmdE2+dF0tT2xDg4OC3iDRatp3SVNxofUKsv6rszIrOjOc5kxCBbMFBTjQ1ECAi+tEBJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BllI6CKN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hxL6KaR9; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 24 Feb 2025 09:19:56 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740385197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9b6JI1PAYyIfk1s7vLaQh6uto3DYX7c5B+kYCp5fkFk=;
+	b=BllI6CKNnuo6xYkmJqFOsIkmEJBxivlt8tjDn5uFY+6g134dkoSaguOBHNnAxowunfWhBE
+	aXFnPZc0evUNstXD3Fd5T45Rgoqk24MOzlRTjiOfLawj1tguU9U0ltbNOZXOoJJyleAjn4
+	Su/yTOFoJRLTfho8iLKwOVuKJv+aQRTdzuTPu5nSAbpt/FivLo4sRR8uTxRk4H1AwpbR+W
+	W2ip5t0b7EVmxIaky9mPDZUtHesrTKGbeRkrA+JfNSpb9+XtRuc2uFqyLjcI8aub3eJ/SR
+	XrEgWVMWHsCnA3g40ikMm8uAUt4zmyVuauBnQMbyZfYuaps/RJ3sG3kNXjuarQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740385197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9b6JI1PAYyIfk1s7vLaQh6uto3DYX7c5B+kYCp5fkFk=;
+	b=hxL6KaR9KJV4d90jn/TKI1wfgV8r0ZUB+HQv6e1PgA5wrDKroIBz05Ju6ojvT3XNPY6Xag
+	GbzWlV2BumnsSQAA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Yosry Ahmed <yosry.ahmed@linux.dev>,
+	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
+	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 01/17] zram: sleepable entry locking
+Message-ID: <20250224081956.knanS8L_@linutronix.de>
+References: <20250221222958.2225035-1-senozhatsky@chromium.org>
+ <20250221222958.2225035-2-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: add a sanity check for btrfs root in
- btrfs_next_old_leaf()
-To: Ma Ke <make24@iscas.ac.cn>, clm@fb.com, josef@toxicpanda.com,
- dsterba@suse.com, fdmanana@suse.com
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250224075937.2959546-1-make24@iscas.ac.cn>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250224075937.2959546-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PE6r0G1K6qU4wJar4LD1jU1ER4JaCInrue1/qb0cbVnsagj/iFY
- 6woJyHQk1dOH4zffCuDBS7eD7qoRmQl7nT2/50SYwHhgZfyhLfbPqiTMtOqNqs/SNQ/9PnD
- ydAAhtOE5VcBjW4/cbqirVPhebCKrKzaN2XofhuujhP8NQtY0A3e2O5Cua3cnGBGfV26Hfq
- /q51PIoc/lSP+CXuz2/0g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:GAhmzB0pPUA=;vUgeJlxxGCkvO5gBYy85DDBaJTQ
- 7P0CUZ+gorunJwd8rAdFDl/tekrrsz1T0Vhe6PpT7Ez79WPAt2KfbCYIOA7PmqettlTdNVhCD
- hAhx2fAinDExuRT7PAVWyoSZNxHy9PDHcc3jgllZzUih6j6onCHpKxysFG/axc8jVqGTRgiH0
- mZRJIHtG7ue4uaPW/CDYebeMthwqzHBNRKgGFYO2w3eyPcQuqPJTGm38mTNTIjO+jmRBlworn
- CfXSCXXhxp4kIJXUhP0JuBoho41Zd3hNTxvtx/kQdFHPrp1kJ63CkHtLAnOj7d/pR24TsXkUa
- DZB8q3EqHPMW9bW9Fcd/79YpIGIGeF8Z67L05qMB9Kdlr5IqnMpCspQ27iPnT6x0ZSONqXsAX
- wuo9KfB0ue+VqPnnULNbojXImfhOT3XpzbwbRGhDeE1yZcYtcBQOS1h7zz6EyKETXAOYZxfIG
- T7/TFE939WgCEoghvSLDSed4HQMWYkzP2Q7hLATOgymtOT2x5vQ1wlUrbQ14i+WYetcf3I/Ez
- XHZW9D2V0hFjGQ0i/uHV4AsV9jTydFTZDPP/6GMhbS2VXJRjMhMy841cSqFqcES7uL2UmQIpz
- lPj4lctXydjHgRP1iLVpKI3XNMyBNcSR8GuuiK0Zy/UaolLbbKIMGhxjRVpB4l+tsQDeUvQyD
- BaHNo2IHQZql7njxKw5S7tA1qX3gLVufBTqA2/K8ou//gNRX4fVZ1mXzFXZuNt+mu2LXUQdmf
- Fce++k9jAdkCIVIhP4cxZn9q25eyQLtXHjiXc/YInMrmfv57yQO9FApD6peDD27cgqsiZCcRs
- 2iazjF+08WU9ySMWnXf/caPIJCzGMtH03e1WEHbHF6K0bWsZVsZ0jCvNfyL+CJ02rCHui8JbG
- jmu9neEmvN5KKY9Q7bn+PL4iTfkNuUsHraCMLVhV1+X4rGWSHF/3sfAMgWY3W5tkqMkdwytPw
- C7lbJOGsWomrygtCQ5rhA7c8yAbGp/jrimLCEwAvrtHMUjlo/kYIhx04xXHehw3BFB2+Rr6/c
- YU+KQX15X7QB68s9eotR5XMS9eouSlYNIPWParCrXLheGr8PgYEuqnj9nQODkwwfr4SHZCJmk
- 3av/IEGguL11hjdohkmY9RrsTMJB0qZFY/ONd8zlJZlP/2SFPyB8JcuF18xRrop3sR94b5iLI
- ruqcthCuudI+VntbuaQpJrT5MIBM46riWiKOfuX22q2zPilrGvLOJOSvzE10EWigNwhvZdfN6
- G993CPJJK3PzLgagAMOKxX2FNeumbi54s4B7V8pmUaYq/v+LgTOfarbeE7BSA8rBAq1t8NQsm
- HZmAUpGM4EnekfJju9uFT2eaNpisbs3daQu3T37XvhEbCCL/M1fkFXwwq7OuELdpbSPVAxsNm
- Lmv4fx5vQfmhMkq8MS8Lgq0XSazxN/n4UpyPfkzmsD/wTGZr53UA1WoHA1
+In-Reply-To: <20250221222958.2225035-2-senozhatsky@chromium.org>
 
+On 2025-02-22 07:25:32 [+0900], Sergey Senozhatsky wrote:
+=E2=80=A6
+> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
+> index 9f5020b077c5..37c5651305c2 100644
+> --- a/drivers/block/zram/zram_drv.c
+> +++ b/drivers/block/zram/zram_drv.c
+> @@ -58,19 +58,62 @@ static void zram_free_page(struct zram *zram, size_t =
+index);
+>  static int zram_read_from_zspool(struct zram *zram, struct page *page,
+>  				 u32 index);
+> =20
+> -static int zram_slot_trylock(struct zram *zram, u32 index)
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +#define slot_dep_map(zram, index) (&(zram)->table[(index)].dep_map)
+> +#define zram_lock_class(zram) (&(zram)->lock_class)
+> +#else
+> +#define slot_dep_map(zram, index) NULL
+> +#define zram_lock_class(zram) NULL
+> +#endif
 
+That CONFIG_DEBUG_LOCK_ALLOC here is not needed because dep_map as well
+as lock_class goes away in !CONFIG_DEBUG_LOCK_ALLOC case.
 
-=E5=9C=A8 2025/2/24 18:29, Ma Ke =E5=86=99=E9=81=93:
-> btrfs_next_old_leaf() doesn't check if the target root is NULL or not,
-> resulting the null-ptr-deref. Add sanity check for btrfs root before
-> using it in btrfs_next_old_leaf().
+> +static void zram_slot_lock_init(struct zram *zram, u32 index)
+>  {
+> -	return spin_trylock(&zram->table[index].lock);
+> +	lockdep_init_map(slot_dep_map(zram, index),
+> +			 "zram->table[index].lock",
+> +			 zram_lock_class(zram), 0);
+> +}
+Why do need zram_lock_class and slot_dep_map? As far as I can tell, you
+init both in the same place and you acquire both in the same place.
+Therefore it looks like you tell lockdep that you acquire two locks
+while it would be enough to do it with one.
 
-Please provide a real world call trace when this is triggered.
-
-There is a prerequisite, the extent tree can only be NULL if
-rescue=3Dibadroots is provided and the extent root is corrupted.
-
-And "rescue=3D" mount options can only be specified for a fully read-only
-fs (no internal log replay or any other thing to write even a bit into
-the fs).
-
-Previously read-only scrub can still be triggered on such fs, but
-6aecd91a5c5b ("btrfs: avoid NULL pointer dereference if no valid extent
-tree") fixed that.
-
-And if you hit such a case in real world, please provide the call trace
-so that we know we're not missing some critical situations that extent
-tree is accessed for read-only operations.
-
-Thanks,
-Qu
-
->
-> Found by code review.
->
-> Cc: stable@vger.kernel.org
-> Fixes: d96b34248c2f ("btrfs: make send work with concurrent block group =
-relocation")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->   fs/btrfs/ctree.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
-> index 4e2e1c38d33a..1a3fc3863860 100644
-> --- a/fs/btrfs/ctree.c
-> +++ b/fs/btrfs/ctree.c
-> @@ -4794,13 +4794,17 @@ int btrfs_next_old_leaf(struct btrfs_root *root,=
- struct btrfs_path *path,
->   	int level;
->   	struct extent_buffer *c;
->   	struct extent_buffer *next;
-> -	struct btrfs_fs_info *fs_info =3D root->fs_info;
-> +	struct btrfs_fs_info *fs_info;
->   	struct btrfs_key key;
->   	bool need_commit_sem =3D false;
->   	u32 nritems;
->   	int ret;
->   	int i;
->
-> +	if (!root)
-> +		return -EINVAL;
+> +/*
+> + * entry locking rules:
+> + *
+> + * 1) Lock is exclusive
+> + *
+> + * 2) lock() function can sleep waiting for the lock
+> + *
+> + * 3) Lock owner can sleep
+> + *
+> + * 4) Use TRY lock variant when in atomic context
+> + *    - must check return value and handle locking failers
+> + */
+> +static __must_check bool zram_slot_trylock(struct zram *zram, u32 index)
+> +{
+> +	unsigned long *lock =3D &zram->table[index].flags;
 > +
-> +	fs_info =3D root->fs_info;
->   	/*
->   	 * The nowait semantics are used only for write paths, where we don't
->   	 * use the tree mod log and sequence numbers.
+> +	if (!test_and_set_bit_lock(ZRAM_ENTRY_LOCK, lock)) {
+> +		mutex_acquire(slot_dep_map(zram, index), 0, 1, _RET_IP_);
+> +		lock_acquired(slot_dep_map(zram, index), _RET_IP_);
+> +		return true;
+> +	}
+> +
+> +	lock_contended(slot_dep_map(zram, index), _RET_IP_);
+> +	return false;
+>  }
+> =20
+>  static void zram_slot_lock(struct zram *zram, u32 index)
+>  {
+> -	spin_lock(&zram->table[index].lock);
+> +	unsigned long *lock =3D &zram->table[index].flags;
+> +
+> +	mutex_acquire(slot_dep_map(zram, index), 0, 0, _RET_IP_);
+> +	wait_on_bit_lock(lock, ZRAM_ENTRY_LOCK, TASK_UNINTERRUPTIBLE);
+> +	lock_acquired(slot_dep_map(zram, index), _RET_IP_);
 
+This looks odd. The first mutex_acquire() can be invoked twice by two
+threads, right? The first thread gets both (mutex_acquire() and
+lock_acquired()) while, the second gets mutex_acquire() and blocks on
+wait_on_bit_lock()).
+
+>  }
+> =20
+>  static void zram_slot_unlock(struct zram *zram, u32 index)
+>  {
+> -	spin_unlock(&zram->table[index].lock);
+> +	unsigned long *lock =3D &zram->table[index].flags;
+> +
+> +	mutex_release(slot_dep_map(zram, index), _RET_IP_);
+> +	clear_and_wake_up_bit(ZRAM_ENTRY_LOCK, lock);
+>  }
+> =20
+>  static inline bool init_done(struct zram *zram)
+=E2=80=A6
+> diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
+> index db78d7c01b9a..794c9234e627 100644
+> --- a/drivers/block/zram/zram_drv.h
+> +++ b/drivers/block/zram/zram_drv.h
+> @@ -58,13 +58,18 @@ enum zram_pageflags {
+>  	__NR_ZRAM_PAGEFLAGS,
+>  };
+> =20
+> -/*-- Data structures */
+> -
+> -/* Allocated for each disk page */
+> +/*
+> + * Allocated for each disk page.  We use bit-lock (ZRAM_ENTRY_LOCK bit
+> + * of flags) to save memory.  There can be plenty of entries and standard
+> + * locking primitives (e.g. mutex) will significantly increase sizeof()
+> + * of each entry and hence of the meta table.
+> + */
+>  struct zram_table_entry {
+>  	unsigned long handle;
+> -	unsigned int flags;
+> -	spinlock_t lock;
+> +	unsigned long flags;
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	struct lockdep_map dep_map;
+> +#endif
+>  #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
+>  	ktime_t ac_time;
+>  #endif
+> @@ -137,5 +142,8 @@ struct zram {
+>  	struct dentry *debugfs_dir;
+>  #endif
+>  	atomic_t pp_in_progress;
+> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
+> +	struct lock_class_key lock_class;
+> +#endif
+As mentioned earlier, no need for CONFIG_DEBUG_LOCK_ALLOC.
+
+>  };
+>  #endif
+> --=20
+> 2.48.1.601.g30ceb7b040-goog
+>=20
 
