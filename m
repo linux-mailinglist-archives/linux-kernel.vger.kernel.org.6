@@ -1,99 +1,225 @@
-Return-Path: <linux-kernel+bounces-529461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FD0A4267A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:39:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61A82A4267D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:39:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAE4165F9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7071416B108
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35032571BD;
-	Mon, 24 Feb 2025 15:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6309425484C;
+	Mon, 24 Feb 2025 15:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lmgCafSl"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jniKeYp6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B498924EF7C;
-	Mon, 24 Feb 2025 15:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADAC1A0BD6;
+	Mon, 24 Feb 2025 15:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740411402; cv=none; b=U/oGZXt7kEq6nMb0+7OloVOSnf4yt8toA2xy7FtE+PgTyIPXeDiZBhvzxhgyn7GV0xfR0dInHQX/vWlt0NDshAybvXBFDGJI1yTuIcCWv8oEJvHA7mN73kQFc1S/roeYN/eJMqsCbXxHZtAnqhtgCaRwOvoYztD68etSvlFrlew=
+	t=1740411438; cv=none; b=ieZrBmKOphAp1WjZN+13HMm3XRroKBTbqpYRXrSUnUo/zVze2qH9NfbNapFtSkbT4JukYZJW9XylvtBLIb8zmxEjEYCnogp89T899RottK06kgOJ5dq6wsKisyNZViexYbjDy4GZr51YJUUoHVjuSS5PzJEnVwuqF2s3c/OsnOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740411402; c=relaxed/simple;
-	bh=8e+QUEACEMP9vSayM7dLVeCNo0bcfzKj1qkl0cfnorU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RtnXzj9A7HWQptMATfTiCS0A7Jg4Q00/pXSS8i/o1kCq0aQZsQHW4CKRzj3k+wer8+Cfxxr60he+lLUi5WMiMsFkyAcSC+FfDMY6v/9KbsuxS7zWofO5uljhb33xCzX/vRXIFRRthET5ffivnSprCeGfjnCkMENeP4H++n5XTkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lmgCafSl; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0475444281;
-	Mon, 24 Feb 2025 15:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740411397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8e+QUEACEMP9vSayM7dLVeCNo0bcfzKj1qkl0cfnorU=;
-	b=lmgCafSlaWX4FJWfhbRr3/uGb3GKmpOjg+NFrXJ3TbBCjaRJsqeYCRiGP/NbQNyQNbfq/G
-	ZCxnWXScG4vU/fFl6+AVipSym7D8L0BQCnmnMShCKmqQsuIySZoU5c/DvxvuPSvbh9MZIs
-	I+a12r8ylTg4MZQHt0YMc3APuWtqfrKhEZrzPwg5o6AkSpdaTgqgIewpPQ8ISNfbdXMtGA
-	0t+hNpfijn+NJ7TsV4EmWUiPAsXaBJkKxFKFYlbRvebgDOZGfCRBZ0+o7GxzhbUIiCpXPn
-	T7Iwh0CldgCkZMz1EzAnpIfhj4WD40xwlTPcsELFHK8pn+CV8xNG6fD2+/TjPQ==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: richard@nod.at,  vigneshr@ti.com,  David.Woodhouse@intel.com,
-  jarkko.lavinen@nokia.com,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org
-Subject: Re: [PATCH] mtd: Fix potential UAF for mtdswap_dev pointers
-In-Reply-To: <20250224133007.3037357-1-make24@iscas.ac.cn> (Ma Ke's message of
-	"Mon, 24 Feb 2025 21:30:07 +0800")
-References: <20250224133007.3037357-1-make24@iscas.ac.cn>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 24 Feb 2025 16:36:30 +0100
-Message-ID: <875xkzfj7l.fsf@bootlin.com>
+	s=arc-20240116; t=1740411438; c=relaxed/simple;
+	bh=yhH5CefLifdIL3/VFY7y8OY6C4KGgUDfVENSrOJRD6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jP0gU2CIBmkdyW/JU142/br9N4P4TYk43/rWT8N8gqrJ0c+Hd6ZNTboePl18Qbf8Mi/sPZ0dhav+WmN4iBRtSZlOwqVo2omQVi8fcs4q1p++XtsSN30Pg6yn1jInRKo8pPGA7dQqRp8NhNm8b7dVZUYWpZ0tcTJeTjVr7rs6SY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jniKeYp6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE423C4CED6;
+	Mon, 24 Feb 2025 15:37:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740411437;
+	bh=yhH5CefLifdIL3/VFY7y8OY6C4KGgUDfVENSrOJRD6w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jniKeYp6f0hbItNPYyxoaqFxMZ9Aj53HJ9oTyPeiazwTL+ROU2sK8joQ/KV8C4Mp4
+	 tCm3xjIy4bvWgF0dOzK1e4un1nopNwXanjWh4or3x1pHyHqU6Pg0p9UCgS+6b6kWca
+	 g8rLJiytSiXNuReVDrW6/rNoP0VNqo3clpNmbfO1HQULGhJfKcDMp+HBOsRNov/nGF
+	 GRIKKvHpkGTyvEPw5ljzs3sew3WHgiM2NhZu9PyezjSDDN0rDNjU9cI6PCMjiQfgAl
+	 LYH9tuSIsHZPhZ7PKBlzkQXShHZfGN71G2a32ahB4vKefeJGfs1oC9eOrNpv2Lk5PD
+	 dPG4MAsMDaTPQ==
+Date: Mon, 24 Feb 2025 09:37:16 -0600
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
+Message-ID: <20250224153716.GA3137990-robh@kernel.org>
+References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
+ <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleduiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppedvudejrdduuddvrddukeelrddukedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvddujedrudduvddrudekledrudekuddphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepkedprhgtphhtthhopehmrghkvgdvgeesihhstggrshdrrggtrdgtnhdprhgtphhtthhopehrihgthhgrrhgusehnohgurdgrthdprhgtphhtthhopehvihhgnhgvshhhrhesthhirdgtohhmpdhrtghpthhtohepffgrvhhiugdrhghoohguhhhouhhsvgesihhnthgvlhdrtghomhdprhgtphhtthhopehjrghrkhhkohdrlhgrvhhinhgvnhesnhhokhhirgdrtghomhdprhgtphhtthhopehlihhnu
- higqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepshhtrggslhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
 
-Hello Ma,
+On Mon, Feb 24, 2025 at 10:28:49AM +0000, André Draszik wrote:
+> Add device tree binding for the Maxim MAX77759 companion PMIC for USB
+> Type-C applications.
+> 
+> The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors,
+> USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+> 
+> This describes the core mfd device.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+> ---
+>  .../devicetree/bindings/mfd/maxim,max77759.yaml    | 104 +++++++++++++++++++++
+>  MAINTAINERS                                        |   6 ++
+>  2 files changed, 110 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+> new file mode 100644
+> index 000000000000..1efb841289fb
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77759.yaml
+> @@ -0,0 +1,104 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Maxim Integrated MAX77759 PMIC for USB Type-C applications
+> +
+> +maintainers:
+> +  - André Draszik <andre.draszik@linaro.org>
+> +
+> +description: |
+> +  This is a part of device tree bindings for the MAX77759 companion Power
+> +  Management IC for USB Type-C applications.
+> +
+> +  The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors, USB
+> +  Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max77759
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  interrupt-controller: true
+> +
+> +  "#interrupt-cells":
+> +    const: 2
+> +
+> +  gpio-controller: true
+> +
+> +  "#gpio-cells":
+> +    const: 2
+> +
+> +  gpio:
+> +    $ref: /schemas/gpio/maxim,max77759-gpio.yaml
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  pmic-nvmem:
 
-On 24/02/2025 at 21:30:07 +08, Ma Ke <make24@iscas.ac.cn> wrote:
+Just 'nvmem'
 
-> In the mtdswap_init(), if the allocations fail, the error handling
-> path frees d->page_buf, d->eb_data, d->revmap and d->page_data without
-> setting these pointers to NULL. This could lead to UAF if subsequent
-> error handling or device reset operations attempt to release these
-> pointers again.
->
-> Set d->page_buf, d->eb_data, d->revmap and d->page_data to NULL
-> immediately after freeing them to prevent misuse. Release immediately
-> and set to NULL, adhering to the 'release implies invalid' defensive
-> programming principle.
->
-> Found by code review.
->
-> Cc: stable@vger.kernel.org
-> Fixes: a32159024620 ("mtd: Add mtdswap block driver")
+> +    $ref: /schemas/nvmem/maxim,max77759-nvmem.yaml
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pmic@66 {
+> +            compatible = "maxim,max77759";
+> +            reg = <0x66>;
+> +            interrupts-extended = <&gpa8 3 IRQ_TYPE_LEVEL_LOW>;
+> +
+> +            interrupt-controller;
+> +            #interrupt-cells = <2>;
+> +
+> +            gpio {
+> +                compatible = "maxim,max77759-gpio";
+> +
+> +                gpio-controller;
+> +                #gpio-cells = <2>;
+> +
+> +                interrupt-controller;
+> +                #interrupt-cells = <2>;
+> +            };
+> +
+> +            pmic-nvmem {
 
-I am sorry but are you really fixing something? There are thousand of
-drivers doing nothing with their freed pointers in the error path,
-because they just cannot be used anymore.
+nvmem {
 
-Thanks,
-Miqu=C3=A8l
+> +                compatible = "maxim,max77759-nvmem";
+> +
+> +                nvmem-layout {
+> +                    compatible = "fixed-layout";
+> +                    #address-cells = <1>;
+> +                    #size-cells = <1>;
+> +
+> +                    reboot-mode@0 {
+> +                        reg = <0x0 0x4>;
+> +                    };
+> +
+> +                    boot-reason@4 {
+> +                        reg = <0x4 0x4>;
+> +                    };
+> +
+> +                    shutdown-user-flag@8 {
+> +                        reg = <0x8 0x1>;
+> +                    };
+> +
+> +                    rsoc@10 {
+> +                        reg = <0xa 0x2>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f076360ce3c6..f2c19a1b4c05 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14322,6 +14322,12 @@ F:	Documentation/devicetree/bindings/mfd/maxim,max77714.yaml
+>  F:	drivers/mfd/max77714.c
+>  F:	include/linux/mfd/max77714.h
+>  
+> +MAXIM MAX77759 PMIC MFD DRIVER
+> +M:	André Draszik <andre.draszik@linaro.org>
+> +L:	linux-kernel@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/devicetree/bindings/*/maxim,max77759*.yaml
+> +
+>  MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
+>  M:	Javier Martinez Canillas <javier@dowhile0.org>
+>  L:	linux-kernel@vger.kernel.org
+> 
+> -- 
+> 2.48.1.658.g4767266eb4-goog
+> 
 
