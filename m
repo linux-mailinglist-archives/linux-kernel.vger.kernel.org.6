@@ -1,154 +1,126 @@
-Return-Path: <linux-kernel+bounces-528773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28020A41C2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:14:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18F8A41D21
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:40:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 150723AB408
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:13:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED2617A80E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EC5F25A2A9;
-	Mon, 24 Feb 2025 11:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="ATyj8RyJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tFmwMZHN"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30051A3165;
-	Mon, 24 Feb 2025 11:13:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DD7270ED2;
+	Mon, 24 Feb 2025 11:20:08 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0183826F476;
+	Mon, 24 Feb 2025 11:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740395634; cv=none; b=NxxsvjeevMlYnT1MVK3rtCmlw5uCLD038u2dOrhy+FrFR2z4te2twR8B0swgKqZ7uwMgJ6zStDkJZEFFLz8ysO4OQpBltbUU08MRjJQW3wMT8yLENoOt34pqp/74z5/RvdxVgtrrfdhnkKcvibzhkOAzUnkpeHgMJosIfujr2Vo=
+	t=1740396008; cv=none; b=KJUxYE2olt8RIxqTmKup4oQGSCr66kvjZT+ZznwU9r7FFbCCOcrrIWeSlgH5KsQ/whj+SHQ5DY+2lAx9pz0k6nMCzLWK0de0oeFYxpG6G5fWLrNqRmyVMvfBcYsqzfcqkiGK50HijXZnanHMaiSISD+YiuYPxWAw4SVEydrnO7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740395634; c=relaxed/simple;
-	bh=MMDvmvrS0Eti+sDwqqljVm+32DgG/Q1qSKrXEPDeg1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bnKFxFZm6gWw+K9Y28Lr0+hJn1a3n9gaH4F4NHk8v0z+V4XJDn7wt+6rdCgB5Qirb8CVsQx6F0nYgnMi69i+rupMFHu27ZAQJvdYKxZsTeDWereB0dUCi6ETPPqnka1iD4WO8Ow/cBO0NwKfxZhSFdnquTR++cXxtb9X73NtAsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=ATyj8RyJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tFmwMZHN; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 74B3E11401A8;
-	Mon, 24 Feb 2025 06:13:50 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Mon, 24 Feb 2025 06:13:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740395630;
-	 x=1740482030; bh=q/WWSDIGgNonfOGqFQW8MDgJxWFPr0j3B1LaVBN50m4=; b=
-	ATyj8RyJFEpx9ntfoEb0XJVpHPglhp/VYcjO5drWWVbly+IpDt3SCtrzKNDDnmpy
-	NwZNub4OomTQJTVvntGiStaPEXKVh6dBx/3DR53foxcrnmhazx0sw5iwZEeR4pJu
-	H4Hyx93EgaMEAdaa9Lkq1BZn/vzD3Maji1EC36+1pBBAqlXq0llOww5daN32SQmE
-	cn2nqyn7qSpxbbpFzaVZy0jSw9i1FmxeCF/IPAP8JHizlA6woeBL86Qg4eJEPZLz
-	aWkTAk2tl4GIfNMIdty8uuxAyVJ0wLIT6YIgr/Uc7ZCI4mzwXPFxOo7YNN74JskE
-	s1l6uxQZrtlmbcB2Hn4+LA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740395630; x=
-	1740482030; bh=q/WWSDIGgNonfOGqFQW8MDgJxWFPr0j3B1LaVBN50m4=; b=t
-	FmwMZHNbO3SAGIGlIrXxFhUXMXBjrDjJx8NVwtB4cnXF0+450RHcVmxlrEsRQGHv
-	asfh//fePK2G7dKVMEHDwG/jNVJ9MUXkfOnpLepYIzaNxb0y73y6JBhduKZGNr2j
-	FXJfhraa9H5CKwob+wfhB390PQoPvMJo1p63nhb/QLnkWI/vDpp7ykq/i+6aBXC+
-	D5tGy6kKyOVXQAtiHycsZRzMc7ZPVIA6C4lURl5FSubu02BRua570T4yfiP97rkb
-	h4pUTzI/+uZbxcVwlYNIb1yRvZsRHq3QUOpoVrReOmrubc5feSmllEhHWMdSt683
-	cR4m247FYh2tt76hAbRqg==
-X-ME-Sender: <xms:bVS8Zz3BQXUlKScqpdzDYt26Em9b1OMM80kp6k6KSE_FdTVvPUhi4Q>
-    <xme:bVS8ZyExzlKHL6SEvyWje-pG1SwS9Jrar1mcmjEThmV6VCf0QNe6BWb1YHClME5Nb
-    uuLcdnEFjz9h0ieB_U>
-X-ME-Received: <xmr:bVS8Zz7pumG2B9tGFl6dsP_e2iPRHAkUpPLx5VT8Kx9RkwQ__jShOcU-XVHPpkG4x-82aS7yx3daG3TmOFthxRZz6S1jt31Glg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeeigecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
-    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
-    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
-    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepuddupd
-    hmohguvgepshhmthhpohhuthdprhgtphhtthhopehthhhorhhsthgvnhdrsghluhhmsehl
-    ihhnuhigrdguvghvpdhrtghpthhtohephihoshhhihhhihhrohdrshhhihhmohgurgdruh
-    hhsehrvghnvghsrghsrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvhes
-    lhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpd
-    hrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehk
-    uhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrth
-    drtghomhdprhgtphhtthhopehrihgthhgrrhgutghotghhrhgrnhesghhmrghilhdrtgho
-    mhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:bVS8Z41vLpiI9rB0Ozt0FTyRXKF6zDrRcGdoj7W41S-YZzFwcKi4mA>
-    <xmx:bVS8Z2HxPdy4S07mwEc0fiXpr1uG2YHx5dhSyjpPzinkJmu5ecpifQ>
-    <xmx:bVS8Z5-Ij5G48d5MIu8BqNqW5HzsmLUee7XVo_kmfFAfBHpSrZDImw>
-    <xmx:bVS8ZzmXDTYaFzoiqb_8n6bbZU1rAmdP83NhjJ-rf2fKvJZXM04Y4A>
-    <xmx:blS8Zx8BJdsM12M13ne8aWv1vIYQeH5EYPgAFHFO-3bIeBPEA-ICfslX>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 06:13:48 -0500 (EST)
-Date: Mon, 24 Feb 2025 12:13:45 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>, netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: ethernet: renesas: rcar_gen4_ptp: Remove
- bool conversion
-Message-ID: <20250224111345.GG515486@ragnatech.se>
-References: <20250223233613.100518-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740396008; c=relaxed/simple;
+	bh=vn+aZ0yf4f2bCr9xVqGeBGVY/4biDA25C2YfH+UeOJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UVzHSp61FKVRjmsltn872PK/6LDaScABiB3LZIiDb3yAf67e57OSq+l8E8MzlwuyZW+YnzsivwVDDcr3eApVEGRfHfXIUwx0NZbGpizrMpdMkbQNcyAoxg1vPINWPv08UD/YdNeA/wq2zXRy3hzrbEaU9R2ms7yFaCUT68Yi96o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z1dQg35xWz9sSq;
+	Mon, 24 Feb 2025 12:13:47 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id reeUmV24E4zC; Mon, 24 Feb 2025 12:13:47 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z1dQg2BZFz9sSp;
+	Mon, 24 Feb 2025 12:13:47 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 2FFAC8B765;
+	Mon, 24 Feb 2025 12:13:47 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id kefUlrU39Hz9; Mon, 24 Feb 2025 12:13:47 +0100 (CET)
+Received: from [10.25.207.138] (unknown [10.25.207.138])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C903F8B763;
+	Mon, 24 Feb 2025 12:13:46 +0100 (CET)
+Message-ID: <5e8a4dd9-50a8-4080-8d63-dbb8c7241b98@csgroup.eu>
+Date: Mon, 24 Feb 2025 12:13:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] mm: Rename GENERIC_PTDUMP and PTDUMP_CORE
+To: Anshuman Khandual <anshuman.khandual@arm.com>,
+ Steven Price <steven.price@arm.com>, linux-mm@kvack.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org
+References: <20250213040934.3245750-1-anshuman.khandual@arm.com>
+ <20250213040934.3245750-5-anshuman.khandual@arm.com>
+ <8e75c5ff-a97b-4a6f-9c8b-ac2598eafe60@arm.com>
+ <6e1201a1-60c1-40a3-951f-d603b6341a11@csgroup.eu>
+ <03b042ec-1cb7-4419-8741-c65e74e49d51@arm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <03b042ec-1cb7-4419-8741-c65e74e49d51@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250223233613.100518-2-thorsten.blum@linux.dev>
 
-Hi Thorsten,
 
-Thanks for your work.
 
-On 2025-02-24 00:36:11 +0100, Thorsten Blum wrote:
-> Remove the unnecessary bool conversion and simplify the code.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
->  drivers/net/ethernet/renesas/rcar_gen4_ptp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/rcar_gen4_ptp.c b/drivers/net/ethernet/renesas/rcar_gen4_ptp.c
-> index 72e7fcc56693..4c3e8cc5046f 100644
-> --- a/drivers/net/ethernet/renesas/rcar_gen4_ptp.c
-> +++ b/drivers/net/ethernet/renesas/rcar_gen4_ptp.c
-> @@ -29,8 +29,8 @@ static const struct rcar_gen4_ptp_reg_offset gen4_offs = {
->  static int rcar_gen4_ptp_adjfine(struct ptp_clock_info *ptp, long scaled_ppm)
->  {
->  	struct rcar_gen4_ptp_private *ptp_priv = ptp_to_priv(ptp);
-> -	bool neg_adj = scaled_ppm < 0 ? true : false;
->  	s64 addend = ptp_priv->default_addend;
-> +	bool neg_adj = scaled_ppm < 0;
->  	s64 diff;
->  
->  	if (neg_adj)
-> -- 
-> 2.48.1
+Le 14/02/2025 à 08:26, Anshuman Khandual a écrit :
 > 
 > 
+> On 2/13/25 17:19, Christophe Leroy wrote:
+>>
+>>
+>> Le 13/02/2025 à 12:23, Steven Price a écrit :
+>>> On 13/02/2025 04:09, Anshuman Khandual wrote:
+>>>> Platforms subscribe into generic ptdump implementation via GENERIC_PTDUMP.
+>>>> But generic ptdump gets enabled via PTDUMP_CORE. These configs combination
+>>>> is confusing as they sound very similar and does not differentiate between
+>>>> platform's feature subscription and feature enablement for ptdump. Rename
+>>>> the configs as ARCH_HAS_PTDUMP and PTDUMP making it more clear and improve
+>>>> readability.
+>>>
+>>> [...]
+>>>> diff --git a/arch/powerpc/configs/mpc885_ads_defconfig b/arch/powerpc/configs/mpc885_ads_defconfig
+>>>> index 77306be62e9e..db005618690b 100644
+>>>> --- a/arch/powerpc/configs/mpc885_ads_defconfig
+>>>> +++ b/arch/powerpc/configs/mpc885_ads_defconfig
+>>>> @@ -78,4 +78,4 @@ CONFIG_DEBUG_VM_PGTABLE=y
+>>>>    CONFIG_DETECT_HUNG_TASK=y
+>>>>    CONFIG_BDI_SWITCH=y
+>>>>    CONFIG_PPC_EARLY_DEBUG=y
+>>>> -CONFIG_GENERIC_PTDUMP=y
+>>>> +CONFIG_PTDUMP=y
+>>>
+>>> I'd suggest dropp this from the defconfig too, just like patch 1 dropped
+>>> it from debug.config.
+>>>
+>>
+>> Thanks for spotting that.
+>>
+>> That one is wrong. Was introduced by commit d210ee3fdfe8 ("powerpc/configs: Update config files for removed/renamed symbols") which aimed at fixing commit e084728393a5 ("powerpc/ptdump: Convert powerpc to GENERIC_PTDUMP") but it did it wrong.
+>>
+>> It is CONFIG_PTDUMP_DEBUGFS that is wanted.
+> 
+> Should this replacement be done in the series or would you like it
+> to be handled in powerpc later ?
 
--- 
-Kind Regards,
-Niklas Söderlund
+Yes I think you should do the replacement.
 
