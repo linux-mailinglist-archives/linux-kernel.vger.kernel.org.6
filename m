@@ -1,278 +1,216 @@
-Return-Path: <linux-kernel+bounces-528108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658F2A413A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:42:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B663A413A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D28316D71E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:42:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE893AA176
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:45:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DCC1A2545;
-	Mon, 24 Feb 2025 02:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FD8199E89;
+	Mon, 24 Feb 2025 02:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PF1/A9db";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4W/SAG+f";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="J7xr5LAV";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2FUNoupm"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lckFGeSE"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E056619C542
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78BB1A23A4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740364920; cv=none; b=HEhG2KS+ERGfEF0ampMg4OnNKU5ZXOr94TCEcEZM38wOkJqYiig2cNiHHPVbGo3a0gctanKRWbVFcVridfl2oobfwQtrFRe5KpTEEq9+sT1Xk0oWV170LkfhSc+pTeCvtnsDcVjhzLTPNoh4eLZWMDo7LZv21bC+E+jfxUnd2tQ=
+	t=1740365107; cv=none; b=pMgMzpIeBQDb8yo1GP+8ORSCuXEFeMJBr7pLI5vaBjYUcwBpkpPX17FPOzB/ycr0XH3QsGb+yjy41TwgS1hHOOw1ALjbnMGCJhJ9t9qZBGpWTVruLL+NI6rGZaZ10UBDH+d4IVPKUb553LHdcn7UEd9BuYdaDJX1VZv3XqFHOqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740364920; c=relaxed/simple;
-	bh=GfXBhWrXc6OEGTVKWTPvQSlNsaOlNuIkwaMkb/7+ySI=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=jaPpu3WvraNoJo6oTH09LjFfRofsn/ithSpv8p1mR/82vrnk11o4REpJ6m99s18sC/hWzV4st8WjK+V9UGgb7/DknUoPTK3J4f42OxSHB1KBeIIKvjXnHSJekl8QW0O3fj9zDnzQVEZyR+IZu82SuBcuECHxI7OrYY+5HgEvokI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PF1/A9db; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4W/SAG+f; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=J7xr5LAV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2FUNoupm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E24EE1F383;
-	Mon, 24 Feb 2025 02:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740364916; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sokZcRi5Jle+fsK51aZ7tjNiImsvREKG7vGnUqDo1c4=;
-	b=PF1/A9dbKEquPdrr+y+sOIJOOSf8woWxlVHOwGLWU8Dbhu1YxsLdDU/bC0u4Wqm+q5o+6D
-	hNvr6eWdM+/bz/17A5Pp3pP3AeCkxJ1UGnS6YyTiQgt6AHodPSIAsAFyyxOZEw09DdKlj4
-	C2TGaRGduVqP+MYYWWF1DG89EHrwh3s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740364916;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sokZcRi5Jle+fsK51aZ7tjNiImsvREKG7vGnUqDo1c4=;
-	b=4W/SAG+fRUk7tp1wd1ozQxfjBIqxOqr4nqDIxvYnaLAQOnNOyiaOJI4CQvuUdeCjLGYj52
-	lJS3rRsYKQLb1KAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=J7xr5LAV;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2FUNoupm
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740364915; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sokZcRi5Jle+fsK51aZ7tjNiImsvREKG7vGnUqDo1c4=;
-	b=J7xr5LAVZNN5Mh8sDgv6/hHinb6Iuf/Ln5E5/G3ELY1aOwfF54zp55MTeawr5BiI1Bk4uz
-	FtVeccRBlZZxHc4tw69hJD5HJZfkhCrYT63OdzsL3iiwG0bsZwpcUBKObsr9q6bSDIw9gC
-	STSzkXWsfKRb2MldZbU+uY3e+ib+2hU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740364915;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sokZcRi5Jle+fsK51aZ7tjNiImsvREKG7vGnUqDo1c4=;
-	b=2FUNoupmwUKtO/g8AMP0aUFbysA9B7OVFNWZUTF5EcBMJ1OImqv8CcszVjdJvbnFACkwF/
-	16e0OuJo856N4NBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBE2613332;
-	Mon, 24 Feb 2025 02:41:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yOoRH2vcu2csegAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 02:41:47 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740365107; c=relaxed/simple;
+	bh=gIvuAsizv4OccMrpbZRQXctJ6ZyhnqJpBjpWH3ek0/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=K6ZgnbK1PmNmvcWt/yKO/IZCNOkRNutJ262l8E9++XicqmOmY+ERdQjCUmvNrm3TIAVSyp45XYaojJVUlqRgHqe+XZxC8BirHQGox76bNIzEX59+RQpCMR8AyK/a4FvA4hPLFVKfpulJblnTJMruLdB/CSalk503plrQlRaAtpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=lckFGeSE; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250224024455epoutp0270d3652abe9551df7b65ed6643d5ae4e~nBNVovgko0634306343epoutp02y
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:44:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250224024455epoutp0270d3652abe9551df7b65ed6643d5ae4e~nBNVovgko0634306343epoutp02y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740365095;
+	bh=IDjRyZ2SFUCnrvJYVPXNwQBBwEP9C1Vcieg5xe1ZKOg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=lckFGeSESTSa9ukMw/+i8EX8PBXeYdKUEMtI6Yars2QGlNSPjCnlgxg/jhFwa6i4E
+	 jnsIoGmjY6TYrYbeLLDAgyAA3pICnrBnrORR/EENuT0Jj5c743JeiUOmlJr59bUP7y
+	 ca9ZwQU1UuyhDw9/0hnuDMvPOqx9bzZYY8BUnyQE=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20250224024455epcas2p269c8a732e32defd846b0c908d6e13441~nBNVMrf_Z0302903029epcas2p2R;
+	Mon, 24 Feb 2025 02:44:55 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.98]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Z1Q7V42qMz4x9Q7; Mon, 24 Feb
+	2025 02:44:54 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	41.B1.23368.62DDBB76; Mon, 24 Feb 2025 11:44:54 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250224024453epcas2p3ae9f54efec7b6ece6192b2b350150cf1~nBNT-5hZB2996329963epcas2p3k;
+	Mon, 24 Feb 2025 02:44:53 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250224024453epsmtrp2779b75680f21c9ef03466d404917cf45~nBNT_8iQ42275022750epsmtrp2R;
+	Mon, 24 Feb 2025 02:44:53 +0000 (GMT)
+X-AuditID: b6c32a45-dc9f070000005b48-11-67bbdd26b0ad
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B3.7F.23488.52DDBB76; Mon, 24 Feb 2025 11:44:53 +0900 (KST)
+Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250224024453epsmtip16aa712af71bc77eea18bc0bfe5406be6~nBNTvGvtT1185911859epsmtip1R;
+	Mon, 24 Feb 2025 02:44:53 +0000 (GMT)
+Date: Mon, 24 Feb 2025 11:43:23 +0900
+From: Hyesoo Yu <hyesoo.yu@samsung.com>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: janghyuck.kim@samsung.com, vbabka@suse.cz, Christoph Lameter
+	<cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes
+	<rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] mm: slub: Print the broken data before restoring
+ slub.
+Message-ID: <20250224024323.GA2153960@tiffany>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
- netfs@lists.linux.dev
-Subject: Re: [PATCH 5/6] nfs: change mkdir inode_operation to return alternate
- dentry if needed.
-In-reply-to: <20250222044130.GO1977892@ZenIV>
-References: <>, <20250222044130.GO1977892@ZenIV>
-Date: Mon, 24 Feb 2025 13:41:44 +1100
-Message-id: <174036490460.74271.3866837223419464073@noble.neil.brown.name>
-X-Rspamd-Queue-Id: E24EE1F383
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org,lists.infradead.org,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <Z7g2QeQp6HkyqCol@harry>
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHc3rL5eJgubYqR9gIubgZcK0t8rhMIMvm4yaQhYAu02WwO7gp
+	pM/0tm7MbANhgGwyqlkqpSFFDWjDQwoq4xFYEUQxhGU6GBnSNQWnEWS8dKhll966+M/J93zP
+	+Zzf97wwRDSIhmEFGgOj19AqAt0kvDoQHS95e6pbITvRE06afpCR1tYmlBxffQTI6YZZIXnp
+	+xKUbLey5G9dVpS817QeQJYtebnmQpuANDVtJWuLq8B7wdTPlqlAyuYwUg77SZRyLJ4OpCrn
+	7gio4bPPhJTnjllA1Rf9hFD/zEwKqaoOO6Bu264HUkuOiIzgo8rkfIbOY/SRjCZXm1egUaQQ
+	aVk5H+TEJ8jkEnkSmUhEamg1k0LsS8+QHChQcfGJyGO0yshZGTTLErtTk/Vao4GJzNeyhhSC
+	0eWpdIk6KUurWaNGIdUwhnflMllsPDfxM2V++dggoquHXzpL0CLwu7gSBGEQj4MT3S3CSrAJ
+	E+GdALY/nkP4ziKAqw+G/COrAJ6orQ18iZTd8voHegG8O1ztR2YANLf9gm7MEuJvwZHmioAN
+	jeI74XBHA9jQW/AdcG7IiW4ACL4igGt3x3yAGD8Ea8wbSYKwEFwK3Z5hhNeb4c0aj88P4had
+	PzfigyHej8HG0RcIn2kfbP3LhfJaDB/e6PBnDYNL871+n4VXzw8IeLiI22rFtB/eAy2z5b54
+	CF4AZ5rPcj7G+VHw+qSQt1+HFQMvAnk7BFaUiXgyCvY11Al5vR26m8sDeE3BsVtXAvhT+ZM7
+	yA4rqAYRllf2Y3mlGq/fgbbuRdTClUDwcNjoxXgZDVu7dttAgB1sY3SsWsGwsTr5/1ecq1U7
+	gO89x+zvBGfmFqROIMCAE0AMIbaESAydClFIHl34FaPX5uiNKoZ1gnjudkxI2NZcLfchNIYc
+	eVySLC4hQZ4YGy9LJEJDjneWKkS4gjYwSobRMfqXnAALCisSyJd7Eqq+taCTUOT+TpomfrJr
+	RSkp2fbG84nyZauxZTJjFOyPCl8/mAQu/fF8PTVX3DX1dKE2ZbZ/eGLXjKsw+pq4r95dknk5
+	uC45NFf9pgcd6Yd7uz8/73FlSjPHd4Qqx2JKW0wmwULpaGrv5W/e7zNdiZp2Z6/svC0xv5be
+	I1qznjqpvgYZm+XrA4ZPjtQcpQ87RZHwwkf6B6zr3/THcm+D0xaRHRx7+ubm6o8bcaow+2nx
+	qV+HjJl1U5aCLKYNbB98olIewz7du948fcPgvG9fjtNig88uHtrzt0OfhlPH17zj5oNV9wa+
+	SDinqLG7HrXP3/8w60hncX3jwMMfCSGbT8tjED1L/wfAgd2WWAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupikeLIzCtJLcpLzFFi42LZdlhJTlf17u50g9WLtC0m9hhYzFm/hs3i
+	+rc3jBb3lz1jsVjZ3cxmsXlOscXlXXPYLO6t+c9q0fb5H5BYspHJYuIaUYvZjX2MDjweO2fd
+	ZfdYsKnUY9OqTjaPTZ8msXt0vb3C5HFixm8WjydXpjN5LGyYyuzx8ektFo++LasYPc4sOMLu
+	8XmTXABPFJdNSmpOZllqkb5dAlfGjH1vmQvuiVY8vHiAqYFxjWAXIyeHhICJRNupfyxdjFwc
+	QgK7GSWe9k5hhUhISsz6fJIJwhaWuN9yhBWi6DGjxLHlc9lAEiwCqhKn13aANbAJqEuc2LKM
+	EcQWEVCReHvsEFgNs8BPJompDZkgtrBAiMTM6etYQGxeAT2JR09OMEMMvccocX3BE2aIhKDE
+	yZlPWCCatSRu/HsJdAUHkC0tsfwfB0iYE2jvu0Wn2SYwCsxC0jELSccshI4FjMyrGCVTC4pz
+	03OTDQsM81LL9YoTc4tL89L1kvNzNzGCo0tLYwfju29N+ocYmTgYDzFKcDArifDqluxIF+JN
+	SaysSi3Kjy8qzUktPsQozcGiJM670jAiXUggPbEkNTs1tSC1CCbLxMEp1cA05bHDf0v33rMT
+	EtlvtyhpX5rJzM55wka54rmsYM7v8oaFkh/LKxgWajFO3xm5cMKsyYZBW7OTtty4eW2CrOm5
+	JfPup62S7JfW/hjN8fJRt4IU3zbePaEctptUSlum3j6fOd3jwauorVPmXbdu/Z+4NTez2ejq
+	yyjj+NZna3PmzP0VXe3Aa65yLTvv1uvVn6QLZNPur5123+uFja/BnqPK/Xvmz+MN035yPN55
+	QdGHVcF6bvcWf/v9/dzppsVzuVef3FNxJcAmvVa82W3pnQzB1TkWEidXFyjvv7F6tfyWXSum
+	zUp5q8vAZf9uw7ay3z6aihd6RKO17Tvypry0vbDzau+yl+0HtHiUjyRKvz25VImlOCPRUIu5
+	qDgRAApYst0dAwAA
+X-CMS-MailID: 20250224024453epcas2p3ae9f54efec7b6ece6192b2b350150cf1
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----souVHaJ2v40ysJO-goJgDtKdm5PFoGmT3TNK2tOxyR5.xT_N=_12e1d3_"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f
+References: <20250220033953.1606820-1-hyesoo.yu@samsung.com>
+	<CGME20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f@epcas2p2.samsung.com>
+	<20250220033953.1606820-2-hyesoo.yu@samsung.com> <Z7g2QeQp6HkyqCol@harry>
 
-On Sat, 22 Feb 2025, Al Viro wrote:
-> On Fri, Feb 21, 2025 at 10:36:34AM +1100, NeilBrown wrote:
->=20
-> >  nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *=
-sattr)
-> >  {
-> >  	struct posix_acl *default_acl, *acl;
-> > @@ -612,15 +612,18 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *d=
-entry, struct iattr *sattr)
-> >  		dentry =3D d_alias;
-> > =20
-> >  	status =3D nfs3_proc_setacls(d_inode(dentry), acl, default_acl);
-> > +	if (status && d_alias)
-> > +		dput(d_alias);
-> > =20
-> > -	dput(d_alias);
-> >  out_release_acls:
-> >  	posix_acl_release(acl);
-> >  	posix_acl_release(default_acl);
-> >  out:
-> >  	nfs3_free_createdata(data);
-> >  	dprintk("NFS reply mkdir: %d\n", status);
-> > -	return status;
-> > +	if (status)
-> > +		return ERR_PTR(status);
-> > +	return d_alias;
->=20
-> Ugh...  That's really hard to follow - you are leaving a dangling
-> reference in d_alias textually upstream of using that variable.
-> The only reason it's not a bug is that dput() is reachable only
-> with status && d_alias and that guarantees that we'll
-> actually go away on if (status) return ERR_PTR(status).
->=20
-> Worse, you can reach 'out:' with d_alias uninitialized.  Yes,
-> all such branches happen with status either still unmodified
-> since it's initialization (which is non-zero) or under
-> if (status), so again, that return d_alias; is unreachable.
->=20
-> So the code is correct, but it's really asking for trouble down
-> the road.
->=20
-> BTW, dput(NULL) is guaranteed to be a no-op...
->=20
+------souVHaJ2v40ysJO-goJgDtKdm5PFoGmT3TNK2tOxyR5.xT_N=_12e1d3_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-Thanks for that.  I've minimised the use of status and mostly
-stored errors in d_alias - which I've renamed to 'ret'.
-I think that answers your concerns.
+On Fri, Feb 21, 2025 at 05:16:01PM +0900, Harry Yoo wrote:
+> On Thu, Feb 20, 2025 at 12:39:43PM +0900, Hyesoo Yu wrote:
+> > Previously, the restore occured after printing the object in slub.
+> > After commit 47d911b02cbe ("slab: make check_object() more consistent"),
+> > the bytes are printed after the restore. This information about the bytes
+> > before the restore is highly valuable for debugging purpose.
+> > For instance, in a event of cache issue, it displays byte patterns
+> > by breaking them down into 64-bytes units. Without this information,
+> > we can only speculate on how it was broken. Hence the corrupted regions
+> > should be printed prior to the restoration process. However if an object
+> > breaks in multiple places, the same log may be output multiple times.
+> > Therefore the slub log is reported only once to prevent redundant printing,
+> > by sending a parameter indicating whether an error has occurred previously.
+> > 
+> > Changes in v3:
+> > - Change the parameter type of check_bytes_and_report.
+> > 
+> > Changes in v2:
+> > - Instead of using print_section every time on check_bytes_and_report,
+> > just print it once for the entire slub object before the restore.
+> > 
+> > Signed-off-by: Hyesoo Yu <hyesoo.yu@samsung.com>
+> > Change-Id: I73cf76c110eed62506643913517c957c05a29520
+> > ---
+> >  mm/slub.c | 29 ++++++++++++++---------------
+> >  1 file changed, 14 insertions(+), 15 deletions(-)
+> > 
+> 
+> > @@ -1212,11 +1213,14 @@ check_bytes_and_report(struct kmem_cache *s, struct slab *slab,
+> >  	if (slab_add_kunit_errors())
+> >  		goto skip_bug_print;
+> >  
+> > -	slab_bug(s, "%s overwritten", what);
+> >  	pr_err("0x%p-0x%p @offset=%tu. First byte 0x%x instead of 0x%x\n",
+> >  					fault, end - 1, fault - addr,
+> >  					fault[0], value);
+> >  
+> > +	scnprintf(buf, 100, "%s overwritten", what);
+> > +	if (slab_obj_print)
+> > +		object_err(s, slab, object, buf);
+> 
+> 
+> Wait, I think it's better to keep printing "%s overwritten" regardless
+> of slab_obj_print and only call __slab_err() if slab_obj_print == true
+> as discussed here [1]? Becuase in case there are multiple errors,
+> users should know.
+> 
+> [1] https://lore.kernel.org/all/2ff52c5e-4b6b-4b3d-9047-f00967315d3e@suse.cz
+> 
+
+Hi,
+
+__slab_err() doesn't include print_trainer(). It needs object_err().
+
+How about including the specific error name 'what' to pr_err ?
+And then object_err would print "Object corrupt" at the beginning once
+without buf like below.
+
+	if (slab_obj_print)
+		object_err(s, slab, object, "Object corrupt");
+
+	pr_err("[%s] 0x%p-0x%p @offset=%tu. First byte 0x%x instead of 0x%x\n",
+ 	       what, fault, end - 1, fault - addr, fault[0], value);
 
 Thanks,
-NeilBrown
+Regards.
+> -- 
+> Cheers,
+> Harry
+> 
 
---- a/fs/nfs/nfs3proc.c
-+++ b/fs/nfs/nfs3proc.c
-@@ -578,13 +578,13 @@ nfs3_proc_symlink(struct inode *dir, struct dentry *den=
-try, struct folio *folio,
- 	return status;
- }
-=20
--static int
-+static struct dentry *
- nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry, struct iattr *satt=
-r)
- {
- 	struct posix_acl *default_acl, *acl;
- 	struct nfs3_createdata *data;
--	struct dentry *d_alias;
--	int status =3D -ENOMEM;
-+	struct dentry *ret =3D ERR_PTR(-ENOMEM);
-+	int status;
-=20
- 	dprintk("NFS call  mkdir %pd\n", dentry);
-=20
-@@ -592,8 +592,9 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentry,=
- struct iattr *sattr)
- 	if (data =3D=3D NULL)
- 		goto out;
-=20
--	status =3D posix_acl_create(dir, &sattr->ia_mode, &default_acl, &acl);
--	if (status)
-+	ret =3D ERR_PTR(posix_acl_create(dir, &sattr->ia_mode,
-+				       &default_acl, &acl));
-+	if (IS_ERR(ret))
- 		goto out;
-=20
- 	data->msg.rpc_proc =3D &nfs3_procedures[NFS3PROC_MKDIR];
-@@ -602,25 +603,27 @@ nfs3_proc_mkdir(struct inode *dir, struct dentry *dentr=
-y, struct iattr *sattr)
- 	data->arg.mkdir.len =3D dentry->d_name.len;
- 	data->arg.mkdir.sattr =3D sattr;
-=20
--	d_alias =3D nfs3_do_create(dir, dentry, data);
--	status =3D PTR_ERR_OR_ZERO(d_alias);
-+	ret =3D nfs3_do_create(dir, dentry, data);
-=20
--	if (status !=3D 0)
-+	if (IS_ERR(ret))
- 		goto out_release_acls;
-=20
--	if (d_alias)
--		dentry =3D d_alias;
-+	if (ret)
-+		dentry =3D ret;
-=20
- 	status =3D nfs3_proc_setacls(d_inode(dentry), acl, default_acl);
-+	if (status) {
-+		dput(ret);
-+		ret =3D ERR_PTR(status);
-+	}
-=20
--	dput(d_alias);
- out_release_acls:
- 	posix_acl_release(acl);
- 	posix_acl_release(default_acl);
- out:
- 	nfs3_free_createdata(data);
--	dprintk("NFS reply mkdir: %d\n", status);
--	return status;
-+	dprintk("NFS reply mkdir: %d\n", PTR_ERR_OR_ZERO(ret));
-+	return ret;
- }
-=20
- static int
+------souVHaJ2v40ysJO-goJgDtKdm5PFoGmT3TNK2tOxyR5.xT_N=_12e1d3_
+Content-Type: text/plain; charset="utf-8"
+
+
+------souVHaJ2v40ysJO-goJgDtKdm5PFoGmT3TNK2tOxyR5.xT_N=_12e1d3_--
 
