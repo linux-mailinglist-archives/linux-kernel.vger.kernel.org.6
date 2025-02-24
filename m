@@ -1,278 +1,116 @@
-Return-Path: <linux-kernel+bounces-528461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93567A417E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:55:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B8CBA417ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:56:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE46A1743A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817F1188BCA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2414423CEF8;
-	Mon, 24 Feb 2025 08:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC6F24291B;
+	Mon, 24 Feb 2025 08:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="pnSnKdlj"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0KVRt9H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB9AB23E229
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A62241695;
+	Mon, 24 Feb 2025 08:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387332; cv=none; b=GYUOb8+9Enw6i6FKggBvYDQkcaVbIih20K7m3sZ8aKFdHvZV9QvznmvnKIfvbanWPJdFEA9RsUULfy1WoV35xHye4XrV5G0WFUJKIuym915lOcB1UpGX+bDooNgi5ZvpYmNk4f8CjqBZhsp5fIzLLEENza/4cZ/IzqozksEesC0=
+	t=1740387367; cv=none; b=Nj51zRijiwLymkWocZGIZ67zvKOLpmYvy4TrrxugPa+nQD4tPSojxam5x96apFaqE2ZDx6j6RPEESBZKbVcEy/AfsCKBRkt/rc5FzkrSeP9HDrYWSpzc/ewY8ZKkOX+9DT5VxnaqsfX5bZ4eElzZ0LCfa3hYw8bZfNMT3Oo41HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387332; c=relaxed/simple;
-	bh=TkahDvOac86EKRRnfPHVD02IPLJ6bUzqSUYsvNKQQTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TMQ5O6J0i7Y9Fuov0NLOuRnBAeH7opuWCpHf7olnd54T8boA4GZQzXAxzh3MVPQ4UqQqsmuL01hv6Gn7JfrUT31+JtVy1pab0FeJTOwCglRn6Qb305W+P6sbmZnJjWO4SucCWTyiMp9rDo7oyzQ2W88YwfHvNHWZb/i4GU24hZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=pnSnKdlj; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso702177566b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:55:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740387327; x=1740992127; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4hSkW3tH+RDTSb9Fo6GDimpNp79/WhGzMXLMYukVH70=;
-        b=pnSnKdljZPNIP+r3Stp5jTJ9clSV2/fM5yab0RFQLtfwH+tRW+PdmP2mY9bYTwI/ud
-         sA0m7sj87WzI+1ww43LY4GsUVB6IwVmnVnFhBZ+VVX7L0eieMBUQZW2RfhM6mFW3Fg8m
-         de6DSnKYAsuthrXJnVL34Pi9i9ir+9L72XgvymFszoD+WhXHbgSsP5lLzVDPMSdT5qzf
-         HaN+4rgwsSB2lfJnPGDcdDpXl9EiXIIzzRlMTD/zL9AvFjLSRATt/AT/wKpdx8Lh6+it
-         SAIdDM2rbTMu/2qAINRC8azrDpue9c3TB9yqSuQXRMdB5ovU567pe3DjAcYCVLzqAyo2
-         8A5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740387327; x=1740992127;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4hSkW3tH+RDTSb9Fo6GDimpNp79/WhGzMXLMYukVH70=;
-        b=iQh8nJihc0QiAQn+HxFnItWuq80BQNGXVKYpnhIrDT7eqi6Knzwr5VGuWb2JycLsJr
-         hdNRs7MTivczZSXVsOQM+eHXFJinlXtANq2i+Ym679yVVvaxh0OavrrXrJdM6Z6ibosu
-         csRm17dAc384mMG30VXh0xdeHvp2eQ5GzWTIuuxqsLGk3IMqwS4HY0ZPAceCiRieZAao
-         JgeuaCTDrQDTGfB6pZ7glY1rEJz38L4iPEj+3OmvbBj4qfroVntY7qMbaJ6IpdkY7L/W
-         3NZYARm3Ip6afIiO0IJRt7a6I69OB+RPkzVhnFTocasY2EC8Rd8uXpZGXjEwzCaXzyve
-         VNQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrqSDGxbASCxUON4Ixaz3RLQky6xOwdSVZVfkXKIn/S1npJpv+Y4VIC6ty7wHX9CukoxlAehu5S0GBsoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ5mC/RutmT5zzhurgbVf+0N4igfdiWwmUGK895BtfmLBI2XDK
-	UsJK+drhdJPTSLYSdZc7VsD6Q6ZJwN0mKG2ujM8FmSX6/7jNPCk7Q26axLG3PHU=
-X-Gm-Gg: ASbGncvLs3T5/GATI9K1nnKn1ed1dxMC4Q8SpQRWNxtmIzB+ZnSBrBC3gQ5m6UQyHCw
-	oZTSX6BFTylfJmR7HTPsU0ygMMvEU1o8tn0l/xNvi/vtItoWV/ZQNzxZLhYvSuPdS17ge8L6+Gp
-	/9z6ow+CH81EHkWbRUpzDMpqPls5iVIH9umUhtZ2to4PVMGXTh6esXNG/l26v02VZy0F1Xu2pql
-	K6kiTCqSob4F4zmfx5A6b7wkHkrFrQ6XGvM1smGHYhepuceRnQKFE5b9yyF8Yro0Hpy/2jgnwOb
-	+vzFd/b/C2Da0E8R32ZVDDiR1tBVvBFK+g==
-X-Google-Smtp-Source: AGHT+IEs8x0IQjFrgjH3pilnXb/AGxeFhCSA//JhOToJBvieCqskdjOj0Fwy0VykJbl/XT4OZr9y7w==
-X-Received: by 2002:a17:906:3282:b0:ab7:cb84:ecd6 with SMTP id a640c23a62f3a-abc0df5d6f5mr911751566b.56.1740387326903;
-        Mon, 24 Feb 2025 00:55:26 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532802a1sm2188079966b.76.2025.02.24.00.55.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 00:55:26 -0800 (PST)
-Message-ID: <edb77ae7-d837-4e30-99ec-9ecb8b0647e9@tuxon.dev>
-Date: Mon, 24 Feb 2025 10:55:23 +0200
+	s=arc-20240116; t=1740387367; c=relaxed/simple;
+	bh=xynIidDgpFBJhwX+rR7LTSuhkkTdXt9jQlEjIf656u4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g+gTEapFROb2+iHKnaa6b/ktgnsIykQ83cTSx4raw7dVd0Gul5IwR57MzHmw8sDmjznAMWf4Yjwfi0PulrlqbtE8c9GyV9gdCm+SuAcKSDBoJLXKMSrqrrGkmGGCl77S+VHKXzHRuLDzL2EcIOmh0t1guTQjrRmzjgXhr6NjlAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0KVRt9H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11564C4CEE6;
+	Mon, 24 Feb 2025 08:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740387367;
+	bh=xynIidDgpFBJhwX+rR7LTSuhkkTdXt9jQlEjIf656u4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D0KVRt9H3ECd8N6iv+XzErxMGS+7KbCRuMJUu+bQMYbTnnPHwLcuWiUTIUxllT1QE
+	 RNtw+Szf2Z0laWEeTI3RBd+YjTiMgOJpEkNatKEWUAsX8gPTlbVs+PJO+i2LHoKqgW
+	 xRVb97fzyaAnQ3W7spRTcxyEEzpiTHGpCvQHcBkkJxhu4J7Z3GDJ5MWimoLpdibh+L
+	 JeZd+LI4viRzL2Zc7a4wG9YVhyXHPpm/XJcfL14/Y117GDC+ExglNclxm12adh3E0x
+	 VWtE/qavf6qxZzv+Afn4YFlss1vzH7k0IpmU5kX0X7J/QqALHccZ/eohy9ECzjfXAw
+	 FQJrOswTPLMJQ==
+Date: Mon, 24 Feb 2025 09:56:04 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
+ samsung,exynos2200-usbcon-phy schema file
+Message-ID: <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/15] ARM: at91: pm: Enable ULP0 for SAMA7D65
-To: Ryan.Wanner@microchip.com, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, sre@kernel.org,
- Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
- p.zabel@pengutronix.de
-Cc: linux@armlinux.org.uk, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-References: <cover.1739221064.git.Ryan.Wanner@microchip.com>
- <a00b193df9e0cb95d144a249b12f1b13188d1ab7.1739221064.git.Ryan.Wanner@microchip.com>
- <32ad3a1a-c6b6-4db1-8e80-8b5f951055a8@tuxon.dev>
- <5c6910ce-b0e4-47e6-9c9b-f0093d34f4a6@microchip.com>
- <b3de47a4-614c-4650-a866-5718b2e2b50a@tuxon.dev>
- <b03c0871-a846-43a1-a4e2-d8d9ee8ef078@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <b03c0871-a846-43a1-a4e2-d8d9ee8ef078@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
 
-
-
-On 19.02.2025 17:24, Ryan.Wanner@microchip.com wrote:
-> On 2/17/25 00:18, Claudiu Beznea wrote:
->> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>
->> Hi, Ryan,
->>
->> On 14.02.2025 20:09, Ryan.Wanner@microchip.com wrote:
->>> On 2/13/25 01:20, Claudiu Beznea wrote:
->>>> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->>>>
->>>> Hi, Ryan,
->>>>
->>>>
->>>> On 10.02.2025 23:13, Ryan.Wanner@microchip.com wrote:
->>>>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->>>>>
->>>>> New clocks are saved to enable ULP0 for SAMA7D65 because this SoC has a
->>>>> total of 10 main clocks that need to be saved for ULP0 mode.
->>>>
->>>> Isn't 9 the total number of MCKs that are handled in the last/first phase
->>>> of suspend/resume?
->>> Yes I was including 10 to match the indexing in the mck_count variable.
->>> Since bgt instruction was suggested I will correct this to reflect the
->>> true behavior of the change.
->>>>
->>>> Also, the state of MCKs are saved/restored for ULP0 and ULP1 as well.
->>>>
->>>>>
->>>>> Add mck_count member to at91_pm_data, this will be used to determine
->>>>> how many mcks need to be saved. In the mck_count member will also make
->>>>> sure that no unnecessary clock settings are written during
->>>>> mck_ps_restore.
->>>>>
->>>>> Add SHDWC to ULP0 mapping to clear the SHDWC status after exiting low
->>>>> power modes.
->>>>
->>>> Can you explain why this clear need to be done? The commit message should
->>>> answer to the "what?" and "why?" questions.
->>>>
->>>>>
->>>>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
->>>>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->>>>> ---
->>>>>  arch/arm/mach-at91/pm.c              | 19 +++++-
->>>>>  arch/arm/mach-at91/pm.h              |  1 +
->>>>>  arch/arm/mach-at91/pm_data-offsets.c |  2 +
->>>>>  arch/arm/mach-at91/pm_suspend.S      | 97 ++++++++++++++++++++++++++--
->>>>>  4 files changed, 110 insertions(+), 9 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
->>>>> index 55cab31ce1ecb..50bada544eede 100644
->>>>> --- a/arch/arm/mach-at91/pm.c
->>>>> +++ b/arch/arm/mach-at91/pm.c
->>>>> @@ -1337,6 +1337,7 @@ struct pmc_info {
->>>>>       unsigned long uhp_udp_mask;
->>>>>       unsigned long mckr;
->>>>>       unsigned long version;
->>>>> +     unsigned long mck_count;>  };
->>>>>
->>>>>  static const struct pmc_info pmc_infos[] __initconst = {
->>>>> @@ -1344,30 +1345,42 @@ static const struct pmc_info pmc_infos[] __initconst = {
->>>>>               .uhp_udp_mask = AT91RM9200_PMC_UHP | AT91RM9200_PMC_UDP,
->>>>>               .mckr = 0x30,
->>>>>               .version = AT91_PMC_V1,
->>>>> +             .mck_count = 1,
->>>>
->>>> As this member is used only for SAMA7 SoCs I would drop it here and above
->>>> (where initialized with 1).
->>>>
->>>>>       },
->>>>>
->>>>>       {
->>>>>               .uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP,
->>>>>               .mckr = 0x30,
->>>>>               .version = AT91_PMC_V1,
->>>>> +             .mck_count = 1,
->>>>>       },
->>>>>       {
->>>>>               .uhp_udp_mask = AT91SAM926x_PMC_UHP,
->>>>>               .mckr = 0x30,
->>>>>               .version = AT91_PMC_V1,
->>>>> +             .mck_count = 1,
->>>>>       },
->>>>>       {       .uhp_udp_mask = 0,
->>>>>               .mckr = 0x30,
->>>>>               .version = AT91_PMC_V1,
->>>>> +             .mck_count = 1,
->>>>>       },
->>>>>       {
->>>>>               .uhp_udp_mask = AT91SAM926x_PMC_UHP | AT91SAM926x_PMC_UDP,
->>>>>               .mckr = 0x28,
->>>>>               .version = AT91_PMC_V2,
->>>>> +             .mck_count = 1,
->>>>>       },
->>>>>       {
->>>>>               .mckr = 0x28,
->>>>>               .version = AT91_PMC_V2,
->>>>> +             .mck_count = 5,
->>>>
->>>> I'm not sure mck_count is a good name when used like proposed in this
->>>> patch. We know that only 4 MCKs need to be handled for SAMA7G5 and 9 for
->>>> SAMA7D65.
->>>>
->>>> Maybe, better change it here to 4 (.mck_count = 4) and to 9 above
->>>> (.mck_count = 9) and adjust properly the assembly macros (see below)? What
->>>> do you think?
->>>
->>> Yes I think this is better and cleaner to read. Should this mck_count
->>> match the pmc_mck_count variable name? Or should this be more
->>> descriptive or would mcks be sufficient.
->>
->> mck_count/mcks should be enough. These will be anyway in the context of
->> pmc_info.
->>
->>>>
->>>>> +     },
->>>>> +     {
->>>>> +             .uhp_udp_mask = AT91SAM926x_PMC_UHP,
->>>>> +             .mckr = 0x28,
->>>>> +             .version = AT91_PMC_V2,
->>>>> +             .mck_count = 10,
->>>>>       },
->>>>>
->>>>>  };
->>>>> @@ -1386,7 +1399,7 @@ static const struct of_device_id atmel_pmc_ids[] __initconst = {
->>>>>       { .compatible = "atmel,sama5d2-pmc", .data = &pmc_infos[1] },
->>>>>       { .compatible = "microchip,sam9x60-pmc", .data = &pmc_infos[4] },
->>>>>       { .compatible = "microchip,sam9x7-pmc", .data = &pmc_infos[4] },
->>>>> -     { .compatible = "microchip,sama7d65-pmc", .data = &pmc_infos[4] },
->>>>> +     { .compatible = "microchip,sama7d65-pmc", .data = &pmc_infos[6] },
->>>>>       { .compatible = "microchip,sama7g5-pmc", .data = &pmc_infos[5] },
->>>>>       { /* sentinel */ },
->>>>>  };
->>>>> @@ -1457,6 +1470,7 @@ static void __init at91_pm_init(void (*pm_idle)(void))
->>>>>       soc_pm.data.uhp_udp_mask = pmc->uhp_udp_mask;
->>>>>       soc_pm.data.pmc_mckr_offset = pmc->mckr;
->>>>>       soc_pm.data.pmc_version = pmc->version;
->>>>> +     soc_pm.data.pmc_mck_count = pmc->mck_count;
->>>>>
->>>>>       if (pm_idle)
->>>>>               arm_pm_idle = pm_idle;
->>>>> @@ -1659,7 +1673,8 @@ void __init sama7_pm_init(void)
->>>>>               AT91_PM_STANDBY, AT91_PM_ULP0, AT91_PM_ULP1, AT91_PM_BACKUP,
->>>>>       };
->>>>>       static const u32 iomaps[] __initconst = {
->>>>> -             [AT91_PM_ULP0]          = AT91_PM_IOMAP(SFRBU),
->>>>> +             [AT91_PM_ULP0]          = AT91_PM_IOMAP(SFRBU) |
->>>>> +                                       AT91_PM_IOMAP(SHDWC),
->>>>
->>>> In theory, as the wakeup sources can also resumes the system from standby
->>>> (WFI), the shdwc should be mapped for standby, too. Unless I'm wrong and
->>>> the wakeup sources covered by the SHDWC_SR register don't apply to standby
->>>> (WFI).
->>> The device can wake up from an RTT or RTC alarm event on both the
->>> standby power mode and the ULP0 power mode, since the RTT/RTC are
->>> included in the SHDWC_SR I think it is safe to have this.
->>> If I understand what you are asking correctly.
->>
->> I was asking if the SHDWC should also be mapped for standby like:
-> Ok I see. I have a better understanding now of wake up sources table
-> like you showed below. I think for readability of code I should not have
-> SHDWC set as ULP0 and STANDBY source because in at91_pm_config_ws()
-> SHDWC is only configured as a wake up source in ULP1 power mode.
+On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
+> The Exynos2200 SoC has a USB controller PHY, which acts as an
+> intermediary between a USB controller (typically DWC3) and other PHYs
+> (UTMI, PIPE3). Add a dt-binding schema for it.
 > 
-> So removing SHDWC from the ULP0 wake up source would reflect more
-> accurately what is configured as a wake up source in the code. What do
-> you think?
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
 
-Sounds good.
+You have undocumented dependencies which prevent merging this file.
+First, dependencies have to be clearly expressed. Second, you should
+rather decouple the code from header dependencies, otherwise this cannot
+be merged for current release (just use clocks with long names, without IDs).
 
-Thank you,
-Claudiu
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+> new file mode 100644
+> index 000000000..7d879ec8b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Exynos2200 USB controller PHY
+> +
+> +maintainers:
+> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> +
+> +description:
+> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
+> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
+
+Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
+
+I think there is no PHY between DWC3 and UTMI/PIPE. There is a PHY
+controller (so the samsung,usb3-drd-phy.yaml) which we call here the
+phy.
+
+
+Best regards,
+Krzysztof
 
 
