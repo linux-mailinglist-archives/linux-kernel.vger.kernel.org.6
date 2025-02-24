@@ -1,223 +1,165 @@
-Return-Path: <linux-kernel+bounces-528125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD04A413E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6EEA413E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4513F1892200
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F26E18949CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CC41A5B89;
-	Mon, 24 Feb 2025 03:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loDVWSzz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QjRw1lx7";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qQPje3YQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qCHfTd4G"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D661A3174;
+	Mon, 24 Feb 2025 03:12:12 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE681A2388
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B09F4E2;
+	Mon, 24 Feb 2025 03:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740366606; cv=none; b=uoY/LbtKb5Ws39zx1hlTic0Be+KsrNrvffMFFeMM2DQocEGaYPupEZ8WYOHYtFmizrZoFcjSEdSrdJPj9vrYdTGfTrFYbNwNjACP3b4Zm3wczy+mPkTSTYf52DckJs/yvWMRiDVrXBtWjZGsI8FKCYuo6tR4dG4nruX+iVq6NQ4=
+	t=1740366732; cv=none; b=JBq/EyQuXLSmkxKU1TNP4i8sT1dg79LV9vPSfC7gDD+P7O23eiUNQGRnqtSbwhP+17ivpQ7iWLnJ0/uS/j4KNvQ23GFGQiMrUxbb23UWQwaMBqXsc6ZTTcCtaOhzH3EKHND2vXNXoATXY/n205GM96+J0dniZFZqh8qNnfs4X84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740366606; c=relaxed/simple;
-	bh=9r5+q8DHKX788ZEFFhiVUo26VVjWFeDu05g9DDwaDMs=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=j3Se+O4f3viuxoit6J3OVxEYQMy/7+lTjveDljMGXkAEOXf/EKznQwAPg2qRpcq94cjLyf2elkb7YkuWHdWdIKliBahQfsakceD/Wb7J9/I7PawRpwZpXjHSYTd/kqvjN3HQXFOAy7jgAoJv5DCn8f83rgN1VdkDlrTWXQNAtmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loDVWSzz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QjRw1lx7; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qQPje3YQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qCHfTd4G; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 025F32116D;
-	Mon, 24 Feb 2025 03:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740366601; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmhavDDqxnU6LOWYcidWK7vEHgKnUEjbsfTBIBD39OU=;
-	b=loDVWSzzfX7dRCGS9w4Q2v36XewRGh5YTGpWLQBGc51FHhgtpXjGBVSUth1WTHbT2HOLpw
-	MmoD+EUp4ECa+PV4IVZ8iE7dzwOoYN+0t1z8w2wVXObQNT6dRom2PBwnYFY9kqvf73k+tz
-	WuN01rM8TL6kSU/CzQCYJ3pe9JSf3mQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740366601;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmhavDDqxnU6LOWYcidWK7vEHgKnUEjbsfTBIBD39OU=;
-	b=QjRw1lx7o9Ya+y6S1+Lq31txEDEF+cG9AoYWSq4bk170sL8QVbcDL34FWJXle+ELQJHdWE
-	HynNG48KqNrXn0AA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qQPje3YQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qCHfTd4G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740366600; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmhavDDqxnU6LOWYcidWK7vEHgKnUEjbsfTBIBD39OU=;
-	b=qQPje3YQS7d0p/XHpgNeHHpc2X/VLCetqDr7a8pXsJ5aPSR3SAF3VazYjEHp1KxQ/mYnML
-	qGvz80h71rw5AmtPtlpWNrtYTfRbfGevDfOslAHGKWrFpfL303WDxl95ZVzwXdUofl+qQZ
-	exeV/QkhyeJEtpiylFG4/p1A4Su/RLc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740366600;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wmhavDDqxnU6LOWYcidWK7vEHgKnUEjbsfTBIBD39OU=;
-	b=qCHfTd4GoP23Op2upORnBqfwGNEOp2Ym1GxccogurCW6unEhk5lX89noOIDRQFZ0ko/HiU
-	Ycctm5os4cezrhCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F013613332;
-	Mon, 24 Feb 2025 03:09:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xSMDKP/iu2cKAgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 03:09:51 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740366732; c=relaxed/simple;
+	bh=XWJMx12NbsBM+EgAyV5Uqf9FJjuPIfxva8iem+oY5tQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iQlEKt2PAlOoRdu+FD5vPwIgGd0hqO/uqD6iNz/Cp67F7kXxBmzCwrtuXB1H14TAItAAMQEvikJGNPrz5MRVJFnngONj360uTZLLMhIJr/ewD+iyyNQIwzj224NEddB+Y9T2Gs+zCNeziTdg9bs5Siy2+vslsMxuo/v4eleCoNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z1Qfn4TKxzCs7B;
+	Mon, 24 Feb 2025 11:08:33 +0800 (CST)
+Received: from kwepemk500005.china.huawei.com (unknown [7.202.194.90])
+	by mail.maildlp.com (Postfix) with ESMTPS id 426EE1402E2;
+	Mon, 24 Feb 2025 11:11:59 +0800 (CST)
+Received: from localhost.localdomain (10.175.112.125) by
+ kwepemk500005.china.huawei.com (7.202.194.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 24 Feb 2025 11:11:57 +0800
+From: Tong Tiangen <tongtiangen@huawei.com>
+To: David Hildenbrand <david@redhat.com>, Oleg Nesterov <oleg@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de
+ Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Mark Rutland
+	<mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Peter Xu
+	<peterx@redhat.com>, Ian Rogers <irogers@google.com>, Adrian Hunter
+	<adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-trace-kernel@vger.kernel.org>,
+	<bpf@vger.kernel.org>, Tong Tiangen <tongtiangen@huawei.com>,
+	<wangkefeng.wang@huawei.com>, Guohanjun <guohanjun@huawei.com>
+Subject: [PATCH -next v3] uprobes: reject the share zeropage in uprobe_write_opcode()
+Date: Mon, 24 Feb 2025 11:11:49 +0800
+Message-ID: <20250224031149.1598949-1-tongtiangen@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Al Viro" <viro@zeniv.linux.org.uk>, Trond Myklebust <trondmy@kernel.org>
-Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
- netfs@lists.linux.dev
-Subject:
- Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
-In-reply-to: <20250224020933.GV1977892@ZenIV>
-References: <>, <20250224020933.GV1977892@ZenIV>
-Date: Mon, 24 Feb 2025 14:09:48 +1100
-Message-id: <174036658872.74271.7972364767583388815@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 025F32116D
-X-Spam-Score: -4.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[25];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org,lists.infradead.org,lists.linux.dev];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,uio.no:email,noble.neil.brown.name:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemk500005.china.huawei.com (7.202.194.90)
 
-On Mon, 24 Feb 2025, Al Viro wrote:
-> On Mon, Feb 24, 2025 at 12:34:06PM +1100, NeilBrown wrote:
-> > On Sat, 22 Feb 2025, Al Viro wrote:
-> > > On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
-> > >=20
-> > > > +In general, filesystems which use d_instantiate_new() to install the=
- new
-> > > > +inode can safely return NULL.  Filesystems which may not have an I_N=
-EW inode
-> > > > +should use d_drop();d_splice_alias() and return the result of the la=
-tter.
-> > >=20
-> > > IMO that's a bad pattern, _especially_ if you want to go for "in-update"
-> > > kind of stuff later.
-> >=20
-> > Agreed.  I have a draft patch to change d_splice_alias() and
-> > d_exact_alias() to work on hashed dentrys.  I thought it should go after
-> > these mkdir patches rather than before.
->=20
-> Could you give a braindump on the things d_exact_alias() is needed for?
-> It's a recurring headache when doing ->d_name/->d_parent audits; see e.g.
-> https://lore.kernel.org/all/20241213080023.GI3387508@ZenIV/ for related
-> mini-rant from the latest iteration.
->=20
-> Proof of correctness is bloody awful; it feels like the primitive itself
-> is wrong, but I'd never been able to write anything concise regarding
-> the things we really want there ;-/
->=20
+We triggered the following error logs in syzkaller test:
 
-As I understand it, it is needed (or wanted) to handle the possibility
-of an inode becoming "stale" and then recovering.  This could happen,
-for example, with a temporarily misconfigured NFS server.
+  BUG: Bad page state in process syz.7.38  pfn:1eff3
+  page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1eff3
+  flags: 0x3fffff00004004(referenced|reserved|node=0|zone=1|lastcpupid=0x1fffff)
+  raw: 003fffff00004004 ffffe6c6c07bfcc8 ffffe6c6c07bfcc8 0000000000000000
+  raw: 0000000000000000 0000000000000000 00000000fffffffe 0000000000000000
+  page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+  Call Trace:
+   <TASK>
+   dump_stack_lvl+0x32/0x50
+   bad_page+0x69/0xf0
+   free_unref_page_prepare+0x401/0x500
+   free_unref_page+0x6d/0x1b0
+   uprobe_write_opcode+0x460/0x8e0
+   install_breakpoint.part.0+0x51/0x80
+   register_for_each_vma+0x1d9/0x2b0
+   __uprobe_register+0x245/0x300
+   bpf_uprobe_multi_link_attach+0x29b/0x4f0
+   link_create+0x1e2/0x280
+   __sys_bpf+0x75f/0xac0
+   __x64_sys_bpf+0x1a/0x30
+   do_syscall_64+0x56/0x100
+   entry_SYSCALL_64_after_hwframe+0x78/0xe2
 
-If ->d_revalidate gets a NFSERR_STALE from the server it will return '0'
-so lookup_fast() and others will call d_invalidate() which will d_drop()
-the dentry.  There are other paths on which -ESTALE can result in d_drop().
+   BUG: Bad rss-counter state mm:00000000452453e0 type:MM_FILEPAGES val:-1
 
-If a subsequent attempt to "open" the name successfully finds the same
-inode we want to reuse the old dentry rather than create a new one.
+The following syzkaller test case can be used to reproduce:
 
-I don't really understand why.  This code was added 20 years ago before
-git.
-It was introduced by
+  r2 = creat(&(0x7f0000000000)='./file0\x00', 0x8)
+  write$nbd(r2, &(0x7f0000000580)=ANY=[], 0x10)
+  r4 = openat(0xffffffffffffff9c, &(0x7f0000000040)='./file0\x00', 0x42, 0x0)
+  mmap$IORING_OFF_SQ_RING(&(0x7f0000ffd000/0x3000)=nil, 0x3000, 0x0, 0x12, r4, 0x0)
+  r5 = userfaultfd(0x80801)
+  ioctl$UFFDIO_API(r5, 0xc018aa3f, &(0x7f0000000040)={0xaa, 0x20})
+  r6 = userfaultfd(0x80801)
+  ioctl$UFFDIO_API(r6, 0xc018aa3f, &(0x7f0000000140))
+  ioctl$UFFDIO_REGISTER(r6, 0xc020aa00, &(0x7f0000000100)={{&(0x7f0000ffc000/0x4000)=nil, 0x4000}, 0x2})
+  ioctl$UFFDIO_ZEROPAGE(r5, 0xc020aa04, &(0x7f0000000000)={{&(0x7f0000ffd000/0x1000)=nil, 0x1000}})
+  r7 = bpf$PROG_LOAD(0x5, &(0x7f0000000140)={0x2, 0x3, &(0x7f0000000200)=ANY=[@ANYBLOB="1800000000120000000000000000000095"], &(0x7f0000000000)='GPL\x00', 0x7, 0x0, 0x0, 0x0, 0x0, '\x00', 0x0, @fallback=0x30, 0xffffffffffffffff, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x10, 0x0, @void, @value}, 0x94)
+  bpf$BPF_LINK_CREATE_XDP(0x1c, &(0x7f0000000040)={r7, 0x0, 0x30, 0x1e, @val=@uprobe_multi={&(0x7f0000000080)='./file0\x00', &(0x7f0000000100)=[0x2], 0x0, 0x0, 0x1}}, 0x40)
 
-commit 89a45174b6b32596ea98fa3f89a243e2c1188a01
-Author: Trond Myklebust <trond.myklebust@fys.uio.no>
-Date:   Tue Jan 4 21:41:37 2005 +0100
+The cause is that zero pfn is set to the pte without increasing the rss
+count in mfill_atomic_pte_zeropage() and the refcount of zero folio does
+not increase accordingly. Then, the operation on the same pfn is performed
+in uprobe_write_opcode()->__replace_page() to unconditional decrease the
+rss count and old_folio's refcount.
 
-     VFS: Avoid dentry aliasing problems in filesystems like NFS, where
-          inodes may be marked as stale in one instance (causing the dentry
-          to be dropped) then re-enabled in the next instance.
-   =20
-     Signed-off-by: Trond Myklebust <trond.myklebust@fys.uio.no>
+Therefore, two bugs are introduced:
+1. The rss count is incorrect, when process exit, the check_mm() report
+   error "Bad rss-count".
+2. The reserved folio (zero folio) is freed when folio->refcount is zero,
+   then free_pages_prepare->free_page_is_bad() report error
+   "Bad page state".
 
-in history.git
+There is more, the following warn could also theoretically be triggered:
+  __replace_page()
+    -> ...
+      -> folio_remove_rmap_pte()
+        -> VM_WARN_ON_FOLIO(is_zero_folio(folio), folio)
 
-Trond: do you have any memory of this?  Can you explain what the symptom
-was that you wanted to fix?
+Considering that uprobe hit the zero folio is a very rare scene, just
+reject zero old folio immediately after get_user_page_vma_remote().
 
-The original patch used d_add_unique() for lookup and atomic_open and
-readdir prime-dcache.  We now only use it for v4 atomic_open.  Maybe we
-don't need it at all?  Or maybe we need to restore it to those other
-callers?=20
+Fixes: 7396fa818d62 ("uprobes/core: Make background page replacement logic account for rss_stat counters")
+Fixes: 2b1444983508 ("uprobes, mm, x86: Add the ability to install and remove uprobes breakpoints")
+Signed-off-by: Tong Tiangen <tongtiangen@huawei.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+---
+v3: update the subject/changelog as David suggests.
+v2: Modified according to the comments of David and Oleg.
+---
+ kernel/events/uprobes.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 9372bfd0e8fc..ca1879c74158 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -506,6 +506,11 @@ int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm,
+ 	if (ret <= 0)
+ 		goto put_old;
+ 
++	if (is_zero_page(old_page)) {
++		ret = -EINVAL;
++		goto put_old;
++	}
++
+ 	if (WARN(!is_register && PageCompound(old_page),
+ 		 "uprobe unregister should never work on compound page\n")) {
+ 		ret = -EINVAL;
+-- 
+2.25.1
 
-Thanks,
-NeilBrown
 
