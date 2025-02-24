@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-528363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2C33A416EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:09:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB45A416F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024A31710FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3AF33AC026
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDECA241671;
-	Mon, 24 Feb 2025 08:08:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AE0241693;
+	Mon, 24 Feb 2025 08:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q4U48zGR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ttzm29QV"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3705B27453;
-	Mon, 24 Feb 2025 08:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA83E241682
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384500; cv=none; b=qLwwqvBMmAdgg5u4Oic7ukZJugoA0zx1YUmr4/o+G9++18+k9bxX49vkvxCLsWVS/uACwFP2Wymtip8kNcIZrRpwmjLg23vp26CkCMGXfUd0hf6PbTnvMQveTHHw3g9qY0HpCO3+Pt8oWXIZpINkJG9r/mPNpUHH5RR958php3Q=
+	t=1740384669; cv=none; b=OIydVIb3Y8rvEDe68DfRibLovMnUGg5vqINAXB2ddhPPNWgsuK2PwwcTk7JyA/N4O2oMClP47f+d4wzuhv7QPz6pVAUwPW/UFfugTfFDoleOQ6ciNmF0e82JLxHqFLdXLcHNVWXXGxrYwBxg3UGBAbCBEfqGs0RVh0glGS8EfJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384500; c=relaxed/simple;
-	bh=1oTcQ9B9UWI2JXHrdtNmloGlEojxNB4930GlWltLit0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fOPtynIhoxbrcZhtXGJbtrDh1EM4eph2GBTzaYg69jyuoM1UxmVNkMedne9omiU4VhkNu3xUlJXqLUysZTZoorubltGR/JgzSajnTnrxGhRxCWunZ+XT2YfibhoE8Aeqicsj7xczvBDt7SoWc/OOMwvY5f2HY/wLAVh7j/779dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q4U48zGR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B776C4CED6;
-	Mon, 24 Feb 2025 08:08:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740384499;
-	bh=1oTcQ9B9UWI2JXHrdtNmloGlEojxNB4930GlWltLit0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=q4U48zGRGUATADJ5sVGS7QHOT2kBfxtnUk78ZluIipuXhbasGCpMdSe22VmkB9KWo
-	 7V0I58wZUqvMQat9I6c5a1DU11he/kRymuWS/dH4MegNSy1l5NSIidOo1rkXRPCCFL
-	 GWhcV7dd+UQZYjO6LJzDQuXMoAXJU+osoReP50lAgteEZJ4FJJy3O5ipgsI9GiN7ha
-	 0BVxPlZ0wHyXdDVew2xyALYYB73XBrD8sTkZzcp0sIi8UYI2F4nLinxZ4+WMwdvwFI
-	 zQ+WGhUL02AGkfub1gXAY1NOBGE/YN3pDSL4IILBycce4yZA0Pc5foEbY6bhHYqlmZ
-	 0sXkWMPHBSO0Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org,  rust-for-linux@vger.kernel.org,  Peter
- Zijlstra <peterz@infradead.org>,  Ingo Molnar <mingo@redhat.com>,  Will
- Deacon <will@kernel.org>,  Waiman Long <longman@redhat.com>,  Miguel Ojeda
- <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,  Gary Guo
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  Benno
- Lossin <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,
-  Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
-In-Reply-To: <20250223072114.3715-1-boqun.feng@gmail.com> (Boqun Feng's
-	message of "Sat, 22 Feb 2025 23:21:14 -0800")
-References: <20250223072114.3715-1-boqun.feng@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 24 Feb 2025 09:08:09 +0100
-Message-ID: <87wmdf22ae.fsf@kernel.org>
+	s=arc-20240116; t=1740384669; c=relaxed/simple;
+	bh=7kUXP1Ju/JmsDQNjU8+Zr14Xc2I2BXR/JTfJV9cfVrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhroBaWSrt45rQpIfVLdFyhZezmhZW7RVjWsDgYrOGiUsXvELn2BTgt4629dAWUZOJmgRHoaBgxHxL/chgHAR1y/9tG170IUKeKkZluMCyODkSaA/BuRDsr7irn3hiOaOjDWU9C37sJn0T/k6C7MRT4zJiMd8b6npNnlqXqx35U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ttzm29QV; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 24 Feb 2025 13:40:01 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740384655;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=faKgzJwVoyrlHudraf/LToNW6X6aLoeWuNwk1IR8b78=;
+	b=Ttzm29QVzxaIFJiGywNt69jQH3E7waI2w0CeXVVY2FnI5QJoHGR7SR5giC+/OLfxdHmMYo
+	7SlwFMoWFsiUHUbIm9uBqy/dP8XBDZMP7ilqPaUwOOZ8owojCnzuuiICU95b6IFH+8GukI
+	IlI7kQNGxPbdqqbwRspmB50DTlu9s+E=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, mripard@kernel.org, mchehab@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devarsht@ti.com, vaishnav.a@ti.com, 
+	r-donadkar@ti.com, u-kumar1@ti.com
+Subject: Re: [PATCH v3 0/2] Enable support for error detection in CSI2RX
+Message-ID: <3vci66duq6uowpavyo7ovjqrdgde2zswmbs6xwo6xv4lxcpy7m@myrohugxcgxb>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250221120337.3920874-1-y-abhilashchandra@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-
-Boqun Feng <boqun.feng@gmail.com> writes:
-
-> To provide examples on usage of `Guard::lock_ref()` along with the unit
-> test, an "assert a lock is held by a guard" example is added.
->
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> ---
-> This depends on Alice's patch:
->
-> 	https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a@google.com/
->
-> I'm also OK to fold this in if Alice thinks it's fine.
->
->  rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index 3701fac6ebf6..6d868e35b0a3 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for Guard<'_, T, B> {}
->  
->  impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
->      /// Returns the lock that this guard originates from.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// The following example shows how to use [`Guard::lock_ref()`] to assert the corresponding
-> +    /// lock is held.
-> +    ///
-> +    /// ```
-> +    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backend, Guard, Lock}};
-> +    ///
-> +    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &Lock<T, B>) {
-> +    ///     // Address-equal means the same lock.
-> +    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
-> +    /// }
-
-This seems super useful. Perhaps add this method as part of the lock api
-instead of just having it in the example?
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="qnr2ibn2hmcurdlp"
+Content-Disposition: inline
+In-Reply-To: <20250221120337.3920874-1-y-abhilashchandra@ti.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-Best regards,
-Andreas Hindborg
+--qnr2ibn2hmcurdlp
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 0/2] Enable support for error detection in CSI2RX
+MIME-Version: 1.0
 
+On Fri, Feb 21, 2025 at 05:33:35PM +0530, Yemike Abhilash Chandra wrote:
+> This patch series enables the csi2rx_err_irq interrupt to record any erro=
+rs
+> that occur during streaming. It also adds support for the VIDIOC_LOG_STAT=
+US
+> ioctl, which outputs the current device status to the kernel log.
+>=20
+> The IRQ handler records any errors encountered during streaming.
+> Additionally, VIDIOC_LOG_STATUS can be invoked from user space to retrieve
+> the latest status.
+>=20
+> Changelog:
+> Changes in v3:
+> - Address Krzysztof's review comment to drop minItems from the bindings.
+> - Collect Acked-by from Krzysztof.
+> - Address Jai's review comment to enable FIFO overflow bits in the mask=
+=20
+>   only for the source pads that have an active remote.
+> - Drop TI-specific interrupt and have support for only two interrupts=20
+>   that are common across all vendors.
+> - Address Changhuang's review to use pdev directly to get the interrupt.
+> - Set the interrupt mask register only if the interrupt is defined in the=
+ DT.
+>=20
+> V1: https://lore.kernel.org/all/20250217130013.2802293-1-y-abhilashchandr=
+a@ti.com/
+>=20
+> Logs with interrupt in DT: https://gist.github.com/Yemike-Abhilash-Chandr=
+a/5bd2dfb4219686ddf389e94d563a2ab1
+> Logs without interrupt in DT: https://gist.github.com/Yemike-Abhilash-Cha=
+ndra/31d8c840b5a4f677fde88373defed2cb=20
+>=20
 
+Tested-by: Jai Luthra <jai.luthra@linux.dev> [on SK-AM62A]
 
+>=20
+> Yemike Abhilash Chandra (2):
+>   dt-bindings: media: cdns,csi2rx.yaml: Add optional interrupts for
+>     cdns-csi2rx
+>   media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add
+>     support for VIDIOC_LOG_STATUS
+>=20
+>  .../bindings/media/cdns,csi2rx.yaml           |   8 ++
+>  drivers/media/platform/cadence/cdns-csi2rx.c  | 125 ++++++++++++++++++
+>  2 files changed, 133 insertions(+)
+>=20
+> --=20
+> 2.34.1
+>=20
+
+--qnr2ibn2hmcurdlp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAme8KVkACgkQQ96R+SSa
+cUUQ1RAAnmm1Y8GkB7fM9JgUvr1P8npWlgxNiPGB+9lZ8HKbBvJ4JAbgstQ4iga+
+W5CktOvW7Ic4zoj9u0b4/8TUjpdVRgEq3FopFHx7DaexuH4rUPUrWwjYRfmKAoCn
+OiJaYBwSKgEYbuh1IinaYovoOjouaHjwloguKIWLDASlMxyR4xqQGx+qEQXeVggn
+BU9s4vHz/YddLVmLpqoOs2BH152vDL7O2XbFCrYh0Z0wYQo8FzNT0pFiiSC6k2k4
+Nq0mhphwXRAQJuu659ES3N+B3udxtlGv3V9AJlL7hOW0pg82UVEOXEb6aS2RVrmR
+thXW9D08oVx8rqAb3mLGKd4YmolOLJr2Z4RicbXRB9mXnJUd2rpz/UbsnmQ7y+g7
+fxDlM8knjMH8tYzD2uDkP0jn/Bz7TVSa4paWccJ0oeNe7G9FLyOnNruwWmbCxF7+
+zLvmv29JedeiGy2aA4oYoHiCmYDOlX+HmmaLqda+vsoDW/39bYAKxK3F0Y6VrFxj
+X+994d6BcCdW5ujqTQAkntLTCWAkaVrruD4hZ9h4p5KZPVvFHo0y0/54OeB8RoEs
+8rThUlMgOpx7ghzI822a+ghq+1AXTeqpoJsJ6WX7wf61lps5EuQ/G8VZnrtSN5sj
+pzs6IVByyxS0ofr6R7U0rYhlwACopTz0Mj4xfGMoR9U5CZ+CxgI=
+=LM7i
+-----END PGP SIGNATURE-----
+
+--qnr2ibn2hmcurdlp--
 
