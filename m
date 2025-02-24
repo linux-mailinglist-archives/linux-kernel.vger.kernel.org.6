@@ -1,179 +1,100 @@
-Return-Path: <linux-kernel+bounces-529198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D33A4219D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:44:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8249A42128
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3333BC7DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC2A167C28
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ED3248866;
-	Mon, 24 Feb 2025 13:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="UOsA4auP"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011025.outbound.protection.outlook.com [52.103.68.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F293A244190;
+	Mon, 24 Feb 2025 13:38:32 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BAA23CEF8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404250; cv=fail; b=qnOhhb30pUHmwdKU5FpxBwoOCWWt/ZpLR8MI7JFItDVYc1MIhs+tmPSnMTfRX7Zw3ScBR9Tjllxfsu1i3C9NJYcSu/n+ucIwwR3sZbPjb3QcUzW4AGSznTqHLO6JItCyt/+mc80QLCHSd7njAVwh1Vvti1kOzCj03FxQ5L910Tc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404250; c=relaxed/simple;
-	bh=i8E01jnnjXw3AzZ7nYlReounb44pmiL7f+YrxRh99o0=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rvx2kAPN0nI4LFcSCwNUcCeaaHK0Esvf7mm3JCuaXBQMoLN+b5XO62sUg/KqTXthKvxtvy0bG2xspdC5q6hk5MVGLynwATBZGrLD6n9hOUlglp9rUk89nqC+HUsK2shVgX1p71b2CQxnPjONz/BI1RCTeGhReZI8JJQmP0uZxao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=UOsA4auP; arc=fail smtp.client-ip=52.103.68.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XhUFNvNTiQuJvlmq9u7Wve4JJ+yG1Kj9fGTCZJQA6cyugxZuoKAV29WzI9EmQJce3uxmRK8TQy4e1QjbqIoXzMhJuua8ptV1MEFp2GMC3ZKlbIJc22/KH10ktU1CrRloTzmcdQXvZ04e+kB0c0aaAsa5mzjlusG1v54VASk9SUWCFY5Qo1BdzS5+c8gP5uqkPM+bhNxuxz7MtEMMOuCliWQtk+u5Pvg/qSMQw3bWydVE27ymk4nJFq+eJYNmnIffoys3/L6Gg7VuWWXkHALMj1z1sbSOp45maVnGr2go5dwUROENH91Y63q5Eg9xLOMS8YQO9GiYR/zEioYSdAMRUg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MB7xhKlkJH0vocogEkfmCRubN9slCyqTuAoJZKkFwOI=;
- b=NZJZa39RTb8A8Mhv2eSITskFt60OHNdPcqprJOS0hRdlHa+oi1EZ+f7b8OwI5kZOZW8eXlfcXHCDFOkeaVTtgjErHhFEpRwLj3O8NtJKl74U04A+9Yy6TJAOAmkMfLSmMqJvNLxPjkzpZQPHDXUlK914yuE9JNkMaCNzI9M+gjg5Oj18q+Ve83Of6Q6byudRXuak1pAnTRBN0DUI+oCgZDdS3x9UPBJLZThdbAE9ERj5EYt5luvnMX+n16jfUBhQW4RK7oj7ALXPUAfOlXMVEUMqDYVz67qaSHmR6O4KqI1miLGz+/pPQe8Pcj3SfhWiVtqQ/GRKenAEHmGG9+45BA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MB7xhKlkJH0vocogEkfmCRubN9slCyqTuAoJZKkFwOI=;
- b=UOsA4auPKIEE7d1nwLB+HMC0QvtY0Xi5oWWqKjQvlsLVRHaQHwF4kIwbNRfkXRYNdxa2SGjowzNFlI0sH/2Qf8AUE31NYfpee6uXZi+8/ku3LOKwYt3Y2Na4RQyUwdx/u4I5wSipeEaTVw2CrvdPpwgDXwoW71HzcUSSPn4OEVeCKa3C41Y6Gdlc7tdEgjn2zp3cOEsKPZ/bSjSxv4BtuDdc5el447CQvCVSJpgNhK/6gR6Ki9VLQNIV/p37+mNDu4aNSQafWsh7JWtQX3ihRCgkL+x27d/0nOYyUDcpZ9X4iBByZEU1JzCZbZamT53XT9zOOrjMF49DIttCnJmhIw==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN2PR01MB4330.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:18::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Mon, 24 Feb
- 2025 13:37:23 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 13:37:23 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
-	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>, "andriy.shevchenko@linux.intel.com"
-	<andriy.shevchenko@linux.intel.com>
-CC: Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: [PATCH v4 0/2] Touch Bar DRM driver for x86 Macs
-Thread-Topic: [PATCH v4 0/2] Touch Bar DRM driver for x86 Macs
-Thread-Index: AQHbhsE8eh6wU9Xf40u6zDzj+/N8Vg==
-Date: Mon, 24 Feb 2025 13:37:23 +0000
-Message-ID: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PR01MB4330:EE_
-x-ms-office365-filtering-correlation-id: 65acebc2-2ca2-448b-fcc9-08dd54d85e94
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8062599003|461199028|19110799003|8060799006|7092599003|15080799006|440099028|3412199025|10035399004|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?jBojukXMLnpZnAeqL9ZKZ2KyosCgDTvq1nyShU9MP3HZeDOxiXROatwuhbyz?=
- =?us-ascii?Q?uYEhFP0n33AW6v9aD0RT7MgGutfZp+YR6FFoZ7WzV15xsJMiw60Tx+G/02K2?=
- =?us-ascii?Q?3t3TdWXqcJeVeraWEpgiCMfK6Dyse+dUZOIP4azqmA8H+3Z1La/pTOcLD9Ia?=
- =?us-ascii?Q?e14tWt4Ndf8lpFQe4PbCcKQXwHt1ThRKTTatDSdnKf5P/tYQqzMCYgQJJwTz?=
- =?us-ascii?Q?7bc6asR0VglzO1ZaWBoQQz0WkVOmv8zldpB566OwP82DQp46bzQzxNj+Ea9k?=
- =?us-ascii?Q?ANwxAPewc1zAnykf7/QN5KSXrvx8C+twtq95kKW+tEA2n1VMYqn0Oi/wTHJA?=
- =?us-ascii?Q?qKK22a8YMB5ri/qIE2RQu9bE4igjmlP+xGT8Xrrv0/KP9LU5/jKIXoLbE/+B?=
- =?us-ascii?Q?XVAxzX1w76j4Agl618E/6R4tdX8LsVFOhDea+kwvCONx4sapzAyht8e56mdS?=
- =?us-ascii?Q?MKqPIm3N4WwxQHcQKrV3KsW1u1AWyzwgHj7h17gY9AzFUgx6V48qs7cmZ1zO?=
- =?us-ascii?Q?9qncaZAcA4LzGixpqlK92RJKJv8EsXHOlui9KH9cV6qw/5ywhlHvKBwvxuIv?=
- =?us-ascii?Q?IaO9ri2ngBTfdpXNVY6qlCG/5s2/gz3E4kGVqwE9YmYE/wi1UNzerynboLzB?=
- =?us-ascii?Q?UCC4rg8Q5hYoXx/p3RrxahhXValOu3Dx1FMQGOb6CBrlXw24pl8DCx7PKIZK?=
- =?us-ascii?Q?mnVgFjp0Lch/J3uXuDMM/H1xIK6ZI0/0j/+g6xBqHSyjazZee9+FDHL57El4?=
- =?us-ascii?Q?BEvM0YZ14glk3LY8/wQHdrmnOSzj5amGyGswxTk295P27agtLnJIPyNh9tFP?=
- =?us-ascii?Q?eVcn01q3ZgHK24/7ICukZBlkG9XSkvGE1moq1BWJuYAW4KkFncU+WhBA9mDN?=
- =?us-ascii?Q?mVu16zfoWxvB08y6pAmXpAoXaX01GPgKslYcNUl5u4FY+PUDNBHKLQqGVU7P?=
- =?us-ascii?Q?P125v8fOQ4dZgmzt8YSMp5BF3T6XcIRWq5kump0adswFELUXy19wtIk5QYFR?=
- =?us-ascii?Q?aLgke8ilTOgDq/qSvEilGkFaqPDp/ZTjlmn+iPHELLbeQjHFmH0VTPAfDute?=
- =?us-ascii?Q?xvhiN/bB1PUg2pvPO41q43WSwsw5j3470qsrqRu3GB/45bW++KM5RK7/hq2+?=
- =?us-ascii?Q?oq+8QS7dcWTS?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?9NY3KVRZIZNf9AZ7WDGCEbSVK/KtE5UqCa27Jcvps5ZDuA/ztrcgTcdN387v?=
- =?us-ascii?Q?KdvX6PiWawiOOefiPubwTOQhFU5mVOIJ0AiUANOD8ozjto7lYBOKr7GlUDRM?=
- =?us-ascii?Q?TGwcQizIEve4k2jseG4J4ZVZqo2ugv+YejNNKtkWlunSN5gvC20fUGnHy2um?=
- =?us-ascii?Q?v/1yMZIj8Ozp9MTnIq1d5XRk6DHTwn1vN5U0l89NERYPnMzBvhVC5CJ3CuY2?=
- =?us-ascii?Q?mriRTRoohM5JmJwrGN8CjCtrRDSwnniRotEWwB90l2HoYceje1GXW9iy5Y64?=
- =?us-ascii?Q?evbpZowgKBcsD2aCAD3M6OmzADpbk3jVvt2KfXPRNXnNdW5DL3OtJ5a3i0b5?=
- =?us-ascii?Q?XYw8mmvBziJXwJXNZfIf21pAZyI71z0jDOtjX5msDxQFyIrEmfrubFljroCV?=
- =?us-ascii?Q?vm67mLtIB6xJDEMbQT2HScglYv4oRebZf3iEJgFiWcPFUHBxvOyXPRMQi7/Z?=
- =?us-ascii?Q?KgaaJ5lpHGoCKDoyfHfnmuPwh0dvZRU2Tciif09Cg9Z+rYQp7Fh+LsB3dyL0?=
- =?us-ascii?Q?xk5AoZ6hAyKq0HmGHQOTt1/CJA6Jtg1c1SKOXiU6G3VXvZfRg+q4s+biAnMZ?=
- =?us-ascii?Q?HkcnzbNujBiHm6S5OCsgPy/JrWaUivV3F0IQQsC+E1paYlfy07tPllgdKnke?=
- =?us-ascii?Q?tfm7CYo3xQ+JtSpvdHzlv3PPhlWgmMOgvROL1JjC88yJ+a7Xs4B28x3sGi8J?=
- =?us-ascii?Q?qaGSU83LxPZR8P+b07wgq4m1ZcekxWVbnTBndnDdLtkzSmt5NVzSXL5hTwdK?=
- =?us-ascii?Q?vVn+W/5qCnxEmvunTuMX0ieTeLhwvNNIZ9kTx2+By4vl2DfoP6RW/c0xyeNh?=
- =?us-ascii?Q?IkV6furlTT2j8IkT6Ltc0Jny2FOtg0JAoYT1t1LiVUPGRsQNYCJxWo5lnBG4?=
- =?us-ascii?Q?TnRizZwLjtXA7Q5TMT76QsI3v3KmVMr9cLeITVpOThGJc2fO9tZH/B0Hha+z?=
- =?us-ascii?Q?SePbPWHH2CxfooEaLTU9DwOXQda+BhZD5A+BbRanU9XE9Oq+YBuwKzkAaLA+?=
- =?us-ascii?Q?xNTvHUI+ENgC36MO1l6fo3v64CqOJ/3ilP2dze3Rg3hFzhpz9xEl2Wndd5Il?=
- =?us-ascii?Q?InC7MmAcn7WVCxeEbOs8tWtkfS2o7nR9Ra0iDFLV6BMKdQcK6t3LozVs0T/a?=
- =?us-ascii?Q?+wGPujABybXwklfK5go5ID8m2j+mlEpuyS1gLaRjamJ371y/8J4xJ5MWPlw0?=
- =?us-ascii?Q?3e/9jMf5ngjELrs6C3FldkWwTvRiBOurut/wDzp/jse6RhS51CF0w+vuyirI?=
- =?us-ascii?Q?RcTsH/opFjfeFioL1kS7YoLz/+aPMvbh0eqsQV0J74KwBdY259hnhZZBImvN?=
- =?us-ascii?Q?FTmFnwrl9iYP3VPnvh3zeQUE?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D036294E01CFC5428573860A3CC607BD@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ED42192E6;
+	Mon, 24 Feb 2025 13:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740404312; cv=none; b=pCqgycfuin/m6/pwSY3Z9k0AVPnJWyJvNv9drCBHPjcIf3F6mJk1D61c2x9VY1fxT6cV+7ob/zlNVB0MEPDKpifHkM72U994wv2uaoPLyOoOAw2mbF3tp9mcOWC4wep1ZH9mBb28r0gbTimxEm09QfxdxHgdLdF2rMqQ23HbJPs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740404312; c=relaxed/simple;
+	bh=gOA6LCFerHUUNDxs1f1ZtRKSjLkGS6/L0cBq0MXUv/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ubIh2otLjDVzFQ8TezbG7Taz4v02bhZ8PagZqxtWPlVAqg6FSWU7y0TWVAgprCNZQ3w3/wG15M+vF5Bj0bgIV8WjtzT2A4MjStk5V2IDLfOSyp7uu1/i/g+C5YDUVHISTbKzwuybccUPIh2owT0GyzI6wHuA0QP3TP/9KA6c+cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: ZcD1qTvnTRWYPzy4tpk9uw==
+X-CSE-MsgGUID: flFkQd76Sj6NTGzSavWFeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40395020"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40395020"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:38:30 -0800
+X-CSE-ConnectionGUID: uSp9G2L4SPap7DUnAlAxqg==
+X-CSE-MsgGUID: HehEs/ZjSVeufOLhwx4R5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="120971151"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:38:27 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tmYfA-0000000Ehx6-2PG2;
+	Mon, 24 Feb 2025 15:38:24 +0200
+Date: Mon, 24 Feb 2025 15:38:24 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Haoxiang Li <haoxiang_li2024@163.com>, u.kleine-koenig@pengutronix.de,
+	erick.archer@outlook.com, ojeda@kernel.org, w@1wt.eu,
+	poeschel@lemonage.de, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] auxdisplay: hd44780: Fix an API misuse in hd44780.c
+Message-ID: <Z7x2UFoTsLR0umvH@smile.fi.intel.com>
+References: <20250224101527.2971012-1-haoxiang_li2024@163.com>
+ <Z7xnnPaoHfz7lYyi@smile.fi.intel.com>
+ <CAMuHMdVYxruwpA92FykyEAwoSBxfb0Z1AmnyqLziGTpMC3d_gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65acebc2-2ca2-448b-fcc9-08dd54d85e94
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 13:37:23.2559
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB4330
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVYxruwpA92FykyEAwoSBxfb0Z1AmnyqLziGTpMC3d_gg@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The following patch series aims to add support for the DRM mode of the
-Touch Bar found on x86 Macs. The DRM mode enables the Touch Bar to act
-as a second display, just like macOS.
+On Mon, Feb 24, 2025 at 02:33:49PM +0100, Geert Uytterhoeven wrote:
+> On Mon, 24 Feb 2025 at 13:35, Andy Shevchenko <andy@kernel.org> wrote:
+> > On Mon, Feb 24, 2025 at 06:15:27PM +0800, Haoxiang Li wrote:
+> > > Variable allocated by charlcd_alloc() should be released
+> > > by charlcd_free(). The following patch changed kfree() to
+> > > charlcd_free() to fix an API misuse.
+> >
+> > > Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
+> > > Cc: stable@vger.kernel.org
+> >
+> > Okay, looking closer to the current state of affairs, the change
+> > does not fix anything actually. OTOH it's correct semantically and
+> > allows to do any further development in charlcd_alloc(), if any.
+> >
+> > That said, if Geert is okay with it, I would like to apply but without
+> > Fixes/Cc: stable@ tags.
+> 
+> I had mixed feelings about the Fixes-tag, too.
+> Semantically, it's indeed a fix.  If any further cleanups are ever done
+> and backported, but this patch would be  missed, it would introduce a bug.
 
-The first patch adds emulation helper from XRGB8888 to BGR888 which is
-needed by this device and the driver.
+Okay, I return it.
 
-The second patch is the main DRM driver, required for the DRM mode.
-Currently, only T2 Macs are supported.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Currently, a daemon named tiny-dfr [1] by Asahi Linux supports the
-Touch Bar in this mode by displaying the Function and Media keys.
-More such daemons can be made with more customisation in the future.
-
-[1]: https://github.com/AsahiLinux/tiny-dfr
-
-Kerem Karabay (2):
-  drm/format-helper: Add conversion c
-  drm/tiny: add driver for Apple Touch Bars in x86 Macs
-
- MAINTAINERS                                   |   8 +
- drivers/gpu/drm/drm_format_helper.c           |  54 ++
- .../gpu/drm/tests/drm_format_helper_test.c    |  81 ++
- drivers/gpu/drm/tiny/Kconfig                  |  14 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c             | 835 ++++++++++++++++++
- include/drm/drm_format_helper.h               |   3 +
- 7 files changed, 996 insertions(+)
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
-
---=20
-2.43.0
 
 
