@@ -1,133 +1,100 @@
-Return-Path: <linux-kernel+bounces-529286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094D2A4229B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:14:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8192A422B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F7941897B65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE23D19C1BD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC73A13C3CD;
-	Mon, 24 Feb 2025 14:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261C51386B4;
+	Mon, 24 Feb 2025 14:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TV9fnMs/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="waaf8LNo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k1QOofvF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F4F7CF16
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC9D13BC26;
+	Mon, 24 Feb 2025 14:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406036; cv=none; b=ROMCbR2ugVMb/M+GYT2aFmqYPB2Pth3y3f7gxAtBYpqmBn4ixx/mP8is7nwk80sBCjM35X4OAgmPp77dFHwmW5qt4vfKHklLCj1YMtXqGu9wCnE8nppc7decOUUFxNaFJu+vQ3vfWbG1v7sa4IYQfsDXUTOoW/Z4B2T2ckK9xi0=
+	t=1740406289; cv=none; b=Fw4+fp/B7F/2bEh4Vtkq6e7eh2rpcnl1bQvR08MnEjIN5xESKDwqHSTLq4qnCubCEHLrXLJO4anQVYu8ch8rFfrnkfbnw0deu6bhOl2bcDfWvMIJbWNHuOaHT2wyZGkYz91yW5iVJ4YvKI2yqdXWdAdDY1SmV5qeb9BB7xGllnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406036; c=relaxed/simple;
-	bh=mvkAruf77vffQU6OTZenOrzj3FNSVqgc5gcpjU/uTL8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V3ZFhwxV8tF2lOUALbwWD+ey9wJxgqxYXjcCH7YvJOagQPqD4SrKWVrsVVXxpHmcF8YyMxn/XRCHnULNFd3IMs/s5flzWfxZ5q0Lygbs8/VTTQLnfgPcn3QGvnDhu2AzzMOWOeINn/kqq4CgW9Hlnxtd0SpVWuQbf87CX+R+7sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TV9fnMs/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=waaf8LNo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 15:07:10 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740406031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yi/UGbRIzBeO5oSPUsDf5E1KE9ikPRD3nsEqz8hQd6k=;
-	b=TV9fnMs/yr1UwZw94lvVsC8kVLC/rl3eG02N2o8p0HxGUQhixOYga6CENfi0FPn9+ZZzM9
-	bCUkCGNxZDBq4xVjbMjb6u9pBjltaOeuLWcBahyKAwc9+55GKbSLhYhGlcKwg2wYc2BzTQ
-	9dpY+HG1ojkPse+Sr2HWq5LzSwD8EzwLCVbpOZghvNFy3EVckoad97iHX1jwGwrlg6nSi+
-	TTxT4UUp7BhIuDCus0p8zGkEBuuUDybLIIvnAZCqF1MSGcvL7bMdwev9Yme2bjRvnv1fdV
-	Q1U4jPlfo/CnMd1dDHvG0kYmYT+nJPylzIsXTw6rjXtzMC+/immYZ/xO4kA/ZQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740406031;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yi/UGbRIzBeO5oSPUsDf5E1KE9ikPRD3nsEqz8hQd6k=;
-	b=waaf8LNo5DT7x8hql4NYeB7kUqJ5lsSIuidG+6b5GkUxFcezAf1b6Q5cv4m0eAUyFwS4kp
-	BCLVUywKKGc7gJAg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Guo Ren <guoren@kernel.org>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RISC-V: vDSO: Wire up getrandom() vDSO implementation
-Message-ID: <20250224150345-46f09b09-3d94-41bf-850c-6188d21750bb@linutronix.de>
-References: <20250224122541.65045-1-xry111@xry111.site>
+	s=arc-20240116; t=1740406289; c=relaxed/simple;
+	bh=RQdVPYUPxuE56GoXKqcHw8DD6iWVMqD2pu1GTpiafhg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j8wYsNz9tkEpqeTr0r/l/y/ELaRbmKf+m28jwMsBAV5EfOqvOg8yLoi2K/Ey7q/HgbNHtcY+7AhU8TiFMYa/RfEOXG7++PrexsxnecivGvbUKMoq/v7utxvVsvlaxPptk+9l0KHLp4Nq88QtFqR+oADh/+J6gve10hXnAF0yW84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k1QOofvF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA91BC4CED6;
+	Mon, 24 Feb 2025 14:11:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740406289;
+	bh=RQdVPYUPxuE56GoXKqcHw8DD6iWVMqD2pu1GTpiafhg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k1QOofvF8qjd2BhDzXY2lzFSfZlTU9nlFLKbhztRIolki5vp1ZsqoSpykZpnUqg4h
+	 Xm3rODsno22eUymgUI3L+5AHfYvAbGb4xZR0l5YTQ+lHi8BGw0OBZK/6fXnRq0Tzgc
+	 ZTmdprto+vVRrEbVylp27siCaZBgWkZfo/V8o+ulgS1jRC3y3rLyO8bnRklcB86KTi
+	 SmUq6V3UUhQqMx8wLv/LDC3jMR98zO+Lj8Teyi/o7kK4lIo0izD/fCQtoQqsRqyO4J
+	 qZv5pmWzlDsk6294meAG4ELObwdo4eA0Unk1VSiYHGmEHUKCIK0vDMFhuoNr4jpyFi
+	 CT7KwdiCTaBJg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Frank van der Linden <fvdl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH 1/2] mm, cma: fix 32-bit warning
+Date: Mon, 24 Feb 2025 15:07:35 +0100
+Message-Id: <20250224141120.1240534-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224122541.65045-1-xry111@xry111.site>
 
-Hi!
+From: Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Feb 24, 2025 at 08:25:41PM +0800, Xi Ruoyao wrote:
-> Hook up the generic vDSO implementation to the LoongArch vDSO data page
+clang warns about certain always-true conditions, like this one on 32-bit
+builds:
 
-LoongArch?
+mm/cma.c:420:13: error: result of comparison of constant 4294967296 with expression of type 'phys_addr_t' (aka 'unsigned int') is always true [-Werror,-Wtautological-constant-out-of-range-compare]
+  420 |                 if (start < SZ_4G)
+      |                     ~~~~~ ^ ~~~~~
 
-"to the generic vDSO getrandom implementation"
+Replace this one with an equivalent expression that does not cause a warning.
 
-> by providing the required __arch_chacha20_blocks_nostack,
-> __arch_get_k_vdso_rng_data, and getrandom_syscall implementations. Also
-> wire up the selftests.
-> 
-> The benchmark result:
-> 
-> 	vdso: 25000000 times in 2.560024913 seconds
-> 	libc: 25000000 times in 40.960524767 seconds
-> 	syscall: 25000000 times in 40.380651864 seconds
-> 
-> 	vdso: 25000000 x 256 times in 171.830655321 seconds
-> 	libc: 25000000 x 256 times in 2913.107080132 seconds
-> 	syscall: 25000000 x 256 times in 2692.084323377 seconds
-> 
-> Note that it depends on Thomas Weißschuh's vDSO generic data storage
-> implementation (now in the timers/vdso branch of tip).
+Fixes: 4765deffa0f7 ("mm, cma: support multiple contiguous ranges, if requested")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ mm/cma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The note should be below a "---" line, so it doesn't end up in the commit.
+diff --git a/mm/cma.c b/mm/cma.c
+index 34a4df29af72..ef0206c0f16d 100644
+--- a/mm/cma.c
++++ b/mm/cma.c
+@@ -417,7 +417,7 @@ int __init cma_declare_contiguous_multi(phys_addr_t total_size,
+ 	 * Create a list of ranges above 4G, largest range first.
+ 	 */
+ 	for_each_free_mem_range(i, nid, MEMBLOCK_NONE, &start, &end, NULL) {
+-		if (start < SZ_4G)
++		if (upper_32_bits(start) == 0)
+ 			continue;
+ 
+ 		start = ALIGN(start, align);
+-- 
+2.39.5
 
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
->  arch/riscv/Kconfig                            |   1 +
->  arch/riscv/include/asm/vdso/getrandom.h       |  30 +++
->  arch/riscv/kernel/vdso/Makefile               |   7 +-
->  arch/riscv/kernel/vdso/getrandom.c            |  10 +
->  arch/riscv/kernel/vdso/vdso.lds.S             |   1 +
->  arch/riscv/kernel/vdso/vgetrandom-chacha.S    | 244 ++++++++++++++++++
->  .../selftests/vDSO/vgetrandom-chacha.S        |   2 +
->  7 files changed, 294 insertions(+), 1 deletion(-)
->  create mode 100644 arch/riscv/include/asm/vdso/getrandom.h
->  create mode 100644 arch/riscv/kernel/vdso/getrandom.c
->  create mode 100644 arch/riscv/kernel/vdso/vgetrandom-chacha.S
-> 
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index aa8ea53186c0..6fdd63e15fb4 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -213,6 +213,7 @@ config RISCV
->  	select THREAD_INFO_IN_TASK
->  	select TRACE_IRQFLAGS_SUPPORT
->  	select UACCESS_MEMCPY if !MMU
-> +	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO
-
-Broken alphabetical ordering.
-
->  	select USER_STACKTRACE_SUPPORT
->  	select ZONE_DMA32 if 64BIT
-
-<snip>
 
