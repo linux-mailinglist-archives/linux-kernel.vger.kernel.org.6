@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-529390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2DDDA4249F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:59:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78485A42516
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:04:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5479317BBCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:51:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8758426F1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC271A0BCD;
-	Mon, 24 Feb 2025 14:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AC6owz5h"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DFB1B7F4;
-	Mon, 24 Feb 2025 14:48:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E879C254873;
+	Mon, 24 Feb 2025 14:51:19 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D952C156F44
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:51:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408519; cv=none; b=mXLZU5QrnT2cfSCyRrlU1IGA4Y+L3rAknV10oroPXyLuXIheAIqcvrCtFlGTu+kkl9DSn9D0xCZ4Mn/sv6oYNkgfhWCSlS9GfcNKaeu3CY21q8eiuyKZ4hT4FUn/+3W9IdtAAVo5w5p/SRUhHPwI+1MPfn0qXdpT+E4Ped+GVcs=
+	t=1740408679; cv=none; b=Zfhgw+pVKCTgAQeAGch5p4xLCgBrAzj4EEFSc3MN4j8IKCVN46mmTZC7mUYLNslU0c2ZynE/QCD62GT5aFHi+tNnTiucRx7bvyYYTdPLPzdzBPcx5PRAMqvKaRKcjRSoFpdAgScdc3o7i4U3NrsUmLG7/FZXgd4HT5Q9gfEDsWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408519; c=relaxed/simple;
-	bh=v/i5uNRdv0lKpzjbyVJ/rUwzfVKBkuvu3O1tyNM6WNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NNDyMO+z3a7/ftVHNxVbCE6dR48RS6RjXZ6Y8j/L/TWOfRWL8pYy6NKiP4s7PMHqInaFyDn+AzvCYrqhZlbawoyNlAA9jRoHjUhVJhy+S3m9uPhW8eno8bYDmJkn8x3dy6KO7qieOQ8UVY3vzu/8f91p0J2B26ra4P5SYSDlTPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AC6owz5h; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2 (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DD8B820DF168;
-	Mon, 24 Feb 2025 06:48:36 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DD8B820DF168
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740408517;
-	bh=B1XHtWIka4rmClyLQc4wAzTbA5a3eeqHQdnViUvy9kU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AC6owz5hIgwCPb/60nWWp31kDbFvEMfSDHte5zvyQRfTgZMDJHuNmzUljmeb+nLDA
-	 FeQz/TFArAmXS8P0SEHyiUc6Lo6UXsG12TY5ts1QefxVqUTJ39MP20TK0DtehvwNRV
-	 MGXB81NfmVdlb15/rzikXrH6f2gJYKgttsm877EY=
-Date: Mon, 24 Feb 2025 09:48:31 -0500
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Petr Mladek <pmladek@suse.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Jani Nikula <jani.nikula@intel.com>, Baoquan He <bhe@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ryo Takakura <takakura@valinux.co.jp>
-Subject: Re: [PATCH v2] panic: call panic handlers before
- panic_other_cpus_shutdown()
-Message-ID: <Z7yGv_ZyeyUueXLz@hm-sls2>
-References: <20250221213055.133849-1-hamzamahfooz@linux.microsoft.com>
- <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1740408679; c=relaxed/simple;
+	bh=WHYbN9/AyM5Wfc5ZUi39uIR3gq4zirgVBh9ocXtA+bc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QUQab5NY+dKlZfxD6xDFGj+pD76qSvtnP1UOH1RLFEI1uwuU9MgyQLHZKoU/0oY6LVWMamrephbC2V6MNUbrREJTGu0rcicOsj9AplKJHM3+RZom5/tK45V5l7lHE9E6J5FFN0jlqpYf/rPKLNzsrtS8uCmjA2Q3VTkje0TMBC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d18a1a0f0eso90900485ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:51:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740408677; x=1741013477;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WHYbN9/AyM5Wfc5ZUi39uIR3gq4zirgVBh9ocXtA+bc=;
+        b=Cs44Dc4Btgpj6TcVg7mPboaF97/LJN8F8rzL2uUw1tC76N4Se5zFbMALG67AQ0Fgzy
+         E9vWUjliAcDSHbGKwn0kzD1nzvzWDa8DMNyguHxmrcxCP0fLLx2gtiOMDmrUcmeRRpU2
+         epVM7YadChDea57oxen4PZtxIZoC21/7qaY32xOhx8EUeggPWvYGcJB8PHMaejeQuNSZ
+         qhT4PBa0jAcADPojAT4khoxSAcxuSYcR+ZQ7pUMMQAHNIP9KLEz19wQRQ6zyrv/NETTs
+         Q0+Q3vjecCAeH/1nOVmCd1YMU2sMEXkMrKcmBSN04vMski4aEWjA9DBaVi1JrO0jTQSm
+         9lBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXdfgTqrMW/+jH7/jwddF6RLsx+YCbYEqoGwDK28TsudLh532L3fJHQwQGtA1Nw7LYeTyVVbkm4yk4PMXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr8E3WNfQvtOWsNbTVnxuOw7qIs+rK/oFyqKU4VxzrO6IpJwyx
+	eKoVjNFi04qnII0pepoKnoBzT5RC53x2DhluXiB0fmxyup6LDbbnVknrtVzDkAEY5ye++GcArVd
+	ugINhYg2qYtAsvxNvz0xzfCIEMx90HnLBaSxp3hnco2YWMheh3MwCqvg=
+X-Google-Smtp-Source: AGHT+IFBU7widGjmEz7cZDPNrguQdpGyuQ1TAilarnJLLrcoBg3mSrgkS4WA2yqbXF13p8Egh8LPbbVkhJYHrJnJ4qNz6GsVHQ6I
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
+X-Received: by 2002:a05:6e02:248b:b0:3d0:e6c:e9c5 with SMTP id
+ e9e14a558f8ab-3d2caf099fcmr159588545ab.21.1740408676909; Mon, 24 Feb 2025
+ 06:51:16 -0800 (PST)
+Date: Mon, 24 Feb 2025 06:51:16 -0800
+In-Reply-To: <6738c3ba.050a0220.bb738.000d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bc8764.050a0220.bbfd1.0088.GAE@google.com>
+Subject: Re: [syzbot] WARNING: locking bug in get_random_u8
+From: syzbot <syzbot+7f4f9a43a9c78eaee04f@syzkaller.appspotmail.com>
+To: Jason@zx2c4.com, bigeasy@linutronix.de, boqun.feng@gmail.com, 
+	hdanton@sina.com, jason@zx2c4.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 21, 2025 at 11:01:09PM +0000, Michael Kelley wrote:
-> From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Friday, February 21, 2025 1:31 PM
-> > 
-> > Since, the panic handlers may require certain cpus to be online to panic
-> > gracefully, we should call them before turning off SMP. Without this
-> > re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
-> > vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
-> > is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
-> > crash_smp_send_stop() before the vmbus channel can be deconstructed.
-> 
-> Hamza -- what specifically is the problem with the way vmbus_wait_for_unload()
-> works today? That code is aware of the problem that the unload response comes
-> only on the VMBUS_CONNECT_CPU, and that cpu may not be able to handle
-> the interrupt. So the code polls the message page of each CPU to try to get the
-> unload response message. Is there a scenario where that approach isn't working?
-> 
+This bug is marked as fixed by commit:
+kasan: Make kasan_record_aux_stack_noalloc() the default behaviour
 
-It doesn't work on arm64 (if the crashing cpu isn't VMBUS_CONNECT_CPU), it
-always ends up at "VMBus UNLOAD did not complete" without fail. It seems
-like arm64's crash_smp_send_stop() is more aggressive than x86's.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-> Note also that Hyper-V itself can take a long time (10's of seconds) to respond
-> to the unload request. See the comments in vmbus_wait_for_unload() about
-> flushing the Azure host disk cache. I worked on this code and did the
-> measurements, so I have some familiarity with the problems. :-)
-> 
-> Michael
-> 
-> > 
-> > Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-> > ---
-> > v2: keep printk_legacy_allow_panic_sync() after
-> >     panic_other_cpus_shutdown().
-> > ---
-> >  kernel/panic.c | 8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/kernel/panic.c b/kernel/panic.c
-> > index fbc59b3b64d0..433cf651e213 100644
-> > --- a/kernel/panic.c
-> > +++ b/kernel/panic.c
-> > @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
-> >  	if (!_crash_kexec_post_notifiers)
-> >  		__crash_kexec(NULL);
-> > 
-> > -	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> > -
-> > -	printk_legacy_allow_panic_sync();
-> > -
-> >  	/*
-> >  	 * Run any panic handlers, including those that might need to
-> >  	 * add information to the kmsg dump output.
-> >  	 */
-> >  	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
-> > 
-> > +	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
-> > +
-> > +	printk_legacy_allow_panic_sync();
-> > +
-> >  	panic_print_sys_info(false);
-> > 
-> >  	kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
-> > --
-> > 2.47.1
-> > 
-> 
+#syz fix: exact-commit-title
+
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=7f4f9a43a9c78eaee04f
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 10 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
