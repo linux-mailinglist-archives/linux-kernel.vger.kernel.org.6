@@ -1,129 +1,166 @@
-Return-Path: <linux-kernel+bounces-528306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90078A41613
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62887A4160D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F453188F023
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E2C13B42DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76542240610;
-	Mon, 24 Feb 2025 07:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C74423FC66;
+	Mon, 24 Feb 2025 07:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="APteWDir"
-Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="if8lQvhE"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3032C155747;
-	Mon, 24 Feb 2025 07:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4A518E377;
+	Mon, 24 Feb 2025 07:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381358; cv=none; b=Q40UC5GDcPAExt9zCJxA9XqXJjW7sQiuIRbURkF0nNNbSjbBfFsihrgQ8lOCp/yLrhxKz9yEG99MUG/PnQfQHly11wImUh++IHFW3FDdWxzKvf8y+LHMNB/DQeBpZpAO8qhxXzMla2rGNJByzEdWLA+bJdWqUbcG6qvmuP1pFGI=
+	t=1740381239; cv=none; b=E75O0X0AMUlt1+pNKG0SKogaBNSqc7uoMXfMUEF4aa/GOyF3i0qhZO94b4xEuCUiX9vEpXhz85/Y4LkTtaipJeuH9RbrhyVL0zaY3XDAnYS/r6yM36jnNwww8RdvKYsk8SMghMYe3pfXZhbeu8KYjhw7mBa5+sHXOf1Ky/eiq1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381358; c=relaxed/simple;
-	bh=LA91jSsheMxR4yC/e7jbT3VZ1jyx/nEH3cVwjan9ivs=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=q666mwewvLixZAJ7KQAMhzfuxNOWyWFJezyDFg96Hh0kKxVHiopG211wJbudKM0C+U9zamUbkG/qWs0/OfJk5dy9hrzmRgBXnbbLQ6pyqvxFyFAHEp79tA8HwM+x9ktnys0t8mwdKAex8ZJLjMDjg6+IXt6S6Y6IQV3+XSw/7Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=APteWDir; arc=none smtp.client-ip=65.108.154.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
-Authentication-Results: dilbert.mork.no;
-	dkim=pass (1024-bit key; secure) header.d=mork.no header.i=@mork.no header.a=rsa-sha256 header.s=b header.b=APteWDir;
-	dkim-atps=neutral
-Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10de:2e00:0:0:0:1])
-	(authenticated bits=0)
-	by dilbert.mork.no (8.18.1/8.18.1) with ESMTPSA id 51O7DMHp962698
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Mon, 24 Feb 2025 07:13:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-	t=1740381202; bh=Qo7e4pHJOv6pCynpF4eYP+eH0PAvvJnROAiF5yvl18E=;
-	h=From:To:Cc:Subject:References:Date:Message-ID:From;
-	b=APteWDira/AXiyCs1XJGdVNQe0uORaD7fKVMZsPgRho24EY8j0hRfDA9xKEhWdcCd
-	 Pt13IlQACmkp6BeE++HlBME+psh/mEZ/TX/uyw6UWFwEik6KyHkdCAqq+8jz6jVHhL
-	 j9IWqvAACBD658BiBsuIlePq50N5Z27/l2raZw5I=
-Received: from miraculix.mork.no ([IPv6:2a01:799:10de:2e0a:149a:2079:3a3a:3457])
-	(authenticated bits=0)
-	by canardo.dyn.mork.no (8.18.1/8.18.1) with ESMTPSA id 51O7DMxE2373751
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Mon, 24 Feb 2025 08:13:22 +0100
-Received: (nullmailer pid 997267 invoked by uid 1000);
-	Mon, 24 Feb 2025 07:13:22 -0000
-From: =?utf-8?Q?Bj=C3=B8rn_Mork?= <bjorn@mork.no>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
-        Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        =?utf-8?Q?K=C3=B6ry?= Maincent <kory.maincent@bootlin.com>,
-        Simon Horman <horms@kernel.org>,
-        Romain Gantois <romain.gantois@bootlin.com>,
-        Antoine Tenart <atenart@kernel.org>,
-        Marek =?utf-8?Q?Beh=C3=BAn?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Organization: m
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-	<87r03otsmm.fsf@miraculix.mork.no>
-	<Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
-	<3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
-Date: Mon, 24 Feb 2025 08:13:22 +0100
-In-Reply-To: <3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch> (Andrew Lunn's
-	message of "Mon, 24 Feb 2025 04:32:29 +0100")
-Message-ID: <87ikozu86l.fsf@miraculix.mork.no>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1740381239; c=relaxed/simple;
+	bh=bQb2/dc1WzW2BE++gvgsOTmck7L6Nvf4DdHExnkKCCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GQItS5JxsX0RjbknyaG64b+bhrHsVV/iBuzYvOrKJS1onmjfxJlF/9EMpFYCot8cgJmX+wFFDEa/hizuFjKTi+5pbBSuibz9m2bZ9l3q5TRYMh1DLdtenQqqYCen+3o3Rxhm7mUV5V0GacBTt/pRhUkFsGDxY03DXUPkrwuQ36c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=if8lQvhE; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb81285d33so779239366b.0;
+        Sun, 23 Feb 2025 23:13:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740381236; x=1740986036; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AhJ1T/fwWWXZEiEbcn+HPev6I/zpx52m+r3y5yvwxno=;
+        b=if8lQvhE8okM+fuHSrY8eK39/VGmeaUcFJrAx40FA4YzbZ6TV7vToKIgU4l23coK/Q
+         VrzWqn21m6/dctQNLrxMp4LcDkQz765JfhmMteSiMx6SCL4EKkmDdTVuzC1Gu2z8nBCN
+         tKiXkowgKLPe0Lni9Z8I69SyYEtZc+tKYTYUJ7oZpuVV3HkOMGWBoZdmYB91P86sh1lg
+         LZpZJodjbKP8Z9aZir9XDgkB+6lRft+JSOFr33rmGbIOhxndwj2XvMJxAhELMcSdrkBC
+         +6J1udlYb0ElWU1ZK/7zJ+HD9HN7ExmRYm/uGJYTPaweCWknBVw/nxVr2/JISmvS8IoN
+         AtAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740381236; x=1740986036;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AhJ1T/fwWWXZEiEbcn+HPev6I/zpx52m+r3y5yvwxno=;
+        b=ZJTbiE8vByRsWdeg1sNDN5vdOsFl9ptOxR40G3gypNrqSWhNoNwgmlTWRTF5Yj4i47
+         Cy6GpWPuPpRgcnGfkGaKVbcaTvAL5+RotJzm4h3Naw9WapmlOMWs+vsy8LXEYU7gYeIG
+         6dmLgqaqTNH8bX33uQmcONLqqkAIYsBFxGAg54p7V2j6gTUQZMe9jwWNLKO21XCOanNI
+         GdXmszUVgsWyhsP9UCv7lNtZXsqy5cPUFqJy4qfjJXw+UyVdOFnTG6wGMhvxgJx106fI
+         /k4lf3AogfkFoa2Z5FN8VGM5Cy/TKYG3vD8S4UrmTC3Hh3bC+cEbvYmxZrwDCEujydv7
+         bYLw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAGs33thR+1rGjZbMInSttBDQF4Rn5nY+chXFVLxXNpiu1/UhSl2G4VMJYTYwTPOGEdQUU8jTPHVv3@vger.kernel.org, AJvYcCV76yqCjfKyycTLXq4ta3cb0s2AvUlllcUlRW8/Jdc4bFbtnnXOOn4Y/YpFhiVhrAPF9WvydtucVYWq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWA1EV3LsOP1LcWRrcoap2jtonB9WhJxnovLd6igmi6zczhkxQ
+	V9vrohrjhNlNbqKm4bgJdn1j2uCuxnRr7OU8GXmDjL1exSu0D6bY
+X-Gm-Gg: ASbGnctQCLMj6W9X3KBWwhn022xzBNMyuyI/7aCrqsbj6SIpKXh+p2bDRU5nq9ET410
+	w9Dhj6mRc2kHnCTMxnkm8Ev5fUIb+AUrzr46sZY7hbYspc/Bdg09eUv7Upn7HazVBM1MSn9GCIM
+	+FEAwt+xurcxE+Uw/lZ3mQZU8XZM4eEhAEq4uKVr/hJiN5YGV4qUwJnaIPMoqY2k0UfYO1zCXZm
+	Q1S1F8Q8y18+y+ht4CWLL9DonS5VusTDuuzJ3GAuAMZ+lESaY8X3S9elFwsotYegvW4WT2kws70
+	WRPGYqBDWy9H02i46uI/z5ZgqQ==
+X-Google-Smtp-Source: AGHT+IFTl/OJwiOMCrQwp/6jVuRvgGddWSjPDFK5GMI5evFJFlBu1ePwDd5puvr/8TxFgsTqVzZxSQ==
+X-Received: by 2002:a17:907:7ea0:b0:ab7:d361:11b4 with SMTP id a640c23a62f3a-abc099b7f3fmr1362031766b.7.1740381235930;
+        Sun, 23 Feb 2025 23:13:55 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbda707e3dsm1034964866b.106.2025.02.23.23.13.55
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 23 Feb 2025 23:13:55 -0800 (PST)
+Date: Mon, 24 Feb 2025 07:13:55 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Pratyush Yadav <ptyadav@amazon.de>,
+	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
+	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH v4 12/14] x86: Add KHO support
+Message-ID: <20250224071355.xsl2dbupda4dhfzl@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250206132754.2596694-1-rppt@kernel.org>
+ <20250206132754.2596694-13-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Virus-Scanned: clamav-milter 1.0.7 at canardo.mork.no
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250206132754.2596694-13-rppt@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Andrew Lunn <andrew@lunn.ch> writes:
+On Thu, Feb 06, 2025 at 03:27:52PM +0200, Mike Rapoport wrote:
+>From: Alexander Graf <graf@amazon.com>
+[...]
+>diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+>index 82b96ed9890a..0b81cd70b02a 100644
+>--- a/arch/x86/kernel/e820.c
+>+++ b/arch/x86/kernel/e820.c
+>@@ -1329,6 +1329,24 @@ void __init e820__memblock_setup(void)
+> 		memblock_add(entry->addr, entry->size);
+> 	}
+> 
+>+	/*
+>+	 * At this point with KHO we only allocate from scratch memory.
+>+	 * At the same time, we configure memblock to only allow
+>+	 * allocations from memory below ISA_END_ADDRESS which is not
+>+	 * a natural scratch region, because Linux ignores memory below
+>+	 * ISA_END_ADDRESS at runtime. Beside very few (if any) early
+>+	 * allocations, we must allocate real-mode trapoline below
+>+	 * ISA_END_ADDRESS.
+>+	 *
+>+	 * To make sure that we can actually perform allocations during
+>+	 * this phase, let's mark memory below ISA_END_ADDRESS as scratch
+>+	 * so we can allocate from there in a scratch-only world.
+>+	 *
+>+	 * After real mode trampoline is allocated, we clear scratch
+>+	 * marking from the memory below ISA_END_ADDRESS
+>+	 */
+>+	memblock_mark_kho_scratch(0, ISA_END_ADDRESS);
+>+
 
->> So, not only do I think that hwmon should be disabled if using SMBus,
->> but I also think that the kernel should print a warning that SMBus is
->> being used and therefore e.g. copper modules will be unreliable. We
->> don't know how the various firmwares in various microprocessors that
->> convert I2C to MDIO will behave when faced with SMBus transfers.
->
-> I agree, hwmon should be disabled, and that the kernel should printing
-> a warning that the hardware is broken and that networking is not
-> guaranteed to be reliable.
+At the beginning of e820__memblock_setup() we call memblock_allow_resize(),
+which means during adding memory region it could double the array. And the
+memory used here is from some region just added.
 
-What do you think will be the effect of such a warning?  Who is the
-target audience?
+But with KHO, I am afraid it would fail?
 
-You can obviously add it, and I don't really care.  But I believe the
-result will be an endless stream of end users worrying about this scary
-warning and wanting to know what they can do about it.  What will be
-your answer?
+> 	/* Throw away partial pages: */
+> 	memblock_trim_memory(PAGE_SIZE);
+> 
 
-No SoC/phy designer will ever see the warning.  They finished designing
-these chips decades ago.  The switch designers might see it. But
-probably not. They're not worried about running mainline Linux at all.
-They have they're vendor SDK.  Linux based of course, but it's never
-going to have that warning no matter what you do.  Firmware developers?
-Same as switch designers really.
-
-The hardware exists. It's not perfect. We agree so far.  But I do not
-understand your way of dealing with that.
-
-If your intention is detecting this hardware problem in bug reports etc,
-then it makes more sense to me.  But I believe a more subtle method will
-be more effeicient than a standalone and scary warning. Like embedding
-"smbus" or similar in existing debug/warning/error messages, e.g by
-making it part of the mdio bus name.
-
-
-Bj=C3=B8rn
+-- 
+Wei Yang
+Help you, Help me
 
