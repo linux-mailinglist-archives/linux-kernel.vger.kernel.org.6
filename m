@@ -1,270 +1,174 @@
-Return-Path: <linux-kernel+bounces-528580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A58A4194D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:39:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7166A4194F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7227C169E5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12DCE1887231
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC06245007;
-	Mon, 24 Feb 2025 09:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8380245007;
+	Mon, 24 Feb 2025 09:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="EwzBQAI5"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u6uMHcNF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBD678F2E;
-	Mon, 24 Feb 2025 09:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E378F2E;
+	Mon, 24 Feb 2025 09:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389947; cv=none; b=ra4IDYWYu2WeiA1cDMm+5eB+41/OfXrGXMdu3Xy9+m53GC3fSN0FIZYF4KIVZvfGQLyIciQZGGYOTOWwybDJf+CNNc449lCzpLWGTreQKUyopcY63C70XSAVnkRfhHAyFpOLxyliajqepQEEHV6g4h9smk2FDgqnJfImXXQNjOI=
+	t=1740389962; cv=none; b=g1XUeDCbyIgmfkpPYRGljCNGCf6JjODCFsfYLn4kU6OdQsgC/SCqBYsiTHq0PbFys1NsMQSDkznxEYzpQeHwlCxIX8/Fjeg4Iqz1qjqcSB/eVCGkddLkWviCxHaiX6tz6MJP+w0aDhjUvHNR53RwBWIwztH1duFh2s5+RDCfXXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389947; c=relaxed/simple;
-	bh=/HpH0//Sd9ANVoi0x2M7SEPliUKtNSAcq4jivyv/0Z0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TAn7AU+wqjWLbGMi0V5uHP72Zz79dYSbxhT10/Y0cVPUIPN7EVYblcvaVkpeuBNtE20VtBdOvucSA0V/FfW4V2fAFIFnM5BKWQT2sXSkTk+6GmhoIkjzdpFpwhmbRYDpj4iAsyITe7dh5zpzZDolCX6JnTpY/IqVE7MqgGIEkxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=EwzBQAI5; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1740389938; x=1740994738; i=ps.report@gmx.net;
-	bh=rBw6xYsOHK0PSghpi+JD9vE8vBfcTAhCyiK4cG4ZtPM=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=EwzBQAI5W4GW7NjWUqX3x/kSnzdJGWK+fVeAIG3RwIrH2CWTJuKdrxNx5W+2RJnG
-	 M/ZEA9t/pqNJAjnBsPqe9KnWpJG1BqsKhhmM01lEReMAHByYRlIRJ0HJWObz0ok3D
-	 ci0ThekP6wjle6BJ6AEw2MIF6wT4H9GO06148tbr9HJEVMH0Nh+BI8Byxp++VBsz2
-	 Op3GzyGmlc6GdvoJivOUVSbfQxj1oh8zh+V6boB47ikZ8GbLzYrI+m4B35wvlwszc
-	 tO6aJbfbYHh+yOPwFWas7lDIvmulw4INvVyViv6Z8FltyWP9wYH5w/Otb5CZA185y
-	 yFgKZFjkavV/BoS4DA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost ([82.135.81.227]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3UZG-1tn2tE1ABu-00DwCy; Mon, 24
- Feb 2025 10:38:58 +0100
-Date: Mon, 24 Feb 2025 10:38:56 +0100
-From: Peter Seiderer <ps.report@gmx.net>
-To: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, "David S
- . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Shuah Khan <shuah@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Artem Chernyshev <artem.chernyshev@red-soft.ru>,
- Frederic Weisbecker <frederic@kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: Re: [PATCH net-next v7 1/8] net: pktgen: fix mix of int/long
-Message-ID: <20250224103856.31dc0260@gmx.net>
-In-Reply-To: <20250224092242.13192-2-ps.report@gmx.net>
-References: <20250224092242.13192-1-ps.report@gmx.net>
-	<20250224092242.13192-2-ps.report@gmx.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1740389962; c=relaxed/simple;
+	bh=3PKhhqDl4PavsonkGg8Yx9ObgvEzeG4jz8Tmf0mpBko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HkezuFliDvkm2T7FZ8ePqEmAF7KSfeueAxoLfRsJUmx5WyQUXQa2O4+E+7qT05ESnuJfWd1NSRuU9uhj6XuYX/XMyojtQlM60IrvPPTzq0peVn4aD4Uya7PGpjun2XaCnpCFDWXGGBV89Bny7/CzhY6UYWE6ak6xLva4FSgvgHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u6uMHcNF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73131C4CEDD;
+	Mon, 24 Feb 2025 09:39:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740389961;
+	bh=3PKhhqDl4PavsonkGg8Yx9ObgvEzeG4jz8Tmf0mpBko=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=u6uMHcNFouGfid1zt39RmM5n/d/QvxqWMP6UjEwnVFHVnd3OIbt8vvkwNIA1OEd+C
+	 ok1+0bImlugkG6eFWSnf9e9TVWoHLVgzzrmmGho1/VvnXjOY/rtS9KUrVtYozgmAS4
+	 QGEoHlzy6QWkHj6fqXky/sEEfU+Nv0ZU3GqHZlJEvv1MGCS6un2Gxt8vZYW5bSWGtU
+	 kf0RFfuOdIoXDwW8krT9nrJchhwbcdQVsK6mKXu9Ja/eO15iW7tjYlq6Wpdy4q61fx
+	 AfLXqBLBFqgNUYXknclqQRIxgEXkVLVRMCr5zU8uk1KzBcR1/GNfkun6iV4kCQBf/r
+	 nECuGAbkRVSrg==
+Message-ID: <5e740543-9bd6-483a-9722-f5d8307b6915@kernel.org>
+Date: Mon, 24 Feb 2025 10:39:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:tisrOSfy4uCVTiyzps2E/dGQ4F2zlzbHDtizmbtjmAcn4nVKxyv
- XZ1eS2CyhWPPNl/fgHp4uGRNa/zvU1DzBVgoijD6BeivKwgwzDADhIhe2DVv6QgDQEy75rx
- GtLCQIdYHY8x9jnLy/Sjx77/uFBPGn+mJ7VuGewIHtFIT6qPLgrZkpF2zjzxAFg5qFoYBbH
- AM5U77NqVMLbIbFxDpXLQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:AmSkhg488Mo=;iHJ7wqyPGccxdVNfniaDHrlnSjv
- z3GK1A0d6uwxgax1oFN+z31CkEZWbqcGaUFzG2MOATvgdDuDIKC7bDH4lKa3dPEQKoiQ01Uzg
- ueJU6FxX67/zPE2xH54Wz8YT5ZMouuu2ZlB3LzT/rLRVMQ/dxv+jYiVZ0d8Dm8UEDdFfkQOpL
- q2XBF//HcgYKYOylor+UYxQEEvsDUPdDLcrvaZgT+CWVRWibAKJiihxFbkafAQHQbl9tRqAbE
- QvFzE/Adt0YCxni1I9amxOtVRh2z/TSGVPW/KI3qFERrMeZOfA0aTR6+uRL9HBTVA9Bsnq5uH
- gMAD7CLAFx6dRBQldpobHmb+5agBboDOfhOREMcLMNYDUcRIq5zFqGHir3aa3d04aJHSK+ir4
- WJ59S7R0iWVWQN6QsFBBH4Y0Zc3wVF6HnbV81LG5gbitOw6tWfdfrsq1ezCPtHMNGw9wQuXkJ
- PdVW0S7IWnE2UTfV+9Ph+wZdfXcoviTa530kLpv1vsGKWL83ahTtzjZoTPAp0OJpnfakP+EtP
- 2YMI17ff3yii1t5Lu4F3uU3YhGitxnJvkaMdCtTrHm0b/oKJArGY15p7rJ/TCORC0A53uYIOg
- 7fhUelzRnPTcDT1YSt1G2zC+PnhD0qcIjj3qqttPtW0eUiUS4OrYyOqLnx0KNM3QC65VQ+AFc
- F0q35wNN2AE7zXttpMB9/NzXGURhZT5FPgJl6pmXjOrKMRhRDUFH9dFdFSnMFtkPFr++buLqP
- Y9xVIDzqRyN7O2XfffDPj8AiZteUQ2SZWvoWSZPaa7KJBsHvsKK1OBW8SHhwrLB/YxeZr8aFa
- yRuLYlFo+1nnCG1PPd38+aKsikqtrSlVoPyrECm8kRfF2yCqQtz/L0LK5PEWduAr4Wf3ixrUj
- CnvzlhBHekotbKA17U2v2wFMEN5U2oY0maQ1AIHMEpniXyTY2nQOWfxTGsTAFz4cM0MABsTpo
- 8OcKFWyPoe6MIF2S9NQWTBx/+G4aiDDMvd12OA14zTsonsqCgQeZmj5oN27HakbsoWsr8gvr0
- te25PEIBQ6Vhyf5na8+3VgWe25QPNMZtRrDAdLD6HJ86M+DGOCNtrmJEriPOpprhHGQ+GUTa/
- BttVZkejqacglR/5BsXUtMYS2+VxFAOB0OmoPhB/Pe9UzUrQnuAgfKAYjrOW3gn+1iNmlBlY/
- ZTTL0YXgB5R3uDV5ylVKnAiHhGrdHVTQDPjN6TXozeNA5CYYD4EDRhD0txd/1w9jTaW2wvoX9
- 10DB5yxSBccl+wgzepqGOCF4SNXeoBITJma8/XPcp5/bbGKVUp7v5zkBHDjXOgvgBS8sOHogY
- DlIVyokCsOhlkBEdS2b3aQVlBp+uCwxtElRgd+Vt/vIMMgIV3zQQtpfFj/Wt6ohpj40o7O8Bw
- EdRF3Tb0YqU8xzMCj1fTZdQ2Gsa41HlV06dM9OXeXtgzMKtnzZ8BwL2j7T
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock, reset: rockchip: Add support
+ for rk3562
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Kever Yang <kever.yang@rock-chips.com>
+Cc: linux-rockchip@lists.infradead.org,
+ Finley Xiao <finley.xiao@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241224092310.3814460-1-kever.yang@rock-chips.com>
+ <z7jb32foci6bamqqddkkp34hazi2itp6uclarsoi5pkrgso2go@bxflagkaciq6>
+ <28dcac28-9060-4f65-8167-64f6a0e4532d@rock-chips.com>
+ <2920539.yaVYbkx8dN@diego>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2920539.yaVYbkx8dN@diego>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello *,
+On 24/02/2025 10:14, Heiko Stübner wrote:
+> Am Montag, 24. Februar 2025, 09:47:40 MEZ schrieb Kever Yang:
+>> Hi Krzysztof,
+>>
+>> On 2024/12/27 16:28, Krzysztof Kozlowski wrote:
+>>> On Tue, Dec 24, 2024 at 05:23:09PM +0800, Kever Yang wrote:
+>>>> From: Finley Xiao <finley.xiao@rock-chips.com>
+>>>>
+>>>> Add the dt-bindings header for the rk3562, that gets shared between
+>>>> the clock controller and the clock references in the dts.
+>>>> Add softreset ID for rk3562.
+>>>>
+>>>> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
+>>>> Signed-off-by: Liang Chen <cl@rock-chips.com>
+>>>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+>>>> ---
+>>>>
+>>>> Changes in v2:
+>>>> - rename the file to rockchip,rk3562-cru.h
+>>>> - remove CLK_NR_CLKS
+>>>> - add new file for reset ID
+>>>> - update to use dual license
+>>>>
+>>>>   .../dt-bindings/clock/rockchip,rk3562-cru.h   | 377 ++++++++++++++++++
+>>>>   .../dt-bindings/reset/rockchip,rk3562-cru.h   | 360 +++++++++++++++++
+>>>
+>>> No, that's not a separate patch. Headers *ALWAYS* go with the bindings
+>>> patch.
+>> Will fix.
+>>>>   2 files changed, 737 insertions(+)
+>>>>   create mode 100644 include/dt-bindings/clock/rockchip,rk3562-cru.h
+>>>>   create mode 100644 include/dt-bindings/reset/rockchip,rk3562-cru.h
+>>>>
+>>>> diff --git a/include/dt-bindings/clock/rockchip,rk3562-cru.h b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+>>>> new file mode 100644
+>>>> index 000000000000..ad07ad3a12ad
+>>>> --- /dev/null
+>>>> +++ b/include/dt-bindings/clock/rockchip,rk3562-cru.h
+>>>> @@ -0,0 +1,377 @@
+>>>> +/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
+>>> Why not using license requested by checkpatch?
+>>
+>> The checkpatch does not report error/warning for this license, and this 
+>> is the same as many other SoCs.
+>>
+>> Which license is recommend in the header file?
+> 
+> I suppose
+> 
+> /* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+> 
+> According to [0] "GPL-2.0" and "GPL-2.0-only" are equivalent, but I guess
+> "GPL-2.0-only" simply makes the "only" part more visible.
 
-On Mon, 24 Feb 2025 10:22:35 +0100, Peter Seiderer <ps.report@gmx.net> wro=
-te:
+No, rather use the one expressed in checkpatch.
 
-> Fix mix of int/long (and multiple conversion from/to) by using consequen=
-tly
-> size_t for i and max and ssize_t for len and adjust function signatures
-> of hex32_arg(), count_trail_chars(), num_arg() and strn_len() accordingl=
-y.
->
-> Signed-off-by: Peter Seiderer <ps.report@gmx.net>
-
-Actual missing the rev-by Simon Horman given for the v5 version of the
-patch set (see [1]) and indicated in the change description v5->v6...
-
-Regards,
-Peter
-
-[1] https://lore.kernel.org/netdev/20250216135748.GD1615191@kernel.org/
-
-> ---
-> Changes v6 -> v7
->   - rebased on actual net-next/main
->   - no changes
->
-> Changes v5 -> v6
->   - adjust to dropped patch ''net: pktgen: use defines for the various
->     dec/hex number parsing digits lengths'
->   - add rev-by Simon Horman
->   - fix line break (suggested by Simon Horman)
->
-> Changes v4 -> v5
->   - split up patchset into part i/ii (suggested by Simon Horman)
->   - instead of align to most common pattern (int) adjust all usages to
->     size_t for i and max and ssize_t for len and adjust function signatu=
-res
->     of hex32_arg(), count_trail_chars(), num_arg() and strn_len() accord=
-ingly
->   - respect reverse xmas tree order for local variable declarations (whe=
-re
->     possible without too much code churn)
->   - update subject line and patch description
->   - fix checkpatch warning '"foo * bar" should be "foo *bar"' for
->     count_trail_chars() and strn_len()
->
-> Changes v3 -> v4
->   - new patch (factored out of patch 'net: pktgen: fix access outside of=
- user
->     given buffer in pktgen_if_write()')
-> ---
->  net/core/pktgen.c | 38 ++++++++++++++++++++------------------
->  1 file changed, 20 insertions(+), 18 deletions(-)
->
-> diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-> index 55064713223e..cd6b6c0dc0dc 100644
-> --- a/net/core/pktgen.c
-> +++ b/net/core/pktgen.c
-> @@ -746,10 +746,11 @@ static int pktgen_if_show(struct seq_file *seq, vo=
-id *v)
->  }
->
->
-> -static int hex32_arg(const char __user *user_buffer, unsigned long maxl=
-en,
-> -		     __u32 *num)
-> +static ssize_t hex32_arg(const char __user *user_buffer, size_t maxlen,
-> +			 __u32 *num)
->  {
-> -	int i =3D 0;
-> +	size_t i =3D 0;
-> +
->  	*num =3D 0;
->
->  	for (; i < maxlen; i++) {
-> @@ -768,10 +769,9 @@ static int hex32_arg(const char __user *user_buffer=
-, unsigned long maxlen,
->  	return i;
->  }
->
-> -static int count_trail_chars(const char __user * user_buffer,
-> -			     unsigned int maxlen)
-> +static ssize_t count_trail_chars(const char __user *user_buffer, size_t=
- maxlen)
->  {
-> -	int i;
-> +	size_t i;
->
->  	for (i =3D 0; i < maxlen; i++) {
->  		char c;
-> @@ -793,10 +793,10 @@ static int count_trail_chars(const char __user * u=
-ser_buffer,
->  	return i;
->  }
->
-> -static long num_arg(const char __user *user_buffer, unsigned long maxle=
-n,
-> -				unsigned long *num)
-> +static ssize_t num_arg(const char __user *user_buffer, size_t maxlen,
-> +		       unsigned long *num)
->  {
-> -	int i;
-> +	size_t i;
->  	*num =3D 0;
->
->  	for (i =3D 0; i < maxlen; i++) {
-> @@ -812,9 +812,9 @@ static long num_arg(const char __user *user_buffer, =
-unsigned long maxlen,
->  	return i;
->  }
->
-> -static int strn_len(const char __user * user_buffer, unsigned int maxle=
-n)
-> +static ssize_t strn_len(const char __user *user_buffer, size_t maxlen)
->  {
-> -	int i;
-> +	size_t i;
->
->  	for (i =3D 0; i < maxlen; i++) {
->  		char c;
-> @@ -844,9 +844,9 @@ static int strn_len(const char __user * user_buffer,=
- unsigned int maxlen)
->  static ssize_t get_imix_entries(const char __user *buffer,
->  				struct pktgen_dev *pkt_dev)
->  {
-> -	const int max_digits =3D 10;
-> -	int i =3D 0;
-> -	long len;
-> +	const size_t max_digits =3D 10;
-> +	size_t i =3D 0;
-> +	ssize_t len;
->  	char c;
->
->  	pkt_dev->n_imix_entries =3D 0;
-> @@ -895,9 +895,9 @@ static ssize_t get_imix_entries(const char __user *b=
-uffer,
->  static ssize_t get_labels(const char __user *buffer, struct pktgen_dev =
-*pkt_dev)
->  {
->  	unsigned int n =3D 0;
-> +	size_t i =3D 0;
-> +	ssize_t len;
->  	char c;
-> -	ssize_t i =3D 0;
-> -	int len;
->
->  	pkt_dev->nr_labels =3D 0;
->  	do {
-> @@ -956,7 +956,8 @@ static ssize_t pktgen_if_write(struct file *file,
->  {
->  	struct seq_file *seq =3D file->private_data;
->  	struct pktgen_dev *pkt_dev =3D seq->private;
-> -	int i, max, len;
-> +	size_t i, max;
-> +	ssize_t len;
->  	char name[16], valstr[32];
->  	unsigned long value =3D 0;
->  	char *pg_result =3D NULL;
-> @@ -1883,7 +1884,8 @@ static ssize_t pktgen_thread_write(struct file *fi=
-le,
->  {
->  	struct seq_file *seq =3D file->private_data;
->  	struct pktgen_thread *t =3D seq->private;
-> -	int i, max, len, ret;
-> +	size_t i, max;
-> +	ssize_t len, ret;
->  	char name[40];
->  	char *pg_result;
->
-
+Best regards,
+Krzysztof
 
