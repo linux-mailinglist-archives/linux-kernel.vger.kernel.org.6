@@ -1,150 +1,152 @@
-Return-Path: <linux-kernel+bounces-529023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33A1A41EF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C16AA41EF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA4C18882C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:24:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8E01889E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BEE20125B;
-	Mon, 24 Feb 2025 12:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3DD19B5A3;
+	Mon, 24 Feb 2025 12:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjptI8Jw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIJwfcMk"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABA22571AD;
-	Mon, 24 Feb 2025 12:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586791A317A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399859; cv=none; b=fbvhMZxmXaiFpQ7VjZDPRuLcbrSfS4GhPCGCtOXh/tTZvmdD06y0V0nOVJsr2SVSAt8tqAhAlgi6IsIGowf7D8bi/socqpd3AlP8QC6lFH0e9Kl3qphvDweaIUgYV9MDlGnH3hGuSdm1OVMdeQv02upAN6aQaua3U6WcjlF//RQ=
+	t=1740399890; cv=none; b=EPNU2W4JSmse4qr9+GfDKNfM06ePLyzLY+hwJA1PksGfcT+WrBBI5V2gwj2l8EZmKuCvY2IOdh0HlBB9GDx7uBD44rp/9BBv+OslpgQQVSXCvb8KInmpojvuMmW361MUstTk17eozRxrrKExeLn7y/tgubBlsDC6IYD2mQugSL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399859; c=relaxed/simple;
-	bh=/4N5BAlR11AdIiOaTPowhjfUjTUrZG9kLoHB5dK9oSQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qS/DcMQs6FUYSQvO70cIP41Vd/M8CGH8pRM2hxeY8XHZCNHixtelz8H2Tt2tuvq+nOADESVjYCaxAl7VzgNJkRZ5h27ZCx2DIwnOk/wHsV3n1lYsbw9gHcYWjOUPAQkV/sr7O3UYliqi+o6BZn6HSEzMXgT//dMkl+ush7fKzwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjptI8Jw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26EAC4CEE6;
-	Mon, 24 Feb 2025 12:24:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740399858;
-	bh=/4N5BAlR11AdIiOaTPowhjfUjTUrZG9kLoHB5dK9oSQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GjptI8Jw1to8DKOHJBwodYcm7HAs1WUo7VZKrBC4iaWEDkrqRLLGaffMjxPEh6hVi
-	 APYACGbm2SpKWrynD1Q3KCk0XP7hpuR3UCGkqHKtTlMbby7RCav+eZVdkqTm0eSBU6
-	 iIL0FNumV/1pTEfVjBU/QK8EDnWjwRDp65c2Da0JU7qCGwj+RBxnbNd/FptmZu1VOw
-	 mUTo1nmQ/aXQ6HdlBs9zDtOWl6K8iT3611UP2ZJqieBA+5dBTGkjT/UvfHT2B1si/c
-	 YqhNJJwcLpA+JNnKOd8Msq7pDRaLpMRl8u9qgQxHcUSNp04mKIfnNaC6IeqegvTR43
-	 DchckWgRrB/kw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tmXVP-007K9l-PQ;
-	Mon, 24 Feb 2025 12:24:16 +0000
-Date: Mon, 24 Feb 2025 12:24:14 +0000
-Message-ID: <86ldtvr0nl.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc:	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Peter Collingbourne <pcc@google.com>
-Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
-In-Reply-To: <Z7xSfVME4z2ComUm@arm.com>
-References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
-	<Z7xSfVME4z2ComUm@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1740399890; c=relaxed/simple;
+	bh=Lis5HjVK3WM+Degswlw1UlkMf1Me/rIKqyrwVJtfqU0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sIJifv1zDqkm11R4zPK7QRBQrXnt7tdFTLZuf0sGTdUhbEy4mxfHvLOMd6HNxQfGct9Coa1j2Wk4W4J3FhX4lEBVNJSKBjRreoRUL26igzPfFocTgkYs8z7obaigj85m5Qs3Wf2OjC2dGrcdbgJEVABDYxVdVW20x5b1wnxn5cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIJwfcMk; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so6621583a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740399887; x=1741004687; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CzOuuE5AQmIPlvYyxq7yqi7h09eNAtPB9O3gjrpeReo=;
+        b=oIJwfcMkfnEX1XrhSul8seuSPE+46c/4HFTZiw5clumOvxxskLZaPSXB4YpyxCLrEl
+         tywQJyA2XdDP0EBQe3lrG4qZgsNf0XiPwi8eHbEC9/ORIA2vFfC5qHn4SM8YIC7aHr2z
+         IPuuoml/OcxfEOUJJ3BSPLgH29l9xGy+X9aav8FsBMswtrAh1CRjhAc3yJ1ZSZxwJesL
+         4VhfkGLWn3NgvMNoyOu2CtmB5gjy5AdOPHGzyQf/qXSwxZR6lLhdltN4p5xxfbVAKPeJ
+         o9F6x0ZAwEn2gJBahYvb/Ht1P4XBIsEqoATZZXO9bxRcdS7VBhBVtTA1DbVeMvRFyBno
+         ZUMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740399887; x=1741004687;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzOuuE5AQmIPlvYyxq7yqi7h09eNAtPB9O3gjrpeReo=;
+        b=Z6EhOx0r/semB4cGfKLqosVZQyNrmRxStiSrwXGIYcTGuRpm0aWaHxDNZHhMyYqjVe
+         /uVBPfNSHmJbdXUrX7l+vj+Du9+8lzh2wh5Q0tOM/ZtiaMusp98MYpKywFx7HO3nGFK+
+         wRvac0ARBQC1Hu2uiMZJGIWKQNfSCbL+lyyIunczL3ayoFE2yqrjHGQ3uVPb0hYmhO5B
+         nE/1EhYoN8sWAWndpu+X+svxXgYhEyJgIO4GtJArTjwIo2ungjYUE7EaRBQS4cf5v/Hb
+         qD8f9t61XDiZ8iEpEnXfwC0jbRg2oi32Ld/OJzwEu3FJR7ircTOmEWp8UCm1hnmRLmmr
+         6egw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvnr5XYijY7E0RogKtpL3I7rkfOAQDgNtWNAaQ8EjKHuHMdcnjSpwsR1dnqgohTBEu1jxzfAk2X5E/HUU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsbKeDeaDS+xCB+McJ+cPXJDFmN7/Z+iG49vbwpi/YEAzqFcNZ
+	HDfMnu4YjumvpwrzJo4z7K2xwIwfkzs/637aBHVYgCIEjbuL13fcKV0XGYELscRQBvFV6SS+lCk
+	=
+X-Gm-Gg: ASbGncteszg2UE/Ud8DTXpRx2tvt7oX0+WXvnka0zRumnGgpW0IMh+fNIbsryXho4ut
+	634PFHORAjEKuz7x9QVKh0glImlgQb4uapbkp0PEd65cA3kMjtQ9J0iME+kF+sr2eV0xFYQC9g7
+	Hbxz0c+XBlDF/eQzNAk6BKYfCMxCkMJx8V16oxR9uH3Jw8N40pgCRRhUZL/V1tSvC3YjT1zf/g2
+	8PzId7UISGqSZ6sN9PsLLBULC1iwQa2hXe0FfV+sh0gI1vJHi0ypMJPRGgH+WWu9g5vWcYnPCbJ
+	YTP9PTga+UH0jjPaB6YOHVnJSiGPT0SzsiZS
+X-Google-Smtp-Source: AGHT+IH/w00sFYxAQuhzHVocmdDGxR/sR2j2LN3gKicNu564R2XT9+1VYMvG9GP5RbWPILjxrB+JCQ==
+X-Received: by 2002:a17:90b:53ce:b0:2f6:d266:f45e with SMTP id 98e67ed59e1d1-2fce789de66mr23281750a91.2.1740399887600;
+        Mon, 24 Feb 2025 04:24:47 -0800 (PST)
+Received: from thinkpad ([36.255.17.202])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb57c5ea71sm18865435a12.8.2025.02.24.04.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 04:24:47 -0800 (PST)
+Date: Mon, 24 Feb 2025 17:54:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>, vkoul@kernel.org,
+	kishon@kernel.org, p.zabel@pengutronix.de,
+	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+	quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
+	quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
+ support
+Message-ID: <20250224122439.njrcoyrfsisddoer@thinkpad>
+References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
+ <20250220102253.755116-3-quic_wenbyao@quicinc.com>
+ <20250224073301.aqbw3gxjnupbejfy@thinkpad>
+ <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
+ <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com, will@kernel.org, Suzuki.Poulose@arm.com, steven.price@arm.com, pcc@google.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
 
-On Mon, 24 Feb 2025 11:05:33 +0000,
-Catalin Marinas <catalin.marinas@arm.com> wrote:
+On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
+> On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
+> > On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
+> >> On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
+> >>> From: Qiang Yu <quic_qianyu@quicinc.com>
+> >>>
+> >>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
+> >>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
+> >>> but retains register values, which means PHY setting can be skipped during
+> >>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
+> >>> after that.
+> >>>
+> >>> Hence, determine whether the PHY has been enabled in bootloader by
+> >>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
+> >>> available, skip BCR reset and PHY register setting to establish the PCIe
+> >>> link with bootloader - programmed PHY settings.
+> >>>
+> >>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> >>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> >> Some nitpicks below.
+> >>
+> >>> ---
 > 
-> On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> > Before commit d89585fbb308 ("KVM: arm64: unify the tests for VMAs in
-> > memslots when MTE is enabled"), kvm_arch_prepare_memory_region() only
-> > rejected a memory slot if VM_SHARED was set. This commit unified the
-> > checking with user_mem_abort(), with slots being rejected if either
-> > VM_MTE_ALLOWED is not set or VM_SHARED set. A subsequent commit
-> > c911f0d46879 ("KVM: arm64: permit all VM_MTE_ALLOWED mappings with MTE
-> > enabled") dropped the VM_SHARED check, so we ended up with memory slots
-> > being rejected if VM_MTE_ALLOWED is not set. This wasn't the case before
-> > the commit d89585fbb308. The rejection of the memory slot with VM_SHARED
-> > set was done to avoid a race condition with the test/set of the
-> > PG_mte_tagged flag. Before Commit d77e59a8fccd ("arm64: mte: Lock a page
-> > for MTE tag initialization") the kernel avoided allowing MTE with shared
-> > pages, thereby preventing two tasks sharing a page from setting up the
-> > PG_mte_tagged flag racily.
+> [...]
+> 
+> >>
+> >>> +     * In this way, no matter whether the PHY settings were initially
+> >>> +     * programmed by bootloader or PHY driver itself, we can reuse them
+> >> It is really possible to have bootloader not programming the init sequence for
+> >> no_csr reset platforms? The comment sounds like it is possible. But I heard the
+> >> opposite.
 > > 
-> > Commit d77e59a8fccd ("arm64: mte: Lock a page for MTE tag
-> > initialization") further updated the locking so that the kernel
-> > allows VM_SHARED mapping with MTE. With this commit, we can enable
-> > memslot creation with VM_SHARED VMA mapping.
-> > 
-> > This patch results in a minor tweak to the ABI. We now allow creating
-> > memslots that don't have the VM_MTE_ALLOWED flag set.
+> > PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
+> > manually in UEFI shell if we want.
 > 
-> As I commented here:
+> IIUC this will not be a concern going forward, and this is a special case
 > 
-> https://lore.kernel.org/r/Z4e04P1bQlFBDHo7@arm.com
-> 
-> I'm fine with the change, we basically go back to the original ABI prior
-> to relaxing this for VM_SHARED.
-> 
-> > If the guest uses
-> > such a memslot with Allocation Tags, the kernel will generate -EFAULT.
-> > ie, instead of failing early, we now fail later during KVM_RUN.
-> 
-> Nit: more like the kernel "will return -EFAULT" to the VMM rather than
-> "generate".
-> 
-> > This change is needed because, without it, users are not able to use MTE
-> > with VFIO passthrough (currently the mapping is either Device or
-> > NonCacheable for which tag access check is not applied.), as shown
-> > below (kvmtool VMM).
-> 
-> Another nit: "users are not able to user VFIO passthrough when MTE is
-> enabled". At a first read, the above sounded to me like one wants to
-> enable MTE for VFIO passthrough mappings.
 
-What the commit message doesn't spell out is how MTE and VFIO are
-interacting here. I also don't understand the reference to Device or
-NC memory here.
+I'm wondering how many *special* cases we may have to deal with going forward.
+Anyhow, I would propose to atleast throw an error and fail probe() if:
 
-Isn't the issue that DMA doesn't check/update tags, and therefore it
-makes little sense to prevent non-tagged memory being associated with
-a memslot?
+* the platform has no_csr reset AND
+* bootloader has not initialized the PHY AND
+* there are no init sequences in the kernel
 
-My other concern is that this gives pretty poor consistency to the
-guest, which cannot know what can be tagged and what cannot, and
-breaks a guarantee that the guest should be able to rely on.
-
-Thanks,
-
-	M.
+- Mani
 
 -- 
-Without deviation from the norm, progress is not possible.
+மணிவண்ணன் சதாசிவம்
 
