@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-529780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C583A42ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:13:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BCDFA42AEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 350CB7A5E64
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606AF1896B8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4B5265CD4;
-	Mon, 24 Feb 2025 18:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A3F2661B0;
+	Mon, 24 Feb 2025 18:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y1yCJ+DW"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L2wUpFga"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC9A264FA6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E168F265CC7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420802; cv=none; b=TOv4XIbpo4Ltxq6K51ZLX99vabthUnp6ykNoDN55gikt60K44DAnipg4Zi/R8jeyIfM7BzN/6f2UVwz0abAPq9vtdCN+cWck3zNYC71GrBEeSarV8J8J0XDBdcU53RDCiX+LKM/F4xn7qP7Z0ijcaR55pfa4o9Th1HV5pRwTAC8=
+	t=1740420804; cv=none; b=ADrY2ONqEETmFi0lQZiftucQMrGE1NXKCgfYvuH/ffxhGImxjRbjnhZv2pM/C+X5n7WjpvhAlt8KGWp2g7NEx4OMFUeEOmOaN20Glu5btH5XXeo/9EMB2wWnPc83gbiBzWT0fwUdebRKl81iKAZDsbfXWku84tvFXvZldL1hzes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420802; c=relaxed/simple;
-	bh=vN/eNE88oaBJnDBhwlNFxVO+p0HRkL3z/lFmoE6TLSU=;
+	s=arc-20240116; t=1740420804; c=relaxed/simple;
+	bh=Chqd3phLcy2hAWvY1UXFVhCZpvMnwC8AQtxFWIuQrRA=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cVkU9HVwVdWvx24IAO/B8huoGBPEkDE9fgleC/Owrl/n+ByWtE8pUUuCuyxK6NAWnud4c3bj2CzDilSJun4k2f/UCiAHf7YjJ7SCmOOUV4KMGd394f0eW22dZPWv1+iYvDpL7zQOw/VIA7c49MLiH7tbs1vJV4AMISaJsu3oc24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y1yCJ+DW; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=cLSw76SQQ5fTZbm94RwoBfgGLKgvOXwCssGi11YF9oTD8oOBywNUQD4vSmhL8IHs1PRdMDXO/OYMK8st9y6M4eUCPQO5BNF+QGsj07Or1UdBWC4jvQ+vgfjgtl4x/ZLLzIiWdZAV7GglxgQmdeCSDr0nPqNSYfBH+R8fz2w9HH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L2wUpFga; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc2b258e82so10202947a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:13:20 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fbfa786a1aso15356285a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:13:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740420800; x=1741025600; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740420802; x=1741025602; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4R7WnGFsL3kL6doD4mCTe3Xz6e56UmxS2U2ziKjVXs=;
-        b=Y1yCJ+DWiwQ+P2ChUleodDW+jSTAZ3fwOOuUBqk01lWNF/NZNEbdGbPVQhiSWoZy5c
-         V01qcDuJHeLQD5/2fT/aPya0vqEYkkHDjWxP2+A1nEYFcolNqgbHQhJ0/sNviyBHavGZ
-         9f0bzHica1pD6BRfoX0jYAD5FnwVcPyRdWJ5ZFB6zMt6qKo+m6vj6hQxUxEmtN8p/a7H
-         Zhzv630LcEoR1yV+MniClWEiKtSD+/3B9aCXspjp1BfuPV+9nDyXma+GHRFJIZ55bo6i
-         DqMEF5PLyTzLK5vXd44Nvr/7x6ih8xfllJQKIbp+skeaoqigveqeh4u53KTBQzHeG7C9
-         nAIQ==
+        bh=iMoEw2TCR/jsf9eyPYGtk4uQ2XLZ2x5LTJoq82YfUM8=;
+        b=L2wUpFgaNLioPXQCdv2uWhdv63LaQER15emZhdOc0Ij1428uvCmePIfPDLN2EmPWqS
+         XhFP7sfZQopXcWt22njvf/b6yF58hbFk7wqJlqMrajxgRbJh3iIIPuvhYpR5l4ejy0ks
+         uqkkfaaqh9Z4x1UDtSshK83nLjc/fO0ODXzpGRhdkGIaV/ZYNPv5C+W1xcTHCSg7dWyI
+         Dn28MHt8rIp2vFd9UKcEQ/exo8GsmDu/YilhuDxahQDbcCHMCGZPxD3Tfu+iLV9RsLUu
+         ei8MFg99x6auFuYlEkJ9rRFOqNYm4bQV4WVCGeFo3MmlHbCCeoMGpZDo8eGudCVIHQtD
+         CBiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740420800; x=1741025600;
+        d=1e100.net; s=20230601; t=1740420802; x=1741025602;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=F4R7WnGFsL3kL6doD4mCTe3Xz6e56UmxS2U2ziKjVXs=;
-        b=i82J6Hzb5/VR/GhVtm2Z5c/DZkzepsl2+aijxj0mxh3isvmWQI4IDgw5LFCnxctCN9
-         tCs41HNG/1Wu0G8NAfnwXFFeAHbYs+EipWjLINV3kCmVwG/aAwqy/fD7Llt7kREV2crx
-         HIJOAwaoBfML7Rgev5oKY+uPK8nJMMs/kJ30C/P3scFwdiSOo0mLLOfIxQtWTE5GCp6O
-         tJSFFrRddh0X+IcLtmrRuGFfvwOnaItgWmIoLBiHNTo6I3P7UquJILebKYo03FzQ5A32
-         FZ7ze/zGhNatanBh/5iYs/Mjl3OShqWZzTqLnNMZ0hk68sn7gyb04bxw7YXa7X09Bz6q
-         npwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR9VPuYMrRyrauTuxmWyWD7U1o5I4uPw5iu7ju6FCbxFbzEIY1n50XVodnKijO9Rzwwp0JVb7mrRkoKNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoXlPPtmkRyLH+RmGWJcVypvObUwYPO2sQ727CkwHfSlkIxZSz
-	oSIQAx7eN8bTMZdQMCytB56f0Ib1MHSVSsTwrUwPcmI8kCG2JxGayfZWoVMowOycZyvESM3IKqr
-	A5w==
-X-Google-Smtp-Source: AGHT+IEkWjLWqfrHGmJqcmECY42kHu9FpsyZxRZXM9MU8IhIeRa/Mtd1C3xZad6PO0xUWbPxHDpEpPRuIRo=
-X-Received: from pjyp8.prod.google.com ([2002:a17:90a:e708:b0:2fc:d2ac:1724])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:180d:b0:2f7:e201:a8cc
- with SMTP id 98e67ed59e1d1-2fce78ad6e0mr27310678a91.18.1740420800405; Mon, 24
- Feb 2025 10:13:20 -0800 (PST)
+        bh=iMoEw2TCR/jsf9eyPYGtk4uQ2XLZ2x5LTJoq82YfUM8=;
+        b=Ytmv4YKjgNkN1cOhZct1LQaFMhK9Nf/PWiu9ws/2q6F+2coso2CJNgC0+0WIfEv52l
+         kxboGLWwnXjMQklq25KZj7sOSgt5pOeTMyrsYuJpFgnK6uZy90FyeDa0is0283qjlanX
+         W5OqW39Uy5FIwHRcWSk99tedgqVtrmCeYf/ujIHqYj9QOAL88PetZALrdBZjnFKq+Y6+
+         Do94j5hJCo0SJuvVyxrCj4xjkA5zX6+z2aNr+aFCkLm53Jl0jLlDphq71BArjEbuTUS9
+         M4tQkI9Zww5kzWTyKKneYuNNsRd9XmivY/rVSXWcUotKbRBrvfgsrTV7MnxyLfekxwuj
+         qSqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgXyoQlbXYV/4ySvT9EnVe8DONa67sEtd15ManM25RKsDf6Ou8edArDaEXHF051YbkaeCxN/qviboiHz4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFwdCR7nqlMhhZ3LqxOGA2AOiFg61vuyIQVPzZj/7rV1/t44le
+	m50ROi8X1venwtB7YOOo2dfPREX0wbTOdGC4qwNu0UzFi2cre7fex7zdJu1BHOlHixKbIAhX2am
+	fHw==
+X-Google-Smtp-Source: AGHT+IGSIS9bceyurPPbtSnVKs/aKbjpXnz1oxcEFb9JiCN90lWjLNGNlYKKZ+JFk+uet8XnEKZWwcnTVY0=
+X-Received: from pfjc10.prod.google.com ([2002:a05:6a00:8a:b0:730:8de5:1c16])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:3a93:b0:1ee:e0c0:85a8
+ with SMTP id adf61e73a8af0-1f0fc139c4fmr34437637.15.1740420802145; Mon, 24
+ Feb 2025 10:13:22 -0800 (PST)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 24 Feb 2025 10:13:13 -0800
+Date: Mon, 24 Feb 2025 10:13:14 -0800
 In-Reply-To: <20250224181315.2376869-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250224181315.2376869-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250224181315.2376869-2-seanjc@google.com>
-Subject: [PATCH 1/3] KVM: x86: Snapshot the host's DEBUGCTL in common x86
+Message-ID: <20250224181315.2376869-3-seanjc@google.com>
+Subject: [PATCH 2/3] KVM: SVM: Manually zero/restore DEBUGCTL if LBR
+ virtualization is disabled
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rangemachine@gmail.com, 
@@ -84,91 +85,82 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, rangemachine@gmail.com,
 	Peter Zijlstra <peterz@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Move KVM's snapshot of DEBUGCTL to kvm_vcpu_arch and take the snapshot in
-common x86, so that SVM can also use the snapshot.
+Manually zero DEBUGCTL prior to VMRUN if the host's value is non-zero and
+LBR virtualization is disabled, as hardware only context switches DEBUGCTL
+if LBR virtualization is fully enabled.  Running the guest with the host's
+value has likely been mildly problematic for quite some time, e.g. it will
+result in undesirable behavior if host is running with BTF=1.
 
-Opportunistically change the field to a u64.  While bits 63:32 are reserved
-on AMD, not mentioned at all in Intel's SDM, and managed as an "unsigned
-long" by the kernel, DEBUGCTL is an MSR and therefore a 64-bit value.
+But the bug became fatal with the introduction of Bus Lock Trap ("Detect"
+in kernel paralance) support for AMD (commit 408eb7417a92
+("x86/bus_lock: Add support for AMD")), as a bus lock in the guest will
+trigger an unexpected #DB.
 
+Note, suppressing the bus lock #DB, i.e. simply resuming the guest without
+injecting a #DB, is not an option.  It wouldn't address the general issue
+with DEBUGCTL, e.g. for things like BTF, and there are other guest-visible
+side effects if BusLockTrap is left enabled.
+
+If BusLockTrap is disabled, then DR6.BLD is reserved-to-1; any attempts to
+clear it by software are ignored.  But if BusLockTrap is enabled, software
+can clear DR6.BLD:
+
+  Software enables bus lock trap by setting DebugCtl MSR[BLCKDB] (bit 2)
+  to 1.  When bus lock trap is enabled, ... The processor indicates that
+  this #DB was caused by a bus lock by clearing DR6[BLD] (bit 11).  DR6[11]
+  previously had been defined to be always 1.
+
+and clearing DR6.BLD is "sticky" in that it's not set (i.e. lowered) by
+other #DBs:
+
+  All other #DB exceptions leave DR6[BLD] unmodified
+
+E.g. leaving BusLockTrap enable can confuse a legacy guest that writes '0'
+to reset DR6.
+
+Reported-by: rangemachine@gmail.com
+Reported-by: whanos@sergal.fun
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219787
+Closes: https://lore.kernel.org/all/bug-219787-28872@https.bugzilla.kernel.org%2F
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/vmx/vmx.c          | 8 ++------
- arch/x86/kvm/vmx/vmx.h          | 2 --
- arch/x86/kvm/x86.c              | 1 +
- 4 files changed, 4 insertions(+), 8 deletions(-)
+ arch/x86/kvm/svm/svm.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 3506f497741b..02bffe6b54c8 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -781,6 +781,7 @@ struct kvm_vcpu_arch {
- 	u32 pkru;
- 	u32 hflags;
- 	u64 efer;
-+	u64 host_debugctl;
- 	u64 apic_base;
- 	struct kvm_lapic *apic;    /* kernel irqchip context */
- 	bool load_eoi_exitmap_pending;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index b71392989609..729c224b72dd 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1514,16 +1514,12 @@ void vmx_vcpu_load_vmcs(struct kvm_vcpu *vcpu, int cpu,
-  */
- void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
--	struct vcpu_vmx *vmx = to_vmx(vcpu);
--
- 	if (vcpu->scheduled_out && !kvm_pause_in_guest(vcpu->kvm))
- 		shrink_ple_window(vcpu);
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index b8aa0f36850f..d5519e592cb3 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4253,6 +4253,16 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+ 	clgi();
+ 	kvm_load_guest_xsave_state(vcpu);
  
- 	vmx_vcpu_load_vmcs(vcpu, cpu, NULL);
++	/*
++	 * Hardware only context switches DEBUGCTL if LBR virtualization is
++	 * enabled.  Manually zero DEBUGCTL if necessary (and restore it after
++	 * VM-Exit), as running with the host's DEBUGCTL can negatively affect
++	 * guest state and can even be fatal, e.g. due to Bus Lock Detect.
++	 */
++	if (vcpu->arch.host_debugctl &&
++	    !(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK))
++		update_debugctlmsr(0);
++
+ 	kvm_wait_lapic_expire(vcpu);
  
- 	vmx_vcpu_pi_load(vcpu, cpu);
--
--	vmx->host_debugctlmsr = get_debugctlmsr();
- }
+ 	/*
+@@ -4280,6 +4290,10 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+ 	if (unlikely(svm->vmcb->control.exit_code == SVM_EXIT_NMI))
+ 		kvm_before_interrupt(vcpu, KVM_HANDLING_NMI);
  
- void vmx_vcpu_put(struct kvm_vcpu *vcpu)
-@@ -7458,8 +7454,8 @@ fastpath_t vmx_vcpu_run(struct kvm_vcpu *vcpu, bool force_immediate_exit)
- 	}
- 
- 	/* MSR_IA32_DEBUGCTLMSR is zeroed on vmexit. Restore it if needed */
--	if (vmx->host_debugctlmsr)
--		update_debugctlmsr(vmx->host_debugctlmsr);
-+	if (vcpu->arch.host_debugctl)
++	if (vcpu->arch.host_debugctl &&
++	    !(svm->vmcb->control.virt_ext & LBR_CTL_ENABLE_MASK))
 +		update_debugctlmsr(vcpu->arch.host_debugctl);
++
+ 	kvm_load_host_xsave_state(vcpu);
+ 	stgi();
  
- #ifndef CONFIG_X86_64
- 	/*
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index 8b111ce1087c..951e44dc9d0e 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -340,8 +340,6 @@ struct vcpu_vmx {
- 	/* apic deadline value in host tsc */
- 	u64 hv_deadline_tsc;
- 
--	unsigned long host_debugctlmsr;
--
- 	/*
- 	 * Only bits masked by msr_ia32_feature_control_valid_bits can be set in
- 	 * msr_ia32_feature_control. FEAT_CTL_LOCKED is always included
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 58b82d6fd77c..09c3d27cc01a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4991,6 +4991,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- 
- 	/* Save host pkru register if supported */
- 	vcpu->arch.host_pkru = read_pkru();
-+	vcpu->arch.host_debugctl = get_debugctlmsr();
- 
- 	/* Apply any externally detected TSC adjustments (due to suspend) */
- 	if (unlikely(vcpu->arch.tsc_offset_adjustment)) {
 -- 
 2.48.1.658.g4767266eb4-goog
 
