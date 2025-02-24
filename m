@@ -1,143 +1,141 @@
-Return-Path: <linux-kernel+bounces-528287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99B21A415C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:04:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10079A415C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74353B4D72
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:03:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C99E3B1086
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298F6241672;
-	Mon, 24 Feb 2025 07:03:29 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFE32B9B7;
+	Mon, 24 Feb 2025 07:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X5SBghwc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401EB1A5B81;
-	Mon, 24 Feb 2025 07:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA338149DE8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380608; cv=none; b=jMEZjkZQ3eUVS0Hi7mskReL1urtD8kyWKk2b7H/i3mH2dMJKNFyCxaopHKj2aVoOFrqhI+2WmTM+Uz61gprDuKxdBtB35fEx+e03wllFibc3ZePE1Yo1kh4gqhlI/Wv+ikqDP/2frk7vEjgyH3lQIDKdxtbK0vtYJgFdXV/+p+s=
+	t=1740380605; cv=none; b=FRqmkvVaxMcTWHODtbyQEWJKlukq8EkCRlVFhDc8RKQrPlgz4rSiYNftBPijrc3VnQ2q04TBsrA3C3K7ib52z55D4I9o/phHURfg3jAWt5gp/zeXLDcKGKM7ta4p8fvpDRxKmIQXaLnNVW0jt9zYidzRTLPI821baXG2OC9QeYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380608; c=relaxed/simple;
-	bh=gAatAcowxA6N32Br3D/yFWKOY7JZvCY0MRpVyrJYcrw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Saxhhse1pCI5BMdQX7CR9dkI9IRayC17je7GQ/40U0X67G7pSP+1Eax8mTWhMnvCJjZoozRpj6ykl28iW0E/AAp6Vqrw/yymVpoo8pRNObaktmQmYUiOvRpUYRCPUbfJ486JpyELuaImhnD5sj1yJozk/IJSv1TCzJOTKjGI/Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z1WsF5vFcz4f3kvl;
-	Mon, 24 Feb 2025 15:02:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 055E61A058E;
-	Mon, 24 Feb 2025 15:03:21 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCH61+3GbxnZ6L5Eg--.46097S3;
-	Mon, 24 Feb 2025 15:03:20 +0800 (CST)
-Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
-To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
- <20250222092823.210318-3-yukuai1@huaweicloud.com> <Z7nAJSKGANoC0Glb@fedora>
- <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
- <Z7vnTyk6Y6X4JWQB@fedora>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
-Date: Mon, 24 Feb 2025 15:03:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1740380605; c=relaxed/simple;
+	bh=BP72IDhvGsEnYuOdJ7dJ833ufPm6ln+Q/i5uIQq42aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnJKkBCUWybxKAmnR9CPRC1E4nbBbImNX/Ukgmp99zrqcF6QXs6k/wFK5sy3rVWu1JWtt6TFoHwBBH+xj6qwEE4lrak2QPDBel8idftBO5xAqEcrB4nijfwJz26oVY7vzgX90gGrogk854yZSVCxk91N8tMid7uFFDd686zgQkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X5SBghwc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22128b7d587so75034955ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:03:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740380603; x=1740985403; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9LqK6pGoCUTPnFXd++QtyjVdr1aa8jEyQEc+rNmPyo0=;
+        b=X5SBghwcnooJI+k+XBjDVQSnOyDmSEB4wjP1ZHMmehZp53A/I8eaZATeH7DNOBhsAc
+         p0kCd7ZOmYaZgVcGpsjYbYhnyufX/jY+u8OzGWDDlg5cPDTN38YBL6iKWe9tYm8uSJcc
+         1LgC7/gjfwdRGJBY/9k53CRb43jM3SpivCHyw/CWoKxLZ3xTSEsE+NQu5y/mEQe0fAxp
+         n0YL3FOEX/wLU/Qh6KgsqWCvVjFqMX/hj/dC3qCmoJCnTYE5Ma19pxqnk8LcQ7kqZyNZ
+         RwWEj2SBE6syhN5J4fZcn9e7B60iFiTUVDjX9LkrR/bvZmev1lDPGEmihuhEbY0dV4Ob
+         bNpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740380603; x=1740985403;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9LqK6pGoCUTPnFXd++QtyjVdr1aa8jEyQEc+rNmPyo0=;
+        b=hQcXhLJXJWq/jbuuvxDBJpgFq3lfeimnjE29SopWmefWO6zZU1yD/zQdMZTefjDQT7
+         XcuLNI3V9YsuF5RD0aooab1oX/7cxdBmal6iYAjUkXj5DlZGXBsTdjsQYSaOrgxnox+o
+         Nva7QTuYI+npe1ErufIx4QQ+YmYnx9g2oAGxectC6419uUa/7ny/Yc3Hv9mcU6P+HS34
+         G+iuHnnXEQ2d2RZZ7kXwksEIyAb5whCZaqX993dv7JCS3uu611jSuFFvDBymc/a5Xy+B
+         aU6rIbJ/Ne0ep2/vB9XtWqPkjDrDR7Kwjw8OvaTB7fe6GChdzZxXymdcfSUO3YIpuBDL
+         qyXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC5T2AsAVAuq0n4TLbOXafTS0B9oD+CP0lklHXhtQJ0PjtazbpQy605CvGrg8mQRcF6QcGfFmr7HduuH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW36jYZPbPkYS3NBD2drcfA9cnxRi2+RB62r++N3MCdoqhMvlu
+	IbdFSWoFhEh7iKTh9xmqrMw11BDfMUkTU0sXZwpm42YVhbz7FYsbqKScvg48UQ==
+X-Gm-Gg: ASbGncsjnyvZnq6nnO9gLCAUYnXmrvYwyEMLuqzBDOrJ96dMvoLTFPJPIOfYGL9ditm
+	tel41pUIh+ZQeCLTjPOcO9uX8+ZjFViBknkBCXw76A2e0cra3ANnPdj44An+Lu1JIlAho1HelJ6
+	9cNQJ6yYI1CH5DqczA98Ry+tRzS6gq0XJf0fT9XjoYUCtej/UWwDjGY+M07ToLDn26iHCQfAkmT
+	cvgroyQrF4Du+V5uVgxQ94tIlRw5XhMY6q0KODVzAEeIHBDb3La7aQBM9+zU4Xyy1/e7hwkfzpO
+	qD8NFRPZ+RKIV+lPjufs+M+2lmIDaYoo7xUa
+X-Google-Smtp-Source: AGHT+IEP7Htb/iGYnVPDDZWWGgVAGsXo3OJ5h9PlRYUthe7Ec1+ayfbl4KPIjZXY590AcXncPZ96ZA==
+X-Received: by 2002:a05:6a00:1387:b0:730:8768:76d7 with SMTP id d2e1a72fcca58-73426d72ae6mr17250142b3a.17.1740380603162;
+        Sun, 23 Feb 2025 23:03:23 -0800 (PST)
+Received: from thinkpad ([36.255.17.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568aaasm19768611b3a.41.2025.02.23.23.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 23:03:22 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:33:18 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com,
+	bharat.kumar.gogada@amd.com,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: PCI: xilinx-cpm: Add compatible
+ string for CPM5NC Versal Net host
+Message-ID: <20250224070318.pkva2mdtbxwm7cvz@thinkpad>
+References: <20250217072713.635643-1-thippeswamy.havalige@amd.com>
+ <20250217072713.635643-2-thippeswamy.havalige@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z7vnTyk6Y6X4JWQB@fedora>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCH61+3GbxnZ6L5Eg--.46097S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF47Kw13JryDAFyrtFWkZwb_yoW8urWkpF
-	WakFW3Kw4DAFyIkF1rZa18XFWYkrWxArnrJw45Jr95A34UWFyjgFWvyrs0yay5X3Z7W34I
-	v3Wjva47AF4jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <20250217072713.635643-2-thippeswamy.havalige@amd.com>
 
-Hi, Ming!
-
-在 2025/02/24 11:28, Ming Lei 写道:
-> throtl_trim_slice() returns immediately if throtl_slice_used()
-> is true.
+On Mon, Feb 17, 2025 at 12:57:12PM +0530, Thippeswamy Havalige wrote:
+> The Xilinx Versal Net series has Coherency and PCIe Gen5 Module
+> Next-Generation compact (CPM5NC) block which supports Root Port
+> controller functionality at Gen5 speed.
 > 
-> And throtl_slice_used() checks jiffies in [start, end] via time_in_range(),
-> so if `start <= jiffies <= end', it still returns false.
-
-Yes, I misread the code, by thinking throtl_slice_used() will return
-true if the slice is still used. :(
-
-
->> BTW, throtl_trim_slice() looks like problematic:
->>
->> -       if (bytes_trim <= 0 && io_trim <= 0)
->> +       if (bytes_trim <= 0 || io_trim <= 0 ||
->> +           tg->bytes_disp[rw] < bytes_trim || tg->io_disp[rw] < io_trim)
->>                  return;
-> That is exactly what my patch is doing, just taking deviation and
-> timeout into account, also U64_MAX limit has to be excluded.
-Yes, perhaps you can add some comments in the last two conditions of
-your patch. I think maybe you're concerned about the case IO is
-throttled by IOs and bytes_disp should really erase extra bytes that
-does not reach bps_limit.
-
+> Error interrupts are handled CPM5NC specific interrupt line and
+> INTx interrupt is not support.
 > 
-> If you test the patch, it works just fine. My patch controls bytes_exp
-> <= 1.5 * disp, then throtl/001 can be completed in 1.5sec, and if it is
-> changed to 1.25 * disp, the test can be completed in 1.25sec.
+> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> Changes in v2:
+> - Update commit message to INTx
+> Changes in v3:
+> - None
+> ---
+>  Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> With this fix, why do we have to play the complicated carryover
-> trick?
+> diff --git a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> index b63a759ec2d7..d674a24c8ccc 100644
+> --- a/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> +++ b/Documentation/devicetree/bindings/pci/xilinx-versal-cpm.yaml
+> @@ -18,6 +18,7 @@ properties:
+>        - xlnx,versal-cpm-host-1.00
+>        - xlnx,versal-cpm5-host
+>        - xlnx,versal-cpm5-host1
+> +      - xlnx,versal-cpm5nc-host
+>  
+>    reg:
+>      items:
+> -- 
+> 2.43.0
 > 
 
-I understand your code now. carryover_bytes in this case is wrong, as
-long as new slice is not started, and trim slice doesn't erase extra
-bytes by mistake, throttle time should be accurate over time because
-bytes_disp is accurate.
-
-And root cause really is throtl_trim_slice().
-
-However, by code review, I think throtl_start_new_slice() should be
-handled as well, the same as throtl_trim_slice(), if the old bio is
-dispatched with one more jiffies wait time, issue a new bio in the same
-jiffies will have the same problem. For example:
-
-Caller do sync IO, with io size: (bps_limit / (HZ / throtl_slice) + 1),
-and caller will issue new IO when old IO is done. Then in this case,
-each IO will start a new slice and wait for throtl_slice + 1 jiffies. I
-believe this can be fixed as well so that BIOs after the first one will
-only wait for throtl_silce jiffies.
-
-> Thanks,
-> Ming
-> 
-> 
-> .
-> 
-
+-- 
+மணிவண்ணன் சதாசிவம்
 
