@@ -1,111 +1,139 @@
-Return-Path: <linux-kernel+bounces-528684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76D48A41A9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:18:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766CBA41A8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:16:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63C0E189002E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:18:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E746F7A2010
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1EB24C66A;
-	Mon, 24 Feb 2025 10:16:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F253625332D;
+	Mon, 24 Feb 2025 10:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="TIj9PGJi"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D661A0BCD;
-	Mon, 24 Feb 2025 10:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BdUqDahJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hN4rsXSQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E185D250BFF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392202; cv=none; b=l2ny6jLHLIlVam2gw2I31afypjxLqL3/tDybE8OANnHau5gCyleNuApVwYvtmE0GXu5BoJvLGH+qvJ7PsaPidhwmBqtgldYUXIiIY4Stmn6YFsQYnd1KiMckNfJ9TFR78MUGEEe8MDP/kHRL7m160rCaUnzrrLWYd34TCIanlNA=
+	t=1740392132; cv=none; b=ealJhRtWs39+OYGgLprvKDHHOpr6yIZ52puyFU514aBrVNUxhEulVO6x3G34MIGC27/Evtll6loB//OE3N+dHL98i8oPKQuy5bREPRrLyuB7Kvx8OjcFBTI//vJTGAzf+aUFjpsI4nS5TH6mNh0p3oe+k2SrEO7epPk5xKz63nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392202; c=relaxed/simple;
-	bh=bmzP7DZYL5PU6Z8gYL3j8sFt9WnzcGSW4w4BWbHWCNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tqUebHw80yo9Cb7EDWRXjoelum0YDGJx/3jH6n1Qv8ntw6YRwwhDVFaxvL6HaREyuL3TbXSE+Uf4cURNgg1+TOCXDMZqiJwd8RUYdLuNvaVW8NfmOduC0VLq+s2QLfPH2xrqejmqVRYrbBcvPsnpmx5LmPT03yYaZFlZm90ITbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=TIj9PGJi; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=2oNUH
-	JB8g4nEbc2gNF1Ap4/gs+R1vgOD/JaR77WeBAY=; b=TIj9PGJifE7aVbz93cRvx
-	Ts90s4p4h6HSqsagsDQqZprmZ4Eu39a70Jw2Y7M+NjImctrmzZ29Gmup8PIzgk94
-	pkUWl6ZzDXj+mBZQ6wf83xzfO5bmsrgxTfFTOJojIyHkqRwJ9OdTidMIvJnZ4gUk
-	zkEYYw6CnMGS1jdx+QyQ7c=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-2 (Coremail) with SMTP id _____wCHzCnBRrxnlq0pOQ--.38564S4;
-	Mon, 24 Feb 2025 18:15:30 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: andy@kernel.org,
-	geert@linux-m68k.org,
-	haoxiang_li2024@163.com,
-	u.kleine-koenig@pengutronix.de,
-	erick.archer@outlook.com,
-	ojeda@kernel.org,
-	w@1wt.eu,
-	poeschel@lemonage.de
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2] auxdisplay: hd44780: Fix an API misuse in hd44780.c
-Date: Mon, 24 Feb 2025 18:15:27 +0800
-Message-Id: <20250224101527.2971012-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740392132; c=relaxed/simple;
+	bh=DHbJrH7Wy2Qgrxrm10ExE1EJqyog3aCCmza3aa8M7VE=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=RXRbqKGb5kZyqdsX0V32T/49v8g3lxW8sMAlY1pyI5/nBXTNGyHknlVYaB5/FptLmuIy3lxrfA/m1mROXzjN1+eOCVBXVHg+PjVoknwHAuSZaYPbPwxBPaTeTBcku0UQ56MxAGNVdgqWHtXb+yjZ88hsIazrq1j6ToXSOjcSrQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BdUqDahJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hN4rsXSQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250224101343.211872476@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740392129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=IeocMCfWumPqvW9Qhzgc4ByoA3vEdEKIXpzY+ZUrsp0=;
+	b=BdUqDahJXBOiiAllt17mDdMQ4pN22rY1boweAmQ5J84PVJJtWgkNSqBIBSkcB6c6hysDZZ
+	6GK6gccKpR0swzzC1Zun22HtLy6fVKssoMLcxfxbQeOX9Ias5n61CCpjAEgwoN+ojzXgto
+	FKHm77/EdnrgIN0DOPHrDxvm76biwxa8fCC1LrFJqfK/kgG+WZRETOVlJ4e1hAJGujdE2k
+	3eqH6lEqMvQtv7yUbree++OG+1bUMIHO/9UVZsFhoCkAeYIsNk1c9Y3H9FNdm+AkOMBlam
+	nKWBIvj4wpgknGTemlaWnn9aY+W005vTH8jUhrrBa9RtDmfjwf7jrr4uUp90ZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740392129;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=IeocMCfWumPqvW9Qhzgc4ByoA3vEdEKIXpzY+ZUrsp0=;
+	b=hN4rsXSQ6khTEIY5r6M5sXcA62YLo0JmJKJav4tcl4JGVEIDnX2/pSWZuQ9LyeyDCRbIDj
+	ybZSGp9zpMgPQmAw==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Benjamin Segall <bsegall@google.com>,
+ Eric Dumazet <edumazet@google.com>,
+ Andrey Vagin <avagin@openvz.org>,
+ Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [patch 04/11] posix-timers: Remove pointless unlock_timer() wrapper
+References: <20250224095736.145530367@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHzCnBRrxnlq0pOQ--.38564S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7Cr4xWFW3Jr4fKF1fXw4ktFb_yoW8JFy8pF
-	srWayFka18JF1UWa4DKw1xXFy5G398Aa4q9ry2k3s3ury5JF97tw15AryjgrsIgFyfW3W2
-	qFnFqrWIyFs7AFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pREoGPUUUUU=
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0gn9bme8PuRYhAADsW
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 24 Feb 2025 11:15:28 +0100 (CET)
 
-Variable allocated by charlcd_alloc() should be released
-by charlcd_free(). The following patch changed kfree() to
-charlcd_free() to fix an API misuse.
+It's just a wrapper around spin_unlock_irqrestore() with zero value.
 
-Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-Changes in v2:
-- Merge the two patches into one.
-- Modify the patch description.
-Sorry Geert, I didn't see your reply until after I sent the
-second patch. I've merged the two patches into one, hoping
-to make your work a bit easier! Thanks a lot!
----
- drivers/auxdisplay/hd44780.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/time/posix-timers.c |   15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
-index 0526f0d90a79..9d0ae9c02e9b 100644
---- a/drivers/auxdisplay/hd44780.c
-+++ b/drivers/auxdisplay/hd44780.c
-@@ -313,7 +313,7 @@ static int hd44780_probe(struct platform_device *pdev)
- fail3:
- 	kfree(hd);
- fail2:
--	kfree(lcd);
-+	charlcd_free(lcd);
- fail1:
- 	kfree(hdc);
- 	return ret;
-@@ -328,7 +328,7 @@ static void hd44780_remove(struct platform_device *pdev)
- 	kfree(hdc->hd44780);
- 	kfree(lcd->drvdata);
- 
--	kfree(lcd);
-+	charlcd_free(lcd);
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -144,11 +144,6 @@ static int posix_timer_add(struct k_itim
+ 	return -EAGAIN;
  }
  
- static const struct of_device_id hd44780_of_match[] = {
--- 
-2.25.1
+-static inline void unlock_timer(struct k_itimer *timr, unsigned long flags)
+-{
+-	spin_unlock_irqrestore(&timr->it_lock, flags);
+-}
+-
+ static int posix_get_realtime_timespec(clockid_t which_clock, struct timespec64 *tp)
+ {
+ 	ktime_get_real_ts64(tp);
+@@ -691,7 +686,7 @@ static int do_timer_gettime(timer_t time
+ 	else
+ 		kc->timer_get(timr, setting);
+ 
+-	unlock_timer(timr, flags);
++	spin_unlock_irqrestore(&timr->it_lock, flags);
+ 	return ret;
+ }
+ 
+@@ -755,7 +750,7 @@ SYSCALL_DEFINE1(timer_getoverrun, timer_
+ 		return -EINVAL;
+ 
+ 	overrun = timer_overrun_to_int(timr);
+-	unlock_timer(timr, flags);
++	spin_unlock_irqrestore(&timr->it_lock, flags);
+ 
+ 	return overrun;
+ }
+@@ -822,7 +817,7 @@ static struct k_itimer *timer_wait_runni
+ 
+ 	/* Prevent kfree(timer) after dropping the lock */
+ 	rcu_read_lock();
+-	unlock_timer(timer, *flags);
++	spin_unlock_irqrestore(&timer->it_lock, *flags);
+ 
+ 	/*
+ 	 * kc->timer_wait_running() might drop RCU lock. So @timer
+@@ -928,7 +923,7 @@ static int do_timer_settime(timer_t time
+ 		timr = timer_wait_running(timr, &flags);
+ 		goto retry;
+ 	}
+-	unlock_timer(timr, flags);
++	spin_unlock_irqrestore(&timr->it_lock, flags);
+ 
+ 	return error;
+ }
+@@ -1046,7 +1041,7 @@ SYSCALL_DEFINE1(timer_delete, timer_t, t
+ 	WRITE_ONCE(timer->it_signal, NULL);
+ 	spin_unlock(&current->sighand->siglock);
+ 
+-	unlock_timer(timer, flags);
++	spin_unlock_irqrestore(&timer->it_lock, flags);
+ 	posix_timer_unhash_and_free(timer);
+ 	return 0;
+ }
 
 
