@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-529558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA77A427D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:24:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE1CA427D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F3A9188E050
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:24:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70399188E071
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E5E262803;
-	Mon, 24 Feb 2025 16:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DD82638B7;
+	Mon, 24 Feb 2025 16:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="it5v0a4t"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CLF47tr8"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F9218950A;
-	Mon, 24 Feb 2025 16:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3B18B46C;
+	Mon, 24 Feb 2025 16:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740414254; cv=none; b=KBZ/RGXtcSINtyj7I6fhzOKlKOGk86qe4/auSm5M5oZadPe2OLMlHvlKtlCyi4+YEkQc4LBnm4OWUuMTMGaIbcklCymnhiNWfoLICeHGp3CE+gGNYlROyaWKlzT+TZ92hyfzjZ5yOtA32OVCx1AEGeu05DqY/Y9afVSLKLIgZpM=
+	t=1740414256; cv=none; b=ih8mEqPiv1SF+m7mR3CSqBP3alHw1QQkI7FrvA8WTY6RyLPUkFE6cQEdVITFpVZVbWRrAUwB24duwr3Ec4ULMNhwIv5ciDLuZtw2KLk6vByNFUZi3fu7Q0B3WAumiuSrosGJy3mHgUA0mje6hkQ/2OaCRxU/0fMIOkxL53A/pDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740414254; c=relaxed/simple;
-	bh=qUSwjH4iIZdUOhSw/4PeSaU1cl3qms07OYHka94Q6k8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y256uI5YPSWDs+b83e+hgW1dHRwr3qz0Io7WCIkZHIPpwJctGg0iuyKhir0aaaftspsZ9WF6fa0c6hhaLPzciUz//K/VCVUvqq9qtgnITHU+uOXt/sgDt4LKOJOf1shLM8hV9KHFoVUyLsxJ239wngW+ouadg8OhRLMb+EEuNGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=it5v0a4t; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fd02536660so667178a91.2;
-        Mon, 24 Feb 2025 08:24:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740414252; x=1741019052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qUSwjH4iIZdUOhSw/4PeSaU1cl3qms07OYHka94Q6k8=;
-        b=it5v0a4t1bQ/y015d0X95DfXA7kZCmU9UQ9kr0aMr9F29V7rcw8W8Mrw5eKlLtbV5Z
-         tWeVm112/DFxwbBz8syBvXh3/kEuHYHDbhMCeq6JA2IBuSSS9BBujOXCP9z9jQWJwOZY
-         zH+xf42nEwfyZCiPPdZZACPZXpKUB2L0t/o1aN4O7a0Lzov/aKSh32v6bi9PryqH3hcz
-         L5lA0msNztmEqtMGzl1IaY7QP3B94KyW2Q+42A2Ad3IK1D6ldLJ+owreM1HomSpKyJc9
-         Wtd0x5sO/UO0MDJcmlSi9y16eJ1gOSbn5PsuUeiJ3EeUieRwxHVOysXyocCv73CJTjE9
-         mqcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740414252; x=1741019052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qUSwjH4iIZdUOhSw/4PeSaU1cl3qms07OYHka94Q6k8=;
-        b=lfQbKLtao4monmWs2M0Ji1Os06Fv7LkLAppDCom/i+7UyKmueVUy1N5p6K6zVUe/W0
-         zkODiI5o76RQ4e4D463HWE2QXpZQ4lF5fmxyWvYwDtSdvt/Urocr6FR0uP7gVpbmaFEE
-         8+/A5cj/QTMuoVXyryWXcy1TKOBSi8nIEJ/bp0DvmvACk+ebS2eJCC+A3uhmhMqAvbSC
-         vWA0iXA8pMgZydzs7Y/LjZx5PCAZo+5/qWxYK4TB6twThiHG73UqARYUUxTLSJR4KhG4
-         j4znF9pXhDkGzcCXOXYu/pBaOyttdnC2GgUKdPR2Fjt/UpSq2kJ6adbvN3qWTsrHy2zR
-         cniQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaL9cVVjTb5tuIIHKFiU0drGLoLmzWimyH4+zYCYnTgIbRV1gppmBpgldMdBG1FvBZiBSrGPsyjih4Dwk=@vger.kernel.org, AJvYcCXUqr7GawFlwu5HcdcYCR4esKfs6sVk/WdqVM9pGUJOeISJqHj3F1GPZXEDQM/Xm25JHFwhuFcKDejoDEUehe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyC/5XPzQhEry9+WPEKVTgobXI7ZtbaAla7/lEZ4/klXr7xskxb
-	UU1vInN44c/WxJUKLtU9y+xnw2iEGI9mhLQ4ZC2eJtQMtVvN3hqvaxiPRZCvtvuQbaXHAP1dMhI
-	If3LrXoiSmjc4HX2umzQwTCI+6QA=
-X-Gm-Gg: ASbGnct8pb5QcheIYWGyTrfnlaqTATRv0/Ts2RFukhTj9OQTrKaWvuU97IUJUiwLzDY
-	vMsCCr9dWL0yR52y8PylfZt4quyMeKBpkU7tsqyrSIk9Ye583K6OnBp1VScnwOZDYT0s3qjDnsA
-	Nsq48OzwA=
-X-Google-Smtp-Source: AGHT+IF03jpYDR6bCisrsUhFC8E/DfFr3s3Tt8qsVO0zmC7ojxOYgj0ndtm7LNnO+jHKPERZceQNcdO44Vf1A20l6ro=
-X-Received: by 2002:a17:90b:1e46:b0:2ee:6a70:c5d1 with SMTP id
- 98e67ed59e1d1-2fce7b14ce7mr8428363a91.3.1740414252306; Mon, 24 Feb 2025
- 08:24:12 -0800 (PST)
+	s=arc-20240116; t=1740414256; c=relaxed/simple;
+	bh=jh88f9FMyhQG9aI3smhoQsjejSXMGTGNffASA2+8FDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WJlQiULpUWzebJT1k3yge1BfQGJI+Y4LLqRrgCITKqUXX85TFvIgnfsAEKKvmm19Mnf1RpDASTv3rimqNMU9Sh9p0/NBKlGilTsc39zgK6RQ3kPJpOCBe9h1orZ3jUyLMLH1hriy4SUnejnrLIHtHwhhpEfze/9etdEu6RoT13E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CLF47tr8; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 74A9244298;
+	Mon, 24 Feb 2025 16:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740414251;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M6fHqsJjE5FU2HQs1fUAHuBgc7rwcnsg86Qu7M/d+dE=;
+	b=CLF47tr8TXZns94jpkQUaOOpx2InLNym8oyc3q/K+kC6WRpjgARcGkFW9l42w9RJbp3sUk
+	/OKQ3SHC8RV8iZ+3jve8GgOUR+FK7YRQ6ZDsomC3V7uml9SUZenZEBc5mZPM76/nJflXVE
+	4VNoFEeuUEEsAZ9H6xtXftOQ6eJkL8orsw8DaiNPiBAvqeHSHvCJ2RjiXtg+ktdw4AXpii
+	3a8lGCUVT8eeJ39IhQXlsrxKBHVIzIiBts9uPwK6iKXOa1qRUETEqcM1M1Y9qOpCLiqOr9
+	rKQvRT+QWq8MvckoRzDFO108lhV1LG5J589ILnfKxRl3MDL5uws5RYJxx1FtKA==
+Date: Mon, 24 Feb 2025 17:24:07 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Andrew Lunn <andrew@lunn.ch>, =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>,
+ davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
+ Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
+ Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <20250224172407.32a2b3f8@fedora>
+In-Reply-To: <Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+	<87r03otsmm.fsf@miraculix.mork.no>
+	<Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
+	<3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
+	<87ikozu86l.fsf@miraculix.mork.no>
+	<7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
+	<Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
- <Fg4QliwzbHj3m-Fr3ZeUiU11d6Bu-I7w_9xzSsnDlzQtqCkjgqxJpI6_YxuXnB8m0MqESq6V7vK7FhPnEcvGwg==@protonmail.internalid>
- <20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
- <874j0j1nv2.fsf@kernel.org> <Z7yUTNEg6gMW0G7b@Mac.home>
-In-Reply-To: <Z7yUTNEg6gMW0G7b@Mac.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 24 Feb 2025 17:23:59 +0100
-X-Gm-Features: AWEUYZm0lZOEykvMW5AYszhUv7NNzoN9gkGQEc0C7vlcjcVMVXpA0B_ikKmgKBQ
-Message-ID: <CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, 
-	Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejledvhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegsjhhorhhnsehmohhrkhdrnhhopdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgo
+ hhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Mon, Feb 24, 2025 at 4:46=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> Why do we need this new kconfig?
+On Mon, 24 Feb 2025 13:48:19 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-I suspect it is to provide flexibility (i.e. to avoid building
-everything if there are no users of the abstraction) and/or to limit
-the set of configs that may be affected by a breaking change on the C
-side -- Andreas and I discussed it the other day. The description of
-the issue has some lines, but perhaps the commit message could
-clarify.
+> On Mon, Feb 24, 2025 at 02:31:42PM +0100, Andrew Lunn wrote:
+> > > What do you think will be the effect of such a warning?  Who is the
+> > > target audience?  
+> > 
+> > It will act as a disclaimer. The kernel is doing its best with broken
+> > hardware, but don't blame the kernel when it does not work
+> > correctly....  
+> 
+> Indeed.
+> 
+> > > You can obviously add it, and I don't really care.  But I believe the
+> > > result will be an endless stream of end users worrying about this scary
+> > > warning and wanting to know what they can do about it.  What will be
+> > > your answer?  
+> > 
+> > I agree that the wording needs to be though about. Maybe something
+> > like:
+> > 
+> > This hardware is broken by design, and there is nothing the kernel, or
+> > the community can do about it. The kernel will try its best, but some
+> > standard SFP features are disabled, and the features which are
+> > implemented may not work correctly because of the design errors. Use
+> > with caution, and don't blame the kernel when it all goes horribly
+> > wrong.  
+> 
+> I was hoping for something shorter, but I think it needs to be expansive
+> so that users can fully understand. Another idea based on your
+> suggestion above:
+> 
+> "Please note:
+> This hardware is broken by design. There is nothing that the kernel or
+> community can do to fix it. The kernel will try best efforts, but some
+> features are disabled, other features may be unreliable or sporadically
+> fail. Use with caution. Please verify any problems on hardware that
+> supports multi-byte I2C transactions."
+> 
 
-We have a similar one already, i.e. a "Rust-only" config, in
-`CONFIG_RUST_FW_LOADER_ABSTRACTIONS`.
+I think what's missing in this message is some indication about what is
+actually wrong with the hardware, so :
 
-Since this one is default "y", it may still affect unrelated
-subsystems that just enable `RUST=3Dy`, though.
+"Please note:
+This SFP cage is accessed via an SMBus only capable of single byte
+transactions. Some features are disabled, other may be unreliable or
+sporadically fail. Use with caution. There is nothing that the kernel
+or community can do to fix it, the kernel will try best efforts. Please
+verify any problems on hardware that supports multi-byte I2C transactions."
 
-(I guess we could consider `select`ing from end users. But they cannot
-be hidden symbols, because that limits the control too much (e.g.
-someone may want to just build the abstraction), and in general they
-may have dependencies, so it may not be a good idea.)
-
-Cheers,
-Miguel
+Maxime
 
