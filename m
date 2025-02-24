@@ -1,184 +1,304 @@
-Return-Path: <linux-kernel+bounces-528669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC072A41A7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:15:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D1E5A41A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 288A61889879
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:14:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B369416FF28
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BB524BBEE;
-	Mon, 24 Feb 2025 10:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4046224BC08;
+	Mon, 24 Feb 2025 10:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQJNwoaF"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3VGNXunB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0CVk7nin"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D75BB24A075
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8032E17557C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392076; cv=none; b=aN0AquRvb6I27+FSgyupyn/0/o5+gfu9ROYSc7J1xr88B1x33SjF34juMVBwL0PfkG9xQyAwYTQUfB1qzLwMQkfznTrMkDmAfmSs/yDVqlH99rfQ5IKOw7T6gtgqiREaPpJDA10LRbUlosDtkGbjTxyQ8+5PpfnRecBMB5hr+Rs=
+	t=1740392126; cv=none; b=PVCcLa4Ct+fMiqTZSfIdey9Lu2OeINNnkjvBNNhOqj6obUjSWMT6pSQuFa5znLvrYEUZiyckZ+NF+hhIrkmHF/3a8WIhf/CNoaMqYtETkulHRXuoV+8OtX1xGR+6+AsAJprmHVNOAASCOej3x5JugJsEhMaUQIX6l0xAps2aksU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392076; c=relaxed/simple;
-	bh=vbjKASiWXzboA2sZA1rLnu3UzF7hoa5908pNhKGfpXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3vV58zmOZpR5R5XOp4ZQnx2gRj6ukgxCX7c7lVbxz28FTcbusSY7kYkovr7DNiBXUgK+8/BG6NeFj/IX7QGsxqpq+Hel216lfDPV0bjw0jHd2iqfUbPNoDEhvsW1JuVW672KkLgU3ZL51zfD60feloBFvad0So8gtKBdVxzIiM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fQJNwoaF; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fb2a6360efso28357547b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:14:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740392074; x=1740996874; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7BT21T9ZsOx2rQl7hC4pSS3NJ3nW+q3IUFkB1OpRZPQ=;
-        b=fQJNwoaF2n7ZkLJm4NiIAQcXapgeTSRhho3norCqkAUZSZekUqRfdWNVRiipkshIIm
-         Nsi6evZXtCm1wjx93kyjMdsN2CxxJmY41/4FndnzGP4Krn2MkxTsL5FM6UE/yuU8OSl7
-         Pv14k9nN2fsmnzjbQMhiCFwR4B2QTaJTBcISqrYov9WP0Pz2VjiuG4UZJLR54vB/KjTK
-         s8i5ob9A2+9MQSHLa9ghsrrW9JyzNkCyZs4LhsQMBOnRLLNU/SFfV3KVDImNmUyBpOzV
-         TnVs1ENLImOJaNNljMp4zbCcVmG48ZCE/xD+sI8+u2bIFyWS9r5/I234bdovIE0I2ILr
-         u04g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740392074; x=1740996874;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7BT21T9ZsOx2rQl7hC4pSS3NJ3nW+q3IUFkB1OpRZPQ=;
-        b=qzPV9V2qD/b+gkG4f0UEtuKlZPdPbE5XWShL2jU7gkvd8DgC2CTr4pct/moNkCQzYM
-         +fL5g8BsaMiwPpUIU4GRmJF9Ip/1pdpZJPSgo6iv6C0E8/HycE4gOFrCMA3iTf3qwgcL
-         bgvz9kaJ5EAwKIfa43owMNHguIUqgV8d4DXHaV7p2eqQwWL5PPsz6vCdWIbYCj6hg9Ou
-         NizsKewuOu8aZtN/lzdLl0B8qzZi3c4pr1mZ+ANhPKmHL0Lrx4ftRAD9uWInDowDla/y
-         iwlpjZJL3NkHa/dVXF2av9R3qpo+aRqrKPwB1TiMnj9xk8n/WQzubfx0SjDrEdESdrHC
-         ax+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVKYVGXKOp4+XXqzXCjW8NH0Kq3o7Ry1pKlX/Q/GI3tJcO38Fq5ukqnlljaECFt4KTR2R/Num75emQVhGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ2iS2HRccCWMJZ7FTukb4+xqdwChBm50qu9I9hSmK/MbCjC2N
-	LamLciaFYFQjJUjkFdQUu2TRZ2C7sr9yX7Iy5OUjvmsXmzCjX2z5TTzygXGVmj82QTqX6bZiDYe
-	OstxvcPUwdHMNMDVb81YX2/fyCYL6ZIuSpI5iWg==
-X-Gm-Gg: ASbGncsr2bpSjDLqyImT4gGRWlQg3r97qRf+V1jTbS4nM5+BHBZTwB1IybECJeDx6Lr
-	uewETXnfxULdBiomZzBNc/zJ733g+B6y5RWE2bO7DDmHsePaCADJ7sHACIAZXAIlJB2T4toFGPA
-	KkiAX8W7DsdvPC
-X-Google-Smtp-Source: AGHT+IHHGiZHgy3s+8XmerKKacF1ioGYVr8/i83Pon+/HFCKY/mSb0SsQmhW+azRKtQiXlPjwnGd0WwE37FqCzJtHXw=
-X-Received: by 2002:a05:690c:9c05:b0:6f7:5605:c62b with SMTP id
- 00721157ae682-6fbcc3673cfmr103922197b3.27.1740392073624; Mon, 24 Feb 2025
- 02:14:33 -0800 (PST)
+	s=arc-20240116; t=1740392126; c=relaxed/simple;
+	bh=o855YPyB7MF1pSbhheBELU0bSkueTWu78hmNgmPvxVQ=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=MihgbNxoNXaGdvSxCsJed5KcrpHZu9pkUO31+6SVw8fZ2/GhhaoR9gThS/po0vr/VQhIEQ1zSzxOOygeEdFED7R9znM1PujxNFAVrpSyERaapmoGzzhc43ypij/NSKoDn+Ffo/lEA8W0VDKKS9zW3LLS9hEz03s44pP1V6gXRJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3VGNXunB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0CVk7nin; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Message-ID: <20250224095736.145530367@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740392122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=C/6jzwPpeY3MGtT+2KO+M6Edw1PfD0hqdXJGPVT3Uk4=;
+	b=3VGNXunBzbSqOVJalGoNL42y4BTW2sRlgWqprI8xC/iLb4UkcZpum5MDmgg6t3fLbQUr9c
+	Jhnn+HOM5rLlcxtBJ05K2YvUNm+iIWyAJ1gHekavueblcuWW+zAcBvWcxrKsOfjSD+8cik
+	Pvr6LyojDqxydkzJGCXYbrZcDg5QIrblof4ctUuwSy0bCDmPgmaRtw+77VRdnnzQhNXY7T
+	OFAMyaEJ8bnzm8rOSO36JiS/nrX3wlcl66pG0wyh2zYtFBRLCxkFHdbPe6Eos8D9v9sp/T
+	/Qnd8XNSvSUpHeH1NJlNuv3hkqbO41ZKv0WdtPFtfszQGqrjHhJg1/y9J4lDRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740392122;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc; bh=C/6jzwPpeY3MGtT+2KO+M6Edw1PfD0hqdXJGPVT3Uk4=;
+	b=0CVk7nincrnzhsv0i2wcYEOOgYbdCkWXZyL9om/Uip5Q+bj7qhAasn5ZDtNee68UTliAJ9
+	fK/L8bWIwKOFAgDA==
+From: Thomas Gleixner <tglx@linutronix.de>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Benjamin Segall <bsegall@google.com>,
+ Eric Dumazet <edumazet@google.com>,
+ Andrey Vagin <avagin@openvz.org>,
+ Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: [patch 00/11] posix-timers: Rework the global hash table and provide
+ a sane mechanism for CRIU
+Date: Mon, 24 Feb 2025 11:15:21 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-0-c11402574367@linaro.org>
- <20250217-sm8650-v6-14-hmd-deckard-mdss-quad-upstream-oldbootwrapper-36-prep-v6-13-c11402574367@linaro.org>
- <khmeegjx5jmu4c32un3gqu7sumkbtdkg6cawwwmwtmkp5gkrag@sklf5tr7qbwv>
-In-Reply-To: <khmeegjx5jmu4c32un3gqu7sumkbtdkg6cawwwmwtmkp5gkrag@sklf5tr7qbwv>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Mon, 24 Feb 2025 18:14:22 +0800
-X-Gm-Features: AWEUYZm42Zh3tL3vnQp2tEApXMrcBNfOORo391vJrlHk1uL8HJBN-be9zH45G4k
-Message-ID: <CABymUCOnnWQZpOhgDfENmWrTUuwb76zSN7nSeO+eyNp4k+PKRw@mail.gmail.com>
-Subject: Re: [PATCH v6 13/15] drm/msm/dpu: support SSPP assignment for
- quad-pipe case
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2025=E5=B9=B42=E6=
-=9C=8822=E6=97=A5=E5=91=A8=E5=85=AD 00:36=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Mon, Feb 17, 2025 at 10:16:02PM +0800, Jun Nie wrote:
-> > Currently, SSPPs are assigned to a maximum of two pipes. However,
-> > quad-pipe usage scenarios require four pipes and involve configuring
-> > two stages. In quad-pipe case, the first two pipes share a set of
-> > mixer configurations and enable multi-rect mode when certain
-> > conditions are met. The same applies to the subsequent two pipes.
-> >
-> > Assign SSPPs to the pipes in each stage using a unified method and
-> > to loop the stages accordingly.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 63 +++++++++++++++++++----=
---------
-> >  1 file changed, 39 insertions(+), 24 deletions(-)
-> >
-> > +     for (stage_id =3D 0; stage_id < num_stages; stage_id++) {
-> > +             for (i =3D stage_id * PIPES_PER_STAGE; i < (stage_id + 1)=
- * PIPES_PER_STAGE; i++) {
+Eric submitted a series a few days ago, which tries to lower the overhead
+of the global hash table and the hash lock contention:
 
-Do you mean define and assign r_pipe / r_pipe_cfg here?
+  https://lore.kernel.org/all/20250219125522.2535263-1-edumazet@google.com
 
-> > +                     pipe =3D &pstate->pipe[i];
-> > +                     pipe_cfg =3D &pstate->pipe_cfg[i];
-> > +
-> > +                     if (drm_rect_width(&pipe_cfg->src_rect) =3D=3D 0)
-> > +                             break;
-> > +
-> > +                     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, =
-global_state, crtc, &reqs);
-> > +                     if (!pipe->sspp)
-> > +                             return -ENODEV;
-> > +
-> > +                     r_pipe =3D &pstate->pipe[i + 1];
-> > +                     r_pipe_cfg =3D &pstate->pipe_cfg[i + 1];
-> > +
-> > +                     /*
-> > +                      * If current pipe is the first pipe in pipe pair=
-, check
-> > +                      * multi-rect opportunity for the 2nd pipe in the=
- pair.
-> > +                      * SSPP multi-rect mode cross mixer pairs is not =
-supported.
-> > +                      */
-> > +                     if ((i % PIPES_PER_STAGE =3D=3D 0) &&
->
-> Please move r_pipe / r_pipe_cfg definition and assignment here.
+Unfortunately the approach does not solve the underlying problem.
 
-r_pipe / r_pipe_cfg is used in this if(). Please see above question.
->
->
-> > +                         drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0 =
-&&
-> > +                         dpu_plane_try_multirect_parallel(pipe, pipe_c=
-fg, r_pipe, r_pipe_cfg,
-> > +                                                           pipe->sspp,
-> > +                                                           msm_framebu=
-ffer_format(plane_state->fb),
-> > +                                                           dpu_kms->ca=
-talog->caps->max_linewidth)) {
-> > +                             i++;
-> > +                     } else {
-> > +                             /* multirect is not possible, use two SSP=
-P blocks */
-> > +                             pipe->multirect_index =3D DPU_SSPP_RECT_S=
-OLO;
-> > +                             pipe->multirect_mode =3D DPU_SSPP_MULTIRE=
-CT_NONE;
-> > +                             DPU_DEBUG_PLANE(pdpu, "allocating sspp_%d=
- for pipe %d.\n",
-> > +                                             pipe->sspp->idx - SSPP_NO=
-NE, i);
-> > +                     }
-> > +             }
-> >       }
-> >
-> >       return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+This also reminded me of the discussion about the global hash table and the
+issues created by CRIU:
+
+   https://lore.kernel.org/all/87ednpyyeo.ffs@tglx/
+
+The problem is that CRIU requires a mechanism to recreate the timers with
+the same ID as they had at checkpointing. This is achieved by a per process
+(signal_struct) counter, which is monotonically increasing. This counter is
+utilized to reach the required timer ID by creating and deleting timers up
+to the point where the ID matches.
+
+As this is user space ABI, the kernel has no way to remove this
+functionality on short notice. So even with per process storage this mode
+needs to be preserved, but that does not prevent to implement smarter
+mechanisms.
+
+So I picked up the fixes from Eric's series and slightly reworked them as
+they should go into the tree first.
+
+On top I built the changes, which rework the global hash table and a
+halfways sane mechanism to create timers with a given ID without the
+create/delete dance and the counter.
+
+There are actually two real solutions to the hashing problem:
+
+  1) Provide a per process (signal struct) xarray storage
+
+  2) Implement a smarter hash like the one in the futex code
+
+#1 works perfectly fine for most cases, but the fact that CRIU enforced a
+   linear increasing timer ID to restore timers makes this problematic.
+
+   It's easy enough to create a sparse timer ID space, which amounts very
+   fast to a large junk of memory consumed for the xarray. 2048 timers with
+   a ID offset of 512 consume more than one megabyte of memory for the
+   xarray storage.
+
+#2 The main advantage of the futex hash is that it uses per hash bucket
+   locks instead of a global hash lock. Aside of that it is scaled
+   according to the number of CPUs at boot time.
+
+Experiments with artifical benchmarks have shown that a scaled hash with
+per bucket locks comes pretty close to the xarray performance and in some
+scenarios it performes better.
+
+Test 1:
+
+     A single process creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
+
+            mainline        Eric   newhash   xarray
+create         23 ms       23 ms      9 ms     8 ms
+getoverrun     14 ms       14 ms      5 ms     4 ms
+
+Test 2:
+
+     A single process creates 50000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
+
+            mainline        Eric   newhash   xarray
+create         98 ms      219 ms     20 ms    18 ms
+getoverrun     62 ms       62 ms     10 ms     9 ms
+
+Test 3:
+
+     A single process creates 100000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them:
+
+            mainline        Eric   newhash   xarray
+create        313 ms      750 ms     48 ms    33 ms
+getoverrun    261 ms      260 ms     20 ms    14 ms
+
+Erics changes create quite some overhead in the create() path due to the
+double list walk, as the main issue according to perf is the list walk
+itself. With 100k timers each hash bucket contains ~200 timers, which in
+the worst case need to be all inspected. The same problem applies for
+getoverrun() where the lookup has to walk through the hash buckets to find
+the timer it is looking for.
+
+The scaled hash obviously reduces hash collisions and lock contention
+significantly. This becomes more prominent with concurrency.
+
+Test 4:
+
+     A process creates 63 threads and all threads wait on a barrier before
+     each instance creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them. The threads are pinned on
+     seperate CPUs to achive maximum concurrency. The numbers are the
+     average times per thread:
+
+            mainline        Eric   newhash   xarray
+create     180239 ms    38599 ms    579 ms   813 ms
+getoverrun   2645 ms     2642 ms     32 ms     7 ms
+
+Test 5:
+
+     A process forks 63 times and all forks wait on a barrier before each
+     instance creates 20000 timers and afterwards invokes
+     timer_getoverrun(2) on each of them. The processes are pinned on
+     seperate CPUs to achive maximum concurrency. The numbers are the
+     average times per process:
+
+            mainline        eric   newhash   xarray
+create     157253 ms    40008 ms     83 ms    60 ms
+getoverrun   2611 ms     2614 ms     40 ms     4 ms
+
+So clearly the reduction of lock contention with Eric's changes makes a
+significant difference for the create() loop, but the same could have been
+achieved with
+
+	 ndelay(total_hashed_timers * $CONSTANT);
+
+The extra lookup just creates enough interleaving to let the other CPUs
+make progress, but it does not mitigate the underlying problem of long list
+walks, which is clearly visible on the getoverrun() side because that is
+purely dominated by the lookup itself. Once the timer is found, the syscall
+just reads from the timer structure with no other locks or code paths
+involved and returns.
+
+The reason for the difference between the thread and the fork case for the
+new hash and the xarray is that both suffer from contention on
+sighand::siglock and the xarray suffers additionally from contention on the
+xarray lock on insertion.
+
+The only case where the reworked hash slighly outperforms the xarray is a
+tight loop which creates and deletes timers.
+
+Test 4:
+
+     A process creates 63 threads and all threads wait on a barrier before
+     each instance runs a loop which creates and deletes a timer 100000
+     times in a row. The threads are pinned on seperate CPUs to achive
+     maximum concurrency. The numbers are the average times per thread:
+
+            mainline        Eric   newhash   xarray
+loop	    5917  ms	 5897 ms   5473 ms  7846 ms
+
+Test 5:
+
+     A process forks 63 times and all forks wait on a barrier before each
+     each instance runs a loop which creates and deletes a timer 100000
+     times in a row. The processes are pinned on seperate CPUs to achive
+     maximum concurrency. The numbers are the average times per process:
+
+            mainline        Eric   newhash   xarray
+loop	     5137 ms	 7828 ms    891 ms   872 ms
+
+In both test there is not much contention on the hash, but the ucount
+accounting for the signal and in the thread case the sighand::siglock
+contention (plus the xarray locking) contribute dominantly to the overhead.
+
+As the memory consumption of the xarray in the sparse ID case is
+significant, the scaled hash with per bucket locks seems to be the better
+overall option. While the xarray has faster lookup times for a large number
+of timers, the actual syscall usage, which requires the lookup is not an
+extreme hotpath. Most applications utilize signal delivery and all syscalls
+except timer_getoverrun(2) are all but cheap.
+
+The next challenge was to provide a mechanism for CRIU to recreate timers
+by requesting the ID in the syscall. There is no way to extend
+timer_create() in a sane way to achieve that, so in the previous discussion
+a new syscall was considered. But that's tedious because timer_create()
+requires a sigevent_t argument, which is unfortunately incompatible between
+32 and 64 bit applications. That would require either a complete new data
+structure or a compat syscall.
+
+After sitting back and thinking more about this, I came to the conclusion,
+that a new syscall is overkill. The only use case for this is CRIU. CRIU
+creates the timers after recreating the threads, which are "parked" at that
+point in the restorer code waiting for a barrier to be released. So there
+is no concurrency and the restorer has exclusive control.
+
+That allows to solve this with an prctl(), which enables a 'restore' mode
+for timer_create() only for the current process. If this is enabled,
+timer_create() expects the requested timer ID to be provided via the
+timer_t pointer, which is used to copy the allocated timer ID back to user
+space. After creating the timers the restorer disables the 'restore' mode
+via prctl() and timer_create() regains it's normal behaviour.
+
+This is backwards compatible because the prctl() fails on older kernels and
+CRIU can fall back to the linear timer ID mechanism. CRIU versions which do
+not know about the prctl() just work as before.
+
+There is also no dependency on library changes as the CRIU restorer uses
+the raw syscalls because it has to avoid modifying the state of the to be
+restored process.
+
+The series also reworks the /proc/$PID/timers iterator which was taking
+sighand::lock across the walk, which can be trivialy replaced with RCU
+protection.
+
+The series survives all posix timer tests and did not show any regressions
+so far.
+
+The series is based on:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip timers/core
+
+and is also available from git:
+
+    git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git timers/posix
+
+Thanks,
+
+	tglx
+---
+Eric Dumazet (3):
+      posix-timers: Initialise timer before adding it to the hash table
+      posix-timers: Add cond_resched() to posix_timer_add() search loop
+      posix-timers: Make signal_struct::next_posix_timer_id an atomic_t
+
+Thomas Gleixner (8):
+      posix-timers: Cleanup includes
+      posix-timers: Remove pointless unlock_timer() wrapper
+      posix-timers: Rework timer removal
+      posix-timers: Improve hash table performance
+      posix-timers: Make per process list RCU safe
+      posix-timers: Don't iterate /proc/$PID/timers with sighand::siglock held
+      posix-timers: Provide a mechanism to allocate a given timer ID
+      selftests/timers/posix-timers: Add a test for exact allocation mode
+
+ fs/proc/base.c                                |   48 +--
+ include/linux/posix-timers.h                  |    9 
+ include/linux/sched/signal.h                  |    3 
+ include/uapi/linux/prctl.h                    |   10 
+ kernel/signal.c                               |    2 
+ kernel/sys.c                                  |    5 
+ kernel/time/posix-timers.c                    |  373 +++++++++++++++-----------
+ tools/testing/selftests/timers/posix_timers.c |   68 ++++
+ 8 files changed, 338 insertions(+), 180 deletions(-)
 
