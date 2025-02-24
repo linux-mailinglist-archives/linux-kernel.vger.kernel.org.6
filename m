@@ -1,181 +1,133 @@
-Return-Path: <linux-kernel+bounces-529403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C28A425E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:15:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B3DA425F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:17:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78BF419C724F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1563D19E1D7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627601607AA;
-	Mon, 24 Feb 2025 15:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F99189905;
+	Mon, 24 Feb 2025 15:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eImADhw7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="JSJCrmdd";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="KBJvqddd"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D161282F0;
-	Mon, 24 Feb 2025 15:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50F38DD8;
+	Mon, 24 Feb 2025 15:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740409213; cv=none; b=TydejOLRhrfW2swnZNLapkfBr1O3K1PAR6LNOR/sxVyJMQSX2bF5PEUs/5goXj4zSTamRr0b7GBE55/QWl8Y2NF35Fq+b91NB9FMvD7jsb0NOoVITqLKjsndXinpzPNUCFLXKyOjdIqq+iheZy/vAODXl+0xff4iRVYi1c+nUUY=
+	t=1740409230; cv=none; b=EFO8ZbGo9wY25Qgxow872XPlhn1Gw+qtXt8PXp+1N1nfPnH9+g4mzgP2qgGdjUAiG6rRoBwNoHCtBAy6W9jiHrTjRNj87mKKiB/XGh+7gzBfYQfbzq9s1HTyHeJgRIfvY1j1bfCn4hTx8mHGr2tVVQCIKZ7K4APwc3Nk6PPslsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740409213; c=relaxed/simple;
-	bh=Q2sCY+UOVqT5oQg+ce4z7pL1L23zo2lBGkRIUVaef0M=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=V84FDgO9bjh1cQbOGWvc15alvMlJtZjtG9gYmAdGhGYLszq/zppV1RGPqbDHW+83YHa2T72ABZweT/1TziB3V4A4vPzZ+ph4gzRMma/vMrYb2Ur9To0uLGN5uqA7d9rW35tMo7CgVYl5j6/7CBnFTtYrQRti01frt30JilEb6gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eImADhw7; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740409212; x=1771945212;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Q2sCY+UOVqT5oQg+ce4z7pL1L23zo2lBGkRIUVaef0M=;
-  b=eImADhw7yYaA65hErspMQ8w2UxhJRDipvEK8++23uhYQKFnGsU0ZiRy0
-   l1cmDhu/HsCSfysEK8y15fmHGEG2XCuTCVvA8zaXIITbW5PiQXj2lqDOD
-   sppSVXBXLjehdKG/73prEyKcDLtkGP6dVCj7V9ZBq930QtFPkFu8B7OAU
-   1Qz9+VrFZLWa0vKUSVpUr+zSwn5Kx30BXUin38xb/JZ2+50S0c8Ijaj5R
-   bXJESYFxqILFvuj8d9uzOVjrSJywIibeeXN3w6Gm/+51ULSKrS/aPECse
-   7m5OA2cSNy+LeL3FfFP+xlzkrAKwttV55nHjBMZmFM4iHYX7DNaaROcNb
-   w==;
-X-CSE-ConnectionGUID: IaSlxWLISGe5s1cX+pjoSQ==
-X-CSE-MsgGUID: c/iyyiExTge8On/qb5fhHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41044333"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="41044333"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 07:00:11 -0800
-X-CSE-ConnectionGUID: wiX6Aj1QQm+vGu/wnLyCMQ==
-X-CSE-MsgGUID: RMIyOFcUQkid03ws0vvPYA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116707650"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.233])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 07:00:06 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Feb 2025 17:00:03 +0200 (EET)
-To: Feng Tang <feng.tang@linux.alibaba.com>
-cc: Bjorn Helgaas <bhelgaas@google.com>, Lukas Wunner <lukas@wunner.de>, 
-    Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-    Liguang Zhang <zhangliguang@linux.alibaba.com>, 
-    Guanghui Feng <guanghuifeng@linux.alibaba.com>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, 
-    Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
- hotplug events
-In-Reply-To: <20250224034500.23024-3-feng.tang@linux.alibaba.com>
-Message-ID: <abb50795-df83-511a-8850-cdf30f187935@linux.intel.com>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com> <20250224034500.23024-3-feng.tang@linux.alibaba.com>
+	s=arc-20240116; t=1740409230; c=relaxed/simple;
+	bh=Hxa8pbq3jaNkyuqDkj4YzOOvo8feC1TgyuBllE+WYYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Uj3qaVihYS8gDeDAaDHTI/AWWlGgZh5RR7gofFsBIvF0uZlU3/JiBkSZ9Sy+G3LvPt5VPNAqDdKfAryJgdqn5jRNAI0a9EJ3m50pZPu1k+dDU8ryWO5sfQakauvN0ejBh96AtSerOmV7/IP0XDpreOaYYBBUcLfTueD5//lQcXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=JSJCrmdd; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=KBJvqddd reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1740409227; x=1771945227;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=T6W5ZMpXaDdvfRap/6NIAL55MOOCeVq3QJ0xPOvFRkQ=;
+  b=JSJCrmddb1ewxEIwrA0Y7GpOSgYsDmQxEIGoWSQcjDEZ/0rfAo0ehXe0
+   z1Tw5yst9qVn4uU808eU5hYJe1cZOeByHS7zRj1uzEp6UJJ+uiaRi0Mwb
+   dvh4Qog+ETvOXyvxVim/g5KUbBZZpPrhndmHHgKPhzwMI5g07OG0Xbp8Z
+   gdYuBrvD9O8ut7WYHJMZo7o5Y2GzRGIcRfzscFejKI31IcqTieqSwgKve
+   l0E6otPcDRaBwnmhpXOzPG0v/VDHrGrHm86EPBuW1yii7XjA34LLMdHwl
+   KpkLGzXq0oA85M0WVGUH22Odjo0eSI3lCJoEQuywfBMLiYJmoqhtg7cvV
+   Q==;
+X-CSE-ConnectionGUID: lvFkyRSJSjyP0h7uqar+0g==
+X-CSE-MsgGUID: fM+2bR44QEOqxtSh2K96uQ==
+X-IronPort-AV: E=Sophos;i="6.13,309,1732575600"; 
+   d="scan'208";a="42043004"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 24 Feb 2025 16:00:24 +0100
+X-CheckPoint: {67BC8988-21-C21CC984-D1047F1F}
+X-MAIL-CPID: C40F4806809927EB72D8AB495A33CC91_5
+X-Control-Analysis: str=0001.0A002117.67BC8987.00BB,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A61D016798B;
+	Mon, 24 Feb 2025 16:00:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1740409220;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=T6W5ZMpXaDdvfRap/6NIAL55MOOCeVq3QJ0xPOvFRkQ=;
+	b=KBJvqddd7Fo+MyVSzXw/Tg1rWwnj/aVyFzMT45gg9ZcLAMoxBoEzuPGyESCuNI3SsyYyVJ
+	cOIqIrzIVVpHNnH6PTq1iH7gF4u0fbWapn7sbxIP8qabLDZbZ3zBAeH6NPYAOCo02NlfwA
+	zQau4MhcsDYUx8fXYNpmMqsMvGeuu6W/BTtbOa/+oFtKYwPQCH/u9Uz6ARQpGoNmoq99sw
+	aDPAave9zUomXQi7VAUPj8CBDnqJRKIeJRjNHMX3eN7MjcVVX2erH0ruIjMt4t4dknKmpI
+	LA4RjQ84x8NBhTW5MJpuj71d1JCiro1jC6zprU0ty/5jHm/t8IFUVb7pYsDAdA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
+	linux@ew.tq-group.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: [PATCH v2 1/2] arm64: dts: imx8mp-tqma8mpql-mba8mpxl: change sound card model name
+Date: Mon, 24 Feb 2025 16:00:14 +0100
+Message-ID: <20250224150016.499055-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, 24 Feb 2025, Feng Tang wrote:
+From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 
-> There was problem reported by firmware developers that they received
-> two PCIe hotplug commands in very short intervals on an ARM server,
-> which doesn't comply with PCIe spec, and broke their state machine and
-> work flow. According to PCIe 6.1 spec, section 6.7.3.2, software needs
-> to wait at least 1 second for the command-complete event, before
-> resending the command or sending a new command.
-> 
-> In the failure case, the first PCIe hotplug command firmware received
-> is from get_port_device_capability(), which sends command to disable
-> PCIe hotplug interrupts without waiting for its completion, and the
-> second command comes from pcie_enable_notification() of pciehp driver,
-> which enables hotplug interrupts again.
-> 
-> Fix it by adding the necessary wait to comply with PCIe spec.
-> 
-> Fixes: 2bd50dd800b5 ("PCI: PCIe: Disable PCIe port services during port initialization")
-> Originally-by: Liguang Zhang <zhangliguang@linux.alibaba.com>
-> Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
-> ---
->  drivers/pci/pci.h          |  2 ++
->  drivers/pci/pcie/portdrv.c | 19 +++++++++++++++++--
->  2 files changed, 19 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 4c94a589de4a..a1138ebc2689 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -760,6 +760,7 @@ static inline void pcie_ecrc_get_policy(char *str) { }
->  void pcie_reset_lbms_count(struct pci_dev *port);
->  int pcie_lbms_count(struct pci_dev *port, unsigned long *val);
->  int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms);
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev);
->  #else
->  static inline void pcie_reset_lbms_count(struct pci_dev *port) {}
->  static inline int pcie_lbms_count(struct pci_dev *port, unsigned long *val)
-> @@ -770,6 +771,7 @@ static inline int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms)
->  {
->  	return 0;
->  }
-> +static inline void pcie_disable_hp_interrupts_early(struct pci_dev *dev) {}
->  #endif
->  
->  struct pci_dev_reset_methods {
-> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> index bb00ba45ee51..ca4f21dff486 100644
-> --- a/drivers/pci/pcie/portdrv.c
-> +++ b/drivers/pci/pcie/portdrv.c
-> @@ -230,6 +230,22 @@ int pcie_poll_sltctl_cmd(struct pci_dev *dev, int timeout_ms)
->  	return  ret;
->  }
->  
-> +void pcie_disable_hp_interrupts_early(struct pci_dev *dev)
-> +{
-> +	u16 slot_ctrl = 0;
+The card name for ALSA is generated from the model name string and
+is limited to 16 characters. Use a shorter name to prevent cutting the
+name.
 
-Unnecessary initialization
+Since nearly all starter kit mainboards for i.MX based SoM by TQ-Systems
+use the same codec with the same routing on board it is a good idea to
+use the same model name for the sound card. This allows sharing a default
+asound.conf in BSP over all the kits.
 
-> +
-> +	pcie_capability_read_word(dev, PCI_EXP_SLTCTL, &slot_ctrl);
-> +	/* Bail out early if it is already disabled */
-> +	if (!(slot_ctrl & (PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE)))
-> +		return;
-> +
-> +	pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> +		  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Changes in v2:
+* Rebased to next-20240224
+* Remove dependency on local patch
 
-Align to (. You might need to put the bits to own lines.
+ arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +	if (pcie_poll_sltctl_cmd(dev, 1000))
-> +		pci_info(dev, "Timeout on disabling PCIe hot-plug interrupt\n");
-> +}
-> +
->  /**
->   * get_port_device_capability - discover capabilities of a PCI Express port
->   * @dev: PCI Express port to examine
-> @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
->  		 * Disable hot-plug interrupts in case they have been enabled
->  		 * by the BIOS and the hot-plug service driver is not loaded.
->  		 */
-> -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
-> -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
-> +		pcie_disable_hp_interrupts_early(dev);
-
-Doesn't calling this here delay setup for all portdrv services, not just 
-hotplug? And the delay can be relatively long.
-
->  	}
->  
->  #ifdef CONFIG_PCIEAER
-> 
-
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+index ae64731266f35..23c612e80dd38 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
+@@ -234,7 +234,7 @@ linux,cma {
+ 
+ 	sound {
+ 		compatible = "fsl,imx-audio-tlv320aic32x4";
+-		model = "tq-tlv320aic32x";
++		model = "tqm-tlv320aic32";
+ 		audio-cpu = <&sai3>;
+ 		audio-codec = <&tlv320aic3x04>;
+ 	};
 -- 
- i.
+2.43.0
 
 
