@@ -1,93 +1,139 @@
-Return-Path: <linux-kernel+bounces-528642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00649A41A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94863A41A1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096E3189222E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:03:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787DC16271A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF02505B7;
-	Mon, 24 Feb 2025 10:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107E425744E;
+	Mon, 24 Feb 2025 09:59:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qY335oQc"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="pgHOFZqz"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC9F1A83E4;
-	Mon, 24 Feb 2025 09:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35627250BFF;
+	Mon, 24 Feb 2025 09:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391200; cv=none; b=WrRgBVPzZr3eNN0BpC4V7w/KznVIKn7kHpt7ZvMYYaEPRN5rViYaXd3k2WyV6DyoX0wGNxALsJT49geiAowGzLFDXzcssvC0W/NRj8vHxkGpxkhanV5EB3dfuBo3QvEr/DZnewvQTglaHHHGb/owt+O5+yjtdUqBBnckZt6Z7iw=
+	t=1740391151; cv=none; b=UxqKmOqkZFB3HmvxTpcvrXdoOCVcQWu38ezsq32XAXFvvHqJd7+2JDN/UHwPtIK+Gk46tPi+OpS+zp/t/wG4ldMjHfg22O8GyHgUsqRXye9niyE7gWOc8STbzmNuIyANh0sts+xphSYrJkyz12Lt62ZsupdEnqXLjpEe2NneMj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391200; c=relaxed/simple;
-	bh=lv2Hk4eNeUBrFbV6d3HvlUnJHDZaar2vjE2F5aIBTdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JybrnbcSlJsVd0pFcqeAxatArENbkBHfCr2rbVoESn1TlesJiT/1HFyfz7flaz90+1N/bnXBf+H7l3ZJ3sLJV81YbLzf9xaPOGAr9c0kHm9peqkuwDQSBkRPaCoj9VoxO28tdTClWWi8Z6AJdKJdeJgzpXW5oKT5isOTWeltSD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qY335oQc; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740391196;
+	s=arc-20240116; t=1740391151; c=relaxed/simple;
+	bh=Ea19bN/vjnrpIUiyzr84w6ttaRjcsA+GtfYkhI4u6CY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BYXk6G1HImOU8U8Ggxo3SA9VwlhpJiMnZmkL7jdxcxTYz6o0UnN7vJqoEhtSWjvszgF/5jI9fdwXoqlD1YxeWWoRnhzXXQbXuwq3aVFVNfqD+vjLJ7AIKDhbIYfGD1L/65cZ2BicGYjDeRnlx9FV+evYjIMrFk9/oz+xUpEjagQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=pgHOFZqz; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 82D2643418;
+	Mon, 24 Feb 2025 09:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
+	t=1740391147;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=klwkj5bN/345d6wigktEvJtFzEefX09mrddgUez4Ztw=;
-	b=qY335oQcxYja9Y5Va8YBypfkdgBZZn6NbO0D4yPJQVnmTN4qXQl3U9rXfbRB5sALl4Wsl0
-	7w5Y/WXDqxkb+1NZvxiCDV+aNWZFBbfJ5E5dgFl8LA0YPIIME6CVHGY7IqReC1kCjRvcO6
-	uBn8DITz+yXU4IQIaF+RDeuYku/t3p0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Yazen Ghannam <yazen.ghannam@amd.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH] EDAC: Simplify return statement in dct_ecc_enabled()
-Date: Mon, 24 Feb 2025 10:58:19 +0100
-Message-ID: <20250201130953.1377-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bpK9rjA2Iyr1/4shXdCRa2AwF0Vk//SchKoDcQ5rZXo=;
+	b=pgHOFZqzeHdQFKGLTV8alC7SVrURSEguknik0k81xZ5Sgkp9h8Hrnk9tUXg0CU7YU9HaiA
+	DuLoPOGFB8gRzv3smWOd9ug0P/vDOEJ8kgqVqOvjIwWLHaDMVZ21cKc0hngGakpUBZjpBI
+	ZoiSInR2ofB44v4+W38e5GTV+zVsLGgUB8wWtwABtUPywYzeadkkt6H9YA5QePlcqjaYyN
+	bovfoBR9pnOzH4VTa8DdwpoxF/ovCh0KVPmHluAqoqOWL0GjX1Y1x76JsRI01wlPH+nop0
+	0MJ7NmPSFO0ky0cb+Csd6h0bnrzqwpeMP2/XW73HbhXNC6Ddei4FpSZxZ2ibGA==
+From: nicolas.bouchinet@clip-os.org
+To: linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	linux-scsi@vger.kernel.org,
+	codalist@coda.cs.cmu.edu,
+	linux-nfs@vger.kernel.org
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Joel Granados <j.granados@samsung.com>,
+	Clemens Ladisch <clemens@ladisch.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Jan Harkes <jaharkes@cs.cmu.edu>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Zhu Yanjun <yanjun.zhu@linux.dev>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v2 5/6] sysctl/infiniband: Fixes infiniband sysctl bounds
+Date: Mon, 24 Feb 2025 10:58:20 +0100
+Message-ID: <20250224095826.16458-6-nicolas.bouchinet@clip-os.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-GND-State: clean
+X-GND-Score: -60
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhorhhtvggutfgvtghiphdvucdlgedtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpehnihgtohhlrghsrdgsohhutghhihhnvghtsegtlhhiphdqohhsrdhorhhgnecuggftrfgrthhtvghrnhepteehfeetkeeujeethfehieelhfejfeduteejieelveegfeefieeuheeiteethfevnecukfhppeeltddrieefrddvgeeirddukeejnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehinhgvthepledtrdeifedrvdegiedrudekjedphhgvlhhopegrrhgthhhlihhnuhigrddrpdhmrghilhhfrhhomhepnhhitgholhgrshdrsghouhgthhhinhgvthestghlihhpqdhoshdrohhrghdpnhgspghrtghpthhtohepvdejpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgumhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgtshhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghouggrlhhishhtsegtohgurgdrtghsrdgtmhhurdgvughupdhrt
+ ghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtohhlrghsrdgsohhutghhihhnvghtsehsshhirdhgohhuvhdrfhhrpdhrtghpthhtohepjhdrghhrrghnrgguohhssehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptghlvghmvghnsheslhgrughishgthhdruggv
+X-GND-Sasl: nicolas.bouchinet@clip-os.org
 
-Simplify the return statement to improve the code's readability.
+From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Bound infiniband iwcm and ucma sysctl writings between SYSCTL_ZERO
+and SYSCTL_INT_MAX.
+
+The proc_handler has thus been updated to proc_dointvec_minmax.
+
+Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
 ---
- drivers/edac/amd64_edac.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/infiniband/core/iwcm.c | 4 +++-
+ drivers/infiniband/core/ucma.c | 4 +++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 8414ceb43e4a..1f106b4fafdf 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -3355,10 +3355,7 @@ static bool dct_ecc_enabled(struct amd64_pvt *pvt)
+diff --git a/drivers/infiniband/core/iwcm.c b/drivers/infiniband/core/iwcm.c
+index 7e3a55349e107..f4486cbd8f45a 100644
+--- a/drivers/infiniband/core/iwcm.c
++++ b/drivers/infiniband/core/iwcm.c
+@@ -109,7 +109,9 @@ static struct ctl_table iwcm_ctl_table[] = {
+ 		.data		= &default_backlog,
+ 		.maxlen		= sizeof(default_backlog),
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_INT_MAX,
+ 	},
+ };
  
- 	edac_dbg(3, "Node %d: DRAM ECC %s.\n", nid, (ecc_en ? "enabled" : "disabled"));
+diff --git a/drivers/infiniband/core/ucma.c b/drivers/infiniband/core/ucma.c
+index 02f1666f3cbab..6e700b9740331 100644
+--- a/drivers/infiniband/core/ucma.c
++++ b/drivers/infiniband/core/ucma.c
+@@ -69,7 +69,9 @@ static struct ctl_table ucma_ctl_table[] = {
+ 		.data		= &max_backlog,
+ 		.maxlen		= sizeof max_backlog,
+ 		.mode		= 0644,
+-		.proc_handler	= proc_dointvec,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ZERO,
++		.extra2		= SYSCTL_INT_MAX,
+ 	},
+ };
  
--	if (!ecc_en || !nb_mce_en)
--		return false;
--	else
--		return true;
-+	return ecc_en && nb_mce_en;
- }
- 
- static bool umc_ecc_enabled(struct amd64_pvt *pvt)
 -- 
 2.48.1
 
