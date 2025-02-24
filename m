@@ -1,502 +1,328 @@
-Return-Path: <linux-kernel+bounces-528258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05042A4158F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:40:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9A08A4158E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:39:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C693F16B01A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:38:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155923AE80A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EAD2054FD;
-	Mon, 24 Feb 2025 06:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5F9207A11;
+	Mon, 24 Feb 2025 06:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HbBp9Gaf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qXv8XUyw"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202742063D2;
-	Mon, 24 Feb 2025 06:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33399205502;
+	Mon, 24 Feb 2025 06:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740379076; cv=none; b=IwnPAhNsWFsyokXrQbZrzKw4eBN4LK/KjiaKv0Cb46bcLcsd2O0O/SLiQwUdP5Y7pCsCxriC78AALsdlXY7rNwptHxUCOaz8UllD23mE+KxNEZuCmM6g04bsMLeP7DkcsZaPzakCY3hUHazV1v4y6nuPF54XBG0rLEYNYocSfKo=
+	t=1740379154; cv=none; b=p4efeXUbPTIfb5yAafqkl0bOvlsrqHshMyDb+JMTM7fB0AguxDDw4Iq+Ob7E56t/nM8L4uAcWLDoL0Vkhs9aI/Mnnx5B6RuBURCJba8jldObPdarpD49u7fBRmTBIxG7Q/TpiEa3P4ZyaiBO172ViLkyqqhQ8K4Ws/SnCKxy5AM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740379076; c=relaxed/simple;
-	bh=0n/z/yxAzQdlfeYCfEyHuZztg2baPOSbRxEFNHO3KzU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RMnLNcDhQsr0SsPrafOsw9oRwCkxFmgKGu/FzL6qdZSAWIou7lesKo/KwjnFJ7o058s2EfmT/AehQ04MH3VRqBtw5IGAv8UWWansPZQM+ABzOrBR6c3WXfazxpWt3pBEvTMa0pfNS6Tt2z6qy55Mvo29glKhlPgwXSupxY6D9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HbBp9Gaf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51NNQROH003925;
-	Mon, 24 Feb 2025 06:37:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PNrL3awcS3WVie8ozSmpRRH24d9HMe5QRgpY4t1QGKw=; b=HbBp9GafelAALDiO
-	3oulfI9Lbhxd98CcKLaGHZ6Cdk0NK1hQrkhjfyVHQkyhz3GtP6uyJng9j9ZHIg2m
-	SPqqAshfuERUk0gD8D9R5o2hHK4sV4gH29pCzrNAjSFIouU4Z23MUkynXkfsHs0k
-	1BKmKXSUxSLcnerXJRagaI9ft5HhstQiSqNO5PhwHL0lbz3JXCTh1ECFIZatBRfR
-	Yo3050MqhDZfdadXfDe1og6/gVkMbsHFzEeKKTmc4EiUAcUBT7H+00yas3Q8XaIH
-	rT/Cwf6N9grmvy9ZRSnq7+ElYTTA/JSuMbCG1B98VlQSkAhSp5dMoHZgm8rHqI8p
-	TeDolQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6y6kt8n-1
+	s=arc-20240116; t=1740379154; c=relaxed/simple;
+	bh=ZCJV7w+vqlC/DJMOFnOmBMcotEXtBYbuv4Hh1ibzxR4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lx8cfy3Yq7JYcSPCK3p63EAWSiSJ3Yu7aLSavJn/Ms0zR04dBo4v9ntpdRIsh93salYaT7cWrjSZQIs7APztLh0sAL94fW10FkuDIW7tT/75XRDfgun+V3vjKwsUHf3MOtOV+MFUcYnVEQnXiFd0qI5LuXQsV9vzS5rEIHj6jXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qXv8XUyw; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O2DRwE020490;
+	Mon, 24 Feb 2025 06:39:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZCJV7w
+	+vqlC/DJMOFnOmBMcotEXtBYbuv4Hh1ibzxR4=; b=qXv8XUywW4VSPGODdD5lCg
+	yOiLbXERIcLPCtHOdrEoz0FDDTNYDI4qzLNLNI2vVpnMKm/zgQJJwvRIOMmTtU8b
+	iSzHwyqn+zlmaPTe9anNS0xrGZ0sSTk8dEwjBq/5GN+QY4xCGS5nB3BcX2o4WtvT
+	axr6go1Hvu/6HpgbkA2hj4o3cRzJeDPV5LAprWuP5i8PMkfnbZwsLIaVVij5yu3D
+	C++rgJJtS3Nd++lOt6sHE2AI9PyX2Hwtq+f3KMadt71DAEJp7Fi9j2yrqyD1r6vG
+	wIUUAr21Ra8iRFJbeec1DTOnRAioYlOunvagrZYYEgxyOJc5y3TFHWmu0idl0pxQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 450cta1d45-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 06:37:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O6bmtL016356
+	Mon, 24 Feb 2025 06:39:04 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51O305ev012470;
+	Mon, 24 Feb 2025 06:39:03 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwse1e0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 06:37:48 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Feb
- 2025 22:37:42 -0800
-Message-ID: <601051fd-ed5a-49be-82fd-25f4a6efdb46@quicinc.com>
-Date: Mon, 24 Feb 2025 12:07:40 +0530
+	Mon, 24 Feb 2025 06:39:03 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51O6d3fu27984448
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 06:39:03 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3611458059;
+	Mon, 24 Feb 2025 06:39:03 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 43B5D58058;
+	Mon, 24 Feb 2025 06:39:00 +0000 (GMT)
+Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com (unknown [9.124.212.4])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Feb 2025 06:38:59 +0000 (GMT)
+Message-ID: <3c36b52e1dab2194e1a5babbfa333e4938cdfc85.camel@linux.ibm.com>
+Subject: Re: [RFT][PATCH v1 0/5] cpuidle: menu: Avoid discarding useful
+ information when processing recent idle intervals
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM
+ <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano
+	 <daniel.lezcano@linaro.org>,
+        Christian Loehle <christian.loehle@arm.com>,
+        Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+        aboorvad@linux.ibm.com
+Date: Mon, 24 Feb 2025 12:08:58 +0530
+In-Reply-To: <d0c013d5d2a9251d5dc468446f2a08ae8a7a8953.camel@linux.ibm.com>
+References: <1916668.tdWV9SEqCh@rjwysocki.net>
+	 <d0c013d5d2a9251d5dc468446f2a08ae8a7a8953.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] clk: qcom: videocc: Add support to attach multiple
- power domains
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Taniya
- Das" <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250218-videocc-pll-multi-pd-voting-v1-0-cfe6289ea29b@quicinc.com>
- <20250218-videocc-pll-multi-pd-voting-v1-4-cfe6289ea29b@quicinc.com>
- <eec2869a-fa8f-4aaf-9fc5-e7a8baf0f864@linaro.org>
- <huluiiaqmunvmffoqadrhssd3kl2toutqtcw7rzamv3sqdglsf@7lz66x4sj3gv>
- <d4c4ecf0-9094-4341-8711-78a48e5d1344@linaro.org>
- <d444f1fb-42a0-48ef-83bc-d5aab9282b22@quicinc.com>
- <gzjyyl2kzv52zsewn5zf6ei65fymyi4pspvsmsjaqj5sklfxvc@bkg46saulni5>
- <fcc31cc7-67bd-4102-a53f-ebe66b4fd1a7@linaro.org>
- <3da96df2-1127-49bf-8114-282cc488c194@quicinc.com>
- <6b0684a0-a519-463f-b7be-176a4752a786@linaro.org>
- <e9bbf39c-dde7-4ace-b134-da15ca092c6a@quicinc.com>
- <b1cf82bf-90a1-4b87-b392-b1f186e97a7c@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <b1cf82bf-90a1-4b87-b392-b1f186e97a7c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: vsR9XwTtqdqcKFztbHiVYZpSPXDBPuGX
-X-Proofpoint-GUID: vsR9XwTtqdqcKFztbHiVYZpSPXDBPuGX
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: kOpueUTOhO3Ti1SifO_A0U_XPX2Jhv3R
+X-Proofpoint-ORIG-GUID: kOpueUTOhO3Ti1SifO_A0U_XPX2Jhv3R
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-24_02,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240047
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 suspectscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502240042
 
+T24gTW9uLCAyMDI1LTAyLTI0IGF0IDExOjU3ICswNTMwLCBBYm9vcnZhIERldmFyYWphbiB3cm90
+ZToKCj4gT24gVGh1LCAyMDI1LTAyLTA2IGF0IDE1OjIxICswMTAwLCBSYWZhZWwgSi4gV3lzb2Nr
+aSB3cm90ZToKPiAKPiA+IEhpIEV2ZXJ5b25lLAo+ID4gCj4gPiAuLi4KPiA+IAo+ID4gCj4gPiAK
+PiAKPiBIaSBSYWZhZWwsCj4gCj4gSSByYW4gc29tZSB0ZXN0cyB1c2luZyBhIGNwdWlkbGUgbWlj
+cm9iZW5jaG1hcmsgdGhhdCBJIGhhdmUgWzFdOgoKSSBtaXNzZWQgaW5jbHVkaW5nIHRoZSBzeXN0
+ZW0gY29uZmlndXJhdGlvbiBpbiBteSBwcmV2aW91cyBlbWFpbCwgc28gaGVyZSBpdCBpcywKCkkg
+Y2FycmllZCBvdXQgdGhlc2UgZXhwZXJpbWVudHMgb24gYSBQb3dlcjEwIC0gcHNlcmllcyBsb2dp
+Y2FsIHBhcnRpdGlvbiB3aXRoCnRoZSBmb2xsb3dpbmcgY29uZmlndXJhdGlvbjoKCgokIGxzY3B1
+CkFyY2hpdGVjdHVyZTogICAgICAgICAgICAgcHBjNjRsZQogIEJ5dGUgT3JkZXI6ICAgICAgICAg
+ICAgIExpdHRsZSBFbmRpYW4KQ1BVKHMpOiAgICAgICAgICAgICAgICAgICA4MAogIE9uLWxpbmUg
+Q1BVKHMpIGxpc3Q6ICAgIDAtNzkKTW9kZWwgbmFtZTogICAgICAgICAgICAgICBQT1dFUjEwIChh
+cmNoaXRlY3RlZCksIGFsdGl2ZWMgc3VwcG9ydGVkCiAgTW9kZWw6ICAgICAgICAgICAgICAgICAg
+Mi4wIChwdnIgMDA4MCAwMjAwKQogIFRocmVhZChzKSBwZXIgY29yZTogICAgIDgKICBDb3JlKHMp
+IHBlciBzb2NrZXQ6ICAgICAxMAogIFNvY2tldChzKTogICAgICAgICAgICAgIDEKICBQaHlzaWNh
+bCBzb2NrZXRzOiAgICAgICA4CiAgUGh5c2ljYWwgY2hpcHM6ICAgICAgICAgMQogIFBoeXNpY2Fs
+IGNvcmVzL2NoaXA6ICAgIDEwClZpcnR1YWxpemF0aW9uIGZlYXR1cmVzOiAgCiAgSHlwZXJ2aXNv
+ciB2ZW5kb3I6ICAgICAgcEh5cAogIFZpcnR1YWxpemF0aW9uIHR5cGU6ICAgIHBhcmEKQ2FjaGVz
+IChzdW0gb2YgYWxsKTogICAgICAKICBMMWQ6ICAgICAgICAgICAgICAgICAgICA2NDAgS2lCICgy
+MCBpbnN0YW5jZXMpCiAgTDFpOiAgICAgICAgICAgICAgICAgICAgOTYwIEtpQiAoMjAgaW5zdGFu
+Y2VzKQogIEwyOiAgICAgICAgICAgICAgICAgICAgIDIwIE1pQiAoMjAgaW5zdGFuY2VzKQogIEwz
+OiAgICAgICAgICAgICAgICAgICAgIDgwIE1pQiAoMjAgaW5zdGFuY2VzKQpOVU1BOiAgICAgICAg
+ICAgICAgICAgICAgIAogIE5VTUEgbm9kZShzKTogICAgICAgICAgIDEKICBOVU1BIG5vZGU0IENQ
+VShzKTogICAgICAwLTc5CgokIGNwdXBvd2VyIGlkbGUtaW5mbwpDUFVpZGxlIGRyaXZlcjogcHNl
+cmllc19pZGxlCkNQVWlkbGUgZ292ZXJub3I6IG1lbnUKYW5hbHl6aW5nIENQVSA0NzoKCk51bWJl
+ciBvZiBpZGxlIHN0YXRlczogMgpBdmFpbGFibGUgaWRsZSBzdGF0ZXM6IHNub296ZSBDRURFCnNu
+b296ZToKRmxhZ3MvRGVzY3JpcHRpb246IHNub296ZQpMYXRlbmN5OiAwClJlc2lkZW5jeTogMApV
+c2FnZTogNTg5OQpEdXJhdGlvbjogMzYwOTQwCkNFREU6CkZsYWdzL0Rlc2NyaXB0aW9uOiBDRURF
+CkxhdGVuY3k6IDEyClJlc2lkZW5jeTogMTIwClVzYWdlOiAzMTAzNwpEdXJhdGlvbjogMTY2NjQ0
+MDkxNzMKCgo+IAo+IFRoZSB0ZXN0IGRvZXMgYSB1bmlmb3JtIGRpc3RyaWJ1dGlvbiBvZiBpZGxl
+IGR1cmF0aW9ucywgd2hpY2ggbWVhbnMgdGhlIHBhc3QgZWlnaHQgaWRsZSBpbnRlcnZhbHMgYXBw
+cm94aW1hdGVseSBtYXRjaCAKPiB0aGUgc2xlZXAgZHVyYXRpb24uIFNvIGFzIGFudGljaXBhdGVk
+LCB0aGlzIGNoYW5nZS1zZXQgZG9lcyBub3QgaW1wYWN0IHRoaXMgY2FzZSwgYW5kIHRoZSBiZWhh
+dmlvciByZW1haW5zIG1vc3RseQo+IGNvbnNpc3RlbnQgZXZlbiBhZnRlciBhcHBseWluZyB0aGUg
+cGF0Y2guCj4gCj4gwqBQaXBlIGJhc2VkIHdha2V1cCAtIEFib3ZlICUKPiDCoC0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KPiA+IFNsZWVwIHRpbWUgKHMpwqAgfCBNZW51IE5vIFBhdGNoKCUpIHwgTWVudSBQYXRjaCgl
+KXwgVGVvIE5vIFBhdGNoICglKSB8Cj4gPiAtLS0tLS0tLS0tLS0tLS0tIHwtLS0tLS0tLS0tLS0t
+LS0tLS18LS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLS0tfAo+ID4gNcKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKg
+wqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDEwwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAw
+JcKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0KPiA+IDMwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA5OS45NyXCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDk5Ljk2JcKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8Cj4gPiAxMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA5OC42MSXCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDk4LjY3JcKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8Cj4gPiAxMjDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA5Ny44OCXCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDk4LjQyJcKgwqDCoMKgwqDCoCB8IDEuMDMlwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8IC0+ICgqKQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gMTMwwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHwgMi44MiXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS4yNiXCoMKgwqDCoMKg
+wqDCoCB8IDAuMjIlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAxNTDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgfCAxLjY4JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjQzJcKgwqDCoMKg
+wqDCoMKgIHwgMC4zMiXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDIwMMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDIuMDklwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuOTElwqDCoMKg
+wqDCoMKgwqAgfCAwLjE1JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMzAwwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHwgMS4yMiXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS4yMiXCoMKg
+wqDCoMKgwqDCoCB8IDAuMTklwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiA0MDDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfCAxLjIwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjIxJcKg
+wqDCoMKgwqDCoMKgIHwgMC4xOSXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDUwMMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuMTYlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuMTIl
+wqDCoMKgwqDCoMKgwqAgfCAwLjEyJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+IC0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQo+IAo+IMKgUGlwZSBiYXNlZCB3YWtldXAgLSBCZWxvdyAlCj4gwqAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLQo+ID4gU2xlZXAgdGltZSAocynCoCB8IE1lbnUgTm8gUGF0Y2goJSkgfCBNZW51IFBhdGNo
+KCUpfCBUZW8gTm8gUGF0Y2ggKCUpIHwKPiA+IC0tLS0tLS0tLS0tLS0tLS0gfC0tLS0tLS0tLS0t
+LS0tLS0tLXwtLS0tLS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS0tLS18Cj4gPiA1wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAl
+wqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMTDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAu
+MDAlwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMzDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
+IDAuMDAlwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4g
+MTAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHwgMC4wMCXCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4g
+PiAxMjDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAyLjc2JcKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfCAxLjE0JcKgwqDCoMKgwqDCoMKgIHwgMC45MyXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwK
+PiA+IDEzMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDMuMTElwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB8IDEuMTMlwqDCoMKgwqDCoMKgwqAgfCAwLjEyJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fAo+ID4gMTUwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS4zNCXCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHwgMS4xNiXCoMKgwqDCoMKgwqDCoCB8IDAuMTglwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8Cj4gPiAyMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjM4JcKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgfCAxLjE1JcKgwqDCoMKgwqDCoMKgIHwgMC4wOSXCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHwKPiA+IDMwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuMzMlwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8IDEuMjElwqDCoMKgwqDCoMKgwqAgfCAwLjExJcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfAo+ID4gNDAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS4zNiXCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHwgMS4yNSXCoMKgwqDCoMKgwqDCoCB8IDAuMTAlwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8Cj4gPiA1MDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjI1JcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgfCAxLjIyJcKgwqDCoMKgwqDCoMKgIHwgMC4xMCXCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHwKPiA+IC0tLS0tLS0tLS0tLS0tLS0gfC0tLS0tLS0tLS0tLS0tLS0tLXwtLS0t
+LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS0tLS18Cj4gCj4gwqBUaW1lIGJhc2VkIHdha2V1cCAt
+IEFib3ZlICUKPiDCoC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBTbGVlcCB0aW1lIChzKcKgIHwgTWVudSBO
+byBQYXRjaCglKSB8IE1lbnUgUGF0Y2goJSl8IFRlbyBObyBQYXRjaCAoJSkgfAo+ID4gLS0tLS0t
+LS0tLS0tLS0tLSB8LS0tLS0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0t
+LS0tLS0tLXwKPiA+IDXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8Cj4gPiAxMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8Cj4gPiAzMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAxMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAx
+JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDEyMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAu
+MDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqAgfCAwLjE1JcKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMTMwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwg
+MTUuODQlwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjE0JcKgwqDCoMKgwqDCoMKgIHwgMC4yMyXC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDE1MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8
+IDAuMzklwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMjMlwqDCoMKgwqDCoMKgwqAgfCAwLjQ4
+JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMjAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHwgMC45NSXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC44NyXCoMKgwqDCoMKgwqDCoCB8IDAu
+MTAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAzMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfCAwLjIwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAwLjE3JcKgwqDCoMKgwqDCoMKgIHwg
+MC4xNSXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDQwMMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB8IDAuMTQlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMTIlwqDCoMKgwqDCoMKgwqAg
+fCAwLjE3JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gNTAwwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHwgMC4xMCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4yMCXCoMKgwqDCoMKgwqDC
+oCB8IDAuMTElwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAtLS0tLS0tLS0tLS0tLS0tIHwt
+LS0tLS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS18LS0tLS0tLS0tLS0tLS0tLS0tfAo+IAo+
+IMKgVGltZSBiYXNlZCB3YWtldXAgLSBCZWxvdyAlCj4gwqAtLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gU2xl
+ZXAgdGltZSAocynCoCB8IE1lbnUgTm8gUGF0Y2goJSkgfCBNZW51IFBhdGNoKCUpfCBUZW8gTm8g
+UGF0Y2ggKCUpIHwKPiA+IC0tLS0tLS0tLS0tLS0tLS0gfC0tLS0tLS0tLS0tLS0tLS0tLXwtLS0t
+LS0tLS0tLS0tLXwtLS0tLS0tLS0tLS0tLS0tLS18Cj4gPiA1wqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKg
+wqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMTDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDC
+oMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMzDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKg
+wqDCoMKgwqAgfCAwLjAwJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMTAwwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMC4wMCXCoMKg
+wqDCoMKgwqDCoCB8IDAuMDAlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAxMjDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgfCAxLjg1JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjY2JcKg
+wqDCoMKgwqDCoMKgIHwgMi42NyXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDEzMMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCB8IDE2LjcxJcKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS4xMyXC
+oMKgwqDCoMKgwqDCoCB8IDEuMTElwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiAxNTDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjM2JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjE2
+JcKgwqDCoMKgwqDCoMKgIHwgMS4xMyXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IDIwMMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuMzMlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEu
+MTQlwqDCoMKgwqDCoMKgwqAgfCAxLjE5JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gMzAw
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwgMS40NCXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwg
+MS4yMCXCoMKgwqDCoMKgwqDCoCB8IDEuMTclwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiA0
+MDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAxLjUxJcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+fCAxLjIxJcKgwqDCoMKgwqDCoMKgIHwgMS4yMSXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHwKPiA+
+IDUwMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8IDEuNDIlwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8IDEuMjQlwqDCoMKgwqDCoMKgwqAgfCAxLjI1JcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfAo+
+ID4gLS0tLS0tLS0tLS0tLS0tLSB8LS0tLS0tLS0tLS0tLS0tLS0tfC0tLS0tLS0tLS0tLS0tfC0t
+LS0tLS0tLS0tLS0tLS0tLXwKPiAKPiAKPiAoKikgLSBBYm92ZSBhbmQgYmVsb3cgdmFsdWVzIGFy
+ZSBoaWdoZXIgZXZlbiB3aXRob3V0IHRoZSBwYXRjaCB3aXRoIG1lbnUgZ292ZXJub3IsCj4gwqDC
+oMKgwqDCoCB0aGlzIGlzc3VlIHN0aWxsIHBlcnNpc3RzLCBhcyBwcmV2aW91c2x5IHJlcG9ydGVk
+IGluIFsyXS4gSSB3aWxsIGludmVzdGlnYXRlCj4gwqDCoMKgwqDCoCBmdXJ0aGVyIGFuZCBzdWJt
+aXQgYSByZXZpc2lvbiB0byBnZXQgYWRkaXRpb25hbCBmZWVkYmFjay4KPiAKPiBJIGFsc28gY2Fy
+cmllZCBvdXQgc29tZSBiZW5jaG1hcmtzIHVzaW5nIHBnYmVuY2g6Cj4gCj4gcGdiZW5jaCBSZXN1
+bHRzCj4gCj4gV2l0aG91dCBQYXRjaDoKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gUnVuwqAg
+fCBUcmFuc2FjdGlvbnMgUHJvY2Vzc2VkIHwgTGF0ZW5jeSBBdmcgKG1zKSB8IFRQUyAod2l0aG91
+dCBpbml0IHRpbWUpIHwKPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gwqAxwqDCoCB8wqAgMTEs
+OTM2LDMyN8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDAuMDUwwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgfMKgIDE5OCw5NDYuMTQxMDI1wqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiDCoDLCoMKgIHzCoCAx
+MSw4OTksNTQwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMC4wNTDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCB8wqAgMTk4LDMzMy4wOTc1NDfCoMKgwqDCoMKgwqDCoMKgIHwKPiA+IMKgM8KgwqAgfMKg
+IDExLDg3MCw3OTLCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAwLjA1McKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHzCoCAxOTcsODUzLjcyODYxNMKgwqDCoMKgwqDCoMKgwqAgfAo+ID4gwqA0wqDCoCB8
+wqAgMTEsOTAxLDY3MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDAuMDUwwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgfMKgIDE5OCwzNjguNTI2MTM5wqDCoMKgwqDCoMKgwqDCoCB8Cj4gPiDCoDXCoMKg
+IHzCoCAxMSw5MjIsMDQ2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMC4wNTDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCB8wqAgMTk4LDcwOC4xMTIyNDPCoMKgwqDCoMKgwqDCoMKgIHwKPiAtLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQo+ID4gQXZnwqAgfMKgIDExLDkwNiwwNzXCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHzCoCAwLjA1MDLCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDE5OCw0NDEuOTIxMTE0wqDCoMKg
+wqDCoMKgwqDCoCB8Cj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAKPiBXaXRoIFBhdGNoOgo+IC0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBSdW7CoCB8IFRyYW5zYWN0aW9ucyBQcm9jZXNzZWQgfCBM
+YXRlbmN5IEF2ZyAobXMpIHwgVFBTICh3aXRob3V0IGluaXQgdGltZSkgfAo+IC0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tCj4gPiDCoDHCoMKgIHzCoCAxMiwwNTIsODY1wqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB8wqAgMC4wNTDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMjAwLDg4OC40OTI3NzHCoMKgwqDC
+oMKgwqDCoMKgIHwKPiA+IMKgMsKgwqAgfMKgIDEyLDA1OCwzNTnCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHzCoCAwLjA1MMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyMDAsOTc5Ljg5NTMyNcKgwqDC
+oMKgwqDCoMKgwqAgfAo+ID4gwqAzwqDCoCB8wqAgMTIsMDcxLDAxMsKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgfMKgIDAuMDUwwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDIwMSwxOTAuODA5NzM0wqDC
+oMKgwqDCoMKgwqDCoCB8Cj4gPiDCoDTCoMKgIHzCoCAxMiwwNTQsNjQ2wqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8wqAgMC4wNTDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgMjAwLDkxOC4wNzY3MzbC
+oMKgwqDCoMKgwqDCoMKgIHwKPiA+IMKgNcKgwqAgfMKgIDEyLDA1MywwODfCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIHzCoCAwLjA1MMKgwqDCoMKgwqDCoMKgwqDCoMKgIHzCoCAyMDAsODkyLjA0NTU4
+McKgwqDCoMKgwqDCoMKgwqAgfAo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiBBdmfCoCB8wqAg
+MTIsMDU4LDM5NMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDAuMDUwMMKgwqDCoMKgwqDCoMKg
+wqDCoCB8wqAgMjAwLDk3My40NjQwMjnCoMKgwqDCoMKgwqDCoMKgIHwKPiAtLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0KPiAKPiBQZXJmb3JtYW5jZSBJbXByb3ZlbWVudCBBZnRlciBQYXRjaDoKPiAtLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ID4gTWV0cmljwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCB8IFdpdGhvdXQgUGF0Y2ggKEF2Zy4pfCBXaXRoIFBhdGNoIChBdmcuKcKg
+IHwgJSBJbXByb3ZlbWVudCB8Cj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiA+IFRy
+YW5zYWN0aW9ucyBQcm9jZXNzZWTCoCB8wqAgMTEsOTA2LDA3NcKgwqDCoMKgwqDCoMKgwqAgfMKg
+IDEyLDA1OCwzOTTCoMKgwqDCoMKgwqDCoCB8wqAgKzEuMjglwqDCoMKgwqDCoMKgIHwgCj4gPiBM
+YXRlbmN5IEF2ZyAobXMpwqDCoMKgwqDCoMKgwqAgfMKgIDAuMDUwMsKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB8wqAgMC4wNTAwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqAgLTAuNDAlwqDCoMKg
+wqDCoMKgIHwKPiA+IFRQUyAod2l0aG91dCBpbml0IHRpbWUpIHzCoCAxOTgsNDQxLjkyMTExNMKg
+wqDCoMKgIHzCoCAyMDAsOTczLjQ2NDAyOcKgwqDCoCB8wqAgKzEuMjglwqDCoMKgwqDCoMKgIHwK
+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+IAo+IFNvIHdpdGggdGhlIHBhdGNoIHBn
+YmVuY2gncyAiVHJhbnNhY3Rpb25zIFByb2Nlc3NlZCIgaW1wcm92ZXMgYnkgfjEuMjglLCBhbmQg
+SSBkaWQgbm90IG9ic2VydmUKPiBhbnkgbWFqb3IgdmFyaWF0aW9ucyBvbiBvdGhlciBiZW5jaG1h
+cmtzIHdpdGggdGhlIHBhdGNoLgo+IAo+IFNvIGZvciB0aGUgZW50aXJlIHNlcmllczoKPiAKPiBU
+ZXN0ZWQtYnk6IEFib29ydmEgRGV2YXJhamFuIDxhYm9vcnZhZEBsaW51eC5pYm0uY29tPgo+IAo+
+IEknbSBhbHNvIHRyeWluZyBhIG1pbmltYWwgdW5pdCBmdXp6LXRlc3Qgd2l0aCB0aGUgcHJlLSBh
+bmQgcG9zdC0gcGF0Y2hlZCB2ZXJzaW9uIG9mIHRoZSBnZXRfdHlwaWNhbF9pbnRlcnZhbMKgCj4g
+ZnVuY3Rpb24gdG8gdW5kZXJzdGFuZCB0aGlzIGJldHRlciwgd2lsbCBwb3N0IHRoZSByZXN1bHRz
+IHNvb24uCj4gCj4gWzFdIC3CoGh0dHBzOi8vZ2l0aHViLmNvbS9BYm9vcnZhRGV2YXJhamFuL2xp
+bnV4LXV0aWxzL3RyZWUvbWFpbi9jcHVpZGxlL2NwdWlkbGVfd2FrZXVwCj4gWzJdIC0gaHR0cHM6
+Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjQwODA5MDczMTIwLjI1MDk3NC0xLWFib29ydmFkQGxp
+bnV4LmlibS5jb20vCj4gCj4gCj4gVGhhbmtzLAo+IEFib29ydmEKCg==
 
-
-On 2/21/2025 6:02 PM, Bryan O'Donoghue wrote:
-> On 21/02/2025 11:43, Jagadeesh Kona wrote:
->>
->>
->> On 2/21/2025 4:01 AM, Bryan O'Donoghue wrote:
->>> On 20/02/2025 07:15, Jagadeesh Kona wrote:
->>>>
->>>>
->>>> On 2/19/2025 5:37 PM, Bryan O'Donoghue wrote:
->>>>> On 19/02/2025 11:59, Dmitry Baryshkov wrote:
->>>>>> On Wed, Feb 19, 2025 at 05:11:03PM +0530, Jagadeesh Kona wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 2/19/2025 6:51 AM, Bryan O'Donoghue wrote:
->>>>>>>> On 18/02/2025 17:19, Dmitry Baryshkov wrote:
->>>>>>>>> On Tue, Feb 18, 2025 at 03:46:15PM +0000, Bryan O'Donoghue wrote:
->>>>>>>>>> On 18/02/2025 14:26, Jagadeesh Kona wrote:
->>>>>>>>>>> During boot-up, the PLL configuration might be missed even after
->>>>>>>>>>> calling pll_configure() from the clock controller probe. This can
->>>>>>>>>>> happen because the PLL is connected to one or more rails that are
->>>>>>>>>>> turned off, and the current clock controller code cannot enable
->>>>>>>>>>> multiple rails during probe. Consequently, the PLL may be activated
->>>>>>>>>>> with suboptimal settings, causing functional issues.
->>>>>>>>>>>
->>>>>>>>>>> To properly configure the video PLLs in the probe on SM8450, SM8475,
->>>>>>>>>>> SM8550, and SM8650 platforms, the MXC rail must be ON along with MMCX.
->>>>>>>>>>> Therefore, add support to attach multiple power domains to videocc on
->>>>>>>>>>> these platforms.
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>>>>>>>>> ---
->>>>>>>>>>>       drivers/clk/qcom/videocc-sm8450.c | 4 ++++
->>>>>>>>>>>       drivers/clk/qcom/videocc-sm8550.c | 4 ++++
->>>>>>>>>>>       2 files changed, 8 insertions(+)
->>>>>>>>>>>
->>>>>>>>>>> diff --git a/drivers/clk/qcom/videocc-sm8450.c b/drivers/clk/qcom/videocc-sm8450.c
->>>>>>>>>>> index f26c7eccb62e7eb8dbd022e2f01fa496eb570b3f..b50a14547336580de88a741f1d33b126e9daa848 100644
->>>>>>>>>>> --- a/drivers/clk/qcom/videocc-sm8450.c
->>>>>>>>>>> +++ b/drivers/clk/qcom/videocc-sm8450.c
->>>>>>>>>>> @@ -437,6 +437,10 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
->>>>>>>>>>>           struct regmap *regmap;
->>>>>>>>>>>           int ret;
->>>>>>>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8450_desc);
->>>>>>>>>>> +    if (ret)
->>>>>>>>>>> +        return ret;
->>>>>>>>>>> +
->>>>>>>>>>>           ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>>>>>>           if (ret)
->>>>>>>>>>>               return ret;
->>>>>>>>>>> diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
->>>>>>>>>>> index 7c25a50cfa970dff55d701cb24bc3aa5924ca12d..d4b223d1392f0721afd1b582ed35d5061294079e 100644
->>>>>>>>>>> --- a/drivers/clk/qcom/videocc-sm8550.c
->>>>>>>>>>> +++ b/drivers/clk/qcom/videocc-sm8550.c
->>>>>>>>>>> @@ -542,6 +542,10 @@ static int video_cc_sm8550_probe(struct platform_device *pdev)
->>>>>>>>>>>           int ret;
->>>>>>>>>>>           u32 sleep_clk_offset = 0x8140;
->>>>>>>>>>> +    ret = qcom_cc_attach_pds(&pdev->dev, &video_cc_sm8550_desc);
->>>>>>>>>>> +    if (ret)
->>>>>>>>>>> +        return ret;
->>>>>>>>>>> +
->>>>>>>>>>>           ret = devm_pm_runtime_enable(&pdev->dev);
->>>>>>>>>>>           if (ret)
->>>>>>>>>>>               return ret;
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> What's the difference between doing the attach here or doing it in
->>>>>>>>>> really_probe() ?
->>>>>>>>>
->>>>>>>>> I'd second this. If the domains are to be attached before calling any
->>>>>>>>> other functions, move the call to the qcom_cc_map(), so that all drivers
->>>>>>>>> get all domains attached before configuring PLLs instead of manually
->>>>>>>>> calling the function.
->>>>>>>>>
->>>>>>>>>> There doesn't seem to be any difference except that we will have an
->>>>>>>>>> additional delay introduced.
->>>>>>>>>>
->>>>>>>>>> Are you describing a race condition ?
->>>>>>>>>>
->>>>>>>>>> I don't see _logic_ here to moving the call into the controller's higher
->>>>>>>>>> level probe.
->>>>>>>>>>
->>>>>>>>>> Can you describe some more ?
->>>>>>>>>>
->>>>>>>>>> ---
->>>>>>>>>> bod
->>>>>>>>>
->>>>>>>>
->>>>>>>> Here's one way this could work
->>>>>>>>
->>>>>>>> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>>>>>> Date:   Tue Feb 18 19:46:55 2025 +0000
->>>>>>>>
->>>>>>>>        clk: qcom: common: Add configure_plls callback prototype
->>>>>>>>
->>>>>>>>        Add a configure_plls() callback so that we can stage qcom_cc_attach_pds()
->>>>>>>>        before configuring PLLs and ensure that the power-domain rail list is
->>>>>>>>        switched on prior to configuring PLLs.
->>>>>>>>
->>>>>>>>        Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>>>>>>
->>>>>>>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>>>>>>> index 9e3380fd71819..1924130814600 100644
->>>>>>>> --- a/drivers/clk/qcom/common.c
->>>>>>>> +++ b/drivers/clk/qcom/common.c
->>>>>>>> @@ -304,6 +304,9 @@ int qcom_cc_really_probe(struct device *dev,
->>>>>>>>            if (ret < 0 && ret != -EEXIST)
->>>>>>>>                    return ret;
->>>>>>>>
->>>>>>>> +       if (desc->configure_plls)
->>>>>>>> +               desc->configure_plls(regmap);
->>>>>>>> +
->>>>>>>>            reset = &cc->reset;
->>>>>>>>            reset->rcdev.of_node = dev->of_node;
->>>>>>>>            reset->rcdev.ops = &qcom_reset_ops;
->>>>>>>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->>>>>>>> index 7ace5d7f5836a..4955085ff8669 100644
->>>>>>>> --- a/drivers/clk/qcom/common.h
->>>>>>>> +++ b/drivers/clk/qcom/common.h
->>>>>>>> @@ -38,6 +38,7 @@ struct qcom_cc_desc {
->>>>>>>>            const struct qcom_icc_hws_data *icc_hws;
->>>>>>>>            size_t num_icc_hws;
->>>>>>>>            unsigned int icc_first_node_id;
->>>>>>>> +       void (*configure_plls)(struct regmap *regmap);
->>>>>>>>     };
->>>>>>>>
->>>>>>>> and
->>>>>>>>
->>>>>>>> % git diff drivers/clk/qcom/camcc-x1e80100.c
->>>>>>>> diff --git a/drivers/clk/qcom/camcc-x1e80100.c b/drivers/clk/qcom/camcc-x1e80100.c
->>>>>>>> index b73524ae64b1b..c9748d1f8a15b 100644
->>>>>>>> --- a/drivers/clk/qcom/camcc-x1e80100.c
->>>>>>>> +++ b/drivers/clk/qcom/camcc-x1e80100.c
->>>>>>>> @@ -2426,6 +2426,21 @@ static const struct regmap_config cam_cc_x1e80100_regmap_config = {
->>>>>>>>            .fast_io = true,
->>>>>>>>     };
->>>>>>>>
->>>>>>>> +static void cam_cc_x1e80100_configure_plls(struct regmap *regmap)
->>>>>>>> +{
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>>>>>>> +       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>>>>>>> +       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>>>>>>> +
->>>>>>>> +       /* Keep clocks always enabled */
->>>>>>>> +       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>>>>>>> +       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>>>>>>> +}
->>>>>>>> +
->>>>>>>>     static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>>>>>>            .config = &cam_cc_x1e80100_regmap_config,
->>>>>>>>            .clks = cam_cc_x1e80100_clocks,
->>>>>>>> @@ -2434,6 +2449,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>>>>>>            .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
->>>>>>>>            .gdscs = cam_cc_x1e80100_gdscs,
->>>>>>>>            .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
->>>>>>>> +       .configure_plls = cam_cc_x1e80100_configure_plls,
->>>>>>>>     };
->>>>>>>>
->>>>>>>>     static const struct of_device_id cam_cc_x1e80100_match_table[] = {
->>>>>>>> @@ -2461,18 +2477,6 @@ static int cam_cc_x1e80100_probe(struct platform_device *pdev)
->>>>>>>>                    return PTR_ERR(regmap);
->>>>>>>>            }
->>>>>>>>
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>>>>>>> -       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>>>>>>> -       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>>>>>>> -
->>>>>>>> -       /* Keep clocks always enabled */
->>>>>>>> -       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>>>>>>> -       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>>>>>>> -
->>>>>>>>            ret = qcom_cc_really_probe(&pdev->dev, &cam_cc_x1e80100_desc, regmap);
->>>>>>>>
->>>>>>>>            pm_runtime_put(&pdev->dev);
->>>>>>>>
->>>>>>>> Or a least it works for me.
->>>>>>>>
->>>>>>>
->>>>>>> This patch will not work in all cases, maybe in your case required power domains might be ON
->>>>>>> from bootloaders so it might be working.
->>>>>>
->>>>>> But with his patch domains are attached before configuring the PLLs, are
->>>>>> they not?
->>>>>
->>>>> Yes, its logically the same just done in core code.
->>>>>
->>>>
->>>> Yes, this code attaches domains before configuring the PLLs, but it attaches PDs after get_sync()
->>>> is called on device. As I mentioned in other patch earlier, if we attach PDS after get_sync() is
->>>> already called on device, then power domains are not getting enabled during the probe, leading to
->>>> the same improper PLL configuration issue. But the current patch series posted will fix this issue
->>>>
->>>>>>>
->>>>>>>> New clock controllers would then use this callback mechanism and potentially all of the controllers to have uniformity.
->>>>>>>>
->>>>>>>
->>>>>>> No, above approach also requires changes in each individual clock driver to define the callback. So I don't see any advantage
->>>>>>> with this than the current approach.
->>>>>>
->>>>>> Bryan's proposal moves us towards having a common code, so it's better.
->>>>>>
->>>>>
->>>>> I can take the time to do the whole sweep and publish a RFC.
->>>>>
->>>>
->>>> Yes, but moving the PLL configuration to callback will not solve the actual PLL configuration
->>>> issue being discussed here.
->>>>
->>>> Thanks,
->>>> Jagadeesh
->>>>
->>>
->>> Right what you are really saying is that the power-rails for the clock controller need to remain always on at the moment.
->>>
->>> Where we can zap the GDSCs the power-rails for the block should be always on because the initial PLL configuration we typically do in probe() would be negated as soon as the power rail for the block is switched off.
->>>
->>> True.
->>>
->>> In my opinion:
->>>
->>> - We should only do the pd list addition in one place
->>>    Either that or push it into each driver.
->>>
->>>    I don't favour doing it in each driver since it is boilerplate
->>>    code that we basically just end up copy/pasting again and again.
->>>
->>> - We can start off by only including a configure_pll callback
->>>    for the 2-3 blocks where we know we have multiple rails
->>>
->>> This here works well for me on x1e:
->>>
->>> Author: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>> Date:   Tue Feb 18 19:46:55 2025 +0000
->>>
->>>      clk: qcom: common: Add configure_plls callback prototype
->>>
->>>      Add a configure_plls() callback so that we can stage qcom_cc_attach_pds()
->>>      before configuring PLLs and ensure that the power-domain rail list is
->>>      switched on prior to configuring PLLs.
->>>
->>>      Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->>>
->>> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
->>> index 9e3380fd71819..4aa00ad51c2f6 100644
->>> --- a/drivers/clk/qcom/common.c
->>> +++ b/drivers/clk/qcom/common.c
->>> @@ -304,6 +304,12 @@ int qcom_cc_really_probe(struct device *dev,
->>>          if (ret < 0 && ret != -EEXIST)
->>>                  return ret;
->>>
->>> +       if (desc->configure_plls) {
->>> +               ret = desc->configure_plls(dev, desc, regmap);
->>> +               if (ret)
->>> +                       return ret;
->>> +       }
->>> +
->>>          reset = &cc->reset;
->>>          reset->rcdev.of_node = dev->of_node;
->>>          reset->rcdev.ops = &qcom_reset_ops;
->>> diff --git a/drivers/clk/qcom/common.h b/drivers/clk/qcom/common.h
->>> index 7ace5d7f5836a..77002e39337d7 100644
->>> --- a/drivers/clk/qcom/common.h
->>> +++ b/drivers/clk/qcom/common.h
->>> @@ -38,6 +38,9 @@ struct qcom_cc_desc {
->>>          const struct qcom_icc_hws_data *icc_hws;
->>>          size_t num_icc_hws;
->>>          unsigned int icc_first_node_id;
->>> +       int (*configure_plls)(struct device *dev,
->>> +                             const struct qcom_cc_desc *desc,
->>> +                             struct regmap *regmap);
->>>   };
->>>
->>> +static int cam_cc_x1e80100_configure_plls(struct device *dev,
->>> +                                         const struct qcom_cc_desc *desc,
->>> +                                         struct regmap *regmap)
->>> +{
->>> +       int ret;
->>> +
->>> +       ret = devm_pm_runtime_enable(dev);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = pm_runtime_resume_and_get(dev);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll0, regmap, &cam_cc_pll0_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll1, regmap, &cam_cc_pll1_config);
->>> +       clk_rivian_evo_pll_configure(&cam_cc_pll2, regmap, &cam_cc_pll2_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll3, regmap, &cam_cc_pll3_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll4, regmap, &cam_cc_pll4_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll6, regmap, &cam_cc_pll6_config);
->>> +       clk_lucid_ole_pll_configure(&cam_cc_pll8, regmap, &cam_cc_pll8_config);
->>> +
->>> +       /* Keep clocks always enabled */
->>> +       qcom_branch_set_clk_en(regmap, 0x13a9c); /* CAM_CC_GDSC_CLK */
->>> +       qcom_branch_set_clk_en(regmap, 0x13ab8); /* CAM_CC_SLEEP_CLK */
->>> +
->>> +       pm_runtime_put(dev);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>>   static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>          .config = &cam_cc_x1e80100_regmap_config,
->>>          .clks = cam_cc_x1e80100_clocks,
->>> @@ -2434,6 +2465,7 @@ static const struct qcom_cc_desc cam_cc_x1e80100_desc = {
->>>          .num_resets = ARRAY_SIZE(cam_cc_x1e80100_resets),
->>>          .gdscs = cam_cc_x1e80100_gdscs,
->>>          .num_gdscs = ARRAY_SIZE(cam_cc_x1e80100_gdscs),
->>> +       .configure_plls = cam_cc_x1e80100_configure_plls,
->>>   };
->>>
->>> This has the same effect as you were alluding to and in fact we could probably even move the pm_runtime_enable/resume_and_get and pm_runtime_put into really_probe().
->>>
->>> It seems to me anyway we should try to push as much of this into core logic to be reused as possible.
->>>
->>
->> As per the issue I pointer earlier, I see now you moved the get_sync() call to after the attach_pds().
->> But this PLL callback approach also requires changes in each individual clock driver,
-> 
-> That's up for discussion.
-> 
-> We can do it for new drivers and for existing drivers where we know we have multiple rails. It need not be a blanket sweep of all of the older drivers - for example 8996 or 8916.
-> 
-> That's why the example code I sent you checks for the validity of the callback.
-> 
-> Right now the only places we _require_ this sequencing are what
-> 
-> - sm8450 videocc/camcc
-> - x1e videocc/camcc
-> - sm8550/sm8650/sm8750 videocc/camcc ?
-> 
-> Certainly not the ~ 80 something clock drivers we have.
-> 
->  and adding a callback
->> in each clock controller driver to configure the PLLs doesn't reduce any boiler plate code in my opinion.
->> Infact I feel this is harder to maintain as the code in callback is not constant and vary from one
->> driver to another. Instead the current approach to explicitly attach pds if we have multiple power
->> domains is much easier to maintain since it is the same function call in every driver.
-> 
-> I understand your reluctance to change 80 drivers but, that's not the proposal.
-> 
-> We need only fix for new and existing - where its required.
-> 
->> Kindly review the discussion in another thread[PATCH 3/5] as that will avoid these extra callbacks in
->> each driver and the code will be uniform across all the clock drivers
-> 
-> My feedback is - still:
-> 
-> - Don't do qcom_cc_attach_pds twice, that is incorrect.
-> - Move the sequencing into core because it is replicated over and over
->   again so it is a waste of time just copy/pasting over and over again.
-> - Describe the change correctly - you need the power rails to stay
->   always on so you need to do qcom_cc_attach_pds prior to
->   devm_pm_runtime_enable
-> 
-> And in fact this whole dance with pm_rumtime_dostuff() should go into common code - so that it gets fixed _once_
-> 
-> That's my honest and unfiltered feedback.
-> 
-> ---
-> bod
-
-Thanks Bryan for your feedback.
-
-I will work on the changes as per above and Konrad's suggestions
-to handle the things from common code.
-
-Thanks,
-Jagadeesh
 
