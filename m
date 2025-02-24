@@ -1,183 +1,264 @@
-Return-Path: <linux-kernel+bounces-529326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFB4A422FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:28:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D254A4232D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4F07A4307
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:26:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F26F3B6F18
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5E215198B;
-	Mon, 24 Feb 2025 14:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C62152E12;
+	Mon, 24 Feb 2025 14:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="KdlWrHlJ"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2076.outbound.protection.outlook.com [40.107.101.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xF/odzGl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AX2bvdGB";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xF/odzGl";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AX2bvdGB"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17142629F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407237; cv=fail; b=ZNgZ0RldH+VFqULP89yVwk5TOtn7tH4gQbGoZ41/kDoC5hESo5tYuwvn8UJJ+R5CxmP2CjTLUAr4hO55ReA9NcDGtYu+EaZ1zhk4N9UsX81VIbjmsXWzeJvpDv93aRlo3Sv6/NKe3sjCzvJBc0CYRkWAa3FSMRKg32SYckEze6M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407237; c=relaxed/simple;
-	bh=80gMgBel8CaZD5CXP4coDOMrJdWm02c80UUxXSKK5V4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rv7SDVcmNrJJz4ZtpGJQNAQVty1/65cNUGwgpafQrGsOLyiqR5EQ+n0anRmV2/YH7i9HXof5s8ZqwECkenVvhN26+xwp4U+vhvI8QcVJZPpszak7weGSLqaiYTP6AHogoM73ddTsG6wcxqOh8cP7vHThn0AKT2SesVJ6kkG7zhg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=KdlWrHlJ; arc=fail smtp.client-ip=40.107.101.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K+V3O8Ylrx656ozL6Kzi/ZgAbyiWMvddO71W1g3EAajjyCkV5ElwIVZceEafAgluAGgbvDeSpA0nYCVzTg/GWze6XHF1nep9yqY7rK0aDMa5INBL4Zltuprm67LPy0A4EW8ZyDeRCrDbbXORRlEfbVFtm934wZlJPasNBQ31y47lSwNFHY01nJeF6vF7O4cNWKfjifsAmSM8PWM4VxhATvjRmlaIW9K4b6LdAHOSCR1teQjqbnkKpRm5j2P80J9Uxy0sgz5sibHzCV6kgm5EVvMY1jxDC/5KETW2Egn9kYrtUSE0wKFP+VYZxOuiOS0VC2pOxBG2nCdz+a8zXTXJoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hbD6IiDfT5798lvhocUGwXP0nLzJikwYDvOR1QokIdk=;
- b=XQoqqCS17nq6b+/hEyIG4wm1PR+HJIHNl4sIP4eVHvUXPWOFeXA323IVfXmjn6V6H+QdmkK8TNE7iMVS3JsuIkkHkXGl46HB4SxK8FeU3j6CRBXTBLRHaLBNb/ceX21pqAins6bNJhfUXCeH+TxgsNU0nTmuKpJKm2+tKi94gluVx0aMFGZZ+9c8nyf/UPP0BVHThY79Ope1FjurH0OWCB5puiqsCrDKQ99WrpPGxxZUxSID8A1WmyBychIlRsPB43Y7ONsl4Gbwr1EiPjDa2V1OM+BA7cGpelTCFFdHOb65+Sh7L9brGnwnH8F8OaSBpK0KBFzTeJbAfzEypnFAXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hbD6IiDfT5798lvhocUGwXP0nLzJikwYDvOR1QokIdk=;
- b=KdlWrHlJSUjpmbVvfHoIXxUja518o6xgkpntQrFlmz62ysRgNMkiYw+362VqroFlgv8sDL3M6JfIdhuqxpV9NDAGqKTyGSehaGT2jIWx12qTxgbTuld67tT7SQP3N35tu4/tzRWF8N8RrIzIlweDm3+UD3d2h4aShEXQHbWgJAP2f6rytXWW8ljPBJN5bZff9XjbS1iERxHuKVHOw0e+eDn+BdXlGjrvgsqUAu92YtpTZDHbvQ/mOAFjBH9C7DhIj21co2wFLe2AIB/BQnHZWK9QzTr08pmXZ8IC07kLW0BsvnG+B0t93TjJ9U1jHVE8X2nXzVtLVId0otZKasYqSw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- IA1PR12MB7638.namprd12.prod.outlook.com (2603:10b6:208:426::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.19; Mon, 24 Feb 2025 14:27:12 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 14:27:12 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
- Frank van der Linden <fvdl@google.com>, David Hildenbrand <david@redhat.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/2] mm, cma: use literal printf format string
-Date: Mon, 24 Feb 2025 09:27:11 -0500
-X-Mailer: MailMate (2.0r6222)
-Message-ID: <DC24FCA1-FEF1-4819-A898-D0704DC963A2@nvidia.com>
-In-Reply-To: <20250224141120.1240534-2-arnd@kernel.org>
-References: <20250224141120.1240534-1-arnd@kernel.org>
- <20250224141120.1240534-2-arnd@kernel.org>
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN0PR03CA0005.namprd03.prod.outlook.com
- (2603:10b6:208:52f::12) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0804314A627
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740407251; cv=none; b=PqpxqNuIvtPxWEx/qMUuLHewsdayo2onJTsopDK4nGv+tttT/HBwAgbF4zKoiFmPzrcJV1O3KktO1vGgwyQqIF1N2CrSRL8X0Z9cMgNmehtGIv7+xeMqpMIlG0eyk/GPOm+3tFM5lSvwnWf/ZpniUK0LhfLYhgDsYhhgJXJuujg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740407251; c=relaxed/simple;
+	bh=cBiHR7/uZtf7KmSwt+mgH8sI9uam4ByqB9mtxjTEOMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VxmeJS9mHDixskNO4zPBSb1ph0dcPBrpseHVWw/I68x8BdRcGZ6S8LdobahgIW8633ltN5JS5/rC/Cfa9uw4T0Cu0hd1Za31qcDJSN4jNSwgNkOX+REFFIRtI04ePMZjn7g5mzvzDN966P0VBG15sQ4ZCET5Cu7p+JObLyEJ4cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xF/odzGl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AX2bvdGB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xF/odzGl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AX2bvdGB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 02F0A21179;
+	Mon, 24 Feb 2025 14:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740407248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+YEX228RJM8U97SxlrhGIsYu/R8oxHePPJweMuKpLc=;
+	b=xF/odzGlo9tbP18HGk45ma07NEQ+YyqZ1p8yzeJMGZXUsF7hRJuOUF574bS4PEBTwyJHK4
+	E88nzkq3iyS3FQRqyNZLYTDfylPL7qg9tSwEL8VxcJz2ImttppHpKRBAfIbKwLFm9p44Xz
+	WIShGd5OTcBA23NrPDyT/alpHrNpe6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740407248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+YEX228RJM8U97SxlrhGIsYu/R8oxHePPJweMuKpLc=;
+	b=AX2bvdGB4BDJwxmnTcg+dmcjVNDtd7Lux82pmY9ctNVIlQV2qBnj5W8zs098EBRS0dVVBo
+	LXFXPwnQyysKhVDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1740407248; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+YEX228RJM8U97SxlrhGIsYu/R8oxHePPJweMuKpLc=;
+	b=xF/odzGlo9tbP18HGk45ma07NEQ+YyqZ1p8yzeJMGZXUsF7hRJuOUF574bS4PEBTwyJHK4
+	E88nzkq3iyS3FQRqyNZLYTDfylPL7qg9tSwEL8VxcJz2ImttppHpKRBAfIbKwLFm9p44Xz
+	WIShGd5OTcBA23NrPDyT/alpHrNpe6E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1740407248;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=n+YEX228RJM8U97SxlrhGIsYu/R8oxHePPJweMuKpLc=;
+	b=AX2bvdGB4BDJwxmnTcg+dmcjVNDtd7Lux82pmY9ctNVIlQV2qBnj5W8zs098EBRS0dVVBo
+	LXFXPwnQyysKhVDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB8C613707;
+	Mon, 24 Feb 2025 14:27:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KkB6Oc+BvGfNRQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 24 Feb 2025 14:27:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A5758A0785; Mon, 24 Feb 2025 15:27:27 +0100 (CET)
+Date: Mon, 24 Feb 2025 15:27:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, 
+	Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ext4: Make sb update interval tunable
+Message-ID: <rperz6ny5wjhhtmxrpnqtju64g33erxxi4rvho5gslqonzy5gb@uwbqxdjycw4y>
+References: <cover.1740212945.git.ojaswin@linux.ibm.com>
+ <86b177b0b0a863362f11afa3fd835c5734e14ef7.1740212945.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB7638:EE_
-X-MS-Office365-Filtering-Correlation-Id: 81b63ecd-104a-457f-1b74-08dd54df5440
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sjgQ+eH1DLFJsP1LBL0CilEeYXHFBbblqxVYEKZouO2ij9J5wrNhf/d4YQcm?=
- =?us-ascii?Q?IWl5+04GbFCq1nfAKMnsFNw4OwYJ4c81aQfJ7JGiyK4opdCFca960lg3NOh6?=
- =?us-ascii?Q?16Y6A86GQOZv+J3ek76pmtKeWCju7qMfL8+ED/wTSikF0bSXqwSc10DSxiPW?=
- =?us-ascii?Q?x3GvNmjEPH8OWrO9REvFNT9T9EKOfmyKwjGsXV2SoP/kAxMR2F0YmJ6N8jix?=
- =?us-ascii?Q?cbQJyyUxRygbeJ3ZrLjh6SBeFKd3QZlXpkTrGp07YIw9W6KUWrl4ZSXkGTIc?=
- =?us-ascii?Q?hXA6xbYkFF4rAuu55pECi9dTdShBjnr3fh6gW/I2HIfl8u9An4bBk6/2Nmr2?=
- =?us-ascii?Q?aGBhwDfM21GSSNMY+ZoOWICpqM8ewnyR1iAppc1+7t1vSYDEI/NP6k91oPAB?=
- =?us-ascii?Q?Q2DIdwIcX0dik4YVr6MHydqSio/UDkpbXXhyNcKRALK5JEMJRCg8ON7FhVQ+?=
- =?us-ascii?Q?o9j/Itmbw9CGy699oPssuwshcdVvyLMSicRrJKNesuVhjiTHw1w1ur1i3q8f?=
- =?us-ascii?Q?iDjuDrIcHPC/r0iKUZqvHiZi3dxfjuzWwQJ54HCa4dAHAm2bL/5mOaS3E00u?=
- =?us-ascii?Q?ULiKp4dTy09wtgQ3tawaAqKdLNTkGrunsnTtLTTYPyQt2SxRGmliZyl/4M8G?=
- =?us-ascii?Q?SG7iS2dO9CNAlDsv75hWgilzAwifnR5od9yvXAE1lFzZu5/t0bhdQ/1Ueuxx?=
- =?us-ascii?Q?5aq4w//xBRCyDCyjzfXly4c0wOEhQR0VuBrx6il2QXLhk/YWZbYTe5OGcnbv?=
- =?us-ascii?Q?O7bPXXMQCW0hzf5dHhSlyYv6zBjwte3McrAbf5nLQCeR0yNYDuiUGDAgOGk9?=
- =?us-ascii?Q?ZUbjxxRYRvR6K5woYcEu1k3vkjqRV2igei++QW3UkvIysOPeP6+EGiw0hD8u?=
- =?us-ascii?Q?3Vh27EXgLzD7SQ+pjom1npxsLfk/Cnx0NzDZug7C8c5u/i9rvAALExIVCugR?=
- =?us-ascii?Q?Y6gs7v3VsF3b2iIP4953NIm5eAWsWenWQg7pdSwoK6MprCxryK32/jaNQoSK?=
- =?us-ascii?Q?9XaljwlgaF0/gd2tOaTy2VuKSiaNxLa6/4NNdOSv1jtVEbL3OyOnhcMvieCy?=
- =?us-ascii?Q?I3Aezj3bo2pkBwlY5i59h5zggkPVkLMKWiNCKAgaDUZeFtAXfNcieca6rydY?=
- =?us-ascii?Q?O1eUMOqDDRxxVdCkVTs35idC2blUL/s3DToxMigNJdqhH/8Yxbx5Zmm5muuH?=
- =?us-ascii?Q?8MLfCAZ8asBPfGKu+5aK9kfZjCdnEytSMC6W1B/LROUWvnhOc2CrcPGzkXl5?=
- =?us-ascii?Q?0TOR6Qwr9XE0vTaUGRlCyfmchwp1TN043YdX+6xQwQfxkUXhIu/gkLz4r1yd?=
- =?us-ascii?Q?+ihRl7vdOhfqaKqMA4bd0+vef+OOeGFgH2Irx+bANbcxifs9DjY7vyglIxTe?=
- =?us-ascii?Q?u7SXWGo0u73dIx/0GvLRr5F1kXqS?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jjx5SxU5e28mm/aa0QTAAN/W0C5NRftYRKJ+V2Oktd6PZEZsYgqRII6J5gQp?=
- =?us-ascii?Q?rqFfh0BcQ+JFTcp9+coEt/Qyq1WO1skuADu0nX1BusKfkAmKNTh36jK+1wnV?=
- =?us-ascii?Q?TtgaA6z6y1P74vKlkcYXQW+arPpm+jVfgEfhTL/xdX9PlnThoC9UQhZMeW+e?=
- =?us-ascii?Q?VSGhao9/Vy/Gmnaq1BZYfGXQEDxtNGbqBUcL4Q79PqLhRJ+RGhS47Er2a4pl?=
- =?us-ascii?Q?WU1FrIW+XIGiQIdTKQs6hDkWQAcgEKwgQhFwV2iUAY5YN9r2UJAx1OWAt0eF?=
- =?us-ascii?Q?dnR5n+SrBjE4O8VIFZz+VG5U1nrUoIcGsaA3IW8kYm31au899wz85kHiIWQy?=
- =?us-ascii?Q?kjxVrz6+ni2M3vATZrETM13uhIPEhmnSzpCaayqgXAK2AHJqpYY1fGIQzziA?=
- =?us-ascii?Q?gJMYR18w95o9RRNZCU+A/kA4C8Sq7QurwHhKahRZyb4HEOo1YHw0plQkcvSg?=
- =?us-ascii?Q?0wDnGWQbTdIJ5/Gqu3EmisQek/JyZF+bwEi7v0MJej1IoLcuUItosMZcEd/N?=
- =?us-ascii?Q?10fEfV1f/hUjGTyx9dudVPPS8SKP2GNPR+RlQ5unjr6qwOGlzvGrGfx3Yijk?=
- =?us-ascii?Q?+/zh9zJOBjw39THjEC+nJH5+VAQ9TFGwEP+MEZnCkPSB1LUIOX8JPaXXnNiS?=
- =?us-ascii?Q?CgDxnSR5YnjCcY8aqRhKH0dMoVuuhoRvW4H4XvlbnhxhwmCx06MM7gFX8zuu?=
- =?us-ascii?Q?TMymKzDlrYIOtGabLl/4WkPwrg9U+dXujJY+W9MC8+HktTHp2ATbYNOEB6lX?=
- =?us-ascii?Q?HzApkPhFPGsGDcw+xT38ySDZIGdOacrm5o61cNbdGT/QdmljtTnmsXFSQbZX?=
- =?us-ascii?Q?cITcrCwnN80uWU3SFzceX1A+JD0rJ4mNuO/AVgxcex2/rrqnSSCW/jB77peW?=
- =?us-ascii?Q?4TbWFdFepxBFyYnpWNsRgrpTP+yvOdfKqcw3xa+8U1/47QuGlUnYit0AB+7e?=
- =?us-ascii?Q?dppHCz6RSlECC3IEeTY7cYLPFWaFQaKpJeuOk13/mQapLMgEZ6TUbbbXllV5?=
- =?us-ascii?Q?qI3p0z5iDbXB+xKAj9yXuwxMKnEmoSaT+sM+mFtQblVhLqkZ8UeyDUCZtr/+?=
- =?us-ascii?Q?jOAwtHPebYmReawKjwa627ijBUAU9Fmsn5E6o0RsNGRdOsMQvw24dCi+o8Z2?=
- =?us-ascii?Q?NVa6XGbGT4276NX/AWmw+d02Q6rdt0FerSHPpCGamevmnNAv7Cnkdz9Z8SwY?=
- =?us-ascii?Q?ZK/Oxqm5SSrWXr4cd/zQqrlqKWB70WoDqAApsRRiM/vDlzORUasMcebAp76u?=
- =?us-ascii?Q?NwP21GUSJgWpndVvZqbya0cr5ygp0nCmZK8CblG6W8DT35WFD27JHYEPCLHz?=
- =?us-ascii?Q?cCRuarGZhj5cjtRSPjXrn03I+2CmmcDoe3LIEbBnTSTHEXd4fv42SL9cdvkf?=
- =?us-ascii?Q?4G7ATAgTP6DeDoY5At+s4IWRL6Gqr+VMzMvyYXpfqTiEtrOWoAFBlJ6e3Gbf?=
- =?us-ascii?Q?Tfsl8oSWcELOBBe1bqqRjCZ4ujlMCD+RXEtAjw7ig6PQgrCJm0jWPzCp7qZR?=
- =?us-ascii?Q?Set6hCcmbFyXPZcg0i5nLcbl8MzIabwJxy8j15fJ5c4iMklMcYq8DAXFFY+X?=
- =?us-ascii?Q?mAWjI2ePF5twu1ZgzdPZkqXJhBaAGj1vOWWmU0NF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 81b63ecd-104a-457f-1b74-08dd54df5440
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 14:27:12.5411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SxifNOG6QNNwluMn1WsfJeV/no747s3O7rNSyLj+NrKYW5Y5jViiuMwUoV5hxPFC
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7638
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86b177b0b0a863362f11afa3fd835c5734e14ef7.1740212945.git.ojaswin@linux.ibm.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 24 Feb 2025, at 9:07, Arnd Bergmann wrote:
+On Sat 22-02-25 14:10:23, Ojaswin Mujoo wrote:
+> Currently, outside error paths, we auto commit the super block after 1
+> hour has passed and 16MB worth of updates have been written since last
+> commit. This is a policy decision so make this tunable while keeping the
+> defaults same. This is useful if user wants to tweak the superblock
+> update behavior or for debugging the codepath by allowing to trigger it
+> more frequently.
+> 
+> We can now tweak the super block update using sb_update_sec and
+> sb_update_kb files in /sys/fs/ext4/<dev>/
+> 
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> Using a variable string as a printf format can be a security issue
-> that clang warns about when extra warnings are enabled:
->
-> mm/cma.c:239:37: error: format string is not a string literal (potentia=
-lly insecure) [-Werror,-Wformat-security]
->   239 |                 snprintf(cma->name, CMA_MAX_NAME, name);
->       |                                                   ^~~~
->
-> This one does not appear to be a security issue since the string is
-> not user controlled, but it's better to avoid the warning.
-> Use "%s" as the format instead and just pass the name as the argument.
->
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Looks sensible. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  mm/cma.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-LGTM. Reviewed-by: Zi Yan <ziy@nvidia.com>
-
-Best Regards,
-Yan, Zi
+>  fs/ext4/ext4.h  |  9 +++++++++
+>  fs/ext4/super.c | 15 ++++++++-------
+>  fs/ext4/sysfs.c |  4 ++++
+>  3 files changed, 21 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 2b7d781bfcad..306e5db7129c 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1608,6 +1608,8 @@ struct ext4_sb_info {
+>  	unsigned int s_mb_prefetch;
+>  	unsigned int s_mb_prefetch_limit;
+>  	unsigned int s_mb_best_avail_max_trim_order;
+> +	unsigned int s_sb_update_sec;
+> +	unsigned int s_sb_update_kb;
+>  
+>  	/* stats for buddy allocator */
+>  	atomic_t s_bal_reqs;	/* number of reqs with len > 1 */
+> @@ -2279,6 +2281,13 @@ static inline int ext4_forced_shutdown(struct super_block *sb)
+>  #define EXT4_DEF_MIN_BATCH_TIME	0
+>  #define EXT4_DEF_MAX_BATCH_TIME	15000 /* 15ms */
+>  
+> +/*
+> + * Default values for superblock update
+> + */
+> +#define EXT4_DEF_SB_UPDATE_INTERVAL_SEC (3600) /* seconds (1 hour) */
+> +#define EXT4_DEF_SB_UPDATE_INTERVAL_KB (16384) /* kilobytes (16MB) */
+> +
+> +
+>  /*
+>   * Minimum number of groups in a flexgroup before we separate out
+>   * directories into the first block group of a flexgroup
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index b7341e9acf62..129d666f450b 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -447,9 +447,6 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
+>  #define ext4_get_tstamp(es, tstamp) \
+>  	__ext4_get_tstamp(&(es)->tstamp, &(es)->tstamp ## _hi)
+>  
+> -#define EXT4_SB_REFRESH_INTERVAL_SEC (3600) /* seconds (1 hour) */
+> -#define EXT4_SB_REFRESH_INTERVAL_KB (16384) /* kilobytes (16MB) */
+> -
+>  /*
+>   * The ext4_maybe_update_superblock() function checks and updates the
+>   * superblock if needed.
+> @@ -457,8 +454,10 @@ static time64_t __ext4_get_tstamp(__le32 *lo, __u8 *hi)
+>   * This function is designed to update the on-disk superblock only under
+>   * certain conditions to prevent excessive disk writes and unnecessary
+>   * waking of the disk from sleep. The superblock will be updated if:
+> - * 1. More than an hour has passed since the last superblock update, and
+> - * 2. More than 16MB have been written since the last superblock update.
+> + * 1. More than sbi->s_sb_update_sec (def: 1 hour) has passed since the last
+> + *    superblock update
+> + * 2. More than sbi->s_sb_update_kb (def: 16MB) kbs have been written since the
+> + *    last superblock update.
+>   *
+>   * @sb: The superblock
+>   */
+> @@ -479,7 +478,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+>  	now = ktime_get_real_seconds();
+>  	last_update = ext4_get_tstamp(es, s_wtime);
+>  
+> -	if (likely(now - last_update < EXT4_SB_REFRESH_INTERVAL_SEC))
+> +	if (likely(now - last_update < sbi->s_sb_update_sec))
+>  		return;
+>  
+>  	lifetime_write_kbytes = sbi->s_kbytes_written +
+> @@ -494,7 +493,7 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+>  	 */
+>  	diff_size = lifetime_write_kbytes - le64_to_cpu(es->s_kbytes_written);
+>  
+> -	if (diff_size > EXT4_SB_REFRESH_INTERVAL_KB)
+> +	if (diff_size > sbi->s_sb_update_kb)
+>  		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+>  }
+>  
+> @@ -5248,6 +5247,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+>  	sbi->s_commit_interval = JBD2_DEFAULT_MAX_COMMIT_AGE * HZ;
+>  	sbi->s_min_batch_time = EXT4_DEF_MIN_BATCH_TIME;
+>  	sbi->s_max_batch_time = EXT4_DEF_MAX_BATCH_TIME;
+> +	sbi->s_sb_update_kb = EXT4_DEF_SB_UPDATE_INTERVAL_KB;
+> +	sbi->s_sb_update_sec = EXT4_DEF_SB_UPDATE_INTERVAL_SEC;
+>  
+>  	/*
+>  	 * set default s_li_wait_mult for lazyinit, for the case there is
+> diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+> index ddb54608ca2e..987bd00f916a 100644
+> --- a/fs/ext4/sysfs.c
+> +++ b/fs/ext4/sysfs.c
+> @@ -254,6 +254,8 @@ EXT4_ATTR(journal_task, 0444, journal_task);
+>  EXT4_RW_ATTR_SBI_UI(mb_prefetch, s_mb_prefetch);
+>  EXT4_RW_ATTR_SBI_UI(mb_prefetch_limit, s_mb_prefetch_limit);
+>  EXT4_RW_ATTR_SBI_UL(last_trim_minblks, s_last_trim_minblks);
+> +EXT4_RW_ATTR_SBI_UI(sb_update_sec, s_sb_update_sec);
+> +EXT4_RW_ATTR_SBI_UI(sb_update_kb, s_sb_update_kb);
+>  
+>  static unsigned int old_bump_val = 128;
+>  EXT4_ATTR_PTR(max_writeback_mb_bump, 0444, pointer_ui, &old_bump_val);
+> @@ -305,6 +307,8 @@ static struct attribute *ext4_attrs[] = {
+>  	ATTR_LIST(mb_prefetch),
+>  	ATTR_LIST(mb_prefetch_limit),
+>  	ATTR_LIST(last_trim_minblks),
+> +	ATTR_LIST(sb_update_sec),
+> +	ATTR_LIST(sb_update_kb),
+>  	NULL,
+>  };
+>  ATTRIBUTE_GROUPS(ext4);
+> -- 
+> 2.48.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
