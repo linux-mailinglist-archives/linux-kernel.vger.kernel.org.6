@@ -1,163 +1,215 @@
-Return-Path: <linux-kernel+bounces-529443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFC1A4263D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:29:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8392A42646
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 904081883CAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:23:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6ABF31887BC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0239D18CC1C;
-	Mon, 24 Feb 2025 15:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B26B1FECB2;
+	Mon, 24 Feb 2025 15:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZLf+sTN8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W15ouCed"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C722E18A6BD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F0119C54E;
+	Mon, 24 Feb 2025 15:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740410576; cv=none; b=Y+8+wBAIlo9LELcsq24fcJ9PnNvcDuJIPEq7qG4wmt36fXiyNbx0WACbBah9z54cqbyEmsSb51yj51h3KFbsvyigS8Bthel7O/qIkl1pXAein6easaoQMqaetGMFA6qJcldaCPC2aHu1Wnr5jFQHlT9KnOL7CKJcAPfIhGHPtVQ=
+	t=1740410661; cv=none; b=CNXCxExf6Yjnzkm6PoKlzAWQyV78SRRlVf0CyULw8K6Zu+thFMbjH3QCv6VTvhe0bAuvBS2LJdAmIJjKS30qZZRcLriKSpUegn+Pyv0FHgdXBne3SaeuA7D2BX5XaCP26SITTf/8stNuoNdy4fgK7CgMRmdIS74VRo6ZVi5dd5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740410576; c=relaxed/simple;
-	bh=KA03db2Q7Bmc8LTEwFfTxiDDccSBkDh4Mxm0Z7Yphys=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aGVTBPCGNmE/jhRtZzrAOYEDXhr4gt0Hll7iN3msh7nJXJqaeHh3sYi46gqWKYvVy4/uzamkiLLFEZbIq+op68E2gb5dgp1+iNpPmZC0KR8nvcGqW/DQ1IN6bONWh6g0070or0otLQ97vrA2Uxm47pcsl46bhzd0V9ZBRuMdAuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZLf+sTN8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740410573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=KA03db2Q7Bmc8LTEwFfTxiDDccSBkDh4Mxm0Z7Yphys=;
-	b=ZLf+sTN8+ZXgD06/uZa1eOWawp/QlknqFljnfXOJSoYB1+ioYhB+f8M1zpgpZ/I7PlvRwx
-	GaobxMNl1Bg292xogGmXviWDp7NQJ80gBJwC3oNUk2lH0wG/Xldugi6nQpmK/sKw1WODpZ
-	cxOJ+Md9n9OCiAmNZhNIldjtGEekemA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-433-6atsKXPnOeugyqKCJS578A-1; Mon, 24 Feb 2025 10:22:52 -0500
-X-MC-Unique: 6atsKXPnOeugyqKCJS578A-1
-X-Mimecast-MFC-AGG-ID: 6atsKXPnOeugyqKCJS578A_1740410571
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-abb61c30566so373511066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:22:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740410571; x=1741015371;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+	s=arc-20240116; t=1740410661; c=relaxed/simple;
+	bh=+JH9WFIVg0ke/75TFC25dWturzu4JHdGKnJIyiQPccM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q/you+aBKq7dJ+joVq+ka63Vta0b+TqWcsrafvCIsufliUBu9YXAJGJ/JFvGys7H2y6O//iTzYkwEmSBIxJ0TZQYrfNxI+9tXratBApyO3YHEZUwGQfD4WTiXTb54yXOCVbM6yTZxsIqJd1Y5E2mAoQlAoLsMN2BLrqgVHZLm+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W15ouCed; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abb81285d33so874841866b.0;
+        Mon, 24 Feb 2025 07:24:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740410658; x=1741015458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=KA03db2Q7Bmc8LTEwFfTxiDDccSBkDh4Mxm0Z7Yphys=;
-        b=bFhs93JeG3v2zB9TSlIHr6MGhw6hRR57jitcTMdsIzHTqErN3c8A8100JNecFF0EGC
-         O8vaXjFhSg2307KNdIL5VRrsMdkfgMpYJZldLoqeKYXjPVIJfnWY8+cwGet77y8s+q9M
-         Wjk04magD8RmgVcwuNt+p4ypLyJB323M+JfxXvr0g+iF52pZDcBy1y66kAX4JJeIZpyZ
-         RVsfSlZGSWta4XKPXJIUGyhUvLgGwCMO+744fK3QR23zO7UsZxltWsrPBX7F/EOimNDq
-         04wjn3fSPO2uteUEvun1j/77JcOIML/TbImRN99Rs8s+fKBfYH35gFtnOmpqckNx2xB/
-         KJDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtPMqTlfWNhJziVFSfCmWobGVxadDs1WnWqTuGaQhwXaouqVkiwn02eHdz+t14L+nRm26e2Fe2TsygSPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ctsAi+IkXuB5wKKBinMIF8vBRNEjvI2gUI5Z/5UaXQ8sYyma
-	60rGOgQ/syJk8Jc1ZKLZrBz0YX9Ibf+87o2XPcG8LrPxsPamy/+jSEzSVGRiz8liFde5mUONHXR
-	eMI48au5r/eeGmrKkn4cyiOY0DuJjteQh7XcKXBbjDHl5+j3/KCJjfynEqDjZxhHflIw9yFqlNA
-	hdw7UX6C0V9dPysY94iNlKg1mtbeIQ+Aru9HrL
-X-Gm-Gg: ASbGncvtJvPwsCAKUbpUIFl6vBlGVGUDxZsZ7snnd+gog4B0QBltt5WSPtQJKZoy+Vz
-	2v9+0YiAcrB/dpBTkfmJ/mR0UKY/OFy/yDGyR5E8lCA1kaD1/SJEOh2d3Q20Cupqw0ivzfohlG0
-	51wJFKIm7PO2jmisn5HPUDvOIyzq0=
-X-Received: by 2002:a17:907:6ea2:b0:abb:bcef:837c with SMTP id a640c23a62f3a-abc09e47232mr1275777166b.56.1740410570898;
-        Mon, 24 Feb 2025 07:22:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHBo6s8cUiAqNVZm4nJopUm/elE2Aq6N61eGyZLrPKP2pVrQSWw1dK8qw/4PCpKABglA5S89W6ODLXX+NDpmlQ=
-X-Received: by 2002:a17:907:6ea2:b0:abb:bcef:837c with SMTP id
- a640c23a62f3a-abc09e47232mr1275773466b.56.1740410570450; Mon, 24 Feb 2025
- 07:22:50 -0800 (PST)
+        bh=90b7JTu64HyQeEwAMfpKEcwfZyjyUK0IOy6HdZ/FyAs=;
+        b=W15ouCedxAj7B9Oa5TVxKG8joKlxu/lhNekNMTWhqfNuN+JP/nW4gdxExLVipl0RPr
+         sbQZej8tAM0TD0vnBz3hArfOJwztMyGnyuqcqUukykIz5uVTZnNDLP07sO4wgwqNahm+
+         +q0TFUpnNzGk+ObxqrpFeL745qb02VbtH5OF+6jb3TDgGnVcvFdn1hWDZ3L3TEUMPXEp
+         M1yxX8jQJyMTN14cnrxmLhPAiuby010XsWB/RAS4hutxX4E5Z7umwryAPp5P2UpmlYi9
+         DYQCvxKR7HOVe49YDqj8Lfpgn1V5F3lz5k1mBfTZyNQ79tfiCmMFylyDwVZIFHa/zJIR
+         Q92Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740410658; x=1741015458;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=90b7JTu64HyQeEwAMfpKEcwfZyjyUK0IOy6HdZ/FyAs=;
+        b=R9BtLimFQCXkt+eEE/HB8sCIHh6ITD7J6JIjHKbNtElp7X2TZRv7CmEhzR5M3QB5PX
+         dQPCUkf2A0ISqes9hU+eWQqWBlPFBCC9vO6mgJIF3LIFIwPiMr2e8y31x8R+C9/7p2Sa
+         C0aDOdX5Pim0DHVQc/k8Ou6DibqZPsRe34rvkQao/ssa/p5cAjvbTopRB6o/bcifRU+K
+         SigGrfoy/BnBAuD+i4UQZ6K4PiVgQXsqvxRxXh0xhOjpz6OJXlEjeSpdTg8GIiqp3KvY
+         HeXQ/qG0lnfahYPOYNu1F0RaeA93v8WC2O+lNZKBSjsJc+bBJKdonPG125sbAeb60GZ5
+         LImg==
+X-Forwarded-Encrypted: i=1; AJvYcCULYRHg1mzgd9qrXrKI8NmjZtnAFyPbwoUYaLxAwjRgUQiDmcG9a8wynShtXu3dOaU/Rw0eRA8w/HEfRTxV@vger.kernel.org, AJvYcCVEuaxg5OY02XCRsjG8aXOVZdY/pK5G92n5fFJVX3YGas1l8QykNyZWt3+oIicIBYfyK13Qpvdywa0hEvRW@vger.kernel.org, AJvYcCW1KewY0vtk7QWlhjCN/aQkinmx32IXC8VTGF8XUBLKYVKAy5/FwJoaeyeanbYlVUidYDjv4BdauZ6L5oY=@vger.kernel.org, AJvYcCWUMVlEgFo9MAJdTHiBdbxArf0ffsLQNZYqUOh/Grf3rbW3Bh/LwReNnnq8HqYRvyiylWJROXKwCVtugmU=@vger.kernel.org, AJvYcCWXCaNE4z3FfBRU70v/zq5Ghf1NV8uNTswumP/CYY9tHmFilQaVzgKhhj9jC4i54gnylIeiA3S7@vger.kernel.org, AJvYcCXXhh6AatyGWOPXNTc7BqJEN694h0uWNgvL6vkiggzGpgoelWe1Ef66cOQ8cXank89mzhSsUKZARDOEidAJFWw=@vger.kernel.org, AJvYcCXyhGM6EHEGJtY/vH05kw3A4G4u6stNHN1scl3tEnxaB4gnb8A5R9JdrnkJZsbNc77CCcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/GHpGs480zr2aVtxqVHV5ZZTsGBV8AsyzYLFK5kHcxyEvjwFd
+	edYlEPVXr7KOpbTs3UA2yfavnNrdXBCHdkjSGgInTFsACWUP3Pmu
+X-Gm-Gg: ASbGncucznpWvUSFF2v5t2s03hDCiGIyhu90jbdvbzusOgUwm9Bp14x9lwA0KiG+Mj1
+	LuAZ0+6mM1X1lRz341+/rShWIV/AAhy0E47B3jHfhCJbufwS3/t7NzReUBQ7Eoe5uH+61y7fyWR
+	F6EjkWe+jTvWOa+deBD4mQbNIcaeuVrr+uLY+Zw1G7DU3T8mw0oh/QMsURuxCcMyhht3gT+e7Se
+	L69W6LqNvHwsO2snAsbQFouBRGG33s/UNXHXhjv8H0J52QD6inqTaPxvvFEj0cl3jG4Kj/bxlF6
+	ur7Okl1C7eG4qnKRPtc++EE2YAk=
+X-Google-Smtp-Source: AGHT+IFuxTp/JUjRKgHm6bk8HGglm4eMoWBRrY8PM6xIIRBJOeg9hhqPfUM+m5fxkbKuGg8YC/F0FQ==
+X-Received: by 2002:a17:907:c29:b0:ab7:86ae:4bb8 with SMTP id a640c23a62f3a-abc09a0bc37mr1270641566b.23.1740410658075;
+        Mon, 24 Feb 2025 07:24:18 -0800 (PST)
+Received: from [192.168.1.100] ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abb9f8442c0sm1531734566b.150.2025.02.24.07.24.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 07:24:17 -0800 (PST)
+Message-ID: <d080a2d6-9ec7-1c86-4cf4-536400221f68@gmail.com>
+Date: Mon, 24 Feb 2025 16:24:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Mon, 24 Feb 2025 16:22:39 +0100
-X-Gm-Features: AWEUYZlP3Wh5a4SlvjJ5cLB44e_lexr3gB5QopvTOz-dW8HAy8T83mH9jizYL8A
-Message-ID: <CAP4=nvTsxjckSBTz=Oe_UYh8keD9_sZC4i++4h72mJLic4_W4A@mail.gmail.com>
-Subject: [BUG] Crash on named histogram trigger with invalid onmax variable
-To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 03/17] x86: Replace open-coded parity calculation with
+ parity8()
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+ Ingo Molnar <mingo@redhat.com>, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, jk@ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, dmitry.torokhov@gmail.com,
+ mchehab@kernel.org, awalls@md.metrocast.net, hverkuil@xs4all.nl,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ louis.peens@corigine.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, parthiban.veerasooran@microchip.com,
+ arend.vanspriel@broadcom.com, johannes@sipsolutions.net,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, yury.norov@gmail.com,
+ akpm@linux-foundation.org, mingo@kernel.org
+Cc: hpa@zytor.com, alistair@popple.id.au, linux@rasmusvillemoes.dk,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+ Yu-Chun Lin <eleanor15x@gmail.com>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-4-visitorckw@gmail.com>
+Content-Language: en-US
+From: Uros Bizjak <ubizjak@gmail.com>
+In-Reply-To: <20250223164217.2139331-4-visitorckw@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Dear maintainers and linux-trace-kernel,
 
-I stumbled upon a bug in the histogram trigger implementation, where a
-named histogram trigger with invalid onmax variable does not get
-unregistered properly in the error path, and a subsequent access to
-the same trigger file leads to kernel panic.
 
-The issue reproduces on 6.14.0-rc4 with these commands (works with any
-trace event):
+On 23. 02. 25 17:42, Kuan-Wei Chiu wrote:
+> Refactor parity calculations to use the standard parity8() helper. This
+> change eliminates redundant implementations and improves code
+> efficiency.
 
-$ cd /sys/kernel/tracing/events/rcu/rcu_callback
-$ echo 'hist:name=bad:keys=common_pid:onmax(bogus).save(common_pid)' > trigger
-bash: echo: write error: Invalid argument
-$ echo 'hist:name=bad:keys=common_pid' > trigger
+The patch improves parity assembly code in bootflag.o from:
 
-which leads to the panic:
+   58:	89 de                	mov    %ebx,%esi
+   5a:	b9 08 00 00 00       	mov    $0x8,%ecx
+   5f:	31 d2                	xor    %edx,%edx
+   61:	89 f0                	mov    %esi,%eax
+   63:	89 d7                	mov    %edx,%edi
+   65:	40 d0 ee             	shr    %sil
+   68:	83 e0 01             	and    $0x1,%eax
+   6b:	31 c2                	xor    %eax,%edx
+   6d:	83 e9 01             	sub    $0x1,%ecx
+   70:	75 ef                	jne    61 <sbf_init+0x51>
+   72:	39 c7                	cmp    %eax,%edi
+   74:	74 7f                	je     f5 <sbf_init+0xe5>
+   76:
 
-BUG: kernel NULL pointer dereference, address: 0000000000000000
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD 0 P4D 0
-Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-CPU: 3 UID: 0 PID: 2187 Comm: hist_panic_repr Kdump: loaded Not
-tainted 6.14.0-rc4 #10
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-3.fc41
-04/01/2014
-RIP: 0010:strcmp+0x10/0x30
-...
-Call Trace:
- <TASK>
- ? __die+0x24/0x70
- ? page_fault_oops+0x75/0x170
- ? exc_page_fault+0x70/0x160
- ? asm_exc_page_fault+0x26/0x30
- ? strcmp+0x10/0x30
- find_named_trigger+0x4a/0x70
- hist_register_trigger+0x3e/0x320
- event_hist_trigger_parse+0x520/0xa80
- trigger_process_regex+0xbc/0x110
- event_trigger_write+0x79/0xe0
- vfs_write+0xf7/0x420
- ? do_syscall_64+0x89/0x160
- ? syscall_exit_to_user_mode_prepare+0x154/0x190
- ksys_write+0x66/0xe0
- do_syscall_64+0x7d/0x160
- ? syscall_exit_to_user_mode_prepare+0x154/0x190
- ? syscall_exit_to_user_mode+0x32/0x1b0
- ? filp_flush+0x72/0x80
- ? filp_close+0x1f/0x30
- ? do_dup2+0xae/0x150
- ? ksys_dup3+0x65/0xf0
- ? syscall_exit_to_user_mode_prepare+0x154/0x190
- ? syscall_exit_to_user_mode+0x32/0x1b0
- ? clear_bhb_loop+0x25/0x80
- ? clear_bhb_loop+0x25/0x80
- ? clear_bhb_loop+0x25/0x80
- entry_SYSCALL_64_after_hwframe+0x76/0x7e
+to:
 
-Further investigation revealed that hist_unregister_trigger called in
-the out_unreg path in event_hist_trigger_parse (which, by the way,
-accidentally passes glob+1 instead of glob; it doesn't matter only
-because it is unused) does not find the trigger, and, thus, does not
-free it and remove it from the named_triggers list.
+   54:	89 d8                	mov    %ebx,%eax
+   56:	ba 96 69 00 00       	mov    $0x6996,%edx
+   5b:	c0 e8 04             	shr    $0x4,%al
+   5e:	31 d8                	xor    %ebx,%eax
+   60:	83 e0 0f             	and    $0xf,%eax
+   63:	0f a3 c2             	bt     %eax,%edx
+   66:	73 64                	jae    cc <sbf_init+0xbc>
+   68:
 
-Subsequent calls to find_named_trigger then finds the freed
-hist_trigger_data, tries to compare against it for name and crashes
-the kernel.
+which is faster and smaller (-10 bytes) code.
 
-I'm not familiar with the trigger implementation. Do you have any
-ideas on why the hist_unregister_trigger fails and/or a fix?
+Reviewed-by: Uros Bizjak <ubizjak@gmail.com>
 
-Thank you.
+Thanks,
+Uros.
 
-Tomas
-
+> 
+> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> ---
+>   arch/x86/kernel/bootflag.c | 18 +++---------------
+>   1 file changed, 3 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
+> index 3fed7ae58b60..314ff0e84900 100644
+> --- a/arch/x86/kernel/bootflag.c
+> +++ b/arch/x86/kernel/bootflag.c
+> @@ -8,6 +8,7 @@
+>   #include <linux/string.h>
+>   #include <linux/spinlock.h>
+>   #include <linux/acpi.h>
+> +#include <linux/bitops.h>
+>   #include <asm/io.h>
+>   
+>   #include <linux/mc146818rtc.h>
+> @@ -20,26 +21,13 @@
+>   
+>   int sbf_port __initdata = -1;	/* set via acpi_boot_init() */
+>   
+> -static int __init parity(u8 v)
+> -{
+> -	int x = 0;
+> -	int i;
+> -
+> -	for (i = 0; i < 8; i++) {
+> -		x ^= (v & 1);
+> -		v >>= 1;
+> -	}
+> -
+> -	return x;
+> -}
+> -
+>   static void __init sbf_write(u8 v)
+>   {
+>   	unsigned long flags;
+>   
+>   	if (sbf_port != -1) {
+>   		v &= ~SBF_PARITY;
+> -		if (!parity(v))
+> +		if (!parity8(v))
+>   			v |= SBF_PARITY;
+>   
+>   		printk(KERN_INFO "Simple Boot Flag at 0x%x set to 0x%x\n",
+> @@ -70,7 +58,7 @@ static int __init sbf_value_valid(u8 v)
+>   {
+>   	if (v & SBF_RESERVED)		/* Reserved bits */
+>   		return 0;
+> -	if (!parity(v))
+> +	if (!parity8(v))
+>   		return 0;
+>   
+>   	return 1;
 
