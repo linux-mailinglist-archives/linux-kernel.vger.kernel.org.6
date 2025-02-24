@@ -1,124 +1,140 @@
-Return-Path: <linux-kernel+bounces-529136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39314A42042
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:16:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A189A4204D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:17:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE09F189B232
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:15:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B9AE189AB7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C370D23BD0B;
-	Mon, 24 Feb 2025 13:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EB421931A;
+	Mon, 24 Feb 2025 13:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+Ogy8EU"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GCVzeErt"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7242C23BCF3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2768118B482
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:16:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402892; cv=none; b=TvwgsyFT+XxY/Rwg+YoU+Q3tVwhhKfKFZuMgIdjXaO+DWQt5JHxoSBtHvF+1euiekQB/kXqX5EK6xjwI/USu3K9i47vkXDXOsKCDs92fTvp+m6v8123owe/+3wi6qzuXnyfWNbSw4Uged81Ijyr/Ap7BXnl7AUxRL76S1QRylY0=
+	t=1740402998; cv=none; b=pywn7wk1BeKUIVKeORrs94jfV9BHLZEfV0gx8DzhYm1iIbhoEC3BTqyzKwV6o9j8EXtGa87QYo/u59rUzcJH4f7dM9vK4TmYGxSY25CZ9kx0qCSQozCGXe676KGqp5l7fypQSL2Q6IpsWwOWR4cHu1jtguLGkWQIyyiV/N8MibQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402892; c=relaxed/simple;
-	bh=bLLZFvEQ2mcyD7duh47ZwGoHjIPEzHkxh/Sc0z24Kyk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ied1XWvLo2DDa5UgHF4FxEuEcalOucwHQhqKbDFJj8BvPDUFCVjpaKvAic/D7lsAvYGRKXfpAltmGAgcQlGmvWLxiLe5btplzBMNEDGShWpSe0BnHqsahlz5XOCDl3NYQQztsZdAEpmoFasXnTCC8OBy4iaNGhSoTpgEMakebxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A+Ogy8EU; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1740402998; c=relaxed/simple;
+	bh=by4c7xWjZv7K9AG20FTgiR7lXj47hBVlvT0Gqp8cxbg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GmV9ecMH5KtdRFMYfWuBofx8qr8qG71Pki9Y1j4ZXT5fZXcCnvwkP079917ZjlHcdty4JGu8nEMap/9NF3gDdVOJVfsSsN5FrnQHYWKxlbAKpAmyEs5Vr0snWLAWOdHOPYLFwYHe84hc8X+DfFzImS4x4VaYcCbd9fhpToHsDvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GCVzeErt; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f2f748128so1963195f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:14:50 -0800 (PST)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5dedd4782c6so8160939a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:16:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740402889; x=1741007689; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bLLZFvEQ2mcyD7duh47ZwGoHjIPEzHkxh/Sc0z24Kyk=;
-        b=A+Ogy8EUQE8JKzQGGQ8yzHdOe/0MnX5du9SpvG1kacFoiGmm70s+MBXnYjNR7GojN/
-         kiVDAZ93+M7Uc5FBhSfCfn55OBf7aiz33XEFm2YcMZN3lpxBF5EF8DlahS1ZiAoZoLfg
-         eO0TS4s70buKHwUncBL/oTMH59bIo+x/UByxX6lkvv0Y01gtvpuUXVWcMBnGWW18unaU
-         TlqnFAggM/4JTQnF4kDteIORunGNTSjv2g756BZN2cbC15QUFcDnkvPRCUx3czvRvm/o
-         UJxhbvgc3s0EKj/exnfYM6T/Gb7trNl3SVeK/xLs0hHSbVkVW7ArGs124A7eeFPVvCO2
-         cTug==
+        d=linaro.org; s=google; t=1740402994; x=1741007794; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WTgfkvn8MxqIFdziVt3orvo1glz+j5V3klW9mhp9Q30=;
+        b=GCVzeErtqN1ddNhWMlZ5GOPadxflER9cacfXr2TOjoUAG1PvDqrTm5jervxmXNYTzw
+         It5cHPoQfQLh7xdnjjHsQEnBcsKXbR0BcKPXWB4/qH6FWiDZcOKztBgiOp007Gu3Kuo8
+         Q/ImNDrC5thZGtrzYSJeopwkIyeCdT4uSVqULPr+w10KbBhZz54K/+B/e/GjHFXUq1NR
+         5Wy5NB9B8XEmeFFmyNLS23JHr+qee2HQKLgH5HUTk35ZfFM5yQVASelaVgZd+9Qr5CZF
+         DZn4K5renUH6mIhy0ytZ7ZXyFkyqS0GYzc/EBs2gp9apujSQl039t+pY6iVomyQfV3dL
+         4H0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402889; x=1741007689;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bLLZFvEQ2mcyD7duh47ZwGoHjIPEzHkxh/Sc0z24Kyk=;
-        b=MSICMkagF/HOgT/n3kKE26hZQZwDNXQNMEnQxnB9/KLom69dZowZGioAduZvHpHKgX
-         VIfLdqkJAVueNYYlFKCO4ksWwYbgDLzBmivP6zNkZWt6tK6TIdkV0oP5SmgVxaqseUGE
-         si/n/eB3NysBJ9QgNzvX6YJ+LVKp/ACK2LI5qNhQKN2UllR/6KRenSKtYmfNU4TkHk79
-         K+vsXTwCVVa6w6PLOLwVcADYGUtUjlyQgFWS57H0Xi6sWTwaDCFttl1kfwuBRnwPU7yr
-         +sOq4iN6NsLYAUGDFH6UH96TSAEqc/ZkOWpGbBIpUlldQg5Jgc79/QQuX7I6K5f0c0+M
-         v48A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7OTT6TqckAfq36qTd3Q+JNJOsaOeKMwRdFzxoMySJjqJeVPIwwz/dBZc8xfC1lbxdQa4gLFQ0ZxzE1cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHkLq/B4DSDNWDeh9Ysqd1+j35W5wVTPPAnJUQryrioJsfODBA
-	VWsxIfMcDSA41A017yYHNo0tyQzoT23HbxOOAU5eQsFqgTpqvx5c3z9aknWpG08=
-X-Gm-Gg: ASbGnctfv80ly6peGJz1RjG7YcEvGUq2HYCmZOkX4o7VngQpYQ4DgQ2mbGtmvIWDzLv
-	8c4gPL9AXyc8xDtnWhHdMXcJRY3tjr3s2XW51CJgQe+QrOO+r8/GxAOmyL9Grts/eyIluhMXEAM
-	DpEgumF0E2L9dRzCYhBjzN+vsrE2yhof6/eUY7R+pnktS2wUCpgwG/N5lLDJrrsvkxAEsfAnAoF
-	BQUh3msLR/qNiPD+Y5eu+ELa6Rxlvl+AhxS/hU69KdhTySsUxoX42XnulV1SIglFIhmgmAz28Q9
-	6SXtL1FqT8Th2+Xa/NwfJgyOBXMeIQ==
-X-Google-Smtp-Source: AGHT+IE62+bU4+ul+YKhx4/yDKxUqcbC0QHBkW4DOt4UrwyrOCzCT+b1QBYFtOue4gs6rL65DxMppQ==
-X-Received: by 2002:a5d:47a3:0:b0:38e:c2de:70d4 with SMTP id ffacd0b85a97d-38f6f0959bamr11119239f8f.42.1740402888772;
-        Mon, 24 Feb 2025 05:14:48 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4158sm31190873f8f.3.2025.02.24.05.14.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 05:14:48 -0800 (PST)
-Message-ID: <b2c8c4757d30b808e3ce800daf6078df6a7a5bcd.camel@linaro.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla
- <srinivas.kandagatla@linaro.org>, Kees Cook	 <kees@kernel.org>, "Gustavo A.
- R. Silva" <gustavoars@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
-	 <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
-Date: Mon, 24 Feb 2025 13:14:47 +0000
-In-Reply-To: <288a69e2-0618-4dce-a96d-646daeb6ca70@kernel.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
-	 <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
-	 <288a69e2-0618-4dce-a96d-646daeb6ca70@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        d=1e100.net; s=20230601; t=1740402994; x=1741007794;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WTgfkvn8MxqIFdziVt3orvo1glz+j5V3klW9mhp9Q30=;
+        b=hubojL/oAwgqkXti5BHo4HFJG1GKTL7CmGjWtYwfEw4cTIbNRdIYkSa4EAdw/oXR7Y
+         IIHS8hRYrmNGV+ipoWTQYA404+eRxyBcsQMqlP8YirXi8zIRP37JcpTW+T3qWIemmRrw
+         HX6RlIMC1AqMdmUWKb6Rxi5E8zSKC8BkYoO3QMMhRFqxTxJfmWPN/Iqq0JonpYfYs6FL
+         4VRBF/8YFTSQUwBHxZuGpyoWq1PPI+qIav8ZfrFRpoCwve4jSiTJSWLNTyOFgpnQKvSh
+         EjR7ouxbl7kY+Zibad+QCYlmhTMYx75ShQDIlI/Gj8Tru/hMf3scryBAUeDHaILBr1vt
+         CiDg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbWho2IxW+2L1kmPeFZ4ErDuYgvG2nOlt6E5CFGpYR5YTEKdgTnHIEkqRqrQlZUGJwN+YuCKJxCqc+PMk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAAMhcL3sCzWF0AJBlkEihiPGOaHz4yrG+NEJVd6XraSchr6EL
+	E4DwBdJWtgXgMhtESEkVOAKmhrBJ23aVX9EN3OScauBaqXJPm+z8SOvX2W1hEUTbcHa5gTsqPbf
+	LKHZeY9LWcneoT1uBdnFQAwZJgi5rI2hQsrDo4w==
+X-Gm-Gg: ASbGncsTIm9TIMZf6QORN2m1E7NmWjqL4+Y8IQlp7LhSovXQ/KeOYQJzWDWLNzPhJ6W
+	LHV5i5a1dQS31zuFH5ZJCug/8E0p7Te4QCLohcL7miM7MYhUSoNJIhP9X1Agx+7xji283p3WKqq
+	kOmCRPgX/7xjNAd9fiZqWoXqdsXrW5GMHOqJhC
+X-Google-Smtp-Source: AGHT+IHo3g1OAq/ooC5HgR04q1dPHE/40igvAMR/vKb2A31SYMAPVdEQLLdj1XolHJ4wg4FhvzL9KZxbboHIVjwwkRc=
+X-Received: by 2002:a05:6402:350f:b0:5dc:c9ce:b022 with SMTP id
+ 4fb4d7f45d1cf-5e0b70e4ddemr12246110a12.9.1740402994477; Mon, 24 Feb 2025
+ 05:16:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250210001915.123424-1-qyousef@layalina.io> <20250212145054.GA1965539@joelnvbox>
+ <Z7rTNxHcXWizV3lq@gpd3> <Z7rxuqIB38Wv557A@gmail.com> <20250223232151.xtsobtuoaofotrxx@airbuntu>
+In-Reply-To: <20250223232151.xtsobtuoaofotrxx@airbuntu>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Mon, 24 Feb 2025 14:16:21 +0100
+X-Gm-Features: AWEUYZkjxZV3kmYnifZsJKpjnAz4sFT0SwnxYtOS_72NpSk8PFae_7E2zBNEAfM
+Message-ID: <CAKfTPtCiTz+-4Umcmt4adn3u6r=rcGoSZgNPfuvacCQ0XerKGg@mail.gmail.com>
+Subject: Re: [PATCH] Kconfig.hz: Change default HZ to 1000
+To: Qais Yousef <qyousef@layalina.io>
+Cc: Ingo Molnar <mingo@kernel.org>, Andrea Righi <arighi@nvidia.com>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Stultz <jstultz@google.com>, 
+	Saravana Kannan <saravanak@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-02-24 at 14:07 +0100, Krzysztof Kozlowski wrote:
-> On 24/02/2025 11:28, Andr=C3=A9 Draszik wrote:
-> > +=C2=A0 gpio-controller: true
-> > +
-> > +=C2=A0 "#gpio-cells":
-> > +=C2=A0=C2=A0=C2=A0 const: 2
-> > +
-> > +=C2=A0 gpio:
-> > +=C2=A0=C2=A0=C2=A0 $ref: /schemas/gpio/maxim,max77759-gpio.yaml
->=20
-> There is no such file at this moment, so this is not bisectable. What's
-> more, even if you fix it, you will have dependency which you *must*
-> always clearly express in patch changelog or *top* (the first people
-> see) of cover letter.
+On Mon, 24 Feb 2025 at 00:21, Qais Yousef <qyousef@layalina.io> wrote:
+>
+> On 02/23/25 11:00, Ingo Molnar wrote:
+> >
+> > * Andrea Righi <arighi@nvidia.com> wrote:
+> >
+> > > On Wed, Feb 12, 2025 at 09:50:54AM -0500, Joel Fernandes wrote:
+> > > > On Mon, Feb 10, 2025 at 12:19:15AM +0000, Qais Yousef wrote:
+> > > ...
+> > > > > I believe HZ_250 was the default as a trade-off for battery power
+> > > > > devices that might not be happy with frequent TICKS potentially draining
+> > > > > the battery unnecessarily. But to my understanding the current state of
+> > > >
+> > > > Actually, on x86, me and Steve did some debug on Chromebooks and we found
+> > > > that HZ_250 actually increased power versus higher HZ. This was because
+> > > > cpuidle governor changes C states on the tick, and by making it less
+> > > > frequent, the CPU could be in a shallow C state for longer.
+> > >
+> > > FWIW, I found the same about power consumption when we decided to switch to
+> > > CONFIG_HZ=1000 in the Ubuntu kernel:
+> > > https://discourse.ubuntu.com/t/enable-low-latency-features-in-the-generic-ubuntu-kernel-for-24-04/42255
+>
+> Thanks for sharing the data Andrea!
 
-Thanks Krzysztof. You're right of course.
-I'll fix the dependency issues in the next version
+I  don't have power figures to share but I'm aligned with the fact
+that keeping HZ=250 (4ms) is not sustainable when it comes to handle
+task scheduling on devices with 120 fps (~8ms) constraint.
 
-Cheers,
-Andre'
+FWIW
+Acked-by : Vincent Guittot <vincent.guittot@linaro.org>
 
+>
+> >
+> > The "HZ=1000 reduces power consumption or keeps it the same" is
+> > actually a pretty good argument to change the default to HZ=1000.
+> >
+> > These experiments and numbers (if any) should be incorporated in the
+> > changelog prominently - as actual data and the Kconfig decisions made
+> > by major distros will, most of the time, be superior to meta analysis
+> > that seems to be the changelog right now.
+>
+> I will update the commit message to incorporate data and the feedback received.
+>
+> Thanks!
+>
+> --
+> Qais Yousef
 
