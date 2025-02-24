@@ -1,118 +1,130 @@
-Return-Path: <linux-kernel+bounces-528659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ECA6A41A5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:11:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C56BA419FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90BB13AB861
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6736C3AFD58
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261A924BBF7;
-	Mon, 24 Feb 2025 10:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2AE24CED2;
+	Mon, 24 Feb 2025 09:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nsh21lt8"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrxCeiNS"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B777F18C924;
-	Mon, 24 Feb 2025 10:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F1324C673;
+	Mon, 24 Feb 2025 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391608; cv=none; b=BWMcsKCYB8Buzb/x9SKBWfh7qPCHUnfpfmPoAY7FLtCgsgFLoI7Jpt542rVqhRFAjk9sjxAPUNN6kjHRZSzMstbSRp1ezEF1PmLHEk8h8XMtN/gmzGgO3bfjYIOumE9doiUwCEWq/TPGkRm6e3ufuUpBgrthlB0gphKFQ0hE/CQ=
+	t=1740391138; cv=none; b=jJYjrlIVWi2RQSA+3yA5touQyuE4Rv+MbEcB7uzx7TwUydoPJhHL7CGy6xtIJdyRG9LopAprfV3hHNIPqB86Q4icV0wMIOy7DhSSjznm/s1rv3V/UgEYXEONdcJ4o7AO+YbLOlCX7SmrDfsOQmtZ3CxrtYxd6LMYtZE62fXXZYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391608; c=relaxed/simple;
-	bh=iG0pOq7skTua110Kfdnnzrm6EfHdFkinT2pLrXudrJg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kz3pdejsTdF2jTMRKGA3AO6xxfjXOGHGEjpG1XYuzWml21SyHCeyGCw2QKeQgh/FFyWJbYzHp0GIRQNGPWCVxktzHgo757TBjt4g8kcBqXWiAnssKTEbrWxMQ16LDgbt4Tki/nYmUnekDL22aQhJ8DtGvWmZ59Hcblce08xtuE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nsh21lt8; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=2eggbcunrrgmnef7zk3fuhzcjm.protonmail; t=1740391598; x=1740650798;
-	bh=yBthN9NjWnE1WZ5jO+aZCi8NljUP2Ml09wtArQ+KDzo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=nsh21lt8d3j7AJIXOZnv+HKf4AQPP/Vc7IlakTcJqfMcvosWTSHoPpTbRCNXEs2A4
-	 WjEuUJVyrU5JuWPhINhN5X2aGFiJPHVVRThVHuY8z4C2y5wo8ET4wtjOybHhBH6cK2
-	 3iGFm0UeBVnwIxo0cSGZD34k+gTBXJADsqo0+8B+C/+wBp+/A7AmYYeEH6FaHrSK75
-	 C4ImrW4UIrngBwlV446UQPh1WeBaXJZNMrA2Kjec0MKjDxVARAP3IQcKyrCGiuDkXK
-	 VLWou/x84rtjBZakA95Gs/hQEcpCDbq3KSeDxzuU1srKMLzCMe7AVe0a1xQmWDLXBS
-	 sa8+OfgWA829Q==
-Date: Mon, 24 Feb 2025 10:06:35 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
-Message-ID: <304505cb-9f68-4d34-b4f1-7d703baba012@proton.me>
-In-Reply-To: <87wmdf22ae.fsf@kernel.org>
-References: <20250223072114.3715-1-boqun.feng@gmail.com> <87wmdf22ae.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 44a2cd62d22bf5bd2b7781e011132f4265e83c73
+	s=arc-20240116; t=1740391138; c=relaxed/simple;
+	bh=fX2FejRKLHmTf189qkb5nrdkHYro4O5UcpVBV7OFrbk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L1crYOGguiLgsoRXoXtqthcJ/fh9EMc/Z41JxkahDP0vuoVVDX9AxzGZPZRcrXVvbIx4JRPC8dARhH6ATcOZo9H7ocrJwujoGrGL1Vy3zzpri7B2eZFJVDcIYkXAvfvvqijAGHvRu5eNjL6hgOA7K4bnJbxEvnzSwd3jH0c4Qd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrxCeiNS; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf3c3c104fso712954266b.1;
+        Mon, 24 Feb 2025 01:58:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740391134; x=1740995934; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YlyuCvvFDo2128e2teHgyAWHlRy7aBFZ5OZbDHsqsLE=;
+        b=GrxCeiNSO0J9qkGWsJpUVqc+uAbLjlW18gfdl7LWunVLyDw0h+Ts9S9vl4mH7bw7nH
+         Do050fgNuXC4RixwQBcnYy9NsiMgdMexPL/K1qKAk+9E8JFt8wrqQalVxT6f+2BmbV6h
+         Q99Z2lRstYHf10AggugiMmTXs+Rg2RpMMWsXrb++zJPvto7oALVf1OYv6QY5AWFtdcAz
+         ncI5bXRaJEZfANUYT9en3HQ0azrLJgTmx4oeIEbj/wwGWfrs2zZYPJnvN0aOi2suqjm5
+         wLRyeO1Lq6dmd570kSGeklhIGyM0zL9gJlifzX3OzsONUMxfbIcJxlV7IkuFWYRfaP2s
+         J+GA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740391134; x=1740995934;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YlyuCvvFDo2128e2teHgyAWHlRy7aBFZ5OZbDHsqsLE=;
+        b=Lhh8t8HNzfMtC5vt5y4ehKvxkI/6ERuuKFPiUJG4pXVyIPuPodkbv2ec1CPuya91qO
+         DN8ggoqIh8M1OrrGzF3CF+CLboXvreBTOexn4NQGsSc7uDY3E/pNNzfZm8vacWMA0zYD
+         sKJJJsfG47AJRaTsuo/wV7DxMLKp6+U/IknVogbDxqqnA/uYBm8eYaq8WNuszNqLjW3m
+         G/l4XF8d78zkeU4i2DbAzYGPPv3+E0epOnDVvoP3BKVoBIond6hobCfztvEtKxSKkH7s
+         Sc3gK3cOQR27dKISlhvxcDnY+5enDfBPegn+wmHw9ZtycFVC2PFhMpqeoZYS/OvHBMaF
+         bBwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvFnH8cxezn8LTrJq0e4HhnUUHFk4ATsmN07Y2bpA8IGBVcXpOQkZCZPZk9rCJANd1lw7zOzWLBt1n82hw@vger.kernel.org, AJvYcCXwFiu6xWUYGdVBG75qb8hAwZPHJFjSiR7BfsplDMDXDl2AtGIrP57bO8MkWQZaUR9IuMaSbuLX3uSF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4XcUlAvMPsya8zplEb/cITuTVgm4vWaEFmiVP5VWsWXVPtjDh
+	dP5birX7otB2xEcKEngAGkpGbzpFA6Gfv9UTo+vXFaK4OLXxKau/
+X-Gm-Gg: ASbGncsZ30PcIB7eT4X6gHIial8R42E3rtOqcHDvXKCyBPOTUWHmDBDBjJ8s29KOJd1
+	cc++FvKuwPCDEf3oIuMRGA+f8gQqzSpuZvNxYm5INko+gce/UNq0EicZzY0eJ1HkbodLhjtN5ak
+	TV6EqDHvSyvjN7xcj+0MLZjDMV2KyIXWBo+gpGOlIN90oWO9AydvieLR0DMIBaSVFEhIosXhdbt
+	b2IMml/OK4YqOyxiqBPx+TUG+krdShJ6tkzYTg9GvzBASBhpM2k+v8HnbQepM1+xYIID5XYyv4R
+	a/e+a2yxKgB3RS8GbB8cmxbnKl28wZPawpU8ImR0UcrSGgRhX4s=
+X-Google-Smtp-Source: AGHT+IE4DISpsiKgYOL3EFZd4l0OSdPpTIlMEud2TUQe2sSiVQY+CihGdqfWOxw12evc/bJo4FFOAA==
+X-Received: by 2002:a17:906:31cf:b0:ab6:ef33:402 with SMTP id a640c23a62f3a-abc0d9e4ef5mr1108032166b.18.1740391133934;
+        Mon, 24 Feb 2025 01:58:53 -0800 (PST)
+Received: from [192.168.5.199] ([92.120.5.6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbbbc95288sm1255333966b.158.2025.02.24.01.58.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 01:58:53 -0800 (PST)
+Message-ID: <a62ab860-5e0e-4ebc-af1f-6fb7ac621e2b@gmail.com>
+Date: Mon, 24 Feb 2025 12:07:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] bus: add driver for IMX AIPSTZ bridge
+Content-Language: en-GB
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Daniel Baluta <daniel.baluta@nxp.com>, Shengjiu Wang
+ <shengjiu.wang@nxp.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev
+References: <20250221191909.31874-1-laurentiumihalcea111@gmail.com>
+ <20250221191909.31874-4-laurentiumihalcea111@gmail.com>
+ <20250224075538.7oetjzllqqr2mlnt@pengutronix.de>
+From: Mihalcea Laurentiu <laurentiumihalcea111@gmail.com>
+In-Reply-To: <20250224075538.7oetjzllqqr2mlnt@pengutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24.02.25 09:08, Andreas Hindborg wrote:
-> Boqun Feng <boqun.feng@gmail.com> writes:
->=20
->> To provide examples on usage of `Guard::lock_ref()` along with the unit
->> test, an "assert a lock is held by a guard" example is added.
->>
->> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
->> ---
->> This depends on Alice's patch:
->>
->> =09https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899920a=
-@google.com/
->>
->> I'm also OK to fold this in if Alice thinks it's fine.
->>
->>  rust/kernel/sync/lock.rs | 24 ++++++++++++++++++++++++
->>  1 file changed, 24 insertions(+)
->>
->> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
->> index 3701fac6ebf6..6d868e35b0a3 100644
->> --- a/rust/kernel/sync/lock.rs
->> +++ b/rust/kernel/sync/lock.rs
->> @@ -201,6 +201,30 @@ unsafe impl<T: Sync + ?Sized, B: Backend> Sync for =
-Guard<'_, T, B> {}
->>
->>  impl<'a, T: ?Sized, B: Backend> Guard<'a, T, B> {
->>      /// Returns the lock that this guard originates from.
->> +    ///
->> +    /// # Examples
->> +    ///
->> +    /// The following example shows how to use [`Guard::lock_ref()`] to=
- assert the corresponding
->> +    /// lock is held.
->> +    ///
->> +    /// ```
->> +    /// # use kernel::{new_spinlock, stack_pin_init, sync::lock::{Backe=
-nd, Guard, Lock}};
->> +    ///
->> +    /// fn assert_held<T, B: Backend>(guard: &Guard<'_, T, B>, lock: &L=
-ock<T, B>) {
->> +    ///     // Address-equal means the same lock.
->> +    ///     assert!(core::ptr::eq(guard.lock_ref(), lock));
->> +    /// }
->=20
-> This seems super useful. Perhaps add this method as part of the lock api
-> instead of just having it in the example?
 
-I don't think it should be an assert. Instead make it return a
-`Result<(), ()>`. (or create better named unit error types)
+On 24.02.2025 09:55, Marco Felsch wrote:
+> Hi Laurentiu,
+>
+> thanks for your patch.
+>
+> On 25-02-21, Laurentiu Mihalcea wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> The secure AHB to IP Slave (AIPSTZ) bus bridge provides access control
+>> configurations meant to restrict access to certain peripherals.
+>> Some of the configurations include:
+>>
+>> 	1) Marking masters as trusted for R/W. Based on this
+>> 	(and the configuration of the accessed peripheral), the bridge
+>> 	may choose to abort the R/W transactions issued by certain
+>> 	masters.
+> Setting these bits requires very often that the core is running at EL3
+> (e.g. secure-monitor) which is not the case for Linux. Can you please
+> provide more information how Linux can set these bits?
+>
+> Regards,
+>   Marco
 
----
-Cheers,
-Benno
+
+In this particular case, as far as I was able to understand, NS EL1 has enough
+
+privilege to program this IP. This is why Linux can do it.
 
 
