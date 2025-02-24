@@ -1,309 +1,372 @@
-Return-Path: <linux-kernel+bounces-529765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E71A42A9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:06:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14698A42A9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C4A3A6D60
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:05:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF201753BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FEF2661BC;
-	Mon, 24 Feb 2025 18:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PjdsIjBk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2207B266571;
+	Mon, 24 Feb 2025 18:04:26 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41CA265CC7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4212E26562E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420247; cv=none; b=Zb7bijCsde9mtJ7t57/JkPiJjxj3DwvQ+jm0y2mTyHrtQehgCYVVEWT0QTRMgk98PTWRWSqoOqxZfA0ZQeiaPkRxhWumvI32Z6y5kN8nPcJ5WcftDs4rvTppZeRIgsPvVrAKREe19I3v2dvanhOiiY9OW9aT/Ss+2HLqha8KdNY=
+	t=1740420265; cv=none; b=LK9uNieKVfb3wuj3eoARdXE7d5iNieD6+Yl4fGYfnYXuc7uiiDbBYAgsA0lDPFO/Tf5oMsn1B26Gz9rVYlbiNxMezDTfKlabRK3bvzBrjeRvFh92DYxfBTd3+u4lou+d7jDn38oE2lE/+hQ4Q40cAk+2k1fF4jjqXP1DwH+Uznw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420247; c=relaxed/simple;
-	bh=C0oe1Ya2EZLRxlAQ0L8g/GFjD5Xv4b7G7R1GBfyoduM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wm65Rx3ymPclbCE63VQxSyHWF0bVpcJCXsIgeuT3jHxP4Cki56ZciBwmqrnLA09M+gwUT4MyeiB8HzYVEtqr977c55Qy4bRVKRmMLwOO1Q7Q6wo2oHEqEu9N62umxBG1NuInmZhy+CzZ3iDKVyyrQSzFkf7fFHInO4odweCAshs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PjdsIjBk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740420244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FKhJDB5I9/Akcs9qeehefKWvAKLmf9oiYnEk3pKbOsI=;
-	b=PjdsIjBkXf5/A+NKEyc2gl7dMhQxKmm7H3fxRjp6raOToLnVS1+c+cRSmbv7iXouezLPTa
-	KCep1FZbNpKIyDGelQW/5RcJ0Bc5aL9Vrl2tdHgVV7VY7jyDGZR9qL92r1a/LpoWtYwdwS
-	e9nQWMcep4GWo70Wx3mz9xcAB7938EM=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-367-Y47yq8svPVeonTaLkSq8uw-1; Mon, 24 Feb 2025 13:04:03 -0500
-X-MC-Unique: Y47yq8svPVeonTaLkSq8uw-1
-X-Mimecast-MFC-AGG-ID: Y47yq8svPVeonTaLkSq8uw_1740420242
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43943bd1409so33160045e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:04:02 -0800 (PST)
+	s=arc-20240116; t=1740420265; c=relaxed/simple;
+	bh=3qlV/GBWgy0F94uIR8IkmJNk0SAH8BsNtxYolYquZeg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lJ+DRylkM6YYLaSf9jWU/yg4E3zuITtr3IVR3lySNmhfKPAIOQMVBPqF0M2oaDySima/xghcjXY+xdcmbfjKtl0V4sjY2M332QSIScfA/ae9nSpgNeCguiuHzuD+3/hBk2kZogMOJGqVRZO5lRV5MmYElQyPm55oHEXYeV2R19c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-84cdae60616so441069939f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:04:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740420242; x=1741025042;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FKhJDB5I9/Akcs9qeehefKWvAKLmf9oiYnEk3pKbOsI=;
-        b=kTgqno+ObRjf/dHl8P+f0HW87m3ZJieLYHZiwBMBzIt0pN/PUKRC2aSGHjR7tQLVIR
-         Pam0E+qkioXrzUyszf0tVFPQpOoAWc3WQ4OCxXt4slCC9KplYHSQY0bH2Vr6HMyGl6FF
-         NCRYkUAPAF5BoWn0w1/V4MnWB86uX2TSyTwgwIfsuULoTlQtpSrw8Bh1FDc7jgtmWuGg
-         fXpQk8Kw7Gty0Gn6c/4jnb0plvZF9p/b2t0fjM0Dj0iTPDefy1G/N8edmMwEUBi1h6Ih
-         nGyUC0IleE7iz0oolc4Dpn5/jKNW0VoH++O4LpwbCZloYlQzlPlsj53swYAnwUEHrlY2
-         NiEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUG5on0kZ4CAPoTfhmC/m8FgKRX26IEg9UfPca08+bzn5hHeAr19XS4YTOPdP3+vwMo6AsAnvyH5N/44W0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHTJzf+CXsySBg7hDH3sBvBmO+cGCMPrrpPMQO8PVGvo13KtTr
-	iAX+EIrsP1mviHat3OvOOLnlydzGzat8IC9Ln1li/Db3aiM+QkdhRCwE7u4nP+1JqVnKUeltckL
-	jc39lZEi7imCun4XxM3kd+K7mKO3p6R+EO4oid+LbkfTX45jklz7CbL/aqC0AZg==
-X-Gm-Gg: ASbGnctyjsxFspFh5l2pvlVL5W6d9G4kL63yOTkPixVKtzbsr3cJF0SzGpgMKS7gTWq
-	+iwI5dJi4++VaHcEBd4Y998zEOFF9K5WlnwlKPj37KSJPMNuqIM4tUOOFNX51cLEM1DSDLI104W
-	nH/V0BbSW2e08jyjnKEYYG1dmjnkgxsq8tN+iTi3Yz4a44Z3CxXYSCx29POtYsf5OSLlVraKK1O
-	Dls2Wc8geqSbuMPtFrMSbh9kmBYDXvIlVZrLUu8Vxwy/b+il6AKAHvx/fTlH++yRhoPoWrRFO0U
-	noqoJhoVzHCyDhrLlJE3N9WRtWYXsQauYks1LwrUiEUYIQ==
-X-Received: by 2002:a05:600c:3c9f:b0:439:34dd:c3cc with SMTP id 5b1f17b1804b1-439ae2197d1mr99189335e9.22.1740420241796;
-        Mon, 24 Feb 2025 10:04:01 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH0qisyK2TmyiUHxqGDOo+VFtcO9MSPSIVtTFeVJRq9q6wtNqxhOQqdWsjAGVkrBH4KkE69kA==
-X-Received: by 2002:a05:600c:3c9f:b0:439:34dd:c3cc with SMTP id 5b1f17b1804b1-439ae2197d1mr99188955e9.22.1740420241360;
-        Mon, 24 Feb 2025 10:04:01 -0800 (PST)
-Received: from [192.168.3.141] (p4ff234b6.dip0.t-ipconnect.de. [79.242.52.182])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f252dsm111389435e9.22.2025.02.24.10.03.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 10:04:00 -0800 (PST)
-Message-ID: <e2917ef8-43bb-4f85-8f0f-712133b88481@redhat.com>
-Date: Mon, 24 Feb 2025 19:03:58 +0100
+        d=1e100.net; s=20230601; t=1740420262; x=1741025062;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=26BoXc3uxySEZk4t96qqAMNaefnIOVDrN9EFPeud7NU=;
+        b=A/CCvBOu6lkcUgLfYsFdRCD0yKoNuqN8POqgo2kfjDaM/lMFrB87qZwqKifAZVD+D6
+         cGTNbETcVYWy7ZGKPuSO3RtuzHyxpBHSn2gUpSesBPhBeTs+miVMSTEjuPjeuENME7yr
+         7tTqAFDeTVi2wuEpT/nymz5mZ380/5i+DB2+AQ3OgG3LhJUnjI3C/H5Z5S+AtKrU/Qfj
+         JApX61P1S4k44fVPoc/EopBSef+34E1Ogw0QTSOR1c3d1P4aCGGImeH033yLbivSOOVW
+         DOgTsB/wt3XXjzezfiMn+w1jMOqhLka/Eh13Vi2daOt+pSTMXHC4pjqxAZ+s0A/KBuwy
+         ygcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX4NQ4JiFe4TqnHpTv/VwyYyKTjTxwqxP82AjyY4ziAIeiN/E/1d+KRJQ5fopMUSR7t1OQ15YJRkCty3Xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiFGdJmcK9GcPg1RdHAfcqsa5EUCUZbIT15OZLWwEzMYkjsns9
+	MoyXB+d+j/qDO6C2SZ7sI7nDaU+91hjWT2aZfkIEz1vFlDG3Scaw9YE3CbA+r2TTZ0Pxwrl7EOi
+	HELKWXXy/1mCePT1B1ko2nI/mj9RVrZrkSz/ES/DxJconhUQAuvIhANg=
+X-Google-Smtp-Source: AGHT+IHZ6rzshGWczOtvBO8U27mzVKxlIwHp3Z7MyNbqJEIeAFCnFiV06cFnYmHMF8WADh6bP0VNT8e0pgX8Q+KYDPQSXnND+y+v
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
- swapcache
-To: Peter Xu <peterx@redhat.com>, Barry Song <21cnbao@gmail.com>
-Cc: Liam.Howlett@oracle.com, aarcange@redhat.com, akpm@linux-foundation.org,
- axelrasmussen@google.com, bgeffon@google.com, brauner@kernel.org,
- hughd@google.com, jannh@google.com, kaleshsingh@google.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, lokeshgidra@google.com,
- mhocko@suse.com, ngeoffray@google.com, rppt@kernel.org,
- ryan.roberts@arm.com, shuah@kernel.org, surenb@google.com,
- v-songbaohua@oppo.com, viro@zeniv.linux.org.uk, willy@infradead.org,
- zhangpeng362@huawei.com, zhengtangquan@oppo.com, yuzhao@google.com,
- stable@vger.kernel.org
-References: <69dbca2b-cf67-4fd8-ba22-7e6211b3e7c4@redhat.com>
- <20250220092101.71966-1-21cnbao@gmail.com> <Z7e7iYNvGweeGsRU@x1.local>
- <CAGsJ_4zXMj3hxazV1R-e9kCi_q-UDyYDhU6onWQRtRNgEEV3rw@mail.gmail.com>
- <Z7fbom4rxRu-NX81@x1.local>
- <CAGsJ_4xb_FoH+3DgRvV7OkkbZqZKiubntPtR25mqiHQ7PLVaNQ@mail.gmail.com>
- <Z7yxY3wkcjg_m-x4@x1.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z7yxY3wkcjg_m-x4@x1.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1565:b0:3d1:946c:e69b with SMTP id
+ e9e14a558f8ab-3d2cb4527abmr115705135ab.8.1740420262350; Mon, 24 Feb 2025
+ 10:04:22 -0800 (PST)
+Date: Mon, 24 Feb 2025 10:04:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bcb4a6.050a0220.bbfd1.008f.GAE@google.com>
+Subject: [syzbot] [hfs?] KASAN: slab-out-of-bounds Read in hfsplus_bmap_alloc
+From: syzbot <syzbot+356aed408415a56543cd@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 24.02.25 18:50, Peter Xu wrote:
-> On Sun, Feb 23, 2025 at 10:31:37AM +1300, Barry Song wrote:
->> On Fri, Feb 21, 2025 at 2:49 PM Peter Xu <peterx@redhat.com> wrote:
->>>
->>> On Fri, Feb 21, 2025 at 01:07:24PM +1300, Barry Song wrote:
->>>> On Fri, Feb 21, 2025 at 12:32 PM Peter Xu <peterx@redhat.com> wrote:
->>>>>
->>>>> On Thu, Feb 20, 2025 at 10:21:01PM +1300, Barry Song wrote:
->>>>>> 2. src_anon_vma and its lock – swapcache doesn’t require it（folio is not mapped）
->>>>>
->>>>> Could you help explain what guarantees the rmap walk not happen on a
->>>>> swapcache page?
->>>>>
->>>>> I'm not familiar with this path, though at least I see damon can start a
->>>>> rmap walk on PageAnon almost with no locking..  some explanations would be
->>>>> appreciated.
->>>>
->>>> I am observing the following in folio_referenced(), which the anon_vma lock
->>>> was originally intended to protect.
->>>>
->>>>          if (!pra.mapcount)
->>>>                  return 0;
->>>>
->>>> I assume all other rmap walks should do the same?
->>>
->>> Yes normally there'll be a folio_mapcount() check, however..
->>>
->>>>
->>>> int folio_referenced(struct folio *folio, int is_locked,
->>>>                       struct mem_cgroup *memcg, unsigned long *vm_flags)
->>>> {
->>>>
->>>>          bool we_locked = false;
->>>>          struct folio_referenced_arg pra = {
->>>>                  .mapcount = folio_mapcount(folio),
->>>>                  .memcg = memcg,
->>>>          };
->>>>
->>>>          struct rmap_walk_control rwc = {
->>>>                  .rmap_one = folio_referenced_one,
->>>>                  .arg = (void *)&pra,
->>>>                  .anon_lock = folio_lock_anon_vma_read,
->>>>                  .try_lock = true,
->>>>                  .invalid_vma = invalid_folio_referenced_vma,
->>>>          };
->>>>
->>>>          *vm_flags = 0;
->>>>          if (!pra.mapcount)
->>>>                  return 0;
->>>>          ...
->>>> }
->>>>
->>>> By the way, since the folio has been under reclamation in this case and
->>>> isn't in the lru, this should also prevent the rmap walk, right?
->>>
->>> .. I'm not sure whether it's always working.
->>>
->>> The thing is anon doesn't even require folio lock held during (1) checking
->>> mapcount and (2) doing the rmap walk, in all similar cases as above.  I see
->>> nothing blocks it from a concurrent thread zapping that last mapcount:
->>>
->>>                 thread 1                         thread 2
->>>                 --------                         --------
->>>          [whatever scanner]
->>>             check folio_mapcount(), non-zero
->>>                                                  zap the last map.. then mapcount==0
->>>             rmap_walk()
->>>
->>> Not sure if I missed something.
->>>
->>> The other thing is IIUC swapcache page can also have chance to be faulted
->>> in but only if a read not write.  I actually had a feeling that your
->>> reproducer triggered that exact path, causing a read swap in, reusing the
->>> swapcache page, and hit the sanity check there somehow (even as mentioned
->>> in the other reply, I don't yet know why the 1st check didn't seem to
->>> work.. as we do check folio->index twice..).
->>>
->>> Said that, I'm not sure if above concern will happen in this specific case,
->>> as UIFFDIO_MOVE is pretty special, that we check exclusive bit first in swp
->>> entry so we know it's definitely not mapped elsewhere, meanwhile if we hold
->>> pgtable lock so maybe it can't get mapped back.. it is just still tricky,
->>> at least we do some dances all over releasing and retaking locks.
->>>
->>> We could either justify that's safe, or maybe still ok and simpler if we
->>> could take anon_vma write lock, making sure nobody will be able to read the
->>> folio->index when it's prone to an update.
->>
->> What prompted me to do the former is that folio_get_anon_vma() returns
->> NULL for an unmapped folio. As for the latter, we need to carefully evaluate
->> whether the change below is safe.
->>
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -505,7 +505,7 @@ struct anon_vma *folio_get_anon_vma(const struct
->> folio *folio)
->>          anon_mapping = (unsigned long)READ_ONCE(folio->mapping);
->>          if ((anon_mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
->>                  goto out;
->>
->> -       if (!folio_mapped(folio))
->> +       if (!folio_mapped(folio) && !folio_test_swapcache(folio))
->>                  goto out;
->>
->>          anon_vma = (struct anon_vma *) (anon_mapping - PAGE_MAPPING_ANON);
->> @@ -521,7 +521,7 @@ struct anon_vma *folio_get_anon_vma(const struct
->> folio *folio)
->>           * SLAB_TYPESAFE_BY_RCU guarantees that - so the atomic_inc_not_zero()
->>           * above cannot corrupt).
->>           */
-> 
-> [1]
-> 
->>
->> -       if (!folio_mapped(folio)) {
->> +       if (!folio_mapped(folio) && !folio_test_swapcache(folio)) {
->>                  rcu_read_unlock();
->>                  put_anon_vma(anon_vma);
->>                  return NULL;
-> 
-> Hmm, this let me go back read again on how we manage anon_vma lifespan,
-> then I just noticed this may not work.
-> 
-> See the comment right above [1], here's a full version:
-> 
-> 	/*
-> 	 * If this folio is still mapped, then its anon_vma cannot have been
-> 	 * freed.  But if it has been unmapped, we have no security against the
-> 	 * anon_vma structure being freed and reused (for another anon_vma:
-> 	 * SLAB_TYPESAFE_BY_RCU guarantees that - so the atomic_inc_not_zero()
-> 	 * above cannot corrupt).
-> 	 */
-> 
-> So afaiu that means we pretty much very rely upon folio_mapped() check to
-> make sure anon_vma being valid at all that we fetched from folio->mapping,
-> not to mention the rmap walk later afterwards.
-> 
-> Then above diff in folio_get_anon_vma() should be problematic, as when
-> "folio_mapped()==false && folio_test_swapcache()==true", above change will
-> start to return anon_vma pointer even if the anon_vma could have been freed
-> and reused by other VMAs.
+Hello,
 
-When splitting a folio, we use folio_get_anon_vma(). That seems to work 
-as long as we have the folio locked.
+syzbot found the following issue on:
 
--- 
-Cheers,
+HEAD commit:    a1c24ab82279 Merge branch 'for-next/el2-enable-feat-pmuv3p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=177737f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f6b108de97771157
+dashboard link: https://syzkaller.appspot.com/bug?extid=356aed408415a56543cd
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=106757a4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10b646e4580000
 
-David / dhildenb
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9581dbc26f55/disk-a1c24ab8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/50aec9ab8b8b/vmlinux-a1c24ab8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3a018984f8f5/Image-a1c24ab8.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/af05206b0a6c/mount_1.gz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+356aed408415a56543cd@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 1024
+==================================================================
+BUG: KASAN: slab-out-of-bounds in hfsplus_bmap_alloc+0x150/0x538
+Read of size 8 at addr ffff0000c1d289c0 by task syz-executor168/6441
+
+CPU: 1 UID: 0 PID: 6441 Comm: syz-executor168 Not tainted 6.14.0-rc3-syzkaller-ga1c24ab82279 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x198/0x538 mm/kasan/report.c:489
+ kasan_report+0xd8/0x138 mm/kasan/report.c:602
+ __asan_report_load8_noabort+0x20/0x2c mm/kasan/report_generic.c:381
+ hfsplus_bmap_alloc+0x150/0x538
+ hfs_btree_inc_height+0xf8/0xa60 fs/hfsplus/brec.c:475
+ hfsplus_brec_insert+0x11c/0xaa0 fs/hfsplus/brec.c:75
+ __hfsplus_ext_write_extent+0x288/0x4ac fs/hfsplus/extents.c:107
+ __hfsplus_ext_cache_extent+0x84/0xa84 fs/hfsplus/extents.c:186
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
+ hfsplus_file_extend+0x39c/0x1544 fs/hfsplus/extents.c:462
+ hfsplus_get_block+0x398/0x1168 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x4c4/0x1610 fs/buffer.c:2116
+ block_write_begin fs/buffer.c:2226 [inline]
+ cont_write_begin+0x634/0x984 fs/buffer.c:2577
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ cont_expand_zero fs/buffer.c:2504 [inline]
+ cont_write_begin+0x2b0/0x984 fs/buffer.c:2567
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ generic_perform_write+0x29c/0x868 mm/filemap.c:4189
+ __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4290
+ generic_file_write_iter+0x108/0x4b0 mm/filemap.c:4316
+ __kernel_write_iter+0x340/0x7a0 fs/read_write.c:612
+ dump_emit_page fs/coredump.c:884 [inline]
+ dump_user_range+0x378/0x6c8 fs/coredump.c:945
+ elf_core_dump+0x336c/0x3c38 fs/binfmt_elf.c:2129
+ do_coredump+0x1d28/0x29a0 fs/coredump.c:758
+ get_signal+0xf6c/0x1500 kernel/signal.c:3021
+ do_signal+0x1a4/0x3a04 arch/arm64/kernel/signal.c:1658
+ do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_da+0xbc/0x178 arch/arm64/kernel/entry-common.c:605
+ el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+Allocated by task 6441:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x40/0x78 mm/kasan/common.c:68
+ kasan_save_alloc_info+0x40/0x50 mm/kasan/generic.c:562
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xac/0xc4 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4294 [inline]
+ __kmalloc_noprof+0x32c/0x54c mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ __hfs_bnode_create+0xe4/0x6d4 fs/hfsplus/bnode.c:409
+ hfsplus_bnode_find+0x1f8/0xc04 fs/hfsplus/bnode.c:486
+ hfsplus_bmap_alloc+0xc8/0x538 fs/hfsplus/btree.c:390
+ hfs_btree_inc_height+0xf8/0xa60 fs/hfsplus/brec.c:475
+ hfsplus_brec_insert+0x11c/0xaa0 fs/hfsplus/brec.c:75
+ __hfsplus_ext_write_extent+0x288/0x4ac fs/hfsplus/extents.c:107
+ __hfsplus_ext_cache_extent+0x84/0xa84 fs/hfsplus/extents.c:186
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
+ hfsplus_file_extend+0x39c/0x1544 fs/hfsplus/extents.c:462
+ hfsplus_get_block+0x398/0x1168 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x4c4/0x1610 fs/buffer.c:2116
+ block_write_begin fs/buffer.c:2226 [inline]
+ cont_write_begin+0x634/0x984 fs/buffer.c:2577
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ cont_expand_zero fs/buffer.c:2504 [inline]
+ cont_write_begin+0x2b0/0x984 fs/buffer.c:2567
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ generic_perform_write+0x29c/0x868 mm/filemap.c:4189
+ __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4290
+ generic_file_write_iter+0x108/0x4b0 mm/filemap.c:4316
+ __kernel_write_iter+0x340/0x7a0 fs/read_write.c:612
+ dump_emit_page fs/coredump.c:884 [inline]
+ dump_user_range+0x378/0x6c8 fs/coredump.c:945
+ elf_core_dump+0x336c/0x3c38 fs/binfmt_elf.c:2129
+ do_coredump+0x1d28/0x29a0 fs/coredump.c:758
+ get_signal+0xf6c/0x1500 kernel/signal.c:3021
+ do_signal+0x1a4/0x3a04 arch/arm64/kernel/signal.c:1658
+ do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_da+0xbc/0x178 arch/arm64/kernel/entry-common.c:605
+ el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+The buggy address belongs to the object at ffff0000c1d28900
+ which belongs to the cache kmalloc-192 of size 192
+The buggy address is located 48 bytes to the right of
+ allocated 144-byte region [ffff0000c1d28900, ffff0000c1d28990)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x101d28
+flags: 0x5ffc00000000000(node=0|zone=2|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 05ffc00000000000 ffff0000c00013c0 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080100010 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff0000c1d28880: 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff0000c1d28900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff0000c1d28980: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+                                           ^
+ ffff0000c1d28a00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff0000c1d28a80: 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6441 at ./include/linux/mm.h:2250 rcu_read_unlock_sched include/linux/rcupdate.h:964 [inline]
+WARNING: CPU: 1 PID: 6441 at ./include/linux/mm.h:2250 pfn_valid include/linux/mmzone.h:2069 [inline]
+WARNING: CPU: 1 PID: 6441 at ./include/linux/mm.h:2250 lowmem_page_address include/linux/mm.h:2250 [inline]
+WARNING: CPU: 1 PID: 6441 at ./include/linux/mm.h:2250 kmap_local_page+0x388/0x500 include/linux/highmem-internal.h:180
+Modules linked in:
+CPU: 1 UID: 0 PID: 6441 Comm: syz-executor168 Tainted: G    B              6.14.0-rc3-syzkaller-ga1c24ab82279 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : lowmem_page_address include/linux/rcupdate.h:964 [inline]
+pc : kmap_local_page+0x388/0x500 include/linux/highmem-internal.h:180
+lr : pfn_valid include/linux/mmzone.h:2061 [inline]
+lr : lowmem_page_address include/linux/mm.h:2250 [inline]
+lr : kmap_local_page+0x148/0x500 include/linux/highmem-internal.h:180
+sp : ffff8000a4a15bf0
+x29: ffff8000a4a15bf0 x28: ffff0000dc472000 x27: 1ffff00014942b8c
+x26: 1fffe0001b88e403 x25: 1fffe0001b88f5fb x24: ffff80008f4d4000
+x23: 1ffff00011e9a8a9 x22: ffff8000a4a15c80 x21: dfff800000000000
+x20: ffff0000c1d28900 x19: 049004df41001929 x18: 0000000000000008
+x17: 0000000000000000 x16: ffff80008b7275dc x15: 0000000000000001
+x14: 1ffff0001262e6f8 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff70001262e6f9 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c5fa0000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a4a152f8 x4 : ffff80008fcaf720 x3 : ffff8000802f88ec
+x2 : 0000000000000001 x1 : 049004df41001929 x0 : 0400000000000000
+Call trace:
+ rcu_read_unlock_sched include/linux/rcupdate.h:964 [inline] (P)
+ pfn_valid include/linux/mmzone.h:2069 [inline] (P)
+ lowmem_page_address include/linux/mm.h:2250 [inline] (P)
+ kmap_local_page+0x388/0x500 include/linux/highmem-internal.h:180 (P)
+ hfsplus_bmap_alloc+0x158/0x538
+ hfs_btree_inc_height+0xf8/0xa60 fs/hfsplus/brec.c:475
+ hfsplus_brec_insert+0x11c/0xaa0 fs/hfsplus/brec.c:75
+ __hfsplus_ext_write_extent+0x288/0x4ac fs/hfsplus/extents.c:107
+ __hfsplus_ext_cache_extent+0x84/0xa84 fs/hfsplus/extents.c:186
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
+ hfsplus_file_extend+0x39c/0x1544 fs/hfsplus/extents.c:462
+ hfsplus_get_block+0x398/0x1168 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x4c4/0x1610 fs/buffer.c:2116
+ block_write_begin fs/buffer.c:2226 [inline]
+ cont_write_begin+0x634/0x984 fs/buffer.c:2577
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ cont_expand_zero fs/buffer.c:2504 [inline]
+ cont_write_begin+0x2b0/0x984 fs/buffer.c:2567
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ generic_perform_write+0x29c/0x868 mm/filemap.c:4189
+ __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4290
+ generic_file_write_iter+0x108/0x4b0 mm/filemap.c:4316
+ __kernel_write_iter+0x340/0x7a0 fs/read_write.c:612
+ dump_emit_page fs/coredump.c:884 [inline]
+ dump_user_range+0x378/0x6c8 fs/coredump.c:945
+ elf_core_dump+0x336c/0x3c38 fs/binfmt_elf.c:2129
+ do_coredump+0x1d28/0x29a0 fs/coredump.c:758
+ get_signal+0xf6c/0x1500 kernel/signal.c:3021
+ do_signal+0x1a4/0x3a04 arch/arm64/kernel/signal.c:1658
+ do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_da+0xbc/0x178 arch/arm64/kernel/entry-common.c:605
+ el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 9593
+hardirqs last  enabled at (9593): [<ffff8000803d4db4>] raw_spin_rq_unlock_irq+0x14/0x24 kernel/sched/sched.h:1533
+hardirqs last disabled at (9592): [<ffff80008b7d0e04>] __schedule+0x2bc/0x257c kernel/sched/core.c:6668
+softirqs last  enabled at (7186): [<ffff800080311b48>] softirq_handle_end kernel/softirq.c:407 [inline]
+softirqs last  enabled at (7186): [<ffff800080311b48>] handle_softirqs+0xb44/0xd34 kernel/softirq.c:589
+softirqs last disabled at (7173): [<ffff800080020dbc>] __do_softirq+0x14/0x20 kernel/softirq.c:595
+---[ end trace 0000000000000000 ]---
+Unable to handle kernel paging request at virtual address fffd86fa0000cb28
+KASAN: maybe wild-memory-access in range [0xfff037d000065940-0xfff037d000065947]
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001a50a6000
+[fffd86fa0000cb28] pgd=0000000000000000, p4d=0000000000000000
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 UID: 0 PID: 6441 Comm: syz-executor168 Tainted: G    B   W          6.14.0-rc3-syzkaller-ga1c24ab82279 #0
+Tainted: [B]=BAD_PAGE, [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : hfsplus_bmap_alloc+0x180/0x538 fs/hfsplus/btree.c:404
+lr : hfsplus_bmap_alloc+0x16c/0x538 fs/hfsplus/btree.c:403
+sp : ffff8000a4a15c40
+x29: ffff8000a4a15cc0 x28: 0000000000000f00 x27: 1ffff00014942b8c
+x26: fff037d000064a40 x25: fff037d000065940 x24: 00000000ffff90f8
+x23: ffff0000c1d289c0 x22: ffff8000a4a15c80 x21: dfff800000000000
+x20: ffff0000c1d28900 x19: 1ffe06fa0000cb28 x18: 0000000000000008
+x17: 0000000000000000 x16: ffff80008b7275dc x15: 0000000000000001
+x14: 1ffff0001262e6f8 x13: 0000000000000000 x12: 0000000000000000
+x11: ffff70001262e6f9 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000c5fa0000 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff8000a4a152f8 x4 : ffff80008fcaf720 x3 : ffff8000802f88ec
+x2 : 0000000000000001 x1 : 00000000000090f8 x0 : 0000000000000000
+Call trace:
+ hfsplus_bmap_alloc+0x180/0x538 fs/hfsplus/btree.c:404 (P)
+ hfs_btree_inc_height+0xf8/0xa60 fs/hfsplus/brec.c:475
+ hfsplus_brec_insert+0x11c/0xaa0 fs/hfsplus/brec.c:75
+ __hfsplus_ext_write_extent+0x288/0x4ac fs/hfsplus/extents.c:107
+ __hfsplus_ext_cache_extent+0x84/0xa84 fs/hfsplus/extents.c:186
+ hfsplus_ext_read_extent fs/hfsplus/extents.c:218 [inline]
+ hfsplus_file_extend+0x39c/0x1544 fs/hfsplus/extents.c:462
+ hfsplus_get_block+0x398/0x1168 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x4c4/0x1610 fs/buffer.c:2116
+ block_write_begin fs/buffer.c:2226 [inline]
+ cont_write_begin+0x634/0x984 fs/buffer.c:2577
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ cont_expand_zero fs/buffer.c:2504 [inline]
+ cont_write_begin+0x2b0/0x984 fs/buffer.c:2567
+ hfsplus_write_begin+0x7c/0xc4 fs/hfsplus/inode.c:46
+ generic_perform_write+0x29c/0x868 mm/filemap.c:4189
+ __generic_file_write_iter+0xfc/0x204 mm/filemap.c:4290
+ generic_file_write_iter+0x108/0x4b0 mm/filemap.c:4316
+ __kernel_write_iter+0x340/0x7a0 fs/read_write.c:612
+ dump_emit_page fs/coredump.c:884 [inline]
+ dump_user_range+0x378/0x6c8 fs/coredump.c:945
+ elf_core_dump+0x336c/0x3c38 fs/binfmt_elf.c:2129
+ do_coredump+0x1d28/0x29a0 fs/coredump.c:758
+ get_signal+0xf6c/0x1500 kernel/signal.c:3021
+ do_signal+0x1a4/0x3a04 arch/arm64/kernel/signal.c:1658
+ do_notify_resume+0x74/0x1f4 arch/arm64/kernel/entry-common.c:148
+ exit_to_user_mode_prepare arch/arm64/kernel/entry-common.c:169 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:178 [inline]
+ el0_da+0xbc/0x178 arch/arm64/kernel/entry-common.c:605
+ el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+Code: 12002e7c 8b3c4359 d343ff33 12000b29 (38f56a68) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	12002e7c 	and	w28, w19, #0xfff
+   4:	8b3c4359 	add	x25, x26, w28, uxtw
+   8:	d343ff33 	lsr	x19, x25, #3
+   c:	12000b29 	and	w9, w25, #0x7
+* 10:	38f56a68 	ldrsb	w8, [x19, x21] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
