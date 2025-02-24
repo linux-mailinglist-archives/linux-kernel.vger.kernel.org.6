@@ -1,168 +1,196 @@
-Return-Path: <linux-kernel+bounces-529540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C5CEA42794
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:15:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93DFCA42799
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC33169106
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35831188A759
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2C3262D02;
-	Mon, 24 Feb 2025 16:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WNFNL/2h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D8A1A0BD6;
+	Mon, 24 Feb 2025 16:15:35 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8D426280C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3428191F60
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740413707; cv=none; b=P6IQL8t2x1ks4l1iyqtfZ6j4nsF/Q4yJZ+eL9LpyOSg4A7lXMoortFdQeljjWBx44O/aobDXBqJCGhX6Fvz8Wu2sWZA2dn2y7h2lSS3FMi8ig1SteCHxo7hGc0fgR4znS2v3mSUFTSHwJmigv0bOVkhlhg2RIk48/kyZ8zruCgg=
+	t=1740413735; cv=none; b=PV5CpNg/usdVHI0Ua8vy7rBrgZHWcN53tjdl3UFHX0yAmj1Cge6MZVPEN3iysI3BH7+2RiTHJ1QzgdfKixgfjACEDJrNUH3TTke9ci2VGEW8nra9LG83rL7DmitILA4pCZPMOBXOLL8mY4HCokHNJj6ciFsY5VdIzkE0Ulzig7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740413707; c=relaxed/simple;
-	bh=OO/5KgROT2R3vAvVbxK4yZELP4saE5cgPxI1MRxOLQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YWFmuDRkF+rKvgOYZXGLqrjYnfHy65Fshu1xb3eeE2SUDTjFWmQKw+DcrEYuAp8LsDN2BLFWfzIAeKlZQQxQ7x17BxlsafkWyf0ONvn4atcKiLdVLvuVqPYPKbCxRzU8NonlHIYDUqKcKBtnbAPxyUl4W88ZwHZzMUCsoaq9xlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WNFNL/2h; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740413705; x=1771949705;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OO/5KgROT2R3vAvVbxK4yZELP4saE5cgPxI1MRxOLQA=;
-  b=WNFNL/2hMFF4ctSCLU4y0MnS6mFizTOcyXmyVfD3H9pX3jRIQVNQupMk
-   ctDGcQv+yJ+xMuPR/FwqvMsf6KIudU2DdgnEKMCsLdbKnlUND9kKvMqiT
-   TyWa+6CSwOEjmfuD8Yue5qCfU6w7RAISOTJH0iQ/aJLLb2OIynVz217ou
-   P3LzDa5THgwVwAm8i2O4QQ67QclPhmVbww7wf69RYbat/HhYd4sB/ZUaF
-   kjjELOJZvgAjE/te+0kkJjiVij+WZFwahWQMIGpU3rSs0/kLNbi65js/G
-   odnE87KYO7zZX0Mgfy9vZxFI28bhjFQsaME5Lm91TNL7kSc9DQbVas9NC
-   g==;
-X-CSE-ConnectionGUID: 8iZHhyFTR/26IGfULqkMeA==
-X-CSE-MsgGUID: zwyvvMshTVOe35eJKJ948w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="51814435"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="51814435"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 08:15:04 -0800
-X-CSE-ConnectionGUID: 7BeqTr8/RxyxD6+CqFHd0w==
-X-CSE-MsgGUID: jmvzcugsQeKMEw2yH0TcXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117007463"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 08:15:02 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmb6g-0000000EkAv-0aoo;
-	Mon, 24 Feb 2025 18:14:58 +0200
-Date: Mon, 24 Feb 2025 18:14:57 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z7ybAVd3pNAhQemw@smile.fi.intel.com>
-References: <Z7yMIC1wxm0AGBCt@smile.fi.intel.com>
- <PN3PR01MB9597D4FD9FD8B8A8FB0F2B3CB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB959729DB53C0D359F8A83292B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z7ySdcYWZjCVd-7v@smile.fi.intel.com>
- <PN3PR01MB959780B670AB514305790D8BB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <Z7yV1rvSM2OPW_un@smile.fi.intel.com>
- <PN3PR01MB95976A734F6763F1574FC7EAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1740413735; c=relaxed/simple;
+	bh=ydXaMC6zS9e4LSddJroFvhRyHHAr7tsNfPBCVg94X7Y=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=RMIVCFOeUQN1xl+9J34iWwBC/pdDr1CL0zTsqj1WBoPuniNlA9aTxdth2qHXgE0n4WC2PvDaY3OiiGpz1bgexKJCBK4LLG210Yr7C4PAmDBBrTt/GJaBsjOEjymhZPHxnUA1YFyEIB68veJo9WFtsSQR8niLZQ/TOwWb5Gk+A/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d289bf6c39so42904665ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:15:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740413733; x=1741018533;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q94TLh93rwphFT6Rw5s+2aRbj+FkZ2+KBTTzXF1Vz/A=;
+        b=g0Beb2sjxkKCWDry0HuLHEHyrLYVyjFWoKUSd1GchNA0+9RVHdDsCoi/VghNd99eJf
+         hZK/UTlWCrKSolM4IgDsiDQIyoQ2nlT6rk+zQ47Ajk87FxeIguAYmL/7Mmy5rkRHUaft
+         ENFUyyBar9KbbPxeITkYZ9ACOxPKYkv7NCZBpAhstVBdHqBcp7WvPW2HLWcVQY4aUI2Q
+         fqgelpgLy3mal4FPToDC7SgpiQ8EKet/jQCP1o5cjPpAZTirWtgi3A8iCTNyuIsDw8eP
+         /EniOXZGJv7hnJPvPxI/cL4cRsxc0rlsWe4MfdQdRbZ9sKbP/tA4BYEQvDxDYC4wwc0v
+         TtFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDh4hcUxbcawNP47Da7LUeF4ibiabLmCXvy5kEqnPvYN+dDuueyobmWAzGvLmBmY/UUxC1vwuTtyUrbtQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ9mx7uKtQ5fmiBw9/cJonSMxx1+k00IFDLfLUo5yhjIWDpCGt
+	4tJ2sffYHJa24BSADEfG24f7mfQprH68H7UjyFxorjNm5BoBlbhRim//ljrxMslc06iZ7E73qRZ
+	lRNxNF8E6fts3+GsWZpxBq9cS30stbFj4FTXKhhVlrQoSphO01/cEhkk=
+X-Google-Smtp-Source: AGHT+IFvHqikWUSpJ7okF8fU05+4z27G+fhPH+6u1seiHFbMdxzpSz/ddpywMj8xOz1tS7XdMwMEd9IZ2tbLz/ffeaZrZl0Fk+LV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB95976A734F6763F1574FC7EAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:1d9e:b0:3a9:cde3:2ecc with SMTP id
+ e9e14a558f8ab-3d2c020d145mr200185565ab.6.1740413732695; Mon, 24 Feb 2025
+ 08:15:32 -0800 (PST)
+Date: Mon, 24 Feb 2025 08:15:32 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bc9b24.050a0220.bbfd1.008e.GAE@google.com>
+Subject: [syzbot] [kernel?] INFO: task hung in __fput
+From: syzbot <syzbot+5014f30b0de0d4b77ae3@syzkaller.appspotmail.com>
+To: anna-maria@linutronix.de, benjamin.tissoires@redhat.com, 
+	bristot@redhat.com, bsegall@google.com, corbet@lwn.net, 
+	david.rheinsberg@gmail.com, dietmar.eggemann@arm.com, frederic@kernel.org, 
+	jiangshanlai@gmail.com, jikos@kernel.org, juri.lelli@redhat.com, 
+	linux-doc@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mgorman@suse.de, mingo@redhat.com, 
+	peterz@infradead.org, rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, 
+	tglx@linutronix.de, tj@kernel.org, vincent.guittot@linaro.org, 
+	vschneid@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 24, 2025 at 03:56:36PM +0000, Aditya Garg wrote:
-> > On 24 Feb 2025, at 9:23 PM, andriy.shevchenko@linux.intel.com wrote:
-> > On Mon, Feb 24, 2025 at 03:40:29PM +0000, Aditya Garg wrote:
-> >>>> On 24 Feb 2025, at 9:08 PM, andriy.shevchenko@linux.intel.com wrote:
-> >>> On Mon, Feb 24, 2025 at 03:32:56PM +0000, Aditya Garg wrote:
-> >>>>> On 24 Feb 2025, at 8:50 PM, Aditya Garg <gargaditya08@live.com> wrote:
-> >>>>>> On 24 Feb 2025, at 8:41 PM, andriy.shevchenko@linux.intel.com wrote:
-> >>>>>> On Mon, Feb 24, 2025 at 03:03:40PM +0000, Aditya Garg wrote:
-> >>>>>>>>> On 24 Feb 2025, at 8:27 PM, andriy.shevchenko@linux.intel.com wrote:
-> >>>>>>>> On Mon, Feb 24, 2025 at 02:32:37PM +0000, Aditya Garg wrote:
-> >>>>>>>>>> On 24 Feb 2025, at 7:30 PM, andriy.shevchenko@linux.intel.com wrote:
-> >>>>>>>>>>>> On Mon, Feb 24, 2025 at 01:40:20PM +0000, Aditya Garg wrote:
+Hello,
 
-...
+syzbot found the following issue on:
 
-> >>>>>>>>>>>>> +#define __APPLETBDRM_MSG_STR4(str4) ((__le32 __force)((str4[0] << 24) | (str4[1] << 16) | (str4[2] << 8) | str4[3]))
-> >>>>>>>>>>>> 
-> >>>>>>>>>>>> As commented previously this is quite strange what's going on with endianess in
-> >>>>>>>>>>>> this driver. Especially the above weirdness when get_unaligned_be32() is being
-> >>>>>>>>>>>> open coded and force-cast to __le32.
-> >>>>>>>>>>> 
-> >>>>>>>>>>> I would assume it was also mimicked from the Windows driver, though I haven't
-> >>>>>>>>>>> really tried exploring this there.
-> >>>>>>>>>>> 
-> >>>>>>>>>>> I’d rather be happy if you give me code change suggestions and let me review
-> >>>>>>>>>>> and test them
-> >>>>>>>>>> 
-> >>>>>>>>>> For the starter I would do the following for all related constants and
-> >>>>>>>>>> drop that weird and ugly macros at the top (it also has an issue with
-> >>>>>>>>>> the str4 length as it is 5 bytes long, not 4, btw):
-> >>>>>>>>>> 
-> >>>>>>>>>> #define APPLETBDRM_MSG_CLEAR_DISPLAY cpu_to_le32(0x434c5244) /* CLRD */
-> >>>>>>>> 
-> >>>>>>>> Lemme test this.
-> >>>>>>> 
-> >>>>>>> Just in case it won't work, reverse bytes in the integer. Because I was lost in
-> >>>>>>> this conversion.
-> >>>>> 
-> >>>>> It works. What I understand is that you used the macro to get the final hex and converted it into little endian, which on the x86 macs would technically remain the same.
-> >>>> 
-> >>>> And now that I oberved again, %p4cc is actually printing these CLRD, REDY etc
-> >>>> in reverse order, probably the reason %p4ch was chosen. And I am unable to
-> >>>> find what macro upstream can be used.
-> >>> 
-> >>> %.4s should work as it technically not DRM 4cc, but specifics of the protocol
-> >>> (that reminds me about ACPI that uses 4cc a lot).
-> >> 
-> >> I still get reverse order in that.
-> > 
-> > Ah, right, it will give you the first letter as LSB, indeed. At the end of the
-> > day if it's so important, there are ways how to solve that without using %p4cc.
-> > But if others (and esp. PRINTK maintainers) want to have / don't object having
-> > that extension, why not?
-> 
-> Right, but what to do about the case of little endian and host endian? I
-> remember the statement "for the sake of completeness" for them. Do you think
-> just host endian and reverse endian should be just fine? Or you got any "no
-> sparse warning" way to get it done? The macros to convert to le32/be32 expect
-> a u32 value, but in those cases we actually are passing a le32/be32 value.
+HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164ae7a4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8de9cc84d5960254
+dashboard link: https://syzkaller.appspot.com/bug?extid=5014f30b0de0d4b77ae3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114ae7a4580000
 
-For now I think we better save the energy and wait for PRINTK people to tell
-if they are okay in general. Otherwise it makes no sense to develop and review
-something that will go to the trash bin.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2538edcc866d/disk-d082ecbc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fe2b2d244cf7/vmlinux-d082ecbc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/471967bae80b/bzImage-d082ecbc.xz
 
--- 
-With Best Regards,
-Andy Shevchenko
+The issue was bisected to:
+
+commit 616db8779b1e3f93075df691432cccc5ef3c3ba0
+Author: Tejun Heo <tj@kernel.org>
+Date:   Thu May 18 03:02:08 2023 +0000
+
+    workqueue: Automatically mark CPU-hogging work items CPU_INTENSIVE
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1217e7a4580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1117e7a4580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1617e7a4580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5014f30b0de0d4b77ae3@syzkaller.appspotmail.com
+Fixes: 616db8779b1e ("workqueue: Automatically mark CPU-hogging work items CPU_INTENSIVE")
+
+INFO: task syz.0.22:6033 blocked for more than 152 seconds.
+      Not tainted 6.14.0-rc4-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.22        state:D stack:25656 pid:6033  tgid:6033  ppid:5937   task_flags:0x400040 flags:0x00000004
+ <TASK>
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_timeout+0xb0/0x290 kernel/time/sleep_timeout.c:75
+ __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4362
+ uhid_dev_destroy drivers/hid/uhid.c:584 [inline]
+ uhid_char_release+0xac/0x600 drivers/hid/uhid.c:662
+ __fput+0x3e9/0x9f0 fs/file_table.c:464
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0f6998d169
+RSP: 002b:00007ffe4cd3e698 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 0000000000019525 RCX: 00007f0f6998d169
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f0f69ba7ba0 R08: 0000000000000001 R09: 000000024cd3e98f
+R10: 00007f0f69800000 R11: 0000000000000246 R12: 00007f0f69ba5fac
+R13: 00007f0f69ba5fa0 R14: ffffffffffffffff R15: 00007ffe4cd3e7b0
+ </TASK>
+INFO: task syz.2.18:6035 blocked for more than 156 seconds.
+      Not tainted 6.14.0-rc4-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.2.18        state:D stack:25984 pid:6035  tgid:6035  ppid:5945   task_flags:0x400040 flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
+ __schedule_loop kernel/sched/core.c:6842 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6857
+ schedule_timeout+0xb0/0x290 kernel/time/sleep_timeout.c:75
+ do_wait_for_common kernel/sched/completion.c:95 [inline]
+ __wait_for_common kernel/sched/completion.c:116 [inline]
+ wait_for_common kernel/sched/completion.c:127 [inline]
+ wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
+ __flush_work+0xa47/0xc60 kernel/workqueue.c:4242
+ __fput+0x3e9/0x9f0 fs/file_table.c:464
+ task_work_run+0x24f/0x310 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+RIP: 0033:0x7f4cedb8d169
+RAX: 0000000000000000 RBX: 0000000000019540 RCX: 00007f4cedb8d169
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007f4cedda7ba0 R08: 0000000000000001 R09: 0000000243e0cb6f
+R10: 00007f4ceda00000 R11: 0000000000000246 R12: 00007f4cedda5fac
+      Not tainted 6.14.0-rc4-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.17        state:D
+ stack:25984 pid:6037  tgid:6037  ppid:5940   task_flags:0x400040 flags:0x00000004
+ context_switch kernel/sched/core.c:5378 [inline]
+ __schedule+0x18bc/0x4c40 kernel/sched/core.c:6765
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
