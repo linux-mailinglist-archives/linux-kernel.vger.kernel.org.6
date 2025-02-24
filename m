@@ -1,152 +1,102 @@
-Return-Path: <linux-kernel+bounces-529024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C16AA41EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3924A41EF7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8E01889E62
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6071886D41
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3DD19B5A3;
-	Mon, 24 Feb 2025 12:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oIJwfcMk"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586791A317A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF381A317A;
+	Mon, 24 Feb 2025 12:25:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D5919B5A3;
+	Mon, 24 Feb 2025 12:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399890; cv=none; b=EPNU2W4JSmse4qr9+GfDKNfM06ePLyzLY+hwJA1PksGfcT+WrBBI5V2gwj2l8EZmKuCvY2IOdh0HlBB9GDx7uBD44rp/9BBv+OslpgQQVSXCvb8KInmpojvuMmW361MUstTk17eozRxrrKExeLn7y/tgubBlsDC6IYD2mQugSL4=
+	t=1740399915; cv=none; b=LAoC4qLrkCMHXEycmfJhE+HG0FFN6t3aYdPsCyU1b9lZ9BoVKK14BnYrRN12lG8wHADP5qIrZn4QIPbN+pE1xpClFfkVoggb/YcLmsstkgWZRI6WgYW7pHQLdNNia2TXjZ0/HNF6SOnoKq3VdGNEP5WJhUu1dF2DdF99L8sLRLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399890; c=relaxed/simple;
-	bh=Lis5HjVK3WM+Degswlw1UlkMf1Me/rIKqyrwVJtfqU0=;
+	s=arc-20240116; t=1740399915; c=relaxed/simple;
+	bh=5zHGTUn4fkkasmwO6qty3ScPi7UAKOnweB9YZ7sD3Eg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIJifv1zDqkm11R4zPK7QRBQrXnt7tdFTLZuf0sGTdUhbEy4mxfHvLOMd6HNxQfGct9Coa1j2Wk4W4J3FhX4lEBVNJSKBjRreoRUL26igzPfFocTgkYs8z7obaigj85m5Qs3Wf2OjC2dGrcdbgJEVABDYxVdVW20x5b1wnxn5cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oIJwfcMk; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fcb6c42c47so6621583a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:24:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740399887; x=1741004687; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CzOuuE5AQmIPlvYyxq7yqi7h09eNAtPB9O3gjrpeReo=;
-        b=oIJwfcMkfnEX1XrhSul8seuSPE+46c/4HFTZiw5clumOvxxskLZaPSXB4YpyxCLrEl
-         tywQJyA2XdDP0EBQe3lrG4qZgsNf0XiPwi8eHbEC9/ORIA2vFfC5qHn4SM8YIC7aHr2z
-         IPuuoml/OcxfEOUJJ3BSPLgH29l9xGy+X9aav8FsBMswtrAh1CRjhAc3yJ1ZSZxwJesL
-         4VhfkGLWn3NgvMNoyOu2CtmB5gjy5AdOPHGzyQf/qXSwxZR6lLhdltN4p5xxfbVAKPeJ
-         o9F6x0ZAwEn2gJBahYvb/Ht1P4XBIsEqoATZZXO9bxRcdS7VBhBVtTA1DbVeMvRFyBno
-         ZUMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740399887; x=1741004687;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CzOuuE5AQmIPlvYyxq7yqi7h09eNAtPB9O3gjrpeReo=;
-        b=Z6EhOx0r/semB4cGfKLqosVZQyNrmRxStiSrwXGIYcTGuRpm0aWaHxDNZHhMyYqjVe
-         /uVBPfNSHmJbdXUrX7l+vj+Du9+8lzh2wh5Q0tOM/ZtiaMusp98MYpKywFx7HO3nGFK+
-         wRvac0ARBQC1Hu2uiMZJGIWKQNfSCbL+lyyIunczL3ayoFE2yqrjHGQ3uVPb0hYmhO5B
-         nE/1EhYoN8sWAWndpu+X+svxXgYhEyJgIO4GtJArTjwIo2ungjYUE7EaRBQS4cf5v/Hb
-         qD8f9t61XDiZ8iEpEnXfwC0jbRg2oi32Ld/OJzwEu3FJR7ircTOmEWp8UCm1hnmRLmmr
-         6egw==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnr5XYijY7E0RogKtpL3I7rkfOAQDgNtWNAaQ8EjKHuHMdcnjSpwsR1dnqgohTBEu1jxzfAk2X5E/HUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsbKeDeaDS+xCB+McJ+cPXJDFmN7/Z+iG49vbwpi/YEAzqFcNZ
-	HDfMnu4YjumvpwrzJo4z7K2xwIwfkzs/637aBHVYgCIEjbuL13fcKV0XGYELscRQBvFV6SS+lCk
-	=
-X-Gm-Gg: ASbGncteszg2UE/Ud8DTXpRx2tvt7oX0+WXvnka0zRumnGgpW0IMh+fNIbsryXho4ut
-	634PFHORAjEKuz7x9QVKh0glImlgQb4uapbkp0PEd65cA3kMjtQ9J0iME+kF+sr2eV0xFYQC9g7
-	Hbxz0c+XBlDF/eQzNAk6BKYfCMxCkMJx8V16oxR9uH3Jw8N40pgCRRhUZL/V1tSvC3YjT1zf/g2
-	8PzId7UISGqSZ6sN9PsLLBULC1iwQa2hXe0FfV+sh0gI1vJHi0ypMJPRGgH+WWu9g5vWcYnPCbJ
-	YTP9PTga+UH0jjPaB6YOHVnJSiGPT0SzsiZS
-X-Google-Smtp-Source: AGHT+IH/w00sFYxAQuhzHVocmdDGxR/sR2j2LN3gKicNu564R2XT9+1VYMvG9GP5RbWPILjxrB+JCQ==
-X-Received: by 2002:a17:90b:53ce:b0:2f6:d266:f45e with SMTP id 98e67ed59e1d1-2fce789de66mr23281750a91.2.1740399887600;
-        Mon, 24 Feb 2025 04:24:47 -0800 (PST)
-Received: from thinkpad ([36.255.17.202])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb57c5ea71sm18865435a12.8.2025.02.24.04.24.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 04:24:47 -0800 (PST)
-Date: Mon, 24 Feb 2025 17:54:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>, vkoul@kernel.org,
-	kishon@kernel.org, p.zabel@pengutronix.de,
-	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
-	quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
-	quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-Message-ID: <20250224122439.njrcoyrfsisddoer@thinkpad>
-References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
- <20250220102253.755116-3-quic_wenbyao@quicinc.com>
- <20250224073301.aqbw3gxjnupbejfy@thinkpad>
- <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
- <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fu0BcerUz3jjxnY1HPVYTJ9D9CRyayTZmO60gqKi7YrqFKiZHmPpJTkClyNp9yhyXx84yZ/4CIYslBGQi+p+CSXllqN6SYcI0/b95JHAeUGCHX80BQgaM7iPPXm9/VFxXPFcJ8PLwIhx0ncHaydANA27etUsGoP28VnJVfMCjgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE2BC497;
+	Mon, 24 Feb 2025 04:25:29 -0800 (PST)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A35A43F6A8;
+	Mon, 24 Feb 2025 04:25:12 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:25:07 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+Message-ID: <20250224122507.GE8144@e132581.arm.com>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
+In-Reply-To: <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
 
-On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
-> On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
-> > On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
-> >> On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
-> >>> From: Qiang Yu <quic_qianyu@quicinc.com>
-> >>>
-> >>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
-> >>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
-> >>> but retains register values, which means PHY setting can be skipped during
-> >>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
-> >>> after that.
-> >>>
-> >>> Hence, determine whether the PHY has been enabled in bootloader by
-> >>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
-> >>> available, skip BCR reset and PHY register setting to establish the PCIe
-> >>> link with bootloader - programmed PHY settings.
-> >>>
-> >>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> >>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
-> >> Some nitpicks below.
-> >>
-> >>> ---
+On Tue, Feb 18, 2025 at 02:40:06PM -0600, Rob Herring (Arm) wrote:
 > 
-> [...]
-> 
-> >>
-> >>> +     * In this way, no matter whether the PHY settings were initially
-> >>> +     * programmed by bootloader or PHY driver itself, we can reuse them
-> >> It is really possible to have bootloader not programming the init sequence for
-> >> no_csr reset platforms? The comment sounds like it is possible. But I heard the
-> >> opposite.
-> > 
-> > PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
-> > manually in UEFI shell if we want.
-> 
-> IIUC this will not be a concern going forward, and this is a special case
-> 
+> From: Anshuman Khandual <anshuman.khandual@arm.com>
 
-I'm wondering how many *special* cases we may have to deal with going forward.
-Anyhow, I would propose to atleast throw an error and fail probe() if:
+[...]
 
-* the platform has no_csr reset AND
-* bootloader has not initialized the PHY AND
-* there are no init sequences in the kernel
+> BRBE records are invalidated whenever events are reconfigured, a new
+> task is scheduled in, or after recording is paused (and the records
+> have been recorded for the event). The architecture allows branch
+> records to be invalidated by the PE under implementation defined
+> conditions. It is expected that these conditions are rare.
 
-- Mani
+[...]
 
--- 
-மணிவண்ணன் சதாசிவம்
+> +static void armv8pmu_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sched_in)
+> +{
+> +       struct arm_pmu *armpmu = *this_cpu_ptr(&cpu_armpmu);
+> +       struct pmu_hw_events *hw_events = this_cpu_ptr(armpmu->hw_events);
+> +
+> +       if (!hw_events->branch_users)
+> +               return;
+> +
+> +       if (sched_in)
+> +               brbe_invalidate();
+> +}
+
+Just a minor concern.  I don't see any handling for task migration.
+E.g., for a task is migrated from one CPU to another CPU, I expect we
+need to save and restore branch records based on BRBE injection.  So
+far, the driver simply invalidates all records.
+
+I think this topic is very likely discussed before.  If this is the
+case, please ignore my comment.  Except this, the code looks good
+to me.
+
+Thanks,
+Leo
 
