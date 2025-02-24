@@ -1,112 +1,141 @@
-Return-Path: <linux-kernel+bounces-528011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9EAA4127A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:20:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40ABBA4127C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EC7D3B5758
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:19:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE48018903A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F741078F;
-	Mon, 24 Feb 2025 00:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200B9F513;
+	Mon, 24 Feb 2025 00:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aUlQ1RHl"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDFJ7SmH"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B772B9A5
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17DC6125;
+	Mon, 24 Feb 2025 00:23:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740356366; cv=none; b=i2Rg21br1UEI/hiAUaXkaefk7W1OQ/R/2emSW38vP0O+7enF51smWffGkdMXOpgtDR7sVSjU74PcnL5AplSoGO+X56XyzShvMvXrH0SiqpICeAna1lUzRuFhfi6iKGf2C7NWhJje9GztanQSqc8L4UdVgYmiyEC1FNhY+lwdXjw=
+	t=1740356607; cv=none; b=soZSjC03rgWCdoiNmapoI6WHUrs7Nu2BKIqZZKDnNAEW6jmCfexGfvqTFvc8Oehy1isrt164vS75/oCXkN2/Knz5sSt+2coCFPRLUsWsOrzBm5J5RBYsNIgIxYmyP6fAH3gLHtaozHCFZiZ+6jkXQZB+XQfMu8Mn9yllchPftNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740356366; c=relaxed/simple;
-	bh=mJRxLtLX96QPS+W09kQbtgthZev7JKYRvBjAfO240g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eN2hLwlVQgfw4SWmdUK7fGt+imgYSMPRygipFWm4JS55qgGbXDJmKjFrd783US08CDQ5LikqJeTW/31Zg+RdKOpSrv6rX91zjd+0zoX00qabrL+E4bzaGJk7OJrZePoTZyIUWixuxtddmtKSKj83RCFuoalMV8rPs0ENVQe2MZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aUlQ1RHl; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5439a6179a7so4300384e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 16:19:24 -0800 (PST)
+	s=arc-20240116; t=1740356607; c=relaxed/simple;
+	bh=9PfFQv5rpvfO87F+TZBj1QMCFUL8jKYvXjKgV9ecBv0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mq8U/DBEMREPUBbhZ6f8xBXTLgbygH2+ZsOAhuBl7qC3KUxhgqfC7p1ffmdrFyQhxjsyzUr/SyIG+qWPPNC5laIn8+GBKm1v6dEfXGRHSJIbE6G5m+Fc/1YtPb7vDIIr2JF36454MtwOApQpDi2ZmHz3/I6Vw07CcOV+WRg0YMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDFJ7SmH; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c08b14baa9so365553685a.3;
+        Sun, 23 Feb 2025 16:23:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740356363; x=1740961163; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=R446aIN2RLdqu5QwrgfAwmYyzyFgaoXG1ioytOKBEEU=;
-        b=aUlQ1RHlt9cIe9SM5rK4MHnDxjhDD3hDYCFtnTjlqWUso2oJaE4O7dgRWoMsRrEb92
-         xNeeGPPynAsCptvxisEjJyNi/fxVBO7epH6r2OHt/MYXRT8fFaNY1/ZrVNFpp6Qjx8F4
-         +VZGEuBOzdlWATgncxqNgDUHcjnrzd/icGix9GvEA47xQ7H+BOAv8g46LV9kMDmWGx+x
-         FnhKYez/4kKRL+F1SpeXMNXGWovOLphpu2bAdlpHkcJKBmtBZ5v0KPdZCobrNUkCOvG+
-         rF3VRQqYhK4Y/bxmM5mashBG5xTZNlo90iWZKhPL+nJSMIy0wSN3jtk87Nhv9hSeyAOQ
-         aGug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740356363; x=1740961163;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740356605; x=1740961405; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R446aIN2RLdqu5QwrgfAwmYyzyFgaoXG1ioytOKBEEU=;
-        b=LZM9PbICZv74fK9dYiSoBw5R7QlRDea5GGvh013cGWhhANbxuKF8qDFaPgGIXkvMu8
-         XChnG/i/MCZyrsWX4eNHPQR+lzD5/+GpafkyJgetLg57EZKCa26fugs7LjDoGNzuS+y9
-         Oq3d+FwXne8uoFTpGWYcWkKWuoNoGY9FXkggTZrFjwSsfzkJqdW2kNYCYMda+dYsAlpl
-         55dpzVNZQF2Onb4xkWbYzOpKndHoP8q2bgRmKIi9/JcomkQzTJ1pYYTISma8FQZkZ5T3
-         tLyfQ/RLPsAEMrtaIxc56FNWI4nvyyI39DYtgi0zn6DeiLufAUQE2+Ycq9+wDpuRuDMP
-         CfXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXswNTcAWQieyeWkBi3ItZnQkuBhtstuCqTMKCclW5C7crRrjem+OwyZg8y1Jrod89KI2L8tKAqBkesaLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJyCjX2HRC5d9zvTtIJOXZjnnIRL0xrMxR09ThmsCoS3HZZ2i6
-	wza4PMCoNzvjdrW9W1iEAbGDV67xtLUdEazirI2nMo+wE/QKgz+yoLVO4meJVWo=
-X-Gm-Gg: ASbGnctHmFqbsYjsJHNywhtjYCFqLpwX8Ke+dLCI1vZXJmcufDw4SIneMeVIBdrqUOs
-	MCoEkwbUxdpc/XUY6zp2hD9W1B4XdeqY4X827ApFaS3mKZIaC/m+Z7WgRwn/Ib89Rmsa4jEXBds
-	8QyaN0GXKOYZdOub8DD8l6FPc8yh8K5A4zMSw+ruE+iZf7tCTO3GvqCX7Riyzsg1IatslaUhSX0
-	bGmuYonzuFpzFZbD+hpCcudHkqF9GN2eBmmwX1989OoaIZ6l1RgKYdaadvwU4thFjkFeidn+rLv
-	qJts0fYTjDZgByDimSyM+qmb+M8TB9FMHa8UCgHvZTsON/N0r1XP017NxxljiS0c58igIbS+isp
-	rLWSJVQ==
-X-Google-Smtp-Source: AGHT+IEpkhmi94KeSpVWykQL8VUd3CBwi10V/U7azWBMHlDu+KWmIDkAfZsUghpQkQNQWo9rzJEtLw==
-X-Received: by 2002:a05:6512:3b86:b0:545:4ca:d395 with SMTP id 2adb3069b0e04-54838c56efdmr3781893e87.2.1740356362733;
-        Sun, 23 Feb 2025 16:19:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530df9016sm2710726e87.36.2025.02.23.16.19.20
+        bh=Bp8Q3VOPQDS+11tGhMzOHaekmo8JCJ4+f6K7eG8FK5s=;
+        b=FDFJ7SmHZYMDTlNQ1V8fgB1KRgE4yPEViBHohF58IU2N8O1zRCNGWxZg/vP7spAeIB
+         lQZtBTMi1p1wi9copkXaWeut+seR9Tpcabp+7NNMee063TgidcCTfwKIViT8suCJIrQB
+         MaZOaVBuSL5aLTb8YBtbTnSldh+cVvR5aLUJ5tt0xix7o2Vnbz7H/a2yLswuxo+ZcLuo
+         BB4fro3xOxWV0CdYDv74ar0u+N8GXdLJl5wHHKi4mF6lzwMvBmjSbzNU0S+i0W0/MxeC
+         qxqkhonb2WFBGcQvw4FGpmPYGYYThp50Z5EElpBhoQeZUJW6Z2bWJL6eNQaU8El1GipM
+         q87g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740356605; x=1740961405;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bp8Q3VOPQDS+11tGhMzOHaekmo8JCJ4+f6K7eG8FK5s=;
+        b=OAXLaLXiFHbh4nAoGGMTc6QnxGBPxXj3Pos2JYXx7btCDMDaWb2KExf9++A5YnZTyG
+         Q290i49snzHECkw9DjOxPQzJpPiSS6THZRZqO4XOi4dBSWMXwEAPSqbuftjqhZooyD/m
+         noJ55PwPLe6Jw8GGKG2/X9X2uiNbLYTfTbxk9ntsX6KanBHEj+uR1d0h/zV34iLemu8H
+         ZsoAS9WhPsB6bYEoRxyj+W5WFskxfvF5/YtZ7Y6WBP9tqxW4Zu/N5DAy0N+2ynWtXW3Q
+         JS0XUC7UDyusE0xREOFiVaGPx4bzw9rtcTeHh3ljrO4Erg6zDFy/JktvZ96TMelPAAxt
+         N+TA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMduRDTMz0ruyDL4xJOr9w+53ZvbIZ5XhJwVjZt4sWfEc9F6sk13PtqR40ClJxodpYH4ffFCeNug2C2BA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziyALGRI3dhTOxwdPHO9oKrvze8iBbstVlSN454Uu0FiWrtUm4
+	m8JmSdG7x0j4zO8oACvBnGheO9aVq4IfYl585q/OFQuE6sgREaDz
+X-Gm-Gg: ASbGnctONgQvHUCh7bdNBMpxd+mMD82wZ/cI7MAIbI5U3muSQF8sWPGKwos7m+z29Q8
+	VdqPPMAN/8fbxjb1p55JX6Tcse9iF7JLf9A1WtrQW+Vt4kIY3mKCDYKQea/l34kyGkD/HAwgdab
+	K6qZVajzqmSRe7OGnQEzW0gpKnV6DnJ7aYwof1yzf3A27tnqfjKQOsfVZkYZPJQ+R+9YD1kcnDW
+	lfasCYBOrpcCOpLoBxkzvJUsEm/AomGvIlXf0gHTcOvT3hl6eP/OKMLIDNAiJ0D++2NTTltbXPl
+	a7Yvdl3MJ389DDONWSIg5qa8Zo7CyM9FCVpzbwmivnZS5w==
+X-Google-Smtp-Source: AGHT+IEIE/Ap+XXQ3t7fuy1XUUriR9MDNfKKWNFqQ2eYbmzLNsuSK4UzJMzsPP3xMEPPYDJ2dx+c1w==
+X-Received: by 2002:a05:620a:1918:b0:7c0:b103:f252 with SMTP id af79cd13be357-7c0ceee99e0mr2002097985a.8.1740356604811;
+        Sun, 23 Feb 2025 16:23:24 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:7a4:75e2:6847:49c9])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ade609easm761851585a.69.2025.02.23.16.23.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 16:19:21 -0800 (PST)
-Date: Mon, 24 Feb 2025 02:19:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Luca Weiss <luca@lucaweiss.eu>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] arm64: dts: qcom: sdm632-fairphone-fp3: Add newlines
- between regulator nodes
-Message-ID: <b7atryuxrqqo24q6rg5s3nmt3f54nzayaaipvoekf5yb4zv5bz@57zg7s7qgk2t>
-References: <20250222-fp3-remoteprocs-firmware-v1-0-237ed21c334a@lucaweiss.eu>
- <20250222-fp3-remoteprocs-firmware-v1-2-237ed21c334a@lucaweiss.eu>
+        Sun, 23 Feb 2025 16:23:23 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Petr Mladek <pmladek@suse.com>, John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject:
+ Re: [PATCH v4 0/2] Optionally allow ttynull to be selected as a default
+ console
+Date: Sun, 23 Feb 2025 19:23:21 -0500
+Message-ID: <7410687.31r3eYUQgx@nerdopolis2>
+In-Reply-To: <Z7uOsqky4Tw9J6QR@surfacebook.localdomain>
+References:
+ <20250223204456.1913392-1-adamsimonelli@gmail.com>
+ <Z7uOsqky4Tw9J6QR@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222-fp3-remoteprocs-firmware-v1-2-237ed21c334a@lucaweiss.eu>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Sat, Feb 22, 2025 at 02:00:48PM +0100, Luca Weiss wrote:
-> As is common style nowadays, make sure there's an empty line between
-> regulator subnodes.
+On Sunday, February 23, 2025 4:10:10 PM EST Andy Shevchenko wrote:
+> Sun, Feb 23, 2025 at 03:44:54PM -0500, adamsimonelli@gmail.com kirjoitti:
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> > 
+> > When switching to a CONFIG_VT=n world, at least on x86 systems,
+> > /dev/console becomes /dev/ttyS0. This can cause some undesired effects.
+> > /dev/console's behavior is now tied to the physical /dev/ttyS0, which when
+> > disconnected can cause isatty() to fail when /dev/ttyS0 is disconnected,
+> > and users who upgrade to a theoretical vt-less kernel from their
+> > distribution who have a device such as a science instrument connected to
+> > their /dev/ttyS0 port will suddenly see it receive kernel log messages.
+> > 
+> > When the new CONFIG_NULL_TTY_CONSOLE option is turned on, this will allow
+> > the ttynull device to be leveraged as the default console. Distributions
+> > that had CONFIG_VT turned on before will be able to leverage this option
+> > to where /dev/console is still backed by a psuedo device, avoiding these
+> > issues, without needing to enable the entire VT subsystem.
 > 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
->  arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+> This rings a bell of the following
 > 
+> https://lore.kernel.org/all/20201111135450.11214-1-pmladek@suse.com/
+> https://lore.kernel.org/all/20210107164400.17904-1-pmladek@suse.com/
+> https://lore.kernel.org/all/20210108114847.23469-1-pmladek@suse.com/
+> 
+> I don't see any mention in the commit message about these, have you studied the
+> cases? Will your change anyhow affect the described there?
+> 
+> 
+I did see that sifting through commits, it looks kind of different though, as
+that was to make ttynull more always on, and if I am understanding it correctly
+it looks more of a last resort? I could be wrong, but I see it was attempted
+and reverted because of conflicts on some hardware platforms?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+The scope with this new patch set is much different, as it has to be manually
+enabled on top of CONFIG_NULL_TTY, rather than assuming CONFIG_NULL_TTY is
+enabled, and adding it to the list of preferred consoles. It is more for
+Desktop configs that are looking to disable CONFIG_VT, but still want
+/dev/console to not be a physical device by default.
 
--- 
-With best wishes
-Dmitry
+
+
 
