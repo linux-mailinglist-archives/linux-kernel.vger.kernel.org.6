@@ -1,144 +1,186 @@
-Return-Path: <linux-kernel+bounces-528737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C07A41BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:50:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE8A6A41B49
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1791A1726AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B51C171825
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73210257ACB;
-	Mon, 24 Feb 2025 10:50:11 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F629257456
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C907B255E21;
+	Mon, 24 Feb 2025 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bxix02Ya"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDF21A08C5;
+	Mon, 24 Feb 2025 10:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740394211; cv=none; b=GN565u5kBDs6v6Wxo4a3K+Y/z0WQhzHEZeVfzyk7DxxfDNXXtDW+NvT+8du67DNX3A4zXH4HYvuB/JGx6bhasfZUV/yB7GR2Ee0Za9ngTeWd6LtbpVoM5Z6/570qmIjCb2lb4WfvwAWfBeXHOcqZuvIytrQ32h/UTyM/7xux9l0=
+	t=1740393383; cv=none; b=s1X5K9GJC+9vgkw88nc2enKvcgdwskQbaVGvPA4vSRTJWmjpFs0/wGYplsoDeR4plHh1gvzzt2kaUowUrUVsxF6sLpkJd9B2UuHbAR6d79FP1Zs2siwS4AoViguaiYBUH27WP0EjeakvGRzwhaeioas2ccuWXwW45pMSSN7rUTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740394211; c=relaxed/simple;
-	bh=+5dgnycedFYjCfpv9nlh2kaRz6IOGUBOWQxH0GhJKPo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7ZuVMAJX6g5v2fix6iuxFhm+6ig5p+yHrEbpYzJcMrc2hbzLyISBpNr9mY46uKS+DAirsKDLzIINgJWgNoepjhAtzubCQ5zz5yuHFEZE5H57fk3PWkyKeWwWijd+vMuwhTlTY3xtEmN42v5zsOdYcv2Qjggjve9WeBAHnbqq1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z1cbK3Xnhz9sVQ;
-	Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rAyZKr75BxfC; Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z1cbK2FxHz9sVN;
-	Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 39B398B765;
-	Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id sYvQOoZx4V4Q; Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-Received: from [10.25.207.138] (unknown [10.25.207.138])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0A1BF8B763;
-	Mon, 24 Feb 2025 11:36:13 +0100 (CET)
-Message-ID: <055e567d-771c-4031-952c-1bcdbf921c90@csgroup.eu>
-Date: Mon, 24 Feb 2025 11:36:12 +0100
+	s=arc-20240116; t=1740393383; c=relaxed/simple;
+	bh=LWj+rzbXhdbUWEizLtYOJLzuzvQIQbJfgxH7xmLfWRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EY5RpGemfd0DvDGeL7CCp441FAoVgKvYmUyuFaL/5nIsZLR4kjYOPVldRijkCxWy708nsX+dzwgbXI8+xvNwWvLqxSxaFytdpWd8A0WCa5bczjwb8oFdAEC/u+6OLhWeh9lMsq/2niWN0uQlgC3o3GuGzGWHrRraSmxmCcQY2J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bxix02Ya; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22990C4CED6;
+	Mon, 24 Feb 2025 10:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740393382;
+	bh=LWj+rzbXhdbUWEizLtYOJLzuzvQIQbJfgxH7xmLfWRk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bxix02YacPDlWmFsV1+Bblcqo22T/1wsSdlOB5ypmFsUZdM5t535aZ0YS6n3zeyUN
+	 3dL6GLrekriU/4LvbioQMRyKHwoFq8+fPXPCKYG6gg0RF9lzogej12m8ZDKeLawbog
+	 JwFtQXtjInRCgA+gOd2y/wSu/6Dl2FxsDF/RfQYPL980nmVN+HD1cPr4UCQZ8GOTa9
+	 ywbB/Lg+nVr5xyHLh123FdkRAi4kvQWqX7dOvMzzpfDKi+zn4bb7yNoGnMsqsG89Ho
+	 esDGUlFal9bjs1EIXBvusnDiyv6f1ZX+ndgyeMjZI1kOBG9MNtdfbNlKDBe5R9eWy5
+	 Bu6V40h7k+Saw==
+Date: Mon, 24 Feb 2025 11:36:16 +0100
+From: Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: =?utf-8?B?QmrDuHJu?= Mork <bjorn@mork.no>, davem@davemloft.net, 
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Russell King <linux@armlinux.org.uk>, Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, 
+	Florian Fainelli <f.fainelli@gmail.com>, =?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, 
+	Simon Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>, 
+	Antoine Tenart <atenart@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <ihxsrolj75ufuhyfu4r2dalth4dzkmamh5naat5fa74iwu3mrb@5vl453qcsoj7>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+ <87r03otsmm.fsf@miraculix.mork.no>
+ <20250224103814.7d60bfbd@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call warning
- for bl+mflr pattern
-To: Sathvika Vasireddy <sv@linux.ibm.com>,
- Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: peterz@infradead.org, npiggin@gmail.com, maddy@linux.ibm.com,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- llvm@lists.linux.dev
-References: <20250219162014.10334-1-sv@linux.ibm.com>
- <20250220195940.ely2l2fpsozd2tuv@jpoimboe>
- <4bea75bc-d3f6-4972-b644-f9b5a4e8bb77@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <4bea75bc-d3f6-4972-b644-f9b5a4e8bb77@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250224103814.7d60bfbd@fedora>
 
+On Mon, Feb 24, 2025 at 10:38:14AM +0100, Maxime Chevallier wrote:
+> Hi Bj�rn,
+> 
+> On Sun, 23 Feb 2025 19:37:05 +0100
+> Bj�rn Mork <bjorn@mork.no> wrote:
+> 
+> > Maxime Chevallier <maxime.chevallier@bootlin.com> writes:
+> > 
+> > > Hi everyone,
+> > >
+> > > Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" designed to
+> > > access SFP modules downstream. These controllers are actually SMBus controllers
+> > > that can only perform single-byte accesses for read and write.
+> > >
+> > > This series adds support for accessing SFP modules through single-byte SMBus,
+> > > which could be relevant for other setups.
+> > >
+> > > The first patch deals with the SFP module access by itself, for addresses 0x50
+> > > and 0x51.
+> > >
+> > > The second patch allows accessing embedded PHYs within the module with single-byte
+> > > SMBus, adding this in the mdio-i2c driver.
+> > >
+> > > As raw i2c transfers are always more efficient, we make sure that the smbus accesses
+> > > are only used if we really have no other choices.
+> > >
+> > > This has been tested with the following modules (as reported upon module insertion)
+> > >
+> > > Fiber modules :
+> > >
+> > > 	UBNT             UF-MM-1G         rev      sn FT20051201212    dc 200512
+> > > 	PROLABS          SFP-1GSXLC-T-C   rev A1   sn PR2109CA1080     dc 220607
+> > > 	CISCOSOLIDOPTICS CWDM-SFP-1490    rev 1.0  sn SOSC49U0891      dc 181008
+> > > 	CISCOSOLIDOPTICS CWDM-SFP-1470    rev 1.0  sn SOSC47U1175      dc 190620
+> > > 	OEM              SFP-10G-SR       rev 02   sn CSSSRIC3174      dc 181201
+> > > 	FINISAR CORP.    FTLF1217P2BTL-HA rev A    sn PA3A0L6          dc 230716
+> > > 	OEM              ES8512-3LCD05    rev 10   sn ESC22SX296055    dc 220722
+> > > 	SOURCEPHOTONICS  SPP10ESRCDFF     rev 10   sn E8G2017450       dc 140715
+> > > 	CXR              SFP-STM1-MM-850  rev 0000 sn K719017031       dc 200720
+> > >
+> > >  Copper modules
+> > >
+> > > 	OEM              SFT-7000-RJ45-AL rev 11.0 sn EB1902240862     dc 190313
+> > > 	FINISAR CORP.    FCLF8521P2BTL    rev A    sn P1KBAPD          dc 190508
+> > > 	CHAMPION ONE     1000SFPT         rev -    sn     GBC59750     dc 19110401
+> > >
+> > > DAC :
+> > >
+> > > 	OEM              SFP-H10GB-CU1M   rev R    sn CSC200803140115  dc 200827
+> > >
+> > > In all cases, read/write operations happened without errors, and the internal
+> > > PHY (if any) was always properly detected and accessible
+> > >
+> > > I haven't tested with any RollBall SFPs though, as I don't have any, and I don't
+> > > have Copper modules with anything else than a Marvell 88e1111 inside. The support
+> > > for the VSC8552 SMBus may follow at some point.
+> > >
+> > > Thanks,
+> > >
+> > > Maxime
+> > >
+> > > Maxime Chevallier (2):
+> > >   net: phy: sfp: Add support for SMBus module access
+> > >   net: mdio: mdio-i2c: Add support for single-byte SMBus operations
+> > >
+> > >  drivers/net/mdio/mdio-i2c.c | 79 ++++++++++++++++++++++++++++++++++++-
+> > >  drivers/net/phy/sfp.c       | 65 +++++++++++++++++++++++++++---
+> > >  2 files changed, 138 insertions(+), 6 deletions(-)  
+> > 
+> > Nice!  Don't know if you're aware, but OpenWrt have had patches for
+> > SMBus access to SFPs for some time:
+> > 
+> > https://github.com/openwrt/openwrt/blob/main/target/linux/realtek/patches-6.6/714-net-phy-sfp-add-support-for-SMBus.patch
+> > https://github.com/openwrt/openwrt/blob/main/target/linux/realtek/patches-6.6/712-net-phy-add-an-MDIO-SMBus-library.patch
+> > 
+> > The reason they carry these is that they support Realtek rtl930x based
+> > switches.  The rtl930x SoCs include an 8 channel SMBus host which is
+> > typically connected to any SFP+ slots on the switch.
+> > 
+> > There has been work going on for a while to bring the support for these
+> > SoCs to mainline, and the SMBus host driver is already here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/i2c/busses/i2c-rtl9300.c?id=c366be720235301fdadf67e6f1ea6ff32669c074
+> > 
+> > I assume DSA and ethernet eventually will follow, making SMBus SFP
+> > support necessary for this platform too.
+> > 
+> > So thanks for doing this!
+> 
+> Good to know this is useful to you ! So there's at least 2 different
+> classes of products out there with SMBus that advertise that it's
+> "designed for SFP" ._.
+> 
+> > FWIW, I don't think the OpenWrt mdio patch works at all.  I've recently
+> > been playing with an 8 SFP+ port switch based on rtl9303, and have tried
+> > to fixup both the clause 22 support and add RollBall and clause 45.
+> > This is still a somewhat untested hack, and I was not planning on
+> > presenting it here as such, but since this discussion is open:
+> > https://github.com/openwrt/openwrt/pull/17950/commits/c40387104af62a065797bc3e23dfb9f36e03851b
+> > 
+> > Sorry for the format.  This is a patch for the patch already present in
+> > OpenWrt. Let me know if you want me to post the complete patched
+> > mdio-smbus.c for easier reading.
+> > 
+> > The main point I wanted to make is that we also need RollBall and clause
+> > 45 over SMBus.  Maybe not today, but at some point.  Ideally, the code
+> > should be shared with the i2c implementation, but I found that very hard
+> > to do as it is.
+> 
+> I don't have anything to test that, and yeah that can be considered as
+> a second step, however I don't even know if this can work at all with
+> single byte accesses :(
 
+I will send you some RollBall modules, Maxime.
 
-Le 21/02/2025 à 09:50, Sathvika Vasireddy a écrit :
-> [Vous ne recevez pas souvent de courriers de sv@linux.ibm.com. Découvrez 
-> pourquoi ceci est important à https://aka.ms/ 
-> LearnAboutSenderIdentification ]
-> 
-> Hi Josh, Thanks for the review.
-> 
-> On 2/21/25 1:29 AM, Josh Poimboeuf wrote:
->> On Wed, Feb 19, 2025 at 09:50:14PM +0530, Sathvika Vasireddy wrote:
->>> Architectures like PowerPC use a pattern where the compiler generates a
->>> branch-and-link (bl) instruction that targets the very next instruction,
->>> followed by loading the link register (mflr) later. This pattern appears
->>> in the code like:
->>>
->>>   bl .+4
->>>   li r5,0
->>>   mflr r30
->> If I understand correctly, this is basically a fake call which is used
->> to get the value of the program counter?
-> 
-> Yes, that's correct.
-> 
-> Also, just out of curiosity, how does x86 do it? Does it not use a
-> branch to next instruction approach?
-> 
->>> Objtool currently warns about this as an "unannotated intra-function
->>> call" because find_call_destination() fails to find any symbol at the
->>> target offset. Add a check to skip the warning when a branch targets
->>> the immediate next instruction in the same function.
->>>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://eur01.safelinks.protection.outlook.com/? 
->>> url=https%3A%2F%2Flore.kernel.org%2Foe-kbuild- 
->>> all%2F202502180818.XnFdv8I8- 
->>> lkp%40intel.com%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7Cdce2affdaed147a6058008dd5254d85e%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638757246560427230%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=dhUS9PNZKUpz%2Bc1hePG1tuTIWbiKqS46uoAJOvU76sU%3D&reserved=0
->>> Signed-off-by: Sathvika Vasireddy <sv@linux.ibm.com>
->> This should have a Fixes tag as well.
-> Thanks for catching that. I'll add the Fixes tag.
->>
->>>   static int add_call_destinations(struct objtool_file *file)
->>>   {
->>> +    struct instruction *next_insn;
->>>      struct instruction *insn;
->>>      unsigned long dest_off;
->>>      struct symbol *dest;
->>> @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct 
->>> objtool_file *file)
->>>              reloc = insn_reloc(file, insn);
->>>              if (!reloc) {
->>>                      dest_off = arch_jump_destination(insn);
->>> +
->>> +                    next_insn = next_insn_same_func(file, insn);
->>> +                    if (next_insn && dest_off == next_insn->offset)
->>> +                            continue;
->>> +
->> This won't work on x86, where an intra-function call is converted to a
->> stack-modifying JUMP.  So this should probably be checked in an
->> arch-specific function.
-> 
-> Thanks for letting me know, I'll introduce arch_skip_call_warning() to
-> handle architecture specific cases in the next patch I send.
-
-Not sure what you want to do here.
-
-See my other response, I think it should just be handled as an 
-INSN_OTHER by arch_decode_instruction()
-
-Christophe
+Marek
 
