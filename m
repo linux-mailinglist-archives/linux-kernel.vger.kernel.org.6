@@ -1,71 +1,57 @@
-Return-Path: <linux-kernel+bounces-530027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AACE7A42DDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:32:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51981A42DDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:33:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D203A7640
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:32:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48F7D174934
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C4024290C;
-	Mon, 24 Feb 2025 20:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF687262801;
+	Mon, 24 Feb 2025 20:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWb+AJ2m"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="maAiH6VF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0C615886C;
-	Mon, 24 Feb 2025 20:32:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FEC242928;
+	Mon, 24 Feb 2025 20:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740429134; cv=none; b=k+ec16wrZG2A0ULZLFY5LeCgjYBzTtTfq5fwHTYKIHGCAXc4MiUjj4F+uL3HYv+hNPX27uvhwyLlTS2IbPXq165Yc5Z9MVxA2CYJpMtzSIDFNR1PJisqSGCH7GLvYDXPTqPO/BCNNupqZCzwTB/uZowElGBI6XeQGpe52X2kyys=
+	t=1740429149; cv=none; b=pb+hx+RaZqBfDgZcp77jixoUNpZVoPEmVkt434+QXHpdE14/mQGEyrpXlr68+8N0hC5DuHFPEAhdSfwUqDHueQUwfnIMliaRBvd/LxnCyUo5DbttdxIaE9IJtiJ9ATiPnDddHQEd4tECQh9M8ZrGFeai/6YakPiIYMqGB4ukeCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740429134; c=relaxed/simple;
-	bh=LEHxu5uUmeaV7+NU70Sza9810F5pHO55NG+jcIxXdLQ=;
+	s=arc-20240116; t=1740429149; c=relaxed/simple;
+	bh=IgK5DDbUjJI07SiT5NHbpZJflCa2im0htozDqhkJ/u0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L1yvoHm+GFqDz+rd1DhPjgHJ+v3y3H5NlMjVIoZ1huo9wkxkkZ3JslsGlvwnSjs5KZPATxezY9D0tcbBm5+yoaJZiceAfRqXs9ux8hj7ZbPZ4coal9+cHmS60tC2DQas30KuoXs8+diTNpq1CqCxG5SpL+VPDWl3Jqb+0xRSph8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWb+AJ2m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2F2C4CEDD;
-	Mon, 24 Feb 2025 20:32:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwn5qBpT9SCu6sHGqkUS8Z0/GYhIexNJ2SRPpXmnT/uCk+TJ/DK0Vda1hi0QDyu6TvYav7gQZlYIUFNX/C1S7V3CzRHuEYKIWi8mNtRomgx8nDD/m2kW9BMBlEoO6C91mcGIW8DyyN8nz9XIOiqBYxRVqp7hiQoY2QEhdqEzp4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=maAiH6VF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAE95C4CED6;
+	Mon, 24 Feb 2025 20:32:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740429133;
-	bh=LEHxu5uUmeaV7+NU70Sza9810F5pHO55NG+jcIxXdLQ=;
+	s=k20201202; t=1740429148;
+	bh=IgK5DDbUjJI07SiT5NHbpZJflCa2im0htozDqhkJ/u0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VWb+AJ2me2apk+gmPLWDZXowwwAyEGuesvKDYbTkGbZHkofFvMw3X3ejLPs2COr1o
-	 ZgWG/ZCnkVCXoqmgHOlJyw+MFXK10bkkBCq0uU8+r9oj8XVlreLKT9zfngo86iM40E
-	 aPuqms5vxELWLUCfMdDPKextu5DeajD2SxRgSCZ2P3x3+EQAI6+YZY9vNjOxIFmkFJ
-	 EbuLfaAacYExZJfr99LMkww9uW/iEkHAJg3kx8mPaiQhp5p9Ywi4v05Lb9LR3WoPfv
-	 Lg537vsSWQwVwA2rJXRKVGHKoCT5bnYp/D99eniwkRm/sVY4LM1Kl4VrxGEXC7IfKu
-	 m3ysrKMt5H7uw==
-Date: Mon, 24 Feb 2025 14:32:11 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Maud Spierings <maudspierings@gocontroll.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	David Airlie <airlied@gmail.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Liu Ying <victor.liu@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Sam Ravnborg <sam@ravnborg.org>, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	Simona Vetter <simona@ffwll.ch>, Shawn Guo <shawnguo@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Ripard <mripard@kernel.org>
-Subject: Re: [PATCH 01/14] dt-bindings: display: simple: add BOE AV101HDT-A10
- panel
-Message-ID: <174042913116.4047506.14844482036971785905.robh@kernel.org>
-References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
- <20250224-initial_display-v1-1-5ccbbf613543@gocontroll.com>
+	b=maAiH6VFtRxwnXRQ2BkmaV41LwfhdMhJ4jfszviC0E2txLHPBQwfHteEx+073uMTH
+	 PJS6zfthEHP8XYIyrEucrAV6XXzPa1BefN/fVhFbHH6junE34QzQMrEAp1luiaE+Rm
+	 hMqH5J9qZrHy2Vt9r0BGUaOKM2EPxlJbMnye48L5OKvqdaKKB2lkklSjCBCruPHIqi
+	 Df8W9vuLtF0vlP9POXj8RCfSpX1AJPqsPbSGSidp3Dm5gnCD5PbA44BETRXLxwK87T
+	 Hh8IGDjiQHr4JbuDfwH81tbQTzebxcqJoP07pXNr/SWXEeFp01xhdB/QekFi3dymkb
+	 1zJsLlWgMKSAQ==
+Date: Mon, 24 Feb 2025 12:32:28 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 06/11] xfs: Reflink CoW-based atomic write support
+Message-ID: <20250224203228.GI21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,18 +60,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250224-initial_display-v1-1-5ccbbf613543@gocontroll.com>
+In-Reply-To: <20250213135619.1148432-7-john.g.garry@oracle.com>
 
-
-On Mon, 24 Feb 2025 14:50:51 +0100, Maud Spierings wrote:
-> add a compatible string for the BOE AV101HDT-A10 10.1" LVDS panel
+On Thu, Feb 13, 2025 at 01:56:14PM +0000, John Garry wrote:
+> For CoW-based atomic write support, always allocate a cow hole in
+> xfs_reflink_allocate_cow() to write the new data.
 > 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> The semantics is that if @atomic is set, we will be passed a CoW fork
+> extent mapping for no error returned.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
->  Documentation/devicetree/bindings/display/panel/panel-simple.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  fs/xfs/xfs_iomap.c   |  2 +-
+>  fs/xfs/xfs_reflink.c | 12 +++++++-----
+>  fs/xfs/xfs_reflink.h |  2 +-
+>  3 files changed, 9 insertions(+), 7 deletions(-)
 > 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index d61460309a78..ab79f0080288 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -865,7 +865,7 @@ xfs_direct_write_iomap_begin(
+>  		/* may drop and re-acquire the ilock */
+>  		error = xfs_reflink_allocate_cow(ip, &imap, &cmap, &shared,
+>  				&lockmode,
+> -				(flags & IOMAP_DIRECT) || IS_DAX(inode));
+> +				(flags & IOMAP_DIRECT) || IS_DAX(inode), false);
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Now I'm /really/ think it's time for some reflink allocation flags,
+because the function signature now involves two booleans...
 
+>  		if (error)
+>  			goto out_unlock;
+>  		if (shared)
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 8428f7b26ee6..3dab3ba900a3 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -435,7 +435,8 @@ xfs_reflink_fill_cow_hole(
+>  	struct xfs_bmbt_irec	*cmap,
+>  	bool			*shared,
+>  	uint			*lockmode,
+> -	bool			convert_now)
+> +	bool			convert_now,
+> +	bool			atomic)
+
+...but this can come later.  Also, is atomic==true only for the
+ATOMIC_SW operation?  I think so, but that's the unfortunate thing about
+booleans.
+
+>  {
+>  	struct xfs_mount	*mp = ip->i_mount;
+>  	struct xfs_trans	*tp;
+> @@ -466,7 +467,7 @@ xfs_reflink_fill_cow_hole(
+>  	*lockmode = XFS_ILOCK_EXCL;
+>  
+>  	error = xfs_find_trim_cow_extent(ip, imap, cmap, shared, &found);
+> -	if (error || !*shared)
+> +	if (error || (!*shared && !atomic))
+>  		goto out_trans_cancel;
+>  
+>  	if (found) {
+> @@ -566,7 +567,8 @@ xfs_reflink_allocate_cow(
+>  	struct xfs_bmbt_irec	*cmap,
+>  	bool			*shared,
+>  	uint			*lockmode,
+> -	bool			convert_now)
+> +	bool			convert_now,
+> +	bool 			atomic)
+
+Nit:        ^ space before tab.
+
+If the answer to the question above is 'yes' then with that nit fixed,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+>  {
+>  	int			error;
+>  	bool			found;
+> @@ -578,7 +580,7 @@ xfs_reflink_allocate_cow(
+>  	}
+>  
+>  	error = xfs_find_trim_cow_extent(ip, imap, cmap, shared, &found);
+> -	if (error || !*shared)
+> +	if (error || (!*shared && !atomic))
+>  		return error;
+>  
+>  	/* CoW fork has a real extent */
+> @@ -592,7 +594,7 @@ xfs_reflink_allocate_cow(
+>  	 */
+>  	if (cmap->br_startoff > imap->br_startoff)
+>  		return xfs_reflink_fill_cow_hole(ip, imap, cmap, shared,
+> -				lockmode, convert_now);
+> +				lockmode, convert_now, atomic);
+>  
+>  	/*
+>  	 * CoW fork has a delalloc reservation. Replace it with a real extent.
+> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
+> index cc4e92278279..754d2bb692d3 100644
+> --- a/fs/xfs/xfs_reflink.h
+> +++ b/fs/xfs/xfs_reflink.h
+> @@ -32,7 +32,7 @@ int xfs_bmap_trim_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
+>  
+>  int xfs_reflink_allocate_cow(struct xfs_inode *ip, struct xfs_bmbt_irec *imap,
+>  		struct xfs_bmbt_irec *cmap, bool *shared, uint *lockmode,
+> -		bool convert_now);
+> +		bool convert_now, bool atomic);
+>  extern int xfs_reflink_convert_cow(struct xfs_inode *ip, xfs_off_t offset,
+>  		xfs_off_t count);
+>  
+> -- 
+> 2.31.1
+> 
+> 
 
