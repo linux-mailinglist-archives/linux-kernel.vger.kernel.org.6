@@ -1,75 +1,53 @@
-Return-Path: <linux-kernel+bounces-529969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2621A42D16
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:52:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06175A42D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DFD03A9326
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BCCB3A356C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B43E2054FD;
-	Mon, 24 Feb 2025 19:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8986E205AA4;
+	Mon, 24 Feb 2025 19:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGAf9T9p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cpglDdjU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923492571B6;
-	Mon, 24 Feb 2025 19:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C871A5B8B;
+	Mon, 24 Feb 2025 19:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740426766; cv=none; b=bUUqmdsFum1cS0gQA8k3tOziXRCq8wI52Gw1bQFVj9W5uPiVbgIisRJXXUf+HOmD4An2emLd9SCZzOCRngAfLsk53JXQo6xsYtWJJxu7cVFVWfFrWtIJ2TeXvXSPOhEiYZOMchILITFmdWjkFrxPRcpbxlR+7NLo8ShJOazzCL0=
+	t=1740426866; cv=none; b=UJyIdS7tTFCQ4PmlCcgaBo6bB1qI/23kC50frpNpLJ0C01byyzIf/tQSSeAyDiTw5LLB8u21sQGOWba6p38TQ4bKqm6DQoG/brop3Z1BhS9uyTP/Ebwb3h+S11llS8kqS6unYfaahUsRBgEoU89767i62zhRmBBmOf3dqVT8gZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740426766; c=relaxed/simple;
-	bh=ESaC73OJFkk3emPXACNhcE07hs+BVKCVvXKDChGH58o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SHqepgKVLKshR+9H4yCSY1gHWOf2z/z6ntivprkhwuCVKLHKemk/xu/qiipgoovz7BQqPXFQKlTBm6kn5lXLVfUjQ6Y1F/kj5K/fA3TGsWS3tJTxKdrrfitFsFA82D42fYja3Uc95SO0hta94cqeU8FxuZk2/jpA9QWU4Sg9blY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGAf9T9p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F725C4CEE7;
-	Mon, 24 Feb 2025 19:52:41 +0000 (UTC)
+	s=arc-20240116; t=1740426866; c=relaxed/simple;
+	bh=eqo9h/PAZIFf5dMdH1i9KPDuTNmee9ed3YQZ/4tZnaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=lUS5jhql8AwYzz8RNnK8HQ+6kuWx8EkDMmcSUR6koke6x9xsdcVNKStzxBkgeIOyAGoe3lvxwZMAvIO5sD2XMxfMmNVCp53cG8rRwL7DxVtC0B6ZKGSZs/xy7ShDsPuvACPChKFZzlpoNWxgmwP3UA7OqmJeSI/uwbgkJE6vQ6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cpglDdjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AA40C4CED6;
+	Mon, 24 Feb 2025 19:54:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740426766;
-	bh=ESaC73OJFkk3emPXACNhcE07hs+BVKCVvXKDChGH58o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=OGAf9T9pHc1dJy+mMMbdQQCj+s4KjN8bUS4dB5Gfj1Ah1rsVeRKrexkY7bumFs62V
-	 Fm7Hq6ywpZqY1+OqhyHsiW8QzFhTgNbyVgAmkNOqMpPPA4Dsnk3Y0lSXZFP6QwXimH
-	 O9R8WNVVeAWOG1KEtYnvsQeOn3YV9ch5lJPNMO/0n7Iexc/5Gu8yFviDKXocIxqFGj
-	 esmAvJ5xLYTvFMSbfqUQsuWpz2g7UeP1Q8cK2TKNtHC2HQVjxRUhhOFEHq0u84jbB+
-	 f7rBWsYcB+tilv0xf4p8HcpuWIh0H5f+Ht4dTK/QmDQ4AQLGvVQbcL855vAO/O+4VL
-	 dq5DABAnXoTxQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Boqun Feng" <boqun.feng@gmail.com>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>,  "Frederic Weisbecker"
- <frederic@kernel.org>,  "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,
-  "Guangbo Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,
-  "Daniel Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>,  "Miguel Ojeda" <ojeda@kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <Z7zF8KF9qTCr_n4l@boqun-archlinux> (Boqun Feng's message of "Mon,
-	24 Feb 2025 11:18:08 -0800")
-References: <Fg4QliwzbHj3m-Fr3ZeUiU11d6Bu-I7w_9xzSsnDlzQtqCkjgqxJpI6_YxuXnB8m0MqESq6V7vK7FhPnEcvGwg==@protonmail.internalid>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
-	<874j0j1nv2.fsf@kernel.org> <Z7yUTNEg6gMW0G7b@Mac.home>
-	<CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
-	<Z7ye0MsACNWe7Mbr@Mac.home>
-	<CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
-	<WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
-	<Z7yl-LsSkVIDAfMF@Mac.home> <87msebyxtv.fsf@kernel.org>
-	<4UoaifxB7JgBVKsNQyFR_T8yc3Vtn5TLAEdxdXrojNmOzJSEncopauEyjDpnbqzr8Z74ZWjd_N-bB-BwBS-7aQ==@protonmail.internalid>
-	<Z7zF8KF9qTCr_n4l@boqun-archlinux>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 24 Feb 2025 20:52:35 +0100
-Message-ID: <87bjuryvb0.fsf@kernel.org>
+	s=k20201202; t=1740426865;
+	bh=eqo9h/PAZIFf5dMdH1i9KPDuTNmee9ed3YQZ/4tZnaY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=cpglDdjU1KMY82rxuH8gT0zRoyKc2n6kTkm4p5aWOIjwBB9C+4g0BTTXUfU6lTvX9
+	 sJy+i/PsStFGOxxqxdmxOyOTdtxE8jd0INf4I6XWYP6hs21zmKRR1lL9z08MiNVza7
+	 wipiYzFN9H1yQLjdXFqSG3oLbcu5PtdNqccPC69oAlC0kkjK5vZSj4QtVuHTjzWc5Z
+	 CX3RBOaSXlmCcuLNhj4xcuNpZiSABVcq2A/elCjGyYu+puvSFDJ1X3f0x5HVKVVzTt
+	 718WO/Me3Xn2STtbtb3mcg6V3E2VpiQkLIfKEpN2tpb7AaqMzOMYXpli8YjNm0OkvJ
+	 4CzmON7cRxb3w==
+Date: Mon, 24 Feb 2025 13:54:23 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernelnewbies <kernelnewbies@kernelnewbies.org>,
+	linux-acpi@vger.kernel.org
+Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+Message-ID: <20250224195423.GA473540@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,120 +55,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMciSVVV9tHH1M2bOnwqCJCQ8OjNFGjuQB7R-fY7JHHD5tQHoA@mail.gmail.com>
 
-"Boqun Feng" <boqun.feng@gmail.com> writes:
+On Tue, Feb 25, 2025 at 12:29:00AM +0530, Naveen Kumar P wrote:
+> On Mon, Feb 24, 2025 at 11:03 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Mon, Feb 24, 2025 at 05:45:35PM +0530, Naveen Kumar P wrote:
+> > > On Wed, Feb 19, 2025 at 10:36 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > > On Wed, Feb 19, 2025 at 05:52:47PM +0530, Naveen Kumar P wrote:
+> > > > > Hi all,
+> > > > >
+> > > > > I am writing to seek assistance with an issue we are experiencing with
+> > > > > a PCIe device (PLDA Device 5555) connected through PCI Express Root
+> > > > > Port 1 to the host bridge.
+> > > > >
+> > > > > We have observed that after booting the system, the Base Address
+> > > > > Register (BAR0) memory of this device gets reset to 0x0 after
+> > > > > approximately one hour or more (the timing is inconsistent). This was
+> > > > > verified using the lspci output and the setpci -s 01:00.0
+> > > > > BASE_ADDRESS_0 command.
 
-> On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
->> "Boqun Feng" <boqun.feng@gmail.com> writes:
->>
->> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
->> >> On Mon, Feb 24, 2025 at 5:31=E2=80=AFPM Boqun Feng <boqun.feng@gmail.=
-com> wrote:
->> >> >
->> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
->> >> > >
->> >> > > side -- Andreas and I discussed it the other day. The description=
- of
->> >> > > the issue has some lines, but perhaps the commit message could
->> >> >
->> >> > Do you have a link to the issue?
->> >>
->> >> Sorry, I meant "description of the symbol", i.e. the description field
->> >> in the patch.
->> >>
->> >
->> > Oh, I see. Yes, the patch description should provide more information
->> > about what the kconfig means for hrtimer maintainers' development.
->>
->> Right, I neglected to update the commit message. I will do that if we
->> have another version.
->>
->> >
->> >> > I asked because hrtimer API is always available regardless of the
->> >> > configuration, and it's such a core API, so it should always be the=
-re
->> >> > (Rust or C).
->> >>
->> >> It may not make sense for something that is always built on the C
->> >> side, yeah. I think the intention here may be that one can easily
->> >> disable it while "developing" a change on the C side. I am not sure
->> >> what "developing" means here, though, and we need to be careful --
->> >> after all, Kconfig options are visible to users and they do not care
->> >> about that.
->> >>
->> >
->> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily because as
->> > you mentioned below, people can disable Rust entirely during
->> > "developing".
->> >
->> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
->> > config provides hrtimer maintainers a way that they could disable Rust
->> > hrtimer abstraction (while enabling other Rust component) when they're
->> > developing a change on the C side, right? If so, it's hrtimer
->> > maintainers' call, and this patch should provide more information on
->> > this.
->> >
->> > Back to my personal opinion, I don't think this is necessary ;-)
->> > Particularly because I can fix if something breaks Rust side, and I'm
->> > confident and happy to do so for hrtimer ;-)
->>
->> As Miguel said, the idea for this came up in the past week in one of the
->> mega threads discussing rust in general. We had a lot of "what happens
->> if I change something in my subsystem and that breaks rust" kind of
->> discussions.
->>
+> ...
+> I booted with the pcie_aspm=off kernel parameter, which means that
+> PCIe Active State Power Management (ASPM) is disabled. Given this
+> context, should I consider removing this setting to see if it affects
+> the occurrence of the Bus Check notifications and the BAR0 reset
+> issue?
+
+Doesn't seem likely to be related.  Once configured, ASPM operates
+without any software intervention.  But note that "pcie_aspm=off"
+means the kernel doesn't touch ASPM configuration at all, and any
+configuration done by firmware remains in effect.
+
+You can tell whether ASPM has been enabled by firmware with "sudo
+lspci -vv" before the problem occurs.
+
+> > > During the ACPI_NOTIFY_BUS_CHECK event, the lspci output initially
+> > > showed all FF's, and then the next run of the same command showed
+> > > BASE_ADDRESS_0 reset to zero:
+> > > $ sudo lspci -xxx -s 01:00.0 | grep "10:"
+> > > 10: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> >
+> > Looks like the device isn't responding at all here.  Could happen if
+> > the device is reset or powered down.
 >
-> So far we haven't heard such a question from hrtimer maintainers, I
-> would only add such a kconfig if explicitly requested.
+> From the kernel driver or user space tools, is it possible to
+> determine whether the device has been reset or powered down?  Are
+> there any power management settings or configurations that could be
+> causing the device to reset or power down unexpectedly?
 
-It gives flexibility and has no negative side effects. Of course, if it
-is unwanted, we can just remove it. But I would like to understand the
-deeper rationale.
+Not really.  By "powered down", I meant D3cold, where the main power
+is removed.  Config space is readable in all other power states.
 
-
+> > What is this device?  What driver is bound to it?  I don't see
+> > anything in dmesg that identifies a driver.
 >
->> For subsystems where the people maintaining the C subsystem is not the
->> same people maintaining the Rust abstractions, this switch might be
->> valuable. It would allow making breaking changes to the C code of a
->> subsystem without refactoring the Rust code in the same sitting. Rather
->
-> That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
-> longer-term, more and more people will get more or less Rust knowledge,
-> and I'd argue that's the direction we should head to. So my vision is a
-> significant amount of core kernel developers would be able to make C and
-> Rust changes at the same time. It's of course not mandatory, but it's
-> better collaboration.
+> The PCIe device in question is a Xilinx FPGA endpoint, which is
+> flashed with RTL code to expose several host interfaces to the system
+> via the PCIe link.
+> 
+> We have an out-of-tree driver for this device, but to eliminate the
+> driver's role in this issue, I renamed the driver to prevent it from
+> loading automatically after rebooting the machine. Despite not using
+> the driver, the issue still occurred.
 
-Having this switch does not prevent longer term plans or change
-directions of anything. It's simply a convenience feature made
-available. I also expect the future you envision. But it is an
-envisioned _future_. It is not the present reality.
+Oh, right, I forgot that you mentioned this before.
 
->
->> than having to disable rust entirely - or going and commenting out lines
->> in the kernel crate - I think it is better to provide an option to just
->> disable building these particular bindings.
->>
->> This has nothing to do with general policies related to breakage between
->> Rust and C code, and how to fix such breakage in a timely manner. It is
->> simply a useful switch for disabling part of the build so that people
->> can move on with their business, while someone else scrambles to fix
->> whatever needs fixing on the Rust side.
->>
->
-> It's of course up to hrtimer maintainers. But I personally nack this
-> kconfig, because it's not necessary, and hrtimer API has been stable for
-> a while.
+> > You're seeing the problem on v5.4 (Nov 2019), which is much newer than
+> > v4.4 (Jan 2016).  But v5.4 is still really too old to spend a lot of
+> > time on unless the problem still happens on a current kernel.
 
-Having the switch is fine for me, removing it is fine as well. It's just
-an added convenience that might come in handy. But having this kconfig
-very close to zero overhead, so I do not really understand your
-objection. I would like to better understand your reasoning.
+This part is important.  We don't want to spend a lot of time
+debugging an issue that may have already been fixed upstream.
 
-
-Best regards,
-Andreas Hindborg
-
-
+Bjorn
 
