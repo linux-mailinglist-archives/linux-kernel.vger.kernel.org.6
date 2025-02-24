@@ -1,42 +1,62 @@
-Return-Path: <linux-kernel+bounces-528654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEA8A41A48
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:10:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20301A41A4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6440017AC43
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:05:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADCB917BC99
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:06:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3012566FC;
-	Mon, 24 Feb 2025 10:03:43 +0000 (UTC)
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75088241CA6;
+	Mon, 24 Feb 2025 10:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yg2U+VQI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9854D254AF6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:03:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEB521CC61;
+	Mon, 24 Feb 2025 10:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391422; cv=none; b=fvFaQZBrZYwnXGV+Ls14/WnnExQRXVaukhr/QzHrVke2zoiJeE586Dk9OoPACWUIrJQUrCvQh5Z15UMdX/rLX34syz07mBX0avYa3qDAzOf08ZqWNw6M7C3n4eWcm6k1TonrJYbYsuXFx8T12JEllz5ZFEHiPTP+7uD3jJLmOr0=
+	t=1740391473; cv=none; b=qWItCudVpfsdDEOZJ/mRviWcUZieKuE6yXLqdVJr9dfsJwv29WlvnrWDWZaKF0GtSn1aNzKDrBahYlaVBtNzGD4jPOf9qrHhrwU5fPFDG/lL87ZY79XQESfs3YoiQXb+Xn1ZVW9dSAFAFw6OK9MdN6wD0zsXNSrSUD/xlMM+3kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391422; c=relaxed/simple;
-	bh=JgJx6ba4RBBDAzbaug5ppV+ryDAhgLpVi1FzyzvSEOA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Lm54Sxo/P/55F6+iJwfKUyWYyOgF6bNPqIPXtzujHxqoHVhFjzdAu+lMLiRGpl6YvxAnqeHop/Y3LO2UHKwn5XI3CWxFJ/tX7uVTXz86y9oIWKhYgAFQcxoIFIZhUfbgH/WaAfkzG8hjTapdxQhmLoHTKly4zH5TsWlN+Zjef/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z1bsc6LHrzK33;
-	Mon, 24 Feb 2025 11:03:32 +0100 (CET)
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z1bsc1f14zVwx;
-	Mon, 24 Feb 2025 11:03:32 +0100 (CET)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Mon, 24 Feb 2025 11:03:22 +0100
-Subject: [PATCH v3 2/2] gpio: pcf857x: add support for reset-gpios on
- (most) PCA967x
+	s=arc-20240116; t=1740391473; c=relaxed/simple;
+	bh=NT7gh5BIToLiCcGd9vlyWqLoVKuOYrT1mPORrvCywpo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=HynSu/TPnU7DU/a8SXhpcofYxRQSmVyryIyKPAwG30TufgcxH7O7aJsoUg+D2J6Nn51UhwbatElik93/eRqJY3cPax00hOEZkD3PE5Bq7Gsc4YD9jtnR0W8iDI6qgsqtbtTvxYh3f9wqTIGlUjK+TmQXZxpZEl5ud89EUXsJ7b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yg2U+VQI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O94YAP006045;
+	Mon, 24 Feb 2025 10:04:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=e9sHA5BgH/NoLFO9fPXwOo
+	tzzmN556j6iDEmhKzeUks=; b=Yg2U+VQIZkYQC9pmmVzTEt9hZKfSu0LLZa6+vi
+	CF9o+2tYRmsZS1/nvoo5v28Igy4Qsc/+1aPxow78vOwIUWVdYoGoa7RRwcFmV8Ui
+	JnCDmvh81pIvX0NQxT76ILEfGBK9Y8umppX8id0gOK0d6E+ewFH0b7Q/il5OKNTp
+	tber0aTPAmO5JAXAV9SWW+qALcCLRHoNFs2s4uiS0/efNOlL9MWqsnVVitkN0Er0
+	sXFpiggVJSiS5H8DbO46/cHpq8rzq3UZo78loBLUvGteH6QF/4Gzv+tNusuylYlD
+	n60tWAU3Q8QwCCXFgv/NskWCYpN8DoLwEPbokTXNcTBPIYuw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y7v9cgr6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 10:04:26 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51OA4P75020107
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 10:04:25 GMT
+Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Feb 2025 02:04:21 -0800
+From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
+Subject: [PATCH 0/2] Enable Qualcomm Crypto Engine for QCS615
+Date: Mon, 24 Feb 2025 15:34:09 +0530
+Message-ID: <20250224-enable-qce-for-qcs615-v1-0-e7c665347eef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,103 +65,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-pca976x-reset-driver-v3-2-58370ef405be@cherry.de>
-References: <20250224-pca976x-reset-driver-v3-0-58370ef405be@cherry.de>
-In-Reply-To: <20250224-pca976x-reset-driver-v3-0-58370ef405be@cherry.de>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Quentin Schulz <quentin.schulz@cherry.de>
+X-B4-Tracking: v=1; b=H4sIABlEvGcC/x2MwQqDMBAFf0X23IW4miL9FekhTZ52QZKagBSC/
+ 27wNMxhplJBVhR6dZUyDi2aYpP+0ZH/uriCNTQnMWKNyMiI7rOBdw9eUm4sz95ywOAmP1hjg1B
+ rfxmL/u/v/D7PCwtSA0tnAAAA
+X-Change-ID: 20250224-enable-qce-for-qcs615-de3a8c3505d2
+To: Thara Gopinath <thara.gopinath@gmail.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Abhinaba
+ Rakshit" <quic_arakshit@quicinc.com>
 X-Mailer: b4 0.14.2
-X-Infomaniak-Routing: alpha
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: M7gwyfJDVAMZLAwus_PjAxjSUHvpnA50
+X-Proofpoint-ORIG-GUID: M7gwyfJDVAMZLAwus_PjAxjSUHvpnA50
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 bulkscore=0 malwarescore=0 phishscore=0
+ spamscore=0 suspectscore=0 mlxscore=0 mlxlogscore=695 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240073
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+Document QCS615 support for QCrypto driver and add QCE
+and Crypto BAM DMA nodes.
 
-The PCA9670, PCA9671, PCA9672 and PCA9673 all have a RESETN input pin
-that is used to reset the I2C GPIO expander.
+This patch series depends on the below patch series:
+https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/ - Reviewed
 
-One needs to hold this pin low for at least 4us and the reset should be
-finished after about 100us according to the datasheet[1]. Once the reset
-is done, the "registers and I2C-bus state machine will be held in their
-default state until the RESET input is once again HIGH.".
-
-Because the logic is reset, the latch values eventually provided in the
-Device Tree via lines-initial-states property are inapplicable so they
-are simply ignored if a reset GPIO is provided.
-
-[1] https://www.nxp.com/docs/en/data-sheet/PCA9670.pdf 8.5 and fig 22.
-
-Tested-by: Heiko Stuebner <heiko@sntech.de> # RK3588 Tiger Haikou Video Demo
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
+Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
 ---
- drivers/gpio/gpio-pcf857x.c | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+Abhinaba Rakshit (2):
+      dt-bindings: crypto: qcom-qce: document QCS615 crypto engine
+      arm64: dts: qcom: qcs615: add QCrypto nodes
 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 7c57eaeb0afeba8953d998d8eec60a65b40efb6d..2e5f5d7f886598318b753304e7e0efca54ff8b69 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -5,6 +5,8 @@
-  * Copyright (C) 2007 David Brownell
-  */
- 
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/i2c.h>
- #include <linux/interrupt.h>
-@@ -272,12 +274,11 @@ static const struct irq_chip pcf857x_irq_chip = {
- 
- static int pcf857x_probe(struct i2c_client *client)
- {
-+	struct gpio_desc *reset_gpio;
- 	struct pcf857x *gpio;
- 	unsigned int n_latch = 0;
- 	int status;
- 
--	device_property_read_u32(&client->dev, "lines-initial-states", &n_latch);
--
- 	/* Allocate, initialize, and register this gpio_chip. */
- 	gpio = devm_kzalloc(&client->dev, sizeof(*gpio), GFP_KERNEL);
- 	if (!gpio)
-@@ -297,6 +298,30 @@ static int pcf857x_probe(struct i2c_client *client)
- 	gpio->chip.direction_output	= pcf857x_output;
- 	gpio->chip.ngpio		= (uintptr_t)i2c_get_match_data(client);
- 
-+	reset_gpio = devm_gpiod_get_optional(&client->dev, "reset", GPIOD_OUT_HIGH);
-+	if (IS_ERR(reset_gpio))
-+		return dev_err_probe(&client->dev, PTR_ERR(reset_gpio),
-+				     "failed to get reset GPIO\n");
-+
-+	if (reset_gpio) {
-+		/* Reset already held with devm_gpiod_get_optional with GPIOD_OUT_HIGH */
-+		fsleep(4); /* tw(rst) > 4us */
-+		gpiod_set_value_cansleep(reset_gpio, 0);
-+		fsleep(100); /* trst > 100uS */
-+
-+		/*
-+		 * Performing a reset means "The PCA9670 registers and I2C-bus
-+		 * state machine will be held in their default state until the
-+		 * RESET input is once again HIGH".
-+		 *
-+		 * This is the same as writing 1 for all pins, which is the same
-+		 * as n_latch=0, the default value of the variable.
-+		 */
-+	} else {
-+		device_property_read_u32(&client->dev, "lines-initial-states",
-+					 &n_latch);
-+	}
-+
- 	/* NOTE:  the OnSemi jlc1562b is also largely compatible with
- 	 * these parts, notably for output.  It has a low-resolution
- 	 * DAC instead of pin change IRQs; and its inputs can be the
+ .../devicetree/bindings/crypto/qcom-qce.yaml       |  1 +
+ arch/arm64/boot/dts/qcom/qcs615.dtsi               | 25 ++++++++++++++++++++++
+ 2 files changed, 26 insertions(+)
+---
+base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+change-id: 20250224-enable-qce-for-qcs615-de3a8c3505d2
 
+Best regards,
 -- 
-2.48.1
+Abhinaba Rakshit <quic_arakshit@quicinc.com>
 
 
