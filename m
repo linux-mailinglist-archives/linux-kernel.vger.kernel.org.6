@@ -1,99 +1,83 @@
-Return-Path: <linux-kernel+bounces-529344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ED0EA4232B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:35:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30546A42328
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BEA77A92E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:32:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CC81894361
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7BE175D48;
-	Mon, 24 Feb 2025 14:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P/UIet10"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3359123371F;
+	Mon, 24 Feb 2025 14:30:30 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1708A1714CF;
-	Mon, 24 Feb 2025 14:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A17244C94
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407379; cv=none; b=ehAYajX9cPuu6TQuHbjyud1LMV3cUvVueq0KmFOihy7xGzKWncwFDCRKIfsXisVhNUfH4xSJzVEInw5X+fAs4xlZkq7NqOxOywWkDstoRCdzbgg7f780LMzIz8cXvBtGAJLAPFfRdoKAzm6GN5zk6LRtBJXmkFWOhG2VNGNe5QI=
+	t=1740407429; cv=none; b=MJZuTw3s32HPzpHca05E0nBCMSG/cv0KXvmksS92kQfYVa99P/0SL9bcOKITqr6e15S/RTob1Diru6hNlIXZZwfHNy3tCaTCgcqMpoOesp3Mp3hKmTtMOpSAfv7VNRKYu0Qr8pGo7XqbS94Qovq2ao07/CNcVyQTB/3S8D8i5/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407379; c=relaxed/simple;
-	bh=dzZWpseyrev5OlunHDNaX/H3YV4k079RCauuuFOelKs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlwKUPetKJA+Sj4yHddYiLMSMjTpbNV1Ty7ED6Jnmv5XQJtn5JxGUuU+PO7EqrW6cYvg+ki8HXaMkjnIwMmhcdIvxzZBwxe30gnkz0X2qeExThnA7HlODGxlKXEW87PXKFpedxYUdEBN2poXu2S/uwQiJ+WandTLmMCBT2sFerU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P/UIet10; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740407378; x=1771943378;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dzZWpseyrev5OlunHDNaX/H3YV4k079RCauuuFOelKs=;
-  b=P/UIet10gFvil3cezh3xGVeq8gLVBYl69ieg/0vShY5c6L9gzZL1bQbP
-   /6eSe6kihsq9Q/pKC3eDTB9uAvLG8flbF/din4QKRlWPNsxoth72ycj/E
-   vtCAs7M0LAomPyJEgPeNnKVY1/Z42sHOo322C3ZnrwRbzs8alEHRGSKL5
-   EPzETr9WYWO1XcQlfHf3Pq8k7jhnSsRitIOdIXQmjhxl7hUSNRm8yLWHS
-   tUoS0cPEs1Lfu6uF+Ye0OdkhyRfvJBXgVhTwdUEigCtQ2a9RK0xLMOj5F
-   CYvVYkmqoGMHfeHnTdpJQ4CvkgJbbQQnD8s83HAD0VHvzy42ge6k4+kEX
-   g==;
-X-CSE-ConnectionGUID: Vi1ZG0tATFuM3h4I4baDuA==
-X-CSE-MsgGUID: wYKMN0rKTpmput2ibhHzWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41179717"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="41179717"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 06:29:37 -0800
-X-CSE-ConnectionGUID: 1OsmfyM1ToGAN7Rk7KutlA==
-X-CSE-MsgGUID: nrHSlI1ESqCvxmEiS39VoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="116557596"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 06:29:34 -0800
-Date: Mon, 24 Feb 2025 16:29:30 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: perex@perex.cz, tiwai@suse.com, lgirdwood@gmail.com, deller@gmx.de,
-	andriy.shevchenko@linux.intel.com, sre@kernel.org,
-	sakari.ailus@linux.intel.com, mchehab@kernel.org,
-	hverkuil-cisco@xs4all.nl, jdmason@kudzu.us, fancer.lancer@gmail.com,
-	linux-sound@vger.kernel.org, linux-fbdev@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
-	ntb@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/13] Convert to use devm_kmemdup_array()
-Message-ID: <Z7yCStqIMZfuWcAJ@black.fi.intel.com>
-References: <20250221165333.2780888-1-raag.jadav@intel.com>
- <31f8302b-96be-41f1-9e58-c9f8cb2a9524@sirena.org.uk>
+	s=arc-20240116; t=1740407429; c=relaxed/simple;
+	bh=M3GmmYhya6xHQLZD4CkdMSghc5D0OhVwWeUh2SzCfns=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q3yk+4xByyqS/b9yV3Z2nw7mdaTJdQXlkvtyHAbAYhw2xjtwwwvgdoK2xuucttY+gRYo8gHUZKOnuzW+AV9AH6VKvZAQfM/J7pppyTcANfqRkEW+9FuLDCMeTihYubbdi3C+NkeFtXwv2BRFwTMrpCKWc7koYPsgRBbKKPrfIz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 24 Feb
+ 2025 17:30:14 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 24 Feb
+ 2025 17:30:14 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: <syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<syzkaller-bugs@googlegroups.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [syzbot] [media?] WARNING in call_s_stream
+Date: Mon, 24 Feb 2025 17:30:11 +0300
+Message-ID: <20250224143012.1215895-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000008cabee0614a97e81@google.com>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31f8302b-96be-41f1-9e58-c9f8cb2a9524@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Mon, Feb 24, 2025 at 01:46:29PM +0000, Mark Brown wrote:
-> On Fri, Feb 21, 2025 at 10:23:20PM +0530, Raag Jadav wrote:
-> > This series is the second wave of patches to add users of newly introduced
-> > devm_kmemdup_array() helper. Original series on [1].
-> > 
-> > This depends on changes available on immutable tag[2]. Feel free to pick
-> > your subsystem patches with it, or share your preferred way to route them.
-> 
-> Please don't combine patches for multiple subsystems into a single patch
-> series, it just makes everything more complex to deal with - it creates
-> cross tree issues that wouldn't otherwise exist.
+Test a simple fix.
 
-Sure, will split v2 per subsystem.
+#syz test
+---
+ drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Raag
+diff --git a/drivers/media/test-drivers/vimc/vimc-streamer.c b/drivers/media/test-drivers/vimc/vimc-streamer.c
+index 807551a5143b..64dd7e0ea5ad 100644
+--- a/drivers/media/test-drivers/vimc/vimc-streamer.c
++++ b/drivers/media/test-drivers/vimc/vimc-streamer.c
+@@ -59,6 +59,12 @@ static void vimc_streamer_pipeline_terminate(struct vimc_stream *stream)
+ 			continue;
+ 
+ 		sd = media_entity_to_v4l2_subdev(ved->ent);
++		/*
++		 * Do not call .s_stream() to stop an already
++		 * stopped/unstarted subdev.
++		 */
++		if (!sd->s_stream_enabled)
++			continue;
+ 		v4l2_subdev_call(sd, video, s_stream, 0);
+ 	}
+ }
 
