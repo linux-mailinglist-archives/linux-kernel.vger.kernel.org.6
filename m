@@ -1,192 +1,168 @@
-Return-Path: <linux-kernel+bounces-528033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C5BA412AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:36:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF67A412B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:37:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666A33A254F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFCB5189491E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB40B1624C1;
-	Mon, 24 Feb 2025 01:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51777156F44;
+	Mon, 24 Feb 2025 01:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ke7MIECh"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFUf6dl/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4EA156C5E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E437B15696E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740361002; cv=none; b=IA5filX+WOW80t91sy+pnV8TjRSxKuyqm93wTqaBHgJIc7Ux65BgIkfMmpy6rEcTuWgN/KpLb9wY+mG2dc5ZwO81krYvtfeUVjCR9iHFSC5hX/KfJEH6uZOTsGnFqUZkkxvoRXVxeesU+Xa3afnwlJQxKv+unRSsqSgMqV69yh0=
+	t=1740361024; cv=none; b=MZrS3/AjjxeBkmT4ZGNzJjn+1JhgKt3VlzQEWwq5lUGn2WGAlwVe8CmwRy4Juy+ieHWRUN9SS05LVdu7cYGNcHwsLrc4mEhsq4D6fT0yquRxCAwThAKhliupoT0j9Q5YGfr3tllzbtPB8HI03bYSTCl+puPeE38VSG5VJ2pURJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740361002; c=relaxed/simple;
-	bh=TeWR9KLXTBmIKTfyhxrXWzdWVKnSHoMtCIlpTT/p9uw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bczhI8cSi5oHZ5CGXktoePotY3fTbSZSZKjjdl95Si2ApvTdiN6PkE0YKRjZXBBIFbcdY4zoeVjYpU8JM+j+kcJM/F5TLsF7hhmoMeNa1bMCNpvGOsFNtsAQbipJA7c6E8/KUPJ1pO7EZaucc7v8zbfhZ5zC+ihL+s9aM3Vu+Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ke7MIECh; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-472098e6e75so380761cf.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:36:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740360999; x=1740965799; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Z0iilXXeFUJb8Y16LfAkZ2RuptL+aVBKvKCYUlU6uU=;
-        b=Ke7MIECh1ikOMI+K4DiQjL8lL9Mlc8KaKGGvEy5lfjtQnoITHPQVrdkuA4wOgve1aF
-         4rvRdrKQw43t4kuXeNtXPRyotBIXjCUZtxKMS1bx9zgukraBJLad5faAzVRY/sZprYbY
-         vEXXBEGnVWtXPV9cJMIxl2EHh6Jw1nelHbvrzq1z7JLZ2wgO5/eWJcJOJrE0BaSWXUcv
-         4eq49pMAQhCxt++Zv9t+Q1zEwQVttFjc0DyJqlh/arex/v7PIDbkIwo7PlbOJH1hResH
-         ktmG6zUFz9Od4dXb0rMf9L7H4o7zd2P+vOMXH1GqPszcL/e3xyohVexyFmPEh3b5OiVu
-         jq0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740360999; x=1740965799;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0Z0iilXXeFUJb8Y16LfAkZ2RuptL+aVBKvKCYUlU6uU=;
-        b=uvKg+U68vvQUkyBkr3y28psHZjhYeUldQsRI3dpGr1qR/KjQEdaDK4E1cRokzOtmHu
-         J0FUPIUjY+UDbIj197HwiHC6tcxNExVvybegcpfVLytnPg5VHX77D4681NNdQsgyb0Sl
-         HnwL5i7GB78flni/k34Nb7lqaArdwHLjmd6VU3RxbilW3xeaDhQjSgQZzNuPk8ATER9h
-         Rwz/rdF6zayRZ36+e/SZNiq5sre3PIGD163Y+IjeiP1T9ngGedIU/ipka0Fnm2bVKw/i
-         BOKSzu9IrUGf0KgkTisTh79glDHWUGHj+DP2/yvBeaMY45NPvJvYTsGGoKbCoz+GSuls
-         Mirg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOtxqttbOXks1v6sPTIo2JVXYYDlccR2HR2RCaK1OOSvOqyY019PqeQaBqB812rWn1F1Hprhbmajzb/CE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrqFvO0MOcqMmYPErZ4NVfAmpK/LzQX5Ppq2m4oTQmOvxREsEc
-	2EtN9n2l2UNoGpdsN+2nKNQalJ4cLvjlbNBG7lVvpN2FzcGzmwCSrtaYsx3tdHi5Om4bFQ4dx2Q
-	RwdD1dJTHq5l3yykh7t5IgOmIeXhBKJUqcbPq
-X-Gm-Gg: ASbGncuCsCJnmn6qGo7Vg7h/TSdOhhGcPyLrERqVySoCsaYAGZRRG3TViQn2MxAHDnv
-	Hu27ktCD3jJRmUi2JliOk4eBxeH2RmbdGgoyaJWG/m3C40QnQBL9QKOTykf+3mTpcAMtRGpJugP
-	D6AFRvTmU=
-X-Google-Smtp-Source: AGHT+IHPYPjlFDSqGO+p0LMHymECdrDlqiQmBYt//urxRVRmELCUI4EioUeoj+QXByhoEOFDN8rmoDb6uqKX7u7x3vg=
-X-Received: by 2002:a05:622a:3cd:b0:471:9ece:b13b with SMTP id
- d75a77b69052e-47234b4f60amr4398531cf.1.1740360998584; Sun, 23 Feb 2025
- 17:36:38 -0800 (PST)
+	s=arc-20240116; t=1740361024; c=relaxed/simple;
+	bh=Li8kSv3uGeFBd+kUVPcEx4w+EuTqJF/eS6zd+7ft5Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sE954OwyqHPAHHid+izi3OjjdXgOFms1WTe8wPtwOFpZcnVg9I/jAdCSCQWrGMou3R9faFM00bDZ3wgTIcDwqOxcGLqnLgLoMsKQlatmOGl+7Miq7+Z84coLiY9GisHQrWYYl80oCp62CZqCZ8+vQILDD+j96WxJUon499YMwvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFUf6dl/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740361021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ak1ca6nvXR4gpIUt8nNdn7G0ahaANyhsMag+O/8d/Is=;
+	b=MFUf6dl/kHwA6Oz1rttYxwqjbFXvFUGxX0NV5WtDUVGYCqXgoYSgvT4Vl+GMxJZAgbSAHQ
+	aSiHg0LbHrQWnXlQ++GLL9mqohh0Fb5kQlStQjYm4LQWdcV2SWRZsoTjdOibyHzP1ZgIpI
+	psO+4wfhHl0sN3RlyuJTJhf0BMNd1Zs=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-269-IHleUlDoO_qBwyXkEEzRBQ-1; Sun,
+ 23 Feb 2025 20:36:57 -0500
+X-MC-Unique: IHleUlDoO_qBwyXkEEzRBQ-1
+X-Mimecast-MFC-AGG-ID: IHleUlDoO_qBwyXkEEzRBQ_1740361015
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A18731800268;
+	Mon, 24 Feb 2025 01:36:55 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C01D1800358;
+	Mon, 24 Feb 2025 01:36:52 +0000 (UTC)
+Date: Mon, 24 Feb 2025 09:36:48 +0800
+From: Baoquan He <bhe@redhat.com>
+To: akpm@linux-foundation.org
+Cc: kexec@lists.infradead.org, Ondrej Kozina <okozina@redhat.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Thomas Staudt <tstaudt@de.ibm.com>,
+	Daniel P =?iso-8859-1?Q?=2E_Berrang=E9?= <berrange@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>, Pingfan Liu <kernelfans@gmail.com>,
+	Dave Young <dyoung@redhat.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Dave Hansen <dave.hansen@intel.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Coiby Xu <coxu@redhat.com>
+Subject: Re: [PATCH v8 0/7] Support kdump with LUKS encryption by reusing
+ LUKS volume keys
+Message-ID: <Z7vNMJPQPr4N6Dih@MiWiFi-R3L-srv>
+References: <20250207080818.129165-1-coxu@redhat.com>
+ <Z6sljm1lurDKPCvj@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd> <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
-In-Reply-To: <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Sun, 23 Feb 2025 17:36:27 -0800
-X-Gm-Features: AWEUYZmlUqp1pDA_wMiYyR9GBcFZPosDdJv_JqLSwV5RNu8wPZMrLyH-r3FhCWM
-Message-ID: <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Alexei Starovoitov <ast@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6sljm1lurDKPCvj@MiWiFi-R3L-srv>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Sat, Feb 22, 2025 at 8:44=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Sat, Feb 22, 2025 at 4:19=E2=80=AFPM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Fri, Feb 14, 2025 at 05:27:36PM +0100, Vlastimil Babka wrote:
-> > > - Cheaper fast paths. For allocations, instead of local double cmpxch=
-g,
-> > >   after Patch 5 it's preempt_disable() and no atomic operations. Same=
- for
-> > >   freeing, which is normally a local double cmpxchg only for a short
-> > >   term allocations (so the same slab is still active on the same cpu =
-when
-> > >   freeing the object) and a more costly locked double cmpxchg otherwi=
-se.
-> > >   The downside is the lack of NUMA locality guarantees for the alloca=
-ted
-> > >   objects.
-> >
-> > Is that really cheaper than a local non locked double cmpxchg?
->
-> Don't know about this particular part but testing sheaves with maple
-> node cache and stress testing mmap/munmap syscalls shows performance
-> benefits as long as there is some delay to let kfree_rcu() do its job.
-> I'm still gathering results and will most likely post them tomorrow.
+Hi Andrew,
 
-Here are the promised test results:
+On 02/11/25 at 06:25pm, Baoquan He wrote:
+> On 02/07/25 at 04:08pm, Coiby Xu wrote:
+> > LUKS is the standard for Linux disk encryption, widely adopted by users,
+> > and in some cases, such as Confidential VMs, it is a requirement. With 
+> > kdump enabled, when the first kernel crashes, the system can boot into
+> > the kdump/crash kernel to dump the memory image (i.e., /proc/vmcore) 
+> > to a specified target. However, there are two challenges when dumping
+> > vmcore to a LUKS-encrypted device:
+> > 
+> >  - Kdump kernel may not be able to decrypt the LUKS partition. For some
+> >    machines, a system administrator may not have a chance to enter the
+> >    password to decrypt the device in kdump initramfs after the 1st kernel
+> >    crashes; For cloud confidential VMs, depending on the policy the
+> >    kdump kernel may not be able to unseal the keys with TPM and the
+> >    console virtual keyboard is untrusted.
+> > 
+> >  - LUKS2 by default use the memory-hard Argon2 key derivation function
+> >    which is quite memory-consuming compared to the limited memory reserved
+> >    for kdump. Take Fedora example, by default, only 256M is reserved for
+> >    systems having memory between 4G-64G. With LUKS enabled, ~1300M needs
+> >    to be reserved for kdump. Note if the memory reserved for kdump can't
+> >    be used by 1st kernel i.e. an user sees ~1300M memory missing in the
+> >    1st kernel.
+> > 
+> > Besides users (at least for Fedora) usually expect kdump to work out of
+> > the box i.e. no manual password input or custom crashkernel value is
+> > needed. And it doesn't make sense to derivate the keys again in kdump
+> > kernel which seems to be redundant work.
+> > 
+> > This patch set addresses the above issues by making the LUKS volume keys
+> > persistent for kdump kernel with the help of cryptsetup's new APIs
+> > (--link-vk-to-keyring/--volume-key-keyring). Here is the life cycle of
+> > the kdump copies of LUKS volume keys,
+> > 
+> >  1. After the 1st kernel loads the initramfs during boot, systemd
+> >     use an user-input passphrase to de-crypt the LUKS volume keys
+> >     or TPM-sealed key and then save the volume keys to specified keyring
+> >     (using the --link-vk-to-keyring API) and the key will expire within
+> >     specified time.
+> > 
+> >  2. A user space tool (kdump initramfs loader like kdump-utils) create
+> >     key items inside /sys/kernel/config/crash_dm_crypt_keys to inform
+> >     the 1st kernel which keys are needed.
+> > 
+> >  3. When the kdump initramfs is loaded by the kexec_file_load
+> >     syscall, the 1st kernel will iterate created key items, save the
+> >     keys to kdump reserved memory.
+> > 
+> >  4. When the 1st kernel crashes and the kdump initramfs is booted, the
+> >     kdump initramfs asks the kdump kernel to create a user key using the
+> >     key stored in kdump reserved memory by writing yes to
+> >     /sys/kernel/crash_dm_crypt_keys/restore. Then the LUKS encrypted
+> >     device is unlocked with libcryptsetup's --volume-key-keyring API.
+> > 
+> >  5. The system gets rebooted to the 1st kernel after dumping vmcore to
+> >     the LUKS encrypted device is finished
+> > 
+> > After libcryptsetup saving the LUKS volume keys to specified keyring,
+> > whoever takes this should be responsible for the safety of these copies
+> > of keys. The keys will be saved in the memory area exclusively reserved
+> > for kdump where even the 1st kernel has no direct access. And further
+> > more, two additional protections are added,
+> >  - save the copy randomly in kdump reserved memory as suggested by Jan
+> >  - clear the _PAGE_PRESENT flag of the page that stores the copy as
+> >    suggested by Pingfan
+> > 
+> > This patch set only supports x86. There will be patches to support other
+> > architectures once this patch set gets merged.
 
-First I ran an Android app cycle test comparing the baseline against sheave=
-s
-used for maple tree nodes (as this patchset implements). I registered about
-3% improvement in app launch times, indicating improvement in mmap syscall
-performance.
-Next I ran an mmap stress test which maps 5 1-page readable file-backed
-areas, faults them in and finally unmaps them, timing mmap syscalls.
-Repeats that 200000 cycles and reports the total time. Average of 10 such
-runs is used as the final result.
-3 configurations were tested:
+Could you pick this patchset into your tree since no conern from other
+reviewers?
 
-1. Sheaves used for maple tree nodes only (this patchset).
+Thanks
+Baoquan
 
-2. Sheaves used for maple tree nodes with vm_lock to vm_refcnt conversion [=
-1].
-This patchset avoids allocating additional vm_lock structure on each mmap
-syscall and uses TYPESAFE_BY_RCU for vm_area_struct cache.
+> 
+> This v8 looks good to me, thanks for the great effort, Coiby.
+> 
+> Acked-by: Baoquan He <bhe@redhat.com>
+> 
 
-3. Sheaves used for maple tree nodes and for vm_area_struct cache with vm_l=
-ock
-to vm_refcnt conversion [1]. For the vm_area_struct cache I had to replace
-TYPESAFE_BY_RCU with sheaves, as we can't use both for the same cache.
-
-The values represent the total time it took to perform mmap syscalls, less =
-is
-better.
-
-(1)                  baseline       control
-Little core       7.58327       6.614939 (-12.77%)
-Medium core  2.125315     1.428702 (-32.78%)
-Big core          0.514673     0.422948 (-17.82%)
-
-(2)                  baseline      control
-Little core       7.58327       5.141478 (-32.20%)
-Medium core  2.125315     0.427692 (-79.88%)
-Big core          0.514673    0.046642 (-90.94%)
-
-(3)                   baseline      control
-Little core        7.58327      4.779624 (-36.97%)
-Medium core   2.125315    0.450368 (-78.81%)
-Big core           0.514673    0.037776 (-92.66%)
-
-Results in (3) vs (2) indicate that using sheaves for vm_area_struct
-yields slightly better averages and I noticed that this was mostly due
-to sheaves results missing occasional spikes that worsened
-TYPESAFE_BY_RCU averages (the results seemed more stable with
-sheaves).
-
-[1] https://lore.kernel.org/all/20250213224655.1680278-1-surenb@google.com/
-
->
-> >
-> > Especially if you now have to use pushf/popf...
-> >
-> > > - kfree_rcu() batching and recycling. kfree_rcu() will put objects to=
- a
-> > >   separate percpu sheaf and only submit the whole sheaf to call_rcu()
-> > >   when full. After the grace period, the sheaf can be used for
-> > >   allocations, which is more efficient than freeing and reallocating
-> > >   individual slab objects (even with the batching done by kfree_rcu()
-> > >   implementation itself). In case only some cpus are allowed to handl=
-e rcu
-> > >   callbacks, the sheaf can still be made available to other cpus on t=
-he
-> > >   same node via the shared barn. The maple_node cache uses kfree_rcu(=
-) and
-> > >   thus can benefit from this.
-> >
-> > Have you looked at fs/bcachefs/rcu_pending.c?
 
