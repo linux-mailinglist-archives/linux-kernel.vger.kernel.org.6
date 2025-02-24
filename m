@@ -1,676 +1,248 @@
-Return-Path: <linux-kernel+bounces-528572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6063A41928
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:32:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4027A4192B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183CA1885B29
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:30:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8625818852D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6ED1FE46B;
-	Mon, 24 Feb 2025 09:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD14245009;
+	Mon, 24 Feb 2025 09:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YMdCxeed"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eMcZNRfQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1287C242936
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389433; cv=none; b=dShGzS4Znyc2Xb0N9VYJPJ8d+8nCh1EsYwT5pN58RdOI1J0JTb1bdnytDPyTIYcFp9jKYG4lUoqT+wTDgeoukYWTJCKtp7XXxUtBfSSWougKt+E/M+n9Oxe+yO7RT6TVQO3oA5MHVXkShGxrB1hCAqjLcge5n80GlRzGAg+h2nY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389433; c=relaxed/simple;
-	bh=RkmdnKSjkVRb0/gJqeWied9iqH51QdUxUlxtE01kQAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sPPm1rocFRfi9ekXChKV9eXS/LB9j99zVCTBATozeP/VfMc1BkouXQLGPHGIxieU+rUaegd596JOv6zwcf7K6zGz+wR2d591ugVNqd+TE+u2dwdUgse3i72u7wBG/havhDRlSsrUjsekPFIy8MJayusdaU8CSUl1TlLkplXiWrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YMdCxeed; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so8349042a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:30:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740389430; x=1740994230; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=B8933hcHHMfIdzCWt+4/Qg0KBD9H6ZcSHRKwPgYW79Q=;
-        b=YMdCxeedUhb7lGTKUt+PZxz/bYQ7pTDRw4pbcDzlKjUyWZdvuEAH6wCKKRHTi0k7wx
-         BBxJUFrnFNH6ftiwM+Jo+i+O4ROz6L8ETuW/6ksW+2SNP5qXa9ddmZMOdUpRFip4QvhM
-         Yi2U5uJJGlZ1qOa2+eJE36LQqPMPtqLDNqv6MM5RMPFKtONRgOoNIIsx48aZZqQe3je0
-         rr9jK56yxVyDXvHhspEqe+qTL9kqeqTmGoy4SIC556u4SwkApW44OUXUjIOUdOf2mnai
-         nG5R+xt/VpDq7fornID6Eqaaszt250woUcdVubI4ZrLGZnrOfx6tAw6dUj6NgPwe4XXP
-         k0Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740389430; x=1740994230;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8933hcHHMfIdzCWt+4/Qg0KBD9H6ZcSHRKwPgYW79Q=;
-        b=a2oSwBZe/LXv62ivK3wKc1B/sxCS3ZFMnclEKvedUgPvW4u0c5/L7lq3jw/AQkDT2+
-         DZUwCZ7lUyvFI5f4h6W4sk5MsemONDFm60j/253KtDG56NvkfzBixd/qdpk/8q+tBZWJ
-         oPjVrzrT1P1P5tI+N9aA9CjJtMp7l2XC/jAByhLvon7AfD/deZ/ORrE8mFTXqber2CrR
-         0xLcjRqhtxstVNt9aKnbEyhFCigVTnbiKlMschpn4G7NqoG1meulZGVvDJPaDPx8mxsR
-         oXfyLsCF6mUi/PGraxY19yyVCOp0W2CF7gCoX5t/9Thw5B2s9ispGtbFbmZNsm0BGhEZ
-         dgrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHV6cuvN8XyRG1Pwttf+8bfm7J1iH+3CViO1nwo/9+UwjY+lOwf8bIeYTvRve/Ggh2OC5ALRARalGmMp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqFYHDuQDcuNOguDfFUoTVBixCCmmt3CdFXffNOLw+k9SqPaI/
-	8AUyz51mndyRNqXz7buDZPZwWijt2GaS8U1BmnIJJsRq+zXpru+mZBh8R409Jw==
-X-Gm-Gg: ASbGncsfAWsv9ybVnaIxSMCZw01ZZP56Az5ud/f0GtjdxHJ8vuc7oqH81Ms3o65/v0Z
-	IUDzm4y2dHCd68xvcPjdOszWQzpM4jdCPKbt4lI9wHq2e/cRm+hdtV/cI7yJout9WGEqM6bSVPG
-	pdVFbrndZMhWqV1F/yetmv2hmMKDg3IEylNNoHhBq9JptkmrxeP23b6ZVmO6xqxemOpnC8sWis0
-	eKLiSS+ppjJy95ndOVTwQk0yWpeakjiWs1IFAHv40aa2ES3SHGlnemuvw5J1gQe7Ze8i4o/RS6I
-	Hn/saikvnltwsRzijIkOT7xrmgXeC/Cyf8N7
-X-Google-Smtp-Source: AGHT+IGbgd9yKaBYnhgfI4LpzNeuJQFZiqib7+iUQ9WKXNJrULeE0eGeCY+y8Gzg8cG4uyD5TIYTSg==
-X-Received: by 2002:a17:90b:4b86:b0:2ee:ab29:1482 with SMTP id 98e67ed59e1d1-2fce86cef44mr23228868a91.16.1740389430017;
-        Mon, 24 Feb 2025 01:30:30 -0800 (PST)
-Received: from thinkpad ([36.255.17.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d55866f9sm173836835ad.230.2025.02.24.01.30.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 01:30:29 -0800 (PST)
-Date: Mon, 24 Feb 2025 15:00:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michal.simek@amd.com,
-	bharat.kumar.gogada@amd.com, jingoohan1@gmail.com
-Subject: Re: [PATCH v14 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-Message-ID: <20250224093024.q4vx2lygrc2swu3h@thinkpad>
-References: <20250224073117.767210-1-thippeswamy.havalige@amd.com>
- <20250224073117.767210-4-thippeswamy.havalige@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8B0243370;
+	Mon, 24 Feb 2025 09:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740389539; cv=fail; b=n6ahtuzddANVb7HMHWOHbvIZ/NCcIt7pfGk4XyL7i6S8KB27qedhfLdqyj5b3cpSsHumZ1EOEz6VeyZDw3OxRknga6BarHXXzXsGRkSW26MHLrzMEsOsEyTzk7V+L11bm5dWTIlhuV0RKiwajEfk2cCeuejLQ2WN4GiB8QxVS7w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740389539; c=relaxed/simple;
+	bh=2Zf6CSo/waSMMjg6gOHDAvDN3w06du9k8MEVJv/z40s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IpNwKeU2A3pLDfTs3shGZZO+KLE7fvSb/Ecn2c7yPqTiw/yX4gvATBQIukdqLIXtHzc0ZqkWKFxbbBZ67UxsVYAIuyP0gqs4UPwt0LPITd/uNSXdZX+a4qXGxbRbXGwi2iIEUeLWuYuEoxqvL043ne/tirF8WB69tbt4dWUhW8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eMcZNRfQ; arc=fail smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740389538; x=1771925538;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=2Zf6CSo/waSMMjg6gOHDAvDN3w06du9k8MEVJv/z40s=;
+  b=eMcZNRfQkoJjuLFBIeoKW3SSL/xqxLwXlRZtOxK/z+PIX0i2mj5KQTzr
+   OTmn52ouBnBNkVTIBlwQSOMdaRss9iM/XUp0tvwTw9BxL4Q283wXexvuF
+   yeD85+qfMsfBoAT2Ww7a1pJXoDW1z9lTAsYegnRMILODwzg+PfMKUxb2C
+   tzmbLuxEsD2zMhxqpo6omf9YdSBj+pNXzGhNj30uWXQKyNxkzPzkVV8hK
+   k7vIeq5HsG1KuJdfaxBinjDa7ncW6ZXt5N2bbNEikebNpJU8o/SzjIMiJ
+   9IklkVVvGqQb82iWoAYh0vgUUZerIMCzEC8dvcIAEtfX/d2lADcqm/7hZ
+   A==;
+X-CSE-ConnectionGUID: z5zfXIOrT06OywjoYqLWLw==
+X-CSE-MsgGUID: pcU0D8FeQdqWmtXJc1oiUw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="44913358"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="44913358"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:32:17 -0800
+X-CSE-ConnectionGUID: SPXo2UeIRayXDvkdacCPYA==
+X-CSE-MsgGUID: urrj859RQ52K4HN5nf21Wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="120131621"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:32:17 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Mon, 24 Feb 2025 01:32:15 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 01:32:15 -0800
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.48) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Mon, 24 Feb 2025 01:32:14 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nqIi9ugB2c9rETQWphosmgEiPLOIny445+v2E5KkNdkQ+3U4l2nyuNcxqQ0unV9kd2EcSEV0X7NGVD4bcoWbLei1PrUKbrRF74SHguMW7xcqsba//S8peTqXU06i9chyxabZ+3bYR472hxpzdkNQoOComgz1Sh0ifZE0DM/Sd/ipZPfl1el8SL0sNBJNd9Zq8fge6Grl0TWlKFlFlXnSZQBDxP7yTzA7sZnf+AHYXN7jMhnKQX+251wj4bukFRcM+sPnKx4TzVpvekIozVnULtYhPN1iaBzYfKxxkTxIq8gySPr/xUYkILjJM/bX3bOdtWIAL0OIWrr7lakcIULQew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Q8pCUZeztYy+d5GwsSemC32yg6Mb2ZERu4N9ff+j/5g=;
+ b=l0hbdXk/L1AMosJxkhzPQaX2V9VhVKlKTVjuLxDX2VkOonFyGnNz/pFWg9MuIr4JwQBoUnhw7ArgPya4JuraTWRppWwHNusV0Q/RSf4NdtEedbaR5fjnWTCUCsGMOwgFlYgR+33WsLS5CQsH/Ja8h3Bt6TzVH8J0sIAN6sQ55GPGCPVL69zrxY9Kz6XlgTGxGSYNVC44b252sczJtNeFWVFdYQKbakRHtwZlWgNjQEK6AvN/udQfwz/Jk9KwFd48WnbpDZ0ZMPHpokuYWkQPW02YM50vBYE5f92747sssFeN71teAFet6HE9IUPWnyAY93lgpEIWno9FTdAAYbog6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com (2603:10b6:5:2a6::7) by
+ IA1PR11MB7318.namprd11.prod.outlook.com (2603:10b6:208:426::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8466.19; Mon, 24 Feb 2025 09:31:27 +0000
+Received: from DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::1d5f:5927:4b71:853a]) by DM6PR11MB4657.namprd11.prod.outlook.com
+ ([fe80::1d5f:5927:4b71:853a%6]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 09:31:27 +0000
+From: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>
+To: Jiasheng Jiang <jiashengjiangcool@gmail.com>, "vadim.fedorenko@linux.dev"
+	<vadim.fedorenko@linux.dev>, "jiri@resnulli.us" <jiri@resnulli.us>,
+	"davem@davemloft.net" <davem@davemloft.net>, "Glaza, Jan"
+	<jan.glaza@intel.com>, "Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>
+CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: RE: [PATCH] dpll: Add a check before kfree() to match the existing
+ check before kmemdup()
+Thread-Topic: [PATCH] dpll: Add a check before kfree() to match the existing
+ check before kmemdup()
+Thread-Index: AQHbhi/zs7hnAFB/d0meSi67d6h7Z7NWKHbg
+Date: Mon, 24 Feb 2025 09:31:27 +0000
+Message-ID: <DM6PR11MB4657A297365AE59DE960AA899BC02@DM6PR11MB4657.namprd11.prod.outlook.com>
+References: <20250223201709.4917-1-jiashengjiangcool@gmail.com>
+In-Reply-To: <20250223201709.4917-1-jiashengjiangcool@gmail.com>
+Accept-Language: pl-PL, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR11MB4657:EE_|IA1PR11MB7318:EE_
+x-ms-office365-filtering-correlation-id: 5067423e-eb41-401f-3b21-08dd54b6035e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?8lfjPP8UZ8p95eRdUng0pB6jpaO+YP5dadrnLR1uxrNxDtKEYNGYxoEfdlkZ?=
+ =?us-ascii?Q?by0tjI1v1Z40RKVD/Xhwzb6ycJfae83AZMafU4fOlujBz39o/addaZ1waOUt?=
+ =?us-ascii?Q?0iorM2uoNehKHogb4/0C1zaGAAWaYvvr3pAVwstT9lkyE/1PAVH4/2YAWRM0?=
+ =?us-ascii?Q?BW3rnsAtCzyTvODm6NDHK+dXCf7gni8ZP5JHEUAZhhEzluzgCYxYCuoiUz1g?=
+ =?us-ascii?Q?YAZlYdgUoG7k0KTQYPqhzqUt6MX8VACVAEDAd1tGTOSFzj4UfohaWTc+jFvM?=
+ =?us-ascii?Q?u6t5XOiVgm4OLbj6C/+OmAQvQ+C5aCdyCAwM+Dc1HPHT7aeD8p5TCjgAcUa1?=
+ =?us-ascii?Q?2ESEqogUKfB9UhcvbF4Jj+16Dia7c+GR5w0uIC8qd2bUOQvwNl9CL/3ZAaj/?=
+ =?us-ascii?Q?4ErSmlQjda5dQZOKyoAezoirE8PRC+zhBtVeRXN4AhnZl6V7PxT4dq7coMH7?=
+ =?us-ascii?Q?PnndQEi9PDNaI0p97Zimne4x/BxHmXMCbwsEobDN3u9o1Aepw5poYF/E4F8Q?=
+ =?us-ascii?Q?TVZ0VPbdXmcrcAcmlzWxyH+z8ZW49irb7AXmnC9CdBAKjr+tRBQ1NoLtdJ43?=
+ =?us-ascii?Q?Cfo8St1h4awV8/wHdx3LtnnSOiVi9iZA+yClV/BR8R8GcVOt5dvhU7DVmTii?=
+ =?us-ascii?Q?cMEx2+Yf3D5oPOGJ/DoYC8iOWPls+ZVDPkOslp41r0FQBmJxLck9g8ty/F0j?=
+ =?us-ascii?Q?4rJzOg2HAyzQ5d5D7wc0t42xKTVNx3nf8II8ibnB+aKy2pD4hSO/yPOKsNrw?=
+ =?us-ascii?Q?5vXoY9Jg1MRblzpOHp1SEVAZlFWaM0v+05I+6dw7KO7QiDy8HFVsSmYKLJom?=
+ =?us-ascii?Q?BFf0NwwwNero420KgNwm/LPJbwnmq5u8omD2WvsaAOPyU3rZf55k/kQ9dsgW?=
+ =?us-ascii?Q?A5jyhHb2W2BLss3uYaBzQjLmTERLjFxKYdv5CIbjiXEz5ubFUG6/Q/VVdgB0?=
+ =?us-ascii?Q?4UTgbzzKs6lLA/6J3I/j+7cmtLh2xi98Wzw3wa+WWTN1IGa/sA2dqqErPs3Y?=
+ =?us-ascii?Q?5Pf0q7riVJc8WyTYQGjlXzXXVEux/taVfhMX3cUHu4fnX0PUCcKTr6E/tEqu?=
+ =?us-ascii?Q?kQTDwmdfYRJsP1xA1G8qO1up845Xg2iEbWu2tw8jQhe7VjtSTKGVQmH5tWmc?=
+ =?us-ascii?Q?FC5/eGl4+VnILymZXzwbiFhcOnklonbRds3DWVUIDZUpgM20uvgrVPpmzKYH?=
+ =?us-ascii?Q?hvjQMrD0xqYu4frnfKY/+yy/RpkWD0uHNdly6CJJMQAGyHpjkgNM96vW6URs?=
+ =?us-ascii?Q?2IpBwDdrM/5xYY566lpAxHf2ETcyUT5IJFh7ScdCOVFiLuSUZ9bAVhxKh0Eb?=
+ =?us-ascii?Q?AfdpXylbWmmknH32LAH5cG8NfoVNmq6YtMQjw/NZc+VGpTLd9TOd3SgrstrX?=
+ =?us-ascii?Q?QRPyIPuxFuCJAepMKyWge35C9kjLtQh4faMyIi3LiWNgQ268nonGCQpHTDN8?=
+ =?us-ascii?Q?zWu6VJtZv8InM2KTzdswZReA5jOt6m8K?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB4657.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/9qdoZX0TWmkD4B8tuvE+nXguoN9kRKmvEuXojNgYEq/JwMvY4fbFCldvSSj?=
+ =?us-ascii?Q?LeiSqiUXnL2pETfrdSZA2NJcrgQ6RK4E/joXlfNUA/Hz7vDGakD1hrQsWmE5?=
+ =?us-ascii?Q?/bXAs3BFSzHiXIkh2bv4W59751urEsgADtj6QBoBb9aSVyTEM9pS6CeWm3j3?=
+ =?us-ascii?Q?4cJPxOdnosJMYq/13KqsstSi/bN22iFohe9zwxACQqiqqApesOG/i49VsT7Z?=
+ =?us-ascii?Q?eDskiGEUzdlck0HSgjft2qOQR2xYY9ib0V1ofxo0It1+TeCfnO6zFvh8WpNG?=
+ =?us-ascii?Q?RcxjyJPsPw7eCP/jVFQeolhjQpoGtlQHbwN5uSOBd1S5IlHsz6oaq4rX08pZ?=
+ =?us-ascii?Q?0S28Bp20N86noAr0Gouf8x/idmX3j6nxaXDs+3qFzhZ2W/QYY0iD7Yux07mp?=
+ =?us-ascii?Q?d5q+huq4OHxlpULhj6hEwWCeAmnTtEFwSbyiClpqSncKH8iOqJ7EE4RNWsHo?=
+ =?us-ascii?Q?h4Jp7i/IfmvsVB0DHeJcBYiSTW6gOHAdjg2l8GbP9pxWnopE+TQHZDEGTEdE?=
+ =?us-ascii?Q?5hy5Y1KqUCXHHSF2yTj1oFqMyUuMmao2TotlSDJEp3I/RaXcbPvq/CZ6A9qe?=
+ =?us-ascii?Q?ebtLYx9HA0XddAJ/hcS+NGgKFdfcNLdrb2HwRVVx0qLN4Gb+UwEXMYURrXOQ?=
+ =?us-ascii?Q?6SyyCsp8r0Yvvay02SsN9cHn1Uqq9XfVi/bzPfjL6RVTmZbYv4d18PeQMx2a?=
+ =?us-ascii?Q?fod4X5Me2/3gtjn419rU00gfsOiIHIVJF4x9m8kXkBLtb5IWVF55fOS4wNJF?=
+ =?us-ascii?Q?gZLUDK3De8aXE8rvcFllwJbIzr1zSm0pSWFGfBW6MlbKzuEBykaIGEQ9M8IO?=
+ =?us-ascii?Q?mPNCAAxZdNrm+MnPtNnX2MhoZOiLDLaoWRtNc3RrNUSibrQNR4Li6n4q9n3b?=
+ =?us-ascii?Q?Yon5qD6sP+LdgEEaVoAUfnyrTJEZ4K5b6RdRxGTjkAtNTCuyNug3ogQ2jHKb?=
+ =?us-ascii?Q?LYOD9XARhqzpFkhAHZlPhJMrEe8MFCf+Bn7IDMbzcLkbYwR98B0OAYYUE5MJ?=
+ =?us-ascii?Q?A5/GPAEJXMNszfnroNS7lZf3T6QZROH4IyvTf/+fbcbKpD6B8vfV3SxUECfl?=
+ =?us-ascii?Q?EXaZ/AHWdzfZRrTpOA5rGDg03HpOacaHnSQ1630BdxFBO8Ed3q9CswVZwHYK?=
+ =?us-ascii?Q?5DRMkrPmXj/V574t04BlLkFvCF9qempat4oop2eveu9aEMPeoLBlQ7aNFoEe?=
+ =?us-ascii?Q?7yrpZ/j3zb3fH1TWb1XN0zmbogdo9RJBNcsKb83z2jzhz7kb1xBiPj6XwLWK?=
+ =?us-ascii?Q?GlZe/km59aIPYkqjxIvrIHxkifs/FFRjLibiLLsFg+n6/+pa+30dO+P6bmKU?=
+ =?us-ascii?Q?abxS8ckEWymffpYHDpoqCxUhIf4px3OhypM/zRXNH2hS51pz4g3MbSOAMyRO?=
+ =?us-ascii?Q?M8vBUqtwIf5zPaoQAvEntNSPp4C7tSdhzs8DssSxwc0THR63jt45T5RzowBa?=
+ =?us-ascii?Q?OXhGXOjbFGm66zWEGJp2NrvKWJ2GMkL6Easv+yQBwIH33Eq5QlYwX3PTL4dW?=
+ =?us-ascii?Q?73X/IQN2hW9dgjYHPe4V8REFz8ZWW1dbK//0eW7+hmws3LgQVjZ90vBEmEHm?=
+ =?us-ascii?Q?v8ToXLK+Ox9eXu7Iw31Li0Exq4UQytHBYi29sDSmPK+5u/2iGMsujzKyFv5/?=
+ =?us-ascii?Q?hQ=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224073117.767210-4-thippeswamy.havalige@amd.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB4657.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5067423e-eb41-401f-3b21-08dd54b6035e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 09:31:27.3177
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 4J5Hqt0zCTLD12fbsD83zdrEdYK2Mw1zt+PYNCVaU4EKEa2ORApM6+RJn8zmc4G4D0/LaxFPyEPwtwwUBPxP94VqLEr1UlecxMdhP5h37Ho=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7318
+X-OriginatorOrg: intel.com
 
-On Mon, Feb 24, 2025 at 01:01:17PM +0530, Thippeswamy Havalige wrote:
-> Add support for AMD MDB (Multimedia DMA Bridge) IP core as Root Port.
-> 
-> The Versal2 devices include MDB Module. The integrated block for MDB along
-> with the integrated bridge can function as PCIe Root Port controller at
-> Gen5 32-Gb/s operation per lane.
+Hi Jiasheng, many thanks for the patch!
 
-Please use GT/s
+>From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+>Sent: Sunday, February 23, 2025 9:17 PM
+>
+>When src->freq_supported is not NULL but src->freq_supported_num is 0,
+>dst->freq_supported is equal to src->freq_supported.
+>In this case, if the subsequent kstrdup() fails, src->freq_supported may
 
-> 
-> Bridge supports error and legacy interrupts and are handled using platform
-> specific interrupt line in Versal2.
-> 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes:
-> | https://lore.kernel.org/oe-kbuild-all/202502191741.xrVmEAG4-lkp@intel.
-> | com/
+The src->freq_supported is not being freed in this function,
+you ment dst->freq_supported?
+But also it is not true.
+dst->freq_supported is being freed already, this patch adds only additional
+condition over it..
+From kfree doc: "If @object is NULL, no operation is performed.".
 
-These tags are irrelevant.
+>be freed without being set to NULL, potentially leading to a
+>use-after-free or double-free error.
+>
 
-> ---
-> changes in v2:
-> -------------
-> - Update Gen5 speed in the patch description.
-> - Modify Kconfig file.
-> - Update string _leg_ to intx.
-> - Get platform structure through automic variables.
-> - Remove _rp_ in function.
-> Changes in v3:
-> --------------
-> -None.
-> Changes in v4:
-> --------------
-> -None.
-> Changes in v5:
-> --------------
-> -None.
-> Changes in v6:
-> --------------
-> - Remove pdev automatic variable.
-> - Update register name to slcr.
-> - Fix whitespace.
-> - remove Spurious extra line.
-> - Update Legacy to INTx.
-> - Add space before (SLCR).
-> - Update menuconfig description.
-> Changes in v7:
-> --------------
-> - None.
-> Changes in v8:
-> --------------
-> - Remove inline keyword.
-> - Fix indentations.
-> - Add AMD MDB prefix to interrupt names.
-> - Remove Kernel doc.
-> - Fix return types.
-> - Modify dev_warn to dev_warn_once.
-> - Add Intx handler & callbacks.
-> Changes in v10:
-> ---------------
-> - Add intx assert & deassert macros.
-> - Move amd_mdb_pcie_init_port function.
-> - Add kernel doc for error warning messages.
-> Changes in v11:
-> ---------------
-> - Remove intx deassert macro & generic handler.
-> - Update Kconfig description.
-> - Update INTx mask macro to handle only asser bits.
-> - Move INTx handler.
-> - Address other review comments.
-> Changes in v12:
-> ---------------
-> - ADD TLP_IR_DISABLE_MISC register.
-> - Modify intx call back function
-> Changes in v13:
-> - Add kernel doc for intx_irq
-> Changes in v14:
-> --------------
-> - Modify mask in intx_irq_mask/unmask functions.
-> - Modify mask in intx_flow handler.
-> ---
->  drivers/pci/controller/dwc/Kconfig        |  11 +
->  drivers/pci/controller/dwc/Makefile       |   1 +
->  drivers/pci/controller/dwc/pcie-amd-mdb.c | 481 ++++++++++++++++++++++
->  3 files changed, 493 insertions(+)
->  create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
-> 
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index b6d6778b0698..882f4b558133 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -27,6 +27,17 @@ config PCIE_AL
->  	  required only for DT-based platforms. ACPI platforms with the
->  	  Annapurna Labs PCIe controller don't need to enable this.
->  
-> +config PCIE_AMD_MDB
-> +	bool "AMD MDB Versal2 PCIe Host controller"
-> +	depends on OF || COMPILE_TEST
-> +	depends on PCI && PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here if you want to enable PCIe controller support on AMD
-> +	  Versal2 SoCs. The AMD MDB Versal2 PCIe controller is based on
-> +	  DesignWare IP and therefore the driver re-uses the Designware core
-> +	  functions to implement the driver.
-> +
->  config PCI_MESON
->  	tristate "Amlogic Meson PCIe controller"
->  	default m if ARCH_MESON
-> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-> index a8308d9ea986..ae27eda6ec5e 100644
-> --- a/drivers/pci/controller/dwc/Makefile
-> +++ b/drivers/pci/controller/dwc/Makefile
-> @@ -3,6 +3,7 @@ obj-$(CONFIG_PCIE_DW) += pcie-designware.o
->  obj-$(CONFIG_PCIE_DW_HOST) += pcie-designware-host.o
->  obj-$(CONFIG_PCIE_DW_EP) += pcie-designware-ep.o
->  obj-$(CONFIG_PCIE_DW_PLAT) += pcie-designware-plat.o
-> +obj-$(CONFIG_PCIE_AMD_MDB) += pcie-amd-mdb.o
->  obj-$(CONFIG_PCIE_BT1) += pcie-bt1.o
->  obj-$(CONFIG_PCI_DRA7XX) += pci-dra7xx.o
->  obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
-> diff --git a/drivers/pci/controller/dwc/pcie-amd-mdb.c b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-> new file mode 100644
-> index 000000000000..01d27cb5a70d
-> --- /dev/null
-> +++ b/drivers/pci/controller/dwc/pcie-amd-mdb.c
-> @@ -0,0 +1,481 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PCIe host controller driver for AMD MDB PCIe Bridge
-> + *
-> + * Copyright (C) 2024-2025, Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/kernel.h>
-> +#include <linux/init.h>
-> +#include <linux/of_device.h>
-> +#include <linux/pci.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/resource.h>
-> +#include <linux/types.h>
-> +
-> +#include "pcie-designware.h"
-> +
-> +#define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
-> +#define AMD_MDB_TLP_IR_MASK_MISC		0x4C4
-> +#define AMD_MDB_TLP_IR_ENABLE_MISC		0x4C8
-> +#define AMD_MDB_TLP_IR_DISABLE_MISC		0x4CC
-> +
-> +#define AMD_MDB_TLP_PCIE_INTX_MASK	GENMASK(23, 16)
-> +
-> +#define AMD_MDB_PCIE_INTR_INTX_ASSERT(x)	BIT((x) * 2)
+kfree does not set to NULL from what I know. How would it lead to
+use-after-free/double-free?
+Why the one would use the memory after the function returns -ENOMEM?
 
-How does these values correspond to the AMD_MDB_TLP_PCIE_INTX_MASK? These values
-could be: 0, 2, 4, and 6 corresponding to: 0b01010101? Looks wierd.
+I don't think this patch is needed or resolves anything.
 
-> +
-> +/* Interrupt registers definitions */
-> +#define AMD_MDB_PCIE_INTR_CMPL_TIMEOUT		15
-> +#define AMD_MDB_PCIE_INTR_INTX			16
-> +#define AMD_MDB_PCIE_INTR_PM_PME_RCVD		24
-> +#define AMD_MDB_PCIE_INTR_PME_TO_ACK_RCVD	25
-> +#define AMD_MDB_PCIE_INTR_MISC_CORRECTABLE	26
-> +#define AMD_MDB_PCIE_INTR_NONFATAL		27
-> +#define AMD_MDB_PCIE_INTR_FATAL			28
-> +
-> +#define IMR(x) BIT(AMD_MDB_PCIE_INTR_ ##x)
-> +#define AMD_MDB_PCIE_IMR_ALL_MASK			\
-> +	(						\
-> +		IMR(CMPL_TIMEOUT)	|		\
-> +		IMR(PM_PME_RCVD)	|		\
-> +		IMR(PME_TO_ACK_RCVD)	|		\
-> +		IMR(MISC_CORRECTABLE)	|		\
-> +		IMR(NONFATAL)		|		\
-> +		IMR(FATAL)		|		\
-> +		AMD_MDB_TLP_PCIE_INTX_MASK		\
-> +	)
-> +
-> +/**
-> + * struct amd_mdb_pcie - PCIe port information
-> + * @pci: DesignWare PCIe controller structure
-> + * @slcr: MDB System Level Control and Status Register (SLCR) Base
-> + * @intx_domain: INTx IRQ domain pointer
-> + * @mdb_domain: MDB IRQ domain pointer
-> + * @intx_irq: INTx IRQ interrupt number
-> + */
-> +struct amd_mdb_pcie {
-> +	struct dw_pcie			pci;
-> +	void __iomem			*slcr;
-> +	struct irq_domain		*intx_domain;
-> +	struct irq_domain		*mdb_domain;
-> +	int				intx_irq;
-> +};
-> +
-> +static const struct dw_pcie_host_ops amd_mdb_pcie_host_ops = {
-> +};
-> +
-> +static inline u32 pcie_read(struct amd_mdb_pcie *pcie, u32 reg)
-> +{
-> +	return readl_relaxed(pcie->slcr + reg);
-> +}
+Thank you!
+Arkadiusz
 
-I think I already commented on these helpers. Please get rid of them. I don't
-see any value in this new driver. Moreover, 'inline' keywords are not required.
+>Fixes: 830ead5fb0c5 ("dpll: fix pin dump crash for rebound module")
+>Cc: <stable@vger.kernel.org> # v6.8+
+>Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+>---
+> drivers/dpll/dpll_core.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/dpll/dpll_core.c b/drivers/dpll/dpll_core.c
+>index 32019dc33cca..7d147adf8455 100644
+>--- a/drivers/dpll/dpll_core.c
+>+++ b/drivers/dpll/dpll_core.c
+>@@ -475,7 +475,8 @@ static int dpll_pin_prop_dup(const struct
+>dpll_pin_properties *src,
+> err_panel_label:
+> 	kfree(dst->board_label);
+> err_board_label:
+>-	kfree(dst->freq_supported);
+>+	if (src->freq_supported_num)
+>+		kfree(dst->freq_supported);
+> 	return -ENOMEM;
+> }
+>
+>--
+>2.25.1
 
-> +
-> +static inline void pcie_write(struct amd_mdb_pcie *pcie,
-> +			      u32 val, u32 reg)
-> +{
-> +	writel_relaxed(val, pcie->slcr + reg);
-> +}
-> +
-> +static void amd_mdb_intx_irq_mask(struct irq_data *data)
-> +{
-> +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(data);
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *port = &pci->pp;
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	raw_spin_lock_irqsave(&port->lock, flags);
-> +	val = FIELD_PREP(AMD_MDB_TLP_PCIE_INTX_MASK,
-> +			 AMD_MDB_PCIE_INTR_INTX_ASSERT(data->hwirq));
-> +
-> +	/*
-> +	 * Writing '1' to a bit in AMD_MDB_TLP_IR_DISABLE_MISC disables that
-> +	 * interrupt, writing '0' has no effect.
-> +	 */
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_DISABLE_MISC);
-> +	raw_spin_unlock_irqrestore(&port->lock, flags);
-> +}
-> +
-> +static void amd_mdb_intx_irq_unmask(struct irq_data *data)
-> +{
-> +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(data);
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *port = &pci->pp;
-> +	unsigned long flags;
-> +	u32 val;
-> +
-> +	raw_spin_lock_irqsave(&port->lock, flags);
-> +	val = FIELD_PREP(AMD_MDB_TLP_PCIE_INTX_MASK,
-> +			 AMD_MDB_PCIE_INTR_INTX_ASSERT(data->hwirq));
-> +
-> +	/*
-> +	 * Writing '1' to a bit in AMD_MDB_TLP_IR_ENABLE_MISC enables that interrupt.
-> +	 * Writing '0' has no effect.
-> +	 */
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_ENABLE_MISC);
-> +	raw_spin_unlock_irqrestore(&port->lock, flags);
-> +}
-> +
-> +static struct irq_chip amd_mdb_intx_irq_chip = {
-> +	.name		= "AMD MDB INTx",
-> +	.irq_mask	= amd_mdb_intx_irq_mask,
-> +	.irq_unmask	= amd_mdb_intx_irq_unmask,
-> +};
-> +
-> +/**
-> + * amd_mdb_pcie_intx_map - Set the handler for the INTx and mark IRQ
-> + * as valid
-> + * @domain: IRQ domain
-> + * @irq: Virtual IRQ number
-> + * @hwirq: HW interrupt number
-> + *
-> + * Return: Always returns 0.
-> + */
-> +static int amd_mdb_pcie_intx_map(struct irq_domain *domain,
-> +				 unsigned int irq, irq_hw_number_t hwirq)
-> +{
-> +	irq_set_chip_and_handler(irq, &amd_mdb_intx_irq_chip,
-> +				 handle_level_irq);
-> +	irq_set_chip_data(irq, domain->host_data);
-> +	irq_set_status_flags(irq, IRQ_LEVEL);
-> +
-> +	return 0;
-> +}
-> +
-> +/* INTx IRQ Domain operations */
-> +static const struct irq_domain_ops amd_intx_domain_ops = {
-> +	.map = amd_mdb_pcie_intx_map,
-> +};
-> +
-> +static irqreturn_t dw_pcie_rp_intx_flow(int irq, void *args)
-
-What does the _flow suffix mean?
-
-> +{
-> +	struct amd_mdb_pcie *pcie = args;
-> +	unsigned long val;
-> +	int i, int_status;
-> +
-> +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-
-You don't need port->lock here?
-
-> +	int_status = FIELD_GET(AMD_MDB_TLP_PCIE_INTX_MASK, val);
-
-You don't need to ack/clear the IRQ?
-
-> +
-> +	for (i = 0; i < PCI_NUM_INTX; i++) {
-> +		if (int_status & AMD_MDB_PCIE_INTR_INTX_ASSERT(i))
-> +			generic_handle_domain_irq(pcie->intx_domain, i);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +#define _IC(x, s)[AMD_MDB_PCIE_INTR_ ## x] = { __stringify(x), s }
-> +
-> +static const struct {
-> +	const char	*sym;
-> +	const char	*str;
-> +} intr_cause[32] = {
-> +	_IC(CMPL_TIMEOUT,	"completion timeout"),
-> +	_IC(PM_PME_RCVD,	"PM_PME message received"),
-> +	_IC(PME_TO_ACK_RCVD,	"PME_TO_ACK message received"),
-> +	_IC(MISC_CORRECTABLE,	"Correctable error message"),
-> +	_IC(NONFATAL,		"Non fatal error message"),
-> +	_IC(FATAL,		"Fatal error message"),
-> +};
-> +
-> +static void amd_mdb_event_irq_mask(struct irq_data *d)
-> +{
-> +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *port = &pci->pp;
-> +	u32 val;
-> +
-> +	raw_spin_lock(&port->lock);
-> +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-
-This register is accessed in the IRQ handler also. So don't you need
-raw_spin_lock_irq{save/restore}? 
-
-> +	val &= ~BIT(d->hwirq);
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-> +	raw_spin_unlock(&port->lock);
-> +}
-> +
-> +static void amd_mdb_event_irq_unmask(struct irq_data *d)
-> +{
-> +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *port = &pci->pp;
-> +	u32 val;
-> +
-> +	raw_spin_lock(&port->lock);
-
-Same here
-
-> +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-> +	val |= BIT(d->hwirq);
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-> +	raw_spin_unlock(&port->lock);
-> +}
-> +
-> +static struct irq_chip amd_mdb_event_irq_chip = {
-> +	.name		= "AMD MDB RC-Event",
-> +	.irq_mask	= amd_mdb_event_irq_mask,
-> +	.irq_unmask	= amd_mdb_event_irq_unmask,
-> +};
-> +
-> +static int amd_mdb_pcie_event_map(struct irq_domain *domain,
-> +				  unsigned int irq, irq_hw_number_t hwirq)
-> +{
-> +	irq_set_chip_and_handler(irq, &amd_mdb_event_irq_chip,
-> +				 handle_level_irq);
-> +	irq_set_chip_data(irq, domain->host_data);
-> +	irq_set_status_flags(irq, IRQ_LEVEL);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct irq_domain_ops event_domain_ops = {
-> +	.map = amd_mdb_pcie_event_map,
-> +};
-> +
-> +static irqreturn_t amd_mdb_pcie_event_flow(int irq, void *args)
-> +{
-> +	struct amd_mdb_pcie *pcie = args;
-> +	unsigned long val;
-> +	int i;
-> +
-> +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-
-Here also, no lock?
-
-> +	val &= ~pcie_read(pcie, AMD_MDB_TLP_IR_MASK_MISC);
-> +	for_each_set_bit(i, &val, 32)
-> +		generic_handle_domain_irq(pcie->mdb_domain, i);
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static void amd_mdb_pcie_free_irq_domains(struct amd_mdb_pcie *pcie)
-> +{
-> +	if (pcie->intx_domain) {
-> +		irq_domain_remove(pcie->intx_domain);
-> +		pcie->intx_domain = NULL;
-> +	}
-> +
-> +	if (pcie->mdb_domain) {
-> +		irq_domain_remove(pcie->mdb_domain);
-> +		pcie->mdb_domain = NULL;
-> +	}
-> +}
-> +
-> +static int amd_mdb_pcie_init_port(struct amd_mdb_pcie *pcie)
-> +{
-> +	/* Disable all TLP Interrupts */
-> +	pcie_write(pcie, AMD_MDB_PCIE_IMR_ALL_MASK,
-> +		   AMD_MDB_TLP_IR_DISABLE_MISC);
-> +
-> +	/* Clear pending TLP interrupts */
-> +	pcie_write(pcie, pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC) &
-> +		   AMD_MDB_PCIE_IMR_ALL_MASK,
-> +		   AMD_MDB_TLP_IR_STATUS_MISC);
-> +
-> +	/* Enable all TLP Interrupts */
-> +	pcie_write(pcie,  AMD_MDB_PCIE_IMR_ALL_MASK,
-> +		   AMD_MDB_TLP_IR_ENABLE_MISC);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * amd_mdb_pcie_init_irq_domains - Initialize IRQ domain
-> + * @pcie: PCIe port information
-> + * @pdev: platform device
-> + * Return: '0' on success and error value on failure
-> + */
-> +static int amd_mdb_pcie_init_irq_domains(struct amd_mdb_pcie *pcie,
-> +					 struct platform_device *pdev)
-> +{
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *pp = &pci->pp;
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = dev->of_node;
-> +	struct device_node *pcie_intc_node;
-> +
-> +	/* Setup INTx */
-
-This comment is quite misleading. This Intc node is not specific to INTx as far
-as I can see.
-
-> +	pcie_intc_node = of_get_next_child(node, NULL);
-> +	if (!pcie_intc_node) {
-> +		dev_err(dev, "No PCIe Intc node found\n");
-> +		return -ENODATA;
-
--ENODEV
-
-> +	}
-> +
-> +	pcie->mdb_domain = irq_domain_add_linear(pcie_intc_node, 32,
-> +						 &event_domain_ops, pcie);
-> +	if (!pcie->mdb_domain) {
-> +		dev_err(dev, "Failed to add mdb_domain\n");
-> +		goto out;
-> +	}
-> +
-> +	irq_domain_update_bus_token(pcie->mdb_domain, DOMAIN_BUS_NEXUS);
-> +
-> +	pcie->intx_domain = irq_domain_add_linear(pcie_intc_node, PCI_NUM_INTX,
-> +						  &amd_intx_domain_ops, pcie);
-> +	if (!pcie->intx_domain) {
-> +		dev_err(dev, "Failed to add intx_domain\n");
-> +		goto mdb_out;
-> +	}
-> +
-> +	of_node_put(pcie_intc_node);
-> +	irq_domain_update_bus_token(pcie->intx_domain, DOMAIN_BUS_WIRED);
-> +
-> +	raw_spin_lock_init(&pp->lock);
-> +
-> +	return 0;
-> +mdb_out:
-> +	amd_mdb_pcie_free_irq_domains(pcie);
-> +out:
-> +	of_node_put(pcie_intc_node);
-> +
-> +	return -ENOMEM;
-
-No please. This is just asking for trouble. Please pass the relevant errno.
-
-> +}
-> +
-> +static irqreturn_t amd_mdb_pcie_intr_handler(int irq, void *args)
-> +{
-> +	struct amd_mdb_pcie *pcie = args;
-> +	struct device *dev;
-> +	struct irq_data *d;
-> +
-> +	dev = pcie->pci.dev;
-> +
-> +	/*
-> +	 * In future, error reporting will be hooked to the AER subsystem.
-> +	 * Currently, the driver prints a warning message to the user.
-> +	 */
-> +	d = irq_domain_get_irq_data(pcie->mdb_domain, irq);
-> +	if (intr_cause[d->hwirq].str)
-> +		dev_warn(dev, "%s\n", intr_cause[d->hwirq].str);
-> +	else
-> +		dev_warn_once(dev, "Unknown IRQ %ld\n", d->hwirq);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static int amd_mdb_setup_irq(struct amd_mdb_pcie *pcie,
-> +			     struct platform_device *pdev)
-> +{
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *pp = &pci->pp;
-> +	struct device *dev = &pdev->dev;
-> +	int i, irq, err;
-> +
-> +	amd_mdb_pcie_init_port(pcie);
-> +
-> +	pp->irq = platform_get_irq(pdev, 0);
-> +	if (pp->irq < 0)
-> +		return pp->irq;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(intr_cause); i++) {
-> +		if (!intr_cause[i].str)
-> +			continue;
-> +		irq = irq_create_mapping(pcie->mdb_domain, i);
-> +		if (!irq) {
-> +			dev_err(dev, "Failed to map mdb domain interrupt\n");
-> +			return -ENOMEM;
-> +		}
-> +		err = devm_request_irq(dev, irq, amd_mdb_pcie_intr_handler,
-> +				       IRQF_SHARED | IRQF_NO_THREAD,
-> +				       intr_cause[i].sym, pcie);
-
-Aren't these IRQs just part of a single IRQ? I'm wondering why do you need to
-represent them individually instead of having a single IRQ handler.
-
-Btw, you are not disposing these IRQs anywhere. Especially in error paths.
-
-> +		if (err) {
-> +			dev_err(dev, "Failed to request IRQ %d\n", irq);
-> +			return err;
-> +		}
-> +	}
-> +
-> +	pcie->intx_irq = irq_create_mapping(pcie->mdb_domain,
-> +					    AMD_MDB_PCIE_INTR_INTX);
-> +	if (!pcie->intx_irq) {
-> +		dev_err(dev, "Failed to map INTx interrupt\n");
-> +		return -ENXIO;
-> +	}
-> +
-> +	err = devm_request_irq(dev, pcie->intx_irq,
-> +			       dw_pcie_rp_intx_flow,
-> +			       IRQF_SHARED | IRQF_NO_THREAD, NULL, pcie);
-> +	if (err) {
-> +		dev_err(dev, "Failed to request INTx IRQ %d\n", irq);
-> +		return err;
-> +	}
-> +
-> +	/* Plug the main event handler */
-> +	err = devm_request_irq(dev, pp->irq, amd_mdb_pcie_event_flow,
-> +			       IRQF_SHARED | IRQF_NO_THREAD, "amd_mdb pcie_irq",
-
-Why is this a SHARED IRQ?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
