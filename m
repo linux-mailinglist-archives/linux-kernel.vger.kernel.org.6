@@ -1,251 +1,122 @@
-Return-Path: <linux-kernel+bounces-529130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 011B3A4200B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:13:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6FBA42012
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97B9D165940
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:13:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B9C1658D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 608F123BD03;
-	Mon, 24 Feb 2025 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C53224886D;
+	Mon, 24 Feb 2025 13:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rmng53Kl"
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AWSlff4o"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C805A24888F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4BF248863
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402782; cv=none; b=SsL2w63ubkHskV23k7upicNZjGCdUDv+rSC6v+CADROiQG4xzvQFuE5oeo39Ih6R0rzEPsgeKK5FWRY3gx72ZSC8dw/Biu7xTxDwnH2iJN7V1J7deJgWk1leylY/65KqNRMbZICQWEPSIeGTpGF5OKK4XGD1iNnWmb9Cn5gkAhA=
+	t=1740402804; cv=none; b=rXyhtPTqHoxXgGTXxCorjMfu7K4xOMtDFXOnpdkQ0JwtdYN+isFXALPBKr3Hei8JF4xiQ4wLfPbh4LDgIGfHJ7IQG+oi8SZ5pRV+g3xAa/+qsCWCzgImqpvbK1IbRNzJfWwRxkQXV7IAvIfYP8kS9bBctCyA1+xA9goFOwVtmyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402782; c=relaxed/simple;
-	bh=w/6+V3WzV7WfT41SO7t/1M6oSg7jIobBlh33/jyiCKE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Mnu/BJnkTuCoiCRm4XUznMpEIFV17cMEsjmLl4q4/WfcNbQmALvnDPCGaCfg5GK1hE9PqZodz9jFCyjVLuV9OldpKvN9/n0DPfzHFCSlA306CWQU4Hbv8fShhM87nP0hcB2Im3HBRtLBRS705s81hfjsCTxb9ZgRFcOLADCFjYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rmng53Kl; arc=none smtp.client-ip=209.85.208.74
+	s=arc-20240116; t=1740402804; c=relaxed/simple;
+	bh=PUpwrxeoaMKQQ/LgBbzTYj1OWgdKZoLF+N3SjHhwDr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V/6Rx7/ddCElMpPNSvK6OTmN2JUsQD5xKUpbOdzE/9XjKKlZClgAKFj4x8VYfhC/Wfg54A+y164XWuhJOH/RVgneOXFlUY9LXutrpkbmJ/pEHlVNY5QbY9VYALcCF4/E4Wlngyi3ifIVrygdf3758FrA47kd9THd+Uz6jMELYxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AWSlff4o; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5e058037b27so4222327a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:13:00 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3078fb1fa28so33621551fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:13:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740402779; x=1741007579; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFpPxyvDOth0HhLewFAODCmd7NewGGY5JD0OvJlhJu8=;
-        b=rmng53KlQ1MBYXscouxCU0o6UQxKl0kPpfUYp8pDlrU8ItTfFRds9Y0TknU+idUkbX
-         wI/+5x0sNOZH5dVhKmbHYA87KrqzypwYvGbsEz1S1/86kKhOzm7ecgiKQE6DqhnZ1S1X
-         3G8HCrjZI0cfhqgPAcuKnoxw517LMILZwbCkxEDLrfdT7dINsc0LLi0J0TlP/1tsbeEk
-         aLmBO/9PHasEznDVenMIlzfexhUywt+ysm1stz4kiMVQQO82W7rWyvzqtrO2l7VBzq8b
-         H8RzWux3l1Zx5leHb2HpI/oHofO6xTp6PViCfBStFfk+YEKcqwO6JgVsWYanhskHa4jh
-         Fojw==
+        d=google.com; s=20230601; t=1740402801; x=1741007601; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CAHPL18k0SExROmDrW1jEqwYLSKWWweaQeig+wvqPEY=;
+        b=AWSlff4oVrKEzBCTQRQs1c0vjItFg6XIVWUBc1HY3GMprok9NvubSGNS3M2b2bCPyv
+         pNSyMLKhe+b04JEJlJZIrhIfbP90YKeknV7c+GqdgII0QJhTX9sKHXwl7FKKLsL4fdF0
+         lkMOHphm6k7n7BI9HdYxaurVcwHNTtIIof/UJix5NbTO6GJlkIw/OsqKmXVp2qef8Nwd
+         KGhz7V+1zMgcho7NjKIx5u7dvYU+bOpoTxy4eMgyaNLrBUMnq8KOXHWlzzK9spRgNCpl
+         xdQDc0r1kAIe8ReQ6yEbd0O3vQanJV4I5VM/VLJFtG2Rkt3sSdeu6/Z2wMHUdjJ31NRh
+         Glkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402779; x=1741007579;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFpPxyvDOth0HhLewFAODCmd7NewGGY5JD0OvJlhJu8=;
-        b=LyWBr56vJkK5y7+oX/g2SSR/bcKa9YimTWw0QWRbqKWqXpFR+iFSO8Y5aqu3Sks0AI
-         oyU2NLDqm8yqoNoF1/0Ybz2L+Eu2yWAvD2oH9AifV0+bW4wGOZspLsus2I8YtD+bDwQM
-         kieAchrox44k9V1dqTF6YA8O5vB/5qzXFk5XYsPO1No3fUzWWPFmdbx9u0Bwq2Vpgc/F
-         YiFsPUw7w73NSUjXlr5fAVa3p1fldBfBZ30fGKH1V6gUjleRbfHlru/5tTT5HvV3Mxzs
-         7Pg/qm2jYiaP+q1NYaNVtHzzqWjj6StVzSEq1bOnUVMDjy0F+31SlWdcgZR4BFr4HJBC
-         C1ng==
-X-Forwarded-Encrypted: i=1; AJvYcCVonXqAgtyfyQ54h50t+fV0wYuKdnjQjeq96cKJ7PERFpyQQyw9grXROb5K9tPpRMuyhxamB80YARaJq0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcP4APlv5LOBFxjBQXUThs7AAoHIYGM9OF4e6Boph5ZVn2Md8k
-	WCzG6TNEAQuV0L5jZzZSUUeyHqZtf2tL24Y6nouaI6EvaZsB0lS3ucQk0OtStPQFWEOSPojCUvU
-	DkQfOiw==
-X-Google-Smtp-Source: AGHT+IGZg2rT8td60W1UKeimFfaAceOU/oiypd2ZmuYT2lD01ebq/Rrh8ttrsLPZ9a6AAzWXSmXiNPOxNyx0
-X-Received: from edbfj8.prod.google.com ([2002:a05:6402:2b88:b0:5de:cfb4:b04a])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:2707:b0:5e0:6238:d72
- with SMTP id 4fb4d7f45d1cf-5e0b7237d39mr11243607a12.21.1740402779230; Mon, 24
- Feb 2025 05:12:59 -0800 (PST)
-Date: Mon, 24 Feb 2025 14:12:31 +0100
-In-Reply-To: <cover.1740402517.git.dvyukov@google.com>
+        d=1e100.net; s=20230601; t=1740402801; x=1741007601;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CAHPL18k0SExROmDrW1jEqwYLSKWWweaQeig+wvqPEY=;
+        b=Izoci9QnE53eMlAHwcp2HY1GgmS9WdPk+rL95TGw0Dg4hmkok5Uq+QqppgR9wUb2fU
+         w/xBKJxPUj6lncLUwL3PRLJfybtmF5dr1sPhwERuxK8PlflypqE5Bj+S1rMFfHYroieo
+         BHq96BA8vJ2WMSZsAInYGLHpH9HiS72vCSY0Bk1oR7rH7zX4c26qvL5bcDX36csPfWGi
+         Puu3LwFankz4CJDZE0aKHtW08ZEh9NoQjHXdhm3Y5fVlZhutlQSIgfrBVNjPG3TGdj0H
+         AMXMx6TG82oCHdvcLlg9x2/39jqaNcpZAmN22x1C6N1xP7l7YGqMG11LL61a2Y8FbaaQ
+         zzpg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1Zm4HRbQvOIsQr0n/LethIlMX8l+AiJFPoU5ccyE59WVRu+IBuK/mQQQpGhpJRUPak+mD9QNlrH8tcaY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI84cK8no6N8Xu5XFtKAf/95XG+cxLbk+/8Zl5d5chQeS1kxVr
+	2Ohk2G2iC/qskDSsRL9oiJmXG+++qkU4ckZylEFzMg5SQPWIT34uKQEYaaITCsxXd7S7rMPTzbe
+	P9Y6+JRUYwKaL3hpw6XGQsJ++DYKx9HdAFJKB
+X-Gm-Gg: ASbGnctlGldWec6YKXaSYV0GtVrtikB0sIKDLARuF7f7reNsNPJOTRJ8EEjCPUWxkjo
+	u7Vzacb8EigFG5Cxu+l2VSzyBXEAiYwAqdrlrXijeZAiVJ4JafWgTu/HGeSKZ5c91TZFoQEKNmE
+	Y94t7yR+Qsnk0ICeEd7Y5UzFDVrXCRkuq0otLu
+X-Google-Smtp-Source: AGHT+IE2Qfv6gUOl1nLWU+9pSXrvtMj6PEzIxUkiRfH+sNqoUFYRr9Ull51dKikz5yg4QVbUPco5NQ/SdGi8wkjq3CI=
+X-Received: by 2002:a2e:be0b:0:b0:300:4362:40 with SMTP id 38308e7fff4ca-30a5b21db20mr53847251fa.36.1740402800828;
+ Mon, 24 Feb 2025 05:13:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1740402517.git.dvyukov@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <55ed8b22855968526dfd1b05e7f249f66cebd25c.1740402517.git.dvyukov@google.com>
-Subject: [PATCH v3 4/4] selftests/rseq: Add test for rseq+pkeys
+MIME-Version: 1.0
+References: <cover.1739864467.git.dvyukov@google.com> <9f33eaaea6fed2948502eff27c4627921d1e1e78.1739864467.git.dvyukov@google.com>
+ <Z7iJSyQYmtAl_z24@gmail.com>
+In-Reply-To: <Z7iJSyQYmtAl_z24@gmail.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-To: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
+Date: Mon, 24 Feb 2025 14:13:08 +0100
+X-Gm-Features: AWEUYZkv1lfF7HmK4Crv9GT6MZI19rxUg5YmWT6xvRtLvyXArZ2vi4fI6FOhbWY
+Message-ID: <CACT4Y+bwm7JtipFaw=sq2QocdL-VVbERnRg2E__K1ZrWBy0hnw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] pkeys: add API to switch to permissive pkey register
+To: Ingo Molnar <mingo@kernel.org>
+Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
 	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
 	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
-	elver@google.com
-Cc: Dmitry Vyukov <dvyukov@google.com>, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	elver@google.com, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Add a test that ensures that PKEY-protected struct rseq_cs
-works and does not lead to process kills.
+On Fri, 21 Feb 2025 at 15:10, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> > The API allows to switch to permissive pkey register that allows accesses
+> > to all PKEYs. This functionality is already used in x86 signal delivery,
+> > and will be needed for rseq.
+> >
+> > Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Borislav Petkov <bp@alien8.de>
+> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> > Cc: "H. Peter Anvin" <hpa@zytor.com>
+> > Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+> > Cc: x86@kernel.org
+> > Cc: linux-kernel@vger.kernel.org
+>
+> So why did not add the Reviewed-by tag by Mathieu, while you
+> incorporated his review feedback:
+>
+> > Changes in v2:
+> >  - Fixed typo in commit description
+>
+> ?
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Cc: x86@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-
----
-Changes in v3:
- - added Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
- - rework the test to work when only pkey 0 is supported for rseq
-
-Changes in v2:
- - change test to install protected rseq_cs instead of rseq
----
- tools/testing/selftests/rseq/Makefile    |  2 +-
- tools/testing/selftests/rseq/pkey_test.c | 99 ++++++++++++++++++++++++
- tools/testing/selftests/rseq/rseq.h      |  1 +
- 3 files changed, 101 insertions(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb586..9111d25fea3af 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -16,7 +16,7 @@ OVERRIDE_TARGETS = 1
- 
- TEST_GEN_PROGS = basic_test basic_percpu_ops_test basic_percpu_ops_mm_cid_test param_test \
- 		param_test_benchmark param_test_compare_twice param_test_mm_cid \
--		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice
-+		param_test_mm_cid_benchmark param_test_mm_cid_compare_twice pkey_test
- 
- TEST_GEN_PROGS_EXTENDED = librseq.so
- 
-diff --git a/tools/testing/selftests/rseq/pkey_test.c b/tools/testing/selftests/rseq/pkey_test.c
-new file mode 100644
-index 0000000000000..8752ecea21ba8
---- /dev/null
-+++ b/tools/testing/selftests/rseq/pkey_test.c
-@@ -0,0 +1,99 @@
-+// SPDX-License-Identifier: LGPL-2.1
-+/*
-+ * Ensure that rseq works when rseq data is inaccessible due to PKEYs.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/mman.h>
-+#include <sys/syscall.h>
-+#include <ucontext.h>
-+#include <unistd.h>
-+
-+#include "rseq.h"
-+#include "rseq-abi.h"
-+
-+int pkey;
-+ucontext_t ucp0, ucp1;
-+
-+void coroutine(void)
-+{
-+	int i, orig_pk0, old_pk0, old_pk1, pk0, pk1;
-+	/*
-+	 * When we disable access to pkey 0, globals and TLS become
-+	 * inaccessible too, so we need to tread carefully.
-+	 * Pkey is global so we need to copy it to onto stack.
-+	 * If ts is not volatile, then compiler may try to init it
-+	 * by loading a global 16-byte value.
-+	 */
-+	volatile int pk = pkey;
-+	volatile struct timespec ts;
-+
-+	orig_pk0 = pkey_get(0);
-+	if (pkey_set(0, PKEY_DISABLE_ACCESS))
-+		err(1, "pkey_set failed");
-+	old_pk0 = pkey_get(0);
-+	old_pk1 = pkey_get(pk);
-+
-+	/*
-+	 * If the kernel misbehaves, context switches in the following loop
-+	 * will terminate the process with SIGSEGV.
-+	 */
-+	ts.tv_sec = 0;
-+	ts.tv_nsec = 10 * 1000;
-+	/*
-+	 * Trigger preemption w/o accessing TLS.
-+	 * Note that glibc's usleep touches errno always.
-+	 */
-+	for (i = 0; i < 10; i++)
-+		syscall(SYS_clock_nanosleep, CLOCK_MONOTONIC, 0, &ts, NULL);
-+
-+	pk0 = pkey_get(0);
-+	pk1 = pkey_get(pk);
-+	if (pkey_set(0, orig_pk0))
-+		err(1, "pkey_set failed");
-+
-+	/*
-+	 * Ensure that the kernel has restored the previous value of pkeys
-+	 * register after changing them.
-+	 */
-+	if (old_pk0 != pk0)
-+		errx(1, "pkey 0 changed %d->%d", old_pk0, pk0);
-+	if (old_pk1 != pk1)
-+		errx(1, "pkey 1 changed %d->%d", old_pk1, pk1);
-+
-+	swapcontext(&ucp1, &ucp0);
-+	abort();
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	pkey = pkey_alloc(0, 0);
-+	if (pkey == -1) {
-+		printf("[SKIP]\tKernel does not support PKEYs: %s\n",
-+			strerror(errno));
-+		return 0;
-+	}
-+
-+	if (rseq_register_current_thread())
-+		err(1, "rseq_register_current_thread failed");
-+
-+	if (getcontext(&ucp1))
-+		err(1, "getcontext failed");
-+	ucp1.uc_stack.ss_size = getpagesize() * 4;
-+	ucp1.uc_stack.ss_sp = mmap(NULL, ucp1.uc_stack.ss_size,
-+		PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
-+	if (ucp1.uc_stack.ss_sp == MAP_FAILED)
-+		err(1, "mmap failed");
-+	if (pkey_mprotect(ucp1.uc_stack.ss_sp, ucp1.uc_stack.ss_size,
-+			PROT_READ | PROT_WRITE, pkey))
-+		err(1, "pkey_mprotect failed");
-+	makecontext(&ucp1, coroutine, 0);
-+	if (swapcontext(&ucp0, &ucp1))
-+		err(1, "swapcontext failed");
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
-index ba424ce80a719..65da4a727c550 100644
---- a/tools/testing/selftests/rseq/rseq.h
-+++ b/tools/testing/selftests/rseq/rseq.h
-@@ -8,6 +8,7 @@
- #ifndef RSEQ_H
- #define RSEQ_H
- 
-+#include <assert.h>
- #include <stdint.h>
- #include <stdbool.h>
- #include <pthread.h>
--- 
-2.48.1.601.g30ceb7b040-goog
-
+Done in v3.
 
