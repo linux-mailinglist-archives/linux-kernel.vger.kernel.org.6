@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-529559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE1CA427D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:24:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4B29A427DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70399188E071
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479DE1641B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DD82638B7;
-	Mon, 24 Feb 2025 16:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFBF263F2B;
+	Mon, 24 Feb 2025 16:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CLF47tr8"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="YD8RJopM"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3B18B46C;
-	Mon, 24 Feb 2025 16:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C83263F20
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740414256; cv=none; b=ih8mEqPiv1SF+m7mR3CSqBP3alHw1QQkI7FrvA8WTY6RyLPUkFE6cQEdVITFpVZVbWRrAUwB24duwr3Ec4ULMNhwIv5ciDLuZtw2KLk6vByNFUZi3fu7Q0B3WAumiuSrosGJy3mHgUA0mje6hkQ/2OaCRxU/0fMIOkxL53A/pDY=
+	t=1740414261; cv=none; b=kNZLHYVvw+Aa/iay0Vgnh1WPbSTmR+MT1+QrlL13nNJ6jpFuuFF1mMoUWsV+1Bv8XHYy7afVVdj0tptS5d3Z5IqHWfSaAHxNBuluoVwCjw9YxiVoVJZJmlowkhUd5dQH2OeRRehmrB/EGTyNk3TKZKeEF3M6OlPiJ8nM99M7Thc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740414256; c=relaxed/simple;
-	bh=jh88f9FMyhQG9aI3smhoQsjejSXMGTGNffASA2+8FDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WJlQiULpUWzebJT1k3yge1BfQGJI+Y4LLqRrgCITKqUXX85TFvIgnfsAEKKvmm19Mnf1RpDASTv3rimqNMU9Sh9p0/NBKlGilTsc39zgK6RQ3kPJpOCBe9h1orZ3jUyLMLH1hriy4SUnejnrLIHtHwhhpEfze/9etdEu6RoT13E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CLF47tr8; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 74A9244298;
-	Mon, 24 Feb 2025 16:24:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740414251;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M6fHqsJjE5FU2HQs1fUAHuBgc7rwcnsg86Qu7M/d+dE=;
-	b=CLF47tr8TXZns94jpkQUaOOpx2InLNym8oyc3q/K+kC6WRpjgARcGkFW9l42w9RJbp3sUk
-	/OKQ3SHC8RV8iZ+3jve8GgOUR+FK7YRQ6ZDsomC3V7uml9SUZenZEBc5mZPM76/nJflXVE
-	4VNoFEeuUEEsAZ9H6xtXftOQ6eJkL8orsw8DaiNPiBAvqeHSHvCJ2RjiXtg+ktdw4AXpii
-	3a8lGCUVT8eeJ39IhQXlsrxKBHVIzIiBts9uPwK6iKXOa1qRUETEqcM1M1Y9qOpCLiqOr9
-	rKQvRT+QWq8MvckoRzDFO108lhV1LG5J589ILnfKxRl3MDL5uws5RYJxx1FtKA==
-Date: Mon, 24 Feb 2025 17:24:07 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew@lunn.ch>, =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>,
- davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
- Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Message-ID: <20250224172407.32a2b3f8@fedora>
-In-Reply-To: <Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-	<87r03otsmm.fsf@miraculix.mork.no>
-	<Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
-	<3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
-	<87ikozu86l.fsf@miraculix.mork.no>
-	<7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
-	<Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740414261; c=relaxed/simple;
+	bh=f9fqrDm4f4P/5LiKN/iY17TSZ6PnstGOuVc0Ti0nO7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jKFM+XJwlFAK/vvMEdk+r+Qvl2JvqutpaKMwEFUB7Uj3wVblVr31MhViAbaydfZ9Jyr3mnxnKBDRDMZtpMK8qb6OTdMQpHAFEkFxVtLZfVamzcGogtesirlTUT2TrCy8Tofkn0edz2mvxoB4B4YAse4qot5oOGe3QiyKnVyVyaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=YD8RJopM; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471f7261f65so46041841cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:24:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1740414259; x=1741019059; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=35lyu+6zyP8UnNWENXatfW2M13RT1ggpz1uxSE8VHmI=;
+        b=YD8RJopM2Tk4qcc7ZhFkJdqsnUISOWOOEXznjVIIDqfY022w3NmduMRcK7dvJ4wERu
+         qoeIiLFehhbqjzeqEWWNa+g3I/06tm6wUFLCUKpuYyC6+LN0UUFqE+Elpx++RQRRRrwd
+         xFgd4Zsv5FMnyU//Im/z+NVQnn8uzbkKL/9Cs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740414259; x=1741019059;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=35lyu+6zyP8UnNWENXatfW2M13RT1ggpz1uxSE8VHmI=;
+        b=IzB0hV3kzy277XQvGYVOpUnh+qdwtLETReT5IUSDHBMiRrNiuFN9ptRCOjvg7ru7wG
+         cLfdKPxbRGV0ob1DARLtRUp4FrDT2MYfptru6/ZjLYOh9K7k5EY7wsItto1CYgXKqz0S
+         XXeDTFtwr3m/YNzJJKaBJAOl513UkYZGUoQGZcxR/QFrEcgIm4K3VZN5dM01ucKo8rEf
+         Rel8N4vHwuxddyuNbQcsuXldUoTKEl06vSvTPbeseboqxRWYDTQsRC/+JyDYrF5YV5pa
+         k/5RQQLxjBd/r62U4FOAUKJr/IH4oQakaeoXGK9G1q6WG4n/DW3yPfzfxx541EfaSUox
+         ElZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVshEJgtAJDOGUANAfS/9HtRnuyOE2oxIDLauMDzVfk5zZ2CHSSNZFs906f3lrtgOsrIXEFfQaJWQBe3f4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrQY/TRBQn2qWIzcEOM1Cd71YO5pMys51bLmt9zFhkxFaHwZjF
+	ywHHeAfYzRqVcvl5Iw+ib1VoRb6TDcqLBPXsMewzYrpl0En7ExJT9K1mgR/ps7YancMf0+nx80U
+	poYH1joD9HGOsH8cOGPABiPKc6BW26gWzZCxYGQ==
+X-Gm-Gg: ASbGnctDxEh8TSNvPtcv9z/ONbnARy/UrKJV//Xfc+5uspPmBxe1BajJkmv6tqLlQM4
+	E23EijQ51sLo6I/uR+C81IWkACJpKwdLq+u8R6k5xA5ESSrbmFqBZiKEXPQyuoIg1mJ5d4KBLJ9
+	Rwm8EH4ROy
+X-Google-Smtp-Source: AGHT+IE6Ky9EEBFBIPfIG0tubUoMa5hcfqB32/Gfh0yagcinnaME1gRLzoVpVDxXuSsCd6YeSm2PCMrBg8mPoK8nMt8=
+X-Received: by 2002:ac8:584b:0:b0:471:fadb:9d41 with SMTP id
+ d75a77b69052e-472151469e1mr241920671cf.17.1740414259165; Mon, 24 Feb 2025
+ 08:24:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejledvhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopegsjhhorhhnsehmohhrkhdrnhhopdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgo
- hhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com> <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
+ <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com> <CAOQ4uxiSkLwPL3YLqmYHMqBStGFm7xxVLjD2+NwyyyzFpj3hFQ@mail.gmail.com>
+ <2d9f56ae-7344-4f82-b5da-61522543ef4f@bsbernd.com> <CAOQ4uxjhi_0f4y5DgrQr+H01j4N7d4VRv3vNidfNYy-cP8TS4g@mail.gmail.com>
+ <CAJfpegv=3=rfxPDTP3HhWDcVJZrb_+ti7zyMrABYvX1w668XqQ@mail.gmail.com> <8e0597b9-d8a9-4d11-8209-ab0f41e94799@gmail.com>
+In-Reply-To: <8e0597b9-d8a9-4d11-8209-ab0f41e94799@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 24 Feb 2025 17:24:08 +0100
+X-Gm-Features: AWEUYZkAGcL0DMXQBzs_mCpbBAb7pYa17NFtHVcfAECQBfKcOzw6NACtoHMfTvY
+Message-ID: <CAJfpegtpBxXk+bJJgXWT8moqTD07DHEdufdNWy51ac9RDUVYdw@mail.gmail.com>
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Moinak Bhattacharyya <moinakb001@gmail.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd@bsbernd.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 24 Feb 2025 13:48:19 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+On Mon, 24 Feb 2025 at 17:06, Moinak Bhattacharyya <moinakb001@gmail.com> wrote:
 
-> On Mon, Feb 24, 2025 at 02:31:42PM +0100, Andrew Lunn wrote:
-> > > What do you think will be the effect of such a warning?  Who is the
-> > > target audience?  
-> > 
-> > It will act as a disclaimer. The kernel is doing its best with broken
-> > hardware, but don't blame the kernel when it does not work
-> > correctly....  
-> 
-> Indeed.
-> 
-> > > You can obviously add it, and I don't really care.  But I believe the
-> > > result will be an endless stream of end users worrying about this scary
-> > > warning and wanting to know what they can do about it.  What will be
-> > > your answer?  
-> > 
-> > I agree that the wording needs to be though about. Maybe something
-> > like:
-> > 
-> > This hardware is broken by design, and there is nothing the kernel, or
-> > the community can do about it. The kernel will try its best, but some
-> > standard SFP features are disabled, and the features which are
-> > implemented may not work correctly because of the design errors. Use
-> > with caution, and don't blame the kernel when it all goes horribly
-> > wrong.  
-> 
-> I was hoping for something shorter, but I think it needs to be expansive
-> so that users can fully understand. Another idea based on your
-> suggestion above:
-> 
-> "Please note:
-> This hardware is broken by design. There is nothing that the kernel or
-> community can do to fix it. The kernel will try best efforts, but some
-> features are disabled, other features may be unreliable or sporadically
-> fail. Use with caution. Please verify any problems on hardware that
-> supports multi-byte I2C transactions."
-> 
+> Thia would require a major version tick as we can't mantain back compat,
+> unless I'm mistaken? If this is the track we want to take, I'm happy to
+> send out another patchset with such a change. Would also need more
+> extensive hooking into core FUSE request code.
 
-I think what's missing in this message is some indication about what is
-actually wrong with the hardware, so :
+I thought we were discussing backing file for FUSE_LOOKUP?  It doesn't
+exist yet, so no backward compat issues.
 
-"Please note:
-This SFP cage is accessed via an SMBus only capable of single byte
-transactions. Some features are disabled, other may be unreliable or
-sporadically fail. Use with caution. There is nothing that the kernel
-or community can do to fix it, the kernel will try best efforts. Please
-verify any problems on hardware that supports multi-byte I2C transactions."
-
-Maxime
+Thanks,
+Miklos
 
