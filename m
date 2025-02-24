@@ -1,177 +1,101 @@
-Return-Path: <linux-kernel+bounces-529060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14C3A41F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12E7A41F48
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:40:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA7A3ADC8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E467A6E62
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7427823373C;
-	Mon, 24 Feb 2025 12:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942BF23373B;
+	Mon, 24 Feb 2025 12:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnBBKK8/"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bGbUDI3j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC1233734;
-	Mon, 24 Feb 2025 12:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249571DDE9;
+	Mon, 24 Feb 2025 12:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400734; cv=none; b=ozEovMNW2TpcwRpIJrfv1z0zqGDN/49DJ5stHlVsL8zCerLrlMNC97bRn6b0lCauRreXV3zUfehkuDM9/pEjGRjiDtgbS/3F6ibzlf8QXsEaN30AdXHgh8amz/6ZwQEQ5FaHMNX41XZJ2hl8GX1DDjZj0uYe6UJEAewdaM5bfAY=
+	t=1740400758; cv=none; b=b2HBVERB/xrS2e+sd7Y2dVTNHe71CY9t9BD04tGepin5tUUXDWqeYWmUZcVCSZSwbh+PH2lYE39AWTA8ZjIV80qxe1yvQXryxdHEwlHZHjxNBaeckPgrJ8bPouDAS6ybHbtZMelDd5nkhzxjH8hnhqIawySLSYcrz9J69Cn8SUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400734; c=relaxed/simple;
-	bh=C/HIYLJMes5/JokQAfCciquYE960i/AJXIf+VAKHVZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iFPyo6Vlv/P8wQ+kA2uJ/3q38z3ySkDpiBcm4vU8lztvTh07p0nhzo0/MIBlsgvyabdD9KDXyQoE9Lpd+5HdHbC7AJIQl64HCW9fh9Ggj6lx/oNaV+I0sWmdDgu9PpLRNxJyFOTUZvrGsaC03xGfK/Aws52PhntDLTbdv9nxyDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnBBKK8/; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c08f9d0ef3so265951485a.2;
-        Mon, 24 Feb 2025 04:38:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740400732; x=1741005532; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/kmTM3n4yBBMdKxDX6gBx7ZoYT1kT7Ntk+s/Q8yOWMw=;
-        b=TnBBKK8/606x0W8NOgmSffZshFeOMysUEXbgcXNmDrGZ7FaNHZlozE3ZREtaROsNJ+
-         eSe4pNJPgPskWe8mxceVcagQ3Mp7gBg1y1+v7QGbl9nuIUKFDhxXx6Q9usDZDH5WLCuA
-         kXqVAKu+6zX12lo29DQ7moD0XwiczMyfO0htllprK0VMpPUXf69aHiTSjUyJNc5cWdkw
-         6xhdKd4wHRl/gbAsY39Bz2y2b9LYTFJXSqmBB6b+IO/eNKopjONqaC6QsD2lrLgaY0Vw
-         gaPe20suDYNYUlRkreuDBNgTnJtFJrxbMhNNFzhYvqY5ll51DIiQz5/25h+b4Qao7ham
-         jd2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740400732; x=1741005532;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/kmTM3n4yBBMdKxDX6gBx7ZoYT1kT7Ntk+s/Q8yOWMw=;
-        b=MJRJpZPIeNY5EBJsLy71Aunr09jXoFYM1Ju8s+VMZLB0ZkB0FsMlue/Io0EVSsHBaN
-         eacIv7quU8zUOmb0Wo0sbJvW38HWVWY9S5D/pHC5DSjK4rik5YDpVhRz/zuYhN9vdT7x
-         7JgGPNcrrrWyv6sz71edGzoTdLneFsrJoLkhfmvqlwiqM9SnnZ4wTEPpde4VYTLxWzSA
-         56dtMfqsr+QESUBrv3omxwgoy0LJolfPPnTW5SEJw4TcVdmswg4Vgh6SxD7kwveonzNB
-         zB4HZ888RmmqdsCXOm660yxPgs819HexyAWG4u4Gvj0DdDltZZignyNnU5iepbJDnrr8
-         +jSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWlNBZm0CtE4alh53s6Oa+VR9nF3ckJchMz0qXxvNYJqa0ZIIPtmc5XeG7dxiwJ6t9JB8Xm33ptyNE+7WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHaZHV4vwUYGd95LCZbnmXKQeZxmAOIBNuTf9wUeuOiXpWl6Kp
-	zkNtomjE8xKv1LJ1GF+lpM7Y7RBvngRMqU8IBs0yFtQ7+awqPjyl
-X-Gm-Gg: ASbGncsAylEL+txE2Y3rjBWxXfHlZR83Vj6DWaLKH9XwOoa/YG/NIdiQFQfJvzODnlc
-	2pz53xB3RQBHstPXlzXw4lnwYVjRmOOLIytvt26j4IeAHhaOhqczadNvbnRczDDjsFDrmdnnqO/
-	W4fhOfh7cioT7WNmFCeR/R3u8mAjO80YWJ3PVmwedXmQA0g5MWp9Umtwo3SQCaQFpn9cUcHjLXY
-	eszym9Zarij0cseEVnKlT4gkDGYHJ+Htjng7eqxkXW7AqktKDSDrxIIU7uNNMYfqaL5I4RDmAdK
-	ajzgnggSbXk0cNgz+Pdds0b6KX0QEhJxeyAHKU4dN+7OIi8=
-X-Google-Smtp-Source: AGHT+IGGhugltGFxjou3YcFhCjOAHq8GvR/ZZ0GJd0SlybKi/gPBxkYd8FyR81teGJvDQXjVckXrqQ==
-X-Received: by 2002:a05:620a:170f:b0:7c0:a5f4:4df with SMTP id af79cd13be357-7c0cef12528mr1659614285a.34.1740400732051;
-        Mon, 24 Feb 2025 04:38:52 -0800 (PST)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:3cb7:1064:72b6:f891])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ad774f81sm831880285a.37.2025.02.24.04.38.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 04:38:50 -0800 (PST)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>
-Subject:
- Re: [PATCH v4 2/2] tty: Change order of ttynull to be linked sooner if
- enabled as a console.
-Date: Mon, 24 Feb 2025 07:38:46 -0500
-Message-ID: <5764492.44csPzL39Z@nerdopolis2>
-In-Reply-To: <2025022421-refract-defame-94db@gregkh>
-References:
- <20250223204456.1913392-1-adamsimonelli@gmail.com>
- <20250223204456.1913392-3-adamsimonelli@gmail.com>
- <2025022421-refract-defame-94db@gregkh>
+	s=arc-20240116; t=1740400758; c=relaxed/simple;
+	bh=I4zwzRfgVjDsqL3gEcvnfx+MpbnW+WUPLHL5AHyvtfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+ck0SEvXsQnet4VV/hqn1ubG0e/9TjPJUthNhbtwtHKWjOc/66s7+Z3FsP0+LyrZINYEChVg7qLHSPJlKcZOZsVOlMvvj0hk1XPlPsdxRhODiGigAuvbQ8y57yhjVwTyI8qP5PYAX8yEWax4IrYQufQmY+WkZaNZemw0ekCCWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bGbUDI3j; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740400757; x=1771936757;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I4zwzRfgVjDsqL3gEcvnfx+MpbnW+WUPLHL5AHyvtfs=;
+  b=bGbUDI3jU+8G0lMyD1MaN7WzggW3cGswR8plSEdS/kZ8yF9QiO1ZnmB7
+   iyyT2ga7XWIV3kEWS/Vkb0lUMmkyJhFIb2JrhRd5byH+otMfq5qWjZgXG
+   nb5lVB9Jz04qFA+0az7KgybuKoAQJEl+QbFxcz0SFpFhbAtfltyOOWTap
+   J/wQQ+IGnkHly0fgkmXjstjI/xdXO99yE4SNcerwDwnBn/ToCJ9LE/HzN
+   REzR33rcpPF71omBNrUSbrcTjzLoi9MGsv9S4E2En44+HIUd2Y0ZCjEwH
+   +fPZkeJZY3PPOOd6vyMK8yZucKxqrhrCy8p1i6fdW9T1Kw0gn5o8hHELx
+   w==;
+X-CSE-ConnectionGUID: xr1416diTaKv3HKJZr8+XA==
+X-CSE-MsgGUID: E/dN3DWHQ/O9NQ+c8Fs2eQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="44804206"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="44804206"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:39:16 -0800
+X-CSE-ConnectionGUID: TOwLHXo3SgmVXIMwNmb0vQ==
+X-CSE-MsgGUID: z2UkMDxrQkWgeU8zvFf0YQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="121321317"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:39:10 -0800
+Date: Mon, 24 Feb 2025 14:39:07 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: perex@perex.cz, tiwai@suse.com, broonie@kernel.org, lgirdwood@gmail.com,
+	deller@gmx.de, andriy.shevchenko@linux.intel.com, sre@kernel.org,
+	sakari.ailus@linux.intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, jdmason@kudzu.us, fancer.lancer@gmail.com
+Cc: linux-sound@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+	ntb@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/13] Convert to use devm_kmemdup_array()
+Message-ID: <Z7xoa9FbuvIaTJFt@black.fi.intel.com>
+References: <20250221165333.2780888-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221165333.2780888-1-raag.jadav@intel.com>
 
-On Monday, February 24, 2025 2:23:09 AM EST Greg Kroah-Hartman wrote:
-> On Sun, Feb 23, 2025 at 03:44:56PM -0500, adamsimonelli@gmail.com wrote:
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> > 
-> > If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
-> > will become the default primary console device, based on the link order.
-> > 
-> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
-> > if CONFIG_VT is disabled, the default console device falls back to
-> > /dev/ttyS0 instead of /dev/tty.
-> > 
-> > This could cause issues in user space, and hardware problems:
-> > 
-> > 1. The user space issues include the case where  /dev/ttyS0 is
-> > disconnected, and the TCGETS ioctl, which some user space libraries use
-> > as a probe to determine if a file is a tty, is called on /dev/console and
-> > fails. Programs that call isatty() on /dev/console and get an incorrect
-> > false value may skip expected logging to /dev/console
-> > 
-> > 2. The hardware issues include the case if a user has a science instrument
-> > or other device connected to the /dev/ttyS0 port, and they were to upgrade
-> > to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
-> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> > command line manually.
-> > 
-> > The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-> > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-> > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-> > is not dependant on hardware configuration by default, and avoid
-> > unexpected new behavior on devices connected to the /dev/ttyS0 serial
-> > port.
-> > 
-> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
-> > ---
-> >  drivers/tty/Makefile | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
-> > index 07aca5184a55..1a1051ecb1af 100644
-> > --- a/drivers/tty/Makefile
-> > +++ b/drivers/tty/Makefile
-> > @@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
-> >  obj-$(CONFIG_N_GSM)		+= n_gsm.o
-> >  
-> >  obj-y				+= vt/
-> > +#If ttynull is configured to be a console by default, ensure that it is linked
-> > +#earlier before a real one is selected.
-> > +obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
-> > +
-> >  obj-$(CONFIG_HVC_DRIVER)	+= hvc/
-> >  obj-y				+= serial/
-> >  obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
-> > @@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
-> >  obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
-> >  obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
-> >  obj-$(CONFIG_NOZOMI)		+= nozomi.o
-> > +
-> > +#If ttynull is enabled, but not as a boot console, it is linked and used later
-> > +#after the real ones.
-> > +ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
-> >  obj-$(CONFIG_NULL_TTY)	        += ttynull.o
-> > +endif
+On Fri, Feb 21, 2025 at 10:23:20PM +0530, Raag Jadav wrote:
+> This series is the second wave of patches to add users of newly introduced
+> devm_kmemdup_array() helper. Original series on [1].
 > 
-> Nit, a " " needs to be after the "#" character, right?
+> This depends on changes available on immutable tag[2]. Feel free to pick
+> your subsystem patches with it, or share your preferred way to route them.
 > 
-> And ick, this is going to be tricky, changing the link order depending
-> on the configuration option setting?  This feels wrong, and messy, and
-> very fragile.
-> 
-Yeah, it did feel kind of odd I will admit, but I was worried if there are any
-ramifications that I don't know about if I move it up early for all cases now
-or if I should just put it back to how it was in v1...
-> thanks,
-> 
-> greg k-h
-> 
+> [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
+> [2] https://lore.kernel.org/r/Z7cqCaME4LxTTBn6@black.fi.intel.com
 
+Update: Anyone wishing to pull from this series, please use the updated
+tag[3]. I'll wait for a few days for review comments and send out a v2
+with fbdev fix.
 
+[3] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
 
+Apologies for the inconvenience.
 
+Raag
 
