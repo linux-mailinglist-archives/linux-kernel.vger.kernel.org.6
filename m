@@ -1,298 +1,137 @@
-Return-Path: <linux-kernel+bounces-528118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAE0A413CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:56:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4598AA413B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6CD9167F1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7600D170137
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCA41A5B87;
-	Mon, 24 Feb 2025 02:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C079C199E89;
+	Mon, 24 Feb 2025 02:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VQ7pCd7J"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SxAxZCx2"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4894B19DF41;
-	Mon, 24 Feb 2025 02:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0A4430
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740365588; cv=none; b=TOtda2CTyQ1P146MDEYs+A+POm2t4P0FYD3B9N7yXZAoLs2Xccu1UyYI5IKfSxFpvpGFq1djGu1ro3yKdp895S47P7SYnRP+0Otw8UlrMZCKgwXr5RAJzGZQzc0/dwDs7+2m789WlTz0y1bgPhjZVKAw7Ebm/sBvYLqbYSot3T8=
+	t=1740365571; cv=none; b=cLTpEwoxKwDpowaxEBzd3uwQm2y6QJz/7nPkwAo99FuAitWG/9YKtYQ9t2vm/XC01M4GObNKzPFg17Wb3PQ17/cePpym6/dNfL1sP50/ILqOraOjnT+0CWhpZeCr4j0m84LND9cH7c5h6QKI2Y1AcOluSlv/hFIKnF8lLwkwJ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740365588; c=relaxed/simple;
-	bh=3eVMKywF0GaSEC41UUuoCtEBQjw9Zj8/cE5TkbR4uxs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=JBxtbCuDrNZrkqlVmDkmk7lT9A+lIrv/9kGEH7tSk69uWwhHQadM/UPzih2hWu9XzQgtArxVo/BVGQhNIVZRR3elqfwJXlztX5HSFya7uRGUU6VIG6xWJLpDvuo0hfHZhCLlT5QVA+UcruR7JUTssE1x02jy5FQo23rEM8TYHzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VQ7pCd7J; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740365586; x=1771901586;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:references:in-reply-to:to:cc;
-  bh=3eVMKywF0GaSEC41UUuoCtEBQjw9Zj8/cE5TkbR4uxs=;
-  b=VQ7pCd7JFbdBo6qrYpnc5fbxW+bPsdAhGxhZauwI4hOCsfPlxEbmfgkA
-   MZp2pEoe/8ytwCT6Fbvp5Zs1hA7VgjYAIuTH+TuEUa+TMNuAge0byRE9L
-   TUoI2JbFpCSvHek4ybdf/H5gqnrJiETRycwpNhmWf8+DLnvxgksK3uAnG
-   7TH9n45pHIvEdiwMQEaFE4Qu+yNWqs71xme0w+OOcFxtHiGzA/GTH//M4
-   MsB0UnoA9L/r8LDC3xQ2YBICup2zA6H6xs2FAZTsXT+UR9lXZm8y9ZOmU
-   U3lF3+Cj0I3RKN/cyRfchhNywUa3j1iOa78PyYhtaGyYVdPP/3C45/sK6
-   g==;
-X-CSE-ConnectionGUID: 6rVg96LVQkmrqYQWG6Firw==
-X-CSE-MsgGUID: Zw74jTgxQ/y0pQphYJJidw==
-X-IronPort-AV: E=Sophos;i="6.13,309,1732604400"; 
-   d="scan'208";a="42149828"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Feb 2025 19:52:58 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 23 Feb 2025 19:52:44 -0700
-Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Sun, 23 Feb 2025 19:52:40 -0700
-From: Dharma Balasubiramani <dharma.b@microchip.com>
-Date: Mon, 24 Feb 2025 08:22:28 +0530
-Subject: [PATCH v4 2/2] dt-bindings: mmc: atmel,hsmci: Convert to json
- schema
+	s=arc-20240116; t=1740365571; c=relaxed/simple;
+	bh=X+jZl9yjWxMVT4yYJA/b1HzJa0muchAg22wzqZtgmIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k7v/lSKWpk37gWC0XLYSpcloXtyXU0KsgdPJOgHlG5rRzi/bUiul/3jkolctuLPEfd73RhuunHKUjgWPzvH9tsRv8B0ujOSE2voe4eyRLEmbPrnVSd6mzYW4Xgb0hfTKzTPkfo6GfnjuhciErsBNExks0H+2bjQyQQYhK7KdhMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SxAxZCx2; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5461cb12e39so3728325e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:52:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740365567; x=1740970367; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N79cu7iC2Cqqnin+PLo4xCdrijtvr/2XsDeBhnAhIuo=;
+        b=SxAxZCx25MjB9yd+nhpYqRFOySLyHXv+K5E3w/36MFzoqsPpaLsm+3ePFQHPeYfDmI
+         Aifvg96ci/Y9L1mpKeIO3AWaHUzE91BxKL4lA1AnoE3gtQ2Yv+RMXPvNgeAh341Vh3YY
+         L6GN0tEkIWUcybBuBhTrFuUPWaxtWNV8Ur4o/Cu/WRLTleqA+J5KM5Bt68AtrXgPw18c
+         N9et6eE0LHpGlmfsDhTYVyHsOftEdxtBLE8IEDxpZ94AcCM3fsJKC0h8cinToGAFMedn
+         rQsnWZYpd7tx0fpYRwgmLDZhQipGOI0a+ddtjN64vF8kBR3YZ4sZO6f2Oxj3h6zAMgHp
+         FxDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740365567; x=1740970367;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N79cu7iC2Cqqnin+PLo4xCdrijtvr/2XsDeBhnAhIuo=;
+        b=FNUUwZNG9evY/Rs4VIrIstkod3USbgUQBwHtbl4u+R0Vl5jX0XcuF/E2U3r5Ida4AK
+         8npAZeaxiR/YuVWUBUOE36EYEyqLikH8LPsOTaIhoDyIuxrc5NJdhWd+09+3WPf34sqv
+         TF65w+VOf46zxsB66sg9C24I/dc4iUHI+08SE5UtsBgw22nszIKfB1kFDDLbsUYcHN/W
+         brAKD4yQS28J6kEmfA7jqEVW1/tXb4kkEX6QgsAcJNhDSG2XiLwVK0QEctGDPj6+u4kA
+         9GQfT+f3I06y7Xj65f0xKiuZG5lHmEtH3MSVgEgP1agJCOyYIjZEh/y5RNVQKDt+nxRj
+         ZZAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrwvDrIi5HQLM3fHNoBGu4EUbaj2lAy/GK9EIGRFIzJep+IiIHYBMoGA7KILf7uPJx3y7TQPBUV+eRmf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybV/s1uB+KWm0RWet57wj85uQfWzw9aBfON7DH1O8ntccXdbpn
+	EKHiISuitR45XX+A4gLYI8JW9ZlHys+MqczbEL/fuilaBTg0ebEodqjkiru2guA=
+X-Gm-Gg: ASbGncsYU333diRAfxLB/vTxn6Y8ohXW1Uqj0dYzxED3j4uhXV9yNH7E+TbRuVYOWDX
+	U8HRL3CMEnSqnMWfXdvJOw7x+c0IFJk4CX8938o1pMfxi4Q4FDQFcM8HoaTBMZAGiNHrMONGnaw
+	RGeVuyr58DTbbqHjYjxsgB+sT9BVeKT4W84I6HOKuftvVJe/1Ut+4/q5cMY0D6Io+Y7soMmKwgt
+	7JjHszOFYDzrIL4NVye8q3EH3bVKDz/M97FJdO5ODV3RVZkAcaL6VoOtXh/tHwscxZzqFHHeW2m
+	6Bsb/4LHSeaqPRFNvFq0i5RLopRBzL454L9IqxXcVj+F6xErA9yMVQgPdPA4w7W7mdca+tc72zd
+	FrcoQxA==
+X-Google-Smtp-Source: AGHT+IEa5Mf84ph5T/ZdHvdKMLIs5jH8HXd1tjLXSn92MqsxBCI728iU6GLsECzIInK2/X8Pt2Ep/A==
+X-Received: by 2002:a05:6512:110d:b0:545:62c:4b13 with SMTP id 2adb3069b0e04-54838f4c9efmr4290701e87.40.1740365567236;
+        Sun, 23 Feb 2025 18:52:47 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54839cd339dsm838172e87.203.2025.02.23.18.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 18:52:45 -0800 (PST)
+Date: Mon, 24 Feb 2025 04:52:43 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+Message-ID: <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
+References: <20250222025102.1519798-1-shiyongbang@huawei.com>
+ <20250222025102.1519798-8-shiyongbang@huawei.com>
+ <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
+ <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250224-mmc-slot-v4-2-231620a31e88@microchip.com>
-References: <20250224-mmc-slot-v4-0-231620a31e88@microchip.com>
-In-Reply-To: <20250224-mmc-slot-v4-0-231620a31e88@microchip.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
-	<khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, "Martin
- Blumenstingl" <martin.blumenstingl@googlemail.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
-	<dharma.b@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740365548; l=4816;
- i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
- bh=3eVMKywF0GaSEC41UUuoCtEBQjw9Zj8/cE5TkbR4uxs=;
- b=SrErEyLdwcdKKkfZs5W5zETReahLtwrZI3FgSRMZnEK2OWsy7Jdn9NMpYCITs8wJKEtVderMQ
- bvgZlFpSqVKA4nEmIBY5v0T26CXoqDTwft7jmuDrn8VO7m792NdCHjv
-X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
- pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com>
 
-Convert atmel,hsmci documentation to yaml format. The new file will inherit
-from mmc-controller.yaml.
+On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
+> > > +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
+> > > +{
+> > > +	struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
+> > > +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
+> > > +	struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
+> > > +	int ret;
+> > > +
+> > > +	if (dp->hpd_status) {
+> > > +		hibmc_dp_hpd_cfg(&priv->dp);
+> > > +		ret = hibmc_dp_prepare(dp, mode);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +
+> > > +		hibmc_dp_display_en(dp, true);
+> > > +	} else {
+> > > +		hibmc_dp_display_en(dp, false);
+> > > +		hibmc_dp_reset_link(&priv->dp);
+> > > +	}
+> > If I understand this correctly, you are using a separate drm_client to
+> > enable and disable the link & display. Why is it necessary? Existing
+> > drm_clients and userspace compositors use drm framework, they should be
+> > able to turn the display on and off as required.
+> > 
+> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
+> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
+> the different video modes into DP registers.
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 106 +++++++++++++++++++++
- .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
- 2 files changed, 106 insertions(+), 73 deletions(-)
+Why? The link training and mode programming should happen during
+pre_enable / enable stage (legacy or atomic).
 
-diff --git a/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
-new file mode 100644
-index 000000000000..151b414b9d27
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
-@@ -0,0 +1,106 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/atmel,hsmci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel High-Speed MultiMedia Card Interface (HSMCI)
-+
-+description:
-+  The Atmel HSMCI controller provides an interface for MMC, SD, and SDIO memory
-+  cards.
-+
-+maintainers:
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+  - Aubin Constans <aubin.constans@microchip.com>
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+properties:
-+  compatible:
-+    const: atmel,hsmci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    const: rxtx
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: mci_clk
-+
-+  "#address-cells":
-+    const: 1
-+    description: Used for slot IDs.
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "slot@[0-2]$":
-+    $ref: mmc-slot.yaml
-+    description: A slot node representing an MMC, SD, or SDIO slot.
-+
-+    properties:
-+      reg:
-+        enum: [0, 1]
-+
-+    required:
-+      - reg
-+      - bus-width
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+anyOf:
-+  - required:
-+      - slot@0
-+  - required:
-+      - slot@1
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/at91.h>
-+    mmc@f0008000 {
-+      compatible = "atmel,hsmci";
-+      reg = <0xf0008000 0x600>;
-+      interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&mci0_clk>;
-+      clock-names = "mci_clk";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      slot@0 {
-+        reg = <0>;
-+        bus-width = <4>;
-+        cd-gpios = <&pioD 15 0>;
-+        cd-inverted;
-+      };
-+
-+      slot@1 {
-+        reg = <1>;
-+        bus-width = <4>;
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt b/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt
-deleted file mode 100644
-index 07ad02075a93..000000000000
---- a/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt
-+++ /dev/null
-@@ -1,73 +0,0 @@
--* Atmel High Speed MultiMedia Card Interface
--
--This controller on atmel products provides an interface for MMC, SD and SDIO
--types of memory cards.
--
--This file documents differences between the core properties described
--by mmc.txt and the properties used by the atmel-mci driver.
--
--1) MCI node
--
--Required properties:
--- compatible: should be "atmel,hsmci"
--- #address-cells: should be one. The cell is the slot id.
--- #size-cells: should be zero.
--- at least one slot node
--- clock-names: tuple listing input clock names.
--	Required elements: "mci_clk"
--- clocks: phandles to input clocks.
--
--The node contains child nodes for each slot that the platform uses
--
--Example MCI node:
--
--mmc0: mmc@f0008000 {
--	compatible = "atmel,hsmci";
--	reg = <0xf0008000 0x600>;
--	interrupts = <12 4>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	clock-names = "mci_clk";
--	clocks = <&mci0_clk>;
--
--	[ child node definitions...]
--};
--
--2) slot nodes
--
--Required properties:
--- reg: should contain the slot id.
--- bus-width: number of data lines connected to the controller
--
--Optional properties:
--- cd-gpios: specify GPIOs for card detection
--- cd-inverted: invert the value of external card detect gpio line
--- wp-gpios: specify GPIOs for write protection
--
--Example slot node:
--
--slot@0 {
--	reg = <0>;
--	bus-width = <4>;
--	cd-gpios = <&pioD 15 0>
--	cd-inverted;
--};
--
--Example full MCI node:
--mmc0: mmc@f0008000 {
--	compatible = "atmel,hsmci";
--	reg = <0xf0008000 0x600>;
--	interrupts = <12 4>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	slot@0 {
--		reg = <0>;
--		bus-width = <4>;
--		cd-gpios = <&pioD 15 0>
--		cd-inverted;
--	};
--	slot@1 {
--		reg = <1>;
--		bus-width = <4>;
--	};
--};
+> 
+> 
 
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
