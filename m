@@ -1,132 +1,289 @@
-Return-Path: <linux-kernel+bounces-529823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168E6A42B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:34:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F053EA42B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88A93A43B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2B47A44C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8C6262D15;
-	Mon, 24 Feb 2025 18:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13BE6265CBC;
+	Mon, 24 Feb 2025 18:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZVOfNOqi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVdv70sQ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D4F1D8E1A;
-	Mon, 24 Feb 2025 18:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B695264613;
+	Mon, 24 Feb 2025 18:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421927; cv=none; b=fRMt7NV+iSiZITUI4ykhJmxrGWSnizikAgD9NUPfSsHsXkIfIvTdVCKAATxymofOKw+/+HhjvIvQ6//J4FHF80+v9Ave+ZS2Pu0MgXmnztpCAydHzs9f/X964MFFViY6ZK0fYkFQJqucsOH9XK8B0Cc/2yUzVa/WUYx38WwxlbM=
+	t=1740421960; cv=none; b=kIVqFqndaqYfpjL+2T1T8CuJAFxhA9o3ov8lx2ual6MRIUZ5M6QZEtPpiAiceVGMgRL+/fgYks0v6eaz2MQAki5C0FH1/2ciKskhQGZhf+k8A845zSk35C4VKMg6gU2pX0dfcsQ0rMIsY5DNxwvoV/cwgKDOd7Fj2Viygn7niyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421927; c=relaxed/simple;
-	bh=PvY0vNGIV2nrW6cWOBfrLF3KmywdDgPWMWumXt7kQCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E0VAjAe13VCq+E7+eDo0YxMe8dUn8tdi91LiQxXhwsmHx9G5ZBQ/Jq8rPXWmk3xij0DHZXu3xVkAkLrkJPLiAn9o37I64+axfv9/D/sRhzjGA+5lgVKat2YW8WfLjSMWn5mrz5mOogrQ/59i9TPm+33D6wx7ltEr/+pnRuCC7BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZVOfNOqi; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740421926; x=1771957926;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PvY0vNGIV2nrW6cWOBfrLF3KmywdDgPWMWumXt7kQCQ=;
-  b=ZVOfNOqi3TC+7tX0gybAfuMXefaKNiukXogQLaSJFZY0PgC6qDDDlGXY
-   4zuE6sxvwREjtCO9OThM89U4feFCA9SQ8y6+6mvO0juD05998YKUp5I3P
-   0KsAXjHovc+GyCwErdWn1Gv2MlJyys9rcKijhmOFlfnI/I5RwVdk5cACK
-   JlJp8aY3gw4QjMqyOz5nw77aiWLwSgdxpBPisyuVXWubXJwlqbtGvaKTf
-   4/aDoE/rDCvCjvYZ+nihHp9T2xtEkzF8oQSgePSVvXgAbG3BLZ/OXHUN3
-   t0NvN03UyWaNsNMbCUUJ/L2VB58VRG2+igqOiGSjcm7QV+cKm9pvUlJQT
-   Q==;
-X-CSE-ConnectionGUID: cEMVdVoySvO2EN9X2s4BQA==
-X-CSE-MsgGUID: MxB+H7GQRVCrDtQlWHVicg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="51409366"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="51409366"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:32:05 -0800
-X-CSE-ConnectionGUID: o+AFoa3CRp6RA4OjFkFi/g==
-X-CSE-MsgGUID: CY4OW9ShQoizvgSgFWyM9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="121105550"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO [10.125.111.71]) ([10.125.111.71])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:32:04 -0800
-Message-ID: <5b866a4a-2cd0-4b17-bf0e-7eeb2a778f7a@intel.com>
-Date: Mon, 24 Feb 2025 11:32:04 -0700
+	s=arc-20240116; t=1740421960; c=relaxed/simple;
+	bh=98uB1rbdWm3A58E80bor3xFULFwAE6GtkDVd4uWUY2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJFROk+AX49BHKBFCAEtIUR/NZi5EqFpw6xp6G2FSL478arw8b10FtB3Fja2o/mvFbZusSlScQTbtjsjB/y09bHv4iP7vp7FzWpPllVCiZqY+wWix1h4lXYP0xU5Ftl3vea5Nyxvbd30MWIjksPW4tO6O7LB31D5y59rItMNeKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVdv70sQ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-54529e15643so5285935e87.1;
+        Mon, 24 Feb 2025 10:32:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740421956; x=1741026756; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N39GuLsH/GHnLWfi6A3DaLvaYCvcqGiUvrrDOML07K8=;
+        b=eVdv70sQCN1jkqLwXhLeGG4uLtshEdmrcIswwawv4e+/XZatwc3yxdabR2N59nLgKy
+         hYJ6QlcBNYG5bM9uvEbsNVRo+b2BSWCx9Dk05dyXzP77fkYfz04+3Mqx6NoIFwnfKNXa
+         lbQHIi6Oi5ZRvIeEowJuLxt6KcUyilHozpYbc57JuDK1jrvs2lISlZdFSBU+zl6CxtTW
+         ZPUK/BWgc1JAY85OGfjdWgd9gPBHIInzbWuFIGAVpfboZxK0nHSCoZGHuZ/2gQfXnsId
+         mTRz2Yfun1i1SyBJfgik7UEJ843WiIh6zN1gtwr0udEFNZ+4MYvWhBtpf6soyV22uyUo
+         L+ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740421956; x=1741026756;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N39GuLsH/GHnLWfi6A3DaLvaYCvcqGiUvrrDOML07K8=;
+        b=kteTx7xedyVdOS7RLGKVt4ghaVQTysl8ZFkOm8alvpX4G6mhG1we4uZUiUziGPqjSS
+         9YfvaEimIVM2fXI3UCFY1s/GMjqrCRs3+7UxPMEsWktLFMHHj13+UhsU2wIuxfsNikcV
+         FhzdmlT1aEO3bMidBKDLnf8k/S9xhB6P5Fjw7NbTMi1/7plPgrNlSm0fKSjZkhLYJe6+
+         ruBPAJgESQ6ZdFEUzbBaIqSQhAG5HatA+3XSARpPXBJ2fM2zlbevuiodqlXPfjrp9Kq+
+         KvZs5PDQmpG9hCl+uOKzw3UGSYOaWJBiphu6qA7/Gj9ow03gWJgHCvcHBRKf+vKqF+1E
+         kXKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpWq0560LEtLPAXovHUgEWZNmY/vvnzueZHW/VpbUM3LZg0HAL+zhVP7JGX/v+Cifv33MRVgFGgol7@vger.kernel.org, AJvYcCVDHL0E4mpQhXh1VSU5vcbH3gonZj/DoqNiUt+DlkxvgQe0FIMaRYQBXSirQ/ZqrRNSLN3bfnEo/bJz@vger.kernel.org, AJvYcCW4YsJZ9qthKJdGAl8aYXyBARfddAsg/GI854zv2uCvep4hr9dWkeOmFYqU6k6kEJbmjtsOm4YTlvlNfWm2@vger.kernel.org, AJvYcCWCT3AS2DA5ktoy/ZYeBvL9bQrRPu6+3B2B3vTSp4SRJAuDt5UgDU7vsXbg5hO1H3mi4/UrsSFoQEBaV8I+AWgCeWU=@vger.kernel.org, AJvYcCWcAuJraHyXtsboQWkrksh3hTEHkxTCQuCI1TTgk5D4F0vPB6FISSGAEiqANyN6i2rWd42YaZBSJyhuSw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG8ToiI911YIKYIh/CeCJ+CoOhJKCAKDTPZL6Avifu9sjfcwUn
+	V4RBOvmblhVNw034V3kvUOSpBfYzAy0S8RUwg6siJuB/Pp9yxaj1
+X-Gm-Gg: ASbGnctZyiC0PYGZgVelGK3rt6Ngq0IHtibeVArAdBtTlAbJOzd9N8PtIJ6t7xsrdQT
+	p2or8PBjzem1aE8yY25k/8mhUzu3z/DjBr8oMKWT6SVAo+5ONirXIZbK/6egavX5Zcffa7r+chw
+	/pC0XQ8hdNry7qplYevUsxVjv8cYt+VkKy//ksIwNBua7TSRbOAZVsxZKPK6IfVk8VEsQo9X+jr
+	Ui+GDUdTPctQ4GB1mBayxr+DZJsaBlkutGamErZ/kshijYA6ny2fCcgGG8F9I+yJOOKrraEuKjW
+	qTkYKy+PO6wkzbUkq6AKCK+pOUYKmKSA
+X-Google-Smtp-Source: AGHT+IGuoaXIvmZgefmGuVB5f6nZE8zpUKpcTq1FcueeKygwj6PXc2F3VGYVqvK8LafWdWjrrE8P6g==
+X-Received: by 2002:a05:6512:159b:b0:545:fdd:9ef4 with SMTP id 2adb3069b0e04-54838c5e1bfmr4544720e87.8.1740421956169;
+        Mon, 24 Feb 2025 10:32:36 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54771f058casm1259809e87.188.2025.02.24.10.32.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 10:32:34 -0800 (PST)
+Date: Mon, 24 Feb 2025 20:32:29 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Guillaume Stols <gstols@baylibre.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
+Subject: [PATCH v4 01/10] dt-bindings: ROHM BD79124 ADC/GPO
+Message-ID: <4d390ca96434a8ee35c0c850cfe4fd49e99db653.1740421248.git.mazziesaccount@gmail.com>
+References: <cover.1740421248.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/Documentation: Remove 'mixed' from sysfs mode doc
-To: Ira Weiny <ira.weiny@intel.com>, Alejandro Lucero <alucerop@amd.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, Fan Ni <fan.ni@samsung.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org
-References: <20250224-remove-mixed-sysfs-v1-1-a329db313dac@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250224-remove-mixed-sysfs-v1-1-a329db313dac@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="OoD2QNHpBXvMQxnR"
+Content-Disposition: inline
+In-Reply-To: <cover.1740421248.git.mazziesaccount@gmail.com>
 
 
+--OoD2QNHpBXvMQxnR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2/24/25 11:29 AM, Ira Weiny wrote:
-> Commit 188e9529a606 ("cxl: Remove the CXL_DECODER_MIXED mistake")
-> removed the mixed mode.
-> 
-> Remove it from the sysfs documentation.
-> 
-> Fixes: 188e9529a606 ("cxl: Remove the CXL_DECODER_MIXED mistake")
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Add binding document for the ROHM BD79124 ADC / GPO.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+ROHM BD79124 is a 8-channel, 12-bit ADC. The input pins can also be used
+as general purpose outputs.
 
-> ---
->  Documentation/ABI/testing/sysfs-bus-cxl | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-> index 3f5627a1210a16aca7c18d17131a56491048a0c2..3ba551ed10e29f33b9eb873bab9b542c8afb66f0 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-cxl
-> +++ b/Documentation/ABI/testing/sysfs-bus-cxl
-> @@ -321,14 +321,13 @@ KernelVersion:	v6.0
->  Contact:	linux-cxl@vger.kernel.org
->  Description:
->  		(RW) When a CXL decoder is of devtype "cxl_decoder_endpoint" it
-> -		translates from a host physical address range, to a device local
-> -		address range. Device-local address ranges are further split
-> -		into a 'ram' (volatile memory) range and 'pmem' (persistent
-> -		memory) range. The 'mode' attribute emits one of 'ram', 'pmem',
-> -		'mixed', or 'none'. The 'mixed' indication is for error cases
-> -		when a decoder straddles the volatile/persistent partition
-> -		boundary, and 'none' indicates the decoder is not actively
-> -		decoding, or no DPA allocation policy has been set.
-> +		translates from a host physical address range, to a device
-> +		local address range. Device-local address ranges are further
-> +		split into a 'ram' (volatile memory) range and 'pmem'
-> +		(persistent memory) range. The 'mode' attribute emits one of
-> +		'ram', 'pmem', or 'none'. The 'none' indicates the decoder is
-> +		not actively decoding, or no DPA allocation policy has been
-> +		set.
->  
->  		'mode' can be written, when the decoder is in the 'disabled'
->  		state, with either 'ram' or 'pmem' to set the boundaries for the
-> 
-> ---
-> base-commit: 8760c1c0bf7eee63a56b5f9edb42d93737a6a378
-> change-id: 20250224-remove-mixed-sysfs-e3baa7616bcc
-> 
-> Best regards,
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Revision history:
+v2 =3D> v3:
+ - Restrict channel numbers to 0-7 as suggested by Conor
+RFC v1 =3D> v2:
+ - drop MFD and represent directly as ADC
+ - drop pinmux and treat all non ADC channel pins as GPOs
+---
+ .../bindings/iio/adc/rohm,bd79124.yaml        | 114 ++++++++++++++++++
+ 1 file changed, 114 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/rohm,bd79124.=
+yaml
 
+diff --git a/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml b/=
+Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
+new file mode 100644
+index 000000000000..503285823376
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/rohm,bd79124.yaml
+@@ -0,0 +1,114 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/adc/rohm,bd79124.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BD79124 ADC/GPO
++
++maintainers:
++  - Matti Vaittinen <mazziesaccount@gmail.com>
++
++description: |
++  The ROHM BD79124 is a 12-bit, 8-channel, SAR ADC. The ADC supports
++  an automatic measurement mode, with an alarm interrupt for out-of-window
++  measurements. ADC input pins can be also configured as general purpose
++  outputs.
++
++properties:
++  compatible:
++    const: rohm,bd79124
++
++  reg:
++    description:
++      I2C slave address.
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  gpio-controller: true
++
++  "#gpio-cells":
++    const: 1
++    description:
++      The pin number.
++
++  vdd-supply: true
++
++  iovdd-supply: true
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 0
++
++patternProperties:
++  "^channel@[0-7]+$":
++    type: object
++    $ref: /schemas/iio/adc/adc.yaml#
++    description: Represents ADC channel.
++
++    properties:
++      reg:
++        description: AIN pin number
++        minimum: 0
++        maximum: 7
++
++    required:
++      - reg
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - iovdd-supply
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/leds/common.h>
++    i2c {
++        #address-cells =3D <1>;
++        #size-cells =3D <0>;
++        adc: adc@10 {
++            compatible =3D "rohm,bd79124";
++            reg =3D <0x10>;
++
++            interrupt-parent =3D <&gpio1>;
++            interrupts =3D <29 8>;
++
++            vdd-supply =3D <&dummyreg>;
++            iovdd-supply =3D <&dummyreg>;
++
++            #address-cells =3D <1>;
++            #size-cells =3D <0>;
++
++            channel@0 {
++                reg =3D <0>;
++            };
++            channel@1 {
++                reg =3D <1>;
++            };
++            channel@2 {
++                reg =3D <2>;
++            };
++            channel@3 {
++                reg =3D <3>;
++            };
++            channel@4 {
++                reg =3D <4>;
++            };
++            channel@5 {
++                reg =3D <5>;
++            };
++            channel@6 {
++                reg =3D <6>;
++            };
++        };
++    };
+--=20
+2.48.1
+
+
+--OoD2QNHpBXvMQxnR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme8uz0ACgkQeFA3/03a
+ocXYDAf/aZy7lHBMV/y8BQfayGuvRMNa+yzPpPHq/dU6XF5PEhMqMJ3UsVOhR+1d
+UGxrDIENa7xyOPAw3ixngeMix77PFLLj/SwSFcDID2NWy5h8HsjTPdIlPZ+/2m+N
+5f7BlMlr7tJYGxTerh8S9zrB2JjLQu15lX9FKyjbGwyjBeLJNLur6WyGPLVKxlKC
+lYtZN4TXAoU1slNTQkNhaOeJA6MBzokAx0R9Le6wvULUuzyEykpl3k2ULVnOXR8/
+zSGA8NBGCgJYExdvpYqYy8x9b8yZec+Lz7/OxFKuylNYCSm0E6K6nNJQY+9V3Pt2
+m0cy3LLxtBGaVFknxcgYneSUA3z7iw==
+=70g3
+-----END PGP SIGNATURE-----
+
+--OoD2QNHpBXvMQxnR--
 
