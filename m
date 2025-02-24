@@ -1,112 +1,215 @@
-Return-Path: <linux-kernel+bounces-529320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BCBA4231F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:33:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D7D7A42325
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7BC51630AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB0F166C01
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DE016F0FE;
-	Mon, 24 Feb 2025 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A6616D9DF;
+	Mon, 24 Feb 2025 14:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YrVCLYDY"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD447CF16;
-	Mon, 24 Feb 2025 14:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GSah3iUu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A621A1386B4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407037; cv=none; b=EW4olFgj2zokSor4Nw4f6qBUtlQVMJH0aX6Ob5EE7F+6/bbOrSk1X2/XEqEHgakbl1+IYYuoHSB9Mnk449Rrfp197VMMIbFCOIAz1gHhG+HNCsYXtmRWhF2soEglFcFdmIZlmaOjIFy7C0sKXyZFeWTFyhYl8kCbqtbu4v3QbpU=
+	t=1740407119; cv=none; b=hdTwJ4Gx4MYyXG9gR2FG9F++3aNHaDBmkDZE6pStx2SDBJcGab3cABqL1mmnJv/C+Cx1XwxrgMRAFGiVctYcaoKs6jQmbt/WC/wIysyigdvKnf2W0LemXyeXwKVHBedlxsFCfRVOYoADo/8N53TWpLxPe61n0dnQhBeGsPxPwj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407037; c=relaxed/simple;
-	bh=E2lAPAZ2LYqRrh+gSq4+glJVFwMQxQGVoWqwBtpJP1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R46SYFWpQ1n5T+ww+Ky0Wqe/tkS8fyVNUAO4q/hfx1SoGzy8SgOmiHLp2SDtjYBj1dtsuluQ4veGrCxjSsRVoDA6Z5qfuOnmJX+GP6Tzr6wwVYe+uvKWa8yg792IKR/nt6E6d9lNWveYGvyXtSLusb66QATsmvSO2gNxXC2Nixc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YrVCLYDY; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from hm-sls2.lan (unknown [142.114.216.132])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 34285203CDDE;
-	Mon, 24 Feb 2025 06:23:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 34285203CDDE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740407029;
-	bh=s6W1mOT343rnBx7peL+teMTPd68LRu36Duj+5rUo2os=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YrVCLYDYjeN2WKG5EXpSQvQGwBsDFvl+phqCiXab0dXi6QJbv9Eo7k2TFRix06b9c
-	 3usHzj0UShjcXVe5tL9iwR+YfCY11TXrwkJ/owHCu8D++eENcBT11Ad4FcrKtu7vuW
-	 oWPKIs1hQYCiAd/MW3LcitkhjhbSkpRnFeeSAaIU=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Wedson Almeida Filho <walmeida@microsoft.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Konstantin Andrikopoulos <kernel@mandragore.io>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Roland Xu <mu001999@outlook.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] rust: workqueue: define built-in bh queues
-Date: Mon, 24 Feb 2025 09:23:23 -0500
-Message-ID: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 2.47.1
+	s=arc-20240116; t=1740407119; c=relaxed/simple;
+	bh=Sq1Y8IC+TkK16PhjzgHqjuFsB8AmqFLAL13Hhk9ypkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ash8e/+mWegdu4TwIif89gEOu2Qu4AQTy6rVHfshoIg8V79Wd9jm62uHjUk4p84vSW3q1yCcgUSnweL1ZxiCBLkkhEwhWGgdVS145+wCr5c4OM3Zu68r/HZY4J2avy8dXWfcp/Qc0Oh2Q5pxEDTMTGtln+0TK3gerFv/ZnD88Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GSah3iUu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740407115;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7UueaCy/3NVQVw6UzkkNyuSPosg3+jMEY4vs1dTQYlM=;
+	b=GSah3iUuTliIAdIp9qoM2O3w3WFuPM9L00Uk6L8x13qYIEna5YrNr7Jwl0+zFlmgMoozXT
+	Fzl4qwTQLY2oTxNPiLsA5sJEsu25Tw6T10i+EKlUPo2Q+QrJPINCmEB2FhAxW44MIDlH6r
+	VgtSyD10Bqs+8JhRi30BDpiMqSHz7CE=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-583-B57fuXfIM2K22U8Gqgj2jg-1; Mon,
+ 24 Feb 2025 09:25:08 -0500
+X-MC-Unique: B57fuXfIM2K22U8Gqgj2jg-1
+X-Mimecast-MFC-AGG-ID: B57fuXfIM2K22U8Gqgj2jg_1740407107
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D317A19783B7;
+	Mon, 24 Feb 2025 14:25:06 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.142])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CE57319560AA;
+	Mon, 24 Feb 2025 14:25:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 24 Feb 2025 15:24:37 +0100 (CET)
+Date: Mon, 24 Feb 2025 15:24:32 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Manfred Spraul <manfred@colorfullife.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250224142329.GA19016@redhat.com>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Provide safe getters to the system bh work queues. They will be used
-to reimplement the Hyper-V VMBus in rust.
+Hi Sapkal,
 
-Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
----
-v2: make the commit message suck less.
----
- rust/kernel/workqueue.rs | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+On 02/24, Sapkal, Swapnil wrote:
+>
+> We saw hang in hackbench in our weekly regression testing on mainline
+> kernel. The bisect pointed to this commit.
 
-diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
-index 0cd100d2aefb..68ce70d94f2d 100644
---- a/rust/kernel/workqueue.rs
-+++ b/rust/kernel/workqueue.rs
-@@ -703,3 +703,21 @@ pub fn system_freezable_power_efficient() -> &'static Queue {
-     // SAFETY: `system_freezable_power_efficient_wq` is a C global, always available.
-     unsafe { Queue::from_raw(bindings::system_freezable_power_efficient_wq) }
- }
-+
-+/// Returns the system bottom halves work queue (`system_bh_wq`).
-+///
-+/// It is similar to the one returned by [`system`] but for work items which
-+/// need to run from a softirq context.
-+pub fn system_bh() -> &'static Queue {
-+    // SAFETY: `system_bh_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_bh_wq) }
-+}
-+
-+/// Returns the system bottom halves high-priority work queue (`system_bh_highpri_wq`).
-+///
-+/// It is similar to the one returned by [`system_bh`] but for work items which
-+/// require higher scheduling priority.
-+pub fn system_bh_highpri() -> &'static Queue {
-+    // SAFETY: `system_bh_highpri_wq` is a C global, always available.
-+    unsafe { Queue::from_raw(bindings::system_bh_highpri_wq) }
-+}
--- 
-2.47.1
+OMG. This patch caused a lot of "hackbench performance degradation" reports,
+but hang??
+
+Just in case, did you use
+
+	https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git/tree/src/hackbench/hackbench.c
+
+?
+
+OK, I gave up ;) I'll send the revert patch tomorrow (can't do this today)
+even if I still don't see how this patch can be wrong.
+
+> Whenever I compare the case where was_full would have been set but
+> wake_writer was not set, I see the following pattern:
+>
+> ret = 100 (Read was successful)
+> pipe_full() = 1
+> total_len = 0
+> buf->len != 0
+>
+> total_len is computed using iov_iter_count() while the buf->len is the
+> length of the buffer corresponding to tail(pipe->bufs[tail & mask].len).
+> Looking at pipe_write(), there seems to be a case where the writer can make
+> progress when (chars && !was_empty) which only looks at iov_iter_count().
+> Could it be the case that there is still room in the buffer but we are not
+> waking up the writer?
+
+I don't think so, but perhaps I am totally confused.
+
+If the writer sleeps on pipe->wr_wait, it has already tried to write into
+the pipe->bufs[head - 1] buffer before the sleep.
+
+Yes, the reader can read from that buffer, but this won't make it more "writable"
+for this particular writer, "PAGE_SIZE - buf->offset + buf->len" won't be changed.
+I even wrote the test-case, let me quote my old email below.
+
+Thanks,
+
+Oleg.
+--------------------------------------------------------------------------------
+
+Meanwhile I wrote a stupid test-case below.
+
+Without the patch
+
+	State:	S (sleeping)
+	voluntary_ctxt_switches:	74
+	nonvoluntary_ctxt_switches:	5
+	State:	S (sleeping)
+	voluntary_ctxt_switches:	4169
+	nonvoluntary_ctxt_switches:	5
+	finally release the buffer
+	wrote next char!
+
+With the patch
+
+	State:	S (sleeping)
+	voluntary_ctxt_switches:	74
+	nonvoluntary_ctxt_switches:	3
+	State:	S (sleeping)
+	voluntary_ctxt_switches:	74
+	nonvoluntary_ctxt_switches:	3
+	finally release the buffer
+	wrote next char!
+
+As you can see, without this patch pipe_read() wakes the writer up
+4095 times for no reason, the writer burns a bit of CPU and blocks
+again after wakeup until the last read(fd[0], &c, 1).
+
+Oleg.
+
+-------------------------------------------------------------------------------
+#include <stdlib.h>
+#include <unistd.h>
+#include <assert.h>
+#include <sys/ioctl.h>
+#include <stdio.h>
+#include <errno.h>
+
+int main(void)
+{
+	int fd[2], nb, cnt;
+	char cmd[1024], c;
+
+	assert(pipe(fd) == 0);
+
+	nb = 1; assert(ioctl(fd[1], FIONBIO, &nb) == 0);
+	while (write(fd[1], &c, 1) == 1);
+	assert(errno = -EAGAIN);
+	nb = 0; assert(ioctl(fd[1], FIONBIO, &nb) == 0);
+
+	// The pipe is full, the next write() will block.
+
+	sprintf(cmd, "grep -e State -e ctxt_switches /proc/%d/status", getpid());
+
+	if (!fork()) {
+		// wait until the parent sleeps in pipe_write()
+		usleep(10000);
+
+		system(cmd);
+		// trigger 4095 unnecessary wakeups
+		for (cnt = 0; cnt < 4095; ++cnt) {
+			assert(read(fd[0], &c, 1) == 1);
+			usleep(1000);
+		}
+		system(cmd);
+
+		// this should actually wake the writer
+		printf("finally release the buffer\n");
+		assert(read(fd[0], &c, 1) == 1);
+		return 0;
+	}
+
+	assert(write(fd[1], &c, 1) == 1);
+	printf("wrote next char!\n");
+
+	return 0;
+}
 
 
