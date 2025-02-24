@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-530179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CDDA4302F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:36:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42CE2A4302E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4F41773DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:36:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3338188F293
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91245206F3A;
-	Mon, 24 Feb 2025 22:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB04B206F22;
+	Mon, 24 Feb 2025 22:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Vi/zuP9k"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="iZ+fg2Aj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="joav2SEH"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE98202F93;
-	Mon, 24 Feb 2025 22:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740436580; cv=pass; b=XSkQhRoCAhWa8kJImRmRfDKURbLBET3rbYM9UYD/dfbGHGWOrsdJ4NKFBQqGsmCYsvqer62WvnFDo4n5xqvceit55KEniT3EsEl8ohhyD7r0G1bA59w08BMJJ0ye6Gl5rXR/OHvPgapRUh+JHhO7WE57unR1gRyU5VN0uKzxFl8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740436580; c=relaxed/simple;
-	bh=FGn/OcZD++sMSp+EacZdPtWL50VqZpRylr+EGHDXth0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=I445s995mQIBsEmJ0Lg4bKpOyZqUi/pxkF1w7oB/sAZvg4YRE5fSCOnzgUMbs8VuxNlk70Y7GGm540NiuAG8VJHck5MC17QEtYbC5INvlpkydNFcwzRoNTyiKZaPys/O/Wg3U5LwqOE5BJqJYQjLqMmKyyHNsVRo82RPRq2xCBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Vi/zuP9k; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740436545; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=eHWtoo5rdNpFEt3CzgTvU8EObGuS0KRK4kWHO+zNBcduUwfCpRaLwAmwAhf1noIm3VLUUcxdRnLhlvWO432AyhzOg9roesQE5vKxkx7VpggUdlJ1oBVLvCKZQHvEW9CNpWJOgR8D6VUTErRP7Lq2RAQRwdqqbxfF6C9nxKecZQI=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740436545; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SdyERRxHHdW7zgOlR6t3ukNnwkuWUi84nscbihMEp6w=; 
-	b=C3XMPYXlXmHMqazBpUXkiTSVuskL194HkWOJbTPrf2/U99cg3khIXYR0ltvQZDOqyDrK4Kqj4XBGPbk3ylIQRlMbeb/bXBmMFpF6+l8o/PRloESdgAh7mHzL9zV0xA/A15iJsEi2yftDP+gojmLSDRwo1K8k8ZWh69ZiLDdEC1w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740436545;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=SdyERRxHHdW7zgOlR6t3ukNnwkuWUi84nscbihMEp6w=;
-	b=Vi/zuP9kxsLmIC3oWyRFl53ZGoN7CLm9BayLmRbEnPPtbwWELD5cVT3fW5nEmTFI
-	SjdRi+5+YAmE++c2XW37rnCI0lQwEIj79zGLeoLJ6TPT9wQ1x8BQvg0DCQzTMVekYUl
-	Y/ioV8lmkM0DbXw/L2YN6pMzDeEnJ/bePYKGorLE=
-Received: by mx.zohomail.com with SMTPS id 1740436543880453.22386984310026;
-	Mon, 24 Feb 2025 14:35:43 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EC31F5FA;
+	Mon, 24 Feb 2025 22:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740436563; cv=none; b=u0N/JO78+QcqDWS2lrezcYHfb89S4xKuAl5yTLz2Flbr4lxjqLj2v3sRMxHVdshDlqhv8WYccHAAnulbQb8hSdS8m5ORLy64fzQsfP09r9n3FjcEEuO+2QCpLpccQ3lG+ZaDhA60sA4VEOkqrOLV3H/xu4/4h2mXZ8DIHOYEg3E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740436563; c=relaxed/simple;
+	bh=uA12i/Y9y+ltc6V9FdPhiBKqqi6WpuVhtuvjX3HFukc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dscLARxSQiqO0NLHXZAbH2ChPj10Ao4bWW65BOfGt1yUMzTtn5d4Q3//WqH7l2nH5UmKJdg2saM6ZdCnKYgnRhjBjvsG4U0Gr83Ez8wQ6MqGQ7qkuZmPbVHG7e5QbeCsUIfMQvIV8+yz3hVq1EnOZS1eqv7VU2CRaEcf1sxbZfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=iZ+fg2Aj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=joav2SEH; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 5342A2540182;
+	Mon, 24 Feb 2025 17:35:59 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 24 Feb 2025 17:35:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1740436559; x=1740522959; bh=ioYEDzHrpz0PAuDFVSS3W
+	+YD7T3n3gFKuDOGtGLUsQQ=; b=iZ+fg2AjQ3FOoPNkSvuUQCk/mP9yU4rDfH1hb
+	G3B5aSQyVewHeRur0H1tc1Us+wtZ+aa5MvAKZAS+wAl8eP7m4YdxNc7rE+WSG//S
+	Ns5Bs9Y5ELquyG2z3TAqSJU3FQtm8frHFqNqDG5AnFVkkOovDcGDUdpXWeEURiz2
+	hhb0cIHVfnIhBxBWmDq5EZNanK+LCFIx/i9+Z91fpb9M5uQp892UHtAvjh3ZzOip
+	Qm4htfPFnORjjLGJ5o67SQVlBtf3rpd0EvcfaNt3L57OPCQxOSXj0iu0rBNAf4m8
+	XklSdvNPVx5MK/sU3wBHqgRi1SHJ9PwtfCf/gse4P1IicoucA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1740436559; x=1740522959; bh=ioYEDzHrpz0PAuDFVSS3W+YD7T3n3gFKuDO
+	GtGLUsQQ=; b=joav2SEHePT0qIcvmqDPkn8ZHS6FunH9Pp5jkiM3re+hyJfEEgw
+	XQbtgBu8hGUzHiZJwvFaL62CUe2R3s7L4TneJu4yfqJDASdpg3hJaCNenVWuaDOB
+	tXLqlQGnu9QKtm4qBCqSOFTOfsAj2StCV+Ki8KgXSkeb1yU0MAFDo7LozWZAumjv
+	0PvZaJz+R/5bE7UIFoIlyM8CGLTLSBj6rUA6xFDqLIDBeaHTYQWS/udg6h+AaegT
+	wGxV+T3xvrti8VJSn0IDd4KSsX2aUeTgYYWCduOx5Eg3hHHUCVpa6vAgYefGRV1G
+	eWtZY5hJvJ0VFT5LphLvTLC1BJW6IznUmLQ==
+X-ME-Sender: <xms:TvS8Zw8KimUFpwdQkHzRiUQZqoYdeahDoph_q3PO14_Wzpgufr9dKw>
+    <xme:TvS8Z4vemdDX6rekZkhsVpaslhTXv-8I0KMukScX3jWdJmmoPwEjjgQH7ifd0uBQJ
+    cs2Zni1Eqt0RpToWy8>
+X-ME-Received: <xmr:TvS8Z2D7-LihsYbK-ahqhkwuYoK_KSy8OHZn6DXlBoYCAIezqKAQPtVSK9KIX4MQleXUlO69s3kUFdVrWA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdektddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecu
+    hfhrohhmpefnuhhkvgculfhonhgvshcuoehluhhkvgeslhhjohhnvghsrdguvghvqeenuc
+    ggtffrrghtthgvrhhnpedtkedtiedtteeuheeuteetffffgefgfefhiedtvdegieefjeeh
+    leehffejgffgheenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeeipdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigke
+    eisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghorhgvnhhtihhnrdgt
+    hhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtohephhguvghgohgvuggvsehrvgguhh
+    grthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhi
+    nhhtvghlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgvsehljhhonhgvshdruggvvh
+X-ME-Proxy: <xmx:TvS8Zwe0PrWefyxNwOQHSPI0Xaaa0yuznjEQR-siSw8ubujlmlCO7w>
+    <xmx:TvS8Z1O1KMbZirPVZVhHhoJ4gO65wZv7CuAZ2CqDYRDtlXO2M7zfUw>
+    <xmx:TvS8Z6liqJWBATWNVLCMPFgXgyGJ_0nb4AF3O1VcmF9FoF3QABhvlQ>
+    <xmx:TvS8Z3tpv_X1ftLn5aGfFhRcHRR_DhNm-cGaLZ7SmPoAXxUZs5LtUQ>
+    <xmx:T_S8Z42WZYbifSfgvOtKYTm_hwyh7AD3GGnCvjQiO5w_gdTbpuLifFib>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Feb 2025 17:35:56 -0500 (EST)
+From: Luke Jones <luke@ljones.dev>
+To: platform-driver-x86@vger.kernel.org
+Cc: corentin.chary@gmail.com,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	"Luke D. Jones" <luke@ljones.dev>
+Subject: [PATCH] platform/x86: asus-wmi: change quiet to low-power
+Date: Tue, 25 Feb 2025 11:35:51 +1300
+Message-ID: <20250224223551.16918-1-luke@ljones.dev>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <6f154af8-6379-4b1f-9e30-2b99f7f736dd@gmail.com>
-Date: Mon, 24 Feb 2025 19:35:26 -0300
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
- aliceryhl@google.com,
- dakr@kernel.org,
- robin.murphy@arm.com,
- rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>,
- linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com,
- iommu@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <39A0DA3F-0ECF-4FD2-A46E-4F831C194C17@collabora.com>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <k3GMnfXzzvUVOgSnuMlEq3eVRyq1qjcf_tDtILRbOwj08EIQpwQ4bGtGhwWufr8lUn-VlHnNjP8FxIA48Jv-Ug==@protonmail.internalid>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <87seo3z9qr.fsf@kernel.org> <6f154af8-6379-4b1f-9e30-2b99f7f736dd@gmail.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Abdiel
+From: "Luke D. Jones" <luke@ljones.dev>
 
-> On 24 Feb 2025, at 13:27, Abdiel Janulgue <abdiel.janulgue@gmail.com> =
-wrote:
->=20
->=20
-> On 24/02/2025 16:40, Andreas Hindborg wrote:
->> "Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
->> [...]
->>> +/// Inform the kernel about the device's DMA addressing =
-capabilities. This will set the mask for
->>> +/// both streaming and coherent APIs together.
->>> +pub fn dma_set_mask_and_coherent(dev: &Device, mask: u64) -> i32 {
->>> +    // SAFETY: device pointer is guaranteed as valid by invariant =
-on `Device`.
->>> +    unsafe { bindings::dma_set_mask_and_coherent(dev.as_raw(), =
-mask) }
->>> +}
->>> +
->>> +/// Same as `dma_set_mask_and_coherent`, but set the mask only for =
-streaming mappings.
->>> +pub fn dma_set_mask(dev: &Device, mask: u64) -> i32 {
->>> +    // SAFETY: device pointer is guaranteed as valid by invariant =
-on `Device`.
->>> +    unsafe { bindings::dma_set_mask(dev.as_raw(), mask) }
->>> +}
->> Sorry if it was asked before, I am late to the party. But would it =
-make
->> sense to put these to functions on `Device` and make them take =
-`&self`.
->=20
-> Thanks for checking this. The API is about the dma addressing =
-capabalities of the device, my thoughts would be to group them with the =
-rest of the dma API? But either way, I don't have a strong preference. =
-I'll let others comment.
->=20
-> Daniel, Danilo?
->=20
-> Regards,
-> Abdiel
+Change the profile name "quiet" to "low-power" to match the AMD name. The
+primary reason for this is to match AMD naming for platform_profiles and
+allow both to match. It does not affect Intel machines.
 
-IIRC, that was already suggested by either Alice or someone else =
-previously. Also (and again IIRC), you were going to
-split that part into a separate patch?=20
+The quiet profile is essentially a low-power profile which tweaks
+both TDP and fans - this applies to 80+ ASUS laptops.
 
-=E2=80=94 Daniel=
+Signed-off-by: Luke D. Jones <luke@ljones.dev>
+---
+ drivers/platform/x86/asus-wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index d22748f1e154..de19c3b3d8fb 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -3945,7 +3945,7 @@ static int asus_wmi_platform_profile_get(struct device *dev,
+ 		*profile = PLATFORM_PROFILE_PERFORMANCE;
+ 		break;
+ 	case ASUS_THROTTLE_THERMAL_POLICY_SILENT:
+-		*profile = PLATFORM_PROFILE_QUIET;
++		*profile = PLATFORM_PROFILE_LOW_POWER;
+ 		break;
+ 	default:
+ 		return -EINVAL;
+@@ -3969,7 +3969,7 @@ static int asus_wmi_platform_profile_set(struct device *dev,
+ 	case PLATFORM_PROFILE_BALANCED:
+ 		tp = ASUS_THROTTLE_THERMAL_POLICY_DEFAULT;
+ 		break;
+-	case PLATFORM_PROFILE_QUIET:
++	case PLATFORM_PROFILE_LOW_POWER:
+ 		tp = ASUS_THROTTLE_THERMAL_POLICY_SILENT;
+ 		break;
+ 	default:
+@@ -3982,7 +3982,7 @@ static int asus_wmi_platform_profile_set(struct device *dev,
+ 
+ static int asus_wmi_platform_profile_probe(void *drvdata, unsigned long *choices)
+ {
+-	set_bit(PLATFORM_PROFILE_QUIET, choices);
++	set_bit(PLATFORM_PROFILE_LOW_POWER, choices);
+ 	set_bit(PLATFORM_PROFILE_BALANCED, choices);
+ 	set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
+ 
+-- 
+2.48.1
+
 
