@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-528496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4426AA41871
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:11:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2F3A41872
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:12:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 801743B06A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 295681743C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3299F252904;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A1F92528FB;
 	Mon, 24 Feb 2025 09:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4XWhXqB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/3bMDI1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8600724503A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848E1245039;
 	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388143; cv=none; b=GaRdVbf5On3Uic7TNHf2xvjK0iZQHfcejZUh5h7Xt8vN1bztPDPJ9dsw7WbBBBtF/De0E0qk2BZPJ+YP/yRHrS7sM9axBv9yQ7nLimXQLHn+dusf/X1ZfOJT4XtE8HEOPPmXWJxZ0gt0VDmuY3trF7IcSf/BHbp1WM9XMRiY+20=
+	t=1740388143; cv=none; b=CEXG2lDYWizWXpifM9JYMo5Cc8iXYzuQaPznmsnvxFukT8SPS5SIr6nbOqpz2mdAEZgEKn8UaELg+M01D4TQtx5sBJ+NSRyv4Ni8d0q84Y5SJ+3Nm2+XWmnHkG4WtNPOB83sM/J+SwstLTJyjMk0SEAr9dsPxN6gUM+se5RR/XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740388143; c=relaxed/simple;
-	bh=lpGcciKaov3Y13LlsgFK4uZcLIWPLc8PIxEf/5bFm3o=;
+	bh=g3yjKUYPJng0/MFnsVcxoDKnYWevbS21H1bMLGz3lcY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WifcTYk7jy6R478p9Gtg8nf1Ef/zwY8ycV5IKBKN9sItAg01GC25qSYQHN0eTVH7KfVbxTAs9Rs89wy/tCcHIlrPkFGCSfQILvIISy4ldhQOlwQ4fHnbwQwRTP5jHy0HZyaX99Td3tKbFIk4MEw66arZQWjmaeUbbxiHUS9rNVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4XWhXqB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCDC0C4CEF2;
+	 MIME-Version; b=fe87NIVi3pOB6xZGFWK1G0XcO6BoJCldXHnil215OywwF0A0G9HxMcET1dFg1H0wvpFYEP5ytlZWNnqZKcVo16paSwIKP+nO+GJCyPWqomtGRt60zRiXOvGPNXVCJDVzg7FMhbK4WZWuwjUfKIxgXg4NgTQcSl5/sA2i/1RdiWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s/3bMDI1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8F7AC4AF09;
 	Mon, 24 Feb 2025 09:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740388142;
-	bh=lpGcciKaov3Y13LlsgFK4uZcLIWPLc8PIxEf/5bFm3o=;
+	bh=g3yjKUYPJng0/MFnsVcxoDKnYWevbS21H1bMLGz3lcY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S4XWhXqBtMDQRmkQZKsQMsdrXlQ+NW2QUaT7k+r0EqZ5kEZ/JkHuEq1jCCKFbN6SU
-	 xe1Xy+Sgdl61JrdQBliaqCk2KphAexH8x674UWQvpXIT7mwwz6t+D1P4o4RgQXnNCG
-	 XjIXYxcnjBTr2kiycyR0Irq0HXiyzqqECF1mT+vMHrpru5+D+9IEsoM1SozccMP3SV
-	 UvGl9g9ddwxCLbn4hkdOmIci91zxu1nsEBtj1wVSPuq6EUQY0M6FDrwH1QgUxr9nZ5
-	 o53othZ0DRVaq55V9LPOk7q0ONClfaG1IUSfoWcZ5x7XMmCvTXpaA8o1/cMVXkUvGe
-	 FcOOLQWoWbF1Q==
+	b=s/3bMDI1lwgqp6ZprTksJ5lTicEc+aV3eqlJ0aGAk6W1wvHcUpojedbSZ1wHv/sNr
+	 ZgJ7gcOqGA2fXxU0kOG8Bzy3E04ivqPv+5RkeMvGsbvkrNMPiko/ngSp6R3YRsAeSZ
+	 8hWNFo6jR7INl+hSh279x9KJeALqSmq1eQMONNdkJjBPvd0iIhDmBHz6CpYA/VThfZ
+	 dWKIQkKjRabYvw+avP5SQ19BEHwO30jIrpdrRRvlAgqnw59PCODNT20bJyhWPa1UFS
+	 9r5HUmh6JwP5Ec2G5ey02EyDq6rHRQYs1yIR928N+/F2zpHL4nX/aLz3T9czj+vb55
+	 tta8Wh8uhWkwg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tmUST-00000003p44-0GIa;
+	id 1tmUST-00000003p48-0NA9;
 	Mon, 24 Feb 2025 10:09:01 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,9 +50,9 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/39] scripts/kernel-doc.py: output warnings the same way as kerneldoc
-Date: Mon, 24 Feb 2025 10:08:16 +0100
-Message-ID: <1ee48bdad5030aebe5c2442d805ac6ca922a86d1.1740387599.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 11/39] scripts/kernel-doc.py: better handle empty sections
+Date: Mon, 24 Feb 2025 10:08:17 +0100
+Message-ID: <af68c1894255eb9cd3591fd1019577ea80652877.1740387599.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
 References: <cover.1740387599.git.mchehab+huawei@kernel.org>
@@ -65,62 +65,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Add a formatter to logging to produce outputs in a similar way
-to kernel-doc. This should help making it more compatible with
-existing scripts.
+While doing the conversion, we opted to skip empty sections
+(description, return), but this makes harder to see the differences
+between kernel-doc (Perl) and kernel-doc.py.
+
+Also, the logic doesn't always work properly. So, change the
+way this is done by adding an extra step to remove such
+sections, doing it only for Return and Description.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/kernel-doc.py | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ scripts/kernel-doc.py | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
 
 diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
-index 5cf5ed63f215..8bc0470d3720 100755
+index 8bc0470d3720..886256e87692 100755
 --- a/scripts/kernel-doc.py
 +++ b/scripts/kernel-doc.py
-@@ -2640,6 +2640,11 @@ neither here nor at the original Perl script.
- """
+@@ -242,6 +242,19 @@ class KernelDoc:
+         name = self.entry.section
+         contents = self.entry.contents
  
- 
-+class MsgFormatter(logging.Formatter):
-+    def format(self, record):
-+        record.levelname = record.levelname.capitalize()
-+        return logging.Formatter.format(self, record)
++        # TODO: we can prevent dumping empty sections here with:
++        #
++        #    if self.entry.contents.strip("\n"):
++        #       if start_new:
++        #           self.entry.section = self.section_default
++        #           self.entry.contents = ""
++        #
++        #        return
++        #
++        # But, as we want to be producing the same output of the
++        # venerable kernel-doc Perl tool, let's just output everything,
++        # at least for now
 +
- def main():
-     """Main program"""
+         if type_param.match(name):
+             name = type_param.group(1)
  
-@@ -2724,10 +2729,19 @@ def main():
-         args.wshort_desc = True
-         args.wcontents_before_sections = True
+@@ -298,6 +311,19 @@ class KernelDoc:
  
-+    logger = logging.getLogger()
-+
-     if not args.debug:
--        level = logging.INFO
-+        logger.setLevel(logging.INFO)
-     else:
--        level = logging.DEBUG
-+        logger.setLevel(logging.DEBUG)
-+
-+    formatter = MsgFormatter('%(levelname)s: %(message)s')
-+
-+    handler = logging.StreamHandler()
-+    handler.setFormatter(formatter)
-+
-+    logger.addHandler(handler)
+         args["type"] = dtype
  
-     if args.man:
-         out_style = ManFormat()
-@@ -2736,8 +2750,6 @@ def main():
-     else:
-         out_style = RestFormat()
++        # TODO: use colletions.OrderedDict
++
++        sections = args.get('sections', {})
++        sectionlist = args.get('sectionlist', [])
++
++        # Drop empty sections
++        # TODO: improve it to emit warnings
++        for section in [ "Description", "Return" ]:
++            if section in sectionlist:
++                if not sections[section].rstrip():
++                    del sections[section]
++                    sectionlist.remove(section)
++
+         self.entries.append((name, args))
  
--    logging.basicConfig(level=level, format="%(levelname)s: %(message)s")
--
-     kfiles = KernelFiles(files=args.files, verbose=args.verbose,
-                          out_style=out_style, werror=args.werror,
-                          wreturn=args.wreturn, wshort_desc=args.wshort_desc,
+         self.config.log.debug("Output: %s:%s = %s", dtype, name, pformat(args))
+@@ -401,7 +427,7 @@ class KernelDoc:
+         # to ignore "[blah" in a parameter string.
+ 
+         self.entry.parameterlist.append(param)
+-        org_arg = Re(r'\s\s+').sub(' ', org_arg, count=1)
++        org_arg = Re(r'\s\s+').sub(' ', org_arg)
+         self.entry.parametertypes[param] = org_arg
+ 
+     def save_struct_actual(self, actual):
+@@ -1309,8 +1335,7 @@ class KernelDoc:
+             return
+ 
+         if doc_end.search(line):
+-            if self.entry.contents.strip("\n"):
+-                self.dump_section()
++            self.dump_section()
+ 
+             # Look for doc_com + <text> + doc_end:
+             r = Re(r'\s*\*\s*[a-zA-Z_0-9:\.]+\*/')
 -- 
 2.48.1
 
