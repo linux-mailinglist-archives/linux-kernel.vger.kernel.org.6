@@ -1,332 +1,149 @@
-Return-Path: <linux-kernel+bounces-529657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06501A4295E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:21:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 589BDA42952
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93006188D96B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:20:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF4C1887D1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1AB264F8F;
-	Mon, 24 Feb 2025 17:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cC+BihlW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53872627E6;
-	Mon, 24 Feb 2025 17:19:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E529E263F5B;
+	Mon, 24 Feb 2025 17:18:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F7E1537C8;
+	Mon, 24 Feb 2025 17:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417564; cv=none; b=RzX7u9+ofEwvQhBIQPeOD7o1mVwFMe9OLSOGinQbUAHDX+bRT9K+7BpDBuqQaPMW/SsL4Y7GLiE8uWrPp5PNqryc42HiQ2wm5/EJF9l1dC2pDwrI+G+95RPZQFDjazDTS4IbnBWLRuuEis+iL/YJEakcB4uqgNF8bJ0G3zCs1i0=
+	t=1740417489; cv=none; b=niJs3INEYJe8k6Z7mk6WW9LEUPlKwIIlthGRj3ENq0eT7EeuJu6M/ItnMm5zpJ3ZrnEC97cu6D69o3R1vJ7AcCn4guwC4HfOOT7kj45HmsLYJGKsx4xfCf8Jef6G37XybBGfVLi/6jvyukLXyuDSf3MDzXUGfCvMe5aKy9yfWkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417564; c=relaxed/simple;
-	bh=slnkLAfN12/Np+ptADfWMEbKgBaAPa6Sx390iWCcpdc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R7YomL74Kx3zSpY90vcdOLNUoifIgkqotRtuU2oZWSoPJB29Ro22P7QCTpBz4vBji2X9qtpZbEloRqm0YD48sUoMxx1ubvS/OZkSxcKYiz0R4TD1zhDPrUo0rLMPnNUmTSdRTHMr5d9OVZDUS/1MnEkoinvUngNPRGYy9uB39eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cC+BihlW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9hKwO011982;
-	Mon, 24 Feb 2025 17:18:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vxStInqxSZjfmhVt7qTltEQSTHXaQIqUY2en8tjE1Kw=; b=cC+BihlWSKMs9JSt
-	dOmM/ogUNbC8dL3gkNaIIE6VRDKIWvOJxnA0PwRtMI6wnTSAgkwU8THANt3Ofrsc
-	3gw5gN30nghP2pex+sXgNYx5ABv4KRoXEdDRAQJU4FHWKy/lL1gty6YuB6Jg6d84
-	IyhhazIgixWQUJrlPrqS61nsA6dGyg8njbYSoqtjnkn2U+XEAg6qGhIazopg5o7C
-	5JBOZv6IQ8THyiKQ755JNhJLE7w5fOFhdYwXu3OzHOGFs6zR8OpP4TJzV4or5WOv
-	66f0cfgmgYxNT/7jlcTTWNWeWmAfWfqbXGF7sBwVPaRDzica++jkpkf3RlWZ64LJ
-	C4JuDA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6y6ny5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 17:18:46 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51OHIjSm006405
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 17:18:45 GMT
-Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Feb 2025 09:18:41 -0800
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_mohamull@quicinc.com>, <quic_janathot@quicinc.com>,
-        <quic_hbandi@quicinc.com>, <quic_anubhavg@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-Subject: [PATCH v11 1/1] arm64: dts: qcom: qcs6490-rb3gen2: add and enable BT node
-Date: Mon, 24 Feb 2025 22:47:37 +0530
-Message-ID: <20250224171737.2522834-2-quic_janathot@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250224171737.2522834-1-quic_janathot@quicinc.com>
-References: <20250224171737.2522834-1-quic_janathot@quicinc.com>
+	s=arc-20240116; t=1740417489; c=relaxed/simple;
+	bh=Udl67jI1Qm6fATwqGT1fr5PHHdw9h5FVAHOl8ACPIDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UeRrfWNAqexR63utZhiSeTMriJX7h5sPgoNuewQd+5KiyycsnPmrluoJOg8SaY51R0c6zhZ1edU0bAVoL0SIs2I0isu1Lcba4EvL9H5g9akrPDMeyA7tt9ZQMg/4f70WJg+PcT/5f6A5Rv0peQ/efte/CUbKR+KLq1ScvH/fuHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14AA3152B;
+	Mon, 24 Feb 2025 09:18:21 -0800 (PST)
+Received: from e133380.arm.com (e133380.arm.com [10.1.197.51])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DBDBF3F5A1;
+	Mon, 24 Feb 2025 09:17:59 -0800 (PST)
+Date: Mon, 24 Feb 2025 17:17:54 +0000
+From: Dave Martin <Dave.Martin@arm.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: "Moger, Babu" <babu.moger@amd.com>, corbet@lwn.net, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	tony.luck@intel.com, peternewman@google.com, x86@kernel.org,
+	hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org,
+	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com,
+	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com,
+	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com,
+	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com,
+	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com,
+	mario.limonciello@amd.com, james.morse@arm.com,
+	tan.shaopeng@fujitsu.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, maciej.wieczor-retman@intel.com,
+	eranian@google.com
+Subject: Re: [PATCH v11 22/23] x86/resctrl: Introduce interface to list
+ assignment states of all the groups
+Message-ID: <Z7ydx6vfuw8OdJzL@e133380.arm.com>
+References: <cover.1737577229.git.babu.moger@amd.com>
+ <52c66bf98480c0ab6bb0f0762497e328fcbdeaac.1737577229.git.babu.moger@amd.com>
+ <Z7XiQ+u3Pc+uvJCK@e133380.arm.com>
+ <45a0a88a-b31e-447e-9d62-bc0cdedf06f7@amd.com>
+ <Z7dN2KpsQjVUb3KR@e133380.arm.com>
+ <7802f9e9-9a63-463d-a51e-e9ad0e60f77f@amd.com>
+ <Z7ijCphcSM58AqA6@e133380.arm.com>
+ <09f2f512-0428-4649-b8ef-33e5a03d5dcb@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: PNh3c0d-U-7q8sy4k-NTK28PSItD9wJS
-X-Proofpoint-GUID: PNh3c0d-U-7q8sy4k-NTK28PSItD9wJS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_08,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09f2f512-0428-4649-b8ef-33e5a03d5dcb@intel.com>
 
-Add the PMU node for WCN6750 present on the qcs6490-rb3gen
-board and assign its power outputs to the Bluetooth module.
+On Fri, Feb 21, 2025 at 12:10:44PM -0800, Reinette Chatre wrote:
+> Hi Dave,
+> 
+> On 2/21/25 8:00 AM, Dave Martin wrote:
+> > On Thu, Feb 20, 2025 at 03:29:12PM -0600, Moger, Babu wrote:
+> >> Hi Dave,
+> >>
+> >> On 2/20/25 09:44, Dave Martin wrote:
 
-In WCN6750 module sw_ctrl and wifi-enable pins are handled
-in the wifi controller firmware. Therefore, it is not required
-to have those pins' entries in the PMU node.
+[...]
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
- 1 file changed, 170 insertions(+), 1 deletion(-)
+> >>> But mbm_assign_control data is dynamically generated and potentially
+> >>> much bigger than a typical sysfs file.
+> >>
+> >> I have no idea how to handle this case. We may have to live with this
+> >> problem. Let us know if there are any ideas.
+> > 
+> > I think the current implication is that this will work for now provided
+> > that the generated text fits in a page.
+> > 
+> > 
+> > Reinette, what's your view on accepting this limitation in the interest
+> > of stabilising this series, and tidying up this corner case later?
+> > 
+> > As for writes to this file, we're unlikely to hit the limit unless
+> > there are a lot of RMIDs available and many groups with excessively
+> > long names.
+> 
+> I am more concerned about reads to this file. If only 4K writes are
+> supported then user space can reconfigure the system in page sized
+> portions. It may not be efficient if the user wants to reconfigure the
+> entire system but it will work. The problem with reads is that if
+> larger than 4K reads are required but not supported then it will be
+> impossible for user space to learn state of the system.
+> 
+> We may already be at that limit. Peter described [1] how AMD systems
+> already have 32 L3 monitoring domains and 256 RMIDs. With conservative
+> resource group names of 10 characters I see one line per monitoring group
+> that could look like below and thus easily be above 200 characters:
+> 
+> resgroupAA/mongroupAA/0=tl;1=tl;2=tl;3=tl;4=tl;5=tl;6=tl;7=tl;8=tl;9=tl;10=tl;11=tl;12=tl;13=tl;14=tl;15=tl;16=tl;17=tl;18=tl;19=tl;20=tl;21=tl;22=tl;23=tl;24=tl;25=tl;26=tl;27=tl;28=tl;29=tl;30=tl;31=tl;32=tl
+> 
+> Multiplying that with the existing possible 256 monitor groups the limit
+> is exceeded today.
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-index 7a36c90ad4ec..de03770e0b90 100644
---- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: BSD-3-Clause
- /*
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -34,6 +34,7 @@ / {
- 
- 	aliases {
- 		serial0 = &uart5;
-+		serial1 = &uart7;
- 	};
- 
- 	chosen {
-@@ -218,6 +219,63 @@ vph_pwr: vph-pwr-regulator {
- 		regulator-min-microvolt = <3700000>;
- 		regulator-max-microvolt = <3700000>;
- 	};
-+
-+	wcn6750-pmu {
-+		compatible = "qcom,wcn6750-pmu";
-+		pinctrl-0 = <&bt_en>;
-+		pinctrl-names = "default";
-+		vddaon-supply = <&vreg_s7b_0p972>;
-+		vddasd-supply = <&vreg_l11c_2p8>;
-+		vddpmu-supply = <&vreg_s7b_0p972>;
-+		vddrfa0p8-supply = <&vreg_s7b_0p972>;
-+		vddrfa1p2-supply = <&vreg_s8b_1p272>;
-+		vddrfa1p7-supply = <&vreg_s1b_1p872>;
-+		vddrfa2p2-supply = <&vreg_s1c_2p19>;
-+
-+		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -799,6 +857,39 @@ &pon_resin {
- 	status = "okay";
- };
- 
-+&qup_uart7_cts {
-+	/*
-+	 * Configure a bias-bus-hold on CTS to lower power
-+	 * usage when Bluetooth is turned off. Bus hold will
-+	 * maintain a low power state regardless of whether
-+	 * the Bluetooth module drives the pin in either
-+	 * direction or leaves the pin fully unpowered.
-+	 */
-+	bias-bus-hold;
-+};
-+
-+&qup_uart7_rts {
-+	/* We'll drive RTS, so no pull */
-+	drive-strength = <2>;
-+	bias-disable;
-+};
-+
-+&qup_uart7_rx {
-+	/*
-+	 * Configure a pull-up on RX. This is needed to avoid
-+	 * garbage data when the TX pin of the Bluetooth module is
-+	 * in tri-state (module powered off or not driving the
-+	 * signal yet).
-+	 */
-+	bias-pull-up;
-+};
-+
-+&qup_uart7_tx {
-+	/* We'll drive TX, so no pull */
-+	drive-strength = <2>;
-+	bias-disable;
-+};
-+
- &qupv3_id_0 {
- 	status = "okay";
- };
-@@ -842,12 +933,90 @@ &sdhc_2 {
- &tlmm {
- 	gpio-reserved-ranges = <32 2>, /* ADSP */
- 			       <48 4>; /* NFC */
-+
-+	bt_en: bt-en-state {
-+		pins = "gpio85";
-+		function = "gpio";
-+		output-low;
-+		bias-disable;
-+	};
-+
-+	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
-+		pins = "gpio28";
-+		function = "gpio";
-+		/*
-+		 * Configure a bias-bus-hold on CTS to lower power
-+		 * usage when Bluetooth is turned off. Bus hold will
-+		 * maintain a low power state regardless of whether
-+		 * the Bluetooth module drives the pin in either
-+		 * direction or leaves the pin fully unpowered.
-+		 */
-+		bias-bus-hold;
-+	};
-+
-+	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
-+		pins = "gpio29";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-down on RTS. As RTS is active low
-+		 * signal, pull it low to indicate the BT SoC that it
-+		 * can wakeup the system anytime from suspend state by
-+		 * pulling RX low (by sending wakeup bytes).
-+		 */
-+		bias-pull-down;
-+	};
-+
-+	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
-+		pins = "gpio31";
-+		function = "gpio";
-+		/*
-+		 * Configure a pull-up on RX. This is needed to avoid
-+		 * garbage data when the TX pin of the Bluetooth module
-+		 * is floating which may cause spurious wakeups.
-+		 */
-+		bias-pull-up;
-+	};
-+
-+	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
-+		pins = "gpio30";
-+		function = "gpio";
-+		/*
-+		 * Configure pull-up on TX when it isn't actively driven
-+		 * to prevent BT SoC from receiving garbage during sleep.
-+		 */
-+		bias-pull-up;
-+	};
- };
- 
- &uart5 {
- 	status = "okay";
- };
- 
-+&uart7 {
-+	/delete-property/ interrupts;
-+	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-+			      <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-+	pinctrl-1 = <&qup_uart7_sleep_cts>,
-+		    <&qup_uart7_sleep_rts>,
-+		    <&qup_uart7_sleep_tx>,
-+		    <&qup_uart7_sleep_rx>;
-+	pinctrl-names = "default",
-+			"sleep";
-+
-+	status = "okay";
-+
-+	bluetooth: bluetooth {
-+		compatible = "qcom,wcn6750-bt";
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		max-speed = <3200000>;
-+	};
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+That's useful to know.  I guess we probably shouldn't just kick this
+issue down the road, then -- at least on the read side (as you say).
 
+> I understand that all domains having "tl" flags are not possible today, but
+> even if that is changed to "_" the resulting display still looks to
+> easily exceed a page when many RMIDs are in use.
+> 
+> > 
+> > This looks perfectly fixable, but it might be better to settle the
+> > design of this series first before we worry too much about it.
+> 
+> I think it fair to delay support of writing more than a page of
+> data but it looks to me like we need a solution to support displaying
+> more than a page of data to user space.
+> 
+> Reinette
+> 
+> [1] https://lore.kernel.org/lkml/20241106154306.2721688-2-peternewman@google.com/
+
+Ack; if I can't find an off-the-shelf solution for this, I'll try to
+hack something as minimal as possible to provide the required
+behaviour, but I won't try to make it optimal or pretty for now.
+
+It has just occurred to be that ftrace has large, multi-line text files
+in sysfs, so I'll try to find out how they handle that there.  Maybe
+there is some infrastructure we can re-use.
+
+Either way, hopefully that will move the discussion forward (unless
+someone else comes up with a better idea first!)
+
+Cheers
+---Dave
 
