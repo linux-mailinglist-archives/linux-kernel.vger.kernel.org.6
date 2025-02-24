@@ -1,180 +1,109 @@
-Return-Path: <linux-kernel+bounces-529757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2B6A42A95
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E478A42A96
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DA41898380
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:04:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 941D83A6BED
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C39A2661A7;
-	Mon, 24 Feb 2025 18:03:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B7526618E;
-	Mon, 24 Feb 2025 18:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDFF265CB9;
+	Mon, 24 Feb 2025 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Or1tNyQD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E210265CA1
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420189; cv=none; b=HHS3qDYB8Wt7RaNNEe2dK5hitLlJvIr/T5ulcOAgEOuIq4C8MELz7llkYntZX1y1Id+DM4GOx591px5rGn9RpbZTXCjHGxYKrvafmmn3gu/60jvdxVIbspEHOVZvzOjIkzHjQnBkxo9CRNjHWlPsA6I8MNHAOr3xPLu9AWZvriQ=
+	t=1740420207; cv=none; b=MOkYz7B7I6JqlogOUaKZXBOkRXttl3NbTf51b6ur1tsa0Q5ACiFCm7U399RKWM1q7Shgx61czevKN+lo4pATnG22QWqmoyyiFH7QcztdyNCnLOsY07+4LS6cyxXGn081m3vkkLBkeapgarU0Olcn9DzqlJ3RRuSleHTNjIEYDsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420189; c=relaxed/simple;
-	bh=rUE/hQROradH9urjwJ+EoCG+n0ZEi4vngN2fnKmbyOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvxtVtmIqcda6U3Jw+eAu00UlzjFolPB/81wpKxUFNe9uEqdAWqQYR6oNPqeGWPqHvbrN+DjJkctcAK4NMH0CFY8o+CVCioHOb4HGiPJsKQQJ6qcxzKF1/vnyt7EbYL9dDIn+XJcAeHOb9/cPe/AXIFTQIRlwvooXtlLV9kBk+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A498152B;
-	Mon, 24 Feb 2025 10:03:23 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 654EE3F5A1;
-	Mon, 24 Feb 2025 10:03:06 -0800 (PST)
-Date: Mon, 24 Feb 2025 18:03:01 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-Message-ID: <20250224180301.GI8144@e132581.arm.com>
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
- <20250224122507.GE8144@e132581.arm.com>
- <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
- <20250224140317.GF8144@e132581.arm.com>
- <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+	s=arc-20240116; t=1740420207; c=relaxed/simple;
+	bh=NI1xjoVbtgHgczdhbNULpZRkuzmAV2dauxiN8EyjFNU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OJqSK8U8y57J28Ny9nWHEeQVQBN1iBitvtXVf07D5gM7OaCK80iyONo/k/3ssmn4krjip81jPriBZEtp/4fjM4Qd7z/W0yfzYKN3IwAgmbZu0T9/kCMGWjGsKwoaAKc59cuivXVSVcRCcDJjjMsRxeVrv7hICGXyuGrJ4sI1f7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Or1tNyQD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740420204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qsdz9u3pB5RtoviLF7GIZI2GctjAOYF/Iu7Vpi9c6vo=;
+	b=Or1tNyQDZbruUKe/d2QHWKUrWjTPp1vDp7mPibgzoqqnKdr15TRck9cFO7iktoz/kNBlST
+	dVlBCL6YDH+zA+jMOFCf6Wg/2wNcrO22BFc5VaUdj6FDDU0bZAepMeoP8lWy3I2ibCh3sf
+	Rwp1I/XZwSLCrY4zZkHa1Jv7kksU0uQ=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-ywjyD_HXO8KT7Z8pH3FeTg-1; Mon,
+ 24 Feb 2025 13:03:22 -0500
+X-MC-Unique: ywjyD_HXO8KT7Z8pH3FeTg-1
+X-Mimecast-MFC-AGG-ID: ywjyD_HXO8KT7Z8pH3FeTg_1740420201
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B2AED18EB2D3;
+	Mon, 24 Feb 2025 18:03:20 +0000 (UTC)
+Received: from cantor.redhat.com (unknown [10.2.16.143])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F0A7A180035E;
+	Mon, 24 Feb 2025 18:03:18 +0000 (UTC)
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: iommu@lists.linux.dev
+Cc: Joerg Roedel <joro@8bytes.org>,
+	Lu Baolu <baolu.lu@linux.intel.com>,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] iommu/vt-d: Remove device comparison in context_setup_pass_through_cb
+Date: Mon, 24 Feb 2025 11:03:16 -0700
+Message-ID: <20250224180316.140123-1-jsnitsel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Feb 24, 2025 at 04:05:43PM +0000, Mark Rutland wrote:
+Remove the device comparison check in context_setup_pass_through_cb.
+pci_for_each_dma_alias already makes a decision on whether the
+callback function should be called for a device. With the check
+in place it will fail to create context entries for aliases as
+it walks up to the root bus.
 
-[...]
+Fixes: 2031c469f816 ("iommu/vt-d: Add support for static identity domain")
+Closes: https://lore.kernel.org/linux-iommu/82499eb6-00b7-4f83-879a-e97b4144f576@linux.intel.com/
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+---
+ drivers/iommu/intel/iommu.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-> > > > Just a minor concern.  I don't see any handling for task migration.
-> > > > E.g., for a task is migrated from one CPU to another CPU, I expect we
-> > > > need to save and restore branch records based on BRBE injection.  So
-> > > > far, the driver simply invalidates all records.
-> > > >
-> > > > I think this topic is very likely discussed before.  If this is the
-> > > > case, please ignore my comment.  Except this, the code looks good
-> > > > to me.
-> > > 
-> > > Not really discussed on the list, but that was present in v18 (though
-> > > not functional because .sched_task() hook wasn't actually enabled) and
-> > > Mark removed it. His work is here[1].The only comment was:
-> > > 
-> > > Note: saving/restoring at context-switch doesn't interact well with
-> > > event rotation (e.g. if filters change)
-> > 
-> > In the brbe_enable() function, it "Merge the permitted branch filters
-> > of all events".  Based on current implementation, all events share the
-> > same branch filter.
-> 
-> Critically, the brbe_enable() function merges the filters of all
-> *active* events which have been installed into hardware. It does not
-> track all events which can be rotated, and the resulting filter is not
-> the same -- it can change as a result of rotation.
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index cc46098f875b..4d8d4593c9c8 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -4378,9 +4378,6 @@ static int context_setup_pass_through_cb(struct pci_dev *pdev, u16 alias, void *
+ {
+ 	struct device *dev = data;
+ 
+-	if (dev != &pdev->dev)
+-		return 0;
+-
+ 	return context_setup_pass_through(dev, PCI_BUS_NUM(alias), alias & 0xff);
+ }
+ 
+-- 
+2.44.0
 
-In a perf session has multiple events, and events have different branch
-filters, seems to me, a simple way is to return error for this case.
-
-I would argue BRBE is an IP for recording branches per CPU wise, it does
-not support recording for event wise.  If we can unify branch filter
-within a perf session, would this be much easier for handling?
-
-> > When event rotation happens, if without context switch, in theory we
-> > should can directly use the branch record (no invalidation, no injection)
-> > for all events.
-> 
-> No; that only works in *some* cases, and will produce incorrect results
-> in others.
-> 
-> For example, consider filtering. Imagine a PMU with a single counter,
-> and two events, where event-A filters for calls-and-returns and event-B
-> filters for calls-only. When switching from event-A to event-B, it's
-> theoretically possible to keep the existing records around, knowing that
-> the returns can be filtered out later. When switching from event-B to
-> event-A we cannot keep the existing records, since there are gaps
-> whenever a return should have been recorded.
-
-Seems to me, the problem is not caused by event rotation.  We need to
-calculate a correct filter in the first place - the BRBE driver should
-calculate a superset for all filters of events for a session.  Then,
-generate branch record based event's specific filter.
-
-> There are a number of cases of that shape given the set of configurable
-> filters. In theory it's possible to retain those in some cases, but I
-> don't think that the complexity is justified.
-> 
-> Similarly, whenever kernel branches are recorded it's necessary to drop
-> the stale branches whenever branch recording is paused, as there's
-> necessarily a blackout period and hence a gap in the records.
-
-If we save BRBE record when a process is switched out and then restore
-the record when a process is switched in, should we can keep a decent
-branch record for performance profiling?
-
-I understand it might be many things happen in the middle of a task
-switching or migration, but it is fine for not recording branches during
-the blackout period.  The missed branch records are not very helpful for
-forming a flow for a profiled program itself, especially, if we
-consider we will optimize userspace program in many cases.
-
-> Do you think that you have a case where losing branches across rotation
-> *really* matters?
-
-I agreed that event rotation case might be rare and complex.  Please see
-a comment below.
-
-> > For a context-switch case, we need to save and re-inject branch record.
-> > BRBE record sticks to a process context, no matter what events have been
-> > enabled.
-> 
-> I had originally wanted to keep per-event records around, but it doesn't
-> work in all cases. One reason events get discarded at context-switch
-> time is that CPU-bound events can sample branches, and would
-> mis-attribute stale userspace branches to the wrong context when
-> switching tasks. There are explicit comments about this in
-> amd_pmu_brs_sched_task() and intel_pmu_lbr_sched_task().
-> 
-> Given we discard records when reprogramming events, we *could* try to
-> preserve events in some cases, but I suspect that as with the rotation
-> case this'll be a lot of complexity for little gain. Note that as we
-> discard events when enabling the PMU, we'd throw some task-bound records
-> away anyway, and practically the gain would be limited to cpu-bound
-> records.
-> 
-> Do you have a reason why you think we *must* keep events around?
-
-Here I am really concerned are cases when a process is preempted or
-migrated.  The driver doesn't save and restore branch records for these
-cases, it just invalidates all records when a task is scheduled in.
-
-As a result, if an event overflow is close to context switch, it is
-likely to capture incomplete branch records.  For a userspace-only
-tracing, it is risk to capture empty branch record after preemption
-and migrations.
-
-Thanks,
-Leo
 
