@@ -1,431 +1,309 @@
-Return-Path: <linux-kernel+bounces-528689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C55F3A41AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:22:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D71CA41AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:22:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1926C164600
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:21:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2069A16353E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD3224E4A8;
-	Mon, 24 Feb 2025 10:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="HpMf6Ewh"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2090.outbound.protection.outlook.com [40.107.20.90])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326FE207A20;
-	Mon, 24 Feb 2025 10:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.90
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392508; cv=fail; b=BgLfJUWdYPmXiR+ikNEgjXF9hbuAkFpw3JrN+fa4D4cuK1MdvD5SnA88LLHHfQws0SrEP1xPueqtAcKjEOXOYUl4e3pnfWG2/hCOsVUxbJNp44m+Mxk8QYdqAqpNhpLIOgi7oGXbefQ0jEWbHUvG4/giG2geyMagC5mCIxRoaWY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392508; c=relaxed/simple;
-	bh=rU2sZV/8zR+8UnM+l0vQ1j6hvCDFuYHJLhooRpNsHHo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hdHPlML+Nf0+IdzUrjudcNlPQaZd6FJw1VNqcgTtKiWTEAI1JU9WpPxyCtL8sP5b13dtzoJGyKKrkM1Z+yAYbWbfsAcIV3vYm8oiJSwSaiUdZGe1qTHj3U2607xZPdQnzpXnHJCsDs6yWg2PZfj0UrU39oX9Nl/D6010SP7R9jA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=HpMf6Ewh; arc=fail smtp.client-ip=40.107.20.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ndzqCKm98JwXsafTz96b/bAkrURh8p8ThKVSUel/+Y8zg9/3dTedvlUekIpvBEdsmcW8fo4h2j4YefI5uqgrIrYxjU9Nq9cbm1xzT4NAIbCvf+Vld1G/Oke+gUPZrvTQUsYdlW78Qp34mrdv2/MywfSdwtW0oHJDmGT63UrMrsXuguC3B3yraAIdnoJRHPapjNbvvwcuWAaYc/OTATntDr4+QnbMlzpaPUdgfaY0nyFP4ca0EobBCr6hIN5vuofSDBqSeToaWCuE701MhZP6P1eoky0UzmAP9QZaLedApDt9pzW+w/b9pVxcC2+r8JGqsQu/9gn4l8/pRza2inUVLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=87Tx/ugPTlFWCzWBSrRXM/HmzoUeuXExYUVuxeSQ6+Y=;
- b=yMWtgtP8hxlXT9tVX1KZ6PO+BY8Rwd0fdMURaAZ0Ae8yEpOwVi+ZKqtOzktr0sTmFIbrZenWas4/pZPbrK+frpH6dJbrfld6NeCuHgleQw9JKm//rkst1+7aPPAepdVKfxah3jS8pQGKUgE7GfcP48mQiEiCGpHqotWXZG2pY1eEhoyr7Fh+s3sZnhf6r/SAMxnzEl2dTnLnveoz9KWXI/wmZKA40f57TmTFTR4nJBuS6ac11GoBcCUgD2+wh40bwZqtrJSgcABqWs6b4Fkk3VvVzt+5Yp9ybzZt5qFPFqc5cqseJDnnV/e4ff6n/sg7PiEGuF0vGUObfzb68oyl6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wolfvision.net; dmarc=pass action=none
- header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=87Tx/ugPTlFWCzWBSrRXM/HmzoUeuXExYUVuxeSQ6+Y=;
- b=HpMf6EwhKf1RaDObj0YqNQz1cu0KuDK7PF3qoXfKJewRhkgUZrs258/blWALC7m6fCK0zE3rl7pvuO0eJBRBAWctd0z3Ijs1qrLASMHZaaRwSiJuvpa5wlLzHqgiq/omHkWIxdbaNCkQG8KJ6RTXIb6PZ0seu3YiGiHq/v/Sq3w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wolfvision.net;
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com (2603:10a6:10:416::5)
- by GV1PR08MB8741.eurprd08.prod.outlook.com (2603:10a6:150:85::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.17; Mon, 24 Feb
- 2025 10:21:41 +0000
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d]) by DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 10:21:41 +0000
-Message-ID: <0b19c544-f773-435e-9829-aaaa1c6daf7a@wolfvision.net>
-Date: Mon, 24 Feb 2025 11:21:41 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 03/11] media: dt-bindings: media: add bindings for
- rockchip rk3568 vicap
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mehdi Djait <mehdi.djait@linux.intel.com>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net>
- <20250219-v6-8-topic-rk3568-vicap-v4-3-e906600ae3b0@wolfvision.net>
- <Z7iJV1rOaqMmcjY7@kekkonen.localdomain>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@wolfvision.net>
-Organization: WolfVision GmbH
-In-Reply-To: <Z7iJV1rOaqMmcjY7@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR09CA0175.eurprd09.prod.outlook.com
- (2603:10a6:800:120::29) To DU0PR08MB9155.eurprd08.prod.outlook.com
- (2603:10a6:10:416::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6448024C692;
+	Mon, 24 Feb 2025 10:22:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4AB24BBF8;
+	Mon, 24 Feb 2025 10:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740392556; cv=none; b=VxDmUPXgO4iHjfmwQNuJmVpdPxtLuHiXv+WF7ljXUQzorXGOoqSaUqOlcz2VbSgMfg+8TIwYpH4NBDJjBm2IUSwau5WlUuvIrBQncRsJwtfnY2jPWClN6Ac37BFsxXlPApdWtBIe9mN6k3FdLQnB0BvmMp2/dLPhLIYj6b5XOwE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740392556; c=relaxed/simple;
+	bh=b1nkShEdJHWgRZo3HKZY/hm1IBId73Fq9MJCqFbRPJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgL/D+72MyM64KKPuyT63R33g/Xou12MQ6XNxS2mSDvo44Zh2Tlcuzo6morgqlaZ7TQuvYtw+1EP8gCHhYURqVXRWUxyOfSGNLVO2VWcRqyTDJZ3AGjLZwAOs59e7v73JojzOWqex2n6PMhEfk/rljFTQXQXFPPPoDWnAWSCkPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D82A1E7D;
+	Mon, 24 Feb 2025 02:22:50 -0800 (PST)
+Received: from [10.57.36.38] (unknown [10.57.36.38])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 111C63F673;
+	Mon, 24 Feb 2025 02:22:30 -0800 (PST)
+Message-ID: <c274175a-ed6d-4ce9-be86-d48f56cafe9d@arm.com>
+Date: Mon, 24 Feb 2025 10:22:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9155:EE_|GV1PR08MB8741:EE_
-X-MS-Office365-Filtering-Correlation-Id: a3531915-076c-4e21-138f-08dd54bd07d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MXpKNUtFdG1wcFhsWTF6RlF5ckVoYjRmaHo0VEp3ZWx0WFYzZ2QrZnBhQXVT?=
- =?utf-8?B?K3dwSllBMTl4Z2xBR3E1R2lyZmI1bi90RXh3MGRqUlpQVzhJdnlIWmhiRFZ2?=
- =?utf-8?B?Q2Y3MlJnMnNBWVpTVmtleDlDZWNlU1I4V0RFRWlKRzlKZjczZkE0K1RDbHlm?=
- =?utf-8?B?ZXBSNFFqcTlXdTEzQ3NObEJMa3hUZmZPUUk3cWwxa0FpbkN0dklRSVZhUkZl?=
- =?utf-8?B?WTM2eVRoc3lhY3B1dExpNnJGSVlxcS92V2paSUtYVFRORUQzd0V6RFFtN3Jy?=
- =?utf-8?B?TXVOM1RtWWROa0NKNkFjbWV1SU9Kc0V6ZWFyekdtWFdub0s1cWE1K2pNYXRl?=
- =?utf-8?B?dXptTWk3bkRsYjhNUkEvZ0NVU0Zzbit4UmozMGZhU0ZEcWtjY3VpRjBpSGVY?=
- =?utf-8?B?VkN0TTUxSEtOUDNBeURSVXZNeUNkVHRhb3JwUlpVdzZoVTRzMEM4bkJWeHpG?=
- =?utf-8?B?SlRTcmNqbTlPN1JFdlZwWVdneGttRkpGYmp6Mnc5ZUFSV1lhZ0gvT3cyZnBo?=
- =?utf-8?B?YjZrV1dyZjNPQ0QyL3lZSk5HZS9ZV0FLSWdJT0d6MFFBN3FhaHh1R3BmOHE2?=
- =?utf-8?B?RDBsRnNoU00xYS9QaFM0WWdHTnBMTittamlpSnFVTG1aUlN6azluY2U3V0t2?=
- =?utf-8?B?cjUvbzF6NWZwV2tqT1FiVVRVckZFTUEweVd0bHVUK0lCcytOSDkrMVdJY253?=
- =?utf-8?B?OU1hcTJ3WEtFMmp0Nmw1OUhwQmZSc2FJaFV3NFRPMXgxdTNhK1pGeG5DS0M2?=
- =?utf-8?B?a0V3Q0IrZitIWHJPNHROQVh3R2R4SmNkUG1IUm4zMnVjVlNiSWI5NXJvekl3?=
- =?utf-8?B?c2xlMW9PeEtWMUtPdW5qZW5MQlo5OXpNYk4xWXBZbkhINWpaT0hoYTlUdVBI?=
- =?utf-8?B?MzIxNURPMEJEMWhjMWxUUmkzd3FPVStTOGpmNXl3Y0krOHZmSjZieldPUzB6?=
- =?utf-8?B?RXp5b0tpUFR3dUJ3a3pyaEpUdHRma2pCVXpXc3VYNERibTZaOWtSZlhpYmlx?=
- =?utf-8?B?K0JUWmhtaVk5YmYvelV1T05OOFp2aW5FUCtUY0ZVdHRXTzQ5dEsycWtyWUl0?=
- =?utf-8?B?VFNSaWZtdjM1eE51cFJ3ZmlvNE1RMnZmbDBNbEd2YmhEODBKNUFwbE5XVXcv?=
- =?utf-8?B?OG1WOThUbEc2WE56UzdyMUk3a3VmY1FVeThWc3E0eHVKQU8vdklZYmIxZGZG?=
- =?utf-8?B?ZWNrY1c2TCtOaDVrWHJUbkwzcnlWajdvSTNmZ05zL3NHUU5QZUl4NWNlRytt?=
- =?utf-8?B?cUdRNWNmbmFZV2VGb0VVaWdXLzF5Z2s5d1NTVnFkT0ZsMW9sWkFzWXozd2Jj?=
- =?utf-8?B?UVVGVndIY01iZW1NZGNzd3cvTS81TU5wUWFobU95UWNTZjQ5NkZNN1V1ZHN4?=
- =?utf-8?B?RXBnSGljeXdhSGl4QTA1Y1VIdldLZXhEMlVWVHVEQUNaaGJHU2s5NDdMQTAx?=
- =?utf-8?B?SjZ6TXZZemoyWTR3ajQyaUdGMjdkRkdlYXFUMVJXNGdpNm5RbmZpVTliK04r?=
- =?utf-8?B?T2RSRndTV1QveGZGaUVWVFBCZWNmaWw3R2JMeXFuNlZndTdIeGhQZHl5ZGRi?=
- =?utf-8?B?U1dJVFc2QUdLa1pQQS9BR3lWcEROQmJKTjhOUXpzamVadFlNOFB4bVV4WVE2?=
- =?utf-8?B?TWg1NGx2c0c4cVUrRDVyQlFmN24rTWNoRnNNR0l6SHQ1VmRQSDY4cjFta1da?=
- =?utf-8?B?YzJUNlZKY0oxR295MmhxM1llMUhOQm5Id3JoVXhnU0RqSkY5dmNYNWVEdDV0?=
- =?utf-8?B?WUlhMXlNT2lrcGFoVkVHVm5qK0Z1MTF3ZG11SzNsek9mZWFlalVzcjRCVzRo?=
- =?utf-8?B?Z05mQjV2a3l2QmtxYVJydz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9155.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXFiMkg4dUk5L3BPYW1MQWtOR2dvQ0I4R3N6S01JbEJVckpsRGhBU2pGNDUv?=
- =?utf-8?B?WXRPalg1TGoxUGZuMTBGQmFrQUcyMmdoK2JVQmFHaDVJVUkxZlJRRzBtWXpI?=
- =?utf-8?B?LzNWbEJRQ1FOU3FzaSs0eUNFQnRkZWo5MC9OR2dPMm9aUEhzTmhVYXBzRktk?=
- =?utf-8?B?cUg0SnlPUGRJZzkwV2tYeDh3cVhBSkF1bGFmSDJ0SDNKc1Z1a3ZUQ3VrdGJi?=
- =?utf-8?B?c09QeDlVTTgxMnkvS1FROXJJeEozeTRoaXRyZ2hlQTdzV2VxbWJiNmVXS0lh?=
- =?utf-8?B?enlNVlEyanhTQjd4bGpBbkZsTFF1Rk8xVXYyQjhsWlozTzdyNFFVZE9sN0Jo?=
- =?utf-8?B?YVhCdDB5cGN5aVcwZnd1UnF5Nm5Pd0lRbFdIYUIxL2hWOW5UeHR6QTMvSW1t?=
- =?utf-8?B?NWZoYURqcWkzcGVvSDFVL09nc09Xc2FVZmdGT0RQdnptUy9lUE8rNXJKc0Vu?=
- =?utf-8?B?ZTlab1NlcW5LdVNzUVhWbkxGbWZ6TXBPWk1ROENjTzdwZVdQek9NbHBpdFkv?=
- =?utf-8?B?T2k1czRnSWVIZGZkN09oYkU5ZjlqUUlvU2s1VXgzMk5mcFF5VHFlREgxS0ZU?=
- =?utf-8?B?cHh1UUx1OUx3VSswY0NwaXVmOUtaaHNGcnZydEhFRzFCaDFtamxxaWZrTkRp?=
- =?utf-8?B?UEVORTdLSzhqK1A4VDBFZldiR2szczg3VHJFeWY0SzhaL0duN3BHTEp1K2lR?=
- =?utf-8?B?cWxVbGNZYS9vQmZlSDdOajA5bTRzNVc4NDhDZWs5SHNFQUtrdlhla2lEKzFZ?=
- =?utf-8?B?bm9HSHZKQjdITzhIUmkyQTBoT2lVajBBbHorcWVBTEUxdDJNcWRibm5kTFYw?=
- =?utf-8?B?TnFKMFpibTBoVDRWY1lDR0JUMFBzM0JXWGRhaXJIcjBub1k0MW1PSUdpanpj?=
- =?utf-8?B?KysxTGxtWjJ0WFZEUm4rZ1FQdzVGdGVrZmpvRUNmR3NBUmZ4SFlRdWlQeWhQ?=
- =?utf-8?B?OVVvcm05cXdmUXEwTVk1aFpyQi9xd21MU3RjTHN5eFAwZ21rT0docmx4S2lp?=
- =?utf-8?B?R2FRa0p1eEpZZnNKRnhKNTgyWjJwWXMrdmYwU3RDa1hOZDkzNlhnUW9uUkNZ?=
- =?utf-8?B?eGV2NVAwcGVuKzh5eFdzSC9VUmJSV3U5dWxmczlUZ3NXV3NtcGNFM3k1TUty?=
- =?utf-8?B?M3p5VzRxZlVvM1NrdFFUWm1CbUlhNXlMQXZrLy9xaGFZcFZYd2tySkg2ZEYr?=
- =?utf-8?B?WTk5UGFMcDZTdUI5TW1GcUJoRzIyNjZTblV1Y2tSN3Fqb1dpbE1naGVQUjlk?=
- =?utf-8?B?cXVVRkRONEpQSCtEczExd2N1TWRhY0hNektSV21aRHphWVJwTEpDeENJSlRv?=
- =?utf-8?B?N2VDUE1DYUxBL2s2a2VaTEZPUENnazR2SzRTTlRGVmhUQWFhTWc2YTZ3cGhu?=
- =?utf-8?B?UnRsSDl6a3VOR3FxV0RLUktjRFZHMEY2L1VwTnAwVjhnQzhnV2lMT1VRRkRJ?=
- =?utf-8?B?WGkrRHVoc01jaW5zSWNjYktickdGK0ROenFYNlVSc3dJZWNHREtHc1p3Wksw?=
- =?utf-8?B?T2UwVE1nQ3ZzQWdGOHNpOTdCWGNqQVFTSHU3b2svZ0hLSUJtVURKVTQ0RTV1?=
- =?utf-8?B?YU1TUFVtVG11MDdUd3VJUlNoaVNkTWxIZjBMcFRZU0NCWWlvMDBvanhsRGpv?=
- =?utf-8?B?M29YNEhabkE5QUt2ZzVNVFFCSmpNNGZPS0VSWUJncUc4TFhvb09xQXVYbGw5?=
- =?utf-8?B?dGF4WHZOZjJta3dxclRLUUZ3SmVoYVVwNGIxY3FDeCtBT0VmOFI3MmE3Y0lt?=
- =?utf-8?B?ZXVpWjMyTGVacThjekxHdGFaam1pVWRqMzBIb2g5WVczQ3pJeE8yMU95YzVs?=
- =?utf-8?B?akUzd2ZPdytnZU1FYWdGVEtsUFhDTlN6V1QzdE15dWtzTmF5LzRaTDBxOStv?=
- =?utf-8?B?MStUQ0k4a0tEUUhJanZtenBQZXBJUlpQYkxwWEl6VXpLWS9DLzBxZ2p3czgr?=
- =?utf-8?B?Tzd2YW5PbE91YzdsSm5EeFhDU2t2WlBIY0FmcUxrOVhtb1VrVVJnV2luT0la?=
- =?utf-8?B?c00yVkIyQ1Z6TS84NWlVdDdqUzNWMFJwUm9EZUlnRDFTbU1DNjk3UmgrOGFH?=
- =?utf-8?B?ZXcvczQ0dFlMUzdlaU4rQ0h1VGlMbENBbS9QL1NrSyttUFoveCswa1BoNEdJ?=
- =?utf-8?B?eDRCRWZyNnhSVmRiWmZHaVpVTlg4SXpZeXJYZjBNaEpFb3d3ck56TXljTy96?=
- =?utf-8?B?akE9PQ==?=
-X-OriginatorOrg: wolfvision.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: a3531915-076c-4e21-138f-08dd54bd07d4
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9155.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 10:21:41.5215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nIbDcUWTZy1hu7Fsz/1ArflSzp6bWWUp8DcKJdxvIeAqFNNu8hMLZqwn6nAK9HUvA2JENF0QyXIjh14RC3KxsOSVlrwHs1ChzbdJQuHlwHU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB8741
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 6/7] Coresight: Add Coresight TMC Control Unit driver
+Content-Language: en-GB
+To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
+ <20250217093024.1133096-7-quic_jiegan@quicinc.com>
+ <35d1a923-4e8e-4fe2-bf4a-0b78b1d511e3@arm.com>
+ <a594bdee-7d9e-4d79-a5ee-a34dafa2869f@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <a594bdee-7d9e-4d79-a5ee-a34dafa2869f@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Sakari,
-
-Thanks for the review.
-
-On 2/21/25 15:10, Sakari Ailus wrote:
-> Hi Michael,
+On 24/02/2025 03:32, Jie Gan wrote:
 > 
-> Thanks for the update.
 > 
-> On Wed, Feb 19, 2025 at 11:16:34AM +0100, Michael Riesch wrote:
->> Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
+> On 2/21/2025 7:39 PM, Suzuki K Poulose wrote:
+>> On 17/02/2025 09:30, Jie Gan wrote:
+>>> The Coresight TMC Control Unit hosts miscellaneous configuration 
+>>> registers
+>>> which control various features related to TMC ETR sink.
+>>>
+>>> Based on the trace ID, which is programmed in the related CTCU ATID
+>>> register of a specific ETR, trace data with that trace ID gets into
+>>> the ETR buffer, while other trace data gets dropped.
+>>>
+>>> Enabling source device sets one bit of the ATID register based on
+>>> source device's trace ID.
+>>> Disabling source device resets the bit according to the source
+>>> device's trace ID.
+>>>
+>>> Reviewed-by: James Clark <james.clark@linaro.org>
+>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>>> ---
+>>>   drivers/hwtracing/coresight/Kconfig          |  12 +
+>>>   drivers/hwtracing/coresight/Makefile         |   1 +
+>>>   drivers/hwtracing/coresight/coresight-ctcu.c | 268 +++++++++++++++++++
+>>>   drivers/hwtracing/coresight/coresight-ctcu.h |  24 ++
+>>>   include/linux/coresight.h                    |   3 +-
+>>>   5 files changed, 307 insertions(+), 1 deletion(-)
+>>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.c
+>>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.h
+>>>
+>>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/ 
+>>> coresight/Kconfig
+>>> index 06f0a7594169..ecd7086a5b83 100644
+>>> --- a/drivers/hwtracing/coresight/Kconfig
+>>> +++ b/drivers/hwtracing/coresight/Kconfig
+>>> @@ -133,6 +133,18 @@ config CORESIGHT_STM
+>>>         To compile this driver as a module, choose M here: the
+>>>         module will be called coresight-stm.
+>>> +config CORESIGHT_CTCU
+>>> +    tristate "CoreSight TMC Control Unit driver"
+>>> +    depends on CORESIGHT_LINK_AND_SINK_TMC
+>>> +    help
+>>> +      This driver provides support for CoreSight TMC Control Unit
+>>> +      that hosts miscellaneous configuration registers. This is
+>>> +      primarily used for controlling the behaviors of the TMC
+>>> +      ETR device.
+>>> +
+>>> +      To compile this driver as a module, choose M here: the
+>>> +      module will be called coresight-ctcu.
+>>> +
+>>>   config CORESIGHT_CPU_DEBUG
+>>>       tristate "CoreSight CPU Debug driver"
+>>>       depends on ARM || ARM64
+>>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/ 
+>>> hwtracing/ coresight/Makefile
+>>> index 4ba478211b31..1b7869910a12 100644
+>>> --- a/drivers/hwtracing/coresight/Makefile
+>>> +++ b/drivers/hwtracing/coresight/Makefile
+>>> @@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o coresight- 
+>>> cti-platform.o \
+>>>              coresight-cti-sysfs.o
+>>>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
+>>>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
+>>> +obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
+>>> diff --git a/drivers/hwtracing/coresight/coresight-ctcu.c b/drivers/ 
+>>> hwtracing/coresight/coresight-ctcu.c
+>>> new file mode 100644
+>>> index 000000000000..e1460a627c4d
+>>> --- /dev/null
+>>> +++ b/drivers/hwtracing/coresight/coresight-ctcu.c
+>>> @@ -0,0 +1,268 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All 
+>>> rights reserved.
+>>> + */
+>>> +
+>>> +#include <linux/clk.h>
+>>> +#include <linux/coresight.h>
+>>> +#include <linux/device.h>
+>>> +#include <linux/err.h>
+>>> +#include <linux/kernel.h>
+>>> +#include <linux/init.h>
+>>> +#include <linux/io.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/mutex.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/slab.h>
+>>> +
+>>> +#include "coresight-ctcu.h"
+>>> +#include "coresight-priv.h"
+>>> +
+>>> +DEFINE_CORESIGHT_DEVLIST(ctcu_devs, "ctcu");
+>>> +
+>>> +#define ctcu_writel(drvdata, val, offset)    __raw_writel((val), 
+>>> drvdata->base + offset)
+>>> +#define ctcu_readl(drvdata, offset)        __raw_readl(drvdata->base 
+>>> + offset)
+>>> +
+>>> +/*
+>>> + * The TMC Coresight Control Unit uses four ATID registers to 
+>>> control the data
+>>> + * filter function based on the trace ID for each TMC ETR sink. The 
+>>> length of
+>>> + * each ATID register is 32 bits. Therefore, the ETR has a related 
+>>> field in
+>>> + * CTCU that is 128 bits long. Each trace ID is represented by one 
+>>> bit in that
+>>> + * filed.
+>>> + * e.g. ETR0ATID0 layout, set bit 5 for traceid 5
+>>> + *                                           bit5
+>>> + * ------------------------------------------------------
+>>> + * |   |28|   |24|   |20|   |16|   |12|   |8|  1|4|   |0|
+>>> + * ------------------------------------------------------
+>>> + *
+>>> + * e.g. ETR0:
+>>> + * 127                     0 from ATID_offset for ETR0ATID0
+>>> + * -------------------------
+>>> + * |ATID3|ATID2|ATID1|ATID0|
+>>> + */
+>>> +#define CTCU_ATID_REG_OFFSET(traceid, atid_offset) \
+>>> +        ((traceid / 32) * 4 + atid_offset)
+>>> +
+>>> +#define CTCU_ATID_REG_BIT(traceid)    (traceid % 32)
+>>> +#define CTCU_ATID_REG_SIZE        0x10
+>>> +
+>>> +struct ctcu_atid_config {
+>>> +    const u32 atid_offset;
+>>> +    const u32 port_num;
+>>> +};
+>>> +
+>>> +struct ctcu_config {
+>>> +    const struct ctcu_atid_config *atid_config;
+>>> +    int num_atid_config;
+>>> +};
+>>> +
+>>> +static const struct ctcu_atid_config sa8775p_atid_cfgs[] = {
+>>> +    {0xf8,  0},
+>>> +    {0x108, 1},
+>>> +};
+>>> +
+>>> +static const struct ctcu_config sa8775p_cfgs = {
+>>> +    .atid_config        = sa8775p_atid_cfgs,
+>>> +    .num_atid_config    = ARRAY_SIZE(sa8775p_atid_cfgs),
+>>> +};
+>>> +
+>>> +static void ctcu_program_atid_register(struct ctcu_drvdata *drvdata, 
+>>> u32 reg_offset,
+>>> +                       u8 bit, bool enable)
+>>> +{
+>>> +    u32 val;
+>>> +
+>>> +    CS_UNLOCK(drvdata->base);
+>>> +    val = ctcu_readl(drvdata, reg_offset);
+>>> +    val = enable? (val | BIT(bit)) : (val & ~BIT(bit));
 >>
->> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
->> ---
->>  .../bindings/media/rockchip,rk3568-vicap.yaml      | 168 +++++++++++++++++++++
->>  MAINTAINERS                                        |   1 +
->>  2 files changed, 169 insertions(+)
+>> minor nit: If possible do not use the ternary operator like this. It 
+>> is much better readable as:
 >>
->> diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
->> new file mode 100644
->> index 000000000000..3dc15efeb32e
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
->> @@ -0,0 +1,168 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/rockchip,rk3568-vicap.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Rockchip RK3568 Video Capture (VICAP)
->> +
->> +maintainers:
->> +  - Michael Riesch <michael.riesch@wolfvision.net>
->> +
->> +description:
->> +  The Rockchip RK3568 Video Capture (VICAP) block features a digital video
->> +  port (DVP, a parallel video interface) and a MIPI CSI-2 port. It receives
->> +  the data from camera sensors, video decoders, or other companion ICs and
->> +  transfers it into system main memory by AXI bus.
->> +
->> +properties:
->> +  compatible:
->> +    const: rockchip,rk3568-vicap
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  interrupts:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    items:
->> +      - description: ACLK
->> +      - description: HCLK
->> +      - description: DCLK
->> +      - description: ICLK
->> +
->> +  clock-names:
->> +    items:
->> +      - const: aclk
->> +      - const: hclk
->> +      - const: dclk
->> +      - const: iclk
->> +
->> +  rockchip,cif-clk-delaynum:
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 0
->> +    maximum: 127
->> +    description:
->> +      Delay the DVP path clock input to align the sampling phase, only valid
->> +      in dual edge sampling mode.
-> 
-> I suppose there's further documentation on this somewhere else? A reference
-> would be nice.
-
-I like your optimism :-) No, I am afraid this single sentence is all the
-the RK3568 TRM has to say about it. I can add a reference to the TRM
-page, but everyone who actually follows this reference will be
-disappointed...
-
->> +
->> +  iommus:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    items:
->> +      - description: ARST
->> +      - description: HRST
->> +      - description: DRST
->> +      - description: PRST
->> +      - description: IRST
->> +
->> +  reset-names:
->> +    items:
->> +      - const: arst
->> +      - const: hrst
->> +      - const: drst
->> +      - const: prst
->> +      - const: irst
->> +
->> +  rockchip,grf:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      Phandle to general register file used for video input block control.
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +
->> +    properties:
->> +      port@0:
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +        unevaluatedProperties: false
->> +        description:
->> +          The digital video port (DVP, a parallel video interface).
->> +
->> +        properties:
->> +          endpoint:
->> +            $ref: video-interfaces.yaml#
->> +            unevaluatedProperties: false
->> +
->> +            properties:
->> +              bus-type:
->> +                enum: [5, 6]
->> +
->> +            required:
->> +              - bus-type
->> +
->> +      port@1:
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +        unevaluatedProperties: false
->> +        description: The MIPI CSI-2 port.
->> +
->> +        properties:
->> +          endpoint:
->> +            $ref: video-interfaces.yaml#
->> +            unevaluatedProperties: false
-> 
-> Don't you need things like data-lanes here? Or is this a single lane
-> receiver?
-
-This may be a bit confusing, and I probably should extend the
-description a bit. This port/endpoint faces the MIPI CSI Host, which has
-its own driver provided in patch 6. The connection in between is a link
-with some internal format. Hence, no properties required.
-
-This is the same issue as the one discussed in the other thread, since
-the other end of this connection is discussed there. I'll fix the issue
-on both ends using Rob's suggestion.
-
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - clocks
->> +  - ports
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/rk3568-cru.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/interrupt-controller/irq.h>
->> +    #include <dt-bindings/power/rk3568-power.h>
->> +    #include <dt-bindings/media/video-interfaces.h>
->> +
->> +    parent {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        vicap: video-capture@fdfe0000 {
->> +            compatible = "rockchip,rk3568-vicap";
->> +            reg = <0x0 0xfdfe0000 0x0 0x200>;
->> +            interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>;
->> +            assigned-clocks = <&cru DCLK_VICAP>;
->> +            assigned-clock-rates = <300000000>;
->> +            clocks = <&cru ACLK_VICAP>, <&cru HCLK_VICAP>,
->> +                     <&cru DCLK_VICAP>, <&cru ICLK_VICAP_G>;
->> +            clock-names = "aclk", "hclk", "dclk", "iclk";
->> +            iommus = <&vicap_mmu>;
->> +            power-domains = <&power RK3568_PD_VI>;
->> +            resets = <&cru SRST_A_VICAP>, <&cru SRST_H_VICAP>,
->> +                     <&cru SRST_D_VICAP>, <&cru SRST_P_VICAP>,
->> +                     <&cru SRST_I_VICAP>;
->> +            reset-names = "arst", "hrst", "drst", "prst", "irst";
->> +            rockchip,grf = <&grf>;
->> +
->> +            ports {
->> +                #address-cells = <1>;
->> +                #size-cells = <0>;
->> +
->> +                vicap_dvp: port@0 {
->> +                    reg = <0>;
->> +
->> +                    vicap_dvp_input: endpoint {
->> +                        bus-type = <MEDIA_BUS_TYPE_BT656>;
->> +                        bus-width = <16>;
->> +                        pclk-sample = <MEDIA_PCLK_SAMPLE_DUAL_EDGE>;
->> +                        remote-endpoint = <&it6801_output>;
->> +                    };
->> +                };
->> +
->> +                vicap_mipi: port@1 {
->> +                    reg = <1>;
-> 
-> Where is the endpoint?
-
-I'll add the endpoint in the example.
-
-Regards,
-Michael
-
-> 
->> +                };
->> +            };
->> +        };
->> +    };
->> +...
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index bbfaf35d50c6..cd8fa1afe5eb 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -20407,6 +20407,7 @@ M:	Michael Riesch <michael.riesch@wolfvision.net>
->>  L:	linux-media@vger.kernel.org
->>  S:	Maintained
->>  F:	Documentation/devicetree/bindings/media/rockchip,px30-vip.yaml
->> +F:	Documentation/devicetree/bindings/media/rockchip,rk3568-vicap.yaml
->>  
->>  ROCKCHIP CRYPTO DRIVERS
->>  M:	Corentin Labbe <clabbe@baylibre.com>
+>>      if (enable)
+>>          val |= BIT(bit);
+>>      else
+>>          val &= ~BIT(bit);
 >>
 > 
+> Will do this way.
+> 
+>>> +    ctcu_writel(drvdata, val, reg_offset);
+>>> +    CS_LOCK(drvdata->base);
+>>> +}
+>>> +
+>>> +/*
+>>> + * __ctcu_set_etr_traceid: Set bit in the ATID register based on 
+>>> trace ID when enable is true.
+>>> + * Reset the bit of the ATID register based on trace ID when enable 
+>>> is false.
+>>> + *
+>>> + * @csdev:    coresight_device struct related to the device
+>>> + * @traceid:    trace ID of the source tracer.
+>>> + * @port_num:    port number from TMC ETR sink.
+>>> + * @enable:    True for set bit and false for reset bit.
+>>> + *
+>>> + * Returns 0 indicates success. Non-zero result means failure.
+>>> + */
+>>> +static int __ctcu_set_etr_traceid(struct coresight_device *csdev, u8 
+>>> traceid, int port_num,
+>>> +                  bool enable)
+>>> +{
+>>> +    struct ctcu_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+>>> +    u32 atid_offset, reg_offset;
+>>> +    u8 refcnt, bit;
+>>> +
+>>> +    atid_offset = drvdata->atid_offset[port_num];
+>>> +    if (atid_offset == 0)
+>>> +        return -EINVAL;
+>>> +
+>>> +    bit = CTCU_ATID_REG_BIT(traceid);
+>>> +    reg_offset = CTCU_ATID_REG_OFFSET(traceid, atid_offset);
+>>> +    if (reg_offset - atid_offset > CTCU_ATID_REG_SIZE)
+>>> +        return -EINVAL;
+>>> +
+>>> +    guard(raw_spinlock_irqsave)(&drvdata->spin_lock);
+>>> +    refcnt = drvdata->traceid_refcnt[port_num][traceid];
+>>> +    /* Only program the atid register when the refcnt value is 0 or 
+>>> 1 */
+>>
+>> A normal trace source won't be enabled more than once (e.g., ETM). The 
+>> only odd one out is the STM, which may be driven by multiple agents.
+>> So this refcounting looks necessary.
+>>
+> 
+> Besides, for the TPDMs which shared the trace_id of the TPDA also need 
+> the refcnt. Consider we have TPDM1 and TPDM2 connected to the same TPDA 
+> device. Once we disable one of the TPDM without checking the refcnt, the 
+> filter function will be disabled for another TPDM.
+> 
+>>> +    if (enable && (++refcnt == 1))
+>>> +        ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+>>> +    else if (!enable && (--refcnt == 0))
+>>> +        ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+>>
+>> minor nit:
+>>
+>>      if ((enable && !refcount++) ||
+>>          (!enable && --refcount))
+>>          ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
+>>
+>>
+> 
+> I did (enable && (++refcnt == 1)) just because I think we only need 
+> program the register when refcnt is equal to 1. We dont need reprogram 
+> the register with same value when refcnt greater than 1. So I think it's 
+> better for the performance?
 
+The code above is similar to yours. It would "set" only for the first
+time, when
+
+enable == 0, refcount == 0 now, but will be incremented to 1.
+
+Suzuki
 
