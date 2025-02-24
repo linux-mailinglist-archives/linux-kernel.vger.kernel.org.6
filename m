@@ -1,156 +1,143 @@
-Return-Path: <linux-kernel+bounces-529164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A83A42095
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2248A42097
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:28:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D91BC3B1ACA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:25:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6513AE315
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A191B041E;
-	Mon, 24 Feb 2025 13:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F7123BD03;
+	Mon, 24 Feb 2025 13:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gv2efhFy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wCZtX7yG"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C28A221F12;
-	Mon, 24 Feb 2025 13:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6E011B041E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403515; cv=none; b=pRL4N44pjNUkdiuEeepg821f97eyCLahtbsJ8HtdrmvlrQyayKCouN/0v2zwE9DU4tFJqp59bs7osVsYyb6cR6r5L4SUFa9fc9ZkMsnLM7Ds4LDRcZ+r2MB5BasValXliwNp4b22PyZMQp64ZrieFT3qnyID39T7pOu4XtQNvCw=
+	t=1740403548; cv=none; b=J+AA4QfmxAHTCT6oevzX1pDQQ0cOLO6DWJhFrQp/vsGJICMs6L0d1imMHDTvEytVZiQnTjsvyQXfmAjzGTJlPP1rophsONDiJ6k7gDAVxp8ECyv5zHtKRwRndal9vbhHjhgBruaeNKli4KOOvbO0sWGpMzcXm8ut65IY0DAW1bM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403515; c=relaxed/simple;
-	bh=ximZJ42CHdbASaltwg2nH8bR186SAp7QNha5PpOD/UM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sIgl2as0DJ9s18peiN33/+C/t3KMwISWatm03ButMwKBVByWCj93AqaOEb9oFGzJSRdyzqEMnFeDrhdEEvFcVZpHa7MDhEdtFppeIxW7+0hEDq5talYPfgOmkeG90XIZmaQAOf7OG+L+AckmnZ8W8OWY2+RbAShwlFKTSQWmAMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gv2efhFy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9K8KL025225;
-	Mon, 24 Feb 2025 13:25:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ukFyx5KoGDa7IkNJf3I2JvC5n29tBOfoCIP4Dm8p/TY=; b=Gv2efhFynPSXV4r/
-	QVdeFXmzVtAL/8Ofn4sEeTmMg7SZjCZtS4sIsccJ8Xr6/qNT30A7rGj7X7bLxRR0
-	9wl2VpR4HnsXu1CETEztaBoGC2zJLsVZCJbYBXTmweAf1uklDyXLCqRQiRNPWzNW
-	1PmhPDxjwdOtiPxi5AtXOQvR+0LJSXNYlLaAWTeSFRBr5ylOkPFhAUQxQ4026DSw
-	c9KvcPR02mLYEGFu7h4UpxXI8ZXKTELD+YM3Wl9ekS0UA+j3b2dfNWTiiyscwlYL
-	A7x1RzMBkFqgFN6UVF0J9gCmEEu9cLZGvJaQeAuOiQ+9lEwT+89ual5PrzPzLlXj
-	em0m9g==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y7v9d5vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 13:25:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51ODP9nW025330
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 13:25:09 GMT
-Received: from [10.216.19.8] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
- 2025 05:25:05 -0800
-Message-ID: <428a1384-bc06-4952-a117-d57f5ab6446c@quicinc.com>
-Date: Mon, 24 Feb 2025 18:55:02 +0530
+	s=arc-20240116; t=1740403548; c=relaxed/simple;
+	bh=9BCfC+8ynSYJhn7A3qCQzNz22cMKqfpqmKxlWSQqtqo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XH+63J50szF5YbMY3d8HEh9UDEP/bAE2rmyesUnJDoKGWVPEUT2tnj6l4vIMODv1YIR9u7lus6FpspXHSO5o+Gl7o7WYsMPW6/wyBVXDZnZdUDIEImfbk14ApzVTovO56stsp2IBrG43i6L3DvNSW5iYyEwmV+rhJaz2ifYjtWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wCZtX7yG; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a04so46837751fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:25:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740403545; x=1741008345; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LguforzV1cctzoXKfI3/XfT9PogudIuxpoZjne3ovFs=;
+        b=wCZtX7yGxu8EPgo9rSISG+itQx4vctdaU8L6kgIjXxpwhRGtvaL0dTSYUMAC2VEF4f
+         eqwGnlBBa8QFWtLNM8k0q5fp6hOWOLp56XkCi5xc2t4mAy/Osl6667aBXO2tbQYK+wtl
+         FI1g98J6DnbsMRX79rnwag8HqrsHin7FSvQy4wrUB8prLANyexmVcEuJN9Z438Kv5gui
+         bTk5KNsDzMmKQX+VJJEFLDDrJbKXDtXNhkRoGnPqE3ZeLwGj57Z6rMrgvgPZY8QSTNqH
+         0hClzuw2EIpSDf68kzWreyTyP0TfN3gIm7ntwrtJbUqUbh3c401SKGYt3ZI8rV3cDM0s
+         sm4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740403545; x=1741008345;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LguforzV1cctzoXKfI3/XfT9PogudIuxpoZjne3ovFs=;
+        b=TiMsVA+F6mlmp3nXANiGKJzmkwCLkzd3sHoeYNziWpJv9n0q1B2FsvTI2tVws1uaEB
+         udylkk8jMvoMxsGWvrO752lGPAeVkvhESGTgpLg+/GBDkhD/Kny/YTOhWStU0T80Dm8M
+         sehL0fc2YcdaSpahw7R8ArmGtcYq93rgZ3wrbnPjQh7HIj8/XI0VmpknkWrjDbyJdJpj
+         izsh7vrZltrbbc/RoIfmjhfZqrDF43IN1QYGCKctNdBg8JqpNeygpYOE2B/f0vJm4YCX
+         93HKPym1DNW2WqLjtggGoajfhDcYBTkPYNSpe4+0GeEuXRibrC9T1jW5cayuTwVS4CBg
+         +O0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdpe61R3DWwBxvhcduqGy6dE1PgqzrDPNW7TH3LJCT0+UgcWSRi9apmN6yoXK655Et2sD5yn8a8d3qekY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8ZTLVVHdlfE1zXYeFyaEDZU/7+g/OWjss1asfesJisa8X2orj
+	NAb8qLk51nZNWqNyLXRAjg0WKb7lwCLGp5oa95DkNDThIb9Ky51D1+RF/+mmOD3Kwj6QmNN+zxa
+	B8LqcZXAurzXrQnG6BcwHj1GrX35JeteABDos
+X-Gm-Gg: ASbGncsL2x2xLuJ2wJLWaiXSfj56tehQalfWYKG8sY9UJSv9ulETpdEbcoHRXxoRwqV
+	7ShCWc7lMa/RB+Oq1oAuzxcNlpx3ulv7yRvvktkZ2wC9Gr6fhrXJDfiUnGrHfqgD00bvtSduZJ3
+	FRavQEs6Bc9GeK4yKfHPP/s0vIhOvitbK2xmeA
+X-Google-Smtp-Source: AGHT+IEvJJz3AXeS2if/gS5fNHN0PriuMRn6lq1wE2xe476HpL6/1oGBJ7JvTfopbuR2zXhulUqv2kuhqvuMIdKXwDQ=
+X-Received: by 2002:a2e:9495:0:b0:308:fec4:5a5f with SMTP id
+ 38308e7fff4ca-30a5b168746mr37300101fa.4.1740403544856; Mon, 24 Feb 2025
+ 05:25:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] dt-bindings: qcom: geni-se: Rename qcom,geni-se.yaml
- to qcom,geni-se-qup.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_msavaliy@quicinc.com>, <quic_anupkulk@quicinc.com>
-References: <20250221085439.235821-1-quic_vdadhani@quicinc.com>
- <49fc59ed-9d09-46bd-9ca6-99d3445221f7@kernel.org>
- <f3349d2a-7eba-4865-9b58-0b2e7e57cc92@quicinc.com>
- <ed8f7aee-e5be-453c-b324-e59e90ecee77@kernel.org>
-Content-Language: en-US
-From: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-In-Reply-To: <ed8f7aee-e5be-453c-b324-e59e90ecee77@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mWPOb30yKBTplRRTEs02xQ7ehA3IxOco
-X-Proofpoint-ORIG-GUID: mWPOb30yKBTplRRTEs02xQ7ehA3IxOco
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_05,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 impostorscore=0 bulkscore=0 malwarescore=0 phishscore=0
- spamscore=0 suspectscore=0 mlxscore=0 mlxlogscore=441 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240097
+References: <cover.1739790300.git.dvyukov@google.com> <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+ <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com>
+In-Reply-To: <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 24 Feb 2025 14:25:32 +0100
+X-Gm-Features: AWEUYZmcriZEjN8lf7KQ--7ThyHoKK5NDz-O2U1ohiwKRqN2OU82L55DeVk0viE
+Message-ID: <CACT4Y+YmWrEW9m5zxKoD-Hu0TXKWPVAr0_Xe_X9WGtZWH5W1_g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
+	elver@google.com, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Fri, 21 Feb 2025 at 18:01, Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 2/17/25 03:07, Dmitry Vyukov wrote:
+> ...
+> >  /*
+> >   * If more than 16 keys are ever supported, a thorough audit
+> >   * will be necessary to ensure that the types that store key
+> > @@ -123,4 +125,16 @@ static inline int vma_pkey(struct vm_area_struct *vma)
+> >       return (vma->vm_flags & vma_pkey_mask) >> VM_PKEY_SHIFT;
+> >  }
+> >
+> > +typedef u32 pkey_reg_t;
+> > +
+> > +static inline pkey_reg_t switch_to_permissive_pkey_reg(void)
+> > +{
+> > +     return write_pkru(0);
+> > +}
+>
+> Just a naming nit: the "switch_to" and "reg" parts of this don't quite
+> parse for me. This is writing a _value_ to a register. Maybe:
+>
+>         write_permissive_pkey_val()
+> or
+>         set_permissive_pkey_val()
+>
+> would be a better name.
 
+Changed them to write_permissive_pkey_val/write_pkey_val in v4.
 
-On 2/24/2025 3:48 PM, Krzysztof Kozlowski wrote:
-> On 24/02/2025 09:47, Viken Dadhaniya wrote:
->>
->>
->> On 2/21/2025 5:05 PM, Krzysztof Kozlowski wrote:
->>> On 21/02/2025 09:54, Viken Dadhaniya wrote:
->>>> The qcom,geni-se.yaml file describes the Qualcomm Universal Peripheral
->>>> (QUP) wrapper and the common entities required by QUP to run any Serial
->>>> Engine (SE) as I2C, SPI, UART, or I3C protocol.
->>>>
->>>> Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml to better reflect its
->>>> association with QUP (Qualcomm Universal Peripheral) and the compatible
->>>> string.
->>>>
->>>> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->>>> ---
->>>>    .../soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml}       | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>    rename Documentation/devicetree/bindings/soc/qcom/{qcom,geni-se.yaml => qcom,geni-se-qup.yaml} (98%)
->>>>
->>>
->>> That's just churn for no real gain. Not even tested churn.
->>
->> That's just churn for no real gain.
->>
->> We made this change based on below plan, we think this will be helpful.
->>
->> 1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml. Reason at 2 below.
-> 
-> There is no reason 2 at this point. You split your patchsets
-> incorrectly. At this point this is churn, without gain. No users of this
-> rename, no benefits.
-> 
->> 2. Create qcom,geni-se.yaml with shared properties for SE-protocol (spi,
->> i2c, uart) nodes. This will be helpful for the shared schema in the
->> ongoing changes
-> 
-> Then post it, instead of sending something which makes no sense on its own.
+> > diff --git a/include/linux/pkeys.h b/include/linux/pkeys.h
+> > index 86be8bf27b41b..d94a0ae7a784b 100644
+> > --- a/include/linux/pkeys.h
+> > +++ b/include/linux/pkeys.h
+> > @@ -48,4 +48,26 @@ static inline bool arch_pkeys_enabled(void)
+> >
+> >  #endif /* ! CONFIG_ARCH_HAS_PKEYS */
+> >
+> > +#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
+> > +
+> > +/*
+> > + * Common name for value of the register that controls access to PKEYs
+> > + * (called differently on different arches: PKRU, POR, AMR).
+> > + */
+> > +typedef int pkey_reg_t;
+> Tiny nit: Should this be an unsigned type?
+>
+> Nobody should be manipulating it, but I'd be surprised if any of the
+> architectures have a signed type for it.
 
-Should I include this change in v3 of the following serial patch?
-
-https://lore.kernel.org/linux-arm-msm/f090d637-1ef1-4967-b5bc-6bfce3d7130e@kernel.org/T/
-
-I hope the approach below is fine for you:
-
-1. Rename qcom,geni-se.yaml to qcom,geni-se-qup.yaml.
-2. Create qcom,geni-se.yaml with shared properties for SE-protocol (i2c, 
-spi, uart) nodes.
-
-if there is anything wrong or missing any validation, please let me know 
-so before next patch i can correct my self.
-
-> 
-> 
-> Best regards,
-> Krzysztof
+Since this is a stub type, can matching the real types do any good
+besides masking programming errors?
+I've changed it to char in v4 to surface more potential programming errors.
 
