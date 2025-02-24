@@ -1,212 +1,94 @@
-Return-Path: <linux-kernel+bounces-529223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6621FA421D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:51:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15639A4205B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA7E1892541
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACB0916A8EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F653F9D2;
-	Mon, 24 Feb 2025 13:50:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11270233735
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B683524887A;
+	Mon, 24 Feb 2025 13:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WC67035u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE21204C19;
+	Mon, 24 Feb 2025 13:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405005; cv=none; b=XPHZaou2L52zlFOzggFGYNDB5k0XZLSzy/4eTZODZN6+2/ekh9m1y2SmjIenQoz+Pw0CmEyrS3p5ZoGBuoTgjA8I/XV/VfTPg44RiGjn/GhbLBd6ynMNjAKE1kge1l0BVSo9H3CnoM5vur2ZifVstbIJJrq1qiVGXvcc657Ov3k=
+	t=1740403198; cv=none; b=ko83P2hUYyycUCF9uLdgW37/OQmNJX6zy7W7oIuRRFswkjicIU3Ml3yFaSiXwGZtlWd4bqjIXXd27xxmb4MP5Q1XII6R+KDw5CeOUOn7xzqLnge+TqgteGY5JfFrSVxmMsRiT1kn0D994uAgfssPHJexBt3EzAxdo8Fbaj0YoHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405005; c=relaxed/simple;
-	bh=+a35ztu5y7ALOkVFHnxnr5nOSLFjUWAO03woQ3A8Ydc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ggtoiHEvV0GsZxRS/OoCFh2ojvK4vIpBKW+o1uZPJMS0lgURYAwapT99oLKuhALhWROQGrenmlwX0JNeUlvHagWIaeCtYzqmBGubjIPUU4dZNGJO20fbAJB80akQlVtCVTQxNscsaGVUSrKE5lfIsjOBhIBfQeW/GoKnHlOnGSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z1hCR2KX7z9sVs;
-	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id elqyD67td6jR; Mon, 24 Feb 2025 14:19:15 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z1hCR1Gpgz9sVq;
-	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 18CEC8B77C;
-	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id PKWx441hCHAv; Mon, 24 Feb 2025 14:19:14 +0100 (CET)
-Received: from [10.25.207.138] (unknown [10.25.207.138])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBC498B765;
-	Mon, 24 Feb 2025 14:19:14 +0100 (CET)
-Message-ID: <8f4ec6d4-2646-4a87-b3a1-edfaecff2a01@csgroup.eu>
-Date: Mon, 24 Feb 2025 14:19:14 +0100
+	s=arc-20240116; t=1740403198; c=relaxed/simple;
+	bh=KA0U3yGXGRApRKSXSLe/A+8EbnTuZLr33bkGUSV34E8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cZJtbMGrUECqcI3xm4M0g8Lzu0ACb2fmTgUtPNPYJd4RVn2hoEcHR03Q3yxL7JJdTyqf1zn5qFgLjQ7iQWWUxpX4Tww2lw1/L4pulFQNnmI7wD9EviwjQJPub128UoQYUv7p0m4v91TIxAv4LBSQ2Q7rM7msv8d/KxUPdq7zhfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WC67035u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16342C4CEE9;
+	Mon, 24 Feb 2025 13:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740403197;
+	bh=KA0U3yGXGRApRKSXSLe/A+8EbnTuZLr33bkGUSV34E8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=WC67035uEDhZLCLF+fM4DWybhrnc8ELZshTrBfgVskOrNof/rUw5S1UH66RZH9R5A
+	 7KqdlmPoqur6lqx3I4SyvB8fZpyAloOMXdd3FO1dygceg5cPmEsgyrYKBEwfPGAgom
+	 pqgbh7LmWC8CXMXHRciufEBtBDgnhah3lLf+SX57xKNrVXgD82rA7Xkl69usXlQFeA
+	 /SRfE0pfrrXjn7AQ69Be8O2HXTWfovejM7dry8bhLAbF6u/hF3eB5a0qmESkw5fMyV
+	 sdg8ahrlHW5EeD0FU9vyS1UABvb/lkUKlz7SCGZhVRjh1ya86IJOdOdqo4GGpBGvQ2
+	 +moOnfmVO4g2w==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Frederic Weisbecker" <frederic@kernel.org>
+Cc: "Anna-Maria Behnsen" <anna-maria@linutronix.de>, "Thomas Gleixner"
+ <tglx@linutronix.de>,  "Danilo Krummrich" <dakr@kernel.org>,  "Alex
+ Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
+  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
+  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  "Tamir Duberstein" <tamird@gmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+ "Miguel Ojeda" <ojeda@kernel.org>
+Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
+In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
+	(Andreas Hindborg's message of "Mon, 24 Feb 2025 13:03:35 +0100")
+References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
+	<Fg4QliwzbHj3m-Fr3ZeUiU11d6Bu-I7w_9xzSsnDlzQtqCkjgqxJpI6_YxuXnB8m0MqESq6V7vK7FhPnEcvGwg==@protonmail.internalid>
+	<20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 24 Feb 2025 14:19:45 +0100
+Message-ID: <874j0j1nv2.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call warning
- for bl+mflr pattern
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Sathvika Vasireddy <sv@linux.ibm.com>, jpoimboe@kernel.org,
- peterz@infradead.org, npiggin@gmail.com, maddy@linux.ibm.com,
- Nathan Chancellor <nathan@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- llvm@lists.linux.dev
-References: <20250219162014.10334-1-sv@linux.ibm.com>
- <3223ec0e-c445-4bbf-ae72-276688e40908@csgroup.eu>
- <d5ada017-1ba2-4a89-8a58-4555f09f9d97@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <d5ada017-1ba2-4a89-8a58-4555f09f9d97@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+
+Hi Frederic,
+
+"Andreas Hindborg" <a.hindborg@kernel.org> writes:
+
+> This patch adds support for intrusive use of the hrtimer system. For now,
+> only one timer can be embedded in a Rust struct.
+>
+> The hrtimer Rust API is based on the intrusive style pattern introduced by
+> the Rust workqueue API.
+>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+
+I dropped your ack because I added the kconfig. Re-ack if you are still
+happy :)
 
 
+Best regards,
+Andreas Hindborg
 
-Le 24/02/2025 à 11:33, Christophe Leroy a écrit :
-> 
-> 
-> Le 24/02/2025 à 08:15, Christophe Leroy a écrit :
->>
->>
->> Le 19/02/2025 à 17:20, Sathvika Vasireddy a écrit :
->>> Architectures like PowerPC use a pattern where the compiler generates a
->>> branch-and-link (bl) instruction that targets the very next instruction,
->>> followed by loading the link register (mflr) later. This pattern appears
->>> in the code like:
->>>
->>>   bl .+4
->>>   li r5,0
->>>   mflr r30
->>
->> What compiler do you use ? Is it a very old version of GCC ?
-> 
-> Oh, I see that this is a report on a projet version of clang ? compiler: 
-> clang version 21.0.0git
-> 
-> Then I guess the bug needs to be fixed in Clang, not in the kernel.
-
-Well, this problem already exists on clang 18 it seems:
-
-00000004 <btext_map>:
-    4:   7c 08 02 a6     mflr    r0
-    8:   94 21 ff e0     stwu    r1,-32(r1)
-    c:   93 c1 00 18     stw     r30,24(r1)
-   10:   90 01 00 24     stw     r0,36(r1)
-   14:   93 a1 00 14     stw     r29,20(r1)
-   18:   48 00 00 05     bl      1c <btext_map+0x18>
-   1c:   38 a0 00 00     li      r5,0
-   20:   7f c8 02 a6     mflr    r30
-
-While GCC generates:
-
-00000418 <btext_map>:
-  418:   94 21 ff e0     stwu    r1,-32(r1)
-  41c:   7c 08 02 a6     mflr    r0
-  420:   42 9f 00 05     bcl     20,4*cr7+so,424 <btext_map+0xc>
-  424:   39 20 00 00     li      r9,0
-  428:   93 c1 00 18     stw     r30,24(r1)
-  42c:   7f c8 02 a6     mflr    r30
-
-So lets make the kernel tolerate it allthough it should be fixed on 
-clang at the end.
-
-I can't find any related issue in the clang issues database 
-(https://github.com/llvm/llvm-project/issues), should we open one ?
-
-Christophe
-
-> 
->>
->> That sequence is not correct and should never be used by modern 
->> compilers. It should be bcl 20,31,+4 instead.
->>
->> All such hand writen sequences have been removed from kernel assembly, 
->> see commit c974809a26a1 ("powerpc/vdso: Avoid link stack corruption in 
->> __get_datapage()") for details
->>
->>
->>>
->>> Objtool currently warns about this as an "unannotated intra-function
->>> call" because find_call_destination() fails to find any symbol at the
->>> target offset. Add a check to skip the warning when a branch targets
->>> the immediate next instruction in the same function.
->>
->> I think this should be done in arch_decode_instruction(), just set 
->> insn-  >type to INSN_OTHER when you see bl .+4
->>
->> Something like:
->>
->> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/ 
->> powerpc/decode.c
->> index 53b55690f320..ca264c97ee8d 100644
->> --- a/tools/objtool/arch/powerpc/decode.c
->> +++ b/tools/objtool/arch/powerpc/decode.c
->> @@ -55,7 +55,9 @@ int arch_decode_instruction(struct objtool_file 
->> *file, const struct section *sec
->>
->>       switch (opcode) {
->>       case 18: /* b[l][a] */
->> -        if ((ins & 3) == 1) /* bl */
->> +        if (ins == 0x48000005)    /* bl .+4 */
->> +            typ = INSN_OTHER;
->> +        else if ((ins & 3) == 1) /* bl */
->>               typ = INSN_CALL;
->>
->>           imm = ins & 0x3fffffc;
->>
->>
->>
->>>
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Closes: https://lore.kernel.org/oe-kbuild-all/202502180818.XnFdv8I8- 
->>> lkp@intel.com/
->>> Signed-off-by: Sathvika Vasireddy <sv@linux.ibm.com>
->>> ---
->>>   tools/objtool/check.c | 6 ++++++
->>>   1 file changed, 6 insertions(+)
->>>
->>> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
->>> index 753dbc4f8198..3f7cf2c917b5 100644
->>> --- a/tools/objtool/check.c
->>> +++ b/tools/objtool/check.c
->>> @@ -1613,6 +1613,7 @@ static struct symbol 
->>> *find_call_destination(struct section *sec, unsigned long o
->>>    */
->>>   static int add_call_destinations(struct objtool_file *file)
->>>   {
->>> +       struct instruction *next_insn;
->>>          struct instruction *insn;
->>>          unsigned long dest_off;
->>>          struct symbol *dest;
->>> @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct 
->>> objtool_file *file)
->>>                  reloc = insn_reloc(file, insn);
->>>                  if (!reloc) {
->>>                          dest_off = arch_jump_destination(insn);
->>> +
->>> +                       next_insn = next_insn_same_func(file, insn);
->>> +                       if (next_insn && dest_off == next_insn->offset)
->>> +                               continue;
->>> +
->>>                          dest = find_call_destination(insn->sec, 
->>> dest_off);
->>>
->>>                          add_call_dest(file, insn, dest, false);
->>> -- 
->>> 2.39.3
->>>
->>
-> 
 
 
