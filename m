@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-529011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1659A41EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEFFA41EDE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71C417B2F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:20:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC8417D532
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD323BD05;
-	Mon, 24 Feb 2025 12:18:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A8E219318
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE2B24886F;
+	Mon, 24 Feb 2025 12:19:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PmzbdfUA"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5936C221F2F;
+	Mon, 24 Feb 2025 12:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399519; cv=none; b=nWFeXSys3Vu0t9XBdPiMCCJWI8ETU7SoUrfdGOZSOYWfENmmX5IMd8Joo4YsGEEx285sVdEnJx+Dl3Zj+PjJIUkQ6JyeZDaS9G5B12AEiSwCrflbZ6F6euvgpO8XMaY6yGPHTzV4Ze/+HFsPJhjK76e5TXkpKs4uRWZcKnOxnOY=
+	t=1740399540; cv=none; b=L37VTA/fhlHN3V7QZqit2OBuiUlOtdLNIPC5Yt41KZ/ZAPLpmH4I49h+DXIgBrzARxy+lh7wkks6lWNL/Yb129zcPb6hEermg7eaG3JOJfmcAJS8zk1ZnfzkIzUkRs6xNyJI1/9BVRIF67ske2kR2aIdrc4wiKOVNX6MBLwB3H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399519; c=relaxed/simple;
-	bh=b93OAySF2grsGEcJBS1Jow13MLA7Wt5wc3bPbytWNWk=;
+	s=arc-20240116; t=1740399540; c=relaxed/simple;
+	bh=AmMH/WOkatDMrjYDYyZb0Wz8PpA1XFye5JqgtqJw11U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pgbo84z0XGlxvzImwwnwuvflLrojgnvl6aTOV8dFYjopzj6IGNlFK0RsYzjcmOyrSzQv1dhKFqdBt5Qq2f3oBEa1+rJnmJcAe7RP69GclTbkP+rrhFO3tcYuqLdrR+O4jtsQGD4byVVvqMWqj5zljQe5FUQnxYl66yJkcNKCv5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B76E61756;
-	Mon, 24 Feb 2025 04:18:53 -0800 (PST)
-Received: from [10.1.27.150] (XHFQ2J9959.cambridge.arm.com [10.1.27.150])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D73FA3F6A8;
-	Mon, 24 Feb 2025 04:18:34 -0800 (PST)
-Message-ID: <30b3ed49-1e83-40ed-8e59-f891eb416289@arm.com>
-Date: Mon, 24 Feb 2025 12:18:33 +0000
+	 In-Reply-To:Content-Type; b=sVczTs92fIVC9lICTPX85DZaHO/ld7qElrRfN++LTc6xjmDJkOdusyscJf2Cuf5ht26pqqgOB6/USQQwrN2y+E0WIvgRMWvYGyUluF/ioEwh15iHeKzzNYTifirh7dB1zFSauBmizTuXqtm8V1T1oauawEBtbdH3+GiHoCxtMOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PmzbdfUA; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740399536;
+	bh=AmMH/WOkatDMrjYDYyZb0Wz8PpA1XFye5JqgtqJw11U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PmzbdfUAU9x/DQ03emUlwVx1qaGBT/El75fCAaqZ7j+vlNqcDh7vEOuWTfvHdzYje
+	 SS80Ogz0dmD861vNImZrqXrjBIHmbFYfGOQgvA6q0ypC277PBbCMbC91YvYFCa9JHZ
+	 24lB7HDVB0rlA8EWSJUeXnwBhV9rIaEMDLiQtsL7q1I6WR9DKNlPmdnHlES9YPcIKI
+	 VXXwfBDaGfCu4Z7K3Ut6QP1MF8i5qngtNlvZk4VcrLCFeTjoV+gHsgJztcfz8lPuXD
+	 jYWDf40tC+fTXArQzJSPQ9S87lZVxtFPTlBNYVQADAAEj2UVssXwlBKEhcGr0NCrq3
+	 dSb5Huby5t+Rw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A59EC17E0071;
+	Mon, 24 Feb 2025 13:18:55 +0100 (CET)
+Message-ID: <a5604cac-b405-4e53-9fd3-92e9aea9a6bb@collabora.com>
+Date: Mon, 24 Feb 2025 13:18:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,55 +56,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/14] arm64/mm: Hoist barriers out of set_ptes_anysz()
- loop
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>,
- Kevin Brodsky <kevin.brodsky@arm.com>, linux-arm-kernel@lists.infradead.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250217140809.1702789-1-ryan.roberts@arm.com>
- <20250217140809.1702789-7-ryan.roberts@arm.com> <Z7m7e1W8LpYvV_h0@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <Z7m7e1W8LpYvV_h0@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 1/3] dt-bindings: usb: mediatek,mtk-xhci: Add port for
+ SuperSpeed EP
+To: Conor Dooley <conor@kernel.org>
+Cc: chunfeng.yun@mediatek.com, gregkh@linuxfoundation.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@collabora.com, pablo.sun@mediatek.com
+References: <20250220105514.43107-1-angelogioacchino.delregno@collabora.com>
+ <20250220105514.43107-2-angelogioacchino.delregno@collabora.com>
+ <20250220-travel-undercoat-339822407907@spud>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250220-travel-undercoat-339822407907@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22/02/2025 11:56, Catalin Marinas wrote:
-> On Mon, Feb 17, 2025 at 02:07:58PM +0000, Ryan Roberts wrote:
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index e255a36380dc..e4b1946b261f 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -317,10 +317,8 @@ static inline void __set_pte_nosync(pte_t *ptep, pte_t pte)
->>  	WRITE_ONCE(*ptep, pte);
->>  }
->>  
->> -static inline void __set_pte(pte_t *ptep, pte_t pte)
->> +static inline void __set_pte_complete(pte_t pte)
->>  {
->> -	__set_pte_nosync(ptep, pte);
->> -
->>  	/*
->>  	 * Only if the new pte is valid and kernel, otherwise TLB maintenance
->>  	 * or update_mmu_cache() have the necessary barriers.
+Il 20/02/25 18:18, Conor Dooley ha scritto:
+> On Thu, Feb 20, 2025 at 11:55:12AM +0100, AngeloGioacchino Del Regno wrote:
+>> Add a port used to connect the SuperSpeed output endpoint to a
+>> Type-C connector.
+>>
+>> Note that the MediaTek XHCI controllers are always in front of a
+>> different controller handling the USB HS (usually, MTU3), so the
+>> only port that this controller provides is SuperSpeed, while the
+>> HighSpeed one comes from elsewhere.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 > 
-> Unrelated to this patch but I just realised that this comment is stale,
-> we no longer do anything in update_mmu_cache() since commit 120798d2e7d1
-> ("arm64: mm: remove dsb from update_mmu_cache"). If you respin, please
-> remove the update_mmu_cache() part as well.
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Will do!
+Is everyone okay if I pick this (and the MTU3 one [1]) in the MediaTek trees?
 
-> 
-> Thanks.
-> 
+This is so that I don't get devicetree warnings when picking the DT patches
+that are adding USB MUX/TCPC to the MediaTek boards.
 
+[1] 
+https://lore.kernel.org/all/0e58bfb8f2f7b7e83e3da6075986ddbcc84531fc.camel@mediatek.com
+
+Thanks,
+Angelo
 
