@@ -1,206 +1,330 @@
-Return-Path: <linux-kernel+bounces-529733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6D5EA42A53
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:51:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C735A42A52
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7130163790
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D783A3FEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3B6264624;
-	Mon, 24 Feb 2025 17:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3236264624;
+	Mon, 24 Feb 2025 17:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S8yd2Vvo"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dUV80sJW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843BA264FB9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1189B149DF4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740419444; cv=none; b=FuzlIvdHF1FtY10j30h/z9eZzZ+ew2E9SXdSy3X6UgV2jeU5QoNL8UdTskPNj2kyNd4PiaZZMWyEDG/SEm7rzFcUKYN8GA8glh/ZFhs39lvtIt/rkTw2FWA4CdFBbSDfeYn7VKl+vgtSSaQF3umQlN78n+zeUMrrwr/VUjphi8w=
+	t=1740419436; cv=none; b=DbF78ZfzkmnI6NISx9CvAgZeUiST+HllHungKcrp0LdGirgwWLyuYhQPaNp27tGSSlpUemlaFCLHtr3P2cwMX3HnTJ8RTgPR2M6Dzl1kfDxcLN/Vg8Ln1Kk/fDHRVs/gVLelcQyCbo6Gq2uW4dkCPq95y/bN2/+N8bS2CeZvmSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740419444; c=relaxed/simple;
-	bh=vqdP06W3wU7p3ohIPmEI8fUUE/tl6qIwJ7tpEbSWuI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LdC3blZn1lxQwOqpd+/yxo1pUOaFq4Vr3rUcWnY+vXk7UhA8kdJ8khvqPnBww/KopolgvdAl5iJL3uBstII7ItfaWo03JgT/EGV19sK60QP00nLDJEjsVNl1y2yz1E8srU+wxkGYJHFZ1XQRZ1lJSHm5zK/iyghGiOp4tIhswsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S8yd2Vvo; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a6bso49159071fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:50:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740419440; x=1741024240; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rI6WhFr7+Sr/oyaZLiBDcEJPWCjSV0G44RZKC0MTEIc=;
-        b=S8yd2Vvo+ws/e4I2W3f/i2csJdZ6JTajuWrW42nu6SUmXlB1NF2sJF/0yceg8XeD4b
-         cRCEs3Aeo0KsWIDVnoOqPu8+bQGh7Ep8J5eADtkKnkCYf7afDVG4pbeeQROBO7beuGrd
-         ipsFLv2u2/drZ5YaxDUgy2uLs0bUUUisdgJz8o1GPCzlxjgXabknr+in+JMCrr/K0ZsJ
-         hRyV+gRBnpaVRxLBYZaVUhsh7+PoOyTy/Ke8L13A+M6kLZ47hL2qUSL0bXBRDgUcvcZh
-         QHoAqnOBAf1Wsgf9uEyBNO74AHGMqU3V3yUfnmRtTNNyEovkmelwc0XsZ/xDrRtdipkb
-         dXAg==
+	s=arc-20240116; t=1740419436; c=relaxed/simple;
+	bh=0iNOKWVOBUDsEBvVYzuviMG4d7wS1hRNYwHdQNs02AU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPOctZVzgf5I7I1TrKImkCCcYZaDHyu8cTb63GuJzW4rKPuXkJ+n8LjE0/wtwAPNYzuCL1G3kPjVoQYUk5ctwVDLfFyW7TOgsegkyuV3gFUrwukAVgtY69pU91fNC4E3F5s1SOdpqNrWJNgBrtbd1qH3FBIC449LbZFtijoK1lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dUV80sJW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740419434;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h33/ibReAMPF5jXPXEdEGWkt5jot1xq8doKW9lgfJGw=;
+	b=dUV80sJW6ApntcupaMgR6WLnA7UFbWg45L+PkE+5NWUSX18d1p7O3c8DT+ep0bk7aczJr1
+	bzcTXPDUnCsl6zhVhQdvVr+tMjqFXGvN5D2MjbhFFzrl8HUzeYMKqpcDIzSFdOgsj6Y5YF
+	JiozKtzpzbnm9tcQZOdCf4/HpjQ6Ibo=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-632-Wx5DYl6cMZyFmPZpYMC9Rw-1; Mon, 24 Feb 2025 12:50:32 -0500
+X-MC-Unique: Wx5DYl6cMZyFmPZpYMC9Rw-1
+X-Mimecast-MFC-AGG-ID: Wx5DYl6cMZyFmPZpYMC9Rw_1740419432
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c086889ad3so866809185a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:50:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740419440; x=1741024240;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rI6WhFr7+Sr/oyaZLiBDcEJPWCjSV0G44RZKC0MTEIc=;
-        b=Sl3iIOS0y2UrO1MNfbnTdbgaeNKaCyTu5Jk4KKgpd7seABlj3Cn6xvAcijwsLTnHOK
-         gVl4hwA8a4d7Br3QZS7H6peqAvNa/S37G5JXmhAgqSLQlVSFgbtqpt91pJgpG6V4W0En
-         Mh9K1chWnV1ybiYM4XSrxOsg7B1wKp48rMuO2u62ha/tBdgLuDi/mIUSiDSwAwzdh3Cw
-         QAWRCwXJaFRFZUXBUmH9c+4X8vMsCMm6JrsQqFjJYXCy/icWIOPT+oXes/Ceb0M6TZqK
-         2M6w8OqlMwhc8OyUl2KWKnzvTo61l0KPStoZpN1tnYo2jG+A1mLTAgxe2vBxzpV4QBvk
-         hLXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXavX/DkBIxrwNkLq7vs0/g25a/Sqe1DRCwU5+hMoMqOa0iIFCX5ve6/QqB6mZZsFchVO8Vi7IIZoQfAo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgCk4BOuap4eD7TjIWD7MNEUkKohZNgo2c6w/70435heDUzX4i
-	CT0aKmQh+4UVVku/dTWyCR7rWZP4ydHaZs4/wjroMptfVXPETYqpx1dbJN0o+OCSKvp6xp0DEhX
-	ADaZdIDND3UerElnEvyfSo7oFb0w=
-X-Gm-Gg: ASbGncsny8jFE36WubndQMXwI9Fv8vXjup1fA38VdAOg4Fuf8oAqBRs9GJBULSORetL
-	Y8VpPRtka0SnhBLwcOB+1xtInc7GOmKkXsYn+8ikpC6YSm8HwEF1nI+zdRttHdRWc0wJmtxY/5P
-	byzefQvHA=
-X-Google-Smtp-Source: AGHT+IG9gHyzqvxVRLTze/Uh/M1gyHaHekyvx+ue890bzSA787Hd6wvfYp7tdQZsvp6jZQ06O1xW+HUqWr1XmXmlbo4=
-X-Received: by 2002:a2e:9049:0:b0:307:5879:e7e6 with SMTP id
- 38308e7fff4ca-30a80cb7ab0mr685011fa.32.1740419440224; Mon, 24 Feb 2025
- 09:50:40 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740419432; x=1741024232;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=h33/ibReAMPF5jXPXEdEGWkt5jot1xq8doKW9lgfJGw=;
+        b=JXw9nhJEPMf1tSZdWYGWu+B16oI1+MMn2FuCpbjTeYSUrgbNGheurCUDmrEZ1PTuCz
+         zw0WdlO0ATFF0zW0IZGVsrwhL9wsjGOhXFcbHeVBZMTvYu7CM0Isz6qEUFgTyK7qmU4T
+         nA/3xgArhWsGBCKlLUPPWwdnLh5p1oaOMNRqyIeGiPEeVu8OeYMyQDnmZ/tKlCHlBZhd
+         JzeIwF6OagybtalGQqttIjMl2pMxeblq+bhTThIr+McdRYU86luD9Dz4KsHWvlF6Dgcv
+         mZSQXtuH5iY0PZUWm2/jHlugJTRe0/puEoYGTIQ+5XRyCl9+87ceWw+KHOrrEmgjE39B
+         G6xA==
+X-Forwarded-Encrypted: i=1; AJvYcCW98z4mg1Kbz8U3WtGPJ/BR5zKHz3R68c7H8mQo3/s7agOyEqpSg/PMF2KUl+mVFrvZOIe8FOC3izjJEHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0PqTFfpodNYWTMyc+xZeFRfh5N/vJsA/iRpnqM8Kq9v4lyG9J
+	52YcPUeFI/qL7DUo7iQSqkhZU6BeKYdSq7aM+itv4M4SWuE/LzU4s0NC5jLnt0dvR9Ru6fO1pUv
+	olHqg8uHHfx/Tk9Uc7q1gST5oG9KJjtMrxBpcM6Sq9SyNlCzUKITIWWOK8h2LAg==
+X-Gm-Gg: ASbGnctYo/6dyefrPikvB4vnJcv2i0YqJRvA5TsPne2TwfZr8EeSYOq+1XV/K27XNWi
+	FhrZ7vEh5ba48xkjH3XzDpGqaFTkuk2FguezqLOVy3IJZkGbZv41eswIvqBTbfUN05cbZ8uLbl6
+	+XPNvBxvbAbn7a1QR5Ls0CgrykD6FOS0CNbH5p8BfZo9c6dgswyq/QclBqSby+AHlJo8PvEbYBy
+	nbSu5RYsTxxngGATO+HMOIEV3H0lcdUFVXqsSYsMEgb+1AXp+CGPgOPPDrHO/qELu38uQ==
+X-Received: by 2002:a05:620a:294f:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c0c229b9b1mr2240430285a.24.1740419432071;
+        Mon, 24 Feb 2025 09:50:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEtId71DUG4ZeM+nkY5pFfCprYMqXckLHG+4ltK2GU+vnkqGTA3w6mxJ4urvsp12Zr3dVEFbA==
+X-Received: by 2002:a05:620a:294f:b0:7c0:a264:4de1 with SMTP id af79cd13be357-7c0c229b9b1mr2240426285a.24.1740419431656;
+        Mon, 24 Feb 2025 09:50:31 -0800 (PST)
+Received: from x1.local ([2604:7a40:2041:2b00::1000])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0a3dcda55sm967097385a.58.2025.02.24.09.50.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 09:50:30 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:50:27 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: david@redhat.com, Liam.Howlett@oracle.com, aarcange@redhat.com,
+	akpm@linux-foundation.org, axelrasmussen@google.com,
+	bgeffon@google.com, brauner@kernel.org, hughd@google.com,
+	jannh@google.com, kaleshsingh@google.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	lokeshgidra@google.com, mhocko@suse.com, ngeoffray@google.com,
+	rppt@kernel.org, ryan.roberts@arm.com, shuah@kernel.org,
+	surenb@google.com, v-songbaohua@oppo.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org, zhangpeng362@huawei.com,
+	zhengtangquan@oppo.com, yuzhao@google.com, stable@vger.kernel.org
+Subject: Re: [PATCH RFC] mm: Fix kernel BUG when userfaultfd_move encounters
+ swapcache
+Message-ID: <Z7yxY3wkcjg_m-x4@x1.local>
+References: <69dbca2b-cf67-4fd8-ba22-7e6211b3e7c4@redhat.com>
+ <20250220092101.71966-1-21cnbao@gmail.com>
+ <Z7e7iYNvGweeGsRU@x1.local>
+ <CAGsJ_4zXMj3hxazV1R-e9kCi_q-UDyYDhU6onWQRtRNgEEV3rw@mail.gmail.com>
+ <Z7fbom4rxRu-NX81@x1.local>
+ <CAGsJ_4xb_FoH+3DgRvV7OkkbZqZKiubntPtR25mqiHQ7PLVaNQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <731904cf-d862-4c0e-ae5b-26444faff253@linux.alibaba.com> <53e610af72302667475821e5b3c84c382da4efbc.1740386576.git.baolin.wang@linux.alibaba.com>
-In-Reply-To: <53e610af72302667475821e5b3c84c382da4efbc.1740386576.git.baolin.wang@linux.alibaba.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 25 Feb 2025 01:50:23 +0800
-X-Gm-Features: AWEUYZlGRBntVkJKFKFmAMSMB-OFznwWpZ3XAcYLcrkzvZkmTsNWtaDj7TNlkv0
-Message-ID: <CAMgjq7D=TKC68PoMhLsJd24_sH5eyJ=o6PsDe6Ne4tAMOi49gw@mail.gmail.com>
-Subject: Re: [PATCH] mm: shmem: fix potential data corruption during shmem swapin
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, alex_y_xu@yahoo.ca, baohua@kernel.org, 
-	da.gomez@samsung.com, david@redhat.com, hughd@google.com, ioworker0@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryan.roberts@arm.com, 
-	wangkefeng.wang@huawei.com, willy@infradead.org, ziy@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGsJ_4xb_FoH+3DgRvV7OkkbZqZKiubntPtR25mqiHQ7PLVaNQ@mail.gmail.com>
 
-On Mon, Feb 24, 2025 at 4:47=E2=80=AFPM Baolin Wang
-<baolin.wang@linux.alibaba.com> wrote:
->
-> Alex and Kairui reported some issues (system hang or data corruption) whe=
-n
-> swapping out or swapping in large shmem folios. This is especially easy t=
-o
-> reproduce when the tmpfs is mount with the 'huge=3Dwithin_size' parameter=
-.
-> Thanks to Kairui's reproducer, the issue can be easily replicated.
->
-> The root cause of the problem is that swap readahead may asynchronously
-> swap in order 0 folios into the swap cache, while the shmem mapping can
-> still store large swap entries. Then an order 0 folio is inserted into
-> the shmem mapping without splitting the large swap entry, which overwrite=
-s
-> the original large swap entry, leading to data corruption.
->
-> When getting a folio from the swap cache, we should split the large swap
-> entry stored in the shmem mapping if the orders do not match, to fix this
-> issue.
->
-> Fixes: 809bc86517cc ("mm: shmem: support large folio swap out")
-> Reported-by: Alex Xu (Hello71) <alex_y_xu@yahoo.ca>
-> Reported-by: Kairui Song <ryncsn@gmail.com>
+On Sun, Feb 23, 2025 at 10:31:37AM +1300, Barry Song wrote:
+> On Fri, Feb 21, 2025 at 2:49 PM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Fri, Feb 21, 2025 at 01:07:24PM +1300, Barry Song wrote:
+> > > On Fri, Feb 21, 2025 at 12:32 PM Peter Xu <peterx@redhat.com> wrote:
+> > > >
+> > > > On Thu, Feb 20, 2025 at 10:21:01PM +1300, Barry Song wrote:
+> > > > > 2. src_anon_vma and its lock – swapcache doesn’t require it（folio is not mapped）
+> > > >
+> > > > Could you help explain what guarantees the rmap walk not happen on a
+> > > > swapcache page?
+> > > >
+> > > > I'm not familiar with this path, though at least I see damon can start a
+> > > > rmap walk on PageAnon almost with no locking..  some explanations would be
+> > > > appreciated.
+> > >
+> > > I am observing the following in folio_referenced(), which the anon_vma lock
+> > > was originally intended to protect.
+> > >
+> > >         if (!pra.mapcount)
+> > >                 return 0;
+> > >
+> > > I assume all other rmap walks should do the same?
+> >
+> > Yes normally there'll be a folio_mapcount() check, however..
+> >
+> > >
+> > > int folio_referenced(struct folio *folio, int is_locked,
+> > >                      struct mem_cgroup *memcg, unsigned long *vm_flags)
+> > > {
+> > >
+> > >         bool we_locked = false;
+> > >         struct folio_referenced_arg pra = {
+> > >                 .mapcount = folio_mapcount(folio),
+> > >                 .memcg = memcg,
+> > >         };
+> > >
+> > >         struct rmap_walk_control rwc = {
+> > >                 .rmap_one = folio_referenced_one,
+> > >                 .arg = (void *)&pra,
+> > >                 .anon_lock = folio_lock_anon_vma_read,
+> > >                 .try_lock = true,
+> > >                 .invalid_vma = invalid_folio_referenced_vma,
+> > >         };
+> > >
+> > >         *vm_flags = 0;
+> > >         if (!pra.mapcount)
+> > >                 return 0;
+> > >         ...
+> > > }
+> > >
+> > > By the way, since the folio has been under reclamation in this case and
+> > > isn't in the lru, this should also prevent the rmap walk, right?
+> >
+> > .. I'm not sure whether it's always working.
+> >
+> > The thing is anon doesn't even require folio lock held during (1) checking
+> > mapcount and (2) doing the rmap walk, in all similar cases as above.  I see
+> > nothing blocks it from a concurrent thread zapping that last mapcount:
+> >
+> >                thread 1                         thread 2
+> >                --------                         --------
+> >         [whatever scanner]
+> >            check folio_mapcount(), non-zero
+> >                                                 zap the last map.. then mapcount==0
+> >            rmap_walk()
+> >
+> > Not sure if I missed something.
+> >
+> > The other thing is IIUC swapcache page can also have chance to be faulted
+> > in but only if a read not write.  I actually had a feeling that your
+> > reproducer triggered that exact path, causing a read swap in, reusing the
+> > swapcache page, and hit the sanity check there somehow (even as mentioned
+> > in the other reply, I don't yet know why the 1st check didn't seem to
+> > work.. as we do check folio->index twice..).
+> >
+> > Said that, I'm not sure if above concern will happen in this specific case,
+> > as UIFFDIO_MOVE is pretty special, that we check exclusive bit first in swp
+> > entry so we know it's definitely not mapped elsewhere, meanwhile if we hold
+> > pgtable lock so maybe it can't get mapped back.. it is just still tricky,
+> > at least we do some dances all over releasing and retaking locks.
+> >
+> > We could either justify that's safe, or maybe still ok and simpler if we
+> > could take anon_vma write lock, making sure nobody will be able to read the
+> > folio->index when it's prone to an update.
+> 
+> What prompted me to do the former is that folio_get_anon_vma() returns
+> NULL for an unmapped folio. As for the latter, we need to carefully evaluate
+> whether the change below is safe.
+> 
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> @@ -505,7 +505,7 @@ struct anon_vma *folio_get_anon_vma(const struct
+> folio *folio)
+>         anon_mapping = (unsigned long)READ_ONCE(folio->mapping);
+>         if ((anon_mapping & PAGE_MAPPING_FLAGS) != PAGE_MAPPING_ANON)
+>                 goto out;
+> 
+> -       if (!folio_mapped(folio))
+> +       if (!folio_mapped(folio) && !folio_test_swapcache(folio))
+>                 goto out;
+> 
+>         anon_vma = (struct anon_vma *) (anon_mapping - PAGE_MAPPING_ANON);
+> @@ -521,7 +521,7 @@ struct anon_vma *folio_get_anon_vma(const struct
+> folio *folio)
+>          * SLAB_TYPESAFE_BY_RCU guarantees that - so the atomic_inc_not_zero()
+>          * above cannot corrupt).
+>          */
 
-Maybe you can add a Closes:?
+[1]
 
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  mm/shmem.c | 31 +++++++++++++++++++++++++++----
->  1 file changed, 27 insertions(+), 4 deletions(-)
->
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 4ea6109a8043..cebbac97a221 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2253,7 +2253,7 @@ static int shmem_swapin_folio(struct inode *inode, =
-pgoff_t index,
->         struct folio *folio =3D NULL;
->         bool skip_swapcache =3D false;
->         swp_entry_t swap;
-> -       int error, nr_pages;
-> +       int error, nr_pages, order, split_order;
->
->         VM_BUG_ON(!*foliop || !xa_is_value(*foliop));
->         swap =3D radix_to_swp_entry(*foliop);
-> @@ -2272,10 +2272,9 @@ static int shmem_swapin_folio(struct inode *inode,=
- pgoff_t index,
->
->         /* Look it up and read it in.. */
->         folio =3D swap_cache_get_folio(swap, NULL, 0);
-> +       order =3D xa_get_order(&mapping->i_pages, index);
->         if (!folio) {
-> -               int order =3D xa_get_order(&mapping->i_pages, index);
->                 bool fallback_order0 =3D false;
-> -               int split_order;
->
->                 /* Or update major stats only when swapin succeeds?? */
->                 if (fault_type) {
-> @@ -2339,6 +2338,29 @@ static int shmem_swapin_folio(struct inode *inode,=
- pgoff_t index,
->                         error =3D -ENOMEM;
->                         goto failed;
->                 }
-> +       } else if (order !=3D folio_order(folio)) {
-> +               /*
-> +                * Swap readahead may swap in order 0 folios into swapcac=
-he
-> +                * asynchronously, while the shmem mapping can still stor=
-es
-> +                * large swap entries. In such cases, we should split the
-> +                * large swap entry to prevent possible data corruption.
-> +                */
-> +               split_order =3D shmem_split_large_entry(inode, index, swa=
-p, gfp);
-> +               if (split_order < 0) {
-> +                       error =3D split_order;
-> +                       goto failed;
-> +               }
-> +
-> +               /*
-> +                * If the large swap entry has already been split, it is
-> +                * necessary to recalculate the new swap entry based on
-> +                * the old order alignment.
-> +                */
-> +               if (split_order > 0) {
-> +                       pgoff_t offset =3D index - round_down(index, 1 <<=
- split_order);
-> +
-> +                       swap =3D swp_entry(swp_type(swap), swp_offset(swa=
-p) + offset);
-> +               }
+> 
+> -       if (!folio_mapped(folio)) {
+> +       if (!folio_mapped(folio) && !folio_test_swapcache(folio)) {
+>                 rcu_read_unlock();
+>                 put_anon_vma(anon_vma);
+>                 return NULL;
+
+Hmm, this let me go back read again on how we manage anon_vma lifespan,
+then I just noticed this may not work.
+
+See the comment right above [1], here's a full version:
+
+	/*
+	 * If this folio is still mapped, then its anon_vma cannot have been
+	 * freed.  But if it has been unmapped, we have no security against the
+	 * anon_vma structure being freed and reused (for another anon_vma:
+	 * SLAB_TYPESAFE_BY_RCU guarantees that - so the atomic_inc_not_zero()
+	 * above cannot corrupt).
+	 */
+
+So afaiu that means we pretty much very rely upon folio_mapped() check to
+make sure anon_vma being valid at all that we fetched from folio->mapping,
+not to mention the rmap walk later afterwards.
+
+Then above diff in folio_get_anon_vma() should be problematic, as when
+"folio_mapped()==false && folio_test_swapcache()==true", above change will
+start to return anon_vma pointer even if the anon_vma could have been freed
+and reused by other VMAs.
+
+> 
+> 
+> The above change, combined with the change below, has also resolved the mTHP
+> -EBUSY issue.
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index e5718835a964..1ef991b5c225 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1333,6 +1333,7 @@ static int move_pages_pte(struct mm_struct *mm,
+> pmd_t *dst_pmd, pmd_t *src_pmd,
+>                 pte_unmap(&orig_src_pte);
+>                 pte_unmap(&orig_dst_pte);
+>                 src_pte = dst_pte = NULL;
+> +               folio_wait_writeback(src_folio);
+>                 err = split_folio(src_folio);
+> 
+>                 if (err)
+>                         goto out;
+> @@ -1343,7 +1344,7 @@ static int move_pages_pte(struct mm_struct *mm,
+> pmd_t *dst_pmd, pmd_t *src_pmd,
+>                 goto retry;
 >         }
->
->  alloced:
-> @@ -2346,7 +2368,8 @@ static int shmem_swapin_folio(struct inode *inode, =
-pgoff_t index,
->         folio_lock(folio);
->         if ((!skip_swapcache && !folio_test_swapcache(folio)) ||
->             folio->swap.val !=3D swap.val ||
-> -           !shmem_confirm_swap(mapping, index, swap)) {
-> +           !shmem_confirm_swap(mapping, index, swap) ||
-> +           xa_get_order(&mapping->i_pages, index) !=3D folio_order(folio=
-)) {
->                 error =3D -EEXIST;
->                 goto unlock;
->         }
-> --
-> 2.43.5
->
+> 
+> -       if (!src_anon_vma && pte_present(orig_src_pte)) {
+> +       if (!src_anon_vma) {
+>                 /*
+>                  * folio_referenced walks the anon_vma chain
+>                  * without the folio lock. Serialize against it with
+> 
+> 
+> split_folio() returns -EBUSY if the folio is under writeback or if
+> folio_get_anon_vma() returns NULL.
+> 
+> I have no issues with the latter, provided the change in folio_get_anon_vma()
+> is safe, as it also resolves the mTHP -EBUSY issue.
+> 
+> We need to carefully consider the five places where folio_get_anon_vma() is
+> called, as this patch will also be backported to stable.
+> 
+>   1   2618  mm/huge_memory.c <<move_pages_huge_pmd>>
+>              src_anon_vma = folio_get_anon_vma(src_folio);
+> 
+>    2   3765  mm/huge_memory.c <<__folio_split>>
+>              anon_vma = folio_get_anon_vma(folio);
+> 
+>    3   1280  mm/migrate.c <<migrate_folio_unmap>>
+>              anon_vma = folio_get_anon_vma(src);
+> 
+>    4   1485  mm/migrate.c <<unmap_and_move_huge_page>>
+>              anon_vma = folio_get_anon_vma(src);
+> 
+>    5   1354  mm/userfaultfd.c <<move_pages_pte>>
+>              src_anon_vma = folio_get_anon_vma(src_folio);
 
-Thanks for the fix, it works for me.
+If my above understanding is correct, we may indeed need alternative plans.
+Not sure whether others have thoughts, but two things I am thinking out
+loud..
 
-Tested-by: Kairui Song <kasong@tencent.com>
+  - Justify rmap on the swap cache folio not possible: I think if
+    folio_mapped() is required for any anon rmap walk (which I didn't
+    notice previously..), and we know this is exclusive swap entry and
+    keeps true (so nobody will be able to race and make the swapcache
+    mapped during the whole process), maybe we are able to justify any rmap
+    won't happen at all, because they should fail at folio_mapped() check.
+    Then we update the folio->mapping & folio->index directly without
+    anon_vma locking.  A rich comment would be helpful in this case..
+
+  - I wonder if it's possible we free the swap cache if it's already
+    writeback to backend storage and clean.  Then moving the swp entry
+    alone looks safe when without the swapcache present.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
