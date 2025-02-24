@@ -1,62 +1,72 @@
-Return-Path: <linux-kernel+bounces-529670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7358BA42989
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:26:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5AEAA429B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C25717A62C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D0D17AA59
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B946265CBD;
-	Mon, 24 Feb 2025 17:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CD2264FBE;
+	Mon, 24 Feb 2025 17:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VIOMoRER"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbOX/TPF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B14F264F8F;
-	Mon, 24 Feb 2025 17:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEF7263F5F;
+	Mon, 24 Feb 2025 17:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417932; cv=none; b=mvrBL3TbEwbLof17maniOpG5JVNiRi2p2FTqsJGWWqAQq03EpPOKZE32L59soI4T5THgM12ao7JGMjaF0q+zB6lQLTKds6C5wzUH8tViAaV5aVLwJGl2ImeKkEJbX8WX9MyXfzCvPgK7Vmr3KNyClAhJiKCfHOIfbu9arCnMDK0=
+	t=1740417988; cv=none; b=j7+38S2MYe1s4IifTezueCS3NGBFh3OF2YbeZ3rXV+fCcUjlXKgUBqYe8+yGE7dwwY+2nEVRgi8ziIN8atoDFtErH0s2OiNYTSl2I90Wq0v4UCh6I8mWKvPeg3Z5AD7aLARNw1hFHAtNdi13fE9juVC17HJhyR3JVPL4obdxK7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417932; c=relaxed/simple;
-	bh=qYcMN3Ko28heWw5Ads1GTJbnXl6xOvUbYMWAixU1XM8=;
+	s=arc-20240116; t=1740417988; c=relaxed/simple;
+	bh=tZ+lB45WUACqJMBa1PQ9dGIjsqcHvzTG2FfmVJNzSp0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFm/HvQXkVYIXthvVsrIT2++hZpFu0Pd/AZzj8LEj6bKa2+wyGm2uaqPGINEG/aIR6lDgTqUyi2tCWgHXT6Ocoy5Evz4w0/NO2iwDbOOk6ATJryNMwWONizvPE7NsvF1vcnl+FTGtwCYrdivRjhoFsxXo/lKS1Bd20t1TLw8S6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VIOMoRER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E29D3C4CED6;
-	Mon, 24 Feb 2025 17:25:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NXXHCIGwXzYWZ9SuL2Jbuc8N5C2wuMFeGStoYRiBxLNmw/cIwLGHaWPRJ2XtksRVyXFvxTq680zWEU0cv0ERpyVOPy8sNFBzdOviqHarwtiwzUj+9QmpzutuLdXnf70MbfP/c4ESe9lNqHLfZcHLMgHp9nfPzqGdRydZyYhay0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbOX/TPF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5266AC4CEDD;
+	Mon, 24 Feb 2025 17:26:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740417931;
-	bh=qYcMN3Ko28heWw5Ads1GTJbnXl6xOvUbYMWAixU1XM8=;
+	s=k20201202; t=1740417987;
+	bh=tZ+lB45WUACqJMBa1PQ9dGIjsqcHvzTG2FfmVJNzSp0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VIOMoRERrJFPSG7+QM9vYAhik6+MyPDcdC8vt1hxWWLg9brUlbTz6qJx72MrtiLPG
-	 EU+BWovufRrv1X+sYwsyFr98SeGPtj8BLhnu62yrTIM9HgRB9jVxOr6iKVsWFBi9Sq
-	 CuYzrQ5goFMXRQPZ7bBupPNpDiBpCMFKb/Txub8y+yvF8TDKYiF1annfxSsCcBMM8A
-	 Hie7HroceCapFgCwkF+scAkX60I5A7iL5RrYB0RP+PF2eHkbYMDVTAWaS1x2c2bvqB
-	 HqYzm7p8rlvLyzRt16TCwRuexlvt/bcwAd7F2pmsWSsdJSoY4mfiCC7WY2kTl/0e6P
-	 axQfoT7PuUZ2g==
-Date: Mon, 24 Feb 2025 11:25:28 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: devicetree@vger.kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	biju.das.jz@bp.renesas.com,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 01/18] media: dt-bindings: renesas,rzg2l-csi2:
- Document Renesas RZ/V2H(P) SoC
-Message-ID: <174041792821.3555548.17117557422413514673.robh@kernel.org>
-References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
- <20250221155532.576759-2-tommaso.merciai.xr@bp.renesas.com>
+	b=MbOX/TPF93uC83/U6DTN+NYOh5nm0n7qRe9uT5KOxKC06Lb6FI6fDwCY4Iiyxg5Gm
+	 p6BmGfK3UzkigK8YC3+UdgErqqvilP8zS2CWcwTGwnoP42P8dkU4+YMdxjyXnx19+r
+	 mTSEKryiACmQW2N6VIMJ5eZSkWu4wd2lYnnwvAXBmXfJLj3x3m6KDZzxL7MWufZqYd
+	 ToF2mTibkMKlXhEqnrEXwy2igFgGRWY2ugReju56GxTOHG2opN4x1kg5v2d/alZ+ZK
+	 URQXnoyD6iKTeevD9IKGtTVkf4p3pzUzNhgoF2FoRPUNdSifVn+JWWZYXyl6o4acRa
+	 fGDs/oup4BN3g==
+Date: Mon, 24 Feb 2025 07:26:26 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Wedson Almeida Filho <walmeida@microsoft.com>,
+	Nell Shamrell-Harrington <nells@linux.microsoft.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Konstantin Andrikopoulos <kernel@mandragore.io>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Roland Xu <mu001999@outlook.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: workqueue: define built-in bh queues
+Message-ID: <Z7yrwkGlJZPC99uL@slm.duckdns.org>
+References: <20250221223533.158959-1-hamzamahfooz@linux.microsoft.com>
+ <CANiq72nsDgRJeKk=B7C9Zo7HL12az+ZLR27qxckqi5H=cmuV5w@mail.gmail.com>
+ <Z7lP5VA374-TuNZz@kernel.org>
+ <Z7lUcq3PycSSHiXx@kernel.org>
+ <Z7lVeWFX-8uQJaJC@Mac.home>
+ <f9b783dff11a923b53cb654a843af7ae33478f30.camel@kernel.org>
+ <CANiq72=c9EZOuwjBz7FjvAe0Hw4Wbyg0w6Za8rZV1kf3uWCtNQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,32 +75,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250221155532.576759-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <CANiq72=c9EZOuwjBz7FjvAe0Hw4Wbyg0w6Za8rZV1kf3uWCtNQ@mail.gmail.com>
 
+On Sat, Feb 22, 2025 at 12:57:03PM +0100, Miguel Ojeda wrote:
+...
+> Moreover, I do take issue with your social media post. You claim:
+> 
+>     "Rust kernel patches should really level up on commit messages and
+> not merging random code with zero callers."
+> 
+> We do _not_ merge random code. In fact, my message above was Cc'ing
+> workqueue precisely because we do not just randomly merge code.
+> 
+> Not just that -- if you had actually checked the Git log, you would
+> have seen that Tejun himself merged the bulk of the content in that
+> file. So it seems now you have just blamed two different subsystems
+> entirely.
+> 
+> Regarding "zero callers": that is the usual rule, yes, but it can
+> happen when there are expected users in the future, and in the end it
+> is up to the judgement of the maintainers. For instance, in this file,
+> there are other queues that do not have users yet.
 
-On Fri, 21 Feb 2025 16:55:15 +0100, Tommaso Merciai wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
-> found on the Renesas RZ/G2L SoC, with the following differences:
-> - A different D-PHY
-> - Additional registers for the MIPI CSI-2 link
-> - Only two clocks
-> 
-> Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
-> SoC.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> ---
-> Changes since v1:
->  - Dropped empty line as suggested by LPinchart
->  - Fixed minItems into else conditional block as suggested by RHerring
-> 
->  .../bindings/media/renesas,rzg2l-csi2.yaml    | 59 ++++++++++++++-----
->  1 file changed, 44 insertions(+), 15 deletions(-)
-> 
+FWIW, the commit message could be better but at the same time I'm not sure
+commit message bar is any higher for C patches for something this trivial.
+As for no-immediate-user policy, yes, generally true but again it's sometims
+a necessity or just more convenient to merge these API patches separately -
+e.g. features straddling across subsystems, straightforward prep patches and
+so on. So, that's the *general* rule but rules without flexibility are often
+silly things and it's not like culling these trivial wrappers afterwards is
+difficult.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Thanks.
 
+-- 
+tejun
 
