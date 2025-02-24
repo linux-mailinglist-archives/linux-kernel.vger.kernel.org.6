@@ -1,269 +1,137 @@
-Return-Path: <linux-kernel+bounces-529388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F12A424C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:01:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2DDDA4249F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF25E19C7229
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:50:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5479317BBCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A8C2580D7;
-	Mon, 24 Feb 2025 14:47:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC271A0BCD;
+	Mon, 24 Feb 2025 14:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gPgm+K37"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E2E254866
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AC6owz5h"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73DFB1B7F4;
+	Mon, 24 Feb 2025 14:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740408458; cv=none; b=OV2+758AzbELVPVObvofa07pl82APqN0CurK8x6soUXUztppx3/1wRGOEkdqLBgm4K/CiGVSnj7wqCb3jYHEkwA6zj2gGjBOPSs4GkjFzc9W+L2H36usxNTtyk8oLcF1qOlrZkSHhVffZd9XfK5GY9MBaCra1iK7Li0/8iJwZPg=
+	t=1740408519; cv=none; b=mXLZU5QrnT2cfSCyRrlU1IGA4Y+L3rAknV10oroPXyLuXIheAIqcvrCtFlGTu+kkl9DSn9D0xCZ4Mn/sv6oYNkgfhWCSlS9GfcNKaeu3CY21q8eiuyKZ4hT4FUn/+3W9IdtAAVo5w5p/SRUhHPwI+1MPfn0qXdpT+E4Ped+GVcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740408458; c=relaxed/simple;
-	bh=/rC3zjRkXgsFNzgn2Bsk3EVpsKL8TMjcDS8os7nggNM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=J6cRH8kOhhtSJoSUfuWmucAGHtrZ6mQo2JfykGqFpCyT2fTDRNxzo/p3X+1Hgg4j7c4dDNbPqi/X+MO8At6oTCl/40fn8Pf8HRM6GM4v7YwE5PSe/arzSQRpKjMzXra3+dQV6Pm552qdWdysMMe8FOcemDDE26q0QvhcYIPVxlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gPgm+K37; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43aafafe6b7so2201605e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:47:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740408455; x=1741013255; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Fz5NU1PueoQjecq9oG9iR+vgvt/Z95TUw+fwY0nW88=;
-        b=gPgm+K37fqYvaDkfm7GVEUrYczTQ/Bsmn4SHyGO4f7z5BbjjYblXV9Wn/Moe0H9VC5
-         l2KhQK88qE0EC9LJn6F2XGZ+I7ocLEMWRa3WJmug/LQ+h+6lgj7RHW6lp+naY1gpOuGv
-         O7lCCWaKjW9k5a6EoMJnkJ5W/AuAye5aB8+L9+H+j/AobvSnVcG93QrutQY4y95eNzsy
-         pjsbc5mXfLQnpOtegU42G4CSDi136WoReehZRE8jmFZ7FZmQOgIz1h+y8NjJLeCwGNeU
-         r2bP/SpcMMxP4XNsbHOqa+zXSra8NzgcgU34mxCjS+Ojg6yb+o16Hlcfev7RzFtYNmtY
-         GcGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740408455; x=1741013255;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Fz5NU1PueoQjecq9oG9iR+vgvt/Z95TUw+fwY0nW88=;
-        b=dYYO0KxQ6lmB+FVjSRZ/JfMNU0m63ZgvwazBNWTB+qfiSWBfp0xxN3NiLhLYUY9fr7
-         iRkf30Ih7a0FYyeH1bbxzWjtowqqeJpS8rxrHzIk3DGTlNXJ2E2FQ5Qm+M3UYpIG/lAK
-         nfNSJ8DjbTbtcMnSvd4uqPNEAWGivGDOF+7HKWYFaTCN0bOj3FG+5YsZ4Ot3cgKQqX2f
-         eu2SJku1UIO0TlGJ4rCCnJXL7tcUdAkh3vqlP83jGPBahu37AMF1l2z6VJJ9YA8j4SrI
-         B/A1ZMzymWN15tmT4COxOKcACcXIvM3UhLSHUomLazpcEIrOVnPoP4GG80Q9hHfJy7Hh
-         y2aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Q1KYsppnzTZGHK3So+PasRSYOTC+Yc9qJJe4rtvitfKIWYHZSQI/a3qV9AuTjqHcgFdi9D0z6VlR25g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBcaswYNjbfbdI7EGZ7cvn2vpwY+WcExaqISDZ4ZmPf+YB1NvU
-	ZeIAtK3LQy++lLlSrwgGjnV6RJXJroOqWMD8W7gFain0vAbmZK6ogv8qRK9hrR4BorSaR1FVVve
-	O8r7Snf9N9g==
-X-Google-Smtp-Source: AGHT+IEAGhOq6ZLG1kWNmTBHOtlzeySJw4C81f6PzEKZO3mD1LQVv/+voZGC5+kCMIWufaPww+gOqaaEPDa8Ww==
-X-Received: from wmqe19.prod.google.com ([2002:a05:600c:4e53:b0:439:831e:ca7c])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:468f:b0:439:5541:53cc with SMTP id 5b1f17b1804b1-439ae2206d5mr101272755e9.29.1740408455220;
- Mon, 24 Feb 2025 06:47:35 -0800 (PST)
-Date: Mon, 24 Feb 2025 14:47:14 +0000
-In-Reply-To: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
+	s=arc-20240116; t=1740408519; c=relaxed/simple;
+	bh=v/i5uNRdv0lKpzjbyVJ/rUwzfVKBkuvu3O1tyNM6WNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNDyMO+z3a7/ftVHNxVbCE6dR48RS6RjXZ6Y8j/L/TWOfRWL8pYy6NKiP4s7PMHqInaFyDn+AzvCYrqhZlbawoyNlAA9jRoHjUhVJhy+S3m9uPhW8eno8bYDmJkn8x3dy6KO7qieOQ8UVY3vzu/8f91p0J2B26ra4P5SYSDlTPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AC6owz5h; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2 (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
+	by linux.microsoft.com (Postfix) with ESMTPSA id DD8B820DF168;
+	Mon, 24 Feb 2025 06:48:36 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DD8B820DF168
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740408517;
+	bh=B1XHtWIka4rmClyLQc4wAzTbA5a3eeqHQdnViUvy9kU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AC6owz5hIgwCPb/60nWWp31kDbFvEMfSDHte5zvyQRfTgZMDJHuNmzUljmeb+nLDA
+	 FeQz/TFArAmXS8P0SEHyiUc6Lo6UXsG12TY5ts1QefxVqUTJ39MP20TK0DtehvwNRV
+	 MGXB81NfmVdlb15/rzikXrH6f2gJYKgttsm877EY=
+Date: Mon, 24 Feb 2025 09:48:31 -0500
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Jani Nikula <jani.nikula@intel.com>, Baoquan He <bhe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: Re: [PATCH v2] panic: call panic handlers before
+ panic_other_cpus_shutdown()
+Message-ID: <Z7yGv_ZyeyUueXLz@hm-sls2>
+References: <20250221213055.133849-1-hamzamahfooz@linux.microsoft.com>
+ <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
-X-Mailer: b4 0.15-dev
-Message-ID: <20250224-page-alloc-kunit-v1-4-d337bb440889@google.com>
-Subject: [PATCH RFC 4/4] mm/page_alloc_test: Add smoke-test for page allocation
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Michal Hocko <mhocko@kernel.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Brendan Jackman <jackmanb@google.com>, Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
 
-This is the bare minimum to illustrate what KUnit code would look like
-that covers the page allocator.
+On Fri, Feb 21, 2025 at 11:01:09PM +0000, Michael Kelley wrote:
+> From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Friday, February 21, 2025 1:31 PM
+> > 
+> > Since, the panic handlers may require certain cpus to be online to panic
+> > gracefully, we should call them before turning off SMP. Without this
+> > re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
+> > vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
+> > is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
+> > crash_smp_send_stop() before the vmbus channel can be deconstructed.
+> 
+> Hamza -- what specifically is the problem with the way vmbus_wait_for_unload()
+> works today? That code is aware of the problem that the unload response comes
+> only on the VMBUS_CONNECT_CPU, and that cpu may not be able to handle
+> the interrupt. So the code polls the message page of each CPU to try to get the
+> unload response message. Is there a scenario where that approach isn't working?
+> 
 
-Even this trivial test illustrates a couple of nice things that are
-possible when testing via KUnit
+It doesn't work on arm64 (if the crashing cpu isn't VMBUS_CONNECT_CPU), it
+always ends up at "VMBus UNLOAD did not complete" without fail. It seems
+like arm64's crash_smp_send_stop() is more aggressive than x86's.
 
-1. We can directly assert that the correct zone was used.
-   (Although note due to the simplistic setup, you can have any zone you
-   like as long as it's ZONE_NORMAL).
-
-2. We can assert that a page got freed. It's probably pretty unlikely
-   that we'd have a bug that actually causes a page to get leaked by the
-   allocator, but it serves as a good example of the kind of assertions
-   we can make by judicously peeking at allocator internals.
-
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- mm/page_alloc_test.c | 139 ++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 138 insertions(+), 1 deletion(-)
-
-diff --git a/mm/page_alloc_test.c b/mm/page_alloc_test.c
-index c6bcfcaf61b57ca35ad1b5fc48fd07d0402843bc..0c4effb151f4cd31ec6a696615a9b6ae4964b332 100644
---- a/mm/page_alloc_test.c
-+++ b/mm/page_alloc_test.c
-@@ -26,6 +26,139 @@
- 	}									\
- })
- 
-+#define EXPECT_WITHIN_ZONE(test, page, zone) ({					\
-+	unsigned long pfn = page_to_pfn(page);					\
-+	unsigned long start_pfn = zone->zone_start_pfn;				\
-+	unsigned long end_pfn = start_pfn + zone->spanned_pages;		\
-+										\
-+	KUNIT_EXPECT_TRUE_MSG(test,						\
-+		pfn >= start_pfn && pfn < end_pfn,				\
-+		"Wanted PFN 0x%lx - 0x%lx, got 0x%lx",				\
-+		start_pfn, end_pfn, pfn);					\
-+	KUNIT_EXPECT_PTR_EQ_MSG(test, page_zone(page), zone,			\
-+		"Wanted %px (%s), got %px (%s)",				\
-+		zone, zone->name, page_zone(page), page_zone(page)->name);	\
-+})
-+
-+static void action_nodemask_free(void *ctx)
-+{
-+	NODEMASK_FREE(ctx);
-+}
-+
-+/*
-+ * Call __alloc_pages_noprof with a nodemask containing only the nid.
-+ *
-+ * Never returns NULL.
-+ */
-+static inline struct page *alloc_pages_force_nid(struct kunit *test,
-+						 gfp_t gfp, int order, int nid)
-+{
-+	NODEMASK_ALLOC(nodemask_t, nodemask, GFP_KERNEL);
-+	struct page *page;
-+
-+	KUNIT_ASSERT_NOT_NULL(test, nodemask);
-+	kunit_add_action(test, action_nodemask_free, &nodemask);
-+	nodes_clear(*nodemask);
-+	node_set(nid, *nodemask);
-+
-+	page = __alloc_pages_noprof(GFP_KERNEL, 0, nid, nodemask);
-+	KUNIT_ASSERT_NOT_NULL(test, page);
-+	return page;
-+}
-+
-+static inline bool page_on_buddy_list(struct page *want_page, struct list_head *head)
-+{
-+	struct page *found_page;
-+
-+	list_for_each_entry(found_page, head, buddy_list) {
-+		if (found_page == want_page)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+/* Test case parameters that are independent of alloc order.  */
-+static const struct {
-+	gfp_t gfp_flags;
-+	enum zone_type want_zone;
-+} alloc_fresh_gfps[] = {
-+	/*
-+	 * The way we currently set up the isolated node, everything ends up in
-+	 * ZONE_NORMAL.
-+	 */
-+	{ .gfp_flags = GFP_KERNEL,	.want_zone = ZONE_NORMAL },
-+	{ .gfp_flags = GFP_ATOMIC,	.want_zone = ZONE_NORMAL },
-+	{ .gfp_flags = GFP_USER,	.want_zone = ZONE_NORMAL },
-+	{ .gfp_flags = GFP_DMA32,	.want_zone = ZONE_NORMAL },
-+};
-+
-+struct alloc_fresh_test_case {
-+	int order;
-+	int gfp_idx;
-+};
-+
-+/* Generate test cases as the cross product of orders and alloc_fresh_gfps.  */
-+static const void *alloc_fresh_gen_params(const void *prev, char *desc)
-+{
-+	/* Buffer to avoid allocations. */
-+	static struct alloc_fresh_test_case tc;
-+
-+	if (!prev) {
-+		/* First call */
-+		tc.order = 0;
-+		tc.gfp_idx = 0;
-+		return &tc;
-+	}
-+
-+	tc.gfp_idx++;
-+	if (tc.gfp_idx >= ARRAY_SIZE(alloc_fresh_gfps)) {
-+		tc.gfp_idx = 0;
-+		tc.order++;
-+	}
-+	if (tc.order > MAX_PAGE_ORDER)
-+		/* Finished. */
-+		return NULL;
-+
-+	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "order %d %pGg\n",
-+		tc.order, &alloc_fresh_gfps[tc.gfp_idx].gfp_flags);
-+	return &tc;
-+}
-+
-+/* Smoke test: allocate from a node where everything is in a pristine state. */
-+static void test_alloc_fresh(struct kunit *test)
-+{
-+	const struct alloc_fresh_test_case *tc = test->param_value;
-+	gfp_t gfp_flags = alloc_fresh_gfps[tc->gfp_idx].gfp_flags;
-+	enum zone_type want_zone_type = alloc_fresh_gfps[tc->gfp_idx].want_zone;
-+	struct zone *want_zone = &NODE_DATA(isolated_node)->node_zones[want_zone_type];
-+	struct list_head *buddy_list;
-+	struct per_cpu_pages *pcp;
-+	struct page *page, *merged_page;
-+	int cpu;
-+
-+	page = alloc_pages_force_nid(test, gfp_flags, tc->order, isolated_node);
-+
-+	EXPECT_WITHIN_ZONE(test, page, want_zone);
-+
-+	cpu = get_cpu();
-+	__free_pages(page, 0);
-+	pcp = per_cpu_ptr(want_zone->per_cpu_pageset, cpu);
-+	put_cpu();
-+
-+	/*
-+	 * Should end up back in the free area when drained. Because everything
-+	 * is free, it should get buddy-merged up to the maximum order.
-+	 */
-+	drain_zone_pages(want_zone, pcp);
-+	KUNIT_EXPECT_TRUE(test, PageBuddy(page));
-+	KUNIT_EXPECT_EQ(test, buddy_order(page), MAX_PAGE_ORDER);
-+	KUNIT_EXPECT_TRUE(test, list_empty(&pcp->lists[MIGRATE_UNMOVABLE]));
-+	merged_page = pfn_to_page(round_down(page_to_pfn(page), 1 << MAX_PAGE_ORDER));
-+	buddy_list = &want_zone->free_area[MAX_PAGE_ORDER].free_list[MIGRATE_UNMOVABLE];
-+	KUNIT_EXPECT_TRUE(test, page_on_buddy_list(merged_page, buddy_list));
-+}
-+
- static void action_drain_pages_all(void *unused)
- {
- 	int cpu;
-@@ -144,7 +277,11 @@ static void depopulate_isolated_node(struct kunit_suite *suite)
- 	WARN_ON(add_memory(0, start, size, MMOP_ONLINE));
- 	WARN_ON(walk_memory_blocks(start, size, NULL, memory_block_online_cb));
- }
--static struct kunit_case test_cases[] = { {} };
-+
-+static struct kunit_case test_cases[] = {
-+	KUNIT_CASE_PARAM(test_alloc_fresh, alloc_fresh_gen_params),
-+	{}
-+};
- 
- struct kunit_suite page_alloc_test_suite = {
- 	.name = "page_alloc",
-
--- 
-2.48.1.601.g30ceb7b040-goog
-
+> Note also that Hyper-V itself can take a long time (10's of seconds) to respond
+> to the unload request. See the comments in vmbus_wait_for_unload() about
+> flushing the Azure host disk cache. I worked on this code and did the
+> measurements, so I have some familiarity with the problems. :-)
+> 
+> Michael
+> 
+> > 
+> > Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> > ---
+> > v2: keep printk_legacy_allow_panic_sync() after
+> >     panic_other_cpus_shutdown().
+> > ---
+> >  kernel/panic.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/kernel/panic.c b/kernel/panic.c
+> > index fbc59b3b64d0..433cf651e213 100644
+> > --- a/kernel/panic.c
+> > +++ b/kernel/panic.c
+> > @@ -372,16 +372,16 @@ void panic(const char *fmt, ...)
+> >  	if (!_crash_kexec_post_notifiers)
+> >  		__crash_kexec(NULL);
+> > 
+> > -	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+> > -
+> > -	printk_legacy_allow_panic_sync();
+> > -
+> >  	/*
+> >  	 * Run any panic handlers, including those that might need to
+> >  	 * add information to the kmsg dump output.
+> >  	 */
+> >  	atomic_notifier_call_chain(&panic_notifier_list, 0, buf);
+> > 
+> > +	panic_other_cpus_shutdown(_crash_kexec_post_notifiers);
+> > +
+> > +	printk_legacy_allow_panic_sync();
+> > +
+> >  	panic_print_sys_info(false);
+> > 
+> >  	kmsg_dump_desc(KMSG_DUMP_PANIC, buf);
+> > --
+> > 2.47.1
+> > 
+> 
 
