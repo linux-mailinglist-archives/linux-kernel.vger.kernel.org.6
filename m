@@ -1,279 +1,345 @@
-Return-Path: <linux-kernel+bounces-528206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A31A414C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:34:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC470A414C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6951B3A8C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:34:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0560716EBA6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99B41A76AC;
-	Mon, 24 Feb 2025 05:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9011A76AC;
+	Mon, 24 Feb 2025 05:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK1EBv8n"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tQsv+qk0"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643A14A1D;
-	Mon, 24 Feb 2025 05:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F70C86324
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740375254; cv=none; b=ZgdfJl1u2xE++OWjBUL0/ddN8ItDo2x7NdfxhzEGamavTIqU9pcO0xgrxYu5O49gdfBHjMyu7sjW7IgOhxhu77+K/98nUTN/h6wVar7gFlKetIphES3UlY/3zEYGs6hZ1vwrkVAfKTIOiuC5UAUYetxOk2SI9m2X40yyymI2Lh0=
+	t=1740375278; cv=none; b=NzgirVGajEhNlKM6cddWxr9xbM2NPdnEr7F5SjdkroJUgrIlo08IfT0wycTgslrTNRm/xbIQdRVMUOc9QzqMR3BJBBgVmUNm+yjbMSnbp5m49I8v0hK5P2GKDC3dSNyS5pKifvNnQFiIjwELq1b5wvH1n9EnH2MHlr+MB5dTSVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740375254; c=relaxed/simple;
-	bh=o0mNt8DLxtw07fV1+vosL8V0dTtj2M4jY53u1buWuVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DFwP85BgQAbgiMvxwTvEiA8vV2mzoK4Q3LxWXCmmxoqkRZAsCQNp7mFuyjujba8NOzWtupOYXoAota2BitusLzLBiuIUW3S4eou0qcD6DEaM6uqYE22Dcgz1rKb8h0Jwifqj/6/aAF+iPaTXOxvnjxI8Ji83nHlvNbjcUARubU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BK1EBv8n; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4399deda38cso23251495e9.1;
-        Sun, 23 Feb 2025 21:34:12 -0800 (PST)
+	s=arc-20240116; t=1740375278; c=relaxed/simple;
+	bh=jBaqHGDAg8bBa+vShvnVRxtbiqFKz1i46zbQ79fBeFA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=artRyn5jsFcQPkbcRh3NiUfT4pJv4ZdRqy4Jhg/U2UF+BwBPZ8PYGYTnD4sVCnoWh+SJ7SzRF4k/Ds3WHqPqbO4rEHEbTbDE0mUSx8u+xT29y1jA0NunPbk/gkWlz3nwWZHx6ZW5FtiXmORunZsKypkSQ0tpTdAK+ottY4SCH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tQsv+qk0; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fbfa8c73a6so8049738a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:34:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740375250; x=1740980050; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hovVMzLzvLv50Bh+e9VDe4ZEqsDfzzqLzPF1Hj3K1cE=;
-        b=BK1EBv8nmWcdHJD/TXJpd8nN6UI2Ak7RPkD/3FTWnCyTy92JCcWl4DsPytbz5J4p7k
-         +STUsxMFSd0HtXgEfBK1jcA/NIPX8ueLbfsTaXxEFbM2ex0qULq69EufhDTHekWiPx9l
-         d6BmHXfru5GL50/5IGnxre9p+tGChC4UAQNHG62AagP79h4NjkD+qL91AtwFsn2NTL1L
-         BUnFz4rzW0e1YtU07FlMNP1EYGfE41ek5lnNvq6aM6tUpe3CFT3Sdr8Yc+EWAII9gaUi
-         RL9zkcT3h0fyu/ieDJIHdG9QYL4n2FrHN7sEcgwjsYuCNSFTL/VhMbKb5LJ72n6gZlEI
-         XbGA==
+        d=linaro.org; s=google; t=1740375275; x=1740980075; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=43ga30Eg/2LYLuOZ6SqxZh5pp6MB94AP6T17p8FlCUE=;
+        b=tQsv+qk0kfx/rWpyqlC/LE0qKTHgLcOktPg8wBhXKD81cAZlMJRtcnGjdkPX5D3+6J
+         l9dd0YedK7vdEjUuOrzqPmwFuhYHHSO2nbh7Oy77IwOC9Q4YquKESibEsUxc/aqbQHNu
+         y0IXIvEnpZXmtnciU9bZXoMkomA5Z83Ok/twMpZzi+sn48xvrEu9Y1nFz4dQTZtmnD7H
+         FC/Wqi5UVMoP2zBlo+eLpy6LaxFvE+0puf/+HvGpE0Fhpy5aTxoaaIqImv/9gqK8s/ZR
+         gWxI96UU+guNBe5TBd2WPk7jzraRtiZUCtnkhQHCItw67eNe38Jn3Rc7B5g33XORhGPc
+         GP2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740375250; x=1740980050;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hovVMzLzvLv50Bh+e9VDe4ZEqsDfzzqLzPF1Hj3K1cE=;
-        b=SG3OgCvuOAjVsPf4Wg86gSFrHJi0QVcMD/EgQ9V7K1lG55KtnyLMGIqvl/1E6k8hM5
-         cE6AtmspPL/JZ8lJuKoGs6076FsehofqQQhbMTsPxBJeKn73sr171i3ZwJSrJzvNzR8c
-         bWQO0JBxI0nIHUTNeYRaAzFxFB5yXYyOjfhYBSDgOScMcNREDY/2GrXnHQrE6AVvo38s
-         1ILo3i2+qZVx84TDedrUq7rAygRtxRsmlHfiv5T0pK/sLGY0ke7b1dsEIWOo+low+8WY
-         CZxvYfB9XLzzjE3SzMQsC0wgIZuS0jjlCnurF74n9cVtmt4KSnZ/Svhwjdgfd3PZnMKi
-         Cj+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUiXR0xlWbEnWg3bQCDzOWXjdYsiA4aBUU5OUC+/cMhldI0W5XZ/b17HqDgQxDAfthd4++TC9FzggAYPMRN@vger.kernel.org, AJvYcCVnvGbgPSWtU+i8eTeipB9Vn+fwO4ytYyWdrx0FF5ODKlpDBxyPpaNlYXbKLij29MEHQvO7qJ7I307Z@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVT/aP/J/qTKkkr5w8WnalObBUiwcsbTpVHlYqZYLFXlsDh/kE
-	C+oUYJjgggVuTdKbyFyL4ZI02z6cFnNAZ1vE5YqcU6h7RmRIkO93EKRngg==
-X-Gm-Gg: ASbGncupEvGlufOOLvky9Fdv/sZXSZoNcHEjG+s1OkRwEyq0KmicZ0hnpTP774okY4U
-	8OBN+dKroyNowKAqcykhBiyywt67NQtD6aL5KW3j0SUWJ7DWIBgZcDlA4Idg7+wXcC2iPSPqoUA
-	/DmfZELOvoFsiWU94Rm6QAepHkXGCNma6xgMob4tuYrHskalAmEia1bgZ0J9/HiTsoe9wS9IQ08
-	sSrXLcvT0nWc8hm8ulUZxzQhIJYse/a0/30x6V26KiwbHsPiqYQArQipJqunMdp80zRNVmHZDAe
-	v5EknePVd858xUCYpNgcWEkH+gE4+PtCUJJFyVj2oCUP0bYMNyuJh/5f5D/bKNP0TAWl2MHlgi4
-	nFjFKLYgnEQIeVVOu
-X-Google-Smtp-Source: AGHT+IEQTu/rmtnoSlqIIUihb2tMIDfl2UQ8f9IYf/tsrTRuzsDJxc+1QdJsEUMs77i493Pzo2FwgQ==
-X-Received: by 2002:a05:600c:3513:b0:439:8a8c:d3d8 with SMTP id 5b1f17b1804b1-439ae21d3e1mr85818965e9.29.1740375250069;
-        Sun, 23 Feb 2025 21:34:10 -0800 (PST)
-Received: from localhost.localdomain (249.red-88-10-54.dynamicip.rima-tde.net. [88.10.54.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce735sm95101525e9.3.2025.02.23.21.34.08
+        d=1e100.net; s=20230601; t=1740375275; x=1740980075;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=43ga30Eg/2LYLuOZ6SqxZh5pp6MB94AP6T17p8FlCUE=;
+        b=CuqgW8c+KOI3qUCHo2899QWd0TOjwmF8rfX8oSAZPDYgDPZLEX+ptvjBkhpARHI1dP
+         7Hw6tVj44ogUmrs4UaGZrz5N8mwVCp/L7lIXoFVN9rnxBGyXn7lk/O+ouPhnZD2xGK5S
+         Anz0dQjWq8Kt35T0mPlwrZ5ZXDhP7BgzOyIEeSjj74gnOlSYZuiK1tsEogSfkfaQj8Fy
+         jMctDLXCVPOKwkq6L95SD47Z/yF7G4IkZ+GBpcn1mX49DFQRV+0gOwCc4gnD74BmDT9k
+         E18L/kRpFpXxRSKFstzw6nXv7cwjlrwM52QXqurgaFdgfaF4C9qaogmdYUzfew6ZN8qb
+         x0hA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjvHKQLP0D6JPUlW/C+9TXClF3CQTvYA9+YzYkIfdOdcFCyGUU2lTBTjGnJS3aNLQwvl6ZIiW7E3VkM78=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyl9rp85St+z33s7OitSvIJ0urFBKamb8RgEpiE9dkiS08CQ23C
+	Mzb96YrlPjxZ/KOeqSHigKoTu9ltYl75SG6etpRRJutgxmsxMIP8dOyUm4AAYQ==
+X-Gm-Gg: ASbGncv62mLer7Uy6NsynlpzxyrLFvl8mmYJ5XeH+6k1a3IvdY0J9vo7b2XRVH+E7GD
+	9H/r9i9cM+I5WpSz+imYevpNVpB8RucI26wacSiTYc8Dm4YEIQU8HWa9EEffL7fBx+r1WcWJDkF
+	N5isvOUdNi0LcVCKqwiwARN7m41qG0EQlsoyzaDHO5+78C4uZstGWXWSIVZNrlST8GxJcU0usmj
+	2DTj+8XA+lYgbJWyAafcX3xF/JxEBUgyd0ofLOqDX7vyTC4QLpnQFo4j67t/+41W90rPTRsKV6L
+	JIexM551E29YCMchCEqOT3CASqSTm6M6M296
+X-Google-Smtp-Source: AGHT+IHE6fFDvFlmYFh4rC73io7Q24A/SjSS++QJyraNtZS3IyyuDX4jUVbXtZQ+X01dxsQcPdKfhQ==
+X-Received: by 2002:a17:90b:1806:b0:2fa:ba3:5451 with SMTP id 98e67ed59e1d1-2fce87468f3mr19833570a91.35.1740375275469;
+        Sun, 23 Feb 2025 21:34:35 -0800 (PST)
+Received: from thinkpad ([36.255.17.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceae32c24sm5511291a91.0.2025.02.23.21.34.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 21:34:09 -0800 (PST)
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-To: linux-mips@vger.kernel.org
-Cc: tsbogend@alpha.franken.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	harveyhuntnexus@gmail.com,
-	devicetree@vger.kernel.org,
-	yangshiji66@outlook.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] mips: dts: ralink: mt7628a: update system controller node and its consumers
-Date: Mon, 24 Feb 2025 06:34:11 +0100
-Message-Id: <20250224053411.924015-1-sergio.paracuellos@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 23 Feb 2025 21:34:34 -0800 (PST)
+Date: Mon, 24 Feb 2025 11:04:28 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Hans Zhang <18255117159@163.com>
+Cc: jingoohan1@gmail.com, shradha.t@samsung.com, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	Frank.Li@nxp.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rockswang7@gmail.com,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [v5] PCI: dwc: Add the debugfs property to provide the LTSSM
+ status of the PCIe link
+Message-ID: <20250224053428.m6w63a64u5lzm47t@thinkpad>
+References: <20250223141848.231232-1-18255117159@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250223141848.231232-1-18255117159@163.com>
 
-Current MT7628A device tree file system controller node is wrong since it is
-not matching bindings. Hence, update it to match current bindings updating
-it also to use new introduced clock constants.
+On Sun, Feb 23, 2025 at 10:18:48PM +0800, Hans Zhang wrote:
+> Add the debugfs property to provide a view of the current link's LTSSM
+> status from the root port device.
+> 
+>   /sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
+> 
+> Signed-off-by: Hans Zhang <18255117159@163.com>
 
-Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
----
-Hi Thomas,
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-This is the missing patch to be applied in the series [0] because of some
-build errors.
+- Mani
 
-Changes in v4:
-- update syntax in mail file from /include/ to #include.
-- Fix build errors in 'usb-phy' node.
+> Tested-by: Niklas Cassel <cassel@kernel.org>
+> ---
+> Changes since v4:
+> https://lore.kernel.org/linux-pci/20250222143335.221168-1-18255117159@163.com/
+> 
+> - Change the return value of function dw_ltssm_sts_string from char *
+>   to const char *.
+> - Modify the Description of the Document.
+> 
+> Changes since v3:
+> https://lore.kernel.org/linux-pci/20250214144618.176028-1-18255117159@163.com/
+> 
+> - My v4 patch is updated to the latest based on Shradha's v7 patch.
+> - Submissions based on the following v7 patches:
+> https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-2-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-3-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-4-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-5-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250221131548.59616-6-shradha.t@samsung.com/
+> 
+> Changes since v2:
+> https://lore.kernel.org/linux-pci/20250206151343.26779-1-18255117159@163.com/
+> 
+> - Git pulls the latest code and fixes conflicts.
+> - Do not place into sysfs node as recommended by maintainer. Shradha-based patch
+>   is put into debugfs.
+> - Submissions based on the following v6 patches:
+> https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-2-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-3-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-4-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250214105007.97582-5-shradha.t@samsung.com/
+> 
+> Changes since v1:
+> https://lore.kernel.org/linux-pci/20250123071326.1810751-1-18255117159@163.com/
+> 
+> - Do not place into sysfs node as recommended by maintainer. Shradha-based patch
+>   is put into debugfs.
+> - Submissions based on the following v5 patches:
+> https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-2-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-3-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-4-shradha.t@samsung.com/
+> https://patchwork.kernel.org/project/linux-pci/patch/20250121111421.35437-5-shradha.t@samsung.com/
+> ---
+>  Documentation/ABI/testing/debugfs-dwc-pcie    |  5 ++
+>  .../controller/dwc/pcie-designware-debugfs.c  | 29 +++++++++++
+>  .../pci/controller/dwc/pcie-designware-host.c | 50 +++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware.h  | 33 ++++++++++++
+>  4 files changed, 117 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/debugfs-dwc-pcie b/Documentation/ABI/testing/debugfs-dwc-pcie
+> index 650a89b0511e..8245261506bc 100644
+> --- a/Documentation/ABI/testing/debugfs-dwc-pcie
+> +++ b/Documentation/ABI/testing/debugfs-dwc-pcie
+> @@ -142,3 +142,8 @@ Description:	(RW) Some lanes in the event list are lane specific events. These i
+>  		events 1) - 11) and 34) - 35).
+>  		Write lane number for which counter needs to be enabled/disabled/dumped.
+>  		Read will return the current selected lane number. Lane0 is selected by default.
+> +
+> +What:		/sys/kernel/debug/dwc_pcie_<dev>/ltssm_status
+> +Date:		February 2025
+> +Contact:	Hans Zhang <18255117159@163.com>
+> +Description:	(RO) Read will return the current PCIe LTSSM state in both string and raw value.
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-debugfs.c b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> index dca1e9999113..39487bd184e1 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> @@ -533,6 +533,33 @@ static int dwc_pcie_rasdes_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+>  	return ret;
+>  }
+>  
+> +static int dwc_pcie_ltssm_status_show(struct seq_file *s, void *v)
+> +{
+> +	struct dw_pcie *pci = s->private;
+> +	enum dw_pcie_ltssm val;
+> +
+> +	val = dw_pcie_get_ltssm(pci);
+> +	seq_printf(s, "%s (0x%02x)\n", dw_ltssm_sts_string(val), val);
+> +
+> +	return 0;
+> +}
+> +
+> +static int dwc_pcie_ltssm_status_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, dwc_pcie_ltssm_status_show, inode->i_private);
+> +}
+> +
+> +static const struct file_operations dwc_pcie_ltssm_status_ops = {
+> +	.open = dwc_pcie_ltssm_status_open,
+> +	.read = seq_read,
+> +};
+> +
+> +static void dwc_pcie_ltssm_debugfs_init(struct dw_pcie *pci, struct dentry *dir)
+> +{
+> +	debugfs_create_file("ltssm_status", 0444, dir, pci,
+> +			    &dwc_pcie_ltssm_status_ops);
+> +}
+> +
+>  void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
+>  {
+>  	dwc_pcie_rasdes_debugfs_deinit(pci);
+> @@ -560,5 +587,7 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+>  	if (ret)
+>  		dev_dbg(dev, "RASDES debugfs init failed\n");
+>  
+> +	dwc_pcie_ltssm_debugfs_init(pci, dir);
+> +
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+> index 2081e8c72d12..cbe9cdbde79f 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> @@ -418,6 +418,56 @@ static void dw_pcie_host_request_msg_tlp_res(struct dw_pcie_rp *pp)
+>  	}
+>  }
+>  
+> +const char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm)
+> +{
+> +	const char *str;
+> +
+> +	switch (ltssm) {
+> +#define DW_PCIE_LTSSM_NAME(n) case n: str = #n; break
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_QUIET);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_ACT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_ACTIVE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_COMPLIANCE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_POLL_CONFIG);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_PRE_DETECT_QUIET);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DETECT_WAIT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LINKWD_START);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LINKWD_ACEPT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LANENUM_WAI);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_LANENUM_ACEPT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_COMPLETE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_CFG_IDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_LOCK);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_SPEED);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_RCVRCFG);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_IDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L0);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L0S);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L123_SEND_EIDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L1_IDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L2_IDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_L2_WAKE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED_ENTRY);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED_IDLE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_DISABLED);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_ENTRY);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_ACTIVE);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_EXIT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_LPBK_EXIT_TIMEOUT);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_HOT_RESET_ENTRY);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_HOT_RESET);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ0);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ1);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ2);
+> +	DW_PCIE_LTSSM_NAME(DW_PCIE_LTSSM_RCVRY_EQ3);
+> +	default:
+> +		str = "DW_PCIE_LTSSM_UNKNOWN";
+> +		break;
+> +	}
+> +
+> +	return str + strlen("DW_PCIE_LTSSM_");
+> +}
+> +
+>  int dw_pcie_host_init(struct dw_pcie_rp *pp)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index 7f9807d4e5de..00c32fa1b151 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -330,9 +330,40 @@ enum dw_pcie_ltssm {
+>  	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
+>  	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
+>  	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
+> +	DW_PCIE_LTSSM_POLL_ACTIVE = 0x2,
+> +	DW_PCIE_LTSSM_POLL_COMPLIANCE = 0x3,
+> +	DW_PCIE_LTSSM_POLL_CONFIG = 0x4,
+> +	DW_PCIE_LTSSM_PRE_DETECT_QUIET = 0x5,
+>  	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
+> +	DW_PCIE_LTSSM_CFG_LINKWD_START = 0x7,
+> +	DW_PCIE_LTSSM_CFG_LINKWD_ACEPT = 0x8,
+> +	DW_PCIE_LTSSM_CFG_LANENUM_WAI = 0x9,
+> +	DW_PCIE_LTSSM_CFG_LANENUM_ACEPT = 0xa,
+> +	DW_PCIE_LTSSM_CFG_COMPLETE = 0xb,
+> +	DW_PCIE_LTSSM_CFG_IDLE = 0xc,
+> +	DW_PCIE_LTSSM_RCVRY_LOCK = 0xd,
+> +	DW_PCIE_LTSSM_RCVRY_SPEED = 0xe,
+> +	DW_PCIE_LTSSM_RCVRY_RCVRCFG = 0xf,
+> +	DW_PCIE_LTSSM_RCVRY_IDLE = 0x10,
+>  	DW_PCIE_LTSSM_L0 = 0x11,
+> +	DW_PCIE_LTSSM_L0S = 0x12,
+> +	DW_PCIE_LTSSM_L123_SEND_EIDLE = 0x13,
+> +	DW_PCIE_LTSSM_L1_IDLE = 0x14,
+>  	DW_PCIE_LTSSM_L2_IDLE = 0x15,
+> +	DW_PCIE_LTSSM_L2_WAKE = 0x16,
+> +	DW_PCIE_LTSSM_DISABLED_ENTRY = 0x17,
+> +	DW_PCIE_LTSSM_DISABLED_IDLE = 0x18,
+> +	DW_PCIE_LTSSM_DISABLED = 0x19,
+> +	DW_PCIE_LTSSM_LPBK_ENTRY = 0x1a,
+> +	DW_PCIE_LTSSM_LPBK_ACTIVE = 0x1b,
+> +	DW_PCIE_LTSSM_LPBK_EXIT = 0x1c,
+> +	DW_PCIE_LTSSM_LPBK_EXIT_TIMEOUT = 0x1d,
+> +	DW_PCIE_LTSSM_HOT_RESET_ENTRY = 0x1e,
+> +	DW_PCIE_LTSSM_HOT_RESET = 0x1f,
+> +	DW_PCIE_LTSSM_RCVRY_EQ0 = 0x20,
+> +	DW_PCIE_LTSSM_RCVRY_EQ1 = 0x21,
+> +	DW_PCIE_LTSSM_RCVRY_EQ2 = 0x22,
+> +	DW_PCIE_LTSSM_RCVRY_EQ3 = 0x23,
+>  
+>  	DW_PCIE_LTSSM_UNKNOWN = 0xFFFFFFFF,
+>  };
+> @@ -683,6 +714,8 @@ static inline enum dw_pcie_ltssm dw_pcie_get_ltssm(struct dw_pcie *pci)
+>  	return (enum dw_pcie_ltssm)FIELD_GET(PORT_LOGIC_LTSSM_STATE_MASK, val);
+>  }
+>  
+> +const char *dw_ltssm_sts_string(enum dw_pcie_ltssm ltssm);
+> +
+>  #ifdef CONFIG_PCIE_DW_HOST
+>  int dw_pcie_suspend_noirq(struct dw_pcie *pci);
+>  int dw_pcie_resume_noirq(struct dw_pcie *pci);
+> 
+> base-commit: ff202c5028a195c07b16e1a2fbb8ca6b7ba11a1c
+> prerequisite-patch-id: c153d1c334b19796f686e3a143e0e4ad0c22f373
+> prerequisite-patch-id: 871aa1f094627d0e0cb4c89bea577e901bbc7b6a
+> prerequisite-patch-id: 54b27bf41a444283be102709e2f8a7d1fdac456a
+> prerequisite-patch-id: 95d8a6c78c32f2ea79ad967c134c881f9f3e0931
+> prerequisite-patch-id: 751ccbe84a18d85c2beeec19f2d1d429569960d2
+> -- 
+> 2.25.1
+> 
 
-Thanks a lot.
-
-Best regards,
-    Sergio Paracuellos
-
-[0]: https://lore.kernel.org/linux-mips/CAMhs-H-8N766PMZMwmV8B3e=65pPZHA4ntnRWDMoqR-U_xULfA@mail.gmail.com/T/#mab23157e03609456bb59d3b5dfc71fe16359a419
-
- .../ralink/gardena_smart_gateway_mt7688.dts   |  2 +-
- arch/mips/boot/dts/ralink/mt7628a.dtsi        | 40 ++++++++++++-------
- arch/mips/boot/dts/ralink/omega2p.dts         |  2 +-
- 3 files changed, 27 insertions(+), 17 deletions(-)
-
-diff --git a/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts b/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-index 18107ca0a06b..7743d014631a 100644
---- a/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-+++ b/arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts
-@@ -5,7 +5,7 @@
- 
- /dts-v1/;
- 
--/include/ "mt7628a.dtsi"
-+#include "mt7628a.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
-diff --git a/arch/mips/boot/dts/ralink/mt7628a.dtsi b/arch/mips/boot/dts/ralink/mt7628a.dtsi
-index 45a15e005cc4..0212700c4fb4 100644
---- a/arch/mips/boot/dts/ralink/mt7628a.dtsi
-+++ b/arch/mips/boot/dts/ralink/mt7628a.dtsi
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <dt-bindings/clock/mediatek,mtmips-sysc.h>
- 
- / {
- 	#address-cells = <1>;
-@@ -16,11 +17,6 @@ cpu@0 {
- 		};
- 	};
- 
--	resetc: reset-controller {
--		compatible = "ralink,rt2880-reset";
--		#reset-cells = <1>;
--	};
--
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-@@ -36,9 +32,11 @@ palmbus@10000000 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
- 
--		sysc: system-controller@0 {
--			compatible = "ralink,mt7620a-sysc", "syscon";
-+		sysc: syscon@0 {
-+			compatible = "ralink,mt7628-sysc", "syscon";
- 			reg = <0x0 0x60>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
- 		};
- 
- 		pinmux: pinmux@60 {
-@@ -138,7 +136,7 @@ watchdog: watchdog@100 {
- 			compatible = "mediatek,mt7621-wdt";
- 			reg = <0x100 0x30>;
- 
--			resets = <&resetc 8>;
-+			resets = <&sysc 8>;
- 			reset-names = "wdt";
- 
- 			interrupt-parent = <&intc>;
-@@ -154,7 +152,7 @@ intc: interrupt-controller@200 {
- 			interrupt-controller;
- 			#interrupt-cells = <1>;
- 
--			resets = <&resetc 9>;
-+			resets = <&sysc 9>;
- 			reset-names = "intc";
- 
- 			interrupt-parent = <&cpuintc>;
-@@ -190,7 +188,9 @@ spi: spi@b00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_spi_spi>;
- 
--			resets = <&resetc 18>;
-+			clocks = <&sysc MT76X8_CLK_SPI1>;
-+
-+			resets = <&sysc 18>;
- 			reset-names = "spi";
- 
- 			#address-cells = <1>;
-@@ -206,7 +206,9 @@ i2c: i2c@900 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_i2c_i2c>;
- 
--			resets = <&resetc 16>;
-+			clocks = <&sysc MT76X8_CLK_I2C>;
-+
-+			resets = <&sysc 16>;
- 			reset-names = "i2c";
- 
- 			#address-cells = <1>;
-@@ -222,7 +224,9 @@ uart0: uartlite@c00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart0_uart>;
- 
--			resets = <&resetc 12>;
-+			clocks = <&sysc MT76X8_CLK_UART0>;
-+
-+			resets = <&sysc 12>;
- 			reset-names = "uart0";
- 
- 			interrupt-parent = <&intc>;
-@@ -238,7 +242,9 @@ uart1: uart1@d00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart1_uart>;
- 
--			resets = <&resetc 19>;
-+			clocks = <&sysc MT76X8_CLK_UART1>;
-+
-+			resets = <&sysc 19>;
- 			reset-names = "uart1";
- 
- 			interrupt-parent = <&intc>;
-@@ -254,7 +260,9 @@ uart2: uart2@e00 {
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&pinmux_uart2_uart>;
- 
--			resets = <&resetc 20>;
-+			clocks = <&sysc MT76X8_CLK_UART2>;
-+
-+			resets = <&sysc 20>;
- 			reset-names = "uart2";
- 
- 			interrupt-parent = <&intc>;
-@@ -271,7 +279,7 @@ usb_phy: usb-phy@10120000 {
- 		#phy-cells = <0>;
- 
- 		ralink,sysctl = <&sysc>;
--		resets = <&resetc 22 &resetc 25>;
-+		resets = <&sysc 22 &sysc 25>;
- 		reset-names = "host", "device";
- 	};
- 
-@@ -290,6 +298,8 @@ wmac: wmac@10300000 {
- 		compatible = "mediatek,mt7628-wmac";
- 		reg = <0x10300000 0x100000>;
- 
-+		clocks = <&sysc MT76X8_CLK_WMAC>;
-+
- 		interrupt-parent = <&cpuintc>;
- 		interrupts = <6>;
- 
-diff --git a/arch/mips/boot/dts/ralink/omega2p.dts b/arch/mips/boot/dts/ralink/omega2p.dts
-index 5884fd48f59a..51a40ab6df2b 100644
---- a/arch/mips/boot/dts/ralink/omega2p.dts
-+++ b/arch/mips/boot/dts/ralink/omega2p.dts
-@@ -1,6 +1,6 @@
- /dts-v1/;
- 
--/include/ "mt7628a.dtsi"
-+#include "mt7628a.dtsi"
- 
- / {
- 	compatible = "onion,omega2+", "ralink,mt7688a-soc", "ralink,mt7628a-soc";
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
