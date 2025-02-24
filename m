@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-528158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11281A41455
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:50:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05273A41440
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:46:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEE63B181D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:50:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7651918944F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420D61A76AC;
-	Mon, 24 Feb 2025 03:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B27A1B21BF;
+	Mon, 24 Feb 2025 03:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="dlStPqtj"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZ66Gnkx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B21A0739;
-	Mon, 24 Feb 2025 03:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C66038DE3;
+	Mon, 24 Feb 2025 03:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740369030; cv=none; b=fqrBBSxQkpkAmv7KiQ0K4nbNwIf5DxYK6Q9U+Q1FOmKlTYNnKJ1bqtp2dzxji+uXKBpHe8X748vVEUIhmM16OlHKy5D5853gshEc+v0UUiqHJwI1knhzitA7JTGr84UdLRxIxFrIo7SD3p2ptZY343EOBRFMaRq2HtqW6Ee27/A=
+	t=1740368744; cv=none; b=TB9+Zdku2kiQ92NQGuvvsQ1Cr/xJ0K05h6yQVuVbt5QfiyglOFOpswdSbZIMnEGYkSBubaVvNL/OR/vu0T9SRXf+HYXYyhdozHUi55ZvrYUHZWpfO/MS8hwafIVeopR07uAYTom9ohddUXvYAcvV9SpTVmjcm/B6R4TTBETI9kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740369030; c=relaxed/simple;
-	bh=LgkDryLjvEZr6bXpKPqMRGIdv3/PyW9iQTas3G5G60M=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q3TBIEf7oRmNCAD1lOjzyQPHOoUdo5WTA59nPyIQg+ct9R6nAWcmXMlu6TDu31/hvio4WlLlIx2hacVKv4cqLczPku/JnF9sf3jYYlPTBBlerJrUnNDMSzN5uT6AXjQkCcIZK5kGdoy9Vbiw+5SwVrq20mkqiwjigLJWCFeTF9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=dlStPqtj; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740369024; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=JWdHXTM9C/dfJCHXa70ZhO8Ss2I8+1cp0VWtCNbkVn0=;
-	b=dlStPqtjlvWvD9ScvLHz6ay6b/s4XS90EovacqcAvpu/+dHmC+m0lerTOKm9Bo1bTUtJKGXrdrTipBkrh/QUQHLi2OGRobtU/h+FULfU1YtyfaSKC3CiaYAKay7iRN80ns6Lptmy2AYrUhFYq7fy0s6SZ5zc+6v5RT09/6Qe6mI=
-Received: from localhost(mailfrom:feng.tang@linux.alibaba.com fp:SMTPD_---0WQ1rZgc_1740368704 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Feb 2025 11:45:05 +0800
-From: Feng Tang <feng.tang@linux.alibaba.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Liguang Zhang <zhangliguang@linux.alibaba.com>,
-	Guanghui Feng <guanghuifeng@linux.alibaba.com>,
-	rafael@kernel.org
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	lkp@intel.com,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	ilpo.jarvinen@linux.intel.com,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Feng Tang <feng.tang@linux.alibaba.com>
-Subject: [PATCH v3 4/4] PCI: Disable PCIe hotplug interrupts early when msi is disabled
-Date: Mon, 24 Feb 2025 11:45:00 +0800
-Message-Id: <20250224034500.23024-5-feng.tang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+	s=arc-20240116; t=1740368744; c=relaxed/simple;
+	bh=x36eM8I9mvfh06MWtqJiRZWuU4kR0fM4aRJdD6U8/3A=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=AxaFl9s2iz6Nr0XDZRpNkHKXJmkm90WJuHth6awGfLL3K/alVqG3lpYrKg0JtKfThLVu9fk1NZI7tKlfEPP1Fij8kUTBTryONJG/CcqiJ6ATC8LbKJZW5g7OmUyT96sPnuBUkkJEFaWov+VOdpCeejYfVUZBI19xi1YlF5ImsdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZ66Gnkx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98399C4CEDD;
+	Mon, 24 Feb 2025 03:45:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740368743;
+	bh=x36eM8I9mvfh06MWtqJiRZWuU4kR0fM4aRJdD6U8/3A=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=dZ66Gnkx4ceRLCODpuOct/FlYIgHKqs09y3VyEDNYAeha11wFWePwaaELtFepl9+4
+	 jHgmYb1wgobZRs68fx2xUSo42mlGXp5LeZdbA7pATs9awNxbbS/uxz1ztkFYUTN4oj
+	 PnprRGqYhqO2eefvXY+Z0u0lZ78dy2w14Iw0W2KSSgNO816Gi2Tum51Ve1u1uQP7BO
+	 nujq0yaUYUivZXPjg0DV+Gh7ujILbkVD3/6JFA27qQnmbnoxooiI3JN4esbPZ4X9y+
+	 wlKpoWNBvVA8QtFog4fqlNwBGOSMDhftxLpAs+Zbz7K+VdV9iHxLyOGM2MKd9L6SBE
+	 7aPO9gLogFY+Q==
+Date: Sun, 23 Feb 2025 21:45:42 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, Maxime Ripard <mripard@kernel.org>, 
+ linux-clk@vger.kernel.org, Will Deacon <will@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ iommu@lists.linux.dev, Robin Murphy <robin.murphy@arm.com>, 
+ Joerg Roedel <joro@8bytes.org>, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Simona Vetter <simona@ffwll.ch>, Stephan Gerhold <stephan@gerhold.net>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
+ linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Sean Paul <sean@poorly.run>, 
+ David Airlie <airlied@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+To: =?utf-8?q?Barnab=C3=A1s_Cz=C3=A9m=C3=A1n?= <barnabas.czeman@mainlining.org>
+In-Reply-To: <20250224-msm8937-v3-1-dad7c182cccb@mainlining.org>
+References: <20250224-msm8937-v3-0-dad7c182cccb@mainlining.org>
+ <20250224-msm8937-v3-1-dad7c182cccb@mainlining.org>
+Message-Id: <174036873937.769195.3244673416189974329.robh@kernel.org>
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: qcom: Add MSM8937 Global
+ Clock Controller
 
-There was an irq storm bug when testing "pci=nomsi" case, and the root
-cause is: 'nomsi' will disable MSI and let devices and root ports use
-legacy INTX interrupt, and likely make several devices/ports share one
-interrupt. In the failure case, BIOS doesn't disable the PCIe hotplug
-interrupts, and the command-complete interrupt was actually asserted.
 
-So the timeline is:
-1. pciehp's CCIE/HPIE enabled and command-complete interrupts asserted
-2. the interrupt is shared by PCIe root port and nvme/nic device
-3. nvme/nic driver's probe function enables the interrupt line
-4. pciehp driver is loaded later or never loaded
+On Mon, 24 Feb 2025 02:56:16 +0100, Barnabás Czémán wrote:
+> Add device tree bindings for the global clock controller on Qualcomm
+> MSM8937 platform.
+> 
+> Signed-off-by: Barnabás Czémán <barnabas.czeman@mainlining.org>
+> ---
+>  .../bindings/clock/qcom,gcc-msm8937.yaml           | 73 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-msm8917.h       | 17 +++++
+>  2 files changed, 90 insertions(+)
+> 
 
-And the "nobody cared irq storm" happens between 3 and 4. This is not
-an issue for normal MSI case, as each interrupt is controlled by its own
-driver. When the driver is not loaded, the interrupt won't get fired
-to kernel even if it is physically asserted.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-So disable the PCIe hotplug CCIE/HPIE interrupt in early boot phase when
-MSI is not enabled.
+yamllint warnings/errors:
 
-Signed-off-by: Feng Tang <feng.tang@linux.alibaba.com>
----
- drivers/pci/probe.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/clock/qcom,gcc-msm8937.example.dts:24.28-29 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.dtbs:131: Documentation/devicetree/bindings/clock/qcom,gcc-msm8937.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1511: dt_binding_check] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 246744d8d268..ffea7851366a 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1665,6 +1665,15 @@ void set_pcie_hotplug_bridge(struct pci_dev *pdev)
- 	pcie_capability_read_dword(pdev, PCI_EXP_SLTCAP, &reg32);
- 	if (reg32 & PCI_EXP_SLTCAP_HPC)
- 		pdev->is_hotplug_bridge = 1;
-+
-+	/*
-+	 * When MSI is disabled, root port will use legacy INTX, and likely
-+	 * share INTX interrupt line with other devices like NIC/NVME. There
-+	 * was real world issue that the CCIE IRQ is asserted afer boot, but
-+	 * will not be handled well and cause IRQ storm. So disable it early.
-+	 */
-+	if (!pci_msi_enabled())
-+		pcie_disable_hp_interrupts_early(pdev);
- }
- 
- static void set_pcie_thunderbolt(struct pci_dev *dev)
--- 
-2.43.5
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250224-msm8937-v3-1-dad7c182cccb@mainlining.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
