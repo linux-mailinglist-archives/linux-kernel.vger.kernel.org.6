@@ -1,186 +1,132 @@
-Return-Path: <linux-kernel+bounces-529987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F326A42D56
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:06:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34DBDA42D59
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA25A188F536
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:06:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A87F176E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F47320766B;
-	Mon, 24 Feb 2025 20:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB0A207A3E;
+	Mon, 24 Feb 2025 20:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTxJYGAH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F5PSnbYP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFBAEEA9;
-	Mon, 24 Feb 2025 20:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC4F1A5BA1;
+	Mon, 24 Feb 2025 20:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740427570; cv=none; b=coYHiwXvFv1BlPfRGQ/3iskofl/7n9G72el+QtQxGis+8jQ4lYi5X9iAB7po74VE/3o22u7toDFjnVrGya5UVDTGB4fXengOl9a3wY1md9HGl8gglegEJdOCJaVmiDy3rI8F6xfLpDBMdmjYDaV6YRjC7UGZboU4PlOxQyw8zto=
+	t=1740427596; cv=none; b=BmAzkFSq9akBxZUzsqFUxr81ajoi5PpJ6ULLAq8OJ7irqFdmIEXEVnSxT72k8ku2jptJxzfygMEL9hQFnyvMRGnMNKLFJ4rfMSkpLpfR7M7HIKPpDaxpt69WxBGchLjtsbLoR4LBOxyIo037OlRN7+ks8wIHY6a3z7W2aK22n2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740427570; c=relaxed/simple;
-	bh=stM2IVR3b2kvR088SM8/A8kfusx7eVUGjEIOksI9LxM=;
+	s=arc-20240116; t=1740427596; c=relaxed/simple;
+	bh=MQRG0wCElGkAgnXGUfFa/phfVU4AAiqsQ2KYJcjrJs8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M21jG8gZOXq8JJhmHZ4ZS8oWunWejGi9F3Zx38wYVJXvfEPxfGONC/7PUEnsf/r1Zj5ngQiXcD3adcCxp6oBbnF4ZWxC2iivEd55K4I4CXLpLdsb8rK/MzC7S1ovmUpS1s4t8o5JnIP4TUfZTqWtRCipif7wpn4Hqbb5ndi0Byg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTxJYGAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF2CAC4CED6;
-	Mon, 24 Feb 2025 20:06:09 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnfO3+wUHOoghFfBabr/K1aBTXc8eHCdJ/ysEzFlTpN3y5XhW6PiIyFYssMrj+Ap8fvF6Z5sFs9sUETNhDWYfg9fweARCxlGvCbj3VEx0ygJsJIct9n/uu/bqSHdCChRXQ00U9UhFwG6k8fuGctfZmJJw8tFrfwZCgUaGx+Cveo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F5PSnbYP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D92A4C4CED6;
+	Mon, 24 Feb 2025 20:06:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740427570;
-	bh=stM2IVR3b2kvR088SM8/A8kfusx7eVUGjEIOksI9LxM=;
+	s=k20201202; t=1740427595;
+	bh=MQRG0wCElGkAgnXGUfFa/phfVU4AAiqsQ2KYJcjrJs8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fTxJYGAHV6FCp80DxZ0l0De/AoUhpsBvWAIfLfrdXZ80o3hrfPZJcAVurzbA8BNSE
-	 ASaGSNB347y5MyVhE+qziw0Ce1PMKxGyGf/2RcUzQwZuKkKrPnC1FWrk5kCtXJ4B32
-	 EEmrUZ1DwdjL4ABOXWIy1G8XsVVIHMU7oiLYdBYcfIsJe8OgeR01gjkkyrMYbQMjrQ
-	 1A2EZ8pjVSfvY8vlXok+kOgJGBJTLJ8knBy9aqg7pxs8LY/azao9rfsT7RG9v+VBCw
-	 hcxR6nQ8GJYBFQn8qTxlh5RZ3DeoF4fX86xb4wlOxj3g2MkPC7b40S5aSc2mYAGnLb
-	 1lcWhvij8UAGQ==
-Date: Mon, 24 Feb 2025 14:06:08 -0600
-From: Rob Herring <robh@kernel.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Conor Dooley <conor@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Jesse Taube <mr.bossman075@gmail.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev
-Subject: Re: [PATCH v6 1/4] dt-bindings: gpio: spacemit: add support for K1
- SoC
-Message-ID: <20250224200608.GA4014994-robh@kernel.org>
-References: <20250223-03-k1-gpio-v6-0-db2e4adeef1c@gentoo.org>
- <20250223-03-k1-gpio-v6-1-db2e4adeef1c@gentoo.org>
+	b=F5PSnbYP4YgwsftEmZ8YZ825gzDSojyh/8X2Q6bWNmKvJU/Gs+oWMwashqIOOBqgk
+	 UX18EdBSEGTcVGe6M95Pc/nRJ+Ne9x95agmGRhCS0+A4oDBluqiYzjRVfVrw7ptYrt
+	 ihkDswwM1AGmZQw5+5d8TTbmsZopkjNKjOX7avQocLHqWQOiSxsD4R1h5MeNxVEmwL
+	 JsunjM8s8RUSDEUUIKJiAxnBeCcbLFgx0wO7HGi51S9UqgTzmWKMT4csXhinjLDaIo
+	 Lhkg2kKDJi8B3cv2pHQrKJV213a8MFaqNkvy8kt4KWNiuTZOkEldGxNH5oICFMA9lR
+	 Tyv9VTeskbPxg==
+Date: Mon, 24 Feb 2025 20:06:28 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Zheng Yejian <zhengyejian1@huawei.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [PATCH v5 4/6] scripts/sorttable: Zero out weak functions in
+ mcount_loc table
+Message-ID: <5225b07b-a9b2-4558-9d5f-aa60b19f6317@sirena.org.uk>
+References: <20250218195918.255228630@goodmis.org>
+ <20250218200022.883095980@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="y1RTCqJAl8VZ6A/p"
+Content-Disposition: inline
+In-Reply-To: <20250218200022.883095980@goodmis.org>
+X-Cookie: Do not flush.
+
+
+--y1RTCqJAl8VZ6A/p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250223-03-k1-gpio-v6-1-db2e4adeef1c@gentoo.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 23, 2025 at 07:49:32PM +0800, Yixun Lan wrote:
-> The GPIO controller of K1 support basic functions as input/output,
-> all pins can be used as interrupt which route to one IRQ line,
-> trigger type can be select between rising edge, falling edge, or both.
-> There are four GPIO banks, each consisting of 32 pins.
-> 
-> Signed-off-by: Yixun Lan <dlan@gentoo.org>
-> ---
->  .../devicetree/bindings/gpio/spacemit,k1-gpio.yaml | 81 ++++++++++++++++++++++
->  1 file changed, 81 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..017165d325565a6868700a9ac8298b61dffcfef4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/spacemit,k1-gpio.yaml
-> @@ -0,0 +1,81 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/spacemit,k1-gpio.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: SpacemiT K1 GPIO controller
-> +
-> +maintainers:
-> +  - Yixun Lan <dlan@gentoo.org>
-> +
-> +description:
-> +  The controller's registers are organized as sets of eight 32-bit
-> +  registers with each set of port controlling 32 pins.  A single
-> +  interrupt line is shared for all of the pins by the controller.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^gpio@[0-9a-f]+$"
-> +
-> +  compatible:
-> +    const: spacemit,k1-gpio
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  gpio-controller: true
-> +
-> +  "#gpio-cells":
-> +    const: 3
-> +    description:
-> +      The first two cells are the GPIO bank index and offset inside the bank,
-> +      the third cell should specify GPIO flag.
-> +
-> +  gpio-ranges: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 3
-> +    description:
-> +      The first two cells are the GPIO bank index and offset inside the bank,
-> +      the third cell should specify interrupt flag. The controller does not
-> +      support level interrupts, so flags of IRQ_TYPE_LEVEL_HIGH, IRQ_TYPE_LEVEL_LOW
-> +      should not be used. Refer <dt-bindings/interrupt-controller/irq.h> for valid flags.
+On Tue, Feb 18, 2025 at 02:59:22PM -0500, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+>=20
+> When a function is annotated as "weak" and is overridden, the code is not
+> removed. If it is traced, the fentry/mcount location in the weak function
+> will be referenced by the "__mcount_loc" section. This will then be added
+> to the available_filter_functions list. Since only the address of the
+> functions are listed, to find the name to show, a search of kallsyms is
+> used.
 
-Wrap lines at 80 chars.
+This breaks builds with ftrace on architectures without KASLR, one
+affected configuration is bcm2835_defconfig:
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - interrupts
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +  - gpio-ranges
-> +
-> +additionalProperties: false
-> +
-> +dependencies:
-> +  interrupt-controller: [ interrupts ]
+/home/broonie/git/bisect/kernel/trace/ftrace.c: In function 'ftrace_process=
+_locs':
+/home/broonie/git/bisect/kernel/trace/ftrace.c:7057:24: error: implicit dec=
+laration of function 'kaslr_offset' [-Werror=3Dimplicit-function-declaratio=
+n]
+ 7057 |         kaslr =3D !mod ? kaslr_offset() : 0;
+      |                        ^~~~~~~~~~~~
 
-You made 'interrupts' always required, so this is redundant.
+since that happens to enable CONFIG_FUNCTION_TRACER but doesn't have
+KASLR, we don't have stubs for KASLR on architectures that don't have
+it.  It also looks like from a quick glance at least RISC-V will fail to
+link since it only provides kaslr_offset() with RANDOMIZE_BASE enabled.
+This all feels a bit footgunish.
 
-> +
-> +examples:
-> +  - |
-> +    gpio: gpio@d4019000 {
+--y1RTCqJAl8VZ6A/p
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Drop unused labels.
+-----BEGIN PGP SIGNATURE-----
 
-> +      compatible = "spacemit,k1-gpio";
-> +      reg = <0xd4019000 0x800>;
-> +      gpio-controller;
-> +      #gpio-cells = <3>;
-> +      interrupts = <58>;
-> +      interrupt-controller;
-> +      interrupt-parent = <&plic>;
-> +      #interrupt-cells = <3>;
-> +      gpio-ranges = <&pinctrl 0 0 0 32>,
-> +                    <&pinctrl 1 0 32 32>,
-> +                    <&pinctrl 2 0 64 32>,
-> +                    <&pinctrl 3 0 96 32>;
-> +    };
-> +...
-> 
-> -- 
-> 2.48.1
-> 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme80UMACgkQJNaLcl1U
+h9D0kQf+LOWnc5+uG7Nh+lw1IM17Kz4TpwJ61yMifGEeuryxBvycLlVXCTeHEAIq
+c7HSB66JzXtv5G9t9gzAkbeVmqYDVAtbhytC3F6yo8X/qpPncogEWepaMByDvprX
+HCCFf0oSdJlk2RPmofn2aVfzCcuAomhv2d96jBz73PlJ44WSxY8LdHmAgCoYcFvd
+LL5HefmNAKADaNA5Kp6zLspUNtUAsuwMH/ki69FVNctvN19ZkyiL7m/+nsV5uPCv
+41qzmSbcqPcNVsCqNocD4fefEk2HZARIqg8TGX0QhliWO0vQkrW+7z97xs1o8zcM
+o9EInP1vqJLx6DQQ0u2h3xxeLNEekA==
+=pRxx
+-----END PGP SIGNATURE-----
+
+--y1RTCqJAl8VZ6A/p--
 
