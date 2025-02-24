@@ -1,210 +1,112 @@
-Return-Path: <linux-kernel+bounces-528628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC81A419FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5596A41A12
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBD4177F8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:00:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526B57A845F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C8824A054;
-	Mon, 24 Feb 2025 09:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5032566FC;
+	Mon, 24 Feb 2025 09:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PO1llj0k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j6DqRpp1"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07599241CA6;
-	Mon, 24 Feb 2025 09:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A366250BE7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391129; cv=none; b=qIG7AI5gDE7jtAZN9+Tm/VMkhR5UYCIsZG0njnajUGMRAQvUrmyVr7GEjZeshKDFFBTgXbkHhMS9tUaLyxz46K6FpieRdDG9mrBaasSXadbK5YDwfZCD8Dp1KEXtLrvNRScUwmHgr5XcM9k38hhZ4OQIDogfvGRcB9fOluSFWuw=
+	t=1740391148; cv=none; b=nJId071rYcFgKxnPknEnXmWKRAIM25ej7WDI74GCwsVAsuis7P34R+ta+ScDzeNal1jTr/cxe+NAj0j5cWQ4VnieCqyE/3EnOCb+K+1t51GuWYPuhC/OdWh7EG80PnLS0kpIk8TnDLbgZxyJakw7fC3R20ulPHTSOT4HXmLkYj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391129; c=relaxed/simple;
-	bh=ZjDnXrksprqcdBpDIG/amfeXKgB6c4lJruai5qe5AhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRezzpmoXdHAjcx5ptw32YSazg4kDJ0ZZ8GzFMwNqKjkYeaAw7BNnepEuGjxr+a+7KqNYdIor2KycJDuqcWke6ICuNTWk7c/aaVPLx5LUapAbf5ZfXeGN0R9qcH/Rb6P2/MLT7uPudfLhaRlDzOJ5dbTGa0Nw6g+O55MPLQvZXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PO1llj0k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30C03C4CED6;
-	Mon, 24 Feb 2025 09:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740391128;
-	bh=ZjDnXrksprqcdBpDIG/amfeXKgB6c4lJruai5qe5AhA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PO1llj0k12h5/Jb8CQuV57BkdgYfH/eqbVrzvtMdBv4G6bGDgxunu7xzsOu2NcAHI
-	 PlCedtu+UkUKI2UZXTaIRl0ltFlFDeBPxRC83CzYSEPFqd9bp3ovwjLYLSljJxTagn
-	 oQMHZa4qstKk4u3mvru+7XQSTjUiTQk13D5PzzBJChsWn2qBBphPqTK7QToFd0sa+8
-	 1ke1OxIH4CQChKZDNFzuPV765Og8okFL3psFARQzGAGcWXX7OWRgBsLkFUxf0X+hBS
-	 nkPPO3ctYZmqfgdFMDw2V+50D0ky4xivMPA1a1rP4V7OeKV3G3ikmsJPkHkS3frsB8
-	 HeGzCJ72wsshw==
-Date: Mon, 24 Feb 2025 20:28:43 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-	Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Sandeep Dhavale <dhavale@google.com>
-Cc: linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 4/8][next] erofs: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <334f60e884cc0314ef98731e60a1b419e462e2d2.1739957534.git.gustavoars@kernel.org>
-References: <cover.1739957534.git.gustavoars@kernel.org>
+	s=arc-20240116; t=1740391148; c=relaxed/simple;
+	bh=O6osCXMkR+k5uk/QSyOuPdRTQUC9ZmT13/Ik/89AMIM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GszwXLCiaaapxc8p6WoaPfYAESCrHHlX0Jv2LQoMDM1+SaKBJepn2fBFR7Jhc0TOZbqM7lNElr50Xoj03uJqTq0KU+0PBS+AUWhLLIoliaR5uGqCU/hUT4/tduMbhxPiESQxcujwPiTU4wZb88g++B6POzjgQEPshrle3RRCa80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j6DqRpp1; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5461a485aa2so3871843e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:59:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740391145; x=1740995945; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O6osCXMkR+k5uk/QSyOuPdRTQUC9ZmT13/Ik/89AMIM=;
+        b=j6DqRpp1AqbwMkHB1n9gUajINEUExYQP0kpwjbsOILhltPoFCTqDxSDYpfFVica3Xd
+         UlvQkDyXQ19TQZ7WfLeRUxzh0EMMhHUVbewU3ye6evy0mGp3w2bhMpKq6cWsPSAcE/XF
+         AXfBf7zVwyW9k33XiG7FBUFo7hqEdF86mtgjDeiOYJNBWjwYEkKM8fzM9DfRJVLGoh3M
+         2PWtWV1z0A9h9s6Od7hN2+6AtN8e8fjrprRAmyofTFBlhH1W2s3JWB/ws/uX3hyeYUej
+         1NM/Ct8WBeZIpy5AfMQAD7iGL0kbDl0WERWEmphFlswlZC9wodk57utaS5iIxSdOOvJq
+         YwyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740391145; x=1740995945;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O6osCXMkR+k5uk/QSyOuPdRTQUC9ZmT13/Ik/89AMIM=;
+        b=qed0Q/s2Bo6jbPzeEmEXvWMqJWIpLBjIzScugQVvdmMNKQL531VgXtBGNT/4DJL44b
+         QDPmm+P2OXiWV7EVEs5ze1bpENkGUa1bZhNTV80NjkmBllxaaVnQF8AeV+dd08rl4nD7
+         e+ZwdwjozSQBWiBoJBjkNIEzA2mtPnDkCyhghMrC1jDnf+HgGUSWsbtuadTHXjZX1zGO
+         WrdHhrIE7XP8eJrQ3ao9u9NF08iNitLETBitii926xeJ3GtbCyCaVFuMXvxfgO70O/MZ
+         nKDZjly9s3AGUn48rm642TzrCSsE2CB4voJmhkUvWCdi3opJUIaStmP2UZ7qmEB2nM9N
+         MHIA==
+X-Forwarded-Encrypted: i=1; AJvYcCXG8fh2/PcXU0rD67q7XGw69OBiKe5D2w75vN1gZtfSao32Mgd5ES0roN4vvSBLy/t5JPbRIKE9obH5lQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRlbjmOEVCYT/gtXgT+PqTFXoMGFJ4aagdaB/sjIqgC/GrwK/0
+	kCh9yLxkrNB7xW43QrBULR/ex9dkkBwdN22wk/g32rkARHLSwJMXg5fxEDRRGt84rtaMrIXXtIb
+	zXjcEDnlnU/qFHO1fEZMlKmMQdTs7Jq0DGpe2jA==
+X-Gm-Gg: ASbGnctv4FGedlnfqdWArqKzLzriN0Knvj5tekUWVP7qV0xcEtg/m6ZEsFNKkUIn+1w
+	c1DUyq3Fs1pRUkYoW5FU5qgh/+6OS4pIix2CZm6qHNXkiqtEHZI02n4AQpZkf3+fIxLPExfCuHw
+	ebxd2sJmQ=
+X-Google-Smtp-Source: AGHT+IFopZlwkhYWY/RNr3zDptTVV6+70BUBCoxks79yWFjaOvVN8kY2ZRjnanDMYkS+tHav+OogpdOyTADvZGRmHWU=
+X-Received: by 2002:a05:6512:1307:b0:545:2a7f:8f79 with SMTP id
+ 2adb3069b0e04-54838ef04b8mr5854049e87.16.1740391144587; Mon, 24 Feb 2025
+ 01:59:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1739957534.git.gustavoars@kernel.org>
+References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
+In-Reply-To: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Mon, 24 Feb 2025 17:58:53 +0800
+X-Gm-Features: AWEUYZkMSn4vPFEG-tzi12j8lxJKJk5iXrx5HLKwOufSb-G1VhIWg-Jk6pa97bc
+Message-ID: <CABQgh9G7Hv-qboRApRrVQF=Zpu5ZKaEf0zrv1=c=zv=LPB-O0g@mail.gmail.com>
+Subject: Re: [PATCH v2 00/12] iommu: Remove IOMMU_DEV_FEAT_SVA/_IOPF
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
+	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Mon, 24 Feb 2025 at 13:16, Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>
+> The new method for driver fault reporting support relies on the domain
+> to specify a iopf_handler. The driver should detect this and setup the
+> HW when fault capable domains are attached.
+>
+> Move SMMUv3 to use this method and have VT-D validate support during
+> attach so that all three fault capable drivers have a no-op FEAT_SVA and
+> _IOPF. Then remove them.
+>
+> This was initiated by Jason. I'm following up to remove FEAT_IOPF and
+> further clean up.
+>
+> The whole series is also available at github:
+> https://github.com/LuBaolu/intel-iommu/commits/iommu_no_feat-v2
+>
+> Signed-off-by: Jason Gunthorpe <jgg@nvidia.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>
+Thanks Baolu
 
-Change the type of the middle struct member currently causing trouble from
-`struct bio` to `struct bio_hdr`.
-
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure `struct bio`, through which we can access the
-flexible-array member in it, if necessary.
-
-With these changes fix the following warnings:
-fs/erofs/fileio.c:10:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/erofs/fscache.c:179:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/erofs/fileio.c  | 25 +++++++++++++++----------
- fs/erofs/fscache.c | 13 +++++++------
- 2 files changed, 22 insertions(+), 16 deletions(-)
-
-diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
-index 0ffd1c63beeb..3080963caf78 100644
---- a/fs/erofs/fileio.c
-+++ b/fs/erofs/fileio.c
-@@ -7,7 +7,7 @@
- 
- struct erofs_fileio_rq {
- 	struct bio_vec bvecs[16];
--	struct bio bio;
-+	struct bio_hdr bio;
- 	struct kiocb iocb;
- 	struct super_block *sb;
- };
-@@ -26,20 +26,21 @@ static void erofs_fileio_ki_complete(struct kiocb *iocb, long ret)
- 
- 	if (ret > 0) {
- 		if (ret != rq->bio.bi_iter.bi_size) {
--			bio_advance(&rq->bio, ret);
--			zero_fill_bio(&rq->bio);
-+			bio_advance(container_of(&rq->bio, struct bio, __hdr),
-+				    ret);
-+			zero_fill_bio(container_of(&rq->bio, struct bio, __hdr));
- 		}
- 		ret = 0;
- 	}
- 	if (rq->bio.bi_end_io) {
--		rq->bio.bi_end_io(&rq->bio);
-+		rq->bio.bi_end_io(container_of(&rq->bio, struct bio, __hdr));
- 	} else {
--		bio_for_each_folio_all(fi, &rq->bio) {
-+		bio_for_each_folio_all(fi, container_of(&rq->bio, struct bio, __hdr)) {
- 			DBG_BUGON(folio_test_uptodate(fi.folio));
- 			erofs_onlinefolio_end(fi.folio, ret);
- 		}
- 	}
--	bio_uninit(&rq->bio);
-+	bio_uninit(container_of(&rq->bio, struct bio, __hdr));
- 	kfree(rq);
- }
- 
-@@ -68,7 +69,8 @@ static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
- 	struct erofs_fileio_rq *rq = kzalloc(sizeof(*rq),
- 					     GFP_KERNEL | __GFP_NOFAIL);
- 
--	bio_init(&rq->bio, NULL, rq->bvecs, ARRAY_SIZE(rq->bvecs), REQ_OP_READ);
-+	bio_init(container_of(&rq->bio, struct bio, __hdr), NULL, rq->bvecs,
-+		 ARRAY_SIZE(rq->bvecs), REQ_OP_READ);
- 	rq->iocb.ki_filp = mdev->m_dif->file;
- 	rq->sb = mdev->m_sb;
- 	return rq;
-@@ -76,12 +78,13 @@ static struct erofs_fileio_rq *erofs_fileio_rq_alloc(struct erofs_map_dev *mdev)
- 
- struct bio *erofs_fileio_bio_alloc(struct erofs_map_dev *mdev)
- {
--	return &erofs_fileio_rq_alloc(mdev)->bio;
-+	return container_of(&erofs_fileio_rq_alloc(mdev)->bio, struct bio, __hdr);
- }
- 
- void erofs_fileio_submit_bio(struct bio *bio)
- {
--	return erofs_fileio_rq_submit(container_of(bio, struct erofs_fileio_rq,
-+	return erofs_fileio_rq_submit(container_of(&bio->__hdr,
-+						   struct erofs_fileio_rq,
- 						   bio));
- }
- 
-@@ -150,7 +153,9 @@ static int erofs_fileio_scan_folio(struct erofs_fileio *io, struct folio *folio)
- 			}
- 			if (!attached++)
- 				erofs_onlinefolio_split(folio);
--			if (!bio_add_folio(&io->rq->bio, folio, len, cur))
-+			if (!bio_add_folio(container_of(&io->rq->bio,
-+							struct bio, __hdr),
-+					   folio, len, cur))
- 				goto io_retry;
- 			io->dev.m_pa += len;
- 		}
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index ce3d8737df85..719ec96c8f22 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -176,7 +176,7 @@ static int erofs_fscache_read_io_async(struct fscache_cookie *cookie,
- 
- struct erofs_fscache_bio {
- 	struct erofs_fscache_io io;
--	struct bio bio;		/* w/o bdev to share bio_add_page/endio() */
-+	struct bio_hdr bio;	/* w/o bdev to share bio_add_page/endio() */
- 	struct bio_vec bvecs[BIO_MAX_VECS];
- };
- 
-@@ -187,7 +187,7 @@ static void erofs_fscache_bio_endio(void *priv,
- 
- 	if (IS_ERR_VALUE(transferred_or_error))
- 		io->bio.bi_status = errno_to_blk_status(transferred_or_error);
--	io->bio.bi_end_io(&io->bio);
-+	io->bio.bi_end_io(container_of(&io->bio, struct bio, __hdr));
- 	BUILD_BUG_ON(offsetof(struct erofs_fscache_bio, io) != 0);
- 	erofs_fscache_io_put(&io->io);
- }
-@@ -197,17 +197,18 @@ struct bio *erofs_fscache_bio_alloc(struct erofs_map_dev *mdev)
- 	struct erofs_fscache_bio *io;
- 
- 	io = kmalloc(sizeof(*io), GFP_KERNEL | __GFP_NOFAIL);
--	bio_init(&io->bio, NULL, io->bvecs, BIO_MAX_VECS, REQ_OP_READ);
-+	bio_init(container_of(&io->bio, struct bio, __hdr), NULL, io->bvecs,
-+		 BIO_MAX_VECS, REQ_OP_READ);
- 	io->io.private = mdev->m_dif->fscache->cookie;
- 	io->io.end_io = erofs_fscache_bio_endio;
- 	refcount_set(&io->io.ref, 1);
--	return &io->bio;
-+	return container_of(&io->bio, struct bio, __hdr);
- }
- 
- void erofs_fscache_submit_bio(struct bio *bio)
- {
--	struct erofs_fscache_bio *io = container_of(bio,
--			struct erofs_fscache_bio, bio);
-+	struct erofs_fscache_bio *io =
-+		container_of(&bio->__hdr, struct erofs_fscache_bio, bio);
- 	int ret;
- 
- 	iov_iter_bvec(&io->io.iter, ITER_DEST, io->bvecs, bio->bi_vcnt,
--- 
-2.43.0
-
+Tested-by: Zhangfei Gao <zhangfei.gao@linaro.org>
 
