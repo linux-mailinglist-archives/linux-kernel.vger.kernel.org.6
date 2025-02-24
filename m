@@ -1,165 +1,177 @@
-Return-Path: <linux-kernel+bounces-529059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA6A0A41F46
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:39:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14C3A41F7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770607A5478
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA7A3ADC8D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:39:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53AD23371F;
-	Mon, 24 Feb 2025 12:38:37 +0000 (UTC)
-Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7427823373C;
+	Mon, 24 Feb 2025 12:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnBBKK8/"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0A2192E7;
-	Mon, 24 Feb 2025 12:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EC1233734;
+	Mon, 24 Feb 2025 12:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400717; cv=none; b=syyZyT+Pj/Sm9H/1qpLQf4FOHmc8cCg8DB/ftkZoawmxAdoB0lXULKNJKUyiEZHXxh7FU3Yz6ignce+IdSWXnYk5qINhDRThHpva53KhAta8dKeMda1WwGQhEg5IUV6EBXI2NFvUy8btXWrNe34FxeG4zmiKafmZ+b/Q2ixL9Pk=
+	t=1740400734; cv=none; b=ozEovMNW2TpcwRpIJrfv1z0zqGDN/49DJ5stHlVsL8zCerLrlMNC97bRn6b0lCauRreXV3zUfehkuDM9/pEjGRjiDtgbS/3F6ibzlf8QXsEaN30AdXHgh8amz/6ZwQEQ5FaHMNX41XZJ2hl8GX1DDjZj0uYe6UJEAewdaM5bfAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400717; c=relaxed/simple;
-	bh=CV3SNwN38gT5yoTP7TpNEiDrI/SO+rvqRtZ2blq7pBI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQp/SK9qwaa/iYIZYYgfYuwslaUKJ64a3Ym+oXv0flL+bNSeW3UHksGIl55dOl4Ct8knmq7G2CR9fW/7mbML0s2AzjZxHjKYKLLIRPAZdJnSCdwtmK4ubtQ6JOlweOI/XCGOmsCS7IdHieE+86KuFarG3d+PCRmU3Fm7pkpWMKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
-Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 64D8D1F554;
-	Mon, 24 Feb 2025 13:38:24 +0100 (CET)
-Date: Mon, 24 Feb 2025 13:38:22 +0100
-From: Marijn Suijten <marijn.suijten@somainline.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] drm/msm/dpu: allocate single CTL for DPU >= 5.0
-Message-ID: <n6cljmchentiycfbnlxoptl6gtrv5n5353gdmvbrrssfp7mkiy@lenjcbxn732p>
-References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
- <20250220-dpu-active-ctl-v1-6-71ca67a564f8@linaro.org>
- <4aix26abutkas2fpj6ubu2hbqeljpgr5e3m24akeb3jz33limj@c7rymwz6zmft>
- <7vcnej2hh3knti66dfyatbcyrlygbwqtwdlumpf4aqmupuopcf@pcpkbn6fs4h4>
+	s=arc-20240116; t=1740400734; c=relaxed/simple;
+	bh=C/HIYLJMes5/JokQAfCciquYE960i/AJXIf+VAKHVZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iFPyo6Vlv/P8wQ+kA2uJ/3q38z3ySkDpiBcm4vU8lztvTh07p0nhzo0/MIBlsgvyabdD9KDXyQoE9Lpd+5HdHbC7AJIQl64HCW9fh9Ggj6lx/oNaV+I0sWmdDgu9PpLRNxJyFOTUZvrGsaC03xGfK/Aws52PhntDLTbdv9nxyDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnBBKK8/; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c08f9d0ef3so265951485a.2;
+        Mon, 24 Feb 2025 04:38:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740400732; x=1741005532; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/kmTM3n4yBBMdKxDX6gBx7ZoYT1kT7Ntk+s/Q8yOWMw=;
+        b=TnBBKK8/606x0W8NOgmSffZshFeOMysUEXbgcXNmDrGZ7FaNHZlozE3ZREtaROsNJ+
+         eSe4pNJPgPskWe8mxceVcagQ3Mp7gBg1y1+v7QGbl9nuIUKFDhxXx6Q9usDZDH5WLCuA
+         kXqVAKu+6zX12lo29DQ7moD0XwiczMyfO0htllprK0VMpPUXf69aHiTSjUyJNc5cWdkw
+         6xhdKd4wHRl/gbAsY39Bz2y2b9LYTFJXSqmBB6b+IO/eNKopjONqaC6QsD2lrLgaY0Vw
+         gaPe20suDYNYUlRkreuDBNgTnJtFJrxbMhNNFzhYvqY5ll51DIiQz5/25h+b4Qao7ham
+         jd2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740400732; x=1741005532;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/kmTM3n4yBBMdKxDX6gBx7ZoYT1kT7Ntk+s/Q8yOWMw=;
+        b=MJRJpZPIeNY5EBJsLy71Aunr09jXoFYM1Ju8s+VMZLB0ZkB0FsMlue/Io0EVSsHBaN
+         eacIv7quU8zUOmb0Wo0sbJvW38HWVWY9S5D/pHC5DSjK4rik5YDpVhRz/zuYhN9vdT7x
+         7JgGPNcrrrWyv6sz71edGzoTdLneFsrJoLkhfmvqlwiqM9SnnZ4wTEPpde4VYTLxWzSA
+         56dtMfqsr+QESUBrv3omxwgoy0LJolfPPnTW5SEJw4TcVdmswg4Vgh6SxD7kwveonzNB
+         zB4HZ888RmmqdsCXOm660yxPgs819HexyAWG4u4Gvj0DdDltZZignyNnU5iepbJDnrr8
+         +jSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWlNBZm0CtE4alh53s6Oa+VR9nF3ckJchMz0qXxvNYJqa0ZIIPtmc5XeG7dxiwJ6t9JB8Xm33ptyNE+7WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHaZHV4vwUYGd95LCZbnmXKQeZxmAOIBNuTf9wUeuOiXpWl6Kp
+	zkNtomjE8xKv1LJ1GF+lpM7Y7RBvngRMqU8IBs0yFtQ7+awqPjyl
+X-Gm-Gg: ASbGncsAylEL+txE2Y3rjBWxXfHlZR83Vj6DWaLKH9XwOoa/YG/NIdiQFQfJvzODnlc
+	2pz53xB3RQBHstPXlzXw4lnwYVjRmOOLIytvt26j4IeAHhaOhqczadNvbnRczDDjsFDrmdnnqO/
+	W4fhOfh7cioT7WNmFCeR/R3u8mAjO80YWJ3PVmwedXmQA0g5MWp9Umtwo3SQCaQFpn9cUcHjLXY
+	eszym9Zarij0cseEVnKlT4gkDGYHJ+Htjng7eqxkXW7AqktKDSDrxIIU7uNNMYfqaL5I4RDmAdK
+	ajzgnggSbXk0cNgz+Pdds0b6KX0QEhJxeyAHKU4dN+7OIi8=
+X-Google-Smtp-Source: AGHT+IGGhugltGFxjou3YcFhCjOAHq8GvR/ZZ0GJd0SlybKi/gPBxkYd8FyR81teGJvDQXjVckXrqQ==
+X-Received: by 2002:a05:620a:170f:b0:7c0:a5f4:4df with SMTP id af79cd13be357-7c0cef12528mr1659614285a.34.1740400732051;
+        Mon, 24 Feb 2025 04:38:52 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:3cb7:1064:72b6:f891])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ad774f81sm831880285a.37.2025.02.24.04.38.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 04:38:50 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>
+Subject:
+ Re: [PATCH v4 2/2] tty: Change order of ttynull to be linked sooner if
+ enabled as a console.
+Date: Mon, 24 Feb 2025 07:38:46 -0500
+Message-ID: <5764492.44csPzL39Z@nerdopolis2>
+In-Reply-To: <2025022421-refract-defame-94db@gregkh>
+References:
+ <20250223204456.1913392-1-adamsimonelli@gmail.com>
+ <20250223204456.1913392-3-adamsimonelli@gmail.com>
+ <2025022421-refract-defame-94db@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7vcnej2hh3knti66dfyatbcyrlygbwqtwdlumpf4aqmupuopcf@pcpkbn6fs4h4>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 2025-02-21 01:58:58, Dmitry Baryshkov wrote:
-> On Fri, Feb 21, 2025 at 12:34:12AM +0100, Marijn Suijten wrote:
-> > On 2025-02-20 12:26:23, Dmitry Baryshkov wrote:
-> > > Unlike previous generation, since DPU 5.0 it is possible to use just one
-> > > CTL to handle all INTF and WB blocks for a single output. And one has to
-> > > use single CTL to support bonded DSI config. Allocate single CTL for
-> > > these DPU versions.
-> > > 
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 17 +++++++++++++----
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h |  2 ++
-> > >  2 files changed, 15 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> > > index 5baf9df702b84b74ba00e703ad3cc12afb0e94a4..4dbc9bc7eb4f151f83055220665ee5fd238ae7ba 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-> > > @@ -53,6 +53,8 @@ int dpu_rm_init(struct drm_device *dev,
-> > >  	/* Clear, setup lists */
-> > >  	memset(rm, 0, sizeof(*rm));
-> > >  
-> > > +	rm->has_legacy_ctls = (cat->mdss_ver->core_major_ver < 5);
-> > > +
-> > >  	/* Interrogate HW catalog and create tracking items for hw blocks */
-> > >  	for (i = 0; i < cat->mixer_count; i++) {
-> > >  		struct dpu_hw_mixer *hw;
-> > > @@ -381,10 +383,16 @@ static int _dpu_rm_reserve_ctls(
-> > >  	int i = 0, j, num_ctls;
-> > >  	bool needs_split_display;
-> > >  
-> > > -	/* each hw_intf needs its own hw_ctrl to program its control path */
-> > > -	num_ctls = top->num_intf;
-> > > +	if (rm->has_legacy_ctls) {
-> > > +		/* each hw_intf needs its own hw_ctrl to program its control path */
-> > > +		num_ctls = top->num_intf;
-> > >  
-> > > -	needs_split_display = _dpu_rm_needs_split_display(top);
-> > > +		needs_split_display = _dpu_rm_needs_split_display(top);
-> > > +	} else {
-> > > +		/* use single CTL */
-> > > +		num_ctls = 1;
-> > > +		needs_split_display = false;
-> > > +	}
-> > >  
-> > >  	for (j = 0; j < ARRAY_SIZE(rm->ctl_blks); j++) {
-> > >  		const struct dpu_hw_ctl *ctl;
-> > > @@ -402,7 +410,8 @@ static int _dpu_rm_reserve_ctls(
-> > >  
-> > >  		DPU_DEBUG("ctl %d caps 0x%lX\n", j + CTL_0, features);
-> > >  
-> > > -		if (needs_split_display != has_split_display)
-> > > +		if (rm->has_legacy_ctls &&
-> > > +		    needs_split_display != has_split_display)
+On Monday, February 24, 2025 2:23:09 AM EST Greg Kroah-Hartman wrote:
+> On Sun, Feb 23, 2025 at 03:44:56PM -0500, adamsimonelli@gmail.com wrote:
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
 > > 
-> > I deduced a long time ago that the check for rm->has_legacy_ctls is not needed.
+> > If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
+> > will become the default primary console device, based on the link order.
 > > 
-> > needs_split_display is always false on DPU >= 5, and neither of those SoCs has
-> > DPU_CTRL_SPLIT_DISPLAY which means false != false is false, and this condition
-> > never triggers on active CTLs even without checking has_legacy_ctls.
+> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
+> > if CONFIG_VT is disabled, the default console device falls back to
+> > /dev/ttyS0 instead of /dev/tty.
+> > 
+> > This could cause issues in user space, and hardware problems:
+> > 
+> > 1. The user space issues include the case where  /dev/ttyS0 is
+> > disconnected, and the TCGETS ioctl, which some user space libraries use
+> > as a probe to determine if a file is a tty, is called on /dev/console and
+> > fails. Programs that call isatty() on /dev/console and get an incorrect
+> > false value may skip expected logging to /dev/console
+> > 
+> > 2. The hardware issues include the case if a user has a science instrument
+> > or other device connected to the /dev/ttyS0 port, and they were to upgrade
+> > to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
+> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> > command line manually.
+> > 
+> > The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+> > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+> > is not dependant on hardware configuration by default, and avoid
+> > unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> > port.
+> > 
+> > Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+> > ---
+> >  drivers/tty/Makefile | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+> > index 07aca5184a55..1a1051ecb1af 100644
+> > --- a/drivers/tty/Makefile
+> > +++ b/drivers/tty/Makefile
+> > @@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
+> >  obj-$(CONFIG_N_GSM)		+= n_gsm.o
+> >  
+> >  obj-y				+= vt/
+> > +#If ttynull is configured to be a console by default, ensure that it is linked
+> > +#earlier before a real one is selected.
+> > +obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
+> > +
+> >  obj-$(CONFIG_HVC_DRIVER)	+= hvc/
+> >  obj-y				+= serial/
+> >  obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
+> > @@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
+> >  obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
+> >  obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
+> >  obj-$(CONFIG_NOZOMI)		+= nozomi.o
+> > +
+> > +#If ttynull is enabled, but not as a boot console, it is linked and used later
+> > +#after the real ones.
+> > +ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
+> >  obj-$(CONFIG_NULL_TTY)	        += ttynull.o
+> > +endif
 > 
-> During the transition time of 1 or 2 patches there is a window of
-> DPU >= 5 and DPU_CTRL_SPLIT_DISPLAY.
-
-Correct, but would there be any harm in reordering the patches?  Before this
-patch DPU_CTL_SPLIT_DISPLAY seems to have caused wrongfully allocating multiple
-CTLs when multiple intfs are requested anyway.
-
-- Marijn
-
-> > Other than that, this is all successfully tested and:
-> > 
-> > Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
-> > 
-> > >  			continue;
-> > >  
-> > >  		ctl_idx[i] = j;
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-> > > index 99bd594ee0d1995eca5a1f661b15e24fdf6acf39..130f753c36338544e84a305b266c3b47fa028d84 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
-> > > @@ -24,6 +24,7 @@ struct dpu_global_state;
-> > >   * @dspp_blks: array of dspp hardware resources
-> > >   * @hw_sspp: array of sspp hardware resources
-> > >   * @cdm_blk: cdm hardware resource
-> > > + * @has_legacy_ctls: DPU uses pre-ACTIVE CTL blocks.
-> > >   */
-> > >  struct dpu_rm {
-> > >  	struct dpu_hw_blk *pingpong_blks[PINGPONG_MAX - PINGPONG_0];
-> > > @@ -37,6 +38,7 @@ struct dpu_rm {
-> > >  	struct dpu_hw_blk *dsc_blks[DSC_MAX - DSC_0];
-> > >  	struct dpu_hw_sspp *hw_sspp[SSPP_MAX - SSPP_NONE];
-> > >  	struct dpu_hw_blk *cdm_blk;
-> > > +	bool has_legacy_ctls;
-> > >  };
-> > >  
-> > >  struct dpu_rm_sspp_requirements {
-> > > 
-> > > -- 
-> > > 2.39.5
-> > > 
+> Nit, a " " needs to be after the "#" character, right?
 > 
-> -- 
-> With best wishes
-> Dmitry
+> And ick, this is going to be tricky, changing the link order depending
+> on the configuration option setting?  This feels wrong, and messy, and
+> very fragile.
+> 
+Yeah, it did feel kind of odd I will admit, but I was worried if there are any
+ramifications that I don't know about if I move it up early for all cases now
+or if I should just put it back to how it was in v1...
+> thanks,
+> 
+> greg k-h
+> 
+
+
+
+
 
