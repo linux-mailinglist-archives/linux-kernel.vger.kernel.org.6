@@ -1,193 +1,98 @@
-Return-Path: <linux-kernel+bounces-530276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37958A4314D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:50:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39901A43146
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E4B1188E678
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BA66173293
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915F120CCEB;
-	Mon, 24 Feb 2025 23:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8D720CCF3;
+	Mon, 24 Feb 2025 23:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alY1V047"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="GUCUJCV7"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332FD20C48E;
-	Mon, 24 Feb 2025 23:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E698020C037;
+	Mon, 24 Feb 2025 23:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740440960; cv=none; b=MDFD4bUwDb4F5Cy3IZxQG/cRpwMAHhkcoy2qQ0hjXb8Ibnlp726ACjIjH1yKMU1XmzcFUsYQebglue0mU7XoPvnhyOQe09FvqD8zfb1nu2i3FicxwIgdmXt1MsQlPthhbz8UMKe5D9fzYjfvGNXYcT+RjG1jthQCas0EbwPbopI=
+	t=1740440953; cv=none; b=HWCCJjW10wFXBne5jbQj4+URk5+uWyJQj34TgvVAwA++/IqizfUgnJYL3exuD+fRN1YwAn6kL8BTPooJablIzF7PY1g0sWlC2P+YoQWc5gY+Wl8VY+dZYAvv5+1nRgm2v7/lMEnZ68dLJNeIolSUP6hc69mhiOiGghFeObE2P68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740440960; c=relaxed/simple;
-	bh=P24KtMme6o5jmQIafJUkN2Tyf2Be/sw+r0h3G0HHz+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKMJxAUsOVAmHbsfw7jCRl6UvJIKh5ll6gt8aUCdN+aUeBndbz1E6qdew4XixCNPfkcP3+MMjG1+ZrAWow7TdWreNsLGmezPIOVMjbnMVRqXJbeSomD6qG0b1rAvoZd+DS7fsnKOWBYFRSLe6CwkA4dBJhr8/3HUf2SVSHc6kNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alY1V047; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c0818add57so517913985a.3;
-        Mon, 24 Feb 2025 15:49:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740440958; x=1741045758; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EpFPdCKOOzYGkmZbz8KYm8xS5nu6X4mus1CxiMy3hoo=;
-        b=alY1V047dCeEk1lZNuPhOYcvGxC+ZH6ORwGnlGCeRwtJ0hwnfEbChJZarwR+i70YFa
-         h1HFhTTYn6nVbm2ozYR3XD/99BeK0t0iQcm2axVp0Mf+II1skIOkzoylHGaGgxYoVjW4
-         H4aGwnmJFvkx0erYLDjmbwIgQ0GLtciS8MZJ+xbHNM+K4u5pfwMIUM8Nk/bqllZ/hY5/
-         3AvnQgzx9Gzh89iLeXL7Qnf559Uq3G/vw84LAA3bmKVU9HP//Vvq3/yZpaOPUV6EP2QS
-         st5rak9VQuxA/epWwSadmGfJ7iEKSzMkE5uWmk6AczhyZdm29oWSxW9oone3HxPJpBLh
-         KB4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740440958; x=1741045758;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EpFPdCKOOzYGkmZbz8KYm8xS5nu6X4mus1CxiMy3hoo=;
-        b=fygRzhWUWbIsQSha7iMQaPy/4HfK3PZcWSiYLNDDi+YrLnifRXbz6JtuiZGvUV3AVN
-         yLQuN+fPqLTgmEQDOJXJ4KR13dtixbVzPlFHE5LnVvfUbNNk2l569dMgzEcOwECSJ2BV
-         lkBenEmPi4ZLSs5MSaDgyX8Xnxhc20NcML8gDqrK0QzY4RJ+IRZBEqEh4E4g/WIEaWcL
-         K4ETwqeUKpF9c2EU7P17sE2Hct/JLo8mWq+oM7MC/Dy/DrfjNdHdUUBvsyZtM9jEIUW6
-         V+fkujNRNaA49jitICmZgHJ6omwbvJRAM2tHqs9MEZ9SK1+tmRJhsMWXPW8yc3A2ZJ3S
-         pPIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWLeqDLgLOTxipREsMkxNzgVNl6CkWBCKazzKzcTxwfryBt8a3bHAZ/We2rE5YAzitlj5OsiQinCY0U@vger.kernel.org, AJvYcCX+PHI9fu5u42ZKihaXbvx6XjLiEAdTZiEZwzG//TskTyXpJ1bfiWohXS+kjb+mF55ZtMf/3CD7fzOLYZmp@vger.kernel.org, AJvYcCXeME+INxXb3T53qWbCSkUrayVG1TnylH/mY00f1MaRVekNLj9uQW8zG3rG2YE7udUmw05CrPjH3pVA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3kGFeWhvC1OwUK+sks8kkar3TTMFgttrq5kFP9MIAyJnxEBcz
-	o6pIZFZlBkrlgQKIiVhFunHFetvIBR9u7qEf0L92Vw4pKkjmYfLC
-X-Gm-Gg: ASbGncuKFNUar+AHmyU5LyIElv9zlPA9uHYAw9sV+x1RnjnjO6mNgMPINadZA9VL7xa
-	HHHMSbVOyC0A0oEsPvjch5c43Y7LaxoboOBPa4zEYTJHACUwj2o/zOggxueoarT5pDT46BuFx1v
-	RxOkAbIMvi1UHBaac3XgWfMf+IazV+UPHFb8fUqtMQz7aNhxhIaxB3sNtkwBfXnvAiAbKAkDe3n
-	bTSBRhwDCyPPx6QGCBWQTjarScENwD3S3SK5jVP+O6mcRYfTJvSsYLZVD2g2zYvzyqzXNLN4KKW
-	yA==
-X-Google-Smtp-Source: AGHT+IEb4O7bqSxdD9PsVnrPdjDODk+0ZRgqEenGZhUD0ccL6Bcsf2l6qeul83BCvsR9I1s84A5TWw==
-X-Received: by 2002:a05:620a:1a1c:b0:7c0:c024:af with SMTP id af79cd13be357-7c0cf8e622cmr1919031285a.26.1740440957990;
-        Mon, 24 Feb 2025 15:49:17 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c23c2c514asm36530985a.64.2025.02.24.15.49.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 15:49:17 -0800 (PST)
-Date: Tue, 25 Feb 2025 07:48:59 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>, 
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
-Message-ID: <7ht3djv7zgrbkcvmdg6tp62nmxytlxzhaprsuvyeshyojhochn@ignvymxb3vfa>
-References: <20250221013758.370936-1-inochiama@gmail.com>
- <20250221013758.370936-2-inochiama@gmail.com>
- <20250221-cavalier-cramp-6235d4348013@spud>
- <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
- <20250224-enable-progress-e3a47fdb625c@spud>
+	s=arc-20240116; t=1740440953; c=relaxed/simple;
+	bh=bSZ1BbEYc5oTKZWo6TwEiFHmEdVxTC2MtfdfcPQcJIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iFRLbrzfszfZctBWcotadjFphwtcFNHQl8ekAW9OGNRE1aVKmVsVmYzV02XeD4x2bFJShlyLJssnL3FSy13er+2hZtiJhdjJY3qDr1Z4W1B2UFB40B+MD6rIlElOkhgQPhbHDbDtIt3goWqJLrEZd9Cudqod336se2iLdVlaqEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=GUCUJCV7; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net CBF4D48EBA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1740440951; bh=pHGnij/eQmKrMRgKcJ0yPzwB3EItplvkoxWR3vEZS0M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GUCUJCV71P0WD5pGzeQ6pnT03wD/CWTLelZENJYTf2t2PdgTk2KFIb2Ypg582Z2ne
+	 Dkrv0sH6cV2iTw9w5UtDnkb3acQcUFtwTyKfMje711n0J7/2APZdWZYl0h60nKMA24
+	 JNJDa38zvOpWLFOOYqBm+PVSWazh6Mi1OjlXXTvvsN1Z3ovEHLk4xwka4Gn2R8AumJ
+	 7XXe5JtmG87omImTS+j3Rpm3SYTnIGW+JzXwqFg/I8l7zuozaSYc86KKftKV+Qayx0
+	 B4AhEQHrwwYN92Gf939Kk8AF9xStt2YN7jkgWk3jtuejtV5ABrzCLEfXEBy9AuJyNo
+	 C2+bSGF8eSZAg==
+Received: from localhost (unknown [IPv6:2601:280:4600:2d7f::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id CBF4D48EBA;
+	Mon, 24 Feb 2025 23:49:10 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>, linux-kernel@vger.kernel.org, "Gustavo A. R.
+ Silva" <mchehab+huawei@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bingbu
+ Cao <bingbu.cao@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Kees Cook <mchehab+huawei@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Takashi Sakamoto
+ <o-takashi@sakamocchi.jp>, Tianshu Qiu <tian.shu.qiu@intel.com>,
+ linux-arch@vger.kernel.org, linux-hardening@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux1394-devel@lists.sourceforge.net
+Subject: Re: [PATCH v2 00/39] Implement kernel-doc in Python
+In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
+References: <cover.1740387599.git.mchehab+huawei@kernel.org>
+Date: Mon, 24 Feb 2025 16:49:10 -0700
+Message-ID: <87msea29ah.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224-enable-progress-e3a47fdb625c@spud>
+Content-Type: text/plain
 
-On Mon, Feb 24, 2025 at 06:54:51PM +0000, Conor Dooley wrote:
-> On Sat, Feb 22, 2025 at 08:34:10AM +0800, Inochi Amaoto wrote:
-> > On Fri, Feb 21, 2025 at 05:01:41PM +0000, Conor Dooley wrote:
-> > > On Fri, Feb 21, 2025 at 09:37:55AM +0800, Inochi Amaoto wrote:
-> > > > The pcie controller on the SG2044 is designware based with
-> > > > custom app registers.
-> > > > 
-> > > > Add binding document for SG2044 PCIe host controller.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > ---
-> > > >  .../bindings/pci/sophgo,sg2044-pcie.yaml      | 125 ++++++++++++++++++
-> > > >  1 file changed, 125 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..040dabe905e0
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
-> > > > @@ -0,0 +1,125 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/pci/sophgo,sg2044-pcie.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: DesignWare based PCIe Root Complex controller on Sophgo SoCs
-> > > > +
-> > > > +maintainers:
-> > > > +  - Inochi Amaoto <inochiama@gmail.com>
-> > > > +
-> > > > +description: |+
-> > > > +  SG2044 SoC PCIe Root Complex controller is based on the Synopsys DesignWare
-> > > > +  PCIe IP and thus inherits all the common properties defined in
-> > > > +  snps,dw-pcie.yaml.
-> > > > +
-> > > > +allOf:
-> > > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
-> > > > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: sophgo,sg2044-pcie
-> > > > +
-> > > > +  reg:
-> > > > +    items:
-> > > > +      - description: Data Bus Interface (DBI) registers
-> > > > +      - description: iATU registers
-> > > > +      - description: Config registers
-> > > > +      - description: Sophgo designed configuration registers
-> > > > +
-> > > > +  reg-names:
-> > > > +    items:
-> > > > +      - const: dbi
-> > > > +      - const: atu
-> > > > +      - const: config
-> > > > +      - const: app
-> > > > +
-> > > > +  clocks:
-> > > > +    items:
-> > > > +      - description: core clk
-> > > > +
-> > > > +  clock-names:
-> > > > +    items:
-> > > > +      - const: core
-> > > > +
-> > > > +  dma-coherent: true
-> > > 
-> > > Why's this here? RISC-V is dma-coherent by default, with dma-noncoherent
-> > > used to indicate systems/devices that are not.
-> > 
-> > The PCIe is dma coherent, but the SoC itself is marked as
-> > dma-noncoherent.
-> 
-> By "the SoC itself", do you mean that the bus that this device is on is
-> marked as dma-noncoherent? 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-Yeah, I was told only PCIe device on SG2044 is dma coherent.
-The others are not.
+> Hi Jon,
+>
+> This changeset contains the kernel-doc.py script to replace the verable
+> kernel-doc originally written in Perl. It replaces the first version and the
+> second series I sent on the top of it.
 
-> IMO, that should not be done if there are devices on it that are coherent.
-> 
+I've sent minor comments on a couple of the patches.  The new version
+works for me, I can't find any real problems with it.
 
-It is OK for me. But I wonder how to handle the non coherent device
-in DT? Just Mark the bus coherent and mark all devices except the
-PCIe device non coherent?
+Here's the question: what were your thoughts on when to do this?  I can
+certainly take the initial fixup patches and get them out of your queue,
+but at some point there will be a need to dive into the deep end.  I'm
+just a bit leery of doing that as we head toward -rc5...  what do you
+think of "just after the merge window"?
 
-Regards,
-Inochi
+I'm definitely looking forward to no longer having to bash my head
+against the Perl version...
+
+Thanks,
+
+jon
 
