@@ -1,176 +1,154 @@
-Return-Path: <linux-kernel+bounces-529072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 457FAA41F61
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:43:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E085BA41F84
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:49:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C51B7A22DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:41:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A67816173E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C276223BCFD;
-	Mon, 24 Feb 2025 12:41:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556C523BCE9;
-	Mon, 24 Feb 2025 12:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E857B233730;
+	Mon, 24 Feb 2025 12:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="boB2xRbE"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB0770830;
+	Mon, 24 Feb 2025 12:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400898; cv=none; b=LbdN4F/4duB22kqkSI2hi/vpaIljpXoIQ984vp2dmLwYtYeu64JMSNeIomFfq6fiwSndCua3ILNJccx2RyEOWboesbokiE09nbYUmI8wQ0owRpHIO1CIZ0JHLGN3VRLjcgDE05XX8qGWCfPHl1m6Vzxje5HiKT8LHl7LL6f2Epg=
+	t=1740400950; cv=none; b=l4nEJeQeJRLV2fRcaVFDb6nkJ3aHwR6srLWTD05CFnKqjSUxAwf/8DD06NLegYvFsj6qlm6Rb6Ef085xEPHLVseDMVrFVkUZh5ARwLNf9hqBAOMdiOs9/qYhCng9M7STWpUdN3s/Vr3HRAZDVou0xm4E61hCbeIq7A1sjN+ZPEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400898; c=relaxed/simple;
-	bh=kJZjwClM/abFmBmNJE5WKeYjNO/OodcLkhc8SQd9mxU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=si4KPZ7Z+ons7b2FmmooQKj7Ab9kt7eWFaysQqN5NzrXn4lPMTnWAMP1VlVbeAFdP9RLtQTk5eIZEXxua3ScKMKqy4Zp+mIO5TQ1BeS/IfskMi02075n9wzdpTv7amJKld/KBV/CSJ2mTEKfhCP2I6bD8kpiDAvZPdjH5S00fkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F2231756;
-	Mon, 24 Feb 2025 04:41:52 -0800 (PST)
-Received: from [10.1.25.52] (e127648.arm.com [10.1.25.52])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 376BE3F6A8;
-	Mon, 24 Feb 2025 04:41:33 -0800 (PST)
-Message-ID: <86756d5c-ce47-4a91-afff-480b82207516@arm.com>
-Date: Mon, 24 Feb 2025 12:41:31 +0000
+	s=arc-20240116; t=1740400950; c=relaxed/simple;
+	bh=+e46wEZt7RfRxQArYUoV6Ucx7yVGn4x2NTNd3fcYDQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ck0VvTMWSd8Nr9T/XTYpIlubKwQFW49z8MSJNHI2Y2eSP4ZjSgmZE+dGGi/N4PWbBSaNcf990YbWkE2vXnWZjMHdPfQKPZ0Us9l9T6e2o4hXL0AkRewS3RVJ/Vtt+9BGDIKo5Vy90CEs2n9Eb+16dElHB0BBGiuqlstWYJH7rEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=boB2xRbE; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7FB694421A;
+	Mon, 24 Feb 2025 12:42:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740400945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4n1rdx2OTrFLTjZI10Rs7guVLntv94obbz/dLbtCoh0=;
+	b=boB2xRbE6uvfUczb00uRATbcNQeX8WGtvPvkrj1Xw70jkiqfpkOBYVb9Htfgd4huA3cm0b
+	tsimHlofYNZHW/ek7BDRPZGsvNw9XlHlWMIQQyHxuda3dxbqd2yWUj/rejSOjVdpuYshCD
+	iTUXnf0YNTM/758gEXhy+PfSSSKc+Rhc/r0WySUlPBCOfFncIu3mtwX9ccnL+Fx2/laXKN
+	mG5fnpLVeCZGveQKWTFFJMFNjtZrOw74Awdl0Da+Gk0IySE859MnngbFOw0WjBjky3jxsG
+	GNW1m1gpgS1cQoXq3YDpAgRMSJxtaX4SxnEYnRjagAPmkA1tu3WthjCFckBHUA==
+Date: Mon, 24 Feb 2025 13:42:22 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 09/12] net: pse-pd: pd692x0: Add support for
+ controller and manager power supplies
+Message-ID: <20250224134222.358b28d8@fedora>
+In-Reply-To: <20250218-feature_poe_port_prio-v5-9-3da486e5fd64@bootlin.com>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-9-3da486e5fd64@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] cpuidle: menu: Update documentation after previous
- changes
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
- Doug Smythies <dsmythies@telus.net>
-References: <4998484.31r3eYUQgx@rjwysocki.net>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <4998484.31r3eYUQgx@rjwysocki.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeekudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuhfefgffgtdfhgffhvdfhhffhteeutdektefghfetveehheejjefgudeiudehudenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmp
+ dhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvght
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 2/20/25 20:13, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> The documentaion of the menu cpuidle governor needs to be updated
-s/documentaion/documentation/
-> to match the code bevavior after some changes made recently.
+Hi K=C3=B6ry,
 
-s/bevavior/behavior/
+On Tue, 18 Feb 2025 17:19:13 +0100
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-> 
-> No functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+>=20
+> Add support for managing the VDD and VDDA power supplies for the PD692x0
+> PSE controller, as well as the VAUX5 and VAUX3P3 power supplies for the
+> PD6920x PSE managers.
+>=20
+> Signed-off-by: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 > ---
->  Documentation/admin-guide/pm/cpuidle.rst |   27 ++++++++++++++++-----------
->  drivers/cpuidle/governors/menu.c         |   29 ++++++++++-------------------
->  2 files changed, 26 insertions(+), 30 deletions(-)
-> 
-> --- a/Documentation/admin-guide/pm/cpuidle.rst
-> +++ b/Documentation/admin-guide/pm/cpuidle.rst
-> @@ -275,20 +275,25 @@
->  and variance of them.  If the variance is small (smaller than 400 square
->  milliseconds) or it is small relative to the average (the average is greater
->  that 6 times the standard deviation), the average is regarded as the "typical
-> -interval" value.  Otherwise, the longest of the saved observed idle duration
-> +interval" value.  Otherwise, either the longest or the shortest (depending on
-> +which one is farther from the average) of the saved observed idle duration
->  values is discarded and the computation is repeated for the remaining ones.
-> +
->  Again, if the variance of them is small (in the above sense), the average is
->  taken as the "typical interval" value and so on, until either the "typical
-> -interval" is determined or too many data points are disregarded, in which case
-> -the "typical interval" is assumed to equal "infinity" (the maximum unsigned
-> -integer value).
-> +interval" is determined or too many data points are disregarded.  In the latter
-> +case, if the size of the set of data points still under consideration is
-> +sufficiently large, the next idle duration is not likely to be above the largest
-> +idle duration value still in that set, so that value is taken as the predicted
-> +next idle duration.  Finally, if the set of data points still under
-> +consideration is too small, no prediction is made.
->  
-> -If the "typical interval" computed this way is long enough, the governor obtains
-> -the time until the closest timer event with the assumption that the scheduler
-> -tick will be stopped.  That time, referred to as the *sleep length* in what follows,
-> -is the upper bound on the time before the next CPU wakeup.  It is used to determine
-> -the sleep length range, which in turn is needed to get the sleep length correction
-> -factor.
-> +If the preliminary prediction of the next idle duration computed this way is
-> +long enough, the governor obtains the time until the closest timer event with
-> +the assumption that the scheduler tick will be stopped.  That time, referred to
-> +as the *sleep length* in what follows, is the upper bound on the time before the
-> +next CPU wakeup.  It is used to determine the sleep length range, which in turn
-> +is needed to get the sleep length correction factor.
->  
->  The ``menu`` governor maintains an array containing several correction factor
->  values that correspond to different sleep length ranges organized so that each
-> @@ -302,7 +307,7 @@
->  The sleep length is multiplied by the correction factor for the range that it
->  falls into to obtain an approximation of the predicted idle duration that is
->  compared to the "typical interval" determined previously and the minimum of
-> -the two is taken as the idle duration prediction.
-> +the two is taken as the final idle duration prediction.
->  
->  If the "typical interval" value is small, which means that the CPU is likely
->  to be woken up soon enough, the sleep length computation is skipped as it may
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -41,7 +41,7 @@
->   * the  C state is required to actually break even on this cost. CPUIDLE
->   * provides us this duration in the "target_residency" field. So all that we
->   * need is a good prediction of how long we'll be idle. Like the traditional
-> - * menu governor, we start with the actual known "next timer event" time.
-> + * menu governor, we take the actual known "next timer event" time.
->   *
->   * Since there are other source of wakeups (interrupts for example) than
->   * the next timer event, this estimation is rather optimistic. To get a
-> @@ -50,30 +50,21 @@
->   * duration always was 50% of the next timer tick, the correction factor will
->   * be 0.5.
->   *
-> - * menu uses a running average for this correction factor, however it uses a
-> - * set of factors, not just a single factor. This stems from the realization
-> - * that the ratio is dependent on the order of magnitude of the expected
-> - * duration; if we expect 500 milliseconds of idle time the likelihood of
-> - * getting an interrupt very early is much higher than if we expect 50 micro
-> - * seconds of idle time. A second independent factor that has big impact on
-> - * the actual factor is if there is (disk) IO outstanding or not.
-> - * (as a special twist, we consider every sleep longer than 50 milliseconds
-> - * as perfect; there are no power gains for sleeping longer than this)
-> - *
-> - * For these two reasons we keep an array of 12 independent factors, that gets
-> - * indexed based on the magnitude of the expected duration as well as the
-> - * "is IO outstanding" property.
-> + * menu uses a running average for this correction factor, but it uses a set of
-> + * factors, not just a single factor. This stems from the realization that the
-> + * ratio is dependent on the order of magnitude of the expected duration; if we
-> + * expect 500 milliseconds of idle time the likelihood of getting an interrupt
-> + * very early is much higher than if we expect 50 micro seconds of idle time.
-> + * For this reason, menu keeps an array of 6 independent factors, that gets
-> + * indexed based on the magnitude of the expected duration.
->   *
->   * Repeatable-interval-detector
->   * ----------------------------
->   * There are some cases where "next timer" is a completely unusable predictor:
->   * Those cases where the interval is fixed, for example due to hardware
-> - * interrupt mitigation, but also due to fixed transfer rate devices such as
-> - * mice.
-> + * interrupt mitigation, but also due to fixed transfer rate devices like mice.
->   * For this, we use a different predictor: We track the duration of the last 8
-> - * intervals and if the stand deviation of these 8 intervals is below a
-> - * threshold value, we use the average of these intervals as prediction.
-> - *
-> + * intervals and use them to estimate the duration of the next one.
->   */
+>=20
+> Changes in v5:
+> - New patch
+> ---
+>  drivers/net/pse-pd/pd692x0.c | 20 ++++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>=20
+> diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
+> index 44ded2aa6fca..c9fa60b314ce 100644
+> --- a/drivers/net/pse-pd/pd692x0.c
+> +++ b/drivers/net/pse-pd/pd692x0.c
+> @@ -976,8 +976,10 @@ pd692x0_register_managers_regulator(struct pd692x0_p=
+riv *priv,
+>  	reg_name_len =3D strlen(dev_name(dev)) + 23;
+> =20
+>  	for (i =3D 0; i < nmanagers; i++) {
+> +		static const char * const regulators[] =3D { "vaux5", "vaux3p3" };
 
-Assuming you fix up the typos in the commit message when applying:
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
+Looks like the 'static' is not needed here :)
+
+>  		struct regulator_dev *rdev;
+>  		char *reg_name;
+> +		int ret;
+> =20
+>  		reg_name =3D devm_kzalloc(dev, reg_name_len, GFP_KERNEL);
+>  		if (!reg_name)
+> @@ -988,6 +990,17 @@ pd692x0_register_managers_regulator(struct pd692x0_p=
+riv *priv,
+>  		if (IS_ERR(rdev))
+>  			return PTR_ERR(rdev);
+> =20
+> +		/* VMAIN is described as main supply for the manager.
+> +		 * Add other VAUX power supplies and link them to the
+> +		 * virtual device rdev->dev.
+> +		 */
+> +		ret =3D devm_regulator_bulk_get_enable(&rdev->dev,
+> +						     ARRAY_SIZE(regulators),
+> +						     regulators);
+> +		if (ret)
+> +			return dev_err_probe(&rdev->dev, ret,
+> +					     "Failed to enable regulators\n");
+> +
+>  		priv->manager_reg[i] =3D rdev;
+>  	}
+> =20
+> @@ -1640,6 +1653,7 @@ static const struct fw_upload_ops pd692x0_fw_ops =
+=3D {
+> =20
+>  static int pd692x0_i2c_probe(struct i2c_client *client)
+>  {
+> +	static const char * const regulators[] =3D { "vdd", "vdda" };
+
+And here as well
+
+Thanks,
+
+Maxime
 
