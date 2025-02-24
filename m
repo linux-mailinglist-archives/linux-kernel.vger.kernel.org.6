@@ -1,54 +1,88 @@
-Return-Path: <linux-kernel+bounces-528176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810D0A4148E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:54:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F970A41492
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC64D188D35E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C611A188F681
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68E621AAA1D;
-	Mon, 24 Feb 2025 04:54:35 +0000 (UTC)
-Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3CA61A5B82;
+	Mon, 24 Feb 2025 05:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBIc/zCb"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6495A2F3B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1E0199920;
+	Mon, 24 Feb 2025 05:00:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740372875; cv=none; b=BskMHRvjWUkx86+lmHnDRQm4iGOj/1jAMg1VwyxSmYD9IOiMtCzs1DfrKH65K9Q/qRgt9AGTeMrprIekNPIrF+eMYLCTIBGfevOk8oHq/FMuxoTUumYGIf5X6N8ddkrDoXz1FvZqsAfydPly7WBeMsnst/cs1vg/aadAZILZ1EM=
+	t=1740373213; cv=none; b=svKmqyHuNYsaGe8n0TmPvDmwfb0QEi+YYrqg8KtV+kQ2iRtgLk/9R4WIcYHqqHUj0L2LDwaYchgbD58+H3HhF/YiRedT8hDcsIctdPQybcIXMxXylLcVI27SOrfOQ4dwPk4pCvgs88U302vdL0zAqfxRXIwFElcQm27GT0vRVFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740372875; c=relaxed/simple;
-	bh=Y1th7TCKRnc1Igzghx/0oQZwI6Axf5FJPd6T4hOut2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H7vP94fjWOWOkNkvpTQ1gbRNX1miiFh0gW9ddjd8tu8xz9eCz4wI6sKtK8ZAEju+YrVrHOIdYq9Xh3cw2Wa5JBDvqY6KB+G6BIcpDoPljLyusz+blD3dh/YbmRT5UYCP0wR0yRhmrE6Lc/NW8A+xqm1HXrggQKT2uWd82cdwpHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.67.129])
-	by sina.com (10.185.250.24) with ESMTP
-	id 67BBFB7B000069A1; Mon, 24 Feb 2025 12:54:22 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 37983610748523
-X-SMAIL-UIID: 4E3D1F39833C4AD7B6425EC5C0A07305-20250224-125422-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-Date: Mon, 24 Feb 2025 12:54:09 +0800
-Message-ID: <20250224045410.2756-1-hdanton@sina.com>
-In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
-References: 
+	s=arc-20240116; t=1740373213; c=relaxed/simple;
+	bh=7Tsgb1VlBaToqdFqXP6tBkBm+KcvCBhRo08kXNZs+Ys=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sLecx0C/TOwlZkgYHGOT1ZFwS7mUstCE00tHflG20lr6euDXRKGDUE3U0bRLzkvhPGk+ONjK5+hD3qog/Wu55cLPhQd+Q+iRnIjzP4Ulz9aRyC9JCjUB979jrUBCdzuXUIxLU+LFQAVyP9/VFGQqndEnte37HOeXo2Sop/Oz2x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBIc/zCb; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-222e8d07dc6so6446745ad.1;
+        Sun, 23 Feb 2025 21:00:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740373211; x=1740978011; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6QdRQnj2hju2Gq755DtSZDoUs9iYpMcUoX/lshJNhNI=;
+        b=aBIc/zCbqX1Lag0V36Yu3T8DIBsAXuKD0xOWc/s/Uvo+aGy4nnn+/hZhRCaek9wmr/
+         +sRcLZ7C5TaHzxgeFOAKn/A7EEU4iphlfPtwFS8QJYderM/JVDa7cK/y+3JoWvvVPPjc
+         Nyu5TrzPPYxa0sDGzHiZD/Z/HQx9e7s+k1pdm3+Zw1zr+9X915qr15b9tMtJo2sbFzOb
+         KeVrk6idsk0kGHjRAtnn96T7Ct0dWxfTt0tu0jEi19Ms4d2foFnQbgrKdQYQB+0YqPnZ
+         DLkxqxKX0oN0otdxPNY8CAtk3LcdpK/wfjSljVJtgBSCw5A5pplqN77GSikEnr+kkaMD
+         1d4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740373211; x=1740978011;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6QdRQnj2hju2Gq755DtSZDoUs9iYpMcUoX/lshJNhNI=;
+        b=pQoQ7Qw/RiqusMX5HkyaIKYDbWob/oF0oN+cyrlDAEgV3o90u/aRhw5rjTFoLK55gd
+         YPI4ddvRUffcvqIATVydoJJC/k3pK75W8kpWHwmuVEBYszEOFMpnn2IJyBpwW1ga2g1d
+         Npkz4tHrq9hTkCNm+bbTymPOtLW4JuWFL364qde3sGOjq0OimtMLe1jNvkY5BczYVBoE
+         wmrE1vMQxB8uHUl1kFDI/QtdfaUpYBxv7KvTieTrOCQDGWlZpyX66LjH9h0C5D/OPZ7C
+         aXCE3UN6lI8iJ7zereRnONdrgzT7cF43fVLUT/DcDdRx8Jh5iNnu5IntOql53WKOwLjy
+         94iw==
+X-Forwarded-Encrypted: i=1; AJvYcCWX7DfmFI/W0L5dUp840DT0XLOwI9VgeiFLDtNWNrbiMqlacMJFS9BeCfUXtWKs1oyZPGHq32MtjiX1GDY=@vger.kernel.org, AJvYcCXqg1SXTWNVGbo3Z0nFY5EiwSNKM+0q7PUX9SvXHw2v976RIIyOgBOLGZQ78QLxZFyoyL2CMmZ7nfwp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/r/CyUXz5ZVAVTPlRVZd/Fvd6nyZqMSzvfcVznXoB17TlpODU
+	h904JKMU1SdEl4z6LIN2j7v434gKKThN0tzusmSbL7UZDY0mEJt1
+X-Gm-Gg: ASbGncuLIFZkzmkR5tpOvDhCKhkQYCN+P/9M8n6uvS0DU/J9fh4hy+W78ncp8H7Yojy
+	lXGWsyoxmss9VMQJwdBOVs17uirWWNcPj2iPnpqUbNyLkPesu3oG/0STtev+CFdv/H4EETy7KTb
+	FpMfkj637sblI+YmjEXP3CyG0TsC4ehAYJTmDKNMSJLnmfsGHj87xH/atJvKDwLRqzpdA0HBT0I
+	rH5D9Mryp3gxQqpakBn4PQeaNUq9m3K4ChssYPH6zQwS7GqGdDBMmoo833WOoqNMDt3Dv2Oy5j/
+	SWb99oOPeToL4aydfR6AuFXnkP0ne/xYnoPgFlBIH+OTYDKmmGEb
+X-Google-Smtp-Source: AGHT+IE4nGagFLEupnjXlfzHS9sWSptGRd1fldH/YrIat/6FgEJhQZvn9iqG8LUDaOP9Ap6sAX7XLA==
+X-Received: by 2002:a17:902:e805:b0:220:cfb7:56eb with SMTP id d9443c01a7336-221a002cf37mr206594795ad.26.1740373211049;
+        Sun, 23 Feb 2025 21:00:11 -0800 (PST)
+Received: from rdbsd2.rdb.adwin.renesas.com ([128.1.49.169])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545c8e7sm168547305ad.122.2025.02.23.21.00.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 21:00:10 -0800 (PST)
+From: Guan Wang <guan.wang.jy@gmail.com>
+X-Google-Original-From: Guan Wang <guan.wang.jy@renesas.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Avri Altman <avri.altman@wdc.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	guan.wang.jy@renesas.com,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: block: add reset workaround for partition switch failures
+Date: Mon, 24 Feb 2025 12:59:17 +0800
+Message-Id: <20250224045918.3321394-1-guan.wang.jy@renesas.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,111 +91,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Sat, 22 Feb 2025 09:01:23 -0800
-> syzbot found the following issue on:
-> 
-> HEAD commit:    0a86e49acfbb dt-bindings: usb: samsung,exynos-dwc3 Add exy..
-> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c02ba4580000
+Some eMMC devices (e.g., BGSD4R and AIM20F) may enter an unresponsive state
+after encountering CRC errors during RPMB writes (CMD25). This prevents the
+device from switching back to the main partition via CMD6, blocking further
+I/O operations.
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  master
+The root cause is suspected to be a firmware/hardware issue in specific
+eMMC models. A workaround is to perform a hardware reset via mmc_hw_reset()
+when the partition switch fails, followed by a retry.
 
---- x/drivers/hid/hid-steam.c
-+++ y/drivers/hid/hid-steam.c
-@@ -314,6 +314,7 @@ struct steam_device {
- 	u16 rumble_right;
- 	unsigned int sensor_timestamp_us;
- 	struct work_struct unregister_work;
-+	struct work_struct unregister_work2;
- };
- 
- static int steam_recv_report(struct steam_device *steam,
-@@ -618,6 +619,8 @@ static void steam_input_close(struct inp
- 	unsigned long flags;
- 	bool set_lizard_mode;
- 
-+	if (dev->going_away)
-+		return;
- 	if (!(steam->quirks & STEAM_QUIRK_DECK)) {
- 		spin_lock_irqsave(&steam->lock, flags);
- 		set_lizard_mode = !steam->client_opened && lizard_mode;
-@@ -1077,25 +1080,17 @@ static void steam_work_unregister_cb(str
- {
- 	struct steam_device *steam = container_of(work, struct steam_device,
- 							unregister_work);
--	unsigned long flags;
--	bool connected;
--	bool opened;
--
--	spin_lock_irqsave(&steam->lock, flags);
--	opened = steam->client_opened;
--	connected = steam->connected;
--	spin_unlock_irqrestore(&steam->lock, flags);
-+	steam_sensors_unregister(steam);
-+	steam_input_unregister(steam);
-+}
- 
--	if (connected) {
--		if (opened) {
--			steam_sensors_unregister(steam);
--			steam_input_unregister(steam);
--		} else {
--			steam_set_lizard_mode(steam, lizard_mode);
--			steam_input_register(steam);
--			steam_sensors_register(steam);
--		}
--	}
-+static void steam_work_unregister_cb2(struct work_struct *work)
-+{
-+	struct steam_device *steam = container_of(work, struct steam_device,
-+							unregister_work2);
-+	steam_set_lizard_mode(steam, lizard_mode);
-+	steam_input_register(steam);
-+	steam_sensors_register(steam);
- }
- 
- static bool steam_is_valve_interface(struct hid_device *hdev)
-@@ -1160,7 +1155,7 @@ static void steam_client_ll_close(struct
- 	connected = steam->connected && !steam->client_opened;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
--	schedule_work(&steam->unregister_work);
-+	schedule_work(&steam->unregister_work2);
- }
- 
- static int steam_client_ll_raw_request(struct hid_device *hdev,
-@@ -1253,6 +1248,7 @@ static int steam_probe(struct hid_device
- 	INIT_WORK(&steam->rumble_work, steam_haptic_rumble_cb);
- 	steam->sensor_timestamp_us = 0;
- 	INIT_WORK(&steam->unregister_work, steam_work_unregister_cb);
-+	INIT_WORK(&steam->unregister_work2, steam_work_unregister_cb2);
- 
- 	/*
- 	 * With the real steam controller interface, do not connect hidraw.
-@@ -1314,6 +1310,7 @@ err_cancel_work:
- 	cancel_delayed_work_sync(&steam->mode_switch);
- 	cancel_work_sync(&steam->rumble_work);
- 	cancel_work_sync(&steam->unregister_work);
-+	cancel_work_sync(&steam->unregister_work2);
- 
- 	return ret;
- }
-@@ -1330,7 +1327,6 @@ static void steam_remove(struct hid_devi
- 	cancel_delayed_work_sync(&steam->mode_switch);
- 	cancel_work_sync(&steam->work_connect);
- 	cancel_work_sync(&steam->rumble_work);
--	cancel_work_sync(&steam->unregister_work);
- 	hid_destroy_device(steam->client_hdev);
- 	steam->client_hdev = NULL;
- 	steam->client_opened = 0;
-@@ -1340,6 +1336,8 @@ static void steam_remove(struct hid_devi
- 	hid_hw_close(hdev);
- 	hid_hw_stop(hdev);
- 	steam_unregister(steam);
-+	flush_work(&steam->unregister_work);
-+	flush_work(&steam->unregister_work2);
- }
- 
- static void steam_do_connect_event(struct steam_device *steam, bool connected)
---
+Add a workaround that:
+1. If initial partition switch fails after rpmb access
+2. Performs mmc card reset using mmc_hw_reset()
+3. Retries switching to main partition
+This helps resolve cases where the device becomes unresponsive after
+RPMB operations.
+
+Signed-off-by: Guan Wang <guan.wang.jy@renesas.com>
+---
+ drivers/mmc/core/block.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 4830628510e6..29388786624c 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -1174,8 +1174,24 @@ static void mmc_blk_issue_drv_op(struct mmc_queue *mq, struct request *req)
+ 				break;
+ 		}
+ 		/* Always switch back to main area after RPMB access */
+-		if (rpmb_ioctl)
+-			mmc_blk_part_switch(card, 0);
++		if (rpmb_ioctl) {
++			if (mmc_blk_part_switch(card, 0)) {
++				pr_warn("%s: failed to switch back to main area, will reset and switch again\n",
++						md->disk->disk_name);
++
++				/*
++				 * Reset eMMC device if partition switch fails.
++				 * Some eMMC devices may get stuck by write CRC error in RPMB,
++				 * preventing switch back to main partition. This workaround
++				 * helps recover from this error state.
++				 */
++				mmc_hw_reset(card);
++
++				if (mmc_blk_part_switch(card, 0))
++					pr_err("%s: failed to switch back to main area even after reset\n",
++						   md->disk->disk_name);
++			}
++		}
+ 		else if (card->reenable_cmdq && !card->ext_csd.cmdq_en)
+ 			mmc_cmdq_enable(card);
+ 		break;
+-- 
+2.25.1
+
 
