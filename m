@@ -1,149 +1,161 @@
-Return-Path: <linux-kernel+bounces-529062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7DDA41F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:45:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B8EA41F73
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E6B1669A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:39:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3340179710
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6FA23BCE7;
-	Mon, 24 Feb 2025 12:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E9723BD0E;
+	Mon, 24 Feb 2025 12:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACYSwwiS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDg5lCbB"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85977221F26;
-	Mon, 24 Feb 2025 12:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3410623BCFB;
+	Mon, 24 Feb 2025 12:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400770; cv=none; b=GWZquWe4hoJ7oCWDc1+z/84Nc0ln2MJFm/Sl8fLY7na0VlgUrt1wXIyZQbeVzpg2bTKUbB+tjvL6+YOT7IiAvvfh36FXrnF3Ln5CVnqOoD2elBOgipC7eMw1YX8FiP6zqQStnOH/zz1Om1/t2P5/6uizVqQ+8okAWC3K2yy4OLE=
+	t=1740400800; cv=none; b=a3BxfBgKmtkgbvBRCMQ+K/qY/iKHBOvpRfgKc8aEFFzCwVdHstO7ayIpbKV7oW3cjmfAFMEvadsfP+qFlLNbhKElOhfaojih/ZReIM/cdlGPI+LJfXoTy4gjq+vlM1lYei+cDlaLMtXZ7zQxs7CyFcoov5GTnzWplDnmMxevWgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400770; c=relaxed/simple;
-	bh=S6ZfOA+HSoIxuZxmAVC9m4CnDBFj730TlTYYvZud6AI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=msgyVwfUxh6Df1KDLpomBcvPE3Cow5qWg2gCfakwn3EcPzfO8+Fftrk78Klc9fR5miFT75760eTXpFrR8wY8t/IdeedaPtF/IHyJE0QGfwiwve7tlgSBwj9LKd9BghraD0UbhhVezWxZqVkaE7ReiNEsE3wkPrIlwZuS3Czw9vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACYSwwiS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67594C4CEE6;
-	Mon, 24 Feb 2025 12:39:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740400770;
-	bh=S6ZfOA+HSoIxuZxmAVC9m4CnDBFj730TlTYYvZud6AI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ACYSwwiSiadXb6UglhqGqNQ/VbzzEbQIAZds28mZoqO6ZB2x/uUwGFOZhTWF4iQtB
-	 V+htWTqSNKDoxjFr9DJNUm/a1UyR7WCpz++50KVONsr/KPjTzkMaIY+Bi1YPDzkSNJ
-	 xnlj+I2n0fLWZrGYFzk/4h6JRxVlZbIpLnFTMAAQbhretkjtcp4m8QMmTJSHIYcILO
-	 KhHjqd4LEMqn09yiRc7QaPwen/5JioDFIFEY58O+z4YYVLLbYHOwfth8fHs0NtF0Lu
-	 HmdWlBqhYjjNRX41Uxc94t3WdLvLFiPSYy7o7UDgpxLwLVwZ5JxF949cFAltP8EYPJ
-	 JrX8kxJ2x/jJQ==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-724d1724657so2723203a34.0;
-        Mon, 24 Feb 2025 04:39:30 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUX3Jyllh8LKDbrLJDCDL4MrpoQy5R7bO0cBPOKowbMLhKf/TJemZ4dX6oUJwKdl/UDsow1sCw3ERqLAGA=@vger.kernel.org, AJvYcCUYM1nVPKW9yFYKiai3gjlran6c+G/x0oFFSjuBl2OIZ+yWcmsKoIIiz83zhJ/l7PA88hn1HWgPCT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2oWC+jT5j//ycOl5wLAnI7q5vPNXPmCkJvynWSj86oL9YQoUw
-	BZUZ4jTndBSNp/QJRC2pKY5H9UW9UPJrdkLn4LhgZjuFp9G8plMuKBADBSvQVoYe68XRmrzpTXJ
-	r/fkj8ColpVNMHPg2d3luyFYbw6w=
-X-Google-Smtp-Source: AGHT+IHggqicMJe4po68oFh3AV+MbbEgliSfKFxjCzT478bb4j8IJW6Xkp8IGccC+aW4rtOOm0njgxkUFQ9W+jhX3As=
-X-Received: by 2002:a05:6808:abb:b0:3f3:d367:52fa with SMTP id
- 5614622812f47-3f419f8937fmr9732251b6e.18.1740400769737; Mon, 24 Feb 2025
- 04:39:29 -0800 (PST)
+	s=arc-20240116; t=1740400800; c=relaxed/simple;
+	bh=vB2i+ruSjy0DOpS/0wDhEiGkvYIz2TmWtti7O3ZnuHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=BWDk5RZ2o99tflG36ZZ+yztmFS5LYnouVJk1pO28pW8VleLwBmye+i37kgkRkHJ8qyTH05xkGt/SKbg24KQ78KLjXFMW9n9pR95fF5qESEg9ckh7cY5Tn/sv/NVDuXTlWnrgNB5mjFIElkLdKYxg4ljHK/6Lt8+gSICw+kq6n9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDg5lCbB; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c0e135e953so156499485a.2;
+        Mon, 24 Feb 2025 04:39:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740400798; x=1741005598; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=veRPaw0hj+cpqnT82b8ArkdmOqx09jq+NLdo9EDH1g4=;
+        b=BDg5lCbB+EU9myeEo3Ylpbl1VnAJVJYU7DxJ/JIyKA5S2LBDqr6lezSBxEjvwwPCw/
+         BPzpjdjPDdxGDxrUUa4CqG9+iCLIgRznYQFM+uj37+WGQ0M41rpkvzi6j2Mhop/goOgl
+         VNlvu2KgwqYTpcEiOz6TK2zjj7apRwSqwQgdarbUAJYn/ASYlhvFU/Hxl5N1KZvYVBtU
+         3180ZLVccynRmRKxZhtIWN8IW9wFZcvueAm4z9tXMtg8K/bANPyDcMsejyFRVax3ZyKu
+         pxwgZs82amq0ju1tvajqjm/6KXvlkoVPNJ0/kn5g/2KutQba2Ly42LY3dnSHG2SM3m00
+         7c1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740400798; x=1741005598;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=veRPaw0hj+cpqnT82b8ArkdmOqx09jq+NLdo9EDH1g4=;
+        b=i02E6zPEzRBm48ee2rYN9Si23UKT5Vm9XfcU9TXrTDABLkb00gw0kHylmoX8ZVe40O
+         eUukor5PwUuhI3vgg/hbi7rCCAN7yTJ42rh2Zvfd4J8Lo/rFVQnXknar7QWgg5jSyS0o
+         OzmosOYdg8fAw5iymysdEqXuK0/z1AhFb/pP/b0ZyR1XXACIlMy9uXN67O4kvs7nmv7Z
+         zd9lJaUyqHQxvhiIOFVKCtfTZZXSjlgczptXfY7HUnOUNMBAGahfbyvP8+k9/2F4ko3n
+         0/AtBxdwvWHD/rM+EYGNxU6XwLjnTOJYdudv7cvRb6LK0c2R7OaG7/aTsmRWQYJCdt9n
+         09ug==
+X-Forwarded-Encrypted: i=1; AJvYcCW8wUzK1NxgGvfL0+sxHZPH4TP0cgK7K9ar6GykN9PbCu0pOfjkG/JjmYxeSb6vmA7eUOY+IsWI7ByvR8A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJBd7e+cMedJ/6O79Fb3CDdaahBLjKWfcy6X5zaKnRSt5YjsUD
+	8V2CHthg7r2IwoOwCp5XiljZNiKdnyAybQfKOw3MOudju6gNUpWG/cd7koWl
+X-Gm-Gg: ASbGncveL24j2tvY01daQRFiEnBIX7vOHy0he5Qle7rjt492tnDCgd7paF4RTFl0//L
+	ZTlRb2pq/yu6gyG1VNN8zacCezfcKxH1Pbv2mChdYkPyJkAm+nxZD6zj1uQU6CKPhneggG36bZH
+	rJJvwl8k4mVBocYs0Qiie3hWmGjqZucQUwv+HYIoGTlAba1kztg9FUTDiK0RVWa6WH+XRwJPHLB
+	yr+fMifks5aXXP3/5CuKe1Drj4iLSm1YfBMe6enRsuXhi+7PSMTred88byxys/9j744oGxUEJv1
+	bYcRoDiA8+0MT4ZDqclVspDruZ/yw2IffDPOMVpX2/Z7NPOQg7MZPx/kPYSLdr2U
+X-Google-Smtp-Source: AGHT+IFWkBDl5kbtdoaaep7NPM++wlLcw1wblzfV7SnHsAs46CYSDzcS0s8dyaAOUwsEE75oh9uZNQ==
+X-Received: by 2002:a05:620a:4148:b0:7c0:c13f:4181 with SMTP id af79cd13be357-7c0cf8adfdemr1620336285a.2.1740400797690;
+        Mon, 24 Feb 2025 04:39:57 -0800 (PST)
+Received: from nerdopolis2.mynetworksettings.com ([2600:4040:5e66:a800:3cb7:1064:72b6:f891])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0ad774f81sm831922785a.37.2025.02.24.04.39.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 04:39:57 -0800 (PST)
+From: adamsimonelli@gmail.com
+To: linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Adam Simonelli <adamsimonelli@gmail.com>
+Subject: [PATCH v5 2/2] tty: Change order of ttynull to be linked sooner if enabled as a console.
+Date: Mon, 24 Feb 2025 07:39:15 -0500
+Message-ID: <20250224123915.2859682-3-adamsimonelli@gmail.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250224123915.2859682-1-adamsimonelli@gmail.com>
+References: <20250224123915.2859682-1-adamsimonelli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1922654.tdWV9SEqCh@rjwysocki.net> <Z7rPOt0x5hWncjhr@black.fi.intel.com>
- <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com> <Z7tB5wshbGtO6LGg@black.fi.intel.com>
-In-Reply-To: <Z7tB5wshbGtO6LGg@black.fi.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 24 Feb 2025 13:39:14 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jmp4PFb6z+K9cGS83CmX=5Ms0F9HSgcpq-VXn=rTdXgg@mail.gmail.com>
-X-Gm-Features: AWEUYZnrxMu49N4Mo5yLfVkT6yju4vb6gvnJgw62dhhnaeg90o5cilnqap9M89U
-Message-ID: <CAJZ5v0jmp4PFb6z+K9cGS83CmX=5Ms0F9HSgcpq-VXn=rTdXgg@mail.gmail.com>
-Subject: Re: [PATCH v1] PM: runtime: Unify error handling during suspend and resume
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Oliver Neukum <oneukum@suse.com>, Ajay Agarwal <ajayagarwal@google.com>, 
-	Brian Norris <briannorris@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 4:42=E2=80=AFPM Raag Jadav <raag.jadav@intel.com> w=
-rote:
->
-> On Sun, Feb 23, 2025 at 01:56:07PM +0100, Rafael J. Wysocki wrote:
-> > On Sun, Feb 23, 2025 at 8:33=E2=80=AFAM Raag Jadav <raag.jadav@intel.co=
-m> wrote:
-> > >
-> > > On Thu, Feb 20, 2025 at 09:18:23PM +0100, Rafael J. Wysocki wrote:
-> > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > >
-> > > > There is a confusing difference in error handling between rpm_suspe=
-nd()
-> > > > and rpm_resume() related to the special way in which the -EAGAIN an=
-d
-> > > > -EBUSY error values are treated by the former.  Also, converting
-> > > > -EACCES coming from the callback to an I/O error, which it quite li=
-kely
-> > > > is not, may confuse runtime PM users a bit.
-> > > >
-> > > > To address the above, modify rpm_callback() to convert -EACCES comi=
-ng
-> > > > from the driver to -EAGAIN and to set power.runtime_error only if t=
-he
-> > > > return value is not -EAGAIN or -EBUSY.
-> > > >
-> > > > This will cause the error handling in rpm_resume() and rpm_suspend(=
-) to
-> > > > work consistently, so drop the no longer needed -EAGAIN or -EBUSY
-> > > > special case from the latter and make it retry autosuspend if
-> > > > power.runtime_error is unset.
-> > > >
-> > > > Link: https://lore.kernel.org/linux-pm/20220620144231.GA23345@axis.=
-com/
-> > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > > > ---
-> > > >  drivers/base/power/runtime.c |   34 ++++++++++++++++++------------=
-----
-> > > >  1 file changed, 18 insertions(+), 16 deletions(-)
-> > > >
-> > > > --- a/drivers/base/power/runtime.c
-> > > > +++ b/drivers/base/power/runtime.c
-> > > > @@ -448,8 +448,13 @@
-> > > >               retval =3D __rpm_callback(cb, dev);
-> > > >       }
-> > > >
-> > > > -     dev->power.runtime_error =3D retval;
-> > > > -     return retval !=3D -EACCES ? retval : -EIO;
-> > > > +     if (retval =3D=3D -EACCES)
-> > > > +             retval =3D -EAGAIN;
-> > >
-> > > While this is one way to address the problem, are we opening the door
-> > > to changing error codes when convenient? This might lead to different
-> > > kind of confusion from user standpoint.
-> >
-> > Are you saying that if a mistake was made sufficiently long ago, it
-> > can't be fixed any more because someone may be confused?
->
-> Nothing against the fix but "sufficiently long ago" is why we might
-> have users that rely on it. As long as we don't break anything I don't
-> see a problem.
->
-> Messing with error codes is usually received with mixed feelings and
-> coming across such a code raises more questions than answers. Perhaps a
-> small explanation might do the trick?
+From: Adam Simonelli <adamsimonelli@gmail.com>
 
-Do you mean an explanation why -EACCES needs to be converted to something e=
-lse?
+If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
+will become the default primary console device, based on the link order.
 
-That's because -EACCES has a special meaning in runtime PM: it means
-that runtime PM is disabled for the given device.
+Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
+if CONFIG_VT is disabled, the default console device falls back to
+/dev/ttyS0 instead of /dev/tty.
 
-Thanks!
+This could cause issues in user space, and hardware problems:
+
+1. The user space issues include the case where  /dev/ttyS0 is
+disconnected, and the TCGETS ioctl, which some user space libraries use
+as a probe to determine if a file is a tty, is called on /dev/console and
+fails. Programs that call isatty() on /dev/console and get an incorrect
+false value may skip expected logging to /dev/console
+
+2. The hardware issues include the case if a user has a science instrument
+or other device connected to the /dev/ttyS0 port, and they were to upgrade
+to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
+sent to the device connected to /dev/ttyS0 unless they edit their kernel
+command line manually.
+
+The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+is not dependant on hardware configuration by default, and avoid
+unexpected new behavior on devices connected to the /dev/ttyS0 serial
+port.
+
+Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
+---
+ drivers/tty/Makefile | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+index 07aca5184a55..1fb905cfb420 100644
+--- a/drivers/tty/Makefile
++++ b/drivers/tty/Makefile
+@@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
+ obj-$(CONFIG_N_GSM)		+= n_gsm.o
+ 
+ obj-y				+= vt/
++# If ttynull is configured to be a console by default, ensure that it is linked
++# earlier before a real one is selected.
++obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
++
+ obj-$(CONFIG_HVC_DRIVER)	+= hvc/
+ obj-y				+= serial/
+ obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
+@@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
+ obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
+ obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
+ obj-$(CONFIG_NOZOMI)		+= nozomi.o
++
++# If ttynull is enabled, but not as a boot console, it is linked and used later
++# after the real ones.
++ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
+ obj-$(CONFIG_NULL_TTY)	        += ttynull.o
++endif
++
+ obj-$(CONFIG_SYNCLINK_GT)	+= synclink_gt.o
+ obj-$(CONFIG_PPC_EPAPR_HV_BYTECHAN) += ehv_bytechan.o
+ obj-$(CONFIG_GOLDFISH_TTY)	+= goldfish.o
+-- 
+2.45.2
+
 
