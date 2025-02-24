@@ -1,198 +1,235 @@
-Return-Path: <linux-kernel+bounces-528391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8530AA41731
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:21:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A4BA41732
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 018283B46C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02761747EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF71B2182;
-	Mon, 24 Feb 2025 08:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7C6193074;
+	Mon, 24 Feb 2025 08:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C5ox613m"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oFiToFM2"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84BF158558;
-	Mon, 24 Feb 2025 08:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027B3185B76
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740385221; cv=none; b=NAZrrlwigNJzHupYKhcfSDE+WScNgSn10I1+Y6Vj3BOuEeaEcjoR43zEqpxv7J/ih7N2fxeTGGv4FS9eDiekl9eN2+M8XYtUAee1CoI8RUVPpmJNuukFLt4mJDKcOXAL4KgdXLSydgla8a55Usi0wQ62TuhbonudgjERqjk8748=
+	t=1740385215; cv=none; b=AYDUV+k8faTTxShgSxksnAkKgqWNqC863Mj/TQ351jhQgaLYSijrfT3PZfMSkzr45KLSgbrWEv4oWYZQzrAMlw6ZuiP0WjMwLaPPWxbihcXWOBbAvJiTeaakQp2ZZfOwzF+LbBk4G89g0iHcQCOelD6G238RbXGPsKjZqsLkHY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740385221; c=relaxed/simple;
-	bh=bnADvqVjOnZxk0sLsbIJnA70d9jXuiQCyeY3qHVIUC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NyGv0hsDfqjUq80HmUMwGmQMWx37d0PpBWdkignzDtTntDQytyCsE4NgUZ0gitpJZgB9Oa0xPUBXtjYNzVDjgfiZIMrZgXp6Gxy1wnNijdeCV+NxX0u1rySC20AqHzHNDaNI9yFvi8dhr+0+jwHFhsHWQ4iUQRQYBhEAXR+2no0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C5ox613m; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O2DZIq013806;
-	Mon, 24 Feb 2025 08:20:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=OsFn2Z
-	xs78d5dqGLlCyQmgsyPmdY+R0BhdnGfkT9/Zo=; b=C5ox613mD1RC7jeghh13/A
-	Om8herRKgwjAzp8Ft6qwbhw+uEIp/dXZGAxE2da9Lfbw3z4NxCCNqAODMmHhIHFI
-	xleIWy83W6bCxDgy7Pe+sn+eNDZ3ZptS3tT1moGIHRjX92UyRvK9Ffv8eigBZidl
-	+HUs8I28yZLVLvd6DxbXJd+tB+5dT1LXw10Ex+cvLwtIUwmcvtuKWDFVHDCK9A1o
-	nzijXwcT1Hh+muS9iglEdwD85+uUbhjfPYzv2izX6sD7vwksWk4HT85OYDDEVJOU
-	q9bGafHHlPtSB3vsvTzTRQmK4kHtCl4sF0HGR+ndGcEoohAvprJ9/C2iOWfYTo4A
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 450fm017sv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 08:20:02 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51O5PVj5002548;
-	Mon, 24 Feb 2025 08:20:02 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jdv4x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 08:20:02 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51O8K0eD34865894
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Feb 2025 08:20:00 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82F6C2004E;
-	Mon, 24 Feb 2025 08:20:00 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A18F20040;
-	Mon, 24 Feb 2025 08:19:59 +0000 (GMT)
-Received: from [9.109.215.252] (unknown [9.109.215.252])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Feb 2025 08:19:59 +0000 (GMT)
-Message-ID: <ed7386c2-50f9-4fa0-8a94-fd67ae2bba4f@linux.ibm.com>
-Date: Mon, 24 Feb 2025 13:49:58 +0530
+	s=arc-20240116; t=1740385215; c=relaxed/simple;
+	bh=21E7UgrvRkxRMCUgPTzjSwSV9qomtLwoLuLUv0Zpa7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gxU9aA3vvb1C3NR8gNQ0tDuv7D1d42TsjQHWTHFqZeNcob+2Ed/kXLDAxFpHjQ1JErsI8BHEHEfR00yptRT3qUwsjQkgQoQC6/Kv5JBrytULAimNUGu0HxIlBvv/f2nQ7jJRJInwH0/256PV/EvC8Rw/905qjHMOGxMpvJxWmo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oFiToFM2; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5209962eefbso3177145e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:20:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740385211; x=1740990011; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j6r85kezRIutcCGmLi1srTZWWPXuVJ6TvYefvLy8aRc=;
+        b=oFiToFM2RRqtIdfQ8GfyOV6Aa/uE/qT62hHNpX3sB7DbKJylU5+bGU3p+fA/etXkQV
+         J8MYSbdVhgEkceayh2Yg7BGO701UDjmgp7Vns9hITq+iwPELrEJ/WzTF0BIXA4/cKd2U
+         tksZpfCbmU+84sNCUZJzB9o8Gen65mU/wIS3P4oJ1Ntib9i4ge7XibGwgDTAeyHfgZMe
+         pveQ+eJmMl+aVn3HNEWhV3l+20NPSDM7woK4nMfR3bV4d3/KJgHc1yaGUnympydo84NC
+         TSF7kWfJbv6C7RMor/fZjswVec8ZFHTSG+YrWTnpjd4Q6d7RT8OT60bCG5uLhme/qZjL
+         35tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740385211; x=1740990011;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j6r85kezRIutcCGmLi1srTZWWPXuVJ6TvYefvLy8aRc=;
+        b=UCBEGF5P0cZnoenDRYQCVmUUf1vQlDQWXHeTWMFC1NqqIwyowcO50vtNwsaHiTwWRt
+         EhrL1hZG6YTFLqnmFnQN31xkMFHZB1B8SMpaeJ13Ib0stZf6lG6EVGpTNKGWF+Eo2Eoa
+         AQMbqRXMv7IXdv3X6LvmpQUjND8CfXMXjF+12mZB1RS0ytRMaVaSck1NZPokeNLfGKL7
+         6fzEFBlccfRuk0JbqQn4Rb2JQ6HTKsA3oIH21dQgd41rwgKLANxAU+v6yY8u68urtJK5
+         TuPLwQq2XnMePEpE2f/00WkAJhcX2+N9Q/EQAWfZXWnpJ8VO4qrbU/Xy5Ks/SRxecrsK
+         10fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxjWzZoSLhU4qEFUAW5Nk0gTcuLu+LzVt8C6ZUSpRTWbKx8rgM8nUB3RGBgSEiuq7DydgvqA51urVsjns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhdTmWM7XEwygNV6ihK/BlKlK3TbxIDIMyKz9Nnoouf8iX07Aw
+	EBrCDS/ktlbSl0XUW7g2Yy2TzygLuFZOcJylIsKJBT6yIh5cDHswTj6f39tbYhyj6uzTATgu+kx
+	/EDzg26pf9W8d9eN1K+RHsCLfJJIN8+0RDmnyZQ==
+X-Gm-Gg: ASbGncvMgeyP21WRA5FbojLz+gaHoZM79uXZ42gL6Jc65H/st2hzLmBVcNXeKf05TDt
+	RDWeH31947VJ1MZXZ1TqKxbz01JlALtATEQ+CaMv+6WTfmccgyVijzd+XTIUCntAmDRoxzVwOzZ
+	0hJdktfCuYnZyh2sH4Gn07L06NJ4dV8a0fgS32Cddu
+X-Google-Smtp-Source: AGHT+IGGzBs8e4QC3zhjyLv0Q2Kb5xRXaFl1GSs1fX52Ac61Q9Lj9A2GVQb5hQJPza9sD0lao51FBajmXwOvO1rVoSk=
+X-Received: by 2002:a05:6122:3190:b0:51f:a02b:45d4 with SMTP id
+ 71dfb90a1353d-521eeadca66mr5091486e0c.1.1740385210804; Mon, 24 Feb 2025
+ 00:20:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] selftests: sched: skip cs_prctl_test for systems
- with core scheduling disabled
-To: Sinadin Shan <sinadin.shan@oracle.com>, shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chris.hyser@oracle.com
-References: <20250221115750.631990-1-sinadin.shan@oracle.com>
- <20250221115750.631990-3-sinadin.shan@oracle.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250221115750.631990-3-sinadin.shan@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 7vOjMe4Hu1fsyWyIqGqTylDuh1GtC0-3
-X-Proofpoint-GUID: 7vOjMe4Hu1fsyWyIqGqTylDuh1GtC0-3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
- lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- mlxlogscore=999 impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240057
+References: <20250220104500.178420129@linuxfoundation.org>
+In-Reply-To: <20250220104500.178420129@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 24 Feb 2025 13:49:58 +0530
+X-Gm-Features: AWEUYZlEaOoTQqQ6ZfWquTdxPh6cQo7pAekxnBccb5yJ3vfsbf5zMYnRWYnbUyE
+Message-ID: <CA+G9fYuGk8vO3-OHRe3AHzgDWhNYWpZnuhT3p49zytXgeCN1Gg@mail.gmail.com>
+Subject: Re: [PATCH 6.13 000/258] 6.13.4-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 20 Feb 2025 at 16:28, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.13.4 release.
+> There are 258 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.13.4-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.13.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
 
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-On 2/21/25 17:27, Sinadin Shan wrote:
-> For kernels with CONFIG_SCHED_CORE=n, the sched selftest cs_prctl_test
-> fails with "Not a core sched system" error. Change this to gracefully
-> skip the test for systems with core scheduling disabled. Exiting early
-> would also ensure failures reported in obtaining cookie are valid
-> failures and not due to the config.
-> 
-> Skip cs_prctl_test for systems with CONFIG_SCHED_CORE=n
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-I tried this on kernel built with CONFIG_SCHED_CORE=y.
-I did make, make modules_install and make install and reboot.
+## Build
+* kernel: 6.13.4-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 191ccd3d65d15205ada79613c4f4a38e01e56b28
+* git describe: v6.13.3-259-g191ccd3d65d1
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13=
+.3-259-g191ccd3d65d1
 
-./cs_prctl_test
-## Checking for CONFIG_SCHED_CORE support
-Cannot find kernel config in /proc or /boot
+## Test Regressions (compared to v6.13.2-443-gf10c3f62c5fd)
 
-This happens because, make install wouldnt copy the .config to 
-/boot/config-<kernel-release>.
+## Metric Regressions (compared to v6.13.2-443-gf10c3f62c5fd)
 
-If the self-tests are to be used in development flow, these checks may 
-not be sufficient.
+## Test Fixes (compared to v6.13.2-443-gf10c3f62c5fd)
 
-Not sure if i have missed any steps in building process.
+## Metric Fixes (compared to v6.13.2-443-gf10c3f62c5fd)
 
+## Test result summary
+total: 125960, pass: 103347, fail: 3715, skip: 18898, xfail: 0
 
-> 
-> Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
-> ---
->   tools/testing/selftests/sched/cs_prctl_test.c | 29 ++++++++++++++++++-
->   1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
-> index 52d97fae4dbd8..60fd657b56c84 100644
-> --- a/tools/testing/selftests/sched/cs_prctl_test.c
-> +++ b/tools/testing/selftests/sched/cs_prctl_test.c
-> @@ -23,6 +23,7 @@
->   #include <sys/eventfd.h>
->   #include <sys/wait.h>
->   #include <sys/types.h>
-> +#include <sys/utsname.h>
->   #include <sched.h>
->   #include <sys/prctl.h>
->   #include <unistd.h>
-> @@ -109,6 +110,30 @@ static void handle_usage(int rc, char *msg)
->   	exit(rc);
->   }
->   
-> +static void check_core_sched_support(void)
-> +{
-> +	char config[128] = "/proc/config.gz";
-> +	char cmd[128];
-> +	struct utsname kernel;
-> +
-> +	printf("## Checking for CONFIG_SCHED_CORE support\n");
-> +
-> +	if (access(config, F_OK) != 0)
-> +		if (uname(&kernel) == 0)
-> +			snprintf(config, sizeof(config), "/boot/config-%s", kernel.release);
-> +
-> +	if (access(config, F_OK) != 0) {
-> +		printf("Cannot find kernel config in /proc or /boot\n");
-> +		exit(EXIT_FAILURE);
-> +	}
-> +
-> +	snprintf(cmd, sizeof(cmd), "zgrep CONFIG_SCHED_CORE=[ym] %s", config);
-> +	if (system(cmd)) {
-> +		printf("Core scheduling not enabled in kernel, hence skipping tests\n");
-> +		exit(4);
-> +	}
-> +}
-> +
->   static unsigned long get_cs_cookie(int pid)
->   {
->   	unsigned long long cookie;
-> @@ -117,7 +142,7 @@ static unsigned long get_cs_cookie(int pid)
->   	ret = prctl(PR_SCHED_CORE, PR_SCHED_CORE_GET, pid, PIDTYPE_PID,
->   		    (unsigned long)&cookie);
->   	if (ret) {
-> -		printf("Not a core sched system\n");
-> +		printf("Failed to get cookie\n");
->   		return -1UL;
->   	}
->   
-> @@ -270,6 +295,8 @@ int main(int argc, char *argv[])
->   	if (keypress)
->   		delay = -1;
->   
-> +	check_core_sched_support();
-> +
->   	srand(time(NULL));
->   
->   	/* put into separate process group */
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 137 total, 137 passed, 0 failed
+* arm64: 48 total, 48 passed, 0 failed
+* i386: 17 total, 17 passed, 0 failed
+* mips: 32 total, 32 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 38 total, 38 passed, 0 failed
+* riscv: 22 total, 22 passed, 0 failed
+* s390: 21 total, 20 passed, 1 failed
+* sh: 6 total, 5 passed, 1 failed
+* sparc: 3 total, 3 passed, 0 failed
+* x86_64: 44 total, 44 passed, 0 failed
 
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-exec
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-build-clang
+* log-parser-build-gcc
+* log-parser-test
+* ltp-capability
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-filecaps
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
