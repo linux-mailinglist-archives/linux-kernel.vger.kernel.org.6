@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-528983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60D7A41EA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:17:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6253DA41E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AC2A3A6AAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA51A3A8FDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D733254857;
-	Mon, 24 Feb 2025 12:06:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F20219318;
+	Mon, 24 Feb 2025 12:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jehlrj6F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1pqX9pT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCCF2512D2;
-	Mon, 24 Feb 2025 12:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480A824EF89;
+	Mon, 24 Feb 2025 12:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740398798; cv=none; b=U19QfjuX+HxecL6g9nnfk3CtT6dZly+MyePSXAjTKO2KFUz11zMnEFdrQJIBFnY4Zx21tB2eCAE5o/DkzpImW9lJlWfO3GwATFfwDulZDPKRRDYK3mW9LXHZXZwXuOXQ5O/9QB4BIM+Q6stgrQjjvn2ZGqo56Xu4E4ZUVS/fRsc=
+	t=1740398787; cv=none; b=BJ3qI+zr1+L9h7axWbh11plFnO/YTpRaQUgK8PCQDzJ7xthd5LKe5BDRs0KN8i6VNau+JApq+m38muQrQernq73Ey1mxyMc6rArRAEOWabUACz8r8wExZC/eOwSFBWfAsEer565uWtYiSisUaSofKsJLgjYyBucoWdhOqm4rIlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740398798; c=relaxed/simple;
-	bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
+	s=arc-20240116; t=1740398787; c=relaxed/simple;
+	bh=Cz+PPybrgL3Hjwl6SQDfq7mfUBbxBMfLAxxhdBqy5pM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OhNXgOxgOkv0BjHz6g+obKr8oay3LumRJaQ6ePTf6AlOPN+R1xg3ujSEG8t6iPmArYSLvBAA8t0a9UKI7CW09hacmArHBvp2a0k+hqHY2YLuG2Z/R3rk/zS0yKWl0G7surrIFNjohPaqDBLqbCrCQrC7n1z8jtMyvWesfQ9A1W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jehlrj6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6F1C4CEE6;
-	Mon, 24 Feb 2025 12:06:33 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=SGnHzmpQX/fAIOShlPvRIKmmAtC37dnuYy5qZbZbiBpp7tdJtDFjWfugeAQJmDMtq35u/771GWlPVCNTgFLlfCUKTLvfECvN221jwatE1LWjprAItBungRnwsp7B9UNg4Mjs9DQApcLHuPfWmvVdCbBRq8NOzvsZHzwPK/GFKqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1pqX9pT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDA93C4CED6;
+	Mon, 24 Feb 2025 12:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740398798;
-	bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
+	s=k20201202; t=1740398787;
+	bh=Cz+PPybrgL3Hjwl6SQDfq7mfUBbxBMfLAxxhdBqy5pM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Jehlrj6Fy59ueGbZq184namXTNyWTvz3YHbpUpN7GJn6+lNlZdX1rDphQEorxTeZf
-	 koeWXzIUk+0ytmYKTSTyRYkPsEp3CWsOJ8hfAtOpKiqkrZA7kDZdBELAIXQsAAYSRj
-	 96pNizEzIoCLRzbDjPLCfv1QwvqJLg58qG9uTHfa/0k3BqAuyIpvamfb59nc0EWQfS
-	 JyLknZvoZv2ShjUmMZkGcJOy7+rQqXpYh4GSmf3pBdEiboC7we1syd45OJ804/XOVd
-	 /eBHaldSUYCrcRehy0ZFyNd+lRaaCGJuhAKRCwX3FiLG12fzswrf0yDY6mX8WokJx4
-	 iVSVe8gk0OBbg==
+	b=n1pqX9pT/mG0mGatUilT03znChbge1Z0gnTT3jXhRsUlvGKW96Cj14v9czRaeUyVi
+	 TkC2DeDZNfepsSOq5wTkRxiLeMOMjW+Tzi3BZScW0EPZLVMttmLaWhgLibe2FZjiSZ
+	 szwirEyGQM5zd/x6YlZ1JwFA4D+CI4jRYAQYqpbJEB/D/u7dCjTXwsmgqy64A4O5qp
+	 l+djFLwn8FiMKxsZV1Xme+XreHL7w6wyzPf+HsI2Dhs5Emm3gMDlE7fD5I2qianWWE
+	 mz7ZG8urVRtQoyC8nPNNA5N27qz78Dc2Q7OT74u/7iZymMFYWgABG1QEz+jRG4jLiw
+	 /4nPHmX9EbOJQ==
 From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Mon, 24 Feb 2025 13:03:36 +0100
-Subject: [PATCH v9 02/13] rust: sync: add `Arc::as_ptr`
+Date: Mon, 24 Feb 2025 13:03:37 +0100
+Subject: [PATCH v9 03/13] rust: hrtimer: implement `HrTimerPointer` for
+ `Arc`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-hrtimer-v3-v6-12-rc2-v9-2-5bd3bf0ce6cc@kernel.org>
+Message-Id: <20250224-hrtimer-v3-v6-12-rc2-v9-3-5bd3bf0ce6cc@kernel.org>
 References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
 In-Reply-To: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
 To: Miguel Ojeda <ojeda@kernel.org>, 
@@ -68,72 +69,152 @@ Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
  Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1949; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
- b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnvGAdj+YLySAKo9zDsGZQfQxAHbhFR3dO/o6Pu
- o+8gKS8KsaJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7xgHQAKCRDhuBo+eShj
- dzs7D/9Pl4CTzAU6DWHc1V180GZY0GWKM6oRmN1DbXI3UIwFNqXgcKt0VJ3f3pZFrck+sRrG2aL
- V4ipXkQsMK0eOyzb7Z9HwKyi6Uy2X0siWoZXoqBiiLR90wfIx42rd8TT1m92LC99veyGH1seE6z
- 63w7voF0h/3MIs4Kl1Ow1HmBFALjJkPQ/VJVcSOAF1+0Pu1v5zrFeeDdeTw+kJzVk9FE2gniz/j
- IY3eHqu71jMCo8KZtWF60gtUkt2be3irhPK3EhKLl1q2KNqzLYRzEEJNBGBXghlAY9rwhdPxh7X
- +3lHR10opiF/X3xLq7iTRLVRqz1HiGYrrFPds0hccPgn176O1tNuZ38RK4l0OOpVQ5Jqunyckbj
- dmiRFPWMJKZJhu1ccfysIeD9QvE0iMOHJjNrYs3zBNRmgsyhhXUpfHF8Xop3T4A4GAPKEufBNH1
- xqu6PAuZraipJowThYSUivuwQ1PvkzOEiXq6uPSoAfsXXb9f3SwSv6vSjvRvZoevY93Q9+cAMWX
- OO3cA3Zb+G/Oiwdycf2n+APDOBHGYS4qRpMuxYe30y5YZzkznyMheyrxymuIb6jvvC/TWy2/VdR
- PsVjs88K339iCaAsyS6HAaAftyIPGugPokYoV5q+ilvX7jKVn9eTTCepG9x20uziCgI7CS6iSqR
- 8uZIFYs2i1iEQjg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4286; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=Cz+PPybrgL3Hjwl6SQDfq7mfUBbxBMfLAxxhdBqy5pM=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBnvGAe/84kGb1/9Af6ccIKbZAboSmZkU3vH06A1
+ dFEhQIc5HmJAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ7xgHgAKCRDhuBo+eShj
+ dygVEACqHjNH3F2N3GA11As7RSYy6OuRCmqMz27+i7mQL0jxdgDYm2Oz8ztjMyz7JvBc3YNEGLK
+ t9XIPFLt+WtVqG7ZqXRrMb4ssDAXEjxcshIOTn/Zp2MwKyE9MxUp9PQaD8KFcJoGVdr1r7B8Lyz
+ KAHslxEx6lSZ/t6FlO029DiWy7FnsHmKkmgLFwRwlty5PYmrXkGEhjuSpGACzOxukG8tsU3e9EU
+ 9jgxgPUc6l2toNS+IVoJarB6BkHCMSscjfJEvzplKrfKM+CfzhgVVfSgXVfhAjZhcKwO0e1GZ93
+ yZOm51aLVlHDChT1ey5KmtbIeIR39Otb9jHKu+zBuv/xlYHa8bLB+tBr6B23BsAX5ALpb0e8CXF
+ kYoDhfjsd9ihOW77AqUoEYllvh8tUXJb3qevbUU/7IZD8wuQSXBbMajbjMj87DaNYpDUtlBxyxs
+ dgx/qrWt70RehG31zmGFYcxf4bKnqecvXhFqfMIB6jXQwks5ANl7h23LCeU0KKHbJq+HPFUPXfA
+ 4dJxmthU7FmFWZkjNlEZQczdKwGy3phqxYef6yF14Y4m9/LBDajZBWxXNF8bVHfCqlGQVOXoFXb
+ ixcjpCvrkMjvCX3cqiXiro5LVFfsnD1Tw+ry+kqPCdj1aQiEVpKLc+OLCzzoqCjDq1TUS1kZmaL
+ FsUNsN2E8ThBsrw==
 X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
  fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-Add a method to get a pointer to the data contained in an `Arc`.
+This patch allows the use of intrusive `hrtimer` fields in structs that are
+managed by an `Arc`.
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Acked-by: Frederic Weisbecker <frederic@kernel.org>
 Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 ---
+ rust/kernel/time/hrtimer.rs     |  4 +-
+ rust/kernel/time/hrtimer/arc.rs | 94 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 97 insertions(+), 1 deletion(-)
 
-This is a dependency for:
-
-rust: hrtimer: implement `HrTimerPointer` for `Arc`
----
- rust/kernel/sync/arc.rs | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 3cefda7a4372..1dfa75714f9d 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -246,6 +246,15 @@ pub fn into_raw(self) -> *const T {
-         unsafe { core::ptr::addr_of!((*ptr).data) }
+diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+index fe20405d8bfe..d08fd7de158d 100644
+--- a/rust/kernel/time/hrtimer.rs
++++ b/rust/kernel/time/hrtimer.rs
+@@ -143,7 +143,6 @@ unsafe fn raw_get(ptr: *const Self) -> *mut bindings::hrtimer {
+     /// # Safety
+     ///
+     /// `self_ptr` must point to a valid `Self`.
+-    #[allow(dead_code)]
+     pub(crate) unsafe fn raw_cancel(self_ptr: *const Self) -> bool {
+         // SAFETY: timer_ptr points to an allocation of at least `HrTimer` size.
+         let c_timer_ptr = unsafe { HrTimer::raw_get(self_ptr) };
+@@ -345,3 +344,6 @@ unsafe fn raw_get_timer(ptr: *const Self) ->
+         }
      }
- 
-+    /// Return a raw pointer to the data in this arc.
-+    pub fn as_ptr(this: &Self) -> *const T {
-+        let ptr = this.ptr.as_ptr();
+ }
 +
-+        // SAFETY: As `ptr` points to a valid allocation of type `ArcInner`,
-+        // field projection to `data`is within bounds of the allocation.
-+        unsafe { core::ptr::addr_of!((*ptr).data) }
++mod arc;
++pub use arc::ArcHrTimerHandle;
+diff --git a/rust/kernel/time/hrtimer/arc.rs b/rust/kernel/time/hrtimer/arc.rs
+new file mode 100644
+index 000000000000..5c916489fc13
+--- /dev/null
++++ b/rust/kernel/time/hrtimer/arc.rs
+@@ -0,0 +1,94 @@
++// SPDX-License-Identifier: GPL-2.0
++
++use super::HasHrTimer;
++use super::HrTimer;
++use super::HrTimerCallback;
++use super::HrTimerHandle;
++use super::HrTimerPointer;
++use super::RawHrTimerCallback;
++use crate::sync::Arc;
++use crate::sync::ArcBorrow;
++use crate::time::Ktime;
++
++/// A handle for an `Arc<HasHrTimer<T>>` returned by a call to
++/// [`HrTimerPointer::start`].
++pub struct ArcHrTimerHandle<T>
++where
++    T: HasHrTimer<T>,
++{
++    pub(crate) inner: Arc<T>,
++}
++
++// SAFETY: We implement drop below, and we cancel the timer in the drop
++// implementation.
++unsafe impl<T> HrTimerHandle for ArcHrTimerHandle<T>
++where
++    T: HasHrTimer<T>,
++{
++    fn cancel(&mut self) -> bool {
++        let self_ptr = Arc::as_ptr(&self.inner);
++
++        // SAFETY: As we obtained `self_ptr` from a valid reference above, it
++        // must point to a valid `T`.
++        let timer_ptr = unsafe { <T as HasHrTimer<T>>::raw_get_timer(self_ptr) };
++
++        // SAFETY: As `timer_ptr` points into `T` and `T` is valid, `timer_ptr`
++        // must point to a valid `HrTimer` instance.
++        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
 +    }
++}
 +
-     /// Recreates an [`Arc`] instance previously deconstructed via [`Arc::into_raw`].
-     ///
-     /// # Safety
-@@ -539,11 +548,11 @@ unsafe fn new(inner: NonNull<ArcInner<T>>) -> Self {
-     }
- 
-     /// Creates an [`ArcBorrow`] to an [`Arc`] that has previously been deconstructed with
--    /// [`Arc::into_raw`].
-+    /// [`Arc::into_raw`] or [`Arc::as_ptr`].
-     ///
-     /// # Safety
-     ///
--    /// * The provided pointer must originate from a call to [`Arc::into_raw`].
-+    /// * The provided pointer must originate from a call to [`Arc::into_raw`] or [`Arc::as_ptr`].
-     /// * For the duration of the lifetime annotated on this `ArcBorrow`, the reference count must
-     ///   not hit zero.
-     /// * For the duration of the lifetime annotated on this `ArcBorrow`, there must not be a
++impl<T> Drop for ArcHrTimerHandle<T>
++where
++    T: HasHrTimer<T>,
++{
++    fn drop(&mut self) {
++        self.cancel();
++    }
++}
++
++impl<T> HrTimerPointer for Arc<T>
++where
++    T: 'static,
++    T: Send + Sync,
++    T: HasHrTimer<T>,
++    T: for<'a> HrTimerCallback<Pointer<'a> = Self>,
++    Arc<T>: for<'a> RawHrTimerCallback<CallbackTarget<'a> = ArcBorrow<'a, T>>,
++{
++    type TimerHandle = ArcHrTimerHandle<T>;
++
++    fn start(self, expires: Ktime) -> ArcHrTimerHandle<T> {
++        // SAFETY:
++        //  - We keep `self` alive by wrapping it in a handle below.
++        //  - Since we generate the pointer passed to `start` from a valid
++        //    reference, it is a valid pointer.
++        unsafe { T::start(Arc::as_ptr(&self), expires) };
++        ArcHrTimerHandle { inner: self }
++    }
++}
++
++impl<T> RawHrTimerCallback for Arc<T>
++where
++    T: 'static,
++    T: HasHrTimer<T>,
++    T: for<'a> HrTimerCallback<Pointer<'a> = Self>,
++{
++    type CallbackTarget<'a> = ArcBorrow<'a, T>;
++
++    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::hrtimer_restart {
++        // `HrTimer` is `repr(C)`
++        let timer_ptr = ptr.cast::<super::HrTimer<T>>();
++
++        // SAFETY: By C API contract `ptr` is the pointer we passed when
++        // queuing the timer, so it is a `HrTimer<T>` embedded in a `T`.
++        let data_ptr = unsafe { T::timer_container_of(timer_ptr) };
++
++        // SAFETY: `data_ptr` points to the `T` that was used to queue the
++        // timer. This `T` is contained in an `Arc`.
++        let receiver = unsafe { ArcBorrow::from_raw(data_ptr) };
++
++        T::run(receiver);
++
++        bindings::hrtimer_restart_HRTIMER_NORESTART
++    }
++}
 
 -- 
 2.47.0
