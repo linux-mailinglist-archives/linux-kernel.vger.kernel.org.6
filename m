@@ -1,161 +1,179 @@
-Return-Path: <linux-kernel+bounces-529197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9028A420D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:38:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D33A4219D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:44:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08BC27A416C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD3333BC7DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E841424CEF6;
-	Mon, 24 Feb 2025 13:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ED3248866;
+	Mon, 24 Feb 2025 13:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ar7Zk7hU"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="UOsA4auP"
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011025.outbound.protection.outlook.com [52.103.68.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCA9243369;
-	Mon, 24 Feb 2025 13:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404228; cv=none; b=bfrCEseliYz28fsPKI/X1miV+fhaoJC12OT4VGzgPlDhWLdrViKOz97ajH8Tmo9q2FWPXUO4JLlmCK5viQkIbfH8OQP3lFLZE+qHrI4sKW7TCNrxHOXdS91HPYYLkMbsRM1ucq3qny7dK7KEFhEqKGePyz6M4bRDnZuwgoPNg/I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404228; c=relaxed/simple;
-	bh=pkWTCsEa6IS0VHokuR+HUR9w20hV7VXpFtsdVk2ZZGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tvlA1UzcFT+nFuLuTOw+xkPqfuxco1yUTCqoNNmqg31PJcjLFGAzJZiM+9yp9AygoyBq/O7h5TEhsSEWyn5w3YJUW4XfrdxpsBCp8l0+yfv2PPyk00daNizf7dvvmeMX5xFYB+1Jc6nS8aj3wFQTod/3gyIF/JplBivgfyMXF1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ar7Zk7hU; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5484fa1401cso253023e87.1;
-        Mon, 24 Feb 2025 05:37:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740404224; x=1741009024; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/eXqFdLeZVXSPcLMt09mytyCkKizYEWoEdvJ/UL21oQ=;
-        b=Ar7Zk7hUGXlKBxQ3mK5/tBXxB1oNeKFfpbJdW4Tg4OUTNyUly6uDKjzOtzc1afRafZ
-         gH2HfHXnbgr7MMPPLQHJ8QzwamRUM8vT0oIAC2QmXghJcelwhKh03RVk86Rpvpth2aLF
-         yjofy1wBl5iidijsTd+ssUTJEKlKx/MfEpekiWnW91Hh3k0aTuoso5qFPiFXH1XifLtU
-         D+S2A82ZAhb3sXcGns8klc1Fjx0o5NtORXFEaTuAvVGB/A4uyyrZVdwYmUKl2CCy8OLV
-         eg6xevzKUEchVlTRtokgl5dPg7GABdAx5tkUopMDzD70hqRgegIO+6I/8fcLLun9q/jN
-         4mQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740404224; x=1741009024;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/eXqFdLeZVXSPcLMt09mytyCkKizYEWoEdvJ/UL21oQ=;
-        b=xRILiaT68aqTnAviqcLzNnjRMB9rn/0Q3sbtLnKUT9y5BVQCLUzFKm3YE4IBWhlTtj
-         qfl7AEQv/2WqmqfvIPtckguPn+zlIm9wSbvOT7zzhtuQCaYP+mEX/sHBr1NQvSyHUHmI
-         lqXtkQ4oNLpqosZHzmWbjNu1JrlI5qdr4gZdIq7wN7/dNjRQnY1KzjzsGhkazsVZsfG7
-         FEvNGLokSA+45+Y6CGhpGDU8socOdkG7VIXZs6pJM3BrsN5s3384POP6l+/B93H0JZIR
-         SEAb0S5Ivx8dKoS1hkcPeup1fWp3cQwhT33+7vNhqIcIL5XAFlvUMwKj1AC5A8OZgQkd
-         hDqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnwTHXd+WDbpDfEtlGvkDVDp8mc1FpD3axNSnwlmLsuKplu7fI9sXsIBbUoQCNalmwkZ86vH8H7hcirmw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9OesregyCr0HPXDvQkshFjCG2kp/DyzAhEhE8VF14jgG1pkkn
-	wihveBXb8uW4TNo/nfSJ5tLBs0G57tvKfoWFsaYXRpL1hx/kOzsmJjyKb6Ee
-X-Gm-Gg: ASbGncvUJb+n0pryUlPGHOhQLtx8bIPlgVtoULlwJYt9PHJknXVgD1nUjzYcoXJQuZ2
-	6k+aUJO33IBXQYq7CCFj9P87H5l96lQsFVw+aSIpyjFIBqfa3ZWtlbluaqZUiNDO2Bc48yYP/h1
-	OBdLrZyEGFmS/smJGfVjZw6ITIHnBqVK4gb3oeeMAL5JlaQpKbaE690vci48lptQcnAPX0yxD+g
-	twCHVQuz/pvJsBTb7CwKlqKCl8j73hQS7ID/wxHhmYqGrNClp6RgnriaVbpC4/GJttTRZaxiXFA
-	KnhIMkP+yirarccIYixq6w==
-X-Google-Smtp-Source: AGHT+IEMNu2VKNIuFdLI6GuahDFVwEebQB5DscNSdB27lRmLJ/IUbTndD683WMxhKdu++b3WWV9Jhw==
-X-Received: by 2002:a05:6512:108f:b0:545:27af:f2e4 with SMTP id 2adb3069b0e04-54838ee8c9fmr5685320e87.18.1740404224221;
-        Mon, 24 Feb 2025 05:37:04 -0800 (PST)
-Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461eb04602sm2424799e87.68.2025.02.24.05.37.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 05:37:03 -0800 (PST)
-From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To: "Paul E . McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: [PATCH v2 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Date: Mon, 24 Feb 2025 14:36:59 +0100
-Message-Id: <20250224133659.879074-3-urezki@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250224133659.879074-1-urezki@gmail.com>
-References: <20250224133659.879074-1-urezki@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BAA23CEF8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740404250; cv=fail; b=qnOhhb30pUHmwdKU5FpxBwoOCWWt/ZpLR8MI7JFItDVYc1MIhs+tmPSnMTfRX7Zw3ScBR9Tjllxfsu1i3C9NJYcSu/n+ucIwwR3sZbPjb3QcUzW4AGSznTqHLO6JItCyt/+mc80QLCHSd7njAVwh1Vvti1kOzCj03FxQ5L910Tc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740404250; c=relaxed/simple;
+	bh=i8E01jnnjXw3AzZ7nYlReounb44pmiL7f+YrxRh99o0=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rvx2kAPN0nI4LFcSCwNUcCeaaHK0Esvf7mm3JCuaXBQMoLN+b5XO62sUg/KqTXthKvxtvy0bG2xspdC5q6hk5MVGLynwATBZGrLD6n9hOUlglp9rUk89nqC+HUsK2shVgX1p71b2CQxnPjONz/BI1RCTeGhReZI8JJQmP0uZxao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=UOsA4auP; arc=fail smtp.client-ip=52.103.68.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XhUFNvNTiQuJvlmq9u7Wve4JJ+yG1Kj9fGTCZJQA6cyugxZuoKAV29WzI9EmQJce3uxmRK8TQy4e1QjbqIoXzMhJuua8ptV1MEFp2GMC3ZKlbIJc22/KH10ktU1CrRloTzmcdQXvZ04e+kB0c0aaAsa5mzjlusG1v54VASk9SUWCFY5Qo1BdzS5+c8gP5uqkPM+bhNxuxz7MtEMMOuCliWQtk+u5Pvg/qSMQw3bWydVE27ymk4nJFq+eJYNmnIffoys3/L6Gg7VuWWXkHALMj1z1sbSOp45maVnGr2go5dwUROENH91Y63q5Eg9xLOMS8YQO9GiYR/zEioYSdAMRUg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MB7xhKlkJH0vocogEkfmCRubN9slCyqTuAoJZKkFwOI=;
+ b=NZJZa39RTb8A8Mhv2eSITskFt60OHNdPcqprJOS0hRdlHa+oi1EZ+f7b8OwI5kZOZW8eXlfcXHCDFOkeaVTtgjErHhFEpRwLj3O8NtJKl74U04A+9Yy6TJAOAmkMfLSmMqJvNLxPjkzpZQPHDXUlK914yuE9JNkMaCNzI9M+gjg5Oj18q+Ve83Of6Q6byudRXuak1pAnTRBN0DUI+oCgZDdS3x9UPBJLZThdbAE9ERj5EYt5luvnMX+n16jfUBhQW4RK7oj7ALXPUAfOlXMVEUMqDYVz67qaSHmR6O4KqI1miLGz+/pPQe8Pcj3SfhWiVtqQ/GRKenAEHmGG9+45BA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MB7xhKlkJH0vocogEkfmCRubN9slCyqTuAoJZKkFwOI=;
+ b=UOsA4auPKIEE7d1nwLB+HMC0QvtY0Xi5oWWqKjQvlsLVRHaQHwF4kIwbNRfkXRYNdxa2SGjowzNFlI0sH/2Qf8AUE31NYfpee6uXZi+8/ku3LOKwYt3Y2Na4RQyUwdx/u4I5wSipeEaTVw2CrvdPpwgDXwoW71HzcUSSPn4OEVeCKa3C41Y6Gdlc7tdEgjn2zp3cOEsKPZ/bSjSxv4BtuDdc5el447CQvCVSJpgNhK/6gR6Ki9VLQNIV/p37+mNDu4aNSQafWsh7JWtQX3ihRCgkL+x27d/0nOYyUDcpZ9X4iBByZEU1JzCZbZamT53XT9zOOrjMF49DIttCnJmhIw==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN2PR01MB4330.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:18::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Mon, 24 Feb
+ 2025 13:37:23 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 13:37:23 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>
+CC: Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>
+Subject: [PATCH v4 0/2] Touch Bar DRM driver for x86 Macs
+Thread-Topic: [PATCH v4 0/2] Touch Bar DRM driver for x86 Macs
+Thread-Index: AQHbhsE8eh6wU9Xf40u6zDzj+/N8Vg==
+Date: Mon, 24 Feb 2025 13:37:23 +0000
+Message-ID: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN2PR01MB4330:EE_
+x-ms-office365-filtering-correlation-id: 65acebc2-2ca2-448b-fcc9-08dd54d85e94
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8062599003|461199028|19110799003|8060799006|7092599003|15080799006|440099028|3412199025|10035399004|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?jBojukXMLnpZnAeqL9ZKZ2KyosCgDTvq1nyShU9MP3HZeDOxiXROatwuhbyz?=
+ =?us-ascii?Q?uYEhFP0n33AW6v9aD0RT7MgGutfZp+YR6FFoZ7WzV15xsJMiw60Tx+G/02K2?=
+ =?us-ascii?Q?3t3TdWXqcJeVeraWEpgiCMfK6Dyse+dUZOIP4azqmA8H+3Z1La/pTOcLD9Ia?=
+ =?us-ascii?Q?e14tWt4Ndf8lpFQe4PbCcKQXwHt1ThRKTTatDSdnKf5P/tYQqzMCYgQJJwTz?=
+ =?us-ascii?Q?7bc6asR0VglzO1ZaWBoQQz0WkVOmv8zldpB566OwP82DQp46bzQzxNj+Ea9k?=
+ =?us-ascii?Q?ANwxAPewc1zAnykf7/QN5KSXrvx8C+twtq95kKW+tEA2n1VMYqn0Oi/wTHJA?=
+ =?us-ascii?Q?qKK22a8YMB5ri/qIE2RQu9bE4igjmlP+xGT8Xrrv0/KP9LU5/jKIXoLbE/+B?=
+ =?us-ascii?Q?XVAxzX1w76j4Agl618E/6R4tdX8LsVFOhDea+kwvCONx4sapzAyht8e56mdS?=
+ =?us-ascii?Q?MKqPIm3N4WwxQHcQKrV3KsW1u1AWyzwgHj7h17gY9AzFUgx6V48qs7cmZ1zO?=
+ =?us-ascii?Q?9qncaZAcA4LzGixpqlK92RJKJv8EsXHOlui9KH9cV6qw/5ywhlHvKBwvxuIv?=
+ =?us-ascii?Q?IaO9ri2ngBTfdpXNVY6qlCG/5s2/gz3E4kGVqwE9YmYE/wi1UNzerynboLzB?=
+ =?us-ascii?Q?UCC4rg8Q5hYoXx/p3RrxahhXValOu3Dx1FMQGOb6CBrlXw24pl8DCx7PKIZK?=
+ =?us-ascii?Q?mnVgFjp0Lch/J3uXuDMM/H1xIK6ZI0/0j/+g6xBqHSyjazZee9+FDHL57El4?=
+ =?us-ascii?Q?BEvM0YZ14glk3LY8/wQHdrmnOSzj5amGyGswxTk295P27agtLnJIPyNh9tFP?=
+ =?us-ascii?Q?eVcn01q3ZgHK24/7ICukZBlkG9XSkvGE1moq1BWJuYAW4KkFncU+WhBA9mDN?=
+ =?us-ascii?Q?mVu16zfoWxvB08y6pAmXpAoXaX01GPgKslYcNUl5u4FY+PUDNBHKLQqGVU7P?=
+ =?us-ascii?Q?P125v8fOQ4dZgmzt8YSMp5BF3T6XcIRWq5kump0adswFELUXy19wtIk5QYFR?=
+ =?us-ascii?Q?aLgke8ilTOgDq/qSvEilGkFaqPDp/ZTjlmn+iPHELLbeQjHFmH0VTPAfDute?=
+ =?us-ascii?Q?xvhiN/bB1PUg2pvPO41q43WSwsw5j3470qsrqRu3GB/45bW++KM5RK7/hq2+?=
+ =?us-ascii?Q?oq+8QS7dcWTS?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?9NY3KVRZIZNf9AZ7WDGCEbSVK/KtE5UqCa27Jcvps5ZDuA/ztrcgTcdN387v?=
+ =?us-ascii?Q?KdvX6PiWawiOOefiPubwTOQhFU5mVOIJ0AiUANOD8ozjto7lYBOKr7GlUDRM?=
+ =?us-ascii?Q?TGwcQizIEve4k2jseG4J4ZVZqo2ugv+YejNNKtkWlunSN5gvC20fUGnHy2um?=
+ =?us-ascii?Q?v/1yMZIj8Ozp9MTnIq1d5XRk6DHTwn1vN5U0l89NERYPnMzBvhVC5CJ3CuY2?=
+ =?us-ascii?Q?mriRTRoohM5JmJwrGN8CjCtrRDSwnniRotEWwB90l2HoYceje1GXW9iy5Y64?=
+ =?us-ascii?Q?evbpZowgKBcsD2aCAD3M6OmzADpbk3jVvt2KfXPRNXnNdW5DL3OtJ5a3i0b5?=
+ =?us-ascii?Q?XYw8mmvBziJXwJXNZfIf21pAZyI71z0jDOtjX5msDxQFyIrEmfrubFljroCV?=
+ =?us-ascii?Q?vm67mLtIB6xJDEMbQT2HScglYv4oRebZf3iEJgFiWcPFUHBxvOyXPRMQi7/Z?=
+ =?us-ascii?Q?KgaaJ5lpHGoCKDoyfHfnmuPwh0dvZRU2Tciif09Cg9Z+rYQp7Fh+LsB3dyL0?=
+ =?us-ascii?Q?xk5AoZ6hAyKq0HmGHQOTt1/CJA6Jtg1c1SKOXiU6G3VXvZfRg+q4s+biAnMZ?=
+ =?us-ascii?Q?HkcnzbNujBiHm6S5OCsgPy/JrWaUivV3F0IQQsC+E1paYlfy07tPllgdKnke?=
+ =?us-ascii?Q?tfm7CYo3xQ+JtSpvdHzlv3PPhlWgmMOgvROL1JjC88yJ+a7Xs4B28x3sGi8J?=
+ =?us-ascii?Q?qaGSU83LxPZR8P+b07wgq4m1ZcekxWVbnTBndnDdLtkzSmt5NVzSXL5hTwdK?=
+ =?us-ascii?Q?vVn+W/5qCnxEmvunTuMX0ieTeLhwvNNIZ9kTx2+By4vl2DfoP6RW/c0xyeNh?=
+ =?us-ascii?Q?IkV6furlTT2j8IkT6Ltc0Jny2FOtg0JAoYT1t1LiVUPGRsQNYCJxWo5lnBG4?=
+ =?us-ascii?Q?TnRizZwLjtXA7Q5TMT76QsI3v3KmVMr9cLeITVpOThGJc2fO9tZH/B0Hha+z?=
+ =?us-ascii?Q?SePbPWHH2CxfooEaLTU9DwOXQda+BhZD5A+BbRanU9XE9Oq+YBuwKzkAaLA+?=
+ =?us-ascii?Q?xNTvHUI+ENgC36MO1l6fo3v64CqOJ/3ilP2dze3Rg3hFzhpz9xEl2Wndd5Il?=
+ =?us-ascii?Q?InC7MmAcn7WVCxeEbOs8tWtkfS2o7nR9Ra0iDFLV6BMKdQcK6t3LozVs0T/a?=
+ =?us-ascii?Q?+wGPujABybXwklfK5go5ID8m2j+mlEpuyS1gLaRjamJ371y/8J4xJ5MWPlw0?=
+ =?us-ascii?Q?3e/9jMf5ngjELrs6C3FldkWwTvRiBOurut/wDzp/jse6RhS51CF0w+vuyirI?=
+ =?us-ascii?Q?RcTsH/opFjfeFioL1kS7YoLz/+aPMvbh0eqsQV0J74KwBdY259hnhZZBImvN?=
+ =?us-ascii?Q?FTmFnwrl9iYP3VPnvh3zeQUE?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D036294E01CFC5428573860A3CC607BD@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65acebc2-2ca2-448b-fcc9-08dd54d85e94
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 13:37:23.2559
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN2PR01MB4330
 
-Switch for using of get_state_synchronize_rcu_full() and
-poll_state_synchronize_rcu_full() pair for debug a normal
-synchronize_rcu() call.
+The following patch series aims to add support for the DRM mode of the
+Touch Bar found on x86 Macs. The DRM mode enables the Touch Bar to act
+as a second display, just like macOS.
 
-Just using "not" full APIs to identify if a grace period
-is passed or not might lead to a false kernel splat.
+The first patch adds emulation helper from XRGB8888 to BGR888 which is
+needed by this device and the driver.
 
-Link: https://lore.kernel.org/lkml/Z5ikQeVmVdsWQrdD@pc636/T/
-Fixes: 988f569ae041 ("rcu: Reduce synchronize_rcu() latency")
-Reported-by: cheung wall <zzqq0103.hey@gmail.com>
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- include/linux/rcupdate_wait.h | 4 ++++
- kernel/rcu/tree.c             | 8 +++-----
- 2 files changed, 7 insertions(+), 5 deletions(-)
+The second patch is the main DRM driver, required for the DRM mode.
+Currently, only T2 Macs are supported.
 
-diff --git a/include/linux/rcupdate_wait.h b/include/linux/rcupdate_wait.h
-index f9bed3d3f78d..a16fc2a9a7d7 100644
---- a/include/linux/rcupdate_wait.h
-+++ b/include/linux/rcupdate_wait.h
-@@ -16,6 +16,10 @@
- struct rcu_synchronize {
- 	struct rcu_head head;
- 	struct completion completion;
-+#ifdef CONFIG_PROVE_RCU
-+	/* This is for testing. */
-+	struct rcu_gp_oldstate oldstate;
-+#endif
- };
- void wakeme_after_rcu(struct rcu_head *head);
- 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 8625f616c65a..48384fa2eaeb 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1632,12 +1632,10 @@ static void rcu_sr_normal_complete(struct llist_node *node)
- {
- 	struct rcu_synchronize *rs = container_of(
- 		(struct rcu_head *) node, struct rcu_synchronize, head);
--	unsigned long oldstate = (unsigned long) rs->head.func;
- 
- 	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) &&
--		!poll_state_synchronize_rcu(oldstate),
--		"A full grace period is not passed yet: %lu",
--		rcu_seq_diff(get_state_synchronize_rcu(), oldstate));
-+		!poll_state_synchronize_rcu_full(&rs->oldstate),
-+		"A full grace period is not passed yet!\n");
- 
- 	/* Finally. */
- 	complete(&rs->completion);
-@@ -3247,7 +3245,7 @@ static void synchronize_rcu_normal(void)
- 	 * snapshot before adding a request.
- 	 */
- 	if (IS_ENABLED(CONFIG_PROVE_RCU))
--		rs.head.func = (void *) get_state_synchronize_rcu();
-+		get_state_synchronize_rcu_full(&rs.oldstate);
- 
- 	rcu_sr_normal_add_req(&rs);
- 
--- 
-2.39.5
+Currently, a daemon named tiny-dfr [1] by Asahi Linux supports the
+Touch Bar in this mode by displaying the Function and Media keys.
+More such daemons can be made with more customisation in the future.
+
+[1]: https://github.com/AsahiLinux/tiny-dfr
+
+Kerem Karabay (2):
+  drm/format-helper: Add conversion c
+  drm/tiny: add driver for Apple Touch Bars in x86 Macs
+
+ MAINTAINERS                                   |   8 +
+ drivers/gpu/drm/drm_format_helper.c           |  54 ++
+ .../gpu/drm/tests/drm_format_helper_test.c    |  81 ++
+ drivers/gpu/drm/tiny/Kconfig                  |  14 +
+ drivers/gpu/drm/tiny/Makefile                 |   1 +
+ drivers/gpu/drm/tiny/appletbdrm.c             | 835 ++++++++++++++++++
+ include/drm/drm_format_helper.h               |   3 +
+ 7 files changed, 996 insertions(+)
+ create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
+
+--=20
+2.43.0
 
 
