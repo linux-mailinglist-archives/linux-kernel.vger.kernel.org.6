@@ -1,108 +1,112 @@
-Return-Path: <linux-kernel+bounces-530052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0E0A42E2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:43:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6ADEA42E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 794131777F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:43:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39C467A7C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6B225485E;
-	Mon, 24 Feb 2025 20:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066A824FBE8;
+	Mon, 24 Feb 2025 20:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="YYI93cJ3"
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwWbpNhC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3A91FDE0B;
-	Mon, 24 Feb 2025 20:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF9B1FDE0B;
+	Mon, 24 Feb 2025 20:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740429832; cv=none; b=bz/00qfqrYcJKcaqMgJHfxdQyct5ETMvlyhMaBjKHZfoTlYzBK0cTuw0B5VN7RGIFZOLafibhb5WcMVooMknJ869If/VrisIDkYTUj4nO7Rq+vcD6HrxtswnDR4M6q7pTul5y2u4VfczLW4Hthhn7inRqZ4c5FQVWQso1hbJH9o=
+	t=1740429872; cv=none; b=UMC3rgdTgVluf8WNPSN7LSVVQFWKnrtO0ONPzVpmlXxxOInuctFsWcCW0FKjKKVfH15oDh4rV/aR4S/MYn4wnS1v2JFnQUkJJCY69d249v3yQORuuUCK89VAxlLloCPS3YTSPeLl8TFYhFzymS3gk42EJD2u2rhurWgTVE8iAw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740429832; c=relaxed/simple;
-	bh=rvbdOy4fuBrSGEQQD49/68Vtl1Atgp4vEU7Tw+AbOCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wzt3uFx2eOlUQwnMNMzXG/vjpjyHDLUcvhoPe4eUYJzbuEnzO66shLGzOFUmUXxHcfz0QwlVpdXjqTGgcyTEBe+zwbC6xSNRg7OwRIFOgFnw20YfOxFoDCi0L9G/DdKB1ZWy7UKXHGf2IfkSiaB8lB6CpBc5OkFZ+hHwHD+ongs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=YYI93cJ3; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1740429829; bh=rvbdOy4fuBrSGEQQD49/68Vtl1Atgp4vEU7Tw+AbOCI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=YYI93cJ3ML0XkkKoLoj3AWEbpPS699twI8GgjcLm0DYhFueIEuLdXkYna2TiWCva0
-	 ta2n/67t+jgVoJ5PG1FveqmZljuqL8zaJckecN5RXKbqdZF2/UEEJbyfKTNAlwKuFB
-	 OV9ljQUkGin3f9XLWsJ9hOx81lYm896wCruEUbIg=
-Message-ID: <82a9d623-2033-4d7f-93b8-67007b46be79@lucaweiss.eu>
-Date: Mon, 24 Feb 2025 21:43:48 +0100
+	s=arc-20240116; t=1740429872; c=relaxed/simple;
+	bh=6ZQ2uzFiFhD7gkzk+n7hLxToXvw9f/qLjNwvw3IN058=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTHlSXE3OVKoKUoOeDG3bjCWLmXBbW0LhmsqMB7ldz8A6aTxlmj80JETrMp3sCz8DNHGzVa0nvcGLQRuQ+5YQQ2a1lsm8sepS5sVdozAXdFdXvyjSv0liC7qFScaSYPftDoLltv2HJkTAj0SZa2EgfbgZr+oNXYBb7epeuY96C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwWbpNhC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9165DC4CED6;
+	Mon, 24 Feb 2025 20:44:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740429870;
+	bh=6ZQ2uzFiFhD7gkzk+n7hLxToXvw9f/qLjNwvw3IN058=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mwWbpNhCqwW2+IaFJM8s1EadrnggVS8HGVSkSAatxVKhTW1CDmZCPuIV58P2ejefE
+	 9fFCKKpdviw7OhuqtW474AqL9TJoMz+idxN5Dg1PXNJ2HAJs/aJP2T2Com9JjsU/WN
+	 ccOvcuOl8SzV1MhWguZaOXc2gHGBy2MZfmB8pjl0yWZLUKRgLpAgoxCgkJBeAPKcV/
+	 6Mkkpf0jw2ofTdTGrB+rw6+cpM20zOg8/7qHNCeg+WOYOaTA1nymb9+I6nhpR0oc/f
+	 UM9JJvk16LHop1JdTSdslzTFJrIcugsdLECkKsvah8C1ZpSmpEWHx+fpN/InM+TFRx
+	 2YaKffluH7H3w==
+Date: Mon, 24 Feb 2025 14:44:28 -0600
+From: Rob Herring <robh@kernel.org>
+To: Maud Spierings <maudspierings@gocontroll.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Sam Ravnborg <sam@ravnborg.org>, Liu Ying <victor.liu@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
+ Moduline IO modules
+Message-ID: <20250224204428.GA4050751-robh@kernel.org>
+References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
+ <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sdm632-fairphone-fp3: Add
- firmware-name for adsp & wcnss
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250222-fp3-remoteprocs-firmware-v1-0-237ed21c334a@lucaweiss.eu>
- <20250222-fp3-remoteprocs-firmware-v1-3-237ed21c334a@lucaweiss.eu>
- <w4l5drhu6exq4jb7x2pisqtkz5ylare7ashsmjjqomv3yetjwj@z3wapq4rkk3u>
- <6d1a95a1-0b84-4bc5-9cb0-3cc514d292a6@oss.qualcomm.com>
-Content-Language: en-US
-From: Luca Weiss <luca@lucaweiss.eu>
-In-Reply-To: <6d1a95a1-0b84-4bc5-9cb0-3cc514d292a6@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
 
-On 24-02-2025 9:27 p.m., Konrad Dybcio wrote:
-> On 24.02.2025 1:17 AM, Dmitry Baryshkov wrote:
->> On Sat, Feb 22, 2025 at 02:00:49PM +0100, Luca Weiss wrote:
->>> Set the paths where the device-specific firmware can be found for this
->>> device.
->>>
->>> Fairphone 3 was shipped with secure-boot off so any testkey-signed
->>> firmware is accepted.
->>>
->>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts | 7 +++++++
->>>   1 file changed, 7 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->>> index 08ffe77d762c3a97f470efbfb5064282fe2090da..5611209dbfa41d7834af7903535ed3e05604ba63 100644
->>> --- a/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->>> +++ b/arch/arm64/boot/dts/qcom/sdm632-fairphone-fp3.dts
->>> @@ -82,6 +82,8 @@ nfc@28 {
->>>   };
->>>   
->>>   &lpass {
->>> +	firmware-name = "qcom/msm8953/fairphone/fp3/adsp.mbn";
->>
->> If any firmware is okay, wouldn't it be better to use
->> "qcom/msm8953/foo.mbn" ? This way if we get any of the firmware (yeah,
->> I'm a dreamer), then FB3 can pick it up.
+On Mon, Feb 24, 2025 at 02:50:55PM +0100, Maud Spierings wrote:
+> The main point of the Moduline series of embedded controllers is its
+> ecosystem of IO modules, these currently are operated through the spidev
+> interface. Ideally there will be a full dedicated driver in the future.
 > 
-> No, the fw may have board/wiring differences encoded inside it
-
-Second that, while I don't have access to the AMSS sources for this 
-device, I'm sure there's at least some board-specific config in these 
-images, and I'd rather not boot up some ADSP or modem firmware compiled 
-for some Dragonboard or equivalent.
-
-Regards
-Luca
-
+> Add the gocontroll moduline-module-slot device to enable the required
+> spidev interface.
 > 
-> Konrad
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c7fb46f771a300926f05 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -107,6 +107,8 @@ properties:
+>            - fsl,mpl3115
+>              # MPR121: Proximity Capacitive Touch Sensor Controller
+>            - fsl,mpr121
+> +            # GOcontroll Moduline module slot for spi based IO modules
 
+I couldn't find anything about SPI for GOcontroll Moduline. Can you 
+point me to what this hardware looks like. Based on what I did find, 
+this seems incomplete and not likely a trivial device.
+
+> +          - gocontroll,moduline-module-slot
+>              # Honeywell Humidicon HIH-6130 humidity/temperature sensor
+>            - honeywell,hi6130
+>              # IBM Common Form Factor Power Supply Versions (all versions)
+> 
+> -- 
+> 2.48.1
+> 
 
