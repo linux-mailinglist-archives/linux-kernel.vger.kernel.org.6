@@ -1,97 +1,117 @@
-Return-Path: <linux-kernel+bounces-528024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D4BA4129A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:25:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58C41A41297
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5D517284C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:24:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E25516BD0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:23:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3BA38DE1;
-	Mon, 24 Feb 2025 01:24:14 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22FC2E62B;
+	Mon, 24 Feb 2025 01:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="FteeSEa0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2723081732;
-	Mon, 24 Feb 2025 01:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A8FEEAB;
+	Mon, 24 Feb 2025 01:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740360254; cv=none; b=qHvijBCKJq0N7HUyI3428OE0q2M8XcglNc5B1PmIBLyjd+kg0Dfyh9GZ5B92FkdxaY9tFmVH6KqQ4euueSVOJMw+BCSwX3t7Z5Pl081J3Nnx0U7gv8UrCZ16QL4yM24YlpWLICCoMm1g0MB0UsjFqR7QLjXE8hiU6Q6+Gb63X18=
+	t=1740360207; cv=none; b=uYNRRIqp0EmCvCiCG4XkhfiuT1jUomnqDS3nRolFeEMxDFmZnpCC29ClUnfp+xVL37Jzath9+EcFoAvaQkKiG8rrtMew9zo40JZzmtoliNHS0e+lMHyWMRcTZ5sG1YF2iEnyHh1wkBZBMu6CJi2gzz7h+IiEOo34Kl6FhD9G2W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740360254; c=relaxed/simple;
-	bh=muEyjcQX89HxkIdlTEjavVGhd848csPb2p7ljgYJI1k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bztTaNndBXN32/nwqMeK5/DuixYmhUKQfFaixU0PXMoc70SQgOJYkBguxkwrIht2ft0nUCw/196Z0+aXsLBcKrkuWd0UtWBsghUfM/+uy9k21GaI+dz/1p4NLkKxll9EnCVG4EeD1aFWnXvFm3WlDfHQJpcIBzVeVvdJRNwkSyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z1NGb72j9z21p0d;
-	Mon, 24 Feb 2025 09:20:55 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 85E4C140368;
-	Mon, 24 Feb 2025 09:23:59 +0800 (CST)
-Received: from huawei.com (10.175.104.67) by kwepemf100017.china.huawei.com
- (7.202.181.16) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 24 Feb
- 2025 09:23:58 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <linux-ext4@vger.kernel.org>, <jack@suse.com>, <tytso@mit.edu>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH] ext4: Modify the comment about mb_optimize_scan
-Date: Mon, 24 Feb 2025 09:20:05 +0800
-Message-ID: <20250224012005.689549-1-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1740360207; c=relaxed/simple;
+	bh=los1eCdEmVxhO5Tf9dnTGtubMObQft7Y2uFyJjHxoXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tiaxIx720uwj3mNG2Brc5MoUCJ6JJHtrReicUugU3fUlxJtSVFV4aU9MhPdPS+2L0b0Bd+Vg7k24JzO91TC3d2OL5D4xtEPfqzInn0YRUIMWYmi3sVGf6DIz7GYDf5Ia7x+oViEYeaGk9TAal0dY44KSnJswPKuW5q5J8CD5dBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=FteeSEa0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740360200;
+	bh=nj1U2uSVkYkz/+hDpbISu/uTHKxGKwkrZgTl8Rgqf5o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FteeSEa0zwN0uy+Xz37wVeDuCYGnSY7OIUdV+GHdf4XMOoP+WFQ2309u6lPEJyFSE
+	 eFGyneDXhhvlXHVSEdU5p3oOyjvL/U7IZGVr+m9oTrK62jHm1DThSDaqX1e13UFe4S
+	 KGqd1j92GuYC1YrnP5q3u8IrQUjFcS5odPGR5Bcsd/VA8u4DH4RYHHnVAThnSAudyk
+	 UfJRjQYBVNwDCkhlSdEs84LIplMAPw7PAPwnX88c6dm1e7Eaw2sEpiA3EwtGLgqpAM
+	 GbqS/W30vP0GhIGWCoXZo7jtJdaFTCg1P9kjTyjgK9XloTqNwTb7Ohw3OQnhJsK5p3
+	 m2cXH+dUGMTYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1NKM5rc4z4wbR;
+	Mon, 24 Feb 2025 12:23:19 +1100 (AEDT)
+Date: Mon, 24 Feb 2025 12:23:18 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the pmdomain tree
+Message-ID: <20250224122318.228f695c@canb.auug.org.au>
+In-Reply-To: <20250220113338.60ba2290@canb.auug.org.au>
+References: <20250220113338.60ba2290@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Type: multipart/signed; boundary="Sig_/UTwz0u31u38k7c7NQZZokZj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Commit 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning") introduces
-the sysfs control interface "mb_max_linear_groups" to address the problem
-that rotational devices performance degrades when the "mb_optimize_scan"
-feature is enabled, which may result in distant block group allocation.
+--Sig_/UTwz0u31u38k7c7NQZZokZj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-However, the name of the interface was incorrect in the comment to the
-ext4/mballoc.c file, and this patch fixes it, without further changes.
+Hi all,
 
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
----
- fs/ext4/mballoc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 20 Feb 2025 11:33:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the pmdomain tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> x86_64-linux-gnu-ld: vmlinux.o: in function `rockchip_do_pmu_set_power_do=
+main':
+> pm-domains.c:(.text+0x19aa103): undefined reference to `arm_smccc_1_1_get=
+_conduit'
+>=20
+> Caused by commit
+>=20
+>   61eeb9678789 ("pmdomain: rockchip: Check if SMC could be handled by TA")
+>=20
+> $ grep CONFIG_HAVE_ARM_SMCCC_DISCOVERY .config
+> $
+>=20
+> I have used the pmdomain tree from next-20250219 for today.
 
-diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-index b25a27c86696..68b54afc78c7 100644
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -187,7 +187,7 @@
-  * /sys/fs/ext4/<partition>/mb_min_to_scan
-  * /sys/fs/ext4/<partition>/mb_max_to_scan
-  * /sys/fs/ext4/<partition>/mb_order2_req
-- * /sys/fs/ext4/<partition>/mb_linear_limit
-+ * /sys/fs/ext4/<partition>/mb_max_linear_groups
-  *
-  * The regular allocator uses buddy scan only if the request len is power of
-  * 2 blocks and the order of allocation is >= sbi->s_mb_order2_reqs. The
-@@ -209,7 +209,7 @@
-  * get traversed linearly. That may result in subsequent allocations being not
-  * close to each other. And so, the underlying device may get filled up in a
-  * non-linear fashion. While that may not matter on non-rotational devices, for
-- * rotational devices that may result in higher seek times. "mb_linear_limit"
-+ * rotational devices that may result in higher seek times. "mb_max_linear_groups"
-  * tells mballoc how many groups mballoc should search linearly before
-  * performing consulting above data structures for more efficient lookups. For
-  * non rotational devices, this value defaults to 0 and for rotational devices
--- 
-2.39.2
+I am still seeing this build failure.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/UTwz0u31u38k7c7NQZZokZj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme7ygYACgkQAVBC80lX
+0Gz9TggAlKSRBZLGUss58HGQ+4zfafAeoVGkdJuM3nSNNktPmvwbI5c+GAjpqG1i
+9ErGKyORTUyh5RDNjYxnv04GQS2W828IvOndYDKR7R7ElFf8vmiw8fWh1/sT57RA
+Y6pZNaBkbv0QNf5wSV5/zE3/pS6MNcI1GsnbrOWiziV2CDFFrTo2EYSFj8b8rxFU
+FmYqfOKcgJKu7M25d64P5epgVdgtNI5sfGrGtWRK4vO0xHU4oEMaiXl0UaDP6Rly
+0qHKadteO7tOshU8Vw5P2sljyYGzKh4s+q5gMzteY4pDd8aCm8qKOAU+P/WCrk77
+l5Z9A9hWb8ogkqYunsUst7QvKs0qcQ==
+=tWn7
+-----END PGP SIGNATURE-----
+
+--Sig_/UTwz0u31u38k7c7NQZZokZj--
 
