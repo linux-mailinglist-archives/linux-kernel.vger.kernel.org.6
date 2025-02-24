@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-529801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD42A42B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:21:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2DFDA42A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:02:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6D23B8613
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D0C61739E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C0626739F;
-	Mon, 24 Feb 2025 18:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23251264A90;
+	Mon, 24 Feb 2025 18:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EXxExxdB"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0bVO1N6"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09360266188;
-	Mon, 24 Feb 2025 18:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E288E264A84
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421193; cv=none; b=Tb4HguFa9u0E0ycCm2+ojafCfddSYdh0IBvq6iX6kq89VYWgilOLZCybV7/tCDPcWxKBdYz1z1aXJ5EuJdo9qXgbxnXmoQk4bQ+uV4LVn7HVa4FZTP07pdrb4UII9xtYraAu/3qcpOSGcGH1c2UK7yCW0CUwU1csPDpRwtBlPIA=
+	t=1740420172; cv=none; b=RfitjD6LdP4aJodlESSsWdYDaExYPOx7VLKGKWhcvyugFywqmjNUaLIVcnbtVghbrlwIQtKJoCPNmrZmUhiHruVbhIi03P1f5gLesSKP8TlGL9/l69xBpCa3wAXctoFnQB0Ms7DJQf9M9uJ+4dzbHjq5PQSBvj7ERAjswoeD+Q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421193; c=relaxed/simple;
-	bh=0oyyNG2V3s5JKdG5srCEuoOxoYgI+qmlA9nLepwoJXI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sRNyRALvFUsSdD1blTZ0flzFPeNxLR5x3Xjije3vRyqII7xiTZwhbpB8FrzMuzgRMPnSys5H8h2XZ8O2WjRacTF3AdsSXPlokTiT0aBL+3aHG7WaK+Ao1w/SmvnpnuQuOw5Hyu+2eo0i5SVPjo1Kd7ExBM9DTosLH3OI7F3U6jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EXxExxdB; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OEinRc013893;
-	Mon, 24 Feb 2025 19:14:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	yJ9Ddvb8/MSiJiYIU7CsHmpvg/muoQVGslcmJdqqGV8=; b=EXxExxdBl+SbI9lX
-	aVxjqj/F0BsEmDrBcY0USzXmDslBjQX0o92MefydgvGDc4Gn/S6z95YZbchArk2F
-	MM01LZ41PZp2dxiHyZT9xIdXt8JIM4kvKlRiy8nqJroVLK2hSFRIyZWxnSNKq5a7
-	/L242jyWnqoQrJRIHD+GdecNRu3ewdbzqfGF7S193JEmr78mt+cn2WkJ03+emhyu
-	lDchp4LbrCC03A95x5xDYpe/SOsZdlf04N5dCl0CsJJjM9DAcVC86WrzhjJcyMwX
-	HpdOyms8r+hfrnBv5I2qypUDI/9TXrp7xrYQL8NAfnkCZjXgwdNXsagK0msmY/Mo
-	X5zjDw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44y4vm10w6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 19:14:11 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id DA1E34006B;
-	Mon, 24 Feb 2025 19:12:29 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 800FB546D7C;
-	Mon, 24 Feb 2025 19:02:36 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 19:02:36 +0100
-Received: from localhost (10.252.23.75) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 19:02:36 +0100
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-To: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <wbg@kernel.org>, <jic23@kernel.org>, <daniel.lezcano@linaro.org>,
-        <tglx@linutronix.de>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>
-Subject: [PATCH 8/8] arm64: dts: st: add low-power timer nodes on stm32mp251
-Date: Mon, 24 Feb 2025 19:01:50 +0100
-Message-ID: <20250224180150.3689638-9-fabrice.gasnier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
-References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
+	s=arc-20240116; t=1740420172; c=relaxed/simple;
+	bh=itsBLLxlrAwDwIQWDjziEP7HxbzQvPfoj0bBM7KwUcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r62aGzuMzRtTfLG8ckl9PuVMZIiUhaJwPSOAqaRzZJW1wEdBd7mi3ByAoC3ran7NB1bcANXmi3Qdy9vSr9JX8RclEQhgR/aRz7WpYq7bgVqW5gdZfNq4aD1wtQwHw4kl7aJOCg5xw2AHMNORCc6bCtIk4BWBgOf49MjCh3ddTGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0bVO1N6; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220e989edb6so129140095ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:02:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740420170; x=1741024970; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rFplMvPNGKU5wF32T8NlzWSeNewPtKyBr0rvnILieu4=;
+        b=l0bVO1N6Y16GA9RoinwRBdcFV/G9f263hqFlDx7x/dA4ktgltzGg+05FOr+xQtc6+c
+         unQ5J3C86k6AAw9kiNokzW22KMNGbBOr0mGbfhW71MBIMXhKF1fyXZ5Xk6gWxu+uh9WP
+         XHpQQKh1toCUDCgHNXWW83HuX8yIFPTUCrQsWXJVnx6AGywGHPm0PghOl7G/JOKuFt6C
+         9lFLGBZ4NPp804ggKIhZZnp/3wJcKe3CMCTRpZ97vS/673ieiLr1JGq0HF/y1VatE316
+         ntvnThP4rcQQJkv8qQZHYjdki1wHNhFxVhJcbw0XelA3C16n5qpnyYVqMbymWHRjlu6x
+         kxAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740420170; x=1741024970;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rFplMvPNGKU5wF32T8NlzWSeNewPtKyBr0rvnILieu4=;
+        b=NA7RaQOF/Y27ezdwOl2MjF+BXyZThBx2/szgTKTYhN84jqec4Gv7zs4T9UiCEXLlSA
+         /1wbK8d6gBTom8nRNcQBk8cXu+l9SVzVTAl1FOA7935DoNZZmRD/14+aaVeUJf+ctYBP
+         57kpVS0j9hj3MkFP56M5fbmMVLGxKaAJOMDqxwI8Tez9dn8itAvhG8N2qTZ+NVHndY5I
+         SHV8idy2wwru+0U6iu2/+M+wJOigKPWkGQBeNzbfShFeqWteFvRTRI3q9UlPmczUA4xS
+         15Iqw9VYM9duAoWSGSY3sIR/xPrOl1rTv6rqG/KNegGkOV91QTK0bfX4R5LRgR88Cvp/
+         h/Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVv3hpOXJjfR9HA7Eicvwe7+jP4Ig2kT2rk1Y3qdE59Rr+BAeGBA+tVEqsoNJulW6cTzFBLjp0sHOfVu7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGEKfSVlXsp8HbNwAfzH7TAyTRsxqMDsDR6WdbgqftH20tHW7Z
+	jyOQo+eMiQl8tz7ZmXltf4QVnLr3/ntBMxwB/FvRBCZKRL83zCPT
+X-Gm-Gg: ASbGncvR5LRsSoRYczUb1VaX9iTqCvsCZMhyzgZr9Ui2uLWHqf0mCuVzstMc7keSzAI
+	muiyQKswu5+FKhhLwv7SHIUgVl4nhk6SjMZo8MmjCVQpoh9+FGcEQl/7Q/wfVM2RVj0uJMagZdI
+	ZJs1ZSTH3C6AAT6c2z+ePjhNsWIOV3WejdCoRbyCry68KQxIMG4/umVhQF0mfQ7V822vbVKegzV
+	VSiakgieLa0xJFI31oR9I/y3fBazTaPBajxi0NBDC4yk+I389wij81L6yf82UIGe/uYBpSl7cL3
+	z7UlO2/Y08INplCvxasas78UdwxJyiP/I+fbBAl27tU9
+X-Google-Smtp-Source: AGHT+IFjacj+DFQCh6G+bTApcerKaqlV3cTYZ+wt3sRTgERS9Hhv3HCDGIZqHizo19yPjQEhUpUnUw==
+X-Received: by 2002:a17:902:ced1:b0:21f:85ee:f2df with SMTP id d9443c01a7336-22307b496fcmr2055065ad.15.1740420169958;
+        Mon, 24 Feb 2025 10:02:49 -0800 (PST)
+Received: from KASONG-MC4.tencent.com ([1.203.117.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d556e15esm184834695ad.190.2025.02.24.10.02.46
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Feb 2025 10:02:49 -0800 (PST)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Chris Li <chrisl@kernel.org>,
+	Barry Song <v-songbaohua@oppo.com>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Baoquan He <bhe@redhat.com>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Kalesh Singh <kaleshsingh@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v2 0/7] mm, swap: remove swap slot cache
+Date: Tue, 25 Feb 2025 02:02:05 +0800
+Message-ID: <20250224180212.22802-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.48.1
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,219 +97,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_09,2025-02-24_02,2024-11-22_01
 
-Add low-power timer (LPTimer) support on STM32MP25 SoC.
-The full feature set is implemented in LPTIM1/2/3/4. LPTIM5 supports a
-smaller set of features (no capture/compare) channel. Still, LPTIM5 can
-be used as single PWM, counter, trigger or timer.
+From: Kairui Song <kasong@tencent.com>
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Slot cache was initially introduced by commit 67afa38e012e ("mm/swap:
+add cache for swap slots allocation") to reduce the lock contention
+of si->lock.
+
+Previous series "mm, swap: rework of swap allocator locks" [1] removed
+swap slot cache for freeing path as freeing path no longer touches
+si->lock in most cased. Allocation path also have slight to none
+contention on si->lock since that series, but slot cache still helps
+to reduce other overheads, like counters and the plist.
+
+This series removes the slot cache from allocation path too, by using
+the cluster as allocation fast path and also reduce other overheads.
+
+Now slot cache is completely gone, the code is much simplified without
+obvious feature or performance change, also clean up related workaround.
+Also this should avoid other potential issues, e.g. the long pinning
+of swap slots: swap slot cache pins swap slots with HAS_CACHE, causing
+reclaim or allocation fail to use these slots on scanning.
+
+The only behavior change is the swap device allocation rotation
+mechanism, as explained in the patch "mm, swap: use percpu cluster
+as allocation fast path".
+
+Test results are looking good after deleting the swap slot cache:
+
+- vm-scalability with: `usemem --init-time -O -y -x -R -31 1G`,
+12G memory cgroup using simulated pmem as SWAP (32G pmem, 32 CPUs),
+16 test runs for each case, measuring the total throughput:
+
+                      Before (KB/s) (stdev)  After (KB/s) (stdev)
+Random (4K):          424907.60 (24410.78)   414745.92  (34554.78)
+Random (64K):         163308.82 (11635.72)   167314.50  (18434.99)
+Sequential (4K, !-R): 6150056.79 (103205.90) 6321469.06 (115878.16)
+
+- Build linux kernel with make -j96, using 4K folio with 1.5G memory
+cgroup limit and 64K folio with 2G memory cgroup limit, on top of tmpfs,
+12 test runs, measuring the system time:
+
+                  Before (s) (stdev)  After (s) (stdev)
+make -j96 (4K):   6445.69 (61.95)     6408.80 (69.46)
+make -j96 (64K):  6841.71 (409.04)    6437.99 (435.55)
+
+The performance is unchanged, slightly better in some cases.
+
+[1] https://lore.kernel.org/linux-mm/20250113175732.48099-1-ryncsn@gmail.com/
+
 ---
- arch/arm64/boot/dts/st/stm32mp251.dtsi | 177 +++++++++++++++++++++++++
- 1 file changed, 177 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-index f3c6cdfd7008..742367e4f16d 100644
---- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
-@@ -238,6 +238,78 @@ rifsc: bus@42080000 {
- 			#access-controller-cells = <1>;
- 			ranges;
- 
-+			lptimer1: timer@40090000 {
-+				compatible = "st,stm32mp25-lptimer";
-+				reg = <0x40090000 0x400>;
-+				interrupts-extended = <&exti1 47 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rcc CK_KER_LPTIM1>;
-+				clock-names = "mux";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				access-controllers = <&rifsc 17>;
-+				power-domains = <&RET_PD>;
-+				wakeup-source;
-+				status = "disabled";
-+
-+				counter {
-+					compatible = "st,stm32mp25-lptimer-counter";
-+					status = "disabled";
-+				};
-+
-+				pwm {
-+					compatible = "st,stm32mp25-pwm-lp";
-+					#pwm-cells = <3>;
-+					status = "disabled";
-+				};
-+
-+				timer {
-+					compatible = "st,stm32mp25-lptimer-timer";
-+					status = "disabled";
-+				};
-+
-+				trigger@0 {
-+					compatible = "st,stm32mp25-lptimer-trigger";
-+					reg = <0>;
-+					status = "disabled";
-+				};
-+			};
-+
-+			lptimer2: timer@400a0000 {
-+				compatible = "st,stm32mp25-lptimer";
-+				reg = <0x400a0000 0x400>;
-+				interrupts-extended = <&exti1 48 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rcc CK_KER_LPTIM2>;
-+				clock-names = "mux";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				access-controllers = <&rifsc 18>;
-+				power-domains = <&RET_PD>;
-+				wakeup-source;
-+				status = "disabled";
-+
-+				counter {
-+					compatible = "st,stm32mp25-lptimer-counter";
-+					status = "disabled";
-+				};
-+
-+				pwm {
-+					compatible = "st,stm32mp25-pwm-lp";
-+					#pwm-cells = <3>;
-+					status = "disabled";
-+				};
-+
-+				timer {
-+					compatible = "st,stm32mp25-lptimer-timer";
-+					status = "disabled";
-+				};
-+
-+				trigger@1 {
-+					compatible = "st,stm32mp25-lptimer-trigger";
-+					reg = <1>;
-+					status = "disabled";
-+				};
-+			};
-+
- 			i2s2: audio-controller@400b0000 {
- 				compatible = "st,stm32mp25-i2s";
- 				reg = <0x400b0000 0x400>;
-@@ -799,6 +871,111 @@ i2c8: i2c@46040000 {
- 				status = "disabled";
- 			};
- 
-+			lptimer3: timer@46050000 {
-+				compatible = "st,stm32mp25-lptimer";
-+				reg = <0x46050000 0x400>;
-+				interrupts-extended = <&exti2 29 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rcc CK_KER_LPTIM3>;
-+				clock-names = "mux";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				access-controllers = <&rifsc 19>;
-+				wakeup-source;
-+				status = "disabled";
-+
-+				counter {
-+					compatible = "st,stm32mp25-lptimer-counter";
-+					status = "disabled";
-+				};
-+
-+				pwm {
-+					compatible = "st,stm32mp25-pwm-lp";
-+					#pwm-cells = <3>;
-+					status = "disabled";
-+				};
-+
-+				timer {
-+					compatible = "st,stm32mp25-lptimer-timer";
-+					status = "disabled";
-+				};
-+
-+				trigger@2 {
-+					compatible = "st,stm32mp25-lptimer-trigger";
-+					reg = <2>;
-+					status = "disabled";
-+				};
-+			};
-+
-+			lptimer4: timer@46060000 {
-+				compatible = "st,stm32mp25-lptimer";
-+				reg = <0x46060000 0x400>;
-+				interrupts-extended = <&exti2 30 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rcc CK_KER_LPTIM4>;
-+				clock-names = "mux";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				access-controllers = <&rifsc 20>;
-+				wakeup-source;
-+				status = "disabled";
-+
-+				counter {
-+					compatible = "st,stm32mp25-lptimer-counter";
-+					status = "disabled";
-+				};
-+
-+				pwm {
-+					compatible = "st,stm32mp25-pwm-lp";
-+					#pwm-cells = <3>;
-+					status = "disabled";
-+				};
-+
-+				timer {
-+					compatible = "st,stm32mp25-lptimer-timer";
-+					status = "disabled";
-+				};
-+
-+				trigger@3 {
-+					compatible = "st,stm32mp25-lptimer-trigger";
-+					reg = <3>;
-+					status = "disabled";
-+				};
-+			};
-+
-+			lptimer5: timer@46070000 {
-+				compatible = "st,stm32mp25-lptimer";
-+				reg = <0x46070000 0x400>;
-+				interrupts-extended = <&exti2 31 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks = <&rcc CK_KER_LPTIM5>;
-+				clock-names = "mux";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				access-controllers = <&rifsc 21>;
-+				wakeup-source;
-+				status = "disabled";
-+
-+				counter {
-+					compatible = "st,stm32mp25-lptimer-counter";
-+					status = "disabled";
-+				};
-+
-+				pwm {
-+					compatible = "st,stm32mp25-pwm-lp";
-+					#pwm-cells = <3>;
-+					status = "disabled";
-+				};
-+
-+				timer {
-+					compatible = "st,stm32mp25-lptimer-timer";
-+					status = "disabled";
-+				};
-+
-+				trigger@4 {
-+					compatible = "st,stm32mp25-lptimer-trigger";
-+					reg = <4>;
-+					status = "disabled";
-+				};
-+			};
-+
- 			csi: csi@48020000 {
- 				compatible = "st,stm32mp25-csi";
- 				reg = <0x48020000 0x2000>;
+V1: https://lore.kernel.org/linux-mm/20250214175709.76029-1-ryncsn@gmail.com/
+Updates from V1:
+- Check the cluster with cluster_is_usable and cluster_is_empty in
+  fast path too, improve performance and avoid fragmentation.
+- Fix a build warning and error for !SWAP build reported by test bot.
+- Global cluster array also record device for each order [Baoquan He]
+- Adjust of comments and function name [Baoquan He]
+- Collect Review-by [Baoquan He]
+- Minor function style improvement [Matthew Wilcox]
+- Retest didn't show performance beyond noise so just keep using
+  the old performance test result.
+
+Signed-off-by: Kairui Song <kasong@tencent.com>
+
+
+Kairui Song (7):
+  mm, swap: avoid reclaiming irrelevant swap cache
+  mm, swap: drop the flag TTRS_DIRECT
+  mm, swap: avoid redundant swap device pinning
+  mm, swap: don't update the counter up-front
+  mm, swap: use percpu cluster as allocation fast path
+  mm, swap: remove swap slot cache
+  mm, swap: simplify folio swap allocation
+
+ include/linux/swap.h       |  21 +--
+ include/linux/swap_slots.h |  28 ----
+ mm/Makefile                |   2 +-
+ mm/shmem.c                 |  21 +--
+ mm/swap.h                  |   6 -
+ mm/swap_slots.c            | 295 --------------------------------
+ mm/swap_state.c            |  79 +--------
+ mm/swapfile.c              | 333 +++++++++++++++++++------------------
+ mm/vmscan.c                |  16 +-
+ mm/zswap.c                 |   6 +
+ 10 files changed, 210 insertions(+), 597 deletions(-)
+ delete mode 100644 include/linux/swap_slots.h
+ delete mode 100644 mm/swap_slots.c
+
 -- 
-2.25.1
+2.48.1
 
 
