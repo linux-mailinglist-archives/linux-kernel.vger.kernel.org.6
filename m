@@ -1,131 +1,251 @@
-Return-Path: <linux-kernel+bounces-529090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB56A41F7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBD1A41F81
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49D718958B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23FB81895667
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EDB23BD0C;
-	Mon, 24 Feb 2025 12:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E407D248865;
+	Mon, 24 Feb 2025 12:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKYjXcHv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="exZNX6Mr"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7223BCFC;
-	Mon, 24 Feb 2025 12:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E28718B46C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401209; cv=none; b=kKO2lYeSm0mVArH3RJd7RzK93bYv7LGVjoAzQqa1kKITEqPahupa8TRiwpZGJN/bOYd+r9hzHenoKJi9QPbQebwXxk5/niCAwP3gPqOWF6bWvNVM+8ojXuCBlI+7zZFGz63x5UDVGyAM4kxuZ1Y9qbk+rV3dLoLa9yIbSghd59M=
+	t=1740401263; cv=none; b=P1WM8GsF6k59GPuY+2KChnh+AFJq6thf1NZ1OlPZfGoBP7tdhguYUlzZrgis9C0P9baQIsohr3VhHPMrfLReN5VpE3AbwgWO8S3FmtZlRG70QAtmn2NhFevWG3aD/RxQch2qjVCQ3h//P3aqprxa9N8OGa4FaSA/QvKC0d4Rx5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401209; c=relaxed/simple;
-	bh=0B0CsThfPjGTpaa60Jmv4WtnpWqz89tZ838PBLhiS1M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E5a4pq6kAexPkGDrA78l/D/mV1CT7orIs3rmHgzyzcQpMH6WJpox5z6A1Z7oTVdHWbTsCGf95ERbWm17Mdqhm65imlnuKsGoljT4zDPjWnucKrtbNBdQCFetd47a0uH7maIOnZNzorc4c2csYIDah8XKN952GPUyMrEsaAIN5C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKYjXcHv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F8BC4CEE8;
-	Mon, 24 Feb 2025 12:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740401209;
-	bh=0B0CsThfPjGTpaa60Jmv4WtnpWqz89tZ838PBLhiS1M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HKYjXcHvXoCFVXB33ypRTMi+qhyXXBGo35E/k5RKPWwJtemmIWmE54meLKFZs/EvJ
-	 3Sj5yokM+60rAF5eOEJsXxZUsRSJTL9gieVYI7odceLW7YtFOAtpJ1f1jaiAT5QvF6
-	 VdQYXKDiyS7Zsl9VeINxjotnJc2NhNY+pDqCZkUmoZowSL5okxpWuO9JuO5gDF7z8q
-	 uEETt/7G+YPbqpb1AkdCI3osV8Gl0Qlpu2b4EY1Ebr+060OKuJkXRzM4z/5klxtS2w
-	 kOZLWvJ8qoeFPZNxulPgsx3CZktIrjFRwFMc/itwI46QhFscpfyp6fY0sOMoWH7yPx
-	 68tHEOSFVsICQ==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so5752131a12.3;
-        Mon, 24 Feb 2025 04:46:49 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1snL8XXmri7I1NfbPSU0phd3YvTUJ77HALIWaIuk3sWeabj25TmpTUBEUJDiFWdvt638vDuUjX57PP9q1@vger.kernel.org, AJvYcCV4oLoJILvFQvRMNjGf0s6dG2mvlG+9eNSCj5SNv46LAdfO8FLmsejF4HVKKwjdakIsAXR7ZXpuWBGWpYjqC3DiRQ==@vger.kernel.org, AJvYcCWQHJ21eEWs+mvwO6XWy07w9sWThtfRCatAOtSy/EzCbsuxHQDLV5jj3IDDt0kAUzB6cHx706RI2OM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnxdV5EPDjT3hdCj/WMo5hCdUgBMpX2sUfLr6KGkZ75t/qTGbD
-	d9gcJVSdV4ZbWFE/MLPcDKPVrz/4HeB5M31v4mLJqeOw/BPnF27JWMX730hI8iThsSkZcjFY1es
-	gHQ92Hf6g5VJ2CNNubi9kQtrF1Q==
-X-Google-Smtp-Source: AGHT+IFSrlzVDhPG7lgCi1VU8B1AxKksGxiI/QFAwg0k5D4fCtrCiSkO61qkvx8HAbvnWUGOsp8xAAa6cceHz1Shh+I=
-X-Received: by 2002:a05:6402:278e:b0:5dc:cf9b:b04a with SMTP id
- 4fb4d7f45d1cf-5e0b70bfd22mr30104043a12.1.1740401207751; Mon, 24 Feb 2025
- 04:46:47 -0800 (PST)
+	s=arc-20240116; t=1740401263; c=relaxed/simple;
+	bh=oZ2dWmyU4A//0DoserIi+hU6J9FipYEUap9axJniyx4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qx4DcZpW+Q2K+Hk0PjkXgWmlkGBkaume89A8zcX35jaupn/yazQOX+IlvVfmpNRX2zVCCsKyBX7cSWiiy5Z+XAx5/61Yo3OajpxWVmfq9Sj+ohcFsK+CUvqPCwx1QHHL6xBpOAexZtrpUEuRgcZ8Bk5jjJb5qfQ2IZX+1Y5T8+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=exZNX6Mr; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=vldkxvxq5bgy3elbypmorpcpye.protonmail; t=1740401258; x=1740660458;
+	bh=izzT/+0Q8SQxJzAfO8adqcn2Lgu3MSr0pO4y4sFm3ys=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=exZNX6MrZub/mnUGj6o/6Nq69vx7GgeC3TMGUDibQyxTc6nuKWYxmtWTgWtIqdz4P
+	 p9TNIP8ChSbMuwMPCJQRcSmqPfSA0gks98iBMQp1h+xxVwQ2WnBb7C37lU+yKtlCW2
+	 3cwVRumVstGDepJO95gozF3Z8OmF6OiIPtC+KmuuY75kX/iEACUxq8YJOQYC+quvgA
+	 /Dk8YKV7zUfCWxscoTHsGsaS/D13XHqSDz/xCKh09ey2nIp3a2ztkAtZJm4VRFm5Yn
+	 GrRLe5Di82lZOkNmPc4IBHjCbY7PYQa43jQ3b+p1v5XblsmgtJvDtcG647c+cqJifi
+	 udNoy5YMQhmfA==
+Date: Mon, 24 Feb 2025 12:47:32 +0000
+To: Ventura Jack <venturajack85@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Gary Guo <gary@garyguo.net>, Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <a4b79751-f1c8-4476-98a5-c59fb2e545ad@proton.me>
+In-Reply-To: <CAFJgqgQ3P81-iskGu9R+T=c=wyB2K0JqUhx+Gj+6mkYeY8-ORg@mail.gmail.com>
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com> <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com> <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c> <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com> <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com> <20250224002745.7d7460a7.gary@garyguo.net> <CAFJgqgSNjF=LfrCNTH3GdYssXz9YG-AeCtpibejJ7Ywtx0m3HQ@mail.gmail.com> <4cb1d98b-f94b-410a-be90-4394c48bdbf2@proton.me> <CAFJgqgQ3P81-iskGu9R+T=c=wyB2K0JqUhx+Gj+6mkYeY8-ORg@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 5e36dc550687cf705f54d72a0b677ac4439eb912
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
-In-Reply-To: <20250224122507.GE8144@e132581.arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Feb 2025 06:46:35 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
-X-Gm-Features: AWEUYZlK0yq7SIgMIaSVRny1cLnFGm1k0eFBcoGHQEZGYoT0-XXIWWwS_6M-XJc
-Message-ID: <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-To: Leo Yan <leo.yan@arm.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
-	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	kvmarm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 6:25=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
->
-> On Tue, Feb 18, 2025 at 02:40:06PM -0600, Rob Herring (Arm) wrote:
-> >
-> > From: Anshuman Khandual <anshuman.khandual@arm.com>
->
-> [...]
->
-> > BRBE records are invalidated whenever events are reconfigured, a new
-> > task is scheduled in, or after recording is paused (and the records
-> > have been recorded for the event). The architecture allows branch
-> > records to be invalidated by the PE under implementation defined
-> > conditions. It is expected that these conditions are rare.
->
-> [...]
->
-> > +static void armv8pmu_sched_task(struct perf_event_pmu_context *pmu_ctx=
-, bool sched_in)
-> > +{
-> > +       struct arm_pmu *armpmu =3D *this_cpu_ptr(&cpu_armpmu);
-> > +       struct pmu_hw_events *hw_events =3D this_cpu_ptr(armpmu->hw_eve=
-nts);
-> > +
-> > +       if (!hw_events->branch_users)
-> > +               return;
-> > +
-> > +       if (sched_in)
-> > +               brbe_invalidate();
-> > +}
->
-> Just a minor concern.  I don't see any handling for task migration.
-> E.g., for a task is migrated from one CPU to another CPU, I expect we
-> need to save and restore branch records based on BRBE injection.  So
-> far, the driver simply invalidates all records.
->
-> I think this topic is very likely discussed before.  If this is the
-> case, please ignore my comment.  Except this, the code looks good
-> to me.
+On 24.02.25 13:21, Ventura Jack wrote:
+> On Mon, Feb 24, 2025 at 3:31=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> On 24.02.25 10:57, Ventura Jack wrote:
+>>>
+>>> In regards to `UnsafeCell`, I believe that you are correct in regards
+>>> to mutability. However, if I understand you correctly, and if I
+>>> am not mistaken, I believe that you are wrong about `UnsafeCell`
+>>> making it possible to opt-out of the aliasing rules. And thus that
+>>> `UnsafeCell` does not behave like `T*` in C.
+>>
+>> `UnsafeCell<T>` does not behave like `T*` in C, because it isn't a
+>> pointer. Like Gary said, `&UnsafeCell<T>` behaves like `T*` in C, while
+>> `&mut UnsafeCell<T>` does not. That is what you quote from the docs
+>> below. (Those ampersands mark references in Rust, pointers that have
+>> additional guarantees [1])
+>=20
+> From what I can see in the documentation, `&UnsafeCell<T>` also does not
+> behave like `T*` in C. In C, especially if "strict aliasing" is turned
+> off in the
+> compiler, `T*` does not have aliasing requirements. You can have multiple
+> C `T*` pointers pointing to the same object, and mutate the same object.
 
-Not really discussed on the list, but that was present in v18 (though
-not functional because .sched_task() hook wasn't actually enabled) and
-Mark removed it. His work is here[1].The only comment was:
+This is true for `&UnsafeCell<T>`. You can have multiple of those and
+mutate the same value via only shared references. Note that
+`UnsafeCell<T>` is `!Sync`, so it cannot be shared across threads, so
+all of those shared references have to be on the same thread. (there is
+the `SyncUnsafeCell<T>` type that is `Sync`, so it does allow for
+across-thread mutations, but that is much more of a footgun, since you
+still have to synchronize the writes/reads)
 
-Note: saving/restoring at context-switch doesn't interact well with
-event rotation (e.g. if filters change)
+> The documentation for `UnsafeCell` conversely spends a lot of space
+> discussing invariants and aliasing requirements.
 
-Rob
+Yes, since normally in Rust, you can either have exactly one mutable
+reference, or several shared references (which cannot be used to mutate
+a value). `UnsafeCell<T>` is essentially a low-level primitive that can
+only be used with `unsafe` to build for example a mutex.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?=
-h=3Darm64/brbe&id=3D642985af34d2d6f54e76995380cf24d512078c56
+> I do not understand why you claim:
+>=20
+>     "`&UnsafeCell<T>` behaves like `T*` in C,"
+>=20
+> That statement is false as far as I can figure out, though I have taken i=
+t
+> out of context here.
+
+Not sure how you arrived at that conclusion, the following code is legal
+and sound Rust:
+
+    let val =3D UnsafeCell::new(42);
+    let x =3D &val;
+    let y =3D &val;
+    unsafe {
+        *x.get() =3D 0;
+        *y.get() =3D 42;
+        *x.get() =3D 24;
+    }
+
+You can't do this with `&mut i32`.
+
+> Is the argument in regards to mutability? But `T*` in C
+> allows mutability. If you looked at C++ instead of C, maybe a `const`
+> pointer would be closer in semantics and behavior.
+>=20
+>> below. (Those ampersands mark references in Rust, pointers that have
+>> additional guarantees [1])
+>>
+>> [omitted]
+>>
+>> [1]: https://doc.rust-lang.org/std/primitive.reference.html
+>=20
+> There is also https://doc.rust-lang.org/reference/types/pointer.html .
+
+Yes that is the description of all primitive pointer types. Both
+references and raw pointers.
+
+> But, references must follow certain aliasing rules, and in unsafe Rust,
+> it is the programmer that has the burden of upholding those aliasing rule=
+s,
+> right?
+
+Indeed.
+
+>> For disabling the uniqueness guarantee for `&mut`, we use an official
+>> "hack" that the Rust language developers are working on replacing with
+>> a better mechanism (this was also mentioned by Gary above).
+>=20
+> Are you referring to `Opaque`?
+
+I am referring to the hack used by `Opaque`, it is `!Unpin` which
+results in `&mut Opaque<T>` not having the `noalias` attribute.
+
+>>> Documentation and related links for `Opaque`:
+>>>     https://rust.docs.kernel.org/kernel/types/struct.Opaque.html
+>>>     https://rust.docs.kernel.org/src/kernel/types.rs.html#307-310
+>>>     https://github.com/Rust-for-Linux/pinned-init
+>>>
+>>> It uses `UnsafeCell`, Rust "pinning", and the Rust for Linux library
+>>> "pinned-init".
+>>
+>> pinned-init is not specific to `Opaque` and not really relevant with
+>> respect to discussing aliasing guarantees.
+>=20
+> Is `Opaque` really able to avoid aliasing requirements for users,
+> without internally using "pinned-init"/derivative or the pinning
+> feature used in its implementation?
+
+Yes, you can write `Opaque<T>` without using pinned-init. The hack
+described above uses `PhantomPinned` to make `Opaque<T>: !Unpin`.
+
+>>> "pinned-init" uses a number of experimental, unstable and nightly
+>>> features of Rust.
+>>
+>> This is wrong. It uses no unstable features when you look at the version
+>> in-tree (at `rust/kernel/init.rs`). The user-space version uses a single
+>> unstable feature: `allocator_api` for accessing the `AllocError` type
+>> from the standard library. You can disable the `alloc` feature and use
+>> it on a stable compiler as written in the readme.
+>=20
+> Interesting, I did not realize that the Rust for Linux project uses
+> a fork or derivative of "pinned-init" in-tree, not "pinned-init" itself.
+
+Yes, that is something that I am working on at the moment.
+
+> What I can read in the README.md:
+>     https://github.com/Rust-for-Linux/pinned-init/tree/main
+>=20
+>     "Nightly Needed for alloc feature
+>=20
+>     This library requires the allocator_api unstable feature
+>     when the alloc feature is enabled and thus this feature
+>     can only be used with a nightly compiler. When enabling
+>     the alloc feature, the user will be required to activate
+>     allocator_api as well.
+>=20
+>     The feature is enabled by default, thus by default
+>     pinned-init will require a nightly compiler. However, using
+>     the crate on stable compilers is possible by disabling alloc.
+>     In practice this will require the std feature, because stable
+>     compilers have neither Box nor Arc in no-std mode."
+>=20
+> Rust in Linux uses no_std, right? So Rust in Linux would not be
+> able to use the original "pinned_init" library as it currently is without
+> using currently nightly/unstable features, until the relevant feature(s)
+> is stabilized.
+
+Yes, Rust for Linux uses `#![no_std]` (and also has its own alloc), so
+it an use the stable version of pinned-init. However, there are several
+differences between the current in-tree version and the user-space
+version. I am working on some patches that fix that.
+
+>>> Working with the library implementation requires having a good
+>>> understanding of unsafe Rust and many advanced features of Rust.
+>>
+>> pinned-init was explicitly designed such that you *don't* have to write
+>> unsafe code for initializing structures that require pinning from the
+>> get-go (such as the kernel's mutex).
+>=20
+> Sorry, I sought to convey that I was referring to the internal library
+> implementation, not the usage of the library.
+
+Ah I see.
+
+> For the library implementation, do you agree that a good
+> understanding of unsafe Rust and many advanced features
+> are required to work with the library implementation? Such as
+> pinning?
+
+Yes I agree.
+
+---
+Cheers,
+Benno
+
+>>> `Opaque` looks interesting. Do you know if it will become a more
+>>> widely used abstraction outside the Linux kernel?
+>>
+>> Only in projects that do FFI with C/C++ (or other such languages).
+>> Outside of that the `Opaque` type is rather useless, since it disables
+>> normal guarantees and makes working with the inner type annoying.
+>=20
+> Interesting.
+>=20
+> Best, VJ.
+
 
