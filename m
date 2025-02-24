@@ -1,251 +1,294 @@
-Return-Path: <linux-kernel+bounces-528441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB0BBA417B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:46:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF4DA417B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3AB016F389
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:46:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45D3E3AE50E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CCD21D3F1;
-	Mon, 24 Feb 2025 08:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E937322171E;
+	Mon, 24 Feb 2025 08:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mdKiKKOE"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HeT76m94"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDCB21D3EE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02470221571;
+	Mon, 24 Feb 2025 08:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386745; cv=none; b=S1iFET/Y9sgWlGKSDkM+D1Julq11sVn0UjiQwdg5ofarCrPKdNqhfl+Z2wf/RN7IHZ6JTo+vafLNGnXNHQepu0pWJeteT5MCIL/17L4w7/8S5sR/89la/a4NTJwciIqcYGwnGE6KLsDAcmFvLW9Ey34JO6Kyhn3vZ2WBUlVzsXs=
+	t=1740386781; cv=none; b=SxpMa24OTgJmtJaDlk3BWTVurDkFq4/jBDCuQdST+sSSlD3gXzgCEDZkI2S3zYHvN9KBWDiVL6iwWzv+Jb7aJvVrqIkMlVdcZmengh/6u7+3Dsy/Bko22MnVOGzL7p8GDtL75MdyLgj+ucedA4iscCmp+Ip01EWHDCP5a1jfcI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386745; c=relaxed/simple;
-	bh=JqtxjAmqxeL0t1hyw/R5nXgv4I20bWPazwl6fujlIAg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=dV6CiueTykH5Mx00rFXtlyeedncWuua4H08GaYbjr67aosI0kvBNA4PuhFbMKjZbNDq8K15iUGJRrmOp6glCWBsYbOzs6eFGwG2cmsgurypeyP785n3kkYicJcmsCqxvfIKCqk+nvbuNrPtEm63+55MGjvL5WSluSMu1XGuXCi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mdKiKKOE; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-abb87e3a3c9so448049466b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:45:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740386742; x=1740991542; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQF+iGReGP9xasU6LwNX6rJHJvus8x0KQVBFP1lU99o=;
-        b=mdKiKKOExEcRjNoO/HP8XERRmev69XmLygISob61OBu9VxNDRlohGSc+r8UoR67TRY
-         KlnYi6o0hKbNPEA6Lad9noTiiUMfip1HtWOroz8PGvkRFngGHVTj+DCrzI/fZLRHFVsw
-         f07V1OfyOWCpbnL2oEoQv5HXMtAv4qcAn9xIGVGLGwLogfFwv+Zz1IIW0BVqRX1+QRby
-         E/hcfSJwrM24zq3YA0ir5nBE5asCfBJmwGt9Zckp7/KGRSnFZCL6vtg9Aq0CYZdTfELS
-         bQxCyDQuCXFF9Ak7d7ozvSoOFhBeEitdgxGxZJdyWBdkHbFtywJkYBCsGMHuf3b5tpi6
-         TORQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740386742; x=1740991542;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YQF+iGReGP9xasU6LwNX6rJHJvus8x0KQVBFP1lU99o=;
-        b=IR8ahkeT84mTYCSa+MvIoa1pMfeFRLIYUxlv4GIjC0ScT08ewOHWiqQQEhOXinKHQo
-         lyPBN72rr5788SVDZnJ0vaEbXMqNrZ55oj3g9XV3qDMqjgWHRYz+J6f0nRri5twvqo74
-         sUDmGqEmtFoTx3xSr4/xVrz87ld+WUcHFUvxSU31nffLycWdX9PGdDmaQTOu6435sio2
-         Iyqw4TbUqs47E043WoaJiFIH6fHGtt8xdwAXKTQbOgPdf6N8lX9GxRNdvJ896CxhMlrM
-         33KmfyjlXUpn4rVRqlE32XtO3Wk3CplD5ZyTtJAYQT5QHtXAVLOdbbfr3UDm6NYo6XBs
-         oU5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWrMYD9v31h7H1Ol9NBQPhJZ/pNGjUgPgvVBuJKUwKcXmGmNLvOEtiG7RHh39nqFZJwxxtdl3Y5zEBOxsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzGr8mXwtVXj8ECjmuGA5CsQMgsCumpMmv2lXqw2CnGSOl+Fg4
-	vMYG5Le21Kl8TAOU+xzf0jjT+3sTQVOOKVKlN8sBQbQrMOV6U9SpbdauWzmNH5KIEd+o8rnmuzt
-	LVINHAQ==
-X-Google-Smtp-Source: AGHT+IHMFPc32xzyLN0MXMpMgNHSUKOvg8vmD2KmV10tV25PoTdfS/durnCaw/m++9k3552XpAhboaQR5z+3
-X-Received: from ejcrx14.prod.google.com ([2002:a17:906:8e0e:b0:abb:8131:986b])
- (user=dvyukov job=prod-delivery.src-stubby-dispatcher) by 2002:a17:906:2801:b0:abc:ca9:45af
- with SMTP id a640c23a62f3a-abc0ca94fb1mr978372666b.18.1740386741815; Mon, 24
- Feb 2025 00:45:41 -0800 (PST)
-Date: Mon, 24 Feb 2025 09:45:27 +0100
-In-Reply-To: <cover.1740386567.git.dvyukov@google.com>
+	s=arc-20240116; t=1740386781; c=relaxed/simple;
+	bh=4U73g4/gOmTnFzPkNcAHhoAxJXYvObnD0dNRTxp53F4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SOs9oLQyz4VqtE1I6zn9e00XyxUUejdbuTSiP4Q5BaAJYe5ZZk1WmlW2F0xcpFzuQpZGKe3psNovadUs+mIVQV730XYDk3Q6DnOdkbvzoPm452bFwPb+zm+7ooS+Q/riZUARLWNM8x23F2ZjSIZD+kS16BNPOG6LwhhYSu8HvVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HeT76m94; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51NNfi3k025322;
+	Mon, 24 Feb 2025 08:46:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	sC4H/bRUgZfWPwQMJ+HGbd2v8BHEROc0Xl9s+cEjNBI=; b=HeT76m94BfLAQ9nE
+	QC5NrJPtPk6i4j5vnkPGYj5R8fSLMh9IpxWEMcG+T98zkAHfmIyGi7RKA0nx07MI
+	M0u4f+RfwapedJcI2MvytPWhWQpKFutNa+lajq2qwpe770UhfMW6bjT3bjbaZmCH
+	ofsSid3rdR5Wu56wCg69GWMyOyZC0TaVv9kwP1gNiFTvgOWqT55zmOuYmadNf86b
+	GlEF4rg4qQOzgeg9DO0ZRk8AbECyX4A9rVYqiwyJjC5gUXmdKwctXDXKIhMOC0pH
+	u7VXZj8hHgnGYJn7U0V4Mbr3gk+Zb/BVZikzNOz26y9HdTxTOjs8CV24wbXYKggK
+	nCfWgw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6ntv74c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 08:46:07 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O8k6u8012866
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 08:46:06 GMT
+Received: from [10.233.19.224] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
+ 2025 00:46:03 -0800
+Message-ID: <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
+Date: Mon, 24 Feb 2025 16:46:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1740386567.git.dvyukov@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <0804b17f1163640eb830de487ab5fc222829e778.1740386567.git.dvyukov@google.com>
-Subject: [PATCH v2 3/3] selftests: Extend syscall_user_dispatch test to check
- allowed range
-From: Dmitry Vyukov <dvyukov@google.com>
-To: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
-	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com
-Cc: Dmitry Vyukov <dvyukov@google.com>, Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
+ support
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <p.zabel@pengutronix.de>,
+        <dmitry.baryshkov@linaro.org>, <abel.vesa@linaro.org>,
+        <quic_qianyu@quicinc.com>, <neil.armstrong@linaro.org>,
+        <quic_devipriy@quicinc.com>, <konrad.dybcio@oss.qualcomm.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
+ <20250220102253.755116-3-quic_wenbyao@quicinc.com>
+ <20250224073301.aqbw3gxjnupbejfy@thinkpad>
+Content-Language: en-US
+From: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+In-Reply-To: <20250224073301.aqbw3gxjnupbejfy@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vyCJcSmPiXHHDsTk6hVMthtBLTlNYqcs
+X-Proofpoint-GUID: vyCJcSmPiXHHDsTk6hVMthtBLTlNYqcs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502240063
 
-Add a test that ensures that PR_SET_SYSCALL_USER_DISPATCH respects
-the specified allowed PC range. The test includes both a continuous
-range and a wrap-around range.
+On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
+> On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
+>> From: Qiang Yu <quic_qianyu@quicinc.com>
+>>
+>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
+>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
+>> but retains register values, which means PHY setting can be skipped during
+>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
+>> after that.
+>>
+>> Hence, determine whether the PHY has been enabled in bootloader by
+>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
+>> available, skip BCR reset and PHY register setting to establish the PCIe
+>> link with bootloader - programmed PHY settings.
+>>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> Some nitpicks below.
+>
+>> ---
+>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 60 +++++++++++++++++++-----
+>>   1 file changed, 49 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> index 219266125cf2..6938b72df7fa 100644
+>> --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
+>> @@ -2805,6 +2805,7 @@ struct qmp_pcie {
+>>   
+>>   	const struct qmp_phy_cfg *cfg;
+>>   	bool tcsr_4ln_config;
+>> +	bool skip_init;
+>>   
+>>   	void __iomem *serdes;
+>>   	void __iomem *pcs;
+>> @@ -3976,7 +3977,9 @@ static int qmp_pcie_init(struct phy *phy)
+>>   {
+>>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>> +	void __iomem *pcs = qmp->pcs;
+>>   	int ret;
+>> +	bool phy_initialized;
+>>   
+>>   	ret = regulator_bulk_enable(cfg->num_vregs, qmp->vregs);
+>>   	if (ret) {
+>> @@ -3984,10 +3987,18 @@ static int qmp_pcie_init(struct phy *phy)
+>>   		return ret;
+>>   	}
+>>   
+>> -	ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "reset assert failed\n");
+>> -		goto err_disable_regulators;
+>> +	phy_initialized = !!(readl(pcs + cfg->regs[QPHY_START_CTRL]));
+>> +	qmp->skip_init = qmp->nocsr_reset && phy_initialized;
+>> +	/*
+>> +	 * Toggle BCR reset for PHY that doesn't support no_csr
+>> +	 * reset or has not been initialized
+> Please make use of 80 column width.
 
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Gregory Price <gregory.price@memverge.com>
-Cc: Marco Elver <elver@google.com>
-Cc: linux-kernel@vger.kernel.org
+Will fix it.
 
----
-Changes in v2:
- - add tests for 0-sized range
- - change range setup in the test to be fatal
----
- .../syscall_user_dispatch/sud_test.c          | 85 ++++++++++++-------
- 1 file changed, 54 insertions(+), 31 deletions(-)
+>
+>> +	 */
+>> +	if (!qmp->skip_init) {
+>> +		ret = reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "reset assert failed\n");
+>> +			goto err_disable_regulators;
+>> +		}
+>>   	}
+>>   
+>>   	ret = reset_control_assert(qmp->nocsr_reset);
+>> @@ -3998,10 +4009,12 @@ static int qmp_pcie_init(struct phy *phy)
+>>   
+>>   	usleep_range(200, 300);
+>>   
+>> -	ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
+>> -	if (ret) {
+>> -		dev_err(qmp->dev, "reset deassert failed\n");
+>> -		goto err_assert_reset;
+>> +	if (!qmp->skip_init) {
+>> +		ret = reset_control_bulk_deassert(cfg->num_resets, qmp->resets);
+>> +		if (ret) {
+>> +			dev_err(qmp->dev, "reset deassert failed\n");
+>> +			goto err_assert_reset;
+>> +		}
+>>   	}
+>>   
+>>   	ret = clk_bulk_prepare_enable(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
+>> @@ -4011,7 +4024,8 @@ static int qmp_pcie_init(struct phy *phy)
+>>   	return 0;
+>>   
+>>   err_assert_reset:
+>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +	if (!qmp->skip_init)
+>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>>   err_disable_regulators:
+>>   	regulator_bulk_disable(cfg->num_vregs, qmp->vregs);
+>>   
+>> @@ -4023,7 +4037,10 @@ static int qmp_pcie_exit(struct phy *phy)
+>>   	struct qmp_pcie *qmp = phy_get_drvdata(phy);
+>>   	const struct qmp_phy_cfg *cfg = qmp->cfg;
+>>   
+>> -	reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>> +	if (qmp->nocsr_reset)
+>> +		reset_control_assert(qmp->nocsr_reset);
+>> +	else
+>> +		reset_control_bulk_assert(cfg->num_resets, qmp->resets);
+>>   
+>>   	clk_bulk_disable_unprepare(ARRAY_SIZE(qmp_pciephy_clk_l), qmp->clks);
+>>   
+>> @@ -4042,6 +4059,13 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   	unsigned int mask, val;
+>>   	int ret;
+>>   
+>> +	/*
+>> +	 * Write CSR register for PHY that doesn't support no_csr
+>> +	 * reset or has not been initialized
+> Same here.
 
-diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-index b0969925ec64c..302089ccd103c 100644
---- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-+++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-@@ -10,6 +10,8 @@
- #include <sys/sysinfo.h>
- #include <sys/syscall.h>
- #include <signal.h>
-+#include <stdbool.h>
-+#include <stdlib.h>
- 
- #include <asm/unistd.h>
- #include "../kselftest_harness.h"
-@@ -110,31 +112,15 @@ TEST(bad_prctl_param)
- 	/* PR_SYS_DISPATCH_ON */
- 	op = PR_SYS_DISPATCH_ON;
- 
--	/* Dispatcher region is bad (offset > 0 && len == 0) */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
--	EXPECT_EQ(EINVAL, errno);
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
--	EXPECT_EQ(EINVAL, errno);
-+	/* All ranges are allowed */
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
-+	EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
- 
- 	/* Invalid selector */
- 	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x0, 0x1, (void *) -1));
- 	EXPECT_EQ(EFAULT, errno);
--
--	/*
--	 * Dispatcher range overflows unsigned long
--	 */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 1, -1L, &sel));
--	EXPECT_EQ(EINVAL, errno) {
--		TH_LOG("Should reject bad syscall range");
--	}
--
--	/*
--	 * Allowed range overflows usigned long
--	 */
--	EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, -1L, 0x1, &sel));
--	EXPECT_EQ(EINVAL, errno) {
--		TH_LOG("Should reject bad syscall range");
--	}
- }
- 
- /*
-@@ -145,11 +131,13 @@ char glob_sel;
- int nr_syscalls_emulated;
- int si_code;
- int si_errno;
-+unsigned long syscall_addr;
- 
- static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
- {
- 	si_code = info->si_code;
- 	si_errno = info->si_errno;
-+	syscall_addr = (unsigned long)info->si_call_addr;
- 
- 	if (info->si_syscall == MAGIC_SYSCALL_1)
- 		nr_syscalls_emulated++;
-@@ -172,26 +160,29 @@ static void handle_sigsys(int sig, siginfo_t *info, void *ucontext)
- #endif
- }
- 
--TEST(dispatch_and_return)
-+int setup_sigsys_handler(void)
- {
--	long ret;
- 	struct sigaction act;
- 	sigset_t mask;
- 
--	glob_sel = 0;
--	nr_syscalls_emulated = 0;
--	si_code = 0;
--	si_errno = 0;
--
- 	memset(&act, 0, sizeof(act));
- 	sigemptyset(&mask);
--
- 	act.sa_sigaction = handle_sigsys;
- 	act.sa_flags = SA_SIGINFO;
- 	act.sa_mask = mask;
-+	return sigaction(SIGSYS, &act, NULL);
-+}
- 
--	ret = sigaction(SIGSYS, &act, NULL);
--	ASSERT_EQ(0, ret);
-+TEST(dispatch_and_return)
-+{
-+	long ret;
-+
-+	glob_sel = 0;
-+	nr_syscalls_emulated = 0;
-+	si_code = 0;
-+	si_errno = 0;
-+
-+	ASSERT_EQ(0, setup_sigsys_handler());
- 
- 	/* Make sure selector is good prior to prctl. */
- 	SYSCALL_DISPATCH_OFF(glob_sel);
-@@ -321,4 +312,36 @@ TEST(direct_dispatch_range)
- 	}
- }
- 
-+bool test_range(unsigned long offset, unsigned long length)
-+{
-+	nr_syscalls_emulated = 0;
-+	SYSCALL_DISPATCH_OFF(glob_sel);
-+	if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
-+		abort();
-+	SYSCALL_DISPATCH_ON(glob_sel);
-+	return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
-+}
-+
-+TEST(dispatch_range)
-+{
-+	ASSERT_EQ(0, setup_sigsys_handler());
-+	ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
-+	SYSCALL_DISPATCH_ON(glob_sel);
-+	ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
-+	TH_LOG("syscall_addr=0x%lx", syscall_addr);
-+	EXPECT_FALSE(test_range(syscall_addr, 1));
-+	EXPECT_FALSE(test_range(syscall_addr-100, 200));
-+	EXPECT_TRUE(test_range(syscall_addr+1, 100));
-+	EXPECT_TRUE(test_range(syscall_addr-100, 100));
-+	/* Wrap-around tests for everything except for a single PC. */
-+	EXPECT_TRUE(test_range(syscall_addr+1, -1));
-+	EXPECT_FALSE(test_range(syscall_addr, -1));
-+	EXPECT_FALSE(test_range(syscall_addr+2, -1));
-+	/* 0-size range does not match anything. */
-+	EXPECT_TRUE(test_range(syscall_addr-1, 0));
-+	EXPECT_TRUE(test_range(syscall_addr, 0));
-+	EXPECT_TRUE(test_range(syscall_addr+1, 0));
-+	SYSCALL_DISPATCH_OFF(glob_sel);
-+}
-+
- TEST_HARNESS_MAIN
+Will fix it.
+
+>
+>> +	 */
+>> +	if (qmp->skip_init)
+>> +		goto skip_tbls_init;
+>> +
+>>   	qphy_setbits(pcs, cfg->regs[QPHY_PCS_POWER_DOWN_CONTROL],
+>>   			cfg->pwrdn_ctrl);
+>>   
+>> @@ -4053,6 +4077,7 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   	qmp_pcie_init_registers(qmp, &cfg->tbls);
+>>   	qmp_pcie_init_registers(qmp, mode_tbls);
+>>   
+>> +skip_tbls_init:
+>>   	ret = clk_bulk_prepare_enable(qmp->num_pipe_clks, qmp->pipe_clks);
+>>   	if (ret)
+>>   		return ret;
+>> @@ -4063,6 +4088,9 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   		goto err_disable_pipe_clk;
+>>   	}
+>>   
+>> +	if (qmp->skip_init)
+>> +		goto skip_serdes_start;
+>> +
+>>   	/* Pull PHY out of reset state */
+>>   	qphy_clrbits(pcs, cfg->regs[QPHY_SW_RESET], SW_RESET);
+>>   
+>> @@ -4072,6 +4100,7 @@ static int qmp_pcie_power_on(struct phy *phy)
+>>   	if (!cfg->skip_start_delay)
+>>   		usleep_range(1000, 1200);
+>>   
+>> +skip_serdes_start:
+>>   	status = pcs + cfg->regs[QPHY_PCS_STATUS];
+>>   	mask = cfg->phy_status;
+>>   	ret = readl_poll_timeout(status, val, !(val & mask), 200,
+>> @@ -4096,7 +4125,15 @@ static int qmp_pcie_power_off(struct phy *phy)
+>>   
+>>   	clk_bulk_disable_unprepare(qmp->num_pipe_clks, qmp->pipe_clks);
+>>   
+>> -	/* PHY reset */
+>> +	/* When PHY is powered off, only qmp->nocsr_reset needs to be checked.
+> s/'When PHY is powered off,'/'While powering off the PHY,'
+
+Will fix it.
+
+>
+>> +	 * In this way, no matter whether the PHY settings were initially
+>> +	 * programmed by bootloader or PHY driver itself, we can reuse them
+> It is really possible to have bootloader not programming the init sequence for
+> no_csr reset platforms? The comment sounds like it is possible. But I heard the
+> opposite.
+
+PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
+manually in UEFI shell if we want.
+
+>
+>> +	 * when PHY is powered on next time.
+>> +	 */
+>> +	if (qmp->nocsr_reset)
+>> +		goto skip_phy_deinit;
+>> +
+>> +		/* PHY reset */
+> Spurious tab before the start of the comment.
+
+Will fix it.
+
+>
+> - Mani
+>
 -- 
-2.48.1.601.g30ceb7b040-goog
+With best wishes
+Wenbin
 
 
