@@ -1,56 +1,76 @@
-Return-Path: <linux-kernel+bounces-528648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E00D6A41A2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:07:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A04EAA41A39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A57E1891277
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59ED53BAB71
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9B1253331;
-	Mon, 24 Feb 2025 10:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C78F255E52;
+	Mon, 24 Feb 2025 10:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqD2Dozx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2WPk2Sg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F36253B64;
-	Mon, 24 Feb 2025 10:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5660D2F3B;
+	Mon, 24 Feb 2025 10:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391290; cv=none; b=urz0i0vAJuIvYVRWhNfErBtNqrIaZ3VsLutQ6TJCdYB+BHvxoNRuohoUzqzHb6PXn2XOBmDJgASmpOt6plrflaGm1WV4fAU3Kh5nvKIylACjCTpWOaTAZJgEBjZdctcrUlNvVmDsa79D+3wKbEMAAO7KwRkyuZG8Qcniur4hNvI=
+	t=1740391330; cv=none; b=ZFC2HGQXx0VAfi6NAddbgujUtpt73yDg9sRDzYsnbZBZ7bLmdV27ulF6dUERhZRSFpMErlIcT+x1OCr7pEUZsPJsDOpC/HrDn5VmnFcsXmNLbLXIklD5n1z0jfmrlzPqDmO+jgzdZsE1o1xOKeKKdAUYKsxCPSa+D+xx5PdIq5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391290; c=relaxed/simple;
-	bh=Enp3Zb8nzXxEkwvMAjUB6rg1iQahYbSwBGgW+v2Giuw=;
+	s=arc-20240116; t=1740391330; c=relaxed/simple;
+	bh=+z8XfJcexfKhI0cgpuZtTAoXymKaOc7Hk9T70kRAtA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I/XZMK1D0GCvIMki3/dqftvbtcZYxYPvHauci2tMqTwV+NeNd1bn+kB+VA3eE8cy7nfpa5QCdzX/2OaXwQIbNGl1paXQF+bcX7i1elwDx34gt2csvSjg/zIpzsuuE/rFl4axWqu31L3BuWYkPt5uxwGenltQIxFCvFa+V7pwJBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqD2Dozx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C2AC4CEE6;
-	Mon, 24 Feb 2025 10:01:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740391289;
-	bh=Enp3Zb8nzXxEkwvMAjUB6rg1iQahYbSwBGgW+v2Giuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VqD2DozxGOkrHVQIsobsGCZ2nE6oH/nofMiU9yF8e/R+bboQE5R4zG3QPdTpZJ77i
-	 l8DmXlsNEJUFZl9DOR43gsjJM/mrB7Uz5HUUY76bRPXNU5w3R3bg5dvmtun3UZf9JH
-	 toesJTUvnYW3mYt58Ecwo+e7hZpuE3aPYQK4IY6l7rL7l6tcq+wPJBRQvH8TZXTqhP
-	 mgh44a15AR8lugpYTekF+UUAWrPzxKjFGXN/yuofnbG4oG+YAmLU+wWC7ysFsSD/gP
-	 6ApKOJkIoYbEgFYnWfDSXPQ21I8r8YjPeCKng5//dR9N+TPugTdtYHw7eJDJrxvWkk
-	 Wtkm3rlFubUzw==
-Date: Mon, 24 Feb 2025 20:31:26 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Coly Li <colyli@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcache@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 8/8][next] bcache: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <f9f20ad9362972ef920dd9aecd7b98ab345ee866.1739957534.git.gustavoars@kernel.org>
-References: <cover.1739957534.git.gustavoars@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PbRiLaTQS3xeLJY3nFEkDzjUM29PV1v70mrJs/Pj1lzH8/gvXvOeMtXLefKZKv9hoHlHYcKkj8TWc/6abBtxSpXaTO3gUhBHFe2aBlsHH67j96zJ8PJUtc+IC9OCVQyxfxqbo2J30ebGgRALmkgUk/FMU7rSR+2+XXm0cZyUlfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2WPk2Sg; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740391330; x=1771927330;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+z8XfJcexfKhI0cgpuZtTAoXymKaOc7Hk9T70kRAtA0=;
+  b=c2WPk2SgQNd/I3lQFws0y+Iu/ffarJZTewaJLnhrlq+MFsB8NtN5egAe
+   /4hmfqaQ2EjndHJcO9TXPl2wdMAWreG6TyFPFU3ZZuqHxgRESgWJa28gL
+   Sc0R79AXJBOuv1By8R7LcdqRYVle6PIFV7HI4ApLD51ExvGleHFpe/iOZ
+   pWj0IMy3qWg/NpyRdgvHBZ7qxjvhHnBQryussFMY5ibdcu/lIWiXvrU3x
+   kFKLxmrIQLwj5oSLET3v6Vc7IFenhrdvVI/lvfLek87yhcrvojD5vKduq
+   02Ox7aNdxG3uLCmWPGjvithBvD9lIDDp2/hmeaPicNR1ndOx+uEv3bhLf
+   w==;
+X-CSE-ConnectionGUID: 1oM2vNJtTXSOLfmrZ/tQpQ==
+X-CSE-MsgGUID: 9P7JVhQBQ3KSSKnuEGATzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52565316"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="52565316"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:02:05 -0800
+X-CSE-ConnectionGUID: Mx9DxBApTCyhjv8S1tc6Gg==
+X-CSE-MsgGUID: J2QR8s9NST+/p0ppvPniqQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116649514"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:02:04 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmVHl-0000000Eety-1wwk;
+	Mon, 24 Feb 2025 12:02:01 +0200
+Date: Mon, 24 Feb 2025 12:02:01 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the gpio-intel
+ tree
+Message-ID: <Z7xDmddu6TZHNAFu@smile.fi.intel.com>
+References: <20250224083406.6174f821@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,158 +79,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1739957534.git.gustavoars@kernel.org>
+In-Reply-To: <20250224083406.6174f821@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Mon, Feb 24, 2025 at 08:34:06AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   b16e9f8547a3 ("input: ipaq-micro-keys: use devm_kmemdup_array()")
+>   67b12cda28e1 ("input: sparse-keymap: use devm_kmemdup_array()")
+>   5f95e8d0be63 ("iio: adc: xilinx-xadc-core: use devm_kmemdup_array()")
+>   18c4aec76056 ("pinctrl: pxa2xx: use devm_kmemdup_array()")
+>   d7f6555aec79 ("pinctrl: tangier: use devm_kmemdup_array()")
+>   6e1bba1140a9 ("pinctrl: cherryview: use devm_kmemdup_array()")
+>   af946f612dfe ("pinctrl: baytrail: copy communities using devm_kmemdup_array()")
+>   85ab35bae5ac ("pinctrl: intel: copy communities using devm_kmemdup_array()")
+>   4c176c256dd9 ("devres: Introduce devm_kmemdup_array()")
+>   d7a76a31c46e ("err.h: move IOMEM_ERR_PTR() to err.h")
+> 
+> are missing a Signed-off-by from their committer.
 
-Change the type of the middle struct members currently causing trouble
-from `struct bio` to `struct bio_hdr`.
+Thanks for the report!
 
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure `struct bio`, through which we can access the
-flexible-array member in it, if necessary.
+But I dunno how to fix it now since it's most likely have been taken to some
+other repos before battery.
 
-With these changes fix 112 of the following warnings:
+I can issue another tag with that being addressed, nevertheless.
 
-drivers/md/bcache/bcache.h:233:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/bcache.h:241:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/bcache.h:242:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/bcache.h:308:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/bcache.h:422:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/bcache.h:639:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/journal.h:152:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-drivers/md/bcache/journal.h:156:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> Also, these have been merged into the battery tree.
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- drivers/md/bcache/bcache.h  |  4 ++--
- drivers/md/bcache/journal.c | 10 +++++-----
- drivers/md/bcache/journal.h |  4 ++--
- drivers/md/bcache/super.c   |  8 +++++---
- 4 files changed, 14 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 785b0d9008fa..328023e90eb2 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -305,7 +305,7 @@ struct cached_dev {
- 
- 	struct cache_sb		sb;
- 	struct cache_sb_disk	*sb_disk;
--	struct bio		sb_bio;
-+	struct bio_hdr		sb_bio;
- 	struct bio_vec		sb_bv[1];
- 	struct closure		sb_write;
- 	struct semaphore	sb_write_mutex;
-@@ -419,7 +419,7 @@ struct cache {
- 	struct cache_set	*set;
- 	struct cache_sb		sb;
- 	struct cache_sb_disk	*sb_disk;
--	struct bio		sb_bio;
-+	struct bio_hdr		sb_bio;
- 	struct bio_vec		sb_bv[1];
- 
- 	struct kobject		kobj;
-diff --git a/drivers/md/bcache/journal.c b/drivers/md/bcache/journal.c
-index 7ff14bd2feb8..2ead129f7758 100644
---- a/drivers/md/bcache/journal.c
-+++ b/drivers/md/bcache/journal.c
-@@ -36,7 +36,7 @@ static int journal_read_bucket(struct cache *ca, struct list_head *list,
- 			       unsigned int bucket_index)
- {
- 	struct journal_device *ja = &ca->journal;
--	struct bio *bio = &ja->bio;
-+	struct bio *bio = container_of(&ja->bio, struct bio, __hdr);
- 
- 	struct journal_replay *i;
- 	struct jset *j, *data = ca->set->journal.w[0].data;
-@@ -571,7 +571,7 @@ static void btree_flush_write(struct cache_set *c)
- static void journal_discard_endio(struct bio *bio)
- {
- 	struct journal_device *ja =
--		container_of(bio, struct journal_device, discard_bio);
-+		container_of(&bio->__hdr, struct journal_device, discard_bio);
- 	struct cache *ca = container_of(ja, struct cache, journal);
- 
- 	atomic_set(&ja->discard_in_flight, DISCARD_DONE);
-@@ -585,13 +585,13 @@ static void journal_discard_work(struct work_struct *work)
- 	struct journal_device *ja =
- 		container_of(work, struct journal_device, discard_work);
- 
--	submit_bio(&ja->discard_bio);
-+	submit_bio(container_of(&ja->discard_bio, struct bio, __hdr));
- }
- 
- static void do_journal_discard(struct cache *ca)
- {
- 	struct journal_device *ja = &ca->journal;
--	struct bio *bio = &ja->discard_bio;
-+	struct bio *bio = container_of(&ja->discard_bio, struct bio, __hdr);
- 
- 	if (!ca->discard) {
- 		ja->discard_idx = ja->last_idx;
-@@ -787,7 +787,7 @@ static CLOSURE_CALLBACK(journal_write_unlocked)
- 
- 	for (i = 0; i < KEY_PTRS(k); i++) {
- 		ca = c->cache;
--		bio = &ca->journal.bio;
-+		bio = container_of(&ca->journal.bio, struct bio, __hdr);
- 
- 		atomic_long_add(sectors, &ca->meta_sectors_written);
- 
-diff --git a/drivers/md/bcache/journal.h b/drivers/md/bcache/journal.h
-index cd316b4a1e95..b4ff5269aee3 100644
---- a/drivers/md/bcache/journal.h
-+++ b/drivers/md/bcache/journal.h
-@@ -149,11 +149,11 @@ struct journal_device {
- 	atomic_t		discard_in_flight;
- 
- 	struct work_struct	discard_work;
--	struct bio		discard_bio;
-+	struct bio_hdr		discard_bio;
- 	struct bio_vec		discard_bv;
- 
- 	/* Bio for journal reads/writes to this device */
--	struct bio		bio;
-+	struct bio_hdr		bio;
- 	struct bio_vec		bv[8];
- };
- 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index e42f1400cea9..cd1342355cf2 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -337,7 +337,7 @@ static CLOSURE_CALLBACK(bch_write_bdev_super_unlock)
- void bch_write_bdev_super(struct cached_dev *dc, struct closure *parent)
- {
- 	struct closure *cl = &dc->sb_write;
--	struct bio *bio = &dc->sb_bio;
-+	struct bio *bio = container_of(&dc->sb_bio, struct bio, __hdr);
- 
- 	down(&dc->sb_write_mutex);
- 	closure_init(cl, parent);
-@@ -374,7 +374,7 @@ void bcache_write_super(struct cache_set *c)
- {
- 	struct closure *cl = &c->sb_write;
- 	struct cache *ca = c->cache;
--	struct bio *bio = &ca->sb_bio;
-+	struct bio *bio = container_of(&ca->sb_bio, struct bio, __hdr);
- 	unsigned int version = BCACHE_SB_VERSION_CDEV_WITH_UUID;
- 
- 	down(&c->sb_write_mutex);
-@@ -2230,7 +2230,9 @@ static int cache_alloc(struct cache *ca)
- 	__module_get(THIS_MODULE);
- 	kobject_init(&ca->kobj, &bch_cache_ktype);
- 
--	bio_init(&ca->journal.bio, NULL, ca->journal.bio.bi_inline_vecs, 8, 0);
-+	bio_init(container_of(&ca->journal.bio, struct bio, __hdr), NULL,
-+		 container_of(&ca->journal.bio, struct bio, __hdr)->bi_inline_vecs,
-+		 8, 0);
- 
- 	/*
- 	 * when ca->sb.njournal_buckets is not zero, journal exists,
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
