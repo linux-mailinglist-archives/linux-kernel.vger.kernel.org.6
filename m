@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-528893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2DFA41D71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB05AA41D5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5513BFAA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:42:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 737733AE17D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07390254854;
-	Mon, 24 Feb 2025 11:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3313F233729;
+	Mon, 24 Feb 2025 11:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="k3VDnIYo"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttVIb1C0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4D523BD11;
-	Mon, 24 Feb 2025 11:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2AA23371F;
+	Mon, 24 Feb 2025 11:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740396076; cv=none; b=GnRg66eWWrsBe2eB2WnwjxK7rkfn74Ui+WAghPPqkyxS5S5jlULr4/sjdADIrrCrEYcugJMW35YZ23bX/bEO39ed7LEgD9k5ckCPlE5O3MZ9jrTYsj80VPS/vO8f/1PPw0B+uWLz/fmZ18bbh+FMQt95jkZvmWulLbFe89C5OTU=
+	t=1740396055; cv=none; b=f/zpRT21f1psAq892W7D8Ur7iO0jgS4PCdLim8lZdpgxDA+7RDBsv0bUyuyacJ4gJrLxVUCl1s8nMtWJ48zmNT+CBbm7bxUo0Qr7DnLH1MqxYQHISBb0vTUG8f/l3mehZVCB9qcb/96v/a40bLfnjlV2meQ1ek8l4a90dV3OaZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740396076; c=relaxed/simple;
-	bh=UR/V5CaH1smA/Ep6TuqVVJoHIRliBWAMQqudackZJOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ePi6u8F0r58Y/JwaSEtRVCIT2MIDIq/y+/NscSKbyaCjhbcOMyReXe+UfepyIy//RJ9aoLZYaR8qcEQ/VL1F755sZE/72jbABhnqyefp0EvA7erBCQHnVkpe536rWsRjsSHqHqY2Fddfc0etfoQCDXyIV9jAxGI9IDjZGtwQMIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=k3VDnIYo; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
-	s=default; t=1740396074;
-	bh=x+JZ0bZh6o31FzL/bWs2L2enB0qu5OHjl9gf7Goj11o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k3VDnIYouVr0xuGpeuELmGYMzdWobg9FRDuC7C9Ezp9heZVLghfX8FkRtu2F7dDHT
-	 Kkkq7HbrnLxWRaK/eMZiQsJyjeG6FRUei2AEg/LnV7gQrdulTn+JnyRv/tFHXSOAk8
-	 Dl81KF6d1PcEAr5VfpGYtWbDbzhEzWuGwV+nG0ho=
-Received: from stargazer.. (unknown [IPv6:240e:358:1110:6100:dc73:854d:832e:7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 44E931A40EF;
-	Mon, 24 Feb 2025 06:21:08 -0500 (EST)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Fangrui Song <i@maskray.me>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>,
-	linux-csky@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Xi Ruoyao <xry111@xry111.site>
-Subject: [PATCH 3/3] LoongArch: vDSO: Remove --hash-style=sysv
-Date: Mon, 24 Feb 2025 19:20:42 +0800
-Message-ID: <20250224112042.60282-4-xry111@xry111.site>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224112042.60282-1-xry111@xry111.site>
-References: <20250224112042.60282-1-xry111@xry111.site>
+	s=arc-20240116; t=1740396055; c=relaxed/simple;
+	bh=1OXLo0LAR1N71lfPQvkQ1ANITGql7CpTEjDaL8Dt48c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o6IZZJew9UM+7lj7qzPikvlLNRQ5A6dj3mycbFL6JD/f3MnluDKI1w54YRVW2srK7abJGNRQ8sP33co/rt4YTjMG9HfBqNIDYjSf17JjtFqZooK5zoR5LJQDQP0t1ksxeKvRW2tFm+qz8Dv5iTu5IgI7joUICP/aZQSlpwUMtbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttVIb1C0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 407C3C4CED6;
+	Mon, 24 Feb 2025 11:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740396055;
+	bh=1OXLo0LAR1N71lfPQvkQ1ANITGql7CpTEjDaL8Dt48c=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ttVIb1C0p8IQnCS3bjnu2dFjr6qtBZxQQ2DhQifMNbt2qQxup0N2lqvijb/Eg3fJR
+	 uN7718vnPoEELqmRBbdwYDJieKI32kN/vh0uvtSMhEuLvx7jaxY2RY1/JZz3oiae5y
+	 nEUOdyX9iMmjgVxiEvbe++V6/6AYO/Ukh/UrXuMXoL+sAFLkDJKFnDamfJTBK9h/J/
+	 dseqZYKfug7+yJhBX/+uDzQr75yEixTKVxswaz3lVK8Ke35YrNxnkLXlyYcfKh7atp
+	 2VJKaf3v5vJG6mke590u+nBoBOxp5TmmMOFeaK9rr7UFA2zfLsPUtUKbYd2c2SFLl7
+	 D9lUXyzlaYK7w==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Uday M Bhat <uday.m.bhat@intel.com>,
+	Jairaj Arava <jairaj.arava@intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	cezary.rojewski@intel.com,
+	liam.r.girdwood@linux.intel.com,
+	peter.ujfalusi@linux.intel.com,
+	kai.vehmanen@linux.intel.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	pierre-louis.bossart@linux.dev,
+	ckeepax@opensource.cirrus.com,
+	Vijendar.Mukunda@amd.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 1/7] ASoC: Intel: sof_sdw: Add support for Fatcat board with BT offload enabled in PTL platform
+Date: Mon, 24 Feb 2025 06:20:44 -0500
+Message-Id: <20250224112051.2215017-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.10.234
 Content-Transfer-Encoding: 8bit
 
-glibc added support for .gnu.hash in 2006 and .hash has been obsoleted
-far before the first LoongArch CPU was taped.  Using
---hash-style=sysv might imply unaddressed issues and confuse readers.
+From: Uday M Bhat <uday.m.bhat@intel.com>
 
-Some architectures use an explicit --hash-style=both here, but
-DT_GNU_HASH has already been supported by Glibc and Musl and become the
-de-facto standard of the distros when the first LoongArch CPU was taped.
-So DT_HASH seems just wasting storage space for LoongArch.
+[ Upstream commit d8989106287d3735c7e7fc6acb3811d62ebb666c ]
 
-Just drop the option and rely on the linker default, which is likely
-"gnu" (Arch, Debian, Gentoo, LFS) on all LoongArch distros (confirmed on
-Arch, Debian, Gentoo, and LFS; AOSC now defaults to "both" but it seems
-just an oversight).
+    This change adds an entry for fatcat boards in soundwire quirk table
+    and also, enables BT offload for PTL RVP.
 
-Following the logic of commit 48f6430505c0
-("arm64/vdso: Remove --hash-style=sysv").
-
-Link: https://github.com/AOSC-Dev/aosc-os-abbs/pull/9796
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+Signed-off-by: Uday M Bhat <uday.m.bhat@intel.com>
+Signed-off-by: Jairaj Arava <jairaj.arava@intel.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
+Link: https://patch.msgid.link/20250204053943.93596-4-yung-chuan.liao@linux.intel.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/loongarch/vdso/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/intel/boards/sof_sdw.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
-index fdde1bcd4e26..abaf87c58f9d 100644
---- a/arch/loongarch/vdso/Makefile
-+++ b/arch/loongarch/vdso/Makefile
-@@ -37,7 +37,7 @@ endif
- # VDSO linker flags.
- ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
- 	$(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared \
--	--hash-style=sysv --build-id -T
-+	--build-id -T
+diff --git a/sound/soc/intel/boards/sof_sdw.c b/sound/soc/intel/boards/sof_sdw.c
+index 25bf73a7e7bfa..387d7f679d64c 100644
+--- a/sound/soc/intel/boards/sof_sdw.c
++++ b/sound/soc/intel/boards/sof_sdw.c
+@@ -234,6 +234,16 @@ static const struct dmi_system_id sof_sdw_quirk_table[] = {
+ 		},
+ 		.driver_data = (void *)(RT711_JD2_100K),
+ 	},
++	{
++		.callback = sof_sdw_quirk_cb,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Google"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "Fatcat"),
++		},
++		.driver_data = (void *)(SOC_SDW_PCH_DMIC |
++					SOF_BT_OFFLOAD_SSP(2) |
++					SOF_SSP_BT_OFFLOAD_PRESENT),
++	},
+ 	{}
+ };
  
- #
- # Shared build commands.
 -- 
-2.48.1
+2.39.5
 
 
