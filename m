@@ -1,86 +1,130 @@
-Return-Path: <linux-kernel+bounces-529579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F1BA42821
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:40:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276F7A4281B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 883CE188472C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:39:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D8A170945
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18665263C6C;
-	Mon, 24 Feb 2025 16:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC118EA2;
+	Mon, 24 Feb 2025 16:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R8lPeSA6"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ECkjPOEz"
+Received: from mail-ej1-f66.google.com (mail-ej1-f66.google.com [209.85.218.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411DD25A329;
-	Mon, 24 Feb 2025 16:39:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4112627EC
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740415143; cv=none; b=fwYt0XrNqeqmJLHwh35mxsJoLwbHMGLKMozVqEbd0np6fo8p+OdQMFfUkMZVgMnROM/ifYXuh/fmQT/XesMOeUJmj2GExl/RLloI6lOHp2THSBACQQwEtMNKo7RYvrRlpLsfBXQHvotH2UCqPaNQs3RyMq3lZCs+jAlII2y8/aY=
+	t=1740415192; cv=none; b=iEK13wJ80UOby+3o6wzvNNI7cEghQXj8NKQvkZStz9Oj1isfLIuDnRkwcG3k7PvCiors60LeGr/wxpaFzJWEfzKmTL5BDHLZ/69BecI2guG6RKVa4q/JsmAs2nkKNwyRCkbulWakNLkSt+oCHJH2WSb6nrCWOxjitrKiNRTZXTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740415143; c=relaxed/simple;
-	bh=qBKzDyjWfLmWXprxvnJItC7T8gVRv1MLXFy5GtdsfPI=;
+	s=arc-20240116; t=1740415192; c=relaxed/simple;
+	bh=A/sSeIa0en0Dl2HTUtfj+TrBQx4ou7E+HxQ8hM8jKp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pkVm7oCSqD6Q3zfTB3FVD28KzLMZTtgWnZP/fAA4edU0+i8UUbdl4w3VNB5+afRzJztks/yOD3nYyQWRSVZN6Kh30iWtLuHdn5FoDG/sVuP1nWjFexf40a/HnvV7tfkgr0bvOcS+NoZNPH7hdD+lLlwVi3n5XtG7b5C7A1dVI/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=R8lPeSA6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZOAgTK9YJm2QBLwD2cDF+huwjTvookcaPAGHBGMqPGo=; b=R8lPeSA6+vDeWo/u/01PmcHNH/
-	U7mccx6QQI4/4O3P3i10HXQbQmlQLuSrSPzdM8zytB4x/dXj8T3pLb1uw0DUSxZ5uHGMjzx8m7kAS
-	T/WYHhxgmFlmjM6xwKKA02UyeYPEorVKgO8aRbb4vJVO2K0lt4XYP8zllJDQUkx5FcILPIYOKd9Ea
-	TNw6vjireiWCc0MQ6Kygl03dc7aMQY0itFEwm9YYjgZJhfsU+BJQnVeKdCxzFugA+12Ac21p4bI/B
-	uuzLSrVoZoN0pNWXyNuiCKAWxYTnXC4j9GbpXLlhp0Pgd6ET/vudISihJsta53LLc/4fmnvRnrnES
-	TVmUDw9Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmbTx-0000000ETEn-2onk;
-	Mon, 24 Feb 2025 16:39:01 +0000
-Date: Mon, 24 Feb 2025 08:39:01 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/8][next] block: blk_types.h: Use struct_group_tagged()
- in flex struct bio
-Message-ID: <Z7ygpff-kUHPtEQp@infradead.org>
-References: <cover.1739957534.git.gustavoars@kernel.org>
- <ccf673b997e771430b7570fb8a6dfc11d07a2bde.1739957534.git.gustavoars@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LiDrp8q5LWUbyA6xDUVOiAMJTzyqEYXKUnPHqiujfiQJsHaAFLGmG3x3+5TV48ZOlaZTJDtWGf7wSIMmqrAf8v4ZR0JOqM/tOHuiggY+/uE39O4Y7y95BV08BdVRRD2LrEWH4MHlTy/FGGuTJqNOwq+ugQrfyiwPewcMmk9Yxvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ECkjPOEz; arc=none smtp.client-ip=209.85.218.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f66.google.com with SMTP id a640c23a62f3a-ab744d5e567so789589166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1740415189; x=1741019989; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=A/sSeIa0en0Dl2HTUtfj+TrBQx4ou7E+HxQ8hM8jKp8=;
+        b=ECkjPOEzGS87TAMlGi47Y30S08kWhPOwrLzNQAdpJA15ODwQLnJXdY4Qml7hKfbs3g
+         XSjdboo14xdPohpbsF7IhOBF8yyATv/UU36Oo/2bgnOS91kaZK5HAKxUoPWi67+O4WWA
+         EFfLpgntE6033TpRpu4W+700sOAnpu2qNGaEgxG8xCvfAj2mp4TjojD8pke9B2WJMX5v
+         zTKxiwYYfpkNFQvYv3r94/VS/wep7Pz9ySxQXHHbvrFSEiM0DHtfweqP8SdeKCROQCO7
+         W+kaWFHYgRetFYhmsB+UL1iBFckrrLZWS7U8fDs1RiElR1IIEoIjMAeutdtwBN4ht/kA
+         LMcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740415189; x=1741019989;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A/sSeIa0en0Dl2HTUtfj+TrBQx4ou7E+HxQ8hM8jKp8=;
+        b=tfn9RsMq3NZLPHG2b/218a1G+yjQewg83tLDZzASG2bixmNwJrfPNXPieHd1otjC9r
+         l6fz545CgVp9Ms7LJg56GfoGi4GjU+wfc42RRXh4tjkXGO8wowrp9yF75hOk2jM9pPxF
+         jWf1wmc6QAER39t/th16mlOAUuLK7vC3pKOM5BrgsLoU06YhTK69/e8sfQMw3EAfmcQD
+         CmKLVve0Eo7r+4jdEKbIb87xtf1m3cqdKsN3LijhWgHfBNC/OTvvaxG/KbeENNRZz4hm
+         y3NxgXC9OqoIKsDvrnF6AD2/nTWX9XqEmgU6VfNta7GOqQAYKrULdQ9a1RaVyMlWRT0Y
+         1I6g==
+X-Forwarded-Encrypted: i=1; AJvYcCW6cKv2ISUC9DTMfnsZLMTfQTveIQ33wzPSudUj368t5UXKCvFUCzfG15uCrhh6Z4dNFgQapSRvFerV+WU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwogESnp2dD+x9TngDn2n3Hw6Ae9XjzPCS2tug6LwzTsl2dv78S
+	uN9yL4gDu7wCf0s4IgQCGuf+HC9iIyYBZQt85YDY9leVbADEyw8CaNDP8I/Ye5E=
+X-Gm-Gg: ASbGnctmwZYeHcZeSh/IATI1M3p32+yQEzW3G294hwSrnfZ4rQr4mU3Mm9m7i99pvPr
+	xVLuRrOUg9XmGBruJBT/e0Q3KG6QQnI6UIs97EFPQe0im67NY2KQYuaGXQORVSjDCg3slbMK8Rv
+	jDHRYU+xIk9C0WDXYLHjBsra9cpLXmSGy+e6DRAHIMPBQM1IVTGE5CVMJpqV/4HurB9bm4V574s
+	gdZXTO2VUgJgOXqFIlzC28k+eEO75304bGihurh4otl7fy6sgEGkHm5yfmX3McQ/hsma/2HaZQS
+	/Qllsde7wRwoc0AbrmfoTLKe5Ky5
+X-Google-Smtp-Source: AGHT+IGSLxJWVXnv3CdGgTuaPwMjyEnoPf9OHWFvCUlPZ62Q7/AjtvUpJqZrvW6HLmGmYJeX1/7uWA==
+X-Received: by 2002:a17:907:a2cd:b0:abb:b154:c064 with SMTP id a640c23a62f3a-abbeded95e3mr1885139966b.18.1740415188993;
+        Mon, 24 Feb 2025 08:39:48 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbdd78ab59sm1085851866b.74.2025.02.24.08.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 08:39:48 -0800 (PST)
+Date: Mon, 24 Feb 2025 17:39:46 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Frederic Weisbecker <fweisbecker@suse.com>
+Subject: Re: [PATCH 0/9] Add kernel cmdline option for rt_group_sched
+Message-ID: <pngv6psyjkvhyxszv6f73nnxjydr56dtsrns57mgosqxoqq27l@lzrrhjpil4ub>
+References: <20250210151239.50055-1-mkoutny@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="am5goqc7aay7yuv3"
 Content-Disposition: inline
-In-Reply-To: <ccf673b997e771430b7570fb8a6dfc11d07a2bde.1739957534.git.gustavoars@kernel.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250210151239.50055-1-mkoutny@suse.com>
 
-On Mon, Feb 24, 2025 at 08:25:08PM +1030, Gustavo A. R. Silva wrote:
-> Use the `struct_group_tagged()` helper to create a new tagged
-> `struct bio_hdr`. This structure groups together all the members of
-> the flexible `struct bio` except the flexible array `bi_inline_vecs`.
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> 
-> This new tagged struct will be used to fix problematic declarations
-> of middle-flex-arrays in composite structs, like these[1][2][3], for
-> instance.
 
-Well, I guess this goes with the context-less nvme patch.  I think
-you're much better off just removing the bi_inline_vecs array entirely,
-and just add a new structure for bio + inline vecs for the few callers
-that dynamically allocate the bio and actually have inline vecs.
+--am5goqc7aay7yuv3
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/9] Add kernel cmdline option for rt_group_sched
+MIME-Version: 1.0
 
-Similar to what I did here for the bio integrity payload:
+Hello Peter.
 
-https://lore.kernel.org/linux-block/20250131122436.1317268-4-hch@lst.de/
+On Mon, Feb 10, 2025 at 04:12:30PM +0100, Michal Koutn=FD <mkoutny@suse.com=
+> wrote:
+> ...
+> Changes from RFC (https://lore.kernel.org/r/20241216201305.19761-1-mkoutn=
+y@suse.com/):
+> - fix macro CONFIG_RT_GROUP_SCHED_DEFAULT_DISABLED invocation
+> - rebase on torvalds/master
+
+Have you got time to look at this?=20
+
+Thank you,
+Michal
+
+--am5goqc7aay7yuv3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ7yg0AAKCRAt3Wney77B
+SRgPAPwOnFhyJ12t/2cuU/uhNM9nJf5k39CWtDwn1oDOm4M23QD+K/QECCKE5bGM
+CA0wjvZYxkYnV+D59hQ9lw0OmL4lfAM=
+=KtN5
+-----END PGP SIGNATURE-----
+
+--am5goqc7aay7yuv3--
 
