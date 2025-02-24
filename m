@@ -1,114 +1,94 @@
-Return-Path: <linux-kernel+bounces-529300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD926A422C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A10A422BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7E2441DB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B324E188865E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:13:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B7A13959D;
-	Mon, 24 Feb 2025 14:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99AD154C0B;
+	Mon, 24 Feb 2025 14:13:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Rp3uGpP4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lQ8lmCKx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx+mZ8GL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AA613A244
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:12:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F661474A9;
+	Mon, 24 Feb 2025 14:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406378; cv=none; b=BqBeUHsFKaNrF6koBomidRlgldJGFRJgQTC6yOCn2L3V4re2USdskxShBkr39FDa8wTM8uc2pIkLF5ZLQnM69nDcSjrbFfAcH3l7dTFlC6qnCbgBsVXGwIjU8LqZB31CuDB5qQTVQ3n7S4GC/sWClEYgtbO4SiDUwFzPSqtJBr0=
+	t=1740406385; cv=none; b=aAFN1s6HwkPNiU0pHa9ArQFCepCSzG2npZKGR2IA++QhqoUxT0mPSEpSrcp057PrUMGVtiSHS6X3+RxYssZ59/ttFno5mYvjS+zoDkWHp449/udq5jhrmI0KTAApmJpNjB1xb5sGQ8mqCr5FgFCoI1MxrUfDiuGYrbHoBiQMg0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406378; c=relaxed/simple;
-	bh=0AC14da4XCxu5G8PsOYWvAtvfeuz5NILFvGvub9Deo0=;
+	s=arc-20240116; t=1740406385; c=relaxed/simple;
+	bh=Et8fg0y3kdfto8fS3aVI6HZ7850HYN1zFXNYVQgyg88=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hdQ/E6V7gNAmewAWbVaxi7JcgCzIQgZn9QRiNnit9tgNtr0TvYKGaTSixNuAEYb2sfKZWsZ748EWV5RdV21I7t3vexycRXNk/UBPHAeGLqu1hTBNxyIqmM0Nkau2DQ4fLxOeO8/SsBqx5nS27KETJRpdJq09nJbY6mvTIEGe5vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Rp3uGpP4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lQ8lmCKx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 15:12:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740406375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=29NxK63rs0vMCdxoDz3JRWeoz7a52gVEWHhjTf6BXnQ=;
-	b=Rp3uGpP4TJgkra1Hw5zuh0HdpXPR3bzzrQoZusnMrC4+qj+NUfdA0GoSH5w8Rk0WiBC1WN
-	p4Vcx1JudPupoRohDZPisYqct8LnzsKjpXzgFu1u8mm5k5TIyPbhuAVEZul8IAH8Lap4dA
-	ErZI4Ohw7VdqoQoDFB7onu6HEeJz+KtyUiKEC+ARVmnbI6/defzC3hIpF+bFXU9eJGlwQ8
-	pHgxjQtZiU4wMWCtBn9n+5xxDYB+ArWA3aj47d6ZLNlqK6BoZAyjL6MRhmU+CsQXtTnmOw
-	doSXuCi7Fu6w3Q3s9+CIJxjrmc6/+0RCoihRxN9U54elkJpUfO5wxRWtLecorQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740406375;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=29NxK63rs0vMCdxoDz3JRWeoz7a52gVEWHhjTf6BXnQ=;
-	b=lQ8lmCKx7D+DydNZoRCAS2U3HhOw3r8Vh4nLz5r+lWPOOGxUcYK0G0Epqhhh5UnTy85HVM
-	2e7QAc96aFU+ftBw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: mm: Don't use %pK through printk
-Message-ID: <20250224150920-87b1bf56-9520-4cd1-ab51-93da2eece162@linutronix.de>
-References: <20250217-restricted-pointers-arm64-v1-1-14bb1f516b01@linutronix.de>
- <20250221145513.GA20567@willie-the-truck>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K4C4bCk6n+9nceR+spLy4ap/7KgSKWGeTxJyD6QFkYUa/MF7q4NDauzYdaD5Q6iv/QoSAsoRynj3rSoPub2OwcHJ/oKsD491cj8ubJib3K4UDaeD418Vq1MPCcjcBs5InPWfLUiJlNOS1f2rlRuzfydNPxEd7lDFUxBkv8awNVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx+mZ8GL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1605BC4CED6;
+	Mon, 24 Feb 2025 14:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740406384;
+	bh=Et8fg0y3kdfto8fS3aVI6HZ7850HYN1zFXNYVQgyg88=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bx+mZ8GLycHcxXpDCwCVm6tsXvfkGsrEGpPFRN2tDZbtKyboYXdqQtaxB/nmVqwyk
+	 qUeptF7lubDpKHG05+a+ZITHFaGBSdsm6ZwQBcx5btgb38RI7Nrw0xGIw8RWS/qDRx
+	 prGl46+/bfV//9iidZRj8c7l6y4wQNNgPC3IdtBRO1XtQ7rwRx/l/o/1KAFbs9HGwq
+	 0nKroS4TASV0IyMIjCDKAGe4hbr+kB3Vs7htf8HRQJbZWSKBsp6XyNhKlKdg6xoqMm
+	 +3NsGQAmalTNd5FaMwrlX8hHS8y7qa6OhABGldgWnG/Vn+aKmy3R+r0P5RIph7M9kV
+	 +zWTk6Xv+SOIw==
+Date: Mon, 24 Feb 2025 14:13:00 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Bard Liao <yung-chuan.liao@linux.intel.com>
+Cc: linux-sound@vger.kernel.org, tiwai@suse.de, vkoul@kernel.org,
+	vinod.koul@linaro.org, linux-kernel@vger.kernel.org,
+	pierre-louis.bossart@linux.dev, bard.liao@intel.com
+Subject: Re: [PATCH v2 16/16] ASoC: rt711-sdca: add DP0 support
+Message-ID: <d5b03e44-19f6-4bb4-b62d-f6cf5d01806e@sirena.org.uk>
+References: <20250224064451.33772-1-yung-chuan.liao@linux.intel.com>
+ <20250224064451.33772-17-yung-chuan.liao@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NVtClzgfj5Nb+JZK"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250221145513.GA20567@willie-the-truck>
-
-On Fri, Feb 21, 2025 at 02:55:14PM +0000, Will Deacon wrote:
-> On Mon, Feb 17, 2025 at 08:39:06AM +0100, Thomas Weiﬂschuh wrote:
-> > Restricted pointers ("%pK") are not meant to be used through printk().
-> > It can unintentionally expose security sensitive, raw pointer values.
-> > 
-> > Use regular pointer formatting instead.
-> > 
-> > Link: https://lore.kernel.org/lkml/20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023@linutronix.de/
-> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
-> > ---
-> >  arch/arm64/mm/physaddr.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/arm64/mm/physaddr.c b/arch/arm64/mm/physaddr.c
-> > index cde44c13dda1bc0924d2d50369ad87f544a0a802..7d94e09b01b35094e883875a46b979666549095c 100644
-> > --- a/arch/arm64/mm/physaddr.c
-> > +++ b/arch/arm64/mm/physaddr.c
-> > @@ -10,7 +10,7 @@
-> >  phys_addr_t __virt_to_phys(unsigned long x)
-> >  {
-> >  	WARN(!__is_lm_address(__tag_reset(x)),
-> > -	     "virt_to_phys used for non-linear address: %pK (%pS)\n",
-> > +	     "virt_to_phys used for non-linear address: %p (%pS)\n",
-> >  	      (void *)x,
-> >  	      (void *)x);
-> 
-> This is part of a WARN() and knowing the actual address may well be
-> useful in debugging. I suspect it also ends up being dumped as part of
-> the register dump _anyway_.
-
-That makes sense, especially the value being part of the register dump.
-OTOH in the default kernel configuration (kptr_restrict==0), %pK is an alias to
-%p and also hashing the pointers. And so far nobody seems to have cared.
-
-If you prefer I can also change it to %px, to specifically show the value.
-My main goal is to remove %pK, as it's prone to misuse.
+In-Reply-To: <20250224064451.33772-17-yung-chuan.liao@linux.intel.com>
+X-Cookie: Phone call for chucky-pooh.
 
 
-Thomas
+--NVtClzgfj5Nb+JZK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 24, 2025 at 02:44:50PM +0800, Bard Liao wrote:
+> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+>=20
+> DP0 is required for BPT/BRA transport.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--NVtClzgfj5Nb+JZK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme8fmsACgkQJNaLcl1U
+h9BIkwf/bOOm22XBmdI5qmWSFTvpILaNUE37r4RmVFpJGSDGzZSnptMomWS2Wecz
+MqZGXcjlY+YjZKY094TXCGb/OA4vwXEQVEIcWwIhMOlxJalpBvSuksSwjkNCVnEI
+p9p2LnwZu1ZCM94gM8dk1gmh9cWmd3GMtdOML04LY1NV52G8S221DgrqdTTazfPh
+m5w8AUz4vtPg5VCd5o+18mCU2iUIG84/75kEPJTXxSm2T6BubNSLf6TV6lF9tTxO
+0AqPqNBE++qln1m+e4RzKfgNhXheA8+GAAxiRPnMe40oajCaCoqmUTXEg0e5/zyD
+TVqXn80uVc6YfqFoWsEtI35GcxFGxw==
+=IHu4
+-----END PGP SIGNATURE-----
+
+--NVtClzgfj5Nb+JZK--
 
