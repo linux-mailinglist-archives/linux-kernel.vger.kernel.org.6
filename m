@@ -1,94 +1,125 @@
-Return-Path: <linux-kernel+bounces-529301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A10A422BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:17:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CF8A422D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B324E188865E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA9E33BA957
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99AD154C0B;
-	Mon, 24 Feb 2025 14:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D914884C;
+	Mon, 24 Feb 2025 14:13:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx+mZ8GL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SHxmHNgq"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F661474A9;
-	Mon, 24 Feb 2025 14:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6377713959D;
+	Mon, 24 Feb 2025 14:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406385; cv=none; b=aAFN1s6HwkPNiU0pHa9ArQFCepCSzG2npZKGR2IA++QhqoUxT0mPSEpSrcp057PrUMGVtiSHS6X3+RxYssZ59/ttFno5mYvjS+zoDkWHp449/udq5jhrmI0KTAApmJpNjB1xb5sGQ8mqCr5FgFCoI1MxrUfDiuGYrbHoBiQMg0A=
+	t=1740406417; cv=none; b=hYBFbdmOqdk4qf+8nb0BkaBGvH03xYOV30m+H50/XyzyT5t5kqqg3upmfUXQsNKY/71Fe9PxcivbXK3gIGPTdym7ddC+2vWhrIGbcLoGXUk2dIUN+SIxYsQmMABgB4mC5LOH8M2ZHybzKujqmzqe60YO+zsQxgjCHcpKQQxNi6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406385; c=relaxed/simple;
-	bh=Et8fg0y3kdfto8fS3aVI6HZ7850HYN1zFXNYVQgyg88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K4C4bCk6n+9nceR+spLy4ap/7KgSKWGeTxJyD6QFkYUa/MF7q4NDauzYdaD5Q6iv/QoSAsoRynj3rSoPub2OwcHJ/oKsD491cj8ubJib3K4UDaeD418Vq1MPCcjcBs5InPWfLUiJlNOS1f2rlRuzfydNPxEd7lDFUxBkv8awNVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx+mZ8GL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1605BC4CED6;
-	Mon, 24 Feb 2025 14:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740406384;
-	bh=Et8fg0y3kdfto8fS3aVI6HZ7850HYN1zFXNYVQgyg88=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bx+mZ8GLycHcxXpDCwCVm6tsXvfkGsrEGpPFRN2tDZbtKyboYXdqQtaxB/nmVqwyk
-	 qUeptF7lubDpKHG05+a+ZITHFaGBSdsm6ZwQBcx5btgb38RI7Nrw0xGIw8RWS/qDRx
-	 prGl46+/bfV//9iidZRj8c7l6y4wQNNgPC3IdtBRO1XtQ7rwRx/l/o/1KAFbs9HGwq
-	 0nKroS4TASV0IyMIjCDKAGe4hbr+kB3Vs7htf8HRQJbZWSKBsp6XyNhKlKdg6xoqMm
-	 +3NsGQAmalTNd5FaMwrlX8hHS8y7qa6OhABGldgWnG/Vn+aKmy3R+r0P5RIph7M9kV
-	 +zWTk6Xv+SOIw==
-Date: Mon, 24 Feb 2025 14:13:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Bard Liao <yung-chuan.liao@linux.intel.com>
-Cc: linux-sound@vger.kernel.org, tiwai@suse.de, vkoul@kernel.org,
-	vinod.koul@linaro.org, linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev, bard.liao@intel.com
-Subject: Re: [PATCH v2 16/16] ASoC: rt711-sdca: add DP0 support
-Message-ID: <d5b03e44-19f6-4bb4-b62d-f6cf5d01806e@sirena.org.uk>
-References: <20250224064451.33772-1-yung-chuan.liao@linux.intel.com>
- <20250224064451.33772-17-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1740406417; c=relaxed/simple;
+	bh=kNAuwtXcim562dObXcreoHv9UBgRaM0ANCRSQx86Ebg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J3SrLZc6VccKQ4D0eIvIBV613uY77sSHncaH1v27wdUQUztqqEitzxhJRslgikNvXHrPs5aqtABehqOV4dVr9VyGQ+aQuelI4peyx2HcXEM/BohVEYy2cW0ZcO7UHlzREmlQ3vbgYjUTLgggu3S6NfE9o1xsKSaj0yhzcbOmT/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SHxmHNgq; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3905044280;
+	Mon, 24 Feb 2025 14:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740406413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w6ddd5eN9n7fNFqvJfwSzJ+NMubkWkXegBbLwCG/opI=;
+	b=SHxmHNgqUIQfAjO5+M0vS07kR4vJdlM2Q61kzT1i3NSw2SLqTYRO4iSTx39hTusWiDbcfy
+	YwSkMFjxJO9IJNe7x/060jHUw0D+Ye4V1Yzx1cinWqlsJopQeiwC4+BbMkRtLBaNfspYNE
+	8DG8TPBkI8JOAS9jaxL1aE5Qs395CVZj0Yg36ovmBtTPNQBUKomEMtT97a/QSJqL6Eizi2
+	P9JsXsUwhBvLTe0qvZtqkhUFsYgwFa8SCFvUpmne+1j+cN9OKUHmEwfifQZ5wdUksIiPgU
+	SHLfUolVwn0DNEfcHj9M+/1hPprlSO4mgSjExqk434LItWh6v+5K0QaUfO9URg==
+Date: Mon, 24 Feb 2025 15:13:30 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 01/13] net: phy: Extract the speed/duplex to
+ linkmode conversion from phylink
+Message-ID: <20250224151330.2e0d95e4@fedora>
+In-Reply-To: <Z7x7p3W0ZpkFu44m@shell.armlinux.org.uk>
+References: <20250222142727.894124-1-maxime.chevallier@bootlin.com>
+	<20250222142727.894124-2-maxime.chevallier@bootlin.com>
+	<Z7x7p3W0ZpkFu44m@shell.armlinux.org.uk>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NVtClzgfj5Nb+JZK"
-Content-Disposition: inline
-In-Reply-To: <20250224064451.33772-17-yung-chuan.liao@linux.intel.com>
-X-Cookie: Phone call for chucky-pooh.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvn
+ hhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
+On Mon, 24 Feb 2025 14:01:11 +0000
+"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
---NVtClzgfj5Nb+JZK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Sat, Feb 22, 2025 at 03:27:13PM +0100, Maxime Chevallier wrote:
+> > Phylink uses MAC capabilities to represent the Pause, AsymPause, Speed
+> > and Duplex capabilities of a given MAC device. These capabilities are
+> > used internally by phylink for link validation and get a coherent set of
+> > linkmodes that we can effectively use on a given interface.
+> > 
+> > The conversion from MAC capabilities to linkmodes is done in a dedicated
+> > function, that associates speed/duplex to linkmodes.
+> > 
+> > As preparation work for phy_port, extract this logic away from phylink
+> > and have it in a dedicated file that will deal with all the conversions
+> > between capabilities, linkmodes and interfaces.  
+> 
+> Fundamental question: why do you want to extract MAC capabilities from
+> phylink?
+> 
+> At the moment, only phylink uses the MAC capabilities (they're a phylink
+> thing.) Why should they be made generic, and what use will they be
+> applied to as something generic?
+> 
+> If there's no answer for that, then I worry that they'll get abused.
+> 
 
-On Mon, Feb 24, 2025 at 02:44:50PM +0800, Bard Liao wrote:
-> From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
->=20
-> DP0 is required for BPT/BRA transport.
+I only have a blurry answer for you, so that probably wont cut it, but
+for phy_port (which I have ready) and stackable PHY support (which I
+have not), I foresee that we may need to specify what can the PHY do on
+its MII serdes port.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+TBH the only real stuff that will be needed is "Given a set of
+phy_interface_t supported by a PHY downstream port, what linkmodes can
+we get out of these". The phylink code uses the mac_capabilities as an
+intermediate between phylink_get_capabilities and
+phylink_caps_to_linkmodes(). Given that this series introduces very very
+similar enums in the form of the LINK_CAPA_XXX, we might be able to
+keep the MAC_CAPABILITIES a phylink-specific set of values. I can
+include that in V2.
 
---NVtClzgfj5Nb+JZK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme8fmsACgkQJNaLcl1U
-h9BIkwf/bOOm22XBmdI5qmWSFTvpILaNUE37r4RmVFpJGSDGzZSnptMomWS2Wecz
-MqZGXcjlY+YjZKY094TXCGb/OA4vwXEQVEIcWwIhMOlxJalpBvSuksSwjkNCVnEI
-p9p2LnwZu1ZCM94gM8dk1gmh9cWmd3GMtdOML04LY1NV52G8S221DgrqdTTazfPh
-m5w8AUz4vtPg5VCd5o+18mCU2iUIG84/75kEPJTXxSm2T6BubNSLf6TV6lF9tTxO
-0AqPqNBE++qln1m+e4RzKfgNhXheA8+GAAxiRPnMe40oajCaCoqmUTXEg0e5/zyD
-TVqXn80uVc6YfqFoWsEtI35GcxFGxw==
-=IHu4
------END PGP SIGNATURE-----
-
---NVtClzgfj5Nb+JZK--
+Maxime
 
