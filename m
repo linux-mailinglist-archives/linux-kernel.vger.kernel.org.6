@@ -1,175 +1,238 @@
-Return-Path: <linux-kernel+bounces-530039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA738A42E05
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:37:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C14CA42E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CEE175C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:37:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88428189D15B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D75245026;
-	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E070D25B680;
+	Mon, 24 Feb 2025 20:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0QG5Yju"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LqxwaZma"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020123.outbound.protection.outlook.com [52.101.191.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E61253BE;
-	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740429458; cv=none; b=PMWbjSUv52aGoF8q9ohJrotSwetXFClK3GA8o0WMEN6nDOdpJp/2sXDX5E20BWfnLIPyrltByLKlqUEXe//5AqPjqijVF7uoZhAn8PtUobkMiOWv8qNum0hgxuaOdUnHeFnKjmiPOjmw4E4EjF31nuLw4C+g8C+IUP8JHTSSg54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740429458; c=relaxed/simple;
-	bh=+M384LVeG2Il1wh2/bradd1uAF59wMWgiJLPtUje9YA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=atf/F59tD2g9qKTsQVz38dENwbgxNYD0kQqWcA4qOeXxjNEh1rOmja/t/jWK3yjNanSWC2s/oENz2laLdklqmZjDqnGRfS1S5uhB8iqwWczXtlNso/AsK25Dh1eiyiZonlidOXln5PCUMMardgjAxtRkgn7oEaE9gdh/gmEz/+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0QG5Yju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E71C4CED6;
-	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740429458;
-	bh=+M384LVeG2Il1wh2/bradd1uAF59wMWgiJLPtUje9YA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l0QG5YjuEOX+85Kc164Adk9WSqRgX2J/Imv3o/5bb6WJJF6lQLHqZjKDMLHNuw7du
-	 EIy16qcZ3s5FjXK4+suVZgI/gj2JawEpD6yEoH8MtG03aTeRa8G0mQyglebShUYnB2
-	 +pCQUApEacIAh4NaumCZPbpfnbzXLIlLE4Lykx3C+PvQC8q+G0xkqDqHdbiZuObGZ3
-	 E4c+jlZwmOOX9A+StxpD303Rx7QxYrE1+ycQfKsuXSM1PvL2c3Ivzco3mefdKZ1Ub5
-	 kFxuoxkz4qJ0rpPf7SVK2ybv3+vHc+CHu27CLSsF0eFWgTcmLLSjcbXSFbyFCXlkeT
-	 FaEbNFacnDz1w==
-Date: Mon, 24 Feb 2025 12:37:37 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] xfs: Allow block allocator to take an alignment
- hint
-Message-ID: <20250224203737.GL21808@frogsfrogsfrogs>
-References: <20250213135619.1148432-1-john.g.garry@oracle.com>
- <20250213135619.1148432-12-john.g.garry@oracle.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D7F264A8C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.123
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740429568; cv=fail; b=QsQP5Y/YoXit1/tiFAKJnU3T9UIrLTQIKkI0AbrIxMEE3QIv5/xLMlSguPj1DuSrKQuicu12zysyws9X81qh/1S8INwUVHSrNVPvG9STKj/PdBlbCGRtsYYRHiqIrx3SV7hNCLDBhxxRBMXA6GThtdWDMcaoS/ShXqR/dqG7HmA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740429568; c=relaxed/simple;
+	bh=ew91dOw3/F4x7a0b5WNltv3iFtvo5lMXxJgGVEZt6h8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QqUukmDv0rd+Dq3MuIFQfMh97+4KsdnrVOjwnra72IRHXO6rlUrUXeKtp5xWQJw4iBF9zVNW/UplbX25Jl8DQCHP3rWcos40De282SPp6mbTgYUaHf+laoIasbEJgdD08/WN/6EwRg2tT5m08zu7vJmMFPelBogoBPqQtOcbB+M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LqxwaZma; arc=fail smtp.client-ip=52.101.191.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mOGvaRdVEomCa1BeNUWsIn1J02w2060g7o3mJcWe/e0BDcSf0WdUKPIFIfMZKJyxYz+PUAiPtMoxxqs80sWvHkPOZC1TmPKdYaiFTBHQEOg/YgTNgeFAb1siwJeVXqNS9v3fTXimvj0vR9dPAWl1wIagRiAqJE/+96btcgp/3qm1gj95SLoY5yL3ZIXtQdbXDY8HMPOhe9R7IcTfkBbMmGaJb1B28h7lOrPUecKxQogxLXSJDtiuT3yZ8no9QJCgDY2oOLpcQmvWYzkriqgc9da1rwT4uMLNiIDrI7SDkATYWGvjHm77FFFru+fPRzINddfApsfUeiCPJHJO110WDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OuBnMWBuWodES9EhntUCVA2FxVctFMXcdMlNGd438U8=;
+ b=iPGP7zltYzjmh57wWecBMg715fjWYhFgd1uN+KNRhFEoHHl40KPxCSYJJCLI09QQMbRhGIQ8pKoSBuBHuXfhGLNl/LgrIOVUtLvBWodo97siEz53jkAr900tOXiYXQmbQYlCxoRPOSS0O9mK1v7FsLQqlkaKA+SyEgZ1swFhP/yTg/DYAF8l4LP1cLuQ2rPRWPGdym1gVtE0l2pI1szG1P8Hax9O25Zh1NZduuhVjd9WW1doRLNRKtwKzFMN1ZbWI/jtdj3M/vNuN3IJ/ERgO55ed/7ZqfeKApST6mD8u8Um9oQI8kubuWKzgl5Wm/ZJRu4DajIDxh5Kl0SMYYug5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OuBnMWBuWodES9EhntUCVA2FxVctFMXcdMlNGd438U8=;
+ b=LqxwaZmaee558TAre+UBwu7TAyf53GH7YWOphJEAevpaHuGja8m+uS5SMA1nQiov45Ua5ecJBkv0zEqEBdtwfI+6A2x1bcsihjo6zzqBlRZ8eS1E3QjP/7AlUvvk9y/BCCDFF6biudXnhbuDPVopW17Ez+yhNiTpTlU1qgTI47h/kHHQTwctXFES7Ypd6P8jLgFcHQJh4ak6KZl5one70AXncsWn/71RIKmZ5jRiTx98oySNrSrE4Ock+9IJZX10cWrFGlSQN05+oaNVjRm5hvMm5f6zD0BFReY8SO+4M+Q9gNSLLsuLzkXvf6Ut9579T4t4upA5HVrmCiFOLwFaIQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB5468.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:53::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Mon, 24 Feb
+ 2025 20:39:24 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 20:39:24 +0000
+Message-ID: <08b48d52-fb1e-4d8f-8586-06280a798331@efficios.com>
+Date: Mon, 24 Feb 2025 15:39:22 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/3] sched: Add prev_sum_exec_runtime support for RT,
+ DL and SCX classes
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.org>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Shuah Khan <shuah@kernel.org>
+References: <20250224132836.383041-1-gmonaco@redhat.com>
+ <20250224132836.383041-2-gmonaco@redhat.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250224132836.383041-2-gmonaco@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0259.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:68::20) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250213135619.1148432-12-john.g.garry@oracle.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB5468:EE_
+X-MS-Office365-Filtering-Correlation-Id: 27c0cf82-a77e-416b-5702-08dd551352e9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V0hrakkvbHZ5QTdxRjlLK3lBL3djNVY4Z2lDRUxBcVhwaFc5NHFOQzNBVHhJ?=
+ =?utf-8?B?Y2I4T0RYR1kzWm56OWZ3NFBseDJpd0FiQzVJbnBCVmpxbzRRM0lOQXFZOEM0?=
+ =?utf-8?B?QTZDa3kxZ3lydHpVQWRuQTdNMXBVRFNnMXVUN3Qza2pZVytyOUxONGNRaWNB?=
+ =?utf-8?B?MStoN1h5SHRtVjJsU3gzeWh1cGtxK1FTOTAyRkU0R2lYQ1ovaDB3cGU1VS8w?=
+ =?utf-8?B?OHlCZzR1L1VjZEhjT09US2pIbzhNNXlsemdKUTJsdStOM2RNQWZwSzVFdlJj?=
+ =?utf-8?B?alcxYjNLT1FsOXpvOStnempybFhPNjhSVXJQNzYwRS80YUhpOG9qTmNYRDlI?=
+ =?utf-8?B?WlB0Y1ZGMkRIOEpmVjZJMW1hYXNocnJIeHRERVQ5dSs3M082R0p3RGlqWkor?=
+ =?utf-8?B?WjBpYzFqNEVZK21HK0hPYjNFQUZTZTc0WEJSZlBYMVM5K3dWUHU5eGpobmRS?=
+ =?utf-8?B?TmZlajdYdjFYZS9Yd3lvWEorVWNQOVpBMERHQmxPV0J2cHRienVmQXZIcnla?=
+ =?utf-8?B?RUd0OFBPdzk4N1h2RVU5L2ttOVdrYkRwUXhwdG1rWXdycGdKdGJrVzBoZlUy?=
+ =?utf-8?B?T2FEbDIvK091UGRERDlVUVFmUTA2elM2MzZZQ2U5aWgzQWVLZ1ExeERSRmJR?=
+ =?utf-8?B?SGVRaXBTYVNoMTF2MXJzWWJ2TmFPQ2o4SjZaSlVrTjhvZko1VTAxc1RLMmQ2?=
+ =?utf-8?B?ZHFvSVdTOENoemc0YWxsdjdmUGx5bkR3d3lUMEdrQXNudlR2Z2wzRjMzZWZ2?=
+ =?utf-8?B?WWRRTHRueHY3elFXelpvNDBNZXVJSFkxWEZNakJSMFZhVzE0QUQwb1hmN2s3?=
+ =?utf-8?B?UHJNOGprU3g2dXU4elQvazJaU2JQbERxZmJFdEF5dUM2UTNFVDNtYTI2QzV0?=
+ =?utf-8?B?cE1EdUhNTWtyMEo3bm16T1pEa0F2aDRld1lNN05JbWh5YUZKQTFBS1ZvMzJv?=
+ =?utf-8?B?MllSbS9oeldZR1d6aU5aUkRra1B0YXFmZ2lNQjBpTHMyeXU2eUZpcEhmZkVK?=
+ =?utf-8?B?VlFLSFV2VW9zWG9aTjMvck5iN0Y4cmdOUk9XNlRHaTliT3orakNaVlRGdWFt?=
+ =?utf-8?B?cjN4byt4aGRNVGhGQWY2Zm56NUlveGtBYmlpSHBYNnNYajFWVGhIQld2NUJv?=
+ =?utf-8?B?cDR6WlFiUTBUcDN1OVlGM2FqcUFYZUk1NDlCNXVBcGRiQzVQL3hCSTIwSity?=
+ =?utf-8?B?cktxQ2F2MWNVTFZDTWM4SmNmUHE4dXIvNkhKcGRIclF5R3hjaTVJK2FQRW1i?=
+ =?utf-8?B?SlUzMWFua0xyTjdESWJEbkNKeUZyS2lNTU4zNWE5dmFHMCsvYm5nWUdVMEdC?=
+ =?utf-8?B?MUorTXZ5blNOcEFNWThBYkZaVE5iYllCQWlVcEdpcHZ2dTE0UVZuZ1pMUFNG?=
+ =?utf-8?B?ckdzT2YrOFZRcGNQVzVmZUdsWmlDUHVST2VoTWFNRDVJb09sY3UrenoxN2Zq?=
+ =?utf-8?B?ckpkVG5tVmo2cXp6M1JqRTFLUHBaYkw1Zy9uem5YSjNrVUEwQWdiWVZWUG9l?=
+ =?utf-8?B?QkprUEJmZlVnd2hBZC83K1hhT0dMM1FGTkIxYXNqdkxRdWpyemRIaTI2bEND?=
+ =?utf-8?B?a3BHZ2FFL1BqTC9MVEFGTHd2S0NpSjQrOWhpMDhwU2xLdW82NWtlalNCTWhn?=
+ =?utf-8?B?ZldML1ZYWVg0WGY1QzdGWUpHaWVUN05VRUUzWEd4VkdnRWRPSzlFb2h5NnRB?=
+ =?utf-8?B?bUxuZ2tDRGVYbkxNbEczOGNKa3haVHNRcmV4MGhUMDVDeC84d0lKcEU0Y0FK?=
+ =?utf-8?B?NjZPVkdtVkN5RGo4SGFWVC90YW9uMFRyNFMraXdNdWNuSk1hK3RNS05vMnEr?=
+ =?utf-8?B?Ny9BWUFMaGd1Nk1BVnhLQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UjlITHB1a0xicjJlY3k2a3puSDNTUVM5MWNRV1RZeFZtYUNuV0psZ2lIWDdK?=
+ =?utf-8?B?WDc1VE1NMHVudnBvWFRXMFJtb3pyeUNKZkVvY2tVMjlKekEvdExHTlB4d3lM?=
+ =?utf-8?B?Uy9BQVZabFFQaFNlR1ptVklhRFpKMmVlcVFocGhNUFBxV0Q2cGVMRE5rVkR1?=
+ =?utf-8?B?V2UvQ1oyTlJKYkFiVW8wRXR6UWwrb3FvdmJSNEVJakxtZnhDUWhQbGNGZ3lT?=
+ =?utf-8?B?Y1RNRnhEVnRmWG5oTlp5dldLQW9yQmllVDlzU3pOeGpFb1pWbEtMMUlPaks3?=
+ =?utf-8?B?VlVFZ2lhNlFnMFd4ZlBiZ3hldkNaQkNOMzRTRXF4VDBqY0I1ZkhrUFNLSk5t?=
+ =?utf-8?B?NTg5ajAwaGdlTTA4K3BFcDdmRmFuV0Y2Q2NQL3JqSGNlK2NGS0RxdGpmeEw3?=
+ =?utf-8?B?cUJ0RTRKNUMwbHd6YUFvcU15b0JoU29Idkl2MGNIb0dVWVllSkpHQjZRT0Fw?=
+ =?utf-8?B?UmRlVEE0UmwzdE41MHlSSSs4REptWXRZS2dtblIyazlaMnQ5S0NqbUl4d0Ev?=
+ =?utf-8?B?dkNYNkhmOXBzeEZ1RlJMSHUzYXJDT1RDbFZ0dmI2SXkrYTlXRjl0YTdLaWIx?=
+ =?utf-8?B?c0NtUDZRU3ZpcTE3dGNtQ0ltQnZvUVgyN0NyQzJpUkxLSnIrOVhSZko5eTlw?=
+ =?utf-8?B?bWJDR0c3WHFuVEwwdzJ3b3RBdHJsazNMcUkyYTBFeThQQzdlbEFGUTNsMFAz?=
+ =?utf-8?B?eEhrNkQwOHI0bXEyUW5wV25YRVYyKzkvMGx5U0loTitEVGlUUVJmM05tck5q?=
+ =?utf-8?B?bXB5cU02bHpsSlFJZ0kwTVg4N2Fkay9UYmtRZjdBL3dPblFWOEtYdDJrc25C?=
+ =?utf-8?B?clZ6RTRCaGRuR2VBK2xaelVKaTRlTzNZR2QvS2swRU03T2sxeU5na1lJenBI?=
+ =?utf-8?B?ekI2d21RN3ByQkJxdnpFdzRRQjhYS3lWRVRCNGNrWG02R1U3ZSszMVFzQjJJ?=
+ =?utf-8?B?NUFPc2NFcm14Q3doS1lISlhvRGRIMEd4cFhMeEdVdWRxL1hOamhkY3IrNDY1?=
+ =?utf-8?B?T1FEcGFUVVJaMVpKSDh3ZVFaK2lrQUltWkUvT2ZTdlY2a0pmcHR1aDV1UFIw?=
+ =?utf-8?B?REE3QUZGOU5IekQyUkE1eTJ6RmF1N2lPWHVXN0NmdkR4VDk1Mk9hLy9jUmtG?=
+ =?utf-8?B?YWFEWXkwUmQwazlvYTIvLzNhZXZGTnpQYjduU3RiUi9PTnZKR0xxeGxUbmN2?=
+ =?utf-8?B?UUlTZzlLeC9iNHF1UHBER2t6WkFrQXFhb2JwSGd0MGFzdU9aS3lPa3BpVk9h?=
+ =?utf-8?B?L0F0emg4dUlzOVN0bTd6eVgzRkhhd1dTdklwNVhpZVNZQ3p2TjdzYWFBaGVK?=
+ =?utf-8?B?b3g2cS9rWitTMC9pV2pvT0hjNkRjVm04RmZMd0lkU3NXNjRMSzZIUExaem1n?=
+ =?utf-8?B?L0tPMzlQcGpMZXFuMEp0VUh1ZHJvSzF2Zkc0WFg3cmVrNlo1VHlMelRldGE0?=
+ =?utf-8?B?TjZtTEJ1d1BnVFY2d0ZyZm5TNEo3cG80L1ZCVTJma0JMczN2ei8rRTk3UHhi?=
+ =?utf-8?B?MWRzWlRjYjYyV25JYzc5U0NhbUoyVEVlOGFpZkt3RWkrMjB4M0RPdlR2aTNz?=
+ =?utf-8?B?aGFaZVozK003cFdoS0dOK2NrMEMrTWlkdlFiczVxWXBhdTNlaU1rRHFXdW0v?=
+ =?utf-8?B?RllxaGlwVXI5RE1sZGZrRk91WWxYTDRZZnpBOG9JWHZUOFRLYlpIK1AxTTZ3?=
+ =?utf-8?B?Zm40UVdveEZ5Z0JZUHQ1RCtITXhBMFdFbEpUTUNrSUJNZFEzRDFIcldhVHZT?=
+ =?utf-8?B?QUxxUjQzSWdjUnA0OS96ZWJoZjRTa2FuTFpROWs1ZS82b2FUZnlsbXdJQWpR?=
+ =?utf-8?B?V1Z2Mmh2REFZdXVyVUdJR1BERTFqaEkzUnpldFUvNWxCNWhHVngvbS8zVnJN?=
+ =?utf-8?B?dWtFejJ6b1haMGRuNEdTRzlJZkZjdjh6WlVkdkRNZUpwakZDRkd6STF0MERp?=
+ =?utf-8?B?ekpQb3M5VVZxMEJVT3hOMk5LY2o2V1gxNVRocldVYWRHOGFhOUt0a3REbkFp?=
+ =?utf-8?B?Qnc2QmlnNENmMkVpM2RwV0VlRWdOUFk5cDVPVVdrdEFhTm9QWVlqQjBydzN4?=
+ =?utf-8?B?Vkp3cndJUjJQazlBRHBNWjFmTEx3WUQzOEg0K2llUnV1ZFVEb3RuL0RKOUJB?=
+ =?utf-8?B?YW9EU3l5RnVSaFR3M0h4TktKYkg5TVpqZURBL1pJUjVIUmwreU9nVTEyQU9P?=
+ =?utf-8?Q?GwxCIqTND2dxBRAX3wCeJsc=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27c0cf82-a77e-416b-5702-08dd551352e9
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 20:39:24.1873
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XgHPoJgS3XlhsGic+E7on2nY0FBz1j+6wpe5Un8ZfJ/Nv/o5ITC+5LDHP+XYsrUSH2xtOweD394Lw2QqJaOS/eKQYyZ6lFgr2gIn4/rgYvU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5468
 
-On Thu, Feb 13, 2025 at 01:56:19PM +0000, John Garry wrote:
-> When issuing an atomic write by the CoW method, give the block allocator a
-> hint to naturally align the data blocks.
+On 2025-02-24 08:28, Gabriele Monaco wrote:
+> The fair scheduling class relies on prev_sum_exec_runtime to compute the
+> duration of the task's runtime since it was last scheduled. This value
+> is currently not required by other scheduling classes but can be useful
+> to understand long running tasks and take certain actions (e.g. during a
+> scheduler tick).
 > 
-> This means that we have a better chance to issuing the atomic write via
-> HW offload next time.
+> Add support for prev_sum_exec_runtime to the RT, deadline and sched_ext
+> classes by simply assigning the sum_exec_runtime at each set_next_task.
 > 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
 > ---
->  fs/xfs/libxfs/xfs_bmap.c | 7 ++++++-
->  fs/xfs/libxfs/xfs_bmap.h | 6 +++++-
->  fs/xfs/xfs_reflink.c     | 8 ++++++--
->  3 files changed, 17 insertions(+), 4 deletions(-)
+>   kernel/sched/deadline.c | 1 +
+>   kernel/sched/ext.c      | 1 +
+>   kernel/sched/rt.c       | 1 +
+>   3 files changed, 3 insertions(+)
 > 
-> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
-> index 0ef19f1469ec..9bfdfb7cdcae 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.c
-> +++ b/fs/xfs/libxfs/xfs_bmap.c
-> @@ -3454,6 +3454,12 @@ xfs_bmap_compute_alignments(
->  		align = xfs_get_cowextsz_hint(ap->ip);
->  	else if (ap->datatype & XFS_ALLOC_USERDATA)
->  		align = xfs_get_extsz_hint(ap->ip);
-> +
-> +	if (align > 1 && ap->flags & XFS_BMAPI_EXTSZALIGN)
-> +		args->alignment = align;
-> +	else
-> +		args->alignment = 1;
-> +
->  	if (align) {
->  		if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
->  					ap->eof, 0, ap->conv, &ap->offset,
-> @@ -3782,7 +3788,6 @@ xfs_bmap_btalloc(
->  		.wasdel		= ap->wasdel,
->  		.resv		= XFS_AG_RESV_NONE,
->  		.datatype	= ap->datatype,
-> -		.alignment	= 1,
->  		.minalignslop	= 0,
->  	};
->  	xfs_fileoff_t		orig_offset;
-> diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
-> index 4b721d935994..7a31697331dc 100644
-> --- a/fs/xfs/libxfs/xfs_bmap.h
-> +++ b/fs/xfs/libxfs/xfs_bmap.h
-> @@ -87,6 +87,9 @@ struct xfs_bmalloca {
->  /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
->  #define XFS_BMAPI_NORMAP	(1u << 10)
->  
-> +/* Try to naturally align allocations to extsz hint */
-> +#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 38e4537790af7..438b3a953d6c7 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -2391,6 +2391,7 @@ static void set_next_task_dl(struct rq *rq, struct task_struct *p, bool first)
+>   	p->se.exec_start = rq_clock_task(rq);
+>   	if (on_dl_rq(&p->dl))
+>   		update_stats_wait_end_dl(dl_rq, dl_se);
+> +	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
+>   
+>   	/* You can't push away the running task */
+>   	dequeue_pushable_dl_task(rq, p);
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 5a81d9a1e31f2..feaed0459eb92 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -2974,6 +2974,7 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
+>   	}
+>   
+>   	p->se.exec_start = rq_clock_task(rq);
+> +	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
+>   
+>   	/* see dequeue_task_scx() on why we skip when !QUEUED */
+>   	if (SCX_HAS_OP(running) && (p->scx.flags & SCX_TASK_QUEUED))
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 4b8e33c615b12..1ea272e4dae71 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1684,6 +1684,7 @@ static inline void set_next_task_rt(struct rq *rq, struct task_struct *p, bool f
+>   	p->se.exec_start = rq_clock_task(rq);
+>   	if (on_rt_rq(&p->rt))
+>   		update_stats_wait_end_rt(rt_rq, rt_se);
+> +	p->se.prev_sum_exec_runtime = p->se.sum_exec_runtime;
+>   
+>   	/* The running task is never eligible for pushing */
+>   	dequeue_pushable_task(rq, p);
 
-IMO "naturally" makes things confusing here -- are we aligning to the
-extent size hint, or are we aligning to the length requested?  Or
-whatever it is that "naturally" means.
 
-(FWIW you and I have bumped over this repeatedly, so maybe this is
-simple one of those cognitive friction things where block storage always
-deals with powers of two and "naturally" means a lot, vs. filesystems
-where we don't usually enforce alignment anywhere.)
-
-I suggest "Try to align allocations to the extent size hint" for the
-comment, and with that:
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
-> +
->  #define XFS_BMAPI_FLAGS \
->  	{ XFS_BMAPI_ENTIRE,	"ENTIRE" }, \
->  	{ XFS_BMAPI_METADATA,	"METADATA" }, \
-> @@ -98,7 +101,8 @@ struct xfs_bmalloca {
->  	{ XFS_BMAPI_REMAP,	"REMAP" }, \
->  	{ XFS_BMAPI_COWFORK,	"COWFORK" }, \
->  	{ XFS_BMAPI_NODISCARD,	"NODISCARD" }, \
-> -	{ XFS_BMAPI_NORMAP,	"NORMAP" }
-> +	{ XFS_BMAPI_NORMAP,	"NORMAP" },\
-> +	{ XFS_BMAPI_EXTSZALIGN,	"EXTSZALIGN" }
->  
->  
->  static inline int xfs_bmapi_aflag(int w)
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index d097d33dc000..033dff86ecf0 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -445,6 +445,11 @@ xfs_reflink_fill_cow_hole(
->  	int			nimaps;
->  	int			error;
->  	bool			found;
-> +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
-> +					      XFS_BMAPI_PREALLOC;
-> +
-> +	if (atomic)
-> +		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
->  
->  	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
->  		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
-> @@ -478,8 +483,7 @@ xfs_reflink_fill_cow_hole(
->  	/* Allocate the entire reservation as unwritten blocks. */
->  	nimaps = 1;
->  	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
-> -			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
-> -			&nimaps);
-> +			bmapi_flags, 0, cmap, &nimaps);
->  	if (error)
->  		goto out_trans_cancel;
->  
-> -- 
-> 2.31.1
-> 
-> 
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
