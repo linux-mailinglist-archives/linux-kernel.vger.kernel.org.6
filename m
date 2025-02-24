@@ -1,92 +1,92 @@
-Return-Path: <linux-kernel+bounces-528415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B416A41774
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:36:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00DC8A41781
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAEE8188A3A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BBB3A14A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA1E198E77;
-	Mon, 24 Feb 2025 08:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051E41C84D0;
+	Mon, 24 Feb 2025 08:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VqwOVeC/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BzcvNPNS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0m+LErZE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QwaEcRE2"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HxHfLoAY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hJujK94I";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HxHfLoAY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hJujK94I"
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1026C1EA91
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4AF1C84B2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386199; cv=none; b=tXV7SV+1soY4dy6Iu5aiREu4/m4uuhfzGBPdhEursJE1UKDdwUpC8Ly/0v+n8yA4xzEYH59lnwZf+4Ft4NcFqeyb2oFgGwjqeEobvLRuysa+/yPgiMvbFDd1LnvMsosIuiovyu/+G8SDHC3fj9LPWB8S6oB+j6uqwnrFT37IEco=
+	t=1740386205; cv=none; b=qNDvDjawfNMSERMYfId4C+ynTVH04Tccpy4hK0eDYZDuSYJzjaTTS/rnSIX4A0oCRppSUgkR+D8q+32Dal9Zy3gZuqoL8RHr6TCGirFYNdNaP1bXS2mJ56a90E+hMxs/168O2Fxi9QFSmTWLM47z5kmpU37tM8anN8eKSEwsuhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386199; c=relaxed/simple;
-	bh=JUbFKimg2CZhy6HpqtjsbGrEysXwRR+hAehcIx/w46g=;
+	s=arc-20240116; t=1740386205; c=relaxed/simple;
+	bh=FNpQTuzeCGo31XNVzvjzELsSzegLVr7SicLD33GUca0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PJonQkOHLH2zsvqsRgjFgd74MUQo/DaLRj7boXif8d9PaELchP853V9LbhDy88j3ZXapBWD+JkbXNeRKLrQ4/boUnscXkgi2aGVzqjYGxh1DuC7dWoLjCylMFKwM5+Ih/UxP6kM59qo+pF3K0Yx5Dz61HJgVMxL/PFWXywFzGqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VqwOVeC/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BzcvNPNS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0m+LErZE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QwaEcRE2; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=gnmdkil6sn3UesCAB/kYBd+4YLtwO+vO6KMzKx9YD5LAxPyAEVm3IlNgE4zfvZ3z3Re0ipFAAAihhyVBVatYDoSWNEy3GVLoY8V0mGsf0yKk9K3FdsqtwVuSF1rAbWP7InJ47eVJggM6UwPKX7UlY2PR4wgJXppxlEmpS8hhiBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HxHfLoAY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hJujK94I; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HxHfLoAY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hJujK94I; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 96C242118A;
-	Mon, 24 Feb 2025 08:36:31 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F0B492117A;
+	Mon, 24 Feb 2025 08:36:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740386192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1740386193; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R0Sm5ehaucSsHtr6evv3VGyr+MK05C9WXfxsoPw7fTU=;
-	b=VqwOVeC/aAzI8axq7ewUQVK8rC8zL2CYl5SGComh1YidKEGQ6mh8lDZEjPx+L/Qyu4Cfcb
-	Ri8NPtqBgr6DLurMUkTrYvGzGK6bJPrvT6gLO6K2gbPK5fUf4a79Ube+FDCcqr6ZeZC2N/
-	Tx/P6XiyWuFjTXB4JeX/wGW1H9XhoNQ=
+	bh=AJkbniysythA0sc6bcyFOvbaXQUvqUuptYrqmjRM03c=;
+	b=HxHfLoAYslaqIO6423815klkNZWRCPfoRdxbGp8nJSn6VFMe/hwptOEmFg/kyXP5Kt0HOf
+	tr39j/TyCP9YLyZD8W/DfuqWisL+n2gdGqr8USf3vQKNW9q2yiETNBGlGJqDIfdPXSuzrg
+	3jiujW6B+xUNJSa5feBSWF3Y6gIFP+g=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740386192;
+	s=susede2_ed25519; t=1740386193;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R0Sm5ehaucSsHtr6evv3VGyr+MK05C9WXfxsoPw7fTU=;
-	b=BzcvNPNSUnWUCBBazoZIOStRDlonbD6+RvX4JBIpR3d31PrVUX9NZtjk75H+ck7Yg6Df8T
-	LAvWVISSHy/P3UCA==
+	bh=AJkbniysythA0sc6bcyFOvbaXQUvqUuptYrqmjRM03c=;
+	b=hJujK94IM4Jxo/iU82vWB+SRxP6gDIx8FFVo7pvpjfDe3MHeiDjuSevjiVeo1oaSRE6d6O
+	WebOi015HY+5dnAQ==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740386191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1740386193; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R0Sm5ehaucSsHtr6evv3VGyr+MK05C9WXfxsoPw7fTU=;
-	b=0m+LErZEI8wM3jS+peh5ZSoE6uspSey2qBD9MM7kxSyzYA2CBeMfvxUgHS1Ewtg6RAfb3D
-	y3vjH4LfQD53SIGg4rIz01VQi4leOMY54KFgqZoQjpgg2v1b026I1xDn02+7hyVEhLtj8w
-	v+nYaqsJ3fZo/yXewmsEiw0iQkitkw0=
+	bh=AJkbniysythA0sc6bcyFOvbaXQUvqUuptYrqmjRM03c=;
+	b=HxHfLoAYslaqIO6423815klkNZWRCPfoRdxbGp8nJSn6VFMe/hwptOEmFg/kyXP5Kt0HOf
+	tr39j/TyCP9YLyZD8W/DfuqWisL+n2gdGqr8USf3vQKNW9q2yiETNBGlGJqDIfdPXSuzrg
+	3jiujW6B+xUNJSa5feBSWF3Y6gIFP+g=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740386191;
+	s=susede2_ed25519; t=1740386193;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=R0Sm5ehaucSsHtr6evv3VGyr+MK05C9WXfxsoPw7fTU=;
-	b=QwaEcRE2NA3237zz6OAVlwmzsbFkdCLUsMmMsDL917w0D5+OWP6dF1FFNkvy2R+YR6ZoRc
-	+W3NTBZfoPSUMeBg==
+	bh=AJkbniysythA0sc6bcyFOvbaXQUvqUuptYrqmjRM03c=;
+	b=hJujK94IM4Jxo/iU82vWB+SRxP6gDIx8FFVo7pvpjfDe3MHeiDjuSevjiVeo1oaSRE6d6O
+	WebOi015HY+5dnAQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5429313929;
-	Mon, 24 Feb 2025 08:36:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A7E4813332;
+	Mon, 24 Feb 2025 08:36:31 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gDEoEo4vvGeJVAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Mon, 24 Feb 2025 08:36:30 +0000
+	id mJFGJo8vvGeJVAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 24 Feb 2025 08:36:31 +0000
 From: Stanimir Varbanov <svarbanov@suse.de>
 To: linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
@@ -112,9 +112,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Stanimir Varbanov <svarbanov@suse.de>,
 	"Ivan T. Ivanov" <iivanov@suse.de>,
 	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [PATCH v6 1/7] dt-bindings: interrupt-controller: Add BCM2712 MSI-X DT bindings
-Date: Mon, 24 Feb 2025 10:35:53 +0200
-Message-ID: <20250224083559.47645-2-svarbanov@suse.de>
+Subject: [PATCH v6 2/7] dt-bindings: PCI: brcmstb: Update bindings for PCIe on BCM2712
+Date: Mon, 24 Feb 2025 10:35:54 +0200
+Message-ID: <20250224083559.47645-3-svarbanov@suse.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250224083559.47645-1-svarbanov@suse.de>
 References: <20250224083559.47645-1-svarbanov@suse.de>
@@ -155,86 +155,43 @@ X-Spamd-Result: default: False [-5.80 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-Add bindings for BCM2712 MSI-X interrupt peripheral controller.
+Update PCIe controller bindings with BCM2712 support.
 
 Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
 Tested-by: Ivan T. Ivanov <iivanov@suse.de>
-Link: https://lore.kernel.org/r/20250120130119.671119-2-svarbanov@suse.de
+Link: https://lore.kernel.org/r/20250120130119.671119-3-svarbanov@suse.de
 [kwilczynski: commit log]
 Signed-off-by: Krzysztof Wilczyński <kwilczynski@kernel.org>
 ---
- .../brcm,bcm2712-msix.yaml                    | 60 +++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+ Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
-new file mode 100644
-index 000000000000..c84614663b5d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2712-msix.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom bcm2712 MSI-X Interrupt Peripheral support
-+
-+maintainers:
-+  - Stanimir Varbanov <svarbanov@suse.de>
-+
-+description:
-+  This interrupt controller is used to provide interrupt vectors to the
-+  generic interrupt controller (GIC) on bcm2712. It will be used as
-+  external MSI-X controller for PCIe root complex.
-+
-+allOf:
-+  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: brcm,bcm2712-mip
-+
-+  reg:
+diff --git a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+index 2ad1652c2584..29f0e1eb5096 100644
+--- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+@@ -14,6 +14,7 @@ properties:
+     items:
+       - enum:
+           - brcm,bcm2711-pcie # The Raspberry Pi 4
++          - brcm,bcm2712-pcie # Raspberry Pi 5
+           - brcm,bcm4908-pcie
+           - brcm,bcm7211-pcie # Broadcom STB version of RPi4
+           - brcm,bcm7216-pcie # Broadcom 7216 Arm
+@@ -101,7 +102,10 @@ properties:
+ 
+   reset-names:
+     minItems: 1
+-    maxItems: 3
 +    items:
-+      - description: Base register address
-+      - description: PCIe message address
-+
-+  "#msi-cells":
-+    const: 0
-+
-+  brcm,msi-offset:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: Shift the allocated MSI's.
-+
-+unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - msi-controller
-+  - msi-ranges
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    axi {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        msi-controller@1000130000 {
-+            compatible = "brcm,bcm2712-mip";
-+            reg = <0x10 0x00130000 0x00 0xc0>,
-+                  <0xff 0xfffff000 0x00 0x1000>;
-+            msi-controller;
-+            #msi-cells = <0>;
-+            msi-ranges = <&gicv2 GIC_SPI 128 IRQ_TYPE_EDGE_RISING 64>;
-+        };
-+    };
++      - enum: [perst, rescal]
++      - const: bridge
++      - const: swinit
+ 
+ required:
+   - compatible
 -- 
 2.47.0
 
