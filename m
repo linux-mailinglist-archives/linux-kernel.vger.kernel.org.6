@@ -1,113 +1,183 @@
-Return-Path: <linux-kernel+bounces-528594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9816A4197D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:50:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BA3A4197A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F98E3ABBD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:47:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF443A9E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D3424292F;
-	Mon, 24 Feb 2025 09:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE73245027;
+	Mon, 24 Feb 2025 09:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="pRolsdAZ"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bT2ICR5Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8919068E;
-	Mon, 24 Feb 2025 09:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1B12B63;
+	Mon, 24 Feb 2025 09:47:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390470; cv=none; b=GC7AM89iNNCSk23zUo+I31v9JikP1v3wxm7zm656uVYp3DyvZlC39dUuf1h7jzyJkwgQnIGz6+7pO617MKZLYbGDzApa9g0xG0akkST5Atrr6Zk7Qxexb5JFZ4gf4gD4oBEUrEp1PATjHY8rWyWqqB9zarAXXXqm26RMPDJWPIs=
+	t=1740390447; cv=none; b=CUhOYthcThOznoPq2Silkphk/0UtNUp919m3/eiJ6CGuWPrBmz9945srW4aKEO2HE9Je8qX3uT87imFIhua7eZI6e+HtnPtCc9IDoiMUhGkfFuso3qMac9p8R5vrjgY5e3fFqsSc5AP0d77E5X+luCY8bn8R2t1OCqPnANz64TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390470; c=relaxed/simple;
-	bh=9BaNaagw/ZNHIHZIGWJapW+0C1OmfI1aZs/907nTjNo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ab8caUYDeJ63Xer9RWTFppKnp9VRgo4taLgF0wdIcNXkFaGO6djd3WZSt9oOxDqreEo1QF0WkBPYWo7pRp/0LjsECXLhBP0Zu+gN3rcrxjOs3tYEM0ti84Kg3OFSTpQK8ne9Nm/W4+OIN9+2/OkBF/J8pxhz61aTMd823PZNFFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=pRolsdAZ; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1740390425; x=1740995225; i=markus.elfring@web.de;
-	bh=hRH62ND8UNosmEYDdA1QCyNtBT0pt/8MXaWtWO0/8yo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pRolsdAZtwJZeVqEjidyxnkbVNPR0yCWUAof4/2eRrmAmHCgY9a3Kb/FAqH/0GhV
-	 29JbxmharSUhUVrGajDbebQvoLUYL08oED4DvqAF7UsJ2kfRwatBc6Le04/pyaIY6
-	 Ndk1fplkZCwARWb2rk49RY8S4rTe5wuA2hmJUxLk6z5/E6EMrcS39VIWDqIeD+7O9
-	 QRlv6dfpcSm5E6vkCyJg3DZoRgGsx67zIQ448HcwWVAknVmK+drj9eBRc+nlQHFSy
-	 ROFlXOu8Gsm/gQfktflMLESJiQFs1eVWHfj9mas6vSqT0FbTxoyaE5lv7hCDBQ2cd
-	 fUtCo9lexU2FSNTrew==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.93.37]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjgSv-1t3JPW2Sol-00aAzV; Mon, 24
- Feb 2025 10:47:05 +0100
-Message-ID: <1f41fd8f-c811-4995-8e94-bf824a9c7f06@web.de>
-Date: Mon, 24 Feb 2025 10:47:02 +0100
+	s=arc-20240116; t=1740390447; c=relaxed/simple;
+	bh=+WTxUZC6daTEmaagLEmds/XTc+7JQgGYHuO1yDEuspo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IrNgzpcouyPuu23Xc8Wl6VGX5x63JWgcMczKtElkKmCRe9uGr+mDvNeqLh1qF0sLU2+EsdP0v3xZ42J0Zbg0OABCOHhRnYWuTP9SuJKvCbNf9QiK2/otjQT80656oV4eC9Qn75pUVdnRPxJ1QraOJGOaCoWcklaV1ZAaW3ieT+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bT2ICR5Y; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740390446; x=1771926446;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+WTxUZC6daTEmaagLEmds/XTc+7JQgGYHuO1yDEuspo=;
+  b=bT2ICR5YhKL7qLMRyyaG2mtQb0x9lXzASSTMq78q5g0QXxQEm000K7ZW
+   go4SZKEXCLQh5pcrzqR6nKECmwPs0vzf2QikoXtg4dNBkLCrc/7OafJA/
+   2/oUBPRNKnZ7sDwdw8Kk+kaUJqflX0YAoyNU5ksfcGm030AhEcI+sTlKV
+   QYrvnrPCS7zfHeOinzyDTe8PGtUX9eZ3jedwWwgTtN9fY5a8RY3xhCOg8
+   wVSRQ/FdA3mqC4haJrwMKX2WSVKc4Qdkov4hD99OvHTDQ8mmuS6vKVjPc
+   wfknpS3mkGkSqwx9AcDG51ZkdYVS8dfPAYrqjWVfMaEV7Y4u3Ic93XRf0
+   w==;
+X-CSE-ConnectionGUID: OB2dOGlzQy2Z7ZCoXLJaUw==
+X-CSE-MsgGUID: HDAPtGfORNmV1LsT6ff9wg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="44789692"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="44789692"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:47:26 -0800
+X-CSE-ConnectionGUID: vQmcoqNlR3C0fKUshxY8iA==
+X-CSE-MsgGUID: oCE9LlNOTnOO77JGa4IywQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="121097706"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:47:19 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmV3R-0000000EXdv-14JO;
+	Mon, 24 Feb 2025 11:47:13 +0200
+Date: Mon, 24 Feb 2025 11:47:12 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"pmladek@suse.com" <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	Kerem Karabay <kekrby@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	Hector Martin <marcan@marcan.st>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v3 3/3] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Message-ID: <Z7xAINooeB7zpnhf@smile.fi.intel.com>
+References: <DC5079B2-9D3D-4917-A50D-20D633071808@live.com>
+ <8F522D41-5417-467E-B9D3-7D9FC24AE536@live.com>
+ <Z7igVXqvRYTVFpXU@smile.fi.intel.com>
+ <A373EDB5-528D-4ECF-8CF3-4F96DE6E3797@live.com>
+ <Z7jlORk0MiMFTmp6@smile.fi.intel.com>
+ <E8256A03-5D13-4B8B-932D-70E734E580FE@live.com>
+ <6f7b0886-5f31-4ba9-b82e-e9d3614b504f@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] PCI/portdrv: Loose the condition check for
- disabling hotplug interrupts
-To: Feng Tang <feng.tang@linux.alibaba.com>, linux-pci@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>,
- Guanghui Feng <guanghuifeng@linux.alibaba.com>,
- Liguang Zhang <zhangliguang@linux.alibaba.com>,
- Lukas Wunner <lukas@wunner.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: lkp@intel.com, LKML <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>
-References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
- <20250224034500.23024-4-feng.tang@linux.alibaba.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250224034500.23024-4-feng.tang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:rAmKrLzRoKv0QW82kY5YP48J2FZ9xjMoF4dS8F8J6OCIHCFi9nQ
- iA/8IYAbw6665tiQzwvP7xvt+mlZXHnp7bq2iB5DXCApbAufzn8u1CIh2b4n8T9/p6wIJZ1
- 1qHWGt426tiYy3hE/8cMO1WpGoV0fDhW8LmM4/ZQTmP0QYEJ4Ad3vKZXPyJY5p4/qTwgKWy
- I8aF0uaGIfBWE3J7f1h2Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:RB8wIQCsvK4=;uAWktxSLvqGqVrzfdO0UNZ5eShN
- bJm2d9lneXflGtEeiBILtTnj6KteeA+5bLPC9x0ybfxHrA1fBqU1RUVNw/dEH//EhYXTYePVM
- fZ+jdt2e8LqOSZhdXXBJOSct78oxdq7OOqn33XLGTVhITAu/CpCJ4nICcMM5IbP1odguRei8z
- rBmuKjUkDOcB8BNLD3GWHuwDE29RYEo0ULac83G5+ZRPCNNc693Pw519S5oqcDmp0XFoZfSas
- JAzk02zeEtksJCwcIM+3i1oGxSIeTEnkLu8egdDTqfdn5XhSEyQ+iZvC0ZMD2JLRlu7Qcvc5T
- CiKTBNNvfY/Zivfr7sqOjLfDhZWpBIL/Xa4eaDX2b/T5ImWfhcLbZVydqC52jZORMD3R72c1U
- Vuh0t1oGv8sU3A+DOXZ35aLvgOKgnVUlooXoUizHqieY7wvqbURoS0mkbvZyFaOqH02qgaq69
- 9X8AHzirSKcuCWIrirOH1bwURLj52cTSLw8loMALjsacjbGyT9XttZSGPkST1XlVwqLdIIxbr
- vZRYP7pla0kVsin92MhnHu08bix19oUVDs7ms5bBUoBIaSNiCtP4mP56T5DPS8zVdP7+mDpMK
- /Pv/8bTt/dL+729wjJtJvMra2P3ltQsgsmFAKUQU9FwVKBpe3rU1qbtnje6ggGvlNduJVTgnr
- WACKXf/QP2kvg27lzjlYoRqNHKxWmbqLLttyu2FIYjHwIbQrREqTIS/6y4CEZCsUHH6r37Y8k
- 7DGlyJqpTwxf3b6drEFnztSFq9VOcfGGVLm/fk8ApLXdNJdyDsmvJ2F5GA9Mr/f34XpXm5SUx
- qEeKux1GLhfwhsrLh2uujWQxCc+vuZqsveCFq/4hoWZrYJBqvDqeVS9KVbo2rnclO0+UG28/O
- xlBTd7v5SRJgHg4PcyLjN91UV5Ruc3Un44sbqQe8GzR/uJtTeEGZLVWWEnRaqpROuuHcwf+hm
- NNiPYem2fGpN+qV0o8O4QgZD6xAWEJfQPcRTmagoahnGbCPdDFcMAARP7a8A7nlMatvVIGEDv
- vJhRYOtOBBVhCgrj3rbo9sOgAUQ+6psVMxEsaQxGfb/LCU59YTSWGkG1/XUEopLL2ujlHVHDp
- AuGMPyRHFHHCtyvP2dss1aG+UqXq9KSMl6wkgtB/J4Z9jIgtL8Mw6/rvLS2LSoVp3sMDB/AXE
- np+xNOeXq60V3TJ5cU/TXgkZtapc3XrM41Gl84azcvZTBLzrrIvjTZ3TCIsbUWnVfQJQjyKT7
- IGMXNhotm5VL821i7Z0mHh2nQrZHMa+mnoTI1Q88n1ne2h0IBFrCKK6WgEWl+th8cErpdvS5C
- q4ybFivUCYfKoiUTFTowt7lcMf31DipGmv8xEWscuhNbKgIuEH6+1ly8TQc9wDgeN46Egc2Rb
- KdQ4N2/b81M5pWqDIGrGQa4NV2VotDvfMZ2ZUtSZjo67wEG3gbchXH/9GlGY8LyXM//2DRZr3
- pncQXqbj9+CLfZFDt7qEE6lnHuy4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6f7b0886-5f31-4ba9-b82e-e9d3614b504f@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-=E2=80=A6
-> remove the depency over them.
+On Mon, Feb 24, 2025 at 09:41:43AM +0100, Thomas Zimmermann wrote:
+> Am 22.02.25 um 10:07 schrieb Aditya Garg:
 
-             dependency?
+...
 
-Regards,
-Markus
+> > > What padding, please? Why TCP UAPI headers do not have these attributes?
+> > > Think about it, and think about what actually __packed does and how it affects
+> > > (badly) the code generation. Otherwise it looks like a cargo cult.
+> > > 
+> > > > I tried removing __packed btw and driver no longer works.
+> > > So, you need to find a justification why. But definitely not due to padding in
+> > > many of them. They can go without __packed as they are naturally aligned.
+> > Alright, I did some debugging, basically printk sizeof(struct). Did it for both packed and unpacked with the following results:
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_request_header is 16
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_request_header_unpacked is 16
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_response_header is 20
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_response_header_unpacked is 20
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_simple_request is 32
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_simple_request_unpacked is 32
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_information is 65
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_msg_information_unpacked is 68
+> 
+> In the unpacked version, there is a 3-byte gap after the 'bits_per_pixel' to
+> align the next field. Using __packed removes those gaps at the expense of
+> runtime overhead.
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_frame is 12
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_frame_unpacked is 12
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_fb_request_footer is 80
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_fb_request_footer_unpacked is 80
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_fb_request is 48
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_fb_request_unpacked is 48
+> > 
+> > Feb 22 13:02:03 MacBook kernel: size of struct appletbdrm_fb_request_response is 40
+> > Feb 22 13:02:04 MacBook kernel: size of struct appletbdrm_fb_request_response_unpacked is 40
+> > 
+> > So, the difference in sizeof in unpacked and packed is only in appletbdrm_msg_information. So, I kept this packed, and removed it from others. The Touch Bar still works.
+> > 
+> > So maybe keep just this packed?
+> 
+> The fields in the TCP header are aligned by design.
+
+> Unfortunately, this hardware's protocol is not. And there's no way of fixing
+> this now. Just keep all of them packed if you want.
+
+It would be nice to see the difference in the code generation for the all
+__packed vs. only those that require it.
+
+> At least it's clear then
+> what happens. And if your hardware requires this, you can't do much anyway.
+
+One aspect (member level alignment) is clear but the other is not
+(object level alignment). I dunno if it makes sense to be pedantic about this,
+but would like to see the binary outcome asked for.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
