@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-528235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E48A41547
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:21:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0229FA4154A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626A918906F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:21:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF383AAAAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7831C84BA;
-	Mon, 24 Feb 2025 06:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4FA1C8632;
+	Mon, 24 Feb 2025 06:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMTkNOP+"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vhy8n0Pg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183AB1C7012
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F3028DB3;
+	Mon, 24 Feb 2025 06:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740378083; cv=none; b=oKgnl3E2sbYhMq4sXmMxBoUP31/7Eo/bQ/qPZIDmsoqkmg+cv1YM8t2vvdWrQCwgGHDlvZWrHwXiF2cfE45E34/DXdRmoLWH1e6MsQmY78uq+FtN6p2TcMI584fjK4GbEkifdaGJE4vvFCoEsPLUciueX5YBUQ4EEEq7Vmhc6YA=
+	t=1740378225; cv=none; b=Qrf3FxLB4C969SDEdLYpk74MYNbEixfXRk2SBv30BDSS8+jWvfAKWS1rLdpBifru0v75GjU2mTOVv28YEPxo2fzCQAgt3nTFyVbXFzGch+iO4DFFjM7AwacLcXvXcgyyfpPn3BXoYk2yOdUgI1U2253WnVCa4ZMxTpF4so5eRGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740378083; c=relaxed/simple;
-	bh=ciShrYJXjTiBmBNuZ+kJSDafrQK9Pcz4WheG87twRBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HWqx1wX2kZGU3b0KNWbtK6GD5Q0IlH/7c31T2x5MxaXbZ+C90HkXHQ+RRj45Y8MlT6lfu/qcBySHmVIkMrUbTVwsuJSW7izIfY+bX7nouXODYt82Ym4G4FQBPBG57eVI544SXCaYlF8b1PlhcfNY1/az6blcMeRcC0ZmEtJMKPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cMTkNOP+; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ab771575040so877945966b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:21:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740378080; x=1740982880; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VmWnaoXiw9bvC988XKjb1pxIMeweo2f9aT4aiVIQmfU=;
-        b=cMTkNOP+S7NlfgnS8+Mk0JoZFJQuGseWaT0QTgnKlyDF5JU/BDCPqs+HpnRIcEBymR
-         YisSKG1/55D4B9w/LT9s8vbMmM6AeNCLohl5orV1odDVvnYDUrFMu85Dgvmx/2yjQ4iO
-         KOslrphhhqmtfduUwzI6aHHhgFgENEoewy469kzu3HqIA4mVHivIdcxdGSvzYtOOxrmz
-         AoSRCrkqjhtyBnTgKk17GgrZn4aghKdow3olHpq0gx481epD+n7PBUfgEsgjYeNRHnPu
-         OtztCJNeC+UiMEoWeRbfOI+sknhTVD9fwF+BhtRI/m+glo3Yq6MSmmxTVnIKgtO726HC
-         /zNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740378080; x=1740982880;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VmWnaoXiw9bvC988XKjb1pxIMeweo2f9aT4aiVIQmfU=;
-        b=MsB5Yf5FEGqTKmDNtsX/3cTNEkmcR/9Yjy2kC3XQ0u3MUQmJZH6HmJ6/TxhjE7lWtf
-         3POLqJrUjVp3oU0+0zOfCsMWVJZ/JbblqeOwUH5hTw/0cq6FoXg1gxkQVAdgykV7QZQB
-         mHw+BW6bd7o20M9mC3+VmHMOTBCh+ny86Iqm3TAa+kPk5KgIQFwtFKhSQumgouMW4++I
-         a2L4o8KLENShbmrxREwycbSHa/yBreout9NTmQ8tWruSB2vBC8CMfleIUO5tQZOMTqnd
-         uSe79zYbZqjHm5MEfFhrMf5JlU1FsghdfOi4Yix44hSqeahmDB49TWxdtUHykNDSfMMs
-         VwHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRx4QuS0/eFy7/SfUjX/D8I8QXeYcrNotiTf/Oh+H7lKWXJ8Bq7xUjzlItVlPFeq80ybWBuQjJD5q74VM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvE7nPsnYMHnUz7gCYUOXa002wprb7uQfthhjvuBARFvXwyB0M
-	TtgZ130KUwFl9HtY+HJ38TJOpBHubBV4Nls5WgC7d9Ob2wnvPJK1
-X-Gm-Gg: ASbGnctmnxISxnYMB1MLoUfwSGSeYu4R8k6A45Hzp/0WJn2fdqLrodXFcBDJvOmbkpm
-	JfZFsCcuFvCXx8RI2f1qVC0L6WIvh2e7ZYUhufT3tw+KEspW6yMvzgBpX9VoDGxYmcqVEJh7cHF
-	lVFX+q/FxKuTAzOhSHrIYbtWKrgBcEriF0A447Wi98Ukat0ktoMxb9ueYsPc0Fr0ki8ZLuAOzjh
-	i+1VoEP3amEF7k861Kx/FgGYrtiqrFdsuCYJPgDSjBzMPRqJyhTC+G18dt6SrLJQ7LiEMbxkEHs
-	nlYWT4JON+KD6ry2YHGOoN2OPw==
-X-Google-Smtp-Source: AGHT+IHsjFhFKXCpBbExhxMEiZqvYYVtXiZHd3OZG0pPrvCmize50lMccoY+FNwAAW55lD57cHl6Eg==
-X-Received: by 2002:a17:907:a317:b0:ab7:46c4:a7be with SMTP id a640c23a62f3a-abbeda28000mr1446440766b.2.1740378080123;
-        Sun, 23 Feb 2025 22:21:20 -0800 (PST)
-Received: from Sahara-HP.. ([2a00:f29:201:83e5:28ef:beb3:776d:dc6c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322d0sm2195183766b.13.2025.02.23.22.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 22:21:19 -0800 (PST)
-From: Keun-O Park <kpark3469@gmail.com>
-To: ardb@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	Keuno Park <keun-o.park@katim.com>
-Subject: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
-Date: Mon, 24 Feb 2025 10:21:11 +0400
-Message-Id: <20250224062111.66528-1-kpark3469@gmail.com>
-X-Mailer: git-send-email 2.34.1
-Reply-To: keun-o.park@katim.com
+	s=arc-20240116; t=1740378225; c=relaxed/simple;
+	bh=cuyUHzmNRrlRengPj2KWGGE7uP665a9dsZbLx/j8reQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HgIrfS7BxkXsvAxFO4TAgwjBNt12wwMsZOMPjckVT59H4sULHwZSwZdC4mpU0hvHwhhLNcVKMoQu4PRXgB/mdbVlvWPt/uOJ/lT8VWutgwdmk6dH6AEXhBxmmXskwS/kYu3+dPF9JCiTVCu+dYnVkCyvLzT8rhctzNNBevL6xEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vhy8n0Pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CC4C4CED6;
+	Mon, 24 Feb 2025 06:23:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740378225;
+	bh=cuyUHzmNRrlRengPj2KWGGE7uP665a9dsZbLx/j8reQ=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Vhy8n0PgndAb1R2oxQLvdFy/gSk/u/G05X+Ht7jPi9KZLU1q2VKDhaPF6YRHW1cvs
+	 8FFdyRk58kF36XiE0PSpIabDL0/NuYmFz4PClvpqmlNj9OPZ7mi0MeJ+VnRlbh7wL2
+	 jrWLr8+fwSlfnzVipwbxgEBd9cDz6dJHDUlfwgTUcaXqyeWT8BXlFLH2pg9o5SnSo5
+	 uw5zBGLrXOD9mhCiacoOXOOaCiYxHwlhDdbvEyfhUYlW30M0ATRFXJE12TshRm/tvz
+	 aaT0gxAWtQAqHdWokPmdL2x7g4XtxbeSXJ9SBHUC0sb+RrvcxjQgr7fBH9nwufTajV
+	 mq9PpSUHj44EA==
+From: da.gomez@kernel.org
+Date: Mon, 24 Feb 2025 07:23:13 +0100
+Subject: [PATCH RESEND v3] drm/xe: xe_gen_wa_oob: replace
+ program_invocation_short_name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-macos-build-support-xe-v3-1-d2c9ed3a27cc@samsung.com>
+X-B4-Tracking: v=1; b=H4sIAFAQvGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyMT3dzE5Pxi3aTSzJwU3eLSgoL8ohLdilTdNAND82QLE0ND4yQzJaD
+ mgqLUtMwKsMHRSkGuwa5+LkqxtbUAW9q+nXAAAAA=
+X-Change-ID: 20250224-macos-build-support-xe-f017c84113b6
+To: Lucas De Marchi <lucas.demarchi@intel.com>, 
+ =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Justin Stitt <justinstitt@google.com>
+Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ Klaus Jensen <k.jensen@samsung.com>, Tamir Duberstein <tamird@gmail.com>, 
+ Theodore Ts'o <tytso@mit.edu>, gost.dev@samsung.com, 
+ Barry Song <baohua@kernel.org>, Daniel Gomez <da.gomez@samsung.com>
+X-Mailer: b4 0.14.2
 
-From: Keuno Park <keun-o.park@katim.com>
+From: Daniel Gomez <da.gomez@samsung.com>
 
-On systems using 4KB pages and having 39 VA_BITS, linear_region_size
-gets 256GiB space. It was observed that some SoCs such as Qualcomm
-QCM8550 returns 40bits of PA range from MMFR0_EL1. This leads range
-value to have minus as the variable range is s64, so that all the
-calculations for randomizing linear address space are skpped.
-As a result of this, the kernel's linear region is not randomized.
-For this case, this patch sets the range by calculating memblock
-DRAM range to randomize the linear region of kernel.
+program_invocation_short_name() may not be available in other systems.
+Instead, replace it with the argv[0] to pass the executable name.
 
-Change-Id: Ib29e45f44928937881d514fb87b4cac828b5a3f5
-Fixes: 97d6786e0669 ("arm64: mm: account for hotplug memory when randomizing the linear region")
-Signed-off-by: Keuno Park <keun-o.park@katim.com>
+Fixes build error when program_invocation_short_name is not available:
+
+drivers/gpu/drm/xe/xe_gen_wa_oob.c:34:3: error: use of
+undeclared identifier 'program_invocation_short_name'    34 |
+program_invocation_short_name);       |                 ^ 1 error
+generated.
+
+Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
 ---
- arch/arm64/mm/init.c | 5 +++++
- 1 file changed, 5 insertions(+)
+This last patch allows for building the Linux kernel allyesconfig target
+for arm64 in macOS hosts with Clang/LLVM.
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9c0b8d9558fc..2ee657e2d60f 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -290,6 +290,11 @@ void __init arm64_memblock_init(void)
- 		s64 range = linear_region_size -
- 			    BIT(id_aa64mmfr0_parange_to_phys_shift(parange));
+Summary of previous feedback and work:
+
+Other Makefile targets, such as defconfig, can already be built
+successfully if the necessary headers are provided and the Linux kernel
+build system is configured appropriately. To facilitate this process,
+the Bee Headers [1] project was created not only to serve as reference
+but also to document [2] the process and supply the missing headers.
+
+To get started:
+
+1. Setup:
+	diskutil apfs addVolume /dev/disk<N> "Case-sensitive APFS" linux
+
+	brew install coreutils findutils gnu-sed gnu-tar grep llvm make \
+	pkg-config
+	brew tap bee-headers/bee-headers
+	brew install bee-headers/bee-headers/bee-headers
+
+2. Build:
+	source bee-init
+	
+	make LLVM=1 defconfig
+	make LLVM=1 -j$(nproc)
+
+[1] Project: https://github.com/bee-headers
+[2] Documentation:
+https://github.com/bee-headers/homebrew-bee-headers/blob/main/README.md
+
+The changelog below has been refined to focus only on feedback related
+to the xe driver. Version 3 was submitted some time ago, and although
+some errors occurred in CI, they appear to be unrelated to the changes.
+---
+Changes in v3 (RESEND):
+- Update cover letter and To/Cc list.
+- Rebase patch onto next-20250221.
+- Link to v3: https://lore.kernel.org/all/20240925-macos-build-support-v3-1-233dda880e60@samsung.com/
+Changes in v3:
+- Update drm/xe patch to replace program_invocation_short_name with
+argv[0] instead of using getprogname + ifdef as suggested by Masahiro.
+- Link to v2: https://lore.kernel.org/r/20240906-macos-build-support-v2-0-06beff418848@samsung.com
+
+Changes in v2:
+- Adapt xe_gen_wa_oob to solve getprogname()/
+program_invocation_short_name in runtime. as suggested by Lucas De
+Marchi.
+- Link to v1: https://lore.kernel.org/r/20240807-macos-build-support-v1-0-4cd1ded85694@samsung.com
+---
+ drivers/gpu/drm/xe/xe_gen_wa_oob.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/xe/xe_gen_wa_oob.c b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+index 904cf47925aa1d5bc37983af83232d5e4697c49e..ed9183599e31cc9d76da3f22c9fb3884384a49bc 100644
+--- a/drivers/gpu/drm/xe/xe_gen_wa_oob.c
++++ b/drivers/gpu/drm/xe/xe_gen_wa_oob.c
+@@ -28,10 +28,10 @@
+ 	"\n" \
+ 	"#endif\n"
  
-+		if (range < 0) {
-+			range = linear_region_size -
-+				(memblock_end_of_DRAM() - memblock_start_of_DRAM());
-+		}
-+
- 		/*
- 		 * If the size of the linear region exceeds, by a sufficient
- 		 * margin, the size of the region that the physical memory can
+-static void print_usage(FILE *f)
++static void print_usage(FILE *f, const char *progname)
+ {
+ 	fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <generated-c-header-file>\n",
+-		program_invocation_short_name);
++		progname);
+ }
+ 
+ static void print_parse_error(const char *err_msg, const char *line,
+@@ -144,7 +144,7 @@ int main(int argc, const char *argv[])
+ 
+ 	if (argc < 3) {
+ 		fprintf(stderr, "ERROR: wrong arguments\n");
+-		print_usage(stderr);
++		print_usage(stderr, argv[0]);
+ 		return 1;
+ 	}
+ 
+
+---
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+change-id: 20250224-macos-build-support-xe-f017c84113b6
+
+Best regards,
 -- 
-2.34.1
+Daniel Gomez <da.gomez@samsung.com>
 
 
