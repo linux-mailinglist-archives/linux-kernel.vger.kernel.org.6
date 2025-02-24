@@ -1,116 +1,128 @@
-Return-Path: <linux-kernel+bounces-528199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084DDA414B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:21:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17B8A414B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:21:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233FC1896080
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:19:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1317F3AF3A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:20:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E061C6FE5;
-	Mon, 24 Feb 2025 05:17:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758111A5B81;
+	Mon, 24 Feb 2025 05:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="CwOlPxWg"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B111C5F27
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4535EA32;
+	Mon, 24 Feb 2025 05:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740374260; cv=none; b=SjAQCbwQCp/sZztTO0j9M7B4DoJuOrGU23zrSv51Kz8kZHDgG8E2pWCet5NySWnpaAC8n/jMtdQpJcGHDR2zwBIlZLm9zth8VEl2m5YVSGwGhtQVydAXlbLcwEDwbUWUf4Em4WcuTjOLp1w2Moz/9ISsZdmXKKM6wjd/rmtEF8Y=
+	t=1740374454; cv=none; b=YpiU58tRq2MKgPntUOhc2HURrJp9nwbDwW+HjE/CFclx7P17Ims2w8qnmt0qv/YPyS3c5gLcoKLuSoaIT5WhFYlfs7uw66okfOF8eEk+AjYuhCOHnMMlkDi+RjhsVtm4C+QODDU6qTQD4PutDLGQF0WDvWJu97hmGjOuzT4MDqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740374260; c=relaxed/simple;
-	bh=ZcexFI/4EAc446zMci9zzde286TvXQiyhQuXDVRfTL0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kT2V1DiqSiDRYIwk2dNCpYiw+SCt7cAalVPEkyj12VSxy+RkShU9bMDvQC9ygyizb0Z0jdVw7wW1i5HapHcR2O4OChCCgjZGrFxfE0g/0ktcWF+5aJlr7V76NVrjLfw2oJBxyLmSYlD2KRbqysox0ScN4sUvlFx9qth8o/1SkM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tmQqL-0000Ca-SW; Mon, 24 Feb 2025 06:17:25 +0100
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tmQqK-002XVo-1p;
-	Mon, 24 Feb 2025 06:17:24 +0100
-Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
-	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <s.hauer@pengutronix.de>)
-	id 1tmQqK-001kmQ-1a;
-	Mon, 24 Feb 2025 06:17:24 +0100
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Date: Mon, 24 Feb 2025 06:17:16 +0100
-Subject: [PATCH v2] net: ethernet: ti: am65-cpsw: select PAGE_POOL
+	s=arc-20240116; t=1740374454; c=relaxed/simple;
+	bh=vQ3xjwYXH2I7M0i6ygJ4uXPPJmBF5XVsprnigQ/Nx4g=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZdEeWLaCkJidTMzdUlRVSIaTi9/+6r+xHPjC3qotA8VThTSFWyzgnS15B6AmK2ZwOHh5n94lHakB0r4xH7vt6ygeW9U/WR9dRGsC01jIFsNodwyYSj7g0MIYiw9us8smd3iKUnOeOwRRWrbXv96P55rUjcyEIoivzJ3qP5erdcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=CwOlPxWg; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740374449;
+	bh=EXNLqUsAjnUnjtxh+YLHpPs0uqC4sXP2JzQumL3iZ4Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CwOlPxWgP8EQj6EWdPLn/5HRpQWm3cnYXc4jZqzGy4halOJWWHsI5dtlDoFTRdBms
+	 t9D72CZXdcwU1bU1Dy96B3A+CQmLFtltye1GwEZ/wgeE801zusfym7AdoeSCTCcUn0
+	 VuGFYnOWTCr+lf838/kTpWNlSMdYReDF84oX/YI9WohNDA0cKfxnP1vB0CwM3j6DXD
+	 E9BJLUx0clJwzI/uDKy7rgBKzOO7MY/xWF1ywoGAQIGCpieN0/j7Fp2kDvA0N6H2nD
+	 5EdsLfn3bPGm/ZBX1tJKluR/DyimzikE0BdedCEyrZgId2WGrm5y7Lih3jA/4bYtA5
+	 51YQA5YBlh2YA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1TbN5YTZz4wby;
+	Mon, 24 Feb 2025 16:20:48 +1100 (AEDT)
+Date: Mon, 24 Feb 2025 16:20:48 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>
+Subject: Re: linux-next: build failure after merge of the pmdomain tree
+Message-ID: <20250224162048.7806bb1d@canb.auug.org.au>
+In-Reply-To: <20250224122318.228f695c@canb.auug.org.au>
+References: <20250220113338.60ba2290@canb.auug.org.au>
+	<20250224122318.228f695c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-net-am654-nuss-kconfig-v2-1-c124f4915c92@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIANsAvGcC/4WNTQ6CMBBGr0Jm7RhafkRW3sOwKGWAiXFKWiAYw
- t2tXMDle8n3vh0CeaYAdbKDp5UDO4mgLwnY0chAyF1k0KkuUq1TFJrRvMsiR1lCwJd10vOApq0
- o73PKVNVCHE+eet7O8LOJPHKYnf+cP6v62b/JVaFCY22lsvZW3jt6TCTDMnsnvF07guY4ji8lw
- GXOwQAAAA==
-To: Andrew Lunn <andrew+netdev@lunn.ch>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Sascha Hauer <s.hauer@pengutronix.de>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740374244; l=1230;
- i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
- bh=ZcexFI/4EAc446zMci9zzde286TvXQiyhQuXDVRfTL0=;
- b=IFPpAWLbRD7QnRn6zV1VTqUMT++P7SbTIjYOpuIXLt65Jw2UTrJZVzSo9Y1ox1AI2zBmeN083
- U7t9xDxs2J6CwVjWQp8IsPjjisIbRz4mEq/8nwCMJ8hHrioxbQTGgyd
-X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
- pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: s.hauer@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/uNnA8B2eLM/pC.aKaEVGknV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-am65-cpsw uses page_pool_dev_alloc_pages(), thus needs PAGE_POOL
-selected to avoid linker errors. This is missing since the driver
-started to use page_pool helpers in 8acacc40f733 ("net: ethernet:
-ti: am65-cpsw: Add minimal XDP support")
+--Sig_/uNnA8B2eLM/pC.aKaEVGknV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 8acacc40f733 ("net: ethernet: ti: am65-cpsw: Add minimal XDP support")
-Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
----
-Changes in v2:
-- Add missing Fixes: tag
-- Link to v1: https://lore.kernel.org/r/20250220-net-am654-nuss-kconfig-v1-1-acc813b769de@pengutronix.de
----
- drivers/net/ethernet/ti/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Hi all,
 
-diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-index 0d5a862cd78a6..3a13d60a947a8 100644
---- a/drivers/net/ethernet/ti/Kconfig
-+++ b/drivers/net/ethernet/ti/Kconfig
-@@ -99,6 +99,7 @@ config TI_K3_AM65_CPSW_NUSS
- 	select NET_DEVLINK
- 	select TI_DAVINCI_MDIO
- 	select PHYLINK
-+	select PAGE_POOL
- 	select TI_K3_CPPI_DESC_POOL
- 	imply PHY_TI_GMII_SEL
- 	depends on TI_K3_AM65_CPTS || !TI_K3_AM65_CPTS
+On Mon, 24 Feb 2025 12:23:18 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Thu, 20 Feb 2025 11:33:38 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the pmdomain tree, today's linux-next build (x86_64
+> > allmodconfig) failed like this:
+> >=20
+> > x86_64-linux-gnu-ld: vmlinux.o: in function `rockchip_do_pmu_set_power_=
+domain':
+> > pm-domains.c:(.text+0x19aa103): undefined reference to `arm_smccc_1_1_g=
+et_conduit'
+> >=20
+> > Caused by commit
+> >=20
+> >   61eeb9678789 ("pmdomain: rockchip: Check if SMC could be handled by T=
+A")
+> >=20
+> > $ grep CONFIG_HAVE_ARM_SMCCC_DISCOVERY .config
+> > $
+> >=20
+> > I have used the pmdomain tree from next-20250219 for today. =20
+>=20
+> I am still seeing this build failure.
 
----
-base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-change-id: 20250220-net-am654-nuss-kconfig-ab8e4f4e318b
+And now that commit from the pmdomain tree has been merged into the
+scsi-mkp tree and so the build failure happens there as well.
 
-Best regards,
--- 
-Sascha Hauer <s.hauer@pengutronix.de>
+I have used the scsi-mkp tree from next-20250221 for today.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/uNnA8B2eLM/pC.aKaEVGknV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme8AbAACgkQAVBC80lX
+0Gy4KAf/QlM4Ge0cp+s8dxmAMVGn8dMv7uoqrRtJlzWukjsH9tDszLSJd0aPx8La
+Kp+ZRVN2sfFXoO2neDkGVxbgGYXYMGBz6/TaoNneVkS57HXwnlppeZ1SXQob9BQw
+9f0VXjuuSdM0asjQC95cp/5Xf93Jrr8VMuUbcOckM9vqzo8MBtm3hLQTzcWzXPu9
+tUF7znc9tyNbUbz1XgDjFbVeip3D9ZxHGwBHEzZHrXf6SSCNtDlYmzHQMFTWCBAT
+o3O+5/YbTu0/U1lCQV4qTlsTkC6eUPeOtisN/z48V7mFcs/iRwUtLx9UvbuihS6A
+h+FFikEI+2mvxz3e3diz+uGwQ80nPg==
+=Ex84
+-----END PGP SIGNATURE-----
+
+--Sig_/uNnA8B2eLM/pC.aKaEVGknV--
 
