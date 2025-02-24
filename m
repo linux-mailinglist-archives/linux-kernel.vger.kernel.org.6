@@ -1,231 +1,439 @@
-Return-Path: <linux-kernel+bounces-530113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A961A42F38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:33:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDEFBA42F3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:35:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F3218928A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518AF189027C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48CA469D;
-	Mon, 24 Feb 2025 21:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE66B1E633C;
+	Mon, 24 Feb 2025 21:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uqj/vsks"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wnKtCZif"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7DA1C8621;
-	Mon, 24 Feb 2025 21:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA091D6187
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740432811; cv=none; b=brZqsQO0YC7F/LxtjZEo7b5b9psxDc/OmzjrmnarpVdKoV1Ecq2GpWfIo1cO+tJigQBu2HM0gaYf82pILneCy/p51eAFwJthFAvmioVTO8qcPce1jt1H5CgmonGjjfeC/Fa7IAY9XyO4dTiCa7EwjukW2FoDimlhvN+YaM+W3Y0=
+	t=1740432887; cv=none; b=VLx7C2VR/z8k4S6r9bHe7lGz/M4B+KlcfWnjAiisShO9D9jM1VC89YzLwFin0K8vZU0sNRgCSh/fSinT1mDabdkdvs3zOLX6z2XU8E3EXB6ZxttwBtc4EUEpyU+6C75qc2+sHFZZFXjPmWnfySR4ajrqn3fulTo7V6LBvC3jQHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740432811; c=relaxed/simple;
-	bh=9HjqOTzB0ZWkUjJj4bfaVy2BMPhz6StSpstkHw9pnOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GOMpTvhdjsDV9jPI5qBO/ie3OcDoxMUcEIamAc+bSDvWfGUh7R8eIblAq+EsnLq44D2KCP7WbkFsTRaXzKIrdDcJGRiAdAjGwKJYw+oq9M7XAMNcgJjwclBRtyJekG60+klvD0imzwDwlaV4RdW9W8+jSHoq27U+5bG/DEqJS/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uqj/vsks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3948DC4CED6;
-	Mon, 24 Feb 2025 21:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740432810;
-	bh=9HjqOTzB0ZWkUjJj4bfaVy2BMPhz6StSpstkHw9pnOE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uqj/vsksO6F0MSH5GCmObkOaFAgMuMpG0CJzdilCS7OqQ0aMwPONo1h/VdTGr4noZ
-	 BfpV2XTAmHDlZrQD5fCT3CAYYEO2iAvWixYIMBd69m/lYVaz8pDvuqFqSwhbLeTcPT
-	 zJFaGS0qvnmPrD2E8nt/YZgpzA09+HFajAIt6EKNsEQXbis+y/M50RNd/zryEhCcRV
-	 TD2On5Irsd/UDDTS6wHx9jU7LHys3S5BcEr2OrrfmUMN9lpF79Yxwplu3d7Mnd6js2
-	 A29SqD9ZSQ77j0CXZIvvwBufM/ySZGvzIeLfE5Dqu73YYGGYVmwLLZNU5+2vl0L5v5
-	 w0IYEK/w2zgyA==
-Date: Mon, 24 Feb 2025 15:33:28 -0600
-From: Rob Herring <robh@kernel.org>
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-sound@vger.kernel.org,
-	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/4] ASoC: dt-bindings: xlnx,spdif: Convert to
- json-schema
-Message-ID: <20250224213328.GB4107125-robh@kernel.org>
-References: <20250224182548.2715896-1-vincenzo.frascino@arm.com>
- <20250224182548.2715896-4-vincenzo.frascino@arm.com>
+	s=arc-20240116; t=1740432887; c=relaxed/simple;
+	bh=USLyXsURBeXakktGgHLRyNMX7pul3PIBls8bVbd7wDQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iBexWtfHCYeCgo/7vnwac7ttsuKY8AJYDG+UnCLLEGadpA6ZgUyjayli8dAs/Ki21yvIJvEtHfqaKyQSCRtphmjQ82EkUqOORUv+3layy1eUbsZwZAPr7PNB8+pwjTir3rE+f5nIK/RMVeNPr1klOq55cn9wfYhgFqPwwo+kQHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wnKtCZif; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-221ac1f849fso10975ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:34:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740432885; x=1741037685; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9su8PHKEPkF3T5ao4+5SnLvoyBnWsJwgTlzhqLlsy7I=;
+        b=wnKtCZif/BxuTgiM87iaHkTheK3IjcFI37YRD6QB1ltBhhTdGxhx6dFjKBoRgPrxja
+         4KJYmoQ4q2RnRps3Yjl1mOXahaaqL0HccCb9JLaj+4RywXwSwPuto+7V7qMYbRr2KDNG
+         PRYPgXVAuEPN6A87lOBPk43/xBUzSMrnInvJOJmIBc2B+PCROTOOFAHKhMIsZk9b+Vf/
+         SyAxnJCLEGDvIyaPTpPtJDv/61zqixO8/9/AEchfyhEBrgx5KkxOfSVQ9tgCLslZWSP7
+         tI/Ws5c1O7maUnvmL5HRdsINlPDmHI/480mqqcNC/Zadmy77kqDvfj2o7Y0WFd6mhqO5
+         qCjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740432885; x=1741037685;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9su8PHKEPkF3T5ao4+5SnLvoyBnWsJwgTlzhqLlsy7I=;
+        b=lZrODhi7kM8fCD62Vi2w6xIxK4lIpo+eQHQlhTuVjLWtbtaKts1gUCKOqxD4eTo7Mz
+         Bv9JVq8EZeylOWAOvlk6h7/aBd4WETxsg7Enf3PkqMVkNPZemotOZNrSt0hsLmwfD+H+
+         EUprwuQHmcp/QBrqQKSEmPV9anHE5cwVTTa4Atw/oCGItDK/Lxcve81iCJqzu7pEQJyS
+         0fa5cAK68gmFZyhVyrS9ycOuJASHw14k/1yHStw4VgOc50H67V/1aJfIBuSGXas1ULGD
+         gDhILrrg03a+3p+c5kxdjHCzYCqiNNgj0GgrKc/ToHjg5m9//MmlbA1GudeW3n2ned51
+         l5Og==
+X-Forwarded-Encrypted: i=1; AJvYcCVKftj3qxHjydbc69pSuecrXsG1oKz8bG+SRe31k2nliJg17CU+vBKtWtvMZ3MnOWr2cH7fqsk/lW/0Cnw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx12jtAMrkSpJCkdxiNU9DSX4JijZvNt/pDEfdVcTM8prN89PJ8
+	8KkWQeOfYNwQkHQLrqU93p94Sw77DcxA40xigtqyAeYQF3uCqcNrFD2snT0c86gmygfLUsPWqhT
+	JbTrG4ivZDE5aqik4d/6uP7Y7ovXYdTbaXowq
+X-Gm-Gg: ASbGncsVE1t3sOuME2gxVhSeu5mjhQ2nuMSJ/+/o5Q1VOOfj1YEN2mKRRgoBK7HTGOj
+	9kVtsvgzxyzfvJ6EkwxCPLUN/XkK+019UFZgvEi+AA1a9VGMWNhwoQP2FmroT/vAvlTO2gW8Hn8
+	En62a6f/5z9siGvVm2AlJRgXbYn36hBrHamQU=
+X-Google-Smtp-Source: AGHT+IFwp3aDY1xdKOGIvNzmNzrE+EbC7dhnuNvWbEqrnN0gDbxK7QEI4q9unX3KH2yI0y+SPV0okonhdvPx7sZ3Bzg=
+X-Received: by 2002:a17:902:db11:b0:216:4d90:47af with SMTP id
+ d9443c01a7336-22307aad240mr1020335ad.29.1740432884571; Mon, 24 Feb 2025
+ 13:34:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224182548.2715896-4-vincenzo.frascino@arm.com>
+References: <Z7Z5kv75BMML2A1q@google.com> <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
+ <Z7yJ0Vpub6JeQyYo@x1> <CAP-5=fXSgpZaAgickZSWgjt-2iTWK7FFZc65_HG3QhrTg1mtBw@mail.gmail.com>
+ <Z7zVzKbQIdB6-bFn@x1>
+In-Reply-To: <Z7zVzKbQIdB6-bFn@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 24 Feb 2025 13:34:33 -0800
+X-Gm-Features: AWEUYZnHJNclQdrWA_kOnPPjWgKKj8hpkivAtF4Q7CYh9TMEeUXvd9VshD-qvSA
+Message-ID: <CAP-5=fU3YSCiHygnOt6MN7i2mJBOwm202tXSefBHaPR3JmptkA@mail.gmail.com>
+Subject: Re: [RFC] perf tools: About encodings of legacy event names
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 06:25:47PM +0000, Vincenzo Frascino wrote:
-> Convert the Xilinx SPDIF 2.0 device tree binding documentation to
-> json-schema.
-> 
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> ---
->  .../devicetree/bindings/sound/xlnx,spdif.txt  | 28 ------
->  .../devicetree/bindings/sound/xlnx,spdif.yaml | 85 +++++++++++++++++++
->  2 files changed, 85 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,spdif.txt b/Documentation/devicetree/bindings/sound/xlnx,spdif.txt
-> deleted file mode 100644
-> index 15c2d64d247c..000000000000
-> --- a/Documentation/devicetree/bindings/sound/xlnx,spdif.txt
-> +++ /dev/null
-> @@ -1,28 +0,0 @@
-> -Device-Tree bindings for Xilinx SPDIF IP
-> -
-> -The IP supports playback and capture of SPDIF audio
-> -
-> -Required properties:
-> - - compatible: "xlnx,spdif-2.0"
-> - - clock-names: List of input clocks.
-> -   Required elements: "s_axi_aclk", "aud_clk_i"
-> - - clocks: Input clock specifier. Refer to common clock bindings.
-> - - reg: Base address and address length of the IP core instance.
-> - - interrupts-parent: Phandle for interrupt controller.
-> - - interrupts: List of Interrupt numbers.
-> - - xlnx,spdif-mode: 0 :- receiver mode
-> -		    1 :- transmitter mode
-> - - xlnx,aud_clk_i: input audio clock value.
-> -
-> -Example:
-> -	spdif_0: spdif@80010000 {
-> -		clock-names = "aud_clk_i", "s_axi_aclk";
-> -		clocks = <&misc_clk_0>, <&clk 71>;
-> -		compatible = "xlnx,spdif-2.0";
-> -		interrupt-names = "spdif_interrupt";
-> -		interrupt-parent = <&gic>;
-> -		interrupts = <0 91 4>;
-> -		reg = <0x0 0x80010000 0x0 0x10000>;
-> -		xlnx,spdif-mode = <1>;
-> -		xlnx,aud_clk_i = <49152913>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml b/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
-> new file mode 100644
-> index 000000000000..ad0b40a12c2b
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
-> @@ -0,0 +1,85 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/xlnx,spdif.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx SPDIF IP
-> +
-> +description:
-> +  The IP supports playback and capture of SPDIF audio.
-> +
-> +maintainers:
-> +  - Vincenzo Frascino <vincenzo.frascino@arm.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - xlnx,spdif-2.0
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: spdif_interrupt
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: |
-> +      List of Interrupt numbers.
+On Mon, Feb 24, 2025 at 12:25=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Feb 24, 2025 at 09:36:16AM -0800, Ian Rogers wrote:
+> > On Mon, Feb 24, 2025 at 7:01=E2=80=AFAM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
+> > > > On Wed, Feb 19, 2025 at 4:38=E2=80=AFPM Namhyung Kim <namhyung@kern=
+el.org> wrote:
+> > > > > Ian and I have been discussing the behaviors of event encodings a=
+nd it's
+> > > > > hard to find a point so far that we can agree on.  So I'd like to=
+ hear
+> > > > > your opinion to resolve this.  If you happen to have some time, y=
+ou can
+> > > > > follow the thread here:
+> > >
+> > > > > https://lore.kernel.org/linux-perf-users/20250109222109.567031-5-=
+irogers@google.com/#r
+> > >
+> > > > > Basically there are some events that were defined in the perf ABI=
+.
+> > >
+> > > > >   PERF_COUNT_HW_CPU_CYCLES, PERF_COUNT_HW_INSTRUCTIONS, ...
+> > >
+> > > > > So perf tools use those (legacy) encodings with the matching name=
+s like
+> > > > > "cycles" (or "cpu-cycles"), "instructions", etc.
+> > >
+> > > > > On the another hand, it has wildcard matching for event names in =
+PMUs so
+> > > > > that users can conveniently use events without specifying PMU nam=
+es.
+> > > > > For example, "event1" would expand to "pmuX/event1/", "pmuY/event=
+1/", etc
+> > > > > as long as the PMUs have the event in sysfs or JSON.
+> > >
+> > > > > And there are platforms where "cycles" event is defined in a (cor=
+e) PMU
+> > > > > (like "blah/cycles") and the event has a different behavior than =
+the
+> > > > > legacy encoding.  Then it has to choose which encoding is better =
+for the
+> > > > > given name.  But it's a general issue for the legacy event names.
+> > >
+> > > So we pick the "legacy" one, as always, and the one that is in a PMU
+> > > needs to have its pmu name specified, no?
+> > >
+> > > > >   Q. what should it do with "cycles"?
+> > > > >   -----------------------------------
+> > > > >   1. just use the legacy encoding (PERF_COUNT_HW_CPU_CYCLES).
+> > >
+> > > Right
+> > >
+> > > > >   2. expand to (possibly multiple) PMU events (like "cpu/cycles/"=
+) and
+> > > > >      use the encoding defined there.
+> > >
+> > > Nope
+> > >
+> > > > > I think the #1 is the current behavior.  The upside is it's simpl=
+e and
+> > > > > intuitive.  But it's different than other names and can make conf=
+usion.
+> > > > > Users should use the full name ("cpu/cycles/") if they need sysfs=
+ one.
+> > >
+> > > Right
+> > >
+> > > > So the code keeps changing, for example, the removal of BPF events.=
+ I
+> > >
+> > > Humm, this seems like a different discussion.
+> > >
+> > > > think the important change and the thing that has brought us here i=
+s
+> > > > the addition of what Intel call hybrid and ARM call BIG.little. ARM
+> > >
+> > > Right, the support for hybrid systems brought lots of problems, most
+> > > people didn't have access to such systems and thus couldn't test
+> > > patches, so the attempt was to keep the existing code working as it h=
+ad
+> > > been while allowing for the support for the new hybrid systems.
+> > >
+> > > As more people get access to hybrid systems we started noticing probl=
+ems
+> > > and working on fixing it, you did a lot of work in this area, highly
+> > > appreciated.
+> > >
+> > > > have got architectural events and so the same event encoding on BIG
+> > > > and little cores. On x86 the e-core (atom) and p-cores have differe=
+nt
+> > > > event encodings. In the original hybrid work, pushed on for the lau=
+nch
+> > > > of Alderlake and reviewed by Jiri and Arnaldo with no involvement f=
+rom
+> > > > me, Intel wanted the event names to work transparently. So a cycles
+> > >
+> > > Without access to such systems, yes, see above.
+> > >
+> > > > event would be gathered on the e-core and p-core with a command lin=
+e
+> > > > option to merge the legacy event cycles on both cores. To be specif=
+ic
+> > > > the expected behavior of:
+> > > > $ perf (stat|record) -e cycles ...
+> > > > would be as if:
+> > > > $ perf (stat|record) -e cpu_atom/cycles/,cpu_core/cycles/ ...
+> > >
+> > > Yes, and if somebody wants to profile in just one of those core types=
+,
+> > > just specify the "cpu_atom" or "cpu_core" to have it fully specified.
+> > >
+> > > > An unfortunate thing in the hybrid code was that it was hardcoded t=
+o
+> > > > PMU names of cpu_atom and cpu_core, but what to do for metrics? The
+> > >
+> > > Yeah, metrics IIRC came before hybrid systems.
+> > >
+> > > > original proposal was that metrics would have a PMU name and all na=
+mes
+> > > > would be relative to that, but what about uncore events? What about
+> > > > metrics that refer to other metrics? A decision was made to not to
+> > > > have PMUs implicitly in metrics and the events in the metric would
+> > > > match those given to perf's -e command line. This also greatly
+> > > > simplifies testing events when creating a metric.
+> > >
+> > > > I set about rewriting the hybrid code not to use hard coded PMU nam=
+es
+> > > > but to discover core PMUs at runtime. This was to make the metric a=
+nd
+> > > > event parsing code as generic as possible, but this had an unintend=
+ed
+> > > > consequence. ARM's core PMU had previously not been seen as handlin=
+g
+> > > > legacy events like cycles, and appeared as an uncore PMU. When ther=
+e
+> > >
+> > > > are both legacy and sysfs/json events then previously the legacy
+> > > > events had priority. This broke events like cycles on Apple M
+> > > > processors where the legacy events were broken and the sysfs ones n=
+ot.
+> > > > Yes this is a driver bug, but everybody told me a change in behavio=
+r
+> > > > of the tool was needed to fix it, that fix was to make sysfs/json
+> > > > events have priority over legacy events. I prioritized fixing event
+> > > > parsing when a PMU was specified but given "cycles" means
+> > > > "cpu_atom/cycles/ and cpu_core/cycles/" for hybrid, why would the
+> > > > prioritization be different without a PMU specified?
+> > >
+> > > > I knew of this tech debt and separately RISC-V was also interested =
+to
+> > > > have sysfs/json be the priority so that the legacy to config encodi=
+ng
+> > > > could exist more in the perf tool than the PMU driver. I'm a SIG
+> > >
+> > > I saw them saying that supporting PERF_TYPE_HARDWARE counters was ok =
+as
+> > > they didn't want to break the perf tooling workflow, no?
+> >
+> > No. The request has always been that they don't want the PMU driver to
+> > do the PERF_TYPE_HARDWARE/PERF_COUNT_HW_* to PMU/config=3D??? mapping
+> > given the diversity of hardware and to keep the PMU driver simple.
+> > Here is Atish's feedback:
+> > https://lore.kernel.org/lkml/CAHBxVyH1q5CRW3emWTZu1oLZEfTWWVRH6B0OVggFx=
+t-0NRzvwQ@mail.gmail.com/
+> > """
+> > If the overriding legacy with JSON is available, each future vendor
+> > may just provide the json file instead of modifying the driver.
+> > """
+>
+> So, making users to figure out what is the best event to use for some
+> specific processor was one of the major reasons for perf to come about,
+> otherwise we would still be stuck with oprofile.
 
-Drop description.
+Tbh, I think OProfile's major issue was a lack of active development.
+There were arguments that perf was going to be more integrated into
+the kernel, but there are no arch events, for example, in
+arch/arm64/events. Perf provided new energy for something started as a
+student project, it was and is good for having done that.
 
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aud_clk_i
-> +      - const: s_axi_aclk
-> +    description: |
-> +      List of input clocks.
+> While it is clear that picking some "most important event and ratios of
+> events" is super difficult, that was one of the ideas that made perf to
+> come about.
+>
+> I wasn=C2=B4t the architect of this, Ingo and Thomas were, with Peter the=
+n
+> tryhing to make the kernel part sane.
+>
+> I just tried to follow those principles while not getting in the way of
+> people wanting to have a common ground for observability in Linux.
+>
+> Having all these JSON tables was in place was a major concession to that
+> original vision.
+>
+> Changing things as we go, with all these changes in the hardware
+> landscape, some fleeting, some reinforced, is super difficult and leads
+> to all this pain in trying to provide a sane experience to people using
+> these tools.
+>
+> I don't think we can have it super consistent.
+>
+> It is super useful as is, or at least that what people say.
+>
+> So we need to keep on improving it while not telling people used to its
+> workflows that they should re-learn the tool because at some point a
+> decision was not properly made.
 
-Drop
+So yes, but no. If you are used to perf on a pentium core 2 and then
+move to a hybrid alderlake system there has to be some notion of what
+cycles means on each core type. We had to change the tool to support
+this. ARM dealt with this long before Intel hybrid ever did, but they
+did so with no legacy event support just sysfs/json. Of course the
+wildcard behavior means that all the PMUs that supply an event will
+have it selected and people have been happy with this a long time.
+We used to have BPF events but no longer. It seemed like a fruitful
+thing, it became obsolete and was removed.
+We have legacy encodings where LLC means L2:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/util/evsel.c?h=3Dperf-tools-next#n801
+Fine at the time, now seems silly. LLC seems like a reasonable PMU
+name, but event parsing will trip over it in the clumsy way it does
+with raw events and "read" (raw event of 0xEAD). Event parsing used to
+broken for events like "llc-llc" now you can have that as an event
+now.
 
-> +
-> +  clocks:
-> +    maxItems: 2
-> +    description: |
-> +      Input clock specifier. Refer to common clock bindings.
+Anyway, I dislike that you are arguing that I am trying to tell people
+to change their way of using the tool, it implies the patch series
+breaks something. If you feel this then you should provide an example.
+Yes Linus had a problem with the cycles event on Neoverse and now
+that, as you suggested, is lowered to be a warning. The original patch
+landed for weeks on linux-next without complaint. I am not asking
+people to "re-lean the tool", I am trying to fix things and make order
+out of something less than that.
 
-Drop
+> > Because of the pain in landing the reverted patch then RISC-V has had
+> > to work with perf's behavior as it is, they need to ship products. I
+>
+> you can present it like that, or you can say that they wanted the API to
+> be different but since it wasn't like they liked they had to comply.
+>
+> Differently phrased he finally understood the value of the current API,
+> maybe.
 
-> +
-> +  xlnx,spdif-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum:
-> +      - 0
-> +      - 1
-> +    description: |
-> +      0 - receiver
-> +      1 - transmitter
-> +
-> +  xlnx,aud_clk_i:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
+So Atish spoke to us at LPC 2023:
+https://lpc.events/event/17/
+Mark Rutland also spoke to me at that time explaining how unhappy he
+was that ARM Apple-M was broken. I combined both issues in our
+discussions.
+Atish has also spoken to Namhyung and myself face-to-face during the
+RISC-V conference.
+These issues were discussed verbally before I wrote patches, before
+Atish made assumptions, and I think we both believe the proposals were
+and are reasonable.
 
-Drop '|'
+So let me completely disagree with your rephrasing. It is rude to
+imply that Atish and myself somehow are trying to push an agenda of
+changing and breaking an API. What has always been done is an attempt
+at pragmatism, such as cleaning up the hard coded issues with the
+original hybrid support, fixing Apple-M, ..
 
-> +      Input audio clock value.
+> > think things would have been simpler in their driver and the wider
+> > ecosystem if this hadn't been forced to happen.
+>
+> > > > vice-chair for RISC-V and hope to push things forward for RISC-V wh=
+en
+> > > > I can. Given that ARM had originally required the prioritization,
+> > > > Intel signed off on this (with a huge number of Intel test
+> > > > expectations updated as a consequence), RISC-V desiring consistency=
+ I
+> > > > thought there was a pretty broad consensus to move forward with hav=
+ing
+> > > > the same prioritization of legacy and sysfs/json events for event
+> > > > names without PMUs as those with it.
+> > >
+> > > > In doing this change I made:
+> > > > $ perf (stat|record) -e cycles ...
+> > > > behave like:
+> > > > $ perf (stat|record) -e */cycles/ ...
+> > > > This is the behavior with sysfs/json events (ie not legacy). For ex=
+ample:
+> > > > $ perf (stat|record) -e inst_retired.any ...
+> > > > in the event parsing code behaves like:
+> > > > $ perf (stat|record) -e */inst_retired.any/ ...
+> > > > That is every PMU advertising the event inst_retired.any (in the sy=
+sfs
+> > > > events directory or in json) will have it opened by the tool.
+> > >
+> > > > My intent was that "cycles" behaving like "*/cycles/" was that it
+> > > > would match the change already done for hybrid of "cycles" behaving
+> > > > like "cpu_atom/cycles/,cpu_core/cycles/". However, this change caus=
+ed
+> > > > an issue on ARM Neoverse that Linus couldn't tolerate and so revert=
+ed
+> > > > the change. Specifically ARM Neoverse's L3 cache PMU advertises a
+> > > > "cycles" event and such an event will fail to open with perf record=
+.
+> > >
+> > > > Specifying the PMU with the event avoids the wild card behavior and
+> > > > fixes the issue but it was put over strongly that "cycles" without =
+a
+> > > > PMU should only ever mean CPU cycles. This missed hybrid/BIG.little
+> > > > type systems, but one could imagine in that case CPU means all core
+> > > > PMUs.
+> > >
+> > > > As with not wanting hybrid PMU names hard coded, I dislike special
+> > > > cases for events. Not least as there are an exciting plethora of
+> > >
+> > > Ok, but the desire for consistency clashes with how things have been =
+for
+> > > a long time, tools expect, scripts, etc, so we seem to need the speci=
+al
+> > > case for what has been called in these threads "legacy events".
+>
+> > There is only one known issue of a problem for 1 event on 1 ARM model.
+> > If ARM renamed the event this wouldn't be an issue. The patch series
+> > works for this event but warns about it if you try to use it with perf
+> > record.
+>
+> Well, maybe just the event name shouldn't be what determines if it
+> should be used in some cases? Maybe some other characteristic should be
+> probed for in each case?
 
-Is value the frequency? If you know more detail, please add it.
+Do you want to explain this? We have events, without a PMU all events
+wildcard on every PMU. This is existing and long standing behavior.
+Uncore PMUs rely on it. Core PMUs with say a json event like
+inst_retired.any rely on it.
+You want a magic list of events that only work on core PMUs? Fine,
+what is it? I hate the idea as why does cpu_cycles mean something
+different than cpu-cycles, but if that is the only way to land the
+series then let's do it. You had been arguing for lowering the failure
+to just being a warning and not doing this. I do not understand where
+you stand. My stance is hopefully clear with the patch series. If you
+and Namhyung are worried that Linus seeing a warning message is a
+blocker the easiest fix is to rename 1 ARM uncore event. We could hide
+warnings and move them to verbose, imo that's gross. We can have a
+magic list of events, similarly imo gross but at least it unblocks
+this.
 
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-names
-> +  - interrupts
-> +  - clock-names
-> +  - clocks
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    spdif_0: spdif@80010000 {
+> Have to stop here, not enough bandwidth.
 
-Drop unused labels.
-
-> +      clock-names = "aud_clk_i", "s_axi_aclk";
-> +      clocks = <&misc_clk_0>, <&clk 71>;
-> +      compatible = "xlnx,spdif-2.0";
-
-'compatible' goes first. Then reg. See 
-Documentation/devicetree/bindings/dts-coding-style.rst for more details.
-
-> +      interrupt-names = "spdif_interrupt";
-> +      interrupt-parent = <&gic>;
-> +      interrupts = <0 91 4>;
-> +      reg = <0x80010000 0x10000>;
-> +      xlnx,spdif-mode = <1>;
-> +      xlnx,aud_clk_i = <49152913>;
-> +    };
-> +
-> +...
-> -- 
-> 2.43.0
-> 
+Thanks for making some time on this,
+Ian
 
