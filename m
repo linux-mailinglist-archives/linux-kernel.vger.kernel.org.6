@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-529653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37DCA4294F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:20:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC1EA4295B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:20:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A478189A552
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B87188CD85
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71261264A77;
-	Mon, 24 Feb 2025 17:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D67264A6D;
+	Mon, 24 Feb 2025 17:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ToM6MJuO"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Phx9zaQQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8F026388F;
-	Mon, 24 Feb 2025 17:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C6CEEA9;
+	Mon, 24 Feb 2025 17:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417351; cv=none; b=EeFhMY0gEgBYO78u/7WkISuQCvcaP3aCtR4OHpjUbQQ/+euQ+KaT3JnM8a0JT0OikVhBdgoZDDEC5bNXiVOjELGjDG+yDZsTyZfaxIDtfdzWDkxsrb0B4Nprl70vV0QNpI+IUJab9zGz2Ore7kpOCoaNbM+niO/t8xIPZIYOql4=
+	t=1740417563; cv=none; b=Od2v+aX/bQSl3QaRsEdEQa7tUqUm7wj/mblKa/kwlmEs9GZ3EWu3uHqy3JNHtbYGqdpKmlkq8XlY0Xw34w//kqoXG9s496m5KyO3htIZQY6VJvJ8Qkz+7iyQYn2/1q/7NBJUIQhqj3DqGdhyMWHCXjKd6YBDSEZq0mXYVbZhbYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417351; c=relaxed/simple;
-	bh=fH4RtBkSRZW2kBeXi3P/AudbFsIVNSe8yu+5vaExYfY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hhV6IcHg1OrhgXhQ2142BPzYKDFhlpyWdq/zDdT/SzZmziOGGrlC4XZQmA2kx9d2fgFrOKWkWlXIOMFdd9Tl+VU5ZZd/JiQN0wZ3Sn6lYx9veZ5ylvfgytvR07waez+Wwy5vRV2XUw5LEmfuu/opFYzR/Tczuk3H9d81oGOuqTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ToM6MJuO; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220ca204d04so75469655ad.0;
-        Mon, 24 Feb 2025 09:15:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740417349; x=1741022149; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UxLi0WJqLjDUsJq7l6SDZpuIuRBeCk6IdkUiuE+2Dwo=;
-        b=ToM6MJuO7wZFueHyooNxLk0pntRFLvGtkX7d/Mfvpqhjqy0f2HccSqHAuQHgFmqJqD
-         7YnWiE5PmlWaQZ5mKrabVUyrNB9zB3LhjpJsI5gYeAskmWShl6qhayyFiiW+h94YNIgR
-         0zynrg9eSKT3eeTcIQdGDDRLN3Sj24zEzXoj/CIJ80F0xBVxMR8B/zr6ltAkgzVTdsHf
-         dTpYAK7DyZRAvgM38XDE0XDK/w1CpnpnLbRZ3HSsTUOsF7vP66OMEf3LbXuYQhfM2odi
-         yT7t/WmhEk1xajHAUFccU8SCnvuD2EK7TR05TUrVyUJKFk+iZ3cFH4/oeEMGOVea9yYk
-         sf0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740417349; x=1741022149;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UxLi0WJqLjDUsJq7l6SDZpuIuRBeCk6IdkUiuE+2Dwo=;
-        b=cpV4DmtZlVqjI1kXrC9RZrMPjaEO+SEHYZU+Y1V8Ao3GzyBJ9Yyhc6hmpQy1QQF9nS
-         rNrE9y1PWfrpmN0oZe6bXCIbE6PBj1FHwwpomD8cBKncePZDqr9Y22pobBaqpRdNzenE
-         /QPXnmQnUKTDxex7GwF/ZGD7EN5V3loxFBWlzKK2hAXxKBx6Gwtf6eP2uw09TmbjWMty
-         6NeXZDhOHcDLyFDH4IC+ACv/oGwv9em/kxVHsJ6B1wTz3yJOzP5bslqYlB8tXHLJ9xPN
-         C2Ntw/J1wzmxpjBkP26uO9Lg/Ij1K5in/W9S5zHQiX0cKrG6jFbBdQmbNxdGgd/OLRcL
-         aWRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Si/ScgG4Y87NQVFsZDheI4iQc0espPIbtI0FwS739PRtA9HtEVhQDdoSpBtAzvgb6NA=@vger.kernel.org, AJvYcCWgwHuVNRWIQPssK7YmtnS2OUTsJ8AVeayg/JD+778KLTjsJ7cdnSaF/qpKDGAyxYALC1uiBibLG5vQ@vger.kernel.org, AJvYcCWvKUT4HNtLKTbcJnQnKkwhAUpLV+BP2XfyMyibQ3PjJznpjiB5lHZPQZvZvNrPBrUUTR9v+4PgR87zXH78T3qx@vger.kernel.org, AJvYcCXaY5eeGgpllUn9o+PaDnrC24BESD5BEZE/c449WAqfHZUJHlatfBQTSS+Jn8LeLblwkEmkpyrCmXZ4NIB0@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7TxsfoY7nIOLE8Ltg1tVJnhUZp/kT271/9r4Dxur7riAQOYGs
-	NY55z4iWyielLOW+KY4AAzPQbG2zfU7+QgfaCONS+t8Ifbh+yOY=
-X-Gm-Gg: ASbGncvxl8Dw0e2+i0mSDJEn4cG+k5UI2m8IR3O+1J+Cu4RDRyh6sw6/LbPei6vL/WK
-	Md4lvdVlv+U2qad5Uv/HgOvkeZB4yT5btQ/9hWypsluoubudl0FnULOZRsGsTmsqFzvH70Lt+ru
-	x7XoCFE3UXtJe+1rrTDUrmULt+ZyxATOBhpw7bE5EWlRV4lvAEkTclUlE0dqbanUZzW8DXCofH2
-	LOnD1DKBCie5vYpMXAaUMO304NAMeb9LPzm1SlORZ85M/LXXaoKBa/RetEsrPCsOv8wilVniym1
-	tXAvdnfuNTHdBupC1+Jq4bl4Pg==
-X-Google-Smtp-Source: AGHT+IHX3hMEBBORSG6Giv0hdr/rxJRv/ocP3i7v+0Nr0JPqfdQtTKmVEfvG1d9RA3UeZWNnTu/9iA==
-X-Received: by 2002:a05:6a00:1947:b0:732:623e:2bdc with SMTP id d2e1a72fcca58-73426c84885mr22523269b3a.2.1740417349558;
-        Mon, 24 Feb 2025 09:15:49 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7346d9b1af1sm1497263b3a.71.2025.02.24.09.15.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 09:15:49 -0800 (PST)
-Date: Mon, 24 Feb 2025 09:15:48 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jeroen de Borst <jeroendb@google.com>,
-	Harshitha Ramamurthy <hramamurthy@google.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Willem de Bruijn <willemb@google.com>,
-	David Ahern <dsahern@kernel.org>,
-	Neal Cardwell <ncardwell@google.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	Stefano Garzarella <sgarzare@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
-	asml.silence@gmail.com, dw@davidwei.uk,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Victor Nogueira <victor@mojatatu.com>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Samiullah Khawaja <skhawaja@google.com>
-Subject: Re: [PATCH net-next v5 6/9] net: enable driver support for netmem TX
-Message-ID: <Z7ypRKrKN0SdBOM2@mini-arch>
-References: <20250222191517.743530-1-almasrymina@google.com>
- <20250222191517.743530-7-almasrymina@google.com>
+	s=arc-20240116; t=1740417563; c=relaxed/simple;
+	bh=fJ/7Re6VBFfqNrTTS9K/pZ1p4608NdWXTxvvNMZjgGU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DDs7h+Vs+aiFRW3HF9ll7l6t72dcSvku6iahuvxl5YogvVwAcIXuL/xa12gkPKKve8FgaVAIlDU4QEPhDWt5On1dV9yInRKzhOfw6ZcerT9nY0DrG13+CpRklPuSnIyzKA5oQs3/CSOM86keLSJGeg98chTv46Dph6kwe43or3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Phx9zaQQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9vPX2014963;
+	Mon, 24 Feb 2025 17:18:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=xqAsvqjN62Ln2LiWNfDrXD
+	GSUuHK4ZtQvRZjTqMuIn4=; b=Phx9zaQQkHwNiJaymDFIWn+ieZB+7v1vaSxoga
+	bt2nk0h94legByo1YmEHr4+ucGPmxkpeoFdSHVRpG/J/yOfrObzZRUZRHUuOoACe
+	BOAxrAZFz9cdMidTnYgMqaI9x+S8yYiVWcuaytSXD9tT2qJvrvxrqKxRX9cxUy1k
+	0P6gj/wbd1brXw0023SgjDt3NF4+KO/3MGfHjxmIIS3HUn6Ltdm8unLKQAqQK+Yl
+	61Ow0Wk+WDkoqbTgDypYuJpYgmhQmFKuXxBrIKXp22yv99/itwI3XCXj1ZjCVc5w
+	5Lll/z1huWeB7bXXURegKWKS7CSMu0z7adF35cvvcznscsIQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6t2nvkb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 17:18:42 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51OHIfU7026508
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 17:18:41 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Feb 2025 09:18:37 -0800
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <quic_mohamull@quicinc.com>, <quic_janathot@quicinc.com>,
+        <quic_hbandi@quicinc.com>, <quic_anubhavg@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v11 0/1] Enable Bluetooth on qcs6490-rb3gen2 board
+Date: Mon, 24 Feb 2025 22:47:36 +0530
+Message-ID: <20250224171737.2522834-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250222191517.743530-7-almasrymina@google.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 49oMY0G3FlDIX35a4aw9slr3j23fHNma
+X-Proofpoint-GUID: 49oMY0G3FlDIX35a4aw9slr3j23fHNma
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_08,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
+ mlxlogscore=636 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240116
 
-On 02/22, Mina Almasry wrote:
-> Drivers need to make sure not to pass netmem dma-addrs to the
-> dma-mapping API in order to support netmem TX.
-> 
-> Add helpers and netmem_dma_*() helpers that enables special handling of
-> netmem dma-addrs that drivers can use.
-> 
-> Document in netmem.rst what drivers need to do to support netmem TX.
-> 
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
+Patch 1/1
+  Corrected the typo in patch 1 commit message.
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+----
+Changes from v10:
+* Corrected the typo in commit message 
+* Added reviewed tag by Konrad Dybcio <konrad.dybcio@oss.qualcomm.com> 
+* Link to v10: https://lore.kernel.org/linux-arm-msm/20250221171014.120946-1-quic_janathot@quicinc.com/#t
+
+Changes from v9:
+* Addressed review comments provided Dmitry 
+* Link to v9: https://lore.kernel.org/linux-arm-msm/20250220112945.3106086-1-quic_janathot@quicinc.com/
+
+Changes from v8:
+* Fixed the dtb-check warning  in P1 and removed tag: Reviewed-by
+* Link to v8: https://lore.kernel.org/linux-arm-msm/20250127064940.1360404-1-quic_janathot@quicinc.com/
+
+Changes from v7:
+* updated P1 & P2 with tag: Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> 
+* Link to v7: https://lore.kernel.org/lkml/20250107134157.211702-1-quic_janathot@quicinc.com/#t
+
+Changes from v6:
+* Elaborated the commit message with more information.
+* Link to v6: https://lore.kernel.org/lkml/20241223135700.22660-1-quic_janathot@quicinc.com/
+
+Changes from v5:
+* Update the wcn6750 required properties in bindings.
+* Link to v5: https://lore.kernel.org/linux-arm-msm/20241209103455.9675-1-quic_janathot@quicinc.com/
+
+Changes from v4:
+* Added reviewed tag by Krzysztof in p1
+* Updated the p2 commit message with sw_ctrl and wifi-enable are
+  handled in wifi FW.
+* Added blank line between the nodes in p2
+* Placed the structures in proper order in p4
+* Link to v4: https://lore.kernel.org/all/20241204131706.20791-1-quic_janathot@quicinc.com/
+
+Changes from v3:
+* Defined the PMU node and used the its output to power up BT
+* Used power sequencer for wcn wcn6750 module
+* Split the patch to multiple as per subtree
+* Add description of the PMU of the WCN6750 module
+* Include separate UART state node for sleep pin configuarion
+* Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
+
+Changes from v2:
+* Sorted nodes alphabetically
+* Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
+
+Changes from v1:
+* Corrected the board name in subject
+* Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+Janaki Ramaiah Thota (1):
+  arm64: dts: qcom: qcs6490-rb3gen2: add and enable BT node
+
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
+ 1 file changed, 170 insertions(+), 1 deletion(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
 
