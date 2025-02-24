@@ -1,255 +1,260 @@
-Return-Path: <linux-kernel+bounces-529926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ECBA42C95
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:19:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F5DA42C98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07531893746
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:19:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391F6179487
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22D01FCCE0;
-	Mon, 24 Feb 2025 19:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F48F201034;
+	Mon, 24 Feb 2025 19:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+GNEs3a"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bFBXwSUx";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="VBEp+yCu"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329B01A76AC;
-	Mon, 24 Feb 2025 19:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424741; cv=none; b=uaNr3sSrCmQPB10JuieZPiJLpg06xf+x+Uqh0ZO/kPUM4YzwdKshSWj/Qoi40S5hQMDZ9fFs1W0+BT7pPhzV51zeB/1MH1PZEyt55BoXFNiD+JBp2rTOkzf1EUBVC4NIuGfA83sEhXdzgxP69JJndPblrYHJfX2g/53kGoIP1pg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424741; c=relaxed/simple;
-	bh=zGicrtl24qQPtby4+Gn1aiZ7UEI+z5oCfwEpkiJRZfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGvurz+yS/wE/lYogKwmwSgTMgvbguiyJoC1ItPrLz4oEa1xnE97cuIYSHeRY3WahuhFKWe3wCjgDvos0alNpLC8ytupGYd8zzTQbOUSR1h8ga/iwotkERd549zvdWkYJSrCSGMugfugeYncaL3ad+prb9W5Kk9p5XRwPEfw2Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+GNEs3a; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c07b65efeeso466753885a.2;
-        Mon, 24 Feb 2025 11:18:59 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81BEA16CD1D;
+	Mon, 24 Feb 2025 19:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740424749; cv=fail; b=Ou81qGM7STWUV6M8K1W6dkIHTHtU8SOP4iZ6vVM7lf1tnKvb8vuQR1DQRL1gMZydKbikpaOEnc/qptbaqrnCDormKvKVjuUV0s0ayGWzhYAd7R2Sxu7UetQT82n4KXXzbZ0oIgnlw685zIutAkjppX3mOzKUmcLmF0pE0lOQFjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740424749; c=relaxed/simple;
+	bh=X77ppp/RwzKlE52lZpvK2JyydbBQabklvXtadkdodwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=euEdIRoiqlSbfvkv2vW8IYvtKfB4lpw43PjVKmZK18HXKITb3g0H8QeB2dZcRc3iMASembo82R/H/4ZnUJBQbGd1nWcWJWHaTP7BBFSZrfpPZYVhjnpqaYX8AdjAIQAe2S7UH5m7dxDKYiR8hXLZYWA6/BGVL8LQgcj6Ni1d+qI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bFBXwSUx; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=VBEp+yCu; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OIfc2f027771;
+	Mon, 24 Feb 2025 19:18:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=wicZF92kP1dMHLslUj
+	pldfTVMNaLeHyEYfoTXx0X90A=; b=bFBXwSUx3X9ByiXE8kjoatN5xBPovPr+qN
+	sUYgy7RdieDXaBnKZ2thcM2vLu2vOXc9NW2dKimzW+0LilrsATMZvnvHdMPt0H0J
+	uil8zHiWZWVidqsPbrXnhfReYvFVOlpQUCuF0Z40hke2UwzyHhLxPfQW+BhwMXEs
+	Wm08itU7kQkl4v9hb8FWw4XnWIk3iYsGMbIq75PrHLQZP1W93Pppg+CbaJWmbIJF
+	lMmwx/kllS0RBix7knbvxxjGOwFhg0Cl1gUTtMJUStIayMAwG0agdVswO49SqPWv
+	+Hd5dsEh4XpEgEOo2Y/nxvdfYdqpjNEcg2hcIUJowtWTE8ifdD1g==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y50bkcxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 19:18:24 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51OIVwWK002691;
+	Mon, 24 Feb 2025 19:18:23 GMT
+Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2170.outbound.protection.outlook.com [104.47.57.170])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 44y518cd95-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 19:18:23 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LPkUpCJopMIE6dAYMd9wDtsjZrjFPRSzCvZ3wT80jf5H3D+QMlydGRvXzTKXMTL44rJDLhMJICIagaKSJ1rxVwyKqEQ4fyvtpGqofRzrAt7iUZGM+ozqVWvqfENH9Ill+ob1loCq09QuHtH8RfWWPu/92A+M1XUARavZbtaTuLoL37l9pLh4dAEDL+iX4Q0+9xJrUbQNUSplEG+/AwDQm+Y+5FB8o/oAZ46MddKbI6SPj8xeo6xSjkLZwXVADPA+HiqKE53VRgH37Rr987r50z5yfsXRsxYTNpfySmv31OcZcjd1pICLz2CtTBENI2P7OVvJ5vV9JasmRrv8trfmMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wicZF92kP1dMHLslUjpldfTVMNaLeHyEYfoTXx0X90A=;
+ b=dMoJ7Sbtw9rqncGvLGALOsLdWTsa5uADHmt91emIioaJHGwg0QeEuTjGFGfXHN3RoxNN5MiORYeJJqLKvKvvKnIXUgZJsDw/wPncLSWaxfvrTTlPoekBRqe3WKOt+NxO/zOBn1UUqcYmvJnd/STcbSTwdbiobniBBmz0a9VqtDx607UPp4mMCGXZI2mKLM47Uxb/uhtzpS1QatGNrkvqE9q6ljQ7BP01M+3Qds+15xV6AW/j+5N06G9f5pQeimuwxjqtX4obCyj11DYymLdy29KPsKEAaAHxFig93nKjy1HBscVphcbcHg6HxLziYQOiIxcIo5AV2I72XvIgvjVzog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740424739; x=1741029539; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=p3xHJbLnGcW0HZ1gLOEDktA60F4a1G/C80wkrIEDae8=;
-        b=P+GNEs3aDjpVvXV2tQV01wYdyavVqajt+qWrhJuYq4gDMpMkS8gQNdL1kr8MylB41i
-         HVCfKL3rPATtWbAubgfZLLpU9mzK1XLuqwEPtlNxOjpu/HvobaVoiHMmPb7ZGaOZlvdV
-         iRX1fkEc/VHqyurX1MWoblxfIF6pyHBqcPl4ljq4aTnHBhOKaNbG/r8gW5ziZCG4yfuF
-         T0XjCEaW+jyW8PFaer81hnsenDQv0hO8/N+HjrRSOYiqfexqFeY1sBw7dqo+GoDA1JS8
-         1DvRq51rdp7zf6RYBGCaWgLhVlioLnrTfnMHeo08C6jgqsAqQO9eS0xE1qD2FNiKDXUf
-         /6FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740424739; x=1741029539;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p3xHJbLnGcW0HZ1gLOEDktA60F4a1G/C80wkrIEDae8=;
-        b=XCP93ZmEJgiMAuFM/r2bICqQFN7+oZTxBXGyG0tVhD3QgQppvEE3linZRUrR6MRAwO
-         sKmL2+mEqr0OYF1xSSAmwDYRh6fucXcUFZEiUiXHHVnZ4ckAKbLBweqe/Z7C++GouB7h
-         YzHyskOujwrtL9eAa0GIuS8H+k8tUJ6x382sqiC7a3jvaBxzxk17bZCN+OCaaZtnzZlB
-         IW+6vmZhXOZP5pvoMdiCefiO8/Rc/y9HDH4FtL/U4kQOhCPHJWXk9pWa+DZXQAOJ4qXv
-         Y97KO0VV6kcrEtKMAr7Qf9UuYwdV9yT20VA15MA95pFqs8nZLjpqL/Oy4mC0R2zADeOR
-         SJmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWan8gHVJgyr28vmdwm9P293A66ei01nz/Tj5wwTGPnyC85petM4sgVkfWjja88k9Kufl22T5KWgGKyTc=@vger.kernel.org, AJvYcCVcgDOjlTwgasXeBEtO981rRQ1M6m6sdKqdg0MFBs3LNXCCQLm0jXjgZdmW6JyfSdadpWy3l/4iaGZZyWDHYoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU+xblTw+IFs5xE0Ol6EOWOydnuvlPt9I/unTd0kn+638N8uz1
-	lb5rAJpW9OzvCByMcBbn0vgm2pf9HXuN9oVCoQhEKIUMGKWk6OY+
-X-Gm-Gg: ASbGncsrr/VJTbvTw6su94om00kUmexB2LxqIwDrKhV0UcuTbPjjUeZbVRUKblY2GO4
-	DdyzDLt3n8AjFRIg4US+LNcWCF9ChEBkH2kC56WiCrxFugNsIfsGlDDL8THEs3AoOLnVkea+4bj
-	JZdvIVrqKYBdE9n9FD/ouG+SePQkGVPVvFrFExnEoYRjWgi9vPA2nQQu333kpW0vls4G8on7u/f
-	fcUbxnqUWYz/2C/Mu0dzsO2adZS/5Z0ShhVKYVw4ssjHKhJfblB1nA6iIur6AwrFovHOB6uLjgi
-	J/a7HW9KqqolVuvwdwXHZW9ZDQ4Io9OgKDiaambgAAfvE1oOUM/su4eW6f6/D9YvYm+4HWLfJWP
-	L0YSYcWLiibnzENmZ
-X-Google-Smtp-Source: AGHT+IEASQDgwK1ZCpXCe9rbQcK/QKGxUv8rOGOYKhCC4qMl70AwVXsBR3xHrdxYO4d9XP89MwfjBA==
-X-Received: by 2002:a05:620a:40c7:b0:7c0:c332:1cdb with SMTP id af79cd13be357-7c0cef46051mr1632523585a.38.1740424738790;
-        Mon, 24 Feb 2025 11:18:58 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c23c299f02sm9535185a.6.2025.02.24.11.18.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 11:18:58 -0800 (PST)
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id AE66D1200068;
-	Mon, 24 Feb 2025 14:18:57 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Mon, 24 Feb 2025 14:18:57 -0500
-X-ME-Sender: <xms:Ica8Z17AasKq5NcTbY4uHB-bIUFjZCQ85NJQdJXbEgOEXOq57te1xQ>
-    <xme:Ica8Zy545tLxKcyjyliQwTWzlfRdbRpc12OuVNZJJeFXc-pU7_HH8sVGRa4pUlr8k
-    UxRAvsWB6_r-zlzNg>
-X-ME-Received: <xmr:Ica8Z8fX4oEF2nD-eFIeGPFM0aQUCyo-lVQBxWihWjUbzaMymGKcelNuxEc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleeitdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
-    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrhhonhhigidruggvpdhr
-    tghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepuggrkh
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpth
-    htohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:Ica8Z-IVyt0oJN-CU9v1TyTArH_JuzKQ33Xmo0cCNG5n7zxQ41W4bg>
-    <xmx:Ica8Z5IhUGOgQ6dH-OHjdnoTsnVbFXFo9qBttix5LrQ3J6n8wuBgaQ>
-    <xmx:Ica8Z3wTxlaT9qZ1XIl-qfZODs0m7CLanlJK0YnCs-KHtUojkI32Bw>
-    <xmx:Ica8Z1JFxdjrQ1JS5VLPO6d7G278_DgP35qYCv0Ci7fDFZTgSPnXmg>
-    <xmx:Ica8Z8b8jpR-oWFXD4AvbQ22S1G2pCAT26XQMqLALmV3MY1AWqZojlAB>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 14:18:57 -0500 (EST)
-Date: Mon, 24 Feb 2025 11:18:08 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-Message-ID: <Z7zF8KF9qTCr_n4l@boqun-archlinux>
-References: <Fg4QliwzbHj3m-Fr3ZeUiU11d6Bu-I7w_9xzSsnDlzQtqCkjgqxJpI6_YxuXnB8m0MqESq6V7vK7FhPnEcvGwg==@protonmail.internalid>
- <20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
- <874j0j1nv2.fsf@kernel.org>
- <Z7yUTNEg6gMW0G7b@Mac.home>
- <CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
- <Z7ye0MsACNWe7Mbr@Mac.home>
- <CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
- <WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
- <Z7yl-LsSkVIDAfMF@Mac.home>
- <87msebyxtv.fsf@kernel.org>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wicZF92kP1dMHLslUjpldfTVMNaLeHyEYfoTXx0X90A=;
+ b=VBEp+yCu1sKOL6XGVpckjiJUiFqGbvXIEy+tuZS7uDQYoSsHwSM0VHAeAJIluV7FjQpQl649M0eYCmvzPbAOEcUsyIfJPVpjrwud0cfi7X+r1aLPIaymBP2/5TXefSw20JgVZKpZOCBxdYVgAaX9szOIe83wZgO3UmFbz2kJRG0=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by CY5PR10MB6166.namprd10.prod.outlook.com (2603:10b6:930:32::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
+ 2025 19:18:16 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 19:18:16 +0000
+Date: Mon, 24 Feb 2025 14:18:09 -0500
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Jeff Xu <jeffxu@chromium.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org,
+        keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org,
+        vbabka@suse.cz, lorenzo.stoakes@oracle.com,
+        adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
+        benjamin@sipsolutions.net, linux-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, linux-mm@kvack.org,
+        jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
+        ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
+        johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
+        willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
+        linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
+        rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
+        f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
+        mingo@kernel.org, ardb@kernel.org, mhocko@suse.com,
+        42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com,
+        enh@google.com, rientjes@google.com, groeck@chromium.org,
+        mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com,
+        mike.rapoport@gmail.com
+Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header
+ change
+Message-ID: <gr4i4o7cy2nxah52kiyglzl4ax63zdblvwqvqbdl7vhlfdy3ko@izskzrcapjxq>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Jeff Xu <jeffxu@chromium.org>, Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org, 
+	keescook@chromium.org, jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
+	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
+	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de, 
+	ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, willy@infradead.org, 
+	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, 
+	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org, 
+	ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, 
+	ardb@google.com, enh@google.com, rientjes@google.com, groeck@chromium.org, 
+	mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
+References: <20250224174513.3600914-1-jeffxu@google.com>
+ <20250224174513.3600914-2-jeffxu@google.com>
+ <443992d7-f694-4e46-b120-545350a5d598@intel.com>
+ <CABi2SkVKhjShryG0K-NSjjBvGs0UOVsY-6MQVOuQCkfuph5K8Q@mail.gmail.com>
+ <3nxcy7zshqxmjia7y6cyajeoclcxizkrhhsitji5ujbafbvhlu@7hqs6uodor56>
+ <CABi2SkUfABFR+SpjBzHT9dEcsJ0OOHiyttKkQVhqrHLrtZzopA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABi2SkUfABFR+SpjBzHT9dEcsJ0OOHiyttKkQVhqrHLrtZzopA@mail.gmail.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4P288CA0058.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:b01:d2::21) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87msebyxtv.fsf@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CY5PR10MB6166:EE_
+X-MS-Office365-Filtering-Correlation-Id: adcbf46e-9f7e-4d98-3ee8-08dd5507fd44
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|366016|7053199007|27256017;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QCwwdlcSJhzc+ZndAU/4Os4Gao4ohWgmb3Ijtu2PVnIB1ec20v+3xPpxcS8J?=
+ =?us-ascii?Q?4bsoT4r3Ir9yuHISTZ2BZYU3iD8BwXv/ZuVlVUFA2r4EaFfH/NBq5YUAmI58?=
+ =?us-ascii?Q?PutcIxdAfSFf65FStNJLRii8u5TCIvRiuLS7/on8KUbVio+UsJ3UuQvTxttS?=
+ =?us-ascii?Q?b+4/EAdIv2/N5q2cDWbEK3TlkQX7Kf+fvd0kdhfSSAovUu4/HA02kI+tEQpX?=
+ =?us-ascii?Q?1DO5H31zbkOxqjdZZAePoSoFzXOEBpYCsRe10yaFevMldf43GHb2OZ8KCVXs?=
+ =?us-ascii?Q?5BNMIQaeZn+ybVoFUsoL2GUnpakK7hg/oRaPu2tNJs3eAuR27XUPC7+1/rJh?=
+ =?us-ascii?Q?ifEOTbDDL6CXwohMsMzDWyKjull7misu2i7I/uiub8aXMuFwpyUsBjZxZMT2?=
+ =?us-ascii?Q?WORRxG9r0Gg1votQt4Y5tCcHCGimqJ1k8uRtgevc7kXEDRAaC9WqSnhB2Hd/?=
+ =?us-ascii?Q?6GSaAb1V0QYXTCS00MAlZ9bAR5uax3piwCs/ZD46c+pgJe02xTKlQhQv0rLv?=
+ =?us-ascii?Q?JLSTqTZP6qtD/3W+m0gYHE73QFl53kPY7kWX1kaM1whCNONCS9oEH44b9sOh?=
+ =?us-ascii?Q?QLm3HB8GmfJ84KzM6taCR2qGOrhJvxmisrnJ6AkgHlfyBioct9VhvRjCThhx?=
+ =?us-ascii?Q?jsq8tMYI1B4b2GW5Wo8MrlNolskMY5RHIXleeq5CfCID3QgaD1wigXJeN8WK?=
+ =?us-ascii?Q?JgIj6+muFtL5Qe2KaSG8UQrVJvNsjqNRE6ewGo0i80X/hMno4dedmdkv3mvu?=
+ =?us-ascii?Q?EvKtFxqcNZuNxP1/GTk1djxv3nw7efQK2e+1jQoB1ooGm1XtrIx2GfeXae4J?=
+ =?us-ascii?Q?tb1FFL6mHUEWkXAC1kEvLy7Lop2uRz/fPpf3a89+4BekGXHHJ585AVVts/Ae?=
+ =?us-ascii?Q?+T2KMMCmQ5Oo5bv6fFpeWU6bwh7EwOyGWfU6dvrMb9PJ80/9QN5i9eJb+72G?=
+ =?us-ascii?Q?v7/XsXFDcgpd7a/gCQ44Spd2kU5nPCuGfUaKfvqN9Mb1sOh0vUUPf1w5+9se?=
+ =?us-ascii?Q?55Mh5S4lZdabPFMWM4HRY6eCW487c6RY7SSGfmfP3/dAwm9vn0XNGIOI05xb?=
+ =?us-ascii?Q?3LB6xw3imrahFpLfMw7ZREUskVvXD53GZdKr0J7o5iDHesFWtgfz10r4G6yj?=
+ =?us-ascii?Q?RONw8bHTSnzsytAOb3QG9n7CdF3C9pEAQPZpt4TW00nUkhlBQMNAc73iRLJZ?=
+ =?us-ascii?Q?jNDNRjwJM5r7v1BiWw8Ed+LvqVyUK5w+sGaJRubrm9PgMxQsuMWC3FR8/bF/?=
+ =?us-ascii?Q?E/su5VLTaKQae16JNfKaxN/NGWD0zlxupr01ORupKCvoPp9qdY7e6ePwEHMG?=
+ =?us-ascii?Q?eQXo1Be5rxWO6SJ89XWFAdn4aQtD8fDauMVPToghLEZfKKTjW819TSgO1uw9?=
+ =?us-ascii?Q?ZkvW7+UTOjyQnSt6JmeoKDzjfrh8Dhy/HQ56SwqqclMpoOVS6N1hayFV3SG+?=
+ =?us-ascii?Q?/7A1vKN3WG4HPotfAcDpcvXY8IyKX+vA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(7053199007)(27256017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+GXuy0QUQFq3nfqRpS9SQWZCP8BIRWIMnWJ19NmRTLOPkfIEuz457EH5VCF+?=
+ =?us-ascii?Q?ie3QJG6Z1EGjxjE9qRpljQFbuBg4UCvre1VKx2wK6Iy2X0rKUjT4JZx3Rygz?=
+ =?us-ascii?Q?b0LA+DUfPPUredigUnNJOYjOm730RYLTiqTWkYj77tHRveccYueIGrMkWFPt?=
+ =?us-ascii?Q?+Es62703ATM7aQBpDxzosYutqRrMLhOGO1x7Ke9cZYu34slUtnvr+aNAJNKB?=
+ =?us-ascii?Q?zCSeR4punGWJ4qXyR//3lpBbuXu9ycOQhVagowo43ORX9kcpCZpRDzXaR7aC?=
+ =?us-ascii?Q?ii+fmfFN32aYpDwi3ZGYKcSC65tYdPxqDNAXTqRlulnBeg1swKwttf7kp82p?=
+ =?us-ascii?Q?Mfga5aCilcnqEHGAWDWLUXSo9EgfZ0dhqGlAmpeVH+HWPrD6UaqN9RxEhbfI?=
+ =?us-ascii?Q?KviRMLqdyzCX1Ukx+voFAsf22e+CLr6SdubIYJ7Nnk7OmjJ1Kl9zAuA49a8Q?=
+ =?us-ascii?Q?Ko6rG1XL6qL6lwiSfSScIag42TC5FzFGCkJW3NgknZpgJRiYMZAroIzQ/3da?=
+ =?us-ascii?Q?BxpZ/mmsSg2sSdwkGkx5F78rm8JP/yCjWQy7GymdxHAZsKh7aI1IhHm7jYMs?=
+ =?us-ascii?Q?Tmj++eLo1KzcRnYVHXmhM08Ski+kWoXuMN0+aQHgwgLcnkXt2ACnlNlLXCGK?=
+ =?us-ascii?Q?edvcrz+tnHRauPsTVoZ49dPy7uwm0QBmNESUIN8XrZy/RmXXnyRdla3Pro0v?=
+ =?us-ascii?Q?ZyYKibiKs2TBYKM0A/tOP4NmG/3cq7rRRY+Pq8f6/Ppbbu/2Xcysyg4EhI/G?=
+ =?us-ascii?Q?7uDtSOz/n2Ib75BHlx4PfXP6cLs1vATPgib9DCaLYGuVgOz2S/pCuoI9qXwj?=
+ =?us-ascii?Q?/r+Iva8kEgfZrUhBi5K2brO+fjC3erTezPjXpXLoVc3oTivi/cJoVjXo1G9p?=
+ =?us-ascii?Q?b9OnjdVrUHB2T/WnxTklyEbGMhZAOeopVvszzuHR+cwuWjGkKMlIp184E4Cy?=
+ =?us-ascii?Q?6Q0LAT0LrAi1h8FvzmbH7WANLZ1V/U4FomlyrDCGDNsz1Ds0/DkKOFnn1Kx1?=
+ =?us-ascii?Q?EqE6WcJJII7prSH8YBgPrWceHLeSoEasFvS3+mRyv3jPVCBVInBR/EzUyzzy?=
+ =?us-ascii?Q?Bwg8pNohMoQii9k2i6RrWP55oOou3kyO2ZyxXyp/zN+/vcY7DzihcCOxAq0p?=
+ =?us-ascii?Q?g9OYgnrIDGdbv8R7GFp6FEGww0eVEUT0UTLBveoV3mEhb7NMDobNdUFb4jlP?=
+ =?us-ascii?Q?OeWRYBzMXfKP2VSWTh+f6pYEAgM3PA/BeKG63wAYtxf6fz4awKAJJlCg2mIy?=
+ =?us-ascii?Q?4DuNSOpp3o57wchmBpxAJMqnJY4PRMJGCflejQs3ZkRdWbxLg9Jj8Bl7W5EN?=
+ =?us-ascii?Q?Q18tmBCKVuwxS9DGneA595LiBHI7x+qrqRG3a1BrFq/zOXFK4ahzii5MQW8H?=
+ =?us-ascii?Q?hkfYCIiDpyhNK92fl7lJcKP1QF61WYCqMQLIKvVmXq4tD+UvCj/K/SDdOfw9?=
+ =?us-ascii?Q?bSk1Ex0enPcAoFWGD8evV51YPglHsSJ03YrPkBlT9hziqzFGYFLa0czpW4v1?=
+ =?us-ascii?Q?8GaLfO7bO1VWrsm+1PXN/cK9k8SfXhz7UNpxeUvFwgOTb/xbJeQs97bgJv+0?=
+ =?us-ascii?Q?9EOzhi4nL73Zefq8kzlpj9r8XdMnqu68xy5z2LR7?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	ckVLfzMfAEbQI52rMKnAiE5xtTkRo0uNHxh7hniXPH5qn3+jYL7k1IBYBVeFPMNS7NThQIHbCxInx0se7JQujsfvm7acqZgursSPdyOSaun2H11/XbwwPed6XfsV7GfiQrCGcxkboUeitQwfA5UOF99fB6DFGzPcS+LTWmlqDoqChUXOIAexiDG2mvsBLqTWGdfgpEt7L8qBC6pbOyPt9OBkeazRTkfBNt6ktABTA8MdFoHMHSSVyXE1db2pY0wWvKbOyjg9/VWwwBMl0WIbaIHIKxJsgzIdex3fyM9XNdjb5zyUsbquK2aSw5/4jjhCIO7Y6rC7sOVP58WM+0Cg6nUJR25w7qfeuSkdjS7qY1F2jahaCP2EId+JBVjE3ZGg30z1FIQnSt30HtpN7q+J/TV3bFpzYvMi4YIuVUSkSengv2Pg4iXuAWOG3uW89dsDF+pUrGumXiB1a3LFSe+34rqdGnCGgPXIR3XGLpBfZAWsPFSWQRyI4z0VbfpOEvFGCnyP7QlVtS8FRLifS2GTj3hKn7RhowIleA89EppEmUCyeFnBPIzTYg1aSxeaPPB44jmSza7Sn4btGjHo+2NFkE9/WPPc7wyyzXJCTdsN4PE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adcbf46e-9f7e-4d98-3ee8-08dd5507fd44
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 19:18:16.0722
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fNEVnOfVGUJzK1AJcIU+ZYoWLh/tBXKYLZJtSrGkASmMr66j7bNV9h3dbYrpIFKfGP7sMREaJ/Hr5zx4au2C2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR10MB6166
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_09,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 bulkscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2502100000 definitions=main-2502240124
+X-Proofpoint-ORIG-GUID: -0_A01huRZxHL-gBRG1MPj4zcXTPKaVn
+X-Proofpoint-GUID: -0_A01huRZxHL-gBRG1MPj4zcXTPKaVn
 
-On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
-> "Boqun Feng" <boqun.feng@gmail.com> writes:
-> 
-> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
-> >> On Mon, Feb 24, 2025 at 5:31 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >> >
-> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
-> >> > >
-> >> > > side -- Andreas and I discussed it the other day. The description of
-> >> > > the issue has some lines, but perhaps the commit message could
-> >> >
-> >> > Do you have a link to the issue?
-> >>
-> >> Sorry, I meant "description of the symbol", i.e. the description field
-> >> in the patch.
-> >>
+* Jeff Xu <jeffxu@chromium.org> [250224 14:07]:
+...
+
+> > >
+> > > #ifdef CONFIG_64BIT
+> > > [ilog2(VM_SEALED)] = "sl",
+> > > #endif
+> > >
+> > > Redefining VM_SEALED  to VM_NONE for 32 bit won't detect the problem
+> > > in case that  "#ifdef CONFIG_64BIT" line is missing.
 > >
-> > Oh, I see. Yes, the patch description should provide more information
-> > about what the kconfig means for hrtimer maintainers' development.
-> 
-> Right, I neglected to update the commit message. I will do that if we
-> have another version.
-> 
+> > I don't think it is reasonable to insist on doing things differently in
+> > the kernel because you have external tests that would need updating.
+> > These things can change independently, so I don't think this is a valid
+> > argument.
 > >
-> >> > I asked because hrtimer API is always available regardless of the
-> >> > configuration, and it's such a core API, so it should always be there
-> >> > (Rust or C).
-> >>
-> >> It may not make sense for something that is always built on the C
-> >> side, yeah. I think the intention here may be that one can easily
-> >> disable it while "developing" a change on the C side. I am not sure
-> >> what "developing" means here, though, and we need to be careful --
-> >> after all, Kconfig options are visible to users and they do not care
-> >> about that.
-> >>
+> > If these are upstream tests, and we need these tests to work then they
+> > can be fixed.
 > >
-> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily because as
-> > you mentioned below, people can disable Rust entirely during
-> > "developing".
-> >
-> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
-> > config provides hrtimer maintainers a way that they could disable Rust
-> > hrtimer abstraction (while enabling other Rust component) when they're
-> > developing a change on the C side, right? If so, it's hrtimer
-> > maintainers' call, and this patch should provide more information on
-> > this.
-> >
-> > Back to my personal opinion, I don't think this is necessary ;-)
-> > Particularly because I can fix if something breaks Rust side, and I'm
-> > confident and happy to do so for hrtimer ;-)
-> 
-> As Miguel said, the idea for this came up in the past week in one of the
-> mega threads discussing rust in general. We had a lot of "what happens
-> if I change something in my subsystem and that breaks rust" kind of
-> discussions.
-> 
+> As above, this is actually kernel code, not test.
 
-So far we haven't heard such a question from hrtimer maintainers, I
-would only add such a kconfig if explicitly requested.
+Okay, so then they could be easily fixed to work with changing the flags
+and it would transparently function in your ChromeOS code base. That's a
+good way of doing things.
 
-> For subsystems where the people maintaining the C subsystem is not the
-> same people maintaining the Rust abstractions, this switch might be
-> valuable. It would allow making breaking changes to the C code of a
-> subsystem without refactoring the Rust code in the same sitting. Rather
+It doesn't make sense here since, as stated in this thread, we need two
+defines.  But it does mean we are less locked into how this functions
+and it could change later, if needed.
 
-That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
-longer-term, more and more people will get more or less Rust knowledge,
-and I'd argue that's the direction we should head to. So my vision is a
-significant amount of core kernel developers would be able to make C and
-Rust changes at the same time. It's of course not mandatory, but it's
-better collaboration.
+Also, do we need something like the above test for VM_SEALED_SYS?
 
-> than having to disable rust entirely - or going and commenting out lines
-> in the kernel crate - I think it is better to provide an option to just
-> disable building these particular bindings.
-> 
-> This has nothing to do with general policies related to breakage between
-> Rust and C code, and how to fix such breakage in a timely manner. It is
-> simply a useful switch for disabling part of the build so that people
-> can move on with their business, while someone else scrambles to fix
-> whatever needs fixing on the Rust side.
-> 
+Thanks,
+Liam
 
-It's of course up to hrtimer maintainers. But I personally nack this
-kconfig, because it's not necessary, and hrtimer API has been stable for
-a while.
-
-Regards,
-Boqun
-
-> I am of course also available to fix anything that would eventually
-> break. In fact, I expect to be able to catch breakage most of the time
-> automatically and very early by means of automatically monitoring the
-> relevant trees. I do this for block, and it has worked really well since
-> rust code was merged in that subsystem.
-> 
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
-> 
-> 
-> 
 
