@@ -1,110 +1,146 @@
-Return-Path: <linux-kernel+bounces-528470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08D2A41805
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:02:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A927A41807
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:02:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82AE171FCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:02:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B88337A24D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:01:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B365A13D279;
-	Mon, 24 Feb 2025 09:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF9A22D7B7;
+	Mon, 24 Feb 2025 09:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XIe78IyU";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Uhrr5LYO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=dougvj.net header.i=@dougvj.net header.b="QB6fR0Ky"
+Received: from mail.bonnevilleinformatics.com (mail.bn-i.net [69.92.154.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B967EEEB5
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70610EEB5;
+	Mon, 24 Feb 2025 09:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=69.92.154.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387719; cv=none; b=eGYySxqxyTFXUDar6HNDt05WztOEyEHjHJmrNR14+E7JmMa7Dm1WI2VlonjJamteNOUeSg0Yc6ioxjxz5FiZ5OstYI0CWdix+hN790fMvfL2/MAoTOxUqaVX9Y96KFfMojT4KsoT4tBpERaUM0uMqb12+5jN3S/IO8R3bHhpuY4=
+	t=1740387756; cv=none; b=rvrX5p4LCn8fQKRJxwSF/W1Q5BHuxPu3Omu176R/WBz/UfLp5wHohup0iyYK+6RVBOfXz2F2Q4Bj8mAkY2XRdW1osBZNL5K9Ah6ER35Mkf7ewt5u+KV1SysYXP/r5dqtvuqksOjxoyfSuhWsnxTcncHXMWF8iPU9JTLBHlf/yFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387719; c=relaxed/simple;
-	bh=1FzywqgCKgWMkGI+DV99J4CScxgQoGC7Ld383gBGf80=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8m7fIFHH4rlh4q1E0dLU3KgS3cCldS5T/iJIGQDjXG9TfZU0JH63lgOByZ3kBQZxX8GUYvgkoZP0OPUo8e4gIeDKV+8r+mpc4f7K7n7/a8Y4cxWofHY6VSKXWmuXiUfrpwe0ITNYM7Qa+42tkZrQAsS0qFgyFSzQRcRhSdSPHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XIe78IyU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Uhrr5LYO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 10:01:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740387716;
+	s=arc-20240116; t=1740387756; c=relaxed/simple;
+	bh=7rHeGw0u94TkI3uLs3v4wQJMcFNzvKAWYlXyDg9wDvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EiIG/d4upoFIntle8UcykAYAMj/EwmJhsSk/nQwt7/RXlDcP5TP+EDvaOpnDNgCGpMnQm92snZ4u60oHTCpyOqVOdOuBF2x8bxXj/X9ItCDvGCd1DF9n4wEUv9euHpm2/kaTNOzxui0Ez2Hy2INJ2KdpekQmNlYbSbeU3ONY7gI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dougvj.net; spf=pass smtp.mailfrom=dougvj.net; dkim=pass (1024-bit key) header.d=dougvj.net header.i=@dougvj.net header.b=QB6fR0Ky; arc=none smtp.client-ip=69.92.154.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dougvj.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dougvj.net
+From: Doug V Johnson <dougvj@dougvj.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dougvj.net; s=dkim;
+	t=1740387745;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=89B3J6ltof4hVeOt1caD0GAKTbuQQP4dUY3CeP0KuwU=;
-	b=XIe78IyU2aFFnmeJDGLu6WIXJ5r2oE8fwMyTaKbRjlVgWpdBKTLpZpwJhWx0eoRxVY10Eq
-	MMd0gIn1g5Rd9iu5Q78ZnChbF7sHYDAWEOLq2j06YZzYu1f3HFK8Z1rs5HlxKB/HVi6fsr
-	MNKRlaLwHQrBl7AUCOq/Sd/LTtqsqCqkNl5NtC2oW8R3DjizGyH4rerRd9FBD3JHA/LrcV
-	oeDvdcBkv1dWWbLOHB2GoEAiWaqimo4p62niuMByDKSumZ86eCMCAfnEnB59PmfB9sCUjH
-	QEqVQGNrZ8OWw0bsLRwQZDMWZKOJHHYnn4FoYOrXl9aaCaa60BwarJantvyJdQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740387716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=89B3J6ltof4hVeOt1caD0GAKTbuQQP4dUY3CeP0KuwU=;
-	b=Uhrr5LYOyOo5kUw0+/7TIs0fz5/SnS7EAL046FItvyirjNDCmUFcNZwijzaiHyCL/qHh9h
-	VgN5mQ2vwxis5sBw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 12/17] zsmalloc: introduce new object mapping API
-Message-ID: <20250224090154.7Xlsipmu@linutronix.de>
-References: <20250221222958.2225035-1-senozhatsky@chromium.org>
- <20250221222958.2225035-13-senozhatsky@chromium.org>
+	bh=+H6/7/JIKzHok4EsxUGhBr4BHEfaAunLEI+U0eYVCEk=;
+	b=QB6fR0KySG8F1rYSPaetz9dZCk530t5dvZT6Lw3wNFKH/6Zkpo3pGJMTP8BYaUQ1iyZtzv
+	l95KiN4133jN4+HT4y8hUfw1m6VxQ2B2lYV6aC+3Fb7/eoy+zAA2HS0Mt8wng7VKB/oQxs
+	adCaiDGbmEKpMxbfGQERW5mLw7zA7Ts=
+Authentication-Results: mail.bonnevilleinformatics.com;
+	auth=pass smtp.mailfrom=dougvj@dougvj.net
+To: 
+Cc: Doug Johnson <dougvj@gmail.com>,
+	Doug V Johnson <dougvj@dougvj.net>,
+	Song Liu <song@kernel.org>,
+	Yu Kuai <yukuai3@huawei.com>,
+	linux-raid@vger.kernel.org (open list:SOFTWARE RAID (Multiple Disks) SUPPORT),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/3] md/raid5: freeze reshape when encountering a bad read
+Date: Mon, 24 Feb 2025 02:02:01 -0700
+Message-ID: <20250224090209.2077-1-dougvj@dougvj.net>
+In-Reply-To: <9d878dea7b1afa2472f8f583fd116e31@dougvj.net>
+References: <9d878dea7b1afa2472f8f583fd116e31@dougvj.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250221222958.2225035-13-senozhatsky@chromium.org>
+Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: -
 
-On 2025-02-22 07:25:43 [+0900], Sergey Senozhatsky wrote:
-> index 03710d71d022..1288a4120855 100644
-> --- a/mm/zsmalloc.c
-> +++ b/mm/zsmalloc.c
-> @@ -1377,6 +1377,135 @@ void zs_unmap_object(struct zs_pool *pool, unsign=
-ed long handle)
->  }
->  EXPORT_SYMBOL_GPL(zs_unmap_object);
-> =20
-> +void *zs_obj_read_begin(struct zs_pool *pool, unsigned long handle,
-> +			void *local_copy)
-> +{
-> +	struct zspage *zspage;
-> +	struct zpdesc *zpdesc;
-> +	unsigned long obj, off;
-> +	unsigned int obj_idx;
-> +	struct size_class *class;
-> +	void *addr;
-> +
-> +	WARN_ON(in_interrupt());
+While adding an additional drive to a raid6 array, the reshape stalled
+at about 13% complete and any I/O operations on the array hung,
+creating an effective soft lock. The kernel reported a hung task in
+mdXX_reshape thread and I had to use magic sysrq to recover as systemd
+hung as well.
 
-This macro is deprecated. Could you come up with something else like
-!in_task() if needed?
+I first suspected an issue with one of the underlying block devices and
+as precaution I recovered the data in read only mode to a new array, but
+it turned out to be in the RAID layer as I was able to recreate the
+issue from a superblock dump in sparse files.
 
-> +	/* Guarantee we can get zspage from handle safely */
-> +	read_lock(&pool->lock);
-> +	obj =3D handle_to_obj(handle);
-> +	obj_to_location(obj, &zpdesc, &obj_idx);
-> +	zspage =3D get_zspage(zpdesc);
-=E2=80=A6
+After poking around some I discovered that I had somehow propagated the
+bad block list to several devices in the array such that a few blocks
+were unreable. The bad read reported correctly in userspace during
+recovery, but it wasn't obvious that it was from a bad block list
+metadata at the time and instead confirmed my bias suspecting hardware
+issues
 
-Sebastian
+I was able to reproduce the issue with a minimal test case using small
+loopback devices. I put a script for this in a github repository:
+
+https://github.com/dougvj/md_badblock_reshape_stall_test
+
+This patch handles bad reads during a reshape by introducing a
+handle_failed_reshape function in a similar manner to
+handle_failed_resync. The function aborts the current stripe by
+unmarking STRIPE_EXPANDING and STRIP_EXPAND_READY, sets the
+MD_RECOVERY_FROZEN bit, reverts the head of the reshape to the safe
+position, and reports the situation in dmesg.
+
+Signed-off-by: Doug V Johnson <dougvj@dougvj.net>
+---
+ drivers/md/raid5.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+index 5c79429acc64..3b5345e66daf 100644
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -3738,6 +3738,27 @@ handle_failed_sync(struct r5conf *conf, struct stripe_head *sh,
+ 	md_done_sync(conf->mddev, RAID5_STRIPE_SECTORS(conf), !abort);
+ }
+ 
++static void
++handle_failed_reshape(struct r5conf *conf, struct stripe_head *sh,
++		      struct stripe_head_state *s)
++{
++	// Abort the current stripe
++	clear_bit(STRIPE_EXPANDING, &sh->state);
++	clear_bit(STRIPE_EXPAND_READY, &sh->state);
++	pr_err("md/raid:%s: read error during reshape at %lu, cannot progress",
++	       mdname(conf->mddev),
++	       (unsigned long)sh->sector);
++	// Freeze the reshape
++	set_bit(MD_RECOVERY_FROZEN, &conf->mddev->recovery);
++	// Revert progress to safe position
++	spin_lock_irq(&conf->device_lock);
++	conf->reshape_progress = conf->reshape_safe;
++	spin_unlock_irq(&conf->device_lock);
++	// report failed md sync
++	md_done_sync(conf->mddev, 0, 0);
++	wake_up(&conf->wait_for_reshape);
++}
++
+ static int want_replace(struct stripe_head *sh, int disk_idx)
+ {
+ 	struct md_rdev *rdev;
+@@ -4987,6 +5008,8 @@ static void handle_stripe(struct stripe_head *sh)
+ 			handle_failed_stripe(conf, sh, &s, disks);
+ 		if (s.syncing + s.replacing)
+ 			handle_failed_sync(conf, sh, &s);
++		if (test_bit(STRIPE_EXPANDING, &sh->state))
++			handle_failed_reshape(conf, sh, &s);
+ 	}
+ 
+ 	/* Now we check to see if any write operations have recently
+-- 
+2.48.1
+
 
