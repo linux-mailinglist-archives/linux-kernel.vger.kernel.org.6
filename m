@@ -1,134 +1,92 @@
-Return-Path: <linux-kernel+bounces-529483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E21CA426D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8711A42688
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD83189A2AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02A83188CD85
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:34:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F59F2561AC;
-	Mon, 24 Feb 2025 15:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D0D2561B6;
+	Mon, 24 Feb 2025 15:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="pWkW3x3J"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XgmiQpUP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCD725B69E;
-	Mon, 24 Feb 2025 15:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A362561A0;
+	Mon, 24 Feb 2025 15:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740411695; cv=none; b=DWk4IBxRVz/Ead67LpFAobADtxzuMe34qnqgzVjlvAmboJZ0+vijdSEFbDiWnFrsgaokKf/6AkDCAM5soZF1knw62t7RQYGrNu63WFLSsSwiZZpk1XAlutLzaWj+JQQEisxz7SVxb5Pg//m0MOU+GlWT3QidFccQsuGWFBpXu20=
+	t=1740411215; cv=none; b=oaCK20p3rvnPOX/aPeElD3A/HV69YecGXiIoWVVbXCfNxSoyoCHjnUqdBg+4OxdeLONIOka/k6wscO9OZgzC6EBMa5pEensZMOMEnFiL71A5ZTdQxfvVLs/574oyT1ZcYq47JHHUXZiQ2EfQ9rZKTlvvnCNB3A4/kDl5x50DML8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740411695; c=relaxed/simple;
-	bh=SAogXjErmnUKWUV3LPeC/KcgOjnw/QZRkCVS8VQvp7g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eWhrgndJMZd9kE0U7TsW5SGW73ot7wcqLXzRZdvClkjeKThRSl3L/62oQuRL1cZgEIUZIiEXN9QTAqSUhyua9EWWk+OAb2MWe5TUrKQLO65aPl6E214QOlK53RIGwtNXLOY9t4EI5WYFoythNH1juzGhjyr0b1whWrR4iNL9UOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=pWkW3x3J; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OFKc72007314;
-	Mon, 24 Feb 2025 16:41:13 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	D1vrqcKSTo7wXwCZBje6dgQBk+XJl1AKFrrz1y87N6A=; b=pWkW3x3J8T9hhUPo
-	91kN3pFh15rWq3XxQMrIdM5XajrsGrllHjx9S0GVpfJ/jWqYo+H8iKQDHJaaWl2P
-	GzbdqHVrKm9MrFyBk6zXudb0wD1T9UREEKWmUIHmiSWj/0t7pSPhm/nYh9Fnm7ty
-	k7W49m8G21LgFEQzjSzo/UiE5iE1I2aN8T73ZbqdwdgH2MzyuvILnntXZAIeg0zB
-	vNQ6jqsjDQmLMDQ2NWxvF+/ckh2zk+btIcn2vaOh1rO1iCcNlHHAxR5oNK5XWhQx
-	dNvE6uP/v2PxpeofC86RkLFO9iQi3E3qNsUrKHfUek+wGwCk8NYwjsPDytHRzPYL
-	vTTYrA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44ytdn5q71-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 16:41:13 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D071B4004B;
-	Mon, 24 Feb 2025 16:39:52 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D8F90541700;
-	Mon, 24 Feb 2025 16:35:26 +0100 (CET)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 16:35:26 +0100
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
-        <cassel@kernel.org>, <quic_schintav@quicinc.com>
-CC: <fabrice.gasnier@foss.st.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 9/9] arm64: dts: st: Enable PCIe on the stm32mp257f-ev1 board
-Date: Mon, 24 Feb 2025 16:33:13 +0100
-Message-ID: <20250224153313.3416318-10-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250224153313.3416318-1-christian.bruel@foss.st.com>
-References: <20250224153313.3416318-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1740411215; c=relaxed/simple;
+	bh=dN+YAJEN00mhIkCuzbWGSXa0wqDJ074BJrDkjMGHkmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KImHzlKl4U21KmZSCzX7pXEutl770wFrPMmVjjCQycPBIQ5coGmiDqGsubkyEiEK/Dl6RSPq76gQNTdo5+4XKDqK/hFv9ScNG27DPnhtoo8WmtkosSg5jfEVweJQjNXE4HME3sZ7QclESNR4tEbFN7O2tZqDs+sU5aYJp0ZXTLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XgmiQpUP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2kZuikH82YSc7S3HfNANRsQo2YtDaV4SIY3/Jou1Rhs=; b=XgmiQpUPZkdrwGIkETA+Q6X97t
+	mycvbbUMQMPAW6+yiqImO/SZLBqZHD33x2o/vxQafs/yKs2yNqB4XnKneI3cX4e9Bg/S+dhc2q53G
+	PE5SwsGWZmTDUhL5Y1IffM6UwRRLIpcJ7xRxDYGw/n+L9yOYTX1L395fg2SqqvlqjogKGcO6SV28Z
+	fMQrFmz27C5HoTPchxfMJ3pfrrwIa77t7E2NCHjn1QEcnJ2i4MPmGloIEJWOTQ4Mn5a0Hh9tqzp0R
+	5Cl1ngj3ZzgxDKHfbE5n9UyBMU1+qCDGDU3g1EkQ2LKlamb1OK+4QslmPGEERJztBFJL8ACj1pBuJ
+	fIn0HkaA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmaSX-00000007diT-2H0i;
+	Mon, 24 Feb 2025 15:33:29 +0000
+Date: Mon, 24 Feb 2025 15:33:29 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Raphael S. Carvalho" <raphaelsc@scylladb.com>,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v2] mm: Fix error handling in __filemap_get_folio() with
+ FGP_NOWAIT
+Message-ID: <Z7yRSe-nkfMz4TS2@casper.infradead.org>
+References: <20250224081328.18090-1-raphaelsc@scylladb.com>
+ <20250224141744.GA1088@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_06,2025-02-24_02,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224141744.GA1088@lst.de>
 
-Add PCIe RC and EP support on stm32mp257f-ev1 board.
-Default to RC mode.
+On Mon, Feb 24, 2025 at 03:17:44PM +0100, Christoph Hellwig wrote:
+> On Mon, Feb 24, 2025 at 05:13:28AM -0300, Raphael S. Carvalho wrote:
+> > +		if (err) {
+> > +			/* Prevents -ENOMEM from escaping to user space with FGP_NOWAIT */
+> > +			if ((fgp_flags & FGP_NOWAIT) && err == -ENOMEM)
+> > +				err = -EAGAIN;
+> >  			return ERR_PTR(err);
+> 
+> I don't think the comment is all that useful.  It's also overly long.
+> 
+> I'd suggest this instead:
+> 
+> 			/*
+> 			 * When NOWAIT I/O fails to allocate folios this could
+> 			 * be due to a nonblocking memory allocation and not
+> 			 * because the system actually is out of memory.
+> 			 * Return -EAGAIN so that there caller retries in a
+> 			 * blocking fashion instead of propagating -ENOMEM
+> 			 * to the application.
+> 			 */
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1..a7646503d6b2 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -225,6 +225,27 @@ scmi_vdd_sdcard: regulator@23 {
- 	};
- };
- 
-+&pcie_ep {
-+	pinctrl-names = "default", "init";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+	status = "disabled";
-+};
-+
-+&pcie_rc {
-+	pinctrl-names = "default", "init", "sleep";
-+	pinctrl-0 = <&pcie_pins_a>;
-+	pinctrl-1 = <&pcie_init_pins_a>;
-+	pinctrl-2 = <&pcie_sleep_pins_a>;
-+	status = "okay";
-+
-+	pcie@0,0 {
-+		 reset-gpios = <&gpioj 8 GPIO_ACTIVE_LOW>;
-+		 wake-gpios = <&gpioh 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
-+	};
-+};
-+
- &sdmmc1 {
- 	pinctrl-names = "default", "opendrain", "sleep";
- 	pinctrl-0 = <&sdmmc1_b4_pins_a>;
--- 
-2.34.1
-
+I don't think it needs a comment at all, but the memory allocation
+might be for something other than folios, so your suggested comment
+is misleading.
 
