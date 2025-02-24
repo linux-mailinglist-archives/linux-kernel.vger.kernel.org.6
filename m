@@ -1,526 +1,132 @@
-Return-Path: <linux-kernel+bounces-529006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A26A41EC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:24:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AEEFA41EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:20:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036463B9E71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F26E53AA3E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D63221F0D;
-	Mon, 24 Feb 2025 12:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62852571B7;
+	Mon, 24 Feb 2025 12:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ZeLkigJ"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f5qtBwvS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E823BD12
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752E31D540
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399350; cv=none; b=HgbzCGldevEN/xfIPcNLLpZT0fLKw/IU8yMvV7KYOqZ3pML3DTE2rZPLL6j3wLUREIWi3/EcNofWYKsjNU1OyxDI166drUSAKsLyXOlrxRjpoIuTnta19zHuVfz6yOey4Sob0exTJlwlwtYCNvLFtzdzGt+sjc5gI0vog3UGS4k=
+	t=1740399294; cv=none; b=rhlwbtReSyL40Zvj/3c8SQ9KRL2tNSv2xO5QG4yecHoOfeIXEpnNXRpFFig0F8c3HKTzjHGnxPI7w0RFnKICoD6QP+Co6uSep4DPKo5jPTwXPN3FWFuXRDAtheNNPFrWZ6fRKlxz+UWsTS3cgtpZC9JTmsOneSDrwpeHOcqc6FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399350; c=relaxed/simple;
-	bh=73xFST6IcyWSU4ybz4NXXeeLlo1YTFKR59MBsdv/5AM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lSNFzBoTncqN8X8ZslWN0RQkpNSd/BQZmWCoKwy6LiT0ysv34+JSDDniJXMe0q1piUsHIje5NeATmLMrz//cD2EC+oKE2s05EwSMuEuj4wTkALAmTVQ5cguRaGiFeXXVo1sYyAcJ1IBJvDXdT/0WI+9sR82g4gnY5RvQG/CauIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ZeLkigJ; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vdonnefort.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4398a60b61fso22057175e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:15:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740399347; x=1741004147; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9CAntV7cf9FOGSVoXQbvcHO1SNXeVU07stlk2XXrAaE=;
-        b=0ZeLkigJOOTqrOcxWIE3APhrd+BGoajrudT8yrV8uV2o22h8/GqwAuk4+rIAIODl4k
-         mJygCT0tW5JtkXU3fgC8kr0HtcPovDYj+IcRZB69bWm0GIGSnwhBu735QvKHykpzu0xK
-         bsg0zcrVl1nO6/4+n79YXlvGASmrfw7FTEjswb09iT7KxDrwyFye1fMKTBFvFOMhZcVc
-         h1VcTmkOci0lz82SMGltNIgv64nndoDgnVCR/1aMgqnzir1m9eL5QYu2PXzF/gXynNN5
-         PfxwQpT/3yg66pd5lLCFJRQLs/vSTuvgMSdPA7ZPN+bij06IHZgTMXivWKVoH5UDAG3T
-         B9BA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740399347; x=1741004147;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9CAntV7cf9FOGSVoXQbvcHO1SNXeVU07stlk2XXrAaE=;
-        b=Oa6OMFo/QWYOb3bUs6p/A9aE4pOcUdmevgje0/1vPBa2ddmGoer18CBOnkYL0QabFd
-         JSga/3xUjvvAtTQ7qhpptNAN8i9p4k9FMV1LM2snVMt0dF++KuihOZwangHAuQqG/A8d
-         P0Ejl1DThctB/8cVqkt6O4R9+s1PERrXocd3olk2oBNGhGz6nnGodu+3E8wctJL5IWx/
-         7rk5H7eoFh53HKGMgAKbZ8ffwnlwEkLsJ/MyOHEPANNpQkE709GsxC9SWDgkrwfo+CX8
-         Lf3IYZnEmmBAF10T87OyMuCmpVi85Pox/+PS9LyH+dr5nyLjmLlIfcspJS6ZnSaOXVQr
-         D6Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm0gj5hFe4QHdJ/UPC30udNKxrldSXdv9crTbUFVKFxlN7oYGlZDyvVEUQfhmQJM3K2OUjcgXp1JXPu9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqk6pUiM0NU9ArU7FcuIBmLCqByqwZYUQ3Plj/mR3QrNCZnyXu
-	v4YINLXz18+hW9nDmFooc28ptjZ7Y8et+4Hex8uvzUYlR6pBJmBKOUNf3aYtoI11TQMmVPkz/E7
-	DCYyqTyHqeH0THtRkeA==
-X-Google-Smtp-Source: AGHT+IF9r3S0MEV0pAXIHdPmAlcUav0RqTDnvruMkd3+nrJooxI1n1GLlFqOTkZUvY5CUW1Km7zrrpubG9E1i1Nk
-X-Received: from wmqe19.prod.google.com ([2002:a05:600c:4e53:b0:439:831e:ca7c])
- (user=vdonnefort job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:468e:b0:439:9b3f:2de1 with SMTP id 5b1f17b1804b1-439ae1f199cmr103370945e9.15.1740399346852;
- Mon, 24 Feb 2025 04:15:46 -0800 (PST)
-Date: Mon, 24 Feb 2025 12:13:53 +0000
-In-Reply-To: <20250224121353.98697-1-vdonnefort@google.com>
+	s=arc-20240116; t=1740399294; c=relaxed/simple;
+	bh=YCh++1ULCr/r55pj5INBB3ZeU2aoKb36FwPl248cnlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=azIC12nU32ATK9XOhQBYmd6zYgeJ/96uCCfAMMKa534oWwx0U0z6QGmmertOVNkpRl+g8aFDNj0ALEO8SQ/6hAJC8KNumYYXzdMrtxddOyu3ngH9amp9XEUj2ATGwd3LXuGj+x3LlOVZNK1zEPDEKaxocmsI7afi3eQk4H4EX1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f5qtBwvS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E786040E01AE;
+	Mon, 24 Feb 2025 12:14:49 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id K6HgFcyKJ6Zt; Mon, 24 Feb 2025 12:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740399286; bh=lhImJPjIcI0AMJM7iOO1E6DHn/v6OyLBkgq4ZZyrkPU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f5qtBwvSoiNLuR8DI8xbFYUVsZPYy1K69o15yw+zk1YwsQ3PxPN/4eI3w5PBjev4f
+	 NPxdZx2aWk6AzZ4XSZc95LefTiwwlst/g1caGg3B0bqYao8QxImsmXyeIzXwyzZxun
+	 IZzJvT3PcK9LIbgeyhw84Nc88Ds83C97WrX7Kr45jMirgGcZ23La85iGJAf3VL0EzO
+	 kQxlaDk3OPJSKEx6zXbeWeqS+Q8oiB7+X5DrDKI6McSlFW4coizLXfnl9t2DtnUDJX
+	 Oe1iHMvbA1U1Rj2/l8LDq1dGNxrxd+GpPQnQmIB/v+KnHKeTlhIcpzSZY7HSik6Hrt
+	 YRMRHR4tln45EYRkF2Vkk+DblvvVVblz+zXpf6LETYKsau+ockj9n31B+Fto52Pg7w
+	 40XejAFZs5gF1tG8o2DtmNZBkMLuYx0xaR3juWsaawX3osGPWStMvV1Z7kJ/ZpdrfX
+	 Uz99rXlMviPx3MdokKKbQmiRKQPAtt2GbJjeAyou9B1c31Fr4vsmU+3sr1AduVnDBg
+	 vEBuOmdUHdpIyH0Hq/Ex1Pm3tLMMDbVF8paRHm2nT7Azo422Eyj2sn7O1tm2errCeI
+	 8N9o5ZhnrKAVOjpFpeipBDeX5KT+1NXwx/AasGNe226DkOvNybb8DXm2/PXNM1Ucwu
+	 +gbBtG7PKO7GGzBQhR36fl/M=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A79C840E0184;
+	Mon, 24 Feb 2025 12:14:27 +0000 (UTC)
+Date: Mon, 24 Feb 2025 13:14:21 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org,
+	Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v13 03/14] x86/mm: add INVLPGB support code
+Message-ID: <20250224121421.GEZ7xinWhjstV_xPU_@fat_crate.local>
+References: <20250223194943.3518952-1-riel@surriel.com>
+ <20250223194943.3518952-4-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250224121353.98697-1-vdonnefort@google.com>
-X-Mailer: git-send-email 2.48.1.601.g30ceb7b040-goog
-Message-ID: <20250224121353.98697-12-vdonnefort@google.com>
-Subject: [PATCH 11/11] KVM: arm64: Add kselftest for tracefs hyp tracefs
-From: Vincent Donnefort <vdonnefort@google.com>
-To: rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, 
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com
-Cc: kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	jstultz@google.com, qperret@google.com, will@kernel.org, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org, 
-	Vincent Donnefort <vdonnefort@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250223194943.3518952-4-riel@surriel.com>
 
-Add a test to validate the newly introduced tracefs interface for the
-pKVM hypervisor. Covers buffer reset, loading/unloading, extended
-timestamp and coherence of the tracing clock.
+On Sun, Feb 23, 2025 at 02:48:53PM -0500, Rik van Riel wrote:
+> Add invlpgb.h with the helper functions and definitions needed to use
 
-Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
+"invlpgb.h" is stale now.
 
-diff --git a/arch/arm64/include/asm/kvm_asm.h b/arch/arm64/include/asm/kvm_asm.h
-index afeb983ca97b..c798bd6ad27e 100644
---- a/arch/arm64/include/asm/kvm_asm.h
-+++ b/arch/arm64/include/asm/kvm_asm.h
-@@ -94,6 +94,7 @@ enum __kvm_host_smccc_func {
- 	__KVM_HOST_SMCCC_FUNC___pkvm_reset_tracing,
- 	__KVM_HOST_SMCCC_FUNC___pkvm_swap_reader_tracing,
- 	__KVM_HOST_SMCCC_FUNC___pkvm_enable_event,
-+	__KVM_HOST_SMCCC_FUNC___pkvm_selftest_event,
- };
- 
- #define DECLARE_KVM_VHE_SYM(sym)	extern char sym[]
-diff --git a/arch/arm64/include/asm/kvm_hypevents.h b/arch/arm64/include/asm/kvm_hypevents.h
-index 0b98a87a1250..25d8e23a3cc6 100644
---- a/arch/arm64/include/asm/kvm_hypevents.h
-+++ b/arch/arm64/include/asm/kvm_hypevents.h
-@@ -28,4 +28,14 @@ HYP_EVENT(hyp_exit,
- 	),
- 	HE_PRINTK(" ")
- );
-+
-+#ifdef CONFIG_PKVM_SELFTESTS
-+HYP_EVENT(selftest,
-+	  HE_PROTO(void),
-+	  HE_STRUCT(),
-+	  HE_ASSIGN(),
-+	  HE_PRINTK(" ")
-+);
- #endif
-+
-+#endif /* __ARM64_KVM_HYPEVENTS_H_ */
-diff --git a/arch/arm64/kvm/Kconfig b/arch/arm64/kvm/Kconfig
-index ead632ad01b4..fff9d24d7771 100644
---- a/arch/arm64/kvm/Kconfig
-+++ b/arch/arm64/kvm/Kconfig
-@@ -46,6 +46,7 @@ menuconfig KVM
- config NVHE_EL2_DEBUG
- 	bool "Debug mode for non-VHE EL2 object"
- 	depends on KVM
-+	select PKVM_SELFTESTS
- 	help
- 	  Say Y here to enable the debug mode for the non-VHE KVM EL2 object.
- 	  Failure reports will BUG() in the hypervisor. This is intended for
-@@ -83,4 +84,13 @@ config PTDUMP_STAGE2_DEBUGFS
- 
- 	  If in doubt, say N.
- 
-+config PKVM_SELFTESTS
-+	bool "Protected KVM hypervisor selftests"
-+	depends on KVM
-+	default n
-+	help
-+	  Say Y here to enable pKVM hypervisor testing infrastructure.
-+
-+	  If unsure, say N.
-+
- endif # VIRTUALIZATION
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index 96dde58f4984..8f0dafaab568 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -628,6 +628,19 @@ static void handle___pkvm_enable_event(struct kvm_cpu_context *host_ctxt)
- 	cpu_reg(host_ctxt, 1) = __pkvm_enable_event(id, enable);
- }
- 
-+static void handle___pkvm_selftest_event(struct kvm_cpu_context *host_ctxt)
-+{
-+	int smc_ret = SMCCC_RET_NOT_SUPPORTED, ret = -EOPNOTSUPP;
-+
-+#ifdef CONFIG_PKVM_SELFTESTS
-+	trace_selftest();
-+	smc_ret = SMCCC_RET_SUCCESS;
-+	ret = 0;
-+#endif
-+	cpu_reg(host_ctxt, 0) = smc_ret;
-+	cpu_reg(host_ctxt, 1) = ret;
-+}
-+
- typedef void (*hcall_t)(struct kvm_cpu_context *);
- 
- #define HANDLE_FUNC(x)	[__KVM_HOST_SMCCC_FUNC_##x] = (hcall_t)handle_##x
-@@ -674,6 +687,7 @@ static const hcall_t host_hcall[] = {
- 	HANDLE_FUNC(__pkvm_reset_tracing),
- 	HANDLE_FUNC(__pkvm_swap_reader_tracing),
- 	HANDLE_FUNC(__pkvm_enable_event),
-+	HANDLE_FUNC(__pkvm_selftest_event),
- };
- 
- static void handle_host_hcall(struct kvm_cpu_context *host_ctxt)
-diff --git a/arch/arm64/kvm/hyp_trace.c b/arch/arm64/kvm/hyp_trace.c
-index cb63af69c38d..1e887e430c42 100644
---- a/arch/arm64/kvm/hyp_trace.c
-+++ b/arch/arm64/kvm/hyp_trace.c
-@@ -892,6 +892,35 @@ static int hyp_trace_clock_show(struct seq_file *m, void *v)
- }
- DEFINE_SHOW_ATTRIBUTE(hyp_trace_clock);
- 
-+#ifdef CONFIG_PKVM_SELFTESTS
-+static int selftest_event_open(struct inode *inode, struct file *file)
-+{
-+	if (file->f_mode & FMODE_WRITE)
-+		return kvm_call_hyp_nvhe(__pkvm_selftest_event);
-+
-+	return 0;
-+}
-+
-+static ssize_t selftest_event_write(struct file *f, const char __user *buf,
-+				    size_t cnt, loff_t *pos)
-+{
-+	return cnt;
-+}
-+
-+static const struct file_operations selftest_event_fops = {
-+	.open	= selftest_event_open,
-+	.write	= selftest_event_write,
-+};
-+
-+static void hyp_trace_init_testing_tracefs(struct dentry *root)
-+{
-+	tracefs_create_file("selftest_event", TRACEFS_MODE_WRITE, root, NULL,
-+			    &selftest_event_fops);
-+}
-+#else
-+static void hyp_trace_init_testing_tracefs(struct dentry *root) { }
-+#endif
-+
- int hyp_trace_init_tracefs(void)
- {
- 	struct dentry *root, *per_cpu_root;
-@@ -950,6 +979,7 @@ int hyp_trace_init_tracefs(void)
- 	}
- 
- 	hyp_trace_init_event_tracefs(root);
-+	hyp_trace_init_testing_tracefs(root);
- 
- 	return 0;
- }
-diff --git a/tools/testing/selftests/hyp-trace/Makefile b/tools/testing/selftests/hyp-trace/Makefile
-new file mode 100644
-index 000000000000..2a5b2e29667e
---- /dev/null
-+++ b/tools/testing/selftests/hyp-trace/Makefile
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
-+all:
-+
-+TEST_PROGS := hyp-trace-test
-+
-+include ../lib.mk
-diff --git a/tools/testing/selftests/hyp-trace/config b/tools/testing/selftests/hyp-trace/config
-new file mode 100644
-index 000000000000..135657ef550d
---- /dev/null
-+++ b/tools/testing/selftests/hyp-trace/config
-@@ -0,0 +1,4 @@
-+CONFIG_FTRACE=y
-+CONFIG_ARM64=y
-+CONFIG_KVM=y
-+CONFIG_PKVM_SELFTESTS=y
-diff --git a/tools/testing/selftests/hyp-trace/hyp-trace-test b/tools/testing/selftests/hyp-trace/hyp-trace-test
-new file mode 100755
-index 000000000000..9be0c5f57160
---- /dev/null
-+++ b/tools/testing/selftests/hyp-trace/hyp-trace-test
-@@ -0,0 +1,264 @@
-+#!/bin/sh -e
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+# hyp-trace-test - Tracefs for pKVM hypervisor test
-+#
-+# Copyright (C) 2024 - Google LLC
-+# Author: Vincent Donnefort <vdonnefort@google.com>
-+#
-+
-+log_and_die()
-+{
-+    echo "$1"
-+
-+    exit 1
-+}
-+
-+host_clock()
-+{
-+    # BOOTTIME clock
-+    awk '/now/ { printf "%.6f\n", $3 / 1000000000 }' /proc/timer_list
-+}
-+
-+page_size()
-+{
-+    echo "$(awk '/KernelPageSize/ {print $2; exit}' /proc/self/smaps) * 1024" | bc
-+}
-+
-+goto_hyp_trace()
-+{
-+    if [ -d "/sys/kernel/debug/tracing/hypervisor" ]; then
-+        cd /sys/kernel/debug/tracing/hypervisor
-+        return
-+    fi
-+
-+    if [ -d "/sys/kernel/tracing/hypervisor" ]; then
-+        cd /sys/kernel/tracing/hypervisor
-+        return
-+    fi
-+
-+    echo "ERROR: hyp tracing folder not found!"
-+
-+    exit 1
-+}
-+
-+reset_hyp_trace()
-+{
-+    echo 0 > tracing_on
-+    echo 0 > trace
-+    for event in events/hypervisor/*; do
-+        echo 0 > $event/enable
-+    done
-+
-+    assert_unloaded
-+}
-+
-+setup_hyp_trace()
-+{
-+    reset_hyp_trace
-+
-+    echo 16 > buffer_size_kb
-+    echo 1 > events/hypervisor/selftest/enable
-+    echo 1 > tracing_on
-+}
-+
-+stop_hyp_trace()
-+{
-+    echo 0 > tracing_on
-+}
-+
-+hyp_trace_loaded()
-+{
-+    grep -q "(loaded)" buffer_size_kb
-+}
-+
-+write_events()
-+{
-+    local num="$1"
-+    local func="$2"
-+
-+    for i in $(seq 1 $num); do
-+        echo 1 > selftest_event
-+        [ -z "$func" -o $i -eq $num ] || eval $func
-+    done
-+}
-+
-+consuming_read()
-+{
-+    local output=$1
-+
-+    cat trace_pipe > $output &
-+
-+    echo $!
-+}
-+
-+run_test_consuming()
-+{
-+    local nr_events=$1
-+    local func=$2
-+    local tmp="$(mktemp)"
-+    local start_ts=0
-+    local end_ts=0
-+    local pid=0
-+
-+    echo "Output trace file: $tmp"
-+
-+    setup_hyp_trace
-+    pid=$(consuming_read $tmp)
-+
-+    start_ts=$(host_clock)
-+    write_events $nr_events $func
-+    stop_hyp_trace
-+    end_ts=$(host_clock)
-+
-+    kill $pid
-+    validate_test $tmp $nr_events $start_ts $end_ts
-+
-+    rm $tmp
-+}
-+
-+validate_test()
-+{
-+    local output=$1
-+    local expected_events=$2
-+    local start_ts=$3
-+    local end_ts=$4
-+    local prev_ts=$3
-+    local ts=0
-+    local num_events=0
-+
-+    IFS=$'\n'
-+    for line in $(cat $output); do
-+        echo "$line" | grep -q -E "^# " && continue
-+        ts=$(echo "$line" | awk '{print $2}' | cut -d ':' -f1)
-+        if [ $(echo "$ts<$prev_ts" | bc) -eq 1 ]; then
-+            log_and_die "Error event @$ts < $prev_ts"
-+        fi
-+        prev_ts=$ts
-+        num_events=$((num_events + 1))
-+    done
-+
-+    if [ $(echo "$ts>$end_ts" | bc) -eq 1 ]; then
-+        log_and_die "Error event @$ts > $end_ts"
-+    fi
-+
-+    if [ $num_events -ne $expected_events ]; then
-+        log_and_die "Expected $expected_events events, got $num_events"
-+    fi
-+}
-+
-+test_ts()
-+{
-+    echo "Test Timestamps..."
-+
-+    run_test_consuming 1000
-+
-+    echo "done."
-+}
-+
-+test_extended_ts()
-+{
-+    echo "Test Extended Timestamps..."
-+
-+    run_test_consuming 1000 "sleep 0.1"
-+
-+    echo "done."
-+}
-+
-+assert_loaded()
-+{
-+    hyp_trace_loaded || log_and_die "Expected loaded buffer"
-+}
-+
-+assert_unloaded()
-+{
-+    ! hyp_trace_loaded || log_and_die "Expected unloaded buffer"
-+}
-+
-+test_unloading()
-+{
-+    local tmp="$(mktemp)"
-+
-+    echo "Test unloading..."
-+
-+    setup_hyp_trace
-+    assert_loaded
-+
-+    echo 0 > tracing_on
-+    assert_unloaded
-+
-+    pid=$(consuming_read $tmp)
-+    sleep 1
-+    assert_loaded
-+    kill $pid
-+    assert_unloaded
-+
-+    echo 1 > tracing_on
-+    write_events 1
-+    echo 0 > trace
-+    assert_loaded
-+    echo 0 > tracing_on
-+    assert_unloaded
-+
-+    echo "done."
-+}
-+
-+test_reset()
-+{
-+    local tmp="$(mktemp)"
-+
-+    echo "Test Reset..."
-+
-+    setup_hyp_trace
-+    write_events 1000
-+    echo 0 > trace
-+    clock_before=$(host_clock)
-+    write_events 5
-+
-+    pid=$(consuming_read $tmp)
-+    sleep 1
-+    stop_hyp_trace
-+    kill $pid
-+
-+    validate_test $tmp 5 $clock_before $(host_clock)
-+
-+    rm $tmp
-+
-+    echo "done."
-+}
-+
-+test_big_bpacking()
-+{
-+    local hyp_buffer_page_size=40
-+    local page_size=$(page_size)
-+    local min_buf_size
-+
-+    # Number of ring-buffer pages stored in a single bpacking page
-+    min_buf_size=$(echo "$page_size / ($hyp_buffer_page_size * $(nproc))" | bc)
-+    # Size of the ring-buffer to fill a single bpacking page
-+    min_buf_size=$(echo "$page_size * $min_buf_size" | bc)
-+    # Size in kiB of the ring-buffer to fill an order-1 bpacking page
-+    min_buf_size=$(echo "$min_buf_size * 2 / 1024" | bc)
-+
-+    echo "Test loading $min_buf_size kB buffer..."
-+
-+    reset_hyp_trace
-+
-+    echo $min_buf_size > buffer_size_kb
-+    echo 1 > tracing_on
-+    assert_loaded
-+
-+    stop_hyp_trace
-+
-+    echo "done."
-+}
-+
-+goto_hyp_trace
-+
-+test_reset
-+test_unloading
-+test_big_bpacking
-+test_ts
-+test_extended_ts
-+
-+exit 0
+> diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
+> index c492bdc97b05..95997caf0935 100644
+> --- a/arch/x86/include/asm/disabled-features.h
+> +++ b/arch/x86/include/asm/disabled-features.h
+> @@ -129,6 +129,13 @@
+>  #define DISABLE_SEV_SNP		(1 << (X86_FEATURE_SEV_SNP & 31))
+>  #endif
+>  
+> +#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
+> +#define DISABLE_INVLPGB		0
+> +#else
+> +/* Keep 32 bit kernels smaller by compiling out the INVLPGB code. */
+
+No need for that comment.
+
+> +#define DISABLE_INVLPGB		(1 << (X86_FEATURE_INVLPGB & 31))
+> +#endif
+> +
+>  /*
+>   * Make sure to add features to the correct mask
+>   */
+
+...
+
+> +/* Wait for INVLPGB originated by this CPU to complete. */
+> +static inline void __tlbsync(void)
+> +{
+> +	cant_migrate();
+
+I could use a comment above that one...
+
+> +	/* TLBSYNC: supported in binutils >= 0.36. */
+> +	asm volatile(".byte 0x0f, 0x01, 0xff" ::: "memory");
+> +}
+> +
+
 -- 
-2.48.1.601.g30ceb7b040-goog
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
