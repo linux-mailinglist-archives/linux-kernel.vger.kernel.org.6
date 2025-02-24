@@ -1,114 +1,209 @@
-Return-Path: <linux-kernel+bounces-528485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F34A41828
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:07:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1D4A41862
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:10:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F183AF975
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:06:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A5993A1EB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744B198E63;
-	Mon, 24 Feb 2025 09:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9144424E4C1;
+	Mon, 24 Feb 2025 09:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vFbagN9F"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IknIikHH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BA224291A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7D6245015;
+	Mon, 24 Feb 2025 09:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388013; cv=none; b=h9CAsyhJgZWgPlykeXfJCefKRHN2lB6SKGi4l0hWqiw2X86B6FTHevaOuGqRbLbZW5zaQOAuf/6tt0RCWwp1E6ZlnN7ZBnBVg45ThvJQw91Oxz3b7wkQlRnUzUAtyy3B+DZ7qKf4Mh14FMP9WBoHIys6HXcURJUaqOCyQQaqfJY=
+	t=1740388143; cv=none; b=IaddgZF1UShkUUvEih75XIxNNOvokGWFoL429PNoHDW0MNy2T2BwJEsmHRuqD+TKfAlAu5wYc4aUI+iZ54tEtx5Io9YyyDR/NZ5dHpQ/QoHJ/eqDm18xBhZCVp1DobDQByxHjPDXB/J6iYgi5YFzRv38+7gt8aSxGk6YQQYyC0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740388013; c=relaxed/simple;
-	bh=yDGWepIHLbPVLZ5Rl3jNTHF4R70JWVTndC2BD1bDldE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h0blsrY06r0mGZ5bSNTJ27jtY/mvt+eUvTlIvZhuUGm6km+/xzPDFYllQgyKSg0KCUznqB8s1pG0o2KyErZY35SAbkKNKTKu1xOxkwwMRll1y+bqlRchfnaAJsbHHH9lubaDorKaS63KwaBkHcq4ghqrqPLozPjHi3lf7GYAFIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vFbagN9F; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-439950a45daso24516625e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:06:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740388010; x=1740992810; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cYxTXn3Dc5cnG8TtU5kqenlM0ZtDWqWGDCzwlccpQPg=;
-        b=vFbagN9FmbhemAI6Czy6FhzH63lWSBF/QJAsiHbbdazPYSqCX9cZ4bWF64x29rNDhq
-         xbV1DANnZIwIl5JeTXcaI9j1oUZFNd1e8piaCyXbNxCyZmPbbPmMJZXG6lJEPRNBVM47
-         sd81GT2xPKWSkjCelBABAFOZXfqY39QU8txF7Mv7xXCr6uaSIBlQi7MfUQ0zpoBzWvGw
-         sRWaGK9RzzY7rjmii10m3teEHq9ISff8T3gvy5v83YUC2g1y8RP9v7O9exzunWd7LVYc
-         gdVuhyJ3HuFylRGGI8qqO8PH/0YR03yZSJqWFDlunqzNOScfFa1M4x/ggLEnKbfwZF8F
-         J0Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740388010; x=1740992810;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cYxTXn3Dc5cnG8TtU5kqenlM0ZtDWqWGDCzwlccpQPg=;
-        b=oic84AFOXQqfbcARB3PwNpky+K0jV1WqQ+y+B4GQuL5MOxqQZb0LZBu1mjNexeNMBT
-         yvTLAUI8NJ18HfIicAOtKIWowQchyuiN4HsHk/p3GXBWnb3N4vo/pEi7i0INQWEgfwPs
-         zUGIVLDsnl2H1P3RlrKZDTmpRpRymfoWBZafSak2LxfH7OmK8ugczh7zajFOsNuVqliq
-         g5bZQ9jfQINqq3t3FZCcdqkCU/ASVw+FxHqLyY+txQaAgrN8ffyvInsqWIHeV/XtHGeY
-         Sfp4eIFur7C/IEdkzrMH+23dmaKgi4/x0VGQonFQtiE+qQUqRP3YFU820GDhOiMEvTTW
-         4G6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUO+b/ZtlPBOKg/ITxhDtjyh9ZUgHcrm09QnaippqGP3INBHfm73qCxiwKCZZwOolCbWDCS8MpxFFPxDEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp6Ba2x8fNx3SyF+qqRAb+fvwgBArgV5cdFvIZwHbGbHeIB5Ls
-	PehHqF7AABvGIGPlEiY6V7w4PoxcpQ6QGWFOUgJ2pGu3t9nJlUSVPFDUBeaRKe0=
-X-Gm-Gg: ASbGncse/IG16347iYQBcplf3SQhJfUfwl0JbPg11eKkQSnsBYTn1fKdfBORse9XyJJ
-	adIPuoF7UG3oMl30+3+w63fKJtnFaOLwwPZAo33fZR/ZJZ7nDyg/NLQUqAk+u5/VxTf+4k/WxLA
-	JgBcEg1+sZlUlNqVWG04cVE4ydx4HOhleC24KPfoZG8SkTrpWKDRL5EUUTbd2jaq98L9MYG45l7
-	PZPF8WoRXoHRXn6r5h9XSeKGrY0Y1Q4jhcJPyNQcPlgLIjxyOF10hrgJSjqZgjfLUEdFsja2QMa
-	4YhNFQYLze5usyqDtSQE2PqV
-X-Google-Smtp-Source: AGHT+IH6mI67VN6+LJhW4CQixdQKl6hq9aE0FVeh49meEBwPyv6KSQ0mFCOhMgKfSlM+rzBNT1MX8A==
-X-Received: by 2002:a05:600c:468e:b0:439:9b3f:2de1 with SMTP id 5b1f17b1804b1-439ae1f199cmr96841805e9.15.1740388010179;
-        Mon, 24 Feb 2025 01:06:50 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:eb70:990:c1af:664a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4399c4df982sm131355455e9.1.2025.02.24.01.06.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 01:06:49 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: read descriptor flags once in gpiolib_dbg_show()
-Date: Mon, 24 Feb 2025 10:06:48 +0100
-Message-ID: <174038800639.24858.15060256292022357731.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250215100847.30136-1-brgl@bgdev.pl>
-References: <20250215100847.30136-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1740388143; c=relaxed/simple;
+	bh=44L74dHmGe2TU7EQRUfkK0TjEkVHS2UIUGo5a4H4lz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AedpQtMzoKUhPHnvunhHGBQu7tcwE1wwlvXSKECceMbW9RaQmHQa+9OXgGnzMJuHH8pEXLAU+u4K2KWtzoT3ZfcuaMfoOAs9imKQp9SNxJFlvHpPEBYdgXs3tU8Ld+DQ32Dngq4nCRHoEipUWulmwK3W+DWoETotjQJYDiTWIp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IknIikHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3ADAC4CEE8;
+	Mon, 24 Feb 2025 09:09:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740388142;
+	bh=44L74dHmGe2TU7EQRUfkK0TjEkVHS2UIUGo5a4H4lz8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IknIikHHAiNqRFJKwiAvsVwQK1WBhsAlo6h2pWfVvsEfYX3BBFpUeoraIWLKCBd8p
+	 wC7muDfBiORTJVrDugS6wOaso2nqSVhssZMGlITsVp5wL4xuc3GLUdz3oBWnYBr+eW
+	 aj4owju7TA2G27ISW9QBWMVRebWBdo4MMLqIMNlWZvuj4TgP0C4tH5lHwFPboF1sGb
+	 moNIlihBZUJ+2wkBViyrsQS8RrGh4+Mz8z1Wc7ZhwRarLBlFOPeAqytwQB2XmN1VDe
+	 NIfBXcEKNZBVAvjxZJADACwluVtE6iygQ2fPe+iG7Hq3Tnhcl+K1YiE3S7fL/qyDvp
+	 l9hNvTRd7m91Q==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tmUSS-00000003p3R-3GJK;
+	Mon, 24 Feb 2025 10:09:00 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <mchehab+huawei@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <mchehab+huawei@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	linux-arch@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux1394-devel@lists.sourceforge.net
+Subject: [PATCH v2 00/39] Implement kernel-doc in Python
+Date: Mon, 24 Feb 2025 10:08:06 +0100
+Message-ID: <cover.1740387599.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi Jon,
 
+This changeset contains the kernel-doc.py script to replace the verable
+kernel-doc originally written in Perl. It replaces the first version and the
+second series I sent on the top of it.
 
-On Sat, 15 Feb 2025 11:08:47 +0100, Bartosz Golaszewski wrote:
-> For consistency with most other code that can access requested
-> descriptors: read the flags once atomically and then test individual
-> bits from the helper variable. This avoids any potential discrepancies
-> should flags change during the debug print.
-> 
-> 
+I tried to stay as close as possible of the original Perl implementation
+on the first patch introducing kernel-doc.py, as it helps to double check
+if each function was  properly translated to Python.  This have been 
+helpful debugging troubles that happened during the conversion.
 
-Applied, thanks!
+I worked hard to make it bug-compatible with the original one. Still, its
+output has a couple of differences from the original one:
 
-[1/1] gpiolib: read descriptor flags once in gpiolib_dbg_show()
-      commit: 11067f50458a5bb3b72f83c508e03f321e0c0c34
+- The tab expansion works better with the Python script. With that, some
+  outputs that contain tabs at kernel-doc markups are now different;
 
-Best regards,
+- The new script  works better stripping blank lines. So, there are a couple
+  of empty new lines that are now stripped with this version;
+
+- There is a buggy logic at kernel-doc to strip empty description and
+  return sections. I was not able to replicate the exact behavior. So, I ended
+  adding an extra logic to strip empty sections with a different algorithm.
+
+Yet, on my tests, the results are compatible with the venerable script
+output for all .. kernel-doc tags found in Documentation/. I double-checked
+this by adding support to output the kernel-doc commands when V=1, and
+then I ran a diff between kernel-doc.pl and kernel-doc.py for the same
+command lines.
+
+On version 2, kerneldoc.py Sphinx extension now uses the Python classes
+if KERNELDOC  environment var ends with kernel-doc.py. It  keeps a cache
+of previously-parsed files to avoid performance penalties when the same
+file is added on multiple places.
+
+This series contains:
+
+- 4 patches fixing some kernel-doc issues. One of them is for media, but
+   I prefer to have this merged via your tree, as it suppresses a warning
+   that happens after the changes;
+
+- 2 cleanup patches for Perl kernel-doc;
+
+- 2 patches renaming kernel-doc to kernel-doc.pl and adding a symlink.
+  I opted to have the symlink in separate to make easier to review, but
+  feel free to merge them on a single patch if you want.
+
+The remaining patches add the new script, converts it into a library and
+addresses lots of minor compatibility issues. The last patch changes
+Sphinx extension to directly use the Python classes.
+
+The only patch that doesn't belong to this series is a patch dropping
+kernel-doc.py. I opted to keep it for now, as it can help to better
+test the new tools.
+
+With such changes, if one wants to build docs with the old script,
+all it is needed is to use KERNELDOC parameter, e.g.:
+
+	$ make KERNELDOC=scripts/kernel-doc.pl htmldocs
+
+Mauro Carvalho Chehab (39):
+  include/asm-generic/io.h: fix kerneldoc markup
+  drivers: media: intel-ipu3.h: fix identation on a kernel-doc markup
+  drivers: firewire: firewire-cdev.h: fix identation on a kernel-doc
+    markup
+  docs: driver-api/infiniband.rst: fix Kerneldoc markup
+  scripts/kernel-doc: don't add not needed new lines
+  scripts/kernel-doc: drop dead code for Wcontents_before_sections
+  scripts/kernel-doc: rename it to scripts/kernel-doc.pl
+  scripts/kernel-doc: add a symlink to the Perl version of kernel-doc
+  scripts/kernel-doc.py: add a Python parser
+  scripts/kernel-doc.py: output warnings the same way as kerneldoc
+  scripts/kernel-doc.py: better handle empty sections
+  scripts/kernel-doc.py: properly handle struct_group macros
+  scripts/kernel-doc.py: move regex methods to a separate file
+  scripts/kernel-doc.py: move KernelDoc class to a separate file
+  scripts/kernel-doc.py: move KernelFiles class to a separate file
+  scripts/kernel-doc.py: move output classes to a separate file
+  scripts/kernel-doc.py: convert message output to an interactor
+  scripts/kernel-doc.py: move file lists to the parser function
+  scripts/kernel-doc.py: implement support for -no-doc-sections
+  scripts/kernel-doc.py: fix line number output
+  scripts/kernel-doc.py: fix handling of doc output check
+  scripts/kernel-doc.py: properly handle out_section for ReST
+  scripts/kernel-doc.py: postpone warnings to the output plugin
+  docs: add a .pylintrc file with sys path for docs scripts
+  docs: sphinx: kerneldoc: verbose kernel-doc command if V=1
+  docs: sphinx: kerneldoc: ignore "\" characters from options
+  docs: sphinx: kerneldoc: use kernel-doc.py script
+  scripts/kernel-doc.py: Set an output format for --none
+  scripts/kernel-doc.py: adjust some coding style issues
+  scripts/lib/kdoc/kdoc_parser.py: fix Python compat with < v3.13
+  scripts/kernel-doc.py: move modulename to man class
+  scripts/kernel-doc.py: properly handle KBUILD_BUILD_TIMESTAMP
+  scripts/lib/kdoc/kdoc_parser.py: remove a python 3.9 dependency
+  scripts/kernel-doc.py: Properly handle Werror and exit codes
+  scripts/kernel-doc.py: some coding style cleanups
+  scripts/kernel-doc: switch to use kernel-doc.py
+  scripts/lib/kdoc/kdoc_files.py: allow filtering output per fname
+  scripts/kernel_doc.py: better handle exported symbols
+  docs: sphinx: kerneldoc: Use python class if available
+
+ .pylintrc                                     |    2 +
+ Documentation/Makefile                        |    2 +-
+ Documentation/conf.py                         |    2 +-
+ Documentation/driver-api/infiniband.rst       |   16 +-
+ Documentation/sphinx/kerneldoc.py             |  183 +-
+ .../media/ipu3/include/uapi/intel-ipu3.h      |    3 +-
+ include/asm-generic/io.h                      |    6 +-
+ include/uapi/linux/firewire-cdev.h            |    3 +-
+ scripts/kernel-doc                            | 2447 +----------------
+ scripts/kernel-doc.pl                         | 2439 ++++++++++++++++
+ scripts/kernel-doc.py                         |  240 ++
+ scripts/lib/kdoc/kdoc_files.py                |  281 ++
+ scripts/lib/kdoc/kdoc_output.py               |  792 ++++++
+ scripts/lib/kdoc/kdoc_parser.py               | 1714 ++++++++++++
+ scripts/lib/kdoc/kdoc_re.py                   |  273 ++
+ 15 files changed, 5930 insertions(+), 2473 deletions(-)
+ create mode 100644 .pylintrc
+ mode change 100755 => 120000 scripts/kernel-doc
+ create mode 100755 scripts/kernel-doc.pl
+ create mode 100755 scripts/kernel-doc.py
+ create mode 100755 scripts/lib/kdoc/kdoc_files.py
+ create mode 100755 scripts/lib/kdoc/kdoc_output.py
+ create mode 100755 scripts/lib/kdoc/kdoc_parser.py
+ create mode 100755 scripts/lib/kdoc/kdoc_re.py
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.48.1
+
+
 
