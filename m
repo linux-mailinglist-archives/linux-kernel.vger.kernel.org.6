@@ -1,338 +1,201 @@
-Return-Path: <linux-kernel+bounces-528181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C760A41499
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:02:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8DBA4149D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:08:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 910B11890710
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:02:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A0B3AE66A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A641A304A;
-	Mon, 24 Feb 2025 05:02:23 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CC91A5B81;
+	Mon, 24 Feb 2025 05:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Qs9Mn6/W"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F935EEA8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B644AA32
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740373342; cv=none; b=skHXku4fFwZszHEb2j/5CsUCU46UHsDRKhntC7nn69/05IUMfDiOHz8C4LV5uLR5EKQfqszyzrYMufSGxcI1zmgQPaJEZNu1ogU8ngLF5z9fAH8nDVKc0kyPTJCZ7SXDJUnXWFzSN5ldJ+yeNX81b7dp1RkvC5Vm6nvpEftf8LQ=
+	t=1740373713; cv=none; b=Ehg8LNdtk0tCKVGe4CatKIa11TnQVCvUMqQvCYEERswIZDgvuNAoZkOYgySQq2ooPzbcBBkYgkhDQJ3EYNmrZLEDzgNINY+784H5ml48MyOFaF9Ii/nisEVF2NFPfnwP9tiephU34+/e/bfFJ1D7JzA9GlZwOTjhSCClftpQrZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740373342; c=relaxed/simple;
-	bh=Afp3Tlpetqv7gdBNhh8by1evIURMXNRKljhsIhBM6Xw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sK9pfxYJgMw56dSERI5XLjEjZbtQXDSkE8a/IuiAFm0M7K2fDROQxn/4FK7ulRDwNILC0IIJ9CzhQQBSzYzcHOZMOaYHq3vT07mEbUffCzxc5Ch8N4FNFg0q69CFdbAYj4dULbRlN4Dvg1ic/xq9rzxeOfCX2gsARj8FbVW5AHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8559d67a0daso827972039f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:02:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740373339; x=1740978139;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d1LuiwTnhxFqGKXEvdeoIsjmOesyDtr4398x5Mxpx4c=;
-        b=TN9yKlfUPosFla8K7K1BZbsHtI0uU2FvPIaKkOeORr2UJ0UbM6e7WH4e3JiVgf1jm+
-         R7P3B+IK7NLuI4Py3D1Z7L9rPY+MD3tgRyCYB9dkDZRxSf0wo2koZkFa+0YVzxQ8Synz
-         amlp7y12n0Pb/3kyrQuUyRWBLXbJOegBct36wwXByH4oozrsEODyd96Ip0k8cHUGi5G3
-         Yuo8mxHB7u+335RXAhzh+Exllv4rKCNodK3O7bKr0kR9NrUCRZYO6zRQDf5d/JBowK4d
-         qbqKckc2RkSUO2JSqbAezLE1GxVEIv0TrJ1qfSOR51Midj26cVCz/UZpv6H9YIO6ZLa6
-         atMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUwuXYswg5m5Cz3UI6j7uPst8ylu8Sq9R/D3MZR/E3n08VVrZ2X59VN4XpGwCqk8WEQg6oXcjUM4oXcBs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmKiaEzgQcdOZhnzNc0QOGgp/qmLfe5o5ux3WscpynIi6IWFy/
-	Mnr8yG9/52jgKaLDxjwfH8QUQ0lpQvAsAQBrik8qloviQ/dTphJ8McZot1/umzQThS7Nzny8nky
-	QDAQArW7u8EV/c8yVzPhe/45lRJopitCJUsNKrS5O/CEXwGFOv/+aY9M=
-X-Google-Smtp-Source: AGHT+IEpL3v2O47v3i5h7Bz+0lgtzzU4Ps7/WJX/9OPRy7ZiAry+N/vyb9lsybQwruzAU37//2ygcsamUeA0RBrXoqLtp2wg61hc
+	s=arc-20240116; t=1740373713; c=relaxed/simple;
+	bh=iRSjSy8jC6XXvS3Pm6hr9Ro/I3mzjob3EtLkNEGo0Ws=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aweR72nV4kKq7C6YY380LZKmA6K/5dUM82dV83w1UmZ5F8k2PnszhXVasLOlysUjXu5UQqG/Waiz+myIhUJtYXHGXzqDWZOHG6kM0O7EyrX7odYp7/8SoTgF+xeC5H1LMVqe4iru5abHTIGLdZoxL0T0HLDxN+qAUkzF7r0SRQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Qs9Mn6/W; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5a50f2fcf26d11ef8eb9c36241bbb6fb-20250224
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=BDIl4d2oYLCth691SnpOglTDGFjNLfuXxv8ji8Rlnto=;
+	b=Qs9Mn6/W37xIA24nrjyg7NYI6R5fw5pXzIR6A3D3AvHxTbk/NVbNUQmhwshwX50tHmKMxF68Vwx3SqFLw/AD0QcB8vyBl/zerzxXBEicx1d6jcdZjfU9WnSUuP6fYOQV0X0WfZvdfkJRoovKMAJA8dHqVLkNrKgtLqnvHwdVtm4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:dda1c844-4bf6-4e08-8472-aafb33397186,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:60aa074,CLOUDID:7eed3fdc-d480-4873-806f-0f365159227b,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5a50f2fcf26d11ef8eb9c36241bbb6fb-20250224
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1301706215; Mon, 24 Feb 2025 13:08:15 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Mon, 24 Feb 2025 13:08:13 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Mon, 24 Feb 2025 13:08:13 +0800
+From: Jason-JH Lin <jason-jh.lin@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: "Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Nancy Lin
+	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, "Yongqiang
+ Niu" <yongqiang.niu@mediatek.com>, Xiandong Wang
+	<xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>, Xavier
+ Chang <xavier.chang@mediatek.com>, Fei Shao <fshao@chromium.org>, Chen-yu
+ Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
+Date: Mon, 24 Feb 2025 13:01:07 +0800
+Message-ID: <20250224050812.3537569-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c0f:b0:3d2:b34d:a264 with SMTP id
- e9e14a558f8ab-3d2cb492863mr123676185ab.12.1740373339625; Sun, 23 Feb 2025
- 21:02:19 -0800 (PST)
-Date: Sun, 23 Feb 2025 21:02:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bbfd5b.050a0220.bbfd1.0043.GAE@google.com>
-Subject: [syzbot] [jfs?] BUG: sleeping function called from invalid context in jfs_fsync
-From: syzbot <syzbot+c266ffd7d9f1769517ec@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-Hello,
+Add cmdq_gctl_value_toggle() to configure GCE_CTRL_BY_SW and GCE_DDR_EN
+together in same the GCE_GCTL_VALUE register.
 
-syzbot found the following issue on:
+Move this function into cmdq_runtime_resume() and cmdq_runtime_suspend()
+to ensure it can be called when the GCE clock is enabled.
 
-HEAD commit:    e6747d19291c Merge branch 'for-next/el2-enable-feat-pmuv3p..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=12435ae4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f6b108de97771157
-dashboard link: https://syzkaller.appspot.com/bug?extid=c266ffd7d9f1769517ec
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=157c6fdf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=137bddb8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/874063395a28/disk-e6747d19.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f707e2e6b743/vmlinux-e6747d19.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/57c934b7f0e8/Image-e6747d19.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fdad6db15ae6/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=106fdba4580000)
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c266ffd7d9f1769517ec@syzkaller.appspotmail.com
-
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1576
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-preempt_count: 100, expected: 0
-RCU nest depth: 0, expected: 0
-no locks held by ksoftirqd/0/16.
-Preemption disabled at:
-[<ffff8000803110e4>] softirq_handle_begin kernel/softirq.c:402 [inline]
-[<ffff8000803110e4>] handle_softirqs+0xe0/0xd34 kernel/softirq.c:537
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.14.0-rc3-syzkaller-ge6747d19291c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- __might_resched+0x374/0x4d0 kernel/sched/core.c:8767
- __might_sleep+0x90/0xe4 kernel/sched/core.c:8696
- down_write+0x28/0xc0 kernel/locking/rwsem.c:1576
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
-=============================
-[ BUG: Invalid wait context ]
-6.14.0-rc3-syzkaller-ge6747d19291c #0 Tainted: G        W         
------------------------------
-ksoftirqd/0/16 is trying to lock:
-ffff0000dd220578 (&sb->s_type->i_mutex_key#18){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:877 [inline]
-ffff0000dd220578 (&sb->s_type->i_mutex_key#18){+.+.}-{4:4}, at: jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
-other info that might help us debug this:
-context-{3:3}
-no locks held by ksoftirqd/0/16.
-stack backtrace:
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.14.0-rc3-syzkaller-ge6747d19291c #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_lock_invalid_wait_context kernel/locking/lockdep.c:4828 [inline]
- check_wait_context kernel/locking/lockdep.c:4900 [inline]
- __lock_acquire+0x2034/0x7904 kernel/locking/lockdep.c:5178
- lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5851
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1576
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-preempt_count: 100, expected: 0
-RCU nest depth: 0, expected: 0
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<ffff8000803110e4>] softirq_handle_begin kernel/softirq.c:402 [inline]
-[<ffff8000803110e4>] handle_softirqs+0xe0/0xd34 kernel/softirq.c:537
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.14.0-rc3-syzkaller-ge6747d19291c #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- __might_resched+0x374/0x4d0 kernel/sched/core.c:8767
- __might_sleep+0x90/0xe4 kernel/sched/core.c:8696
- down_write+0x28/0xc0 kernel/locking/rwsem.c:1576
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1576
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-preempt_count: 100, expected: 0
-RCU nest depth: 0, expected: 0
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<ffff8000803110e4>] softirq_handle_begin kernel/softirq.c:402 [inline]
-[<ffff8000803110e4>] handle_softirqs+0xe0/0xd34 kernel/softirq.c:537
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.14.0-rc3-syzkaller-ge6747d19291c #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- __might_resched+0x374/0x4d0 kernel/sched/core.c:8767
- __might_sleep+0x90/0xe4 kernel/sched/core.c:8696
- down_write+0x28/0xc0 kernel/locking/rwsem.c:1576
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1576
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-preempt_count: 100, expected: 0
-RCU nest depth: 0, expected: 0
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<ffff8000803110e4>] softirq_handle_begin kernel/softirq.c:402 [inline]
-[<ffff8000803110e4>] handle_softirqs+0xe0/0xd34 kernel/softirq.c:537
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.14.0-rc3-syzkaller-ge6747d19291c #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- __might_resched+0x374/0x4d0 kernel/sched/core.c:8767
- __might_sleep+0x90/0xe4 kernel/sched/core.c:8696
- down_write+0x28/0xc0 kernel/locking/rwsem.c:1576
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1576
-in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 16, name: ksoftirqd/0
-preempt_count: 100, expected: 0
-RCU nest depth: 0, expected: 0
-INFO: lockdep is turned off.
-Preemption disabled at:
-[<ffff8000803110e4>] softirq_handle_begin kernel/softirq.c:402 [inline]
-[<ffff8000803110e4>] handle_softirqs+0xe0/0xd34 kernel/softirq.c:537
-CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Tainted: G        W          6.14.0-rc3-syzkaller-ge6747d19291c #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- __might_resched+0x374/0x4d0 kernel/sched/core.c:8767
- __might_sleep+0x90/0xe4 kernel/sched/core.c:8696
- down_write+0x28/0xc0 kernel/locking/rwsem.c:1576
- inode_lock include/linux/fs.h:877 [inline]
- jfs_fsync+0xa0/0x1d4 fs/jfs/file.c:28
- vfs_fsync_range+0x160/0x19c fs/sync.c:187
- generic_write_sync include/linux/fs.h:2970 [inline]
- dio_complete+0x510/0x6b8 fs/direct-io.c:313
- dio_bio_end_aio+0x488/0x550 fs/direct-io.c:368
- bio_endio+0x840/0x87c block/bio.c:1548
- blk_update_request+0x4ac/0xda0 block/blk-mq.c:983
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1145
- lo_complete_rq+0x188/0x2f4 drivers/block/loop.c:395
- blk_complete_reqs block/blk-mq.c:1220 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1225
- handle_softirqs+0x320/0xd34 kernel/softirq.c:561
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:950
- smpboot_thread_fn+0x4b0/0x90c kernel/smpboot.c:164
- kthread+0x65c/0x7b0 kernel/kthread.c:464
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
-
+Fixes: 7abd037aa581 ("mailbox: mtk-cmdq: add gce ddr enable support flow")
+Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/mailbox/mtk-cmdq-mailbox.c | 41 +++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 24 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index d186865b8dce..be17697d7785 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -92,16 +92,17 @@ struct gce_plat {
+ 	u32 gce_num;
+ };
+ 
+-static void cmdq_sw_ddr_enable(struct cmdq *cmdq, bool enable)
++static void cmdq_gctl_value_toggle(struct cmdq *cmdq, bool ddr_enable)
+ {
+-	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
++	u32 val = (cmdq->pdata->control_by_sw) ? GCE_CTRL_BY_SW : 0;
+ 
+-	if (enable)
+-		writel(GCE_DDR_EN | GCE_CTRL_BY_SW, cmdq->base + GCE_GCTL_VALUE);
+-	else
+-		writel(GCE_CTRL_BY_SW, cmdq->base + GCE_GCTL_VALUE);
++	if (!cmdq->pdata->control_by_sw && !cmdq->pdata->sw_ddr_en)
++		return;
+ 
+-	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
++	if (cmdq->pdata->sw_ddr_en && ddr_enable)
++		val |= GCE_DDR_EN;
++
++	writel(val, cmdq->base + GCE_GCTL_VALUE);
+ }
+ 
+ u8 cmdq_get_shift_pa(struct mbox_chan *chan)
+@@ -140,16 +141,10 @@ static void cmdq_thread_resume(struct cmdq_thread *thread)
+ static void cmdq_init(struct cmdq *cmdq)
+ {
+ 	int i;
+-	u32 gctl_regval = 0;
+ 
+ 	WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks));
+-	if (cmdq->pdata->control_by_sw)
+-		gctl_regval = GCE_CTRL_BY_SW;
+-	if (cmdq->pdata->sw_ddr_en)
+-		gctl_regval |= GCE_DDR_EN;
+ 
+-	if (gctl_regval)
+-		writel(gctl_regval, cmdq->base + GCE_GCTL_VALUE);
++	cmdq_gctl_value_toggle(cmdq, true);
+ 
+ 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
+ 	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
+@@ -315,14 +310,21 @@ static irqreturn_t cmdq_irq_handler(int irq, void *dev)
+ static int cmdq_runtime_resume(struct device *dev)
+ {
+ 	struct cmdq *cmdq = dev_get_drvdata(dev);
++	int ret;
+ 
+-	return clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
++	ret = clk_bulk_enable(cmdq->pdata->gce_num, cmdq->clocks);
++	if (ret)
++		return ret;
++
++	cmdq_gctl_value_toggle(cmdq, true);
++	return 0;
+ }
+ 
+ static int cmdq_runtime_suspend(struct device *dev)
+ {
+ 	struct cmdq *cmdq = dev_get_drvdata(dev);
+ 
++	cmdq_gctl_value_toggle(cmdq, false);
+ 	clk_bulk_disable(cmdq->pdata->gce_num, cmdq->clocks);
+ 	return 0;
+ }
+@@ -347,9 +349,6 @@ static int cmdq_suspend(struct device *dev)
+ 	if (task_running)
+ 		dev_warn(dev, "exist running task(s) in suspend\n");
+ 
+-	if (cmdq->pdata->sw_ddr_en)
+-		cmdq_sw_ddr_enable(cmdq, false);
+-
+ 	return pm_runtime_force_suspend(dev);
+ }
+ 
+@@ -360,9 +359,6 @@ static int cmdq_resume(struct device *dev)
+ 	WARN_ON(pm_runtime_force_resume(dev));
+ 	cmdq->suspended = false;
+ 
+-	if (cmdq->pdata->sw_ddr_en)
+-		cmdq_sw_ddr_enable(cmdq, true);
+-
+ 	return 0;
+ }
+ 
+@@ -370,9 +366,6 @@ static void cmdq_remove(struct platform_device *pdev)
+ {
+ 	struct cmdq *cmdq = platform_get_drvdata(pdev);
+ 
+-	if (cmdq->pdata->sw_ddr_en)
+-		cmdq_sw_ddr_enable(cmdq, false);
+-
+ 	if (!IS_ENABLED(CONFIG_PM))
+ 		cmdq_runtime_suspend(&pdev->dev);
+ 
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
