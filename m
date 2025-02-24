@@ -1,123 +1,93 @@
-Return-Path: <linux-kernel+bounces-528635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00EB5A41A11
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00649A41A1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54CB93B5989
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096E3189222E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB94256C83;
-	Mon, 24 Feb 2025 09:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FF02505B7;
+	Mon, 24 Feb 2025 10:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="M+CWHb2K"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qY335oQc"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1907A255E4A;
-	Mon, 24 Feb 2025 09:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC9F1A83E4;
+	Mon, 24 Feb 2025 09:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391149; cv=none; b=aM5S4hVcMyWTrMLG83dYxqw1nj9kRRf+BcRKkYqT/YYgi0ew05sCyYMOVEV768DmMPa4Zgu2bNSMa+HwkNeFts6lR/sK3quP/cp8VhQ1YIAU/6RnyOU54o63kH/Faf5w5EO6gikPExZGJ4xNHZyCMku2XWewIkW4BX2ym6C87X8=
+	t=1740391200; cv=none; b=WrRgBVPzZr3eNN0BpC4V7w/KznVIKn7kHpt7ZvMYYaEPRN5rViYaXd3k2WyV6DyoX0wGNxALsJT49geiAowGzLFDXzcssvC0W/NRj8vHxkGpxkhanV5EB3dfuBo3QvEr/DZnewvQTglaHHHGb/owt+O5+yjtdUqBBnckZt6Z7iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391149; c=relaxed/simple;
-	bh=x7LDXz5gjzRqT41x6cb5nBAUnAncBQ9XsZlJ1yXvFDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WbM+eiRojLUO1dC/j0AwYgkczQTRQctsTKHbmNRhfZlzMnOwZSKWjN7M2ts4qqMOMbUXlbbY07DNL11a9rTk6uzx8UiCSgveXYvDd3JcPIywQWQFMgXsj+zXx3IITBUyYa9tm71eoqLSJj9kojGrfGS52ToMQ5cIFL0xf7Ru5nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=M+CWHb2K; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 20E5B43421;
-	Mon, 24 Feb 2025 09:59:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1740391145;
+	s=arc-20240116; t=1740391200; c=relaxed/simple;
+	bh=lv2Hk4eNeUBrFbV6d3HvlUnJHDZaar2vjE2F5aIBTdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JybrnbcSlJsVd0pFcqeAxatArENbkBHfCr2rbVoESn1TlesJiT/1HFyfz7flaz90+1N/bnXBf+H7l3ZJ3sLJV81YbLzf9xaPOGAr9c0kHm9peqkuwDQSBkRPaCoj9VoxO28tdTClWWi8Z6AJdKJdeJgzpXW5oKT5isOTWeltSD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qY335oQc; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740391196;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uG8YREgzOaMEIYr81Fw9Y59TiL3EgehsVEm3an6XvLc=;
-	b=M+CWHb2K85uCIxnskX7Ao6BXhny6GB7A6S+TNZf9S+0+RLZxUTK4l8va3GCbH1VyWlI9PM
-	Vemeql5AkUfBzqvRBmuxaHPDdDILj5j+qKIXKKCUZ38dsZscB7v0CPKouNVLNKEiDvjzDr
-	OMzaZCwBeh8I6beSQ62sHh1saJ+ojS7m3tdRG7zVShp5o2WWXugxOMMduF9m+xBYPnQrLF
-	SBQd1/eNZNOjEjCdk61hMz0EbO+cXKb7oea4Rb5h8X9i4GRrPQ4X3ppy4duolG9bG8ksgQ
-	lyxTFQ4PkOHkw1EHUGMlRtTNytHvmZW3vRh90IBr1I10bR+RKPHZLPV+lssJdQ==
-From: nicolas.bouchinet@clip-os.org
-To: linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	codalist@coda.cs.cmu.edu,
-	linux-nfs@vger.kernel.org
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Joel Granados <j.granados@samsung.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Zhu Yanjun <yanjun.zhu@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v2 4/6] sysctl: Fixes scsi_logging_level bounds
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=klwkj5bN/345d6wigktEvJtFzEefX09mrddgUez4Ztw=;
+	b=qY335oQcxYja9Y5Va8YBypfkdgBZZn6NbO0D4yPJQVnmTN4qXQl3U9rXfbRB5sALl4Wsl0
+	7w5Y/WXDqxkb+1NZvxiCDV+aNWZFBbfJ5E5dgFl8LA0YPIIME6CVHGY7IqReC1kCjRvcO6
+	uBn8DITz+yXU4IQIaF+RDeuYku/t3p0=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Yazen Ghannam <yazen.ghannam@amd.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] EDAC: Simplify return statement in dct_ecc_enabled()
 Date: Mon, 24 Feb 2025 10:58:19 +0100
-Message-ID: <20250224095826.16458-5-nicolas.bouchinet@clip-os.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
-References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+Message-ID: <20250201130953.1377-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -60
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeegkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnegoufhorhhtvggutfgvtghiphdvucdlgedtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpehnihgtohhlrghsrdgsohhutghhihhnvghtsegtlhhiphdqohhsrdhorhhgnecuggftrfgrthhtvghrnhepteehfeetkeeujeethfehieelhfejfeduteejieelveegfeefieeuheeiteethfevnecukfhppeeltddrieefrddvgeeirddukeejnecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpehinhgvthepledtrdeifedrvdegiedrudekjedphhgvlhhopegrrhgthhhlihhnuhigrddrpdhmrghilhhfrhhomhepnhhitgholhgrshdrsghouhgthhhinhgvthestghlihhpqdhoshdrohhrghdpnhgspghrtghpthhtohepvdejpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgumhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgtshhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghouggrlhhishhtsegtohgurgdrtghsrdgtmhhurdgvughupdhrt
- ghpthhtoheplhhinhhugidqnhhfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehnihgtohhlrghsrdgsohhutghhihhnvghtsehsshhirdhgohhuvhdrfhhrpdhrtghpthhtohepjhdrghhrrghnrgguohhssehsrghmshhunhhgrdgtohhmpdhrtghpthhtoheptghlvghmvghnsheslhgrughishgthhdruggv
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+X-Migadu-Flow: FLOW_OUT
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Simplify the return statement to improve the code's readability.
 
-Bound scsi_logging_level sysctl writings between SYSCTL_ZERO
-and SYSCTL_INT_MAX.
-
-The proc_handler has thus been updated to proc_dointvec_minmax.
-
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/scsi/scsi_sysctl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/edac/amd64_edac.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/scsi_sysctl.c b/drivers/scsi/scsi_sysctl.c
-index be4aef0f4f996..055a03a83ad68 100644
---- a/drivers/scsi/scsi_sysctl.c
-+++ b/drivers/scsi/scsi_sysctl.c
-@@ -17,7 +17,9 @@ static const struct ctl_table scsi_table[] = {
- 	  .data		= &scsi_logging_level,
- 	  .maxlen	= sizeof(scsi_logging_level),
- 	  .mode		= 0644,
--	  .proc_handler	= proc_dointvec },
-+	  .proc_handler	= proc_dointvec_minmax,
-+	  .extra1	= SYSCTL_ZERO,
-+	  .extra2	= SYSCTL_INT_MAX },
- };
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index 8414ceb43e4a..1f106b4fafdf 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -3355,10 +3355,7 @@ static bool dct_ecc_enabled(struct amd64_pvt *pvt)
  
- static struct ctl_table_header *scsi_table_header;
+ 	edac_dbg(3, "Node %d: DRAM ECC %s.\n", nid, (ecc_en ? "enabled" : "disabled"));
+ 
+-	if (!ecc_en || !nb_mce_en)
+-		return false;
+-	else
+-		return true;
++	return ecc_en && nb_mce_en;
+ }
+ 
+ static bool umc_ecc_enabled(struct amd64_pvt *pvt)
 -- 
 2.48.1
 
