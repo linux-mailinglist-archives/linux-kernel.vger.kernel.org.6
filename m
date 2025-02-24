@@ -1,138 +1,105 @@
-Return-Path: <linux-kernel+bounces-529738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85506A42A5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:53:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E679CA42A60
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:53:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19AB4189190F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:53:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00C4516777B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE752264A85;
-	Mon, 24 Feb 2025 17:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E86264616;
+	Mon, 24 Feb 2025 17:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwRTQcwG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="HHEU1r1x"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF202561D8;
-	Mon, 24 Feb 2025 17:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5249A263C7F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740419586; cv=none; b=gm2PQ565MJiRhLKnImpdp3NlODDdMd1jmCX/KAqHCH1FyECGjw/8HhSR2tfJp7u3Xs/zOZkkG/joq4mRlvzU4eJYSJ0T2XWi5F1jyk0emqhf053A8oqGzAGCoPpthlYykStW6SNpg/0UleRdnPsQgsdvZr31S6CqdHhIlcjIw8Y=
+	t=1740419627; cv=none; b=NG/KPrTUHFKoN2gtYHD7BL1kIcgYXjqm1AKVn9a9SbYUtquJSILDZio7WmyIGwVtAw47LNBcHyIK4KjVQ7zfiB1YYv+WafPSElLY2BZg5DBF8yA7ge+tJylqtVtCHUwtXNxf4KdAlnfj3FArQMGcczvpP9G09+iReI4jq4RdK8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740419586; c=relaxed/simple;
-	bh=SypH5F3wVUceAM6oLW8fAUMy59LCnOZGidtaq3tQLeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2XF9brjLi8WOFtm8pFqL078lK3GbDnDD9ytjImFDJfxUgmWfSeBR2cjUaxZ4pCg9Z1JUNS0fETLQAwPPLEBvwBrDzlN6KXgSZ+Vrf++C8mv28RDH/oDsPz+UzwIBjfXcQ1hE4c90wz9jytBH15fHoYq5GIFghNbc5wIEFYlqLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwRTQcwG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61420C4CED6;
-	Mon, 24 Feb 2025 17:53:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740419585;
-	bh=SypH5F3wVUceAM6oLW8fAUMy59LCnOZGidtaq3tQLeI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jwRTQcwG+0nHe4lgQJuX++cQT1hb8CZqL/QPGJswLS/RDlTZD/YWNkCRrHFfAjbFh
-	 wHsI5bhiR7K3lo599/s6gg6AE543iW8CsPmKB1XUruJI6pKQFJR0CC61pyABH8wa+E
-	 feQi416dNe4avOlhKiLwheqDm2mllJRhizmLrRBtd8RMsqS4UF7ezd3KS4jBg8FSh8
-	 mXdbldMAbPDe6aORojwRfjrXCtuFCIDYEU2fHXGHzK59nF4sHUv17lC582Z1B8nlz/
-	 iqV56XQwVOs+wobZvmW6lxvcGLDq8A63MZSaC5L5IDZZ5N96syNlmCfK0BwLCcgwg0
-	 SIsrVpmciCs2Q==
-Received: by pali.im (Postfix)
-	id 486F88A5; Mon, 24 Feb 2025 18:52:52 +0100 (CET)
-Date: Mon, 24 Feb 2025 18:52:52 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Steve French <stfrench@microsoft.com>, sfrench@samba.org,
-	linkinjeon@kernel.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org
-Subject: Re: [PATCH AUTOSEL 6.12 25/28] cifs: Treat unhandled directory name
- surrogate reparse points as mount directory nodes
-Message-ID: <20250224175252.xuwl32zstd7ucaro@pali>
-References: <20250224111759.2213772-1-sashal@kernel.org>
- <20250224111759.2213772-25-sashal@kernel.org>
+	s=arc-20240116; t=1740419627; c=relaxed/simple;
+	bh=TJOZAeIIJjbAum7vKPxxSUEgL+PtYhuuKao3f1L0n1w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=keEGqvuxAjFUx5r0ICVC3brlVgw1ktvcCjaFQm8EmgESWokzwgZZfcZXhCKLCBwxcILjCbvY9LVhtywxSdSVJON1nucvKGaPfgVDRMxqQkAkH3TUza9wXfPAE/TSuwhegVPtzG4TGkYbAI+ti1aFYKAD+IquQq9ZljmwQIO6Im8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=HHEU1r1x; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2217ea6d8daso12111965ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:53:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1740419624; x=1741024424; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TJOZAeIIJjbAum7vKPxxSUEgL+PtYhuuKao3f1L0n1w=;
+        b=HHEU1r1xYZyGse+hRh6l8mD+rHhmHd2yf1+BobGqZvaNHSQsOeQ0C7XC1WTUjjqGQc
+         PUyvc3ekQ0sw2PpXrHQfAhYM7my1h8l/edTEqYPQwl4L5o6DGpfECeGtt6MvaYuesgqL
+         4YJ5rFK7awO0CUEkbrACDaiAuRzrNZyqGZR1jkIiOCjZXLQabxuAT25VKiegQHc6vukL
+         K0REQyckzVbKzhhAT3aFJpWMzUvTOVBG4gft148c9CY4ANTBQxAKZ/Hcu0xg0PfxpWQ1
+         +sy7AADJnWKutKenjokbYD/CO1bzc3nyMyGt2Gf2N3ElYJYyQmTuVawi/8A1qwcVPUAN
+         uRUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740419624; x=1741024424;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TJOZAeIIJjbAum7vKPxxSUEgL+PtYhuuKao3f1L0n1w=;
+        b=eoEfkgCPWX5/oMDX9xgImaSazir82CX+Uf3LqDbhHKWd+mM/Kld78cNbdj045sEIX5
+         IpIqK6KnmXSHat4Rhjm38ULGI3p6E1uulRiOgmDxSTmuD06N13kU5LlxQPyE0o1/DvmY
+         tJn1qC8JERcGo66ceKhwZz8kPtTLN8vhtiUw/LZ0wlnt9J8gQFz/ewxd0AE75iLOG6Bo
+         FHbsBtDjIXOP5HYVlilbBROvCNjuKQ30xrzTD0KsAkm+Hfq5e0kwOT1Ym18XOhfSZnqf
+         DUTxZxg/x/WwAJxK5mQVOxjOimfCcaC385SGkxh5+tvajiFDd3h6sms4CUwNIvrUq3Ut
+         RqLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXK9AWSVXjSVU+uO8FFiHrjyO/D5FNW191K5Ac5uzQfq0yfvw4n0qyygQaKXm7BEKj4xYDTMd33cg4I670=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzWfu28EKPs6BBxsnHnV/TI0Ef3CwHg7ZepOPNV5NDGcEEBBtG
+	o31D1r4WjVYK4hFpGi8q9kAyD/sXLEso4SgmWz5IbHq/xTJrKQn7lqekyU59pSAc/J5kLl/bj7/
+	OrjrdOcg3JIwYvPirEdertG+fN3KLw1FdOuy5vA==
+X-Gm-Gg: ASbGnct1dXjKf2TEuFzJBChHxsjgVbiVBz6kPCCHIG7g/qXyOusflYiV5HSjmQXccDa
+	CBMUbMaDKsSVLgg/Y55gQZNKewFP7O1QiV+N6RibOfaMVWwS/Kk2J7hgSEXwxq9DIMwHsB/MHhM
+	h77LgfhWY=
+X-Google-Smtp-Source: AGHT+IEmKSr9StH1o6AjwBks6b3kLW4tgV8ow5+DNqt2NPti+5RsJWBpzngd6Sal7T/kd3TjhPM6F1HxVfZa0gJCX00=
+X-Received: by 2002:a17:902:ec8d:b0:215:435d:b41a with SMTP id
+ d9443c01a7336-2219ff31246mr85389055ad.1.1740419624625; Mon, 24 Feb 2025
+ 09:53:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224111759.2213772-25-sashal@kernel.org>
-User-Agent: NeoMutt/20180716
+References: <20250224172337.2009871-1-csander@purestorage.com> <ebad3c9b-9305-4efd-97b7-bbdf07060fea@kernel.dk>
+In-Reply-To: <ebad3c9b-9305-4efd-97b7-bbdf07060fea@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 24 Feb 2025 09:53:32 -0800
+X-Gm-Features: AWEUYZlZV4sj4ZGftiGUyWKPl8ccOi3mmENvFBBeSC3j4cgo_ltS-EW9ZaRDYOk
+Message-ID: <CADUfDZrXAn=+4B9boaKe3aMBq19TXn8JDQm4kL0ctOxwB6YF9g@mail.gmail.com>
+Subject: Re: [PATCH] io_uring/waitid: remove #ifdef CONFIG_COMPAT
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch depends on cad3fc0a4c8cef07b07ceddc137f582267577250 ("cifs:
-Throw -EOPNOTSUPP error on unsupported reparse point type from
-parse_reparse_point()". Please ensure that this dependency is included.
+On Mon, Feb 24, 2025 at 9:44=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 2/24/25 10:23 AM, Caleb Sander Mateos wrote:
+> > io_is_compat() is already defined to return false if CONFIG_COMPAT is
+> > disabled. So remove the additional #ifdef CONFIG_COMPAT guards. Let the
+> > compiler optimize out the dead code when CONFIG_COMPAT is disabled.
+>
+> Would you mind if I fold this into Pavel's patch? I can keep it
+> standalone too, just let me know.
 
-On Monday 24 February 2025 06:17:56 Sasha Levin wrote:
-> From: Pali Rohár <pali@kernel.org>
-> 
-> [ Upstream commit b587fd128660d48cd2122f870f720ff8e2b4abb3 ]
-> 
-> If the reparse point was not handled (indicated by the -EOPNOTSUPP from
-> ops->parse_reparse_point() call) but reparse tag is of type name surrogate
-> directory type, then treat is as a new mount point.
-> 
-> Name surrogate reparse point represents another named entity in the system.
-> 
-> From SMB client point of view, this another entity is resolved on the SMB
-> server, and server serves its content automatically. Therefore from Linux
-> client point of view, this name surrogate reparse point of directory type
-> crosses mount point.
-> 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
-> Signed-off-by: Steve French <stfrench@microsoft.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  fs/smb/client/inode.c    | 13 +++++++++++++
->  fs/smb/common/smbfsctl.h |  3 +++
->  2 files changed, 16 insertions(+)
-> 
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index fafc07e38663c..295afb73fcdd6 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -1193,6 +1193,19 @@ static int reparse_info_to_fattr(struct cifs_open_info_data *data,
->  			rc = server->ops->parse_reparse_point(cifs_sb,
->  							      full_path,
->  							      iov, data);
-> +			/*
-> +			 * If the reparse point was not handled but it is the
-> +			 * name surrogate which points to directory, then treat
-> +			 * is as a new mount point. Name surrogate reparse point
-> +			 * represents another named entity in the system.
-> +			 */
-> +			if (rc == -EOPNOTSUPP &&
-> +			    IS_REPARSE_TAG_NAME_SURROGATE(data->reparse.tag) &&
-> +			    (le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY)) {
-> +				rc = 0;
-> +				cifs_create_junction_fattr(fattr, sb);
-> +				goto out;
-> +			}
->  		}
->  		break;
->  	}
-> diff --git a/fs/smb/common/smbfsctl.h b/fs/smb/common/smbfsctl.h
-> index 4b379e84c46b9..3253a18ecb5cb 100644
-> --- a/fs/smb/common/smbfsctl.h
-> +++ b/fs/smb/common/smbfsctl.h
-> @@ -159,6 +159,9 @@
->  #define IO_REPARSE_TAG_LX_CHR	     0x80000025
->  #define IO_REPARSE_TAG_LX_BLK	     0x80000026
->  
-> +/* If Name Surrogate Bit is set, the file or directory represents another named entity in the system. */
-> +#define IS_REPARSE_TAG_NAME_SURROGATE(tag) (!!((tag) & 0x20000000))
-> +
->  /* fsctl flags */
->  /* If Flags is set to this value, the request is an FSCTL not ioctl request */
->  #define SMB2_0_IOCTL_IS_FSCTL		0x00000001
-> -- 
-> 2.39.5
-> 
+Fine by me, though I thought Pavel was suggesting keeping it separate:
+https://lore.kernel.org/io-uring/da109d01-7aab-4205-bbb1-f5f1387f1847@gmail=
+.com/T/#u
+
+Thanks,
+Caleb
 
