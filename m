@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-529039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899D4A41F2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33A1A41EF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 950223A4988
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA4C18882C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A988A221F17;
-	Mon, 24 Feb 2025 12:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26BEE20125B;
+	Mon, 24 Feb 2025 12:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZSChmxoZ"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjptI8Jw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F4EF4E2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABA22571AD;
+	Mon, 24 Feb 2025 12:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400165; cv=none; b=AW69hRHTKAd9jaSZEXCGc7agpOsTRhve26Kjt3zWXSQVpo0ra7g1dWcTovUbYYACkyuxVi6WtXVEvj/yqbKcWhxLKzqIDCMZ4k64wjfPPAm1s48R6Xro4eo+ZLGa9BM9Uyc/KWsskpm1e0YgmT2sE4sy+nwBLGiqt6ddd1fqxUk=
+	t=1740399859; cv=none; b=fbvhMZxmXaiFpQ7VjZDPRuLcbrSfS4GhPCGCtOXh/tTZvmdD06y0V0nOVJsr2SVSAt8tqAhAlgi6IsIGowf7D8bi/socqpd3AlP8QC6lFH0e9Kl3qphvDweaIUgYV9MDlGnH3hGuSdm1OVMdeQv02upAN6aQaua3U6WcjlF//RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400165; c=relaxed/simple;
-	bh=RFe1ydalf8vwBdsFJ8Wj2bKVjLFoxUY1kMZeT2QhXSQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Xm8DN5PDvJh4d3q10XnOT/ZF2E3ETN+p56a/zxRames2n+RmTWh/rKL2URWa5DRVc2CuGFk6lc2dAXDkl7a48JYbX0oLLaD6DCQEh3yQBWfwuTED14tyG+hxNYfCsXEuJvH+xT0psFsDV5Gd86T8TgrOShMMNOKK+pmq8ZCwC7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZSChmxoZ; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1740399850; bh=HrNFaY+qaUFsUEoz8BRLQ7nHOgdzdV7YqruWbvhJMXY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=ZSChmxoZr8nR/PmDHe2cydxhboeRMN01AVQMklrAbnVq5jkUpZp9uZBtGCQO2ruWa
-	 SXfor48qgYCoVG+Tpg9YQC0HdJL92lE8MrE1cv40IGT/VSxN+27+Eyatcp9lF2PEXz
-	 7P371OQ3E/k7DQH/il0zPQGVcSZ+ZFh3tTXi9Uds=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
-	id 6091788B; Mon, 24 Feb 2025 20:24:09 +0800
-X-QQ-mid: xmsmtpt1740399849tbq3bwdd8
-Message-ID: <tencent_52D2E1065D498D2EE42EFC0C9CA7C806CF06@qq.com>
-X-QQ-XMAILINFO: OUWxYGO5ICDbYUIJy2A2CswdVOTQUjosA13SU1AZiSi98oek7BabcjBBAt1DWN
-	 DSaL4mQjObz8+boOIx3yZcp1skFJsG69kfnP0F0G6Pfbb3VzqnyAQViEwN3iaeoi/bTkYHYBwOdp
-	 ufQ3+HSP/kymEOTRTZuJDAh8LgHnkH27vITQazL8D6QI9eTFQae20Jp9L7IYbAPiGEU6QbyTXQMV
-	 3gtLVPvb//tdO5K+NDQvqtHxvVFIZCQZoZqcv0vvxASk2ZbWvhQAsNyP/MY1NHtRD6eeDogjmArD
-	 /Zz3YPfO4fQknPNAfONoXP+7Jf9M8UBkMLsz+iLUXs7kqa+Vw0e24C4NvHDpCein2P/XkLIRm7LZ
-	 2ir8cMLV++md/5XkprX78+xELr99s72h6hm/4pHVLVcT3kock6C9pVcdC/6ZEHQTmw5uKnvaQXue
-	 ktfVBNed0/eEYUMhN1nU3moF5iiHSVE3hwGJIfmwM3VOX9fzpPE4nIgXzfskw0/2FZzJMSma8Rw+
-	 bgf33V0ODxkuHRG8HwhzVAt9afbCvllDneSkK3HiM6aLJ+C2mDCDApUdtVmfLAuwWtnN+RlmOq2e
-	 YiqgRLKsjCpDPcd4HeriHpARkroOsG9+W4jOwyN3ByFoGj7pm6DYi6AjgNl58Ey0JtSBKtPRfeQ5
-	 BDuao8LqWPreaBWGESsYncNGqEo8WUyrdSQpRl9/gR+nUx7hScSn/kzpBCKamZ5e4bvZzphe57ae
-	 RO0AhH+Vw0xSURtqWDtJ4fQM7QRVrjcUSdQY933RB7pzrXzv4D/KBbE93RbyKkkMZf8iFDsvZdKn
-	 CL3vssr4HAfVdTvMKxBuFDUmNbcYWWS2fcXv2RQlv5CWWbJcoPRZbGXpM4zvoTJNib05YqNlVH5u
-	 N7TlWRygSHwsmF91HlICNalWnahfo7vgldm8s1EVo+xGapz5eJu7gmHfOIZgeXnuGj8t76yKRzMC
-	 d59YJH7CfGnBzbwneVozDGrKE3OIKa
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-Date: Mon, 24 Feb 2025 20:24:10 +0800
-X-OQ-MSGID: <20250224122409.639768-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
-References: <67ba02e3.050a0220.14d86d.065b.GAE@google.com>
+	s=arc-20240116; t=1740399859; c=relaxed/simple;
+	bh=/4N5BAlR11AdIiOaTPowhjfUjTUrZG9kLoHB5dK9oSQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qS/DcMQs6FUYSQvO70cIP41Vd/M8CGH8pRM2hxeY8XHZCNHixtelz8H2Tt2tuvq+nOADESVjYCaxAl7VzgNJkRZ5h27ZCx2DIwnOk/wHsV3n1lYsbw9gHcYWjOUPAQkV/sr7O3UYliqi+o6BZn6HSEzMXgT//dMkl+ush7fKzwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjptI8Jw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26EAC4CEE6;
+	Mon, 24 Feb 2025 12:24:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740399858;
+	bh=/4N5BAlR11AdIiOaTPowhjfUjTUrZG9kLoHB5dK9oSQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GjptI8Jw1to8DKOHJBwodYcm7HAs1WUo7VZKrBC4iaWEDkrqRLLGaffMjxPEh6hVi
+	 APYACGbm2SpKWrynD1Q3KCk0XP7hpuR3UCGkqHKtTlMbby7RCav+eZVdkqTm0eSBU6
+	 iIL0FNumV/1pTEfVjBU/QK8EDnWjwRDp65c2Da0JU7qCGwj+RBxnbNd/FptmZu1VOw
+	 mUTo1nmQ/aXQ6HdlBs9zDtOWl6K8iT3611UP2ZJqieBA+5dBTGkjT/UvfHT2B1si/c
+	 YqhNJJwcLpA+JNnKOd8Msq7pDRaLpMRl8u9qgQxHcUSNp04mKIfnNaC6IeqegvTR43
+	 DchckWgRrB/kw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tmXVP-007K9l-PQ;
+	Mon, 24 Feb 2025 12:24:16 +0000
+Date: Mon, 24 Feb 2025 12:24:14 +0000
+Message-ID: <86ldtvr0nl.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
+Cc:	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
+In-Reply-To: <Z7xSfVME4z2ComUm@arm.com>
+References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
+	<Z7xSfVME4z2ComUm@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, catalin.marinas@arm.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com, will@kernel.org, Suzuki.Poulose@arm.com, steven.price@arm.com, pcc@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-#syz test
+On Mon, 24 Feb 2025 11:05:33 +0000,
+Catalin Marinas <catalin.marinas@arm.com> wrote:
+> 
+> On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> > Before commit d89585fbb308 ("KVM: arm64: unify the tests for VMAs in
+> > memslots when MTE is enabled"), kvm_arch_prepare_memory_region() only
+> > rejected a memory slot if VM_SHARED was set. This commit unified the
+> > checking with user_mem_abort(), with slots being rejected if either
+> > VM_MTE_ALLOWED is not set or VM_SHARED set. A subsequent commit
+> > c911f0d46879 ("KVM: arm64: permit all VM_MTE_ALLOWED mappings with MTE
+> > enabled") dropped the VM_SHARED check, so we ended up with memory slots
+> > being rejected if VM_MTE_ALLOWED is not set. This wasn't the case before
+> > the commit d89585fbb308. The rejection of the memory slot with VM_SHARED
+> > set was done to avoid a race condition with the test/set of the
+> > PG_mte_tagged flag. Before Commit d77e59a8fccd ("arm64: mte: Lock a page
+> > for MTE tag initialization") the kernel avoided allowing MTE with shared
+> > pages, thereby preventing two tasks sharing a page from setting up the
+> > PG_mte_tagged flag racily.
+> > 
+> > Commit d77e59a8fccd ("arm64: mte: Lock a page for MTE tag
+> > initialization") further updated the locking so that the kernel
+> > allows VM_SHARED mapping with MTE. With this commit, we can enable
+> > memslot creation with VM_SHARED VMA mapping.
+> > 
+> > This patch results in a minor tweak to the ABI. We now allow creating
+> > memslots that don't have the VM_MTE_ALLOWED flag set.
+> 
+> As I commented here:
+> 
+> https://lore.kernel.org/r/Z4e04P1bQlFBDHo7@arm.com
+> 
+> I'm fine with the change, we basically go back to the original ABI prior
+> to relaxing this for VM_SHARED.
+> 
+> > If the guest uses
+> > such a memslot with Allocation Tags, the kernel will generate -EFAULT.
+> > ie, instead of failing early, we now fail later during KVM_RUN.
+> 
+> Nit: more like the kernel "will return -EFAULT" to the VMM rather than
+> "generate".
+> 
+> > This change is needed because, without it, users are not able to use MTE
+> > with VFIO passthrough (currently the mapping is either Device or
+> > NonCacheable for which tag access check is not applied.), as shown
+> > below (kvmtool VMM).
+> 
+> Another nit: "users are not able to user VFIO passthrough when MTE is
+> enabled". At a first read, the above sounded to me like one wants to
+> enable MTE for VFIO passthrough mappings.
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index c9e65e9088b3..1d43e4dce14e 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -1139,6 +1139,9 @@ static int steam_client_ll_open(struct hid_device *hdev)
- 	struct steam_device *steam = hdev->driver_data;
- 	unsigned long flags;
- 
-+	if (!steam->client_hdev)
-+		return -ENODEV;
-+
- 	spin_lock_irqsave(&steam->lock, flags);
- 	steam->client_opened++;
- 	spin_unlock_irqrestore(&steam->lock, flags);
-@@ -1153,11 +1156,12 @@ static void steam_client_ll_close(struct hid_device *hdev)
- 	struct steam_device *steam = hdev->driver_data;
- 
- 	unsigned long flags;
--	bool connected;
-+
-+	if (!steam->client_hdev)
-+		return;
- 
- 	spin_lock_irqsave(&steam->lock, flags);
- 	steam->client_opened--;
--	connected = steam->connected && !steam->client_opened;
- 	spin_unlock_irqrestore(&steam->lock, flags);
- 
- 	schedule_work(&steam->unregister_work);
+What the commit message doesn't spell out is how MTE and VFIO are
+interacting here. I also don't understand the reference to Device or
+NC memory here.
 
+Isn't the issue that DMA doesn't check/update tags, and therefore it
+makes little sense to prevent non-tagged memory being associated with
+a memslot?
+
+My other concern is that this gives pretty poor consistency to the
+guest, which cannot know what can be tagged and what cannot, and
+breaks a guarantee that the guest should be able to rely on.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
