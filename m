@@ -1,274 +1,339 @@
-Return-Path: <linux-kernel+bounces-529829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 620AFA42B73
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:34:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAF37A42B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:35:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C74D1732FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:34:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896C11898033
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385912661A1;
-	Mon, 24 Feb 2025 18:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B48D4265615;
+	Mon, 24 Feb 2025 18:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FwgRMwzj"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xT8/L8fL"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E1FE264FBA;
-	Mon, 24 Feb 2025 18:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EEB262D38
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422036; cv=none; b=ZDq3g2zJzavvs3SskNMTdsaNQZ7hyUyXr5mNJktAL+If4cX0tKfvlnyl3/X79Wq9Vv+48g+uqtSuB0QODfv+xJ6tob5hcJD+ksfR3H6r5mQ5xDoaV3D5WSIhEleyqsHCZj8IoXC/oHUovmSRdtGNR148GDC/e0Ns8URicM5d7kY=
+	t=1740422061; cv=none; b=IX87tcP57/sOMgjHkCIzAMFQ4WbjVzPP+3uY4CX+7kOJsO4FBQa+Pa/kziRPQf0fsNxD/wHWylD9aNq+W4/MPvxAB4VaX9sgj9iScrJdTsQ7sZWhzHdedfeyrL33NhsSExSNvS4uvFtCJicYtprhbp0dV/faPridqRlJsUyHVkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422036; c=relaxed/simple;
-	bh=DNgabINj0/zQQQgszmslDd1ZCNia1KB91/1Io5eaLn4=;
+	s=arc-20240116; t=1740422061; c=relaxed/simple;
+	bh=N6sN2FLPigYamqhEvCvuLt9xM109+ohlHbli7MlCrcI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tn2i/f45/s6SKBEev5kqMumxCnSn5T0nL8Vd+7xYr4z61wKHGNf1MymoLFHuO7KIduJVvqOT826TZpLBIKNbYGlacRuZ6pGNCCFwMem81+Og1MGLEZrYTz10a7g/GkH8h67w5cqAbFMsc2xJfdYmlsVYADxE76joqVkuExDUalg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FwgRMwzj; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5484fa1401cso566361e87.1;
-        Mon, 24 Feb 2025 10:33:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740422032; x=1741026832; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=heP8tu0ZCh/Rz+nsytMurli7kJvo4BfOkz2KYfukdDQ=;
-        b=FwgRMwzjy1EpQ8sXOLa6AY4mHd3IpTyx5B7lDDfClEoTyLS48wnGm3ttoLgPkcbH03
-         PUrIjIoZWsPlSboFKAoS5qtl7R/Jc4CdxTSSsqZMXY5pRI7/I8Ym54B6g9Zoc/ZmcoPR
-         XOaC32nkbQtaMN3rHcWPOB9x9/HSN2lAbItmC/OWIpopC5rP2Vi+C5U5Eb98pTHNf2J1
-         O+iF5GyaK1dHS7mlRHU5+sz4hrP/5qMAEpQQbaLVbcSPM3QediW3L3/N+NdEnk/3nI+1
-         9oFijGi3QOS52LIz1PIRG/Bq1JeEVXdzCLancJ7mxbF4K9r+ujAKzwH2T+8Sp02/Eoff
-         zaFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740422032; x=1741026832;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=heP8tu0ZCh/Rz+nsytMurli7kJvo4BfOkz2KYfukdDQ=;
-        b=UU7ZYkxfjgj0zHHUcWqJt4h0CqEp+qic9nb5dKr9Lsb/A3D2pg9ISigelbNFQ7gWNz
-         vOpDNdMvZj/Qj4YLpJPvS7KCOYn7J3K8CnU9FegWucmDH1XkY2oiVhvf4bkwuPALj550
-         ymSGdJZbc1TmwHv/czTT/Q+AMGkGzzYpIqxqH3OaZoGV894Flzkx99IxUJj+BBJKxJ++
-         DZKV1Rk68GpDTskP4qIqSREdZ1qNeqIm7+xBde39TCYyjs8twKf525k6pwdxojqEyWCA
-         yQNBIKD6uHCzSjOM3SrwF3ajlc53GgOLetHnWWKlhRfuF1hFWYO3SurdLTxHSW/xXy40
-         4lIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ctX/dzHIfPn5P9oPIzLC4W7SypF7e+oUAHzZoPPPZDSgPd40AQ1rLmKDFNxiDSFhk5eH/o2z0CDLefvy+Rxx+Oo=@vger.kernel.org, AJvYcCVIP7ELy3RksMdsTJXno1ehtPUGTrxj9Wcy53d/R9vexnBxqSkTGwkBwOjNrPRlyD6AD7EbgxJ2jAHj@vger.kernel.org, AJvYcCVPi2WhMijv9xkcWSd4fkzZJ7Mz6dRdyj7yBI6XzNTv6YO4DjxShYXBYq4nCisuFIGdNOmARVzEnQ52@vger.kernel.org, AJvYcCW0hynL6adio0APsPAS7Xqe6D3+ffYbsW7uM0rPbqQNKUN7Pd64PakkMu3re0OZ4czzzutPTw7cmxCz2g==@vger.kernel.org, AJvYcCXUKBHL3i7GuKmMPAqGK/kiLpv0n/SwvsXlVKKajWlcywmBvuB1iYtJfJykyXikKW6lbxz8C0mjnIC8DMCc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmnSJAgpC/f/G9Qrtq2lGP7XAyCK2lrWQtKiP7nJ66BH1xEgdx
-	VBxqef/UPRujDAS35Rzad31LhqHR0g3+b1MuZdJsmUorJBX968P/
-X-Gm-Gg: ASbGncsRYxTQixg3Fzv+JbhMi7cvtES/zHSS1mSsucCOK5YAnRM60hYqMErI0y25Qzb
-	ioTFosb5wrSjRYGOocgDmKuHl4z4GXguRVoPKQyU2Y5hEsiz9/F/8TI/JGF/AhOj5G3DVR9J6Jk
-	DyL9op5/bKXolV0uwYLhXs0BpZc9FfshZIadEdXsCm4wNrCXCZO2HOyiV2Ig/kMUALq6ypXaees
-	xwl6uQZ+XvcSPePddp4oqpR96BHzjxcBRqzko2gQDazSqxiiTj7DbAYKfyBgzoC5ZnHkSe1akmL
-	9+vzvfsdj6lUaWKoMVpcTGn6Sd6XcQCg
-X-Google-Smtp-Source: AGHT+IEPWpkUpgPr0eB/Achjr7Rn3Tb0Ji8xC1A5AEo/ZmVuif3jXu4CrP1IlCZOVmjDn2HsR2pkFg==
-X-Received: by 2002:a05:6512:280b:b0:545:1e2d:6b8e with SMTP id 2adb3069b0e04-54838f4ee02mr4841783e87.42.1740422032277;
-        Mon, 24 Feb 2025 10:33:52 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5452e4b08dasm3063356e87.87.2025.02.24.10.33.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 10:33:51 -0800 (PST)
-Date: Mon, 24 Feb 2025 20:33:46 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: [PATCH v4 05/10] iio: adc: sun20i-gpadc: Use adc-helpers
-Message-ID: <a3c579cc96b35cae04f6090d98c7672c48fa8347.1740421248.git.mazziesaccount@gmail.com>
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mfQ1WvFbDeFUTgwaTS+GU/6vaDHBk3gVdS7gnVDUwuXGc5dYwMbIKWp34ePWAIUbeEzzgDshX+H07WxE012ddWr85thExNsWcOz5m/LpeCi0kzNBZoxzaRTFS921QuLyAFpSVPurTGJw0UE7owWW3iPnstnd3+EvrONQUqexng4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xT8/L8fL; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 24 Feb 2025 18:33:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740422046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8VL12o/LdH3kCkg/mh0i2BdX2UIk8jnH58+NaO0DIrQ=;
+	b=xT8/L8fLq1i85pmRhANtO5xDDs6sWhQs+Cz98cxFnKGXNDsTMZVEB6QDplt+qdCBzTIfyk
+	cDeND6C3OzcdenhVew7ZiEAiwpwheJlgN45ykmaX4oNoLRMvUHrLSnmOR++qjMk8MxZ4xm
+	ob7h4loev+VUbuhvWoNW3tnp47qMWiY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Brendan Jackman <jackmanb@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH RFC 3/4] mm/page_alloc_test: Add logic to isolate a node
+ for testing
+Message-ID: <Z7y7ltOSDjamYmhP@google.com>
+References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
+ <20250224-page-alloc-kunit-v1-3-d337bb440889@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SN0UVbzzUhiLmzpo"
-Content-Disposition: inline
-In-Reply-To: <cover.1740421248.git.mazziesaccount@gmail.com>
-
-
---SN0UVbzzUhiLmzpo
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250224-page-alloc-kunit-v1-3-d337bb440889@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-The new devm_iio_adc_device_alloc_chaninfo() -helper is intended to help
-drivers avoid open-coding the for_each_node -loop for getting the
-channel IDs. The helper provides standard way to detect the ADC channel
-nodes (by the node name), and a standard way to convert the "reg",
-"diff-channels", "single-channel" and the "common-mode-channel" to
-channel identification numbers used in the struct iio_chan_spec.
-Furthermore, the helper checks the ID is in range of 0 ... num-channels.
+On Mon, Feb 24, 2025 at 02:47:13PM +0000, Brendan Jackman wrote:
+> In order to test the page allocator, we need an "instance" of the page
+> allocator that is not subject to unpredictable perturbation by the live
+> system. The closest thing that we have to an "instance" of the allocator
+> is a NUMA node.
+> 
+> So, introduce a new concept of an "isolated" node. This is an extension
+> of the existing concept of a "fake" node, with the addition that nothing
+> else in the system will touch it unless instructed to by the test code.
+> 
+> The node is created during boot but has no memory nor any CPUs attached.
+> It is not on any other node's fallback lists. Any code that pays general
+> attention to NODE_DATA in such a way that might cause the page allocator
+> data structures to be modified asynchronously to the test, is
+> enlightened to ignore it via the node_isolated() helper.
+> 
+> Then, during initialization of the allocator test suite, hotplug out
+> some memory and then plug it back in to the isolated node. The node can
+> then be used for testing.
+> 
+> Because it's easy to miss code that needs enlightenment, which can lead
+> to confusing test behaviour, also add some defensive checks to try and
+> interference with the isolated node before the start of the test.
+> 
+> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> ---
+>  drivers/base/memory.c    |   5 +-
+>  include/linux/memory.h   |   4 ++
+>  include/linux/nodemask.h |  13 +++++
+>  kernel/kthread.c         |   3 +
+>  mm/.kunitconfig          |  10 +++-
+>  mm/Kconfig               |   2 +-
+>  mm/internal.h            |  11 ++++
+>  mm/memory_hotplug.c      |  26 ++++++---
+>  mm/numa_memblks.c        |  22 ++++++++
+>  mm/page_alloc.c          |  37 +++++++++++-
+>  mm/page_alloc_test.c     | 142 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  11 files changed, 260 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/base/memory.c b/drivers/base/memory.c
+> index 348c5dbbfa68ad30d34b344ace1dd8deac0e1947..cdb893d7f13324862ee0943df080440d19fbd957 100644
+> --- a/drivers/base/memory.c
+> +++ b/drivers/base/memory.c
+> @@ -26,6 +26,8 @@
+>  #include <linux/atomic.h>
+>  #include <linux/uaccess.h>
+>  
+> +#include <kunit/visibility.h>
+> +
+>  #define MEMORY_CLASS_NAME	"memory"
+>  
+>  static const char *const online_type_to_str[] = {
+> @@ -183,7 +185,7 @@ static inline unsigned long memblk_nr_poison(struct memory_block *mem)
+>  /*
+>   * Must acquire mem_hotplug_lock in write mode.
+>   */
+> -static int memory_block_online(struct memory_block *mem)
+> +VISIBLE_IF_KUNIT int memory_block_online(struct memory_block *mem)
+>  {
+>  	unsigned long start_pfn = section_nr_to_pfn(mem->start_section_nr);
+>  	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
+> @@ -250,6 +252,7 @@ static int memory_block_online(struct memory_block *mem)
+>  	mem_hotplug_done();
+>  	return ret;
+>  }
+> +EXPORT_SYMBOL_IF_KUNIT(memory_block_online);
+>  
+>  /*
+>   * Must acquire mem_hotplug_lock in write mode.
+> diff --git a/include/linux/memory.h b/include/linux/memory.h
+> index c0afee5d126ef65d420770e1f8669842c499c8de..99139a6e9c11a407a8d7bfb17b7bbe3d276048ff 100644
+> --- a/include/linux/memory.h
+> +++ b/include/linux/memory.h
+> @@ -177,6 +177,10 @@ int walk_dynamic_memory_groups(int nid, walk_memory_groups_func_t func,
+>  	register_memory_notifier(&fn##_mem_nb);			\
+>  })
+>  
+> +#ifdef CONFIG_KUNIT
 
-The original driver treated all found child nodes as channel nodes. The
-new helper requires channel nodes to be named channel[@N]. This should
-help avoid problems with devices which may contain also other but ADC
-child nodes. Quick grep from arch/* with the sun20i-gpadc's compatible
-string didn't reveal any in-tree .dts with channel nodes named
-othervice. Also, same grep shows all the in-tree .dts seem to have
-channel IDs between 0..num of channels.
+Why not CONFIG_PAGE_ALLOC_KUNIT_TEST?
 
-Use the new helper.
+> +int memory_block_online(struct memory_block *mem);
+> +#endif
+> +
+>  #ifdef CONFIG_NUMA
+>  void memory_block_add_nid(struct memory_block *mem, int nid,
+>  			  enum meminit_context context);
+> diff --git a/include/linux/nodemask.h b/include/linux/nodemask.h
+> index 9fd7a0ce9c1a7336df46f12622867e6786a5c0a9..6ea38963487e1fbb800eab69e5e6413aa17a8047 100644
+> --- a/include/linux/nodemask.h
+> +++ b/include/linux/nodemask.h
+> @@ -536,6 +536,19 @@ static __always_inline int node_random(const nodemask_t *maskp)
+>  #define for_each_node(node)	   for_each_node_state(node, N_POSSIBLE)
+>  #define for_each_online_node(node) for_each_node_state(node, N_ONLINE)
+>  
+> +
+> +#ifdef CONFIG_PAGE_ALLOC_KUNIT_TEST
+> +/*
+> + * An isolated node is a fake node for testing, that boots with no memory and no
+> + * attached CPUs, and nothing should touch it except for test code.
+> + */
+> +extern bool node_isolated(int node);
+> +/* Only one isolated node is supported at present and it cannot be un-isolated. */
+> +extern void node_set_isolated(int node);
+> +#else
+> +static inline bool node_isolated(int node) { return false; }
+> +#endif /* CONFIG_PAGE_ALLOC_KUNIT_TEST */
+> +
+>  /*
+>   * For nodemask scratch area.
+>   * NODEMASK_ALLOC(type, name) allocates an object with a specified type and
+> diff --git a/kernel/kthread.c b/kernel/kthread.c
+> index 5dc5b0d7238e85ad4074076e4036062c7bfcae74..93f65c5935cba8a59c7d3df2e36335130c3e1f71 100644
+> --- a/kernel/kthread.c
+> +++ b/kernel/kthread.c
+> @@ -9,6 +9,7 @@
+>   */
+>  #include <uapi/linux/sched/types.h>
+>  #include <linux/mm.h>
+> +#include <linux/mmdebug.h>
+>  #include <linux/mmu_context.h>
+>  #include <linux/sched.h>
+>  #include <linux/sched/mm.h>
+> @@ -511,6 +512,8 @@ struct task_struct *__kthread_create_on_node(int (*threadfn)(void *data),
+>  	struct kthread_create_info *create = kmalloc(sizeof(*create),
+>  						     GFP_KERNEL);
+>  
+> +	VM_WARN_ON(node != NUMA_NO_NODE && node_isolated(node));
+> +
+>  	if (!create)
+>  		return ERR_PTR(-ENOMEM);
+>  	create->threadfn = threadfn;
+> diff --git a/mm/.kunitconfig b/mm/.kunitconfig
+> index fcc28557fa1c1412b21f9dbddbf6a63adca6f2b4..4ff4e1654c3e9b364072d33bfffb3a2336825859 100644
+> --- a/mm/.kunitconfig
+> +++ b/mm/.kunitconfig
+> @@ -1,2 +1,10 @@
+>  CONFIG_KUNIT=y
+> -CONFIG_PAGE_ALLOC_KUNIT_TEST=y
+> \ No newline at end of file
+> +CONFIG_PAGE_ALLOC_KUNIT_TEST=y
+> +
+> +# Required for NUMA
+> +CONFIG_SMP=y
+> +# Used by tests to carve out fake node for isolating page_alloc data.
+> +CONFIG_NUMA=y
+> +CONFIG_NUMA_EMU=y
+> +CONFIG_MEMORY_HOTPLUG=y
+> +CONFIG_MEMORY_HOTREMOVE=y
+> \ No newline at end of file
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 1fac51c536c66243a1321195a78eb40668386158..64c3794120002a839f56e3feb284c6d5c2635f40 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1360,7 +1360,7 @@ config PT_RECLAIM
+>  
+>  config PAGE_ALLOC_KUNIT_TEST
+>  	tristate "KUnit test for page allocator" if !KUNIT_ALL_TESTS
+> -	depends on KUNIT
+> +	depends on KUNIT && NUMA && MEMORY_HOTREMOVE
+>  	default KUNIT_ALL_TESTS
+>  	help
+>  	  Builds unit tests for page allocator.
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 109ef30fee11f8b399f6bac42eab078cd51e01a5..9dbe5853b90b53ff261ba1b2fca12eabfda1a9de 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1545,5 +1545,16 @@ static inline bool reclaim_pt_is_enabled(unsigned long start, unsigned long end,
+>  }
+>  #endif /* CONFIG_PT_RECLAIM */
+>  
+> +#ifdef CONFIG_PAGE_ALLOC_KUNIT_TEST
+> +/*
+> + * Note that node_isolated() is separate, that's a "public API". But only
+> + * test code needs to look up which node is isolated.
+> + */
+> +extern int isolated_node;
+> +#endif
+> +
+> +#ifdef CONFIG_KUNIT
 
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Same here, why not just put it in the above #ifdef?
 
----
-Revision history:
-v3 =3D> v4:
- - Adapt to 'drop diff-channel support' changes to ADC-helpers
- - select ADC helpers in the Kconfig
-v2 =3D> v3:
- - New patch
+> +void drain_pages(unsigned int cpu);
+> +#endif
+>  
+>  #endif	/* __MM_INTERNAL_H */
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index e3655f07dd6e33efb3e811cab07f240649487441..968c23b6f347cf6a0c30d00cb556166b8df9c9c3 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1198,10 +1198,12 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+>  	arg.nr_pages = nr_pages;
+>  	node_states_check_changes_online(nr_pages, zone, &arg);
+>  
+> -	ret = memory_notify(MEM_GOING_ONLINE, &arg);
+> -	ret = notifier_to_errno(ret);
+> -	if (ret)
+> -		goto failed_addition;
+> +	if (!node_isolated(nid)) {
+> +		ret = memory_notify(MEM_GOING_ONLINE, &arg);
+> +		ret = notifier_to_errno(ret);
+> +		if (ret)
+> +			goto failed_addition;
+> +	}
+>  
+>  	/*
+>  	 * Fixup the number of isolated pageblocks before marking the sections
+> @@ -1242,19 +1244,27 @@ int online_pages(unsigned long pfn, unsigned long nr_pages,
+>  	/* reinitialise watermarks and update pcp limits */
+>  	init_per_zone_wmark_min();
+>  
+> -	kswapd_run(nid);
+> -	kcompactd_run(nid);
+> +	/*
+> +	 * Don't run daemons on the special test node, if that needs to be
+> +	 * tested the test should run it.
+> +	 */
+> +	if (!node_isolated(nid)) {
+> +		kswapd_run(nid);
+> +		kcompactd_run(nid);
+> +	}
+>  
+>  	writeback_set_ratelimit();
+>  
+> -	memory_notify(MEM_ONLINE, &arg);
+> +	if (!node_isolated(nid))
+> +		memory_notify(MEM_ONLINE, &arg);
 
-I picked the sun20i-gpadc in this series because it has a straightforward
-approach for populating the struct iio_chan_spec. Everything else except
-the .channel can use 'template'-data.
+I am not familiar with this code, I am wondering if we can move things
+around to have a single block of things we skip for isolated nodes. It
+depends on ordering dependencies so we need someone who knows this code
+to tell us.
 
-This makes the sun20i-gpadc well suited to be an example user of this new
-helper. I hope this patch helps to evaluate whether these helpers are worth
-the hassle.
+>  	return 0;
+>  
+>  failed_addition:
+>  	pr_debug("online_pages [mem %#010llx-%#010llx] failed\n",
+>  		 (unsigned long long) pfn << PAGE_SHIFT,
+>  		 (((unsigned long long) pfn + nr_pages) << PAGE_SHIFT) - 1);
+> -	memory_notify(MEM_CANCEL_ONLINE, &arg);
+> +	if (!node_isolated(nid))
+> +		memory_notify(MEM_CANCEL_ONLINE, &arg);
+>  	remove_pfn_range_from_zone(zone, pfn, nr_pages);
+>  	return ret;
+>  }
+[..]
+> -static struct kunit_suite test_suite = {
+> +struct kunit_suite page_alloc_test_suite = {
 
-The change is compile tested only!! Testing before applying is highly
-appreciated (as always!). Also, even though I tried to audit the dts
-files for the reg-properties in the channel nodes, use of references
-didn't make it easy. I can't guarantee I didn't miss anything.
----
- drivers/iio/adc/Kconfig            |  1 +
- drivers/iio/adc/sun20i-gpadc-iio.c | 38 ++++++++++++------------------
- 2 files changed, 16 insertions(+), 23 deletions(-)
+We should probably just intrdouce the suite as page_alloc_test_suite to
+begin with?
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index e4933de0c366..0993008a1586 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -1357,6 +1357,7 @@ config SUN4I_GPADC
- config SUN20I_GPADC
- 	tristate "Allwinner D1/T113s/T507/R329 and similar GPADCs driver"
- 	depends on ARCH_SUNXI || COMPILE_TEST
-+	select IIO_ADC_HELPER
- 	help
- 	  Say yes here to build support for Allwinner (D1, T113, T507 and R329)
- 	  SoCs GPADC. This ADC provides up to 16 channels.
-diff --git a/drivers/iio/adc/sun20i-gpadc-iio.c b/drivers/iio/adc/sun20i-gp=
-adc-iio.c
-index 136b8d9c294f..bf1db2a3de9b 100644
---- a/drivers/iio/adc/sun20i-gpadc-iio.c
-+++ b/drivers/iio/adc/sun20i-gpadc-iio.c
-@@ -15,6 +15,7 @@
- #include <linux/property.h>
- #include <linux/reset.h>
-=20
-+#include <linux/iio/adc-helpers.h>
- #include <linux/iio/iio.h>
-=20
- #define SUN20I_GPADC_DRIVER_NAME	"sun20i-gpadc"
-@@ -149,37 +150,27 @@ static void sun20i_gpadc_reset_assert(void *data)
- 	reset_control_assert(rst);
- }
-=20
-+static const struct iio_chan_spec sun20i_gpadc_chan_template =3D {
-+	.type =3D IIO_VOLTAGE,
-+	.indexed =3D 1,
-+	.info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW),
-+	.info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE),
-+};
-+
- static int sun20i_gpadc_alloc_channels(struct iio_dev *indio_dev,
- 				       struct device *dev)
- {
--	unsigned int channel;
--	int num_channels, i, ret;
-+	int num_channels;
- 	struct iio_chan_spec *channels;
-=20
--	num_channels =3D device_get_child_node_count(dev);
-+	num_channels =3D devm_iio_adc_device_alloc_chaninfo_se(dev,
-+				&sun20i_gpadc_chan_template, -1, &channels);
-+	if (num_channels < 0)
-+		return num_channels;
-+
- 	if (num_channels =3D=3D 0)
- 		return dev_err_probe(dev, -ENODEV, "no channel children\n");
-=20
--	channels =3D devm_kcalloc(dev, num_channels, sizeof(*channels),
--				GFP_KERNEL);
--	if (!channels)
--		return -ENOMEM;
--
--	i =3D 0;
--	device_for_each_child_node_scoped(dev, node) {
--		ret =3D fwnode_property_read_u32(node, "reg", &channel);
--		if (ret)
--			return dev_err_probe(dev, ret, "invalid channel number\n");
--
--		channels[i].type =3D IIO_VOLTAGE;
--		channels[i].indexed =3D 1;
--		channels[i].channel =3D channel;
--		channels[i].info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW);
--		channels[i].info_mask_shared_by_type =3D BIT(IIO_CHAN_INFO_SCALE);
--
--		i++;
--	}
--
- 	indio_dev->channels =3D channels;
- 	indio_dev->num_channels =3D num_channels;
-=20
-@@ -271,3 +262,4 @@ module_platform_driver(sun20i_gpadc_driver);
- MODULE_DESCRIPTION("ADC driver for sunxi platforms");
- MODULE_AUTHOR("Maksim Kiselev <bigunclemax@gmail.com>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS("IIO_DRIVER");
---=20
-2.48.1
-
-
---SN0UVbzzUhiLmzpo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAme8u4oACgkQeFA3/03a
-ocWbZQf9ENM9NOauYJv2UjhpBSTG5JItz5FY4Ls+WM6co9Ueho/lhcnSyp002koJ
-D9fFrMq51TfFu2ABL7fETrJ9gmYl0dOTD7C/w2ayltZKZrPiBmmjnU+hLl/0eiF0
-YAZAQTPVFUdTQSHmU+GnBa/ruBAyxjl81h54lON13X9gpP+IDqAhc+1IKXTSRA+Q
-DfWzAYk/qTCA/S5UWjrUZXAu6Q7cG1YfvGw0m7FjryW3GEDvJ0OF9ejaLxpstlnj
-3SQc3hqfmtgaGK9WoOGVOup4R92TRVwl27rmYUt0B6xOtZ3MBawR3ivKFCxF1ZG4
-u+vpEVi1loNi09TGLVyMFz/RaxOgvA==
-=RyMg
------END PGP SIGNATURE-----
-
---SN0UVbzzUhiLmzpo--
+>  	.name = "page_alloc",
+>  	.test_cases = test_cases,
+> +	.suite_init = populate_isolated_node,
+> +	.suite_exit = depopulate_isolated_node,
+> +	.init = test_init,
+>  };
+> -kunit_test_suite(test_suite);
+> +kunit_test_suite(page_alloc_test_suite);
+>  
+>  MODULE_LICENSE("GPL");
+>  MODULE_IMPORT_NS("EXPORTED_FOR_KUNIT_TESTING");
+> 
+> -- 
+> 2.48.1.601.g30ceb7b040-goog
+> 
 
