@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-530159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00BAFA42FD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF1DA42FE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D55E3AA32B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:10:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC3C3A897B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC112063ED;
-	Mon, 24 Feb 2025 22:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44573204F63;
+	Mon, 24 Feb 2025 22:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cuaouu7E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jPh52aGb"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2F719F11F;
-	Mon, 24 Feb 2025 22:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98514207DE0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740435010; cv=none; b=W86eoyMP7lJSRds7eyVCCRjAbTv35Mrv3ldhgfoQE6hdHNdwobujjiz3eomLKWp96K6pmGdnztB1h6mX16YBYwlh+lM0nPoo1YZ7xHdEkT8dYay+i5P6OgA146gvP3v2CLNQDFOsl82HBJ4dGIheJbKxfhsjLl0tSDfjqGAyFGE=
+	t=1740435459; cv=none; b=bFLEODJjy8t4VAFZGYZ4XvkYyB8F8jQrbQ6KLzfx/zQYC3HkLxR0dQQq4Erre2cVR3gx90MRtJ4/BI4Pxe5MqXDhkug0ryzYtGsaqvBqN9Ey6fgRpr5V9Nvb3xbNoeB9Ans2g4/REe4Gcga7y0Tu83GLCRlr6je257h3wVergwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740435010; c=relaxed/simple;
-	bh=EVBNpwDMZYWrj1DBB/Slu9MsiZUKPg8LcAsAq7i3c5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t2joRSTW9LWH0SndYCQllX0ATTy6g9C5B/0pRXFq2IIY+831alBrsQZKtf/k9c5OFYYvW7EjEFgA47Sfc1k0LWeHKPRPc0rTmdiaRiFLRUPJE7Y2X1bmK3ZteZ50QxdUHc1EdHyxFdfxA3uTGHrGkXVSuhB9Zz2c+QbCbC7FhgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cuaouu7E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94D89C4CEE9;
-	Mon, 24 Feb 2025 22:10:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740435010;
-	bh=EVBNpwDMZYWrj1DBB/Slu9MsiZUKPg8LcAsAq7i3c5U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cuaouu7Eql0mfcgKelO7Z/3TUHklDW9L+m7oa2PPAzuyu5hD0VbRpK36/mbqT3taH
-	 6xmVqBqQTc+MYf54I3genvdijo1M9tKZ6zBwlqEG9nwgoR8pB/ifeRD2EXybzw5KvV
-	 N+zBTgingDlbQldQH0fJVpbDmjMYxyBsxVXxw0bvWuuMZpTBFH1c6Y1nmcQU7HySV5
-	 gTxjRBcFryZ50+ykL84TJPaO4AUS1I1+Or7NZX6jqJjkQVO/AAQMbu+3nBsj/dtOhT
-	 b57zp1AzmA10oyvNtXn3SN4Ih+Y4apD2cd8/+gX5L60tuhWS19I+UWXopA0IocumAj
-	 j5lGS2N41rA3Q==
-Date: Mon, 24 Feb 2025 14:10:08 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Nikolay
- Aleksandrov <razor@blackwall.org>, Simon Horman <horms@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] bonding: report duplicate MAC address in all
- situations
-Message-ID: <20250224141008.3ee3a74b@kernel.org>
-In-Reply-To: <20250219075515.1505887-1-liuhangbin@gmail.com>
-References: <20250219075515.1505887-1-liuhangbin@gmail.com>
+	s=arc-20240116; t=1740435459; c=relaxed/simple;
+	bh=j9ul9lajmssaQGsq2f0RPtIkSoaHICdgb6sZ0MzTFZI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qXO5cv6aI0HJe/G3nIHQvKHr14U8bZWzS/J/KmPjcCh3WrEV6w72O+0C1dHg0aTDDSapCPTf7mM8aR8AqANoM8F2DOA9YEXRsYBxe8c4SqdYe7DCRlMZ68a4fLz+NP8Ar1orOGSb7rQv9+OSLiTYTk5+lOW30x8pH8bG5t+3lsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jPh52aGb; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740435455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dwgY2gg0fChR9PNYJGZKx8vqnKeNt/Cl9yuFpNMFMTQ=;
+	b=jPh52aGbtItWazshP7zdpw3qDR5bkqzjfncQ/BYRKizUSg5as3bcDNA/K/truiH4Y+MzQ0
+	fYBcpOn4VLSDOVQevunASLIKWA6H4NOu7oxgilCvCw67DTn5CoFbk5js9DNLQIQTJe/S1I
+	liyvH0h0VPyEZKdNu9D1v0nZUzhLHKA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+	Venkata Prasad Potturu <venkataprasad.potturu@amd.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: amd: acp: acp70: Remove unnecessary if-check
+Date: Mon, 24 Feb 2025 23:12:12 +0100
+Message-ID: <20250224221214.199849-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 19 Feb 2025 07:55:15 +0000 Hangbin Liu wrote:
-> Normally, a bond uses the MAC address of the first added slave as the
-> bond=E2=80=99s MAC address. And the bond will set active slave=E2=80=99s =
-MAC address to
-> bond=E2=80=99s address if fail_over_mac is set to none (0) or follow (2).
->=20
-> When the first slave is removed, the bond will still use the removed
-> slave=E2=80=99s MAC address, which can lead to a duplicate MAC address and
-> potentially cause issues with the switch. To avoid confusion, let's warn
-> the user in all situations, including when fail_over_mac is set to 2 or
-> in active-backup mode.
+Since list_for_each_entry() expects the list to not be empty, the
+iterator variable cannot be NULL and the unnecessary if-check can be
+removed. Remove it and indent the code accordingly.
 
-Makes sense, thanks for the high quality commit message.
+Compile-tested only.
 
-False positive warnings are annoying to users (especially users who
-monitor all warnings in their fleet). Could we stick to filtering out
-the BOND_FOM_ACTIVE case? Looks like this condition:
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/soc/amd/acp/acp70.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
-	if (bond->params.fail_over_mac !=3D BOND_FOM_ACTIVE ||
-	    BOND_MODE(bond) !=3D BOND_MODE_ACTIVEBACKUP) {
+diff --git a/sound/soc/amd/acp/acp70.c b/sound/soc/amd/acp/acp70.c
+index ef3f6504bc7f..7f4ec3bfaeab 100644
+--- a/sound/soc/amd/acp/acp70.c
++++ b/sound/soc/amd/acp/acp70.c
+@@ -230,18 +230,16 @@ static int __maybe_unused acp70_pcm_resume(struct device *dev)
+ 
+ 	spin_lock(&adata->acp_lock);
+ 	list_for_each_entry(stream, &adata->stream_list, list) {
+-		if (stream) {
+-			substream = stream->substream;
+-			if (substream && substream->runtime) {
+-				buf_in_frames = (substream->runtime->buffer_size);
+-				buf_size = frames_to_bytes(substream->runtime, buf_in_frames);
+-				config_pte_for_stream(adata, stream);
+-				config_acp_dma(adata, stream, buf_size);
+-				if (stream->dai_id)
+-					restore_acp_i2s_params(substream, adata, stream);
+-				else
+-					restore_acp_pdm_params(substream, adata);
+-			}
++		substream = stream->substream;
++		if (substream && substream->runtime) {
++			buf_in_frames = (substream->runtime->buffer_size);
++			buf_size = frames_to_bytes(substream->runtime, buf_in_frames);
++			config_pte_for_stream(adata, stream);
++			config_acp_dma(adata, stream, buf_size);
++			if (stream->dai_id)
++				restore_acp_i2s_params(substream, adata, stream);
++			else
++				restore_acp_pdm_params(substream, adata);
+ 		}
+ 	}
+ 	spin_unlock(&adata->acp_lock);
+-- 
+2.48.1
 
-exists a few lines later in __bond_release_one()
-
-> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
-ain.c
-> index e45bba240cbc..ca66107776cc 100644
-> --- a/drivers/net/bonding/bond_main.c
-> +++ b/drivers/net/bonding/bond_main.c
-> @@ -2551,13 +2551,11 @@ static int __bond_release_one(struct net_device *=
-bond_dev,
-> =20
->  	RCU_INIT_POINTER(bond->current_arp_slave, NULL);
-> =20
-> -	if (!all && (!bond->params.fail_over_mac ||
-> -		     BOND_MODE(bond) !=3D BOND_MODE_ACTIVEBACKUP)) {
-> -		if (ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
-> -		    bond_has_slaves(bond))
-> -			slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM =
-- is still in use by bond - set the HWaddr of slave to a different address =
-to avoid conflicts\n",
-> -				   slave->perm_hwaddr);
-> -	}
-> +	if (!all &&
-> +	    ether_addr_equal_64bits(bond_dev->dev_addr, slave->perm_hwaddr) &&
-> +	    bond_has_slaves(bond))
-> +		slave_warn(bond_dev, slave_dev, "the permanent HWaddr of slave - %pM -=
- is still in use by bond - set the HWaddr of slave to a different address t=
-o avoid conflicts\n",
-> +			   slave->perm_hwaddr);
---=20
-pw-bot: cr
 
