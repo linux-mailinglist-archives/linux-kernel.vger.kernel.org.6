@@ -1,156 +1,133 @@
-Return-Path: <linux-kernel+bounces-528424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51581A41792
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:40:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C7B7A41793
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54073AC355
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:39:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A4BC173B53
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41921A7045;
-	Mon, 24 Feb 2025 08:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B601F8908;
+	Mon, 24 Feb 2025 08:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RolAwdSA"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K3ks3Uaq"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14AEE1991BB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC231DDC28;
+	Mon, 24 Feb 2025 08:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386347; cv=none; b=DYN+of2muwtjjOIVqxq6oBVYvqNp4B9l8oYfXiakF8//vnFEShGuwUrODL2IsMFw910AmPz3opA3IC3fAFSpvvzn5QV+oA43bzhDe2GPfFeADBoSN8ya4EYAKup4x1TujUaDfDOpzgZOhgHoSj9iiDiHUBiCLW68e3IZpk8nb6Q=
+	t=1740386389; cv=none; b=eIPx5G5ZLA6jNG1XnVfkUw7MUWREQAn0BUs8QDM5K6/qgpaUuQTNKg8sZdjOt7JoX2r1kaPlFUNq26WxDNYgEj6HS4U6ZXnPy83ykOOAhset7io+kLq0SuPFiC6Ku/cmMirDFgPu070IUUZY/6e+Vm5pjXVmf6p+dKE7o6Tt+r4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386347; c=relaxed/simple;
-	bh=DgXuInIetqyl3CHQ2oL3QcDvsgktAaByQyVi+3OmYIA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
-	 In-Reply-To:Content-Type; b=FaAx/pgugyByWMqsx4f7YnnXdMs75ooqX8vw0Vs/bQKQOsFZrLkvzxWpC4bWu68ZEJ5S8LJOcRKzgn0M0Jo7r2QrxuB52z4lw43koDYD+bIHDDZ83JI4EfcZ8vUCXMIV6G9dAH6qpgLS0kjpZi2/Cr6SM4f11oHA6L8UKphcbPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RolAwdSA; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4399ee18a57so23588865e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:39:05 -0800 (PST)
+	s=arc-20240116; t=1740386389; c=relaxed/simple;
+	bh=OPib70z7RStdLqTILP/CTDIzshCEGAvZQiaDyNFFxIk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=shEZsM78ilKr9uAqcID3wzDtDpjuS++paOgX+9AyD/N//zpwiKXBZ+cfXhuKJ/nGbDKTRCTpkmDKU9k3pvoyUU06IdNTKsvKqA9FfAfad9+mWBeN2ii7Pe6DjOStNMllpEGDjY7t2BzPm0t8LpXUuhoXWA55ltT8Lu3MvxmbSkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K3ks3Uaq; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21c2f1b610dso117657025ad.0;
+        Mon, 24 Feb 2025 00:39:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740386344; x=1740991144; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sK3C+y9SW9Coh39Uk8y+GEOLM7p3ebzwSbAot9WE95s=;
-        b=RolAwdSAIKLdowIIg5ftr63yKG4eHxljmeTNusR/FqFfD3COAzYu3OekaAupHvzroM
-         yKqTzbO8oKf6JiR+DpnU/EKfDWh0cflnmemhOnXOyXumGzEC+AP/mOLGwjNXVMH4rdt0
-         Rkr33LcwthNEZvWCtCm1NxuXIjWxlKu0nPdfjxkF6QTuz2UdrTjStvUt2uFPIHPpUT68
-         Kh3gzAmllBwYk9S5RFI0XjdypAWoMEOwVnJqLCYzrVSDtsQsMwSmcwz8zvuuh7gAOU8j
-         24mvLMV+8AwFIfn8uSTyXa/2yU05vjTKko27gi5kW7lSn5BcYr0nEmCgJ8G3GSftW4Df
-         9Lbg==
+        d=gmail.com; s=20230601; t=1740386387; x=1740991187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=95SHW6HzB6iNhL/wzrH3WG7qpOIgT6dZkumEvj+k6IY=;
+        b=K3ks3Uaq+YSU930lYDlice6Rw1iPLBsMk8pd7+HbiA3SPPcNQrJikIvJ7uYR14G0E7
+         0ZByAWdVsIf1UMMvurkqFZwnCqithN1+s6PQH/X+L7bD5VPTVYqMsstP5VXv4kw182rR
+         RgFmQV67eU616iOJSDxdynzWPEKvR/321UYy93MhvinE0qwM+kQPglKBVX0JBvtuvK8n
+         N1spDT1IjuYor83a1c0jve+U1pPS9LJNAk5ZLBRyOt4qDh7Uc1TwK34lUHg4slCVReEn
+         h5sTLmC6rMTUJrHr7KEI/bzLV7cbMfIqL4ZrVPVZ9RUROnyhnLN0DUXC7j6LWbOPSctA
+         zzEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740386344; x=1740991144;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sK3C+y9SW9Coh39Uk8y+GEOLM7p3ebzwSbAot9WE95s=;
-        b=CUCEmX3wND5k3FyhQIGcDBhfDQO/b7zPY7w0F2AuzBX+Ldm0Q6Nnbzkcvj0i+BUJIM
-         +Ywz4rjPcfUuJeAyAe/6nbdeyAQYwe4bODHZr0t5TWXvU+0jEV4WRR0DjnnWChdenxwc
-         YIFKUPGiRuQ5pnbuqBaKQAZJJJf08dnLNZSlSkl9ETsyUFOEUrTFvXEXDxTk+Jnqb2UG
-         ECSv8R5aq8KtLjHr2lns1isZubvheMX2Ht2Q5O4rv5I/N8M71U7Pgly3PvckivsfJl2D
-         dGHAbyt4MO1xEqDE13ycwXycz8MEaR/e9Hw33rCPuX0Wy5LBl4kx0OALh2tE1g/s8I2c
-         yS5g==
-X-Forwarded-Encrypted: i=1; AJvYcCV/LjQ6ZjltvuUmDCmBWRXaavaSyPJGFvYdV9U1l/MbloUaTjZlUlWnFee1GBzIn9zXntgH2yDAVuy2smM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxhVGWuP9zdWx3bl7q+C/zw8lnAWaMwxx0gBgizpVilHngbvi/
-	GJ+U1GsUSAzRlWeS163v0b847mZ1A0mwFSNMyfiyLrn54KuHaKKxbhBxk+xryv8=
-X-Gm-Gg: ASbGnctppKL3q08dmDe9HcwrjTqmoeoNtfd8I24ZBla7DYEONAQv0jwVFYZl0YRvMeV
-	70g0/ejTD4bDiwrbkPtJYwzyJFTBFW9k6tf+J7dgfrFoXzunsedGuzYVSTlV1KhcnKSWrHME93o
-	S0mgyg9if2vvNYaxVKkm4zKET/Q/Hz9upTsS4yXoaYp8yApOLkryhO+mVa8W1M1u9khSbtKEY7X
-	Xm/QTkWQIR3ydXLZd5TuUz7V9L2h1CFUR+WJR/ghGxEZz9KzQIBmW4n4d6bwVfsgQtmSmLy5UG5
-	t6tmH6wgnmppr3Af1y+j8Vm9PTid9urmqfAF7L5PO0LII78/uDkMJ9T25iV2mCFxdKfn9fZqHXm
-	PJSI=
-X-Google-Smtp-Source: AGHT+IEEJX6T6GgItatrLUOO4eq1TE6WCfNa/DqbWsLOIOCWLzZKyFG0bwOQ4opt5Ug5hrQOAM7F1w==
-X-Received: by 2002:a05:600c:54ea:b0:439:871d:d4c0 with SMTP id 5b1f17b1804b1-439a2eb09f6mr130885245e9.3.1740386344324;
-        Mon, 24 Feb 2025 00:39:04 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:825b:5392:ef70:cc0b? ([2a01:e0a:982:cbb0:825b:5392:ef70:cc0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce4e9sm100644875e9.4.2025.02.24.00.39.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 00:39:03 -0800 (PST)
-Message-ID: <92321fed-28b3-454e-b187-7ecfe4ce27ae@linaro.org>
-Date: Mon, 24 Feb 2025 09:39:03 +0100
+        d=1e100.net; s=20230601; t=1740386387; x=1740991187;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=95SHW6HzB6iNhL/wzrH3WG7qpOIgT6dZkumEvj+k6IY=;
+        b=XPgtypLFQyNnX5HIsfvj8FibFArxRhCVClLK7wB+C0W8azY4y/cMnjChYihQaE8Jqr
+         WBA1XfnqNsVqBnaRPTGd+4i9xJ64M3dk791BEM0qa0ghxlWZwz/tK8wP3enbZcYvoaVe
+         GHXeQuPJB4tWHaRoYBEOu/OpL2oJkZLs7nLSFfSz8/6uzvWfmM+qZCUJUESeD0n81rh0
+         5VzlFrFkrxcApyiF3/Hh9q5t5ndBZDx7Xzp23KYzKw7eYS36enoGkpxqDeaKXVbfm8jF
+         3ZTuewIovmMFjX6YiGHyP5KALaU7Lv1HkB/MN6erSSKLtLcod0WUpKu99YUNXJVy+tHw
+         cDRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaBIpHsHLp5UHWhJ5lF7QuIVLNz8P8cWKYNAe1O+fLWc9phaYPROzw22GQVloH/funtbiPmth2SI9v@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrZ+z2t1pdHsMWiKAIqtgjp/nKywqddUUCMnmq4nJknH1QeRgj
+	6UVk2kjpCEzn7XoE/2qNcEZjQpYhqF4+Ue6l8YsduUZz8iwnKXyu
+X-Gm-Gg: ASbGncvUZrAwKaow6mHgzT/Ht82EfF2SMIiOMXZdoMFkYsqSK/rJhfn554k8tgcDDQQ
+	PuFLgB5jThVBIiANZg9Z0aG0+/2fgXwQykju+eUJsW+G7kNuUszXmkB6NyYhkVWewfMlVhW5eUr
+	ghkmXMzLksKT4ljf2JgCPSNWy07PBfTe01hJdCzUNxpHJA0vgvA0FEQiRAlhI71IV56SIRYAZJO
+	t/EV8BK1yN9buhCVpKfvkPR9ZXvyN60tqjTfE3gtGgMf9ArGK7lEdsIxq9kxXGbZv74Sz7+LRes
+	WNNbwG8TQa+mRTKMTWyqw8bIeljLYRbbKRNv
+X-Google-Smtp-Source: AGHT+IFre9XOybV0YxAiqbX3XhSPOqNf9uDTbDbMVVNdbMkg+GELuP1pFb1lBJN/C9iaOtzknuA7gA==
+X-Received: by 2002:a05:6a00:2ea9:b0:731:771:38f2 with SMTP id d2e1a72fcca58-73426cab14fmr26237456b3a.8.1740386386696;
+        Mon, 24 Feb 2025 00:39:46 -0800 (PST)
+Received: from cs20-buildserver.lan ([2403:c300:cd02:bc36:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7327590ff12sm14634793b3a.115.2025.02.24.00.39.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 00:39:46 -0800 (PST)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v4 1/5] dt-bindings: i3c: silvaco: Add npcm845 compatible string
+Date: Mon, 24 Feb 2025 16:39:04 +0800
+Message-Id: <20250224083908.1880383-2-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250224083908.1880383-1-yschu@nuvoton.com>
+References: <20250224083908.1880383-1-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] drm/meson: vclk: revert and re-fix vclk calculations
-To: Christian Hewitt <christianshewitt@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, dri-devel@lists.freedesktop.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250110074458.3624094-1-christianshewitt@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250110074458.3624094-1-christianshewitt@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/01/2025 08:44, Christian Hewitt wrote:
-> Patch 1 reverts a previous fix for loss of HDMI sync when playing YUV420
-> @ 59.94 media. The patch does resolve a calculation issue. It also makes
-> all fractional rates invalid which is a bigger problem.
-> 
-> Patch 2 provides a proper fix after I figured out the actual root cause
-> of the original problem. This time the maths checks out.
-> 
-> Apologies to the stable team as the original patch has been applied to
-> a wide range of older and LTS kernels (as far as 5.10). Please let me
-> know if combining the two patches into a single 'fix the previous fix'
-> patch would be preferred?
-> 
-> Christian
-> 
-> Christian Hewitt (2):
->    Revert "drm/meson: vclk: fix calculation of 59.94 fractional rates"
->    drm/meson: vclk: fix precision in vclk calculations
-> 
->   drivers/gpu/drm/meson/meson_encoder_hdmi.c | 42 +++++++++++-----------
->   drivers/gpu/drm/meson/meson_vclk.c         |  7 ++--
->   2 files changed, 25 insertions(+), 24 deletions(-)
-> 
+From: Stanley Chu <yschu@nuvoton.com>
 
-LGTM
+Nuvoton npcm845 SoC uses the same Silvico IP but an older version.
+Need to add a new compatible string to distinguish between different
+hardware versions.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+---
+ Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
+index c56ff77677f1..4fbdcdac0aee 100644
+--- a/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
++++ b/Documentation/devicetree/bindings/i3c/silvaco,i3c-master.yaml
+@@ -14,7 +14,9 @@ allOf:
+ 
+ properties:
+   compatible:
+-    const: silvaco,i3c-master-v1
++    enum:
++      - nuvoton,npcm845-i3c
++      - silvaco,i3c-master-v1
+ 
+   reg:
+     maxItems: 1
+-- 
+2.34.1
+
 
