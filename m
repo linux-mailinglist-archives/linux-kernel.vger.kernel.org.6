@@ -1,354 +1,116 @@
-Return-Path: <linux-kernel+bounces-528198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19648A414B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:20:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084DDA414B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D1D03B6D44
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:18:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 233FC1896080
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7791A7044;
-	Mon, 24 Feb 2025 05:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cKwtPrbV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E061C6FE5;
+	Mon, 24 Feb 2025 05:17:41 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 667AE202C42
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B111C5F27
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740374221; cv=none; b=dVdBv/LnXlzjQWtAsJj1CVbbr1Tw/vaF2Ia+9AdsS3gqz2wqt3DqkIjNJOHrvXx6v8Nqu/qeoxMkvS9enZqpXPvSaOv8fhZIOwhUQ5ECi20A6KqM8daT4Ilrx31P4xhiqSLnbJ+VMGNmYAanjMry/jia0TdzDKMnfBgh4jxwdzY=
+	t=1740374260; cv=none; b=SjAQCbwQCp/sZztTO0j9M7B4DoJuOrGU23zrSv51Kz8kZHDgG8E2pWCet5NySWnpaAC8n/jMtdQpJcGHDR2zwBIlZLm9zth8VEl2m5YVSGwGhtQVydAXlbLcwEDwbUWUf4Em4WcuTjOLp1w2Moz/9ISsZdmXKKM6wjd/rmtEF8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740374221; c=relaxed/simple;
-	bh=K8Z8TiFdvMKbRj/6jVY7kiDPGIgHFHUtvEi9bWdlG+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BJuzI+yei0uFVm2JymD0Fy/qMiEp1mADQ5HNU5m3FWmLr7x7OsejrAqQ0QfFmcvqitLNhdyuk16avWaeZyZvG6BWrNMiDN/KGOCUZhFOQe45/u2vHUPLqQuRBQHyepQJFkiYYxYlgIkIhw/ciYEUk2pYzEAOPFPV7dDYWlZ6P4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cKwtPrbV; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740374220; x=1771910220;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=K8Z8TiFdvMKbRj/6jVY7kiDPGIgHFHUtvEi9bWdlG+k=;
-  b=cKwtPrbVqFLzbLRKa787nuqPo2T6JUNhADqtSqsWj403cs2HuWsqPBvj
-   PkN6lYdroL8sMwtDtZ9fSKQZk9ynUuinuQeHOAo8pEcdkoevIPT57bKSX
-   JG2YxVjLxEI06UP7BZM/8OifQ+GHHmE+3ujn2UHy1atzKd1Y+euod7kgq
-   9DllLbdzVl0SsP7Q2JudAMQFJaXQUUf3cBzlnUOo5JaUNuF2UQUWzD7Vw
-   j3qeBeqNUvgEfhJgTHV+E5RK6Q6TgD0Vb/WkbpO+D5gpyxiAOrhIGX2q4
-   oA5cW6LNbTqnIL5cFK9IFgUbu9QHK4wuyBGS7wl/ecsPYyMYS8JO/xaum
-   w==;
-X-CSE-ConnectionGUID: aJMI/KaeQ9CRmwWp4xQE0g==
-X-CSE-MsgGUID: fuaRspOWRw2I7c8oNRx/XA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="45024303"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="45024303"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 21:16:59 -0800
-X-CSE-ConnectionGUID: iZXiCKF2S7+Hn36/nnXg4w==
-X-CSE-MsgGUID: +3Vj3l92RG2YCM6BAXDRgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116143445"
-Received: from allen-box.sh.intel.com ([10.239.159.52])
-  by fmviesa008.fm.intel.com with ESMTP; 23 Feb 2025 21:16:56 -0800
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Fenghua Yu <fenghuay@nvidia.com>,
-	Zhangfei Gao <zhangfei.gao@linaro.org>,
-	Zhou Wang <wangzhou1@hisilicon.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH v2 12/12] iommu: Remove iommu_dev_enable/disable_feature()
-Date: Mon, 24 Feb 2025 13:16:26 +0800
-Message-ID: <20250224051627.2956304-13-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
-References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1740374260; c=relaxed/simple;
+	bh=ZcexFI/4EAc446zMci9zzde286TvXQiyhQuXDVRfTL0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kT2V1DiqSiDRYIwk2dNCpYiw+SCt7cAalVPEkyj12VSxy+RkShU9bMDvQC9ygyizb0Z0jdVw7wW1i5HapHcR2O4OChCCgjZGrFxfE0g/0ktcWF+5aJlr7V76NVrjLfw2oJBxyLmSYlD2KRbqysox0ScN4sUvlFx9qth8o/1SkM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tmQqL-0000Ca-SW; Mon, 24 Feb 2025 06:17:25 +0100
+Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tmQqK-002XVo-1p;
+	Mon, 24 Feb 2025 06:17:24 +0100
+Received: from localhost ([::1] helo=dude02.red.stw.pengutronix.de)
+	by dude02.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.hauer@pengutronix.de>)
+	id 1tmQqK-001kmQ-1a;
+	Mon, 24 Feb 2025 06:17:24 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+Date: Mon, 24 Feb 2025 06:17:16 +0100
+Subject: [PATCH v2] net: ethernet: ti: am65-cpsw: select PAGE_POOL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-net-am654-nuss-kconfig-v2-1-c124f4915c92@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIANsAvGcC/4WNTQ6CMBBGr0Jm7RhafkRW3sOwKGWAiXFKWiAYw
+ t2tXMDle8n3vh0CeaYAdbKDp5UDO4mgLwnY0chAyF1k0KkuUq1TFJrRvMsiR1lCwJd10vOApq0
+ o73PKVNVCHE+eet7O8LOJPHKYnf+cP6v62b/JVaFCY22lsvZW3jt6TCTDMnsnvF07guY4ji8lw
+ GXOwQAAAA==
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Sascha Hauer <s.hauer@pengutronix.de>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740374244; l=1230;
+ i=s.hauer@pengutronix.de; s=20230412; h=from:subject:message-id;
+ bh=ZcexFI/4EAc446zMci9zzde286TvXQiyhQuXDVRfTL0=;
+ b=IFPpAWLbRD7QnRn6zV1VTqUMT++P7SbTIjYOpuIXLt65Jw2UTrJZVzSo9Y1ox1AI2zBmeN083
+ U7t9xDxs2J6CwVjWQp8IsPjjisIbRz4mEq/8nwCMJ8hHrioxbQTGgyd
+X-Developer-Key: i=s.hauer@pengutronix.de; a=ed25519;
+ pk=4kuc9ocmECiBJKWxYgqyhtZOHj5AWi7+d0n/UjhkwTg=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.hauer@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-No external drivers use these interfaces anymore. Furthermore, no existing
-iommu drivers implement anything in the callbacks. Remove them to avoid
-dead code.
+am65-cpsw uses page_pool_dev_alloc_pages(), thus needs PAGE_POOL
+selected to avoid linker errors. This is missing since the driver
+started to use page_pool helpers in 8acacc40f733 ("net: ethernet:
+ti: am65-cpsw: Add minimal XDP support")
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Fixes: 8acacc40f733 ("net: ethernet: ti: am65-cpsw: Add minimal XDP support")
+Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 ---
- drivers/iommu/amd/iommu.c                   | 32 -------------------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 34 ---------------------
- drivers/iommu/intel/iommu.c                 | 25 ---------------
- drivers/iommu/iommu.c                       | 32 -------------------
- include/linux/iommu.h                       | 28 -----------------
- 5 files changed, 151 deletions(-)
+Changes in v2:
+- Add missing Fixes: tag
+- Link to v1: https://lore.kernel.org/r/20250220-net-am654-nuss-kconfig-v1-1-acc813b769de@pengutronix.de
+---
+ drivers/net/ethernet/ti/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iommu/amd/iommu.c b/drivers/iommu/amd/iommu.c
-index e3653bdfcd7d..8d74afa552fb 100644
---- a/drivers/iommu/amd/iommu.c
-+++ b/drivers/iommu/amd/iommu.c
-@@ -2983,36 +2983,6 @@ static const struct iommu_dirty_ops amd_dirty_ops = {
- 	.read_and_clear_dirty = amd_iommu_read_and_clear_dirty,
- };
- 
--static int amd_iommu_dev_enable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
--static int amd_iommu_dev_disable_feature(struct device *dev,
--					 enum iommu_dev_features feat)
--{
--	int ret = 0;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		break;
--	default:
--		ret = -EINVAL;
--		break;
--	}
--	return ret;
--}
--
- const struct iommu_ops amd_iommu_ops = {
- 	.capable = amd_iommu_capable,
- 	.blocked_domain = &blocked_domain,
-@@ -3026,8 +2996,6 @@ const struct iommu_ops amd_iommu_ops = {
- 	.get_resv_regions = amd_iommu_get_resv_regions,
- 	.is_attach_deferred = amd_iommu_is_attach_deferred,
- 	.def_domain_type = amd_iommu_def_domain_type,
--	.dev_enable_feat = amd_iommu_dev_enable_feature,
--	.dev_disable_feat = amd_iommu_dev_disable_feature,
- 	.page_response = amd_iommu_page_response,
- 	.default_domain_ops = &(const struct iommu_domain_ops) {
- 		.attach_dev	= amd_iommu_attach_device,
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 3a2faf4fdd09..31500e25c4a5 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -3620,38 +3620,6 @@ static void arm_smmu_get_resv_regions(struct device *dev,
- 	iommu_dma_get_resv_regions(dev, head);
- }
- 
--static int arm_smmu_dev_enable_feature(struct device *dev,
--				       enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -ENODEV;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
--static int arm_smmu_dev_disable_feature(struct device *dev,
--					enum iommu_dev_features feat)
--{
--	struct arm_smmu_master *master = dev_iommu_priv_get(dev);
--
--	if (!master)
--		return -EINVAL;
--
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -EINVAL;
--	}
--}
--
- /*
-  * HiSilicon PCIe tune and trace device can be used to trace TLP headers on the
-  * PCIe link and save the data to memory by DMA. The hardware is restricted to
-@@ -3684,8 +3652,6 @@ static struct iommu_ops arm_smmu_ops = {
- 	.device_group		= arm_smmu_device_group,
- 	.of_xlate		= arm_smmu_of_xlate,
- 	.get_resv_regions	= arm_smmu_get_resv_regions,
--	.dev_enable_feat	= arm_smmu_dev_enable_feature,
--	.dev_disable_feat	= arm_smmu_dev_disable_feature,
- 	.page_response		= arm_smmu_page_response,
- 	.def_domain_type	= arm_smmu_def_domain_type,
- 	.viommu_alloc		= arm_vsmmu_alloc,
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 20d07f5fea85..aad11e76ac40 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3920,29 +3920,6 @@ void intel_iommu_disable_iopf(struct device *dev)
- 	iopf_queue_remove_device(iommu->iopf_queue, dev);
- }
- 
--static int
--intel_iommu_dev_enable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--	default:
--		return -ENODEV;
--	}
--}
--
--static int
--intel_iommu_dev_disable_feat(struct device *dev, enum iommu_dev_features feat)
--{
--	switch (feat) {
--	case IOMMU_DEV_FEAT_IOPF:
--		return 0;
--
--	default:
--		return -ENODEV;
--	}
--}
--
- static bool intel_iommu_is_attach_deferred(struct device *dev)
- {
- 	struct device_domain_info *info = dev_iommu_priv_get(dev);
-@@ -4387,8 +4364,6 @@ const struct iommu_ops intel_iommu_ops = {
- 	.release_device		= intel_iommu_release_device,
- 	.get_resv_regions	= intel_iommu_get_resv_regions,
- 	.device_group		= intel_iommu_device_group,
--	.dev_enable_feat	= intel_iommu_dev_enable_feat,
--	.dev_disable_feat	= intel_iommu_dev_disable_feat,
- 	.is_attach_deferred	= intel_iommu_is_attach_deferred,
- 	.def_domain_type	= device_def_domain_type,
- 	.pgsize_bitmap		= SZ_4K,
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 60aed01e54f2..e19c04304b03 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -2877,38 +2877,6 @@ int iommu_fwspec_add_ids(struct device *dev, const u32 *ids, int num_ids)
- }
- EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
- 
--/*
-- * Per device IOMMU features.
-- */
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_enable_feat)
--			return ops->dev_enable_feat(dev, feat);
--	}
--
--	return -ENODEV;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_enable_feature);
--
--/*
-- * The device drivers should do the necessary cleanups before calling this.
-- */
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	if (dev_has_iommu(dev)) {
--		const struct iommu_ops *ops = dev_iommu_ops(dev);
--
--		if (ops->dev_disable_feat)
--			return ops->dev_disable_feat(dev, feat);
--	}
--
--	return -EBUSY;
--}
--EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
--
- /**
-  * iommu_setup_default_domain - Set the default_domain for the group
-  * @group: Group to change
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 1d0dde49168d..127f99acab5f 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -301,16 +301,6 @@ struct iommu_iort_rmr_data {
- 	u32 num_sids;
- };
- 
--/**
-- * enum iommu_dev_features - Per device IOMMU features
-- * @IOMMU_DEV_FEAT_IOPF: I/O Page Faults such as PRI or Stall.
-- *
-- * Device drivers enable a feature using iommu_dev_enable_feature().
-- */
--enum iommu_dev_features {
--	IOMMU_DEV_FEAT_IOPF,
--};
--
- #define IOMMU_NO_PASID	(0U) /* Reserved for DMA w/o PASID */
- #define IOMMU_FIRST_GLOBAL_PASID	(1U) /*starting range for allocation */
- #define IOMMU_PASID_INVALID	(-1U)
-@@ -630,9 +620,6 @@ struct iommu_ops {
- 	bool (*is_attach_deferred)(struct device *dev);
- 
- 	/* Per device IOMMU features */
--	int (*dev_enable_feat)(struct device *dev, enum iommu_dev_features f);
--	int (*dev_disable_feat)(struct device *dev, enum iommu_dev_features f);
--
- 	void (*page_response)(struct device *dev, struct iopf_fault *evt,
- 			      struct iommu_page_response *msg);
- 
-@@ -1102,9 +1089,6 @@ void dev_iommu_priv_set(struct device *dev, void *priv);
- extern struct mutex iommu_probe_device_lock;
- int iommu_probe_device(struct device *dev);
- 
--int iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features f);
--int iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features f);
--
- int iommu_device_use_default_domain(struct device *dev);
- void iommu_device_unuse_default_domain(struct device *dev);
- 
-@@ -1393,18 +1377,6 @@ static inline int iommu_fwspec_add_ids(struct device *dev, u32 *ids,
- 	return -ENODEV;
- }
- 
--static inline int
--iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
--static inline int
--iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
--{
--	return -ENODEV;
--}
--
- static inline struct iommu_fwspec *dev_iommu_fwspec_get(struct device *dev)
- {
- 	return NULL;
+diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
+index 0d5a862cd78a6..3a13d60a947a8 100644
+--- a/drivers/net/ethernet/ti/Kconfig
++++ b/drivers/net/ethernet/ti/Kconfig
+@@ -99,6 +99,7 @@ config TI_K3_AM65_CPSW_NUSS
+ 	select NET_DEVLINK
+ 	select TI_DAVINCI_MDIO
+ 	select PHYLINK
++	select PAGE_POOL
+ 	select TI_K3_CPPI_DESC_POOL
+ 	imply PHY_TI_GMII_SEL
+ 	depends on TI_K3_AM65_CPTS || !TI_K3_AM65_CPTS
+
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250220-net-am654-nuss-kconfig-ab8e4f4e318b
+
+Best regards,
 -- 
-2.43.0
+Sascha Hauer <s.hauer@pengutronix.de>
 
 
