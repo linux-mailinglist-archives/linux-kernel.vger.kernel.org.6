@@ -1,173 +1,143 @@
-Return-Path: <linux-kernel+bounces-528285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA2FA415C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:03:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B21A415C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B9E3B34DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:02:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74353B4D72
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361FE19D8AC;
-	Mon, 24 Feb 2025 07:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSRa4TUB"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298F6241672;
+	Mon, 24 Feb 2025 07:03:29 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F068A1DB34C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401EB1A5B81;
+	Mon, 24 Feb 2025 07:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380565; cv=none; b=tApRIMOC8+zwvNljnS4xsaQXOusk+7Ma0n2ce5b6Kd/klHEsuEM/1sEuKH0mOCfDsQSXxkDTv4+eQUt1yMkUbEyhr3F8zTauVa93hlXQKz4hdzmjlTJJMAqflcLJOEPfDzv6F6qK+iEmOLSrls41w0Kxx7Ml72vUl4CiKbyFbuE=
+	t=1740380608; cv=none; b=jMEZjkZQ3eUVS0Hi7mskReL1urtD8kyWKk2b7H/i3mH2dMJKNFyCxaopHKj2aVoOFrqhI+2WmTM+Uz61gprDuKxdBtB35fEx+e03wllFibc3ZePE1Yo1kh4gqhlI/Wv+ikqDP/2frk7vEjgyH3lQIDKdxtbK0vtYJgFdXV/+p+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380565; c=relaxed/simple;
-	bh=o7KXtFkkiossVlXHLyR6rFidy6CgsihrYaqqAvlOcIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b79jxPsfosBjvf2gDkhp2jsnuMumTHlnmUsOcn4cZxK7TedsBK/bqRoY28jRntjmD90hNjSddoO7f4mmC5IoRGBEml9PJLOxnu0987h8SqEC7x4Wuksp+nHAqdm69SHhGzhurpzoN/+0oSk+NeRKBo0WB1faEQYOyrgCd4PD04c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bSRa4TUB; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-219f8263ae0so81448985ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:02:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740380563; x=1740985363; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6wvvGLB8O3NF43tAdS2H7DvAXcu+6aLP4+yb5jyf9L4=;
-        b=bSRa4TUB1+c3Lj6xxrTPth2yZ+gsfb3LxC5f1OU1A3ngInkH42BYBLEsMVvuMif6Cn
-         Nk9k2+0d1sumBwPyOA7j0uS1xFExTf2sQVa9skUafuUlIdR7B+9ViDncV78z8F0eAR0q
-         OOBm1f/fgOSlqncI9ONa+2yCz2MSVRnsEoSZkWcLA0kX6US037mUs7Q2+pFve0CB+GCr
-         +oWT8y9A0z8I6wDFTI4q2Mt3uCPjFDWzOXoNeOw1qu4uH8nGrDlaYgXLpqTcRfPJjNET
-         1Ta67VGBI8E/5eq4SpJ2xaA2syXLQuw8pUVy9/J55E4cqpW9AM105Ie5FIGrio6jzDWj
-         kfyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740380563; x=1740985363;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6wvvGLB8O3NF43tAdS2H7DvAXcu+6aLP4+yb5jyf9L4=;
-        b=n4atcnAKiofAobGV2OXkACrLYu/Nj02VwfzmWh1SIbM1GJLJN1OL1SNSsfBzxaZXZA
-         KB3bS1zhAtkxoHf+c9jIm445CF6CcVdBNbyJazHhhtlxuwGl1ac3UcNhqgEROZpG+cMN
-         IkE+Ma5w7m+HR2qQlraSt3Tu5x3x+fyL4MH9K+tElSK05AMC/70/4RDd1WPQ5ZIQXIGQ
-         KTnfq5lEZrnhTsL342DpJl6JRShbol6K1kuOw/e78RQQEG+k+q8N/Fz15zb5UPh0CQHJ
-         CY2igajuNcm3b688sQ1280fp2RbGJUYuT30QhvtocedGCRun1uOmKAsmJGenLI7EZHkY
-         hYqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBKHEJB3ZwIuQMhZlGqcVN19qSQKz16xLWAwInNC5AX2zNKANBY/mHDwwMO4ygmm0jhF71cvQ1h6+hU4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKtMvpba9h848rcpMrXLBdEw30nABLsIj2Q3ee/kfSavDmNl+v
-	q1xvhxhoU89G/VuQ0F75bOFeiZCe9+qGXeqzLfSGy3Im2jxnWAmTXqREFDKl3A==
-X-Gm-Gg: ASbGnctKvmLGXQVDSqbcqLrvGuL52nv36Lz2eNPQtUm0BcgIB0YPSrx/KlBJpwVBuW6
-	+zel/yyrieLdC0CaWvpOog7fIIn0zclSPxUtAR2ddmSlyA39/NsvcdH+usr5/rW9us91E5wWf/T
-	WAeIEbqHusCZI7JPl/TPgpn4wrxlRFTQYdQWH6ofFmmN+T7ghaswX2b8HxKSEutB902la51dn0R
-	fMJGn7hRDow4Fxt2d21Nx8YevZlieUtVHnepVx2EPEh2QykssItQlKJ1j+ZA/iv4LK4IKzL1Sf9
-	xW4VSWBTKjrRUw8ED1UlkImhPlKv6ZWmT2E7
-X-Google-Smtp-Source: AGHT+IHZDCUkVb6KkQggLmytTi/Bc9e4L0SoN/9Y4bEIbQD8e9Ei3Q2gcbNibzYNgvXFukkN4bS6Cg==
-X-Received: by 2002:a17:902:d502:b0:220:f509:686a with SMTP id d9443c01a7336-221a10f1e97mr202837705ad.29.1740380563145;
-        Sun, 23 Feb 2025 23:02:43 -0800 (PST)
-Received: from thinkpad ([36.255.17.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7325c3f4cd3sm16992430b3a.6.2025.02.23.23.02.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 23:02:42 -0800 (PST)
-Date: Mon, 24 Feb 2025 12:32:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Sai Krishna Musham <sai.krishna.musham@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michal.simek@amd.com,
-	bharat.kumar.gogada@amd.com, thippeswamy.havalige@amd.com
-Subject: Re: [PATCH 2/2] PCI: xilinx-cpm: Add support for PCIe RP PERST#
- signal
-Message-ID: <20250224070236.nhowwz3uwk2rx4qi@thinkpad>
-References: <20250224063046.1438006-1-sai.krishna.musham@amd.com>
- <20250224063046.1438006-3-sai.krishna.musham@amd.com>
+	s=arc-20240116; t=1740380608; c=relaxed/simple;
+	bh=gAatAcowxA6N32Br3D/yFWKOY7JZvCY0MRpVyrJYcrw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Saxhhse1pCI5BMdQX7CR9dkI9IRayC17je7GQ/40U0X67G7pSP+1Eax8mTWhMnvCJjZoozRpj6ykl28iW0E/AAp6Vqrw/yymVpoo8pRNObaktmQmYUiOvRpUYRCPUbfJ486JpyELuaImhnD5sj1yJozk/IJSv1TCzJOTKjGI/Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z1WsF5vFcz4f3kvl;
+	Mon, 24 Feb 2025 15:02:57 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 055E61A058E;
+	Mon, 24 Feb 2025 15:03:21 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCH61+3GbxnZ6L5Eg--.46097S3;
+	Mon, 24 Feb 2025 15:03:20 +0800 (CST)
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
+ <20250222092823.210318-3-yukuai1@huaweicloud.com> <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+Date: Mon, 24 Feb 2025 15:03:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <Z7vnTyk6Y6X4JWQB@fedora>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224063046.1438006-3-sai.krishna.musham@amd.com>
+X-CM-TRANSID:gCh0CgCH61+3GbxnZ6L5Eg--.46097S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF47Kw13JryDAFyrtFWkZwb_yoW8urWkpF
+	WakFW3Kw4DAFyIkF1rZa18XFWYkrWxArnrJw45Jr95A34UWFyjgFWvyrs0yay5X3Z7W34I
+	v3Wjva47AF4jvrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Feb 24, 2025 at 12:00:46PM +0530, Sai Krishna Musham wrote:
-> Add GPIO-based control for the PCIe Root Port PERST# signal.
+Hi, Ming!
+
+在 2025/02/24 11:28, Ming Lei 写道:
+> throtl_trim_slice() returns immediately if throtl_slice_used()
+> is true.
 > 
-> According to section 2.2 of the PCIe Electromechanical Specification
-> (Revision 6.0), PERST# signal has to be deasserted after a delay of
-> 100 ms (TPVPERL) to ensure proper reset sequencing during PCIe
-> initialization.
+> And throtl_slice_used() checks jiffies in [start, end] via time_in_range(),
+> so if `start <= jiffies <= end', it still returns false.
+
+Yes, I misread the code, by thinking throtl_slice_used() will return
+true if the slice is still used. :(
+
+
+>> BTW, throtl_trim_slice() looks like problematic:
+>>
+>> -       if (bytes_trim <= 0 && io_trim <= 0)
+>> +       if (bytes_trim <= 0 || io_trim <= 0 ||
+>> +           tg->bytes_disp[rw] < bytes_trim || tg->io_disp[rw] < io_trim)
+>>                  return;
+> That is exactly what my patch is doing, just taking deviation and
+> timeout into account, also U64_MAX limit has to be excluded.
+Yes, perhaps you can add some comments in the last two conditions of
+your patch. I think maybe you're concerned about the case IO is
+throttled by IOs and bytes_disp should really erase extra bytes that
+does not reach bps_limit.
+
 > 
-> Signed-off-by: Sai Krishna Musham <sai.krishna.musham@amd.com>
-> ---
-> This patch depends on the following patch series.
-> https://lore.kernel.org/all/20250217072713.635643-3-thippeswamy.havalige@amd.com/
-> ---
->  drivers/pci/controller/pcie-xilinx-cpm.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
+> If you test the patch, it works just fine. My patch controls bytes_exp
+> <= 1.5 * disp, then throtl/001 can be completed in 1.5sec, and if it is
+> changed to 1.25 * disp, the test can be completed in 1.25sec.
 > 
-> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-> index 81e8bfae53d0..0e31b85658e6 100644
-> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
-> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-> @@ -6,6 +6,8 @@
->   */
->  
->  #include <linux/bitfield.h>
-> +#include <linux/delay.h>
-> +#include <linux/gpio/consumer.h>
->  #include <linux/interrupt.h>
->  #include <linux/irq.h>
->  #include <linux/irqchip.h>
-> @@ -568,8 +570,29 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
->  	struct device *dev = &pdev->dev;
->  	struct pci_host_bridge *bridge;
->  	struct resource_entry *bus;
-> +	struct gpio_desc *reset_gpio;
->  	int err;
->  
-> +	/* Request the GPIO for PCIe reset signal */
-> +	reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-
-You've defined the polarity as 0x1 in the binding. Which corresponds to
-GPIO_ACTIVE_LOW. So if you request the GPIO as GPIOD_OUT_LOW, it means the host
-is going to drive the PERST# line as 'high', which corresponds to PERST#
-deassert. I don't think you'd want that and if that is what is really happening,
-the endpoint state machine would be broken. So I suspect that the polarity of
-your PERST# line is wrong.
-
-- Mani
-
-> +	if (IS_ERR(reset_gpio)) {
-> +		dev_err(dev, "Failed to request reset GPIO\n");
-> +		return PTR_ERR(reset_gpio);
-> +	}
-> +
-> +	/* Assert the reset signal */
-> +	gpiod_set_value(reset_gpio, 0);
-> +
-> +	/*
-> +	 * As per section 2.2 of the PCI Express Card Electromechanical
-> +	 * Specification (Revision 6.0), the deassertion of the PERST# signal
-> +	 * should be delayed by 100 ms (TPVPERL).
-> +	 */
-> +	msleep(100);
-> +
-> +	/* Deassert the reset signal */
-> +	gpiod_set_value(reset_gpio, 1);
-> +
->  	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*port));
->  	if (!bridge)
->  		return -ENODEV;
-> -- 
-> 2.44.1
+> With this fix, why do we have to play the complicated carryover
+> trick?
 > 
 
--- 
-மணிவண்ணன் சதாசிவம்
+I understand your code now. carryover_bytes in this case is wrong, as
+long as new slice is not started, and trim slice doesn't erase extra
+bytes by mistake, throttle time should be accurate over time because
+bytes_disp is accurate.
+
+And root cause really is throtl_trim_slice().
+
+However, by code review, I think throtl_start_new_slice() should be
+handled as well, the same as throtl_trim_slice(), if the old bio is
+dispatched with one more jiffies wait time, issue a new bio in the same
+jiffies will have the same problem. For example:
+
+Caller do sync IO, with io size: (bps_limit / (HZ / throtl_slice) + 1),
+and caller will issue new IO when old IO is done. Then in this case,
+each IO will start a new slice and wait for throtl_slice + 1 jiffies. I
+believe this can be fixed as well so that BIOs after the first one will
+only wait for throtl_silce jiffies.
+
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
+
 
