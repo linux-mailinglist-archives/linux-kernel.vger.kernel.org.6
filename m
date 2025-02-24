@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-529229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B52A42232
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6E3A421FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 136673B0FC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:51:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC391882C74
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84497254845;
-	Mon, 24 Feb 2025 13:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D58D2580F2;
+	Mon, 24 Feb 2025 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cM52n2M6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbfjZmGE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C871724A06C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69B024E4B7;
 	Mon, 24 Feb 2025 13:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405064; cv=none; b=auv3P8VTytZXbO0oRz+kUMljUxFLi2tTvrKQgnCVjK8n7A+KjFXVtUJv3pDzPtR9p3jhTFQERrzb0B1F3Sj4PSLqFy1Y2upw6pAjBaT9w7MgcYC2cAuWIWVOt3M86T9eCa6UPB9zbk6Z4nfpRLC5Q0ue5B/flyP6tJAEfgcAHaY=
+	t=1740405065; cv=none; b=L/ZBaqPJq0GicTZoNSaw2SwKM6UL+N9YiYTICcnWJT1vhb15/B8KYJ97sLIOC3TgsT2BgYEoxEmJYUZz5+KuoDEEArrd5Qj7wXabem5ZgSzXqfLiEIgQaKoe6JsnhSBPvaIbM3Fj7d5Wq9cb2FTjtDzkPxhdS48EWC5VNDeVN10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405064; c=relaxed/simple;
-	bh=pZKfDA3ali55C1jq54Pf/O8lGAmzjSBZ65ftlVmOLmA=;
+	s=arc-20240116; t=1740405065; c=relaxed/simple;
+	bh=2fFVeE5CFvJX83ipfaRcNiSD6AFsyycdrk50gKKutJI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gaCdNIaO82XRpaeqcjaYyhQreoMTMNYWY1f8aOacpYEjPsC+DMr/cguQgV+aLJImzAVld+bAf9FF8PG/uZizltS+4bDpgOaLNJiCe2osfFrTV13Io0R5FjbrR7WGYkQGvLBX4zL6yNiUAptaj3ljEQfLyUeEduuGV5362KXmNwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cM52n2M6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 56299C4CEED;
+	 In-Reply-To:To:Cc; b=cChHkqu0q3t6IBeWey3uyKFOPVuIm876eoeTonN0h+YoR8IOGSxjfYixnL31yrAR0+br+0pDIhVL5/k90p2NaoLy5/N3kMWjekfGvMIfE8TF7t1J/NRPPautqPZTd5tdkjkK8UUAndOOpJ3T4scZ/lu+EWRoNpKLUUYJWXCfKEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbfjZmGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 6831EC4CEF3;
 	Mon, 24 Feb 2025 13:51:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740405064;
-	bh=pZKfDA3ali55C1jq54Pf/O8lGAmzjSBZ65ftlVmOLmA=;
+	bh=2fFVeE5CFvJX83ipfaRcNiSD6AFsyycdrk50gKKutJI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=cM52n2M6D8g8xJjlTRy3CFPc8+QvvP40luSWKnZyOHyrE6ahQSF7fEMvpwIUQ53HT
-	 qnU0HJWPI/V+8NmAhwrll8fjJ7OpUYascWVsTSYmnMXRebfbRajeTr6ICLv5EGrc8U
-	 VbGj01J8660oNcoEsMar1KuRjlP7Jtdw/WXkMrhuEbCXTfZk+B0xMjpRto6y6tOkjX
-	 9PLYLO9ToTM5Rfk1BW21ux09KgiAgtbvJLkFVoiqxiZ5wSF7rKOasOB9qe4vtnH179
-	 MupX4QiUPqqkFKwB/LyDFaoPiArmpz739ZG24lSxZkfzSVAdel2ZZtim/idUqek0/6
-	 HXVQFNQJEwDnw==
+	b=IbfjZmGE6TulPMcMu5ucaAQTgTvn++o4J0YwgJGPXGx+p+Qv+8EGybZQDo6O4sHjm
+	 Du9YIbWupOhCl95tfy7ypFkPD09Zx8eUJQeEHJKYENSBBKCl6QMUmCPvfhIJyFQMtB
+	 TKclEtjkYWKSTkTXWelYCtljK3qLifZk2gyz3nVvfWx2TH51lZ39QOeczOOUeBIbed
+	 1ti52p6XEpvT6Fegf2JH4ly+BTLRrJ9Dh7fLa+Gvp3SHz3V+CjZ2FE2kg+mQN1Atf4
+	 Hbpjx5DzsiQvX4nRfDkkygZ4s/p8VCx07Q5ATLz3zJ1A5szm81bsHebyo/42fIJ5Ny
+	 x7ZNgz83QLFEw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CB12C021B5;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E27BC021A4;
 	Mon, 24 Feb 2025 13:51:04 +0000 (UTC)
 From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Date: Mon, 24 Feb 2025 14:50:54 +0100
-Subject: [PATCH 04/14] dt-bindings: vendor-prefixes: add GOcontroll
+Date: Mon, 24 Feb 2025 14:50:55 +0100
+Subject: [PATCH 05/14] dt-bindings: trivial-devices: add GOcontroll
+ Moduline IO modules
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-initial_display-v1-4-5ccbbf613543@gocontroll.com>
+Message-Id: <20250224-initial_display-v1-5-5ccbbf613543@gocontroll.com>
 References: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
 In-Reply-To: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
@@ -74,11 +75,11 @@ Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, 
  Maud Spierings <maudspierings@gocontroll.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740405062; l=973;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740405062; l=1292;
  i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=GJs6pNBexRn96NM+OGXxZUfK9O73xNA0YJNFsc5BkjU=;
- b=IJEmmCyq9UEKO0tAanMOCXF7YyKSMtNx5xwL9il4SoqOZ0zccX5GR4svLEQ+D5oAUtrxo2Flu
- CzPPhebk0IOA4dQ509AFMK+reya+R2ZDIqRtiXy22t5OplPrBzlh7Vc
+ bh=MzfkGV7s1Bx+ubm3O33iLbvUjEe7KE6YD28WzxYypQI=;
+ b=XPAaKQUyngLl8QTmZ2xkR4XmJbDTaVMt0nfkm38EyJAR9Hbkjfs8fA5TFPpN3fjtjLE6mPMh0
+ IcCzcWXiVmbCoxk1qiFME3yluxZfxnzsoxkLi+xdTK8Air4RmwpRu2T
 X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
  pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
 X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
@@ -88,27 +89,31 @@ Reply-To: maudspierings@gocontroll.com
 
 From: Maud Spierings <maudspierings@gocontroll.com>
 
-GOcontroll produces embedded linux systems and IO modules to use in
-these sytems, add its a prefix.
+The main point of the Moduline series of embedded controllers is its
+ecosystem of IO modules, these currently are operated through the spidev
+interface. Ideally there will be a full dedicated driver in the future.
+
+Add the gocontroll moduline-module-slot device to enable the required
+spidev interface.
 
 Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 ---
- Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index dac80c62b742fec14cd7652d9d690acc4b4b1ee6..5dc61a05de0ce907caeb60bb92018569df0d19e3 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -597,6 +597,8 @@ patternProperties:
-     description: GlobalTop Technology, Inc.
-   "^gmt,.*":
-     description: Global Mixed-mode Technology, Inc.
-+  "^gocontroll,.*":
-+    description: GOcontroll Modular Embedded Electronics B.V.
-   "^goldelico,.*":
-     description: Golden Delicious Computers GmbH & Co. KG
-   "^goodix,.*":
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 8255bb590c0cc619d15b27dcbfd3aa85389c0a54..24ba810f91b73efdc615c7fb46f771a300926f05 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -107,6 +107,8 @@ properties:
+           - fsl,mpl3115
+             # MPR121: Proximity Capacitive Touch Sensor Controller
+           - fsl,mpr121
++            # GOcontroll Moduline module slot for spi based IO modules
++          - gocontroll,moduline-module-slot
+             # Honeywell Humidicon HIH-6130 humidity/temperature sensor
+           - honeywell,hi6130
+             # IBM Common Form Factor Power Supply Versions (all versions)
 
 -- 
 2.48.1
