@@ -1,236 +1,173 @@
-Return-Path: <linux-kernel+bounces-529646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D551A4293E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:18:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0909A42941
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD853AD4D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:11:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C5A3AB163
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32C3263F26;
-	Mon, 24 Feb 2025 17:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEA0263F4B;
+	Mon, 24 Feb 2025 17:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cx3ZwOe2"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2069.outbound.protection.outlook.com [40.107.22.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAxOmcAC"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD7226136C;
-	Mon, 24 Feb 2025 17:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740417113; cv=fail; b=uLpEnFJO0jOeiFR8tpAKgZBCqCT7oLwaijmesMH+l4Bgzth/+r4+qUU3zkjp4Qjo/VfQ5+3+aGVWOgniQHqb4qWlI/fdR074fkHN9FS3LMxaaDJnwjJI30DvyOH4Tah3E8gI9/NxZDxZ3Dx3PlkdXEvrWxqjSoisp2fA9hs+g2E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740417113; c=relaxed/simple;
-	bh=P3BJa9lj1XclXmwFTykj8WJHfN/J9sYRclMkSVpxooU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AxrbP530UNHxb2T7JWP8a7BYnWchTNoDojm0F0PB7xnsnq1to4vQwMpkgE9YT3g/qCS4mWXDqGdX7dSwF+9WmqOzIJ8v0DoXNBS+6QkRLTIeAjcGs7tS/R1jmiMcmk447tZSPeOfSsNLGr+zzBJPEpdWDosg3ZuXBBiwmfeWXro=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cx3ZwOe2; arc=fail smtp.client-ip=40.107.22.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A+UILeNmhXpaKPsVbb5mPG5rx//uyT1GmyJQKp+lkZC3u/WBJqEn9oC49DFmyC8wUcoJmRAecfVGGYimpbm19WLm7jOfrNb0o7PID5yuooiS9fNepL3++D+6epM24urpRhvnckkUoZmW+GGi85/L0cPrbcD/zg7zVI/OfPBFTfLu/iXd0Vp9GrpmeDIgmuhyA1P1tQjTRy+j1QLVSAdnWwEmIDgVRaYsn4kCM7w3dgbVI7AMQ6YAwvrbWWh0fXpArn+1qOwjXmWcOFldiqa0DExdsAMPE7mmPHnmK1OiKSAUWXSmEFT3jI85upfO01ibOTNaXTf4UCY+ChN9LUJc9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TD9OM8eXvfveIqh4KTLufiaeAHslTxS/XUii1rr8cGA=;
- b=OYKmRLv0n0UF1SomkN9rLBqQT5TYTV8WfkCH8miUPDiv9mCaFlTUC115lNHkNra9J/0tkN9R8acff+WcKLogyxiTaIA5i1esqMFQX+6s1JH9fE1KplGPlUC8HGHvDeD8gNCvW1NeFizU26DjX4uKtcZaLdkBnh9uXx5DN6+yE7VwNAi/yA0RTgCCn0uNS8vvfCxFFPZmovlrAZhqyNzNel0R9wbGN/elW8IZ/AvC7abe4IzPi8veVysvbM6ODHxss9W1p9f6m6G+qQ4h1gcbzOOxH00M4UqOqhi9LbTYZJHVVWVE1JubM14/fozQqdcXbYoVh+5us7xPzgeeVl+VXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TD9OM8eXvfveIqh4KTLufiaeAHslTxS/XUii1rr8cGA=;
- b=Cx3ZwOe244P2m48CxoZ5fxy8qglzKvEX7gWFjVFUWbzwT24213dsrbOItLbr0HNvbUDIo8Fdt/YZFmvjyh0t309300fj7VIQKfuDhkrkT2mTMSLjBJZr2ODQTSw+/bhzvS1DXL/b87VhkQZ/7eJpRtnokv18yidYgDFR8hBge+cejz9VNQEBhbc6cIlntpiOhWj0eYpfCgo0BenI1VoS3YwmTeHu1IM9VYedZCeK3yarg1zT0ift36Ih/C6BDJzpU1NMPnNDMUO6Af2Dcp1HV5R/htUT9DKvFaw5Reo50FEVCa1Qys+5jjXKkL2lLr8bkAHw/xx5WSsh+j7hAgcNvw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10488.eurprd04.prod.outlook.com (2603:10a6:150:1d1::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
- 2025 17:11:48 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 17:11:48 +0000
-Date: Mon, 24 Feb 2025 12:11:40 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: Shawn Guo <shawnguo2@yeah.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] arm64: dts: imx95: add ref clock for pcie nodes
-Message-ID: <Z7yoTPAvhzqfBel6@lizhi-Precision-Tower-5810>
-References: <20250128211559.1582598-1-Frank.Li@nxp.com>
- <20250128211559.1582598-5-Frank.Li@nxp.com>
- <Z7nmckvKi1xcb4Qo@dragon>
- <AS8PR04MB8676A4DA393EABCFF5DB80948CC02@AS8PR04MB8676.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676A4DA393EABCFF5DB80948CC02@AS8PR04MB8676.eurprd04.prod.outlook.com>
-X-ClientProxiedBy: BYAPR05CA0064.namprd05.prod.outlook.com
- (2603:10b6:a03:74::41) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AF7260A5E;
+	Mon, 24 Feb 2025 17:12:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740417154; cv=none; b=lHJXOo+y6IqHhnF6gIOEjady0B0G/hHJLsGLUGCm7FNxyXwWlvrkNe7wwPYaLcl3XNwOmdgW4JaNd4tCTNKKe7wMx73ycyvo6wdKrfaCvzWTRKh+dGUZvGKkrACoggqmlNQynCUtzQxDrOccy2q2D7ziXnartOuGpF3PW+4wiF0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740417154; c=relaxed/simple;
+	bh=INCTVpEiHnc/oIKx9E4dIa9hFE2BQCY6HgP+mcwRRT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0j9NcViaISwKirVf5i9+jT0QV58paFjJTzK1sQNV1iKD1lUaPTEItJlVY848DwHgQxS2tPkn8lrPP3ax7PjSOLlFU7WWLu/e38517Hm3gQaUahbpgJO5MOF1cRisFZc6yhNXXtpWkWvz72adQNNw7HLWuUrwSUPL6oYUx8hJV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAxOmcAC; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-220c8cf98bbso11563205ad.1;
+        Mon, 24 Feb 2025 09:12:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740417152; x=1741021952; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TlqcvofmGggiBiv0CE7G1YH/4SRW4duxvdw0TO81nSE=;
+        b=LAxOmcACcMgm6BQWO9ZvIyHVb5WSurpcb554CHYiV0Bluz0tqxeIifj3C7gG4f9Vpw
+         VN0vYlN5mSVcZxrCdI16vklZHc7/6xDoCvL+I+EgWKfW8SYyewkFDpJwFxcx+2S2b4x3
+         P8oQqJZbHCoHeXGmQxv8aiGEZtazJXn0ZPWm1Q/bizyasPHtE28Nkw1h77rsJgJboKQ4
+         36wa2+9GzXimb69s0H/Z61nO/7TrNdl48hxKvoqInBDYDhU1f07YgF88deDOTLbM7sqf
+         fVb513sQ5uKfD519tXDM6MI5z4Em8ofa1zNs/GI22jJqu+uffYg2bIMNrKjsfBn/LiC4
+         GRMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740417152; x=1741021952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TlqcvofmGggiBiv0CE7G1YH/4SRW4duxvdw0TO81nSE=;
+        b=Q06WDhIogxl+pYFdIDvEjEB5tUJFMzEVlTrQTvhkBIvB6m+FSAKPJlsDyT5wYndbvP
+         gMRVHeuDMueChyeBgZ/rt3SX+K7dAc2QqnC7eFEPKf+PndmKfM5w+aPUEVJdftkXhW6A
+         b/GZlTzBxBlvQVdfxzDtuT1sNoyJkkHu8aNBUnHj52O0Dl4/jZZgKFuS67py/T0k5Jjl
+         lSxnjwW32cg+dABaRbpDm5186/M6CdCak+7xQ3Ufcw/ofZFSXxgv8SxxXn+XbGb+lBQ/
+         F8DDi7dS3Z9/kCgQWDxn80YyXN1wYwi+cB7EqKgrzBsw1ldi8e1lQICk96RM9d/kS23R
+         5udA==
+X-Forwarded-Encrypted: i=1; AJvYcCU+ZzC0o63Dp6WFsY+oVfSo4kov7LAe5kZbEurbW9VgNX2PiyJTYV7WnNYewkWFuZDHj5I=@vger.kernel.org, AJvYcCWGWtWI9+VXWUBqyf/CioCO+uwT8L/pGpUHG49C6UVgwMaKWLKf88ZVRZuneHSm/SUSvf+qOoj2qLN/xkX/xWZy@vger.kernel.org, AJvYcCWYlO3vaB8037KFUTeo0PZ3bbmO9sieFLkyuHlpZpqnr6Jfzyga2MT07ID1AvppO4eoRwAFIfoeX04efCDJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrQ11CnJiGJb0diZ8tYN+Y2ExMdBmpFLzFuTzs3Qpt2KIIAWzu
+	M4Ur4tFnyxv/nBGPc1GGETd7YrBny/Y2nyebFVWxXgWkf97yqgE=
+X-Gm-Gg: ASbGncv2cKhhbpCqrltexjUOW/j+mdGXYsNZzDzuT8h+Iljf9TFayR8cLMIIXzpCUaN
+	/2ghu4Xncq6ytIkLaz9okn95FNeAjOdnKqwlu88+gJ9YkdhvLfU7tDTQJRpFz8fvwhqiDoT1CHv
+	PXezLDTKz4g7E5hKKc0CD3CVtG153w5jDA7Abe7+3G6k/YZcVqUhGF8ypjbf58eS1pzcmb5n69v
+	sZLMC2PJBpJlvh49rqMVum/OKsnxZlVnPSB+nsuuCBXpycLrVKBqXunPwA7/P9QJwCdDLAtg8c1
+	CtddmFeujaTR1l+W5X6WT9wz6A==
+X-Google-Smtp-Source: AGHT+IEn9JgospvuGafyt2PK7wawjv6RYzjXoajKoNOMWXmzMfR7NyYhQJKwd1T2G5qAEYY1RFGtgA==
+X-Received: by 2002:a17:902:e88d:b0:21d:dfae:300b with SMTP id d9443c01a7336-221a0ec46ffmr231562035ad.10.1740417152537;
+        Mon, 24 Feb 2025 09:12:32 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d53490c2sm184364335ad.47.2025.02.24.09.12.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 09:12:32 -0800 (PST)
+Date: Mon, 24 Feb 2025 09:12:31 -0800
+From: Stanislav Fomichev <stfomichev@gmail.com>
+To: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org,
+	eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+	yonghong.song@linux.dev, john.fastabend@gmail.com,
+	kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+	jolsa@kernel.org, shuah@kernel.org, hawk@kernel.org
+Subject: Re: [PATCH bpf-next v3 4/6] selftests/bpf: refactor
+ xdp_context_functional test and bpf program
+Message-ID: <Z7yof3pafRsMwBrf@mini-arch>
+References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
+ <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10488:EE_
-X-MS-Office365-Filtering-Correlation-Id: d74013f9-43df-4701-72f2-08dd54f6528f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|7416014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WGtpM3JrVEZ3R1VwTVVjYjFYc3BoNUZHdjZtclZJcmt1emw0TUxFdkFidDVB?=
- =?utf-8?B?ZmVJUHpDWWtwTHV0UWdxY25ldkI3ODdpWUtGaWI0dFJhb2RkTTl3ZHFrUEYx?=
- =?utf-8?B?Vm5icU1CRTMraENoSnduRThER0JFUVdQVlZKMzJWYTlCbG1nWlgwWGQ1aVJT?=
- =?utf-8?B?UG03c0tuOWswNWNXQW53MHNPRFRwNDIrd1cvcXJTQ284aUtuNUhMQ1FYbTNQ?=
- =?utf-8?B?dTFndzV2UDV2eWZRN0luMjFIVlYvbzFYbk9FM1lYUDBreUN1cVVnd3ZHcXkw?=
- =?utf-8?B?bVh1akp5Njhqc2JaQkxHNmpVWTJJUHpndDJtYjMxTWxVK1J3a041OGFOdzZs?=
- =?utf-8?B?am9jTzMrYXNrZkZrK0N5SkhXWVRnbm5mOGtLQ3ZFUVZBa0N2cXpWSkFUeWlZ?=
- =?utf-8?B?M05zczJxblNmK3V1WEplRi9kRXlBNjUwUmkvbStSOWNKLzhONDNvcUJ3YWtV?=
- =?utf-8?B?ZnZVc1BpSUt2M2JGaldUa1ZXbDJjTHQ0VGNvZERYVi9SZ1pXdjdLaXZpQmoy?=
- =?utf-8?B?ckdzUml2R1pMWWdxSk0vVTBYd1k0dnI0NDBWR3l6b0pheThpRUk0VXZ4M1dI?=
- =?utf-8?B?WFJGTkxlL05JOGpIaW1QSnZZMms1eWZaeHFpSmlVS1FxWmFQTk53WUNSOWNt?=
- =?utf-8?B?dmgybm9ESDRwQ051dzdHeWhHRFA2dWorN2kvNzU4azY1dllqTTArWVhWd2FY?=
- =?utf-8?B?RmJFUnlQa1QwN05WNkpxdGdHK3ZVKzN1RzBweGQ5dkNPRVlWaTkrcDA1b3U2?=
- =?utf-8?B?N2hzbzV0N2pNb00zU1VReEVLTGZGZHcyWThoenh1NkZvQWJLTmU4YzRtVFdJ?=
- =?utf-8?B?MjhRSGluQVZ1aVlmZWh6NzR3WkJzVUV5SjJ1ZWE3RDlObTN0T3gwL3V5NFJx?=
- =?utf-8?B?REtaNmlDNnFLNkNjMzlROWVpMWowUHkvRkJ5ZVlFQ1l0R2hla0huSkZTMlhY?=
- =?utf-8?B?Z0hWRmNURkU3UjNUcDIrOVhrdnRwdnBENVdFYUIzT1pOUTBYVU9ScGdFTnMy?=
- =?utf-8?B?OEE0cWQ1Wi80czBRVy9uaTIrZHZqWXczRzNiemhpRTRlMWg0WTJiNTJTWTRh?=
- =?utf-8?B?VmNCZzBONEVuYkV1aCtVb1lWTkZFVThFendhbjZDdzcrY3Y0aS9LOGVteWEy?=
- =?utf-8?B?ay96U09FbjRxOUxRYnpnQTZ2bnVRS084UklmQll6NEZWTVlVL1Ixa1VrZ0hp?=
- =?utf-8?B?VlE3dmF5OWl5L2dBQW5MT09yVGV1S0RFeHJGUE5aSGQ5d0QyclBkV2doK09E?=
- =?utf-8?B?ZjlIc2w0SE5halhIQ21DcnMvWFdwL3I2SDZKN250dG0wVXFacmw1dnNnMTEw?=
- =?utf-8?B?NnZka3V6R3YxMzczWUFuU005bnFlS1R5RmwvNmVqdFl5YzlQSkpWcW50QzNi?=
- =?utf-8?B?aGREQXQ5bEQ1djR1enByT2RETU8rdnBzK0d3SWZLVGorNWlWZTEwQkhTbEEr?=
- =?utf-8?B?eG9IZWRGV3VtTHBQWkJOL2Y3endXZVhUc1pSWnNCVXd2YUdpSlB4MU9zaEtk?=
- =?utf-8?B?N3Izc1IyUnlFamVvdERFU2xLbEhmSTc3QU9MZkFwS3JDak5qYjBPSk5IbzdJ?=
- =?utf-8?B?QWVDNXd6Y1dvMlZlb042TXFjME5GWHZYS2pCdWNtVTA2RG5xbWhaZldJMnl6?=
- =?utf-8?B?Y09lc0REZVhsT2Nwb1FZa0gwc3QvSjVsalNRbGVWT2M5bmxtTkVhOVdaWStL?=
- =?utf-8?B?NGxrRUd6R0wySm4zUnU2UHlqMTZVUEtHZGxtYi9UL2Y5RWdnVzlSdGtUWTEz?=
- =?utf-8?B?RWhNcldta0p6V3RFV3p5bG45KzEwQ2NnZitNNFNIR1I3eCtpU1F3THFiZGhR?=
- =?utf-8?B?MzhvM2JNYVRwZm5ZSUpYaDl1UTNLeUFBUU9jN3dxUEZxMjkwVGRlbWI0YlhB?=
- =?utf-8?B?d3VnS0o0TFFETEpGZUhNWU1XU2NSM1JFaWpQVHEvNGd5UWc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MldRNjh5WXdpbmhpcStOVHNyOTNqN1VuTVUveUlRS3EwSU1VSElNZTgzQmk5?=
- =?utf-8?B?S3J1bGdVOCs4dDhGQVUydDNKTmg3K3NzQi9OUkVRTGtwZnFJdWNKRTRXTFlV?=
- =?utf-8?B?RWtra2VvS2ZCOXJ0V1A3MUZxQ0YxZXlBUlNrVVg3MkFFWXpUYis2TWtDd2t4?=
- =?utf-8?B?cjRyY2xqMnBPclhScUsrRGxiWWRWazg0amZlQ2l4L0xOdEN4VW1HL2Rrdmxm?=
- =?utf-8?B?RHJqZ1JQMDdzYUsrZUx0NS9DYTNic3RrMUEvSVB0WXEvODBleTdjQzROTUpZ?=
- =?utf-8?B?cURtUHlnM00xMDBMTnAwNWFPM05iVG1QUFhnQmRxd0I5WE1KbXlxU3dnRmtm?=
- =?utf-8?B?ZzhzeStRV1U3UTFVcCtVVVBzWTZlRkEvTkxwdGZUUzFJYzFlV1cwSnRteGNs?=
- =?utf-8?B?T2tQMmhRRUxhN0NJU3NndmNvMFVDLzh4cHhhTy9sVS9DUy8xWTFMbVU0OHd2?=
- =?utf-8?B?aEFCWkk3enNtcDdINTRXZVpCZHJTQWF1MEVLeHhmRWVJaEJLOFA2MTI5NjlF?=
- =?utf-8?B?MmwxU0cvcXZSUDl3dlFrak9TdHV1SVVtQnR1SmZzaUZZekJ2SXp2VlQvMjUy?=
- =?utf-8?B?WFVEbCtKRzFQN3BVRUtLeHNmeS90SnJ4MUxqN1hBeTdoK3pyNlQ2RDhhMjVa?=
- =?utf-8?B?aTNCSWZJa2ZNZnFXLytpZVdTSFZPNXBGRkNyT25QTFN0dkl5Y0tMVXpibDhq?=
- =?utf-8?B?UGp1bTBudVNRcTNmODNVZ0hJSTh3cWlNMnBlbk1yQWh4a011SkJpVjJwT21w?=
- =?utf-8?B?WVNUKzJPOHRCSHczZjcySEZ4ZkM5RjZGQUVDZS9TbDNNb3Z0dVNkWDR0RWIw?=
- =?utf-8?B?NGRZU25qRzBLRGl0ak11c0U0MTVVYnVhVWF5aFBSdmdJbDdLSE80dzhydGRU?=
- =?utf-8?B?T2ZUaEFWRmtSQkkrbEJKMmxFc3lwMFpIejNzRW9uZ0ZiK0oyT3BjS2pCMmZP?=
- =?utf-8?B?dzY2aEJDU0VYc1dyUGY1NFVlYmVNWmhEUm95V0dkdWl4NDExN2k4OTJ2SkVt?=
- =?utf-8?B?cWRESkRweHJ6SHZMM1pLT0ZQMkxnY3BDRVFMZHVuNm5IeUxjbExLSnN6dVYr?=
- =?utf-8?B?Q2dCTXdmam0rVHBudC9FRDRRTWFDUmRUdnM0YmpacXVzNWlUQnAyY1BlUXVW?=
- =?utf-8?B?bzA1TmdmcDFRNzdaT1VLQkVaSDBHVHRjcFFDTjY5MlJFdVZoa3BvelU5ZDRZ?=
- =?utf-8?B?WVY5MTQ0elBtNkxEM2JaenEzT0h5NHQ4OElOOU9GMC9Zdko4K2ZSM1F5NUl3?=
- =?utf-8?B?WGlRRXhxVHY1V1ZjeWpwYmtsYVdGZEdwcEpUa3R4eWFGTmVxUHorSUFyR2No?=
- =?utf-8?B?SVhtS2FUd0RIUG9RTnR6MS9rcXQwazZseUlpS1U5MVgyUHdaWFBzL2FJbkJH?=
- =?utf-8?B?L0VjZWZjWVVQOUZqdkI4T1MveS8zV3IvK3BIQkR5YWNRcDRSN2VFbjR2STF2?=
- =?utf-8?B?Z085alRKREpSZitaWVBGaWJpZXBhVncwZlJiUW5YZjVlUFFXRlpWVEN2M3pz?=
- =?utf-8?B?Slc1MkJmMFBLN3A1b0lVZ2ZOcndPZURwWHlKT2hzd0E3d1A1NmpjM1JydDh0?=
- =?utf-8?B?bVhTTzg2ZEN5QlBkaCtKS1VXaFAvOTlzZnZUWVVXZzFHT0dZcjZiRVNBazR0?=
- =?utf-8?B?WE1xSDM5TFlKNVBYdHRSN1FrVkJEazAzWnlZWjZEU3ZoZFc5UEQxdmxqM3JY?=
- =?utf-8?B?MEpUWEU1SGhqaXQyKzdSd1dtZXY4YXViVVY1RFp1ZmhQbURvSUVGUEE2ajZ5?=
- =?utf-8?B?R0RtemtaaGl0MTJiQUdqaUI5WEI5YzlUNlpWSVZERWV5RS9GNlNDN29Ibjdj?=
- =?utf-8?B?MnpTeHl6dnkyTzA0N09MOU9ZdnYxWmhHWGRyamUzTEI2VGJBYnhvcEx4R2hS?=
- =?utf-8?B?azRXRHQ2ZmZYazR1T2Fpd2EzM0NLVEdtYWFBWk82VmNTdGtFNUllSWdSdURz?=
- =?utf-8?B?MlpKNFBvQjlDc0dKbjVrSE5scm1hL1kvY2pXZWFzWkhTZERrMUtyR0hPTk5S?=
- =?utf-8?B?WTNka2JpanRySHRodmpXM254REZXWExQNzI0K1pDTjBCQWdld0JKYVhpdlRk?=
- =?utf-8?B?N09qOWJEb0RHUiszUUgyWGs5WnlZSWYvTzZ6cFFBRllFMzdabzNKeVpLTW9z?=
- =?utf-8?Q?iYD5KZVcu3atPjpmvRkfwqfUq?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d74013f9-43df-4701-72f2-08dd54f6528f
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 17:11:48.1634
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: i+i+K1P8LDvs4do+yvUaZzsleIwneFf80WjHfeCSlcb85SsXOindcK/MO061IK7Gd6NRH5bDqCctN71oFfgObg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10488
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
 
-On Mon, Feb 24, 2025 at 02:10:40AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Shawn Guo <shawnguo2@yeah.net>
-> > Sent: 2025年2月22日 23:00
-> > To: Frank Li <frank.li@nxp.com>
-> > Cc: Rob Herring <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;
-> > Conor Dooley <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>;
-> > Sascha Hauer <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; open
-> > list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-> > <devicetree@vger.kernel.org>; open list:ARM/FREESCALE IMX / MXC ARM
-> > ARCHITECTURE <imx@lists.linux.dev>; moderated list:ARM/FREESCALE IMX /
-> > MXC ARM ARCHITECTURE <linux-arm-kernel@lists.infradead.org>; open list
-> > <linux-kernel@vger.kernel.org>; Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Subject: Re: [PATCH 5/5] arm64: dts: imx95: add ref clock for pcie nodes
-> >
-> > On Tue, Jan 28, 2025 at 04:15:59PM -0500, Frank Li wrote:
-> > > Add "ref" clock for i.MX95's pcie and fix below CHECK_DTBS warnings:
-> > > arch/arm64/boot/dts/freescale/imx95-19x19-evk.dtb: pcie@4c300000:
-> > clock-names: ['pcie', 'pcie_bus', 'pcie_phy', 'pcie_aux'] is too short
-> > > 	from schema $id:
-> > https://eur01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevicetree
-> > .org%2Fschemas%2Fpci%2Ffsl%2Cimx6q-pcie.yaml&data=05%7C02%7Chongxin
-> > g.zhu%40nxp.com%7Cf373e5ed1a6b4c7aefc908dd5351a620%7C686ea1d3bc2
-> > b4c6fa92cd99c5c301635%7C0%7C0%7C638758332322731937%7CUnknown
-> > %7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOi
-> > JXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=glq
-> > vwWeavp1SMo6%2F8rZ%2FbGMXgJHCeYPYIZVW3vkTFHs%3D&reserved=0
-> > >
-> > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> >
-> > #1 ~ #4 are applied and #5 doesn't apply.
-> Hi Shawn:
-> Can you help to take the last one dts patch in one patch-set below instead?
-> https://patchwork.kernel.org/project/linux-pci/patch/20241126075702.4099164-11-hongxing.zhu@nxp.com/
-> Thanks in advanced.
-> BTW, the others had been merged in PCIe git tree.
+On 02/24, Marcus Wichelmann wrote:
+> The existing XDP metadata test works by creating a veth pair and
+> attaching XDP & TC programs that drop the packet when the condition of
+> the test isn't fulfilled. The test then pings through the veth pair and
+> succeeds when the ping comes through.
+> 
+> While this test works great for a veth pair, it is hard to replicate for
+> tap devices to test the XDP metadata support of them. A similar test for
+> the tun driver would either involve logic to reply to the ping request,
+> or would have to capture the packet to check if it was dropped or not.
+> 
+> To make the testing of other drivers easier while still maximizing code
+> reuse, this commit refactors the existing xdp_context_functional test to
+> use a test_result map. Instead of conditionally passing or dropping the
+> packet, the TC program is changed to copy the received metadata into the
+> value of that single-entry array map. Tests can then verify that the map
+> value matches the expectation.
+> 
+> This testing logic is easy to adapt to other network drivers as the only
+> remaining requirement is that there is some way to send a custom
+> Ethernet packet through it that triggers the XDP & TC programs.
+> 
+> The payload of the Ethernet packet is used as the test data that is
+> expected to be passed as metadata from the XDP to the TC program and
+> written to the map. It has a fixed size of 32 bytes which is a
+> reasonalbe size that should be supported by both drivers. Additional
+> packet headers are not necessary for the test and were therefore skipped
+> to keep the testing code short.
+> 
+> Signed-off-by: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
+> ---
+>  .../bpf/prog_tests/xdp_context_test_run.c     | 99 +++++++++++++++----
+>  .../selftests/bpf/progs/test_xdp_meta.c       | 56 ++++++-----
+>  2 files changed, 112 insertions(+), 43 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c b/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
+> index 937da9b7532a..4043f220d7c0 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
+> @@ -4,13 +4,19 @@
+>  #include "test_xdp_context_test_run.skel.h"
+>  #include "test_xdp_meta.skel.h"
+>  
+> -#define TX_ADDR "10.0.0.1"
+> -#define RX_ADDR "10.0.0.2"
+>  #define RX_NAME "veth0"
+>  #define TX_NAME "veth1"
+>  #define TX_NETNS "xdp_context_tx"
+>  #define RX_NETNS "xdp_context_rx"
+>  
+> +#define TEST_PAYLOAD_LEN 32
+> +static const __u8 test_payload[TEST_PAYLOAD_LEN] = {
+> +	0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+> +	0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+> +	0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+> +	0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38,
+> +};
+> +
+>  void test_xdp_context_error(int prog_fd, struct bpf_test_run_opts opts,
+>  			    __u32 data_meta, __u32 data, __u32 data_end,
+>  			    __u32 ingress_ifindex, __u32 rx_queue_index,
+> @@ -112,15 +118,66 @@ void test_xdp_context_test_run(void)
+>  	test_xdp_context_test_run__destroy(skel);
+>  }
+>  
+> -void test_xdp_context_functional(void)
 
-Richard:
+[..]
 
-	Still can't apply with your patch because usb3.0 nodes impact this.
-	I resend my patch because it is easy to fix conflict and apply your
-125mHz input part.
+> +int send_test_packet(int ifindex)
 
-	https://lore.kernel.org/imx/20250224170751.146840-1-Frank.Li@nxp.com/T/#u
-
-Frank
-
->
-> Best Regards
-> Richard Zhu
-> >
-> > Shawn
->
+nit: static? same for assert_test_result below
 
