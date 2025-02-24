@@ -1,226 +1,191 @@
-Return-Path: <linux-kernel+bounces-528731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9874A41B8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:47:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604BCA41B92
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:49:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248B01891A65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:48:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A56C1719FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C60D24500C;
-	Mon, 24 Feb 2025 10:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14637257ADA;
+	Mon, 24 Feb 2025 10:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZCUq+nN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MIbGB0/J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8278460
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95DD24C66A;
+	Mon, 24 Feb 2025 10:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740394069; cv=none; b=GeSs/C7wOF4/6oaYcu4fXEQ1C6XMr3AWbM1WSbxwsd3AtlEp6DyQVxxVM3y9Sjlr6uP1mtW84dHQz1Ewq4aqqnJ15wPZsSV7FerrTnRs7hfglwoa4Y+wo7PCz0IF2AhJmtubqfId0/zvr6u0OPC0gvcSlRbjEaeZoaIe7r3kG6M=
+	t=1740394134; cv=none; b=A22/MA1TE/GW6dBt21TesxfXMZDbr52eGO4fkRnPXscbqEsl3O8Z4cSg+cGcKLa7g2PcPMW94HPCf9B3rVdcx8irV+ZpNndDlUgL7m1ABcWM1it6a3v/6vu7cG1IYworw98R/DFzEaQMEplJAf9BhyTp1u6QZQkEv3OP8yZRnJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740394069; c=relaxed/simple;
-	bh=eIgCdJjAMkjDXoM50NjKZgQTAKFkDD604iLENVAOjYE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nn4ugIfEi/S+8ZgGyou7UmTbeunKBSHsWIojJy/4ucicSEfbjZP82mcNbw5EpKFx+Zi3ZhlkCBCWqKNxlidqzInI6u2IG0A0YqUcwqZ1xml1yX9DhxXD5pKxF883nVZ6yCoVspWoyGGDVHhGJIDfVVLCArVeTUYlXaovRbEyDQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZCUq+nN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13206C4CED6;
-	Mon, 24 Feb 2025 10:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740394069;
-	bh=eIgCdJjAMkjDXoM50NjKZgQTAKFkDD604iLENVAOjYE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=SZCUq+nNl6X+bObN5eHBPS/GzC6UxloKEe63PssWGq4NB7Ukk2dmG9EiJANEesWjk
-	 Czhj8zApGt7pxbqeKI8FukywLRseKOfuiR5h8Ys1JkLsrKHjtxoxE7lNRRBUM9Tn1g
-	 nrZXjIzuDnKwurQKqFAsyRgspw6jmVzL24pzk8YbfpsIUx3KAc9hNuKx6yw8vGEVj2
-	 s4kV72YnNaL/fDlIB+GzzKOQX1di3XkuzRQx8WngsnVUTuBnBoOXKtRKXf+ZTFq967
-	 RmCTN/VVaJPyoa0bRep7wHKZaA3HGWcSiZcJjhfM1WdZk0xCG88wmHuv1apYlfl6de
-	 IQQ898wARlWAA==
-Message-ID: <5f390129-1b93-42d2-8db7-276c370db90f@kernel.org>
-Date: Mon, 24 Feb 2025 18:47:45 +0800
+	s=arc-20240116; t=1740394134; c=relaxed/simple;
+	bh=OtIOQaQoJLBkpZbs4145CiVHNBvcVb5nGQVLgTK4vEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qll4VDjzStPCugBvuMKD/8Ekkbaod+RphFD7IRIUJDA4fDSWc/1AjDR6d5xAZWZPtGJe7HAoVn7CYgLiG2Bw5BA3qjLfExi2gJXp2YiXcY5xEOJTSGA+2arhFBftL4ioOmwmn/ytkpLni0giDC+kaPYTS4DiHSi59MjZvMWMKYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MIbGB0/J; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740394133; x=1771930133;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=OtIOQaQoJLBkpZbs4145CiVHNBvcVb5nGQVLgTK4vEI=;
+  b=MIbGB0/J13BEccObtTd5BgWOu65Zb1/5VakC+1pEJrYMaDWLTGG64oxV
+   e0bAya4PVVSeUJd/f8ps+gis5YNbiRTHP0f6MnrVj/W750pnL6iblO3YR
+   XRhOBjeQOysvSRxPC/1aMeQ2//WL1TWSX4QJpEW+8Mqz4K6t7ik3weml3
+   cmL6BhMnHhNOEOKuEvE/dpmThVEQRbjL0y7HwIJ80MjLHyRfqJvH2G9Qe
+   W5pLprM3T9F404rqTngf8QZWeIPvz9PwA6YpWriJ0mk/IuMjykeKQrm5I
+   G9AtnDg0+jMprUs7muTSOk0thzgZshDy2H+bSz/P6ySIxdAjMml9yKlNy
+   Q==;
+X-CSE-ConnectionGUID: 8VRGrqfcSpCxiZmyLt+ScQ==
+X-CSE-MsgGUID: JkYzoda2Sgio4TGq/jlxRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="63612350"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="63612350"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:48:52 -0800
+X-CSE-ConnectionGUID: I0KWzrBmTauijSdEfky6AQ==
+X-CSE-MsgGUID: wqtI++JaSbCVnWW5Q/CAoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="139249147"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:48:45 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmW0u-0000000EfdP-23DT;
+	Mon, 24 Feb 2025 12:48:40 +0200
+Date: Mon, 24 Feb 2025 12:48:40 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "pmladek@suse.com" <pmladek@suse.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"kekrby@gmail.com" <kekrby@gmail.com>,
+	"admin@kodeit.net" <admin@kodeit.net>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"evepolonium@gmail.com" <evepolonium@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	Hector Martin <marcan@marcan.st>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Message-ID: <Z7xOiK92jFfDqujz@smile.fi.intel.com>
+References: <716BCB0A-785B-463A-86C2-94BD66D5D22E@live.com>
+ <C66F35BB-2ECC-4DB8-8154-DEC5177967ED@live.com>
+ <6CB20172-906F-4D13-B5E4-100A9CF74F02@live.com>
+ <Z7xCr4iPmIkPoWGC@smile.fi.intel.com>
+ <PN3PR01MB9597CF2907CBBD6ED43D5E62B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z7xIxFT-eB_OTGzm@smile.fi.intel.com>
+ <PN3PR01MB9597FA2077E6FD498E8CDDD9B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z7xMt2Kp1pFuMar2@smile.fi.intel.com>
+ <PN3PR01MB9597DDF5CD7965128C2075DBB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, Leo Stone <leocstone@gmail.com>,
- syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
-Subject: Re: [PATCH v4] f2fs: add check for deleted inode
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20250212072742.977248-1-chao@kernel.org>
- <Z6zQoyNp5td-Wgd1@google.com>
- <d8be79a2-9470-45b7-9df1-b571f2219c30@kernel.org>
- <Z64uA2ys4nhV54lI@google.com>
- <666e62d1-3446-485e-bac9-0cc8089b04de@kernel.org>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <666e62d1-3446-485e-bac9-0cc8089b04de@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597DDF5CD7965128C2075DBB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 2/14/25 09:44, Chao Yu wrote:
-> On 2/14/25 01:38, Jaegeuk Kim wrote:
->> On 02/13, Chao Yu wrote:
->>> On 2/13/25 00:47, Jaegeuk Kim wrote:
->>>> On 02/12, Chao Yu wrote:
->>>>> From: Leo Stone <leocstone@gmail.com>
->>>>>
->>>>> The syzbot reproducer mounts a f2fs image, then tries to unlink an
->>>>> existing file. However, the unlinked file already has a link count of 0
->>>>> when it is read for the first time in do_read_inode().
->>>>>
->>>>> Add a check to sanity_check_inode() for i_nlink == 0.
->>>>>
->>>>> [Chao Yu: rebase the code and fix orphan inode recovery issue]
->>>>> Reported-by: syzbot+b01a36acd7007e273a83@syzkaller.appspotmail.com
->>>>> Closes: https://syzkaller.appspot.com/bug?extid=b01a36acd7007e273a83
->>>>> Fixes: 39a53e0ce0df ("f2fs: add superblock and major in-memory structure")
->>>>> Signed-off-by: Leo Stone <leocstone@gmail.com>
->>>>> Signed-off-by: Chao Yu <chao@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/checkpoint.c | 4 ++++
->>>>>  fs/f2fs/f2fs.h       | 1 +
->>>>>  fs/f2fs/inode.c      | 6 ++++++
->>>>>  3 files changed, 11 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>>>> index bd890738b94d..ada2c548645c 100644
->>>>> --- a/fs/f2fs/checkpoint.c
->>>>> +++ b/fs/f2fs/checkpoint.c
->>>>> @@ -751,6 +751,8 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>>  	if (is_sbi_flag_set(sbi, SBI_IS_WRITABLE))
->>>>>  		f2fs_info(sbi, "orphan cleanup on readonly fs");
->>>>>  
->>>>> +	set_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>>
->>>> What about using SBI_POR_DOING?
->>>
->>> SBI_POR_DOING will cover most flow of f2fs_fill_super(), I think we can add a
->>> separated flag just covering f2fs_recover_orphan_inodes(), so that we can allow
->>> iget() of root_inode and all inodes during roll-forward recovery to do sanity
->>> check nlink w/ zero. What do you think?
->>
->> Can we do this sanity check after f2fs_iget in the f2fs_unlink() only?
-> 
-> Sure, we need to cover f2fs_rename() as well, please check this:
-> 
-> https://lore.kernel.org/all/67450f9a.050a0220.21d33d.0003.GAE@google.com
+On Mon, Feb 24, 2025 at 10:43:54AM +0000, Aditya Garg wrote:
+> > On 24 Feb 2025, at 4:11 PM, andriy.shevchenko@linux.intel.com wrote:
+> > ﻿On Mon, Feb 24, 2025 at 10:32:27AM +0000, Aditya Garg wrote:
+> >>>> On 24 Feb 2025, at 3:54 PM, andriy.shevchenko@linux.intel.com wrote:
+> >>> ﻿On Mon, Feb 24, 2025 at 10:18:48AM +0000, Aditya Garg wrote:
+> >>>>>> On 24 Feb 2025, at 3:28 PM, andriy.shevchenko@linux.intel.com wrote:
+> >>>>> ﻿On Sat, Feb 22, 2025 at 03:46:03PM +0000, Aditya Garg wrote:
+> >>>>>>>> On 20 Feb 2025, at 10:09 PM, Aditya Garg <gargaditya08@live.com> wrote:
 
-Hi Jaegeuk,
+...
 
-I'm testing this, seems there is a problem, once we opened an inode that
-has zeroed nlink, in f2fs_evict_inode(), the inode and all its data will be
-deleted, then leaving its stale dir entry in parent directory.
+> >>>>>>> %p4cc is designed for DRM/V4L2 FOURCCs with their specific quirks, but
+> >>>>>>> it's useful to be able to print generic 4-character codes formatted as
+> >>>>>>> an integer. Extend it to add format specifiers for printing generic
+> >>>>>>> 32-bit FOURCCs with various endian semantics:
+> >>>>>>> 
+> >>>>>>> %p4ch   Host-endian
+> >>>>>>> %p4cl Little-endian
+> >>>>>>> %p4cb Big-endian
+> >>>>>>> %p4cr Reverse-endian
+> >>>>>>> 
+> >>>>>>> The endianness determines how bytes are interpreted as a u32, and the
+> >>>>>>> FOURCC is then always printed MSByte-first (this is the opposite of
+> >>>>>>> V4L/DRM FOURCCs). This covers most practical cases, e.g. %p4cr would
+> >>>>>>> allow printing LSByte-first FOURCCs stored in host endian order
+> >>>>>>> (other than the hex form being in character order, not the integer
+> >>>>>>> value).
+> >>>>> 
+> >>>>> ...
+> >>>>> 
+> >>>>>> BTW, after looking at the comments by Martin [1], its actually better to use
+> >>>>>> existing specifiers for the appletbdrm driver.  The driver needs the host
+> >>>>>> endian as proposed by this patch, so instead of that, we can use %.4s
+> >>>>> 
+> >>>>> Do you mean this patch will not be needed? If this a case, that would be the
+> >>>>> best solution.
+> >>>> 
+> >>>> I tested with %4pE, and the results are different from expected. So this
+> >>>> would be preferred. Kindly see my latest email with a proposed workaround for
+> >>>> the sparse warnings.
+> >>> 
+> >>> %.4s sounded okay, but %4pE is always about escaping and the result may occupy
+> >>> %4x memory (octal escaping of non-printable characters). Of course, you may vary
+> >>> the escaping classes, but IIRC the octal or hex escaping is unconditional.
+> >> 
+> >> %.4s is used for unsigned int iirc, here it's __le32.
+> > 
+> > No, it's used to 'char *'. in case one may guarantee that it at least is
+> > four characters long.
 
-What do you think using v4? so that we may has chance to repair it w/ fsck
-rather than just deleting it?
+> Still the argument here is __le32. %p4h is showing reverse values than what
+> %4pE as well as %.4s shows.
 
----
- fs/f2fs/namei.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+For __le32 the %.4s will print from LSB to MSB and otherwise for __be32.
+You can provide any conversion you want to have it stable between
+the endianesses. In any case looking at the DRM patch it might be that
+the entire driver got the endianess wrong. Have you checked my comment
+there?
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a278c7da8177..949621bc0d07 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -547,6 +547,16 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 		goto fail;
- 	}
+> >>>>>> [1]: https://lore.kernel.org/asahi/E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org/
+> >>>>>> 
+> >>>>>> Alternatively we could add a host endian only. Other endians are not really
+> >>>>>> used by any driver AFAIK. The host endian is being used by appletbdrm and
+> >>>>>> Asahi Linux’ SMC driver only.
 
-+	if (unlikely(S_ISDIR(inode->i_mode) ?
-+			inode->i_nlink <= 1 : inode->i_nlink == 0)) {
-+		f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
-+				__func__, inode->i_ino, inode->i_nlink,
-+				S_ISDIR(inode->i_mode));
-+		err = -EFSCORRUPTED;
-+		set_sbi_flag(sbi, SBI_NEED_FSCK);
-+		goto fail;
-+	}
-+
- 	err = f2fs_dquot_initialize(dir);
- 	if (err)
- 		goto fail;
-@@ -968,6 +978,15 @@ static int f2fs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	}
-
- 	if (new_inode) {
-+		if (unlikely(old_is_dir ?
-+			new_inode->i_nlink <= 1 : new_inode->i_nlink == 0)) {
-+			f2fs_err_ratelimited(sbi, "%s: inode (ino=%lx) has inconsistent nlink: %u, isdir: %d",
-+				__func__, new_inode->i_ino, new_inode->i_nlink,
-+				S_ISDIR(new_inode->i_mode));
-+			err = -EFSCORRUPTED;
-+			set_sbi_flag(sbi, SBI_NEED_FSCK);
-+			goto out_dir;
-+		}
-
- 		err = -ENOTEMPTY;
- 		if (old_is_dir && !f2fs_empty_dir(new_inode))
 -- 
-2.48.1.601.g30ceb7b040-goog
+With Best Regards,
+Andy Shevchenko
 
-> 
-> Thanks,
-> 
->>
->>>
->>> Thanks,
->>>
->>>>
->>>>> +
->>>>>  	start_blk = __start_cp_addr(sbi) + 1 + __cp_payload(sbi);
->>>>>  	orphan_blocks = __start_sum_addr(sbi) - 1 - __cp_payload(sbi);
->>>>>  
->>>>> @@ -778,9 +780,11 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
->>>>>  		}
->>>>>  		f2fs_put_page(page, 1);
->>>>>  	}
->>>>> +
->>>>>  	/* clear Orphan Flag */
->>>>>  	clear_ckpt_flags(sbi, CP_ORPHAN_PRESENT_FLAG);
->>>>>  out:
->>>>> +	clear_sbi_flag(sbi, SBI_ORPHAN_RECOVERY);
->>>>>  	set_sbi_flag(sbi, SBI_IS_RECOVERED);
->>>>>  
->>>>>  	return err;
->>>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>>>> index 05879c6dc4d6..1c75081c0c14 100644
->>>>> --- a/fs/f2fs/f2fs.h
->>>>> +++ b/fs/f2fs/f2fs.h
->>>>> @@ -1322,6 +1322,7 @@ enum {
->>>>>  	SBI_IS_CLOSE,				/* specify unmounting */
->>>>>  	SBI_NEED_FSCK,				/* need fsck.f2fs to fix */
->>>>>  	SBI_POR_DOING,				/* recovery is doing or not */
->>>>> +	SBI_ORPHAN_RECOVERY,			/* orphan inodes recovery is doing */
->>>>>  	SBI_NEED_SB_WRITE,			/* need to recover superblock */
->>>>>  	SBI_NEED_CP,				/* need to checkpoint */
->>>>>  	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
->>>>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>>>> index d6ad7810df69..02f1b69d03d8 100644
->>>>> --- a/fs/f2fs/inode.c
->>>>> +++ b/fs/f2fs/inode.c
->>>>> @@ -386,6 +386,12 @@ static bool sanity_check_inode(struct inode *inode, struct page *node_page)
->>>>>  		}
->>>>>  	}
->>>>>  
->>>>> +	if (inode->i_nlink == 0 && !is_sbi_flag_set(sbi, SBI_ORPHAN_RECOVERY)) {
->>>>> +		f2fs_warn(sbi, "%s: inode (ino=%lx) has a link count of 0",
->>>>> +			  __func__, inode->i_ino);
->>>>> +		return false;
->>>>> +	}
->>>>> +
->>>>>  	return true;
->>>>>  }
->>>>>  
->>>>> -- 
->>>>> 2.48.1.502.g6dc24dfdaf-goog
-> 
 
 
