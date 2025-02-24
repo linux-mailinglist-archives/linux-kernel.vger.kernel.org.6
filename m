@@ -1,167 +1,225 @@
-Return-Path: <linux-kernel+bounces-528163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BC07A41462
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:09:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA62FA413E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:08:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E09D7A5FAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:08:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E561891E5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA89D1C6FF2;
-	Mon, 24 Feb 2025 04:09:22 +0000 (UTC)
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2104.outbound.protection.partner.outlook.cn [139.219.17.104])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D0F1A23A8;
+	Mon, 24 Feb 2025 03:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpEcIqG2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE41C32EA;
-	Mon, 24 Feb 2025 04:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740370162; cv=fail; b=K2uT0xPliZRGwpCu82+z9sL4YqHy9RTTrRq0zvswzKWLb6UdvtCa6olVPFE3f/1awAQ0lN3wv9qRFbYyyK/EmbjHUdexOB24qdMs6n2lJn0bnTcQcU+DjR1+0dBAycDy/PaHpFOmpw7rDeLwbADJqtNDhpDook6C4P/wWB4OdMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740370162; c=relaxed/simple;
-	bh=2jzPwIPD5lggOyll4nVtqP/TFXODcKJCXFfSMW55E7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LbcXquWYsero0ZTDctDvrHxOI6VjDEiVlQOxujF3Zigr6Yd9FvIbn/AekbUMKLQ3j8g/xkTD5JPMFQ7qogqO+sA06DnH5UleaiTLNfD03kc7Zj9hQo9t70K39dtcqLmYSgtYDUy/Gl17UfbILpqlz/9PIMuHKZeB009M65mUDqw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PpjRTMislZe7Xx7UrlRBinT8sPPhuRBGLvqlqzf3NCXoTpKMmY3hHetcrOXW7MwfN4dsgE76ogtwqQ0ZJ2M7rtMIsfZIqPTzAWpWUOOKjvJgFvtmXqcocGuuzGjaYIqBBRoU5CkcFn1h3UvkuwaVRembc0sslfSxF2Xl08Df0z17xFHjhsymBwoYOsYgNKlV6O1jBmBZNcGsy40Ao9T9Y7z8xLfDonDHTPAdhQLwO7A0a6o7cGVfsI8h2qw5+gk2m8Kmi2dm4YUu+sHxeoUcbP0zIxZERerH5G/rtQKMhhqjtMOVcDDHUMNsOjicxLees7ZPTSdw++znroQrABXVTQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z2f7wHfzpLLOdm4iZ1WvZBiif+Dif0VI7N8Qz2YUD0c=;
- b=QFVnCXKQFYjXTLpfvbqNB+77O2nQvBdF5v6Vnww+3Z1kDtegDaRZTZtXLHkWC4SWXc9q1IIReND6C/R8vhyflpfh5PeP8dTmqV1CPitScgU5jRLL8PfReS9j7hMfXvr72DNlLvIcXs9QRxUqs4VwD39J88DY/Kc4TfNVB8RVimIFDkN4RrZocNAaNx6FeQkt5l7in+bK6+FFDmMvcM/SdNqJBjSd7g58kF5TQ8H+egXrqb3KDmAz4W9gI91M28OsBXMHqWS/QddbVu85aZwUCx5zd1hcToA9FS4wGlqa5PqFJmpFICNaWy2sr6PB2Nz6F0FmPABs8eQt0kzmjiOVEA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9) by ZQ0PR01MB1031.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:e::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.11; Mon, 24 Feb
- 2025 02:34:51 +0000
-Received: from ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- ([fe80::64c5:50d8:4f2c:59aa]) by
- ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn ([fe80::64c5:50d8:4f2c:59aa%3])
- with mapi id 15.20.8466.009; Mon, 24 Feb 2025 02:34:51 +0000
-From: Changhuang Liang <changhuang.liang@starfivetech.com>
-To: y-abhilashchandra@ti.com
-Cc: conor+dt@kernel.org,
-	devarsht@ti.com,
-	devicetree@vger.kernel.org,
-	jai.luthra@linux.dev,
-	krzk+dt@kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5DB157A5C;
+	Mon, 24 Feb 2025 03:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740366475; cv=none; b=TOSogWMiFAadTTqT24NPLvqBmXn0f4tREoYo7KdfxOxcW80aG2dzEqj+fFiuAqzgRpioVRbTatmy/ZmZLR5UYudu1g0AOEaq9ifQJIe3pZa81cCZA6qj3CuFP9m4DpdGHy7h8Cbt8Z+aQnlwex2tljCPRhvZ0MEmDJm5iGMYEug=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740366475; c=relaxed/simple;
+	bh=Ba3wMsdsMZt4q0+MdOQd3tGZpmRW5h3c/acmhZctCSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwrucgE41uyE//RTQBB3Tfww3zdOfLjuPXH8k2tnViNq6EB4g28+LIYQi3bvKDvA/6wc+XykjWX2a5P46wdkg3+mb9WthwQ7FhZBwuL3TNhx6tb4KpUVv/HIR+JM0s6b2hgPnrWk3rPifaiiM9XZx3v3GbRkyZFfQFxYoV51LvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpEcIqG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E53DC4CEDD;
+	Mon, 24 Feb 2025 03:07:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740366475;
+	bh=Ba3wMsdsMZt4q0+MdOQd3tGZpmRW5h3c/acmhZctCSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TpEcIqG2zo2PySpCB2ecwND0bLf3YDv19Z47qbF4Kb68l5SU0LTrKOmqNUw/GhMeY
+	 Ueeyf3/B/s0+KG+uRb5tPlLt/ddF+0hHBXzb7L0K7YLcc7SE7sh/QQc67RGuDk9dLw
+	 owDmBIAgqVw6FlN8F2+1NFRP12DJBvcdu9qGxMj+rjcFE0SR02HzqLVu+ff9EUiV5g
+	 Y40i1uT9KIVYoVHMZjqF9Ig/e2zjoCiu0IYP34LgSfcEKj7ImNLXtK8iCGtsJ4GVBn
+	 o04oaGim9Osi8DkBzGqUQxDrqBF4HrCnL4A1zAvTNbt+/ooHRU9Lwq9VMw9u0Okh2G
+	 l3XpDnrc8MK3g==
+Date: Mon, 24 Feb 2025 12:07:48 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	mchehab@kernel.org,
-	mripard@kernel.org,
-	r-donadkar@ti.com,
-	robh@kernel.org,
-	u-kumar1@ti.com,
-	vaishnav.a@ti.com,
-	changhuang.liang@starfivetech.com
-Subject: [PATCH v3 2/2] media: cadence: csi2rx: Enable csi2rx_err_irq interrupt and add support for VIDIOC_LOG_STATUS
-Date: Sun, 23 Feb 2025 18:34:40 -0800
-Message-Id: <20250224023440.558827-1-changhuang.liang@starfivetech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250221120337.3920874-3-y-abhilashchandra@ti.com>
-References: <20250221120337.3920874-3-y-abhilashchandra@ti.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHXPR01CA0017.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c311:1b::26) To ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c550:1b::9)
+	Kamel Bouhara <kamel.bouhara@bootlin.com>, Dharma.B@microchip.com
+Subject: Re: [PATCH v4 0/2] microchip-tcb-capture: Add Capture, Compare,
+ Overflow etc. events
+Message-ID: <Z7vihBqOgP3fBUVq@ishi>
+References: <20250211151914.313585-3-csokas.bence@prolan.hu>
+ <Z7h0AXV1zlgp9Nw-@ishi>
+ <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: ZQ0PR01MB1302:EE_|ZQ0PR01MB1031:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0fc2a299-a913-41c7-43bc-08dd547bd07e
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|52116014|1800799024|366016|41320700013|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	64mTJPYFzpVObeMJXVCtdGD/AkkJ48dQ4EqSz/6H5vxanqxPpvr36q5dudy9WAh4tXDdI/t8c3K3EuyzZdMfZHeP6brD5kDpvKI7zgjLP9/ZYtI/g31r0daHwOkE5UGG/Vs0Lvpu3bHlB3cVi6y5rCiSoXjzuv6bMGimj0c4TwF8ckIj3a06lulbgf1tm4IGHa7Lw49mYuDz2rjAKPMWE+9zGzaUtnrY1seaMmv6HDQFpc/OYKkr9d3nQUh2Dpmwkr5UsIYzarjA8AMlVes0FndJqCGVdKO9yocgKJwDObpNTupj+gTtJgJvJKaeb1T/GNi6tGJA49VbpsWOiPSxObYqQd55zmKTCOGDEOTqU35t7gMnuufQj8xAKNgu/92t/tY+E5owKBaL1pzw/BkrAyTA10Sn9SIe4ccS469V/eFAgrPAqvErQDeKhRHK7AVVDkOlxPPn3wsVIEfNGiOpdU9m5tgXjc9b8NmE9uiNE3iHxcHoSRI3L0SylOL7XBZYs4kaYTOltC20rLOqPVXsS7RbivxpE2QO38ySxZgdhZtMquZliHMgx0Jm04TKTAtjyLP+U94AScl78tXnhrXW+Rb4JrjQ16XLgz0jelbCCMI=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(1800799024)(366016)(41320700013)(7053199007)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?QT6QEjm9nudmHy4Eq3/wMbYqFruoWXSiJ0/7R9cies/jgEQnWih8Udd/QNV6?=
- =?us-ascii?Q?7rJ6FDJluStmvoHUBs+/nPoxxQlsZ5jqQI8P9wDzh2fxuz8LSBIAqMTEt7sN?=
- =?us-ascii?Q?qcT07d/kIa4yxeeRn7RA4+cIn6kT+T9np+UnBMQcHJdGNr31tzw7HnPB/Tzi?=
- =?us-ascii?Q?T4JwDT0SuffF8ENGZqdUPuVH3HPhO4lMFvTAi4rTCCeTYN7b1aRoep/TgqKb?=
- =?us-ascii?Q?VNi460hSpHvmKw9KzO66yodI4Hmzuc/HOXd+zORFxEa/XZasSunxJmJZbf0J?=
- =?us-ascii?Q?0Sfy5Bzj5hjCBRtHQc2JnzSftqg1ERDVkOMqn6Mho62yfiA/kIm062MgmSD4?=
- =?us-ascii?Q?S5yLG8nZV032AQGaQ4TGY4dedLR1Kp1UVv/QVWnSO4HPJPpLbVmnl8RK0KHq?=
- =?us-ascii?Q?RDS2otUudUA8aBm8g73YZyFYVn2TzdT4muwYmCGkFgoMkTg1t3Sqnx5zSXhq?=
- =?us-ascii?Q?/g0DgAScyQdyir01FcLU+EUxg5Y+JA7Zo7YY7xehXXopdW85Er/JcMRQaJLl?=
- =?us-ascii?Q?YANtgHYvqNo65tbesgVUhGvAAbgNUZ6fd61oiKePAKfCBEOWrdAUFoNugqPN?=
- =?us-ascii?Q?ET7TKHXzPGmNY4L3ad/VH148DQGzRPFbdgJlBIY3YVE7BhljeieN7HrZ7cnd?=
- =?us-ascii?Q?Ltp5A2P3YbuNtIhujcVkDYouF7+o2VW45oVqcgeTgWbRqPfVkznKHxFRVacw?=
- =?us-ascii?Q?MbkwDxrCdq/LMrt8099Bu2vH29RjqZP1r6CKizQtPPGDjHhKDMHw6BjYEUdd?=
- =?us-ascii?Q?f8SOX9O05AKPgA+7qOFYvjc2GPpHH8WsG6oTO1XzQTJHue0ifByCixUbAzj2?=
- =?us-ascii?Q?N/nNGIP3awa1CZG1c8DtOgnvUeJA2eipWvpei/fzm1BhaSvyTtodBM2WDm89?=
- =?us-ascii?Q?Q6v52t2Y4La0rh+r6gK82i5Xs/lnv4Ld+KzbY4mC75IupsZjTAGM95KuU2ch?=
- =?us-ascii?Q?f68UMmsFqs5ZwZonsVd7tRDm7CZzIBy7Q2xzPm8p1TgXVUxCoooi6sMNM3NF?=
- =?us-ascii?Q?lvlgVFZoRpbLIQ5qVNwqt4RivBPSaw5YclDsikzDjhhLIXvovgW6oCf3RL/r?=
- =?us-ascii?Q?rDtHJQVjX8gSaYlvytcdPOIXqc0uVoIsECKWNQMSe1tqzPH9WudzIWB4iq5R?=
- =?us-ascii?Q?J/A6Kzepjs/kPxsHf+4Rg+EY93TKEX0G64bBxYc/w8GqCrhZ2mNH+dnzs4xC?=
- =?us-ascii?Q?s+rkT4UEqOVHTgQG2RBYTUWG3rdBKO4vgPeopA69RF9JploJmcRfRmQYZhBC?=
- =?us-ascii?Q?D91zVqI4aH1/K3rAM/DpkNELlZuuPQvGJ4uiD7T/eoaOSnLxrabMl1DsXFJF?=
- =?us-ascii?Q?tvRq4q/h5yntAuuaDWkkq456HWyuH53xxngqsbwOX5ZXEtiQ5hbFFUKCwc+K?=
- =?us-ascii?Q?S6yWK7qOIYMFTYpxWIM35umHLoIH/978hiNcP6rzUiz9qdXd1QWd8kgRU2mZ?=
- =?us-ascii?Q?GZ3gVikzLWl9uCzU0oe+m/dOcgx9wgNRNnmgwJEyzFgQv7CmDyjve00So8u8?=
- =?us-ascii?Q?MQ7rhJhUt2KjYmPxFC3ynsY/ngcJCQAgxERaV1S9lNxnzaN/fuxnRZCK/tyR?=
- =?us-ascii?Q?bo79YmuQkYFzKCQ0oog6WDbLaC7ZClUxOAxMuzeldV9sxwcVSVZWT8ISfZso?=
- =?us-ascii?Q?PCG0r77VEUInc3+BmxvAbvg=3D?=
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0fc2a299-a913-41c7-43bc-08dd547bd07e
-X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 02:34:51.3635
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2wytqm+c5woxkLSJqXPW863b6KOznOuI6jYTg2s/dCNBjrDbhzS5ahZy+NB48AMCrNkYGJoCHJNob7bEaz8WURB8Tg76AHWbK6FWsJjtL6PoSOEg6HvO+wdJO0n8iQae
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1031
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/Tmqyh1uo1sTZuwD"
+Content-Disposition: inline
+In-Reply-To: <8fb9f188-3065-4fdc-a9f1-152cc5959186@prolan.hu>
 
-Hi,  Abhilash
 
-Thanks for the patch.
+--/Tmqyh1uo1sTZuwD
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Enable the csi2rx_err_irq interrupt to record any errors during streaming
-> and also add support for VIDIOC_LOG_STATUS ioctl. The VIDIOC_LOG_STATUS
-> ioctl can be invoked from user space to retrieve the device status,
-> including details about any errors.
->
-> Signed-off-by: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>
+On Fri, Feb 21, 2025 at 03:14:44PM +0100, Cs=F3k=E1s Bence wrote:
+> On 2025. 02. 21. 13:39, William Breathitt Gray wrote:
+> > First, register RC seems to serve only as a threshold value for a
+> > compare operation. So it shouldn't be exposed as "capture2", but rather
+> > as its own dedicated threshold component. I think the 104-quad-8 module
+> > is the only other driver supporting THRESHOLD events; it exposes the
+> > threshold value configuration via the "preset" component, but perhaps we
+> > should introduce a proper "threshold" component instead so counter
+> > drivers have a standard way to expose this functionality. What do you
+> > think?
+>=20
+> Possibly. What's the semantics of the `preset` component BTW? If we can
+> re-use that here as well, that could work too.
 
-Looks ok to me!
-Reviewed-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+You can find the semantics of each attribute under the sysfs ABI doc
+file located at Documentation/ABI/testing/sysfs-bus-counter. For the
+`preset` component, its essential purpose is to configure a value to
+preset register to reload the Count when some condition is met (e.g.
+when an external INDEX/SYNC trigger line goes high).
 
-> ---
->
-> Changes in v3:
-> - Address Jai's review comment to enable FIFO overflow bits in the mask
->   only for the source pads that have an active remote.
-> - Drop TI-specific interrupt and have support for only two interrupts
->   that are common across all vendors.
-> - Address Changhuang's review to use pdev directly to get the interrupt.
-> - Set the interrupt mask register only if the interrupt is defined in the DT.
->
->
->  drivers/media/platform/cadence/cdns-csi2rx.c | 125 +++++++++++++++++++
->  1 file changed, 125 insertions(+)
+In the 104-quad-8 module,  the `preset` component is used for a number
+of threshold-like purposes; you can see some of the uses by reading the
+description of the /sys/bus/counter/devices/counterX/countY/count_mode
+attribute. Of relevance to the SAMA5D2, the 104-quad-8 has a mode where
+the current Count value is compared against the preset register and an
+interrupt is fired when they match (i.e. our Counter THRESHOLD event).
 
-Best Regards,
-Changhuang
+I think it'll be fine to use the preset component to expose the RC
+register because the 104-quad-8 already uses the preset component in a
+similar fashion; also I would like to keep things simple in this
+patchset to avoid the complexities of introducing a new `threshold`
+component interface, at least until we get the rest of the capture
+functionality in this driver merged.
+
+So for now, use COUNTER_COMP_PRESET() to expose the RC register as a
+`preset` component. In the next patchset revision, put this code in its
+own patch after the capture components patch, so that we can review the
+RC register code separately.
+
+In the same vein, move the uapi header introduction to its own patch.
+That will separate the userspace-exposed changes and make things easier
+for future users when bisecting the linux kernel history when tracking
+down possible bugs.
+=20
+> > Regarding registers RA and RB, these do hold historic captures of count
+> > data so it does seem appropriate to expose these as "capture0" and
+> > "capture1". However, I'm still somewhat confused about why there are two
+> > registers holding the same sampled CV (or do RA and RB hold different
+> > values from each other?). Does a single external line trigger the sample
+> > of CV to both RA and RB, or are there two separate external lines
+> > triggering the samples independently; or is this a situation where it's
+> > a single external line where rising edge triggers a sample to RA while
+> > falling edge triggers a sample to RB?
+>=20
+> It is exactly the latter. And you can configure which edge should sample
+> which register; you can also set them to the same edge in which case they
+> would (presumably) hold the same value, but as you said, it wouldn't be
+> practical.
+
+Ah okay, I think I understand now. Thank you for clarifying.
+
+> > Next, the driver right now has three separate event channels, but I
+> > believe you only need two. The purpose of counter event channels is to
+> > provide a way for users to differentiate between the same type of event
+> > being issued from different sources. An example might clarify what I
+> > mean.
+>=20
+> Yeah true, I could shove the RC compare event to event channel 0. It just
+> made more sense to have event channels 0, 1, 2 correspond to RA, RB and R=
+C.
+> And it's not like we're short on channels, it's a u8, and we have 5 event=
+s;
+> if we wanted to, we could give each a channel and still have plenty left
+> over. I also thought about separating RA capture from channel 0, but I
+> figured it would be fine, as you said, the event type would differentiate
+> among them.
+>=20
+> The reason I did not put the RC compare event to channel 0 as well is tha=
+t I
+> only have the SAMA5D2, and I don't know whether other parts are capable of
+> generating other events related to RC, potentially clashing with other
+> channel 0 use, if we later decide to support them. One channel per
+> event-sourcing register seems like a safe bet; having CV and RA on the sa=
+me
+> channel still seems to be an acceptable compromise (but again, I don't kn=
+ow
+> about the other parts' capabilities, so it _might_ still lead to clashes).
+
+I can see your rationale, and I don't have too strong of an opinion
+either way, so I'll leave it up to your best judgement. Ultimately, as
+you point out we do have a large enough availability of channels that
+will accommodate future introductions, which can be abstracted to users
+via the uapi header, so we should be fine.
+
+Regarding future additions, I took a look at the Microchip SAMA5D2
+datasheet[^1] (is the right document?) and it looks like this chip has
+three timer counter channels described in section 54. Currently, the
+microchip-tcb-capture module is exposing only one timer counter channel
+(as Count0), correct? Should this driver expose all three channels (as
+Count0, Count1, and Count2)?
+
+> > Suppose a hypothetical counter device has two independent timers. When
+> > either timer overflows, the device fires off a single interrupt. We can
+> > consider this interrupt a counter OVERFLOW event. As users we can watch
+> > for COUNTER_EVENT_OVERFLOW to collect these events. However, a problem
+> > arises: we know an OVERFLOW event occurred, but we don't know which
+> > particular timer is the source of the overflow. The solution is to
+> > dedicate each source to its own event channel so that users can
+> > differentiate between them (e.g. channel 0 are events sourced from the
+> > first timer whereas channel 1 are events sourced from the second timer).
+> >=20
+> > Going back to your driver, there seems to be no ambiguity about the
+> > source of the CHANGE-OF-STATE, THRESHOLD, and OVERFLOW events, so these
+> > events can all coexist in the same event channel. The only possible
+> > ambiguity I see is regarding the CAPTURE events, which could be sourced
+> > by either a sample to RA or RB. Given this, I believe all your events
+> > could go in channel 0, with channel 1 serving to simply differentiate
+> > CAPTURE events that are sourced by samples to RB.
+> >=20
+> > Finally, you mentioned that this device supports a PWM mode that also
+> > makes use of the RA, RB, and RC registers. To prevent globbering the
+> > registers when in the wrong mode, you should verify the device is in the
+> > counter capture mode before handling the capture components (or return
+> > an appropriate "Operation not support" error code when in PWM mode). You
+> > don't need to worry about adding these checks for now because it looks
+> > like this driver does not support PWM mode yet, but it's something to
+> > keep in mind if you do add support for it in the future.
+>=20
+> The `mchp_tc_count_function_write()` function already disables PWM mode by
+> clearing the `ATMEL_TC_WAVE` bit from the Channel Mode Register (CMR).
+
+So capture mode is unconditionally set by mchp_tc_count_function_write()
+which means the first time the user sets the Count function then PWM
+mode will be disabled. However, what happens if the user does not set
+the Count function? Should PWM mode be disabled by default in
+mchp_tc_probe(), or does that already happen?
+
+William Breathitt Gray
+
+[^1] https://ww1.microchip.com/downloads/en/DeviceDoc/DS60001476B.pdf
+
+--/Tmqyh1uo1sTZuwD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ7vihAAKCRC1SFbKvhIj
+K0AEAQDJspkJEtu7+1N2PmNO7mzKvaWSEPhzCTQUbAYZILYDYAEAuzh92eO/ENSb
+SaJWYNoXvQdyag5Hw+MTo7vm2P7vdA4=
+=1lMt
+-----END PGP SIGNATURE-----
+
+--/Tmqyh1uo1sTZuwD--
 
