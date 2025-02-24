@@ -1,181 +1,184 @@
-Return-Path: <linux-kernel+bounces-528411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E37A4176C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:33:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371AFA41772
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B88166D58
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:33:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90FFA188BEFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6382818DF65;
-	Mon, 24 Feb 2025 08:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4120B19259A;
+	Mon, 24 Feb 2025 08:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="MKQ4f10o"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uwFcHTc/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w4lkTbXw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uwFcHTc/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w4lkTbXw"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F61282EE;
-	Mon, 24 Feb 2025 08:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075D91EA91
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386014; cv=none; b=FcLow8glTy0qh6sd6tscoM5xeDckl/HHkoMoyMSYuffsI0lluWGJe3e4Oo4k4NWuS63jTIkCqIKBbL9gwxtTAWRhN8lW2e6++gFyczXjj2ra3LvWIWcfEYZpc3o+9lBFu5DQjYINTyEy8XBtOEVqCxi3do3CPt83/Wa4iGTV0Cs=
+	t=1740386193; cv=none; b=WhBrJvaFLUOb2z5gH0pl+CDV4Alb+j2POlRuYsA4Q3JRJgLljZZ9WgRkOpXFx/wjb9WcIsIOzKoma68JEGF0Rw77Z3giqyJ2Z3gvaWhDFS2k/E7pkP+oLREr5rU26jHMoWOrcgYjPrwTsH8fGKk1W9njGgandM+iJgjg6grg33U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386014; c=relaxed/simple;
-	bh=NuzFwxtYdesIophLu0YyccS/I+GnQ6AvcugdwLFq/CY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=skZ7QAyT12fWWQzpQeYivuBky9BomC38KJqJ3ejffbpPYJKoh+I7/MziHbKL9IscW9Pp6aCCJeH1vfp0cHdFb6UFKgPHxsqNJ2ED2NyPi0+KZYA9eLN3gkxRXhyZbS3iu9krqPsSzEidPneaDEwyGuV7gm7kdgd8EKx45K6C5Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=MKQ4f10o; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1740385999; x=1740990799; i=christian@heusel.eu;
-	bh=KgVRmiwCVReVwWRPkj4/Qyf0OtRG7F/ydIgzOByr4Zg=;
-	h=X-UI-Sender-Class:From:Date:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-Id:To:Cc:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MKQ4f10o3LW3TDhCKde2QqP1N9krMOy4d6v3C8hnb2NY2GdimkmYeTA8ejbugU7Z
-	 p7PvEhQGiCMHE1/CdQfJ5MV4ga2CxjEdXVwhg9zu79gBVMEp+apFyDRIucvzctAZL
-	 pkqgfx5MxMLGh0Hv0sAdrC7PV6tUY3Hy+TdspiC0tZBsl7wfSpnqy2LQ1Lx7hmVJw
-	 +/V+WwWw5Ww5qlWkC5fdp+hRSaeR2TZn41B2/1dQsaYAd0Lmkd6pT9ZtY+wzy3pjx
-	 052oKejQySj6CN1vXvRCZKpqe3e+L+8T9Qwu9dRm3XXQQxIUByqu/WMAODpbqMF/o
-	 sK/n3fDlNiuMyvJb+A==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from meterpeter.localdomain ([141.70.80.5]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MKbwg-1u0pt52sMm-00IAck; Mon, 24 Feb 2025 09:33:19 +0100
-From: Christian Heusel <christian@heusel.eu>
-Date: Mon, 24 Feb 2025 09:32:59 +0100
-Subject: [PATCH] Revert "drivers/card_reader/rtsx_usb: Restore interrupt
- based detection"
+	s=arc-20240116; t=1740386193; c=relaxed/simple;
+	bh=kZRwcmfGy2m7oH9gUrAguuyEMXKNlnK9rQaFGw/638g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vDPq01OYz8xN2MP2Gjw0mReXvbjGEvRSdUC2w+IuxyzFjfP4wVFzYe3UY4PqSwiniykK34iBfkHg0+jrm3f2T5rX0LnuevYEkk1XLTjJNx1t836wRn0vjHMlCT5Omrk9X2N2lr1DXnL1TisLY72spWLi7nSUa3j8dqeBzc/DDbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uwFcHTc/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w4lkTbXw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uwFcHTc/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w4lkTbXw; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 43D0C21180;
+	Mon, 24 Feb 2025 08:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740386190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
+	b=uwFcHTc/LFTskg1mfIT56B9t7NITPFmDdC9KTKprw4CwVsuJho0g+bL5YgD46jhVz5BTnl
+	xouXnK8DEInulO7FpZuIc9mhXlXXNcv8yPD8i6tVPONOL6Mopcq13xYusISC/VQtNMWeRi
+	Rhe4NpKgWnNlda14UYl6YC8On1AevNA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740386190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
+	b=w4lkTbXwT+2e2RiYx9OrFOWNW5fTGPBTG4PGphGgHcmGvOq8RzyZPKu31c0C8km0zBxYMW
+	JtqiSHrACf3O/tCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740386190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
+	b=uwFcHTc/LFTskg1mfIT56B9t7NITPFmDdC9KTKprw4CwVsuJho0g+bL5YgD46jhVz5BTnl
+	xouXnK8DEInulO7FpZuIc9mhXlXXNcv8yPD8i6tVPONOL6Mopcq13xYusISC/VQtNMWeRi
+	Rhe4NpKgWnNlda14UYl6YC8On1AevNA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740386190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
+	b=w4lkTbXwT+2e2RiYx9OrFOWNW5fTGPBTG4PGphGgHcmGvOq8RzyZPKu31c0C8km0zBxYMW
+	JtqiSHrACf3O/tCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 13C1A13332;
+	Mon, 24 Feb 2025 08:36:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RvcVAo0vvGeJVAAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 24 Feb 2025 08:36:29 +0000
+From: Stanimir Varbanov <svarbanov@suse.de>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Stanimir Varbanov <svarbanov@suse.de>
+Subject: [PATCH v6 0/7] Add PCIe support for bcm2712
+Date: Mon, 24 Feb 2025 10:35:52 +0200
+Message-ID: <20250224083559.47645-1-svarbanov@suse.de>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <20250224-revert-sdcard-patch-v1-1-d1a457fbb796@heusel.eu>
-X-B4-Tracking: v=1; b=H4sIALouvGcC/x2MQQqAMAzAviI9W9C5ofgV8VDWTntR6UQE8e8Oj
- 4EkD2QxlQxj9YDJpVn3rUBbVxBX2hZB5cLgGhca5zwWSezEzJGM8aAzrph66n3o2PNAUMrDJOn
- 9X6f5fT/NpgpWZQAAAA==
-X-Change-ID: 20250224-revert-sdcard-patch-f7a7453d4d8a
-To: Arnd Bergmann <arnd@arndb.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Sean Rhodes <sean@starlabs.systems>
-Cc: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
- stable@vger.kernel.org, qf <quintafeira@tutanota.com>, 
- Christian Heusel <christian@heusel.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2053; i=christian@heusel.eu;
- h=from:subject:message-id; bh=V6xy3xipLArMKiCyA2z7lBLNfypg99krUJnGZrY8h+I=;
- b=owEBbQKS/ZANAwAIAcBH1PMotSWFAcsmYgBnvC7OCYTL/0VjTDcElDQJfiRhKcbn1dx/CiwaL
- 403m0uA7hCJAjMEAAEIAB0WIQRvd5reJHprig9yzBPAR9TzKLUlhQUCZ7wuzgAKCRDAR9TzKLUl
- hawaD/9jUFBJsEKllhjaSIqOJBKKamQgve1ikyxMX6hcCnXDV8Vq2Ff6B90v6+ndhrQ7ecsbB4V
- HkV2Do7Z0GSwdeGlKYpQlTTgzFQ2ZKkmu9CRp93l95aU9KYiHuq/ESIt/XzYn4p2zn/qAqfWfUU
- fZN70LLjeMOzayDqOIhjRB8yU7LgpoaoHTreOqRsZ5B8jMmasvwdyDUfL0qaPbErRxaEa0XdYaZ
- +z8i4V90UJx6xRlF4xeA2F6XQPtthcWjt+uLMOUV/6xCr6pWClw10Hiwf9l29/g4ac0L1pSNwU4
- 909bhNvTWbCp63PHaIipjEmbgBPGpdWcSRm5ZYiNTQEHbYBMwghPcFoOh3BaaBreove/QRJjdwQ
- u1SKx3bUPS6+R++yzwOUh9jw2ha1Mx978GSOLlj/Zc09LGmubPqAqyXNTBTdKt0ER1Q2vBdUaGr
- We3PaeXGneeu4rNUtl18bdXER6cej9Qm7m7wha0RYwJ5C/8TDe5ISaLjioFdL+XQgQtHTiUeZOo
- +tnnQEJ5zbWTQVDsIJKkD6LjmIVUJBK0KYtex1UotLUL+XLivKt6MNKgw0b/9kgBvejdrO3pjpZ
- 1w3MLogwZZzpRrdBzP50EviUPLy2Gg9TyyZFjJiR8w7noMU1tLIZP+jzzh+5xO4RxDUUgkg4y7p
- iK8cVvKf59/Y48Q==
-X-Developer-Key: i=christian@heusel.eu; a=openpgp;
- fpr=6F779ADE247A6B8A0F72CC13C047D4F328B52585
-X-Provags-ID: V03:K1:cP2vEgXYL7A+FBvrgir/UoCCcxPcVF0N/v2xJTZcaZYFbB/xvbr
- YB9ao8B5gUrn6wvpi1UUghABvbsM545vww4HgRKKMnaDvF094vmJTJxzecfrpd51z54W6ml
- uIWvRsqEeLwSLm0059jgw5m5a+5avCDtBLyw+X9ZnXJdJjjf9NnVajSyGsdC647DE79shag
- nfviVGBRMYte/Kx0PablQ==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -1.80
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[dt];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com,suse.de];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:LCklwuAw0Og=;ONA//bQGGaAuhUAPERHOSf42mu/
- hRYNn/tAxtgVGymKS8O/oIkWMjtoQcEKVhrbcf2U4A1ADynEziksTelACTsPhoynjGZnJhOel
- GPrMNhbLXm3T0pXPP350sc+k01jgxmUvc7CS5iDH+H8ZMjt8oswxIG9yTwewzfb4cI7VhxlF4
- Yl3YKMSB2LSmDcnZq9j4Kvrx2PVQNMFOeveTLSybZ1V9b+62pcM3nAF2qB+6XcvC4q+TssEm7
- 5UDFRHL+jrwhXJaOp5Cxg2WQ7DjE4jKalHpg/c/+zeui03X7yPY4Xvln7ls03qeKoX9Qiv8AT
- qpVZrIT3fwpgRbUB+kYxCOO2brMrRAbH9z1yUgOyNUJE5FvcMCmWDk8jxwa8v4gdZHU7KsBe0
- MZ/3/UUE6Hut1xKlT4I41sqJ9A0fG/7H5ZXL0qfp1yo0KfeUHBB7mMcX8grfxOJpBWWrOrWTq
- 0WSPMvekLnFtcJVujC8kDy4KLW5Zi2IClrFJmgaQeojOo8fHftgEFb/EMjptLkFaQgWiIGREo
- or+1Xr42tR//amT+BJy5nYfoO5pM23OQYlRFeWcYOqOrAax75zZRLDkA71bb8P7+gYBAjBMmM
- tcdbHyCQa46TTJ5oqcX3wx0ufpSjEuGgmkdj7Fiw0sNIRibx/IWHD21dFjQFTSBFvD/bLLMXr
- yO5DfvZleYAfxDD5BAVOFSUpOf1kqFL8Qt0tQp4MaxA2O1NRH6fMCgBz+1fjVOZq4sHiypQxo
- VmP3TdDAP/lV3WyXt5uYjKSOniBLEnusk73PInuxX1lNmJyk6k6A5/iwgNQSrRwhmdA8T6U0e
- fp/ZhzcFEjGYK/eVj6vPw/co9Uqvr23ASVdRqUWsBrOEtJk9nPO4hEjCRrqflzqclUXWl5Y8i
- K27cZZ8GYzoQaTTqUWoqTMIqLr6ndSTyTu5YkcZix4XLVWNWxr5vX1K6RhdRvTXM0+bnPn50J
- 9IproCwRdmCsjpbrJRaR9+Z9xprsiT4KPSTXyjKL2Xark62tt2PkwXQECh8CLBolutHC5kgxq
- 46tsJ/tZaA6CUYhn1OMNHgMzzp5Rw+nwSamy83I/2nmvobfmi/DIinAuNq0QZpciLjWHpVUfD
- vx1QH6T+bvdbQ8/ZZkmrjyPaASSemkJFBMdyNEC5ZahtqmaZ1qrMSOjJ/dheG9CJKfdExK99h
- 7Ekmm9XzJcBRNgjET84PNxwQHS9humwgp/+6AAEez5A2yKidbbwRkd43XFn3PI2FCFh02YaDK
- sFcuAHtNtojLObgMXG2RXEMFt0YKcIEXmVGkDuOPSomedxzjWEvnGNjjSdpmoUS1w/1r9EUux
- F5L2F/IKeOY+GSlfvfAGmpyXUcsk/n+5gbYu0sBNUXu6omsj/2EQK4i8MKEJFqtCtfX9X0eHj
- PdKmXWgDGt/StOvKgfGYNwWwt/CTWdVgMHASg=
+X-Spam-Level: 
 
-This reverts commit 235b630eda072d7e7b102ab346d6b8a2c028a772.
+Hello, v6 is re-based version of controller/brcmstb branch of pci tree.
 
-This commit was found responsible for issues with SD card recognition,
-as users had to re-insert their cards in the readers and wait for a
-while. As for some people the SD card was involved in the boot process
-it also caused boot failures.
+v5 could be found at [1].
 
-Cc: stable@vger.kernel.org
-Link: https://bbs.archlinux.org/viewtopic.php?id=3D303321
-Fixes: 235b630eda07 ("drivers/card_reader/rtsx_usb: Restore interrupt base=
-d detection")
-Reported-by: qf <quintafeira@tutanota.com>
-Closes: https://lore.kernel.org/all/1de87dfa-1e81-45b7-8dcb-ad86c21d5352@h=
-eusel.eu
-Signed-off-by: Christian Heusel <christian@heusel.eu>
-=2D--
- drivers/misc/cardreader/rtsx_usb.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+v5 -> v6 changes include:
+ - Fix a build error in 04/11 (Jim).
+ - Address a comment from Bjorn about bisect-ability by squash
+   07/11 in 06/11 (Bjorn).
+ - Move 08/11 right after irqchip patch (Bjorn).
 
-diff --git a/drivers/misc/cardreader/rtsx_usb.c b/drivers/misc/cardreader/=
-rtsx_usb.c
-index e0174da5e9fc39ae96b70ce70d57a87dfaa2ebdb..77b0490a1b38d79134d48020bd=
-49a9fa6f0df967 100644
-=2D-- a/drivers/misc/cardreader/rtsx_usb.c
-+++ b/drivers/misc/cardreader/rtsx_usb.c
-@@ -286,7 +286,6 @@ static int rtsx_usb_get_status_with_bulk(struct rtsx_u=
-cr *ucr, u16 *status)
- int rtsx_usb_get_card_status(struct rtsx_ucr *ucr, u16 *status)
- {
- 	int ret;
--	u8 interrupt_val =3D 0;
- 	u16 *buf;
+Regards,
+~Stan
 
- 	if (!status)
-@@ -309,20 +308,6 @@ int rtsx_usb_get_card_status(struct rtsx_ucr *ucr, u1=
-6 *status)
- 		ret =3D rtsx_usb_get_status_with_bulk(ucr, status);
- 	}
+[1] https://lore.kernel.org/lkml/20250120130119.671119-1-svarbanov@suse.de/
 
--	rtsx_usb_read_register(ucr, CARD_INT_PEND, &interrupt_val);
--	/* Cross check presence with interrupts */
--	if (*status & XD_CD)
--		if (!(interrupt_val & XD_INT))
--			*status &=3D ~XD_CD;
--
--	if (*status & SD_CD)
--		if (!(interrupt_val & SD_INT))
--			*status &=3D ~SD_CD;
--
--	if (*status & MS_CD)
--		if (!(interrupt_val & MS_INT))
--			*status &=3D ~MS_CD;
--
- 	/* usb_control_msg may return positive when success */
- 	if (ret < 0)
- 		return ret;
+Stanimir Varbanov (7):
+  dt-bindings: interrupt-controller: Add BCM2712 MSI-X DT bindings
+  dt-bindings: PCI: brcmstb: Update bindings for PCIe on BCM2712
+  irqchip: Add Broadcom BCM2712 MSI-X interrupt controller
+  PCI: brcmstb: Adding a softdep to MIP MSI-X driver
+  PCI: brcmstb: Reuse pcie_cfg_data structure
+  PCI: brcmstb: Expand inbound window size up to 64GB
+  PCI: brcmstb: Add BCM2712 support
 
-=2D--
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250224-revert-sdcard-patch-f7a7453d4d8a
+ .../brcm,bcm2712-msix.yaml                    |  60 ++++
+ .../bindings/pci/brcm,stb-pcie.yaml           |   6 +-
+ drivers/irqchip/Kconfig                       |  16 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-bcm2712-mip.c             | 292 ++++++++++++++++++
+ drivers/pci/controller/pcie-brcmstb.c         | 144 ++++++---
+ 6 files changed, 475 insertions(+), 44 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+ create mode 100644 drivers/irqchip/irq-bcm2712-mip.c
 
-Best regards,
-=2D-
-Christian Heusel <christian@heusel.eu>
+-- 
+2.47.0
 
 
