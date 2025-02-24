@@ -1,189 +1,257 @@
-Return-Path: <linux-kernel+bounces-530124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94808A42F68
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:45:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9605CA42F6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAEB3B0DCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0003C189BB75
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202FC1D5159;
-	Mon, 24 Feb 2025 21:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76391DE3D9;
+	Mon, 24 Feb 2025 21:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XZDplTQP"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pEE0djpm"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06331917D0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740433548; cv=none; b=HK9A4gNXe/mmFQVGbnKVLIXMbxWWNApeh1TB8+/P52fXPEicFPqSWJ54msnQwk3wyIDl8d9FtF0cIdMtvD2hG4H/dk8MJUl+Sig7ixidp4gp3RlfGF33pdk7lvhmZ+x90H/lgCPBi4u7/SOEN2R2p54NBvmAaA1NDA7v6PcYRKs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740433548; c=relaxed/simple;
-	bh=B8Um3eMk3hvqma38jKFiyIbEi663Dt3UgWX5h5sXLl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q406t4wEvD6dGNZnixWbGiz+QnNbNM7M6m5ZOfTRPGQqh5rFsQSPAFWpmomAE77s8INdAJ+hn4GHaeYIma4jaotkig8BU8QdlP28oPjYESQYcGUfTVCU5CDcg8AqkgPrj1gVDU5+fH2sZYQZLaBeKUaAPZwsTZCgUhL6PuvrV/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XZDplTQP; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220dc3831e3so92319645ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:45:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1740433546; x=1741038346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=baQcd4BlBbeci4pq+lkQS7gSttZ++rUKJi5374wmvuA=;
-        b=XZDplTQPnT2QE+FR9MkNOp94a+o/ES4Ftkv3D99+hGCxy9U9g5/Ilt6ay0cHDhy9FX
-         0m8cGAwuyTrwC3nEffFU7eijYtsAvsAql6LnIrmsao+iOfbmyx51POIBF4howRhzRMmb
-         I0QkrjL7KMy74GCknt62ju5VLWfA908YhZxP3J3dvMVlAgmOeMqMwWjNo8Vl0vZ8Plh8
-         EbSwK60l4YkLB9q2Bm2UsFSAs9Nq8cCQbYPUXmE6Uf7INaTG7mf9cb4L8eeWO3M/HFKL
-         lvfJdJnpy9v5nBmUXFg8XlT2fob7WkHwx1OuO9bGkdoPB7+1ypSksihpX7ivHZbGpYk4
-         ycKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740433546; x=1741038346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=baQcd4BlBbeci4pq+lkQS7gSttZ++rUKJi5374wmvuA=;
-        b=Ve+2518azZTA4Z6nuvE0XxVjCs0DlZqCR2IbQrf+HqMKAY4KpOfInJmTKMyUQ4Sucs
-         r2CKDgh6nzcuNRjM72hC/rbLsJBtcoAUv+he3h1D/U8TG+g2dHAwFuxkLj/DuVO90S4H
-         3dmlaqUFEn5GE/jJrI+J3T3Cm0twn5qCxla6mNSmdYsszqK26SHnXWLpk+z6b1cx+UzT
-         lrZk1wCoVWkm9hKTS1P5HwnKrIBCfghNQBWvQtBfurhefvftYVKlsBPeJOQGtfq6/pdF
-         D1zYUnV5IeAaVownBurHNiys6sTcjQuNnSSgLcpFaI8DWp8pdKAkumXIPsOwdmbTNb1g
-         rHBg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLG8V13oRqhRqfdVfryPz8IK4fkRqypuMcVm6Rkvq/E8iDmpLYIzp9HAbpRyWeNHKQe4BQgKDQ+MPj6Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDnamuspSKDXlzqGcLWLPOlHtIzl+cS/NTfQCSej1CMQMadOSc
-	KLcmZyc9tiSa4DPu4l2v4Sgx5jXAp9ju6geEL+WtECeXRXxG5T7WTd/Z5t3S6XE=
-X-Gm-Gg: ASbGnctE2zYrbOb768RyaKVUFz5i3GG/RAJe5mYlTGvWos+1eOdpRdhyAkRnjKJNvXi
-	TwRzzbXMi3e3BzaoKKX9jwn8HfpZVe5HM6TORhMUUJOyEqkbCkqD4o1YNRIMFDwB++mYsmzSDiM
-	xXeGd+/No4CaUMAio6+1dqRYpH0vS/1t3p7rzigDlm67LPG8wxtAXpxtHOyqf4lsbisjPZENw7C
-	orefin9C3es+ctfaAGY3MTOMQCKJMGyaPEM1VzmdrtmjXlyD94ID2tfNbYK67whhvBubYfa+5CR
-	hMVm2ycIT0cejYgISOLkMs8soQk1oK/rP2noDJ7Pc4/Htjij/y6+7QEprlILgRUygl0HeEgKTTY
-	H6w==
-X-Google-Smtp-Source: AGHT+IF1kivAJK+5XJv15nd3N2xNPfYMjBaPhJULgUhbrdplw1aav3juq/XyTUOTjPQZBXSn8PmxHg==
-X-Received: by 2002:a05:6a00:3d0f:b0:732:61d2:8187 with SMTP id d2e1a72fcca58-7341411d7c9mr30371600b3a.11.1740433546051;
-        Mon, 24 Feb 2025 13:45:46 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda8384d1esm114878a12.38.2025.02.24.13.45.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 13:45:45 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tmgGk-00000005Vo4-2uVO;
-	Tue, 25 Feb 2025 08:45:42 +1100
-Date: Tue, 25 Feb 2025 08:45:42 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 3/8][next] xfs: Avoid -Wflex-array-member-not-at-end
- warnings
-Message-ID: <Z7zohueO2E3ZSpfj@dread.disaster.area>
-References: <cover.1739957534.git.gustavoars@kernel.org>
- <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22F931917D0;
+	Mon, 24 Feb 2025 21:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740433569; cv=fail; b=pWQooba8jOFnjYOLIXQLcGeAjRNSbvEgzOrHn3jd0oKFWFhhMFl8OUpCXfqZ2Dms+0MNpc28L6xv0IjvcxPZaf6jWy/Q5ISq5+4LAG4uRL17zKKzpNXp88TmfH0pIccgnC/FpOUBFJAFNeujl+CJQL2SOOEb8htC3kzSy2C/YNk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740433569; c=relaxed/simple;
+	bh=NXnW5RDnJmzU/i36xDnUX7/S53i9R29aGS15s/3uy8Y=;
+	h=Message-ID:Date:To:Cc:References:From:Subject:In-Reply-To:
+	 Content-Type:MIME-Version; b=UlmrOsSZiTqUswxYLpmOnumJBOdVvNgv+QWE4ESyovlzI1s1uOq3RTX8vpqv57EARSce5+D5ZDGhuKqbGciAmd5nXGkoLEMMZyf+hWV5US2GKd71wllmZCvAoKEEMSMGg5QxwYmfDkxswwYcOSBjEARJv+a/Z/FnDynqtJ1dYBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pEE0djpm; arc=fail smtp.client-ip=40.107.244.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RiTeVtX74S0kv3YzL73dgZ/jxVnL1+NxCVj75HXg6VpjFrT0tms7acrrJ5lcLd3OBmbanAj4HGgXXILwJnQzIH2QXoyDlrXFSnT85mUz0ZLDazBRuZmdwoXyj6xfGgbY8j+FoH1QmN0UlBFR3N1JkAs50ulAxwiBgeE2Gk7qPCGx6EGi8kCihgL46Sx5uilBhbAWPdiOI2tprlXFpM1NuKzzwlBBJENFb+RBZhgSBMdQHnVxX5HoZ3vAWlZjaGls5oSgEU5u/D0Vxgbxq50U3rQ0Gan6yfBPaZEeOizI260TbXP50W2X3PL8AIZokV6nnt79iqxUXXJ66PiOTKrqHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SN+NQ55S0tezVQxfC3eeHMiJYmV9vZZKjqj/jEHcREU=;
+ b=dzK9ev4kaqCBYHRN2DS9zpcUr1+z+UfBSjkrvVH+Bw5WJc9o32SNHDeilXGzJvGxxZ6Vk7qs/1N3KPZikR4imcIvTDE73dbVdLl3eKgeBpujfS730KDiMs//2ArBY7/xBqZ9rRyuZ8glG9S15l1gQ8NRnCyaIdXodjQdf/IzeVisQHAH8kq1rE+2YoWRvjSSflICOVaWSu0jmak9QCxANMvJlliJKqJIj/Ni1CSPUSuWmYc0ww7BDRi569yeQpYMTHkrOi/6yfv+VyaZ7WIgMQecFtXU71V2u/wDgp8EVzbK+wlMOG5lE9hNTa+6f/yOFSt+o+rBv80QWGJjtdqaNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SN+NQ55S0tezVQxfC3eeHMiJYmV9vZZKjqj/jEHcREU=;
+ b=pEE0djpmLVyf1yHt6Qm4B0EL5CS7Yl5MuG6fjKnwBUw3WqcnHDMHZo0omEcDkbfgAcw7UvQdkn9Ud4ACz3e9g7kbgvVPyiuvt24v3W+cgb0iiJTzC+n8yARr4ICQWu2oWGif8MpUpB08xsrqSYA5adsk4uhLTtJsQQqbjUlml/U=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
+ by SN7PR12MB7204.namprd12.prod.outlook.com (2603:10b6:806:2ab::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Mon, 24 Feb
+ 2025 21:46:02 +0000
+Received: from DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
+ ([fe80::20a9:919e:fd6b:5a6e%7]) with mapi id 15.20.8466.020; Mon, 24 Feb 2025
+ 21:46:02 +0000
+Message-ID: <7f7f15e2-7ed0-b5fd-eb19-4423b4dabc46@amd.com>
+Date: Mon, 24 Feb 2025 15:46:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Content-Language: en-US
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>,
+ Alexey Kardashevskiy <aik@amd.com>
+References: <20250219012705.1495231-1-seanjc@google.com>
+ <20250219012705.1495231-6-seanjc@google.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH 05/10] KVM: SVM: Require AP's "requested" SEV_FEATURES to
+ match KVM's view
+In-Reply-To: <20250219012705.1495231-6-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR05CA0020.namprd05.prod.outlook.com
+ (2603:10b6:805:de::33) To DM4PR12MB5070.namprd12.prod.outlook.com
+ (2603:10b6:5:389::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|SN7PR12MB7204:EE_
+X-MS-Office365-Filtering-Correlation-Id: c0fab38a-63fc-4d43-e0a5-08dd551ca1ee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ek1hL2UzOU5NRnRsK3VuNTg4NmNjVU9uM2dCYmJXUUYxSVg4SEVENnhTOGx0?=
+ =?utf-8?B?endsYjE5VEJ1ODlQT25YVXY5aWcxMU1SOXg4M1hoVmFhZmEyOCtUYy96N1VG?=
+ =?utf-8?B?RDY0QW5DcG9oTExaRnhzNEZNRkl1TUJ5OXptVXhodDZZbmNVY21id25NaStu?=
+ =?utf-8?B?UGVjaFJzcDMrSGwzZ3U3VUF6eGpqcTI3c1Fua2dHa2dEWTZkR2d1dEUrbTFD?=
+ =?utf-8?B?eVdTbHRUV1ExeDJTRyt5ZjFuL0VVbHh3TlVkVWkvbk9ScXhrU1dxcmpGWGxo?=
+ =?utf-8?B?VVkwZ1FReDZXRVR2a1l0OGhZOE9TaGRHR3VSSmpuTERCMUN4QXdobWo3TUFj?=
+ =?utf-8?B?Mml4a3lvazhhNkdSMmtySVlTU1BWajBGYm16Q1lGeHQ4NDl1QytPbTd6a0ll?=
+ =?utf-8?B?V3FuN3Iyd0FyQUdTVnVEd1ViaXFiamtYMHBVZ25DdWYzeWIxdkZBRnJPK1lk?=
+ =?utf-8?B?THEwQ1BxSzNwZXo4aUhHRUtpREZzTnkxeWxQNVY5d1JJL0ZLTFZuWmF1R0FU?=
+ =?utf-8?B?NG1ZclhUNHdzRlFNVzRDSlF0aUhTaStIakV0ZDdacnVNdXNsdzhscVBkK2sw?=
+ =?utf-8?B?Sko4QmVheDlESGZvb1NOakRONUV0WGNBUlF1bUFpaEk0aVdjenRoWURpcGpR?=
+ =?utf-8?B?aUZXZlZiMTFZMnArTzFVN1g3ZlV1Q0xhQjJxNEZjSTR6L2RZamxFdHlMalho?=
+ =?utf-8?B?dlFiRzYvOCtZaXFQMUplTmY4QkRYTGNxZDZERmdwSUdvVXA0U1pJL0VQTHM5?=
+ =?utf-8?B?ZUdudUZwUlU1SnVKcVJNR1lWMkRkd0pvdE9KNlllYzFlWVZER3p2dXVCVlp1?=
+ =?utf-8?B?RkRlY215bjhwd2lqODN4TEx2QXJGRC9VSFRiMG84RVNKWnB0VmRiaUlmR1ZG?=
+ =?utf-8?B?VWFnWkpzK001S0hGdHVUS051R2lxZjZnelgza0Z1TEU4Z1BwZjFLeERmVG84?=
+ =?utf-8?B?Y3JtWFlWcjBBSlhSWkRkL0diRXUwWDdXdWhyd1M1ZCs4ajZqb3pGZEhpOUhO?=
+ =?utf-8?B?NFk5VXBsdHB1YkxIVjloL2lMbmFJRXdBMDE2SS9QeGdqdVVTZk5YbUlSRStP?=
+ =?utf-8?B?c0FwNTR6VGtqZUplNHJhbVB4a0ZJNUdiTDFNR3g4NHM3NVR2dUpyOG9xRXBF?=
+ =?utf-8?B?ZmJaNDJJMVRaa2tobEYyUmFZdnJSc2lremlQTVE4R2I4dmhQZXB0TVMxYVV5?=
+ =?utf-8?B?NzZUOVZhRmI1cHRZWnJmK09pdVQxTkUza056dUpTVDRERzE0cVVBYWVjaWNX?=
+ =?utf-8?B?aWxORjFkcnhGK1RWZG1MdW1xK05nTFRvNFpjRlFIL25xcTd1eHZadFpTVEEw?=
+ =?utf-8?B?Z2NXWGxRNDBzWkF1K01CWVRvTVhuTnQ1amtqT0hKTGd0elA2SUw2SWVIMnB4?=
+ =?utf-8?B?WGtPZ0hQR2gwSzJ0Q2FrNXdtcnpPUVBTc2JZbVgyUno1S0dLVmVjTFpNYTIx?=
+ =?utf-8?B?Mmt6RGI0aThHUmZRbWVyd0xMZGJBOFVBcTlsbVJKeG53aWpnU05yUzIvZlNa?=
+ =?utf-8?B?em5zMlN4bEoxN2Rmd0tzSkpjR1dVOUVQV2xKajNOS1lPanJwbjBETE10WXB1?=
+ =?utf-8?B?VjNEL0YxSHhEUU1aeW41WlF0OEk0ZFdIZm5ZTDY1d3dJd1B1ZW9mdGNnVTA2?=
+ =?utf-8?B?MkhFNVNOZTkwdzZnckpuS3ZJd1ZVeFp0VitYU0UzektnZGJ2QkR5VE1tWW5n?=
+ =?utf-8?B?VllyREF3UytqbGh5a3lVSW90YTI3cHpXYVZNTEhWYkJkNDdaYUtWdzNUT3lX?=
+ =?utf-8?B?SUJmNVVBOG9xcEhYSy9wK1dwRkZ5K2N0QXBLdFRSd3hDdVdKYjNOQzV0eUZq?=
+ =?utf-8?B?bmNIdmFrWG4yVzN0d1JDait2T0J4UUxRYVhySVJQY3FKa1dOcDVZRUlubUdo?=
+ =?utf-8?Q?8RJPwdcv+mInN?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VUJFM0k2eEFuQU0zSDlDeis5RGRxM0E0Qk4vQUE0dUc2SWkwQTZjeEQ1OHE3?=
+ =?utf-8?B?N1NpNC93NmVINFg3c2FUYnFzbmlJNi9vMHM3VWxoTjAyMFR5anBPb21ieGls?=
+ =?utf-8?B?RVJ1MGRaL0hvVjVpOG9IOUFmNUFWVjQ3RTlwV1Q3MGcrakI5ZW4yem9COE13?=
+ =?utf-8?B?WnJ1Y3ZSM0JuSFZwMkZlWVZUM1N5S2NCNW8vVXBSWjNDV2M0QkVjblBpeWhQ?=
+ =?utf-8?B?alRJK0RaSDJSS2ttUVNnbGpNSzVaWVB4VnJjVEJBMnExNVphS3hqTE85aFBO?=
+ =?utf-8?B?WTJkWDB2c0s2VjlXMHAwR2txOTB4NTZxYVg4Vk13WGRLQ3pGd1UxZXhIai9X?=
+ =?utf-8?B?TW9HaEtRUXNvUkxlai8wZElmdGI5amU0Wk9RSWFoWk1sWGFWelVKMnNRcmkv?=
+ =?utf-8?B?U3YzVVRzZVNxZVdMeGhSMTczekJiUDF2amRUc0pTb204eVdQbFpqcUs2WGkz?=
+ =?utf-8?B?ZzFiNFRpSk5PaW9DQmVBN2xFODhoME5oTlBIUTFQR0RJTHVWeVV5STVxTnhk?=
+ =?utf-8?B?dE9iSnhYS0p4UHgvOGdiaU1KZ1UwcnNwdC9QNlNENzd4UlpNNDN3NjJDcWk5?=
+ =?utf-8?B?VkNNSWFiYkp2RDNIeUJaWTkveGJITEptUS9XWkNaZHFlWjBvVTdGaFUzcW0w?=
+ =?utf-8?B?bUM1eXplMnE3dDQ0bE5wU05lcmFXaWFyUGxjaUdXK0RLZktTL0J3N2xSMG9Q?=
+ =?utf-8?B?M0s2K3Jtam5QV1lmRTBwT1F4eWpFeEZEOEtaeHRJSVg0VzZ3NEhZVXVBdlU0?=
+ =?utf-8?B?azNqcExubGRNWG92bFhBWGFaZ3JhOVhwMW9MbnpVbXhpTzZaUHZTSnpsZi9O?=
+ =?utf-8?B?Uk15SmFoclNNUFQ1dTVxQXZGK3N4em5GS2MyUXg3Zy91M2V1R0VNVzVGa1lz?=
+ =?utf-8?B?akkzbUdycnd4OExDWWVZVzJNTDM2cDdHS05qeGczRHZaZHoxQW4rcEF5UlJV?=
+ =?utf-8?B?T2lldnc2eDEzTGl5VmdhN0dGYjg2Q2txNTNiMGdmM3ByZ2tTY1RZSWcxVkJv?=
+ =?utf-8?B?clVwc0VJam5ON3lhVlpKenJMK2dMZis3SERYckFoeExXQWViMVUzc29nTUpr?=
+ =?utf-8?B?RjFTUFU3Y29Wd1UwR3JXM2dmb3pydXJSMzFWeU9vM25hR0FNMGp3TjhPMUx0?=
+ =?utf-8?B?aU9DZCs0Ui85ckNGVG5RWW90ZmJxNG56Yk9ySGpHbTJKaFVRbXB1d3NDOTVx?=
+ =?utf-8?B?RXFEZEppL0FBMUdGWU5Vb3NLSGQ2eEI2T3U5OWpXYWtaNFdhTDNhYlRkRzNs?=
+ =?utf-8?B?dDBFbHJmaEg1YWdsOXJodXN0a2d1Z1ZYSis0bVFTUnJ3RVNBM0RDemNLcW1x?=
+ =?utf-8?B?eWRVa2VTalRlM1lpemttRXNuMFE1R3lzM3VOQWllTDdlTTd0RXpzNGd6TlVK?=
+ =?utf-8?B?TU51bFcrTVhGZDI5NUJUdFY1VmY1OWYzZVhHclRaQmJPUHFTNHdjNEpsTTlm?=
+ =?utf-8?B?RUpEeFUvRWs3Q3NLVnpxdjE2Ym9LbWhOcmhzaDA5cjExN1Y3K3N2eE1iTW9r?=
+ =?utf-8?B?U2VlYmx1QVhYczBidjE2VVp5UytlYlc1NnFRN01SWS8yd3FlY2dQcGl4NEFr?=
+ =?utf-8?B?MFBoeStiaUQ5NU5kY1pFZDZTZnNRTkxlZXFLc0ZheVczOE9rVFFZcFZHeFNI?=
+ =?utf-8?B?RFEwRFIweHFaZ3ZodkZVMVVsU2U1Q0JJZ3ljUzdka2pwRXdnWHNhMU81azBh?=
+ =?utf-8?B?dGtXeUd2WW01SU9RQS9JMmd0UUdmcVhVdjUwbldKYTFIL2swa1JTdUJ5M3d3?=
+ =?utf-8?B?R2FXZjRmaFVreDlPdDRsU1hKbHA4akZRVzVsRndBQW5od0VNdW9tcjJsbSt5?=
+ =?utf-8?B?dXRzZVdOWjErc3NkNUpCQittMEliM0lPeWlXbzJZOFg5a0FQd3VtMEdFeDZJ?=
+ =?utf-8?B?VDdWbktMSi9WdXp2Q0hGRi9Zck80aEoxOVhTU2x2Z0Y4MnBZbkpkZVJTS1VQ?=
+ =?utf-8?B?NG9sa0hSb3JXazA3aW5xUStMY1NXUmh6SjY4QjhmdmRid0VqQjlzTDRrSjdF?=
+ =?utf-8?B?T2x1eHQ0VFZoMHVlS1pXVWE4d2tGanB0dHM4WUJCaGxhdnJ0YWVVYkZQdS8z?=
+ =?utf-8?B?UTJkWklTTTZkT1p6eXhuOCtCV1dBNExzdDdHcWxGckVKUmNtOW80b0UzcDMw?=
+ =?utf-8?Q?V+3iOEjzdYGsGtYxs60sKGvvT?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0fab38a-63fc-4d43-e0a5-08dd551ca1ee
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 21:46:02.1953
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ib4L1dEzsElSztF9heGmpzQY+9nQNTR3ofHGwVGpgbNwS/mWvRi2qTZ3Hzql/S44MCp04wXr96gteKJ3UVJBmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7204
 
-On Mon, Feb 24, 2025 at 08:27:44PM +1030, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
+On 2/18/25 19:27, Sean Christopherson wrote:
+> When handling an "AP Create" event, return an error if the "requested" SEV
+> features for the vCPU don't exactly match KVM's view of the VM-scoped
+> features.  There is no known use case for heterogeneous SEV features across
+> vCPUs, and while KVM can't actually enforce an exact match since the value
+> in RAX isn't guaranteed to match what the guest shoved into the VMSA, KVM
+> can at least avoid knowingly letting the guest run in an unsupported state.
 > 
-> Change the type of the middle struct members currently causing trouble
-> from `struct bio` to `struct bio_hdr`.
+> E.g. if a VM is created with DebugSwap disabled, KVM will intercept #DBs
+> and DRs for all vCPUs, even if an AP is "created" with DebugSwap enabled in
+> its VMSA.
+> 
+> Note, the GHCB spec only "requires" that "AP use the same interrupt
+> injection mechanism as the BSP", but given the disaster that is DebugSwap
+> and SEV_FEATURES in general, it's safe to say that AMD didn't consider all
+> possible complications with mismatching features between the BSP and APs.
+> 
+> Oppurtunistically fold the check into the relevant request flavors; the
+> "request < AP_DESTROY" check is just a bizarre way of implementing the
+> AP_CREATE_ON_INIT => AP_CREATE fallthrough.
 
-What's this bio_hdr thing? You haven't sent the patch to the XFS
-list, so we cannot review this for correctness. Please cc the
--entire- patch set to -all- recipients so we can see the whole
-change in it's full context.
+s/Oppurtunistically/Opportunistically/
 
-> We also use `container_of()` whenever we need to retrieve a pointer to
-> the flexible structure `struct bio`, through which we can access the
-> flexible-array member in it, if necessary.
+Yes, with the change in patch #4 to not kick vCPUs on AP creation
+failure, that check can now be moved to the switch statement.
+
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+
 > 
-> With these changes fix 27 of the following warnings:
-> 
-> fs/xfs/xfs_log_priv.h:208:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> Fixes: e366f92ea99e ("KVM: SEV: Support SEV-SNP AP Creation NAE event")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  fs/xfs/xfs_log.c      | 15 +++++++++------
->  fs/xfs/xfs_log_priv.h |  2 +-
->  2 files changed, 10 insertions(+), 7 deletions(-)
+>  arch/x86/kvm/svm/sev.c | 23 ++++++++---------------
+>  1 file changed, 8 insertions(+), 15 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-> index f8851ff835de..7e8b71f64a46 100644
-> --- a/fs/xfs/xfs_log.c
-> +++ b/fs/xfs/xfs_log.c
-> @@ -1245,7 +1245,7 @@ xlog_ioend_work(
->  	}
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 07125b2cf0a6..8425198c5204 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -3934,6 +3934,7 @@ void sev_snp_init_protected_guest_state(struct kvm_vcpu *vcpu)
 >  
->  	xlog_state_done_syncing(iclog);
-> -	bio_uninit(&iclog->ic_bio);
-> +	bio_uninit(container_of(&iclog->ic_bio, struct bio, __hdr));
-
-This is a pretty nasty conversion. The code is obviously correct
-right now - the bio uses an external bvec table, so has no
-associated allocated bvec space and so the bio isn't flexibly
-sized.
-
-Making the code more complex for humans to understand and get
-right because "the compiler is dumb" is a bad tradeoff.
-
-I also think this is a really nasty way of fixing the problem;
-casting the fixed size structure to a flex sized structure that can
-overlap other parent structure fields really isn't a good solution.
-IMO, it is a recipe for unexpected memory corruption when the bio
-isn't set up properly by the caller or there are bugs in the way the
-bio is iterated/processed....
-
->  	return;
->  shutdown:
->  	xlog_force_shutdown(log, SHUTDOWN_LOG_IO_ERROR);
-> diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
-> index f3d78869e5e5..32abc48aef24 100644
-> --- a/fs/xfs/xfs_log_priv.h
-> +++ b/fs/xfs/xfs_log_priv.h
-> @@ -205,7 +205,7 @@ typedef struct xlog_in_core {
->  #endif
->  	struct semaphore	ic_sema;
->  	struct work_struct	ic_end_io_work;
-> -	struct bio		ic_bio;
-> +	struct bio_hdr		ic_bio;
->  	struct bio_vec          ic_bvec[];
-
-But then there is the bigger question: ic_bvec is a *fixed size*
-that is allocated at mount time. The fact it is defined as a
-flexible array is the problem here, not the embedding of a struct
-bio. i.e. we've used a flex array to optimise away an extra
-allocation in a non-performance sensitive path.
-
-Hence if we had done it this way:
-
-	struct bvec		*ic_bvecs;
-	struct bio		ic_bio;		// must be last
-};
-
-and use another allocation for ic_bvecs in xlog_alloc_log() (similar
-to how we do the separate allocation of the *ic_data buffer that is
-mapped into ic_bio at IO time), then none of the code that accesses
-ic_bio for IO purposes needs to change and the compiler warnings go
-away. That's a much cleaner solution that requires no extra
-cognitive load on developers to maintain in correct working order.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>  static int sev_snp_ap_creation(struct vcpu_svm *svm)
+>  {
+> +	struct kvm_sev_info *sev = to_kvm_sev_info(svm->vcpu.kvm);
+>  	struct kvm_vcpu *vcpu = &svm->vcpu;
+>  	struct kvm_vcpu *target_vcpu;
+>  	struct vcpu_svm *target_svm;
+> @@ -3965,26 +3966,18 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
+>  
+>  	mutex_lock(&target_svm->sev_es.snp_vmsa_mutex);
+>  
+> -	/* Interrupt injection mode shouldn't change for AP creation */
+> -	if (request < SVM_VMGEXIT_AP_DESTROY) {
+> -		u64 sev_features;
+> -
+> -		sev_features = vcpu->arch.regs[VCPU_REGS_RAX];
+> -		sev_features ^= to_kvm_sev_info(svm->vcpu.kvm)->vmsa_features;
+> -
+> -		if (sev_features & SVM_SEV_FEAT_INT_INJ_MODES) {
+> -			vcpu_unimpl(vcpu, "vmgexit: invalid AP injection mode [%#lx] from guest\n",
+> -				    vcpu->arch.regs[VCPU_REGS_RAX]);
+> -			ret = -EINVAL;
+> -			goto out;
+> -		}
+> -	}
+> -
+>  	switch (request) {
+>  	case SVM_VMGEXIT_AP_CREATE_ON_INIT:
+>  		kick = false;
+>  		fallthrough;
+>  	case SVM_VMGEXIT_AP_CREATE:
+> +		if (vcpu->arch.regs[VCPU_REGS_RAX] != sev->vmsa_features) {
+> +			vcpu_unimpl(vcpu, "vmgexit: mismatched AP sev_features [%#lx] != [%#llx] from guest\n",
+> +				    vcpu->arch.regs[VCPU_REGS_RAX], sev->vmsa_features);
+> +			ret = -EINVAL;
+> +			goto out;
+> +		}
+> +
+>  		if (!page_address_valid(vcpu, svm->vmcb->control.exit_info_2)) {
+>  			vcpu_unimpl(vcpu, "vmgexit: invalid AP VMSA address [%#llx] from guest\n",
+>  				    svm->vmcb->control.exit_info_2);
 
