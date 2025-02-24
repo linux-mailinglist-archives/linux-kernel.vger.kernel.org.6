@@ -1,112 +1,165 @@
-Return-Path: <linux-kernel+bounces-529912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9010CA42C6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:12:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560B4A42C70
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0941892F05
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59A93AA3E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2ED1EDA10;
-	Mon, 24 Feb 2025 19:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE161F419C;
+	Mon, 24 Feb 2025 19:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="m6yxRP+P"
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvmgjDln"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B63DB674
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97FE155CB3;
+	Mon, 24 Feb 2025 19:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424316; cv=none; b=LG4HF+jatQSAeV46Zm3crhbAujp/9lcRNL9aXm5eZd69dt+/K6ujARoTk7ZFwRUcYX71xjhT2jT1AhQ957OZfWMEM1hooxnxVKeV0+qGT6WVRQsrRQfMYcPjvrWasKtn5qvso0Q7xfGSV8dENGHFlYG+nMRGY7Z6twBUPZ4Znz8=
+	t=1740424332; cv=none; b=RaYZZ+9dSB+G3o5kMGuy1ayjm/jdSy0+ztgw6D50rVqhcuCrn3gm+tBMHJQaU35WbWQ/GoJpKDYxwlpCoQgNjkYfHB3NNsyiOJrJ21FTuUtIDyxTZAsQYf4rzUOPQYLozW288IrvnMcpGzQFOf1WsMPeRZWv5zQFScNMb3lERWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424316; c=relaxed/simple;
-	bh=lqITVuHjSdd5RRpvKDEPCjNX6WgnfoWxYiPz1JVma5U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hP+a2jeI3JfZhQnnbUl3gISPS8I0v36M7aQQ78W9JWe3KD0p1gVuT7oa4Az+ioS9luMqbCCag1N/ZKJ0AYzYCjx3Kk1G+E+8Dvo91pLloH28dABSWM64xxSXTgo8UdZaHNOEMxaIhrllf5xQvyg2iKD11bhpFj5+AfwbTIRoX0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=m6yxRP+P; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3ce85545983so14252715ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:11:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1740424312; x=1741029112; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FmN3KVAfNfgQLfOINQ04HTMkcolnnhRuNSGcRqyX7Zk=;
-        b=m6yxRP+PvEiFr777V4ZwKdSjYp2deBUjqCmb61Eu8LOu5RScL8OxcDdUVk0c+98WiM
-         3JJyyFs9mf/zrV9+AAqMwsdNyowb+kFeeap0XA6RHSEnfQV44mNpCrE5MMCJv/n+y+Xc
-         IesAM+0yUPrRS9fAYyZBrBhEYtGlnn9VlBmiWEPpbyYBIOXIxh/+3i+vRldjxBBYM+F0
-         3HtxhSM/8Zpmi9uCYccAEwuDhEC6FCP/3W53+f3qP6aWHhsJBGVYydP6BEXVqZocpk17
-         6xveQZ7S3xmCcLenEop6KjDZnACpmWzb632Z++0dT7jZAwA8FqCBLbwINUtS6XDC++yI
-         2fvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740424312; x=1741029112;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FmN3KVAfNfgQLfOINQ04HTMkcolnnhRuNSGcRqyX7Zk=;
-        b=WXwP9mFAvstnFPEp27Y6XGt3n5CJmH0r0NuYKCCt0QDAn08+HgwXUTTCZcKymPqZfc
-         Js8422XtczPhiOqet3lybo/dzZpcgTkQa6BNQywSxoRKExuDSbYi9D1SOwU8tU6iP54+
-         tcjTAExOn2RpSL+TFR1posPHTieYaFULcH2RiDSlV0BX+6DSHQcCadXv/+52Zdg1qD/h
-         GwjqwQVWcRPVLhUxvac1ZudkuypFFG9ZOVVHdjdjLvLlBGlNrhUBIo9WMysJ7WPbTRw3
-         8o8Acr+GMAMvDmSWIlB8QT8dNUUoalfz36o6YFBhGd81lxZm+YcFmCKi2+3q7IEe3HVe
-         qfSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyGbDp5IjAZ1ULov89KyDQpPKLBw0ShG8PPgv226rQ40dz4ZiKphnkX2Jt4rf/pTrfk31XfNqaQjbLjTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNtAx0TnzOuXYhGfU1+VZx3ZfwRVjCTrjY9zi4k5hhzgJc8ZLU
-	suWAqFIOp7jaTmCVW9Ayz4o6SFB/eUidjDYzhOqsYsLL5cM6+QJslbMXYC0yMhI=
-X-Gm-Gg: ASbGncvvoUfbktOBtqXvZuC5IiOCTVP3Ex28rEvgokSqhVmIJ4E/rSb3z2ceaOirYzH
-	7gRbXSbRM4OvyztkNr72gEsGzyCLDnz1/JAr49dqqDG68SC80T2eCs1Kzo4AqBV9Wjx9mDTyu0l
-	7r4wUXyWXQWesTI7IMn1xC0UEFNlMXqxgJlGb6koTbb12P2OLnpPUDC1S2bbpBfXy+xRMF8LM5k
-	APGh5r1/JO12mPdZ70tNY03jfkMWBRUPrEn4ji3Uw4ZtkPioXt9M1oHp1fQt+saLCvRb/XjIMV0
-	2UQVRZphEnhUyWBGbw==
-X-Google-Smtp-Source: AGHT+IFv8GhjG79J3q5ecRXZdFhxhc3NK0bAEpM1VgiIaqs2Y5/ii9q53L2gwQISuhGHureqzJhrIw==
-X-Received: by 2002:a05:6e02:1fc9:b0:3d1:5840:1333 with SMTP id e9e14a558f8ab-3d2c00a5ff3mr187424625ab.1.1740424312651;
-        Mon, 24 Feb 2025 11:11:52 -0800 (PST)
-Received: from [127.0.0.1] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d18fb56f99sm52420845ab.50.2025.02.24.11.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 11:11:52 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250224172337.2009871-1-csander@purestorage.com>
-References: <20250224172337.2009871-1-csander@purestorage.com>
-Subject: Re: [PATCH] io_uring/waitid: remove #ifdef CONFIG_COMPAT
-Message-Id: <174042431179.2039316.10674905939776007454.b4-ty@kernel.dk>
-Date: Mon, 24 Feb 2025 12:11:51 -0700
+	s=arc-20240116; t=1740424332; c=relaxed/simple;
+	bh=vXBsqbufAWtmBoM7Qh1pntSR7FtTvFbZYNSh+wYzzv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hox9hgUAEcWd6VIY5mZxu5bn4iJ4Dtsc7tgQB6PwYLORGFK9Z1pMH3ECGE4HKhrIDrXLwZGZnXkoWntdGDsxoCyXqeG03ZbAeVIzkDLJ/4iJyPk2b4MrEUCHymFxv18nzDlF7mTncWv9swufhoB+qRw8SMTGkurVFX/ea87fgDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvmgjDln; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A31C4CEEF;
+	Mon, 24 Feb 2025 19:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740424330;
+	bh=vXBsqbufAWtmBoM7Qh1pntSR7FtTvFbZYNSh+wYzzv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TvmgjDlnxWsPu6PSnGEV2bpAwWTTTq6AVXIoJHV6iPbaFCclbAf70dZoCPm4vSXlj
+	 AoA7yFbzTjuZ5tkJzdtvQCGETB/8vF4B9iT/uyPpgMwheIglp5KtQqLWUQKgdp5evx
+	 NI9rrPtWeh8DzVaFd5MtsmYyc/hr8bN6pgjAQ0/RmQY1c5IklS0mD0k0XE66duewSg
+	 UCOynPjmpRooGigm6YPbpPgAUg6CzvfHTyDlPtVVWdDmlJFk7i8jYMPDD+CdiG16n7
+	 MhyQL1POu6Mrbl40Gj5c11vPlyYclVd7/z4nJt8bOmStAYGaVYEgvFTm5wWaR/e7nB
+	 UMZUqZPAiDtaw==
+Date: Mon, 24 Feb 2025 11:12:09 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Carlos Maiolino <cem@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 3/8][next] xfs: Avoid -Wflex-array-member-not-at-end
+ warnings
+Message-ID: <20250224191209.GZ21808@frogsfrogsfrogs>
+References: <cover.1739957534.git.gustavoars@kernel.org>
+ <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
 
+On Mon, Feb 24, 2025 at 08:27:44PM +1030, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Change the type of the middle struct members currently causing trouble
+> from `struct bio` to `struct bio_hdr`.
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure `struct bio`, through which we can access the
+> flexible-array member in it, if necessary.
+> 
+> With these changes fix 27 of the following warnings:
+> 
+> fs/xfs/xfs_log_priv.h:208:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  fs/xfs/xfs_log.c      | 15 +++++++++------
+>  fs/xfs/xfs_log_priv.h |  2 +-
+>  2 files changed, 10 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+> index f8851ff835de..7e8b71f64a46 100644
+> --- a/fs/xfs/xfs_log.c
+> +++ b/fs/xfs/xfs_log.c
+> @@ -1245,7 +1245,7 @@ xlog_ioend_work(
+>  	}
+>  
+>  	xlog_state_done_syncing(iclog);
+> -	bio_uninit(&iclog->ic_bio);
+> +	bio_uninit(container_of(&iclog->ic_bio, struct bio, __hdr));
+>  
+>  	/*
+>  	 * Drop the lock to signal that we are done. Nothing references the
+> @@ -1663,7 +1663,8 @@ xlog_write_iclog(
+>  	 * writeback throttle from throttling log writes behind background
+>  	 * metadata writeback and causing priority inversions.
+>  	 */
+> -	bio_init(&iclog->ic_bio, log->l_targ->bt_bdev, iclog->ic_bvec,
+> +	bio_init(container_of(&iclog->ic_bio, struct bio, __hdr),
+> +		 log->l_targ->bt_bdev, iclog->ic_bvec,
+>  		 howmany(count, PAGE_SIZE),
+>  		 REQ_OP_WRITE | REQ_META | REQ_SYNC | REQ_IDLE);
+>  	iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart + bno;
+> @@ -1692,7 +1693,8 @@ xlog_write_iclog(
+>  
+>  	iclog->ic_flags &= ~(XLOG_ICL_NEED_FLUSH | XLOG_ICL_NEED_FUA);
+>  
+> -	if (xlog_map_iclog_data(&iclog->ic_bio, iclog->ic_data, count))
+> +	if (xlog_map_iclog_data(container_of(&iclog->ic_bio, struct bio, __hdr),
+> +				iclog->ic_data, count))
+>  		goto shutdown;
+>  
+>  	if (is_vmalloc_addr(iclog->ic_data))
+> @@ -1705,16 +1707,17 @@ xlog_write_iclog(
+>  	if (bno + BTOBB(count) > log->l_logBBsize) {
+>  		struct bio *split;
+>  
+> -		split = bio_split(&iclog->ic_bio, log->l_logBBsize - bno,
+> +		split = bio_split(container_of(&iclog->ic_bio, struct bio, __hdr),
+> +				  log->l_logBBsize - bno,
+>  				  GFP_NOIO, &fs_bio_set);
+> -		bio_chain(split, &iclog->ic_bio);
+> +		bio_chain(split, container_of(&iclog->ic_bio, struct bio, __hdr));
+>  		submit_bio(split);
+>  
+>  		/* restart at logical offset zero for the remainder */
+>  		iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart;
+>  	}
+>  
+> -	submit_bio(&iclog->ic_bio);
+> +	submit_bio(container_of(&iclog->ic_bio, struct bio, __hdr));
+>  	return;
+>  shutdown:
+>  	xlog_force_shutdown(log, SHUTDOWN_LOG_IO_ERROR);
+> diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+> index f3d78869e5e5..32abc48aef24 100644
+> --- a/fs/xfs/xfs_log_priv.h
+> +++ b/fs/xfs/xfs_log_priv.h
+> @@ -205,7 +205,7 @@ typedef struct xlog_in_core {
+>  #endif
+>  	struct semaphore	ic_sema;
+>  	struct work_struct	ic_end_io_work;
+> -	struct bio		ic_bio;
+> +	struct bio_hdr		ic_bio;
 
-On Mon, 24 Feb 2025 10:23:36 -0700, Caleb Sander Mateos wrote:
-> io_is_compat() is already defined to return false if CONFIG_COMPAT is
-> disabled. So remove the additional #ifdef CONFIG_COMPAT guards. Let the
-> compiler optimize out the dead code when CONFIG_COMPAT is disabled.
+What struct is this?
+
+$ git grep 'struct bio_hdr' include/
+$
+
+(Please always send the core code change patches to the xfs list.)
+
+--D
+
+>  	struct bio_vec		ic_bvec[];
+>  } xlog_in_core_t;
+>  
+> -- 
+> 2.43.0
 > 
 > 
-
-Applied, thanks!
-
-[1/1] io_uring/waitid: remove #ifdef CONFIG_COMPAT
-      commit: 0cd64345c4ba127d27fa07a133d108ea92d38361
-
-Best regards,
--- 
-Jens Axboe
-
-
-
 
