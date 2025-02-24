@@ -1,339 +1,339 @@
-Return-Path: <linux-kernel+bounces-530068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FDFA42E65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:56:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0F58A42E61
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:55:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 835123B77CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80AEB176C51
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155AE2638BA;
-	Mon, 24 Feb 2025 20:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7174D26280C;
+	Mon, 24 Feb 2025 20:55:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="i3el/lmX"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2081.outbound.protection.outlook.com [40.107.92.81])
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="Y04RqWV6"
+Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3597D2512D3;
-	Mon, 24 Feb 2025 20:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430440; cv=fail; b=ZHJmBxHAQOsBwLZLol9LQ56a3dS6GkTAjtK6uW6TtYiKsqBH4OPJ35wzG5U/YY5ouljy68M/aFFubpeGgDrPJjt+hx6nk9KHoYAeqKSkvYyrXccIdfrQe/kcQtij/lCA2MVHvlSRKSO0/ZMJuCG7LLRdyqFIhNyboSsq0+N27xY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430440; c=relaxed/simple;
-	bh=iTYIZltomIrv+2LnUIdW2g7VTFrS1zgqPz6pbUCiIuo=;
-	h=Content-Type:Date:Message-Id:Subject:Cc:To:From:References:
-	 In-Reply-To:MIME-Version; b=YLdymWr4a3lnT7rPRB9Eri+5pWjRx2hlm+P+/TG1YC/MKKbt8+cM9eh3NQmIboHIrfqNTCH1DwhuoeDDAVoomBfnmIPjRIFtOxfC71rcxlaYeDjeKCc4nax5snctTAcevi31EXGTqvm4nM4wTfnOgFPGApAb05fb3XylERpXj/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=i3el/lmX; arc=fail smtp.client-ip=40.107.92.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r93aYHPPvGnmvtDb6rRZ2J0z+sGO9tRuhPymbHMKqn576RMy5ecR5p18wrbTKFra+BpYLTtCmCHSPNdonNJsa1BY1o8wENVboqYpKH1d7dUgYqwJIhi21EoPao28kAQSal20fYPjU+2LEegGaRGI8YA5vAmNvHm6TcRbePRgO+f7ex+uP4NmY80mV0sICvVQ0qZc5nIscI1XI1YKnDHrRwtbFl6aMXMoBPjJg+se3W/MXtCzcGgErgdS/MvGe6HHFyQVFSzla+zPN8npzv5qPvLp+kVTNQ+gPekfwSaqYktaJ6uw4yp9nJdoqjontT5ufnC//GqTR7dqOy3Nl/x37Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DBgDXppHFvblf16VOUB6Y5vJzUXX/uNP5zwrqd3oykA=;
- b=o6I5XUHNWneAuB7SjPREsgJZC47Jh1SZC7o9OuyZ/2ezBzEyZ8aobdvayIv8A8szEMRTlN5bOHBHfaOlGRYnUQH/tRW7PKnLDzEjNcL/qkQoDXDgoPTJOvts3H1Ojo6dbuxQGAnVZB+823m3ymVlgpANHagyEZ5rgwvkeC9nwqX2c/vA1wM5/S1oCxVMz2kJCLgYVTEr989PNjv0NDEhCVGew+pX1FNyMyBXNWnLLcbvodvU6eoDlLe/WV0UqBH2oEZJxQ65Q4SLHk9QZInyLsNv22Wjj6DoIHxuyIPVd807wsWeLwZqn2IDJZaqcKoYnNsof0N4BOd1v9sepkVKpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DBgDXppHFvblf16VOUB6Y5vJzUXX/uNP5zwrqd3oykA=;
- b=i3el/lmXBNsmIjzuD1rFjOPhJF0RUCPnmGEFcrQ9ANa5ay0OwHSJNYq5cqmfKqaaKvN6s1E0OTTDMdYI+TjiZ1TKPSEJRSXn+P1VJugxYC5mz6LclkL2Cxwn40BUveaWkqz2K04puOv54tNiKI9sugzTDeGyy9qgWB4GKtsJbzU1vPyXl1RRybf/JqNX9DgCjIyj7BW5T7DeKV3GxBa/FYBa/pYjw+TETqWLJCyQAi8oJng01gHiIG5ryfcEcaBZZKo6EkatiqC0HgBRz5M38kCntOWSjPshg00VF3pocIUhYkkBygHES/VxTTZ7IV2vwsYkjjRH6ovWgT+LrQZG3g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CY5PR12MB6384.namprd12.prod.outlook.com (2603:10b6:930:3c::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.18; Mon, 24 Feb 2025 20:53:50 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 20:53:50 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Feb 2025 15:53:48 -0500
-Message-Id: <D80Z3H6NZARU.1HP5EKXOJ68QH@nvidia.com>
-Subject: Re: [PATCH v2 19/20] fs/proc/task_mmu: remove per-page mapcount
- dependency for smaps/smaps_rollup (CONFIG_NO_PAGE_MAPCOUNT)
-Cc: <linux-doc@vger.kernel.org>, <cgroups@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-api@vger.kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, "Tejun Heo"
- <tj@kernel.org>, "Zefan Li" <lizefan.x@bytedance.com>, "Johannes Weiner"
- <hannes@cmpxchg.org>, =?utf-8?q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- "Jonathan Corbet" <corbet@lwn.net>, "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, "Muchun Song" <muchun.song@linux.dev>, "Liam
- R. Howlett" <Liam.Howlett@oracle.com>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>, "Jann
- Horn" <jannh@google.com>
-To: "David Hildenbrand" <david@redhat.com>, <linux-kernel@vger.kernel.org>
-From: "Zi Yan" <ziy@nvidia.com>
-X-Mailer: aerc 0.20.0
-References: <20250224165603.1434404-1-david@redhat.com>
- <20250224165603.1434404-20-david@redhat.com>
-In-Reply-To: <20250224165603.1434404-20-david@redhat.com>
-X-ClientProxiedBy: MN2PR15CA0061.namprd15.prod.outlook.com
- (2603:10b6:208:237::30) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5503E1B21BF;
+	Mon, 24 Feb 2025 20:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740430548; cv=none; b=M81s3HhsT9Nf6dtDuif6q2X8nyy680Aj6WbIAhyCf4IZRDYNJknO43PrI0PXqOgVlZgLzbGBrbmw4pV9SaavzNww+Qfy8H9AF7GvLxVrk1IP1fx4UPpJv/zkqB4uqeOfJiN6chEeOOeIRrCLW8ovRwXX88MMI3/Sh8j8A7W1tkU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740430548; c=relaxed/simple;
+	bh=5BMfWZTTcRKNJdyzL9wXKRaxV3sEHCUxuGqUziXtyk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=g7IIZb2e4+Tt3k8wYocwsVEE/akL9v42wsB87TFz+/wD/MzC95lPz9+VDpKdq60oEowdSlwDeyZ4R2kOV83WsDZgG9uSvNS8l7SrGULWgZSjEnoWX2oU+SQcD10HJdhYBhDCtaJzpBu77+L1CKjsxbhQQ13ooAL4cbpxSjVRfOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=Y04RqWV6; arc=none smtp.client-ip=131.188.11.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z1tL80JJJz1y9Q;
+	Mon, 24 Feb 2025 21:55:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1740430544; bh=ntgsfQWiVpVb4y+TMEAENEQjeNqzPtISJnnNVS7HCkU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
+	 Subject;
+	b=Y04RqWV6FNt/X2aHemmJcOpJU4l3/bOhUS/ZoXGLw9ZG1pPaPMOW2+iaRW53r1N8V
+	 p2nDLvnuNqAc36yGaVDbzohF3sE+LlzeroqP5THt6Uw8fOE1WvJFrGPSG1nlA1ImBM
+	 RhjOdPaTRwzZWvvFw58itvxGr9i36SXmTtR1ctxOtAFW4Oen2Tq276tt97z8EyzSz9
+	 Kpz3FOhh6aCeYu3atIeP6aQaIU3kjNCwUbAer1JpkDmzaOCjDW5jVVP7NSBKipeEt3
+	 0UiGUAbeIpYUYRkwC90gtYDzd/FpPnkK4yI7UUoi0+9Q9ahSwEa1upydirwgAfmNO6
+	 2SgWUWJE2F+dg==
+X-Virus-Scanned: amavisd-new at boeck2.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2001:9e8:362e:e00:55a6:11d5:2473:17a9
+Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:362e:e00:55a6:11d5:2473:17a9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX1++pJ30EWaXZtK/wg5tWfK6Lqv7GXZL8rM=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z1tL453j3z1y1k;
+	Mon, 24 Feb 2025 21:55:40 +0100 (CET)
+From: Luis Gerhorst <luis.gerhorst@fau.de>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Xu Kuohai <xukuohai@huaweicloud.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mykola Lysenko <mykolal@fb.com>,
+	Henriette Herzog <henriette.herzog@rub.de>,
+	Cupertino Miranda <cupertino.miranda@oracle.com>,
+	Matan Shachnai <m.shachnai@gmail.com>,
+	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
+	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	bpf@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: Luis Gerhorst <luis.gerhorst@fau.de>,
+	Maximilian Ott <ott@cs.fau.de>,
+	Milan Stephan <milan.stephan@fau.de>
+Subject: [RFC PATCH 8/9] bpf: Fall back to nospec for sanitization-failures
+Date: Mon, 24 Feb 2025 21:55:23 +0100
+Message-ID: <20250224205523.608343-1-luis.gerhorst@fau.de>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250224203619.594724-1-luis.gerhorst@fau.de>
+References: <20250224203619.594724-1-luis.gerhorst@fau.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY5PR12MB6384:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34e369da-6e2c-4eef-e323-08dd55155771
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cyt6ZGhOOEE1UCtoQW45N3BQWEs2QTN0RmdBM3BJUGNZbXlSVnRaUGtlcXpP?=
- =?utf-8?B?bjA5d08zc2crRTUwMTV4S1JzT2wrbjQyZ0g0dWNEK1Y0V1FzRzM3ZkhINjJX?=
- =?utf-8?B?WFVvcEh0eWVOdjZWVHVLYVdsRkI1d1FERDVEbmJoRFlNQlZ3aGZJL0xLaTIr?=
- =?utf-8?B?UUZJemJQSUR6K3JEdGs0eVM2TkFJem0waTJ0SVBGQTFGNkgvUjNBMEJKTFlD?=
- =?utf-8?B?a0srOG1QOXdXcXlpOHF5bUk4bTNBZy9RWmV1d2ViTHdGejJ2ZENiSVhEM205?=
- =?utf-8?B?ZklBSzVXNjJzQ0hVMmcvci9FS1ljWVJDYUxCRVNZVDBhUlcyUGpLcFN2c1Zk?=
- =?utf-8?B?aU9RdkpHNmJwc3FBaG1idWxGYmQyMTdUUWJpWTRoQ1ZGSFhmdlR1SlEvOGs0?=
- =?utf-8?B?WVpkdmVNNGRYaFY3aEJxWS85RE4wVGFuWVBUZU5lTmlaNWhiNFdrcmVOUzZ5?=
- =?utf-8?B?QzIzcHp4a1ZJYzN5d1h1aVJORHd3V1NBam5HRGJ6anA3b3ZGWUZ3VUVCaDdr?=
- =?utf-8?B?WlVMUlV1TnBqMDBybndabUhaTFlWY0REZFE5dDYrVVJHZEgvUWhsclBzRkw2?=
- =?utf-8?B?YS9SNUVrbks5U3M3dWozWTVtN01BTjNKY3poQjVPWEw1RHlQMkZzK0s2ZENx?=
- =?utf-8?B?SFlqbTFldjhVbWhCcjFDYm9Kd3pDVWNlK3owZ0IrYTNtQ1hsOUsrbytld081?=
- =?utf-8?B?a1o2Y0h2MWhQYzh2M2ZwSXlBZnBkcjhLenJuWFlNSDRIR2d2S0JMWUtpTGVz?=
- =?utf-8?B?eGkxQ09SQjVjdnI3NXNIRjZhSms4V1JGbkdseWgxMnZsN2RxN1c0MHRHSjFY?=
- =?utf-8?B?WkZYUUxEeCszaFpudllSTFlTU04zVTVJWXZEb3RKMGtpd0xTaGhGbmlubC9w?=
- =?utf-8?B?NC91eHQxMExEQk1USnZkMGUzam1jNXdQZkp5TzBMcXJPcmNRN0E4WjZXNnov?=
- =?utf-8?B?ZE5IRFQrb1FSaCsxS3JEaklYZnkzU2hxbmRrQWtPczhWTGtjZ2RRbE9JZURp?=
- =?utf-8?B?WGlhL3BUdGpyVFJEbzYrS2lsTHJJa1krbkpMamFQeFZqM3pDL2xEdzgxSHZQ?=
- =?utf-8?B?OGtOSnJRdTRpN3REOVZBcjBsZ09LeE1GV0plakFXY2FsMXV0SjFPWDh2RG9U?=
- =?utf-8?B?NkFodThDUUxJMGJYcWtYbWhjc2ptOGhDSzh1V0tJN3RBRVdUajh4VTVzZDJB?=
- =?utf-8?B?cE9MVzlVY2dWL1JDMWVlQVk0VHhxV0huOW0ybllicDkxcHExbGc4dzhjWnJI?=
- =?utf-8?B?SXlYMGVRKy9oelhaZ1NNTHY0RHc3WlhKNGlNUy9sMmhNc0M2R24yM1IxVDB4?=
- =?utf-8?B?SjYyNnBrUHNTL3QrUmJ5RjZia3ZEWmwvVGdKa3h2NVArRDlreHAxV1NHSHZt?=
- =?utf-8?B?L1RwVWZFeDdsWjE1TFU5cHhsR0ZrMnI1aVRNYnBWNm1lQ1VZSFc2QnZEUUZw?=
- =?utf-8?B?SStRODE4YzRYMGpMVFpUbTBFdS9FTWlRNkxWOE9uR1RsbGlXWERzb3VSeUVQ?=
- =?utf-8?B?TkIzQ0NJTEwxUm5NdGN2NHovZTY1RnBicUhTL1ZCRDZKUVJndGZzM0xUbUJs?=
- =?utf-8?B?V2tZRmVaeWtWajRFeHpUcXR1R1ZQSXREaUlZcTJCTlFzRldhTG9iUFQrUkR1?=
- =?utf-8?B?VmZraHh5ay9VYnZjRGRTY2NxK1JXa1lnQlE4MlZpSDY3ajlJTGsvSFYwY3lw?=
- =?utf-8?B?YzBTTjRrZXZTVDFSaXVnL2FYdmVXeDZ1Vk9IN1pid1VPUVNKYTA3bHNUMkpr?=
- =?utf-8?B?MXpQblllWnh4U09uR2R3MFkxSHV4TjhKZ3JuTTA1bWFweXdmWnpLKzVNMGYr?=
- =?utf-8?B?QmV5VTg1M1RFQnJkN0JyckRpMXJPN2tvMkJzekMxcnp3MWwwS1I4OE82MEQz?=
- =?utf-8?Q?TZJ+zcL00buYB?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?LzhZTHhpK0xlVzBmQzNHTUxNU2xWc1ZoMEw4RDA2Z0VaY1ZDQllnSHJXcFps?=
- =?utf-8?B?MTI3K0FHaFlwZHRWRUFyZDRNVzBPc3hXSm1WbDVQeGh1UE9NTjRYZmVKN1Vl?=
- =?utf-8?B?aHZRZjFDOUE5KzlPUGRmWVpsMHFUU1lsZ0tEZ2tUbkNxY0d2UWhvQnNUMmVj?=
- =?utf-8?B?OWJTOFpjRHl2WXpsT1JNL0UyR25kSG5zU1VteWo1Tm0wZXcwTEVtVGNTdXpq?=
- =?utf-8?B?Wi90NDJ2Z2RzRWplZ3hwNWIwUURhSGFpN0owczZpTzdpTDF2czJMSUNWRXdy?=
- =?utf-8?B?TW1EK0tBU28za1Rnem9vQUVwZG03UkpNak5HMDl0TTZjNTFWYnhHai93WFBr?=
- =?utf-8?B?cUhQWCtVK2dZdFdRUndQYXZ6cEFSZkkzRkF1SWZ2NldjcUNvOGxtc2NTdnM2?=
- =?utf-8?B?NzI3NXVtZDF5Q2t3R0hNNGMrbHdIZ2lWZTRrMG9pUVJ6Tmo0UjZ4Z0xYQlo5?=
- =?utf-8?B?THp5cXBHdzVHMkJhWjBUOFNPdnpsdzVoT1lPWDRBSTRWRzhuay9mVlFsU2hC?=
- =?utf-8?B?eFRXbHBMaEtRNVJlR2hUWGhuc25iaUxUay9WUzVuWm8wdFpnQUlFUURqdW1W?=
- =?utf-8?B?VWRkV0NqNFkvQTErWUZUNXkycitoRjdhNjRjQWtORVVuMklVRWpMVXk4Q3d2?=
- =?utf-8?B?YUIxTjVTMms1eWJ0S24xYUVpWDlnWnpXdWZLbjJUN3N2WWM5akM4d0dkenph?=
- =?utf-8?B?TEU1UEN4aGJmREVZZWNPZ0ZsTFU2d2N1RktCTUVWalQ0WjVpRkxWV1ZRV09P?=
- =?utf-8?B?SHlQME1SYldSUE5RekVpdGpoUUd0ZVFhVG5YV3hYRkhMS2w0NG1nRkRTTnp3?=
- =?utf-8?B?TWxOQVpGWHN1MkhLT0RGMTFpTS90UjdaMTNKWFc1Mkt1Y2dQcENWQitXVVhn?=
- =?utf-8?B?Z2w0dmVMSU9SS1FSUjhUdWNFbElKOWg4a1M0R2plZTNGU1R0VHhTZjJHdUhM?=
- =?utf-8?B?dWtTbUhXd0dwSW41Qml4anU5bE9rR0RRUEF6RnlTSWRvazFMMHZaRzFaeGkw?=
- =?utf-8?B?dGRsb1BETmVKZTN1cGZvZjArT3dmOWxVQ0tidm1DR2tXbDVGWDZQSlBWNk9s?=
- =?utf-8?B?WmlHNTRYcW5NZHNpWExwZnVvMHo3VDB2UkNLeHhXN2JzaUdzY096WTFLV0Nq?=
- =?utf-8?B?K2RxL21XUUFLTmFKRmhjNGhGcUI2cEsxZmhJSWJYNTRiOEVBSDBGZWYwTkFm?=
- =?utf-8?B?WDczR1JlcHFJZG96MzdMUXhzQUFvMFNOTkhMM1JSUENWb0k2RHF0NVVZZVBl?=
- =?utf-8?B?N1dsU0trNkhzSGhHN3Q2ek5tcUpldnNJQTlOenM1Y0lJb0VUMjlQVkVBOUgv?=
- =?utf-8?B?V0REaHFBdTlqeCsyUmtlZ3R2TzZIYm00OVNxWU5NN2tCREdNQm9pMXhTdXRW?=
- =?utf-8?B?OEh6MUFrL3BXOVpDU2QvQ0pBSnpQaUpNekR4U3JGYVdEMWhmTmJMNnF1dUdt?=
- =?utf-8?B?Nkg2eHdzRTlFb1NCc29TOTFnNktMTHNHN29SRjk5UmY1MVNLYi9HZUpVb21n?=
- =?utf-8?B?R3R1elN4OWhFT3FtSitjaFRId25TQkNJeW0wZ2xmMGdncHZEWXZBcERQL245?=
- =?utf-8?B?VDlZS2t0QzJPMHV3ejkzVkQ0ZGp3VDZwVHhRODBKQzB1YUxma29jSG94U0tK?=
- =?utf-8?B?SnNEZmt5VHUxQU1KamJzajQrQUN2NGNCLzRuQlA0WWR2MmZWcTR4ZHlJblYy?=
- =?utf-8?B?Vk1BZ0o1RXI5aHMxMDBrQ25iQXNKWkpsNDdZSFl4QnJvQy9FOXNPYTZlNVp2?=
- =?utf-8?B?b1FtVGdKN0JUb29Hd0M4eXl4RHh1bzk1RTBaeHR3QjY4SmhjTEhTd3RIeGJQ?=
- =?utf-8?B?Y1o3RU5pdFpiWDVXOTRoZFozaVVoMGd2UmJmbitBdU9kNGxBWHJUbDNZWHpJ?=
- =?utf-8?B?UTRDNTFaWE5Td1hqRDBUREcrdHNpQXRsV3dDckpwMTVwYUQ3SHo3b1NtU0hM?=
- =?utf-8?B?VjBMN0NFZGRhNThNcjczR0FoZTRBaVNXYnN5NGdiUGtJZWRkU0VWU3JoWCtR?=
- =?utf-8?B?a3IyeDZKMm0rQjdPcW5BRS9VRFJ3MzF3ZXhnKzkxVWFJZm8vaGhFWXZQc2lx?=
- =?utf-8?B?TitSNmNqaHIrSzlsTTdQTkllL3RTUG5HaWxpZm1aTk9odElSY0laczBHV2Vi?=
- =?utf-8?Q?W9Qqela0Ti7hG3ibIM54dRSgD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34e369da-6e2c-4eef-e323-08dd55155771
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 20:53:50.7441
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9GFR748p+Liz80aeilu/2vq+vTyWbmc+cpSQ5pnEEgdnKxv/7PW9Em1z4MBqxauh
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6384
+Content-Transfer-Encoding: 8bit
 
-On Mon Feb 24, 2025 at 11:56 AM EST, David Hildenbrand wrote:
-> Let's implement an alternative when per-page mapcounts in large folios ar=
-e
-> no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
->
-> When computing the output for smaps / smaps_rollups, in particular when
-> calculating the USS (Unique Set Size) and the PSS (Proportional Set Size)=
-,
-> we still rely on per-page mapcounts.
->
-> To determine private vs. shared, we'll use folio_likely_mapped_shared(),
-> similar to how we handle PM_MMAP_EXCLUSIVE. Similarly, we might now
-> under-estimate the USS and count pages towards "shared" that are
-> actually "private" ("exclusively mapped").
->
-> When calculating the PSS, we'll now also use the average per-page
-> mapcount for large folios: this can result in both, an over-estimation
-> and an under-estimation of the PSS. The difference is not expected to
-> matter much in practice, but we'll have to learn as we go.
->
-> We can now provide folio_precise_page_mapcount() only with
-> CONFIG_PAGE_MAPCOUNT, and remove one of the last users of per-page
-> mapcounts when CONFIG_NO_PAGE_MAPCOUNT is enabled.
->
-> Document the new behavior.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> ---
->  Documentation/filesystems/proc.rst | 13 +++++++++++++
->  fs/proc/internal.h                 |  8 ++++++++
->  fs/proc/task_mmu.c                 | 17 +++++++++++++++--
->  3 files changed, 36 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesyste=
-ms/proc.rst
-> index 1aa190017f796..57d55274a1f42 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -506,6 +506,19 @@ Note that even a page which is part of a MAP_SHARED =
-mapping, but has only
->  a single pte mapped, i.e.  is currently used by only one process, is acc=
-ounted
->  as private and not as shared.
-> =20
-> +Note that in some kernel configurations, all pages part of a larger allo=
-cation
-> +(e.g., THP) might be considered "shared" if the large allocation is
-> +considered "shared": if not all pages are exclusive to the same process.
-> +Further, some kernel configurations might consider larger allocations "s=
-hared",
-> +if they were at one point considered "shared", even if they would now be
-> +considered "exclusive".
-> +
-> +Some kernel configurations do not track the precise number of times a pa=
-ge part
-> +of a larger allocation is mapped. In this case, when calculating the PSS=
-, the
-> +average number of mappings per page in this larger allocation might be u=
-sed
-> +as an approximation for the number of mappings of a page. The PSS calcul=
-ation
-> +will be imprecise in this case.
-> +
->  "Referenced" indicates the amount of memory currently marked as referenc=
-ed or
->  accessed.
-> =20
-> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-> index 16aa1fd260771..70205425a2daa 100644
-> --- a/fs/proc/internal.h
-> +++ b/fs/proc/internal.h
-> @@ -143,6 +143,7 @@ unsigned name_to_int(const struct qstr *qstr);
->  /* Worst case buffer size needed for holding an integer. */
->  #define PROC_NUMBUF 13
-> =20
-> +#ifdef CONFIG_PAGE_MAPCOUNT
->  /**
->   * folio_precise_page_mapcount() - Number of mappings of this folio page=
-.
->   * @folio: The folio.
-> @@ -173,6 +174,13 @@ static inline int folio_precise_page_mapcount(struct=
- folio *folio,
-> =20
->  	return mapcount;
->  }
-> +#else /* !CONFIG_PAGE_MAPCOUNT */
-> +static inline int folio_precise_page_mapcount(struct folio *folio,
-> +		struct page *page)
-> +{
-> +	BUILD_BUG();
-> +}
-> +#endif /* CONFIG_PAGE_MAPCOUNT */
-> =20
->  /**
->   * folio_average_page_mapcount() - Average number of mappings per page i=
-n this
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index d7ee842367f0f..7ca0bc3bf417d 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -707,6 +707,8 @@ static void smaps_account(struct mem_size_stats *mss,=
- struct page *page,
->  	struct folio *folio =3D page_folio(page);
->  	int i, nr =3D compound ? compound_nr(page) : 1;
->  	unsigned long size =3D nr * PAGE_SIZE;
-> +	bool exclusive;
-> +	int mapcount;
-> =20
->  	/*
->  	 * First accumulate quantities that depend only on |size| and the type
-> @@ -747,18 +749,29 @@ static void smaps_account(struct mem_size_stats *ms=
-s, struct page *page,
->  				      dirty, locked, present);
->  		return;
->  	}
-> +
-> +	if (IS_ENABLED(CONFIG_NO_PAGE_MAPCOUNT)) {
-> +		mapcount =3D folio_average_page_mapcount(folio);
+For the now raised REASON_STACK, this allows us to later fall back to
+nospec for certain errors from push_stack() if we are on a speculative
+path.
 
-This seems inconsistent with how folio_average_page_mapcount() is used
-in patch 16 and 18.
+Fall back to nospec_result directly for the remaining sanitization errs
+even if we are not on a speculative path. We must prevent a following
+mem-access from using the result of the alu op speculatively. Therefore,
+insert a nospec after the alu insn.
 
-> +		exclusive =3D !folio_maybe_mapped_shared(folio);
-> +	}
-> +
->  	/*
->  	 * We obtain a snapshot of the mapcount. Without holding the folio lock
->  	 * this snapshot can be slightly wrong as we cannot always read the
->  	 * mapcount atomically.
->  	 */
->  	for (i =3D 0; i < nr; i++, page++) {
-> -		int mapcount =3D folio_precise_page_mapcount(folio, page);
->  		unsigned long pss =3D PAGE_SIZE << PSS_SHIFT;
-> +
-> +		if (IS_ENABLED(CONFIG_PAGE_MAPCOUNT)) {
-> +			mapcount =3D folio_precise_page_mapcount(folio, page);
-> +			exclusive =3D mapcount < 2;
-> +		}
-> +
->  		if (mapcount >=3D 2)
->  			pss /=3D mapcount;
->  		smaps_page_accumulate(mss, folio, PAGE_SIZE, pss,
-> -				dirty, locked, mapcount < 2);
-> +				dirty, locked, exclusive);
->  	}
->  }
-> =20
+The latter requires us to modify the nospec_result patching code to work
+not only for write-type insns.
 
+Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
+Acked-by: Henriette Herzog <henriette.herzog@rub.de>
+Cc: Maximilian Ott <ott@cs.fau.de>
+Cc: Milan Stephan <milan.stephan@fau.de>
+---
+ kernel/bpf/verifier.c | 122 +++++++++++++++---------------------------
+ 1 file changed, 42 insertions(+), 80 deletions(-)
 
-
-
---=20
-Best Regards,
-Yan, Zi
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 406294bcd5ce..033780578966 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -13572,14 +13572,6 @@ static bool check_reg_sane_offset(struct bpf_verifier_env *env,
+ 	return true;
+ }
+ 
+-enum {
+-	REASON_BOUNDS	= -1,
+-	REASON_TYPE	= -2,
+-	REASON_PATHS	= -3,
+-	REASON_LIMIT	= -4,
+-	REASON_STACK	= -5,
+-};
+-
+ static int retrieve_ptr_limit(const struct bpf_reg_state *ptr_reg,
+ 			      u32 *alu_limit, bool mask_to_left)
+ {
+@@ -13602,11 +13594,13 @@ static int retrieve_ptr_limit(const struct bpf_reg_state *ptr_reg,
+ 			     ptr_reg->umax_value) + ptr_reg->off;
+ 		break;
+ 	default:
+-		return REASON_TYPE;
++		/* Register has pointer with unsupported alu operation. */
++		return -ENOTSUPP;
+ 	}
+ 
++	/* Register tried access beyond pointer bounds. */
+ 	if (ptr_limit >= max)
+-		return REASON_LIMIT;
++		return -ENOTSUPP;
+ 	*alu_limit = ptr_limit;
+ 	return 0;
+ }
+@@ -13625,8 +13619,12 @@ static int update_alu_sanitation_state(struct bpf_insn_aux_data *aux,
+ 	 */
+ 	if (aux->alu_state &&
+ 	    (aux->alu_state != alu_state ||
+-	     aux->alu_limit != alu_limit))
+-		return REASON_PATHS;
++	     aux->alu_limit != alu_limit)) {
++		/* Tried to perform alu op from different maps, paths or scalars */
++		aux->nospec_result = true;
++		aux->alu_state = 0;
++		return 0;
++	}
+ 
+ 	/* Corresponding fixup done in do_misc_fixups(). */
+ 	aux->alu_state = alu_state;
+@@ -13707,16 +13705,24 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
+ 
+ 	if (!commit_window) {
+ 		if (!tnum_is_const(off_reg->var_off) &&
+-		    (off_reg->smin_value < 0) != (off_reg->smax_value < 0))
+-			return REASON_BOUNDS;
++		    (off_reg->smin_value < 0) != (off_reg->smax_value < 0)) {
++			/* Register has unknown scalar with mixed signed bounds. */
++			aux->nospec_result = true;
++			aux->alu_state = 0;
++			return 0;
++		}
+ 
+ 		info->mask_to_left = (opcode == BPF_ADD &&  off_is_neg) ||
+ 				     (opcode == BPF_SUB && !off_is_neg);
+ 	}
+ 
+ 	err = retrieve_ptr_limit(ptr_reg, &alu_limit, info->mask_to_left);
+-	if (err < 0)
+-		return err;
++	if (err) {
++		WARN_ON_ONCE(err != -ENOTSUPP);
++		aux->nospec_result = true;
++		aux->alu_state = 0;
++		return 0;
++	}
+ 
+ 	if (commit_window) {
+ 		/* In commit phase we narrow the masking window based on
+@@ -13769,7 +13775,7 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
+ 					   env->insn_idx);
+ 	if (!ptr_is_dst_reg && !IS_ERR(branch))
+ 		*dst_reg = tmp;
+-	return IS_ERR(branch) ? REASON_STACK : 0;
++	return PTR_ERR_OR_ZERO(branch);
+ }
+ 
+ static void sanitize_mark_insn_seen(struct bpf_verifier_env *env)
+@@ -13785,45 +13791,6 @@ static void sanitize_mark_insn_seen(struct bpf_verifier_env *env)
+ 		env->insn_aux_data[env->insn_idx].seen = env->pass_cnt;
+ }
+ 
+-static int sanitize_err(struct bpf_verifier_env *env,
+-			const struct bpf_insn *insn, int reason,
+-			const struct bpf_reg_state *off_reg,
+-			const struct bpf_reg_state *dst_reg)
+-{
+-	static const char *err = "pointer arithmetic with it prohibited for !root";
+-	const char *op = BPF_OP(insn->code) == BPF_ADD ? "add" : "sub";
+-	u32 dst = insn->dst_reg, src = insn->src_reg;
+-
+-	switch (reason) {
+-	case REASON_BOUNDS:
+-		verbose(env, "R%d has unknown scalar with mixed signed bounds, %s\n",
+-			off_reg == dst_reg ? dst : src, err);
+-		break;
+-	case REASON_TYPE:
+-		verbose(env, "R%d has pointer with unsupported alu operation, %s\n",
+-			off_reg == dst_reg ? src : dst, err);
+-		break;
+-	case REASON_PATHS:
+-		verbose(env, "R%d tried to %s from different maps, paths or scalars, %s\n",
+-			dst, op, err);
+-		break;
+-	case REASON_LIMIT:
+-		verbose(env, "R%d tried to %s beyond pointer bounds, %s\n",
+-			dst, op, err);
+-		break;
+-	case REASON_STACK:
+-		verbose(env, "R%d could not be pushed for speculative verification, %s\n",
+-			dst, err);
+-		break;
+-	default:
+-		verbose(env, "verifier internal error: unknown reason (%d)\n",
+-			reason);
+-		break;
+-	}
+-
+-	return -EACCES;
+-}
+-
+ /* check that stack access falls within stack limits and that 'reg' doesn't
+  * have a variable offset.
+  *
+@@ -13989,7 +13956,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		ret = sanitize_ptr_alu(env, insn, ptr_reg, off_reg, dst_reg,
+ 				       &info, false);
+ 		if (ret < 0)
+-			return sanitize_err(env, insn, ret, off_reg, dst_reg);
++			return ret;
+ 	}
+ 
+ 	switch (opcode) {
+@@ -14117,7 +14084,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		ret = sanitize_ptr_alu(env, insn, dst_reg, off_reg, dst_reg,
+ 				       &info, true);
+ 		if (ret < 0)
+-			return sanitize_err(env, insn, ret, off_reg, dst_reg);
++			return ret;
+ 	}
+ 
+ 	return 0;
+@@ -14711,7 +14678,7 @@ static int adjust_scalar_min_max_vals(struct bpf_verifier_env *env,
+ 	if (sanitize_needed(opcode)) {
+ 		ret = sanitize_val_alu(env, insn);
+ 		if (ret < 0)
+-			return sanitize_err(env, insn, ret, NULL, NULL);
++			return ret;
+ 	}
+ 
+ 	/* Calculate sign/unsigned bounds and tnum for alu32 and alu64 bit ops.
+@@ -20515,6 +20482,22 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 			 */
+ 		}
+ 
++		if (env->insn_aux_data[i + delta].nospec_result) {
++			struct bpf_insn patch[] = {
++				*insn,
++				BPF_ST_NOSPEC(),
++			};
++
++			cnt = ARRAY_SIZE(patch);
++			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
++			if (!new_prog)
++				return -ENOMEM;
++
++			delta    += cnt - 1;
++			env->prog = new_prog;
++			insn      = new_prog->insnsi + i + delta;
++		}
++
+ 		if (insn->code == (BPF_LDX | BPF_MEM | BPF_B) ||
+ 		    insn->code == (BPF_LDX | BPF_MEM | BPF_H) ||
+ 		    insn->code == (BPF_LDX | BPF_MEM | BPF_W) ||
+@@ -20561,27 +20544,6 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 			continue;
+ 		}
+ 
+-		if (type == BPF_WRITE &&
+-		    env->insn_aux_data[i + delta].nospec_result) {
+-			/* nospec_result is only used to mitigate Spectre v4 and
+-			 * to limit verification-time for Spectre v1.
+-			 */
+-			struct bpf_insn patch[] = {
+-				*insn,
+-				BPF_ST_NOSPEC(),
+-			};
+-
+-			cnt = ARRAY_SIZE(patch);
+-			new_prog = bpf_patch_insn_data(env, i + delta, patch, cnt);
+-			if (!new_prog)
+-				return -ENOMEM;
+-
+-			delta    += cnt - 1;
+-			env->prog = new_prog;
+-			insn      = new_prog->insnsi + i + delta;
+-			continue;
+-		}
+-
+ 		switch ((int)env->insn_aux_data[i + delta].ptr_type) {
+ 		case PTR_TO_CTX:
+ 			if (!ops->convert_ctx_access)
+-- 
+2.48.1
 
 
