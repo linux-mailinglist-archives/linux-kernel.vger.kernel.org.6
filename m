@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-528145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 609FAA4141F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:39:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F54FA4142F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:45:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4547C172431
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:39:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3525171705
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24ED1A9B2C;
-	Mon, 24 Feb 2025 03:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7891A76AC;
+	Mon, 24 Feb 2025 03:43:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="j8TUACTx"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDY9oqFC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D6FF510;
-	Mon, 24 Feb 2025 03:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A9C1A705C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740368334; cv=none; b=r4dd6v92RD8PVJOkYTvrwDMQXn1JxjsGJlEtCDG6A8CQzGBXlZ71e3k4/IwN94EiRtH5jm0d5u80jn4nxmxWaXy0QfmY4QVjWV7jqrinb8sKBmDGU/BXAiEANF81qbk23D3G8GNGqMchL2dqq1v7Z5rwCnV3p7NudlobLX7DhcA=
+	t=1740368609; cv=none; b=ABw3VfRV+p55UYeA4Y1aaLOlR7INiKg75VqW9rNM4ZHqSlC5w7x7p0TRpACyHyc/PpgUOQ8GML67prw3XQPyhMC/2BM6msMZSBmjgfaocyaC26R30kj1lBGLMPvcabWMcoj01aeJW+oDnHQbn3/WF8ZmaaHNud8XJfNADBmvNVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740368334; c=relaxed/simple;
-	bh=khPyexFgRrzKD4aS8Pr7cyj242wf3EyCfCMQCvtoNiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oTX/5Re2T/rSEoN/98oNCO1cXvdiBkyj+3swhJspLkz/eFBDmnyHAhuqJ6hDCzW1WvUcAaJy1hPmnx4DSimhFCTT5lmwwq5Mf2dUSH0VBj+iDERRF//XfDo75UrotadMljC3sf0PAnrlIfoaTYsnODEmFzrwriqsF+HiEWby47I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=j8TUACTx; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740368321; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=zDYrXQDA4qm9LJorA4fiBczFbRiFUQ1RGHOU5r99wBQ=;
-	b=j8TUACTxtSTK/lxfzbqGXTay5cMBroXpK5kHDpL6xiUdM2+D7FsIw7sIYt2K6M5lJKl50KfyPkT/XAm4n+5oO20yBiMxR6IkSafHa7cBl25kLaz8pkk39KwKtrE8YKbwEcm/h4wPZ5//Brfa2cOJP9h7G7E3yZTlzfSyceT6IEk=
-Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQ1w.6n_1740368318 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Feb 2025 11:38:39 +0800
-Message-ID: <fc8788ca-ffef-4166-a8d0-4c5748003de2@linux.alibaba.com>
-Date: Mon, 24 Feb 2025 11:38:37 +0800
+	s=arc-20240116; t=1740368609; c=relaxed/simple;
+	bh=8o9r4B0XpOobeIieD2x5HaFRY17SbtMnCUSAOwwT1Tk=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=oFo6yH/6a5rHy9UtIzJForkhMVwEtqmJH+pSzWX6ExaH7y6Fu1KceITEFKnG4VN1ztjCK1CLoIAKPtPmScpPyIgoy3+nQAyR/24qMLwtjzt6ohYa01u+qMTP7OMdTI20ZDzoD8Bc191ubxwzgUbUKeJok5Mfmn4iCyDpkjBczic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDY9oqFC; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740368606; x=1771904606;
+  h=date:from:to:cc:subject:message-id;
+  bh=8o9r4B0XpOobeIieD2x5HaFRY17SbtMnCUSAOwwT1Tk=;
+  b=iDY9oqFCWIAIJ/ZzMF0MFkDFFL1mkrMrQtB3xl5ux/n5VWCvgnqLVsee
+   lNzzAlexEAJfVjoj7zJhquiIJq1DwHFH0SU8g3XhgEsswIjWL/NJR4FXs
+   R9o0zx4TBewYnbo14gcdSo0/qrp+ymQovJbDaMgaJqNC9TLbgMG96PmHA
+   oiSByY5uZi+fGZh0XHFSP4aqyDp1oDejxmE0SCZ8WIlUjvlK7pGI+8l4p
+   bUc5ituphKFr7q2439xyRkAzMkTpdLMkFSCfbhP+tGi3BDZJqENogOHh6
+   dxUmilRb8E+BjcjfirdKHEFRpebHX5ocOyJFeEhYvBYuRV9R2yaEV75yW
+   w==;
+X-CSE-ConnectionGUID: 4ER7HeP4TWuNrg8SPCyQwQ==
+X-CSE-MsgGUID: SG74YsS4Qa2A8htyMj2oLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="43941553"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="43941553"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 19:43:25 -0800
+X-CSE-ConnectionGUID: pPXeqpcyT96+kG0Z1nIu5Q==
+X-CSE-MsgGUID: r7Xn/nstQ0aVf2BC5GhBvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116130817"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 23 Feb 2025 19:43:25 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tmPN5-0007pP-1U;
+	Mon, 24 Feb 2025 03:43:09 +0000
+Date: Mon, 24 Feb 2025 11:42:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/cleanups] BUILD SUCCESS
+ 51184c3c96a19b5143710ef91426e311f4364bac
+Message-ID: <202502241120.GUQv6unk-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] PCI: hotplug: Add a generic RAS tracepoint for hotplug
- event
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: bhelgaas@google.com, tony.luck@intel.com, bp@alien8.de,
- mhiramat@kernel.org, mathieu.desnoyers@efficios.com, oleg@redhat.com,
- naveen@kernel.org, davem@davemloft.net, anil.s.keshavamurthy@intel.com,
- mark.rutland@arm.com, peterz@infradead.org, tianruidong@linux.alibaba.com,
- rostedt@goodmis.org, lukas@wunner.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20250115013753.49126-1-xueshuai@linux.alibaba.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <20250115013753.49126-1-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cleanups
+branch HEAD: 51184c3c96a19b5143710ef91426e311f4364bac  x86/usercopy: Fix kernel-doc func param name in clean_cache_range()'s description
 
+elapsed time: 728m
 
-在 2025/1/15 09:37, Shuai Xue 写道:
-> Hotplug events are critical indicators for analyzing hardware health,
-> particularly in AI supercomputers where surprise link downs can
-> significantly impact system performance and reliability.
-> 
-> To this end, define a new TRACING_SYSTEM named pci, add a generic RAS
-> tracepoint for hotplug event to help healthy check, and generate
-> tracepoints for pcie hotplug event. Add enum pci_hotplug_event in
-> include/uapi/linux/pci.h so applications like rasdaemon can register
-> tracepoint event handlers for it.
-> 
-> The output like below:
-> 
-> $ echo 1 > /sys/kernel/debug/tracing/events/pci/pci_hp_event/enable
-> $ cat /sys/kernel/debug/tracing/trace_pipe
->      <...>-206     [001] .....    40.373870: pci_hp_event: 0000:00:02.0 slot:10, event:Link Down
-> 
->      <...>-206     [001] .....    40.374871: pci_hp_event: 0000:00:02.0 slot:10, event:Card not present
-> 
-> Suggested-by: Lukas Wunner <lukas@wunner.de>
-> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Reviewed-by: Lukas Wunner <lukas@wunner.de>
-> ---
-> changes since v5:
-> - move define of enum to include/uapi/linux/pci.h
+configs tested: 19
+configs skipped: 127
 
-Hi, Bjorn,
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-As this patch missed v6.13, should I rebase on pci/main (v6.14-rc1)?
+tested configs:
+i386                         allmodconfig    gcc-12
+i386                          allnoconfig    gcc-12
+i386                         allyesconfig    gcc-12
+i386    buildonly-randconfig-001-20250223    clang-19
+i386    buildonly-randconfig-002-20250223    gcc-11
+i386    buildonly-randconfig-003-20250223    gcc-12
+i386    buildonly-randconfig-004-20250223    clang-19
+i386    buildonly-randconfig-005-20250223    gcc-12
+i386    buildonly-randconfig-006-20250223    gcc-11
+i386                            defconfig    clang-19
+x86_64                        allnoconfig    clang-19
+x86_64                       allyesconfig    clang-19
+x86_64  buildonly-randconfig-001-20250223    clang-19
+x86_64  buildonly-randconfig-002-20250223    gcc-12
+x86_64  buildonly-randconfig-003-20250223    gcc-12
+x86_64  buildonly-randconfig-004-20250223    gcc-12
+x86_64  buildonly-randconfig-005-20250223    gcc-12
+x86_64  buildonly-randconfig-006-20250223    gcc-12
+x86_64                          defconfig    gcc-11
 
-Thanks.
-Shuai
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
