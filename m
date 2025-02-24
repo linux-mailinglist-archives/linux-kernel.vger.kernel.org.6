@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-528691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E542DA41ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:24:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6485A41AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:25:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C42E16A1D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2401B3AF39E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF4824E4B7;
-	Mon, 24 Feb 2025 10:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9YLbuhW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C92F24A04A;
-	Mon, 24 Feb 2025 10:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9E524FC1A;
+	Mon, 24 Feb 2025 10:25:01 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21523241669;
+	Mon, 24 Feb 2025 10:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392658; cv=none; b=Bqrgi6PkwANa/O+Ql9R9UyIMZ4fAXS0lh2r0gzKwPjHQjrLd/cLned+bV2c9UDFdfiKEEXxDKKbtHrWjxCTjoNS++vBQK0BECI7pYdDkMmjLypEpAh+kgn6HafGgxoVrkzLDtnO4NBe9R/tzT52ODYtlnscr/FMSG+1uemKJINE=
+	t=1740392701; cv=none; b=Xs7dJx73FuxmLk6mnDerfYovR+2sEPI890XguJaZKq5blgY0i7zRHj/oBFNQr8KsGjKI9KtxCgJ0J0dFaHlsdpM2i4tkL+gzEXEj8sN4JFHD2AR2JTkLkORRT9CTkQ56jLnFMlTvwpdA02kLrsnZPghLsqO28iTcSb7hb5w9VPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392658; c=relaxed/simple;
-	bh=6Q7YxosGYCvvfZdEhOxa5tW2ht0jkZihzhAPG6TYYuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZXyj0oIQc1/66GUiMzIfi5YNe2g1OBKF6w8SdqoTCI6bLIr6tAh5BV6sDLjnhKY+EC9oMLOUsUaybZIxu41AFHcH6aGalIMWQ0Nt4xSMjFk0EbNow1KBSvgRhB2Sx2/GTDBL35WnN6SO8AcsXwY2UTiNxs6RfGNNoSwSQNto8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9YLbuhW; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740392657; x=1771928657;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=6Q7YxosGYCvvfZdEhOxa5tW2ht0jkZihzhAPG6TYYuc=;
-  b=L9YLbuhWpc02Ob/kPk7kvlOWPQZJk4WwxTlSclpiD9wfbRQMahu/VA8I
-   L4fDo7roahc9ngwDDUsh2Rhqc+w9EkaTbLEBlktFkOi6eZajtXoWZE+WK
-   1ZjPytRAk/a6QkzdMh4fO5lW5PIR+HqA3bRYNmFuCdP//VoZpjiSPxuhE
-   peuaMf7xU7wgPwP6KjfBBhhFNVssX1moEs9d+Dn4AdfcYbsf2i58BCN/+
-   id9c5w7MFLbTqHtFUYfJ9qI5jSQfWTUSMDFh2whK9sG6UGePYitqZZtO/
-   jeIFKrIr5qQY1izYb0iFLE1NRtcoFcTt2NToMM/aoQXeg6cYjmy7y8cHS
-   A==;
-X-CSE-ConnectionGUID: sJySdjU+TbC/O4bcMh2/Kw==
-X-CSE-MsgGUID: 7xWSFAudTlKarxoq8E33Mg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="58688072"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="58688072"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:24:16 -0800
-X-CSE-ConnectionGUID: +pAAAG08Rvu5FzAQi5JPqA==
-X-CSE-MsgGUID: 9ieeuXQLQPOIECVGNEmZEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="139243452"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:24:09 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmVd7-0000000EfEB-0qjH;
-	Mon, 24 Feb 2025 12:24:05 +0200
-Date: Mon, 24 Feb 2025 12:24:04 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "pmladek@suse.com" <pmladek@suse.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	"kekrby@gmail.com" <kekrby@gmail.com>,
-	"admin@kodeit.net" <admin@kodeit.net>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	"evepolonium@gmail.com" <evepolonium@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	Hector Martin <marcan@marcan.st>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
- extending %p4cc
-Message-ID: <Z7xIxFT-eB_OTGzm@smile.fi.intel.com>
-References: <716BCB0A-785B-463A-86C2-94BD66D5D22E@live.com>
- <C66F35BB-2ECC-4DB8-8154-DEC5177967ED@live.com>
- <6CB20172-906F-4D13-B5E4-100A9CF74F02@live.com>
- <Z7xCr4iPmIkPoWGC@smile.fi.intel.com>
- <PN3PR01MB9597CF2907CBBD6ED43D5E62B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1740392701; c=relaxed/simple;
+	bh=FN8iFgeI6rosvaokiG/UoUpgH0k0DiZJJ6LLcQceCXI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wp67eR/7xQTY1/5HVdnu0CSGa85u7ahu0M8pea2wK19WfeYlzHPgV7DfxdyZCgjaBmt9tWm6y4ndEvo/q7YTcpig14wl1Ff/+7zRvYefBR0faIhgbeIya6eZSWv25232ldvlKlVpuUDlDxbMq6Vz1UmnureICsNwC4OBaTEp7Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A75D1E7D;
+	Mon, 24 Feb 2025 02:25:14 -0800 (PST)
+Received: from [10.57.38.222] (unknown [10.57.38.222])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D51B3F673;
+	Mon, 24 Feb 2025 02:24:53 -0800 (PST)
+Message-ID: <ecd2190d-09a2-4e7e-a076-08f517fe20de@arm.com>
+Date: Mon, 24 Feb 2025 11:24:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB9597CF2907CBBD6ED43D5E62B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch 3/5] ACPI: CPPC: support updating epp, auto_sel and
+ {min|max_perf} from sysfs
+To: Sumit Gupta <sumitg@nvidia.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, lenb@kernel.org, robert.moore@intel.com,
+ corbet@lwn.net, linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-doc@vger.kernel.org, acpica-devel@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, treding@nvidia.com, jonathanh@nvidia.com,
+ sashal@nvidia.com, vsethi@nvidia.com, ksitaraman@nvidia.com,
+ sanjayc@nvidia.com, bbasu@nvidia.com
+References: <20250211103737.447704-1-sumitg@nvidia.com>
+ <20250211103737.447704-4-sumitg@nvidia.com>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20250211103737.447704-4-sumitg@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 10:18:48AM +0000, Aditya Garg wrote:
+Hello Sumit,
+
+On 2/11/25 11:37, Sumit Gupta wrote:
+> Add support to update the CPC registers used for Autonomous
+> Performance Level Selection from acpi_cppc sysfs store nodes.
+> Registers supported for updation are:
+> - Engergy Performance Preference (EPP): energy_perf
+> - Autonomous Selection: auto_sel
+> - Maximum Performance: max_perf
+> - Minimum Performance: min_perf
 > 
+> Also, enable show nodes to read of the following CPC registers:
+> - Performance Limited: perf_limited
+> - Autonomous Activity Window: auto_activity_window
 > 
-> > On 24 Feb 2025, at 3:28 PM, andriy.shevchenko@linux.intel.com wrote:
-> > 
-> > ﻿On Sat, Feb 22, 2025 at 03:46:03PM +0000, Aditya Garg wrote:
-> >>>> On 20 Feb 2025, at 10:09 PM, Aditya Garg <gargaditya08@live.com> wrote:
-> >>> 
-> >>> %p4cc is designed for DRM/V4L2 FOURCCs with their specific quirks, but
-> >>> it's useful to be able to print generic 4-character codes formatted as
-> >>> an integer. Extend it to add format specifiers for printing generic
-> >>> 32-bit FOURCCs with various endian semantics:
-> >>> 
-> >>> %p4ch   Host-endian
-> >>> %p4cl Little-endian
-> >>> %p4cb Big-endian
-> >>> %p4cr Reverse-endian
-> >>> 
-> >>> The endianness determines how bytes are interpreted as a u32, and the
-> >>> FOURCC is then always printed MSByte-first (this is the opposite of
-> >>> V4L/DRM FOURCCs). This covers most practical cases, e.g. %p4cr would
-> >>> allow printing LSByte-first FOURCCs stored in host endian order
-> >>> (other than the hex form being in character order, not the integer
-> >>> value).
-> > 
-> > ...
-> > 
-> >> BTW, after looking at the comments by Martin [1], its actually better to use
-> >> existing specifiers for the appletbdrm driver.  The driver needs the host
-> >> endian as proposed by this patch, so instead of that, we can use %.4s
-> > 
-> > Do you mean this patch will not be needed? If this a case, that would be the
-> > best solution.
+> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+> ---
+>   drivers/acpi/cppc_acpi.c | 191 ++++++++++++++++++++++++++++++++++++---
+>   include/acpi/cppc_acpi.h |   5 +
+>   2 files changed, 183 insertions(+), 13 deletions(-)
 > 
-> I tested with %4pE, and the results are different from expected. So this
-> would be preferred. Kindly see my latest email with a proposed workaround for
-> the sparse warnings.
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index cc2bf958e84f..c60ad66ece85 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
 
-%.4s sounded okay, but %4pE is always about escaping and the result may occupy
-%4x memory (octal escaping of non-printable characters). Of course, you may vary
-the escaping classes, but IIRC the octal or hex escaping is unconditional.
+[...]
 
-> >> [1]: https://lore.kernel.org/asahi/E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org/
-> >> 
-> >> Alternatively we could add a host endian only. Other endians are not really
-> >> used by any driver AFAIK. The host endian is being used by appletbdrm and
-> >> Asahi Linux’ SMC driver only.
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, highest_perf, ro);
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_perf, ro);
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_perf, ro);
+> @@ -177,9 +304,16 @@ sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_nonlinear_perf, ro);
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, guaranteed_perf, ro);
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, lowest_freq, ro);
+>   sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, nominal_freq, ro);
+> +sysfs_cppc_data(cppc_get_perf_caps, cppc_perf_caps, auto_sel, rw);
+>   
+>   sysfs_cppc_data(cppc_get_perf_fb_ctrs, cppc_perf_fb_ctrs, reference_perf, ro);
+>   sysfs_cppc_data(cppc_get_perf_fb_ctrs, cppc_perf_fb_ctrs, wraparound_time, ro);
+> +sysfs_cppc_data(cppc_get_perf_fb_ctrs, cppc_perf_fb_ctrs, perf_limited, ro);
+> +
+> +sysfs_cppc_data(cppc_get_perf_ctrls, cppc_perf_ctrls, min_perf, rw);
+> +sysfs_cppc_data(cppc_get_perf_ctrls, cppc_perf_ctrls, max_perf, rw);
 
--- 
-With Best Regards,
-Andy Shevchenko
+IIUC, this means that users can modify the min/max performance levels of the CPU
+without having the cpufreq framework notified. Meaning that if a user modifies these
+levels, the frequency selection will be done using the initial min/max performance
+level.
+I think it would be better not allow users to modifies these values directly. Reliying
+on existing scaling_min_freq/scaling_max_freq files would be better IMO.
 
-
+Regards,
+Pierre
 
