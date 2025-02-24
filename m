@@ -1,194 +1,185 @@
-Return-Path: <linux-kernel+bounces-528298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0CBA415F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:09:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F72A415F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFD3918850C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:10:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A8118902FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A048723F438;
-	Mon, 24 Feb 2025 07:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA2B23F262;
+	Mon, 24 Feb 2025 07:08:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eVli4zsi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k1qumtSW"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126291A072C;
-	Mon, 24 Feb 2025 07:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797C320ADFA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:08:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380991; cv=none; b=L0mG/hsSv3snpj9MJwtz7VIm1eY5TOQwiCNO9wgNYHAAohd50lVguQVlGj7zr/CiIfRja99kvkQW3R+5hd8unOuF5WNQB8L+R1H2VNV4BM7NaeZ2FkuCCQgsilJ/GNZ1a+D2Mlr2DXt8y/xZCKdEcZoMEJpADik5xIdS5Ka3fYE=
+	t=1740380933; cv=none; b=BLsWGOcAgwnZyRZ7hnjPxdcd+gPoOOUiJnYDWpfNAM2m1THPXBX7ae+R0A9GK8KKM+P1ftorjTaSGb4NcP/JzXpHbZjqhQc5wfMIHSwW1MHh3omFKvSqXCFo4Diadw/5eG/yiJrmW+Wj92sVxMTRyrR4QUaFpOZC4ydUKPgwttM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380991; c=relaxed/simple;
-	bh=XUC1UkF9PtibPdWLdRDQzE8kWmuC6oCyYfcuGn1Rg5Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Pw6bLKWn+Bfn7MHK7YTukHPEu9+z1O7tLew0eaMU9UKRduSB9YBVQSLodm0/SPONgif5sxqAkWz2eqfCGAiSx3UMR+vMldF9/612TeivV7PmYmqO6DaMrvrl72mKdQfbifJruqP/ekW1qo1YVhxUK61I3DmSjNodnrSa9cQAMFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eVli4zsi; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740380989; x=1771916989;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=XUC1UkF9PtibPdWLdRDQzE8kWmuC6oCyYfcuGn1Rg5Y=;
-  b=eVli4zsi7SK0nIbTC4pvjM+QCyPSV2nrCChsJLY2rRPQYOEYw4p6OIJ4
-   ePElTssFg08RR9P921fPV4zRRM+JWkppFWUi6Qo6CH8CZvMtlADkrpF5m
-   /1BZtjLUWmCmI2DroTo9cxK8GUxan2arF4iQRFFiCxzEV+f72gmqqBEWO
-   4Ol2a5EMwQ/LAkg2+G5TeEFt7iXkgm4+gVNh2ho/qEZgI5AfOAcNx1KaE
-   A+a16H8gtSAYSL1aw2mKOQN62EtjZvNS15Rkslp1YrcSBtvfOhiYn8h11
-   9EseFZLr5b5QwhYzu3g0sPzh9uzqUhFxMcvLDdcKUcj06xKd71Zv+9Tfj
-   Q==;
-X-CSE-ConnectionGUID: +YnJobzGQbu1qCg9lMPJTQ==
-X-CSE-MsgGUID: NhbB/1Q/SFKNDh18jrRLTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="52117295"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="52117295"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:09:48 -0800
-X-CSE-ConnectionGUID: 2XeGKsmEQWuIi6HZTF31Yg==
-X-CSE-MsgGUID: qSoedMXWRd6KpW7p2bbz8w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="120951840"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:09:47 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 1/3] KVM: x86: Introduce supported_quirks for platform-specific valid quirks
-Date: Mon, 24 Feb 2025 15:08:32 +0800
-Message-ID: <20250224070832.31394-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20250224070716.31360-1-yan.y.zhao@intel.com>
-References: <20250224070716.31360-1-yan.y.zhao@intel.com>
+	s=arc-20240116; t=1740380933; c=relaxed/simple;
+	bh=MkwbQ9LZo/6/lhuFfrtyiseDQAS/lGEZIPN9WcJGNnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eauMp0fH+RL9uAl6f2ENlt4lLbO6iSHCqar1fGgH00cLH7/xoo+onkoXCOM+Y/7j/gpRZI3rKx3N3C+DwR0EG3c9+wGJPVI1ZaCuSSwkeSP77Q2zGWVKrm/8ILeZAIQk0cDXYVa9YRpZVUEh/4JygpB4zfCPk30ofFTW4VqXnmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k1qumtSW; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-220d39a5627so59154105ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:08:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740380931; x=1740985731; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=G0f/tMLiJYULZsRTUCEOnqKZM46qSBJY24xovvsvnuI=;
+        b=k1qumtSW9obQQB0YMLHpSu1ds+oEQ7qufETEPGNO+AZ6Wk85LPXXDE2YirNvCaLoJk
+         4949arjpZXuttWVITj9l0iErfq1noGg0QbrqBOjJuFvbJa2bj7iImt46eCxb7wr7DG4q
+         V+YfAfh7zFT6mWip3cJm8aq9tdCWEV+OABRkKwzYOsWz1FxV5TuFcLlsSiJvXJufPPpn
+         4TcS8YJz4/myEc15Tq6qiZ85G4wjlX8ZY5SQf87SiepswGUF1hdufoXARzbFqVmysYdX
+         S/9gu19X2HxXtOgVqs8lH6KGJ06jGJp7Up8rMtk3oBLbJ1Lh7RzE+1bZKZoV+yCtBQhQ
+         Gr8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740380931; x=1740985731;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G0f/tMLiJYULZsRTUCEOnqKZM46qSBJY24xovvsvnuI=;
+        b=tQrmFIRAT03fY2CGa92PE+Sv9xpqT7ENwDwiy5LqSAOTlceAPjhP0NSw1VFmAWIGXp
+         BuY0ZZC2VFMIVNAsSWGgiZN06MH+DTa/KG7JMAu1YaJ7acaHuzAR59QCeh5SfG+DIc7a
+         UWHK38JTlUsEzgTQ4kFI175Fr8mGyyvkctQUmUnZhq+zos/IPLp+HpgsIPAypZJbvSu0
+         ZL/RddNXhcUQhWa7VSApT1/hhFBkCT0P5CasiVVDxW2WLPHMyB4pty0pBmXb2Q2TG4/P
+         JRAPQ55/SAOrdCVUYabkdxLoynCnYCEE2Zsj0IcmqkzzdjU/0uairJLHSwMg+NXCoUlS
+         ivGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSpF6g/dpeSRX6GG6Ffzw+EYybcKgG/zbnu//BGXw3MlmiM0YD9Z+IrXPd4mkQoyWbcF1g0D8JWDtNgsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOm5JTHZpq7Q1RN6iSSl0zbq3aRsBYtuCILl1P4JOfyeAwG62b
+	VUcwFyX7An1z9Z30A4n8Pal+lAP9DMdtXHK1Yx9i00YgHB03N3e9eAyIOHO2iA==
+X-Gm-Gg: ASbGncuegit63p+3LO8hHmGLAikcVwJUDFwJDKU+5ZFJrSGhosTXN/dH2fwJ02sIspX
+	vRU5clS1isBchmJNV4V+8HTruPxHSOw7FXwNq83xFw0BWLcuhjJ7N2sbkDcj5qAVKpNI3DLZxlD
+	OoIiKqwtJBjzCk3C22tirTxPZQlxgcd6PVPPzHa+25fJGiK9iCbVq+xvpSjj/cQZSQFhsFpYrLs
+	bQoR4axOXpJECY4FsPGjDKf9xm/BnyEeRen3aja3AACaCk8DqfwMdlbMYxzjyzb+tShb5lMaAxH
+	TaKCUM30H1aTzLzk+rMzJpDX+WPcE2PgHPQG
+X-Google-Smtp-Source: AGHT+IGYWVJJjdXNjc0YzDIJ7TnUfz9dHgBceb0HcOaXD4nstU0qRzoNxcUhZBsY8+NGXb55yZoadQ==
+X-Received: by 2002:a17:903:2bcb:b0:216:60a3:b3fd with SMTP id d9443c01a7336-2219ff827c2mr185647485ad.3.1740380930797;
+        Sun, 23 Feb 2025 23:08:50 -0800 (PST)
+Received: from thinkpad ([36.255.17.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5348f12sm174698405ad.46.2025.02.23.23.08.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 23:08:50 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:38:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com,
+	bharat.kumar.gogada@amd.com
+Subject: Re: [PATCH v3 2/2] PCI: xilinx-cpm: Add support for Versal Net
+ CPM5NC Root Port controller
+Message-ID: <20250224070845.6ocpyblzxk7cviro@thinkpad>
+References: <20250217072713.635643-1-thippeswamy.havalige@amd.com>
+ <20250217072713.635643-3-thippeswamy.havalige@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250217072713.635643-3-thippeswamy.havalige@amd.com>
 
-Introduce supported_quirks in kvm_caps to store platform-specific valid
-quirks.
+On Mon, Feb 17, 2025 at 12:57:13PM +0530, Thippeswamy Havalige wrote:
+> The Versal Net ACAP (Adaptive Compute Acceleration Platform) devices
+> incorporate the Coherency and PCIe Gen5 Module, specifically the
 
-Rename KVM_X86_VALID_QUIRKS to KVM_X86_VALID_QUIRKS_COMMON, representing
-valid quirks common to all x86 platforms. Initialize
-kvm_caps.supported_quirks to KVM_X86_VALID_QUIRKS_COMMON in the common
-vendor initializer kvm_x86_vendor_init().
+What do you mean by 'Coherency' here? Cache coherency?
 
-Use kvm_caps.supported_quirks to respond to user queries about valid quirks
-and to mask out unsupported quirks provided by the user.
+> Next-Generation Compact Module (CPM5NC).
+> 
+> The integrated CPM5NC block, along with the built-in bridge, can function
+> as a PCIe Root Port & supports the PCIe Gen5 protocol with data transfer
+> rates of up to 32 GT/s, capable of supporting up to a x16 lane-width
+> configuration.
+> 
+> Bridge errors are managed using a specific interrupt line designed for
+> CPM5N. Intx interrupt support is not available.
 
-In kvm_check_has_quirk(), in additional to check if a quirk is not
-explicitly disabled by the user, also verify if the quirk is supported by
-the platform. This ensures KVM does not treat a quirk as enabled if it's
-not explicitly disabled by the user but is outside the platform supported
-mask.
+INTx
 
-This is a preparation for introducing quirks specific to certain platforms,
-e.g., quirks present only on Intel platforms and not on AMD.
+> 
+> Currently in this commit platform specific Bridge errors support is not
+> added.
+> 
+> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> ---
+> Changes in v2:
+> - Update commit message.
+> ---
+>  drivers/pci/controller/pcie-xilinx-cpm.c | 48 ++++++++++++++++--------
+>  1 file changed, 32 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
+> index 81e8bfae53d0..9b241c665f0a 100644
+> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
+> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
+> @@ -84,6 +84,7 @@ enum xilinx_cpm_version {
+>  	CPM,
+>  	CPM5,
+>  	CPM5_HOST1,
+> +	CPM5NC_HOST,
+>  };
+>  
+>  /**
+> @@ -478,6 +479,9 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
+>  {
+>  	const struct xilinx_cpm_variant *variant = port->variant;
+>  
+> +	if (variant->version != CPM5NC_HOST)
+> +		return;
+> +
+>  	if (cpm_pcie_link_up(port))
+>  		dev_info(port->dev, "PCIe Link is UP\n");
+>  	else
+> @@ -493,18 +497,16 @@ static void xilinx_cpm_pcie_init_port(struct xilinx_cpm_pcie *port)
+>  		   XILINX_CPM_PCIE_REG_IDR);
+>  
+>  	/*
+> -	 * XILINX_CPM_PCIE_MISC_IR_ENABLE register is mapped to
+> -	 * CPM SLCR block.
+> +	 * XILINX_CPM_PCIE_MISC_IR_ENABLE register is mapped to CPM SLCR block.
 
-No functional changes intended.
+Spurious change.
 
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/x86.c              |  5 +++--
- arch/x86/kvm/x86.h              | 12 +++++++-----
- 3 files changed, 11 insertions(+), 8 deletions(-)
+>  	 */
+>  	writel(variant->ir_misc_value,
+>  	       port->cpm_base + XILINX_CPM_PCIE_MISC_IR_ENABLE);
+>  
+> -	if (variant->ir_enable) {
+> +	if (variant->ir_enable)
+>  		writel(XILINX_CPM_PCIE_IR_LOCAL,
+>  		       port->cpm_base + variant->ir_enable);
+> -	}
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 089cf2c82414..8d15e604613b 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2409,7 +2409,7 @@ int memslot_rmap_alloc(struct kvm_memory_slot *slot, unsigned long npages);
- #define KVM_CLOCK_VALID_FLAGS						\
- 	(KVM_CLOCK_TSC_STABLE | KVM_CLOCK_REALTIME | KVM_CLOCK_HOST_TSC)
- 
--#define KVM_X86_VALID_QUIRKS			\
-+#define KVM_X86_VALID_QUIRKS_COMMON		\
- 	(KVM_X86_QUIRK_LINT0_REENABLED |	\
- 	 KVM_X86_QUIRK_CD_NW_CLEARED |		\
- 	 KVM_X86_QUIRK_LAPIC_MMIO_HOLE |	\
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3078e09fc841..4f1b73620c6a 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4782,7 +4782,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
- 		r = enable_pmu ? KVM_CAP_PMU_VALID_MASK : 0;
- 		break;
- 	case KVM_CAP_DISABLE_QUIRKS2:
--		r = KVM_X86_VALID_QUIRKS;
-+		r = kvm_caps.supported_quirks;
- 		break;
- 	case KVM_CAP_X86_NOTIFY_VMEXIT:
- 		r = kvm_caps.has_notify_vmexit;
-@@ -6521,7 +6521,7 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
- 	switch (cap->cap) {
- 	case KVM_CAP_DISABLE_QUIRKS2:
- 		r = -EINVAL;
--		if (cap->args[0] & ~KVM_X86_VALID_QUIRKS)
-+		if (cap->args[0] & ~kvm_caps.supported_quirks)
- 			break;
- 		fallthrough;
- 	case KVM_CAP_DISABLE_QUIRKS:
-@@ -9775,6 +9775,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
- 		kvm_host.xcr0 = xgetbv(XCR_XFEATURE_ENABLED_MASK);
- 		kvm_caps.supported_xcr0 = kvm_host.xcr0 & KVM_SUPPORTED_XCR0;
- 	}
-+	kvm_caps.supported_quirks = KVM_X86_VALID_QUIRKS_COMMON;
- 
- 	rdmsrl_safe(MSR_EFER, &kvm_host.efer);
- 
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index 8ce6da98b5a2..772d5c320be1 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -34,6 +34,7 @@ struct kvm_caps {
- 	u64 supported_xcr0;
- 	u64 supported_xss;
- 	u64 supported_perf_cap;
-+	u64 supported_quirks;
- };
- 
- struct kvm_host_values {
-@@ -354,11 +355,6 @@ static inline void kvm_register_write(struct kvm_vcpu *vcpu,
- 	return kvm_register_write_raw(vcpu, reg, val);
- }
- 
--static inline bool kvm_check_has_quirk(struct kvm *kvm, u64 quirk)
--{
--	return !(kvm->arch.disabled_quirks & quirk);
--}
--
- void kvm_inject_realmode_interrupt(struct kvm_vcpu *vcpu, int irq, int inc_eip);
- 
- u64 get_kvmclock_ns(struct kvm *kvm);
-@@ -394,6 +390,12 @@ extern struct kvm_host_values kvm_host;
- 
- extern bool enable_pmu;
- 
-+static inline bool kvm_check_has_quirk(struct kvm *kvm, u64 quirk)
-+{
-+	return (kvm_caps.supported_quirks & quirk) &&
-+	       !(kvm->arch.disabled_quirks & quirk);
-+}
-+
- /*
-  * Get a filtered version of KVM's supported XCR0 that strips out dynamic
-  * features for which the current process doesn't (yet) have permission to use.
+Same here. You should not do these kind of the cleanups in this patch as this
+patch is supposed to add only CPM5NC support.
+
+>  
+> -	/* Set Bridge enable bit */
+> +		/* Set Bridge enable bit */
+
+Same here.
+
+Rest LGTM!
+
+- Mani
+
 -- 
-2.43.2
-
+மணிவண்ணன் சதாசிவம்
 
