@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-528520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CBDA41887
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:15:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63739A4188F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD0C8188858B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326493BAB3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3449B2586D4;
-	Mon, 24 Feb 2025 09:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED8125A2D5;
+	Mon, 24 Feb 2025 09:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FphbtCHM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eq5ynI/H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EC324BBEF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1538224BBF2;
 	Mon, 24 Feb 2025 09:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388144; cv=none; b=QYdE2N08Fum2N4kqqaWSqH+S2BNLAndxe2G0M4fSMxT8wFgPTqz0nm3evbxEu6yikUv/MFfS02viBxSrdoYkuO7nRK+MVjYoDzLBkkTZwFohTHiXbw7SutwCs8VQO4Z24Qw+UMR1joO85XJv8UOZnoXnkELnGiL08JrdRtlzWgE=
+	t=1740388144; cv=none; b=CluUICEX8eHDBInpch8bX9q3ucwkHM3khECXbHW/XEJ3BY15jiz8BzkggHfG29fFkz8DdAvoKjW8zeC6aZTwmmzr/gsrZB0pyXDGR5XNxfsAcTZ2WplsOkg52ByVYpdgV1X4KlOJ3zWCdtM+X/GDJBmA/eC6Um6x2Klx7wfSlwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740388144; c=relaxed/simple;
-	bh=kkF62LinWQ1IkT47CUMzLT2NmYxiRtevRju9Af+8QaQ=;
+	bh=07FCqO/8Qxm5lSe7sCG8lMGcmip/PZdZVuFoGS9C284=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YhE6OcmE3CSAtUCGPQT+WUVvJe0ja601Hqtlm29k1C0tIDeE0bgXF3wyjV8OdE3wIziASVk1VAr3s5A380Ein1KnfaHx4aGwS4WpezcQ6V3GuP+X+VEef1aw++5Rb2eYsVOW/XApZ4czXcTVAXFl/eSN+HRtva57lA08/4CVvX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FphbtCHM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9320EC4CEFC;
+	 MIME-Version; b=mvJKuDIgbXOzfpxQM6ksAw2pbxeTUsNR6LGKoxtT+U53HgACEjGcjgE9Kto9ejzpEhT+mNRFTkuuxZGNHzHCStA/+07eDJLUvcKIMnPuhPQNt2q7bOB4sYx3ICBzLn6Sw4LVW/Qv/N4ltecqLNpi96kAXje8pZqGwEd8Sov1Q7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eq5ynI/H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4D1C2BCC7;
 	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740388143;
-	bh=kkF62LinWQ1IkT47CUMzLT2NmYxiRtevRju9Af+8QaQ=;
+	bh=07FCqO/8Qxm5lSe7sCG8lMGcmip/PZdZVuFoGS9C284=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FphbtCHMhvRpx5D3dDodEX/9NpLXJwgF2caoxEwWxh10p5F5E3hQTrYk1xdlw9565
-	 HFZZOEA0SGuFY88tf7lgueWzRuWS4Kx15rsFcV88WaNg1Zv2Mmq3vBFKdV/4XC9Upu
-	 Ko2SREcTrrcMV8hlEe9yu4qZ7xX1FEX3QKjIMANgTSVPChmf6jB5R/SwqlbwIdpSoI
-	 q74TMzWeCmglOGf1/CLOt59pXotDDaDMBsbzVS2VUbowBm9ZnXhyFcL1KpJwY+XRy9
-	 kkqo79aKdJSRUOHMA/XxTnGY/dHO71kmjRgaH5I81U/XaF7NM+Y7MRn8t15vKKjVbY
-	 8ZlWn2eZjmM1g==
+	b=Eq5ynI/HGk1dxhEr8zv3/xWVea4TpFu3HvJ5N1q08cZ4pRMVAia2IRwrxqaoseNEN
+	 RgklGXBnC0iFL8v7MjW7uqUWFyAaCMqd9a504xOt05hWMaigjMdpG5MAqg1PoQWoqQ
+	 U/A10Ya/o2Xsxo15hcS9L+/Hinuja2HnpZ1GMAQhMtPN73g0dBVVLRv9Ig6DXwZEXl
+	 JgpmlWla4pApo+/tx7je9UG9EUp6swW3aDbNImrgZArtAyLjcgGcn5S/6c9ratmo5O
+	 WPqMHczHKHLMdrS6DMaUiBASTCf3i585Hqqer0J5hqlVr+2Ayzfj36vYUq5YoWAoI2
+	 u2b5pGoKryaZw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tmUST-00000003p5f-2ySh;
+	id 1tmUST-00000003p5j-35Dy;
 	Mon, 24 Feb 2025 10:09:01 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,9 +50,9 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 34/39] scripts/kernel-doc.py: Properly handle Werror and exit codes
-Date: Mon, 24 Feb 2025 10:08:40 +0100
-Message-ID: <4d1cb32e557b82a53d91219494e2f019d5c26000.1740387599.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 35/39] scripts/kernel-doc.py: some coding style cleanups
+Date: Mon, 24 Feb 2025 10:08:41 +0100
+Message-ID: <cad306720aa8a4e86df8b8d584aa03462b791bac.1740387599.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
 References: <cover.1740387599.git.mchehab+huawei@kernel.org>
@@ -65,158 +65,182 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-The original kernel-doc script has a logic to return warnings
-as errors, and to report the number of warnings found, if in
-verbose mode.
+Remove some warnings generated by pylint. Among them, cleanup
+TODO messages, removing the ones that were already handled,
+as now all TODOs that are required to be fully compatible with
+kernel-doc were already addressed.
 
-Implement it to be fully compatible with the original script.
+So, the existing TODOs are pointing possible future cleanups and
+improvements.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/kernel-doc.py           | 18 ++++++++++++++++--
- scripts/lib/kdoc/kdoc_files.py  | 11 ++++++++++-
- scripts/lib/kdoc/kdoc_output.py |  8 +++-----
- scripts/lib/kdoc/kdoc_parser.py | 15 ++++++---------
- 4 files changed, 35 insertions(+), 17 deletions(-)
+ scripts/kernel-doc.py           | 10 +++++-----
+ scripts/lib/kdoc/kdoc_files.py  |  1 -
+ scripts/lib/kdoc/kdoc_output.py |  1 +
+ scripts/lib/kdoc/kdoc_parser.py | 30 +++++++-----------------------
+ scripts/lib/kdoc/kdoc_re.py     |  3 ++-
+ 5 files changed, 15 insertions(+), 30 deletions(-)
 
 diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
-index 064106c18d8b..7683fb4ffc59 100755
+index 7683fb4ffc59..5e1e1839438c 100755
 --- a/scripts/kernel-doc.py
 +++ b/scripts/kernel-doc.py
-@@ -3,8 +3,6 @@
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env python3
+-# pylint: disable=C0103,
++# pylint: disable=C0103,R0915
  # Copyright(c) 2025: Mauro Carvalho Chehab <mchehab@kernel.org>.
  # SPDX-License-Identifier: GPL-2.0
  
--# TODO: implement warning filtering
--
- """
- kernel_doc
- ==========
-@@ -220,6 +218,22 @@ def main():
+@@ -167,7 +167,7 @@ def main():
+ 
+     # Those are valid for all 3 types of filter
+     parser.add_argument("-n", "-nosymbol", "--nosymbol", action='append',
+-                         help=NOSYMBOL_DESC)
++                        help=NOSYMBOL_DESC)
+ 
+     parser.add_argument("-D", "-no-doc-sections", "--no-doc-sections",
+                         action='store_true', help="Don't outputt DOC sections")
+@@ -211,9 +211,9 @@ def main():
+     kfiles.parse(args.files, export_file=args.export_file)
+ 
+     for t in kfiles.msg(enable_lineno=args.enable_lineno, export=args.export,
+-                          internal=args.internal, symbol=args.symbol,
+-                          nosymbol=args.nosymbol,
+-                          no_doc_sections=args.no_doc_sections):
++                        internal=args.internal, symbol=args.symbol,
++                        nosymbol=args.nosymbol,
++                        no_doc_sections=args.no_doc_sections):
+         msg = t[1]
          if msg:
              print(msg)
- 
-+    error_count = kfiles.errors
-+    if not error_count:
-+        sys.exit(0)
-+
-+    if args.werror:
-+        print(f"{error_count} warnings as errors")
-+        sys.exit(error_count)
-+
-+    if args.verbose:
-+        print(f"{error_count} errors")
-+
-+    if args.none:
-+        sys.exit(0)
-+
-+    sys.exit(error_count)
-+
- 
- # Call main method
- if __name__ == "__main__":
 diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index 19fe9c6f5352..e130e5e32806 100755
+index e130e5e32806..fc14bd6f9863 100755
 --- a/scripts/lib/kdoc/kdoc_files.py
 +++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -108,7 +108,7 @@ class KernelFiles():
-                     KernelDoc.process_export(self.config.function_table, line)
+@@ -11,7 +11,6 @@ import argparse
+ import logging
+ import os
+ import re
+-import sys
  
-         except IOError:
--            print(f"Error: Cannot open fname {fname}", fname=sys.stderr)
-+            self.config.log.error("Error: Cannot open fname %s", fname)
-             self.config.errors += 1
- 
-     def file_not_found_cb(self, fname):
-@@ -261,3 +261,12 @@ class KernelFiles():
-                                             fname, ln, dtype)
-             if msg:
-                 yield fname, msg
-+
-+    @property
-+    def errors(self):
-+        """
-+        Return a count of the number of warnings found, including
-+        the ones displayed while interacting over self.msg.
-+        """
-+
-+        return self.config.errors
+ from kdoc_parser import KernelDoc
+ from kdoc_output import OutputFormat
 diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index 166fcabbb4cf..d0cb7f511f87 100755
+index d0cb7f511f87..487068753b53 100755
 --- a/scripts/lib/kdoc/kdoc_output.py
 +++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -127,11 +127,9 @@ class OutputFormat:
+@@ -234,6 +234,7 @@ class OutputFormat:
+     def out_struct(self, fname, name, args):
+         """Outputs a struct"""
  
-         warnings = args.get('warnings', [])
++
+ class RestFormat(OutputFormat):
+     """Consts and functions used by ReST output"""
  
--        for warning, log_msg in warnings:
--            if warning:
--                self.config.log.warning(log_msg)
--            else:
--                self.config.log.info(log_msg)
-+        for log_msg in warnings:
-+            self.config.log.warning(log_msg)
-+            self.config.errors += 1
- 
-     def check_doc(self, name, args):
-         """Check if DOC should be output"""
 diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index feac699a3893..6cebc32e18f2 100755
+index 6cebc32e18f2..cf4bf7cedcbc 100755
 --- a/scripts/lib/kdoc/kdoc_parser.py
 +++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -136,17 +136,18 @@ class KernelDoc:
+@@ -130,7 +130,7 @@ class KernelDoc:
+         # Place all potential outputs into an array
+         self.entries = []
  
-         log_msg = f"{self.fname}:{ln} {msg}"
+-    # TODO: rename to emit_message
++    # TODO: rename to emit_message after removal of kernel-doc.pl
+     def emit_warning(self, ln, msg, warning=True):
+         """Emit a message"""
  
-+        if not warning:
-+            self.config.log.info(log_msg)
-+            return
-+
-         if self.entry:
-             # Delegate warning output to output logic, as this way it
-             # will report warnings/info only for symbols that are output
+@@ -157,19 +157,6 @@ class KernelDoc:
+         name = self.entry.section
+         contents = self.entry.contents
  
--            self.entry.warnings.append((warning, log_msg))
-+            self.entry.warnings.append(log_msg)
-             return
+-        # TODO: we can prevent dumping empty sections here with:
+-        #
+-        #    if self.entry.contents.strip("\n"):
+-        #       if start_new:
+-        #           self.entry.section = self.section_default
+-        #           self.entry.contents = ""
+-        #
+-        #        return
+-        #
+-        # But, as we want to be producing the same output of the
+-        # venerable kernel-doc Perl tool, let's just output everything,
+-        # at least for now
+-
+         if type_param.match(name):
+             name = type_param.group(1)
  
--        if warning:
--            self.config.log.warning(log_msg)
--        else:
--            self.config.log.info(log_msg)
-+        self.config.log.warning(log_msg)
+@@ -205,7 +192,7 @@ class KernelDoc:
+             self.entry.section = self.section_default
+             self.entry.contents = ""
  
-     def dump_section(self, start_new=True):
+-    # TODO: rename it to store_declaration
++    # TODO: rename it to store_declaration after removal of kernel-doc.pl
+     def output_declaration(self, dtype, name, **args):
          """
-@@ -568,7 +569,6 @@ class KernelDoc:
+         Stores the entry into an entry array.
+@@ -225,13 +212,13 @@ class KernelDoc:
+         args["type"] = dtype
+         args["warnings"] = self.entry.warnings
  
-         if not members:
-             self.emit_warning(ln, f"{proto} error: Cannot parse struct or union!")
--            self.config.errors += 1
+-        # TODO: use colletions.OrderedDict
++        # TODO: use colletions.OrderedDict to remove sectionlist
+ 
+         sections = args.get('sections', {})
+         sectionlist = args.get('sectionlist', [])
+ 
+         # Drop empty sections
+-        # TODO: improve it to emit warnings
++        # TODO: improve empty sections logic to emit warnings
+         for section in ["Description", "Return"]:
+             if section in sectionlist:
+                 if not sections[section].rstrip():
+@@ -635,7 +622,9 @@ class KernelDoc:
+ 
+             # Replace macros
+             #
+-            # TODO: it is better to also move those to the NestedMatch logic,
++            # TODO: use NestedMatch for FOO($1, $2, ...) matches
++            #
++            # it is better to also move those to the NestedMatch logic,
+             # to ensure that parenthesis will be properly matched.
+ 
+             (Re(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
+@@ -902,7 +891,6 @@ class KernelDoc:
+             self.dump_struct(ln, prototype)
              return
  
-         if self.entry.identifier != declaration_name:
-@@ -841,7 +841,6 @@ class KernelDoc:
+-        # TODO: handle other types
+         self.output_declaration(self.entry.decl_type, prototype,
+                                 entry=self.entry)
  
-         if not members:
-             self.emit_warning(ln, f"{proto}: error: Cannot parse enum!")
--            self.config.errors += 1
-             return
+@@ -1670,10 +1658,6 @@ class KernelDoc:
+                                           self.st_inline_name[self.inline_doc_state],
+                                           line)
  
-         if self.entry.identifier != declaration_name:
-@@ -1143,7 +1142,6 @@ class KernelDoc:
-             return
+-                    # TODO: not all states allow EXPORT_SYMBOL*, so this
+-                    # can be optimized later on to speedup parsing
+-                    self.process_export(self.config.function_table, line)
+-
+                     # Hand this line to the appropriate state handler
+                     if self.state == self.STATE_NORMAL:
+                         self.process_normal(ln, line)
+diff --git a/scripts/lib/kdoc/kdoc_re.py b/scripts/lib/kdoc/kdoc_re.py
+index 45ddba8090e5..de362ec38db7 100755
+--- a/scripts/lib/kdoc/kdoc_re.py
++++ b/scripts/lib/kdoc/kdoc_re.py
+@@ -131,7 +131,8 @@ class NestedMatch:
+     will ignore the search string.
+     """
  
-         self.emit_warning(ln, "error: Cannot parse typedef!")
--        self.config.errors += 1
- 
-     @staticmethod
-     def process_export(function_table, line):
-@@ -1692,4 +1690,3 @@ class KernelDoc:
-                         self.process_docblock(ln, line)
-         except OSError:
-             self.config.log.error(f"Error: Cannot open file {self.fname}")
--            self.config.errors += 1
+-    # TODO:
++    # TODO: make NestedMatch handle multiple match groups
++    #
+     # Right now, regular expressions to match it are defined only up to
+     #       the start delimiter, e.g.:
+     #
 -- 
 2.48.1
 
