@@ -1,185 +1,176 @@
-Return-Path: <linux-kernel+bounces-529807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AF9A42B37
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:25:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24749A42B2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B3497A799C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1E23B3CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A34266EE3;
-	Mon, 24 Feb 2025 18:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OpHmjjXU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5292661AE;
+	Mon, 24 Feb 2025 18:22:17 +0000 (UTC)
+Received: from mail.muc.de (mail.muc.de [193.149.48.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DF9265CCB;
-	Mon, 24 Feb 2025 18:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0E315B122
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.149.48.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421304; cv=none; b=iEBD222kvl8fSH8Iyjan5hMVx7eoOfVj6JElwlndEkFTumdzI/NjP/3n/Uc7g0envknjle1je32ZkqIfxke1FUfR1HCPxwMvqr0wEHnxAKS2NW3zN8pVz5AJ3MJcVhQiIJeSbWXztTrD8jti/+OXpz2OvTtzSkKDbw1cMQDZvyA=
+	t=1740421336; cv=none; b=qOHGvWocoajvgcbt1FSR87J3qBVXcW/SmQlfDkTTIzlocnd4JrU2WzNY3n23QCbiKEnYCYIaGPL0KdlhMCznPFZ1+GoEhTTO8aEQYJACglA7Zo3f4DLdiyM8jV+6hrpc0mvB6fZjIlM2wWFYbCw4EBfq3wL3Vd8p501JW81qwvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421304; c=relaxed/simple;
-	bh=10a3pM1AYmlxD+Z+pBe8Hm9/Sao0/x+QwYFONyDg3o4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aUS63VvB4azvWvP+ScVjWaitL92RkY39Fn5z873ID+zsHZAzzm+r+FMkCyNRD3lv+qXB5wjLTaX01GZy8GAHTyeRepgcV61ZGVFBwEaskAzM6fzPh3Pci0gBYZBtsKwKa7WzxYao77RFGGftYzakAgT21e19UYxwsNjRbcv4Hss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OpHmjjXU; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740421302; x=1771957302;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=10a3pM1AYmlxD+Z+pBe8Hm9/Sao0/x+QwYFONyDg3o4=;
-  b=OpHmjjXUS6GiOCpVWgy68XjSPNJ5n8A3c3PNRd1vFTrDeNrOjiBUHE/C
-   vvX5RmHh4Tw4MiIyjniYQR4VI9dbwcHJV03SZsNznLzQxfmV9gREuwWK2
-   OVBjAigohAmRozaBgenFUI8fhYhE/ZTLtcVaTVfAkkW9FMZ+Qw9ODGWx+
-   u1PiIsZoOF5g1J0a/I8h4U5uW3FO/eTbhtup5A9uiX2oWI4f8TVbOQQEj
-   5Ik7u+3+qeekMO4hxWrwJWwZMk56RTfdDls3Nf4IB+WHJ9imp7Q7xHirk
-   R2QdlGW3o5Y2wtsXWJV5Fn3tpi0VTYGZ2kPRmTzvx9LbsPrzhJ15vEjxH
-   Q==;
-X-CSE-ConnectionGUID: 97WfLrygRU+qOOMmgy5lwA==
-X-CSE-MsgGUID: p5yeb2PFTmCnBbVEuYcO+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58738352"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="58738352"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:21:41 -0800
-X-CSE-ConnectionGUID: nH/dmqPkRqeMY5P4pZu3sA==
-X-CSE-MsgGUID: 5RHlkFn7S5mj32IzNhfDdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="117050107"
-Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.111.40]) ([10.125.111.40])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:21:40 -0800
-Message-ID: <443992d7-f694-4e46-b120-545350a5d598@intel.com>
-Date: Mon, 24 Feb 2025 10:21:47 -0800
+	s=arc-20240116; t=1740421336; c=relaxed/simple;
+	bh=LapUr4uhDE8WT47s1iRnSBv3OPnVfs++Nynyc7QEa20=;
+	h=Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To:From; b=kObBd2bzKMIfa6wtKvq7Kd2LcdMcMyrH092uUAi5QuiWMcLWeS4U7TjXM4xVJ3s4nH/C5xqbpxXAnHcZQLV9faJOncacxhg3oG50hxnBrYuucU5Nb1KYpMH0dYDJlA6yvxhu+Ogq6m8GCp5Mk2NDXH6ufKe29UzlVKC0phtT1S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de; spf=pass smtp.mailfrom=muc.de; arc=none smtp.client-ip=193.149.48.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=muc.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=muc.de
+Received: (qmail 76694 invoked by uid 3782); 24 Feb 2025 19:22:01 +0100
+Received: from muc.de (p4fe15466.dip0.t-ipconnect.de [79.225.84.102]) (using
+ STARTTLS) by colin.muc.de (tmda-ofmipd) with ESMTP;
+ Mon, 24 Feb 2025 19:22:00 +0100
+Received: (qmail 19105 invoked by uid 1000); 24 Feb 2025 18:22:00 -0000
+Date: Mon, 24 Feb 2025 18:22:00 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+  linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: More than 256/512 glyphs on the Liinux console
+Message-ID: <Z7y4yHT0fNYYiPI8@MAC.fritz.box>
+References: <Z7idXzMcDhe_E5oN@MAC.fritz.box>
+ <2025022243-street-joylessly-6dfa@gregkh>
+ <Z7nu7HqKn4o2rMd5@MAC.fritz.box>
+ <2025022355-peroxide-defacing-4fa4@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header
- change
-To: jeffxu@chromium.org, akpm@linux-foundation.org, keescook@chromium.org,
- jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz,
- lorenzo.stoakes@oracle.com, Liam.Howlett@Oracle.com,
- adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com,
- benjamin@sipsolutions.net
-Cc: linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-mm@kvack.org, jorgelo@chromium.org, sroettger@google.com, hch@lst.de,
- ojeda@kernel.org, thomas.weissschuh@linutronix.de, adobriyan@gmail.com,
- johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com,
- willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com,
- linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de,
- rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com,
- f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com,
- mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com,
- peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com,
- groeck@chromium.org, mpe@ellerman.id.au,
- aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
-References: <20250224174513.3600914-1-jeffxu@google.com>
- <20250224174513.3600914-2-jeffxu@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250224174513.3600914-2-jeffxu@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025022355-peroxide-defacing-4fa4@gregkh>
+X-Submission-Agent: TMDA/1.3.x (Ph3nix)
+From: Alan Mackenzie <acm@muc.de>
+X-Primary-Address: acm@muc.de
 
-On 2/24/25 09:45, jeffxu@chromium.org wrote:
-> +/*
-> + * mseal of userspace process's system mappings.
-> + */
-> +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG	VM_SEALED
-> +#else
-> +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG	VM_NONE
-> +#endif
+Hello, Greg.
 
-This ends up looking pretty wonky in practice:
+On Sun, Feb 23, 2025 at 08:47:53 +0100, Greg Kroah-Hartman wrote:
+> On Sat, Feb 22, 2025 at 03:36:12PM +0000, Alan Mackenzie wrote:
+> > On Sat, Feb 22, 2025 at 09:48:32 +0100, Greg Kroah-Hartman wrote:
 
-> +	vm_flags = VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
-> +	vm_flags |= MSEAL_SYSTEM_MAPPINGS_VM_FLAG;
+[ .... ]
 
-because MSEAL_SYSTEM_MAPPINGS_VM_FLAG is so much different from the
-other ones.
+> > But I think you are also asking why I use the console at all.  That's
+> > a fair question which I'll try to answer.
 
-Would it really hurt to have
+> I'm not disputing using the console, it's the vt layer that I'm talking
+> about.  The DRM developers have the long-term goal of getting rid of
+> CONFIG_VT which will remove a ton of mess that we have overall.
+> DRM-based consoles should provide the same functionality that a vt
+> console does today.  If not, please let them know so that the remaining
+> corner cases can be resolved.
 
- #ifdef CONFIG_64BIT
- /* VM is sealed, in vm_flags */
- #define VM_SEALED       _BITUL(63)
-+#else
-+#define VM_SEALED       VM_NONE
- #endif
+Does a DRM based console exist at the moment?  I spent quite some time
+looking for it yesterday, but found nothing.
 
-?
+[ .... ]
 
-Then all the users could just do:
+> > > What about the move to get rid of the vt code entirely, ....
 
-	vm_flags = VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP|
-		   VM_SEALED
+> > Getting rid of the vt code would be a Bad Thing.  People depend on it.
+> > What is the alternative?
 
-That seems to be a the common way of doing things. Take a look at:
+> The drm console layer.
 
-# define VM_GROWSUP     VM_NONE
-...
-# define VM_MTE         VM_NONE
-# define VM_MTE_ALLOWED VM_NONE
-...
-# define VM_UFFD_MINOR          VM_NONE
-...
-#define VM_DROPPABLE            VM_NONE
+Again, does it exist yet, or alternatively are there plans to introduce
+it into the kernel in the near future?
 
-... and more
+> > > .... if you do that, can't you get proper glyphs with the drm
+> > > subsystem?
+
+> > I don't know.  I've looked briefly at fbterm, a terminal which uses drm.
+> > It steals key sequences too, some of which are needed in Emacs.
+> > Although not as bad as GUIs, it puts awkward layers between the user and
+> > Linux too.
+
+> I don't know what fbterm is, sorry.
+
+It's a user level terminal emulator for the framebuffer.  It's not
+important.
+
+> > I think using drm in place of fbterm.c and bitblit.c would need a lot of
+> > design and implementation work.  The change I'm proposing barely changes
+> > the design at all.
+
+> Ok, but we haven't seen the patches to know this :)
+
+> > > Doing huge changes for a subsystem that almost everyone agrees should
+> > > only be kept around for legacy reasons is a rough undertaking.
+
+> > Isn't there a principle in Linux that preserving existing user
+> > interfaces is of utmost importance?
+
+> I agree, keeping the existing ones is key.  You are talking about
+> extending the existing ones in a way that adds additional complexity
+> when there might already be a solution for this for you.  That's why I
+> brought that up.
+
+Where/how can I find the DRM console?
+
+> > As I've already written, I've got working code, but it needs refinement
+> > before I submit it.  Otherwise reviewers would likely reject it for
+> > "inessential" reasons like code formatting.  This will likely take me
+> > several days.
+
+> code formatting is NOT "inessential", please never think that.
+
+However necessary code formatting is (and it is necessary), it doesn't
+form part of the essence of the changes.  I'm sure we're agreed that
+proposed changes are best judged by that essence.  That was all I meant.
+
+> Our brains run on patterns and common code formatting allows us to see
+> the real issues here.  To not follow those formatting rules means we
+> just can't review your code properly.
+
+I understand.
+
+[ .... ]
+
+> > What is the best way of submitting such a large patch (~3,500 lines)?
+> > I committed it to my own local git repository in three main stages
+> > (around equal size), and have applied corrections after rebasing and
+> > the odd bug fix.
+
+> Break down the changes into "one logical change per patch" to make them
+> easy to review.  It's an art form, think about how you want to get to
+> your end result and then take us on a path that is "obvious" to get
+> there over a series of changes.
+
+> Think of it as "showing your work" when solving a math or physics
+> problem that your teacher told you to follow.  No one wants to just see
+> the end result, they have to see all the steps along the way to even
+> begin to understand if the end result is correct or not.
+
+Thanks.  I have a fair amount of work to do to achieve this.
+
+> But again, before doing that work, see how using the drm console works
+> for you, or not.  If not, let us and the drm developers know so that we
+> can work toward solving those issues, as that might actually be easier
+> to do.
+
+I would actually appreciate the work I've done being superfluous.  ;-)
+But where can I find the drm console?
+
+> thanks,
+
+> greg k-h
+
+And thank you, too.
+
+-- 
+Alan Mackenzie (Nuremberg, Germany).
 
