@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-529210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B76BA421C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:48:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4858A421B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B68144121E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:41:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0385162984
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62F9253B7E;
-	Mon, 24 Feb 2025 13:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A0F248890;
+	Mon, 24 Feb 2025 13:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdZEcMlN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eTwl10BO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA9224EF7D;
-	Mon, 24 Feb 2025 13:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F0D59B71;
+	Mon, 24 Feb 2025 13:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404470; cv=none; b=Q1CMnkFUlSQELtPnHjunFnpEpHGng6vlmepLwU3tl0+hwwCXSO8VDO4CEOdarhQTSL4jqBTbezmU2pLT3W0ujce1AtavQaepjDg0pFOeHQuptF8xpUAGOX/GrvJp/wL43eAaJu9eWP6pmexIpN8Hr8M534UuPomyF1aGvPHHxmE=
+	t=1740404646; cv=none; b=Fp11Hm9cvzudiqLoRdkfDUZJzn+9TGgAx+mVvLIlnOmJjKLf3LTMaYeJKZJBpZ4gCjkwQtzDDdTsKAubEI+3ezKyzj7QY422w4Txno9reLVsTPghTRi9GgyzvC+fTI+XKA7Ph7jwU+y2f1yGR24/3PdFznvaJerTQfLnS51LEU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404470; c=relaxed/simple;
-	bh=SvBnxw/XZz/WJPddbKqh/lOJdzpZ372yLfQQGTkJXiI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XakA4BiXtJBYd/yFsDt2HNhF8dtp+GzOe7VLM065KIU0qAxkAxku03NYiMBFo1vKPGXJHvOXlkGWBk91Q/QWlQ8/ShIw0V0cRmtFmyg8Ei1KGiN5bflwITruwyxS86HSjFRniH1Q6cYr0mbvIThuhRtH7YyB3t/SdZua5cWgyf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdZEcMlN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1184C4CED6;
-	Mon, 24 Feb 2025 13:41:08 +0000 (UTC)
+	s=arc-20240116; t=1740404646; c=relaxed/simple;
+	bh=rVfs2/wZfKjg6Qg51IMEySr29bgkBwjvvO/H4L2lWLw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iYQq+FCMyHZ/syecalD+0d3fTWlxiOnv+ZmjFFbc4f9X7WOtxEBhFqnFIHBZvGyk74j8wIcZgeuU+dN8HmSNWilpZdvmdZIbeaBm9Jqze3bgjLEb0fSxgbMSdgcuojwEovM3LsbdA4G+yL2ZQUx9AIckndafg5HxETl+JgTrbBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eTwl10BO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DDBBC4CEE6;
+	Mon, 24 Feb 2025 13:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740404469;
-	bh=SvBnxw/XZz/WJPddbKqh/lOJdzpZ372yLfQQGTkJXiI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QdZEcMlNjm4qlOm1gtQWFby41SiZBRVKdgf9N3HiucDIQGrgCv/dj35QrP/Ox9trY
-	 0blvkIb1JS5KKshjzLgkxN+VEJRrsr3jv6rZapjalnk9npL/YhK5z7yZu+kpyhg3Ei
-	 GbNishKojUclov0ff1rk2tKLyb2FUZKlcBx/CKfacfwPjYeViZlB3wiZITYqn4sSSF
-	 hg+V7m481i8qCa5Rpz2de+mlVrSmcsSAIxMEffBUh2gNINJLyxvtb5lUUBN3Sm1nb2
-	 2ZlDYwzeDiJ7zYmYUG8J5ALVKfYCWbx+TLcpWRE8WKy/9gmYnXIsy4TfvDl5gjxg0N
-	 nSGgNY7IV6FFQ==
-Date: Mon, 24 Feb 2025 15:41:05 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: nicolas.bouchinet@clip-os.org
-Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu,
-	linux-nfs@vger.kernel.org,
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Joel Granados <j.granados@samsung.com>,
-	Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Jan Harkes <jaharkes@cs.cmu.edu>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Zhu Yanjun <yanjun.zhu@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2 5/6] sysctl/infiniband: Fixes infiniband sysctl bounds
-Message-ID: <20250224134105.GC53094@unreal>
-References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
- <20250224095826.16458-6-nicolas.bouchinet@clip-os.org>
+	s=k20201202; t=1740404645;
+	bh=rVfs2/wZfKjg6Qg51IMEySr29bgkBwjvvO/H4L2lWLw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=eTwl10BOYV2LyLCJDOL6XfdY/rQRILjH31zUnnBRelTxxx3123Ei0+gCO8I6UfcOV
+	 AwEzMvhWNlrueLXqK3rSw+e5J8lDZvoBWc/K834x/gZ32wkBhh+zbtNtaAuwKLlxsJ
+	 x8wR4aiJ8gfQuJWmg20j0Zr7yYamoBKMOVgRTKu4HCsbBTfinhN0sROr1TZ8olq43A
+	 J1hTcBGoENWn4IiqeOdasg+3aYPG9aouiRyGCWW6UFJH90bnrJGC1pVDjCvEbgXYqS
+	 ujQDyM/rztTHRMdy/XKMkISh2de9HcasWMecS1OVkJCFRrt06719tp9MYFItNcNTQJ
+	 XGG/diXrDyrIQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Masahiro Yamada"
+ <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
+ <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
+ <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v7 5/6] rust: str: add radix prefixed integer parsing
+ functions
+In-Reply-To: <24221C62-2470-4B03-B39B-58BCDC500D68@collabora.com> (Daniel
+	Almeida's message of "Mon, 24 Feb 2025 10:34:11 -0300")
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+	<20250218-module-params-v3-v7-5-5e1afabcac1b@kernel.org>
+	<VZotdu1M69nw0dml87uPIIA1DETDQf9U-jnVNtPyHO5xOGkqqNvLcZPUnt2lcHCcQJ9KjdPYyHtc31taMMIuAA==@protonmail.internalid>
+	<24221C62-2470-4B03-B39B-58BCDC500D68@collabora.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Mon, 24 Feb 2025 14:43:53 +0100
+Message-ID: <87y0xvzcdi.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224095826.16458-6-nicolas.bouchinet@clip-os.org>
+Content-Type: text/plain
 
-On Mon, Feb 24, 2025 at 10:58:20AM +0100, nicolas.bouchinet@clip-os.org wrote:
-> From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> 
-> Bound infiniband iwcm and ucma sysctl writings between SYSCTL_ZERO
-> and SYSCTL_INT_MAX.
-> 
-> The proc_handler has thus been updated to proc_dointvec_minmax.
-> 
-> Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-> ---
->  drivers/infiniband/core/iwcm.c | 4 +++-
->  drivers/infiniband/core/ucma.c | 4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-Acked-by: Leon Romanovsky <leon@kernel.org>
+> Hi Andreas,
+>
+>> On 18 Feb 2025, at 10:00, Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> Add the trait `ParseInt` for parsing string representations of integers
+>> where the string representations are optionally prefixed by a radix
+>> specifier. Implement the trait for the primitive integer types.
+>>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>> rust/kernel/str.rs | 118 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+>> 1 file changed, 118 insertions(+)
+>>
+>> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+>> index db272d2198fcc..8b0d814b47f52 100644
+>> --- a/rust/kernel/str.rs
+>> +++ b/rust/kernel/str.rs
+>> @@ -945,3 +945,121 @@ fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+>> macro_rules! fmt {
+>>     ($($f:tt)*) => ( core::format_args!($($f)*) )
+>> }
+>> +
+>> +pub mod parse_int {
+>> +    //! Integer parsing functions for parsing signed and unsigned integers
+>> +    //! potentially prefixed with `0x`, `0o`, or `0b`.
+>> +
+>> +    use crate::prelude::*;
+>> +    use crate::str::BStr;
+>> +    use core::ops::Deref;
+>> +
+>> +    /// Trait that allows parsing a [`&BStr`] to an integer with a radix.
+>> +    ///
+>> +    /// [`&BStr`]: kernel::str::BStr
+>> +    // This is required because the `from_str_radix` function on the primitive
+>> +    // integer types is not part of any trait.
+>> +    pub trait FromStrRadix: Sized {
+>
+> Is this supposed to be implemented by somebody else? Otherwise we should seal it,
+> perhaps?
 
-How do you want to proceed from here? Should I take to RDMA repository?
+That is a good point. I did not intend for the user to implement this,
+same for `ParseInt`. I will look into sealing them.
 
-Thanks
+
+Best regards,
+Andreas Hindborg
+
+
 
