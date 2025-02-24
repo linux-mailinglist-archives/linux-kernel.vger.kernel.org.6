@@ -1,213 +1,278 @@
-Return-Path: <linux-kernel+bounces-528302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5133A41607
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:12:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 139D9A4160C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EC95188AEF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:12:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D221916B347
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BBD19ABB6;
-	Mon, 24 Feb 2025 07:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C36D2405F8;
+	Mon, 24 Feb 2025 07:13:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WExZ5WrJ"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qk+BW5ie"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B52241676
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F373618E377
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381121; cv=none; b=DsdEXRZUwhTiWr6WMUH7FPlytzQjLARLYYLfgfRkUUhExYNvFSvNECu15lfHWMQycaYp35tvp3PDpcZZ9msLazy4FDewv0Jrld4Pl5L6B8z/zxPKdrzy2xe5A7n5NEkL4Vbut2fdaEI99mrvssIoFZAj3kl7MkOiUsNkG/sWKCc=
+	t=1740381227; cv=none; b=uQvS4yYIsqULu3hSOX8LMHChbYuyoxiuOm+1RCgPtYLX4sYR5TFiXN6OFTp1Q915IYXtstpfNfFTVnD3qY3Pn8QhyWdatC6ncwdPWBirg5HnTntQkD/kr9yfDQIWJBEeQHKkXKvcwj/yXNsPh0m7dvJunFveii/zScO4SaC1PxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381121; c=relaxed/simple;
-	bh=/1UkArgjZHBVNZF0wcs9JPzFXDkQUWusPAcUgb/TvRc=;
+	s=arc-20240116; t=1740381227; c=relaxed/simple;
+	bh=ptAje5SiDVEq7xxyOAtG4fwOQmV0CrpzXKDFEFCBgo0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KuX7fXCflzmErzCaWXA/fPl0q1ZNjG5AgF1VtBTJz4ej2DXphbELbmK/g8t6apj4loquTYGuu7PgAhw3Cs8TLfqoKCpaNi4MjurKL1vJ1zRm++t0VhFUq++z+sotccPIbTe7qmR4yykQPv6YSoHBo7m93/IR6rxKfazzSnrCMfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WExZ5WrJ; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8692998b124so2491090241.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:11:59 -0800 (PST)
+	 To:Cc:Content-Type; b=B4+R+moMY3pokV4yeY8vRlmu5qlw8p43hXQmx2D6+B6pOKna3wgF5MDkj1A3gN3/mXTmBiNyA3DgLpcwbPb2v4BCqvYiOaybBQmzUJADib2+XXlFNgxSyA57CxZWUV1/TvxV5fHHcT4+oaaxZpYRJRDHnFZTpOgZQs13+CfgbYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qk+BW5ie; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e5dc299deb4so3587297276.1
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 23:13:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740381118; x=1740985918; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740381225; x=1740986025; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JIvNwyb9c99qju9CvFMo9HfVex7JVbi6QU5PjcFvET8=;
-        b=WExZ5WrJMmVB0tbcf77bUYXC0jfwX/LB22STMDNFz3rNwR9AFICbEmoK6tUsrlPnPV
-         YfMtm3gcc4tdT5qdURv/vuRUzrmK1mkcHxb2vy06hvVzEKIzZ+wkb4Aar3JX1xjpR6y9
-         bQ/Yknlir8tqbhFV05wIIoHFazs/JUuLFxJVcyNCvjqMX0RhtfAhBUkD0FSicA/tXkuL
-         rbn0cXPgmal5HNQ6SY+gZfsRQHpIL7D6PjOGJTXaBHBVRPgF5TbFYdSpu2ODykc5clg5
-         F5pWz4SE1M7BMysHulDRybwNkskSbxfLWL0yIqKbni9yERoaM6TUMkbedoPdyKSoJI26
-         3dhA==
+        bh=Semc5mMpQsWkD1sVkCsLdhfdCNCpbBhtUCrwzr2j3F8=;
+        b=qk+BW5iezKqzWpx2NJq9SuBagfOzgkXYrjz0XRj5niege8b5NHSYxrCAZVot7AxStj
+         utHjc8+9MfkipHrRFHWdbu/BE2PYk9kqi7GMeQKKw+cOZDrsZDGA3mk6lHj1NONK3gJa
+         n3abzjBIZyYMhXEknNtX/k/oLeqcmyQYo9eQdTJiP+l9XqjS+WlkWUwNszfQr+Gj7bXk
+         t4Ai4klET+63/3Pe3GGkxvj/WGk6KrsVIqhKJHe9C2nV1ob77JetygNow3q6tAxrGu2G
+         64MMJYlMuNbH0XL0RzoWHRylr7lJMzkc2lBAL2CIeZKfjFRrfNkhDHRDAm+Ye/4dClEY
+         zuhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740381118; x=1740985918;
+        d=1e100.net; s=20230601; t=1740381225; x=1740986025;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JIvNwyb9c99qju9CvFMo9HfVex7JVbi6QU5PjcFvET8=;
-        b=cGqOUypW6yeUNyajqPuStCTrPF1zatVO4Q4uX0kev0u2kkFOiHVxYSbtl0QRScDQix
-         BtswkRZ3Pk9wFkdRlAZBA7fd3BlGlzzTcuYh5urBzySOJnCPsrYTFnfJ8+n3qgdpH4vy
-         XQHx0SBULntqbhag9jjMt3REgW5QkZpF7Ct3b+bHPNXEOGS/Q5NTseQ4TRvUFkCeZQVq
-         5gYdmhISUATTO+ftj2J8msXDyCDo/+Vgyq8rvoGyJBGn8aCzjFERrZX/nce4yupguSIc
-         62t7kJz1oue1uEyQt/vuoRcwXyYs1Y1RtO1NfGkReeaXr/v69CR+V3NZgRxQoOeQKhMW
-         4phg==
-X-Forwarded-Encrypted: i=1; AJvYcCUl+apUMACUISJB043uCQdCbPlBbNUBBiH5XXhqVEFntLI03XMyaA974n8BZ5pl5snZRUTcdm3B3QA2bxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3Ijp0fdsu9SvFJPhmeoF+/G1kp/l8FaXHte9yL38DQWTCniMx
-	tqNofLuO0vlbzaFvzkNjEe1gpplMABojJJM031js0+iOLhJSsvsBJHKPslMdP/u9qnxb/HQvAkE
-	oFoLp7c5p1fM73ZCoI7lbDzJNHnA=
-X-Gm-Gg: ASbGncvWlqfXu+ZPxauPiqXHSx27muQ/Sw+zGrW2y36hnk5E4MWyLH8FDqyEFYTp7/6
-	aSbGMkxcEAYKPDNj4MghRUOU2naUOLWpDlKjA6P2ja/u6G9Tc885+DWYK6sC1EJBFjjHZ0gU92r
-	643Mb9cFE=
-X-Google-Smtp-Source: AGHT+IFAWFdhAsiWn8tZVTQlMqHrJNKUqCfhEJP0T3oeRrmv05lMcKz4+5DsgNOnvqVCZuF2D+XbpSDoHQKbWh2pUnI=
-X-Received: by 2002:a05:6102:3590:b0:4bb:cbbc:38 with SMTP id
- ada2fe7eead31-4bfc27af44cmr5255329137.5.1740381118541; Sun, 23 Feb 2025
- 23:11:58 -0800 (PST)
+        bh=Semc5mMpQsWkD1sVkCsLdhfdCNCpbBhtUCrwzr2j3F8=;
+        b=uF7HZpHLC0XaeSxGP8kW3ra1pJMXMsXvs7ie025O17BzeP3DdBnOeyam0RPLxcNrwE
+         6afgFwGMWK7dAdYfCUqsV1rrTUgjifAPUC2M5PM8ByHS4wzIIQBkHTd+qlEUQSM0CMqn
+         uewsOfask90OkPaXkszEKE/i7vyfhxt9TeJ0h2Q9GLCbrItRSNZ0eT+Wnw7TQNG/5PYU
+         A+/lPfgDXAu0Dy/FG6+UW3Rm1pyyUcUqXHQjs9jLPH1aSLrI5WkDR8UVeHnfp+aY9J3Q
+         pGHMjOR5kew+KfGuCznwzVDg6M/i/y364VXORPldpWHH3dZoHI5j9aLOYt/GjXqn/QUV
+         A6zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVt9fIsXUQuH5cSm/I6/fVXzyKcVGjUGvkRb2T5h/835VJz4Pc0zHY2rcsfz11Aimrhxpgj523WMfZpvyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeGQAKxwcytPOQOGBymRBiIgzI5/YA9GmHKw9MT0M1FIbMikWV
+	wHWMpnYQhBFujOardxLPw40Lz0XXV9xqr2zkT7yhK1mmRjWpZRo58aricDe//+dUNLCI23Gpfks
+	r3weeGWn19vt3vOaHlr+ff29XHgeJNZ3nMPEI
+X-Gm-Gg: ASbGncu6eMfY7HAHWltYw2jjv7patpj6akK0xBIs+KDD8kAKvs4tHyEJPX7NHhsKWKR
+	JLPwXUdXtNrzKhUUSpLGtx+NnhsuL1dWbg3MERL3yegI6v8s1O4D1wxIGGsY1tURNNR3CPKD8yf
+	bMFo0h+kjv
+X-Google-Smtp-Source: AGHT+IEZrbBxm1LF/NEV8MZgFjYkpaICrfTfY23T8mXdJKPIdn+h6eA2w91MUwKAQjYZVvwQ3NYaXFLF5bTvlaUNkco=
+X-Received: by 2002:a05:6902:168e:b0:e5b:42c7:8f21 with SMTP id
+ 3f1490d57ef6-e5e245b784dmr9327159276.7.1740381224723; Sun, 23 Feb 2025
+ 23:13:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222024617.2790609-1-mawupeng1@huawei.com>
- <Z7lIYzLSACbWxlEM@casper.infradead.org> <2c7dfa44-266a-4aa6-9401-7528368f171e@huawei.com>
- <Z7qK-NFJsqcV0rPw@casper.infradead.org> <CAGsJ_4xHaaf_DHsFZ_zEqEd3Nb9C=7JJjy5gGFo+RhEhQYX_tg@mail.gmail.com>
- <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
-In-Reply-To: <61566a74-04aa-44f1-9aa9-624644f06450@huawei.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 24 Feb 2025 20:11:47 +1300
-X-Gm-Features: AWEUYZmed7yyNa1vGcuthB1-aGrOUUAhknAIxzyTspe7dvxQa1il-ggOwjB4yC0
-Message-ID: <CAGsJ_4zLw5+A+0gaeubBSLuL1EcaHgFa41dt+BG3VgmPsF=Ocw@mail.gmail.com>
-Subject: Re: [PATCH] mm: swap: Avoid infinite loop if no valid swap entry
- found during do_swap_page
-To: mawupeng <mawupeng1@huawei.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, david@redhat.com, 
-	kasong@tencent.com, ryan.roberts@arm.com, chrisl@kernel.org, 
-	huang.ying.caritas@gmail.com, schatzberg.dan@gmail.com, hanchuanhua@oppo.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250224045237.1290971-1-chharry@google.com> <2025022431-ditto-shy-c62f@gregkh>
+ <CADg1FFeW5EXOJTqTS+jwBphGnDSCreNwM8hcFOhB1Tatdti6QA@mail.gmail.com> <2025022407-polo-disgrace-9655@gregkh>
+In-Reply-To: <2025022407-polo-disgrace-9655@gregkh>
+From: Hsin-chen Chuang <chharry@google.com>
+Date: Mon, 24 Feb 2025 15:13:17 +0800
+X-Gm-Features: AWEUYZlT4OeXusnFgsZdXBLpnk2X21PFJOMgjPDL0SyEns4KFZ132qombPDpNzg
+Message-ID: <CADg1FFehoZr3DmDhV_ri69+XBHLQcpKjoxLMaVhQUdzRuhST9A@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: btusb: Configure altsetting for USER_CHANNEL
+To: Greg KH <gregkh@linuxfoundation.org>, luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org, 
+	chromeos-bluetooth-upstreaming@chromium.org, 
+	Hsin-chen Chuang <chharry@chromium.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Ying Hsu <yinghsu@chromium.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 2:27=E2=80=AFPM mawupeng <mawupeng1@huawei.com> wro=
-te:
+On Mon, Feb 24, 2025 at 2:44=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org=
+> wrote:
 >
->
->
-> On 2025/2/23 14:18, Barry Song wrote:
-> > On Sun, Feb 23, 2025 at 3:42=E2=80=AFPM Matthew Wilcox <willy@infradead=
+> On Mon, Feb 24, 2025 at 02:25:52PM +0800, Hsin-chen Chuang wrote:
+> > Hi Greg,
+> >
+> > On Mon, Feb 24, 2025 at 2:10=E2=80=AFPM Greg KH <gregkh@linuxfoundation=
 .org> wrote:
-> >>
-> >> On Sat, Feb 22, 2025 at 11:59:53AM +0800, mawupeng wrote:
-> >>>
-> >>>
-> >>> On 2025/2/22 11:45, Matthew Wilcox wrote:
-> >>>> On Sat, Feb 22, 2025 at 10:46:17AM +0800, Wupeng Ma wrote:
-> >>>>> Digging into the source, we found that the swap entry is invalid du=
-e to
-> >>>>> unknown reason, and this lead to invalid swap_info_struct. Excessiv=
-e log
-> >>>>> printing can fill up the prioritized log space, leading to the purg=
-ing of
-> >>>>> originally valid logs and hindering problem troubleshooting. To mak=
-e this
-> >>>>> more robust, kill this task.
-> >>>>
-> >>>> this seems like a very bad way to fix this problem
-> >>>
-> >>> Sure, It's a bad way to fix this. Just a proper way to make it more r=
-obust?
-> >>> Since it will produce lots of invalid and same log?
-> >>
-> >> We have a mechanism to prevent flooding the log: <linux/ratelimit.h>.
-> >> If you grep for 'ratelimit' in include, you'll see a number of
-> >> convenience functions exist; not sure whether you'll need to use the r=
-aw
-> >> ratelilmit stuff, or if you can just use one of the prepared ones.
-> >>
+> > >
+> > > On Mon, Feb 24, 2025 at 12:52:32PM +0800, Hsin-chen Chuang wrote:
+> > > > From: Hsin-chen Chuang <chharry@chromium.org>
+> > > >
+> > > > Automatically configure the altsetting for USER_CHANNEL when a SCO =
+is
+> > > > connected. This adds support for the USER_CHANNEL to transfer SCO d=
+ata
+> > > > over USB transport.
+> > > >
+> > > > Fixes: b16b327edb4d ("Bluetooth: btusb: add sysfs attribute to cont=
+rol USB alt setting")
+> > > > Signed-off-by: Hsin-chen Chuang <chharry@chromium.org>
+> > > > ---
+> > > >
+> > > > Changes in v2:
+> > > > - Give up tracking the SCO handles. Only configure the altsetting w=
+hen
+> > > >   SCO connected.
+> > > > - Put the change behind Kconfig/module parameter
+> > > >
+> > > >  drivers/bluetooth/Kconfig | 11 ++++++++++
+> > > >  drivers/bluetooth/btusb.c | 46 +++++++++++++++++++++++++++++++++++=
+++++
+> > > >  2 files changed, 57 insertions(+)
+> > > >
+> > > > diff --git a/drivers/bluetooth/Kconfig b/drivers/bluetooth/Kconfig
+> > > > index 4ab32abf0f48..7c497f878732 100644
+> > > > --- a/drivers/bluetooth/Kconfig
+> > > > +++ b/drivers/bluetooth/Kconfig
+> > > > @@ -56,6 +56,17 @@ config BT_HCIBTUSB_POLL_SYNC
+> > > >         Say Y here to enable USB poll_sync for Bluetooth USB device=
+s by
+> > > >         default.
+> > > >
+> > > > +config BT_HCIBTUSB_AUTO_SET_ISOC_ALT
+> > > > +     bool "Auto set isoc_altsetting for USER_CHANNEL when SCO conn=
+ected"
+> > > > +     depends on BT_HCIBTUSB
+> > > > +     default n
+> > > > +     help
+> > > > +       Say Y here to enable auto set isoc_altsetting for USER_CHAN=
+NEL
+> > > > +       when SCO connected
+> > > > +
+> > > > +       This can be overridden by passing btusb.auto_set_isoc_alt=
+=3D[y|n]
+> > > > +       on the kernel commandline.
+> > > > +
+> > > >  config BT_HCIBTUSB_BCM
+> > > >       bool "Broadcom protocol support"
+> > > >       depends on BT_HCIBTUSB
+> > > > diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> > > > index de3fa725d210..af93d757911b 100644
+> > > > --- a/drivers/bluetooth/btusb.c
+> > > > +++ b/drivers/bluetooth/btusb.c
+> > > > @@ -34,6 +34,8 @@ static bool force_scofix;
+> > > >  static bool enable_autosuspend =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_A=
+UTOSUSPEND);
+> > > >  static bool enable_poll_sync =3D IS_ENABLED(CONFIG_BT_HCIBTUSB_POL=
+L_SYNC);
+> > > >  static bool reset =3D true;
+> > > > +static bool auto_set_isoc_alt =3D
+> > > > +     IS_ENABLED(CONFIG_BT_HCIBTUSB_AUTO_SET_ISOC_ALT);
+> > > >
+> > > >  static struct usb_driver btusb_driver;
+> > > >
+> > > > @@ -1113,6 +1115,42 @@ static inline void btusb_free_frags(struct b=
+tusb_data *data)
+> > > >       spin_unlock_irqrestore(&data->rxlock, flags);
+> > > >  }
+> > > >
+> > > > +static void btusb_sco_connected(struct btusb_data *data, struct sk=
+_buff *skb)
+> > > > +{
+> > > > +     struct hci_event_hdr *hdr =3D (void *) skb->data;
+> > > > +     struct hci_ev_sync_conn_complete *ev =3D
+> > > > +             (void *) skb->data + sizeof(*hdr);
+> > > > +     struct hci_dev *hdev =3D data->hdev;
+> > > > +     unsigned int notify_air_mode;
+> > > > +
+> > > > +     if (hci_skb_pkt_type(skb) !=3D HCI_EVENT_PKT)
+> > > > +             return;
+> > > > +
+> > > > +     if (skb->len < sizeof(*hdr) || hdr->evt !=3D HCI_EV_SYNC_CONN=
+_COMPLETE)
+> > > > +             return;
+> > > > +
+> > > > +     if (skb->len !=3D sizeof(*hdr) + sizeof(*ev) || ev->status)
+> > > > +             return;
+> > > > +
+> > > > +     switch (ev->air_mode) {
+> > > > +     case BT_CODEC_CVSD:
+> > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_CVSD;
+> > > > +             break;
+> > > > +
+> > > > +     case BT_CODEC_TRANSPARENT:
+> > > > +             notify_air_mode =3D HCI_NOTIFY_ENABLE_SCO_TRANSP;
+> > > > +             break;
+> > > > +
+> > > > +     default:
+> > > > +             return;
+> > > > +     }
+> > > > +
+> > > > +     bt_dev_info(hdev, "enabling SCO with air mode %u", ev->air_mo=
+de);
+> > > > +     data->sco_num =3D 1;
+> > > > +     data->air_mode =3D notify_air_mode;
+> > > > +     schedule_work(&data->work);
+> > > > +}
+> > > > +
+> > > >  static int btusb_recv_event(struct btusb_data *data, struct sk_buf=
+f *skb)
+> > > >  {
+> > > >       if (data->intr_interval) {
+> > > > @@ -1120,6 +1158,11 @@ static int btusb_recv_event(struct btusb_dat=
+a *data, struct sk_buff *skb)
+> > > >               schedule_delayed_work(&data->rx_work, 0);
+> > > >       }
+> > > >
+> > > > +     /* Configure altsetting for HCI_USER_CHANNEL on SCO connected=
+ */
+> > > > +     if (auto_set_isoc_alt &&
+> > > > +         hci_dev_test_flag(data->hdev, HCI_USER_CHANNEL))
+> > > > +             btusb_sco_connected(data, skb);
+> > > > +
+> > > >       return data->recv_event(data->hdev, skb);
+> > > >  }
+> > > >
+> > > > @@ -4354,6 +4397,9 @@ MODULE_PARM_DESC(enable_autosuspend, "Enable =
+USB autosuspend by default");
+> > > >  module_param(reset, bool, 0644);
+> > > >  MODULE_PARM_DESC(reset, "Send HCI reset command on initialization"=
+);
+> > > >
+> > > > +module_param(auto_set_isoc_alt, bool, 0644);
+> > > > +MODULE_PARM_DESC(auto_set_isoc_alt, "Auto set isoc_altsetting for =
+USER_CHANNEL when SCO connected");
+> > >
+> > > This is not the 1990's, why are you adding new module parameters when=
+ we
+> > > have so many other more proper ways to do this?  And really, this wou=
+ld
 > >
-> > IMHO, I really don=E2=80=99t think log flooding is the issue here; rath=
-er, we=E2=80=99re dealing
-> > with an endless page fault. For servers, that might mean server is unre=
-sponsive
-> > , for phones, they could be quickly running out of battery.
+> > Sorry but could you please provide an example to guard a feature like t=
+his.
 >
-> Yes, log flooding is not the main issue here, endless #PF is rather a mor=
-e serious
-> problem.
+> Depends on what you want to do with this configuration.  Why is it an
+> option at all?  Why can't it "just work"?  Module parameters are a pain
+
+I would like to hand this question to Luiz. I believe this patch just
+works because this configuration is defined in the spec.
+I think Luiz's point is to project the potential existing user, but
+there's probably no User channel user sending SCO data with the latest
+btusb driver because:
+a) There's no way to configure alt setting from userspace
+b) Before eafcfcfca97d, SCO data would be rejected since User channel
+shouldn't be able to modify hci_conn_num
+
+> to configure, we have loads of other ways to do this now (configfs,
+> debugfs for debugging stuff, sysfs for device-specific things, etc.)
 >
-
-Please send a V2 and update your changelog to accurately describe the real
-issue. Additionally, clarify how frequently this occurs and why resolving
-the root cause is challenging. Gaoxu reported a similar case on the Android
-kernel 6.6, while you're reporting it on 5.10. He observed an occurrence
-rate of 1 in 500,000 over a week on customer devices but was unable to
-reproduce it in the lab.
-
-BTW, your patch is incorrect, as normally we could have a case _swap_info_g=
-et()
-returns NULL:
-thread 1                                           thread2
-
-
-1. page fault happens
-with entry points to
-swapfile;
-                                                       swapoff()
-2. do_swap_page()
-
-In this scenario, _swap_info_get() may return NULL, which is expected,
-and we should not return -ERRNO=E2=80=94the subsequent page fault  will
-detect that the PTE has changed. Since you have never enabled any
-swap, the appropriate action is to do the following:
-
-        /* Prevent swapoff from happening to us. */
-        si =3D get_swap_device(entry);
--       if (unlikely(!si))
-+       if unlikely(!si)) {
-+                      /*
- +                     * Return VM_FAULT_SIGBUS if the swap entry points to
-+                      * a never-enabled swap file, caused by either hardwa=
-re
-+                      * issues or a kernel bug. Return an error code to pr=
-event
-+                      * an infinite page fault (#PF) loop.
-+               if (WARN_ON_ONCE(!swp_swap_info(entry)))
-+                       ret =3D VM_FAULT_SIGBUS;
-                goto out;
-+       }
-
-
+> > > not work at all for multiple controllers in teh same system, right?
 > >
-> > It=E2=80=99s certainly better to identify the root cause, but it could =
-be due
-> > to a bit-flip in
-> > DDR or memory corruption in the page table. Until we can properly fix i=
-t, the
-> > patch seems somewhat reasonable=E2=80=94the wrong application gets kill=
-ed, it at
-> > least has a chance to be restarted by systemd, Android init, etc. A PTE=
- pointing
-> > to a non-existent swap file and never being enabled clearly indicates s=
-omething
-> > has gone seriously wrong - either a hardware issue or a kernel bug.
-> > At the very least, it warrants a WARN_ON_ONCE(), even after we identify=
- and fix
-> > the root cause, as it still enhances the system's robustness.
-> >
-> > Gaoxu will certainly encounter the same problem if do_swap_page() execu=
-tes
-> > earlier than swap_duplicate() where the PTE points to a non-existent sw=
-ap
-> > file [1]. That means the phone will heat up quickly.
-> >
-> > [1] https://lore.kernel.org/linux-mm/e223b0e6ba2f4924984b1917cc717bd5@h=
-onor.com/
-> >
+> > Do you mean we can't have separate parameters for different
+> > controllers? Yes that's true, but why would a user want the different
+> > behavior on the same machine?
+>
+> Why would you prevent them from allowing this to happen for a
+> device-specific option?
+>
+> thanks,
+>
+> greg k-h
 
-Thanks
-Barry
+--=20
+Best Regards,
+Hsin-chen
 
