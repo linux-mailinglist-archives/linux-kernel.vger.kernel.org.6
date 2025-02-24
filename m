@@ -1,275 +1,267 @@
-Return-Path: <linux-kernel+bounces-528565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECEAA41924
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:32:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90673A41918
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:30:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1383A9288
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CDEF170D0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E410F24A058;
-	Mon, 24 Feb 2025 09:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1A224A055;
+	Mon, 24 Feb 2025 09:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="VfSdBJaU"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2053.outbound.protection.outlook.com [40.107.92.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D8A4ZQwT"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187031A0BCD;
-	Mon, 24 Feb 2025 09:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389212; cv=fail; b=JEc7bgTTKdVds1JRlGvsISmNjUgNajfSOvbng0OCNDuGgyoydhFAeMkE7/WCFFRXeWnTPEXWZRoMsb9D6JrA1b1yOdFmpMBOmfXbQDYAG+udEg9LjTT5Jl49HUUDVAzLN5olZ5cEUv47kug0TNnYhBbsoiUg4JEjjBj04aO4908=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4703243370
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740389212; cv=none; b=aDhQcbGDUCTLsTQKnXFxSAjRszgEf2huzgQoLi/wAdKWWVCOPaqwaRhumYKhMhfKiymuAcogWOmSOLhlmRQOqK1g3d+ye8AEw0wAa7eqwBDRhb3dDVP3SBWPLcaKAIKVpq3wTow0yQV3BoVql5PHXQBpZoBKnczEIrBnfpLIOBk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740389212; c=relaxed/simple;
-	bh=5UPZVMyGT9kTlopkoDAI+TYe5ZC/ATL4BYNYhXM/RTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=EiGLPZyX2Cml2qg+urRGd5r2t0Kq96osxfjzdqTQvLpZB1B52Zd3nFc435fRHIhc2TcvCxgFjjis3dkM3u05A95XQMCOL+ZdlT/HSVgFSUR0c98/ug6pdgUNZc6MZN1jkZ/QqPpIR3nROMjS5y4czTTBozd0sn5Uj7drAFVoH/Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=VfSdBJaU; arc=fail smtp.client-ip=40.107.92.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SwOAtiSyEQ2SYVNzs87AwrYbG9Zzw0jnHihP3+EBF1prh1JlnikyfEazLLHuLnGcJR50sNB+ekTsDUAc3p0WE+Iai94OKSxVDNi/Wa698q4lisf2UUcrpw3LNBOabvgHGdJ+y1d4eHmfesyFtpFvxwbRFOi062M70yulS5TTp9k3djCNZwyanpf4syBIUvuflxzzl7Frxr3QzeFEb08jfZ7g0XSJuB3GmS+ma4wo0ywtkr5agKTyny4SBXEwaSWyBHFZupzWXHlnlC1AImAXoHcy5c5lOEoe/9bLe899dLnL3IdMc0RVNBxVxsVJU4ttrka8/apL4xUjKcR6eOSiZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
- b=Vy+QblMq6pJLNV//3XpmD0kzh4rU9AAE+h1vSgLvtZsgDx7JzxFjbWRHGOY0ApyhGiQkdjZMXzi+npNLGljBEdFIY0qElnTrGDbaUFLM4ZlVCBdxNXIIEzZwwKmphmQ5eBVbCYly83e2/gY0gO1uM/tHpWzdkYKcO1gBdjBmkPABatitOuLxZvOnGQKwlN01p8HYL1/vks0J4iTp/c/NmRZrVJgwFktN6GSju1cHcUyHarO+edMjd4D1g0SNtpSC/mXU0XbybtaR273Lrlp23ufV8JWn0oVB++rD/McmmStOv+x7hjCbtobXn+lobNd5wGLxClEwYYdVrq/X9lkJ/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FOoAqzKsVnOEeyaT/kvnMOt+FLUw6hA5Uh1vpf6vUTM=;
- b=VfSdBJaUBQgaAks5McUB3e3eQsCxj2o7obPxRixivbD1xowrwDMFqIolA4xT/DuYwpmG7eNqc01FEPqAhcrwbFMm40/nmELPeIi+TnxmR2YaEJDcs8CFpGc6lpl99msD5+uaUOwj6X3DXYdDKgxkCoFIQOVy0Ppi3XcXtw9evv8=
-Received: from MW4PR03CA0215.namprd03.prod.outlook.com (2603:10b6:303:b9::10)
- by SA1PR12MB6823.namprd12.prod.outlook.com (2603:10b6:806:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 09:26:42 +0000
-Received: from BY1PEPF0001AE16.namprd04.prod.outlook.com
- (2603:10b6:303:b9:cafe::d) by MW4PR03CA0215.outlook.office365.com
- (2603:10b6:303:b9::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Mon,
- 24 Feb 2025 09:26:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BY1PEPF0001AE16.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8466.11 via Frontend Transport; Mon, 24 Feb 2025 09:26:41 +0000
-Received: from [10.252.195.191] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 03:26:32 -0600
-Message-ID: <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
-Date: Mon, 24 Feb 2025 14:56:09 +0530
+	bh=/ryG12havO6GGoTrPBXBQA1dshzJ3F4G9J8CFEub8VQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QI1uoOIzxRKEkPLLVqOWMH+YVby2m2aD5IEq2sgYFJnJETQEHZafWAQxzirMsXqArJNmr1gpKI7JLZ5pnK+rhO5glLlAzN0AUp7CRiavUOh1hQSgcs1Cub5RH/wD/552rrsJuvLl7dR3/Mav07Ibxe+caB53rHu2X0BVGmKaaxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=D8A4ZQwT; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30613802a04so44301641fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:26:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740389209; x=1740994009; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=R9DwX5H0t5xZGrbvpWDysDlrDfS0kR6OfhPIwAFx6mo=;
+        b=D8A4ZQwTKHrnZk01/sUFcZbMWaYs3LeRVXQzesg91XPVVKhO3+TaRs3Aos6f6pSjFO
+         BHYh/pCpbfPlhKVSlxBal7PggrN31Z+aj7Lm9d0oQh4UqCOSz44hAk/vU7bQF/LArCHX
+         SywYTVIql9ZrYVhdbzLOANGQtKRbNdvRVkkv4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740389209; x=1740994009;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R9DwX5H0t5xZGrbvpWDysDlrDfS0kR6OfhPIwAFx6mo=;
+        b=IwsytOlwD44/HlPJJDI1NXBZL8360jO82V1DaNHECLUYUnPcQ//geGaf6Ry19kmYF3
+         ZV7FOxvCBbNXA4kR6Vecd/8wdx5/KpLawxMVEQz0D/E3lohWaaCNcLAHp9x6go23/hiu
+         EQ/bK3D8j3u/Xe7GDVJcqIS2SMw8eLZagpynf5IywDwg+MVXzc3ry60qrx/fGwNnZonJ
+         TLUdxmAcDFR8qIDsLVFZ1CIi63gyU6G8stGCgzEWYR8Q8Day2rhmCRHp0kcUnY2oY0uD
+         ca8zCmu2x7aopM0ml4Dv1EZqLvJ2CVnCU6OwvcoMrt8LKfTKvWvVGTEcDg4x5zFnfGq0
+         XDjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWcr0seYeuYjBEg/K5JnIxStiojwunx5wbQCLABtBOYyCG/d7AGEcHA06CLSCcdQVDVegWOtmXGjpQVZ1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCh0eg2lC7+hMr8wWZiK6bWiKUoFSpo0HsW8OWqpE7UlT97iM1
+	sCuXHQ2FtiX0zT0J4Cb+vKWBpVgaCD4s3qZ5wOTJzby/HmgLzq0WVOCTL00iH/WvkMdmoa2izU3
+	//A==
+X-Gm-Gg: ASbGncs1o5HV1tAOqzofUUiRSgDXgfBpvAtfYFOXv3lt56kiRxX30pTw7lbIov+8Vjg
+	R5iuIp9bS2wERVbHPMn/A4Z8UyRK3Xp10HRziH5dJlBD5CT/WhgRNlvNkG2HxzFBpWKr/4/wIfv
+	f/YNlhP+0zVBsWbfZxTlo1HFbRr2/33rfuBHnngyiBROqCW0jOIDQcAT05zHGx0KZraZ4EM+ztA
+	z0jxaCg/E3y2dL2nOsLe8aJssMJhM+wxRA3Jpj8fI23s4v2uQ9s7pdkIgu4TXu8UkhK7amieDmY
+	GCrArT1j+cXuQbTaXhBKXUjd25rUn1MfUfKRgDfJMVuYqP6Vu08p7B1mqBnq+GxuxkrT
+X-Google-Smtp-Source: AGHT+IE36OYXxgN5bUd1ISnpCowjzuWl5K41xltZyeWXHnQvgP9Pi2kiIFnlkZEJ2j4ZGq3/QfOa6g==
+X-Received: by 2002:a05:6512:1296:b0:545:3034:7b8 with SMTP id 2adb3069b0e04-54839147d71mr5367128e87.23.1740389208581;
+        Mon, 24 Feb 2025 01:26:48 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5462c60f99fsm1721093e87.118.2025.02.24.01.26.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 01:26:47 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30613802a04so44301281fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:26:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXizL04EIj8IfNBQjEhIgt6U5MFbK+GH2og08ltKkJXFdwhPGnoRidP+h7BRxpkGL1GuNf7VJmuQ0X9OR8=@vger.kernel.org
+X-Received: by 2002:a05:6512:3e14:b0:545:576:cbca with SMTP id
+ 2adb3069b0e04-5483912fcd7mr4198905e87.8.1740389206945; Mon, 24 Feb 2025
+ 01:26:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-To: Oleg Nesterov <oleg@redhat.com>, Manfred Spraul
-	<manfred@colorfullife.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>
-CC: WangYuli <wangyuli@uniontech.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>
-References: <20250102140715.GA7091@redhat.com>
-Content-Language: en-US
-From: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
-In-Reply-To: <20250102140715.GA7091@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE16:EE_|SA1PR12MB6823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|13003099007|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TDU2VWZCSTlwRkJHdHduRFQ5dnRSRGVCRE9SaG1weEhSVjZqNzdrY2hDbXU1?=
- =?utf-8?B?VDVIWjBQdUVRUUVwVFlsNTFtVHVUbVZZVmxud0pHZkVHNEFXSlJYaHNoYVJK?=
- =?utf-8?B?OUFyVFIrZGJxUmFwRm1oeTc3OUxia0xXTlZ4TDdVaHhWTld6RGRSa2VKRHR2?=
- =?utf-8?B?QUs5TEVoWS92YURxWXN5WkhWVU9oeVJYN2x6am9BbGFJUHp6dXpKQ0tXbGQ0?=
- =?utf-8?B?NGVxS2tCemZSZFE5aXI3QXI0bnNFZzY0V2JSRGhydzgrRExCWWpnTWJ2cHlB?=
- =?utf-8?B?Q2s1MzhMMjBEdms3dlZxZ2cwR0xNWXBPNWRuSnQvZGViU0FONDR6cndqVG1t?=
- =?utf-8?B?ZVpvL1EvK3ZZSEpYbkxhRXo2S2VDd1UwNXdSTUpuWW9rczVmc0NINDZvV1ZP?=
- =?utf-8?B?ZmRURVovRjArRERtVCtJR2gxdGFuMDE2bHdPcWkxb05pbURYemtPUGl6dmk4?=
- =?utf-8?B?RDg2a29pbXhUYklLanBKWG4zWGFnYXpGaXdmTHVwNE50cnBJYmY2ak50bWYr?=
- =?utf-8?B?ZWdjak5xWGVtTjBIZ1AzMW9Edm1udmJKckpuQzZtTWd1Y2Q0M3cwaVEvZkVO?=
- =?utf-8?B?Q1FxendGUFgxSkl0SGt1NVFHSkYxN3J3Smk0bTVoV054bEFGNUg3KzBpNXIr?=
- =?utf-8?B?U0JZSFo2Tys4L0xaZHhoUHpJY25NNWt6SUlISUw2Wm5CY1Nqc1AvZS9DTmhw?=
- =?utf-8?B?Zy9wZXFjTjF0ektPaVdJRU43aTM3eUo0clNyNVlNWmYrNjBuUGtZcVRDRDFk?=
- =?utf-8?B?V2lXNEt1YnR3ZFRoT0JqZFZzekY1YnNWTnZSMHlPdk5GQ2dvZkNWT1hqUzNy?=
- =?utf-8?B?RVIra0NBQzN3aGlFTGlLWWJqeFRyUjFBKzNoYmRaa0gwampEY0FPVlNoZFFl?=
- =?utf-8?B?V0Vwby9oUFNMZVFvam1vMFo3WXpLcGVMLzlkalVKc3ZRR0FtWDRKVXB4Rmw0?=
- =?utf-8?B?a0hWZmxNWndneTF6eEZTOExBT0QvcFdaU1RtdTZpdU1yTCt1MkJHSU5mZmNz?=
- =?utf-8?B?T1REdHIwRktXbjhaOHBVSm95QjBMQTYveVVBVXloalNXTjEvaFRxaGtTR0hC?=
- =?utf-8?B?MUVsUS9zRTJmay8wNU1yQXUwRFkrUVNPWGRPZDJBZXZqQmNiZkNQZm5IZlZM?=
- =?utf-8?B?MnR4ZG1Uam1GaDh6UWYwdEE3UFh2U25KanEzNks3cEpBV0tvWEZ6U240OCtC?=
- =?utf-8?B?ZUEvNTB3blp2T2FWRWoxbVhoZTRrZDNoYTRiRG1tbFh0d3Fna2JKNEFTWWZr?=
- =?utf-8?B?Uk5XekI0dkxiVXZRNS96L1lBeXFqczdVcjA5N0Myd2JDODBVT3JsdXk0Szgr?=
- =?utf-8?B?VS9iOVlrZEh3ZGlTR1NIWnQxd2c4Q3U2ZnZZdTR4L0VXZCt3MjB2RkRBbVFP?=
- =?utf-8?B?NGwxVThXeGRMRStSV0xJc3d4VFpmTGtSQldvNjdBZ0h2M3NlWE44amRuMGM2?=
- =?utf-8?B?SG1iVllXZ25pUGg4aEhReTVYa3RyNEpoek9mbFppcEpDQi9sUkQxZmtpOWIr?=
- =?utf-8?B?SkdZODFmSndGTlBoR3ovR1BzcW00UU5BK1AycVVOdngzV2FJZis5T3U5Q2ZV?=
- =?utf-8?B?Q1FIcmd0YUZyNFRnRTdJTjArbllLR0JoNDBKYm05UTVWblVTR2ZacEVvOXJJ?=
- =?utf-8?B?dGlRQ3g2UUtmNnlJV3kvMlBBOEhyYWhHeGZBZEh6aWE5OVZpcVQwZkk2OUxt?=
- =?utf-8?B?YmZJdDBPbHM1ZVJtWG9tMWhzWTdBMUt0Q0MrUGxzT2hxMzZRTDZsekdqT1U1?=
- =?utf-8?B?cUNOYUNPRkl6dDBBdi9QOTZYb0Fid0VBTWdjOE44MjJ6U1ppYVEwWmtwaFFO?=
- =?utf-8?B?QnNqZDMxTllYZzFzb3RMcjZXd1BBZ3RPNThGTkorSkhtdCtSZGtJVllWYnQ0?=
- =?utf-8?B?TXF0Q2dwQmRxQ1cyUElZc2xwNGJkNDFNVHJBSlV6Zzl6aWc3Y1FoTW1HS1NJ?=
- =?utf-8?B?WFVHSDRsL0xOYjZESE1zRDh0ZFNhdGIwRVZLZTNNVW1TRWRHY0V0SWd0K1pN?=
- =?utf-8?Q?qNrncORf+rcw95s79LJ9v+1qZYMT1o=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(13003099007)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 09:26:41.4799
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4734e8f0-8b3a-407e-b484-08dd54b5590d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE16.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6823
+References: <20250111-uvc-eaccess-v4-1-c7759bfd1bd4@chromium.org> <20250223170319.GA2821@pendragon.ideasonboard.com>
+In-Reply-To: <20250223170319.GA2821@pendragon.ideasonboard.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 24 Feb 2025 10:26:34 +0100
+X-Gmail-Original-Message-ID: <CANiDSCv1HVu82D=PoJFu=XCQ97k_MM1dmYpufkUCiKpSgGRT9w@mail.gmail.com>
+X-Gm-Features: AWEUYZmvV4iGze7N3ugwoy0UYAWbTsMtuoDRa1uh5PWbgtlebItM-Je3dCsd9uI
+Message-ID: <CANiDSCv1HVu82D=PoJFu=XCQ97k_MM1dmYpufkUCiKpSgGRT9w@mail.gmail.com>
+Subject: Re: [PATCH v4] media: uvcvideo: Set V4L2_CTRL_FLAG_DISABLED during
+ queryctrl errors
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hdegoede@redhat.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Oleg,
+On Sun, 23 Feb 2025 at 18:03, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Ricardo,
+>
+> Thank you for the patch.
+>
+> On Sat, Jan 11, 2025 at 09:57:21AM +0000, Ricardo Ribalda wrote:
+> > To implement VIDIOC_QUERYCTRL, we need to know the minimum, maximum,
+> > step and flags of the control. For some of the controls, this involves
+> > querying the actual hardware.
+> >
+> > Some non-compliant cameras produce errors when we query them. Right now,
+> > we populate that error to userspace. When an error happens, the v4l2
+> > framework does not copy the v4l2_queryctrl struct to userspace. Also,
+> > userspace apps are not ready to handle any other error than -EINVAL.
+> >
+> > One of the main usecases of VIDIOC_QUERYCTRL is enumerating the controls
+> > of a device. This is done using the V4L2_CTRL_FLAG_NEXT_CTRL flag. In
+> > that usecase, a non-compliant control will make it almost impossible to
+> > enumerate all controls of the device.
+> >
+> > A control with an invalid max/min/step/flags is better than non being
+> > able to enumerate the rest of the controls.
+> >
+> > This patch makes VIDIOC_QUERYCTRL return 0 in all the error cases
+> > different than -EINVAL, introduces a warning in dmesg so we can
+> > have a trace of what has happened and sets the V4L2_CTRL_FLAG_DISABLED.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> > Hi 2*Hans and Laurent!
+> >
+> > I came around a device that was listing just a couple of controls when
+> > it should be listing much more.
+> >
+> > Some debugging latter I found that the device was returning -EIO when
+> > all the focal controls were read.
+> >
+> > Lots of good arguments in favor/against this patch in the v1. Please
+> > check!
+> >
+> > Without this patch:
+> > $ v4l2-ctl --list-ctrls
+> >                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+> >          exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+> >      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+> > region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+> >
+> > With this patch:
+> > $ v4l2-ctl --list-ctrls
+> >                   auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+> >          exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+> >      exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+> > error 5 getting ext_ctrl Focus, Absolute
+> > error 5 getting ext_ctrl Focus, Automatic Continuous
+> >    region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
+> > region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+> > --
+> > ---
+> > Changes in v4:
+> > - Display control name (Thanks Hans)
+> > - Link to v3: https://lore.kernel.org/r/20250107-uvc-eaccess-v3-1-99f3335d5133@chromium.org
+> >
+> > Changes in v3:
+> > - Add a retry mechanism during error.
+>
+> This needs to be explained in the commit message, including when/why it
+> helps, and why the retry count is 2.
+>
+> > - Set V4L2_CTRL_FLAG_DISABLED flag.
+> > - Link to v2: https://lore.kernel.org/r/20241219-uvc-eaccess-v2-1-bf6520c8b86d@chromium.org
+> >
+> > Changes in v2:
+> > - Never return error, even if we are not enumerating the controls
+> > - Improve commit message.
+> > - Link to v1: https://lore.kernel.org/r/20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 43 ++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 35 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index 4e58476d305e..9d7812e8572d 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -1280,6 +1280,8 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+> >       return ~0;
+> >  }
+> >
+> > +#define MAX_QUERY_RETRIES 2
+> > +
+> >  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> >       struct uvc_control *ctrl,
+> >       struct uvc_control_mapping *mapping,
+> > @@ -1305,19 +1307,44 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> >               __uvc_find_control(ctrl->entity, mapping->master_id,
+> >                                  &master_map, &master_ctrl, 0);
+> >       if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
+> > +             unsigned int retries;
+> >               s32 val;
+> > -             int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > +             int ret;
+> >
+> > -             if (val != mapping->master_manual)
+> > -                             v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+> > +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+> > +                     ret = __uvc_ctrl_get(chain, master_ctrl, master_map,
+> > +                                          &val);
+> > +                     if (ret >= 0)
+> > +                             break;
+> > +             }
+> > +
+> > +             if (ret < 0) {
+> > +                     dev_warn_ratelimited(&chain->dev->udev->dev,
+> > +                                          "UVC non compliance: Error %d querying master control %x (%s)\n",
+> > +                                           ret, master_map->id,
+> > +                                           uvc_map_get_name(master_map));
+> > +             } else if (val != mapping->master_manual) {
+> > +                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+> > +             }
+> >       }
+> >
+> >       if (!ctrl->cached) {
+> > -             int ret = uvc_ctrl_populate_cache(chain, ctrl);
+> > -             if (ret < 0)
+> > -                     return ret;
+> > +             unsigned int retries;
+> > +             int ret;
+> > +
+> > +             for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
+> > +                     ret = uvc_ctrl_populate_cache(chain, ctrl);
+> > +                     if (ret >= 0)
+> > +                             break;
+> > +             }
+> > +
+> > +             if (ret < 0) {
+> > +                     dev_warn_ratelimited(&chain->dev->udev->dev,
+> > +                                          "UVC non compliance: Error %d populating cache of control %x (%s)\n",
+> > +                                          ret, mapping->id,
+> > +                                          uvc_map_get_name(mapping));
+> > +                     v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
+>
+> Can we make the control permanently disabled ?
 
-On 1/2/2025 7:37 PM, Oleg Nesterov wrote:
-> wake_up(pipe->wr_wait) makes no sense if pipe_full() is still true after
-> the reading, the writer sleeping in wait_event(wr_wait, pipe_writable())
-> will check the pipe_writable() == !pipe_full() condition and sleep again.
-> 
-> Only wake the writer if we actually released a pipe buf, and the pipe was
-> full before we did so.
-> 
+I'd rather not. In funky hardware the control might work with the
+right combination of other controls.
 
-We saw hang in hackbench in our weekly regression testing on mainline 
-kernel. The bisect pointed to this commit.
+>
+> > +             }
+> >       }
+> >
+> >       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+> >
+> > ---
+> > base-commit: c5aa327e10b194884a9c9001a751f6e4703bc3e3
+> > change-id: 20241213-uvc-eaccess-755cc061a360
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
 
-This patch avoids the unnecessary writer wakeup but I think there may be 
-a subtle race due to which the writer is never woken up in certain cases.
 
-On zen5 system with 2 sockets with 192C/384T each, I ran hackbench with 
-16 groups or 32 groups. In 1 out of 20 runs, the race condition is 
-occurring where the writer is not getting woken up and the benchmarks 
-hangs. I tried reverting this commit and it again started working fine.
 
-I also tried with
-https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/. After 
-applying this patch, the frequency of hang is reduced to 1 in 100 times, 
-but hang still
-exists.
-
-Whenever I compare the case where was_full would have been set but 
-wake_writer was not set, I see the following pattern:
-
-ret = 100 (Read was successful)
-pipe_full() = 1
-total_len = 0
-buf->len != 0
-
-total_len is computed using iov_iter_count() while the buf->len is the 
-length of the buffer corresponding to tail(pipe->bufs[tail & mask].len).
-Looking at pipe_write(), there seems to be a case where the writer can 
-make progress when (chars && !was_empty) which only looks at 
-iov_iter_count(). Could it be the case that there is still room in the 
-buffer but we are not waking up the writer?
-
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->   fs/pipe.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 12b22c2723b7..82fede0f2111 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -253,7 +253,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   	size_t total_len = iov_iter_count(to);
->   	struct file *filp = iocb->ki_filp;
->   	struct pipe_inode_info *pipe = filp->private_data;
-> -	bool was_full, wake_next_reader = false;
-> +	bool wake_writer = false, wake_next_reader = false;
->   	ssize_t ret;
->   
->   	/* Null read succeeds. */
-> @@ -264,14 +264,13 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   	mutex_lock(&pipe->mutex);
->   
->   	/*
-> -	 * We only wake up writers if the pipe was full when we started
-> -	 * reading in order to avoid unnecessary wakeups.
-> +	 * We only wake up writers if the pipe was full when we started reading
-> +	 * and it is no longer full after reading to avoid unnecessary wakeups.
->   	 *
->   	 * But when we do wake up writers, we do so using a sync wakeup
->   	 * (WF_SYNC), because we want them to get going and generate more
->   	 * data for us.
->   	 */
-> -	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
->   	for (;;) {
->   		/* Read ->head with a barrier vs post_one_notification() */
->   		unsigned int head = smp_load_acquire(&pipe->head);
-> @@ -340,8 +339,10 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   				buf->len = 0;
->   			}
->   
-> -			if (!buf->len)
-> +			if (!buf->len) {
-> +				wake_writer |= pipe_full(head, tail, pipe->max_usage);
->   				tail = pipe_update_tail(pipe, buf, tail);
-> +			}
->   			total_len -= chars;
->   			if (!total_len)
->   				break;	/* common path: read succeeded */
-> @@ -377,7 +378,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   		 * _very_ unlikely case that the pipe was full, but we got
->   		 * no data.
->   		 */
-> -		if (unlikely(was_full))
-> +		if (unlikely(wake_writer))
->   			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
->   		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
->   
-> @@ -390,15 +391,15 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->   		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
->   			return -ERESTARTSYS;
->   
-> -		mutex_lock(&pipe->mutex);
-> -		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
-> +		wake_writer = false;
->   		wake_next_reader = true;
-> +		mutex_lock(&pipe->mutex);
->   	}
->   	if (pipe_empty(pipe->head, pipe->tail))
->   		wake_next_reader = false;
->   	mutex_unlock(&pipe->mutex);
->   
-> -	if (was_full)
-> +	if (wake_writer)
->   		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
->   	if (wake_next_reader)
->   		wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
---
-Thanks and Regards,
-Swapnil
+-- 
+Ricardo Ribalda
 
