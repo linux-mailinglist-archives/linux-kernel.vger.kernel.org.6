@@ -1,143 +1,150 @@
-Return-Path: <linux-kernel+bounces-528165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FC3CA4146D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:14:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25979A41475
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14748188FAE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F881189195A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD331AAA1A;
-	Mon, 24 Feb 2025 04:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D771ACEA7;
+	Mon, 24 Feb 2025 04:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pVRthAn+"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k/N2uq8J"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0861EB3E;
-	Mon, 24 Feb 2025 04:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23571A2391;
+	Mon, 24 Feb 2025 04:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740370455; cv=none; b=DAScDczAf6spQp4UrX7sl7XFV8rVb+6pkqP6Xsd5OsToCRmrBHtPlyOV+qNda9MIFE4HTMi0B6o2ShqCikNWxFpPvaD1bX4HE6/FvBsVgE2PbZ6YoyPZO6FKY+c1PS6dJDrF7feAPPwQ3Gr9Rv6aTuCd7ExENawIe+YxknSHXNE=
+	t=1740370646; cv=none; b=QZRCRhrOffyPnQwXreP/4GC6ewi51k3yqqAchZSRtqve6pVntP5+XsUvSl42Kv4h00w7tq9tmG7w4X5YrJEtGwGRlDcGxcagYQ7EVHM7eBLMEX+gW0M4eQU71hOMSws2RcTJfsrOZcsE7MrhS7LZ6NZYY8pw0yYgPpp363zIJKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740370455; c=relaxed/simple;
-	bh=v4fYCedTc0qTMnm4Gc512gs9yjcyXyOH3zKeTar6uQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdahPK0f3ZWqbPdKlIh+4tEpG1uQmcTFBHbVLQFeQsTy7IZ6z5TVRUqhANnaBNSg6FYgU0qQeqF99OJ2nRjb5Dwuh0aU6YhsBvTlDNwBi/1OuDXgnH2RTBKgZftth8h9tE6vSURn9PlAipOv6WR8FzyVGoRznQ1rYVC1JmhJXaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pVRthAn+; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JoCq6Jz0t//yAHagLSB8UGfdvTzUw8oFXQk1EBIFNr4=; b=pVRthAn+XtisXAj11CGbPJxxZZ
-	DN0KL99xN6g/0s+OJJ70cuDGYu8lzWYZ2On/bWtXlRJQBQEajWRh994WtYsGVUXbne6hWZDaqy3oW
-	JJKVqPskYuBZ+QvxwvhnC0Ok9EBsZt8DM3ECakjlc35qB8gIZcxaVY7KriVEKraU2V12TAyItoX3V
-	9eiS+YicI+T9uLmiF5rv4qOE3LUfC8bvQiF0b2WM3KprjaSufIPE/n2u4M2WvIXWbK9JMjqlFfKIk
-	uwYpeRS/cLfg7nEIdUggwWutRtySsC4eWYU/BPvfsNDou043NwBVipPXUxhX4Turo6lqZfY21qlHr
-	Z6gLMiMQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmPr8-00000005mAP-0DQO;
-	Mon, 24 Feb 2025 04:14:10 +0000
-Date: Mon, 24 Feb 2025 04:14:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	djwong@kernel.org, Dave Chinner <david@fromorbit.com>, hch@lst.de
-Subject: Re: [PATCH] mm: Fix error handling in __filemap_get_folio() with
- FGP_NOWAIT
-Message-ID: <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
-References: <20250223235719.66576-1-raphaelsc@scylladb.com>
+	s=arc-20240116; t=1740370646; c=relaxed/simple;
+	bh=c2TRpeElFxpZIG4NM+kWVUeRgGO0CsD8fi/lB/JYzUw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=seYbhU/cAQi0CDq+fxZZfOOUKElD9VmVVK4vWxwcaegBHdzKW8STpXZyfKGUztEhbGNeVKJJSmDOjCtX8uMTmsqfi97/Lx3lKKg1g4BetYF70Hr/Kvv+WXb5WQeTDEZfn74Zz9KNXVM8VtY38DBFEbnrz5hZRYunAo44bSvDIjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k/N2uq8J; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51NMle2P005630;
+	Mon, 24 Feb 2025 04:17:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c2TRpeElFxpZIG4NM+kWVUeRgGO0CsD8fi/lB/JYzUw=; b=k/N2uq8Jrc83pukh
+	HfNFj3M3TVhmXh052B58Eqt51JGXfa29Nca1Jcpu7wfIQbNFBfYjewBey/ZZYiw2
+	9ogzdX3/EaAtCTgZniPY9resF62n+LJ+vFypTK3GpT1pkJs8EAPxFJbDnULQgi/2
+	dJT05IVTwTmVPTYeSlvj7mI8lI2aZwA0gknkuhl0W54PsNMfmWGG3ptsczjONMG9
+	4GMEdpmk6twTWMY7ERZ3BFYEedqrztSnQEW+c9Y4ZF3IJp8bOhWhx2wvqo9wJNfy
+	yos8T9Fi7sycBN9PVaFtcDCjWZU7ourDJSh9GRbM/j+syHdm1crh3zOcJw8pBFLv
+	OCoGMQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y7bf3c5k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 04:17:09 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O4H80e004221
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 04:17:08 GMT
+Received: from [10.218.35.239] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Feb
+ 2025 20:17:05 -0800
+Message-ID: <53f8a9cd-c30c-47fe-b189-c632a093dc66@quicinc.com>
+Date: Mon, 24 Feb 2025 09:47:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250223235719.66576-1-raphaelsc@scylladb.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: gadget: Set self-powered based on MaxPower and
+ bmAttributes
+To: Kees Bakker <kees@ijzerbout.nl>,
+        Prashanth K
+	<prashanth.k@oss.qualcomm.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Peter Korsgaard
+	<peter@korsgaard.com>,
+        Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+References: <20250217120328.2446639-1-prashanth.k@oss.qualcomm.com>
+ <a882365c-148c-410a-ac67-b7a17dafc501@ijzerbout.nl>
+Content-Language: en-US
+From: Prashanth K <quic_prashk@quicinc.com>
+In-Reply-To: <a882365c-148c-410a-ac67-b7a17dafc501@ijzerbout.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: NMJ0Wgnu26jXNFvEfjIvjI7GL4Zbf8Wx
+X-Proofpoint-ORIG-GUID: NMJ0Wgnu26jXNFvEfjIvjI7GL4Zbf8Wx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_01,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 mlxscore=0 bulkscore=0 adultscore=0 spamscore=0
+ mlxlogscore=331 impostorscore=0 suspectscore=0 clxscore=1011 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240028
 
-On Sun, Feb 23, 2025 at 08:57:19PM -0300, Raphael S. Carvalho wrote:
-> This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_PTR
-> from __filemap_get_folio"), which performed the following changes:
->     --- a/fs/iomap/buffered-io.c
->     +++ b/fs/iomap/buffered-io.c
->     @@ -468,19 +468,12 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
->     struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
->     {
->             unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
->     -       struct folio *folio;
-> 
->             if (iter->flags & IOMAP_NOWAIT)
->                     fgp |= FGP_NOWAIT;
-> 
->     -       folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
->     +       return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
->                             fgp, mapping_gfp_mask(iter->inode->i_mapping));
->     -       if (folio)
->     -               return folio;
->     -
->     -       if (iter->flags & IOMAP_NOWAIT)
->     -               return ERR_PTR(-EAGAIN);
->     -       return ERR_PTR(-ENOMEM);
->     }
 
-We don't usually put this in the changelog ...
 
-> Essentially, that patch is moving error picking decision to
-> __filemap_get_folio, but it missed proper FGP_NOWAIT handling, so ENOMEM
-> is being escaped to user space. Had it correctly returned -EAGAIN with NOWAIT,
-> either io_uring or user space itself would be able to retry the request.
-> It's not enough to patch io_uring since the iomap interface is the one
-> responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must return
-> the proper error too.
-> 
-> The patch was tested with scylladb test suite (its original reproducer), and
-> the tests all pass now when memory is pressured.
-> 
-> Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
+On 22-02-25 12:56 am, Kees Bakker wrote:
+> Op 17-02-2025 om 13:03 schreef Prashanth K:
+>> Currently the USB gadget will be set as bus-powered based solely
+>> on whether its bMaxPower is greater than 100mA, but this may miss
+>> devices that may legitimately draw less than 100mA but still want
+>> to report as bus-powered. Similarly during suspend & resume, USB
+>> gadget is incorrectly marked as bus/self powered without checking
+>> the bmAttributes field. Fix these by configuring the USB gadget
+>> as self or bus powered based on bmAttributes, and explicitly set
+>> it as bus-powered if it draws more than 100mA.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 5e5caf4fa8d3 ("usb: gadget: composite: Inform controller driver
+>> of self-powered")
+>> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
+>> ---
+>> Changes in v2:
+>> - Didn't change anything from RFC.
+>> - Link to RFC: https://lore.kernel.org/all/20250204105908.2255686-1-
+>> prashanth.k@oss.qualcomm.com/
+>>
+>>   drivers/usb/gadget/composite.c | 16 +++++++++++-----
+>>   1 file changed, 11 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/
+>> composite.c
+>> index bdda8c74602d..1fb28bbf6c45 100644
+>> --- a/drivers/usb/gadget/composite.c
+>> +++ b/drivers/usb/gadget/composite.c
+>> @@ -1050,10 +1050,11 @@ static int set_config(struct usb_composite_dev
+>> *cdev,
+>>       else
+>>           usb_gadget_set_remote_wakeup(gadget, 0);
+>>   done:
+>> -    if (power <= USB_SELF_POWER_VBUS_MAX_DRAW)
+>> -        usb_gadget_set_selfpowered(gadget);
+>> -    else
+>> +    if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
+>> +        !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
+> Please check this change again. From line 983-884 there is a `goto done`.
+> in case `c` is NULL. So, there will be a potential NULL pointer dereference
+> with your change.
 
-Instead, we add:
+Yea good catch, sorry for missing the corner case. Ill send another patch.
 
-Fixes: 66dabbb65d67 (mm: return an ERR_PTR from __filemap_get_folio)
-
-> ---
->  mm/filemap.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 804d7365680c..b06bd6eedaf7 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1986,8 +1986,15 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
->  
->  		if (err == -EEXIST)
->  			goto repeat;
-> -		if (err)
-> +		if (err) {
-> +			/*
-> +			 * Presumably ENOMEM, either from when allocating or
-> +			 * adding folio (this one for xarray node)
-> +			 */
-
-I don't like the comment.  Better to do that in code:
-
-			if ((fgp_flags & FGP_NOWAIT) && (err == -ENOMEM))
-
-> +			if (fgp_flags & FGP_NOWAIT)
-> +				err = -EAGAIN;
->  			return ERR_PTR(err);
-> +		}
->  		/*
->  		 * filemap_add_folio locks the page, and for mmap
->  		 * we expect an unlocked page.
-> -- 
-> 2.48.1
-> 
+Regards,
+Prashanth K
 
