@@ -1,144 +1,183 @@
-Return-Path: <linux-kernel+bounces-529364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779C7A4235B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:40:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0554CA4237A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D40711899B81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:38:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77D8188F32F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B94B18C03D;
-	Mon, 24 Feb 2025 14:37:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7E0254854;
+	Mon, 24 Feb 2025 14:37:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HMR9ZyF5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="P6VAJO94"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825532629F;
-	Mon, 24 Feb 2025 14:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3824213B298
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407819; cv=none; b=DMCHXKXmgcUC0fgs2hyyGmJJiCml1inyHAh1XXqWDyynrDVoVfdPKYmYrbb0UJflGFtdy+B8p3rl8Wi15Fvv07LpN3XbTz5dBQRqrb1hN4ts6yjrm/JykVKFkJs706FocPkLUToQF9CULAgaaY2qBhWKMDcSj5oKSTvxLrLA25w=
+	t=1740407859; cv=none; b=Bn1iAHSr7dSbgaVnKYMFGOtobPsI0qd7VwjAFVRfrFu1bRoHiH21dtby9IicsS+ngpr8YAR6TvDZjXwhJGyoV0YkYARGD9JODlIgTB7FtRyKejMWLEo6yObUgQZBgBgTscGBc8LinySlW3n4R5fCqRmJPaU6exkAsdR8Q5H3FB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407819; c=relaxed/simple;
-	bh=ZPkqFHkfpEEXBvv/JiiAXJD73VY1MQPjnfI68AzNmMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g7AMyIuI5fRanzd7OIL+A/VQ94kmsJ9JyZX9S0reG8ia6odXxQiJw1N9kUKcnE8XiY8pv317dnmwGTfvrZuX7zEmYr16kfN4yGaKc7eFY2yoeh5wNwgVwsUr3Vu9gKuvtw08a1I9XAoRaFnoYPARXVCBFvgI05zLveINtf6FeD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HMR9ZyF5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36ADC4CEE6;
-	Mon, 24 Feb 2025 14:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740407819;
-	bh=ZPkqFHkfpEEXBvv/JiiAXJD73VY1MQPjnfI68AzNmMg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HMR9ZyF51+gCTr5O6+tVcp768/JhJHldAdQMuQdHABvUY7CdUug/Ab1wT3ObgQGAC
-	 7NzdY7UbKVP+eM8BgNncEZMMwXw3Wso7TJk0q2VyeryHtrjfnrTE2e5UNcbDKvPLhE
-	 5rK+17rtGXNWyA/lMLkVwP2uxrzQbGpoqpM86P+xp+fCHrb56wfT+YG6s+mEWHlMq7
-	 +kkYVhJASr3nwSzp8WJx6sGZ3GtEKDCIWteAIxOWx0XP2wkAbG4nWMVBfM/fSU2Vi1
-	 69Xel5I0sX2/L5q0XRAaPHw5kaC8vo10XnIAcPaeS8jvBssTAmWVUTy3s4cxy0sDjX
-	 NCx7zo+hSuMbw==
-Date: Mon, 24 Feb 2025 16:36:38 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Wei Yang <richard.weiyang@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Alexander Graf <graf@amazon.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Arnd Bergmann <arnd@arndb.de>, Ashish Kalra <ashish.kalra@amd.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Ingo Molnar <mingo@redhat.com>, James Gowans <jgowans@amazon.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Pratyush Yadav <ptyadav@amazon.de>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Will Deacon <will@kernel.org>, devicetree@vger.kernel.org,
-	kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH v4 12/14] x86: Add KHO support
-Message-ID: <Z7yD9g1AgtUUfKr0@kernel.org>
-References: <20250206132754.2596694-1-rppt@kernel.org>
- <20250206132754.2596694-13-rppt@kernel.org>
- <20250224071355.xsl2dbupda4dhfzl@master>
+	s=arc-20240116; t=1740407859; c=relaxed/simple;
+	bh=Gc23huDW2EMDvsPrII/FfATOT3S+8qNoqO/SY9zSRVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k7LtTSxOiDPOsA8ww751wI1T9P2wuvJXRCGnfN/HBMRi6LUeh1Wf2JZKkQfkYt0KaFlHvz8MH2xOIgqf28BAMoegVpi8H+T5iFbWNp2ovd2zyj8sPIJFkgQ29S2lStzjrdvagC59H2SEkX4HjJQPT/jTrKIJYI2kk7nmDd6WaKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=P6VAJO94; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21c2f1b610dso130931565ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:37:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=scylladb.com; s=google; t=1740407857; x=1741012657; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tr5NrMy0t1nSuRnqeN8ZOfvTg64bXP6rdk8GuFGDbik=;
+        b=P6VAJO94A2JQVD2Oq1AQuldioP9LkI+3vTV5g6M3wCI+tf4sUMMSaugybK08sjwR4n
+         swe9XSLhJrfikIo6L6PZLo7SI9homo7vKtxCoGsNWnIoPa4YpJGyFDssJ8hbNXVVRJqh
+         UHibyBTQsfFusU/D393hjXxsYylqqh71tdWThqQLB6FWC0Rxr+lPKIf01HSkdrJR1fUl
+         nQXgs1rlcltDfN6UQ4Zkr7Gnfj6QLRZI6RY+KE+hgtCVsWfGRCgS7TdN6MxliC1LLe8Z
+         PEjvcENQMrftBXYY/Zfu6NdgY9luF65xoJRCyTLbrz4sKakm03k6vIPbfXhRMoD2JXgR
+         HxOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740407857; x=1741012657;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tr5NrMy0t1nSuRnqeN8ZOfvTg64bXP6rdk8GuFGDbik=;
+        b=sBprUj14CHRG+PRDLNXweRSp1IdLXcRGJ9etaD8b59GRDB8cgyzJC1kKN6LgG4uj37
+         rafrrBVc176Mx4p8X7OViF/W01TR4+GtodtPiEthAjrU7mpQona1yuYVcEACIWfQSinM
+         nOypjYoIWbXXX1CUhXtcftCeO1hC31yFdtuxIw32u3zsuo11vcUyvtUmg98CZkor/uvp
+         RMKwV4Oa6tANH2zx3uQcaz2+NFpIcxfJjBJmghimUZVneT36BTrcWHa2gPc1S5uIdJcv
+         6WUnSHs17ZNu0fCstU5haZ3ZmXpFKDUVTVzqMaDoJ3HZPpx/Zu50yHyAqcTTGQQXqZLO
+         9/cA==
+X-Gm-Message-State: AOJu0YzuBL69dSEecL2HDEpf2ODTfsJEyBDql+DSLyf93uINVnFVN1vf
+	KPZYVIEc9uosUXyZOyabL3zORfH2V+IEgIN5yCo8o6BMWHXkrsk/hO0BUEN7o8GHTUe8XtndThk
+	ygg9vq2QU6HK0CKC9FofyD5pjggGO3GtPUtE0cyYqr3dckYLOQRCg/kA8lV3RleiWzc/jvH18dy
+	GqREHAmiKDsPiplBFdeiUjLUMmR1ybq2DABm7ty7NMigKN9QYaiOWDclv0MvW/rheXz95xp6RC2
+	g3n7NMyvHLpSIm0MeZP1bI2r53rPUDPbEHGXP2v9MTO7bnIIvODOU1Ql7tU92cj/xza6kzeYEB9
+	FWljdvGbH9kw/oE1u6r44TUBBBsA/Taj0nxhziPDyABKoo5pVXf+y9om3sw=
+X-Gm-Gg: ASbGncskn9gNpwpwqCb/eTexe7nIpEYRhS3455Dps0dNBv5dTDYAjZH6PfbetT2EgO/
+	GhiICX6viuZz+VjyHv2modeka7bJcpypCNDDZZtZXAuRcShImvsn53Bp5fdPHRreJJBiBBCoELY
+	boseMoD1MK5HdLCiSjQXxHrxb8vwLd3hYzgB84ecUUhTHKmvlxiuW1x3oDbCVQ6LjGLYmtRfnBc
+	xknPaunhUqW9mEq4AAeBpGlFwaVaDgcWD7QyizhAFs4lhvS4rPmLLVaU6ZL/nA+XBgDAMbUK2zC
+	2Sc1kLnd7QScXpAkIxsmmssqXG0=
+X-Google-Smtp-Source: AGHT+IFpy3+E5cMzJqqit+IUZQ9CCf4tM5IGjll5j8aYvpZK6kzjNSVYR9yVXPP52A1Zj8pouSbmXQ==
+X-Received: by 2002:a05:6a00:4b4f:b0:732:622f:ec39 with SMTP id d2e1a72fcca58-73426c7c77cmr19802356b3a.1.1740407856561;
+        Mon, 24 Feb 2025 06:37:36 -0800 (PST)
+Received: from localhost.localdomain ([2a09:bac5:7a2:878::d8:ed])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732575e055dsm19294949b3a.68.2025.02.24.06.37.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 06:37:36 -0800 (PST)
+From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
+To: linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Cc: djwong@kernel.org,
+	Dave Chinner <david@fromorbit.com>,
+	hch@lst.de,
+	willy@infradead.org,
+	"Raphael S. Carvalho" <raphaelsc@scylladb.com>
+Subject: [PATCH v3] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
+Date: Mon, 24 Feb 2025 11:37:00 -0300
+Message-ID: <20250224143700.23035-1-raphaelsc@scylladb.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224071355.xsl2dbupda4dhfzl@master>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CLOUD-SEC-AV-Sent: true
+X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
+X-CLOUD-SEC-AV-Sent: true
+X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
+X-Gm-Spam: 0
+X-Gm-Phishy: 0
 
-On Mon, Feb 24, 2025 at 07:13:55AM +0000, Wei Yang wrote:
-> On Thu, Feb 06, 2025 at 03:27:52PM +0200, Mike Rapoport wrote:
-> >From: Alexander Graf <graf@amazon.com>
-> [...]
-> >diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> >index 82b96ed9890a..0b81cd70b02a 100644
-> >--- a/arch/x86/kernel/e820.c
-> >+++ b/arch/x86/kernel/e820.c
-> >@@ -1329,6 +1329,24 @@ void __init e820__memblock_setup(void)
-> > 		memblock_add(entry->addr, entry->size);
-> > 	}
-> > 
-> >+	/*
-> >+	 * At this point with KHO we only allocate from scratch memory.
-> >+	 * At the same time, we configure memblock to only allow
-> >+	 * allocations from memory below ISA_END_ADDRESS which is not
-> >+	 * a natural scratch region, because Linux ignores memory below
-> >+	 * ISA_END_ADDRESS at runtime. Beside very few (if any) early
-> >+	 * allocations, we must allocate real-mode trapoline below
-> >+	 * ISA_END_ADDRESS.
-> >+	 *
-> >+	 * To make sure that we can actually perform allocations during
-> >+	 * this phase, let's mark memory below ISA_END_ADDRESS as scratch
-> >+	 * so we can allocate from there in a scratch-only world.
-> >+	 *
-> >+	 * After real mode trampoline is allocated, we clear scratch
-> >+	 * marking from the memory below ISA_END_ADDRESS
-> >+	 */
-> >+	memblock_mark_kho_scratch(0, ISA_END_ADDRESS);
-> >+
-> 
-> At the beginning of e820__memblock_setup() we call memblock_allow_resize(),
-> which means during adding memory region it could double the array. And the
-> memory used here is from some region just added.
+original report:
+https://lore.kernel.org/all/CAKhLTr1UL3ePTpYjXOx2AJfNk8Ku2EdcEfu+CH1sf3Asr=B-Dw@mail.gmail.com/T/
 
-There are large KHO scratch areas that will be used for most allocations.
-Marking the memory below ISA_END_ADDRESS as KHO scratch is required to
-satisfy allocations that explicitly limit the allocation to ISA_END_ADDRESS,
-e.g the real time trampoline.
+When doing buffered writes with FGP_NOWAIT, under memory pressure, the system
+returned ENOMEM despite there being plenty of available memory, to be reclaimed
+from page cache. The user space used io_uring interface, which in turn submits
+I/O with FGP_NOWAIT (the fast path).
+
+retsnoop pointed to iomap_get_folio:
+
+00:34:16.180612 -> 00:34:16.180651 TID/PID 253786/253721
+(reactor-1/combined_tests):
+
+                    entry_SYSCALL_64_after_hwframe+0x76
+                    do_syscall_64+0x82
+                    __do_sys_io_uring_enter+0x265
+                    io_submit_sqes+0x209
+                    io_issue_sqe+0x5b
+                    io_write+0xdd
+                    xfs_file_buffered_write+0x84
+                    iomap_file_buffered_write+0x1a6
+    32us [-ENOMEM]  iomap_write_begin+0x408
+iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
+pos=0 len=4096 foliop=0xffffb32c296b7b80
+!    4us [-ENOMEM]  iomap_get_folio
+iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
+pos=0 len=4096
+
+This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_PTR
+from __filemap_get_folio"), which moved error handling from
+io_map_get_folio() to __filemap_get_folio(), but broke FGP_NOWAIT handling, so
+ENOMEM is being escaped to user space. Had it correctly returned -EAGAIN with
+NOWAIT, either io_uring or user space itself would be able to retry the
+request.
+It's not enough to patch io_uring since the iomap interface is the one
+responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must return
+the proper error too.
+
+The patch was tested with scylladb test suite (its original reproducer), and
+the tests all pass now when memory is pressured.
+
+Fixes: 66dabbb65d67 ("mm: return an ERR_PTR from __filemap_get_folio")
+Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
+---
+v3: make comment more descriptive as per hch's suggestion.
+---
+ mm/filemap.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 804d7365680c..3e75dced0fd9 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1986,8 +1986,19 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
  
-> But with KHO, I am afraid it would fail?
-> 
-> > 	/* Throw away partial pages: */
-> > 	memblock_trim_memory(PAGE_SIZE);
-> > 
-> 
-> -- 
-> Wei Yang
-> Help you, Help me
-
+ 		if (err == -EEXIST)
+ 			goto repeat;
+-		if (err)
++		if (err) {
++			/*
++			 * When NOWAIT I/O fails to allocate folios this could
++			 * be due to a nonblocking memory allocation and not
++			 * because the system actually is out of memory.
++			 * Return -EAGAIN so that there caller retries in a
++			 * blocking fashion instead of propagating -ENOMEM
++			 * to the application.
++			 */
++			if ((fgp_flags & FGP_NOWAIT) && err == -ENOMEM)
++				err = -EAGAIN;
+ 			return ERR_PTR(err);
++		}
+ 		/*
+ 		 * filemap_add_folio locks the page, and for mmap
+ 		 * we expect an unlocked page.
 -- 
-Sincerely yours,
-Mike.
+2.48.1
+
 
