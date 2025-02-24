@@ -1,101 +1,129 @@
-Return-Path: <linux-kernel+bounces-530228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB3DA430D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:26:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C2BA430D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:27:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 087C17A56CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:25:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE72319C17BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E9A2571AD;
-	Mon, 24 Feb 2025 23:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D868A20B1F3;
+	Mon, 24 Feb 2025 23:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="blgBdzQ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h/+Rr2s7"
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE1117578;
-	Mon, 24 Feb 2025 23:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF59B101F2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439607; cv=none; b=pMPtQrLFMBQMn128kvPZwZSGLihf5TQI6c8L0GGpbuLjpj6Rk+orZ75zrawUnHXv8w9iE8gER5KwE38FxE8fHWHDRoPez/9YMUuko3OiukBWgcLfvEIswAW/dKmwfdqUUgSxsxX1RICJDBClSFB6KI206dwvlcflrnx1ZddAGlA=
+	t=1740439632; cv=none; b=oMXaNdmp5G0UGH4K7Z/vaZS476W5k6fq4GQVBtNMDdTWrQFbR67WQURKOuWI/qqlCM+G9uGvd0AiswufH2P/Pje4/Hq8+LTkN5AvMFr1kKF44JlGRawkylA+yilb96AQjSYKnytZAkF8LC82YdhA1Kxqzy0lCQd47Hd6cSt2PMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439607; c=relaxed/simple;
-	bh=FN+pC9T5AWPvaPTFjiXFC+7rLGANFb8eaEwM3ubi9po=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bkBGqEs88MHM6KdVMlpaAyD0fdhT1QCR696iWmyFxZPTk8I0Ajxbg6CpOfZGq1/LZdfQ0ZL2fLtEEr75icEIbMMRemyAZ354JOJepHMiyxdyuljg44lYa2PCBqdoBcetRj1et9s/U2K9Hqk0qEDtdDqATpDUSL2Xqulomz0tR6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=blgBdzQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D153FC4CED6;
-	Mon, 24 Feb 2025 23:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740439607;
-	bh=FN+pC9T5AWPvaPTFjiXFC+7rLGANFb8eaEwM3ubi9po=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=blgBdzQ5skUoctzXhTlZpUdmnH9wYsT6JKpdS570RRscpxAWk/Sik06N9S1boY3rF
-	 l462UV/j+Sdq3jiUKB3aDyWt8XyETf1LFVOm0cElARkvio8YO5uRBIYJP64Pn2ZVdj
-	 M6FDYcQ7CVJCCh0c570isc43KAhjAciHiWpkl7dFNDAcOZ6GYnOHk+LfaXTg+ryMCZ
-	 mytPquk60LevrEFpP1OxnisCO0clXDWlWH6985yVXW5uOLAZWZQLz+LnoI07TKklN4
-	 sO2N0oaF8sS9o23Hsd612Pon9vtL7c91+WPVTRghNjB9L/1KTXgMLaxWg4sVfBzf89
-	 0IfQhL2oauNMg==
-Date: Mon, 24 Feb 2025 17:26:45 -0600
-From: Rob Herring <robh@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
-	Stefan Wiehler <stefan.wiehler@nokia.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-	Julia Lawall <Julia.Lawall@lip6.fr>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 0/9] of: fix bugs about refcount
-Message-ID: <20250224232645.GA117818-robh@kernel.org>
-References: <20250209-of_irq_fix-v2-0-93e3a2659aa7@quicinc.com>
+	s=arc-20240116; t=1740439632; c=relaxed/simple;
+	bh=iroxDNFPNkTpLhvKi4DfL/KYjUD21VFFgmsM2gvE364=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cHECJu+k9+ZqEt2Frhl37Q+SYtaZu4iryZQuKI9/QFQM+LGS+WC0gveAjl+nGE7+gbgJUYgEmOLl+EO778B+8cTPlLMgctwbbFlR013IbWVdQTlbj3Gvhlq6yCfvnE4715f0Kg9X63JIiuhLb2l6zoGIit14+iaE39tbziJDp0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h/+Rr2s7; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4bd3763900aso1336209137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:27:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740439629; x=1741044429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VuGzKCSQYyNZUYU6hCRZeweFzFEgPJQoQ9Vkmq2hXCQ=;
+        b=h/+Rr2s7g7YF6i2kTCcaJ0QC3uytwb7YTK4HJVLjwD9GoZptGXbRepWGigCSJQf905
+         QdfleWsfPhnQ5rH3da9b+KEgHMSchG/gpm/RqKg/BfOhcV35biybtSMo5ViJ49IuqiEY
+         KE2kQS/7QMomwhCiXb4ool2INQ5/myNUfJnGyQfB2ON3v720OAP66pTYkgzmw4oZ1Sz2
+         qwAFWKuBYOGwQnUp7rcre2DZtr6SSndAW6NA8yMFBn5m22Yoonb6m6EMS+gqD4T0RlRU
+         trUNKHv6z3rX0CdhV456uTFEpcGodI9/VU+inuJJbMJRhBNC05CWNicgSOCMp9GwjPia
+         VylQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740439629; x=1741044429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VuGzKCSQYyNZUYU6hCRZeweFzFEgPJQoQ9Vkmq2hXCQ=;
+        b=TfQaDrfaw/It2tECgzLYNU9wV4baQtD30hU/dBH1LTSYKSpAyFZTbQXzzkhRhw++m3
+         h8LPrnJV/cjZrCHfOYUbt4GyyYrC5q+DDE/36/TNP7cHmcMTMcrGySjLY9Py0r+377F0
+         6sa/1G/jZuuMihu8/Bj6L12ykepfn3ysdeULRN7E18LJGMPRFq5K17PPhCbgPoW92j8t
+         zCHoIoOrvPZO+0ZNMWD9feGAPphX+S5f/bYV2S9n0jqo+6VD8bD9lbju0XLQUy6XGBCt
+         NRYZFgjhWs/L2wfIMjkLKefO1HTGh7vI757UR4KjrqMeOiqPQVbCZEagWDTQWvX1c8ue
+         9LEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEM/VkmLzP7RoNWNxjOlcJvhtCbP0+/X67cLVFC9y0/J92wABLiOV59XjYfj4ksQZLqjqTC9lgQbGrPCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOEdTgoe83iyXFzN93zxD+aPP6aLL1CF7Z8RsFFLN+bqVtkZUh
+	y6oAOhhRKV+HgLcujU9/jswPmDhy3apt9wie+1FvSKrrcMj5A+cdljWPdBS+11GvkD90dUj4NV6
+	OClEb7wWugw+ALxjzzgO9FgjnvprQ1HOLRdyKeEXaK4L/UTBxZg==
+X-Gm-Gg: ASbGncvv1xH6ZeUDABS5L1k3VzUnOCtVQPAC5U8EMVP0ecGcWPrU48gYcx0dTpYL1yu
+	RJey6XTFGkPteZSak7czcdMnfmmS+UZF60WCPNu0KoCjisc7ttRXrEAm6VwR+PUNXlBuQZpflgt
+	/8IiUhn2H+lc+hjzr6sxNL9ibJy76WVzR4DWiSL1A=
+X-Google-Smtp-Source: AGHT+IFe5RXwRFKY9KkPg7QhwK35KreXgcFhB+vQ5850rIH/knCMNJ4wDDUgBle8O/RjjdYF8KgAjLP509K8PN62lWw=
+X-Received: by 2002:a05:6102:919:b0:4ba:974c:891e with SMTP id
+ ada2fe7eead31-4bfc01d3495mr8009263137.17.1740439629304; Mon, 24 Feb 2025
+ 15:27:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250209-of_irq_fix-v2-0-93e3a2659aa7@quicinc.com>
+References: <20250217112756.1011333-1-masahiroy@kernel.org>
+In-Reply-To: <20250217112756.1011333-1-masahiroy@kernel.org>
+From: Todd Kjos <tkjos@google.com>
+Date: Mon, 24 Feb 2025 15:26:56 -0800
+X-Gm-Features: AQ5f1JofbDbS9waB_jAM5Sw7y4KKCnxqWRmovq6TnHHGtP8n7tFiqJFv2Py3Xb4
+Message-ID: <CAHRSSExQf+FxRm61Pk9egJ73fz+1tp4nUFzANMujg3ban2REgw@mail.gmail.com>
+Subject: Re: [PATCH] binder: remove unneeded <linux/export.h> inclusion from binder_internal.h
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Christian Brauner <christian@brauner.io>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 09, 2025 at 08:58:53PM +0800, Zijun Hu wrote:
-> This patch series is to fix of bugs about refcount.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+On Mon, Feb 17, 2025 at 3:28=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> binder_internal.h is included only in the following two C files:
+>
+>   $ git grep binder_internal.h
+>   drivers/android/binder.c:#include "binder_internal.h"
+>   drivers/android/binderfs.c:#include "binder_internal.h"
+>
+> Neither of these files use the EXPORT_SYMBOL macro, so including
+> <linux/export.h> is unnecessary.
+>
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+
+Acked-by: Todd Kjos <tkjos@google.com>
+
 > ---
-> Changes in v2:
-> - Add 2 unittest patches + 1 refcount bug fix + 1 refcount comments patch
-> - Correct titles and commit messages
-> - Link to v1: https://lore.kernel.org/r/20241209-of_irq_fix-v1-0-782f1419c8a1@quicinc.com
-> 
-> ---
-> Zijun Hu (9):
->       of: unittest: Add a case to test if API of_irq_parse_one() leaks refcount
->       of/irq: Fix device node refcount leakage in API of_irq_parse_one()
->       of: unittest: Add a case to test if API of_irq_parse_raw() leaks refcount
->       of/irq: Fix device node refcount leakage in API of_irq_parse_raw()
->       of/irq: Fix device node refcount leakages in of_irq_count()
->       of/irq: Fix device node refcount leakage in API irq_of_parse_and_map()
->       of/irq: Fix device node refcount leakages in of_irq_init()
->       of/irq: Add comments about refcount for API of_irq_find_parent()
->       of: resolver: Fix device node refcount leakage in of_resolve_phandles()
-> 
->  drivers/of/irq.c                               | 34 ++++++++++---
->  drivers/of/resolver.c                          |  2 +
->  drivers/of/unittest-data/tests-interrupts.dtsi | 13 +++++
->  drivers/of/unittest.c                          | 67 ++++++++++++++++++++++++++
->  4 files changed, 110 insertions(+), 6 deletions(-)
-
-I've applied the series. I made a few adjustments to use __free() 
-cleanup and simplify things.
-
-Rob
+>
+>  drivers/android/binder_internal.h | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_i=
+nternal.h
+> index e4eb8357989c..6a66c9769c6c 100644
+> --- a/drivers/android/binder_internal.h
+> +++ b/drivers/android/binder_internal.h
+> @@ -3,7 +3,6 @@
+>  #ifndef _LINUX_BINDER_INTERNAL_H
+>  #define _LINUX_BINDER_INTERNAL_H
+>
+> -#include <linux/export.h>
+>  #include <linux/fs.h>
+>  #include <linux/list.h>
+>  #include <linux/miscdevice.h>
+> --
+> 2.43.0
+>
 
