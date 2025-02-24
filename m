@@ -1,126 +1,58 @@
-Return-Path: <linux-kernel+bounces-530040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCA4A42E07
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:38:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA738A42E05
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C3B175A3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CEE175C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3ACC245026;
-	Mon, 24 Feb 2025 20:37:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D75245026;
+	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jhyZvxnD"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0QG5Yju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7D953BE;
-	Mon, 24 Feb 2025 20:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E61253BE;
+	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740429471; cv=none; b=XS7T7FlPUeLXr92PH/rI7TDb9fU48uUSMYR3X/+J0/Hvc5hBGSuzCVg6jX+QE4qXzJejvNE0SrYqVttwfq83R/U9I0ph/1Z7ZrL0ZwCqXkIoX0p63nBeaS2r47ugm77vJxS7v4m/afCGKJIbCAsDbQF8DeEIIEOG6xr0uU6tD0g=
+	t=1740429458; cv=none; b=PMWbjSUv52aGoF8q9ohJrotSwetXFClK3GA8o0WMEN6nDOdpJp/2sXDX5E20BWfnLIPyrltByLKlqUEXe//5AqPjqijVF7uoZhAn8PtUobkMiOWv8qNum0hgxuaOdUnHeFnKjmiPOjmw4E4EjF31nuLw4C+g8C+IUP8JHTSSg54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740429471; c=relaxed/simple;
-	bh=CSaM3CTsdB8VvBBuF2udjUi2OuNHmqw4SUCPz7jaLFs=;
+	s=arc-20240116; t=1740429458; c=relaxed/simple;
+	bh=+M384LVeG2Il1wh2/bradd1uAF59wMWgiJLPtUje9YA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bN2dSfvbcaSHCGzBPhcI+1Iic9PNC/lzlh7f4ABGQ8feSovI1DTP6GoDfyWTHH8TvLgVT0LjjasTlrxHp3fS4sWBRXNSjMx0YeHKxH962NZxuxc2xXvTNqwJxJYD9T/zOPcBY1Br1Id2I7BmqcVWHwvu95alM6DFi4mU3T/SkZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jhyZvxnD; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c0ba9825e9so308897085a.0;
-        Mon, 24 Feb 2025 12:37:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740429468; x=1741034268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hvTahac7VoN8UIfPPDTOy2XoASsmvBZhy0HRy4LhMqE=;
-        b=jhyZvxnDQ55KXT1t9s4U+7Uw/2ITujjH/izFFV16moE4khHikdCgPL/gniFWExu730
-         WNGaXT03BkALh2KX9rRij+tf6z7nSnZg7K6m2vW1CMuF+6ZYA6Ad1cyTGWoT/POf67jP
-         C91b7/XNBMFJYaGRdQ/gw7/zg7LS/JbTrzNo5QbJo+vhysdnU16QRA9D8gJsNx+iHxJW
-         WnQnuqsJ8BrNeWaTTj2fYTfbMiu1Reg6Egb8xxWOQHO7OyOfwpadDx0eJq5sZfeYDkDU
-         lV0kUYUC3HV5wUG2+RrFWFEvIOWTjEg5xoT4f++QLs7at49JI9kwxDdBEVxGEuSiwPIZ
-         B2Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740429468; x=1741034268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hvTahac7VoN8UIfPPDTOy2XoASsmvBZhy0HRy4LhMqE=;
-        b=xGQYnLhJV2Asay9Fx7PKm8b/D7lE2lEIS4Pnh12GyGYMaylTyxU6/I1uB8rP+TFPjd
-         ReqgTZe4IP95LPzMyKUNCqGJWf5l0cvpuh60f/gdVKd/HHaLy1klTtP0xmH0iQOg4NLD
-         4OviCn53ICst3R1vberpUTiw6P7pAQFg8izz/aUXId/PeUAVMCY2ZtQB/fy2Lo4UKnxo
-         kJPf1OumueQFTyD5k6UTL6i5G+SZ4oQwa6sr//qb/2TivxnBHslh8EqMKv3uN9NSl92Y
-         4LUxy4COPNBU4f0X9nnd8H9FSb3OiASTml+G0J9vr4AbF94JjQZqCxql/fUxg+hEEHAk
-         taxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFck4hvIBdtY3O9CLLKhIqkj+yTC5bYuJrzLexHhWcdS4PJN2zMZsgawH80cU40uq2sjdAui5fP6k5B0LnPWg=@vger.kernel.org, AJvYcCX1pUUgxxsGYWxfxIRVwenI/OV98u/DV7aZHqJC6Y9SpIkypUO9Ou2KpuJAxl24XStY16x6qPN6n7FpjRo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMMUqGqwdjhCjBnv0Yr/1p8hBlwsn8STurHUyrDqitvOYuQeLK
-	gGez3fWAZmNsnzO4G4VeajDKUe8yHKIVWgxt8fcWhWcy+PQW531h
-X-Gm-Gg: ASbGncvTYjmmE19MvjYpNkR3ovmj4GhPxt8mPVoJblsWHocIgvRlNzxMg4aygepb44D
-	JZ8lESVCoxowGbJRFNpXgrbkZpCUckW5b87GIsRoJ5jOxBlSTE+KLexg4EKyh7PzVSaTDu5KS4m
-	QX45tdh3ASGHUdqhhIwIZgQeQwiBiiHUCErxwCj8LC16/XguP5qOYJsPAP0Nwb2iHcux4wPvb55
-	zzWpgFz7vzkBpJ433pY7MlQbPvGZm8yc40d18IsKO8Gy9Tsexfho8Eq3KsA5gh39mujDH3iB+6e
-	XLu2Jd4OMFsBhr2IBhf2NOGS6sgR4yzZ6tL7TdYeI4BU+nktRhmYuQhDehWYKLn+l/oQyc35H3J
-	QELwcK7APQlJyPxC+
-X-Google-Smtp-Source: AGHT+IFT4gDG2ylFYDoxJMqAedimzIeqWHVtIBuyFpPAl0k5SuiVG6BEh2+gKDUkXECGw8juLszw+g==
-X-Received: by 2002:a05:620a:170f:b0:7c0:a5f4:4df with SMTP id af79cd13be357-7c0cef12528mr1893154985a.34.1740429468409;
-        Mon, 24 Feb 2025 12:37:48 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c23c329852sm16364385a.72.2025.02.24.12.37.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 12:37:48 -0800 (PST)
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 9E1EF1200068;
-	Mon, 24 Feb 2025 15:37:47 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Mon, 24 Feb 2025 15:37:47 -0500
-X-ME-Sender: <xms:m9i8Z3htkq1szULmKOCJ93b3ZDcZqF5GQYWy3ist86cWawfG9AyCwg>
-    <xme:m9i8Z0CISLhmKQZwUJoNh5An7DQbWTzOxWW__l3ngPsdTmDO9zC8tI-fRBATHF7wO
-    cwPFvt62hCGWM6I7A>
-X-ME-Received: <xmr:m9i8Z3Hbq7NL8kTiKhzQmPEfo_tcPPwW_yXp6yW3Jvoj17jO84rclhBNWU8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleejjecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
-    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
-    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfhgvlhhiphgvrdgtohhnthhrvghrrghsse
-    hgmhgrihhlrdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggr
-    thhiohhnrdhorhhgpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprh
-    gtphhtthhopehhtghhsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohephhhprges
-    iiihthhorhdrtghomhdprhgtphhtthhopehkshhumhhmihhtsehlihhsthhsrdhlihhnuh
-    igrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhish
-    esghhmrghilhdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlhhinhhugiesvhhg
-    vghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:m9i8Z0RhY3borjabk8JHmynQuNN9pOs47w3GYNM0zdqMjWzgx3cjQw>
-    <xmx:m9i8Z0xGp5A9H-SE-jJX5OYR8HBG_lFTiI-LIBct7WSS8aMDWkznHw>
-    <xmx:m9i8Z67SVxfeJlSqQCo90n5QFPATcX0yuhcXqX2at_2Lxus7QFGH2Q>
-    <xmx:m9i8Z5yZsmZuS4_xuOcWgjQrM9QfxuKohipBko2pSxzAcnzIwfajBg>
-    <xmx:m9i8Z0hcjhwwU-R2TUr3LvYVUDj1M_dYx0ehe_xwlVxVTUwXBqkPvWiz>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 15:37:47 -0500 (EST)
-Date: Mon, 24 Feb 2025 12:37:08 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Felipe Contreras <felipe.contreras@gmail.com>
-Cc: gregkh@linuxfoundation.org, airlied@gmail.com, hch@infradead.org,
-	hpa@zytor.com, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
-	rust-for-linux@vger.kernel.org, torvalds@linux-foundation.org
-Subject: Re: Rust kernel policy
-Message-ID: <Z7zYdEM5TkT2LNN1@boqun-archlinux>
-References: <2025021954-flaccid-pucker-f7d9@gregkh>
- <20250221051909.37478-1-felipe.contreras@gmail.com>
- <Z7gQ3kSeCf7gY1i9@Mac.home>
- <CAMP44s1Ai5qMU4yV+Rwz4cY869ZA=cxBcTf2wuaUY1oyLKUNCg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=atf/F59tD2g9qKTsQVz38dENwbgxNYD0kQqWcA4qOeXxjNEh1rOmja/t/jWK3yjNanSWC2s/oENz2laLdklqmZjDqnGRfS1S5uhB8iqwWczXtlNso/AsK25Dh1eiyiZonlidOXln5PCUMMardgjAxtRkgn7oEaE9gdh/gmEz/+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0QG5Yju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E71C4CED6;
+	Mon, 24 Feb 2025 20:37:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740429458;
+	bh=+M384LVeG2Il1wh2/bradd1uAF59wMWgiJLPtUje9YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l0QG5YjuEOX+85Kc164Adk9WSqRgX2J/Imv3o/5bb6WJJF6lQLHqZjKDMLHNuw7du
+	 EIy16qcZ3s5FjXK4+suVZgI/gj2JawEpD6yEoH8MtG03aTeRa8G0mQyglebShUYnB2
+	 +pCQUApEacIAh4NaumCZPbpfnbzXLIlLE4Lykx3C+PvQC8q+G0xkqDqHdbiZuObGZ3
+	 E4c+jlZwmOOX9A+StxpD303Rx7QxYrE1+ycQfKsuXSM1PvL2c3Ivzco3mefdKZ1Ub5
+	 kFxuoxkz4qJ0rpPf7SVK2ybv3+vHc+CHu27CLSsF0eFWgTcmLLSjcbXSFbyFCXlkeT
+	 FaEbNFacnDz1w==
+Date: Mon, 24 Feb 2025 12:37:37 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 11/11] xfs: Allow block allocator to take an alignment
+ hint
+Message-ID: <20250224203737.GL21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-12-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -129,47 +61,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMP44s1Ai5qMU4yV+Rwz4cY869ZA=cxBcTf2wuaUY1oyLKUNCg@mail.gmail.com>
+In-Reply-To: <20250213135619.1148432-12-john.g.garry@oracle.com>
 
-On Thu, Feb 20, 2025 at 11:59:10PM -0600, Felipe Contreras wrote:
-> Boqun Feng wrote:
-> >
-> > On Thu, Feb 20, 2025 at 11:19:09PM -0600, Felipe Contreras wrote:
-> > > Greg KH wrote:
-> > > > But for new code / drivers, writing them in rust where these types of
-> > > > bugs just can't happen (or happen much much less) is a win for all of
-> > > > us, why wouldn't we do this?
-> > >
-> > > *If* they can be written in Rust in the first place. You are skipping that
-> > > very important precondition.
-> >
-> > Hmm.. there are multiple old/new drivers (not a complete list) already
-> > in Rust:
+On Thu, Feb 13, 2025 at 01:56:19PM +0000, John Garry wrote:
+> When issuing an atomic write by the CoW method, give the block allocator a
+> hint to naturally align the data blocks.
 > 
-> That is a black swan fallacy. Just because you've seen 4 white swans
-> that doesn't mean all swans are white.
+> This means that we have a better chance to issuing the atomic write via
+> HW offload next time.
 > 
-> > , so is there still a question that drivers can be written in Rust?
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/libxfs/xfs_bmap.c | 7 ++++++-
+>  fs/xfs/libxfs/xfs_bmap.h | 6 +++++-
+>  fs/xfs/xfs_reflink.c     | 8 ++++++--
+>  3 files changed, 17 insertions(+), 4 deletions(-)
 > 
-> I didn't say no driver can be written Rust, I questioned whether *all*
-> drivers can be written in Rust.
-> 
+> diff --git a/fs/xfs/libxfs/xfs_bmap.c b/fs/xfs/libxfs/xfs_bmap.c
+> index 0ef19f1469ec..9bfdfb7cdcae 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.c
+> +++ b/fs/xfs/libxfs/xfs_bmap.c
+> @@ -3454,6 +3454,12 @@ xfs_bmap_compute_alignments(
+>  		align = xfs_get_cowextsz_hint(ap->ip);
+>  	else if (ap->datatype & XFS_ALLOC_USERDATA)
+>  		align = xfs_get_extsz_hint(ap->ip);
+> +
+> +	if (align > 1 && ap->flags & XFS_BMAPI_EXTSZALIGN)
+> +		args->alignment = align;
+> +	else
+> +		args->alignment = 1;
+> +
+>  	if (align) {
+>  		if (xfs_bmap_extsize_align(mp, &ap->got, &ap->prev, align, 0,
+>  					ap->eof, 0, ap->conv, &ap->offset,
+> @@ -3782,7 +3788,6 @@ xfs_bmap_btalloc(
+>  		.wasdel		= ap->wasdel,
+>  		.resv		= XFS_AG_RESV_NONE,
+>  		.datatype	= ap->datatype,
+> -		.alignment	= 1,
+>  		.minalignslop	= 0,
+>  	};
+>  	xfs_fileoff_t		orig_offset;
+> diff --git a/fs/xfs/libxfs/xfs_bmap.h b/fs/xfs/libxfs/xfs_bmap.h
+> index 4b721d935994..7a31697331dc 100644
+> --- a/fs/xfs/libxfs/xfs_bmap.h
+> +++ b/fs/xfs/libxfs/xfs_bmap.h
+> @@ -87,6 +87,9 @@ struct xfs_bmalloca {
+>  /* Do not update the rmap btree.  Used for reconstructing bmbt from rmapbt. */
+>  #define XFS_BMAPI_NORMAP	(1u << 10)
+>  
+> +/* Try to naturally align allocations to extsz hint */
+> +#define XFS_BMAPI_EXTSZALIGN	(1u << 11)
 
-Huh? Your previous reply is:
+IMO "naturally" makes things confusing here -- are we aligning to the
+extent size hint, or are we aligning to the length requested?  Or
+whatever it is that "naturally" means.
 
-"*If* they can be written in Rust in the first place. You are skipping
-that very important precondition."
+(FWIW you and I have bumped over this repeatedly, so maybe this is
+simple one of those cognitive friction things where block storage always
+deals with powers of two and "naturally" means a lot, vs. filesystems
+where we don't usually enforce alignment anywhere.)
 
-how does that imply you questioned whether *all* drivers can be written
-in Rust.
+I suggest "Try to align allocations to the extent size hint" for the
+comment, and with that:
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Care to explain your logic?
+--D
 
-Regards,
-Boqun
-
-> People are operating under that assumption, but it isn't necessarily true.
-> 
+> +
+>  #define XFS_BMAPI_FLAGS \
+>  	{ XFS_BMAPI_ENTIRE,	"ENTIRE" }, \
+>  	{ XFS_BMAPI_METADATA,	"METADATA" }, \
+> @@ -98,7 +101,8 @@ struct xfs_bmalloca {
+>  	{ XFS_BMAPI_REMAP,	"REMAP" }, \
+>  	{ XFS_BMAPI_COWFORK,	"COWFORK" }, \
+>  	{ XFS_BMAPI_NODISCARD,	"NODISCARD" }, \
+> -	{ XFS_BMAPI_NORMAP,	"NORMAP" }
+> +	{ XFS_BMAPI_NORMAP,	"NORMAP" },\
+> +	{ XFS_BMAPI_EXTSZALIGN,	"EXTSZALIGN" }
+>  
+>  
+>  static inline int xfs_bmapi_aflag(int w)
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index d097d33dc000..033dff86ecf0 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -445,6 +445,11 @@ xfs_reflink_fill_cow_hole(
+>  	int			nimaps;
+>  	int			error;
+>  	bool			found;
+> +	uint32_t		bmapi_flags = XFS_BMAPI_COWFORK |
+> +					      XFS_BMAPI_PREALLOC;
+> +
+> +	if (atomic)
+> +		bmapi_flags |= XFS_BMAPI_EXTSZALIGN;
+>  
+>  	resaligned = xfs_aligned_fsb_count(imap->br_startoff,
+>  		imap->br_blockcount, xfs_get_cowextsz_hint(ip));
+> @@ -478,8 +483,7 @@ xfs_reflink_fill_cow_hole(
+>  	/* Allocate the entire reservation as unwritten blocks. */
+>  	nimaps = 1;
+>  	error = xfs_bmapi_write(tp, ip, imap->br_startoff, imap->br_blockcount,
+> -			XFS_BMAPI_COWFORK | XFS_BMAPI_PREALLOC, 0, cmap,
+> -			&nimaps);
+> +			bmapi_flags, 0, cmap, &nimaps);
+>  	if (error)
+>  		goto out_trans_cancel;
+>  
 > -- 
-> Felipe Contreras
+> 2.31.1
+> 
+> 
 
