@@ -1,134 +1,169 @@
-Return-Path: <linux-kernel+bounces-529410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37E2A425E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:15:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49D4A4255F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:08:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E9D16F329
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:02:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD3897A643A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777691FC7DA;
-	Mon, 24 Feb 2025 15:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BB6158858;
+	Mon, 24 Feb 2025 15:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YeMchzhu";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Yhkf86Hy"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBdozJLP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995EE192D97;
-	Mon, 24 Feb 2025 15:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A312571C9;
+	Mon, 24 Feb 2025 15:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740409316; cv=none; b=fDKtlvpeMYOEihGug2SBGU/t9o2geuRvQMBTjkJIsQevCuLZfjl+GtuVXiTpHhvhCX4RO+XbK+U3pejgiuZACq1IzhTtSZqccJpZ2gohmH0E9IHsf19ZsmyCES26aZYogaEAUMCOOisf6/pwnDCQPG/OtaFeS+hMSTshrHQtC8E=
+	t=1740409365; cv=none; b=dzm4bKqMXeQXgG/AqYyvsaSkKyYFvinvIAy5dEzgslGgFLXOmqYY8JPIt858HdPHs8EQEzDdjPc5fr5Re+HHV648FuOE6vxjtb7umNuuyebXlAWLdU85TOWzGMIijLdolA0eDf9EsjdnxfLdMHChOP0ZjyS4OiKp+52AnoPjhOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740409316; c=relaxed/simple;
-	bh=0vgPCjuI1eJZYbLDfgbr1Uw7fIRlLSv275jSMkiMWms=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IXV6o4fBxdpLaZ+xmFSlExhxMbbdOyhBRxdaq3R62FvyVZVh/bAg5Yyiw8Q28sEJ36YClA9EYGF7VoS1Xb3iwUEKUjirYx4GTjRzd4m6MYCQ5Rgu802IWURa+VofV23F8xGK6tlqHQG92V92BWAoHveHQCBULDU26835YLunZOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YeMchzhu; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Yhkf86Hy reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1740409315; x=1771945315;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=0vgPCjuI1eJZYbLDfgbr1Uw7fIRlLSv275jSMkiMWms=;
-  b=YeMchzhuFwDuPMJl4WEVtYcpo2x5ew434u67pshPlmJ/vn8AtkMzR/zJ
-   nKedlKQ/IMe055FqqK3YXtPqWX8oMHaOwaf2duK7FsPr6qG/W0hIHFsK/
-   TXN+dlJ4QwdRKGi7WNcRYPmNpNzfmYn64NmiOSj6fCy1Ies0nT9czWoe5
-   um3sb35dBz9lfmDLCPcNuTsKa5An2EfFMt5jFPjoxLNLwY2Gga4N7Bh+c
-   tKfghsa05lac/6S+t8OUUAghNb3cpnXHl7oA8q9T4d6sEsxvm7wOGgNQa
-   g4lcoA7A29kdur+nXpnFCl+IAO3Iun1k4rgBNtFR2DioAO4rxIUym3rJS
-   g==;
-X-CSE-ConnectionGUID: 5dJT9lkORb2bXGaN9wqrRQ==
-X-CSE-MsgGUID: 3M5nagRHQgO5oBudA1DgGQ==
-X-IronPort-AV: E=Sophos;i="6.13,309,1732575600"; 
-   d="scan'208";a="42043119"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Feb 2025 16:01:52 +0100
-X-CheckPoint: {67BC89E0-16-6E0A4539-DBC44C3A}
-X-MAIL-CPID: DF92074B598E4880E8D6D2A2DC4D7C0A_1
-X-Control-Analysis: str=0001.0A00211E.67BC89DF.0016,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 69A1416798B;
-	Mon, 24 Feb 2025 16:01:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1740409308;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0vgPCjuI1eJZYbLDfgbr1Uw7fIRlLSv275jSMkiMWms=;
-	b=Yhkf86HymiAEhVU5Mhl2xNo9I/xdvDYPOkBZ4PLhphiNHfstietFbhe4efwDFjXVTm1rRS
-	cP1Rsi3BPwN2UiOdkcvd2nJOLAqgxnFiDOlxkTha5kWUSUSqcezqeYQVt9og3zj7WG+yO7
-	fLI442EWMXjTKkyZfqWINo1/moo66uUHgqEMdjk1/vKz3wd9I9AXca+jtZhrbJdWd5fCij
-	My3WeokGvW/Qrlo2L1Uj8kESlWqB+XK4wnj5iD40639KTwMPr6d2UtBhLYJhTF7+fTInRO
-	XwgfNHNxuXqsm1e670IIOADYQ3aQV+/U8zee74frAx8elptzxeJfNDh7zLc1+g==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo2@yeah.net>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Markus Niebel <Markus.Niebel@ew.tq-group.com>, linux@ew.tq-group.com,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: mba8mx: change sound card model name
-Date: Mon, 24 Feb 2025 16:01:46 +0100
-Message-ID: <6132446.lOV4Wx5bFT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <Z7mUU/Rgj3Gx7g9E@dragon>
-References:
- <20250120132503.556547-1-alexander.stein@ew.tq-group.com>
- <20250120132503.556547-5-alexander.stein@ew.tq-group.com>
- <Z7mUU/Rgj3Gx7g9E@dragon>
+	s=arc-20240116; t=1740409365; c=relaxed/simple;
+	bh=rTiFJlSpCk0AZrdTPRKm2xyTNCPY81YJmzaN9bEB8TY=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L9KrILyMbUkVoKLTss/iqDs3dqHu7s9l5NNNXUFTZol5iv2zVxrvyc7H1UnrDZF0F4J90K7uNDiVPzLsfv2wtLsP7QaOtcns13QsEWcwsxSqG57xjA5PF1vTqF9Ng7q8Yn7rpepx+NIhamoNd6NxaeGhrr2XK/IW5SKxqU4Ykw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBdozJLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 225DDC4CED6;
+	Mon, 24 Feb 2025 15:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740409365;
+	bh=rTiFJlSpCk0AZrdTPRKm2xyTNCPY81YJmzaN9bEB8TY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hBdozJLPOJPdd1TKsAXPeYy34sqOELWPceH3WQmR6puP78MelKnf0DXIaftco2ymE
+	 RDFmZDLl5iGz+t6ouH2S9eMmdmVeEyRscgcYSRFv6dgKp70JpphiiAXFnMkAaxGn5H
+	 vYl+YOa/+YdlcJd2IcWLoiw+0OY48jdh27I62wZqE287/iChnU1/tDl6xGPuxIE3Ua
+	 L+vCdC3He5FkPwUqhh6UJtwsZEegFvQUUVMrP+/kTl1YOq1/+bj9NcmycuPKQvB8M4
+	 4wWyNlLck23MqK8qT5KrpMm5aH/3CGc51gN0FXE5Xmy6i1sXP1g0Elp0OCVk/jTPOR
+	 WtZfWtmUOSHNA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tmZyj-007PrC-4N;
+	Mon, 24 Feb 2025 15:02:42 +0000
+Date: Mon, 24 Feb 2025 15:02:39 +0000
+Message-ID: <86jz9fqtbk.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
+In-Reply-To: <Z7yElHKrJGn8XuPS@arm.com>
+References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
+	<Z7xSfVME4z2ComUm@arm.com>
+	<86ldtvr0nl.wl-maz@kernel.org>
+	<Z7yElHKrJGn8XuPS@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: catalin.marinas@arm.com, aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com, will@kernel.org, Suzuki.Poulose@arm.com, steven.price@arm.com, pcc@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Shawn,
+On Mon, 24 Feb 2025 14:39:16 +0000,
+Catalin Marinas <catalin.marinas@arm.com> wrote:
+> 
+> On Mon, Feb 24, 2025 at 12:24:14PM +0000, Marc Zyngier wrote:
+> > On Mon, 24 Feb 2025 11:05:33 +0000,
+> > Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > > On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> > > > This change is needed because, without it, users are not able to use MTE
+> > > > with VFIO passthrough (currently the mapping is either Device or
+> > > > NonCacheable for which tag access check is not applied.), as shown
+> > > > below (kvmtool VMM).
+> > > 
+> > > Another nit: "users are not able to user VFIO passthrough when MTE is
+> > > enabled". At a first read, the above sounded to me like one wants to
+> > > enable MTE for VFIO passthrough mappings.
+> > 
+> > What the commit message doesn't spell out is how MTE and VFIO are
+> > interacting here. I also don't understand the reference to Device or
+> > NC memory here.
+> 
+> I guess it's saying that the guest cannot turn MTE on (Normal Tagged)
+> for these ranges anyway since Stage 2 is Device or Normal NC. So we
+> don't break any use-case specific to VFIO.
+>
+> > Isn't the issue that DMA doesn't check/update tags, and therefore it
+> > makes little sense to prevent non-tagged memory being associated with
+> > a memslot?
+> 
+> The issue is that some MMIO memory range that does not support MTE
+> (well, all MMIO) could be mapped by the guest as Normal Tagged and we
+> have no clue what the hardware does as tag accesses, hence we currently
+> prevent it altogether. It's not about DMA.
+> 
+> This patch still prevents such MMIO+MTE mappings but moves the decision
+> to user_mem_abort() and it's slightly more relaxed - only rejecting it
+> if !VM_MTE_ALLOWED _and_ the Stage 2 is cacheable. The side-effect is
+> that it allows device assignment into the guest since Stage 2 is not
+> Normal Cacheable (at least for now, we have some patches Ankit but they
+> handle the MTE case).
 
-Am Samstag, 22. Februar 2025, 10:09:39 CET schrieb Shawn Guo:
-> On Mon, Jan 20, 2025 at 02:25:02PM +0100, Alexander Stein wrote:
-> > From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> >=20
-> > The card name for ALSA is generated from the model name string and
-> > is limited to 16 characters. Use a shorter name to prevent cutting the
-> > name.
-> >=20
-> > Since nearly all starter kit mainboards for i.MX based SoM by TQ-Systems
-> > use the same codec with the same routing on board it is a good idea to
-> > use the same mode name for the sound card. This allows sharing a default
-> > asound.conf in BSP over all the kits.
-> >=20
-> > Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->=20
-> I may have missed some prerequisite ones, but #4 and #5 do not apply for
-> me.
+The other side effect is that it also allows non-tagged cacheable
+memory to be given to the MTE-enabled guest, and the guest has no way
+to distinguish between what is tagged and what's not.
 
-Thanks for pointing out. A local commit was silently introduced as dependen=
-cy.
-I removed it and pushed a v2 while also fixing a typo in the commit message
-'mode' -> 'model'
+> 
+> > My other concern is that this gives pretty poor consistency to the
+> > guest, which cannot know what can be tagged and what cannot, and
+> > breaks a guarantee that the guest should be able to rely on.
+> 
+> The guest should not set Normal Tagged on anything other than what it
+> gets as standard RAM. We are not changing this here. KVM than needs to
+> prevent a broken/malicious guest from setting MTE on other (physical)
+> ranges that don't support MTE. Currently it can only do this by forcing
+> Device or Normal NC (or disable MTE altogether). Later we'll add
+> FEAT_MTE_PERM to permit Stage 2 Cacheable but trap on tag accesses.
+> 
+> The ABI change is just for the VMM, the guest shouldn't be aware as
+> long as it sticks to the typical recommendations for MTE - only enable
+> on standard RAM.
 
-Thanks
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+See above. You fall into the same trap with standard memory, since you
+now allow userspace to mix things at will, and only realise something
+has gone wrong on access (and -EFAULT is not very useful).
 
+>
+> Does any VMM rely on the memory slot being rejected on registration if
+> it does not support MTE? After this change, we'd get an exit to the VMM
+> on guest access with MTE turned on (even if it's not mapped as such at
+> Stage 1).
 
+I really don't know what userspace expects w.r.t. mixing tagged and
+non-tagged memory. But I don't expect anything good to come out of it,
+given that we provide zero information about the fault context.
+
+Honestly, if we are going to change this, then let's make sure we give
+enough information for userspace to go and fix the mess. Not just "it
+all went wrong".
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
