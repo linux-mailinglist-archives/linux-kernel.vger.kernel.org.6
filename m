@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-529431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F30A42618
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:22:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374B2A425E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:16:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FAEE19C2167
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:16:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDA837A3F64
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46D2324EF6D;
-	Mon, 24 Feb 2025 15:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D707718B484;
+	Mon, 24 Feb 2025 15:14:57 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D3524889A;
-	Mon, 24 Feb 2025 15:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DE124EF6B;
+	Mon, 24 Feb 2025 15:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740410095; cv=none; b=o5yUUR6BDdmXeSku2JV927grsxxuX7UMe6VqDAnSU1W3K+ZX/raL9ANURifVLHTBq9nRpeHj3h/SaQQ8xS4JWx6d/mVHeeqg0rFpABrhuACbpdIlTvexDAvVLkmG7aVsWAMGr4djC0kGD8MSp1ieCbwGrS3/KHf5K8MZumVPyHQ=
+	t=1740410097; cv=none; b=I1Lk4eCcaxkkZE/kWLN7lBhyQGK08npfT+26uF8C8wlW2ov7I2I+hL7ZQ4NrAiaHFFuxksUk4cb39LNFB5WFbs5rqjuZFpdH4QYj+zrK6oFmjLbfLOZ7SLajbOGaAPmJlROjumvdeGGniiRu6e55TPD+DcOF4XC96L7sZLE0z50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740410095; c=relaxed/simple;
-	bh=KkpYxuL1uLu1jKclPiVsV+6ZGMawm3j5Ei8x+PAF5r8=;
+	s=arc-20240116; t=1740410097; c=relaxed/simple;
+	bh=h1NUjbsWtVI+rR0BWHzHHmfjMA+kj2h8OixpmVCAlv4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V8kC0ATLi67PetXvIFAqB3ubQgIjdqyQx7A1drjiju7zx6GlAHeddAwKGnjy0zN0rxDmzJdNT6mHAWuFVHbVuzbYr66jKk6iWmwMge0+75KuYt+3Kv3gExQ4Xd66XLg7aqCtlZHlSFqF+/8a6MV9MJDygpx0BEkvgsF2RWVDlDo=
+	 MIME-Version; b=I+NB7U6PTXAi9tZmwXD+2OOhB3LWh0xoi3Tj81NJ2r/EpDXYRd/5bZxctMTkgS9FeW0M5GigmpXUr6yT9mFGMn/md2Gd8EFex2U6xqXRXk0VlBk9GbWMW6JoRqDqwDxPwfbPriS4x1zH+/xmnF8bafMQz5agT+Nej33hoxXDRhM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 142302681;
-	Mon, 24 Feb 2025 07:15:10 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1B87E26AC;
+	Mon, 24 Feb 2025 07:15:12 -0800 (PST)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A491B3F6A8;
-	Mon, 24 Feb 2025 07:14:51 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ABBE43F6A8;
+	Mon, 24 Feb 2025 07:14:53 -0800 (PST)
 From: Leo Yan <leo.yan@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Mike Leach <mike.leach@linaro.org>,
@@ -45,9 +45,9 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 5/8] coresight: etm: Add an attribute for updating buffer
-Date: Mon, 24 Feb 2025 15:14:20 +0000
-Message-Id: <20250224151423.1630639-6-leo.yan@arm.com>
+Subject: [PATCH v1 6/8] coresight: perf: Update buffer on AUX pause
+Date: Mon, 24 Feb 2025 15:14:21 +0000
+Message-Id: <20250224151423.1630639-7-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250224151423.1630639-1-leo.yan@arm.com>
 References: <20250224151423.1630639-1-leo.yan@arm.com>
@@ -59,105 +59,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add an attribute for updating buffer when the AUX trace is paused.  And
-populate the value to the 'update_buf_on_pause' flag during the AUX
-setting up.
+Due to sinks like ETR and ETB don't support interrupt handling, the
+hardware trace data might be lost for continuous running tasks.
 
-If the AUX pause operation is attached to a PMU counter, when the
-counter is overflow and if the PMU interrupt in an NMI, then AUX pause
-operation will be triggered in the NMI context.  On the other hand, the
-per CPU sink has its own interrupt handling.  Thus, there will be a race
-condition between the updating buffer in NMI and sink's interrupt
-handler.
-
-To avoid the race condition, this commit disallows updating buffer on
-AUX pause for the per CPU sink.  Currently, this is only applied for
-TRBE.
+This commit takes advantage of the AUX pause for updating trace buffer
+to mitigate the trace data losing issue.
 
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- .../hwtracing/coresight/coresight-etm-perf.c  | 20 +++++++++++++++++++
- .../hwtracing/coresight/coresight-etm-perf.h  |  2 ++
- include/linux/coresight-pmu.h                 |  1 +
- 3 files changed, 23 insertions(+)
+ .../hwtracing/coresight/coresight-etm-perf.c  | 38 ++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-index 29d52386ffbb..d759663a1f7d 100644
+index d759663a1f7d..667110429de9 100644
 --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
 +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-@@ -62,6 +62,8 @@ PMU_FORMAT_ATTR(contextid1,	"config:" __stringify(ETM_OPT_CTXTID));
- PMU_FORMAT_ATTR(contextid2,	"config:" __stringify(ETM_OPT_CTXTID2));
- PMU_FORMAT_ATTR(timestamp,	"config:" __stringify(ETM_OPT_TS));
- PMU_FORMAT_ATTR(retstack,	"config:" __stringify(ETM_OPT_RETSTK));
-+PMU_FORMAT_ATTR(update_buf_on_pause,
-+		"config:" __stringify(ETM_OPT_UPDATE_BUF_ON_PAUSE));
- /* preset - if sink ID is used as a configuration selector */
- PMU_FORMAT_ATTR(preset,		"config:0-3");
- /* Sink ID - same for all ETMs */
-@@ -103,6 +105,7 @@ static struct attribute *etm_config_formats_attr[] = {
- 	&format_attr_configid.attr,
- 	&format_attr_branch_broadcast.attr,
- 	&format_attr_cc_threshold.attr,
-+	&format_attr_update_buf_on_pause.attr,
- 	NULL,
- };
+@@ -594,14 +594,48 @@ static void etm_event_start(struct perf_event *event, int flags)
+ 	return;
+ }
  
-@@ -434,6 +437,23 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
- 	if (!sink)
- 		goto err;
- 
-+	/* Populate the flag for updating buffer on AUX pause */
-+	event_data->update_buf_on_pause =
-+		!!(event->attr.config & BIT(ETM_OPT_UPDATE_BUF_ON_PAUSE));
+-static void etm_event_pause(struct coresight_device *csdev,
++static void etm_event_pause(struct perf_event *event,
++			    struct coresight_device *csdev,
+ 			    struct etm_ctxt *ctxt)
+ {
++	int cpu = smp_processor_id();
++	struct coresight_device *sink;
++	struct perf_output_handle *handle = &ctxt->handle;
++	struct list_head *path;
++	unsigned long size;
 +
-+	if (event_data->update_buf_on_pause) {
-+		/*
-+		 * The per CPU sink has own interrupt handling, it might have
-+		 * race condition with updating buffer on AUX trace pause if
-+		 * it is invoked from NMI.  To avoid the race condition,
-+		 * disallows updating buffer for the per CPU sink case.
-+		 */
-+		if (coresight_is_percpu_sink(sink)) {
-+			dev_err(&sink->dev, "update_buf_on_pause is not permitted.\n");
-+			goto err;
-+		}
+ 	if (!ctxt->event_data)
+ 		return;
+ 
+ 	/* Stop tracer */
+ 	coresight_pause_source(csdev);
++
++	/* Bail out if no need update buffer */
++	if (!ctxt->event_data->update_buf_on_pause)
++		return;
++
++	if (WARN_ON_ONCE(handle->event != event))
++		return;
++
++	path = etm_event_cpu_path(ctxt->event_data, cpu);
++	sink = coresight_get_sink(path);
++	if (WARN_ON_ONCE(!sink))
++		return;
++
++	if (!sink_ops(sink)->update_buffer)
++		return;
++
++	size = sink_ops(sink)->update_buffer(sink, handle,
++					     ctxt->event_data->snk_config);
++	if (READ_ONCE(handle->event)) {
++		if (!size)
++			return;
++
++		perf_aux_output_end(handle, size);
++		perf_aux_output_begin(handle, event);
++	} else {
++		WARN_ON_ONCE(size);
 +	}
-+
- 	/* If we don't have any CPUs ready for tracing, abort */
- 	cpu = cpumask_first(mask);
- 	if (cpu >= nr_cpu_ids)
-diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.h b/drivers/hwtracing/coresight/coresight-etm-perf.h
-index 744531158d6b..52b9385f8c11 100644
---- a/drivers/hwtracing/coresight/coresight-etm-perf.h
-+++ b/drivers/hwtracing/coresight/coresight-etm-perf.h
-@@ -51,6 +51,7 @@ struct etm_filters {
-  * @aux_hwid_done:	Whether a CPU has emitted the TraceID packet or not.
-  * @snk_config:		The sink configuration.
-  * @cfg_hash:		The hash id of any coresight config selected.
-+ * @update_buf_on_pause: The flag to indicate updating buffer on AUX pause.
-  * @path:		An array of path, each slot for one CPU.
-  */
- struct etm_event_data {
-@@ -59,6 +60,7 @@ struct etm_event_data {
- 	cpumask_t aux_hwid_done;
- 	void *snk_config;
- 	u32 cfg_hash;
-+	bool update_buf_on_pause;
- 	struct list_head * __percpu *path;
- };
+ }
  
-diff --git a/include/linux/coresight-pmu.h b/include/linux/coresight-pmu.h
-index 89b0ac0014b0..04147e30c2f2 100644
---- a/include/linux/coresight-pmu.h
-+++ b/include/linux/coresight-pmu.h
-@@ -35,6 +35,7 @@
- #define ETM_OPT_CTXTID2		15
- #define ETM_OPT_TS		28
- #define ETM_OPT_RETSTK		29
-+#define ETM_OPT_UPDATE_BUF_ON_PAUSE	30
+ static void etm_event_stop(struct perf_event *event, int mode)
+@@ -615,7 +649,7 @@ static void etm_event_stop(struct perf_event *event, int mode)
+ 	struct list_head *path;
  
- /* ETMv4 CONFIGR programming bits for the ETM OPTs */
- #define ETM4_CFG_BIT_BB         3
+ 	if (mode & PERF_EF_PAUSE)
+-		return etm_event_pause(csdev, ctxt);
++		return etm_event_pause(event, csdev, ctxt);
+ 
+ 	/*
+ 	 * If we still have access to the event_data via handle,
 -- 
 2.34.1
 
