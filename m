@@ -1,154 +1,131 @@
-Return-Path: <linux-kernel+bounces-529089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C057A41FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB56A41F7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0843164794
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A49D718958B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CF23BCE8;
-	Mon, 24 Feb 2025 12:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EDB23BD0C;
+	Mon, 24 Feb 2025 12:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tftfdh5x"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKYjXcHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7129323373C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B7223BCFC;
+	Mon, 24 Feb 2025 12:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401205; cv=none; b=n8u0FQ5KYUDsqXlrE2CHZ2pE6vrrIuV5FnVGvVcVxvmFaa3d6N7xjE7ysnGMpKobwGuE92hocBKNwsV54Jy998xYrzFq4rSn5wZcfwHpAAi0VLBFtw/YKW1l5ALAgal+ouUBy084vy+ngJvusHcbXc8b2i3UGlLqGKdJBQKI1tE=
+	t=1740401209; cv=none; b=kKO2lYeSm0mVArH3RJd7RzK93bYv7LGVjoAzQqa1kKITEqPahupa8TRiwpZGJN/bOYd+r9hzHenoKJi9QPbQebwXxk5/niCAwP3gPqOWF6bWvNVM+8ojXuCBlI+7zZFGz63x5UDVGyAM4kxuZ1Y9qbk+rV3dLoLa9yIbSghd59M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401205; c=relaxed/simple;
-	bh=C917u6T4jfg0c9cJ9l1ouE+03Feeq04jBiwMklKuPVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9+J6Zrg/5/UGhWd+o6Wb8sx70dTTLQBnAJDmg+XIzyVfLCckJIJokZ3p9alDTrc50WfObJfbFPV+urTLEO8r0dyYYj4pZ+qeJrZ1w2uMghmZImVLiuh3zbwV3Zv//HtWmzyx9XubzUEBPVKR+qhhlJylotqpBGAbZKrZSH+8UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tftfdh5x; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D4C2140E015F;
-	Mon, 24 Feb 2025 12:46:40 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id zIGJtjT7ztu8; Mon, 24 Feb 2025 12:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740401195; bh=r4zJ7NGL8jaiq+rMES5kwpX3x3oY70MnfLBpgKugJOs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tftfdh5xa8q24B8D7TqVCt5+HY4WFIG5+EFq2AcQmrkMf1YTEPpXCgxqYEneQBBV+
-	 Yy9321QMWpjx0jcPxuUw5s5Xm5B3ndWMkTnAo1RH0+Wk9v99j7seJODYaRlja9s0f8
-	 Op+C9liFejQ4RgHF6J88n/AZfWAkX24yOzE+DRtIztm6DspT1DJ2OhycUZ0JcR322v
-	 xhuetgS++S0I13RUmyhMplVZlxe10Iz0KwFONZ0q1Fg2MTJgqDf8XhuPykkeMlHlbF
-	 P1STo99C8DXzhWLseJCfIYBBnKmP5u/p46+94kqqiJWdpsViWwPAk/f6KfCrVGmsaE
-	 Ew8hAcBbmmI0eurIq7bViT00ynP/oaU2YrTFAWnCAnrobCkVmlRdkcG4NwyCichr/2
-	 vbU0cofcY5PgR/M8cTfHAzZ+tunWlUuVT1eJab7FW2v7UbOdKqG7AJv/ZFcXNppfmq
-	 p/YvTjxLfxIlESNnTvpUkiYdbW+Wfg+odltsFDdblx6V5QvpbdfWc71iS5G5Xkj1lJ
-	 M5U7Cafn//jELR0G8V+CpVgC5+5binv/GhVsJ27eebFc8pAxvr5Q//DWB6pB1E/UZv
-	 k+1SBKEYHH+VvLi0MUMWo2eZ/EQYf5RqdLySJBmmWxopcWJFLJGZJncPft0GsAolr6
-	 dyZgYz6Vq+Sy2/k8Rd20/M1I=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8F56140E01A3;
-	Mon, 24 Feb 2025 12:46:18 +0000 (UTC)
-Date: Mon, 24 Feb 2025 13:46:12 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Rik van Riel <riel@surriel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v13 05/14] x86/mm: use INVLPGB in flush_tlb_all
-Message-ID: <20250224124612.GGZ7xqFMYXmoRXqKdP@fat_crate.local>
-References: <20250223194943.3518952-1-riel@surriel.com>
- <20250223194943.3518952-6-riel@surriel.com>
+	s=arc-20240116; t=1740401209; c=relaxed/simple;
+	bh=0B0CsThfPjGTpaa60Jmv4WtnpWqz89tZ838PBLhiS1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E5a4pq6kAexPkGDrA78l/D/mV1CT7orIs3rmHgzyzcQpMH6WJpox5z6A1Z7oTVdHWbTsCGf95ERbWm17Mdqhm65imlnuKsGoljT4zDPjWnucKrtbNBdQCFetd47a0uH7maIOnZNzorc4c2csYIDah8XKN952GPUyMrEsaAIN5C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKYjXcHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32F8BC4CEE8;
+	Mon, 24 Feb 2025 12:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740401209;
+	bh=0B0CsThfPjGTpaa60Jmv4WtnpWqz89tZ838PBLhiS1M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HKYjXcHvXoCFVXB33ypRTMi+qhyXXBGo35E/k5RKPWwJtemmIWmE54meLKFZs/EvJ
+	 3Sj5yokM+60rAF5eOEJsXxZUsRSJTL9gieVYI7odceLW7YtFOAtpJ1f1jaiAT5QvF6
+	 VdQYXKDiyS7Zsl9VeINxjotnJc2NhNY+pDqCZkUmoZowSL5okxpWuO9JuO5gDF7z8q
+	 uEETt/7G+YPbqpb1AkdCI3osV8Gl0Qlpu2b4EY1Ebr+060OKuJkXRzM4z/5klxtS2w
+	 kOZLWvJ8qoeFPZNxulPgsx3CZktIrjFRwFMc/itwI46QhFscpfyp6fY0sOMoWH7yPx
+	 68tHEOSFVsICQ==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so5752131a12.3;
+        Mon, 24 Feb 2025 04:46:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU1snL8XXmri7I1NfbPSU0phd3YvTUJ77HALIWaIuk3sWeabj25TmpTUBEUJDiFWdvt638vDuUjX57PP9q1@vger.kernel.org, AJvYcCV4oLoJILvFQvRMNjGf0s6dG2mvlG+9eNSCj5SNv46LAdfO8FLmsejF4HVKKwjdakIsAXR7ZXpuWBGWpYjqC3DiRQ==@vger.kernel.org, AJvYcCWQHJ21eEWs+mvwO6XWy07w9sWThtfRCatAOtSy/EzCbsuxHQDLV5jj3IDDt0kAUzB6cHx706RI2OM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnxdV5EPDjT3hdCj/WMo5hCdUgBMpX2sUfLr6KGkZ75t/qTGbD
+	d9gcJVSdV4ZbWFE/MLPcDKPVrz/4HeB5M31v4mLJqeOw/BPnF27JWMX730hI8iThsSkZcjFY1es
+	gHQ92Hf6g5VJ2CNNubi9kQtrF1Q==
+X-Google-Smtp-Source: AGHT+IFSrlzVDhPG7lgCi1VU8B1AxKksGxiI/QFAwg0k5D4fCtrCiSkO61qkvx8HAbvnWUGOsp8xAAa6cceHz1Shh+I=
+X-Received: by 2002:a05:6402:278e:b0:5dc:cf9b:b04a with SMTP id
+ 4fb4d7f45d1cf-5e0b70bfd22mr30104043a12.1.1740401207751; Mon, 24 Feb 2025
+ 04:46:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250223194943.3518952-6-riel@surriel.com>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
+In-Reply-To: <20250224122507.GE8144@e132581.arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Feb 2025 06:46:35 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+X-Gm-Features: AWEUYZlK0yq7SIgMIaSVRny1cLnFGm1k0eFBcoGHQEZGYoT0-XXIWWwS_6M-XJc
+Message-ID: <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+To: Leo Yan <leo.yan@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 23, 2025 at 02:48:55PM -0500, Rik van Riel wrote:
-> The flush_tlb_all() function is not used a whole lot, but we might
-> as well use broadcast TLB flushing there, too.
-> 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
-> Tested-by: Brendan Jackman <jackmanb@google.com>
-> Tested-by: Michael Kelley <mhklinux@outlook.com>
-> ---
->  arch/x86/mm/tlb.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-> index 59396a3c6e9c..2d7ed0fda61f 100644
-> --- a/arch/x86/mm/tlb.c
-> +++ b/arch/x86/mm/tlb.c
-> @@ -1065,6 +1065,16 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
->  }
->  
->  
-> +static bool broadcast_flush_tlb_all(void)
+On Mon, Feb 24, 2025 at 6:25=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Tue, Feb 18, 2025 at 02:40:06PM -0600, Rob Herring (Arm) wrote:
+> >
+> > From: Anshuman Khandual <anshuman.khandual@arm.com>
+>
+> [...]
+>
+> > BRBE records are invalidated whenever events are reconfigured, a new
+> > task is scheduled in, or after recording is paused (and the records
+> > have been recorded for the event). The architecture allows branch
+> > records to be invalidated by the PE under implementation defined
+> > conditions. It is expected that these conditions are rare.
+>
+> [...]
+>
+> > +static void armv8pmu_sched_task(struct perf_event_pmu_context *pmu_ctx=
+, bool sched_in)
+> > +{
+> > +       struct arm_pmu *armpmu =3D *this_cpu_ptr(&cpu_armpmu);
+> > +       struct pmu_hw_events *hw_events =3D this_cpu_ptr(armpmu->hw_eve=
+nts);
+> > +
+> > +       if (!hw_events->branch_users)
+> > +               return;
+> > +
+> > +       if (sched_in)
+> > +               brbe_invalidate();
+> > +}
+>
+> Just a minor concern.  I don't see any handling for task migration.
+> E.g., for a task is migrated from one CPU to another CPU, I expect we
+> need to save and restore branch records based on BRBE injection.  So
+> far, the driver simply invalidates all records.
+>
+> I think this topic is very likely discussed before.  If this is the
+> case, please ignore my comment.  Except this, the code looks good
+> to me.
 
-broadcast?
+Not really discussed on the list, but that was present in v18 (though
+not functional because .sched_task() hook wasn't actually enabled) and
+Mark removed it. His work is here[1].The only comment was:
 
-All those INVLPGB functions have a "invlpgb_" prefix...
+Note: saving/restoring at context-switch doesn't interact well with
+event rotation (e.g. if filters change)
 
-In any case, get rid of that function:
+Rob
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 2d7ed0fda61f..feaca53b7685 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -1065,16 +1065,6 @@ void flush_tlb_mm_range(struct mm_struct *mm, unsigned long start,
- }
- 
- 
--static bool broadcast_flush_tlb_all(void)
--{
--	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
--		return false;
--
--	guard(preempt)();
--	invlpgb_flush_all();
--	return true;
--}
--
- static void do_flush_tlb_all(void *info)
- {
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
-@@ -1085,9 +1075,11 @@ void flush_tlb_all(void)
- {
- 	count_vm_tlb_event(NR_TLB_REMOTE_FLUSH);
- 
--	/* First try (faster) hardware-assisted TLB invalidation. */
--	if (broadcast_flush_tlb_all())
-+	if (cpu_feature_enabled(X86_FEATURE_INVLPGB)) {
-+		guard(preempt)();
-+		invlpgb_flush_all();
- 		return;
-+	}
- 
- 	/* Fall back to the IPI-based invalidation. */
- 	on_each_cpu(do_flush_tlb_all, NULL, 1);
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git/commit/?=
+h=3Darm64/brbe&id=3D642985af34d2d6f54e76995380cf24d512078c56
 
