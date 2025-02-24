@@ -1,85 +1,111 @@
-Return-Path: <linux-kernel+bounces-529015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEFFA41ECD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:26:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BFFA41EEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0858188C789
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B94421768
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:21:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B94224EF6F;
-	Mon, 24 Feb 2025 12:19:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3234C221F0F;
+	Mon, 24 Feb 2025 12:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I3Fp8gjJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64DC21930E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B771A3174;
+	Mon, 24 Feb 2025 12:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399544; cv=none; b=l2K13JrVn0/p0dezVdY8CZhUiWCA4fysMY71Rc5BF91lo1m9lnwg/S1goUE0Ear8T3cYrEYTJAjND030VMyzgwkEITytSrH1u/H34sTzWdB2Aw/3xvcevUzRS4ksteDg9gtPpYobSuduosd2XBJWIPnGg/LHkbgnUn0r9gBZ9TA=
+	t=1740399595; cv=none; b=l9zTi87xNkxxwiUuBesRu7lwXzyj6bEK1ekWI0NDg8EXjNSlp4BmgRpXHwENH+t3CpzcFhjnODnbbKk6YbUj56V5cZCc1nkTRwYZdhCZQK2wlvIdx3TOSnFoinKPhz3Z71ViFSKgt6GTRA/HssUqg4beY2bJcb2fLEvFACIbKAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399544; c=relaxed/simple;
-	bh=bA1YliEC7JWt29IiGwF9kVTTKGiLJATqU7DWsNHZPiw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nL6M0JQRCatwon6IxuNujvv/3D+y38cUAAFORBmMoIe54aYJTAqW/StYw4rJeS+3HzgcWc1HCGBZAgLaas4chKQ3KTnBUXYyCEd2mQYnmrX1z/dM/LymYk2X0YblXmtzznmxXpjzso4GmHy+E6L80cNfITXnyQfaDHA0/JAC3Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d2b3882ff5so36048395ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 04:19:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740399542; x=1741004342;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G4r6WmBx5yWSeSppN3kUnNSChy5sPeXVXjlXGrKQQPA=;
-        b=kei34SHsw5Au+OdSTUl6kIqcQ7ZWUmk7pioT13CSATbY2iophqqtoMjlezZ26jpLbW
-         PZ2lpOnXX9JfWH8oneBWvPWXnaSTEJY7OhZ3R9Rd6T+9JsCyJfz9IQeVH9Ym0XxIyprY
-         ZUH1hrZEX4CiAMnNbiqZGsCCmX7Tl1cpXzX857QOhjWhX28DL/Acw70lMaVs9zyvuIk1
-         sr6CQD3IX75OKIo08xj4kIvfWgM59IF34gzYzT89hn9MWmhOxaJxjgHfdEehW3BZ29aV
-         ZiygDAsk/NaXSwryFH80s5YH++6m3RB64DhQsdlSejMYFKSvr9z8WuVhJK1lIXNUT+uP
-         RANg==
-X-Forwarded-Encrypted: i=1; AJvYcCUz44Ftg1vZz8riJIcm2oQiOrm6ZrJRyrsDCvabbypVecOnvokq8bicSYhQQrZtAB3LpgjgA6zTsCRvgG0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqLneuCTM+J9QOy3uoXlgWNB75nHrTIZLBQhiG42rfLWnAX44N
-	ungYvb/57WKOi2pAylp5dDWFp8gP7G+eBx/tjoK5+muZMpYJnFEI7/0S3LXfKkhE5iQi17jU1bC
-	Hz+uzbQog6d7Cbg/OQ3P3hguCnYNoaassUNNP9v0+lQ26ZIUU01pD1BI=
-X-Google-Smtp-Source: AGHT+IE+MKwpftySpthmW3y4fbGBKGh/uy2r0pX1I/6v9QERjn1rmlYx7LkBE/iKLfDFH+YZN8Z/uTU9npaW+lEiM6GJgyUE0e3S
+	s=arc-20240116; t=1740399595; c=relaxed/simple;
+	bh=6BmGyMMS27SVlVYPnXA5Rl27H1w216df0y02GFQxmHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UF4Wt7MO0n5dtePzadPTJT1UMQkAE3ncXjECZbHGruyQTHswah8AZRYex7gZUzsisWMDBxzfy+a3jhKeO692brCeh4YCGTlQgPrx/KP62RI2vnq9YS1XMyMZqs3iB3ZCqTswLEblj0HhLbLbl4Oxph1e7zgxu6XPswDyUeNIy+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I3Fp8gjJ; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740399594; x=1771935594;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6BmGyMMS27SVlVYPnXA5Rl27H1w216df0y02GFQxmHg=;
+  b=I3Fp8gjJySrOhQFDCYJOEaY8xsqLHJA561YXy+HYKcK+I7Va4X8orfJQ
+   xz4cUQGNiei2qUOMnCTAgSqlY2TwyZJL/VXpp/pmMzicAsk3qFng1dr6T
+   e0xRrxuPVTPyWFvh2gG2dyLkNYqqKWXq9khioKyDIKFepm+dqHge2t3AV
+   WV7bvDByIFpvfU4upqzfjdO9BmKf9WthN4PvbVMKWF8HpPE8PtfBVwFlA
+   fTA/+/epI9oKILO2mdE+qO2OzrImhHfWmjHmfCYschwRZip2b/1G+bjSg
+   In6WonwAcj1pJ5ztkOZAmlfPNUAX/ifQUyZKl4hdW2TgPJPP6KvkRQa9o
+   g==;
+X-CSE-ConnectionGUID: NTVB2L39QyuoQkhqi0UObQ==
+X-CSE-MsgGUID: TL2nCt+0QnC/RhPhoeJjlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="40338503"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="40338503"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:19:53 -0800
+X-CSE-ConnectionGUID: WFFN2HW+SBuJndhyZd7bOg==
+X-CSE-MsgGUID: MR/s5Z0XSEas4p1OJ4fgNA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="120954994"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:19:52 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 45BB411F944;
+	Mon, 24 Feb 2025 14:19:48 +0200 (EET)
+Date: Mon, 24 Feb 2025 12:19:48 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Shravan.Chippa@microchip.com
+Cc: mchehab@kernel.org, kieran.bingham@ideasonboard.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Conor.Dooley@microchip.com, Valentina.FernandezAlanis@microchip.com,
+	Praveen.Kumar@microchip.com
+Subject: Re: [PATCH V4] media: i2c: imx334: Add support for 1280x720 &
+ 640x480 resolutions
+Message-ID: <Z7xj5JJe27L39wCG@kekkonen.localdomain>
+References: <20250218093356.3608409-1-shravan.chippa@microchip.com>
+ <Z7cr8x6i8NZbdjIQ@kekkonen.localdomain>
+ <PH0PR11MB5611074F959638A90A7160E381C02@PH0PR11MB5611.namprd11.prod.outlook.com>
+ <Z7xCY2c8AvdgFNfm@kekkonen.localdomain>
+ <PH0PR11MB561150AEB8471B346304FBDF81C02@PH0PR11MB5611.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2c:b0:3d2:b154:49dc with SMTP id
- e9e14a558f8ab-3d2cae4d217mr111790235ab.5.1740399542090; Mon, 24 Feb 2025
- 04:19:02 -0800 (PST)
-Date: Mon, 24 Feb 2025 04:19:02 -0800
-In-Reply-To: <tencent_B22DF56DC89700E9F2EF4ECDEC797E6F9C0A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bc63b6.050a0220.bbfd1.0085.GAE@google.com>
-Subject: Re: [syzbot] [input?] [usb?] KASAN: slab-use-after-free Read in steam_input_open
-From: syzbot <syzbot+0154da2d403396b2bd59@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH0PR11MB561150AEB8471B346304FBDF81C02@PH0PR11MB5611.namprd11.prod.outlook.com>
 
-Hello,
+Hi Shravan,
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On Mon, Feb 24, 2025 at 11:07:58AM +0000, Shravan.Chippa@microchip.com wrote:
+> > > > Please split this into two to make it more reviewable: splitting
+> > > > register lists into two and then to adding new modes.
+> > >
+> > > I will try to make one patch for common register values One more patch
+> > > for new modes of 640x480 and 1280x720
+> > 
+> > Please add one for the hblank changes and more if there are similar cases.
+> 
+> Date sheet is not clear to me to understand the horizontal blank change value dynamically.
+> And do not have proper equipment (hardware) to measure horizontal blank values by change the register values.
 
-drivers/hid/hid-steam.c:1143:17: error: 'return' with no value, in function returning non-void [-Werror=return-type]
+Ok, fair enough. Maybe it'd be better to leave it as-is if there's no need
+to change it? Many Omnivision sensors use some other, non-line/pixel based
+unit for blankings indeed.
 
+-- 
+Regards,
 
-Tested on:
-
-commit:         c749f058 USB: core: Add eUSB2 descriptor and parsing i..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f429368eda610a89
-dashboard link: https://syzkaller.appspot.com/bug?extid=0154da2d403396b2bd59
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15f137f8580000
-
+Sakari Ailus
 
