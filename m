@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-529131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B6FBA42012
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:14:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB97FA42017
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:14:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20B9C1658D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:14:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92E63165E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:14:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C53224886D;
-	Mon, 24 Feb 2025 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE11248881;
+	Mon, 24 Feb 2025 13:13:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AWSlff4o"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OG0l2yPc"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4BF248863
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13580248862
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402804; cv=none; b=rXyhtPTqHoxXgGTXxCorjMfu7K4xOMtDFXOnpdkQ0JwtdYN+isFXALPBKr3Hei8JF4xiQ4wLfPbh4LDgIGfHJ7IQG+oi8SZ5pRV+g3xAa/+qsCWCzgImqpvbK1IbRNzJfWwRxkQXV7IAvIfYP8kS9bBctCyA1+xA9goFOwVtmyo=
+	t=1740402825; cv=none; b=b9uEbko3FVbx8oRb5kWhyiHpoNZTJ0LWUCkWM9RleFyZFC1PnAIs4UgDD3lyfTdDxGj5auxbj1t1kzzGKVUyv5nuUgwEFPZaefqOOau8zcbBEATIjWipSx5xSFTHrZ2BMpL8s6DjRUxxPXr7Tu1qQ8oOnRFKc9KbaV7NiPIzRiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402804; c=relaxed/simple;
-	bh=PUpwrxeoaMKQQ/LgBbzTYj1OWgdKZoLF+N3SjHhwDr4=;
+	s=arc-20240116; t=1740402825; c=relaxed/simple;
+	bh=FJoND9jFNnnNAMkgzJFWDjRCMTnPwYnnldsd3k5ZzjM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/6Rx7/ddCElMpPNSvK6OTmN2JUsQD5xKUpbOdzE/9XjKKlZClgAKFj4x8VYfhC/Wfg54A+y164XWuhJOH/RVgneOXFlUY9LXutrpkbmJ/pEHlVNY5QbY9VYALcCF4/E4Wlngyi3ifIVrygdf3758FrA47kd9THd+Uz6jMELYxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AWSlff4o; arc=none smtp.client-ip=209.85.208.181
+	 To:Cc:Content-Type; b=WjNy8qgtYyTt6mlZ+jlrvHfL0P1IJGHlxJV4gSWttyLDPPSpz6kgBFijXDT1Vq577uCaEEds+ZLrD3UU/Syqy/hF6tqDvWi1qx+i71pPuzqSZiXF26ojXXQILuneS31AP1VABahi0BonWRQKAYrq7NqW48KAwEsfpV1iWiQBPnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OG0l2yPc; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3078fb1fa28so33621551fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:13:22 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-54524740032so4609525e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:13:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740402801; x=1741007601; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1740402822; x=1741007622; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CAHPL18k0SExROmDrW1jEqwYLSKWWweaQeig+wvqPEY=;
-        b=AWSlff4oVrKEzBCTQRQs1c0vjItFg6XIVWUBc1HY3GMprok9NvubSGNS3M2b2bCPyv
-         pNSyMLKhe+b04JEJlJZIrhIfbP90YKeknV7c+GqdgII0QJhTX9sKHXwl7FKKLsL4fdF0
-         lkMOHphm6k7n7BI9HdYxaurVcwHNTtIIof/UJix5NbTO6GJlkIw/OsqKmXVp2qef8Nwd
-         KGhz7V+1zMgcho7NjKIx5u7dvYU+bOpoTxy4eMgyaNLrBUMnq8KOXHWlzzK9spRgNCpl
-         xdQDc0r1kAIe8ReQ6yEbd0O3vQanJV4I5VM/VLJFtG2Rkt3sSdeu6/Z2wMHUdjJ31NRh
-         Glkw==
+        bh=CdTbVKi0CUQDbJRgMdFniAozjWCEaHtWyxLsgTRQpmw=;
+        b=OG0l2yPcGyY7qrylzB04aNlbB9pPBG1k6mRVv0uw/yuTwPap1/WDYYylt0RS+5Q5sz
+         IjyO/oVmrmey6lBCUblvnV/Sy594iJ/nCwx0O6fWkFFiKLBjVOESIjw8DFPYZN6bpp9P
+         TZTMXaJLizK0R4APJAvuP4D3IBCmwiTSVKyYtPYriv67SHweXSQcaYeOizTVhs4NqC+B
+         ab6PxBwqTBpQ2b/XUm100sce6vsd79WrUDgfxzM7r+IBQg5mHQitqs1iAjLq6SpVnbrl
+         Mqy2X2hpSslgaxcyGCzIlWvd0bDLJi/XywQdj7fmPCewllslCYR863KTTGjBLi4IKhk2
+         pcZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402801; x=1741007601;
+        d=1e100.net; s=20230601; t=1740402822; x=1741007622;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CAHPL18k0SExROmDrW1jEqwYLSKWWweaQeig+wvqPEY=;
-        b=Izoci9QnE53eMlAHwcp2HY1GgmS9WdPk+rL95TGw0Dg4hmkok5Uq+QqppgR9wUb2fU
-         w/xBKJxPUj6lncLUwL3PRLJfybtmF5dr1sPhwERuxK8PlflypqE5Bj+S1rMFfHYroieo
-         BHq96BA8vJ2WMSZsAInYGLHpH9HiS72vCSY0Bk1oR7rH7zX4c26qvL5bcDX36csPfWGi
-         Puu3LwFankz4CJDZE0aKHtW08ZEh9NoQjHXdhm3Y5fVlZhutlQSIgfrBVNjPG3TGdj0H
-         AMXMx6TG82oCHdvcLlg9x2/39jqaNcpZAmN22x1C6N1xP7l7YGqMG11LL61a2Y8FbaaQ
-         zzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Zm4HRbQvOIsQr0n/LethIlMX8l+AiJFPoU5ccyE59WVRu+IBuK/mQQQpGhpJRUPak+mD9QNlrH8tcaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI84cK8no6N8Xu5XFtKAf/95XG+cxLbk+/8Zl5d5chQeS1kxVr
-	2Ohk2G2iC/qskDSsRL9oiJmXG+++qkU4ckZylEFzMg5SQPWIT34uKQEYaaITCsxXd7S7rMPTzbe
-	P9Y6+JRUYwKaL3hpw6XGQsJ++DYKx9HdAFJKB
-X-Gm-Gg: ASbGnctlGldWec6YKXaSYV0GtVrtikB0sIKDLARuF7f7reNsNPJOTRJ8EEjCPUWxkjo
-	u7Vzacb8EigFG5Cxu+l2VSzyBXEAiYwAqdrlrXijeZAiVJ4JafWgTu/HGeSKZ5c91TZFoQEKNmE
-	Y94t7yR+Qsnk0ICeEd7Y5UzFDVrXCRkuq0otLu
-X-Google-Smtp-Source: AGHT+IE2Qfv6gUOl1nLWU+9pSXrvtMj6PEzIxUkiRfH+sNqoUFYRr9Ull51dKikz5yg4QVbUPco5NQ/SdGi8wkjq3CI=
-X-Received: by 2002:a2e:be0b:0:b0:300:4362:40 with SMTP id 38308e7fff4ca-30a5b21db20mr53847251fa.36.1740402800828;
- Mon, 24 Feb 2025 05:13:20 -0800 (PST)
+        bh=CdTbVKi0CUQDbJRgMdFniAozjWCEaHtWyxLsgTRQpmw=;
+        b=O7nA4bNJbVqsktZ+GKebXQp6mkyC0iiZZUk2ghyXng3AgctgzLr/BjB4qxqO0r0RG3
+         SVYYPgoVW1Zqw7/zagP3OLOzhePllmvifP8zg52PolYW2W1Xn8cJhyZxYYUjQF4zkarW
+         iDucqBwoXh6fYQ9fvC5pbC6k3n33OJXYDRHVEDF+89Ls7M6HvCyCdWoOU6NdOwOm7IES
+         caN4oLi779QJIeGkaPd9WypI1xrUVzwzrWdKNeCa/RoRWkv2R2lZrIRwRiZDGohLarwW
+         cy/qEGnMtTZ6ucq49v8MrBLZGq9XmmO4OlGYUbFOhSYikE8tA25exRixRBStuX5pQcFA
+         cxHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvyUycIOMtFEkpUz1MO82pdYB3jNHgeRdoCqf/I1qUOovDb857c9p2UQd1p0xBi14rPQkbuuZ3JXyTyDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuUcanhU7LYfMjb7qTwr2Q+LD2J6R2usMwsQGLBonFF6eTW2Dh
+	5BvY/edy1yYJ+C/a0BV6QpI1YWKUdCamQqyr3jnxON9WQGr5FPd+s/Um9P3QGGwVw3J1THkFnML
+	pThJ47JL5V53k+TZF84Ns18pBUk12fRxaF0Jx
+X-Gm-Gg: ASbGncvABdd12Tldn+DmmBzfPtYmzSdXSp4BjhCAoToEFk8BvO+UdIwheuCa1gvPqoJ
+	tFWd0IXsX919saZ0iO8za7t4v34cIOV7Idwf+/B+4ys73WYQqsdNdg11BLa4ORZ5BlXtI4sq3Uf
+	U9AFh/xBJ1nWIqVnDQavKY5u5ArBje9+m7J91H
+X-Google-Smtp-Source: AGHT+IGQrvsr4odKUEgeH1bkkZjegayIkiqYClbMrE0j3eOYhXJOuvoctFYePfM/+qd8DmdTmo8UHRlGJd684M6yAAU=
+X-Received: by 2002:a05:6512:31d2:b0:546:2ff9:1542 with SMTP id
+ 2adb3069b0e04-54838f79e55mr4764605e87.53.1740402821962; Mon, 24 Feb 2025
+ 05:13:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739864467.git.dvyukov@google.com> <9f33eaaea6fed2948502eff27c4627921d1e1e78.1739864467.git.dvyukov@google.com>
- <Z7iJSyQYmtAl_z24@gmail.com>
-In-Reply-To: <Z7iJSyQYmtAl_z24@gmail.com>
+References: <cover.1739790300.git.dvyukov@google.com> <6a97e9986b0fb05935204f55f8d16fc5e66f0ccf.1739790300.git.dvyukov@google.com>
+ <d6d7745f-ad25-4faa-a3a3-65a4604e8592@intel.com>
+In-Reply-To: <d6d7745f-ad25-4faa-a3a3-65a4604e8592@intel.com>
 From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 24 Feb 2025 14:13:08 +0100
-X-Gm-Features: AWEUYZkv1lfF7HmK4Crv9GT6MZI19rxUg5YmWT6xvRtLvyXArZ2vi4fI6FOhbWY
-Message-ID: <CACT4Y+bwm7JtipFaw=sq2QocdL-VVbERnRg2E__K1ZrWBy0hnw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] pkeys: add API to switch to permissive pkey register
-To: Ingo Molnar <mingo@kernel.org>
+Date: Mon, 24 Feb 2025 14:13:28 +0100
+X-Gm-Features: AWEUYZlYLWq2aISpHvFPgJAzT8TTyQJjq1PvXwFPLhQWiasg7JhczNUZf7FZBLE
+Message-ID: <CACT4Y+YmdnTznWw5LO4gXHbxbXNPj0jqOO3KG=dJWKEcVbrkvA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] x86/signal: Use switch_to_permissive_pkey_reg() helper
+To: Dave Hansen <dave.hansen@intel.com>
 Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com, 
 	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
 	dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com, 
@@ -87,36 +88,61 @@ Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org, boqun.feng@gmail.com,
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 21 Feb 2025 at 15:10, Ingo Molnar <mingo@kernel.org> wrote:
+On Fri, 21 Feb 2025 at 17:26, Dave Hansen <dave.hansen@intel.com> wrote:
 >
->
-> * Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> > The API allows to switch to permissive pkey register that allows accesses
-> > to all PKEYs. This functionality is already used in x86 signal delivery,
-> > and will be needed for rseq.
+> ...
+> > -/*
+> > - * Enable all pkeys temporarily, so as to ensure that both the current
+> > - * execution stack as well as the alternate signal stack are writeable.
+> > - * The application can use any of the available pkeys to protect the
+> > - * alternate signal stack, and we don't know which one it is, so enable
+> > - * all. The PKRU register will be reset to init_pkru later in the flow,
+> > - * in fpu__clear_user_states(), and it is the application's responsibility
+> > - * to enable the appropriate pkey as the first step in the signal handler
+> > - * so that the handler does not segfault.
+> > - */
+> > -static inline u32 sig_prepare_pkru(void)
+> > -{
+> > -     u32 orig_pkru = read_pkru();
+> > -
+> > -     write_pkru(0);
+> > -     return orig_pkru;
+> > -}
+> > -
+> >  /*
+> >   * Set up a signal frame.
+> >   */
+> > @@ -157,8 +140,18 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
+> >               return (void __user *)-1L;
+> >       }
 > >
-> > Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-> > Cc: x86@kernel.org
-> > Cc: linux-kernel@vger.kernel.org
+> > -     /* Update PKRU to enable access to the alternate signal stack. */
+> > -     pkru = sig_prepare_pkru();
+> > +     /*
+> > +      * Enable all pkeys temporarily, so as to ensure that both the current
+> > +      * execution stack as well as the alternate signal stack are
+> > +      * writeable. The application can use any of the available pkeys to
+> > +      * protect the alternate signal stack, and we don't know which one it
+> > +      * is, so enable all. The PKRU register will be reset to init_pkru
+> > +      * later in the flow, in fpu__clear_user_states(), and it is the
+> > +      * application's responsibility to enable the appropriate pkey as the
+> > +      * first step in the signal handler so that the handler does not
+> > +      * segfault.
+> > +      */
+> > +     pkru = switch_to_permissive_pkey_reg();
+> I think this hurts readability too much in the get_sigframe() code. On
+> some level, it's silly to have a basically empty helper. But in this
+> case, it does help keep the signal code readable.
 >
-> So why did not add the Reviewed-by tag by Mathieu, while you
-> incorporated his review feedback:
+> In other words, this would be preferred:
 >
-> > Changes in v2:
-> >  - Fixed typo in commit description
->
-> ?
+> /*
+>  * Keep existing big comment
+>  */
+> static inline u32 sig_prepare_pkru(void)
+> {
+>         return switch_to_permissive_pkey_reg();
+> }
 
-Done in v3.
+Makes sense. Done in v3.
 
