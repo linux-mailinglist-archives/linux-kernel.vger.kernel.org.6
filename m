@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-528929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D859A41E17
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:01:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED95A41E39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FDAC1769C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:56:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FA7C3BBCEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631DF23BCE9;
-	Mon, 24 Feb 2025 11:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMT+Gg/u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CBE1863E;
-	Mon, 24 Feb 2025 11:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1B524EF8D;
+	Mon, 24 Feb 2025 11:47:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14BE624EF69;
+	Mon, 24 Feb 2025 11:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397516; cv=none; b=WtO7vB/JBNyNHFXQTESH8bbA7mbnJx9rK5r8aaUnvz74XVzHNCGe4OQAtQqqybg8BemAMUe3yogKz3jxKchlg4rGR/1OuBz8iMKWKLqKvvrxyNNfHV+Va1eZruC2JEYy9R5D5ATTY3q460DShO8UPdvKtSJIRvcExKVCLxCafi8=
+	t=1740397626; cv=none; b=QyNMXIJIVa/dMrZRgcaJ92ebxioSddsD8cZ1SXK1IF9zlnKrEDJ3QWXHtUClUPtl1geijZNJy9/8Fqckb5p+9DHPdeahTu6NW7mi+GmvyYPgYKR9NMk3g43rl0AjUqvmlxofDWSP1gTeHA6JBOFiU0NMm3z5BUlfQR8tYkcdVMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397516; c=relaxed/simple;
-	bh=a0Gu+lD9oj96GYmuEZPjUSxbpQsQJkD4AxoAjGpcW1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q23C30XwjAuMCcE1UE7H5FHZqy9AbFY7VB4chyF8S6TphuJj+A2FxGqgE3Y8UinZPWHvPgrZ0vR6yh8kgNKzVsUAyYqTqqGEZUPmvBo7eFCBwuYcdb+xpxEz1UhzW9fZh4WtnLojMoHzk2tvdS/C5hATk3Re9bJbPqVL02Pxj9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMT+Gg/u; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740397514; x=1771933514;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a0Gu+lD9oj96GYmuEZPjUSxbpQsQJkD4AxoAjGpcW1M=;
-  b=YMT+Gg/uvxoDnqIhv5kge2QRinfIitVdfkthzehvs1YuPzFxZnwWukU1
-   FDKIUEaEawsMREVR43TkPaDXuGOHvttiAWNGaZ3LkrfPyG/+IKdLnM/fR
-   t/TDkzhE9A57sIztRNOHY6LRWCYCiRBBEz4rqKjD48NAPhRlc9+aQg/4c
-   XbemVKrKxkw8iTQxxftqxSGdrhdK9zT5K+XBUrFQrP1tmHmNtwx3TSKeG
-   FmbZRLpHvzt3nET1tuLOhPBNzeHIzauMWsSb+ogDeN6Mv4UaIZl9Rspzu
-   KakiEllZYvqrmIB9s1QS5BaAH7FTUxbgEvdKeBxML6tWvMUXwrAnm4YUe
-   g==;
-X-CSE-ConnectionGUID: TWWfOEs6TGi31IGmK5jdIA==
-X-CSE-MsgGUID: peKchv+/Qf2Bar2BoBqdtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="40853903"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="40853903"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 03:45:14 -0800
-X-CSE-ConnectionGUID: jsn3bgY9Q3q7kbMFFMLyTA==
-X-CSE-MsgGUID: SzBbv3ZZRgSFjOdBylY0aA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="139266681"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 03:45:12 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1tmWta-0000000EgPS-1D9Z;
-	Mon, 24 Feb 2025 13:45:10 +0200
-Date: Mon, 24 Feb 2025 13:45:10 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] gpiolib: use the required minimum set of headers
-Message-ID: <Z7xbxv-fkpXR4RXs@smile.fi.intel.com>
-References: <20250221123001.95887-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1740397626; c=relaxed/simple;
+	bh=ZFclqke8ZUlQE4gwyCnHc4Wc6HXOb7AO198d6seDxnQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XihxOEGM9Kkw1NvPa25gBJQRlkc06x13N9Lrk8F06Ev0I3sOSt37iEPQ7zQ4VCN9W9jmZdKunotKpler5mHHrVqUIlbLgTulpIpH2P4o8hlVSExwzblXB/nzAH1p46L1V9a+aqLuk2s8wj+qNIFZkgwwFx1mTCIFoJxSICDHu+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C87211756;
+	Mon, 24 Feb 2025 03:47:19 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 74C5F3F6A8;
+	Mon, 24 Feb 2025 03:47:01 -0800 (PST)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-sound@vger.kernel.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] xlnx: dt-bindings: Convert to json-schema
+Date: Mon, 24 Feb 2025 11:46:44 +0000
+Message-ID: <20250224114648.1606184-1-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221123001.95887-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 01:30:01PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Andy suggested we should keep a fine-grained scheme for includes and
-> only pull in stuff required within individual ifdef sections. Let's
-> revert commit dea69f2d1cc8 ("gpiolib: move all includes to the top of
-> gpio/consumer.h") and make the headers situation even more fine-grained
-> by only including the first level headers containing requireded symbols
-> except for bug.h where checkpatch.pl warns against including asm/bug.h.
+This series converts the folling Xilinx device tree binding documentation:
+ - xlnx,i2s
+ - xlnx,audio-formatter
+ - xlnx,spdif
+to json-schema.
 
->  #include <linux/bits.h>
-> -#include <linux/bug.h>
->  #include <linux/err.h>
-> -#include <linux/errno.h>
-> -#include <linux/kernel.h>
->  #include <linux/types.h>
+To simplify the testing a linux tree rebased on 6.13-rc4 is accessible
+at [1].
 
-...
+[1] https://codeberg.org/vincenzo/linux/src/branch/xlnx/dt-bindings/v4
 
-> +#include <asm/errno.h>
+Note: These bindings are required for future work on the ARM Morello
+Platforms device tree.
 
-> +#include <asm/errno.h>
+Cc: Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 
-> +#include <asm/errno.h>
+Changes
+=======
+v3:
+  - Address an issue with the MAINTAINERS file reported by the kernel
+    test robot. 
+v2:
+  - Address review comments.
+  - Rebase on 6.14-rc4.
 
-These are redundant as err.h guarantees to include asm/errno.h
-Dropping this will also satisfy the `make includecheck`.
+Vincenzo Frascino (4):
+  ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
+  ASoC: dt-bindings: xlnx,audio-formatter: Convert to json-schema
+  ASoC: dt-bindings: xlnx,spdif: Convert to json-schema
+  MAINTAINERS: Add Vincenzo Frascino as Xilinx Sound Driver Maintainer
+
+ .../bindings/sound/xlnx,audio-formatter.txt   | 29 ------
+ .../bindings/sound/xlnx,audio-formatter.yaml  | 76 +++++++++++++++
+ .../devicetree/bindings/sound/xlnx,i2s.txt    | 28 ------
+ .../devicetree/bindings/sound/xlnx,i2s.yaml   | 68 ++++++++++++++
+ .../devicetree/bindings/sound/xlnx,spdif.txt  | 28 ------
+ .../devicetree/bindings/sound/xlnx,spdif.yaml | 92 +++++++++++++++++++
+ MAINTAINERS                                   |  8 ++
+ 7 files changed, 244 insertions(+), 85 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,spdif.yaml
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
