@@ -1,224 +1,107 @@
-Return-Path: <linux-kernel+bounces-528364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4FDA416ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:10:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4057DA416F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1AE718952A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:10:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94AA83A733A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAED24166E;
-	Mon, 24 Feb 2025 08:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91538241675;
+	Mon, 24 Feb 2025 08:11:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDtL7Ii3"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgFqjvSn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B098518EFD4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DAE17548
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384632; cv=none; b=dMhyZlPk5YT13X2FxtwxBynrUqkEoFd3ygQWhvGUHWFRX7523gvqUX2ktFoVvZpu4/6Wgs/LwjV4FfsLS1JxDSAgOXKQlj+IOgkKufdHzNuAZUgXJ3lJSRXYKzLyKytPPQG+Y9ILn/vM46AlDbyCbfRRRD1/Tnynpx2GOHHDz6A=
+	t=1740384666; cv=none; b=jDp/K/nwiAqC6Dcl9XljsNYq1UtaDmmCVGx98TkgqMTs6uOyWzRjEztCrPyg5EmEtN9HqUTwplEqdRMu/Pw2l7SYB8XtWmI9OvtVXrN4iPWvlc3UR7kkEiB+xtFHOrRAKdtpFT7Z/ckaKeJSRXORgwvOSFotSN8z4wzpDjQAmVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384632; c=relaxed/simple;
-	bh=u8TrK9hYcC65/WeviX8JWvUBq96uK8ZgDDuf0b8u/ew=;
+	s=arc-20240116; t=1740384666; c=relaxed/simple;
+	bh=wpaTUIwidiE3GZ8YUXT7uXhOSdSbxhbvnoqkGr7J4/M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iSHBTgzg5dOO9pikM7oo7c8lw9fiRDAo2RIS4wGHVr06CX6DaWSpSdeRo6gxFy1r23sBo3wQ4kRyZDJbOYLsUaxx931DhMg+9ESMg+lUJY3G0cSAzZVlxnNt/yfH6TILYSBG0lfpM5yLEcOiYc97wWBJQouzfr3qY9pObp4y9nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WDtL7Ii3; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-868fa40bb9aso1244687241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:10:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740384628; x=1740989428; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5rAfh0+TUi6TP02l6JXkpyL3aEAeCTCEFN0Bf4ro6c4=;
-        b=WDtL7Ii3e5ZCQ+E5MAdnHj3IMXVFC4PGp9uY9bQZ6doH2gSTSW7u+wOANozq0gjsBr
-         A1rD1fgXmpQd0EJAXfE+rABAsKDmjdw8q6c26SUXqc3oRc9j4ldslefh7K69bcU6rn0M
-         m3KBevC0UK1L2BObnjH8uYfq8E3PQwzYYSx6csEdQZLgQHUCwK+HLppkZ09QJSn+O1Fw
-         bxYlxavX7rIyGT/hgrcSJbyOBkhphWv6zXBHPO/nrCa9sY5OGIGT7TkYA+OvhQRN4mny
-         H+sFi0qS67k1WYO4sd2pYRWk2XWrGxXrMZJDwidFlj19EGqEhZhiBq7Is7Nr/4vAox9Y
-         58Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740384628; x=1740989428;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5rAfh0+TUi6TP02l6JXkpyL3aEAeCTCEFN0Bf4ro6c4=;
-        b=PEcqq27P6UyCbyXvibFrHY5GozXanXIXlMK61CJXW+tBaTf0p8vtJmq7QGWsLqbSpJ
-         O7CojguQYvTNgyNEteQKcnHIKyrnKDtaIv3WDhlKWAjs3bP3eGPj4Tulf9GTSfZWlR6Z
-         QTTaS7NsqIgjdLVxY25AMc09hYOnAZmfq7E5URVuFo8Nmlfzy4Wy96ZN9acBTOoyXJNz
-         uWp0ROh2iM1pImUrU3zC6e2WA1KopWHzK2pJ8zoCzQyhO3S9RQMw19BoRPsfVEU2lVWV
-         6OLMLbAyLy0qEev0DTXRQK5SkRRo/two+b34kuIaOnsxn0QccqSTBeXhAc2Fa9Lk0PIw
-         17Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVluH2i5q8+79DmrJWufdoYtcbGH5wsc4S4LTDm2jJEORGu5QM/yLKmqL9Q3d9MxLjlDatTAye78TsaGw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9UGA7GYzLOEbSt37e4gFJMtynPX8FDOQ0tgCoVFSzoy8LbuwL
-	U915fCWbXcNh/85JsDIYmp7DtUkmdxHmvotV3MqWhTDRdVeMan8oVCYaGK9pT8V8NmotznhxruG
-	r/d7FXzDc1DZSwe931CCCaHquuIdT/82MQ/++gQ==
-X-Gm-Gg: ASbGncv4x5cQzf+TppTPxHY76qF+Nh/lcyDLRgeVIzXd+neS8oV+KEcdpPbZ6tjC6X6
-	kQj2IqEV+1cicVUuRXZqUgmyxcSHvz4EXeI/oPbnCDNTk2IBsdAEVsQpoU4o1P097eFFClDuUyy
-	FU/x3tBc1ulFE30AVJJIRlHkkGWTPCPiZ7GcyDgMcu
-X-Google-Smtp-Source: AGHT+IFtTzjpecd4WNbfJBrPmnNi8gxRNYitwtUYtxG//98YquxYsUWInAxrtNW/QbRt9da1gEn7CzWKqroyZsH5TV8=
-X-Received: by 2002:a05:6102:c8c:b0:4bb:e8c5:b172 with SMTP id
- ada2fe7eead31-4bfc0098918mr5692399137.8.1740384628553; Mon, 24 Feb 2025
- 00:10:28 -0800 (PST)
+	 To:Cc:Content-Type; b=amyHeZQXezKF1lxbF96R7Ev/X/AVpIRSVLWSJ+ez7dJsi4jGUYaJUS9wB0rSlvoKTsPFAuMGojo9/h8lHFrQkt9C+UnyS+sRHdquOOu64YWNLDwMjEXIOqTwFVDG/eCiO6rlV4YBvtMi90iPzXh+/T659oazPdijcsg3up4QLK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgFqjvSn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73853C4CEE6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740384665;
+	bh=wpaTUIwidiE3GZ8YUXT7uXhOSdSbxhbvnoqkGr7J4/M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MgFqjvSnEXfT2dN4JbrW/VYqYgG0nWOsQqlUPQ9awS2RrhQZZkwg2OtAbIQLfcY7P
+	 tmsnful6TtvtS4w6HHnFxFlDrugVAC3GoSEtUbRJonDvXS2eElxEb5eqcI6VYxVsCj
+	 3sSUMT+fkiS1zfZhpJIrexfUdY7cl6RnZ0p3HD3ZgaDgklHkiUtE1fM4kpOxe6cPv3
+	 yyCBCIvdRTFbTEbCeJXshwAP6fr2U177a81O0o6wUp76E+U0eybAZ3PAjr0JuX6UGo
+	 03moZsKieEmNVnbMZ/Q+aH69KZK4RC9v1/OH3RdWLpiqERS7ufPP9WkuKKnEaGWrZS
+	 QbcQLVyKeM8xw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5452ed5b5b2so4154310e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:11:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCX2UxPoI1ob+6b4vdpokm/+4uR2HtJ1aE0xhehEoYT//jzr9ACa+KgyYb4dm6ngzc0IIodZEhKaxo2xH1M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycNDnxK466Q09XkoaYxmvHairs2DvXfWy++iMBpfw+hqU054Ho
+	Hpb4BS6umv+iYo+ZG/ROVuFhbmGZM/gZetF7NcFd2QNKAMILjx+6EYULl/k0C63xt807dcnB4hh
+	+27+ePAFkeROyvHMv+sGvHiL3pFs=
+X-Google-Smtp-Source: AGHT+IGWAdvh8Uk5kDUolWyUpntZPHToLER0sCEfBzrsbMTUct8qTsWzLwAR4xPwH4meMXT3mHvjOWDudLYqwdHehTo=
+X-Received: by 2002:a05:6512:2211:b0:545:58e:e543 with SMTP id
+ 2adb3069b0e04-54838ee9334mr4265598e87.21.1740384663815; Mon, 24 Feb 2025
+ 00:11:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220104545.805660879@linuxfoundation.org>
-In-Reply-To: <20250220104545.805660879@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 24 Feb 2025 13:40:16 +0530
-X-Gm-Features: AWEUYZkqBO2UQkfmgOsDe-rD71hPOBWtwJTpV4dFszBoXqdjV-sFVpZiDA8Hqo4
-Message-ID: <CA+G9fYuoYfGft-2D88dCVQeB5mTvyf6ADkWau172BZs2SD99VQ@mail.gmail.com>
-Subject: Re: [PATCH 6.1 000/569] 6.1.129-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
+References: <20250224062111.66528-1-kpark3469@gmail.com>
+In-Reply-To: <20250224062111.66528-1-kpark3469@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 24 Feb 2025 09:10:52 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXG5uTUH3--A3OtPQcMqj4hiNrONL6tUKkmwqmjkOYMuyQ@mail.gmail.com>
+X-Gm-Features: AWEUYZml3zcWsZttkBGhQ352lKORrZnbm7B76-btGrHm4knlWfWj1Hj1AfPuHtk
+Message-ID: <CAMj1kXG5uTUH3--A3OtPQcMqj4hiNrONL6tUKkmwqmjkOYMuyQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kaslr: consider parange is bigger than linear_region_size
+To: keun-o.park@katim.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	catalin.marinas@arm.com, will@kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Feb 2025 at 16:28, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, 24 Feb 2025 at 07:21, Keun-O Park <kpark3469@gmail.com> wrote:
 >
-> This is the start of the stable review cycle for the 6.1.129 release.
-> There are 569 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> From: Keuno Park <keun-o.park@katim.com>
 >
-> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
-> Anything received after that time might be too late.
+> On systems using 4KB pages and having 39 VA_BITS, linear_region_size
+> gets 256GiB space. It was observed that some SoCs such as Qualcomm
+> QCM8550 returns 40bits of PA range from MMFR0_EL1. This leads range
+> value to have minus as the variable range is s64, so that all the
+> calculations for randomizing linear address space are skpped.
+> As a result of this, the kernel's linear region is not randomized.
+> For this case, this patch sets the range by calculating memblock
+> DRAM range to randomize the linear region of kernel.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.1.129-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.1.y
-> and the diffstat can be found below.
+> Change-Id: Ib29e45f44928937881d514fb87b4cac828b5a3f5
+> Fixes: 97d6786e0669 ("arm64: mm: account for hotplug memory when randomizing the linear region")
+> Signed-off-by: Keuno Park <keun-o.park@katim.com>
+> ---
+>  arch/arm64/mm/init.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 >
-> thanks,
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9c0b8d9558fc..2ee657e2d60f 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -290,6 +290,11 @@ void __init arm64_memblock_init(void)
+>                 s64 range = linear_region_size -
+>                             BIT(id_aa64mmfr0_parange_to_phys_shift(parange));
 >
-> greg k-h
+> +               if (range < 0) {
+> +                       range = linear_region_size -
+> +                               (memblock_end_of_DRAM() - memblock_start_of_DRAM());
+> +               }
+> +
 
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 6.1.129-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: fdd3f50c8e3e56aa4407011c21e440d1f39bf99f
-* git describe: v6.1.128-570-gfdd3f50c8e3e
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.1=
-28-570-gfdd3f50c8e3e
-
-## Test Regressions (compared to v6.1.126-65-gc5148ca733b3)
-
-## Metric Regressions (compared to v6.1.126-65-gc5148ca733b3)
-
-## Test Fixes (compared to v6.1.126-65-gc5148ca733b3)
-
-## Metric Fixes (compared to v6.1.126-65-gc5148ca733b3)
-
-## Test result summary
-total: 104367, pass: 81540, fail: 3794, skip: 18597, xfail: 436
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 133 total, 133 passed, 0 failed
-* arm64: 20 total, 20 passed, 0 failed
-* i386: 26 total, 22 passed, 4 failed
-* mips: 24 total, 24 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 31 total, 30 passed, 1 failed
-* riscv: 9 total, 9 passed, 0 failed
-* s390: 11 total, 11 passed, 0 failed
-* sh: 12 total, 10 passed, 2 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 32 total, 32 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Please explain how this ensures that hotplug memory still works as expected.
 
