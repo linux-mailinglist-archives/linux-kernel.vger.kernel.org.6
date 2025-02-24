@@ -1,167 +1,158 @@
-Return-Path: <linux-kernel+bounces-528447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331C4A417C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:49:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B63A417C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 501CE18874C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:48:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3FF17A25EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F6A23C8C9;
-	Mon, 24 Feb 2025 08:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="35bQaqVJ"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB76B242921;
+	Mon, 24 Feb 2025 08:49:52 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CD520A5EF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5761818A6D5;
+	Mon, 24 Feb 2025 08:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386915; cv=none; b=HY7L2EOdvj5oAum4TGdygcHmfJTOx8FRo4/zNw3LaEnAm+2yo/IlLXLsQslwPnDm1mOmH6cN00N4p6XktB4gDB1XuzSjiFXUTMc1K0Ymc66K5tWoCmnh3yDPpX9EwF0Udj2RDnsPGyQYFnJB+1bFUNeMs28fFdHHaPOPy9TSvpM=
+	t=1740386992; cv=none; b=q81+iFn5KlV0jpB8Lx6pOoL+mi8Ltv2QYtlr/FJ7TRHwc/cg0RyFKEAqGPkoKln7PeB4Ta2Obug5mG9F61m5xuiq1xyXW3d0ayCSpLhSjHPziwol+rQs2hidu6e4wCjShXQ7tt6m25HOwoeIOO9ObS1JeDMPTOijZAKRNri+V/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386915; c=relaxed/simple;
-	bh=7RbjGvmVrtFqA0ZQvxGPPCHbndaFIwxjUK767xQvYow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VuQE1ancriBtHm0Xdcf1+MgNATkgr8pko1YkJRYCj8ApigYDCeGAYbr1ACqmrbZEqsl77qwo2zd1I6sAk89g2t2u/m/Ssj62mX2tuYNfZ3NtxxsH1+ngxPlmVFs1rhHlGAEPfjN3ilYiyZETXQaVqxp+9g2U9EHWTHP+V5rhAmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=35bQaqVJ; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30761be8fa7so38335941fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:48:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740386912; x=1740991712; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M4OIur9r2TccLLhBHIsDK1vsWiP0yZKdzQkTaFNLmec=;
-        b=35bQaqVJY4WOdYhQNnSz67aw741QEiREBPYN7xL2yCV+BPd4pm7fAL0YXNGkTP/RpG
-         CRiklOdT07oICU75BVNXX90xKxOL9wwkkpLRkWWBMSg2OlNzBdPt3eJRaMsUiv6/4p5e
-         ny72vDWJlzOrWEgkd1jJRMgavP4zujNZTHSWkHWbbXj//xv4rOeSGAPIjZd/TE9QkRBH
-         3uAh7xgUTVex4HnvqY6Y72+JM0RsxTQRo1xNTpBh1b/yHKi9lyrVI3mog57lOlGhe7aR
-         eOnjgaP8sxrNeqxlisuX+IxlBkz+yCwSZoluobIIUHCYJR6hK9aOdt5kaInk0iaJe7td
-         EzJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740386912; x=1740991712;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M4OIur9r2TccLLhBHIsDK1vsWiP0yZKdzQkTaFNLmec=;
-        b=cqV6ZvkKR1kyKHBEG7w4oJXtTR4f6RvrZ/ZVmILh8bx2ruVDYzcb9lIU4saHdQyDGa
-         qrXCeigWAvGw53Q4dnQSoyEwlBYYJ7vDII91akxQbX5dIQNG+36ntTS/E1U5Ifyb79hr
-         gfrXBOp8xhWvV9rp1OS4xndoodnQYS3dsNBC9IGZOoP9Zh+MHfjhuXCrb5vzNQwmwOHr
-         8Rb0qfVjugUE1CzdkvXK7YlCczOg6sbfWpfH/QqpoC//IKHaeCkOT0cGJBH8lbIN1uki
-         uGisU72rGy4TpXdunSjAxbgX2U+FioAX5KVBTN6nSgOKxy8eFNQBGY2qCbivVVxvdXOQ
-         NJ1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVbvHspggGZ4s5XFO0NE/IykWcU5T1/PJCj7Udn5uFpQlpaFZH/Oo/VsowvVs2DEh0a5SAoQP/61rDcjdg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8oZKxldERt0gqVj7wulIBhc/qN1Cavt3JvRdZQy9ugt0YeLk4
-	xcPsWYHhlC07pMvSaP5A14jdGAj2D0S0lm4QEqC//vhr/FjkUpw7W9L6mzV0YoKaROFAg/PRPih
-	JCixOObYnLkTYKeLCnwmicjxoZO2l8rVBzJAv
-X-Gm-Gg: ASbGncuywFX4q6Yyj9ETft0Nt+khn+J9NahAIseibvVWnN+qxDE4YsSfrvlZ1P1uSvf
-	CAM068IQI8oarDHn2uaIc3QVUsT8Kud0U4a+ZedocTkmaeGaUjhy3T+I8GX+Ft6hstB/wE3d+X2
-	3CxJeETGdc7js4H5LY3+sOoAoYUmg2RmcXiR/GX8nV
-X-Google-Smtp-Source: AGHT+IHoulG8yAuPTtFY5mi/Qv8Hzh39cGA58YppozdQkacVGZqNqCguNZ60Yz072X1oNPnaQgYje/Vw05VduO2Mkq0=
-X-Received: by 2002:a05:6512:238a:b0:545:d7d:ac4a with SMTP id
- 2adb3069b0e04-54838f5a594mr4606853e87.36.1740386911883; Mon, 24 Feb 2025
- 00:48:31 -0800 (PST)
+	s=arc-20240116; t=1740386992; c=relaxed/simple;
+	bh=4v04aWR/7PVHIVTNajs1BuaEeWwIotLZUNbAIwD4iFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mz/NnP2DtE9blvZhzHBOJ+zbv2lo4vS6iTCarlc9Sn3faBgV3Dtpgei07DQenyisz+33QZVOavhEAZmZaOEizmvfsvd3JD+LgQh8PB4g5x4qN5rpeIBrKad/SCbHjP5Q2RGOH1EI5HTLijWSXtA3okClYDD3D5YmmF1yKld/zhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5201BC4CED6;
+	Mon, 24 Feb 2025 08:49:49 +0000 (UTC)
+Message-ID: <71d343e7-ff9f-44e6-abfc-64425640c4f6@xs4all.nl>
+Date: Mon, 24 Feb 2025 09:49:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1739894594.git.dvyukov@google.com> <5e105b1382cd43d05f1d3a80958e4f50f32144c8.1739894594.git.dvyukov@google.com>
- <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
-In-Reply-To: <Z7dHid-IL7OAPmUa@gourry-fedora-PF4VCD3F>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 24 Feb 2025 09:48:19 +0100
-X-Gm-Features: AWEUYZlAU3W0s0mngiGlITQm0EeoHzeog8X8ALg0WE5m7tuuOWEewj68nHv7K4s
-Message-ID: <CACT4Y+btS62MDJLRToydRfK-QAMBiihv9d7Du=zEf5U_GbiOMg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] selftests: Extend syscall_user_dispatch test to check
- allowed range
-To: Gregory Price <gourry@gourry.net>
-Cc: krisman@collabora.com, tglx@linutronix.de, luto@kernel.org, 
-	peterz@infradead.org, keescook@chromium.org, gregory.price@memverge.com, 
-	Marco Elver <elver@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] media: xilinx-tpg: fix double put in xtpg_parse_of()
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Michal Simek <michal.simek@amd.com>, "Rob Herring (Arm)" <robh@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
+ linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f41dfe97-6e6c-47b4-91bf-199c5938c6d0@stanley.mountain>
+ <20241105165928.GJ14276@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241105165928.GJ14276@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Feb 2025 at 16:17, Gregory Price <gourry@gourry.net> wrote:
->
-> On Tue, Feb 18, 2025 at 05:04:36PM +0100, Dmitry Vyukov wrote:
-> > diff --git a/tools/testing/selftests/syscall_user_dispatch/sud_test.c b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> > index b0969925ec64c..fa40e46e6d3e9 100644
-> > --- a/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> > +++ b/tools/testing/selftests/syscall_user_dispatch/sud_test.c
-> ... snip ...
-> > @@ -110,31 +111,15 @@ TEST(bad_prctl_param)
-> >       /* PR_SYS_DISPATCH_ON */
-> >       op = PR_SYS_DISPATCH_ON;
-> >
-> > -     /* Dispatcher region is bad (offset > 0 && len == 0) */
-> > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-> > -     EXPECT_EQ(EINVAL, errno);
-> > -     EXPECT_EQ(-1, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
-> > -     EXPECT_EQ(EINVAL, errno);
-> > +     /* All ranges are allowed */
-> > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, 0x1, 0x0, &sel));
-> > +     EXPECT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, op, -1L, 0x0, &sel));
->
-> A 0 length is ambiguous and nonsensical in every other context, not sure
-> why you'd allow it here.
+On 05/11/2024 17:59, Laurent Pinchart wrote:
+> Hi Dan,
+> 
+> Thank you for the patch.
+> 
+> On Mon, Nov 04, 2024 at 08:16:19PM +0300, Dan Carpenter wrote:
+>> This loop was recently converted to use for_each_of_graph_port() which
+>> automatically does __cleanup__ on the "port" iterator variable.  Delete
+>> the calls to of_node_put(port) to avoid a double put bug.
+>>
+>> Fixes: 393194cdf11e ("media: xilinx-tpg: use new of_graph functions")
+>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> The offending commit wasn't merged through the media tree, so we can't
+> easily merge the fix there either. I'm fine merging this fix through
+> Rob's tree.
 
-Yes, but it's also not special in any way. One asks for a range of N
-bytes, one gets a range of N bytes. Works for 0 as well. We can move 0
-to an own special category, and add production code to support that.
-But I don't see strong reasons to do that. It's like it's possible to
-do read/write with 0 bytes to get, well, exactly that.
-How strong do you feel about special casing 0?
+I don't see this patch merged anywhere. Should I just pick it up? I think
+it got lost in the noise.
 
-> > +bool test_range(unsigned long offset, unsigned long length)
-> > +{
-> > +     nr_syscalls_emulated = 0;
-> > +     if (prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, offset, length, &glob_sel))
-> > +             return false;
->
-> This creates an ambiguous failure state for your test. Is it failing
-> because the range is bad or because you didn't intercept a syscall?
->
-> Better to be more explicit here. It makes it difficult to understand
-> what each individual test is doing at a glance.
+The commit 393194cdf11e is now available in our media tree, so it should
+be fine, I think, if I pick it up. It needs a CC to stable as well, right?
+I can add that.
 
-Good point. Done in v2.
+Regards,
 
-> > +     SYSCALL_DISPATCH_ON(glob_sel);
-> > +     return syscall(MAGIC_SYSCALL_1) == MAGIC_SYSCALL_1 && nr_syscalls_emulated == 1;
-> > +}
-> > +
-> > +TEST(dispatch_range)
-> > +{
-> > +     ASSERT_EQ(0, setup_sigsys_handler());
-> > +     ASSERT_EQ(0, prctl(PR_SET_SYSCALL_USER_DISPATCH, PR_SYS_DISPATCH_ON, 0, 0, &glob_sel));
-> > +     SYSCALL_DISPATCH_ON(glob_sel);
-> > +     ASSERT_EQ(MAGIC_SYSCALL_1, syscall(MAGIC_SYSCALL_1));
-> > +     TH_LOG("syscall_addr=0x%lx", syscall_addr);
-> > +     EXPECT_FALSE(test_range(syscall_addr, 1));
-> > +     EXPECT_FALSE(test_range(syscall_addr-100, 200));
-> > +     EXPECT_TRUE(test_range(syscall_addr+1, 100));
-> > +     EXPECT_TRUE(test_range(syscall_addr-100, 100));
-> > +     /* Wrap-around tests for everything except for a single PC. */
-> > +     EXPECT_TRUE(test_range(syscall_addr+1, -1));
-> > +     EXPECT_FALSE(test_range(syscall_addr, -1));
-> > +     EXPECT_FALSE(test_range(syscall_addr+2, -1));
->
-> If you are planning to include 0 as an allowed length, you need to
-> demonstrate what it does.
+	Hans
 
-Done in v2.
+> 
+>> ---
+>>  drivers/media/platform/xilinx/xilinx-tpg.c | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/xilinx/xilinx-tpg.c b/drivers/media/platform/xilinx/xilinx-tpg.c
+>> index cb93711ea3e3..7deec6e37edc 100644
+>> --- a/drivers/media/platform/xilinx/xilinx-tpg.c
+>> +++ b/drivers/media/platform/xilinx/xilinx-tpg.c
+>> @@ -722,7 +722,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
+>>  		format = xvip_of_get_format(port);
+>>  		if (IS_ERR(format)) {
+>>  			dev_err(dev, "invalid format in DT");
+>> -			of_node_put(port);
+>>  			return PTR_ERR(format);
+>>  		}
+>>  
+>> @@ -731,7 +730,6 @@ static int xtpg_parse_of(struct xtpg_device *xtpg)
+>>  			xtpg->vip_format = format;
+>>  		} else if (xtpg->vip_format != format) {
+>>  			dev_err(dev, "in/out format mismatch in DT");
+>> -			of_node_put(port);
+>>  			return -EINVAL;
+>>  		}
+>>  
+> 
 
-> > +     SYSCALL_DISPATCH_OFF(glob_sel);
-> > +}
-> > +
-> >  TEST_HARNESS_MAIN
-> > --
-> > 2.48.1.601.g30ceb7b040-goog
-> >
 
