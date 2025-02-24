@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-529511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD1AA42736
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:02:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C77A4272C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6136A3B5BC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B53C188AC09
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F062B261593;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6862D261575;
 	Mon, 24 Feb 2025 15:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="tP4zyfNX"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="AgrR/Iqz"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F00221F00;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F71233714;
 	Mon, 24 Feb 2025 15:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740412518; cv=none; b=PgSlT/W32zoOvyLlw9p37p/3b8IgnHIsxbwQpiF2lXMUITo0XNvZ6EJBrOcIgDEZQIHm9Ij50Ht6Nc6+6Hs7kNxKq/SPG4zySL2chB93bwOM85RYxjTiB/bIiJYYUliRkY88gx9Lbf4qh9oNJNaotRlCF8CQoDwFA/4Gtbg0AqQ=
+	t=1740412517; cv=none; b=JlzEy6bwNkoy9KKGoJ18jMZrE+TFtRSMHxu/9P7RN/dsCloBe9UtKvLelWynPRl4YR/uHtlA9fqgUZ4pv25s7o77BYmUpEOix7uccbGwmlC8G9wmxWE9x0qIDApdHi3LC1jHOXK3u7GKcT601K8NPRa0K13Mgqx/abtq5f4t2RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740412518; c=relaxed/simple;
-	bh=zUqgJStw7LAI5K7zUabnJlCU9IfT32qqy1wWSMnNcCk=;
+	s=arc-20240116; t=1740412517; c=relaxed/simple;
+	bh=b7FaFj06eG3NydoTECTJkSmRx8X6pGTreLFj5Z0+02A=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eyk4luAUIWV0xjhMmWzgYJoAd4BGkWe8ebKYngAxFtXEyBmgeTg6oq8A7j08smPQkL2FBeZxcR/W06G7DCSmpLXeNrXJ76ilnyK+sQdoj6aUpwcAX+JlJDmdDeMwkXHV7MltCCMJSeO6EPP9tA21s/1KClE31hTYR4uV+yHtY5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=tP4zyfNX; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=uPbMkbWc01Oe1QPQ6h+pDh8otbjvpmNBcU7kwQCYrKFY8q/KTLGNUkZ9MnhL1LXFbOKr9iW2UCM0U3K3LpNYkhM5z8tJ3JC1WaZKaMGbOBmPVMjCEFDzKF3f9WQmDyJYmuR/GNoWw8O1AHogEYtAK80Il2KKk7nGdTfSQKTt01o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=AgrR/Iqz; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 10D2D1FB68;
+	by mail11.truemail.it (Postfix) with ESMTPA id BFB271FB8C;
 	Mon, 24 Feb 2025 16:55:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1740412507;
-	bh=+1ZoflOzJXeYt9WTAcrPFAGrSpNtmA3nQiz905jptCk=; h=From:To:Subject;
-	b=tP4zyfNXvNXxjSpuOUYQR4sT0JrwQbpKB+VV6qSX71UVhCke+8iGYpznuECeKO82J
-	 ZkHCtpJJMsrbMojhYu175wtYJ4Afv3/YGuV1QAvkNP0oFEGixv40oeiR31oPsJ2OMW
-	 6Cc36vNJbK3VsxP+t5T1BgQf9JTLtd3Tk4VNmzrHcj/2Be8hxD0gANRdXzveYIiVyQ
-	 srt075bonoXcCgw3GxAG928P0krpowUIylpfGKwRGWKjPrQUOfxtuTT3NN4dwKd/22
-	 NRsoBdSDgPGZz0C5+o3+blrOkLlKqK50MretDGbQJ8uEW4ooNy7i15ORqgNXVZmbVk
-	 wzhy3m/ahT89w==
+	s=default; t=1740412508;
+	bh=lEX6XPbraoU2mAPkLBWD9pXLXIQQnoMkWm/NaiyYKYE=; h=From:To:Subject;
+	b=AgrR/IqzsveuHFSqCthzpjXhoycPAzH1DuvpASASqGv6vTYTNOCHvSG3+af6HnLPR
+	 iS33eekimvaeevtwksv3P/Kyrtiu/0caNoVvFUnNR9DNwlNlmEAjqiReQRBMeEbHPl
+	 0XjKfjmDb/IofUPD4wdE5+ZnwJ5gHm93pMQRzyzKidRs4GTSzhjJRKmhRbyEvwQOQI
+	 UVtdn2rk2msO6PGZoSHvMn+Hax6EvL2D8fbYekrDNGM+eWaSxLzTGRMUbsvm7hE8cT
+	 LDJ7IJ51ieD42z0TyktzZYSaevgYQgI/JWEM5KRSwcbNTUAirE6eQducQ/e36uJadC
+	 72zAF6f6407hQ==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -58,9 +58,9 @@ Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
 	linux-kernel@vger.kernel.org,
 	Francesco Dolcini <francesco.dolcini@toradex.com>,
 	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and EQ support
-Date: Mon, 24 Feb 2025 16:54:58 +0100
-Message-Id: <20250224155500.52462-4-francesco@dolcini.it>
+Subject: [PATCH v2 4/5] ASoC: wm8904: get platform data from DT
+Date: Mon, 24 Feb 2025 16:54:59 +0100
+Message-Id: <20250224155500.52462-5-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250224155500.52462-1-francesco@dolcini.it>
 References: <20250224155500.52462-1-francesco@dolcini.it>
@@ -74,27 +74,17 @@ Content-Transfer-Encoding: 8bit
 
 From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-Add two properties to select the IN1L/DMICDAT1 and IN2R/DMICDAT2
-functionality:
+Read in optional codec-specific properties from the device tree.
+
+The platform_data structure is not populated when using device trees.
+This change parses optional dts properties to populate it.
+
 - wlf,in1l-as-dmicdat1
 - wlf,in1r-as-dmicdat2
-
-Add a property to describe the GPIO configuration registers, that can be
-used to set the four multifunction pins:
 - wlf,gpio-cfg
-
-Add a property to describe the mic bias control registers:
 - wlf,mic-cfg
-
-Add two properties to describe the Dynamic Range Controller (DRC),
-allowing multiple named configurations where each config sets the 4 DRC
-registers (R40-R43):
 - wlf,drc-cfg-regs
 - wlf,drc-cfg-names
-
-Add three properties to describe the equalizer (ReTune Mobile), allowing
-multiple named configurations (associated with a samplerate) that set
-the 24 (R134-R157) EQ registers:
 - wlf,retune-mobile-cfg-regs
 - wlf,retune-mobile-cfg-names
 - wlf,retune-mobile-cfg-rates
@@ -104,135 +94,235 @@ Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
 Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
-v2: Added an example of how to use the ReTune Mobile config properties
-v1: https://lore.kernel.org/lkml/20250206163152.423199-4-francesco@dolcini.it/
+v2: Fixed wm8904_parse_retune_cfg_from_of: refer to
+    pdata->retune_mobile_cfgs[i].name instead of pdata->drc_cfgs[i].name
+v1: https://lore.kernel.org/lkml/20250206163152.423199-5-francesco@dolcini.it/
 ---
- .../devicetree/bindings/sound/wlf,wm8904.yaml | 106 ++++++++++++++++++
- 1 file changed, 106 insertions(+)
+ include/sound/wm8904.h    |   3 +
+ sound/soc/codecs/wm8904.c | 189 +++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 191 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-index 329260cf0fa0..f4338efaee18 100644
---- a/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-+++ b/Documentation/devicetree/bindings/sound/wlf,wm8904.yaml
-@@ -38,6 +38,74 @@ properties:
-   DCVDD-supply: true
-   MICVDD-supply: true
+diff --git a/include/sound/wm8904.h b/include/sound/wm8904.h
+index 88ac1870510e..8b2c16b524f7 100644
+--- a/include/sound/wm8904.h
++++ b/include/sound/wm8904.h
+@@ -151,6 +151,9 @@ struct wm8904_pdata {
+ 	int num_retune_mobile_cfgs;
+ 	struct wm8904_retune_mobile_cfg *retune_mobile_cfgs;
  
-+  wlf,in1l-as-dmicdat1:
-+    type: boolean
-+    description:
-+      Use IN1L/DMICDAT1 as DMICDAT1, enabling the DMIC input path.
++	bool in1l_as_dmicdat1;
++	bool in1r_as_dmicdat2;
 +
-+  wlf,in1r-as-dmicdat2:
-+    type: boolean
-+    description:
-+      Use IN1R/DMICDAT2 as DMICDAT2, enabling the DMIC input path.
+ 	u32 gpio_cfg[WM8904_GPIO_REGS];
+ 	u32 mic_cfg[WM8904_MIC_REGS];
+ };
+diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
+index 2082ff12d336..83cf59f6e879 100644
+--- a/sound/soc/codecs/wm8904.c
++++ b/sound/soc/codecs/wm8904.c
+@@ -2168,6 +2168,184 @@ static const struct of_device_id wm8904_of_match[] = {
+ MODULE_DEVICE_TABLE(of, wm8904_of_match);
+ #endif
+ 
++/**
++ * wm8904_read_cfg_reg_arr() - Reads a subarray from a DT u16 array
++ *
++ * @np: pointer to the device_node struct
++ * @regs_property: DT property of interest
++ * @size: size of subarrays within the array
++ * @idx: index of the subarray of interest
++ * @out: output
++ *
++ * Helper to read a subarray from a DT uint16-array,
++ *  divided into equally sized arrays of size `size`
++ *
++ * Subset starts at `idx * size` and is of size `size`
++ *
++ * Return: 0 on success, negative error code otherwise
++ */
++static int wm8904_read_cfg_reg_arr(const struct device_node *np,
++				   const char * const regs_property,
++				   int size, int idx,
++				   u16 * const out)
++{
++	int i, offset, ret;
 +
-+  wlf,gpio-cfg:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 4
-+    maxItems: 4
-+    description:
-+      Default register values for R121/122/123/124 (GPIO Control).
-+      If any entry has the value 0xFFFF, the related register won't be set.
-+    default: [0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF]
++	offset = idx * size;
 +
-+  wlf,mic-cfg:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    minItems: 2
-+    maxItems: 2
-+    description:
-+      Default register values for R6/R7 (Mic Bias Control).
-+    default: [0, 0]
++	for (i = 0; i < size; i++) {
++		ret = of_property_read_u16_index(np, regs_property, i + offset, &out[i]);
++		if (ret)
++			return ret;
++	}
++	return 0;
++}
 +
-+  wlf,drc-cfg-names:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    description:
-+      List of strings for the available DRC modes.
-+      If absent, DRC is disabled.
++static int wm8904_parse_retune_cfg_regs(const struct device_node *np,
++					struct wm8904_pdata *pdata, int cfg_idx)
++{
++	return wm8904_read_cfg_reg_arr(np, "wlf,retune-mobile-cfg-regs",
++				       WM8904_EQ_REGS, cfg_idx,
++				       &pdata->retune_mobile_cfgs[cfg_idx].regs[0]);
++}
 +
-+  wlf,drc-cfg-regs:
-+    $ref: /schemas/types.yaml#/definitions/uint16-array
-+    description:
-+      Default register values for R40/41/42/43 (DRC).
-+      The list must be 4 times the length of wlf,drc-cfg-names.
-+      If absent, DRC is disabled.
++static int wm8904_parse_drc_cfg_regs(const struct device_node *np,
++				     struct wm8904_pdata *pdata, int cfg_idx)
++{
++	return wm8904_read_cfg_reg_arr(np, "wlf,drc-cfg-regs",
++				       WM8904_DRC_REGS, cfg_idx,
++				       &pdata->drc_cfgs[cfg_idx].regs[0]);
++}
 +
-+  wlf,retune-mobile-cfg-names:
-+    $ref: /schemas/types.yaml#/definitions/string-array
-+    description:
-+      List of strings for the available retune modes.
-+      If absent, retune is disabled.
++static int wm8904_parse_drc_cfg_from_of(struct i2c_client *i2c,
++					struct wm8904_pdata *pdata)
++{
++	const struct device_node *np = i2c->dev.of_node;
++	int i, n_cfgs;
 +
-+  wlf,retune-mobile-cfg-rates:
-+    $ref: /schemas/types.yaml#/definitions/uint32-array
-+    description:
-+      List of rates for the available retune modes.
-+      The list must be the same length as wlf,retune-mobile-cfg-names.
-+      If absent, retune is disabled.
++	n_cfgs = of_property_count_strings(np, "wlf,drc-cfg-names");
++	if (n_cfgs == -EINVAL)
++		return 0;
 +
-+  wlf,retune-mobile-cfg-regs:
-+    $ref: /schemas/types.yaml#/definitions/uint16-array
-+    description:
-+      Default register values for R134/.../157 (EQ).
-+      The list must be 24 times the length of wlf,retune-mobile-cfg-names.
-+      If absent, retune is disabled.
++	if (n_cfgs <= 0) {
++		dev_err(&i2c->dev, "Could not get wlf,drc-cfg-names length: %d",
++			n_cfgs);
++		return n_cfgs;
++	}
 +
-+dependencies:
-+  wlf,drc-cfg-names: [ 'wlf,drc-cfg-regs' ]
-+  wlf,drc-cfg-regs: [ 'wlf,drc-cfg-names' ]
++	pdata->drc_cfgs = devm_kzalloc(&i2c->dev,
++				       n_cfgs * sizeof(struct wm8904_drc_cfg),
++				       GFP_KERNEL);
++	if (!pdata->drc_cfgs)
++		return -ENOMEM;
 +
-+  wlf,retune-mobile-cfg-names: [ 'wlf,retune-mobile-cfg-rates', 'wlf,retune-mobile-cfg-regs' ]
-+  wlf,retune-mobile-cfg-regs: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-rates' ]
-+  wlf,retune-mobile-cfg-rates: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-regs' ]
++	for (i = 0; i < n_cfgs; i++) {
++		if (wm8904_parse_drc_cfg_regs(np, pdata, i)) {
++			dev_err(&i2c->dev,
++				"Invalid 'wlf,drc-cfg-regs[%i,:]'\n", i);
++			return -EINVAL;
++		}
 +
- required:
-   - compatible
-   - reg
-@@ -70,5 +138,43 @@ examples:
-             DBVDD-supply = <&reg_1p8v>;
-             DCVDD-supply = <&reg_1p8v>;
-             MICVDD-supply = <&reg_1p8v>;
++		if (of_property_read_string_index(np, "wlf,drc-cfg-names", i,
++						  &pdata->drc_cfgs[i].name)) {
++			dev_err(&i2c->dev,
++				"Invalid 'wlf,drc-cfg-names[%i]'\n", i);
++			return -EINVAL;
++		}
++	}
 +
-+            wlf,drc-cfg-names = "default", "peaklimiter", "tradition", "soft", "music";
-+            wlf,drc-cfg-regs =
-+                /* coded default: KNEE_IP = KNEE_OP = 0, HI_COMP = LO_COMP = 1  */
-+                /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
-+                /* coded default: KNEE_IP = -24, KNEE_OP = -6, HI_COMP = 1/4, LO_COMP = 1 */
-+                /bits/ 16 <0x04af 0x324b 0x0010 0x0408>,
-+                /* coded default: KNEE_IP = -42, KNEE_OP = -3, HI_COMP = 0, LO_COMP = 1 */
-+                /bits/ 16 <0x04af 0x324b 0x0028 0x0704>,
-+                /* coded default: KNEE_IP = -45, KNEE_OP = -9, HI_COMP = 1/8, LO_COMP = 1 */
-+                /bits/ 16 <0x04af 0x324b 0x0018 0x078c>,
-+                /* coded default: KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1 */
-+                /bits/ 16 <0x04af 0x324b 0x0010 0x050e>;
++	pdata->num_drc_cfgs = n_cfgs;
++	return 0;
++}
 +
-+            wlf,gpio-cfg = <
-+                0x0018 /* GPIO1 => DMIC_CLK */
-+                0xffff /* GPIO2 => don't touch */
-+                0xffff /* GPIO3 => don't touch */
-+                0xffff /* GPIO4 => don't touch */
++static int wm8904_parse_retune_cfg_from_of(struct i2c_client *i2c,
++					   struct wm8904_pdata *pdata)
++{
++	const struct device_node *np = i2c->dev.of_node;
++	int i, n_cfgs;
 +
-+            wlf,retune-mobile-cfg-names = "bassboost", "bassboost", "treble";
-+            wlf,retune-mobile-cfg-rates = <48000 44100 48000>;
-+            wlf,retune-mobile-cfg-regs =
-+                /* bassboost: EQ_ENA = 1, +6 dB @ 100 Hz, +3 dB @ 300 Hz, 0 dB @ 875, 2400, 6900 Hz */
-+                /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
-+                /* default values for ReTune Mobile registers 140-157 */
-+                /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5 0xf145 0x0bd5 0x0075 0x1c58 0xf3d3 0x0a54 0x0568 0x168e 0xf829 0x07ad 0x1103 0x0564 0x0559 0x4000>,
++	n_cfgs = of_property_count_strings(np, "wlf,retune-mobile-cfg-names");
++	if (n_cfgs == -EINVAL)
++		return 0;
 +
-+                /* bassboost: EQ_ENA = 1, +6 dB @ 100 Hz, +3 dB @ 300 Hz, 0 dB @ 875, 2400, 6900 Hz */
-+                /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
-+                /* default values for ReTune Mobile registers 140-157 */
-+                /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5 0xf145 0x0bd5 0x0075 0x1c58 0xf3d3 0x0a54 0x0568 0x168e 0xf829 0x07ad 0x1103 0x0564 0x0559 0x4000>,
++	if (n_cfgs <= 0) {
++		dev_err(&i2c->dev,
++			"Could not get wlf,retune-mobile-cfg-names length: %d",
++			n_cfgs);
++		return n_cfgs;
++	}
 +
-+                /* treble: EQ_ENA = 1, -2 dB @ 100, 300 Hz, 0 dB @ 875, 2400 Hz, +3 dB @ 6900 Hz */
-+                /bits/ 16 <0x1 0xa 0xa 0xc 0xc 0xf>,
-+                /* default values for ReTune Mobile registers 140-157 */
-+                /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5 0xf145 0x0bd5 0x0075 0x1c58 0xf3d3 0x0a54 0x0568 0x168e 0xf829 0x07ad 0x1103 0x0564 0x0559 0x4000>;
-+            >;
-         };
-     };
++	pdata->retune_mobile_cfgs = devm_kzalloc(&i2c->dev,
++						 n_cfgs * sizeof(struct wm8904_retune_mobile_cfg),
++						 GFP_KERNEL);
++	if (!pdata->retune_mobile_cfgs)
++		return -ENOMEM;
++
++	for (i = 0; i < n_cfgs; i++) {
++		if (wm8904_parse_retune_cfg_regs(np, pdata, i)) {
++			dev_err(&i2c->dev,
++				"Invalid 'wlf,retune-mobile-cfg-regs[%i,:]'\n", i);
++			return -EINVAL;
++		}
++
++		if (of_property_read_u32_index(np, "wlf,retune-mobile-cfg-rates", i,
++					       &pdata->retune_mobile_cfgs[i].rate)) {
++			dev_err(&i2c->dev,
++				"Invalid 'wlf,retune-mobile-cfg-rates[%i]'\n", i);
++			return -EINVAL;
++		}
++
++		if (of_property_read_string_index(np, "wlf,retune-mobile-cfg-names", i,
++						  &pdata->retune_mobile_cfgs[i].name)) {
++			dev_err(&i2c->dev,
++				"Invalid 'wlf,retune-mobile-cfg-names[%i]'\n", i);
++			return -EINVAL;
++		}
++	}
++
++	pdata->num_retune_mobile_cfgs = n_cfgs;
++	return 0;
++}
++
++static int wm8904_set_pdata_from_of(struct i2c_client *i2c,
++				    struct wm8904_priv *wm8904)
++{
++	const struct device_node *np = i2c->dev.of_node;
++	struct wm8904_pdata *pdata;
++	int ret, i;
++
++	pdata = devm_kzalloc(&i2c->dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++
++	pdata->in1l_as_dmicdat1 =
++		of_property_read_bool(np, "wlf,in1l-as-dmicdat1");
++
++	pdata->in1r_as_dmicdat2 =
++		of_property_read_bool(np, "wlf,in1r-as-dmicdat2");
++
++	/* If absent, default to 0xFFFF for GPIO config (i.e.: don't set) */
++	for (i = 0; i < WM8904_GPIO_REGS; i++)
++		pdata->gpio_cfg[i] = 0xFFFF;
++
++	of_property_read_u32_array(np, "wlf,gpio-cfg", pdata->gpio_cfg,
++				   ARRAY_SIZE(pdata->gpio_cfg));
++
++	of_property_read_u32_array(np, "wlf,mic-cfg", pdata->mic_cfg,
++				   ARRAY_SIZE(pdata->mic_cfg));
++
++	ret = wm8904_parse_drc_cfg_from_of(i2c, pdata);
++	if (ret)
++		return ret;
++
++	ret = wm8904_parse_retune_cfg_from_of(i2c, pdata);
++	if (ret)
++		return ret;
++
++	wm8904->pdata = pdata;
++	return 0;
++}
++
+ static const struct i2c_device_id wm8904_i2c_id[];
+ 
+ static int wm8904_i2c_probe(struct i2c_client *i2c)
+@@ -2199,7 +2377,16 @@ static int wm8904_i2c_probe(struct i2c_client *i2c)
+ 	wm8904->devtype = (uintptr_t)i2c_get_match_data(i2c);
+ 
+ 	i2c_set_clientdata(i2c, wm8904);
+-	wm8904->pdata = i2c->dev.platform_data;
++
++	if (i2c->dev.of_node) {
++		ret = wm8904_set_pdata_from_of(i2c, wm8904);
++		if (ret) {
++			dev_err(&i2c->dev, "Failed to set platform data from of: %d\n", ret);
++			return ret;
++		}
++	} else {
++		wm8904->pdata = i2c->dev.platform_data;
++	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(wm8904->supplies); i++)
+ 		wm8904->supplies[i].supply = wm8904_supply_names[i];
 -- 
 2.39.5
 
