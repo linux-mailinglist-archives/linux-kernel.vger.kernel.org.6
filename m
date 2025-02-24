@@ -1,111 +1,114 @@
-Return-Path: <linux-kernel+bounces-529799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA13A42B15
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:22:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD49A42AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6937A7AAA28
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:20:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B805B7A13C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F49E266EE7;
-	Mon, 24 Feb 2025 18:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617E3264FBC;
+	Mon, 24 Feb 2025 18:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rl95B2IT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="0WpoIo37"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BB2265CCB;
-	Mon, 24 Feb 2025 18:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16292263F2C;
+	Mon, 24 Feb 2025 18:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421185; cv=none; b=qMIK+X8mEXr+sd1QnIZNfzmaYaOWAz5PAsFo3wgle3vnTfK5HCcjymOTe+EgqfpciTwj/tjHcDZiJSULPGy4yPEHUtUi5azKAbyac2FLqNpEFJxGzykfDnOLB7yVeRdgDxbeN9FzDo5KoWPAOm1EG7n2dTFr2dxm8pzhiJdGZ3A=
+	t=1740420733; cv=none; b=Sfh47/ozA7bj2rxNVnrda98GzfhrubsElMES5hdYSxDQob/wE1WjfjUz5549L3XO0HtDTNsSLRY7df8+wUiWbJotI9w68YqixdryLZ/cL5I8mH59VzHHLtHBRg98/wvqF7pch/JE8S+FZk8vEoqqsaj0B3Ge/p8JeikDY3GLWTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421185; c=relaxed/simple;
-	bh=aOpTiNZ4UTpq4GD/D/yo0qqX81+gFPuHmfJiBAbK3MQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=srAcSIYf0FpYzLXlfYZWxcs/clAd/+jW37xUwJEotl4PObFR9FLSQm6DSIuxxZoQ2xLbN+68epYlFlZTq4ljtkV3cl97hfT2ezrdffagiSYPIPZFsj7TIqck0VFcEjy+dHzxJCoZ6m+7O6qnQfH08PxEhWK6cEtE9AOeENzXOFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rl95B2IT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012EEC4CEED;
-	Mon, 24 Feb 2025 18:19:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740421185;
-	bh=aOpTiNZ4UTpq4GD/D/yo0qqX81+gFPuHmfJiBAbK3MQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rl95B2ITOHzPPIZEYbmMq41/UD94NPfW+6HKhV8S6qH+goXyzLp9dOGu2tHZj3FIC
-	 izZF6fi3TP8430/x/Rm5Lc7cZJth30EJMGbucf7kxM27mGbXVxTz1ZP7tg+H92//OA
-	 jJuEjT6afOMHY/5Yxh7F3Hckc+MPm6Sn7vtJFHvs6JCSx8UHzP70RzPkNcc3cxJ8Po
-	 qTQ+loH3rAy5CbRToQWS1DRSNhgpbjUHgR+K5tWOTm85uB+c2tYMgri3oHXZGTOOQ6
-	 x6W3fAWZKFnXGZM35Wye89ws3p0XxjwP9xfrSX9Z8hzNsGLTcqVTZrsZv8DbLTW1Kg
-	 j0fjSK3tlQFsw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 24 Feb 2025 19:11:52 +0100
-Subject: [PATCH net 3/3] mptcp: safety check before fallback
+	s=arc-20240116; t=1740420733; c=relaxed/simple;
+	bh=g8/KDpgvxe1c7z2kKKWcFmyVaQCFiSYt5VoEmADrJJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZTBWyV16ZunJRC76QN84+cpwqUUaqBNzZtiWlcRsYY8Cy190QeU3SB5jkmPrwKnFeN1OqJnwpdB5k6XlmLhYJ/iOhNqnZbPnFiC0Ygwo/ofbEKeuzea4H9YtAovgXghvf7x3VEWbixdAhFXg+aYuHrxblnWBnEXKxmP8AntYVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=0WpoIo37; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4Z1pjK1LVvzm0yQH;
+	Mon, 24 Feb 2025 18:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1740420722; x=1743012723; bh=02iQ2St+XAcnKASiGHZa/LWP
+	G7gPbiyGfTrSwpW4hCY=; b=0WpoIo37rLvZE4R0nHmTmhSA1NaoKDLuVf1GcV7o
+	xm3tMdd+/Q9Us2R+HgYP/5NSBYL0QZ3jzspvwFN0kZszUDhXVgcBNtxhn/XDjDOb
+	H+qVeS7mfi2gAe7GN687iElF6PfOM3eIn6pPjWsBoz9tiiykVyOmgRA+NQvBPb8i
+	GNTVWmoy7Rz0JPmUY9S7sTWuB08SEcX6gTv/gvdjTVUSVBC8hvWypxB07Kzs9Y+W
+	3qE0ii8/SDmlE8i1E+eyrq/Qi/eEj8OuImtpWZDb5pfyXRnR/20FrdQ0ghwDGo5B
+	Pw+YY1qdEYTHmMWclEXRpjZytc7+Z1n5O6HdG+1kz7XR+Q==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id LkPBP-YrE8zg; Mon, 24 Feb 2025 18:12:02 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4Z1pjD4JM3zm0djZ;
+	Mon, 24 Feb 2025 18:11:59 +0000 (UTC)
+Message-ID: <ad1ba59a-3a67-4b3c-a05d-c4e56405cc19@acm.org>
+Date: Mon, 24 Feb 2025 10:11:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v3] scsi: Bypass certain SCSI commands on disks
+ with "use_192_bytes_for_3f" attribute
+To: WangYuli <wangyuli@uniontech.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stern@rowland.harvard.edu, zhanjun@uniontech.com, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, chenlinxuan@uniontech.com,
+ Xinwei Zhou <zhouxinwei@uniontech.com>, Xu Rao <raoxu@uniontech.com>,
+ Yujing Ming <mingyujing@uniontech.com>
+References: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <ADB8844D07D40320+20250224034832.40529-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-net-mptcp-misc-fixes-v1-3-f550f636b435@kernel.org>
-References: <20250224-net-mptcp-misc-fixes-v1-0-f550f636b435@kernel.org>
-In-Reply-To: <20250224-net-mptcp-misc-fixes-v1-0-f550f636b435@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=942; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=aOpTiNZ4UTpq4GD/D/yo0qqX81+gFPuHmfJiBAbK3MQ=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnvLbEGKhlFTAlo0xrvPENFUa8ZD2kU1QWhHNua
- ZIEQaX3b6KJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ7y2xAAKCRD2t4JPQmmg
- c1voD/9cqEQ+1y1c6VouIeNTM7UDiOdfkaJWyXPQTRrmJpYqraTb0kL/QR1sQJ1MpHazbkgsE75
- H2NfvDaAP0v+hnSR+5IjZoYRM96/D2aMLuo7BQk3jRmtSWxlZjD6k8OjX8v+AejB4zrpN7tC2TG
- vVmxaX1xs+bKLGgPz6ybC5uVfvKIL2wubnUNWMkEVBVdOX76tvPZ4jPEqcN0BHQuts0LzkQ88W7
- G26Pbh6ZK3v8/vYBUDARKQ9xA/mnQISWdh336gF3NvTDZOOJyERDdDMSyaVl8wdT9aEepyQp0sa
- WkL9ssuTqapCmCMzkzgWyvX5fyGfIj/69taRBrATqgDZM/reZk849ZKXhMB+38SagUdsQYtv0Kv
- 00cgOXd2ZfReAzWIFHK+aylLY39XJN/UJGeM9vRrBZJr8zOyfgx7tlL0NpVzELkCBEP0licKKv3
- GBBcJe3ewG9aDCLWWq6uYmq/EBeyTejWgIdJ08tAAywbc/spUzyXHFOLhBUA9sV/o7w11DwRMUs
- UllDm5MYwcc7nSmxj48DwERKeazNryjR4yutkSqUtuP08iB+QXSR12lmFOKDLhoBTcid2Pi+Kp6
- 6cH5cIEdZiSrMIarf9oQ8bv0HF+Le6bojQEjEFYJ5+VKmZ9jgfNuyucZeqScgBRqV0tkEJLDrF3
- MmiGY2zzjTPb8/g==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-Recently, some fallback have been initiated, while the connection was
-not supposed to fallback.
+On 2/23/25 7:48 PM, WangYuli wrote:
+> However, "lshw" disregards the "use_192_bytes_for_3f" attribute and
+> transmits data with a length of 0xff bytes via ioctl, which can cause
+> some hard drives to hang and become unusable.
 
-Add a safety check with a warning to detect when an wrong attempt to
-fallback is being done. This should help detecting any future issues
-quicker.
+lshw is a user space utility. use_192_bytes_for_3f is not exposed to
+user space as far as I know. So how can the above statement be correct?
 
-Acked-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/protocol.h | 2 ++
- 1 file changed, 2 insertions(+)
+> @@ -1613,6 +1614,17 @@ static int scsi_dispatch_cmd(struct scsi_cmnd *cmd)
+> +	/*
+> +	 * Before we queue this command, check attribute use_192_bytes_for_3f.
+> +	 * Because transmits data with a length of 0xff bytes via ioctl may
+> +	 * cause some hard drives to hang and become unusable.
+> +	 */
+> +	if (cmd->cmnd[0] == MODE_SENSE && sdev->use_192_bytes_for_3f &&
+> +		cmd->cmnd[2] == 0x3f && cmd->cmnd[4] != 192) {
+> +		cmd->result = DID_ABORT << 16;
+> +		goto done;
+> +	}
 
-diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
-index f6a207958459db5bd39f91ed7431b5a766669f92..ad21925af061263d908bd9faddffaef979f46c93 100644
---- a/net/mptcp/protocol.h
-+++ b/net/mptcp/protocol.h
-@@ -1199,6 +1199,8 @@ static inline void __mptcp_do_fallback(struct mptcp_sock *msk)
- 		pr_debug("TCP fallback already done (msk=%p)\n", msk);
- 		return;
- 	}
-+	if (WARN_ON_ONCE(!READ_ONCE(msk->allow_infinite_fallback)))
-+		return;
- 	set_bit(MPTCP_FALLBACK_DONE, &msk->flags);
- }
- 
+ From include/scsi/scsi_device.h:
 
--- 
-2.47.1
+unsigned use_192_bytes_for_3f:1; /* ask for 192 bytes from page 0x3f */
+
+The above code uses use_192_bytes_for_3f for another purpose. Please 
+respect the purpose of the use_192_bytes_for_3f bitfield.
+
+Thanks,
+
+Bart.
 
 
