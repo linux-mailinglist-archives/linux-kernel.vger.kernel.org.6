@@ -1,130 +1,250 @@
-Return-Path: <linux-kernel+bounces-528582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEB6A41959
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:40:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1200CA41952
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4903B44EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:39:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FF701887826
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD5B23CEF8;
-	Mon, 24 Feb 2025 09:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0C9245008;
+	Mon, 24 Feb 2025 09:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frWUrc+p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UEmmI4ll"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBF078F2E;
-	Mon, 24 Feb 2025 09:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B43204C24
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389989; cv=none; b=U7gE9y/vxcLk3bI2ePuTBUxl5Yo80F3JLXF+HeC+vR0t9gS9Tl79Y7XEby2TW3Hq6MOI8gth4wklDERj5pdjAX5Xnl8PPkRaS+kf8aZsdnnWOII3QJVgDZqU3H4zk971/kXbcd7H3rmgzaKowd1eMZkNDLoE/LtwDxwghAvzLKo=
+	t=1740390014; cv=none; b=rG2uQcfqwrEp5VIV8w5M4W7zxTLOOjNLGl3IhM5WWotAa5Gsw4WXIOgWf3jYgjNWBEDNgjoL7VOF5Kf6J0kDokwbAmBRCGs97G8lpqdZ9Tqxc68y7fM4X3NeWEK9nZUhJSln9SncYw7qJ2Y04vGAdCby39qGOmY/HFs8/vX4ZJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389989; c=relaxed/simple;
-	bh=R+HmxPG16H8vvvu0uSUgZflbClb30RDYT9Rf/tlkZUQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CK+gUszokWHx+846W/+KbZhxPLJljxroRZPMP8lmMkLWTreETRAXvMIWXWaj80UqFQmvOFBEH5o+DDdMNja1E/B176zPWL+xNwqk/FCFUpPpPu1Q8piyicqbqYrmbPv46jJzWhDTQLTkiC6liDG/o4glLLBdDFUBWSNdUEpG09Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frWUrc+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D10FC4CED6;
-	Mon, 24 Feb 2025 09:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740389988;
-	bh=R+HmxPG16H8vvvu0uSUgZflbClb30RDYT9Rf/tlkZUQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=frWUrc+pFtazhaExLu8Sa4PymlW7J14mDrwpxHtqsB9nPfZ3ytNZFQhSPPjiyOwKS
-	 znweSFBFw0i8wBai/gTKv447hgW+cXbDQ5JEmNkkCoukRvQ5VLET0yS3UsR0lLviyI
-	 MEkVN76MMS5HfLFSEIw5glKfevVz++uiM+zBP1YOSMYCtYg7GQ+EQRGRJLJFYIIS9a
-	 4fCe86/3O3flmYHXQHSiP7zmNnwTJ99VQJe5R0iVQVQ2FaVY94YyHRFyql2hEuxvwE
-	 /g/EF9VAhvk6hiK52qHNaO3cCnqCKhXvoTZTcLuMl7lNVt1mLXQ6it4BeOqs/c0Vs2
-	 fyo6Ae4NHqF6A==
-From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Subject: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
-Date: Mon, 24 Feb 2025 15:09:38 +0530
-Message-ID: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740390014; c=relaxed/simple;
+	bh=sA8WO++5rNZBtjx501c9cpcdkpsxzwHOMX4IWV9Rsr8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Ecw6R0xVxH+v7iS6yhm6gArSINDL3Vov80K6KVWA3qcuo7G3o1ue6Hm1QGEnQg5SV3FnMnQ9KHNMyj2K5EePsgdU4i6fq6+/RCHMsRgo2eJKEW/Wcu5JQVRrwQBzwdYra7cLFftFreIqE/TgbrvYF5Ib0D7f7A/4QMZt4zdIp04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UEmmI4ll; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6dd01781b56so51968246d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:40:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740390010; x=1740994810; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hOH4g4FLbQyk00Mre2FH+qMcOUGd/gLcBgjYmHBMbaU=;
+        b=UEmmI4llct9ULjjtoRcyDhVdz3iK5BiVMvlexADX86aFnHGnToxxIvHD1rGSOJKWJ7
+         rOhCsmNhH9OQPTs8nYeq8gHYyX7oBM+ZA4gPi5CnifwddBEGwii5WtMG1IGzvcHoQKuy
+         1iBVGjKz2iKth+qJEStpotXTUV+p9MCqMk+38=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740390010; x=1740994810;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hOH4g4FLbQyk00Mre2FH+qMcOUGd/gLcBgjYmHBMbaU=;
+        b=HEAvgWMwF8snjwIlFtIInhtgBuLNnfC2wWQI2EeEXVYUUKMKIHN+0opogOUi/cqA73
+         dGUTuu0s7s9LNCXfNjeOscN6ZwgFSDU/ALbowGt1Er2wKj1K91rrkEZbT18k0jV+ndgE
+         IhlEQtrEevDxjefJ7ExgfEEZJgcc8cfK69QtQtyQzWIeCGaEOQPzaBeYfpL6GR7a9wOT
+         Zo1046xb/gGWDPgl6cyCweqOrrn6ZROZaqoJo3ntPt8fFUDHqEXwl9LxmoJSDh6WvOdQ
+         /n6COP+WfE03B8xXjC+J2FdTwZ0di2/iB0cXS4fkEn9V7XKxqf4fg7c/RYpurAn6h9zv
+         HQXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMIJpLjU3/OuJXZMdYch6xeX3pb+rl8jRumUj4TjXnrWvQjIPeIew736x0YU+HmxEaCE2b/QcDpCp98b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbFHH2jnlQ1To05KgGijtvoQ59JQEhMxoT+jJCLCXh7XLwUHXM
+	xN0adfiXCEyswlSrzD3ywLrjAiCieZ4LyDPIwkJ0xKEm97WlcE+pU9ck7+QQhg==
+X-Gm-Gg: ASbGncuJb22aJGG7UcP8r/e2zS8Jp6hzcERQhpRF7TYkpAfNdxpJYTOOmwWol1hR8gV
+	jb8hmKBJkLbC8LMrF2CHz/lSKrMXf3AjUa5UD1TynRibxK+AY11EMMXUswNa6VG2PuRmijRWPKH
+	r3OIhGNUST7SIz0EypVBzvKQ2zA9cFgGrO6NRFxE5QmZDfXVHHwPmTQicrgbq3pt0lhU2tuKTuh
+	bo5UNiGudPN4+iFMO8bQO1z/3OApSQANLgBi7wbp9H85JNfGT78cpYumqTCqSYgzeOkYqaCUabc
+	bvTGhkiBESE7hhteJkcbukeKfYsnWj5C7cA1UpJfrFblBacdwU7JjSxtHmiYmOosVLe8QvCV7DN
+	8q00=
+X-Google-Smtp-Source: AGHT+IF1JnvNYB15RUgRsLAqAnfBQ/3pKcNCeKY+GATLateLaGQ+wG+j6ppWfzqAdhQJOSiBAgkCYg==
+X-Received: by 2002:a05:6214:48f:b0:6e4:6ff6:bac2 with SMTP id 6a1803df08f44-6e6ae9a6af6mr162780496d6.40.1740390010484;
+        Mon, 24 Feb 2025 01:40:10 -0800 (PST)
+Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e6acb6d6b4sm46641146d6.121.2025.02.24.01.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 01:40:09 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 24 Feb 2025 09:40:06 +0000
+Subject: [PATCH v5] media: uvcvideo: Set V4L2_CTRL_FLAG_DISABLED during
+ queryctrl errors
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-uvc-eaccess-v5-1-690d73bcef28@chromium.org>
+X-B4-Tracking: v=1; b=H4sIAHY+vGcC/23OQQ7CIBCF4asY1mIYBqh15T2MizKAZaE1YInG9
+ O6iiYk1Xb5Jvj/zZNmn6DPbrZ4s+RJzHC516PWKUd9dTp5HVzeTQiqQgHwsxH1H5HPmjdZEwkC
+ HRrAqrsmHeP/UDse6+5hvQ3p84gXe1+VOAQ7cSC+sCkQG1Z76NJzjeN4M6cTeqSJ/eTvnsnIbj
+ JaCtnZr3ALHL9cCRDPnWHnbBkTUTgPiAlc/HGDOVeXUNLq1wYF1/89P0/QCXxP1dmYBAAA=
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.1
 
-Before commit d89585fbb308 ("KVM: arm64: unify the tests for VMAs in
-memslots when MTE is enabled"), kvm_arch_prepare_memory_region() only
-rejected a memory slot if VM_SHARED was set. This commit unified the
-checking with user_mem_abort(), with slots being rejected if either
-VM_MTE_ALLOWED is not set or VM_SHARED set. A subsequent commit
-c911f0d46879 ("KVM: arm64: permit all VM_MTE_ALLOWED mappings with MTE
-enabled") dropped the VM_SHARED check, so we ended up with memory slots
-being rejected if VM_MTE_ALLOWED is not set. This wasn't the case before
-the commit d89585fbb308. The rejection of the memory slot with VM_SHARED
-set was done to avoid a race condition with the test/set of the
-PG_mte_tagged flag. Before Commit d77e59a8fccd ("arm64: mte: Lock a page
-for MTE tag initialization") the kernel avoided allowing MTE with shared
-pages, thereby preventing two tasks sharing a page from setting up the
-PG_mte_tagged flag racily.
+To implement VIDIOC_QUERYCTRL, we need to know the minimum, maximum,
+step and flags of the control. For some of the controls, this involves
+querying the actual hardware.
 
-Commit d77e59a8fccd ("arm64: mte: Lock a page for MTE tag
-initialization") further updated the locking so that the kernel
-allows VM_SHARED mapping with MTE. With this commit, we can enable
-memslot creation with VM_SHARED VMA mapping.
+Some non-compliant cameras produce errors when we query them. These
+error can be triggered every time, sometimes, or when other controls do
+not have the "right value". Right now, we populate that error to userspace.
+When an error happens, the v4l2 framework does not copy the v4l2_queryctrl
+struct to userspace. Also, userspace apps are not ready to handle any
+other error than -EINVAL.
 
-This patch results in a minor tweak to the ABI. We now allow creating
-memslots that don't have the VM_MTE_ALLOWED flag set. If the guest uses
-such a memslot with Allocation Tags, the kernel will generate -EFAULT.
-ie, instead of failing early, we now fail later during KVM_RUN.
+One of the main usecases of VIDIOC_QUERYCTRL is enumerating the controls
+of a device. This is done using the V4L2_CTRL_FLAG_NEXT_CTRL flag. In
+that usecase, a non-compliant control will make it almost impossible to
+enumerate all controls of the device.
 
-This change is needed because, without it, users are not able to use MTE
-with VFIO passthrough (currently the mapping is either Device or
-NonCacheable for which tag access check is not applied.), as shown
-below (kvmtool VMM).
+A control with an invalid max/min/step/flags is better than non being
+able to enumerate the rest of the controls.
 
-[  617.921030] vfio-pci 0000:01:00.0: resetting
-[  618.024719] vfio-pci 0000:01:00.0: reset done
-  Error: 0000:01:00.0: failed to register region with KVM
-  Warning: [0abc:aced] Error activating emulation for BAR 0
-  Error: 0000:01:00.0: failed to configure regions
-  Warning: Failed init: vfio__init
+This patch:
+- Retries for an extra attempt to read the control, to avoid spurious
+  errors. More attempts do not seem to produce better results in the
+  tested hardware.
+- Makes VIDIOC_QUERYCTRL return 0 in all the error cases different than
+  -EINVAL.
+- Introduces a warning in dmesg so we can have a trace of what has happened
+  and sets the V4L2_CTRL_FLAG_DISABLED.
 
-  Fatal: Initialisation failed
-
-Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 ---
- arch/arm64/kvm/mmu.c | 5 -----
- 1 file changed, 5 deletions(-)
+Hi 2*Hans and Laurent!
 
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index ef53af6df6de..1f1b5aa43d2d 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -2178,11 +2178,6 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- 		if (!vma)
- 			break;
+I came around a device that was listing just a couple of controls when
+it should be listing much more.
+
+Some debugging latter I found that the device was returning -EIO when
+all the focal controls were read.
+
+Lots of good arguments in favor/against this patch in the v1. Please
+check!
+
+Without this patch:
+$ v4l2-ctl --list-ctrls
+                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+
+With this patch:
+$ v4l2-ctl --list-ctrls
+                  auto_exposure 0x009a0901 (menu)   : min=0 max=3 default=3 value=3 (Aperture Priority Mode)
+         exposure_time_absolute 0x009a0902 (int)    : min=50 max=10000 step=1 default=166 value=166 flags=inactive
+     exposure_dynamic_framerate 0x009a0903 (bool)   : default=0 value=0
+error 5 getting ext_ctrl Focus, Absolute
+error 5 getting ext_ctrl Focus, Automatic Continuous
+   region_of_interest_rectangle 0x009a1901 (unknown): type=107 value=unsupported payload type flags=has-payload
+region_of_interest_auto_control 0x009a1902 (bitmask): max=0x00000001 default=0x00000001 value=1
+--
+---
+Changes in v5:
+- Explain the retry in the commit message (Thanks Laurent).
+- Link to v4: https://lore.kernel.org/r/20250111-uvc-eaccess-v4-1-c7759bfd1bd4@chromium.org
+
+Changes in v4:
+- Display control name (Thanks Hans)
+- Link to v3: https://lore.kernel.org/r/20250107-uvc-eaccess-v3-1-99f3335d5133@chromium.org
+
+Changes in v3:
+- Add a retry mechanism during error.
+- Set V4L2_CTRL_FLAG_DISABLED flag.
+- Link to v2: https://lore.kernel.org/r/20241219-uvc-eaccess-v2-1-bf6520c8b86d@chromium.org
+
+Changes in v2:
+- Never return error, even if we are not enumerating the controls
+- Improve commit message.
+- Link to v1: https://lore.kernel.org/r/20241213-uvc-eaccess-v1-1-62e0b4fcc634@chromium.org
+---
+ drivers/media/usb/uvc/uvc_ctrl.c | 43 ++++++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+index 4e58476d305e..9d7812e8572d 100644
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1280,6 +1280,8 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+ 	return ~0;
+ }
  
--		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
--			ret = -EINVAL;
--			break;
--		}
--
- 		if (vma->vm_flags & VM_PFNMAP) {
- 			/* IO region dirty page logging not allowed */
- 			if (new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
++#define MAX_QUERY_RETRIES 2
++
+ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 	struct uvc_control *ctrl,
+ 	struct uvc_control_mapping *mapping,
+@@ -1305,19 +1307,44 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+ 		__uvc_find_control(ctrl->entity, mapping->master_id,
+ 				   &master_map, &master_ctrl, 0);
+ 	if (master_ctrl && (master_ctrl->info.flags & UVC_CTRL_FLAG_GET_CUR)) {
++		unsigned int retries;
+ 		s32 val;
+-		int ret = __uvc_ctrl_get(chain, master_ctrl, master_map, &val);
+-		if (ret < 0)
+-			return ret;
++		int ret;
+ 
+-		if (val != mapping->master_manual)
+-				v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
++		for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
++			ret = __uvc_ctrl_get(chain, master_ctrl, master_map,
++					     &val);
++			if (ret >= 0)
++				break;
++		}
++
++		if (ret < 0) {
++			dev_warn_ratelimited(&chain->dev->udev->dev,
++					     "UVC non compliance: Error %d querying master control %x (%s)\n",
++					      ret, master_map->id,
++					      uvc_map_get_name(master_map));
++		} else if (val != mapping->master_manual) {
++			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
++		}
+ 	}
+ 
+ 	if (!ctrl->cached) {
+-		int ret = uvc_ctrl_populate_cache(chain, ctrl);
+-		if (ret < 0)
+-			return ret;
++		unsigned int retries;
++		int ret;
++
++		for (retries = 0; retries < MAX_QUERY_RETRIES; retries++) {
++			ret = uvc_ctrl_populate_cache(chain, ctrl);
++			if (ret >= 0)
++				break;
++		}
++
++		if (ret < 0) {
++			dev_warn_ratelimited(&chain->dev->udev->dev,
++					     "UVC non compliance: Error %d populating cache of control %x (%s)\n",
++					     ret, mapping->id,
++					     uvc_map_get_name(mapping));
++			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_DISABLED;
++		}
+ 	}
+ 
+ 	if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+
+---
+base-commit: c2b96a6818159fba8a3bcc38262da9e77f9b3ec7
+change-id: 20241213-uvc-eaccess-755cc061a360
+
+Best regards,
 -- 
-2.43.0
+Ricardo Ribalda <ribalda@chromium.org>
 
 
