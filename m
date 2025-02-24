@@ -1,61 +1,86 @@
-Return-Path: <linux-kernel+bounces-528473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B92A4180B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:03:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF7AFA4181A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87CCC1892984
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:03:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB70B1635AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1A813D279;
-	Mon, 24 Feb 2025 09:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0517A198E63;
+	Mon, 24 Feb 2025 09:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=dougvj.net header.i=@dougvj.net header.b="xVNJPimZ"
-Received: from mail.bonnevilleinformatics.com (mail.bn-i.net [69.92.154.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcJFoPBx"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A026A24397B;
-	Mon, 24 Feb 2025 09:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=69.92.154.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A561EDA00;
+	Mon, 24 Feb 2025 09:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387760; cv=none; b=ScezqifkjTo0Ur7MXKaA4Yr2EnLbQuAbh0nJonUQaVDlWG2dnfhr24863tuNwyDcIdMD2yURbmK1USDzxa86tp0C67T83hqsEVroPZSfAsgny991sLZ4mEVXa0r9T4C53EyTK95uAFNSMvwRBoma9HSvsRXyqqpBKoAotQxcUic=
+	t=1740387907; cv=none; b=m2Etl2HNBjOt0GoN2gTbTsbqdJyaw8LlFZSLIxWj2KoUnPrmeAPBoKzoGwH5O/3J9PPvh9L53Tfn4HNl5puMQrnERfTmHTQr1XI2KNRjVVhZfFmwXrzVUlrpNLp56VNkSYaogUjsXaW4wHfDHGRUx0iWIeFbJg4wrCr53CalZ7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387760; c=relaxed/simple;
-	bh=gDHxG0kkUeldAgeCtL4jPoTiu0/zhSccpV0rqhMNq2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pZpmimZ0WcBCkifx2sfp4NA4/BtNYym/7QLQuossGWm607eZB3i3v+DONhCELbDslJDu9VM6CGOMH39q7ziO9VpifF/jAZCCGk+CX5TqEVW9l3k4MjZf9G4MNcZdsTjXPnLs3fCZc4yM3ZlnEnJJs598fYHvc8zvUEKvJCFxy8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dougvj.net; spf=pass smtp.mailfrom=dougvj.net; dkim=pass (1024-bit key) header.d=dougvj.net header.i=@dougvj.net header.b=xVNJPimZ; arc=none smtp.client-ip=69.92.154.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=dougvj.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dougvj.net
-From: Doug V Johnson <dougvj@dougvj.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dougvj.net; s=dkim;
-	t=1740387752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jhl2WGlLymmY/OuBSoRdwp/PIswVgAd6LqWrZryYdwI=;
-	b=xVNJPimZDPsqHoaVWIC9c2zeFbew9/mjQnQF4EMZwLgI80rJfUKlPgyHDzVhhsUOFf/mUT
-	2I+awQxKObfqY1B43yB2dSiw3KhNBobK6iPs256E3eG7fNw9zGCffekSoZpilZirw8c/15
-	ODPtPHUuIGr6kGDxywEtfF/mO0C3LeM=
-Authentication-Results: mail.bonnevilleinformatics.com;
-	auth=pass smtp.mailfrom=dougvj@dougvj.net
-To: 
-Cc: Doug Johnson <dougvj@gmail.com>,
-	Doug V Johnson <dougvj@dougvj.net>,
-	Song Liu <song@kernel.org>,
-	Yu Kuai <yukuai3@huawei.com>,
-	linux-raid@vger.kernel.org (open list:SOFTWARE RAID (Multiple Disks) SUPPORT),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 3/3] md/raid5: check for overlapping bad blocks before starting reshape
-Date: Mon, 24 Feb 2025 02:02:03 -0700
-Message-ID: <20250224090209.2077-3-dougvj@dougvj.net>
-In-Reply-To: <20250224090209.2077-1-dougvj@dougvj.net>
-References: <9d878dea7b1afa2472f8f583fd116e31@dougvj.net>
- <20250224090209.2077-1-dougvj@dougvj.net>
+	s=arc-20240116; t=1740387907; c=relaxed/simple;
+	bh=SqHL6xTRVipsGvScdT04CAh9Zy3KMqZjnmYjsQkiaDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HVYGtO+8zhV19wltH+2k0RQ6PJMVPJD1WkDuHKFWqaNoUWM9QqvSzrWrtWyHUC0szDHUet8qHphJBHxwdIWKFReJ8y4kuO0q4gHKxCZq8CiarQ2awJ6Mk3AOwJFOewUgV2qpbnH623wAEa048upi4BlchAOOkZ67opbamOzrDSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FcJFoPBx; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-439350f1a0bso23902895e9.0;
+        Mon, 24 Feb 2025 01:05:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740387904; x=1740992704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1o+hmUFjyxLJ5txUQsV8eFqZyJVyTj/M8WfPxzZGAO0=;
+        b=FcJFoPBxogT1Nv8TqBwIu7MZVH8Syff6ZqadXjc3PC8sDu8J7jvUQYVl7oMJ8gZxQ/
+         1aQs8WAqqOMR5KVuFxASW4f+/ZxMLIQhR+TGRBeBTJBQrL0v4fkYmfncWOwu0p7CKnun
+         s/eHScgKTGGRn5c0Ey0UNTUY8J09cWxiDrXHZct0qpWb7cccvUaFBDDQq7HaMFeicYMN
+         sdFUpUuZbSBgUFLVWVgei6lq3KIZ0JF/8dauz3/1FV0GD5TrMPAyhzbtLYgxUcnN7Bft
+         Exg/RGGKy0yRQ+t1kCFgd0Bt6YVOWZONose3U1vTqYVyd1j3ciWvwHs8OsRCtcEe/Hiu
+         zwnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740387904; x=1740992704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1o+hmUFjyxLJ5txUQsV8eFqZyJVyTj/M8WfPxzZGAO0=;
+        b=IdpkVDGEs5o+ilNau/X7TTbtEbNm2ozvlS+rONmghLgKDfcD0Wanln8Nbc7grqvBBa
+         hPdSGL6y5WrJ9rhI19QRj3XKiANxx+S1Y5jkAlhKCmJWyezqxU165m149mSPIQboxpSK
+         hVKjXdL2hHnbv/1gHVr0bGQIHg1nexCSxYvfzPqawZQac0m9XUc84C6WELoEl+kprIls
+         T1Au+o0xcffGg0tASOrj77PCtAcrOzADmZfBtWiBxL77usHgTJjIOuNoP/6y3QsnjKFX
+         +Xl7CzMG1y3mXag/xHay9AtU3Xjfci2zo3xjGN/Foz8axi7zGKdJRCOCIbaPpicQAwl2
+         bV3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVNpPVCMb0Rt89akuWgENG8ao6KoAK97tZW5tZBjIAXQt8kjzprLvLeZ8Z+RFOvdetyXNK5HWKvu3Txig==@vger.kernel.org, AJvYcCVbuI3mwYOVR9H1wuwSQd/N74pNTLqI9SB49plkMbZtKAHgFcm0wUB4lcl/KsNdOF839V2oyCYSs2YKgmNB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ309qsOhKELXTZEemnhi1dyyKDuWnDBJk6wPlxnp2R3o+lxVS
+	Zz2070ApQfXMO9ZBfyR2Bjo3zqu+NJIlsxo6Xvy5xUq9oVGScK+kMyfmceoBLDg=
+X-Gm-Gg: ASbGncvwzesTRUvHJ1f5VOwmcAK3iqmu2AKYtdmCJS2K3KUsv/FHMbgT4Pkw7ClAqIc
+	nj7rSd4YyRn+2sLREhdttaI2P7GuIOufguL+h82fSaLnBCibsQOdlg6dU5re97HXr0lfps1JkFt
+	lw4Xb1r6plQkrv6lMhe8k2WQre54WDvchInzx02CFzJX+0ImZUTRz9vXpot0ZCSXHVpR53RpaGo
+	Jm6FtGGxUjoJImvUHrYcKBHGvymQY1Ra3Bsj97Xb+ZzCLzN+Kte51z9gG3rBgSy2KNOKEU+58BN
+	9Y7QS7Opwlj3pV0EWeeUkbEHVQ658vkBOrcVgR/xbQsXwBeO5VPVMj/rr4CBIw==
+X-Google-Smtp-Source: AGHT+IG7ux92omp2zX4ff8jGYQdlwlhR2jbX2uF0UyuI3jJ+fCAMB/gq6CixmUwKF5yAPwT9yQpapg==
+X-Received: by 2002:a05:600c:198f:b0:436:1b86:f05 with SMTP id 5b1f17b1804b1-439ae320521mr94741215e9.11.1740387903721;
+        Mon, 24 Feb 2025 01:05:03 -0800 (PST)
+Received: from fedora.. (84-236-81-135.pool.digikabel.hu. [84.236.81.135])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f258b4123sm31835674f8f.17.2025.02.24.01.05.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 01:05:03 -0800 (PST)
+From: Andras Sebok <sebokandris2009@gmail.com>
+To: markuss.broks@gmail.com,
+	dmitry.torokhov@gmail.com,
+	linux-input@vger.kernel.org
+Cc: phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	linux-kernel@vger.kernel.org,
+	Andras Sebok <sebokandris2009@gmail.com>
+Subject: [PATCH 1/2] input/touchscreen: imagis: add support for imagis IST3038H
+Date: Mon, 24 Feb 2025 10:03:54 +0100
+Message-ID: <20250224090354.102903-2-sebokandris2009@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,143 +88,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: -----
 
-In addition to halting a reshape in progress when we encounter bad
-blocks, we want to make sure that we do not even attempt a reshape if we
-know before hand that there are too many overlapping bad blocks and we
-would have to stall the reshape.
+Adds support for imagis IST3038H, simular to IST3038C.
+Tested on samsung,j5y17lte.
 
-To do this, we add a new internal function array_has_badblock() which
-first checks to see if there are enough drives with bad blocks for the
-condition to occur and if there are proceeds to do a simple O(n^2) check
-for overlapping bad blocks. If more overlaps are found than can be
-corrected for, we return 1 for the presence of bad blocks, otherwise 0
-
-This function is invoked in raid5_start_reshape() and if there are bad
-blocks present, returns -EIO which is reported to userspace.
-
-It's possible for bad blocks to be discovered or put in the metadata
-after a reshape has started, so we want to leave in place the
-functionality to detect and halt a reshape.
-
-Signed-off-by: Doug V Johnson <dougvj@dougvj.net>
+Signed-off-by: Andras Sebok <sebokandris2009@gmail.com>
 ---
- drivers/md/raid5.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 94 insertions(+)
+ drivers/input/touchscreen/imagis.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 8b23109d6f37..4b907a674dd1 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -8451,6 +8451,94 @@ static int check_reshape(struct mddev *mddev)
- 				     + mddev->delta_disks));
- }
+diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen/imagis.c
+index abeae9102323..3c8bbe284b73 100644
+--- a/drivers/input/touchscreen/imagis.c
++++ b/drivers/input/touchscreen/imagis.c
+@@ -22,6 +22,7 @@
  
-+static int array_has_badblock(struct r5conf *conf)
-+{
-+	/* Searches for overlapping bad blocks on devices that would result
-+	 * in an unreadable condition
-+	 */
-+	int i, j;
-+	/* First see if we even have bad blocks on enough drives to have a
-+	 * bad read condition
-+	 */
-+	int num_badblock_devs = 0;
-+
-+	for (i = 0; i < conf->raid_disks; i++) {
-+		if (rdev_has_badblock(conf->disks[i].rdev,
-+				      0, conf->disks[i].rdev->sectors))
-+			num_badblock_devs++;
-+	}
-+	if (num_badblock_devs <= conf->max_degraded) {
-+		/* There are not enough devices with bad blocks to pose any
-+		 * read problem
-+		 */
-+		return 0;
-+	}
-+	pr_debug("%s: running overlapping bad block check",
-+		 mdname(conf->mddev));
-+	/* Do a more sophisticated check for overlapping regions */
-+	for (i = 0; i < conf->raid_disks; i++) {
-+		sector_t first_bad;
-+		int bad_sectors;
-+		sector_t next_check_s = 0;
-+		int next_check_sectors = conf->disks[i].rdev->sectors;
-+
-+		pr_debug("%s: badblock check: %i (s: %lu, sec: %i)",
-+			 mdname(conf->mddev), i,
-+			 (unsigned long)next_check_s, next_check_sectors);
-+		while (is_badblock(conf->disks[i].rdev,
-+				   next_check_s, next_check_sectors,
-+				   &first_bad,
-+				   &bad_sectors) != 0) {
-+			/* Align bad blocks to the size of our stripe */
-+			sector_t aligned_first_bad = first_bad &
-+				~((sector_t)RAID5_STRIPE_SECTORS(conf) - 1);
-+			int aligned_bad_sectors =
-+				max_t(int, RAID5_STRIPE_SECTORS(conf),
-+				      bad_sectors);
-+			int this_num_bad = 1;
-+
-+			pr_debug("%s: found blocks %i %lu -> %i",
-+				 mdname(conf->mddev), i,
-+				 (unsigned long)aligned_first_bad,
-+				 aligned_bad_sectors);
-+			for (j = 0; j < conf->raid_disks; j++) {
-+				sector_t this_first_bad;
-+				int this_bad_sectors;
-+
-+				if (j == i)
-+					continue;
-+				if (is_badblock(conf->disks[j].rdev,
-+						aligned_first_bad,
-+						aligned_bad_sectors,
-+						&this_first_bad,
-+						&this_bad_sectors)) {
-+					this_num_bad++;
-+					pr_debug("md/raid:%s: bad block overlap dev %i: %lu %i",
-+						 mdname(conf->mddev), j,
-+						 (unsigned long)this_first_bad,
-+						 this_bad_sectors);
-+				}
-+			}
-+			if (this_num_bad > conf->max_degraded) {
-+				pr_debug("md/raid:%s: %i drives with unreadable sector(s) around %lu %i due to bad block list",
-+					 mdname(conf->mddev),
-+					 this_num_bad,
-+					 (unsigned long)first_bad,
-+					 bad_sectors);
-+				return 1;
-+			}
-+			next_check_s = first_bad + bad_sectors;
-+			next_check_sectors =
-+				next_check_sectors - (first_bad + bad_sectors);
-+			pr_debug("%s: badblock check: %i (s: %lu, sec: %i)",
-+				 mdname(conf->mddev), i,
-+				 (unsigned long)next_check_s,
-+				 next_check_sectors);
-+		}
-+	}
-+	return 0;
-+}
-+
- static int raid5_start_reshape(struct mddev *mddev)
- {
- 	struct r5conf *conf = mddev->private;
-@@ -8498,6 +8586,12 @@ static int raid5_start_reshape(struct mddev *mddev)
- 		return -EINVAL;
- 	}
+ #define IST3032C_WHOAMI			0x32c
+ #define IST3038C_WHOAMI			0x38c
++#define IST3038H_WHOAMI			0x38d
  
-+	if (array_has_badblock(conf)) {
-+		pr_warn("md/raid:%s: reshape not possible due to bad block list",
-+			mdname(mddev));
-+		return -EIO;
-+	}
+ #define IST3038B_REG_CHIPID		0x30
+ #define IST3038B_WHOAMI			0x30380b
+@@ -428,11 +429,19 @@ static const struct imagis_properties imagis_3038c_data = {
+ 	.protocol_b = true,
+ };
+ 
++static const struct imagis_properties imagis_3038h_data = {
++	.interrupt_msg_cmd = IST3038C_REG_INTR_MESSAGE,
++	.touch_coord_cmd = IST3038C_REG_TOUCH_COORD,
++	.whoami_cmd = IST3038C_REG_CHIPID,
++	.whoami_val = IST3038H_WHOAMI,
++};
 +
- 	atomic_set(&conf->reshape_stripes, 0);
- 	spin_lock_irq(&conf->device_lock);
- 	write_seqcount_begin(&conf->gen_lock);
+ static const struct of_device_id imagis_of_match[] = {
+ 	{ .compatible = "imagis,ist3032c", .data = &imagis_3032c_data },
+ 	{ .compatible = "imagis,ist3038", .data = &imagis_3038_data },
+ 	{ .compatible = "imagis,ist3038b", .data = &imagis_3038b_data },
+ 	{ .compatible = "imagis,ist3038c", .data = &imagis_3038c_data },
++	{ .compatible = "imagis,ist3038h", .data = &imagis_3038h_data },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, imagis_of_match);
 -- 
 2.48.1
 
