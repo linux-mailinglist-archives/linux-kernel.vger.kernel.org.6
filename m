@@ -1,149 +1,173 @@
-Return-Path: <linux-kernel+bounces-529171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB84A420A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:31:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72750A420B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C0B1897506
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671123B2C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E64E248866;
-	Mon, 24 Feb 2025 13:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17924BC09;
+	Mon, 24 Feb 2025 13:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rme7mC03"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5EB24169C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CnrlGXKl"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2724169C;
+	Mon, 24 Feb 2025 13:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403783; cv=none; b=L5RhMCneytPQwwHe5xP4KCBofeHP/RfU6lx2hlvrL+MEkEalneMymrp+fOHXMDAkZGtlthdNcxrQwBQp8sYEgShFFEd8hXjMNhCzo7xsZ4gBskJ5Xdwhk3nCjmodPWTy0FrnPtVnQMeo15Ft/r1tQ1ANoJgmtm0KQe8mCsB6rX4=
+	t=1740403788; cv=none; b=ZgB6UvIdjDoA+1obOOyKPCPCO2+dPm3h6kuLhY6O/D5SmjX26Y8/ozemtwIQZWjNtCPKRolPxsq5gsKSpGTTbvBn0pnTnp/5e9TZ50P6gusT76PTQYXHbnuSSl9EhmN9ypzlE1ovezlyEvvgrcyRlBtvZ6y+smMWC/DAgaJ9fZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403783; c=relaxed/simple;
-	bh=q9/TtM1NG+ifOqQFSbmWbZoInNyjK7xJ99Snl4OUlIM=;
+	s=arc-20240116; t=1740403788; c=relaxed/simple;
+	bh=vXEFc8vCTxFU53LlB8L6wrOQ9QWoqVL3htuV4RYrMKQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vbg6nQqEqrAzXoTTG/NtSJGnEol9T7zFHVVEOAzfUQ8KzingwU5wSeT8E8cF0lD4MKBwRBl5WRaHzoOXCQyP2fpUPajwO7e8/V1m4MhAIhc7Aek82NFE9htYHDa+/ehEWNPZdwRX+f1iUL+Wm9o0GtdlTglol6Qt0sC4kiz2ud8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rme7mC03; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740403780;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9xqhh1X8+oxDwhTT/zyF9J7eY23U1qqffowUkxLKRu0=;
-	b=Rme7mC03fwGue2liO0VoXPdVH3UT4lB7ybdddLnzVu3Fo5IGM06/1k8ehDE+YsOcNzwTJI
-	cH56iwp8SQ58v3CsEZ+qFymw1GJqo9RAYnX+toSzl2fLqySbk2EzErY6syphh2Eej+dZUI
-	q/VM10hC0LmSM3xyubpVjehnt8eBo1A=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-186-zajP-Y25PeeaW0gZRgMbhA-1; Mon,
- 24 Feb 2025 08:29:37 -0500
-X-MC-Unique: zajP-Y25PeeaW0gZRgMbhA-1
-X-Mimecast-MFC-AGG-ID: zajP-Y25PeeaW0gZRgMbhA_1740403774
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7BD6818D95F3;
-	Mon, 24 Feb 2025 13:29:33 +0000 (UTC)
-Received: from localhost (unknown [10.22.80.185])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 59D971800368;
-	Mon, 24 Feb 2025 13:29:32 +0000 (UTC)
-Date: Mon, 24 Feb 2025 10:29:30 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>
-Subject: Re: [ANNOUNCE] 5.10.234-rt126
-Message-ID: <Z7x0OuwMk0rVIy_E@uudg.org>
-References: <Z7ZWPGBt4Pv9o54T@uudg.org>
- <26f102f6-4e35-4267-b6ec-9ebd0c7572f7@siemens.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NGZEXs/R65IM9R4NRPd1NRzXGkYAHtNgdDXrX/ZC/6bPjp7iCQekbpGktiGQejiyqGQ1J3A7fW5+X0fE38Jbu89YQsEq+MrNSZma/IVRa8LSaUl/22sN9TsnvUZQcXNu/S7Ib+i+GNKgiNy+Rh2MYQudLDRWiZRr9arkWVs0px4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CnrlGXKl; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 3EAB6203CDDA; Mon, 24 Feb 2025 05:29:46 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3EAB6203CDDA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740403786;
+	bh=i01zIab6305TaFlNKn7K/1S71vqUHIZ2SMtS+KnZW5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CnrlGXKlOaWiyi66FhJ6/N36v5KvcV6ldKV+IQevrGpmO7UGJnZ8rJ7Cd/BQuYkw0
+	 lLWRMnUwFeM4OuGuimbaznlHZ4tZQmlbIr5R/GlWCw8txh7UxhvKliD0zif9TV17AM
+	 FEUNe9MgWI+y11r/xtxLv/fIOAOcmwsztrr4Z7ew=
+Date: Mon, 24 Feb 2025 05:29:46 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"deller@gmx.de" <deller@gmx.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"ssengar@microsoft.com" <ssengar@microsoft.com>
+Subject: Re: [PATCH] fbdev: hyperv_fb: Allow graceful removal of framebuffer
+Message-ID: <20250224132946.GA7039@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <1739611240-9512-1-git-send-email-ssengar@linux.microsoft.com>
+ <SN6PR02MB4157813782C1D9E6D1225582D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20250222172715.GA28061@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SN6PR02MB4157F6CF7CACF45C398933C4D4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <20250223140933.GA16428@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SN6PR02MB41571ED5CEA6B91A7F35AC3FD4C02@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <26f102f6-4e35-4267-b6ec-9ebd0c7572f7@siemens.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB41571ED5CEA6B91A7F35AC3FD4C02@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Fri, Feb 21, 2025 at 10:50:04AM +0100, Jan Kiszka wrote:
-> On 19.02.25 23:07, Luis Claudio R. Goncalves wrote:
-> > Hello RT-list!
+On Mon, Feb 24, 2025 at 12:38:22AM +0000, Michael Kelley wrote:
+> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, February 23, 2025 6:10 AM
 > > 
-> > I'm pleased to announce the 5.10.234-rt126 stable release.
-> > 
-> > This release is just an update to the new stable 5.10.234 version and
-> > no RT-specific changes have been made.
-> > 
+> > On Sat, Feb 22, 2025 at 08:16:53PM +0000, Michael Kelley wrote:
+> > > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, February 22, 2025 9:27 AM
+> > > >
 > 
-> Was [1] coming too late for this release cycle?
+> [anip]
 > 
-> We may have run into this bug independently a second time here, I just
-> don't know the exact kernel version yet. However, we do know that 5.10
-> needs the fix as well.
+> > > >
+> > > > I had considered moving the entire `hvfb_putmem()` function to `destroy`,
+> > > > but I was hesitant for two reasons:
+> > > >
+> > > >   1. I wasn’t aware of any scenario where this would be useful. However,
+> > > >      your explanation has convinced me that it is necessary.
+> > > >   2. `hvfb_release_phymem()` relies on the `hdev` pointer, which requires
+> > > >      multiple `container_of` operations to derive it from the `info` pointer.
+> > > >      I was unsure if the complexity was justified, but it seems worthwhile now.
+> > > >
+> > > > I will move `hvfb_putmem()` to the `destroy` function in V2, and I hope this
+> > > > will address all the cases you mentioned.
+> > > >
+> > >
+> > > Yes, that's what I expect needs to happen, though I haven't looked at the
+> > > details of making sure all the needed data structures are still around. Like
+> > > you, I just had this sense that hvfb_putmem() might need to be moved as
+> > > well, so I tried to produce a failure scenario to prove it, which turned out
+> > > to be easy.
+> > >
+> > > Michael
+> > 
+> > I will add this in V2 as well. But I have found an another issue which is
+> > not very frequent.
+> > 
+> > 
+> > [  176.562153] ------------[ cut here ]------------
+> > [  176.562159] fb0: fb_WARN_ON_ONCE(pageref->page != page)
+> > [  176.562176] WARNING: CPU: 50 PID: 1522 at drivers/video/fbdev/core/fb_defio.c:67
+> > fb_deferred_io_mkwrite+0x215/0x280
+> > 
+> > <snip>
+> > 
+> > [  176.562258] Call Trace:
+> > [  176.562260]  <TASK>
+> > [  176.562263]  ? show_regs+0x6c/0x80
+> > [  176.562269]  ? __warn+0x8d/0x150
+> > [  176.562273]  ? fb_deferred_io_mkwrite+0x215/0x280
+> > [  176.562275]  ? report_bug+0x182/0x1b0
+> > [  176.562280]  ? handle_bug+0x133/0x1a0
+> > [  176.562283]  ? exc_invalid_op+0x18/0x80
+> > [  176.562284]  ? asm_exc_invalid_op+0x1b/0x20
+> > [  176.562289]  ? fb_deferred_io_mkwrite+0x215/0x280
+> > [  176.562291]  ? fb_deferred_io_mkwrite+0x215/0x280
+> > [  176.562293]  do_page_mkwrite+0x4d/0xb0
+> > [  176.562296]  do_wp_page+0xe8/0xd50
+> > [  176.562300]  ? ___pte_offset_map+0x1c/0x1b0
+> > [  176.562304]  __handle_mm_fault+0xbe1/0x10e0
+> > [  176.562307]  handle_mm_fault+0x17f/0x2e0
+> > [  176.562309]  do_user_addr_fault+0x2d1/0x8d0
+> > [  176.562314]  exc_page_fault+0x85/0x1e0
+> > [  176.562318]  asm_exc_page_fault+0x27/0x30
+> > 
+> > Looks this is because driver is unbind still Xorg is trying to write
+> > to memory which is causing some page faults. I have confirmed PID 1522
+> > is of Xorg. I think this is because we need to cancel the framebuffer
+> > deferred work after flushing it.
+> 
+> Does this new issue occur even after moving hvfb_putmem()
+> into the destroy() function?
 
-Yes, I had v5.10.234-rt126-rc1 in testing since the day v5.10.234 was
-released. But I will push v5.10.234-rt127-rc1 with the patches you
-submitted and another fix I have in my queue.
+Unfortunately yes :( 
 
-Thank you!
- 
-> Jan
+>                             I'm hoping it doesn't. I've
+> looked at the fb_deferred_io code, and can't quite figure out
+> how that deferred I/O work is supposed to get cancelled. Or
+> maybe it's just not supposed to get started again after the flush.
 > 
-> > You can get this release via the git tree at:
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-> > 
-> >   branch: v5.10-rt
-> >   Head SHA1: 5c5f37fc0ab0914da38776700e77a46ca3e30bf6
-> > 
-> > Or to build 5.10.234-rt126 directly, the following patches should be applied:
-> > 
-> >   https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-> > 
-> >   https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.234.xz
-> > 
-> >   https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.234-rt126.patch.xz
-> > 
-> > Signing key fingerprint:
-> > 
-> >   9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-> > 
-> > All keys used for the above files and repositories can be found on the
-> > following git repository:
-> > 
-> >    git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-> > 
-> > Enjoy!
-> > Luis
-> > 
-> 
-> [1]
-> https://lore.kernel.org/stable-rt/CAMLffL-PTp+Y-rXsTFaC5cUJyMMiXk-Gjx59WiQvcTe46rXFrw@mail.gmail.com/T/#m67dce3408cac40318ae3dbe1c713b13621ac66c9
-> 
-> -- 
-> Siemens AG, Foundational Technologies
-> Linux Expert Center
-> 
----end quoted text---
 
+I want to understand why cancel_delayed_work_sync was introduce in
+hvfb_suspend and not the flush. Following commit introduced it.
+
+382a462217572 ('video: hyperv_fb: Fix hibernation for the deferred IO feature')
+
+But I agree this need more analysis.
+
+> If the new issue still happens, that seems like more of a flaw
+> in the fb deferred I/O mechanism not shutting itself down
+> properly.
+> 
+
+As the repro rate is quite low, this will take some effort to get this
+fixed. Shall we take this in a separate patch later ?
+
+
+> Michael
+>
+
+<snip> 
 
