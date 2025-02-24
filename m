@@ -1,118 +1,172 @@
-Return-Path: <linux-kernel+bounces-528030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F57A412A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:34:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3E9A412AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BE187A7829
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:33:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2BE73A5AC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B17D156F39;
-	Mon, 24 Feb 2025 01:34:05 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE2F156677;
+	Mon, 24 Feb 2025 01:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rzonImDk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="wKHL00mL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qCjqXg8K";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NnMPKFp7"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA01537C8;
-	Mon, 24 Feb 2025 01:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574C7155A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740360844; cv=none; b=fji8kBDCK/Fby+hJNh163wnq/p7MZsZ3R4qULsskG0dkOYjE8l1k+76TsHN0Q+SGRiVZ3MQLT8dIcZ3ePJggD9UfIt8dzsDT656/sbC8IAEtZuVXPNhhalrPL+h0ffjhkHM1UsmtkvYh5EXtN7W/hRHMBVBdTdha1eppb4cl1bU=
+	t=1740360862; cv=none; b=fVJK5pAbMndPP7cGbTAchKqbCF2GDm2Eeep7O81M0dWm8hG19hj9ObX8BUGonB8Gukezpi9KuC5V+fGsFV2zqQRwTWEozjxwqWzz9pbkfjWTcXpda2HSICxJ2YiXLIJ947dVofB1nYQgVZr9iMgBe54/GQjwJk30lWPv4MBx7aE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740360844; c=relaxed/simple;
-	bh=7XL2h2hW1xBQfS3RvO7aPyzUBxNged97N/J/f0eaYk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=u2FzfudJL+5WMkv0fw33yy+pUAmQzyP8WrUJk7HLddt63JEFYi122jcr3E/aCAB7kBTbNFYubpgBAFCqUCFQF6EIFw9mpJljPZ+3eyZ8LGOT1hxmIPxudJNDF+LcWXi90Lb90z666zAMORSNKmJnyYFeZC6Ta7gr9k+lwABqhvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABnbaFozLtn0cGYDw--.27817S2;
-	Mon, 24 Feb 2025 09:33:37 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: gregkh@linuxfoundation.org,
-	make24@iscas.ac.cn,
-	elder@kernel.org,
-	quic_zijuhu@quicinc.com,
-	kekrby@gmail.com,
-	oliver@neukum.org,
-	stern@rowland.harvard.edu
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] USB: Skip resume if pm_runtime_set_active() fails
-Date: Mon, 24 Feb 2025 09:33:25 +0800
-Message-Id: <20250224013325.2928731-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740360862; c=relaxed/simple;
+	bh=Al6jKkOiVhexQTQI4Zbtqw8ZvF2LAQnFfueXusXBnhk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=TgCosaNdmUN717Kj7gODHOG/c01UiNVNV5K5VMPH7zXr7mMOppUuhj4dLZTBPzs4HlrSJZSrD+LK89EH5waJCpScH5n053Wzr1ewL0AHn/Xtd+OUfgfadhc1zxDhVK8N+GcOsMAmGyyCTewkPd4PJL5LhHrgTTg4ntFYjwaUu2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rzonImDk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=wKHL00mL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qCjqXg8K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NnMPKFp7; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8CC902116D;
+	Mon, 24 Feb 2025 01:34:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740360858; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=rzonImDkwJoVgWfKV5OP1Ih17Ix4H0Uj8cYlPZ+aY6Hdv0gpMIjIyh0ZkQKVgVT/FndPIi
+	sZMx93YtVbo91VfBLYw5Sd6QCpfSxUdFevY2NXEwZL0R6VVTI4hCqHByOBkOvB43Ien6pD
+	P/6G9UJwoNlFoBYkRddy4ZWrLNokImU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740360858;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=wKHL00mL1XwcnqReM3IXJ5QvOzvSSWlBJfXq7VRTKaOqqQlFbKoDoTYOYWQwP6zgNjjEty
+	3hVZKYyoFwDy9BDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740360857; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=qCjqXg8KOIWeT3woveYRbx7VhkwuOymOoulEdAyAbzEyKPU1njqvzcfJPElrVedFsxBHIA
+	hxTuG7Yu2Md3OY4EmdKk88M7EAXGOkBVk431FVrQCkAV3L5EonJ6odzCnm3MPhvA4Tkm0C
+	xCoR6Ww2x6WwPLM+/hg9l/iLduL29nU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740360857;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6DmzFO4HIzWBxdCLLN4FbtoKwoidbgVbtC5hcg04Dc=;
+	b=NnMPKFp7uSRVRE7AKEKm5nzIqIWLBtvgf0+qLo3xf1arIZxW9yW/A3b6APtVdlgfYPoB/h
+	GnKso9DG+FqdTyDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 903E0136B3;
+	Mon, 24 Feb 2025 01:34:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 2AUiCpHMu2dQagAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 01:34:09 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABnbaFozLtn0cGYDw--.27817S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tFykCrW3ZrWrXryDZr1DJrb_yoW8Gw1kpa
-	18JFW0kF47X3Wayw4jvFn2vFy5Ww4rCFW7Cr97Gwn3u3W5Aa48try8Jryag3WqkrnxX3WU
-	ta1DGw1UuFW8GFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
-	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUOmhFUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+From: "NeilBrown" <neilb@suse.de>
+To: "Al Viro" <viro@zeniv.linux.org.uk>
+Cc: "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
+ "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
+ netfs@lists.linux.dev
+Subject:
+ Re: [PATCH 1/6] Change inode_operations.mkdir to return struct dentry *
+In-reply-to: <20250222041937.GM1977892@ZenIV>
+References: <>, <20250222041937.GM1977892@ZenIV>
+Date: Mon, 24 Feb 2025 12:34:06 +1100
+Message-id: <174036084630.74271.16513912864596248299@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org,lists.infradead.org,lists.linux.dev];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-A race condition occurs during system suspend if interrupted between
-usb_suspend() and the parent device’s PM suspend (e.g., a power
-domain). This triggers PM resume workflows (via usb_resume()), but if
-parent device is already runtime-suspended, pm_runtime_set_active()
-fails. Subsequent operations like pm_runtime_enable() and interface
-unbinding may leave the USB device in an inconsistent state or trigger
-unintended behavior.
+On Sat, 22 Feb 2025, Al Viro wrote:
+> On Fri, Feb 21, 2025 at 10:36:30AM +1100, NeilBrown wrote:
+>=20
+> > +In general, filesystems which use d_instantiate_new() to install the new
+> > +inode can safely return NULL.  Filesystems which may not have an I_NEW i=
+node
+> > +should use d_drop();d_splice_alias() and return the result of the latter.
+>=20
+> IMO that's a bad pattern, _especially_ if you want to go for "in-update"
+> kind of stuff later.
 
-Found by code review.
+Agreed.  I have a draft patch to change d_splice_alias() and
+d_exact_alias() to work on hashed dentrys.  I thought it should go after
+these mkdir patches rather than before.
 
-Cc: stable@vger.kernel.org
-Fixes: 98d9a82e5f75 ("USB: cleanup the handling of the PM complete call")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/usb/core/driver.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Thanks,
+NeilBrown
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index 460d4dde5994..7478fcc11fd4 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -1624,11 +1624,17 @@ int usb_resume(struct device *dev, pm_message_t msg)
- 	status = usb_resume_both(udev, msg);
- 	if (status == 0) {
- 		pm_runtime_disable(dev);
--		pm_runtime_set_active(dev);
-+		status = pm_runtime_set_active(dev);
-+		if (status) {
-+			pm_runtime_enable(dev);
-+			goto out;
-+		}
-+
- 		pm_runtime_enable(dev);
- 		unbind_marked_interfaces(udev);
- 	}
- 
-+out:
- 	/* Avoid PM error messages for devices disconnected while suspended
- 	 * as we'll display regular disconnect messages just a bit later.
- 	 */
--- 
-2.25.1
+
+>=20
+> That's pretty much the same thing as d_drop()/d_rehash() window.
+>=20
+> We'd be better off dropping that BUG_ON() in d_splice_alias() and teaching
+> __d_add() to handle the "it's a hashed negative" case.
+>=20
 
 
