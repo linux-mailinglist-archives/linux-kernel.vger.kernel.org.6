@@ -1,143 +1,127 @@
-Return-Path: <linux-kernel+bounces-529806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DD7A42B2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:24:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A10FAA42AAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BDD07A50AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:22:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3E847A4349
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:07:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BCDA266B46;
-	Mon, 24 Feb 2025 18:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708AB264FAA;
+	Mon, 24 Feb 2025 18:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="BQR8h4qZ"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qelw19KD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9E1265CBF;
-	Mon, 24 Feb 2025 18:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3122641D8;
+	Mon, 24 Feb 2025 18:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740421276; cv=none; b=p3I+MxbEmGDvHSKmizrZuwckSQy8FqKac3/ZU82X/ZrSJfkDcj8dXQj6UqIV8KgugfkC6o56nxALFKUvbK4oyn0lIrpZyAZZ5ADkdCEDeLXrveSqrkL3JXBJTl3FdtzNlorJ26j9OpVaDHgguWVohEhhtBBsJ5VQe1q7Z3zIlco=
+	t=1740420492; cv=none; b=JbglQWOQEMnUSxa2TweNaaGY/tzNAeLjUKCgb0fjE0aIuAoGtQvhaD+uDu5fC9+qmWnvTw9JBmC7GfxKMer+SuL5xzV9lJbbMiql59gKGehTTt3fis9/Q+H93ZIPKgyzGMPgI1wsEuMsjm1UL3doL+0wlG4/NvidmH1drR0RXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740421276; c=relaxed/simple;
-	bh=DCXTAXYVaCDoehjsFSI9JGthYW2HgxuvBibu7CR934I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=h2pl3u0eB+giEQBTfXA5FzoxhXoLmG8VKyRYvHQsyt8yyRtahZH1GybXJXPxpNTjzZOeORdwaus63AslWN0ht7h56OdWOScI3WHUQhpzr0Kk5TMrEn5/vI7UDJn8tvs6o+IFpjlW7Ooe/X3eEDOwHfxs77APyA60Yz2J82PsrEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=BQR8h4qZ; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 31F111FBD4;
-	Mon, 24 Feb 2025 19:08:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1740420486;
-	bh=C7U4HwlepaLvGf1mVinelge72wt+sVgO2WNDILODsR0=; h=From:To:Subject;
-	b=BQR8h4qZ9ROPMhDIlNvrQ+RrB3mQKBzFKlMUHECmKM6plkdai1b9GBE+P333oXAxE
-	 SNH+uN+MRoHMHQlB1hA3gDj+vrAMN0l9G4uQhLlKOoaFoPCLE/+PBGO/1wFFnMGwMA
-	 p3pV/0uLeD6vLcCtdeJcajDtcCOV00tu6agYAlx0BlGV8QUsKA5vjvyiWyOp/ZDClO
-	 9cwmuGjrXOmoP0zK1s3qaft9B7HZAzNqKB24Be5kYpzU70lEqGSJ84fOoJP0Fbp0xG
-	 fDBKVa+PXfwGw6994eXRqE/xiP1S6pMUbsFVztX7A6o7x9HW4eBHftub1Z5PbSZjya
-	 8PpAoDm8pkI6A==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	Quentin Schulz <quentin.schulz@cherry.de>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-hwmon@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] hwmon: (amc6821) Add PWM polarity configuration with OF
-Date: Mon, 24 Feb 2025 19:08:01 +0100
-Message-Id: <20250224180801.128685-3-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250224180801.128685-1-francesco@dolcini.it>
-References: <20250224180801.128685-1-francesco@dolcini.it>
+	s=arc-20240116; t=1740420492; c=relaxed/simple;
+	bh=OAGKsUmy5EtMSVfMc9WTBde8Uxv0P28mK2h80COKX7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WYuG6iuLw5OagsKp+F1lrB6u+NHE4yUw/pYWbKKXTLDHFe6QEJ0F/8Whx5D0jWO8i2+nLsyxpzoEoBjFGSOSJ+cuhq0Q9Ax/ZYvVKXHkkfXLH17mavvgjlsPnJ3NS6gK87Mh1ZiieI2F4y2PIwryaBgHxlN/YekJ5YBy0apRPgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qelw19KD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68671C4CED6;
+	Mon, 24 Feb 2025 18:08:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740420492;
+	bh=OAGKsUmy5EtMSVfMc9WTBde8Uxv0P28mK2h80COKX7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qelw19KDNu3QrsBuONGuAhKFvM8rTeBIVxDIr1U788i1+zWZCnhxgLph12LRkIbXr
+	 3+uXYdtoIHMNlQD+kSDJO9bwuz8oQmuaY7lgUqp81HJ2/QomcbuHb7/8KFjHe4z8PI
+	 AAFcpOyN0Xi30jU2JDvk/sciKh8+U60Yzsg4Ym/+czneNs3tp1qj+K9p9bfrdi0S/x
+	 1/OBrHyUC+vonPIlWNYbJiQhhPDZP9iySdKmMxeg4GmFfOAC+Pgzr6jqpUUrqsjw0K
+	 Sa3Qdwe3Mg42KjWZRNx2YPyMK8V/J71bprho2oxqyCGekYgEVUwyMzhYJeUrDKQT+C
+	 BkeKqEgaS7XGg==
+Date: Mon, 24 Feb 2025 10:08:05 -0800
+From: Nathan Chancellor <nathan@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	bpf <bpf@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Zheng Yejian <zhengyejian1@huawei.com>,
+	Martin Kelly <martin.kelly@crowdstrike.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Josh Poimboeuf <jpoimboe@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>
+Subject: Re: [for-next][PATCH 4/6] scripts/sorttable: Zero out weak functions
+ in mcount_loc table
+Message-ID: <20250224180805.GA1536711@ax162>
+References: <20250219151815.734900568@goodmis.org>
+ <20250219151904.476350486@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219151904.476350486@goodmis.org>
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+Hi Steve,
 
-Add support to configure the PWM-Out pin polarity based on a device
-tree property.
+On Wed, Feb 19, 2025 at 10:18:19AM -0500, Steven Rostedt wrote:
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index 728ecda6e8d4..e3f89924f603 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -7004,6 +7004,7 @@ static int ftrace_process_locs(struct module *mod,
+>  	unsigned long count;
+>  	unsigned long *p;
+>  	unsigned long addr;
+> +	unsigned long kaslr;
+>  	unsigned long flags = 0; /* Shut up gcc */
+>  	int ret = -ENOMEM;
+>  
+> @@ -7052,6 +7053,9 @@ static int ftrace_process_locs(struct module *mod,
+>  		ftrace_pages->next = start_pg;
+>  	}
+>  
+> +	/* For zeroed locations that were shifted for core kernel */
+> +	kaslr = !mod ? kaslr_offset() : 0;
+> +
+>  	p = start;
+>  	pg = start_pg;
+>  	while (p < end) {
+> @@ -7063,7 +7067,7 @@ static int ftrace_process_locs(struct module *mod,
+>  		 * object files to satisfy alignments.
+>  		 * Skip any NULL pointers.
+>  		 */
+> -		if (!addr) {
+> +		if (!addr || addr == kaslr) {
+>  			skipped++;
+>  			continue;
+>  		}
 
-The driver has a module option to set the PWM polarity (normal=0,
-inverted=1), when specified it always takes the precedence over the DT
-configuration.
+Our CI and KernelCI reports that this change as commit ef378c3b8233
+("scripts/sorttable: Zero out weak functions in mcount_loc table") in
+next-20250224 breaks when an architecture does not have kaslr_offset()
+defined:
 
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v2: pwminv module parameter takes always the precedence over the DT property
-v1: https://lore.kernel.org/all/20250218165633.106867-3-francesco@dolcini.it/
----
- drivers/hwmon/amc6821.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+  $ make -skj"$(nproc)" ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- mrproper allmodconfig kernel/trace/ftrace.o
+  kernel/trace/ftrace.c: In function 'ftrace_process_locs':
+  kernel/trace/ftrace.c:7074:24: error: implicit declaration of function 'kaslr_offset' [-Wimplicit-function-declaration]
+   7074 |         kaslr = !mod ? kaslr_offset() : 0;
+        |                        ^~~~~~~~~~~~
 
-diff --git a/drivers/hwmon/amc6821.c b/drivers/hwmon/amc6821.c
-index 1e3c6acd8974..317741995df2 100644
---- a/drivers/hwmon/amc6821.c
-+++ b/drivers/hwmon/amc6821.c
-@@ -37,7 +37,7 @@ static const unsigned short normal_i2c[] = {0x18, 0x19, 0x1a, 0x2c, 0x2d, 0x2e,
-  * Insmod parameters
-  */
- 
--static int pwminv;	/*Inverted PWM output. */
-+static int pwminv = -1; /*Inverted PWM output. */
- module_param(pwminv, int, 0444);
- 
- static int init = 1; /*Power-on initialization.*/
-@@ -845,9 +845,10 @@ static int amc6821_detect(struct i2c_client *client, struct i2c_board_info *info
- 	return 0;
- }
- 
--static int amc6821_init_client(struct amc6821_data *data)
-+static int amc6821_init_client(struct i2c_client *client, struct amc6821_data *data)
- {
- 	struct regmap *regmap = data->regmap;
-+	u32 regval;
- 	int err;
- 
- 	if (init) {
-@@ -864,11 +865,15 @@ static int amc6821_init_client(struct amc6821_data *data)
- 		if (err)
- 			return err;
- 
-+		regval = AMC6821_CONF1_START;
-+		if ((pwminv < 0 && of_property_read_bool(client->dev.of_node, "ti,pwm-inverted")) ||
-+		    pwminv > 0)
-+			regval |= AMC6821_CONF1_PWMINV;
-+
- 		err = regmap_update_bits(regmap, AMC6821_REG_CONF1,
- 					 AMC6821_CONF1_THERMOVIE | AMC6821_CONF1_FANIE |
- 					 AMC6821_CONF1_START | AMC6821_CONF1_PWMINV,
--					 AMC6821_CONF1_START |
--					 (pwminv ? AMC6821_CONF1_PWMINV : 0));
-+					 regval);
- 		if (err)
- 			return err;
- 	}
-@@ -916,7 +921,7 @@ static int amc6821_probe(struct i2c_client *client)
- 				     "Failed to initialize regmap\n");
- 	data->regmap = regmap;
- 
--	err = amc6821_init_client(data);
-+	err = amc6821_init_client(client, data);
- 	if (err)
- 		return err;
- 
--- 
-2.39.5
+https://lore.kernel.org/CACo-S-0GeJjWWcrGvos_Avg2FwGU2tj2QZpgoHOvPT+YbyknSg@mail.gmail.com/
 
+Cheers,
+Nathan
 
