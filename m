@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-528260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D40A41592
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:41:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38E5A41597
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:42:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5D0C1890358
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:41:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3FA16642B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2C5207E13;
-	Mon, 24 Feb 2025 06:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012042080D4;
+	Mon, 24 Feb 2025 06:42:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OYLuhkW3"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h7bGiyD9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C065B32C85;
-	Mon, 24 Feb 2025 06:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953E7207DEF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740379255; cv=none; b=Z26PlD8FWbJdpUIq8vwK/NzDrWzIdUFR8EkHvDhu3iUBb1NmrBs7IOPsgIHe+/uLm+El44Cg9cyYTDwfeMvEbOcarAQhmu0vWZaf7ItQ3rl4M0MXh2f7xJHE8OThr8VM0/nWAonmJt4Wb+V8f2NKCLE9Xt67Fr8F13FYxvSNnh4=
+	t=1740379367; cv=none; b=gXcc4DJrm8cyb+HjTbE+JKp1MXeRE+53t+HFgIOfCcX87CI8KHg5VjoyIfiK62tgD0OWdhGcey+G8VbvncpJj8lKNFC9VTnQ58gopBnohG8fLM773JqlbVepVy/vfegOGwhVd5mPw+F/F9DOptM5Mg9Qjnb3yP/mOxvQXvd8bLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740379255; c=relaxed/simple;
-	bh=dI2rXdwa1aLewP5sET84b/vlAgp2MelpL729FzfWKCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=clrJ1XHBDuoAYgbvLQoy46dOveePGCMfFAYmQzZemASRjsPsrk2yd76mUCQX0PH8tWlruyfMnCALQMPzMeyoetjDrvq/SmlMl8+JtPQXu13IpsIFOgSJ+SrW4orGkiDUJ7QBchZnsvyAbe6DNza37m3tLzVjokt2uGmggjqJE0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OYLuhkW3; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740379249;
-	bh=G4UcVpz4z9IEcH5ibVq1WHPGG6fkGN6RFuLkoZyfg0o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OYLuhkW35+zp7hDUsqBMgaFJJczshgYUCfJJU1HoGN8Pi/8AkN6p3OZnGUpbd0tD8
-	 QsRzXdedXOwajdwzNQmkzJykL6xpTpxdQVzhE7IOfW/m/F0q2AKepwlPXVZK5YRfmD
-	 8MeskW3n+puIsgSez9xhssqOtE2xcANZBD3IQ55m95UG0vzNSCwG0Sdrvr2nxkMvrO
-	 7yOq42/VQn2KiHoeLsExWAIY03zQwsPMg6T15KCXvYdAtE9KG91b//BUXVXuqBsPkn
-	 ulGowbJAJxKGP+qGarJgxMJoY6Tprsxow+ou3v3vy32kJF6ROYEk6fUfOIGxrfUpeQ
-	 gg7I8izR6rw+Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1WMj3xMrz4wby;
-	Mon, 24 Feb 2025 17:40:48 +1100 (AEDT)
-Date: Mon, 24 Feb 2025 17:40:47 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kees Cook <kees@kernel.org>, Christian Brauner <brauner@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Brian Mak <makb@juniper.net>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the execve tree
-Message-ID: <20250224174047.7d1bd6e4@canb.auug.org.au>
+	s=arc-20240116; t=1740379367; c=relaxed/simple;
+	bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C9jeapS5fVCSELD/V8OBa3aP/oeCQ89kOsGw9Hx8yz3ehIMZKlLcCzMUPUiVSLtpgQnNzSAGdvUo/0bsBmYGm+W7EaVdNvLiCy4Wvoo/lU1+mZM3bPscdB2/eZ2ekrcu743YSNDoxN2MyC+34CZxrtrf+bs0K3p7f70oOu5AeFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h7bGiyD9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740379364;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
+	b=h7bGiyD97fFMUzp4lOVFLfffKffqM3cOBVDRVZzhWTD2ypN+uG9guckjUcAmpTLvilIwFL
+	82ZTBPUa2qcCBiq1dM4k7Rx862eMP97FE50Xq4nZ2hRaJ2RtLVKNvh00fh7RyGlIZiDzxH
+	iLDaIhr1+mjARTVXim5GYEpU2xIsYPU=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438-3af_4m9vO1aLVZ8x-3ZzZQ-1; Mon, 24 Feb 2025 01:42:42 -0500
+X-MC-Unique: 3af_4m9vO1aLVZ8x-3ZzZQ-1
+X-Mimecast-MFC-AGG-ID: 3af_4m9vO1aLVZ8x-3ZzZQ_1740379361
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc5888c192so7929989a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:42:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740379361; x=1740984161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dtjB5lyx5eVjo41HPScIoxSHxdSK2RxZloMKni6QTKE=;
+        b=wP542ipS45+MZiC8w//810C5+G4NNhTm8kgmMni+xieBbbwwnlX1CgbdWdUXufA8Zr
+         BY6AeY+pBn80QUAk8akLh43XQkbCBEHesFAVby7BiiqIOyFL3Zaa2ca0LfKzM2yR5GD+
+         RLMVeFAIFT7tt6oD17yNoLo3m+l/VBObWeWgbO+TQzyMRpZiF20P5ASvvxpkVjYmkMZm
+         C6rHdrH21IzV8L7wLlZdyqnB2I+32E/iCpL8QNbG9r6g7wHEJttPvgYGzEQ6K8gnvtwa
+         aBQ0dtQENkMdKFLPva3zjaJxMtvhYbw++Xbpo/vAiUPcqK1F7ADUdOxPTGpab4iCK9rH
+         elhw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4SChVUZ9PENzsiFEg5Qg6mdJ+8O0HfQxD6RWrmy/ziaEij4dLKa8AszmJ5uiZp7Jy1U88J8lhNZHmJH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGgopjceY4GKMPDdMpd0f0AFe6TVXOnbXfMxFDCH6Vr4V82DrW
+	Vru1nCvcIJ+nwNO8lCT3od6YnzLKQG/KraylQcJIWIFqRbtsoLUOlN1I9mnbZkEykxjHvfdPoQ2
+	s5a4lCdCq8IBZF2oRC1MdJ8acA5is2r5rzM7Qku5wSrg+vak9ouLW7BaMsDehfdsyu1dr3TtT0/
+	pNKESRoKuU/TBaWDeeLuflQBIyaiKeLBxnUBvN
+X-Gm-Gg: ASbGnctGmHy2u83oyGZw+ss1BI1j4ALFeU6Yg1uUZrkuQDY2URcMJxutG8/4fihGatG
+	1bvA3rITcWAPx8olKRKmV/gRfwZGAultyuG/FZWdZcdp3abazUicVrJiGXx1fBXUPZ9Ue66o=
+X-Received: by 2002:a17:90b:2688:b0:2fa:20f4:d27a with SMTP id 98e67ed59e1d1-2fce77a6382mr22454972a91.7.1740379361492;
+        Sun, 23 Feb 2025 22:42:41 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEuFD2ecIhUAFhVjxb8VN9DbbzjXzl6lNulCOdvpETmdpzPozqSwQzz5CU4bcDz4WMau0RfbbIjUtCAkxFwf68=
+X-Received: by 2002:a17:90b:2688:b0:2fa:20f4:d27a with SMTP id
+ 98e67ed59e1d1-2fce77a6382mr22454953a91.7.1740379361235; Sun, 23 Feb 2025
+ 22:42:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/L35Mzz/flyxhQr5DMosP99l";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/L35Mzz/flyxhQr5DMosP99l
-Content-Type: text/plain; charset=US-ASCII
+References: <20250221170626.261687-1-eperezma@redhat.com> <20250221170626.261687-2-eperezma@redhat.com>
+ <CACGkMEurYAGHx1FF5YgS=T-4CDY8dn4B2sQJB_ojRxDdiqB2YQ@mail.gmail.com>
+In-Reply-To: <CACGkMEurYAGHx1FF5YgS=T-4CDY8dn4B2sQJB_ojRxDdiqB2YQ@mail.gmail.com>
+From: Eugenio Perez Martin <eperezma@redhat.com>
+Date: Mon, 24 Feb 2025 07:42:04 +0100
+X-Gm-Features: AWEUYZnuYDjmdyQD3CYZL5hzzrYfofHBj4VHCbCLQNKiTNY5xfwbgaR5pmNcLH8
+Message-ID: <CAJaqyWc6M+1dkLSMuGwauUKEOoaC-VfW5Ofn6JwYtnKYB-yjRw@mail.gmail.com>
+Subject: Re: [RFC v2 1/5] vduse: add virtio_fs to allowed dev id
+To: Jason Wang <jasowang@redhat.com>
+Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Hanna Reitz <hreitz@redhat.com>, linux-kernel@vger.kernel.org, 
+	German Maglione <gmaglione@redhat.com>, virtualization@lists.linux.dev, 
+	Stefano Garzarella <sgarzare@redhat.com>, yama@redhat.com, Vivek Goyal <vgoyal@redhat.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, mst@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Mon, Feb 24, 2025 at 2:57=E2=80=AFAM Jason Wang <jasowang@redhat.com> wr=
+ote:
+>
+> On Sat, Feb 22, 2025 at 1:06=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redh=
+at.com> wrote:
+> >
+> > A VDUSE device that implements virtiofs device works fine just by
+> > adding the device id to the whitelist.
+> >
+> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > Acked-by: Jason Wang <jasowang@redhat.com>
+> > ---
+>
+> Let's separate this from this series.
+>
 
-After merging the execve tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+Right, actually I should have said this series should be applied on
+top of this sent patch:
 
-fs/coredump.c: In function 'dump_vma_snapshot':
-fs/coredump.c:1301:45: error: too few arguments to function 'get_dump_page'
- 1301 |                         struct page *page =3D get_dump_page(addr);
-      |                                             ^~~~~~~~~~~~~
-In file included from fs/coredump.c:6:
-include/linux/mm.h:2620:14: note: declared here
- 2620 | struct page *get_dump_page(unsigned long addr, int *locked);
-      |              ^~~~~~~~~~~~~
+https://lore.kernel.org/lkml/CAJaqyWdC-Tte+ao6pk22fq-mUym8C9guQFThSnG5gMxWN=
+qWyXw@mail.gmail.com/T/
 
-Caused by commit
-
-  ff41385709f0 ("coredump: Only sort VMAs when truncating or core_sort_vma =
-sysctl is set")
-
-interacting with commit
-
-  d6ff4c8f6522 ("fs: avoid mmap sem relocks when coredumping with many miss=
-ing pages")
-
-from the vfs-brauner tree.
-
-I did the obvious (but probably wrong fix up below).
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 24 Feb 2025 17:27:25 +1100
-Subject: [PATCH] fix up for "coredump: Only sort VMAs when truncating or
- core_sort_vma sysctl is set"
-
-interacting with commit
-
-  d6ff4c8f6522 ("fs: avoid mmap sem relocks when coredumping with many miss=
-ing pages")
-
-from the vfs-brauner tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- fs/coredump.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 723c1ae9d2f4..eb75cd30862d 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -1243,6 +1243,7 @@ static bool dump_vma_snapshot(struct coredump_params =
-*cprm)
- 	VMA_ITERATOR(vmi, mm, 0);
- 	int i =3D 0;
- 	size_t sparse_vma_dump_size =3D 0;
-+	int locked =3D 0;
-=20
- 	/*
- 	 * Once the stack expansion code is fixed to not change VMA bounds
-@@ -1298,7 +1299,7 @@ static bool dump_vma_snapshot(struct coredump_params =
-*cprm)
-=20
- 		/* Subtract zero pages from the sparse_vma_dump_size. */
- 		for (addr =3D m->start; addr < m->start + m->dump_size; addr +=3D PAGE_S=
-IZE) {
--			struct page *page =3D get_dump_page(addr);
-+			struct page *page =3D get_dump_page(addr, &locked);
-=20
- 			if (!page)
- 				sparse_vma_dump_size -=3D PAGE_SIZE;
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/L35Mzz/flyxhQr5DMosP99l
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme8FG8ACgkQAVBC80lX
-0GyZeQgAm0PaC71mgxbd+cEwFf+BNbNKp1vH61xOUNHnL6uZz5O44taBpONBwNff
-5sHjFIbJAEJ/CwyoL55N5u4ejf8bKppc2QMlOf+Mm51pqjo0eZcnIb9xrK/OQZXT
-yhFlf9JP51M8uGZpO5F6uaewxGP8o7l5/ItoVKlh86/Zy+VbMpckPI2l0Ml+5nma
-49Yd8G9SxL+uRUouHFz5HGQPunFvoacxWq/B20FJ9UPTOQiYEO1c53JAPtPk6pqr
-J6XBF4xmlxSDv7eguU3uW1l/AEuhsmeGQtMmRfgsq0BsLWfFePvL4ClMmoVJ1tJA
-aFP7l0hiyGMSxF5qMcbISvSLAL6jwQ==
-=oBlw
------END PGP SIGNATURE-----
-
---Sig_/L35Mzz/flyxhQr5DMosP99l--
 
