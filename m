@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-529763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A401A42AAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:07:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85485A42AAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AC6A189F106
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:05:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4966D189A7CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB5226618D;
-	Mon, 24 Feb 2025 18:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279DB266B78;
+	Mon, 24 Feb 2025 18:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="QHb7XYev"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF2C265CC7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lR5RGht4"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC63265CC7;
+	Mon, 24 Feb 2025 18:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420234; cv=none; b=O/yQlAzJWkqZSbkGVuG/yGwjTZGqPUYHme8lONk1KFFawQJMLftCYeei3F90bhnruhCUXkTz3vmREABQhsLw9zWFoCdzrv/8U7Q2hjDv0/s1y6iUZhLLAXzJJrgmdUObhQdScrUck0fCt43syDu8gAVCx2YNAhn3WeRN67w50e8=
+	t=1740420239; cv=none; b=eALzd1wTCXDCLNuWRVyfpUmt8SYhO+RcUCgecJ0PcTrSxlS3DA6TKlP6YhTLLgBb/OdW2WvhbCxk3xtdzNpMB/JWgd6VJrk63uSwhPARhRPTNlt3cjcO1YOb8NwDSUT0PcZJdI8/FgMJdLzXMjhC/6VpNank9Lp45ON8QFOQCPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420234; c=relaxed/simple;
-	bh=5RpMAGSZ0ZNkJ3JooIv7O3KzA0gyrRIWj2o3HUgtdfg=;
+	s=arc-20240116; t=1740420239; c=relaxed/simple;
+	bh=cgzLQwBCDfKRaWD7SiW5ribqbmcPwvUXFZODbdvUuAI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKtPzBxybbjtNU2URr/yjE4mYUSXL0ylc2MkXQ8chn+J9s3za4WUw9/GFZOaZGPfxN3uau/FI8lalCSOwxtzcF94FzgPBB27EBZmeihKMtwXX5z5HCIv2yTF59R/C7aRhc9HZy0QJpv83MUjTwLH8qFQmeMjDgdHbpQq/gSpv9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=QHb7XYev; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-Date: Mon, 24 Feb 2025 13:03:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1740420229;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nXUDp/2MWc9Zgcs/aIwBZ8FKfaDetZqTuesjivcVPQ8=;
-	b=QHb7XYevWDc6ou8iTHrXYw/+/PbT7u/UCDAqUt4Tn6FKYAMSPA6Y/46u0eX61MreH05wUo
-	uY2BM/JQk9Vh0Bowihp/4zl/aJG125Ng7VSzpI+39GCUFca7PWIsZ0RaeSpneisBBHxcTL
-	mH+OVHdjqQ4BeGy+UQeYTp7kffSBJTqQ76vZ5xxDUWo6eo+U8CrK/eupappRZJ7YtMOGB3
-	1yolobGSZ/PFOdLr51o8d5JmUeM1Hg1QSI289vCAJ0mb/MTEhSav2/xKj1hDmOK9HawGsP
-	iBVZxtfOLHgedn1TDLJ1d1o51bSfunrymeCjqLjol7jVNBgbfznjGUIlAyr0xA==
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: sven@svenpeter.dev
-Cc: Janne Grunau <j@jannau.net>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] soc: apple: rtkit: Add APPLE_RTKIT_PWR_STATE_INIT
-Message-ID: <Z7y0gJPD5-OQvyog@blossom>
-References: <20250222-apple-soc-misc-v1-0-1a3af494a48a@svenpeter.dev>
- <20250222-apple-soc-misc-v1-1-1a3af494a48a@svenpeter.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+s+JTMlGbJu7qpYKYWcHLNzA3kREPM+6aeHallS84/IbQ+IopLcDJYrPrG0re9mhjLmVL8ZTBLp4X7nuJ5L/y6l1xZraCwEPmpr16zrc+sLH3hIO2Rz9GIPMOvetDfA3CIesHe33fZaMrIPli6sulga0MoIuxiPJyixA2Q3dyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lR5RGht4; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2 (bras-base-toroon4332w-grc-32-142-114-216-132.dsl.bell.ca [142.114.216.132])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 8A81320376D0;
+	Mon, 24 Feb 2025 10:03:56 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8A81320376D0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740420237;
+	bh=uLG6vEMaW8gpv5F+S3c/S5AJWW46BKdcE4ru+h4q8a8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lR5RGht4yTR/C72u7mR8k3uoCiiKr621ctR90Ca6YYCsKRVVCcJlUFalhWTUtyDD6
+	 a0UPD58sWaSYY3Xvk369VoUSQTWw2ehVjg3gRDhDqxZpmEBjVdrRJBhKHMCgHZgT2e
+	 HVJpiwAPf3I+HsqoCk28rxLucJl4hi5Mo+QF8Pd8=
+Date: Mon, 24 Feb 2025 13:03:48 -0500
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Wedson Almeida Filho <walmeida@microsoft.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Konstantin Andrikopoulos <kernel@mandragore.io>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Roland Xu <mu001999@outlook.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: workqueue: define built-in bh queues
+Message-ID: <Z7y0hMZ-wAKkMrvP@hm-sls2>
+References: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
+ <Z7ytBYLKNabbm1m4@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,13 +67,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250222-apple-soc-misc-v1-1-1a3af494a48a@svenpeter.dev>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <Z7ytBYLKNabbm1m4@slm.duckdns.org>
 
-> -	msg = FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_STATE_ON);
-> +	msg = FIELD_PREP(APPLE_RTKIT_MGMT_PWR_STATE, APPLE_RTKIT_PWR_STATE_INIT);
+On Mon, Feb 24, 2025 at 07:31:49AM -1000, Tejun Heo wrote:
+> On Mon, Feb 24, 2025 at 09:23:23AM -0500, Hamza Mahfooz wrote:
+> > Provide safe getters to the system bh work queues. They will be used
+> > to reimplement the Hyper-V VMBus in rust.
+> > 
+> > Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> 
+> Ah, you already sent v2.
+> 
+>   Acked-by: Tejun Heo <tj@kernel.org>
+> 
+> Again, let me know how you want route it.
 
-Commit message doesn't match the code. Just adding the state doesn't
-imply a behaviour change but the patch is one. How about "Use INIT state
-instead of ON" or something to make explicit the behaviour change?
+I would prefer it it went through the workqueue tree, thanks!
+
+> 
+> Thanks.
+> 
+> -- 
+> tejun
 
