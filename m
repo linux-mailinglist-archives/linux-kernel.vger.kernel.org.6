@@ -1,67 +1,58 @@
-Return-Path: <linux-kernel+bounces-528531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2225AA418BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:22:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526FBA418BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F823B5799
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:18:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7D821888C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0926624BC13;
-	Mon, 24 Feb 2025 09:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2255E24CEE4;
+	Mon, 24 Feb 2025 09:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2OWZEL+c";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7CZDdR/l"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVDyb9A6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 106FF24BC0B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AFF0245014;
+	Mon, 24 Feb 2025 09:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388240; cv=none; b=M/4hWVJ3yv32/UhartT3lUf3Fun2Bv4n+M7TYSPFassG+IcG9zY/D/Kp4cH5L7fv2Elep8+P/hcUe+sjhYvGxZWJiXq1IfKPZQMpNn6wQ7ja86j5lQ195sjFYWMc8Z5i986fK82TbLWGNC3yrUJf1KwZfS0Xl/BlqBmksILCGoU=
+	t=1740388264; cv=none; b=amQyDAFNHPrlB//ylP769XjRgHXhxSWY+8z6WgLV8+5Ti2UN4d/4EpVGyc+B2gLyCPehJhkc6VSEakBQ2AM/vqVUE5xlcVAm1TAiw+/grzHsZfFBGVU/EJaAc1lqSf+mU4eKYZSpD+hs49UMcFA/BslQwyfte638Q/WbM+CaIIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740388240; c=relaxed/simple;
-	bh=eerz/6m2SwTKOFXB2OKD0Y5sI2vf/FI/jwlWGslcu8s=;
+	s=arc-20240116; t=1740388264; c=relaxed/simple;
+	bh=paqcVaN+9js9H2BBnIzPb/KQmMraUhcTcdEAOrrYxGc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkYhcFXx1qNbMgAaEeAUeE6I/bxWzZZxv0EauPqPJwKkWQY3TAY5aEbm9Na9JjOdpsSjIssnJvlrcgHjVcSRUjlz4jtdu3Ey74kI2ctJCkwNhgY4M2p/5aoR8yis3KjDbfSoJ0tDLBkG3SHos+a8mietzIGNrcFUZrxs/jihMlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2OWZEL+c; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7CZDdR/l; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 10:10:36 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740388237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPqGnpTERnLv/18IQIdDLi4CqLYf720duchwyRqxOZU=;
-	b=2OWZEL+c1cj8I0babIp6FhPn+sOh120YWsro0KostGW4iFTBGb2eCyrN/nGOjU1ouAsCMj
-	dNZCWINWTuqQyHH/rRgJC1+/YZsmQLrJld75izW57QoN7pSI1EqqvwN+ktm1QjJoN2+b5/
-	gc25jJA18EooRjgHEtKzNiI2cRm6Rg+MLKjHRzsOFByD/Oen+mhwyuBQbE2VxRcbxhVZ+C
-	1QKpb7ajlQJP5948Atu+2ufiO9v8k5oUWuLrpzgToYa+PvryYN4CfKlCUM3u/OVxC6gBh5
-	i/Pp1d7BZYOGSGCa2xPF5dzbYQVV46hrm4al8OCffE0X8jCbjNR3MCR9aNCVWQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740388237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPqGnpTERnLv/18IQIdDLi4CqLYf720duchwyRqxOZU=;
-	b=7CZDdR/lQVFuSZ13nzzqpxmYidYAwyMH2Pq/c34Thj4WqVMfHrgu6Nlyx4ftKbbwqww5z2
-	akR4ri2QJ5i2zRDA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 14/17] zram: permit reclaim in zstd custom allocator
-Message-ID: <20250224091036.Y9fHrKr-@linutronix.de>
-References: <20250221222958.2225035-1-senozhatsky@chromium.org>
- <20250221222958.2225035-15-senozhatsky@chromium.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QWNDXSeehvblZ+6SZit5jAHemjCdbaaTDDVldCdmGlQILx3uFb6kV/YMjN1/42aANW08lxsPzJTKUw8yvWVkWjq2aG14jMj4CH/NuKXO6m90xNFE5Xurp6wzLbvzj/iR4+DvMlZrAwMZxkPRWkvXsTnIAIwmpXbMJw0Q3Du1xRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVDyb9A6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 571D5C4CED6;
+	Mon, 24 Feb 2025 09:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740388264;
+	bh=paqcVaN+9js9H2BBnIzPb/KQmMraUhcTcdEAOrrYxGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UVDyb9A6iSFEZR+LjdELpEgVGyTrHax22CwW4kimVb/iLXTObfEsv95EuplSKgtBc
+	 5oUowBkfia/PWtbiRSow61VRZSQVmbFYD6RuAi+aQDfk5QP5t3a5vTE1HHtVr+B9CK
+	 myk1UQDUe+goU/zFwEjgPNeMwTMX64NNYwl34jsmeunRzgU+oexHDv6r+OlHpWtxyt
+	 TzfKctNBcaeHe1aHUHgRjNE+k5yxN2tN4eH9gAfY5kzqN7cN0P4vy0gQFGtG/5nylJ
+	 p1CFFYYDurj9gQex5jiwi5Ba5lGwPbayQsy2BFTfJ4wzexIHkq5cC4FjIqPAZZz+Rd
+	 260/jfeD3TjfQ==
+Date: Mon, 24 Feb 2025 10:11:01 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: benh@kernel.crashing.org, joel@jms.id.au, andi.shyti@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	andrew@codeconstruct.com.au, p.zabel@pengutronix.de, andriy.shevchenko@linux.intel.com, 
+	linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
+ AST2600-i2cv2
+Message-ID: <20250224-arrogant-adventurous-mackerel-0dc18a@krzk-bin>
+References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
+ <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,28 +61,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250221222958.2225035-15-senozhatsky@chromium.org>
+In-Reply-To: <20250224055936.1804279-2-ryan_chen@aspeedtech.com>
 
-On 2025-02-22 07:25:45 [+0900], Sergey Senozhatsky wrote:
->  static void *zstd_custom_alloc(void *opaque, size_t size)
->  {
-> -	if (!preemptible())
-> +	/* Technically this should not happen */
-> +	if (WARN_ON_ONCE(!preemptible()))
->  		return kvzalloc(size, GFP_ATOMIC);
-
-This check works only on preemptible kernels.
-If you run this on !PREEMPTIBLE kernels, preemptible() reports always 0
-so that WARNING will always trigger there.
-
-> -	return kvzalloc(size, __GFP_KSWAPD_RECLAIM | __GFP_NOWARN);
-> +	return kvzalloc(size, GFP_NOIO | __GFP_NOWARN);
->  }
->  
->  static void zstd_custom_free(void *opaque, void *address)
-> -- 
-> 2.48.1.601.g30ceb7b040-goog
+On Mon, Feb 24, 2025 at 01:59:34PM +0800, Ryan Chen wrote:
+> Add ast2600-i2cv2 compatible and aspeed,global-regs, aspeed,enable-dma
+> and description for ast2600-i2cv2.
 > 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../devicetree/bindings/i2c/aspeed,i2c.yaml   | 58 +++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> index 5b9bd2feda3b..356033d18f90 100644
+> --- a/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/aspeed,i2c.yaml
+> @@ -44,12 +44,60 @@ properties:
+>      description: frequency of the bus clock in Hz defaults to 100 kHz when not
+>        specified
+>  
+> +  multi-master:
+> +    type: boolean
+> +    description:
+> +      states that there is another master active on this bus
 
-Sebastian
+Except that this wasn't ever tested...
+
+Don't duplicate properties. i2c-controller schema has it already.
+
+> +
+> +  aspeed,enable-dma:
+> +    type: boolean
+> +    description: |
+> +      I2C bus enable dma mode transfer.
+> +
+> +      ASPEED ast2600 platform equipped with 16 I2C controllers that share a
+> +      single DMA engine. DTS files can specify the data transfer mode to/from
+> +      the device, either DMA or programmed I/O. However, hardware limitations
+
+so what is byte mode?
+
+> +      may require a DTS to manually allocate which controller can use DMA mode.
+> +      The "aspeed,enable-dma" property allows control of this.
+> +
+> +      In cases where one the hardware design results in a specific
+> +      controller handling a larger amount of data, a DTS would likely
+> +      enable DMA mode for that one controller.
+> +
+> +  aspeed,enable-byte:
+> +    type: boolean
+> +    description: |
+> +      I2C bus enable byte mode transfer.
+
+No, either this is expressed as lack of dma mode property or if you have
+three modes, then rather some enum (aspeed,transfer-mode ?)
+
+
+
+> +
+> +  aspeed,global-regs:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: The phandle of i2c global register node.
+
+For what? Same question as usual: do not repeat property name, but say
+what is this used for and what exactly it points to.
+
+s/i2c/I2C/ but then what is "I2C global register node"? This is how you
+call your device in datasheet?
+
+
+> +
+>  required:
+>    - reg
+>    - compatible
+>    - clocks
+>    - resets
+>  
+> +allOf:
+> +  - $ref: /schemas/i2c/i2c-controller.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: aspeed,ast2600-i2cv2
+
+NAK, undocumented compatible.
+
+> +
+> +    then:
+> +      properties:
+> +        reg:
+> +          minItems: 2
+
+
+Best regards,
+Krzysztof
+
 
