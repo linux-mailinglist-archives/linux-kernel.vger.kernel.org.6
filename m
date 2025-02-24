@@ -1,115 +1,121 @@
-Return-Path: <linux-kernel+bounces-529369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1110DA42396
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:45:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D48A5A423E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:50:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03E42189AFE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB1964449B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020F2248885;
-	Mon, 24 Feb 2025 14:39:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WzZfFuix"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110FD245006;
-	Mon, 24 Feb 2025 14:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0F24EF94;
+	Mon, 24 Feb 2025 14:39:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9891B192B96
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407949; cv=none; b=pODkmrW/hAQLsXZ1SNU/oomeg0VWQ3iKlxB3ywjRFffS0hr7G7ZwtIC6i/Mfe4VaynNKtSbdsCUBy59vE5db+hVgpnf/6o5baMu9BszaX/6v0q8ABgIwy2AvthIkMt4UTofpcsafpJiQgaV0QHZH6i48he/1gx3qPUfbEw/GqTE=
+	t=1740407963; cv=none; b=gKv8vORdSP5CpmKLT15IJeNK5MX1Qv4TH157AQUOm8TNWbrZhpyOtUHZ2wsfUdVLqC+nIrcCjcqDmV3VA3dhAl50QZcFrTX6KP7uSPNUynFKo02hVZ5J0dcCUTZAUZu97LG8BOUFOPeNyuucOQsC8WPBIzJFDROzWaIjBnIb51U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407949; c=relaxed/simple;
-	bh=fMonh/pKAVHu07dY8Vw+0UdrpHd7C1ki/HDFFIv2F+U=;
+	s=arc-20240116; t=1740407963; c=relaxed/simple;
+	bh=sCxDiVNbZjf7WMYy8fcgHxFMaXVXy0syheMXmm8C+dE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AZYFQyKWhW/4HvFgHB5iNYsbylRH2uWP0QLlHKWY6ePs/baFcLCeKwCds6dNF+4QgGnmgSy09kEeYemTbeSg80aPfA6EEwsO9kUSz1jE6vOoqdpxczR9I81XUduqhkkF+jvgyZVEopMLEvv62Db4Ze4J4F671b/hrEsd+ZmQuFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WzZfFuix; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=oZBH+BBvL/hgtaMob59TY/eIeJhL38EKvFH99ZsXxXM=; b=WzZfFuixs4bggs/CuH1/ino7Aq
-	kP5Ug2KPxPDM+7ABlB53uXRnElwtHPfiscmCflcSs8jBFu2/xx0YBSYR4QxgzgXqDkGkDTfpmJzdx
-	EWdrBl9RkuIAFyPw3p/MKcWazcymxG1zaa88y+kNqeBpeSjn4s/JTC/rx89AKUptrb7qmtrdmxh+2
-	6Fk68d72cl+rQxN9Qz+yowEPnXW2l/Di61nbL3AWdUZSFTHvSyDPJTcWP2E8WoI5uuhBzl4KYF9Wi
-	Vy27njJqV9t6KPeDjMbFosJdHdF7W3x02uXi+RnelsTQ33Gx//mBkKx/+XnhrGGIvOAJaGxAq17sh
-	v3Gcpy3w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52904)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tmZbm-0006da-26;
-	Mon, 24 Feb 2025 14:38:58 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tmZbk-00054V-1k;
-	Mon, 24 Feb 2025 14:38:56 +0000
-Date: Mon, 24 Feb 2025 14:38:56 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>,
-	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	davem@davemloft.net, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Message-ID: <Z7yEgFR9scO2aRYh@shell.armlinux.org.uk>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
- <87r03otsmm.fsf@miraculix.mork.no>
- <Z7uFhc1EiPpWHGfa@shell.armlinux.org.uk>
- <3c6b7b3f-04a2-48ce-b3a9-2ea71041c6d2@lunn.ch>
- <87ikozu86l.fsf@miraculix.mork.no>
- <7c456101-6643-44d1-812a-2eae3bce9068@lunn.ch>
- <Z7x4oxR5_KtyvSYg@shell.armlinux.org.uk>
- <kqur446k5sryspwh4zzndytfqhpupfybimhgbtq5m7fm7vom7s@hhqlh3llrsxl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2e/gXhPt4IZvJfUkjB9ixdC/7TBqrvPhstL5SQC7Cco60MhMfbIKyu5tuTnYQPmG22G2GrzYqnC/e0mPix8GtS//mreMLLRbr203r4RD2y3BHjapRmEL7QGdvsnr77HC9Uva1TE2+F1WKhQc4uHZxrqOclAv/w7Vg0+jCtZDWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98972152B;
+	Mon, 24 Feb 2025 06:39:37 -0800 (PST)
+Received: from arm.com (unknown [10.1.32.142])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D2C03F5A1;
+	Mon, 24 Feb 2025 06:39:19 -0800 (PST)
+Date: Mon, 24 Feb 2025 14:39:16 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>,
+	Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot
+ creation
+Message-ID: <Z7yElHKrJGn8XuPS@arm.com>
+References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
+ <Z7xSfVME4z2ComUm@arm.com>
+ <86ldtvr0nl.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <kqur446k5sryspwh4zzndytfqhpupfybimhgbtq5m7fm7vom7s@hhqlh3llrsxl>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <86ldtvr0nl.wl-maz@kernel.org>
 
-On Mon, Feb 24, 2025 at 03:32:43PM +0100, Marek Behún wrote:
-> On Mon, Feb 24, 2025 at 01:48:19PM +0000, Russell King (Oracle) wrote:
+On Mon, Feb 24, 2025 at 12:24:14PM +0000, Marc Zyngier wrote:
+> On Mon, 24 Feb 2025 11:05:33 +0000,
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+> > On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> > > This change is needed because, without it, users are not able to use MTE
+> > > with VFIO passthrough (currently the mapping is either Device or
+> > > NonCacheable for which tag access check is not applied.), as shown
+> > > below (kvmtool VMM).
+> > 
+> > Another nit: "users are not able to user VFIO passthrough when MTE is
+> > enabled". At a first read, the above sounded to me like one wants to
+> > enable MTE for VFIO passthrough mappings.
 > 
-> ...
-> 
-> > "Please note:
-> > This hardware is broken by design. There is nothing that the kernel or
-> 
-> Doesn't "broken by design" mean "broken intentionally" ?
+> What the commit message doesn't spell out is how MTE and VFIO are
+> interacting here. I also don't understand the reference to Device or
+> NC memory here.
 
-The point of this part of the discussion is to find a form of words
-that folk are happy with, so please feel free to suggest an
-alternative.
+I guess it's saying that the guest cannot turn MTE on (Normal Tagged)
+for these ranges anyway since Stage 2 is Device or Normal NC. So we
+don't break any use-case specific to VFIO.
 
-To put it bluntly, it does come down to "broken by the hardware
-engineer not having full knowledge of the requirements of SFP modules
-as documented in the SNIA documentation and selecting hardware that
-violates some of the requirements."
+> Isn't the issue that DMA doesn't check/update tags, and therefore it
+> makes little sense to prevent non-tagged memory being associated with
+> a memslot?
+
+The issue is that some MMIO memory range that does not support MTE
+(well, all MMIO) could be mapped by the guest as Normal Tagged and we
+have no clue what the hardware does as tag accesses, hence we currently
+prevent it altogether. It's not about DMA.
+
+This patch still prevents such MMIO+MTE mappings but moves the decision
+to user_mem_abort() and it's slightly more relaxed - only rejecting it
+if !VM_MTE_ALLOWED _and_ the Stage 2 is cacheable. The side-effect is
+that it allows device assignment into the guest since Stage 2 is not
+Normal Cacheable (at least for now, we have some patches Ankit but they
+handle the MTE case).
+
+> My other concern is that this gives pretty poor consistency to the
+> guest, which cannot know what can be tagged and what cannot, and
+> breaks a guarantee that the guest should be able to rely on.
+
+The guest should not set Normal Tagged on anything other than what it
+gets as standard RAM. We are not changing this here. KVM than needs to
+prevent a broken/malicious guest from setting MTE on other (physical)
+ranges that don't support MTE. Currently it can only do this by forcing
+Device or Normal NC (or disable MTE altogether). Later we'll add
+FEAT_MTE_PERM to permit Stage 2 Cacheable but trap on tag accesses.
+
+The ABI change is just for the VMM, the guest shouldn't be aware as
+long as it sticks to the typical recommendations for MTE - only enable
+on standard RAM.
+
+Does any VMM rely on the memory slot being rejected on registration if
+it does not support MTE? After this change, we'd get an exit to the VMM
+on guest access with MTE turned on (even if it's not mapped as such at
+Stage 1).
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Catalin
 
