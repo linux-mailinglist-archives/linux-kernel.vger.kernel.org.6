@@ -1,163 +1,164 @@
-Return-Path: <linux-kernel+bounces-529112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53C8A41FDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:04:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0464A41FDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:04:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BCA43A5666
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:02:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA3587A7BB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F9D23BCE7;
-	Mon, 24 Feb 2025 13:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4FC23BD18;
+	Mon, 24 Feb 2025 13:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ubd8FU2V"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/+oUGpR"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464492571CF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFBE233736;
+	Mon, 24 Feb 2025 13:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402151; cv=none; b=cW+QwJp+jmsIQmjqAXJYAwQxPYrhhzFoO3YLKWm7EIwbSWALKEk7FMWreVxOChffMtXC2T3NTKcAJ6EDMv/37QrPhjKFDdjeSlYXrW7ler3QX98uqY9Nx8DnMR3TS5rv8MIJKyBP4jVG3oI6msIXy2eteK0J1PvqCgExrjXi0Ko=
+	t=1740402231; cv=none; b=pKpbycOf93GqHok2XTv9djWpPCHpE8JH4vu4YcBYSWM97cDg0A+IpWCWQ9ycRPONPCjw5nZdceAN1VgUXC8MFBTl75Bdo1UQGnzJfWjDC/W2onP657wYdTNkwCBY9MOPJ1o7KMEwcgsmzmEwEAuGJXkSxJxmnK+oLMOXzDdzM/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402151; c=relaxed/simple;
-	bh=3GoOSlh4aghrEUhFA8T2QcZ172IFZvBUU3F8aELhD30=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MijEl0SumLVw8anHi+qKcUN/ZCt2KrRlXBGWm91H8679qCmo2w0+319rAxP03puudeXPmKs1VbDhsbv6d97qG3Y28ry9LjQBstuRqDtKwLu2FRSSTFjbc0HOxVu2FJcPqnow/8b+E/wAJeTOxILckFceK306kJZtzA0Bt0yVA9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ubd8FU2V; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a823036so41823555e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:02:28 -0800 (PST)
+	s=arc-20240116; t=1740402231; c=relaxed/simple;
+	bh=3WH7N5b2mLwHCzKQItZCh++HaF1mtPPWYK1ByZIVs+k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JWmg8HILJBrOul0CJ93+GMjwm/iMqrR74rxKEHdvI/eKwFHSGlH+R8WeZq798EHno9z5+xI7y2KONiB6cWd+F0dFCD/hC3TsvMBitCGS5ntRTk+0IojfFv8/yr0BMvdwbHc9HsL1+X9PV2FVLSb17kDWMEC9om80nhJ/m4giIoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/+oUGpR; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-220c4159f87so59016205ad.0;
+        Mon, 24 Feb 2025 05:03:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740402147; x=1741006947; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6JKe2d60+WlSAD6t2/IsKdHC5kmJu+MWZz25xMIMoOk=;
-        b=ubd8FU2VmYWa9zNq8snfYYUdTdx5EThfLEqp+3GRLMRpK6TRQIF3vDQVtwhRqw16fS
-         fxyNsNnCXgFvr7KAxi3xzxbo+WWrNql28k2uI864GNnMCovlmNbcTmgnJAk5vdDqPLM8
-         W/pWbk3waERSvTXuf1pAt1f9Nq6iPuWhtAiTMVAjeQlEJLBuxaBGX2LdLQCZj6HCeW42
-         niwbU6ZqHWlPUVhg6NoGvMLQNNyULFb2yCuUJj7zuToXhr2wzxOPwEpjL5qonX0JagYL
-         /2z+eK/GsLTjerGmQNAYwDMS6VnMp4AnajjLOaJaclGndB45x4vaH36sRzw+TNwnq7xg
-         I5jw==
+        d=gmail.com; s=20230601; t=1740402229; x=1741007029; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K2yGA1NhGbMJI9b6zgvWTEkXn51K+UPXbLwr9O6ldtY=;
+        b=i/+oUGpRklwRJKad7O+79a+RVhITSlynGN/s0DpPmv9VHTFwqdaL0Yz3TAq7X/n/s5
+         TUFhcQNgrs5BmKDROtUHVH3+KesqgZPsjos8f7q9Ixs+kplIP7kvgWODMVBPBkv+WUkL
+         4hLTN9OjcO+ty/GZAMmVwLKf3wQYAsX3UQwRJ2A2Cf6gTvcRUT0iyWOD7B4WbsSNED2+
+         ikzL0xE2Xdc8dPn/lhgEqTsLNGT2m7YqcF0+SqQCF1chwaIlCXThWdLUA/Hp+x18vfHs
+         7kbtPQY1nxuKPBvw74LwHwdjw9WQmXOxtWe8cG83bBrspbsZRMvd0AclWeFfF1gs+I16
+         vU4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402147; x=1741006947;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6JKe2d60+WlSAD6t2/IsKdHC5kmJu+MWZz25xMIMoOk=;
-        b=jMyOm3xZCNHTpk9a0fWDpC1WM1AULy8WovtdgooDApjTHdKhHgjt71y/DgpvItEd1M
-         W3SWkToefkLUL2jVzq9sG5u4pdPWVQZfuRJu18VthCBfU9Ol3O3bfUTdk8tSMdLfliJt
-         RceSlhLsn1LHmF7WtOIBqabLsSbLD1l3VZI1tMH4ILBazEIBXM8vrjbzQdZ3Ru9/07F7
-         /qpf2+s/KH3fDjRr+QkWGbTTt0rCp3QynbyWoxIqptVHt1+aO+i3gUmeCI/XlGV21zJf
-         29wGbe5Vm/AysxIZAevlIu1YBjdO8ltl+UGeumJmtbo7u6xe1lsHC9IDMbZ0XCzftBwO
-         HIRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ7CX0WVCFGwC6AP2eI0ySTXfP+EuAx5gD5BLlwFq0JiolzxBe7CwQyDxKINtUE8ffaGv73tgwXflj58I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2cH0UVfeaoh4/G4QbZ1L03bmeqPY68EXhg3z4jRl4EuxFhNHt
-	nPqk5Mav5rWfUKfXgKZTp/ywOz6572m55+Uv9XlgkFN89DRLrKKHDaNsjey8iDA=
-X-Gm-Gg: ASbGncsd/pMiYqKfd3RwKzUvZCFf1JzFN12wmBPULYt6gSXBogRZDR17TMdTlr+hdIy
-	df5E9bDrGfL4ngK7bO0JojNHqLbx8XusacS1IN30KxJlzJ9BdFLihHa9zRuLbSyRQxpnGsWjXBe
-	lmwHDbqTMquqNH8IGv6fXCOfgAZR2wCyeknodnoDPzag/BysrhEnDqpuaDMIlEUwW/L3xbwCZRk
-	FIOMvwzj9sJ02LJ7sskYdOMw2zlDgJltRKh/tP15QEbragxPiNfQPiBJHKa5RBuS06tmJJZUsNp
-	AD0n4vKyrSys1fhE0NQKelCrIAjQ8Q==
-X-Google-Smtp-Source: AGHT+IHIvx/Mzi0ATkCEL7v8mqxYPxS778o/u734+8lN1qwnKFPkNnFzPQqlUpq/kfgg00sUP03rEg==
-X-Received: by 2002:a05:600c:358c:b0:439:84ba:5760 with SMTP id 5b1f17b1804b1-439aeae1c8bmr110053185e9.5.1740402145511;
-        Mon, 24 Feb 2025 05:02:25 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02e6cf4sm104593555e9.19.2025.02.24.05.02.24
+        d=1e100.net; s=20230601; t=1740402229; x=1741007029;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K2yGA1NhGbMJI9b6zgvWTEkXn51K+UPXbLwr9O6ldtY=;
+        b=q1c2tccSRDdtqLVaqRnjmFYJJPfAKkPadHKZp9vL/IArONcjbfhutoiWzEVbz3wuQs
+         Cwrd7qG8lb9i6PvJscp3d4UFY1RM6KUvGWwRKcBdvTsJfUEsKenbLLzrlbaHB+kyQv8m
+         7bI2cRZapv6B7L9miTDrzkeWilc/TARq9nkCJhe/iaetWXC2ZJbSsJq58kxfD3JnTu02
+         bwg/8XCTc/Oc6nc+9xdbTTVZChIz2CxDPWj7wODjRib01BsucIpTtqNarAnPTOBjD+PL
+         oYsTewpZdna9DNJANOAxtjYGbBCaSp1R14JTmHPRehB7uJQYRHATsKbefmn/cSJxyc9k
+         PY1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVucUsqPj73vCOD9pvVsLsMcMAr2Vr2Y4Zhv4sALy1ZnQ1OTTq/4kqL2uuBIEBNrtalpVcQBr05rWZFsKw=@vger.kernel.org, AJvYcCWN6bmGIuim0Uw+8j/lBLZF1NURHgA2pEsCj+j8n+SEmwMaPB3i/9yE5N6K5be8pOTqawNUuIoRFFwIsxd6TdFP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb9x9bSVkfW/kN+o5prFxrubiDmmhnG1PgcBnFJNe8rSP5D9xk
+	EnRL+Tco8OgY+x2hPtVr9+9GhQn1HFFW/YoYl18UDhsdr+jlNjXjzGiVmFjAaFI=
+X-Gm-Gg: ASbGncsanp0CSdllaCE0qiR31/IudHXbK592snE9u2qhCsAOo/0kFBN+z4KoHwXie6u
+	/Ell4r3NKRkP2WPL/2ccCYYhzMnD/hKhdGPFs+Qe2AG53cKcQcAmLJjkw/BbEIDVHP41Mm4TPp2
+	m2tSdkjNM1ZiNdkyKpDsaeE4plzj6prprC1unvgo6K5c8FZgouLXZG8Q6czGc4pxXS8nImIDSS+
+	qncW3wtSjqLQe+M4wJhIDVWY/TiXILaanVA3dXhRiFrtq0mpSiCDxU7GJhzESvFDOrheps7fccJ
+	I5gvU2leeDrEovFe+ngR
+X-Google-Smtp-Source: AGHT+IGgDwE3drF3XPiR4PgO0QiIq/gzYst8UaIiUyo9KJCwD6vSvTrQUc35zV8OFRAWRZHDZB7oIw==
+X-Received: by 2002:a17:903:32c5:b0:21f:658b:8ed5 with SMTP id d9443c01a7336-2219ff30c91mr211707465ad.6.1740402228768;
+        Mon, 24 Feb 2025 05:03:48 -0800 (PST)
+Received: from dev.. ([2804:14d:887:95a9:942:b4ba:d811:bd8e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d53491besm180097185ad.14.2025.02.24.05.03.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 05:02:25 -0800 (PST)
-Message-ID: <923badeacb9e52b78d276382ae8c06a47c44fbae.camel@linaro.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	devicetree@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, linux-gpio@vger.kernel.org,
- linux-hardening@vger.kernel.org,  "Gustavo A. R. Silva"	
- <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, Conor Dooley	
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	kernel-team@android.com, Peter Griffin <peter.griffin@linaro.org>, Srinivas
- Kandagatla <srinivas.kandagatla@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, 	linux-kernel@vger.kernel.org
-Date: Mon, 24 Feb 2025 13:02:23 +0000
-In-Reply-To: <174040128694.2418814.685647591949303616.robh@kernel.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
-	 <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
-	 <174040128694.2418814.685647591949303616.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+        Mon, 24 Feb 2025 05:03:48 -0800 (PST)
+From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
+X-Google-Original-From: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
+To: david@redhat.com,
+	osalvador@suse.de,
+	shuah@kernel.org
+Cc: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org
+Subject: [PATCH] selftests/memory-hotplug: debugging improvement
+Date: Mon, 24 Feb 2025 10:03:00 -0300
+Message-ID: <20250224130341.10613-1-leofthirata@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-02-24 at 06:48 -0600, Rob Herring (Arm) wrote:
->=20
-> On Mon, 24 Feb 2025 10:28:49 +0000, Andr=C3=A9 Draszik wrote:
-> > Add device tree binding for the Maxim MAX77759 companion PMIC for USB
-> > Type-C applications.
-> >=20
-> > The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors,
-> > USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> >=20
-> > This describes the core mfd device.
-> >=20
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > =C2=A0.../devicetree/bindings/mfd/maxim,max77759.yaml=C2=A0=C2=A0=C2=A0=
- | 104 +++++++++++++++++++++
-> > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 ++
-> > =C2=A02 files changed, 110 insertions(+)
-> >=20
->=20
-> My bot found errors running 'make dt_binding_check' on your patch:
->=20
-> yamllint warnings/errors:
->=20
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/m=
-fd/maxim,max77759.example.dtb: pmic@66: gpio: False schema
-> does not allow {'compatible': ['maxim,max77759-gpio'], 'gpio-controller':=
- True, '#gpio-cells': 2, 'interrupt-controller': True,
-> '#interrupt-cells': 2}
-> 	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/m=
-fd/maxim,max77759.example.dtb: pmic@66: pmic-nvmem: False
-> schema does not allow {'compatible': ['maxim,max77759-nvmem'], 'nvmem-lay=
-out': {'compatible': ['fixed-layout'], '#address-cells': 1,
-> '#size-cells': 1, 'reboot-mode@0': {'reg': [[0, 4]]}, 'boot-reason@4': {'=
-reg': [[4, 4]]}, 'shutdown-user-flag@8': {'reg': [[8, 1]]},
-> 'rsoc@10': {'reg': [[10, 2]]}}}
-> 	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-> Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: /exampl=
-e-0/i2c/pmic@66/gpio: failed to match any schema with
-> compatible: ['maxim,max77759-gpio']
-> Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: /exampl=
-e-0/i2c/pmic@66/pmic-nvmem: failed to match any schema with
-> compatible: ['maxim,max77759-nvmem']
+Formats testing messages to improve debugging:
+- Inserts alignment tabs with printf for testing results
+- Changes messages to improve readability and understanding
 
-The top-level example in here references the two (MFD cell)
-bindings added in the two follow-up patches for gpio and
-nvmem. When all three binding patches exist in the tree,
-the errors are gone.
+Signed-off-by: Leonardo Felipe Takao Hirata <leofthirata@gmail.com>
+---
+ .../memory-hotplug/mem-on-off-test.sh         | 21 ++++++++++++-------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-Is this acceptable, or shall I add the top-level example only
-after the bindings?
-
-
-
-Thanks,
-Andre'
+diff --git a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
+index 611be86eaf3d..7a2eea366c1b 100755
+--- a/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
++++ b/tools/testing/selftests/memory-hotplug/mem-on-off-test.sh
+@@ -143,6 +143,11 @@ online_all_offline_memory()
+ 	done
+ }
+ 
++print_status()
++{
++	printf '\t\t%-37s   %12s\n' "$1" "$2"
++}
++
+ error=-12
+ priority=0
+ # Run with default of ratio=2 for Kselftest run
+@@ -184,16 +189,16 @@ echo "Test scope: $ratio% hotplug memory"
+ # Online all hot-pluggable memory
+ #
+ hotpluggable_num=`hotpluggable_offline_memory | wc -l`
+-echo -e "\t online all hot-pluggable memory in offline state:"
++echo -e "Changing all OFFLINE hot-pluggable memory blocks to ONLINE:\n"
+ if [ "$hotpluggable_num" -gt 0 ]; then
+ 	for memory in `hotpluggable_offline_memory`; do
+-		echo "offline->online memory$memory"
++		echo -e "\t\tOFFLINE -> ONLINE memory block ($memory)"
+ 		if ! online_memory_expect_success $memory; then
+ 			retval=1
+ 		fi
+ 	done
+ else
+-	echo -e "\t\t SKIPPED - no hot-pluggable memory in offline state"
++	echo -e "\t\t SKIPPED - no hot-pluggable memory in OFFLINE state"
+ fi
+ 
+ #
+@@ -201,16 +206,16 @@ fi
+ #
+ hotpluggable_num=`hotpluggable_online_memory | wc -l`
+ target=`echo "a=$hotpluggable_num*$ratio; if ( a%100 ) a/100+1 else a/100" | bc`
+-echo -e "\t offline $ratio% hot-pluggable memory in online state"
+-echo -e "\t trying to offline $target out of $hotpluggable_num memory block(s):"
++echo -e "\nOFFLINE $ratio% hot-pluggable memory in ONLINE state ($target memory block(s))"
++echo -e "Changing $target out of $hotpluggable_num OFFLINE memory block(s) to ONLINE:\n"
+ for memory in `hotpluggable_online_memory`; do
+ 	if [ "$target" -gt 0 ]; then
+-		echo "online->offline memory$memory"
++		tmp="ONLINE -> OFFLINE memory block (${memory})"
+ 		if offline_memory_expect_success $memory &>/dev/null; then
+ 			target=$(($target - 1))
+-			echo "-> Success"
++			print_status "$tmp" "[SUCCESS]"
+ 		else
+-			echo "-> Failure"
++			print_status "$tmp" "[FAILURE]"
+ 		fi
+ 	fi
+ done
+-- 
+2.43.0
 
 
