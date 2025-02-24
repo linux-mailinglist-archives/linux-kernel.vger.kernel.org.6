@@ -1,178 +1,153 @@
-Return-Path: <linux-kernel+bounces-529854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BA61A42BDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:43:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1863BA42BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:45:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8552317ABB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:43:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97003B117B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FCD42661BE;
-	Mon, 24 Feb 2025 18:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11B82661B7;
+	Mon, 24 Feb 2025 18:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NjTbjPFD";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XuQMzgLX"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CpcE9dJ7"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25EB11185
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FDC26618C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422610; cv=none; b=XjzCnzUexhpYpg3a/B/yh9LRrCsLD22boJ5sJGYDbulW24bHC8YQY5k9VAJWfA0rbuc24jCs+pfE1Xi5UUZsfCjsxfgA9QTbvRoIpMC7dSBwDEBgMbMpkCc9Im0IMcsPZM4U7roE1OceKQbQ60V/cSwvzbHqO3BEgxwXBeYiIYw=
+	t=1740422660; cv=none; b=bwjiQKLIekZvGUmVTPv1xSbyBj0rBsDoRmCABgEgVgAeHGTMTgQq+qin0lXNy+hm+lpMtN8HBzpqxBxNBVWJMz1uPtoISNtpzbR14PO6dwG9ENchp2EhpDlJLGSZ0AO2JIIBOUncCPwkWaBLfpauZueh5oBEFCsfvWUgU9KkGE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422610; c=relaxed/simple;
-	bh=hWWRkKrW0NjOq5okGUAg0QJwfP81JEeOp/KOElZboho=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=I8G91fbSZcWj4+0vXJcLqsJlE4RjBDU9e67+i71sJGVffkan/zCjQ1BQVuDSlw/WauWQ7mqpyRRoodhQyiWTHPmC71YOBoD8LH6C+V3e1WcnIi7J51jIyS/pMBUf9MLNft0JUlLNus5TrHnCEm8pL82p4DEk9ee+tdBbd+/iwJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NjTbjPFD; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XuQMzgLX; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740422607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4zRxXei+NhZ3ug/zntxrTaw539SASSuoyiD1iAV0r/Y=;
-	b=NjTbjPFDWu4r5/rS7jMESQ1f1tQdTv1OtFyK47aT+jTBlOSosc52NmDMnHxK97qKGofUff
-	/TGSW/v1iD48M3oA37gQFhOhjozHREdQyiC0Q6lH0h8rHrwT0RVrNnafw/o45j3bWBvUHg
-	amb1DOcG0WcoB1rlMYugOMiTFYAKO/5RAbefDDXWXD2qAywIm4yaJVVsFWdyUnr2xGixxS
-	66K7rnZPjfqPdlG1zug8I4eLMaB2Cjxn3tFE49Tmnrh6k3sy6oZNG5BskWIB41Y7yO9H3i
-	AVV5dqiuwm9VPai4HPwb0p+3ji3W1UqQVZ6jvejhhcZe3LjbQoWFR3/EtTmHKQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740422607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4zRxXei+NhZ3ug/zntxrTaw539SASSuoyiD1iAV0r/Y=;
-	b=XuQMzgLXfkldZI5gxy15DMws/W35w2wtM7P3m6fiTJd827+52MDWDh6Qmdd1zauNn8AGgE
-	vRIdH1HycLpoeHDA==
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
- Benjamin Segall <bsegall@google.com>, Eric Dumazet <edumazet@google.com>,
- Andrey Vagin <avagin@openvz.org>, Pavel Tikhomirov
- <ptikhomirov@virtuozzo.com>
-Subject: Re: [patch 04/11] posix-timers: Remove pointless unlock_timer()
- wrapper
-In-Reply-To: <20250224162103.GD11590@noisy.programming.kicks-ass.net>
-References: <20250224095736.145530367@linutronix.de>
- <20250224101343.211872476@linutronix.de>
- <20250224162103.GD11590@noisy.programming.kicks-ass.net>
-Date: Mon, 24 Feb 2025 19:43:26 +0100
-Message-ID: <87seo3fak1.ffs@tglx>
+	s=arc-20240116; t=1740422660; c=relaxed/simple;
+	bh=khj59qHPmTHqrt6WaeToKlT0AivW47rW2SfqTzUq9gw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qLyWuWRAkRUD2vTYidceUL/uFtX52xc5ZT77IO6Ea61gnFxpNAXnYR05UDxYXPMipZQekXz7Saz2THE1OY4RgGSdd2BbhTe8IDqvduUyaU6LG7+QFhRRGuPetygi47vJj2jjgjFqB+3dlyeejmUEgE2Vn8sYseXlJwAV7EC7Y5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CpcE9dJ7; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3f3fa75b1e7so144553b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:44:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740422658; x=1741027458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3xWA/77tS/bA1FDIGO2ulCuHvVLqpsD27PQsdyeLvA=;
+        b=CpcE9dJ7cjnzj/lF4aefTjDC9/dHuSQdNXujN1lzu3gHUEeQ1i7CM36vYPVTbrQx2c
+         PkkwQ4vtxgH6nSyesy9KlAC4GbuAmzsGZB2uC7oL0S4FCdorLyobQEcqMxPUIMobhC7p
+         ookijqy+E7cEc60OkFm8C83sRJBXk186jtqG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740422658; x=1741027458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l3xWA/77tS/bA1FDIGO2ulCuHvVLqpsD27PQsdyeLvA=;
+        b=uLkPGtafN9UKylZbKeIhpn0ovw82kvkZCnEN1y1rMt/y8xU8yT565faE6FgSWC83K1
+         LhwevuFU6bVrguxYHuBPrCnBjTfcTzLw+Z7xij2V0NDnJrA5S+NRc9dFLzkM1a+nlfHz
+         Ydpio7bQsoKSsHMSYpMm68m7JtF4+OZsrodv1S7bjm8dLXVnsSFNIiuRdinB5s5TgE0i
+         PdCKY2cVlUkLrmbbk3fPZX6we2GDDHrybcvnhcKHbXKPctBdLjUJ9TngKDgmkKUVj4bB
+         KFz5ngSfcOqm2azaiIEGQmeQZRiNxUr0VxmKXkEphNd6JOgjo6jMY/T0BD7OtMr2P1C8
+         Glrg==
+X-Forwarded-Encrypted: i=1; AJvYcCX9KqQJ6iGCMcQJ41K+8U0rwiBX8jxykTZvw51kO89fOGPL4Q/YYPMsoK7W5+/ApGv7xhIJdUe44+/f310=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhPjxq5Elpe3NMlIz3U/3BpmZNtG+ssQnjh9961uwN3nmVGRCX
+	YrXt2VR6MWE9W/PYZEVtAJAx5C+dfEz39uuU5BVwBUjqs9ZKrGzkk0rX+ZlYk5iY/rOo3Njue3C
+	E/H3503hOG3ZIrNsuRWyA3RDrnayfDYrvJSYT
+X-Gm-Gg: ASbGnctXOGS9tXDQ3sZwkgPWEu6tNVNdI+wymyS76K/ypKU3VpytuzeZ8r7A9k8QR9K
+	xKxw/oVSsIe9kmCsR6cYe4hnSdatsHwQnfthywm1dok0kx1VnYhfv8hSFeC+DGHOjOx3yXlR7al
+	1GLKjCYmUudjIFUgQUl/NJ785eljY3e2RoFfQx
+X-Google-Smtp-Source: AGHT+IFN+bvliOIeTRCEzzqueIeoaQOjdPQ9OrltDO6mVppq+7ugAyjJAg5Sdh7fwscXh0PnNqV1UaZJHQv0Bp5Y3+U=
+X-Received: by 2002:a05:6808:1525:b0:3f4:1f1e:7459 with SMTP id
+ 5614622812f47-3f4247bf741mr3932358b6e.6.1740422657819; Mon, 24 Feb 2025
+ 10:44:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250224174513.3600914-1-jeffxu@google.com> <20250224174513.3600914-2-jeffxu@google.com>
+ <443992d7-f694-4e46-b120-545350a5d598@intel.com>
+In-Reply-To: <443992d7-f694-4e46-b120-545350a5d598@intel.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Mon, 24 Feb 2025 10:44:07 -0800
+X-Gm-Features: AWEUYZmHQiSO8llCjmhY8a1Y8Dk59_j8_WwL1SOLQEoLurxsiSGp7YKgCz-mRG0
+Message-ID: <CABi2SkVKhjShryG0K-NSjjBvGs0UOVsY-6MQVOuQCkfuph5K8Q@mail.gmail.com>
+Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header change
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
+	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
+	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
+	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
+	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
+	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
+	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
+	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
+	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
+	mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24 2025 at 17:21, Peter Zijlstra wrote:
-> On Mon, Feb 24, 2025 at 11:15:28AM +0100, Thomas Gleixner wrote:
->> It's just a wrapper around spin_unlock_irqrestore() with zero value.
+On Mon, Feb 24, 2025 at 10:21=E2=80=AFAM Dave Hansen <dave.hansen@intel.com=
+> wrote:
 >
-> Well, I disagree... the value is that is matches lock_timer(). Both in
-> naming and in argument types.
+> On 2/24/25 09:45, jeffxu@chromium.org wrote:
+> > +/*
+> > + * mseal of userspace process's system mappings.
+> > + */
+> > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
+> > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_SEALED
+> > +#else
+> > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_NONE
+> > +#endif
+>
+> This ends up looking pretty wonky in practice:
+>
+> > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
+> > +     vm_flags |=3D MSEAL_SYSTEM_MAPPINGS_VM_FLAG;
+>
+> because MSEAL_SYSTEM_MAPPINGS_VM_FLAG is so much different from the
+> other ones.
+>
+> Would it really hurt to have
+>
+>  #ifdef CONFIG_64BIT
+>  /* VM is sealed, in vm_flags */
+>  #define VM_SEALED       _BITUL(63)
+> +#else
+> +#define VM_SEALED       VM_NONE
+>  #endif
+>
+> ?
+>
+VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't part of
+the build. This is intentional. Any 32-bit code trying to use the
+sealing function or the VM_SEALED flag will immediately fail
+compilation. This makes it easier to identify incorrect usage.
 
-Sure, but it's not used consistently as we have places where
-lock_timer() is not involved.
+For example:
+Consider the case below in src/third_party/kernel/v6.6/fs/proc/task_mmu.c,
 
-> @@ -327,14 +350,13 @@ bool posixtimer_deliver_signal(struct ke
->  	 * Release siglock to ensure proper locking order versus
->  	 * timr::it_lock. Keep interrupts disabled.
->  	 */
-> -	spin_unlock(&current->sighand->siglock);
-> +	guard(spinlock)(&current->sighand->siglock);
+#ifdef CONFIG_64BIT
+[ilog2(VM_SEALED)] =3D "sl",
+#endif
 
-How is that equivalent?
+Redefining VM_SEALED  to VM_NONE for 32 bit won't detect the problem
+in case that  "#ifdef CONFIG_64BIT" line is missing.
 
-This is a unlock/lock pair because __posix_timer_deliver_signal() takes
-timr->it_lock and now you introduced the ABBA which the sighand::siglock
-unlock carefully avoids :)
+Please note, this has been like this since the first version of
+mseal() RFC patch, and I prefer to keep it this way.
 
->  
->  	ret = __posixtimer_deliver_signal(info, timr);
-> 
->  	/* Drop the reference which was acquired when the signal was queued */
->  	posixtimer_putref(timr);
->  
-> -	spin_lock(&current->sighand->siglock);
->  	return ret;
->  }
->  
-> @@ -717,24 +739,20 @@ void common_timer_get(struct k_itimer *t
->  
->  static int do_timer_gettime(timer_t timer_id,  struct itimerspec64 *setting)
->  {
-> -	const struct k_clock *kc;
-> -	struct k_itimer *timr;
-> -	unsigned long flags;
-> -	int ret = 0;
-> -
-> -	timr = lock_timer(timer_id, &flags);
-> -	if (!timr)
-> -		return -EINVAL;
-> +	scoped_guard (lock_timer, timer_id) {
-> +		struct k_itimer *timr = __guard_ptr(lock_timer)(&scope);
-> +		const struct k_clock *kc;
-> +
-> +		memset(setting, 0, sizeof(*setting));
-> +		kc = timr->kclock;
-> +		if (WARN_ON_ONCE(!kc || !kc->timer_get))
-> +			return -EINVAL;
->  
-> -	memset(setting, 0, sizeof(*setting));
-> -	kc = timr->kclock;
-> -	if (WARN_ON_ONCE(!kc || !kc->timer_get))
-> -		ret = -EINVAL;
-> -	else
->  		kc->timer_get(timr, setting);
-> +		return 0;
-> +	}
->  
-> -	spin_unlock_irqrestore(&timr->it_lock, flags);
-> -	return ret;
-> +	return -EINVAL;
-
-So the resulting code is:
-
-	scoped_guard (lock_timer, timer_id) {
-		struct k_itimer *timr = __guard_ptr(lock_timer)(&scope);
-		const struct k_clock *kc;
-
-		memset(setting, 0, sizeof(*setting));
-		kc = timr->kclock;
-		if (WARN_ON_ONCE(!kc || !kc->timer_get))
-			return -EINVAL;
- 
-		return 0;
-	}
-	return -EINVAL;
-
-I had to go and stare at the guard/class muck 10 times to convince
-myself, that this actually works. This really wants to be express the
-condition of the scoped_guard() somehow, e.g. scoped_cond_guard() or
-such.
-
->  /* Delete a POSIX.1b interval timer. */
->  SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
->  {
-> -	return posix_timer_delete(NULL, timer_id);
-> +	scoped_guard (lock_timer, timer_id) {
-> +		posix_timer_invalidate(scope.lock, scope.flags);
-> +		scoped_guard_end(lock_timer);
-> +		posix_timer_unhash_and_free(scope.lock);
-
-Not sure whether it's a good idea to free the scope.lock and not
-scope.timer :)
-
-Thanks,
-
-        tglx
+Thanks
+-Jeff
 
