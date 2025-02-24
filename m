@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-529984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027D9A42D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:03:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DC1A42D4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:04:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6FB188E30E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FEF01889977
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67487204F7E;
-	Mon, 24 Feb 2025 20:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B852040BD;
+	Mon, 24 Feb 2025 20:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntCgV/Fj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qreTVj6N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1642571A8;
-	Mon, 24 Feb 2025 20:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2CE3B2A0;
+	Mon, 24 Feb 2025 20:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740427383; cv=none; b=nr2lxqyZZFMh28/3wa5PtC0GHmULVJcbb1X4a2BbiPnazUmrg9+oY6Z+naCHSuOEwXqkFmyz8iuc1YbLzgPnQAEenYHLgzU4p4Nk2s+6wwN6q29BPsxBmgPz+Uf3oLEf9XaC8RvJq2OeYzL7qurACDnAOSz9ZwNz+mdauMZLckY=
+	t=1740427429; cv=none; b=hgrnAFg+LoC2wfqcPEdmjlblHo+37J2vMZimTTmCmwNWT/PeuHh2IhQAtM0TZDfkGxTiDC5hUl5Zmifd5fbgfS54bNj+iHHd6j8F8h/KbZ7IlT2KiVvexTNrIZaXY3ZS8v3paTtOBd2ZJDBekr6dO9WkhqQjQvPpKBFXucVchMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740427383; c=relaxed/simple;
-	bh=+Wgzs5V7WqoWJII1yMuFCzRJM9tIcRQS6YUTom0Ieko=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=R5x4zLkp/Iyo+ISbWtTlv4j9jPz3KfipfzqPfFiWMFBrMBJ8a8uwN0AyvK3ew9oIMpaTn7P+TrweSXa7NLJeWsvEgAncA6M5G6yT1sNBj4ztUDP65f2h7MIOJrvQ3v8zLqi+2O7nbdK2NbU25+XtfmIvQDymCw3G7LzdboCQbng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntCgV/Fj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02257C4CED6;
-	Mon, 24 Feb 2025 20:03:02 +0000 (UTC)
+	s=arc-20240116; t=1740427429; c=relaxed/simple;
+	bh=q+d7nm16qN8obUZdl22kTIu5V70Mi/RYYzCCy6bqBeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tMlHCbpZUmid/Q4WT4BKniUpFj5MZ3EsOqIGxEVuR5Wfg7Pkf2euNlLFG3GomIWukMulUwbJlEooBXKUBYRkBaEgLV7jqNPxuklUpydShU6hmG31+cdJPOE7y7XwyxHvVn7eXkGLW8pXcMyX5B84GAUH8ZvEEiwSXSxFLMNi0t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qreTVj6N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD12C4CED6;
+	Mon, 24 Feb 2025 20:03:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740427383;
-	bh=+Wgzs5V7WqoWJII1yMuFCzRJM9tIcRQS6YUTom0Ieko=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ntCgV/FjGaG1emKU+Urx0iHvHUKwJgx4PVa5uqLWI+jgbUFZ6VTkWxjj7LaUItdNS
-	 0mWZ2XFhpjzH4S9U1i0l7moB36bcdaaspVVYVQN7dYXgEgUBwSMinEXzpg5hcC4yIz
-	 UJm3laZrQD1Ov0rVnjAATtdbNGJR+2sjsbZZbH/oPlhEr70ZuZsQHtqyKcBppSSoxz
-	 8p3i1a9kD7TQSZUql0uRG3t+wnWXsMfvqdCOH/CnnVBo/pRNcMLVSCJhp+nGbjHUKH
-	 2HhQWE840jW1pE1U4dNXbt9NHKI+tNgtKQlmlF11iq9QjaMd6j1xM80Ukz/ItEcNRF
-	 p+pQAB9/8amIQ==
-Date: Mon, 24 Feb 2025 14:03:01 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michal.simek@amd.com, bharat.kumar.gogada@amd.com,
-	jingoohan1@gmail.com
-Subject: Re: [PATCH v14 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-Message-ID: <20250224200301.GA465730@bhelgaas>
+	s=k20201202; t=1740427429;
+	bh=q+d7nm16qN8obUZdl22kTIu5V70Mi/RYYzCCy6bqBeI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qreTVj6NyKUm6lrRKJbd3QXAxIqqOAJWW8G16C5zFxWhZCQDN1BM6OAGYPLK8+CyZ
+	 1FRGrGG5N7qqtX5xzjmsQYb8/ojIngs7HVgz2F6fXoXPi0coG24ncjg578qVp1tL6V
+	 CTsoZeST5a0x5h1xMyu0fuWWkWEkOVvIpp9G9PaHC2W3yNb8M4ibhsIUNMKB5dojV4
+	 kmpAIrzQk1gIPOzxo1dJ7Pkv4QD1dpfdlV/bNRrqNEEHL5Kd+g3HFabCw85n+SVN0q
+	 sIX/kHXEUh1r4I/KgO/yF9HVqbfplwRbkd+TsnyVKxb+IupTJ0hZjpXP1SlA2uRG7l
+	 pefph794JXEvA==
+Date: Mon, 24 Feb 2025 14:03:47 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andy Yan <andyshrk@163.com>
+Cc: heiko@sntech.de, hjc@rock-chips.com, mripard@kernel.org,
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org,
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org,
+	devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, sebastian.reichel@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH 1/6] dt-bindings: display: rockchip: Add schema for
+ RK3588 DPTX Controller
+Message-ID: <20250224200347.GA4011821-robh@kernel.org>
+References: <20250223113036.74252-1-andyshrk@163.com>
+ <20250223113036.74252-2-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250224073117.767210-4-thippeswamy.havalige@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250223113036.74252-2-andyshrk@163.com>
 
-On Mon, Feb 24, 2025 at 01:01:17PM +0530, Thippeswamy Havalige wrote:
-> Add support for AMD MDB (Multimedia DMA Bridge) IP core as Root Port.
+On Sun, Feb 23, 2025 at 07:30:24PM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
 > 
-> The Versal2 devices include MDB Module. The integrated block for MDB along
-> with the integrated bridge can function as PCIe Root Port controller at
-> Gen5 32-Gb/s operation per lane.
+> The Rockchip RK3588 SoC integrates the Synopsys DesignWare DPTX
+> controller. And this DPTX controller need share a USBDP PHY with
+> the USB 3.0 OTG controller during operation.
 > 
-> Bridge supports error and legacy interrupts and are handled using platform
-> specific interrupt line in Versal2.
-
-s/legacy/INTx/ (I assume that's what you mean here)
-
-> +config PCIE_AMD_MDB
-> +	bool "AMD MDB Versal2 PCIe Host controller"
-> +	depends on OF || COMPILE_TEST
-> +	depends on PCI && PCI_MSI
-> +	select PCIE_DW_HOST
-> +	help
-> +	  Say Y here if you want to enable PCIe controller support on AMD
-> +	  Versal2 SoCs. The AMD MDB Versal2 PCIe controller is based on
-> +	  DesignWare IP and therefore the driver re-uses the Designware core
-> +	  functions to implement the driver.
-
-s/Designware/DesignWare/
-
-> +static void amd_mdb_intx_irq_unmask(struct irq_data *data)
-> +{
-> +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(data);
-> +	struct dw_pcie *pci = &pcie->pci;
-> +	struct dw_pcie_rp *port = &pci->pp;
-> +	unsigned long flags;
-> +	u32 val;
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> 
+> ---
+> 
+>  .../display/rockchip/rockchip,dw-dp.yaml      | 150 ++++++++++++++++++
+>  1 file changed, 150 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml
+> new file mode 100644
+> index 000000000000..b48af8c3e68b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml
+> @@ -0,0 +1,150 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-dp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	raw_spin_lock_irqsave(&port->lock, flags);
-> +	val = FIELD_PREP(AMD_MDB_TLP_PCIE_INTX_MASK,
-> +			 AMD_MDB_PCIE_INTR_INTX_ASSERT(data->hwirq));
+> +title: Rockchip DW DisplayPort Transmitter
 > +
-> +	/*
-> +	 * Writing '1' to a bit in AMD_MDB_TLP_IR_ENABLE_MISC enables that interrupt.
-> +	 * Writing '0' has no effect.
+> +maintainers:
+> +  - Andy Yan <andy.yan@rock-chips.com>
+> +
+> +description: |
+> +  The Rockchip RK3588 SoC integrates the Synopsys DesignWare DPTX controller
+> +  which is compliant with the DisplayPort Specification Version 1.4 with the
+> +  following features:
+> +
+> +  * DisplayPort 1.4a
+> +  * Main Link: 1/2/4 lanes
+> +  * Main Link Support 1.62Gbps, 2.7Gbps, 5.4Gbps and 8.1Gbps
+> +  * AUX channel 1Mbps
+> +  * Single Stream Transport(SST)
+> +  * Multistream Transport (MST)
+> +  *Type-C support (alternate mode)
 
-Wrap to fit in 80 columns like the rest of the file.
+???   ^
 
-> +	 */
-> +	pcie_write(pcie, val, AMD_MDB_TLP_IR_ENABLE_MISC);
-> +	raw_spin_unlock_irqrestore(&port->lock, flags);
-> +}
+Otherwise,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
