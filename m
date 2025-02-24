@@ -1,157 +1,182 @@
-Return-Path: <linux-kernel+bounces-528931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DCCA41E23
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:02:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD52A41E33
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:03:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99202169BAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:56:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27E33BC382
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA95124888F;
-	Mon, 24 Feb 2025 11:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DDTg2Vxl"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7729724887C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2078125484A;
+	Mon, 24 Feb 2025 11:47:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDE824EF81;
+	Mon, 24 Feb 2025 11:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397612; cv=none; b=iTI+1T4HcAwHcNdA+sVmyoRLBg9gAxB6iS2UfKF3vYH4LIAeCZ3TvbkVI1SmXShhRIi+H4ThHD/HVEymLuATVJQjnwpkOC+9l6qNzcsJdutisP2stHodBd3ZDHyNG2r74Jt5XRgZAy7vVp44cvNTs0vKR5OZwvVOY/zisEF7n7s=
+	t=1740397627; cv=none; b=Yq2pjG+A2AYzILSu8b9mcDjedI2X46EU5+PEoQH3GLuOc9Ppa7cjScXgisvOthvAuHPAx2VkR1/wsfWgjXLqcymluMmof7mVPdzFFxDqThacUbUVUotKysyDNefhlXHr8Oa2twQqyQNHRliodyvRJVgoX6QVOl8b9bILjXVktLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397612; c=relaxed/simple;
-	bh=XBF0vElKHwv9izTK+ZHX3O5WdWZ3wV+1ORfUCZnBmCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bzVpTVnKEwrxjx3MWifQXsxviVQQJDbuK6qbkIAwZb2R+FLrAcm3yEwq8hIpJqwUAChqLFwSLuYPzN5q44lw7pkWzBekLqf3pQyteJ7TRGAmNdca0USFzAHE5zPix1eHUR4sCgVywH6ZI0foG5GXRNCFDscQ9rN5IRRtJt+uvq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DDTg2Vxl; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O76se3024811
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:46:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Xa3GHQtmXXvUkIsS5ubfpH9d30YWI2ILON8s0tgJN8A=; b=DDTg2VxlH5n0g0p4
-	EtdCiksujrsoUdTC21uB1k6cHMu0rB5cGagKQn9dknbgSWfaGpX6xBKTKfw2+D8Y
-	Ichq3PMP8c+YiJvJOVdVmmuQtuisV0djPd3Bph7Qhel+oejA6qPBQQDtZLPsBlwy
-	5CHISj7r5Wdmlue8a0itnCXCIVucqzJTekbYgq4ddu0E9hgMUAK3McwGSESqPyjC
-	t1pRtesBp+EBQ7jEbsKYt/B54vwcj3XP05gPWJ2VfKYTKgyGNQrVsC1SjO8fHvj8
-	EaMzxOM3J1hkPcrG6u3W/596tXyxa5CwRMu/aCy5m9Wa0P5tR0NJ/BGMPx2S9anp
-	W3teAQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 450m3d91dc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:46:49 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-471f691c847so13069041cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:46:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740397608; x=1741002408;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xa3GHQtmXXvUkIsS5ubfpH9d30YWI2ILON8s0tgJN8A=;
-        b=PpPxO7/2/MJ4QloveGYJT9wYanqdtK0oSuLRf07qGsRIjrtmnr32g++iD2G6c+olTg
-         FUl0fy5Ub9htDtZgHIkwdcd2zYSvyTp9wtDne9NU6oxINeGBOjiDKSJhDsPvPmyFLKl4
-         kZW6mAd1qJId2NdAeUoBbFTqJMn+5h2joDvjT21gLRg3HM9GKePLcr4Gzs2jOnPSjLGc
-         /hc4mLZxlVpRScdANjK3LYt5k594kJPVm/mo7fMnnzR6zafTNdps+nHD+NjoxxgjoVx1
-         uSjz3AxwV2t7DkfcKZTNZzFx0cZLD+1EGZLEbjOaAng21U10GHEm77MgFvLpdzLdNkWD
-         uJWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUM/BOfaMG+z1shWZgoEwbGis/ddZM1XHgCj/mfUTyrn0hcb6dtc2bX5ezrVawAvQ0uji3edGeo5XmO+40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWx7fHZCoCbjMaCi80w1i+EHBr/ebaDoSmuF2e06xAg3/WvTRz
-	9ulzpswbcypTCRYp4n9TqVfPN/dmxpdWPkH6b4qxVFAmAYU377eJb2NLqls+NzUz4OP8ZjdKr9N
-	Px0QMoAoFOsDW/jicJFiCxQOZLA2fWFdJSzrcaZ1bRQiaLX2E/TzZ0GhTgCpZeZE=
-X-Gm-Gg: ASbGncvV9aKMbqtk4vqSime8h/l0q3DIoQTg+lViUMbxEQk1e6j5ETxfMO5ea89YQf2
-	cIYWn+eVZWfI94gmOOdwSccOLO8wzVQ7vk3k3oW+yGzj+a/laQB9tiB/wpiUZa5mXUtWpFpSzIu
-	wnUCjZFBRS1YYjiJcMBH7L3sL5c8h3lp5++JbLOTaIxQz1GMmYOxyxGDAkAo1SVU610eHlsynC7
-	/78gNXDevmFQPiiVbLbnEGXRFyfI2dZZBgT20887TTdUa4JqsnQsph4R/t9VUONhcIgqPXkvGMF
-	Ala/20vi4I/1x6Pb0XaYY9FOqfBVE0pmJ3kojApRGaq9AnxVfEl9p+gMn1aZorI5gm9G7w==
-X-Received: by 2002:a05:6214:5190:b0:6d8:967a:1a60 with SMTP id 6a1803df08f44-6e6ae7d9a09mr65659866d6.2.1740397608193;
-        Mon, 24 Feb 2025 03:46:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG+5WWCtb4qyPi6Hdk7FQSLpQ7/kRF6GbZ4urrGS273dUwCcdOpWH2AW2Megucz8XI5EO8lng==
-X-Received: by 2002:a05:6214:5190:b0:6d8:967a:1a60 with SMTP id 6a1803df08f44-6e6ae7d9a09mr65659726d6.2.1740397607829;
-        Mon, 24 Feb 2025 03:46:47 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abba9bd6e22sm1409071066b.121.2025.02.24.03.46.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 03:46:47 -0800 (PST)
-Message-ID: <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
-Date: Mon, 24 Feb 2025 12:46:44 +0100
+	s=arc-20240116; t=1740397627; c=relaxed/simple;
+	bh=9hZ/D1FEiotDeHCnsk7IUOqenDt+Ku5Gi9rxKMs6MXs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FTg+2RKsLx5Jk1FaPiwX3arakCM8vWQ9Fjw5QcFIPMF020DfKqmd8aamOEa9SL9hCirpESmfslEi/aBndczMlRdeK47VKN9cQo6Uuwvp2rp5HKQEzWGbXJzCWj7J90OVZOw3Rb9GdqSg1hSK4KoWHW7pn4I8Sjgp9G18Q0+5hR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B15401CE0;
+	Mon, 24 Feb 2025 03:47:21 -0800 (PST)
+Received: from e119884-lin.cambridge.arm.com (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5FFA13F6A8;
+	Mon, 24 Feb 2025 03:47:03 -0800 (PST)
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+To: linux-sound@vger.kernel.org
+Cc: Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/4] ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
+Date: Mon, 24 Feb 2025 11:46:45 +0000
+Message-ID: <20250224114648.1606184-2-vincenzo.frascino@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250224114648.1606184-1-vincenzo.frascino@arm.com>
+References: <20250224114648.1606184-1-vincenzo.frascino@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
- support
-To: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, p.zabel@pengutronix.de,
-        dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
-        quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
-        quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
- <20250220102253.755116-3-quic_wenbyao@quicinc.com>
- <20250224073301.aqbw3gxjnupbejfy@thinkpad>
- <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: Av8E--Hb1DuKbim8vTgm9deyhZSRFB9D
-X-Proofpoint-ORIG-GUID: Av8E--Hb1DuKbim8vTgm9deyhZSRFB9D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_05,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- bulkscore=0 impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=999
- clxscore=1015 malwarescore=0 lowpriorityscore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240086
 
-On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
-> On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
->> On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
->>> From: Qiang Yu <quic_qianyu@quicinc.com>
->>>
->>> Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
->>> whole PHY (hardware and register), no_csr reset only resets PHY hardware
->>> but retains register values, which means PHY setting can be skipped during
->>> PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
->>> after that.
->>>
->>> Hence, determine whether the PHY has been enabled in bootloader by
->>> verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
->>> available, skip BCR reset and PHY register setting to establish the PCIe
->>> link with bootloader - programmed PHY settings.
->>>
->>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
->>> Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
->> Some nitpicks below.
->>
->>> ---
+Convert the Xilinx I2S device tree binding documentation to json-schema.
 
-[...]
+Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+---
+ .../devicetree/bindings/sound/xlnx,i2s.txt    | 28 --------
+ .../devicetree/bindings/sound/xlnx,i2s.yaml   | 68 +++++++++++++++++++
+ 2 files changed, 68 insertions(+), 28 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+ create mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
 
->>
->>> +     * In this way, no matter whether the PHY settings were initially
->>> +     * programmed by bootloader or PHY driver itself, we can reuse them
->> It is really possible to have bootloader not programming the init sequence for
->> no_csr reset platforms? The comment sounds like it is possible. But I heard the
->> opposite.
-> 
-> PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
-> manually in UEFI shell if we want.
+diff --git a/Documentation/devicetree/bindings/sound/xlnx,i2s.txt b/Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+deleted file mode 100644
+index 5e7c7d5bb60a..000000000000
+--- a/Documentation/devicetree/bindings/sound/xlnx,i2s.txt
++++ /dev/null
+@@ -1,28 +0,0 @@
+-Device-Tree bindings for Xilinx I2S PL block
+-
+-The IP supports I2S based playback/capture audio
+-
+-Required property:
+- - compatible: "xlnx,i2s-transmitter-1.0" for playback and
+-	       "xlnx,i2s-receiver-1.0" for capture
+-
+-Required property common to both I2S playback and capture:
+- - reg: Base address and size of the IP core instance.
+- - xlnx,dwidth: sample data width. Can be any of 16, 24.
+- - xlnx,num-channels: Number of I2S streams. Can be any of 1, 2, 3, 4.
+-		      supported channels = 2 * xlnx,num-channels
+-
+-Example:
+-
+-	i2s_receiver@a0080000 {
+-		compatible = "xlnx,i2s-receiver-1.0";
+-		reg = <0x0 0xa0080000 0x0 0x10000>;
+-		xlnx,dwidth = <0x18>;
+-		xlnx,num-channels = <1>;
+-	};
+-	i2s_transmitter@a0090000 {
+-		compatible = "xlnx,i2s-transmitter-1.0";
+-		reg = <0x0 0xa0090000 0x0 0x10000>;
+-		xlnx,dwidth = <0x18>;
+-		xlnx,num-channels = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/sound/xlnx,i2s.yaml b/Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+new file mode 100644
+index 000000000000..5d7f0c651944
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/xlnx,i2s.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Xilinx I2S PL block
++
++description: |
++  The IP supports I2S based playback/capture audio.
++
++maintainers:
++  - Vincenzo Frascino <vincenzo.frascino@arm.com>
++
++allOf:
++  - $ref: dai-common.yaml#
++
++properties:
++  compatible:
++    enum:
++      - xlnx,i2s-receiver-1.0
++      - xlnx,i2s-transmitter-1.0
++
++  reg:
++    minItems: 1
++    maxItems: 4
++    description: |
++      Base address and size of the IP core instance.
++
++  xlnx,dwidth:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    enum:
++      - 16
++      - 24
++    description: |
++      Sample data width. Can be any of 16, 24.
++
++  xlnx,num-channels:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 1
++    maximum: 4
++    description: |
++      Number of I2S streams.
++
++required:
++  - compatible
++  - reg
++  - xlnx,dwidth
++  - xlnx,num-channels
++
++additionalProperties: true
++
++examples:
++  - |
++    i2s_receiver@a0080000 {
++      compatible = "xlnx,i2s-receiver-1.0";
++      reg = <0x0 0xa0080000 0x0 0x10000>;
++      xlnx,dwidth = <0x18>;
++      xlnx,num-channels = <1>;
++    };
++    i2s_transmitter@a0090000 {
++      compatible = "xlnx,i2s-transmitter-1.0";
++      reg = <0x0 0xa0090000 0x0 0x10000>;
++      xlnx,dwidth = <0x18>;
++      xlnx,num-channels = <1>;
++    };
++
++...
+-- 
+2.43.0
 
-IIUC this will not be a concern going forward, and this is a special case
-
-Konrad
 
