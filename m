@@ -1,82 +1,157 @@
-Return-Path: <linux-kernel+bounces-529247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9107A42229
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:58:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85645A4222F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2616189DB05
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6DB1885A25
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 872FF25A2AB;
-	Mon, 24 Feb 2025 13:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBBD24EF61;
+	Mon, 24 Feb 2025 13:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="o1k1I8O8"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBekRFC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8425B25744A;
-	Mon, 24 Feb 2025 13:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08892136327;
+	Mon, 24 Feb 2025 13:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405225; cv=none; b=DaP+XSH2FtVTLaHQAKjHmtYvvH1eeQiINIfcWaPEktYTWeRtWYW4Hejx0DheH9TsymYtcico1S/EjkxdXDeYM+OheySOjhw94SZbPcNXuYCITeZifXNEXOEQISfob9bAeBcsXUDo3FjgMYvBFo8EKt00w/R0QEiHlyky6DYDYqI=
+	t=1740405424; cv=none; b=BWNneHT6sRaAKiAzf7iwaioqjK+T9LEny/8Y8viJNK1UUJjRLAlMDkELfCLAMBBr602ZYA+76ggb3swtavPpD3LeXx0jKCHLPD2DipTXNj5vTJZyIwOgpthgp8zQVNBgh/uSolBDI/PYJy5hNuGRXk0YbSvbf3qBwF9S6OlBAzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405225; c=relaxed/simple;
-	bh=+0fVRFojAPaGCk0kjhWR6deAUNC6V61mrO7QnJO5Gec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeUmhAlaMyrH6eoH6Q3WzDcqUQ227P8yVaOo1S/O6/yT9A5UAZVGbLkhrGZxaJw1vHcUMK7ay130fRNnhgBV4OHrz9cRcssVGYK5UbUtxW+EfADbTtycXkqiY9G+MV3ctPZ5vBUi0IAftJ0p64b23Eo7cog6+rIPW4CApatmHUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=o1k1I8O8; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=kmukkXqExqlfdB9kboV9/OW7eMvGP0k7DUtnzMx2NWI=; b=o1k1I8O8vos488sLu1Z1Xz7Aya
-	bbsLP3VWce1GaquLcOsAZqj/NenU3zopHgdEzZjx+s7x/tHQP19WkdDPyt4Jubfa0G3/uKbnrr8/F
-	Pfabdj3Sr0ulTaYOW/Kd6ezpKjIZ/5kxqhFWp7NpMpoU41E5etSPRB98ELmkQzu1Y4Xs=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tmYtk-00HAy6-EH; Mon, 24 Feb 2025 14:53:28 +0100
-Date: Mon, 24 Feb 2025 14:53:28 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Aleksander Jan Bajkowski <olek2@wp.pl>
-Cc: lxu@maxlinear.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>
-Subject: Re: [PATCH net-next 2/2] net: phy: mxl-gpy: add LED dimming support
-Message-ID: <ce7d9ef9-e788-4e36-84ec-ef8b858c1050@lunn.ch>
-References: <20250222183814.3315-1-olek2@wp.pl>
- <20250222183814.3315-2-olek2@wp.pl>
+	s=arc-20240116; t=1740405424; c=relaxed/simple;
+	bh=OQ7YbuLAqtoQmHB21uw+7T4OIQyqMIGl/9dHS8SMf3I=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=N7AU7AoYiosiceNS8eicOntOf59K8vx4RE5pHPL1CkpMaonjOU9kDxvfTn2Huz9/0BxVv+DY6P5yEeO4DYRV7pxQ8sJmOyF5lYXJqlFfsCpu+73taydVEXd0yfN7QwnKU8PojfGPENKSbzlhyQuswITEd9h5Dl+xDpNbHHR9SGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBekRFC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C8DC4CEE6;
+	Mon, 24 Feb 2025 13:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740405423;
+	bh=OQ7YbuLAqtoQmHB21uw+7T4OIQyqMIGl/9dHS8SMf3I=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=IBekRFC0f6gWwCSFDsRNzMkpGSB2uuxZWf8eLw1JIuQCbgnybT8Nr9dWdAq6C7sis
+	 +UhxPIog8lJhYq50ZvxT4ZQ8NTT1ltpdZcoKdSf1iVYg7itMrVXxF4evLvHMo0f8F4
+	 20aj9DfOAFix0I2zhLERV2oEPOyuYXlhPMgr92riUWrfPD54dcZZEYTlGHtao8N75W
+	 6T/XtUBmY64ed3q7yWX6vVFP4g7XwXNBRrVgAuHcNk42BwG91wLRJc+KqvDgknPm/a
+	 /8BBroJCopj4QsMIfGtEgKfLq+RmA+Q3EugyZ4Mv4AaSY03IBqYxn/pwkIYSBvjJ0O
+	 V+SGYdotM9nvQ==
+Date: Mon, 24 Feb 2025 07:57:01 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222183814.3315-2-olek2@wp.pl>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-mediatek@lists.infradead.org, 
+ Yow-Shin Liou <yow-shin.liou@mediatek.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Chris-qj chen <chris-qj.chen@mediatek.com>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ Alexandre Mergnat <amergnat@baylibre.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Simon Sun <simon.sun@yunjingtech.com>, linux-usb@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, Macpaul Lin <macpaul@gmail.com>, 
+ Fabien Parent <fparent@baylibre.com>, ChiYuan Huang <cy_huang@richtek.com>, 
+ Bear Wang <bear.wang@mediatek.com>, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ Pablo Sun <pablo.sun@mediatek.com>
+To: Macpaul Lin <macpaul.lin@mediatek.com>
+In-Reply-To: <20250224114934.3583191-1-macpaul.lin@mediatek.com>
+References: <20250224114934.3583191-1-macpaul.lin@mediatek.com>
+Message-Id: <174040535775.2710776.691558658609135796.robh@kernel.org>
+Subject: Re: [PATCH v6] arm64: dts: mediatek: mt8395-genio-1200-evk: add
+ support for TCPC port
 
-On Sat, Feb 22, 2025 at 07:38:14PM +0100, Aleksander Jan Bajkowski wrote:
-> Some PHYs support LED dimming. The use case is a router that dims LEDs
-> at night. In the GPY2xx series, the PWM control register is common to
-> all LEDs. To avoid confusing users, only the first LED used has
-> brightness control enabled.
 
-Please Cc: the LED mailing list, and Lee Jones.
+On Mon, 24 Feb 2025 19:49:34 +0800, Macpaul Lin wrote:
+> From: Fabien Parent <fparent@baylibre.com>
+> 
+> Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
+> configuration for TCPC Port, USB-C connector, MUX IT5205 and related
+> settings.
+> 
+> Configure dual role switch capability, set up PD (Power Delivery) profiles,
+> and establish endpoints for SS (SuperSpeed) and HS (HighSpeed) USB.
+> 
+> Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
+> to "otg" for OTG (On-The-Go) mode operation.
+> 
+> Add ITE IT5205 (TYPEC MUX) under I2C2 bus and configure its properties;
+> also add references and configurations to 'typec-mux' node.
+> 
+> Signed-off-by: Fabien Parent <fparent@baylibre.com>
+> Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
+> Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> ---
+>  .../dts/mediatek/mt8395-genio-1200-evk.dts    | 102 ++++++++++++++++++
+>  1 file changed, 102 insertions(+)
+> 
+> Changes for v2:
+>  - Drop the no need '1/2' DT Schema update patch in the 1st version.
+>  - Fix indent for 'ports' node, it should under the 'connector' node.
+>  - Correct the index for 'port@0' and 'port@1' node.
+> 
+> Changes for v3:
+>  - Correct the order between new added nodes.
+> 
+> Changes for v4:
+>  - Reorder for property 'op-sink-microwatt'.
+>  - Fix indentation for 'source-pdos' and 'sink-pdos' nodes.
+>  - Correct node 'pin-cmd-dat' with 'pins-vbus'.
+>  - Add both Highspeed and Superspeed ports to ssusb0 port.
+>  - Set 'role-switch-default-mode' = "peripheral" for ssusb0 port.
+>  - Rename endpoint of USB data port to 'mtu3_hs0_role_sw' and
+>    'mtu3_ss0_role_sw'.
+>  - Drop it5205fn phandle for node typec-mux@48.
+>  - Reorder properties of typec-mux@48
+>  - Add "Reviewed-by:" tag. Thanks!
+> 
+> Changes for v5:
+>  - Squash two patches into one patch and refine commit messages:
+>    suggested by reviewer.
+>  - Drop 'role-switch-default-mode'
+>  - Add altmodes settings
+>  - Drop 'Reviewed-by:' tag since the two sub patches has been combined
+>    into a new patch.
+> 
+> Changes for v6:
+>  - Add 'pd-revision' property to 'connector', thanks ChiYuan Huang's help!.
+>  - Add 'Reviewed-by' tag. Thanks!
+> 
 
-I've no idea myself what is the normal way to represent a single
-brightness control shared by a number of LEDs. I would like to ensure
-whatever we do with PHYs is the same as what other LEDs do. I had a
-quick look at leds-class.rst, but i did not see anything there.
 
-    Andrew
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
 
----
-pw-bot: cr
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/mediatek/' for 20250224114934.3583191-1-macpaul.lin@mediatek.com:
+
+arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dtb: usb@11201000: 'ports' does not match any of the regexes: '^usb@[0-9a-f]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/usb/mediatek,mtu3.yaml#
+
+
+
+
+
 
