@@ -1,118 +1,79 @@
-Return-Path: <linux-kernel+bounces-528601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53073A41993
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:52:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D79A41991
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 969083A9CCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8129216EB81
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071E324A072;
-	Mon, 24 Feb 2025 09:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nUQI6feA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535A424A05B;
-	Mon, 24 Feb 2025 09:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEFE24A041;
+	Mon, 24 Feb 2025 09:51:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73781A08C5
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390671; cv=none; b=CVjK7cMngSuEKvmIs00HW393xU1dnPMOtbaXK9N7pgp4EyAjxKghaI8fJ9VEWKLrlYqqXfSoFpfnoqSznUqf3BhgVrVOZMcM03d7OYRnYHj15bj/tJHz+k7399mcNB28R75mQy7T+DGvAFOrSkxml9y3tqA986cpWykCkMTKzDA=
+	t=1740390697; cv=none; b=sJXrNVGCFsYBJYmsDcsjOnZ87PAwGKR/sGqwikSsx+HRpKI7hn6vjiqKP1lsH1Eyk1MIQ1H9dmtDrRHzVirUJThSczSvzRQ1Ru4A4aLNNbALBPHxJDqDxMhGczDdRHoTTVs3ggFMcsxMHzbEQTVDMWIws8HjaAjMJstYXQScDxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390671; c=relaxed/simple;
-	bh=a1cc70jbOv5CCjNK84m5TgpuPadBsPl0xnYC/NRZ3Fk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C1boUKKuBThcXw2/sHTMyW8EntcHEwgZxY1GaXK3A7ocBVxHQJqheqrG0zlaPcveAIBSSeC8VLgU3qJPuXvCcTx1CdINyUQMgUdIEsMhy8mXnkuRyuJ8xewGfhCEwasmn18N3yzluvgAIclZW182sF6FYUxUXCldXrGyPzjy0o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nUQI6feA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4489DC4CED6;
-	Mon, 24 Feb 2025 09:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1740390667;
-	bh=a1cc70jbOv5CCjNK84m5TgpuPadBsPl0xnYC/NRZ3Fk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUQI6feAoboadIqs+ta8SLxF0sQs43hw9TsAaTYvAYof2a8ud2gC5z9NT0l70y2YJ
-	 Pv+e10CRD9Y0ovyTZIP8kL8mUsL6CofD5RLqxJuZhBh33tPOEwYQ2TyXdNnipk0KQI
-	 n9TCaTEwNWaxQ07pdtSvUpvFqkksDrRXATOqzubE=
-Date: Mon, 24 Feb 2025 10:51:04 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Prashanth K <prashanth.k@oss.qualcomm.com>
-Cc: Kees Bakker <kees@ijzerbout.nl>,
-	William McVicker <willmcvicker@google.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: Check bmAttributes only if configuration is
- valid
-Message-ID: <2025022446-reliable-snugly-84e6@gregkh>
-References: <20250224085604.417327-1-prashanth.k@oss.qualcomm.com>
- <2025022434-unveiling-handbook-6fc3@gregkh>
- <63c3b650-c3cf-49bc-973a-c5fe025a22f6@oss.qualcomm.com>
+	s=arc-20240116; t=1740390697; c=relaxed/simple;
+	bh=oR/VCH37ylXMZC5ykHY0N18dLE/YaUj2dJ89LYjd11Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dYIcj+5sB7UgfOIWfyAyUdxRVRK6DGbybbD6swI3bc6zwppHr3YpLZsm/voeWhgDaJxGuCMuJg7i0xyzxNgVbT2buX/Tv9PHpl8jscv9LMiIx2OWSUy5z5oGTSOhWBhWLpPE9aFLFS4iWjCivqxmCccobJXAYHdB2WgKCw0185k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E9A61FCD;
+	Mon, 24 Feb 2025 01:51:51 -0800 (PST)
+Received: from ewhatever.cambridge.arm.com (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AA6673F673;
+	Mon, 24 Feb 2025 01:51:33 -0800 (PST)
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] hwtracing: coresight: Minor const fixes
+Date: Mon, 24 Feb 2025 09:51:26 +0000
+Message-ID: <174039066430.1495447.13273959809148103257.b4-ty@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
+References: <20250222-coresight-const-arm-id-v1-0-69a377cd098b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63c3b650-c3cf-49bc-973a-c5fe025a22f6@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 02:53:59PM +0530, Prashanth K wrote:
+
+On Sat, 22 Feb 2025 12:38:56 +0100, Krzysztof Kozlowski wrote:
+> Just few improvements.
 > 
+> Best regards,
+> Krzysztof
 > 
-> On 24-02-25 02:36 pm, Greg Kroah-Hartman wrote:
-> > On Mon, Feb 24, 2025 at 02:26:04PM +0530, Prashanth K wrote:
-> >> If the USB configuration is not valid, then avoid checking for
-> >> bmAttributes to prevent null pointer deference.
-> >>
-> >> Cc: stable@vger.kernel.org
-> >> Fixes: 40e89ff5750f ("usb: gadget: Set self-powered based on MaxPower and bmAttributes")
-> >> Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
-> >> ---
-> >>  drivers/usb/gadget/composite.c | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-> >> index 4bcf73bae761..869ad99afb48 100644
-> >> --- a/drivers/usb/gadget/composite.c
-> >> +++ b/drivers/usb/gadget/composite.c
-> >> @@ -1051,7 +1051,7 @@ static int set_config(struct usb_composite_dev *cdev,
-> >>  		usb_gadget_set_remote_wakeup(gadget, 0);
-> >>  done:
-> >>  	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
-> >> -	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
-> >> +	    (c && !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER)))
-> >>  		usb_gadget_clear_selfpowered(gadget);
-> >>  	else
-> >>  		usb_gadget_set_selfpowered(gadget);
-> >> -- 
-> >> 2.25.1
-> >>
-> >>
-> > 
-> > Have you checked linux-next yet for this fix that was posted last week?
-> > Does that not resolve the issue for you?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> 
-> I hope you are mentioning this one -
-> https://lore.kernel.org/all/20250220120314.3614330-1-m.szyprowski@samsung.com/
 
-Yes.
+Applied, thanks!
 
-> The above patch fixes null pointer in composite_suspend(), I'm trying to
-> address a similar bug which is present in set_config(), it gets exposed
-> if the requested configuration is not present in cdev->configs.
+[1/3] coresight: catu: Constify amba_id table
+      https://git.kernel.org/coresight/c/2ecdbebe
+[2/3] coresight: tpda: Constify amba_id table
+      https://git.kernel.org/coresight/c/7b6d52e8
+[3/3] coresight: tpdm: Constify amba_id table
+      https://git.kernel.org/coresight/c/2197cbc2
 
-Ah, missed that, sorry.  I'll go queue this up too.
-
-thanks,
-
-greg k-h
+Best regards,
+-- 
+Suzuki K Poulose <suzuki.poulose@arm.com>
 
