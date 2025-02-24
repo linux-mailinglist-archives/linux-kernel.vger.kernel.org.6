@@ -1,139 +1,82 @@
-Return-Path: <linux-kernel+bounces-529543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778F7A427A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:16:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB4EA427B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41281887A81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:16:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0593B524D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A056D25C6E0;
-	Mon, 24 Feb 2025 16:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D7325A658;
+	Mon, 24 Feb 2025 16:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EA5OJtYe"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LpFZ5ejL"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E7D24EF78
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EECD1474A9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740413801; cv=none; b=pp07PG8DwGtzlzL2b3lpRfc9lD9zpl2cwI8wG/K1fwYv0pNw+zuBemMn42jqdeJ/aABq6aEXTy5lHHrvuZBqX0lMnbwGa/i9NqhhQjqmUA79c2AVISQfaC3UwmyEmO2hIJ5qzVSF6vb3FsaUrf2OrAfd0AvNaXoh2jI5rlpcPDI=
+	t=1740413841; cv=none; b=jMidKts+/oG5qLVECm488g8Zsl7nwSpaa+fBu+MlydDa7oMX8XJW0DP5F6zYvRk0Ymp8rGQt9cm+cyjIsGDKg3jUAJwAtr/5ESFatViNseh2IxXXTVVJgayzbkweNuq+hjWd/dNooQy2vhwwDnbipyAEJDNrsXWMuGbp+B4MngI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740413801; c=relaxed/simple;
-	bh=sP1m+Ua+RcKbeh+23HHa7XO1td465p/V+rsiw+jfP2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FyNqiTXLUjBGYj0D/DzSFoJ2ltEhGD+yf1gUtynAE3Tze3T9V36n2DctfwG6tnSqBvSR1hyEyvK0zk2X6vpuUpKcQf6n8LyrV/xUzKfuXgEhvjgUeEFE9iU7//jE8d8w/dyqkQE2JFErOkdevD3eosOvyLVEdGD5Jxf6ytE7O3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EA5OJtYe; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e53c9035003so3569676276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:16:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740413797; x=1741018597; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7nhvYBpaOQuzZc2PPxyd2t+tuXQyCwGXIxNVGnXYPsA=;
-        b=EA5OJtYemVKwg0dr+1IbZlRY21fEaMg2LlngSHgvfqrtc1bKY0cV3K3D+bURxXvVcY
-         k4LN+/73wgdvvh+JTPLIcEFMsgHjk77wMOUrcg/QF9YqqMXyVQ/+nGffVXTK55hK37iE
-         dAb8caOE9R6hkM4TjRSFiquOZw55mY5RI0Op/3WaT/qlcdGQuZ7q5XIvAGSylraa/8N+
-         laiZRE9AI8aJG8pMovNy8AfWbUPOWyYv961O1W1fSt5CEWwfy2kPZNsSduNdbWcNpIAX
-         O49uXKaaqkBZ26bsuS7mfK35CQsS3FPqHBXZ/mRbnKWTueF8nfigY2Dkux6OKusIgWRi
-         d10Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740413797; x=1741018597;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7nhvYBpaOQuzZc2PPxyd2t+tuXQyCwGXIxNVGnXYPsA=;
-        b=l4ISMODzjEV+kJM6j1cTXpHHf9CdRGioJ2h1kSYtffnRrSjrqdcDelpYNvlQ/PHdjy
-         xjIBPUU0ztnO8FUWWNF/NkRQxQW8kYYdvH5bOwA71MRoA22HOFlGLE3jFBcAct/SzcTL
-         IIemV0Sn5yFw5RQIpb9xNBEtznULCjUX73oLbcpBWPW3SUl9VuuRTg0W/iS6d7zGjVu2
-         vzyou7HrskmmrtQw0qXkIxhVm5ZHdLYE8z5tkVqtAzRB0V8exlGQUOg3g8M3dL1lvDec
-         qyF07/nutewpGXUgp6pZY8cO0GSRZsnoNxm6VV9lkrhvr1A4kLEwv8XHROzv+MhVgbKZ
-         WMmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXD4WrI84UyiyQzfuO+KHvXnJd3k2DAdCKX9S7knODa4hTjAQ1l55hYGCcpgWovwBAgXIVaDQqoJU/1Ey4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/KO4Kz3C20CY6VufmbAAjhdsJLCuzh+NPFYM02AREGpsbrNuh
-	XeY5/W59NzZ1iKqg+crmOt54M4wW7Kr6Leq5eybpHBKNqMcXqi6cHks3s4hscBJ3qGWJQMNizOc
-	+cGohGOtYp0nG7OMT/wAAizcvfIdrDpoCkCJTpQ==
-X-Gm-Gg: ASbGncvpN4GaI+IBh0G4g0Wn9HozKJKwhIVPb7j/BUxbDWC5wFcHxSaJv2fLptf0a1z
-	x+JvyniYcoIRB4LDKUYxu2VOmHhlqPAomWDaIjW0Y2Ls/Z91pz+o30fFn/iOjvX5dgJxeDzkqZj
-	GGMIMvKz8hnklfIbp6BrgitFHFCVdGtjL9nTWm1m5V
-X-Google-Smtp-Source: AGHT+IERTbcHpTFjL8xCwXbbDdtb9v5bJZbheeag9xnvtXSUhwjOQHRlR9/ILy4dAvc8ziVN20n9Ds50jV3I6NnIhrk=
-X-Received: by 2002:a05:6902:1147:b0:e5e:14d4:e630 with SMTP id
- 3f1490d57ef6-e5e24668e26mr11373831276.39.1740413797228; Mon, 24 Feb 2025
- 08:16:37 -0800 (PST)
+	s=arc-20240116; t=1740413841; c=relaxed/simple;
+	bh=yo9JxgjYf/ScCj3LEzwDAFGCnXQxy+7/7XKdoZmi/rM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SA7whjPnks6ld1D0rgye9pgD6KY3fHoAB+tdnPDT6kKtuF25+sTbfrKYhOuVs+OOs3j3hmx/QcxvO/4sBdpiepLtEj9rzQ7TF8ZB/2Yid2OhtHDy7g3RPaVXTev7T1NAoNwFh++HAa8hca54BQXEjCPdfEoQfNxyJmTZYByE/fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LpFZ5ejL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=riN2xThdQC9GaUY8tQqX5se0PRjowKE8bLS+k67G0lE=; b=LpFZ5ejL2ZTl+3ySDHDn4BHamR
+	8hxGwPb2vsGJPLQpGXhvd+38OlvCFfwHL7bLtsY8IDqWeVXQBiXPREaTkjDXe7x53nvc1sVZ038yg
+	q7+JdzQ/CKvv3ttbLYsxjjQvcZTCdL1oEdypdOHfd0v4JtUy1ghEhwf8Zht9GYYbcNOacLe0FNUNb
+	KxLg0IiXs4efcO2qvlqfpr7rcdeQTuoI8DPXB0qMijcMqYsIYHYJwHPMy8CoUquqlJ99m0TuMgbFf
+	ZGSgoN69N6yvLmkKvJwXLaoNlhwN0hCtk1JmPtxK5S54DzCP06Lr90AvFNHutuTJ6a6Sm3m0/oPcQ
+	zEPtX5xA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmb8w-0000000EQhm-46gF;
+	Mon, 24 Feb 2025 16:17:18 +0000
+Date: Mon, 24 Feb 2025 08:17:18 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Frank <david@davidfrank.ch>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Efficient mapping of sparse file holes to zero-pages
+Message-ID: <Z7ybjloC5fobHbTE@infradead.org>
+References: <CAOR27cSr9yxodkctfp-Yjybh1NsKBeSkhdbZYeK7O5M87PfEYw@mail.gmail.com>
+ <Z7cygtpjGDJadgg0@casper.infradead.org>
+ <CAOR27cQ8oHmA8fWnmB7Wk5pTL4TRjMPzRuqT=uA1cVROYZH7UA@mail.gmail.com>
+ <Z7p-SLdiyQCknetc@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222025102.1519798-1-shiyongbang@huawei.com>
- <20250222025102.1519798-8-shiyongbang@huawei.com> <reqpxlbvlz5qssgy6gbjuou33h4zevo4xeztqbsr4keehplyhx@utv22a5ihohx>
- <eef68fc7-30f4-4246-a82e-4f90cd6a665d@huawei.com> <6jx5ldpidy2ycrqognfiv5ttqr5ia4dtbryta3kc2mkndrvvgo@qzuakucz765k>
- <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com>
-In-Reply-To: <6634386b-afc1-4e31-a2f4-9c1afed2d1d8@huawei.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 24 Feb 2025 18:16:24 +0200
-X-Gm-Features: AWEUYZktbuXYXa96Q3xFxeJhj1PB3sx90DPGtIUB2gMqOztio-fCDvHDs3KOcks
-Message-ID: <CAA8EJpqHmhUxLE57XNeh-nVtSP7WvtBE=FiFWk9kqM_P+AC=0A@mail.gmail.com>
-Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-To: Yongbang Shi <shiyongbang@huawei.com>
-Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, daniel@ffwll.ch, kong.kongxinwei@hisilicon.com, 
-	liangjian010@huawei.com, chenjianmin@huawei.com, lidongming5@huawei.com, 
-	libaihan@huawei.com, shenjian15@huawei.com, shaojijie@huawei.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7p-SLdiyQCknetc@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
->
-> > On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
-> >>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
-> >>>> +{
-> >>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
-> >>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
-> >>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
-> >>>> +  int ret;
-> >>>> +
-> >>>> +  if (dp->hpd_status) {
-> >>>> +          hibmc_dp_hpd_cfg(&priv->dp);
-> >>>> +          ret = hibmc_dp_prepare(dp, mode);
-> >>>> +          if (ret)
-> >>>> +                  return ret;
-> >>>> +
-> >>>> +          hibmc_dp_display_en(dp, true);
-> >>>> +  } else {
-> >>>> +          hibmc_dp_display_en(dp, false);
-> >>>> +          hibmc_dp_reset_link(&priv->dp);
-> >>>> +  }
-> >>> If I understand this correctly, you are using a separate drm_client to
-> >>> enable and disable the link & display. Why is it necessary? Existing
-> >>> drm_clients and userspace compositors use drm framework, they should be
-> >>> able to turn the display on and off as required.
-> >>>
-> >> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
-> >> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
-> >> the different video modes into DP registers.
-> > Why? The link training and mode programming should happen during
-> > pre_enable / enable stage (legacy or atomic).
->
-> Hi Dmitry,
->
-> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
-> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
+On Sun, Feb 23, 2025 at 01:47:52AM +0000, Matthew Wilcox wrote:
+>  - Choose a data structure in the VFS to store this range information
+>    (a tree of some kind)
+>  - Design a protocol such that the VFS can query this information about
+>    a range of a particular file, and the filesystem can invalidate the
+>    VFS's knowledge
 
-It should be userspace, who triggers the enable/disable (or it should
-be the in-kernel fbdev / fbcon, which interface through the generic
-drm_fbdev client).
+That information is always going to be incoherent in some way.  Reads
+are already done without i_rwsem for most file systems and there is
+further work on reducing locking.  So anything needs to come from inside
+the file system itself.  That probably means you can't reduce the folio
+allocation overhead, but at least you don't have to persistently use the
+memory.
 
--- 
-With best wishes
-Dmitry
 
