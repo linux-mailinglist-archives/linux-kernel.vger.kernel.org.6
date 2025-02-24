@@ -1,309 +1,170 @@
-Return-Path: <linux-kernel+bounces-528690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D71CA41AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:22:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E542DA41ACB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2069A16353E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:22:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C42E16A1D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6448024C692;
-	Mon, 24 Feb 2025 10:22:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4AB24BBF8;
-	Mon, 24 Feb 2025 10:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF4824E4B7;
+	Mon, 24 Feb 2025 10:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9YLbuhW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C92F24A04A;
+	Mon, 24 Feb 2025 10:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740392556; cv=none; b=VxDmUPXgO4iHjfmwQNuJmVpdPxtLuHiXv+WF7ljXUQzorXGOoqSaUqOlcz2VbSgMfg+8TIwYpH4NBDJjBm2IUSwau5WlUuvIrBQncRsJwtfnY2jPWClN6Ac37BFsxXlPApdWtBIe9mN6k3FdLQnB0BvmMp2/dLPhLIYj6b5XOwE=
+	t=1740392658; cv=none; b=Bqrgi6PkwANa/O+Ql9R9UyIMZ4fAXS0lh2r0gzKwPjHQjrLd/cLned+bV2c9UDFdfiKEEXxDKKbtHrWjxCTjoNS++vBQK0BECI7pYdDkMmjLypEpAh+kgn6HafGgxoVrkzLDtnO4NBe9R/tzT52ODYtlnscr/FMSG+1uemKJINE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740392556; c=relaxed/simple;
-	bh=b1nkShEdJHWgRZo3HKZY/hm1IBId73Fq9MJCqFbRPJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rgL/D+72MyM64KKPuyT63R33g/Xou12MQ6XNxS2mSDvo44Zh2Tlcuzo6morgqlaZ7TQuvYtw+1EP8gCHhYURqVXRWUxyOfSGNLVO2VWcRqyTDJZ3AGjLZwAOs59e7v73JojzOWqex2n6PMhEfk/rljFTQXQXFPPPoDWnAWSCkPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D82A1E7D;
-	Mon, 24 Feb 2025 02:22:50 -0800 (PST)
-Received: from [10.57.36.38] (unknown [10.57.36.38])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 111C63F673;
-	Mon, 24 Feb 2025 02:22:30 -0800 (PST)
-Message-ID: <c274175a-ed6d-4ce9-be86-d48f56cafe9d@arm.com>
-Date: Mon, 24 Feb 2025 10:22:30 +0000
+	s=arc-20240116; t=1740392658; c=relaxed/simple;
+	bh=6Q7YxosGYCvvfZdEhOxa5tW2ht0jkZihzhAPG6TYYuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZXyj0oIQc1/66GUiMzIfi5YNe2g1OBKF6w8SdqoTCI6bLIr6tAh5BV6sDLjnhKY+EC9oMLOUsUaybZIxu41AFHcH6aGalIMWQ0Nt4xSMjFk0EbNow1KBSvgRhB2Sx2/GTDBL35WnN6SO8AcsXwY2UTiNxs6RfGNNoSwSQNto8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9YLbuhW; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740392657; x=1771928657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=6Q7YxosGYCvvfZdEhOxa5tW2ht0jkZihzhAPG6TYYuc=;
+  b=L9YLbuhWpc02Ob/kPk7kvlOWPQZJk4WwxTlSclpiD9wfbRQMahu/VA8I
+   L4fDo7roahc9ngwDDUsh2Rhqc+w9EkaTbLEBlktFkOi6eZajtXoWZE+WK
+   1ZjPytRAk/a6QkzdMh4fO5lW5PIR+HqA3bRYNmFuCdP//VoZpjiSPxuhE
+   peuaMf7xU7wgPwP6KjfBBhhFNVssX1moEs9d+Dn4AdfcYbsf2i58BCN/+
+   id9c5w7MFLbTqHtFUYfJ9qI5jSQfWTUSMDFh2whK9sG6UGePYitqZZtO/
+   jeIFKrIr5qQY1izYb0iFLE1NRtcoFcTt2NToMM/aoQXeg6cYjmy7y8cHS
+   A==;
+X-CSE-ConnectionGUID: sJySdjU+TbC/O4bcMh2/Kw==
+X-CSE-MsgGUID: 7xWSFAudTlKarxoq8E33Mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="58688072"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="58688072"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:24:16 -0800
+X-CSE-ConnectionGUID: +pAAAG08Rvu5FzAQi5JPqA==
+X-CSE-MsgGUID: 9ieeuXQLQPOIECVGNEmZEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="139243452"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:24:09 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmVd7-0000000EfEB-0qjH;
+	Mon, 24 Feb 2025 12:24:05 +0200
+Date: Mon, 24 Feb 2025 12:24:04 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "pmladek@suse.com" <pmladek@suse.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"kekrby@gmail.com" <kekrby@gmail.com>,
+	"admin@kodeit.net" <admin@kodeit.net>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"evepolonium@gmail.com" <evepolonium@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	Hector Martin <marcan@marcan.st>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Message-ID: <Z7xIxFT-eB_OTGzm@smile.fi.intel.com>
+References: <716BCB0A-785B-463A-86C2-94BD66D5D22E@live.com>
+ <C66F35BB-2ECC-4DB8-8154-DEC5177967ED@live.com>
+ <6CB20172-906F-4D13-B5E4-100A9CF74F02@live.com>
+ <Z7xCr4iPmIkPoWGC@smile.fi.intel.com>
+ <PN3PR01MB9597CF2907CBBD6ED43D5E62B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 6/7] Coresight: Add Coresight TMC Control Unit driver
-Content-Language: en-GB
-To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250217093024.1133096-1-quic_jiegan@quicinc.com>
- <20250217093024.1133096-7-quic_jiegan@quicinc.com>
- <35d1a923-4e8e-4fe2-bf4a-0b78b1d511e3@arm.com>
- <a594bdee-7d9e-4d79-a5ee-a34dafa2869f@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <a594bdee-7d9e-4d79-a5ee-a34dafa2869f@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <PN3PR01MB9597CF2907CBBD6ED43D5E62B8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 24/02/2025 03:32, Jie Gan wrote:
+On Mon, Feb 24, 2025 at 10:18:48AM +0000, Aditya Garg wrote:
 > 
 > 
-> On 2/21/2025 7:39 PM, Suzuki K Poulose wrote:
->> On 17/02/2025 09:30, Jie Gan wrote:
->>> The Coresight TMC Control Unit hosts miscellaneous configuration 
->>> registers
->>> which control various features related to TMC ETR sink.
->>>
->>> Based on the trace ID, which is programmed in the related CTCU ATID
->>> register of a specific ETR, trace data with that trace ID gets into
->>> the ETR buffer, while other trace data gets dropped.
->>>
->>> Enabling source device sets one bit of the ATID register based on
->>> source device's trace ID.
->>> Disabling source device resets the bit according to the source
->>> device's trace ID.
->>>
->>> Reviewed-by: James Clark <james.clark@linaro.org>
->>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>> ---
->>>   drivers/hwtracing/coresight/Kconfig          |  12 +
->>>   drivers/hwtracing/coresight/Makefile         |   1 +
->>>   drivers/hwtracing/coresight/coresight-ctcu.c | 268 +++++++++++++++++++
->>>   drivers/hwtracing/coresight/coresight-ctcu.h |  24 ++
->>>   include/linux/coresight.h                    |   3 +-
->>>   5 files changed, 307 insertions(+), 1 deletion(-)
->>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.c
->>>   create mode 100644 drivers/hwtracing/coresight/coresight-ctcu.h
->>>
->>> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/ 
->>> coresight/Kconfig
->>> index 06f0a7594169..ecd7086a5b83 100644
->>> --- a/drivers/hwtracing/coresight/Kconfig
->>> +++ b/drivers/hwtracing/coresight/Kconfig
->>> @@ -133,6 +133,18 @@ config CORESIGHT_STM
->>>         To compile this driver as a module, choose M here: the
->>>         module will be called coresight-stm.
->>> +config CORESIGHT_CTCU
->>> +    tristate "CoreSight TMC Control Unit driver"
->>> +    depends on CORESIGHT_LINK_AND_SINK_TMC
->>> +    help
->>> +      This driver provides support for CoreSight TMC Control Unit
->>> +      that hosts miscellaneous configuration registers. This is
->>> +      primarily used for controlling the behaviors of the TMC
->>> +      ETR device.
->>> +
->>> +      To compile this driver as a module, choose M here: the
->>> +      module will be called coresight-ctcu.
->>> +
->>>   config CORESIGHT_CPU_DEBUG
->>>       tristate "CoreSight CPU Debug driver"
->>>       depends on ARM || ARM64
->>> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/ 
->>> hwtracing/ coresight/Makefile
->>> index 4ba478211b31..1b7869910a12 100644
->>> --- a/drivers/hwtracing/coresight/Makefile
->>> +++ b/drivers/hwtracing/coresight/Makefile
->>> @@ -51,3 +51,4 @@ coresight-cti-y := coresight-cti-core.o coresight- 
->>> cti-platform.o \
->>>              coresight-cti-sysfs.o
->>>   obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
->>>   obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
->>> +obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
->>> diff --git a/drivers/hwtracing/coresight/coresight-ctcu.c b/drivers/ 
->>> hwtracing/coresight/coresight-ctcu.c
->>> new file mode 100644
->>> index 000000000000..e1460a627c4d
->>> --- /dev/null
->>> +++ b/drivers/hwtracing/coresight/coresight-ctcu.c
->>> @@ -0,0 +1,268 @@
->>> +// SPDX-License-Identifier: GPL-2.0-only
->>> +/*
->>> + * Copyright (c) 2024-2025 Qualcomm Innovation Center, Inc. All 
->>> rights reserved.
->>> + */
->>> +
->>> +#include <linux/clk.h>
->>> +#include <linux/coresight.h>
->>> +#include <linux/device.h>
->>> +#include <linux/err.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/init.h>
->>> +#include <linux/io.h>
->>> +#include <linux/module.h>
->>> +#include <linux/mutex.h>
->>> +#include <linux/of.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/slab.h>
->>> +
->>> +#include "coresight-ctcu.h"
->>> +#include "coresight-priv.h"
->>> +
->>> +DEFINE_CORESIGHT_DEVLIST(ctcu_devs, "ctcu");
->>> +
->>> +#define ctcu_writel(drvdata, val, offset)    __raw_writel((val), 
->>> drvdata->base + offset)
->>> +#define ctcu_readl(drvdata, offset)        __raw_readl(drvdata->base 
->>> + offset)
->>> +
->>> +/*
->>> + * The TMC Coresight Control Unit uses four ATID registers to 
->>> control the data
->>> + * filter function based on the trace ID for each TMC ETR sink. The 
->>> length of
->>> + * each ATID register is 32 bits. Therefore, the ETR has a related 
->>> field in
->>> + * CTCU that is 128 bits long. Each trace ID is represented by one 
->>> bit in that
->>> + * filed.
->>> + * e.g. ETR0ATID0 layout, set bit 5 for traceid 5
->>> + *                                           bit5
->>> + * ------------------------------------------------------
->>> + * |   |28|   |24|   |20|   |16|   |12|   |8|  1|4|   |0|
->>> + * ------------------------------------------------------
->>> + *
->>> + * e.g. ETR0:
->>> + * 127                     0 from ATID_offset for ETR0ATID0
->>> + * -------------------------
->>> + * |ATID3|ATID2|ATID1|ATID0|
->>> + */
->>> +#define CTCU_ATID_REG_OFFSET(traceid, atid_offset) \
->>> +        ((traceid / 32) * 4 + atid_offset)
->>> +
->>> +#define CTCU_ATID_REG_BIT(traceid)    (traceid % 32)
->>> +#define CTCU_ATID_REG_SIZE        0x10
->>> +
->>> +struct ctcu_atid_config {
->>> +    const u32 atid_offset;
->>> +    const u32 port_num;
->>> +};
->>> +
->>> +struct ctcu_config {
->>> +    const struct ctcu_atid_config *atid_config;
->>> +    int num_atid_config;
->>> +};
->>> +
->>> +static const struct ctcu_atid_config sa8775p_atid_cfgs[] = {
->>> +    {0xf8,  0},
->>> +    {0x108, 1},
->>> +};
->>> +
->>> +static const struct ctcu_config sa8775p_cfgs = {
->>> +    .atid_config        = sa8775p_atid_cfgs,
->>> +    .num_atid_config    = ARRAY_SIZE(sa8775p_atid_cfgs),
->>> +};
->>> +
->>> +static void ctcu_program_atid_register(struct ctcu_drvdata *drvdata, 
->>> u32 reg_offset,
->>> +                       u8 bit, bool enable)
->>> +{
->>> +    u32 val;
->>> +
->>> +    CS_UNLOCK(drvdata->base);
->>> +    val = ctcu_readl(drvdata, reg_offset);
->>> +    val = enable? (val | BIT(bit)) : (val & ~BIT(bit));
->>
->> minor nit: If possible do not use the ternary operator like this. It 
->> is much better readable as:
->>
->>      if (enable)
->>          val |= BIT(bit);
->>      else
->>          val &= ~BIT(bit);
->>
+> > On 24 Feb 2025, at 3:28 PM, andriy.shevchenko@linux.intel.com wrote:
+> > 
+> > ﻿On Sat, Feb 22, 2025 at 03:46:03PM +0000, Aditya Garg wrote:
+> >>>> On 20 Feb 2025, at 10:09 PM, Aditya Garg <gargaditya08@live.com> wrote:
+> >>> 
+> >>> %p4cc is designed for DRM/V4L2 FOURCCs with their specific quirks, but
+> >>> it's useful to be able to print generic 4-character codes formatted as
+> >>> an integer. Extend it to add format specifiers for printing generic
+> >>> 32-bit FOURCCs with various endian semantics:
+> >>> 
+> >>> %p4ch   Host-endian
+> >>> %p4cl Little-endian
+> >>> %p4cb Big-endian
+> >>> %p4cr Reverse-endian
+> >>> 
+> >>> The endianness determines how bytes are interpreted as a u32, and the
+> >>> FOURCC is then always printed MSByte-first (this is the opposite of
+> >>> V4L/DRM FOURCCs). This covers most practical cases, e.g. %p4cr would
+> >>> allow printing LSByte-first FOURCCs stored in host endian order
+> >>> (other than the hex form being in character order, not the integer
+> >>> value).
+> > 
+> > ...
+> > 
+> >> BTW, after looking at the comments by Martin [1], its actually better to use
+> >> existing specifiers for the appletbdrm driver.  The driver needs the host
+> >> endian as proposed by this patch, so instead of that, we can use %.4s
+> > 
+> > Do you mean this patch will not be needed? If this a case, that would be the
+> > best solution.
 > 
-> Will do this way.
-> 
->>> +    ctcu_writel(drvdata, val, reg_offset);
->>> +    CS_LOCK(drvdata->base);
->>> +}
->>> +
->>> +/*
->>> + * __ctcu_set_etr_traceid: Set bit in the ATID register based on 
->>> trace ID when enable is true.
->>> + * Reset the bit of the ATID register based on trace ID when enable 
->>> is false.
->>> + *
->>> + * @csdev:    coresight_device struct related to the device
->>> + * @traceid:    trace ID of the source tracer.
->>> + * @port_num:    port number from TMC ETR sink.
->>> + * @enable:    True for set bit and false for reset bit.
->>> + *
->>> + * Returns 0 indicates success. Non-zero result means failure.
->>> + */
->>> +static int __ctcu_set_etr_traceid(struct coresight_device *csdev, u8 
->>> traceid, int port_num,
->>> +                  bool enable)
->>> +{
->>> +    struct ctcu_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
->>> +    u32 atid_offset, reg_offset;
->>> +    u8 refcnt, bit;
->>> +
->>> +    atid_offset = drvdata->atid_offset[port_num];
->>> +    if (atid_offset == 0)
->>> +        return -EINVAL;
->>> +
->>> +    bit = CTCU_ATID_REG_BIT(traceid);
->>> +    reg_offset = CTCU_ATID_REG_OFFSET(traceid, atid_offset);
->>> +    if (reg_offset - atid_offset > CTCU_ATID_REG_SIZE)
->>> +        return -EINVAL;
->>> +
->>> +    guard(raw_spinlock_irqsave)(&drvdata->spin_lock);
->>> +    refcnt = drvdata->traceid_refcnt[port_num][traceid];
->>> +    /* Only program the atid register when the refcnt value is 0 or 
->>> 1 */
->>
->> A normal trace source won't be enabled more than once (e.g., ETM). The 
->> only odd one out is the STM, which may be driven by multiple agents.
->> So this refcounting looks necessary.
->>
-> 
-> Besides, for the TPDMs which shared the trace_id of the TPDA also need 
-> the refcnt. Consider we have TPDM1 and TPDM2 connected to the same TPDA 
-> device. Once we disable one of the TPDM without checking the refcnt, the 
-> filter function will be disabled for another TPDM.
-> 
->>> +    if (enable && (++refcnt == 1))
->>> +        ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
->>> +    else if (!enable && (--refcnt == 0))
->>> +        ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
->>
->> minor nit:
->>
->>      if ((enable && !refcount++) ||
->>          (!enable && --refcount))
->>          ctcu_program_atid_register(drvdata, reg_offset, bit, enable);
->>
->>
-> 
-> I did (enable && (++refcnt == 1)) just because I think we only need 
-> program the register when refcnt is equal to 1. We dont need reprogram 
-> the register with same value when refcnt greater than 1. So I think it's 
-> better for the performance?
+> I tested with %4pE, and the results are different from expected. So this
+> would be preferred. Kindly see my latest email with a proposed workaround for
+> the sparse warnings.
 
-The code above is similar to yours. It would "set" only for the first
-time, when
+%.4s sounded okay, but %4pE is always about escaping and the result may occupy
+%4x memory (octal escaping of non-printable characters). Of course, you may vary
+the escaping classes, but IIRC the octal or hex escaping is unconditional.
 
-enable == 0, refcount == 0 now, but will be incremented to 1.
+> >> [1]: https://lore.kernel.org/asahi/E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org/
+> >> 
+> >> Alternatively we could add a host endian only. Other endians are not really
+> >> used by any driver AFAIK. The host endian is being used by appletbdrm and
+> >> Asahi Linux’ SMC driver only.
 
-Suzuki
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
