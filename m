@@ -1,340 +1,375 @@
-Return-Path: <linux-kernel+bounces-529563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC15A427DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7231FA427B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA89216A499
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:26:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4E36169534
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77100262D01;
-	Mon, 24 Feb 2025 16:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD3B25A347;
+	Mon, 24 Feb 2025 16:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b="kzUfOmPp"
-Received: from mail.servus.at (mail.servus.at [193.170.194.20])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iu6MLiF7"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD3518950A;
-	Mon, 24 Feb 2025 16:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.170.194.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DB1C7009
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740414413; cv=none; b=YKM9sxI+lAMder/kG8vbClKhY5zxmVK8jPtZtGWJOLp9wIWzYbjEbvRt5g3YrOuuyC5gromwJlaLznyjsevI2ywLFtP4YHGHsEww2+bK0hZ9/KNfxAH0lyE7J8gxcEFQRjxp6WThPlBEiUCs8859LqzgGJY8LQGA1pvzmZsI2t8=
+	t=1740414070; cv=none; b=EeMzBU7jyP0OWLMMPDuPIvzyuY7jZfNy8XcSxoP+xY/LMgZcef/C0lGRzSdD0IbfgRAKS6DttUM5cvukcXuggelZBzaNlJ/jjii5nlMlG7fR9Xsc4mHTQ9Jdl9CN8jmNXzGvlqEffsel4uT/4I++12CFvV6+S9yYyzTO9h0cxeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740414413; c=relaxed/simple;
-	bh=jCYb+d7G1reO0vaUQ96m458H4rRW2Evdk3/qIlZD0oc=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=h3JYVP7fwmQpMI+kStvyws/pn5elRNRB9ZRr/TbN6w+/YMG9R7fkrT4samXBnHw5Y8piAKZQMQMm+8f/BWprpPSor+KZq5tu8K5olTXHO4Wzrv3KQmYGtfoqMv/seVm2bY2tpPTIm63JE4+rbF5WqHslw3tyWak+iZx/mUraqdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com; spf=none smtp.mailfrom=oberhumer.com; dkim=pass (1024-bit key) header.d=oberhumer.com header.i=@oberhumer.com header.b=kzUfOmPp; arc=none smtp.client-ip=193.170.194.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oberhumer.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=oberhumer.com
-Received: from localhost (localhost [127.0.0.1])
-	by mail.servus.at (Postfix) with ESMTP id 2A66778926;
-	Mon, 24 Feb 2025 17:21:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=oberhumer.com; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:mime-version:user-agent:date:date:message-id:organization:from
-	:from:references:subject:subject:received:received; s=main; t=
-	1740414058; x=1742228459; bh=jCYb+d7G1reO0vaUQ96m458H4rRW2Evdk3/
-	qIlZD0oc=; b=kzUfOmPp9OgoaAWcX1oq6cBTRWEW/ZAVBkY5I5k2GoosSyD8ICq
-	rnYGEy+ntkp3cE9zg/IFAW8s9WwdYPTMqfnrEJL29L3dMS+S0LKApQrvH8pD9S0i
-	SDw6066ix8+DU7DeUKF8F+sBVzh8eIrk+nSkSmiXVwQrMQ/sj0OjH6Tk=
-X-Virus-Scanned: amavis at servus.at
-Received: from mail.servus.at ([127.0.0.1])
- by localhost (mail.servus.at [127.0.0.1]) (amavis, port 10024) with ESMTP
- id PhpXsMLSR3C6; Mon, 24 Feb 2025 17:20:58 +0100 (CET)
-Received: from [192.168.216.53] (unknown [81.10.228.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: oh_markus)
-	by mail.servus.at (Postfix) with ESMTPSA id F269F5A771;
-	Mon, 24 Feb 2025 17:20:56 +0100 (CET)
-Subject: Re: [PATCH] lib/lzo: Avoid output overruns when compressing
-To: Herbert Xu <herbert@gondor.apana.org.au>,
- Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-References: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Nitin Gupta <nitingupta910@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Dave Rodgman <dave.rodgman@arm.com>
-From: "Markus F.X.J. Oberhumer" <markus@oberhumer.com>
-Organization: oberhumer.com
-Message-ID: <67BC9C68.5090300@oberhumer.com>
-Date: Mon, 24 Feb 2025 17:20:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.3.0
+	s=arc-20240116; t=1740414070; c=relaxed/simple;
+	bh=jIwb6dGWmuP0Yf4HpEXtQpY3/Ijx53O+VH2TtE/T3yQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BBb5m47YcP0Svr1SIIkimtLYE0dhj5adpdR0RcVgoxlp9koZsaO/rPDdjFqvyXnG6s0f8s21VC3CDp5ufOIkOnRZn0BFjHyL5jqYbnvJUu+g2rysLbCV6y6+F/wmNt+eJEyPCjbPxlNEMzQI7JAWOlEGBfQOztc3zFaSc6Y3xso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iu6MLiF7; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=D37+WCwOf1pVaNHTH3XhuobNoJeXcm98cYO3EfveS5Q=; b=iu6MLiF7cyy+dVPShcViLgMGHO
+	fhmtboCbYwhrbKwDkeDWle9tzL378TVNoZCt/mhtS3xdLKDfRJrS1nhLVGzlBAmPg27d3gKGhOz7G
+	mKpCufiPYEJ+3Ia0XtAjBaIFkHFNYTqoYtRVhVH2HE5xLWZIuGvFc+3sl/y+5DbqJ9s9SLvX7iInC
+	KlbZUUekVaSzpu3A1YZJdmg83fc8ua8ybRdbLHb/DaifsBiC+KdDpBeAZrV2LzIWVCvRsnv9KdQvK
+	ychXDUYCbaUdcrwP5IOsq2dQ0oBJgbfMBowJfBqmJyQ1K58DFli2cWInJau7QCoO3icnnX9cc3+PL
+	lp0SZn1Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmbCb-00000007ixC-0N9O;
+	Mon, 24 Feb 2025 16:21:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id F38A6300756; Mon, 24 Feb 2025 17:21:03 +0100 (CET)
+Date: Mon, 24 Feb 2025 17:21:03 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Subject: Re: [patch 04/11] posix-timers: Remove pointless unlock_timer()
+ wrapper
+Message-ID: <20250224162103.GD11590@noisy.programming.kicks-ass.net>
+References: <20250224095736.145530367@linutronix.de>
+ <20250224101343.211872476@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Z7rGXJSX57gEfXPw@gondor.apana.org.au>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224101343.211872476@linutronix.de>
 
-LZO declares "*out_len" as output parameter because
+On Mon, Feb 24, 2025 at 11:15:28AM +0100, Thomas Gleixner wrote:
+> It's just a wrapper around spin_unlock_irqrestore() with zero value.
 
-  #define lzo1x_worst_compress(x) ((x) + ((x) / 16) + 64 + 3 + 2)
+Well, I disagree... the value is that is matches lock_timer(). Both in
+naming and in argument types.
 
-~Markus
+Anyway, I started tinkering with the code, it's more hacky than I'd like
+it to be, but what do you think?
 
-
-On 2025-02-23 07:55, Herbert Xu wrote:
-> The compression code in LZO never checked for output overruns.
-> Fix this by checking for end of buffer before each write.
-> 
-> Fixes: 64c70b1cf43d ("Add LZO1X algorithm to the kernel")
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-> 
-> diff --git a/lib/lzo/lzo1x_compress.c b/lib/lzo/lzo1x_compress.c
-> index 47d6d43ea957..5d2f2f851694 100644
-> --- a/lib/lzo/lzo1x_compress.c
-> +++ b/lib/lzo/lzo1x_compress.c
-> @@ -18,10 +18,10 @@
->  #include <linux/lzo.h>
->  #include "lzodefs.h"
->  
-> -static noinline size_t
-> +static noinline int
->  lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
-> -		    unsigned char *out, size_t *out_len,
-> -		    size_t ti, void *wrkmem, signed char *state_offset,
-> +		    unsigned char **out, unsigned char *op_end,
-> +		    size_t *tp, void *wrkmem, signed char *state_offset,
->  		    const unsigned char bitstream_version)
->  {
->  	const unsigned char *ip;
-> @@ -30,8 +30,9 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  	const unsigned char * const ip_end = in + in_len - 20;
->  	const unsigned char *ii;
->  	lzo_dict_t * const dict = (lzo_dict_t *) wrkmem;
-> +	size_t ti = *tp;
->  
-> -	op = out;
-> +	op = *out;
->  	ip = in;
->  	ii = ip;
->  	ip += ti < 4 ? 4 - ti : 0;
-> @@ -116,25 +117,41 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  		if (t != 0) {
->  			if (t <= 3) {
->  				op[*state_offset] |= t;
-> +				if (!HAVE_OP(4))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				COPY4(op, ii);
->  				op += t;
->  			} else if (t <= 16) {
-> +				if (!HAVE_OP(1))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				*op++ = (t - 3);
-> +				if (!HAVE_OP(16))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				COPY8(op, ii);
->  				COPY8(op + 8, ii + 8);
->  				op += t;
->  			} else {
->  				if (t <= 18) {
-> +					if (!HAVE_OP(1))
-> +						return LZO_E_OUTPUT_OVERRUN;
->  					*op++ = (t - 3);
->  				} else {
->  					size_t tt = t - 18;
-> +					if (!HAVE_OP(1))
-> +						return LZO_E_OUTPUT_OVERRUN;
->  					*op++ = 0;
->  					while (unlikely(tt > 255)) {
->  						tt -= 255;
-> +						if (!HAVE_OP(1))
-> +							return LZO_E_OUTPUT_OVERRUN;
->  						*op++ = 0;
->  					}
-> +					if (!HAVE_OP(1))
-> +						return LZO_E_OUTPUT_OVERRUN;
->  					*op++ = tt;
->  				}
-> +				if (!HAVE_OP(t))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				do {
->  					COPY8(op, ii);
->  					COPY8(op + 8, ii + 8);
-> @@ -151,6 +168,8 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  		if (unlikely(run_length)) {
->  			ip += run_length;
->  			run_length -= MIN_ZERO_RUN_LENGTH;
-> +			if (!HAVE_OP(4))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			put_unaligned_le32((run_length << 21) | 0xfffc18
->  					   | (run_length & 0x7), op);
->  			op += 4;
-> @@ -243,10 +262,14 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  		ip += m_len;
->  		if (m_len <= M2_MAX_LEN && m_off <= M2_MAX_OFFSET) {
->  			m_off -= 1;
-> +			if (!HAVE_OP(2))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = (((m_len - 1) << 5) | ((m_off & 7) << 2));
->  			*op++ = (m_off >> 3);
->  		} else if (m_off <= M3_MAX_OFFSET) {
->  			m_off -= 1;
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			if (m_len <= M3_MAX_LEN)
->  				*op++ = (M3_MARKER | (m_len - 2));
->  			else {
-> @@ -254,14 +277,22 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  				*op++ = M3_MARKER | 0;
->  				while (unlikely(m_len > 255)) {
->  					m_len -= 255;
-> +					if (!HAVE_OP(1))
-> +						return LZO_E_OUTPUT_OVERRUN;
->  					*op++ = 0;
->  				}
-> +				if (!HAVE_OP(1))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				*op++ = (m_len);
->  			}
-> +			if (!HAVE_OP(2))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = (m_off << 2);
->  			*op++ = (m_off >> 6);
->  		} else {
->  			m_off -= 0x4000;
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			if (m_len <= M4_MAX_LEN)
->  				*op++ = (M4_MARKER | ((m_off >> 11) & 8)
->  						| (m_len - 2));
-> @@ -282,11 +313,17 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  				m_len -= M4_MAX_LEN;
->  				*op++ = (M4_MARKER | ((m_off >> 11) & 8));
->  				while (unlikely(m_len > 255)) {
-> +					if (!HAVE_OP(1))
-> +						return LZO_E_OUTPUT_OVERRUN;
->  					m_len -= 255;
->  					*op++ = 0;
->  				}
-> +				if (!HAVE_OP(1))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				*op++ = (m_len);
->  			}
-> +			if (!HAVE_OP(2))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = (m_off << 2);
->  			*op++ = (m_off >> 6);
->  		}
-> @@ -295,14 +332,16 @@ lzo1x_1_do_compress(const unsigned char *in, size_t in_len,
->  		ii = ip;
->  		goto next;
->  	}
-> -	*out_len = op - out;
-> -	return in_end - (ii - ti);
-> +	*out = op;
-> +	*tp = in_end - (ii - ti);
-> +	return LZO_E_OK;
->  }
->  
->  static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
->  		     unsigned char *out, size_t *out_len,
->  		     void *wrkmem, const unsigned char bitstream_version)
->  {
-> +	unsigned char * const op_end = out + *out_len;
->  	const unsigned char *ip = in;
->  	unsigned char *op = out;
->  	unsigned char *data_start;
-> @@ -326,14 +365,17 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
->  	while (l > 20) {
->  		size_t ll = min_t(size_t, l, m4_max_offset + 1);
->  		uintptr_t ll_end = (uintptr_t) ip + ll;
-> +		int err;
-> +
->  		if ((ll_end + ((t + ll) >> 5)) <= ll_end)
->  			break;
->  		BUILD_BUG_ON(D_SIZE * sizeof(lzo_dict_t) > LZO1X_1_MEM_COMPRESS);
->  		memset(wrkmem, 0, D_SIZE * sizeof(lzo_dict_t));
-> -		t = lzo1x_1_do_compress(ip, ll, op, out_len, t, wrkmem,
-> -					&state_offset, bitstream_version);
-> +		err = lzo1x_1_do_compress(ip, ll, &op, op_end, &t, wrkmem,
-> +					  &state_offset, bitstream_version);
-> +		if (err != LZO_E_OK)
-> +			return err;
->  		ip += ll;
-> -		op += *out_len;
->  		l  -= ll;
->  	}
->  	t += l;
-> @@ -342,20 +384,32 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
->  		const unsigned char *ii = in + in_len - t;
->  
->  		if (op == data_start && t <= 238) {
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = (17 + t);
->  		} else if (t <= 3) {
->  			op[state_offset] |= t;
->  		} else if (t <= 18) {
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = (t - 3);
->  		} else {
->  			size_t tt = t - 18;
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = 0;
->  			while (tt > 255) {
->  				tt -= 255;
-> +				if (!HAVE_OP(1))
-> +					return LZO_E_OUTPUT_OVERRUN;
->  				*op++ = 0;
->  			}
-> +			if (!HAVE_OP(1))
-> +				return LZO_E_OUTPUT_OVERRUN;
->  			*op++ = tt;
->  		}
-> +		if (!HAVE_OP(t))
-> +			return LZO_E_OUTPUT_OVERRUN;
->  		if (t >= 16) do {
->  			COPY8(op, ii);
->  			COPY8(op + 8, ii + 8);
-> @@ -368,6 +422,8 @@ static int lzogeneric1x_1_compress(const unsigned char *in, size_t in_len,
->  		} while (--t > 0);
->  	}
->  
-> +	if (!HAVE_OP(3))
-> +		return LZO_E_OUTPUT_OVERRUN;
->  	*op++ = M4_MARKER | 1;
->  	*op++ = 0;
->  	*op++ = 0;
-> diff --git a/lib/lzo/lzo1x_decompress_safe.c b/lib/lzo/lzo1x_decompress_safe.c
-> index c94f4928e188..4d5a1b58a4a0 100644
-> --- a/lib/lzo/lzo1x_decompress_safe.c
-> +++ b/lib/lzo/lzo1x_decompress_safe.c
-> @@ -21,7 +21,6 @@
->  #include "lzodefs.h"
->  
->  #define HAVE_IP(x)      ((size_t)(ip_end - ip) >= (size_t)(x))
-> -#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
->  #define NEED_IP(x)      if (!HAVE_IP(x)) goto input_overrun
->  #define NEED_OP(x)      if (!HAVE_OP(x)) goto output_overrun
->  #define TEST_LB(m_pos)  if ((m_pos) < out) goto lookbehind_overrun
-> diff --git a/lib/lzo/lzodefs.h b/lib/lzo/lzodefs.h
-> index b60851fcf6ce..8b1a46993acf 100644
-> --- a/lib/lzo/lzodefs.h
-> +++ b/lib/lzo/lzodefs.h
-> @@ -19,6 +19,7 @@
->   */
->  #define LZO_VERSION 1
->  
-> +#define HAVE_OP(x)      ((size_t)(op_end - op) >= (size_t)(x))
->  #define COPY4(dst, src)	\
->  		put_unaligned(get_unaligned((const u32 *)(src)), (u32 *)(dst))
->  #if defined(CONFIG_X86_64) || defined(CONFIG_ARM64)
-> 
-
--- 
-Markus Oberhumer, <markus@oberhumer.com>, http://www.oberhumer.com/
+---
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -74,6 +74,29 @@ static struct k_itimer *__lock_timer(tim
+ 	__timr;								   \
+ })
+ 
++static inline void unlock_timer(struct k_itimer *timer, unsigned long flags)
++{
++	spin_unlock_irqrestore(&timer->it_lock, flags);
++}
++
++__DEFINE_CLASS_IS_CONDITIONAL(lock_timer, true);
++__DEFINE_UNLOCK_GUARD(lock_timer, struct k_itimer,
++		      unlock_timer(_T->lock, _T->flags),
++		      unsigned long flags);
++static inline class_lock_timer_t class_lock_timer_constructor(timer_t id)
++{
++	class_lock_timer_t _t = {
++		.lock = __lock_timer(id, &_t.flags),
++	};
++	return _t;
++}
++
++#define scoped_guard_end(_name) do {		\
++	class_##_name##_t *_T = &(scope);	\
++	class_##_name##_destructor(_T);		\
++	_T->lock = NULL;			\
++} while (0)
++
+ static int hash(struct signal_struct *sig, unsigned int nr)
+ {
+ 	return hash_32(hash32_ptr(sig) ^ nr, timer_hashbits);
+@@ -327,14 +350,13 @@ bool posixtimer_deliver_signal(struct ke
+ 	 * Release siglock to ensure proper locking order versus
+ 	 * timr::it_lock. Keep interrupts disabled.
+ 	 */
+-	spin_unlock(&current->sighand->siglock);
++	guard(spinlock)(&current->sighand->siglock);
+ 
+ 	ret = __posixtimer_deliver_signal(info, timr);
+ 
+ 	/* Drop the reference which was acquired when the signal was queued */
+ 	posixtimer_putref(timr);
+ 
+-	spin_lock(&current->sighand->siglock);
+ 	return ret;
+ }
+ 
+@@ -717,24 +739,20 @@ void common_timer_get(struct k_itimer *t
+ 
+ static int do_timer_gettime(timer_t timer_id,  struct itimerspec64 *setting)
+ {
+-	const struct k_clock *kc;
+-	struct k_itimer *timr;
+-	unsigned long flags;
+-	int ret = 0;
+-
+-	timr = lock_timer(timer_id, &flags);
+-	if (!timr)
+-		return -EINVAL;
++	scoped_guard (lock_timer, timer_id) {
++		struct k_itimer *timr = __guard_ptr(lock_timer)(&scope);
++		const struct k_clock *kc;
++
++		memset(setting, 0, sizeof(*setting));
++		kc = timr->kclock;
++		if (WARN_ON_ONCE(!kc || !kc->timer_get))
++			return -EINVAL;
+ 
+-	memset(setting, 0, sizeof(*setting));
+-	kc = timr->kclock;
+-	if (WARN_ON_ONCE(!kc || !kc->timer_get))
+-		ret = -EINVAL;
+-	else
+ 		kc->timer_get(timr, setting);
++		return 0;
++	}
+ 
+-	spin_unlock_irqrestore(&timr->it_lock, flags);
+-	return ret;
++	return -EINVAL;
+ }
+ 
+ /* Get the time remaining on a POSIX.1b interval timer. */
+@@ -788,18 +806,12 @@ SYSCALL_DEFINE2(timer_gettime32, timer_t
+  */
+ SYSCALL_DEFINE1(timer_getoverrun, timer_t, timer_id)
+ {
+-	struct k_itimer *timr;
+-	unsigned long flags;
+-	int overrun;
+-
+-	timr = lock_timer(timer_id, &flags);
+-	if (!timr)
+-		return -EINVAL;
+-
+-	overrun = timer_overrun_to_int(timr);
+-	spin_unlock_irqrestore(&timr->it_lock, flags);
++	scoped_guard (lock_timer, timer_id) {
++		struct k_itimer *timr = __guard_ptr(lock_timer)(&scope);
+ 
+-	return overrun;
++		return timer_overrun_to_int(timr);
++	}
++	return -EINVAL;
+ }
+ 
+ static void common_hrtimer_arm(struct k_itimer *timr, ktime_t expires,
+@@ -855,15 +867,9 @@ static void common_timer_wait_running(st
+  * when the task which tries to delete or disarm the timer has preempted
+  * the task which runs the expiry in task work context.
+  */
+-static struct k_itimer *timer_wait_running(struct k_itimer *timer, unsigned long *flags,
+-					   bool delete)
++static void timer_wait_running(struct k_itimer *timer)
+ {
+ 	const struct k_clock *kc = READ_ONCE(timer->kclock);
+-	timer_t timer_id = READ_ONCE(timer->it_id);
+-
+-	/* Prevent kfree(timer) after dropping the lock */
+-	rcu_read_lock();
+-	spin_unlock_irqrestore(&timer->it_lock, *flags);
+ 
+ 	/*
+ 	 * kc->timer_wait_running() might drop RCU lock. So @timer cannot
+@@ -872,27 +878,6 @@ static struct k_itimer *timer_wait_runni
+ 	 */
+ 	if (!WARN_ON_ONCE(!kc->timer_wait_running))
+ 		kc->timer_wait_running(timer);
+-
+-	rcu_read_unlock();
+-
+-	/*
+-	 * On deletion the timer has been marked invalid before
+-	 * timer_delete_hook() has been invoked. That means that the
+-	 * current task is the only one which has access to the timer and
+-	 * even after dropping timer::it_lock above, no other thread can
+-	 * have accessed the timer.
+-	 */
+-	if (delete) {
+-		spin_lock_irqsave(&timer->it_lock, *flags);
+-		return timer;
+-	}
+-
+-	/*
+-	 * If invoked from timer_set() the timer could have been deleted
+-	 * after dropping the lock. So in that case the timer needs to be
+-	 * looked up and validated.
+-	 */
+-	return lock_timer(timer_id, flags);
+ }
+ 
+ /*
+@@ -952,8 +937,6 @@ static int do_timer_settime(timer_t time
+ 			    struct itimerspec64 *old_spec64)
+ {
+ 	const struct k_clock *kc;
+-	struct k_itimer *timr;
+-	unsigned long flags;
+ 	int error;
+ 
+ 	if (!timespec64_valid(&new_spec64->it_interval) ||
+@@ -963,33 +946,35 @@ static int do_timer_settime(timer_t time
+ 	if (old_spec64)
+ 		memset(old_spec64, 0, sizeof(*old_spec64));
+ 
+-	timr = lock_timer(timer_id, &flags);
+ retry:
+-	if (!timr)
+-		return -EINVAL;
++	scoped_guard (lock_timer, timer_id) {
++		struct k_itimer *timr = __guard_ptr(lock_timer)(&scope);
+ 
+-	if (old_spec64)
+-		old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
++		if (old_spec64)
++			old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
+ 
+-	/* Prevent signal delivery and rearming. */
+-	timr->it_signal_seq++;
++		/* Prevent signal delivery and rearming. */
++		timr->it_signal_seq++;
++
++		kc = timr->kclock;
++		if (WARN_ON_ONCE(!kc || !kc->timer_set))
++			return -EINVAL;
+ 
+-	kc = timr->kclock;
+-	if (WARN_ON_ONCE(!kc || !kc->timer_set))
+-		error = -EINVAL;
+-	else
+ 		error = kc->timer_set(timr, tmr_flags, new_spec64, old_spec64);
++		if (error == TIMER_RETRY) {
++			// We already got the old time...
++			old_spec64 = NULL;
++			/* Unlocks and relocks the timer if it still exists */
++
++			guard(rcu)();
++			scoped_guard_end(lock_timer);
++			timer_wait_running(timr);
++			goto retry;
++		}
+ 
+-	if (error == TIMER_RETRY) {
+-		// We already got the old time...
+-		old_spec64 = NULL;
+-		/* Unlocks and relocks the timer if it still exists */
+-		timr = timer_wait_running(timr, &flags, false);
+-		goto retry;
++		return error;
+ 	}
+-	spin_unlock_irqrestore(&timr->it_lock, flags);
+-
+-	return error;
++	return -EINVAL;
+ }
+ 
+ /* Set a POSIX.1b interval timer */
+@@ -1072,18 +1057,8 @@ static inline int timer_delete_hook(stru
+ 	return kc->timer_del(timer);
+ }
+ 
+-static int posix_timer_delete(struct k_itimer *timer, timer_t id)
++static void posix_timer_invalidate(struct k_itimer *timer, unsigned long flags)
+ {
+-	unsigned long flags;
+-
+-	if (!timer) {
+-		timer = lock_timer(id, &flags);
+-		if (!timer)
+-			return -EINVAL;
+-	} else {
+-		spin_lock_irqsave(&timer->it_lock, flags);
+-	}
+-
+ 	/*
+ 	 * Invalidate the timer, remove it from the linked list and remove
+ 	 * it from the ignored list if pending.
+@@ -1115,19 +1090,23 @@ static int posix_timer_delete(struct k_i
+ 		 * delete possible after unlocking the timer as the timer
+ 		 * has been marked invalid above.
+ 		 */
+-		timer_wait_running(timer, &flags, true);
++		guard(rcu)();
++		spin_unlock_irqrestore(&timer->it_lock, flags);
++		timer_wait_running(timer);
++		spin_lock_irqsave(&timer->it_lock, flags);
+ 	}
+-
+-	spin_unlock_irqrestore(&timer->it_lock, flags);
+-	/* Remove it from the hash, which frees up the timer ID */
+-	posix_timer_unhash_and_free(timer);
+-	return 0;
+ }
+ 
+ /* Delete a POSIX.1b interval timer. */
+ SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
+ {
+-	return posix_timer_delete(NULL, timer_id);
++	scoped_guard (lock_timer, timer_id) {
++		posix_timer_invalidate(scope.lock, scope.flags);
++		scoped_guard_end(lock_timer);
++		posix_timer_unhash_and_free(scope.lock);
++		return 0;
++	}
++	return -EINVAL;
+ }
+ 
+ /*
+@@ -1143,13 +1122,17 @@ void exit_itimers(struct task_struct *ts
+ 		return;
+ 
+ 	/* Protect against concurrent read via /proc/$PID/timers */
+-	spin_lock_irq(&tsk->sighand->siglock);
+-	hlist_move_list(&tsk->signal->posix_timers, &timers);
+-	spin_unlock_irq(&tsk->sighand->siglock);
++	scoped_guard (spinlock_irq, &tsk->sighand->siglock)
++		hlist_move_list(&tsk->signal->posix_timers, &timers);
+ 
+ 	/* The timers are not longer accessible via tsk::signal */
+ 	while (!hlist_empty(&timers)) {
+-		posix_timer_delete(hlist_entry(timers.first, struct k_itimer, list), 0);
++		struct k_itimer *timer = hlist_entry(timers.first, struct k_itimer, list);
++
++		scoped_guard (spinlock_irqsave, &timer->it_lock)
++			posix_timer_invalidate(timer, scope.flags);
++
++		posix_timer_unhash_and_free(timer);
+ 		cond_resched();
+ 	}
+ 
 
