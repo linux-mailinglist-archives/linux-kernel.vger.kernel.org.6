@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-530181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EAFA43038
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:46:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9CBA4303C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:49:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8C0B189BF9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:46:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3492118929E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07E32063FD;
-	Mon, 24 Feb 2025 22:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC57207E03;
+	Mon, 24 Feb 2025 22:49:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dzwkFCTG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="uTPOcOrp"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162C915B10D;
-	Mon, 24 Feb 2025 22:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938E815B10D;
+	Mon, 24 Feb 2025 22:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740437158; cv=none; b=ViGGkDJzl6cFnHhidT5DRwNBLh4/OBdPDe9sIS2C1EJI73T9lMOSh3vSqq7JJkmSAIU2g8IVDT42fsp7YLu4ehVKS1htlo7048mTFYYpYpbpAmhjpq9eE34zFilWwZxVirQwh4Wp2963Ahw5bZE8wUK/AT674yJvxiAl0pw65Wk=
+	t=1740437380; cv=none; b=JI2kIqzl8xYScJGykM6kXsCzLelStB8fKrt5JCFhbdCIRpJ7jk4r62rco/EPGvVcIx7MkTL5fbP0OZ2GwM3C0FgisBePF0QRtXHNjoqXsro+37sKVH0fjcYkJnpwBKA4yeS2ewA6o9SJhRfjzqkjfZ72U4t6vCcBT24Or5oUcqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740437158; c=relaxed/simple;
-	bh=fw9oTcSXegVf07QbdB2fqLC1txFxRYJ6ssp60Q9K+/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=BMvukUzp9pSOZNxhUdVR28G2khiPS+KeydzDN6VaEtJ+JClxOc2SzUwKrcgiDOpIBvu5/+LndVHEYvsUJXRIWsd9gdMT8VhjipzYXvDRwyiK6r/1I5CT+8aiX6cfJZMeqgvcLiZoRZvoVwed+H7QpyjmxuAxpQ34IsHd56HQfFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dzwkFCTG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1740437152;
-	bh=MQUqHl3mEegWqvY5jEX/7Z5JLTYhc0M4o3b44r7C+2o=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dzwkFCTGmORTKLAuXc8vqkLWb5hr5Ulsq0P7QqG9mrkSEmFF88m3gOfpcidaexwKB
-	 D0Pn1a5IFOWs5Nouium9JMqhWzR9itgxhS5iXGnv0XlNz/90gt5JAeut4nqyrFYu6N
-	 1TtmGw+ZuWh43/L/vNjRiJFJzDSXvVUslWYb8q4zEOcyZugBYpBeQr/beAYSb6L3kA
-	 8NirlEpPKapEm+jhR04fY6lI5ZWF5tslZZapZYBuprHnI8X0XKCVP+syK/qOvggtku
-	 CKvP22xVWCW8u9U4/0NCAyX6rHvv8dDpCWoPq3f69kVbY87X6zlWP4kZxjedLWzVgw
-	 eELDjdNaHDG4A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1wnC2V4lz4whq;
-	Tue, 25 Feb 2025 09:45:51 +1100 (AEDT)
-Date: Tue, 25 Feb 2025 09:45:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Yufeng Wang <wangyufeng@kylinos.cn>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the vhost tree
-Message-ID: <20250225094550.07b771f9@canb.auug.org.au>
+	s=arc-20240116; t=1740437380; c=relaxed/simple;
+	bh=Xy9HTvZEt1MPY0q0wd7PjYQMsZnSy2ro8SIqYGa0838=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bjBnWNzhMRsVp6mgTSXy0ICpL1XnUmg4vE8PXbGWBtHeB2bSL/BpOiXSQsFJ/1u+FGUOk0l5zYdtroDGogcID684/ak7D6gMpY5e6s9bdgVRkL7kEXqQxv2JO9PfsD04JUf54vVLM05gPsDkVq1U89qgq8LoJkqEpqqKAu889h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=uTPOcOrp; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1740437354; x=1741042154; i=w_armin@gmx.de;
+	bh=Xy9HTvZEt1MPY0q0wd7PjYQMsZnSy2ro8SIqYGa0838=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=uTPOcOrpHg3Zs88QyI41k2efFBZ8tahzrpgPQT+PEBf2jQO7dXAWUHA7mXrg+jeh
+	 V1hRO8Ng841PNaNHtMc5h3B8/tIrx5wD5EtU2gWv/VVPzEThRcbYgWHTijYRkGBu6
+	 QmNYa9mwEjpUvBISMhmqrV/bJKO2uyp7CGgHFhWsjby+wLXBY7RTVgWsuWQebjvXx
+	 e0i9Kw4GTC9Zodg8S+LcYGM03vaOpptdyl40f+0aJRGlYbgx1N+ZeEFAdtARa1aZv
+	 mtR2RYxFmD/z7xj3Hf/ZuICNa3FY69Ic+5OGJAvsbrJTzmOyzpU+zufm2HUXsjxkK
+	 TgIBF8QKr/MeGC7g3g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.24] ([87.177.78.219]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MJE2D-1u2rCL2KGh-00MLZn; Mon, 24
+ Feb 2025 23:49:14 +0100
+Message-ID: <9fa91732-3085-4e79-9a8f-b38263ee7d08@gmx.de>
+Date: Mon, 24 Feb 2025 23:49:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/AIvKsybOh3zi6yl92M5NiS4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
+ multiple handlers
+To: Antheas Kapenekakis <lkml@antheas.dev>, Luke Jones <luke@ljones.dev>
+Cc: Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede
+ <hdegoede@redhat.com>, me@kylegospodneti.ch
+References: <20250224195059.10185-1-lkml@antheas.dev>
+ <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+ <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
+ <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ibwYsx4t9xisw7mRoLddwREaXllX2vD7tbYNXXUX2pSwe3a8m8m
+ Qfn0tKhZODeeKi1/xSCZH+e2R10E2kOSjjSek8aiS+lJWVkpcanKSkL2TfuyU+gU/rxzA6/
+ 3gnIycgtc9EOJxc/OVWab4RgWnfB9aZ2cgpNaNo/rv11ALSKhJSsc9POHDtXN1iaAJpTPQe
+ zO93ECOJfLYqBsHUlB2Og==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:DMWThMoawBg=;MhipS2UA6kqDN/eHH6TFo+IRh/H
+ LrsNO7GGeWOtPO18CG/8megNUxtqgMLKHulDareH9HlDzOKqR58tyeJy0Doc7915BvKDNqLg6
+ KgCE/NsRBF/3H84sr/jRj4mnewQtt4cX6xF3jSpUhEJ3zD9fbdNhjhh//0QU4+R7Pfqj8YQmT
+ aYfCsdCfAo+H5Tfd1IKt7/A/HSoKtaYJxZmqhGMkf1W4z4YX8XkpaLs5Xx4ZdpxkcHrHll8mP
+ f2ppDN0zqcO/0WmmMABRbk2qztYXyafixqJ9ILFvBx3MbbIG8VYnhJpvkd4tEFZFBEV/7RT9e
+ DUGyjxRr7EVUAj02fKUv7YwdrwGZjfWXqjXEUElQPQXvUFTXPQeW7u2bZKmXpyOiAns78Dis9
+ z1fa38CXmKNAhcubNUuX49sMwj63CRkVU0C7A3L4UrJXt1mt4ETvTpEUTobTn7ZTqI3N1bybm
+ UcUVmhTQrCxB/aq005Ji5eKjMvuSYwpxVp2Cw9Z4iOEsQQIu73Noe64MsOlfVwwhDWzIhXlSR
+ ILvajRUizozs5w/fiqijx1Ng+ekQXp9OUupBNc8b+CXvX3U5gF0ihO9tN/qepX8+7nNwZQ3Hl
+ cEj7XT4W7brUTLwn2wrVmMf3QT8f+zObltFfrT7JM5Mwn0WEDvZCRT5bkAiPXZzmOvSgQUunb
+ 9uukMv/tSvQyzdEnxUpJEColIaUcDMP454Lh4i7f/uyojY/mSmcSqK+6m8x5W1GucjEXXjDTh
+ fd+z4QrD9D1ZaOOQvIfQbIsOsHdeL/FHTYL8sDwrNIiKdfu/yuZBWWgb2BqdCgXj+KAIsYdsq
+ +7fp5hyfTznkSJtw1LEZWUmUnYiCmIAOgEMTZPUuFjpeIn74kdEHmWVvJ8Mf9DECqi84UCHK6
+ QxUnZSkoU/MI08uM71yqpbV34HXBdW5YjpO2YfEpKb7KxZQKZ56ZPstEXei+YyewEPWMBMP/B
+ uyKhZVZUFhXOhNJu/VNyrQTJnE3d3oXTL8xC78YKg1AWK9kIErRcr1cEur6Y7KrtRfFvE9WOd
+ NW7HrbuBjPuKKvOaD/UlGTGXr2hoWQb0VYC8271NYKMqkJNiV8XvDsishnbdLu0QK9jI1g7yw
+ oqQXkjFF9MzPHKDKyE1YzRbkn7Ntbz7VOo1kbYZu2+GKpnWA2rlfeXwh1Mx7PrVnQVkJMpVyc
+ gv+lp7DCT0gy72zaN00PNdjSp9vesgEqv57ddRj/qr7qIRjimW8ADCX375BJgx7edCq4zN2jg
+ sxOss0R5Z8cWbtPuKKZar0C9Gwn8aoqvu1O49bSsk8TQp0jJguoVVqkIOMgcUScCvCNGGuzm2
+ 28MABgIeCw/UIFI45u4Vh1kXwg8LBGp7hZ0jl6N0I3HbGroYOWNp78i3ukYD2tGnEpB1mTEdx
+ V67e8d+saXjFw849Ih3F0HDw30c3UeNrhx0SxT4ppbdOcFrflC5jNb/Pbl
 
---Sig_/AIvKsybOh3zi6yl92M5NiS4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Am 24.02.25 um 22:58 schrieb Antheas Kapenekakis:
 
-Hi all,
+> I will tell you that compared with other manufacturers, when asus says
+> quiet, they mean quiet and not low power
+>
+> Z13's quiet mode is 40W, not very low-power if you ask me. Ally X uses
+> 13w+boost, a source of many complaints. Other manufacturers use around
+> 8W for low power modes.
+>
+> In any case, any rename might break user scripts and there are
+> actually 3 types of low power profiles:
+> PLATFORM_PROFILE_COOL
+> PLATFORM_PROFILE_QUIET
+> PLATFORM_PROFILE_LOW_POWER
+>
+> Then, there is also:
+> PLATFORM_PROFILE_BALANCED_PERFORMANCE
+>
+> Some ACER laptops implement many of those
+>
+> Obscuring any of those is not ideal.
+>
+>
+> Antheas
+>
+I see. Maybe extending userspace to support the new platform-profile class interface
+could solve this issue without breaking already existing scripts.
 
-In commit
+However i do not know the amount of work which needs to be done to achieve this.
 
-  b995427e8a85 ("tools: virtio/linux/module.h add MODULE_DESCRIPTION() defi=
-ne.")
+Thanks,
+Armin Wolf
 
-Fixes tag
-
-  Fixes: <ab0727f3ddb8>("virtio: add missing MODULE_DESCRIPTION() macros")
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-In commit
-
-  9709a9145ffe ("tools/virtio: Add DMA_MAPPING_ERROR and sg_dma_len api def=
-ine for virtio test")
-
-Fixes tag
-
-  Fixes: <c7e1b422afac>("virtio_ring: perform premapped operations based on=
- per-buffer")
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-Fixes tags should be
-
-Fixes: SHA1 ("subject")
-
-Also, please keep all the commit message tags together at the end of
-the commit message.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/AIvKsybOh3zi6yl92M5NiS4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme89p4ACgkQAVBC80lX
-0GyiBAf+PEel7MN4UV1vvS/iTpt8zUyqqjkWW1OkpY/WvmLHpdxXVa/78iCXDKtw
-wrHMFnJs5TxK/HyEOWpLac6zw870toMIkqRmnxMj1tsKHZw/1HSloSL0XL6dGAML
-zB6gn2prKS6MTCaZMjTe2NzollWOhqPIaCWHwIvg/wKZ8oeP42LQjxuS91zPMeZT
-hcQgQKFsTzNWFI/YQrsgRxVuojFgkZK8yDKf/+gHWACN0f/4+sTGS6s9pcPaJATG
-NSBYJTVhDWRfPkhyQiEIpkCQ5Ir6po9iRVabAoXH9qucJRNusw4zzAeLzHh5uwxv
-cytsQLxKZ3MQI3YIaIjDUgChyy3GOQ==
-=vKIe
------END PGP SIGNATURE-----
-
---Sig_/AIvKsybOh3zi6yl92M5NiS4--
 
