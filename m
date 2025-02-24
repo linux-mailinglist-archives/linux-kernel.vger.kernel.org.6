@@ -1,264 +1,132 @@
-Return-Path: <linux-kernel+bounces-530065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12A35A42E51
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:53:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6D89A42E5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E7C1620C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:53:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0465D3B51C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3854225A325;
-	Mon, 24 Feb 2025 20:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C38C2641CC;
+	Mon, 24 Feb 2025 20:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KN9+CLAD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H2YYL45L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KN9+CLAD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H2YYL45L"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyckZLa0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CE583B2A0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F62262D11;
+	Mon, 24 Feb 2025 20:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430395; cv=none; b=qh1lK8y95gRsCb+Tn3WZ1aljgsme6ltroII9dMeCFxnT7c8PUfy7C1owU9qiWZwk7RLYjJGUBYq6JNZlHr/W5GwQwOXX5wG6fLgQ130CPBmGtzjYSXWdppNGjExR7DwY3U/nUv2p71Jnvk0XTlGK2On2fND5NG/3GMJhNJHHzQc=
+	t=1740430398; cv=none; b=ciRR9OGiG0zdFbN237ktJUL4X6lBQ1E1OSdOJg2B7VcD/Y1cnLDBv7n+S3YWr6r87sVeyayYW54A5euSyATHo9oeFJiu8ZxJ52yTPZIwgcrGUpBu7Y21wrS/JUiNpvk3o+SLjZxa40eyLacBiGL6Mh6BvhTse9ToVlHRHES0N7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430395; c=relaxed/simple;
-	bh=fH5K5cT4slfPgNSl4Lqh0gMntLBBPKKNUKXeVN+SX10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JFoLGuFFf6C/5RVcWj3N16fD3n63NArQ92SrSfuhbbTbGU8HUAKBEHcn5imuyYA3rOlT5GRsA63+ss4563t5NGiOF8bctlbC3oOFzL8WCqIHfZpOIK8XkMUa0ehEzxgQXwoEqdprQFKkb95sbYJkw+yUQcEV5ApZQWjsSETdv78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KN9+CLAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H2YYL45L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KN9+CLAD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H2YYL45L; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 74B4B1F44E;
-	Mon, 24 Feb 2025 20:53:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740430391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJOXvzmoxen8Yfe4DbyjOI0SBc1bw6aCP1zccs3V4bI=;
-	b=KN9+CLADZxRzmzLwqO9felhSgKzpKKlXBV04+iU3jz++H7SDJNM7lw2YsMVV01buDOKaXn
-	j6Pt+f7nAdOQDcbCtpmdrmdkEJRXh3+41ai+OaWK00KSZUDQum6xOiGLTYDcML9wuURr/F
-	KmEPWY7qcozMYheuAPROkxfHySMIe/E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740430391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJOXvzmoxen8Yfe4DbyjOI0SBc1bw6aCP1zccs3V4bI=;
-	b=H2YYL45LjH73GwXFtIlFSuweY7V1MAUcmN5B+Wp42XyKlgvpLO4l/mezSLykb4RE766y7F
-	+o5FaOIB7Mj/UqAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=KN9+CLAD;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=H2YYL45L
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1740430391; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJOXvzmoxen8Yfe4DbyjOI0SBc1bw6aCP1zccs3V4bI=;
-	b=KN9+CLADZxRzmzLwqO9felhSgKzpKKlXBV04+iU3jz++H7SDJNM7lw2YsMVV01buDOKaXn
-	j6Pt+f7nAdOQDcbCtpmdrmdkEJRXh3+41ai+OaWK00KSZUDQum6xOiGLTYDcML9wuURr/F
-	KmEPWY7qcozMYheuAPROkxfHySMIe/E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1740430391;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=qJOXvzmoxen8Yfe4DbyjOI0SBc1bw6aCP1zccs3V4bI=;
-	b=H2YYL45LjH73GwXFtIlFSuweY7V1MAUcmN5B+Wp42XyKlgvpLO4l/mezSLykb4RE766y7F
-	+o5FaOIB7Mj/UqAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55BAD13332;
-	Mon, 24 Feb 2025 20:53:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id CvOMFDfcvGcJQAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 24 Feb 2025 20:53:11 +0000
-Message-ID: <173d4dbe-399d-4330-944c-9689588f18e8@suse.cz>
-Date: Mon, 24 Feb 2025 21:53:11 +0100
+	s=arc-20240116; t=1740430398; c=relaxed/simple;
+	bh=pREGhWg1kcj3syTH2EZjMgzcwFGBKmTgaY0Mxt8vcBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=q+OTpjeTbYy6GEOUXAEVoE8StWTLMvAUuPS3yFVI5qG6BJTMGzfEbPKE/QpAB3985SIjmrUprIKnUmqfgEQfUtSeHNNVyo7LtMyVrbxF6Yv2kbDaErM/nuZh5sA1NTg0h7SZw/kjS9yMPZYkGRnf33lMVZr0ILFJdxo+C9W+NbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyckZLa0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 239D9C4CED6;
+	Mon, 24 Feb 2025 20:53:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740430396;
+	bh=pREGhWg1kcj3syTH2EZjMgzcwFGBKmTgaY0Mxt8vcBk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=fyckZLa0MhIBkOEp96YFckrMzMItxbfarxjlThBvHzF1sF/J0CFKnvNBp3FK5rDqV
+	 qCOI1UPi2Y2K3/62XbfxPTdwTTxm1VfJVHLoz+UuI59cDt8HyYHaMMS8BE1+tzYx/e
+	 dABMISnYyfMQrv8W5+6p6JWhfV8A9P/bQjC9ZHbNv8uLwVgdjepzG/FM6wLg9mBsc0
+	 f/59WF5i2asjjpGrAb4623fte1gUsev2wdavllCS4G6YPnuOcYRfM8jgNkWsBGOtLd
+	 Z9tWabzTxe1nvPrId3CMtisrbuovE4uESNGIdlatzdBqIbpnAUVaqk51ufZ7VZ4/49
+	 sAX6TBzdjC5Cg==
+Date: Mon, 24 Feb 2025 14:53:14 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>,
+	Matthew Rosato <mjrosato@linux.ibm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Thorsten Winkler <twinkler@linux.ibm.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Julian Ruess <julianr@linux.ibm.com>,
+	Halil Pasic <pasic@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 0/3] vfio/pci: s390: Fix issues preventing
+ VFIO_PCI_MMAP=y for s390 and enable it
+Message-ID: <20250224205314.GA478317@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>,
- Kent Overstreet <kent.overstreet@linux.dev>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Alexei Starovoitov <ast@kernel.org>
-References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
- <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
- <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
- <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 74B4B1F44E
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[oracle.com,linux.com,google.com,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,linutronix.de,kernel.org];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250214-vfio_pci_mmap-v6-0-6f300cb63a7e@linux.ibm.com>
 
-On 2/24/25 02:36, Suren Baghdasaryan wrote:
-> On Sat, Feb 22, 2025 at 8:44 PM Suren Baghdasaryan <surenb@google.com> wrote:
->>
->> Don't know about this particular part but testing sheaves with maple
->> node cache and stress testing mmap/munmap syscalls shows performance
->> benefits as long as there is some delay to let kfree_rcu() do its job.
->> I'm still gathering results and will most likely post them tomorrow.
-
-Without such delay, the perf is same or worse?
-
-> Here are the promised test results:
+On Fri, Feb 14, 2025 at 02:10:51PM +0100, Niklas Schnelle wrote:
+> With the introduction of memory I/O (MIO) instructions enbaled in commit
+> 71ba41c9b1d9 ("s390/pci: provide support for MIO instructions") s390
+> gained support for direct user-space access to mapped PCI resources.
+> Even without those however user-space can access mapped PCI resources
+> via the s390 specific MMIO syscalls. There is thus nothing fundamentally
+> preventing s390 from supporting VFIO_PCI_MMAP, allowing user-space
+> drivers to access PCI resources without going through the pread()
+> interface. To actually enable VFIO_PCI_MMAP a few issues need fixing
+> however.
 > 
-> First I ran an Android app cycle test comparing the baseline against sheaves
-> used for maple tree nodes (as this patchset implements). I registered about
-> 3% improvement in app launch times, indicating improvement in mmap syscall
-> performance.
+> Firstly the s390 MMIO syscalls do not cause a page fault when
+> follow_pte() fails due to the page not being present. This breaks
+> vfio-pci's mmap() handling which lazily maps on first access.
+> 
+> Secondly on s390 there is a virtual PCI device called ISM which has
+> a few oddities. For one it claims to have a 256 TiB PCI BAR (not a typo)
+> which leads to any attempt to mmap() it fail with the following message:
+> 
+>     vmap allocation for size 281474976714752 failed: use vmalloc=<size> to increase size
+> 
+> Even if one tried to map this BAR only partially the mapping would not
+> be usable on systems with MIO support enabled. So just block mapping
+> BARs which don't fit between IOREMAP_START and IOREMAP_END. Solve this
+> by keeping the vfio-pci mmap() blocking behavior around for this
+> specific device via a PCI quirk and new pdev->non_mappable_bars
+> flag.
+> 
+> As noted by Alex Williamson With mmap() enabled in vfio-pci it makes
+> sense to also enable HAVE_PCI_MMAP with the same restriction for pdev->
+> non_mappable_bars. So this is added in patch 3 and I tested this with
+> another small test program.
+> 
+> Note:
+> For your convenience the code is also available in the tagged
+> b4/vfio_pci_mmap branch on my git.kernel.org site below:
+> https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git/
+> 
+> Thanks,
+> Niklas
+> 
+> Link: https://lore.kernel.org/all/c5ba134a1d4f4465b5956027e6a4ea6f6beff969.camel@linux.ibm.com/
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> ---
+> Changes in v6:
+> - Add a patch to also enable PCI resource mmap() via sysfs and proc
+>   exlcluding pdev->non_mappable_bars devices (Alex Williamson)
+> - Added Acks
+> - Link to v5: https://lore.kernel.org/r/20250212-vfio_pci_mmap-v5-0-633ca5e056da@linux.ibm.com
 
-There was no artificial 500us delay added for this test, right?
-
-> Next I ran an mmap stress test which maps 5 1-page readable file-backed
-> areas, faults them in and finally unmaps them, timing mmap syscalls.
-> Repeats that 200000 cycles and reports the total time. Average of 10 such
-> runs is used as the final result.
-> 3 configurations were tested:
-> 
-> 1. Sheaves used for maple tree nodes only (this patchset).
-> 
-> 2. Sheaves used for maple tree nodes with vm_lock to vm_refcnt conversion [1].
-> This patchset avoids allocating additional vm_lock structure on each mmap
-> syscall and uses TYPESAFE_BY_RCU for vm_area_struct cache.
-> 
-> 3. Sheaves used for maple tree nodes and for vm_area_struct cache with vm_lock
-> to vm_refcnt conversion [1]. For the vm_area_struct cache I had to replace
-> TYPESAFE_BY_RCU with sheaves, as we can't use both for the same cache.
-
-Hm why we can't use both? I don't think any kmem_cache_create check makes
-them exclusive? TYPESAFE_BY_RCU only affects how slab pages are freed, it
-doesn't e.g. delay reuse of individual objects, and caching in a sheaf
-doesn't write to the object. Am I missing something?
-
-> The values represent the total time it took to perform mmap syscalls, less is
-> better.
-> 
-> (1)                  baseline       control
-> Little core       7.58327       6.614939 (-12.77%)
-> Medium core  2.125315     1.428702 (-32.78%)
-> Big core          0.514673     0.422948 (-17.82%)
-> 
-> (2)                  baseline      control
-> Little core       7.58327       5.141478 (-32.20%)
-> Medium core  2.125315     0.427692 (-79.88%)
-> Big core          0.514673    0.046642 (-90.94%)
-> 
-> (3)                   baseline      control
-> Little core        7.58327      4.779624 (-36.97%)
-> Medium core   2.125315    0.450368 (-78.81%)
-> Big core           0.514673    0.037776 (-92.66%)
-> 
-> Results in (3) vs (2) indicate that using sheaves for vm_area_struct
-> yields slightly better averages and I noticed that this was mostly due
-> to sheaves results missing occasional spikes that worsened
-> TYPESAFE_BY_RCU averages (the results seemed more stable with
-> sheaves).
-
-Thanks a lot, that looks promising!
-
-> [1] https://lore.kernel.org/all/20250213224655.1680278-1-surenb@google.com/
-> 
-
+I think the series would be more readable if patch 2/3 included all
+the core changes (adding pci_dev.non_mappable_bars, the 3/3
+pci-sysfs.c and proc.c changes to test it, and I suppose the similar
+vfio_pci_core.c change), and we moved all the s390 content from 2/3 to
+3/3.
 
