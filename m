@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-529525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0224BA42748
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:06:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF6EA4277F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:11:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C42A7A2271
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92C593AEAF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37C9325A625;
-	Mon, 24 Feb 2025 16:05:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13DA2036EB;
-	Mon, 24 Feb 2025 16:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB82627E1;
+	Mon, 24 Feb 2025 16:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lQG+gacF"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3210825A645
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740413150; cv=none; b=PiaDcnKjBr6IrekwBdzuetKK6A6iYlTTg+PyPAovsEkpipUrdU5X/amzHMkMKzasrGxxmY/rCYMiC4UczC/4t9wZzQzy6Q667f1mPqptjQtsQx/bc75/+mVoJpfUE5ywEVJbgIwWiX3ZA25eOwNt0e8lKk0zOS/Ql2Tmlwz4+7A=
+	t=1740413151; cv=none; b=epEEG3fmlNoRWiwtfAU0goFT1acJm427VXFK294UMt853Irv9pZKkfBo7eEFCWlpxNlfJSckcpcj5PDGvqRpLxW9VbARlHXS/WN60T94EMrOGRkggTLHBFQbI4KJAdHl3hdn3MofX1EksD+hpyJtn1Z/DZTnahe6NDnC2s7kzNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740413150; c=relaxed/simple;
-	bh=I5i93RapKVBB7nGJyYUbYjj4Pg4I16EXwIBHbvBtTVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpEPdFgkFl1lakfgh+vnbkly1KTbaQYEVOSQ8nvMyaXjmD+fZuYJ7PZVnEZiEkzAofy7vk68C+NqJRG7B0wbi8aWiDbINUNcAxqc6vwFskUX6TzR2I/9rUcfskrT7cFUDEF5+u2aiTiwqll/m4vA0NQxI+k06VI/Wmj8fgpnCwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 074DE1477;
-	Mon, 24 Feb 2025 08:06:05 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D0BE73F6A8;
-	Mon, 24 Feb 2025 08:05:45 -0800 (PST)
+	s=arc-20240116; t=1740413151; c=relaxed/simple;
+	bh=qld9vDpB6QDXxnS+8fXAONoUc5F9WAZoTYNAokUyWH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uRlfT58rYKifXTkpWm5dTOEf7wJpEgmpNIKX3HodpfnZQ5vyBERr69kd8xGslO7Ivqr1G+ZPb0ImN7VenAEoGb/Ap4YBjAA2h9PdAZIhjscH8X76Ll8JYxTmZI1KbH52CR34PWu3SdWBCFJHV7OtcaLCMsiQaSl26wzLtvWLPts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lQG+gacF; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <451d4cfe-b22f-4ac5-9074-05a2155f7d6a@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740413146;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D1Rbf9tEpuTcSX5Ha3F0jZOYLk78dDb108drquGs+dE=;
+	b=lQG+gacFqb/aKv2uO2khuC+L2k+vkY9QlpGyXc62KwxI2OSsFuUymwrKqnb/I9zXitLs/+
+	fUBjZLpNErr4kj9pxxcb8J9DOCaGDHYvRplfSXaffdSe+BSeR03M3qth3/mk4355HMqy5j
+	dsJRLwP2e4dzE0SzpWG4K+m2VT3bQGs=
 Date: Mon, 24 Feb 2025 16:05:43 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev
-Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
- Record Buffer Extension (BRBE)
-Message-ID: <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
-References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
- <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org>
- <20250224122507.GE8144@e132581.arm.com>
- <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
- <20250224140317.GF8144@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224140317.GF8144@e132581.arm.com>
+Subject: Re: [PATCH] net: wangxun: fix LIBWX dependencies
+To: Arnd Bergmann <arnd@kernel.org>, Jiawen Wu <jiawenwu@trustnetic.com>,
+ Mengyuan Lou <mengyuanlou@net-swift.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+ Andi Shyti <andi.shyti@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250224140516.1168214-1-arnd@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250224140516.1168214-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Feb 24, 2025 at 02:03:17PM +0000, Leo Yan wrote:
-> On Mon, Feb 24, 2025 at 06:46:35AM -0600, Rob Herring wrote:
-> > On Mon, Feb 24, 2025 at 6:25 AM Leo Yan <leo.yan@arm.com> wrote:
-> > > On Tue, Feb 18, 2025 at 02:40:06PM -0600, Rob Herring (Arm) wrote:
-> > > >
-> > > > From: Anshuman Khandual <anshuman.khandual@arm.com>
-> > >
-> > > [...]
-> > >
-> > > > BRBE records are invalidated whenever events are reconfigured, a new
-> > > > task is scheduled in, or after recording is paused (and the records
-> > > > have been recorded for the event). The architecture allows branch
-> > > > records to be invalidated by the PE under implementation defined
-> > > > conditions. It is expected that these conditions are rare.
-> > >
-> > > [...]
-> > >
-> > > > +static void armv8pmu_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sched_in)
-> > > > +{
-> > > > +       struct arm_pmu *armpmu = *this_cpu_ptr(&cpu_armpmu);
-> > > > +       struct pmu_hw_events *hw_events = this_cpu_ptr(armpmu->hw_events);
-> > > > +
-> > > > +       if (!hw_events->branch_users)
-> > > > +               return;
-> > > > +
-> > > > +       if (sched_in)
-> > > > +               brbe_invalidate();
-> > > > +}
-> > >
-> > > Just a minor concern.  I don't see any handling for task migration.
-> > > E.g., for a task is migrated from one CPU to another CPU, I expect we
-> > > need to save and restore branch records based on BRBE injection.  So
-> > > far, the driver simply invalidates all records.
-> > >
-> > > I think this topic is very likely discussed before.  If this is the
-> > > case, please ignore my comment.  Except this, the code looks good
-> > > to me.
-> > 
-> > Not really discussed on the list, but that was present in v18 (though
-> > not functional because .sched_task() hook wasn't actually enabled) and
-> > Mark removed it. His work is here[1].The only comment was:
-> > 
-> > Note: saving/restoring at context-switch doesn't interact well with
-> > event rotation (e.g. if filters change)
+On 24/02/2025 14:05, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> In the brbe_enable() function, it "Merge the permitted branch filters
-> of all events".  Based on current implementation, all events share the
-> same branch filter.
+> Selecting LIBWX requires that its dependencies are met first:
+> 
+> WARNING: unmet direct dependencies detected for LIBWX
+>    Depends on [m]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PTP_1588_CLOCK_OPTIONAL [=m]
+>    Selected by [y]:
+>    - TXGBE [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_WANGXUN [=y] && PCI [=y] && COMMON_CLK [=y] && I2C_DESIGNWARE_PLATFORM [=y]
+> ld.lld-21: error: undefined symbol: ptp_schedule_worker
+>>>> referenced by wx_ptp.c:747 (/home/arnd/arm-soc/drivers/net/ethernet/wangxun/libwx/wx_ptp.c:747)
+>>>>                drivers/net/ethernet/wangxun/libwx/wx_ptp.o:(wx_ptp_reset) in archive vmlinux.a
+> 
+> Add the smae dependency on PTP_1588_CLOCK_OPTIONAL to the two driver
+> using this library module.
+> 
+> Fixes: 06e75161b9d4 ("net: wangxun: Add support for PTP clock")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/net/ethernet/wangxun/Kconfig | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/wangxun/Kconfig b/drivers/net/ethernet/wangxun/Kconfig
+> index 6b60173fe1f5..47e3e8434b9e 100644
+> --- a/drivers/net/ethernet/wangxun/Kconfig
+> +++ b/drivers/net/ethernet/wangxun/Kconfig
+> @@ -26,6 +26,7 @@ config LIBWX
+>   config NGBE
+>   	tristate "Wangxun(R) GbE PCI Express adapters support"
+>   	depends on PCI
+> +	depends on PTP_1588_CLOCK_OPTIONAL
+>   	select LIBWX
+>   	select PHYLINK
+>   	help
+> @@ -43,6 +44,7 @@ config TXGBE
+>   	depends on PCI
+>   	depends on COMMON_CLK
+>   	depends on I2C_DESIGNWARE_PLATFORM
+> +	depends on PTP_1588_CLOCK_OPTIONAL
+>   	select MARVELL_10G_PHY
+>   	select REGMAP
+>   	select PHYLINK
 
-Critically, the brbe_enable() function merges the filters of all
-*active* events which have been installed into hardware. It does not
-track all events which can be rotated, and the resulting filter is not
-the same -- it can change as a result of rotation.
-
-> When event rotation happens, if without context switch, in theory we
-> should can directly use the branch record (no invalidation, no injection)
-> for all events.
-
-No; that only works in *some* cases, and will produce incorrect results
-in others.
-
-For example, consider filtering. Imagine a PMU with a single counter,
-and two events, where event-A filters for calls-and-returns and event-B
-filters for calls-only. When switching from event-A to event-B, it's
-theoretically possible to keep the existing records around, knowing that
-the returns can be filtered out later. When switching from event-B to
-event-A we cannot keep the existing records, since there are gaps
-whenever a return should have been recorded.
-
-There are a number of cases of that shape given the set of configurable
-filters. In theory it's possible to retain those in some cases, but I
-don't think that the complexity is justified.
-
-Similarly, whenever kernel branches are recorded it's necessary to drop
-the stale branches whenever branch recording is paused, as there's
-necessarily a blackout period and hence a gap in the records.
-
-Do you think that you have a case where losing branches across rotation
-*really* matters?
-
-> For a context-switch case, we need to save and re-inject branch record.
-> BRBE record sticks to a process context, no matter what events have been
-> enabled.
-
-I had originally wanted to keep per-event records around, but it doesn't
-work in all cases. One reason events get discarded at context-switch
-time is that CPU-bound events can sample branches, and would
-mis-attribute stale userspace branches to the wrong context when
-switching tasks. There are explicit comments about this in
-amd_pmu_brs_sched_task() and intel_pmu_lbr_sched_task().
-
-Given we discard records when reprogramming events, we *could* try to
-preserve events in some cases, but I suspect that as with the rotation
-case this'll be a lot of complexity for little gain. Note that as we
-discard events when enabling the PMU, we'd throw some task-bound records
-away anyway, and practically the gain would be limited to cpu-bound
-records.
-
-Do you have a reason why you think we *must* keep events around?
-
-Mark.
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
