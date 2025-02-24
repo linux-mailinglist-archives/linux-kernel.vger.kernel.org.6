@@ -1,125 +1,184 @@
-Return-Path: <linux-kernel+bounces-529874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6EADA42C13
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:55:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7976A42C17
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7099118901EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B00B18902A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827102661BE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81CB9266B4D;
+	Mon, 24 Feb 2025 18:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emIq/Vl3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBE8E26657E;
 	Mon, 24 Feb 2025 18:54:58 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A030F264A74
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740423298; cv=none; b=qpxRUOCF6REJC5s0GvNBrro/Lm0qnGP6TZLtEBY6/TP3U0oe6JqWQbfpBeLpCHAgpIoxRMJCnvYEkincimdMFhKq98SC69HX2cJBx/WNP3CmkjFS/EGS5mNUfVHXaXdEb96f/KwstA7pCKuOmyHrB5gHbG/pS2m5Eqdqg7ggj+E=
+	t=1740423298; cv=none; b=uLfHPuJgWiVtr12dWgmIWzsVaSM1ClJnWDrmva+Cf+SrxEJTPGSFCd/rIHJ84F1n4uHp6HzW70V1PLDp4oX3sni0f4IWAr5MgM/QZZLaISPE0ZdIa4gKFAenVc6IHniio0EhRiMlwCMDZ7iTBkbca45ldfeudQa7SnXTBTYnoYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740423298; c=relaxed/simple;
-	bh=zO1Nj+G37HFh5abgCmhWvYGXDLskzEKUbRouOVDvN64=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=eyzheSiH+lVJOfCfH0bs2q/7Uefs4bZwNCZvzEZSnmTSZOZgV/NFvpWtp68VEh3zXgVh+4xuI6oP+XNNvVRpetlX7rn97hsjdbEpBOoBOTm1LR2Pz+Q+4+GiyCGA5t8qJmixR8xlF58FvYQQuKHlM1yySavcY5PY4PqzFou9HpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 6D16692009C; Mon, 24 Feb 2025 19:54:47 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 5F97F92009B;
-	Mon, 24 Feb 2025 18:54:47 +0000 (GMT)
-Date: Mon, 24 Feb 2025 18:54:47 +0000 (GMT)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-    Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc: Don't use %pK through printk
-In-Reply-To: <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
-Message-ID: <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
-References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de> <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	bh=rVPeC5mli/1j43LuHoG3PNlmHNErM72hIXBxgKKPqkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vl340X2E5WUL00xSQJ0iDmCjJSWTfVoXw7krie9u5jhQGnkiEIGtJUQAAVBVTBtqh2WmkpeGojdMsX+GtTWSMxI0L/2o2AG92L3g02w64LnhAtopM9AGvI/P9b1DgR+yh624VSpBeZibp3NS9d6dWQihiFYaI6gCiGxdpjSUmgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emIq/Vl3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF4FC4CED6;
+	Mon, 24 Feb 2025 18:54:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740423298;
+	bh=rVPeC5mli/1j43LuHoG3PNlmHNErM72hIXBxgKKPqkk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=emIq/Vl3E2OwY+6+v4gj+ccn7N7qHNSVsBl7o3EtRKI899Jx8bZ42IS+pnn7I6bXY
+	 J4U3eVMBb1M3zMyX22+z84AkQRkRg7yVbwyFer/q24CJfkt4LgxGkBVEBtFWROI7LT
+	 VklI4xu4iodLJHllFqkevZnruOhHTwVVcn1iv3LwK6rSPOFBGdXhui6gdzGz8P/b4V
+	 Z0JLN+2sDZHL+ECOddLd+flANvQDrVMQj4sxoCT6+dy6o+zyqVCndYM6yU/nR8u2CY
+	 bmia8xiDiU8QbNA7QnVRKGo/vUT6FelVkNVNk5J+pWqlXat519L3csa4taJkx5cNIp
+	 cjuFHEojP2tzw==
+Date: Mon, 24 Feb 2025 18:54:51 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Niklas Cassel <cassel@kernel.org>,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
+Message-ID: <20250224-enable-progress-e3a47fdb625c@spud>
+References: <20250221013758.370936-1-inochiama@gmail.com>
+ <20250221013758.370936-2-inochiama@gmail.com>
+ <20250221-cavalier-cramp-6235d4348013@spud>
+ <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="nEmMIcx09OhU3DPI"
+Content-Disposition: inline
+In-Reply-To: <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
 
-On Mon, 24 Feb 2025, Christophe Leroy wrote:
 
-> > Restricted pointers ("%pK") are not meant to be used through printk().
-> > It can unintentionally expose security sensitive, raw pointer values.
-> > 
-> > Use regular pointer formatting instead.
-> > 
-> > Link:
-> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023%40linutronix.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C75a852a0fef54fa43a3608dd4f263f45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638753747883689862%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aUgq6pXb1ySaQ6e%2FdyM09jfc4MNLE71Njw0%2FnCg%2F6VU%3D&reserved=0
-> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> 
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> 
-> > ---
-> >   arch/powerpc/kernel/eeh_driver.c | 2 +-
-> >   arch/powerpc/perf/hv-24x7.c      | 8 ++++----
-> >   2 files changed, 5 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/kernel/eeh_driver.c
-> > b/arch/powerpc/kernel/eeh_driver.c
-> > index
-> > 7efe04c68f0fe3fb1c3c13d97d58e79e47cf103b..10ce6b3bd3b7c54f91544ae7f7fd3f32a51ee09a
-> > 100644
-> > --- a/arch/powerpc/kernel/eeh_driver.c
-> > +++ b/arch/powerpc/kernel/eeh_driver.c
-> > @@ -907,7 +907,7 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
-> >   		/* FIXME: Use the same format as dump_stack() */
-> >   		pr_err("EEH: Call Trace:\n");
-> >   		for (i = 0; i < pe->trace_entries; i++)
-> > -			pr_err("EEH: [%pK] %pS\n", ptrs[i], ptrs[i]);
-> > +			pr_err("EEH: [%p] %pS\n", ptrs[i], ptrs[i]);
-> >     		pe->trace_entries = 0;
-> >   	}
+--nEmMIcx09OhU3DPI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- But shouldn't this be using `%px' then instead?  It would be sad if all 
-the address information from error reports such as below:
+On Sat, Feb 22, 2025 at 08:34:10AM +0800, Inochi Amaoto wrote:
+> On Fri, Feb 21, 2025 at 05:01:41PM +0000, Conor Dooley wrote:
+> > On Fri, Feb 21, 2025 at 09:37:55AM +0800, Inochi Amaoto wrote:
+> > > The pcie controller on the SG2044 is designware based with
+> > > custom app registers.
+> > >=20
+> > > Add binding document for SG2044 PCIe host controller.
+> > >=20
+> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > ---
+> > >  .../bindings/pci/sophgo,sg2044-pcie.yaml      | 125 ++++++++++++++++=
+++
+> > >  1 file changed, 125 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg20=
+44-pcie.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie=
+=2Eyaml b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > new file mode 100644
+> > > index 000000000000..040dabe905e0
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+> > > @@ -0,0 +1,125 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/pci/sophgo,sg2044-pcie.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: DesignWare based PCIe Root Complex controller on Sophgo SoCs
+> > > +
+> > > +maintainers:
+> > > +  - Inochi Amaoto <inochiama@gmail.com>
+> > > +
+> > > +description: |+
+> > > +  SG2044 SoC PCIe Root Complex controller is based on the Synopsys D=
+esignWare
+> > > +  PCIe IP and thus inherits all the common properties defined in
+> > > +  snps,dw-pcie.yaml.
+> > > +
+> > > +allOf:
+> > > +  - $ref: /schemas/pci/pci-host-bridge.yaml#
+> > > +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: sophgo,sg2044-pcie
+> > > +
+> > > +  reg:
+> > > +    items:
+> > > +      - description: Data Bus Interface (DBI) registers
+> > > +      - description: iATU registers
+> > > +      - description: Config registers
+> > > +      - description: Sophgo designed configuration registers
+> > > +
+> > > +  reg-names:
+> > > +    items:
+> > > +      - const: dbi
+> > > +      - const: atu
+> > > +      - const: config
+> > > +      - const: app
+> > > +
+> > > +  clocks:
+> > > +    items:
+> > > +      - description: core clk
+> > > +
+> > > +  clock-names:
+> > > +    items:
+> > > +      - const: core
+> > > +
+> > > +  dma-coherent: true
+> >=20
+> > Why's this here? RISC-V is dma-coherent by default, with dma-noncoherent
+> > used to indicate systems/devices that are not.
+>=20
+> The PCIe is dma coherent, but the SoC itself is marked as
+> dma-noncoherent.
 
-EEH: Call Trace:
-EEH: [000000008985bc3b] __eeh_send_failure_event+0x78/0x150
-EEH: [000000008c4c5782] eeh_dev_check_failure+0x388/0x6b0
-EEH: [000000001fb766c1] eeh_check_failure+0x98/0x100
-EEH: [000000004b9af8c6] dfx_port_read_long+0xb0/0x130 [defxx]
-EEH: [00000000e23999c1] dfx_interrupt+0x80/0x8c0 [defxx]
-EEH: [00000000c7884fb7] __handle_irq_event_percpu+0x9c/0x2f0
-EEH: [000000008d4e9afd] handle_irq_event_percpu+0x44/0xc0
-EEH: [000000008c39ece4] handle_irq_event+0x74/0xc0
-EEH: [00000000d85114a9] handle_fasteoi_irq+0xd4/0x220
-EEH: [00000000a692ef4e] generic_handle_irq+0x54/0x80
-EEH: [00000000a6db243b] __do_irq+0x68/0x200
-EEH: [0000000040ccff9e] call_do_irq+0x14/0x24
-EEH: [00000000e8e9ddf7] do_IRQ+0x78/0xd0
-EEH: [0000000031916539] replay_soft_interrupts+0x180/0x370
-EEH: [000000001b7e5728] arch_local_irq_restore+0x48/0xc0
-EEH: [00000000088691b7] cpuidle_enter_state+0x108/0x560
-EEH: [00000000e6e26f30] cpuidle_enter+0x50/0x70
-EEH: [000000007c26474c] call_cpuidle+0x4c/0x80
-EEH: [0000000036b8a2fc] do_idle+0x360/0x3b0
-EEH: [0000000048702083] cpu_startup_entry+0x38/0x40
-EEH: [00000000d3b1fb8d] start_secondary+0x62c/0x660
-EEH: [0000000041a9a815] start_secondary_prolog+0x10/0x14
+By "the SoC itself", do you mean that the bus that this device is on is
+marked as dma-noncoherent? IMO, that should not be done if there are
+devices on it that are coherent.
 
-was suddenly lost from the kernel log, the access to which unprivileged 
-users can be denied if so desired according to the site policy.  Whereas 
-running the kernel such as to have all output from plain `%p' exposed just 
-to cope with this proposed change, now that seems like a security risk.
+> So I add dma-coherent to the binding. I
+> wonder whether dma-coherent is necessary even in this case?
 
-  Maciej
+
+--nEmMIcx09OhU3DPI
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ7zAewAKCRB4tDGHoIJi
+0tHFAP90UC8I2j/g5PJgPzzQmwCvjacmi9hAbI+pK4XrrteVtAD/c51IWVKh5nvr
+YkNyy6zZ/5H8GwW0TxvOKWhT8Q8jXAo=
+=qPA6
+-----END PGP SIGNATURE-----
+
+--nEmMIcx09OhU3DPI--
 
