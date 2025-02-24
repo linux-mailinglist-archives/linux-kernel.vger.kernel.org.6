@@ -1,122 +1,125 @@
-Return-Path: <linux-kernel+bounces-529067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5643A41F91
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59201A41F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251E03B2F33
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:40:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CB13B3F94
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E29823BCE0;
-	Mon, 24 Feb 2025 12:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAE248864;
+	Mon, 24 Feb 2025 12:40:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n0TKdl88"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fU1+Cg/C"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7801DDE9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87C323BCE3;
+	Mon, 24 Feb 2025 12:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400846; cv=none; b=LiaoYXNmDC2HnmnF+4MPS8ENnxoh8xo11clKBstM5JemUgPmW1Azy3HQSssmlpHA5VByvjAjjSm6E8euFuh3kodIUBojmb/YIC8Dmk5uXFXzEdXcbZD3mB05i9Jl8SOSOQL5fcYeUIqth6mP9+FoS2F4m006UAnSwSGLIYo7psk=
+	t=1740400848; cv=none; b=kvTydkhyT97L6GpnVHouvXf71lkcHZ1EvdZY7NHTCo3vVwjxQ6d9VNBqxGU9GXd1wMxL39iREfEONa3zeiQx2WsQeaRVgcqIGW4vYoMOZ5CUPRHxzNApGSKpH0+Cw13E82kayWmAzLNne7qYB2SBjFZRfTrV/tiGSLVm9P+7PRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400846; c=relaxed/simple;
-	bh=W6turjkF5UgWj4NumzTU+qn8HpLaCyt0loPxOO4rxQ4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=upKcP/Y+B+h6hI+ehXzd6xN6InEri84CoOgwsRcVhIKIBWsC7UUZh96DBS++Ou0VAWie0TEDkaqu+1Vnu4Gyzc3NZB9RAt3baM3N9cU9wrflW+WwMOIdmoU7rfrEvkKzM9b2ZTPdLF15hJs7MMWB+m0uPim0tAVHdyfSHSVfdOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n0TKdl88; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [223.190.81.199])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 61F99220;
-	Mon, 24 Feb 2025 13:39:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740400756;
-	bh=W6turjkF5UgWj4NumzTU+qn8HpLaCyt0loPxOO4rxQ4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=n0TKdl88755ynz/laGzH3bMTzpQ89L/roRoyLaMRSxDGKoMghXxhcxA2O6iO6zyge
-	 BTgdBdfJ3iGG0gZYM/KS4Svjho6WdmE6aYcsuBz1k+rxTRFZG7eEDd/QVgH9icVeyo
-	 XmYzocFedfx/W80Q4fVZgNg9MDTbLJ58sd1Vyt6c=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Mon, 24 Feb 2025 18:10:05 +0530
-Subject: [PATCH] phy: cadence: cdns-dphy-rx: Add runtime PM support
+	s=arc-20240116; t=1740400848; c=relaxed/simple;
+	bh=u23oF0QW377DCF2g12JmtZDftKGIy09CDhlv1P8fYHo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OEH1BDBcxOxjfoAf4b/WkC2VMAt02QXLyNAiWJhBYhSKtwOkin10/6yO/tiw/6toko5tcc9gyenOgjDk607ZKFoczYzhxzfb6X7tw50wvVeHv9fskVnKeu3m5Fi+EYycp2fZ0gr18ueJsGvNyFErch/Exjtd2kra6wz92CKSXew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fU1+Cg/C; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so8663932a91.3;
+        Mon, 24 Feb 2025 04:40:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740400846; x=1741005646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tkZFih/XZf2yI3GxthedwF42LMBAHKEi46yINuICECc=;
+        b=fU1+Cg/CRhIGFyCqy3kUMIct+6UpjmrPXP+GMLhcRYc/SAg+yEnxISH5DSooIWiz7X
+         cNuQU3Uh5D1HZ9QUysRGh4AleY6F2GCd/3MaBby3QwQDIq6B1J2lkTk4XVtgr3UelD6y
+         KflpoaAeZG7SC+KYmAGn/3qVirj1kKRvoiJgj7plcj9sVKomNk7QDL2he5qv+p05uwWl
+         xO1WO5o3dcjwWOFZfQzNN/V+RfKK8ThbelK5Js9cEKh3LwlNpmeTo1EWB6yFJqoqNQ3o
+         oy7bFp/2DyyJYpaDF2ca8thtT6u3CVGO0X6kyq1yieuKQLfxVKHiaYXyjWHlQ/AzlPrk
+         25qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740400846; x=1741005646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tkZFih/XZf2yI3GxthedwF42LMBAHKEi46yINuICECc=;
+        b=EEfij9OoWcokSpUYVldw4sFz4Rf0Wd42ozA8RSlkcX7plTxk5atLMkkqJQ9TtmbLp0
+         A2q0HwZc9TpftbTULTQ9xGJMxFPsMB3NoUToSDyZhKtaD0FVyqx7J0O5VroJ3vGRaNOf
+         KCKD73Wn7nQqoQsvY/LqELPeke2OeFXUmlepZ7uF9aUJ2OD3Ux3NWXUwqXn2O0qGb7C4
+         VX1MLE3WIYFCFvwcZQvv4vLeaVZ8FrVnleywPq5mSSTb2sjqkVlAHiLg9gfLqkKCJ5BM
+         peKcfsxDS+enFbqV17HSxy57nwAYXZ0mEmxtHeslAtmPJ5dczYWmZuYy6PGIBYxLUsMR
+         hhMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVS6QKTdgpWglXfbr4D2tY95gt4WyfN+Z0blfNDItqwb35msMK8gkYfutmkbUiENduX6aULDuOAsJP8@vger.kernel.org, AJvYcCVb2Sq13Nh/mSycze96zOUyqSz1r3cCYcKltwJbFW/Rd3xacS2lnU5gvulsnGIq3wrxaW+L0WZ4YZ+qWcxWRg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpdWdthd/MNgwlqNPZgtrfNlk/lWHdUAHPEP5BuwWyIODVgdxu
+	w2v8vco1fGroGUiLj88McWTuXzCuOOVBCtBQvRcW4PoP76UeOiYk
+X-Gm-Gg: ASbGncuBSQ20u6EXfrMjNeKPzKp3AQer+IhVKpQMiu3Kn2of2f1PHNf6SVeruAPwuTe
+	k14aFwivGtKH17njitGKB3ubOTpkBkqhFhdhGWmxRDSOyFHKALFT4ZdztQpoZHrgQRtuQtlRHsM
+	K3FNIk1o+wPmRbj0vN8GYsYjbnRsYpfDW+3OOzdSap2LhoqawimKJf45W0kkFPBN0qyLbi4O1pw
+	i+R3Rdb5X8N2JEpHHBH49VP3oKuI2xxdTDV5xzyKNRPE3tc8a8H/NiBWIqnHvRXQWKLWnydgsH3
+	ZXLTCmj20VIJ/i5rTKX+DmVUkQ==
+X-Google-Smtp-Source: AGHT+IGKClpqPgKkTVHuqsoij0SCKsuAJFmN/t8lkLNgr8yhMAFXsbqAFFtBGkwF9vaCfhEex0fu2g==
+X-Received: by 2002:a17:90b:3807:b0:2ee:d63f:d71 with SMTP id 98e67ed59e1d1-2fce86ae672mr25817022a91.14.1740400845730;
+        Mon, 24 Feb 2025 04:40:45 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb02d781sm6409409a91.4.2025.02.24.04.40.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 04:40:43 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 2E2CD4209E40; Mon, 24 Feb 2025 19:40:39 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux bcachefs <linux-bcachefs@vger.kernel.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wei Liu <wei.liu@kernel.org>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Purva Yeshi <purvayeshi550@gmail.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/3] bcachefs: docs index refactoring
+Date: Mon, 24 Feb 2025 19:40:25 +0700
+Message-ID: <20250224124028.42059-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-cdns_phy_pm-v1-1-0fe2c544cc87@ideasonboard.com>
-X-B4-Tracking: v=1; b=H4sIAKRovGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMT3eSUvOL4gozK+IJc3SSjJPMUE3MjC2PTFCWgjoKi1LTMCrBp0bG
- 1tQBE2u2zXQAAAA==
-X-Change-ID: 20250224-cdns_phy_pm-b2b7d472835d
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Devarsh Thakkar <devarsht@ti.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Jai Luthra <jai.luthra@ideasonboard.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1208;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=W6turjkF5UgWj4NumzTU+qn8HpLaCyt0loPxOO4rxQ4=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnvGi7z0kT3JUdhqyomX83zFcbIpSWh7NC3C9eK
- kx4WVY9RN+JAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZ7xouwAKCRBD3pH5JJpx
- RdTwD/9m+sldr3u0wwJEVQJysKRRj3/bo6eQYmkgkY3tXeiL+6nGUMAP3+3WzpsJ/E8lwVp32Gi
- YtTpKTs5ysTMn0NqtR2BZOd8tCl9BDkkNx/pnFF3kz2S0ZqAJu+0gRwb3T+7Tu8hZ2dsKEFGB9p
- vnhCOjDERnHX5T6ZeJlCeQdyjP9Lj+aS50p5wiXxhQgqVDjo5/s/3QZKU1QgLkGLL5BpfpkgBTt
- bK7rGJrnPYUWReHfDSVu4UPxo/+xL9R4poinWspatuoByjoCayc1G5mKFCM+mlcigqj3QZm4RqK
- MLSp4U0SZQq4i+3wfPCWRnTuDdRw09gJsKFAPs0NCw6LFaA9gciaRZzk9CkeIhTWl50loyi48i8
- qd78OY+i7Az90D/npTUjac6LDl9hPi5AML/tvoB3G2imHBA4cjMQjWOFXG5lsVeWikRyIsEBXPC
- l2jPFavL1KW4DVHSR4d5pHgWJ1TgmO0y7/WIJO4lScUxAbMthdGwTxaPAN04bCGfcYQtksQNgd3
- TU4e2guVRhy5YEGaUAt9HsozBTw0KNDXbhxyUo67Oh4Zd0fBFxa6aCWHRtP/pbZpRidjgWMpf8O
- Xhe4lA52qHJFjbnJTGYphDCMpSLdqqdWsxxQz6mop9WmQONFtm+LCXwDqMQLvDyMB0uheqiHWk/
- hSLSTbnq8QWPKjg==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+X-Developer-Signature: v=1; a=openpgp-sha256; l=869; i=bagasdotme@gmail.com; h=from:subject; bh=u23oF0QW377DCF2g12JmtZDftKGIy09CDhlv1P8fYHo=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOl7MtgdNAovc396/Ur9zu1g70vXrQIvn+8MLc/pX7bl5 uYrrH0xHaUsDGJcDLJiiiyTEvmaTu8yErnQvtYRZg4rE8gQBi5OAZiIowQjw/c5i63/+fBxn9FY 7SygfGuy9uOsbfoLX9SlSNevO77H35iRYYrZDe/GaZvu8k9K7dB6uLhE02qn3Tf5016P1vRcm2g tygYA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-Enable runtime power management for the device. The PHY framework
-handles calling pm_runtime_(get|put)_sync when powering on/off this
-device.
+Hi Kent,
 
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/phy/cadence/cdns-dphy-rx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Here is bcachefs docs toctree reorganizing (inspired by similar work on
+tracing subsystem by Purva Yeshi [Cc'ed] [1]). The actual refactoring
+is in patches [1/3] and [2/3]. Patch [3/3] is a bonus: footnotes
+formatting.
 
-diff --git a/drivers/phy/cadence/cdns-dphy-rx.c b/drivers/phy/cadence/cdns-dphy-rx.c
-index 7729cf80a9bd892c3e5db6cdbdc4ece9ada2d99f..3ac80141189c4c8c350b678998e5dec7a15c3892 100644
---- a/drivers/phy/cadence/cdns-dphy-rx.c
-+++ b/drivers/phy/cadence/cdns-dphy-rx.c
-@@ -12,6 +12,7 @@
- #include <linux/phy/phy.h>
- #include <linux/phy/phy-mipi-dphy.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/sys_soc.h>
- 
- #define DPHY_PMA_CMN(reg)		(reg)
-@@ -265,7 +266,7 @@ static int cdns_dphy_rx_probe(struct platform_device *pdev)
- 		return PTR_ERR(provider);
- 	}
- 
--	return 0;
-+	return devm_pm_runtime_enable(dev);
- }
- 
- static const struct of_device_id cdns_dphy_rx_of_match[] = {
+Enjoy!
 
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250224-cdns_phy_pm-b2b7d472835d
+[1]: https://lore.kernel.org/linux-doc/20250217110637.6640-1-purvayeshi550@gmail.com/
 
-Best regards,
+Bagas Sanjaya (3):
+  Documentation: bcachefs: Split index toctree
+  Documentation: bcachefs: SubmittingPatches: Demote section headings
+  Documentation: bcachefs: SubmittingPatches: Convert footnotes to reST
+    syntax
+
+ .../bcachefs/SubmittingPatches.rst            | 43 +++++++++++--------
+ Documentation/filesystems/bcachefs/index.rst  | 19 +++++++-
+ 2 files changed, 43 insertions(+), 19 deletions(-)
+
+
+base-commit: d139df3ad938bd1e18bcc16c2452dea1cf852807
 -- 
-Jai Luthra <jai.luthra@ideasonboard.com>
+An old man doll... just what I always wanted! - Clara
 
 
