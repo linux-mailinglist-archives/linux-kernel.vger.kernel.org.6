@@ -1,280 +1,188 @@
-Return-Path: <linux-kernel+bounces-530024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42103A42DCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2132A42D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12ED07A4940
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:28:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE91A1895219
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734A624291E;
-	Mon, 24 Feb 2025 20:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E4A245000;
+	Mon, 24 Feb 2025 20:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="r1LWAxau"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQBYy678"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0926AFB;
-	Mon, 24 Feb 2025 20:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F251219301;
+	Mon, 24 Feb 2025 20:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428976; cv=none; b=GSDZxMYFUcZIVUSAGkNXW+jeFPSAIaJgdRgCgCJeqrtmaG+utyqXIvrh9k/efNtQDNEOcSaDqu/ZQUb1POJeP+YiOAqA9hPJW6anD+2ypNmYoF5evGtoKkTYiC6E4lv1UrLNbIhMB47UTLosBMLeyPx1tJlp8MCAN06jMxUhm78=
+	t=1740428436; cv=none; b=aS/1ZWdJwRD2kB9ptF1D2/ULakRqAHtm2xxnqDXThTIeKcPNmGasRRhfJsY34MxCvxxoK64VDXhITjsSsWnvz2KTplDU0VjpmqxNC+J8owBhuyrOStp0AbuZTdE8yVHWqx2zcTGY1P0lAmvJnXs61n6fJex/UXIJ494nJXOv2QE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428976; c=relaxed/simple;
-	bh=0+5ylH1RpEMxad2fU57+zr3KWtLmylDPnzNe+ClA5vo=;
-	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
-	 In-Reply-To:Content-Type; b=nm7TNtxBmO8mX18YfDNEJMJNEPjNRPmt0q/FxtMvQ29z6wpFL+kh4UhDb5k+6uNHdPalIPGrVmYr+VR4Jc2NgKY3nSbJ639jnaIh0f4UmwYOmSzD/2qTf+SmQFhLD4JHLkv3Snj4JUTCaTvkaMwsRi6po3nL8uy5qQaYRZhWHOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=r1LWAxau; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id mevztE6C3KGvrmew2tsEVG; Mon, 24 Feb 2025 21:20:16 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1740428416;
-	bh=zXvGjak3HqVlV81qtbZ7PYjHL81uIlDbJz0ggojYpY8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To;
-	b=r1LWAxauFhYfUxEL9mkYC5X/vQmAnYURZZy2xWKN49VQZxmw42GDRGUkn5aD8Khot
-	 BF/3RfdCIurvlhZGfoX4qZhMQiUyyGAB3zDWXaK3bFQR3WYQeQgnMyo2PwYk+Hw5zf
-	 sAdUm8CcFVNDPGPetowSfkypjllAD3/BZco9yblhm7j82m3yrDj4iMDtbfePj0ezy1
-	 EoCGzg2geQKtcBZuyXXXqzO6c2LtWjzdj5twfKbo5GGLWP7xJArGEpjywtyWwDlGTF
-	 GVGTd9QTJDdvgMHegqpgrbXw07rhegTDNJ2AQLmXPgq8RGIB2ILVlYLAyzXg+HjxO8
-	 ferPrBGilLmMw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Mon, 24 Feb 2025 21:20:16 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <614644f9-71f7-41af-af90-7ae892581646@wanadoo.fr>
-Date: Mon, 24 Feb 2025 21:20:11 +0100
+	s=arc-20240116; t=1740428436; c=relaxed/simple;
+	bh=6VAqcp8i/KksTRnjFl8hZ1PVyC+q8YxP3Kyhwai1Ibs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M7U/vMurP2Rm0huVhA2/JzU9I1KGlnw42ag6jBv7rqmG64+HKfEzfQri3a//WuwMPDGSw8riPpZDbMXBs7OyHQXJ2nq5ea+xQ2UfVFclMKmBxlgN+Vu3MX/LyMRSJELxJY891PfJqPWLLVQ8DBHvHoCCYvVqAkEHYCjrAABINRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQBYy678; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 808A5C4CEDD;
+	Mon, 24 Feb 2025 20:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740428435;
+	bh=6VAqcp8i/KksTRnjFl8hZ1PVyC+q8YxP3Kyhwai1Ibs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IQBYy678jd44jdnG4APN0sq4DrqtNqvjjyui5kWyGLPH18QZpNUyvuN3yCUwfPPKj
+	 Oe+E+cwzCIiaL2mw+VOOyeoOLuRKWd95cD+JUQuyJSOgZLFZvlNga+A8BgGpmLwU4p
+	 cE+3K8RUrf/XYQcrMFXohjfgPivA25T2k7zwZJdS3/Jd8iRoqrFvzJxR0gRLf57JHB
+	 buv7TRQeLux1FLmzfl8YvXUamn5toFAHbaiXhjLQQ+cS/+eHo7KXWFY6oiuS4mJbxk
+	 DAfOHb+Jz/+GW8nuM3RBh1YQziFuAYZ4mNHLe8vpCZZhxnkymGr6f8JorFmEeRfP+h
+	 1IjUFP57O0xnA==
+Date: Mon, 24 Feb 2025 12:20:34 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 09/11] xfs: Commit CoW-based atomic writes atomically
+Message-ID: <20250224202034.GE21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-10-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] mfd: max77759: add Maxim MAX77759 core mfd driver
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
- <20250224-max77759-mfd-v1-4-2bff36f9d055@linaro.org>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: brgl@bgdev.pl, conor+dt@kernel.org, devicetree@vger.kernel.org,
- gustavoars@kernel.org, kees@kernel.org, kernel-team@android.com,
- krzk+dt@kernel.org, lee@kernel.org, linus.walleij@linaro.org,
- linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org,
- linux-kernel@vger.kernel.org, peter.griffin@linaro.org, robh@kernel.org,
- srinivas.kandagatla@linaro.org, tudor.ambarus@linaro.org,
- willmcvicker@google.com
-In-Reply-To: <20250224-max77759-mfd-v1-4-2bff36f9d055@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213135619.1148432-10-john.g.garry@oracle.com>
 
-Le 24/02/2025 à 11:28, André Draszik a écrit :
-> The Maxim MAX77759 is a companion Power Management IC for USB Type-C
-> applications with Battery Charger, Fuel Gauge, temperature sensors, USB
-> Type-C Port Controller (TCPC), NVMEM, and additional GPIO interfaces.
+On Thu, Feb 13, 2025 at 01:56:17PM +0000, John Garry wrote:
+> When completing a CoW-based write, each extent range mapping update is
+> covered by a separate transaction.
 > 
-> Fuel Gauge and TCPC have separate and independent I2C addresses,
-> register maps, and interrupt lines and are therefore excluded from the
-> MFD core device driver here.
+> For a CoW-based atomic write, all mappings must be changed at once, so
+> change to use a single transaction.
 > 
-> The GPIO and NVMEM interfaces are accessed via specific commands to the
-> built-in microprocessor. This driver implements an API that client
-> drivers can use for accessing those.
-
-Hi,
-
-...
-
-> +int max77759_maxq_command(struct max77759_mfd *max77759_mfd,
-> +			  const struct max77759_maxq_command *cmd,
-> +			  struct max77759_maxq_response *rsp)
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_file.c    |  5 ++++-
+>  fs/xfs/xfs_reflink.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_reflink.h |  3 +++
+>  3 files changed, 52 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> index 9762fa503a41..243640fe4874 100644
+> --- a/fs/xfs/xfs_file.c
+> +++ b/fs/xfs/xfs_file.c
+> @@ -527,7 +527,10 @@ xfs_dio_write_end_io(
+>  	nofs_flag = memalloc_nofs_save();
+>  
+>  	if (flags & IOMAP_DIO_COW) {
+> -		error = xfs_reflink_end_cow(ip, offset, size);
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			error = xfs_reflink_end_atomic_cow(ip, offset, size);
+> +		else
+> +			error = xfs_reflink_end_cow(ip, offset, size);
+>  		if (error)
+>  			goto out;
+>  	}
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 3dab3ba900a3..d097d33dc000 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -986,6 +986,51 @@ xfs_reflink_end_cow(
+>  		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+>  	return error;
+>  }
+> +int
+> +xfs_reflink_end_atomic_cow(
+> +	struct xfs_inode		*ip,
+> +	xfs_off_t			offset,
+> +	xfs_off_t			count)
 > +{
-> +	DEFINE_FLEX(struct max77759_maxq_response, _rsp, rsp, length, 1);
-> +	int ret;
-> +	static const unsigned int timeout_ms = 200;
+> +	xfs_fileoff_t			offset_fsb;
+> +	xfs_fileoff_t			end_fsb;
+> +	int				error = 0;
+> +	struct xfs_mount		*mp = ip->i_mount;
+> +	struct xfs_trans		*tp;
+> +	unsigned int			resblks;
 > +
-> +	if (cmd->length > MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX)
-> +		return -EINVAL;
+> +	trace_xfs_reflink_end_cow(ip, offset, count);
 > +
-> +	/* rsp is allowed to be NULL. In that case we do need a temporary. */
-> +	if (!rsp)
-> +		rsp = _rsp;
-> +
-> +	BUILD_BUG_ON(MAX77759_MAXQ_OPCODE_MAXLENGTH
-> +		     != MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX);
-> +	if (!rsp->length || rsp->length > MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX)
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&max77759_mfd->maxq_lock);
-> +
-> +	reinit_completion(&max77759_mfd->cmd_done);
-> +
-> +	/* write the opcode and data */
-> +	ret = regmap_bulk_write(max77759_mfd->regmap_maxq,
-> +				MAX77759_MAXQ_REG_AP_DATAOUT0, cmd->cmd,
-> +				cmd->length);
-> +	if (!ret && cmd->length < MAX77759_MAXQ_REG_AP_MESSAGESZ_MAX) {
-> +		/* writing the last byte triggers MaxQ */
-> +		ret = regmap_write(max77759_mfd->regmap_maxq,
-> +				   MAX77759_MAXQ_REG_AP_DATAOUT32, 0);
-> +	}
-> +	if (ret)
-> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
+> +	offset_fsb = XFS_B_TO_FSBT(ip->i_mount, offset);
+> +	end_fsb = XFS_B_TO_FSB(ip->i_mount, offset + count);
 
-Maybe regmap_get_device(max77759_mfd->regmap_maxq) could be assigned to 
-a variable to simplify its usage?
-
-> +			 "write data failed: %d\n", ret);
-> +	if (ret)
-> +		return ret;
-
-Merge with the if (ret) just above? (as done a few lines below)
+Use @mp here instead of walking the pointer.
 
 > +
-> +	/* wait for response from MaxQ */
-> +	if (!wait_for_completion_timeout(&max77759_mfd->cmd_done,
-> +					 usecs_to_jiffies(timeout_ms))) {
-> +		dev_err(regmap_get_device(max77759_mfd->regmap_maxq),
-> +			"timed out waiting for data\n");
-> +		return -ETIMEDOUT;
-> +	}
+> +	resblks = (end_fsb - offset_fsb) *
+> +			XFS_NEXTENTADD_SPACE_RES(mp, 1, XFS_DATA_FORK);
+
+How did you arrive at this computation?  The "b" parameter to
+XFS_NEXTENTADD_SPACE_RES is usually the worst case number of mappings
+that you're going to change on this file.  I think that quantity is
+(end_fsb - offset_fsb)?
+
 > +
-> +	ret = regmap_bulk_read(max77759_mfd->regmap_maxq,
-> +			       MAX77759_MAXQ_REG_AP_DATAIN0,
-> +			       rsp->rsp, rsp->length);
-> +	if (ret) {
-> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
-> +			 "read data failed: %d\n", ret);
-> +		return ret;
-> +	}
+> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, resblks, 0,
+> +			XFS_TRANS_RESERVE, &tp);
+> +	if (error)
+> +		return error;
 > +
-> +	/*
-> +	 * As per the protocol, the first byte of the reply will match the
-> +	 * request.
-> +	 */
-> +	if (rsp->rsp[0] != cmd->cmd[0]) {
-> +		dev_warn(regmap_get_device(max77759_mfd->regmap_maxq),
-> +			 "unexpected opcode response for %#.2x: %*ph\n",
-> +			 cmd->cmd[0], (int)rsp->length, rsp->rsp);
-> +		return -EIO;
-> +	}
+> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> +	xfs_trans_ijoin(tp, ip, 0);
 > +
+> +	while (end_fsb > offset_fsb && !error)
+> +		error = xfs_reflink_end_cow_extent_locked(tp, ip, &offset_fsb,
+> +							end_fsb);
+
+Overly long line, and the continuation line only needs to be indented
+two more tabs.
+
+> +
+> +	if (error) {
+> +		trace_xfs_reflink_end_cow_error(ip, error, _RET_IP_);
+> +		goto out_cancel;
+> +	}
+> +	error = xfs_trans_commit(tp);
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
 > +	return 0;
+
+Why is it ok to drop @error here?  Shouldn't a transaction commit error
+should be reported to the writer thread?
+
+--D
+
+> +out_cancel:
+> +	xfs_trans_cancel(tp);
+> +	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> +	return error;
 > +}
-
-...
-
-> +static int max77759_probe(struct i2c_client *client)
-> +{
-> +	struct regmap *regmap_top;
-> +	unsigned int pmic_id;
-> +	int ret;
-> +	struct irq_data *irq_data;
-> +	struct max77759_mfd *max77759_mfd;
-> +	unsigned long irq_flags;
-> +	struct regmap_irq_chip_data *irq_chip_data_pmic;
-> +
-> +	regmap_top = devm_regmap_init_i2c(client, &max77759_regmap_config_top);
-> +	if (IS_ERR(regmap_top))
-> +		return dev_err_probe(&client->dev, PTR_ERR(regmap_top),
-> +				     "regmap init failed\n");
-> +
-> +	ret = regmap_read(regmap_top, MAX77759_PMIC_REG_PMIC_ID, &pmic_id);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "Unable to read Device ID\n");
-> +
-> +	if (pmic_id != MAX77759_PMIC_REG_PMIC_ID_MAX77759)
-> +		return dev_err_probe(&client->dev, -ENODEV,
-> +				     "Unsupported Device ID %#.2x (%d)\n",
-> +				     pmic_id, pmic_id);
-> +
-> +	irq_data = irq_get_irq_data(client->irq);
-> +	if (!irq_data)
-> +		return dev_err_probe(&client->dev, -EINVAL,
-> +				     "Invalid IRQ: %d\n", client->irq);
-> +
-> +	max77759_mfd = devm_kzalloc(&client->dev, sizeof(*max77759_mfd),
-> +				    GFP_KERNEL);
-> +	if (!max77759_mfd)
-> +		return -ENOMEM;
-> +
-> +	max77759_mfd->regmap_top = regmap_top;
-> +	devm_mutex_init(&client->dev, &max77759_mfd->maxq_lock);
-
-Error handling?
-
-> +
-> +	i2c_set_clientdata(client, max77759_mfd);
-
-Harmless, but is it needed? (there is no i2c_get_clientdata() in the flile)
-
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(max77759_i2c_subdevs); ++i) {
-
-Unusual. Maybe declare 'i' at the beginning of the function?
-
-> +		ret = max77759_create_i2c_subdev(client,
-> +						 max77759_mfd,
-> +						 &max77759_i2c_subdevs[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	irq_flags = IRQF_ONESHOT | IRQF_SHARED;
-> +	irq_flags |= irqd_get_trigger_type(irq_data);
-> +
-> +	ret = devm_regmap_add_irq_chip(&client->dev, max77759_mfd->regmap_top,
-> +				       client->irq, irq_flags, 0,
-> +				       &max77759_pmic_irq_chip,
-> +				       &irq_chip_data_pmic);
-> +	if (ret)
-> +		return dev_err_probe(&client->dev, ret,
-> +				     "Failed to add IRQ chip\n");
-> +
-> +	/* INTSRC - MaxQ & children */
-> +	ret = max77759_add_chained_maxq(client, max77759_mfd,
-> +					irq_chip_data_pmic);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* INTSRC - topsys & children */
-> +	ret = max77759_add_chained_topsys(client, max77759_mfd,
-> +					  irq_chip_data_pmic);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* INTSRC - charger & children */
-> +	ret = max77759_add_chained_charger(client, max77759_mfd,
-> +					   irq_chip_data_pmic);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return devm_mfd_add_devices(&client->dev, PLATFORM_DEVID_AUTO,
-> +				    max77759_cells, ARRAY_SIZE(max77759_cells),
-> +				    NULL, 0,
-> +				    regmap_irq_get_domain(irq_chip_data_pmic));
-> +}
-> +
-> +static const struct i2c_device_id max77759_i2c_id[] = {
-> +	{ "max77759", 0 },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(i2c, max77759_i2c_id);
-> +
-> +static const struct of_device_id max77759_of_id[] = {
-> +	{ .compatible = "maxim,max77759", },
-> +	{},
-
-Unneeded trailing comma after a terminator.
-Maybe { }  to match the style used in max77759_i2c_id?
-
-> +};
-> +MODULE_DEVICE_TABLE(of, max77759_of_id);
-
+>  
+>  /*
+>   * Free all CoW staging blocks that are still referenced by the ondisk refcount
+> diff --git a/fs/xfs/xfs_reflink.h b/fs/xfs/xfs_reflink.h
+> index 754d2bb692d3..ca945d98e823 100644
+> --- a/fs/xfs/xfs_reflink.h
+> +++ b/fs/xfs/xfs_reflink.h
+> @@ -43,6 +43,9 @@ extern int xfs_reflink_cancel_cow_range(struct xfs_inode *ip, xfs_off_t offset,
+>  		xfs_off_t count, bool cancel_real);
+>  extern int xfs_reflink_end_cow(struct xfs_inode *ip, xfs_off_t offset,
+>  		xfs_off_t count);
+> +		int
+> +xfs_reflink_end_atomic_cow(struct xfs_inode *ip, xfs_off_t offset,
+> +		xfs_off_t count);
+>  extern int xfs_reflink_recover_cow(struct xfs_mount *mp);
+>  extern loff_t xfs_reflink_remap_range(struct file *file_in, loff_t pos_in,
+>  		struct file *file_out, loff_t pos_out, loff_t len,
+> -- 
+> 2.31.1
+> 
+> 
 
