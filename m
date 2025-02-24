@@ -1,135 +1,107 @@
-Return-Path: <linux-kernel+bounces-529226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65ABA42212
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:54:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8076A42217
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:55:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D975A1779C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:51:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4E816E4A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5869B2505C9;
-	Mon, 24 Feb 2025 13:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ABB25A2AA;
+	Mon, 24 Feb 2025 13:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q9Yx9dn3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="EYmG3eqn"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1F11A23AA;
-	Mon, 24 Feb 2025 13:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A03FBB3;
+	Mon, 24 Feb 2025 13:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405064; cv=none; b=uX/HA1M0SZYJDAa3kZv4Xy+vd5lM6yeQKiw4Chci8hDe2EuJkGecuiwUqhI3TrhPAeroLyGhZp7XeYob4Rw/4r5PbDfOr1IbcWbi0bp6JXVnhM3rTL2CxrfP7MECDQoZGVjySIq9CuUVq0HihrN55996ZAYzJdPcHrAFYKLSxgk=
+	t=1740405064; cv=none; b=tAsWAFUqAMgSIgeCSfbzrGigXb5UY5MwZ/yw9uvjYgHcwSyHhA1HdB85vgntiq11w5rlkf6X4C643IbtOtWlevdZ3275CSMAQyoVqHoPFoCp0iCOLv0PVpvkK8kdsB5vyBsfoMk7OX4zOZO/uHKgpYHmub3pR7t2vtgIDQ6DRTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740405064; c=relaxed/simple;
-	bh=VEEv6nk8vDex2BIMDGcyoeXhYWRBAy36ZB74OSyadLQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fSNf3L1Dp7lT8WywmERO0wGovItoooujZLDR758/TAFAvHcLC1DAheSc5HjfxY3qpRFZHZB3ngijskBgOFWxTd1y2flsm1eMy9jEf4OH9b4h6jxKat0isG9o5m0ttqwWqFs4pv7FbV/uUU5gEZmzA4bfe+S1U/cP+TwAQtb3NjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q9Yx9dn3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F3D8C4CED6;
-	Mon, 24 Feb 2025 13:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740405064;
-	bh=VEEv6nk8vDex2BIMDGcyoeXhYWRBAy36ZB74OSyadLQ=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=q9Yx9dn33NrvPGC7k8HNZ+NZo16C87m+oyDcFCf2eKUUbUrZqGwJzOfEdR2cvjIgP
-	 nNMwy72OFTvgFghGIoJWuVylQjcthKHFPLzunbqRcDwGT4E2MOLTO+5x/ydiPGVF9E
-	 d57jhB99L5IWWLqedGGTI3Pz3qkrgMrNGJGM2Jg5+CUQq+0+xSG1Y2aJzfYF2HAnkN
-	 FMDNUJA+oJeZSarnx8F2JYb3t+IZjuBy8q/t+fyevv5ZnClpaWEkZL1NuoDRz9rpkR
-	 GHqIrCtwuBcc6GbDAgjhMSic3vrPxEq40l5W91O2S4uWDxu42xYbOoc2qY0FPLcnl0
-	 e+Sdyz91dN5Gw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2531C021A4;
-	Mon, 24 Feb 2025 13:51:03 +0000 (UTC)
-From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
-Subject: [PATCH 00/14] arm64: dts: freescale: Add support for the
- GOcontroll Moduline Display
-Date: Mon, 24 Feb 2025 14:50:50 +0100
-Message-Id: <20250224-initial_display-v1-0-5ccbbf613543@gocontroll.com>
+	bh=9RDuIIDDoRX3iUwz/B6eYJZ3G8+IPjNTeRWnefHxkUw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Oz6V04Yahp+R9+1TSZj+E2yabxfmlpxJnk1hCh53Gz6PEcskySrY7Uve84Dq0AEjopfbJYantDAU62dW9q82+5+9JQW3U/LNQzs4OolM502HpRuKi+mL4pwuX2m0t4HQ9oH6TG+isTTGq07vC2ADQ3nurIjwtLemPZe1h1TAFmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=EYmG3eqn; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1740405052; bh=GoyOgU4F8MJF8xBQLwzVC2scpgFAnMUGWJKmA0XPqNw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=EYmG3eqnM4MCQ0hLO2jgmWLWjqkqd00n6N6mN7raLyGsb/UFfbcyOO5mMQ/PIPf+z
+	 l/XQMWRzSY1FO4WSPtodgX95I3F4KIonw8h3eM7Nb7i3CaVAOXrc4qSYyCIYKgyLRs
+	 GFqMGgPIBwl5fdpk+qDGDgi8qJsISOryviETc/4I=
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Benno Lossin
+ <benno.lossin@proton.me>,  Alice Ryhl <aliceryhl@google.com>,  Trevor
+ Gross <tmgross@umich.edu>,  Masahiro Yamada <masahiroy@kernel.org>,
+  Nathan Chancellor <nathan@kernel.org>,  Nicolas Schier
+ <nicolas@fjasle.eu>,  Luis Chamberlain <mcgrof@kernel.org>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,  Adam
+ Bratschi-Kaye <ark.email@gmail.com>,  linux-kbuild@vger.kernel.org,  Petr
+ Pavlu <petr.pavlu@suse.com>,  Sami Tolvanen <samitolvanen@google.com>,
+  Daniel Gomez <da.gomez@samsung.com>,  Simona Vetter
+ <simona.vetter@ffwll.ch>,  Greg KH <gregkh@linuxfoundation.org>,
+  linux-modules@vger.kernel.org
+Subject: Re: [PATCH v7 2/6] rust: str: implement `Index` for `BStr`
+In-Reply-To: <20250218-module-params-v3-v7-2-5e1afabcac1b@kernel.org> (Andreas
+	Hindborg's message of "Tue, 18 Feb 2025 14:00:44 +0100")
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+	<20250218-module-params-v3-v7-2-5e1afabcac1b@kernel.org>
+Date: Mon, 24 Feb 2025 14:50:51 +0100
+Message-ID: <87y0xvpi2s.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADp5vGcC/x3M0QpAMBSH8VdZ59pqTkheRdKyg39p1iaRvLvl8
- nfxfQ8liZBEnXooyomE3WeUhaJptX4RDZdNbLg2zJWGxwG7jQ4pbPbWs22Zy1ZMIzXlKkSZcf3
- HfnjfD16CHDdhAAAA
-X-Change-ID: 20250224-initial_display-fa82218e06e5
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, 
- Maud Spierings <maudspierings@gocontroll.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740405062; l=2195;
- i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
- bh=VEEv6nk8vDex2BIMDGcyoeXhYWRBAy36ZB74OSyadLQ=;
- b=fKWlALGDjjqxq4Z193T7Ci/ahYXLxryiGGIkZwxtx0yJxz7Sffnh3789/tCcMZcJS7qRSZ0SC
- OXfDAtd+vzFBxMyTIjw8WpoWUMc911QpWUXsBSVw5lsld0AipyD649U
-X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
- pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
-X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
- with auth_id=341
-X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
-Reply-To: maudspierings@gocontroll.com
+Content-Type: text/plain
 
-Add inital support for 2 variants of the Moduline Display controller.
-This system is powered by the Ka-Ro Electronics tx8p-ml81 COM, which
-features an imx8mp SoC.
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
----
-Maud Spierings (14):
-      dt-bindings: display: simple: add BOE AV101HDT-A10 panel
-      dt-bindings: display: simple: Add BOE AV123Z7M-N17 panel
-      dt-bindings: arm: fsl: Add GOcontroll Moduline Display
-      dt-bindings: vendor-prefixes: add GOcontroll
-      dt-bindings: trivial-devices: add GOcontroll Moduline IO modules
-      arm64: dts: imx8mp: Add pinctrl config definitions
-      drm/panel: simple: add BOE AV101HDT-A10 panel
-      drm/panel: simple: Add BOE AV123Z7M-N17 panel
-      MAINTAINERS: add maintainer for the Ka-Ro tx8p-ml81 COM module
-      MAINTAINERS: add maintainer for the GOcontroll Moduline controllers
-      arm64: dts: freescale: add Ka-Ro Electronics tx8p-ml81 COM
-      arm64: dts: freescale: Add the GOcontroll Moduline Display baseboard
-      arm64: dts: freescale: Add the BOE av101hdt-a10 variant of the Moduline Display
-      arm64: dts: freescale: Add the BOE av123z7m-n17 variant of the Moduline Display
+> The `Index` implementation on `BStr` was lost when we switched `BStr` from
+> a type alias of `[u8]` to a newtype. This patch adds back `Index` by
+> implementing `Index` for `BStr` when `Index` would be implemented for
+> `[u8]`.
+>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 
- Documentation/devicetree/bindings/arm/fsl.yaml     |   1 +
- .../panel/panel-simple-lvds-dual-ports.yaml        |   2 +
- .../bindings/display/panel/panel-simple.yaml       |   2 +
- .../devicetree/bindings/trivial-devices.yaml       |   2 +
- .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
- MAINTAINERS                                        |  12 +
- arch/arm64/boot/dts/freescale/imx8mp-pinfunc.h     |  27 +
- ...tx8p-ml81-moduline-display-106-av101hdt-a10.dts |  60 +++
- ...tx8p-ml81-moduline-display-106-av123z7m-n17.dts | 133 +++++
- .../imx8mp-tx8p-ml81-moduline-display-106.dtsi     | 530 ++++++++++++++++++++
- .../arm64/boot/dts/freescale/imx8mp-tx8p-ml81.dtsi | 547 +++++++++++++++++++++
- drivers/gpu/drm/panel/panel-simple.c               |  64 +++
- 12 files changed, 1382 insertions(+)
----
-base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
-change-id: 20250224-initial_display-fa82218e06e5
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
 
-Best regards,
--- 
-Maud Spierings <maudspierings@gocontroll.com>
-
-
+> ---
+>  rust/kernel/str.rs | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+> index 002dcddf7c768..ba6b1a5c4f99d 100644
+> --- a/rust/kernel/str.rs
+> +++ b/rust/kernel/str.rs
+> @@ -114,6 +114,17 @@ fn eq(&self, other: &Self) -> bool {
+>      }
+>  }
+>  
+> +impl<Idx> Index<Idx> for BStr
+> +where
+> +    [u8]: Index<Idx, Output = [u8]>,
+> +{
+> +    type Output = Self;
+> +
+> +    fn index(&self, index: Idx) -> &Self::Output {
+> +        BStr::from_bytes(&self.0[index])
+> +    }
+> +}
+> +
+>  /// Creates a new [`BStr`] from a string literal.
+>  ///
+>  /// `b_str!` converts the supplied string literal to byte string, so non-ASCII
 
