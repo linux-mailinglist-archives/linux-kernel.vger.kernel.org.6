@@ -1,169 +1,165 @@
-Return-Path: <linux-kernel+bounces-529057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382E4A41F42
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:38:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6A0A41F46
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:39:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7451188A8C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:38:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 770607A5478
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DA123370D;
-	Mon, 24 Feb 2025 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FMfDW40Q"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53AD23371F;
+	Mon, 24 Feb 2025 12:38:37 +0000 (UTC)
+Received: from relay02.th.seeweb.it (relay02.th.seeweb.it [5.144.164.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8D2221F32
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A0A2192E7;
+	Mon, 24 Feb 2025 12:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.144.164.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400682; cv=none; b=qe9eGbz198qlRynGzU4xMXnES84KHn9+nG7g4AU9X7S4fC6bzoWHjXrRDsJaWZebIuOOhdwlHNVl4MGyx4+tO2KfXP27eTkXQ/Z6ERuaW9GBecl6IHJW+HITETDLLqYsEFGSb/KU3xN8pEd2Kr1lDeglm21wjnt6sn5/xFcCu24=
+	t=1740400717; cv=none; b=syyZyT+Pj/Sm9H/1qpLQf4FOHmc8cCg8DB/ftkZoawmxAdoB0lXULKNJKUyiEZHXxh7FU3Yz6ignce+IdSWXnYk5qINhDRThHpva53KhAta8dKeMda1WwGQhEg5IUV6EBXI2NFvUy8btXWrNe34FxeG4zmiKafmZ+b/Q2ixL9Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400682; c=relaxed/simple;
-	bh=OIakarWoMeNm1+9A78XkiOJS7zdSHXLoTKBw4WTe1J0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Byuv91z6or9kXMnl0HAVaAg5Y/2SrHb5X7l40VTZqUYayZm3VkV64F7A1QPZI7GK7sRs6AcrTN8gBPlsWR7xc0jaocUkcdBxubQgXvj92z/8VJOb1Bwf0cJfwzlU2/366tD4PJxRzh/shyq2GAhEl1u3I9ue/sbKyoQYaBHotzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FMfDW40Q; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1740400674; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=77wyXoRkLV4oo9tYPoFRu8JPKiM3mw/dn6Qq/i2OJjA=;
-	b=FMfDW40QaulUxNpqFoUbxNnc4C1B4z5UTnXEndI3N0y+PwEyBnyrymgPamdJdI/Jwz1Ui1MsZ3kGX2qvY62WVCHqghGCRkJFoobfgT3ue97tlNKgDaNh2mPnV0ZEQ823yEYuV0l2xrYMs+0UkXa6Uev4lweFTP62cPhyf91Pt2M=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQ7msAv_1740400673 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Feb 2025 20:37:54 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 2/2] erofs: clean up header parsing for ztailpacking and fragments
-Date: Mon, 24 Feb 2025 20:37:47 +0800
-Message-ID: <20250224123747.1387122-2-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250224123747.1387122-1-hsiangkao@linux.alibaba.com>
-References: <20250224123747.1387122-1-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1740400717; c=relaxed/simple;
+	bh=CV3SNwN38gT5yoTP7TpNEiDrI/SO+rvqRtZ2blq7pBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQp/SK9qwaa/iYIZYYgfYuwslaUKJ64a3Ym+oXv0flL+bNSeW3UHksGIl55dOl4Ct8knmq7G2CR9fW/7mbML0s2AzjZxHjKYKLLIRPAZdJnSCdwtmK4ubtQ6JOlweOI/XCGOmsCS7IdHieE+86KuFarG3d+PCRmU3Fm7pkpWMKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org; spf=pass smtp.mailfrom=somainline.org; arc=none smtp.client-ip=5.144.164.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=somainline.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=somainline.org
+Received: from SoMainline.org (94-211-6-86.cable.dynamic.v4.ziggo.nl [94.211.6.86])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by m-r1.th.seeweb.it (Postfix) with ESMTPSA id 64D8D1F554;
+	Mon, 24 Feb 2025 13:38:24 +0100 (CET)
+Date: Mon, 24 Feb 2025 13:38:22 +0100
+From: Marijn Suijten <marijn.suijten@somainline.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] drm/msm/dpu: allocate single CTL for DPU >= 5.0
+Message-ID: <n6cljmchentiycfbnlxoptl6gtrv5n5353gdmvbrrssfp7mkiy@lenjcbxn732p>
+References: <20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org>
+ <20250220-dpu-active-ctl-v1-6-71ca67a564f8@linaro.org>
+ <4aix26abutkas2fpj6ubu2hbqeljpgr5e3m24akeb3jz33limj@c7rymwz6zmft>
+ <7vcnej2hh3knti66dfyatbcyrlygbwqtwdlumpf4aqmupuopcf@pcpkbn6fs4h4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7vcnej2hh3knti66dfyatbcyrlygbwqtwdlumpf4aqmupuopcf@pcpkbn6fs4h4>
 
-Simplify the logic in z_erofs_fill_inode_lazy() by combining the
-handling of ztailpacking and fragments, as they are mutually exclusive.
+On 2025-02-21 01:58:58, Dmitry Baryshkov wrote:
+> On Fri, Feb 21, 2025 at 12:34:12AM +0100, Marijn Suijten wrote:
+> > On 2025-02-20 12:26:23, Dmitry Baryshkov wrote:
+> > > Unlike previous generation, since DPU 5.0 it is possible to use just one
+> > > CTL to handle all INTF and WB blocks for a single output. And one has to
+> > > use single CTL to support bonded DSI config. Allocate single CTL for
+> > > these DPU versions.
+> > > 
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 17 +++++++++++++----
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h |  2 ++
+> > >  2 files changed, 15 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> > > index 5baf9df702b84b74ba00e703ad3cc12afb0e94a4..4dbc9bc7eb4f151f83055220665ee5fd238ae7ba 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
+> > > @@ -53,6 +53,8 @@ int dpu_rm_init(struct drm_device *dev,
+> > >  	/* Clear, setup lists */
+> > >  	memset(rm, 0, sizeof(*rm));
+> > >  
+> > > +	rm->has_legacy_ctls = (cat->mdss_ver->core_major_ver < 5);
+> > > +
+> > >  	/* Interrogate HW catalog and create tracking items for hw blocks */
+> > >  	for (i = 0; i < cat->mixer_count; i++) {
+> > >  		struct dpu_hw_mixer *hw;
+> > > @@ -381,10 +383,16 @@ static int _dpu_rm_reserve_ctls(
+> > >  	int i = 0, j, num_ctls;
+> > >  	bool needs_split_display;
+> > >  
+> > > -	/* each hw_intf needs its own hw_ctrl to program its control path */
+> > > -	num_ctls = top->num_intf;
+> > > +	if (rm->has_legacy_ctls) {
+> > > +		/* each hw_intf needs its own hw_ctrl to program its control path */
+> > > +		num_ctls = top->num_intf;
+> > >  
+> > > -	needs_split_display = _dpu_rm_needs_split_display(top);
+> > > +		needs_split_display = _dpu_rm_needs_split_display(top);
+> > > +	} else {
+> > > +		/* use single CTL */
+> > > +		num_ctls = 1;
+> > > +		needs_split_display = false;
+> > > +	}
+> > >  
+> > >  	for (j = 0; j < ARRAY_SIZE(rm->ctl_blks); j++) {
+> > >  		const struct dpu_hw_ctl *ctl;
+> > > @@ -402,7 +410,8 @@ static int _dpu_rm_reserve_ctls(
+> > >  
+> > >  		DPU_DEBUG("ctl %d caps 0x%lX\n", j + CTL_0, features);
+> > >  
+> > > -		if (needs_split_display != has_split_display)
+> > > +		if (rm->has_legacy_ctls &&
+> > > +		    needs_split_display != has_split_display)
+> > 
+> > I deduced a long time ago that the check for rm->has_legacy_ctls is not needed.
+> > 
+> > needs_split_display is always false on DPU >= 5, and neither of those SoCs has
+> > DPU_CTRL_SPLIT_DISPLAY which means false != false is false, and this condition
+> > never triggers on active CTLs even without checking has_legacy_ctls.
+> 
+> During the transition time of 1 or 2 patches there is a window of
+> DPU >= 5 and DPU_CTRL_SPLIT_DISPLAY.
 
-Note that `h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT` is handled
-above, so no need to duplicate the check.
+Correct, but would there be any harm in reordering the patches?  Before this
+patch DPU_CTL_SPLIT_DISPLAY seems to have caused wrongfully allocating multiple
+CTLs when multiple intfs are requested anyway.
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-v2:
- - rebase on the previous one;
+- Marijn
 
- fs/erofs/zmap.c | 40 ++++++++++++++--------------------------
- 1 file changed, 14 insertions(+), 26 deletions(-)
-
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 9518d341cd82..dd120306a272 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -394,7 +394,8 @@ static int z_erofs_get_extent_decompressedlen(struct z_erofs_maprecorder *m)
- static int z_erofs_do_map_blocks(struct inode *inode,
- 				 struct erofs_map_blocks *map, int flags)
- {
--	struct erofs_inode *const vi = EROFS_I(inode);
-+	struct erofs_inode *vi = EROFS_I(inode);
-+	struct super_block *sb = inode->i_sb;
- 	bool fragment = vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER;
- 	bool ztailpacking = vi->z_idata_size;
- 	struct z_erofs_maprecorder m = {
-@@ -438,7 +439,7 @@ static int z_erofs_do_map_blocks(struct inode *inode,
- 		}
- 		/* m.lcn should be >= 1 if endoff < m.clusterofs */
- 		if (!m.lcn) {
--			erofs_err(inode->i_sb, "invalid logical cluster 0 at nid %llu",
-+			erofs_err(sb, "invalid logical cluster 0 at nid %llu",
- 				  vi->nid);
- 			err = -EFSCORRUPTED;
- 			goto unmap_out;
-@@ -454,7 +455,7 @@ static int z_erofs_do_map_blocks(struct inode *inode,
- 			goto unmap_out;
- 		break;
- 	default:
--		erofs_err(inode->i_sb, "unknown type %u @ offset %llu of nid %llu",
-+		erofs_err(sb, "unknown type %u @ offset %llu of nid %llu",
- 			  m.type, ofs, vi->nid);
- 		err = -EOPNOTSUPP;
- 		goto unmap_out;
-@@ -473,10 +474,16 @@ static int z_erofs_do_map_blocks(struct inode *inode,
- 		map->m_flags |= EROFS_MAP_META;
- 		map->m_pa = vi->z_fragmentoff;
- 		map->m_plen = vi->z_idata_size;
-+		if (erofs_blkoff(sb, map->m_pa) + map->m_plen > sb->s_blocksize) {
-+			erofs_err(sb, "invalid tail-packing pclustersize %llu",
-+				  map->m_plen);
-+			err = -EFSCORRUPTED;
-+			goto unmap_out;
-+		}
- 	} else if (fragment && m.lcn == vi->z_tailextent_headlcn) {
- 		map->m_flags |= EROFS_MAP_FRAGMENT;
- 	} else {
--		map->m_pa = erofs_pos(inode->i_sb, m.pblk);
-+		map->m_pa = erofs_pos(sb, m.pblk);
- 		err = z_erofs_get_extent_compressedlen(&m, initial_lcn);
- 		if (err)
- 			goto unmap_out;
-@@ -495,7 +502,7 @@ static int z_erofs_do_map_blocks(struct inode *inode,
- 		afmt = m.headtype == Z_EROFS_LCLUSTER_TYPE_HEAD2 ?
- 			vi->z_algorithmtype[1] : vi->z_algorithmtype[0];
- 		if (!(EROFS_I_SB(inode)->available_compr_algs & (1 << afmt))) {
--			erofs_err(inode->i_sb, "inconsistent algorithmtype %u for nid %llu",
-+			erofs_err(sb, "inconsistent algorithmtype %u for nid %llu",
- 				  afmt, vi->nid);
- 			err = -EFSCORRUPTED;
- 			goto unmap_out;
-@@ -596,31 +603,12 @@ static int z_erofs_fill_inode_lazy(struct inode *inode)
- 		goto out_put_metabuf;
- 	}
- 
--	if (vi->z_idata_size) {
-+	if (vi->z_idata_size ||
-+	    (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER)) {
- 		struct erofs_map_blocks map = {
- 			.buf = __EROFS_BUF_INITIALIZER
- 		};
- 
--		err = z_erofs_do_map_blocks(inode, &map,
--					    EROFS_GET_BLOCKS_FINDTAIL);
--		erofs_put_metabuf(&map.buf);
--
--		if (erofs_blkoff(sb, map.m_pa) + map.m_plen > sb->s_blocksize) {
--			erofs_err(sb, "invalid tail-packing pclustersize %llu",
--				  map.m_plen);
--			err = -EFSCORRUPTED;
--		}
--		if (err < 0)
--			goto out_put_metabuf;
--	}
--
--	if (vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER &&
--	    !(h->h_clusterbits >> Z_EROFS_FRAGMENT_INODE_BIT)) {
--		struct erofs_map_blocks map = {
--			.buf = __EROFS_BUF_INITIALIZER
--		};
--
--		vi->z_fragmentoff = le32_to_cpu(h->h_fragmentoff);
- 		err = z_erofs_do_map_blocks(inode, &map,
- 					    EROFS_GET_BLOCKS_FINDTAIL);
- 		erofs_put_metabuf(&map.buf);
--- 
-2.43.5
-
+> > Other than that, this is all successfully tested and:
+> > 
+> > Reviewed-by: Marijn Suijten <marijn.suijten@somainline.org>
+> > 
+> > >  			continue;
+> > >  
+> > >  		ctl_idx[i] = j;
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> > > index 99bd594ee0d1995eca5a1f661b15e24fdf6acf39..130f753c36338544e84a305b266c3b47fa028d84 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h
+> > > @@ -24,6 +24,7 @@ struct dpu_global_state;
+> > >   * @dspp_blks: array of dspp hardware resources
+> > >   * @hw_sspp: array of sspp hardware resources
+> > >   * @cdm_blk: cdm hardware resource
+> > > + * @has_legacy_ctls: DPU uses pre-ACTIVE CTL blocks.
+> > >   */
+> > >  struct dpu_rm {
+> > >  	struct dpu_hw_blk *pingpong_blks[PINGPONG_MAX - PINGPONG_0];
+> > > @@ -37,6 +38,7 @@ struct dpu_rm {
+> > >  	struct dpu_hw_blk *dsc_blks[DSC_MAX - DSC_0];
+> > >  	struct dpu_hw_sspp *hw_sspp[SSPP_MAX - SSPP_NONE];
+> > >  	struct dpu_hw_blk *cdm_blk;
+> > > +	bool has_legacy_ctls;
+> > >  };
+> > >  
+> > >  struct dpu_rm_sspp_requirements {
+> > > 
+> > > -- 
+> > > 2.39.5
+> > > 
+> 
+> -- 
+> With best wishes
+> Dmitry
 
