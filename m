@@ -1,95 +1,104 @@
-Return-Path: <linux-kernel+bounces-530166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98090A42FF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C41BA42FFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34DFD17AE51
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CE77169EBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3991F204C24;
-	Mon, 24 Feb 2025 22:21:15 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFBA2045A4;
+	Mon, 24 Feb 2025 22:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="maOIQzSv"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD20C1FC0E0;
-	Mon, 24 Feb 2025 22:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954F22571D0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740435674; cv=none; b=sir88/98adb/sbY72/+zyPL8TOw4C8dJuhdrNRVrVenParAZQHv5IReutKRcsJ4jZvnFpOwuJL88LyM1B7pod7FZyziZEqxwRPQeglLlLJdXT63nkJ5TP680iwpiBdbqr7oEC33zvg5xjkWRj2l8A5QvtkwzZIWYQv7Hw08NiZk=
+	t=1740435808; cv=none; b=b7am/Ei0ikC2b5M7t/gWHle+jZrSX8RdRhUS9EdbQIblF2BO8mRdlsITYt1kMfChbVtcN8/tBzpkAeJlcF3bL0frx6T2IPwVbQkauGvUF+7ns2ocUoPqRH6jHwnFR/bwxNdkwKvKxMzh1jF3EFECuJke1vKghwi5KLQc+nuC850=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740435674; c=relaxed/simple;
-	bh=LrD5cFP6XRskhPKi5A3NNkORWlC7VdNKTXufpCXDwkk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HxI07xg2+EjC8qXDMSO1qwrhGThauLinK+v+VNIl0qvynvSM13Frk06b5Qq6Nbu4dKW5Vzf7nAiKLsqnzEeMBVj7ajIL3UETg2MaKgaD1apLyTt6HpxTkqXOv65wRTAd2zJc5GYpEZIfUZ43+FirGr5FLBQrk9ccnIPax8LaTrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 701C6C4CED6;
-	Mon, 24 Feb 2025 22:21:11 +0000 (UTC)
-Date: Mon, 24 Feb 2025 17:21:47 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, bpf <bpf@vger.kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org, "Masami
- Hiramatsu" <mhiramat@kernel.org>, "Mark Rutland" <mark.rutland@arm.com>,
- "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>, "Andrew Morton"
- <akpm@linux-foundation.org>, "Peter Zijlstra" <peterz@infradead.org>,
- "Linus Torvalds" <torvalds@linux-foundation.org>, "Masahiro Yamada"
- <masahiroy@kernel.org>, "Nathan Chancellor" <nathan@kernel.org>, "Nicolas
- Schier" <nicolas@fjasle.eu>, "Zheng Yejian" <zhengyejian1@huawei.com>,
- "Martin Kelly" <martin.kelly@crowdstrike.com>, "Christophe Leroy"
- <christophe.leroy@csgroup.eu>, "Josh Poimboeuf" <jpoimboe@redhat.com>,
- "Heiko Carstens" <hca@linux.ibm.com>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>, "Vasily Gorbik"
- <gor@linux.ibm.com>, "Alexander Gordeev" <agordeev@linux.ibm.com>
-Subject: Re: [PATCH v5 2/6] scripts/sorttable: Have mcount rela sort use
- direct values
-Message-ID: <20250224172147.1de3fda5@gandalf.local.home>
-In-Reply-To: <893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com>
-References: <20250218195918.255228630@goodmis.org>
-	<20250218200022.538888594@goodmis.org>
-	<893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1740435808; c=relaxed/simple;
+	bh=qmooO3AxZOs0ohQpJ4yo5y4Yi0jidhmcv0CFom4ARm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CpRtqy3O8V0ztxmAqZ6gG8yKFsMRtUcpamWWdvRzypYh2sIPg/nzED7NILNzaOVpm0uedUFr/Y4pe+TDQo925Go5klpRXDpHjpNPALCCTWYQJKmNpPwtGenDKHk+b7Fuvf4+Qc6lqNKJHR+W7OZKxv2Xzj57PEy4jMTb8ho1q7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=maOIQzSv; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 24 Feb 2025 14:23:05 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740435794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MytlJ2KGkzQ+RhdKVpvDJ1qR08yPF+KOv8QGFyqerQs=;
+	b=maOIQzSvuUUmYk2SXkgSfup4ufEe8vHbBJ1FJO81wU3bAJfRUFrahN1yRRh9znIPT/o5TV
+	WoB9p4K7A8zLUuGiNJ6GriZ8DtNyq3pPrqY+zl2aOneRbzq2EQxRQ9awhbiIE8t+IhjSRU
+	HIruwKqVpJtTTT00ZjwDqRmDWWixvoY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: Sebastian Ott <sebott@redhat.com>
+Cc: Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Cornelia Huck <cohuck@redhat.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] KVM: arm64: writable MIDR/REVIDR
+Message-ID: <Z7zxSdW5b6rqe2bt@linux.dev>
+References: <20250218163443.32836-1-sebott@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250218163443.32836-1-sebott@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 24 Feb 2025 22:10:53 +0100
-"Arnd Bergmann" <arnd@arndb.de> wrote:
+Hi Sebastian,
 
-> This is what I get on arm64 randconfig builds using clang after your
-> patch:
+On Tue, Feb 18, 2025 at 05:34:39PM +0100, Sebastian Ott wrote:
+> Based on prior discussion [1] this series allows VMMs to change
+> MIDR/REVIDR to enable migration between machines that differ in
+> these registers. Since these are used for errata handling the
+> errata management series [2] is a prerequisite for this one.
 > 
->   failed to sort mcount 'Expected 24260 mcount elements but found 0
->   ': vmlinux
->   Failed to sort kernel tables
-> 
-> I have not tried to understand what your patch does. See the attached
-> defconfig for a reproducer.
+> changes for V3:
+> * handle VPIDR_EL2 as part of vcpu ctxt - thanks Oliver!
 
-Hmm, I haven't tried building this with clang.
+Thanks for respinning. While your changes are looking good, as I got
+ready to apply this series I wound up peeling the onion a bit further
+and have a few more concerns:
 
-Can you compile without that commit, run and give me the output from these
-two programs:
+ - Current KVM allows guests to read SMIDR_EL1 despite the fact that we
+   do not support SME (this is part of TID1 traps)
 
- ./dump_elf_sym vmlinux __start_mcount_loc __stop_mcount_loc
- ./dump_elf_rela vmlinux .rela.dyn
+ - The "invariant" values that KVM presents to userspace originate from
+   the boot CPU, not the CPU that resets the ID registers for a VM
 
-If the second one fails, remove the '.rela.dyn' and see what that shows.
+ - A VMM that wants to present big-little can do so on current KVM by
+   affining vCPUs, but cannot with this series
 
- https://rostedt.org/code/dump_elf_sym.c
- https://rostedt.org/code/dump_elf_rela.c
+All of this is to say, I think your series is going to collide with
+the pre-existing pile of crap we have. I'm going to pick up these
+changes and rework them so we can send a fix for #1 to stable trees and
+(hopefully) avoid breaking the old "invariant" behavior.
 
+I'll post what I have as soon as I test it, hopefully we can get this
+shaped up for 6.15.
 
 Thanks,
-
--- Steve
+Oliver
 
