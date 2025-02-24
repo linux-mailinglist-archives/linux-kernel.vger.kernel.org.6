@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-528522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63739A4188F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:17:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D573DA4188B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:16:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326493BAB3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:14:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 375D33B9490
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED8125A2D5;
-	Mon, 24 Feb 2025 09:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C692586D0;
+	Mon, 24 Feb 2025 09:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eq5ynI/H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1qu1IiW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1538224BBF2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1214824BBF0;
 	Mon, 24 Feb 2025 09:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740388144; cv=none; b=CluUICEX8eHDBInpch8bX9q3ucwkHM3khECXbHW/XEJ3BY15jiz8BzkggHfG29fFkz8DdAvoKjW8zeC6aZTwmmzr/gsrZB0pyXDGR5XNxfsAcTZ2WplsOkg52ByVYpdgV1X4KlOJ3zWCdtM+X/GDJBmA/eC6Um6x2Klx7wfSlwo=
+	t=1740388144; cv=none; b=A3VpHzd17A276aEJwo6zR6VByPlab7ZnXLdLvqnkhBK+TnjNH2bCIdj8MLsKg+X7kEVglrwFOHsm5sJ8tC0D+YH0VOMzXqQp2boimTd4TIDmkuFCVeViZMBW0YOHVc+sxA5ZYm6qakXE6PG4PiTnryb+IFbcuvhhrf2fmdORkP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740388144; c=relaxed/simple;
-	bh=07FCqO/8Qxm5lSe7sCG8lMGcmip/PZdZVuFoGS9C284=;
+	bh=dA/lwXoRISFanQzES1j4+YBcD/qyLfU1x/1xle+1MdY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mvJKuDIgbXOzfpxQM6ksAw2pbxeTUsNR6LGKoxtT+U53HgACEjGcjgE9Kto9ejzpEhT+mNRFTkuuxZGNHzHCStA/+07eDJLUvcKIMnPuhPQNt2q7bOB4sYx3ICBzLn6Sw4LVW/Qv/N4ltecqLNpi96kAXje8pZqGwEd8Sov1Q7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eq5ynI/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F4D1C2BCC7;
+	 MIME-Version; b=rwEF6+gF6mRtrC6Tr1QPzngRCI/NhD9hgwVRsONWyEWtQNk68JOescXfwEXlosvpt4uNFh/j1YuuOsN5Yrzyl41Huov6QVhATu8bOb/5PkVGPusLh/RNIPt8AgRtSRUs2/nMhlU9RkU8s9b80T5pSm/r9WgmNE59xmcaZcnOvvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1qu1IiW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A117C2BCC6;
 	Mon, 24 Feb 2025 09:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1740388143;
-	bh=07FCqO/8Qxm5lSe7sCG8lMGcmip/PZdZVuFoGS9C284=;
+	bh=dA/lwXoRISFanQzES1j4+YBcD/qyLfU1x/1xle+1MdY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Eq5ynI/HGk1dxhEr8zv3/xWVea4TpFu3HvJ5N1q08cZ4pRMVAia2IRwrxqaoseNEN
-	 RgklGXBnC0iFL8v7MjW7uqUWFyAaCMqd9a504xOt05hWMaigjMdpG5MAqg1PoQWoqQ
-	 U/A10Ya/o2Xsxo15hcS9L+/Hinuja2HnpZ1GMAQhMtPN73g0dBVVLRv9Ig6DXwZEXl
-	 JgpmlWla4pApo+/tx7je9UG9EUp6swW3aDbNImrgZArtAyLjcgGcn5S/6c9ratmo5O
-	 WPqMHczHKHLMdrS6DMaUiBASTCf3i585Hqqer0J5hqlVr+2Ayzfj36vYUq5YoWAoI2
-	 u2b5pGoKryaZw==
+	b=P1qu1IiWGCGCgSi8NxNsQqFqHYTxZx5GQab2cZ8n4BrUUM/J+yZyeJIDaQNRAykcR
+	 bCh+6QTRQUonMyP4doygMsjjz7vu/1ehWsSq/eCA+qr0kSuCRaaV8LGHBtx9iCdJLs
+	 fe5R/Ij3TCxcKe0fN2jU9JvuU74Q9LhVQGe7XZiY2wfSbW2L2AK9ej3Z89AXUrTCzk
+	 p/fgr4lvxBd7lGj5a3Ti0uwwJtgqFau5dbjMsAT15QVPZTFVriAFZQ1awNYTuRiu13
+	 Dxcw8InNDVPBYSAKF7VkM1s3Ei69ZX5aUelLsxPtkJ4z6NwN+wk1B0/nGAwZHXz7Sq
+	 e7oZXtBvNoGSA==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tmUST-00000003p5j-35Dy;
+	id 1tmUST-00000003p5n-3CKt;
 	Mon, 24 Feb 2025 10:09:01 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
@@ -50,9 +50,9 @@ To: Linux Doc Mailing List <linux-doc@vger.kernel.org>,
 Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
 	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 35/39] scripts/kernel-doc.py: some coding style cleanups
-Date: Mon, 24 Feb 2025 10:08:41 +0100
-Message-ID: <cad306720aa8a4e86df8b8d584aa03462b791bac.1740387599.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v2 36/39] scripts/kernel-doc: switch to use kernel-doc.py
+Date: Mon, 24 Feb 2025 10:08:42 +0100
+Message-ID: <67b7ece3fae241361e0ae2fdd1536b34dbacf8b2.1740387599.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1740387599.git.mchehab+huawei@kernel.org>
 References: <cover.1740387599.git.mchehab+huawei@kernel.org>
@@ -65,182 +65,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Remove some warnings generated by pylint. Among them, cleanup
-TODO messages, removing the ones that were already handled,
-as now all TODOs that are required to be fully compatible with
-kernel-doc were already addressed.
-
-So, the existing TODOs are pointing possible future cleanups and
-improvements.
+Now that all features are in place, change the kernel-doc alias
+to point to kernel-doc.py.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- scripts/kernel-doc.py           | 10 +++++-----
- scripts/lib/kdoc/kdoc_files.py  |  1 -
- scripts/lib/kdoc/kdoc_output.py |  1 +
- scripts/lib/kdoc/kdoc_parser.py | 30 +++++++-----------------------
- scripts/lib/kdoc/kdoc_re.py     |  3 ++-
- 5 files changed, 15 insertions(+), 30 deletions(-)
+ scripts/kernel-doc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
-index 7683fb4ffc59..5e1e1839438c 100755
---- a/scripts/kernel-doc.py
-+++ b/scripts/kernel-doc.py
-@@ -1,5 +1,5 @@
- #!/usr/bin/env python3
--# pylint: disable=C0103,
-+# pylint: disable=C0103,R0915
- # Copyright(c) 2025: Mauro Carvalho Chehab <mchehab@kernel.org>.
- # SPDX-License-Identifier: GPL-2.0
- 
-@@ -167,7 +167,7 @@ def main():
- 
-     # Those are valid for all 3 types of filter
-     parser.add_argument("-n", "-nosymbol", "--nosymbol", action='append',
--                         help=NOSYMBOL_DESC)
-+                        help=NOSYMBOL_DESC)
- 
-     parser.add_argument("-D", "-no-doc-sections", "--no-doc-sections",
-                         action='store_true', help="Don't outputt DOC sections")
-@@ -211,9 +211,9 @@ def main():
-     kfiles.parse(args.files, export_file=args.export_file)
- 
-     for t in kfiles.msg(enable_lineno=args.enable_lineno, export=args.export,
--                          internal=args.internal, symbol=args.symbol,
--                          nosymbol=args.nosymbol,
--                          no_doc_sections=args.no_doc_sections):
-+                        internal=args.internal, symbol=args.symbol,
-+                        nosymbol=args.nosymbol,
-+                        no_doc_sections=args.no_doc_sections):
-         msg = t[1]
-         if msg:
-             print(msg)
-diff --git a/scripts/lib/kdoc/kdoc_files.py b/scripts/lib/kdoc/kdoc_files.py
-index e130e5e32806..fc14bd6f9863 100755
---- a/scripts/lib/kdoc/kdoc_files.py
-+++ b/scripts/lib/kdoc/kdoc_files.py
-@@ -11,7 +11,6 @@ import argparse
- import logging
- import os
- import re
--import sys
- 
- from kdoc_parser import KernelDoc
- from kdoc_output import OutputFormat
-diff --git a/scripts/lib/kdoc/kdoc_output.py b/scripts/lib/kdoc/kdoc_output.py
-index d0cb7f511f87..487068753b53 100755
---- a/scripts/lib/kdoc/kdoc_output.py
-+++ b/scripts/lib/kdoc/kdoc_output.py
-@@ -234,6 +234,7 @@ class OutputFormat:
-     def out_struct(self, fname, name, args):
-         """Outputs a struct"""
- 
-+
- class RestFormat(OutputFormat):
-     """Consts and functions used by ReST output"""
- 
-diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-index 6cebc32e18f2..cf4bf7cedcbc 100755
---- a/scripts/lib/kdoc/kdoc_parser.py
-+++ b/scripts/lib/kdoc/kdoc_parser.py
-@@ -130,7 +130,7 @@ class KernelDoc:
-         # Place all potential outputs into an array
-         self.entries = []
- 
--    # TODO: rename to emit_message
-+    # TODO: rename to emit_message after removal of kernel-doc.pl
-     def emit_warning(self, ln, msg, warning=True):
-         """Emit a message"""
- 
-@@ -157,19 +157,6 @@ class KernelDoc:
-         name = self.entry.section
-         contents = self.entry.contents
- 
--        # TODO: we can prevent dumping empty sections here with:
--        #
--        #    if self.entry.contents.strip("\n"):
--        #       if start_new:
--        #           self.entry.section = self.section_default
--        #           self.entry.contents = ""
--        #
--        #        return
--        #
--        # But, as we want to be producing the same output of the
--        # venerable kernel-doc Perl tool, let's just output everything,
--        # at least for now
--
-         if type_param.match(name):
-             name = type_param.group(1)
- 
-@@ -205,7 +192,7 @@ class KernelDoc:
-             self.entry.section = self.section_default
-             self.entry.contents = ""
- 
--    # TODO: rename it to store_declaration
-+    # TODO: rename it to store_declaration after removal of kernel-doc.pl
-     def output_declaration(self, dtype, name, **args):
-         """
-         Stores the entry into an entry array.
-@@ -225,13 +212,13 @@ class KernelDoc:
-         args["type"] = dtype
-         args["warnings"] = self.entry.warnings
- 
--        # TODO: use colletions.OrderedDict
-+        # TODO: use colletions.OrderedDict to remove sectionlist
- 
-         sections = args.get('sections', {})
-         sectionlist = args.get('sectionlist', [])
- 
-         # Drop empty sections
--        # TODO: improve it to emit warnings
-+        # TODO: improve empty sections logic to emit warnings
-         for section in ["Description", "Return"]:
-             if section in sectionlist:
-                 if not sections[section].rstrip():
-@@ -635,7 +622,9 @@ class KernelDoc:
- 
-             # Replace macros
-             #
--            # TODO: it is better to also move those to the NestedMatch logic,
-+            # TODO: use NestedMatch for FOO($1, $2, ...) matches
-+            #
-+            # it is better to also move those to the NestedMatch logic,
-             # to ensure that parenthesis will be properly matched.
- 
-             (Re(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
-@@ -902,7 +891,6 @@ class KernelDoc:
-             self.dump_struct(ln, prototype)
-             return
- 
--        # TODO: handle other types
-         self.output_declaration(self.entry.decl_type, prototype,
-                                 entry=self.entry)
- 
-@@ -1670,10 +1658,6 @@ class KernelDoc:
-                                           self.st_inline_name[self.inline_doc_state],
-                                           line)
- 
--                    # TODO: not all states allow EXPORT_SYMBOL*, so this
--                    # can be optimized later on to speedup parsing
--                    self.process_export(self.config.function_table, line)
--
-                     # Hand this line to the appropriate state handler
-                     if self.state == self.STATE_NORMAL:
-                         self.process_normal(ln, line)
-diff --git a/scripts/lib/kdoc/kdoc_re.py b/scripts/lib/kdoc/kdoc_re.py
-index 45ddba8090e5..de362ec38db7 100755
---- a/scripts/lib/kdoc/kdoc_re.py
-+++ b/scripts/lib/kdoc/kdoc_re.py
-@@ -131,7 +131,8 @@ class NestedMatch:
-     will ignore the search string.
-     """
- 
--    # TODO:
-+    # TODO: make NestedMatch handle multiple match groups
-+    #
-     # Right now, regular expressions to match it are defined only up to
-     #       the start delimiter, e.g.:
-     #
+diff --git a/scripts/kernel-doc b/scripts/kernel-doc
+index f175155c1e66..3b6ef807791a 120000
+--- a/scripts/kernel-doc
++++ b/scripts/kernel-doc
+@@ -1 +1 @@
+-kernel-doc.pl
+\ No newline at end of file
++kernel-doc.py
+\ No newline at end of file
 -- 
 2.48.1
 
