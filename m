@@ -1,140 +1,228 @@
-Return-Path: <linux-kernel+bounces-530015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2E7A42DB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:26:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13AEA42DBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3B4188C393
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8946018950A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12666242909;
-	Mon, 24 Feb 2025 20:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2DF25A325;
+	Mon, 24 Feb 2025 20:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L+cEEI41"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5aE8D2I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9871620AF64
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83D6243374;
+	Mon, 24 Feb 2025 20:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428763; cv=none; b=iUTkwFg9TRNQnr6PLh3w1cLqHIR1VBM/w9eOf5+GqgQJzVmsvRxo/Uz6WqxlT5gkvPjk1K8z0GoKTkYVJ/nuwARhQ4WpUDk4MMjk+IICX9o+rZ+JsvFDLzLZX/NLGg9PMUe1QWlyJ+PspFkaQ4Y51pqQSZufJBiOkjg0J1A3XJY=
+	t=1740428772; cv=none; b=Y7y947rIVvmbF9e/GoqbTJYiV3MPbQIT1YNmSZxO1D+ILfwwOJCe8hg71AZjkn26IUBHgSB+jXy/4/qmn9jE3FRE2r+5wW1NQ21LkbJ4MPE5EBKWMZtO6g+p+QK3qtN1BZ4sSfUKFKhyFRGbZLjdCH2TRK5s0N+fAZYdD6cXafI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428763; c=relaxed/simple;
-	bh=1j/g1K7Ja5vbzknnuLCVHa/8XApl+L1E/ioFi17G0B4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m0xoJmo+F+W8y6nE0pIO+sQJ8+bZOGHl7VYCYstHhVEPIJterqS4F51RtmC7zwDuZlRGO1UmVXfkpDjV5QcDXZcv5PvFA+yyzTYfAmnT73UMa/O3p6tITtVhF0wCJXmxyzThwJSJ7rps+k++7Kl1M8IJ/454x3Y+7YRuI7YO1HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L+cEEI41; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOgvQ029304
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:26:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	65ZKk2GtEBap0WC6JfQnvOCcYk0q6mp1fm75hAwKexE=; b=L+cEEI41C6nWNjyv
-	x3fE+tlVbbb1p6Qn/6V/hxl/wNoyArBMgKbJPPbfVEQq+jgfI8bADBOjsP8DPFVj
-	6mdOXo1i26JUOCe3akULpU3cnUlQAGO1VV7OMS3xdfZYRC8WacaOp63oqDhvSk0+
-	3EFRGZ86ccJfmJ/1cckB6ats39mRFy1Cs4DKSFqrSLAZCp1eU1kGpPg/wvsiVrmd
-	QbN1oZ5xIb2apWMxgMpLNKsmAHU2/QquJ2nRpqd1x4GpaZyeYlRsNtifNlFRloL4
-	ADeTOYfGHraIn4T5yy5jtWd97LpB4YVizyIFzfylEBDLtq42XxF3PzpdIMJEGImU
-	dozm6g==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y49eem5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:25:59 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6e65bc4f2d8so7260056d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:25:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740428758; x=1741033558;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=65ZKk2GtEBap0WC6JfQnvOCcYk0q6mp1fm75hAwKexE=;
-        b=g9gpzZfuifyJdMupu0Scjz6RK6qstxUolmvA07P0CxKg/RWwj7Pmv6urvTGiRkwd9y
-         2iLUEiwZq18sU+G9R2f6mbOrvcpcua6lHv0PCHQn3zUVY2txojFEb9vlJIu8MYYJGmvP
-         z8ODt8eB+CTS9jcSa9rjkZVreEftcEMQyJu0iOs38d2orUpj3hDcx9+oHuuLKST6rJbj
-         6Vb/NICaAcu2MaAV5lQNs+ybulmA8+48BNXoMpbNqGVZl6DhYa03BH7wui79KiDw3aul
-         Rti1xz+3mDYGiIdLUMQKJOMpU3oT/uks3EBwE55HqDSXzmwS2U55Ui0WyLAhGPP1bjGk
-         lvIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWORIeUjzbuPHZW7PjdEH/E79yuzaY5UVOFwLPb8FkcXlZUcweCjqrK2eex76CN2QRIjUgUnnmtwwB1sYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl37p/KAUj0MCOgHpMqSvoYvCRB1UGJPd+pxyTx/+LLWI9vPV+
-	Pjlc/uPOq31TOFkZ4PQzxKoZjivQYDfP6ylqI7tF2F/gG9tSNy0e44fioJY4QkKskG6vREBUdjS
-	uCOBDwkwgw/+clQab7Bkpwz2LoCrxc9921/r8ePRRXDM35euOyC9Sdlt7J4uyZI4=
-X-Gm-Gg: ASbGncveIpFfhG8KRekbwclQUWeJlXxesx/0H3DZk1uO8Wrsy/BpyYDuqujp02xQkYe
-	9tnmZI8vSaTuh8aHN1Ne3XDObw6HCa5iJ5/TPShtBv9ayoJmmv7KpCokiQgpF0Z5WSFpTshBIeh
-	nVC6mPb8Xi9BEzaeoInEz1pDDPfJhPIvyxGLrIkQLYty1Ll2EAUB8uxfN86SDiXEmCh2wpo2qZm
-	1KFDVyQmNGZIRopiyB2q+CQPLWA9qTkpzp27axOcEU/9jmpWZGoaZrydOflm1gRnH8SGq1oKipx
-	LUp/fJBuBZjw+w6Xcckysy6l2BxFqvlBz6dST6Lj5MV70UIbkYj9qeF7vdNw7CPe4ZAFOQ==
-X-Received: by 2002:ad4:594d:0:b0:6e6:5d69:ec2f with SMTP id 6a1803df08f44-6e6ae9d2e05mr63774606d6.8.1740428758384;
-        Mon, 24 Feb 2025 12:25:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFfKUxFcIDY7voAldnprBxDRpcJ8vSl3Q4jTMO+GbQSLIoMZ1VG0lqyLwhpCWUnpAzTaWApvQ==
-X-Received: by 2002:ad4:594d:0:b0:6e6:5d69:ec2f with SMTP id 6a1803df08f44-6e6ae9d2e05mr63774336d6.8.1740428757890;
-        Mon, 24 Feb 2025 12:25:57 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1da1c2dsm17830366b.77.2025.02.24.12.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 12:25:57 -0800 (PST)
-Message-ID: <6fe42573-7e98-47d1-8815-c11d44671395@oss.qualcomm.com>
-Date: Mon, 24 Feb 2025 21:25:54 +0100
+	s=arc-20240116; t=1740428772; c=relaxed/simple;
+	bh=6DkvP5Utu3fZcN+GtpoN9thgA+2c0lgdkBnrvG1XS/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAQjxF7zES8liDMJYKJMBYe2J0oLFqjdoo69sXSfudR9i4rCiB7YIr1WupevozWq06gQGBjngAxYT8SYqGuLtCToxPqYVfGb+vxYwJiiaDMONqiWc/wLCkyLcLOhlYtmkPVALBomJz8fFad2gAWmdDGDc2Q+o/h0tDGl+PJDOHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5aE8D2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48595C4CEE7;
+	Mon, 24 Feb 2025 20:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740428770;
+	bh=6DkvP5Utu3fZcN+GtpoN9thgA+2c0lgdkBnrvG1XS/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N5aE8D2IQIIWf2OcyMAsmlJRWU5ap7dVpPfjyrb3hzcQzj+HKypWylNlX8I1Z4ttt
+	 Zi20Qsh0mg1YKpMLhB6s+7XjmKRDtRBdnMe00Y4GiS8W9CwsRV9tWfZ2OPeYROHnDC
+	 ZZUVTi75g9MsDWymVPkDMKCEE/BRxziODJAwoFwA/zW/1T1Bdgj1uuiGb85QOTc9PF
+	 V58WD35yyGueJo0YvJjXaL7VFLqOx5VaaPdDS5jAtCPd5RHmG3xTq6dSniTPgudtCO
+	 8eB8Rlnp7YyMCLBDnGU1SpcpqCo9OrpkO/jxCV57on9/1PKo/cuzcv0RChqMnu5DK1
+	 szv8TBvchL1Hw==
+Date: Mon, 24 Feb 2025 12:26:09 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 03/11] xfs: Refactor xfs_reflink_end_cow_extent()
+Message-ID: <20250224202609.GH21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: sdm632-fairphone-fp3: Enable
- display and GPU
-To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
-        phone-devel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20250222-fp3-display-v1-0-ccd812e16952@lucaweiss.eu>
- <20250222-fp3-display-v1-4-ccd812e16952@lucaweiss.eu>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250222-fp3-display-v1-4-ccd812e16952@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: B0fplJwNDa0ExkvgOU7JBXqzL7gS_xTX
-X-Proofpoint-GUID: B0fplJwNDa0ExkvgOU7JBXqzL7gS_xTX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_10,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- impostorscore=0 spamscore=0 mlxlogscore=999 lowpriorityscore=0 mlxscore=0
- adultscore=0 malwarescore=0 clxscore=1015 phishscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2502240129
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250213135619.1148432-4-john.g.garry@oracle.com>
 
-On 22.02.2025 6:58 PM, Luca Weiss wrote:
-> Add the description for the display panel found on this phone.
-> Unfortunately the LCDB module on PMI632 isn't yet supported upstream so
-> we need to use a dummy regulator-fixed in the meantime.
+On Thu, Feb 13, 2025 at 01:56:11PM +0000, John Garry wrote:
+> Refactor xfs_reflink_end_cow_extent() into separate parts which process
+> the CoW range and commit the transaction.
 > 
-> And with this done we can also enable the GPU and set the zap shader
-> firmware path.
+> This refactoring will be used in future for when it is required to commit
+> a range of extents as a single transaction, similar to how it was done
+> pre-commit d6f215f359637.
 > 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 > ---
+>  fs/xfs/xfs_reflink.c | 73 ++++++++++++++++++++++++++------------------
+>  1 file changed, 43 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+> index 59f7fc16eb80..8428f7b26ee6 100644
+> --- a/fs/xfs/xfs_reflink.c
+> +++ b/fs/xfs/xfs_reflink.c
+> @@ -786,35 +786,19 @@ xfs_reflink_update_quota(
+>   * requirements as low as possible.
+>   */
+>  STATIC int
+> -xfs_reflink_end_cow_extent(
+> +xfs_reflink_end_cow_extent_locked(
+> +	struct xfs_trans	*tp,
+>  	struct xfs_inode	*ip,
+>  	xfs_fileoff_t		*offset_fsb,
+>  	xfs_fileoff_t		end_fsb)
+>  {
+>  	struct xfs_iext_cursor	icur;
+>  	struct xfs_bmbt_irec	got, del, data;
+> -	struct xfs_mount	*mp = ip->i_mount;
+> -	struct xfs_trans	*tp;
+>  	struct xfs_ifork	*ifp = xfs_ifork_ptr(ip, XFS_COW_FORK);
+> -	unsigned int		resblks;
+>  	int			nmaps;
+>  	bool			isrt = XFS_IS_REALTIME_INODE(ip);
+>  	int			error;
+>  
+> -	resblks = XFS_EXTENTADD_SPACE_RES(mp, XFS_DATA_FORK);
+> -	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, resblks, 0,
+> -			XFS_TRANS_RESERVE, &tp);
+> -	if (error)
+> -		return error;
+> -
+> -	/*
+> -	 * Lock the inode.  We have to ijoin without automatic unlock because
+> -	 * the lead transaction is the refcountbt record deletion; the data
+> -	 * fork update follows as a deferred log item.
+> -	 */
+> -	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> -	xfs_trans_ijoin(tp, ip, 0);
+> -
+>  	/*
+>  	 * In case of racing, overlapping AIO writes no COW extents might be
+>  	 * left by the time I/O completes for the loser of the race.  In that
+> @@ -823,7 +807,7 @@ xfs_reflink_end_cow_extent(
+>  	if (!xfs_iext_lookup_extent(ip, ifp, *offset_fsb, &icur, &got) ||
+>  	    got.br_startoff >= end_fsb) {
+>  		*offset_fsb = end_fsb;
+> -		goto out_cancel;
+> +		return 0;
+>  	}
+>  
+>  	/*
+> @@ -837,7 +821,7 @@ xfs_reflink_end_cow_extent(
+>  		if (!xfs_iext_next_extent(ifp, &icur, &got) ||
+>  		    got.br_startoff >= end_fsb) {
+>  			*offset_fsb = end_fsb;
+> -			goto out_cancel;
+> +			return 0;
+>  		}
+>  	}
+>  	del = got;
+> @@ -846,14 +830,14 @@ xfs_reflink_end_cow_extent(
+>  	error = xfs_iext_count_extend(tp, ip, XFS_DATA_FORK,
+>  			XFS_IEXT_REFLINK_END_COW_CNT);
+>  	if (error)
+> -		goto out_cancel;
+> +		return error;
+>  
+>  	/* Grab the corresponding mapping in the data fork. */
+>  	nmaps = 1;
+>  	error = xfs_bmapi_read(ip, del.br_startoff, del.br_blockcount, &data,
+>  			&nmaps, 0);
+>  	if (error)
+> -		goto out_cancel;
+> +		return error;
+>  
+>  	/* We can only remap the smaller of the two extent sizes. */
+>  	data.br_blockcount = min(data.br_blockcount, del.br_blockcount);
+> @@ -882,7 +866,7 @@ xfs_reflink_end_cow_extent(
+>  		error = xfs_bunmapi(NULL, ip, data.br_startoff,
+>  				data.br_blockcount, 0, 1, &done);
+>  		if (error)
+> -			goto out_cancel;
+> +			return error;
+>  		ASSERT(done);
+>  	}
+>  
+> @@ -899,17 +883,46 @@ xfs_reflink_end_cow_extent(
+>  	/* Remove the mapping from the CoW fork. */
+>  	xfs_bmap_del_extent_cow(ip, &icur, &got, &del);
+>  
+> -	error = xfs_trans_commit(tp);
+> -	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+> -	if (error)
+> -		return error;
+> -
+>  	/* Update the caller about how much progress we made. */
+>  	*offset_fsb = del.br_startoff + del.br_blockcount;
+>  	return 0;
+> +}
+>  
+> -out_cancel:
+> -	xfs_trans_cancel(tp);
+> +
+> +/*
+> + * Remap part of the CoW fork into the data fork.
+> + *
+> + * We aim to remap the range starting at @offset_fsb and ending at @end_fsb
+> + * into the data fork; this function will remap what it can (at the end of the
+> + * range) and update @end_fsb appropriately.  Each remap gets its own
+> + * transaction because we can end up merging and splitting bmbt blocks for
+> + * every remap operation and we'd like to keep the block reservation
+> + * requirements as low as possible.
+> + */
+> +STATIC int
+> +xfs_reflink_end_cow_extent(
+> +	struct xfs_inode	*ip,
+> +	xfs_fileoff_t		*offset_fsb,
+> +	xfs_fileoff_t		end_fsb)
+> +{
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +	struct xfs_trans	*tp;
+> +	unsigned int		resblks;
+> +	int			error;
+> +
+> +	resblks = XFS_EXTENTADD_SPACE_RES(mp, XFS_DATA_FORK);
+> +	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, resblks, 0,
+> +			XFS_TRANS_RESERVE, &tp);
+> +	if (error)
+> +		return error;
+> +	xfs_ilock(ip, XFS_ILOCK_EXCL);
+> +	xfs_trans_ijoin(tp, ip, 0);
+> +
+> +	error = xfs_reflink_end_cow_extent_locked(tp, ip, offset_fsb, end_fsb);
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Overly long line, but otherwise looks fine.  With that fixed,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-Konrad
+--D
+
+> +	if (error)
+> +		xfs_trans_cancel(tp);
+> +	else
+> +		error = xfs_trans_commit(tp);
+>  	xfs_iunlock(ip, XFS_ILOCK_EXCL);
+>  	return error;
+>  }
+> -- 
+> 2.31.1
+> 
+> 
 
