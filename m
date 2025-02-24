@@ -1,207 +1,80 @@
-Return-Path: <linux-kernel+bounces-529635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39473A42903
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:11:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264D9A428F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204DB19C4836
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B113717E28B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277BA267720;
-	Mon, 24 Feb 2025 17:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42CEA2641C7;
+	Mon, 24 Feb 2025 16:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lpDm5H4s"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Bsh9uTGi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD14B264A9E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B5D26460A;
+	Mon, 24 Feb 2025 16:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740416577; cv=none; b=lBXsO7SHVw3Gr9Sl9Rw3NW6ROdiV9ZGPSzZS0131+GAYMo+/6ynHpJIX1FxJGdlt0eVY6rTr26l5ZrP/RN3YxIZ6hd8Wu2xKAOyFluEdLJE9qb42oU81pZTS5NGWfBEAVkn3RJrCFoSOKgC2AgxpIgUqmsuNsAMxDuznm0jYWzo=
+	t=1740416372; cv=none; b=THSOvo+Z6T2VKnAQl2K2Kx3MF0tB8TMY6754eSQ4UVVFmVyC59EuMxZjyAX5QpONoQIk2EF6rjuBztdMV9WuVcreIoiU8tbdb88k8kumHJG/6jHFYcjR30DG+Odyyurt77D/wmrl9d0SySSVCOduarQYGlZQUiarPV8RFyiknt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740416577; c=relaxed/simple;
-	bh=e1HU03QaEH/WJqwMrSHwDYP8oWlp/FRk7I/D+9cATTo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=anxNUEGVZL/kse+IrteziPjAHBRpyWytHcAi2Ealcb8MPCuZz1jfvLfcsl5uhgExYlslW0xsoi1uyhuiqF4q2ADY4ILiBZuFLp/YaRU+I7jQnTzoO99szVOLZx6NO5jH4ESQ9lw7as2fZrwwo3nlH/njZaU3tMcrOunss5CZhSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lpDm5H4s; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740416573;
+	s=arc-20240116; t=1740416372; c=relaxed/simple;
+	bh=lHuXjtnGIwA8Zzr3bT7RPQh03xIe4TvMRJ0gk9Qtcas=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I0VbBGGsZvgtUfAYxG6nby70HQSvXaBi4BHQjP1mlMXUQIQkxzwFkVBac4iOgtJ8bMQXCNippMDuQuLH0DXjP+oW49l12KhijoUPKUOyC6e37R/oHYIgB34WpuGry7T84wodL8aeZ2r9rLOR6KFSMAopsj4pb3JQ3+700t6NAUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=Bsh9uTGi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDEE5C4CED6;
+	Mon, 24 Feb 2025 16:59:30 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Bsh9uTGi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1740416368;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qiQKTOacPogCTZt2sF84QiGnZvXEsGlrdkRpybzF4+0=;
-	b=lpDm5H4sJdnzN0FVGveCI+7jrxzFfbnhmXhpxW3Nnuhh6TdXNlMAdIcXDFOXlU/7+yYqRC
-	kg744NhFn8Epzua9iaUK3upeY8Ab4LxungmSXp5/ewmkDWRmAHr4VDpyOQurVCcO/LyXAP
-	P5CH5gjfz8nr0fvspiPu0PQ08IjrGzs=
-From: Tao Chen <chen.dylane@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	qmo@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chen.dylane@gmail.com,
-	Tao Chen <chen.dylane@linux.dev>,
-	Tao Chen <dylane.chen@didiglobal.com>
-Subject: [PATCH bpf-next v8 5/5] selftests/bpf: Add libbpf_probe_bpf_kfunc API selftests
-Date: Tue, 25 Feb 2025 00:59:12 +0800
-Message-Id: <20250224165912.599068-6-chen.dylane@linux.dev>
-In-Reply-To: <20250224165912.599068-1-chen.dylane@linux.dev>
-References: <20250224165912.599068-1-chen.dylane@linux.dev>
+	bh=lHuXjtnGIwA8Zzr3bT7RPQh03xIe4TvMRJ0gk9Qtcas=;
+	b=Bsh9uTGiYhe1o8ZXOSqrPFWBmXQ1xZ6i4iCW91bSkJCVhH35s3W7gsgmJA0/fB2w4dJJ0f
+	jP2EMvnZ+zb0edTKNfba/gtbAuc+7d5nvexXWfUqBuaUwH9qGihPM6xFppbLWSyCSmV5x5
+	r05bEMj01G1Thw2Trn9nB15iq/P4CrI=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 022d9860 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 24 Feb 2025 16:59:28 +0000 (UTC)
+Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3f422d6e3b0so922832b6e.1;
+        Mon, 24 Feb 2025 08:59:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUxl78VYZ7bKpQ3dq+RHskNJ9GE6cuUmfLjhr8IrPXlP3V8DKtsHJqyY+RkIfff6UvbF1TjGUp5H3tjQS5IcaLP@vger.kernel.org, AJvYcCVB6jifDnSHbqvHu12VmpCA2rQhbP6IXGNux/CpeAtW53L8G2ISw9DrMbpg0eemClJrRj1iPdxS@vger.kernel.org, AJvYcCVVzMzFKdgSNT4/b6oxv6Y2MxN4nq8cM+yGXPXNBA9uZ3uosGW+Px6y9yyuGn6mA5iMJaExopCKs8SQKbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyv+i+Ac6duGTKPI5R8XNDKlBuAkfTbWJOURAHEig8fweJ0oGj
+	JCr6BBeXPlV7ScLTe09IpvWAk+h/45XAY1MakjSf2DqV/KWrXPeiHkJjqLAU1JQscQIZiLS6AvB
+	rRrVOhgm3+dx1F6BkwRt2Khq3zVk=
+X-Google-Smtp-Source: AGHT+IFtmDu5uSUGW95GD4oZE/+yQz6eG0LBmjYl0CcxM+BcvKE8kMWJ+nIwSVZEE0+psbkqclZn5gJikjdKQrHlg3k=
+X-Received: by 2002:a05:6808:2e89:b0:3f4:7a9:7bb9 with SMTP id
+ 5614622812f47-3f425a7e72emr10406901b6e.11.1740416367403; Mon, 24 Feb 2025
+ 08:59:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <6945896DD80A71BD+20250224041238.45039-1-wangyuli@uniontech.com>
+In-Reply-To: <6945896DD80A71BD+20250224041238.45039-1-wangyuli@uniontech.com>
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date: Mon, 24 Feb 2025 17:59:17 +0100
+X-Gmail-Original-Message-ID: <CAHmME9rGjwFKMhpAuWxNerRc9_0068d3k13n3wxZ8BwV_EeMHg@mail.gmail.com>
+X-Gm-Features: AWEUYZknNUYzGad3f0Uq5YaAmoyWIrddgaIGfC_iv0ceh4M9u47CYY8wOZTJJ-c
+Message-ID: <CAHmME9rGjwFKMhpAuWxNerRc9_0068d3k13n3wxZ8BwV_EeMHg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] wireguard: selftests: Cleanup CONFIG_UBSAN_SANITIZE_ALL
+To: WangYuli <wangyuli@uniontech.com>
+Cc: shuah@kernel.org, horms@kernel.org, tglx@linutronix.de, jstultz@google.com, 
+	wireguard@lists.zx2c4.com, netdev@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	zhanjun@uniontech.com, niecheng1@uniontech.com, guanwentao@uniontech.com, 
+	chenlinxuan@uniontech.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add selftests for prog_kfunc feature probing.
-
- ./test_progs -t libbpf_probe_kfuncs
- #153     libbpf_probe_kfuncs:OK
- Summary: 1/0 PASSED, 0 SKIPPED, 0 FAILED
-
-Cc: Tao Chen <dylane.chen@didiglobal.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Reviewed-by: Eduard Zingerman <eddyz87@gmail.com>
-Signed-off-by: Tao Chen <chen.dylane@linux.dev>
----
- .../selftests/bpf/prog_tests/libbpf_probes.c  | 111 ++++++++++++++++++
- 1 file changed, 111 insertions(+)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-index 4ed46ed58a7b..d8f5475a94ce 100644
---- a/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-+++ b/tools/testing/selftests/bpf/prog_tests/libbpf_probes.c
-@@ -126,3 +126,114 @@ void test_libbpf_probe_helpers(void)
- 		ASSERT_EQ(res, d->supported, buf);
- 	}
- }
-+
-+static int module_btf_fd(char *module)
-+{
-+	int fd, err;
-+	__u32 id = 0, len;
-+	struct bpf_btf_info info;
-+	char name[64];
-+
-+	while (true) {
-+		err = bpf_btf_get_next_id(id, &id);
-+		if (err)
-+			return -1;
-+
-+		fd = bpf_btf_get_fd_by_id(id);
-+		if (fd < 0) {
-+			if (errno == ENOENT)
-+				continue;
-+			return -1;
-+		}
-+		len = sizeof(info);
-+		memset(&info, 0, sizeof(info));
-+		info.name = ptr_to_u64(name);
-+		info.name_len = sizeof(name);
-+		err = bpf_btf_get_info_by_fd(fd, &info, &len);
-+		if (err) {
-+			close(fd);
-+			return -1;
-+		}
-+		/* find target module BTF */
-+		if (!strcmp(name, module))
-+			break;
-+
-+		close(fd);
-+	}
-+
-+	return fd;
-+}
-+
-+void test_libbpf_probe_kfuncs(void)
-+{
-+	int ret, kfunc_id, fd;
-+	char *kfunc = "bpf_cpumask_create";
-+	struct btf *vmlinux_btf = NULL;
-+	struct btf *module_btf = NULL;
-+
-+	vmlinux_btf = btf__parse("/sys/kernel/btf/vmlinux", NULL);
-+	if (!ASSERT_OK_PTR(vmlinux_btf, "btf_parse"))
-+		return;
-+
-+	kfunc_id = btf__find_by_name_kind(vmlinux_btf, kfunc, BTF_KIND_FUNC);
-+	if (!ASSERT_GT(kfunc_id, 0, kfunc))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in vmlinux support"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_cpumask_create */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in vmlinux not suuport"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, -1, -1, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id:-1"))
-+		goto cleanup;
-+
-+	ret = libbpf_probe_bpf_kfunc(100000, kfunc_id, -1, NULL);
-+	if (!ASSERT_ERR(ret, "invalid prog type:100000"))
-+		goto cleanup;
-+
-+	if (!env.has_testmod)
-+		goto cleanup;
-+
-+	module_btf = btf__load_module_btf("bpf_testmod", vmlinux_btf);
-+	if (!ASSERT_OK_PTR(module_btf, "load module BTF"))
-+		goto cleanup;
-+
-+	kfunc_id = btf__find_by_name(module_btf, "bpf_kfunc_call_test1");
-+	if (!ASSERT_GT(kfunc_id, 0, "func not found"))
-+		goto cleanup;
-+
-+	fd = module_btf_fd("bpf_testmod");
-+	if (!ASSERT_GE(fd, 0, "module BTF fd"))
-+		goto cleanup;
-+
-+	/* prog BPF_PROG_TYPE_SYSCALL supports kfunc bpf_kfunc_call_test1 in bpf_testmod */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 1, "kfunc in module BTF support"))
-+		goto cleanup_fd;
-+
-+	/* prog BPF_PROG_TYPE_KPROBE does not support kfunc bpf_kfunc_call_test1
-+	 * in bpf_testmod
-+	 */
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_KPROBE, kfunc_id, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "kfunc in module BTF not support"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, -1, fd, NULL);
-+	if (!ASSERT_EQ(ret, 0, "invalid kfunc id in module BTF"))
-+		goto cleanup_fd;
-+
-+	ret = libbpf_probe_bpf_kfunc(BPF_PROG_TYPE_SYSCALL, kfunc_id, 100, NULL);
-+	ASSERT_EQ(ret, 0, "invalid BTF fd in module BTF");
-+
-+cleanup_fd:
-+	close(fd);
-+cleanup:
-+	btf__free(vmlinux_btf);
-+	btf__free(module_btf);
-+}
--- 
-2.43.0
-
+Applied, thanks.
 
