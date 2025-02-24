@@ -1,183 +1,193 @@
-Return-Path: <linux-kernel+bounces-529366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0554CA4237A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C533A423A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77D8188F32F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:39:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11C79444243
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E7E0254854;
-	Mon, 24 Feb 2025 14:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F4A190063;
+	Mon, 24 Feb 2025 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="P6VAJO94"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b2g6mToH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3824213B298
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C32152E12
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407859; cv=none; b=Bn1iAHSr7dSbgaVnKYMFGOtobPsI0qd7VwjAFVRfrFu1bRoHiH21dtby9IicsS+ngpr8YAR6TvDZjXwhJGyoV0YkYARGD9JODlIgTB7FtRyKejMWLEo6yObUgQZBgBgTscGBc8LinySlW3n4R5fCqRmJPaU6exkAsdR8Q5H3FB4=
+	t=1740407843; cv=none; b=Pg/x3gLdBCIqQAWb/b39oD6+AJLTVA6V5NOz4Ch98uhgD0O1HWzdpkHg/hpT2deKDCzQNI32x9KB/bMMsD92yoH43j8N3dHaJviTGmIX8XuMoKqbY6psUC6WC5iozw/Rmxr6j66e2bBXCDANLH/EiTe3WtsCwDxrso1By+rI64Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407859; c=relaxed/simple;
-	bh=Gc23huDW2EMDvsPrII/FfATOT3S+8qNoqO/SY9zSRVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k7LtTSxOiDPOsA8ww751wI1T9P2wuvJXRCGnfN/HBMRi6LUeh1Wf2JZKkQfkYt0KaFlHvz8MH2xOIgqf28BAMoegVpi8H+T5iFbWNp2ovd2zyj8sPIJFkgQ29S2lStzjrdvagC59H2SEkX4HjJQPT/jTrKIJYI2kk7nmDd6WaKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=P6VAJO94; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21c2f1b610dso130931565ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:37:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb.com; s=google; t=1740407857; x=1741012657; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tr5NrMy0t1nSuRnqeN8ZOfvTg64bXP6rdk8GuFGDbik=;
-        b=P6VAJO94A2JQVD2Oq1AQuldioP9LkI+3vTV5g6M3wCI+tf4sUMMSaugybK08sjwR4n
-         swe9XSLhJrfikIo6L6PZLo7SI9homo7vKtxCoGsNWnIoPa4YpJGyFDssJ8hbNXVVRJqh
-         UHibyBTQsfFusU/D393hjXxsYylqqh71tdWThqQLB6FWC0Rxr+lPKIf01HSkdrJR1fUl
-         nQXgs1rlcltDfN6UQ4Zkr7Gnfj6QLRZI6RY+KE+hgtCVsWfGRCgS7TdN6MxliC1LLe8Z
-         PEjvcENQMrftBXYY/Zfu6NdgY9luF65xoJRCyTLbrz4sKakm03k6vIPbfXhRMoD2JXgR
-         HxOw==
+	s=arc-20240116; t=1740407843; c=relaxed/simple;
+	bh=jlphq0Jof3bRTJ7MBXqVmTTElhEpnSobrv7W4kpBGJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T4qNLuIXc/I8hLd6aFENLeyXBT3Qb+0Cki2z0xSAj9C7zyvKAWhXSC6EPI997fmEsPqBykvhPA1OmN7+0qardOmh75TMb0BW1kYobzDvX4TrFeZdZbzMqZgZvx6+R2hxyKnwQeh6aiD+eUAdOWLdq0Vj2GOKNpOk2peGKytstZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b2g6mToH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740407840;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8cBqLVMO9KyDdhAhicbfLxQ0QgptAxHHChSiZfSWUp8=;
+	b=b2g6mToH593YM38m1sC0RHaUA+BMAEknDcZMRlYYyi37atHt0jUk+UQhfa0n3DX/BZItMH
+	hre9/naXCpiUNx4zR4DYUx2APo2kV7A0jnK5VLufOUbpBtBjqryBNPf2PcahrWsQHHpy/d
+	RT2cKQmzbky75H0JK3oblJ0NuDAUYqY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-vtVIPAztP8q90WvDjEVOSg-1; Mon, 24 Feb 2025 09:37:18 -0500
+X-MC-Unique: vtVIPAztP8q90WvDjEVOSg-1
+X-Mimecast-MFC-AGG-ID: vtVIPAztP8q90WvDjEVOSg_1740407837
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43943bd1409so31707575e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:37:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740407857; x=1741012657;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tr5NrMy0t1nSuRnqeN8ZOfvTg64bXP6rdk8GuFGDbik=;
-        b=sBprUj14CHRG+PRDLNXweRSp1IdLXcRGJ9etaD8b59GRDB8cgyzJC1kKN6LgG4uj37
-         rafrrBVc176Mx4p8X7OViF/W01TR4+GtodtPiEthAjrU7mpQona1yuYVcEACIWfQSinM
-         nOypjYoIWbXXX1CUhXtcftCeO1hC31yFdtuxIw32u3zsuo11vcUyvtUmg98CZkor/uvp
-         RMKwV4Oa6tANH2zx3uQcaz2+NFpIcxfJjBJmghimUZVneT36BTrcWHa2gPc1S5uIdJcv
-         6WUnSHs17ZNu0fCstU5haZ3ZmXpFKDUVTVzqMaDoJ3HZPpx/Zu50yHyAqcTTGQQXqZLO
-         9/cA==
-X-Gm-Message-State: AOJu0YzuBL69dSEecL2HDEpf2ODTfsJEyBDql+DSLyf93uINVnFVN1vf
-	KPZYVIEc9uosUXyZOyabL3zORfH2V+IEgIN5yCo8o6BMWHXkrsk/hO0BUEN7o8GHTUe8XtndThk
-	ygg9vq2QU6HK0CKC9FofyD5pjggGO3GtPUtE0cyYqr3dckYLOQRCg/kA8lV3RleiWzc/jvH18dy
-	GqREHAmiKDsPiplBFdeiUjLUMmR1ybq2DABm7ty7NMigKN9QYaiOWDclv0MvW/rheXz95xp6RC2
-	g3n7NMyvHLpSIm0MeZP1bI2r53rPUDPbEHGXP2v9MTO7bnIIvODOU1Ql7tU92cj/xza6kzeYEB9
-	FWljdvGbH9kw/oE1u6r44TUBBBsA/Taj0nxhziPDyABKoo5pVXf+y9om3sw=
-X-Gm-Gg: ASbGncskn9gNpwpwqCb/eTexe7nIpEYRhS3455Dps0dNBv5dTDYAjZH6PfbetT2EgO/
-	GhiICX6viuZz+VjyHv2modeka7bJcpypCNDDZZtZXAuRcShImvsn53Bp5fdPHRreJJBiBBCoELY
-	boseMoD1MK5HdLCiSjQXxHrxb8vwLd3hYzgB84ecUUhTHKmvlxiuW1x3oDbCVQ6LjGLYmtRfnBc
-	xknPaunhUqW9mEq4AAeBpGlFwaVaDgcWD7QyizhAFs4lhvS4rPmLLVaU6ZL/nA+XBgDAMbUK2zC
-	2Sc1kLnd7QScXpAkIxsmmssqXG0=
-X-Google-Smtp-Source: AGHT+IFpy3+E5cMzJqqit+IUZQ9CCf4tM5IGjll5j8aYvpZK6kzjNSVYR9yVXPP52A1Zj8pouSbmXQ==
-X-Received: by 2002:a05:6a00:4b4f:b0:732:622f:ec39 with SMTP id d2e1a72fcca58-73426c7c77cmr19802356b3a.1.1740407856561;
-        Mon, 24 Feb 2025 06:37:36 -0800 (PST)
-Received: from localhost.localdomain ([2a09:bac5:7a2:878::d8:ed])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-732575e055dsm19294949b3a.68.2025.02.24.06.37.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 06:37:36 -0800 (PST)
-From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-To: linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org
-Cc: djwong@kernel.org,
-	Dave Chinner <david@fromorbit.com>,
-	hch@lst.de,
-	willy@infradead.org,
-	"Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Subject: [PATCH v3] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
-Date: Mon, 24 Feb 2025 11:37:00 -0300
-Message-ID: <20250224143700.23035-1-raphaelsc@scylladb.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1740407837; x=1741012637;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8cBqLVMO9KyDdhAhicbfLxQ0QgptAxHHChSiZfSWUp8=;
+        b=eyrRpUZCak/zC5JdrBZPsPEeLekyFfB2OJPljzLgjUyVwaCl7T/ywjhkaf+XShoCF3
+         VKEELNMOtxDz2FDvS4zWLIX6Ty1k68f8fx3DZHyYvR0O86Vp1wrOpEUVqW/hnTJkhm79
+         PWXIEgd/7xCaLyPO+6Ta0ObzFaYHkK425+CEYJivmaYVZV5XNB4QSe+KYOzus8tpcuY/
+         I8fTpUOeqaiSNXpDGHkACTisWXVM1i01kdJTK4jZcZNQ+7msCPXcehSKSgweAbx2r34v
+         VMMk+P6yew+2606s4rkq5MdxWLZNPrXWAdIPhb0Pm428QozbTtO139k+Sw3irzMgFZCS
+         Llhg==
+X-Forwarded-Encrypted: i=1; AJvYcCULsHgTKq57xlkCOMlgvt3H8/Xrgpg5gHn/6T+3Cq4Q4iYH08wp293D4KEQEV0cTsRI/aWPuG2dcVkBoM0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEB5T+gGrQl/t3j0tAs0yUXrOfKN9ApH9CSQSaOfr8pv8v5+KM
+	mCXODmvyHkPmvsEj9fdOpWmPa3UI+bj+Kt2fmQ8Hh5PNEQW0oCPsoAVnNUOz43DE2joBvUVsbQF
+	7bS/5lfeiF7oeJ2cRQVECBrNA7kpDgEtrcnGeIaaxu8MshwMTkLK6lfUGB3Nc6A==
+X-Gm-Gg: ASbGncv2TsQlGwiGY30fPX26FlpHm1KXeZriVY5Y2UHomXwwLptW2eNTvllKtXD2PCd
+	NdU9HMjfP1AKxvM6Jh4CKnLgXyxNu8KUyvVPh7+10OuAjJbV2w7bqPqi4iOfrts6CNU3895P2bH
+	DFuJx4u1Mb1nwQPI+5zviphSxBs6OziQ2Grg02mVf8ojBIAVarRO0ZQ4jtQ3XRVR6+WDS99oHf7
+	HL0iucmDnt1LZjFM5vDXuk53+AEMDWZgqsHAUjhKYL8wt2C1PCA7R4s28JWNYJRkmG2Q1tPGZf3
+	mXz+C1g1t1K8Inujy4JD4AVHvVH3alu+RS+crTn1h5EjR/nmQ0z2oXXV5TwbsECKKQZ0NGH+MAp
+	2+LnWzox7UlBnMsiOIU+LsvZN8Ms7DvGClYifIrui8Og=
+X-Received: by 2002:a05:600c:4f02:b0:439:689b:99eb with SMTP id 5b1f17b1804b1-439ae1e6668mr111032595e9.7.1740407837354;
+        Mon, 24 Feb 2025 06:37:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFsgWIR7iUmkg5e2QIW4/Xk5GM1LXoMIZsAwAYVXVELaDEwSw/hfMUlejuAwccBjLpngSd3iw==
+X-Received: by 2002:a05:600c:4f02:b0:439:689b:99eb with SMTP id 5b1f17b1804b1-439ae1e6668mr111032365e9.7.1740407837022;
+        Mon, 24 Feb 2025 06:37:17 -0800 (PST)
+Received: from ?IPV6:2003:cb:c735:1900:ac8b:7ae5:991f:54fc? (p200300cbc7351900ac8b7ae5991f54fc.dip0.t-ipconnect.de. [2003:cb:c735:1900:ac8b:7ae5:991f:54fc])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b030c615sm108844235e9.32.2025.02.24.06.37.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 06:37:15 -0800 (PST)
+Message-ID: <697ca5a0-174f-441e-a27e-6a1652235a87@redhat.com>
+Date: Mon, 24 Feb 2025 15:37:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] mm, cma: use literal printf format string
+To: Arnd Bergmann <arnd@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Nathan Chancellor <nathan@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Frank van der Linden <fvdl@google.com>, Zi Yan <ziy@nvidia.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20250224141120.1240534-1-arnd@kernel.org>
+ <20250224141120.1240534-2-arnd@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250224141120.1240534-2-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-original report:
-https://lore.kernel.org/all/CAKhLTr1UL3ePTpYjXOx2AJfNk8Ku2EdcEfu+CH1sf3Asr=B-Dw@mail.gmail.com/T/
+On 24.02.25 15:07, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Using a variable string as a printf format can be a security issue
+> that clang warns about when extra warnings are enabled:
+> 
+> mm/cma.c:239:37: error: format string is not a string literal (potentially insecure) [-Werror,-Wformat-security]
+>    239 |                 snprintf(cma->name, CMA_MAX_NAME, name);
+>        |                                                   ^~~~
+> 
+> This one does not appear to be a security issue since the string is
+> not user controlled, but it's better to avoid the warning.
+> Use "%s" as the format instead and just pass the name as the argument.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   mm/cma.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/cma.c b/mm/cma.c
+> index ef0206c0f16d..09322b8284bd 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -236,7 +236,7 @@ static int __init cma_new_area(const char *name, phys_addr_t size,
+>   	cma_area_count++;
+>   
+>   	if (name)
+> -		snprintf(cma->name, CMA_MAX_NAME, name);
+> +		snprintf(cma->name, CMA_MAX_NAME, "%s", name);
+>   	else
+>   		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
+>   
 
-When doing buffered writes with FGP_NOWAIT, under memory pressure, the system
-returned ENOMEM despite there being plenty of available memory, to be reclaimed
-from page cache. The user space used io_uring interface, which in turn submits
-I/O with FGP_NOWAIT (the fast path).
+Acked-by: David Hildenbrand <david@redhat.com>
 
-retsnoop pointed to iomap_get_folio:
-
-00:34:16.180612 -> 00:34:16.180651 TID/PID 253786/253721
-(reactor-1/combined_tests):
-
-                    entry_SYSCALL_64_after_hwframe+0x76
-                    do_syscall_64+0x82
-                    __do_sys_io_uring_enter+0x265
-                    io_submit_sqes+0x209
-                    io_issue_sqe+0x5b
-                    io_write+0xdd
-                    xfs_file_buffered_write+0x84
-                    iomap_file_buffered_write+0x1a6
-    32us [-ENOMEM]  iomap_write_begin+0x408
-iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
-pos=0 len=4096 foliop=0xffffb32c296b7b80
-!    4us [-ENOMEM]  iomap_get_folio
-iter=&{.inode=0xffff8c67aa031138,.len=4096,.flags=33,.iomap={.addr=0xffffffffffffffff,.length=4096,.type=1,.flags=3,.bdev=0x…
-pos=0 len=4096
-
-This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_PTR
-from __filemap_get_folio"), which moved error handling from
-io_map_get_folio() to __filemap_get_folio(), but broke FGP_NOWAIT handling, so
-ENOMEM is being escaped to user space. Had it correctly returned -EAGAIN with
-NOWAIT, either io_uring or user space itself would be able to retry the
-request.
-It's not enough to patch io_uring since the iomap interface is the one
-responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must return
-the proper error too.
-
-The patch was tested with scylladb test suite (its original reproducer), and
-the tests all pass now when memory is pressured.
-
-Fixes: 66dabbb65d67 ("mm: return an ERR_PTR from __filemap_get_folio")
-Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
----
-v3: make comment more descriptive as per hch's suggestion.
----
- mm/filemap.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 804d7365680c..3e75dced0fd9 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1986,8 +1986,19 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 
- 		if (err == -EEXIST)
- 			goto repeat;
--		if (err)
-+		if (err) {
-+			/*
-+			 * When NOWAIT I/O fails to allocate folios this could
-+			 * be due to a nonblocking memory allocation and not
-+			 * because the system actually is out of memory.
-+			 * Return -EAGAIN so that there caller retries in a
-+			 * blocking fashion instead of propagating -ENOMEM
-+			 * to the application.
-+			 */
-+			if ((fgp_flags & FGP_NOWAIT) && err == -ENOMEM)
-+				err = -EAGAIN;
- 			return ERR_PTR(err);
-+		}
- 		/*
- 		 * filemap_add_folio locks the page, and for mmap
- 		 * we expect an unlocked page.
 -- 
-2.48.1
+Cheers,
+
+David / dhildenb
 
 
