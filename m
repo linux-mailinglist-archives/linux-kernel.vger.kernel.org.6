@@ -1,181 +1,132 @@
-Return-Path: <linux-kernel+bounces-529249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8989A42244
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C723FA42239
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:02:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE2FA421489
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271A817E1FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7F125A646;
-	Mon, 24 Feb 2025 13:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BDD2561DF;
+	Mon, 24 Feb 2025 13:53:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7Eg3/Sh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IFDXK8ML"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1803525A2C8;
-	Mon, 24 Feb 2025 13:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CD82561A0;
+	Mon, 24 Feb 2025 13:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405230; cv=none; b=OCZ37VMRA25AWc/+4JGM00r2GTY1z5ZOnWMRWwdExo5W54Mlilv0Re9jWybPU69NOCyxAt22eieNtjIVQ3eEgHLIJLWgUGUiMQ6UA9zlujHhZfK9aReMg5RT8FQrdS4kMLAa1aErsJIVXbkzDQg/IZqi6P9IG/vWe2LIGONs4Q4=
+	t=1740405222; cv=none; b=uO3zUpdq2LJ9yfFbyUi8GOrZI51dPy+3g565HMFKdW8G6UUdMJMIKwt+u371GQYHyFYfz0TrH4U+idAvOe9XspMZuq+2IE+mRlbVm/K25E/VQhEcD7qTFgFgyYErCBNQFvGsR3RjYsKzSwG+TYVFYkMaFkPXDuBtRJuUq9hoKAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405230; c=relaxed/simple;
-	bh=6AJEKimFGREFIv6dQXE7i5boQezEtjb7GqUPTRe+6Ac=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qQZsK+Cf9/IBjqvMl4YmYe0Lb9g28c+umZrclSXRICDm4MrWAsd3f7jkpgevN7R23np+bjPk8E3uXHAAZXQ7/ZknLIQTQsTyDdwOeoLFwsiNS0HmXpvi6PXyM4swig7hiQkndjT5Ygg4CoVnjOBRDzOvvwrTmgpjf1kmV0BuHpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7Eg3/Sh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC87FC4CEEE;
-	Mon, 24 Feb 2025 13:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740405229;
-	bh=6AJEKimFGREFIv6dQXE7i5boQezEtjb7GqUPTRe+6Ac=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=D7Eg3/ShhVOZNOsWWOj84nY2fquvYuZpUvYenGvAUgmhWX+mAYZmO8am9h6dT564f
-	 qWxqcrxt8f5SmxaXCrtJA/Kr+reZx49QhlqCD5oERYLLmTZ6LohaoUS4hHIcZUO3xr
-	 j7yPRbs6Q+cmjY8fpLQqppHnIi+5rjc68Ml18F0WSPZTRXLlE4GXBuUliqg8dh0VOW
-	 c7PvPlDqqHCh+x8e+beLjNp/mb5IGNQBuHJcYEVu8W7gqfy18bq4TvJbjCL3+Q++MA
-	 bqUta3GptmlhDmQiKV7euT29ujamO7V/lxBE0BLojb7usecjMaVMC6jq6tY/oIMDZE
-	 MvATDSRqbdLbw==
-From: Philipp Stanner <phasta@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Yanteng Si <si.yanteng@linux.dev>,
-	Yinggang Gu <guyinggang@loongson.cn>,
-	Feiyang Chen <chenfeiyang@loongson.cn>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Qing Zhang <zhangqing@loongson.cn>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
+	s=arc-20240116; t=1740405222; c=relaxed/simple;
+	bh=PRg0JhKmJjiExJkYVCCygq4oygc4hYcM1lk7x5cwHVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B0WNHuK8pmvK3zHM/7dfEA7qlWqZtewlRe60k+CKUFrQvXUgGaxv7KxSYg9UBi00ZvMKev1el0r1gXQO1Gv/CoeCO7J3smIgPAwTFoxJuBFNn0DOPDfA4z9qHTxUyFi9NODeXDLpEgU4jWJVyANpBw9FmwXq1T8AzdDozMjuBIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IFDXK8ML; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Lp4/LaCOxhgTD9ld3zM3tC7T8uIic+jBJ97jkYwzPPM=; b=IFDXK8ML/4e5xZmJuFegO5PCVw
+	vEPdtsztGy5uQFW+6doHgWRr6UChPFlNs/0JLPzF2N9d7gjKpJpMq88IuRmFhMAc4kXVQciyYytSB
+	lLm3fC5bPW1Cq/cXDowLG11ASeR3wtkjvFSNjl3tL/CGGwhiRTvJa6hOoZVD7P4TGOU1UCke6OLAT
+	jJG/kav21ybLkc2W7RyYycfsIR9gefq9Cz6AmkdlIpLiCANAq0EMELHcC232tCKls/08wLbobPYfL
+	Cd7H6wJ+WLlVkmSOo7yCHEOLiyJjXa/uFOfJwFUFmdpYH77oz5VVQcwxZgvTanjxRPfbEQRHfrsxs
+	pja2YzGw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:50418)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tmYtn-0006TQ-2U;
+	Mon, 24 Feb 2025 13:53:31 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tmYtk-00052t-1u;
+	Mon, 24 Feb 2025 13:53:28 +0000
+Date: Mon, 24 Feb 2025 13:53:28 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v3 4/4] stmmac: Replace deprecated PCI functions
-Date: Mon, 24 Feb 2025 14:53:22 +0100
-Message-ID: <20250224135321.36603-6-phasta@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224135321.36603-2-phasta@kernel.org>
-References: <20250224135321.36603-2-phasta@kernel.org>
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>
+Subject: Re: [PATCH net-next 12/13] net: phy: phylink: Use phy_caps_lookup
+ for fixed-link configuration
+Message-ID: <Z7x52C5dE3eXWomq@shell.armlinux.org.uk>
+References: <20250222142727.894124-1-maxime.chevallier@bootlin.com>
+ <20250222142727.894124-13-maxime.chevallier@bootlin.com>
+ <20250224144431.2dca9d19@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224144431.2dca9d19@kmaincent-XPS-13-7390>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Philipp Stanner <pstanner@redhat.com>
+On Mon, Feb 24, 2025 at 02:44:31PM +0100, Kory Maincent wrote:
+> On Sat, 22 Feb 2025 15:27:24 +0100
+> Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+> 
+> > When phylink creates a fixed-link configuration, it finds a matching
+> > linkmode to set as the advertised, lp_advertising and supported modes
+> > based on the speed and duplex of the fixed link.
+> > 
+> > Use the newly introduced phy_caps_lookup to get these modes instead of
+> > phy_lookup_settings(). This has the side effect that the matched
+> > settings and configured linkmodes may now contain several linkmodes (the
+> > intersection of supported linkmodes from the phylink settings and the
+> > linkmodes that match speed/duplex) instead of the one from
+> > phy_lookup_settings().
+> 
+> ...
+> 
+> >  
+> >  	linkmode_set_bit(ETHTOOL_LINK_MODE_Pause_BIT, mask);
+> >  	linkmode_set_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, mask);
+> > @@ -588,9 +591,9 @@ static int phylink_parse_fixedlink(struct phylink *pl,
+> >  
+> >  	phylink_set(pl->supported, MII);
+> >  
+> > -	if (s) {
+> > -		__set_bit(s->bit, pl->supported);
+> > -		__set_bit(s->bit, pl->link_config.lp_advertising);
+> > +	if (c) {
+> > +		linkmode_or(pl->supported, pl->supported, match);
+> > +		linkmode_or(pl->link_config.lp_advertising,
+> > pl->supported, match);
+> 
+> You are doing the OR twice. You should use linkmode_copy() instead.
 
-The PCI functions
-  - pcim_iomap_regions() and
-  - pcim_iomap_table()
-have been deprecated.
+No, we don't want to copy pl->supported to
+pl->link_config.lp_advertising. We just want to set the linkmode bit
+that corresponds to the speed/duplex in each mask.
 
-Replace them with their successor function, pcim_iomap_region().
+That will result in e.g. the pause mode bits will be overwritten despite
+being appropriately set in the advertising mask in the code above this.
 
-Make variable declaration order at closeby places comply with reverse
-christmas tree order.
-
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   | 11 ++++-------
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c   | 14 ++++++--------
- 2 files changed, 10 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-index f3ea6016be68..25ef7b9c5dce 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
-@@ -521,10 +521,10 @@ static int loongson_dwmac_acpi_config(struct pci_dev *pdev,
- static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- {
- 	struct plat_stmmacenet_data *plat;
-+	struct stmmac_resources res = {};
- 	struct stmmac_pci_info *info;
--	struct stmmac_resources res;
- 	struct loongson_data *ld;
--	int ret, i;
-+	int ret;
- 
- 	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
- 	if (!plat)
-@@ -554,13 +554,11 @@ static int loongson_dwmac_probe(struct pci_dev *pdev, const struct pci_device_id
- 	pci_set_master(pdev);
- 
- 	/* Get the base address of device */
--	ret = pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
-+	res.addr = pcim_iomap_region(pdev, 0, DRIVER_NAME);
-+	ret = PTR_ERR_OR_ZERO(res.addr);
- 	if (ret)
- 		goto err_disable_device;
- 
--	memset(&res, 0, sizeof(res));
--	res.addr = pcim_iomap_table(pdev)[0];
--
- 	plat->bsp_priv = ld;
- 	plat->setup = loongson_dwmac_setup;
- 	ld->dev = &pdev->dev;
-@@ -603,7 +601,6 @@ static void loongson_dwmac_remove(struct pci_dev *pdev)
- 	struct net_device *ndev = dev_get_drvdata(&pdev->dev);
- 	struct stmmac_priv *priv = netdev_priv(ndev);
- 	struct loongson_data *ld;
--	int i;
- 
- 	ld = priv->plat->bsp_priv;
- 	stmmac_dvr_remove(&pdev->dev);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index 91ff6c15f977..37fc7f55a7e4 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -155,9 +155,9 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- {
- 	struct stmmac_pci_info *info = (struct stmmac_pci_info *)id->driver_data;
- 	struct plat_stmmacenet_data *plat;
--	struct stmmac_resources res;
--	int i;
-+	struct stmmac_resources res = {};
- 	int ret;
-+	int i;
- 
- 	plat = devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
- 	if (!plat)
-@@ -188,13 +188,13 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 		return ret;
- 	}
- 
--	/* Get the base address of device */
-+	/* The first BAR > 0 is the base IO addr of our device. */
- 	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
- 		if (pci_resource_len(pdev, i) == 0)
- 			continue;
--		ret = pcim_iomap_regions(pdev, BIT(i), pci_name(pdev));
--		if (ret)
--			return ret;
-+		res.addr = pcim_iomap_region(pdev, i, STMMAC_RESOURCE_NAME);
-+		if (IS_ERR(res.addr))
-+			return PTR_ERR(res.addr);
- 		break;
- 	}
- 
-@@ -204,8 +204,6 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
- 	if (ret)
- 		return ret;
- 
--	memset(&res, 0, sizeof(res));
--	res.addr = pcim_iomap_table(pdev)[i];
- 	res.wol_irq = pdev->irq;
- 	res.irq = pdev->irq;
- 
 -- 
-2.48.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
