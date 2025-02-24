@@ -1,117 +1,284 @@
-Return-Path: <linux-kernel+bounces-528948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E25BA41E4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:06:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE8EA41E50
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:06:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F941886D16
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:00:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713B61887F68
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EFB25E450;
-	Mon, 24 Feb 2025 11:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BF0B666;
+	Mon, 24 Feb 2025 11:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BgY5xZRZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="a19wWjJT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445EB666;
-	Mon, 24 Feb 2025 11:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D423125E45F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397857; cv=none; b=AvfCh8eLgsxNtFItRsKSYmBgTE31EtD5I8rkn00741wJiasypnibwlnEqz2TyAmum5AzA2w7JDQxJmSB2c5s1s6hycrx3gWZx3FM0te9ExX0Ba+jK6RlDEjarzEI5BMNde1u7kza+NOc7lvim1y/FCaaKhdcpKjx36IyVgakNIY=
+	t=1740397894; cv=none; b=FipSEHnsMuIcsbUOyG1oRWYUWVEcMNCN7GE06aIF0lC4i4lbHnp1DSeP9icmc2iqEr/CykHEB74nzH2MMALvluGI4hUeauahIR80Vxn9uetFNfinTaEg8wuElI0HhkIiSd2arcWOdVf/STyHxCKFtfeIAqaZxHxjK99gnPxQR/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397857; c=relaxed/simple;
-	bh=3pOmWWotVeFG7/aCwZCOGG1H2P+WnR8cfNlGlq4bbTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m6F9wmVrg2CzG285igD+CWJPJaTaapbqtWITYftWUyksn6cMcI/ADImoAhQPk4Gp2vVOvA/wHwkhHIq5aGNgnYjeRW2Y8w1/OGRwwG1Bf+tKBAL7is+aLhQC5rcg2NTV+JjUNA/NXRYVvhDHBO+TLXh7wRHLe47eDbxcngrClpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BgY5xZRZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D08E140E0184;
-	Mon, 24 Feb 2025 11:50:51 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ivEoj6-VbOC3; Mon, 24 Feb 2025 11:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1740397847; bh=M+1Oj8yUN4/F9fqehf8NtiUeOEnlB2Q9pV11IJcCOkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgY5xZRZyyHcbymG/jlbXrNXaFXfSDbO8i45nhWQ2V37YX1k/XgK7zh0PMKMkh/iP
-	 JYFV5SVHJhISD29fe8Yi2WfoH6Kzp3RyCBosloGJWp5RTwfexJRt3a3CnkJmHR18cB
-	 GhXk1q7dyeHrU/i23LderkJ+mDkqvku0svXVEsTEkY9JC18UDrqB/aQgX9ThzNRJPM
-	 QgyESfyhiO40lpHb8vxQeLATC+0od69Bzjp0SsobfmuAWUszuurHZOUshNXFkcIFov
-	 InE6AA/L6TfQGfFqn1lseK3ejIZcomiFw0Daw2HxjeUbBHaUp+3t0t66J8bVftxgAk
-	 V+f+tdNol9JQPvE4KuDd665W5Sop/JfoEpPE50eeS6LDsc9xd2UMOoFZ7nRNXFzwul
-	 txFEL0mb1/Xih0owGH9mSNLqLA1kOpj8p+ZK5Om9DUeyv5dSIhI/dIVmv/3VQbrF9T
-	 qRjYKNrrEPyD2jNI3oGF/yWLIpa+MBCts9F7kKiERC9+G3NRmogprmUACPJVbBnxDf
-	 9HR3MVeMz/UJZv9MPlgq9wDm4fFHjOlRKWeUAOG1CD9hhOySbA3BM0ZafgJBWAny+o
-	 k85O8qB1OeGz0AkxnS39MKSGpvtNYzaLjC9xHHnledxZC8ayNIBoA4yOuNkV1QKEN0
-	 KIq8H30qDwp/QIbq1jk+8ab0=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	s=arc-20240116; t=1740397894; c=relaxed/simple;
+	bh=DEB+SMivXXKdttMI0HIj4UzZBSfctVingpXmJjWYPbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E+9IGjG49HFrrYmsjpQcj4anuegMN4fztQ7Tf2AHW/7qpAe1GxnvyXPntuUiLPSfRbMyGmPc6sTw6J1Pcr4XaVGSeXQ458VL1ewka2izvJs/YL2FmZOKXcEL/F2QdmIVcDQSmqRFOfgPZkVuM0eSv3SbZ8JP1Rvr50kTHnbSyH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=a19wWjJT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740397890;
+	bh=DEB+SMivXXKdttMI0HIj4UzZBSfctVingpXmJjWYPbQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=a19wWjJTIdrUI1w/E9NlR5Zwn9/2T1WkvKsDDms833Rlvearb30SSwORC0D/0WoMQ
+	 I9GTYJ94HLVE3Cgy0/sF+lGuEp85SsIWDXsBwzpwFBBi7y8/cPV+wfhk0RmYDucuYq
+	 9yKcvzWdO2MRKhmv/uqbZznaDSVxFze0qrIhAYor72HnKPGG6EFrU2wJLGhXNu+8d3
+	 RLu5hxRiM9rLzEysXDv4gsKwQtuu0hRNdEzE8vT/Gwu9/y8k5iDjctV3CQb+eUfXdf
+	 s3g/rHhYMbsDYlkhV+Sg92FTj++WEsjUCgNM0WDImL/uWlyE8O56mCGNYO2lkL1wLi
+	 JvInyWNZnoPZw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B2F840E0176;
-	Mon, 24 Feb 2025 11:50:03 +0000 (UTC)
-Date: Mon, 24 Feb 2025 12:50:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: shiju.jose@huawei.com
-Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org,
-	mchehab@kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
-	jonathan.cameron@huawei.com, dave.jiang@intel.com,
-	alison.schofield@intel.com, vishal.l.verma@intel.com,
-	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
-	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
-	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
-	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
-	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
-	duenwen@google.com, gthelen@google.com,
-	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
-	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
-	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
-	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
-	wanghuiqiang@huawei.com, linuxarm@huawei.com
-Subject: Re: [PATCH v20 00/15] EDAC: Scrub: introduce generic EDAC RAS
- control feature driver + CXL/ACPI-RAS2 drivers
-Message-ID: <20250224115002.GCZ7xc6o3yA1Q2j85i@fat_crate.local>
-References: <20250212143654.1893-1-shiju.jose@huawei.com>
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A8E617E00FC;
+	Mon, 24 Feb 2025 12:51:29 +0100 (CET)
+Date: Mon, 24 Feb 2025 12:51:24 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Mihail Atanassov
+ <mihail.atanassov@arm.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm/panthor: Avoid sleep locking in the internal
+ BO size path
+Message-ID: <20250224125124.34dc1e7a@collabora.com>
+In-Reply-To: <22tktof6433nshmhihwjpvvgnwpos3v4mkggxqikxbta5p4s57@w2gzdqudhbfi>
+References: <20250214210009.1994543-1-adrian.larumbe@collabora.com>
+	<20250214210009.1994543-2-adrian.larumbe@collabora.com>
+	<20250215104438.13220f14@collabora.com>
+	<22tktof6433nshmhihwjpvvgnwpos3v4mkggxqikxbta5p4s57@w2gzdqudhbfi>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250212143654.1893-1-shiju.jose@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 12, 2025 at 02:36:38PM +0000, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> The CXL patches of this series has dependency on Dave's CXL fwctl
-> series [1].
+Hi Adrian,
 
-First 5 patches massaged and queued here:
+On Thu, 20 Feb 2025 20:26:23 +0000
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=edac-cxl
+> Hi Boris,
+>=20
+> On 15.02.2025 10:44, Boris Brezillon wrote:
+> > On Fri, 14 Feb 2025 20:55:21 +0000
+> > Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+> > =20
+> > > Commit 434e5ca5b5d7 ("drm/panthor: Expose size of driver internal BO'=
+s over
+> > > fdinfo") locks the VMS xarray, to avoid UAF errors when the same VM is
+> > > being concurrently destroyed by another thread. However, that puts the
+> > > current thread in atomic context, which means taking the VMS' heap lo=
+cks
+> > > will trigger a warning as the thread is no longer allowed to sleep.
+> > >
+> > > Because in this case replacing the heap mutex with a spinlock isn't
+> > > feasible, the fdinfo handler no longer traverses the list of heaps for
+> > > every single VM associated with an open DRM file. Instead, when a new=
+ heap
+> > > chunk is allocated, its size is accumulated into a VM-wide tally, whi=
+ch
+> > > also makes the atomic context code path somewhat faster.
+> > >
+> > > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> > > Fixes: 3e2c8c718567 ("drm/panthor: Expose size of driver internal BO'=
+s over fdinfo")
+> > > ---
+> > >  drivers/gpu/drm/panthor/panthor_heap.c | 38 ++++++++----------------=
+--
+> > >  drivers/gpu/drm/panthor/panthor_heap.h |  2 --
+> > >  drivers/gpu/drm/panthor/panthor_mmu.c  | 23 +++++++++++-----
+> > >  drivers/gpu/drm/panthor/panthor_mmu.h  |  1 +
+> > >  4 files changed, 28 insertions(+), 36 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm=
+/panthor/panthor_heap.c
+> > > index db0285ce5812..e5e5953e4f87 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_heap.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_heap.c
+> > > @@ -127,6 +127,8 @@ static void panthor_free_heap_chunk(struct pantho=
+r_vm *vm,
+> > >  	heap->chunk_count--;
+> > >  	mutex_unlock(&heap->lock);
+> > >
+> > > +	panthor_vm_heaps_size_accumulate(vm, -heap->chunk_size);
+> > > +
+> > >  	panthor_kernel_bo_destroy(chunk->bo);
+> > >  	kfree(chunk);
+> > >  }
+> > > @@ -180,6 +182,8 @@ static int panthor_alloc_heap_chunk(struct pantho=
+r_device *ptdev,
+> > >  	heap->chunk_count++;
+> > >  	mutex_unlock(&heap->lock);
+> > >
+> > > +	panthor_vm_heaps_size_accumulate(vm, heap->chunk_size);
+> > > +
+> > >  	return 0;
+> > >
+> > >  err_destroy_bo:
+> > > @@ -389,6 +393,7 @@ int panthor_heap_return_chunk(struct panthor_heap=
+_pool *pool,
+> > >  			removed =3D chunk;
+> > >  			list_del(&chunk->node);
+> > >  			heap->chunk_count--;
+> > > +			panthor_vm_heaps_size_accumulate(chunk->bo->vm, -heap->chunk_size=
+);
+> > >  			break;
+> > >  		}
+> > >  	}
+> > > @@ -560,6 +565,8 @@ panthor_heap_pool_create(struct panthor_device *p=
+tdev, struct panthor_vm *vm)
+> > >  	if (ret)
+> > >  		goto err_destroy_pool;
+> > >
+> > > +	panthor_vm_heaps_size_accumulate(vm, pool->gpu_contexts->obj->size);
+> > > +
+> > >  	return pool;
+> > >
+> > >  err_destroy_pool:
+> > > @@ -594,8 +601,11 @@ void panthor_heap_pool_destroy(struct panthor_he=
+ap_pool *pool)
+> > >  	xa_for_each(&pool->xa, i, heap)
+> > >  		drm_WARN_ON(&pool->ptdev->base, panthor_heap_destroy_locked(pool, =
+i));
+> > >
+> > > -	if (!IS_ERR_OR_NULL(pool->gpu_contexts))
+> > > +	if (!IS_ERR_OR_NULL(pool->gpu_contexts)) {
+> > > +		panthor_vm_heaps_size_accumulate(pool->gpu_contexts->vm,
+> > > +					    -pool->gpu_contexts->obj->size);
+> > >  		panthor_kernel_bo_destroy(pool->gpu_contexts);
+> > > +	}
+> > >
+> > >  	/* Reflects the fact the pool has been destroyed. */
+> > >  	pool->vm =3D NULL;
+> > > @@ -603,29 +613,3 @@ void panthor_heap_pool_destroy(struct panthor_he=
+ap_pool *pool)
+> > >
+> > >  	panthor_heap_pool_put(pool);
+> > >  }
+> > > -
+> > > -/**
+> > > - * panthor_heap_pool_size() - Calculate size of all chunks across al=
+l heaps in a pool
+> > > - * @pool: Pool whose total chunk size to calculate.
+> > > - *
+> > > - * This function adds the size of all heap chunks across all heaps i=
+n the
+> > > - * argument pool. It also adds the size of the gpu contexts kernel b=
+o.
+> > > - * It is meant to be used by fdinfo for displaying the size of inter=
+nal
+> > > - * driver BO's that aren't exposed to userspace through a GEM handle.
+> > > - *
+> > > - */
+> > > -size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
+> > > -{
+> > > -	struct panthor_heap *heap;
+> > > -	unsigned long i;
+> > > -	size_t size =3D 0;
+> > > -
+> > > -	down_read(&pool->lock);
+> > > -	xa_for_each(&pool->xa, i, heap)
+> > > -		size +=3D heap->chunk_size * heap->chunk_count;
+> > > -	up_read(&pool->lock);
+> > > -
+> > > -	size +=3D pool->gpu_contexts->obj->size;
+> > > -
+> > > -	return size;
+> > > -}
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm=
+/panthor/panthor_heap.h
+> > > index e3358d4e8edb..25a5f2bba445 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_heap.h
+> > > +++ b/drivers/gpu/drm/panthor/panthor_heap.h
+> > > @@ -27,8 +27,6 @@ struct panthor_heap_pool *
+> > >  panthor_heap_pool_get(struct panthor_heap_pool *pool);
+> > >  void panthor_heap_pool_put(struct panthor_heap_pool *pool);
+> > >
+> > > -size_t panthor_heap_pool_size(struct panthor_heap_pool *pool);
+> > > -
+> > >  int panthor_heap_grow(struct panthor_heap_pool *pool,
+> > >  		      u64 heap_gpu_va,
+> > >  		      u32 renderpasses_in_flight,
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/=
+panthor/panthor_mmu.c
+> > > index 8c6fc587ddc3..9e48b34fcf80 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
+> > > @@ -347,6 +347,14 @@ struct panthor_vm {
+> > >  		struct mutex lock;
+> > >  	} heaps;
+> > >
+> > > +	/**
+> > > +	 * @fdinfo: VM-wide fdinfo fields.
+> > > +	 */
+> > > +	struct {
+> > > +		/** @fdinfo.heaps_size: Size of all chunks across all heaps in the=
+ pool. */
+> > > +		atomic_t heaps_size;
+> > > +	} fdinfo; =20
+> >
+> > Feels more like a panthor_heap_pool field to me. If you do that,
+> > you can keep the panthor_heap_pool_size() helper. =20
+>=20
+> The only downside of storing a per-heap-pool fdinfo size for its chunks s=
+ize total is that we'll
+> have to traverse all the heap pools owned by a VM any time the fdinfo han=
+dler for an open
+> DRM file is invoked. That means spending a longer time with the vms xarra=
+y lock taken.
 
-Please run them with the rest of your test cases to make sure I haven't
-fat-fingered anything.
+There's only one heap pool per VM though, and once the pool is created
+it can't go away, so you don't even have to take the lock to deref the
+panthor_vm::heaps::pool object, you just need a NULL check.
 
-Thx.
+> > >
+> > > +void panthor_vm_heaps_size_accumulate(struct panthor_vm *vm, ssize_t=
+ acc)
+> > > +{
+> > > +	atomic_add(acc, &vm->fdinfo.heaps_size);
+> > > +} =20
+> >
+> > Calling atomic_add() directly would probably be shorter, and I prefer
+> > the idea of calling atomic_sub(size) instead of atomic_add(-size), so
+> > how about we drop this helper and use atomic_add/sub() directly? =20
+>=20
+> I had to add this VM interface function because the VM struct fields are =
+kept hidden from
+> other compilation units, as struct panthor_vm is defined inside panthor_m=
+mu.c. I agree
+> using atomic_sub() would be clearer, but that would imply exporting yet a=
+nother panthor_mmu
+> symbol, and atomic_add() can take signed values anyway.
 
--- 
-Regards/Gruss,
-    Boris.
+If you move the "heaps_size" field to panthor_heap_pool (which I would
+rename "size" when moving it to panthor_heap::fdinfo BTW), you no longer
+have this problem, because all users of this field exist in
+panthor_heap.c only.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Regards,
+
+Boris
 
