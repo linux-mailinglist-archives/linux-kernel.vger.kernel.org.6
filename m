@@ -1,111 +1,236 @@
-Return-Path: <linux-kernel+bounces-529041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83937A41F03
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:31:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9DCA41F35
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 188527A3A25
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C5E165F01
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E67623370B;
-	Mon, 24 Feb 2025 12:31:07 +0000 (UTC)
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B8F233712;
+	Mon, 24 Feb 2025 12:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NukBH3qI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848D119B5A3;
-	Mon, 24 Feb 2025 12:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CC919B5A3;
+	Mon, 24 Feb 2025 12:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400266; cv=none; b=FvY3PtoXhOydlfqFXjM3f//Gc3M2Q+TqQNdVxn47Gmp67yDyQeS8JjYGmoP775gjAuv9UhL5Fz/TMWqJV5TmVQSTONgOE6CHsooLzBX/rXJ5X0gGKk3c09DpgJXeXj83kTzhIqHDabCBoPKuSjK/4T670XDPkPxcwNHja7ktsT4=
+	t=1740400275; cv=none; b=q2EqTGABboJGHKGSP8uJgz8Spu5hP2Oh/Rl09+i7EnLrHD75YmodQo+3+Al+2VDnIDHZ+Y21brdAGf6mZlqrlEbiCw0Z6MJAhrEiX/DcnKaAd9hTr6TgUP0rRXcMv//zJtjg38d2cj1g9wi/biGXrv1l4wuLRMkIcIMubE4375I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400266; c=relaxed/simple;
-	bh=Aj1fgSnSbsuebKXK7cL71r4KIt41HCLiUVhHUxEST2o=;
+	s=arc-20240116; t=1740400275; c=relaxed/simple;
+	bh=gc1D//Ffey8erAww4BtrYA/C5TzLux2XzdYyCROK0w8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g5FZN59wwpBCb8opHiW2j56HzOFcM6M6kS2hauHI8U8bG2tdzJIHfmgw4H/60pQ23LuZCAb5Ys7aDdFAG5WvhsGP1qnaJKPMN2qnGQgMdyVHr0slQmDpqPMCxlGnIje6Y6OiYu8fonfU/d1CcEg2sh+JpL+USAY4lyH6sOAwIM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-521b5bd2268so2580796e0c.0;
-        Mon, 24 Feb 2025 04:31:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740400263; x=1741005063;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LpwRDmNfJixHhcPNp0aPYj4prQ9N655RIM3FLbxCSF8=;
-        b=TtqL1NqTe2JML8eB0+GBz9vA4j56Mq9v8zPvxeDb96yOrZmj21T9eF0KvtMBJlsBIA
-         so/1OpTRvLl3pM+Cs7InoN/gUlysv7GFTs5p2SJrs4YsHphIZFJ+oFMJCzDFZ6d5f68q
-         r6RGku7lKiN0b2X5O2kTNQvFF2a1SaDgi5OOkIrnLddK6Cw35v8kAAsUEd72yIusqZtc
-         J+TTkUssly1hTjqAQUK0DF9tdCrC/Cj4TxoyboWFhvzOLS/L8PdLrmV7ClQ9g7DK1x2b
-         yoF8TOrt36k6KDD+uTMcePSjrduwK9mFJXmVhNbcNbDilhDKzD+OQ0HggkLjPtQDlaO/
-         SAQw==
-X-Forwarded-Encrypted: i=1; AJvYcCUelUEntVig3bQy4IU5VlIFTUycsAWwOBT6D8yCu2Z1zjiWMX6jIYgqMRkGB+O3zGjNa4/3frUD@vger.kernel.org, AJvYcCUykS6GsMPzKLJsCiYA0hgIYN3nXo1plOygOd27rdmYwzYlRuTh8/d/EVPX2HEZHQnj8xutZk53dReIlRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3t2XmqwhKpgGsnCMD1//9QloopsRM2mrZYRDbwOb/QINhHV8+
-	ysaCzdYV3hUSBvZ2IgS3bbg8Q98V3h76rkOhxiSCW3WpfDMZExi0Wb7wlTcS6X8=
-X-Gm-Gg: ASbGncuRNNAwJ/1Wr5T3mKP4NPOeReEg6Aa2m9Z0w7BjDcNsxpzzoi+tKCv1T4GCZr/
-	t5070lSyH2LDvgkc0pBIgfNNOqZG7o1XdKhh2RmDTmS7Wctv70d6lRgJ5HayJpNZQ9MZJJQlpnZ
-	a/OaFvAmqImxqVpWWLjuubMEj1tej5VG0YJXQuq/gt99lTO5eKno6xd6m+aJOHhpkJNHrA4zoQI
-	waiHd1Tp5K6kWGf1BI7p7r3fpe3qki9mtvsZRKCZORsWebiqkvE5YgJoAEUyJLGTSVDNHdRKDIn
-	8s2mfzkx/az+n7Gsi9cA2MZIvTjXWPQiL/wlB5uPJX/MuzXoHdRm/hc9TdcGvB7u
-X-Google-Smtp-Source: AGHT+IHFwrghthQNyNeEpKiW1uMVjyIwpWxHTWW0AvfTOyhzj7jgBdU9s0cIylU3pyPc/h1PwGJrhQ==
-X-Received: by 2002:a05:6122:488f:b0:520:59ee:8197 with SMTP id 71dfb90a1353d-521ee448087mr6004985e0c.8.1740400263138;
-        Mon, 24 Feb 2025 04:31:03 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-868e86bd45csm4609368241.24.2025.02.24.04.31.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 04:31:02 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-866faa61728so2585468241.2;
-        Mon, 24 Feb 2025 04:31:01 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV67ACbxKEDleM4osQZ5uy+MUZBH22j8a7P0YI6q6rQPyUl0XEHW1LFvRz0nPbYOfkbj5DhcpBEvVj9ByI=@vger.kernel.org, AJvYcCXYMjPh+Mj68F9OhaIyxh9bmL5/A1bveupKfKcKefCdvVvVj2jKcIrpEnTYt4wjCBQlfefK04hR@vger.kernel.org
-X-Received: by 2002:a05:6102:50ab:b0:4bb:d394:46d7 with SMTP id
- ada2fe7eead31-4bfc0021756mr5448326137.6.1740400260502; Mon, 24 Feb 2025
- 04:31:00 -0800 (PST)
+	 To:Cc:Content-Type; b=LzANUy6i5YYIG+IFLTvme9S4SY6qgPW+Viq2CE5VWkK8N2kAF0xuVyol9zALe2AeCvYjo27dhmWHLUxHJu2e74Z/xof1CXnAB0xxv/V337VGhhkQc7LyOqMG/J+SXbxNotMp/Sx04+rRtYTDgMVIlUjBaDgqsvgBNJPi+A5zexQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NukBH3qI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13225C4CEE8;
+	Mon, 24 Feb 2025 12:31:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740400275;
+	bh=gc1D//Ffey8erAww4BtrYA/C5TzLux2XzdYyCROK0w8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NukBH3qIVuiuCGmBh6hzBM9KH8XfZoGm6ggcvta1b0j3EqI8yvPp1hK8BXG1rzhvt
+	 wqU9Ywx17tLnCYsKlocPE8Q1k/QqJzITn8vHKDjsdOsz7Ic4ULY7At/6EemgMn2ZSb
+	 Bz/3HNWekpcA7BDZtiVk8MJimEdwZH+58oskxrA68Q9hQnojTFf+O1v1mlt44mhh7I
+	 4L2Zzwa5aWCdp8hUSKO2HIHXPgADlYuZvlqur9HpQ9DTSQg/fG5BRiPEG/iQXgVV/u
+	 aNiMX2PPaWLTEUyayv8v6b0Hn8kk+AxEDI92+/hsLWWieqIV5Mwvuuw+iOEVSA7Xpi
+	 8HoIgSbXxDmYw==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e04f87584dso6355341a12.3;
+        Mon, 24 Feb 2025 04:31:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVE3zeWQnaAfw8geMkzAAo2wy3gBQgLDdO2qeos7VjGKGCWkymvdRteh1h2Bs2qWu8TBJ8aAkd3SGuB@vger.kernel.org, AJvYcCVn+/7OxqHxjnOGRe5tyJcEmyF0X/XCGAMeyIDuDY4/43KiMS+Wwm6fLSMtdX4Y0HdbwIDAhUYzWAL13ks/@vger.kernel.org
+X-Gm-Message-State: AOJu0YztbMgIaIgVHHEHtpkChbz8q2FpYTqEa8uw7PddxN31yo3a8uEx
+	Aa564jxSZKBzNXPb/c/NY2Mq//CxENNyZNB9O75g39nJjZzYGlk+RZSW6i/NZLlpay5BA19qq+u
+	tgtAgQ4XSAOphibJ6/Oo0yJhwrw==
+X-Google-Smtp-Source: AGHT+IHIrFLQGrUmr0/vRBFFvkZaV+UNoXq1Y47I6/AgegFXRC8cAvE98Z6EsH8IgPlqwmpF0VzqMVFcZN6ZdyHqFN4=
+X-Received: by 2002:a05:6402:35c9:b0:5dc:c9ce:b029 with SMTP id
+ 4fb4d7f45d1cf-5e0b70b6efamr12810252a12.5.1740400273495; Mon, 24 Feb 2025
+ 04:31:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224101527.2971012-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250224101527.2971012-1-haoxiang_li2024@163.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Feb 2025 13:30:47 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUM18v5zyvQ5YZWRhN5Ppn8ks5LGxrjOX1GHy=hC3SD3Q@mail.gmail.com>
-X-Gm-Features: AWEUYZmM_bkwvA0z-YjpK_qsk5uZkUfOB_T5-yLlTRbGrCbVCo-fL3mmCN6Y7Dk
-Message-ID: <CAMuHMdUM18v5zyvQ5YZWRhN5Ppn8ks5LGxrjOX1GHy=hC3SD3Q@mail.gmail.com>
-Subject: Re: [PATCH v2] auxdisplay: hd44780: Fix an API misuse in hd44780.c
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: andy@kernel.org, u.kleine-koenig@pengutronix.de, erick.archer@outlook.com, 
-	ojeda@kernel.org, w@1wt.eu, poeschel@lemonage.de, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250224114648.1606184-1-vincenzo.frascino@arm.com> <20250224114648.1606184-3-vincenzo.frascino@arm.com>
+In-Reply-To: <20250224114648.1606184-3-vincenzo.frascino@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Feb 2025 06:31:01 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+h5Dt=_mSaew269pXnuR-nQjgzRcdkN2XdCJjwMX-YqQ@mail.gmail.com>
+X-Gm-Features: AWEUYZm3u587qtfsFiWkv7dVwFwrNgMkCER2T9IDPbRJEnI5_7JDV-pRlScrhz8
+Message-ID: <CAL_Jsq+h5Dt=_mSaew269pXnuR-nQjgzRcdkN2XdCJjwMX-YqQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] ASoC: dt-bindings: xlnx,audio-formatter: Convert
+ to json-schema
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-sound@vger.kernel.org, 
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 24 Feb 2025 at 11:16, Haoxiang Li <haoxiang_li2024@163.com> wrote:
-> Variable allocated by charlcd_alloc() should be released
-> by charlcd_free(). The following patch changed kfree() to
-> charlcd_free() to fix an API misuse.
+On Mon, Feb 24, 2025 at 5:47=E2=80=AFAM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
 >
-> Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> Convert the Xilinx Audio Formatter 1.0  device tree binding documentation
+> to json-schema.
+
+Similar issues in this one I won't repeat...
+
+>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
-> Changes in v2:
-> - Merge the two patches into one.
-> - Modify the patch description.
+>  .../bindings/sound/xlnx,audio-formatter.txt   | 29 -------
+>  .../bindings/sound/xlnx,audio-formatter.yaml  | 76 +++++++++++++++++++
+>  2 files changed, 76 insertions(+), 29 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-fo=
+rmatter.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-fo=
+rmatter.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter=
+.txt b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
+> deleted file mode 100644
+> index cbc93c8f4963..000000000000
+> --- a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
+> +++ /dev/null
+> @@ -1,29 +0,0 @@
+> -Device-Tree bindings for Xilinx PL audio formatter
+> -
+> -The IP core supports DMA, data formatting(AES<->PCM conversion)
+> -of audio samples.
+> -
+> -Required properties:
+> - - compatible: "xlnx,audio-formatter-1.0"
+> - - interrupt-names: Names specified to list of interrupts in same
+> -                   order mentioned under "interrupts".
+> -                   List of supported interrupt names are:
+> -                   "irq_mm2s" : interrupt from MM2S block
+> -                   "irq_s2mm" : interrupt from S2MM block
+> - - interrupts-parent: Phandle for interrupt controller.
+> - - interrupts: List of Interrupt numbers.
+> - - reg: Base address and size of the IP core instance.
+> - - clock-names: List of input clocks.
+> -   Required elements: "s_axi_lite_aclk", "aud_mclk"
+> - - clocks: Input clock specifier. Refer to common clock bindings.
+> -
+> -Example:
+> -       audio_ss_0_audio_formatter_0: audio_formatter@80010000 {
+> -               compatible =3D "xlnx,audio-formatter-1.0";
+> -               interrupt-names =3D "irq_mm2s", "irq_s2mm";
+> -               interrupt-parent =3D <&gic>;
+> -               interrupts =3D <0 104 4>, <0 105 4>;
+> -               reg =3D <0x0 0x80010000 0x0 0x1000>;
+> -               clock-names =3D "s_axi_lite_aclk", "aud_mclk";
+> -               clocks =3D <&clk 71>, <&clk_wiz_1 0>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter=
+.yaml b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+> new file mode 100644
+> index 000000000000..52a685519bc0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/xlnx,audio-formatter.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx PL audio formatter
+> +
+> +description: |
+> +  The IP core supports DMA, data formatting(AES<->PCM conversion)
+> +  of audio samples.
+> +
+> +maintainers:
+> +  - Vincenzo Frascino <vincenzo.frascino@arm.com>
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - xlnx,audio-formatter-1.0
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      Base address and size of the IP core instance.
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +    description: |
+> +      Names specified to list of interrupts in same order mentioned unde=
+r
+> +      "interrupts".
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+You didn't define the order though...
 
-Gr{oetje,eeting}s,
+You must define what the names are and the order. We had that, but you
+dropped them.
 
-                        Geert
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 3
+> +    description: |
+> +      List of Interrupt numbers.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Generic description of 'interrupts' is not useful.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +
+> +  clock-names:
+> +    minItems: 2
+> +    maxItems: 3
+> +    description: |
+> +      List of input clocks.
+
+Must define the names and order.
+
+> +
+> +  clocks:
+> +    minItems: 2
+> +    maxItems: 3
+> +    description: |
+> +      Input clock specifier. Refer to common clock bindings.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupt-names
+> +  - interrupts
+> +  - clock-names
+> +  - clocks
+> +
+> +additionalProperties: true
+
+Only common schemas which are incomplete can use 'true'. This must be false=
+.
+
+> +
+> +examples:
+> +  - |
+> +    audio_ss_0_audio_formatter_0: audio_formatter@80010000 {
+> +      compatible =3D "xlnx,audio-formatter-1.0";
+> +      interrupt-names =3D "irq_mm2s", "irq_s2mm";
+> +      interrupt-parent =3D <&gic>;
+> +      interrupts =3D <0 104 4>, <0 105 4>;
+> +      reg =3D <0x0 0x80010000 0x0 0x1000>;
+> +      clock-names =3D "s_axi_lite_aclk", "aud_mclk";
+> +      clocks =3D <&clk 71>, <&clk_wiz_1 0>;
+> +    };
+> +...
+> --
+> 2.43.0
+>
 
