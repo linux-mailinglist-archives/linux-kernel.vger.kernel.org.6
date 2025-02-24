@@ -1,129 +1,279 @@
-Return-Path: <linux-kernel+bounces-530206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09596A43082
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:07:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16869A4308E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:13:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CD097A18AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:06:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33F687A5787
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9351B207A18;
-	Mon, 24 Feb 2025 23:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C5C20AF9F;
+	Mon, 24 Feb 2025 23:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IwU1ezg9"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="HHxaMDRl"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8971FFC45
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740438436; cv=none; b=Tw2bn4zBy189VewLYJdTVMAzlqb99EFDjiCqu/0QN8H7ZkmknWeF1tZ6Qa1QugLb4v+O9LQPW7kfVvko77JiIf6hT3JttE501Ff62MZ+1kKFSeUhdvUyWBXBdwtmxMHmCQYczDU8F+zi5WPChHuD0xrCgJn0rKwLeZd+F00aQDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740438436; c=relaxed/simple;
-	bh=FYfFMWiTzduSPtbvpZ0Pkv9pDjTpRTObNnikiDKwKYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pc61jMjgSOmykWBtJpNRMB7YDzyGHySy5LpKriiaX6JITRwX1UqFVE8s0L+2ai/YaDU3qjJoRHCbxVKP0qcVv9V02bzGmrlU5kExNUfTzS+Z6K401kZPE2z1Xr1e3KeccmZW65FFom+PEpzOhgTI2JwPMcj8JU+NEBV8POf1X0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IwU1ezg9; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-724daedf8c3so1283652a34.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:07:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740438433; x=1741043233; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gt7M2cm9mI5eYr0nERX+qOY3z3eWRP2n3iQJDxTpkO4=;
-        b=IwU1ezg9yFX8REbX70AWUvgJLlfygynQGT9OQl3mQmsKmY1Z8wfb42p6S2T5nG/1CZ
-         Mx0MImm5cfkZedJfbk2PKz7F4FL6QRgZQX6H4vJZcb1do0WegnUkjAiDDaYU3q89mIG2
-         568cdQ59KLnakjdjCWTPqJJk2vG+/NxOK9NkU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740438433; x=1741043233;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gt7M2cm9mI5eYr0nERX+qOY3z3eWRP2n3iQJDxTpkO4=;
-        b=FkUARrTgwdVYIxIjcxJejW+F1zcuRQBa1mQoBXde1hD/87Z9+NgjEwUxtNIfHj7ueP
-         44lQ4IkisrrrvxVv31QeH3B02pqksSiZUt6E894c7cl2Do084X6F/pTXQAaVxGjxDI5D
-         wi+VJIww4qbnVocYuDLfYa8E8Dm+cEGV/7SExboSMk55E2hnwfMuwT0+iRteELZm5dmE
-         v+vC+gJHBQb72Sw88aUm0SJknFRI3gAQEcsS0td5I540Pr+PjMUvZ4RBML8Hu+R1hcXO
-         LNAK6wI24QGLJL9o/jpvsB4NBnhWDwIGAJSlUj9S89ZRh4m+q90CLZLsJFpj4YMcdN+s
-         Fxkg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbzNPyIXI9RTl7gj2NeRPcnse779XCLFFg8mMBp0b9KI8BoICvcMuDXhQ48/KJN4hyISB2ON2iZjfVy+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJdWPZdNJO+VjFy/mjbjfceJI0L0B7wcSHj6bKW+gDufVKcnma
-	lPmfnOeXQj7vtoivabfGlt9G7RZOKD3kYoF3BhXSxZQQtPe2uLF9o4g+3Dy1K2dqLxdNRkCfB4/
-	GSTOALp596JvIZqUVcH+6UNwYSNtouKI3FmSz
-X-Gm-Gg: ASbGncv2P92NGfFN3NiY2OmvH3esaj6x02osAHwYO5HzBt/GQiIMc9aRneCZ3RmnlEV
-	yViPT/rTxXK0c6aSGHugewG0ZrkSqDHvYWj8QfTCrUF4QAuIW97tjizBpUSDuIvvQaxJ/Yp5ykr
-	HlUkmu52g1WkmQKUaBTdp3qdFLacqgllQBHnuM
-X-Google-Smtp-Source: AGHT+IEP4PV9DNBhdrXRh+chy4n1/lVYXwdesM2YhvWLjUuJsbctZ76XazgP1D4104ECH40KdG2B3ht8gtQ3Gkm0fcM=
-X-Received: by 2002:a05:6808:191e:b0:3f4:23ea:f9b9 with SMTP id
- 5614622812f47-3f4246b3c3fmr4357094b6e.1.1740438433475; Mon, 24 Feb 2025
- 15:07:13 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B78914A4E9;
+	Mon, 24 Feb 2025 23:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740438778; cv=pass; b=TH0Ea/5NQgn+1G/KLLNDMWUj/2QA2sxFogK6ySvrRZHb3bJGPbGOMUm3dDiq7GA2lsza3IxLihQGFPMXJAFsCqocVsEd7MpBqZFgUyzQcyfbMxhJQdjWq9nzT/qr1H6FAPCzl2/RGZUWMHx1EOWZHROnu++tmGlb2hz/cyXdrKk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740438778; c=relaxed/simple;
+	bh=XXWEC2LqLJIv0MKv58pUZk0CKwpxlzBRzGseoopbZqw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CsVry5AHsyCdVdP4jTniaanJd975C0lhAX/aJNaWC8dK+dXXRiHPBsRTkcwCdPEdJ/WWiH/6PER0yElQFqrNdoZsJvoQBSgT7u4PUS9llEtOLU7BzZAcpcabVT2XUKv3Rv+mqYHlSG3Z9Pyht3Lg0etBoOhx+7KPhdp9z7Kz10o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=HHxaMDRl; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740438745; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=PgU9Mm6RT7uuCN862cQr8qLNQ285guHKqyOoMNUV9P7h1iGWyW1SesCfskDE92aoUJjtbtfn7axNKQIU+gdNOOj0yCwRo2Qaxzl4RSQpRS+cVmx/XHLv1tRt14hYcMYbZW+f+bNVehe8w9sPK2zjeQXaRDtXbgO7tWA0/37JupI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740438745; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=bO9uZfn8SM1Jv2su8dWyJGrswvnxZaC5Z+EMWGYE4uY=; 
+	b=abm72LkhKE2k+l84SADs9WnPM2jxW49yfJz1w/KJisvMvpZhCJyUBThg/2Ev52AzZ/mk30nUcR/Eeuk8UTfc4unTL9ItcWIMkGIculPplX0kCeRrHvK/q7E0MfGowgeMAZc/n1TBz5OpTqfzQMsSq7Uinvx9KLGd56F7O64O0U8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740438745;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=bO9uZfn8SM1Jv2su8dWyJGrswvnxZaC5Z+EMWGYE4uY=;
+	b=HHxaMDRlmysoXNfGvP4Qgk8queEmuYFMHF0MeIe7JUf4THVo241qcT3h3mC4rAbt
+	stYCQ1bRF081kb+J1Cvu7Q4LIsFLGyL7z49uxSnS4SRbVDAnyuJCN4Z0KW4nbXBvcBe
+	lLx87+OwaYJRM9jZKNyhr9leWPlV3/S1CNR0f+DY=
+Received: by mx.zohomail.com with SMTPS id 1740438743258548.6806747875588;
+	Mon, 24 Feb 2025 15:12:23 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <CAKbZUD03mBKVfOTQ4me79bZTLgWP8QLyD1PSxTcpw2YPmtsyUQ@mail.gmail.com>
-In-Reply-To: <CAKbZUD03mBKVfOTQ4me79bZTLgWP8QLyD1PSxTcpw2YPmtsyUQ@mail.gmail.com>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 24 Feb 2025 15:07:03 -0800
-X-Gm-Features: AWEUYZlNlJhjCemXFyWfsLbYFok5NAL1CEToK9WkF-XdBylNHUu_GFihHhpgA0Q
-Message-ID: <CABi2SkUaUMTS06mKm5_k7m=NpfyDR=L45xqp1i+FkvPJHT4-TQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/7] mseal system mappings
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
-	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, hca@linux.ibm.com, willy@infradead.org, 
-	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, 
-	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
-	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org, 
-	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
-	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
-	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
-	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+Date: Mon, 24 Feb 2025 20:12:05 -0300
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ aliceryhl@google.com,
+ dakr@kernel.org,
+ robin.murphy@arm.com,
+ rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com,
+ iommu@lists.linux.dev
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+To: Benno Lossin <benno.lossin@proton.me>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On Mon, Feb 24, 2025 at 3:03=E2=80=AFPM Pedro Falcato <pedro.falcato@gmail.=
-com> wrote:
->
-> On Mon, Feb 24, 2025 at 10:52=E2=80=AFPM <jeffxu@chromium.org> wrote:
-> >
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > This is V7 version, addressing comments from V6, without code logic
-> > change.
-> >
-> > --------------------------------------------------
-> >
-> > History:
-> > V7:
-> >  - Remove cover letter from the first patch (Liam R. Howlett)
-> >  - Change macro name to VM_SEALED_SYSMAP (Liam R. Howlett)
-> >  - logging and fclose() in selftest (Liam R. Howlett)
->
-> Jeff, please don't send out new versions of the patchset that quickly.
-> We were having a discussion on v5, you sent v6 today (acceptable) and
-> now v7 (while changing barely anything of note). It's hard to track
-> things this way, and you're just flooding a bunch of mailboxes.
->
-Ah, I apologize. Sure.
+Hi Benno,
 
--Jeff
+>> +pub struct CoherentAllocation<T: AsBytes + FromBytes> {
+>> +    dev: ARef<Device>,
+>> +    dma_handle: bindings::dma_addr_t,
+>> +    count: usize,
+>> +    cpu_addr: *mut T,
+>> +    dma_attrs: Attrs,
+>> +}
+>> +
+>> +impl<T: AsBytes + FromBytes> CoherentAllocation<T> {
+>> +    /// Allocates a region of `size_of::<T> * count` of consistent =
+memory.
+>> +    ///
+>> +    /// # Examples
+>> +    ///
+>> +    /// ```
+>> +    /// use kernel::device::Device;
+>> +    /// use kernel::dma::{attrs::*, CoherentAllocation};
+>> +    ///
+>> +    /// # fn test(dev: &Device) -> Result {
+>> +    /// let c: CoherentAllocation<u64> =3D =
+CoherentAllocation::alloc_attrs(dev.into(), 4, GFP_KERNEL,
+>> +    ///                                                              =
+    DMA_ATTR_NO_WARN)?;
+>> +    /// # Ok::<(), Error>(()) }
+>> +    /// ```
+>> +    pub fn alloc_attrs(
+>> +        dev: ARef<Device>,
+>> +        count: usize,
+>> +        gfp_flags: kernel::alloc::Flags,
+>> +        dma_attrs: Attrs,
+>> +    ) -> Result<CoherentAllocation<T>> {
+>> +        build_assert!(
+>> +            core::mem::size_of::<T>() > 0,
+>> +            "It doesn't make sense for the allocated type to be a =
+ZST"
+>> +        );
+>=20
+> Is this a safety requirement? I.e. the `dma_alloc_attrs` function =
+cannot
+> handle a size of 0?
 
+It doesn=E2=80=99t make any sense to have a ZST here. At the very =
+minimum we want to be able to read and
+write bytes using this code, or preferably some larger T if applicable. =
+The region also has to be allocated and we
+need a size for that too.
 
-> Thanks,
-> Pedro
+This was discussed in an early iteration of this patch. I think a build =
+failure is warranted.
+
+>=20
+>> +    /// r/w access or use-cases where the pointer to the live data =
+is needed, `start_ptr()` or
+>> +    /// `start_ptr_mut()` could be used instead.
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// Callers must ensure that no hardware operations that involve =
+the buffer are currently
+>> +    /// taking place while the returned slice is live.
+>> +    pub unsafe fn as_slice(&self, offset: usize, count: usize) -> =
+Result<&[T]> {
+>> +        let end =3D offset.checked_add(count).ok_or(EOVERFLOW)?;
+>> +        if end >=3D self.count {
+>> +            return Err(EINVAL);
+>> +        }
+>> +        // SAFETY:
+>> +        // - The pointer is valid due to type invariant on =
+`CoherentAllocation`,
+>> +        // we've just checked that the range and index is within =
+bounds. The immutability of the
+>> +        // of data is also guaranteed by the safety requirements of =
+the function.
+>> +        // - `offset` can't overflow since it is smaller than =
+`self.count` and we've checked
+>> +        // that `self.count` won't overflow early in the =
+constructor.
+>> +        Ok(unsafe { =
+core::slice::from_raw_parts(self.cpu_addr.add(offset), count) })
+>> +    }
+>> +
+>> +    /// Performs the same functionality as `as_slice`, except that a =
+mutable slice is returned.
+>> +    /// See that method for documentation and safety requirements.
+>=20
+> I don't think this is good documentation style. I think copy-pasting =
+the
+> first line and second paragraph is better.
+>=20
+>> +    ///
+>> +    /// # Safety
+>> +    ///
+>> +    /// It is the callers responsibility to avoid separate read and =
+write accesses to the region
+>> +    /// while the returned slice is live.
+>=20
+> This safety requirement is worded quite differently compared to the =
+one
+> on `as_slice`, why?
+
+This was discussed in an earlier iteration of this patch too. If you =
+call this function, you must make
+sure that some hw doesn=E2=80=99t change the memory contents while the =
+slice is alive.
+
+This is device-specific. e.g.: I know that for video codecs this is =
+possible. Therefore this API
+can be used there.
+
+On the other hand, some people may use the API to share ring buffers =
+with the hw or even implement
+some polling logic where the CPU is waiting for a given memory location =
+to be written by the HW.=20
+
+If you=E2=80=99re trying to do this, you cannot use this API, that=E2=80=99=
+s what the safety requirement is about.
+
+Although I=E2=80=99d word this differently to be honest, i.e.:
+
+ /// It is the callers responsibility to avoid concurrent access to the =
+region by the CPU and any other device
+ /// while the slice is alive.
+
+This is also needs a bit of work, but at least it makes the point =
+clearer.
+
+>=20
+>> +    pub unsafe fn as_slice_mut(&self, offset: usize, count: usize) =
+-> Result<&mut [T]> {
+>> +        let end =3D offset.checked_add(count).ok_or(EOVERFLOW)?;
+>> +        if end >=3D self.count {
+>> +            return Err(EINVAL);
+>> +        }
+>> +        // SAFETY:
+>> +        // - The pointer is valid due to type invariant on =
+`CoherentAllocation`,
+>> +        // we've just checked that the range and index is within =
+bounds. The immutability of the
+>> +        // of data is also guaranteed by the safety requirements of =
+the function.
+>> +        // - `offset` can't overflow since it is smaller than =
+`self.count` and we've checked
+>> +        // that `self.count` won't overflow early in the =
+constructor.
+>> +        Ok(unsafe { =
+core::slice::from_raw_parts_mut(self.cpu_addr.add(offset), count) })
+>> +    }
+>> +
+>> +    /// Writes data to the region starting from `offset`. `offset` =
+is in units of `T`, not the
+>> +    /// number of bytes.
+>> +    ///
+>> +    /// # Examples
+>> +    ///
+>> +    /// ```
+>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) =
+-> Result {
+>> +    /// let somedata: [u8; 4] =3D [0xf; 4];
+>> +    /// let buf: &[u8] =3D &somedata;
+>> +    /// alloc.write(buf, 0)?;
+>> +    /// # Ok::<(), Error>(()) }
+>> +    /// ```
+>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+>> +        let end =3D offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
+>> +        if end >=3D self.count {
+>> +            return Err(EINVAL);
+>> +        }
+>> +        // SAFETY:
+>> +        // - The pointer is valid due to type invariant on =
+`CoherentAllocation`
+>> +        // and we've just checked that the range and index is within =
+bounds.
+>> +        // - `offset` can't overflow since it is smaller than =
+`self.count` and we've checked
+>> +        // that `self.count` won't overflow early in the =
+constructor.
+>> +        unsafe {
+>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), =
+self.cpu_addr.add(offset), src.len())
+>=20
+> Why are there no concurrent write or read operations on `cpu_addr`?
+
+Sorry, can you rephrase this question?
+
+=E2=80=94 Daniel=
 
