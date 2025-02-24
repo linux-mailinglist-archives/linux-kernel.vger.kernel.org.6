@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-530248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A36BA4310B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:40:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506ACA43112
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C183B2F9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95F1219C0750
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867EC20C037;
-	Mon, 24 Feb 2025 23:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283E720C470;
+	Mon, 24 Feb 2025 23:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QYqV/Fnl"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCNxnZCt"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52BD120764E;
-	Mon, 24 Feb 2025 23:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F8C20764E;
+	Mon, 24 Feb 2025 23:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740440375; cv=none; b=E54TsxEmxuxuSzP35t8PUBIVPNF80zWBJuDyWGBghD5uCJRVNx+a+Xgl6sMSZ6qsLYYjOrM8nPByLSsri0tNoM03M1dpslBjXjtGTBYUdX694IHrwzT9oeFMV4JTq4GQXmWEm5KBkgb+oBEC4cUXjbC723+AU0SvvVXaB5Z4GXw=
+	t=1740440386; cv=none; b=PqDDckqCsiPsor72UaMw3vIzsdfSl+wOFD7GlvuOUW1hdTS+VfhBzYAiqE/44BZGBsFqk11qC4UvXJLcb3J2hiivGtKm1UW3L3MfAgv8rVsFA9BdX47wnEdLW0+4WhZBpKxl8Na0VCeZIeTmQkoPnbeNNGcAOyzaCF3gnk9KJZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740440375; c=relaxed/simple;
-	bh=H/fdp/lgu3P0d5FbePVHc4hZ2QR1bTnY+ap8F4xxnTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiZmLR3M+vPl+LLdAKW0SCln1ZjT7toV4uWKQzNHgEVUoQh/0/GeajB3XAnN8QgPaHCRWaS2goAH8zPS6gJVL0Dozxugw7V0yoB7MjqcmaLYQyMuIQPlx5gL+Qcz9k5zhFzWV1R6j2k0mXcJnZT8nSkvSbSmjAh9uRAYhbwdzKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QYqV/Fnl; arc=none smtp.client-ip=209.85.222.169
+	s=arc-20240116; t=1740440386; c=relaxed/simple;
+	bh=Mx3M84WwtY3NU5OR0FXjmYAPb68dziDd5bWY/P4BbEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P3J9tBQWNRJJavdkVJHe/7kkTD9b970EaEYDMmHEE7u9xVkyuS4pNq4Nmvw5hcQj8L4waffrfKrIm7UfzKEOQy32KCoKq2XE981uepZpkPnzp878wouO6FKzX2JWK/dhgVs/j0vln+aesXic9I/qhZwoDutM1OcP+9bH7lq+TYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCNxnZCt; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c08f9d0ef3so313040785a.2;
-        Mon, 24 Feb 2025 15:39:34 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e5dd7b439e3so4230765276.1;
+        Mon, 24 Feb 2025 15:39:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740440373; x=1741045173; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I28BvW8sYtCIJpp5k7EPbcyeOkG6IabIbB4ctmQvitg=;
-        b=QYqV/FnlF6wRmuqUBjc7G0d3RMsYFXcyNCDJbfjy/cVE0Wb6PJTMdeAbUwt768N0Lj
-         yWLOsfHr7F1ahy5seuw+y/qi7lUbm9JFbG/e0BslmJ87TIh76xLbv1VCJj71q/wvC8sT
-         78mC1fTkpOBTQJqpncgBIh4DSQjtmpcvwZ0TEYFzLh7hzhu2gKXAEeZIp8k9InEt1Zue
-         iEO1/a8GX38xZ4l57BHL+1GL9+e6sTSX2XwlGjV+NgmEhw2uU6z5LTV65lOlXzlSpZ9Z
-         6/ZIgjLZKWybd1whc/thl86bpNOuIolQC8F5f9eMG9IMB1wHcvNTdVBak1NJcbcS7ETd
-         LKKA==
+        d=gmail.com; s=20230601; t=1740440383; x=1741045183; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Em6wyZNwKj45p/oNoxuXgA87kPyVGeauMHk780ar+kU=;
+        b=fCNxnZCtovtjDme0XXFa+yfJJY4l/Akj1tHyikhyIxNS4HRRWIzY8exvMS9YBwwe8J
+         xW3iB2eXvuwUBfO9IU+BgXznmHLuiz8xlT/GP8Hq5AvPq8OD5X4ygKPc4Iuipoi0roww
+         rw/Yqa/e0iVAfvLmk2F1jj3PBKkXKXRoIPwV13B7x02GJc6p2l7S0ry2P5CGBbV8+gL6
+         vMP+AlI5tbbRQwq3Jys2d0n8viqwuPk4w0G1TeFq217Dif7Qr1eqSJrO5wtI4atnFyfe
+         IPrJGAiqBxPxjO7ufHrMfTIEaq+rvCYLYJF3MPvoAx+3slkfA0xUcthXlgBdrUvi4l4o
+         +DTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740440373; x=1741045173;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I28BvW8sYtCIJpp5k7EPbcyeOkG6IabIbB4ctmQvitg=;
-        b=tbX4DowWRn5BOUoEtv+sCOtAt8qwMADnHP5XNvVap0vskIfxGyswI5XPDCvB0MVKIo
-         9VUZRMQKIvgS5T/uvAQjzfbg4RIcIqDekWoCx4gwZBxyw1wmwshF3042kKMLq63ubofp
-         XBZjqfwIhNSJ268V7lE6BvAD7ldLF6xit8kHYfAS6/uxYDh7CpJ4t1+Py/eF9Oe74LYQ
-         w3bzoF9LZBrRXPZpxL5Imh/3T7kt4monpMUSVlsMykd1hprWf3kouEzhtCa7cXJT1ubi
-         7/i0ADwW07jsBhZ2LLaUyNVCX4jlkSY831OUEJCJUv0eqgM+4DoaXPiffkpS/coZjkt5
-         gEmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp/Ym4/yL7oyvkqFSC3Vg0/WuQrDB3ypl5l3whjiE4igmMOHGjQ1Gdl2BA/rbJS5tmIt3RDWZwWc7s@vger.kernel.org, AJvYcCVaECsvMCadTnnMwCDncxFI74U5jgzQvDp87G+KbqMJN1C6ti+kY7dSR1/Diy1XC7TEWENnCQw68QYU@vger.kernel.org, AJvYcCWyPo5N2Eh5kLll881SXbcOnh+LSAWpT2kX/gBOTAQS4nbCmJTGpXoZRuAqU6xBKo0jajAFPMcgkCg5HffM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6fhYbxsROlU75LUN2hApDZKuu5iOarudIl9QJNIMW7y4QATr6
-	CiwIJVpUqe5wdTfXrH5hir1ay45FdKHXe2rsdA5kDGBG33NE5GwY
-X-Gm-Gg: ASbGncs7rslTv6AXl4vrU3izeKX9D0nFZCYhW3WI59WnE4VXx9V8D61f+K3MM3Q0sVY
-	wiP9zyhxOGTVw01tfxyfdF73ZwuNfUEeA7gB1Xn1DayXgJPMp9Su//Fib83ivmi1TpakBbBb3wK
-	dQMG6MngTZkRiOA+acw6F96apB5taZxIhCwU293mlW+7LEgAfmHIMfE6tSNZg5VA6l957+h62kI
-	gDScbg6KSz5I4H3L7k2YllOgWzMIxuBqCSjp29u2RdYHcioFOX4F/JQ1rt81Fa8WizEf6aUodE5
-	aQ==
-X-Google-Smtp-Source: AGHT+IFwSiY82sk1UHPy1sh4TaxDRFtt/bKpmiKYsLl62LaJzeIFLc36bW8vjGEj+Z6l8tQnP1hrSg==
-X-Received: by 2002:a05:620a:600b:b0:7c0:b368:5d78 with SMTP id af79cd13be357-7c0ceeea4e1mr2231799485a.9.1740440373095;
-        Mon, 24 Feb 2025 15:39:33 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c23c299259sm35457385a.14.2025.02.24.15.39.32
+        d=1e100.net; s=20230601; t=1740440383; x=1741045183;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Em6wyZNwKj45p/oNoxuXgA87kPyVGeauMHk780ar+kU=;
+        b=lawplL/zrq4g7rejcnKcuiUAKEQ5tgRffpmdyl/+xNX20lJi/uLRwpjZb4SEQTpSZ/
+         8FgT+9NZHGmCI9+VUbCzRG1ulxZ2es/03ZIaQSZ2Xhw23uSDJiM7hSxCNnIHtEAtSpfc
+         4PXgBO66Uy5sAZfg21m34vFdXzF6dlKiDsFBFEfWs6r49yg7FQvBMu9UCVdzF14oThkX
+         Zko9zhlvOKwVhMRnzHDrX0hk6MGQjm6pJMPX76i7jxYeRh1wAaGlTRx8P/r0l/gA0X7Q
+         2jDTmNpShuqluepG3fpdsRCN2u4Ow8KfaJtYx1aH+z5ez26aqD5keAwmzfv4Q0+sRbiZ
+         zZfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUa9wmnI8RWuQawNh9bdlU7Im7Dt4S/ODx0YyGn/rAwtcrtLo1bWX4JaIQNEQMjJxmSnYirYu4jui+pMH15Jvk=@vger.kernel.org, AJvYcCUfKkPknD//GVe3WA+S/l9VSfdSo2f/kqc0sUQYUNkZSCQx+cEF2Mo2ljtqW92MZD/7jQNNSbTTj5ntYZ4=@vger.kernel.org, AJvYcCVWjZUlPHNW9VCIOuk9ytGy6O8l/aiKN7ZDGY29yXpC6NJydswKX+xF3ejJgTKU9l2LULp4ZRvZgEw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjAQgZaow1RUZgQ+nbPwy5M1KeyXert/zJ5OirN7york+mpoZ/
+	YScFWVtPuxU6/6WLupVozh1h7pfNxStnLMJbJEJTAiM+5kL2eZBM
+X-Gm-Gg: ASbGncvpadk5ZDSyUvkxHStY95zV3I9TpQWBSQsBDvDTb4WkXKGy1ep3UJwaVqpmtBs
+	N3qgnFrE+eQi4UyZ/3YUl4XQHL1pWzS4Z731JN/NxQFBcgIbrrOCutMay+Ul1kDSCsdRUNvCxR5
+	2QjGc2cj6GLAP5YNXQoOynIz5aLJdnGW8jrPpfdzMhhKxkSdyp1osrf5gxM7tS7D/Vn+qieAETN
+	Hd7S7sDD7YRYYBmIrHIviSoSRwVna15ihYwYX+ZNso9BCwD1ehJBOHaHKQ3C92ai1P/dRKoI0DV
+	WbSA0/IX0tJNgM+YvZP3Nhgm+6GtDRExh+DXzDJOpRv0nQ+P+/VB2+KDszEcfQ==
+X-Google-Smtp-Source: AGHT+IGJ4kYO+7vEeod1p53CFmuKDYnA9HznKe1Ojaxw+/QIMgxp46DfqTGP8DgzDp0dw2ylUJqDyA==
+X-Received: by 2002:a05:6902:3301:b0:e5d:ba97:b1af with SMTP id 3f1490d57ef6-e5e8b04674cmr10799379276.39.1740440382744;
+        Mon, 24 Feb 2025 15:39:42 -0800 (PST)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e607b3eb08bsm89564276.23.2025.02.24.15.39.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 15:39:32 -0800 (PST)
-Date: Tue, 25 Feb 2025 07:39:13 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Bjorn Helgaas <helgaas@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chen Wang <unicorn_wang@outlook.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Niklas Cassel <cassel@kernel.org>, 
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
-Message-ID: <jq55rzcvcp6bxfk3klkomr3gtzqgkwqb2qpjnfndymomaac6ry@5jmzq6vlpu2u>
-References: <fanm6m6fx6cqwalhdvrxmjzsluiyptbvrwbi5ufwbqmxsf62xl@lntprhkjv6tm>
- <20250224194725.GA473475@bhelgaas>
+        Mon, 24 Feb 2025 15:39:41 -0800 (PST)
+From: Yury Norov <yury.norov@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nishanth Menon <nm@ti.com>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	linux-pm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Bitmap bindings for rust
+Date: Mon, 24 Feb 2025 18:39:34 -0500
+Message-ID: <20250224233938.3158-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224194725.GA473475@bhelgaas>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025 at 01:47:25PM -0600, Bjorn Helgaas wrote:
-> On Sat, Feb 22, 2025 at 08:43:46AM +0800, Inochi Amaoto wrote:
-> > On Fri, Feb 21, 2025 at 05:49:58PM -0600, Bjorn Helgaas wrote:
-> > > On Fri, Feb 21, 2025 at 09:37:56AM +0800, Inochi Amaoto wrote:
-> > > > Add support for DesignWare-based PCIe controller in SG2044 SoC.
-> > > 
-> > > > @@ -341,6 +341,16 @@ config PCIE_ROCKCHIP_DW_EP
-> > > >  	  Enables support for the DesignWare PCIe controller in the
-> > > >  	  Rockchip SoC (except RK3399) to work in endpoint mode.
-> > > >  
-> > > > +config PCIE_SOPHGO_DW
-> > > > +	bool "SOPHGO DesignWare PCIe controller"
-> > > 
-> > > What's the canonical styling of "SOPHGO"?  I see "Sophgo" in the
-> > > subject line and in Chen Wang's SG2042 series.  Pick the official
-> > > styling and use it consistently.
-> > 
-> > This is my mistake. It should be "Sophgo", I will change it.
-> > 
-> > > Reorder this so the menuconfig menu items remain alphabetically
-> > > sorted.
-> > 
-> > I think this order is applied to the entry title in menuconfig,
-> > and is not the config key? If so, I will change it.
-> 
-> It's the title shown by menuconfig, i.e., "SOPHGO DesignWare PCIe
-> controller" here.
+The bindings and a new maintenance entry together with the API changes
+policy.
 
-Thanks, I will reorder it.
+v1: https://lore.kernel.org/all/20250221205649.141305-1-yury.norov@gmail.com/T/
+v2:
+ - export alloc_cpumask_var() @ Viresh;
+ - clarify that the maintenance rules apply to all bitmap interfaces,
+   including those not mentioned explicitly in the helpers @ Miguel.
 
-Regards,
-Inochi
+Viresh Kumar (1):
+  rust: Add cpumask helpers
+
+Yury Norov [NVIDIA] (1):
+  MAINTAINERS: add rust bindings entry for bitmap API
+
+ MAINTAINERS                     |  5 ++++
+ rust/bindings/bindings_helper.h |  1 +
+ rust/helpers/cpumask.c          | 45 +++++++++++++++++++++++++++++++++
+ rust/helpers/helpers.c          |  1 +
+ 4 files changed, 52 insertions(+)
+ create mode 100644 rust/helpers/cpumask.c
+
+-- 
+2.43.0
+
 
