@@ -1,156 +1,135 @@
-Return-Path: <linux-kernel+bounces-529035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD75FA41F09
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:31:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B5D7A41F24
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:34:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB08D188F4C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:28:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA4D3B179F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB352221F20;
-	Mon, 24 Feb 2025 12:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 124D4233712;
+	Mon, 24 Feb 2025 12:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EVQ7aBPC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LCqOKxS1"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CAA219300;
-	Mon, 24 Feb 2025 12:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C397B21930E;
+	Mon, 24 Feb 2025 12:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400073; cv=none; b=QnAqrdIoRxrSTJPeAv3zvgHxJepWu/sYpQBdDj6bRs4Hhb27qfwGoxw6p88gilesQ8HqF7/b0i7TAE9JtharTq5VqBYvefOjgbN9yIJiwsVxMDsIYUI/6h9mY8LUnyTr6DeBzb8WjAGmsGD2juq5fYQ+g0fULtc1zFQ+SgR8Q9M=
+	t=1740400008; cv=none; b=M/dTZPk8BaLT4b5Xq9jTPfG77mcHXzVAV0Raoy/3MwmYJR/SJQM+BJY/yztXv9D/zDrrWIMumLrSwWiAfxoPW2awDKGj8Y2jQ/qFlb1gB0YGVbQN2/kd2xSDeWjPBwMKm08qlhvHuRq+k+7TT3qtY/WcayZ9nT5/93q9NZGxwlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400073; c=relaxed/simple;
-	bh=ehOS2DLAOvq4B8Dskw4jr188VJvBUk4de8iEqUYAzYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mYQua5icsuukMmiMAx5t799krjNiDJ1onua+6kFJusgK9LK3KZOFaYINLA4sKWvVpbmlvOfXWp5z+3IhQDI3q0SuAMl1IRDJG0iB4UKxY3Xl/B+adzkBQ+7oXc7OcTXQGH15ctVRLYRH2Z8w+jasK5eYWTZTAO83T1fe96P8wLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EVQ7aBPC; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740400072; x=1771936072;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ehOS2DLAOvq4B8Dskw4jr188VJvBUk4de8iEqUYAzYs=;
-  b=EVQ7aBPCBfZ7QPbCBuVtlhqaEVaJC7DQ6dwOc1237VvCCsSLDSXbJXDe
-   AWfWw7A0eoLYWbkypGVLmXVWyZf0bOq5GSMHlGEdN+/xG0D5Ed3FumtFV
-   n6TfQn9uItZEK+8ZG7WhNii6streQC/1ybWUDLBhsCcdTVrWm17WXyL0B
-   fXN3hVW+9+6OCQDEVwtN7FduVkuTKZeR4ANcUMLHM4WkuZ9/PIRu08SuU
-   18SavoJ2hD5MvrYyqoYRzVF1uEekRFabV1rYRlTPZVCYuvLMAQDgtANYu
-   bzs4AQudQJ7B5XN9ljoXUsjPpQ0IxGd25/0o7ksVsTUokApfkSYHVNJS/
-   A==;
-X-CSE-ConnectionGUID: iJtQoMHTTem0q9b3jRKACQ==
-X-CSE-MsgGUID: 6BhNp7QYSgmv6ReJ35qmUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41167287"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="41167287"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:27:51 -0800
-X-CSE-ConnectionGUID: +wIC8x9qQB+3KPPmx2a0kQ==
-X-CSE-MsgGUID: P3FUKr/gTjOYv49VEZlpSA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116553489"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:27:43 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmXYg-0000000EgzJ-2Ka1;
-	Mon, 24 Feb 2025 14:27:38 +0200
-Date: Mon, 24 Feb 2025 14:27:38 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	"pmladek@suse.com" <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
-	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"apw@canonical.com" <apw@canonical.com>,
-	"joe@perches.com" <joe@perches.com>,
-	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>,
-	Kerem Karabay <kekrby@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
-	Orlando Chamberlain <orlandoch.dev@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
-	Hector Martin <marcan@marcan.st>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH v3 3/3] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z7xluhcEA-VS22kK@smile.fi.intel.com>
-References: <8F522D41-5417-467E-B9D3-7D9FC24AE536@live.com>
- <Z7igVXqvRYTVFpXU@smile.fi.intel.com>
- <A373EDB5-528D-4ECF-8CF3-4F96DE6E3797@live.com>
- <Z7jlORk0MiMFTmp6@smile.fi.intel.com>
- <E8256A03-5D13-4B8B-932D-70E734E580FE@live.com>
- <6f7b0886-5f31-4ba9-b82e-e9d3614b504f@suse.de>
- <Z7xAINooeB7zpnhf@smile.fi.intel.com>
- <3AC583EA-AA74-4F75-ADB9-3270519E8448@live.com>
- <Z7xbM_8fV4MT_TJ0@smile.fi.intel.com>
- <PN3PR01MB95974767785F92606B5EA96EB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1740400008; c=relaxed/simple;
+	bh=vGlGepndYgWT2DQBTH8vv9ZPy9qn+806foZdcXyS1Xo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IKVFW0toGzTP/9xNXNtTt2rUlHv1eyKm9sF15/59sgJGO4WQ1AbSO7dH4WbTsB7C89KzZXUsCR88+7AmJHy82nFKK/5rR0dSG9WieNGcQTkAoyU6TjwvUJLyrClQ9PNJDFitfDh6OLzAcB+kJa8JThQSwV2D1f0PpbfImDerElk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LCqOKxS1; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abbac134a19so669972166b.0;
+        Mon, 24 Feb 2025 04:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740400005; x=1741004805; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3DINdR7U7YAAVkvMzjWHburtjPwkiuTtmGkvHpks3E=;
+        b=LCqOKxS1Zp7+Kww/K+t/nUbuZG4n8YyzMm6cdoO7PgeHtaBI1gxi1JsFUU9A+Km4X2
+         KfT4NPNz4fNIPwbkAqOgfRyZKtV8RUd1loV3VWJG5G2g44tkA/uPi9tKScnCV37LjZLb
+         p/TuSYHhoDlSMJTxpVNEp/TTxtLHxFyBp0gszCkv0wKBwINj1JfDSOXuU/lSumi+m1FG
+         jEDXhHEwRgiYoqdx+ksDd4mDjrtvKlnlL5X/HST9NsLZJxnMWbVhcP+Nyq2qPlkzjmWp
+         Bb8LSlIDGxLWHr8JjQ4vwIRQGTz2ZRWXYk7y/k06phnZ6sJWSxH8lD6xTTRVAfhxMZsk
+         rW8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740400005; x=1741004805;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3DINdR7U7YAAVkvMzjWHburtjPwkiuTtmGkvHpks3E=;
+        b=jP0a/LxR/xp4M5PuQonGCyqtDhWt73KuOzj8cGodxFH37s5ksWvcIX99f3MGmmVBkz
+         3JU2PAjqemH8dicI1CaymbrgZDfF2LSUzPRct3qbKcMuvV76iq4PD7aJ+9R1obbLQ9iE
+         r/0kwzwAS/GTpi2Z6YvZUVtQ4aZBitNbfT7HZoNjCHZuzo8+jmqgeSyev0WR+TTbYfqo
+         sy7Rf7dGcQLEWIMZTCozd9+fbDor4Yv1DD3wYud/D9jG90trBLXe3GDIq3oo3XQyJIHq
+         W6RpnVCLWffOMNtvOTzZrRU0f5DgUDIvuJpzykvnqfdBS550Q42unu2+JGSK85dKoZ6+
+         GbMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3Bzx3KWd6K86azWfoysx7Ww/VsfXYozzkTDQBtYFMXEhvsHWz0VX/E51H4UTjt+W5hme9IKomdjkIEuj4@vger.kernel.org, AJvYcCVG+1DTS7qdgN3/aOyVzW3jXam3QSNdKtZ4A2hz5tqLO0NCtuARvS/eEj/ELPOSrp7+sSyvbOrIbQ==@vger.kernel.org, AJvYcCVTtZpXXENNi7GLPkLcpZPFvYVmSgsq5bwSekpA2+LdNDRHJwBuaPn9aKV9/urV57tSbKfGmxgdzJC//HVsXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQ2IS+IDV25iq2CkMc3ErgQ2/sYZ2HZJvuwrxri4cXru/iCbZh
+	QZNBxgm087UpzDHaa8Rrnkj3MVAuw+x4yP+s6nKrLQ5rv7vGMgzK
+X-Gm-Gg: ASbGncs5jYmd8ELZ46dE+lqM+uJ7RhuJwKMsCYyXfmqUPlWP+dQ7ZVYAIi35i90dfT1
+	S9KZHwdI3Iy8hA8Cg4c5Kq1A2TFm4Z0tMQh8OkvuKMF+q1uJcM+YZmKvUHJqFK3Is2mYW/mGCsD
+	UpZ4OfhgIl9UyUesBuiKplO8KjsyFy6lELUWKt90fFRneEG2Dq6W0id64nxB4AiPH+RkGl34Hlo
+	haSImqueDc+N8+AH0Tzfkm0oxWhxe9HA66Oe/QZDFCmTh7kxsSFZCrA0mg++YzmjFMTEDaJLjnZ
+	Z1YE1yLqX+jhvqBndxXbxG+e9g6NAhpoGTAb6SFWzz63iGHUhMY9IfMPICY=
+X-Google-Smtp-Source: AGHT+IH8L/KI4RvCadlDZyccK4lBIzA7goaTDNlGRXtE+85csj2TkvksvFPrY0HaLmx4pWJ/nbSNDw==
+X-Received: by 2002:a17:907:1c0d:b0:ab7:f0fa:1341 with SMTP id a640c23a62f3a-abc09d379b4mr1093453566b.56.1740400004729;
+        Mon, 24 Feb 2025 04:26:44 -0800 (PST)
+Received: from ?IPV6:2620:10d:c096:325:77fd:1068:74c8:af87? ([2620:10d:c092:600::1:bd30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aba532322f1sm2258286766b.19.2025.02.24.04.26.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 04:26:44 -0800 (PST)
+Message-ID: <99a7a0ce-eb2f-4421-9f8e-e7f9d749b674@gmail.com>
+Date: Mon, 24 Feb 2025 12:27:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <PN3PR01MB95974767785F92606B5EA96EB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Fuse: Add backing file support for uring_cmd
+To: Bernd Schubert <bernd@bsbernd.com>, Amir Goldstein <amir73il@gmail.com>,
+ Moinak Bhattacharyya <moinakb001@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <CAKXrOwbkMUo9KJd7wHjcFzJieTFj6NPWPp0vD_SgdS3h33Wdsg@mail.gmail.com>
+ <db432e5b-fc90-487e-b261-7771766c56cb@bsbernd.com>
+ <e0019be0-1167-4024-8268-e320fee4bc50@gmail.com>
+ <CAOQ4uxiVvc6i+5bV1PDMcvS8bALFdp86i==+ZQAAfxKY6AjGiQ@mail.gmail.com>
+ <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <a8af0bfc-d739-49aa-ac3f-4f928741fb7a@bsbernd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 11:57:47AM +0000, Aditya Garg wrote:
-> > On 24 Feb 2025, at 5:13 PM, andriy.shevchenko@linux.intel.com wrote:
-> > On Mon, Feb 24, 2025 at 11:20:12AM +0000, Aditya Garg wrote:
-> >> 
-> >>> It would be nice to see the difference in the code generation for the all
-> >>> __packed vs. only those that require it.
-> >>> 
-> >>>> At least it's clear then
-> >>>> what happens. And if your hardware requires this, you can't do much anyway.
-> >>> 
-> >>> One aspect (member level alignment) is clear but the other is not
-> >>> (object level alignment). I dunno if it makes sense to be pedantic about this,
-> >>> but would like to see the binary outcome asked for.
-> >> 
-> >> Hex dump of the compiled binary:
-> > 
-> > Oh, sorry I wasn't clear. We have a script called bloat-o-meter for these
-> > purposes. Please, run it with old and new binaries as parameters and share the
-> > output.
+On 2/21/25 17:13, Bernd Schubert wrote:
+> On 2/21/25 17:24, Amir Goldstein wrote:
+...
+>>> +/*
+>>> + * Register new backing file for passthrough, getting backing map from
+>>> URING_CMD data
+>>> + */
+>>> +static int fuse_uring_backing_open(struct io_uring_cmd *cmd,
+>>> +    unsigned int issue_flags, struct fuse_conn *fc)
+>>> +{
+>>> +    const struct fuse_backing_map *map = io_uring_sqe_cmd(cmd->sqe);
+>>> +    int ret = fuse_backing_open(fc, map);
+>>> +
+>>
+>> I am not that familiar with io_uring, so I need to ask -
+>> fuse_backing_open() does
+>> fb->cred = prepare_creds();
+>> to record server credentials
+>> what are the credentials that will be recorded in the context of this
+>> io_uring command?
+> 
+> This is run from the io_uring_enter() syscall - it should not make
 
-> aditya@MacBook:~/linux$ ./scripts/bloat-o-meter $PACKED $UNPACKED
-> add/remove: 0/0 grow/shrink: 0/0 up/down: 0/0 (0)
-> Function                                     old     new   delta
-> Total: Before=13286, After=13286, chg +0.00%
+That's not necessarily true ...
 
-Thanks! That shows that __packed can be used for all protocol related data
-types. Just mention in the commit message that the __packed, even if not
-needed, is: a) for the consistency, b) not affecting code generation in
-accordance with bloat-o-meter.
+> a difference to an ioctl, AFAIK. Someone from @io-uring please
+> correct me if I'm wrong.
+
+... but it's executed in a context that inherits creds from the
+task that submitted the request. It might be trickier if the app
+changes creds at runtime, but IIRC the request tries to grab
+creds at submission time.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Pavel Begunkov
 
 
