@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-528481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 510E6A41819
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:06:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85A8A4181F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:06:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D14937A3363
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:05:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A0D7A359E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC595244196;
-	Mon, 24 Feb 2025 09:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Lyo6wIGS"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C403A242935;
+	Mon, 24 Feb 2025 09:05:54 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031D1C8605;
-	Mon, 24 Feb 2025 09:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A63245007;
+	Mon, 24 Feb 2025 09:05:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387948; cv=none; b=Iim4aP+b6brVPcyDoUB8yJnKfb6uwm9LgaYRmK3Yog+NeQyIlqJTwoQ/9uHpGaRXFi++4boz8nS6RQas1ekQ5O+7gK4CqbRSBciXzdJzzVuqNTc3MAyQ1DnW74DJ2nZYBje+BExRvIYMW9XsBC9BbVzE3X2+GyvD2KGPdZrOA6A=
+	t=1740387954; cv=none; b=Q0fjVWVQQWK6xPKgOZAHNrsw4qsljzg4yzU0/zEtNj7ZUQB8dV5u90lMebRVs5FEyP+xtF5+a0d7eqSx0p1rru0FH/4wlQfYFp89u7wSpwlkyZVcHkcqe9/6Y15XtwGBCydkpUCV4NQI7dKEHDji3L8qmBxCD0aCGB5TafCPJDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387948; c=relaxed/simple;
-	bh=G2T+5jx2T46OXT+t+hE9ysgeOpZNVNsNKxFpRbqXoa0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bJdQg41bA849AL6/oRitfUYGW4sQsUS9Ee3CcwqpJh+T+BJgP2kXcxLlf0mHA/U4/8/a2TDJceabG4AziGkA7tg5k1Okrd9Nnwm3zgruguUoZeFvblgUjL3fTs2V57oKlkrDncPQr06QWDyp9CjE+bPTFH9aCg7gZCeXCNq2KLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Lyo6wIGS; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rkbvCWKWFbcG3pKLozXS5DJoywVzuOsRiaQ4nyhFRLo=; b=Lyo6wIGSbY/t2pPYdG119NxFo9
-	jgXiEoRaMKSwyG5QqIKvPl+sbotacyhcv41fpqXMsawCPvSP150BlMPWpy5oQBCAGO6QDPir1LDkk
-	MZJ08PqZRVjdYQnLgtL2n6QYLg8yioK0JccWRGSsTcT5qq7gi7LfEIsAaYHBV77iSRzTDJi/vEeFB
-	f696Y+rAoZtcPw9yJCUvAUsaNOrJHSoUVsHXMpLhAQ5t+fH5eh8quSB674NDWn7oHKvVtJxDUGEkG
-	RC1gyr0f7ATUW6EXlHraLe8vDkkxcOxFb2671ouru+ZhxS2J9d0fDu119nBR2r8TgajBv4fxgi+Kv
-	YYNbJXPw==;
-Received: from i53875a0d.versanet.de ([83.135.90.13] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tmUP0-0006rE-Mm; Mon, 24 Feb 2025 10:05:26 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Kever Yang <kever.yang@rock-chips.com>
-Cc: linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: add rk3562 cru bindings
-Date: Mon, 24 Feb 2025 10:05:25 +0100
-Message-ID: <3234236.fEcJ0Lxnt5@diego>
-In-Reply-To: <23c84fd5-83f4-46b3-a247-56e4a2c06d1d@rock-chips.com>
-References:
- <20241224092310.3814460-1-kever.yang@rock-chips.com>
- <krrqtjllx6akrurefbtuhgxw6bwmkiro5rtvdexoevjyufm2uz@r5biw7kbttyr>
- <23c84fd5-83f4-46b3-a247-56e4a2c06d1d@rock-chips.com>
+	s=arc-20240116; t=1740387954; c=relaxed/simple;
+	bh=eUkPwQ9m36exbMkdtZ5SGav/mKYeXKb0WO6zAUjz2jo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U3IIpE2gqNeCKQbpCnxKBeP5hgJ1kIbBJeBChcQLZbIWhJ3hHUjjLkSDbYTIM+txTs1nErWhj35NV3rHyJIQnMxt7YZ7aDW1itMdLf9+hnr/e3Jug+1dIoYk+ZpJ5/sgI6ulgaCiiNB0O9hv0JSWa3ZTGGi/ftnFczp3SrZtj3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-38f22fe889aso3531533f8f.3;
+        Mon, 24 Feb 2025 01:05:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740387946; x=1740992746;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XW7SoAHFjEV752Biy5J96qJjLeCuR0/5/9KQgU4Yvq8=;
+        b=Kva0ZaSvBl5AsUWkJuKc/0/KQCWsS+kVHPvUR3ZtvqgIWjr0JjB6gksSdUAbiu0N1+
+         QlTb7YVJvEx+42CHkvmoTWADD+cY7UCJw6ZeHC5I0oWieEn2ixhWURTjFZVNFEbbM0ql
+         5LjFUxJ0HpoEz8keBM9syisIjwVdexmZGnbwB/pKzyhNm0T/MkbT/a5f3hpS3SQP4m0e
+         kRx32iP5Hk4Jv10edVONEY0htHN5i0XwqEPObRdhixxX6do0KdLAE0q1U/Ui58tParw5
+         +0lesz/GG6F/Rt82hjW9GVof8qmu1N7bODG+XOaR0ntbPULVdUJZcq/97g+pElRAXlda
+         cT7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUF9+PdbB4GRTJlAQYv+sapA7G/CeV5FnD9bwTXET62xXNc1s3ZEOl+8oDSzYYKSroZxe9lIJlj6aUz@vger.kernel.org, AJvYcCVJU6hGZrYond0pG9stIBhVoZC4NOiIwDHd6dckdWWXzCq6doTefhDqpj39UhPjOsYlBwBN3ZHL/u96LxuW@vger.kernel.org, AJvYcCXMPXvkJ2ahgUbPZ68i1uC1yhEn+ryu4D3wrIop7dKqF7ojoSEIiJoivj3FzsRk1W4aOiVa3IdSlzvcaP8=@vger.kernel.org, AJvYcCXpCHLIxm9rKasO3hTpiwshRh7y0CABDezgW4VZLjIvnP/xYN2aii6osRySVrpE6uqaHGmyrjJKQpA8GjtbfTeW9UU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAOP5n5rn2aejNYsqQ3pZz3Q/vb1eG4rRX8Wr3EG2XXbxb9Vqh
+	ViVDrfQFrO/VIpqDANI49HMrTf7PKAoXZWzu9cJn2hejsLYp4aEq3UISOMKYInA=
+X-Gm-Gg: ASbGncvqsaS6s4sOB4dsuCzctvDvj1DXqrJLCyunbMyMQSJ3OoFZUyqpJvqCSVnKNXa
+	BZi2uuSm/+wBUfyLOMGFx6vjQmU+0oTntC5t+sjl+FmXdMTRoDZpNXmeFU3Vqtnd8qRQZV9Julz
+	3jAgXOtMA5qCz72QUsvfzSJNvn9tVS2HcLt+M3OwCeJMXPubkbOxlMRBmfpa4KETmysDnu6xwaM
+	TPhn20YRDuFkm4YmQ1XnFtOIzSYj9U8OdyE2Ao0oig6o5Gg8dRvXVXKoNHRwslYs++dbTB/a/+W
+	LO9cxsk+QdHgV5WcCtdUWZPn1Xtymc7qzgoj9XUrbHx6yOlXCkMLvi806tliK0Sm
+X-Google-Smtp-Source: AGHT+IG2byA6VcTZexHq+P++yju4e8je8MyD4ZSKRXtHQfqNAa+mSxi0Bs7t8nt7woVT/BN81WvKEQ==
+X-Received: by 2002:a5d:5f51:0:b0:38d:d9e4:9ba6 with SMTP id ffacd0b85a97d-38f6e756860mr11598232f8f.3.1740387946504;
+        Mon, 24 Feb 2025 01:05:46 -0800 (PST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com. [209.85.218.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abbabfe1d9dsm1389651666b.101.2025.02.24.01.05.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 01:05:44 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aaedd529ba1so500781666b.1;
+        Mon, 24 Feb 2025 01:05:43 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/qOzLTLrHMfGjK96Kl8BQEJIn34htAiF4GGv5rDaIMoPHPysh+VNkQkQjLfwNeEdNvQVDZQc/Z9weIZXzxd2ycYY=@vger.kernel.org, AJvYcCWA6wSTC5uOtqoyxx0Y1As2yrg3SFtPIhr4Vm8ydJkj32iXAvoy3nDvktcbK9VX+Gkl9N8ZYJ7DNBeUqkPL@vger.kernel.org, AJvYcCWGtlkP6qsCvoOKLcEiDlgrOMnx7Vf2aHsNOrinLAB5PAk2pVMJ6v410Tc6OYFwMcMhmWwuvNwMBHpWPgs=@vger.kernel.org, AJvYcCWmhXcNLIpXgn66xtLxcJt6X7p9YJsZEU93XgsNj41w5DYxS2b/XMf542t9LU705/79c1YNtwDw9Gyq@vger.kernel.org
+X-Received: by 2002:a05:6402:274d:b0:5e0:49e4:2180 with SMTP id
+ 4fb4d7f45d1cf-5e0b725286fmr28663134a12.25.1740387943126; Mon, 24 Feb 2025
+ 01:05:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
+ <20250221155532.576759-2-tommaso.merciai.xr@bp.renesas.com>
+ <20250223180855.GD15078@pendragon.ideasonboard.com> <CAMuHMdU-H-6zLJAX06Zx+cu2vjCYvKghNAEw=55eu+sYqDoSgw@mail.gmail.com>
+In-Reply-To: <CAMuHMdU-H-6zLJAX06Zx+cu2vjCYvKghNAEw=55eu+sYqDoSgw@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 24 Feb 2025 10:05:27 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdV_hc2DCLzmHO8jNAsb9oy2MTvn-7Z-h+EwCU1gaH8ioA@mail.gmail.com>
+X-Gm-Features: AWEUYZlqi2EGmND0ZEA8Us8Hs9h0LJdT8q-1XVxelx3fRONaDfoLe8xmQ1d33Ck
+Message-ID: <CAMuHMdV_hc2DCLzmHO8jNAsb9oy2MTvn-7Z-h+EwCU1gaH8ioA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/18] media: dt-bindings: renesas,rzg2l-csi2: Document
+ Renesas RZ/V2H(P) SoC
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>, tomm.merciai@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Am Montag, 24. Februar 2025, 09:52:12 MEZ schrieb Kever Yang:
-> Hi Krzysztof,
-> 
-> On 2024/12/27 16:25, Krzysztof Kozlowski wrote:
-> > On Tue, Dec 24, 2024 at 05:23:08PM +0800, Kever Yang wrote:
-> >> Document the device tree bindings of the rockchip rk3562 SoC
-> >> clock and reset unit.
-> >>
-> >> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> >> ---
-> > A nit, subject: drop second/last, redundant "bindings". The
-> > "dt-bindings" prefix is already stating that these are bindings.
-> > See also:
-> > https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+On Mon, 24 Feb 2025 at 10:00, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Sun, 23 Feb 2025 at 19:09, Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > On Fri, Feb 21, 2025 at 04:55:15PM +0100, Tommaso Merciai wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > The MIPI CSI-2 block on the Renesas RZ/V2H(P) SoC is similar to the one
+> > > found on the Renesas RZ/G2L SoC, with the following differences:
+> > > - A different D-PHY
+> > > - Additional registers for the MIPI CSI-2 link
+> > > - Only two clocks
+> > >
+> > > Add a new compatible string, `renesas,r9a09g057-csi2`, for the RZ/V2H(P)
+> > > SoC.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+>
+> > > --- a/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+> > > +++ b/Documentation/devicetree/bindings/media/renesas,rzg2l-csi2.yaml
+>
+> > > @@ -48,7 +58,7 @@ properties:
+> > >    resets:
+> > >      items:
+> > >        - description: CRU_PRESETN reset terminal
+> > > -      - description: CRU_CMN_RSTB reset terminal
+> > > +      - description: CRU_CMN_RSTB reset terminal or D-PHY reset
 > >
+> > I'd mention which SoCs these apply to:
 > >
-> > s/rk3562/Rocchip RK3562/
-> > or whatever your proper name is (and use proper capitalized parts of
-> > products)
-> Will update.
-> >
-> >> +properties:
-> >> +  compatible:
-> >> +    const: rockchip,rk3562-cru
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  "#clock-cells":
-> >> +    const: 1
-> >> +
-> >> +  "#reset-cells":
-> >> +    const: 1
-> >> +
-> >> +  clocks:
-> >> +    maxItems: 2
-> >
-> > Why clocks are not required?
-> The cru is the clock-controller, which is always on module in SoC,
-> so we don't need to enable "clock" for this clock-controller.
+> >       - description:
+> >           CRU_CMN_RSTB reset terminal (all but RZ/V2H) or D-PHY reset (RZ/V2H)
+>
+> Note that RZ/G3E uses the same naming, so be prepared for more churn...
+>
+> However, I am confused...
+>
+> 1. According to Section 35.3.1 "Starting Reception for the MIPI CSI-2
+>    Input" (RZ/G2L Rev. 1.45) CPG_RST_CRU.CRU_CMN_RSTB _is_ the
+>    D-PHY reset.
 
-hmm, shouldn't clocks be
+This is still valid.
 
-  clocks:
-    minItems: 1
-    maxItems: 2
+> 2. The CRU has three (not two) resets on all:
+>      - CRU_PRESETN,
+>      - CRU_ARESETN,
+>      - CRU_CMN_RSTB (RZ/G2L, RZ/V2L, and RZ/G2UL) or
+>        CRU_S_RESETN (RZ/V2H and RZ/G3E).
 
-The CRU _needs_ the xin24m because that is the main oscillator
-supplying everything, but _can_ work work without xin32k .
+Sorry, I missed this binding is about the CSI-2, not the CRU.
+So the third interrupt is really about the CSI-2 PHY.
 
-Sidenote: itseems we're doing this wrong on rk3588
+Gr{oetje,eeting}s,
 
-Heiko
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
