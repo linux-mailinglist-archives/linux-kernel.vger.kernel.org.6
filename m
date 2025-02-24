@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-529426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64ADA4260F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:21:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8AEEA42628
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B611897F63
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:14:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4A63B461A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FC0189905;
-	Mon, 24 Feb 2025 15:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D396C18CBEC;
+	Mon, 24 Feb 2025 15:14:48 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4270E13D52B;
-	Mon, 24 Feb 2025 15:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B551607B7;
+	Mon, 24 Feb 2025 15:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740410086; cv=none; b=AYVIgN32q4oKqI31Sbn3D64A9/hB1m2lkC6WlStAnofan2hbxtKUAR5wmY4lQMPqq6d5e9aFbuVx3o5ZhqW+bI+uw6b7kwPN7ZPEYykpe/ZTSnnFLruyHloBTvoy51LfoAIYBR7qRvRCZWYDmYt+iSBsXHOqcc0vr4at8969gq4=
+	t=1740410088; cv=none; b=okz/Fr3LUXke9iXKNzH1vv6qXI3x3upfHN9Thk9boVw9VeUAoddG2oxJnXtjJieV/TIj2PZcPc7ixMZg4AW2lFWJ++RXaI5eU+HUQPBJ2V7WWyEBQO3/H4whpaKJX2uKzBae4ynk53+coumD+FCJFjRc//NHrpiF2si5/163iiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740410086; c=relaxed/simple;
-	bh=39IaXFwTZhQ6mNM8ADNcM9b5VILnAM/6sCCIci5UAkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U+20FLnMBHdaJ7bj9/qzIxcaHs/1PJIBQZMDwIRjis1qSoLqI8vFt2OQFJY0jhmg6KvFfAWjc/DeJ/HMmr4moLF5m/jgYOFdNV06nbOaCKw97B/st+Gw7EVtF2sj6ZaXYmZlcaguSPR3f3nYGZQ0teL7D2+/TCfyRSi5IhjQMaw=
+	s=arc-20240116; t=1740410088; c=relaxed/simple;
+	bh=fxIITD7YfeumZwD1pSFoPnnCPGP2V7Qv+p2xMSFK8Ik=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Cl8FduKZhzumOZBaJS6HTYCA8odP/79gvYTOAJDJ/W4vpHk06gUQhf9HQ8+HRlEQrkw1lLDX1dVLa1aLtHsyKnd3PDsR7jTwVrFsbf78CLDw7s0VvjMPuAtamprUe4B/FQk1saFabdX9Q8uq/plTzYmYUopeenk4JSkwCW/T+Mw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F1906152B;
-	Mon, 24 Feb 2025 07:14:59 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0709E16F8;
+	Mon, 24 Feb 2025 07:15:02 -0800 (PST)
 Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 857503F6A8;
-	Mon, 24 Feb 2025 07:14:41 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8BE9E3F6A8;
+	Mon, 24 Feb 2025 07:14:43 -0800 (PST)
 From: Leo Yan <leo.yan@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	Mike Leach <mike.leach@linaro.org>,
@@ -44,10 +45,12 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH v1 0/8] Arm CoreSight: Support AUX pause and resume
-Date: Mon, 24 Feb 2025 15:14:15 +0000
-Message-Id: <20250224151423.1630639-1-leo.yan@arm.com>
+Subject: [PATCH v1 1/8] coresight: etm4x: Extract the trace unit controlling
+Date: Mon, 24 Feb 2025 15:14:16 +0000
+Message-Id: <20250224151423.1630639-2-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250224151423.1630639-1-leo.yan@arm.com>
+References: <20250224151423.1630639-1-leo.yan@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,52 +59,178 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series is to enable AUX pause and resume on Arm CoreSight.
+The trace unit is controlled in the ETM hardware enabling and disabling.
+The sequential changes for support AUX pause and resume will reuse the
+same operations.
 
-The first patch extracts the trace unit controlling operations to two
-functions.  These two functions will be used by AUX pause and resume.
+Extract the operations in the etm4_{enable|disable}_trace_unit()
+functions.  A minor improvement in etm4_enable_trace_unit() is for
+returning the timeout error to callers.
 
-Patches 02 and 03 change the ETMv4 driver to prepare callback functions
-for AUX pause and resume.
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ .../coresight/coresight-etm4x-core.c          | 126 ++++++++++--------
+ 1 file changed, 74 insertions(+), 52 deletions(-)
 
-Patch 04 changes the ETM perf layer to support AUX pause and resume in a
-perf session.  The patches 05 and 06 offers an extra feature for
-updating buffer on AUX pause occasion, which can mitigate the trace data
-lose issue.
-
-Patch 07 documents the AUX pause usages with Arm CoreSight.  The last
-patch syncs headers between user space and the kernel.
-
-This patch set has been verified on the Hikey960 board and TC platform.
-The previous one uses ETR and the later uses TRBE as sink.
-
-It is suggested to disable CPUIdle (add `nohlt` option in Linux command
-line) when verifying this series.  ETM and funnel drivers are found
-issues during CPU suspend and resume which will be addressed separately.
-
-
-Leo Yan (8):
-  coresight: etm4x: Extract the trace unit controlling
-  coresight: Introduce pause and resume APIs for source
-  coresight: etm4x: Hook pause and resume callbacks
-  coresight: perf: Support AUX trace pause and resume
-  coresight: etm: Add an attribute for updating buffer
-  coresight: perf: Update buffer on AUX pause
-  Documentation: coresight: Document AUX pause and resume
-  perf cs-etm: Sync kernel coresight-pmu.h header
-
- .../trace/coresight/coresight-perf.rst        |  50 ++++++
- drivers/hwtracing/coresight/coresight-core.c  |  12 ++
- .../hwtracing/coresight/coresight-etm-perf.c  |  94 +++++++++-
- .../hwtracing/coresight/coresight-etm-perf.h  |   2 +
- .../coresight/coresight-etm4x-core.c          | 166 ++++++++++++------
- drivers/hwtracing/coresight/coresight-etm4x.h |   2 +
- drivers/hwtracing/coresight/coresight-priv.h  |   2 +
- include/linux/coresight-pmu.h                 |   1 +
- include/linux/coresight.h                     |   4 +
- tools/include/linux/coresight-pmu.h           |   1 +
- 10 files changed, 281 insertions(+), 53 deletions(-)
-
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+index 2c1a60577728..71be566bd117 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+@@ -428,6 +428,78 @@ static void etm4_check_arch_features(struct etmv4_drvdata *drvdata,
+ }
+ #endif /* CONFIG_ETM4X_IMPDEF_FEATURE */
+ 
++static int etm4_enable_trace_unit(struct etmv4_drvdata *drvdata)
++{
++	struct coresight_device *csdev = drvdata->csdev;
++	struct device *etm_dev = &csdev->dev;
++	struct csdev_access *csa = &csdev->access;
++
++	/*
++	 * ETE mandates that the TRCRSR is written to before
++	 * enabling it.
++	 */
++	if (etm4x_is_ete(drvdata))
++		etm4x_relaxed_write32(csa, TRCRSR_TA, TRCRSR);
++
++	etm4x_allow_trace(drvdata);
++	/* Enable the trace unit */
++	etm4x_relaxed_write32(csa, 1, TRCPRGCTLR);
++
++	/* Synchronize the register updates for sysreg access */
++	if (!csa->io_mem)
++		isb();
++
++	/* wait for TRCSTATR.IDLE to go back down to '0' */
++	if (coresight_timeout(csa, TRCSTATR, TRCSTATR_IDLE_BIT, 0)) {
++		dev_err(etm_dev,
++			"timeout while waiting for Idle Trace Status\n");
++		return -ETIME;
++	}
++
++	/*
++	 * As recommended by section 4.3.7 ("Synchronization when using the
++	 * memory-mapped interface") of ARM IHI 0064D
++	 */
++	dsb(sy);
++	isb();
++
++	return 0;
++}
++
++static void etm4_disable_trace_unit(struct etmv4_drvdata *drvdata)
++{
++	u32 control;
++	struct coresight_device *csdev = drvdata->csdev;
++	struct device *etm_dev = &csdev->dev;
++	struct csdev_access *csa = &csdev->access;
++
++	control = etm4x_relaxed_read32(csa, TRCPRGCTLR);
++
++	/* EN, bit[0] Trace unit enable bit */
++	control &= ~0x1;
++
++	/*
++	 * If the CPU supports v8.4 Trace filter Control,
++	 * set the ETM to trace prohibited region.
++	 */
++	etm4x_prohibit_trace(drvdata);
++	/*
++	 * Make sure everything completes before disabling, as recommended
++	 * by section 7.3.77 ("TRCVICTLR, ViewInst Main Control Register,
++	 * SSTATUS") of ARM IHI 0064D
++	 */
++	dsb(sy);
++	isb();
++	/* Trace synchronization barrier, is a nop if not supported */
++	tsb_csync();
++	etm4x_relaxed_write32(csa, control, TRCPRGCTLR);
++
++	/* wait for TRCSTATR.PMSTABLE to go to '1' */
++	if (coresight_timeout(csa, TRCSTATR, TRCSTATR_PMSTABLE_BIT, 1))
++		dev_err(etm_dev,
++			"timeout while waiting for PM stable Trace Status\n");
++}
++
+ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+ {
+ 	int i, rc;
+@@ -536,33 +608,7 @@ static int etm4_enable_hw(struct etmv4_drvdata *drvdata)
+ 		etm4x_relaxed_write32(csa, trcpdcr | TRCPDCR_PU, TRCPDCR);
+ 	}
+ 
+-	/*
+-	 * ETE mandates that the TRCRSR is written to before
+-	 * enabling it.
+-	 */
+-	if (etm4x_is_ete(drvdata))
+-		etm4x_relaxed_write32(csa, TRCRSR_TA, TRCRSR);
+-
+-	etm4x_allow_trace(drvdata);
+-	/* Enable the trace unit */
+-	etm4x_relaxed_write32(csa, 1, TRCPRGCTLR);
+-
+-	/* Synchronize the register updates for sysreg access */
+-	if (!csa->io_mem)
+-		isb();
+-
+-	/* wait for TRCSTATR.IDLE to go back down to '0' */
+-	if (coresight_timeout(csa, TRCSTATR, TRCSTATR_IDLE_BIT, 0))
+-		dev_err(etm_dev,
+-			"timeout while waiting for Idle Trace Status\n");
+-
+-	/*
+-	 * As recommended by section 4.3.7 ("Synchronization when using the
+-	 * memory-mapped interface") of ARM IHI 0064D
+-	 */
+-	dsb(sy);
+-	isb();
+-
++	rc = etm4_enable_trace_unit(drvdata);
+ done:
+ 	etm4_cs_lock(drvdata, csa);
+ 
+@@ -906,7 +952,6 @@ static void etm4_disable_hw(void *info)
+ 	struct etmv4_drvdata *drvdata = info;
+ 	struct etmv4_config *config = &drvdata->config;
+ 	struct coresight_device *csdev = drvdata->csdev;
+-	struct device *etm_dev = &csdev->dev;
+ 	struct csdev_access *csa = &csdev->access;
+ 	int i;
+ 
+@@ -920,31 +965,8 @@ static void etm4_disable_hw(void *info)
+ 		etm4x_relaxed_write32(csa, control, TRCPDCR);
+ 	}
+ 
+-	control = etm4x_relaxed_read32(csa, TRCPRGCTLR);
++	etm4_disable_trace_unit(drvdata);
+ 
+-	/* EN, bit[0] Trace unit enable bit */
+-	control &= ~0x1;
+-
+-	/*
+-	 * If the CPU supports v8.4 Trace filter Control,
+-	 * set the ETM to trace prohibited region.
+-	 */
+-	etm4x_prohibit_trace(drvdata);
+-	/*
+-	 * Make sure everything completes before disabling, as recommended
+-	 * by section 7.3.77 ("TRCVICTLR, ViewInst Main Control Register,
+-	 * SSTATUS") of ARM IHI 0064D
+-	 */
+-	dsb(sy);
+-	isb();
+-	/* Trace synchronization barrier, is a nop if not supported */
+-	tsb_csync();
+-	etm4x_relaxed_write32(csa, control, TRCPRGCTLR);
+-
+-	/* wait for TRCSTATR.PMSTABLE to go to '1' */
+-	if (coresight_timeout(csa, TRCSTATR, TRCSTATR_PMSTABLE_BIT, 1))
+-		dev_err(etm_dev,
+-			"timeout while waiting for PM stable Trace Status\n");
+ 	/* read the status of the single shot comparators */
+ 	for (i = 0; i < drvdata->nr_ss_cmp; i++) {
+ 		config->ss_status[i] =
 -- 
 2.34.1
 
