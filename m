@@ -1,176 +1,93 @@
-Return-Path: <linux-kernel+bounces-529253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BB2AA4223C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:02:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32B0BA42266
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0F2C188D748
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:01:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821FA167A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0042474E09;
-	Mon, 24 Feb 2025 14:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158526EB7D;
+	Mon, 24 Feb 2025 14:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnCk4LS/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="M1GG7ZIv"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3ACFEAF1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A84A1369B6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740405656; cv=none; b=GL6R6+ThjVK4DeH7JAbXWnvsM0NMrujJ/nDQepLgW5BQOzjKjJQYH1f9yCWSIrkDtakdU5Z2FGuW9mTHu/1iFHfje0tAoQU5jC0lOKAhGa4KQt/T6uew3meAnS+dnZwZPzbiy0X9kb6Ip27K7lGz7qiZCObShkYcGlooJ49TIC4=
+	t=1740405666; cv=none; b=cRvDkbAb+K2Zpuo0ssa1IRqQMy5ahknNC4mKyaLdT96kgWIzhjMvbyvWkLaqaO9MRSm9yuIfcwpIJPE9LefREHyOV/ICVfPSYW0qK2z7x3p/afqc56Gg1lxlVu0b9X5rkM0wFIgOu41q26y4BGdGgmhtt/F4cT++wtGtC2zn70M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740405656; c=relaxed/simple;
-	bh=7Z65X3uAnnrMTsxGFkCu0G6zCm18r0qbQoTUv+3XTJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZD2EiUmXco6hz7KPoxMCpCSTed07uLMur8CziZ5FhUtnbv08zzVCciuh4VM5fiiiG9s8enGAm3UDKvuyHgkqFewixNdxoIZFzQIpwHYXeMx+dAJdKDtGuyTKXpegQWv9umJUJGYMVj7tbtw6u/d5KE4dYWUjDlHZWfM710OHyPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnCk4LS/; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740405655; x=1771941655;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7Z65X3uAnnrMTsxGFkCu0G6zCm18r0qbQoTUv+3XTJY=;
-  b=QnCk4LS/Ac1y/rMHQMPPn2uIaX9Wi2a5mBore5xGz9C55vR2p9sGcaAY
-   8f5OO1XLtuLWoRcPUsUPWY/tsH8RZ7sWyUxAcPivyOxKOBcEV9uZHzNwb
-   V+Mg94J9Nu9wRJxWNBvYRdrRkRhTLedV/PihFYsmMBqGBdZjMnUIPHSM9
-   /olPOotsku1zyXCmz2jQzV7p4PU8bSUrIS7T+x9aJ802d4tMILvc0OUrW
-   OA5yKufPGVqtdDPUUTMhEtRBsXgQCcQahIql1PLoFSOCt80Lbyg2nNzej
-   T+GjJxdfKMH7/15fdEuQo8vjzYtdpJ7+Bs5PQFbW2AYKygcvJF1ir+3gA
-   A==;
-X-CSE-ConnectionGUID: 0chBuxBSRFSDk5PwlxyyjA==
-X-CSE-MsgGUID: opWq3wjjTcCthahJttFaNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58576179"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="58576179"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 06:00:54 -0800
-X-CSE-ConnectionGUID: omwNZuk9RwmIZq4cQKjXWA==
-X-CSE-MsgGUID: 8k+fUmvKS+K3SkL+2y59lg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="116270717"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 06:00:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmZ0q-0000000EiFx-1f8o;
-	Mon, 24 Feb 2025 16:00:48 +0200
-Date: Mon, 24 Feb 2025 16:00:48 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z7x7kMjaDbCp_LB2@smile.fi.intel.com>
-References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
- <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+	s=arc-20240116; t=1740405666; c=relaxed/simple;
+	bh=dbw6dXg5TQeVowkeoYcRgmEHG8zpRcSKiLa7Cj4uv/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pQtg5lFTQ2lZV8o/L2HurKllei6Pb2XxMCQ7d/37e163DOvIKgQ1C15A/StmixWOIG7Jz9jTWYpww4AETa/1twDcAbl/4zf8EoTCT5Rn3ht7adwh7q2x1uveCJoxc7uSnItrqTdHzOy+RChJ3W+5oxnJTRsGDY7+gztWOO8532o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=M1GG7ZIv; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740405662;
+	bh=dbw6dXg5TQeVowkeoYcRgmEHG8zpRcSKiLa7Cj4uv/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=M1GG7ZIv7rz7MMMQd7tgm39CzSeYcobCtvKgXQKcjGYpZvW6Vx7EjKpZqjbfa1oo7
+	 cmDcS9wSJMxNz+GekADGFyfAS6s+p7ksVtm7nn9L9fw3PbkRSKH8MvLiPk1VqjxWTZ
+	 nxIRVhlWiwhG79GGEYgn2wKaJliYaJZYXIWgrDh2wHA1tzRTdC4u7D/Gm0LI1l9vUI
+	 Z41UoW8xIACcsKDa18+jjKpPo2S9ldrSVj/iPKUBy37eqQnBW+3882xcqYJELo//Cx
+	 VGFsAaHfERb/OHLKTmNdVscSwxwc8efuE49Uc7/mm7T+apJQQ86FkPlYy3CB35KGC+
+	 3zHOq3n3fQ3Vg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7A97B17E0DFB;
+	Mon, 24 Feb 2025 15:01:01 +0100 (CET)
+Message-ID: <7dfa6548-c2ad-4492-832d-87dea1ececf5@collabora.com>
+Date: Mon, 24 Feb 2025 15:01:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
+ <singo.chang@mediatek.com>, Yongqiang Niu <yongqiang.niu@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>,
+ Xavier Chang <xavier.chang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Chen-yu Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 01:40:20PM +0000, Aditya Garg wrote:
-> From: Kerem Karabay <kekrby@gmail.com>
+Il 24/02/25 11:50, Jason-JH Lin ha scritto:
+> Add cmdq_gctl_value_toggle() to configure GCE_CTRL_BY_SW and GCE_DDR_EN
+> together in the same GCE_GCTL_VALUE register.
 > 
-> The Touch Bars found on x86 Macs support two USB configurations: one
-> where the device presents itself as a HID keyboard and can display
-> predefined sets of keys, and one where the operating system has full
-> control over what is displayed.
+> For the SoCs whose GCE is located in MMINFRA and uses MMINFRA_AO power,
+> this allows it to be written without enabling the clocks. Otherwise, all
+> GCE registers should be written after the GCE clocks are enabled.
+> Move this function into cmdq_runtime_resume() and cmdq_runtime_suspend()
+> to ensure it is called when the GCE clock is enabled.
 > 
-> This commit adds support for the display functionality of the second
-> configuration. Functionality for the first configuration has been
-> merged in the HID tree.
-> 
-> Note that this driver has only been tested on T2 Macs, and only includes
-> the USB device ID for these devices. Testing on T1 Macs would be
-> appreciated.
-> 
-> Credit goes to Ben (Bingxing) Wang on GitHub for reverse engineering
-> most of the protocol.
-> 
-> Also, as requested by Andy, I would like to clarify the use of __packed
-> structs in this driver:
-> 
-> - All the packed structs are aligned except for appletbdrm_msg_information.
-> - We have to pack appletbdrm_msg_information since it is requirement of
->   the protocol.
-> - We compared binaries compiled by keeping the rest structs __packed and
->   not __packed using bloat-o-meter, and __packed was not affecting code
->   generation.
-> - To maintain consistency, rest structs have been kept __packed.
+> Fixes: 7abd037aa581 ("mailbox: mtk-cmdq: add gce ddr enable support flow")
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
 
-...
-
-> +#define __APPLETBDRM_MSG_STR4(str4)	((__le32 __force)((str4[0] << 24) | (str4[1] << 16) | (str4[2] << 8) | str4[3]))
-
-As commented previously this is quite strange what's going on with endianess in
-this driver. Especially the above weirdness when get_unaligned_be32() is being
-open coded and force-cast to __le32.
-
-...
-
-> +struct appletbdrm_msg_information {
-> +	struct appletbdrm_msg_response_header header;
-> +	u8 unk_14[12];
-> +	__le32 width;
-> +	__le32 height;
-> +	u8 bits_per_pixel;
-> +	__le32 bytes_per_row;
-> +	__le32 orientation;
-> +	__le32 bitmap_info;
-> +	__le32 pixel_format;
-> +	__le32 width_inches;	/* floating point */
-> +	__le32 height_inches;	/* floating point */
-> +} __packed;
-
-Haven't looked deeply into the protocol, but still makes me think that
-the above (since it's the only __packed data type required) might be simply
-depicted wrongly w.r.t. endianess / data types in use. It might be that
-the data types have something combined and / or different types.
-
-Do I understand correctly that the protocol was basically reverse-engineered?
-
-...
-
-> +	/*
-> +	 * The coordinate system used by the device is different from the
-> +	 * coordinate system of the framebuffer in that the x and y axes are
-> +	 * swapped, and that the y axis is inverted; so what the device reports
-> +	 * as the height is actually the width of the framebuffer and vice
-> +	 * versa
-
-Missing period.
-
-> +	 */
-
-...
-
-Otherwise it's nice tiny driver.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
 
