@@ -1,294 +1,224 @@
-Return-Path: <linux-kernel+bounces-530010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E03AA42DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:23:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F11A42DA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B18E416815C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:23:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 198527A7457
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC31241678;
-	Mon, 24 Feb 2025 20:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC729245006;
+	Mon, 24 Feb 2025 20:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzjsCZtj"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fxlcMljf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522243B2A0;
-	Mon, 24 Feb 2025 20:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32FB43B2A0;
+	Mon, 24 Feb 2025 20:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428606; cv=none; b=O9Uc/c7R8ah/4e2cRA1MCdloOZmZxLtlu8pT6AUMOmvU86gsOqn5VpeHD2nZv4ksuG9V1/lGzviVU2wPfjwXsJRA1M6H+KqW3upZRvfcUlTvOIysauL3FsCbYfm1iKPUMhs9aM4EYgy4Dndd5CKDKSLMVdrDCuQDBT1jJEkgxik=
+	t=1740428612; cv=none; b=hRH9C50oUJUh15XBBQmIl3s+sG5GY1UkU3AnyeAHbRB4Q24W3+8eylkO1k0bDCh0pYZ3O/NegIYGaDddmi20aau6C93eK0DlT7odBVeNBBJrT3lwRvFQ1mrVQXVPiMr7/+hkm7zDx0qtSlHqzJHj8zhXVaLttbEaflL1BUMSIH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428606; c=relaxed/simple;
-	bh=eDAMB1a9HteWrzWS3YVk/G6mZ1EHXdtCK2QfeYq6BiQ=;
+	s=arc-20240116; t=1740428612; c=relaxed/simple;
+	bh=fj9sDRa/umZo0BRc92vVFI+fRvhsxSOyR+/mPfQ1iYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QUIJeJJU5vHXdkNqT2maHrfcl2jlB4K2Z33f96zNiyeifJ8YVCDYIiahRgL7emVse1ZkPpWfGYrNEvjMAu4F7WELZe8YZ9y6KhqOfivO4hI+Dh24buylJdvQRjxoZ09P4xL8rciIXVhacJTZO+f7d3yByb9SynmKRUYQt8nLmFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fzjsCZtj; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e17d3e92d9so38536606d6.1;
-        Mon, 24 Feb 2025 12:23:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740428603; x=1741033403; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zRZueQGAuyNHX0V+MUT1BY/FrLcRwAdtXZvuxb2xKNM=;
-        b=fzjsCZtjXzwF6Wv47SVhJLpjxGGwydhY3VGKgLa0+eHlSciFncbhGw3ylPlvHPkTEf
-         KlJF/5u1aOuE/ZPVacnLpBJhtPag7R73WapBt6DYMLJiG2Z+jfcXzWisRst39uily72g
-         b+JgI++J1ZCHuyHZ+/1oI65VIKFgIkohFgIIucEtcToM6VmC/CwjFzcuIPiKNv1WvrKY
-         75ZTnqOEnny2egc3FhRi/LG1JicK7rJ5KjGs+92xFcGkwqEt+UYMgndguBPPvFRV0yFn
-         JfYyVuDGsVul/nBvAB5HFoFEBLkOlvMfo/3Qbt7YyXANicEDaBJo1HEfria3KQM6zPur
-         9xVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740428603; x=1741033403;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zRZueQGAuyNHX0V+MUT1BY/FrLcRwAdtXZvuxb2xKNM=;
-        b=fFlWorS+EZZf9Z0PfCshA6ZV6U7GTKNam8rXssnXGQkzEJEgztGz1dEcqTabUxnfkf
-         3XqStBSFr0Vy+z6BYWgCJVFjzzekZGCK4bbAXHhqBk/LnbdOaZdLgxGMuAjy0FcG9+wJ
-         /RGwAzeK4eX+HAioFM+SHiLuHMcrHQWUXLiuiGfcwGMTZZw3Ymo4mWiSCZ6ddykvJG+L
-         A71wzAdiXGZ0XrDHzK6qcwOCuqnymRQhRb643Zn77vIs5g2mqVBYR7KGVDselvhOXjGN
-         nzZZYP6IaSvfCSPJS/l9bzw6lkJCwWjpFpAVVu5HZI6ebC93JByxqsJn1tLOJEtL4IeA
-         u+kA==
-X-Forwarded-Encrypted: i=1; AJvYcCVUxEgSejaLHrlzZBbSrraM3AKJpD6crvZ8vf5/XBGI/yqk3e+IjqdLHA9AD+XVbOy8Q/WU9m+sxHR8bZU=@vger.kernel.org, AJvYcCWxCab+9+iYlWRLXGEA63wDDErJ5VAyALRrYAv0W+w4KVifB1XV0wfgSs/DcHpWhAsQ6nd4MArKgfD5xj5L8zs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHNJtbD6K5y3WpUqt6vn9iE+hPDgnhCVM3QxdPWcareHFj7ZZ2
-	hhIsqyYBuP112gTn56eAE4RMwZ7kHrj2j6kV+YMTWP/k56gNXKQB
-X-Gm-Gg: ASbGncsKAwExfU/70dVVzJKTRy7vHHOUYMzQoZvIBNEpeIfpBauGmRRPHwAvSEykWPU
-	hOOW8njr4lDpglsD+8JNs40bX0DMXLxc5nQ+zOWCiUN4WNctvL54Jypy47KTINIwmWdyc32IhvZ
-	Z0ZMAmzL23L8Z8drBdxsp2jZLLWzvtiMwVIe1oMDiI5hJhxInQfhfOyLFQjDt00y3bFvub/guly
-	Sw1qhFfQtAYYu43An5iMGoPENIXVDbmLMtrufgAS40HV6dJ+ZXCSTD2PrK7/78Qzy6ZFYCjckGS
-	claeeQ+n6/16NvMvvQy+zyrF9AJJySXKbxVb3w3CAk39TkihU0YcQeu2w+ovgXJ7IY3S+bHdBjz
-	6IBQ6zJDLh00565kS
-X-Google-Smtp-Source: AGHT+IFF/nt4KqGKEazj9d82/SIzFir8ZJLtqSHJf3e6/Vx/5KuEpvKEVA+dz2gT7EfeYM40+sbvbw==
-X-Received: by 2002:ad4:5f8b:0:b0:6e6:64e8:28e7 with SMTP id 6a1803df08f44-6e6ae7f7d4cmr187370936d6.15.1740428603088;
-        Mon, 24 Feb 2025 12:23:23 -0800 (PST)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b06dc41sm1083246d6.20.2025.02.24.12.23.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 12:23:22 -0800 (PST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 159D01200043;
-	Mon, 24 Feb 2025 15:23:22 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 24 Feb 2025 15:23:22 -0500
-X-ME-Sender: <xms:OdW8Z2eSb38yOCPMpsgHdlftieMNSwa9yjoPv-3Hb-15livprNJcMg>
-    <xme:OdW8ZwP88xBe0FTvB2z5aXwKbjGoeBbgMzW6lkvaZWl53hwjBerZ9720MkuD99xC-
-    0L1FThTVxcrxL_-Xw>
-X-ME-Received: <xmr:OdW8Z3hXcVDCcFaDpkF0rBxEX_rXSrvBA-_4r1HWVKbN0d64_h-_rZoN3o8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleejgecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeevgffhueevkedutefgveduuedujeefledt
-    hffgheegkeekiefgudekhffggeelfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgr
-    lhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppe
-    hgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishes
-    ghhmrghilhdrtghomhdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprghnnhgrqdhmrghrihgrsehlihhnuhhtrhhonhhigidruggvpdhr
-    tghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepuggrkh
-    hrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvghtpdhrtghpth
-    htohepsghjohhrnhefpghghhesphhrohhtohhnmhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:OdW8Zz96WwxM3isbc_vbPo0404XP695WanPpsC24TuRMYPiUBhKKVQ>
-    <xmx:OtW8ZytrHwOmRfhKh0TGaGozuLlDW7kYkDhdyK1yknvWmpartbo2-w>
-    <xmx:OtW8Z6HfMyVdYEJ7OvD_AZp3ygs3GRxQooNS29YN4C_CpasRZMR6KA>
-    <xmx:OtW8ZxNvCqv8cHA6BL91uUPko4A5_jzfN5RZrPqd1sNY6tXCqwJi6g>
-    <xmx:OtW8Z_MpcRvkU9nZO2NYjzMSArZwLNjd-y4gHHphFKvCfAvDeUmur_aJ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Feb 2025 15:23:21 -0500 (EST)
-Date: Mon, 24 Feb 2025 12:22:43 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-Message-ID: <Z7zVE_CvmIVukkXB@boqun-archlinux>
-References: <Z7yUTNEg6gMW0G7b@Mac.home>
- <CANiq72kx31exTFohb3+9_=PGUq_JtqpCvG8=oQUc_gZB+De5og@mail.gmail.com>
- <Z7ye0MsACNWe7Mbr@Mac.home>
- <CANiq72=qayfPk+W4BRiXe9xBGcgP2zPf-Q3K6GXTg8MKy-Kg=Q@mail.gmail.com>
- <WlwmQ3r8VXTu77m77jclUgLjPh65ztwxUu_mXaElarFHBBiG2kWi0ZLYWNxKAUF9LK2QYrOWhtlFYhwaaNjYRA==@protonmail.internalid>
- <Z7yl-LsSkVIDAfMF@Mac.home>
- <87msebyxtv.fsf@kernel.org>
- <4UoaifxB7JgBVKsNQyFR_T8yc3Vtn5TLAEdxdXrojNmOzJSEncopauEyjDpnbqzr8Z74ZWjd_N-bB-BwBS-7aQ==@protonmail.internalid>
- <Z7zF8KF9qTCr_n4l@boqun-archlinux>
- <87bjuryvb0.fsf@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGOlgbf/cbEWIvPG3zuOehuUJ4kF+blQsk3Z+cINr6vjiOHF3XtRLDbcGQKmDPeDYl0lsC810ClfUMh5SmkGBTWdmB46oEyeEEDu3cjFqrWma7GiH5m0M8XULKNWjkeVkpf3V3JoGtK7bdP6+ovNQwshuqQkqaaFUESVMZYw7lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fxlcMljf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E763C4CED6;
+	Mon, 24 Feb 2025 20:23:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740428611;
+	bh=fj9sDRa/umZo0BRc92vVFI+fRvhsxSOyR+/mPfQ1iYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fxlcMljf+waHtF0pSkyePhgbbUyUYydMJmNmavuFK51JfJuBEZjduMPz1w/R9Rwy6
+	 VOc8wkO+EK0bOvRYtdHxYHxgc4YAcI/11UKD5XOa7gV6okj2WUlRr/1rCv0zFtJElV
+	 fs0x3y0pyI0Qtol+KBoHu1XDER6d/13aOgWBfFD8yJzFDgXh8FAePyGQ6/XQ0C0C+C
+	 sE9v8mboZbGAHWapSEcl0+Ti8I4el+QSuOPAfYJLzjpUjm3K68uMx2r0qVMSodZ7CQ
+	 XP9p0ttLLxZm8uPAH1znduRbfCMmYUI1251JwOaFAzEp+z2wCc2Jfes+wD8sGTIaLs
+	 vFneGjc6VJs8Q==
+Date: Mon, 24 Feb 2025 12:23:31 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v2 01/11] iomap: Rename IOMAP_ATOMIC -> IOMAP_ATOMIC_HW
+Message-ID: <20250224202331.GF21808@frogsfrogsfrogs>
+References: <20250213135619.1148432-1-john.g.garry@oracle.com>
+ <20250213135619.1148432-2-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87bjuryvb0.fsf@kernel.org>
+In-Reply-To: <20250213135619.1148432-2-john.g.garry@oracle.com>
 
-On Mon, Feb 24, 2025 at 08:52:35PM +0100, Andreas Hindborg wrote:
-> "Boqun Feng" <boqun.feng@gmail.com> writes:
+On Thu, Feb 13, 2025 at 01:56:09PM +0000, John Garry wrote:
+> In future xfs will support a CoW-based atomic write, so rename
+> IOMAP_ATOMIC -> IOMAP_ATOMIC_HW to be clear which mode is being used.
 > 
-> > On Mon, Feb 24, 2025 at 07:58:04PM +0100, Andreas Hindborg wrote:
-> >> > On Mon, Feb 24, 2025 at 05:45:03PM +0100, Miguel Ojeda wrote:
-> >> >> On Mon, Feb 24, 2025 at 5:31 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >> >> >
-> >> >> > On Mon, Feb 24, 2025 at 05:23:59PM +0100, Miguel Ojeda wrote:
-> >> >> > >
-> >> >> > > side -- Andreas and I discussed it the other day. The description of
-> >> >> > > the issue has some lines, but perhaps the commit message could
-> >> >> >
-> >> >> > Do you have a link to the issue?
-> >> >>
-> >> >> Sorry, I meant "description of the symbol", i.e. the description field
-> >> >> in the patch.
-> >> >>
-> >> >
-> >> > Oh, I see. Yes, the patch description should provide more information
-> >> > about what the kconfig means for hrtimer maintainers' development.
-> >>
-> >> Right, I neglected to update the commit message. I will do that if we
-> >> have another version.
-> >>
-> >> >
-> >> >> > I asked because hrtimer API is always available regardless of the
-> >> >> > configuration, and it's such a core API, so it should always be there
-> >> >> > (Rust or C).
-> >> >>
-> >> >> It may not make sense for something that is always built on the C
-> >> >> side, yeah. I think the intention here may be that one can easily
-> >> >> disable it while "developing" a change on the C side. I am not sure
-> >> >> what "developing" means here, though, and we need to be careful --
-> >> >> after all, Kconfig options are visible to users and they do not care
-> >> >> about that.
-> >> >>
-> >> >
-> >> > Personally, I don't think CONFIG_RUST_HRTIMER is necessarily because as
-> >> > you mentioned below, people can disable Rust entirely during
-> >> > "developing".
-> >> >
-> >> > And if I understand the intention correctly, the CONFIG_RUST_HRTIMER
-> >> > config provides hrtimer maintainers a way that they could disable Rust
-> >> > hrtimer abstraction (while enabling other Rust component) when they're
-> >> > developing a change on the C side, right? If so, it's hrtimer
-> >> > maintainers' call, and this patch should provide more information on
-> >> > this.
-> >> >
-> >> > Back to my personal opinion, I don't think this is necessary ;-)
-> >> > Particularly because I can fix if something breaks Rust side, and I'm
-> >> > confident and happy to do so for hrtimer ;-)
-> >>
-> >> As Miguel said, the idea for this came up in the past week in one of the
-> >> mega threads discussing rust in general. We had a lot of "what happens
-> >> if I change something in my subsystem and that breaks rust" kind of
-> >> discussions.
-> >>
-> >
-> > So far we haven't heard such a question from hrtimer maintainers, I
-> > would only add such a kconfig if explicitly requested.
+> Also relocate setting of IOMAP_ATOMIC_HW to the write path in
+> __iomap_dio_rw(), to be clear that this flag is only relevant to writes
 > 
-> It gives flexibility and has no negative side effects. Of course, if it
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-The negative side effects that I can think of:
+Looks fine,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
-* It doubles the work for testing, it's a Kconfig after all, so every
-  reasonable test run will have to run at least one build with it and
-  one build without it combined with other configs.
+--D
 
-* It may compelicate other component. For example, if I would like
-  use hrtimer in a doc test of a lock component (the component itself
-  doesn't depend on hrtimer, so it exists with CONFIG_RUST_HRTIMER=n),
-  because I would like to unlock something after a certain time. Now
-  since CONFIG_RUST_HRTIMER can be unset, how would I write the test?
-  
-  #[cfg(CONFIG_RUST_HRTIMER)]
-  <use the Rust timer>
-  #[cfg(not(CONFIG_RUST_HRTIMER))]
-  <use the C timer? with unsafe??>
-
-A new kconfig is not something free. We will need to cope with it in
-multiple places.
-
-> is unwanted, we can just remove it. But I would like to understand the
-> deeper rationale.
+> ---
+>  Documentation/filesystems/iomap/operations.rst |  4 ++--
+>  fs/ext4/inode.c                                |  2 +-
+>  fs/iomap/direct-io.c                           | 18 +++++++++---------
+>  fs/iomap/trace.h                               |  2 +-
+>  include/linux/iomap.h                          |  2 +-
+>  5 files changed, 14 insertions(+), 14 deletions(-)
 > 
-> 
-> >
-> >> For subsystems where the people maintaining the C subsystem is not the
-> >> same people maintaining the Rust abstractions, this switch might be
-> >> valuable. It would allow making breaking changes to the C code of a
-> >> subsystem without refactoring the Rust code in the same sitting. Rather
-> >
-> > That's why I asked Frederic to be a reviewer of Rust hrtimer API. In
-> > longer-term, more and more people will get more or less Rust knowledge,
-> > and I'd argue that's the direction we should head to. So my vision is a
-> > significant amount of core kernel developers would be able to make C and
-> > Rust changes at the same time. It's of course not mandatory, but it's
-> > better collaboration.
-> 
-> Having this switch does not prevent longer term plans or change
-> directions of anything. It's simply a convenience feature made
-> available. I also expect the future you envision. But it is an
-> envisioned _future_. It is not the present reality.
-> 
-
-The reality is: we haven't heard hrtimer maintainers ask for this,
-right? I know you're trying to do something nice, I do appreciate your
-intention, but if hrtimer maintainers haven't asked for this, maybe it
-implies that they can handle or trust that wouldn't be a problem?
-
-> >
-> >> than having to disable rust entirely - or going and commenting out lines
-> >> in the kernel crate - I think it is better to provide an option to just
-> >> disable building these particular bindings.
-> >>
-> >> This has nothing to do with general policies related to breakage between
-> >> Rust and C code, and how to fix such breakage in a timely manner. It is
-> >> simply a useful switch for disabling part of the build so that people
-> >> can move on with their business, while someone else scrambles to fix
-> >> whatever needs fixing on the Rust side.
-> >>
-> >
-> > It's of course up to hrtimer maintainers. But I personally nack this
-> > kconfig, because it's not necessary, and hrtimer API has been stable for
-> > a while.
-> 
-> Having the switch is fine for me, removing it is fine as well. It's just
-> an added convenience that might come in handy. But having this kconfig
-> very close to zero overhead, so I do not really understand your
-> objection. I would like to better understand your reasoning.
-> 
-
-Hope my explanation above is helpful.
-
-Regards,
-Boqun
-
-> 
-> Best regards,
-> Andreas Hindborg
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index 2c7f5df9d8b0..82bfe0e8c08e 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -513,8 +513,8 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+>  
+> - * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> -   protection.
+> + * ``IOMAP_ATOMIC_HW``: This write is being issued with torn-write
+> +   protection based on HW-offload support.
+>     Only a single bio can be created for the write, and the write must
+>     not be split into multiple I/O requests, i.e. flag REQ_ATOMIC must be
+>     set.
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 7c54ae5fcbd4..ba2f1e3db7c7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3467,7 +3467,7 @@ static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>  		return false;
+>  
+>  	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> +	if (flags & IOMAP_ATOMIC_HW)
+>  		return false;
+>  
+>  	/* can only try again if we wrote nothing */
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index b521eb15759e..f87c4277e738 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -271,7 +271,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic)
+> +		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+>  
+> @@ -283,7 +283,7 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> -	if (atomic)
+> +	if (atomic_hw)
+>  		opflags |= REQ_ATOMIC;
+>  
+>  	return opflags;
+> @@ -295,8 +295,8 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> +	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
+>  	const loff_t length = iomap_length(iter);
+> -	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -306,7 +306,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  	size_t copied = 0;
+>  	size_t orig_count;
+>  
+> -	if (atomic && length != fs_block_size)
+> +	if (atomic_hw && length != fs_block_size)
+>  		return -EINVAL;
+>  
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> @@ -383,7 +383,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  			goto out;
+>  	}
+>  
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+>  
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+> @@ -416,7 +416,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+>  		}
+>  
+>  		n = bio->bi_iter.bi_size;
+> -		if (WARN_ON_ONCE(atomic && n != length)) {
+> +		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+>  			/*
+>  			 * This bio should have covered the complete length,
+>  			 * which it doesn't, so error. We may need to zero out
+> @@ -610,9 +610,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+>  
+> -	if (iocb->ki_flags & IOCB_ATOMIC)
+> -		iomi.flags |= IOMAP_ATOMIC;
+> -
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> @@ -647,6 +644,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>  		}
+>  
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			iomi.flags |= IOMAP_ATOMIC_HW;
+> +
+>  		/* for data sync or sync, we need sync completion processing */
+>  		if (iocb_is_dsync(iocb)) {
+>  			dio->flags |= IOMAP_DIO_NEED_SYNC;
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 4118a42cdab0..0c73d91c0485 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -99,7 +99,7 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+>  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> -	{ IOMAP_ATOMIC,		"ATOMIC" }
+> +	{ IOMAP_ATOMIC_HW,	"ATOMIC_HW" }
+>  
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 75bf54e76f3b..e7aa05503763 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -182,7 +182,7 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> -#define IOMAP_ATOMIC		(1 << 9)
+> +#define IOMAP_ATOMIC_HW		(1 << 9) /* HW-based torn-write protection */
+>  
+>  struct iomap_ops {
+>  	/*
+> -- 
+> 2.31.1
 > 
 > 
 
