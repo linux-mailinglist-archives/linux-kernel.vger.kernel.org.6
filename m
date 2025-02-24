@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-528184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD785A4149E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:13:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5DDA414A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AFC17A5039
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:12:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692961892056
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9561A705C;
-	Mon, 24 Feb 2025 05:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E021C7016;
+	Mon, 24 Feb 2025 05:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ejF4qh/6"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XefuTDvg"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBFFEEA8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E0B1A5B81
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740373988; cv=none; b=aw3UyhcdqsOIJj8kScSJMWj/g8HLDFvZ7oGWQ27q+u3KGiPSVIQ+0je8OeZaEHW8lkWznnwxnLBeQVdzdosxzq2eq6lmw4IXvsfxDWGACXWSanqzo78dNNtpcr4+QuccUHjTIyt0csdhb3G6zPMT6DrAEgH/TKCjlIxyAneA3Ro=
+	t=1740374049; cv=none; b=uct4Q1dpowdpB6G1ZjpqRioBnAhvJ7mEkg2qeOc1tqkV+mdBcmLssCEziUB7sCqZmeaMAhM8DrdXak9y8lhmCoqOvikmiK+Lap7nOqgATxADolMExMwVi+M0+GOHTsAp5B5578bhwTnSbDRjAQ6Iv0qeQxh6N7Esz846wfLLpZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740373988; c=relaxed/simple;
-	bh=41vU5dkvy12qCzhdsgdHfY8GQ1ok9vAv2tmZe94hMDM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Jti8DXvxe80mDUvp01659sfCPsQ2DT3t0BKOOpfu1N7VF4AQf5xougIk30XrAa4kQXyMhFGetiN7X21wROFv8dnC1cUc1WgHU8Pox58AM4TCUsy8zsfnpGcHeyPWx1O2qTfzPOFNPVfQ4HE6b7WPx3Dns286gjQqW7D11srzg4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=ejF4qh/6; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 060c2a58f26e11ef8eb9c36241bbb6fb-20250224
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=0Xf3zNMSr+yu5a58iIvJf4uTceCQidvq4R1Svcp2yks=;
-	b=ejF4qh/68ugQBmFvcgRXHLQbCmqqvdLcaRpl1lDwa85n4hQqyccfeUxHLUMm3zxeUPzSnC4KiNI6v6NcpCTtWvyrbCOVyd0lj9of+QOsTfe1teD8YJPXBqSUdCdGGT+pKJj08Y7tmt+upGFdCIYilxS+eqpJQaS8rVFPhL9nphA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:686a94d8-87d3-402d-8a1a-034c65dfa4ef,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:60aa074,CLOUDID:b3e978a4-5c06-4e72-8298-91cabc9efadf,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 060c2a58f26e11ef8eb9c36241bbb6fb-20250224
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1748444666; Mon, 24 Feb 2025 13:13:03 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Mon, 24 Feb 2025 13:13:02 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Mon, 24 Feb 2025 13:13:02 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: "Jason-JH . Lin" <jason-jh.lin@mediatek.com>, Nancy Lin
-	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Yongqiang
- Niu <yongqiang.niu@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
-	Xavier Chang <xavier.chang@mediatek.com>, Fei Shao <fshao@chromium.org>,
-	Chen-yu Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH] drm/mediatek: Fix config_updating flag never false when no mbox channel
-Date: Mon, 24 Feb 2025 13:12:21 +0800
-Message-ID: <20250224051301.3538484-1-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1740374049; c=relaxed/simple;
+	bh=cxSQuQQtbQOCfR6+umVvSr7i7TkqT67zGAdQTxDz4gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KSue8x24hOmxrsZZjI5+ozAjG3/CSfm3wScR/boBcYIhHMaF41tAG02w157EGDgIkAIIKasC9sxTDZi30+XL0iIMDgwsnrG+C/YmL8fiQwdOkmL84vhsUYmbdUxQTvrF5He7Ig8+NBV1uJDq8UmDRjYAbQnOgO1qOlpucmoXoSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XefuTDvg; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc1c80cdc8so6126347a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 21:14:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740374047; x=1740978847; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+joD/tYf7d881SCRKiox9DoLZN0Dh3msjbOhq+t3e2c=;
+        b=XefuTDvgkxfT5r/jEba2bPNa9ZbIBvu8r27O/lGhKRM4cbc6Zrs1/RnhnIkIp5//8b
+         Ft9n38+xgCzKVuAT871Xgj3drLI49JRJAyYyLbzm9XVSHeo5pGGK1lacSaJY1G6cnqZe
+         vCDOS3e2j5f8AV9pbr8fVLdth7+vlFVtPjLpd3TOAi6161TBL4YhR4Li/z8cBqtYot7s
+         dgtRMeEIzXTML0LnZp9ugyxmPiBCN+EVeaKjqx8kvGrnI2KPN8m/LFK8idb4DeaphcDM
+         uuflKyGkRaTZVtdLGxj8w3Rbh5h8QOebtmgJc2rC9uF1IJ8eEtrhMhqVEjINNs8sE2dp
+         JnTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740374047; x=1740978847;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+joD/tYf7d881SCRKiox9DoLZN0Dh3msjbOhq+t3e2c=;
+        b=QZpCi01lyNo6V64BTBGXsug44N5ai7dFhgoF8ir0nX9GrjaCY5o9INS+f3opn/IWQi
+         Q527t+7SvWrhmtdIpwKK03CZQ6djuXDUqoZp5xrme4UKXIgrYRmWkpqinPX8AxLXre11
+         jbxfQjvI9OPhAq6wVSiU4LcRrM9RsaA+T3UIY+8YBAhT1VYhHYX9Uo6ELzVZUIMr5Ipc
+         C32P5CdOdTF/f0aimh9oKvvp3LgAJ/otc4rmSRYOKNTOr42uyikn5w3RT5t+PG+ay90o
+         vNtlGgLPSPTJ8pu+sTC4kFvoapSNz0HRUnl2my43Bzmtld8uHHHLQBw/zS9LQb3O9hrA
+         JD7A==
+X-Forwarded-Encrypted: i=1; AJvYcCVR6N2s/ZyYgGDjIkaq6+riyDQq8BNO0/FPnBONkUR3rATzN9UHOCFRy5uyY/rSeeKEjcZfJLF/3+ckbyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhu/V5M3qwgT7XUNM7aQvLO9CsJ+8WwnpniIlMGgAJDhn0OyYh
+	pjEpe/FbXR4LjaT8NxxU3Cuo71ZDcIzsSBoLIl+faw4os/6fXS8I3G0K3+5ZGjk=
+X-Gm-Gg: ASbGncvWp1aECUNRmofwxU1DIxk6z1HN09SuXZ9keoE+w3W+ZyfkYiK+2BwI1O8M41o
+	IWD1UUaSPjMPxgPv5nb/nDpsy0r/Mmycg1XkrYFjhrz1vbqzegjdWofySoDDcDeQNNZMW8Gfzhi
+	5CBKD7km8lDvKvyplkqjg/YW4tNxAE0OiAbI4IgfXp9/tra6g6xwE6PXJoTMsP6qe79urK0QE+o
+	x10wrk5SB8G3crm7SCuCnAZeK1F22627tLd1A6RM+iZ7empfZC5sr0KwdnPiFcxnzD7Vh1KAgi8
+	qvqyYcz7yxyC3PpwZqFsabisI/A=
+X-Google-Smtp-Source: AGHT+IG0b6emkD0CmhSV1QNXb4HVeu5MkvIkiNO02AEPBxGCijtAK2X6heTwZs19Vt7813cTnGENng==
+X-Received: by 2002:a05:6a20:6a0b:b0:1e1:ad39:cc5c with SMTP id adf61e73a8af0-1eef3c7718dmr22515662637.14.1740374046890;
+        Sun, 23 Feb 2025 21:14:06 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb57c5dee4sm18114799a12.14.2025.02.23.21.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 21:14:06 -0800 (PST)
+Date: Mon, 24 Feb 2025 10:44:03 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] MAINTAINERS: add rust bindings entry for bitmap API
+Message-ID: <20250224051403.k2x6deccboytjcjw@vireshk-i7>
+References: <20250221205649.141305-1-yury.norov@gmail.com>
+ <20250221205649.141305-3-yury.norov@gmail.com>
+ <CANiq72=ctKoDz+Kf7UFBTD-oF17cTHBcrkNN_5cqxQeK609OVA@mail.gmail.com>
+ <Z7pfBoXDoH5x-MEq@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7pfBoXDoH5x-MEq@thinkpad>
 
-When CONFIG_MTK_CMDQ is enabled, if the display is controlled by the CPU
-while other hardware is controlled by the GCE, the display will encounter
-a mbox request channel failure.
-However, it will still enter the CONFIG_MTK_CMDQ statement, causing the
-config_updating flag to never be set to false. As a result, no page flip
-event is sent back to user space, and the screen does not update.
+On 22-02-25, 18:34, Yury Norov wrote:
+> I think rust developers need similar guarantees form rust maintainers:
+> there will be a rust engineer who will keep the bindings on rust side in
+> a good shape. Viresh, as per my understanding, has committed on that.
 
-Fixes: da03801ad08f ("drm/mediatek: Move mtk_crtc_finish_page_flip() to ddp_cmdq_cb()")
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Yes.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 5674f5707cca..cfc4867296b8 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -620,13 +620,14 @@ static void mtk_crtc_update_config(struct mtk_crtc *mtk_crtc, bool needs_vblank)
- 
- 		mbox_send_message(mtk_crtc->cmdq_client.chan, cmdq_handle);
- 		mbox_client_txdone(mtk_crtc->cmdq_client.chan, 0);
-+		goto update_config_out;
- 	}
--#else
-+#endif
- 	spin_lock_irqsave(&mtk_crtc->config_lock, flags);
- 	mtk_crtc->config_updating = false;
- 	spin_unlock_irqrestore(&mtk_crtc->config_lock, flags);
--#endif
- 
-+update_config_out:
- 	mutex_unlock(&mtk_crtc->hw_lock);
- }
- 
 -- 
-2.43.0
-
+viresh
 
