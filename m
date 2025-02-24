@@ -1,91 +1,107 @@
-Return-Path: <linux-kernel+bounces-529940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D406A42CB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:27:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46FA3A42CC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:27:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF64F3AF569
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:26:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7474C1899544
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:27:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B571200138;
-	Mon, 24 Feb 2025 19:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0E12063DB;
+	Mon, 24 Feb 2025 19:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QvUMFj91"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4q+SHA7"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C59A1EDA0F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757591EDA0F;
+	Mon, 24 Feb 2025 19:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740425218; cv=none; b=VxWdKzv5b+EqK/tU/ZVLb8acD8p186OmQDmcjZdBiMHPj92n5iZKK8KDSmRJPqR1Htm5vv+RLY7RlXeVjvJczK4iQl1QAl9Rtwn7cYbxxH1YtwmjdickIUtakhNds/kQpVjQzqHzgXgyThn5+F2907NJBVmHYuXPVWjqj2nXBcY=
+	t=1740425229; cv=none; b=cclm2t5G++aynQHLJLWuhmPXQudPRbQpYBMYlxI0aCcMwSypjiVM5YLCv0A/LAdvoRuMuMXa9eSjl19OsZYifb+dtZS33lJMeGf3C8R2+c9hyw21JEl1KxmbLNpCm8smqWlhZaRpagbX/VH6qJtEo8lOP4qos79BmMQCFiRjJvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740425218; c=relaxed/simple;
-	bh=RjsVDHq5onMdcNO8yu6bUCK3Q733x4J7UZ4pmLrG/ss=;
+	s=arc-20240116; t=1740425229; c=relaxed/simple;
+	bh=zms8AwfScWDNRnCzKtbTRceK4ozgPM3XizahJfE+6tI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kPo80qZE3VcbcToIWsETI0/S4AqUpXECCowGXCTB0Udyd8CXdEdojAcN7fIukJ7tyU0qE6eXAeiXUDkGT8qPuC452r9ocHpP6pbNF/StHP6z//t8d0zdKmqtj7UjT9yGSGDh1MwW4w09qxUSdbtxZ6wrn7+DH60n8rceYuJhUVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QvUMFj91; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so10530747a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:26:55 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=p7GhyiyUVnT1yRTNL9fMSdPDqtmE9zMWFrlg0KRKnm9PPQpJZhIHWjqiiX++MNWCV3jyhJ7jYg+G7UYOxbFpFrKrbHuj95Fbu+UW+mAa7vxz19h1b1JcVs0m9kSi1DXYKuTympQXLNUqXnr1Y/KeBZBQapdbt+ypynVFUv93Eag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j4q+SHA7; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fbfa8c73a6so9616717a91.2;
+        Mon, 24 Feb 2025 11:27:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740425214; x=1741030014; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740425227; x=1741030027; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RpG14FyHciUCJeJWu7dlaHcQcwmbGCSP29+dFb0PBnE=;
-        b=QvUMFj916w/3zQN75r97CA2nQQ6oiRtk5JJG2rHygf2jiEmc/+uPq3cnVUngEcF0GU
-         Nd/O62RWxUKRqIJKnnpgrWNvWetGMs1l+AkvENWsHW9DvDtMhrp6ucQq2fbiMhJ2FH2Q
-         1Q1dlesVGQoNGLJ9iGdsg0cs8lucp6FZvjpKJJvSiSJcGsssjIF71L1/BZ5muRJl9/G9
-         nT/7IV2/wmrjnyjg3t9FAwzn61V+8hC9FTv2IdiG+1QseWIrEphjnK/llvHGaEbzA0xk
-         sGihqEfBmm97AQ9nK66zWBGOhnR9xLUOe7l9Gt4/GN5Z0u69cOrSkqAsw2YmZsCApya2
-         j34w==
+        bh=fNLdUwijT6W41ZsoblnFA+2AFZPup2ylwdIktRpNhS8=;
+        b=j4q+SHA7EXf0knh8DM6GL/5Og6eZo6oZM6cSRjq4gqADlhgYT4gukZ1QGPtCsBihtH
+         BLVVI/DwEe7J2F1a6rAtV5SfbhncGYtNJAlYgBx9h13EUPh1uJzqn5Dmffa80o/2fLBI
+         1tUd26LAmdyunCp4Eh1Oj5Yg8Tv8YfsmGn8HfqITk1P0UfX4NApKA4uo0q0m6FJBDPlN
+         3Rfzmw4XyjCFV1NkjafHGKrrjAVgbLOXxGNEOZZEXCTtFi2DUty88sIq7BWcT1xHmzmo
+         y5DirFpC3T4gSE3b4Q5z14px4GdYPctnLMkWXL0nuLeGmiUx+dzOamueqQC/UkyIM3ss
+         oKsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740425214; x=1741030014;
+        d=1e100.net; s=20230601; t=1740425227; x=1741030027;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RpG14FyHciUCJeJWu7dlaHcQcwmbGCSP29+dFb0PBnE=;
-        b=lm35tMm9fio+4bQMLLAfIv1WcX8myQz5JD9aHxVpiaJL7eXVioy9PTwQLDUcMkHpq+
-         FZs2PvDewmZg3H1hdCtpDGSD4m+hSgLMilK+FrfrT7HpkgA/3X9Eh3f7JflCz1i1dmVC
-         1wz3JUIoHpHPfG3OYexhRlUWHzA0oKRxoI5i3DHHJIKFEmQXLehi66G1cSSP8Yu+XFmD
-         pCY+s2QzoM4vINP/GxGqryWnURqErsO6/m9JjWnVS1uaQ49bKIzAiKyZCyh2IPaN76wJ
-         SDA3hdkjhkFE6L9eu6mFcafflwoHlMwA/9VZlZ3VVAN87YoQdQo1ytFRSUrVLGjv4pfd
-         D7eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXpuEsn+x5AmQRC/hx65mi9a+rFqXfJT/EC3pnJEbgok2phKiFLSZdIPlhAqSt6IW0rSIB2WjB+vioYekg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPKlddreD8LT5UDb3CowQMsSI1rru6zxdPxkbW1YKkT1pjCEtp
-	SKLtnrYXrYVhyt+oHnggdYcGX7bu3j9W1+K9DWLEWStDubRUk5L4y4whylqTYTc=
-X-Gm-Gg: ASbGncsB4gHpqUj4vsbNYqIo2998of9Lx0lfC4mgFeAD2PTd1Q9a/ioguH+6JUDHJYG
-	2SbWXiSMFUdg9TqL32j7J27xtazjU+p1xmJwPB35SaPvm+lhw9vOWE/zq0ZgJ0mxhtHqSynKrz2
-	AgitHiELg6g2/H9Ipn5xiPk5pHYgHTUzP3faVYxsjc58E/+skj8Ldr0CzGNSmQZvZ6MN49poA+5
-	tIBhR/MF8tz1MYPMI0dXF56UlgIa4i+IND39qXePx2eo2k25qv1t2+StKra/LjnW2qCQK1yBt0Y
-	eUUTcdk+tQDVAvtYlh6BF/eE+8a1Ld8=
-X-Google-Smtp-Source: AGHT+IEkKWuUL7F5MtASBjfUP3GAc3+5X8K8oDEv6bNFiTlpvxETEam5AUBsm70isUAlIpvpz/BZvA==
-X-Received: by 2002:a17:907:9989:b0:abb:daa7:f769 with SMTP id a640c23a62f3a-abbed5b21b4mr1841919766b.0.1740425213760;
-        Mon, 24 Feb 2025 11:26:53 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abed1cd4c23sm11026266b.11.2025.02.24.11.26.52
+        bh=fNLdUwijT6W41ZsoblnFA+2AFZPup2ylwdIktRpNhS8=;
+        b=kgp8QZIxb98RP24ZmcHLLgN0vAPgBaP4qfG63wyVJ04U41fDbvOZ4K4KNEyCoIEMqp
+         nCmsjsc7/dOSzHPhuTl6CVXxea/2WMqYkozT4SgRYe/IG6s50IZ8muaARJrM38722MJD
+         +DBl+mQwfpndVY9fBFmqesHJ7LKaqRksWMUzm2Dr2EJeyvEquhXvZAdXzmKEkrn1qn33
+         lQVgcFUdL6Oku3Sd9oLyzQwHrO/bCx1Fhs3+Zvh5Kn4ba9FYOsgcoGkGfzFqn7pwc/n7
+         CJtAE1en4JL+sI0gGV8+gmJvZ5XI2ft0n/WLFPcbgswOvWK1JG4e3PvfIuc1pu6r0hkU
+         Fusg==
+X-Forwarded-Encrypted: i=1; AJvYcCVo+24H2n6s1NmNizHYw1Q3Q4YtGmWl4l8Eg1wlxo+WSR8Ri69zUjh7zvBViKkVG+7dmchvCwgQak0vZa0=@vger.kernel.org, AJvYcCVo6wzUwuk1Sa5Ghlc6klClWEcsEuJsj0ayuXvLaHwEd24vlVNswETrj9Gf7WcxtZv4usE=@vger.kernel.org, AJvYcCW/8tFvT2PEFpPLVjI8A1G7IVa0aFk5EUmUJ+Ynrx5jpC635ZpY3kg77SoZWa07zs/0E76WsIe5NJ7Iay3Ni30=@vger.kernel.org, AJvYcCW9uELGb6sfcagREh6YWsJyYOvlTb+/MXqU5B7X0vCyLda0XtPyR6+/t6mIU/+Ao44iO3/6a7NnPjDaHc4E@vger.kernel.org, AJvYcCWAJPTxxwInFlBgAS/ehVMhO2fT6Y07TpxBz4Twa09BsdwE16eXYY30kM5MD8fBNO/6hr7Xn0sllnf92eY=@vger.kernel.org, AJvYcCWlo1rtLxuGqu62bLDODjtj8ItqOTX2tn2CnGFwjGtGNAWi1O7yWcWR5fE4iwikr61j56i8UonCx7nshIew@vger.kernel.org, AJvYcCWpr2XrYzwJq/kf4Zu2ElH1yxXfaGA5jYPJrwCHT/CEe56zweEu1SHE4/h3nFq8xch/ybAAQZ53@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1z2cWOtNzHmZC1FeZL25CsRi53MqFEN7IfGOX7XQR0OLFvu9x
+	wBnDqX14OHOuyqqQQ6+HlHb87viLHqHQ1n5D/yYMeUDlbRj0zO2S
+X-Gm-Gg: ASbGncsGuZ7wjRMB2Gjp/GNDozuepRqQFwiZ2aYesZi0E9cJi931jagv+n+W71ZYH4l
+	7Dkkzi//rwVlwxEP5dDXt+yxLX4wVxrftANsfBqsOQIU6ZixJRh2AdOvhfNMSAP3Nf9wyAof58r
+	Uza6656YWI6MKHMV1uNwieo18izVgj/ZyL537+uEPwY6H0/Uo+DwH3p64cEDwdHRoFCnbpGMwUV
+	6/S3olmjAthWDxq9kZ7Ta6pqRZz3hIixcBKTsjd0UBBUMjx5Ghj0u5FMtn4S0i8BUu9hOf/KUf6
+	aUZaiZYgZ0UbxBaHPtkr64O/4Q6BouUOm6jIxZHdny/4brC+jA==
+X-Google-Smtp-Source: AGHT+IH68TTuhENvYMBVibjVTmGrUAIBmwlMSF4lzlrMkZQD90CN6i4oKdfqdXSCYQRlTI+LIK96VA==
+X-Received: by 2002:a17:90b:38ca:b0:2ee:e945:5355 with SMTP id 98e67ed59e1d1-2fce86cf118mr21465186a91.19.1740425226496;
+        Mon, 24 Feb 2025 11:27:06 -0800 (PST)
+Received: from localhost (maglev-oncall.nvidia.com. [216.228.125.128])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a3da759sm31947a91.13.2025.02.24.11.27.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 11:26:53 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:26:47 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Jim Qu <Jim.Qu@amd.com>, Lukas Wunner <lukas@wunner.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Takashi Iwai <tiwai@suse.de>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Su Hui <suhui@nfschina.com>
-Subject: Re: [PATCH] vgaswitcheroo: Fix error checking in
- vga_switcheroo_register_audio_client()
-Message-ID: <8e161bf8-70f6-4557-8fa8-81d4bbfab91f@stanley.mountain>
-References: <ae24cd32-1e78-4656-b983-051ed22d86b9@stanley.mountain>
- <87eczn7adi.fsf@intel.com>
+        Mon, 24 Feb 2025 11:27:05 -0800 (PST)
+Date: Mon, 24 Feb 2025 14:27:03 -0500
+From: Yury Norov <yury.norov@gmail.com>
+To: Kuan-Wei Chiu <visitorckw@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org,
+	joel@jms.id.au, eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, akpm@linux-foundation.org, hpa@zytor.com,
+	alistair@popple.id.au, linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
+Message-ID: <Z7zIBwH4aUA7G9MY@thinkpad>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+ <20250223164217.2139331-3-visitorckw@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,59 +110,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87eczn7adi.fsf@intel.com>
+In-Reply-To: <20250223164217.2139331-3-visitorckw@gmail.com>
 
-On Mon, Feb 24, 2025 at 03:14:33PM +0200, Jani Nikula wrote:
-> On Wed, 19 Feb 2025, Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > The "id" variable is an enum and in this context it's treated as an
-> > unsigned int so the error handling can never trigger.  The
-> > ->get_client_id() functions do not currently return any errors but
-> > I imagine that if they did, then the intention was to return
-> > VGA_SWITCHEROO_UNKNOWN_ID on error.  Let's check for both negatives
-> > and UNKNOWN_ID so we'll catch it either way.
-> >
-> > Reported-by: Su Hui <suhui@nfschina.com>
-> > Closes: https://lore.kernel.org/all/20231026021056.850680-1-suhui@nfschina.com/
-> > Fixes: 4aaf448fa975 ("vga_switcheroo: set audio client id according to bound GPU id")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> >  drivers/gpu/vga/vga_switcheroo.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/vga/vga_switcheroo.c b/drivers/gpu/vga/vga_switcheroo.c
-> > index 18f2c92beff8..216fb208eb31 100644
-> > --- a/drivers/gpu/vga/vga_switcheroo.c
-> > +++ b/drivers/gpu/vga/vga_switcheroo.c
-> > @@ -375,7 +375,7 @@ int vga_switcheroo_register_audio_client(struct pci_dev *pdev,
-> >  	mutex_lock(&vgasr_mutex);
-> >  	if (vgasr_priv.active) {
-> >  		id = vgasr_priv.handler->get_client_id(vga_dev);
-> > -		if (id < 0) {
-> > +		if ((int)id < 0 || id == VGA_SWITCHEROO_UNKNOWN_ID) {
-> 
-> Maybe we want to do something else here... see [1].
-> 
-> BR,
-> Jani.
-> 
-> 
-> [1] https://lore.kernel.org/r/CAHk-=wgg2A_iHNwf_JDjYJF=XHnKVGOjGp50FzVWniA2Z010bw@mail.gmail.com
-> 
+On Mon, Feb 24, 2025 at 12:42:02AM +0800, Kuan-Wei Chiu wrote:
+> Several parts of the kernel open-code parity calculations using
+> different methods. Add a generic parity64() helper implemented with the
+> same efficient approach as parity8().
 
-I feel like my patch is good enough...  I guess the concern here is that
-GCC could change enums to something else.  I don't think that's likely as
-it would break a lot of code.  The other option, which is a good option,
-is to change the function signature for vgasr_priv.handler->get_client_id()
-so that we do:
+No reason to add parity32() and parity64() in separate patches
+ 
+> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> ---
+>  include/linux/bitops.h | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> index fb13dedad7aa..67677057f5e2 100644
+> --- a/include/linux/bitops.h
+> +++ b/include/linux/bitops.h
+> @@ -281,6 +281,28 @@ static inline int parity32(u32 val)
+>  	return (0x6996 >> (val & 0xf)) & 1;
+>  }
+>  
+> +/**
+> + * parity64 - get the parity of an u64 value
+> + * @value: the value to be examined
+> + *
+> + * Determine the parity of the u64 argument.
+> + *
+> + * Returns:
+> + * 0 for even parity, 1 for odd parity
+> + */
+> +static inline int parity64(u64 val)
+> +{
+> +	/*
+> +	 * One explanation of this algorithm:
+> +	 * https://funloop.org/codex/problem/parity/README.html
 
-	ret = vgasr_priv.handler->get_client_id(vga_dev, &id);
-	if (ret)
-		return;
+This is already referenced in sources. No need to spread it for more.
 
-That's better code, honestly.  But I can't find motivation enough to do
-the work.
+> +	 */
+> +	val ^= val >> 32;
+> +	val ^= val >> 16;
+> +	val ^= val >> 8;
+> +	val ^= val >> 4;
+> +	return (0x6996 >> (val & 0xf)) & 1;
 
-regards,
-dan carpenter
+It's better to avoid duplicating the same logic again and again.
+
+> +}
+> +
+
+So maybe make it a macro?
+
+
+From f17a28ae3429f49825d65ebc0f7717c6a191a3e2 Mon Sep 17 00:00:00 2001
+From: Yury Norov <yury.norov@gmail.com>
+Date: Mon, 24 Feb 2025 14:14:27 -0500
+Subject: [PATCH] bitops: generalize parity8()
+
+The generic parity calculation approach may be easily generalized for
+other standard types. Do that and drop sub-optimal implementation of
+parity calculation in x86 code.
+
+Signed-off-by: Yury Norov [NVIDIA] <yury.norov@gmail.com>
+---
+ arch/x86/kernel/bootflag.c | 14 +-----------
+ include/linux/bitops.h     | 47 +++++++++++++++++++++++++++-----------
+ 2 files changed, 35 insertions(+), 26 deletions(-)
+
+diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
+index 3fed7ae58b60..4a85c69a28f8 100644
+--- a/arch/x86/kernel/bootflag.c
++++ b/arch/x86/kernel/bootflag.c
+@@ -2,6 +2,7 @@
+ /*
+  *	Implement 'Simple Boot Flag Specification 2.0'
+  */
++#include <linux/bitops.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+@@ -20,19 +21,6 @@
+ 
+ int sbf_port __initdata = -1;	/* set via acpi_boot_init() */
+ 
+-static int __init parity(u8 v)
+-{
+-	int x = 0;
+-	int i;
+-
+-	for (i = 0; i < 8; i++) {
+-		x ^= (v & 1);
+-		v >>= 1;
+-	}
+-
+-	return x;
+-}
+-
+ static void __init sbf_write(u8 v)
+ {
+ 	unsigned long flags;
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index c1cb53cf2f0f..29601434f5f4 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -230,10 +230,10 @@ static inline int get_count_order_long(unsigned long l)
+ }
+ 
+ /**
+- * parity8 - get the parity of an u8 value
++ * parity - get the parity of a value
+  * @value: the value to be examined
+  *
+- * Determine the parity of the u8 argument.
++ * Determine parity of the argument.
+  *
+  * Returns:
+  * 0 for even parity, 1 for odd parity
+@@ -241,24 +241,45 @@ static inline int get_count_order_long(unsigned long l)
+  * Note: This function informs you about the current parity. Example to bail
+  * out when parity is odd:
+  *
+- *	if (parity8(val) == 1)
++ *	if (parity(val) == 1)
+  *		return -EBADMSG;
+  *
+  * If you need to calculate a parity bit, you need to draw the conclusion from
+  * this result yourself. Example to enforce odd parity, parity bit is bit 7:
+  *
+- *	if (parity8(val) == 0)
++ *	if (parity(val) == 0)
+  *		val ^= BIT(7);
++ *
++ * One explanation of this algorithm:
++ * https://funloop.org/codex/problem/parity/README.html
+  */
+-static inline int parity8(u8 val)
+-{
+-	/*
+-	 * One explanation of this algorithm:
+-	 * https://funloop.org/codex/problem/parity/README.html
+-	 */
+-	val ^= val >> 4;
+-	return (0x6996 >> (val & 0xf)) & 1;
+-}
++#define parity(val)					\
++({							\
++	u64 __v = (val);				\
++	int __ret;					\
++	switch (BITS_PER_TYPE(val)) {			\
++	case 64:					\
++		__v ^= __v >> 32;			\
++		fallthrough;				\
++	case 32:					\
++		__v ^= __v >> 16;			\
++		fallthrough;				\
++	case 16:					\
++		__v ^= __v >> 8;			\
++		fallthrough;				\
++	case 8:						\
++		__v ^= __v >> 4;			\
++		__ret =  (0x6996 >> (__v & 0xf)) & 1;	\
++		break;					\
++	default:					\
++		BUILD_BUG();				\
++	}						\
++	__ret;						\
++})
++
++#define parity8(val)	parity((u8)(val))
++#define parity32(val)	parity((u32)(val))
++#define parity64(val)	parity((u64)(val))
+ 
+ /**
+  * __ffs64 - find first set bit in a 64 bit word
+-- 
+2.43.0
 
 
