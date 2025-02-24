@@ -1,120 +1,219 @@
-Return-Path: <linux-kernel+bounces-528063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CEDA4131A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:01:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8BEA4131D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87DDD1892930
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B171891767
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E722019ABB6;
-	Mon, 24 Feb 2025 01:59:53 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A9F19C54E;
+	Mon, 24 Feb 2025 02:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VHrebsVX"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7111E7485;
-	Mon, 24 Feb 2025 01:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486FED530;
+	Mon, 24 Feb 2025 02:00:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740362393; cv=none; b=WlBrGcCi8fQksRRTIMNu8DNCNCgrLtXn8p2OeDYs/ZHwFYKRhR6riuK7fEz7WGvTtS5Rq7lXF8kYIwLxoSzSquTSVlbx8cWxyMW26LiHhT0BRDKCYgAqiCdf/D6tFE7w0RLN+ML9ztNiKfG1vWqltbvMKWYCzBihkXoBKFsTS6Q=
+	t=1740362448; cv=none; b=erNgNTfkxHYWepf5sRr8Zfmm3mXLyTOMBhA3RMQ8WOomLdxtpxaFo6gGlskzwobieNBGL9oJs9u0u++uu9Hs0kjhverq6LJjwgtQhxKypT4ozfkOKbNd1ZeLgvs8+9Y30CQbWC5Qikc5NJt39MBJmZeDqaKaGiXpfjDRTRAdzlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740362393; c=relaxed/simple;
-	bh=fKrszG9NHCY6e29PEfyo0QFYgGgQ/ryEJE73agr7ors=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbNpcSXuivyNjkAwnm7xT+y7fsvvw3TdFBUbWa9K4stm3HCkIshA+aYOq/26Cb/yINeMglhJb1CKFYdH8ZKVV6cxyL0b4CzVBfth7MlOGzl9g94fM50CieoErxSAFUbYOtOXhxNsPzSJxTcHMGyj9FVlgewFuWIy5XI44P1yAhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z1P6t4Lykz4f3js1;
-	Mon, 24 Feb 2025 09:59:18 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5D43E1A06D7;
-	Mon, 24 Feb 2025 09:59:40 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXul6K0rtnie_kEg--.41699S3;
-	Mon, 24 Feb 2025 09:59:40 +0800 (CST)
-Message-ID: <18453da2-35f1-4f65-b84e-d62a89ff3bab@huaweicloud.com>
-Date: Mon, 24 Feb 2025 09:59:38 +0800
+	s=arc-20240116; t=1740362448; c=relaxed/simple;
+	bh=4YaY9q0EJkK2mUF5qAs7EEnE6on3MPwGZF1ixcRuqWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lovQNRBia1TtuOHTSUSQznvA9l3xYk1GsHjmUdq86S/67CKd8RXBrIbEkYjzh6qGm0MF20CcE0q67qvxQoNKqTrfkCuRaXvrJfj0fpVeaC8IOFZi3+LTJ/IF4VFTk6t5tEokPnbml727qqWWjw6tK5sFOxYw90fb8l4X5lIv6A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VHrebsVX; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4720fb0229fso38584911cf.0;
+        Sun, 23 Feb 2025 18:00:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740362446; x=1740967246; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yA9nk/wpJFfsEqZszO8XisM4k7QXhq3KJDWfVlGLF7A=;
+        b=VHrebsVXQAsWTQI0fEBBew3IOF25ecWSn3ccz5l2Sfk7jc857Mb9IwIqETQj2P4W9f
+         EfFn1bCFrpTGCfunXVuKTLb7+f8OnZZpTKltQTUuJ9COGr8sMXMOYUb7aEO8W9RjCj38
+         wXeMbVjRSXvBscauwmpdTwKz4+28iUuJ/90BCUat5aqRe319eO+hEU1mFsy38B8oFFVD
+         teWBUnFcYim3C5xwgx0xbslhZi3ThZYJ9daqtCMYebdRL9YkFoQSp8CPzRBz4T7Y5FIl
+         ot0njs853CxxasY6Dp8evHj+4KT7eXWlr8k0HcLMUtfCOtZnDmL8/j9yPF8+Gt+nvMTa
+         aKYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740362446; x=1740967246;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yA9nk/wpJFfsEqZszO8XisM4k7QXhq3KJDWfVlGLF7A=;
+        b=OHVeS8XDTFYeflap/xWD9XPYWhri7esIUlzmj2off8vudWtLpWb5khQr2lMh0JTxSm
+         nHnr/GIWm/w509hYmTsjNuxvwqEstNQgT0cBDRJehogQrLeB8RNiXqmkdLC+HhU/uY20
+         fKyE4/hiS3OxkguSQwOypxaA9Oly8edgpywmi/cV3034UPKm0l1nzPogdXtvI6ygFC/i
+         +lKtFR8Kvx6ZGWMQofiTRruQNaG92x2DLudrSk42CZql6jOZzkwgW9dkdzSA1sVzCZvq
+         lW4t/bIWJLCCL90PWMAGRp9szplFcsujCcquOm2BZo8MmrX94Ll9FNRmTjGjtE2c5R3V
+         daAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS2qfoRXdHEnWG6Y72q7w53772AGL0EnUnylYD5qAHbHRpfn6jo61Qige4oWLCwjkrF2Q=@vger.kernel.org, AJvYcCUXYhbRFH2qQNGkwknSC1DOvePrWbhqRm1a5pYdqkRGEgQpSIZ+LjFN7VkpO99zT930bmuRBqcCZ5EzMhUy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzykSofuOYPi6E/owrIKm0MGO0pALe7IymvQOmUpMKwlb9mVLgS
+	4ujf8WDpIl5qSceVEZZ19q5B69g5v45+tD/W/d34QXOn66dY56zi7dTF69RyjbN2H07OfKLoSlQ
+	lZyV4JgQPw05rLFk/j0MX3GSTD5s=
+X-Gm-Gg: ASbGncuZBVCNZeOtthvakDTTuib/Uu7z/ZhSEaQtbsToZee0qo3KFPokBiRcg8B4ocw
+	vXsDpHbtrxkXpkBS4ctIeDu4Ji2GMWvizw91+kZzczYvJvZeDf52dfbq6gkiQDYZNGXf1h9MAwm
+	SupDhRtG05
+X-Google-Smtp-Source: AGHT+IFKQj2+DTts1D7vUBYjEIEZ3cXjGE1z2jOqS9FWlPa5R0x+SaBjAsZMVmTBO4G3bFLAokci9BnkMyFnU7hHHTg=
+X-Received: by 2002:a05:6214:194c:b0:6e6:5d9a:9171 with SMTP id
+ 6a1803df08f44-6e6b00fc43bmr179852756d6.23.1740362446063; Sun, 23 Feb 2025
+ 18:00:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ext4: Modify the comment about mb_optimize_scan
-To: Zizhi Wo <wozizhi@huawei.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-ext4@vger.kernel.org, jack@suse.com, tytso@mit.edu,
- yangerkun@huawei.com
-References: <20250224012005.689549-1-wozizhi@huawei.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250224012005.689549-1-wozizhi@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXul6K0rtnie_kEg--.41699S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr1rtFy7uF13JFy5ur1kuFg_yoW8Zr4rp3
-	9xCF18GF1rWr45Cw47Wa4ku3WYqws7Gw48XF1Yvw1Y9FZrCFZ2yasFyw18uFyUArZ5Za45
-	XFnFgFn5C3Z093DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20250223062735.3341-1-laoar.shao@gmail.com> <20250223062735.3341-2-laoar.shao@gmail.com>
+ <CAADnVQ+zLZKyrNGnGQDThasdS6cvM-FheN5Ttz23pF5ttbGasw@mail.gmail.com>
+In-Reply-To: <CAADnVQ+zLZKyrNGnGQDThasdS6cvM-FheN5Ttz23pF5ttbGasw@mail.gmail.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 24 Feb 2025 10:00:10 +0800
+X-Gm-Features: AWEUYZkj5sPFEfbqE6phMUV8wjr5S0EKpAU92N1rTgrU3h1cnug49vJP-W20Zqo
+Message-ID: <CALOAHbACTQYoJ6bJom4ePkXEhvPcMQbUNZJPSC-2mteGuWhanw@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/3] objtool: Copy noreturns.h to include/linux
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/2/24 9:20, Zizhi Wo wrote:
-> Commit 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning") introduces
-> the sysfs control interface "mb_max_linear_groups" to address the problem
-> that rotational devices performance degrades when the "mb_optimize_scan"
-> feature is enabled, which may result in distant block group allocation.
-> 
-> However, the name of the interface was incorrect in the comment to the
-> ext4/mballoc.c file, and this patch fixes it, without further changes.
-> 
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+On Mon, Feb 24, 2025 at 4:12=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Sat, Feb 22, 2025 at 10:28=E2=80=AFPM Yafang Shao <laoar.shao@gmail.co=
+m> wrote:
+> >
+> > It will used by bpf to reject attaching fexit prog to functions
+> > annotated with __noreturn.
+> >
+> > Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> > ---
+> >  include/linux/noreturns.h               | 52 +++++++++++++++++++++++++
+> >  tools/objtool/Documentation/objtool.txt |  3 +-
+> >  tools/objtool/sync-check.sh             |  2 +
+> >  3 files changed, 56 insertions(+), 1 deletion(-)
+> >  create mode 100644 include/linux/noreturns.h
+> >
+> > diff --git a/include/linux/noreturns.h b/include/linux/noreturns.h
+> > new file mode 100644
+> > index 000000000000..b2174894f9f7
+> > --- /dev/null
+> > +++ b/include/linux/noreturns.h
+> > @@ -0,0 +1,52 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +
+> > +/*
+> > + * This is a (sorted!) list of all known __noreturn functions in the k=
+ernel.
+> > + * It's needed for objtool to properly reverse-engineer the control fl=
+ow graph.
+> > + *
+> > + * Yes, this is unfortunate.  A better solution is in the works.
+> > + */
+> > +NORETURN(__fortify_panic)
+> > +NORETURN(__ia32_sys_exit)
+> > +NORETURN(__ia32_sys_exit_group)
+> > +NORETURN(__kunit_abort)
+> > +NORETURN(__module_put_and_kthread_exit)
+> > +NORETURN(__stack_chk_fail)
+> > +NORETURN(__tdx_hypercall_failed)
+> > +NORETURN(__ubsan_handle_builtin_unreachable)
+> > +NORETURN(__x64_sys_exit)
+> > +NORETURN(__x64_sys_exit_group)
+> > +NORETURN(arch_cpu_idle_dead)
+> > +NORETURN(bch2_trans_in_restart_error)
+> > +NORETURN(bch2_trans_restart_error)
+> > +NORETURN(bch2_trans_unlocked_error)
+> > +NORETURN(cpu_bringup_and_idle)
+> > +NORETURN(cpu_startup_entry)
+> > +NORETURN(do_exit)
+> > +NORETURN(do_group_exit)
+> > +NORETURN(do_task_dead)
+> > +NORETURN(ex_handler_msr_mce)
+> > +NORETURN(hlt_play_dead)
+> > +NORETURN(hv_ghcb_terminate)
+> > +NORETURN(kthread_complete_and_exit)
+> > +NORETURN(kthread_exit)
+> > +NORETURN(kunit_try_catch_throw)
+> > +NORETURN(machine_real_restart)
+> > +NORETURN(make_task_dead)
+> > +NORETURN(mpt_halt_firmware)
+> > +NORETURN(nmi_panic_self_stop)
+> > +NORETURN(panic)
+> > +NORETURN(panic_smp_self_stop)
+> > +NORETURN(rest_init)
+> > +NORETURN(rewind_stack_and_make_dead)
+> > +NORETURN(rust_begin_unwind)
+> > +NORETURN(rust_helper_BUG)
+> > +NORETURN(sev_es_terminate)
+> > +NORETURN(snp_abort)
+> > +NORETURN(start_kernel)
+> > +NORETURN(stop_this_cpu)
+> > +NORETURN(usercopy_abort)
+> > +NORETURN(x86_64_start_kernel)
+> > +NORETURN(x86_64_start_reservations)
+> > +NORETURN(xen_cpu_bringup_again)
+> > +NORETURN(xen_start_kernel)
+> > diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Do=
+cumentation/objtool.txt
+> > index 7c3ee959b63c..70a878e4dc36 100644
+> > --- a/tools/objtool/Documentation/objtool.txt
+> > +++ b/tools/objtool/Documentation/objtool.txt
+> > @@ -326,7 +326,8 @@ the objtool maintainers.
+> >
+> >     The call from foo() to bar() doesn't return, but bar() is missing t=
+he
+> >     __noreturn annotation.  NOTE: In addition to annotating the functio=
+n
+> > -   with __noreturn, please also add it to tools/objtool/noreturns.h.
+> > +   with __noreturn, please also add it to tools/objtool/noreturns.h an=
+d
+> > +   include/linux/noreturns.h.
+> >
+> >  4. file.o: warning: objtool: func(): can't find starting instruction
+> >     or
+> > diff --git a/tools/objtool/sync-check.sh b/tools/objtool/sync-check.sh
+> > index 81d120d05442..23b9813cd5e9 100755
+> > --- a/tools/objtool/sync-check.sh
+> > +++ b/tools/objtool/sync-check.sh
+> > @@ -17,6 +17,7 @@ arch/x86/include/asm/emulate_prefix.h
+> >  arch/x86/lib/x86-opcode-map.txt
+> >  arch/x86/tools/gen-insn-attr-x86.awk
+> >  include/linux/static_call_types.h
+> > +tools/objtool/noreturns.h
+> >  "
+> >
+> >  SYNC_CHECK_FILES=3D'
+> > @@ -24,6 +25,7 @@ arch/x86/include/asm/inat.h
+> >  arch/x86/include/asm/insn.h
+> >  arch/x86/lib/inat.c
+> >  arch/x86/lib/insn.c
+> > +include/linux/noreturns.h
+>
+> The copy looks pointless.
+> Since we cannot rely on objtool let's just list all noreturn funcs
+> directly in BTF_SET_START(fexit_deny) in a single patch.
+> So all changes will be under kernel/bpf directory.
 
-Looks good to me.
+OK
+I will send a new version.
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-> ---
->  fs/ext4/mballoc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
-> index b25a27c86696..68b54afc78c7 100644
-> --- a/fs/ext4/mballoc.c
-> +++ b/fs/ext4/mballoc.c
-> @@ -187,7 +187,7 @@
->   * /sys/fs/ext4/<partition>/mb_min_to_scan
->   * /sys/fs/ext4/<partition>/mb_max_to_scan
->   * /sys/fs/ext4/<partition>/mb_order2_req
-> - * /sys/fs/ext4/<partition>/mb_linear_limit
-> + * /sys/fs/ext4/<partition>/mb_max_linear_groups
->   *
->   * The regular allocator uses buddy scan only if the request len is power of
->   * 2 blocks and the order of allocation is >= sbi->s_mb_order2_reqs. The
-> @@ -209,7 +209,7 @@
->   * get traversed linearly. That may result in subsequent allocations being not
->   * close to each other. And so, the underlying device may get filled up in a
->   * non-linear fashion. While that may not matter on non-rotational devices, for
-> - * rotational devices that may result in higher seek times. "mb_linear_limit"
-> + * rotational devices that may result in higher seek times. "mb_max_linear_groups"
->   * tells mballoc how many groups mballoc should search linearly before
->   * performing consulting above data structures for more efficient lookups. For
->   * non rotational devices, this value defaults to 0 and for rotational devices
-
+--=20
+Regards
+Yafang
 
