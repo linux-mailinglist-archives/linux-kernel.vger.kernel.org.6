@@ -1,121 +1,138 @@
-Return-Path: <linux-kernel+bounces-528750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E73EBA41BD5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:00:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301DEA41C0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE18A171013
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:00:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A735E3AD3C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559F28460;
-	Mon, 24 Feb 2025 10:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537022586E2;
+	Mon, 24 Feb 2025 11:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYidwaXZ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bVluDuFu"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEAF146D59
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88222586DF;
+	Mon, 24 Feb 2025 11:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740394795; cv=none; b=V8+5L34l+McCMxKSWbOIF10Qec0JWNNieBFYTOkbK5HZzhdUYJhRqaw0dYE3LPl6wK87GJCNPnprnvvWgJ61cwIbp5ez7CBn92nqf6cdwJac6Q+djNj3nfSmKK/CzUt2B9w29eDnae3gd3sE6dg8F7mn17llKnII6llQq7mEoiI=
+	t=1740394921; cv=none; b=RxXw6ibH0kq7JPyPlEgYFwN/hhS/akENHWkgekEN3tzJ4ugf2NF9SQ00BjklxXSpGuc/B8WIXojKuxkPssXmY0NEaCH0EDlZHTzUSwgBIsTpoJRNWOLEcy6BBuwMArPKNLr+wcK3iI0hD82StIjfo+MTd3xHXyvEgMsEKXnm7po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740394795; c=relaxed/simple;
-	bh=2VAPN/YFIe72X7+c5zYKU5APQ15E0BUAbd602TiZYLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AJElEhH9CYNBJrdLztQntksQ+Y6UtVRo6d0/CekKOTkAsZA2zloj+9xD5rBDcKqCJbiEuduepL4RX4vqpTslxP0d77eWPP6OUoN9rnzmouh2l3qldMfuZNs4P+3Vr2w91yZTLU+im6t8/Vw9UFNGNOkhON8Vn/qwGeGt1sIOM60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYidwaXZ; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740394794; x=1771930794;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2VAPN/YFIe72X7+c5zYKU5APQ15E0BUAbd602TiZYLM=;
-  b=IYidwaXZgd5Dou0MZiFvJIYeI/deNlk2o0ga2jWs+oh3e+7H+qvUkYgj
-   Ndt7Xgi830OVwidWpYQrtxTnZ6NslpDuz9XtuyGS0jSDASntECok/iMBW
-   GZ90zYm1DsYGrmZYsKWWxJCOB1R8a8986PWjnlr+97ZSg8LQ1LBYAX9vN
-   SLZd3GjmdVk/2bFdvA6yN2GLZPCvHqyjnjovRzpe3OuJX/Pmw0/Wve84W
-   5EUvgZ5zq+PucuWfcTr5gEdHFg74yWRY8u835145rGKSBj5niy9OMO22s
-   Rrgl7Jk3nK5fDSr2X3BC8zIXXONHEQsi2KEquqIdQeXTM5NKxgsY88aGx
-   g==;
-X-CSE-ConnectionGUID: mSS/6X5USF6Ww6XNFbmjtA==
-X-CSE-MsgGUID: UCDEhLR1Rx+LmL/+9EFM3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="44795211"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="44795211"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:59:53 -0800
-X-CSE-ConnectionGUID: 8H+5arURRgypSvOy7xSQEg==
-X-CSE-MsgGUID: Ztv91BT8SdutOovpI2GjCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121295256"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:59:51 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmWBh-0000000EfoG-19CF;
-	Mon, 24 Feb 2025 12:59:49 +0200
-Date: Mon, 24 Feb 2025 12:59:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Cc: sre@kernel.org, rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-	21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn
-Subject: Re: [PATCH v3] HSI: ssi_protocol: Fix use after free vulnerability
- in ssi_protocol Driver Due to Race Condition
-Message-ID: <Z7xRJbUVEcbWnCgO@smile.fi.intel.com>
-References: <20240918120749.1730-1-kxwang23@m.fudan.edu.cn>
- <88CA06F7CB097DC8+6c5e0521.3de0.19535fad611.Coremail.kxwang23@m.fudan.edu.cn>
+	s=arc-20240116; t=1740394921; c=relaxed/simple;
+	bh=q18mKMH72Y4UUcWf73SfinzZFUcLW4FTQuzaM83ivAc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ly8O+8GP93tyaRv3zLCvZx2ZKr+0yigcoZQVGlcVCCWaNddMY7EAOZdQlKWSo2/qIdBj/ogDT89DPIDxONPl8SmJ+Xndeous/HKku7IqOOEFDqVFKwUWi0+ydJ4UgpmQWKXvcUXLbHI4QUjvby7MibKf0N3qd6sQQKTw2BVOLk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bVluDuFu; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51OB174G874420
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 05:01:07 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740394867;
+	bh=UrJwRS5j0Znv8WvcVKXlmtyolIJX3daZq7dyAqxKQS4=;
+	h=From:To:CC:Subject:Date;
+	b=bVluDuFu35aMtK+DaebNDRkm+5h3txflRDrM7o2icA9EPwTddFpXH9qdhbB9vHqOF
+	 pIs5ILC2tGzJXUuBLOhrDEnR51Ex+Bj/CYw5hj5kB5GFWcAWMxpA/LfihhyTxqMgq1
+	 9+j4xElOK7g4OMf2v7J7V5XrFngbtO3L9/cf1xW0=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51OB17lt106562
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Feb 2025 05:01:07 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Feb 2025 05:01:06 -0600
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Feb 2025 05:01:07 -0600
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51OB16qV093011;
+	Mon, 24 Feb 2025 05:01:06 -0600
+Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 51OB16T6002030;
+	Mon, 24 Feb 2025 05:01:06 -0600
+From: Meghana Malladi <m-malladi@ti.com>
+To: <rogerq@kernel.org>, <danishanwar@ti.com>, <pabeni@redhat.com>,
+        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
+        <andrew+netdev@lunn.ch>
+CC: <bpf@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <u.kleine-koenig@baylibre.com>, <matthias.schiffer@ew.tq-group.com>,
+        <dan.carpenter@linaro.org>, <m-malladi@ti.com>,
+        <schnelle@linux.ibm.com>, <diogo.ivo@siemens.com>,
+        <glaroque@baylibre.com>, <macro@orcam.me.uk>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+Subject: [PATCH net-next v3 0/3] net: ti: icssg-prueth: Add native mode XDP support
+Date: Mon, 24 Feb 2025 16:30:59 +0530
+Message-ID: <20250224110102.1528552-1-m-malladi@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88CA06F7CB097DC8+6c5e0521.3de0.19535fad611.Coremail.kxwang23@m.fudan.edu.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Feb 24, 2025 at 11:23:06AM +0800, Kaixin Wang wrote:
-> At 2024-09-18 20:07:50, "Kaixin Wang" <kxwang23@m.fudan.edu.cn> wrote:
+This series adds native XDP support using page_pool.
+XDP zero copy support is not included in this patch series.
 
-> >In the ssi_protocol_probe() function, &ssi->work is bound with
-> >ssip_xmit_work(), In ssip_pn_setup(), the ssip_pn_xmit() function
-> >within the ssip_pn_ops structure is capable of starting the
-> >work.
-> >
-> >If we remove the module which will call ssi_protocol_remove()
-> >to make a cleanup, it will free ssi through kfree(ssi),
-> >while the work mentioned above will be used. The sequence
-> >of operations that may lead to a UAF bug is as follows:
-> >
-> >CPU0                                    CPU1
-> >
-> >                        | ssip_xmit_work
-> >ssi_protocol_remove     |
-> >kfree(ssi);             |
-> >                        | struct hsi_client *cl = ssi->cl;
-> >                        | // use ssi
-> >
-> >Fix it by ensuring that the work is canceled before proceeding
-> >with the cleanup in ssi_protocol_remove().
+Patch 1/3: Replaces skb with page pool for Rx buffer allocation
+Patch 2/3: Adds prueth_swdata struct for SWDATA for all swdata cases
+Patch 3/3: Introduces native mode XDP support
 
-...
+v2: https://lore.kernel.org/all/20250210103352.541052-1-m-malladi@ti.com/
 
-> Hi, I noticed that there are no relevant replies to this patch that I sent
-> several months ago. Is it missed?
+Changes since v2 (v3-v2):
+0/3:
+- Update cover letter subject line to add details of the driver as suggested by
+Jesper Dangaard Brouer <hawk@kernel.org>
+1/3:
+- few cosmetic changes for all the patches
+2/3:
+- Fix leaking tx descriptor in emac_tx_complete_packets()
+- Free rx descriptor if swdata type is not page in emac_rx_packet()
+- Revert back the size of PRUETH_NAV_SW_DATA_SIZE
+- Use build time check for prueth_swdata size
+- re-write prueth_swdata to have enum type as first member in the struct
+and prueth_data union embedded in the struct
+3/3:
+- Use page_pool contained in the page instead of using passing page_pool
+(rx_chn) as part of swdata
+- dev_sw_netstats_tx_add() instead of incrementing the stats directly
+- Add missing ndev->stats.tx_dropped++ wherever applicable
+- Move k3_cppi_desc_pool_alloc() before the DMA mapping for easier cleanup
+on failure
+- Replace rxp->napi_id with emac->napi_rx.napi_id in prueth_create_xdp_rxqs()
 
-Seems like fell into cracks...
+All the above changes have been suggested by Roger Quadros <rogerq@kernel.org>
 
+Roger Quadros (3):
+  net: ti: icssg-prueth: Use page_pool API for RX buffer allocation
+  net: ti: icssg-prueth: introduce and use prueth_swdata struct for
+    SWDATA
+  net: ti: icssg-prueth: Add XDP support
+
+ drivers/net/ethernet/ti/Kconfig               |   1 +
+ drivers/net/ethernet/ti/icssg/icssg_common.c  | 421 ++++++++++++++----
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 128 +++++-
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  47 +-
+ .../net/ethernet/ti/icssg/icssg_prueth_sr1.c  |  23 +-
+ 5 files changed, 529 insertions(+), 91 deletions(-)
+
+
+base-commit: e13b6da7045f997e1a5a5efd61d40e63c4fc20e8
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
