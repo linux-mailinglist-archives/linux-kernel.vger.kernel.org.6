@@ -1,278 +1,345 @@
-Return-Path: <linux-kernel+bounces-530137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A02A42F8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:53:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52F2A42F8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:53:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40EA63B249F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0AEA1786EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E1D1E3DFD;
-	Mon, 24 Feb 2025 21:53:25 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7896C1EE00E;
+	Mon, 24 Feb 2025 21:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YRsw28nJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983461DE3D9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E901DF242
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740434004; cv=none; b=EWNUCPsam51MWYYHntwzTRnEywse6x/rcYOyf40cqLQLV0xHsiXJbapN075BwTLuMJ+IZhIAxJJF18BNuWPbni3ggmaBpafjCtJxLm934HSdQp0LBAAi8dn2vMwyyrBk5/F+TY5cJB0CoBDyYSsKrAabAIXxQFyn2jMdiTy4Nmo=
+	t=1740434020; cv=none; b=iwTbbt8FMoNJ092Qeqmjp7gLwbQ05bj6ZlNkwIrdoFYnLn5aF0glZvTMFAesXzq6IsA25HZu/J4huc5QLucPgLNGlSWM07FwkmQt0eoRuHZxWRHytakXfpNqzTQwtH+riaBHpwpNCf6z25VFL4rE0/MqGQCJwt4pP7fUahgE9XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740434004; c=relaxed/simple;
-	bh=CSm4IKIIGo3NNCfeh6K2j7UriVaFAlPR2aj1b+Nim/E=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ivFrNlvB6PANC0tzDz2Ku6hV2BFxjlNNQ6B0H10VKm1yTqsUvm/liC+6gffmfzL3m1Sxfkoo1pl+YJ6z5honguElXf5u7d9x6goLt+r7wmn3NFx4La6M18TsRxMupmJKhHxWKbTRfM2T7Sto470uRTLxcdShg1psa951VVHDo58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d2b6d933acso44589425ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:53:22 -0800 (PST)
+	s=arc-20240116; t=1740434020; c=relaxed/simple;
+	bh=9WVbUY4QmTFE5qSff2+svAL1urTIL7XxiLFr/MSEZ4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jBrx1P1lYMXf0wxHosdthYq+5AS2NbGQgmeagt3xM5D2SYMpjZHSf5ydyXpZltrQCOLiy+M9ORGKYkRBCqoh6gP3GOpBxdEsLWoYHeF+im9lyGmn0n9QoveQ0P6c9UFNmoVRvOlguxT21xEWfoQNgOEdFEngTYDOMGhL+gA+ltk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YRsw28nJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740434017;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kydi1edv7zo81EuViV3XyV61d+pzCDxRiN2C51w0vq8=;
+	b=YRsw28nJwxeGh/rAsm5EP/CFGXo6vPq8XJqadsFRlu5qAvICKvDywuWod7sOz89pTJ+kj7
+	91X1AKZ9/Uh3ueCiZisVemEqV5I8wmpSNa9ZopFsO24b4SZdh8QCpt6hP51Rb/UL6VUuA0
+	XoB+7QlCnlFkz2SVQajbkuxFKJuQQe4=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-495-pAwxM9SONiuwRk8dS5shyw-1; Mon, 24 Feb 2025 16:53:35 -0500
+X-MC-Unique: pAwxM9SONiuwRk8dS5shyw-1
+X-Mimecast-MFC-AGG-ID: pAwxM9SONiuwRk8dS5shyw_1740434014
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso46418425e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:53:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740434001; x=1741038801;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YgU+3s2XffgAkhGqgiW9xHV1qsCRbz4+whll19johCs=;
-        b=lvD78kakb8nrPKOjFnFtdTNZcVXgKTyE+f1xU9uZTMK74hxqQXtqMlB2nTpdfgXjOf
-         4ER85M6iIzWX8L+dpSs5E9INvoIBEcANogY4CpHwca14NbdCDGN9MCC/8gOLNXk179J2
-         pRNllIxXMDVaDR/MLvF5dRnA8BHoLwWiUPdBJvPY/Hq2ErwLzBymz4gjIvMAjgycZGL8
-         dc/0hsdoR2g6pS05gbJb/i0io9kGXv9j0fPviQcq6T/X6WDoVavd2wJYGE0SqJLcRqnV
-         TzfVGWoHJyomic1FrFczer0sHvEbQcFS84R5p1jnuaaEeLk+WVneBGYn8E32yp/cy7Id
-         krHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTOUb4lPcn8XR0mIXCp0ROo7RCzCWStOR6f6DymcFlqGRwlRH/LbjSXUCEQUZE+aSQ9QQcKqP5D9Jcq1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAu8wh3mlbeZ7cFM0DKL1EojAYxsTHSgu0VEh6mdtJFKOpMw22
-	zL16COzLsljXuxfmGmTZTR6eg8QGDzYDG+Dze1LrS8m+PpnZgp9K8zZTD1LV4H2jEjle3ECYMRc
-	YHlgP92Go/8DNCW5SOyf61RTqwViJ4bluD9UmSb6T8SVsflSTz7R0yLU=
-X-Google-Smtp-Source: AGHT+IEmtLyf903MvD/OSUmkRQgWzQpO25kB4MNT8aBNYol/PerpcfmKEXUHgNdJvahMECDsjIU2A/5R2oQqxReJsBZmZooeOJ6j
+        d=1e100.net; s=20230601; t=1740434014; x=1741038814;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kydi1edv7zo81EuViV3XyV61d+pzCDxRiN2C51w0vq8=;
+        b=YMKRYTcdZ/YGrymnlPeBEiQAXR/MROHElHq7NGa63Z59c/M58NkqSEjvqF2HXxx8xO
+         4OXCFnrg98O1bue1iELw5ZU7uX3NP1kzIKA+oYpRJrEDvJCJW4xg7J8LixhBGCcdXg4n
+         ov+26aZKBpnXi03KJCKRRjVBXnC21t+KLWsyp1K8pM8eqszoqWlv8A+HFQwF8d3HtmN0
+         2JwfTeB7T0/MlY2eAYg5Ui9NVK44inheIUxKwWF5wZDBfSdthoWjB9v+9Rk/wlwGqz8C
+         nT1tUXdazMqLiS3Xy8cONUO5Gywb+7gDjCahE8ezxR0CNuKJ5MS0fMb91ypqu3EHVF0I
+         5Zzw==
+X-Gm-Message-State: AOJu0YyrP/t2A9K+gpe5rz2uzLaYrfLllRnTYDc/mgmSMMEswRDXAqwC
+	pmbvAeTiQxBdaQDbeFe2DD7DDMxetxCAkQ/u9oGp7uZX/+5xEkL2ejdaHuTOgHgv7YDobUohjPR
+	Ds1yU/WVs9o1CyyeyuWkuSq0zIX3LRLk+AIV5N/fnFW5JCOPSazxtsZJoMFOcvA==
+X-Gm-Gg: ASbGncsW/NNesihNkhPKH9EN8Xo/c9cbT89QLC0c2MEVBHuevKRAscYJR9sSNsFl1Lo
+	RkPlAltwOWaCX3kRbr9JdFOtc9wRRI61dOi48amSCJXoqn878hhA0y8vvix3lOTDHK5rsYS5W9J
+	JQ+TYKIPCJHiAfrzK/494aaunMxv+qj2mEXKDoh7fnNKAZnK4zm9PvGV7O+BbKcX5mFBG6wyNgP
+	eUq6zgmaLx7MoqXRz6zUZ1lt1u3V9vGE2obkv73qGgH9ZmPPW0YfO8WvK/RgeGDSGEkUTrUqzYg
+	tzsjpmCmlMUDG3xnUu3W31pRXRtJXVoJYnkwHC/V0u+mhSnv8VcXUKFvRz1gj2k32GMIrBYV8tc
+	siLqNFrrV2EYdRFkeL1paMdI0sotbOOpkIWBzd/NGqAE=
+X-Received: by 2002:a05:600c:3b02:b0:439:94f8:fc79 with SMTP id 5b1f17b1804b1-43ab0ec8f7dmr10762175e9.0.1740434013756;
+        Mon, 24 Feb 2025 13:53:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGkTgMDMNLKfN+dDzSWo/p7vVZriiJ8gKb01Qvd68zttKaby/KqQQrqbKEwqz2pyN7lubSwlw==
+X-Received: by 2002:a05:600c:3b02:b0:439:94f8:fc79 with SMTP id 5b1f17b1804b1-43ab0ec8f7dmr10761835e9.0.1740434013307;
+        Mon, 24 Feb 2025 13:53:33 -0800 (PST)
+Received: from ?IPV6:2003:cb:c735:1900:ac8b:7ae5:991f:54fc? (p200300cbc7351900ac8b7ae5991f54fc.dip0.t-ipconnect.de. [2003:cb:c735:1900:ac8b:7ae5:991f:54fc])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd883c68sm219732f8f.60.2025.02.24.13.53.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 13:53:32 -0800 (PST)
+Message-ID: <ffd9ce49-efad-4d8f-84e1-34ac3b4dc9fd@redhat.com>
+Date: Mon, 24 Feb 2025 22:53:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a22:b0:3d0:27f5:1b6c with SMTP id
- e9e14a558f8ab-3d2cb5151b1mr109586995ab.14.1740434001671; Mon, 24 Feb 2025
- 13:53:21 -0800 (PST)
-Date: Mon, 24 Feb 2025 13:53:21 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bcea51.050a0220.bbfd1.0096.GAE@google.com>
-Subject: [syzbot] [crypto?] possible deadlock in crypto_exit_scomp_ops_async
-From: syzbot <syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com>
-To: davem@davemloft.net, herbert@gondor.apana.org.au, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 16/20] fs/proc/page: remove per-page mapcount
+ dependency for /proc/kpagecount (CONFIG_NO_PAGE_MAPCOUNT)
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Muchun Song <muchun.song@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
+References: <20250224165603.1434404-1-david@redhat.com>
+ <20250224165603.1434404-17-david@redhat.com>
+ <D80YSXJPTL7M.2GZLUFXVP2ZCC@nvidia.com>
+ <8a5e94a2-8cd7-45f5-a2be-525242c0cd16@redhat.com>
+ <9010E213-9FC5-4900-B971-D032CB879F2E@nvidia.com>
+ <567b02b0-3e39-4e3c-ba41-1bc59217a421@redhat.com>
+ <30C2A030-7438-4298-87D8-287BED1EA473@nvidia.com>
+ <3f6b7e66-3412-4af2-97d9-6d31d6373079@redhat.com>
+ <1FAD9E31-3D11-4759-9363-4B76BE96002A@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1FAD9E31-3D11-4759-9363-4B76BE96002A@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 24.02.25 22:44, Zi Yan wrote:
+> On 24 Feb 2025, at 16:42, David Hildenbrand wrote:
+> 
+>> On 24.02.25 22:23, Zi Yan wrote:
+>>> On 24 Feb 2025, at 16:15, David Hildenbrand wrote:
+>>>
+>>>> On 24.02.25 22:10, Zi Yan wrote:
+>>>>> On 24 Feb 2025, at 16:02, David Hildenbrand wrote:
+>>>>>
+>>>>>> On 24.02.25 21:40, Zi Yan wrote:
+>>>>>>> On Mon Feb 24, 2025 at 11:55 AM EST, David Hildenbrand wrote:
+>>>>>>>> Let's implement an alternative when per-page mapcounts in large folios
+>>>>>>>> are no longer maintained -- soon with CONFIG_NO_PAGE_MAPCOUNT.
+>>>>>>>>
+>>>>>>>> For large folios, we'll return the per-page average mapcount within the
+>>>>>>>> folio, except when the average is 0 but the folio is mapped: then we
+>>>>>>>> return 1.
+>>>>>>>>
+>>>>>>>> For hugetlb folios and for large folios that are fully mapped
+>>>>>>>> into all address spaces, there is no change.
+>>>>>>>>
+>>>>>>>> As an alternative, we could simply return 0 for non-hugetlb large folios,
+>>>>>>>> or disable this legacy interface with CONFIG_NO_PAGE_MAPCOUNT.
+>>>>>>>>
+>>>>>>>> But the information exposed by this interface can still be valuable, and
+>>>>>>>> frequently we deal with fully-mapped large folios where the average
+>>>>>>>> corresponds to the actual page mapcount. So we'll leave it like this for
+>>>>>>>> now and document the new behavior.
+>>>>>>>>
+>>>>>>>> Note: this interface is likely not very relevant for performance. If
+>>>>>>>> ever required, we could try doing a rather expensive rmap walk to collect
+>>>>>>>> precisely how often this folio page is mapped.
+>>>>>>>>
+>>>>>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>>>>>> ---
+>>>>>>>>      Documentation/admin-guide/mm/pagemap.rst |  7 +++++-
+>>>>>>>>      fs/proc/internal.h                       | 31 ++++++++++++++++++++++++
+>>>>>>>>      fs/proc/page.c                           | 19 ++++++++++++---
+>>>>>>>>      3 files changed, 53 insertions(+), 4 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/Documentation/admin-guide/mm/pagemap.rst b/Documentation/admin-guide/mm/pagemap.rst
+>>>>>>>> index caba0f52dd36c..49590306c61a0 100644
+>>>>>>>> --- a/Documentation/admin-guide/mm/pagemap.rst
+>>>>>>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+>>>>>>>> @@ -42,7 +42,12 @@ There are four components to pagemap:
+>>>>>>>>         skip over unmapped regions.
+>>>>>>>>        * ``/proc/kpagecount``.  This file contains a 64-bit count of the number of
+>>>>>>>> -   times each page is mapped, indexed by PFN.
+>>>>>>>> +   times each page is mapped, indexed by PFN. Some kernel configurations do
+>>>>>>>> +   not track the precise number of times a page part of a larger allocation
+>>>>>>>> +   (e.g., THP) is mapped. In these configurations, the average number of
+>>>>>>>> +   mappings per page in this larger allocation is returned instead. However,
+>>>>>>>> +   if any page of the large allocation is mapped, the returned value will
+>>>>>>>> +   be at least 1.
+>>>>>>>>       The page-types tool in the tools/mm directory can be used to query the
+>>>>>>>>      number of times a page is mapped.
+>>>>>>>> diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+>>>>>>>> index 1695509370b88..16aa1fd260771 100644
+>>>>>>>> --- a/fs/proc/internal.h
+>>>>>>>> +++ b/fs/proc/internal.h
+>>>>>>>> @@ -174,6 +174,37 @@ static inline int folio_precise_page_mapcount(struct folio *folio,
+>>>>>>>>      	return mapcount;
+>>>>>>>>      }
+>>>>>>>>     +/**
+>>>>>>>> + * folio_average_page_mapcount() - Average number of mappings per page in this
+>>>>>>>> + *				   folio
+>>>>>>>> + * @folio: The folio.
+>>>>>>>> + *
+>>>>>>>> + * The average number of present user page table entries that reference each
+>>>>>>>> + * page in this folio as tracked via the RMAP: either referenced directly
+>>>>>>>> + * (PTE) or as part of a larger area that covers this page (e.g., PMD).
+>>>>>>>> + *
+>>>>>>>> + * Returns: The average number of mappings per page in this folio. 0 for
+>>>>>>>> + * folios that are not mapped to user space or are not tracked via the RMAP
+>>>>>>>> + * (e.g., shared zeropage).
+>>>>>>>> + */
+>>>>>>>> +static inline int folio_average_page_mapcount(struct folio *folio)
+>>>>>>>> +{
+>>>>>>>> +	int mapcount, entire_mapcount;
+>>>>>>>> +	unsigned int adjust;
+>>>>>>>> +
+>>>>>>>> +	if (!folio_test_large(folio))
+>>>>>>>> +		return atomic_read(&folio->_mapcount) + 1;
+>>>>>>>> +
+>>>>>>>> +	mapcount = folio_large_mapcount(folio);
+>>>>>>>> +	entire_mapcount = folio_entire_mapcount(folio);
+>>>>>>>> +	if (mapcount <= entire_mapcount)
+>>>>>>>> +		return entire_mapcount;
+>>>>>>>> +	mapcount -= entire_mapcount;
+>>>>>>>> +
+>>>>>>>> +	adjust = folio_large_nr_pages(folio) / 2;
+>>>>>>
+>>>>>> Thanks for the review!
+>>>>>>
+>>>>>>>
+>>>>>>> Is there any reason for choosing this adjust number? A comment might be
+>>>>>>> helpful in case people want to change it later, either with some reasoning
+>>>>>>> or just saying it is chosen empirically.
+>>>>>>
+>>>>>> We're dividing by folio_large_nr_pages(folio) (shifting by folio_large_order(folio)), so this is not a magic number at all.
+>>>>>>
+>>>>>> So this should be "ordinary" rounding.
+>>>>>
+>>>>> I thought the rounding would be (mapcount + 511) / 512.
+>>>>
+>>>> Yes, that's "rounding up".
+>>>>
+>>>>> But
+>>>>> that means if one subpage is mapped, the average will be 1.
+>>>>> Your rounding means if at least half of the subpages is mapped,
+>>>>> the average will be 1. Others might think 1/3 is mapped,
+>>>>> the average will be 1. That is why I think adjust looks like
+>>>>> a magic number.
+>>>>
+>>>> I think all callers could tolerate (or benefit) from folio_average_page_mapcount() returning at least 1 in case any page is mapped.
+>>>>
+>>>> There was a reason why I decided to round to the nearest integer instead.
+>>>>
+>>>> Let me think about this once more, I went back and forth a couple of times on this.
+>>>
+>>> Sure. Your current choice might be good enough for now. My intend of
+>>> adding a comment here is just to let people know the adjust can be
+>>> changed in the future. :)
+>>
+>> The following will make the callers easier to read, while keeping
+>> the rounding to the next integer for the other cases untouched.
+>>
+>> +/**
+>> + * folio_average_page_mapcount() - Average number of mappings per page in this
+>> + *                                folio
+>> + * @folio: The folio.
+>> + *
+>> + * The average number of present user page table entries that reference each
+>> + * page in this folio as tracked via the RMAP: either referenced directly
+>> + * (PTE) or as part of a larger area that covers this page (e.g., PMD).
+>> + *
+>> + * The average is calculated by rounding to the nearest integer; however,
+>> + * if at least a single page is mapped, the average will be at least 1.
+>> + *
+>> + * Returns: The average number of mappings per page in this folio.
+>> + */
+>> +static inline int folio_average_page_mapcount(struct folio *folio)
+>> +{
+>> +       int mapcount, entire_mapcount, avg;
+>> +
+>> +       if (!folio_test_large(folio))
+>> +               return atomic_read(&folio->_mapcount) + 1;
+>> +
+>> +       mapcount = folio_large_mapcount(folio);
+>> +       if (unlikely(mapcount <= 0))
+>> +               return 0;
+>> +       entire_mapcount = folio_entire_mapcount(folio);
+>> +       if (mapcount <= entire_mapcount)
+>> +               return entire_mapcount;
+>> +       mapcount -= entire_mapcount;
+>> +
+>> +       /* Round to closest integer ... */
+>> +       avg = (mapcount + folio_large_nr_pages(folio) / 2) >> folio_large_order(folio);
+>> +       avg += entire_mapcount;
+>> +       /* ... but return at least 1. */
+>> +       return max_t(int, avg, 1);
+>> +}
+> 
+> LGTM. Thanks.
 
-syzbot found the following issue on:
+Thanks! BTW, I think I chose the "round to closest integer" primarily
+to make the PSS estimate a bit better. But that is indeed something
+that can be adjusted easily later.
 
-HEAD commit:    e9a8cac0bf89 Merge tag 'v6.14-rc3-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b667f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=61cbf5ac8a063ad4
-dashboard link: https://syzkaller.appspot.com/bug?extid=1a517ccfcbc6a7ab0f82
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+BTW, as commented in the cover letter, being able to calculate the
+avg without the entire_mapcount could clean this function up quite a bit
+(and make it completely atomic), but that will require more work.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+-- 
+Cheers,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/8441f1b50402/disk-e9a8cac0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/65b1f8d2f790/vmlinux-e9a8cac0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1d6f6d8c3d6b/bzImage-e9a8cac0.xz
+David / dhildenb
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com
-
-smpboot: CPU 0 is now offline
-crash hp: kexec_trylock() failed, kdump image may be inaccurate
-======================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc3-syzkaller-00096-ge9a8cac0bf89 #0 Not tainted
-------------------------------------------------------
-kworker/1:1/46 is trying to acquire lock:
-ffffffff8ec41aa8 (scomp_lock){+.+.}-{4:4}, at: crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
-
-but task is already holding lock:
-ffffe8ffffc21250 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}, at: zswap_cpu_comp_dead+0x80/0x210 mm/zswap.c:885
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       acomp_ctx_get_cpu_lock mm/zswap.c:905 [inline]
-       zswap_compress mm/zswap.c:937 [inline]
-       zswap_store_page mm/zswap.c:1462 [inline]
-       zswap_store+0x8fc/0x2690 mm/zswap.c:1571
-       swap_writepage+0x3b6/0x1120 mm/page_io.c:278
-       pageout+0x3b2/0xaa0 mm/vmscan.c:696
-       shrink_folio_list+0x2f7f/0x40c0 mm/vmscan.c:1402
-       evict_folios+0x774/0x1ab0 mm/vmscan.c:4660
-       try_to_shrink_lruvec+0x5a2/0x9a0 mm/vmscan.c:4821
-       shrink_one+0x3e3/0x7b0 mm/vmscan.c:4866
-       shrink_many mm/vmscan.c:4929 [inline]
-       lru_gen_shrink_node mm/vmscan.c:5007 [inline]
-       shrink_node+0x2761/0x3e60 mm/vmscan.c:5978
-       kswapd_shrink_node mm/vmscan.c:6807 [inline]
-       balance_pgdat+0xbab/0x19c0 mm/vmscan.c:6999
-       kswapd+0x590/0xb70 mm/vmscan.c:7264
-       kthread+0x3af/0x750 kernel/kthread.c:464
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       __fs_reclaim_acquire mm/page_alloc.c:3853 [inline]
-       fs_reclaim_acquire+0x102/0x150 mm/page_alloc.c:3867
-       might_alloc include/linux/sched/mm.h:318 [inline]
-       slab_pre_alloc_hook mm/slub.c:4066 [inline]
-       slab_alloc_node mm/slub.c:4144 [inline]
-       __kmalloc_cache_node_noprof+0x54/0x420 mm/slub.c:4333
-       kmalloc_node_noprof include/linux/slab.h:924 [inline]
-       __get_vm_area_node+0x101/0x2f0 mm/vmalloc.c:3127
-       __vmalloc_node_range_noprof+0x26a/0x1530 mm/vmalloc.c:3806
-       __vmalloc_node_noprof mm/vmalloc.c:3911 [inline]
-       vmalloc_node_noprof+0x6f/0x90 mm/vmalloc.c:4022
-       crypto_scomp_alloc_scratches crypto/scompress.c:86 [inline]
-       crypto_scomp_init_tfm+0x122/0x270 crypto/scompress.c:107
-       crypto_create_tfm_node+0x100/0x320 crypto/api.c:539
-       crypto_create_tfm crypto/internal.h:120 [inline]
-       crypto_init_scomp_ops_async+0x5d/0x1d0 crypto/scompress.c:217
-       crypto_acomp_init_tfm+0x240/0x2e0 crypto/acompress.c:70
-       crypto_create_tfm_node+0x100/0x320 crypto/api.c:539
-       crypto_alloc_tfm_node+0x102/0x260 crypto/api.c:640
-       zswap_cpu_comp_prepare+0xe2/0x420 mm/zswap.c:834
-       cpuhp_invoke_callback+0x20c/0xa10 kernel/cpu.c:204
-       cpuhp_issue_call+0x1c0/0x980 kernel/cpu.c:2376
-       __cpuhp_state_add_instance_cpuslocked+0x1a4/0x3c0 kernel/cpu.c:2438
-       __cpuhp_state_add_instance+0xd7/0x2e0 kernel/cpu.c:2459
-       cpuhp_state_add_instance include/linux/cpuhotplug.h:387 [inline]
-       zswap_pool_create+0x59a/0x7b0 mm/zswap.c:291
-       __zswap_pool_create_fallback mm/zswap.c:359 [inline]
-       zswap_setup+0x402/0x810 mm/zswap.c:1814
-       zswap_init+0x2c/0x40 mm/zswap.c:1850
-       do_one_initcall+0x128/0x700 init/main.c:1257
-       do_initcall_level init/main.c:1319 [inline]
-       do_initcalls init/main.c:1335 [inline]
-       do_basic_setup init/main.c:1354 [inline]
-       kernel_init_freeable+0x5c7/0x900 init/main.c:1568
-       kernel_init+0x1c/0x2b0 init/main.c:1457
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (scomp_lock){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain kernel/locking/lockdep.c:3906 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
-       crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
-       crypto_exit_ops crypto/api.c:370 [inline]
-       crypto_destroy_tfm crypto/api.c:681 [inline]
-       crypto_destroy_tfm+0x135/0x2b0 crypto/api.c:668
-       crypto_free_acomp include/crypto/acompress.h:159 [inline]
-       zswap_cpu_comp_dead+0x169/0x210 mm/zswap.c:891
-       cpuhp_invoke_callback+0x528/0xa10 kernel/cpu.c:216
-       __cpuhp_invoke_callback_range+0x101/0x200 kernel/cpu.c:966
-       cpuhp_invoke_callback_range kernel/cpu.c:990 [inline]
-       cpuhp_down_callbacks kernel/cpu.c:1383 [inline]
-       _cpu_down+0x422/0xf20 kernel/cpu.c:1444
-       __cpu_down_maps_locked+0x6c/0x90 kernel/cpu.c:1474
-       work_for_cpu_fn+0x52/0xa0 kernel/workqueue.c:6731
-       process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
-       process_scheduled_works kernel/workqueue.c:3317 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
-       kthread+0x3af/0x750 kernel/kthread.c:464
-       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  scomp_lock --> fs_reclaim --> &per_cpu_ptr(pool->acomp_ctx, cpu)->mutex
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex);
-                               lock(fs_reclaim);
-                               lock(&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex);
-  lock(scomp_lock);
-
- *** DEADLOCK ***
-
-4 locks held by kworker/1:1/46:
- #0: ffff88801b080d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3211
- #1: ffffc90000b67d18 ((work_completion)(&wfc.work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3212
- #2: ffffffff8e060bd0 (cpu_hotplug_lock){++++}-{0:0}, at: cpus_write_lock kernel/cpu.c:508 [inline]
- #2: ffffffff8e060bd0 (cpu_hotplug_lock){++++}-{0:0}, at: _cpu_down+0xe5/0xf20 kernel/cpu.c:1412
- #3: ffffe8ffffc21250 (&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex){+.+.}-{4:4}, at: zswap_cpu_comp_dead+0x80/0x210 mm/zswap.c:885
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 46 Comm: kworker/1:1 Not tainted 6.14.0-rc3-syzkaller-00096-ge9a8cac0bf89 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-Workqueue: events work_for_cpu_fn
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x490/0x760 kernel/locking/lockdep.c:2076
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain kernel/locking/lockdep.c:3906 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5228
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5851
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x19b/0xb10 kernel/locking/mutex.c:730
- crypto_exit_scomp_ops_async+0x42/0x90 crypto/scompress.c:201
- crypto_exit_ops crypto/api.c:370 [inline]
- crypto_destroy_tfm crypto/api.c:681 [inline]
- crypto_destroy_tfm+0x135/0x2b0 crypto/api.c:668
- crypto_free_acomp include/crypto/acompress.h:159 [inline]
- zswap_cpu_comp_dead+0x169/0x210 mm/zswap.c:891
- cpuhp_invoke_callback+0x528/0xa10 kernel/cpu.c:216
- __cpuhp_invoke_callback_range+0x101/0x200 kernel/cpu.c:966
- cpuhp_invoke_callback_range kernel/cpu.c:990 [inline]
- cpuhp_down_callbacks kernel/cpu.c:1383 [inline]
- _cpu_down+0x422/0xf20 kernel/cpu.c:1444
- __cpu_down_maps_locked+0x6c/0x90 kernel/cpu.c:1474
- work_for_cpu_fn+0x52/0xa0 kernel/workqueue.c:6731
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3236
- process_scheduled_works kernel/workqueue.c:3317 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3398
- kthread+0x3af/0x750 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
