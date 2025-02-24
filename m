@@ -1,150 +1,179 @@
-Return-Path: <linux-kernel+bounces-530212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A2BA4309A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:21:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE15A430A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54F5F3AFC1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:20:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 978CA17B7BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B43820B7E7;
-	Mon, 24 Feb 2025 23:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JX+AkCZD"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 505C920C492;
+	Mon, 24 Feb 2025 23:22:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0638E2571AD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFFA42571AD;
+	Mon, 24 Feb 2025 23:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439262; cv=none; b=QHc0arNPoiGONM+JcAp2bmTtlMWKTnq9hgcVUHwh6oRLPaKfT89Y4AsViakk2TAAseVnVm38Yw4ko9aV6nl68k8gfT0b+E7x1HAmqeyqF9uVrTkAriFtr3i1wtvltda+uhT1yuHqelQMYeqXZLpGDOXKN3bdfhrTqI5GKn7gy70=
+	t=1740439320; cv=none; b=d6WUhQYC9GRvB3tUOXqXGV9jC0uhJa3ze3t//yDoUiRxHPGM9XWgIZmC2KLJDlfblg7RgnlYyHKUePfofMtZYDqIF/4qysY/qTIBbZq0AuqHYaqi6Nx9z3xtBy/CapKgwtwzhpVU9MTtfTOjDamykW6YoJ7nsKf444FT985BUvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439262; c=relaxed/simple;
-	bh=AE/BPPesqujpVG7Skm0q6iIAoiy53Pv6lPSfsMRVZc4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hl0bBcNc0vBZKqEVMsNEbf7+wgdfJNPk3h9hK9s05+1viBSJdf9nLNVpVsCGkMYkji9+7JhzgtvfVHQNXya/fTdzLar+wboO6uESq3khQBHe9cJtnZh0t3sLtrPAII0wIzMBa+umc83Q77l5W5uUfoMOuKcjlfPydObUCxX0a0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JX+AkCZD; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740439259;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=w9VyCqQ5W4f+Wpe3SrLp284SEcfzz6nkkWLxQdGLo2g=;
-	b=JX+AkCZDCJVLVqVVXmZnp+4dkUZQ3iZQKvPrFcykHfPmUu4wNQ0lK+fkpvqy5Hy1My6Bcl
-	8WhEJ4E2xkzVLJesnfWI6YS11VQ4i1Mia9SkRU5LWXBBdY3CcvfXZ3UMeB7NNesIo6VWIO
-	Ddf2BB/bllU5jDQyXvPSVAr1PG1CnNs=
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Leon Romanovsky <leon@kernel.org>,
-	Maher Sanalla <msanalla@nvidia.com>,
-	Parav Pandit <parav@mellanox.com>,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] RDMA/core: fix a NULL-pointer dereference in hw_stat_device_show()
-Date: Mon, 24 Feb 2025 23:20:48 +0000
-Message-ID: <20250224232048.1423635-1-roman.gushchin@linux.dev>
+	s=arc-20240116; t=1740439320; c=relaxed/simple;
+	bh=FRmFi9i/dohft9kXQXHUNw9zRthT6BA/ZO7P+OEA/Tg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XXNslb6uQX8Z/wPf3tGbpVsyVJTYicOqWHvzJNcHd64kCTovbbLLJQeIFz+Fsyutw4Ws1/8mvHs726BvRJRKp8cvKHbWJ13mhOJjLrM2BXTceD6cGg04VU8fO0AhDegc0d5M/RmTPWCqEWMCY4t16LlsHBz+RVCv8ZfDeW+m+FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2069AC4CEE8;
+	Mon, 24 Feb 2025 23:22:00 +0000 (UTC)
+Received: by venus (Postfix, from userid 1000)
+	id 420B218066D; Tue, 25 Feb 2025 00:21:58 +0100 (CET)
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH 0/7] power: supply: core: convert to fwnode
+Date: Tue, 25 Feb 2025 00:21:33 +0100
+Message-Id: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAP3+vGcC/x3MPQqAMAxA4atIZgMa7aBXEQdpU83SSir+ULy7x
+ eXBt7wMiVU4wVhlUD4lSQwFbV2B3ZawMoorBmrINEQt7ulBG5VLwsl64BHRXyE6RmcW0/fkbec
+ HKINd2cv9z6f5fT9n8zkSbAAAAA==
+X-Change-ID: 20250221-psy-core-convert-to-fwnode-d5a5442fc3f9
+To: Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Hans de Goede <hdegoede@redhat.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Paul Cercueil <paul@crapouillou.net>, Samuel Holland <samuel@sholland.org>, 
+ David Lechner <david@lechnology.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Orson Zhai <orsonzhai@gmail.com>, 
+ Baolin Wang <baolin.wang@linux.alibaba.com>, 
+ Chunyan Zhang <zhang.lyra@gmail.com>, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4565;
+ i=sebastian.reichel@collabora.com; h=from:subject:message-id;
+ bh=FRmFi9i/dohft9kXQXHUNw9zRthT6BA/ZO7P+OEA/Tg=;
+ b=owEBbQKS/ZANAwAKAdju1/PIO/qaAcsmYgBnvP8LwBsfsMPqhNW3Q9Z8oPHCkw9MnJk5mtaNE
+ HkSMAD54iuJAjMEAAEKAB0WIQTvZg0HRj+Lcmp5VBPY7tfzyDv6mgUCZ7z/CwAKCRDY7tfzyDv6
+ mtZyD/9gpAbaSTVDHWfO8vw/mF7Vq6c7KXwf8S7SgR/B9wmdUAdPSB/4o66mnFkSDwNz2NUMEdb
+ dlxrM1cSFflYjC5saEMxvuFRhCWh6OXT4L2k14esjYg6QFX9BKkeBoOfVl+qljgJNofr/WBHb52
+ 4ntAMLY0BWmlKgbaqxC6RDbEoZfMh92jEzP7nIYNEg/tav/xPYfFAjxeTf8UYhYhc7rJXfESzcA
+ jJFA5Bvpx6xELiY3AM3uTjgMBLY+HTl72R1ua0UlYvucPVegur7vBVsQezwDfkw2Moc6neE40zu
+ WOxi1NUMtT9Z8J+TZ+yZD2rk+AKNnZ7JHabss2TzJS4RI6l8sJmD3m0RM4cRXpctLTXZdUDIcOC
+ 1e15+sTmn5KTnwbI4VJgdT5CGAwJfCqt0u7w04oUuv/rVzjnuegaORzyqLcZoly4K+c8u3PjFvL
+ XHB2jdLu1sbacBwTP5OYkFRSwpKZ8u19SjLm6VVZDD+nPoH0BXWNMMHXw5MXYPGb03l2F4giMIb
+ 4ug5XqRBy9YusWNpGQx/dDqf34+8PFJ5pCdZeA6fp+nIf/kgjdAyt0im2k5W6g5TNJV29BySHib
+ av5I4SFe6qScMNKXcA9UuHcqw8+H905kqiMKKE2BnR+NsMNVp1teHHgCz4/XhZbC/CPB9DeXTu3
+ JrGBKUPHowjP5rA==
+X-Developer-Key: i=sebastian.reichel@collabora.com; a=openpgp;
+ fpr=EF660D07463F8B726A795413D8EED7F3C83BFA9A
 
-The following panic has been noticed in production on multiple hosts:
+The goal of this series is to replace any OF specific code in the
+power-supply core with more generic fwnode code.
 
-[42021.807566] BUG: kernel NULL pointer dereference, address: 0000000000000028
-[42021.814463] #PF: supervisor read access in kernel mode
-[42021.819549] #PF: error_code(0x0000) - not-present page
-[42021.824636] PGD 0 P4D 0
-[42021.827145] Oops: 0000 [#1] SMP PTI
-[42021.830598] CPU: 82 PID: 2843922 Comm: switchto-defaul Kdump: loaded Tainted: G S      W I        XXX
-[42021.841697] Hardware name: XXX
-[42021.849619] RIP: 0010:hw_stat_device_show+0x1e/0x40 [ib_core]
-[42021.855362] Code: 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 49 89 d0 4c 8b 5e 20 48 8b 8f b8 04 00 00 48 81 c7 f0 fa ff ff <48> 8b 41 28 48 29 ce 48 83 c6 d0 48 c1 ee 04 69 d6 ab aa aa aa 48
-[42021.873931] RSP: 0018:ffff97fe90f03da0 EFLAGS: 00010287
-[42021.879108] RAX: ffff9406988a8c60 RBX: ffff940e1072d438 RCX: 0000000000000000
-[42021.886169] RDX: ffff94085f1aa000 RSI: ffff93c6cbbdbcb0 RDI: ffff940c7517aef0
-[42021.893230] RBP: ffff97fe90f03e70 R08: ffff94085f1aa000 R09: 0000000000000000
-[42021.900294] R10: ffff94085f1aa000 R11: ffffffffc0775680 R12: ffffffff87ca2530
-[42021.907355] R13: ffff940651602840 R14: ffff93c6cbbdbcb0 R15: ffff94085f1aa000
-[42021.914418] FS:  00007fda1a3b9700(0000) GS:ffff94453fb80000(0000) knlGS:0000000000000000
-[42021.922423] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[42021.928130] CR2: 0000000000000028 CR3: 00000042dcfb8003 CR4: 00000000003726f0
-[42021.935194] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[42021.942257] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[42021.949324] Call Trace:
-[42021.951756]  <TASK>
-[42021.953842]  [<ffffffff86c58674>] ? show_regs+0x64/0x70
-[42021.959030]  [<ffffffff86c58468>] ? __die+0x78/0xc0
-[42021.963874]  [<ffffffff86c9ef75>] ? page_fault_oops+0x2b5/0x3b0
-[42021.969749]  [<ffffffff87674b92>] ? exc_page_fault+0x1a2/0x3c0
-[42021.975549]  [<ffffffff87801326>] ? asm_exc_page_fault+0x26/0x30
-[42021.981517]  [<ffffffffc0775680>] ? __pfx_show_hw_stats+0x10/0x10 [ib_core]
-[42021.988482]  [<ffffffffc077564e>] ? hw_stat_device_show+0x1e/0x40 [ib_core]
-[42021.995438]  [<ffffffff86ac7f8e>] dev_attr_show+0x1e/0x50
-[42022.000803]  [<ffffffff86a3eeb1>] sysfs_kf_seq_show+0x81/0xe0
-[42022.006508]  [<ffffffff86a11134>] seq_read_iter+0xf4/0x410
-[42022.011954]  [<ffffffff869f4b2e>] vfs_read+0x16e/0x2f0
-[42022.017058]  [<ffffffff869f50ee>] ksys_read+0x6e/0xe0
-[42022.022073]  [<ffffffff8766f1ca>] do_syscall_64+0x6a/0xa0
-[42022.027441]  [<ffffffff8780013b>] entry_SYSCALL_64_after_hwframe+0x78/0xe2
+The first 5 patches of this series mostly take care of removing .of_node
+from power_supply_config in favor of using the existing .fwnode.
 
-The problem can be reproduced using the following steps:
-  ip netns add foo
-  ip netns exec foo bash
-  cat /sys/class/infiniband/mlx4_0/hw_counters/*
+Patch 6 replaces the OF specific logic in battery-info. This will
+hopefully also allow Hans de Goede reusing the code with his Intel
+Dollar Cove TI CC battery driver series.
 
-The problem is caused by reading hw counters from a non-initial
-net namespace. In this case casting the device pointer into
-an ib_device pointer using container_of() in hw_stat_device_show() is
-wrong and leads to a memory corruption. Instead, rdma_device_to_ibdev()
-should be used, which uses a back-reference
-(container_of(device, struct ib_core_device, dev))->owner.
+Last but not least patch 7 replaces the OF phandle code with fwnode to
+have everything converted.
 
-Fixes: 467f432a521a ("RDMA/core: Split port and device counter sysfs attributes")
-Signed-off-by: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Leon Romanovsky <leon@kernel.org>
-Cc: Maher Sanalla <msanalla@nvidia.com>
-Cc: Parav Pandit <parav@mellanox.com>
-Cc: linux-rdma@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Note, that I do not own a single device making use of the
+"ocv-capacity-celsius" and "resistance-temp-table", which means patch 7
+is basically untested. I would really appreciate if somebody gives this
+series a test run on an affected device.
+
 ---
- drivers/infiniband/core/sysfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sebastian Reichel (7):
+      power: supply: core: get rid of of_node
+      regulator: act8865-regulator: switch psy_cfg from of_node to fwnode
+      usb: common: usb-conn-gpio: switch psy_cfg from of_node to fwnode
+      power: supply: all: switch psy_cfg from of_node to fwnode
+      power: supply: core: remove of_node from power_supply_config
+      power: supply: core: battery-info: fully switch to fwnode
+      power: supply: core: convert to fwnnode
 
-diff --git a/drivers/infiniband/core/sysfs.c b/drivers/infiniband/core/sysfs.c
-index 7491328ca5e6..0be77b8abeae 100644
---- a/drivers/infiniband/core/sysfs.c
-+++ b/drivers/infiniband/core/sysfs.c
-@@ -148,7 +148,7 @@ static ssize_t hw_stat_device_show(struct device *dev,
- {
- 	struct hw_stats_device_attribute *stat_attr =
- 		container_of(attr, struct hw_stats_device_attribute, attr);
--	struct ib_device *ibdev = container_of(dev, struct ib_device, dev);
-+	struct ib_device *ibdev = rdma_device_to_ibdev(dev);
- 
- 	return stat_attr->show(ibdev, ibdev->hw_stats_data->stats,
- 			       stat_attr - ibdev->hw_stats_data->attrs, 0, buf);
-@@ -160,7 +160,7 @@ static ssize_t hw_stat_device_store(struct device *dev,
- {
- 	struct hw_stats_device_attribute *stat_attr =
- 		container_of(attr, struct hw_stats_device_attribute, attr);
--	struct ib_device *ibdev = container_of(dev, struct ib_device, dev);
-+	struct ib_device *ibdev = rdma_device_to_ibdev(dev);
- 
- 	return stat_attr->store(ibdev, ibdev->hw_stats_data->stats,
- 				stat_attr - ibdev->hw_stats_data->attrs, 0, buf,
+ drivers/power/supply/ab8500_charger.c       |   4 +-
+ drivers/power/supply/acer_a500_battery.c    |   3 +-
+ drivers/power/supply/act8945a_charger.c     |   2 +-
+ drivers/power/supply/axp20x_ac_power.c      |   2 +-
+ drivers/power/supply/axp20x_battery.c       |   2 +-
+ drivers/power/supply/axp20x_usb_power.c     |   2 +-
+ drivers/power/supply/bd99954-charger.c      |   2 +-
+ drivers/power/supply/bq2415x_charger.c      |   4 +-
+ drivers/power/supply/bq24190_charger.c      |   2 +-
+ drivers/power/supply/bq24735-charger.c      |   2 +-
+ drivers/power/supply/bq2515x_charger.c      |   2 +-
+ drivers/power/supply/bq256xx_charger.c      |   2 +-
+ drivers/power/supply/bq25980_charger.c      |   2 +-
+ drivers/power/supply/bq27xxx_battery.c      |   2 +-
+ drivers/power/supply/cpcap-battery.c        |   2 +-
+ drivers/power/supply/cpcap-charger.c        |   2 +-
+ drivers/power/supply/ds2760_battery.c       |   3 +-
+ drivers/power/supply/generic-adc-battery.c  |   2 +-
+ drivers/power/supply/gpio-charger.c         |   2 +-
+ drivers/power/supply/ingenic-battery.c      |   2 +-
+ drivers/power/supply/ip5xxx_power.c         |   2 +-
+ drivers/power/supply/lego_ev3_battery.c     |   3 +-
+ drivers/power/supply/lt3651-charger.c       |   2 +-
+ drivers/power/supply/ltc4162-l-charger.c    |   2 +-
+ drivers/power/supply/max17042_battery.c     |   2 +-
+ drivers/power/supply/max77650-charger.c     |   2 +-
+ drivers/power/supply/max8903_charger.c      |   2 +-
+ drivers/power/supply/mm8013.c               |   2 +-
+ drivers/power/supply/mt6360_charger.c       |   2 +-
+ drivers/power/supply/mt6370-charger.c       |   2 +-
+ drivers/power/supply/olpc_battery.c         |   4 +-
+ drivers/power/supply/pm8916_bms_vm.c        |   2 +-
+ drivers/power/supply/pm8916_lbc.c           |   2 +-
+ drivers/power/supply/power_supply_core.c    | 178 +++++++++++++++-------------
+ drivers/power/supply/qcom_battmgr.c         |   5 +-
+ drivers/power/supply/qcom_pmi8998_charger.c |   2 +-
+ drivers/power/supply/qcom_smbb.c            |   2 +-
+ drivers/power/supply/rk817_charger.c        |   2 +-
+ drivers/power/supply/rt5033_battery.c       |   2 +-
+ drivers/power/supply/rt5033_charger.c       |   3 +-
+ drivers/power/supply/rt9455_charger.c       |   2 +-
+ drivers/power/supply/rt9467-charger.c       |   2 +-
+ drivers/power/supply/rt9471.c               |   2 +-
+ drivers/power/supply/sbs-battery.c          |   2 +-
+ drivers/power/supply/sbs-charger.c          |   2 +-
+ drivers/power/supply/sbs-manager.c          |   2 +-
+ drivers/power/supply/sc2731_charger.c       |   2 +-
+ drivers/power/supply/sc27xx_fuel_gauge.c    |   3 +-
+ drivers/power/supply/smb347-charger.c       |   2 +-
+ drivers/power/supply/tps65090-charger.c     |   2 +-
+ drivers/power/supply/tps65217_charger.c     |   2 +-
+ drivers/power/supply/ucs1002_power.c        |   2 +-
+ drivers/regulator/act8865-regulator.c       |   2 +-
+ drivers/usb/common/usb-conn-gpio.c          |   2 +-
+ include/linux/power_supply.h                |   4 +-
+ 55 files changed, 158 insertions(+), 144 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20250221-psy-core-convert-to-fwnode-d5a5442fc3f9
+
+Best regards,
 -- 
-2.48.1.658.g4767266eb4-goog
+Sebastian Reichel <sebastian.reichel@collabora.com>
 
 
