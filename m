@@ -1,124 +1,172 @@
-Return-Path: <linux-kernel+bounces-529696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C81A429F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:36:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 751AEA42A0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACDE018897BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:34:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92863A72D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967CE264A8B;
-	Mon, 24 Feb 2025 17:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF665265634;
+	Mon, 24 Feb 2025 17:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTQ87Y5E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="QGUA3CWN"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6C326280C;
-	Mon, 24 Feb 2025 17:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B4D2571A7;
+	Mon, 24 Feb 2025 17:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740418478; cv=none; b=BsWPMHtyAf8naAVr+d0seHFlRnDjXaaqF40BOgl9jERX7xdiooNMSBxapvrdsHwo8+12ZQvKjaj6Z68HCA7TLVhl9qd207MNnraGJYUjJM7wfbO2WqfTarVTb65gBT19Q5VQN/uMPzne7TVSopuLaT8KvtnW3urvR7uuhGRtldA=
+	t=1740418532; cv=none; b=FuV6gL0fIEHOq8ZPTTnhyeFGXx/ToGpToR+3/Tg+uF9zbJoa4MaCdmISInbOiYHpsp0RLqXdWMMoYQX+FWLBnu5n1sA+DFeRJ8KC4wR+lfG/Aa8EI2ffxWAlA31GQX97H8FdOtAQDcVxIRZi/6/ECNpA5t4zO6Lx+hXpygQNxC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740418478; c=relaxed/simple;
-	bh=sCwX7+nI/q81kiD2Y4/3tqSc3VlI4gc1dBG+Icft1Fs=;
+	s=arc-20240116; t=1740418532; c=relaxed/simple;
+	bh=i22IAVTAO3pfY8ToQVg8JT04CAxa2kXTVUFL+IbTL4c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gw5M+DM/TiHYubm9BbhQZvVfdnmDYvau/BfokQy4FPmhoMz45hb7Ronjg8FMHGgno4xV2XisD11XMC9rvXpt0R8jcg+XZ24UD4qXiuC3+AXkcXLfPpGv8lzOi33EwLhQH0szqVWi/dgx9oRZ99NiQkza5l3JJ65iwGpbEqS18AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTQ87Y5E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3560DC4CED6;
-	Mon, 24 Feb 2025 17:34:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740418477;
-	bh=sCwX7+nI/q81kiD2Y4/3tqSc3VlI4gc1dBG+Icft1Fs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTQ87Y5EJefkpgjqkOeu0y6B5lNoAOCly/eXwp3K8arYTGs7bcZbVzUX4x9a8zKrE
-	 fQMnAJNEPArkOi/b0YFY4zipLp+oj2+sz88wuvfD0yO3p41Pe2e4w5LNDdkuC1oJQy
-	 omNqK13szevPn7ITpFrP2LUzwKO/J8sRkcfbpy5Zaeha/9jYHIHOX2cVtpRYD7S21l
-	 TOT5v7/SM3B9U/Mxk+NSFxwq6QbA96irjalNyV1JWBXAnP6A6tF4kIsLiY74DmBH92
-	 eyLlIJyxOJV96k4y1RNOJQNyw17IoAyXKvuQO8vyOcHWgxlYN05Tcs9xKLHLNatvm6
-	 FGbpObWGrs0Lw==
-Date: Mon, 24 Feb 2025 11:34:35 -0600
-From: Rob Herring <robh@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDz4fJt7kO4wVObDP9UAgv0hcQmzJ/H4lnFSxyz5xQTBYBHFU8IutalGi1ONxmY5U3HgCRMTscJ1u1dQpfnkn6HU/3RAEpLbEUviIKMm6O1j7KzSVCG3pkbKDS8rhuJAtgaAVtEWZVg8o3IPhGcMwVZ0Yduna86oTIDjsFQrM7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=QGUA3CWN; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8F22F20648;
+	Mon, 24 Feb 2025 18:35:26 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id QpJm_5OANzFD; Mon, 24 Feb 2025 18:35:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1740418522; bh=i22IAVTAO3pfY8ToQVg8JT04CAxa2kXTVUFL+IbTL4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=QGUA3CWNEtsRmDhqYaetzRpV0soYfzkz79PxMxPeaRXJWW4GyiEwwFeTT45fLax0/
+	 Lut4N6ImQA4vC+2KCo8dj7hzusdpwlsInDUv5G2+Tb5Kmm+DdTZPkLsMpxqZJ4zq21
+	 ZWKvvM+UJm2OWg6y01Mnx9U0XxSyP5ZpMOcNSMkaaYG/qX8u6H4NG5Yqmh10QmL8ZC
+	 e8IJgCZwx0Pe89RPOJ+kqL4yVZMegp6ERK9TXvsnnEwCKU0M6bq1b54gnLKvDRuiW7
+	 +p+naZHib8SsDhKaoVeTWTMM4mhvRVquQfwRK6bpzKcpMPMXSkDp3dAruNd7Tud1jr
+	 7RlyLgyRbn0YQ==
+Date: Mon, 24 Feb 2025 17:35:04 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>, Marek Vasut <marex@denx.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: imx8mp: add axi clock
-Message-ID: <20250224173435.GA3560337-robh@kernel.org>
-References: <20250221190929.31469-1-laurentiumihalcea111@gmail.com>
- <20250221190929.31469-2-laurentiumihalcea111@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: clock: Document clock and reset unit
+ of RK3528
+Message-ID: <Z7ytqSQkwwi3RmB9@pie.lan>
+References: <20250217061142.38480-5-ziyao@disroot.org>
+ <20250217061142.38480-6-ziyao@disroot.org>
+ <49730692.MN2xkq1pzW@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250221190929.31469-2-laurentiumihalcea111@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <49730692.MN2xkq1pzW@diego>
 
-On Fri, Feb 21, 2025 at 02:09:26PM -0500, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+On Mon, Feb 24, 2025 at 10:09:29AM +0100, Heiko Stübner wrote:
+> Am Montag, 17. Februar 2025, 07:11:42 MEZ schrieb Yao Zi:
+> > There are two types of clocks in RK3528 SoC, CRU-managed and
+> > SCMI-managed. Independent IDs are assigned to them.
+> > 
+> > For the reset part, differing from previous Rockchip SoCs and
+> > downstream bindings which embeds register offsets into the IDs, gapless
+> > numbers starting from zero are used.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  .../bindings/clock/rockchip,rk3528-cru.yaml   |  64 +++
+> >  .../dt-bindings/clock/rockchip,rk3528-cru.h   | 453 ++++++++++++++++++
+> >  .../dt-bindings/reset/rockchip,rk3528-cru.h   | 241 ++++++++++
+> >  3 files changed, 758 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3528-cru.h
+> >  create mode 100644 include/dt-bindings/reset/rockchip,rk3528-cru.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+> > new file mode 100644
+> > index 000000000000..5a3ec902351c
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3528-cru.yaml
+> > @@ -0,0 +1,64 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/rockchip,rk3528-cru.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Rockchip RK3528 Clock and Reset Controller
+> > +
+> > +maintainers:
+> > +  - Yao Zi <ziyao@disroot.org>
+> > +
+> > +description: |
+> > +  The RK3528 clock controller generates the clock and also implements a reset
+> > +  controller for SoC peripherals. For example, it provides SCLK_UART0 and
+> > +  PCLK_UART0 as well as SRST_P_UART0 and SRST_S_UART0 for the first UART
+> > +  module.
+> > +  Each clock is assigned an identifier, consumer nodes can use it to specify
+> > +  the clock. All available clock and reset IDs are defined in dt-binding
+> > +  headers.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: rockchip,rk3528-cru
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
 > 
-> The AUDIOMIX clock provider takes an additional clock: AUDIO_AXI_CLK_ROOT.
+> I do think this needs a
+>     minItems: 1
+>     maxItems: 2
+> or similar.
+> 
+> xin24m is the main oscillator everything else is supplied from, so is
+> absolutely required, but that gmac0 supply comes from an (probably)
+> optional clock supply from a mac phy?
+> 
+> So is possibly not available on a system without ethernet hardware?
+
+I don't think so. By the CRU commit message[1] in the vendor driver, the
+"phy module" should mean the integrated phy for GMAC0,
+
+	The io-in clocks are module phy output clock, gating child
+	clocks by disabling phy output but not CRU gate.
+
+	Add gmac0 clocks. They are all orphans if clk_gmac0_io_i is not
+	registered by GMAC driver. But it's fine that GMAC driver only
+	get it but not to set/get rate.
+
+(gmac0 is called "clk_gmac0_io_i" in the vendor driver).
+
+Taking that both the upstream and downstream Rockchip GMAC glue (GMAC
+driver) takes some care of the integrated phy, if the clock is an
+out-of-SoC supply, the second paragraph sounds less sensible: the clock
+should be registered by the external PHY instead of the GMAC driver in
+this case.
+
+And there cannot be a case that an integrated clocksource is missing.
+
+> 
+> 
+> Heiko
+> 
 > 
 
-Fixes tag? The commit message should be expanded a bit as this is an ABI 
-change.
+Thanks,
+Yao Zi
 
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> Reviewed-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
->  .../devicetree/bindings/clock/imx8mp-audiomix.yaml     | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> index 6588a17a7d9a..0272c9527037 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> @@ -24,8 +24,8 @@ properties:
->      maxItems: 1
->  
->    clocks:
-> -    minItems: 7
-> -    maxItems: 7
-> +    minItems: 8
-> +    maxItems: 8
->  
->    clock-names:
->      items:
-> @@ -36,6 +36,7 @@ properties:
->        - const: sai5
->        - const: sai6
->        - const: sai7
-> +      - const: axi
->  
->    '#clock-cells':
->      const: 1
-> @@ -72,10 +73,11 @@ examples:
->                   <&clk IMX8MP_CLK_SAI3>,
->                   <&clk IMX8MP_CLK_SAI5>,
->                   <&clk IMX8MP_CLK_SAI6>,
-> -                 <&clk IMX8MP_CLK_SAI7>;
-> +                 <&clk IMX8MP_CLK_SAI7>,
-> +                 <&clk IMX8MP_CLK_AUDIO_AXI_ROOT>;
->          clock-names = "ahb",
->                        "sai1", "sai2", "sai3",
-> -                      "sai5", "sai6", "sai7";
-> +                      "sai5", "sai6", "sai7", "axi";
->          power-domains = <&pgc_audio>;
->      };
->  
-> -- 
-> 2.34.1
-> 
+[1]: https://github.com/rockchip-linux/kernel/commit/16f512f1e10375dc48aa6c26cedeb7079aba01de
 
