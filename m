@@ -1,122 +1,108 @@
-Return-Path: <linux-kernel+bounces-529493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1DA426EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:53:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78FB6A426FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5D8168A8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:49:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D0673A38F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A9D261565;
-	Mon, 24 Feb 2025 15:49:35 +0000 (UTC)
-Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 510E1261383;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2301526137E;
 	Mon, 24 Feb 2025 15:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TZefOmSR"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5212586E8;
+	Mon, 24 Feb 2025 15:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740412174; cv=none; b=mIoEbE0sU0UeSSUAKM0mZibf1gzt2KnjS3ygOFGKHmcd9cGUHYWo3aMKtZR8mRAAeSLfYA3OgONUlhX56q5Zycvz7ZWj4qwgMs4epKUawS71GGCAWGUKj8i0s6xrDNqRDQqS4K88tHVqIeH6UZwead85kLm8WYBk89zwdX3dco8=
+	t=1740412170; cv=none; b=dK61VPcFap/cqeVjXHV57hO64vVmG6/A/PHlmMWHlcPNdTYVjKAXzj1zWIoJ9cIe4oHDC8Kbyqcbj1VZDXZESFmgf7zYdbfLqB4Ssy8gd7ofp6XBH/cQbECaMFCCfaDWXuDlRe1zXPnpq8abzB2iyttB79mUxG5XB+NCMJ3+X3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740412174; c=relaxed/simple;
-	bh=x4hmtsNoaZPvA2XK6XOAhEj0ABwOAUsGA+qnNVorA/A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ap+9W3X3TxknHzSVQ2aLIheDc1VgifIAHFh1kAWQk/kjnjftsopRDeYPpdYJ2fgPbQb3sLbbDNymWuTvrpxDQEbWMaUshCoz0CCAWd/xcI7hbEaa7ZOd2GQ+ayvSUUKTARgVVxQCtWG2EKDKbQkhqr4oAv2MN/z/BsVTzt6onAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
-Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
- (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 24 Feb
- 2025 18:49:29 +0300
-Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 24 Feb
- 2025 18:49:28 +0300
-From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
-To: Shuah Khan <skhan@linuxfoundation.org>, Kieran Bingham
-	<kieran.bingham@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com>,
-	<syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] media: vimc: skip .s_stream() for stopped entities
-Date: Mon, 24 Feb 2025 18:49:26 +0300
-Message-ID: <20250224154928.1220074-1-n.zhandarovich@fintech.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1740412170; c=relaxed/simple;
+	bh=2F1yKXvZDy9KJ3o7uCp5qsrGeb3CkfF1yTUgtwkYwdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kkDYpI3sghRnT8uprY4TMfZudQbUep1wLPM6I6eC0FC1VacEHKIDcAmGvUOwHn/H+pb6DaFytvgKFvceF8vNWqMLZC3itmPXr5Xy0QHYpdsHNoePM6JSqqiXNaFlEoH2RiHs5v4XiPNH6vRkmEt2ogt58HBEU4lD+7THJnCf82A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TZefOmSR; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=YErfRUqRg108yTH5RXZzWhvly/jQo5kC4YXPq+9ZtKA=; b=TZefOmSRKXmue8yFnsBIq67Vzj
+	Mdjvtl7tQycOyZFeRWtWhHbHO704f8fmdWuxrCyqNBIcvrYWK7dnq3AmArLPc4SneUxIAkUp2Yuxe
+	ZpXX7X5dN/OB1OcQZWWb7+OWrrIbIyUOuc9CWSc1YLTMQVDZTnhZikNk5rg4JSJNlYkfAhTrbYNag
+	L2H32yLitZPgUyJsPa5Uyf2J6+RPFHNVM4UVhiHGCORUWGTSa0sVcVJ3u96ESVxz9Iwt1VC0+djFe
+	yCc3mg3Dww13/GtUIKZblhwwmeKUbTmTk8XYlKejibAd/p72Hkqn1EuWbCgHLZvNKSJwx5WOdzInb
+	gl7GIKzw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmahz-00000007gGA-1xkE;
+	Mon, 24 Feb 2025 15:49:27 +0000
+Date: Mon, 24 Feb 2025 15:49:27 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, djwong@kernel.org,
+	Dave Chinner <david@fromorbit.com>
+Subject: Re: [PATCH v2] mm: Fix error handling in __filemap_get_folio() with
+ FGP_NOWAIT
+Message-ID: <Z7yVB0w7YoY_DrNz@casper.infradead.org>
+References: <20250224081328.18090-1-raphaelsc@scylladb.com>
+ <20250224141744.GA1088@lst.de>
+ <Z7yRSe-nkfMz4TS2@casper.infradead.org>
+ <CAKhLTr1s9t5xThJ10N9Wgd_M0RLTiy5gecvd1W6gok3q1m4Fiw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
- (10.0.10.18)
+In-Reply-To: <CAKhLTr1s9t5xThJ10N9Wgd_M0RLTiy5gecvd1W6gok3q1m4Fiw@mail.gmail.com>
 
-Syzbot reported [1] a warning prompted by a check in call_s_stream()
-that checks whether .s_stream() operation is warranted for unstarted
-or stopped subdevs.
+On Mon, Feb 24, 2025 at 12:45:21PM -0300, Raphael S. Carvalho wrote:
+> On Mon, Feb 24, 2025 at 12:33 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Mon, Feb 24, 2025 at 03:17:44PM +0100, Christoph Hellwig wrote:
+> > > On Mon, Feb 24, 2025 at 05:13:28AM -0300, Raphael S. Carvalho wrote:
+> > > > +           if (err) {
+> > > > +                   /* Prevents -ENOMEM from escaping to user space with FGP_NOWAIT */
+> > > > +                   if ((fgp_flags & FGP_NOWAIT) && err == -ENOMEM)
+> > > > +                           err = -EAGAIN;
+> > > >                     return ERR_PTR(err);
+> > >
+> > > I don't think the comment is all that useful.  It's also overly long.
+> > >
+> > > I'd suggest this instead:
+> > >
+> > >                       /*
+> > >                        * When NOWAIT I/O fails to allocate folios this could
+> > >                        * be due to a nonblocking memory allocation and not
+> > >                        * because the system actually is out of memory.
+> > >                        * Return -EAGAIN so that there caller retries in a
+> > >                        * blocking fashion instead of propagating -ENOMEM
+> > >                        * to the application.
+> > >                        */
+> >
+> > I don't think it needs a comment at all, but the memory allocation
+> > might be for something other than folios, so your suggested comment
+> > is misleading.
+> 
+> Isn't it all in the context of allocating or adding folio? The reason
+> behind a comment is to prevent movements in the future that could
+> cause a similar regression, and also to inform the poor reader that
+> might be left wondering why we're converting -ENOMEM into -EAGAIN with
+> FGP_NOWAIT. Can it be slightly adjusted to make it more correct? Or
+> you really think it's better to remove it completely?
 
-Add a simple fix in vimc_streamer_pipeline_terminate() ensuring that
-entities skip a call to .s_stream() unless they have been previously
-properly started.
-
-[1] Syzbot report:
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5933 at drivers/media/v4l2-core/v4l2-subdev.c:460 call_s_stream+0x2df/0x350 drivers/media/v4l2-core/v4l2-subdev.c:460
-Modules linked in:
-CPU: 0 UID: 0 PID: 5933 Comm: syz-executor330 Not tainted 6.13.0-rc2-syzkaller-00362-g2d8308bf5b67 #0
-...
-Call Trace:
- <TASK>
- vimc_streamer_pipeline_terminate+0x218/0x320 drivers/media/test-drivers/vimc/vimc-streamer.c:62
- vimc_streamer_pipeline_init drivers/media/test-drivers/vimc/vimc-streamer.c:101 [inline]
- vimc_streamer_s_stream+0x650/0x9a0 drivers/media/test-drivers/vimc/vimc-streamer.c:203
- vimc_capture_start_streaming+0xa1/0x130 drivers/media/test-drivers/vimc/vimc-capture.c:256
- vb2_start_streaming+0x15f/0x5a0 drivers/media/common/videobuf2/videobuf2-core.c:1789
- vb2_core_streamon+0x2a7/0x450 drivers/media/common/videobuf2/videobuf2-core.c:2348
- vb2_streamon drivers/media/common/videobuf2/videobuf2-v4l2.c:875 [inline]
- vb2_ioctl_streamon+0xf4/0x170 drivers/media/common/videobuf2/videobuf2-v4l2.c:1118
- __video_do_ioctl+0xaf0/0xf00 drivers/media/v4l2-core/v4l2-ioctl.c:3122
- video_usercopy+0x4d2/0x1620 drivers/media/v4l2-core/v4l2-ioctl.c:3463
- v4l2_ioctl+0x1ba/0x250 drivers/media/v4l2-core/v4l2-dev.c:366
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl fs/ioctl.c:892 [inline]
- __x64_sys_ioctl+0x190/0x200 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f2b85c01b19
-...
-
-Reported-by: syzbot+5bcd7c809d365e14c4df@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=5bcd7c809d365e14c4df
-Fixes: adc589d2a208 ("media: vimc: Add vimc-streamer for stream control")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
----
- drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/media/test-drivers/vimc/vimc-streamer.c b/drivers/media/test-drivers/vimc/vimc-streamer.c
-index 807551a5143b..64dd7e0ea5ad 100644
---- a/drivers/media/test-drivers/vimc/vimc-streamer.c
-+++ b/drivers/media/test-drivers/vimc/vimc-streamer.c
-@@ -59,6 +59,12 @@ static void vimc_streamer_pipeline_terminate(struct vimc_stream *stream)
- 			continue;
- 
- 		sd = media_entity_to_v4l2_subdev(ved->ent);
-+		/*
-+		 * Do not call .s_stream() to stop an already
-+		 * stopped/unstarted subdev.
-+		 */
-+		if (!sd->s_stream_enabled)
-+			continue;
- 		v4l2_subdev_call(sd, video, s_stream, 0);
- 	}
- }
+I really don't think the comment is needed.  This is a common mistake
+when fixing a bug.
 
