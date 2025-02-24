@@ -1,212 +1,309 @@
-Return-Path: <linux-kernel+bounces-528569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45F24A4191D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:30:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3198CA41934
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B51B188E210
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:28:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54993A4714
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6733D24501F;
-	Mon, 24 Feb 2025 09:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A32624BBF5;
+	Mon, 24 Feb 2025 09:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iY0hEtjV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TR+l/N2h"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAEC24500C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D03245027;
+	Mon, 24 Feb 2025 09:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740389261; cv=none; b=Hr4YOnHTOtaRnx5UOrCep1sStyPEcOPBaKn2X2eoyqk4Jt3Ow4IQzeNdFQvw2OFiXE7Ex6Tfn2SLFEZHJ774UQpbo2VbBGaDnUmRNHIC6Xa6nSGJ1VHfoKwRbneoZV17elcBXAVkkIrp3wre80oN220O3xZk56rCtUjnFUbjdAM=
+	t=1740389265; cv=none; b=p8MOq4L54wuQ/LA0DAjUfzWGRQZGgQ9kfaZWFQivX2TD9x1A7vROBhBi9CKlHYGSZMUqZZjGa/N4iK9JJqIKoVzeG3H9/We2+0f+JbeFMxpglPoT6lzN8sVl0qXqDYMiC3iRHSPRVRn6xKwF/NolnylG+8C1bb4cCS2G5y44COs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740389261; c=relaxed/simple;
-	bh=pUC6Ed2z/zY6KZOsQgf29yYj/OuBkJWzoRQUf/rC154=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=umVJBTvPKFPW3+hsfYBdQ1hvAonC6Zpnl8+72sAuM4uxLu0VKetbHAh2FNXV/3epPZmiab9h2R8UfxA3pGVCwUU70bKtBxh6SOcn7IvLR9Og+1f3pyMxtcWtt4UFXTEnexTnwTYKvpJy4gahf9xbX6YuIC7bs9CdAxzQfsWv8YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iY0hEtjV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740389258;
+	s=arc-20240116; t=1740389265; c=relaxed/simple;
+	bh=xtPJ+9TPcQnIoTApT2qVmDx4XC/2epsxSLv0GCkiSg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j6wxrIW+Yo3clv5k0Suw2zYWxrQwKCLrWYu9fbvB0rHrtHjr1FNfVkEfXo/z8OotuKAJhYIxLrG8SwoPIKmyb4O/hHtaWFtaMp55noxUQIQOo/A1szeWXmkVopkvBx6/uy93PAl9728h+F1PIQt9/EGuQEM5uMPct9Vn0hOQcm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TR+l/N2h; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 56299433F8;
+	Mon, 24 Feb 2025 09:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740389259;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0X0AQO/2ghVbNwC3CVRjTuq8PTR+HZJjGnXHV3qwXKY=;
-	b=iY0hEtjVQxjTdAKZvQ3xt88SnOWDnncSELXqJ2lh4kB9iMwDKFvbUbmP9LuqDeDOzrsXW3
-	6l8NtiF3MOM/wlutq7lvC4cJV+vU5NEvaBzrkkcmJMNE/OHXqE6MEmM30r/mCG/GqpCDmw
-	/NkrE0rDxvWfnBOb5LMrnyQRjrws+ZI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-687-5q6UYAmbMSKczhZRG3-ayQ-1; Mon, 24 Feb 2025 04:27:37 -0500
-X-MC-Unique: 5q6UYAmbMSKczhZRG3-ayQ-1
-X-Mimecast-MFC-AGG-ID: 5q6UYAmbMSKczhZRG3-ayQ_1740389256
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f455a8e43so1578808f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:27:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740389256; x=1740994056;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0X0AQO/2ghVbNwC3CVRjTuq8PTR+HZJjGnXHV3qwXKY=;
-        b=iWQmGE0A+Dj5SL0Q2u2ov6doCu2UvJ5PBw5WGxL4oiMrD6lmHImNCHCeRmWnutGNQe
-         j94kRuqvobo6vvZcMshMAOBerpKX56kGlQi7COVZu1OzOHDILCNToPiYECKXrjXsRrD2
-         6OEAePCG9KkoA/c4eorBfwOZhybdLuXrUkc+1wi6AXsiYwgzTQ9c6yhf7jaivy7T0ahe
-         0dpsfJm8wwP0kCR23i8v1HhZucJXIoe42IRu7FQtqnaGV9d0ItoX6S0rhViNiJuQ+fUE
-         3vxk1ziEZv0MsTOm8cK5RkqQjj1m1/Lxl8htRbHuNx5w9eufv2D00KuOHztJiZRE+pzv
-         5rJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8SR38y8v1daHX0EqZgcPNz0NSwdRwjVxSBFxP+qOBjdlAQPFn0zZoRfgpZQ7FIZofFpL2l2Eh3O1xZ3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1u6AFN2/ZN+2G4jc4A0ru3cg30TQsT7nbMZL/UCouQPbYr7W5
-	XcsuTrmMdG74i+oX1V2UmGuygvo5kaPwe1AK2L5jbzubRAdDFTnY/5KXMFKns6zJNirqkFAv0Te
-	I3MyWH4/gLnIOgU2C78TQCBhSkpoktTn5O2/SzBjieHD8Zlq/LcA9ljF/seIDUA==
-X-Gm-Gg: ASbGncsLZbSAzXxkhGDcu4fi5J3hLDhL44FSz3uqxpAPxYWSnaVy/wbveZf+1QPes+F
-	5HIQAk8TzSQw8a2QnepWbnSW2gs046y7GE26LG6JvtyYYmI8woQv0O5slj1DisEGf01AlC325lF
-	pqlPa2sw+wvH5vupaA/8jgeswzOep5HYVS6lNeLzxAnpfPzxeg2iKRkqv9nQsdoOxb75bpR1bTa
-	vDfxGt/op64exwRh0jM/JwzdZ3d9NN3lNiaAy6ABX4fFBhYqkhX4tX42GI8mtWVrN2/k4Z6ntxb
-	eQ6otJZ7fRUU/ejBZIorkKUlsFj5x9c36KlTeizdwrO1
-X-Received: by 2002:a05:6000:154b:b0:38f:4c30:7cdd with SMTP id ffacd0b85a97d-38f6f09789fmr8445609f8f.37.1740389255977;
-        Mon, 24 Feb 2025 01:27:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHaS0RFZ37ne1nVAbmV7xLchKHTtvTGvrdxafr5L2u+6HaGa2IC0AD7fHvr/akM++F67G10Dg==
-X-Received: by 2002:a05:6000:154b:b0:38f:4c30:7cdd with SMTP id ffacd0b85a97d-38f6f09789fmr8445575f8f.37.1740389255519;
-        Mon, 24 Feb 2025 01:27:35 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f25a0fe5esm31411004f8f.99.2025.02.24.01.27.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 01:27:34 -0800 (PST)
-Date: Mon, 24 Feb 2025 10:27:31 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Jon Hunter <jonathanh@nvidia.com>,
-	Thierry Reding <treding@nvidia.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 3/2] sched/deadline: Check bandwidth overflow earlier
- for hotplug
-Message-ID: <Z7w7g1zb0nfu9-C7@jlelli-thinkpadt14gen4.remote.csb>
-References: <db800694-84f7-443c-979f-3097caaa1982@nvidia.com>
- <8ff19556-a656-4f11-a10c-6f9b92ec9cea@arm.com>
- <Z6oysfyRKM_eUHlj@jlelli-thinkpadt14gen4.remote.csb>
- <dbd2af63-e9ac-44c8-8bbf-84358e30bf0b@arm.com>
- <Z6spnwykg6YSXBX_@jlelli-thinkpadt14gen4.remote.csb>
- <285a43db-c36d-400e-8041-0566f089a482@arm.com>
- <Z62PPUOY5DClYo1A@jlelli-thinkpadt14gen4.remote.csb>
- <20250216163340.ttwddti5pzuynsj5@airbuntu>
- <Z7NNHmGgrEF666W_@jlelli-thinkpadt14gen4.remote.csb>
- <20250222235936.jmyrfacutheqt5a2@airbuntu>
+	bh=bv9esbM3X3XFxLbrYON0o0vsKE/aVAnt/YyaYFae7xk=;
+	b=TR+l/N2hF7PDXRr6GdLqFUHz4pzP3rrdAMLp9Fd8O7SLWvARUubTLB8RON9mdUxDC7Pmdp
+	4TfRCP7DzbIf0gRofSK86Hj0EHJrAehc8USbBKCJ0Fu4f/+skggRj281kRW9Z+dMRMSNdP
+	Pljh70F0KT7m8e3YrCXONvSk2F3fy21YLeK0hXf/xyC/9BY9CjZ3GArRlHFPj51qn+vcL3
+	trc1MnIn3Rg/0nN78UwGsAjZW1/XD73s/kC9ZwPE6RPBCPoz4LAlKJr1lh4zYYWYL/i5Qf
+	4S7iNp39MdMwdfeOork7R7Rj5sUa1fEGUfpthSJaQ6uD1VDV71rqs8vtNmxq/g==
+Message-ID: <4c39f9cf-a9cb-493b-b44f-b9ac264019c6@bootlin.com>
+Date: Mon, 24 Feb 2025 10:27:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250222235936.jmyrfacutheqt5a2@airbuntu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Migrate test_xdp_vlan.sh into
+ test_progs
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Mykola Lysenko <mykolal@fb.com>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Shuah Khan <shuah@kernel.org>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Alexis Lothore <alexis.lothore@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250221-xdp_vlan-v1-0-7d29847169af@bootlin.com>
+ <20250221-xdp_vlan-v1-2-7d29847169af@bootlin.com>
+ <Z7imfH-Adq5qUUsB@mini-arch>
+Content-Language: en-US
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+In-Reply-To: <Z7imfH-Adq5qUUsB@mini-arch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeegvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeurghsthhivghnucevuhhruhhttghhvghtuceosggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfehgefgteffkeehveeuvdekvddvueefgeejvefgleevveevteffveefgfehieejnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrudegngdpmhgrihhlfhhrohhmpegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehsthhfohhmihgthhgvvhesghhmrghilhdrtghomhdprhgtphhtthhopegrshhtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtt
+ hhopehhrgifkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrihhisehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-On 22/02/25 23:59, Qais Yousef wrote:
-> On 02/17/25 15:52, Juri Lelli wrote:
-> > On 16/02/25 16:33, Qais Yousef wrote:
-> > > On 02/13/25 07:20, Juri Lelli wrote:
-> > > > On 12/02/25 19:22, Dietmar Eggemann wrote:
-> > > > > On 11/02/2025 11:42, Juri Lelli wrote:
-> > > > 
-> > > > ...
-> > > > 
-> > > > > > What about we actually ignore them consistently? We already do that for
-> > > > > > admission control, so maybe we can do that when rebuilding domains as
-> > > > > > well (until we find maybe a better way to deal with them).
-> > > > > > 
-> > > > > > Does the following make any difference?
-> > > > > 
-> > > > > It at least seems to solve the issue. And like you mentioned on irc, we
-> > > > > don't know the bw req of sugov anyway.
-> > > > > 
-> > > > > So with this change we start with 'dl_bw->total_bw = 0' even w/ sugov tasks.
-> > > > > 
-> > > > > dl_rq[0]:
-> > > > >   .dl_nr_running                 : 0
-> > > > >   .dl_bw->bw                     : 996147
-> > > > >   .dl_bw->total_bw               : 0       <-- !
-> > > > > 
-> > > > > IMHO, people who want to run serious DL can always check whether there
-> > > > > are already these infrastructural DL tasks or even avoid schedutil.
-> > > > 
-> > > > It definitely not ideal and admittedly gross, but not worse than what we
-> > > > are doing already considering we ignore sugovs at AC and the current
-> > > > bandwidth allocation its there only to help with PI. So, duck tape. :/
-> > > > 
-> > > > A more proper way to work with this would entail coming up with sensible
-> > > > bandwidth allocation for sugovs, but that's most probably hardware
-> > > > specific, so I am not sure how we can make that general enough.
-> > > 
-> > > I haven't been following the problem closely, but one thing I was considering
-> > > and I don't know if it makes sense to you and could help with this problem too.
-> > > Shall we lump sugov with stopper class or create a new sched_class (seems
-> > > unnecessary, I think stopper should do)? With the consolidate cpufreq update
-> > > patch I've been working on Vincent raised issues with potential new ctx switch
-> > > and to improve that I needed to look at improving sugov wakeup path. If we
-> > > decouple it from DL I think that might fix your problem here and could allow us
-> > > to special case it for other problems like the ones I faced more easily without
-> > > missing up with DL.
-> > > 
-> > > Has the time come to consider retire the simple solution of making sugov a fake
-> > > DL task?
-> > 
-> > Problem is that 'ideally' we would want to explicitly take sugovs into
-> > account when designing the system. We don't do that currently as a
-> > 'temporary solution' that seemed simpler than a proper approach (started
-> > wondering if it's indeed simpler). So, not sure if moving sugovs outside
-> > DL is something we want to do.
+Hi Stanislav,
+
+On 2/21/25 5:14 PM, Stanislav Fomichev wrote:
+> On 02/21, Bastien Curutchet (eBPF Foundation) wrote:
+>> test_xdp_vlan.sh isn't used by the BPF CI.
+>>
+>> Migrate test_xdp_vlan.sh in prog_tests/xdp_vlan.c.
+>> It uses the same BPF programs located in progs/test_xdp_vlan.c and the
+>> same network topology.
+>> Remove test_xdp_vlan*.sh and their Makefile entries.
+>>
+>> Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
+>> ---
+>>   tools/testing/selftests/bpf/Makefile               |   4 +-
+>>   tools/testing/selftests/bpf/prog_tests/xdp_vlan.c  | 175 ++++++++++++++++
+>>   tools/testing/selftests/bpf/test_xdp_vlan.sh       | 233 ---------------------
+>>   .../selftests/bpf/test_xdp_vlan_mode_generic.sh    |   9 -
+>>   .../selftests/bpf/test_xdp_vlan_mode_native.sh     |   9 -
+>>   5 files changed, 176 insertions(+), 254 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+>> index 5dc9c84ed30f6e5a46572a9e428f692a79623469..09c1f731b8280696c729e3c87020ef749fee9dcb 100644
+>> --- a/tools/testing/selftests/bpf/Makefile
+>> +++ b/tools/testing/selftests/bpf/Makefile
+>> @@ -103,8 +103,6 @@ TEST_PROGS := test_kmod.sh \
+>>   	test_tunnel.sh \
+>>   	test_lwt_seg6local.sh \
+>>   	test_lirc_mode2.sh \
+>> -	test_xdp_vlan_mode_generic.sh \
+>> -	test_xdp_vlan_mode_native.sh \
+>>   	test_lwt_ip_encap.sh \
+>>   	test_tc_tunnel.sh \
+>>   	test_tc_edt.sh \
+>> @@ -118,7 +116,7 @@ TEST_PROGS := test_kmod.sh \
+>>   
+>>   TEST_PROGS_EXTENDED := \
+>>   	ima_setup.sh verify_sig_setup.sh \
+>> -	test_xdp_vlan.sh test_bpftool.py
+>> +	test_bpftool.py
+>>   
+>>   TEST_KMODS := bpf_testmod.ko bpf_test_no_cfi.ko bpf_test_modorder_x.ko \
+>>   	bpf_test_modorder_y.ko
+>> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c b/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..18dd25344de768aa83a162a0c091f28a4e5f505e
+>> --- /dev/null
+>> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_vlan.c
+>> @@ -0,0 +1,175 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/*
+>> + * Network topology:
+>> + *  -----------        -----------
+>> + *  |  NS1    |        |   NS2   |
+>> + *  | veth0  -|--------|- veth0  |
+>> + *  -----------        -----------
+>> + *
+>> + */
+>> +
+>> +#define _GNU_SOURCE
+>> +#include <net/if.h>
+>> +#include <uapi/linux/if_link.h>
+>> +
+>> +#include "network_helpers.h"
+>> +#include "test_progs.h"
+>> +#include "test_xdp_vlan.skel.h"
+>> +
+>> +
+>> +#define VETH_NAME	"veth0"
+>> +#define NS_MAX_SIZE	32
+>> +#define NS1_NAME	"ns-xdp-vlan-1-"
+>> +#define NS2_NAME	"ns-xdp-vlan-2-"
+>> +#define NS1_IP_ADDR	"100.64.10.1"
+>> +#define NS2_IP_ADDR	"100.64.10.2"
+>> +#define VLAN_ID		4011
+>> +
+>> +static int setup_network(char *ns1, char *ns2)
+>> +{
+>> +	if (!ASSERT_OK(append_tid(ns1, NS_MAX_SIZE), "create ns1 name"))
+>> +		goto fail;
+>> +	if (!ASSERT_OK(append_tid(ns2, NS_MAX_SIZE), "create ns2 name"))
+>> +		goto fail;
+>> +
 > 
-> Okay I see. The issue though is that for a DL system with power management
-> features on that warrant to wake up a sugov thread to update the frequency is
-> sort of half broken by design. I don't see the benefit over using RT in this
-> case. But I appreciate I could be misguided. So take it easy on me if it is
-> obviously wrong understanding :) I know in Android usage of DL has been
-> difficult, but many systems ship with slow switch hardware.
+> [..]
 > 
-> How does DL handle the long softirqs from block and network layers by the way?
-> This has been in a practice a problem for RT tasks so they should be to DL.
-> sugov done in stopper should be handled similarly IMHO. I *think* it would be
-> simpler to masquerade sugov thread as irq pressure.
+>> +	SYS(fail, "ip netns add %s", ns1);
+>> +	SYS(fail, "ip netns add %s", ns2);
+> 
+> Will replacing these with open_netns work? Or we don't setup up enough
+> state to cooperate with 'ip' tool? (same for cleanup_network if it
+> works)
+> 
 
-Kind of a trick question :), as DL doesn't handle this kind of
-load/pressure explicitly. It is essentially agnostic about it. From a
-system design point of view though, I would say that one should take
-that into account and maybe convert sensible kthreads to DL, so that the
-overall bandwidth can be explicitly evaluated. If one doesn't do that
-probably a less sound approach is to treat anything not explicitly
-scheduled by DL, but still required from a system perspective, as
-overload and be more conservative when assigning bandwidth to DL tasks
-(i.e. reduce the maximum amount of available bandwidth, so that the
-system doesn't get saturated).
+Yes, it will work. Initially I planned to use it but it isn't very 
+convenient in this case because struct netns_obj is defined in 
+test_progs.c, not in the header. This means you can't access ns->nsname 
+to get the namespace name and as I use append_tid() this name is 
+dynamic. So using netns_new / close_netns / netns_free would require 
+keeping both the namespace names (for further ip commands / open_netns) 
+and the netns_objs objects (for netns_free) whereas here I only keep the 
+namespace name.
 
-> You can use the rate_limit_us as a potential guide for how much bandwidth sugov
-> needs if moving it to another class really doesn't make sense instead?
+I can send a V2 using netns_* helpers if you prefer, though. Maybe I can 
+also either move the netns_obj definition in test_progs.h or create a 
+'get_nsname()' helper ?
 
-Or maybe try to estimate/measure how much utilization sugov threads are
-effectively using while running some kind of workload of interest and
-use that as an indication for DL runtime/period.
+>> +	SYS(fail, "ip -n %s link add %s type veth peer name %s netns %s",
+>> +	    ns1, VETH_NAME, VETH_NAME, ns2);
+>> +
+>> +	/* NOTICE: XDP require VLAN header inside packet payload
+>> +	 *  - Thus, disable VLAN offloading driver features
+>> +	 */
+>> +	SYS(fail, "ip netns exec %s ethtool -K %s rxvlan off txvlan off", ns1, VETH_NAME);
+>> +	SYS(fail, "ip netns exec %s ethtool -K %s rxvlan off txvlan off", ns2, VETH_NAME);
+>> +
+>> +	/* NS1 configuration */
+>> +	SYS(fail, "ip -n %s addr add %s/24 dev %s", ns1, NS1_IP_ADDR, VETH_NAME);
+>> +	SYS(fail, "ip -n %s link set %s up", ns1, VETH_NAME);
+>> +
+>> +	/* NS2 configuration */
+>> +	SYS(fail, "ip -n %s link add link %s name %s.%d type vlan id %d",
+>> +	    ns2, VETH_NAME, VETH_NAME, VLAN_ID, VLAN_ID);
+>> +	SYS(fail, "ip -n %s addr add %s/24 dev %s.%d", ns2, NS2_IP_ADDR, VETH_NAME, VLAN_ID);
+>> +	SYS(fail, "ip -n %s link set %s up", ns2, VETH_NAME);
+>> +	SYS(fail, "ip -n %s link set %s.%d up", ns2, VETH_NAME, VLAN_ID);
+>> +
+>> +	/* At this point ping should fail because VLAN tags are only used by NS2 */
+>> +	return !SYS_NOFAIL("ip netns exec %s ping -W 1 -c1 %s", ns2, NS1_IP_ADDR);
+>> +
+>> +fail:
+>> +	return -1;
+>> +}
+>> +
+>> +static void cleanup_network(const char *ns1, const char *ns2)
+>> +{
+>> +	SYS_NOFAIL("ip netns del %s", ns1);
+>> +	SYS_NOFAIL("ip netns del %s", ns2);
+>> +}
+>> +
+>> +static void xdp_vlan(struct bpf_program *xdp, struct bpf_program *tc, u32 flags)
+>> +{
+>> +	LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_EGRESS);
+>> +	LIBBPF_OPTS(bpf_tc_opts, tc_opts, .handle = 1, .priority = 1);
+>> +	char ns1[NS_MAX_SIZE] = NS1_NAME;
+>> +	char ns2[NS_MAX_SIZE] = NS2_NAME;
+>> +	struct nstoken *nstoken = NULL;
+>> +	int interface;
+>> +	int ret;
+>> +
+>> +	if (!ASSERT_OK(setup_network(ns1, ns2), "setup network"))
+>> +		goto cleanup;
+>> +
+>> +	nstoken = open_netns(ns1);
+>> +	if (!ASSERT_OK_PTR(nstoken, "open NS1"))
+>> +		goto cleanup;
+>> +
+>> +	interface = if_nametoindex(VETH_NAME);
+>> +	if (!ASSERT_NEQ(interface, 0, "get interface index"))
+>> +		goto cleanup;
+>> +
+>> +	ret = bpf_xdp_attach(interface, bpf_program__fd(xdp), flags, NULL);
+>> +	if (!ASSERT_OK(ret, "attach xdp_vlan_change"))
+>> +		goto cleanup;
+>> +
+>> +	tc_hook.ifindex = interface;
+>> +	ret = bpf_tc_hook_create(&tc_hook);
+>> +	if (!ASSERT_OK(ret, "bpf_tc_hook_create"))
+>> +		goto detach_xdp;
+>> +
+>> +	/* Now we'll use BPF programs to pop/push the VLAN tags */
+>> +	tc_opts.prog_fd = bpf_program__fd(tc);
+>> +	ret = bpf_tc_attach(&tc_hook, &tc_opts);
+>> +	if (!ASSERT_OK(ret, "bpf_tc_attach"))
+>> +		goto detach_xdp;
+>> +
+>> +	close_netns(nstoken);
+>> +	nstoken = NULL;
+>> +
+>> +	/* Now the namespaces can reach each-other, test with pings */
+>> +	SYS(detach_tc, "ip netns exec %s ping -i 0.2 -W 2 -c 2 %s > /dev/null", ns1, NS2_IP_ADDR);
+>> +	SYS(detach_tc, "ip netns exec %s ping -i 0.2 -W 2 -c 2 %s > /dev/null", ns2, NS1_IP_ADDR);
+>> +
+>> +
+>> +detach_tc:
+>> +	bpf_tc_detach(&tc_hook, &tc_opts);
+>> +detach_xdp:
+>> +	bpf_xdp_detach(interface, flags, NULL);
+>> +cleanup:
+>> +	close_netns(nstoken);
+>> +	cleanup_network(ns1, ns2);
+>> +}
+>> +
+>> +/* First test: Remove VLAN by setting VLAN ID 0, using "xdp_vlan_change"
+>> + * egress use TC to add back VLAN tag 4011
+>> + */
+>> +void test_xdp_vlan_change(void)
+>> +{
+>> +	struct test_xdp_vlan *skel;
+>> +
+>> +	skel = test_xdp_vlan__open_and_load();
+>> +	if (!ASSERT_OK_PTR(skel, "xdp_vlan__open_and_load"))
+>> +		return;
+>> +
+> 
+> [..]
+> 
+>> +	if (test__start_subtest("0"))
+>> +		xdp_vlan(skel->progs.xdp_vlan_change, skel->progs.tc_vlan_push, 0);
+> 
+> Does the original test also test with flags=0? What is the purpose?
 
+The original test allows testing the 'xdp', 'xdpgeneric' and 'xdpdrv' 
+modes. My understanding is that flags=0 is the 'xdp' equivalent. IIRC, 
+there are fallbacks that will set these flags to SKB or DRV mode at some 
+point but, since it's allowed by the bpf_xdp_attach API, I thought it 
+was worth testing. This way, if the fallbacks stop working at some 
+point, we'll be noticed.
+
+Best regards,
+Bastien
 
