@@ -1,73 +1,52 @@
-Return-Path: <linux-kernel+bounces-528318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FB3A41630
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:26:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86391A4162B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BF316C7E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C94C23AB946
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B2D23F262;
-	Mon, 24 Feb 2025 07:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8211EA7E6;
+	Mon, 24 Feb 2025 07:23:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LKiwQORs"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="fBl8Jj6L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334A24414;
-	Mon, 24 Feb 2025 07:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750984414;
+	Mon, 24 Feb 2025 07:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740381953; cv=none; b=LyYv+xkMr8WMN9U3ar8GhQptrK2K2QA2SVzQGtTKj6d1pC1U2K/jwz5VUYvn151M8bStUhB9kUAg0Z2QL0pAds+OmoJUjd/h5N/VTJNo/IwD2uhZXpxvVshFaTopjK0feaI663KdYlufNiFhi1yiTdCryW2kTFSOvuhR2tRB2zQ=
+	t=1740381792; cv=none; b=Ef4O1N4MyHiBGzKL0gQrHHOhmhqxH2F7zHviTHSIMBM65+lBnqn68ex4uUWQC+rcw9CPBm2YlqlYCDKry6ajNGeDaZ8FqU6g6Dd2GOLvozarR5DaJHzIuNZp+nXrQsmCvlXAPsWxUfHcISpojIe5QXxh0nOFTTK4OxAw0ARRPZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740381953; c=relaxed/simple;
-	bh=V5PrS03/1N+lOBDHmbvokVfJz8kHXIKEr5Xg2RwNgD8=;
+	s=arc-20240116; t=1740381792; c=relaxed/simple;
+	bh=+EWaupg0d1Pte3v7FOuZSIlbDDH5RojNM3LDm1F5cMU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5EU/TM95UY/0fUL91OY6n2yCe9JprkXaA8rtzY9F3CT2TGrUvhUlS3cvYunYW48iylcM0/tXAcrs4lDD8vJHiFbUyidI5NuszZC0GOavspWn2ivi62B5LZMHwrMgcRO2UYJuPbquFIy/z0gB0XiCLjbkFeVcP2B3MFmzffrL0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LKiwQORs; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740381952; x=1771917952;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=V5PrS03/1N+lOBDHmbvokVfJz8kHXIKEr5Xg2RwNgD8=;
-  b=LKiwQORss2MSk4AZEYnPTzI4OUCb4kvZ/DZpITUYmfj/7jmkMfZ0xeMk
-   ToqNnozDt6dU8XPxblJS3DdDVPXHifBMyHwHeUTZbuSGuvBOne5TYOmXg
-   Sv0pyNjR+Nz8ea+I67fHCTwSZtk80EyGTjypgvXpsZAFuLKNXPKnb7gwG
-   UsfFc4eTCUIxYi7a3h+tgubtZUo1GeMHvaK+3h/VVrj0JReQSqO5NET/3
-   9sHusVQfaA72rmn5EJWaEfC920Apvk8pyoMyQoIJAECYgza9Bmr6Ok9ZD
-   cwD7qGRuSZYIQCvAhFh9tgIIqz6ADphfrzmvaUk7cwtzT4ef0ltRZ1W53
-   Q==;
-X-CSE-ConnectionGUID: iwrXaTj4Qhasgqb99FEbgA==
-X-CSE-MsgGUID: zKSpuJSlQMyhshEhQNBuOQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="43955173"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="43955173"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:25:51 -0800
-X-CSE-ConnectionGUID: 70pRwv/LTdC4zptT1ieOBg==
-X-CSE-MsgGUID: 4LiYCxXWQS+sdNNNNe8ixA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="115817879"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:25:49 -0800
-Date: Mon, 24 Feb 2025 08:22:05 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: ethernet: ti: am65-cpsw: select PAGE_POOL
-Message-ID: <Z7weHW5bJnYpiAEN@mev-dev.igk.intel.com>
-References: <20250224-net-am654-nuss-kconfig-v2-1-c124f4915c92@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WuJ8K//qEkcMjeYyp5uONaczlX0vHuxaYlXVey9F6F1lm45scIEb9BXl8RMJDQPcLVMDjVImJeZeFWgqvD7rnWmJ7XMhYmJs48BTkbygk2IU49jhLSXksVS1+nb4A218pp9ZvuMQDlA9OZSo7LGzT8yygu3i4KKXpNjE9/INpTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=fBl8Jj6L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A97D8C4CED6;
+	Mon, 24 Feb 2025 07:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740381792;
+	bh=+EWaupg0d1Pte3v7FOuZSIlbDDH5RojNM3LDm1F5cMU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fBl8Jj6LUFwHqvw6djbWYuWfXWPw3yQ90Su9J2HvUOINU7Ao6JzFW58lfFB+94NO9
+	 3KUN5hUPiwZobdKfVBKWZvihnfSpJjOAnBGRWc5HU7ykQKiBIQ08mHcDsm6f4EhLYQ
+	 VPcfHxOrXgHnhQVL99+Gfa5taiGDWDAYcqtMvBkQ=
+Date: Mon, 24 Feb 2025 08:23:09 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v4 2/2] tty: Change order of ttynull to be linked sooner
+ if enabled as a console.
+Message-ID: <2025022421-refract-defame-94db@gregkh>
+References: <20250223204456.1913392-1-adamsimonelli@gmail.com>
+ <20250223204456.1913392-3-adamsimonelli@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,46 +55,77 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250224-net-am654-nuss-kconfig-v2-1-c124f4915c92@pengutronix.de>
+In-Reply-To: <20250223204456.1913392-3-adamsimonelli@gmail.com>
 
-On Mon, Feb 24, 2025 at 06:17:16AM +0100, Sascha Hauer wrote:
-> am65-cpsw uses page_pool_dev_alloc_pages(), thus needs PAGE_POOL
-> selected to avoid linker errors. This is missing since the driver
-> started to use page_pool helpers in 8acacc40f733 ("net: ethernet:
-> ti: am65-cpsw: Add minimal XDP support")
+On Sun, Feb 23, 2025 at 03:44:56PM -0500, adamsimonelli@gmail.com wrote:
+> From: Adam Simonelli <adamsimonelli@gmail.com>
 > 
-> Fixes: 8acacc40f733 ("net: ethernet: ti: am65-cpsw: Add minimal XDP support")
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> If CONFIG_NULL_TTY_CONSOLE is enabled, and CONFIG_VT is disabled, ttynull
+> will become the default primary console device, based on the link order.
+> 
+> Many distributions ship with CONFIG_VT enabled. On tested desktop hardware
+> if CONFIG_VT is disabled, the default console device falls back to
+> /dev/ttyS0 instead of /dev/tty.
+> 
+> This could cause issues in user space, and hardware problems:
+> 
+> 1. The user space issues include the case where  /dev/ttyS0 is
+> disconnected, and the TCGETS ioctl, which some user space libraries use
+> as a probe to determine if a file is a tty, is called on /dev/console and
+> fails. Programs that call isatty() on /dev/console and get an incorrect
+> false value may skip expected logging to /dev/console
+> 
+> 2. The hardware issues include the case if a user has a science instrument
+> or other device connected to the /dev/ttyS0 port, and they were to upgrade
+> to a kernel that is disabling the CONFIG_VT option, kernel logs will then be
+> sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> command line manually.
+> 
+> The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+> maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+> is not dependant on hardware configuration by default, and avoid
+> unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> port.
+> 
+> Signed-off-by: Adam Simonelli <adamsimonelli@gmail.com>
 > ---
-> Changes in v2:
-> - Add missing Fixes: tag
-> - Link to v1: https://lore.kernel.org/r/20250220-net-am654-nuss-kconfig-v1-1-acc813b769de@pengutronix.de
-> ---
->  drivers/net/ethernet/ti/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/tty/Makefile | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
 > 
-> diff --git a/drivers/net/ethernet/ti/Kconfig b/drivers/net/ethernet/ti/Kconfig
-> index 0d5a862cd78a6..3a13d60a947a8 100644
-> --- a/drivers/net/ethernet/ti/Kconfig
-> +++ b/drivers/net/ethernet/ti/Kconfig
-> @@ -99,6 +99,7 @@ config TI_K3_AM65_CPSW_NUSS
->  	select NET_DEVLINK
->  	select TI_DAVINCI_MDIO
->  	select PHYLINK
-> +	select PAGE_POOL
->  	select TI_K3_CPPI_DESC_POOL
->  	imply PHY_TI_GMII_SEL
->  	depends on TI_K3_AM65_CPTS || !TI_K3_AM65_CPTS
-> 
-> ---
-> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
-> change-id: 20250220-net-am654-nuss-kconfig-ab8e4f4e318b
-> 
-> Best regards,
-> -- 
-> Sascha Hauer <s.hauer@pengutronix.de>
+> diff --git a/drivers/tty/Makefile b/drivers/tty/Makefile
+> index 07aca5184a55..1a1051ecb1af 100644
+> --- a/drivers/tty/Makefile
+> +++ b/drivers/tty/Makefile
+> @@ -11,6 +11,10 @@ obj-$(CONFIG_N_HDLC)		+= n_hdlc.o
+>  obj-$(CONFIG_N_GSM)		+= n_gsm.o
+>  
+>  obj-y				+= vt/
+> +#If ttynull is configured to be a console by default, ensure that it is linked
+> +#earlier before a real one is selected.
+> +obj-$(CONFIG_NULL_TTY_CONSOLE)	+= ttynull.o
+> +
+>  obj-$(CONFIG_HVC_DRIVER)	+= hvc/
+>  obj-y				+= serial/
+>  obj-$(CONFIG_SERIAL_DEV_BUS)	+= serdev/
+> @@ -20,7 +24,13 @@ obj-$(CONFIG_AMIGA_BUILTIN_SERIAL) += amiserial.o
+>  obj-$(CONFIG_MOXA_INTELLIO)	+= moxa.o
+>  obj-$(CONFIG_MOXA_SMARTIO)	+= mxser.o
+>  obj-$(CONFIG_NOZOMI)		+= nozomi.o
+> +
+> +#If ttynull is enabled, but not as a boot console, it is linked and used later
+> +#after the real ones.
+> +ifneq ($(CONFIG_NULL_TTY_CONSOLE),y)
+>  obj-$(CONFIG_NULL_TTY)	        += ttynull.o
+> +endif
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Nit, a " " needs to be after the "#" character, right?
 
+And ick, this is going to be tricky, changing the link order depending
+on the configuration option setting?  This feels wrong, and messy, and
+very fragile.
 
+thanks,
+
+greg k-h
 
