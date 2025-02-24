@@ -1,412 +1,135 @@
-Return-Path: <linux-kernel+bounces-528115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53924A413B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:52:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12675A413C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B7CF1891D5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:52:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BB6D7A4CD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED6E1A23B1;
-	Mon, 24 Feb 2025 02:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEF71A5B93;
+	Mon, 24 Feb 2025 02:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Lk/uqCJj";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nC37crRK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rTreylf5";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="UtAzLv+z"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0K/aLdkS"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B741624EB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11807199E89;
+	Mon, 24 Feb 2025 02:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740365528; cv=none; b=iabcji4zTRCC4pNLjKsXwTz2ZkAuts/JOXP5R0ncIWHbaLrKQKBSCB4XJ7ApmKreOTH+aspzbtfoTrrK4/P3rbf5cBIWEq/HvfiYjBUYVEerNpzAF4mDmwQJ3TfYIMXLyE0R4eSiiGUClRa5Is0w2q1viRc7ElsWUzX403vdXZ0=
+	t=1740365654; cv=none; b=efsTtLoClwxOr1UBAblnzJJgAvQwIfaQZMDTeQfe+LmtdZRilAYtLWW0UQr4KgDs9xBrkuJFRGVyaFRyPYAyNZFPuM5IOPJsFrEqsPGFcAZ/7cglzN29rN7AhRXX0LuW44U8h0RJUzPNPmZQKhCyxuopimNBPvDEBFqzFPmFrM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740365528; c=relaxed/simple;
-	bh=jXWor17FKnDDhH0VmC5rCoae7iirHq7pFepPZzbda1c=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Rg0FkOgA9SglDLwCNVUl4nx4G7Y4l3tg2DcN2WBxLnqGoMwe/pk1xKHKkEXmGBi76LDPE17aZGIHJhDp2STXaLBCvJI1bhd/O+rXv+0cG7kVCIlHW4CgNAWaNrAWqMAavbP2FytYR9wwIrLDWNEJsXnSz3i43aKTf4fUa/E02cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Lk/uqCJj; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nC37crRK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rTreylf5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=UtAzLv+z; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D85891F383;
-	Mon, 24 Feb 2025 02:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740365524; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF0P8a6Hwqb95loG5irVcapgwjZVYtE4gO0QxGgiXKQ=;
-	b=Lk/uqCJjdUedvIhGrbOAhb8qtZ3FfBPtE8qHepyDIlrpFbh/yZ01eiQxtE0rKc+jEleib+
-	LA7V135lQ2hI1sT35cd6C3lABAgoCYLZb96H1FpDNNX2nvJtJgCgJpI5xIH447L/MZoPho
-	oabDOojCcr2vu9Tk3Y7Rs1LPjTFnKJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740365524;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF0P8a6Hwqb95loG5irVcapgwjZVYtE4gO0QxGgiXKQ=;
-	b=nC37crRKvzCDWHFvhLEPngNSUcjS8veQogPaXTK4/xMSfgMn3Va7tsnLP8TJXuh4XVdfPZ
-	i1xGq9X/ZNMeB0CA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740365522; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF0P8a6Hwqb95loG5irVcapgwjZVYtE4gO0QxGgiXKQ=;
-	b=rTreylf5qRbHpxi0Ie6+jW+DLuU1eaXKk5q3GZlOrPiM3ts2gDZb0b9UfdKoQXBibzTIDG
-	HDaQaoxaLkmtsGXUH0wwAenyFfVlNFX3oCh/ZbU6+eyzXy2fRx4JLaBHj3XmV77HN7JQJe
-	YeRLrwciELmH3FLeSg4sT4LLL8Hkg5k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740365522;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rF0P8a6Hwqb95loG5irVcapgwjZVYtE4gO0QxGgiXKQ=;
-	b=UtAzLv+zO/zhrpZzsvVcXozs26QN4HAyaaOEqxBUY+hU+6nmIeKpoqzqqmU0GYWFXZx45B
-	+nK2BFE0IZUk3mDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2D28413332;
-	Mon, 24 Feb 2025 02:51:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lp4zNMneu2eXfAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 02:51:53 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1740365654; c=relaxed/simple;
+	bh=eyemEMNGosa3n/OdORh+QR5/lkWa2v+ZSdITVPlwPk0=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=akwahEJ3rJZJSqyz9pJ2O3JwnGgi3ihSfQV3y3zHSSRjMyGaqejvZ5HDK8Zh0YBZdBkOLjvD01TmOpGH/bnDnc3wWNipoqtcZMSI4WZJgmBYeL2kiqqPOVboFkAOCpOSfrl2YVXTHxcb7hz3N3FdQasG1B2O+zeV8qQ46FYE2UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0K/aLdkS; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1740365653; x=1771901653;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=eyemEMNGosa3n/OdORh+QR5/lkWa2v+ZSdITVPlwPk0=;
+  b=0K/aLdkSCs2gkdPXebs1dkViAQ1+r5Sf0VVl25EZv8D3dvHOisKAHMBA
+   wqB+0jwLK/2n2z6mymD69LkOv1VbfqN27yRUVrU1I2FTImGjE3Lbv+qHf
+   DJKYyFsn3Kg/DPHUzPHdVfrf8YzntqdjdajfvpwmddOzLNs0vSYzjDjRk
+   rSa5mhk4WRJ6mFwLIKHiXIet1nYCZIdgFOQnzZHslIsBxHIVTZ26Av/uD
+   BNVS2IwkkuTe/pH8tkFAMrG0TW2CterkjAM+aPYCa42ZaO+ngfy/s4HG6
+   7jCCGgqfpHJksnrvGSPxFrSp7IFJYm5/JM0cal09h1uQ/uyBt4tGRCcQC
+   A==;
+X-CSE-ConnectionGUID: PEkXTKBESfqUq+t0U30eiQ==
+X-CSE-MsgGUID: 9NPXPyaESMmg2sWeIQg41A==
+X-IronPort-AV: E=Sophos;i="6.13,309,1732604400"; 
+   d="scan'208";a="37623869"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Feb 2025 19:53:03 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sun, 23 Feb 2025 19:52:34 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Sun, 23 Feb 2025 19:52:30 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Subject: [PATCH v4 0/2] dt-bindings: mmc: Fix the mmc-slot and Convert
+ atmel,hsmci to json schema
+Date: Mon, 24 Feb 2025 08:22:26 +0530
+Message-ID: <20250224-mmc-slot-v4-0-231620a31e88@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Chuck Lever" <chuck.lever@oracle.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Miklos Szeredi" <miklos@szeredi.hu>, "Xiubo Li" <xiubli@redhat.com>,
- "Ilya Dryomov" <idryomov@gmail.com>, "Richard Weinberger" <richard@nod.at>,
- "Anton Ivanov" <anton.ivanov@cambridgegreys.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Trond Myklebust" <trondmy@kernel.org>, "Anna Schumaker" <anna@kernel.org>,
- "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
- "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
- "Sergey Senozhatsky" <senozhatsky@chromium.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
- linux-um@lists.infradead.org, ceph-devel@vger.kernel.org,
- netfs@lists.linux.dev
-Subject: Re: [PATCH 6/6] VFS: Change vfs_mkdir() to return the dentry.
-In-reply-to: <01a3f184-940c-494e-ade2-775e3441fc4e@oracle.com>
-References: <>, <01a3f184-940c-494e-ade2-775e3441fc4e@oracle.com>
-Date: Mon, 24 Feb 2025 13:51:50 +1100
-Message-id: <174036551056.74271.9438990163654268476@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,szeredi.hu,redhat.com,gmail.com,nod.at,cambridgegreys.com,sipsolutions.net,oracle.com,talpey.com,chromium.org,vger.kernel.org,lists.infradead.org,lists.linux.dev];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,noble.neil.brown.name:mid]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOreu2cC/23MTQqDMBCG4atI1k2ZTBKMXfUepYuYnxpoGklEW
+ sS7V4WCFJffMM87keJycIVcqolkN4YS0msZ4lQR0+nXw9Fgl00QUDBkDY3R0PJMAwVZC6Uaq53
+ mZHnvs/PhvaVu92V3oQwpf7byyNbrQWRklFHrTS1qzS337TUGk5PpQn82KZI1NOIPS0CQO4wr1
+ txIz8GhbY4w32GGO8wpUGw9KoVQg4B/PM/zFyRl03geAQAA
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+	<khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, "Martin
+ Blumenstingl" <martin.blumenstingl@googlemail.com>
+CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740365548; l=1684;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=eyemEMNGosa3n/OdORh+QR5/lkWa2v+ZSdITVPlwPk0=;
+ b=s5k2Y8EORIHPvltG/Ih2kxVcEz9Cv6lHPofX+nfuc0ktRhQu4EsQNp90vxo9mlS4ZaVtgsCWm
+ qCIrJ+jwNReDZsOSt+mQjvruxeCAQC3DiLunjhq4vmkE8AyyuWAZgzp
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Sat, 22 Feb 2025, Chuck Lever wrote:
-> On 2/20/25 6:36 PM, NeilBrown wrote:
-...
-> > +		dchild =3D vfs_mkdir(&nop_mnt_idmap, dirp, dchild, iap->ia_mode);
-> > +		if (IS_ERR(dchild)) {
-> > +			host_err =3D PTR_ERR(dchild);
-> > +		} else if (d_is_negative(dchild)) {
-> > +			err =3D nfserr_serverfault;
-> > +			goto out;
-> > +		} else if (unlikely(dchild !=3D resfhp->fh_dentry)) {
-> >  			dput(resfhp->fh_dentry);
-> > -			resfhp->fh_dentry =3D dget(d);
-> > -			err =3D fh_update(resfhp);
->=20
-> Hi Neil, why is this fh_update() call no longer necessary?
->=20
+This patch series modifies the property status of "compatible"
+(required/optional).
 
-I tried to explain that in the commit message:
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+Changes in v4:
+- Rewrapped the commit message with textwidth=75
+- Allow slot pattern property to match only 0 to 2 as per reg.
+- Add Reviewed-by tags from Rob.
+- Link to v3: https://lore.kernel.org/r/20250212-mmc-slot-v3-0-2bf288207040@microchip.com
 
-                                        I removed the fh_update()
-      call as that is not needed and out-of-place.  A subsequent
-      nfsd_create_setattr() call will call fh_update() when needed.
+Changes in v3:
+- Add compatible as required property in meson binding.
+- Include the dependent patch that converts txt to yaml for clarity in patch series.
+- Refer the mmc-slot binding in the hsmci binding.
+- Explain "why" the property is made optional in commit description.
+- Link to v2: https://lore.kernel.org/r/20250205-mmc-slot-v2-1-da3c5f30e2d9@microchip.com
 
-I don't think the fh_update() was needed even when first added in=20
-Commit 3819bb0d79f5 ("nfsd: vfs_mkdir() might succeed leaving dentry negative=
- unhashed")
+Changes in v2:
+- Instead of moving the compatible string to the other binding, just make it
+  optional (remove from required list).
+- Link to v1: https://lore.kernel.org/r/20241219-mmc-slot-v1-1-dfc747a3d3fb@microchip.com
 
-as there was already an fh_update() call later in the function.
+---
+Dharma Balasubiramani (2):
+      dt-bindings: mmc: mmc-slot: Make compatible property optional
+      dt-bindings: mmc: atmel,hsmci: Convert to json schema
 
-Thanks,
-NeilBrown
+ .../bindings/mmc/amlogic,meson-mx-sdio.yaml        |   3 +
+ .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 106 +++++++++++++++++++++
+ .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
+ .../devicetree/bindings/mmc/mmc-slot.yaml          |   1 -
+ 4 files changed, 109 insertions(+), 74 deletions(-)
+---
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+change-id: 20241219-mmc-slot-0574889daea3
 
-
-
->=20
-> > -			dput(dchild);
-> > -			dchild =3D d;
-> > -			if (err)
-> > -				goto out;
-> > +			resfhp->fh_dentry =3D dget(dchild);
-> >  		}
-> >  		break;
-> >  	case S_IFCHR:
-> > @@ -1530,7 +1517,8 @@ nfsd_create_locked(struct svc_rqst *rqstp, struct s=
-vc_fh *fhp,
-> >  	err =3D nfsd_create_setattr(rqstp, fhp, resfhp, attrs);
-> > =20
-> >  out:
-> > -	dput(dchild);
-> > +	if (!IS_ERR(dchild))
-> > +		dput(dchild);
-> >  	return err;
-> > =20
-> >  out_nfserr:
-> > diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-> > index 21c3aaf7b274..fe493f3ed6b6 100644
-> > --- a/fs/overlayfs/dir.c
-> > +++ b/fs/overlayfs/dir.c
-> > @@ -138,37 +138,6 @@ int ovl_cleanup_and_whiteout(struct ovl_fs *ofs, str=
-uct inode *dir,
-> >  	goto out;
-> >  }
-> > =20
-> > -int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
-> > -		   struct dentry **newdentry, umode_t mode)
-> > -{
-> > -	int err;
-> > -	struct dentry *d, *dentry =3D *newdentry;
-> > -
-> > -	err =3D ovl_do_mkdir(ofs, dir, dentry, mode);
-> > -	if (err)
-> > -		return err;
-> > -
-> > -	if (likely(!d_unhashed(dentry)))
-> > -		return 0;
-> > -
-> > -	/*
-> > -	 * vfs_mkdir() may succeed and leave the dentry passed
-> > -	 * to it unhashed and negative. If that happens, try to
-> > -	 * lookup a new hashed and positive dentry.
-> > -	 */
-> > -	d =3D ovl_lookup_upper(ofs, dentry->d_name.name, dentry->d_parent,
-> > -			     dentry->d_name.len);
-> > -	if (IS_ERR(d)) {
-> > -		pr_warn("failed lookup after mkdir (%pd2, err=3D%i).\n",
-> > -			dentry, err);
-> > -		return PTR_ERR(d);
-> > -	}
-> > -	dput(dentry);
-> > -	*newdentry =3D d;
-> > -
-> > -	return 0;
-> > -}
-> > -
-> >  struct dentry *ovl_create_real(struct ovl_fs *ofs, struct inode *dir,
-> >  			       struct dentry *newdentry, struct ovl_cattr *attr)
-> >  {
-> > @@ -191,7 +160,8 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, st=
-ruct inode *dir,
-> > =20
-> >  		case S_IFDIR:
-> >  			/* mkdir is special... */
-> > -			err =3D  ovl_mkdir_real(ofs, dir, &newdentry, attr->mode);
-> > +			newdentry =3D  ovl_do_mkdir(ofs, dir, newdentry, attr->mode);
-> > +			err =3D PTR_ERR_OR_ZERO(newdentry);
-> >  			break;
-> > =20
-> >  		case S_IFCHR:
-> > @@ -219,7 +189,8 @@ struct dentry *ovl_create_real(struct ovl_fs *ofs, st=
-ruct inode *dir,
-> >  	}
-> >  out:
-> >  	if (err) {
-> > -		dput(newdentry);
-> > +		if (!IS_ERR(newdentry))
-> > +			dput(newdentry);
-> >  		return ERR_PTR(err);
-> >  	}
-> >  	return newdentry;
-> > diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-> > index 0021e2025020..6f2f8f4cfbbc 100644
-> > --- a/fs/overlayfs/overlayfs.h
-> > +++ b/fs/overlayfs/overlayfs.h
-> > @@ -241,13 +241,14 @@ static inline int ovl_do_create(struct ovl_fs *ofs,
-> >  	return err;
-> >  }
-> > =20
-> > -static inline int ovl_do_mkdir(struct ovl_fs *ofs,
-> > -			       struct inode *dir, struct dentry *dentry,
-> > -			       umode_t mode)
-> > +static inline struct dentry *ovl_do_mkdir(struct ovl_fs *ofs,
-> > +					  struct inode *dir,
-> > +					  struct dentry *dentry,
-> > +					  umode_t mode)
-> >  {
-> > -	int err =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
-> > -	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, err);
-> > -	return err;
-> > +	dentry =3D vfs_mkdir(ovl_upper_mnt_idmap(ofs), dir, dentry, mode);
-> > +	pr_debug("mkdir(%pd2, 0%o) =3D %i\n", dentry, mode, PTR_ERR_OR_ZERO(den=
-try));
-> > +	return dentry;
-> >  }
-> > =20
-> >  static inline int ovl_do_mknod(struct ovl_fs *ofs,
-> > @@ -838,8 +839,6 @@ struct ovl_cattr {
-> > =20
-> >  #define OVL_CATTR(m) (&(struct ovl_cattr) { .mode =3D (m) })
-> > =20
-> > -int ovl_mkdir_real(struct ovl_fs *ofs, struct inode *dir,
-> > -		   struct dentry **newdentry, umode_t mode);
-> >  struct dentry *ovl_create_real(struct ovl_fs *ofs,
-> >  			       struct inode *dir, struct dentry *newdentry,
-> >  			       struct ovl_cattr *attr);
-> > diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-> > index 61e21c3129e8..b63474d1b064 100644
-> > --- a/fs/overlayfs/super.c
-> > +++ b/fs/overlayfs/super.c
-> > @@ -327,9 +327,10 @@ static struct dentry *ovl_workdir_create(struct ovl_=
-fs *ofs,
-> >  			goto retry;
-> >  		}
-> > =20
-> > -		err =3D ovl_mkdir_real(ofs, dir, &work, attr.ia_mode);
-> > -		if (err)
-> > -			goto out_dput;
-> > +		work =3D ovl_do_mkdir(ofs, dir, work, attr.ia_mode);
-> > +		err =3D PTR_ERR(work);
-> > +		if (IS_ERR(work))
-> > +			goto out_err;
-> > =20
-> >  		/* Weird filesystem returning with hashed negative (kernfs)? */
-> >  		err =3D -EINVAL;
-> > diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
-> > index fe29acef5872..8554aa5a1059 100644
-> > --- a/fs/smb/server/vfs.c
-> > +++ b/fs/smb/server/vfs.c
-> > @@ -206,8 +206,8 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const ch=
-ar *name, umode_t mode)
-> >  {
-> >  	struct mnt_idmap *idmap;
-> >  	struct path path;
-> > -	struct dentry *dentry;
-> > -	int err;
-> > +	struct dentry *dentry, *d;
-> > +	int err =3D 0;
-> > =20
-> >  	dentry =3D ksmbd_vfs_kern_path_create(work, name,
-> >  					    LOOKUP_NO_SYMLINKS | LOOKUP_DIRECTORY,
-> > @@ -222,27 +222,15 @@ int ksmbd_vfs_mkdir(struct ksmbd_work *work, const =
-char *name, umode_t mode)
-> > =20
-> >  	idmap =3D mnt_idmap(path.mnt);
-> >  	mode |=3D S_IFDIR;
-> > -	err =3D vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-> > -	if (!err && d_unhashed(dentry)) {
-> > -		struct dentry *d;
-> > -
-> > -		d =3D lookup_one(idmap, dentry->d_name.name, dentry->d_parent,
-> > -			       dentry->d_name.len);
-> > -		if (IS_ERR(d)) {
-> > -			err =3D PTR_ERR(d);
-> > -			goto out_err;
-> > -		}
-> > -		if (unlikely(d_is_negative(d))) {
-> > -			dput(d);
-> > -			err =3D -ENOENT;
-> > -			goto out_err;
-> > -		}
-> > -
-> > -		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(d));
-> > -		dput(d);
-> > -	}
-> > +	d =3D dentry;
-> > +	dentry =3D vfs_mkdir(idmap, d_inode(path.dentry), dentry, mode);
-> > +	if (IS_ERR(dentry))
-> > +		err =3D PTR_ERR(dentry);
-> > +	else if (d_is_negative(dentry))
-> > +		err =3D -ENOENT;
-> > +	if (!err && dentry !=3D d)
-> > +		ksmbd_vfs_inherit_owner(work, d_inode(path.dentry), d_inode(dentry));
-> > =20
-> > -out_err:
-> >  	done_path_create(&path, dentry);
-> >  	if (err)
-> >  		pr_err("mkdir(%s): creation failed (err:%d)\n", name, err);
-> > diff --git a/fs/xfs/scrub/orphanage.c b/fs/xfs/scrub/orphanage.c
-> > index c287c755f2c5..3537f3cca6d5 100644
-> > --- a/fs/xfs/scrub/orphanage.c
-> > +++ b/fs/xfs/scrub/orphanage.c
-> > @@ -167,10 +167,11 @@ xrep_orphanage_create(
-> >  	 * directory to control access to a file we put in here.
-> >  	 */
-> >  	if (d_really_is_negative(orphanage_dentry)) {
-> > -		error =3D vfs_mkdir(&nop_mnt_idmap, root_inode, orphanage_dentry,
-> > -				0750);
-> > -		if (error)
-> > -			goto out_dput_orphanage;
-> > +		orphanage_dentry =3D vfs_mkdir(&nop_mnt_idmap, root_inode,
-> > +					     orphanage_dentry, 0750);
-> > +		error =3D PTR_ERR(orphanage_dentry);
-> > +		if (IS_ERR(orphanage_dentry))
-> > +			goto out_unlock_root;
-> >  	}
-> > =20
-> >  	/* Not a directory? Bail out. */
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 8f4fbecd40fc..eaad8e31c0d4 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -1971,8 +1971,8 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
-> >   */
-> >  int vfs_create(struct mnt_idmap *, struct inode *,
-> >  	       struct dentry *, umode_t, bool);
-> > -int vfs_mkdir(struct mnt_idmap *, struct inode *,
-> > -	      struct dentry *, umode_t);
-> > +struct dentry *vfs_mkdir(struct mnt_idmap *, struct inode *,
-> > +			 struct dentry *, umode_t);
-> >  int vfs_mknod(struct mnt_idmap *, struct inode *, struct dentry *,
-> >                umode_t, dev_t);
-> >  int vfs_symlink(struct mnt_idmap *, struct inode *,
->=20
->=20
-> --=20
-> Chuck Lever
->=20
+Best regards,
+-- 
+Dharma Balasubiramani <dharma.b@microchip.com>
 
 
