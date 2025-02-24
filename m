@@ -1,294 +1,192 @@
-Return-Path: <linux-kernel+bounces-530063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49254A42E4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2FE2A42E4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E871751AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:52:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC441752F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D186A25C6E1;
-	Mon, 24 Feb 2025 20:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE1C25D521;
+	Mon, 24 Feb 2025 20:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="q/KaE+t0"
-Received: from mx-rz-2.rrze.uni-erlangen.de (mx-rz-2.rrze.uni-erlangen.de [131.188.11.21])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="KF1zgztu";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SbwUAOAp"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6B91A5B8B;
-	Mon, 24 Feb 2025 20:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552193B2A0;
+	Mon, 24 Feb 2025 20:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430349; cv=none; b=eIPgud9A+IijrbIIO2bUx2hL+ZeQEGPubTpnsv5XpTzweYrBi1h6MqMHBkp/BxRLBw2R0nmaT2Gd4vlVpvh0H+iIxavLzpRQN4JGfiHsbEoHbe2r09prK9kWm+doL3ncBdA1IvOP2mhw3c7jO+bDHvN1YhxBn0a8FOu8AKfe/nc=
+	t=1740430363; cv=none; b=sFDQiu548IDFWwTy6fqSCvc7CafhnzGyoj7g2MwYv4zW/01aUpRdO0PQZbt3doLUnC3RO1BCz4hNjQYl2WnaxEmYX4pTRfzNKQg2lYGtDsheKuE16G4ZZWcgl3lu71hKeUgn+HhJ9xW9NYk6hjWw30kGfcRvC21y7fZAVOipTFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430349; c=relaxed/simple;
-	bh=OXn3Uu+gQ9c3RLQAujMg7ZAmlHllThbNbBycDxf6u/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fteMkQ++27NHYbq2ReFrKTgBhCxIVVl8Tmle4VNm6DH594Rj8iC9M3fJlNrspWnerhfwM8+1OMNFezsdbRTS2HXdiOUHiDlpHrUWw7SxoUFIV5mIVDg+yh5X1JqakqgMmUOUNVwbLc26rlPllTyzMuKJiroJ3j+8fSa/AAnNZTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=q/KaE+t0; arc=none smtp.client-ip=131.188.11.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z1tGJ5njHzPk3T;
-	Mon, 24 Feb 2025 21:52:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1740430344; bh=OiuNKiAS+hTR+fhJp6x108vWgctpUrLzfl7kMtExH6o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=q/KaE+t00/Gft3eo2t/VfHs/88XfbCborQ4GQjPmsCuB50ItFoDnIPUOhT7RngcFt
-	 T2FQfbyk0wHWXedfXb9bNRd7Kc7csnajBUD8DvOZw5rogaI/gKHQvOZxesCroABspt
-	 5QHhD4VMYM86PUloy8UrAnTXcotN3UArdrzNOGwM226zVIic0+I9vQyFltpsWBgdnQ
-	 qxCJwPJpD2cOxr9+SbEIXsd88OnHWVsgqDsZMcmcfzgi9YFII9Ia8rmjyriOfmsVAK
-	 r0yyi/6f4TNQVSJ14BCirHbT8NQZUaP9zdi2VycxntDEn/3dDicZoB88DdWy0g0qpK
-	 U0SOjfbGtZY5g==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:362e:e00:55a6:11d5:2473:17a9
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:362e:e00:55a6:11d5:2473:17a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX1+BBC75IbyzFS0BDN4tVWKxiHYwgF5BobA=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z1tGF4LgJzPk3N;
-	Mon, 24 Feb 2025 21:52:21 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Luis Gerhorst <luis.gerhorst@fau.de>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [RFC PATCH 7/9] bpf: Refactor push_stack to return error code
-Date: Mon, 24 Feb 2025 21:52:06 +0100
-Message-ID: <20250224205206.607052-1-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224203619.594724-1-luis.gerhorst@fau.de>
-References: <20250224203619.594724-1-luis.gerhorst@fau.de>
+	s=arc-20240116; t=1740430363; c=relaxed/simple;
+	bh=i2lSlrPBMuCRNw51I1wI0TjkpQ3iZ7HBx4oolxNaP4E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=XuvhiolVyRABgRAGT8wih5nuNr7xdkgzrEt1RaK6XRFu+dmHtNYz0RC9/X1jtP2Re/Hp1TTn2BuyVuxbSlUyhpjhh7ygF4atbsJrCqE8xDfTx4bOR/9gUYudkhGPszCahoxqt3oJt2HLaeD57CyR+WKzvLu/dyCpzYhr/DlFzqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=KF1zgztu; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SbwUAOAp; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.stl.internal (Postfix) with ESMTP id 0C2A3114011B;
+	Mon, 24 Feb 2025 15:52:39 -0500 (EST)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-04.internal (MEProxy); Mon, 24 Feb 2025 15:52:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1740430358;
+	 x=1740516758; bh=i2lSlrPBMuCRNw51I1wI0TjkpQ3iZ7HBx4oolxNaP4E=; b=
+	KF1zgztuVJfQPMr5qsB9V+f8gFU7nB812dEm7IgO+/iG7w77kS7oEdJTiuvL2WdE
+	SzYHmaRfKlFG/fy24Du7Bgn/rO/4f+D04P8Fs+8mkrqIgF8jtowqlY70P9KkSId3
+	gn0gVDsLxAtUgxzC5OE88UW/p3Y+7x7muCmXPlmo4l7iJJTxdFHUi2RDyRs5x1BY
+	5vj8qkiH5B1nRGERdEh0PC0Thj4YSLJ2qXJeBa8f9ew0sjyBI5rsR91jLx3wAxyK
+	k+x8jvpc/tQd2bNTZK/SGBuY1NzWkPxyZZxh8eeudZpT7vRLBQCu2y6E4XViG9Hu
+	i55zMQMqAEZS8nVlBEyg+A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740430358; x=
+	1740516758; bh=i2lSlrPBMuCRNw51I1wI0TjkpQ3iZ7HBx4oolxNaP4E=; b=S
+	bwUAOAp9C0g9dRp9ScxzHZUBkmk9xdzpvaU7fzG3v6dhhp7jtPy51zqpkOnEPxsd
+	iilSrfBuwpojzOobL6h3df2KdtHuW8ejLUpUQjTCqzj0xJk08PyXUEQed3eg9yq0
+	qeFq1TXpffY+ld6Q/fWLfCxlJJ6KwvDedTDJY6aot2aZ3DtwL7i+9sH77gs1R+HH
+	miIWLAS+KXl+WKcnK8BYUUtWvzpc4Q3JzDceoOv/6vE7oaln3YxpBauM50yYbNrG
+	27AbMFxEAvU29Y+RMSkoHEpaPPnKBy/ulKkDZyJIrQeJxJgPZzsHW9dgbaPqpZ8L
+	EpYZ36cC/5XUDD5pdRT9g==
+X-ME-Sender: <xms:Fty8Z3EOuMRZdmp0kfHoNFu99MyMT25Nx4d363oIbiEK6ledJScDkA>
+    <xme:Fty8Z0XIebV7aWozZ3Rsd5tRto7vRqHDc6I1ClPYZg8_y5z2hLfZDqDm6Lts2tXe-
+    ZK3EjHI-51kMrKOkdY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleektdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdforghrkhcurfgvrghrshhonhdfuceomhhpvggrrhhsohhnqdhlvg
+    hnohhvohesshhquhgvsggsrdgtrgeqnecuggftrfgrthhtvghrnhephfeuvdehteeghedt
+    hedtveehuddvjeejgffgieejvdegkefhfeelheekhedvffehnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhhpvggrrhhsohhnqdhlvghnohhv
+    ohesshhquhgvsggsrdgtrgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpoh
+    huthdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllhhosegrmhgurdgtohhm
+    pdhrtghpthhtoheplhhkmhhlsegrnhhthhgvrghsrdguvghvpdhrtghpthhtoheplhgvnh
+    gssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtohepmhgvsehkhihlvghgohhsphhoughnvghtihdrtghhpdhrtghpth
+    htohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgt
+    phhtthhopehhuggvghhovgguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhhinh
+    hugidqrggtphhisehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhu
+    gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Fty8Z5KbxBs--EDSSYIHHQghE0tWHjlKnd2D4BQoODJRPXj5yS_5Eg>
+    <xmx:Fty8Z1HV9sE_OhGTxLrDpku4DO_In6vpiCThzTtL2cEy64PnxrT6Rg>
+    <xmx:Fty8Z9Vdr3qWODQxevL7aoemEYu3YxvKkTD_FGHjP476xA0rmORHWA>
+    <xmx:Fty8ZwPuOoKluflvZdaEDdE1Uypz449qT1mRkOKwsFgOEVDJQsrIrg>
+    <xmx:Fty8Z1TsH1Oira0Dw7Zud8iG8qJF5M2i2QqEoIowVt7CavmBssp-770O>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 0B7F23C0066; Mon, 24 Feb 2025 15:52:38 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Mon, 24 Feb 2025 15:52:17 -0500
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Antheas Kapenekakis" <lkml@antheas.dev>,
+ "Limonciello, Mario" <mario.limonciello@amd.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ "Len Brown" <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ linux-kernel@vger.kernel.org,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Hans de Goede" <hdegoede@redhat.com>, me@kylegospodneti.ch
+Message-Id: <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+In-Reply-To: <20250224195059.10185-1-lkml@antheas.dev>
+References: <20250224195059.10185-1-lkml@antheas.dev>
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with multiple
+ handlers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Main reason is, that it will later allow us to fall back to a nospec for
-certain errors in push_stack().
+Hi Antheas,
 
-This has the side effect of changing the sanitization-case to returning
-ENOMEM. However, I believe this is more fitting as I undestand EFAULT to
-indicate a verifier-internal bug.
+On Mon, Feb 24, 2025, at 2:50 PM, Antheas Kapenekakis wrote:
+> On the Asus Z13 (2025), a device that would need the amd-pmf quirk that
+> was removed on the platform_profile refactor, we see the following output
+> from the sysfs platform profile:
+>
+> $ cat /sys/firmware/acpi/platform_profile_choices
+> balanced performance
+>
+> I.e., the quiet profile is missing. Which is a major regression in terms of
+> power efficiency and affects both tuned, and ppd (it also affected my
+> software but I fixed that on Saturday). This would affect any laptop that
+> loads both amd-pmf and asus-wmi (around 15 models give or take?).
+>
+> The problem stems from the fact that asus-wmi uses quiet, and amd-pmf uses
+> low-power. While it is not clear to me what the amd-pmf module is supposed
+> to do here, and perhaps some autodetection should be done and make it bail,
+> if we assume it should be kept, then there is a small refactor that is
+> needed to maintain the existing ABI interface.
+>
+> This is the subject of this patch series.
+>
+> Essentially, we introduce the concept of a "secondary" handler. Secondary
+> handlers work exactly the same, except for the fact they are able to
+> receive all profile names through the sysfs interface. The expectation
+> here would be that the handlers choose the closest appropriate profile
+> they have, and this is what I did for the amd-pmf handler.
+>
+> In their own platform_profile namespace, these handlers still work normally
+> and only accept the profiles from their probe functions, with -ENOSUP for
+> the rest.
+>
+> In the absence of a primary handler, the options of all secondary handlers
+> are unioned in the legacy sysfs, which prevents them from hiding each
+> other's options.
+>
+> With this patch series applied, the sysfs interface will look like this:
+>
+> $ cat /sys/firmware/acpi/platform_profile_choices
+> quiet balanced performance
+>
+> And writing quiet to it results in the profile being applied to both
+> platform profile handlers.
+>
+> $ echo low-power > /sys/firmware/acpi/platform_profile
+> bash: echo: write error: Operation not supported
+> $ echo quiet > /sys/firmware/acpi/platform_profile
+> $ cat /sys/class/platform-profile/platform-profile-*/{name,profile}
+> asus-wmi
+> amd-pmf
+> quiet
+> quiet
+>
+> Agreed ABI still works:
+> $ echo quiet > /sys/class/platform-profile/platform-profile-0/profile
+> $ echo quiet > /sys/class/platform-profile/platform-profile-1/profile
+> bash: echo: write error: Operation not supported
+> $ echo low-power > /sys/class/platform-profile/platform-profile-0/profile
+> bash: echo: write error: Operation not supported
+> $ echo low-power > /sys/class/platform-profile/platform-profile-1/profile
+>
 
-Downside is, that it requires us to introduce an output parameter for
-the state.
+I understand where you're coming from with this implementation but my concern is this is making profiles more complicated - and they're already becoming hard to understand (and debug) for users.
 
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
----
- kernel/bpf/verifier.c | 71 +++++++++++++++++++++++++------------------
- 1 file changed, 42 insertions(+), 29 deletions(-)
+I'm not a huge fan of multiple profile handlers, but can see why some people might want them and that they're a valid tool to have (especially given some of the limitations of what platform vendors themselves implement).
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 06c2f929d602..406294bcd5ce 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1934,8 +1934,10 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
- 	int err;
- 
- 	elem = kzalloc(sizeof(struct bpf_verifier_stack_elem), GFP_KERNEL);
--	if (!elem)
--		goto err;
-+	if (!elem) {
-+		err = -ENOMEM;
-+		goto unrecoverable_err;
-+	}
- 
- 	elem->insn_idx = insn_idx;
- 	elem->prev_insn_idx = prev_insn_idx;
-@@ -1945,12 +1947,18 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
- 	env->stack_size++;
- 	err = copy_verifier_state(&elem->st, cur);
- 	if (err)
--		goto err;
-+		goto unrecoverable_err;
- 	elem->st.speculative |= speculative;
- 	if (env->stack_size > BPF_COMPLEXITY_LIMIT_JMP_SEQ) {
- 		verbose(env, "The sequence of %d jumps is too complex.\n",
- 			env->stack_size);
--		goto err;
-+		/* Do not return -EINVAL to signal to the main loop that this
-+		 * can likely not be recovered-from by inserting a nospec if we
-+		 * are on a speculative path. If it was tried anyway, we would
-+		 * encounter it again shortly anyway.
-+		 */
-+		err = -ENOMEM;
-+		goto unrecoverable_err;
- 	}
- 	if (elem->st.parent) {
- 		++elem->st.parent->branches;
-@@ -1965,12 +1973,14 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
- 		 */
- 	}
- 	return &elem->st;
--err:
-+unrecoverable_err:
- 	free_verifier_state(env->cur_state, true);
- 	env->cur_state = NULL;
- 	/* pop all elements and return */
- 	while (!pop_stack(env, NULL, NULL, false));
--	return NULL;
-+	WARN_ON_ONCE(err >= 0);
-+	WARN_ON_ONCE(error_recoverable_with_nospec(err));
-+	return ERR_PTR(err);
- }
- 
- #define CALLER_SAVED_REGS 6
-@@ -8630,8 +8640,8 @@ static int process_iter_next_call(struct bpf_verifier_env *env, int insn_idx,
- 		prev_st = find_prev_entry(env, cur_st->parent, insn_idx);
- 		/* branch out active iter state */
- 		queued_st = push_stack(env, insn_idx + 1, insn_idx, false);
--		if (!queued_st)
--			return -ENOMEM;
-+		if (IS_ERR(queued_st))
-+			return PTR_ERR(queued_st);
- 
- 		queued_iter = get_iter_from_state(queued_st, meta);
- 		queued_iter->iter.state = BPF_ITER_STATE_ACTIVE;
-@@ -10214,8 +10224,8 @@ static int push_callback_call(struct bpf_verifier_env *env, struct bpf_insn *ins
- 	 * proceed with next instruction within current frame.
- 	 */
- 	callback_state = push_stack(env, env->subprog_info[subprog].start, insn_idx, false);
--	if (!callback_state)
--		return -ENOMEM;
-+	if (IS_ERR(callback_state))
-+		return PTR_ERR(callback_state);
- 
- 	err = setup_func_entry(env, subprog, insn_idx, set_callee_state_cb,
- 			       callback_state);
-@@ -13654,7 +13664,7 @@ sanitize_speculative_path(struct bpf_verifier_env *env,
- 	struct bpf_reg_state *regs;
- 
- 	branch = push_stack(env, next_idx, curr_idx, true);
--	if (branch && insn) {
-+	if (!IS_ERR(branch) && insn) {
- 		regs = branch->frame[branch->curframe]->regs;
- 		if (BPF_SRC(insn->code) == BPF_K) {
- 			mark_reg_unknown(env, regs, insn->dst_reg);
-@@ -13682,7 +13692,7 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
- 	u8 opcode = BPF_OP(insn->code);
- 	u32 alu_state, alu_limit;
- 	struct bpf_reg_state tmp;
--	bool ret;
-+	struct bpf_verifier_state *branch;
- 	int err;
- 
- 	if (can_skip_alu_sanitation(env, insn))
-@@ -13755,11 +13765,11 @@ static int sanitize_ptr_alu(struct bpf_verifier_env *env,
- 		tmp = *dst_reg;
- 		copy_register_state(dst_reg, ptr_reg);
- 	}
--	ret = sanitize_speculative_path(env, NULL, env->insn_idx + 1,
--					env->insn_idx);
--	if (!ptr_is_dst_reg && ret)
-+	branch = sanitize_speculative_path(env, NULL, env->insn_idx + 1,
-+					   env->insn_idx);
-+	if (!ptr_is_dst_reg && !IS_ERR(branch))
- 		*dst_reg = tmp;
--	return !ret ? REASON_STACK : 0;
-+	return IS_ERR(branch) ? REASON_STACK : 0;
- }
- 
- static void sanitize_mark_insn_seen(struct bpf_verifier_env *env)
-@@ -16008,8 +16018,8 @@ static int check_cond_jmp_op(struct bpf_verifier_env *env,
- 
- 		/* branch out 'fallthrough' insn as a new state to explore */
- 		queued_st = push_stack(env, idx + 1, idx, false);
--		if (!queued_st)
--			return -ENOMEM;
-+		if (IS_ERR(queued_st))
-+			return PTR_ERR(queued_st);
- 
- 		queued_st->may_goto_depth++;
- 		if (prev_st)
-@@ -16073,10 +16083,12 @@ static int check_cond_jmp_op(struct bpf_verifier_env *env,
- 		 * the fall-through branch for simulation under speculative
- 		 * execution.
- 		 */
--		if (!env->bypass_spec_v1 &&
--		    !sanitize_speculative_path(env, insn, *insn_idx + 1,
--					       *insn_idx))
--			return -EFAULT;
-+		if (!env->bypass_spec_v1) {
-+			struct bpf_verifier_state *branch = sanitize_speculative_path(
-+				env, insn, *insn_idx + 1, *insn_idx);
-+			if (IS_ERR(branch))
-+				return PTR_ERR(branch);
-+		}
- 		if (env->log.level & BPF_LOG_LEVEL)
- 			print_insn_state(env, this_branch, this_branch->curframe);
- 		*insn_idx += insn->off;
-@@ -16086,11 +16098,12 @@ static int check_cond_jmp_op(struct bpf_verifier_env *env,
- 		 * program will go. If needed, push the goto branch for
- 		 * simulation under speculative execution.
- 		 */
--		if (!env->bypass_spec_v1 &&
--		    !sanitize_speculative_path(env, insn,
--					       *insn_idx + insn->off + 1,
--					       *insn_idx))
--			return -EFAULT;
-+		if (!env->bypass_spec_v1) {
-+			struct bpf_verifier_state *branch = sanitize_speculative_path(
-+				env, insn, *insn_idx + insn->off + 1, *insn_idx);
-+			if (IS_ERR(branch))
-+				return PTR_ERR(branch);
-+		}
- 		if (env->log.level & BPF_LOG_LEVEL)
- 			print_insn_state(env, this_branch, this_branch->curframe);
- 		return 0;
-@@ -16113,8 +16126,8 @@ static int check_cond_jmp_op(struct bpf_verifier_env *env,
- 
- 	other_branch = push_stack(env, *insn_idx + insn->off + 1, *insn_idx,
- 				  false);
--	if (!other_branch)
--		return -EFAULT;
-+	if (IS_ERR(other_branch))
-+		return PTR_ERR(other_branch);
- 	other_branch_regs = other_branch->frame[other_branch->curframe]->regs;
- 
- 	if (BPF_SRC(insn->code) == BPF_X) {
--- 
-2.48.1
+In patch #3 it states that 'It is the expectation that secondary handlers will pick the closest profile they have to what was sent'. I'm not convinced that is true, or desired.
 
+e.g. Quiet and low-power are different things and can have different implementations. One is giving you as much power as possible with the fans running below a certain audible level; and one is giving you a system with as low-power consumption as possible, but still be usable. They're admittedly not very different in practice - but they can be different.
+
+Would it be better here to ask AMD to implement a quiet profile (maybe it can be based on low-power, at least initially)?
+I think that would solve the ASUS issue and not introduce another layer of complexity.
+
+Mark
 
