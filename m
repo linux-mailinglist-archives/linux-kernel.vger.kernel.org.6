@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-529917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB79A42C7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:14:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D5DA42C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:15:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E26403AFBCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:13:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD1217A72CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385011FC117;
-	Mon, 24 Feb 2025 19:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1E31448E3;
+	Mon, 24 Feb 2025 19:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JOL2Sv3W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gmrfz3Ry"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2601EEA29;
-	Mon, 24 Feb 2025 19:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E70F1FC117
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424426; cv=none; b=HjJoFIOaBAqxTYuPbUA6ezrOc72Ag7/0GyttGrFmh9oUHHXCMmv3KZdjDgN5YgSb4RQU4FUgXxyywiem2ypfitrbmrwOdX5fZaeW2/n/7Ki/nppsQdyUAtAZmQmDHjy0rpVwdJxpXu4GsTMUnkH/zPIYp1GfZiqCCrfpAU68OP8=
+	t=1740424504; cv=none; b=qji7uKSgb0wON+9cdo9u6XiqWIEf8F278cKcESddUK0kx5HtRHcDTvKWAoHnuUu9uFC4/BPdB194wxNy/ftKJcsJPDqyz1tOBVFA9oVkxuOYljzt3BjgATs8r9ZHfQL3gYI1fTzBjsjbn6BuAT0fOnntDmsIRnCoSTS3OTd1WnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424426; c=relaxed/simple;
-	bh=WAOfxPgc9tiZhiYwa3QpFYflhga5gLDQ+TLXha6GKOM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jai8lNp6/S0tNx/GxhG+h4jUG33/t35tCLZwWD0bIU7gvfumMQE1v3PAX664eTCw40coCeUBOEz3bbq/7lCjHcZ2tz1vItAIfQIW1tTE5HDoLeM8+Ylq/ULqWY/At9HT/a6ChBts01HW1IR0x2DHwrbTorp9Ai17+U+1+6byPCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JOL2Sv3W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A9D7C4CED6;
-	Mon, 24 Feb 2025 19:13:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740424426;
-	bh=WAOfxPgc9tiZhiYwa3QpFYflhga5gLDQ+TLXha6GKOM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JOL2Sv3Woy2Q5WJ/EtpvbMwF2Huqz5mzi2THuBslL2zvM1MH3sUMkX9oBGGpq05jK
-	 sp+oCO9TeT0pABoIE4f0UCe7HmSqyRyAeWZMYboG1j83HltgHSj4oP+KaLX1ii1L95
-	 Bp49GoX9bhOj/zuuqewUEwrsiU/GtPE8ukoXk9D/2BEem90wpisyZC2lKcpYUU6j1r
-	 HsekTuV6vuunHlenlqThRmYdYMNmGv3VvpZbzKH/AdmvPgQYXCItizUjeHe+NY1hVI
-	 yvZWQlkd9yCeSlv/VrszILC4Md3phek67eLqZ74TRI+aF8MW/PKPS14oHa5ME/2cQW
-	 QT5iFvwblSM2Q==
-Message-ID: <5670d992-71f4-4791-94ff-4fadc1fb5993@kernel.org>
-Date: Mon, 24 Feb 2025 20:13:38 +0100
+	s=arc-20240116; t=1740424504; c=relaxed/simple;
+	bh=PyPR7g3RvZN5snMxXyy5cQHXfPJa7xrkkt2SS0hf0F4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c0qj0CIg40NFXQT4jb8C5/ujbYBCVc8svIlnb1/cRVnPq5wA4z+Bo011FuSNmBAnIdZj4P4TKPvzQB25QvFnGuM9uEO6CZh9Ek6G6dA4OCamhkQYs75o79FIzhq2qXFYFSuNJeqZOQAXC1V8KUVQG0PMhMM0yag8SoC7oL7yUkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gmrfz3Ry; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5452efeb87aso4800210e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:15:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740424499; x=1741029299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JFwWACfJvly3TimpIZIv2QEBJArjKTFr1P6UvNu7FGg=;
+        b=Gmrfz3Ry2h3d+6gC7+llDFhR8FDh1VfgGKJUt8Eo55pbG1y+iN+GvLHNJ1XpDee/Ti
+         rgsU8icogVsxt6v/2lMIuVKX5fb/yzHOKJ6arT5xMB2+o71G4BspfX+unyaWlwKRDHE5
+         Qy0mSNYECLMUk6dkHmWLivXdgau3bv0JhG9h8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740424499; x=1741029299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JFwWACfJvly3TimpIZIv2QEBJArjKTFr1P6UvNu7FGg=;
+        b=jxFkiF1xngeryKGoodtsYyg7DN18fgGZK1eh+6DfrKHx2hF4B4/rM/liW8rzIs5aLA
+         cUSGLN7k5khmTORZP7btkpyeNMyebDZzfQ8Fn9MYfvhDQ5ehZJhfT4Zr0f/kOiEQHb7B
+         1x+kJANrvQIfMT7OgIg9Is+fDPWw917UHm6AX31fPcY4ROCUj3YBPte485Pw5Ivy6nE5
+         HN2fvGE0vyM+1yiOwY2N1V3GvzrzJy9mqPDo44pJDiL9WTlu8xYuLubYxE2BXKvLSYVe
+         iLbqhxuujN/dV65Hk8CmzrqwaCiT13emYnIRBf9VKJa42rGSa8rsl7LlJKt7RVpzWBgu
+         9sKg==
+X-Forwarded-Encrypted: i=1; AJvYcCXn5WX/aMQATsszRNlONVldW4UQXTF/5w9KDKmTxuFYP023oV3FqaMVyCDXXPku9eUC9Cy1nh34HrPSvss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV/aaMcLQ3QaKxD/yVwXUzaaxh7jIhURIv+i5cviZwR0SXce5j
+	TLZhJN3QTGU/hr5Y+BwQWs1YVYwI53fZqXIbtZoL0Tg7AUa40cUm9Fd7r3dptpCKkfob0sup31y
+	E1Q==
+X-Gm-Gg: ASbGncvACRyelRfCY45BcQaQiiHF25TbuJx+yUs4z2KyjIf37H8AU6gVt2YZGUEvZL7
+	QLyWbwlmFFxe4DBIQN1Lbjw35U1RFgbkKwmv26GgLoio6vQKy2cCoco93gsyId0dw3kxAVfNS7l
+	J/NUyibXfrGjvXZJ8C4tiGRAni00cdgnPnYrx3FqdTDo23XUQap6wkvn3lmmcK0kHz/lqAQNDl8
+	+ZLwjb14PMoosISovFgiNir3QoS+AvgkXsHhZOwmAIUTISa6t1puLR0Kw1KpiFD+MDV5AO9Uvvs
+	WziSQBhTVa11NTXa9q7pi78FcNJ8rIcQ+UnWTJtbCIKhoetviUTJM37vulSqOcTkxg==
+X-Google-Smtp-Source: AGHT+IFQ11324rtl9UgCxdsjDeGpqOQ49PF081S0BemmwAz0e21lASIGP1XAIFVMWWQ3el7uHcMPsQ==
+X-Received: by 2002:a05:6512:3d88:b0:542:a73d:a39c with SMTP id 2adb3069b0e04-54838f79d62mr6484265e87.49.1740424499398;
+        Mon, 24 Feb 2025 11:14:59 -0800 (PST)
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54530b2aeb3sm2971642e87.175.2025.02.24.11.14.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 11:14:58 -0800 (PST)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5452efeb87aso4800177e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:14:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVLoF7f+x03xKeHtAZSyCcX0mczph7POXP9pC2OfvWNZ7gSPLV32Ixs5vjcZ3wkU3JrIE5lw8I6oI16ji4=@vger.kernel.org
+X-Received: by 2002:a05:6512:a91:b0:545:ab8:2bed with SMTP id
+ 2adb3069b0e04-54838eff589mr5600639e87.28.1740424498000; Mon, 24 Feb 2025
+ 11:14:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/5] clk: samsung: add exynos7870 CLKOUT support
-To: Kaustabh Chakraborty <kauschluss@disroot.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20250219-exynos7870-pmu-clocks-v3-0-0d1e415e9e3a@disroot.org>
- <20250219-exynos7870-pmu-clocks-v3-5-0d1e415e9e3a@disroot.org>
- <20250219-discerning-affable-chital-1fdff4@krzk-bin>
- <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e2ebd4503100ddbbe8d7e21290329e38@disroot.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250214172958.81258-1-tejasvipin76@gmail.com>
+ <20250214172958.81258-3-tejasvipin76@gmail.com> <CAD=FV=U22kToVeyCBy_TV5hNKuMZv-QBUg0WTyXsMSu=bHLd3g@mail.gmail.com>
+ <260b1542-a9b3-4541-abbf-0edb796918f2@gmail.com>
+In-Reply-To: <260b1542-a9b3-4541-abbf-0edb796918f2@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 24 Feb 2025 11:14:46 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xn=ZztJVGA46eeRn442BnPAOwefwNid6Lm5ZHnLuCZcA@mail.gmail.com>
+X-Gm-Features: AWEUYZmO6vGLyUBmWDxm78XuNqM9mknBitSEQMpTZlilUORJ0saWZ4Ayv5wcIFo
+Message-ID: <CAD=FV=Xn=ZztJVGA46eeRn442BnPAOwefwNid6Lm5ZHnLuCZcA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] drm/panel: sony-td4353-jdi: transition to mipi_dsi
+ wrapped functions
+To: Tejas Vipin <tejasvipin76@gmail.com>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com, 
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	quic_jesszhan@quicinc.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24/02/2025 18:47, Kaustabh Chakraborty wrote:
->>
->> I wonder why do we need to keep growing this list? All devices are
->> compatible, aren't they?
-> 
-> Well, there are two variants of compatibility having different mask
-> values.
-> 
->> Do you use clkout, BTW?
-> 
-> Using the clocks defined by clkout? No. I added it as downstream
-> had it too. And the devices work fine without it. If you want me
-> to remove this patch and send the PMU patch to its respective
-> series I'll do that then (unless you object or suggest something
-> else).
+Hi,
 
-clkout is a testing tool and I doubt you can use it on a phone - finding
-the actual clkout pins to connect the oscilloscope is tricky.
+On Fri, Feb 14, 2025 at 8:46=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail.com=
+> wrote:
+>
+>
+>
+> On 2/15/25 6:12 AM, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Fri, Feb 14, 2025 at 9:30=E2=80=AFAM Tejas Vipin <tejasvipin76@gmail=
+.com> wrote:
+> >>
+> >> Change the sony-td4353-jdi panel to use multi style functions for
+> >> improved error handling.
+> >>
+> >> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> >> ---
+> >>  drivers/gpu/drm/panel/panel-sony-td4353-jdi.c | 107 ++++-------------=
+-
+> >>  1 file changed, 23 insertions(+), 84 deletions(-)
+> >
+> > Nice diffstat and so much boilerplate error code removed. :-)
+> >
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+>
+> If I rebase both the patches into 1, should I still add the Reviewed-by
+> tag?
 
-If this is about to grow and be used, then we should fix the
-compatibility and do not duplicate the ID table.
+Sorry, I was away, but it looks like you've sent v2 anyway and what
+you did there is fine. In this case my "Reviewed-by" for the second
+patch was more me helping myself keep track of the fact that I'd
+already looked at all the contents on this patch and I was happy with
+it.
 
-Best regards,
-Krzysztof
+For the record, most of the time it seems like you're expected to just
+"guess" a bit what a reviewer would want. The absolute safest thing
+you can do is to remove the "Reviewed-by" (like you did) but then also
+"after the cut" in your new patch (like where you put version history)
+indicate why you didn't carry the Reviewed-by. Like you could say:
+
+NOTE: removed Doug's review tag in v2 because it was only provided for
+one of the two patches that were squashed together.
+
+Then if I wondered why you didn't carry my tag I'd have my answer.
+Some reviewers get upset if you don't carry their tag forward and you
+don't explain why you didn't. ;-)
+
+-Doug
 
