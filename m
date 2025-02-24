@@ -1,188 +1,160 @@
-Return-Path: <linux-kernel+bounces-529905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCDC0A42C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:07:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D22A42C5D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:10:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A571892DD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1F0A3AAA76
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C585D1EDA31;
-	Mon, 24 Feb 2025 19:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A68D1EDA24;
+	Mon, 24 Feb 2025 19:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dIHNiEnW"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ie63vOzC"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDD31E5B95
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD98F2571B6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424051; cv=none; b=K4KK2Dgp7SZHC7pxtzhb0+i+IWxsVDpoGWUSdxviWJ+zfgVS32itHhMaHFWUE/1ISlbuxGCNx/z7kganX8i+BZQNOLF2kGS4aFjxDgffPRyi4JbHM4bnZgE2V+PkJWYAx1g/Jx8R7HjgQfCxCKTANKvngTEP9mwZ00XRKdKG7Xc=
+	t=1740424148; cv=none; b=Dc5Z34IqTuM0+rO67MopDXplP34qOcatNVS3FaVxaY8X+GFD4izrUx1HlAatsBMnsZqu6/RlJK4ppWEZMJdhLlu/weVLeOSEItZYpnD4ZSrRgjWllfGqHL8c9Qczt1FWKcQX2up4g9DIKjRP785tEldSMfbt9jnyZjaTvSsOc68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424051; c=relaxed/simple;
-	bh=GbuUXHqUtP/Zw8eNMCTnJLOtMqQEM+OFbTLgxZqprGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=WR5SKUxIiRDfVTAdmur2MDkovOncfDOi1Rvgyd2DnWnJj4oDQaEGkqAfxzhL0CX3FOSRzfxFfzpSTesZww9cvVaEKlmQNKrl6vsLidg/NH4vGFkU9rui3L5SLIXnu8ZDRTK/UoRNtj3RBO9s5jMjvVWX7yHxIfF+tB5qBs3hl2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dIHNiEnW; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2bc69a33810so177582fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:07:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740424048; x=1741028848; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wQCHGb/1mEcTjB0ohJkHDUAZUcOj91T5VUbYgnfzfKs=;
-        b=dIHNiEnWIVWmOw1r432MBjAWluocUeWXz11TtpsWGtyet7Wp2BlgSMexd2JdgAPeTS
-         xxCqIPEsuKf7TbMV75RQerE6gmFmPGwetKBilHB7rqvvTfu4IEcJpqQvgf3U5L7UqU5t
-         CWcb/1l09DoRfW+8MlXyOsND5znqTdgZyi/sw=
+	s=arc-20240116; t=1740424148; c=relaxed/simple;
+	bh=bCr8vR9eIpvmjDP2ky0jg3Mz8hl842I/M1iMYHRf9/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eGHhVCgDPLDeQ/fctKlrEaSs3ahNWLSN4u8FA1g1opx1XZ+Z46e5QC0piETZk+FtiW3hS2ULsFRmqiODzMZLpVjrDXrBxZ92dogbBLqL/61XIhCoo1glV+21Bzy+yU6BQ3KpDLg2TlQY6WcslN/bpyg9xBNnObZt6M9u0H1/fX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ie63vOzC; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OCv1Nx012736
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:09:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zavfbH1zR/1Hpjz69wllzxoWL+BaXWGYetefdcl5eoY=; b=ie63vOzCZ1O5web1
+	y34A/gcZOBLTWM7sX+71F1kllAlZ/z9IBPx1gEE0nLWuvnv8vjJH2wrkJAk3SXJY
+	vkqLeaCz3/GQQWxWF1WflBTpyX+ajBn/b3R/ihGAKumaf3ANILsmYDFwWmQLYxqc
+	TJnu9gMPKHHur543bb/rKNJLGaYLmQGhZgDsiizpcFkGwOdHszHoKBkWMEApGuAw
+	23z5lAGZ5J59dC98p/fOdPs0BAmYeQRIxMjQdKnj3uxrcntScJOHS5MXWzYq2HCF
+	6xGV5bfp2Z7AzkRjGMXzU6swerVk9rTx6Ax4j6FyZOUmhNTivqSyor/nayogqNLA
+	1oKpCA==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 450kqg2fhc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 19:09:05 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-221063a808dso90249195ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:09:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740424048; x=1741028848;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wQCHGb/1mEcTjB0ohJkHDUAZUcOj91T5VUbYgnfzfKs=;
-        b=UnWQ1DZjcnyyUAau1+U/97A1muArq5DNgPNUMZ7LF3Xvf340Vp1+RRdQMjL5GFqJVg
-         4jHYxI2C5ZV1zvqNFOdxP9EmAMZGr6Gd9tOa/uCV95RLW93nt0Fw4remvc1MWuxgIFfb
-         7wVUjVlj5Sq/WUz7SMJhxbztOYwxEN0815KfPw8vlgoZo9dOkQDgLkP1iEwDQSOD9auc
-         9aO6XvkigbaBKBCBt/cwq0+UNTV3VJ9AkQqYesABHBWmcjzsn8CZ31kr5VfwhQJ659QH
-         xozcRLYO+dIuJp4yGg0AxE0YAutN0VVvG9qCz7kImxeMxGQNC0MJCTx8VXtd1XsSzziN
-         JYnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtxLl/VqGJl0uO9ZBYNbXitCqKhISnjgoXUyJqzVEpTr5FMlc87qdhDp4ERNZ3uqCALkJUwcADirs4Rns=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7ZwLl3Xi6tNAaH3GzPqAcABpByl0C8ut2U1DKEDuXoeGdDCdJ
-	kgVoa77jSeABj+4JgKMf7WH1N2U5DTHi0viKgXqluuX/ihZ1U/9mPLbkjT7A7+O+7Hy5V++Ihlw
-	lhwJsFMca8+M7j1Pu2K0bqJz56C3/LKjqx7a8
-X-Gm-Gg: ASbGncsVG7MxIXHavhtAO9JMoSHJOnRTYhTadexkbTUv4lCNpRtWyJuYbnzJCeRNbZ1
-	mRAjQzbQmeD87IJ+ZiGxg+ncl1bQWv2soOWhOx4dh5MH9i9FXpV4Si61Mzko0gyUXvPABnSH4fP
-	QUD4ys9jB/0hXOpjQkDakAhbbIoYAJhDBJV4v9
-X-Google-Smtp-Source: AGHT+IFrbrwEmuYOunYtHNdMni7okQkt3QFjQtD8vHn5l5zTdcXfnyAMvDD/7Ae+veDhcxsJz6JhhrxQ5jvSrdRN1DM=
-X-Received: by 2002:a05:6808:201f:b0:3f4:11a1:615a with SMTP id
- 5614622812f47-3f4247a9cd8mr4184198b6e.6.1740424048367; Mon, 24 Feb 2025
- 11:07:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740424145; x=1741028945;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zavfbH1zR/1Hpjz69wllzxoWL+BaXWGYetefdcl5eoY=;
+        b=i6nnzt17Bw/qbbOckMOCTcZA8A1rwK5TUU0GJzEzBn4j3zxJPGRQ57gyWn2y5nFMBM
+         e3OJqcQalSjOOYYWxoTP5m68bnsigz8uU9QRFBu+2vfh8nLZbUiUUE9ahehYufT2JnYN
+         3kpfnSRfnnx6Wq0EvLxYAZR99e/WpgFnF5O8nmk9LEOI/fL+JwXiQZEwLExsiIk6tZ36
+         IR1pF+NYqTOcTQnTdvmFBJ2Va0QXNykKtFy4N9KtqQiyNHhjokfc8NdyX33IGvsbf3XY
+         pvf0ot07iWdY9FNXX+rAjw2ovdKhe1/Y81dEy98hSLJndebcx4mkFuJJrE7o1B7Pa++m
+         mAvA==
+X-Gm-Message-State: AOJu0YwQnca3K2o2IL9eiixY9oZFMwXENhLrZc6ndO5sqFoMbUU9B2ol
+	dUUsXHH4qmSmCsAoEXBU3DsJ12WdMTD9xP+M6axBcbPK6HEisCh8cGo2JoXbI8Pld9afqXJVoXN
+	ZMdQNUzx/HXU74eIvt7OmwTpcuwFIPU5YvD1BmSJfmJKFh3KeErS+JSzplqjbLX4=
+X-Gm-Gg: ASbGnctqE0I3iUkWhfL4tZtnogYEdDP1b5TgHerB3bGw/KkZZOwggz4V+UfBYGrraRf
+	c99mPOhlhV7Bxicrqd2V4ASP7glkxcLBL51Ahn6kf2BWiAb5R9Rdr8520EcZHSOI44ufmRLklZM
+	CKOWxgmXPph7vfWUqPfiF6yQ2IqmucbBqiIU6JfPRjAYqgimiTohwBRFNTKm5ysYe4yRg/seGJG
+	dkgDCw/i99hbkqlBfyGiyBcYmVC24nr8x8aPat14ZCqquvAodHpPFjpBEIJ8lh4YF7e5+7bVyFd
+	9P7nipv0rXcMP7jU5y4J+tHeIb3T53NyxnbEWziQW4Eq5xrhQx6AZ113Rs1oiObQw8YEbgI+MBl
+	eqyKYIADg
+X-Received: by 2002:a17:902:d485:b0:216:4c88:d939 with SMTP id d9443c01a7336-221a001566bmr251110675ad.38.1740424144814;
+        Mon, 24 Feb 2025 11:09:04 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGcdxrqY3Lyk9CkgTZBMPvmDZreZBBgsyz9s8m4CzkH23FajmfKJsLRld5cYoHmaSFvTzGfDw==
+X-Received: by 2002:a17:902:d485:b0:216:4c88:d939 with SMTP id d9443c01a7336-221a001566bmr251110365ad.38.1740424144434;
+        Mon, 24 Feb 2025 11:09:04 -0800 (PST)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d6fa9b75sm181348775ad.199.2025.02.24.11.09.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 11:09:04 -0800 (PST)
+Message-ID: <763bd905-6f1a-42a9-9f81-acecd98131a4@oss.qualcomm.com>
+Date: Mon, 24 Feb 2025 11:09:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224174513.3600914-1-jeffxu@google.com> <20250224174513.3600914-2-jeffxu@google.com>
- <443992d7-f694-4e46-b120-545350a5d598@intel.com> <CABi2SkVKhjShryG0K-NSjjBvGs0UOVsY-6MQVOuQCkfuph5K8Q@mail.gmail.com>
- <3nxcy7zshqxmjia7y6cyajeoclcxizkrhhsitji5ujbafbvhlu@7hqs6uodor56>
-In-Reply-To: <3nxcy7zshqxmjia7y6cyajeoclcxizkrhhsitji5ujbafbvhlu@7hqs6uodor56>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 24 Feb 2025 11:07:17 -0800
-X-Gm-Features: AWEUYZnFbU7bWMO5mDGdFqrYIJo2aJVDJw1Nuop8sup_tSwiXkOaJwtHACFOP_4
-Message-ID: <CABi2SkUfABFR+SpjBzHT9dEcsJ0OOHiyttKkQVhqrHLrtZzopA@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header change
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org, keescook@chromium.org, 
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] checkpatch: Add support for checkpatch-ignore note
+To: Brendan Jackman <jackmanb@google.com>, Andy Whitcroft
+ <apw@canonical.com>,
+        Joe Perches <joe@perches.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, workflows@vger.kernel.org,
+        linux-doc@vger.kernel.org
+References: <20250115-checkpatch-ignore-v2-0-8467750bf713@google.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20250115-checkpatch-ignore-v2-0-8467750bf713@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: bom59ekuXQGi0GWltqT1rqv1EUBhuZKP
+X-Proofpoint-ORIG-GUID: bom59ekuXQGi0GWltqT1rqv1EUBhuZKP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_09,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 spamscore=0 clxscore=1015 mlxlogscore=999
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240124
 
-On Mon, Feb 24, 2025 at 11:03=E2=80=AFAM Liam R. Howlett
-<Liam.Howlett@oracle.com> wrote:
->
-> * Jeff Xu <jeffxu@chromium.org> [250224 13:44]:
-> > On Mon, Feb 24, 2025 at 10:21=E2=80=AFAM Dave Hansen <dave.hansen@intel=
-.com> wrote:
-> > >
-> > > On 2/24/25 09:45, jeffxu@chromium.org wrote:
-> > > > +/*
-> > > > + * mseal of userspace process's system mappings.
-> > > > + */
-> > > > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_SEALED
-> > > > +#else
-> > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_NONE
-> > > > +#endif
-> > >
-> > > This ends up looking pretty wonky in practice:
-> > >
-> > > > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_PFNMAP;
-> > > > +     vm_flags |=3D MSEAL_SYSTEM_MAPPINGS_VM_FLAG;
-> > >
-> > > because MSEAL_SYSTEM_MAPPINGS_VM_FLAG is so much different from the
-> > > other ones.
-> > >
-> > > Would it really hurt to have
-> > >
-> > >  #ifdef CONFIG_64BIT
-> > >  /* VM is sealed, in vm_flags */
-> > >  #define VM_SEALED       _BITUL(63)
-> > > +#else
-> > > +#define VM_SEALED       VM_NONE
-> > >  #endif
-> > >
-> > > ?
-> > >
-> > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't part of
-> > the build. This is intentional. Any 32-bit code trying to use the
-> > sealing function or the VM_SEALED flag will immediately fail
-> > compilation. This makes it easier to identify incorrect usage.
-> >
->
-> The reason that two #defines are needed is because you can have mseal
-> enabled while not sealing system mappings, so for this to be clean we
-> need two defines.
->
-> However MSEAL_SYSTEM_MAPPINGS_VM_FLAG, is _way_ too long, in my opinion.
-> Keeping with "VM_SEALED" I'd suggest "VM_SYSTEM_SEALED".
->
-> > For example:
-> > Consider the case below in src/third_party/kernel/v6.6/fs/proc/task_mmu=
-.c,
->
-> third_party?
->
-Sorry, I pasted the code path from ChromeOS code base, it is actually
-in the kernel itself.
+On 1/15/2025 7:33 AM, Brendan Jackman wrote:
+> Checkpatch sometimes has false positives. This makes it less useful for
+> automatic usage: tools like b4 [0] can run checkpatch on all of your
+> patches and give you a quick overview. When iterating on a branch, it's
+> tiresome to manually re-check that any errors are known false positives.
+> 
+> This patch adds a feature to record in the patch "graveyard" (after the
+> "---" that a patch might produce a certain checkpatch error, and that
+> this is an expected false positive.
+> 
+> Note, for Git users this will require some configuration changes to
+> adopt (see documentation patch), and not all tools that wrap Checkpatch
+> will automatically be able to take advantage. Changes are required for
+> `b4 prep --check` to work [0], I'll send that separately if this patch
+> is accepted.
+> 
+> [0] https://github.com/bjackman/b4/tree/checkpatch-ignore
 
-fs/proc/task_mmu.c
+While this addresses one issue with checkpatch, it doesn't solve what I
+consider to be a bigger issue, namely to have a way for checkpatch to ignore
+false positives (or deliberate use of non-compliant code) when run with the -f
+flag.
 
-> >
-> > #ifdef CONFIG_64BIT
-> > [ilog2(VM_SEALED)] =3D "sl",
-> > #endif
-> >
-> > Redefining VM_SEALED  to VM_NONE for 32 bit won't detect the problem
-> > in case that  "#ifdef CONFIG_64BIT" line is missing.
->
-> I don't think it is reasonable to insist on doing things differently in
-> the kernel because you have external tests that would need updating.
-> These things can change independently, so I don't think this is a valid
-> argument.
->
-> If these are upstream tests, and we need these tests to work then they
-> can be fixed.
->
-As above, this is actually kernel code, not test.
+I don't know how many times I've seen new kernel contributors try to "fix"
+checkpatch issues as their first commit, and contribute broken code in the
+process. This is especially true when trying to "fix" macros.
 
--Jeff
+So IMO what would be more useful is to have some way to document these
+overrides in the tree so that they could be honored both when processing
+patches as well as when processing files.
 
-> >
-> > Please note, this has been like this since the first version of
-> > mseal() RFC patch, and I prefer to keep it this way.
->
-> Thanks,
-> Liam
+Note that thanks to Kalle's work, the wireless/ath drivers have their own way
+of doing this, but of course that only works if you run the scripts.
+checkpatch run normally would still flag the issues.
+
+more surgical:
+<https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath12k/ath12k-check>
+
+less surgical:
+<https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath11k/ath11k-check>
+<https://github.com/qca/qca-swiss-army-knife/blob/master/tools/scripts/ath10k/ath10k-check>
+
+/jeff
 
