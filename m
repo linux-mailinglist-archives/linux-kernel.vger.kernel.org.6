@@ -1,148 +1,82 @@
-Return-Path: <linux-kernel+bounces-529642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34165A42917
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:15:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F5FA42914
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B0917AF67
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:08:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A394188DD0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:09:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D83263F48;
-	Mon, 24 Feb 2025 17:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F2726159A;
+	Mon, 24 Feb 2025 17:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eubje9Yl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sHiKVSf+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91326244195;
-	Mon, 24 Feb 2025 17:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0CF146A6F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740416913; cv=none; b=BR0jajcUQ5GB9tjtIyOIuEJtchc/bbYLtdR8TTXlwaZYmbmeBjVIi+NS257bbwK48Lrf/4MgbchxB/kZS1kDgPHFqiyqPTboWloHs9zgO/uhDQ1/iKSmap5AsWlMdQe9GZT5/LkJyRxoS9f3PHBmsGsF7ZKbi2/D4fZuArmEEK8=
+	t=1740416944; cv=none; b=BGORwq3/9NqC2fKwSMlw198BxpPoZj41c/kJHPYat5YZRtnhsaCbOUPlVA1oG/cqIdmkpDJoGwstiRfNousJVcBFznuMMz8y7zGwiypvNGpXXz4KQBlDtI5h4n3zg3RckYdwU6SsNREFRGrzYEE+kKKAxx3qecJj/t8s5uu76fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740416913; c=relaxed/simple;
-	bh=I5InXa5iPxIUg/XL60LjkpRPCQ4Lls7ukDWRdePp2vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Au7EuIKxQTbjL7wVCnxhpkH/tS+rye2Rd9P0+DJFOMJk2bxVCcGSeM0mSoeBlE1E+beRTFpJ9tVWcy+1QPXB2RJC9eiqed9286MGIea/RvvthDy1nZv6Wy2R0ABviDzT1pDIm+QTLDrjEPsN5VYi0BGH9slSCGQOHwrJh3nKXuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eubje9Yl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7EA5C4CED6;
-	Mon, 24 Feb 2025 17:08:28 +0000 (UTC)
+	s=arc-20240116; t=1740416944; c=relaxed/simple;
+	bh=f3FWAWqKObBU7iKw0nZ9RZrNN4S7jDVi0Qku/f/biv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ckiJiVE27Uiesb1WHJj9Q9vQW3ZkbQcefiquqoSWOZDkQmqMeGXuUW5kWGZdU/6HZmuALz9YJqWye932HIgtxPd/l5JAKjNEFQGdrLThaI1EOnnZp2YIatnp2GFTskaci6QtsDggLh+DwK86JUsWF4ACSIxubgqjsqD6OiMXFk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sHiKVSf+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5B77C4CED6;
+	Mon, 24 Feb 2025 17:09:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740416913;
-	bh=I5InXa5iPxIUg/XL60LjkpRPCQ4Lls7ukDWRdePp2vA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eubje9YlzJi0bBqI0AJSqLsQzrWoa05DCF4dgQBTG67+gfFKVSE6L+hh0/t4ZwX+w
-	 rnVqn/tMyeSMSBJwS9FEuM7TaD2jxfme7QAgZvFBJO15SathlzjfJGvKPymY9/iSWY
-	 XLcJlIPqc9Y2GYkObgbSNBWu5Wpff8xnVxjdKOzue5JmJDWG/Agwp9RbJfT7zC60v8
-	 jeYEZze2FbDMF+Of/JG5USwIcNmOZCLhtJrkiG13XUrQdF/xePJhxFUq7CSfkIXRrE
-	 X9x8ZpRa90FZlDRgpQqN2k4w+b/RGXWvg9PMxKohOc0yEPuAfykOvnwvAHyicbye/5
-	 gwpDw0eztSzVA==
-Date: Mon, 24 Feb 2025 18:08:26 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
-	nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
- PCIe DW
-Message-ID: <Z7yniizCTdBvUBI0@ryzen>
-References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
- <20250221131548.59616-1-shradha.t@samsung.com>
+	s=k20201202; t=1740416944;
+	bh=f3FWAWqKObBU7iKw0nZ9RZrNN4S7jDVi0Qku/f/biv4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sHiKVSf+mE/PTtYlQ9mYjKF9Y0zbDlyq2ehTJ7Bk/U0WosG1elNo02pi4EYnUNz0t
+	 AXYg1cON8o1ayNWx5+ffQqzEKUPkBvFJXnPY0n3fxun1IO6auYtyXYuygoswTBYaIp
+	 +87bmcdw04lymq+RmN7dKhFCDOzxvVt+j6uoSuOYrZxySNPyw4G7GHiI4pna6gll3e
+	 M3VOUbDj4gVCfRESrQsRwCVD7WpiSU0gKXiYn1Bze2UJk9Ga8e6vcg5uWEskd2FPo2
+	 uG+UolnQMQ5k6R90HM06C07oloOcmB4WhS/U2qPqEVe+zPo5rv3UuJq64BxBDGK/dj
+	 sJEMtl4C3Nefg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>,  Michael Walle
+ <mwalle@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,  Richard
+ Weinberger <richard@nod.at>,  Vignesh Raghavendra <vigneshr@ti.com>,
+  linux-mtd@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mtd: spi-nor: explicitly include <linux/math64.h>
+In-Reply-To: <20250223-snor-math64-v2-1-6f0313eea331@linaro.org> (Tudor
+	Ambarus's message of "Sun, 23 Feb 2025 06:51:10 +0000")
+References: <20250223-snor-math64-v2-1-6f0313eea331@linaro.org>
+Date: Mon, 24 Feb 2025 17:09:01 +0000
+Message-ID: <mafs0bjurl176.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221131548.59616-1-shradha.t@samsung.com>
+Content-Type: text/plain
 
-Hello Shradha,
+On Sun, Feb 23 2025, Tudor Ambarus wrote:
 
-On Fri, Feb 21, 2025 at 06:45:43PM +0530, Shradha Todi wrote:
-> DesignWare controller provides a vendor specific extended capability
-> called RASDES as an IP feature. This extended capability  provides
-> hardware information like:
->  - Debug registers to know the state of the link or controller. 
->  - Error injection mechanisms to inject various PCIe errors including
->    sequence number, CRC
->  - Statistical counters to know how many times a particular event
->    occurred
-> 
-> However, in Linux we do not have any generic or custom support to be
-> able to use this feature in an efficient manner. This is the reason we
-> are proposing this framework. Debug and bring up time of high-speed IPs
-> are highly dependent on costlier hardware analyzers and this solution
-> will in some ways help to reduce the HW analyzer usage.
-> 
-> The debugfs entries can be used to get information about underlying
-> hardware and can be shared with user space. Separate debugfs entries has
-> been created to cater to all the DES hooks provided by the controller.
-> The debugfs entries interacts with the RASDES registers in the required
-> sequence and provides the meaningful data to the user. This eases the
-> effort to understand and use the register information for debugging.
-> 
-> This series creates a generic debugfs framework for DesignWare PCIe
-> controllers where other debug features apart from RASDES can also be
-> added as and when required.
-> 
-> v7:
->     - Moved the patches to make finding VSEC IDs common from Mani's patchset [1]
->       into this series to remove dependancy as discussed
->     - Addressed style related change requests from v6
+> swp and otp drivers use div_u64 and div64_u64 and rely on implicit
+> inclusion of <linux/math64.h>.
+>
+> It is good practice to directly include all headers used, it avoids
+> implicit dependencies and spurious breakage if someone rearranges
+> headers and causes the implicit include to vanish.
+>
+> Include the missing header.
+>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 
-I tested this series, and one thing that I noticed:
+Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
 
-# for f in /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/counter_enable; do echo 1 > $f; done
-
-# grep "" /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/* | grep Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/ctl_skp_os_parity_err/counter_enable:Counter Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/deskew_uncompleted_err/counter_enable:Counter Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/framing_err_in_l0/counter_enable:Counter Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/margin_crc_parity_err/counter_enable:Counter Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/retimer_parity_err_1st/counter_enable:Counter Disabled
-/sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/retimer_parity_err_2nd/counter_enable:Counter Disabled
-
-that there are some events that cannot be enabled when testing on my platform,
-rk3588, perhaps this is because my version of the DWC IP does not have these
-events.
-
-(Because all the other events can be enabled successfully:
-# grep "" /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/* | grep Enabled | wc -l
-29
-)
-
-
-So the question is, how do we want to handle that?
-
-E.g. counter_enable_write() could theoretically read back the
-dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
-register after doing the
-ww_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
-
-to actually check if it could enable the event.
-
-If counter_enable_write() could not enable the specific event, should it
-perhaps return a failure to user space?
-
-Or, do we want to keep the current behavior of just letting counter_enable_write()
-return success, even for events that are not supported by the specific DWC PCIe
-implementation?
-
-
-Kind regards,
-Niklas
-
-
+-- 
+Regards,
+Pratyush Yadav
 
