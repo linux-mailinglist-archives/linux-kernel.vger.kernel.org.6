@@ -1,194 +1,280 @@
-Return-Path: <linux-kernel+bounces-530186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE72A43041
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:52:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E349AA43042
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8F81892C6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:52:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EEE27A811A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D573220A5D5;
-	Mon, 24 Feb 2025 22:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0356C20AF78;
+	Mon, 24 Feb 2025 22:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BswvhGq1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SKNJVXYc"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E16207DFF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819982080FD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740437529; cv=none; b=cfka+cZ87w74vPxFca2Psr0fYZkduvP0+2j3lAwcKnzBulKV/ZYB06A+hPu3C4QnvISku4WO+ZOOC+K6ptcsBJCvvoW58hFspMf21eyW8zzzvwCfAmaAgq20zcYHUsW8loqcTds45BTB7nBUtEKjqJ9Zsb3aslztb0pGHLcTPAA=
+	t=1740437570; cv=none; b=LJuusaeovM3/essbzL2v3hsdbqMNt2rOCitBZuKvzUUuHR694DbHV/A85qrLFrUlOdCF2VAPPb7ikzQYGu4+SVnGk0O1KuhwCfogkgXOXa/a05LD5WC2w3Y6CtfbumJ1J3D0YCzGtLO3+q3FPylOabt1qQPEqeNmmc2WD3PWk74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740437529; c=relaxed/simple;
-	bh=O82oiPcsMLy7wzs3UgA3GGSNT0fWH9thnsRmzxfnxqk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QV+JY83QbaokIP7Up6URiCOaNURKqaMIzL5ON14OdHfCdnfN2MSXbpbCDUNyrSUT2Ydq571ci04ZArzdHFm2kyQ7KjVyH1yrb+IiYyYqLbKFeoLfnkHdHF7YzPrKVeHxHpWSepdsOEUAyjtnp1uoEdSQoKHlHf8YF4jND5HWSP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BswvhGq1; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740437527; x=1771973527;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=O82oiPcsMLy7wzs3UgA3GGSNT0fWH9thnsRmzxfnxqk=;
-  b=BswvhGq1TBW6ws9SOEHE3SjEYOqhzfRi8UXcRCelpcfcKbm+ZF+8/H9b
-   wf8q4i5/N67n8BoWnfVveUpPbmJ6k4bnbVOGTQB1C5tOtIGv0t3ZTPng1
-   gOtH07zaHHHVrJQi0G81MkoORkO7pvG26AcuCyDIoaz2Bhx5vVRflWstN
-   2QjlxNb40717/sA2fM50UgQMgz24eYsuJrBWFd8m6GoETKk6lSwdXXeRo
-   KFLcCUrVNlFXHFTjVQ39WokEwTL+nTJIVdHTC2uTwbDChfQT9nFloQQSw
-   nMf7pUFl/abns6qnDvi0rTaflUHavtOL35FmMWv32kJkc02pH4iZ/vyju
-   w==;
-X-CSE-ConnectionGUID: MP6dzRJZRa2EyhjmL8YgWQ==
-X-CSE-MsgGUID: XI1QdTWdQ4e2RbvQmH9cxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="45128160"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="45128160"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 14:52:06 -0800
-X-CSE-ConnectionGUID: 79PtHDDATImMUzpqLh6vdg==
-X-CSE-MsgGUID: evyYl6uKR+e55hHm4veqeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="121165309"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 24 Feb 2025 14:52:04 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tmhIv-0009Pv-0w;
-	Mon, 24 Feb 2025 22:52:01 +0000
-Date: Tue, 25 Feb 2025 06:51:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Wolfram Sang <wsa-dev@sang-engineering.com>,
-	Ray Jui <ray.jui@broadcom.com>
-Subject: drivers/i2c/busses/i2c-bcm-iproc.c:871:3: warning: cast to smaller
- integer type 'enum bcm_iproc_i2c_type' from 'const void *'
-Message-ID: <202502250655.7lohuY6f-lkp@intel.com>
+	s=arc-20240116; t=1740437570; c=relaxed/simple;
+	bh=ZnS1NHCFx7r4xILLYVXzHRj4d38PK3W5IrV0vHOLCR4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VSJQjC4FF8WBO2sqCzebSVWyCcTJ5gvZrhrJAaeAC6Kr7WoL9WPj8zUCb9L9jt9SMPOttHrwN1/8WSk60gBWXi6x4FRFktGGZMpRk8MMBf9XApaMhG+UfGEeQSc0lbO5t4oTuAyFzARVlRECFg+n0TmXALwxplAELqtRKTNONwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SKNJVXYc; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-220d47b035fso11398265ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:52:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1740437568; x=1741042368; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mXpe5H0HYKIhNOHQN5JiS3xHvAhirtYzR6Noo4in+5s=;
+        b=SKNJVXYca0GNbjawg8fWFuUqWsM7D1Q6PgWAAHVf9oiUh7BzjO0ltfgVfCsqdq2Y8z
+         DHj7VGpGLREhLzUqj2GZvvaAhDo56gpgQJkg5/gV80m5Xutuuu5ietO7KQcTO/qVNee6
+         qcF9sLDaeFldYqD+FngTNQLGqZNcTRdlNwk0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740437568; x=1741042368;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mXpe5H0HYKIhNOHQN5JiS3xHvAhirtYzR6Noo4in+5s=;
+        b=qzwZ88Xzg+eYqqaQSVa65OqeNdwoGrT2uw0ALOcV0ajIpu9t311kWKw7hMkBTNEJIG
+         QZUEbRpn3y3zfMxdZz3UI4Sy8gLTCS7KMFcWIkxVJDrweIUorZhI4LFwfai5meEa35VS
+         +e/d4UC1oPLp1RGpOV7B5Oq47eFIUOsivzsw4HyM4zDV5s+rqpQ/htKJ1PLg6L+xsn9e
+         SY4inUq58TS2oZWSckjdiV2QB6HuGfJOQYFtM/BnwAkxl5AE+pcGkEzuekq10EOQYTCY
+         scSp38Rzwu3GRbzgKAstNa6urIMyG3AH+tBDO4m1gLLO8tadNSlDR2zKGhjnWefCHopf
+         9joQ==
+X-Gm-Message-State: AOJu0YzNm89zUNOF8E02ekvCeN1Rt1tPln0puLnpKZvzwnQjNwSxePHF
+	tMfxe53gOrBqP9Q7meceXco+PIIjDCJUkmnDJ+KZjQkX45dHSh9zyVjKX06JDg==
+X-Gm-Gg: ASbGnctaL8uo2k/I5pWXgbcKWXh6UyArhHi3jZ1l5bnMi3isptiuhcThMcQfcAdwyri
+	nMlthLPx5y+TVz0/Hlses7K27mLrcKMXHqjdFYp/VSNB08qPHnIfTCPJOj5co7/qk/1ka7PGfbx
+	E5BHkixpAv60I0bHy+j8y9+wT57G8+ln36CciRQnL06+sVsA+T5joCIjuDdffJDY+y34tVut7BW
+	nTvwzi3NypDeuyHzhh/ShGr44KGjoWiTGtnlL5awxp0wS7hcqeIlGc3eOZu6vR9884Pqa9QLwk7
+	aGx8vwsZGE6TFFgHTULufYKk6yUKdoQE5eXta0tLSSy0ZU7RAbC2fk75VpnS
+X-Google-Smtp-Source: AGHT+IEHa9T2X9sLxY9oVUNah712hKbuLVNF6n68F2r7XX8GrvVHGwGDQiEDAKEWHbny+TNT2twy6Q==
+X-Received: by 2002:a17:903:40c9:b0:215:b8b6:d2c4 with SMTP id d9443c01a7336-2219ff4f24fmr94100455ad.4.1740437567432;
+        Mon, 24 Feb 2025 14:52:47 -0800 (PST)
+Received: from localhost (201.59.83.34.bc.googleusercontent.com. [34.83.59.201])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2230a00a9e3sm1392335ad.60.2025.02.24.14.52.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 14:52:46 -0800 (PST)
+From: jeffxu@chromium.org
+To: akpm@linux-foundation.org,
+	keescook@chromium.org,
+	jannh@google.com,
+	torvalds@linux-foundation.org,
+	vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@Oracle.com,
+	adhemerval.zanella@linaro.org,
+	oleg@redhat.com,
+	avagin@gmail.com,
+	benjamin@sipsolutions.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org,
+	jorgelo@chromium.org,
+	sroettger@google.com,
+	hch@lst.de,
+	ojeda@kernel.org,
+	thomas.weissschuh@linutronix.de,
+	adobriyan@gmail.com,
+	johannes@sipsolutions.net,
+	pedro.falcato@gmail.com,
+	hca@linux.ibm.com,
+	willy@infradead.org,
+	anna-maria@linutronix.de,
+	mark.rutland@arm.com,
+	linus.walleij@linaro.org,
+	Jason@zx2c4.com,
+	deller@gmx.de,
+	rdunlap@infradead.org,
+	davem@davemloft.net,
+	peterx@redhat.com,
+	f.fainelli@gmail.com,
+	gerg@kernel.org,
+	dave.hansen@linux.intel.com,
+	mingo@kernel.org,
+	ardb@kernel.org,
+	mhocko@suse.com,
+	42.hyeyoo@gmail.com,
+	peterz@infradead.org,
+	ardb@google.com,
+	enh@google.com,
+	rientjes@google.com,
+	groeck@chromium.org,
+	mpe@ellerman.id.au,
+	aleksandr.mikhalitsyn@canonical.com,
+	mike.rapoport@gmail.com,
+	Jeff Xu <jeffxu@chromium.org>
+Subject: [PATCH v7 0/7]  mseal system mappings
+Date: Mon, 24 Feb 2025 22:52:39 +0000
+Message-ID: <20250224225246.3712295-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-commit: 9a1038728037521d177042522bd05c3c51e744a4 i2c: iproc: add NIC I2C support
-date:   6 years ago
-config: x86_64-buildonly-randconfig-006-20250127 (https://download.01.org/0day-ci/archive/20250225/202502250655.7lohuY6f-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250225/202502250655.7lohuY6f-lkp@intel.com/reproduce)
+From: Jeff Xu <jeffxu@chromium.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502250655.7lohuY6f-lkp@intel.com/
+This is V7 version, addressing comments from V6, without code logic
+change.
 
-All warnings (new ones prefixed by >>):
+--------------------------------------------------
 
->> drivers/i2c/busses/i2c-bcm-iproc.c:871:3: warning: cast to smaller integer type 'enum bcm_iproc_i2c_type' from 'const void *' [-Wvoid-pointer-to-enum-cast]
-     871 |                 (enum bcm_iproc_i2c_type)of_device_get_match_data(&pdev->dev);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   1 warning generated.
+History:
+V7:
+ - Remove cover letter from the first patch (Liam R. Howlett)
+ - Change macro name to VM_SEALED_SYSMAP (Liam R. Howlett)
+ - logging and fclose() in selftest (Liam R. Howlett)
+
+V6:
+  https://lore.kernel.org/all/20250224174513.3600914-1-jeffxu@google.com/
+
+V5
+  https://lore.kernel.org/all/20250212032155.1276806-1-jeffxu@google.com/
+
+V4:
+  https://lore.kernel.org/all/20241125202021.3684919-1-jeffxu@google.com/
+
+V3:
+  https://lore.kernel.org/all/20241113191602.3541870-1-jeffxu@google.com/
+
+V2:
+  https://lore.kernel.org/all/20241014215022.68530-1-jeffxu@google.com/
+
+V1:
+  https://lore.kernel.org/all/20241004163155.3493183-1-jeffxu@google.com/
+
+--------------------------------------------------
+As discussed during mseal() upstream process [1], mseal() protects
+the VMAs of a given virtual memory range against modifications, such
+as the read/write (RW) and no-execute (NX) bits. For complete
+descriptions of memory sealing, please see mseal.rst [2].
+
+The mseal() is useful to mitigate memory corruption issues where a
+corrupted pointer is passed to a memory management system. For
+example, such an attacker primitive can break control-flow integrity
+guarantees since read-only memory that is supposed to be trusted can
+become writable or .text pages can get remapped.
+
+The system mappings are readonly only, memory sealing can protect
+them from ever changing to writable or unmmap/remapped as different
+attributes.
+
+System mappings such as vdso, vvar, and sigpage (arm), vectors (arm)
+are created by the kernel during program initialization, and could
+be sealed after creation.
+
+Unlike the aforementioned mappings, the uprobe mapping is not
+established during program startup. However, its lifetime is the same
+as the process's lifetime [3]. It could be sealed from creation.
+
+The vsyscall on x86-64 uses a special address (0xffffffffff600000),
+which is outside the mm managed range. This means mprotect, munmap, and
+mremap won't work on the vsyscall. Since sealing doesn't enhance
+the vsyscall's security, it is skipped in this patch. If we ever seal
+the vsyscall, it is probably only for decorative purpose, i.e. showing
+the 'sl' flag in the /proc/pid/smaps. For this patch, it is ignored.
+
+It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
+alter the system mappings during restore operations. UML(User Mode Linux)
+and gVisor, rr are also known to change the vdso/vvar mappings.
+Consequently, this feature cannot be universally enabled across all
+systems. As such, CONFIG_MSEAL_SYSTEM_MAPPINGS is disabled by default.
+
+To support mseal of system mappings, architectures must define
+CONFIG_ARCH_HAS_MSEAL_SYSTEM_MAPPINGS and update their special mappings
+calls to pass mseal flag. Additionally, architectures must confirm they
+do not unmap/remap system mappings during the process lifetime.
+
+In this version, we've improved the handling of system mapping sealing from
+previous versions, instead of modifying the _install_special_mapping
+function itself, which would affect all architectures, we now call
+_install_special_mapping with a sealing flag only within the specific
+architecture that requires it. This targeted approach offers two key
+advantages: 1) It limits the code change's impact to the necessary
+architectures, and 2) It aligns with the software architecture by keeping
+the core memory management within the mm layer, while delegating the
+decision of sealing system mappings to the individual architecture, which
+is particularly relevant since 32-bit architectures never require sealing.
+
+Prior to this patch series, we explored sealing special mappings from
+userspace using glibc's dynamic linker. This approach revealed several
+issues:
+- The PT_LOAD header may report an incorrect length for vdso, (smaller
+  than its actual size). The dynamic linker, which relies on PT_LOAD
+  information to determine mapping size, would then split and partially
+  seal the vdso mapping. Since each architecture has its own vdso/vvar
+  code, fixing this in the kernel would require going through each
+  archiecture. Our initial goal was to enable sealing readonly mappings,
+  e.g. .text, across all architectures, sealing vdso from kernel since
+  creation appears to be simpler than sealing vdso at glibc.
+- The [vvar] mapping header only contains address information, not length
+  information. Similar issues might exist for other special mappings.
+- Mappings like uprobe are not covered by the dynamic linker,
+  and there is no effective solution for them.
+
+This feature's security enhancements will benefit ChromeOS, Android,
+and other high security systems.
+
+Testing:
+This feature was tested on ChromeOS and Android for both x86-64 and ARM64.
+- Enable sealing and verify vdso/vvar, sigpage, vector are sealed properly,
+  i.e. "sl" shown in the smaps for those mappings, and mremap is blocked.
+- Passing various automation tests (e.g. pre-checkin) on ChromeOS and
+  Android to ensure the sealing doesn't affect the functionality of
+  Chromebook and Android phone.
+
+I also tested the feature on Ubuntu on x86-64:
+- With config disabled, vdso/vvar is not sealed,
+- with config enabled, vdso/vvar is sealed, and booting up Ubuntu is OK,
+  normal operations such as browsing the web, open/edit doc are OK.
+
+In addition, Benjamin Berg tested this on UML.
+
+Link: https://lore.kernel.org/all/20240415163527.626541-1-jeffxu@chromium.org/ [1]
+Link: Documentation/userspace-api/mseal.rst [2]
+Link: https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/ [3]
 
 
-vim +871 drivers/i2c/busses/i2c-bcm-iproc.c
 
-   855	
-   856	static int bcm_iproc_i2c_probe(struct platform_device *pdev)
-   857	{
-   858		int irq, ret = 0;
-   859		struct bcm_iproc_i2c_dev *iproc_i2c;
-   860		struct i2c_adapter *adap;
-   861		struct resource *res;
-   862	
-   863		iproc_i2c = devm_kzalloc(&pdev->dev, sizeof(*iproc_i2c),
-   864					 GFP_KERNEL);
-   865		if (!iproc_i2c)
-   866			return -ENOMEM;
-   867	
-   868		platform_set_drvdata(pdev, iproc_i2c);
-   869		iproc_i2c->device = &pdev->dev;
-   870		iproc_i2c->type =
- > 871			(enum bcm_iproc_i2c_type)of_device_get_match_data(&pdev->dev);
-   872		init_completion(&iproc_i2c->done);
-   873	
-   874		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-   875		iproc_i2c->base = devm_ioremap_resource(iproc_i2c->device, res);
-   876		if (IS_ERR(iproc_i2c->base))
-   877			return PTR_ERR(iproc_i2c->base);
-   878	
-   879		if (iproc_i2c->type == IPROC_I2C_NIC) {
-   880			res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-   881			iproc_i2c->idm_base = devm_ioremap_resource(iproc_i2c->device,
-   882								    res);
-   883			if (IS_ERR(iproc_i2c->idm_base))
-   884				return PTR_ERR(iproc_i2c->idm_base);
-   885	
-   886			ret = of_property_read_u32(iproc_i2c->device->of_node,
-   887						   "brcm,ape-hsls-addr-mask",
-   888						   &iproc_i2c->ape_addr_mask);
-   889			if (ret < 0) {
-   890				dev_err(iproc_i2c->device,
-   891					"'brcm,ape-hsls-addr-mask' missing\n");
-   892				return -EINVAL;
-   893			}
-   894	
-   895			spin_lock_init(&iproc_i2c->idm_lock);
-   896	
-   897			/* no slave support */
-   898			bcm_iproc_algo.reg_slave = NULL;
-   899			bcm_iproc_algo.unreg_slave = NULL;
-   900		}
-   901	
-   902		ret = bcm_iproc_i2c_init(iproc_i2c);
-   903		if (ret)
-   904			return ret;
-   905	
-   906		ret = bcm_iproc_i2c_cfg_speed(iproc_i2c);
-   907		if (ret)
-   908			return ret;
-   909	
-   910		irq = platform_get_irq(pdev, 0);
-   911		if (irq > 0) {
-   912			ret = devm_request_irq(iproc_i2c->device, irq,
-   913					       bcm_iproc_i2c_isr, 0, pdev->name,
-   914					       iproc_i2c);
-   915			if (ret < 0) {
-   916				dev_err(iproc_i2c->device,
-   917					"unable to request irq %i\n", irq);
-   918				return ret;
-   919			}
-   920	
-   921			iproc_i2c->irq = irq;
-   922		} else {
-   923			dev_warn(iproc_i2c->device,
-   924				 "no irq resource, falling back to poll mode\n");
-   925		}
-   926	
-   927		bcm_iproc_i2c_enable_disable(iproc_i2c, true);
-   928	
-   929		adap = &iproc_i2c->adapter;
-   930		i2c_set_adapdata(adap, iproc_i2c);
-   931		strlcpy(adap->name, "Broadcom iProc I2C adapter", sizeof(adap->name));
-   932		adap->algo = &bcm_iproc_algo;
-   933		adap->quirks = &bcm_iproc_i2c_quirks;
-   934		adap->dev.parent = &pdev->dev;
-   935		adap->dev.of_node = pdev->dev.of_node;
-   936	
-   937		return i2c_add_adapter(adap);
-   938	}
-   939	
+
+Jeff Xu (7):
+  mseal, system mappings: kernel config and header change
+  selftests: x86: test_mremap_vdso: skip if vdso is msealed
+  mseal, system mappings: enable x86-64
+  mseal, system mappings: enable arm64
+  mseal, system mappings: enable uml architecture
+  mseal, system mappings: uprobe mapping
+  mseal, system mappings: update mseal.rst
+
+ Documentation/userspace-api/mseal.rst         |  7 +++
+ arch/arm64/Kconfig                            |  1 +
+ arch/arm64/kernel/vdso.c                      | 22 +++++++---
+ arch/um/Kconfig                               |  1 +
+ arch/x86/Kconfig                              |  1 +
+ arch/x86/entry/vdso/vma.c                     | 16 ++++---
+ arch/x86/um/vdso/vma.c                        |  6 ++-
+ include/linux/mm.h                            | 10 +++++
+ init/Kconfig                                  | 18 ++++++++
+ kernel/events/uprobes.c                       |  5 ++-
+ security/Kconfig                              | 18 ++++++++
+ .../testing/selftests/x86/test_mremap_vdso.c  | 43 +++++++++++++++++++
+ 12 files changed, 132 insertions(+), 16 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.48.1.658.g4767266eb4-goog
+
 
