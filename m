@@ -1,187 +1,174 @@
-Return-Path: <linux-kernel+bounces-528930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DFCA41E1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:02:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B37E1A41DEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A6A1891325
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:56:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B1017F90D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C6B1248878;
-	Mon, 24 Feb 2025 11:46:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F00B260A2E;
+	Mon, 24 Feb 2025 11:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="VH1JLX91"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S2h0bWvG"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B3248867;
-	Mon, 24 Feb 2025 11:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E3F23F419;
+	Mon, 24 Feb 2025 11:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397589; cv=none; b=OfcBK71Im0rK0MMkg7CI/6XWUf4qTf/u0d1jeQNBqzX4NDgXS/MSX+azFOLFDn3BHhyJ0ypz+zwJlpJZMGcBP+ai4AS7g0R5cvV+WN5eSwzMFSiiM0qWhB8RhKn8FBueuijts0NKB2My+OEMQS5PW/9AV/67Lzb3q8kW2Uf4FFI=
+	t=1740396997; cv=none; b=IgyNdoXk8f2ii4vqkLq4OH/2UWRhY7QZa0tCLJzbblwnHTkmkraiuUDtKbbKTO1RBRSJxHts9lEJ7eKIAOPnNIc4RAsOcZfiZBp25bZAW5r3dlUXKLILuD+uEXLopjzUh2vVgtVo1iC30rKGQqNpJsZJ+VCktPxn0XidvLYRPYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397589; c=relaxed/simple;
-	bh=NlnoUZSFwuABwD0daHXZJr7GkVokqSLQ+bN2yG+cOGk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSr1PklYOBUyy0HcsfZbBHIx894m1p+7UOl5IycRgv7673yYaGQLjCubp8CyFy6SmKpWCExc9N0z+f/oq8srG/d+85Ne+5WvAJ5hoa5rNYOX9GfpSTDQl21WDmYH+Ga/Imbob99Lf4LzvzVSMPotI3IdUlRhILuDrKk8zR9xqJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=VH1JLX91; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id 51BAD1E000D;
-	Mon, 24 Feb 2025 14:36:56 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru 51BAD1E000D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1740397016; bh=DTItJCPFhbVedZdbaxnqWm55x4dSNHRqn77CJj9NmTU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=VH1JLX91L4V8hbBR8Ys8idEMJR4jPCxo+5YOsHQzRKlUEdHnBZsbL1tltsvQmg9eQ
-	 /k6SebhOXLdZmqKYQCR0BBvdznolAgBtl97Ep6KbJWL4MKyTT+o/oAkiEQ0DyhRSUC
-	 QR6KmdVgQsDt9Y0gZYWgieqa9WfhQ70r392ZI3h9pHZBR8B9o2SGh+U8I3mtwUsWwi
-	 1x0Cq3Nb1Fg5Rvm/BJzyApfrorucWsNK4OgGcLddGHW46X/6g6Yh36LJvZnI9xD1D5
-	 TGRLRwIjOYZZCjYmmG25yUAobhbgjIilun7Tva4iN6sUrngU8SIHc/tC31Y2+lq50E
-	 3eNKO1Jg189Bg==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Mon, 24 Feb 2025 14:36:56 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.246.182) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Mon, 24 Feb
- 2025 14:36:53 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang
-	<dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, "Rafael J. Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>, Murad Masimov <m.masimov@mt-integration.ru>,
-	<stable@vger.kernel.org>,
-	<syzbot+c80d8dc0d9fa81a3cd8c@syzkaller.appspotmail.com>
-Subject: [PATCH v2] acpi: nfit: fix narrowing conversion in acpi_nfit_ctl
-Date: Mon, 24 Feb 2025 14:35:46 +0300
-Message-ID: <20250224113546.1441-1-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1740396997; c=relaxed/simple;
+	bh=PSYe6R/xPBasga876FmS8mHT9Zoo5UeLL8SBdjJXyYU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=me+EdXZhcikssWO2ffEGlnZ9OGrP19PKcXP6N+dto+850GYIjM+EmwVU8eFskhIX0APhu5PB9ZJAqeHD2/0xfwdsFfZ8aBeGYKckVApWflQ1Tgd5ybKudHgl9tKW5Jb+/USCAn8JC+Ixw744IIlA23N2PbLix96NV+IfR44k8y8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S2h0bWvG; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1740396992;
+	bh=PSYe6R/xPBasga876FmS8mHT9Zoo5UeLL8SBdjJXyYU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=S2h0bWvGZ/wrr74QxKpyYx3qf9WQ0JxBIUIjM4IGAT16YoVeJKx1K4amOuK76OY8o
+	 0R6eNuYkJ3ceb2AQZObzCrHaxfifC9fX9LBuHqEOQbwJxdks9F9siUe9k0qFloe+C7
+	 uF3KlDYg3LvWBCNuRgxDfHblWLHi5JCe7B095xMkFnO8xz2u7wxjYxpcyX64pCu/fI
+	 OidgFXAVvWuyE2CnaBc9j1s8nwYW1sbhRhZKwvgjmc0ZHNYa8zycnvM2rogw46y9gh
+	 nd4QIhnLaSMccsOwjs7RRqk/keKhQI4h7jiAy7QtCib6a+/Rct5zI1AvmIWlSVDaej
+	 biIXz6p58xOCw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id AD4FD17E019E;
+	Mon, 24 Feb 2025 12:36:31 +0100 (CET)
+Date: Mon, 24 Feb 2025 12:36:28 +0100
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Nicolas Dufresne <nicolas@ndufresne.ca>, Florent Tomasin
+ <florent.tomasin@arm.com>, Vinod Koul <vkoul@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Steven Price <steven.price@arm.com>, Liviu Dudau
+ <liviu.dudau@arm.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>, Benjamin
+ Gaignard <benjamin.gaignard@collabora.com>, Brian Starkey
+ <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, "T . J .
+ Mercier" <tjmercier@google.com>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Yong
+ Wu <yong.wu@mediatek.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, nd@arm.com, Akash Goel
+ <akash.goel@arm.com>
+Subject: Re: [RFC PATCH 0/5] drm/panthor: Protected mode support for Mali
+ CSF GPUs
+Message-ID: <20250224123628.52d43b84@collabora.com>
+In-Reply-To: <20250220-strict-cobalt-albatross-6f742e@houat>
+References: <3ykaewmjjwkp3y2f3gf5jvqketicd4p2xqyajqtfnsxci36qlm@twidtyj2kgbw>
+	<1a73c3acee34a86010ecd25d76958bca4f16d164.camel@ndufresne.ca>
+	<ppznh3xnfuqrozhrc7juyi3enxc4v3meu4wadkwwzecj7oxex7@moln2fiibbxo>
+	<9d0e381758c0e83882b57102fb09c5d3a36fbf57.camel@ndufresne.ca>
+	<1f436caa-1c27-4bbd-9b43-a94dad0d89d0@arm.com>
+	<20250205-amorphous-nano-agouti-b5baba@houat>
+	<2085fb785095dc5abdac2352adfb3e1e1c8ae549.camel@ndufresne.ca>
+	<20250207160253.42551fb1@collabora.com>
+	<20250211-robust-lush-skink-0dcc5b@houat>
+	<20250211153223.2fef2316@collabora.com>
+	<20250220-strict-cobalt-albatross-6f742e@houat>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/02/24 10:30:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_one_url}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, ksmg02.maxima.ru:7.1.1;81.200.124.62:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mt-integration.ru:7.1.1;syzkaller.appspot.com:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191224 [Feb 24 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/02/24 06:47:00 #27427681
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/02/24 10:29:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Syzkaller has reported a warning in to_nfit_bus_uuid():
+Hi Maxime,
 
-==================================================================
-only secondary bus families can be translated
-WARNING: CPU: 0 PID: 15821 at drivers/acpi/nfit/core.c:80 to_nfit_bus_uuid+0x6f/0x90 drivers/acpi/nfit/core.c:79
-Modules linked in:
-CPU: 0 UID: 0 PID: 15821 Comm: syz-executor579 Not tainted 6.11.0-rc7-syzkaller-00020-g8d8d276ba2fb #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:to_nfit_bus_uuid+0x6f/0x90 drivers/acpi/nfit/core.c:79
-Call Trace:
- <TASK>
- acpi_nfit_ctl+0x8a9/0x24a0 drivers/acpi/nfit/core.c:489
- __nd_ioctl drivers/nvdimm/bus.c:1186 [inline]
- nd_ioctl+0x184d/0x1fe0 drivers/nvdimm/bus.c:1264
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-==================================================================
+On Thu, 20 Feb 2025 14:32:14 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-This warning is triggered if the argument passed in to_nfit_bus_uuid() is
-equal to 0. It is important that this function expects that the argument
-is between 1 and NVDIMM_BUS_FAMILY_MAX. Therefore, it must be checked
-beforehand. However, in acpi_nfit_ctl() validity checks made before
-calling to_nfit_bus_uuid() are erroneous.
+> > > > This approach has two downsides though:
+> > > > 
+> > > > 1. We have no way of checking that the memory we're passed is actually
+> > > > suitable for FW execution in a protected context. If we're passed
+> > > > random memory, this will likely hang the platform as soon as we enter
+> > > > protected mode.    
+> > > 
+> > > It's a current limitation of dma-buf in general, and you'd have the same
+> > > issue right now if someone imports a buffer, or misconfigure the heap
+> > > for a !protected heap.
+> > > 
+> > > I'd really like to have some way to store some metadata in dma_buf, if
+> > > only to tell that the buffer is protected.  
+> > 
+> > The dma_buf has a pointer to its ops, so it should be relatively easy
+> > to add an is_dma_buf_coming_from_this_heap() helper. Of course this
+> > implies linking the consumer driver to the heap it's supposed to take
+> > protected buffers from, which is basically the thing being discussed
+> > here :-).  
+> 
+> I'm not sure looking at the ops would be enough. Like, you can compare
+> that the buffer you allocated come from the heap you got from the DT,
+> but if that heap doesn't allocate protected buffers, you're screwed and
+> you have no way to tell.
 
-Function acpi_nfit_ctl() first verifies that a user-provided value
-call_pkg->nd_family of type u64 is not equal to 0. Then the value is
-converted to int (narrowing conversion), and only after that is compared
-to NVDIMM_BUS_FAMILY_MAX. This can lead to passing an invalid argument to
-acpi_nfit_ctl(), if call_pkg->nd_family is non-zero, while the lower 32
-bits are zero.
+If heap names are unique, the name of the heap should somehow guarantee
+the protected/restricted nature of buffers allocated from this heap
+though. So, from a user perspective, all you have to do is check that
+the buffers you import come from this particular heap you've been
+pointed to. Where we get the heap name from (DT or module param
+passed through a whitelist of protected heap names?) is an
+implementation detail.
 
-Moreover, the same way zero can be passed in to_nfit_bus_uuid(),
-negative value also may occur. That wouldn't trigger the warning, but
-could lead to a wild-memory-access in test_bit(). This is achieved with
-a slightly modified version of the reproducer generated by Syzkaller.
-The crash report is as follows:
+> 
+> It also falls apart if we have a heap driver with multiple instances,
+> which is pretty likely if we ever merge the carveout heap driver.
 
-==================================================================
- BUG: KASAN: wild-memory-access in acpi_nfit_ctl (./arch/x86/include/asm/bitops.h:227 (discriminator 6) ./arch/x86/include/asm/bitops.h:239 (discriminator 6) ./include/asm-generic/bitops/instrumented-non-atomic.h:142 (discriminator 6) drivers/acpi/nfit/core.c:489 (discriminator 6))
- Read of size 8 at addr 1fff888141379358 by task repro/681503
+What I meant here is that checking that a buffer comes from a
+particular heap is something the heap driver itself can easily do. It
+can be a mix of ops+name check (or ops+property check) if there's
+multiple heaps instantiated by a single driver, of course.
 
- CPU: 0 UID: 0 PID: 681503 Comm: repro Not tainted 6.13.0-04858-g21266b8df522 #30
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
- Call Trace:
- <TASK>
- dump_stack_lvl (lib/dump_stack.c:123)
- kasan_report (mm/kasan/report.c:604)
- kasan_check_range (mm/kasan/generic.c:183 mm/kasan/generic.c:189)
- acpi_nfit_ctl (./arch/x86/include/asm/bitops.h:227 (discriminator 6) ./arch/x86/include/asm/bitops.h:239 (discriminator 6) ./include/asm-generic/bitops/instrumented-non-atomic.h:142 (discriminator 6) drivers/acpi/nfit/core.c:489 (discriminator 6))
- nd_ioctl (drivers/nvdimm/bus.c:1187 drivers/nvdimm/bus.c:1264)
- __x64_sys_ioctl (fs/ioctl.c:52 fs/ioctl.c:906 fs/ioctl.c:892 fs/ioctl.c:892)
- do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
- entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
-==================================================================
+I guess the other option would be to have a protected property at the
+dma_buf level so we don't have to go all the way back to the dma_heap
+to figure it out.
 
-All checks of the input value should be applied to the original variable
-call_pkg->nd_family. This approach is better suited for the stable
-branches and is much safer than replacing the type of the variable from
-int to u32 or u64 throughout the code, as this could potentially
-introduce new bugs.
+> 
+> > > 
+> > > I suspect you'd also need that if you do things like do protected video
+> > > playback through a codec, get a protected frame, and want to import that
+> > > into the GPU. Depending on how you allocate it, either the codec or the
+> > > GPU or both will want to make sure it's protected.  
+> > 
+> > If it's all allocated from a central "protected" heap (even if that
+> > goes through the driver calling the dma_heap_alloc_buffer()), it
+> > shouldn't be an issue.  
+> 
+> Right, assuming we have a way to identify the heap the buffer was
+> allocated from somehow. This kind of assumes that you only ever get one
+> source of protected memory, and you'd never allocate a protected buffer
+> from a different one in the codec driver for example.
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+Yes, and that's why having the ability to check that a buffer comes
+from a particular heap is key. I mean, we don't necessarily have to
+restrict things to a single heap, it can be a whitelist of heaps we know
+provide protected buffers if we see a value in having multiple
+protected heaps coexisting on a single platform.
 
-Fixes: 6450ddbd5d8e ("ACPI: NFIT: Define runtime firmware activation commands")
-Cc: stable@vger.kernel.org
-Reported-by: syzbot+c80d8dc0d9fa81a3cd8c@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c80d8dc0d9fa81a3cd8c
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
-v2: Add more details to the commit message.
+Regards,
 
- drivers/acpi/nfit/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index a5d47819b3a4..ae035b93da08 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -485,7 +485,7 @@ int acpi_nfit_ctl(struct nvdimm_bus_descriptor *nd_desc, struct nvdimm *nvdimm,
- 		cmd_mask = nd_desc->cmd_mask;
- 		if (cmd == ND_CMD_CALL && call_pkg->nd_family) {
- 			family = call_pkg->nd_family;
--			if (family > NVDIMM_BUS_FAMILY_MAX ||
-+			if (call_pkg->nd_family > NVDIMM_BUS_FAMILY_MAX ||
- 			    !test_bit(family, &nd_desc->bus_family_mask))
- 				return -EINVAL;
- 			family = array_index_nospec(family,
---
-2.39.2
-
+Boris
 
