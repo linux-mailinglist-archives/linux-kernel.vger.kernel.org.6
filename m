@@ -1,119 +1,205 @@
-Return-Path: <linux-kernel+bounces-529715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971F8A42A1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:42:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC69A42A30
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED2D3A4227
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:41:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6291883635
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54FF26463B;
-	Mon, 24 Feb 2025 17:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+ULiqkz"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56D2264A81;
+	Mon, 24 Feb 2025 17:44:05 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FFA170A13
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9325426280C;
+	Mon, 24 Feb 2025 17:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740418921; cv=none; b=TS9PPHEOxIQYVB9+DWwlXOZlXr6kOl5Z04AHojC2Aix7+M6a73QvrAi127l1SkwbM08xDe+IIKnSR78knR8iqSqaC6k/FCDp4PJw8kWJlgl2OWLo7xmzNAMbEBOcCN67oC1t/5GEbGA5toG4slPK4mbgtB5CXiTPpg+yZiOw55c=
+	t=1740419045; cv=none; b=mE8c4sZ6T0MM2nkS/YPjyWc+HIeFofoNxIwve9eexy3cqehLsQGmTrEstJ+NF+hLWs7R9eDomdtPj1G+xfHfy9A2qaZfk6E2CNWLP0JGuPuxJ93aOj0GP1Cr0LaKiT3m8o8YyWYQv5EbZMA4rH30OYBzdjN/z3HYjhRH+hIeLh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740418921; c=relaxed/simple;
-	bh=3IFadXaUYj7sdZ/YoFBbGyfHNpr1yxv29eaIHoixx3w=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=R2G2gxpH8dY69tUAvhafKd1UbMjqJoeyglc8y0iieKbsz3YrlQpCyZLwaratckCoWamP+0hkCuU62OWjn7lSMcqoxAneJ3A13yGM16zfA406d4KDvlGzaNaObo9E7G+zIdFzlMcNxpcAIeTXm86o8W15AM4AlauCzTkiUa2zl9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j+ULiqkz; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc318bd470so9042578a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:41:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740418919; x=1741023719; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e1EZBmSe2im3juqrZK3CYkAhncBM5TtZhAUdFg3KflY=;
-        b=j+ULiqkzVJUHePkxzUuurPaTkSW8k50eUp1nwfd6iH50R/+0UbpZBByCxvYGL3+ESb
-         lL6r0QWIzUvgOl55jUUxk+/2DhKzCcY2EfOLspVHlxTaomWZT5IP44Roqndyp/9Sloiz
-         5bA0Zj4WeMjKR5+H/GsEvqKjhueQ/hpoW9HP0WjSgEPWPPqS8KsdBMs6GaZ3FAvzPkQd
-         23J4CIz4aeNCbPRvnjffGm5zeGOt06AnW5y5lqMLm/yARDFRGwxYwAAdwc3mXEDzRYj7
-         /7UWlbQwAzK8au19wc9yxOrHO/VDjT9adz7KHNxAvfCsTPiU2tNflbnu4Z0PX3uyCweG
-         J9QA==
+	s=arc-20240116; t=1740419045; c=relaxed/simple;
+	bh=nWiv1gFNqBVT0jBzZeK1/WSuHaNSOd+ibwvsUUqZowU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X4KxGINcty18m6rdacBCzHHN7FacyyzOaeO9uI8fHvFRZNJ4NbgTG5GSOAj3MGuvTDvGC9Psclr0kTgGDXX0gl36PT9lwIg2cZs/VhD4hrJJO7O9rujvBvRd+27L84bquz5apvliGnQ5HM8ehUHaXnJoid/IA7FEiybajXdyMFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220c8f38febso100071735ad.2;
+        Mon, 24 Feb 2025 09:44:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740418919; x=1741023719;
-        h=cc:to:from:subject:message-id:mime-version:date:reply-to
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e1EZBmSe2im3juqrZK3CYkAhncBM5TtZhAUdFg3KflY=;
-        b=RypwHtsvwISWGlYUSvISndAsfmzdFd7TvAYx3w+EFWg6pOSPYVK/h64DrDeSExciYI
-         TwxWSWUmx/daClMplaZItGdahOztNVTdvdG+9C4hAdBod1SIjRwDxCxr6pmRpRsmZ3Py
-         NyLmdSs0naS7T5hCQ7yXDTiLLZeb1DDckoe3WEW0otmItNSPyajiTsfWg43VnvBXUxE0
-         A6nu7W5nYEN+PY1wWlg9Uw01KfJN3hEL3b1cJgj5/tTbFiC2p3BK4E/y/pzHGZEe3D/5
-         8Akd6kn6z+PNW79JkspGmQyFk2uJV57In+IrGaEjHdSpG8VPavoGCzGnfoop9BRbnJd2
-         En3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW2OG27JeMTlrCajOCb7xTQ8w32yBHRSaUX0/7UiwjAWQcTzt8HxX2W6qKgug3MpBlhCU0/z0fRo3JEsGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEPb0e3mjIs0BF4274JooBUF21PwNqlMsFTT7RgXTtL946MLS4
-	EmEKZ7Fh9ugHQ9Sd+Peb0ToutlYmUn1WMjQObuQHsNN/zyVodpgAGNTFZ1TyQhyXPc6MF2/arcR
-	Ixg==
-X-Google-Smtp-Source: AGHT+IHFioBGXOxzm41NcBknr4shVziaEDjiaSXZYk4bXNvmJxj5hrZDjUahvq4dTClGOKbh+vDVlxvAwxw=
-X-Received: from pjbpt3.prod.google.com ([2002:a17:90b:3d03:b0:2fc:13d6:b4cb])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4a41:b0:2f4:47fc:7f18
- with SMTP id 98e67ed59e1d1-2fce78a2965mr24749658a91.10.1740418919237; Mon, 24
- Feb 2025 09:41:59 -0800 (PST)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Mon, 24 Feb 2025 09:41:56 -0800
+        d=1e100.net; s=20230601; t=1740419042; x=1741023842;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aE6DUngSxwY3etZZHx2C7wT0U9bbZo01Xod0OnS+oLI=;
+        b=gIcHqQ93lEnqbbrvDI+8+hyqrD0NGmuYXZi0FwuxQS9qOX9HzNBjVcarUPS8oGCOlg
+         xh8tU/D6x210MjUVdwtGXs3gIZDJoMz9livM09Lx40CIZwk0Ljrs07wYj1b1+GULGVTs
+         TpU3tsBUowBZhr8bEP0FG32enb9fZywB1RMuELLQ2LSutOj//iZXjIf1EkX7/hK5QqVE
+         +yb+xJyleYZ0T3YOx+EtQ4QBqcmt/6cTxOP3XAz96F/DfnqY0gy5PbHZDWquybkUrdFw
+         gsu9pNEt48DReLFYzvpuqFJOM2eEsZvRN3EgtoCINvukf37mauCFl1O/klFDHE10OWN7
+         a7+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/rQXRHrkE5t/cXpxdioDPFPnQLnx33cXMgbcejsCNZKp4NNnSA9akp7jXnffeCMVKMEUXEGyRA15lHzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkYeZqE6cgIuPMnkeISlnflZaFcaqMI7kHuUsXzgH/DMPuVFSs
+	IInXU+BXXJJ0vV7HDqjK5RMcSKueZ3YYLae/NEYm2wx+IHFV91xXastrv9E=
+X-Gm-Gg: ASbGncsYocTD3v1x9J45OK1QxhFLA7Lsiy8wchCbPnA/Yyl7bGzOlnB81TlpwDEOMB5
+	RpOq/lO8bvDFbGkeFLCmLIe+UWiOYUy4ymwVIgOfeO3Hna2YwPkhzGM23ON1sawFC+uh8SOpiL7
+	FOr4hPkkqX94/OEZogz178a/z8r7+o7xdLEIH68DFn07uyN48OvDF2BepHNxYLuas0orZV1yKMu
+	fq5QGcqmeiQmAOwLmKF+THqwJn2O+X0m9isix3WZq6gJIW47Uy8FhSmwSkwwHnek3wuaW8ApPF1
+	Q+qRX275IPg7RYOGpjQgYKQEVw==
+X-Google-Smtp-Source: AGHT+IG6C8GKkGjXLzptgw4xMFBRKHxCzZoWFt9D2V7ocYm5Xdh2ewFEuIHX7Zu8Prit0CTGpU/N2w==
+X-Received: by 2002:a17:902:e54e:b0:220:d256:d133 with SMTP id d9443c01a7336-2219ff9e7f3mr262239945ad.14.1740419042456;
+        Mon, 24 Feb 2025 09:44:02 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-220d5596115sm183685685ad.258.2025.02.24.09.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 09:44:02 -0800 (PST)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	kuniyu@amazon.com,
+	willemb@google.com,
+	horms@kernel.org,
+	ncardwell@google.com,
+	dsahern@kernel.org,
+	kaiyuanz@google.com,
+	asml.silence@gmail.com,
+	Mina Almasry <almasrymina@google.com>
+Subject: [PATCH net v4] tcp: devmem: don't write truncated dmabuf CMSGs to userspace
+Date: Mon, 24 Feb 2025 09:44:01 -0800
+Message-ID: <20250224174401.3582695-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250224174156.2362059-1-seanjc@google.com>
-Subject: [PATCH] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-When emulating HLT and a wake event is already pending, explicitly mark
-the vCPU RUNNABLE (via kvm_set_mp_state()) instead of assuming the vCPU is
-already in the appropriate state.  Barring a KVM bug, it should be
-impossible for the vCPU to be in a non-RUNNABLE state, but there is no
-advantage to relying on that to hold true, and ensuring the vCPU is made
-RUNNABLE avoids non-deterministic behavior with respect to pv_unhalted.
+Currently, we report -ETOOSMALL (err) only on the first iteration
+(!sent). When we get put_cmsg error after a bunch of successful
+put_cmsg calls, we don't signal the error at all. This might be
+confusing on the userspace side which will see truncated CMSGs
+but no MSG_CTRUNC signal.
 
-E.g. if the vCPU is not already RUNNABLE, then depending on when
-pv_unhalted is set, KVM could either leave the vCPU in the non-RUNNABLE
-state (set before __kvm_emulate_halt()), or transition the vCPU to HALTED
-and then RUNNABLE (pv_unhalted set after the kvm_vcpu_has_events() check).
+Consider the following case:
+- sizeof(struct cmsghdr) = 16
+- sizeof(struct dmabuf_cmsg) = 24
+- total cmsg size (CMSG_LEN) = 40 (16+24)
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
+When calling recvmsg with msg_controllen=60, the userspace
+will receive two(!) dmabuf_cmsg(s), the first one will
+be a valid one and the second one will be silently truncated. There is no
+easy way to discover the truncation besides doing something like
+"cm->cmsg_len != CMSG_LEN(sizeof(dmabuf_cmsg))".
+
+Introduce new put_devmem_cmsg wrapper that reports an error instead
+of doing the truncation. Mina suggests that it's the intended way
+this API should work.
+
+Note that we might now report MSG_CTRUNC when the users (incorrectly)
+call us with msg_control == NULL.
+
+Fixes: 8f0b3cc9a4c1 ("tcp: RX path for devmem TCP")
+Reviewed-by: Mina Almasry <almasrymina@google.com>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
- arch/x86/kvm/x86.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v4: respect 80 character line length
+v3: s/put_devmem_cmsg/put_cmsg_notrunc/ and put it into scm.c (Jakub)
+---
+ include/linux/socket.h |  2 ++
+ net/core/scm.c         | 10 ++++++++++
+ net/ipv4/tcp.c         | 26 ++++++++++----------------
+ 3 files changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 58b82d6fd77c..7f5abdaab935 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11310,9 +11310,8 @@ static int __kvm_emulate_halt(struct kvm_vcpu *vcpu, int state, int reason)
- 	++vcpu->stat.halt_exits;
- 	if (lapic_in_kernel(vcpu)) {
- 		if (kvm_vcpu_has_events(vcpu))
--			vcpu->arch.pv.pv_unhalted = false;
--		else
--			kvm_set_mp_state(vcpu, state);
-+			state = KVM_MP_STATE_RUNNABLE;
-+		kvm_set_mp_state(vcpu, state);
- 		return 1;
- 	} else {
- 		vcpu->run->exit_reason = reason;
-
-base-commit: fed48e2967f402f561d80075a20c5c9e16866e53
+diff --git a/include/linux/socket.h b/include/linux/socket.h
+index d18cc47e89bd..c3322eb3d686 100644
+--- a/include/linux/socket.h
++++ b/include/linux/socket.h
+@@ -392,6 +392,8 @@ struct ucred {
+ 
+ extern int move_addr_to_kernel(void __user *uaddr, int ulen, struct sockaddr_storage *kaddr);
+ extern int put_cmsg(struct msghdr*, int level, int type, int len, void *data);
++extern int put_cmsg_notrunc(struct msghdr *msg, int level, int type, int len,
++			    void *data);
+ 
+ struct timespec64;
+ struct __kernel_timespec;
+diff --git a/net/core/scm.c b/net/core/scm.c
+index 4f6a14babe5a..733c0cbd393d 100644
+--- a/net/core/scm.c
++++ b/net/core/scm.c
+@@ -282,6 +282,16 @@ int put_cmsg(struct msghdr * msg, int level, int type, int len, void *data)
+ }
+ EXPORT_SYMBOL(put_cmsg);
+ 
++int put_cmsg_notrunc(struct msghdr *msg, int level, int type, int len,
++		     void *data)
++{
++	/* Don't produce truncated CMSGs */
++	if (!msg->msg_control || msg->msg_controllen < CMSG_LEN(len))
++		return -ETOOSMALL;
++
++	return put_cmsg(msg, level, type, len, data);
++}
++
+ void put_cmsg_scm_timestamping64(struct msghdr *msg, struct scm_timestamping_internal *tss_internal)
+ {
+ 	struct scm_timestamping64 tss;
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 0d704bda6c41..d74281eca14f 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -2438,14 +2438,12 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+ 			 */
+ 			memset(&dmabuf_cmsg, 0, sizeof(dmabuf_cmsg));
+ 			dmabuf_cmsg.frag_size = copy;
+-			err = put_cmsg(msg, SOL_SOCKET, SO_DEVMEM_LINEAR,
+-				       sizeof(dmabuf_cmsg), &dmabuf_cmsg);
+-			if (err || msg->msg_flags & MSG_CTRUNC) {
+-				msg->msg_flags &= ~MSG_CTRUNC;
+-				if (!err)
+-					err = -ETOOSMALL;
++			err = put_cmsg_notrunc(msg, SOL_SOCKET,
++					       SO_DEVMEM_LINEAR,
++					       sizeof(dmabuf_cmsg),
++					       &dmabuf_cmsg);
++			if (err)
+ 				goto out;
+-			}
+ 
+ 			sent += copy;
+ 
+@@ -2499,16 +2497,12 @@ static int tcp_recvmsg_dmabuf(struct sock *sk, const struct sk_buff *skb,
+ 				offset += copy;
+ 				remaining_len -= copy;
+ 
+-				err = put_cmsg(msg, SOL_SOCKET,
+-					       SO_DEVMEM_DMABUF,
+-					       sizeof(dmabuf_cmsg),
+-					       &dmabuf_cmsg);
+-				if (err || msg->msg_flags & MSG_CTRUNC) {
+-					msg->msg_flags &= ~MSG_CTRUNC;
+-					if (!err)
+-						err = -ETOOSMALL;
++				err = put_cmsg_notrunc(msg, SOL_SOCKET,
++						       SO_DEVMEM_DMABUF,
++						       sizeof(dmabuf_cmsg),
++						       &dmabuf_cmsg);
++				if (err)
+ 					goto out;
+-				}
+ 
+ 				atomic_long_inc(&niov->pp_ref_count);
+ 				tcp_xa_pool.netmems[tcp_xa_pool.idx++] = skb_frag_netmem(frag);
 -- 
-2.48.1.658.g4767266eb4-goog
+2.48.1
 
 
