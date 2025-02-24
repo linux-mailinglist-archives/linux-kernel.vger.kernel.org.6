@@ -1,131 +1,142 @@
-Return-Path: <linux-kernel+bounces-528599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D13FA4198D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:51:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32423A4198E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:51:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B9C33AC77D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0804E188DDBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBA6B2475DD;
-	Mon, 24 Feb 2025 09:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E24324BBF5;
+	Mon, 24 Feb 2025 09:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CGbq4i/V"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Bvmrm/Rd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE2024BBF5;
-	Mon, 24 Feb 2025 09:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CCF24BC0E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390658; cv=none; b=U9/gl+rossJm6ujLJ8mAbEBe4aNUnMYYysdqZqhqF96My9fxWpRIQoXXdwiBjmxMyH+UrpuYvdaYeyzU7nKZSTkpLHZdA9gKvX3ffAtY/Unr7oOEGEz0iiHVYVKc6hzEtRlesVU2c7mrT4q/shiPnrXo2pXytD6FOqQTK2HPX08=
+	t=1740390660; cv=none; b=Zh6mYR90mjx1B7Pvmlg5+lakow5Jo0zaBU2nQ7BiNJvZSx4bEahldsfSu72AfUiW/oIW3pM27pJDvZ/YNiKwmJ621/Fb1pRgoce6Ra+p+WKAGchN+0HtyGDBEOvs3DXjXj46Cg9cpIr5GjCwy5F/LNKuwUeMgOxH7pisVAO/TII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390658; c=relaxed/simple;
-	bh=AW+V/3m9BUBJyT7p7GWgL2ZMcj7ir6r/SScWqZ+2LjE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=Jn00Rt6GJywlq6Kn7aX+nNGglCUpXL1ogyAgluXoA8UErKYDXLBd7OTsBGBREgGq2kpX/Py7btIGPHJ6qY9ESRRB9GH2FbUkS+XyIrLmy40fD4zxzQ6AtqLwDFwE45ujkdHJf5c3Gq58d2TUhFRLbdnkxokeWtIcFWQdyUVkVeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CGbq4i/V; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51NMf8rD030604;
-	Mon, 24 Feb 2025 09:50:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PX82TbmITA0Q84CW35eCU1R22/DtHs9lW3Mx1JZv8B0=; b=CGbq4i/VFzIuzkV6
-	osKmJiBR0op5LAQowpJvQzjaf95FeCKg8DxqtbRcbfFdKmEi7AnD90DYBSwQSI9A
-	HNmearmqOSz+51ie333XRhw7sfOE3tnYMj2EmMu4CVKME1RLrMHIvvOWItF8nq2k
-	V2IfreG49ojbtR8JnEP/gvucV/jnvAaKEUGUzlvgGsJoMhybLFL7zg2dHVkZCI7T
-	8rJ+WNsIOz3pfAVLZirXgyKsDq4RCrHgQKdzvTTVNpUrdKQ/gXaavVzmGFguFDKz
-	i/C9m13FXSQ2jXHqS6GNR37zHM0el8cXoA4IhzAZjU6+A6Vh4ZqFD1yGrkaLs8OX
-	UtjbHA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y65xvg1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 09:50:50 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O9onqq028561
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 09:50:49 GMT
-Received: from hu-arakshit-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Feb 2025 01:50:45 -0800
-From: Abhinaba Rakshit <quic_arakshit@quicinc.com>
-Date: Mon, 24 Feb 2025 15:20:09 +0530
-Subject: [PATCH 2/2] arm64: dts: qcom: qcs615: add TRNG node
+	s=arc-20240116; t=1740390660; c=relaxed/simple;
+	bh=kOip+9a74eUiw2GtE1DNpepkjAxlDJiUPnd1Z/7h674=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFf6udepBSp3RbxGnFjIVg6WphlNZ+GIEf09lp8HGDExbmtDV29kVrDtmdOu9hJ1kz3JjfSxiHs2SIeIHEfTq9Fn1eGdYUuOQsDi2cSVsfe+hVPOa5au+nBTlfd6xoYCdxu8EjKVkdOYJmB8HYE5NKuNE8P5ffrINQ4g+wp7xdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Bvmrm/Rd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740390657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wZqHm/9cDgAOWUdU6io4A3jzHsAy/X8He33+MZcDyN8=;
+	b=Bvmrm/RddWlRMxk3VLkLva7ZTAJleHuuY5DrxOh5uD9b6H84VSFo/VfK392xlsYj20RQEx
+	EBHhQp8kyaZw+PDnOJZt938BRqBwkxIjn1K44BnbGYxTDSIkxzcUFSkUUlyKsJf1DycqXM
+	mS0poRQK52/b5hx1Wo0BTx4axrTQ6BY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-12-q7SpfhcvM1q7BpypVumEWQ-1; Mon, 24 Feb 2025 04:50:53 -0500
+X-MC-Unique: q7SpfhcvM1q7BpypVumEWQ-1
+X-Mimecast-MFC-AGG-ID: q7SpfhcvM1q7BpypVumEWQ_1740390653
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-38f42f21f54so1587096f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:50:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740390652; x=1740995452;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZqHm/9cDgAOWUdU6io4A3jzHsAy/X8He33+MZcDyN8=;
+        b=nbvYjh1ekQyaUlIihpZiHx/rk+Du8/LfjtSpH18CdcyIhJGHlvxt0cY/cCCvkRqlQC
+         PSzfSQmrMSCu2JF7rjJi607yv7PJdkncISlIT5/szReltZBqg1+gV19BwJOKB4LhlhTr
+         pso6nhfc0XQpCr2S9XFZu84eOCuNM5U/zJeuOfAwcDSc9O50qyyP0Xi9Gnl6Le4OMa3C
+         +mm+1mxe4l0AfxgV1ME4Yw5ljMRtgoHk+KRaQb1aXU27DN1tUFdpYVz8GnmTGjrZytgY
+         iKHs9PDg3PD1r2BEVDMAQnHl+idukDHUwPLhmqZSgvtCINatnCk/s/Zq/P4DnhoJM3Qh
+         1siQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGWAkfCGW9Km/5q/ZH6t9jlhGZ333dNHM6O2sjckneIBZwx2A7UwC4koOTaCdSUvAacrJN6ylfGy4pzx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVaCtvcFwXwTNT+cFJ0wGUftn1B5EVZNw4q9D8XoJ/xbc5JmB6
+	nmCPKzEezcLhb00WZhuarH+skazqpOHcEQkVKUIhsTOavTqSp89fbaBt4xeYFoLD5DP3FU20WB4
+	xWDNCYXD10JcPtKpJOBM4l2N2+huFBBik5GcoaQ44Ba1Mxrqit0Y5oGjH7g9qOw==
+X-Gm-Gg: ASbGncvFaXO8dYZIbSlyFBdwjJvzWD7oiGDrbR3w7RADODakNnIQ/QPyBvUv8BKzYJS
+	UKmmRE2VZBfY9p1KlWb1GCdHgySQjmzHKiJaaY6lx8i76hap8VvMvmhQkOunf3qq/pzk1hLSyna
+	CaIOlmu0/K5ll7xPQ+CZYPe8OMI6ZN1LDXkBJ8Q+SDgGLUN/3wMITxjJBVenEom6bg3YEdbrSiA
+	MaFMkDBIoHcLg8VzZcR4clW5OUBKWDTKqbp1CKjbNjztWLMEImC5PC2VhYg6myaB+QaYpWTxLM8
+	vTStnyzG4W6bdRmB9k8AtCWvRMqY7k8VzJC0FIzmRe+2
+X-Received: by 2002:a05:6000:1842:b0:38d:c2d7:b5a1 with SMTP id ffacd0b85a97d-38f7078b9f2mr10169992f8f.19.1740390652602;
+        Mon, 24 Feb 2025 01:50:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHAwza1hcgdxrJ8BwraVFQwVo7B5sCH/ekjF9MElryXwIHjucBtqc/nrNIBAZsErtsZwpeQ/w==
+X-Received: by 2002:a05:6000:1842:b0:38d:c2d7:b5a1 with SMTP id ffacd0b85a97d-38f7078b9f2mr10169974f8f.19.1740390652290;
+        Mon, 24 Feb 2025 01:50:52 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.34.42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02d8859sm99806715e9.16.2025.02.24.01.50.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 01:50:51 -0800 (PST)
+Date: Mon, 24 Feb 2025 10:50:49 +0100
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: Linux warns `sched: DL replenish lagged too much`
+Message-ID: <Z7xA-ZRw6J-68M35@jlelli-thinkpadt14gen4.remote.csb>
+References: <6ebe1130-0143-4388-9d69-ead0bf1fddf9@molgen.mpg.de>
+ <Z7cvifR-y0CWK1e6@jlelli-thinkpadt14gen4.remote.csb>
+ <47903c9d-3949-43b3-8f27-d59db20acb1e@molgen.mpg.de>
+ <51e0d018-f4c5-4a2d-93bd-265b4c13415f@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250224-enable-trng-for-qcs615-v1-2-3243eb7d345a@quicinc.com>
-References: <20250224-enable-trng-for-qcs615-v1-0-3243eb7d345a@quicinc.com>
-In-Reply-To: <20250224-enable-trng-for-qcs615-v1-0-3243eb7d345a@quicinc.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Abhinaba
- Rakshit" <quic_arakshit@quicinc.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: vEqY2ew4vgb1ocp8Jt-FkkCzF5rxZPAj
-X-Proofpoint-ORIG-GUID: vEqY2ew4vgb1ocp8Jt-FkkCzF5rxZPAj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- bulkscore=0 clxscore=1015 phishscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 adultscore=0 mlxlogscore=772 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240071
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <51e0d018-f4c5-4a2d-93bd-265b4c13415f@molgen.mpg.de>
 
-The qcs615 SoC has a True Random Number Generator, add the node
-with the correct compatible set.
+On 21/02/25 23:13, Paul Menzel wrote:
+> Dear Juri,
+> 
+> Am 20.02.25 um 21:18 schrieb Paul Menzel:
 
-Signed-off-by: Abhinaba Rakshit <quic_arakshit@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+...
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index f4abfad474ea62dea13d05eb874530947e1e8d3e..ab0bf68fdd8c2e223c242f70e779a3d9374292ea 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -973,6 +973,11 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 			};
- 		};
- 
-+		rng@793000 {
-+			compatible = "qcom,qcs615-trng", "qcom,trng";
-+			reg = <0x0 0x00793000 0x0 0x1000>;
-+		};
-+
- 		config_noc: interconnect@1500000 {
- 			reg = <0x0 0x01500000 0x0 0x5080>;
- 			compatible = "qcom,qcs615-config-noc";
+> I was able to reproduce this today. The same behavior after resuming from
+> ACPI S3.
+> 
+>     Feb 21 17:20:19 abreu gnome-shell[1775]:
+> meta_wayland_buffer_process_damage: assertion 'buffer->resource' failed
+>     Feb 21 17:20:19 abreu gnome-shell[1775]:
+> (../src/wayland/meta-wayland-buffer.c:709):meta_wayland_buffer_inc_use_count:
+> runtime check failed: (buffer->resource)
+>     Feb 21 17:20:21 abreu rtkit-daemon[1017]: Supervising 7 threads of 5
+> processes of 1 users.
+>     Feb 21 17:20:21 abreu rtkit-daemon[1017]: Supervising 7 threads of 5
+> processes of 1 users.
+>     Feb 21 17:20:59 abreu kernel: sched: DL replenish lagged too much
+>     Feb 21 17:21:01 abreu systemd[1588]: Started
+> app-gnome-ptyxis-26577.scope - Application launched by gsd-media-keys.
+>     […]
+>     Feb 21 17:23:43 abreu gnome-shell[1775]: libinput error: event11 -
+> DLL075B:01 06CB:76AF Touchpad: client bug: event processing lagging behind
+> by 31ms, your system is too slow
+> 
+> Move lags sometimes, and also switching GNOME virtual desktops, or just
+> opening a new window takes several seconds.
+> 
+> Can I set an option so more stuff is logged, once the scheduler warning is
+> logged?
 
--- 
-2.34.1
+Could you please first try to reproduce after having disabled the fair
+deadline server with something like the following?
+
+# for ((i=0; i<$(nproc); i++)); do echo 0 > /sys/kernel/debug/sched/fair_server/cpu$i/runtime; done
 
 
