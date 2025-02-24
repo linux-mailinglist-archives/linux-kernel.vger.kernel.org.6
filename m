@@ -1,134 +1,152 @@
-Return-Path: <linux-kernel+bounces-529592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974BDA4285F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:53:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C1EA42862
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:54:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 948313AA143
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:51:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C18AC16607B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26403263C92;
-	Mon, 24 Feb 2025 16:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC0B263C9F;
+	Mon, 24 Feb 2025 16:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="Q7TD/HW8";
-	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="t+YaG54F"
-Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="BUNnVFHI"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF9C263C72
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DD31917F1;
+	Mon, 24 Feb 2025 16:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740415893; cv=none; b=U18TuR/AUW59uZoa0h/Gvk/gb7AfoDcY+rimeG8tk2y2FlhmAzKJFcIj68EVGOFxGqCIWH+XHhHFrz3imU20Co1IyzecaNpYB0GYF9q0sUFvqgZ08vX5ajnv/Me8b8HgOjVxpq4o4kUQjBdb8GCQ8863fq1FdkURW2yvWSFzJtw=
+	t=1740416079; cv=none; b=Xe/d/waoJ6igtbxew5GIT4zkMVdQkCT8k6vpcL9rCtYjKDsur+5xSdPN9kiHluOIYnm9L/up53TERsxVsCJBhrJObSI/18F2W/Iv7jXPXlBEuz6FRL77kLF4FcJxDbZSr4cuwUKD48AjhPW04vQkp+XHeDSwHrqnYK2I2/6Pfkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740415893; c=relaxed/simple;
-	bh=K28/z7QwIeobQDU/vrm+DEec3wrz9qnljeycGV8KQZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CUiU3LD5LD9Tp3P3ZBh9+lQ/o7Xr6SmVKbl4rW+1jTLU2LX16sUlGg6PAsisZK7B/qoybNoEj56bbIZfD9o9EKaSwDj/ZTvcUiD/XkLGIooJURJ/nX7gc9jDEqW+jzAi2Bd/ruz7rdXzBbLBc5Re8BMwArWBafym3tkvkeW9Yb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=Q7TD/HW8; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=t+YaG54F; arc=none smtp.client-ip=148.163.129.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sladewatkins.com;
- h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
- s=selector-1739986532; bh=Jyt0wxZCqrJX4sJ0pBWunQCrP16mlcdWeo8PdzECLyE=;
- b=Q7TD/HW8uG4Pk31shNysm4oOEbJyoZ/eHkxNHe0+VavQpzKRIRv78Seb2qKse3HekXUWkm8i3QpAXk9bLDcYvZW5UYbh5D8GLzKbcyjwpXfyp2Y5O0l/5D5yLOFhrM+1RM3+JmEcqS+vi0ipnyvimQHQT+Gt27mRdHZe2AagMzTx6FdqY1Uotyh37ykgP61JHzHFVjXwVFCR3cQGn797CKsA9LAnK4PeKD4pjChXqGb+uXxAzE6VVAAkIWuls5zW8NztZgD3Cuo3sDeY76UVEg6TZmOmuuloBKSHsu3xcYBE36a1ZCqczgi6VSiO7sKtSNnoqXxejDcUo7sSqRUF4A==
-X-Virus-Scanned: Proofpoint Essentials engine
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id CD88C2400DD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:51:21 +0000 (UTC)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c0c1025a6cso371288885a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:51:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sladewatkins.net; s=google; t=1740415880; x=1741020680; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Jyt0wxZCqrJX4sJ0pBWunQCrP16mlcdWeo8PdzECLyE=;
-        b=t+YaG54FqTEsNQo4rca0STCmSCAEfvjezbUwMFCj1Wdme5a6P8RkpdtDNpeFV46+XS
-         lKJxTjaagQzD9EEiaocqxkmUOeVnRNvoP0Wqs4bEywH1BXFGgjnr212iLgXaOFOoE5Ro
-         t/LeusVXFaJ10Y61XDOqcWwwFm9qkc2GP4kInkPe2H/eqyEs4NUDANeeL8N0tCmyQ3Qn
-         pCY4mewAADuCa/Z1QqU+AZciU7DxuIc9cJLaSf/7y4nKOHpKthIYcspJWysTSucrocpp
-         4bxeIN/4TrxSOKydDDHayMmScfhJT+u+uFMl4V5kMv92cSOdCva2ShYbM1ZmHQmpYAYw
-         twjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740415880; x=1741020680;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jyt0wxZCqrJX4sJ0pBWunQCrP16mlcdWeo8PdzECLyE=;
-        b=qi2hnSNMg0F3ebLooAyGifgFFiHCXXGhLHbW7MF8ops9fiiFINLp/Jh51IMY2Q1HBZ
-         eTWr7Xj6Duq6YMq0WXZafOl4oVmFBOexavOCr2vzEFeRvwah4mb6xtCES/w+JBE6T/y/
-         //JCtAl6wNEeSXve3GstVPK72m0yS3Yc9UTpmAabue3u27SLWft3ajikJP8dtt5RnDBL
-         rKMc/PJs5r6tt4fegugvCw6hCPaoMJJkUwbaJAph2gWsrsJrsOf5ImS7O7J4K4hs7kdx
-         CEXdLqaLuAIzFBFhyFUyAI4qAGDrhH9W4ao4w4Uvla9tEgom4nh/cAyofBO1t0dhrnR+
-         R4LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjfjGRkbe7grJ/VFBLA548IynWRPDbafiSFnJVcHlBSSL036vFD/KEK+Y4VSiUKM1tv/mdWdOP3DEUUm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8bfAVTKCBblZbookrojXd2Qdt5i7oWMj19FNYaewcbpbOy9I8
-	NT88on4Lnob15uaK2qOD+F5sfVpJp7ziYDGIYqv2FSKPi6O/LHbajag1J0NL3TZ2TI+z+hKdP7Z
-	pjpjP52HI2sNXVgqHb/Ewm7eMEYVLFBI8LMfIMqiP9mJIfTY0mckeO7CY/cP5aY675EtKiIK/CG
-	8Zu3RnMZQ=
-X-Gm-Gg: ASbGncuzxxNTJa9koMx6x2biiVwkDwYDmJ+lzo5lZm+vML1KABXV1qTCHw2lCOD6yki
-	wDoDMbBSpwx3qUEb91gI1wEUhqYoKeC9btbhKGgCvw03JjPofJou7JxT/7dM7stbd9bJH31MXv9
-	UWpBnt4xMjl3gIkqSngG7Y4l5eTNNLY+gbP7k+c4uLx0/+9egMD2sAEf0pIPUccS0rIe8DqMHE3
-	RtA2pduGhvN6EEJD5cW98uZnPVKDxvcCuLLdHsyHyONkjnwglhT9W0yBbrjljP+GSLtgY8qsQsf
-	IF+1RzYMnuTQcKuMsUKp/Z75vL+l/yVcCBGJ7371C4AW5Eq8O6unXUTnnmNmPZTKD2dsxhLmOIS
-	HNHuaVu3uCODpdoFZQzv+9YPOBMO1q3CWGjjV
-X-Received: by 2002:a05:620a:2985:b0:7c0:b685:1bb0 with SMTP id af79cd13be357-7c0ceef77f4mr1723520085a.17.1740415880334;
-        Mon, 24 Feb 2025 08:51:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE+l9174nk3i6VHzzdNLPRKcdildnJV0MBhHekW79kq7PRniYea04k3F6dvly7pRsJDJAeTJQ==
-X-Received: by 2002:a05:620a:2985:b0:7c0:b685:1bb0 with SMTP id af79cd13be357-7c0ceef77f4mr1723516885a.17.1740415880028;
-        Mon, 24 Feb 2025 08:51:20 -0800 (PST)
-Received: from ghostleviathan.computer.sladewatkins.net (syn-076-037-141-128.res.spectrum.com. [76.37.141.128])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c0bde74158sm686422185a.28.2025.02.24.08.51.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 08:51:19 -0800 (PST)
-Message-ID: <2faa8912-a699-47d9-b9d6-dc2fb22fe7c8@sladewatkins.net>
-Date: Mon, 24 Feb 2025 11:51:18 -0500
+	s=arc-20240116; t=1740416079; c=relaxed/simple;
+	bh=Y+DIUur2W80o9iTlTLPQPr/9J9Lr8rvP5f0TDTbi4qw=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hzQRivUf8lVte4Jv8NxnQA+ebbBnxVGmhO8IocBdeY/J4tB32Q+bRkK74kD5pDkPeHX33IHL4mFFuvRgybMiN+O4KcuqlJ65R+jN5RIpc53EM51j4HRh2N6lMfa5FbLcHgHxcTnXqgfYXvroWZxl10qTMldiW1fsr75fHrrESmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=BUNnVFHI; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O7jUb6002951;
+	Mon, 24 Feb 2025 10:54:01 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	PODMain02222019; bh=5OuOpiSbISPiLOHJ5OGL2EeTP76xBxd4YC+Zp3RJI5I=; b=
+	BUNnVFHI/R8zGG2K3uDUEg6SGN4A9uFOfBYIqRKmbxEo7LfN66y+oJEjVYpCB3cB
+	ecsigrpI0Gc2I+/h9wnRG1+1pCiE61tBzQaGtgC7g2R8SDZMkxXsfDrEKp3YgGs+
+	InrP+8UI/yGKPR9d15qYMBxR56xo4PT7oHYK0gQSUaGYdzyH+GbA5el4kq94VnpT
+	NVWaxGNQvCG4hbE1L0OY+ahFhogwYfQU1K/Shm3Dw9YS2k5jANbY7yCnutZC3X3T
+	AEjnwCm3rlbIioU9QByVSK8oiSMbFg09tmgD7dnpE7bcjj6MrRz63wv7EnWjG1vc
+	hSGPCV3Ax0iRWkim2kNycQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 44ycv5mnkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 10:54:01 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 24 Feb
+ 2025 16:53:59 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 16:53:59 +0000
+Received: from LONNCK4V044 (unknown [198.90.188.46])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 3F27A822560;
+	Mon, 24 Feb 2025 16:53:59 +0000 (UTC)
+From: "Stefan Binding (Opensource)" <sbinding@opensource.cirrus.com>
+To: 'Antheas Kapenekakis' <lkml@antheas.dev>, <linux-sound@vger.kernel.org>,
+        <kailang@realtek.com>
+CC: <linux-kernel@vger.kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <baojun.xu@ti.com>, <simont@opensource.cirrus.com>,
+        'Kyle Gospodnetich'
+	<me@kylegospodneti.ch>
+References: <20250224161016.439696-1-lkml@antheas.dev> <20250224161016.439696-3-lkml@antheas.dev>
+In-Reply-To: <20250224161016.439696-3-lkml@antheas.dev>
+Subject: RE: [PATCH 2/2] ALSA: hda/realtek: Fix Asus Z13 2025 audio
+Date: Mon, 24 Feb 2025 16:53:59 +0000
+Message-ID: <004001db86dc$b32dec60$1989c520$@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
-To: Wentao Guan <guanwentao@uniontech.com>,
- Greg KH <gregkh@linuxfoundation.org>
-Cc: John Keeping <jkeeping@inmusicbrands.com>,
- Jiri Slaby <jirislaby@kernel.org>, Ferry Toth <ftoth@exalondelft.nl>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-serial <linux-serial@vger.kernel.org>, stable <stable@vger.kernel.org>
-References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
- <tencent_09E5A20410369ED253A21788@qq.com>
- <2025022434-subsiding-esquire-1de2@gregkh>
- <tencent_013690E01596D03C0362D092@qq.com>
-Content-Language: en-US
-From: Slade Watkins <srw@sladewatkins.net>
-In-Reply-To: <tencent_013690E01596D03C0362D092@qq.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-X-MDID: 1740415882-8GOQj38l7-Ey
-X-MDID-O:
- us5;ut7;1740415882;8GOQj38l7-Ey;<slade@sladewatkins.com>;c71d53d8b4bf163c84f4470b0e4d7294
-X-PPE-TRUSTED: V=1;DIR=OUT;
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-gb
+Thread-Index: AQK4C/lidhPLDnaStG469zOZiMBV9AIYzneVsYzWteA=
+X-Authority-Analysis: v=2.4 cv=HoqMG1TS c=1 sm=1 tr=0 ts=67bca429 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=T2h4t0Lz3GQA:10 a=VwQbUJbxAAAA:8 a=n9Sqmae0AAAA:8 a=iox4zFpeAAAA:8 a=sozttTNsAAAA:8 a=w1d2syhTAAAA:8
+ a=rFI6naETVmhn8JkIUsQA:9 a=CjuIK1q_8ugA:10 a=UmAUUZEt6-oIqEbegvw9:22 a=WzC6qhA0u3u7Ye7llzcV:22 a=YXXWInSmI4Sqt1AkVdoW:22
+X-Proofpoint-GUID: Qk-SlthDU3OWytr9Rae7AIYM5voKxuZu
+X-Proofpoint-ORIG-GUID: Qk-SlthDU3OWytr9Rae7AIYM5voKxuZu
+X-Proofpoint-Spam-Reason: safe
+
+Hi,
+
+> -----Original Message-----
+> From: Antheas Kapenekakis <lkml@antheas.dev>
+> Sent: Monday, February 24, 2025 4:10 PM
+> To: linux-sound@vger.kernel.org; kailang@realtek.com
+> Cc: linux-kernel@vger.kernel.org; perex@perex.cz; tiwai@suse.com;
+> baojun.xu@ti.com; simont@opensource.cirrus.com; Antheas Kapenekakis
+> <lkml@antheas.dev>; Kyle Gospodnetich <me@kylegospodneti.ch>
+> Subject: [PATCH 2/2] ALSA: hda/realtek: Fix Asus Z13 2025 audio
+> 
+> dsdt entry is the same as the original Ally, so borrow its quirks.
+> Sound works in both speakers, headphones, and microphone. Whereas none
+> worked before.
+
+This laptop is in the list of laptops that I was planning to upstream, but I
+am currently waiting on testing for this generation of laptops.
+The Ally fixups do some extra stuff in the Realtek driver, which may or may
+not apply to this laptop.  I believe the minimum fixup required for this
+laptop is ALC287_FIXUP_CS35L41_I2C_2, but I don't have the laptop to test
+that.
+If possible, could you provide an acpidump of this system, so I can compare
+against what I have?
+
+It would be better to wait until we have tested this generation of laptops,
+after which I can upstream the kernel patches to support them, as well as
+the firmware.
+
+Thanks,
+Stefan
+
+> 
+> Tested-by: Kyle Gospodnetich <me@kylegospodneti.ch>
+> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> ---
+>  sound/pci/hda/patch_realtek.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+> index 1771e3b5618d..62c77db73df9 100644
+> --- a/sound/pci/hda/patch_realtek.c
+> +++ b/sound/pci/hda/patch_realtek.c
+> @@ -10699,6 +10699,7 @@ static const struct hda_quirk alc269_fixup_tbl[] =
+{
+>  	SND_PCI_QUIRK(0x1043, 0x1f1f, "ASUS H7604JI/JV/J3D",
+> ALC245_FIXUP_CS35L41_SPI_2),
+>  	SND_PCI_QUIRK(0x1043, 0x1f62, "ASUS UX7602ZM",
+> ALC245_FIXUP_CS35L41_SPI_2),
+>  	SND_PCI_QUIRK(0x1043, 0x1f92, "ASUS ROG Flow X16",
+> ALC289_FIXUP_ASUS_GA401),
+> +	SND_PCI_QUIRK(0x1043, 0x1fb3, "ASUS ROG Flow Z13 GZ302EA",
+> +ALC294_FIXUP_ASUS_ALLY),
+>  	SND_PCI_QUIRK(0x1043, 0x3030, "ASUS ZN270IE",
+> ALC256_FIXUP_ASUS_AIO_GPIO2),
+>  	SND_PCI_QUIRK(0x1043, 0x31d0, "ASUS Zen AIO 27 Z272SD_A272SD",
+> ALC274_FIXUP_ASUS_ZEN_AIO_27),
+>  	SND_PCI_QUIRK(0x1043, 0x3a20, "ASUS G614JZR",
+> ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
+> --
+> 2.48.1
+> 
 
 
-On 2/24/2025 8:13 AM, Wentao Guan wrote:
-> It is means that 'Fixes xxxxxx' tag point commit will auto be backport 
-> to those stable tree with xxxxxx commit without cc stable, correct ?
-
-If you mean that it will be "automatically backported to stable," then 
-no. Ask for it to be backported, or submit it as a patch the proper way: 
-https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-
-Otherwise, I have no idea what you're talking about either. :-/
-
--slade
 
