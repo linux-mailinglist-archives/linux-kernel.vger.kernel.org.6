@@ -1,231 +1,181 @@
-Return-Path: <linux-kernel+bounces-528378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C03BA4170E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:16:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C944CA41716
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:16:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5988D3A6A78
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:15:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E08167B07
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F05835893;
-	Mon, 24 Feb 2025 08:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9E9158558;
+	Mon, 24 Feb 2025 08:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QiGqBVpB"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/ttPLL7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDB02AEE1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3324B1FDA;
+	Mon, 24 Feb 2025 08:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384953; cv=none; b=Osm3x0rLL4EKgJly5jsKUOf6QYaN+cmPrA9/1VlDFeK6VQ0RWmEFdvYrIIIJOO6pQm0QtU7xTYneS5nRRFozndk15AzPfRfIGLdPNMzYhTzNwJ+s7vNAtrrLkLwiVzqqRpM1qkiNI+G8HVilHGK+cU00jChrnFEQbUDwL8i9PrM=
+	t=1740384993; cv=none; b=YzkGq3yVxxSyfHqVfK6dY4iknTI5PaYOrXKp+mOp0HMeYaPBeGm8oLRNeX7Pnj2XBx+kbhDl/nWi4IyWZwBwXf36DezDQH2QwTpew/LiwDaQgcSyXiiQzTJiHlp5yZzj/d8d+pw15b7AHePraZLOru2GSgZGIgPBlNlWeRnKdoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384953; c=relaxed/simple;
-	bh=GWOmq/SU5FvkARyYsOTefg//x/uWpGN7kXITX55gZVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WrrIQVczwaklIZcZF2sa5PBXCQ1JH/Y8tWZG2Kpw6MCz9x8IbR4Aiy92ayVqzTnGxsLMWuXo2UDKNd7cI672mUDdSdz0B9qcESY6B2I9RecHlpj6v955LxKuMrv/xjOHtOg6/RiwqgjxSoGefLKg9849+vwP/MDU9GC9i0S88Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QiGqBVpB; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86718541914so2859544241.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:15:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740384950; x=1740989750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KfaExuEzw+yi+UhF0ndMdtO6v5AbFoFgAvWAoNTpMdE=;
-        b=QiGqBVpBucbY6AY5tKq6DDYg+NqXoSE7vEmYQXgYiMBTYs8V67DbTmdV1WFoAwvrkW
-         xBOFiAV4g2OKGfsQhlNk8OHJzvMOimfVSiV/j+6BY518o+E0i2qU2DeFy6c5haI2PX6e
-         r7RVfdQLUcAO3/t2IGnTHD9+lX2TaQtGVh952Ys76/tcIEAQtSje9aGVgCIz4RVcZTSg
-         Rioh8y6EHPW5ucsw13HXe+9GsyJsD6PFFzRF8vtssbYUib80kF9sLCM6wCVAplwpnMEt
-         WcnnhzEbwDOlFFx+LtuBGAG4dpAzCoG3Pae6g5ZH/DGv/VIp3oNVj+j2zwsJ21I5JqKh
-         jQaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740384950; x=1740989750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KfaExuEzw+yi+UhF0ndMdtO6v5AbFoFgAvWAoNTpMdE=;
-        b=BShI1+bpVUltEedwclJ7fJdG5ZtWJ9T/nc4aczx7blbVdw5jzMpWcaINuLII73t5L/
-         nbGP7uXTNPvpM0Ukmk9nFgULcmVtiO7JcQcKVSMifTOqvY3GbgruwwdS5VRfyctw6VdU
-         QGWEspFcpLo+XrsS5WP8TsF0KfaKf4inN83RQc9vox1aKDsXJzgPp2UJH+clLZaQ0ZuV
-         xoQtmXPbm/fSom6D2/e6DleIICIfwSHp9n9Z4imhDsqVRvqANDTxA82ICzCO98pCFsyW
-         LTpglIN6B1xcMGwDuP4hwO2h7HOJkvAtf5oR/GCvQTbUfjrkSJSpnF/HOgj5tJ4OBz3G
-         o7HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW34vTyHKa7gT72z0/XGxatp9nK8cwabOd/gQvdwQdiYMbOJlQttbIARDQO2Vp7GIhXnyWMNyjxpbydXIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsXGDAEzhLXuuuxDdu5FUKpj7hc0Lf+OjHpF+A4f0xTWZzH+T0
-	X6xPDB7XhBxzAYN7H8YG93jv1QhkLNQeXrjfDknZumxjKKCeIUAMxejVDaEIeh3Zeg4lNKzS08x
-	/fISxP5jAB3Zzk2tntFnD2JsUWAZBLeamhjXepg==
-X-Gm-Gg: ASbGncuvoDSsX/KITkJxv4p8MEGnuWVA0dF2JKohxYsmybLPMU8peH5jSpVdCjMuPqp
-	pUikxg4jLnJnbxFZ/J/bkVjBEMCvqOti4b1la66mMda4JV8lvwOrqG0RWrb/BFokH49Z0ahyEwt
-	yPk+xvE4tiFAhOHHOsmrKOrll1UuR+ysXza2gUaPRU
-X-Google-Smtp-Source: AGHT+IFc115RJeH5JT0j+3w3wvCrq/AUOfV/8I4K53IvbnOg1TsmznhiEqqpup4LggCT7+8+VL7ZRrGjE2PExyTSqDg=
-X-Received: by 2002:a05:6102:370c:b0:4b6:9ba:72c0 with SMTP id
- ada2fe7eead31-4bfc0d99c32mr4822022137.1.1740384950049; Mon, 24 Feb 2025
- 00:15:50 -0800 (PST)
+	s=arc-20240116; t=1740384993; c=relaxed/simple;
+	bh=gt2MCXtVdya24atwkU4cONI7P9IdUS2PBs4mrROEj0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+vK3As/w9qruUfTeLMAECrBENp2+1pftv1zU9PKv20bkvDfhl3E8ZJ7K4gXroKM33NBt9jT+dt5bwpcZcEofvhY1jKlipLw6WmVXEjYTXp4sMn75twMTdz6DbYa19UJ9hQ+deADhaOHgy0HsBc5jheIbziigdTBYdbMIerrJCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/ttPLL7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B385C4CED6;
+	Mon, 24 Feb 2025 08:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740384992;
+	bh=gt2MCXtVdya24atwkU4cONI7P9IdUS2PBs4mrROEj0s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=g/ttPLL7eoNUC88HNs2W0qbYp05Lc42lxDRDplSR3msw2jBNwhCrgViTzv3TX8sCR
+	 j8KD4HNtRUT2ZoTwSypBKj2YU5JQIkv9QXJIPBMGZ/7KuMOrJoMc9bbEUNA/Q14wgI
+	 0EXVr7D/qe3kQHQznCk2EVNZc2R4rm8Nr2ZdhKce0rHsW5shQpvg40gs52uKVSKlAI
+	 T6RgcrLO30YeWZLhimqpGsz1MBapW7Vb7ThSWvj+riXwe9Q8S/Kmnhws5Od7R1jwcL
+	 AhejNyrtz14S34riFVwALpH+DOfbLrQOJIyCUtOwvE6kZs+wbqRfMfcwxEW1NyQDNu
+	 c5c+dKe0QnjHg==
+Message-ID: <cf3a0429-0c36-426f-b9b0-ae7749877bf3@kernel.org>
+Date: Mon, 24 Feb 2025 09:16:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250220104454.293283301@linuxfoundation.org>
-In-Reply-To: <20250220104454.293283301@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 24 Feb 2025 13:45:38 +0530
-X-Gm-Features: AWEUYZn85dY5ySPbnb-rOAoLV4jXZBzx4as3Ge9fLIUK21jmGyMeitK2qFepA6Y
-Message-ID: <CA+G9fYuokw31OLwLC11ipPZ153PT7+mEddA3vF=KmPMF=ajvvw@mail.gmail.com>
-Subject: Re: [PATCH 6.12 000/225] 6.12.16-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: display: panel: Add Himax HX83112B
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20250222-fp3-display-v1-0-ccd812e16952@lucaweiss.eu>
+ <20250222-fp3-display-v1-2-ccd812e16952@lucaweiss.eu>
+ <20250223-tricky-saffron-rattlesnake-aaad63@krzk-bin>
+ <89cbb27e-414a-472f-8664-db5b4d37ddc1@lucaweiss.eu>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <89cbb27e-414a-472f-8664-db5b4d37ddc1@lucaweiss.eu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Feb 2025 at 16:28, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.12.16 release.
-> There are 225 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 22 Feb 2025 10:44:04 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.16-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 23/02/2025 16:29, Luca Weiss wrote:
+> Hi Krzysztof,
+> 
+> On 23-02-2025 12:54 p.m., Krzysztof Kozlowski wrote:
+>> On Sat, Feb 22, 2025 at 06:58:05PM +0100, Luca Weiss wrote:
+>>> Himax HX83112B is a display driver IC used to drive LCD DSI panels.
+>>> Describe it and the Fairphone 3 panel from DJN using it.
+>>>
+>>> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+>>> ---
+>>>   .../bindings/display/panel/himax,hx83112b.yaml     | 75 ++++++++++++++++++++++
+>>>   1 file changed, 75 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+>>> new file mode 100644
+>>> index 0000000000000000000000000000000000000000..e6bd4b33d40be98e479d84617aea6d2af0df70e4
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/display/panel/himax,hx83112b.yaml
+>>> @@ -0,0 +1,75 @@
+>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/display/panel/himax,hx83112b.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Himax HX83112B-based DSI display panels
+>>> +
+>>> +maintainers:
+>>> +  - Luca Weiss <luca@lucaweiss.eu>
+>>> +
+>>> +description:
+>>> +  The Himax HX83112B is a generic DSI Panel IC used to control
+>>> +  LCD panels.
+>>> +
+>>> +allOf:
+>>> +  - $ref: panel-common.yaml#
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    contains:
+>>> +      const: djn,fairphone-fp3-panel
+>>
+>> Why no himax,hx83112b fallback?
+> 
+> While this is the driver IC for this panel, I don't think there's any 
+> "generic" init sequence that can successfully configure this panel, so 
+> generic hx83112b driver could work I'd say.
 
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Hm, indeed usually this would mean no need for unusable fallback alone,
+but still drivers could use it for some common pieces of code. I imagine
+there could be a piece of init sequence which is generic. Or some piece
+of attributes.
+We already have examples of both approaches for panels - with generic
+fallback (himax,hx83102) and without (himax,hx83112a).
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+@Rob
+what is your generic advice? Which of above (himax,hx83102 vs
+himax,hx83112a) should be used, if the fallback compatible cannot be
+used alone?
 
-## Build
-* kernel: 6.12.16-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: c3d6b353438e989b2ec07730a3454b583937b796
-* git describe: v6.12.15-226-gc3d6b353438e
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.12.y/build/v6.12=
-.15-226-gc3d6b353438e
-
-## Test Regressions (compared to v6.12.13-419-gaa95ced31609)
-
-## Metric Regressions (compared to v6.12.13-419-gaa95ced31609)
-
-## Test Fixes (compared to v6.12.13-419-gaa95ced31609)
-
-## Metric Fixes (compared to v6.12.13-419-gaa95ced31609)
-
-## Test result summary
-total: 126820, pass: 104027, fail: 3980, skip: 18747, xfail: 66
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 137 total, 137 passed, 0 failed
-* arm64: 49 total, 49 passed, 0 failed
-* i386: 17 total, 17 passed, 0 failed
-* mips: 32 total, 32 passed, 0 failed
-* parisc: 3 total, 3 passed, 0 failed
-* powerpc: 38 total, 38 passed, 0 failed
-* riscv: 22 total, 22 passed, 0 failed
-* s390: 24 total, 20 passed, 4 failed
-* sh: 6 total, 5 passed, 1 failed
-* sparc: 3 total, 3 passed, 0 failed
-* x86_64: 44 total, 44 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Best regards,
+Krzysztof
 
