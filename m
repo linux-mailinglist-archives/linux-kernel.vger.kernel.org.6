@@ -1,157 +1,81 @@
-Return-Path: <linux-kernel+bounces-528296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06D5DA415F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:09:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5DA6A415F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:07:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6773AE8C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:08:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABC93A5312
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1985023F41D;
-	Mon, 24 Feb 2025 07:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9ACA20B20A;
+	Mon, 24 Feb 2025 07:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+SPhtiE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rWnZ9qRA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B909020B20A;
-	Mon, 24 Feb 2025 07:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A01238DE9;
+	Mon, 24 Feb 2025 07:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740380924; cv=none; b=lcBoUoIQ6M1rdse9LXrZ7xPGld0RaqIueXQIsFWB6ZT241YbSTrh11UJFEngUSPgNZNOHsR4nS/QsyefhTTRPaz83gWDHHqLofeUqgNXdBoqo3SZiCaqhSkvldxVP1ONsNgijExzQlsaLcdmokSrZcfEPzszDbfu1Khf9wl4Lyo=
+	t=1740380872; cv=none; b=LruCIMM/7RHLWNCcIpSYMyxfOQ2zzT5s7XrFaoRKyns9CTy7mpOjrApAlXS5T0t1usE1AWCLem+X6rpvJoMXzXOgDt8ZNIiHjEFNCLqqpCw4NuxvZTtX4EVyR1K8Ka+2KlaPiOouzDC8CZwnct+10N++9bpR6XPvKvmCAIfdiz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740380924; c=relaxed/simple;
-	bh=R6HSVBn9Y8ToVb2vuMlEkF1uRe5BDzQkqHH1ig9bbZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gWqRXHWfC4m0YflWYgio2KtJ+rjLmiUE0cn+i+GZm49ImiRt3fqRbK3iDhy7WZRG0BUqaQOp/xRKWlKQ6i8pJmcQNAuGcYJw15jEjcCQosoC96JBXPNWxURMAkJDfdHC/217Skr+BJBskexLCiiGPVPFDhQeY/JMkxofpm5h5/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+SPhtiE; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740380923; x=1771916923;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=R6HSVBn9Y8ToVb2vuMlEkF1uRe5BDzQkqHH1ig9bbZI=;
-  b=e+SPhtiESzq13nQZKOX+ijVWhGQ07X6XpK3QiEh5R7Kc4fk4AI7Fb+E4
-   QV9Pr8sG7UCvaL8i3KGipj9j0RNaNZv2KBLI77R6SCZX/O7aSwNgmbGhE
-   0fWUKErEh3gnMaeGJdb5Hrx7Kkmz5RfLQ8EFFA6tnzk+uV4NsnFN/aJzx
-   jbGnZfRYAC1Vebd9S0+lcUHIVoGjdcTPVXYSr/EaZp/JjE/5yHGSMBax5
-   23OvqXUs1JGkwxyk/yF5GeK1GYcaT0ILqlVD6ts89ZjqndWefZL8jOcXd
-   z3hz47kk6Z1z1SdNja1TZM0MYolCnmKOO8jpZ+ebhDLZDRr7M3l9jROpT
-   w==;
-X-CSE-ConnectionGUID: 2IDI5BvKTj6qz2vzHp8myA==
-X-CSE-MsgGUID: QOU+KXLBSb6ygIpTqVOZGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="41138956"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="41138956"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:08:43 -0800
-X-CSE-ConnectionGUID: bAiP6BC7SVmWzN2IMUHO/Q==
-X-CSE-MsgGUID: 2qg8Ct02QKCKlpFhLhKk0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="121243058"
-Received: from yzhao56-desk.sh.intel.com ([10.239.159.62])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 23:08:40 -0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: pbonzini@redhat.com,
-	seanjc@google.com
-Cc: rick.p.edgecombe@intel.com,
-	kevin.tian@intel.com,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	Yan Zhao <yan.y.zhao@intel.com>
-Subject: [PATCH 0/3] KVM: x86: Introduce quirk KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT
-Date: Mon, 24 Feb 2025 15:07:15 +0800
-Message-ID: <20250224070716.31360-1-yan.y.zhao@intel.com>
-X-Mailer: git-send-email 2.43.2
+	s=arc-20240116; t=1740380872; c=relaxed/simple;
+	bh=l/KXpYBP9o/pd7S757V9Gogf2OWf5kFV8ikH/H87ia8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ab/QvabqFFUkpG+lRX9C+YAX9Z7WivnsVTCKYrJacI0J1SVFzbrxpNoLGlFF8J9PCVREqjtP4bs6VpFamXSRwaS6dz992lCv5KRYbN7H7M39/M2gup3C/kRX4l2zGSQtglQXgwWNwvogpqfqiLZhMAlfVl/zcpbdczZL4UZav4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rWnZ9qRA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D830C4CED6;
+	Mon, 24 Feb 2025 07:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740380871;
+	bh=l/KXpYBP9o/pd7S757V9Gogf2OWf5kFV8ikH/H87ia8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rWnZ9qRA4eFiqW4nr34aMGgratoBeTwfHMrd7tw+IeRIYftHexSgM3gmy5cIz4d7T
+	 Oz4JlvH1AfsHDr2GIEexmvQy0LYbb2ScBW2N98TYHNI2m0Km351z8Q/sJJ8BEcCZ+C
+	 fdT7rXiAItN3VZQYP+yv1WkZQu2QiO/JW36Ni4cU=
+Date: Mon, 24 Feb 2025 08:07:48 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Heusel <christian@heusel.eu>
+Cc: Sean Rhodes <sean@starlabs.systems>, quintafeira@tutanota.com,
+	Arnd Bergmann <arnd@arndb.de>, Desnes Nunes <desnesn@redhat.com>,
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
+Subject: Re: [REGRESSION][BISECTED] SD Cards detection broken leading to boot
+ failures
+Message-ID: <2025022429-powdery-possibly-e4e5@gregkh>
+References: <1de87dfa-1e81-45b7-8dcb-ad86c21d5352@heusel.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1de87dfa-1e81-45b7-8dcb-ad86c21d5352@heusel.eu>
 
-This series introduces a quirk KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT as
-suggested by Paolo and Sean [1].
+On Sat, Feb 22, 2025 at 10:22:34PM +0100, Christian Heusel wrote:
+> Hello everyone,
+> 
+> on the Arch Linux Forums[1] multiple users reported issues with their SD
+> cards not being recognized during boot or that they needed to re-plug
+> them in order for them to be recognized.
+> 
+> One user tracked this down to the following commit:
+> 
+>     235b630eda07 ("drivers/card_reader/rtsx_usb: Restore interrupt based detection")
+> 
+> They have also created a report on the kernel bugzilla[1], therefore I
+> cc'ed them to this thread. We found that reverting the above commit on
+> top of v6.14-rc3 fixes the issue.
 
-The purpose of introducing this quirk is to allow KVM to honor guest PAT on
-Intel platforms with self-snoop feature. This support was previously
-reverted by commit 9d70f3fec144 ("Revert "KVM: VMX: Always honor guest PAT
-on CPUs that support self-snoop"") due to a reported broken of an old bochs
-driver which incorrectly set memory type to UC but did not expect that UC
-would be very slow on certain Intel platforms.
+Thanks for the report.  Do you want to send a revert for this, or do you
+need us to create it?
 
-Sean previously suggested to bottom out if the UC slowness issue is working
-as intended so that we can enable the quirk only when the VMs are affected
-by the old unmodifiable guests [2]. After consulting with CPU architects,
-it's told that this behavior is expected on ICX/SPR Xeon platforms due to
-the snooping implementation.
+thanks,
 
-So, implement the quirk such that KVM enables it by default on all Intel
-non-TDX platforms while having the quirk explicitly reference the old
-unmodifiable guests that rely on KVM to force memory type to WB. Newer
-userspace can disable the quirk by default and only leave it enabled if an
-old unmodifiable guest is an concern.
-
-The quirk is platform-specific valid, available only on Intel non-TDX
-platforms. It is absent on Intel TDX and AMD platforms, where KVM always
-honors guest PAT.
-
-Patch 1 does the preparation of making quirks platform-specific valid.
-Patch 2 makes the quirk to be present on Intel and absent on AMD.
-Patch 3 makes the quirk to be absent on Intel TDX and self-snoop a hard
-        dependency to enable TDX [3].
-        As a new platform, TDX is always running on CPUs with self-snoop
-        feature. It has no worry to break old yet unmodifiable guests.
-        Simply have KVM always honor guest PAT on TDX enabled platforms.
-        Attaching/detaching non-coherent DMA devices would not lead to
-        mirrored EPTs being zapped for TDs then. A previous attempt for
-        this purpose is at [4].
-
-
-This series is based on kvm-coco-queue. It was supposed to be included in
-TDX's "the rest" section. We post it separately to start review earlier.
-
-Patches 1 and 2 are changes to the generic code, which can also be applied
-to kvm/queue. A proposal is to have them go into kvm/queue and we rebase on
-that.
-
-Patch 3 can be included in TDX's "the rest" section in the end.
-
-Thanks
-Yan
-
-[1] https://lore.kernel.org/kvm/CABgObfa=t1dGR5cEhbUqVWTD03vZR4QrzEUgHxq+3JJ7YsA9pA@mail.gmail.com
-[2] https://lore.kernel.org/kvm/Zt8cgUASZCN6gP8H@google.com
-[3] https://lore.kernel.org/kvm/ZuBSNS33_ck-w6-9@google.com
-[4] https://lore.kernel.org/kvm/20241115084600.12174-1-yan.y.zhao@intel.com
-
-
-Yan Zhao (3):
-  KVM: x86: Introduce supported_quirks for platform-specific valid
-    quirks
-  KVM: x86: Introduce Intel specific quirk
-    KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT
-  KVM: TDX: Always honor guest PAT on TDX enabled platforms
-
- Documentation/virt/kvm/api.rst  | 30 +++++++++++++++++++++++++
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/include/uapi/asm/kvm.h |  1 +
- arch/x86/kvm/mmu.h              |  2 +-
- arch/x86/kvm/mmu/mmu.c          | 14 +++++++-----
- arch/x86/kvm/vmx/main.c         |  1 +
- arch/x86/kvm/vmx/tdx.c          |  5 +++++
- arch/x86/kvm/vmx/vmx.c          | 39 +++++++++++++++++++++++++++------
- arch/x86/kvm/x86.c              |  7 +++---
- arch/x86/kvm/x86.h              | 12 +++++-----
- 10 files changed, 91 insertions(+), 22 deletions(-)
-
--- 
-2.43.2
-
+greg k-h
 
