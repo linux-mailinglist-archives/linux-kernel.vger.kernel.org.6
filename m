@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-530146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8FCA42FA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:00:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94578A42FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:00:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF33C17AF96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:59:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE9CA17B5C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD9A1EDA31;
-	Mon, 24 Feb 2025 21:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAB21FC100;
+	Mon, 24 Feb 2025 21:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="b98OtZAa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XmxRY1Uj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E5E1EBFE6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388ED1FC0EB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740434366; cv=none; b=HFjJgNsbrZ0kezCq1rTcnsw9VhGg39D37xaRZBarCAHApTO0jEj0d3NFLBjOIGGH7QiPqGT8jzercOD5ckNDgn0I9OSTkJuihAnI39f5mfqWXC3UgVeOISfm3hIv+ukuXhzaKnBdxUr0pzsFkXatWbi/Kony9yQ/YyO2BrWDBTs=
+	t=1740434370; cv=none; b=fg7XTFg+8P7cjQ0J5bfydTo844ZkSRZH+3plzplvuffyJqF5I8T40XpOnx0eX0LylNhPi8DlP2B/QM4ZsHl+Gy/o4Pj7noqUM+L/jRtSLd5rCfWQ2pp+QzucvrVzqJ181OdFIcQg226QMD/Y5RHMRiMYZbJoELxaZiNZ5IVIM5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740434366; c=relaxed/simple;
-	bh=iyopBc6+eCC+M1Pt6uymDRmCUK1Ju/Llgaq6AN0koVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QvNQzLO45iqcLlMXuhbiZppLLUvmXzvp3SaD3p9yUKXPTpnnpV89a3PuRpelRERl8qB4TpDhoZR2RyifizFnn5Oh71X5j3oCAO+pQ4No07VQsoBw9UGORsmN+RJgLYzN9ldrGuTWhiV60lArGugdGgRTb8t60t7L23xMuH2ZpVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=b98OtZAa; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1740434370; c=relaxed/simple;
+	bh=rTjLKS6zi3fibnlja9uhJe1I0xGmSZ8izGxln042tOM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OU3hZxJTFjn3YBlWbRyMxXUL9+C9C5MkYtTQby5wG3BZBVgtlCh6JDhu81QGlfZvl6sR7BB/56zxRBvFYrByozQtlpYq5VcbZNzSIUJhMcRcSgZAUq5jss22c4QTpNWv783II9PuUqw5c0fHue6cKXZMiJ0t15/lX29QB3jY5WA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XmxRY1Uj; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740434363;
+	s=mimecast20190719; t=1740434368;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=vDPhXGlAvceGOH95ueyoy89QBaIskHOY83k25VR+vSA=;
-	b=b98OtZAac1ngfYsi2BlHuakGd6OWWVjDcf4q+cLlKz4qm15SrHfnownk+h+rftwvE/jJD9
-	rSssjB82z52V6HtPsT0tSi3UllMGa56pTJ2qREJh2VVxIJZ6T5QbAaa5N5KdcTFPdA/VW8
-	k2Dn6bTsO1l26YQRFb+u0G5NThfqq5Q=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtYeaQb9yjWDAqIxpFJ3I+Fkvf55cMTzB8yThSJBOoQ=;
+	b=XmxRY1Ujax7TBC72QJcTKPD9O/V4SbeF2a25WfA2jhlE4bty1uInFV8TscR1oADSlj8I7O
+	s7Y1lBdPU/f1HpilGS/vgk73gzi7xR6Uvvl5XFNaQXe7X0vqZBxyuf/RKeN/FbmmYM1Yf0
+	egnEdvAGaTYi8st4MDMspFERbbNsRug=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-435-5iTqhX9aPhi37YB8mR_nIA-1; Mon,
- 24 Feb 2025 16:59:20 -0500
-X-MC-Unique: 5iTqhX9aPhi37YB8mR_nIA-1
-X-Mimecast-MFC-AGG-ID: 5iTqhX9aPhi37YB8mR_nIA_1740434358
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-JUYoEci3NZm2AUhf6yksEw-1; Mon,
+ 24 Feb 2025 16:59:22 -0500
+X-MC-Unique: JUYoEci3NZm2AUhf6yksEw-1
+X-Mimecast-MFC-AGG-ID: JUYoEci3NZm2AUhf6yksEw_1740434361
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 21BAC18EB2C9;
-	Mon, 24 Feb 2025 21:59:18 +0000 (UTC)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C20701800373;
+	Mon, 24 Feb 2025 21:59:20 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.22.65.50])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A161F180035F;
-	Mon, 24 Feb 2025 21:59:15 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6746D1800359;
+	Mon, 24 Feb 2025 21:59:18 +0000 (UTC)
 From: Luiz Capitulino <luizcap@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
@@ -64,9 +66,11 @@ Cc: akpm@linux-foundation.org,
 	hannes@cmpxchg.org,
 	muchun.song@linux.dev,
 	luizcap@redhat.com
-Subject: [PATCH v2 0/4] mm: page_ext: Introduce new iteration API
-Date: Mon, 24 Feb 2025 16:59:04 -0500
-Message-ID: <cover.1740434344.git.luizcap@redhat.com>
+Subject: [PATCH v2 1/4] mm: page_ext: make lookup_page_ext() public
+Date: Mon, 24 Feb 2025 16:59:05 -0500
+Message-ID: <fb46436ec9ef892b6f40b9e48d40237b9855ac16.1740434344.git.luizcap@redhat.com>
+In-Reply-To: <cover.1740434344.git.luizcap@redhat.com>
+References: <cover.1740434344.git.luizcap@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,67 +80,48 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-This series is against v6.14-rc4. The introduction is after the changelog.
+The next commit will use it.
 
-v1 -> v2
-========
+Signed-off-by: Luiz Capitulino <luizcap@redhat.com>
+---
+ include/linux/page_ext.h | 1 +
+ mm/page_ext.c            | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-- Drop for_each_page_ext_order() (David)
-- Make page_ext_iter_begin() and page_ext_iter_next() inline functions
-  (David)
-- Move loop logic into page_ext_iter_begin() and page_ext_iter_next()
-  (David)
-
-RFC -> v1
-=========
-
-- Revamped the API by introducing for_each_page_ext macros
-- Implemented various suggestions from David Hildenbrand, including page_ext
-  lookup optimization
-- Fixed changelogs
-
-Introduction
-============
-
-  [ Thanks to David Hildenbrand for identifying the root cause of this
-    issue and proving guidance on how to fix it. The new API idea, bugs
-    and misconceptions are all mine though ]
-
-Currently, trying to reserve 1G pages with page_owner=on and sparsemem
-causes a crash. The reproducer is very simple:
-
- 1. Build the kernel with CONFIG_SPARSEMEM=y and the table extensions
- 2. Pass 'default_hugepagesz=1 page_owner=on' in the kernel command-line
- 3. Reserve one 1G page at run-time, this should crash (see patch 1 for
-    backtrace) 
-
- [ A crash with page_table_check is also possible, but harder to trigger ]
-
-Apparently, starting with commit cf54f310d0d3 ("mm/hugetlb: use __GFP_COMP
-for gigantic folios") we now pass the full allocation order to page
-extension clients and the page extension implementation assumes that all
-PFNs of an allocation range will be stored in the same memory section (which
-is not true for 1G pages).
-
-To fix this, this series introduces a new iteration API for page extension
-objects. The API checks if the next page extension object can be retrieved
-from the current section or if it needs to look up for it in another
-section.
-
-Please, find all details in patch 2.
-
-Luiz Capitulino (4):
-  mm: page_ext: make lookup_page_ext() public
-  mm: page_ext: add an iteration API for page extensions
-  mm: page_table_check: use new iteration API
-  mm: page_owner: use new iteration API
-
- include/linux/page_ext.h | 93 ++++++++++++++++++++++++++++++++++++++++
- mm/page_ext.c            |  4 +-
- mm/page_owner.c          | 61 +++++++++++++-------------
- mm/page_table_check.c    | 39 ++++++-----------
- 4 files changed, 136 insertions(+), 61 deletions(-)
-
+diff --git a/include/linux/page_ext.h b/include/linux/page_ext.h
+index e4b48a0dda244..d6fb891c51d1d 100644
+--- a/include/linux/page_ext.h
++++ b/include/linux/page_ext.h
+@@ -79,6 +79,7 @@ static inline void page_ext_init(void)
+ 
+ extern struct page_ext *page_ext_get(const struct page *page);
+ extern void page_ext_put(struct page_ext *page_ext);
++extern struct page_ext *lookup_page_ext(const struct page *page);
+ 
+ static inline void *page_ext_data(struct page_ext *page_ext,
+ 				  struct page_ext_operations *ops)
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index 641d93f6af4c1..23ad30597c05c 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -165,7 +165,7 @@ void __meminit pgdat_page_ext_init(struct pglist_data *pgdat)
+ 	pgdat->node_page_ext = NULL;
+ }
+ 
+-static struct page_ext *lookup_page_ext(const struct page *page)
++struct page_ext *lookup_page_ext(const struct page *page)
+ {
+ 	unsigned long pfn = page_to_pfn(page);
+ 	unsigned long index;
+@@ -245,7 +245,7 @@ static bool page_ext_invalid(struct page_ext *page_ext)
+ 	return !page_ext || (((unsigned long)page_ext & PAGE_EXT_INVALID) == PAGE_EXT_INVALID);
+ }
+ 
+-static struct page_ext *lookup_page_ext(const struct page *page)
++struct page_ext *lookup_page_ext(const struct page *page)
+ {
+ 	unsigned long pfn = page_to_pfn(page);
+ 	struct mem_section *section = __pfn_to_section(pfn);
 -- 
 2.48.1
 
