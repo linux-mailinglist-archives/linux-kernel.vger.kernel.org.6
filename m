@@ -1,95 +1,223 @@
-Return-Path: <linux-kernel+bounces-528606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 540A2A4199F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:54:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D386A41951
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:40:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB8A23AD3FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A9DF3A62C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F2024A041;
-	Mon, 24 Feb 2025 09:54:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CD6244195;
+	Mon, 24 Feb 2025 09:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="GO4YtGQL"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC60242937;
-	Mon, 24 Feb 2025 09:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="SIFP+mS5"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF83D12CDBE;
+	Mon, 24 Feb 2025 09:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390871; cv=none; b=Yv18sNh8WSARVVAQmjQVhWm025Q4AJh6Bss+yDPDaRhrDe2ibFt+zVY2+tTa799iBqnjaaR8Iyk0wYeiMgmyhLTTUaEU9QeCWEAIfPNqEaztEYZ5voSil4kgSeG17rRUlQEnnQAbrg3QIm1IYTJcIW3uE+2hDBj60K6S72Kvoug=
+	t=1740389907; cv=none; b=FH6psJFm3s6VZwdS6z2UxBsI9KIcPQzzte85rCqjLSnlkzKAO0yGo2FTjVGy37CJxguByDHLrinSR8XEWrui5QMxGFUWRXx9owPH2VitV70qY0RRzyREjziz9XKfZ+TS0Ug5rxWhPbuWPwYS8VUEaMhAobX9osVfAAs4r/Pnzqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390871; c=relaxed/simple;
-	bh=g8X99TOPL0otzcxF1N+utf6ztWrEQtdujpo+L0MLn9k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1dI0ZuuVlMU2y4gMLHuJVPUVAhTBXYxOkfdIvovBkLRCBM9UVlfam9gW1H2oQr4sndtpU1jgbRg7IJzHpBcIU3FWtEjVcL8+MLJuYvxw8EEHAGPpj/bn6Y42vZ+8VHmjrPrFs1RQdUSiBJNgUTcfa5LEhzFebMjb8jZWl7SGxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=GO4YtGQL; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=Sh06N
-	4SQha47MxwITMQ5mfmDR3A2miHvY6K140EwxyQ=; b=GO4YtGQLDNdTTkgestW1X
-	0vnSLOEDXDA5QvtbTRxLzoPsch34UUCOnsnXWh0m1LQi7T9LOdmxF/PFBoD+RKGl
-	dMTq1kP4uurH+k9x0aSj6NNFudD/vrBmeKrY3Z/0+ErNwfcaIDTqeQqgMvo4L1yg
-	bidlcH4hozQd901B0ZASt0=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3HSQEPrxnlgK1OQ--.21200S4;
-	Mon, 24 Feb 2025 17:38:13 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: andy@kernel.org,
-	geert@linux-m68k.org,
-	haoxiang_li2024@163.com,
-	u.kleine-koenig@pengutronix.de,
-	erick.archer@outlook.com,
-	ojeda@kernel.org,
-	w@1wt.eu,
-	poeschel@lemonage.de
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] auxdisplay: hd44780: Fix an API misuse in hd44780_probe()
-Date: Mon, 24 Feb 2025 17:38:10 +0800
-Message-Id: <20250224093810.2965667-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740389907; c=relaxed/simple;
+	bh=Y45OZf5AEVqbMLHC2vetp5A95pNeIRg/N3EqYrtFEj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qKs40XrH1wdLUZ4qstn2WIJwUlumXiTqUUd1q///a3Bv+oYHObo9nikZ7VPz1VdhrXV8xkJvL7i3B38eAGEJTfytwsTs3GkkrWupmFK0BXctr/2KXj3maV7fwWQUX2heBgu81Cks0RzE+AQzj1/2YUvy3ljb5nC4zccAgUz9DJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=SIFP+mS5; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8DC571F764;
+	Mon, 24 Feb 2025 09:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740389897;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8U5EMMWlFDym6d2qg1LTT9H9US9Iiqf+zo1LbUZs+SQ=;
+	b=SIFP+mS5sChUesjRmTYG6lyyKcqt01GNDyNN6oB3oI+9J9I7EykFplii+zPokEJVKrb+Fv
+	ECI+OoafKYZhwK4dcpBpThrzdJyHTkUnsw7VKeLBb1ZUctViSrhI/eB5YvhDJuXEZl5VI4
+	+q0IyvzuqaLQrKn0TH8IMLM5ON66QyUKEohR6MFpgQgKStc7vIU5g5I4klVHW44JFxU4QF
+	QIoHHqI1aONLT4S/SLbEStHAAuiZHk+LI913EYDXT61Aq3zwgiDsXAcyyLhK/W/Dvg0OA6
+	Ucz2FC+jFWZzbNXuWqiQf4W8mDqPGtYuYFa9vB1D42RJW1QbcqcYn9XZ3VYT5w==
+Date: Mon, 24 Feb 2025 10:38:14 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, Heiner Kallweit
+ <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
+ Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
+ Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <20250224103814.7d60bfbd@fedora>
+In-Reply-To: <87r03otsmm.fsf@miraculix.mork.no>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+	<87r03otsmm.fsf@miraculix.mork.no>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3HSQEPrxnlgK1OQ--.21200S4
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKw13tr1UJw1kCw4ftw1DJrb_yoW3uFX_Ga
-	4ruFs3XF4jyr4UZ3s7tF4fury0qr1jqrn5ZwsFq3y3XFyUuF4xtry2qrn5Gas8ZFW8tr95
-	C3Z8WFZrCa17AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRRApnDUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkA39bme77loMFgADs-
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeegfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeftddujeeliefhkeegkeehueekkeeivdejjeevtefhffduuddujeevueeihfehgeenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtohepsghjohhrnhesmhhorhhkrdhnohdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesg
+ hhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-Variable "lcd" allocated by charlcd_alloc() should be
-released by charlcd_free(). The following patch changed
-kfree(lcd) to charlcd_free(lcd) to fix an API misuse.
+Hi Bj=C3=B8rn,
 
-Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
----
- drivers/auxdisplay/hd44780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, 23 Feb 2025 19:37:05 +0100
+Bj=C3=B8rn Mork <bjorn@mork.no> wrote:
 
-diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
-index 0526f0d90a79..a1729196bc82 100644
---- a/drivers/auxdisplay/hd44780.c
-+++ b/drivers/auxdisplay/hd44780.c
-@@ -313,7 +313,7 @@ static int hd44780_probe(struct platform_device *pdev)
- fail3:
- 	kfree(hd);
- fail2:
--	kfree(lcd);
-+	charlcd_free(lcd);
- fail1:
- 	kfree(hdc);
- 	return ret;
--- 
-2.25.1
+> Maxime Chevallier <maxime.chevallier@bootlin.com> writes:
+>=20
+> > Hi everyone,
+> >
+> > Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" desig=
+ned to
+> > access SFP modules downstream. These controllers are actually SMBus con=
+trollers
+> > that can only perform single-byte accesses for read and write.
+> >
+> > This series adds support for accessing SFP modules through single-byte =
+SMBus,
+> > which could be relevant for other setups.
+> >
+> > The first patch deals with the SFP module access by itself, for address=
+es 0x50
+> > and 0x51.
+> >
+> > The second patch allows accessing embedded PHYs within the module with =
+single-byte
+> > SMBus, adding this in the mdio-i2c driver.
+> >
+> > As raw i2c transfers are always more efficient, we make sure that the s=
+mbus accesses
+> > are only used if we really have no other choices.
+> >
+> > This has been tested with the following modules (as reported upon modul=
+e insertion)
+> >
+> > Fiber modules :
+> >
+> > 	UBNT             UF-MM-1G         rev      sn FT20051201212    dc 2005=
+12
+> > 	PROLABS          SFP-1GSXLC-T-C   rev A1   sn PR2109CA1080     dc 2206=
+07
+> > 	CISCOSOLIDOPTICS CWDM-SFP-1490    rev 1.0  sn SOSC49U0891      dc 1810=
+08
+> > 	CISCOSOLIDOPTICS CWDM-SFP-1470    rev 1.0  sn SOSC47U1175      dc 1906=
+20
+> > 	OEM              SFP-10G-SR       rev 02   sn CSSSRIC3174      dc 1812=
+01
+> > 	FINISAR CORP.    FTLF1217P2BTL-HA rev A    sn PA3A0L6          dc 2307=
+16
+> > 	OEM              ES8512-3LCD05    rev 10   sn ESC22SX296055    dc 2207=
+22
+> > 	SOURCEPHOTONICS  SPP10ESRCDFF     rev 10   sn E8G2017450       dc 1407=
+15
+> > 	CXR              SFP-STM1-MM-850  rev 0000 sn K719017031       dc 2007=
+20
+> >
+> >  Copper modules
+> >
+> > 	OEM              SFT-7000-RJ45-AL rev 11.0 sn EB1902240862     dc 1903=
+13
+> > 	FINISAR CORP.    FCLF8521P2BTL    rev A    sn P1KBAPD          dc 1905=
+08
+> > 	CHAMPION ONE     1000SFPT         rev -    sn     GBC59750     dc 1911=
+0401
+> >
+> > DAC :
+> >
+> > 	OEM              SFP-H10GB-CU1M   rev R    sn CSC200803140115  dc 2008=
+27
+> >
+> > In all cases, read/write operations happened without errors, and the in=
+ternal
+> > PHY (if any) was always properly detected and accessible
+> >
+> > I haven't tested with any RollBall SFPs though, as I don't have any, an=
+d I don't
+> > have Copper modules with anything else than a Marvell 88e1111 inside. T=
+he support
+> > for the VSC8552 SMBus may follow at some point.
+> >
+> > Thanks,
+> >
+> > Maxime
+> >
+> > Maxime Chevallier (2):
+> >   net: phy: sfp: Add support for SMBus module access
+> >   net: mdio: mdio-i2c: Add support for single-byte SMBus operations
+> >
+> >  drivers/net/mdio/mdio-i2c.c | 79 ++++++++++++++++++++++++++++++++++++-
+> >  drivers/net/phy/sfp.c       | 65 +++++++++++++++++++++++++++---
+> >  2 files changed, 138 insertions(+), 6 deletions(-) =20
+>=20
+> Nice!  Don't know if you're aware, but OpenWrt have had patches for
+> SMBus access to SFPs for some time:
+>=20
+> https://github.com/openwrt/openwrt/blob/main/target/linux/realtek/patches=
+-6.6/714-net-phy-sfp-add-support-for-SMBus.patch
+> https://github.com/openwrt/openwrt/blob/main/target/linux/realtek/patches=
+-6.6/712-net-phy-add-an-MDIO-SMBus-library.patch
+>=20
+> The reason they carry these is that they support Realtek rtl930x based
+> switches.  The rtl930x SoCs include an 8 channel SMBus host which is
+> typically connected to any SFP+ slots on the switch.
+>=20
+> There has been work going on for a while to bring the support for these
+> SoCs to mainline, and the SMBus host driver is already here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/drivers/i2c/busses/i2c-rtl9300.c?id=3Dc366be720235301fdadf67e6f1ea6ff32669=
+c074
+>=20
+> I assume DSA and ethernet eventually will follow, making SMBus SFP
+> support necessary for this platform too.
+>=20
+> So thanks for doing this!
 
+Good to know this is useful to you ! So there's at least 2 different
+classes of products out there with SMBus that advertise that it's
+"designed for SFP" ._.
+
+> FWIW, I don't think the OpenWrt mdio patch works at all.  I've recently
+> been playing with an 8 SFP+ port switch based on rtl9303, and have tried
+> to fixup both the clause 22 support and add RollBall and clause 45.
+> This is still a somewhat untested hack, and I was not planning on
+> presenting it here as such, but since this discussion is open:
+> https://github.com/openwrt/openwrt/pull/17950/commits/c40387104af62a06579=
+7bc3e23dfb9f36e03851b
+>=20
+> Sorry for the format.  This is a patch for the patch already present in
+> OpenWrt. Let me know if you want me to post the complete patched
+> mdio-smbus.c for easier reading.
+>=20
+> The main point I wanted to make is that we also need RollBall and clause
+> 45 over SMBus.  Maybe not today, but at some point.  Ideally, the code
+> should be shared with the i2c implementation, but I found that very hard
+> to do as it is.
+
+I don't have anything to test that, and yeah that can be considered as
+a second step, however I don't even know if this can work at all with
+single byte accesses :(
+
+Thanks,
+
+Maxime
 
