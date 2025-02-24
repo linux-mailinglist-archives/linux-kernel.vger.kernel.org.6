@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-528179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA3A3A41496
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:00:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765ACA41494
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:00:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCE01699C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:00:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 805DC3AEDAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504B21AAA1D;
-	Mon, 24 Feb 2025 05:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96A9EEA8;
+	Mon, 24 Feb 2025 05:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7kNwocy"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D4kPcOYf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A82CEEA8;
-	Mon, 24 Feb 2025 05:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A56941C85;
+	Mon, 24 Feb 2025 05:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740373249; cv=none; b=Qk2wjFOFgyHyeVeE8jpJXmVfg1UUj5axSYmNTbY2FVpPFPE/WYlEX5PpwaZbHDMD9sXZqOPpsrSPO20sI7A4IizZ9Upr1giys1DO2ThUteDBEudm1V6dcgMQHCLwDPbaOe1QgHzM+nvzb+4/Eywk3BxzoFxSyDRMGEGS4ykNcZ8=
+	t=1740373226; cv=none; b=VWcfEmlqsKGIjbWA6x+WqEyNTtL+mdQqEAQL3yyaYBGisu4d277wD/0Qi9XaJQHhhbgi6yBFt6ME7/CWiKrzxUO9zBu9097R8NNUtI4jUzDJ2eJPCK3/3sk3tWqOZwp1ykJBGaInV/EaVf2klW0ZRaXn0Hq9ljNgeb5Q+jPetus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740373249; c=relaxed/simple;
-	bh=7Tsgb1VlBaToqdFqXP6tBkBm+KcvCBhRo08kXNZs+Ys=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Cap8z+KECtjLOy8BFnc4Pr4UxHVzwj6IrKOv8FjEkbVLwUaor30ntFhpT3m5nrcdgJbWR5mocMO1s4AIRRkHHfQ5zhN8bFClJXwEYEECYLK7DlVXWwKwavJRtorSMo1VuCXpqvmgbksviMpgdCwN+1UemcsXxGeWtJnZHD/Tdn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7kNwocy; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22104c4de96so65754985ad.3;
-        Sun, 23 Feb 2025 21:00:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740373247; x=1740978047; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QdRQnj2hju2Gq755DtSZDoUs9iYpMcUoX/lshJNhNI=;
-        b=N7kNwocyEb9Fw3LtSdvcDqj3iwO5n8n7hJg4r0hKLp4WnK95go6N9bVYsrjn6tGs8u
-         IZVW9lbD5wqbUxg4+mUihCj4+HUTeqsY3c37r1k/JTRP+Pu0C0WQ7pG9gcosgVENzFl4
-         XVIghhoJCUe/sg1BGziOp7zws7963PYaYGgY2XVJfQp6tRyI0JDhNvEUq6pJ6jBZVrvG
-         A7/V/Nz78t3wp4mxeh5HuU1dkQ/bdH82IpAOI3/uku3zZU9BftMSS7fpxhou90QOl16u
-         YtKJh3tjDWcCcsuTd43APmEidjyAaT+f/DwfkTxrgE0HNsnRtp791JADITBfo5bDYk/u
-         kn0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740373247; x=1740978047;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QdRQnj2hju2Gq755DtSZDoUs9iYpMcUoX/lshJNhNI=;
-        b=oV3AyyfOzEWVM5PUTAFRxW7liiQPcJxeextN7y77M87zjlLGQ3FaI2zCVbVmoufIVC
-         +C50c3ZzUjuZk43DNUsNCCHTibvTWhRgm+BbchSJ5hgzax1z2ZP5OaLEya3P5fJPYjgR
-         t65gAS/s8HY+dqsxzW4eIQmPvUsOwUBsvQccycrT5DvZ/pxcjUkroCsznaIO+I+/xqru
-         EDYSkYLLvvMyRVgW7LljcjCfwOOBTqxqiH3bDvA2NlcoTiUxMW09NaFJ+9bkQiLo15FI
-         hhyWDkS2HDBcw4UeXqK+g4wa9WsR3C8UCZXg5uuBvgi0Qcai+ObovjO7qVWWgqQr4wnO
-         JisA==
-X-Forwarded-Encrypted: i=1; AJvYcCVoWX9o7rPPwnEw4bWVwl7sznnSToGYmF9ty1vzRemq0gQdpZRgD3+3QjzG/XVKwxumW9cdWpHddFuVVNM=@vger.kernel.org, AJvYcCXIsFszQ8bg6Gsthny8uZNWL4KwOumAUj2DuTDpRU5r1ixKrtbFi/ibQjEwQMzzVDCOOavk1JIVz7oq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxHyWVjyv+jffMXcWIk5lxmZax83wTw2DOf/mDTK5ENW4TrD3I
-	3619qlpsqg0zMnHFOBrr3I/4EHYQYBI2e3zCX8lxL3ScCpX6oCvL
-X-Gm-Gg: ASbGncsrVUFqc/AFwkUCC86XHiQqTdL+mS5AzOjwMyivLY93rbHI84UKDl8Lm78JHT0
-	JL4Cf+sgg0e2CntrrITrKbxnnf3AzbSlc/ePelNiGa4uTW2zXOj5LlrgWIcgfCH8meInVLDzpsd
-	2QQVlX+N0+uqb2tOuNpqiDbUQRzm5R+Ds9onHe2YtuWN8DCWtk+7hAx2psEwdwkKqumw1G+dkVT
-	T6Sk+PKi1/NFMcyYn2e4vmga8AlXq5EIbNhILtlpFvCYe9sWF4vcpJ9xdaBl3h7kEiDjoD+ZYhs
-	wOK6FxM6kEyknXLGez6wNRg/U8OgnVVyGTuNOaVInmbs2Sl4ef4R
-X-Google-Smtp-Source: AGHT+IGsIF87TBSPJ3DZAxX8nALQtN3ooza/Y9c/kL86lpMIqw5PDJoF2uQac2kMFvONxXnK+jn/vw==
-X-Received: by 2002:a17:902:f687:b0:216:7ee9:220b with SMTP id d9443c01a7336-2219ff61d84mr213737735ad.22.1740373247391;
-        Sun, 23 Feb 2025 21:00:47 -0800 (PST)
-Received: from rdbsd2.rdb.adwin.renesas.com ([128.1.49.169])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545c8e7sm168547305ad.122.2025.02.23.21.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Feb 2025 21:00:46 -0800 (PST)
-From: Guan Wang <guan.wang.jy@gmail.com>
-X-Google-Original-From: Guan Wang <guan.wang.jy@renesas.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Avri Altman <avri.altman@wdc.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	guan.wang.jy@renesas.com,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: block: add reset workaround for partition switch failures
-Date: Mon, 24 Feb 2025 12:59:18 +0800
-Message-Id: <20250224045918.3321394-2-guan.wang.jy@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250224045918.3321394-1-guan.wang.jy@renesas.com>
-References: <20250224045918.3321394-1-guan.wang.jy@renesas.com>
+	s=arc-20240116; t=1740373226; c=relaxed/simple;
+	bh=K9i6Jn+Zx+VHq4F4pEcWJAeOv1sieh7R7qTCwo+JiD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Z62VW/jRnBw8vN/Wi8ScyssP3+3X6r5HoxnD4n4cZQ/uncZpekracm+94uPAP3qmFfnsuWHo1WUt+p0R30Mz76vTfBs0N6FHOwJQCZBMYP0gD04mrZwugVgEDc3PYeIuZBVjbxF2Ls0/WJ0zGzuiSUenN0Gdxk9MRn7oPBcGs6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D4kPcOYf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740373222;
+	bh=dma7rBTTkx2nvjxB+nfPmpRvUxgwC22P+h+MR1cXpMM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=D4kPcOYfNe0mM28w6022i/CplmnfPnPGfcurK8ifwFr+/FuYE1GRX2GYUJiIrLvJZ
+	 cIqG62OJeefwzs/uplbKT+5EpFffFhNQn/oXD93LK4ecVF6lUqcwK2xx6IkIz0JPyP
+	 NI6SjmHQJHEve6/x5Y98mBY+jU5hIp7WG4ZYhRK47GgDxkA1RDduvjUx+crmDzfxCg
+	 LfFelDHfKqxr+0tPGNBIVsN0ViD/U/C2XxAbiZzFdcytDshP29hxn5rqPpNNkdp900
+	 2Ph+/gMcK13yN9BxNuD1h86FnW54NE+r4qT+uWIkvOHq0lB0Z/LdDTJMe2cPBUHiMh
+	 vR+2kXRl76z+w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z1T7n50KPz4wcj;
+	Mon, 24 Feb 2025 16:00:21 +1100 (AEDT)
+Date: Mon, 24 Feb 2025 16:00:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Hans de Goede
+ <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the char-misc tree
+Message-ID: <20250224160021.63b13a2b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/YU2IFvuctig6A5Qs9=gyinR";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Some eMMC devices (e.g., BGSD4R and AIM20F) may enter an unresponsive state
-after encountering CRC errors during RPMB writes (CMD25). This prevents the
-device from switching back to the main partition via CMD6, blocking further
-I/O operations.
+--Sig_/YU2IFvuctig6A5Qs9=gyinR
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The root cause is suspected to be a firmware/hardware issue in specific
-eMMC models. A workaround is to perform a hardware reset via mmc_hw_reset()
-when the partition switch fails, followed by a retry.
+Hi all,
 
-Add a workaround that:
-1. If initial partition switch fails after rpmb access
-2. Performs mmc card reset using mmc_hw_reset()
-3. Retries switching to main partition
-This helps resolve cases where the device becomes unresponsive after
-RPMB operations.
+The following commit is also in the drivers-x86 tree as a different commit
+(but the same patch):
 
-Signed-off-by: Guan Wang <guan.wang.jy@renesas.com>
----
- drivers/mmc/core/block.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+  74826b3fd7d2 ("sonypi: Use str_on_off() helper in sonypi_display_info()")
 
-diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
-index 4830628510e6..29388786624c 100644
---- a/drivers/mmc/core/block.c
-+++ b/drivers/mmc/core/block.c
-@@ -1174,8 +1174,24 @@ static void mmc_blk_issue_drv_op(struct mmc_queue *mq, struct request *req)
- 				break;
- 		}
- 		/* Always switch back to main area after RPMB access */
--		if (rpmb_ioctl)
--			mmc_blk_part_switch(card, 0);
-+		if (rpmb_ioctl) {
-+			if (mmc_blk_part_switch(card, 0)) {
-+				pr_warn("%s: failed to switch back to main area, will reset and switch again\n",
-+						md->disk->disk_name);
-+
-+				/*
-+				 * Reset eMMC device if partition switch fails.
-+				 * Some eMMC devices may get stuck by write CRC error in RPMB,
-+				 * preventing switch back to main partition. This workaround
-+				 * helps recover from this error state.
-+				 */
-+				mmc_hw_reset(card);
-+
-+				if (mmc_blk_part_switch(card, 0))
-+					pr_err("%s: failed to switch back to main area even after reset\n",
-+						   md->disk->disk_name);
-+			}
-+		}
- 		else if (card->reenable_cmdq && !card->ext_csd.cmdq_en)
- 			mmc_cmdq_enable(card);
- 		break;
--- 
-2.25.1
+This is commit
 
+
+
+  74826b3fd7d2 ("sonypi: Use str_on_off() helper in sonypi_display_info()")
+
+This is commit
+
+  9cf1c75bfda5 ("sonypi: Use str_on_off() helper in sonypi_display_info()")
+
+in the drivers-x86 tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/YU2IFvuctig6A5Qs9=gyinR
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme7/OUACgkQAVBC80lX
+0GzZLwgAjPOKTPHHeMgxeiaV/Z8mE9+K/FavLe7qC4hcV2ljVnSUN9zQ6k3U/lMr
+mxCGs2Edg/zWflbe0q/wWhlPw3Kf6DW+uuTkE/F2GDY7ZCsVhDPtqJqgr7Vqb+BI
+kiznCVfBrkhKOaPdVFe1f3gq9SVAHYe0tQjqsw3M5sFJQQeNUqaObCmeK0cYbkRK
+8vxvRLlYrqoNOhV0o8B8LWNdoJbc41vUOEHF7z9pdipbkk2P9381E5Zl2SGLJ6eL
+MknBa59wl5eFVogCEstz5Mkw7Xcqg/kNA4uL/jOmIuXbZ8U4jcMUA5INpEWhALf7
+uvATAfP20LbBj5AX+4lXmXE572U9PA==
+=IHsg
+-----END PGP SIGNATURE-----
+
+--Sig_/YU2IFvuctig6A5Qs9=gyinR--
 
