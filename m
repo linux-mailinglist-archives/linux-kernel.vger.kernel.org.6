@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-529920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0980EA42C88
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:16:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47C8A42C8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:17:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E6F18944F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC71174C18
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC5C1FC7D0;
-	Mon, 24 Feb 2025 19:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE001FC7DB;
+	Mon, 24 Feb 2025 19:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="km2eVt6W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dTskuR9F"
+Received: from smtp.smtpout.orange.fr (smtp-22.smtpout.orange.fr [80.12.242.22])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B3A126F0A;
-	Mon, 24 Feb 2025 19:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB879126F0A;
+	Mon, 24 Feb 2025 19:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740424566; cv=none; b=CTf0WsihUdCwMNO3IAXTYYI3rPcCzbDZx5c32Lw886Peu5qtIPbnJi9cbuNHJOhdjz9T9hakF+7nGVryp6DCD3Ghk/97euPXxbgSZ8vRrpInoHQG43WJo13o3cya37/dTiWfV/VX8TxrcQE0LArPGTKCLx+iQSJyB7Jj6siORoI=
+	t=1740424666; cv=none; b=p11l7sG1p/O6Rmw6DjMi42MVLVaPbTWppvryEJV53vka7oX4OMqk20HCeWG7xsVGBKsIY8YN/eIdmjxDAeFvdUmaoaBmER7tIVpeuYIwOnb8kUv9IeJ6ZG/ZR96BJa6z6hpXFzKKFxLTGk1bLXMXISkmvaNDi9KKRKwlejCzDNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740424566; c=relaxed/simple;
-	bh=o0zV8DH2b915PxW+XO057vqWp/Z4dhVTZcSuK1elOLc=;
+	s=arc-20240116; t=1740424666; c=relaxed/simple;
+	bh=PUeRntGvwXImYDS+7i7O0aN6qpNF8PoicxIEo5iasdk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xz/w+kTKfuhzSb3wXYeBfmb0f+bzabwYXb95C7CI27evYXuoA3ydpJXqBht9VW222bGEQX4xY1UDt8pYR3PPyDI3sf4X/vlL1pFFRnIunOkyfJpKRnMqH3dgwLsOkdVjcTo7lQJ0ZUSCKOea6xPYDPBt1XfITK5bKmuHWjZtbYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=km2eVt6W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F27BFC4CED6;
-	Mon, 24 Feb 2025 19:16:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740424565;
-	bh=o0zV8DH2b915PxW+XO057vqWp/Z4dhVTZcSuK1elOLc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=km2eVt6Wv0nBwUeqlUcJvsLx8jY/zvb5EISGbWJIb/M1AcymmNpq8JhvarpioIe8S
-	 czse3BjjR3JOloRnQ5J70QpG+2fswVyp5H2CFDo4RXcLWFyU9CCiz5TD1AGI3pjBKi
-	 SIkVgrcgPCW57+C5y55qz5bZImc4GJEPKr88PD7YrvWz3lE2skw1IFQGjvTqwTDDc9
-	 XhAkrvf8I+g/SD8qi+tcZv6M+cnC30Qysh0eScuQd6mKTEK5JazvpKj9I6X1NdCONk
-	 LrvHnOszYeXgMXg88YcoTvPcXzkzZ54dlGjZ8KarGMl4qdvcLhDEhtCqFhsq4lN+mO
-	 +iwRu43xD52hA==
-Message-ID: <559f3da9-4b3d-41c2-bf44-18329f76e937@kernel.org>
-Date: Mon, 24 Feb 2025 12:16:04 -0700
+	 In-Reply-To:Content-Type; b=ma47mx7HsOY1jFqr7rCtSEu2MJY7UxELfzMSlPmeNlZWy7fM7sWgWiksHKRzDCUBE8eEQNMXcezgcxyl5mR6OJ0gncPCpLt6niDEo/u9GAEUMih/VKl8Wsm72zIYa/sMkXBRRcVUzhszuqCIsZdorGRc17EcSBrepfdIhV9HddM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dTskuR9F; arc=none smtp.client-ip=80.12.242.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id mdwGt5kjyKyVdmdwJtBcWJ; Mon, 24 Feb 2025 20:16:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740424592;
+	bh=9VPOLtQg+zqSMxeSCbo0v5e5C1uKf8cqE57WkcwIzms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=dTskuR9FK1/IIcaRaov8nY9R+bPoGTkJfSWtdVzr5DCQ8GSXiMe/Gv9j9AT7jhyh+
+	 eb9hTyQgiyd+gD6n71R/H4jdu4XUEgCIlAvIl9DJQacjP2ZKQkqDGjA/WaeqHI0cSm
+	 LYGu20syygD+cGHkgL1Rp1xzSxL0SoWRFTJyfj2Fpse7037OyX36ZSs4LjmvFLOHMZ
+	 va7D587KDqw4oLdn7xT+anZF5p2g309POA4ayVMIZhrBZVDkxZPHAicGKJ8M5kT1gO
+	 e4gesxROvoK73rdErzscHvUIhecucjaw4piH5UHPQTwNGQGtYT3IdYwcPjhB98Y5UP
+	 F+Q6bArp1jsMw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Mon, 24 Feb 2025 20:16:32 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <29687c3c-d983-4d1f-8cde-fde82df84e0e@wanadoo.fr>
+Date: Mon, 24 Feb 2025 20:16:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,60 +56,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] trace: tcp: Add tracepoint for tcp_sendmsg()
-Content-Language: en-US
-To: Eric Dumazet <edumazet@google.com>, Breno Leitao <leitao@debian.org>
-Cc: Neal Cardwell <ncardwell@google.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, kernel-team@meta.com,
- yonghong.song@linux.dev
-References: <20250224-tcpsendmsg-v1-1-bac043c59cc8@debian.org>
- <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
-From: David Ahern <dsahern@kernel.org>
-In-Reply-To: <CANn89iLybqJ22LVy00KUOVscRr8GQ88AcJ3Oy9MjBUgN=or0jA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v8 4/6] media: platform: synopsys: Add support for HDMI
+ input driver
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>
+References: <20250223173019.303518-1-dmitry.osipenko@collabora.com>
+ <20250223173019.303518-5-dmitry.osipenko@collabora.com>
+ <88b02c37-6741-459b-b966-d6d58d1f9b6f@wanadoo.fr>
+ <c30a291b-c81b-4da1-a0ae-270d323b28e3@collabora.com>
+ <bc1f5334-b0fb-4e81-979d-feb17886ac40@wanadoo.fr>
+ <d13f13ac-1501-4427-b6d3-ee161eeb932a@collabora.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <d13f13ac-1501-4427-b6d3-ee161eeb932a@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2/24/25 12:03 PM, Eric Dumazet wrote:
-> On Mon, Feb 24, 2025 at 7:24 PM Breno Leitao <leitao@debian.org> wrote:
+Le 24/02/2025 à 05:19, Dmitry Osipenko a écrit :
+> On 2/24/25 00:11, Christophe JAILLET wrote:
+>>>>
+>>>>> +    ret = cec_register_adapter(cec->adap, cec->dev);
+>>>>> +    if (ret < 0) {
+>>>>> +        dev_err(cec->dev, "cec register adapter failed\n");
+>>>>> +        cec_unregister_adapter(cec->adap);
+>>>>
+>>>> Is it needed to call cec_unregister_adapter() when
+>>>> cec_register_adapter() fails?
+>>>
+>>> Yes, it's confusing, but unregister is needed to free the adapter
+>>> properly, it's prepared to do it. Thanks for the review.
+>>>
 >>
->> Add a lightweight tracepoint to monitor TCP sendmsg operations, enabling
->> the tracing of TCP messages being sent.
+>> I don't know this API, so you'll get the last word, but
+>> cec_unregister_adapter() does not seem to do that many things in such a
+>> case, unless I miss something. See [1].
 >>
->> Meta has been using BPF programs to monitor this function for years,
->> indicating significant interest in observing this important
->> functionality. Adding a proper tracepoint provides a stable API for all
->> users who need visibility into TCP message transmission.
+>> CJ
 >>
->> The implementation uses DECLARE_TRACE instead of TRACE_EVENT to avoid
->> creating unnecessary trace event infrastructure and tracefs exports,
->> keeping the implementation minimal while stabilizing the API.
->>
->> Given that this patch creates a rawtracepoint, you could hook into it
->> using regular tooling, like bpftrace, using regular rawtracepoint
->> infrastructure, such as:
->>
->>         rawtracepoint:tcp_sendmsg_tp {
->>                 ....
->>         }
+>> [1]: https://elixir.bootlin.com/linux/v6.14-rc3/source/drivers/media/
+>> cec/core/cec-core.c#L370
 > 
-> I would expect tcp_sendmsg() being stable enough ?
+> On a second look, apparently you're right and
+> cec_notifier_cec_adap_unregister() should be used there.
 > 
-> kprobe:tcp_sendmsg {
-> }
 
-Also, if a tracepoint is added, inside of tcp_sendmsg_locked would cover
-more use cases (see kernel references to it).
+So, maybe in the .remove() function as well?
 
-We have a patch for a couple years now with a tracepoint inside the
-
-while (msg_data_left(msg)) {
-}
-
-loop which is more useful than just entry to sendmsg.
+CJ
 
