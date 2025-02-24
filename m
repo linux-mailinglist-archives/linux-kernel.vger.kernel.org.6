@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-528623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F16A419E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:00:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C616AA419F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EF1188F28E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88439175B10
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45142505C1;
-	Mon, 24 Feb 2025 09:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7DD2528FA;
+	Mon, 24 Feb 2025 09:57:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="bPP8dfzG"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="BXW8cJ8A"
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7AFC24292F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BF22505DE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391055; cv=none; b=bau74A7vvnTiCem+QbGauITGdPvrWDHj6O8Rruoed6LBmfzjMdK+Q79HCUQousm0rEIFL3lxhKFNKUntOLGTqE8pofzWsrzuPqTFZfmkt10vazcFKCyi7QCvnoNfHJP3ME6OMOPQ7/yYeupg60CbqvHSbUgrtXAFpwnT3aZCTVs=
+	t=1740391070; cv=none; b=aIEur2wDMZsAOg584SObCE1Ai24PzWyc/Ae+dUc61fUSeOj11uflXAclAUw4XCb4c4TAPvjIAR9GOU0zp4pG8tmji9mhtTqdLYdyu8pm0AP6biD6995Cs4VZSdCQymUz+LdKAYXXAwBI+Mggwul9L3kl2VDYEwRJe0C5LlFUZT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391055; c=relaxed/simple;
-	bh=zZ4LSD0pf5gem00PnlfjoiKkJZOWfQSUlOEEwXRRwAo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=J/6ZpSUKxKM1lYleXtxfN8xcW0h7vK/Ca9mm5XpGX2Ek8EiRoMLN5REjgx4t7YWhHiaTRafzULkSy3WPQfAbxXlDcI0BBHlpV70f9vNYXlRvLG+M1R81KJqLJYVGRvH5Cg70/FjeSa0RLVZ443ZVojYoKE6kcnizZYWfYOYYvLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=bPP8dfzG; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	s=arc-20240116; t=1740391070; c=relaxed/simple;
+	bh=f38sbjkp8IsEbCigbaDtZbUmcaFSWIygdD0JyuwEVhM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=NleDPcAXBpvE/RCTiyNRtEhR0xhDUg/eYms+GAAsHvILChHMthC0KE6U+rzFaaRgyj68hRelRuCKDkV56S+lYPVrlr0vvAfee0ePIL79sG6Z02LJoIQzyb2iIymmF4uiklkBg6MliVoN0rvP5i95tjzMX5MjrN0wUL8T9/4vn34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=BXW8cJ8A; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id 815E88D;
+	Mon, 24 Feb 2025 10:57:38 +0100 (CET)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id eLhPAqcJMhzr; Mon, 24 Feb 2025 10:57:36 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr 0EC4C8C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1740391056; bh=NFlPp2fA2pDpeFVq75KIRnfMMtdGC9swH34bQDpPKdk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=BXW8cJ8AoWFZakWzml0RkTc50uPb9O2nXfdFdjNicF08tRTxq1iWvbP8mdZQ3Z7nE
+	 m4wTpInI/9IVPb7IfsCXJfaTCUNesoWhHGewRr4fhCeuECz6XEeu5RdUSuzCv9/Eab
+	 m1fDECNnqZGUtIbOQmRKu6bPxSrX57i4YXdthDm1ZHpj44bb49u7HqD9qmDiZ37ht/
+	 BXLxRY1Xewx4wPRNPzmxPPd8OkSyeLRwzWO68+L7fZCZp/yWImG/4tNzqbuSnJaJyw
+	 nmFjj4f6cqtV8MhiPaCUhOnmZ8d+vK1OimHDZp1iDBErv3lY3DHpd72bf4/0IrtqKM
+	 yoMbznt+2EMPg==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z1bkf0DrSz9spX;
-	Mon, 24 Feb 2025 10:57:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740391050; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZVke/a1muIuPPw9tqzQVhkbMsCi2gU1HQNx6O8LlpO0=;
-	b=bPP8dfzG1KdKoo4XbbnX0Egqkj/tZSMiFQtHy0HvtRoDc1AE3cT7JliMii9B6hAOhVOblf
-	dM7uLyZnW/0Q/zmfi3RhUY5+XHeCFuCfNRpTwnnk+rCzBHW4JTB5CcAv74yZkt9ZVWI6dJ
-	BMCH5t719k17DKhmW5PQJl7ec77gcQdbfka5T4+QJDdY2gIqODr1uWlXA5I2ZQ2zeze2GI
-	S2GTSWjkvKDG8RQAGVqsvyyIr+evhi7laaLgrGdDr1FhaxKfJnnkEcVVZhw9PI6DgHPE46
-	95+Kpar4PR98oI4e9W9SlPpTO+IwujfdjeSmSzWZkadPJyIc8PTjD3UtKOLgwA==
-Message-ID: <21a944a054790c0a5b542183b7d5fa54483232be.camel@mailbox.org>
-Subject: Re: [PATCH] drm/scheduler: Fix mem leak when last_scheduled signaled
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: phasta@kernel.org, qianyi liu <liuqianyi125@gmail.com>, Danilo Krummrich
- <dakr@kernel.org>, Matthew Brost <matthew.brost@intel.com>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Mon, 24 Feb 2025 10:57:26 +0100
-In-Reply-To: <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
-References: <20250221062702.1293754-1-liuqianyi125@gmail.com>
-	 <3b369e1a49b354852f361b103999673e4f7906a9.camel@mailbox.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	by mail.3xo.fr (Postfix) with ESMTPSA id 0EC4C8C;
+	Mon, 24 Feb 2025 10:57:36 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: o6us1zn17yc464ke5wp6ap13n3xd8wwq
-X-MBO-RS-ID: 181b0d227478099764b
+Date: Mon, 24 Feb 2025 10:57:35 +0100
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Thomas Zimmermann <tzimmermann@suse.de>,
+ dri-devel@lists.freedesktop.org, airlied@redhat.com, Jocelyn Falempe
+ <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ linux-kernel@vger.kernel.org
+Subject: Re: Include ASPEED ast-drm 1.15.1 video driver in kernel tree
+In-Reply-To: <87o6yr911t.fsf@intel.com>
+References: <d507f6268ea3158b5af82b6860ca7b71@3xo.fr>
+ <194c4656963debcf074d87e89ab1a829@3xo.fr>
+ <b296bfef-1a9c-4452-baeb-09f86758addd@suse.de>
+ <984c317de1027f5886390a65f1f66126@3xo.fr> <87o6yr911t.fsf@intel.com>
+Message-ID: <78ac8b58affdd365506fe72822e30f6f@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-02-24 at 10:52 +0100, Philipp Stanner wrote:
-> Hello,
->=20
-> subject line: please write "drm/sched" instead of "drm/scheduler". It
-> has become the norm
->=20
-> On Fri, 2025-02-21 at 14:27 +0800, qianyi liu wrote:
-> > Problem: If prev(last_scheduled) was already signaled I encountred
-> > a
->=20
-> prev(last_scheduled) almost reads like a function call. Maybe write
-> "prev / last_scheduled"?
->=20
-> > memory leak in drm_sched_entity_fini. This is because the
-> > prev(last_scheduled) fence is not free properly.
->=20
-> s/free/freed
->=20
-> >=20
-> > Fix: Balance the prev(last_scheduled) fence refcnt when
-> > dma_fence_add_callback failed.
-> >=20
-> > Signed-off-by: qianyi liu <liuqianyi125@gmail.com>
-> > ---
-> > =C2=A0drivers/gpu/drm/scheduler/sched_entity.c | 7 +++++--
-> > =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/scheduler/sched_entity.c
-> > b/drivers/gpu/drm/scheduler/sched_entity.c
-> > index 69bcf0e99d57..1c0c14bcf726 100644
-> > --- a/drivers/gpu/drm/scheduler/sched_entity.c
-> > +++ b/drivers/gpu/drm/scheduler/sched_entity.c
-> > @@ -259,9 +259,12 @@ static void drm_sched_entity_kill(struct
-> > drm_sched_entity *entity)
-> > =C2=A0		struct drm_sched_fence *s_fence =3D job->s_fence;
-> > =C2=A0
-> > =C2=A0		dma_fence_get(&s_fence->finished);
-> > -		if (!prev || dma_fence_add_callback(prev, &job-
-> > > finish_cb,
-> > -					=C2=A0=C2=A0
-> > drm_sched_entity_kill_jobs_cb))
-> > +		if (!prev ||
-> > +		=C2=A0=C2=A0=C2=A0 dma_fence_add_callback(prev, &job->finish_cb,
-> > +					=C2=A0=C2=A0
-> > drm_sched_entity_kill_jobs_cb)) {
-> > +			dma_fence_put(prev);
->=20
-> But now the fence will also be put when prev =3D=3D NULL. Is that
-> intentional? It doesn't seem correct to me from looking at the commit
-> message, which states "Balance [=E2=80=A6] refcnt when dma_fence_add_call=
-back
-> failed"
->=20
-> It didn't get clear to me immediately which dma_fence_get() your new
-> dma_fence_put() balances. Can you ellaborate on that or maybe write a
-> comment?
->=20
-> But also be handy of could share the kmemleak trace.
+Hi Jani
 
-Argh.
+> I'm not sure what you're trying to say here. The driver date was 
+> removed
+> because it was virtually never updated for any driver. It provided no
+> useful information.
 
--> "It would also be handy if you could share the kmemleak trace"
+Sure your right, when I removed it from NVIDIA driver (to be able to 
+build nvidia driver with DKMS on mainline), the .date value was still 
+set to 20160202 !
+See the PR here 
+https://github.com/NVIDIA/open-gpu-kernel-modules/pull/783
 
-I should drink less=E2=80=A6
+I did just say that to be able to build and use the ast_new on mainline 
+(6.14-rcX) I had to update the source which were working on linux-stable 
+and to remove .date from drm structure.
+That's why on the online directory there are 2 versions of the driver, 
+one for linux-stable (up to 6.13.2) and one for mainline (from 
+6.14.0-rc1).
 
-P.
+Kind regards
+Nicolas Baranger
 
 
->=20
->=20
-> Thanks
-> P.
->=20
-> > =C2=A0			drm_sched_entity_kill_jobs_cb(NULL, &job-
-> > > finish_cb);
-> > +		}
-> > =C2=A0
-> > =C2=A0		prev =3D &s_fence->finished;
-> > =C2=A0	}
->=20
 
+Le 2025-02-24 09:53, Jani Nikula a écrit :
+
+> On Thu, 13 Feb 2025, Nicolas Baranger <nicolas.baranger@3xo.fr> wrote:
+> 
+>> Yes, due to .date total removal in linux 6.14
+>> (https://github.com/torvalds/linux/commit/cb2e1c2136f71618142557ceca3a8802e87a44cd)
+>> the last DKMS sources are :
+>> https://xba.soartist.net/ast-drm_nba_20250211/nba-dkms/nba_last_src_20250212/src/
+> 
+> I'm not sure what you're trying to say here. The driver date was 
+> removed
+> because it was virtually never updated for any driver. It provided no
+> useful information.
+> 
+> BR,
+> Jani.
 
