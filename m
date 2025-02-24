@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-529290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA12AA422A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:15:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE81A422D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:22:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8C8419C02CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38043B491F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:10:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0449C2C6;
-	Mon, 24 Feb 2025 14:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2BC1519B0;
+	Mon, 24 Feb 2025 14:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xjys1v/w"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Lx0TWNAf"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAF013AA2D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC45814D28C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406178; cv=none; b=I/9jTgznb7OhU6qU7BXM1GrsmDpI/VaOWowlMkvnAMCxE1VAPuQE7gvwXgjdhVO5ERoDNQvNtLB/AkUeTFV1om4hHcmChJS2Cg0t2lPSclm83ICbdTRL3V+xo9pKQVD8zc68YhJJW9rTReVVMBhkhCtbCXuOYmobAAejmV/eumg=
+	t=1740406206; cv=none; b=GOc+1tr4YGi68GBCr/xiL47ioYGufwKnMEmSytHjsPclBB2sIIRTrdEOeX/x02Ud+C00PNcHiCD6V74L+taD62PcQ5Ek4ml5030OOPVDgb/7RjTqJHm6smfbqME13NnNG31djzPGk2vz1ccWcaFpnQ86fGz5Xecr2rBqH1hAEY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406178; c=relaxed/simple;
-	bh=iR+ZRm8Rf4CcWzzHJUgQJE++fFjiHr0jVOTIRynNSds=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=rmNPfGXrc85hJIPv1ny6/RPdYQBhPkfX4peFEhbVEBLNrdyjC1Uln78LPHLMufJiCItjlRo2fdarG8f/TpwbLVgwbLH0HEWEmusmLBPrTszVUzTnaaGIZlms6Ex8ViYatrJWj2nZ3izMcbote4PLuBTjIQROi+Y3q6nl/50HReM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xjys1v/w; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1740406172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iR+ZRm8Rf4CcWzzHJUgQJE++fFjiHr0jVOTIRynNSds=;
-	b=Xjys1v/w08YouEoOoiycof9pS9nLTNmUMcP5eJjFxL1liBMyt860Zi2OQMxCbmDidA7+cc
-	rHTN/4sRVP03ZxzzAZ+hBeydNhtZ00yawJRwzzftT8mx7zue0sNEqwnyNCZeAiu0yyrsap
-	fIt4CwSxAYrHoFGewHHUvQS+3diFLK8=
+	s=arc-20240116; t=1740406206; c=relaxed/simple;
+	bh=HnSEhuTIXi0xEJPiLl93d5orRgsQ3EAPZVCCkYSS4Lc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nZqOPpj6/0DaQU30cSu+lExJK9/GwCZRHo3tctxmgiIVKDWiIoigcrjjtZ/iGbRzX9kOuOJWZrpcDc1rJTXKyrE13S88se/yeMAmFtiOTUnlM5VmcdjMXhcCcmNR+0SbeogJ9UaAFcqSDJEHEDfNiDwroHTKEa2RKiL6SOctUB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Lx0TWNAf; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1740406203;
+	bh=7BSvEQjr8ICbU0tQIQzNSwxDzW8DS5PIxkIDb9EMHLY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Lx0TWNAfqQvVVNqNlfV2wWd85CYtCLG9tk+KSJdw4KjdTDnW7FzchpHrrc5cYJOGw
+	 lcFyNWVN9aWI5Vkn1eH60J6WqIlmQlLz+JfMaf801aPMkmhXF+tt6RSNNUeER2Wj2x
+	 ONRpPlCalyTuuJfPcNp2Q3J0r5S/8aaK7z4GYbng=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id CB7D01A413E;
+	Mon, 24 Feb 2025 09:10:01 -0500 (EST)
+Message-ID: <69007e7142414d281617c1edb7444b18f53fd1f0.camel@xry111.site>
+Subject: Re: [PATCH] RISC-V: vDSO: Wire up getrandom() vDSO implementation
+From: Xi Ruoyao <xry111@xry111.site>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Paul Walmsley
+	 <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Guo Ren
+	 <guoren@kernel.org>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Date: Mon, 24 Feb 2025 22:10:00 +0800
+In-Reply-To: <20250224150345-46f09b09-3d94-41bf-850c-6188d21750bb@linutronix.de>
+References: <20250224122541.65045-1-xry111@xry111.site>
+	 <20250224150345-46f09b09-3d94-41bf-850c-6188d21750bb@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [RESEND PATCH] powerpc: mpic: Use str_enabled_disabled() helper
- function
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <f872c2ef-4adc-4daa-aa12-769e3108abc8@csgroup.eu>
-Date: Mon, 24 Feb 2025 15:09:19 +0100
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Naveen N Rao <naveen@kernel.org>,
- =?utf-8?Q?=22Ricardo_B=2E_Marli=C3=A8re=22?= <ricardo@marliere.net>,
- linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AE3E083C-D554-449B-9C67-81556D06FD35@linux.dev>
-References: <20250219112053.3352-2-thorsten.blum@linux.dev>
- <f872c2ef-4adc-4daa-aa12-769e3108abc8@csgroup.eu>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
 
-Hi Christophe,
-
-> On 24. Feb 2025, at 13:56, Christophe Leroy wrote:
-> Le 19/02/2025 =C3=A0 12:20, Thorsten Blum a =C3=A9crit :
->> Remove hard-coded strings by using the str_enabled_disabled() helper
->> function.
->> Use pr_debug() instead of printk(KERN_DEBUG) to silence a checkpatch
->> warning.
->> Reviewed-by: Ricardo B. Marli=C3=A8re <ricardo@marliere.net>
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> ---
+On Mon, 2025-02-24 at 15:07 +0100, Thomas Wei=C3=9Fschuh wrote:
+> Hi!
 >=20
-> When you resend a patch, please tell why here (below the ---) so that =
-we know the reason.
+> On Mon, Feb 24, 2025 at 08:25:41PM +0800, Xi Ruoyao wrote:
+> > Hook up the generic vDSO implementation to the LoongArch vDSO data
+> > page
+>=20
+> LoongArch?
 
-A "resend" is meant as a "ping" and the patch is always unmodified.
+Oops, pasto by "reusing" my own words in LoongArch commit :(.
 
-=46rom [1]: "Don=E2=80=99t add =E2=80=9CRESEND=E2=80=9D when you are =
-submitting a modified version
-of your patch or patch series - =E2=80=9CRESEND=E2=80=9D only applies to =
-resubmission of
-a patch or patch series which have not been modified in any way from the
-previous submission."
+> "to the generic vDSO getrandom implementation"
+>=20
+> > by providing the required __arch_chacha20_blocks_nostack,
+> > __arch_get_k_vdso_rng_data, and getrandom_syscall implementations.
+> > Also
+> > wire up the selftests.
+> >=20
+> > The benchmark result:
+> >=20
+> > 	vdso: 25000000 times in 2.560024913 seconds
+> > 	libc: 25000000 times in 40.960524767 seconds
+> > 	syscall: 25000000 times in 40.380651864 seconds
+> >=20
+> > 	vdso: 25000000 x 256 times in 171.830655321 seconds
+> > 	libc: 25000000 x 256 times in 2913.107080132 seconds
+> > 	syscall: 25000000 x 256 times in 2692.084323377 seconds
+> >=20
+> > Note that it depends on Thomas Wei=C3=9Fschuh's vDSO generic data stora=
+ge
+> > implementation (now in the timers/vdso branch of tip).
+>=20
+> The note should be below a "---" line, so it doesn't end up in the
+> commit.
 
-When a patch is not in -next yet or when it's been a week or longer and
-I haven't received any feedback, I eventually follow up on it by
-resending the same patch.
+>=20
+> > Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+> > ---
+> > =C2=A0arch/riscv/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0arch/riscv/include/asm/vdso/getrandom.h=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0 30 +++
+> > =C2=A0arch/riscv/kernel/vdso/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 7 +-
+> > =C2=A0arch/riscv/kernel/vdso/getrandom.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 10 +
+> > =C2=A0arch/riscv/kernel/vdso/vdso.lds.S=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0arch/riscv/kernel/vdso/vgetrandom-chacha.S=C2=A0=C2=A0=C2=A0 | 24=
+4
+> > ++++++++++++++++++
+> > =C2=A0.../selftests/vDSO/vgetrandom-chacha.S=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A07 files changed, 294 insertions(+), 1 deletion(-)
+> > =C2=A0create mode 100644 arch/riscv/include/asm/vdso/getrandom.h
+> > =C2=A0create mode 100644 arch/riscv/kernel/vdso/getrandom.c
+> > =C2=A0create mode 100644 arch/riscv/kernel/vdso/vgetrandom-chacha.S
+> >=20
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index aa8ea53186c0..6fdd63e15fb4 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -213,6 +213,7 @@ config RISCV
+> > =C2=A0	select THREAD_INFO_IN_TASK
+> > =C2=A0	select TRACE_IRQFLAGS_SUPPORT
+> > =C2=A0	select UACCESS_MEMCPY if !MMU
+> > +	select VDSO_GETRANDOM if HAVE_GENERIC_VDSO
+>=20
+> Broken alphabetical ordering.
 
-You're the first one to ask for a reason for resending.
+I'm still investigating some CI failures (at lease some of them seem not
+just caused by missing the generic data storage implementation).  I'll
+fix them and the errors you found in V2.
 
-> At the time being I have several duplicated patches from you and I =
-don't know what to do with them which one to keep and which one to drop.
-
-They're the same - feel free to pick the original patch or the resend.
-
-Thanks,
-Thorsten
-
-[1] =
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#don=
--t-get-discouraged-or-impatient
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
