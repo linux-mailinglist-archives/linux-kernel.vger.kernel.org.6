@@ -1,136 +1,88 @@
-Return-Path: <linux-kernel+bounces-529691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AF0EA429EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:35:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CA0A429EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E061605C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:33:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369243A7682
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9852B266196;
-	Mon, 24 Feb 2025 17:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA5F264A71;
+	Mon, 24 Feb 2025 17:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JtZNii9m"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaRSPMYz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EAB265CD3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D3F25B699;
+	Mon, 24 Feb 2025 17:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740418331; cv=none; b=KgJ4Lrd8oRvIUt5K9j5qwRj992yJQVRJQkG5IPa5neNf2VeYarObc5EyEs4NpIfoDbSCAfI0OeClGnliCq78TEU9kVAzO4YDSOjLV7VMqS7hloygepZqiXwxAxKLG/c7anlqIR489gE0YAB4pfNi2K24YTOrC17ecA5YdUt817c=
+	t=1740418311; cv=none; b=NYlKRX+PlpEznvp7epApFMIL7opDdjsenmh5uQNQUp6Yw5rhvqxeeXRGq/yhKr5nSxNUdDQ8WcU8i3hAOfRWTwxwL7PSfntHlTSoiJNurNgYvFapFSsZe7H96KSTyFyemsLBg5PAwFZ1FGtaLihyzRuYgb/qKRawIBE6vkXVHCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740418331; c=relaxed/simple;
-	bh=oIB0SGCz6w/sdFWz/voO0kJ/tz/pNsc4Pe98Mbdlmuk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otEqsvlCQ+6XANiKR1xkOUR2R/XbvMO5X5evYVAW5c8FMLFAn8uyEgjKyuSyFXcQQyUDmGyr1Q7loSHYPOvN9eEhZuiAGZtaLgMsl0hmqwzXf5+WdvdWeEWDwOpYIF9VsGMcp+mHX6kMIy8yVq5JgeHcZCJsFVqLfqgF3SO5pDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JtZNii9m; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so6940689a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:32:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1740418328; x=1741023128; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XhxXNmQS7HiqcndJwzB1tfncWGWAmFhTQNVTNzL+Iew=;
-        b=JtZNii9m2CclQdlEmJ8tK24LCj6XEuU3LqkFARNKiLvFT61QPErlqVStQvrREXP40V
-         w+A1L3lgCtrozH3xOhaRz66a1n7CuWOfjoHeiWEu3luJbKfzNwOfr1OIhEErPIJI2EyC
-         q5nKLA5INTlnHUEjGqBiTJWOSeHI5KelLduYCL/YH+mEc83wq6wIHIOrcCqidREb5Jwq
-         Q6VJ2VYZdt1UhkgD+Paq5iy8S6du0Fia9Bei5NSPsCWf6SoI6uQE10+SZoMgEX3ier1m
-         tFXMgJlJI8TFO4Ov3gPVP/1aThmsFKPX5U6QEN2MHUxPERrfTffo1f/lhUGEW6Q8WZw6
-         Cjyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740418328; x=1741023128;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XhxXNmQS7HiqcndJwzB1tfncWGWAmFhTQNVTNzL+Iew=;
-        b=ZfiJ8oq+RWn9IfyvmPLEbA/BHKlLYY8qT/u29Gg8EI5zi2a44TxPt/LYD0KOBbcKNa
-         6LdeNL63eaOal4cpDm4yA6MPy29FiVuhujSYt/tBARG5n+LOA7s0SunU0xhlMRFSkwlR
-         j8PIySnMYXxjYzNbVIWcZQWIzm0uIsOXp3mpCMWEbEFRttACMuYsHDtxPkoFOMEqBoDo
-         Xm8fYlBRBdyDDzYns0RnI5QiAPptat9OORSKmNjy0UL+6oZdWUibUIma6Ph2LM+DuvMa
-         CZVt7w83UYGRVizGSE4s7EYLPz+Xacu9WJ9/kGj71LgaiykUKILGOW9QoC7JgxzpVdBM
-         w0aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmvnEk/9cFOI1cUHZH0XpOHGoy7d2NCPiWSVjW3+338IjZeEjvKGahtK4PopmQqRU9wBJnQQANMQGTRhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3j4fsNq37TDEpMwOvwQoS9+jNkzVKTv3+db+e07l2ectyyZXP
-	mWgGjTXy9Xjlr2RtrlCp7cEjrkoIpX4y8cPGmAKbCTQyPebRxvGqG+XKtVzfrJc=
-X-Gm-Gg: ASbGncvdL4/9Ji7EepObyqegttx3AGQ2XznLKVZUvgZW2R8575Wp5DsM/25pbokn1Ch
-	DJxCDxiRL4JdOqs+kzYVdAG5X4fWACzl5rYWF0J83SQqvjFdvGT2k/4ghCu9vSOxWR+SPNGHaSv
-	MziKKcpL6cTEHeiVHWthiIdVdmCHyRgqya4mOWm5PGScSPQZQis8qcI612AkVaCPrQPo9UPsQpq
-	nkTpQ/bhhZGdx5L7yscxqe78qkPZEkI7gI6wyyuvLH5OHD5lksDW624vvcZ+kXlTBCNUX309PpP
-	301grq6mBiDEWzjaswYbOGg7jwTuyyuaHr5bxrVxyXXlLUUEs7tkW7M=
-X-Google-Smtp-Source: AGHT+IEOW8+Mti0kStIcH2NN1v3JN2p1VlS2xp8UH5KoJEBDGTjvf4FDX9S2JYf1r+OelyXxGOdoUA==
-X-Received: by 2002:a17:907:970c:b0:abb:eec3:394c with SMTP id a640c23a62f3a-abc0d97e77amr1259252366b.5.1740418327678;
-        Mon, 24 Feb 2025 09:32:07 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.25])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5dece270a7fsm18674357a12.58.2025.02.24.09.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 09:32:06 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 4/4] arm64: defconfig: Enable RZ/G3S thermal
-Date: Mon, 24 Feb 2025 19:31:44 +0200
-Message-ID: <20250224173144.1952801-5-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250224173144.1952801-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250224173144.1952801-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1740418311; c=relaxed/simple;
+	bh=HpZaOXLO3Z1G7wqrD9cPqVgbJ/VRy8RAVL3gxBCibuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XcacQaiVH/XcFHHixuAJYVan+mxPWwk61F7o2ReY0SyeY0yeda9QyobUBhINf0J8Dca1yjrXH0y5dyEbmBaNvijs5xTu6UB5H4lxNmFSqFPOm22UWokFlpq5wJn9S0WuSyTNB8/hwuHJY9XQjlhYQdcUXeyuHnFB+N4Bv4euIoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaRSPMYz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2812C4CED6;
+	Mon, 24 Feb 2025 17:31:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740418310;
+	bh=HpZaOXLO3Z1G7wqrD9cPqVgbJ/VRy8RAVL3gxBCibuI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oaRSPMYzGbq5Juqoadk/HwTdWlvLalUon0UeIcI0+C7wnoducvGg5zrN7FobbDVyW
+	 c8Mg5TUEZj2lBxg+KJqdy1C0CwQff38pfmNTN/9QbCUTGtQjM8Kubpob1GObB1EvA+
+	 4HXoVj/i9p5squ5JDXlbbquPR0rN6GkxPiwExW985Sw1w7YvmvW7GgMNC68Ff3cNdt
+	 dv3n6hi2FEbegCFcwUwYoodZX6daaBYEl3seUTHBafIYjwzNrr4F8nAwsQGUHoBhQf
+	 w+wFoVyXWT+wtd+AmgBbbx861kocawPVTYBbAmr+2pIalJ3wIRgtbDmMHMFALbLoR1
+	 TfHHfu9uPHgJA==
+Date: Mon, 24 Feb 2025 07:31:49 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+Cc: rust-for-linux@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Wedson Almeida Filho <walmeida@microsoft.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Konstantin Andrikopoulos <kernel@mandragore.io>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Roland Xu <mu001999@outlook.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: workqueue: define built-in bh queues
+Message-ID: <Z7ytBYLKNabbm1m4@slm.duckdns.org>
+References: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, Feb 24, 2025 at 09:23:23AM -0500, Hamza Mahfooz wrote:
+> Provide safe getters to the system bh work queues. They will be used
+> to reimplement the Hyper-V VMBus in rust.
+> 
+> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
 
-Enable the CONFIG_RZG3S_THERMAL flag for the RZ/G3S SoC.
+Ah, you already sent v2.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+  Acked-by: Tejun Heo <tj@kernel.org>
 
-Changes in v2:
-- collected tags
+Again, let me know how you want route it.
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index a1cc3814b09b..c3336b1342c5 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -714,6 +714,7 @@ CONFIG_ROCKCHIP_THERMAL=m
- CONFIG_RCAR_THERMAL=y
- CONFIG_RCAR_GEN3_THERMAL=y
- CONFIG_RZG2L_THERMAL=y
-+CONFIG_RZG3S_THERMAL=m
- CONFIG_ARMADA_THERMAL=y
- CONFIG_MTK_THERMAL=m
- CONFIG_MTK_LVTS_THERMAL=m
 -- 
-2.43.0
-
+tejun
 
