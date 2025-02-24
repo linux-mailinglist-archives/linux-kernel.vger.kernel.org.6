@@ -1,213 +1,183 @@
-Return-Path: <linux-kernel+bounces-529168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DD4A4209B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:29:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AE63A420A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:32:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E9DE1708EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93262189C208
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6583823CEF8;
-	Mon, 24 Feb 2025 13:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CDF1B041E;
+	Mon, 24 Feb 2025 13:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kPTf+Bza"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkB1Ovxu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE26A1B041E;
-	Mon, 24 Feb 2025 13:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403713; cv=fail; b=Od9VtzL+yqMnSOFMBbnGYzub82KOMUFTzS5HLXAQkYgKpgq9BVOPF/XxF5cl3bIEr87e+6YPTz9dX9vmMTTD7LtnrmqGwdL3+gp/a1X4RUf0A01d0V5hHUTNevyErOMoi1s3hl8XcOcsf2bhJuSf05zgIVGPvRcDA8P0OrduOTs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403713; c=relaxed/simple;
-	bh=H2k9111kKJ8r4u28JyRRlxhUdQOpQjVOZCG5IobUEFc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=s/i+4UjjOq/G+DZkJU1ogCjwsDORmpJFJnQkrMKmTLL+JfYEpNVlBy0qubvJVwAk1XrO8nHTAPPAu0XMdn1b42PnGZkgFNL/iSSp4kE5LvrMPnqqIkkeEzlLahEwrfR7JwTpizjfxVvUOeEFY6iPhcJgImjCCmpNnYN1yImvEZE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kPTf+Bza; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740403712; x=1771939712;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=H2k9111kKJ8r4u28JyRRlxhUdQOpQjVOZCG5IobUEFc=;
-  b=kPTf+BzaWiIhCyyKOW333zjtEWWco3x+yZboc8gIq9qID8X6sRi/8GZZ
-   V3htk+cpZdmmdc9SHZ3Oq4YoXlMm5pKV11PChGG0hLntNa/65H/xKgcyC
-   XHaZtPtAhjEgf0bmSB/GFlaWCOfKVMj4v1y/OjzUcl7DXQRkHf720dKDd
-   N28vhUyv9BTsXpkGqQGb8ZJCVjIqa42nIRF0dX0esv7NKTwUgHRNzXzci
-   nhcBqH5uW89SiwPTvdF6nqao8J1ucYu5wm0KXI5w75At49u5CWMzoeVHs
-   n8bkkKTku8cJ/584FJM+ftgbsaNxqsnDIr0djW+bfTYuR7JWIWF6Xfxej
-   Q==;
-X-CSE-ConnectionGUID: p8BwranwSd+PB/XzOPWoQw==
-X-CSE-MsgGUID: 2c6ZQDtTQ8ezgQ2xYL6Uqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="45064872"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="45064872"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:28:31 -0800
-X-CSE-ConnectionGUID: vr2dzZ7XTdicvqTe5QdPJw==
-X-CSE-MsgGUID: UOOGk3nqTO+cVwTQYwhp7g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="121154361"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 05:28:31 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 24 Feb 2025 05:28:30 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 24 Feb 2025 05:28:30 -0800
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 24 Feb 2025 05:28:29 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nsO4VWgY+vix8Ktqpd44o2U8COL0J0hjgp3m+tCFK3zrB6B/bYZjSvXFkhoQmgVshofZG4oDQXzdictFH/RK5uWaAY+GUAG/aKvsWS2wi3fFT+u+S8IUOdIJ7VN32oYDJTKZdTVxjeqOYfLjj8SDiNmJWwxJIETsK6reHMj1xvutspSzxF5XTc3EiX/G9LXX4vVE2/VVNe5m5c/YbOn/bvDN8iF0W4v9svv/GkPR74Om9Q7N8zNlpJtIg5NxFoxDJbgAG8Tek5ujp7nnzZEKdqI6b3FzjstoTXBpeFwBVCAnHTZUr4Oa7vqZglSrCU/HhVTUq9yj5tdizJs3DWZ7qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=117/949cz7D67LBlu3aHDDjxJEtsmFgGsp61Lh8eYgg=;
- b=iqSHvXxl/mjXBqD777gHiXLWqjKxcW8OL9wRaHpMYnY61+RjLrU+M3dqFew3qQO5Y5214y0picQ11n/Yy3ecXcfL2/B6SxksXb+/Nyj4UVoXy2/n9/n8M5kPliQOyfKmdCsnpttOOgH/EdwfKS3SwwrED4KaDGOfyqIi6Nh1Owoa1nbgxMSERt7IG3HEUx7mVv2aW+SlUSWnwZVdWWWKkK122LXK35vH7BNGV7iPGfc6mmLjHASaafFDqMGN7dWVX0QfJRc/r+GQkp96T6gyuNH4TRqhxK/yIXG6n2iFivpRahOCRTPHJz2ETalAZD/W4DLCm6lkQwKP8d9up6EYIQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by CH3PR11MB7321.namprd11.prod.outlook.com (2603:10b6:610:150::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.19; Mon, 24 Feb
- 2025 13:28:23 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%4]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 13:28:23 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "Luck, Tony" <tony.luck@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"Smita.KoralahalliChannabasappa@amd.com"
-	<Smita.KoralahalliChannabasappa@amd.com>
-Subject: RE: [PATCH v2 07/16] x86/mce: Define BSP-only init
-Thread-Topic: [PATCH v2 07/16] x86/mce: Define BSP-only init
-Thread-Index: AQHbfjlT9nBBe5Yi8UGLWXfjZPPcjrNMZ98AgAJptYCAAJ+JsIAA2/cAgAY1FTA=
-Date: Mon, 24 Feb 2025 13:28:23 +0000
-Message-ID: <CY8PR11MB71342BEF686D52AA3ED52B0789C02@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20250213-wip-mca-updates-v2-0-3636547fe05f@amd.com>
- <20250213-wip-mca-updates-v2-7-3636547fe05f@amd.com>
- <CY8PR11MB71348FE4A5684E941992B5CA89FA2@CY8PR11MB7134.namprd11.prod.outlook.com>
- <20250219155745.GB337534@yaz-khff2.amd.com>
- <CY8PR11MB7134DA72B48006B403A6516D89C42@CY8PR11MB7134.namprd11.prod.outlook.com>
- <20250220143602.GB589698@yaz-khff2.amd.com>
-In-Reply-To: <20250220143602.GB589698@yaz-khff2.amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|CH3PR11MB7321:EE_
-x-ms-office365-filtering-correlation-id: b2b9fee0-5f1b-478f-90cf-08dd54d71ce7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?lHrVR7ysX3pkqycutQV/yq88klLB3uaF4/drDlfeLxNvFB5NJsxqCLqZ7UCl?=
- =?us-ascii?Q?OJMcTAWmAGV+Q5vHlaoMJeT1WSRdyYvmbi+Zpv2v1r+HIrDOOV+2xU4coAZ6?=
- =?us-ascii?Q?yZmys7RNwY2iqbmQxT/zqFEXgNm6hgc059NY+wavuCYcCUlC/ElQDfgWInHy?=
- =?us-ascii?Q?g2qnQKUDmXQIvIpWtcXFMKdK+FGWTVM1QuY2a785qKQm3RewvfOhfYx4Ff7t?=
- =?us-ascii?Q?W69emMLHu6KDeG8kqHSopONzVxq072Yd91I5dkWwqve72fCL2l0Ej62Lx02H?=
- =?us-ascii?Q?wzexa4euaRDSy1S6mOiw2lpYjqMldwaNGhb1BO97Lo7pB2J2c7mildm8MkaR?=
- =?us-ascii?Q?kkhrEuzYKkyQDrOfHA3fmR4MGcH82EiZ/F9h1EWdzihpCIIDLlgeuHVQ2NYG?=
- =?us-ascii?Q?Jn1hghV6Q7fFYkmmpbO/ajGuErbbaBYyA9K+DMnCU0DI3vEVLbHV50Lr/Kys?=
- =?us-ascii?Q?XCT08TFp3j5YWxaC5D/6ppdHHv8Jyn1IyZLnbQF7R/hlYJak2v/n2Xb5WuUO?=
- =?us-ascii?Q?10sBY/UmSbCxeZf9fgi6ytHhovoG9XE/seNJU3/PkX3/vbO6NK7leTf35gTk?=
- =?us-ascii?Q?U8vkC1q7wPS1QJiMeY+T8hyHLPYquA35dTO1vOG9m7N+67U8pUk3RnfG4ewh?=
- =?us-ascii?Q?cJC9d6C3USzlM7A0pEThu06ISXNAS89vZtzhe3Umv6pRbHwspRw/zduVHwPD?=
- =?us-ascii?Q?aOrhzeA9FyCpRbbFUtCKKrZKOW3cM+KQouxr1k0pP//dMVSiX3D+GvQemLDc?=
- =?us-ascii?Q?oxc/51Hc6LL6GWCgTKyfB/fTzbdUxvYk4hANugR4F87uRC5HWjG7tUC47e+N?=
- =?us-ascii?Q?LsyMuoOUcbv5uLUwRCJzWsahlhAoUEEcsdi5vjsV4UUB8/UptdAEDHSITIC8?=
- =?us-ascii?Q?0X7fgEbFCbIaMv6brHSAKV/rRnRUjfykOdTosnGsO05RkVtHDiQA5NnT5Npy?=
- =?us-ascii?Q?gj9L/x5pBkP203M63XTyo13vrvKGoEp2V9iHPJO/fpawue7FftFtmAilwGB0?=
- =?us-ascii?Q?oPVlbTbji+QP3Kw3IrsuhbI4ZULDxut5H0QreuZiZ9ZF3V4GvzOqn7bEPXDN?=
- =?us-ascii?Q?bhGccogiF7Vobc3hUDXUflmoShko6r+jaFkdeJ8EHkOWHXAMgXbnh/9nHX5g?=
- =?us-ascii?Q?eIdf3osaaew7kKDNEmGv5zQz7/pzxT5yMBMDnpZN/ukGZ+hCD66MYfzWaToI?=
- =?us-ascii?Q?uV1noLbp6wuVta6gJ2MQpVSjBpiBNRtA6EhVSoT63Bte5TkSwzf/VGf1OTBU?=
- =?us-ascii?Q?ePSG29PUbOfc/CF27pogRiRyo9v65PA1VX2qgx2792QxED0aSqcQvmu2UktL?=
- =?us-ascii?Q?yiBmnFH+2DCwlrM33CrL3mgfRphur0pmSvXV6Ae2FK99FQL5kNXjBcRN++t9?=
- =?us-ascii?Q?VgaCZ7slparZPuFCaMEKofoe2witW1nBTzYhR01dc7A6BZLlmEd2RDZuDYJ9?=
- =?us-ascii?Q?XPpXRTcdDrQJ1SZ7DsEf1I0jiHUsgTY7?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cqm6Emq7nKwUlPUPkYwZ0OsUrHkqq7btzT9uaINaJ8ePJCtrq7JTsw2Tv96f?=
- =?us-ascii?Q?8N7RFCGZAe5LeIp4kzD++dexn/OZkEm4dTNbo4hpqKim45cMQrH2HVBNtVTb?=
- =?us-ascii?Q?BGcCE+6PKMDObpRYeTF7DHgEyVEUdw99yYuc05RPlMnN1y+/nQWb5+wIUfi2?=
- =?us-ascii?Q?mXnQ5PZzgL3NCoxSVKUEZX5HejaW12ZP2kNydWlCHa54yJL4ne49U0gWQ121?=
- =?us-ascii?Q?zQ7GSj9lePengXAAMZjLKnLUTuciBBRFHSVYelBfN2d93xAarIQDHjuD4eZs?=
- =?us-ascii?Q?X5VN8VzByw4soDhEwLWk7Pd9TH1c/WwR5Qv0GTWrAtYVmCq/VzoiPapGtU9C?=
- =?us-ascii?Q?EuzAn0z6lOWJBsJOwQJUFmgtiuZmzxFlJCxW59/XH+IGnTD5zS4moUX+nvcr?=
- =?us-ascii?Q?Yt7cI7qd/DwMQQPzVglZNCYpUylRT1+RCUsRgZpYMwIupxzvm3ALbV6xfYAL?=
- =?us-ascii?Q?+hQC7uX64+7Ml8PSaa9gltRK7iLHqTydfjDKgQs5YWFLJZR/K9Av0aEUVzQ8?=
- =?us-ascii?Q?kvuKZiJI+9h6GPcq1n9aUksYFP2gbS0Wcn7kwP7Wq6BRdUW2BSg7WJg/BWU3?=
- =?us-ascii?Q?B00DVhZYtv23SZ1EH96m4MGgCPk5BgYNuaavUWBqmVWcWyhBYTEwlGA90Nt9?=
- =?us-ascii?Q?fVAJW9aZ+0/gVW5SZrzWnF8mD1YmaJKZRWmuexsgjoPeNttyfkFWUYHtZZi7?=
- =?us-ascii?Q?bU4/rB2Eyan2ZvQHSswN9h0NoYc4fM7Q7nF1E8cbZ7zvMX1M//1lw2E+/Uxt?=
- =?us-ascii?Q?orvqHZjOnu6mRvqLzK73m2ObpV1uuqsEWHwdjGnvvEyIwXyKK9MWuvdAtvhL?=
- =?us-ascii?Q?E0ptHeZQcqs5pwUgI9Jlaygae3THWNHgEUd9YyukQS2ye+D7FqB8DiSd7Fgj?=
- =?us-ascii?Q?NwgIn2IZZnz8dmc9jM8IOqqxVQCuVFY8kquTAQGVuox+xiaYMmZY4gbIZHc3?=
- =?us-ascii?Q?ok9keHw61v67AQprKZtbU/EO5epxVKbBJBawTj8wDAalbzyh8fub/z8FCIf9?=
- =?us-ascii?Q?9agvgEL6Bd2ZsxNid6JhD55QBAeWfbWQ3rEaPTujNd7TSZ1okHdwhdQCDZ2i?=
- =?us-ascii?Q?cdnu8R3fEYLJuvBboGTdiUK8BpGLJVXAdUqunoaNNHWrBoPynNdGbf45VGFA?=
- =?us-ascii?Q?ex9ogKIx1yO/RCGFaSJdx4CkoBUiN5dO97T+Bl/8aLcXq96LI3sR1Aox6cVx?=
- =?us-ascii?Q?KlexmzkVTq3L43Ie1fNvasq2AyrEWeaRW3TrU8syCyaFUf7iUJAcufWiPxI4?=
- =?us-ascii?Q?HQZYtne+aRnMi3BRhJscMsUFvNUgirDzO6v9dV0EGc4kX2smlK5cxHc9Npsy?=
- =?us-ascii?Q?sffqrQYjjW/0LzCUrKPcOP5d3X9E/aVQ6fKLNJhGqfA3wgkKkmZJLofb/4In?=
- =?us-ascii?Q?NTRqaz8h8dMt4yin0/QQw7hD0Vk32/vs0MRrovz4qIzx206vWy5QZqTr/Jdy?=
- =?us-ascii?Q?HcNNTVOZ2kJg+fil85nu8Uk9mrhmNd73QfbNAP9iWGancgi+O9RMPa7Hri0j?=
- =?us-ascii?Q?BoHBqi3JwzYuH0V+ivVnZwtjFnIFaX2/9F74OghoLME+ZYYnaNdxkm/V4ARc?=
- =?us-ascii?Q?ZvOxWWsg6sEimkjLfrN7DVxZmMJFw/1Zb3H4FMf1?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB242192EB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740403822; cv=none; b=aO3FHQHNQZ8HsMG3twTTFjq9YXgY8UsxAn3pUe3kXH8mpxZHvts9sayOmV1EfvLBynJG06CIqVUqOHSHW93r7xYYdVUqYfyWPy6F6s/unIQ2Gof15KDVCpKqDBuAH6nWM/b1BxrSq+ddOAXgAIvYJ37/jXAZQI5Xu5PPeE0aP6M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740403822; c=relaxed/simple;
+	bh=s6SXgk6edeyiXy+VdJO48htCnjk1RNWyS5jovcOTAGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S4dZOEAmIA75HPwZNTnVbvkrXyu3JQlDIZ1p1MdSI9Kwei8cAksfPWXAgFFXS9nDqYtgOZOG5xRXeQ+LSLcmIj3xBVG2O+JArHmn1Ua24apKC0IaVxvEwa0MIJ4BxOW4wYtbY3ZtNiul7CPi7fD5fcPFk7h6clWG6tgHwfQgsLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkB1Ovxu; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740403819;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kF0mtbZi5PCeZW3q0E/GxxqP9VBPDymI5zE24QYiKus=;
+	b=bkB1OvxuTbaAfy//BmrxeQ9QBVGH8eRHAsTTqqmByBMvkXBwQUX6Aod3mvCeqA18FCIYvG
+	8qy/onDrxLRph/H98HmqPJh9gAdvBNrB0peU7JKT3hTt3EVc5ucTiorcpmvHGvgmguJCV8
+	UTvsCBp6yoJ6hREXjtVluGneKXS+u5E=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-475-NLdBPH9LOtSJKEwJivjAjg-1; Mon,
+ 24 Feb 2025 08:30:15 -0500
+X-MC-Unique: NLdBPH9LOtSJKEwJivjAjg-1
+X-Mimecast-MFC-AGG-ID: NLdBPH9LOtSJKEwJivjAjg_1740403814
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B2491903085;
+	Mon, 24 Feb 2025 13:30:14 +0000 (UTC)
+Received: from gmonaco-thinkpadt14gen3.rmtit.com (unknown [10.45.226.36])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7A9871956094;
+	Mon, 24 Feb 2025 13:30:09 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Shuah Khan <shuah@kernel.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Subject: [PATCH v9 0/3] sched: Restructure task_mm_cid_work for predictability
+Date: Mon, 24 Feb 2025 14:28:32 +0100
+Message-ID: <20250224132836.383041-1-gmonaco@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b2b9fee0-5f1b-478f-90cf-08dd54d71ce7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 13:28:23.5976
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fltnIvIGl+iR3+xIVNYwpVzozjBFUFFNn9bHnl008yXiVaYxZ2FUgWnNuw+HpVMqPm8gw+3Tyw1OstYd5Xfr0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7321
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> [...]=20
-> It's okay if Intel CPUs run this code, because they don't support these
-> features. The feature flags are generally derived from CPUID bits, and
-> x86 vendors do try to make sure they are unique and not
-> overloaded/redefined between vendors.
->
-> The same is true in reverse. It's okay if AMD CPUs run code to check for =
-Intel-
-> specific features. The feature checks will be false, and feature-specific=
- code
-> will not be used.
+This patchset moves the task_mm_cid_work to a preemptible and migratable
+context. This reduces the impact of this work to the scheduling latency
+of real time tasks.
+The change makes the recurrence of the task a bit more predictable.
 
-Thanks for addressing my concerns.=20
-This patch looks good to me.
+The behaviour causing latency was introduced in commit 223baf9d17f2
+("sched: Fix performance regression introduced by mm_cid") which
+introduced a task work tied to the scheduler tick.
+That approach presents two possible issues:
+* the task work runs before returning to user and causes, in fact, a
+  scheduling latency (with order of magnitude significant in PREEMPT_RT)
+* periodic tasks with short runtime are less likely to run during the
+  tick, hence they might not run the task work at all
 
-    Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Patch 1 add support for prev_sum_exec_runtime to the RT, deadline and
+sched_ext classes as it is supported by fair, this is required to avoid
+calling rseq_preempt on tick if the runtime is below a threshold.
+
+Patch 2 contains the main changes, removing the task_work on the
+scheduler tick and using a work_struct scheduled more reliably during
+__rseq_handle_notify_resume.
+
+Patch 3 adds a selftest to validate the functionality of the
+task_mm_cid_work (i.e. to compact the mm_cids).
+
+Changes since V8 [1]:
+* Add support for prev_sum_exec_runtime to RT, deadline and sched_ext
+* Avoid rseq_preempt on ticks unless executing for more than 100ms
+* Queue the work on the unbound workqueue
+
+Changes since V7:
+* Schedule mm_cid compaction and update at every tick too
+* mmgrab before scheduling the work
+
+Changes since V6 [2]:
+* Switch to a simple work_struct instead of a delayed work
+* Schedule the work_struct in __rseq_handle_notify_resume
+* Asynchronously disable the work but make sure mm is there while we run
+* Remove first patch as merged independently
+* Fix commit tag for test
+
+Changes since V5:
+* Punctuation
+
+Changes since V4 [3]:
+* Fixes on the selftest
+    * Polished memory allocation and cleanup
+    * Handle the test failure in main
+
+Changes since V3 [4]:
+* Fixes on the selftest
+    * Minor style issues in comments and indentation
+    * Use of perror where possible
+    * Add a barrier to align threads execution
+    * Improve test failure and error handling
+
+Changes since V2 [5]:
+* Change the order of the patches
+* Merge patches changing the main delayed_work logic
+* Improved self-test to spawn 1 less thread and use the main one instead
+
+Changes since V1 [6]:
+* Re-arm the delayed_work at each invocation
+* Cancel the work synchronously at mmdrop
+* Remove next scan fields and completely rely on the delayed_work
+* Shrink mm_cid allocation with nr thread/affinity (Mathieu Desnoyers)
+* Add self test
+
+[1] - https://lore.kernel.org/lkml/20250220102639.141314-1-gmonaco@redhat.com
+[2] - https://lore.kernel.org/lkml/20250210153253.460471-1-gmonaco@redhat.com
+[3] - https://lore.kernel.org/lkml/20250113074231.61638-4-gmonaco@redhat.com
+[4] - https://lore.kernel.org/lkml/20241216130909.240042-1-gmonaco@redhat.com
+[5] - https://lore.kernel.org/lkml/20241213095407.271357-1-gmonaco@redhat.com
+[6] - https://lore.kernel.org/lkml/20241205083110.180134-2-gmonaco@redhat.com
+
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Peter Zijlstra <peterz@infradead.org>
+To: Ingo Molnar <mingo@redhat.org>
+To: Paul E. McKenney <paulmck@kernel.org>
+To: Shuah Khan <shuah@kernel.org>
+
+Gabriele Monaco (3):
+  sched: Add prev_sum_exec_runtime support for RT, DL and SCX classes
+  sched: Move task_mm_cid_work to mm work_struct
+  selftests/rseq: Add test for mm_cid compaction
+
+ include/linux/mm_types.h                      |   8 +
+ include/linux/rseq.h                          |   2 +
+ include/linux/sched.h                         |   7 +-
+ kernel/rseq.c                                 |   1 +
+ kernel/sched/core.c                           |  42 ++--
+ kernel/sched/deadline.c                       |   1 +
+ kernel/sched/ext.c                            |   1 +
+ kernel/sched/rt.c                             |   1 +
+ kernel/sched/sched.h                          |   2 -
+ tools/testing/selftests/rseq/.gitignore       |   1 +
+ tools/testing/selftests/rseq/Makefile         |   2 +-
+ .../selftests/rseq/mm_cid_compaction_test.c   | 200 ++++++++++++++++++
+ 12 files changed, 241 insertions(+), 27 deletions(-)
+ create mode 100644 tools/testing/selftests/rseq/mm_cid_compaction_test.c
+
+
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+-- 
+2.48.1
+
 
