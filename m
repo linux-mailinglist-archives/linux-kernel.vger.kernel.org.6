@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-528166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89820A41471
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:15:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC3CA4146D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 05:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7152A18958A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14748188FAE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26AD01AAA1D;
-	Mon, 24 Feb 2025 04:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD331AAA1A;
+	Mon, 24 Feb 2025 04:14:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="c8kZ0Ibr"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pVRthAn+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423621EB3E;
-	Mon, 24 Feb 2025 04:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0861EB3E;
+	Mon, 24 Feb 2025 04:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740370478; cv=none; b=PwCG4t1JT6yQxqjZ5KaZAg65l6rGPq96PQlPmlGk3YGwRNIDd7rBTZCUHcD5F4VVGYrxG2YT7UTuvTN99Ii5Mle6SbHEKlGP1fVZ8FdS/PUI4jggiTJ5HSCF4AzsTyF4xdL7HvHIkEmy+J6awpCXrU1/AJSeUFLhrTU44UBvqGo=
+	t=1740370455; cv=none; b=DAScDczAf6spQp4UrX7sl7XFV8rVb+6pkqP6Xsd5OsToCRmrBHtPlyOV+qNda9MIFE4HTMi0B6o2ShqCikNWxFpPvaD1bX4HE6/FvBsVgE2PbZ6YoyPZO6FKY+c1PS6dJDrF7feAPPwQ3Gr9Rv6aTuCd7ExENawIe+YxknSHXNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740370478; c=relaxed/simple;
-	bh=Q32jPkfBVfYf3TEwyBJF066Q+2lZ165Aft6mCGepb18=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2QOyNyZvbvPWFTxdrnxnFra7OhZNAcNNGxt0fRZD10vlCSwruNkpSwWw06w5N/vBFYKD0pP/KkNVPBSotlt+DRWNyz6FitzVdalKD7L78jvYsXYTGhsFTT4F0k16RwU1pGrrmRu3zWj8M4G58gJja0yUryLn5oPOCSmevkiUvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=c8kZ0Ibr; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740370417;
-	bh=QUnxINV4h0+72Ou0M9jqMPGNZyrytkwHTR/8PMwxqYM=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=c8kZ0IbrnJln1gGF2ss+9B9o962Jy1/Fts1QmfBmJvqOc52a5LmNXVK5NcvFreDO9
-	 1Vsf5Ivqc6Paj2fo86XtC6HEDKyySPgHCI60lLKoaxiJ+eKHZVUV89s8/9733RXC0Z
-	 Wqt4/eNAhX1QezmoGXIGrj6KXm+o1PT7SJxg5+Vs=
-X-QQ-mid: bizesmtpip4t1740370367th0m8ul
-X-QQ-Originating-IP: YACropfZKbFnsY+WYSwIdCcFXQBCfwM3OPJ2699B36A=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 24 Feb 2025 12:12:45 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 210867971091029739
-From: WangYuli <wangyuli@uniontech.com>
-To: Jason@zx2c4.com,
-	shuah@kernel.org
-Cc: wangyuli@uniontech.com,
-	horms@kernel.org,
-	tglx@linutronix.de,
-	jstultz@google.com,
-	wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	chenlinxuan@uniontech.com
-Subject: [RESEND PATCH v2] wireguard: selftests: Cleanup CONFIG_UBSAN_SANITIZE_ALL
-Date: Mon, 24 Feb 2025 12:12:38 +0800
-Message-ID: <6945896DD80A71BD+20250224041238.45039-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1740370455; c=relaxed/simple;
+	bh=v4fYCedTc0qTMnm4Gc512gs9yjcyXyOH3zKeTar6uQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdahPK0f3ZWqbPdKlIh+4tEpG1uQmcTFBHbVLQFeQsTy7IZ6z5TVRUqhANnaBNSg6FYgU0qQeqF99OJ2nRjb5Dwuh0aU6YhsBvTlDNwBi/1OuDXgnH2RTBKgZftth8h9tE6vSURn9PlAipOv6WR8FzyVGoRznQ1rYVC1JmhJXaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pVRthAn+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JoCq6Jz0t//yAHagLSB8UGfdvTzUw8oFXQk1EBIFNr4=; b=pVRthAn+XtisXAj11CGbPJxxZZ
+	DN0KL99xN6g/0s+OJJ70cuDGYu8lzWYZ2On/bWtXlRJQBQEajWRh994WtYsGVUXbne6hWZDaqy3oW
+	JJKVqPskYuBZ+QvxwvhnC0Ok9EBsZt8DM3ECakjlc35qB8gIZcxaVY7KriVEKraU2V12TAyItoX3V
+	9eiS+YicI+T9uLmiF5rv4qOE3LUfC8bvQiF0b2WM3KprjaSufIPE/n2u4M2WvIXWbK9JMjqlFfKIk
+	uwYpeRS/cLfg7nEIdUggwWutRtySsC4eWYU/BPvfsNDou043NwBVipPXUxhX4Turo6lqZfY21qlHr
+	Z6gLMiMQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tmPr8-00000005mAP-0DQO;
+	Mon, 24 Feb 2025 04:14:10 +0000
+Date: Mon, 24 Feb 2025 04:14:09 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
+Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	djwong@kernel.org, Dave Chinner <david@fromorbit.com>, hch@lst.de
+Subject: Re: [PATCH] mm: Fix error handling in __filemap_get_folio() with
+ FGP_NOWAIT
+Message-ID: <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
+References: <20250223235719.66576-1-raphaelsc@scylladb.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MPAlP4yRn0xgUjN0gIBL01n/MBhEZCsEcAKtVOEh6kVYgpA/OKfZoppR
-	Gy6EExKtL9VBD3aHP+/Q82Y9EGvQGXbmdW9Dr5czGaJ9imlQUVxv4dKorSyUO2inX3k2Mfl
-	fFnOhKhkLoPx+oP/McSyZ+l3VGyZKW1xPzZRxzQSlgA+kJOQ97bRtTfdJjWwKlL0JXNIHIX
-	lJuCO/KDy2DDseG20VpucLPWAxrA+0RlGZNa7i0xVJdNx/oTKC0bCxna4bY4wx6sjpG+g1v
-	UdmOZJOD4aU4rNteih3M1YsLbdO+BTHId2NDmotndPq0ycWZHyqYLFUfevkkmaRMfY4ABZ1
-	1shpjAvb/otOTk3+WRxGeZPSNWm5O+9g2NvAiu7YednSYioZV+7tBLkxbc2ClJ2+3oSsyBg
-	WM9hCFuo9wgrHFx18fP6L6U3qIjOTZlXO4bhFqJX4vSLIDeVMGLXxOKVbM9JpLjEtp89sP+
-	ISNQU29BpvyLC55XzFeBcWtlzZ6VC0hwhrOw8RV7GOiY5yWo79kcpYGtQPXbE9cOddyaiLf
-	L1gXJf4eo1WsCynmtGsdvz8pzxaPcw5kXjJmd9VkS6ndRDD2WjpQpluOvJFxWdaWw55r9aT
-	Zk04ixLKjQC0JdM7q/a/OAGsaTWwcYMxy3jVdWCXb1iADItmua6w0ZxRis0OC1IYsIoBnOU
-	PLdn8fqOMde0XYJtnI/dpztOfBPH7v8FRGiuH7m3bcgQYmjjhXLOXYLyGkNG3eBfiyXH9vG
-	6pETQth2Blt0TqE85r12KEatLXQ+bzsNUAUCGY+3nVArClmJTsIuFba8UuakeYqnLr2x20y
-	310j6D1CE1saKKrSccQ1+xlTJ3pkRbBPROOM1SioXYH3pR3m2Bfz7zZm647YK+3crx4XEGx
-	d+s7riJflmY3lUteAhitHc0suL1r7yRx8P6iWLClOJaKMN1FR/BgOfXXoPBEUGPXHRPJ+TV
-	nJBqRcER7zOpLkDzQ3u8JxgrJlwWOami8Y9JsAquIrW8b02uNToVFxC5advjrl6jVBjUVp1
-	PoWxtjAtwjvg3wNEVIClI/Lq1376VgH/wl7e7XXPrlclnjj/SKDJErt/5Iof7uUEqTptrTf
-	w==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250223235719.66576-1-raphaelsc@scylladb.com>
 
-Commit 918327e9b7ff ("ubsan: Remove CONFIG_UBSAN_SANITIZE_ALL")
-removed the CONFIG_UBSAN_SANITIZE_ALL configuration option.
-Eliminate invalid configurations to improve code readability.
+On Sun, Feb 23, 2025 at 08:57:19PM -0300, Raphael S. Carvalho wrote:
+> This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_PTR
+> from __filemap_get_folio"), which performed the following changes:
+>     --- a/fs/iomap/buffered-io.c
+>     +++ b/fs/iomap/buffered-io.c
+>     @@ -468,19 +468,12 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate);
+>     struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
+>     {
+>             unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
+>     -       struct folio *folio;
+> 
+>             if (iter->flags & IOMAP_NOWAIT)
+>                     fgp |= FGP_NOWAIT;
+> 
+>     -       folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+>     +       return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+>                             fgp, mapping_gfp_mask(iter->inode->i_mapping));
+>     -       if (folio)
+>     -               return folio;
+>     -
+>     -       if (iter->flags & IOMAP_NOWAIT)
+>     -               return ERR_PTR(-EAGAIN);
+>     -       return ERR_PTR(-ENOMEM);
+>     }
 
-Link: https://lore.kernel.org/all/20250123105743.GO395043@kernel.org/
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
-Changelog:
- *v1->v2: Add Simon Horman's "Reviewed-by" tag.
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- tools/testing/selftests/wireguard/qemu/debug.config | 1 -
- 1 file changed, 1 deletion(-)
+We don't usually put this in the changelog ...
 
-diff --git a/tools/testing/selftests/wireguard/qemu/debug.config b/tools/testing/selftests/wireguard/qemu/debug.config
-index 139fd9aa8b12..828f14300d0a 100644
---- a/tools/testing/selftests/wireguard/qemu/debug.config
-+++ b/tools/testing/selftests/wireguard/qemu/debug.config
-@@ -22,7 +22,6 @@ CONFIG_HAVE_ARCH_KASAN=y
- CONFIG_KASAN=y
- CONFIG_KASAN_INLINE=y
- CONFIG_UBSAN=y
--CONFIG_UBSAN_SANITIZE_ALL=y
- CONFIG_DEBUG_KMEMLEAK=y
- CONFIG_DEBUG_STACK_USAGE=y
- CONFIG_DEBUG_SHIRQ=y
--- 
-2.47.2
+> Essentially, that patch is moving error picking decision to
+> __filemap_get_folio, but it missed proper FGP_NOWAIT handling, so ENOMEM
+> is being escaped to user space. Had it correctly returned -EAGAIN with NOWAIT,
+> either io_uring or user space itself would be able to retry the request.
+> It's not enough to patch io_uring since the iomap interface is the one
+> responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must return
+> the proper error too.
+> 
+> The patch was tested with scylladb test suite (its original reproducer), and
+> the tests all pass now when memory is pressured.
+> 
+> Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
 
+Instead, we add:
+
+Fixes: 66dabbb65d67 (mm: return an ERR_PTR from __filemap_get_folio)
+
+> ---
+>  mm/filemap.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 804d7365680c..b06bd6eedaf7 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -1986,8 +1986,15 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  
+>  		if (err == -EEXIST)
+>  			goto repeat;
+> -		if (err)
+> +		if (err) {
+> +			/*
+> +			 * Presumably ENOMEM, either from when allocating or
+> +			 * adding folio (this one for xarray node)
+> +			 */
+
+I don't like the comment.  Better to do that in code:
+
+			if ((fgp_flags & FGP_NOWAIT) && (err == -ENOMEM))
+
+> +			if (fgp_flags & FGP_NOWAIT)
+> +				err = -EAGAIN;
+>  			return ERR_PTR(err);
+> +		}
+>  		/*
+>  		 * filemap_add_folio locks the page, and for mmap
+>  		 * we expect an unlocked page.
+> -- 
+> 2.48.1
+> 
 
