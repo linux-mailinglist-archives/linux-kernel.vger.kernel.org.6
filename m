@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-530103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FCEA42F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:25:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D76BA42F08
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2C33ABE84
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3D18188A3D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E51DC1A7;
-	Mon, 24 Feb 2025 21:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38331DC98B;
+	Mon, 24 Feb 2025 21:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRhu8Lee"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GV0bpMsq";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6KZfci/H";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eDL/v6Wx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="rRv9u7fE"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D2F1DC988;
-	Mon, 24 Feb 2025 21:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D15A71DC198
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:28:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740432335; cv=none; b=LSZtYjx9O9LLDyLArDxvsXeQ1yXO2TtFirALkS+MuKb2hPm6Ve+P1U0A54u0T2nHUYjjzO+2Yw9B7PT94puwc4/sttKJCd7TSbUk0quBEnmmzWEgrFuE3NQnInBMk/NdZfjQ4ZYkWNB/pC5FFsD1wfFJufRZ8OWq05W2I9UeKNY=
+	t=1740432502; cv=none; b=R9MxSHgTO1vgJyVOLp64Q+FilunYFECR8LiVzfjnCNAdL3IkNK6pqlTqsynm8m7IjQ1NyuZj4oaKN/AH3W3DG0kA/65prGJYy57iq18ExC4r7wKW2YgxShhO9pWV4u+FhNuQQuYLsMpRbz5xGCLRZ6w93pQBSNImyAkgP7Tid0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740432335; c=relaxed/simple;
-	bh=4f5dzSITboQRQ64Jn+vt+EFxbohswPMI1VV0DipjSPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m2c0pxJ7v1T+N68sPlh21GvHYJHhh6f2/vB9fSXLyrNxCkQAHtVNaoR4kbpjtQgoHz1ZdSKR5OkX5Ocsw5s30sHAMdgbkIXK2DPb7yI0YMA1oRxIAAUfYxE7kXOZ0BxpvoYYnCjm+Yhy2uGkdY4GKTMuLchATbVPlbBigehFT7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRhu8Lee; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0AC0C4AF0B;
-	Mon, 24 Feb 2025 21:25:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740432334;
-	bh=4f5dzSITboQRQ64Jn+vt+EFxbohswPMI1VV0DipjSPE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TRhu8LeeMugJHSEDHhYRjwJO/Ej8TLItzzB/rup7y/N4KC41lcCfnQj4A1ntrTjhs
-	 lNKqDGb+Z7m/RV5jEavJODwOLpE8UnmvxENeoj0sayxDJKH/rp7xEHm4m5vYkopOoZ
-	 YLi4OgEvKnprnunQA29sVX41nviiCf8gMy+Toop2OuJierHeo2s2a8OnBbCcQQH/mW
-	 KHIqw3LumDve3uqXfpbK1AZHLPWSs+pQMWCvle4jWCDXMzl/fnqTnOmfnSPZ/tg5Di
-	 5hAdVC2nOvvM32DXRCaup/JrfIq9FAmH/cVYgGWjgOxRxqCvc7leWmMNYhD1ER4T0l
-	 oVwQSsOUdPCDQ==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-548409cd2a8so3135853e87.3;
-        Mon, 24 Feb 2025 13:25:34 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWFpsmyfSIBVQ6GAxbdcEU0CW5OmDsLpxZ51H1FPnewxa6IXAXxTnMyH8W4kNrpB/eGJDTVpg4sAybrdEk=@vger.kernel.org, AJvYcCXiFpMXXYip2te4TB2NOEXIUUrhvIsK203MWz3vAfB0B+4rxYoRBZWgNXcmYiZTJguw/MkKnhtVqXd7uCLl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2OKHGhj7lnpGsF27wWPvGZlR4TsnwPtvypnbgWb+wrxV9tMNr
-	Y+PTHynGTe+dpL9geB15J5zQZPaRkP1eP42qt0Sy7PZRmzoj6hZlNJQcuvkxnscCd1afgqrYrO1
-	rtznhChqtGyM8wLGVBGYoEIy+h70=
-X-Google-Smtp-Source: AGHT+IFgjYIyT2TgCVvk7h65gsUY+76p68aSEzKrkfMwPy6B59/8CffeYxZQNMuWlfPP7Hr9EbXD+ghEDhK5h9H3Jd4=
-X-Received: by 2002:a05:6512:690:b0:545:6a2:e56 with SMTP id
- 2adb3069b0e04-548510ecf32mr205578e87.37.1740432333129; Mon, 24 Feb 2025
- 13:25:33 -0800 (PST)
+	s=arc-20240116; t=1740432502; c=relaxed/simple;
+	bh=GL21N69H/P/6mdUx2zjbZ2ak9oshViQynEjDaJrrehc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S2MiNPQJWWLLywFpwS1d1HqSLCPl/+KtJOzyOahl48nkJMCwM/jZ35Mbez0JrOpnNqFSrqLBlkvk0FfWWLPAFYu94r/9UYoUB676v/6BkzBeVdvQV7SoF6/qcI7lz2C9Q3W/opG3X782H+gqepL+VTXmBpKVffGTE/Y1NmjNQlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GV0bpMsq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6KZfci/H; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eDL/v6Wx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=rRv9u7fE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C92E21F44E;
+	Mon, 24 Feb 2025 21:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740432498; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qvgm+D28JDvejs53Z18fdULzcHEuXR6KF6+ladTokSM=;
+	b=GV0bpMsq5UQbZviMXq9ntFQ+U1cxHTSutltlQ+ufcM8iRz+33IGwOHXO0h8IZJEDtJKYyC
+	ceP1NQKsiWMyktJ1NPhtPBWrSAqtyCJlyevg6zQ2vdyF7WIIdQi/MZr0iqhztTKjVPUGv+
+	WcmD6dpRkOPS0CE5GS+gM1EQxFSUAFk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740432498;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qvgm+D28JDvejs53Z18fdULzcHEuXR6KF6+ladTokSM=;
+	b=6KZfci/Hi52jZd1i5JMzlEubUQzzNg/QE1zE6kvBvkUu+8JBPN43jH7/WGhFWL8tsSYY8G
+	NYdC6I2iKFomd9CA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740432497; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qvgm+D28JDvejs53Z18fdULzcHEuXR6KF6+ladTokSM=;
+	b=eDL/v6Wx+hy0B2WiyaN66MzTiRU0RC4aeVtES+O0PMrzRO2Eu6UcFf+U1STZGxmFCYZkjm
+	HjDgR+xZ1VAgix1LHTjXURDdjovyY0U6KxtcdezQMAGaIecnfO1pruZfgXpTXJ7sF/iOIa
+	Rw8yyeUVKaFUu1LoK/vyVCURcbMfDSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740432497;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Qvgm+D28JDvejs53Z18fdULzcHEuXR6KF6+ladTokSM=;
+	b=rRv9u7fEBGAkK0D81JkV2U5IBsqrmDp5Zbtb3+mwxC5jQov2DAstrgDmR7RGavmTEOglfI
+	HwIgqZvOHsxwYYBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B426013332;
+	Mon, 24 Feb 2025 21:28:16 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0uQmKXDkvGeoSQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Mon, 24 Feb 2025 21:28:16 +0000
+Message-ID: <7219082a-6a84-4681-ad9e-6f76aba08966@suse.de>
+Date: Mon, 24 Feb 2025 23:28:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <Z7y_i-ySL68BfkgQ@gmail.com>
- <CAHk-=wg0=Vh=9z_rUGSJn6p6xH8Z9Wkz0TLPenSt1m-1rHmJyA@mail.gmail.com>
-In-Reply-To: <CAHk-=wg0=Vh=9z_rUGSJn6p6xH8Z9Wkz0TLPenSt1m-1rHmJyA@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 24 Feb 2025 22:25:21 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXF0+-xWqZE4LRF51DSzcpz5MszX1R49mwfSGe8H9f7xxQ@mail.gmail.com>
-X-Gm-Features: AWEUYZmc3E3Ssh6J6zxtB1mmx-HIWZuLGFvYgMKSFbY1_oZd-9nC7gzyPD1wuLA
-Message-ID: <CAMj1kXF0+-xWqZE4LRF51DSzcpz5MszX1R49mwfSGe8H9f7xxQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, linux-kbuild@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] Add PCIe support for bcm2712
+To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rpi-kernel@lists.infradead.org,
+ linux-pci@vger.kernel.org,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Jim Quinlan <jim2101024@gmail.com>,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Andrea della Porta <andrea.porta@suse.com>,
+ Phil Elwell <phil@raspberrypi.com>, Jonathan Bell
+ <jonathan@raspberrypi.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>
+References: <20250224083559.47645-1-svarbanov@suse.de>
+ <20250224192215.GC2064156@rocinante>
+Content-Language: en-US
+From: Stanimir Varbanov <svarbanov@suse.de>
+In-Reply-To: <20250224192215.GC2064156@rocinante>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.992];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[dt];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,lists.infradead.org,broadcom.com,linutronix.de,kernel.org,gmail.com,google.com,pengutronix.de,suse.com,raspberrypi.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Mon, 24 Feb 2025 at 21:00, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Mon, 24 Feb 2025 at 10:51, Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> > But in terms of justification for upstreaming, the reduction in
-> > complexity alone makes it worth it IMO:
-> >
-> >   19 files changed, 52 insertions(+), 87 deletions(-)
->
-> Yeah, absolutely. Our fancy make build rules still have too many of
-> the phony forced targets, but this is a few less of them and makes the
-> build confirm (more) to the usual rules.
->
-> I do wonder if we could just get rid of that
-> CONFIG_ARCH_VMLINUX_NEEDS_RELOCS entirely and make it just be how all
-> architectures do it.
->
-> Yes, it was apparently "just" riscv/s390/x86/mips that did that
-> 'strip_relocs' hack, but at the same time that whole pass *feels*
-> entirely generic.
->
 
-TL;DR it is not
 
-It is only needed on architectures that use --emit-relocs in the first
-place, e.g., to construct bespoke KASLR tables. This is actually a
-somewhat dubious practice, because these are static relocations, i.e.,
-what the linker consumes as input, and they are emitted along with
-vmlinux as output. [*] This feature was (AFAIK) never really intended
-for constructing dynamic relocation tables as some architectures in
-Linux do.
+On 2/24/25 9:22 PM, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+>> Hello, v6 is re-based version of controller/brcmstb branch of pci tree.
+> 
+> Applied to controller/brcmstb, thank you!
 
-On those architectures, these static relocations need to be stripped
-again, to avoid bloating vmlinux with useless data.
+Thank you, Krzysztof!
 
-On architectures that rely on PIE linking (such as arm64), the linker
-will emit a dynamic relocation table that is more suitable for use at
-boot time, i.e., it only contains absolute relocations (as
-RIP-relative ones never require any fixing up at boot), and uses RELR
-format to pack them very densely, removing the need for our own
-special format.
+~Stan
 
-Architectures that do not implement KASLR in the first place have no
-need for these static relocations either.
-
-PIE linking is generally a better choice than relying on
---emit-relocs, but it is highly ISA dependent whether that requires a
-costlier kind of codegen. On arm64, we don't even bother generating
--fPIE code because ordinary code can be linked in PIE mode. OTOH, on
-x86, we'd need full 64-bit PIC/PIE codegen in order to link with PIE,
-whereas we currently rely on the 'kernel' code model to generate
-32-bit wide absolute symbol references that can only refer to the top
-2G of the 64-bit address space.
-
-[*] Using static relocations to describe a fully linked binary such as
-vmlinux is problematic because a) it covers all external symbol
-references, including relative ones that don't need fixing up, but
-more importantly, b) the linker may perform relaxations that result in
-the code going out of sync with the relocation that annotates it (this
-is not entirely avoidable if the relaxed version of the code cannot
-even be described by any relocation specified by the ELF psABI)
 
