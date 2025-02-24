@@ -1,51 +1,70 @@
-Return-Path: <linux-kernel+bounces-528337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A09C0A4167B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:44:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BC7A41682
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:48:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D7C3A55C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:43:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F1BD3ACE4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715391CEAB2;
-	Mon, 24 Feb 2025 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9611DF988;
+	Mon, 24 Feb 2025 07:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="McTsKz6d"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1633E1BC3C;
-	Mon, 24 Feb 2025 07:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TFGJj6fQ"
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107F0134AB;
+	Mon, 24 Feb 2025 07:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740383013; cv=none; b=hBIuPNfwXLigOv47fKli8Nbaz+OMW9x+9LUvB2PWCPB78AaT3Mb+DYAXHMtuhmLPAnopruFP+057sWzq5LtLS1RAEcR74floTPq4NigJpkgCbFh0NW+/rR4OUCqy+y0sYCigQd7jBRfab7M/j7bFkneeL4zzbpNmfxKdFuWTL7c=
+	t=1740383282; cv=none; b=A+48xRjumtX5VRMdcSuB/0ILZ3GSYsFqyVLGGfraI9lUooEYz02867xk3FTXBEvUo3Fn+BqGVy2TLXWXqUkx+76QsCPVkrjR6RM7slxaeDrIZUoTe3Wlz/kW3gY7Bv8ShEJPoLa0g0/ffiXd5kNXg7IBBCWsJ4kAXwwXYHBscEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740383013; c=relaxed/simple;
-	bh=YGsuhljqccKPHTYpawWHibXzqUjkIgNy6z/pL7cScYk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rqhNViM3h+ksxudWBo4RT0h3s9e6pxoo2vecQh1/WVx1ciE4ccinNsXqL+8ScHCq+peTdQt2EsJZto4ZThLoMccax/5AAoVKZ0HCu7fFCiDVx8vjHfXIEnK6xWBjYxBdMbVt083KmDXDjFW+s5xjMMBhnzrp9QFj/CeRlGrhVcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=McTsKz6d; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=JBeRk
-	4co3+uSwf3WyPiW0R5ciRcTZIeouYHkX7tcL/M=; b=McTsKz6dcaZmybhL4zeys
-	KZLrr5bcTkC1DHyjwS0DFwmle2Q6erq8+CcKTpCFJDOeUQjZEMmN6G2Fse1KzGDX
-	Y9xVuSo/9cSUqMs5zZZFe47Mxel2qEqR0u8nJju4NpRoyYS12n9HLimCkWfvLI/A
-	h3ZsPElFwhTMpYQBcTAslk=
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wCXu_oSI7xnHWzkNg--.62438S4;
-	Mon, 24 Feb 2025 15:43:16 +0800 (CST)
-From: Haoxiang Li <haoxiang_li2024@163.com>
-To: airlied@redhat.com
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1740383282; c=relaxed/simple;
+	bh=QgMoDqFA4Xm41gdv7f4UTTcLqqWKoOdtzL+m3RfcUu0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=toLHSnxwyyz1YptaPrkTnMLkqf7kmtu6XDKsbUzYPlIER3WxJU+jCLAW/rC/gRwII2nmy4cfBTnXm7EGQngsGEVvxFrTyFHe58dsIRIiIs00JnYcceiKtjcoiRwoONg5ZJZGq4Q2UwYBaTUkp7nf28s10lqJ3SS2e+JCV2X0p1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TFGJj6fQ; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1740383109;
+	bh=Jf6ITo4s7xR7v45XyJbqqJSz6q1dIgPfXfKuSzS6Ki4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=TFGJj6fQ9wPoOoam22GCZPy68sjQSlMvRE4PofrlHym4tMh5liBke8sXRC1aH5sJ6
+	 Pd05tPzKfAKQ1ggmLEnDsXGy+glF8X6LZ8Ns0rX28QIrQTyODnuzfJiLvVFat8yBlt
+	 IiAlYr10W7zolh42m17/hzDxpartih0kgm8U1i1M=
+X-QQ-mid: bizesmtpip4t1740383055tuh3phr
+X-QQ-Originating-IP: qNhz+YbDATmHpQzl00uFaa4wQn8B9O7SEGBWcl535dQ=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 24 Feb 2025 15:44:12 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16862361414539914337
+From: WangYuli <wangyuli@uniontech.com>
+To: rafael@kernel.org,
+	pavel@kernel.org,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com
+Cc: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Haoxiang Li <haoxiang_li2024@163.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] agp: Fix a potential memory leak bug in agp_amdk7_probe()
-Date: Mon, 24 Feb 2025 15:43:13 +0800
-Message-Id: <20250224074313.2958696-1-haoxiang_li2024@163.com>
-X-Mailer: git-send-email 2.25.1
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	chenlinxuan@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [RFC PATCH] x86 / hibernate: Eliminate the redundant smp_ops.play_dead assignment
+Date: Mon, 24 Feb 2025 15:43:57 +0800
+Message-ID: <CF154B5C3C8E7E64+20250224074357.673094-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,38 +72,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCXu_oSI7xnHWzkNg--.62438S4
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GF4DCF47tFyktw17JF17trb_yoWDXFb_G3
-	yUAr9293s5AFW8ur1akw4F9rWF9a1rXryku3ZFgwnxAFy3Zr4xXanrWFs5WF17ursrCFy7
-	t34DXr4Uuw1IyjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRXyCLJUUUUU==
-X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkA39bme77loMFgABs9
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OSUW9vQLVhiZDMc2mapvkNNMYirSW4aQzdAAOeLSRTDkbg3sQfKJ1UN8
+	Foua3YWLdUW8D2rNhnsJFMuVqKG4ZyUAMjw7WFlfByV6t3gaSyIFEa/uEbx/lRtmAmmU8CG
+	Ol2WPd8lfGDFbMwCuZqTJ2CzSkXiC0a/8ZOjDtnSh/lE5QtXPPelKoz3sKKyVkl2wf3cVN9
+	N74wZ009zx5ZHKI+FUxAduOk3vNPx9YMYgZwRTyPXGgLBCpopyvL8lsE0nSjTsW43xQcEdv
+	1JJ86hi5xcZdsXCO15TOKhf/nl3Sh+cJWwI/GY5wSju0OoROHhlKpO7rbtMIS2WNxjVH7ZH
+	6vqW9ItrC9RRy0nT90iltfvOjmDAuFe2a5W1p5wRlzFWwPYLzbK9yQPr85jQZRur1gkkQ7f
+	pWozDgrsVfXPBF2K2R9EocKWkcr9648Xo94Rc5onBaSpzKQWHvsVgCU4tPdRSXRa8s6A2Ac
+	R9Y1yM1odz/6IgfEjlCFjpruW6ECFAvbUFpyzjsdCHZPREom/il3pdwedFr5vtApWneYb6c
+	weD5VjwSoDPKiZvQS7tSUf0zyAJ2If0aD0ve4tyNsoez7xGv3oQkiU5UxeYQH0zcQD5rFhr
+	+cDNOrLe9zAYxkO6gasZz5joECmuHaGdD3rWzrs71iKLEnWUX8nn3ChwCfL1b96rFW1DuU4
+	Oec82nrGWWcB4de7gZfVbXWSYgZrI6t4jm6Vuts4Owtgg0M/wCX/BWRTr5ANtf0xOJpWiw8
+	SbjQneP7lZMdT4sISp+Yc6R1Oics2oZ7Kuo9Tqep+LOpZWefr2O22P0J2ik84kcJEltNDlR
+	+EIRKU3skvV3uGMMbm/YZfwWn6RX8eALGsCRirD4EcalT1ush4ltQQUn8B9UpRChGAPtMTP
+	fjaGyvu+WANSpbJ3aJC7yzCvFVglV2N+a1B4M9JZmYQVYv96dieJ1vQHhTppqWeGnC6IcjF
+	SdZ6ImgnqbIIKNt0pPU4Hi17FdETls243apInlu39yoriTAfclYFg9Q1N1lqb6PT57OoJuB
+	7z/EDShEqQm1lc2ByoRuuPps8VeJWiJAC0eKDEbAjFSwCRoUkJzOhK3+CEZk4=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-Variable "bridge" is allocated by agp_alloc_bridge() and
-have to be released by agp_put_bridge() if something goes
-wrong. In this patch, add the missing call of agp_put_bridge()
-in agp_amdk7_probe() to prevent potential memory leak bug.
+It's unnecessary to re-initialize smp_ops.play_dead to play_dead as
+it naturally goes back to play_dead in the freshly booted kernel upon
+device resume.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Suggested-by: Huacai Chen <chenhuacai@loongson.cn>
+Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- drivers/char/agp/amd-k7-agp.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/power/cpu.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/agp/amd-k7-agp.c b/drivers/char/agp/amd-k7-agp.c
-index 795c8c9ff680..40e1fc462dca 100644
---- a/drivers/char/agp/amd-k7-agp.c
-+++ b/drivers/char/agp/amd-k7-agp.c
-@@ -441,6 +441,7 @@ static int agp_amdk7_probe(struct pci_dev *pdev,
- 			gfxcard = pci_get_class(PCI_CLASS_DISPLAY_VGA<<8, gfxcard);
- 			if (!gfxcard) {
- 				dev_info(&pdev->dev, "no AGP VGA controller\n");
-+				agp_put_bridge(bridge);
- 				return -ENODEV;
- 			}
- 			cap_ptr = pci_find_capability(gfxcard, PCI_CAP_ID_AGP);
+diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
+index 63230ff8cf4f..023cf9421467 100644
+--- a/arch/x86/power/cpu.c
++++ b/arch/x86/power/cpu.c
+@@ -297,9 +297,6 @@ static void __noreturn resume_play_dead(void)
+ 
+ int hibernate_resume_nonboot_cpu_disable(void)
+ {
+-	void (*play_dead)(void) = smp_ops.play_dead;
+-	int ret;
+-
+ 	/*
+ 	 * Ensure that MONITOR/MWAIT will not be used in the "play dead" loop
+ 	 * during hibernate image restoration, because it is likely that the
+@@ -316,13 +313,11 @@ int hibernate_resume_nonboot_cpu_disable(void)
+ 	 * resume) sleep afterwards, and the resumed kernel will decide itself
+ 	 * what to do with them.
+ 	 */
+-	ret = cpuhp_smt_enable();
++	int ret = cpuhp_smt_enable();
+ 	if (ret)
+ 		return ret;
+ 	smp_ops.play_dead = resume_play_dead;
+-	ret = freeze_secondary_cpus(0);
+-	smp_ops.play_dead = play_dead;
+-	return ret;
++	return freeze_secondary_cpus(0);
+ }
+ #endif
+ 
 -- 
-2.25.1
+2.47.2
 
 
