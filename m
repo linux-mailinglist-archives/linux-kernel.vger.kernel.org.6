@@ -1,255 +1,184 @@
-Return-Path: <linux-kernel+bounces-528344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA72A416B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:56:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9218AA416B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:57:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6B227A10E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF47188C104
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8445241663;
-	Mon, 24 Feb 2025 07:55:53 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817CE24166B;
+	Mon, 24 Feb 2025 07:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="i43eTKD2"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1D8207DF7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC311898ED;
+	Mon, 24 Feb 2025 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740383753; cv=none; b=VFI5LqxJFbiZMIYVvKRWDiIhe47srBfk4AjQcOHV2f/ftKQuUdsy3ueG5jaxAwPuBqZCd8JiehZLuyZ9ZSgRcAaA3ClFyqk6UbA3wDH+pHWkB3Imd2hl5MrDgDp9ei0YMY8WfNuhgNS0hLL2882VYSgQtlv2ntkVguSYTKVVpao=
+	t=1740383808; cv=none; b=bjNzOLh4OgLiHHiNOeE+A0H3ioHM7xiddVMPbUJ+Edez+5OOFldd5RrdDac7pSNGRLzn1uKy50ftjutFARgICFtMGHlGk2ID5+r+rnjFDcEy9VjvBU2273AvurTif7B95ZgDvW223jd4zMCD+JU+5RdOshKx9CSH+lv3G4VoDIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740383753; c=relaxed/simple;
-	bh=Rmom2qkXeLYVVxaAC+CYsG2On1lDNH+srFbmeOI+SKY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2Tb2848alsgxkdHcMA5h7Dlpd8rJAGQZ7f/LTmqHOiZ2/keVB1tzxm6cyDs6JN+x5SAls42dHS1le4dnWlGT0RWhCVia/B8mTZWEqTL5ry9sKyHbn0NlzlPaAcwCkGPJNyC3zbmvfc6h+5MlxJLDSPMi+GNMuFw7PHea9FUJu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tmTJS-00024I-Up; Mon, 24 Feb 2025 08:55:38 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tmTJS-002YWc-1Y;
-	Mon, 24 Feb 2025 08:55:38 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tmTJS-00FNGw-1D;
-	Mon, 24 Feb 2025 08:55:38 +0100
-Date: Mon, 24 Feb 2025 08:55:38 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH 3/5] bus: add driver for IMX AIPSTZ bridge
-Message-ID: <20250224075538.7oetjzllqqr2mlnt@pengutronix.de>
-References: <20250221191909.31874-1-laurentiumihalcea111@gmail.com>
- <20250221191909.31874-4-laurentiumihalcea111@gmail.com>
+	s=arc-20240116; t=1740383808; c=relaxed/simple;
+	bh=hKdBOJbxvt7VJtTUJ3m4q02Ajt73HEcUMnlh4lI1uWE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QbKrnScQwWUUaXE1d8cHLUJ+DFcqUCL34+3Ode7f9DNc8Nv9dzE68tlpA8R0LGAfmIEN/RKxCejVNVR6UK9oSg0lMqxF8uZD7DieQE0iU7O6kuLuEiJ8wQeMYEJLTwnGJ49qrlYP6xKj61DqWRxUQJckCl2gxQrHBV1vV2CHhe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=i43eTKD2; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1740383799; x=1740988599; i=quwenruo.btrfs@gmx.com;
+	bh=nqmVyRReVjeJ6BDJSeumOoabKAEAeB/XZCTujfcuHrI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=i43eTKD2ng/bc+vfc3eevlhNLWQk8e709deP/Y8KK2ex5Tg7kuQf+dmcgguxIQMl
+	 I4b++UwPCLAETw98SD9zcktEETOdsneyFBm8GlU2u7bYwQfG1sx4oxbFESkcPzEAE
+	 75i4J5Otr7FMU2mKlQovH1QSL93gPzLR6UcY8u0C9Tcgr6hPGnWbXpStvCkb7DKCX
+	 YODqkFawQSQBMSwp3xiTnd4gL0z+ubXobMhmQOHmAM9zdllewSJEO46MaUKSaIujK
+	 7ontFpwdJRL1UskSn2ffD2gRRKSshe+AS8hk5mjLDHcDcMeB16qHsKCiiE9Ql3xGp
+	 JMxtbOHszMai6rX7hA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MG9g4-1tVxaF1MOS-007BXl; Mon, 24
+ Feb 2025 08:56:39 +0100
+Message-ID: <cac35c18-0389-4012-97b3-4b8243f8752d@gmx.com>
+Date: Mon, 24 Feb 2025 18:26:34 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221191909.31874-4-laurentiumihalcea111@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: add a sanity check for btrfs root in
+ btrfs_search_old_slot()
+To: Ma Ke <make24@iscas.ac.cn>, clm@fb.com, josef@toxicpanda.com,
+ dsterba@suse.com, jeffm@suse.com
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250224075142.2959155-1-make24@iscas.ac.cn>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
+ sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
+ xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
+ naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
+ tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
+ 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
+ VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
+ CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
+ B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
+ Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
+ +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
+ HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
+In-Reply-To: <20250224075142.2959155-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8NmEbpoU9pig/+op+iD4lkKBBhSwV8ZptO6Todoz+/MzOP53Ks8
+ CzE2wH8KmDY0FP5+ZNOlu03RzoNxxUhi9mWFsMqliCtWIJnpei8EwegIz46gN1eqxwz1V0t
+ S3rAccqQjgxo4YcRvp8PqGa9oUbmZQx/o2+Rg9EVt35/xQ2YbgIA9avZEfXh2WF/VCW4XeM
+ 34LjYecbkXhmpYPcOr5VQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:NVQYyFINjTg=;GeqLE6GIjZ2CIDr93i825/JrWdD
+ EC5eIcAPRUmVUkC5wDCY80QsDo1OlU271ArnTd7yRmzrcLxreHsKY4lBDZEsSh0AzCnLqSP2u
+ yaRro4XrESxgtZm1UkpElxma75rQ3489s5hKwWu5d5V4R15vTLHIDXCHH8uxlWhd00mBeNFho
+ nVqYe6efye099xIjFTCKuLgOKU5klBTCITQChXjn8eqqV46LJQ5DyOI9vE97lruxrgDfLBZ1t
+ m3W1AsKgI9GYL33xhyJegpZ7JM1vES02PCdrxg44r2a12j+9roRrmRkrHf9YUJhz+OJ/smc1J
+ 9vJGFVsyWqfeQfVAToFcvri9vk9M+klExrOWqoM0oryvRPfZFkobeLeHIKEqQ2W2arTO4Kkzs
+ pdUv9ekpGvh9j+CWCRn5DKsH46fwMUrjRlxOZ4ZhNSVQciLicgc49mUyvypw7E6iexy+3MScc
+ YQzQAAF6gjPSRPO7W7c9NtG1gkspJXh3VLpTXzmG6PNg+qYNWTRFhAoF00w70yEpROD6/gAw9
+ F2VPqjRnpDSzJFn5AU+5D3kdKPBrbGwgmNt2dSe+MhK4J2msRVLh2u0ogTu1bsM2xncfMP4H9
+ pRuRJTD+Fd9iBXblF5A0iGilDO/ENSS6hIhQ0QlJBI7PyMVAPPSGNDVBPrgNG7iDT45mOgzqb
+ hDJbtgu2i8kxb44OIeCXiFOb6lojqA4ddr9jCH2VXJxhvPQ6lg6+7fULsxhO/pSh8Fbt3xyh2
+ o+MuoBd461rDUVCY/3+jXgpDvN/dCFKi36D0mYMx9wGnnrq+suAZzlW1VzqgFX9bQpgb0y0Pe
+ BNttPRdAhjPqssWmzJMea6Rayq0BaSUQ3ICs+CVKwa5MyD5+BrRvTBJDmn5ZP9EXEPMZeL7GI
+ rlttFdx7Ilvwmq5Nd7Qejiwc2FzzZv5gO+t6lIP2nyCwidwPFnTdb9E0Wo1bWhu1idea9BItk
+ YlgSGVExTnMgqocAUDFRXVtNC/vMj+kNJ5VVfia5fy5JMDTelcOlAd9NdQXPW8dfwVYifjfQR
+ gK6MNxTZCXdWSPD3bbRNQFw+5BPKHNMPtbuzVdMHeMM7dOpMX8YyKjNgAwNAHr5xCBddZpWpI
+ swcCYG7AO2Cj9rRXVUG3NBnhDrqN31NwGQEwETDaH4tUOlxDiXn/GqK7TIwfrZTx7GHwJNk2N
+ kqRkThG2/+BZQPD85fumWzADLM8RDTpT1hD2SSuFMfSX06aSCZcr4dos2/NAR6NbCrt4kHWD7
+ oNqmyiUiSPSDQv5lixgxFamxiG5ZLYKnO6eiw89LKizrzGxFpuzhgMZ+/Freb5wpUOY1XQizL
+ Jrxc882U4TWiU1NrzIBTXsV6bL72RZsbvQpke9Lz6eFF6fGf21fyHwAw7TmUc4WaeDwtvVicP
+ 72iWR8XT5dzn8U71Xg4XBbQBDyHykqXQLaWzQCnU7ZNLX/yGKiuDpX38V9
 
-Hi Laurentiu,
-
-thanks for your patch.
-
-On 25-02-21, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> 
-> The secure AHB to IP Slave (AIPSTZ) bus bridge provides access control
-> configurations meant to restrict access to certain peripherals.
-> Some of the configurations include:
-> 
-> 	1) Marking masters as trusted for R/W. Based on this
-> 	(and the configuration of the accessed peripheral), the bridge
-> 	may choose to abort the R/W transactions issued by certain
-> 	masters.
-
-Setting these bits requires very often that the core is running at EL3
-(e.g. secure-monitor) which is not the case for Linux. Can you please
-provide more information how Linux can set these bits?
-
-Regards,
-  Marco
 
 
-> 
-> 	2) Allowing/disallowing write accesses to peripherals.
-> 
-> Add driver for this IP. Since there's currently no framework for
-> access controllers (and since there's currently no need for having
-> flexibility w.r.t the configurations) all this driver does is it
-> applies a relaxed, "default" configuration, in which all masters
-> are trusted for R/W.
-> 
-> Note that some instances of this IP may be tied to a power domain and may
-> lose their configuration when the domain is powered off. This is why the
-> configuration has to be restored when the domain is powered on.
-> 
-> Co-developed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+=E5=9C=A8 2025/2/24 18:21, Ma Ke =E5=86=99=E9=81=93:
+> When searching the extent tree to gather the needed extent info,
+> btrfs_search_old_slot() doesn't check if the target root is NULL or
+> not, resulting the null-ptr-deref. Add sanity check for btrfs root
+> before using it in btrfs_search_old_slot().
+
+I do not think it's the case anymore.
+
+Commit 6aecd91a5c5b ("btrfs: avoid NULL pointer dereference if no valid
+extent tree") has introduced a check for the extent root, at the very
+beginning of scrub_find_fill_first_stripe().
+
+Thus it will never call find_first_extent_item() to search the NULL
+extent tree.
+
+Or do you have another case where we need to search extent tree
+meanwhile the fs is mounted with rescue=3Dibadroots?
+
+Thanks,
+Qu
+
+>
+> Found by code review.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 0b246afa62b0 ("btrfs: root->fs_info cleanup, add fs_info convenie=
+nce variables")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 > ---
->  drivers/bus/Kconfig      |  6 +++
->  drivers/bus/Makefile     |  1 +
->  drivers/bus/imx-aipstz.c | 92 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 99 insertions(+)
->  create mode 100644 drivers/bus/imx-aipstz.c
-> 
-> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-> index ff669a8ccad9..fe7600283e70 100644
-> --- a/drivers/bus/Kconfig
-> +++ b/drivers/bus/Kconfig
-> @@ -87,6 +87,12 @@ config HISILICON_LPC
->  	  Driver to enable I/O access to devices attached to the Low Pin
->  	  Count bus on the HiSilicon Hip06/7 SoC.
->  
-> +config IMX_AIPSTZ
-> +	tristate "Support for IMX Secure AHB to IP Slave bus (AIPSTZ) bridge"
-> +	depends on ARCH_MXC
-> +	help
-> +	  Enable support for IMX AIPSTZ bridge.
+>   fs/btrfs/ctree.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/btrfs/ctree.c b/fs/btrfs/ctree.c
+> index 3dc5a35dd19b..4e2e1c38d33a 100644
+> --- a/fs/btrfs/ctree.c
+> +++ b/fs/btrfs/ctree.c
+> @@ -2232,7 +2232,7 @@ ALLOW_ERROR_INJECTION(btrfs_search_slot, ERRNO);
+>   int btrfs_search_old_slot(struct btrfs_root *root, const struct btrfs_=
+key *key,
+>   			  struct btrfs_path *p, u64 time_seq)
+>   {
+> -	struct btrfs_fs_info *fs_info =3D root->fs_info;
+> +	struct btrfs_fs_info *fs_info;
+>   	struct extent_buffer *b;
+>   	int slot;
+>   	int ret;
+> @@ -2241,6 +2241,10 @@ int btrfs_search_old_slot(struct btrfs_root *root=
+, const struct btrfs_key *key,
+>   	int lowest_unlock =3D 1;
+>   	u8 lowest_level =3D 0;
+>
+> +	if (!root)
+> +		return -EINVAL;
 > +
->  config IMX_WEIM
->  	bool "Freescale EIM DRIVER"
->  	depends on ARCH_MXC || COMPILE_TEST
-> diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-> index cddd4984d6af..8e693fe8a03a 100644
-> --- a/drivers/bus/Makefile
-> +++ b/drivers/bus/Makefile
-> @@ -15,6 +15,7 @@ obj-$(CONFIG_FSL_MC_BUS)	+= fsl-mc/
->  
->  obj-$(CONFIG_BT1_APB)		+= bt1-apb.o
->  obj-$(CONFIG_BT1_AXI)		+= bt1-axi.o
-> +obj-$(CONFIG_IMX_AIPSTZ)	+= imx-aipstz.o
->  obj-$(CONFIG_IMX_WEIM)		+= imx-weim.o
->  obj-$(CONFIG_INTEL_IXP4XX_EB)	+= intel-ixp4xx-eb.o
->  obj-$(CONFIG_MIPS_CDMM)		+= mips_cdmm.o
-> diff --git a/drivers/bus/imx-aipstz.c b/drivers/bus/imx-aipstz.c
-> new file mode 100644
-> index 000000000000..75696eac8ba2
-> --- /dev/null
-> +++ b/drivers/bus/imx-aipstz.c
-> @@ -0,0 +1,92 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2025 NXP
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
-> +#include <linux/regmap.h>
-> +
-> +#define IMX_AIPSTZ_MPR0 0x0
-> +
-> +struct imx_aipstz_config {
-> +	u32 mpr0;
-> +};
-> +
-> +static void imx_aipstz_apply_default(void __iomem *base,
-> +				     const struct imx_aipstz_config *default_cfg)
-> +{
-> +	writel(default_cfg->mpr0, base + IMX_AIPSTZ_MPR0);
-> +}
-> +
-> +static int imx_aipstz_probe(struct platform_device *pdev)
-> +{
-> +	void __iomem *base;
-> +	const struct imx_aipstz_config *default_cfg;
-> +
-> +	base = devm_platform_get_and_ioremap_resource(pdev, 0, NULL);
-> +	if (IS_ERR(base))
-> +		return dev_err_probe(&pdev->dev, -ENOMEM,
-> +				     "failed to get/ioremap memory\n");
-> +
-> +	default_cfg = of_device_get_match_data(&pdev->dev);
-> +
-> +	imx_aipstz_apply_default(base, default_cfg);
-> +
-> +	dev_set_drvdata(&pdev->dev, base);
-> +
-> +	pm_runtime_set_active(&pdev->dev);
-> +	devm_pm_runtime_enable(&pdev->dev);
-> +
-> +	return devm_of_platform_populate(&pdev->dev);
-> +}
-> +
-> +static int imx_aipstz_runtime_resume(struct device *dev)
-> +{
-> +	void __iomem *base;
-> +	const struct imx_aipstz_config *default_cfg;
-> +
-> +	base = dev_get_drvdata(dev);
-> +	default_cfg = of_device_get_match_data(dev);
-> +
-> +	/* restore potentially lost configuration during domain power-off */
-> +	imx_aipstz_apply_default(base, default_cfg);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops imx_aipstz_pm_ops = {
-> +	RUNTIME_PM_OPS(NULL, imx_aipstz_runtime_resume, NULL)
-> +	SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
-> +};
-> +
-> +/*
-> + * following configuration is equivalent to:
-> + *	masters 0-7 => trusted for R/W + use AHB's HPROT[1] to det. privilege
-> + */
-> +static const struct imx_aipstz_config imx8mp_aipstz_default_cfg = {
-> +	.mpr0 = 0x77777777,
-> +};
-> +
-> +static const struct of_device_id imx_aipstz_of_ids[] = {
-> +	{ .compatible = "fsl,imx8mp-aipstz", .data = &imx8mp_aipstz_default_cfg },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_aipstz_of_ids);
-> +
-> +static struct platform_driver imx_aipstz_of_driver = {
-> +	.probe = imx_aipstz_probe,
-> +	.driver = {
-> +		.name = "imx-aipstz",
-> +		.of_match_table = imx_aipstz_of_ids,
-> +		.pm = pm_ptr(&imx_aipstz_pm_ops),
-> +	},
-> +};
-> +module_platform_driver(imx_aipstz_of_driver);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("IMX secure AHB to IP Slave bus (AIPSTZ) bridge driver");
-> +MODULE_AUTHOR("Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>");
-> -- 
-> 2.34.1
-> 
-> 
-> 
+> +	fs_info =3D root->fs_info;
+>   	lowest_level =3D p->lowest_level;
+>   	WARN_ON(p->nodes[0] !=3D NULL);
+>   	ASSERT(!p->nowait);
+
 
