@@ -1,53 +1,63 @@
-Return-Path: <linux-kernel+bounces-529017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4577EA41EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:28:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 502E9A41E6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A68E42216A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B97E17CC7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBEE233715;
-	Mon, 24 Feb 2025 12:20:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40961221F0D;
-	Mon, 24 Feb 2025 12:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967FE2192E8;
+	Mon, 24 Feb 2025 12:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s8B48YN6"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1C62571A0;
+	Mon, 24 Feb 2025 12:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399606; cv=none; b=YsO7jZixoAT2J74D8U0Ab3v93N6yHiHFiXJl0NT08KDRZbhTDa9KM51OYvQ4cHSh2NAI7Ho1Sci2FQkUc1U4bI4Pso+/DRNOa6rY6KyExo5cmylDYpfBrV/cnxe3opbf5ZPXESedfPWYx3lMknq+NfsYHnV6PGbPNLPNiQj4WVs=
+	t=1740398608; cv=none; b=hewNhkotvEol4+i38H7Qv9mU5izbBVp6ISHMldi3p2ewryXzxCJHMHChw68i7VPWk2Abl0jltB9uPe4HLiOZ58OC2eYWyT3OsPhM+bR9fhbE5HloikXC2dmEBc3zklGIqB++0SewliimR1t/OJ2hRxNvaPNAMnPNav5KmjUyUMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399606; c=relaxed/simple;
-	bh=nDYG+N4sCw2PXkfazOpD7KKDIb0FoRylJKyl8gY9Nks=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GHRP4LMDyfq9fjML8rp+hZoFbcjA1ar+L6lTl1EJ8P9gFsWPRyW1kO2Dv/7WNqRnpHx3mbSqSszm5pbR+09YalTkbVHqcntBsFe062MxqHmBm3EmEciPhUkJMeiqMLSlwS+aX5b6lUGAefNCGDt5SJ5i2C+T0Hug/BqfPyuA75Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z1fV21lT7z9sSH;
-	Mon, 24 Feb 2025 13:01:46 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id RSWOAySpYadf; Mon, 24 Feb 2025 13:01:46 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z1fV20Znwz9sRy;
-	Mon, 24 Feb 2025 13:01:46 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EF2E28B775;
-	Mon, 24 Feb 2025 13:01:45 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id U8aocdpqgbdH; Mon, 24 Feb 2025 13:01:45 +0100 (CET)
-Received: from [10.25.207.138] (unknown [10.25.207.138])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A584D8B763;
-	Mon, 24 Feb 2025 13:01:45 +0100 (CET)
-Message-ID: <ba5b12e4-850c-445b-a1b1-0dc5f3905dda@csgroup.eu>
-Date: Mon, 24 Feb 2025 13:01:45 +0100
+	s=arc-20240116; t=1740398608; c=relaxed/simple;
+	bh=7h5ryNxk757OKWlLFcNWOYukboylFtUCaUa59b6WtpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bK7V41rqxKChzKP5F/rfaoycvpZSw8XY9R+GaKA3OsQKX67wNSdw7ZvHHLXhJqv8k9n7svVk4EOZ5Kk9mGTZ6DYxVR8ja4DR8VRve0n3Yp9yRZogBbmHZZnNQzGPdvLe8WAR9x72c3iHWcZguf/mj0LMkDei1nDKxief9GBff68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s8B48YN6; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 51OC3HQw884652
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 06:03:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1740398597;
+	bh=5raQfcZhDMhumdfr8jxuCUsBCb/cAX6lrocettlzYYo=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=s8B48YN6RXbPyYcRP3wjIDrfdeyLzL/aICw32+tMLtDI7d+3xRXAMeeM0d0NcdXRl
+	 YhaRDfeDpYzbsne2U1IOxxWSW3qxm0IEu7HeayWBnEcNA0cPkQ6T41QKBbO2Dp8LOC
+	 U5+BDYi+wNCITyJankazxTQ5wpe0W9Yyqv85X46w=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 51OC3HNE006194
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Feb 2025 06:03:17 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Feb 2025 06:03:16 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Feb 2025 06:03:16 -0600
+Received: from [172.24.227.245] (uda0132425.dhcp.ti.com [172.24.227.245])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 51OC3BEA070806;
+	Mon, 24 Feb 2025 06:03:12 -0600
+Message-ID: <0d871153-e4dd-42d1-aafa-b6ed1e4e5a10@ti.com>
+Date: Mon, 24 Feb 2025 17:33:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,82 +65,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 5/5] mm: Rename GENERIC_PTDUMP and PTDUMP_CORE
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: steven.price@arm.com, Andrew Morton <akpm@linux-foundation.org>,
- Mark Rutland <mark.rutland@arm.com>, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>
-References: <20250217042220.32920-1-anshuman.khandual@arm.com>
- <20250217042220.32920-6-anshuman.khandual@arm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250217042220.32920-6-anshuman.khandual@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH 2/2] arm64: dts: ti: Add k3-am62-pocketbeagle2
+To: Robert Nelson <robertcnelson@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Andrew Davis
+	<afd@ti.com>, Roger Quadros <rogerq@kernel.org>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, Judith Mendez <jm@ti.com>,
+        Andrei Aldea
+	<a-aldea@ti.com>,
+        Jason Kridner <jkridner@beagleboard.org>,
+        Deepak Khatri
+	<lorforlinux@beagleboard.org>,
+        Ayush Singh <ayush@beagleboard.org>
+References: <20250211181839.1575497-1-robertcnelson@gmail.com>
+ <20250211181839.1575497-2-robertcnelson@gmail.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20250211181839.1575497-2-robertcnelson@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi
 
-
-Le 17/02/2025 à 05:22, Anshuman Khandual a écrit :
-> Platforms subscribe into generic ptdump implementation via GENERIC_PTDUMP.
-> But generic ptdump gets enabled via PTDUMP_CORE. These configs combination
-> is confusing as they sound very similar and does not differentiate between
-> platform's feature subscription and feature enablement for ptdump. Rename
-> the configs as ARCH_HAS_PTDUMP and PTDUMP making it more clear and improve
-> readability.
+On 11/02/25 23:48, Robert Nelson wrote:
+> BeagleBoard.org PocketBeagle 2 is an upgraded version of the popular
+> PocketBeagle.  It is based on Texas Instruments AM6232 SoC. Its dual
+> A53 cores can provide higher performance than classic PocketBeagle.
+> The new design comes with pre-soldered headers, a 3-pin JST-SH 1.00mm
+> UART debug port, a USB-C port, Texas Instruments MSPM0L1105 Cortex-M0+
+> MCU for ADC, 512MB RAM, and a LiPo Battery charger.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kvmarm@lists.linux.dev
-> Cc: linuxppc-dev@lists.ozlabs.org
-> Cc: linux-riscv@lists.infradead.org
-> Cc: linux-s390@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 7612c52e9b1e..5aef2aa4103c 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -43,6 +43,7 @@ config RISCV
->   	select ARCH_HAS_PMEM_API
->   	select ARCH_HAS_PREEMPT_LAZY
->   	select ARCH_HAS_PREPARE_SYNC_CORE_CMD
-> +	select ARCH_HAS_PTDUMP
+> https://www.beagleboard.org/boards/pocketbeagle-2
+> https://openbeagle.org/pocketbeagle/pocketbeagle-
+> 
+> Signed-off-by: Robert Nelson <robertcnelson@gmail.com>
+> CC: Rob Herring <robh@kernel.org>
+> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> CC: Conor Dooley <conor+dt@kernel.org>
+> CC: Vignesh Raghavendra <vigneshr@ti.com>
+> CC: Nishanth Menon <nm@ti.com>
+> CC: Andrew Davis <afd@ti.com>
+> CC: Roger Quadros <rogerq@kernel.org>
+> CC: Siddharth Vadapalli <s-vadapalli@ti.com>
+> CC: Judith Mendez <jm@ti.com>
+> CC: Andrei Aldea <a-aldea@ti.com>
+> CC: Jason Kridner <jkridner@beagleboard.org>
+> CC: Deepak Khatri <lorforlinux@beagleboard.org>
+> CC: Ayush Singh <ayush@beagleboard.org>
 
-Is it OK to drop the 'if MMU' from below ?
 
->   	select ARCH_HAS_PTE_DEVMAP if 64BIT && MMU
->   	select ARCH_HAS_PTE_SPECIAL
->   	select ARCH_HAS_SET_DIRECT_MAP if MMU
-> @@ -112,7 +113,6 @@ config RISCV
->   	select GENERIC_IRQ_SHOW_LEVEL
->   	select GENERIC_LIB_DEVMEM_IS_ALLOWED
->   	select GENERIC_PCI_IOMAP
-> -	select GENERIC_PTDUMP if MMU
->   	select GENERIC_SCHED_CLOCK
->   	select GENERIC_SMP_IDLE_THREAD
->   	select GENERIC_TIME_VSYSCALL if MMU && 64BIT
+Please run make dtbs_check and fix the reported issues. Eg.:
+
+
++arch/arm64/boot/dts/ti/k3-am62-pocketbeagle2.dts: /bus@f0000/pinctrl@f4000/main_i2c2-default-pins: Character '_' not recommended in node name
+
+[...]
+
+> ----- 
+Regards
+Vignesh
+https://ti.com/opensource
+
 
