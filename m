@@ -1,117 +1,94 @@
-Return-Path: <linux-kernel+bounces-528717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670F5A41B4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:38:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCFCAA41B50
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:38:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC6B189A2A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:36:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08F781892BF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DF8255E41;
-	Mon, 24 Feb 2025 10:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NmTz3W+x"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1041A255E26;
+	Mon, 24 Feb 2025 10:36:10 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03275254B1E;
-	Mon, 24 Feb 2025 10:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F77E1EA7E6;
+	Mon, 24 Feb 2025 10:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740393314; cv=none; b=di22lALJwin2ni6/d7SazkHCd4rXWfgB2UoQpFsCfGfP7nwFvrRyLY2JnJ5u7NWgoVJy6g+QSy6yDnEyJOFF2DxMe11T6BWmCcdYbnEyan4OioWwrKYDKBZzvYysT6tgNfdCh1THcLE7y32LUNMhxsQIDEAqkZpieYJvXizeTK4=
+	t=1740393369; cv=none; b=Nk/oBBysYUFgghrZtHjvw3IqoVYLbRTiBovvfZ+r2HWDsB9cA1BenEQ29vDcmIYgZasJbwP1yqh3xfNaz0v7M9nozNWqRePvtOXxNLpw0NYq2U/AO03wHRa+1wBQYk55vde9+7Hxu7YFmhkBSA+lFWxULA7vYAzhBxZbRP5swB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740393314; c=relaxed/simple;
-	bh=+slKAxwE4DeokI82jRZ6SVAqxHDic6FLYoo4hJ7Jw9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vBHFZwjQCyN0fgC2z6xAYZKDXGJ3+E3wqmF3PyFC2dR7/uYJNgtMvmTEy9pn0AciGZln1oxL42es/NiT7XUlSIU3YAi0ximRB1v6oN4z0ZItOxbl6yZlZXfx6olrGNyKcyWXFbqi0le8fVhhYDYpEFSjniBMAXkg+GYK9+jOouc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NmTz3W+x; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 10B2E44124;
-	Mon, 24 Feb 2025 10:35:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740393311;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wkvVrJjKIGs4iFLG8vSHGkD0ysqCc9enUTK/nmKkbHw=;
-	b=NmTz3W+xn0P3GrO9pTZvl+iRiHcKJSh5ci5FGR862qa5JQYMoDQPyg3hM+TVlw7WrWnJb2
-	bQAMPSg7eM3yc2Mrn7TxuBJLHcKx6566h7iJUJKAyqH2a9+egzl5eFenW7WBs+mVF+c2tW
-	hXrgeqh5844adfnjPY7RoLtNlZ3S+xd8ZUhrqoMExHNz7SY/cj7W7qmSKVDnmW045RsYbs
-	lqdDGhmHzmv23bWcr2EcAFdDIp1fqwlR+rRujX7lE2xYYRZvUUOCGHXnyJcTPnQmZcwgrh
-	pcvsdIO5/eBDuQKbYWi2y25gaC+8sMkoPzZqgkGVCveuB6xnjcYO9SaQNfvHlA==
-Date: Mon, 24 Feb 2025 11:35:08 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Harshal Chaudhari <hchaudhari@marvell.com>
-Cc: <marcin.s.wojtas@gmail.com>, <linux@armlinux.org.uk>,
- <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
- <kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/1] net: mvpp2: cls: Fixed Non IP flow, with vlan
- tag flow defination.
-Message-ID: <20250224113508.2911ccf4@fedora>
-In-Reply-To: <20250224062927.2829186-1-hchaudhari@marvell.com>
-References: <20250224062927.2829186-1-hchaudhari@marvell.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740393369; c=relaxed/simple;
+	bh=/QRPoW5lk+0E4XMQkF2qjohhTPGz+hAfa/dkYnO7+AI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tzUED5kCIWXhiWQ4/1N6lWzxVDh9eLwhWYAX4/dGQ0HgSqwPYRMAe4xo9YwNwa6XcPVyDCom3Xet0FngRHvkOu+NgZLFnxOBnZ43xFiSHZgzATd3W9YzLDW2PAd8SH0S6a0LiXXmy6zG8+GNkX2i2pz9UsucOw+dDaQed+wbwFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 8OZiYwFjQ5SJ9M7167K8fg==
+X-CSE-MsgGUID: czf3qQKZQnqJ/rMiYmSt/Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="52568149"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="52568149"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:36:07 -0800
+X-CSE-ConnectionGUID: 4ZVg8+LeR2eRVpeQWKp3TA==
+X-CSE-MsgGUID: rekQZxHCRZeBRi/8xFWpsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="115814660"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 02:36:05 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tmVoe-0000000EfPl-1X4Y;
+	Mon, 24 Feb 2025 12:36:00 +0200
+Date: Mon, 24 Feb 2025 12:36:00 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: geert@linux-m68k.org, u.kleine-koenig@pengutronix.de,
+	erick.archer@outlook.com, ojeda@kernel.org, w@1wt.eu,
+	poeschel@lemonage.de, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] auxdisplay: hd44780: Fix an API misuse in hd44780.c
+Message-ID: <Z7xLkNkPc8rdbTL_@smile.fi.intel.com>
+References: <20250224101527.2971012-1-haoxiang_li2024@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeehgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtohephhgthhgruhguhhgrrhhisehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepmhgrrhgtihhnrdhsrdifohhjthgrshesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtoheprghnughrvgifodhnvghtuggvvheslhhunhhnrdgthhdprhgtphhtthhopegurghvvghmsegurghvvghml
- hhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224101527.2971012-1-haoxiang_li2024@163.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sun, 23 Feb 2025 22:29:27 -0800
-Harshal Chaudhari <hchaudhari@marvell.com> wrote:
+On Mon, Feb 24, 2025 at 06:15:27PM +0800, Haoxiang Li wrote:
+> Variable allocated by charlcd_alloc() should be released
+> by charlcd_free(). The following patch changed kfree() to
+> charlcd_free() to fix an API misuse.
 
-> Fixes: 1274daede3ef ("net: mvpp2: cls: Add steering based on vlan Id and priority.")
+...
 
-Well, that tag should be alongside your SoB (just before it)
+> - Merge the two patches into one.
 
-> Non IP flow, with vlan tag not working as expected while
-> running below command for vlan-priority. fixed that.
-> 
-> ethtool -N eth1 flow-type ether vlan 0x8000 vlan-mask 0x1fff action 0 loc 0
-> 
+Thanks!
+
+> - Modify the patch description.
+> Sorry Geert, I didn't see your reply until after I sent the
+> second patch. I've merged the two patches into one, hoping
+> to make your work a bit easier! Thanks a lot!
+
+In any case it's better if Geert acks/reviews this one as from code p.o.v.
+it's a 50% change :-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> Change from v1:
-> 	* Added the fixes tag
-
-This should be below the "---", as it won't be in the final commit log.
-
-> Signed-off-by: Harshal Chaudhari <hchaudhari@marvell.com>
-> ---
-
-here
-
->  drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-> index 1641791a2d5b..8ed83fb98862 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-> @@ -324,7 +324,7 @@ static const struct mvpp2_cls_flow cls_flows[MVPP2_N_PRS_FLOWS] = {
->  		       MVPP2_PRS_RI_VLAN_MASK),
->  	/* Non IP flow, with vlan tag */
->  	MVPP2_DEF_FLOW(MVPP22_FLOW_ETHERNET, MVPP2_FL_NON_IP_TAG,
-> -		       MVPP22_CLS_HEK_OPT_VLAN,
-> +		       MVPP22_CLS_HEK_TAGGED,
->  		       0, 0),
->  };
->  
-
-Maxime
 
