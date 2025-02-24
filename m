@@ -1,164 +1,79 @@
-Return-Path: <linux-kernel+bounces-529066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E8AA41F90
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09A3A41F56
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:42:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 341C03B299D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:40:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6191890021
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F7C23372A;
-	Mon, 24 Feb 2025 12:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E23E23372C;
+	Mon, 24 Feb 2025 12:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X32UPvtm"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="L+nUgf9b"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6449158870;
-	Mon, 24 Feb 2025 12:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A3723371F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400845; cv=none; b=GMh5WS8OxfWCrde2bKgg4VIwC2kc0iRps0nrjeJkoIirXcMi1IllRqk8D2r0sU1Y7LDI4jD4Xv69UEOAhUYFPRtdsaBlU2wGXqktRU1mZ+W6Dwb6MWi6m+KgRMi9z5IhZMhWB9qHA4GuhzH6uBL2FLOoL2iFhjzGesF0Y4MOI/s=
+	t=1740400859; cv=none; b=MeqTEHveu7p9E1X8HU4EI+L1l5q8q4I6e1nraQBDgJlk3jatj00HtNhr+Nny3j3lGwhctHRd/tYRy+PWBMobqtgAqRiTkyMTmtZfDfcI5BeC9rWIzgtnij41unFUuWQ+WMyzWhNkGfhnQXYTwyZUri9zSKj0mgrBGDN6yIEF838=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400845; c=relaxed/simple;
-	bh=SQLajT4z7bmfJBkPXz2F5dIaF9jtUs4cUyT6QRWnEg4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kf5jN5ALNxqCCSB54dCSoF+dN/y1khq2tcgpOoSjlONLZHQ2mymZtwuIkARiLr4oHZuLdDNUYgsqkSDXGnBp1rTsaRp5rIlunzwd46YWDRTPi/+jR+xEo/e4c1CzpmnryjslMooH20lIrr3uYd8RhmCnN6KXD/ZR7RwvoaPlm+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X32UPvtm; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22114b800f7so81896355ad.2;
-        Mon, 24 Feb 2025 04:40:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740400843; x=1741005643; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vxDhcIIfOi0Ejcuhqf9fXn1q3Kj1XENHhTye07+0O3o=;
-        b=X32UPvtmPt/kTECk8AdMYyZ0RraFIEl+jW0XV26xkcvVFHR3WGAFpyj+u4bMZFMMrq
-         9Q3rWCLE8mcJ/mfDFZNjmNTA5wsJasPhdLfjAZwKkIz7MTo/fN2zP9KwOGjIfeVs86za
-         qtIvElfjdDj863PGrzE2nLxw+ptY4XQc6/LcLcXlvO3ToxBWogyzxjzQCR12bYaK14Bj
-         Sqd1Gi8VLKHI1IOOLlzNbV9F/SSViaVnej/ZHsUXLG3yCkUaWU+kRh5LL8g79jFFuLxh
-         yfkT/fAp0cYKCgozZsn00KWyvPM4HjkVrN8kC/UsyLAHlWQNaKwWXpxZuHwofHOG511H
-         iUkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740400843; x=1741005643;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vxDhcIIfOi0Ejcuhqf9fXn1q3Kj1XENHhTye07+0O3o=;
-        b=tkmCT4MqwPhQ2OhIDKZTvTb7mJlA51A3D1ldsOyOzOO1rJ5GsgZYpYdj0221c4G4vL
-         um7V8g8mvN8oqB8BKJiVSMqtG9S82ApKDVoyieHrAUZjNaEDJbzJHg7ePe2yCjxLFuQR
-         Q3WREZjYD7c9ioGASaFybl67FwfkI/zX+aeKl0veXApuY0fU/GJzL6lVj53AXJDDkROA
-         9uUrfPoy/V9VbRK1aL6cO+4GOxkzqa1cuzjCn+xl0sEvQ8M8JTAjSdI4kfRQvE0mrxhr
-         vmJs8BCORuUD7oy2re7JAbVFbUE4Y7Y5y3p4CaDJOJ40NQXu3+DidyMNW8tNkoZXBR9N
-         iktQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfDhBN0EB0YgGV4o7fUFdaGTHFbBu8mcXJ0GKDFKatFI9Jcljpmr0jT4kdcbctnc8fJAaj9vsT/F+JqThtpA==@vger.kernel.org, AJvYcCWbBhhXtj9KXsNaGGc1FJAF/G5wjxGwSD3PS5loZNS6Y0GHLo8tLeLLMDvQwJMq/951RyOGkZyiYTru@vger.kernel.org
-X-Gm-Message-State: AOJu0YyukfKy8vflTXo+IygXA0Sp9rHAclQVMOSfGqMdWmm7baC8S+Gf
-	009yooIBEWk7XhnI/HFezQ9mKpwcCf1gBZ1YV1a3q5JyI1Fe40ER
-X-Gm-Gg: ASbGncthWKLnUKUmilc2+WG3I9qvOk7dg2EU36oaeAuNeXyaEGceHjMStEC2/bBEwtO
-	3Awc6BA2KvNgn42WqjIY+dAKvdWMXyXl3e7TL/Z408Oim5kP/otWZIeG9tX0fOAxBOCZM2ax9hj
-	MY0+p3rgeDecRGM4Spr67nWBGlpDlT970ee/DWpwcmEEkAbSkDm3b1sTbdOBouhsbN6ypwAs8tY
-	GaONOPJB+Ck1Em2RhLNoaPJesXfTyIDvjU5e0ajaTCemVWANh7dVYFKGmAfqjnDKFKluNfvJI49
-	0VF83PY5vn083mo191psQbP2cg==
-X-Google-Smtp-Source: AGHT+IHukjlTpSyyANyf1X0RijEHy54FY3sjovR1jYsCe6rqYOD7JUQhxb6PZDsCkAItbtOAJRfGSQ==
-X-Received: by 2002:a17:903:944:b0:220:f449:7415 with SMTP id d9443c01a7336-2219fff18c3mr254529245ad.44.1740400842823;
-        Mon, 24 Feb 2025 04:40:42 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2210005641dsm149187185ad.210.2025.02.24.04.40.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 04:40:42 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id A97A541296DB; Mon, 24 Feb 2025 19:40:39 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux bcachefs <linux-bcachefs@vger.kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Wei Liu <wei.liu@kernel.org>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Purva Yeshi <purvayeshi550@gmail.com>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH 3/3] Documentation: bcachefs: SubmittingPatches: Convert footnotes to reST syntax
-Date: Mon, 24 Feb 2025 19:40:28 +0700
-Message-ID: <20250224124028.42059-4-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224124028.42059-1-bagasdotme@gmail.com>
-References: <20250224124028.42059-1-bagasdotme@gmail.com>
+	s=arc-20240116; t=1740400859; c=relaxed/simple;
+	bh=l0gqURHk5dX6iMu60ku9YofrcSGIX2DN4NM5AdEw9Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EbVgnuv0ko9jl0QRyFTyUEy/X+vnNlLl/nOgT7JqiG1r0trLjkaDlNRJc76rAnw9PHOT5DCOR1zJr6zEN0m3Eo1rlAOXM/c0gt9nB/5rPh5Cz84MyhKSmKPNRfLjN7ZscwvGSK3/Qpi6xMW438yCBRgzSIq95FBlskSS66ilqps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=L+nUgf9b; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740400853; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=JdoIXR/PyO0tsr8CSMm0YjmkZsBotehPGDdTTTCKsR0=;
+	b=L+nUgf9bOWJI07PcDmX2yo1m4VKjTZT/y+b+LG2yzsAVptA5XyO77rcFNgzWHeZZBnWwUl+vIbwEMBZ5LdiWzgopzoL2A1zr6w84M3Q048EUwhqzUtAbmwJZatpzFe5SEtjngFSqOlVOAZ0zB7CW7sKBzsgmn74yLjEVmcBfAz8=
+Received: from 30.74.129.221(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQ7w-07_1740400853 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 24 Feb 2025 20:40:53 +0800
+Message-ID: <26db55bd-31a1-4fb8-8ac1-add64c971841@linux.alibaba.com>
+Date: Mon, 24 Feb 2025 20:40:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3071; i=bagasdotme@gmail.com; h=from:subject; bh=SQLajT4z7bmfJBkPXz2F5dIaF9jtUs4cUyT6QRWnEg4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOl7MvhKFup8/Tn5rp5DaJ6h0toEo6nPTsqwHNLZmVkYv pLL1tC0o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABPZEMbIcHCXodvP1MkhMcUp Fj0L6uuz/02qYZ2w5PzHe/PUo7LsVBgZ9kz6wV2VaHB4/Yeo8pQzU9YmGnvO7Xn5Y+59pvkG80O 3sQIA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] erofs: simplify tail inline pcluster handling
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250224123747.1387122-1-hsiangkao@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20250224123747.1387122-1-hsiangkao@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Footnotes list are outputted in htmldocs simply as long-running
-paragraph instead. Use reST numbered footnotes syntax for the job.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- .../bcachefs/SubmittingPatches.rst            | 22 ++++++++++---------
- 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/filesystems/bcachefs/SubmittingPatches.rst b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
-index ece0e85d259807..a455f9cfd15c79 100644
---- a/Documentation/filesystems/bcachefs/SubmittingPatches.rst
-+++ b/Documentation/filesystems/bcachefs/SubmittingPatches.rst
-@@ -7,7 +7,7 @@ Submission checklist
- --------------------
- 
- Patches must be tested before being submitted, either with the xfstests suite
--[0], or the full bcachefs test suite in ktest [1], depending on what's being
-+[0]_, or the full bcachefs test suite in ktest [1]_, depending on what's being
- touched. Note that ktest wraps xfstests and will be an easier method to running
- it for most users; it includes single-command wrappers for all the mainstream
- in-kernel local filesystems.
-@@ -39,7 +39,7 @@ prefereable to let a server farm do it in parallel, and then have the results
- in a nice test dashboard (which can tell you which failures are new, and
- presents results in a git log view, avoiding the need for most bisecting).
- 
--That exists [2], and community members may request an account. If you work for
-+That exists [2]_, and community members may request an account. If you work for
- a big tech company, you'll need to help out with server costs to get access -
- but the CI is not restricted to running bcachefs tests: it runs any ktest test
- (which generally makes it easy to wrap other tests that can run in qemu).
-@@ -87,17 +87,19 @@ Other things to think about
- Mailing list, IRC
- -----------------
- 
--Patches should hit the list [3], but much discussion and code review happens on
--IRC as well [4]; many people appreciate the more conversational approach and
--quicker feedback.
-+Patches should hit the list [3]_, but much discussion and code review happens
-+on IRC as well [4]_; many people appreciate the more conversational approach
-+and quicker feedback.
- 
- Additionally, we have a lively user community doing excellent QA work, which
- exists primarily on IRC. Please make use of that resource; user feedback is
- important for any nontrivial feature, and documenting it in commit messages
- would be a good idea.
- 
--[0]: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
--[1]: https://evilpiepirate.org/git/ktest.git/
--[2]: https://evilpiepirate.org/~testdashboard/ci/
--[3]: linux-bcachefs@vger.kernel.org
--[4]: irc.oftc.net#bcache, #bcachefs-dev
-+.. rubric:: References
-+
-+.. [0] git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-+.. [1] https://evilpiepirate.org/git/ktest.git/
-+.. [2] https://evilpiepirate.org/~testdashboard/ci/
-+.. [3] linux-bcachefs@vger.kernel.org
-+.. [4] irc.oftc.net#bcache, #bcachefs-dev
--- 
-An old man doll... just what I always wanted! - Clara
+On 2025/2/24 20:37, Gao Xiang wrote:
+> Commit ab92184ff8f1 ("erofs: add on-disk compressed tail-packing inline
+> support") introduced the flag `Z_EROFS_ADVISE_INLINE_PCLUSTER`, which is
+> redundant because `h_idata_size != 0` serves the same purpose.
+> 
+> Additionally, merge `z_idataoff` and `z_fragmentoff` since these two
+> features are mutually exclusive for a given inode.
+> 
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+> new patch.
 
+Note that `Z_EROFS_ADVISE_INLINE_PCLUSTER` now is left for
+the compatibility purposes, only `mkfs.erofs` uses it in
+the future.
+
+Thanks,
+Gao Xiang
 
