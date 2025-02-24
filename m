@@ -1,188 +1,207 @@
-Return-Path: <linux-kernel+bounces-529584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21A97A42833
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:46:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3324DA42837
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA251899795
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832F33B8813
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB839263F57;
-	Mon, 24 Feb 2025 16:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D662641E6;
+	Mon, 24 Feb 2025 16:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xhhrvAK0"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZ7jqDjM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92AF7263F32
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C622638AC;
+	Mon, 24 Feb 2025 16:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740415450; cv=none; b=Iu5m4BVJ3usVKfmbQ/uS1i8mkgo7XLMIzdKBZxJmFVxztpAUfrSQPWycXyFKcvmVJvcVEwB0bOomWjIGq1tezpgpkJ8ofTkzj1A6HdLpDJohKU1hEQqPic4HLLInp+gfUiDMYPM1JFXoyRF99G3IPgZuhWIRZn5PXdq46ZO6jYI=
+	t=1740415455; cv=none; b=d4P7G8S+3mG0WHlwzAKi4N2UqsSa25LNlvuSTsLczwt4wZwYAIw4+Yi2ot4fVY5swKiFAoGN1/Si0qyj+RejRMJr2ExDkQRJ0P2AYVSbhBEjWS9ANedPlf5saOb/lZ4MbQSA6bNPUXasvHKoC5NTnApspbjrWPvPmeTmeuvWpBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740415450; c=relaxed/simple;
-	bh=lsBzBusKOpwT3CwNGtzOUDsl4urSNfOiHa9mnOLQcac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYmS6LTYnSzSPpPT/rOmX3EFPuLm/A0ak7VjaGY8np2IFF1iOCoYfrPlprFyr8euhFjNAFxKRlY0O4/xqR4zUyS+DCNUCHB79j9T5Tsp8GPZ7Nb/x4dU2gTEH3EwaRvVvM+1M5QeUK9PNZ21lMGK4tjuY40qT6yhpyUkzTo8GHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xhhrvAK0; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-220d39a5627so70778505ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:44:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740415448; x=1741020248; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6d5XSfEwRqWaYFLWfE4Y4ohPqjDkgrU++dRrHmEqq/c=;
-        b=xhhrvAK0xI/C9ggeY8sKeSx84Y0sS8vr/V6dGz07SdbxzEGzaGS7UhdXuTbZlYASMz
-         mDckt7RRcASI8BXv9CvoX0Zs5vfN+siVwaFGhUYr4WGI6wVoqUv66gZlEeMe37FIyOCE
-         jm7kAhnZ13IGpTRBC1XwuoKMqHGn7a3tE4KRInOHla9kmldQXWth23ZNGBkAvT7YM3Ph
-         OW02flrlI2W6cxyV9+POXNt132oVc059ng7hXco4rOHxSsDm5aXht5Uiy51/ALYf0bCX
-         GV2znOpT13aUrhqrWX1Fkyys7eonHcLJIx2hXiIwlKjMXxTCxvbcNaDME0HtKlu3aVBv
-         puDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740415448; x=1741020248;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6d5XSfEwRqWaYFLWfE4Y4ohPqjDkgrU++dRrHmEqq/c=;
-        b=J8MgRG+RNHrjaqoJ8icgQT2ZXKabkkUgXTh3Fvxo9FJEi/n6H1TuQv/wXaHTiXXkXG
-         VlOVvnsX0Dc7xxL3TBFWhssoRMoJzLF+cDPbPyuZgTFMhDSK1FgBsF/voiibtZYZw1KU
-         Za2Gl5Ry5/R/WcVtOgmmoW1CMdPvy19PGtYQ66pbMBj1VxEclmi/R34HsWcDLeWQ0TRJ
-         /WNmTqq415Mp/yq4z+HkcWgLlCmInl3LrpPiSnLoQmvV/Kohpnf20NwFh8dfjKV4Oo+T
-         Nt2HrRnZXF8mTPYoXMy2yTTtG0Ugc3phdTYhw7YRQIMK2fyheuesYgiFzz9SRLAI8UOR
-         L2EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHHDjmX8/6fEtSyvHzgKuI0ug8yRhOaF7PcVTSegcSWq4bL6QVWPHg05l6fVVsCAoZMxcDOvTkglgcCz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTvLurPGlE1CVX/x8XPTPGzGv/EKo1K+rHOBLwmsqFR/XW2XTC
-	OGkr5nTpppHblN13tGc94yHyHxT7/Sd0fBLoKmEDwO47aPnlNuywjaPt2nywXQ==
-X-Gm-Gg: ASbGnctk1Q0KoMSatb+4a0VLbOlUEpcBsFXXG1K+56tSJjn1sZzEZKaLFcXI7TO5vfa
-	xUiXMLMfb4aIQajDXLEMTDMdjCPurDQrXuD555bgUW9AOkXD2hoyAs8vZVfUjYfTP/t853kcn60
-	kLNeYNMJK5dE52kp0J9MV9hENgPxN+k9eXPwurifkwxJqMfEoy28zkBGGwkvMIl6yFvnwZ1+s0U
-	vcnfaqDHtTsYSJOHLu9zcGi/YqJn2BiMHIqePRpbMOUlid6pzN6qBkCBbx++hLuEN9oJmH1y0OF
-	uo+Rbk1G/adFssRD66oT0FNUpRoPZ+yB1s2Q
-X-Google-Smtp-Source: AGHT+IFG1lGtUN3MM7H9ZJAba5MymArVGS0ryXDNHwp0DEkpN0qPAZv5NG2dk7v/JN0eP4aRNmsZlw==
-X-Received: by 2002:a17:903:2f43:b0:215:89a0:416f with SMTP id d9443c01a7336-2219ffc2dcbmr207030045ad.30.1740415447841;
-        Mon, 24 Feb 2025 08:44:07 -0800 (PST)
-Received: from thinkpad ([36.255.17.202])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d545c9casm183409845ad.130.2025.02.24.08.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 08:44:07 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:14:00 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Johan Hovold <johan@kernel.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mhi@lists.linux.dev,
-	kernel@collabora.com, ath11k@lists.infradead.org,
-	jjohnson@kernel.org
-Subject: Re: [BUG REPORT] MHI's resume from hibernate is broken
-Message-ID: <20250224164400.w3lpzxxwfbrj5lb6@thinkpad>
-References: <59c036b6-a3d6-403b-8bb0-566a17f72abc@collabora.com>
- <20250214070447.scs6lpytjtecz3ko@thinkpad>
- <1cd4a1ed-f4e7-4c7b-a19f-f79afddbe310@collabora.com>
- <20250220075034.unsd5cq7xkip2by6@thinkpad>
- <ec8a01a3-5eaf-4fba-bb85-e7a677877e5f@collabora.com>
+	s=arc-20240116; t=1740415455; c=relaxed/simple;
+	bh=4vKvW2vFq+jrpSt/7ZJtCDqcqBjO57UWmfG8VBjnp4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AH1ia3RaKYwNbSu9c+hZijURZlpYUwyayZbofZcdzw1CmpkUVrTPk5aiYGSyYmTzk0Inh054oCpOxQ7Q1J6D/ZjyMmUz1ED2AbWPxAfew6LumiBEoj2WH+TRebu5a3wlurogmzAkczRxhNNyZhtv6x49ij82c50N/tGr5hh+Loc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZ7jqDjM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38C53C4CEDD;
+	Mon, 24 Feb 2025 16:44:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740415454;
+	bh=4vKvW2vFq+jrpSt/7ZJtCDqcqBjO57UWmfG8VBjnp4w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=MZ7jqDjMd3WvUU1/RcIHisfmhUcs1edC2t626orE53nxLw28kguAHrLHsvodaRhs2
+	 E/8lRSn420GmHzSRZNH8rpOrg2+19BOFGjArEsgvuAlzhJlNq6fvSDnAM93RFETdPS
+	 JGGG+aYy1RdGW0138Zygtad/aB9dr/F77w46aDoK3tqRm6uiJbuxqstoD9rXmzeFqX
+	 k92cfA0rs6YofrMmEYvpq6mI/qRknhOZgrgM9W7u/X/+WZ0CnaCe8JoDsoULb3kjO3
+	 qsrNsUQFv016c8/YcIwbik1nxzKMF0JqjDRvQdvE2R4PveKGKy9pi8J2lxP2qk5GTZ
+	 CHtaBmEQr6JLQ==
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Marc Zyngier <maz@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>, Will Deacon <will@kernel.org>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Peter Collingbourne <pcc@google.com>
+Subject: Re: [PATCH] KVM: arm64: Drop mte_allowed check during memslot creation
+In-Reply-To: <86jz9fqtbk.wl-maz@kernel.org>
+References: <20250224093938.3934386-1-aneesh.kumar@kernel.org>
+ <Z7xSfVME4z2ComUm@arm.com> <86ldtvr0nl.wl-maz@kernel.org>
+ <Z7yElHKrJGn8XuPS@arm.com> <86jz9fqtbk.wl-maz@kernel.org>
+Date: Mon, 24 Feb 2025 22:14:06 +0530
+Message-ID: <yq5aseo3gund.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec8a01a3-5eaf-4fba-bb85-e7a677877e5f@collabora.com>
+Content-Type: text/plain
 
-On Thu, Feb 20, 2025 at 05:34:06PM +0500, Muhammad Usama Anjum wrote:
-> On 2/20/25 12:50 PM, Manivannan Sadhasivam wrote:
-> > On Mon, Feb 17, 2025 at 07:35:50PM +0500, Muhammad Usama Anjum wrote:
-> >> On 2/14/25 12:04 PM, Manivannan Sadhasivam wrote:
-> >>> Hi,
-> >> Thank you so much for replying.
-> >>
-> >>>
-> >>> + ath11k list and Jeff
-> >>>
-> >>> On Tue, Feb 11, 2025 at 01:15:55PM +0500, Muhammad Usama Anjum wrote:
-> >>>> Hi,
-> >>>>
-> >>>> I've been digging in the MHI code to find the reason behind broken
-> >>>> resume from hibernation for MHI. The same resume function is used
-> >>>> for both resume from suspend and resume from hibernation. The resume
-> >>>> from suspend works fine because at resume time the state of MHI is 
-> >>>> MHI_STATE_M3. On the other hand, the state is MHI_STATE_RESET when
-> >>>> we resume from hibernation.
-> >>>>
-> >>>> It seems resume from MHI_STATE_RESET state isn't correctly supported.
-> >>>> The channel state is MHI_CH_STATE_ENABLED at this point. We get error
-> >>>> while switching channel state from MHI_CH_STATE_ENABLE to
-> >>>> MHI_CH_STATE_RUNNING. Hence, channel state change fails and later mhi
-> >>>> resume fails as well. 
-> >>>>
-> >>>> I've put some debug prints to understand the issue. These may be
-> >>>> helpful:
-> >>>>
-> >>>> [  669.032683] mhi_update_channel_state: switch to MHI_CH_STATE_TYPE_START[2] channel state not possible cuzof channel current state[1]. mhi state: [0] Return -EINVAL
-> >>>> [  669.032685] mhi_prepare_channel: mhi_update_channel_state to MHI_CH_STATE_TYPE_START[2] returned -22
-> >>>> [  669.032693] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
-> >>>>
-> >>>
-> >>> Thanks for the report!
-> >>>
-> >>> Could you please enable the MHI and ath11k debug logs and share the full dmesg
-> >>> to help us understand the issue better?
-> >> The ath11k debug was already enabled. CONFIG_MHI_BUS_DEBUG wasn't enabled. 
-> > 
-> > Sorry for not being clear. I asked you to enable the dev_dbg() logs in the MHI
-> > driver. But it is not required. See below.
-> I've disabled the MHI_BUG_DEBUG. It only enables some files. Ideally if those files
-> being used, there shouldn't be any difference. But they are definitely changing the
-> timings.
-> 
-> > 
-> >> I've
-> >> enabled it and now the hibernate is working without any issue. It is very strange
-> >> how can CONFIG_MHI_BUS_DEBUG make any difference. I don't have much background on
-> >> how it is helping.
-> >>
-> > 
-> > Probably some timing issue. But enabling the MHI debug logs could also hide the
-> > issue. So you should disable the CONFIG_MHI_BUS_DEBUG option and collect the MHI
-> > trace logs that we recently added.
-> Disabled the MHI_BUS_DEBUG and collected logs by Dynamic debug:
-> [  584.040189] mhi mhi0: Allowing M3 transition
-> [  584.040202] mhi mhi0: Waiting for M3 completion
-> [  584.040480] mhi mhi0: State change event to state: M3
-> ..
-> [  584.535478] qcom_mhi_qrtr mhi0_IPCR: failed to prepare for autoqueue transfer -22
-> [  584.535482] qcom_mhi_qrtr mhi0_IPCR: PM: dpm_run_callback(): qcom_mhi_qrtr_pm_resume_early [qrtr_mhi] returns -22
-> [  584.535490] qcom_mhi_qrtr mhi0_IPCR: PM: failed to restore early: error -22
-> [  584.831583] mhi mhi0: Entered with PM state: M3, MHI state: M3
-> 
-> It seems like the state save was success at hibernate time. The error is originating
-> at resume from hibernation.
-> 
+Marc Zyngier <maz@kernel.org> writes:
 
-I just tried hibernation on my RB5 board featuring QCA6390 WLAN chip which makes
-use of ath11k driver. I did encounter the resume failure, but the error log was
-slightly different. Then looking at the ath11k driver made me realize that they
-reverted the hibernation support due to suspend issue reported on some Lenovo
-platforms: 2f833e8948d6 ("Revert "wifi: ath11k: support hibernation"").
+> On Mon, 24 Feb 2025 14:39:16 +0000,
+> Catalin Marinas <catalin.marinas@arm.com> wrote:
+>>
+>> On Mon, Feb 24, 2025 at 12:24:14PM +0000, Marc Zyngier wrote:
+>> > On Mon, 24 Feb 2025 11:05:33 +0000,
+>> > Catalin Marinas <catalin.marinas@arm.com> wrote:
+>> > > On Mon, Feb 24, 2025 at 03:09:38PM +0530, Aneesh Kumar K.V (Arm) wrote:
+>> > > > This change is needed because, without it, users are not able to use MTE
+>> > > > with VFIO passthrough (currently the mapping is either Device or
+>> > > > NonCacheable for which tag access check is not applied.), as shown
+>> > > > below (kvmtool VMM).
+>> > >
+>> > > Another nit: "users are not able to user VFIO passthrough when MTE is
+>> > > enabled". At a first read, the above sounded to me like one wants to
+>> > > enable MTE for VFIO passthrough mappings.
+>> >
+>> > What the commit message doesn't spell out is how MTE and VFIO are
+>> > interacting here. I also don't understand the reference to Device or
+>> > NC memory here.
+>>
+>> I guess it's saying that the guest cannot turn MTE on (Normal Tagged)
+>> for these ranges anyway since Stage 2 is Device or Normal NC. So we
+>> don't break any use-case specific to VFIO.
+>>
+>> > Isn't the issue that DMA doesn't check/update tags, and therefore it
+>> > makes little sense to prevent non-tagged memory being associated with
+>> > a memslot?
+>>
+>> The issue is that some MMIO memory range that does not support MTE
+>> (well, all MMIO) could be mapped by the guest as Normal Tagged and we
+>> have no clue what the hardware does as tag accesses, hence we currently
+>> prevent it altogether. It's not about DMA.
+>>
+>> This patch still prevents such MMIO+MTE mappings but moves the decision
+>> to user_mem_abort() and it's slightly more relaxed - only rejecting it
+>> if !VM_MTE_ALLOWED _and_ the Stage 2 is cacheable. The side-effect is
+>> that it allows device assignment into the guest since Stage 2 is not
+>> Normal Cacheable (at least for now, we have some patches Ankit but they
+>> handle the MTE case).
+>
+> The other side effect is that it also allows non-tagged cacheable
+> memory to be given to the MTE-enabled guest, and the guest has no way
+> to distinguish between what is tagged and what's not.
+>
+>>
+>> > My other concern is that this gives pretty poor consistency to the
+>> > guest, which cannot know what can be tagged and what cannot, and
+>> > breaks a guarantee that the guest should be able to rely on.
+>>
+>> The guest should not set Normal Tagged on anything other than what it
+>> gets as standard RAM. We are not changing this here. KVM than needs to
+>> prevent a broken/malicious guest from setting MTE on other (physical)
+>> ranges that don't support MTE. Currently it can only do this by forcing
+>> Device or Normal NC (or disable MTE altogether). Later we'll add
+>> FEAT_MTE_PERM to permit Stage 2 Cacheable but trap on tag accesses.
+>>
+>> The ABI change is just for the VMM, the guest shouldn't be aware as
+>> long as it sticks to the typical recommendations for MTE - only enable
+>> on standard RAM.
+>
+> See above. You fall into the same trap with standard memory, since you
+> now allow userspace to mix things at will, and only realise something
+> has gone wrong on access (and -EFAULT is not very useful).
+>
+>>
+>> Does any VMM rely on the memory slot being rejected on registration if
+>> it does not support MTE? After this change, we'd get an exit to the VMM
+>> on guest access with MTE turned on (even if it's not mapped as such at
+>> Stage 1).
+>
+> I really don't know what userspace expects w.r.t. mixing tagged and
+> non-tagged memory. But I don't expect anything good to come out of it,
+> given that we provide zero information about the fault context.
+>
+> Honestly, if we are going to change this, then let's make sure we give
+> enough information for userspace to go and fix the mess. Not just "it
+> all went wrong".
+>
 
-So that explained the resume failure. I reverted the revert and that allowed me
-to resume properly from hibernation. So please try to do the same and see if it
-helps you.
+What if we trigger a memory fault exit with the TAGACCESS flag, allowing
+the VMM to use the GPA to retrieve additional details and print extra
+information to aid in analysis? BTW, we will do this on the first fault
+in cacheable, non-tagged memory even if there is no tagaccess in that
+region. This can be further improved using the NoTagAccess series I
+posted earlier, which ensures the memory fault exit occurs only on
+actual tag access
 
-- Mani
+Something like below?
 
--- 
-மணிவண்ணன் சதாசிவம்
+modified   Documentation/virt/kvm/api.rst
+@@ -7121,6 +7121,9 @@ describes properties of the faulting access that are likely pertinent:
+  - KVM_MEMORY_EXIT_FLAG_PRIVATE - When set, indicates the memory fault occurred
+    on a private memory access.  When clear, indicates the fault occurred on a
+    shared access.
++ - KVM_MEMORY_EXIT_FLAG_TAGACCESS - When set, indicates the memory fault
++   occurred due to allocation tag access on a memory region that doesn't support
++   allocation tags.
+ 
+ Note!  KVM_EXIT_MEMORY_FAULT is unique among all KVM exit reasons in that it
+ accompanies a return code of '-1', not '0'!  errno will always be set to EFAULT
+modified   arch/arm64/kvm/mmu.c
+@@ -1695,6 +1695,7 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+ 		if (mte_allowed) {
+ 			sanitise_mte_tags(kvm, pfn, vma_pagesize);
+ 		} else {
++			kvm_prepare_tagaccess_exit(vcpu, gfn << PAGE_SHIFT, PAGE_SIZE);
+ 			ret = -EFAULT;
+ 			goto out_unlock;
+ 		}
+modified   include/linux/kvm_host.h
+@@ -2489,6 +2489,16 @@ static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+ 		vcpu->run->memory_fault.flags |= KVM_MEMORY_EXIT_FLAG_PRIVATE;
+ }
+ 
++static inline void kvm_prepare_tagaccess_exit(struct kvm_vcpu *vcpu,
++					      gpa_t gpa, gpa_t size)
++{
++	vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
++	vcpu->run->memory_fault.flags = KVM_MEMORY_EXIT_FLAG_TAGACCESS;
++	vcpu->run->memory_fault.gpa = gpa;
++	vcpu->run->memory_fault.size = size;
++}
++
++
+ #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+ static inline unsigned long kvm_get_memory_attributes(struct kvm *kvm, gfn_t gfn)
+ {
+modified   include/uapi/linux/kvm.h
+@@ -442,6 +442,7 @@ struct kvm_run {
+ 		/* KVM_EXIT_MEMORY_FAULT */
+ 		struct {
+ #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
++#define KVM_MEMORY_EXIT_FLAG_TAGACCESS	(1ULL << 4)
+ 			__u64 flags;
+ 			__u64 gpa;
+ 			__u64 size;
 
