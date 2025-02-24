@@ -1,110 +1,185 @@
-Return-Path: <linux-kernel+bounces-529194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9140A42179
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:44:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADCE4A420D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 277313B8E3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0A9D7A73C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED0924EF67;
-	Mon, 24 Feb 2025 13:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9CC248865;
+	Mon, 24 Feb 2025 13:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1qIi2DA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EdtVjHcT"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C5E24BBF3;
-	Mon, 24 Feb 2025 13:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B576286340;
+	Mon, 24 Feb 2025 13:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404194; cv=none; b=O8eVEhAlhYfVaHsyWL/w5x1Xdhdwtn9a1V/co+dj6c4YcZUUrp9SgO7GGDzrdHQ5XS8CSsCWkU/8E2O5wkgJNqTW5JIOIVtax5/dwnzGrG7XDxNg2eVaORgf3GjPb3imtSjSIBKoWrSe2pazI2yckWwc+dhFbH5W/s6QWKdfmKA=
+	t=1740404226; cv=none; b=PsIBmA63x32i1TYoYCUacvpTf7iSdOpJM56QuswCv0MNX/JHWHz4IL8gV5GW5sVcdBxtk4jmw7ONcxMIoZBai2pZKg8GrXNo6X+o+FbSTTFpkjA17hGF503GJOqRPJAREt6l6qYgwMxRvSFPQDFII1WRtexxqx3PGf9Q1fyIH1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404194; c=relaxed/simple;
-	bh=VhFuW1YX+WDguNbx1Pqhdgwyq1wth1UVzs2bcOFTY6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gs8X8VW//irdQ4FqWcmlvjSqmbIxPQX4i2vbp3PumsdBPCQC/OMIBLTiNoTy88iLP4XA4fydK8FDDJD6Pa59gICoPINvAbeNQ7SvTDf88+fdHm7LX5U49416rSJXNgx46uvCOraOb2+daIM3ppojJQVbBFgAR7tmQ3DpnJwBeXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1qIi2DA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03DC5C4CED6;
-	Mon, 24 Feb 2025 13:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740404193;
-	bh=VhFuW1YX+WDguNbx1Pqhdgwyq1wth1UVzs2bcOFTY6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G1qIi2DAwoQ/P1Re3G3WBaoT1KaYq+h3Yy0OxGNJWSsO8k5Nle1HFV3fXkLVu/7ol
-	 bRA4ewU6jH6usaAvxmTaUuBSmVSNpymyu4x1NqhaaYH1buNB9MpXaSFUfjdCZkESxW
-	 50IkRrzj1TRwCFjbO8EJUiNbwIcB0qNs3m9/uaTSJa8Ef09V2g3Vvp0cz9cCNmKd/g
-	 OfS0xiMSu4egIuoxXWwz9QziulS0mWQ5FVPvuq9qw2yQucnPyey5OaOlgRl9c/PL+f
-	 Em5/L/SKjsRvBpAMG7u68U98/CwIzi7gciO4gyYX9C+NsYuwpfEtBfdUHtvnb//cUB
-	 d7S9jQngIHsIw==
-Date: Mon, 24 Feb 2025 13:36:27 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Steev Klimaszewski <steev@kali.org>
-Cc: Alexey Klimov <alexey.klimov@linaro.org>,
-	srinivas.kandagatla@linaro.org, lgirdwood@gmail.com,
-	krzysztof.kozlowski@linaro.org, perex@perex.cz, tiwai@suse.com,
-	jdelvare@suse.com, linux@roeck-us.net, linux-sound@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v2] ASoC: codecs: wsa883x: Implement temperature reading
- and hwmon
-Message-ID: <1a667486-590d-47c9-b23a-069e3d51cb54@sirena.org.uk>
-References: <20250221032141.1206902-1-alexey.klimov@linaro.org>
- <CAKXuJqj4zKfA4HNNcooG5Ffqi+EKQ1RvuzWndZd=htoatwszOw@mail.gmail.com>
+	s=arc-20240116; t=1740404226; c=relaxed/simple;
+	bh=9bv/BkfKEIv9oVjGUQsKqnEbdHXpyR6xGX9zMJD+pwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qNIQgfRQxpJzOIKRw6eugWI5nxvcKBnbdspjIbA0QfWSaCeaNi9ez+f0AvmPV7qkXbH5GGfdnT3wjMk/jUyBjxKlLuLCZn6qQL6u8LQ2DN5Mqv+01MGEh/8WMHgKILjePlnW+13W2ZS/9PTbguEtNiu/z4H9lu8Tm2WDDyOki34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EdtVjHcT; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-546210287c1so4589900e87.2;
+        Mon, 24 Feb 2025 05:37:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740404223; x=1741009023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wdv8+U0yij4s1XgNV9ma7hVlOv6Caj6S/IBFLz/1n8s=;
+        b=EdtVjHcTsN7lq5u4hj5DeTtAIzekBw3lZFiqSh4VnVaXrb9l0oWyxEGiEPjU0E01ps
+         Dz3obP4TEqZThzHATEoX+XhGnw7li3vpRHA/KiiognY94LTb6C/XsSeBCpjEU3TRdbmw
+         skFP+cmi6N6MX2BFPBTrgIyA1lc3hOHmk8B4qA0zWsDEZlbWcII+HImXy8gGQxPLpx4m
+         6HXM5xNGK2eGyvKbJ57Rk6Og3BCIkqKX6AABHewDTJQHtCEjRclUl0KTeB3DPMrwUvXP
+         B8Ry+gUpXz2CAqsSsoj7OsgFeS2vFjEX39Kep2j1qYYdxbMYmviSZDmUh/hNAvOgxbHG
+         UT0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740404223; x=1741009023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wdv8+U0yij4s1XgNV9ma7hVlOv6Caj6S/IBFLz/1n8s=;
+        b=mnQcZt6Ifw33rfpplTCjSal/UX5lkQseuRPdM9fCFOJTYKkFHs82WBKLWQzrkGCZHZ
+         hVWyz1HbPehbHSGZ5D5/XaiPEldk2C8yCwigghaeRPfEFHLCjw0V1vNg38n58n7a1euk
+         kZwBjBpOcoC9jZlQhQLrgwjjwXuYhcwowMpnCOqvVFb9naT0E+17BxTrPOkV1LmGpZkS
+         1HNnuVzqD8+ayny37rljxl9u/Ui3fLo3plnAbuwCrHzNi9ZTuoqIzAEPE1M/FfDTVjpF
+         uQaV1fFSQGoBRFLYNBjUM7mNr14D6mpH1gdqW3I+zri5kttB1N+rdYmcoTEyCKufNohW
+         tzvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxtP2h0TmBfG6o3zAlzyM3rETGRBXgagGsyYOWGFS/VhKFct61tfhWXzZPcI1SMzup2QxDDzfLozPicX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyDDKajMvtqwqjcNoweZxqD0kc5jdtc3EEp9mnLX92CoSND+8P
+	YYipvkO0lqBZsmaIb5jEQBZdHdgW6+dMv+8nWGBtliHjF/FhVPrs
+X-Gm-Gg: ASbGncs9DH8ih2P8FVs8FhiUWrbzqA+H3Gr1cOtjzlyQVEKXCGDpPATXxg1TyBXuqPq
+	Cio4QKScIYxJQzsyYcwrafq5vVLI0Ux0TAkODs6MP7xpPeKaNybqRwC+FwGLTCrifELoGbKOjxI
+	AGjQqQbeD17eBPCv4HXlyAGXDVS1piDUDQBHzm11vNcXMmU0xQIpgHqS9AnGCOZT/02HxAfQGaN
+	EXY/g3O5zUJiYtGS2adBLgXts21aBwqqzRay24fyH0Fuz1QN5l7Ra0NSEVek56UkOQAayD2gK9i
+	l9e/3+4YVhfemUR+kT1b4Q==
+X-Google-Smtp-Source: AGHT+IF9V3z7jyWk2I52KnpgJLgcQTTOJI1gAW4Nz7p5BXjwR8EeAlRkkNBmXL0VdG/Lj6HLGi4t4g==
+X-Received: by 2002:a05:6512:1244:b0:545:ee3:f3cd with SMTP id 2adb3069b0e04-5483912fd2dmr4529859e87.9.1740404222396;
+        Mon, 24 Feb 2025 05:37:02 -0800 (PST)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5461eb04602sm2424799e87.68.2025.02.24.05.37.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 05:37:01 -0800 (PST)
+From: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+To: "Paul E . McKenney" <paulmck@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Cheung Wall <zzqq0103.hey@gmail.com>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: [PATCH v2 1/3] rcutorture: Allow a negative value for nfakewriters
+Date: Mon, 24 Feb 2025 14:36:57 +0100
+Message-Id: <20250224133659.879074-1-urezki@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9sSdn6rh6EA/NDBo"
-Content-Disposition: inline
-In-Reply-To: <CAKXuJqj4zKfA4HNNcooG5Ffqi+EKQ1RvuzWndZd=htoatwszOw@mail.gmail.com>
-X-Cookie: Phone call for chucky-pooh.
+Content-Transfer-Encoding: 8bit
 
+Currently "nfakewriters" parameter can be set to any value but
+there is no possibility to adjust it automatically based on how
+many CPUs a system has where a test is run on.
 
---9sSdn6rh6EA/NDBo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To address this, if the "nfakewriters" is set to negative it will
+be adjusted to num_online_cpus() during torture initialization.
 
-On Fri, Feb 21, 2025 at 02:10:44PM -0600, Steev Klimaszewski wrote:
-> Hi Alexey,
->=20
-> On Thu, Feb 20, 2025 at 9:21=E2=80=AFPM Alexey Klimov <alexey.klimov@lina=
-ro.org> wrote:
-> >
-> > Read temperature of the amplifier and expose it via hwmon interface, wh=
-ich
-> > will be later used during calibration of speaker protection algorithms.
-> > The method is the same as for wsa884x and therefore this is based on
-> > Krzysztof Kozlowski's approach implemented in commit 6b99dc62d940 ("ASo=
-C:
-> > codecs: wsa884x: Implement temperature reading and hwmon").
+Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+---
+ kernel/rcu/rcutorture.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index d98b3bd6d91f..f376262532ce 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -148,6 +148,7 @@ MODULE_PARM_DESC(torture_type, "Type of RCU to torture (rcu, srcu, ...)");
+ 
+ static int nrealnocbers;
+ static int nrealreaders;
++static int nrealfakewriters;
+ static struct task_struct *writer_task;
+ static struct task_struct **fakewriter_tasks;
+ static struct task_struct **reader_tasks;
+@@ -1763,7 +1764,7 @@ rcu_torture_fakewriter(void *arg)
+ 	do {
+ 		torture_hrtimeout_jiffies(torture_random(&rand) % 10, &rand);
+ 		if (cur_ops->cb_barrier != NULL &&
+-		    torture_random(&rand) % (nfakewriters * 8) == 0) {
++		    torture_random(&rand) % (nrealfakewriters * 8) == 0) {
+ 			cur_ops->cb_barrier();
+ 		} else {
+ 			switch (synctype[torture_random(&rand) % nsynctypes]) {
+@@ -2568,7 +2569,7 @@ rcu_torture_print_module_parms(struct rcu_torture_ops *cur_ops, const char *tag)
+ 		 "nocbs_nthreads=%d nocbs_toggle=%d "
+ 		 "test_nmis=%d "
+ 		 "preempt_duration=%d preempt_interval=%d\n",
+-		 torture_type, tag, nrealreaders, nfakewriters,
++		 torture_type, tag, nrealreaders, nrealfakewriters,
+ 		 stat_interval, verbose, test_no_idle_hz, shuffle_interval,
+ 		 stutter, irqreader, fqs_duration, fqs_holdoff, fqs_stutter,
+ 		 test_boost, cur_ops->can_boost,
+@@ -3644,7 +3645,7 @@ rcu_torture_cleanup(void)
+ 	rcu_torture_reader_mbchk = NULL;
+ 
+ 	if (fakewriter_tasks) {
+-		for (i = 0; i < nfakewriters; i++)
++		for (i = 0; i < nrealfakewriters; i++)
+ 			torture_stop_kthread(rcu_torture_fakewriter,
+ 					     fakewriter_tasks[i]);
+ 		kfree(fakewriter_tasks);
+@@ -4066,6 +4067,14 @@ rcu_torture_init(void)
+ 
+ 	rcu_torture_init_srcu_lockdep();
+ 
++	if (nfakewriters >= 0) {
++		nrealfakewriters = nfakewriters;
++	} else {
++		nrealfakewriters = num_online_cpus() - 2 - nfakewriters;
++		if (nrealfakewriters <= 0)
++			nrealfakewriters = 1;
++	}
++
+ 	if (nreaders >= 0) {
+ 		nrealreaders = nreaders;
+ 	} else {
+@@ -4122,8 +4131,9 @@ rcu_torture_init(void)
+ 					  writer_task);
+ 	if (torture_init_error(firsterr))
+ 		goto unwind;
+-	if (nfakewriters > 0) {
+-		fakewriter_tasks = kcalloc(nfakewriters,
++
++	if (nrealfakewriters > 0) {
++		fakewriter_tasks = kcalloc(nrealfakewriters,
+ 					   sizeof(fakewriter_tasks[0]),
+ 					   GFP_KERNEL);
+ 		if (fakewriter_tasks == NULL) {
+@@ -4132,7 +4142,7 @@ rcu_torture_init(void)
+ 			goto unwind;
+ 		}
+ 	}
+-	for (i = 0; i < nfakewriters; i++) {
++	for (i = 0; i < nrealfakewriters; i++) {
+ 		firsterr = torture_create_kthread(rcu_torture_fakewriter,
+ 						  NULL, fakewriter_tasks[i]);
+ 		if (torture_init_error(firsterr))
+-- 
+2.39.5
 
---9sSdn6rh6EA/NDBo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme8ddsACgkQJNaLcl1U
-h9B8igf8DvVM3ehtTA/kt8PFdlYgC7fDa+W9NdQiGnL5dBWxZHkjW/K/+0BdZcLZ
-oUYwbPazrLOk/UNutZEPtmTeA/tsDICgJkRqo4JNr+ieJCYi5cx4ndnC41p9NaN+
-fBJmvIwp5fR3Xf7xqcNUYODzUV4up5UNcSrZ6XLbe7Gu9ARUDnbysW6xiDPrwT5f
-Vs4Dxbebd3DAc6AYaUY/238U7UMIs1grbd3n31BEDpHqARVEacRfrDs3T6HfJMcG
-QYifRzsro6uoZYLyqEQDQ8Arxz5mEXpJBMK1xUdtNPH3qElOLdhR0ilIJlGRmKIH
-fATfb92v3UosKMkBU1NWq2aU3ph4Gg==
-=v9FJ
------END PGP SIGNATURE-----
-
---9sSdn6rh6EA/NDBo--
 
