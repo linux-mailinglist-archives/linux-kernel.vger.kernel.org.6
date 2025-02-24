@@ -1,139 +1,290 @@
-Return-Path: <linux-kernel+bounces-529859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872AFA42BEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:47:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF5BA42BFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EE5188713D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:47:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2230817B8BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7674C266196;
-	Mon, 24 Feb 2025 18:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BAA266B4B;
+	Mon, 24 Feb 2025 18:50:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joQbmD8D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxdP2LC4"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE711185;
-	Mon, 24 Feb 2025 18:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906CC266196
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422815; cv=none; b=a5ldrw44t0aTBfTzJBDP8o+wnMmdzltFnT2yYppe64fYSi5dOugWfl7bGCp6KEBhfbtkLup4igCYAhsoYBJ6E1LjBc39dsVci+Vt8LLcNdgiISXaRh6BEQYZTpJ+Vcr07L8gIeWqpdQxEaHmnJTrjhloKSBVGwFsH6IsQ+hisHs=
+	t=1740423038; cv=none; b=sObpliOuXL68uPNCi9l+F2rVMbroxP53pk6Fccg0Z10IVM9jXJNEzOAPcmrDdVQReceE88ONTjspJl6U1YK/eoruyRk6WS9weUJGGu626IEnFbtjPW8ET0dBpaJ6P4qlCVpGOfNEQa1v2dvQxP+2FwNdqldO3fhH+FwBCnAmMSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422815; c=relaxed/simple;
-	bh=/9XEwpYnicVuWAD8/l1pDfwiKoB8ajZoewUaq9rOkwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=deQAgR7QBe/Ps4RtXvCqp4gqwhRfwCWnyVSf+aPFcs8P8F/j/nmYUXNZeEuCUoODS68ssaPRlWvqglOVW7lEnGYBqzWSlJWKao4sHqn/iE121KaaQiC8OZdt8pTUp61E5zoMBHW1P7RRtc9Z6wvAKI5GOJrCln7f1AaS2pQLUl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joQbmD8D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82BEEC4CEDD;
-	Mon, 24 Feb 2025 18:46:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740422815;
-	bh=/9XEwpYnicVuWAD8/l1pDfwiKoB8ajZoewUaq9rOkwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=joQbmD8Dlm/rcU8cHKF28oFBH+pplRZ7yq8Yk9ZphffAC71lrqqxFB+eN5TuIdLai
-	 +BVlmZQgJHYOT1knIYJPgSqxOyJtcxgahK/sf8kx75xsKq3jr6PXMl10xtxcm4z2KR
-	 8RIARDh/LN43obOLl3q27+nPYOqG7i0neP8qmZCBUNG+E1oY/DKoEpyIO/IssA5ZGC
-	 psnaVDQp7K5HW6cxTk/VDLS1QcD8/tMqrksuuIaU4KONXMrVQXJ6Li6XIgJi5DE84o
-	 /p8TsZZn697oYw4lBQhPoNnNMfmyxkXEnxS/e4fOBTsWLIU34LMCrZ2dudnvEKnHeO
-	 QzZYI/O52QU8A==
-Date: Mon, 24 Feb 2025 19:46:43 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH RFCv2 00/18] uprobes: Add support to optimize usdt probes
- on x86_64
-Message-ID: <Z7y-kwkXZzbv-CQs@gmail.com>
-References: <20250224140151.667679-1-jolsa@kernel.org>
+	s=arc-20240116; t=1740423038; c=relaxed/simple;
+	bh=5CaLqSIq4mCnOOx0MhA6jcrVXhqB1DEJiNOTtn0cTGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ruzgTEe8i9OnI/i8XGxsik40+Sk2com8BKcSvNNnI3ogFDnVJg3jrCbwmhPZd8QLZ61OEx+ZXjByq2D7VE9WWVt3wokSEV3mApux/wF2PXAArd65KTFL6jTJP9XKahDBZbgJt0CZ+LH8cNgYAeuRPe9G4f0f88t6u6VJiK42HgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxdP2LC4; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2212222d4cdso21885ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:50:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740423036; x=1741027836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9zPz9Dl0COcxVGhQTNW8N2OAhun/SnyUt3wbyp6XG8=;
+        b=VxdP2LC4bPJvxzeCXZ7n/ytoFv3tkVu6JsgyKBecDU7y+/6G5xIOtptJWTie4QruEu
+         3miA30qoTNStdflA3D1YwtHXOg4Y+VxASYBXqUQeKxVoNAdfKX9XZqqhycXWL/6e57Fz
+         eqS7eWsATQGlfKkPJRuvAdIUnLkHKte5hX0fFTrJEpIWb1/nVPa0LK1L6+iEF0N9iLsV
+         UHpwUvGyAda6Su0Q1LGR5HErczHijtOCzw4SICS3m2QThHBiLbXtURlhntmQztqFqNUl
+         cbxXWfQ/sn/8yVRp2J0Q+ZRVm64l6aUlpPXY4jR4273KE9n8B6jx+VvNDHhGFZaStCrI
+         dZ6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740423036; x=1741027836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9zPz9Dl0COcxVGhQTNW8N2OAhun/SnyUt3wbyp6XG8=;
+        b=tERvfHn80vPMfRCssAQjUNalqy0jbIyTgHC/xNntk560ya4O1dhFe4GS1FipMFJQga
+         D5ZevPccAzGeCSIO5MYCo8sbYPVvuei8/K7TVYChKJbQl0SafqYJJD3Djom2mo516zZj
+         11mWX2UC2r0ZO7PWE5M1SFruPYoM5RzbUBleVy/yr78iFagByuq6QSL3F+FMnUdiNXuA
+         BwdFbjaNOA00hmzM7mG1c0m0pIJnhiXDSJfl6uIeyWGzAgCfFjLZotrGpY8nt1oqA/EY
+         SI4SmNACmHscHCkp6cpq9VnYRn/uh0kVMb1qPsZL2V3rGvbiOwiM4eTTEVEKSfEh/XgR
+         GKqw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8wB5zh0ZGLdQU1hETi0p0bgo72hyl9lI4UCYQWF9CsAoA5TQGidh+A6/Fiu8nQjsym/FwH560ItewGVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPFtHUX90p3Q+NZQfsMPttCZbtqDeW72InWlaWNpSc1flsM8PF
+	1cyGpQkb++C3jE/6LlRjM6MVb9gTtXsJMfpoD70M10IQSDAktCbdIsJQDP+/yzPxdT3uAYVAmt/
+	dEkRVR1eaifPGO9dFm0Xf0xqPDgUZUM2krZNU
+X-Gm-Gg: ASbGncuDj34attKE367NcMZ5gPkEjSEZ8BpwrV8EXyDvwOW3gwnxplMPc5Y7CiIjAu0
+	PjqPA1BKPbxvVRNxixSNr0Er3JzGIHG7zP+HG8HlxxLyQnVK900PlLTNpocOr+zk8vEtWRM91Pd
+	Gf63nYxNPWioJ+uWl9bvhOGwaDidqxf9D2tk0=
+X-Google-Smtp-Source: AGHT+IF4iy7Cr6LyEEeDuwD4QeXjKkepRemJp0RPuKz+bUm+oM1sBypRaykIARZw7zxRPsFInMQ7EtobdxMm+8z6kEQ=
+X-Received: by 2002:a17:903:22ce:b0:212:26e:1b46 with SMTP id
+ d9443c01a7336-22307a9740cmr453145ad.23.1740423035520; Mon, 24 Feb 2025
+ 10:50:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224140151.667679-1-jolsa@kernel.org>
+References: <20240627200353.1230407-1-namhyung@kernel.org> <CAP-5=fWSpM7NL7UjXZBN8WHNAE7hGe1ghQ6_DqFe2VjTCGoA7A@mail.gmail.com>
+ <CAM9d7cibrW=K=GZB_zsURB1Ff6Eok7qy3rVt83VVM6pVhv+Agg@mail.gmail.com>
+In-Reply-To: <CAM9d7cibrW=K=GZB_zsURB1Ff6Eok7qy3rVt83VVM6pVhv+Agg@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 24 Feb 2025 10:50:24 -0800
+X-Gm-Features: AWEUYZnbjIOlvNwJafq1_Xk-12VDEFP9TXTd1RynT8x8YsqpDfDJmh1ZtcqMoB8
+Message-ID: <CAP-5=fVmybd=WTKS3kvsF+VU_Lrke9hEvNyBtunAHBw-6ViZig@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf stat: Use field separator in the metric header
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jun 27, 2024 at 3:24=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Thu, Jun 27, 2024 at 1:48=E2=80=AFPM Ian Rogers <irogers@google.com> w=
+rote:
+> >
+> > On Thu, Jun 27, 2024 at 1:03=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > It didn't use the passed field separator (using -x option) when it
+> > > prints the metric headers and always put "," between the fields.
+> > >
+> > > Before:
+> > >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-on=
+ly true
+> > >   core,cpus,%  tma_core_bound:     <<<--- here: "core,cpus," but ":" =
+expected
+> > >   S0-D0-C0:2:10.5:
+> > >   S0-D0-C1:2:14.8:
+> > >   S0-D0-C2:2:9.9:
+> > >   S0-D0-C3:2:13.2:
+> > >
+> > > After:
+> > >   $ sudo ./perf stat -a -x : --per-core -M tma_core_bound --metric-on=
+ly true
+> > >   core:cpus:%  tma_core_bound:
+> > >   S0-D0-C0:2:10.5:
+> > >   S0-D0-C1:2:15.0:
+> > >   S0-D0-C2:2:16.5:
+> > >   S0-D0-C3:2:12.5:
+> > >
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  tools/perf/util/stat-display.c | 37 ++++++++++++++++++++++++++------=
+--
+> > >  1 file changed, 29 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-di=
+splay.c
+> > > index 91d2f7f65df7..e8673c9f6b49 100644
+> > > --- a/tools/perf/util/stat-display.c
+> > > +++ b/tools/perf/util/stat-display.c
+> > > @@ -47,16 +47,27 @@ static int aggr_header_lens[] =3D {
+> > >  };
+> > >
+> > >  static const char *aggr_header_csv[] =3D {
+> > > -       [AGGR_CORE]     =3D       "core,cpus,",
+> > > -       [AGGR_CACHE]    =3D       "cache,cpus,",
+> > > -       [AGGR_DIE]      =3D       "die,cpus,",
+> > > -       [AGGR_SOCKET]   =3D       "socket,cpus,",
+> > > -       [AGGR_NONE]     =3D       "cpu,",
+> > > -       [AGGR_THREAD]   =3D       "comm-pid,",
+> > > -       [AGGR_NODE]     =3D       "node,",
+> > > +       [AGGR_CORE]     =3D       "core%scpus%s",
+> > > +       [AGGR_CACHE]    =3D       "cache%scpus%s",
+> > > +       [AGGR_DIE]      =3D       "die%scpus%s",
+> > > +       [AGGR_SOCKET]   =3D       "socket%scpus%s",
+> > > +       [AGGR_NONE]     =3D       "cpu%s",
+> > > +       [AGGR_THREAD]   =3D       "comm-pid%s",
+> > > +       [AGGR_NODE]     =3D       "node%s",
+> > >         [AGGR_GLOBAL]   =3D       ""
+> > >  };
+> > >
+> > > +static int aggr_header_num[] =3D {
+> > > +       [AGGR_CORE]     =3D       2,
+> > > +       [AGGR_CACHE]    =3D       2,
+> > > +       [AGGR_DIE]      =3D       2,
+> > > +       [AGGR_SOCKET]   =3D       2,
+> > > +       [AGGR_NONE]     =3D       1,
+> > > +       [AGGR_THREAD]   =3D       1,
+> > > +       [AGGR_NODE]     =3D       1,
+> > > +       [AGGR_GLOBAL]   =3D       0,
+> > > +};
+> > > +
+> > >  static const char *aggr_header_std[] =3D {
+> > >         [AGGR_CORE]     =3D       "core",
+> > >         [AGGR_CACHE]    =3D       "cache",
+> > > @@ -1185,8 +1196,18 @@ static void print_metric_headers_csv(struct pe=
+rf_stat_config *config,
+> > >  {
+> > >         if (config->interval)
+> > >                 fputs("time,", config->output);
+> > > -       if (!config->iostat_run)
+> > > +       if (config->iostat_run)
+> > > +               return;
+> > > +
+> >
+> > Having a static count of commas seems somewhat error prone, perhaps:
+> > ```
+> > const char *header =3D aggr_header_csv[config->aggr_mode];
+> > if (config->csv_sep =3D=3D ',' || !strchr(header, ',')) {
+> >   fputs(config->output, header);
+> > } else {
+> >   char *tmp =3D strdup(header);
+> >   char *p =3D tmp;
+> >    while (p && *p) {
+> >       if (p =3D=3D ',')
+> >         *p =3D config->csv_sep;
+> >      p++;
+> >    }
+> >   fputs(config->output, tmp);
+> >   free(tmp);
+> > }
+> > ```
+>
+> Looks good.  But I think we should handle longer separators like -x ":::"=
+.
+> Will do in v2.
 
-* Jiri Olsa <jolsa@kernel.org> wrote:
+Hi Namhyung,
 
-> hi,
-> this patchset adds support to optimize usdt probes on top of 5-byte
-> nop instruction.
-> 
-> The generic approach (optimize all uprobes) is hard due to emulating
-> possible multiple original instructions and its related issues. The
-> usdt case, which stores 5-byte nop seems much easier, so starting
-> with that.
-> 
-> The basic idea is to replace breakpoint exception with syscall which
-> is faster on x86_64. For more details please see changelog of patch 8.
-> 
-> The run_bench_uprobes.sh benchmark triggers uprobe (on top of different
-> original instructions) in a loop and counts how many of those happened
-> per second (the unit below is million loops).
-> 
-> There's big speed up if you consider current usdt implementation
-> (uprobe-nop) compared to proposed usdt (uprobe-nop5):
-> 
->   # ./benchs/run_bench_uprobes.sh 
-> 
->           usermode-count :  818.386 ± 1.886M/s
->           syscall-count  :    8.923 ± 0.003M/s
->   -->     uprobe-nop     :    3.086 ± 0.005M/s
->           uprobe-push    :    2.751 ± 0.001M/s
->           uprobe-ret     :    1.481 ± 0.000M/s
->   -->     uprobe-nop5    :    4.016 ± 0.002M/s
->           uretprobe-nop  :    1.712 ± 0.008M/s
->           uretprobe-push :    1.616 ± 0.001M/s
->           uretprobe-ret  :    1.052 ± 0.000M/s
->           uretprobe-nop5 :    2.015 ± 0.000M/s
-
-So I had to dig into patch #12 to see the magnitude of the speedup:
-
-# current:
-#         usermode-count :  818.836 ± 2.842M/s
-#         syscall-count  :    8.917 ± 0.003M/s
-#         uprobe-nop     :    3.056 ± 0.013M/s
-#         uprobe-push    :    2.903 ± 0.002M/s
-#         uprobe-ret     :    1.533 ± 0.001M/s
-# -->     uprobe-nop5    :    1.492 ± 0.000M/s
-#         uretprobe-nop  :    1.783 ± 0.000M/s
-#         uretprobe-push :    1.672 ± 0.001M/s
-#         uretprobe-ret  :    1.067 ± 0.002M/s
-# -->     uretprobe-nop5 :    1.052 ± 0.000M/s
-# 
-# after the change:
-# 
-#         usermode-count :  818.386 ± 1.886M/s
-#         syscall-count  :    8.923 ± 0.003M/s
-#         uprobe-nop     :    3.086 ± 0.005M/s
-#         uprobe-push    :    2.751 ± 0.001M/s
-#         uprobe-ret     :    1.481 ± 0.000M/s
-# -->     uprobe-nop5    :    4.016 ± 0.002M/s
-#         uretprobe-nop  :    1.712 ± 0.008M/s
-#         uretprobe-push :    1.616 ± 0.001M/s
-#         uretprobe-ret  :    1.052 ± 0.000M/s
-# -->     uretprobe-nop5 :    2.015 ± 0.000M/s
-
-That's a +169% and a +91% speedup - pretty darn impressive!
+It looks like this has been forgotten. Did you have a v2?
 
 Thanks,
+Ian
 
-	Ingo
+> > I'm somewhat surprised that we have no metric tests in the stat output
+> > tests like tools/perf/tests/shell/stat+csv_output.sh. Perhaps we can
+> > add the following:
+> > ```
+> > diff --git a/tools/perf/tests/shell/lib/stat_output.sh
+> > b/tools/perf/tests/shell/lib/stat_output.sh
+> > index 9a176ceae4a3..a920b2d78abb 100644
+> > --- a/tools/perf/tests/shell/lib/stat_output.sh
+> > +++ b/tools/perf/tests/shell/lib/stat_output.sh
+> > @@ -148,6 +148,14 @@ check_per_socket()
+> >        echo "[Success]"
+> > }
+> >
+> > +check_metric_only()
+> > +{
+> > +        echo -n "Checking $1 output: metric only "
+> > +        perf stat --metric-only $2 -e instructions,cycles true
+> > +        commachecker --metric-only
+> > +        echo "[Success]"
+> > +}
+> > +
+> > # The perf stat options for per-socket, per-core, per-die
+> > # and -A ( no_aggr mode ) uses the info fetched from this
+> > # directory: "/sys/devices/system/cpu/cpu*/topology". For
+> > diff --git a/tools/perf/tests/shell/stat+csv_output.sh
+> > b/tools/perf/tests/shell/stat+csv_output.sh
+> > index fc2d8cc6e5e0..d6807dbab931 100755
+> > --- a/tools/perf/tests/shell/stat+csv_output.sh
+> > +++ b/tools/perf/tests/shell/stat+csv_output.sh
+> > @@ -44,6 +44,7 @@ function commachecker()
+> >        ;; "--per-die")         exp=3D8
+> >        ;; "--per-cluster")     exp=3D8
+> >        ;; "--per-cache")       exp=3D8
+> > +        ;; "--metric-only")     exp=3D2
+> >        esac
+> >
+> >        while read line
+> > @@ -83,6 +84,7 @@ then
+> >        check_per_cluster "CSV" "$perf_cmd"
+> >        check_per_die "CSV" "$perf_cmd"
+> >        check_per_socket "CSV" "$perf_cmd"
+> > +        check_metric_only "CSV" "$perf_cmd"
+> > else
+> >        echo "[Skip] Skipping tests for system_wide_no_aggr, per_core,
+> > per_die and per_socket since
+> > socket id exposed via topology is invalid"
+> > fi
+> > ```
+> > It is using the hard coded metrics and it looks like the header
+> > printing for that is broken, but this is so often the case for stat
+> > output :-(
+>
+> Right, I also noticed something in the header.  One more work
+> item to the list.
+>
+> Anyway, I'll add it to the test case!
+>
+> Thanks,
+> Namhyung
+>
+> >
+> > > +       if (aggr_header_num[config->aggr_mode] =3D=3D 1) {
+> > > +               fprintf(config->output, aggr_header_csv[config->aggr_=
+mode],
+> > > +                       config->csv_sep);
+> > > +       } else if (aggr_header_num[config->aggr_mode] =3D=3D 2) {
+> > > +               fprintf(config->output, aggr_header_csv[config->aggr_=
+mode],
+> > > +                       config->csv_sep, config->csv_sep);
+> > > +       } else {
+> > >                 fputs(aggr_header_csv[config->aggr_mode], config->out=
+put);
+> > > +       }
+> > >  }
+> > >
+> > >  static void print_metric_headers_json(struct perf_stat_config *confi=
+g __maybe_unused,
+> > > --
+> > > 2.45.2.803.g4e1b14247a-goog
+> > >
 
