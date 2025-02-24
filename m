@@ -1,151 +1,181 @@
-Return-Path: <linux-kernel+bounces-529547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BF93A427AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:19:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F45A427C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:22:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D9A1188690C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:19:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7994F3B6324
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41D426280D;
-	Mon, 24 Feb 2025 16:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D61E262803;
+	Mon, 24 Feb 2025 16:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UjR5Iyoz"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="QhQA4IUr"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE21C25A35D;
-	Mon, 24 Feb 2025 16:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 410972627F8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740413977; cv=none; b=BFJdQWrFJJibsJwalEvEIJTs9uHu1dHSOBW+V7XWzvynOQ2iddvjzUkJy6+Fp427Vh3LU5ZNZ4fblKhx6TM1ssf7nDoCobZcSlv4KxKV2WH5bUpcxLjgZC3BtTGlwnnqx1jnzrotOitLQ+/eqKAZReJink+7O1fkZdgz4BMRy8c=
+	t=1740414013; cv=none; b=DM/raMCrLfLxavM2rP4HrFXarDRLVfkH6PwhJNAYL6KywAxk0APiOCzzofNTlbW4J1iHmhYeMTkJhwbvLvEn2dFJLgjFF/eXIQrnVlY3Ees6qVgigzzIcWR5KHlBTS/D/9A6zydsbGrotrAYdOQ1KmLG8XNjuevV1oKhVgXSD28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740413977; c=relaxed/simple;
-	bh=4GzgfkJb2gmKexeq9dwq5MdgAoigbYl7qj0gsU2qFuc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NcoBb4ddsy66h2qvFJSrS+B56qVpaMz8ciC4lZigy+YAYOSgXZYWGzfcTOXSaUPOgnvsWmR7dBryS509oKTNego8tC0aQGS32vylwgM0p8dHds+IMuwup1PBqUaV8VIGahoK+Lq8dogOodPW0fSPlPnfZ2mLXfksZneu+rsxgN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UjR5Iyoz; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fc0bd358ccso9325397a91.2;
-        Mon, 24 Feb 2025 08:19:35 -0800 (PST)
+	s=arc-20240116; t=1740414013; c=relaxed/simple;
+	bh=FheqO8KzYo1Xtd5I7TGsNuaxE22xi/JqG2iXSfyifPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFDNygfrC8EBb1ShzV1ljhFX0VF+5i9/xRZxTZm0YKfq9jVl0bWCbHgHZ8frJ1/IFW/622bYZDcELmfLAgMgfODZPajh80QjOYDBwN+7u8aqKmm0ygSoT4ydppVqTdAtMJOB14lmeZwnswrRVk1gP/lWh4MErsnVn0P2I43Id3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=QhQA4IUr; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72722d2717aso1238761a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:20:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740413975; x=1741018775; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FWqm33tm+BoJJmuTVNeID7zEMxZd7DFzwDY9FfAP8Gs=;
-        b=UjR5IyozaW0Mr3Dd2gV3GJpdsk8MwHODrZ9DRmcrSCjZ6Vk0bVbHLzTepLbTAT2wjg
-         MfdR4H5hZzc80XIfF38oZvclN8YikBw5CoO2vntUOVmL9sVkTAYvw/TywKTIK+ChPBv7
-         lEZFrzpQtGt6/XngKDEtAcWUBwtPCNR8Fxwx4ApbpKw7jCxCVCNT89L8Dt2KjL+yVOy4
-         tJHJNgMrkXqkRdsZAB/q5mwErx2MyHKbnOM23AIGC0xTYaMfBi1T33u3yqhF9ztGm48h
-         WXBPtLWJv7h6iEs9uEEUAoeiEBfYzrRkwvr1u9jv5jQMNlE4sD3gJRkdiG7Mk4UzjYij
-         LuVw==
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1740414010; x=1741018810; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1ggNVg1i8dPseY+YzGhRPP522mFrqRdnWvnVFy7OGPU=;
+        b=QhQA4IUrtC7dCYDUz49vFIPClkv5bmEOX24NUS44hpxNTTJcezZjEntbQx0lsptC9y
+         FXZ23k2RhVYTrcoG3LOnNnwCp3zpyTHbU96QXIv1yonncD+sK4TJh5YGngrHV81E0HhS
+         ii3H++lXKGR4RloNovFVdrmO+1isGu3sRLpl6qBqEc+9HSaA7wVxaGXqBcAon156k9l7
+         YD5XLVAv5zN7gVIotZPupPTgbG3ITLZfhtIzhoz/P1d+aakZ9+zEFJr3FaLNsxM+Yc2h
+         EfmXszLgJuoAQtd2vWmPGggm/VxsfH770GmoXy/q45Ussz+dOMBmswptCVowdQBPFmnx
+         ki3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740413975; x=1741018775;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FWqm33tm+BoJJmuTVNeID7zEMxZd7DFzwDY9FfAP8Gs=;
-        b=Cmi/KNWrcRtflTbbbKDWf+C4PhfJGU6bhAZnmbJ11xymJgewQjdDphq9Tp2lEUoZIt
-         YjPukvgCUd9l3qEWHZn6ipiUtraHcHkYZlfugN4ODlCpG48IKDWpnD9pn5eLTmRo3mjr
-         jZSH7LH8VJe03oO33BzB9gIBAFLAYjiO5KLpZYXRTET8Azxcam9mVW7mekfziDUTV5ku
-         0uOsqAJ0B5sl4yx+kzxCoZNyG8/bnbSKLG20LpCiQLHi5uctUZnon4iQJtmAV6s5To4X
-         qJ4pVdMSR3QF+95Ca0eQ8npW5LmD7foZLP6vDuJU2vN5yynRd/zb7k9DbBrILK11ESHM
-         Y24A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZqxpFDiUIrxBqHTaywDU6VmORq1hKcQr5PL/k1ArdG4dwBhyiI5IuHKZrL+wLIRCz0lV41uvyPZXbdg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb88GeJr/sLbHsq+v9rQg2opGZ64PxKwvzOyLpxJspRTysQzdm
-	QuebN33ttAQ0nR4/725KAcAvmFIYmiRdVJc8RH1G4XabGNH2zy2OogF9OekrLhOeiUcdnSqUBhV
-	1BcRKS2ZWDtrMkHukbKg84KibpoP7gbWA
-X-Gm-Gg: ASbGncs9+EwZ9xZHTPHFa3XdH6kGSGgU7XYs+L482+cSrRUfOy0m0CucEVVM6itMjFy
-	QA1cHclmBn/KTsr00u5QeGIHe/WPiS5EPfiGQ5r2oeT5SzywSboa9lkos2mL/nza0NvlDPspXVt
-	IyYdKEJb0=
-X-Google-Smtp-Source: AGHT+IHN3+7tc4CILBRG8b0xSgeYbA+sxSkEYT5Xr/Gx4lEYIQmkQKUDZdyZskgwXw75GXiXPMcjSu0+hBt4DcqVppA=
-X-Received: by 2002:a17:90b:3946:b0:2f4:434d:c7ed with SMTP id
- 98e67ed59e1d1-2fce78c7fd8mr26255470a91.16.1740413974738; Mon, 24 Feb 2025
- 08:19:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740414010; x=1741018810;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ggNVg1i8dPseY+YzGhRPP522mFrqRdnWvnVFy7OGPU=;
+        b=Kq1zXRD+0E0iOS2bfwF7qgmf2iSjWaW1Oyvcv6QUpLJngOalkhusITlhSIbBHDDiX5
+         /TD6kpDAISC4F3kf5V80I7vsF95o0uyQF9rRfpUKN2TWF/B6yhDVrNowEujOLIN5EKwx
+         6EwmSG0Y0jQ2ryovh6vkDs5FJB2ISJdnKNtEu8gCtznRP4Jf2vOHJRWPnAYrCLJfceg6
+         lWFVxEcXa3nb9dcj9+A/Yre8bzOMVsJ1A/tfOXde8HeF1SM0nD/YDfLNRcs8ellImoBm
+         EPt0dTU3g2aa810psMp2vM9jNuocnm2U5Dzjciva+Kpdc2tlcgLja+mNJEER+pE97kKF
+         4fhA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1tES70QQJLsy6VvchL7tySQNXggcIjW+2pZDnVCGkdcCTuu6jYzAyCCPfMyvxdko75aHt+hlkWvkqCHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj5ITjFaI0Z1iTL8nCHSQvjv8qhDhEvT0haHSwnYS88ebGe6g/
+	mkUgj8s0o2LmxHDDA56ZsZDxS6gEOQnw6gk0FPbF9OrRAjBEvETp/HEQZNvxmjs=
+X-Gm-Gg: ASbGncvv9nP51v8jPbgO7SFFuKp5Qmbc7bt7MvqmHyjfq0roYxvAzCEg0FM7eTRWp5N
+	nhgQxNHbfIRT/yOOrR+5sXzbCZxsIQo1Db0+o69L2jYmORtZSFTbJ8uPLfu0MDd5PIEeKXNpLHB
+	n8jwdyIivMps5HxHhiQEvR1ELJHdlU/r1nRFoVQ8856W7Qyao4Y8HenyWrZEyjyq7tg8lSD4Z4s
+	LZFG8YXYTiBukmSXPHzunSZ+91rV7zU9RQoWEytsZHYuLCH/tOb7RbestCyENyY2r5APc8XwjmN
+	cfsnmo48RyU1GruIOn/m3JPCQCYSki0iE9IP7P9ZKyMB4nd/QDDKaBVEB7VUwm6Erw==
+X-Google-Smtp-Source: AGHT+IFCWs+0CCuJamgGPiQVcYx+xUj/OyX9/a5EIgOce/keywE1eBKMEV5gEit7BDGyEshCJIcKAw==
+X-Received: by 2002:a05:6830:700a:b0:727:3a2e:2132 with SMTP id 46e09a7af769-7274c24724bmr15027042a34.21.1740414010164;
+        Mon, 24 Feb 2025 08:20:10 -0800 (PST)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-727378237e4sm2656892a34.47.2025.02.24.08.20.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Feb 2025 08:20:09 -0800 (PST)
+Message-ID: <96a72cc3-5c89-48ca-b535-8a9a5cfb52c4@riscstar.com>
+Date: Mon, 24 Feb 2025 10:20:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202123351.86957-1-guille.rodriguez@gmail.com>
-In-Reply-To: <20241202123351.86957-1-guille.rodriguez@gmail.com>
-From: Guillermo Rodriguez Garcia <guille.rodriguez@gmail.com>
-Date: Mon, 24 Feb 2025 17:19:23 +0100
-X-Gm-Features: AWEUYZnZqpr1FP9G-sfegvfp2isrZ6N1y1AiiaaSdkYjWRfT1uN6s1MBNMRAkDg
-Message-ID: <CABDcavYkGAGA5CVsMZGE9g_HLTvE3kAM25Uu8h6ccqerLp5oWQ@mail.gmail.com>
-Subject: Re: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
-To: linux-kernel@vger.kernel.org
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/5] clk: bcm: kona: Add bus clock support and
+ prerequisite clocks
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Alex Elder <elder@kernel.org>, Stanislav Jakubek
+ <stano.jakubek@gmail.com>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250216-kona-bus-clock-v1-0-e8779d77a6f2@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On 2/16/25 10:12 AM, Artur Weber wrote:
+> This patchset does the following:
+> 
+> - Introduce support for bus clocks. These are fairly similar to
+>    peripheral clocks, but only implement policy, gate and hyst.
+> 
+> - Introduce support for prerequisite clocks; this way we can
+>    make peripheral clocks automatically enable their corresponding
+>    bus clocks.
+> 
+> - Add matching bus clocks for BCM21664 peripheral clocks and update
+>    device tree bindings to match.
+> 
+> The prerequisite clock portion of this patchset is adapted from an
+> older attempt to add bus clocks[1], submitted by Alex Elder. I've
+> retained his authorship on that commit.
 
-Any comments on the patch below?
+That was a long time ago!
 
-Thank you,
+> Notably, Alex's patchset moved clock initialization to the prepare
+> function. This seems to be incorrect; the prepare function gets called
+> before the enable function, but not before "set rate"/"set parent"
+> functions; thus, while clocks enabled fine, any configuration done
+> before they were first enabled was broken. I ignored that part of
+> the patchset and only kept the prerequisite clocks.
 
-Guillermo Rodriguez Garcia
-guille.rodriguez@gmail.com
+I think you're right.
 
-El lun, 2 dic 2024 a las 13:34, Guillermo Rodr=C3=ADguez
-(<guille.rodriguez@gmail.com>) escribi=C3=B3:
->
-> Hi all,
->
-> We are seeing an issue with gpio_keys where the first event after
-> a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
-> After some investigation it looks like this is an issue with evdev
-> and not specific to gpio_keys.
->
-> The issue was originally introduced in commit 3b51c44 ("Input: allow
-> drivers specify timestamp for input events").
->
-> This commit introduced input_set_timestamp and input_get_timestamp.
-> The latter (despite the name) actually generates and stores a timestamp
-> in dev->timestamp if the driver did not set one itself. This timestamp
-> needs to be reset when events are flushed; otherwise the next event
-> will use a stale timestamp. A partial fix was implemented in 4370b23
-> ("Input: reset device timestamp on sync"), but this does not cover the
-> case of SYN_DROPPED.
->
-> If a SYN_DROPPED is generated (currently only done by evdev), the
-> following happens:
->
-> - evdev calls input_get_timestamp to generate a timestamp for the
->   SYN_DROPPED event.
-> - input_get_timestamp generates a timestamp and stores it in
->   dev->timestamp
-> - When the next real event is reported (in evdev_events), evdev
->   calls input_get_timestamp, which uses the timestamp already
->   stored in dev->timestamp, which corresponds to the SYN_DROPPED event
->
-> How to fix:
->
-> - When a SYN_DROPPED is generated, after calling input_get_timestamp,
->   the timestamp stored in dev->timestamp should be reset (same as is
->   currently done in input_handle_event). The attached patch does that.
->
-> (Perhaps the underlying problem is that it is not expected that a
-> function called input_get_timestamp will have side effects. The
-> commit history of input.c shows that this has actually caused a
-> few issues since 3b51c44.)
->
->
-> Guillermo Rodr=C3=ADguez (1):
->   Input: evdev - fix wrong timestamp after SYN_DROPPED event
->
->  drivers/input/evdev.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
->
-> base-commit: e70140ba0d2b1a30467d4af6bcfe761327b9ec95
-> 2.25.1
->
+> I would appreciate feedback on the prerequisite clock patch, hence
+> why this patchset is marked as RFC.
+> 
+> I wasn't able to find any other driver that does something like this,
+> so I'm not sure if it's correct (especially since I had to switch from
+> non-locking __clk_prepare and __clk_enable to the regular locking
+> versions, as the non-locking versions are no longer public - they
+> appear to have been replaced by clk_core counterparts, but those
+> functions are not exported anywhere AFAICT).
+> 
+> An alternative way to do this dependency would be to wrap every
+> component with a relevant bus clock in a "simple-pm-bus" node
+> with the bus clock in DT, but this seems rather unwieldy.
+
+Yes I had the same thought, and ask about this on patch 3.  I
+can't comment on whether this notion of a prerequisite (that
+is not its parent) makes sense though.
+
+I didn't look at patch 1 or patch 5.
+
+					-Alex
+
+> 
+> [1] https://lore.kernel.org/lkml/1402926007-4436-1-git-send-email-elder@linaro.org/
+> 
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+> ---
+> Alex Elder (1):
+>        clk: bcm281xx: implement prerequisite clocks
+> 
+> Artur Weber (4):
+>        dt-bindings: clock: brcm,kona-ccu: Add BCM21664 bus clocks
+>        clk: bcm: kona: Add support for bus clocks
+>        clk: bcm21664: Add matching bus clocks for peripheral clocks
+>        ARM: dts: bcm2166x-common: Add matching bus clocks for peripheral clocks
+> 
+>   .../devicetree/bindings/clock/brcm,kona-ccu.yaml   |  18 ++-
+>   arch/arm/boot/dts/broadcom/bcm2166x-common.dtsi    |  28 +++--
+>   drivers/clk/bcm/clk-bcm21664.c                     | 107 ++++++++++++++++--
+>   drivers/clk/bcm/clk-kona-setup.c                   | 116 +++++++++++++++++++
+>   drivers/clk/bcm/clk-kona.c                         | 124 ++++++++++++++++++++-
+>   drivers/clk/bcm/clk-kona.h                         |  30 ++++-
+>   include/dt-bindings/clock/bcm21664.h               |  19 +++-
+>   7 files changed, 411 insertions(+), 31 deletions(-)
+> ---
+> base-commit: ffd294d346d185b70e28b1a28abe367bbfe53c04
+> change-id: 20250212-kona-bus-clock-4297eefae940
+> 
+> Best regards,
+
 
