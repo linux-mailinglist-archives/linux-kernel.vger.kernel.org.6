@@ -1,132 +1,173 @@
-Return-Path: <linux-kernel+bounces-528761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016B4A41C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:06:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D63A41C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8846B3A43F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A418318994DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7142505C9;
-	Mon, 24 Feb 2025 11:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C698B2580E9;
+	Mon, 24 Feb 2025 11:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c6cIv8pb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="jNPKYatd"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D9F25A346;
-	Mon, 24 Feb 2025 11:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF86F2586C8;
+	Mon, 24 Feb 2025 11:02:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740394939; cv=none; b=YQIaTrxLoTm/1qwPycTqOQvPN9g+Mgfl6s43D1sQKkowcAuXh4wrOnMBkoi2gbB7VM+PpTdfeqTSx6WgPgX47Uwz5EpOrD2c/+TzxsmvLVX0hvpVB4cvoE1KFKRokT1+TTaUUCeMKuolAM0gigu9aWFPy+VdvMv5Zzlj8cJQOkA=
+	t=1740394956; cv=none; b=aZeZcsoBMqE1Ayzxpk73EtjZUmSDklnqziQCMHWMHIMC0GUxS+KpiWL76nWLTzKnw2XG3LRyjvr+zE0NK4uuOLSDGo5Hw2LRoANf4dXFHWcwIr35IbpZC46ZiY0uyzlm55gKaI0qk2IkgWrglsN+XvjWZQNGq+hP5SHyMQ9/90s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740394939; c=relaxed/simple;
-	bh=jgUIKutYD6JHar/7UGNU4iJs/xInxZUk3vydF/EOQVw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=O7r0WenNl9f0un4dgn38W/sG/GMuFrMCD5pZQDBoXjSaUwN+mEo8raBF2/mP2WCRvp6q0VhWZfjKQ6+SCiNxhDqHwic2JbSfA32Ls0oo2lJ2JPYdj5GfBPr31bjgTXKKMJpAA1HIueiAw0s4XFP1nOMnsETbCzaOtkQf5PNpjj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c6cIv8pb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 95D20C4CEF2;
-	Mon, 24 Feb 2025 11:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740394938;
-	bh=jgUIKutYD6JHar/7UGNU4iJs/xInxZUk3vydF/EOQVw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=c6cIv8pbAIrCW8ylEnQPrXc4iNkB/bZnN3CuZCWPxnO8BzJbm7lJE5VcKB1pu81pS
-	 RTwyjKgzn222bhOZ050hlMB8hJX3d/tbsrEk3xQi+3N5nmLYTToTKVDI5sU68RvhVy
-	 9IDfRkfxrW1N4i3D3CA13pUKiQxn5EC3vO82dcDyxoLEv0lM4GrugW61frxhl64LTC
-	 X849yeRRzOkerLIRy1nvUHbzaHub724IRGXsV7FnhAbfEIsOYUGmkPXdhpm4m2eOcc
-	 6xUjvLCHkDzF8zwB/+Ku/edim/NNUBYlotT0DupxX5v3fSx3z+r1U8MYD779nq+Cq1
-	 T+YDmRK3z2BLg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D340C021BD;
-	Mon, 24 Feb 2025 11:02:18 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Mon, 24 Feb 2025 12:02:20 +0100
-Subject: [PATCH v8 5/5] MAINTAINERS: Add entries for touchbar display
- driver
+	s=arc-20240116; t=1740394956; c=relaxed/simple;
+	bh=4h5Vn63f6Fe+g51YvuC9s4LnHdlrSh7w3OTHz6xuoCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S6zvFlWi5BRHwCsbSSE/l9K2UdChh4zgvAtmwy2D/6BojCMKMxZChZy/3f1N1nPGGJsYYlm/Dec6BAXHQUiAF+1BPxuXiXD5Xvfw5cjdgjwkxT0RFuEQ3XmruTmzmzI4w1p1kRZcAtEUbBx0hC2gxEf6/Yo40HbPGPaVGcNomIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=jNPKYatd; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6145B441B0;
+	Mon, 24 Feb 2025 11:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740394951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YlMYiWhNWjllG+4m2VbMgy0URpmB5UKN6+mVfUuELF4=;
+	b=jNPKYatdKYpX0w8cf1KMzvCyrMN2jGJjZW20cKTgfAZXnYnbSg8juSaOz2mATMrwIuGO5t
+	StH/bCTj3skEjD6go/TDhCzm48sElq9Zt87aCZGBuEQs6rbG+G2ZMrXAm3I30RHy1hRmXB
+	KE9Wv2aXceEmLGMnaFGEZomY3BABKdXPw3/7a0BSGa0bTw1bHn3fEN7t5AE1NnDFWN2H6C
+	Yh496qsvn4uBHEbJwLBacumVEhQ3fQfR7SngbNb2LrfjDFbCswGLP/0Wi0gFbu6RAdooSl
+	h4jbfmFzTj8cEucPRzZqN2sVMyc+QMqkE7vcU7vjk12DZUt86QI14O+AaHiNQg==
+Date: Mon, 24 Feb 2025 12:02:28 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 02/12] net: pse-pd: Add support for
+ reporting events
+Message-ID: <20250224120228.62531319@kmaincent-XPS-13-7390>
+In-Reply-To: <Z7g-WYQNpVp5w7my@pengutronix.de>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-2-3da486e5fd64@bootlin.com>
+	<Z7g-WYQNpVp5w7my@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-adpdrm-v8-5-cccf96710f0f@gmail.com>
-References: <20250224-adpdrm-v8-0-cccf96710f0f@gmail.com>
-In-Reply-To: <20250224-adpdrm-v8-0-cccf96710f0f@gmail.com>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
- Janne Grunau <j@jannau.net>
-Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alyssa Ross <hi@alyssa.is>, Sasha Finkelstein <fnkl.kernel@gmail.com>, 
- Neal Gompa <neal@gompa.dev>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740394936; l=1450;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=bjGQY6YcAfvFhQstvcidH714PAZmif+zGGMT8HLhTJg=;
- b=h37nVwZ9F5bmgDy71SXMvVSptZeWIvrNU1lxX9sOteApVreqjkkJkqkO6y1KZZmiDxDfReI3k
- R20062i+v+GChYOeeKqOOlttNUNRoimiALptpJfaD28eq9MH+AxU328
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeeitdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqfedtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhjeevfeeggeeghffgudfhhedvvedvueekleevjeduvddutefhvddugedtfeeludenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhus
+ ggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Hello Oleksij,
 
-Add the MAINTAINERS entries for the driver
+On Fri, 21 Feb 2025 09:50:33 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-Acked-by: Sven Peter <sven@svenpeter.dev>
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Reviewed-by: Neal Gompa <neal@gompa.dev>
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
----
- MAINTAINERS | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+> Hi Kory,
+>=20
+> On Tue, Feb 18, 2025 at 05:19:06PM +0100, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > Add support for devm_pse_irq_helper() to register PSE interrupts. This =
+aims
+> > to report events such as over-current or over-temperature conditions
+> > similarly to how the regulator API handles them but using a specific PSE
+> > ethtool netlink socket. =20
+>=20
+> Thank you for your work. Here some comments.
+>=20
+> ...
+>=20
+> > --- a/drivers/net/mdio/fwnode_mdio.c
+> > +++ b/drivers/net/mdio/fwnode_mdio.c
+> > @@ -18,7 +18,8 @@ MODULE_LICENSE("GPL");
+> >  MODULE_DESCRIPTION("FWNODE MDIO bus (Ethernet PHY) accessors");
+> > =20
+> >  static struct pse_control *
+> > -fwnode_find_pse_control(struct fwnode_handle *fwnode)
+> > +fwnode_find_pse_control(struct fwnode_handle *fwnode,
+> > +			struct phy_device *phydev)
+> >  { =20
+>=20
+> This change seems to be not directly related to the commit message.
+> Is it the preparation for the multi-phy support?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a87ddad78e26f28ffd0f3433560d6db1518f9f95..895d682bcf4e351971b04c6515ebf685fd39b662 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7746,6 +7746,22 @@ F:	drivers/gpu/host1x/
- F:	include/linux/host1x.h
- F:	include/uapi/drm/tegra_drm.h
- 
-+DRM DRIVERS FOR PRE-DCP APPLE DISPLAY OUTPUT
-+M:	Sasha Finkelstein <fnkl.kernel@gmail.com>
-+R:	Janne Grunau <j@jannau.net>
-+L:	dri-devel@lists.freedesktop.org
-+L:	asahi@lists.linux.dev
-+S:	Maintained
-+W:	https://asahilinux.org
-+B:	https://github.com/AsahiLinux/linux/issues
-+C:	irc://irc.oftc.net/asahi-dev
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe-mipi.yaml
-+F:	Documentation/devicetree/bindings/display/apple,h7-display-pipe.yaml
-+F:	Documentation/devicetree/bindings/display/panel/apple,summit.yaml
-+F:	drivers/gpu/drm/adp/
-+F:	drivers/gpu/drm/panel/panel-summit.c
-+
- DRM DRIVERS FOR RENESAS R-CAR
- M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
- M:	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+I need to save the phy_device related to PSE control to use the right netwo=
+rk
+interface for the ethtool notification. (ethnl_pse_send_ntf())
+Indeed I have not described this in the commit message.
 
--- 
-2.48.1
+> ...
+>=20
+> > +/**
+> > + * pse_to_regulator_notifs - Convert PSE notifications to Regulator
+> > + *			     notifications
+> > + * @notifs: PSE notifications
+> > + *
+> > + * Return: Regulator notifications
+> > + */
+> > +static unsigned long pse_to_regulator_notifs(unsigned long notifs) =20
+>=20
+> I prefer converting it the other way around to make it reusable for
+> plain regulator-based PSEs. For example, the podl-pse-regulator driver
+> won=E2=80=99t have its own interrupt handler but will instead use
+> devm_regulator_register_notifier().
 
+The driver PIs part send PSE notifications which will be converted to regul=
+ator
+events from the core. It is posting events.
+If you use devm_regulator_register_notifier() you will registers a listener=
+ for
+the regulator events. It is two distinct things.
 
+> Even full-fledged PSE controllers like the PD692x0 are just one part of
+> a larger chain of regulators. An overcurrent event may originate from a
+> downstream regulator that is not part of the PD692x0 itself. In this
+> case, we need to process the event from the downstream regulator,
+> convert it into an ethtool event, and forward it to the user.
+
+If you want to do something in case of downstream regulator events you will=
+ deal
+with regulator events not PSE events. I think you want to disable PIs in ca=
+se of
+event like downstream regulator over current.
+What policy should we use? Should we disable all the PIs or only disabled t=
+he
+low priority like the budget evaluation strategy of this series? As it is o=
+ver
+current event not related to budget we don't know how many PIs we should
+disable.
+
+Still as said before it is a distinct development that could be tackled lat=
+er.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
