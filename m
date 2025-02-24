@@ -1,173 +1,117 @@
-Return-Path: <linux-kernel+bounces-529172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72750A420B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:34:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D5FA420AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:33:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671123B2C4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:29:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20D2E189DF0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17924BC09;
-	Mon, 24 Feb 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CnrlGXKl"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2724169C;
-	Mon, 24 Feb 2025 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F501248899;
+	Mon, 24 Feb 2025 13:30:38 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B471B041E;
+	Mon, 24 Feb 2025 13:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403788; cv=none; b=ZgB6UvIdjDoA+1obOOyKPCPCO2+dPm3h6kuLhY6O/D5SmjX26Y8/ozemtwIQZWjNtCPKRolPxsq5gsKSpGTTbvBn0pnTnp/5e9TZ50P6gusT76PTQYXHbnuSSl9EhmN9ypzlE1ovezlyEvvgrcyRlBtvZ6y+smMWC/DAgaJ9fZY=
+	t=1740403838; cv=none; b=YFH4cubRP53YdeKS4Lb6Ukwo8591dJVxhRi5I3eDHpfgGoTJ9Hi1pkf+glha3sYo5NpmC3neXyv9aLq6pHWAbeHlXhm2coHUclwb9jv3CjUHGnIWpC8a69qnDOlX5SSHVs7gnF+z2q+e5o/ljqfqEbKU64M12+AKJgvsIbGRozM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403788; c=relaxed/simple;
-	bh=vXEFc8vCTxFU53LlB8L6wrOQ9QWoqVL3htuV4RYrMKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NGZEXs/R65IM9R4NRPd1NRzXGkYAHtNgdDXrX/ZC/6bPjp7iCQekbpGktiGQejiyqGQ1J3A7fW5+X0fE38Jbu89YQsEq+MrNSZma/IVRa8LSaUl/22sN9TsnvUZQcXNu/S7Ib+i+GNKgiNy+Rh2MYQudLDRWiZRr9arkWVs0px4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CnrlGXKl; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 3EAB6203CDDA; Mon, 24 Feb 2025 05:29:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3EAB6203CDDA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740403786;
-	bh=i01zIab6305TaFlNKn7K/1S71vqUHIZ2SMtS+KnZW5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CnrlGXKlOaWiyi66FhJ6/N36v5KvcV6ldKV+IQevrGpmO7UGJnZ8rJ7Cd/BQuYkw0
-	 lLWRMnUwFeM4OuGuimbaznlHZ4tZQmlbIr5R/GlWCw8txh7UxhvKliD0zif9TV17AM
-	 FEUNe9MgWI+y11r/xtxLv/fIOAOcmwsztrr4Z7ew=
-Date: Mon, 24 Feb 2025 05:29:46 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"deller@gmx.de" <deller@gmx.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"ssengar@microsoft.com" <ssengar@microsoft.com>
-Subject: Re: [PATCH] fbdev: hyperv_fb: Allow graceful removal of framebuffer
-Message-ID: <20250224132946.GA7039@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <1739611240-9512-1-git-send-email-ssengar@linux.microsoft.com>
- <SN6PR02MB4157813782C1D9E6D1225582D4C52@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20250222172715.GA28061@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157F6CF7CACF45C398933C4D4C62@SN6PR02MB4157.namprd02.prod.outlook.com>
- <20250223140933.GA16428@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB41571ED5CEA6B91A7F35AC3FD4C02@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1740403838; c=relaxed/simple;
+	bh=ABZeoDoCXyMZznzUxsqlycvSyByLRS8r9I1i4W5KKZ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G/T/mou8GGv9LrYmfeHDrfjtbJqX3Srr2bIMAiaR3KAyQZ0/C7v/bCU7E0S5JZd4jmBm+rp1N6fOpEfhkCw5WX31MWKav4TR4FOqR+e3wJC6Hd6lRNFbtqNyLg1MDAyg4ic2ogTeSEvhdnrsdRgBHJ6sGGGFBOkv8dDoZo91NvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAAnLAxldLxnkjsEEA--.4476S2;
+	Mon, 24 Feb 2025 21:30:17 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	David.Woodhouse@intel.com,
+	jarkko.lavinen@nokia.com
+Cc: linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] mtd: Fix potential UAF for mtdswap_dev pointers
+Date: Mon, 24 Feb 2025 21:30:07 +0800
+Message-Id: <20250224133007.3037357-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB41571ED5CEA6B91A7F35AC3FD4C02@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CM-TRANSID:rQCowAAnLAxldLxnkjsEEA--.4476S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CFyrtr13trWrGF4ftry7Jrb_yoW8GF1UpF
+	Z8CrWay398Jw1fG3ZrAw4DAFyFkw15urW5Gr4rJ3y2vwn5A34fAr90vayY9Fy3KF4DKa4Y
+	qrsFqr98Wr1rGaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Mon, Feb 24, 2025 at 12:38:22AM +0000, Michael Kelley wrote:
-> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, February 23, 2025 6:10 AM
-> > 
-> > On Sat, Feb 22, 2025 at 08:16:53PM +0000, Michael Kelley wrote:
-> > > From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, February 22, 2025 9:27 AM
-> > > >
-> 
-> [anip]
-> 
-> > > >
-> > > > I had considered moving the entire `hvfb_putmem()` function to `destroy`,
-> > > > but I was hesitant for two reasons:
-> > > >
-> > > >   1. I wasn’t aware of any scenario where this would be useful. However,
-> > > >      your explanation has convinced me that it is necessary.
-> > > >   2. `hvfb_release_phymem()` relies on the `hdev` pointer, which requires
-> > > >      multiple `container_of` operations to derive it from the `info` pointer.
-> > > >      I was unsure if the complexity was justified, but it seems worthwhile now.
-> > > >
-> > > > I will move `hvfb_putmem()` to the `destroy` function in V2, and I hope this
-> > > > will address all the cases you mentioned.
-> > > >
-> > >
-> > > Yes, that's what I expect needs to happen, though I haven't looked at the
-> > > details of making sure all the needed data structures are still around. Like
-> > > you, I just had this sense that hvfb_putmem() might need to be moved as
-> > > well, so I tried to produce a failure scenario to prove it, which turned out
-> > > to be easy.
-> > >
-> > > Michael
-> > 
-> > I will add this in V2 as well. But I have found an another issue which is
-> > not very frequent.
-> > 
-> > 
-> > [  176.562153] ------------[ cut here ]------------
-> > [  176.562159] fb0: fb_WARN_ON_ONCE(pageref->page != page)
-> > [  176.562176] WARNING: CPU: 50 PID: 1522 at drivers/video/fbdev/core/fb_defio.c:67
-> > fb_deferred_io_mkwrite+0x215/0x280
-> > 
-> > <snip>
-> > 
-> > [  176.562258] Call Trace:
-> > [  176.562260]  <TASK>
-> > [  176.562263]  ? show_regs+0x6c/0x80
-> > [  176.562269]  ? __warn+0x8d/0x150
-> > [  176.562273]  ? fb_deferred_io_mkwrite+0x215/0x280
-> > [  176.562275]  ? report_bug+0x182/0x1b0
-> > [  176.562280]  ? handle_bug+0x133/0x1a0
-> > [  176.562283]  ? exc_invalid_op+0x18/0x80
-> > [  176.562284]  ? asm_exc_invalid_op+0x1b/0x20
-> > [  176.562289]  ? fb_deferred_io_mkwrite+0x215/0x280
-> > [  176.562291]  ? fb_deferred_io_mkwrite+0x215/0x280
-> > [  176.562293]  do_page_mkwrite+0x4d/0xb0
-> > [  176.562296]  do_wp_page+0xe8/0xd50
-> > [  176.562300]  ? ___pte_offset_map+0x1c/0x1b0
-> > [  176.562304]  __handle_mm_fault+0xbe1/0x10e0
-> > [  176.562307]  handle_mm_fault+0x17f/0x2e0
-> > [  176.562309]  do_user_addr_fault+0x2d1/0x8d0
-> > [  176.562314]  exc_page_fault+0x85/0x1e0
-> > [  176.562318]  asm_exc_page_fault+0x27/0x30
-> > 
-> > Looks this is because driver is unbind still Xorg is trying to write
-> > to memory which is causing some page faults. I have confirmed PID 1522
-> > is of Xorg. I think this is because we need to cancel the framebuffer
-> > deferred work after flushing it.
-> 
-> Does this new issue occur even after moving hvfb_putmem()
-> into the destroy() function?
+In the mtdswap_init(), if the allocations fail, the error handling
+path frees d->page_buf, d->eb_data, d->revmap and d->page_data without
+setting these pointers to NULL. This could lead to UAF if subsequent
+error handling or device reset operations attempt to release these
+pointers again.
 
-Unfortunately yes :( 
+Set d->page_buf, d->eb_data, d->revmap and d->page_data to NULL
+immediately after freeing them to prevent misuse. Release immediately
+and set to NULL, adhering to the 'release implies invalid' defensive
+programming principle.
 
->                             I'm hoping it doesn't. I've
-> looked at the fb_deferred_io code, and can't quite figure out
-> how that deferred I/O work is supposed to get cancelled. Or
-> maybe it's just not supposed to get started again after the flush.
-> 
+Found by code review.
 
-I want to understand why cancel_delayed_work_sync was introduce in
-hvfb_suspend and not the flush. Following commit introduced it.
+Cc: stable@vger.kernel.org
+Fixes: a32159024620 ("mtd: Add mtdswap block driver")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/mtd/mtdswap.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-382a462217572 ('video: hyperv_fb: Fix hibernation for the deferred IO feature')
+diff --git a/drivers/mtd/mtdswap.c b/drivers/mtd/mtdswap.c
+index 680366616da2..b315dab2a914 100644
+--- a/drivers/mtd/mtdswap.c
++++ b/drivers/mtd/mtdswap.c
+@@ -1318,12 +1318,16 @@ static int mtdswap_init(struct mtdswap_dev *d, unsigned int eblocks,
+ 
+ oob_buf_fail:
+ 	kfree(d->page_buf);
++	d->page_buf = NULL;
+ page_buf_fail:
+ 	vfree(d->eb_data);
++	d->eb_data = NULL;
+ eb_data_fail:
+ 	vfree(d->revmap);
++	d->revmap = NULL;
+ revmap_fail:
+ 	vfree(d->page_data);
++	d->page_data = NULL;
+ page_data_fail:
+ 	printk(KERN_ERR "%s: init failed (%d)\n", MTDSWAP_PREFIX, ret);
+ 	return ret;
+-- 
+2.25.1
 
-But I agree this need more analysis.
-
-> If the new issue still happens, that seems like more of a flaw
-> in the fb deferred I/O mechanism not shutting itself down
-> properly.
-> 
-
-As the repro rate is quite low, this will take some effort to get this
-fixed. Shall we take this in a separate patch later ?
-
-
-> Michael
->
-
-<snip> 
 
