@@ -1,215 +1,523 @@
-Return-Path: <linux-kernel+bounces-528137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7752A413FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:27:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35CFBA413FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 04:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A54D9166D82
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EE5216DC19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C261A5B89;
-	Mon, 24 Feb 2025 03:27:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CFE1A5B89;
+	Mon, 24 Feb 2025 03:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Mob3Ona6"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2073.outbound.protection.outlook.com [40.107.105.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PJZA8c2o"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129DC1F60A;
-	Mon, 24 Feb 2025 03:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740367635; cv=fail; b=bTaI3N1NLlsIdukS5Q8imsq0a6nzSvtQqL38lOmM34yvW/q1wVkPmMdhtfEI8kPBlt73ZYYCg0q2KD3JNoYOAMWw6NB4mkL+NkuiXu+/cAfBVCJtbCEw4dXNCdM1QJ+pnj1nHkYmDRon0Pj0rYXEd/RxlNgK74JSHqJWKLWuh68=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740367635; c=relaxed/simple;
-	bh=UO7I4C4xQKPZrMIaZCXJE3y1evwo9y9j3OTVgqB+IMg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PCFVVczYEZU0WSa4+WVQLZC9NJDLI6YDC+O+LsTdsxNAm+Tyt/KohrkUOxpr2QAFZRUz/jgKqWWjit1OCogQXs8k3z6ZV4f+mpncdAUgiQ+1eeAWEQwjLmYLHBdxka8piL9oj4ar7J2MikQ6GwHV+P0MfwA9TtH09TPonKsI5ME=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Mob3Ona6; arc=fail smtp.client-ip=40.107.105.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eDhVhBRCPJGTMlfKYB7bRmVDjMQO4+1IYnuCvtYsVIveGXLNCIaZOQMq59eGbOdp4a/JSiFpAk4m1F2IzObM/hBpBnYRrmkPpsISTmdcrvLZvprw/8Ry3NvzM5xR+OO2SXov4ClS3ANwuLdypUk6Ur2ieovPSYb8EwGB6CLouAObU4U/44vqZUSGINHJI4e5hcwacuVEfeeqYFsIKKB3Vbgi6Wd/6S34pqYqi7ZQvCyRtnDmTnc17qmf5JlGvsBlGgzt7xn8V6O/mHg81AzpT2tPRFLe1Ffqw883NPpth0JTLMO+2fKTbBnTN+qWBxKnE4Aq+T0wK9sd45VovHsprw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UO7I4C4xQKPZrMIaZCXJE3y1evwo9y9j3OTVgqB+IMg=;
- b=t2DzixT5NPB2d3IVTFE5r06SLZdXzC2c0kirZahChyfAr+6fP1N1nVdInwOp6gnMKQ4B8YKF+x02ntipclpNp9MhsdRSzNIjtnn3GxCOWjzxDASiBXZzerly8KFhdke9QkvkAi1kjqKt2UWFGIFE/VpUdf4X9nimYQN/uywzNyklYF0W2/+s7WzzJABlK2FwmyncGFgvcMy/Q/xCYSnLSo8KAbmmOy1XK5i7JyqFwQmNcz6XRFUlZi74hZtep0NBehHtuNpftGWYcwcQunOJ7+dteKzlKan1tina5ndgf98EcgyXjFUIHjsVE/Y9AqUZFVvyCUpOlavywVio1QLrwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UO7I4C4xQKPZrMIaZCXJE3y1evwo9y9j3OTVgqB+IMg=;
- b=Mob3Ona6sebitd5+b0GJv4qcDRQ7/C4yX8D3qW7Wia87H3RuSLu3hlhO0xMxkaBE0tyjdfWK5E4EY6sv3bbeiriztISonGWXMRUMgV9whLLgQlkII3Q9+5fn0iPNcFP3snQkG5qDyh7tP6POpvmAhpF6QcsDa02Do5i3R2bCguA+xjLJxLBNs4CVXmgbchMLEj5Yg4J6iy04vj0S9fJ6YjWQZWpyAC6szDXTRSTErE30KpQTvW7hlvgpYpPlCbYHG+UVAqusIshSWjwWLe4sB1Cz1eyDMej/8htoRjUKYZ/4eXR1NZEZu8F3Lz4xbgr/MO+verPIQ8kBoewZRcGVCA==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PA1PR04MB10555.eurprd04.prod.outlook.com (2603:10a6:102:48d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 03:27:10 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%5]) with mapi id 15.20.8466.020; Mon, 24 Feb 2025
- 03:27:10 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang
-	<xiaoning.wang@nxp.com>, "andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, Ioana Ciornei
-	<ioana.ciornei@nxp.com>, "Y.B. Lu" <yangbo.lu@nxp.com>,
-	"michal.swiatkowski@linux.intel.com" <michal.swiatkowski@linux.intel.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH v2 net 2/9] net: enetc: correct the tx_swbd statistics
-Thread-Topic: [PATCH v2 net 2/9] net: enetc: correct the tx_swbd statistics
-Thread-Index: AQHbgpN/Xw1oIgK130OBsitj8eB9+LNQXDmAgACfT2CAAIJ7gIAEVFAg
-Date: Mon, 24 Feb 2025 03:27:10 +0000
-Message-ID:
- <PAXPR04MB8510EA8BC58E151B178F684188C02@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20250219054247.733243-1-wei.fang@nxp.com>
- <20250219054247.733243-3-wei.fang@nxp.com>
- <20250220160123.5evmuxlbuzo7djgr@skbuf>
- <PAXPR04MB8510D3ACAB9DD6C86AC87E5488C72@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <20250221091835.g6ybtng4wiltg4ii@skbuf>
-In-Reply-To: <20250221091835.g6ybtng4wiltg4ii@skbuf>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PA1PR04MB10555:EE_
-x-ms-office365-filtering-correlation-id: ccd0df99-ff77-4971-bca6-08dd54831f73
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?FYOw/2fZ/Z6JMZrP5Y74JK21yT/G4SDQzrGbRIB4/FkeKgU8K0YYZf7H/j2L?=
- =?us-ascii?Q?q2cktp8iUHAEoCuBGwULoXuIHdLsdCOEUBsuiPUdGEuQaS2eKYyauzNkV3U4?=
- =?us-ascii?Q?7OEUhDOWv6zDnjT8KV3PoUlxQWijAYgEpL2por06OUdclGn/w8CiDs4cn2lA?=
- =?us-ascii?Q?4VBmSyvfWCDH6ZLtx1cFlP58JHw+smdTgP+Xukw9A3r902oYXURH3+HxEPFy?=
- =?us-ascii?Q?PF+VwgmeX/CRcZSG5O2rtVNLax9domzvLQQHr7dfML60nmnUtgUtM7pVxW7b?=
- =?us-ascii?Q?S4tNhMuTWcXGFzKPvKlp/rKDALP+sN4m2zfnnUUQbpcPE+nIdahQ5EyTlqPf?=
- =?us-ascii?Q?Nzi+8PP156hlLBkoCzx+P7qXOm68FK77GJyaVQKd+zNS+dK15AI1Rm9bZUPP?=
- =?us-ascii?Q?PKp3GL7BQkUlkOkaTehAebggDfZ3V/a1qX6mzhiN1LEnEhHHi07iO0UshgId?=
- =?us-ascii?Q?89XDsiwSLyhnWLbEz7GR5PSoxrystJu9icrbdxN9s4FQEliWfUR11DvxtnP/?=
- =?us-ascii?Q?4/l6ooA/Jh/gosPDIWiO5glVErSd+8/SlPgxOYmSjZdr+Z5lD4Ydj8YGMCJj?=
- =?us-ascii?Q?rSkLVAX+9W/+AUqMtJ1X6Gc1MqLRlHsllEacxAtty0qW/GNldsUjgkLdtNIs?=
- =?us-ascii?Q?/G1DjrEL9SMdlgmX7K/XWNLTfS1YPVKKbUegy3ny6fU+RKoxe7zMwrF34nS/?=
- =?us-ascii?Q?4DYpiGbUtnGi1kh4G/7YEfHudtTn7uEW57RauckeE4cQxBUTQheRHyzRmr4I?=
- =?us-ascii?Q?Xqra6J7qwPvc5s4J/dxMeBYLPIk31XbZZsJAjmAlIrcZ3bPHiOEpdxbsyphc?=
- =?us-ascii?Q?JsDh2tY6fCYgkoJQG/b3yRF1zJcJy66gwe4s7idxHlT4BrV7Yay//+74cZW0?=
- =?us-ascii?Q?ZAUXmRa3gVztyZksraJnV6tqkvx1cbiDC1T+upxB1jfxO/U88yn0DQNybqxp?=
- =?us-ascii?Q?98kkNOHOr8lSqHrUjffTqB9lijkn1Q96Af+ZEwtp07dHrvWuZoPYf3fPSNFZ?=
- =?us-ascii?Q?SJjmpG+CQb/OqepIJ2RylmRKuwfZHKk7t9v2yCw9v7FzNmEPNTenyqEygJK6?=
- =?us-ascii?Q?VyIAjp/JkYRUrVNh8R289zQe0ivNBDyVlTmsUJ9fIEiZxWcIXIHrflgm3nsu?=
- =?us-ascii?Q?ysL2IXM2gIGYEfpA1o5Y1EzXZqds41V/iEIez3q4C0bbYb3hj39J44vL2Y2O?=
- =?us-ascii?Q?wP/q+Dedr2UxICnF94cfPtKkN1A7ni805QQR31raQrC4kXm4B/uToLOvWDy7?=
- =?us-ascii?Q?YnE7poW3Uv3ru1sLC5qhUyCrFHb0mbq2nehnt2FEcH/0BrUIVvidVtxUBra9?=
- =?us-ascii?Q?yW89NAcc6WVXxyYLQnogsRoEXA9bAd7EeE6TGIpUj0Yx0GZWgega8Ta+HvwF?=
- =?us-ascii?Q?UHRymD3RuWc9M95T4qrVsp/ymSKFl6rYUD3L0nbpN4O0NBmzCy1bC43pivzc?=
- =?us-ascii?Q?JwI7SnxTsVSNBMY4Kw+At0zkUHn3hKQc?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?HAUO1z49CKP9KtakeCkxUMg1N93njy6hzNiqoS3J/6ZdarZlENVUlO0cWYhZ?=
- =?us-ascii?Q?XSp4VQpL8wBcbsUdziC8NS2Bm7IgyQJINP9I10j/AIVe/1HBfbSBazD34fgb?=
- =?us-ascii?Q?GEuJs7RWHGFGuAsD4ZOSaalLVjCy3TgLYVsf7lXm+9AW9Tf8UwN4n6GXFaPm?=
- =?us-ascii?Q?NkCseppOIgDQ1LS1jGBkMBlVNLIR0ETDAoo7YuruhDj9GtBx6N4doGDXRP1R?=
- =?us-ascii?Q?1SC7t7yk7mF7Pb3WG2t09WpOt+aTuvvqMay/ehgK+KcS4shu51XYSXiJH8Dj?=
- =?us-ascii?Q?Xp+tnc0LDzLlVtfKQl8s1mIi/bBYgEiZ1S7okEQ3RG7IMMGiLVh7eVVSl8tt?=
- =?us-ascii?Q?z3J/HOgMd3AP22gukcNEd/lLu9/a+WkzcGoKxwyB82QdM11+CfC2DnUiSFZl?=
- =?us-ascii?Q?F2Pn9QVdA+AZ2JblFunznPwZ8BsxqpQsBwGyOEpUyB6rbaCbzcbqy0Uxtqps?=
- =?us-ascii?Q?uO+pco2UTx+hXDsH9SEBcDFcykjiSdY16NF3oSzfvi6We3440Cd8w6j7+xqg?=
- =?us-ascii?Q?s5ohHzT9abAF15wgPpxR80hm8KpNoE91XPATpfk2PsrZln8XWfgqIWVpU5mY?=
- =?us-ascii?Q?+kt7AlVSe20WTtknl1H9QRVbrNhCg9o6gFFGwFDlYfhoCVLQqu9BW/21MNqz?=
- =?us-ascii?Q?D9JNSmR7koATCtckUBda+bCcMcFTc30N1sGIS3qQP39DEGahYahWxBCPGE3w?=
- =?us-ascii?Q?/VnRUWsGaLXg5jENzBBMOfcETrUt2/vGEGtzbDc/T53/3NcNLg1AMfSdtRh2?=
- =?us-ascii?Q?85QQIk7kOqeGmMsDiqkApwrYf9PV+/QIWFJ8JQ/Ls/qzEzI5e68c7OwjhFAV?=
- =?us-ascii?Q?VRW1BFpi7ewUUEeYNDKUBPHklBEUvqUh8j73T/Xbbdsxs0IhENY4RhQn9cVn?=
- =?us-ascii?Q?M0bxBVddhjCuboHATPXgBD/ZdLLGsVUs/kxmAUMWMXDSU6Jk2v4h4lQT6+6X?=
- =?us-ascii?Q?ayZ+Z3tymeFiQsJ/OCajL5WQHxAcI0geBClT3voO5fOzEXjXSNqSKTtpJ6YA?=
- =?us-ascii?Q?QYjbfdOAPe+EHMtJAvQ3zWPYXQgqtMyLdXGmQRUTvNAhmepK5xQKVs1LVFVl?=
- =?us-ascii?Q?kP813kT0+NViyIxTv2E+99YVONGUrgxY7Yf0p18BR5/ACgeUXQNnp/umwW6C?=
- =?us-ascii?Q?ghdYj67H1Mz1mDlkWYjl8+sB8ZZLTIti7SOTp9cnx5s5rYZNCkYG4lSjFxip?=
- =?us-ascii?Q?cuMNd3HGihTYSkPt5+TnN0XrsJGl/PISSZsaNC+lwIL9I8ZXCN9tiAAdqlzz?=
- =?us-ascii?Q?1Vu1bA2Sv1kjcQga8mEY0tsUDQKtEAY+//XYy9Z1Nbq5IvvFaxgjPs3WvOlQ?=
- =?us-ascii?Q?Aw+RR6hNBWj3Wu3RKAB8BYUn2FAfwZVtPT+SOmW4B6gNMQTQ8J+Ua79TqrpK?=
- =?us-ascii?Q?VLgk7+qHB2VhKZr6SVHtmyhq6nuQVDuRs99IbfDi4rrLVaJEcZr5LRNx4oxr?=
- =?us-ascii?Q?Um8oAkI+4Y0DRqC0IC8xklLw7q2GFYXDYGogyrSLZ2Zb9Wr13gSfAg9L8IBy?=
- =?us-ascii?Q?pcIaFPeeQ95benOUv+rl4kJxW2cz781+ngYDZEHenItlylVGTP0C/eQ6CQrH?=
- =?us-ascii?Q?vxtAiSZqhTftCnlcXrU=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4904770824
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740367720; cv=none; b=CO3jNuhMoGUtEQoLPHw/Br3HZhvp0sm07KDLJpmrBhD28H5u7IJnJEJ7y0wNFUOK9jFydc3WnYSYgBKs1BAETSeyJBvzZEsNi1adm8n0u5vscbChsZbLnakGRuHwg5JD3cqitPwwlkGGmgLviuvSIPJP2UxFNH9ZhX7wNTNB0gQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740367720; c=relaxed/simple;
+	bh=Q4FSVu6jUyT1kY2R+LJKOebYCDa7zGKm2uwTxpzLdjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prA8OF41jKA7/UQlT1XRG9E26/NIxdnje/DBvb4OTndkYO5CicAWrFNN79f1E6pYsfJT6U3nf9Vxym+wzXMDkHo4Rfr+8df0L262mNbpFoLkf6iWoQHWOf6Q4tzX1xA2b4bw6TZlwJPWE5mBohfV793qZmweSuM2oA4ujqUKrnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PJZA8c2o; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740367716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=01SlYQwVpThtAextzuIZDhJWnhAEwR2pf3Jnf5JXgXI=;
+	b=PJZA8c2oFcgof7CRbm332x7SDka57MO3OxXMZL85MRRHeB3lY6uQFR6nOem4F7UFcbiILj
+	sdBM+XRoB2C1tmIdXsvZkcgawpIJq/knfIo5W9xBXzxKNobKMCWVZzPGABE8V0Bo2MwOPT
+	fMJ7uptbIPHmZ5wSUcj2K4KGWaW380Y=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-378-Su_tnlnjPsCFVvRNlFV5Hg-1; Sun,
+ 23 Feb 2025 22:28:31 -0500
+X-MC-Unique: Su_tnlnjPsCFVvRNlFV5Hg-1
+X-Mimecast-MFC-AGG-ID: Su_tnlnjPsCFVvRNlFV5Hg_1740367709
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D1D061800873;
+	Mon, 24 Feb 2025 03:28:28 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.9])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3FD6819560AD;
+	Mon, 24 Feb 2025 03:28:20 +0000 (UTC)
+Date: Mon, 24 Feb 2025 11:28:15 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+Message-ID: <Z7vnTyk6Y6X4JWQB@fedora>
+References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
+ <20250222092823.210318-3-yukuai1@huaweicloud.com>
+ <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccd0df99-ff77-4971-bca6-08dd54831f73
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Feb 2025 03:27:10.1293
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: D3n3R8SiO7fUYBZbgN1hQt3Fe/EG9h+CfhhIqEPtM9JJVtdgSobDrwZkt5sLWF/Z5vFEj9ghE/xzy8yb7sUSGw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10555
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-> On Fri, Feb 21, 2025 at 03:42:05AM +0200, Wei Fang wrote:
-> > > I'm not sure "correct the statistics" is the best way to describe thi=
-s
-> > > change. Maybe "keep track of correct TXBD count in
-> > > enetc_map_tx_tso_buffs()"?
-> >
-> > Hi Vladimir,
-> >
-> > Inspired by Michal, I think we don't need to keep the count variable, b=
-ecause
-> > we already have index "i", we just need to record the value of the init=
-ial i at
-> the
-> > beginning. So I plan to do this optimization on the net-next tree in th=
-e future.
-> > So I don't think it is necessary to modify enetc_map_tx_tso_hdr().
->=20
-> You are saying this in reply to my observation that the title of the
-> change does not correctly represent the change. But I don't see how what
-> you're saying is connected to that. Currently there exists a "count"
-> variable based on which TX BDs are unmapped, and these patches are not
-> changing that fact.
->=20
-> > > stylistic nitpick: I think this implementation choice obscures the fa=
-ct,
-> > > to an unfamiliar reader, that the requirement for an extended TXBD co=
-mes
-> > > from enetc_map_tx_tso_hdr(). This is because you repeat the condition
-> > > for skb_vlan_tag_present(), but it's not obvious it's correlated to t=
-he
-> > > other one. Something like the change below is more expressive in this
-> > > regard, in my opinion:
->=20
-> It seems you were objecting to this other change suggestion instead.
-> Sure, I mean, ignore it if you want, but you're saying "well I'm going
-> to change the scheme for net-next, so no point in making the code more
-> obviously correct in stable branches", but the stable branches aren't
-> going to pick up the net-next patch - they are essentially frozen except
-> for bug fixes. I would still recommend writing code that makes the most
-> sense for stable (to the extent that this is logically part of fixing a
-> bug), and then writing code that makes most sense for net-next, even if
-> it implies changing some of it back the way it was.
+On Mon, Feb 24, 2025 at 10:39:13AM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/02/22 20:16, Ming Lei 写道:
+> > Hi Yukuai,
+> > 
+> > On Sat, Feb 22, 2025 at 05:28:23PM +0800, Yu Kuai wrote:
+> > > From: Yu Kuai <yukuai3@huawei.com>
+> > > 
+> > > wait_time is based on jiffies, and the calculation is:
+> > > 
+> > > wait_time = extra_bytes * HZ / bps_limit;
+> > > 
+> > > If wait time is not zero, the remainder is ignored, means wait time is
+> > > short by at most 1 jiffes; On the other hand, if wait time is zero, it
+> > > will be used as 1 jiffies, means it's excessive by at most 1 jiffes.
+> > > 
+> > > This way causes blktests throtl/001 failure in case of CONFIG_HZ_100=y,
+> > > fix the problem by recording remainder as debt, and repay the debt
+> > > later.
+> > 
+> > After further analysis, I figured out that this one extra jiffy isn't the
+> > only reason for throtl/001 failure.
+> > 
+> > In blktests throtl/001, bps_limit is 1MB/sec, and BS is 4k, and
+> > COFIG_HZ=100, and default throttle slice is 2 jiffies(20ms):
+> > 
+> > - 20ms can submit 5 bios: 1024K/50(5*4k=20KB)
+> > 
+> > - the 6th bio is throttled, and the calculated wait is 1 jiffy from
+> > tg_within_bps_limit()
+> > 
+> > - given all the 6 bios are handled in the time of jiffies A, so A + 1(wait) + 2(slice)
+> > is programmed to start pending timer for scheduling dispatch
+> > 
+> > - when the pending timer is expired, the 6th bio is submitted, then the
+> >    current slice is trim/reset since the throttled 6th bio is dispatched.
+> > 
+> > Now in the whole throttle slice period, 6 bios(24KB) are submitted, and 3
+> > jiffies are taken, so 256 bios will take (256/6) * 30ms = 1.3sec.
+> > 
+> > But blktests throtl/001 still should pass since the allowed deviation is 0.5sec,
+> > and 1.3 < 1.5.
+> > 
+> > Actually there is another reason of timer delay, looks one extra jiffy is
+> > delayed when the timer is triggered, which can be observed reliably by:
+> > 
+> > bpftrace -e 'kfunc:throtl_pending_timer_fn { @timer_expire_delay = lhist(jiffies - args->t->expires, 0, 16, 1);}'
+> > 
+> > Then 256 bios will take (256/6) * 40ms = 1.7sec, which does match with
+> > observation in throtl/001.
+> 
+> Thanks for the detailed explanation.
+> > 
+> > Yeah, killing one jiffy may pass blktests throtl/001, but, ...
+> > 
+> > > 
+> > > Reported-and-tested-by: Ming Lei <ming.lei@redhat.com>
+> > > Closes: https://lore.kernel.org/all/20250220111735.1187999-1-ming.lei@redhat.com/
+> > > Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> > > ---
+> > >   block/blk-throttle.c | 24 +++++++++++++++++-------
+> > >   block/blk-throttle.h | 12 ++++++++----
+> > >   2 files changed, 25 insertions(+), 11 deletions(-)
+> > > 
+> > > diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> > > index 0096e486b1e3..3828c6535605 100644
+> > > --- a/block/blk-throttle.c
+> > > +++ b/block/blk-throttle.c
+> > > @@ -703,9 +703,10 @@ static unsigned long tg_within_iops_limit(struct throtl_grp *tg, struct bio *bio
+> > >   }
+> > >   static unsigned long tg_within_bps_limit(struct throtl_grp *tg, struct bio *bio,
+> > > -				u64 bps_limit)
+> > > +				u64 bps_limit, bool *has_debt)
+> > >   {
+> > >   	bool rw = bio_data_dir(bio);
+> > > +	long long carryover_bytes;
+> > >   	long long bytes_allowed;
+> > >   	u64 extra_bytes;
+> > >   	unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
+> > > @@ -730,10 +731,16 @@ static unsigned long tg_within_bps_limit(struct throtl_grp *tg, struct bio *bio,
+> > >   	/* Calc approx time to dispatch */
+> > >   	extra_bytes = tg->bytes_disp[rw] + bio_size - bytes_allowed;
+> > > -	jiffy_wait = div64_u64(extra_bytes * HZ, bps_limit);
+> > > -
+> > > -	if (!jiffy_wait)
+> > > -		jiffy_wait = 1;
+> > > +	jiffy_wait = div64_u64_rem(extra_bytes * HZ, bps_limit, &carryover_bytes);
+> > > +	if (carryover_bytes) {
+> > > +		/*
+> > > +		 * If extra_bytes is not divisible, the remainder is recorded as
+> > > +		 * debt. Caller must ensure the current slice has at least 1
+> > > +		 * more jiffies to repay the debt.
+> > > +		 */
+> > > +		*has_debt = true;
+> > > +		tg->carryover_bytes[rw] -= div64_u64(carryover_bytes, HZ);
+> > > +	}
+> > 
+> > Thinking of further, it may not be good to use ->carryover_bytes[]:
+> > 
+> > - if tg_within_bps_limit() returns 0 and the bio is dispatched
+> >    immediately, throtl_trim_slice() is called and ->carryover_bytes[]
+> >    is cleared.
+> > 
+> I think this should not happen, because:
+> 
+> If the slice is extended in consideration of carryover_bytes,
+> throtl_slice_used() is checked first in throtl_trim_slice().
 
-Okay, agree with you, I will improve the patch.
+throtl_trim_slice() returns immediately if throtl_slice_used()
+is true.
+
+And throtl_slice_used() checks jiffies in [start, end] via time_in_range(),
+so if `start <= jiffies <= end', it still returns false.
+
+So if the 6 bio comes at the end of the slice exactly:
+
+- tg_within_bps_limit() returns 0 from tg_within_bps_limit() with your
+patch
+
+- the bio is dispatched
+
+- throtl_trim_slice() still clears ->carryover_bytes[] since
+  throtl_slice_used() returns false.
+
+
+> 
+> > - if tg_within_bps_limit() returns >0, this bio will be throttled, and
+> >    tg_within_bps_limit() may be called more than one time, so
+> >    tg->carryover_bytes[] could be over-counted.
+> > 
+> Yes, carryover_bytes can be over-counted with this patch. For now, the
+> only way that I can think of to fix this is to handle carryover_bytes
+> from the caller of tg_may_dispatch():
+
+As I explained, there are two reason which contributes to throtl/001,
+and the throttle algorithm needn't to take the single time delay into
+account, and it can dispatch more if less bytes are dispatched in
+previous period of this slice because of either jiffy_wait roundup or
+timer expire delay.
+
+The opposite, probably carryover_bytes[] could be killed in future.
+
+
+>  - tg_within_limit(), only handle if bio is dispatched directly;
+>  - tg_update_disptime(), never handle;
+>  - throtl_dispatch_tg(), always handle;
+> 
+> The idea is that only handle when bio is dispatched, like following
+> patch(not tested yet):
+> 
+> [yukuai@localhost linux-next]$ git diff
+> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> index 3828c6535605..20f6bab07960 100644
+> --- a/block/blk-throttle.c
+> +++ b/block/blk-throttle.c
+> @@ -703,10 +703,9 @@ static unsigned long tg_within_iops_limit(struct
+> throtl_grp *tg, struct bio *bio
+>  }
+> 
+>  static unsigned long tg_within_bps_limit(struct throtl_grp *tg, struct bio
+> *bio,
+> -                               u64 bps_limit, bool *has_debt)
+> +                               u64 bps_limit, long long *carryover_bytes)
+>  {
+>         bool rw = bio_data_dir(bio);
+> -       long long carryover_bytes;
+>         long long bytes_allowed;
+>         u64 extra_bytes;
+>         unsigned long jiffy_elapsed, jiffy_wait, jiffy_elapsed_rnd;
+> @@ -731,16 +730,7 @@ static unsigned long tg_within_bps_limit(struct
+> throtl_grp *tg, struct bio *bio,
+> 
+>         /* Calc approx time to dispatch */
+>         extra_bytes = tg->bytes_disp[rw] + bio_size - bytes_allowed;
+> -       jiffy_wait = div64_u64_rem(extra_bytes * HZ, bps_limit,
+> &carryover_bytes);
+> -       if (carryover_bytes) {
+> -               /*
+> -                * If extra_bytes is not divisible, the remainder is
+> recorded as
+> -                * debt. Caller must ensure the current slice has at least 1
+> -                * more jiffies to repay the debt.
+> -                */
+> -               *has_debt = true;
+> -               tg->carryover_bytes[rw] -= div64_u64(carryover_bytes, HZ);
+> -       }
+> +       jiffy_wait = div64_u64_rem(extra_bytes * HZ, bps_limit,
+> carryover_bytes);
+> 
+>         /*
+>          * This wait time is without taking into consideration the rounding
+> @@ -755,13 +745,12 @@ static unsigned long tg_within_bps_limit(struct
+> throtl_grp *tg, struct bio *bio,
+>   * of jiffies to wait before this bio is with-in IO rate and can be
+> dispatched
+>   */
+>  static bool tg_may_dispatch(struct throtl_grp *tg, struct bio *bio,
+> -                           unsigned long *wait)
+> +                           unsigned long *wait, long long *carryover_bytes)
+>  {
+>         bool rw = bio_data_dir(bio);
+>         unsigned long bps_wait = 0, iops_wait = 0, max_wait = 0;
+>         u64 bps_limit = tg_bps_limit(tg, rw);
+>         u32 iops_limit = tg_iops_limit(tg, rw);
+> -       bool has_debt = false;
+> 
+>         /*
+>          * Currently whole state machine of group depends on first bio
+> @@ -792,20 +781,18 @@ static bool tg_may_dispatch(struct throtl_grp *tg,
+> struct bio *bio,
+>         else
+>                 throtl_extend_slice(tg, rw, jiffies + tg->td->throtl_slice);
+> 
+> -       bps_wait = tg_within_bps_limit(tg, bio, bps_limit, &has_debt);
+> +       bps_wait = tg_within_bps_limit(tg, bio, bps_limit, carryover_bytes);
+>         iops_wait = tg_within_iops_limit(tg, bio, iops_limit);
+>         if (bps_wait + iops_wait == 0) {
+>                 if (wait)
+>                         *wait = 0;
+> -               if (has_debt)
+> -                       throtl_extend_slice(tg, rw, jiffies + 1);
+>                 return true;
+>         }
+> 
+>         max_wait = max(bps_wait, iops_wait);
+>         if (wait)
+>                 *wait = max_wait;
+> -       throtl_extend_slice(tg, rw, jiffies + max_wait + has_debt);
+> +       throtl_extend_slice(tg, rw, jiffies + max_wait);
+> 
+>         return false;
+>  }
+> @@ -858,19 +845,33 @@ static void throtl_add_bio_tg(struct bio *bio, struct
+> throtl_qnode *qn,
+>         throtl_enqueue_tg(tg);
+>  }
+> 
+> +static void handle_tg_carryover_bytes(struct throtl_grp *tg,
+> +                                     long long carryover_bytes, int rw)
+> +{
+> +       if (carryover_bytes == 0)
+> +               return;
+> +       /*
+> +        * IO is dispatched without waiting for @carryover_bytes, make sure
+> +        * current slice has 1 more jiffies to repay the debt.
+> +        */
+> +       tg->carryover_bytes[rw] -= carryover_bytes;
+> +       throtl_extend_slice(tg, rw, tg->slice_end[rw] + 1);
+> +}
+> +
+>  static void tg_update_disptime(struct throtl_grp *tg)
+>  {
+>         struct throtl_service_queue *sq = &tg->service_queue;
+>         unsigned long read_wait = -1, write_wait = -1, min_wait = -1,
+> disptime;
+> +       long long carryover_bytes = 0;
+>         struct bio *bio;
+> 
+>         bio = throtl_peek_queued(&sq->queued[READ]);
+>         if (bio)
+> -               tg_may_dispatch(tg, bio, &read_wait);
+> +               tg_may_dispatch(tg, bio, &read_wait, &carryover_bytes);
+> 
+>         bio = throtl_peek_queued(&sq->queued[WRITE]);
+>         if (bio)
+> -               tg_may_dispatch(tg, bio, &write_wait);
+> +               tg_may_dispatch(tg, bio, &write_wait, &carryover_bytes);
+> 
+>         min_wait = min(read_wait, write_wait);
+>         disptime = jiffies + min_wait;
+> @@ -943,12 +944,15 @@ static int throtl_dispatch_tg(struct throtl_grp *tg)
+>         unsigned int nr_reads = 0, nr_writes = 0;
+>         unsigned int max_nr_reads = THROTL_GRP_QUANTUM * 3 / 4;
+>         unsigned int max_nr_writes = THROTL_GRP_QUANTUM - max_nr_reads;
+> +       long long carryover_bytes = 0;
+>         struct bio *bio;
+> 
+>         /* Try to dispatch 75% READS and 25% WRITES */
+> 
+>         while ((bio = throtl_peek_queued(&sq->queued[READ])) &&
+> -              tg_may_dispatch(tg, bio, NULL)) {
+> +              tg_may_dispatch(tg, bio, NULL, &carryover_bytes)) {
+> +               handle_tg_carryover_bytes(tg, carryover_bytes, READ);
+> +               carryover_bytes = 0;
+> 
+>                 tg_dispatch_one_bio(tg, READ);
+>                 nr_reads++;
+> @@ -958,7 +962,9 @@ static int throtl_dispatch_tg(struct throtl_grp *tg)
+>         }
+> 
+>         while ((bio = throtl_peek_queued(&sq->queued[WRITE])) &&
+> -              tg_may_dispatch(tg, bio, NULL)) {
+> +              tg_may_dispatch(tg, bio, NULL, &carryover_bytes)) {
+> +               handle_tg_carryover_bytes(tg, carryover_bytes, WRITE);
+> +               carryover_bytes = 0;
+> 
+>                 tg_dispatch_one_bio(tg, WRITE);
+>                 nr_writes++;
+> @@ -1613,11 +1619,18 @@ void blk_throtl_cancel_bios(struct gendisk *disk)
+> 
+>  static bool tg_within_limit(struct throtl_grp *tg, struct bio *bio, bool
+> rw)
+>  {
+> +       long long carryover_bytes = 0;
+> +
+>         /* throtl is FIFO - if bios are already queued, should queue */
+>         if (tg->service_queue.nr_queued[rw])
+>                 return false;
+> 
+> -       return tg_may_dispatch(tg, bio, NULL);
+> +       if (tg_may_dispatch(tg, bio, NULL, &carryover_bytes)) {
+> +               handle_tg_carryover_bytes(tg, carryover_bytes, rw);
+> +               return true;
+> +       }
+> +
+> +       return false;
+>  }
+> 
+>  static void tg_dispatch_in_debt(struct throtl_grp *tg, struct bio *bio,
+> bool rw)
+> 
+> 
+> > Actually this patch changes tg_within_bps_limit() to one stateful function...
+> > 
+> > >   	/*
+> > >   	 * This wait time is without taking into consideration the rounding
+> > > @@ -754,6 +761,7 @@ static bool tg_may_dispatch(struct throtl_grp *tg, struct bio *bio,
+> > >   	unsigned long bps_wait = 0, iops_wait = 0, max_wait = 0;
+> > >   	u64 bps_limit = tg_bps_limit(tg, rw);
+> > >   	u32 iops_limit = tg_iops_limit(tg, rw);
+> > > +	bool has_debt = false;
+> > >   	/*
+> > >    	 * Currently whole state machine of group depends on first bio
+> > > @@ -784,18 +792,20 @@ static bool tg_may_dispatch(struct throtl_grp *tg, struct bio *bio,
+> > >   	else
+> > >   		throtl_extend_slice(tg, rw, jiffies + tg->td->throtl_slice);
+> > > -	bps_wait = tg_within_bps_limit(tg, bio, bps_limit);
+> > > +	bps_wait = tg_within_bps_limit(tg, bio, bps_limit, &has_debt);
+> > >   	iops_wait = tg_within_iops_limit(tg, bio, iops_limit);
+> > >   	if (bps_wait + iops_wait == 0) {
+> > >   		if (wait)
+> > >   			*wait = 0;
+> > > +		if (has_debt)
+> > > +			throtl_extend_slice(tg, rw, jiffies + 1);
+> > >   		return true;
+> > >   	}
+> > >   	max_wait = max(bps_wait, iops_wait);
+> > >   	if (wait)
+> > >   		*wait = max_wait;
+> > > -	throtl_extend_slice(tg, rw, jiffies + max_wait);
+> > > +	throtl_extend_slice(tg, rw, jiffies + max_wait + has_debt);
+> > >   	return false;
+> > >   }
+> > > diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+> > > index 1a36d1278eea..56dcb5ce412f 100644
+> > > --- a/block/blk-throttle.h
+> > > +++ b/block/blk-throttle.h
+> > > @@ -110,10 +110,14 @@ struct throtl_grp {
+> > >   	unsigned int last_io_disp[2];
+> > >   	/*
+> > > -	 * The following two fields are updated when new configuration is
+> > > -	 * submitted while some bios are still throttled, they record how many
+> > > -	 * bytes/ios are waited already in previous configuration, and they will
+> > > -	 * be used to calculate wait time under new configuration.
+> > > +	 * The following two fields are updated when:
+> > > +	 * 1) new configuration is submitted while some bios are still
+> > > +	 * throttled, they record how many bytes/ios are waited already in
+> > > +	 * previous configuration;
+> > > +	 * 2) IOs which may cause priority inversions are dispatched while tg is
+> > > +	 * over limit, these IOs will be dispatched directly;
+> > > +	 * 3) While calculating wait_time for IO, extra_bytes * HZ is not
+> > > +	 * divisible by bps_limit, the remainder will be recorded;
+> > >   	 */
+> > 
+> > blk-throttle takes token bucket algorithm, and the implementation
+> > shouldn't be sensitive with the above two factors, because the bps
+> > rate is controlled over the whole bucket(slice). Meantime it is still
+> > tricky to maintain ->carryover_bytes during slice cycle, which can't
+> > cover timer delay too.
+> > 
+> > Another way is to avoid to trim slice too soon in case of owning too
+> > much debt, something like the following does avoid this issue:
+> 
+> 
+> > 
+> > 
+> > diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> > index 8d149aff9fd0..a778ebbb6887 100644
+> > --- a/block/blk-throttle.c
+> > +++ b/block/blk-throttle.c
+> > @@ -615,6 +615,14 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+> >   	if (bytes_trim <= 0 && io_trim <= 0)
+> >   		return;
+> > +	if (tg_bps_limit(tg, rw) != U64_MAX) {
+> > +		long long disp = tg->bytes_disp[rw];
+> > +
+> > +		if (bytes_trim > disp && (bytes_trim - disp) > disp / 2 && time_elapsed <
+> > +				8 * tg->td->throtl_slice)
+> > +			return;
+> > +	}
+> 
+> I'm not sure why we need this, why will there be too much debt? debt
+> from remainder should be at most 1 jiffies, new debt can only happen
+> when old debt is paid.
+
+Maybe term of `debt` is not accurate.
+
+In throtl_trim_slice(), if we dispatched much less bytes than expected(bytes_trim),
+there should be extra delay introduced, such as, extra one jiffy because
+of roundup(), or timer expire delay, we shouldn't reset the slice because actual
+rate(bps here) is much less than bps_limit.
+
+> 
+> If you mean we don't clear debt in time, and the historical debt
+> accumulated too much, then we might want to trim slice sooner and a new
+> branch try to clear historical debt.
+> 
+> BTW, throtl_trim_slice() looks like problematic:
+> 
+> -       if (bytes_trim <= 0 && io_trim <= 0)
+> +       if (bytes_trim <= 0 || io_trim <= 0 ||
+> +           tg->bytes_disp[rw] < bytes_trim || tg->io_disp[rw] < io_trim)
+>                 return;
+
+That is exactly what my patch is doing, just taking deviation and
+timeout into account, also U64_MAX limit has to be excluded.
+
+If you test the patch, it works just fine. My patch controls bytes_exp 
+<= 1.5 * disp, then throtl/001 can be completed in 1.5sec, and if it is
+changed to 1.25 * disp, the test can be completed in 1.25sec.
+
+With this fix, why do we have to play the complicated carryover
+trick?
+
+
+Thanks,
+Ming
+
 
