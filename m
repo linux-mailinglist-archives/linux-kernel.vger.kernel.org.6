@@ -1,81 +1,50 @@
-Return-Path: <linux-kernel+bounces-528040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7437A412BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:43:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77AD2A413A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:43:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD06B189496F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B464A3A2328
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303A91078F;
-	Mon, 24 Feb 2025 01:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QiP6zlkq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A343419C54E;
+	Mon, 24 Feb 2025 02:42:58 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D5E158520;
-	Mon, 24 Feb 2025 01:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537AB70824
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740361390; cv=none; b=foDlpodlQLg3nbzVjeWhIu5c2fUP7n0VXPWTh3qjR1LGoec1c9eQNkwEP2EhjxZ7UIglyfgnM5Ka82YG10rSPw+sYcMM7x++vQp1Xw7wTJa/Z6rtInXKGXtbNbSgTNL90EEJWPOAyHaTzmQAezxFCa+vxbe+uDh7IKkYaK4lrEQ=
+	t=1740364978; cv=none; b=KPJGmUkoDHWWtf1l+zjGRgdRRfTJSqUDWVF1IpIeCjVsK9MYk/jwsvc/qNE+jEo2HpG5zrkyxoR529S+GzxZN0fp2wOVbdxWx9Dvm8y3gi+ElPCpDfoIpQWp8jI4wR4bwm/wxCgOD5Ram5w2pan8pwOuxtLuevEq7n5WxLInSUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740361390; c=relaxed/simple;
-	bh=s8sv5qb6pgFnrR0f38MWn2U4qzSyEbnuVcoxEpRBLmM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pmXvTSHEV4SmJ13/B1ExYBTZNuBEuJNXsmnwdLP4ra9eOQs/TRftGogQOYqeVifky4iDAT1dqzLsZJZYgcHhxdvlydqihsmfCBvI2IyHCCGagank3VDbo6BX3Jh4c+SO5F0rW8uPDOeuuY5ecfUwbAZzEzSWOF1M5VSxj1++9f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QiP6zlkq; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740361388; x=1771897388;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=s8sv5qb6pgFnrR0f38MWn2U4qzSyEbnuVcoxEpRBLmM=;
-  b=QiP6zlkq3inKnoE/vUku18IVO/WCzpHtMVWQJqngHLU1aSQEQJhkHC4s
-   XB67cJjlGTHYWY4zqA+OyavF9Pkki1BY4agDy2+XNBqJqsIywjsToP6gl
-   e38hkqWSAH10EyZyVSYp5t5shdxNGtLOOaEfqfRLBEhpN9KGuZ+vfRcuS
-   zDmEdpZDCh2H1/pi3QX83caLIHD9bk0dWEiMj2uLmmz7/gpJDGaE2Ifrt
-   MCUCiJcN1tWGgM6Qaifjl/E8/X1VpqyngUNx7ouM0t2+ztBsUu1/XZ8Em
-   W28V0RLw5D45CihRW6zJoGkZtsK6Iy/zRk2Y5fTTJI6cKxeaTft3sy+jP
-   Q==;
-X-CSE-ConnectionGUID: D93yo9rlRtiBrJD0nPsFfQ==
-X-CSE-MsgGUID: 5x1hqogVQ/yO05vMerhRHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="40293798"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="40293798"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 17:43:08 -0800
-X-CSE-ConnectionGUID: eFE4hpiCR/K1rk5C9Q+wJw==
-X-CSE-MsgGUID: 4dp0fR39TUmc2iMIf6gykA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="115892919"
-Received: from emr.sh.intel.com ([10.112.229.56])
-  by orviesa006.jf.intel.com with ESMTP; 23 Feb 2025 17:43:05 -0800
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH 2/2] perf tools/tests: Fix topdown groups test on hybrid platforms
-Date: Mon, 24 Feb 2025 08:33:06 +0000
-Message-Id: <20250224083306.71813-2-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250224083306.71813-1-dapeng1.mi@linux.intel.com>
-References: <20250224083306.71813-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1740364978; c=relaxed/simple;
+	bh=Ih2vmHXajFO/sfOB+dozRyHrCrkHKSPIZ0+H5Pr/4AY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cUfY18skaCcy+M10B9aR+wBceqrM01FaLy8njguDhXiV7JiHO9tLBxbGxrBWip8x8wFbn0fyErEjg1euiw/W9/ad9zMnAQDvI85uhLl7TfM6kV6TZiOYjmN7OL7IcqRVkPkSCPfkF6ziPQo/lcLVXALMJ1KwvVAUdQmtY4IBA1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z1Q4p4Pk4z4f3jqM
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:42:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 1199D1A0F5B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:42:51 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.6])
+	by APP4 (Coremail) with SMTP id gCh0CgCX+1+p3LtnhuPnEg--.32591S2;
+	Mon, 24 Feb 2025 10:42:50 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: akpm@linux-foundation.org,
+	kasong@tencent.com
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] mm: swap: add back full cluster when no entry is reclaimed
+Date: Mon, 24 Feb 2025 19:39:10 +0800
+Message-Id: <20250224113910.522439-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,145 +52,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCX+1+p3LtnhuPnEg--.32591S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7GFy5Kr4fXF4rKFWftr15XFb_yoWfXwc_Ca
+	4vy348CrW5Jw1kCr12y3yrXrWkKrs3ZFyj9ry3tFWxA34fGFZ7tan7GFW2gw1fJa1DCa4S
+	ywnYyrn3J39F9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l87I20VAvwVAaII0Ic2I_JFv_Gryl8c
+	AvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWD
+	JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oV
+	Cq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG
+	8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2js
+	IE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY
+	0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+	0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAI
+	cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07j-6pPUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-When running topdown groups test on hybrid platforms like LNL/ARL, we
-see the following 2 commands fail.
+If no swap cache is reclaimed, cluster taken off from full_clusters list
+will not be put in any list and we can't reclaime HAS_CACHE slots
+efficiently. Do relocate_cluster for such cluster to avoid inefficiency.
 
-perf stat $cputype -e '{instructions,slots},topdown-retiring' true
-perf stat $cputype -e '{instructions,slots},{topdown-retiring}' true
-
-Take the 1st command as an example, 5 events are created on hybrid
-platform. They are cpu_atom/instructions/, cpu_core/instructions/,
-cpu_core/slots/, cpu_atom/topdown-retiring/ and
-cpu_core/topdown-retiring/ events. The former 3 events are in a group
-and the latter 2 topdown-retiring events are independent events.
-
-As the limitation of current implementation, the
-cpu_core/topdown-retiring/ event can't be moved into previous group as
-long as there are other events before it. That's the reason why we see
-the failure.
-
-Thus add "--cputype core" option to limit only P-core events are tested.
-
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Fixes: 3b644773eefda ("mm, swap: reduce contention on device lock")
+Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Reviewed-by: Kairui Song <kasong@tencent.com>
 ---
- tools/perf/arch/x86/util/evlist.c | 26 +++++++++++++++++++++++---
- tools/perf/tests/shell/stat.sh    | 20 ++++++++++++++++++--
- 2 files changed, 41 insertions(+), 5 deletions(-)
+ mm/swapfile.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-index 447a734e591c..0a71ba975871 100644
---- a/tools/perf/arch/x86/util/evlist.c
-+++ b/tools/perf/arch/x86/util/evlist.c
-@@ -9,7 +9,7 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
- {
- 	/*
- 	 * Currently the following topdown events sequence are supported to
--	 * move and regroup correctly.
-+	 * move and regroup correctly on non-hybrid platforms.
- 	 *
- 	 * a. all events in a group
- 	 *    perf stat -e "{instructions,topdown-retiring,slots}" -C0 sleep 1
-@@ -44,7 +44,7 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
- 	 * topdown metrics events must be first event after the slots event group,
- 	 * otherwise topdown metrics events can't be regrouped correctly, e.g.
- 	 *
--	 * a. perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
-+	 * e. perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
- 	 *    WARNING: events were regrouped to match PMUs
- 	 *     Performance counter stats for 'CPU(s) 0':
- 	 *         17,923,134      slots
-@@ -56,11 +56,31 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
- 	 * has topdown metrics events must contain only the topdown metrics event,
- 	 * otherwise topdown metrics event can't be regrouped correctly as well, e.g.
- 	 *
--	 * a. perf stat -e "{instructions,slots},{topdown-retiring,cycles}" -C0 sleep 1
-+	 * f. perf stat -e "{instructions,slots},{topdown-retiring,cycles}" -C0 sleep 1
- 	 *    WARNING: events were regrouped to match PMUs
- 	 *    Error:
- 	 *    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
- 	 *    event (topdown-retiring)
-+	 *
-+	 * For hybrid platforms, the sequences 'c' and 'd' are not supported as well
-+	 * besides above sequences 'e' and 'f'.
-+	 *
-+	 *    perf stat -e "{instructions,slots},topdown-retiring" -C0 sleep 1
-+	 *    perf stat -e "{instructions,slots},{topdown-retiring}" -C0 sleep 1
-+	 *
-+	 * On hybrid platforms each event would create an instance on all types of PMU
-+	 * if the event can be supported by the PMU, i.e., the "topdown-retiring" event
-+	 * would create two instances on hybrid platforms with P-cores and E-cores,
-+	 * "cpu_core/topdown-retiring/" and "cpu_atom/topdown_retiring".
-+	 *
-+	 * Take the first command as an example, the events list would be converted to
-+	 * below list in fact.
-+	 *
-+	 * "{cpu_atom/instructions/,cpu_core/instructions/,cpu_core/slots/},
-+	 *  cpu_atom/topdown-retiring/,cpu_core/topdown-retiring/"
-+	 *
-+	 * This is actually same with event list in case 'e', "cpu_core/topdown-retiring/"
-+	 * event can't be moved into previous events group.
- 	 */
- 	if (topdown_sys_has_perf_metrics() &&
- 	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 68323d636fb7..cdfe27c25528 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -5,6 +5,16 @@
- set -e
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 34baefb000b5..e5f58ab86329 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -861,6 +861,10 @@ static void swap_reclaim_full_clusters(struct swap_info_struct *si, bool force)
+ 			offset++;
+ 		}
  
- err=0
-+is_hybrid=false
++		/* in case no swap cache is reclaimed */
++		if (ci->flags == CLUSTER_FLAG_NONE)
++			relocate_cluster(si, ci);
 +
-+check_hybrid_platform() {
-+  pmus=$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l)
-+  if [ "$pmus" -gt 1 ]
-+  then
-+    is_hybrid=true
-+  fi
-+}
-+
- test_default_stat() {
-   echo "Basic stat command test"
-   if ! perf stat true 2>&1 | grep -E -q "Performance counter stats for 'true':"
-@@ -62,6 +72,11 @@ test_topdown_groups() {
-   # Topdown events must be grouped with the slots event first. Test that
-   # parse-events reorders this.
-   echo "Topdown event group test"
-+  cputype=""
-+  if $is_hybrid
-+  then
-+    cputype="--cputype core"
-+  fi
-   if ! perf stat -e '{slots,topdown-retiring}' true > /dev/null 2>&1
-   then
-     echo "Topdown event group test [Skipped event parsing failed]"
-@@ -85,13 +100,13 @@ test_topdown_groups() {
-     err=1
-     return
-   fi
--  if perf stat -e '{instructions,slots},topdown-retiring' true 2>&1 | grep -E -q "<not supported>"
-+  if perf stat $cputype -e '{instructions,slots},topdown-retiring' true 2>&1 | grep -E -q "<not supported>"
-   then
-     echo "Topdown event group test [Failed topdown metrics event not move into slots group]"
-     err=1
-     return
-   fi
--  if perf stat -e '{instructions,slots},{topdown-retiring}' true 2>&1 | grep -E -q "<not supported>"
-+  if perf stat $cputype -e '{instructions,slots},{topdown-retiring}' true 2>&1 | grep -E -q "<not supported>"
-   then
-     echo "Topdown event group test [Failed topdown metrics group not merge into slots group]"
-     err=1
-@@ -200,6 +215,7 @@ test_hybrid() {
-   echo "hybrid test [Success]"
- }
- 
-+check_hybrid_platform
- test_default_stat
- test_stat_record_report
- test_stat_record_script
+ 		unlock_cluster(ci);
+ 		if (to_scan <= 0)
+ 			break;
 -- 
-2.40.1
+2.30.0
 
 
