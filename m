@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-528848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF23A41D06
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:37:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A2AA41D25
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8339B3A9DC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:31:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557443BAF4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:34:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B60D269CE1;
-	Mon, 24 Feb 2025 11:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAA126FD85;
+	Mon, 24 Feb 2025 11:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0VZ4GezC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kb7VwFf7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BEF269896
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28C725A332;
+	Mon, 24 Feb 2025 11:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740395982; cv=none; b=JeTk9k+gBYCMXCqI5RXsPztsZfm1xO7A6G7NsLnoq80RZZ6YnvaQHNPDlgiJ1zui3a0rhlminVu1+Rpg9i33Ryp0bNuO5QKS/wNGAFxvys+FaErvRpvTS5vCI5eht7HUZ7Yd+k4E6qUaEeSejZiP5osrmqDk1nZe+S2g/wq8KSU=
+	t=1740396005; cv=none; b=Yz1AHd2KPSWqeRwiLxV366MLXinrWxaubM0m9pD2TCdkAft+cQh40sJrao4eBZZLJvycOK8ho8QbXw74L5WRkPTpW+dsDkqnArlwKTeyu7QXAlheNtBCm0OuhgNoX+p/knfwYUoR9tZlGwfORZkkKr1yKhNe5cv0dT78IEsa1f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740395982; c=relaxed/simple;
-	bh=nbthR7RhGoVVTUAl39Aagc6UcJUc0m+dmOqj/KUfZkI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pz2fi/Btr+pl16pCk13eIF7P7vq9PbKl8nRhyRprh7yt8jv3g5if6IbwhZIc0qPEKJ66zKRz5NtrhEoqwI3h7k0o5aQW34ZuLIQtEDxzt5K02gSRV3FAtM/HnuxJ2Edolj+0hr4iCegKe4IDf2FnXuweFX06T+a1CCAmytlnewg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0VZ4GezC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-439a1e8ba83so40395435e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 03:19:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740395979; x=1741000779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rKNwKhh4dEnTxVcOajigIGSRE5tzPUoKtH97+XkBOAY=;
-        b=0VZ4GezCHOwKdwLfQ5VDyjZVSCXbOP0WjrkfEAJDlxXvGmbi4j89u6ULlqzWekFGQD
-         /RpJSkB/zWldxW2cGeVLX6xjkT96koI3DmOo9BmTmsVlkFJ0EXxVr+LseevM519Ooz7d
-         gH3eFRNhS4+E+0j01rFtHiGcyDxOG5k7LcsFA9Wty53FHACDYX5xku8QbM7lJTmdbG/N
-         wJmsoTTXzu64C2KOLCp8JvWh0q75bK1YNz3AzGkqNKyI/SCuAGwo8n0d9uePwxhNm+zJ
-         wmDWnqR1JHaI99ygIE1AlHk0hSFmdix2n+FhQvnXcGy88RVByyDcoO4sRVSzTJBV3kVS
-         +vgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740395979; x=1741000779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rKNwKhh4dEnTxVcOajigIGSRE5tzPUoKtH97+XkBOAY=;
-        b=QVE2qB0bEeEvONrAwXAbek6DcL6YXA6E+tlf+eNHMPxKIR01RlShMhYqQYga8pwDwa
-         4dKhS7JvZZGLTZpLtNh6LCEwmY8AHuaE2oAXvKk8w3rvDz1GVxTSWqvFvuS7BM8/zkQa
-         886s1G9Pum8S5SPEHNFKUQ3dAxoMkzV2OPhr63bsonVoMDNg5Dch70oSZllHHxRwYyKP
-         thE05mTfkzhfRqSZsUVd5yveu/EMGoWFqKyP48C9Nb/WsqQ3wDrrTQYm9feube2SILA8
-         mb6e26IlPrm7Wh025RdL0IW0qSKrQHVXe/i1sDVyc5DHG0Osf2wNXVXR14makXcAnl8K
-         Rg1A==
-X-Gm-Message-State: AOJu0YyrpCHC5oVn04wMazfya/e3KFbwlHNCnNlpAVnOZKZpBRzpoSbG
-	JlbWAQWt7qF2dkTwPNKQrNU0Vg0h5fzbyUxmAyXBK8s4Qyl1uPR3A5IYrGIbHdkei1F8dtzaPQC
-	EVMnlf+WNJPgaiLwA+Pu2r3EfFIq5KmhYKROh
-X-Gm-Gg: ASbGncvtH7XIzYniVOIDdyrDw4y0cMrI4+HZjckJNcEz/Ogp5Uk4qcG1P1917H7SG0h
-	YAQNRqj/p+cAQOAS1FsgU+lBYsUOJsBDc59lrvbtYUQaUC/K65vgPW+Np/WRaw4e89hm2NusDfS
-	K+URs/RcctUPoIcb9tJzs1JEL39xTxnbCfcl6r
-X-Google-Smtp-Source: AGHT+IHfngivAfolpBCcXGBcAYbBekzzGYNr0zyvzMbAGXe+oiu7MNfqwRvlRvu1E0aoJ70PuTQ8YmFBD7fGj1cJG6E=
-X-Received: by 2002:a05:6000:154e:b0:38f:4d20:4a17 with SMTP id
- ffacd0b85a97d-38f70799935mr9568176f8f.13.1740395979256; Mon, 24 Feb 2025
- 03:19:39 -0800 (PST)
+	s=arc-20240116; t=1740396005; c=relaxed/simple;
+	bh=ZBg8wnELctbgjiFZj8U2NhYREpSLnnZqoP9XNpQE+qA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WNqNEv0quzWuo3UNC5u5P8oWR0xanivfKHEKmhcqxDnecgKcvl4b7yoxmIdtmQkJxJz/FVsi2Bdisd0LQAuD72kbH0RR4tYWbovxtU2MXkLY3YeEHJ4YvtRhHtekr11dNySp5WHKpbsuWNGoBWjIh5Nz7JjNTnZ55awtZb/e8WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kb7VwFf7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B54EC4CED6;
+	Mon, 24 Feb 2025 11:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740396004;
+	bh=ZBg8wnELctbgjiFZj8U2NhYREpSLnnZqoP9XNpQE+qA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Kb7VwFf7JklZ6SD/Ry5ybQS4v8I2j+QF5zs6KGkPvhKe2aY5um9KeMOYcd+K0yfQ9
+	 pM/IAJre3L/D+vJF7EdZDH8B4gD8JKg9vbsMSGhN7OX9z3EQZ/OqdwodSfQyFdttQ9
+	 ciITHTQKmBIyJBhMbwHZBukxwx2GlElTPICXMdQwiWuiVdA4QyhOrePX1zB1+ghF3f
+	 LQ4EvJBd1PYaMkm23xufcpuHFia6HDH6ynsGqCflWlkQr7Xjmy0xm/cvI7hZFKzkbj
+	 IsOH5qc4cJ44QeoVib2I0O4hHk3Ff2h2SHMx+Jp/3al9wAC/mrqZzGRnCA/teOCVFd
+	 LGoldztolgHeg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Sasha Levin <sashal@kernel.org>,
+	perex@perex.cz,
+	tiwai@suse.com,
+	kailang@realtek.com,
+	sbinding@opensource.cirrus.com,
+	simont@opensource.cirrus.com,
+	josh@joshuagrisham.com,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 01/12] ALSA: hda/realtek: Limit mic boost on Positivo ARN50
+Date: Mon, 24 Feb 2025 06:19:49 -0500
+Message-Id: <20250224112002.2214613-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223072114.3715-1-boqun.feng@gmail.com>
-In-Reply-To: <20250223072114.3715-1-boqun.feng@gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 24 Feb 2025 12:19:27 +0100
-X-Gm-Features: AWEUYZlG3dBja0S9lUuTrhyjnlqfO-rrsKw667VUMX7yjVkDuivZCQ1hf-oSPHg
-Message-ID: <CAH5fLgi2iXKg+Mwze41KHk1rLa1=f7=ofhbq_wz6mxmC4GNe6w@mail.gmail.com>
-Subject: Re: [PATCH] rust: sync: lock: Add an example for Guard::lock_ref()
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.129
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 8:21=E2=80=AFAM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> To provide examples on usage of `Guard::lock_ref()` along with the unit
-> test, an "assert a lock is held by a guard" example is added.
->
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+From: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+[ Upstream commit 76b0a22d4cf7dc9091129560fdc04e73eb9db4cb ]
 
-> This depends on Alice's patch:
->
->         https://lore.kernel.org/all/20250130-guard-get-lock-v1-1-8ed87899=
-920a@google.com/
->
-> I'm also OK to fold this in if Alice thinks it's fine.
+The internal mic boost on the Positivo ARN50 is too high.
+Fix this by applying the ALC269_FIXUP_LIMIT_INT_MIC_BOOST fixup to the machine
+to limit the gain.
 
-I think we can just keep two patches :)
+Signed-off-by: Edson Juliano Drosdeck <edson.drosdeck@gmail.com>
+Link: https://patch.msgid.link/20250201143930.25089-1-edson.drosdeck@gmail.com
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/pci/hda/patch_realtek.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Alice
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 183c8a587acfe..748e84ec100aa 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10246,6 +10246,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1d72, 0x1945, "Redmi G", ALC256_FIXUP_ASUS_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1d72, 0x1947, "RedmiBook Air", ALC255_FIXUP_XIAOMI_HEADSET_MIC),
+ 	SND_PCI_QUIRK(0x1f66, 0x0105, "Ayaneo Portable Game Player", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x2014, 0x800a, "Positivo ARN50", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x2782, 0x0214, "VAIO VJFE-CL", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x2782, 0x0228, "Infinix ZERO BOOK 13", ALC269VB_FIXUP_INFINIX_ZERO_BOOK_13),
+ 	SND_PCI_QUIRK(0x2782, 0x0232, "CHUWI CoreBook XPro", ALC269VB_FIXUP_CHUWI_COREBOOK_XPRO),
+-- 
+2.39.5
+
 
