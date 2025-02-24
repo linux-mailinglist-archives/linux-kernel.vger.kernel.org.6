@@ -1,208 +1,198 @@
-Return-Path: <linux-kernel+bounces-528389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A8A4172F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:20:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8530AA41731
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D651895F1F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 018283B46C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0411C84D0;
-	Mon, 24 Feb 2025 08:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDF71B2182;
+	Mon, 24 Feb 2025 08:20:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BllI6CKN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hxL6KaR9"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="C5ox613m"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC2C018C337
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84BF158558;
+	Mon, 24 Feb 2025 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740385201; cv=none; b=cNgu31zVcS4zdu0esWYzqJAplAQ4NQbQ350MdRW31Od+BEOQJhY0S2gR8WiTbotqNyIBZOfO1OkEwxxSPDDD4yRHjoH5LJqpkNRK0p0LcVQjIwx9XOJX15+k/lnxjcueoCzXlECRu28XUyMplyUvXvqxpRj8giuBVYDd1+TO03A=
+	t=1740385221; cv=none; b=NAZrrlwigNJzHupYKhcfSDE+WScNgSn10I1+Y6Vj3BOuEeaEcjoR43zEqpxv7J/ih7N2fxeTGGv4FS9eDiekl9eN2+M8XYtUAee1CoI8RUVPpmJNuukFLt4mJDKcOXAL4KgdXLSydgla8a55Usi0wQ62TuhbonudgjERqjk8748=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740385201; c=relaxed/simple;
-	bh=aPBmcWzxRZ793+P17lZYUhIEtRt1ahNijA11PsDEAbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KW/Vq8SHGChRo2cTqUy+5Pi4NUpG+X7q/Y+KPw3CwCIt4H/xMKDfIDnfhQj+gGJ3jBewAMQ/ylpOAtupENicj3AoQ7aI16mLCpZWtAxmdE2+dF0tT2xDg4OC3iDRatp3SVNxofUKsv6rszIrOjOc5kxCBbMFBTjQ1ECAi+tEBJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BllI6CKN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hxL6KaR9; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 09:19:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740385197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9b6JI1PAYyIfk1s7vLaQh6uto3DYX7c5B+kYCp5fkFk=;
-	b=BllI6CKNnuo6xYkmJqFOsIkmEJBxivlt8tjDn5uFY+6g134dkoSaguOBHNnAxowunfWhBE
-	aXFnPZc0evUNstXD3Fd5T45Rgoqk24MOzlRTjiOfLawj1tguU9U0ltbNOZXOoJJyleAjn4
-	Su/yTOFoJRLTfho8iLKwOVuKJv+aQRTdzuTPu5nSAbpt/FivLo4sRR8uTxRk4H1AwpbR+W
-	W2ip5t0b7EVmxIaky9mPDZUtHesrTKGbeRkrA+JfNSpb9+XtRuc2uFqyLjcI8aub3eJ/SR
-	XrEgWVMWHsCnA3g40ikMm8uAUt4zmyVuauBnQMbyZfYuaps/RJ3sG3kNXjuarQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740385197;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9b6JI1PAYyIfk1s7vLaQh6uto3DYX7c5B+kYCp5fkFk=;
-	b=hxL6KaR9KJV4d90jn/TKI1wfgV8r0ZUB+HQv6e1PgA5wrDKroIBz05Ju6ojvT3XNPY6Xag
-	GbzWlV2BumnsSQAA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	Hillf Danton <hdanton@sina.com>, Kairui Song <ryncsn@gmail.com>,
-	Minchan Kim <minchan@kernel.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 01/17] zram: sleepable entry locking
-Message-ID: <20250224081956.knanS8L_@linutronix.de>
-References: <20250221222958.2225035-1-senozhatsky@chromium.org>
- <20250221222958.2225035-2-senozhatsky@chromium.org>
+	s=arc-20240116; t=1740385221; c=relaxed/simple;
+	bh=bnADvqVjOnZxk0sLsbIJnA70d9jXuiQCyeY3qHVIUC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NyGv0hsDfqjUq80HmUMwGmQMWx37d0PpBWdkignzDtTntDQytyCsE4NgUZ0gitpJZgB9Oa0xPUBXtjYNzVDjgfiZIMrZgXp6Gxy1wnNijdeCV+NxX0u1rySC20AqHzHNDaNI9yFvi8dhr+0+jwHFhsHWQ4iUQRQYBhEAXR+2no0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=C5ox613m; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O2DZIq013806;
+	Mon, 24 Feb 2025 08:20:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OsFn2Z
+	xs78d5dqGLlCyQmgsyPmdY+R0BhdnGfkT9/Zo=; b=C5ox613mD1RC7jeghh13/A
+	Om8herRKgwjAzp8Ft6qwbhw+uEIp/dXZGAxE2da9Lfbw3z4NxCCNqAODMmHhIHFI
+	xleIWy83W6bCxDgy7Pe+sn+eNDZ3ZptS3tT1moGIHRjX92UyRvK9Ffv8eigBZidl
+	+HUs8I28yZLVLvd6DxbXJd+tB+5dT1LXw10Ex+cvLwtIUwmcvtuKWDFVHDCK9A1o
+	nzijXwcT1Hh+muS9iglEdwD85+uUbhjfPYzv2izX6sD7vwksWk4HT85OYDDEVJOU
+	q9bGafHHlPtSB3vsvTzTRQmK4kHtCl4sF0HGR+ndGcEoohAvprJ9/C2iOWfYTo4A
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 450fm017sv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 08:20:02 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51O5PVj5002548;
+	Mon, 24 Feb 2025 08:20:02 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jdv4x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 08:20:02 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51O8K0eD34865894
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 08:20:00 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 82F6C2004E;
+	Mon, 24 Feb 2025 08:20:00 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9A18F20040;
+	Mon, 24 Feb 2025 08:19:59 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Feb 2025 08:19:59 +0000 (GMT)
+Message-ID: <ed7386c2-50f9-4fa0-8a94-fd67ae2bba4f@linux.ibm.com>
+Date: Mon, 24 Feb 2025 13:49:58 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250221222958.2225035-2-senozhatsky@chromium.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] selftests: sched: skip cs_prctl_test for systems
+ with core scheduling disabled
+To: Sinadin Shan <sinadin.shan@oracle.com>, shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chris.hyser@oracle.com
+References: <20250221115750.631990-1-sinadin.shan@oracle.com>
+ <20250221115750.631990-3-sinadin.shan@oracle.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20250221115750.631990-3-sinadin.shan@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7vOjMe4Hu1fsyWyIqGqTylDuh1GtC0-3
+X-Proofpoint-GUID: 7vOjMe4Hu1fsyWyIqGqTylDuh1GtC0-3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 adultscore=0
+ lowpriorityscore=0 suspectscore=0 spamscore=0 priorityscore=1501
+ mlxlogscore=999 impostorscore=0 malwarescore=0 bulkscore=0 clxscore=1015
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502240057
 
-On 2025-02-22 07:25:32 [+0900], Sergey Senozhatsky wrote:
-=E2=80=A6
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-> index 9f5020b077c5..37c5651305c2 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -58,19 +58,62 @@ static void zram_free_page(struct zram *zram, size_t =
-index);
->  static int zram_read_from_zspool(struct zram *zram, struct page *page,
->  				 u32 index);
-> =20
-> -static int zram_slot_trylock(struct zram *zram, u32 index)
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +#define slot_dep_map(zram, index) (&(zram)->table[(index)].dep_map)
-> +#define zram_lock_class(zram) (&(zram)->lock_class)
-> +#else
-> +#define slot_dep_map(zram, index) NULL
-> +#define zram_lock_class(zram) NULL
-> +#endif
 
-That CONFIG_DEBUG_LOCK_ALLOC here is not needed because dep_map as well
-as lock_class goes away in !CONFIG_DEBUG_LOCK_ALLOC case.
 
-> +static void zram_slot_lock_init(struct zram *zram, u32 index)
->  {
-> -	return spin_trylock(&zram->table[index].lock);
-> +	lockdep_init_map(slot_dep_map(zram, index),
-> +			 "zram->table[index].lock",
-> +			 zram_lock_class(zram), 0);
-> +}
-Why do need zram_lock_class and slot_dep_map? As far as I can tell, you
-init both in the same place and you acquire both in the same place.
-Therefore it looks like you tell lockdep that you acquire two locks
-while it would be enough to do it with one.
+On 2/21/25 17:27, Sinadin Shan wrote:
+> For kernels with CONFIG_SCHED_CORE=n, the sched selftest cs_prctl_test
+> fails with "Not a core sched system" error. Change this to gracefully
+> skip the test for systems with core scheduling disabled. Exiting early
+> would also ensure failures reported in obtaining cookie are valid
+> failures and not due to the config.
+> 
+> Skip cs_prctl_test for systems with CONFIG_SCHED_CORE=n
 
-> +/*
-> + * entry locking rules:
-> + *
-> + * 1) Lock is exclusive
-> + *
-> + * 2) lock() function can sleep waiting for the lock
-> + *
-> + * 3) Lock owner can sleep
-> + *
-> + * 4) Use TRY lock variant when in atomic context
-> + *    - must check return value and handle locking failers
-> + */
-> +static __must_check bool zram_slot_trylock(struct zram *zram, u32 index)
+I tried this on kernel built with CONFIG_SCHED_CORE=y.
+I did make, make modules_install and make install and reboot.
+
+./cs_prctl_test
+## Checking for CONFIG_SCHED_CORE support
+Cannot find kernel config in /proc or /boot
+
+This happens because, make install wouldnt copy the .config to 
+/boot/config-<kernel-release>.
+
+If the self-tests are to be used in development flow, these checks may 
+not be sufficient.
+
+Not sure if i have missed any steps in building process.
+
+
+> 
+> Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
+> ---
+>   tools/testing/selftests/sched/cs_prctl_test.c | 29 ++++++++++++++++++-
+>   1 file changed, 28 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/sched/cs_prctl_test.c b/tools/testing/selftests/sched/cs_prctl_test.c
+> index 52d97fae4dbd8..60fd657b56c84 100644
+> --- a/tools/testing/selftests/sched/cs_prctl_test.c
+> +++ b/tools/testing/selftests/sched/cs_prctl_test.c
+> @@ -23,6 +23,7 @@
+>   #include <sys/eventfd.h>
+>   #include <sys/wait.h>
+>   #include <sys/types.h>
+> +#include <sys/utsname.h>
+>   #include <sched.h>
+>   #include <sys/prctl.h>
+>   #include <unistd.h>
+> @@ -109,6 +110,30 @@ static void handle_usage(int rc, char *msg)
+>   	exit(rc);
+>   }
+>   
+> +static void check_core_sched_support(void)
 > +{
-> +	unsigned long *lock =3D &zram->table[index].flags;
+> +	char config[128] = "/proc/config.gz";
+> +	char cmd[128];
+> +	struct utsname kernel;
 > +
-> +	if (!test_and_set_bit_lock(ZRAM_ENTRY_LOCK, lock)) {
-> +		mutex_acquire(slot_dep_map(zram, index), 0, 1, _RET_IP_);
-> +		lock_acquired(slot_dep_map(zram, index), _RET_IP_);
-> +		return true;
+> +	printf("## Checking for CONFIG_SCHED_CORE support\n");
+> +
+> +	if (access(config, F_OK) != 0)
+> +		if (uname(&kernel) == 0)
+> +			snprintf(config, sizeof(config), "/boot/config-%s", kernel.release);
+> +
+> +	if (access(config, F_OK) != 0) {
+> +		printf("Cannot find kernel config in /proc or /boot\n");
+> +		exit(EXIT_FAILURE);
 > +	}
 > +
-> +	lock_contended(slot_dep_map(zram, index), _RET_IP_);
-> +	return false;
->  }
-> =20
->  static void zram_slot_lock(struct zram *zram, u32 index)
->  {
-> -	spin_lock(&zram->table[index].lock);
-> +	unsigned long *lock =3D &zram->table[index].flags;
+> +	snprintf(cmd, sizeof(cmd), "zgrep CONFIG_SCHED_CORE=[ym] %s", config);
+> +	if (system(cmd)) {
+> +		printf("Core scheduling not enabled in kernel, hence skipping tests\n");
+> +		exit(4);
+> +	}
+> +}
 > +
-> +	mutex_acquire(slot_dep_map(zram, index), 0, 0, _RET_IP_);
-> +	wait_on_bit_lock(lock, ZRAM_ENTRY_LOCK, TASK_UNINTERRUPTIBLE);
-> +	lock_acquired(slot_dep_map(zram, index), _RET_IP_);
-
-This looks odd. The first mutex_acquire() can be invoked twice by two
-threads, right? The first thread gets both (mutex_acquire() and
-lock_acquired()) while, the second gets mutex_acquire() and blocks on
-wait_on_bit_lock()).
-
->  }
-> =20
->  static void zram_slot_unlock(struct zram *zram, u32 index)
->  {
-> -	spin_unlock(&zram->table[index].lock);
-> +	unsigned long *lock =3D &zram->table[index].flags;
+>   static unsigned long get_cs_cookie(int pid)
+>   {
+>   	unsigned long long cookie;
+> @@ -117,7 +142,7 @@ static unsigned long get_cs_cookie(int pid)
+>   	ret = prctl(PR_SCHED_CORE, PR_SCHED_CORE_GET, pid, PIDTYPE_PID,
+>   		    (unsigned long)&cookie);
+>   	if (ret) {
+> -		printf("Not a core sched system\n");
+> +		printf("Failed to get cookie\n");
+>   		return -1UL;
+>   	}
+>   
+> @@ -270,6 +295,8 @@ int main(int argc, char *argv[])
+>   	if (keypress)
+>   		delay = -1;
+>   
+> +	check_core_sched_support();
 > +
-> +	mutex_release(slot_dep_map(zram, index), _RET_IP_);
-> +	clear_and_wake_up_bit(ZRAM_ENTRY_LOCK, lock);
->  }
-> =20
->  static inline bool init_done(struct zram *zram)
-=E2=80=A6
-> diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-> index db78d7c01b9a..794c9234e627 100644
-> --- a/drivers/block/zram/zram_drv.h
-> +++ b/drivers/block/zram/zram_drv.h
-> @@ -58,13 +58,18 @@ enum zram_pageflags {
->  	__NR_ZRAM_PAGEFLAGS,
->  };
-> =20
-> -/*-- Data structures */
-> -
-> -/* Allocated for each disk page */
-> +/*
-> + * Allocated for each disk page.  We use bit-lock (ZRAM_ENTRY_LOCK bit
-> + * of flags) to save memory.  There can be plenty of entries and standard
-> + * locking primitives (e.g. mutex) will significantly increase sizeof()
-> + * of each entry and hence of the meta table.
-> + */
->  struct zram_table_entry {
->  	unsigned long handle;
-> -	unsigned int flags;
-> -	spinlock_t lock;
-> +	unsigned long flags;
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	struct lockdep_map dep_map;
-> +#endif
->  #ifdef CONFIG_ZRAM_TRACK_ENTRY_ACTIME
->  	ktime_t ac_time;
->  #endif
-> @@ -137,5 +142,8 @@ struct zram {
->  	struct dentry *debugfs_dir;
->  #endif
->  	atomic_t pp_in_progress;
-> +#ifdef CONFIG_DEBUG_LOCK_ALLOC
-> +	struct lock_class_key lock_class;
-> +#endif
-As mentioned earlier, no need for CONFIG_DEBUG_LOCK_ALLOC.
+>   	srand(time(NULL));
+>   
+>   	/* put into separate process group */
 
->  };
->  #endif
-> --=20
-> 2.48.1.601.g30ceb7b040-goog
->=20
 
