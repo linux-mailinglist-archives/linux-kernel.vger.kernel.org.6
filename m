@@ -1,118 +1,146 @@
-Return-Path: <linux-kernel+bounces-528245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FC3A41565
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:32:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B8BA41567
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C8F81894BA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:33:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F845188616C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:33:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F7C1C6FEB;
-	Mon, 24 Feb 2025 06:32:48 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2C1B21BF;
+	Mon, 24 Feb 2025 06:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t0glToU+"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A301F155CB3;
-	Mon, 24 Feb 2025 06:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA27319E806
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740378768; cv=none; b=QKI2fmw/DhKq+pVsbrAWh7chLmnicwXRpRzsRU/9girIPAyEgG9T7NtosSiSiE9ZBugdsXgVJuyN8X11AkIxsW10WinBdF8XhY650HPrjKn8ptWIcsuvnxeevZFJbiVWfoDJOJaHL0vbr+0ajhjf1bx15/34gDmZ/m+w3fr9+uQ=
+	t=1740378814; cv=none; b=PMM4P0o2uHON9KdZFoNgP3nyCwSfCjBuMWj18ciWQxdWcJQvGJ2519OmYRDVu0prHHf6TmFlohkdoQ+355Th45qrJXG/USEFiopaOfH61rZG5PhioA90ITqC9ZeE3xt6pcXrj1+pilCorlLP2IIaH+J+EllAkCjcVplz1uknTRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740378768; c=relaxed/simple;
-	bh=alqqsKVkfMgJ0mBzCGDL8ZQOv8hgioR6Z+KL/cL1SFs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c24hMik3dtB5+rYb9A118wDvGwBYjPB+AjBGioMThBboMnyqdmWcC0Dnj++qtqx6GmxQB0AikCzvBTngYz1JkXw7154B1Q25mV05Zb48WeT0hY8KNQ5DUOVEIsBhbAF++V3Wq1VXaNywOiiQ9xrjyx82aMeGjk0B1M3Bk4u/MAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAC3vVV0ErxnL6j0Dw--.49149S2;
-	Mon, 24 Feb 2025 14:32:29 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	wenjing.liu@amd.com,
-	alex.hung@amd.com,
-	dillon.varone@amd.com,
-	Samson.Tam@amd.com,
-	yi-lchen@amd.com,
-	chris.park@amd.com,
-	aurabindo.pillai@amd.com,
-	george.shen@amd.com,
-	gabe.teeger@amd.com,
-	Yihan.Zhu@amd.com,
-	Tony.Cheng@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/amd/display: Fix null check for pipe_ctx->plane_state in resource_build_scaling_params
-Date: Mon, 24 Feb 2025 14:32:18 +0800
-Message-Id: <20250224063218.2953217-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740378814; c=relaxed/simple;
+	bh=qE5Ooj/sRtrynocI5AMkTQZwp1X0muUARYAtXHlt/WQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i6I7cFvAOxK//2WcUncKOURW1LS0qu8DXvLKrj2f5HVqVnt0crxaSuKhvmvTESMumgwu0+eogk5by8xnQhB7E1I+ASht48mJ0dxwXAllJJszo5Hc5M9AqGHbFFdqp30W/TvQPMxJZX8i3povAcmz9Vy7/hH6ALf+J4Nosx88oTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=t0glToU+; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fce3b01efcso4815286a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 22:33:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740378812; x=1740983612; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Iqkad0gQXVEGWERnspJWUKhGckXkl0GYwi/NHjWdAHc=;
+        b=t0glToU+I8W06Sk881ZEOClYi2eWve3caSbRSvwQDUt1RLvjVib9AyAgEKkr1HWqZP
+         kAVmoMPEKfT4EsPHuCyJBmtkMOK0jc2gRs/E7TPfNCmpv31q3XULAvGPWst4kIOdljU2
+         5e3GD1WklY9BfWDUHYpzTlPu5pk4WnMZaUR38O6FDvP0NzfXtAHNQJvjcw7liaHSFzWW
+         X3VebADic2CtrQ6lHblXNu4g+I8PFLYvJr3+9kpw/QslrhWmHSlgzuvCXqz+mytALOU8
+         URlJV8ErUYbQOGGxXTiWa90j0/JTpxsqR6UnjXwOHNxQdgrDIIKOuMjxvfZYKz1W1kON
+         oVCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740378812; x=1740983612;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Iqkad0gQXVEGWERnspJWUKhGckXkl0GYwi/NHjWdAHc=;
+        b=PZKh3IRrgfkmPuUN3fvGFQo85dePc0PRvg8RUn87w70Rb8wLFPwdCTeBI0/8gtfQqN
+         qIy+Ca2m4avu9sckLWaR0+j72bcDDoDuEeLk2XKOAyagNB0q3t4WrOs+lucmiPRIPhtB
+         ddJ94kn7YKow9I3y5fEH2jtfcR/gtPfMPvO8mbeRTxkcLgRKHMAeCvcfclwY/f77a772
+         LejDEdsc4zIveOA9nu7QkJ5zgUhYWwoRUuJXUiIIT/bz06LLv2Pa7z4P0j8fxu8EIRcv
+         f5u5ye2h4XzRWF+0SLP8ULeml77wf1ckwhYG2SEHXrcYDONzPN/F24GgmwSd9FW5AMqF
+         I2zA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxO0SzRgCwlCOY8yc1qJKPTSQ2E7+Xv4gmF523oPwaz4PZQql1MvEMZSFjboMJIvNXrFz1CDYL8fefYg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzxulD6hVpImYuzc1G1U7sqwpC2FZW+n9XGUzatZL+Kl1YKZw9
+	EFM04g5RIpeTtTFQX7Ff75PXAlTmaqK5tMvfeTOoiVE/TrTFd14hlxRCXpQT9w==
+X-Gm-Gg: ASbGncuLeY8qEnQMWFHIl12if/0Buo//YVJ21GJXA+suVtIcIT465MLJgsWpxLOuf/E
+	sq1PK8Z+mCT5hfXoYw9yE22DpGwC0vd+swxXoMF28qYqHJng8fWTdZuRSgJA8oxMbqbZp2Nxz32
+	8NfjSlpp9BHNkfVswrKvE69hH/LS5cBJtYpEHBZXobtfWxcHFGowxkxBFSkFrcf5dwJ3K5V0+XJ
+	97yZc9eNTthHF782iGsUtRZUqfKqU5ScF44wTsglanrxKcAHESpWicEV0/XkNUcxbu/Db/JcHEI
+	lhMUzv+s1rAf1qDjJk/O/6MYPNoe/swUdok+
+X-Google-Smtp-Source: AGHT+IEbRSe+OEOIF/Hwj1HtvuPcYE9SBc3HpXkK2iXWXr8X/DXMyLtMpCTDK0xPCr8xvjSxPvok1A==
+X-Received: by 2002:a17:90b:35ce:b0:2ee:cded:9ac7 with SMTP id 98e67ed59e1d1-2fce78ad9ddmr19817303a91.20.1740378812014;
+        Sun, 23 Feb 2025 22:33:32 -0800 (PST)
+Received: from thinkpad ([36.255.17.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb12dc27sm5798212a91.45.2025.02.23.22.33.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 22:33:31 -0800 (PST)
+Date: Mon, 24 Feb 2025 12:03:26 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	matthew.gerlach@altera.com, peter.colberg@altera.com
+Subject: Re: [PATCH v8 1/2] dt-bindings: PCI: altera: Add binding for Agilex
+Message-ID: <20250224063326.kbuknwwhx5kyhgad@thinkpad>
+References: <20250221170452.875419-1-matthew.gerlach@linux.intel.com>
+ <20250221170452.875419-2-matthew.gerlach@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3vVV0ErxnL6j0Dw--.49149S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr45GrW5XF1rZr4UJr47urg_yoWDKrg_KF
-	48urn3tr1fAanF9F10vw4fuFyF9rZ5urZaqFW2yFWYyry7WrWkX34xXr1rWryxZFsrKF98
-	A3Wqkr15ZwnFgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbSxFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0x
-	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
-	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
-	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRKCJmDUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+In-Reply-To: <20250221170452.875419-2-matthew.gerlach@linux.intel.com>
 
-Null pointer dereference issue could occur when pipe_ctx->plane_state
-is null. The fix adds a check to ensure 'pipe_ctx->plane_state' is not
-null before accessing. This prevents a null pointer dereference.
+On Fri, Feb 21, 2025 at 11:04:51AM -0600, Matthew Gerlach wrote:
+> Add the compatible bindings for the three variants of Agilex
+> PCIe Hard IP.
+> 
+> Signed-off-by: Matthew Gerlach <matthew.gerlach@linux.intel.com>
 
-Found by code review.
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Cc: stable@vger.kernel.org
-Fixes: 3be5262e353b ("drm/amd/display: Rename more dc_surface stuff to plane_state")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 3 +++
- 1 file changed, 3 insertions(+)
+- Mani
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-index 520a34a42827..88e8ae63a07f 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -1452,6 +1452,9 @@ bool resource_build_scaling_params(struct pipe_ctx *pipe_ctx)
- 	struct scaling_taps temp = {0};
- 	bool res = false;
- 
-+	if (!plane_state)
-+		return false;
-+
- 	DC_LOGGER_INIT(pipe_ctx->stream->ctx->logger);
- 
- 	/* Invalid input */
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> v8:
+>  - Removed patches unrelated to Agilex PCIe root port support from set.
+>  - Removed patches related to a specific FPGA configuration from set.
+> ---
+>  .../devicetree/bindings/pci/altr,pcie-root-port.yaml   | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> index 52533fccc134..1f93120d8eef 100644
+> --- a/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> +++ b/Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
+> @@ -12,9 +12,19 @@ maintainers:
+>  
+>  properties:
+>    compatible:
+> +    description: Each family of socfpga has its own implementation
+> +      of the pci controller. altr,pcie-root-port-1.0 is used for the Cyclone5
+> +      family of chips. The Stratix10 family of chips is supported
+> +      by altr,pcie-root-port-2.0. The Agilex family of chips has
+> +      three, non-register compatible, variants of PCIe Hard IP referred to as
+> +      the f-tile, p-tile, and r-tile, depending on the specific chip instance.
+> +
+>      enum:
+>        - altr,pcie-root-port-1.0
+>        - altr,pcie-root-port-2.0
+> +      - altr,pcie-root-port-3.0-f-tile
+> +      - altr,pcie-root-port-3.0-p-tile
+> +      - altr,pcie-root-port-3.0-r-tile
+>  
+>    reg:
+>      items:
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.25.1
-
+மணிவண்ணன் சதாசிவம்
 
