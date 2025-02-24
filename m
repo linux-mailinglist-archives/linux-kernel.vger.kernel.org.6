@@ -1,214 +1,167 @@
-Return-Path: <linux-kernel+bounces-529295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA73EA422B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:16:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93EE2A422DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF937188F9E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D516444539
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B0713CA9C;
-	Mon, 24 Feb 2025 14:11:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E82151995;
-	Mon, 24 Feb 2025 14:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA281151992;
+	Mon, 24 Feb 2025 14:11:51 +0000 (UTC)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB5B14A627;
+	Mon, 24 Feb 2025 14:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406300; cv=none; b=iuWvNBFb3CXLo+pGaCaZanlpYXc1Fj+iJJiNnsnI4HMdMZnhrboRGfUvZyFtj+iVB9XK0dczerwRRRmI3Mf8m/M2Fb874ueOlEZN9rhNUKP+cth5Eo3sMePsPYotiolopRh8LoPTthNMblEHaJdZmtuhPnXG9HzGgvjIvTFSoq4=
+	t=1740406311; cv=none; b=R5q5mTnKojyYNFWkgrEgsZZ1FDM1AMy8o/gc70nSBNxH7DW6XDb44rLA4E69KLbvnZEzglnIf4Z9b39Vn4KDvvTCaYMFMseacQQ3x1wNmxkHpapZLqoC9Nhvpif4zxeZJIb6CSzuyswJE50ySgek5P49fhqUOxkp7X4EPwELis0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406300; c=relaxed/simple;
-	bh=qbABspKHTl7q1m2eaGEAV0p55jJgAh/ssIKCRexnX58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UfuNfFEWFfXbYEk9+CiO29Ov0O/vvX+sXE8v0vDpPchCd5f7GcU/3A27X4zF8WTcmnSyeyenoJxofCrC+xy4NRuuwhKgUPuQaHbbk+FXWGg2gJkT78mDGC/j6G9nxsf4bEuohxhoSzpfVPo3+aOr3aSKvUV08OkAaIw3pGUM2Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E2DF1516;
-	Mon, 24 Feb 2025 06:11:54 -0800 (PST)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B19513F5A1;
-	Mon, 24 Feb 2025 06:11:35 -0800 (PST)
-Date: Mon, 24 Feb 2025 14:11:28 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>, Mark Brown <robh@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Eric Auger <eric.auger@redhat.com>, kvmarm@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 7/7] arm64/boot: Enable EL2 requirements for
- FEAT_PMUv3p9
-Message-ID: <Z7x-EDH9QP7g4lC6@J2N7QTR9R3.cambridge.arm.com>
-References: <20250203050828.1049370-1-anshuman.khandual@arm.com>
- <20250203050828.1049370-8-anshuman.khandual@arm.com>
+	s=arc-20240116; t=1740406311; c=relaxed/simple;
+	bh=honEVnfE4V0zsMviYhLubu2ELztDXqvTPG+FhJ7VOjk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MiyHgy5V7ashjPDmfEOdxVCcc8GFjmH1ZBiXpMm/ZkXm9TLi/D4uIk1QSa0EPl//5ur8VYYQhvlNAmurSR58NC4mDqTODDN3YO0oCJ92EykMYvqMyOh6WjgRhhFMNyEFJ6rLP0GdVYs8ehz2Edvp0h01WpjeNDjFYj01A1LtpSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so6559176a12.0;
+        Mon, 24 Feb 2025 06:11:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740406308; x=1741011108;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IryNxkKlBcc9D0krfwIyGbizOCjjxeePhgWwSTN0Pco=;
+        b=pDvQU0ScAw7fg/Uo6xabkPAIKKlrACETqofqUSNX1svlwVsrpO+HNpjhCQImvAv/TI
+         Xlj6Qf+06VmYZsErN7oQTYRe4/+3kFQH5y/5InYVkqTwjqP2H8hiotrVNc98UGeNbx66
+         yv6y2n7ZDAandCLIZHf2quYh6IHuqvzUmU03Z2lbrD0LywPiM+VMy4erdV+Qr9kxD85A
+         DZ+JNstpYPZMBfLPE0CEfrWTB17Pof7JzwgvveC9TCtfYqZ/hBRfcA/bvTaCiiFGRtQK
+         ZhNB+s6YQga5xI1LmsjJdAXw6FrTOR7MyLtmVqd5sRYbcA/+kZEIHYsOITnPlEVegdrS
+         FtNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUto27U76ELjxqe48kg0CBlTZbGEUzOmv3Iknb3bGhZAFc1Kbct0S/6VDa/48FkVGKO9SL7A29I@vger.kernel.org, AJvYcCVCpb34qP+zpqCCDCoRvlf1yG4/MW85SgnOmaIJWTwCloX3bMQmwCjSL9w6kEoRiPFKqHkIwYzGBt+/2Fs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAcdrlUsIHB0HRFRROM/Hix8VRgF/vB0vkhWcoVH85w6QbIZoW
+	l5u1ZEReqcUnlnna/An9BjrFKVp2qK6Xk6UMMNECtXiCiz4Yd2BO
+X-Gm-Gg: ASbGncsAq6/FF7Ai+csFA5/c958Pt8m48Qvn6120/SGtR+Hf06DlCSqQPjgLiv1UioD
+	7u3WdVqBrs62A9ZF694AseDpFWb44MRwLRLPgjyG4dDGBVSpfulp6htxiat5jGtXDmI7u/D8vhw
+	J6+Gc99jvO7UQ7yapFzFxT4BVaeQR43NTSqr75D359eXzccZTXFULUDDRqNw0yMXTomFA1hH/0N
+	CLNjH0r5ijgObkItk0HoYpz9sgAElBfb0ZRNNWsMqWKFIwwiz72hajc51iF9oFWloHM/aow0ZX5
+	GQESRtwANCCAgZlyCQ==
+X-Google-Smtp-Source: AGHT+IFJpKKTHNRBe9nWPzyfqPKFOkrLThbFnGPbXWdFQK/HTVe5NOVch1hoveoxNvgsKgKvjeXnbg==
+X-Received: by 2002:a17:907:3ea8:b0:abb:6f30:32c3 with SMTP id a640c23a62f3a-abc0d9dbdd5mr1294707366b.24.1740406307623;
+        Mon, 24 Feb 2025 06:11:47 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abecd9b9a33sm2884366b.80.2025.02.24.06.11.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 06:11:46 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 24 Feb 2025 06:11:34 -0800
+Subject: [PATCH v2] perf: Add RCU read lock protection to
+ perf_iterate_ctx()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250203050828.1049370-8-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-fix_perf_rcu-v2-1-9e11ec2f0e69@debian.org>
+X-B4-Tracking: v=1; b=H4sIABZ+vGcC/3XMsQqDMBAA0F8JN5uSi9gSp/5HEYnxorckcrFiE
+ f+91L3rG94BhYSpQKsOENq4cE7QKlspCLNPE2keoVVgjW0M4kNH3vuFJPYS3trG6Gp0xjXGQ6V
+ gEYq8X92rqxTMXNYsn2vf8Kd/og01aqzD4CyaGO7+OdLAPt2yTNCd5/kFBjBf5akAAAA=
+X-Change-ID: 20250117-fix_perf_rcu-2ff93190950a
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, stable@vger.kernel.org, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1961; i=leitao@debian.org;
+ h=from:subject:message-id; bh=honEVnfE4V0zsMviYhLubu2ELztDXqvTPG+FhJ7VOjk=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnvH4h3QrzQ2sBlSHI21Fcx4F7xfKaMIypsIb9t
+ pzsYk55MduJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ7x+IQAKCRA1o5Of/Hh3
+ bWcRD/9zHVZRAqiY/kdYGJ4J/yZOC0CW42pp3p2njID5sjXN/tXmOqi1AchXSxoVuVtX7pvKm9q
+ ilH+/Hk5iDpY4jhbNIvYA013g2MRUP4rScxeqQCmV/gCcX/9C6pRrxTGBSnZ2Xz5qg/sYZrtG90
+ mY2A1o9kIn20zftEJWAuRMsLtLmjZ19lgTZKMp/t9mPW0cVmWqKb5Ybgny+EfB0bXh832hLlrtr
+ FRV5xUH9+F1dTlYWA5wLxe/5OScmbRnMHjMrTeyyjHSeNS8mz6cnfeHZBPQ//ftal9pznunb/3v
+ l7n7goEaxio+8PPL213nqqB1xaY11olcjbcBW9BOVL2fraSFWbFMFDd0AOFQSpFvkxx0e/njQL3
+ Ar93a6v/CmqJbl/e6CGUNq1T0D38/vhFV7rQjOcPZuA9y75I6pWylNeR+HKkXM3FFckogU319sX
+ 5H6po/rv6UmVSg5nFKnIk28UvbLwhctuHgOWrVlvoR1c5BOANPz5lPf8QLlBC75tU9rBThTNk0O
+ FN/uxneiCXKaKFq8iADHlp1y5wMW/LdwooAHhj6PefAdCWJei8HtkcbMzYUgtG0Xcuug6I0uzcc
+ AT/zaKhBkbyoXVi0mGEZfdVl22P3RIgRIcwe7ccSUjX6IEBzCKos5Kq/xPtrvNk1syb69NcLiDr
+ RFAVzEfhJsIyUUw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On Mon, Feb 03, 2025 at 10:38:28AM +0530, Anshuman Khandual wrote:
-> FEAT_PMUv3p9 registers such as PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1
-> access from EL1 requires appropriate EL2 fine grained trap configuration
-> via FEAT_FGT2 based trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2.
-> Otherwise such register accesses will result in traps into EL2.
-> 
-> Add a new helper __init_el2_fgt2() which initializes FEAT_FGT2 based fine
-> grained trap control registers HDFGRTR2_EL2 and HDFGWTR2_EL2 (setting the
-> bits nPMICNTR_EL0, nPMICFILTR_EL0 and nPMUACR_EL1) to enable access into
-> PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 registers.
-> 
-> Also update booting.rst with SCR_EL3.FGTEn2 requirement for all FEAT_FGT2
-> based registers to be accessible in EL2.
-> 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Marc Zyngier <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-doc@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: kvmarm@lists.linux.dev
-> Tested-by: Rob Herring (Arm) <robh@kernel.org>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-> ---
->  Documentation/arch/arm64/booting.rst | 18 ++++++++++++++++++
->  arch/arm64/include/asm/el2_setup.h   | 25 +++++++++++++++++++++++++
->  2 files changed, 43 insertions(+)
+The perf_iterate_ctx() function performs RCU list traversal but
+currently lacks RCU read lock protection. This causes lockdep warnings
+when running perf probe with unshare(1) under CONFIG_PROVE_RCU_LIST=y:
 
-Three things to note here:
+	WARNING: suspicious RCU usage
+	kernel/events/core.c:8168 RCU-list traversed in non-reader section!!
 
-(1) I think this is missing some other necessary register configuration.
+	 Call Trace:
+	  lockdep_rcu_suspicious
+	  ? perf_event_addr_filters_apply
+	  perf_iterate_ctx
+	  perf_event_exec
+	  begin_new_exec
+	  ? load_elf_phdrs
+	  load_elf_binary
+	  ? lock_acquire
+	  ? find_held_lock
+	  ? bprm_execve
+	  bprm_execve
+	  do_execveat_common.isra.0
+	  __x64_sys_execve
+	  do_syscall_64
+	  entry_SYSCALL_64_after_hwframe
 
-    From a quick scan, we also require MDCR_EL3.EnPM2 (bit [7]) to be
-    configured, which is not described in mainline nor here. If that
-    resets to 0, then EL{2,1,0} accesses to a number of registers such
-    as PMUACR_EL1 may trap to EL3.
+This protection was previously present but was removed in commit
+bd2756811766 ("perf: Rewrite core context handling"). Add back the
+necessary RCU read locks around perf_iterate_ctx() call in
+perf_event_exec().
 
-    AFAICT the boot-wrapper resets that bit to 0, so have we actually
-    tested all of this with the boot-wrapper? Does TF-A set this bit?
+CC: stable@vger.kernel.org
+Fixes: bd2756811766 ("perf: Rewrite core context handling")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Use scoped_guard() instead of rcu_read_lock() as suggested by Peter Zijlstra.
+- Link to v1: https://lore.kernel.org/r/20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org
+---
+ kernel/events/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-    Are we sure we've cpatured *all* requirements for FEAT_PMUv3p9? i.e.
-    is there anything else that we've missed?
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index bcb09e011e9e1..7dabbcaf825a0 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8321,7 +8321,8 @@ void perf_event_exec(void)
+ 
+ 	perf_event_enable_on_exec(ctx);
+ 	perf_event_remove_on_exec(ctx);
+-	perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
++	scoped_guard(rcu)
++		perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
+ 
+ 	perf_unpin_context(ctx);
+ 	put_ctx(ctx);
 
-(2) This is a fix for !VHE support for PMUACR and ICNTR, where the host
-    may run at EL1 and consequently will be affected by fine grained
-    traps.
+---
+base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
+change-id: 20250117-fix_perf_rcu-2ff93190950a
 
-    So this probably needs a CC stable and/or fixes tag, and backport.
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-(3) As there's no KVM changes, this is only safe provided that the
-    registers affected by these fine grained traps are already
-    unconditionally trapped by other traps when running a vCPU.
-
-    It looks like PMICNTR_EL0, PMICFILTR_EL0, and PMUACR_EL1 are all
-    trapped by MDCR_EL2.TPM, so that should work as long as we emulate
-    the PMU. For direct access, FGT2 support will be a prerequisite.
-
-Ideally, we'd have added support for FGT2 before the PMU functionality
-that implicitly depends upon it. We should pay more attention to trap
-controls in future.
-
-Given (1) and (2) I think someone needs to look into this a bit more and
-figure out if this needs a fixup or a respin.
-
-Mark.
-
-> diff --git a/Documentation/arch/arm64/booting.rst b/Documentation/arch/arm64/booting.rst
-> index cad6fdc96b98..04d97a1d5ffa 100644
-> --- a/Documentation/arch/arm64/booting.rst
-> +++ b/Documentation/arch/arm64/booting.rst
-> @@ -288,6 +288,12 @@ Before jumping into the kernel, the following conditions must be met:
->  
->      - SCR_EL3.FGTEn (bit 27) must be initialised to 0b1.
->  
-> +  For CPUs with the Fine Grained Traps 2 (FEAT_FGT2) extension present:
-> +
-> +  - If EL3 is present and the kernel is entered at EL2:
-> +
-> +    - SCR_EL3.FGTEn2 (bit 59) must be initialised to 0b1.
-> +
->    For CPUs with support for HCRX_EL2 (FEAT_HCX) present:
->  
->    - If EL3 is present and the kernel is entered at EL2:
-> @@ -382,6 +388,18 @@ Before jumping into the kernel, the following conditions must be met:
->  
->      - SMCR_EL2.EZT0 (bit 30) must be initialised to 0b1.
->  
-> +  For CPUs with the Performance Monitors Extension (FEAT_PMUv3p9):
-> +
-> + - If the kernel is entered at EL1 and EL2 is present:
-> +
-> +    - HDFGRTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-> +    - HDFGRTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-> +    - HDFGRTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-> +
-> +    - HDFGWTR2_EL2.nPMICNTR_EL0 (bit 2) must be initialised to 0b1.
-> +    - HDFGWTR2_EL2.nPMICFILTR_EL0 (bit 3) must be initialised to 0b1.
-> +    - HDFGWTR2_EL2.nPMUACR_EL1 (bit 4) must be initialised to 0b1.
-> +
->    For CPUs with Memory Copy and Memory Set instructions (FEAT_MOPS):
->  
->    - If the kernel is entered at EL1 and EL2 is present:
-> diff --git a/arch/arm64/include/asm/el2_setup.h b/arch/arm64/include/asm/el2_setup.h
-> index 25e162651750..1a0071faf57e 100644
-> --- a/arch/arm64/include/asm/el2_setup.h
-> +++ b/arch/arm64/include/asm/el2_setup.h
-> @@ -233,6 +233,30 @@
->  .Lskip_fgt_\@:
->  .endm
->  
-> +.macro __init_el2_fgt2
-> +	mrs	x1, id_aa64mmfr0_el1
-> +	ubfx	x1, x1, #ID_AA64MMFR0_EL1_FGT_SHIFT, #4
-> +	cmp	x1, #ID_AA64MMFR0_EL1_FGT_FGT2
-> +	b.lt	.Lskip_fgt2_\@
-> +
-> +	mov	x0, xzr
-> +	mrs	x1, id_aa64dfr0_el1
-> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_PMUVer_SHIFT, #4
-> +	cmp	x1, #ID_AA64DFR0_EL1_PMUVer_V3P9
-> +	b.lt	.Lskip_pmuv3p9_\@
-> +
-> +	orr	x0, x0, #HDFGRTR2_EL2_nPMICNTR_EL0
-> +	orr	x0, x0, #HDFGRTR2_EL2_nPMICFILTR_EL0
-> +	orr	x0, x0, #HDFGRTR2_EL2_nPMUACR_EL1
-> +.Lskip_pmuv3p9_\@:
-> +	msr_s   SYS_HDFGRTR2_EL2, x0
-> +	msr_s   SYS_HDFGWTR2_EL2, x0
-> +	msr_s   SYS_HFGRTR2_EL2, xzr
-> +	msr_s   SYS_HFGWTR2_EL2, xzr
-> +	msr_s   SYS_HFGITR2_EL2, xzr
-> +.Lskip_fgt2_\@:
-> +.endm
-> +
->  .macro __init_el2_gcs
->  	mrs_s	x1, SYS_ID_AA64PFR1_EL1
->  	ubfx	x1, x1, #ID_AA64PFR1_EL1_GCS_SHIFT, #4
-> @@ -283,6 +307,7 @@
->  	__init_el2_nvhe_idregs
->  	__init_el2_cptr
->  	__init_el2_fgt
-> +	__init_el2_fgt2
->          __init_el2_gcs
->  .endm
->  
-> -- 
-> 2.25.1
-> 
 
