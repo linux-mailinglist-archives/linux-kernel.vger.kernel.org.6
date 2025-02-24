@@ -1,152 +1,155 @@
-Return-Path: <linux-kernel+bounces-528624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC529A419F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:01:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F140A419F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15DF1738E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 851A2177969
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D373E24F5A6;
-	Mon, 24 Feb 2025 09:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D5524A075;
+	Mon, 24 Feb 2025 09:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfIFXDJe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gIwc1H79"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344C02505B7;
-	Mon, 24 Feb 2025 09:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428E5241CA6;
+	Mon, 24 Feb 2025 09:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391069; cv=none; b=CDCDTddcGNurCPJPVW39XktWLeKCncBY/F5a2pciUXu0ivNvYLdSS63GnV9klJtp8WE6zs2fCY0TMCUMmAafNDE8SzH3yrsaAbHXaRdNDU6C8WFvANd2lMxdwQxY+9FuZ/xfHgi0sT55l1e9urNszhoWW084Zzy5sdoXmwEJw7Y=
+	t=1740391101; cv=none; b=f3FYzAbVj3AMMeuq3t1x/8hyWmQAAdEXFhpgoazs3aOhLwg1Bf5BdwsWSw5eMI8ZTfbmvd3dAoEUvPKLAWqQF8Lyb8CYoiSJCsOne59TFDpsYg+sgB2fZN4QjbOrBODCbP5Xg+1As8EjqKKF+NjxqUQxS0pBi054v6kqODKXbFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391069; c=relaxed/simple;
-	bh=iE537x/MELrUY0Qtk8aCd5YLeWWHG15hTl09B9wGRWM=;
+	s=arc-20240116; t=1740391101; c=relaxed/simple;
+	bh=nAiaU3xwjMDNRMLJw8qN9OXA1uMi4hAnYos+MNgxPWo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SQF99Ogla2XncNWI19M3IJU952sY2Oey+5XltVQ7vkN7+I0Do/BBp+tqJ9JQjaMRn+JicHHiANkrohn5T4rmeG7Er1/IShdy6lCoBzoc8Gqu52HuXiqZTtljeIf6hgMFBWb3gNVpGcf3atH/z7GLLBQh3RDsEUd+R6IEMYZtGr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfIFXDJe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098C3C4CEE8;
-	Mon, 24 Feb 2025 09:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740391068;
-	bh=iE537x/MELrUY0Qtk8aCd5YLeWWHG15hTl09B9wGRWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TfIFXDJen3mMesTjG7OhjLyO68Lu9krViqA7VC3vhkwnLojy4G3CBiTdUmL3na5zf
-	 ey2d8msVYSk18M5THfX+RJdtV/35HTBjjiieiPT1B9lKgRxUblNdrLhnR090a4dUDp
-	 FkP/7/PnwOILK+QWx4uFaUo67l3z3VqYe5pzZuknUTsNQ5E5UX2KyDSU5kOlq4JXSs
-	 Z1Bwr4k9KLgdBR37JAv6X9l6o/j1iGueZhQVbXva5c1h8hjI9PZAm1jeoz8P9C78du
-	 Upp41f6hNuhj6KQ/6UrooNmrkqTQr4K66zIME/NA1If65Ly8AwVuuEYnio7f84sn8m
-	 j8jH/pA1AvlLQ==
-Date: Mon, 24 Feb 2025 20:27:44 +1030
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH 3/8][next] xfs: Avoid -Wflex-array-member-not-at-end warnings
-Message-ID: <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
-References: <cover.1739957534.git.gustavoars@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sdTgid5Ay+BMvRRjBZ19DYqZE/igxvPmFzU0u1VUBQoj/Gh2R1Hx4G8557L4Bg/agUNavO5PWLUNnHz1dW0vuJdevKrj7khRwYMR8hk7q29SK1160uZ/6L7PTrlteuIJuBrfV3xvl6pENq7KsPkftImCVCPEw0DWDbyKYsg8lVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gIwc1H79; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740391100; x=1771927100;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=nAiaU3xwjMDNRMLJw8qN9OXA1uMi4hAnYos+MNgxPWo=;
+  b=gIwc1H79NKR+8XApGQXGJ1bj0iBAsr0NFDkYg07gDhEEl9z6uhPz5aum
+   bCYJP89IgFpOslUS2xvO3cVuJ+IPTixG0kEpWS2Yb9+BsL7s9rIcb8sM0
+   bRLXHWy5UZYvJmGwvaaHzgPgOoOHJGVqOx3wAI7ky41xdRptEvEe1+GYH
+   8ECxINfXEmRnRKFc1/VQLzHoCepUWc+joC3nL8C7hY9Na+QKUDoL3LxD8
+   p7BzoFuWDZl7Ok+HazfjicX9f1GJzxSbTb41VbLX2sEl66I5N3frwvVEo
+   rI8kcsUuqQf1/hNvG/AvQKfQvWp7xJHdZmRt3oCBMARBEx2iz+6WNjv4D
+   Q==;
+X-CSE-ConnectionGUID: MNsXkAJ/T9KU9b+CUpDRzQ==
+X-CSE-MsgGUID: l2FIXTfFRRu4SBJjMnUlMg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41349421"
+X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
+   d="scan'208";a="41349421"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:58:19 -0800
+X-CSE-ConnectionGUID: 11TMVs8TQuSz6IfVkUqtCg==
+X-CSE-MsgGUID: zRpSnxCBTH6o2zWgA+I+MQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116206670"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:58:11 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmVDz-0000000Eequ-1e5o;
+	Mon, 24 Feb 2025 11:58:07 +0200
+Date: Mon, 24 Feb 2025 11:58:07 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "pmladek@suse.com" <pmladek@suse.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	"corbet@lwn.net" <corbet@lwn.net>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	"kekrby@gmail.com" <kekrby@gmail.com>,
+	"admin@kodeit.net" <admin@kodeit.net>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	"evepolonium@gmail.com" <evepolonium@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	Hector Martin <marcan@marcan.st>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v2 2/3] lib/vsprintf: Add support for generic FOURCCs by
+ extending %p4cc
+Message-ID: <Z7xCr4iPmIkPoWGC@smile.fi.intel.com>
+References: <716BCB0A-785B-463A-86C2-94BD66D5D22E@live.com>
+ <C66F35BB-2ECC-4DB8-8154-DEC5177967ED@live.com>
+ <6CB20172-906F-4D13-B5E4-100A9CF74F02@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1739957534.git.gustavoars@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6CB20172-906F-4D13-B5E4-100A9CF74F02@live.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Sat, Feb 22, 2025 at 03:46:03PM +0000, Aditya Garg wrote:
+> > On 20 Feb 2025, at 10:09 PM, Aditya Garg <gargaditya08@live.com> wrote:
+> > 
+> > %p4cc is designed for DRM/V4L2 FOURCCs with their specific quirks, but
+> > it's useful to be able to print generic 4-character codes formatted as
+> > an integer. Extend it to add format specifiers for printing generic
+> > 32-bit FOURCCs with various endian semantics:
+> > 
+> > %p4ch   Host-endian
+> > %p4cl Little-endian
+> > %p4cb Big-endian
+> > %p4cr Reverse-endian
+> > 
+> > The endianness determines how bytes are interpreted as a u32, and the
+> > FOURCC is then always printed MSByte-first (this is the opposite of
+> > V4L/DRM FOURCCs). This covers most practical cases, e.g. %p4cr would
+> > allow printing LSByte-first FOURCCs stored in host endian order
+> > (other than the hex form being in character order, not the integer
+> > value).
 
-Change the type of the middle struct members currently causing trouble
-from `struct bio` to `struct bio_hdr`.
+...
 
-We also use `container_of()` whenever we need to retrieve a pointer to
-the flexible structure `struct bio`, through which we can access the
-flexible-array member in it, if necessary.
+> BTW, after looking at the comments by Martin [1], its actually better to use
+> existing specifiers for the appletbdrm driver.  The driver needs the host
+> endian as proposed by this patch, so instead of that, we can use %.4s
 
-With these changes fix 27 of the following warnings:
+Do you mean this patch will not be needed? If this a case, that would be the
+best solution.
 
-fs/xfs/xfs_log_priv.h:208:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> [1]: https://lore.kernel.org/asahi/E753B391-D2CB-4213-AF82-678ADD5A7644@cutebit.org/
+> 
+> Alternatively we could add a host endian only. Other endians are not really
+> used by any driver AFAIK. The host endian is being used by appletbdrm and
+> Asahi Linux’ SMC driver only.
 
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- fs/xfs/xfs_log.c      | 15 +++++++++------
- fs/xfs/xfs_log_priv.h |  2 +-
- 2 files changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index f8851ff835de..7e8b71f64a46 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -1245,7 +1245,7 @@ xlog_ioend_work(
- 	}
- 
- 	xlog_state_done_syncing(iclog);
--	bio_uninit(&iclog->ic_bio);
-+	bio_uninit(container_of(&iclog->ic_bio, struct bio, __hdr));
- 
- 	/*
- 	 * Drop the lock to signal that we are done. Nothing references the
-@@ -1663,7 +1663,8 @@ xlog_write_iclog(
- 	 * writeback throttle from throttling log writes behind background
- 	 * metadata writeback and causing priority inversions.
- 	 */
--	bio_init(&iclog->ic_bio, log->l_targ->bt_bdev, iclog->ic_bvec,
-+	bio_init(container_of(&iclog->ic_bio, struct bio, __hdr),
-+		 log->l_targ->bt_bdev, iclog->ic_bvec,
- 		 howmany(count, PAGE_SIZE),
- 		 REQ_OP_WRITE | REQ_META | REQ_SYNC | REQ_IDLE);
- 	iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart + bno;
-@@ -1692,7 +1693,8 @@ xlog_write_iclog(
- 
- 	iclog->ic_flags &= ~(XLOG_ICL_NEED_FLUSH | XLOG_ICL_NEED_FUA);
- 
--	if (xlog_map_iclog_data(&iclog->ic_bio, iclog->ic_data, count))
-+	if (xlog_map_iclog_data(container_of(&iclog->ic_bio, struct bio, __hdr),
-+				iclog->ic_data, count))
- 		goto shutdown;
- 
- 	if (is_vmalloc_addr(iclog->ic_data))
-@@ -1705,16 +1707,17 @@ xlog_write_iclog(
- 	if (bno + BTOBB(count) > log->l_logBBsize) {
- 		struct bio *split;
- 
--		split = bio_split(&iclog->ic_bio, log->l_logBBsize - bno,
-+		split = bio_split(container_of(&iclog->ic_bio, struct bio, __hdr),
-+				  log->l_logBBsize - bno,
- 				  GFP_NOIO, &fs_bio_set);
--		bio_chain(split, &iclog->ic_bio);
-+		bio_chain(split, container_of(&iclog->ic_bio, struct bio, __hdr));
- 		submit_bio(split);
- 
- 		/* restart at logical offset zero for the remainder */
- 		iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart;
- 	}
- 
--	submit_bio(&iclog->ic_bio);
-+	submit_bio(container_of(&iclog->ic_bio, struct bio, __hdr));
- 	return;
- shutdown:
- 	xlog_force_shutdown(log, SHUTDOWN_LOG_IO_ERROR);
-diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
-index f3d78869e5e5..32abc48aef24 100644
---- a/fs/xfs/xfs_log_priv.h
-+++ b/fs/xfs/xfs_log_priv.h
-@@ -205,7 +205,7 @@ typedef struct xlog_in_core {
- #endif
- 	struct semaphore	ic_sema;
- 	struct work_struct	ic_end_io_work;
--	struct bio		ic_bio;
-+	struct bio_hdr		ic_bio;
- 	struct bio_vec		ic_bvec[];
- } xlog_in_core_t;
- 
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
