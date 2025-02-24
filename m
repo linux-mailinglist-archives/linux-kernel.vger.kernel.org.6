@@ -1,521 +1,349 @@
-Return-Path: <linux-kernel+bounces-530230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29979A430D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:28:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F80A430DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B03A498F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0395D3A4181
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3DFB1DF993;
-	Mon, 24 Feb 2025 23:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5E720C012;
+	Mon, 24 Feb 2025 23:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dYf2EicW"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="loBfTiR6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="J3mvHyzY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9407917578
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062C220969D
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740439701; cv=none; b=c8eIztNPVcm3HNlhNBmnEAaBQt4BJwpHdd+8ZINYMRIVAwiI2Ax3dw+KaRqp9A3zxd4Skx4/8gzhoczzMe33+QA9wHmwIwrVSd76MCAUBa8wLO/Hh4j6Tj7zjaGdqYh5pQQA4CxgBBFWIyqZQEd8NP6+yBcYXDh3WOu9xdUaNUc=
+	t=1740439793; cv=none; b=rToHjWaDeVtV51qQ2CRYdDCcrXEM7FuiFJe2CWFJ1F6vEpVI7RCJljA4qvg1HvJi43ZFcnKNBdSV2rJq4RRfRrXqR42vDTQkXSnz1CCDKr6EXUJzKQx7nJm3mjolA8s0XYD+1p7ijCoVy/mhUP8st/YbCtUgdorOImchMbJUuEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740439701; c=relaxed/simple;
-	bh=UDMiYbz4qQW9GEbcj0+ab6zhftwWPuae/OoFs6VwfSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5WIfH+ehRacAYBGmXxmjQ0KniBZT5oH7ol8tuwynUPPZcifOfrxDwDJ99A6lAsy2St8wPwl3wbi6QBlgqJNloyjLDxpp/9DC6jt145eM9aXLj3G2nk0ivK4S1NC9XIZaLeP5FV+lAYSzLrC4LQQsnxuYtW88pAUv5rRRTqeOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dYf2EicW; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22117c396baso31385ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 15:28:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740439699; x=1741044499; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bqtlSo3+RM2vEBk3JOvQebOKTpRgBDM2rBr6SGwN0cc=;
-        b=dYf2EicW6VutOrCZRpywBPbb1uSYr3wxxToo5AB9AH9jS3/PpwTzUoKcyGUDDV+MQm
-         gwMIuU1MMDE57iGvTLg8r+9uqnZ/tXITH/8FARoU+R38ib9i0UpaBK/L3dqtiyj4jgNQ
-         nhfTJv3lmhXuumPTnqyzNWmlTvIeV2DacFakRXoE/2e8ShsPJoPDAqw4q85zu7RtRF6O
-         nmSp+sGBaJqxxMpGUmVnSQFzL/BO5xcNiD62kLv3VewFc0dZV2a1GRCCIEeZfFVzxRy3
-         XkwjMurqtJcRNZ+eewANmu1Fz3Q9mc9kxQzsg1DG9ENF2g2WHlqX0/jx4BEKUIU4g1Ej
-         zQlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740439699; x=1741044499;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bqtlSo3+RM2vEBk3JOvQebOKTpRgBDM2rBr6SGwN0cc=;
-        b=i9xPNGrj0dLWq3VS9s1wvzja+buePxvuT+1iipppirLAtK73D1I5lVvkrKeMYp4sRO
-         LH0mpl/Cx816w3Lih9o3GK7CPIvLb+RU/c1ZtxQZD1Dyk48J/lmOGGGfYIjx7PCW9RSg
-         D3YeU6av5fkPQ9P90WE0m0b/6dutG86L+rkNQK9n2YrIYACIgf5zw0BQmkMjzv3XZdwH
-         vS7iZ0/TU3geCphG7HHkIEOrGPtOmlSyRNajckVO5Qy1DuM1MdPSxT8binpBx0hRG64B
-         DT+HFxBKExGsYv7eBsW91FPf3A6bLqRywJhIbG4dOUnVT2e55kWeTekUCt2uEpN/ho04
-         y0ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUhBh8qJK7j/01yrj4toAYDmXGnIkec9HeO4xxwKbm65IQCwEwtVJHXZUnPIcykIcV8LimJsE/lut4CG3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjpaQ+Eet7WHIFCw3Ds7qd/IxZyCPrI5nfDSiMgJlrovDFnTq2
-	e+qI1obK+r4bnx0Cvk2Qfgu0mXBE2LsxqE8HZhAvXuTBUOmnXnW1u0u7R+Bdmj3hqeNX2f1tAM5
-	a+HOjXOtzpDLRa6jfkyg35hbVc3LedN+w31oQtLRw1TEkr2hlqybc
-X-Gm-Gg: ASbGncuAndDbYx/oeWnsylPwFwDhJgipP7YnXzrMlQoQGb0XXWEv1uUGcme2sKrODUs
-	gFZjjHK5QI4/Il7DJ20EabDMDRcrj8Ergl5Z+XcqyJRhDnmMiS2BRVlpmgkRYbJbt+VamUVjKwe
-	5uHwaAKlsEWV3JdobnOvyZdG6yWgDIG+c8
-X-Google-Smtp-Source: AGHT+IGhOVgZj8JBCkZvntzKtpLpEOd5r8cse93N8V1vb/etSzYfbb91Ox/MM0wFE3fH3JXO5h7ett4XqqnNUFDejc0=
-X-Received: by 2002:a17:902:c402:b0:216:5e53:d055 with SMTP id
- d9443c01a7336-22307a3f2d4mr1411405ad.9.1740439698469; Mon, 24 Feb 2025
- 15:28:18 -0800 (PST)
+	s=arc-20240116; t=1740439793; c=relaxed/simple;
+	bh=vt/y9E4/DcaZ9NV1EBDUcDNYGDvwjv/mQRtyYJZcYqk=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=rJKAGfRyYwq5M7OklXBAuVch6gY7JhFlF3sRdIJl1Ra+W69G8YTYT8eP6tuj1NISEurSFpGp0R4BJLEZJi8HdwsArCxjPLSts6ziak94ngKrjDJHMCQW2J29XvOj6UqZ1on8aJwu9J4AX7gFmGDgBUKeUX/ud0H8Tv2Bwmt2qMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=loBfTiR6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=J3mvHyzY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1769F1F44E;
+	Mon, 24 Feb 2025 23:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
+	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
+	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
+	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740439789;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
+	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
+	p9GIZjyHOh0bImAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740439789; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
+	b=loBfTiR6kAlC/sS0ot1CDtcKEiKmB6GXrsHNK+SsrbeZzGdV6O2ZrsmO8jw3wvJPHK58Kj
+	glzLsVFTkUpcycBhzhfiLzoYOAwECgg5wubkGZIw8GCF2DWKEIFm9faiQIbZ45b9stImh9
+	J9FQoxLwzfFLcLMM4Nzxcdvxtbe/i94=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740439789;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2oj990YaLGkPA4ae4sIKmdEX5RxKU3jTg87RjSWSYeg=;
+	b=J3mvHyzY65SyoNedSF0MYSEG2w3R6giaas15VW09Vb9TUfaAv1RMGveIpiZI1/xnVIoKU6
+	p9GIZjyHOh0bImAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A647613332;
+	Mon, 24 Feb 2025 23:29:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 5OlzEuQAvWc2awAAD6G6ig
+	(envelope-from <neilb@suse.de>); Mon, 24 Feb 2025 23:29:40 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z7Z5kv75BMML2A1q@google.com> <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
- <Z7yJ0Vpub6JeQyYo@x1> <CAP-5=fXSgpZaAgickZSWgjt-2iTWK7FFZc65_HG3QhrTg1mtBw@mail.gmail.com>
- <Z7zVzKbQIdB6-bFn@x1> <CAP-5=fU3YSCiHygnOt6MN7i2mJBOwm202tXSefBHaPR3JmptkA@mail.gmail.com>
-In-Reply-To: <CAP-5=fU3YSCiHygnOt6MN7i2mJBOwm202tXSefBHaPR3JmptkA@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 24 Feb 2025 15:28:07 -0800
-X-Gm-Features: AWEUYZnUqeiKDpZwXpFyPObmrQolRNhx_ADtoUPNTreye08noZjHU-gzVDZnswM
-Message-ID: <CAP-5=fX+8rGtq4w6gaH7SMsYEwgJ0xbsmR48BF3g=vQtRu0aRg@mail.gmail.com>
-Subject: Re: [RFC] perf tools: About encodings of legacy event names
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neilb@suse.de>
+To: "Viacheslav Dubeyko" <Slava.Dubeyko@ibm.com>
+Cc: "brauner@kernel.org" <brauner@kernel.org>, "Xiubo Li" <xiubli@redhat.com>,
+ "idryomov@gmail.com" <idryomov@gmail.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>,
+ "linux-cifs@vger.kernel.org" <linux-cifs@vger.kernel.org>,
+ "Dai.Ngo@oracle.com" <Dai.Ngo@oracle.com>,
+ "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "johannes@sipsolutions.net" <johannes@sipsolutions.net>,
+ "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>,
+ "anna@kernel.org" <anna@kernel.org>, "miklos@szeredi.hu" <miklos@szeredi.hu>,
+ "trondmy@kernel.org" <trondmy@kernel.org>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "jack@suse.cz" <jack@suse.cz>, "tom@talpey.com" <tom@talpey.com>,
+ "richard@nod.at" <richard@nod.at>,
+ "anton.ivanov@cambridgegreys.com" <anton.ivanov@cambridgegreys.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "netfs@lists.linux.dev" <netfs@lists.linux.dev>,
+ "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+ "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+ "senozhatsky@chromium.org" <senozhatsky@chromium.org>
+Subject: RE:  [PATCH 3/6] ceph: return the correct dentry on mkdir
+In-reply-to: <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
+References: <>, <f7d3e39f5ced7832d451de172004172b59a994eb.camel@ibm.com>
+Date: Tue, 25 Feb 2025 10:29:37 +1100
+Message-id: <174043977707.74271.6498110571534472585@noble.neil.brown.name>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	RCVD_TLS_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,redhat.com,gmail.com,vger.kernel.org,oracle.com,lists.infradead.org,sipsolutions.net,szeredi.hu,zeniv.linux.org.uk,suse.cz,talpey.com,nod.at,cambridgegreys.com,lists.linux.dev,chromium.org];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-On Mon, Feb 24, 2025 at 1:34=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Mon, Feb 24, 2025 at 12:25=E2=80=AFPM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Mon, Feb 24, 2025 at 09:36:16AM -0800, Ian Rogers wrote:
-> > > On Mon, Feb 24, 2025 at 7:01=E2=80=AFAM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
-> > > > > On Wed, Feb 19, 2025 at 4:38=E2=80=AFPM Namhyung Kim <namhyung@ke=
-rnel.org> wrote:
-> > > > > > Ian and I have been discussing the behaviors of event encodings=
- and it's
-> > > > > > hard to find a point so far that we can agree on.  So I'd like =
-to hear
-> > > > > > your opinion to resolve this.  If you happen to have some time,=
- you can
-> > > > > > follow the thread here:
-> > > >
-> > > > > > https://lore.kernel.org/linux-perf-users/20250109222109.567031-=
-5-irogers@google.com/#r
-> > > >
-> > > > > > Basically there are some events that were defined in the perf A=
-BI.
-> > > >
-> > > > > >   PERF_COUNT_HW_CPU_CYCLES, PERF_COUNT_HW_INSTRUCTIONS, ...
-> > > >
-> > > > > > So perf tools use those (legacy) encodings with the matching na=
-mes like
-> > > > > > "cycles" (or "cpu-cycles"), "instructions", etc.
-> > > >
-> > > > > > On the another hand, it has wildcard matching for event names i=
-n PMUs so
-> > > > > > that users can conveniently use events without specifying PMU n=
-ames.
-> > > > > > For example, "event1" would expand to "pmuX/event1/", "pmuY/eve=
-nt1/", etc
-> > > > > > as long as the PMUs have the event in sysfs or JSON.
-> > > >
-> > > > > > And there are platforms where "cycles" event is defined in a (c=
-ore) PMU
-> > > > > > (like "blah/cycles") and the event has a different behavior tha=
-n the
-> > > > > > legacy encoding.  Then it has to choose which encoding is bette=
-r for the
-> > > > > > given name.  But it's a general issue for the legacy event name=
-s.
-> > > >
-> > > > So we pick the "legacy" one, as always, and the one that is in a PM=
-U
-> > > > needs to have its pmu name specified, no?
-> > > >
-> > > > > >   Q. what should it do with "cycles"?
-> > > > > >   -----------------------------------
-> > > > > >   1. just use the legacy encoding (PERF_COUNT_HW_CPU_CYCLES).
-> > > >
-> > > > Right
-> > > >
-> > > > > >   2. expand to (possibly multiple) PMU events (like "cpu/cycles=
-/") and
-> > > > > >      use the encoding defined there.
-> > > >
-> > > > Nope
-> > > >
-> > > > > > I think the #1 is the current behavior.  The upside is it's sim=
-ple and
-> > > > > > intuitive.  But it's different than other names and can make co=
-nfusion.
-> > > > > > Users should use the full name ("cpu/cycles/") if they need sys=
-fs one.
-> > > >
-> > > > Right
-> > > >
-> > > > > So the code keeps changing, for example, the removal of BPF event=
-s. I
-> > > >
-> > > > Humm, this seems like a different discussion.
-> > > >
-> > > > > think the important change and the thing that has brought us here=
- is
-> > > > > the addition of what Intel call hybrid and ARM call BIG.little. A=
-RM
-> > > >
-> > > > Right, the support for hybrid systems brought lots of problems, mos=
-t
-> > > > people didn't have access to such systems and thus couldn't test
-> > > > patches, so the attempt was to keep the existing code working as it=
- had
-> > > > been while allowing for the support for the new hybrid systems.
-> > > >
-> > > > As more people get access to hybrid systems we started noticing pro=
-blems
-> > > > and working on fixing it, you did a lot of work in this area, highl=
-y
-> > > > appreciated.
-> > > >
-> > > > > have got architectural events and so the same event encoding on B=
-IG
-> > > > > and little cores. On x86 the e-core (atom) and p-cores have diffe=
-rent
-> > > > > event encodings. In the original hybrid work, pushed on for the l=
-aunch
-> > > > > of Alderlake and reviewed by Jiri and Arnaldo with no involvement=
- from
-> > > > > me, Intel wanted the event names to work transparently. So a cycl=
-es
-> > > >
-> > > > Without access to such systems, yes, see above.
-> > > >
-> > > > > event would be gathered on the e-core and p-core with a command l=
-ine
-> > > > > option to merge the legacy event cycles on both cores. To be spec=
-ific
-> > > > > the expected behavior of:
-> > > > > $ perf (stat|record) -e cycles ...
-> > > > > would be as if:
-> > > > > $ perf (stat|record) -e cpu_atom/cycles/,cpu_core/cycles/ ...
-> > > >
-> > > > Yes, and if somebody wants to profile in just one of those core typ=
-es,
-> > > > just specify the "cpu_atom" or "cpu_core" to have it fully specifie=
-d.
-> > > >
-> > > > > An unfortunate thing in the hybrid code was that it was hardcoded=
- to
-> > > > > PMU names of cpu_atom and cpu_core, but what to do for metrics? T=
-he
-> > > >
-> > > > Yeah, metrics IIRC came before hybrid systems.
-> > > >
-> > > > > original proposal was that metrics would have a PMU name and all =
-names
-> > > > > would be relative to that, but what about uncore events? What abo=
-ut
-> > > > > metrics that refer to other metrics? A decision was made to not t=
-o
-> > > > > have PMUs implicitly in metrics and the events in the metric woul=
-d
-> > > > > match those given to perf's -e command line. This also greatly
-> > > > > simplifies testing events when creating a metric.
-> > > >
-> > > > > I set about rewriting the hybrid code not to use hard coded PMU n=
-ames
-> > > > > but to discover core PMUs at runtime. This was to make the metric=
- and
-> > > > > event parsing code as generic as possible, but this had an uninte=
-nded
-> > > > > consequence. ARM's core PMU had previously not been seen as handl=
-ing
-> > > > > legacy events like cycles, and appeared as an uncore PMU. When th=
-ere
-> > > >
-> > > > > are both legacy and sysfs/json events then previously the legacy
-> > > > > events had priority. This broke events like cycles on Apple M
-> > > > > processors where the legacy events were broken and the sysfs ones=
- not.
-> > > > > Yes this is a driver bug, but everybody told me a change in behav=
-ior
-> > > > > of the tool was needed to fix it, that fix was to make sysfs/json
-> > > > > events have priority over legacy events. I prioritized fixing eve=
-nt
-> > > > > parsing when a PMU was specified but given "cycles" means
-> > > > > "cpu_atom/cycles/ and cpu_core/cycles/" for hybrid, why would the
-> > > > > prioritization be different without a PMU specified?
-> > > >
-> > > > > I knew of this tech debt and separately RISC-V was also intereste=
-d to
-> > > > > have sysfs/json be the priority so that the legacy to config enco=
-ding
-> > > > > could exist more in the perf tool than the PMU driver. I'm a SIG
-> > > >
-> > > > I saw them saying that supporting PERF_TYPE_HARDWARE counters was o=
-k as
-> > > > they didn't want to break the perf tooling workflow, no?
-> > >
-> > > No. The request has always been that they don't want the PMU driver t=
-o
-> > > do the PERF_TYPE_HARDWARE/PERF_COUNT_HW_* to PMU/config=3D??? mapping
-> > > given the diversity of hardware and to keep the PMU driver simple.
-> > > Here is Atish's feedback:
-> > > https://lore.kernel.org/lkml/CAHBxVyH1q5CRW3emWTZu1oLZEfTWWVRH6B0OVgg=
-Fxt-0NRzvwQ@mail.gmail.com/
-> > > """
-> > > If the overriding legacy with JSON is available, each future vendor
-> > > may just provide the json file instead of modifying the driver.
-> > > """
-> >
-> > So, making users to figure out what is the best event to use for some
-> > specific processor was one of the major reasons for perf to come about,
-> > otherwise we would still be stuck with oprofile.
->
-> Tbh, I think OProfile's major issue was a lack of active development.
-> There were arguments that perf was going to be more integrated into
-> the kernel, but there are no arch events, for example, in
-> arch/arm64/events. Perf provided new energy for something started as a
-> student project, it was and is good for having done that.
->
-> > While it is clear that picking some "most important event and ratios of
-> > events" is super difficult, that was one of the ideas that made perf to
-> > come about.
-> >
-> > I wasn=C2=B4t the architect of this, Ingo and Thomas were, with Peter t=
-hen
-> > tryhing to make the kernel part sane.
-> >
-> > I just tried to follow those principles while not getting in the way of
-> > people wanting to have a common ground for observability in Linux.
-> >
-> > Having all these JSON tables was in place was a major concession to tha=
-t
-> > original vision.
+On Tue, 25 Feb 2025, Viacheslav Dubeyko wrote:
+> On Mon, 2025-02-24 at 13:15 +1100, NeilBrown wrote:
+> > On Fri, 21 Feb 2025, Viacheslav Dubeyko wrote:
+> > > On Fri, 2025-02-21 at 10:36 +1100, NeilBrown wrote:
+> > > > ceph already splices the correct dentry (in splice_dentry()) from the
+> > > > result of mkdir but does nothing more with it.
+> > > >=20
+> > > > Now that ->mkdir can return a dentry, return the correct dentry.
+> > > >=20
+> > > > Signed-off-by: NeilBrown <neilb@suse.de>
+> > > > ---
+> > > >  fs/ceph/dir.c | 9 ++++++++-
+> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > > >=20
+> > > > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > > > index 39e0f240de06..c1a1c168bb27 100644
+> > > > --- a/fs/ceph/dir.c
+> > > > +++ b/fs/ceph/dir.c
+> > > > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idm=
+ap *idmap, struct inode *dir,
+> > > >  	struct ceph_client *cl =3D mdsc->fsc->client;
+> > > >  	struct ceph_mds_request *req;
+> > > >  	struct ceph_acl_sec_ctx as_ctx =3D {};
+> > > > +	struct dentry *ret =3D NULL;
+> > >=20
+> > > I believe that it makes sense to initialize pointer by error here and a=
+lways
+> > > return ret as output. If something goes wrong in the logic, then we alr=
+eady have
+> > > error.
+> >=20
+> > I'm not certain that I understand, but I have made a change which seems
+> > to be consistent with the above and included it below.  Please let me
+> > know if it is what you intended.
+> >=20
+> > >=20
+> > > >  	int err;
+> > > >  	int op;
+> > > > =20
+> > > > @@ -1166,14 +1167,20 @@ static struct dentry *ceph_mkdir(struct mnt_i=
+dmap *idmap, struct inode *dir,
+> > > >  	    !req->r_reply_info.head->is_dentry)
+> > > >  		err =3D ceph_handle_notrace_create(dir, dentry);
+> > > >  out_req:
+> > > > +	if (!err && req->r_dentry !=3D dentry)
+> > > > +		/* Some other dentry was spliced in */
+> > > > +		ret =3D dget(req->r_dentry);
+> > > >  	ceph_mdsc_put_request(req);
+> > > >  out:
+> > > >  	if (!err)
+> > > > +		/* Should this use 'ret' ?? */
+> > >=20
+> > > Could we make a decision should or shouldn't? :)
+> > > It looks not good to leave this comment instead of proper implementatio=
+n. Do we
+> > > have some obstacles to make this decision?
+> >=20
+> > I suspect we should use ret, but I didn't want to make a change which
+> > wasn't directly required by my needed.  So I highlighted this which
+> > looks to me like a possible bug, hoping that someone more familiar with
+> > the code would give an opinion.  Do you agree that 'ret' (i.e.
+> > ->r_dentry) should be used when ret is not NULL?
+> >=20
+>=20
+> I think if we are going to return ret as a dentry, then it makes sense to c=
+all
+> the ceph_init_inode_acls() for d_inode(ret). I don't see the point to call
+> ceph_init_inode_acls() for d_inode(dentry) then.
 
-Fwiw, I believe the original vision was seen as being flawed - at
-least that's what's come up in discussions I've had and Google has a
-policy to avoid legacy events. Specifically, a legacy event like
-instructions or branch-misses what could go wrong? Well does the
-instructions count contain speculatively executed instructions or not?
-Similarly for branch-misses. Cache misses, can they be speculative or
-not? The idea that there can be a counter and it gives just one value
-across vendors and models just doesn't exist in practice. On ARM in
-their json you'll see INST_RETIRED and INST_SPEC to deal with this,
-the exact behavior of the event can be seen in its description. What
-about the legacy instructions event? Well there's no description but
-it happens that it is mapped onto the retired instruction count, as it
-is for Intel. So the PMUs are trying for some consistency but you are
-crossing your fingers. If a PMU lacked a retired instruction count
-then why not use the speculative instruction count?
+If the mkdir used the original dentry, then ->mkdir returns NULL so ret
+is NULL.  If the mkdir used a different dentry it returns that, so ret
+is not NULL.
 
-If you look at the events for perf stat -ddd, on the well supported
-Intel (Skylake) and AMD (Turin):
-Supported on both:
-instructions, cycles, branches, branch-misses, L1-dcache-loads,
-L1-dcache-load-misses, L1-icache-load-misses, dTLB-loads,
-dTLB-load-misses, iTLB-loads, iTLB-load-misses.
-Supported only on Intel:
-LLC-loads, LLC-load-misses - presumably LLC means L2, so the event
-name is misleading
-Supported only on AMD:
-stalled-cycles-frontend, stalled-cycles-backed, L1-icache-loads,
-L1-dcache-prefetches
-Supported on neither:
-L1-dcache-prefetch-misses
-
-For metrics we added the "Default" metric group to deal with this
-diversity. I think "Default" also makes sense for events as:
-1) it is more intention revealing to have a json event with a
-description rather than legacy event,
-2) we can avoid events like branches and branch-misses that cause
-multiplexing on Intel p-cores when gathered with TopdownL1  (another
-surprise is this combination hides the multiplexing percentages),
-3) legacy events just don't really make sense when we're asking for
-something (by default) like L1-dcache-prefetch-misses and no PMUs
-support it,
-4) we can optionally set precision on events. People seem to be wildly
-ignorant of what precision architectures support, such as Linus
-copying cycles:ppp from Intel to ARM and expecting the ppps to
-actually mean something. Arguably it would be a service if perf failed
-if a precision greater than the PMU's max_precise is given - that's
-not practical given how precision works for AMD.
-
-Anyway, the idea that legacy events should make a comeback, this is
-best achieved, as ARM do, by having standard json events with standard
-names. Losing descriptions and adding ambiguity with kernel tables is
-a step backward imo.
+I'll try to re-organise the code so that "dentry" is the correct dentry
+on success, and "ret" is the returned dentry, which might be NULL.
 
 Thanks,
-Ian
+NeilBrown
 
-> > Changing things as we go, with all these changes in the hardware
-> > landscape, some fleeting, some reinforced, is super difficult and leads
-> > to all this pain in trying to provide a sane experience to people using
-> > these tools.
-> >
-> > I don't think we can have it super consistent.
-> >
-> > It is super useful as is, or at least that what people say.
-> >
-> > So we need to keep on improving it while not telling people used to its
-> > workflows that they should re-learn the tool because at some point a
-> > decision was not properly made.
->
-> So yes, but no. If you are used to perf on a pentium core 2 and then
-> move to a hybrid alderlake system there has to be some notion of what
-> cycles means on each core type. We had to change the tool to support
-> this. ARM dealt with this long before Intel hybrid ever did, but they
-> did so with no legacy event support just sysfs/json. Of course the
-> wildcard behavior means that all the PMUs that supply an event will
-> have it selected and people have been happy with this a long time.
-> We used to have BPF events but no longer. It seemed like a fruitful
-> thing, it became obsolete and was removed.
-> We have legacy encodings where LLC means L2:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/=
-tree/tools/perf/util/evsel.c?h=3Dperf-tools-next#n801
-> Fine at the time, now seems silly. LLC seems like a reasonable PMU
-> name, but event parsing will trip over it in the clumsy way it does
-> with raw events and "read" (raw event of 0xEAD). Event parsing used to
-> broken for events like "llc-llc" now you can have that as an event
-> now.
->
-> Anyway, I dislike that you are arguing that I am trying to tell people
-> to change their way of using the tool, it implies the patch series
-> breaks something. If you feel this then you should provide an example.
-> Yes Linus had a problem with the cycles event on Neoverse and now
-> that, as you suggested, is lowered to be a warning. The original patch
-> landed for weeks on linux-next without complaint. I am not asking
-> people to "re-lean the tool", I am trying to fix things and make order
-> out of something less than that.
->
-> > > Because of the pain in landing the reverted patch then RISC-V has had
-> > > to work with perf's behavior as it is, they need to ship products. I
-> >
-> > you can present it like that, or you can say that they wanted the API t=
-o
-> > be different but since it wasn't like they liked they had to comply.
-> >
-> > Differently phrased he finally understood the value of the current API,
-> > maybe.
->
-> So Atish spoke to us at LPC 2023:
-> https://lpc.events/event/17/
-> Mark Rutland also spoke to me at that time explaining how unhappy he
-> was that ARM Apple-M was broken. I combined both issues in our
-> discussions.
-> Atish has also spoken to Namhyung and myself face-to-face during the
-> RISC-V conference.
-> These issues were discussed verbally before I wrote patches, before
-> Atish made assumptions, and I think we both believe the proposals were
-> and are reasonable.
->
-> So let me completely disagree with your rephrasing. It is rude to
-> imply that Atish and myself somehow are trying to push an agenda of
-> changing and breaking an API. What has always been done is an attempt
-> at pragmatism, such as cleaning up the hard coded issues with the
-> original hybrid support, fixing Apple-M, ..
->
-> > > think things would have been simpler in their driver and the wider
-> > > ecosystem if this hadn't been forced to happen.
-> >
-> > > > > vice-chair for RISC-V and hope to push things forward for RISC-V =
-when
-> > > > > I can. Given that ARM had originally required the prioritization,
-> > > > > Intel signed off on this (with a huge number of Intel test
-> > > > > expectations updated as a consequence), RISC-V desiring consisten=
-cy I
-> > > > > thought there was a pretty broad consensus to move forward with h=
-aving
-> > > > > the same prioritization of legacy and sysfs/json events for event
-> > > > > names without PMUs as those with it.
-> > > >
-> > > > > In doing this change I made:
-> > > > > $ perf (stat|record) -e cycles ...
-> > > > > behave like:
-> > > > > $ perf (stat|record) -e */cycles/ ...
-> > > > > This is the behavior with sysfs/json events (ie not legacy). For =
-example:
-> > > > > $ perf (stat|record) -e inst_retired.any ...
-> > > > > in the event parsing code behaves like:
-> > > > > $ perf (stat|record) -e */inst_retired.any/ ...
-> > > > > That is every PMU advertising the event inst_retired.any (in the =
-sysfs
-> > > > > events directory or in json) will have it opened by the tool.
-> > > >
-> > > > > My intent was that "cycles" behaving like "*/cycles/" was that it
-> > > > > would match the change already done for hybrid of "cycles" behavi=
-ng
-> > > > > like "cpu_atom/cycles/,cpu_core/cycles/". However, this change ca=
-used
-> > > > > an issue on ARM Neoverse that Linus couldn't tolerate and so reve=
-rted
-> > > > > the change. Specifically ARM Neoverse's L3 cache PMU advertises a
-> > > > > "cycles" event and such an event will fail to open with perf reco=
-rd.
-> > > >
-> > > > > Specifying the PMU with the event avoids the wild card behavior a=
-nd
-> > > > > fixes the issue but it was put over strongly that "cycles" withou=
-t a
-> > > > > PMU should only ever mean CPU cycles. This missed hybrid/BIG.litt=
-le
-> > > > > type systems, but one could imagine in that case CPU means all co=
-re
-> > > > > PMUs.
-> > > >
-> > > > > As with not wanting hybrid PMU names hard coded, I dislike specia=
-l
-> > > > > cases for events. Not least as there are an exciting plethora of
-> > > >
-> > > > Ok, but the desire for consistency clashes with how things have bee=
-n for
-> > > > a long time, tools expect, scripts, etc, so we seem to need the spe=
-cial
-> > > > case for what has been called in these threads "legacy events".
-> >
-> > > There is only one known issue of a problem for 1 event on 1 ARM model=
-.
-> > > If ARM renamed the event this wouldn't be an issue. The patch series
-> > > works for this event but warns about it if you try to use it with per=
-f
-> > > record.
-> >
-> > Well, maybe just the event name shouldn't be what determines if it
-> > should be used in some cases? Maybe some other characteristic should be
-> > probed for in each case?
->
-> Do you want to explain this? We have events, without a PMU all events
-> wildcard on every PMU. This is existing and long standing behavior.
-> Uncore PMUs rely on it. Core PMUs with say a json event like
-> inst_retired.any rely on it.
-> You want a magic list of events that only work on core PMUs? Fine,
-> what is it? I hate the idea as why does cpu_cycles mean something
-> different than cpu-cycles, but if that is the only way to land the
-> series then let's do it. You had been arguing for lowering the failure
-> to just being a warning and not doing this. I do not understand where
-> you stand. My stance is hopefully clear with the patch series. If you
-> and Namhyung are worried that Linus seeing a warning message is a
-> blocker the easiest fix is to rename 1 ARM uncore event. We could hide
-> warnings and move them to verbose, imo that's gross. We can have a
-> magic list of events, similarly imo gross but at least it unblocks
-> this.
->
-> > Have to stop here, not enough bandwidth.
->
-> Thanks for making some time on this,
-> Ian
+
+>=20
+> > >=20
+> > > >  		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
+> > > >  	else
+> > > >  		d_drop(dentry);
+> > > >  	ceph_release_acl_sec_ctx(&as_ctx);
+> > > > -	return ERR_PTR(err);
+> > > > +	if (err)
+> > > > +		return ERR_PTR(err);
+> > > > +	return ret;
+> > >=20
+> > > What's about this?
+> > >=20
+> > > return err ? ERR_PTR(err) : ret;
+> >=20
+> > We could do that, but you said above that you thought we should always
+> > return 'ret' - which does make some sense.
+> >=20
+> > What do you think of the following alternate patch?
+> >=20
+>=20
+> Patch looks good to me. Thanks.
+>=20
+> Reviewed-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+>=20
+> > Thanks,
+> > NeilBrown
+> >=20
+> > diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
+> > index 39e0f240de06..d2e5c557df83 100644
+> > --- a/fs/ceph/dir.c
+> > +++ b/fs/ceph/dir.c
+> > @@ -1099,6 +1099,7 @@ static struct dentry *ceph_mkdir(struct mnt_idmap *=
+idmap, struct inode *dir,
+> >  	struct ceph_client *cl =3D mdsc->fsc->client;
+> >  	struct ceph_mds_request *req;
+> >  	struct ceph_acl_sec_ctx as_ctx =3D {};
+> > +	struct dentry *ret;
+> >  	int err;
+> >  	int op;
+> > =20
+> > @@ -1116,32 +1117,32 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+> >  		      ceph_vinop(dir), dentry, dentry, mode);
+> >  		op =3D CEPH_MDS_OP_MKDIR;
+> >  	} else {
+> > -		err =3D -EROFS;
+> > +		ret =3D ERR_PTR(-EROFS);
+> >  		goto out;
+> >  	}
+> > =20
+> >  	if (op =3D=3D CEPH_MDS_OP_MKDIR &&
+> >  	    ceph_quota_is_max_files_exceeded(dir)) {
+> > -		err =3D -EDQUOT;
+> > +		ret =3D ERR_PTR(-EDQUOT);
+> >  		goto out;
+> >  	}
+> >  	if ((op =3D=3D CEPH_MDS_OP_MKSNAP) && IS_ENCRYPTED(dir) &&
+> >  	    !fscrypt_has_encryption_key(dir)) {
+> > -		err =3D -ENOKEY;
+> > +		ret =3D ERR_PTR(-ENOKEY);
+> >  		goto out;
+> >  	}
+> > =20
+> > =20
+> >  	req =3D ceph_mdsc_create_request(mdsc, op, USE_AUTH_MDS);
+> >  	if (IS_ERR(req)) {
+> > -		err =3D PTR_ERR(req);
+> > +		ret =3D ERR_CAST(req);
+> >  		goto out;
+> >  	}
+> > =20
+> >  	mode |=3D S_IFDIR;
+> >  	req->r_new_inode =3D ceph_new_inode(dir, dentry, &mode, &as_ctx);
+> >  	if (IS_ERR(req->r_new_inode)) {
+> > -		err =3D PTR_ERR(req->r_new_inode);
+> > +		ret =3D ERR_CAST(req->r_new_inode);
+> >  		req->r_new_inode =3D NULL;
+> >  		goto out_req;
+> >  	}
+> > @@ -1165,15 +1166,23 @@ static struct dentry *ceph_mkdir(struct mnt_idmap=
+ *idmap, struct inode *dir,
+> >  	    !req->r_reply_info.head->is_target &&
+> >  	    !req->r_reply_info.head->is_dentry)
+> >  		err =3D ceph_handle_notrace_create(dir, dentry);
+> > +	ret =3D ERR_PTR(err);
+> >  out_req:
+> > +	if (!IS_ERR(ret) && req->r_dentry !=3D dentry)
+> > +		/* Some other dentry was spliced in */
+> > +		ret =3D dget(req->r_dentry);
+> >  	ceph_mdsc_put_request(req);
+> >  out:
+> > -	if (!err)
+> > -		ceph_init_inode_acls(d_inode(dentry), &as_ctx);
+> > -	else
+> > +	if (!IS_ERR(ret)) {
+> > +		if (ret)
+> > +			ceph_init_inode_acls(d_inode(ret), &as_ctx);
+> > +		else
+> > +			ceph_init_inode_acls(d_inode(dentry), &as_ctx);
+> > +	} else {
+> >  		d_drop(dentry);
+> > +	}
+> >  	ceph_release_acl_sec_ctx(&as_ctx);
+> > -	return ERR_PTR(err);
+> > +	return ret;
+> >  }
+> > =20
+> >  static int ceph_link(struct dentry *old_dentry, struct inode *dir,
+> >=20
+>=20
+> Thanks,
+> Slava.
+>=20
+>=20
+
 
