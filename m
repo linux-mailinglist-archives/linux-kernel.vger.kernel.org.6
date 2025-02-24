@@ -1,115 +1,174 @@
-Return-Path: <linux-kernel+bounces-528817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6C0DA41CB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:28:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044F2A41CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:32:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72543A7974
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6126C1899BB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3C9266197;
-	Mon, 24 Feb 2025 11:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEE3268C48;
+	Mon, 24 Feb 2025 11:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IOM5tliM"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrUijrKu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9189B265CDC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 11:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA9C25E453;
+	Mon, 24 Feb 2025 11:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740395901; cv=none; b=RFI5x+Ob2REG3J/oPUKtHasp1/+m1hzHc/bmZKI9CNR/eLTgxicNPUgJiTUiTEL7PxcbMpIn0PJ6swembSCxzIDtARxtblBOxcFdvb/usiZYs1tvxOhfFfN8i/5VlvJ1yzKhOPH1MsB1b0toquIiIolqyzz/Zn57CisMEDyeaMk=
+	t=1740395957; cv=none; b=rZANBzeMMn6FYeN4BqYjp87FtLgLqMZdPS+WRPOif/zYEtq4qj5mvGa4en53IfGWmQYEHcGq3eb5493mJFCilzOy1l3x6pyB2xypDYMRmEfO5mnEfJW/YIBVtoeAeAb0/UNvpWBMjZ8x4BoJ6ehnp5LZHl9Zo+Kpox3eZc/DqaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740395901; c=relaxed/simple;
-	bh=fEikObLI+PJPm7Km4x/KqXSkIAGyKsU6Oid+W+SKd7o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Dh/hnXbMwjIX+CHi9dvYn8v02xSP4eZ+eiWKknCmd1KZtapYa3LP2H2yIVsST8ljWSJsIzbH7rYeXbVdgVHgiLzRBhRTy2m0ZMHv62Zq12N0VGUZ+lqIQ+zdXoF0xukVYxWLlfj3EAPMV0NWes1tPOmsviCNX7w0RTDxwfg9udA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IOM5tliM; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z1dWq3hyNz9sp9;
-	Mon, 24 Feb 2025 12:18:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1740395895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=poEXpB9K1y9vdfQWtg9Kt9vHNV/RTZ0L7LaGGPuin2E=;
-	b=IOM5tliMYHrHklJCslpc23Y2z9qSc7C4myDYgRpC2yRS4Rx4N0vUSGEVnDFE8k/xRT/NeW
-	JCKnIzueuGXXCYIyTeyaebgSwvg0VVfICr3BiHLJA47tS0TG8sQ+fjoncPPV35DpWrp2by
-	M4RnY1lOjYRqzZYqP43eyY4QAWlVd7kwWMwPOzdV8Y4aDm7EtC71BsoSq1otL+jsThOTd8
-	LM/wMtjOE8UEJKzSGNlXSvDzB4L107H+GWqZcFsEJ27IkAz/l3HPpbhj2i9YGosBxVy0df
-	ujbK/n1Wyfef3m2CRBFZ8zFCb1L2di2eHQ1UtutrUQV1sBSSdyfvwdHWdgkXZg==
-Message-ID: <055fb477-c369-414b-98e4-d2677213fb9e@mailbox.org>
-Date: Mon, 24 Feb 2025 12:18:12 +0100
+	s=arc-20240116; t=1740395957; c=relaxed/simple;
+	bh=C3waVzTqbQGaq2xcqAuoxu6j+d1pP0AJ/3lxZ8a9tD4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VP/aEoZP6rgp0a420Dso18vX3Tsb69kCX1LDSuYqDQgdgFW7o9O3eGptCs0L6xVxQzMFfyNTu7nscy3hT/tYMZ+8WnfUXmTMmy+M6vtfynXzW+aUtYaiHdgaFRPhVq7J128y+y5anC0bTSt+Kn1OPFHnaeYDTRhJPrrZCkjK4/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CrUijrKu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9867CC4CEE8;
+	Mon, 24 Feb 2025 11:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740395956;
+	bh=C3waVzTqbQGaq2xcqAuoxu6j+d1pP0AJ/3lxZ8a9tD4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CrUijrKuFtNm40KL2YobmaTPyyue2cjkBJmIz7zR5R6MdXNwkREFlCHwMoXTavlmI
+	 wzStcnNq5i2pqBeQNACbyX9etz80pceUTzF0VYZJx/e+2VkzRehy/NQUceFYvUkNYM
+	 ZW7BKKoEfYjIdoqqNYLB3A7d1YO+rXMZeRS0fkzcA7VwHRLxhdcafpJ4aKtQqctrIa
+	 eDN2dY9Pda6tpOK4Oja6XggH5c9QEptUygMksF9rbBnSOo+T+eSyW3+wRYiG5UbfMh
+	 CoSKnM2heXadqvr5zi7pE9fbb2DJj0aw3TvD+QB57y8QLT2/kwcanOmCMGss3VSS9l
+	 FhF4pui1+mIJQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	daniel@iogearbox.net,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 01/20] bpf: unify VM_WRITE vs VM_MAYWRITE use in BPF map mmaping logic
+Date: Mon, 24 Feb 2025 06:18:54 -0500
+Message-Id: <20250224111914.2214326-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH 1/3] drm/amdgpu: Log the creation of a coredump file
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?B?J0NocmlzdGlhbiBLw7ZuaWcn?= <christian.koenig@amd.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, siqueira@igalia.com
-References: <20250219213517.281556-1-andrealmeid@igalia.com>
- <20250219213517.281556-2-andrealmeid@igalia.com>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: de-CH-frami, en-CA
-In-Reply-To: <20250219213517.281556-2-andrealmeid@igalia.com>
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.79
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: m4n5jh5nm7i7j4fubmeks4qk69itcojw
-X-MBO-RS-ID: f8b276519071cec9aea
 
-On 2025-02-19 22:35, André Almeida wrote:
-> After a GPU reset happens, the driver creates a coredump file. However,
-> the user might not be aware of it. Log the file creation the user can
-> find more information about the device and add the file to bug reports.
-> This is similar to what the xe driver does.
-> 
-> Signed-off-by: André Almeida <andrealmeid@igalia.com>
-> ---
->  drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
-> index 824f9da5b6ce..7b50741dc097 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dev_coredump.c
-> @@ -364,5 +364,9 @@ void amdgpu_coredump(struct amdgpu_device *adev, bool skip_vram_check,
->  
->  	dev_coredumpm(dev->dev, THIS_MODULE, coredump, 0, GFP_NOWAIT,
->  		      amdgpu_devcoredump_read, amdgpu_devcoredump_free);
-> +
-> +	drm_info(dev, "AMDGPU device coredump file has been created\n");
-> +	drm_info(dev, "Check your /sys/class/drm/card%d/device/devcoredump/data\n",
-> +		 dev->primary->index);
->  }
->  #endif
+From: Andrii Nakryiko <andrii@kernel.org>
 
-Maybe this should be done in dev_coredumpm instead of in the driver?
+[ Upstream commit 98671a0fd1f14e4a518ee06b19037c20014900eb ]
 
-Could make it a single line:
+For all BPF maps we ensure that VM_MAYWRITE is cleared when
+memory-mapping BPF map contents as initially read-only VMA. This is
+because in some cases BPF verifier relies on the underlying data to not
+be modified afterwards by user space, so once something is mapped
+read-only, it shouldn't be re-mmap'ed as read-write.
 
-	drm_info(dev, "Device core dump created in /sys/class/drm/card%d/device/devcoredump/data\n",
-		 dev->primary->index);
+As such, it's not necessary to check VM_MAYWRITE in bpf_map_mmap() and
+map->ops->map_mmap() callbacks: VM_WRITE should be consistently set for
+read-write mappings, and if VM_WRITE is not set, there is no way for
+user space to upgrade read-only mapping to read-write one.
 
-(AFAICT drm_info prints the driver name twice already, no need for a third time :)
+This patch cleans up this VM_WRITE vs VM_MAYWRITE handling within
+bpf_map_mmap(), which is an entry point for any BPF map mmap()-ing
+logic. We also drop unnecessary sanitization of VM_MAYWRITE in BPF
+ringbuf's map_mmap() callback implementation, as it is already performed
+by common code in bpf_map_mmap().
 
+Note, though, that in bpf_map_mmap_{open,close}() callbacks we can't
+drop VM_MAYWRITE use, because it's possible (and is outside of
+subsystem's control) to have initially read-write memory mapping, which
+is subsequently dropped to read-only by user space through mprotect().
+In such case, from BPF verifier POV it's read-write data throughout the
+lifetime of BPF map, and is counted as "active writer".
 
+But its VMAs will start out as VM_WRITE|VM_MAYWRITE, then mprotect() can
+change it to just VM_MAYWRITE (and no VM_WRITE), so when its finally
+munmap()'ed and bpf_map_mmap_close() is called, vm_flags will be just
+VM_MAYWRITE, but we still need to decrement active writer count with
+bpf_map_write_active_dec() as it's still considered to be a read-write
+mapping by the rest of BPF subsystem.
+
+Similar reasoning applies to bpf_map_mmap_open(), which is called
+whenever mmap(), munmap(), and/or mprotect() forces mm subsystem to
+split original VMA into multiple discontiguous VMAs.
+
+Memory-mapping handling is a bit tricky, yes.
+
+Cc: Jann Horn <jannh@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+Link: https://lore.kernel.org/r/20250129012246.1515826-1-andrii@kernel.org
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ kernel/bpf/ringbuf.c |  4 ----
+ kernel/bpf/syscall.c | 10 ++++++++--
+ 2 files changed, 8 insertions(+), 6 deletions(-)
+
+diff --git a/kernel/bpf/ringbuf.c b/kernel/bpf/ringbuf.c
+index 246559c3e93d0..528f4d6342262 100644
+--- a/kernel/bpf/ringbuf.c
++++ b/kernel/bpf/ringbuf.c
+@@ -268,8 +268,6 @@ static int ringbuf_map_mmap_kern(struct bpf_map *map, struct vm_area_struct *vma
+ 		/* allow writable mapping for the consumer_pos only */
+ 		if (vma->vm_pgoff != 0 || vma->vm_end - vma->vm_start != PAGE_SIZE)
+ 			return -EPERM;
+-	} else {
+-		vm_flags_clear(vma, VM_MAYWRITE);
+ 	}
+ 	/* remap_vmalloc_range() checks size and offset constraints */
+ 	return remap_vmalloc_range(vma, rb_map->rb,
+@@ -289,8 +287,6 @@ static int ringbuf_map_mmap_user(struct bpf_map *map, struct vm_area_struct *vma
+ 			 * position, and the ring buffer data itself.
+ 			 */
+ 			return -EPERM;
+-	} else {
+-		vm_flags_clear(vma, VM_MAYWRITE);
+ 	}
+ 	/* remap_vmalloc_range() checks size and offset constraints */
+ 	return remap_vmalloc_range(vma, rb_map->rb, vma->vm_pgoff + RINGBUF_PGOFF);
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index ba38c08a9a059..98d7558e2f2be 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -912,15 +912,21 @@ static int bpf_map_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	vma->vm_ops = &bpf_map_default_vmops;
+ 	vma->vm_private_data = map;
+ 	vm_flags_clear(vma, VM_MAYEXEC);
++	/* If mapping is read-only, then disallow potentially re-mapping with
++	 * PROT_WRITE by dropping VM_MAYWRITE flag. This VM_MAYWRITE clearing
++	 * means that as far as BPF map's memory-mapped VMAs are concerned,
++	 * VM_WRITE and VM_MAYWRITE and equivalent, if one of them is set,
++	 * both should be set, so we can forget about VM_MAYWRITE and always
++	 * check just VM_WRITE
++	 */
+ 	if (!(vma->vm_flags & VM_WRITE))
+-		/* disallow re-mapping with PROT_WRITE */
+ 		vm_flags_clear(vma, VM_MAYWRITE);
+ 
+ 	err = map->ops->map_mmap(map, vma);
+ 	if (err)
+ 		goto out;
+ 
+-	if (vma->vm_flags & VM_MAYWRITE)
++	if (vma->vm_flags & VM_WRITE)
+ 		bpf_map_write_active_inc(map);
+ out:
+ 	mutex_unlock(&map->freeze_mutex);
 -- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+2.39.5
+
 
