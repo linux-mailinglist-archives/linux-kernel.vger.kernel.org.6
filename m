@@ -1,164 +1,98 @@
-Return-Path: <linux-kernel+bounces-530013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12585A42DAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:25:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58959A42DBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738DA172A04
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:25:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 354E97A7A19
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:26:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD8A24290D;
-	Mon, 24 Feb 2025 20:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vEv/LVYV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36296221F13;
+	Mon, 24 Feb 2025 20:26:53 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D9E1F03C1;
-	Mon, 24 Feb 2025 20:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F36B206F3E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 20:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740428697; cv=none; b=P68dR9R5XY1I4Ecgjvl53ADO/PiJlPVpDhsghtnTpJuLqqzIQWc2X1oZeAUMp3foLtMHNAte3kWhmWJ3LfnGP9duUvetDGxIM/3RGTF3Zf+71FGeJQEACut2u+BYs6+pz8Zs+zFy1K4H3ctIdbJduimldoslJejG+6gFF4LnHWE=
+	t=1740428812; cv=none; b=UwNGEaSIiB88yidOx3JZzReAgNeoQeLTRO/v9r2P+uA09cRdJo4qjCpEs7OwhjPblt74EPmpA9nFaxakgYL0k425s/cLtpCDS512MQs2hYYIcXfbclRoqAqPRJHqOIP7Ga2I+itAutRwJNPzBff9TtdCe3k/hru2jDUd+Q6pBj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740428697; c=relaxed/simple;
-	bh=l/MFWRud7t098wBF/lfw4tADHECtkN/XfyIu1vGbRN0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=teIu2tYkT4RzCQIKTwQNoACCK50AxxcG6kby0yNUkq7f1re2B54ypPV7pmBB6NFPcez8qqX6yEPEp5ywXkxu8qNTmOSU5kicUbWbYC1PHN6eHCkyF3gjXmZoMqQk9YplTM50aXOVwvdwcHfhH6v2Tqe7YJPXgHN5yJdszWocbFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vEv/LVYV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F7FCC4CED6;
-	Mon, 24 Feb 2025 20:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740428697;
-	bh=l/MFWRud7t098wBF/lfw4tADHECtkN/XfyIu1vGbRN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vEv/LVYV01fznWakAPZ7d8CBqh7z4AoBnyC7JvA8XRt2rUH/Mk5C8D4Qie4r76V7G
-	 SWeKD1a+0kXrJqBlXGXjyK0Cl9hvN3iSrgnkX+OMOAOcfoDmnVF+kizrgaJmmdC+Xa
-	 muJDMflN1fnx6OcefuSNnH4TKXQTfkHIlawHDQutTGRqnXVgs7MdQiMDiYN9BqIN9o
-	 Ch2ijyo/iBKActHFKncLadJaVLiV7FErERWXTlqmqyPvDjiIbdrzKIQKhwAKgvgsLo
-	 dTLDR+epirpTFDxaQBUeVZusfRTBDJV8AVglfoxoM8Ie5WmkmyXBuiZpS7ioWJDv+A
-	 a+tO7fQKi0eoQ==
-Date: Mon, 24 Feb 2025 12:24:56 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: brauner@kernel.org, cem@kernel.org, dchinner@redhat.com, hch@lst.de,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v2 02/11] xfs: Switch atomic write size check in
- xfs_file_write_iter()
-Message-ID: <20250224202456.GG21808@frogsfrogsfrogs>
-References: <20250213135619.1148432-1-john.g.garry@oracle.com>
- <20250213135619.1148432-3-john.g.garry@oracle.com>
+	s=arc-20240116; t=1740428812; c=relaxed/simple;
+	bh=lSOhfgM9aqjP7uFmcecoJ5HzRf8wsz0vaLN16X+Vsy8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxiTHYeaA2SzhsTsOiCQh06vi9AYPDQQFOftbNEfg/rP1bdaM/BIoh0DM8hS9E3PyevfrA+xXLNJncEonmGiit0Lr1F0M1aO6cik7vaM5C0UCCsxf6wxdb3xRmSb0O6ueu5wfWzIu9YLcC1QoQYcbkqvAsbGb4hh9eC6JcUjn6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-232.elisa-laajakaista.fi [88.113.26.232])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 80914f8f-f2ed-11ef-9d7a-005056bd6ce9;
+	Mon, 24 Feb 2025 22:25:35 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 24 Feb 2025 22:25:34 +0200
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 8/8] gpiolib: sanitize the return value of
+ gpio_chip::get_direction()
+Message-ID: <Z7zVvgcEeWnYr9vZ@surfacebook.localdomain>
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+ <20250210-gpio-sanitize-retvals-v1-8-12ea88506cb2@linaro.org>
+ <Z7yfTggRrk3K6srs@black.fi.intel.com>
+ <CAMRc=Md-bMUEKgF7srLFqwdetDcTDB-0YzrisccQmReDs-Ndvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250213135619.1148432-3-john.g.garry@oracle.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Md-bMUEKgF7srLFqwdetDcTDB-0YzrisccQmReDs-Ndvg@mail.gmail.com>
 
-On Thu, Feb 13, 2025 at 01:56:10PM +0000, John Garry wrote:
-> Currently the size of atomic write allowed is fixed at the blocksize.
-> 
-> To start to lift this restriction, refactor xfs_get_atomic_write_attr()
-> to into a helper - xfs_report_atomic_write() - and use that helper to
-> find the per-inode atomic write limits and check according to that.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+Mon, Feb 24, 2025 at 08:55:26PM +0100, Bartosz Golaszewski kirjoitti:
+> On Mon, Feb 24, 2025 at 5:33 PM Andy Shevchenko
+> <andriy.shevchenko@intel.com> wrote:
+> > On Mon, Feb 10, 2025 at 11:52:02AM +0100, Bartosz Golaszewski wrote:
 
-Looks fine,
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+...
 
---D
+> > > +static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     lockdep_assert_held(&gc->gpiodev->srcu);
+> > > +
+> > > +     if (WARN_ON(!gc->get_direction))
+> > > +             return -EOPNOTSUPP;
+> > > +
+> > > +     ret = gc->get_direction(gc, offset);
+> > > +     if (ret > 1)
+> >
+> > Would it be better to use the respective GPIO*... macro instead of 1?
+> >
+> 
+> I did consider it but I don't like comparing against enums, it doesn't
+> feel right as the value behind the name can change. I think I prefer
+> it like this even if it's not the best solution either. Maybe we could
+> be more explicit and say:
+> 
+>     if (!(ret == IN || ret == OUT || ret < 0)
+> 
+> ?
 
-> ---
->  fs/xfs/xfs_file.c | 12 +++++-------
->  fs/xfs/xfs_iops.c | 20 +++++++++++++++++---
->  fs/xfs/xfs_iops.h |  3 +++
->  3 files changed, 25 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index f7a7d89c345e..258c82cbce12 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -853,14 +853,12 @@ xfs_file_write_iter(
->  		return xfs_file_dax_write(iocb, from);
->  
->  	if (iocb->ki_flags & IOCB_ATOMIC) {
-> -		/*
-> -		 * Currently only atomic writing of a single FS block is
-> -		 * supported. It would be possible to atomic write smaller than
-> -		 * a FS block, but there is no requirement to support this.
-> -		 * Note that iomap also does not support this yet.
-> -		 */
-> -		if (ocount != ip->i_mount->m_sb.sb_blocksize)
-> +		unsigned int	unit_min, unit_max;
-> +
-> +		xfs_get_atomic_write_attr(ip, &unit_min, &unit_max);
-> +		if (ocount < unit_min || ocount > unit_max)
->  			return -EINVAL;
-> +
->  		ret = generic_atomic_write_valid(iocb, from);
->  		if (ret)
->  			return ret;
-> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> index 40289fe6f5b2..ea79fb246e33 100644
-> --- a/fs/xfs/xfs_iops.c
-> +++ b/fs/xfs/xfs_iops.c
-> @@ -600,15 +600,29 @@ xfs_report_dioalign(
->  		stat->dio_offset_align = stat->dio_read_offset_align;
->  }
->  
-> +void
-> +xfs_get_atomic_write_attr(
-> +	struct xfs_inode	*ip,
-> +	unsigned int		*unit_min,
-> +	unsigned int		*unit_max)
-> +{
-> +	if (!xfs_inode_can_atomicwrite(ip)) {
-> +		*unit_min = *unit_max = 0;
-> +		return;
-> +	}
-> +
-> +	*unit_min = *unit_max = ip->i_mount->m_sb.sb_blocksize;
-> +}
-> +
->  static void
->  xfs_report_atomic_write(
->  	struct xfs_inode	*ip,
->  	struct kstat		*stat)
->  {
-> -	unsigned int		unit_min = 0, unit_max = 0;
-> +	unsigned int		unit_min, unit_max;
-> +
-> +	xfs_get_atomic_write_attr(ip, &unit_min, &unit_max);
->  
-> -	if (xfs_inode_can_atomicwrite(ip))
-> -		unit_min = unit_max = ip->i_mount->m_sb.sb_blocksize;
->  	generic_fill_statx_atomic_writes(stat, unit_min, unit_max);
->  }
->  
-> diff --git a/fs/xfs/xfs_iops.h b/fs/xfs/xfs_iops.h
-> index 3c1a2605ffd2..ce7bdeb9a79c 100644
-> --- a/fs/xfs/xfs_iops.h
-> +++ b/fs/xfs/xfs_iops.h
-> @@ -19,5 +19,8 @@ int xfs_inode_init_security(struct inode *inode, struct inode *dir,
->  extern void xfs_setup_inode(struct xfs_inode *ip);
->  extern void xfs_setup_iops(struct xfs_inode *ip);
->  extern void xfs_diflags_to_iflags(struct xfs_inode *ip, bool init);
-> +void xfs_get_atomic_write_attr(struct xfs_inode *ip,
-> +		unsigned int *unit_min, unsigned int *unit_max);
-> +
->  
->  #endif /* __XFS_IOPS_H__ */
-> -- 
-> 2.31.1
-> 
-> 
+Yep, I like this.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
