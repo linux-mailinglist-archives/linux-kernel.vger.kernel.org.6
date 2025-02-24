@@ -1,383 +1,125 @@
-Return-Path: <linux-kernel+bounces-529873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0791FA42C0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:53:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EADA42C13
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:55:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B2B73AD21A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7099118901EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52C726656E;
-	Mon, 24 Feb 2025 18:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B60lm7RZ"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF604263F3A;
-	Mon, 24 Feb 2025 18:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827102661BE;
+	Mon, 24 Feb 2025 18:54:58 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A030F264A74
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740423160; cv=none; b=o+n9yAwCbQIBr8dN5wWII4CAbQBpNce5agfYgF8PL8mcWXNXDV5k1hroeXaM1fTEItH0BMf3Q4aeBi5Z+wWc21AQScEdzj/zvPxnhuYr6o1seVf9oZed8is0KdF+pNk/rj+d9q3Iqj0pz9E/cJNT9LqYTtGEHnORhu+B3tsi5a8=
+	t=1740423298; cv=none; b=qpxRUOCF6REJC5s0GvNBrro/Lm0qnGP6TZLtEBY6/TP3U0oe6JqWQbfpBeLpCHAgpIoxRMJCnvYEkincimdMFhKq98SC69HX2cJBx/WNP3CmkjFS/EGS5mNUfVHXaXdEb96f/KwstA7pCKuOmyHrB5gHbG/pS2m5Eqdqg7ggj+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740423160; c=relaxed/simple;
-	bh=NRqmJrka1KFCKrbmi1NfqRE1Svd7bhfDRuWVbmXIb/U=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PeOhidTvpuhfhhHBgE8ooiGwGWDVAniYsEf2Fff5QOjNfPJQ48WVkdx+0f1BJlsgy16aPAizyEpZOMoiKcs1z3BDGc7k35wsOAz+91DNFIXu6UKCYE/zDMoT8AAkF3yEBeazub3Rkj6OYRgT/PTB+XYI5VITKiHSbV/Vz2bUzSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B60lm7RZ; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e5df8468d6eso3823336276.0;
-        Mon, 24 Feb 2025 10:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740423158; x=1741027958; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d7U1sT68Ju6x/uUPaDyaf4r2qRxDAkfJXgbOu58Kb8U=;
-        b=B60lm7RZ4stqh64BpLB/VaV0nAVBMumfoLKDv4JQIOOdchNZJjQUNQG7KBlFcC/eo6
-         E6QDI/TGMWB+fD5IQKWxIMHro2q9lDGxSqxaQw74hZPBV/j+Al5zwFfixRInbIs66LXl
-         Em918V0tPHE9uSSg/bH6ESmlR1mkXf7SzQm4dyc71CXNTp10FWpoGJQgXiINAMJHfzYT
-         yGy6sIpPz4tALoTigC8VRC/74S71fq79Q/iZOhHTv6RNRiqINPGkfxR6QkgB1WSpJbqi
-         ax1Wr88+a1MbkA7k4AblKSRZaMMIDuSGJdWR3GWuiTWmKqnPvbha52MXNhx16EIjIxT4
-         OD9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740423158; x=1741027958;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d7U1sT68Ju6x/uUPaDyaf4r2qRxDAkfJXgbOu58Kb8U=;
-        b=IQqHxVBVC7mJKViAqBRzZrBOar/GRRP4QLf8hw76q5cklT61B88DCQtwOwW6jqgSoV
-         TmnD8DSx+JMPkadCnQHuF/7QPopb560f7PAYJ0XtKcagDHOY3xifCHbkYZ1wO1T1hk7f
-         ujtp8PSXK1eRU6/TgXqv5gtqvkHiuV4RWAH0EdUfFMeCLrPUAhhpkIM9wtihchUn7Vlr
-         hl5YeBkTuSm7fo6I6gJfUc5lmq/emTSn2tvGDIHMu0acLzJe10bRgTvisWd2XLZ8OxY7
-         A0uZl4ToKBny5Q5MoIois4Nif3VRa2AL1WBdaQNCDuC7ZVwbldmdWtEwe+DtMgnfaqeN
-         XDvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMVchJU+R1Jn1pgpGop7LL/T1J7NQjieLTdeyT4lbn/8JHiK3Jt6AL3q/KdXabYMEvFEr5dfF8MqnJmUXs@vger.kernel.org, AJvYcCW1eSm19cJ5dyTdHyAwcIRdeojpNHYihM1+BR+6gIyG5PVhvXW9hBCmIdGWYky8PqU0c81r/69xosg+SV+uag==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8sP20IxlEIz8/sEohZSYDxJzq/5zI+wzzjxBsvua8jKdtACrx
-	dDticuxOsgC1L9BgEWItbzug0ne2TABXtxiLPtbI0OpXQIHqSjDU
-X-Gm-Gg: ASbGncuIs7fH3FHdLth6cBC5B8zdIvF4pop0JnPonie5o8QrwJSVFRYXyENM0DaAj9O
-	3uOumr2d0Ipt0raGM0O733yErcaQmePjDInbN8ZF90Hi+wYfMJnsTOKQGbDEeXzUwii3SaMxV2J
-	HiOrxjPL19JLAsKFqRyzFUGa64yyTQvispNuIEvRz19RELZJATZUFXGpw8t/lWwiiMJYbpjvEIv
-	PXOx8uSJA9n7+Yrt4eZ30VYwHocXKsgUZt5fk5wVP00+QMiJCMLSs1sfOTUw7SNxMQmgXCCZXfT
-	CF+lm+e3uw==
-X-Google-Smtp-Source: AGHT+IHEk4mYfwqnXdGk6IZ5LDHStVWUJrPV3qrNODcC8fn17dMbMLHDNSzLGInKGhJsdAstZ6a9jw==
-X-Received: by 2002:a05:6902:e0c:b0:e5b:44d6:b56a with SMTP id 3f1490d57ef6-e5e245ea444mr10352939276.20.1740423157630;
-        Mon, 24 Feb 2025 10:52:37 -0800 (PST)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e5dadeb1f8dsm6298438276.23.2025.02.24.10.52.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 24 Feb 2025 10:52:37 -0800 (PST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1740423298; c=relaxed/simple;
+	bh=zO1Nj+G37HFh5abgCmhWvYGXDLskzEKUbRouOVDvN64=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eyzheSiH+lVJOfCfH0bs2q/7Uefs4bZwNCZvzEZSnmTSZOZgV/NFvpWtp68VEh3zXgVh+4xuI6oP+XNNvVRpetlX7rn97hsjdbEpBOoBOTm1LR2Pz+Q+4+GiyCGA5t8qJmixR8xlF58FvYQQuKHlM1yySavcY5PY4PqzFou9HpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 6D16692009C; Mon, 24 Feb 2025 19:54:47 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 5F97F92009B;
+	Mon, 24 Feb 2025 18:54:47 +0000 (GMT)
+Date: Mon, 24 Feb 2025 18:54:47 +0000 (GMT)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
+    Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, 
+    Madhavan Srinivasan <maddy@linux.ibm.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+    Naveen N Rao <naveen@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't use %pK through printk
+In-Reply-To: <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
+Message-ID: <alpine.DEB.2.21.2502241840360.65342@angie.orcam.me.uk>
+References: <20250217-restricted-pointers-powerpc-v1-1-32c6bff63c9a@linutronix.de> <ffd5dd44-babc-480a-b1bc-61bd7ff1e920@csgroup.eu>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in pcpu_alloc_noprof
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <67ac241e.050a0220.110943.0047.GAE@google.com>
-Date: Tue, 25 Feb 2025 02:52:18 +0800
-Cc: kent.overstreet@linux.dev,
- linux-bcachefs@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <4659682E-734B-439A-9C3B-02257858B8F1@gmail.com>
-References: <67ac241e.050a0220.110943.0047.GAE@google.com>
-To: syzbot <syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com>
-X-Mailer: Apple Mail (2.3826.400.131.1.6)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
+On Mon, 24 Feb 2025, Christophe Leroy wrote:
 
-> On Feb 12, 2025, at 12:31, syzbot =
-<syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com> wrote:
->=20
-> syzbot has found a reproducer for the following issue on:
->=20
-> HEAD commit:    09fbf3d50205 Merge tag 'tomoyo-pr-20250211' of =
-git://git.c..
-> git tree:       upstream
-> console output: =
-https://syzkaller.appspot.com/x/log.txt?x=3D14370aa4580000
-> kernel config:  =
-https://syzkaller.appspot.com/x/.config?x=3D3c2347dd6174fbe2
-> dashboard link: =
-https://syzkaller.appspot.com/bug?extid=3Dfe63f377148a6371a9db
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for =
-Debian) 2.40
-> syz repro:      =
-https://syzkaller.appspot.com/x/repro.syz?x=3D17404718580000
->=20
-> Downloadable assets:
-> disk image (non-bootable): =
-https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_dis=
-k-09fbf3d5.raw.xz
-> vmlinux: =
-https://storage.googleapis.com/syzbot-assets/835b3d29c46c/vmlinux-09fbf3d5=
-.xz
-> kernel image: =
-https://storage.googleapis.com/syzbot-assets/ff4bfd8a5d42/bzImage-09fbf3d5=
-.xz
-> mounted in repro #1: =
-https://storage.googleapis.com/syzbot-assets/24d046ee591e/mount_7.gz
-> mounted in repro #2: =
-https://storage.googleapis.com/syzbot-assets/fc8a49472f19/mount_9.gz
->=20
-> IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> Reported-by: syzbot+fe63f377148a6371a9db@syzkaller.appspotmail.com
->=20
-> bcachefs (loop0): initializing new filesystem
-> bcachefs (loop0): going read-write
-> bcachefs (loop0): marking superblocks
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> WARNING: possible circular locking dependency detected
-> 6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0 Not tainted
-> ------------------------------------------------------
-> syz.0.21/5625 is trying to acquire lock:
-> ffffffff8ea19608 (pcpu_alloc_mutex){+.+.}-{4:4}, at: =
-pcpu_alloc_noprof+0x293/0x1760 mm/percpu.c:1782
->=20
-> but task is already holding lock:
-> ffff888051401c68 (&bc->lock){+.+.}-{4:4}, at: =
-bch2_btree_node_mem_alloc+0x559/0x16f0 fs/bcachefs/btree_cache.c:804
->=20
-> which lock already depends on the new lock.
->=20
->=20
-> the existing dependency chain (in reverse order) is:
->=20
-> -> #2 (&bc->lock){+.+.}-{4:4}:
->       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
->       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
->       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
->       bch2_btree_cache_scan+0x184/0xec0 fs/bcachefs/btree_cache.c:482
->       do_shrink_slab+0x72d/0x1160 mm/shrinker.c:437
->       shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
->       shrink_one+0x43b/0x850 mm/vmscan.c:4868
->       shrink_many mm/vmscan.c:4929 [inline]
->       lru_gen_shrink_node mm/vmscan.c:5007 [inline]
->       shrink_node+0x37c5/0x3e50 mm/vmscan.c:5978
->       kswapd_shrink_node mm/vmscan.c:6807 [inline]
->       balance_pgdat mm/vmscan.c:6999 [inline]
->       kswapd+0x20f3/0x3b10 mm/vmscan.c:7264
->       kthread+0x7a9/0x920 kernel/kthread.c:464
->       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
->       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->=20
-> -> #1 (fs_reclaim){+.+.}-{0:0}:
->       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
->       __fs_reclaim_acquire mm/page_alloc.c:3853 [inline]
->       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3867
->       might_alloc include/linux/sched/mm.h:318 [inline]
->       slab_pre_alloc_hook mm/slub.c:4066 [inline]
->       slab_alloc_node mm/slub.c:4144 [inline]
->       __do_kmalloc_node mm/slub.c:4293 [inline]
->       __kmalloc_noprof+0xae/0x4c0 mm/slub.c:4306
->       kmalloc_noprof include/linux/slab.h:905 [inline]
->       kzalloc_noprof include/linux/slab.h:1037 [inline]
->       pcpu_mem_zalloc mm/percpu.c:510 [inline]
->       pcpu_alloc_chunk mm/percpu.c:1430 [inline]
->       pcpu_create_chunk+0x57/0xbc0 mm/percpu-vm.c:338
->       pcpu_balance_populated mm/percpu.c:2063 [inline]
->       pcpu_balance_workfn+0xc4d/0xd40 mm/percpu.c:2200
->       process_one_work kernel/workqueue.c:3236 [inline]
->       process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
->       worker_thread+0x870/0xd30 kernel/workqueue.c:3398
->       kthread+0x7a9/0x920 kernel/kthread.c:464
->       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
->       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->=20
-> -> #0 (pcpu_alloc_mutex){+.+.}-{4:4}:
->       check_prev_add kernel/locking/lockdep.c:3163 [inline]
->       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
->       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
->       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
->       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
->       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
->       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
->       pcpu_alloc_noprof+0x293/0x1760 mm/percpu.c:1782
->       __six_lock_init+0x104/0x150 fs/bcachefs/six.c:876
->       bch2_btree_lock_init+0x38/0x100 fs/bcachefs/btree_locking.c:12
->       bch2_btree_node_mem_alloc+0x565/0x16f0 =
-fs/bcachefs/btree_cache.c:807
->       __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:304 =
-[inline]
->       bch2_btree_reserve_get+0x2df/0x1890 =
-fs/bcachefs/btree_update_interior.c:532
->       bch2_btree_update_start+0xe56/0x14e0 =
-fs/bcachefs/btree_update_interior.c:1230
->       bch2_btree_split_leaf+0x121/0x880 =
-fs/bcachefs/btree_update_interior.c:1851
->       bch2_trans_commit_error+0x212/0x1380 =
-fs/bcachefs/btree_trans_commit.c:908
->       __bch2_trans_commit+0x812b/0x97a0 =
-fs/bcachefs/btree_trans_commit.c:1085
->       bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
->       bch2_trans_mark_metadata_bucket+0x47a/0x17b0 =
-fs/bcachefs/buckets.c:1043
->       bch2_trans_mark_metadata_sectors fs/bcachefs/buckets.c:1060 =
-[inline]
->       __bch2_trans_mark_dev_sb fs/bcachefs/buckets.c:1100 [inline]
->       bch2_trans_mark_dev_sb+0x3f6/0x820 fs/bcachefs/buckets.c:1128
->       bch2_trans_mark_dev_sbs_flags+0x6be/0x720 =
-fs/bcachefs/buckets.c:1138
->       bch2_fs_initialize+0xba0/0x1610 fs/bcachefs/recovery.c:1149
->       bch2_fs_start+0x36d/0x610 fs/bcachefs/super.c:1042
->       bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
->       vfs_get_tree+0x90/0x2b0 fs/super.c:1814
->       do_new_mount+0x2be/0xb40 fs/namespace.c:3560
->       do_mount fs/namespace.c:3900 [inline]
->       __do_sys_mount fs/namespace.c:4111 [inline]
->       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
->       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->       entry_SYSCALL_64_after_hwframe+0x77/0x7f
->=20
-> other info that might help us debug this:
->=20
-> Chain exists of:
->  pcpu_alloc_mutex --> fs_reclaim --> &bc->lock
->=20
-> Possible unsafe locking scenario:
->=20
->       CPU0                    CPU1
->       ----                    ----
->  lock(&bc->lock);
->                               lock(fs_reclaim);
->                               lock(&bc->lock);
->  lock(pcpu_alloc_mutex);
->=20
-> *** DEADLOCK ***
->=20
-> 4 locks held by syz.0.21/5625:
-> #0: ffff888051400278 (&c->state_lock){+.+.}-{4:4}, at: =
-bch2_fs_start+0x45/0x610 fs/bcachefs/super.c:1010
-> #1: ffff888051404378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: =
-srcu_lock_acquire include/linux/srcu.h:164 [inline]
-> #1: ffff888051404378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: =
-srcu_read_lock include/linux/srcu.h:256 [inline]
-> #1: ffff888051404378 (&c->btree_trans_barrier){.+.+}-{0:0}, at: =
-__bch2_trans_get+0x7e4/0xd30 fs/bcachefs/btree_iter.c:3377
-> #2: ffff8880514266d0 (&c->gc_lock){.+.+}-{4:4}, at: =
-bch2_btree_update_start+0x682/0x14e0 =
-fs/bcachefs/btree_update_interior.c:1180
-> #3: ffff888051401c68 (&bc->lock){+.+.}-{4:4}, at: =
-bch2_btree_node_mem_alloc+0x559/0x16f0 fs/bcachefs/btree_cache.c:804
->=20
-> stack backtrace:
-> CPU: 0 UID: 0 PID: 5625 Comm: syz.0.21 Not tainted =
-6.14.0-rc2-syzkaller-00039-g09fbf3d50205 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS =
-1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> Call Trace:
-> <TASK>
-> __dump_stack lib/dump_stack.c:94 [inline]
-> dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
-> print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
-> check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
-> check_prev_add kernel/locking/lockdep.c:3163 [inline]
-> check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-> validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
-> __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
-> lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-> __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-> __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
-> pcpu_alloc_noprof+0x293/0x1760 mm/percpu.c:1782
-> __six_lock_init+0x104/0x150 fs/bcachefs/six.c:876
-> bch2_btree_lock_init+0x38/0x100 fs/bcachefs/btree_locking.c:12
-> bch2_btree_node_mem_alloc+0x565/0x16f0 fs/bcachefs/btree_cache.c:807
-> __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:304 =
-[inline]
-> bch2_btree_reserve_get+0x2df/0x1890 =
-fs/bcachefs/btree_update_interior.c:532
-> bch2_btree_update_start+0xe56/0x14e0 =
-fs/bcachefs/btree_update_interior.c:1230
-> bch2_btree_split_leaf+0x121/0x880 =
-fs/bcachefs/btree_update_interior.c:1851
-> bch2_trans_commit_error+0x212/0x1380 =
-fs/bcachefs/btree_trans_commit.c:908
-> __bch2_trans_commit+0x812b/0x97a0 =
-fs/bcachefs/btree_trans_commit.c:1085
-> bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
-> bch2_trans_mark_metadata_bucket+0x47a/0x17b0 =
-fs/bcachefs/buckets.c:1043
-> bch2_trans_mark_metadata_sectors fs/bcachefs/buckets.c:1060 [inline]
-> __bch2_trans_mark_dev_sb fs/bcachefs/buckets.c:1100 [inline]
-> bch2_trans_mark_dev_sb+0x3f6/0x820 fs/bcachefs/buckets.c:1128
-> bch2_trans_mark_dev_sbs_flags+0x6be/0x720 fs/bcachefs/buckets.c:1138
-> bch2_fs_initialize+0xba0/0x1610 fs/bcachefs/recovery.c:1149
-> bch2_fs_start+0x36d/0x610 fs/bcachefs/super.c:1042
-> bch2_fs_get_tree+0xd8d/0x1740 fs/bcachefs/fs.c:2203
-> vfs_get_tree+0x90/0x2b0 fs/super.c:1814
-> do_new_mount+0x2be/0xb40 fs/namespace.c:3560
-> do_mount fs/namespace.c:3900 [inline]
-> __do_sys_mount fs/namespace.c:4111 [inline]
-> __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
-> do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-> entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fcaed38e58a
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f =
-1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d =
-01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fcaec5fde68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007fcaec5fdef0 RCX: 00007fcaed38e58a
-> RDX: 00004000000000c0 RSI: 0000400000000180 RDI: 00007fcaec5fdeb0
-> RBP: 00004000000000c0 R08: 00007fcaec5fdef0 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000400000000180
-> R13: 00007fcaec5fdeb0 R14: 0000000000005a05 R15: 0000400000000480
-> </TASK>
-> bcachefs (loop0): initializing freespace
-> bcachefs (loop0): done initializing freespace
-> bcachefs (loop0): reading snapshots table
-> bcachefs (loop0): reading snapshots done
-> bcachefs (loop0): done starting filesystem
->=20
->=20
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before =
-testing.
->=20
+> > Restricted pointers ("%pK") are not meant to be used through printk().
+> > It can unintentionally expose security sensitive, raw pointer values.
+> > 
+> > Use regular pointer formatting instead.
+> > 
+> > Link:
+> > https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Flkml%2F20250113171731-dc10e3c1-da64-4af0-b767-7c7070468023%40linutronix.de%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C75a852a0fef54fa43a3608dd4f263f45%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638753747883689862%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=aUgq6pXb1ySaQ6e%2FdyM09jfc4MNLE71Njw0%2FnCg%2F6VU%3D&reserved=0
+> > Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> 
+> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+> 
+> > ---
+> >   arch/powerpc/kernel/eeh_driver.c | 2 +-
+> >   arch/powerpc/perf/hv-24x7.c      | 8 ++++----
+> >   2 files changed, 5 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/kernel/eeh_driver.c
+> > b/arch/powerpc/kernel/eeh_driver.c
+> > index
+> > 7efe04c68f0fe3fb1c3c13d97d58e79e47cf103b..10ce6b3bd3b7c54f91544ae7f7fd3f32a51ee09a
+> > 100644
+> > --- a/arch/powerpc/kernel/eeh_driver.c
+> > +++ b/arch/powerpc/kernel/eeh_driver.c
+> > @@ -907,7 +907,7 @@ void eeh_handle_normal_event(struct eeh_pe *pe)
+> >   		/* FIXME: Use the same format as dump_stack() */
+> >   		pr_err("EEH: Call Trace:\n");
+> >   		for (i = 0; i < pe->trace_entries; i++)
+> > -			pr_err("EEH: [%pK] %pS\n", ptrs[i], ptrs[i]);
+> > +			pr_err("EEH: [%p] %pS\n", ptrs[i], ptrs[i]);
+> >     		pe->trace_entries = 0;
+> >   	}
 
-#syz test
+ But shouldn't this be using `%px' then instead?  It would be sad if all 
+the address information from error reports such as below:
 
+EEH: Call Trace:
+EEH: [000000008985bc3b] __eeh_send_failure_event+0x78/0x150
+EEH: [000000008c4c5782] eeh_dev_check_failure+0x388/0x6b0
+EEH: [000000001fb766c1] eeh_check_failure+0x98/0x100
+EEH: [000000004b9af8c6] dfx_port_read_long+0xb0/0x130 [defxx]
+EEH: [00000000e23999c1] dfx_interrupt+0x80/0x8c0 [defxx]
+EEH: [00000000c7884fb7] __handle_irq_event_percpu+0x9c/0x2f0
+EEH: [000000008d4e9afd] handle_irq_event_percpu+0x44/0xc0
+EEH: [000000008c39ece4] handle_irq_event+0x74/0xc0
+EEH: [00000000d85114a9] handle_fasteoi_irq+0xd4/0x220
+EEH: [00000000a692ef4e] generic_handle_irq+0x54/0x80
+EEH: [00000000a6db243b] __do_irq+0x68/0x200
+EEH: [0000000040ccff9e] call_do_irq+0x14/0x24
+EEH: [00000000e8e9ddf7] do_IRQ+0x78/0xd0
+EEH: [0000000031916539] replay_soft_interrupts+0x180/0x370
+EEH: [000000001b7e5728] arch_local_irq_restore+0x48/0xc0
+EEH: [00000000088691b7] cpuidle_enter_state+0x108/0x560
+EEH: [00000000e6e26f30] cpuidle_enter+0x50/0x70
+EEH: [000000007c26474c] call_cpuidle+0x4c/0x80
+EEH: [0000000036b8a2fc] do_idle+0x360/0x3b0
+EEH: [0000000048702083] cpu_startup_entry+0x38/0x40
+EEH: [00000000d3b1fb8d] start_secondary+0x62c/0x660
+EEH: [0000000041a9a815] start_secondary_prolog+0x10/0x14
 
-diff --git a/fs/bcachefs/btree_cache.c b/fs/bcachefs/btree_cache.c
-index ca755e8d1a37..9761dc05ba07 100644
---- a/fs/bcachefs/btree_cache.c
-+++ b/fs/bcachefs/btree_cache.c
-@@ -794,17 +794,17 @@ struct btree *bch2_btree_node_mem_alloc(struct =
-btree_trans *trans, bool pcpu_rea
-                        goto got_node;
-                }
-=20
-+       mutex_unlock(&bc->lock);
-        b =3D __btree_node_mem_alloc(c, GFP_NOWAIT|__GFP_NOWARN);
-        if (!b) {
--               mutex_unlock(&bc->lock);
-                bch2_trans_unlock(trans);
-                b =3D __btree_node_mem_alloc(c, GFP_KERNEL);
-                if (!b)
-                        goto err;
--               mutex_lock(&bc->lock);
-        }
-=20
-        bch2_btree_lock_init(&b->c, pcpu_read_locks ? SIX_LOCK_INIT_PCPU =
-: 0);
-+       mutex_lock(&bc->lock);
-=20
-        BUG_ON(!six_trylock_intent(&b->c.lock));
-        BUG_ON(!six_trylock_write(&b->c.lock));
+was suddenly lost from the kernel log, the access to which unprivileged 
+users can be denied if so desired according to the site policy.  Whereas 
+running the kernel such as to have all output from plain `%p' exposed just 
+to cope with this proposed change, now that seems like a security risk.
 
-
+  Maciej
 
