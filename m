@@ -1,149 +1,105 @@
-Return-Path: <linux-kernel+bounces-529839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C49A42BB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:39:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 055ACA42BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A2D3B0044
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:36:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AB2D7A2901
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481C026659B;
-	Mon, 24 Feb 2025 18:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F4D266569;
+	Mon, 24 Feb 2025 18:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mUc4jY4r";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Sltbqph7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="jgnoQ/tH"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B81266572;
-	Mon, 24 Feb 2025 18:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3314E8828;
+	Mon, 24 Feb 2025 18:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422203; cv=none; b=cnTj4hMiw/2P5ykqDu8JjGK1bZ9H1Dsb0mvBJef6gLA6fFZeBfUesBkUnWk3ig241FJ/0F+wRUbggwH9Zv3vvO8C5Q0I553PmgdScq9GS0WwwAeza72MckCq8L2DUftSbTBcQkVmyWuVjeObfChEbj6WnzD3Ka5n1gvKNklBoH4=
+	t=1740422216; cv=none; b=PB2anSOqyfZOS1zSWWpN4ltYoW/mBeauD1wsx5FP8OQclyrdr5JyzaM4YWo3VRvuYtfRBufG7ctaJJAYTuG6l6P5Y7dQQXrIPWb9wSf+ewp4/iLMVtBuTMCGc5OfVTbwTOSVuw3prItPMoE6NKBnyf5Bj137Hh0o5tk36HkGweQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422203; c=relaxed/simple;
-	bh=0OOQOk1ZnJvAAWZOrlMhlnGqbC5S/BxglUYn7c+m+7Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lxbDxFU8SETGxi6GuAb/H+bMNtSt+2DdIDIVRLBf/EgoHZHepqDaOcsJlcI2YcZzV8VquOQw9PJuiVb+XlYxmp2T6HnzKR0TOpBgpUWTEZlFF+M4Xj6OlFoy+Z19GKPEGxlC0pLIOCxThNSDzfSxv9J+cNgDSxM28V+WWX+3YRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mUc4jY4r; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Sltbqph7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Feb 2025 18:36:38 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1740422199;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YdY6dX/V8XAG25x3F3g6c2bm9h3Ih0E7bzan2RKkkM=;
-	b=mUc4jY4rZlEve/sGKYtuYEhibivr3XdOykuoMj05jRIRK3wkBARqJ3CPRc3HEobFCakiYn
-	luyU8js7FzbbI95WSeOqt3xgNINA3r+b5vVi4qCU97S6NT94fhjpHmpqtxb/6MxzS35LNJ
-	rJkWRcOliZxAgni1rKqE+gYK1oXMm+TIW+5xJJakU8IdrSbpR0YSKaFzkXZ9VcsUmVqCI6
-	lAkUiBkWv+KAmElAYbfIVXrdajonsBEzWo+UjUVvP0g8FzFQXJO25FoFo11pTdLhgl/MAs
-	cqVIZhIzjTO1DLMvjobZWjfjFa4/nhaYnU3mWWi2QtVvmSYsUwvtu1RZlOakbA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1740422199;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3YdY6dX/V8XAG25x3F3g6c2bm9h3Ih0E7bzan2RKkkM=;
-	b=Sltbqph7mWmNONlnPt6QCI6u6ZVmesTz+yVNmKLcLKlX8hJOnxXpctVMgFYkUkM6JeQswS
-	kwnLxgmJFJ56k4Cg==
-From: "tip-bot2 for Breno Leitao" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf/core: Add RCU read lock protection to
- perf_iterate_ctx()
-Cc: Breno Leitao <leitao@debian.org>, Ingo Molnar <mingo@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org>
-References: <20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org>
+	s=arc-20240116; t=1740422216; c=relaxed/simple;
+	bh=Vl6urr6HQFsUbyaJvMwo6I4XeN66kqeEoBFOmL22k9E=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p4qxbAjX2HECLrHboXkaAlL6ZmePfzH9ydbYG6ZeMvixTTCRZa02oIBBpk9kPEyV8/RQ50GTWIXboHRy1S9AOt4FJUloa80bWChxQIGuX6xxMa9131O9rJAo4pbHNLFRDYGOuAkgiGFUq40FkSbW1rFatBmjcPlaz2XApSNpkG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=jgnoQ/tH; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1740422207; bh=DOBfBGdX7ZZpM/xley3bGLMroG6LxxKexfb2wwpHXiI=;
+	h=From:Date:Subject:To:Cc;
+	b=jgnoQ/tH7GHyoYuDPZaTRXuib9NV/QbG//1IdFGsG81vY8iDXvu47JMDLxXD/9HGO
+	 AQhUrrJuz+mP0mVH3zvl0uZZdH9n6x8XFlLsr6ZrWq1h5Uivr0pV2EW68moEUvyufr
+	 35qhXr0YUVDWnwFhveVuLl5nd3G0D4a1EsvMK++E=
+Date: Mon, 24 Feb 2025 19:36:43 +0100
+Subject: [PATCH] rust: io: fix devres test with new io accessor functions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174042219873.10177.3901726341080483847.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250224-rust-iowrite-read8-fix-v1-1-c6abee346897@kloenk.dev>
+X-B4-Tracking: v=1; b=H4sIADq8vGcC/02MSw7CMAwFr1J5jUWJiPhcBbFw0gf1JkFOWipVv
+ TuBFbs3T5pZqcAUha7dSoZZi+bU4LDrKI6SnmAdGpPrne+dO7JNpbLmt2kFG2Q480MX9s5LjAF
+ yOXlq8svQ7l/4dm8cpICDSYrjNzeYzjCO2bD/25ywVNq2D8Vs+SCXAAAA
+X-Change-ID: 20250224-rust-iowrite-read8-fix-525accbea975
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org, Fiona Behrens <me@kloenk.dev>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=849; i=me@kloenk.dev;
+ h=from:subject:message-id; bh=Vl6urr6HQFsUbyaJvMwo6I4XeN66kqeEoBFOmL22k9E=;
+ b=owJ4nJvAy8zAJdbGuXyr5NPHToyn1ZIY0vfssfkR3/pp+aGXNc9WpWTlVWtk1/r57XXZlrr79
+ rKYA0r1tjkdpSwMYlwMsmKKLFu87t//kbksy/7+3W6YOaxMIEMYuDgFYCLcoQx/xZZaTqyOORL9
+ oS5LpqFky4GEjUfeyMb6i6wpkY4RzhX2YPgrqr27+eCph7ce+alOmvNpv+DUv/7PrXxvyDsn1Zz
+ 3/HiYFQAJHE6a
+X-Developer-Key: i=me@kloenk.dev; a=openpgp;
+ fpr=B44ADFDFF869A66A3FDFDD8B8609A7B519E5E342
 
-The following commit has been merged into the perf/urgent branch of tip:
+Fix doctest of `Devres` which still used `writeb` instead of `write8`.
 
-Commit-ID:     0fe8813baf4b2e865d3b2c735ce1a15b86002c74
-Gitweb:        https://git.kernel.org/tip/0fe8813baf4b2e865d3b2c735ce1a15b86002c74
-Author:        Breno Leitao <leitao@debian.org>
-AuthorDate:    Fri, 17 Jan 2025 06:41:07 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 24 Feb 2025 19:17:04 +01:00
-
-perf/core: Add RCU read lock protection to perf_iterate_ctx()
-
-The perf_iterate_ctx() function performs RCU list traversal but
-currently lacks RCU read lock protection. This causes lockdep warnings
-when running perf probe with unshare(1) under CONFIG_PROVE_RCU_LIST=y:
-
-	WARNING: suspicious RCU usage
-	kernel/events/core.c:8168 RCU-list traversed in non-reader section!!
-
-	 Call Trace:
-	  lockdep_rcu_suspicious
-	  ? perf_event_addr_filters_apply
-	  perf_iterate_ctx
-	  perf_event_exec
-	  begin_new_exec
-	  ? load_elf_phdrs
-	  load_elf_binary
-	  ? lock_acquire
-	  ? find_held_lock
-	  ? bprm_execve
-	  bprm_execve
-	  do_execveat_common.isra.0
-	  __x64_sys_execve
-	  do_syscall_64
-	  entry_SYSCALL_64_after_hwframe
-
-This protection was previously present but was removed in commit
-bd2756811766 ("perf: Rewrite core context handling"). Add back the
-necessary rcu_read_lock()/rcu_read_unlock() pair around
-perf_iterate_ctx() call in perf_event_exec().
-
-[ mingo: Use scoped_guard() as suggested by Peter ]
-
-Fixes: bd2756811766 ("perf: Rewrite core context handling")
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org
+Fixes: 354fd6e86fac ("rust: io: rename `io::Io` accessors")
+Signed-off-by: Fiona Behrens <me@kloenk.dev>
 ---
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ rust/kernel/devres.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index bcb09e0..7dabbca 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8321,7 +8321,8 @@ void perf_event_exec(void)
- 
- 	perf_event_enable_on_exec(ctx);
- 	perf_event_remove_on_exec(ctx);
--	perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
-+	scoped_guard(rcu)
-+		perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
- 
- 	perf_unpin_context(ctx);
- 	put_ctx(ctx);
+diff --git a/rust/kernel/devres.rs b/rust/kernel/devres.rs
+index 942376f6f3af..ddb1ce4a78d9 100644
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@ -92,7 +92,7 @@ struct DevresInner<T> {
+ /// let devres = Devres::new(&dev, iomem, GFP_KERNEL)?;
+ ///
+ /// let res = devres.try_access().ok_or(ENXIO)?;
+-/// res.writel(0x42, 0x0);
++/// res.write8(0x42, 0x0);
+ /// # Ok(())
+ /// # }
+ /// ```
+
+---
+base-commit: 354fd6e86fac60b7c1ce2e6c83d4e6bf8af95f59
+change-id: 20250224-rust-iowrite-read8-fix-525accbea975
+
+Best regards,
+-- 
+Fiona Behrens <me@kloenk.dev>
+
 
