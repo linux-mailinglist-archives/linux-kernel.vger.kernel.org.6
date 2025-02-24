@@ -1,184 +1,95 @@
-Return-Path: <linux-kernel+bounces-528414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371AFA41772
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:36:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1E32A41770
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90FFA188BEFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C930216A2B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4120B19259A;
-	Mon, 24 Feb 2025 08:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761DD18C337;
+	Mon, 24 Feb 2025 08:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uwFcHTc/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w4lkTbXw";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uwFcHTc/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="w4lkTbXw"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tff7ZpM4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075D91EA91
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08BB8C11;
+	Mon, 24 Feb 2025 08:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740386193; cv=none; b=WhBrJvaFLUOb2z5gH0pl+CDV4Alb+j2POlRuYsA4Q3JRJgLljZZ9WgRkOpXFx/wjb9WcIsIOzKoma68JEGF0Rw77Z3giqyJ2Z3gvaWhDFS2k/E7pkP+oLREr5rU26jHMoWOrcgYjPrwTsH8fGKk1W9njGgandM+iJgjg6grg33U=
+	t=1740386155; cv=none; b=kYSXUBi1dDR3TAhoBfpBysih8WrFU8x4csLFNOSEsiDTLYa1qhR3FMzQ+wtCz+NQB4oedHRosAgc6JBY6Vm8itZvJUV+rw78M3jUNL7pF2tteZ2Shsbu+KW059jQosxSYWeB7MeWUlQSay02z60YSbizJ/GC5PsUzjoR4cD2YHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740386193; c=relaxed/simple;
-	bh=kZRwcmfGy2m7oH9gUrAguuyEMXKNlnK9rQaFGw/638g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vDPq01OYz8xN2MP2Gjw0mReXvbjGEvRSdUC2w+IuxyzFjfP4wVFzYe3UY4PqSwiniykK34iBfkHg0+jrm3f2T5rX0LnuevYEkk1XLTjJNx1t836wRn0vjHMlCT5Omrk9X2N2lr1DXnL1TisLY72spWLi7nSUa3j8dqeBzc/DDbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uwFcHTc/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w4lkTbXw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uwFcHTc/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=w4lkTbXw; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 43D0C21180;
-	Mon, 24 Feb 2025 08:36:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740386190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
-	b=uwFcHTc/LFTskg1mfIT56B9t7NITPFmDdC9KTKprw4CwVsuJho0g+bL5YgD46jhVz5BTnl
-	xouXnK8DEInulO7FpZuIc9mhXlXXNcv8yPD8i6tVPONOL6Mopcq13xYusISC/VQtNMWeRi
-	Rhe4NpKgWnNlda14UYl6YC8On1AevNA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740386190;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
-	b=w4lkTbXwT+2e2RiYx9OrFOWNW5fTGPBTG4PGphGgHcmGvOq8RzyZPKu31c0C8km0zBxYMW
-	JtqiSHrACf3O/tCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740386190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
-	b=uwFcHTc/LFTskg1mfIT56B9t7NITPFmDdC9KTKprw4CwVsuJho0g+bL5YgD46jhVz5BTnl
-	xouXnK8DEInulO7FpZuIc9mhXlXXNcv8yPD8i6tVPONOL6Mopcq13xYusISC/VQtNMWeRi
-	Rhe4NpKgWnNlda14UYl6YC8On1AevNA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740386190;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gUzxlfop69b1dDrCQAZ0orgLMQmh6UkeuP2YTL3zP5E=;
-	b=w4lkTbXwT+2e2RiYx9OrFOWNW5fTGPBTG4PGphGgHcmGvOq8RzyZPKu31c0C8km0zBxYMW
-	JtqiSHrACf3O/tCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 13C1A13332;
-	Mon, 24 Feb 2025 08:36:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RvcVAo0vvGeJVAAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Mon, 24 Feb 2025 08:36:29 +0000
-From: Stanimir Varbanov <svarbanov@suse.de>
-To: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Jim Quinlan <jim2101024@gmail.com>,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	kw@linux.com,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Stanimir Varbanov <svarbanov@suse.de>
-Subject: [PATCH v6 0/7] Add PCIe support for bcm2712
-Date: Mon, 24 Feb 2025 10:35:52 +0200
-Message-ID: <20250224083559.47645-1-svarbanov@suse.de>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1740386155; c=relaxed/simple;
+	bh=WuwA9lx8DIhJc69cVxyeSZRKBoaJAiCZxmUVd9ueWRg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=lsL/qIuG8L5KJeOYTLUocqgFBnAKoMtGyYgruQoxnhblrDPi/8YomjejiUUMA/TIwCetDkvoGvlM/X8Oz+fxO6UX+PoS8Lyfwvd0PMZKBMY4qf0YKgB2Vw3XhR8WXQ2AJQ45n9ATTbx3uNQJrjtNaoIjeO11mQGcPzd+lnOAuP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tff7ZpM4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF107C4CED6;
+	Mon, 24 Feb 2025 08:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740386155;
+	bh=WuwA9lx8DIhJc69cVxyeSZRKBoaJAiCZxmUVd9ueWRg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=tff7ZpM46rgfQr8eH8R0XyOxkGKWhcgkcpIfyxVQhRwy7dtsyDT+sjFkKwrNRRd7j
+	 YbJQpiNXvjER/UK5xKeMALWvEWTai2lzCO41VZ3KFSpHyEUD077DfERFT503A0EGO/
+	 6zSRVKs6y8qEDDhaJg11fNRavgyMfglZ0LQ7Y/tuY2QEGwDiHt30jlTDOCBUatN0Zx
+	 5uJVXHNqR0FOiMt0PTpz7P7bXe0zdbCpOeFqO5QQcl0pRdgQfr95T1HZIQEQsyrAU2
+	 gw1V1VtEwxGAgWmQZIn4f8JkHAVkgVdqmXN3jWNqiogsiR+HrxH8gykasXf80tGiLa
+	 AtUH3TjrxJfyw==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, 
+ Peter Hutterer <peter.hutterer@who-t.net>, 
+ Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Werner Sembach <wse@tuxedocomputers.com>, Aki Van Ness <aki@lethalbit.net>
+In-Reply-To: <20250207-bpf-import-2025-02-07-v1-0-6048fdd5a206@kernel.org>
+References: <20250207-bpf-import-2025-02-07-v1-0-6048fdd5a206@kernel.org>
+Subject: Re: [PATCH 0/7] HID: bpf: sync with udev-hid-bpf
+Message-Id: <174038615371.3769057.7408139095276010309.b4-ty@kernel.org>
+Date: Mon, 24 Feb 2025 09:35:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -1.80
-X-Spamd-Result: default: False [-1.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TAGGED_RCPT(0.00)[dt];
-	RCPT_COUNT_TWELVE(0.00)[22];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com,suse.de];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Hello, v6 is re-based version of controller/brcmstb branch of pci tree.
+On Fri, 07 Feb 2025 14:55:56 +0100, Benjamin Tissoires wrote:
+> Here are a few hid-bpf device fixes from udev-hid-bpf.
+> We've got the usual XP-Pen and Huion plus one from TUXEDO.
+> 
+> Cheers,
+> Benjamin
+> 
+> 
+> [...]
 
-v5 could be found at [1].
+Applied to hid/hid.git (for-6.15/bpf), thanks!
 
-v5 -> v6 changes include:
- - Fix a build error in 04/11 (Jim).
- - Address a comment from Bjorn about bisect-ability by squash
-   07/11 in 06/11 (Bjorn).
- - Move 08/11 right after irqchip patch (Bjorn).
+[1/7] HID: bpf: Add support for the default firmware mode of the Huion K20
+      https://git.kernel.org/hid/hid/c/56be86393214
+[2/7] HID: bpf: Suppress bogus F13 trigger on Sirius keyboard full fan shortcut
+      https://git.kernel.org/hid/hid/c/43db1911f807
+[3/7] HID: bpf: Added updated Kamvas Pro 19 descriptor
+      https://git.kernel.org/hid/hid/c/531a1cc66713
+[4/7] HID: bpf: add support for the XP-Pen Artist Pro 19 (gen2)
+      https://git.kernel.org/hid/hid/c/4be933521ffa
+[5/7] HID: bpf: import new kfunc from v6.10 & v6.11
+      https://git.kernel.org/hid/hid/c/91bb3115efdf
+[6/7] HID: bpf: new hid_bpf_async.h common header
+      https://git.kernel.org/hid/hid/c/4a94deb94994
+[7/7] HID: bpf: add a v6.11+ compatible BPF fixup for the XPPen ACK05 remote
+      https://git.kernel.org/hid/hid/c/834da3756f49
 
-Regards,
-~Stan
-
-[1] https://lore.kernel.org/lkml/20250120130119.671119-1-svarbanov@suse.de/
-
-Stanimir Varbanov (7):
-  dt-bindings: interrupt-controller: Add BCM2712 MSI-X DT bindings
-  dt-bindings: PCI: brcmstb: Update bindings for PCIe on BCM2712
-  irqchip: Add Broadcom BCM2712 MSI-X interrupt controller
-  PCI: brcmstb: Adding a softdep to MIP MSI-X driver
-  PCI: brcmstb: Reuse pcie_cfg_data structure
-  PCI: brcmstb: Expand inbound window size up to 64GB
-  PCI: brcmstb: Add BCM2712 support
-
- .../brcm,bcm2712-msix.yaml                    |  60 ++++
- .../bindings/pci/brcm,stb-pcie.yaml           |   6 +-
- drivers/irqchip/Kconfig                       |  16 +
- drivers/irqchip/Makefile                      |   1 +
- drivers/irqchip/irq-bcm2712-mip.c             | 292 ++++++++++++++++++
- drivers/pci/controller/pcie-brcmstb.c         | 144 ++++++---
- 6 files changed, 475 insertions(+), 44 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
- create mode 100644 drivers/irqchip/irq-bcm2712-mip.c
-
+Cheers,
 -- 
-2.47.0
+Benjamin Tissoires <bentiss@kernel.org>
 
 
