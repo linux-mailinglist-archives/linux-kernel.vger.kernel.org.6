@@ -1,282 +1,117 @@
-Return-Path: <linux-kernel+bounces-528943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D984A41E42
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:04:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E25BA41E4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0892188A36C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2F941886D16
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E71825C71E;
-	Mon, 24 Feb 2025 11:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EFB25E450;
+	Mon, 24 Feb 2025 11:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PxbeCiXP"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BgY5xZRZ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246D2158870;
-	Mon, 24 Feb 2025 11:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A445EB666;
+	Mon, 24 Feb 2025 11:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397809; cv=none; b=GVm8cyaJ6cwqNKlcrRGBh/PqcyEvDyX5t8k1sEGaLhD9oksKTmAVLnJnx0X/KMVJgF94Y2PFgmO+g1g3whEWAibCYWw+7MVNA6cwsio1vZOPYK3krkXZ/n4ISTjy9YTrVgIAGISJn2ZCgj3wkZBAbPRLjYFd4vH6FuMI+Lf5huA=
+	t=1740397857; cv=none; b=AvfCh8eLgsxNtFItRsKSYmBgTE31EtD5I8rkn00741wJiasypnibwlnEqz2TyAmum5AzA2w7JDQxJmSB2c5s1s6hycrx3gWZx3FM0te9ExX0Ba+jK6RlDEjarzEI5BMNde1u7kza+NOc7lvim1y/FCaaKhdcpKjx36IyVgakNIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397809; c=relaxed/simple;
-	bh=PSWqmG5uRw23IQ/mMzq14qL5ztMdUMVj9Gatu+r66gE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=so67LLDZXTOYIVMwtcMm4SXQB1w5I/xG8UJ5X6YRkpL34WhDHG75dzmYtlLe9hmtUBqU2j1Fb3AczPpDFaverFC0/3x1IVAXXoCWhLg1VbBIAnxP6tU+h0wYU3KB/zXRuWD4qYdvBv5fQ2qci4zD30e0p/EvsLOfDrM2mwJKlSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PxbeCiXP; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7a6a3840f2a511efaae1fd9735fae912-20250224
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=1yXoVn4d41rL3z4hjc5R72fder7LjdF+dcCF5p2tEkw=;
-	b=PxbeCiXPMQuB0+w5zWALDbCctmV/PpoPrs9vqW2N/I3kulIjpnx+TehEwMhjJJeHcv8BAerOaNpMSLPbDMIo7KNd1i0y7Ag1goqoQnVrjdX4FLNvl+hrO3wv8/6258GTenJhtM0tZUcgHHFaEW+3QFKVUvXU0xwjR6yijk/kC5Q=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.46,REQID:b17fa284-d12b-4c4f-b479-d4fa89ac5dfe,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:60aa074,CLOUDID:637244dc-d480-4873-806f-0f365159227b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:1|19,IP:
-	nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,L
-	ES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7a6a3840f2a511efaae1fd9735fae912-20250224
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1041160626; Mon, 24 Feb 2025 19:50:00 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Mon, 24 Feb 2025 19:49:59 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Mon, 24 Feb 2025 19:49:59 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: ChiYuan Huang <cy_huang@richtek.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-usb@vger.kernel.org>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	Fabien Parent <fparent@baylibre.com>, Yow-Shin Liou
-	<yow-shin.liou@mediatek.com>, Simon Sun <simon.sun@yunjingtech.com>
-Subject: [PATCH v6] arm64: dts: mediatek: mt8395-genio-1200-evk: add support for TCPC port
-Date: Mon, 24 Feb 2025 19:49:34 +0800
-Message-ID: <20250224114934.3583191-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1740397857; c=relaxed/simple;
+	bh=3pOmWWotVeFG7/aCwZCOGG1H2P+WnR8cfNlGlq4bbTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m6F9wmVrg2CzG285igD+CWJPJaTaapbqtWITYftWUyksn6cMcI/ADImoAhQPk4Gp2vVOvA/wHwkhHIq5aGNgnYjeRW2Y8w1/OGRwwG1Bf+tKBAL7is+aLhQC5rcg2NTV+JjUNA/NXRYVvhDHBO+TLXh7wRHLe47eDbxcngrClpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BgY5xZRZ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D08E140E0184;
+	Mon, 24 Feb 2025 11:50:51 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ivEoj6-VbOC3; Mon, 24 Feb 2025 11:50:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740397847; bh=M+1Oj8yUN4/F9fqehf8NtiUeOEnlB2Q9pV11IJcCOkY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BgY5xZRZyyHcbymG/jlbXrNXaFXfSDbO8i45nhWQ2V37YX1k/XgK7zh0PMKMkh/iP
+	 JYFV5SVHJhISD29fe8Yi2WfoH6Kzp3RyCBosloGJWp5RTwfexJRt3a3CnkJmHR18cB
+	 GhXk1q7dyeHrU/i23LderkJ+mDkqvku0svXVEsTEkY9JC18UDrqB/aQgX9ThzNRJPM
+	 QgyESfyhiO40lpHb8vxQeLATC+0od69Bzjp0SsobfmuAWUszuurHZOUshNXFkcIFov
+	 InE6AA/L6TfQGfFqn1lseK3ejIZcomiFw0Daw2HxjeUbBHaUp+3t0t66J8bVftxgAk
+	 V+f+tdNol9JQPvE4KuDd665W5Sop/JfoEpPE50eeS6LDsc9xd2UMOoFZ7nRNXFzwul
+	 txFEL0mb1/Xih0owGH9mSNLqLA1kOpj8p+ZK5Om9DUeyv5dSIhI/dIVmv/3VQbrF9T
+	 qRjYKNrrEPyD2jNI3oGF/yWLIpa+MBCts9F7kKiERC9+G3NRmogprmUACPJVbBnxDf
+	 9HR3MVeMz/UJZv9MPlgq9wDm4fFHjOlRKWeUAOG1CD9hhOySbA3BM0ZafgJBWAny+o
+	 k85O8qB1OeGz0AkxnS39MKSGpvtNYzaLjC9xHHnledxZC8ayNIBoA4yOuNkV1QKEN0
+	 KIq8H30qDwp/QIbq1jk+8ab0=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4B2F840E0176;
+	Mon, 24 Feb 2025 11:50:03 +0000 (UTC)
+Date: Mon, 24 Feb 2025 12:50:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org,
+	mchehab@kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, vishal.l.verma@intel.com,
+	ira.weiny@intel.com, david@redhat.com, Vilas.Sridharan@amd.com,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH v20 00/15] EDAC: Scrub: introduce generic EDAC RAS
+ control feature driver + CXL/ACPI-RAS2 drivers
+Message-ID: <20250224115002.GCZ7xc6o3yA1Q2j85i@fat_crate.local>
+References: <20250212143654.1893-1-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250212143654.1893-1-shiju.jose@huawei.com>
 
-From: Fabien Parent <fparent@baylibre.com>
+On Wed, Feb 12, 2025 at 02:36:38PM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> The CXL patches of this series has dependency on Dave's CXL fwctl
+> series [1].
 
-Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
-configuration for TCPC Port, USB-C connector, MUX IT5205 and related
-settings.
+First 5 patches massaged and queued here:
 
-Configure dual role switch capability, set up PD (Power Delivery) profiles,
-and establish endpoints for SS (SuperSpeed) and HS (HighSpeed) USB.
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=edac-cxl
 
-Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
-to "otg" for OTG (On-The-Go) mode operation.
+Please run them with the rest of your test cases to make sure I haven't
+fat-fingered anything.
 
-Add ITE IT5205 (TYPEC MUX) under I2C2 bus and configure its properties;
-also add references and configurations to 'typec-mux' node.
+Thx.
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
-Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../dts/mediatek/mt8395-genio-1200-evk.dts    | 102 ++++++++++++++++++
- 1 file changed, 102 insertions(+)
-
-Changes for v2:
- - Drop the no need '1/2' DT Schema update patch in the 1st version.  
- - Fix indent for 'ports' node, it should under the 'connector' node.
- - Correct the index for 'port@0' and 'port@1' node.
-
-Changes for v3:
- - Correct the order between new added nodes.
-
-Changes for v4:
- - Reorder for property 'op-sink-microwatt'.
- - Fix indentation for 'source-pdos' and 'sink-pdos' nodes.
- - Correct node 'pin-cmd-dat' with 'pins-vbus'.
- - Add both Highspeed and Superspeed ports to ssusb0 port.
- - Set 'role-switch-default-mode' = "peripheral" for ssusb0 port.
- - Rename endpoint of USB data port to 'mtu3_hs0_role_sw' and
-   'mtu3_ss0_role_sw'.
- - Drop it5205fn phandle for node typec-mux@48.
- - Reorder properties of typec-mux@48
- - Add "Reviewed-by:" tag. Thanks!
-
-Changes for v5:
- - Squash two patches into one patch and refine commit messages:
-   suggested by reviewer.
- - Drop 'role-switch-default-mode'
- - Add altmodes settings
- - Drop 'Reviewed-by:' tag since the two sub patches has been combined
-   into a new patch.
-
-Changes for v6:
- - Add 'pd-revision' property to 'connector', thanks ChiYuan Huang's help!.
- - Add 'Reviewed-by' tag. Thanks!
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index 5950194c9ccb..f02c32def593 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -229,6 +229,21 @@ &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+
-+	typec-mux@48 {
-+		compatible = "ite,it5205";
-+		reg = <0x48>;
-+		vcc-supply = <&mt6359_vibr_ldo_reg>;
-+		mode-switch;
-+		orientation-switch;
-+		status = "okay";
-+
-+		port {
-+			it5205_sbu_ep: endpoint {
-+				remote-endpoint = <&mt6360_ssusb_sbu_ep>;
-+			};
-+		};
-+	};
- };
- 
- &i2c6 {
-@@ -335,6 +350,63 @@ mt6360_ldo7: ldo7 {
- 				regulator-always-on;
- 			};
- 		};
-+
-+		tcpc {
-+			compatible = "mediatek,mt6360-tcpc";
-+			interrupts-extended = <&pio 17 IRQ_TYPE_LEVEL_LOW>;
-+			interrupt-names = "PD_IRQB";
-+
-+			connector {
-+				compatible = "usb-c-connector";
-+				label = "USB-C";
-+				data-role = "dual";
-+				op-sink-microwatt = <10000000>;
-+				power-role = "dual";
-+				try-power-role = "sink";
-+
-+				source-pdos = <PDO_FIXED(5000, 1000,
-+							 PDO_FIXED_DUAL_ROLE |
-+							 PDO_FIXED_DATA_SWAP)>;
-+				sink-pdos = <PDO_FIXED(5000, 2000,
-+						       PDO_FIXED_DUAL_ROLE |
-+						       PDO_FIXED_DATA_SWAP)>;
-+
-+				pd-revision = /bits/ 8 <0x03 0x01 0x01 0x06>;
-+
-+				altmodes {
-+					displayport {
-+						svid = /bits/ 16 <0xff01>;
-+						vdo = <0x00001c46>;
-+					};
-+				};
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+						typec_con_hs: endpoint {
-+							remote-endpoint = <&mtu3_hs0_role_sw>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+						typec_con_ss: endpoint {
-+							remote-endpoint = <&mtu3_ss0_role_sw>;
-+						};
-+					};
-+
-+					port@2 {
-+						reg = <2>;
-+						mt6360_ssusb_sbu_ep: endpoint {
-+							remote-endpoint = <&it5205_sbu_ep>;
-+						};
-+					};
-+				};
-+			};
-+		};
- 	};
- };
- 
-@@ -770,6 +842,13 @@ pins-reset {
- 		};
- 	};
- 
-+	u3_p0_vbus: u3-p0-vbus-default-pins {
-+		pins-vbus {
-+			pinmux = <PINMUX_GPIO63__FUNC_VBUSVALID>;
-+			input-enable;
-+		};
-+	};
-+
- 	uart0_pins: uart0-pins {
- 		pins {
- 			pinmux = <PINMUX_GPIO98__FUNC_UTXD0>,
-@@ -898,8 +977,31 @@ &ufsphy {
- };
- 
- &ssusb0 {
-+	dr_mode = "otg";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&u3_p0_vbus>;
-+	usb-role-switch;
- 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
- 	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			mtu3_hs0_role_sw: endpoint {
-+				remote-endpoint = <&typec_con_hs>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			mtu3_ss0_role_sw: endpoint {
-+				remote-endpoint = <&typec_con_ss>;
-+			};
-+		};
-+	};
- };
- 
- &ssusb2 {
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
