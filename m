@@ -1,183 +1,115 @@
-Return-Path: <linux-kernel+bounces-528917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351D7A41DE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:58:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D6DBA41DF6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:59:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3CE189643B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35EC142153C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08848264A86;
-	Mon, 24 Feb 2025 11:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048672676E9;
+	Mon, 24 Feb 2025 11:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b="Lk6Pmg49"
-Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020132.outbound.protection.outlook.com [52.101.128.132])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EdPuFMOq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947825A33D;
-	Mon, 24 Feb 2025 11:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.132
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740397005; cv=fail; b=mjf7ZI6Jh0ZGgHafqhyGy3Wt85iVF6ViDloWBz/a/5036yiCLyxXOii5bx+eZQZ/M7yH9VL/l1i372x4XtRuMkh+bL2WeMNskH93lT45vKStoVcNR0uf/CbpqhKfQUnHP0swvf73pH72NVtzWvgx6kltc4ErBzNKnQegLqQn3MM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740397005; c=relaxed/simple;
-	bh=XC8PWEUSzSDtEFWuPkhzCcwacSQQ+KxOOJHRxb877bs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WuyHpuZzxhP3sTPKFFKQEkX7b13u5Ws3U3jH7Aqrnj61XmVmDI3JoQRbt9avINkahM+rnbHId3ipa2LxPUtSPnAeg5/zcXXpiAWcd8d6EjRHeseJ3NdHWhuZaDMPgjPUhlj56ANM7K+nFYUZGEIKXRQRrGrlInw6YTJBvKhwnVk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; dkim=pass (2048-bit key) header.d=cixtech.com header.i=@cixtech.com header.b=Lk6Pmg49; arc=fail smtp.client-ip=52.101.128.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IMpWF0PFIWn+Y1ZzfP2b9xOzuVQtxPiPCC+F0E9+JwtZnZviLhs2PPovE57uX5Cq1qSg+AaI224yuPFle6kKxUJoTCs2Nhf+2M0AF4oSuNUT0p4l/UgZVRFDHGfVpM2urEUlLbWZvFswkZE76ZLY/L+5FkxHjDyWDSDOR5kLxnu2Lvq7bbNIkGYv3pbgyvhBPFRaD7qtcV8hqckmNBLYQvBy5SoHglUeLre1KA0A82LLEjMci0Y42+DRAOgVx9cg2Wx9wX94vwZ1dquNms20z7a9OtHpaSHU3jxyhiU1GUi+COKkzUvMmZ0yOS5qsWZXNLj7/g8kfkD2REDAfodSaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gt/cmEL9D93k5bWb2cTiqgCz8cZnXiVXnIFSe3vC5VU=;
- b=eBC0Iytji2tVdIKcwGFtHM2f+2Vgh/RANDP7dh4QtJHMlzPxCx4WI2y9QwNPeqDOkP52GNrxQfrfP0Bb2BuFtsyY7leZU5I0h+SfiWclve+GE2RcL35nNpX1wnM2OoUSeIZUT5NnOlXusYxCXuPRKg7zhRT8ZiKf/pEetB6womZhvDT/7bmJYKNj8bOHk8BIDXs8AKfCX3npwEMnGB62si7Zvs4CTuC4gtD4oG6xFdRTHfg2ONIcWjvsK/gFt9S/j9D/vxOQdLmL2pwbCTZs56XuI5dgBQQRMjNd755izWnDPp0hjgzSk9QtNv4OaVnIbyUC6iu+8betHOkvr/rv0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 222.71.101.198) smtp.rcpttodomain=arm.com smtp.mailfrom=cixtech.com;
- dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
- not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cixtech.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Gt/cmEL9D93k5bWb2cTiqgCz8cZnXiVXnIFSe3vC5VU=;
- b=Lk6Pmg49+TWGHm6MNJfnFPTeHX4RYsst9eIdDP5fZilF6bAVlCnpEevbcytUJ7RCKYeU8x7y7MAYXQWzYdtRehGAgmJHJ/hUYRNLAAaD6zup3vlRm6gJmcdHHC2l9yE4WvyofrtwpNXeyVO2xr/fMhVvQPRWLDL5x+SmPjLep28IIXme0makG8wXIB5bbuLXv/FtiAFQXFYvp0ibxFPUy9eDfz+cOjj4EoKHYvw55zOj87u+kwKsRrBfrqMNRsxZhOCQhRXpm8Zi1TnzDONOrHkoS95PRO9Qn43clvJRHuiRrltV/5+cLZz/JCeEdN7JAdtInrtZOfmAG4BO5iAgfA==
-Received: from SG2PR03CA0132.apcprd03.prod.outlook.com (2603:1096:4:91::36) by
- SEZPR06MB5174.apcprd06.prod.outlook.com (2603:1096:101:70::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.12; Mon, 24 Feb 2025 11:36:36 +0000
-Received: from SG2PEPF000B66CC.apcprd03.prod.outlook.com
- (2603:1096:4:91:cafe::2c) by SG2PR03CA0132.outlook.office365.com
- (2603:1096:4:91::36) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.15 via Frontend Transport; Mon,
- 24 Feb 2025 11:36:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
- smtp.mailfrom=cixtech.com; dkim=none (message not signed)
- header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
-Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
- 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
- client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
-Received: from smtprelay.cixcomputing.com (222.71.101.198) by
- SG2PEPF000B66CC.mail.protection.outlook.com (10.167.240.25) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8466.11 via Frontend Transport; Mon, 24 Feb 2025 11:36:35 +0000
-Received: from nchen-desktop (unknown [172.16.64.25])
-	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id BC6CB4160CA0;
-	Mon, 24 Feb 2025 19:36:33 +0800 (CST)
-Date: Mon, 24 Feb 2025 19:36:32 +0800
-From: Peter Chen <peter.chen@cixtech.com>
-To: Marcin Juszkiewicz <marcin@juszkiewicz.com.pl>
-Cc: "arnd@arndb.de" <arnd@arndb.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	cix-kernel-upstream <cix-kernel-upstream@cixtech.com>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	Fugang Duan <fugang.duan@cixtech.com>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"will@kernel.org" <will@kernel.org>
-Subject: Re: [PATCH 6/6] arm64: dts: cix: add initial CIX P1(SKY1) dts support
-Message-ID: <Z7xZwGTIKgj9_zNZ@nchen-desktop>
-References: <20250220084020.628704-7-peter.chen@cixtech.com>
- <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C721853;
+	Mon, 24 Feb 2025 11:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740397089; cv=none; b=UPuqzo7SHSKZVeI2yZtKQ3N95EhIynYD3puj6GwsnYOKegWig9M+S3LFWKWKM+Ja2p9fHktcCENY7GwKjp8gNa52VkxwbBA8KV7io251KqKKXJWBV3v+1yDeqdpRdJhaVkj/l7fhsBPM/sXlDs72us7TZ7MvcHZVbvIBtCnn9Jc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740397089; c=relaxed/simple;
+	bh=wuSxXss6RzVtlocbNY5JSCCyDZrY88CylnzIBph0nzk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=elNn5+HT4jatj8/f3rmPDfAk1/+AjDi1am38USWjFEJRvhAVScj0S7LEDgCx51jGwK0lNQr6bhsS6j663ViiycPKmzh4xo4E7JoZe598IHxdqxJRn/SgycPh5DVEI8hViAmyzrnNZ+9/vF382eaf36sQf4+VD4z3+/W0CVAdUFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EdPuFMOq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O9uAr4026596;
+	Mon, 24 Feb 2025 11:38:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=LHIb8FddLo7UDs1+HrmkOE
+	/59uJ/xNxlwNySJoYSKwg=; b=EdPuFMOqq6yIna11ZwdzIA3416w/i0r+9NKq+s
+	23BtQD+uM/3LWkwHrrXvgvxhMXQ+cO/Qe02dxq2uBuFqrJ5t3D3pyQwoX8f9wdFi
+	oOLersXfX5j3qSKAaSESx4RDNbZnlMSe2MmcT4XR8WXfJAL9rsOMsigSF3P7y5LK
+	sMmztVbNbeuuffm2Bsa2guybXtftHPbo65mRxWneo+RqnzDo/2OWgnnKKJPGLAUs
+	a4X0dBFmR6Xonru97DUcuQxXumgRfgz3BJqYPo1kCics5SnPRLrKKRQ9OankLKyu
+	r5Swe/ZCPZVmgBFFDbuu/5NQVF+uHwYCk7jbSLphAFKBgrKg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6ntvxkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 11:38:03 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51OBc2IQ017464
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 11:38:02 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Feb 2025 03:38:00 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 0/3] Add SPI nand support in IPQ9574
+Date: Mon, 24 Feb 2025 17:07:39 +0530
+Message-ID: <20250224113742.2829545-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <068655e7-2ad7-4497-aca7-4100ad478d99@juszkiewicz.com.pl>
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG2PEPF000B66CC:EE_|SEZPR06MB5174:EE_
-X-MS-Office365-Filtering-Correlation-Id: a86333e3-0ec7-469e-8b8e-08dd54c77e79
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?IdKrXEFKCLHep0YogcxKC+/ayGc74qXnEbHZvwDuBuk7jr+6omJEG0j0YExN?=
- =?us-ascii?Q?0ueYt1aLw3t06isU25lEq4IilB0EqG1JdCEfmNb6hVFXveGQLqXBqfuzkTKt?=
- =?us-ascii?Q?F+hmtvBh+hJBpFZjgF/Ii5Q3JY/g4tnrSwBv6XkHARKLJvm7oSrIR13i/qQB?=
- =?us-ascii?Q?DBvX5nmP29jg0R+fcCsoOfHmL/3K/tGnuQk6F8jNH7pTPA+k/BCfnhhk+E8l?=
- =?us-ascii?Q?OtwjXF4aPGxYoi8F6vnw90jMBvQneSQ+83unKJwWW3iYDociM9zaqnjqyJFo?=
- =?us-ascii?Q?1oRI5py1XAdF1x4PLVzIVBxbI6iBFSQJhYVHmAAp2NnE4TlGt0pRibnTDP8v?=
- =?us-ascii?Q?3hkDewBFRuYaLJQsWBD8/TRMCwszCgnQqjqbNlHEio2rCVU5GTYg5YdFJYd+?=
- =?us-ascii?Q?fbchKgMt30DiC1EOZe1Hp80I0ibQhNvIONmiKd86uxD1azqxHFGqmWcf5L4I?=
- =?us-ascii?Q?edp46PGlL0NQonawRhuHmiL9U0H17hMoFKE7u4ebQDadPjVlD4Qmo2MtlQNi?=
- =?us-ascii?Q?awUayMP30pE1g7ua9UnRbVUHCfxdxRyPXPDFbZ0YhOG5Z7HiPFcxDZpmgtmC?=
- =?us-ascii?Q?CGSv2bX4UMid9YtcFUJXNISpmz3kCiWXGWi20wS43GAeUGdi86bXFD0tpgM+?=
- =?us-ascii?Q?WcG0+qHTRNX0zR5ZsnsJSwYzEq+ficl+SEG1dCp3jSX3OaIbhs8qRAEbV7ts?=
- =?us-ascii?Q?K3zyQE13s6Hp/A9naBY0PBV8pkHLhudWxNddBxo+XjO0G26KWiDswivWhq17?=
- =?us-ascii?Q?cWqrVlvRfnk16JbfpFIV0Qq2nyL9nM0QGTZSL3dqm8KQBfIW/3ZkY6m7MldA?=
- =?us-ascii?Q?Sk3Ir4CzqgHQiM0ggiRPk/UKb+KDHHi/Q3i6IW2TURTCVkpfm7z8S0oL+G96?=
- =?us-ascii?Q?xHybYL+yQcHLcvyA0yzg6wUCrdtudtko+JMB7q+wgg0MYv5kgBQLQN8VX80a?=
- =?us-ascii?Q?e2LWFssDbJewDAL7Pho4nG8iXk0XUIdHRkkXzRxXdLjN47OxMkbOP1NOt31D?=
- =?us-ascii?Q?oJbEHkwRk6SQa4SrR6tJhTA9O8GtDenB8b9WbA7ri7gSOacfQwsU3LBumyHd?=
- =?us-ascii?Q?U6JE/njoGdWiTwh6cvFKlqCPjr8klGcKyTpLPVaQn5rLutVu4+8tQG7JeRvs?=
- =?us-ascii?Q?9N6s/pX6GhYWWP2QKLCbyvz9C1HMRUQxmYHxHrzxVlMRqVqN5T6MdvBtqDEh?=
- =?us-ascii?Q?spQ289gefC2R0OEEl8SQnj1KYMI+T4MD3atGssVVLttC8Zi1WEbkdmkYF7Ud?=
- =?us-ascii?Q?MybB7mDVSJNUzGE6Ht+l7bDbOLU+3cFSpM0lMFD7oNEeX1FohEWW2b/NZhXa?=
- =?us-ascii?Q?/f/Ioi0mJ9vjnFu9fmg+V/aEqSyAS1vDmcy4fuyquiRBx/PDkA1uut6uk1m6?=
- =?us-ascii?Q?ligLrKxyg8RgRve4Fv5LXul8m7/FM+kX61qkLhZhE/W988/JCxP0xoxMjKmV?=
- =?us-ascii?Q?v72z0V9ak/ncWe4X93nMAvVxAkJwDGCmcP/JdKL3vcRcqrIOBy4KCGv5R3YR?=
- =?us-ascii?Q?KfRU7IYIZC53Qsw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014);DIR:OUT;SFP:1102;
-X-OriginatorOrg: cixtech.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 11:36:35.1254
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a86333e3-0ec7-469e-8b8e-08dd54c77e79
-X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
-X-MS-Exchange-CrossTenant-AuthSource: SG2PEPF000B66CC.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5174
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GuQjiFWROyIpJSHVCTRB5Qv22Bk_BjvD
+X-Proofpoint-GUID: GuQjiFWROyIpJSHVCTRB5Qv22Bk_BjvD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_05,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=595 malwarescore=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1011 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502240085
 
-On 25-02-23 04:05:10, Marcin Juszkiewicz wrote:
-> 
-> > diff --git a/arch/arm64/boot/dts/cix/sky1.dtsi b/arch/arm64/boot/dts/cix/sky1.dtsi
-> > new file mode 100644
-> > index 000000000000..d98735f782e0
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/cix/sky1.dtsi
-> > @@ -0,0 +1,264 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +/*
-> > + * Copyright 2025 Cix Technology Group Co., Ltd.
-> > + *
-> > + */
-> > +
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> 
-> [..]
-> 
-> > +     arch_timer: timer {
-> > +             compatible = "arm,armv8-timer";
-> > +             interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-> > +                          <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-> > +                          <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-> > +                          <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-> > +             clock-frequency = <1000000000>;
-> > +             interrupt-parent = <&gic>;
-> > +             arm,no-tick-in-suspend;
-> > +     };
-> 
-> This is not Arm v8.0 SoC so where is non-secure EL2 virtual timer?
+* This was a part of 'Add QPIC SPI NAND driver' - [1]. Have split it out
+  into a separate series based on the community feedback [2].
+* Additionally, address comments. Please see individual patches for
+  details
+* The 'dt' and 'dtsi' portions of 'arm64: dts: qcom: ipq9574: Add SPI
+  nand support' are split and posted as separate patches in this series. 
 
-It is the Arm v9 SoC and back compatible with Arm v8.
+1 - https://lore.kernel.org/linux-arm-msm/20241120091507.1404368-1-quic_mdalam@quicinc.com/
+2 - https://lore.kernel.org/linux-arm-msm/4c1fe789-5190-465d-bb41-3fe1534d2523@oss.qualcomm.com/
 
+Md Sadre Alam (3):
+  arm64: dts: qcom: ipq9574: Add SPI nand support
+  arm64: dts: qcom: ipq9574: Enable SPI NAND for ipq9574
+  arm64: dts: qcom: ipq9574: Remove eMMC node
+
+ .../boot/dts/qcom/ipq9574-rdp-common.dtsi     | 43 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   | 12 ------
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 28 ++++++++++++
+ 3 files changed, 71 insertions(+), 12 deletions(-)
+
+
+base-commit: d4b0fd87ff0d4338b259dc79b2b3c6f7e70e8afa
+prerequisite-patch-id: 4acad06926841baacc627f32d457f3a6c9e9de1d
+prerequisite-patch-id: bc3b78dc0486b0effcc2e595dd55c316700095b7
 -- 
+2.34.1
 
-Best regards,
-Peter
 
