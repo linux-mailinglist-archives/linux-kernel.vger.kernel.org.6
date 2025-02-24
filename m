@@ -1,116 +1,74 @@
-Return-Path: <linux-kernel+bounces-529092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9F4A41FAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF16A41FB0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23FA16B8C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:49:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A807C17519D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB20248890;
-	Mon, 24 Feb 2025 12:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED46D23BCE6;
+	Mon, 24 Feb 2025 12:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3IT5vJ9"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MwnVDy6I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDF62571AC;
-	Mon, 24 Feb 2025 12:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195BD1B041E;
+	Mon, 24 Feb 2025 12:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401290; cv=none; b=CYD7EjHxc44tUYjjvELS894PcnEhuTQdmFB8zseBqPThrNy9zb0hV7RvQsAUg6qR78AE5x5854xd2Xz5nYG+3BuuVIhdlX8qYQzT2Lo3BdAfkfZOfb0NF8z6Hok/3MTFgwEy4XZJ35ShK59PbpCUMN1StgYW4dMEK7KctCtbDAU=
+	t=1740401316; cv=none; b=lDQ/DpF63L9CjQrNiU5tKygSI2YvtLvBjDONbL2QkO/ni6gr432yrxmXBBT9AegkiKu2EBLbSHC0ZAp4AQPBnN5LqNTfHaS6vfyBrCv1ZTJ8yTY2OV+GLaQt5ZPswwb1jo0BnM8Tv+O5XWOtAnMOyXtzkNTO0UtFGvr3KNBBFzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401290; c=relaxed/simple;
-	bh=xGrXpHP0zY8/SIrBj0TE+9SJl5xd19Yuva4BudonjIw=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ii4n2uUNzP8q8EqzjfmCLSNlVGndG0DgZSv1SAzo/pKZK5gRZuludWtpH3meq9IuJtC+wHTFxLdRJSBKcHvdO6SmumcNn3zBYoVDIgKD8355PvLcHdXTnM88W4pZmbvzXqKJqbhaAfHF0ViAEcs4q9WrzJIixf8JvT8aVjhZTOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3IT5vJ9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3343C4CED6;
-	Mon, 24 Feb 2025 12:48:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740401289;
-	bh=xGrXpHP0zY8/SIrBj0TE+9SJl5xd19Yuva4BudonjIw=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=l3IT5vJ9PJxndyf5cx65sy+XrwvonxvBLh8aMBaF/JhvqC0YEy3IGJQu5pzqwNs+l
-	 34+CKVhI0fyfRW1RGYJltx6L3LBH6QkwA5HZT3P+HOGE1fkdjeD/r3D5pNxEfmRFbs
-	 TcHv/WjxUdu3bRbnhuvSSZj0fqp9KvBaTdPsd3EUFdx6DeCVWmqrhgzTnbkqtk1gJ9
-	 z9SMR3yrANkW4YW968bZiyT0MiilRRaW6MXtFl6UY6hwvUnbHoXopn83F5DuJjZiz8
-	 DEIEbKS6yZzN2MzM7GoLOK6avMi3UGj+HY0silNCRkY8XDm8sBRiD5nBci416l8V2H
-	 Pu1ybwjWXGIxw==
-Date: Mon, 24 Feb 2025 06:48:07 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1740401316; c=relaxed/simple;
+	bh=sToislC1Vv7cuiOW5VzcASQTgxeUrbyvLfNb6ddVg3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fB48pxB2mTHO/JsI3TmQoa0FByUkSioRji6HMxBg5qGyBB6PMb2qhwHKrbnqic8sZgn6R3X0AH2hYJjtsWIjeDHal6E4XAstDy3QVajn5gbDFVp8/CeElkDh9roTpDTfewk/k1FgMxD51ppQe138sZrzgvI06wP3zZd0nhkZo/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MwnVDy6I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12ABAC4CED6;
+	Mon, 24 Feb 2025 12:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740401315;
+	bh=sToislC1Vv7cuiOW5VzcASQTgxeUrbyvLfNb6ddVg3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MwnVDy6IeYwQvS7jYYmdhNRs59eSsfajixs+PrOiVg7SJrylqeJwpGhS2FnxySkI8
+	 RAJvNcmDIGN4IuMrEBJDOGLVh7B6oRtk+tkNPXwuqSlDH/zZFDPEk4X+kX6rJd87+L
+	 lvyYVq0h4i/7Qzl/2GDUhqKPSIwsSzkfkOqS4AWw=
+Date: Mon, 24 Feb 2025 13:48:32 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Wentao Guan <guanwentao@uniontech.com>
+Cc: John Keeping <jkeeping@inmusicbrands.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Ferry Toth <ftoth@exalondelft.nl>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	linux-serial <linux-serial@vger.kernel.org>,
+	stable <stable@vger.kernel.org>
+Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
+Message-ID: <2025022416-sanctuary-heftiness-7603@gregkh>
+References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
+ <tencent_09E5A20410369ED253A21788@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- devicetree@vger.kernel.org, Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, linux-gpio@vger.kernel.org, 
- linux-hardening@vger.kernel.org, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, kernel-team@android.com, 
- Peter Griffin <peter.griffin@linaro.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-In-Reply-To: <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
-References: <20250224-max77759-mfd-v1-0-2bff36f9d055@linaro.org>
- <20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org>
-Message-Id: <174040128694.2418814.685647591949303616.robh@kernel.org>
-Subject: Re: [PATCH 1/6] dt-bindings: mfd: add max77759 binding
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_09E5A20410369ED253A21788@qq.com>
 
+On Mon, Feb 24, 2025 at 08:36:20PM +0800, Wentao Guan wrote:
+> Hello,
+> Thanks for reply.
+> + Cc: stable@vger.kernel.org
 
-On Mon, 24 Feb 2025 10:28:49 +0000, André Draszik wrote:
-> Add device tree binding for the Maxim MAX77759 companion PMIC for USB
-> Type-C applications.
-> 
-> The MAX77759 includes Battery Charger, Fuel Gauge, temperature sensors,
-> USB Type-C Port Controller (TCPC), NVMEM, and a GPIO expander.
-> 
-> This describes the core mfd device.
-> 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-> ---
->  .../devicetree/bindings/mfd/maxim,max77759.yaml    | 104 +++++++++++++++++++++
->  MAINTAINERS                                        |   6 ++
->  2 files changed, 110 insertions(+)
-> 
+I have no context at all here, sorry.  What am I supposed to do?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+confused,
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: pmic@66: gpio: False schema does not allow {'compatible': ['maxim,max77759-gpio'], 'gpio-controller': True, '#gpio-cells': 2, 'interrupt-controller': True, '#interrupt-cells': 2}
-	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: pmic@66: pmic-nvmem: False schema does not allow {'compatible': ['maxim,max77759-nvmem'], 'nvmem-layout': {'compatible': ['fixed-layout'], '#address-cells': 1, '#size-cells': 1, 'reboot-mode@0': {'reg': [[0, 4]]}, 'boot-reason@4': {'reg': [[4, 4]]}, 'shutdown-user-flag@8': {'reg': [[8, 1]]}, 'rsoc@10': {'reg': [[10, 2]]}}}
-	from schema $id: http://devicetree.org/schemas/mfd/maxim,max77759.yaml#
-Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: /example-0/i2c/pmic@66/gpio: failed to match any schema with compatible: ['maxim,max77759-gpio']
-Documentation/devicetree/bindings/mfd/maxim,max77759.example.dtb: /example-0/i2c/pmic@66/pmic-nvmem: failed to match any schema with compatible: ['maxim,max77759-nvmem']
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250224-max77759-mfd-v1-1-2bff36f9d055@linaro.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+greg k-h
 
