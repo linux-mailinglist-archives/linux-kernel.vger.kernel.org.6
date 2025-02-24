@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-529510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C77A4272C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:00:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AD0A42737
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B53C188AC09
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:55:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638283AAAAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6862D261575;
-	Mon, 24 Feb 2025 15:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D95262810;
+	Mon, 24 Feb 2025 15:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="AgrR/Iqz"
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="NXKaI++C"
 Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F71233714;
-	Mon, 24 Feb 2025 15:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4552C2627E2;
+	Mon, 24 Feb 2025 15:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740412517; cv=none; b=JlzEy6bwNkoy9KKGoJ18jMZrE+TFtRSMHxu/9P7RN/dsCloBe9UtKvLelWynPRl4YR/uHtlA9fqgUZ4pv25s7o77BYmUpEOix7uccbGwmlC8G9wmxWE9x0qIDApdHi3LC1jHOXK3u7GKcT601K8NPRa0K13Mgqx/abtq5f4t2RY=
+	t=1740412521; cv=none; b=a1bJ5/iF9xBhQHdW1rSdmrwXUYnmBL72PSoale4ohrTcH6TdzgIXsir8ej5TcZS4Qba3mQ5EgbiF8jhvwwCSnZNUG0Qc0WIgjhwTEef7Sl1RdBqaabF6POFFjmHPW7yEgY2uPZ2h0dV0+r5W2aPFPV4hJY5OcG2T5cchLxM+MNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740412517; c=relaxed/simple;
-	bh=b7FaFj06eG3NydoTECTJkSmRx8X6pGTreLFj5Z0+02A=;
+	s=arc-20240116; t=1740412521; c=relaxed/simple;
+	bh=dcG5/d7YsNTu2b54KQ6wCfzUCDNwYHtoap6j4u7RGNY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uPbMkbWc01Oe1QPQ6h+pDh8otbjvpmNBcU7kwQCYrKFY8q/KTLGNUkZ9MnhL1LXFbOKr9iW2UCM0U3K3LpNYkhM5z8tJ3JC1WaZKaMGbOBmPVMjCEFDzKF3f9WQmDyJYmuR/GNoWw8O1AHogEYtAK80Il2KKk7nGdTfSQKTt01o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=AgrR/Iqz; arc=none smtp.client-ip=217.194.8.81
+	 MIME-Version; b=dvV0qo5w9XQpta/Mlcgby0bQ6DMufjMzyPv0bWt/pXMJmHdY/E7+esnMg7p1iYncaAb3C/LuF8idWrJXeDqaMdAtIgQ8QX20PFXTwQyFy12LwckaC2MxQZX/mkyJcH+3L9thpSgqWG+z3GLyLXeLWZmrUn0ieXgxjz9HquTLihA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=NXKaI++C; arc=none smtp.client-ip=217.194.8.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
 Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id BFB271FB8C;
-	Mon, 24 Feb 2025 16:55:07 +0100 (CET)
+	by mail11.truemail.it (Postfix) with ESMTPA id 7A87A1FBA2;
+	Mon, 24 Feb 2025 16:55:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1740412508;
-	bh=lEX6XPbraoU2mAPkLBWD9pXLXIQQnoMkWm/NaiyYKYE=; h=From:To:Subject;
-	b=AgrR/IqzsveuHFSqCthzpjXhoycPAzH1DuvpASASqGv6vTYTNOCHvSG3+af6HnLPR
-	 iS33eekimvaeevtwksv3P/Kyrtiu/0caNoVvFUnNR9DNwlNlmEAjqiReQRBMeEbHPl
-	 0XjKfjmDb/IofUPD4wdE5+ZnwJ5gHm93pMQRzyzKidRs4GTSzhjJRKmhRbyEvwQOQI
-	 UVtdn2rk2msO6PGZoSHvMn+Hax6EvL2D8fbYekrDNGM+eWaSxLzTGRMUbsvm7hE8cT
-	 LDJ7IJ51ieD42z0TyktzZYSaevgYQgI/JWEM5KRSwcbNTUAirE6eQducQ/e36uJadC
-	 72zAF6f6407hQ==
+	s=default; t=1740412509;
+	bh=hFbONcKyhjUHboYxM0ZaY3VOZ5oAiMtjcU/h4VEveuI=; h=From:To:Subject;
+	b=NXKaI++CDjuzppw/qLDI4RS2ZefxoOrXHPg7Zsmj+hCsuIMCEfYUYov3IMIkh7VQJ
+	 wBS5QfLaM/lXg3Mb7QosEMqJsK2q05E9pjYZ2HZYhJzSnoHg9CH6k67ELyjCe6dc7A
+	 pRSt/1oaPwHPQrn8onbcPzu5yAcjEv2QqCtPrdoHx/+EfjzgKrT2Hf9rUw6jmM5y/A
+	 3UZygtzTwAh+6UU+4RBu7L2vdMNRFUI6T0QxRqaCki3/jGQhUHMkruA7/c3Bx/awmq
+	 TNo2PYBHgVaX+KDeuGWew470q667hH/obzMbTV6ZTsxz5ak5buOLSEeN7CMblmtrEx
+	 WaKzOPBH289Yg==
 From: Francesco Dolcini <francesco@dolcini.it>
 To: Liam Girdwood <lgirdwood@gmail.com>,
 	Mark Brown <broonie@kernel.org>,
@@ -57,10 +57,10 @@ Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: [PATCH v2 4/5] ASoC: wm8904: get platform data from DT
-Date: Mon, 24 Feb 2025 16:54:59 +0100
-Message-Id: <20250224155500.52462-5-francesco@dolcini.it>
+	ckeepax@opensource.cirrus.com
+Subject: [PATCH v2 5/5] ASoC: wm8904: add DMIC support
+Date: Mon, 24 Feb 2025 16:55:00 +0100
+Message-Id: <20250224155500.52462-6-francesco@dolcini.it>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250224155500.52462-1-francesco@dolcini.it>
 References: <20250224155500.52462-1-francesco@dolcini.it>
@@ -74,255 +74,217 @@ Content-Transfer-Encoding: 8bit
 
 From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 
-Read in optional codec-specific properties from the device tree.
+The WM8904 codec supports both ADC and DMIC inputs.
 
-The platform_data structure is not populated when using device trees.
-This change parses optional dts properties to populate it.
+Get input pin functionality from the platform data and add the necessary
+controls depending on the possible additional routing.
 
-- wlf,in1l-as-dmicdat1
-- wlf,in1r-as-dmicdat2
-- wlf,gpio-cfg
-- wlf,mic-cfg
-- wlf,drc-cfg-regs
-- wlf,drc-cfg-names
-- wlf,retune-mobile-cfg-regs
-- wlf,retune-mobile-cfg-names
-- wlf,retune-mobile-cfg-rates
+The ADC and DMIC share the IN1L/DMICDAT1 and IN1R/DMICDAT2 pins.
 
-Datasheet: https://statics.cirrus.com/pubs/proDatasheet/WM8904_Rev4.1.pdf
+This leads to a few scenarios requiring different DAPM routing:
+- When both are connected to an analog input, only the ADC is used.
+- When one line is a DMIC and the other an analog input, the DMIC source
+  is set from the platform data and a mux is added to select whether to
+  use the ADC or DMIC.
+- When both are connected to a DMIC, another mux is added to this to
+  select the DMIC source. Note that we still need to be able to select
+  the ADC system for use with the IN2L, IN2R, IN3L and IN3R pins.
+
 Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
 Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 ---
-v2: Fixed wm8904_parse_retune_cfg_from_of: refer to
-    pdata->retune_mobile_cfgs[i].name instead of pdata->drc_cfgs[i].name
-v1: https://lore.kernel.org/lkml/20250206163152.423199-5-francesco@dolcini.it/
----
- include/sound/wm8904.h    |   3 +
- sound/soc/codecs/wm8904.c | 189 +++++++++++++++++++++++++++++++++++++-
- 2 files changed, 191 insertions(+), 1 deletion(-)
+v2: DAPM routes have been reworked, please see the commit message body.
+    The previous approach forgot that the ADC is still needed for the
+    IN2L/R and IN3L/R pins, and did not properly disconnect the PGAs
+    from the ADC when only the DMIC was in use.
+v1: https://lore.kernel.org/lkml/20250206163152.423199-6-francesco@dolcini.it/
 
-diff --git a/include/sound/wm8904.h b/include/sound/wm8904.h
-index 88ac1870510e..8b2c16b524f7 100644
---- a/include/sound/wm8904.h
-+++ b/include/sound/wm8904.h
-@@ -151,6 +151,9 @@ struct wm8904_pdata {
- 	int num_retune_mobile_cfgs;
- 	struct wm8904_retune_mobile_cfg *retune_mobile_cfgs;
- 
-+	bool in1l_as_dmicdat1;
-+	bool in1r_as_dmicdat2;
-+
- 	u32 gpio_cfg[WM8904_GPIO_REGS];
- 	u32 mic_cfg[WM8904_MIC_REGS];
- };
+Cc: ckeepax@opensource.cirrus.com
+---
+ sound/soc/codecs/wm8904.c | 125 ++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 120 insertions(+), 5 deletions(-)
+
 diff --git a/sound/soc/codecs/wm8904.c b/sound/soc/codecs/wm8904.c
-index 2082ff12d336..83cf59f6e879 100644
+index 83cf59f6e879..ed717140ec76 100644
 --- a/sound/soc/codecs/wm8904.c
 +++ b/sound/soc/codecs/wm8904.c
-@@ -2168,6 +2168,184 @@ static const struct of_device_id wm8904_of_match[] = {
- MODULE_DEVICE_TABLE(of, wm8904_of_match);
- #endif
+@@ -844,6 +844,26 @@ static int out_pga_event(struct snd_soc_dapm_widget *w,
+ 	return 0;
+ }
  
-+/**
-+ * wm8904_read_cfg_reg_arr() - Reads a subarray from a DT u16 array
-+ *
-+ * @np: pointer to the device_node struct
-+ * @regs_property: DT property of interest
-+ * @size: size of subarrays within the array
-+ * @idx: index of the subarray of interest
-+ * @out: output
-+ *
-+ * Helper to read a subarray from a DT uint16-array,
-+ *  divided into equally sized arrays of size `size`
-+ *
-+ * Subset starts at `idx * size` and is of size `size`
-+ *
-+ * Return: 0 on success, negative error code otherwise
-+ */
-+static int wm8904_read_cfg_reg_arr(const struct device_node *np,
-+				   const char * const regs_property,
-+				   int size, int idx,
-+				   u16 * const out)
-+{
-+	int i, offset, ret;
++static const char * const dmic_text[] = {
++	"DMIC1", "DMIC2"
++};
 +
-+	offset = idx * size;
++static SOC_ENUM_SINGLE_DECL(dmic_enum, WM8904_DIGITAL_MICROPHONE_0,
++			    WM8904_DMIC_SRC_SHIFT, dmic_text);
 +
-+	for (i = 0; i < size; i++) {
-+		ret = of_property_read_u16_index(np, regs_property, i + offset, &out[i]);
-+		if (ret)
-+			return ret;
-+	}
-+	return 0;
-+}
++static const struct snd_kcontrol_new dmic_mux =
++	SOC_DAPM_ENUM("DMIC Mux", dmic_enum);
 +
-+static int wm8904_parse_retune_cfg_regs(const struct device_node *np,
-+					struct wm8904_pdata *pdata, int cfg_idx)
-+{
-+	return wm8904_read_cfg_reg_arr(np, "wlf,retune-mobile-cfg-regs",
-+				       WM8904_EQ_REGS, cfg_idx,
-+				       &pdata->retune_mobile_cfgs[cfg_idx].regs[0]);
-+}
++static const char * const cin_text[] = {
++	"ADC", "DMIC"
++};
 +
-+static int wm8904_parse_drc_cfg_regs(const struct device_node *np,
-+				     struct wm8904_pdata *pdata, int cfg_idx)
-+{
-+	return wm8904_read_cfg_reg_arr(np, "wlf,drc-cfg-regs",
-+				       WM8904_DRC_REGS, cfg_idx,
-+				       &pdata->drc_cfgs[cfg_idx].regs[0]);
-+}
++static SOC_ENUM_SINGLE_DECL(cin_enum, WM8904_DIGITAL_MICROPHONE_0,
++			    WM8904_DMIC_ENA_SHIFT, cin_text);
 +
-+static int wm8904_parse_drc_cfg_from_of(struct i2c_client *i2c,
-+					struct wm8904_pdata *pdata)
-+{
-+	const struct device_node *np = i2c->dev.of_node;
-+	int i, n_cfgs;
++static const struct snd_kcontrol_new cin_mux =
++	SOC_DAPM_ENUM("Capture Input", cin_enum);
 +
-+	n_cfgs = of_property_count_strings(np, "wlf,drc-cfg-names");
-+	if (n_cfgs == -EINVAL)
-+		return 0;
-+
-+	if (n_cfgs <= 0) {
-+		dev_err(&i2c->dev, "Could not get wlf,drc-cfg-names length: %d",
-+			n_cfgs);
-+		return n_cfgs;
-+	}
-+
-+	pdata->drc_cfgs = devm_kzalloc(&i2c->dev,
-+				       n_cfgs * sizeof(struct wm8904_drc_cfg),
-+				       GFP_KERNEL);
-+	if (!pdata->drc_cfgs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < n_cfgs; i++) {
-+		if (wm8904_parse_drc_cfg_regs(np, pdata, i)) {
-+			dev_err(&i2c->dev,
-+				"Invalid 'wlf,drc-cfg-regs[%i,:]'\n", i);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_string_index(np, "wlf,drc-cfg-names", i,
-+						  &pdata->drc_cfgs[i].name)) {
-+			dev_err(&i2c->dev,
-+				"Invalid 'wlf,drc-cfg-names[%i]'\n", i);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	pdata->num_drc_cfgs = n_cfgs;
-+	return 0;
-+}
-+
-+static int wm8904_parse_retune_cfg_from_of(struct i2c_client *i2c,
-+					   struct wm8904_pdata *pdata)
-+{
-+	const struct device_node *np = i2c->dev.of_node;
-+	int i, n_cfgs;
-+
-+	n_cfgs = of_property_count_strings(np, "wlf,retune-mobile-cfg-names");
-+	if (n_cfgs == -EINVAL)
-+		return 0;
-+
-+	if (n_cfgs <= 0) {
-+		dev_err(&i2c->dev,
-+			"Could not get wlf,retune-mobile-cfg-names length: %d",
-+			n_cfgs);
-+		return n_cfgs;
-+	}
-+
-+	pdata->retune_mobile_cfgs = devm_kzalloc(&i2c->dev,
-+						 n_cfgs * sizeof(struct wm8904_retune_mobile_cfg),
-+						 GFP_KERNEL);
-+	if (!pdata->retune_mobile_cfgs)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < n_cfgs; i++) {
-+		if (wm8904_parse_retune_cfg_regs(np, pdata, i)) {
-+			dev_err(&i2c->dev,
-+				"Invalid 'wlf,retune-mobile-cfg-regs[%i,:]'\n", i);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_u32_index(np, "wlf,retune-mobile-cfg-rates", i,
-+					       &pdata->retune_mobile_cfgs[i].rate)) {
-+			dev_err(&i2c->dev,
-+				"Invalid 'wlf,retune-mobile-cfg-rates[%i]'\n", i);
-+			return -EINVAL;
-+		}
-+
-+		if (of_property_read_string_index(np, "wlf,retune-mobile-cfg-names", i,
-+						  &pdata->retune_mobile_cfgs[i].name)) {
-+			dev_err(&i2c->dev,
-+				"Invalid 'wlf,retune-mobile-cfg-names[%i]'\n", i);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	pdata->num_retune_mobile_cfgs = n_cfgs;
-+	return 0;
-+}
-+
-+static int wm8904_set_pdata_from_of(struct i2c_client *i2c,
-+				    struct wm8904_priv *wm8904)
-+{
-+	const struct device_node *np = i2c->dev.of_node;
-+	struct wm8904_pdata *pdata;
-+	int ret, i;
-+
-+	pdata = devm_kzalloc(&i2c->dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata)
-+		return -ENOMEM;
-+
-+	pdata->in1l_as_dmicdat1 =
-+		of_property_read_bool(np, "wlf,in1l-as-dmicdat1");
-+
-+	pdata->in1r_as_dmicdat2 =
-+		of_property_read_bool(np, "wlf,in1r-as-dmicdat2");
-+
-+	/* If absent, default to 0xFFFF for GPIO config (i.e.: don't set) */
-+	for (i = 0; i < WM8904_GPIO_REGS; i++)
-+		pdata->gpio_cfg[i] = 0xFFFF;
-+
-+	of_property_read_u32_array(np, "wlf,gpio-cfg", pdata->gpio_cfg,
-+				   ARRAY_SIZE(pdata->gpio_cfg));
-+
-+	of_property_read_u32_array(np, "wlf,mic-cfg", pdata->mic_cfg,
-+				   ARRAY_SIZE(pdata->mic_cfg));
-+
-+	ret = wm8904_parse_drc_cfg_from_of(i2c, pdata);
-+	if (ret)
-+		return ret;
-+
-+	ret = wm8904_parse_retune_cfg_from_of(i2c, pdata);
-+	if (ret)
-+		return ret;
-+
-+	wm8904->pdata = pdata;
-+	return 0;
-+}
-+
- static const struct i2c_device_id wm8904_i2c_id[];
+ static const char *input_mode_text[] = {
+ 	"Single-Ended", "Differential Line", "Differential Mic"
+ };
+@@ -963,6 +983,15 @@ SND_SOC_DAPM_AIF_OUT("AIFOUTL", "Capture", 0, SND_SOC_NOPM, 0, 0),
+ SND_SOC_DAPM_AIF_OUT("AIFOUTR", "Capture", 1, SND_SOC_NOPM, 0, 0),
+ };
  
- static int wm8904_i2c_probe(struct i2c_client *i2c)
-@@ -2199,7 +2377,16 @@ static int wm8904_i2c_probe(struct i2c_client *i2c)
- 	wm8904->devtype = (uintptr_t)i2c_get_match_data(i2c);
- 
- 	i2c_set_clientdata(i2c, wm8904);
--	wm8904->pdata = i2c->dev.platform_data;
++static const struct snd_soc_dapm_widget wm8904_dmic_dapm_widgets[] = {
++SND_SOC_DAPM_MUX("DMIC Mux", SND_SOC_NOPM, 0, 0, &dmic_mux),
++};
 +
-+	if (i2c->dev.of_node) {
-+		ret = wm8904_set_pdata_from_of(i2c, wm8904);
-+		if (ret) {
-+			dev_err(&i2c->dev, "Failed to set platform data from of: %d\n", ret);
-+			return ret;
-+		}
++static const struct snd_soc_dapm_widget wm8904_cin_dapm_widgets[] = {
++SND_SOC_DAPM_MUX("Left Capture Input", SND_SOC_NOPM, 0, 0, &cin_mux),
++SND_SOC_DAPM_MUX("Right Capture Input", SND_SOC_NOPM, 0, 0, &cin_mux),
++};
++
+ static const struct snd_soc_dapm_widget wm8904_dac_dapm_widgets[] = {
+ SND_SOC_DAPM_AIF_IN("AIFINL", "Playback", 0, SND_SOC_NOPM, 0, 0),
+ SND_SOC_DAPM_AIF_IN("AIFINR", "Playback", 1, SND_SOC_NOPM, 0, 0),
+@@ -1101,12 +1130,45 @@ static const struct snd_soc_dapm_route adc_intercon[] = {
+ 	{ "AIFOUTR", NULL, "AIFOUTR Mux" },
+ 
+ 	{ "ADCL", NULL, "CLK_DSP" },
+-	{ "ADCL", NULL, "Left Capture PGA" },
+-
+ 	{ "ADCR", NULL, "CLK_DSP" },
++};
++
++/* No DMICs, always connect PGAs */
++static const struct snd_soc_dapm_route cin_nodmic_con[] = {
++	{ "ADCL", NULL, "Left Capture PGA" },
+ 	{ "ADCR", NULL, "Right Capture PGA" },
+ };
+ 
++/* DMIC system in use: mux between ADC and DMICDAT1, 2 or both */
++static const struct snd_soc_dapm_route cin_adc_dmic_con[] = {
++	{ "Left Capture Input", "ADC", "Left Capture PGA" },
++	{ "Right Capture Input", "ADC", "Right Capture PGA" },
++
++	{ "ADCL", NULL, "Left Capture Input" },
++	{ "ADCR", NULL, "Right Capture Input" },
++};
++
++/*  IN1L as DMICDAT1 */
++static const struct snd_soc_dapm_route cin_dmic1_con[] = {
++	{ "Left Capture Input", "DMIC", "IN1L" },
++	{ "Right Capture Input", "DMIC", "IN1L" },
++};
++
++/* IN1R as DMICDAT2 */
++static const struct snd_soc_dapm_route cin_dmic2_con[] = {
++	{ "Left Capture Input", "DMIC", "IN1R" },
++	{ "Right Capture Input", "DMIC", "IN1R" },
++};
++
++/* DMICDAT1 and DMICDAT2: mux between them, ADC still used for IN2 and IN3 */
++static const struct snd_soc_dapm_route cin_2dmics_con[] = {
++	{ "DMIC Mux", "DMIC1", "IN1L" },
++	{ "DMIC Mux", "DMIC2", "IN1R" },
++
++	{ "Left Capture Input", "DMIC", "DMIC Mux" },
++	{ "Right Capture Input", "DMIC", "DMIC Mux" },
++};
++
+ static const struct snd_soc_dapm_route dac_intercon[] = {
+ 	{ "DACL Mux", "Left", "AIFINL" },
+ 	{ "DACL Mux", "Right", "AIFINR" },
+@@ -2050,18 +2112,70 @@ static void wm8904_handle_retune_mobile_pdata(struct snd_soc_component *componen
+ 			"Failed to add ReTune Mobile control: %d\n", ret);
+ }
+ 
++static void wm8904_handle_dmic_pdata(struct snd_soc_component *component)
++{
++	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
++	struct wm8904_priv *wm8904 = snd_soc_component_get_drvdata(component);
++	struct wm8904_pdata *pdata = wm8904->pdata;
++	unsigned int dmic_src;
++
++	if (!pdata->in1l_as_dmicdat1 && !pdata->in1r_as_dmicdat2) {
++		snd_soc_dapm_add_routes(dapm, cin_nodmic_con,
++					ARRAY_SIZE(cin_nodmic_con));
++		snd_soc_component_update_bits(component, WM8904_DIGITAL_MICROPHONE_0,
++					      WM8904_DMIC_ENA_MASK, 0);
++		return;
++	}
++
++	/* Need a control and routing to switch between DMIC and ADC */
++	snd_soc_dapm_new_controls(dapm, wm8904_cin_dapm_widgets,
++				  ARRAY_SIZE(wm8904_cin_dapm_widgets));
++	snd_soc_dapm_add_routes(dapm, cin_adc_dmic_con,
++				ARRAY_SIZE(cin_adc_dmic_con));
++
++	if (pdata->in1l_as_dmicdat1 && pdata->in1r_as_dmicdat2) {
++		/* Need a control and routing to mux between DMICDAT1 and 2 */
++		dev_dbg(component->dev, "DMICDAT1 and DMICDAT2 in use\n");
++		snd_soc_dapm_new_controls(dapm, wm8904_dmic_dapm_widgets,
++					  ARRAY_SIZE(wm8904_dmic_dapm_widgets));
++		snd_soc_dapm_add_routes(dapm, cin_2dmics_con,
++					ARRAY_SIZE(cin_2dmics_con));
++		return;
++	}
++
++	/* Either DMICDAT1 or DMICDAT2 is in use, not both */
++	if (pdata->in1l_as_dmicdat1) {
++		dmic_src = 0;
++		snd_soc_dapm_add_routes(dapm, cin_dmic1_con,
++					ARRAY_SIZE(cin_dmic1_con));
 +	} else {
-+		wm8904->pdata = i2c->dev.platform_data;
++		dmic_src = 1;
++		snd_soc_dapm_add_routes(dapm, cin_dmic2_con,
++					ARRAY_SIZE(cin_dmic2_con));
 +	}
++	dev_dbg(component->dev, "DMIC_SRC (0 or 1): %d\n", dmic_src);
++	snd_soc_component_update_bits(component, WM8904_DIGITAL_MICROPHONE_0,
++				      WM8904_DMIC_SRC_MASK,
++				      dmic_src << WM8904_DMIC_SRC_SHIFT);
++}
++
+ static void wm8904_handle_pdata(struct snd_soc_component *component)
+ {
++	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
+ 	struct wm8904_priv *wm8904 = snd_soc_component_get_drvdata(component);
+ 	struct wm8904_pdata *pdata = wm8904->pdata;
+ 	int ret, i;
  
- 	for (i = 0; i < ARRAY_SIZE(wm8904->supplies); i++)
- 		wm8904->supplies[i].supply = wm8904_supply_names[i];
+ 	if (!pdata) {
++		snd_soc_dapm_add_routes(dapm, cin_nodmic_con,
++					ARRAY_SIZE(cin_nodmic_con));
+ 		snd_soc_add_component_controls(component, wm8904_eq_controls,
+-				     ARRAY_SIZE(wm8904_eq_controls));
++					       ARRAY_SIZE(wm8904_eq_controls));
+ 		return;
+ 	}
+ 
++	wm8904_handle_dmic_pdata(component);
++
+ 	dev_dbg(component->dev, "%d DRC configurations\n", pdata->num_drc_cfgs);
+ 
+ 	if (pdata->num_drc_cfgs) {
+@@ -2117,10 +2231,11 @@ static int wm8904_probe(struct snd_soc_component *component)
+ 		return -EINVAL;
+ 	}
+ 
+-	wm8904_handle_pdata(component);
+-
+ 	wm8904_add_widgets(component);
+ 
++	/* This can add dependent widgets, so it is done after add_widgets */
++	wm8904_handle_pdata(component);
++
+ 	return 0;
+ }
+ 
 -- 
 2.39.5
 
