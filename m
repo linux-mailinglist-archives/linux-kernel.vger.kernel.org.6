@@ -1,227 +1,167 @@
-Return-Path: <linux-kernel+bounces-528324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63135A41647
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:31:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757C6A4164B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:31:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0091890435
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:31:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBE3A7A2284
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3424218F2EF;
-	Mon, 24 Feb 2025 07:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11221ACEA5;
+	Mon, 24 Feb 2025 07:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NB2H6Skj"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="r25O98/+"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2054.outbound.protection.outlook.com [40.107.243.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9A6FC3;
-	Mon, 24 Feb 2025 07:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740382262; cv=none; b=a+9lre6OwjpE1kl8x67W1aD0VRGh3lyBHvnsVZnptcOU6AfdbzBlcJzsc/6G7CU39NaBUPFLdznrutzMHt7j8bY8hMEbg4NfUbdbw3LHhkDsLC7yez6nz79OyD0djQvm1Be/wZjNycHfy8bjBc/0OsLasgH3yBkaAjQoFqClgIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740382262; c=relaxed/simple;
-	bh=6Z6dnjGVgdpViKxmv3ZMODE/l0flzQ0TomzD7aIpjeQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hhh6CjdXMgrtsmhW0BjdpxTTmZEt68iy0jNpKMWjGGgrUlFYGB2Vdi9WT1WhtsNIp8kyXVOp2WK/w9Bnh6snSpSN9XfVfxx6HvhwQEBo0Ub9q04b1ZYsrvjB1akCmyw9a9TRgX+fINPMpLl2HjoT/63+cj0ojHRrrRMyVuxsj8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NB2H6Skj; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f29a1a93bso3215428f8f.1;
-        Sun, 23 Feb 2025 23:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740382259; x=1740987059; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b0duzw3Ywocqb3zPYovQHOlpL11++t/qRORIguG/x8M=;
-        b=NB2H6SkjtKlJ/djFqjHu8QshpxWRo6qha4AFj9YUkgMypUSoBLDZ9SBwtSJqzbvR0l
-         sIf5UX19566DLSNvute9ENXcdoucYI+sIIo/k1qM+/fi5EgNAm7zyXByi66rSROHdNK4
-         JqS0u3uUyksOmtL8ZhamR8SGwC2ukqSOipyJmuH4Uf5XWlQ+Yej59ByhndkNVDWK2wMV
-         xn5mBTRL1s/q9LNZHXJ6Wj4Em3peW4N9vKn4LxYGQ2VSYPQnOZohRFyVl7so1LkVx6TL
-         1d+jMhIXYn9oxQr2aZrM/LgxEFS91rdrp9yDaNGY2Dsb9UfFmJCjUt/cTyWIiPlRkrV0
-         lPtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740382259; x=1740987059;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0duzw3Ywocqb3zPYovQHOlpL11++t/qRORIguG/x8M=;
-        b=NZHRUzlaEZB8HV6iVrGIRopgdkSdXZV/gRF4ml20tX54+Tjf+FYRUNKJRff+Gncipr
-         /ZSPIkWAMPEzJwDkBpV12+LAARTJZFgdabycGpNCCOfypILbUW2y/NtAggFNsxXhOmz9
-         Bg/EeCkJC7TK4PtcAfJ6tlYgzgcq3yPoH1pvPHs+ECoyatXCbz9GmT3frvUJy/hu6fSU
-         IgwdbEKbESkC3MP14PPQp95zf+AGkM5GQt5OxJ/G5Go+vM5aipkvLBuLdyOUoRq2KK0A
-         kbu1by83ynDSXtd/xBi/guAcVPl7p6CoYEGkOI3k1uiXuh4E3BD2z9I+Zyel40OorhUu
-         3d+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1CEPES0LBUvO3KxD+V8MXyKTKGNNlDbTVI0rjC/ROppP4SwfnJLrQS1e+DjEKhK/orPrUvkvQynnrryNPVISEvzY=@vger.kernel.org, AJvYcCVqz4ypyOXGRex5vlVFp2mXge8Jhl57JpP4HOVhGyT8s0SlI9+p9Tce5rpoO1MZmpI4Om3w3SmDpuLPZj747Q==@vger.kernel.org, AJvYcCXs/znA2q+HragQn51XloaM1H58nJ1ES6W6R9loRodC8SXGGMQCRT9924fbjPPx8QXgCXpW3wh/gfqUVPuq@vger.kernel.org, AJvYcCXy6YRk7LCQKDhdxg02bDU0yMKSdsVout/njM1bPWFDMwoCq3pWng153mObJUr0V5GQ2AwG8xREyO4H@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzoq2l/0EzqbyaKZO0xk7iENW7y9HfR5Z4OGv3Jb/ytkgxhth7+
-	BIrmPEVrkPSF4umsdk35SvFCiOZZ2Mias8SDgo3Un81UHU9bIQHP
-X-Gm-Gg: ASbGncvxdT9dKl6+mNmopUamGZLjdHpo1GJ0uWu+OYNQVf+Q9xesnYI4jMuTnYImpWQ
-	qKHpMlTWFA/XrKCXx+tsVYwUyC37UAjQ7JWtJkk+3q13JOKhSOit/tH517WVHrbT+Pe6vNaf+z/
-	SSiy6JSLVS04059j+mXwNJ0CcDxhvKt5nk/N4xuhR/JyKEtm/+EwkQR9q2ItDUC2EG30Ts7NbdX
-	CSe23NXk29eZ1IPr1bP8O/nWdPElKslV/CmS5plVsFN+fauvnOfm+lxBo2brLbdpPlWaqnVcp8H
-	4U/bdJFhGnkJum5BUBjea0pkKgxbuTPMljyC/XBk
-X-Google-Smtp-Source: AGHT+IFR8qOglMl8SOkJiw+ah079XOs4fUxWnUURIZha7TGgX1naigEEn4nk1GDXeUIJqH7dqWjSFw==
-X-Received: by 2002:a5d:5f92:0:b0:38d:e02d:5f4c with SMTP id ffacd0b85a97d-38f6e7578d8mr10115232f8f.10.1740382258857;
-        Sun, 23 Feb 2025 23:30:58 -0800 (PST)
-Received: from [192.168.43.21] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f69b3ca41sm11133698f8f.27.2025.02.23.23.30.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Feb 2025 23:30:58 -0800 (PST)
-Message-ID: <7426ef0e-c0ae-4a4a-8678-c1a3a4ead250@gmail.com>
-Date: Mon, 24 Feb 2025 09:30:57 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958CB1BC3C;
+	Mon, 24 Feb 2025 07:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740382298; cv=fail; b=A47fsaxJzzo3xGsKTMuUi5xwsCg5EBOLFlcSnExuFWi/I/cqFT984piudLCCfvJJLa/j4SXxpJAQ7nriXVlmSXx+EIk2G2LfTbtuBtb7TT1uO2LN1J1VCzRTAuPAvL3CZs70crZo35LNTWMbW2ie/psItjI945Ml1ArNMmQAnig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740382298; c=relaxed/simple;
+	bh=aSk5B5lpxfvjqPKroxO2vD+p+ThgOtJoRxQtDh2yAPc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IkzIt9vzRa+PxI7El7OQ+dlvU5Y1FvGoKc6H4Jwo01awHhwahxt4Zio++NyQoA7eI0z0qvDk52daifJ8dLID7RXR80k4OoLE17PM2Q42C8qXjPgmZqRsjWZCJK9/UWOdqUKHx7HNltdf4L0yMRLecdfIx3ohsqYtBM7AMGpOl9g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=r25O98/+; arc=fail smtp.client-ip=40.107.243.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NKuTP9HvjrhIbHPMs7HMUA8Y0JK/gjob90eT2HyQHoyjdvJOcJ4QYuJ8PuEO2df6iS+KSOc4YOMG/m2ge62g9ziyLjPFkFRrba/R6RDKBrJdKD0O7A/xpM/D+tLQKEPdrDTndCV57wJUBTjHGkyVK5QQiG6vXDQ8FwoVtiBGnAyypIuJkrJpRhdXVYOLGzP8eef3PqSjzzBG4VSaVInE8oAs6ZPd/XDBRSnA6WpGvzKCrBduEmcag4jFEdgTzjVl4IUQtS2/+1JTCJxws+mw2nXfqU8P5peWXE65RIxFeuHVL4mTANPuDVtdCQuhTc5EfLC/nCOX9GboWfIv6qFMhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DhukL/MRiJzBEp9WhQhJYMTpvKRPoGuD7Hv4g+970Tg=;
+ b=xYafvduA6dH7FgBgT+rawsqAEfncaGJ2FPmfeRSLgPs2mCU/jLbssXsrT+ES38WT+sM9uDAnaF/6al8kLK86jMsCFSEIdrZ12vZhiEbpc/ZqVqHaLadDVkcu+Ci9n4p3WCrO6/9CLS6OLuMb2MIghWiRygd7+jpywP/MasTwN9U3MqPSd6jkah3Q8ZOj6M0a77A81ul4o5t9P5cCB8z4KGL5BT6+19XPZyQrJe0YKJx39/g2GBaAyavhQreWtw2CEk03pxqmZU+ZgKtLW/IxtKhB59Tvr2L8j1mM+Molxiitc3As4jniRZiCgimR+FIeLq5JwRRbNPx3U/PfYVxsKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DhukL/MRiJzBEp9WhQhJYMTpvKRPoGuD7Hv4g+970Tg=;
+ b=r25O98/+PWbDZpHp/49179pHKd464Vs9LRwEKpVZpQzDUWNkNmcsuBY0iOvnRH0LwMUSG1xkvhchy+sML0cX6fIi+FX+Bbp5IRRsSfV0Tk61UUZG9bBt4Yc3TnCt3F1YrvO1AMrxRVDnpidt5YtBibQB33Fh3/tkN+cTVisJCHc=
+Received: from MN2PR22CA0017.namprd22.prod.outlook.com (2603:10b6:208:238::22)
+ by PH0PR12MB7077.namprd12.prod.outlook.com (2603:10b6:510:21d::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 07:31:24 +0000
+Received: from BN3PEPF0000B06A.namprd21.prod.outlook.com
+ (2603:10b6:208:238:cafe::e4) by MN2PR22CA0017.outlook.office365.com
+ (2603:10b6:208:238::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.19 via Frontend Transport; Mon,
+ 24 Feb 2025 07:31:24 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN3PEPF0000B06A.mail.protection.outlook.com (10.167.243.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.0 via Frontend Transport; Mon, 24 Feb 2025 07:31:24 +0000
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
+ 2025 01:31:23 -0600
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 24 Feb 2025 01:31:20 -0600
+From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <michal.simek@amd.com>,
+	<bharat.kumar.gogada@amd.com>, <jingoohan1@gmail.com>, Thippeswamy Havalige
+	<thippeswamy.havalige@amd.com>
+Subject: [PATCH v14 0/3] Add support for AMD MDB IP as Root Port
+Date: Mon, 24 Feb 2025 13:01:14 +0530
+Message-ID: <20250224073117.767210-1-thippeswamy.havalige@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/8] phy: phy-snps-eusb2: add support for exynos2200
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-8-ivo.ivanov.ivanov1@gmail.com>
- <ac7bq3toicuoppmspqvohiss5wkhgw4v6aozzstd5pr66bfcse@k7tqijab4csq>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <ac7bq3toicuoppmspqvohiss5wkhgw4v6aozzstd5pr66bfcse@k7tqijab4csq>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB04.amd.com: thippeswamy.havalige@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06A:EE_|PH0PR12MB7077:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf13c252-aa52-4ee5-9765-08dd54a53e13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?No8hAyj9h4FxPnM9dzTS9p/mzc9RVNxwTab5bc0RCX+AgNSZAb9vsLZ0SAcZ?=
+ =?us-ascii?Q?P/Ow1nG8RFNmB04arH5p/oMyJFpeNn8Ayq2/4JvveCd1cakpnGJN9Hd55kbb?=
+ =?us-ascii?Q?ldmZLGHX0i73vWQFXwyvbQqUl/cxBz4hvpbTTZUoCtYJLMfP4ofa/K4LVu09?=
+ =?us-ascii?Q?qSOvSsC8sSufvz592l4cjEUuXcs6DHPlsSbkYNeatpvVUuKVB5yrxurtxHQx?=
+ =?us-ascii?Q?TUMvqkqXkTfI9BtcKXCQlEPWLv+d2Vtr8lFvPzPcJK1bPZn0lPAgv0QSN9L7?=
+ =?us-ascii?Q?6QNRXAsaDfXrjpgoT5pQNWYKRULxocJLPGRsLinc5MHwK8N/Ci5iZj5U9UIx?=
+ =?us-ascii?Q?1PufsySH5UTtMU7nyiFkxUpvUb2CfM7EKjfSYgoHuxwLeaE7sr0yGcVsABTZ?=
+ =?us-ascii?Q?3l15IWiJGoyDtVF8GZl5gRu/2h0U8aYYlz7/1q//fc/+NXP5KFlgJ3qzCMYJ?=
+ =?us-ascii?Q?bQRVrBfAe9seKf3ygLj9P0FymcEazVmyAY4Uu/9YUaQRuvIPqa6txMxFJiXx?=
+ =?us-ascii?Q?7iSV6CnkOALDGe1DaXOdoB9X2az3C+9ayg4i/r1xrUNUvLimH24sgoAHW0Dv?=
+ =?us-ascii?Q?bUbsuslKyLQ5n96f3UtRAFnwwuJtKLenqfFfSqadSd7acqPIwTcX5iyybnO+?=
+ =?us-ascii?Q?naFDCtAY1sOz2lFplhOVR7AvmQNLedUaAt+Obknx0Gf68xd9jTMnSyVTFVRM?=
+ =?us-ascii?Q?elSzuL4dgtyxsDsvRrrWro5mKhMU19VVxoarOCbEtstO42uKyW4Ko52T2hvW?=
+ =?us-ascii?Q?PUoj3kjclWdJdRQNLrVJypADuYlj1cda0DbKm79MDQAgb0IQoikHchuWSv/f?=
+ =?us-ascii?Q?7GHnpsbXXByJ6ZopjW4VpRveaLoeoMHzcirF6e2Vfc3gUoq9BiLCZOtq9hGr?=
+ =?us-ascii?Q?ChTZ5+lXEC6QGhlccuE9OBFVFNtJJvQ1wIGxke4XWCYkPGkWjJYaplBPuoj+?=
+ =?us-ascii?Q?mMwfRd2iHRWZFXRQuS0tsY3mY9vjzCrEclnhaEMgC452mO1ntLarS9Xj979v?=
+ =?us-ascii?Q?OU/C/yGTULjqFs8GZK5HMuB4jadEjJgUHDjNrw2GzZTuUY2SUgCbQOTnVWO+?=
+ =?us-ascii?Q?EKd92TuZtB3xR7t880UNaU42PZZq6EIZjHVZChvxKYCmbSWB/8ox4yFcwYdh?=
+ =?us-ascii?Q?VK2BY4sXtO1oBoY66ftQ6RC+713iZZLL5kMl6pQJZ/QFOaoq+/4v7hJM0Knk?=
+ =?us-ascii?Q?i4W2pAE0Dtz63OAbu+tgFpKkGEPQqumwoMSvDBsheZmSHs3ehyTwMWV1wJfo?=
+ =?us-ascii?Q?0RzED6cyjz8gAbRC+/A6GXRS5GePdqMZHxDSih8cim8GdO9k/+T95v1Ad2Bb?=
+ =?us-ascii?Q?5YK0o7lqcikhdNqVpSXtlL9L6Z603GvDEMZp5HU63KBhyl7DaJPAc+Yy1mk6?=
+ =?us-ascii?Q?yNlo/r2Y3k1HF5ythjved1YFgYaLm6kW0ckmZGdH/U/AlQJKqDe7iwOsVt0J?=
+ =?us-ascii?Q?2lRpudoer61kSMxiEqK6SaDoIZ+IFSe8Chz2VbGEsSfHxnVBE6vhzUb31jox?=
+ =?us-ascii?Q?4oqKzOCpTmQaNpM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 07:31:24.3818
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf13c252-aa52-4ee5-9765-08dd54a53e13
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06A.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7077
 
-On 2/24/25 01:51, Dmitry Baryshkov wrote:
-> On Sun, Feb 23, 2025 at 02:22:26PM +0200, Ivaylo Ivanov wrote:
->> The Exynos2200 SoC reuses the Synopsis eUSB2 PHY IP, alongside an
->> external repeater, for USB 2.0. Add support for it to the existing
->> driver.
->>
->> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->> ---
->>  drivers/phy/Kconfig          |   2 +-
->>  drivers/phy/phy-snps-eusb2.c | 172 +++++++++++++++++++++++++++++++++++
->>  2 files changed, 173 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
->> index 11c166204..58c911e1b 100644
->> --- a/drivers/phy/Kconfig
->> +++ b/drivers/phy/Kconfig
->> @@ -45,7 +45,7 @@ config PHY_PISTACHIO_USB
->>  
->>  config PHY_SNPS_EUSB2
->>  	tristate "SNPS eUSB2 PHY Driver"
->> -	depends on OF && (ARCH_QCOM || COMPILE_TEST)
->> +	depends on OF && (ARCH_EXYNOS || ARCH_QCOM || COMPILE_TEST)
->>  	select GENERIC_PHY
->>  	help
->>  	  Enable support for the USB high-speed SNPS eUSB2 phy on select
->> diff --git a/drivers/phy/phy-snps-eusb2.c b/drivers/phy/phy-snps-eusb2.c
->> index 7a242fe32..67a19d671 100644
->> --- a/drivers/phy/phy-snps-eusb2.c
->> +++ b/drivers/phy/phy-snps-eusb2.c
->> @@ -13,6 +13,39 @@
->>  #include <linux/regulator/consumer.h>
->>  #include <linux/reset.h>
->>  
->> +#define EXYNOS_USB_PHY_HS_PHY_CTRL_RST	(0x0)
->> +#define USB_PHY_RST_MASK		GENMASK(1, 0)
->> +#define UTMI_PORT_RST_MASK		GENMASK(5, 4)
->> +
->> +#define EXYNOS_USB_PHY_HS_PHY_CTRL_COMMON	(0x4)
->> +#define RPTR_MODE			BIT(10)
->> +#define FSEL_20_MHZ_VAL			(0x1)
->> +#define FSEL_24_MHZ_VAL			(0x2)
->> +#define FSEL_26_MHZ_VAL			(0x3)
->> +#define FSEL_48_MHZ_VAL			(0x2)
->> +
->> +#define EXYNOS_USB_PHY_CFG_PLLCFG0	(0x8)
->> +#define PHY_CFG_PLL_FB_DIV_19_8_MASK	GENMASK(19, 8)
->> +#define DIV_19_8_19_2_MHZ_VAL		(0x170)
->> +#define DIV_19_8_20_MHZ_VAL		(0x160)
->> +#define DIV_19_8_24_MHZ_VAL		(0x120)
->> +#define DIV_19_8_26_MHZ_VAL		(0x107)
->> +#define DIV_19_8_48_MHZ_VAL		(0x120)
->> +
->> +#define EXYNOS_USB_PHY_CFG_PLLCFG1	(0xc)
->> +#define EXYNOS_PHY_CFG_PLL_FB_DIV_11_8_MASK	GENMASK(11, 8)
->> +#define EXYNOS_DIV_11_8_19_2_MHZ_VAL	(0x0)
->> +#define EXYNOS_DIV_11_8_20_MHZ_VAL	(0x0)
->> +#define EXYNOS_DIV_11_8_24_MHZ_VAL	(0x0)
->> +#define EXYNOS_DIV_11_8_26_MHZ_VAL	(0x0)
->> +#define EXYNOS_DIV_11_8_48_MHZ_VAL	(0x1)
->> +
->> +#define EXYNOS_PHY_CFG_TX		(0x14)
->> +#define EXYNOS_PHY_CFG_TX_FSLS_VREF_TUNE_MASK	GENMASK(2, 1)
->> +
->> +#define EXYNOS_USB_PHY_UTMI_TESTSE	(0x20)
->> +#define TEST_IDDQ			BIT(6)
->> +
->>  #define QCOM_USB_PHY_UTMI_CTRL0		(0x3c)
->>  #define SLEEPM				BIT(0)
->>  #define OPMODE_MASK			GENMASK(4, 3)
->> @@ -196,6 +229,93 @@ static void qcom_eusb2_default_parameters(struct snps_eusb2_hsphy *phy)
->>  				    FIELD_PREP(PHY_CFG_TX_HS_XV_TUNE_MASK, 0x0));
->>  }
->>  
->> +static int exynos_eusb2_ref_clk_init(struct snps_eusb2_hsphy *phy)
->> +{
->> +	unsigned long ref_clk_freq = clk_get_rate(phy->ref_clk);
->> +
->> +	switch (ref_clk_freq) {
->> +	case 19200000:
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_HS_PHY_CTRL_COMMON,
->> +					    FSEL_MASK,
->> +					    FIELD_PREP(FSEL_MASK, FSEL_19_2_MHZ_VAL));
->> +
-> Could you please unify the switchcase? assign the values to temp
-> variables, then program them from a single code stream. Or maybe even
-> replace switch-case with a table-based lookup.
->
-> (we probably should implement the similar change for qcom part. Maybe
-> you can refactor it too?)
+This series of patch add support for AMD MDB IP as Root Port.
 
-Alright. I'll do it for the Qualcomm part too in a separate commit.
+The AMD MDB IP support's 32 bit and 64bit BAR's at Gen5 speed.
+As Root Port it supports MSI and legacy interrupts.
 
-Thanks for the feedback!
+Thippeswamy Havalige (3):
+  dt-bindings: PCI: dwc: Add AMD Versal2 mdb slcr support
+  dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB PCIe Root Port Bridge
+  PCI: amd-mdb: Add AMD MDB Root Port driver
 
-Best regards,
-Ivaylo
+ .../bindings/pci/amd,versal2-mdb-host.yaml    | 121 +++++
+ .../devicetree/bindings/pci/snps,dw-pcie.yaml |   2 +
+ drivers/pci/controller/dwc/Kconfig            |  11 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-amd-mdb.c     | 481 ++++++++++++++++++
+ 5 files changed, 616 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
 
-> Other than that LGTM.
->
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_CFG_PLLCFG0,
->> +					    PHY_CFG_PLL_FB_DIV_19_8_MASK,
->> +					    FIELD_PREP(PHY_CFG_PLL_FB_DIV_19_8_MASK,
->> +						       DIV_19_8_19_2_MHZ_VAL));
->> +
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_CFG_PLLCFG1,
->> +					    EXYNOS_PHY_CFG_PLL_FB_DIV_11_8_MASK,
->> +					    EXYNOS_DIV_11_8_19_2_MHZ_VAL);
->> +		break;
->> +
->> +	case 20000000:
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_HS_PHY_CTRL_COMMON,
->> +					    FSEL_MASK,
->> +					    FIELD_PREP(FSEL_MASK, FSEL_20_MHZ_VAL));
->> +
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_CFG_PLLCFG0,
->> +					    PHY_CFG_PLL_FB_DIV_19_8_MASK,
->> +					    FIELD_PREP(PHY_CFG_PLL_FB_DIV_19_8_MASK,
->> +						       DIV_19_8_20_MHZ_VAL));
->> +
->> +		snps_eusb2_hsphy_write_mask(phy->base, EXYNOS_USB_PHY_CFG_PLLCFG1,
->> +					    EXYNOS_PHY_CFG_PLL_FB_DIV_11_8_MASK,
->> +					    EXYNOS_DIV_11_8_20_MHZ_VAL);
->> +		break;
->> +
+-- 
+2.43.0
 
 
