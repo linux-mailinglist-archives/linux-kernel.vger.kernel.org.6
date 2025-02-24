@@ -1,236 +1,136 @@
-Return-Path: <linux-kernel+bounces-529042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F9DCA41F35
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:37:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 688EBA41F37
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:37:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C5E165F01
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4592D3A56E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B8F233712;
-	Mon, 24 Feb 2025 12:31:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523952192E3;
+	Mon, 24 Feb 2025 12:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NukBH3qI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TM/q4xlc"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CC919B5A3;
-	Mon, 24 Feb 2025 12:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F09C204C19
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740400275; cv=none; b=q2EqTGABboJGHKGSP8uJgz8Spu5hP2Oh/Rl09+i7EnLrHD75YmodQo+3+Al+2VDnIDHZ+Y21brdAGf6mZlqrlEbiCw0Z6MJAhrEiX/DcnKaAd9hTr6TgUP0rRXcMv//zJtjg38d2cj1g9wi/biGXrv1l4wuLRMkIcIMubE4375I=
+	t=1740400335; cv=none; b=OiRXUpHRnmarnf1pUUVaIO4DW9K7hjP48E4k++GRJ4GOth5CihLN0gguNAqWj2637iqGhuSUXaXByHIgEWpke7WJ6FtqYsCkZASx2q/tqB7Uo/LPr0EKxXam6Q8A1em4O+RdjGsViMu/QU+1E22UZOKY6p6v4m9wOvpdW96S2X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740400275; c=relaxed/simple;
-	bh=gc1D//Ffey8erAww4BtrYA/C5TzLux2XzdYyCROK0w8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LzANUy6i5YYIG+IFLTvme9S4SY6qgPW+Viq2CE5VWkK8N2kAF0xuVyol9zALe2AeCvYjo27dhmWHLUxHJu2e74Z/xof1CXnAB0xxv/V337VGhhkQc7LyOqMG/J+SXbxNotMp/Sx04+rRtYTDgMVIlUjBaDgqsvgBNJPi+A5zexQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NukBH3qI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13225C4CEE8;
-	Mon, 24 Feb 2025 12:31:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740400275;
-	bh=gc1D//Ffey8erAww4BtrYA/C5TzLux2XzdYyCROK0w8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NukBH3qIVuiuCGmBh6hzBM9KH8XfZoGm6ggcvta1b0j3EqI8yvPp1hK8BXG1rzhvt
-	 wqU9Ywx17tLnCYsKlocPE8Q1k/QqJzITn8vHKDjsdOsz7Ic4ULY7At/6EemgMn2ZSb
-	 Bz/3HNWekpcA7BDZtiVk8MJimEdwZH+58oskxrA68Q9hQnojTFf+O1v1mlt44mhh7I
-	 4L2Zzwa5aWCdp8hUSKO2HIHXPgADlYuZvlqur9HpQ9DTSQg/fG5BRiPEG/iQXgVV/u
-	 aNiMX2PPaWLTEUyayv8v6b0Hn8kk+AxEDI92+/hsLWWieqIV5Mwvuuw+iOEVSA7Xpi
-	 8HoIgSbXxDmYw==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e04f87584dso6355341a12.3;
-        Mon, 24 Feb 2025 04:31:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVE3zeWQnaAfw8geMkzAAo2wy3gBQgLDdO2qeos7VjGKGCWkymvdRteh1h2Bs2qWu8TBJ8aAkd3SGuB@vger.kernel.org, AJvYcCVn+/7OxqHxjnOGRe5tyJcEmyF0X/XCGAMeyIDuDY4/43KiMS+Wwm6fLSMtdX4Y0HdbwIDAhUYzWAL13ks/@vger.kernel.org
-X-Gm-Message-State: AOJu0YztbMgIaIgVHHEHtpkChbz8q2FpYTqEa8uw7PddxN31yo3a8uEx
-	Aa564jxSZKBzNXPb/c/NY2Mq//CxENNyZNB9O75g39nJjZzYGlk+RZSW6i/NZLlpay5BA19qq+u
-	tgtAgQ4XSAOphibJ6/Oo0yJhwrw==
-X-Google-Smtp-Source: AGHT+IHIrFLQGrUmr0/vRBFFvkZaV+UNoXq1Y47I6/AgegFXRC8cAvE98Z6EsH8IgPlqwmpF0VzqMVFcZN6ZdyHqFN4=
-X-Received: by 2002:a05:6402:35c9:b0:5dc:c9ce:b029 with SMTP id
- 4fb4d7f45d1cf-5e0b70b6efamr12810252a12.5.1740400273495; Mon, 24 Feb 2025
- 04:31:13 -0800 (PST)
+	s=arc-20240116; t=1740400335; c=relaxed/simple;
+	bh=+rGrDGhEvXQ24U2PIiAS+hQLDz5X3B6pjpBKZP6y9kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O+UHcGl0wrzOMJEu+X5/smrzfF9pU1Pcb61Xum6JcyTGtgySgnJFYKzhQXG/01HsSpIhrpLGii4t0YYxJ3eTVHiAKvJ5cfKNpPuuf9jDtwLCCizxrwgjyDh1a+0ocLtjo55kliUXw8vyby8/O0SJkfqJDaz7OzFci2pIXRZel+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TM/q4xlc; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AFE4D40E01A3;
+	Mon, 24 Feb 2025 12:32:09 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id OSeDC-B-B6hg; Mon, 24 Feb 2025 12:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1740400324; bh=TcyDkc7c9gBCOEI6pzKjHHoYgUk+1szSgx0RLJQP/Fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TM/q4xlc0EfzK0QLoUM4hiK4V+KfXJ3roILDlo4AJNPTNjLTOkdfZ9nHvTzd7+oSe
+	 Wswe8DXNbIS9Op9V/Dna6FL2RDvbz/7u2FaY1Sg5Zma76vWDLZ4kG/lCxgkyOWkZLa
+	 i+SgtNKbHSwgaIjZEdtpeBjw7TfEyYza6aCb+EsEsrcSyo3Fk84QmiQQ+fM+cjyIsq
+	 ExpUyJ3MCGWHAoLG9DrsolJeet47nhtKMNwpNI/BAD/y1CCy7nyDwBkubK18jKL3oi
+	 yMBS4NSbQTf3PsS+7MJiyDuxocvlg8QA0GdGNtT95sR5Fm48bLTIa3cwKuvE2Y3Bc7
+	 AwuKUct8TkX9uixa32NZlZI0TherwrVIXeqrzOi/7G6j/B+H9VrXyUC3GeIk9yq1R9
+	 Y7EYjkjYKKaixz/MEJ3A62MpDg7VPFXQBy2RmIl1ESHHWS8ZC7/26W/O0hOuGOZFtv
+	 zZbWcFSmo2YXmJEzj8pp67JZfjSgb4b9v/+5o+rxO/5lmY1rl+ky+6u3HUwA62qCl4
+	 S2/v7Gnioh9v0MC9ufAjPCLZLH9whYw1DvBe1lqf8i6jSjQRIEiJXmHrHLHo9p4JzK
+	 XGKfor+r+pxdwAwKo3l4DtcY72HY0N9KIjQEvH5fBWnWkAqaREu27gJdk7hOPLapvO
+	 DXM/mTwGEmUtLrYjB3idGtqU=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 635FF40E015F;
+	Mon, 24 Feb 2025 12:31:47 +0000 (UTC)
+Date: Mon, 24 Feb 2025 13:31:42 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Rik van Riel <riel@surriel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v13 04/14] x86/mm: use INVLPGB for kernel TLB flushes
+Message-ID: <20250224123142.GFZ7xmruuyrc2Wy0r7@fat_crate.local>
+References: <20250223194943.3518952-1-riel@surriel.com>
+ <20250223194943.3518952-5-riel@surriel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224114648.1606184-1-vincenzo.frascino@arm.com> <20250224114648.1606184-3-vincenzo.frascino@arm.com>
-In-Reply-To: <20250224114648.1606184-3-vincenzo.frascino@arm.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Feb 2025 06:31:01 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+h5Dt=_mSaew269pXnuR-nQjgzRcdkN2XdCJjwMX-YqQ@mail.gmail.com>
-X-Gm-Features: AWEUYZm3u587qtfsFiWkv7dVwFwrNgMkCER2T9IDPbRJEnI5_7JDV-pRlScrhz8
-Message-ID: <CAL_Jsq+h5Dt=_mSaew269pXnuR-nQjgzRcdkN2XdCJjwMX-YqQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] ASoC: dt-bindings: xlnx,audio-formatter: Convert
- to json-schema
-To: Vincenzo Frascino <vincenzo.frascino@arm.com>
-Cc: linux-sound@vger.kernel.org, 
-	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250223194943.3518952-5-riel@surriel.com>
 
-On Mon, Feb 24, 2025 at 5:47=E2=80=AFAM Vincenzo Frascino
-<vincenzo.frascino@arm.com> wrote:
->
-> Convert the Xilinx Audio Formatter 1.0  device tree binding documentation
-> to json-schema.
+On Sun, Feb 23, 2025 at 02:48:54PM -0500, Rik van Riel wrote:
+> Use broadcast TLB invalidation for kernel addresses when available.
+> 
+> Remove the need to send IPIs for kernel TLB flushes.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Reviewed-by: Nadav Amit <nadav.amit@gmail.com>
+> Tested-by: Manali Shukla <Manali.Shukla@amd.com>
+> Tested-by: Brendan Jackman <jackmanb@google.com>
+> Tested-by: Michael Kelley <mhklinux@outlook.com>
 
-Similar issues in this one I won't repeat...
+What's the point of keeping those Tested-by tags if you still keep changing
+the patchset?
 
->
-> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
 > ---
->  .../bindings/sound/xlnx,audio-formatter.txt   | 29 -------
->  .../bindings/sound/xlnx,audio-formatter.yaml  | 76 +++++++++++++++++++
->  2 files changed, 76 insertions(+), 29 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-fo=
-rmatter.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,audio-fo=
-rmatter.yaml
->
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter=
-.txt b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
-> deleted file mode 100644
-> index cbc93c8f4963..000000000000
-> --- a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.txt
-> +++ /dev/null
-> @@ -1,29 +0,0 @@
-> -Device-Tree bindings for Xilinx PL audio formatter
-> -
-> -The IP core supports DMA, data formatting(AES<->PCM conversion)
-> -of audio samples.
-> -
-> -Required properties:
-> - - compatible: "xlnx,audio-formatter-1.0"
-> - - interrupt-names: Names specified to list of interrupts in same
-> -                   order mentioned under "interrupts".
-> -                   List of supported interrupt names are:
-> -                   "irq_mm2s" : interrupt from MM2S block
-> -                   "irq_s2mm" : interrupt from S2MM block
-> - - interrupts-parent: Phandle for interrupt controller.
-> - - interrupts: List of Interrupt numbers.
-> - - reg: Base address and size of the IP core instance.
-> - - clock-names: List of input clocks.
-> -   Required elements: "s_axi_lite_aclk", "aud_mclk"
-> - - clocks: Input clock specifier. Refer to common clock bindings.
-> -
-> -Example:
-> -       audio_ss_0_audio_formatter_0: audio_formatter@80010000 {
-> -               compatible =3D "xlnx,audio-formatter-1.0";
-> -               interrupt-names =3D "irq_mm2s", "irq_s2mm";
-> -               interrupt-parent =3D <&gic>;
-> -               interrupts =3D <0 104 4>, <0 105 4>;
-> -               reg =3D <0x0 0x80010000 0x0 0x1000>;
-> -               clock-names =3D "s_axi_lite_aclk", "aud_mclk";
-> -               clocks =3D <&clk 71>, <&clk_wiz_1 0>;
-> -       };
-> diff --git a/Documentation/devicetree/bindings/sound/xlnx,audio-formatter=
-.yaml b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-> new file mode 100644
-> index 000000000000..52a685519bc0
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/xlnx,audio-formatter.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/xlnx,audio-formatter.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Xilinx PL audio formatter
-> +
-> +description: |
-> +  The IP core supports DMA, data formatting(AES<->PCM conversion)
-> +  of audio samples.
-> +
-> +maintainers:
-> +  - Vincenzo Frascino <vincenzo.frascino@arm.com>
-> +
-> +allOf:
-> +  - $ref: dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - xlnx,audio-formatter-1.0
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 4
-> +    description: |
-> +      Base address and size of the IP core instance.
-> +
-> +  interrupt-names:
-> +    minItems: 1
-> +    maxItems: 3
-> +    description: |
-> +      Names specified to list of interrupts in same order mentioned unde=
-r
-> +      "interrupts".
+>  arch/x86/mm/tlb.c | 34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+> index dbcb5c968ff9..59396a3c6e9c 100644
+> --- a/arch/x86/mm/tlb.c
+> +++ b/arch/x86/mm/tlb.c
+> @@ -1077,6 +1077,20 @@ void flush_tlb_all(void)
+>  	on_each_cpu(do_flush_tlb_all, NULL, 1);
+>  }
+>  
+> +static bool invlpgb_kernel_range_flush(struct flush_tlb_info *info)
+> +{
+> +	unsigned long addr;
+> +	unsigned long nr;
 
-You didn't define the order though...
+Oh, c'mon:
 
-You must define what the names are and the order. We had that, but you
-dropped them.
+	unsigned long addr, nr;
 
 > +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 3
-> +    description: |
-> +      List of Interrupt numbers.
+> +	for (addr = info->start; addr < info->end; addr += nr << PAGE_SHIFT) {
+> +		nr = (info->end - addr) >> PAGE_SHIFT;
+> +		nr = clamp_val(nr, 1, invlpgb_count_max);
+> +		invlpgb_flush_addr_nosync(addr, nr);
+> +	}
+> +	__tlbsync();
+> +	return true;
 
-Generic description of 'interrupts' is not useful.
+Unused retval - that function looks like it wants to be void.
 
-> +
-> +  clock-names:
-> +    minItems: 2
-> +    maxItems: 3
-> +    description: |
-> +      List of input clocks.
+-- 
+Regards/Gruss,
+    Boris.
 
-Must define the names and order.
-
-> +
-> +  clocks:
-> +    minItems: 2
-> +    maxItems: 3
-> +    description: |
-> +      Input clock specifier. Refer to common clock bindings.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-names
-> +  - interrupts
-> +  - clock-names
-> +  - clocks
-> +
-> +additionalProperties: true
-
-Only common schemas which are incomplete can use 'true'. This must be false=
-.
-
-> +
-> +examples:
-> +  - |
-> +    audio_ss_0_audio_formatter_0: audio_formatter@80010000 {
-> +      compatible =3D "xlnx,audio-formatter-1.0";
-> +      interrupt-names =3D "irq_mm2s", "irq_s2mm";
-> +      interrupt-parent =3D <&gic>;
-> +      interrupts =3D <0 104 4>, <0 105 4>;
-> +      reg =3D <0x0 0x80010000 0x0 0x1000>;
-> +      clock-names =3D "s_axi_lite_aclk", "aud_mclk";
-> +      clocks =3D <&clk 71>, <&clk_wiz_1 0>;
-> +    };
-> +...
-> --
-> 2.43.0
->
+https://people.kernel.org/tglx/notes-about-netiquette
 
