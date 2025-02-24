@@ -1,102 +1,144 @@
-Return-Path: <linux-kernel+bounces-529675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317E8A429C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:31:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716C8A429D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3B01892865
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:29:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 561723B56CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A361B264A82;
-	Mon, 24 Feb 2025 17:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LTKIQkxY"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F6226560A;
+	Mon, 24 Feb 2025 17:29:27 +0000 (UTC)
+Received: from exchange.fintech.ru (exchange.fintech.ru [195.54.195.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DE2641F6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3370B2641F6;
+	Mon, 24 Feb 2025 17:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.54.195.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740418157; cv=none; b=kLZo6ILfmLNn9KyhRZL72o2G4lG/b4qddecpPx/6P+hKv0q5reg13psQWUQwMGA+2lZtc/vSant2Y9Cbw5b/iKXbgWyvoiYHCo4FAp5UuQ/ibcop1xEuUWGagm6SR638sWY3loyuk+H/2zNmqFsI7zdhbYGQbSadhC04nmman6w=
+	t=1740418166; cv=none; b=Ab7Kje1BjXkDhQJvrSMIZjPeocPNc1KRz4W/2UDX6UGBgXqTX9L2DvyAUpEACbiTIw74o0EITgx4JhhqKee6xJdPfEuR5XlomlUGf6f0newt+ivEFGJwDt2ZguD2S+gyQsyVR/oR2y2YqQImbVFKRJLR3+y3dbXeM+R39cp+jig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740418157; c=relaxed/simple;
-	bh=xx1QeYum9F0g4R1uQ44LWKRmPki5YkeJN99+/cp6RXo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r79mrAYbhbh7UlddeieuOuDlC3qC8AA1hK2mrTNCi1huXoeKQdTQs0eauiGuyix6JM5wWacEchfDesaUUYnHTndv/N1Gz2Qsh85RmtuC2sZVrLdLarmgOrNw68x50TjSh0o9ZGruJG+PAkvpAYlhh1G/zR6QdshJlN3+eiOXpf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LTKIQkxY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e08001cff4so14449a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 09:29:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740418154; x=1741022954; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xx1QeYum9F0g4R1uQ44LWKRmPki5YkeJN99+/cp6RXo=;
-        b=LTKIQkxYv3j/YmeuLJ+fmpEFgx3BZPQNTW8VGvac+6zuUmS1OwUa7VU0NJbI9XuREE
-         RKEWJavITT9A4stZ3bstUDCwAPe6wln1Wa9GLil6nxQk9E6msk0gXAKXYA/L34B738W2
-         8K6MWVNoud3khBH2/faXqeZJa6Ys+XrLRX28r+WvBy0l3BLKzvEmZ06m9qFfHsa3+lJS
-         Z22xe2ZXCt7xmolLjawqh4zRkdQzxjcwVmQm7pHXCt56z53Tk1Z7+ZmIsHFtD7+MA2MG
-         XWR3dacp5FSrJNCof3bmX6obzkDq7LKOD5qw5IqgbC4H7C2xKZs/+U+AciXmUmGr7AMS
-         0NZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740418154; x=1741022954;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xx1QeYum9F0g4R1uQ44LWKRmPki5YkeJN99+/cp6RXo=;
-        b=TqkgvICHgIswBv0FBFZN9Q4oYASpIr8adqcCNMFnu5c1MNGu2Sekyt7K783qMKG9WG
-         121vx4JtKeNJJ4dASLTWovr20qjZv3X1b1kkv6It3bfQAqi0/18A/vXDeC5FDysG6RLY
-         8f28MQ4xXU2MDA9QFCpmo7k9Yuy979sByRX9BQa8t871loBrt0E7nLd1uM5pEgdXW4D2
-         nJh9JfjPPmnZ6v3mmqoAufJUyQe5tO7pCK70BhqRmjZikFeFnTv2a6WrsQ6kokA4SMCp
-         jILgGvU0gP+A10XSoZyvMWWbMgOU89aTjlChiQ6g8w/QeGhZDn6jep/UZYY6uXl/Q3lk
-         B9Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7dQKqWoebqz//2RZUcjH0rAUSAy03to0xxvWdz+ephL/lt5uAqgg/tY/nw35fYVoVZjk28C/Z2w4GMIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrRcu0a9wCgI5Zty2HihKSgQr2EFeOaQ4U1b8EAFZvcMCyeRx8
-	xGfvgAlEkg4Z2ltLTNL0n1KFg3KDuqz874HTVXUUhVbtetz965JYILe4YIsDZTdotGPlQMrsEiM
-	qVJYOkA24rp9bJpAIxoc4zdskm5hx7jLK2iymDBMHMAnw4nyFKA==
-X-Gm-Gg: ASbGncs7ngYjAEgLv779i8X103HbLU/wz6DDfP4+zg6Vf7YrxjDI60K0j4HT5JRGoPo
-	6gp2IVb5KRNEpIPKteVMyz3xq8pTCerl7mKZ8Mk4uC8FlsI4BNijraW7qWOVmEFaNmWr2+t6lnz
-	2BtBAPdT8=
-X-Google-Smtp-Source: AGHT+IF33Bz0K5wTdY9n2hwU2nzRuWmxmxvKbeT5PUpV0suDtFxp2gRSePT6D7x7AVWBorWFCnCBILpKjJQOBzBvGy0=
-X-Received: by 2002:a05:6402:2062:b0:5e0:ed25:d28 with SMTP id
- 4fb4d7f45d1cf-5e400125716mr2002a12.1.1740418153635; Mon, 24 Feb 2025 09:29:13
- -0800 (PST)
+	s=arc-20240116; t=1740418166; c=relaxed/simple;
+	bh=I5GWCSyetMtFNFPwBKBBMZ9WghbOoBNwMPykCUkhfjs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XDzcorjiGOBOz+jO+HaHnrv5Jz44RI6tWG3b3S1gH4xajinc2QakicxI7EYfpEJ4mylu0IzKRRS6+uU3CAkNG6ZH4EQ9iNah3oYt/RjyhUZDsLPk1IIJAjoj5kz59jsSKjTfHgfRMNTcPUJGhDfAUPb41zCRAME78C2tZ7M0ylA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru; spf=pass smtp.mailfrom=fintech.ru; arc=none smtp.client-ip=195.54.195.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fintech.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fintech.ru
+Received: from Ex16-01.fintech.ru (10.0.10.18) by exchange.fintech.ru
+ (195.54.195.169) with Microsoft SMTP Server (TLS) id 14.3.498.0; Mon, 24 Feb
+ 2025 20:29:19 +0300
+Received: from localhost (10.0.253.138) by Ex16-01.fintech.ru (10.0.10.18)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2242.4; Mon, 24 Feb
+ 2025 20:29:19 +0300
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+CC: Nikita Zhandarovich <n.zhandarovich@fintech.ru>,
+	<linux-usb@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<syzbot+d693c07c6f647e0388d3@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net] usbnet: gl620a: fix endpoint checking in genelink_bind()
+Date: Mon, 24 Feb 2025 20:29:17 +0300
+Message-ID: <20250224172919.1220522-1-n.zhandarovich@fintech.ru>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224165442.2338294-1-seanjc@google.com> <20250224165442.2338294-3-seanjc@google.com>
-In-Reply-To: <20250224165442.2338294-3-seanjc@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Mon, 24 Feb 2025 09:29:00 -0800
-X-Gm-Features: AWEUYZkxSRz7bozwI6B1PTS5d-j--Hld6kcW4FN3FHQP5MxWfJFlCRft8xOA5s8
-Message-ID: <CALMp9eRrZ3vMbiJRLU3wrpGaVbBOuYh8QkxazZKxXvDrnxVkUQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] KVM: selftests: Assert that STI blocking isn't set
- after event injection
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Doug Covelli <doug.covelli@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Ex16-02.fintech.ru (10.0.10.19) To Ex16-01.fintech.ru
+ (10.0.10.18)
 
-On Mon, Feb 24, 2025 at 8:56=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> Add an L1 (guest) assert to the nested exceptions test to verify that KVM
-> doesn't put VMRUN in an STI shadow (AMD CPUs bleed the shadow into the
-> guest's int_state if a #VMEXIT occurs before VMRUN fully completes).
->
-> Add a similar assert to the VMX side as well, because why not.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Syzbot reports [1] a warning in usb_submit_urb() triggered by
+inconsistencies between expected and actually present endpoints
+in gl620a driver. Since genelink_bind() does not properly
+verify whether specified eps are in fact provided by the device,
+in this case, an artificially manufactured one, one may get a
+mismatch.
 
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Fix the issue by resorting to a usbnet utility function
+usbnet_get_endpoints(), usually reserved for this very problem.
+Check for endpoints and return early before proceeding further if
+any are missing.
+
+[1] Syzbot report:
+usb 5-1: Manufacturer: syz
+usb 5-1: SerialNumber: syz
+usb 5-1: config 0 descriptor??
+gl620a 5-1:0.23 usb0: register 'gl620a' at usb-dummy_hcd.0-1, ...
+------------[ cut here ]------------
+usb 5-1: BOGUS urb xfer, pipe 3 != type 1
+WARNING: CPU: 2 PID: 1841 at drivers/usb/core/urb.c:503 usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+Modules linked in:
+CPU: 2 UID: 0 PID: 1841 Comm: kworker/2:2 Not tainted 6.12.0-syzkaller-07834-g06afb0f36106 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: mld mld_ifc_work
+RIP: 0010:usb_submit_urb+0xe4b/0x1730 drivers/usb/core/urb.c:503
+...
+Call Trace:
+ <TASK>
+ usbnet_start_xmit+0x6be/0x2780 drivers/net/usb/usbnet.c:1467
+ __netdev_start_xmit include/linux/netdevice.h:5002 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5011 [inline]
+ xmit_one net/core/dev.c:3590 [inline]
+ dev_hard_start_xmit+0x9a/0x7b0 net/core/dev.c:3606
+ sch_direct_xmit+0x1ae/0xc30 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3827 [inline]
+ __dev_queue_xmit+0x13d4/0x43e0 net/core/dev.c:4400
+ dev_queue_xmit include/linux/netdevice.h:3168 [inline]
+ neigh_resolve_output net/core/neighbour.c:1514 [inline]
+ neigh_resolve_output+0x5bc/0x950 net/core/neighbour.c:1494
+ neigh_output include/net/neighbour.h:539 [inline]
+ ip6_finish_output2+0xb1b/0x2070 net/ipv6/ip6_output.c:141
+ __ip6_finish_output net/ipv6/ip6_output.c:215 [inline]
+ ip6_finish_output+0x3f9/0x1360 net/ipv6/ip6_output.c:226
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip6_output+0x1f8/0x540 net/ipv6/ip6_output.c:247
+ dst_output include/net/dst.h:450 [inline]
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ NF_HOOK include/linux/netfilter.h:308 [inline]
+ mld_sendpack+0x9f0/0x11d0 net/ipv6/mcast.c:1819
+ mld_send_cr net/ipv6/mcast.c:2120 [inline]
+ mld_ifc_work+0x740/0xca0 net/ipv6/mcast.c:2651
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Reported-by: syzbot+d693c07c6f647e0388d3@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=d693c07c6f647e0388d3
+Fixes: 47ee3051c856 ("[PATCH] USB: usbnet (5/9) module for genesys gl620a cables")
+Cc: stable@vger.kernel.org
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+---
+ drivers/net/usb/gl620a.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/net/usb/gl620a.c b/drivers/net/usb/gl620a.c
+index 46af78caf457..0bfa37c14059 100644
+--- a/drivers/net/usb/gl620a.c
++++ b/drivers/net/usb/gl620a.c
+@@ -179,9 +179,7 @@ static int genelink_bind(struct usbnet *dev, struct usb_interface *intf)
+ {
+ 	dev->hard_mtu = GL_RCV_BUF_SIZE;
+ 	dev->net->hard_header_len += 4;
+-	dev->in = usb_rcvbulkpipe(dev->udev, dev->driver_info->in);
+-	dev->out = usb_sndbulkpipe(dev->udev, dev->driver_info->out);
+-	return 0;
++	return usbnet_get_endpoints(dev, intf);
+ }
+ 
+ static const struct driver_info	genelink_info = {
 
