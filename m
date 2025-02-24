@@ -1,102 +1,132 @@
-Return-Path: <linux-kernel+bounces-529135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C567FA42035
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B42C6A42027
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B7A18996D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC97F1898FB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFB2248865;
-	Mon, 24 Feb 2025 13:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5FC248862;
+	Mon, 24 Feb 2025 13:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="TFeCz0wX"
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W9a0H6Z7"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE0F23BCF3;
-	Mon, 24 Feb 2025 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 834D323BD0C;
+	Mon, 24 Feb 2025 13:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402884; cv=none; b=N5vrhnnD40d3iVGAjcWfLHjwvvbm6EosHvKEV6YXHTHHuXcuuFNjaNhO9gx4HQm3mKWcdefBzFJImDFd6kIpcx6e9rpHuMTdYJIj8ebY8feC1KnBpnxNZZOANvCSXqu4o+cM6K57pRMjIQ1uycT6najeC9PWjLOgso/oyEl2KTs=
+	t=1740402844; cv=none; b=PUJj9UV10iwWHxzvml9+0wTaamT9afPuLHqwDc//7Qke4h48Yo9BkksHnmX1xg34CgQB2dcuClthJQeICr6Z3N02z14L2oaicc1rA6q/2c0f7y08COhU4d8DIFGU0fnc92NID8j43rrN21luXdxBte1n1CDfgpmbIj1s3Z3k70M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402884; c=relaxed/simple;
-	bh=CyJN9JaMODyHdJc8qubxk5o7iU9zvIlTc2ZbhfkECdg=;
-	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
-	 References:In-Reply-To; b=q3k/iRkbq6u9ya0M5vHfbZUD/XtqqnWGLbW4QK8A7XukCu7ngQWqYN0rRrCj0Rww7+69Btr5KoW3GiB9d8/JZC8w0mnbcQSxmAdBJFdLDgdXLxTTS2+L43jwqsjP+idGCaLyawngFpSkLNL/gcdVySChUnxDTZqRGBCKciiOhKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=TFeCz0wX; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1740402812;
-	bh=CyJN9JaMODyHdJc8qubxk5o7iU9zvIlTc2ZbhfkECdg=;
-	h=From:To:Subject:Mime-Version:Date:Message-ID;
-	b=TFeCz0wX2rOSWZP7ais0R/h/DMJs9yrqJxsEu1HAmaWzpEtcj9AJyXjSf4KG2jhkW
-	 sxSmesi/qTG5MA6jVNijpoSd8xaxeXWNsYnZqaxoIU2+l6Zzvutj/yCU8QQDgxHAh7
-	 Lwog7MFdhzXwNReNgI2/nYWeP/gz6nzL+yEPCDf8=
-X-QQ-GoodBg: 1
-X-QQ-SSF: 00400000000000F0
-X-QQ-FEAT: D4aqtcRDiqT6iyfUez+DXx4B7ybItHVbSxkDlA8/kMI=
-X-QQ-BUSINESS-ORIGIN: 2
-X-QQ-Originating-IP: LTKmhXHO+1nYhaZnHpGMJG08yBMWnWJmYXF7R9u8a7s=
-X-QQ-STYLE: 
-X-QQ-mid: v3sz3a-6t1740402810t4115755
-From: "=?utf-8?B?V2VudGFvIEd1YW4=?=" <guanwentao@uniontech.com>
-To: "=?utf-8?B?R3JlZyBLSA==?=" <gregkh@linuxfoundation.org>
-Cc: "=?utf-8?B?Sm9obiBLZWVwaW5n?=" <jkeeping@inmusicbrands.com>, "=?utf-8?B?SmlyaSBTbGFieQ==?=" <jirislaby@kernel.org>, "=?utf-8?B?RmVycnkgVG90aA==?=" <ftoth@exalondelft.nl>, "=?utf-8?B?SWxwbyBKw6RydmluZW4=?=" <ilpo.jarvinen@linux.intel.com>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>, "=?utf-8?B?bGludXgtc2VyaWFs?=" <linux-serial@vger.kernel.org>, "=?utf-8?B?c3RhYmxl?=" <stable@vger.kernel.org>
-Subject: Re: [PATCH] serial: 8250_dma: terminate correct DMA in tx_dma_flush()
+	s=arc-20240116; t=1740402844; c=relaxed/simple;
+	bh=nJR/oct9FaXI0t9DTfvKDLkojusQDlTdMGlmiUFoIbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TOj7v23hi2qs+hEYXfGZgBCbuYReNeqpl5o7u2WiTKg7kQkcdjBKC2yreddkhiw8swZT3YPpJqSnwz+Ed6MZogIVoSwqYe58Xqj88hhlujg9D0VolhIA+4KGX1/jrNXvxmQfM9yZf6MuA6E+IlMwczswPVNs4MHHBTgGaEPbYoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W9a0H6Z7; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1B23844278;
+	Mon, 24 Feb 2025 13:13:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740402833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CCAIkXQWMLlT5Qmo1Sco1hYx05ZJXQkx1DWR+S7sN28=;
+	b=W9a0H6Z7g2kiDsfvojehTYR1fvg8IVBOLZ0E7g2ru3DPQL2cRDUBgJ0b84ZO2dsXNancyK
+	xTNafqw99yaqGZ1J/Ywmzdv5DkennF5U1VKv/JUKI+n8BGWC5O1k2Szo+30/63aqVf7l2S
+	jm44u2kAT7Sf83YvE6CtEHfBfjTtgnifWh0x9rR3q9t+5Tr0lZpz5StnqGdbYjtT6ODER1
+	XsEjHdAua7AgxlaszUOAJbuzeRfAJxFyndyYxY5DmIjMqn18IW/SCTqF5JAlYf6pdQXz1C
+	q5GXTScg2jYKWjQsM9o/IXDOQHgYnAZIGvuQwbRFAPq9x5I/xSRq1hPUy9YENw==
+Date: Mon, 24 Feb 2025 14:13:51 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, Rob Herring <robh@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Simon Horman <horms@kernel.org>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
+ Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
+ Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 07/12] net: ethtool: Add PSE new budget
+ evaluation strategy support feature
+Message-ID: <20250224141351.3a942099@kmaincent-XPS-13-7390>
+In-Reply-To: <Z7iEYQzsdpUFmfZE@pengutronix.de>
+References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
+	<20250218-feature_poe_port_prio-v5-7-3da486e5fd64@bootlin.com>
+	<Z7iEYQzsdpUFmfZE@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Mon, 24 Feb 2025 21:13:29 +0800
-X-Priority: 3
-Message-ID: <tencent_013690E01596D03C0362D092@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-References: <20250224121831.1429323-1-jkeeping@inmusicbrands.com>
-	<tencent_09E5A20410369ED253A21788@qq.com>
-	<2025022434-subsiding-esquire-1de2@gregkh>
-In-Reply-To: <2025022434-subsiding-esquire-1de2@gregkh>
-X-QQ-ReplyHash: 67608264
-X-BIZMAIL-ID: 1832330930202671626
-X-QQ-SENDSIZE: 520
-Received: from qq.com (unknown [127.0.0.1])
-	by smtp.qq.com (ESMTP) with SMTP
-	id ; Mon, 24 Feb 2025 21:13:31 +0800 (CST)
-Feedback-ID: v:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NpoapEztA32CwkNa2GufcN+h19vav4pkwPH0RUvhz5AKMuKltzEqBjic
-	SFyiYWWQMPgy5LzwY4bu2wgAOx7r57+7PC9ow7PWlsTf0THf8lUf34errH0hNSX/aAMw3Lc
-	Q662wB6NqFbAK7T/VuHp4V3j3qtn6U3kZgpBPW/CJBrP5AwUIAXMPljp5hOh46t0S0rIdiU
-	ukg6nDP0gQYYcZcclLQKBtfYalssv4VZNgspeyMy+KNPRNGk4Ejd17oYV/1xfFhYpgwaIiD
-	MaiJsYrjrsh6dqhU72LJNuv7yiIvsT88E0/Vf+lqU2EUkXJRz4B/DVUMdQ+i6DV4PAlQgnt
-	KteP1R3q02FunWEpgaGul5v+lpS8GPMWHisKt7OiLX+BrdGrnsU3QgkMAnvWA7kilohORrx
-	EhLIiLXkFPIwBW/gB8EJ7jmPaw4fsFbrRam5Xo03XWPhckW4g/JaIjv5WdlWBvraceRVxc3
-	jA24barTecDIu2ywnk+jcC2dUEjHYj3l4dxEeWVQrvRDpHKhTjipfdiKqALh86xKPBurU1J
-	0nGNOLzBUjB9Lg2y2lTVEgMyZhXdu9PikZam/wnEmcMh3LVORtFzjQ4vyfD7J5yB2nlR+dK
-	UwtdQpM4E5LX0mZJNXPgFJLmGSHgL0A6HpSb98B53BCK1FUdcaPHahVkZN6dQWR5TVlKT5s
-	DrhjpOiA86b1KkLPdjCjqEvDWR45a42ty8DRXwHdPOeT2qyEWJUhsew44rvJxUfj5P0qZAI
-	duYWXeTSEvpjooRLxpHBmCHcGnGIgVVzr1uSnRAr8wkRKT8ZncIZfip/NPgksQ+wOoGcO6Z
-	q0ZPX4vhVM0SwYlpjEqEG+KhhvaLNcBrw982KVGpj4INgz59Aq+ZbrcVlo4Tc9bHqsFpjOi
-	ClVe74w9Az74TWGYhLhaLl8VC5daTeoZigOCNO097N+r6AoqnmVB7iH+C2wyWuSANRNjZJJ
-	I3uv1wM4MBCI7iU+SPZwo4mD6/GJWQF4Qy9T5jD2/Qk7c+Nu/hgXx8aFP50MUJOHSjDpW0A
-	QjGYOSltYjpxIeko1gGVPwQqAkufcb7A3qJK/Oa7YRojyt74G8Jz8f4NcD4FPkW+9MsiobH
-	i5XLqVQQi0K
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-X-QQ-RECHKSPAM: 0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeekjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefguddtfeevtddugeevgfevtdfgvdfhtdeuleetffefffffhffgteekvdefudeiieenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepkhhmrghinhgtvghnthdqigfrufdqudefqdejfeeltddpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehordhrvghmphgvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepkhhus
+ ggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepughonhgrlhgurdhhuhhnthgvrhesghhmrghilhdrtghomh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-SGVsbG8gR3JlZywNClNvcnJ5IGZvciBteSBIVE1MIGZvcm1hdCBwYXN0Lg0KSXQgaXMgbWVh
-bnMgdGhhdCAnRml4ZXMgeHh4eHh4JyB0YWcgcG9pbnQgY29tbWl0IHdpbGwgYXV0byBiZSBi
-YWNrcG9ydCB0byB0aG9zZSBzdGFibGUgdHJlZSB3aXRoDQp4eHh4eHggY29tbWl0IHdpdGhv
-dXQgY2Mgc3RhYmxlLCBjb3JyZWN0ID8NCg0KQlJzDQpXZW50YW8gR3Vhbg==
+On Fri, 21 Feb 2025 14:49:21 +0100
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
+> Hi Kory,
+>=20
+> On Tue, Feb 18, 2025 at 05:19:11PM +0100, Kory Maincent wrote:
+> > From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
+> >=20
+> > This patch expands the status information provided by ethtool for PSE c=
+33
+> > with current port priority and max port priority. It also adds a call to
+> > pse_ethtool_set_prio() to configure the PSE port priority. =20
+>=20
+> Thank you! Here are some comments...
+>=20
+> > --- a/Documentation/networking/ethtool-netlink.rst
+> > +++ b/Documentation/networking/ethtool-netlink.rst
+> > @@ -1790,6 +1790,12 @@ Kernel response contents:
+> >    ``ETHTOOL_A_C33_PSE_PW_LIMIT_RANGES``       nested  Supported power =
+limit
+> >                                                        configuration ra=
+nges.
+> >    ``ETHTOOL_A_PSE_PW_D_ID``                      u32  Index of the PSE
+> > power domain
+> > +  ``ETHTOOL_A_C33_PSE_BUDGET_EVAL_STRAT``        u32  Budget evaluation
+> > strategy
+> > +                                                      of the PSE
+> > +  ``ETHTOOL_A_C33_PSE_PRIO_MAX``                 u32  Priority maximum
+> > configurable
+> > +                                                      on the PoE PSE
+> > +  ``ETHTOOL_A_C33_PSE_PRIO``                     u32  Priority of the =
+PoE
+> > PSE
+> > +                                                      currently config=
+ured
+> > =20
+>=20
+> Please remove _C33_ from these fields, as they are not specific to Clause=
+ 33.
+
+Oops, forgot to update the documentation accordingly. Thanks for spotting i=
+t.
+
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
