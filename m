@@ -1,119 +1,149 @@
-Return-Path: <linux-kernel+bounces-528281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652ABA415AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:49:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39865A415AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2236C189921B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00B303A308A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE1724BC10;
-	Mon, 24 Feb 2025 06:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455BA207E08;
+	Mon, 24 Feb 2025 06:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A0EMSkvV"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DCUxkcYe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9EA24BC0B;
-	Mon, 24 Feb 2025 06:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E166615886C;
+	Mon, 24 Feb 2025 06:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740379547; cv=none; b=rLvKJ8lWQeCev3fLLsLPaNwMSjEn+oTS+5mavell9DctBpaJnZ1EUTYMej1mGNbK94sjc/K18kASRA7IWMWMAXRvs/5oL6wAx7IBYpzzWTPAT2PkQVR0T8uWpJHVMjJ9/SjO0VYIzUqiAxalV7iD80jIyE3FOOPQQvPP0qvxA6A=
+	t=1740379710; cv=none; b=EMA1GAlTCZuZyO15xUbCs4OdWXRN1LgtqkgYCHhgUpUnujE6i2+JfXAzNtiwJxUghJTpAr2ss7j3sxpyUGELtGfZ18AbCxQ8KdeIEh3zHSLJMk0EGmglXwjgxyZQ8B5/iVUXSoZK/uWeLF3d9RLGRkzkS82kibzDZdwZy2YD0zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740379547; c=relaxed/simple;
-	bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s7We/Jq+AV1IQvyB8v5s2U9Yff7EXEoOm7PmV9ILaRKX/JpNMIEajf+ytgY3oWVi7cgZJvE/GA73v5qHOliKAoIGqu7/EvF7FxIXlrbsf8Gx2Xp14W8NFy6v7HPYqHax+VfcYDgY21MQ+bmCUf95a7z7d/BAFXLGeUsB6Yvz7Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A0EMSkvV; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740379546; x=1771915546;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=goZDLHvWODKwCst2CM1CW/pL0JVHaP6YCWm3xiQc4VU=;
-  b=A0EMSkvVDB9dg3kfA4Tvlr9qqrp0gIHG21XUA8Q/oszNKzdKqy7c2a2M
-   W9VoEeLhbWka5SE3hQKrNezpK3rmwnY7ig2JEZL2LNQjaYbCX0Kp33qiC
-   1fswbufPG+2WlDN5JjTx0StRlNTHpKSgXMl2SCTcpNU8Kue+FeuNHA0Qw
-   QEiyeQB0pdR5UwndDJM0CgLARAHtFNqxNeXwQv7S10/s5ALj+zSjcqoF1
-   mQ1qrq/Fo8qk7uoOA+1vrC4CD4+Ab8PpgPtxjDjPMoAqeRomTEVjOgQx1
-   SjvoOwE4WLvwBNd0/zJtxpF7U9+RVLc5MnSmd6yOFrqq6VhO2DgXZ1w+9
-   Q==;
-X-CSE-ConnectionGUID: 3XR6j0jpSH2URwUDkEN+hw==
-X-CSE-MsgGUID: v6oXg7NfQdCIaKx1A+YhLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="58539005"
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="58539005"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 22:45:44 -0800
-X-CSE-ConnectionGUID: Hltnk+N9TcKZ3XpdyEqzcA==
-X-CSE-MsgGUID: rv1wvSlSQ3WfHosguoOkIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
-   d="scan'208";a="120597762"
-Received: from ssimmeri-mobl2.amr.corp.intel.com (HELO yungchua-desk.intel.com) ([10.124.222.232])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2025 22:45:42 -0800
-From: Bard Liao <yung-chuan.liao@linux.intel.com>
-To: linux-sound@vger.kernel.org,
-	broonie@kernel.org,
-	tiwai@suse.de,
-	vkoul@kernel.org
-Cc: vinod.koul@linaro.org,
-	linux-kernel@vger.kernel.org,
-	pierre-louis.bossart@linux.dev,
-	bard.liao@intel.com
-Subject: [PATCH v2 16/16] ASoC: rt711-sdca: add DP0 support
-Date: Mon, 24 Feb 2025 14:44:50 +0800
-Message-ID: <20250224064451.33772-17-yung-chuan.liao@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250224064451.33772-1-yung-chuan.liao@linux.intel.com>
-References: <20250224064451.33772-1-yung-chuan.liao@linux.intel.com>
+	s=arc-20240116; t=1740379710; c=relaxed/simple;
+	bh=9KZgxs+1o6vKrEnPwrYoJj3riTTKoKtEdF5UGkLRMHk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UU99IDutF1tK2lKIIXbVrlO4pwXll6MKzHDKXsY9N4eqYqErt+uhI8pKcBl/U4cof0IUUdiGoWsKMR203JE0JMdTx/i6+EIAcjnPlSkabTvVPyRE2NO2p7MYABxfN7QeqkpfZ/gS3iC+bIJ6seqnB6A/HsTjURsdN48HIfM0PqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DCUxkcYe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O2D9A2020204;
+	Mon, 24 Feb 2025 06:48:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=/s+Bcdw5RZudblgGKPzY06GE+qI04O
+	/42P1AlZVTUgg=; b=DCUxkcYeLRl84AxXG7hnIHwhdwshoo+4RuZ6G/d5iLWern
+	YQKqeMWVD2msNpiKHtTffnyucLzNcCk9h1qnyNp+BQH537tFBfy9mm6BOQ6kChDF
+	Tt6NiqHQ95eRbESUTqVEwHyJ2T4eYnDmyDf59CBwrCKTMyD84Hzg+omFfReiDEMz
+	L4i2mXz5Az5rA1N+p9qFS75msC7uTCZdQkGBjWFwrwf7P2E3iTJyOJilgT+GvZX/
+	eGPVlBxkQ4ouXT3+NEJjIYlwiWHpFH90bRdpLMK24+Q4kTulpQKuA5hgv9KniS2N
+	vqzNbzOrcYH72vAWvcbs50we3ODP0Jqw6PRjQnsg==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 450cta1ec4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 06:48:15 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51O2X9dv012465;
+	Mon, 24 Feb 2025 06:48:14 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwse2j4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Feb 2025 06:48:14 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51O6mDNw11010484
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Feb 2025 06:48:13 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F34B2004B;
+	Mon, 24 Feb 2025 06:48:13 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7179320043;
+	Mon, 24 Feb 2025 06:48:11 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.249])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 24 Feb 2025 06:48:11 +0000 (GMT)
+Date: Mon, 24 Feb 2025 12:18:08 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zizhi Wo <wozizhi@huawei.com>
+Cc: linux-ext4@vger.kernel.org, jack@suse.com, tytso@mit.edu,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yangerkun@huawei.com
+Subject: Re: [PATCH] ext4: Modify the comment about mb_optimize_scan
+Message-ID: <Z7wWKFrYfdJwX2JA@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20250224012005.689549-1-wozizhi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224012005.689549-1-wozizhi@huawei.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mk52NVO6j5ghDtBd05GOgoSNkD65teSr
+X-Proofpoint-ORIG-GUID: mk52NVO6j5ghDtBd05GOgoSNkD65teSr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_02,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=729
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 suspectscore=0 adultscore=0
+ spamscore=0 priorityscore=1501 clxscore=1011 phishscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502240042
 
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
+On Mon, Feb 24, 2025 at 09:20:05AM +0800, Zizhi Wo wrote:
+> Commit 196e402adf2e ("ext4: improve cr 0 / cr 1 group scanning") introduces
+> the sysfs control interface "mb_max_linear_groups" to address the problem
+> that rotational devices performance degrades when the "mb_optimize_scan"
+> feature is enabled, which may result in distant block group allocation.
+> 
+> However, the name of the interface was incorrect in the comment to the
+> ext4/mballoc.c file, and this patch fixes it, without further changes.
 
-DP0 is required for BPT/BRA transport.
+Looks good Zizhi, feel free to add:
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>
-Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Péter Ujfalusi <peter.ujfalusi@linux.intel.com>
-Reviewed-by: Liam Girdwood <liam.r.girdwood@intel.com>
-Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
----
- sound/soc/codecs/rt711-sdca-sdw.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-diff --git a/sound/soc/codecs/rt711-sdca-sdw.c b/sound/soc/codecs/rt711-sdca-sdw.c
-index f5933d2e085e..e87e2e1bfff7 100644
---- a/sound/soc/codecs/rt711-sdca-sdw.c
-+++ b/sound/soc/codecs/rt711-sdca-sdw.c
-@@ -225,6 +225,14 @@ static int rt711_sdca_read_prop(struct sdw_slave *slave)
- 		j++;
- 	}
- 
-+	prop->dp0_prop = devm_kzalloc(&slave->dev, sizeof(*prop->dp0_prop),
-+				      GFP_KERNEL);
-+	if (!prop->dp0_prop)
-+		return -ENOMEM;
-+
-+	prop->dp0_prop->simple_ch_prep_sm = true;
-+	prop->dp0_prop->ch_prep_timeout = 10;
-+
- 	/* set the timeout values */
- 	prop->clk_stop_timeout = 700;
- 
--- 
-2.43.0
+IIRC the documentation above mballoc is a bit outdated and it might
+be a good idea to see if we can make more improvements there. Maybe
+something worth exploring
 
+Regards,
+ojaswin
+> 
+> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> ---
+>  fs/ext4/mballoc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index b25a27c86696..68b54afc78c7 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -187,7 +187,7 @@
+>   * /sys/fs/ext4/<partition>/mb_min_to_scan
+>   * /sys/fs/ext4/<partition>/mb_max_to_scan
+>   * /sys/fs/ext4/<partition>/mb_order2_req
+> - * /sys/fs/ext4/<partition>/mb_linear_limit
+> + * /sys/fs/ext4/<partition>/mb_max_linear_groups
+>   *
+>   * The regular allocator uses buddy scan only if the request len is power of
+>   * 2 blocks and the order of allocation is >= sbi->s_mb_order2_reqs. The
+> @@ -209,7 +209,7 @@
+>   * get traversed linearly. That may result in subsequent allocations being not
+>   * close to each other. And so, the underlying device may get filled up in a
+>   * non-linear fashion. While that may not matter on non-rotational devices, for
+> - * rotational devices that may result in higher seek times. "mb_linear_limit"
+> + * rotational devices that may result in higher seek times. "mb_max_linear_groups"
+>   * tells mballoc how many groups mballoc should search linearly before
+>   * performing consulting above data structures for more efficient lookups. For
+>   * non rotational devices, this value defaults to 0 and for rotational devices
+> -- 
+> 2.39.2
+> 
 
