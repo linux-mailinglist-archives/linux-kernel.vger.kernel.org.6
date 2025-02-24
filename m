@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-528621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DACA8A419E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:00:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A85ACA419D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:58:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F294916A4B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F781883270
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9517224CED2;
-	Mon, 24 Feb 2025 09:57:13 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB3224BC0B;
+	Mon, 24 Feb 2025 09:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/374Pze"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC72224C66B;
-	Mon, 24 Feb 2025 09:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503F124A054;
+	Mon, 24 Feb 2025 09:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391033; cv=none; b=pjBm7CZ+wd6xQOZUpBZZRb96ENCWos/BbIfi0ybc0Z2R8hT/vG94BhcMp7nV9ECGygcA7OMnt50x+kfXAfk26ZcGFSmbG59/4Gz50guk9C2fFw7+b5MV1FkWLUtRPpFGz6xqRJUXx7O8ly5weaRS0t9JtUFVaOf0D9pZXvUwQE4=
+	t=1740391025; cv=none; b=I2c9rq7r0z7+ckwP8lfb9kGl9NbzmbPHWDuDnNhmgIheDS9IkYtQkTgweUI2KapQkMdI12xFBlq/nQACydOfjXK8VEmEVPFkZDQmOa9K2YeNy2rBZ+yBNOrGBB0pMYB8CflOGE5C5A2Dwy8BP0+RdjRKA3iJIT9TeyqTa0XBmDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391033; c=relaxed/simple;
-	bh=MSl6c5eG4xbpBVfyZR8dcHuYjVQmZCg26ue/c3GLq0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMZOSEdrEVwm2rdoF5sKiZlkMlevdPyaUlLVjVXYXFbgmTn3xn1ottpdr6bNFzLpAYbvjlW+YLwu38qxzaX7dWXBVR/+ElzRwOL0exhw5hsQ2Jaj00WuEuRxtlP2GQC3YsQOVRk13A+QjXCz483A729Xpgaq6UZeAKV1REpFUqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-521b84aa5d5so836738e0c.1;
-        Mon, 24 Feb 2025 01:57:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740391029; x=1740995829;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YZbn+v0xyuTX45sY6qG0ln35ZltgvYtyEb5LTmw+eFM=;
-        b=NhzwFrASfMEghcu4aVL0Kwv30RXSb7Igts4aCRoQSZFqw+hclOeSGa3ToDe4fxul+n
-         JtDqRSvuCev2ToKb9OyChf9zPHXsrRtdmUpxpWU991Z5528tCClF66QM9Mlul5Yl93YW
-         Ld6WIyDftBp0NzdT/mJBFggt6Fzw6mkZ4Je1CmDo2YNpk/0rz0PhoFwaDtcz38QsJu82
-         JcUlvakNHIufDfz8dLQ7ykxeT7HTwyngWR8BSmCdDdCCYXYAvFvsLZVf58Ux9vfg3TV4
-         mzom3149OkWNqaPBtpUhMS+MxQG2dH5GyB4mUjrXZNG1Wuj6B9irTZqRWi5qzOzh+JdT
-         eXQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3TN+IM11kMV2YIr9pLt4DsMs2n0VSXsmmP6Hu04dvMGLMVGCDHxDJf3R9txyakp9jINw23BB8@vger.kernel.org, AJvYcCXLQWHDmcWbzUaguNCSMT1CG7r1hlFmKkgMlpD17UmGqwDIn0FA3C2LcwdPqVmEZvKrC7oYG+7xLOcceZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuMJrtNBhLbZfsLwXlYAI05DyPgAXxRAed7fFH8y6KHx+5d/3M
-	/rG/9gpbfQZpXpKmdORvPwBexg4fnR+Cs6EOz0SNMtjXHLSHI3E6cr6H2l2cjZA=
-X-Gm-Gg: ASbGnctZXm9nQHR7EItm2VV60Z8d+zO2e2wv6jlvDyAXn5TC+tNhnUAaTaxYpERQMG3
-	SL8/OsFtMVPhul7SAOOFpe/CDQ/BIKUfIHvs/qGG6IjPKyIzqZU1KiXDyjsK8p4ikdfXfk8jlFE
-	EU8WHOO6hTdsN7P2dVUfKg0rVVZ1PTzmPIXgH1H1TZarhOtkpfWoF1o0KLy0m5+40RFWfZ8gkOR
-	V5Eu3mhPDLM7FihAd6csa04hLaVN9UMmy12UZ18LKDconvEIn2UWWl4mLAQ2xlgrdUyylFUV3Ko
-	SflKspyEYnBQ4wQFyLx9lb/yo6cfn2OX2+sAxrPgoJ7HkrvLhYDRbuCRLjv5Z4lr
-X-Google-Smtp-Source: AGHT+IEw9LxbFjzj4bELO/xURG1hu87zIbfTFfPGvOoKxWFtpTFf5ICvakyGFZ94QKjPq5U6ABHSng==
-X-Received: by 2002:a05:6122:3295:b0:520:3914:e6bb with SMTP id 71dfb90a1353d-521ee424763mr4701769e0c.7.1740391029579;
-        Mon, 24 Feb 2025 01:57:09 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-520b0ff2c9fsm3278637e0c.35.2025.02.24.01.57.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Feb 2025 01:57:09 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-86715793b1fso1240502241.0;
-        Mon, 24 Feb 2025 01:57:09 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU9Bvvh/5bJsXXA9tLa/+hQ2+XXo04cseIQcw9qMa9+zA6vpubhaWYWy8UAO7LqUOe6bMVT5g/HvDzks38=@vger.kernel.org, AJvYcCXyIn3/KSZuecRo1/KV4cO+oXghfOrz+mMlV/Gu5Nrl5x/w+khLAI7rXXZtVSf98WWfmg+CyeU5@vger.kernel.org
-X-Received: by 2002:a05:6102:3711:b0:4bb:e14a:944b with SMTP id
- ada2fe7eead31-4bfc023cc30mr4782066137.20.1740391028952; Mon, 24 Feb 2025
- 01:57:08 -0800 (PST)
+	s=arc-20240116; t=1740391025; c=relaxed/simple;
+	bh=w0YgVKrRrqyq3WB5LJqdCy80y+/4l0zZSSmJeq9kY8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKhyB2WERuiioUWfxY55HJKP7B5P6CrxsjlHOaOMMfnjwwhEF7O1boqYRMESVln5D8mRH5bMHgwj3KlIOFl8lTuRvFcFgcgKBSm4WAcbok+joLwFEZWxAS8UFCPIOA0a4ir612nqJoLgLLLEHtpCHC3Z0ZWrRAfbjOvyk2tL+AI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/374Pze; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F968C4CEE6;
+	Mon, 24 Feb 2025 09:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740391024;
+	bh=w0YgVKrRrqyq3WB5LJqdCy80y+/4l0zZSSmJeq9kY8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S/374PzejpKI2vR+hDuN/rtJADsNlL7nQUGK4fk1OPZeOhCf+7pNb0lCkbzgAOuWC
+	 2uDpUBuSfyhYUKuCBN6Boie5H2szyaz9a2uzBKot3hZ7OPEG13hmFWawORMCAxB+1p
+	 SEHoRB/gubJwzIb7S9n5dHM7MVSEC6Ay+bsTJl0mTUqLSkJKOXSWWxKDDW+fIo27Zt
+	 AKDIiB3dVGVuvYDj8xsOI+fQEAEr2+ETaS5+5543B+SGExhG8gCUN27SwK4VLUj3RO
+	 9DYHggMuReFIjwvZi1EV8sFV8em3oKZpNgs+MEh5pdZs/AM8oY2+iph05lvFyRRtD/
+	 5zl2lI5zO6MUw==
+Date: Mon, 24 Feb 2025 20:26:59 +1030
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 2/8][next] md/raid5-ppl: Avoid -Wflex-array-member-not-at-end
+ warning
+Message-ID: <7ceee2968cd7efa74c6a39147b14bb1b3bc3928c.1739957534.git.gustavoars@kernel.org>
+References: <cover.1739957534.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224093810.2965667-1-haoxiang_li2024@163.com>
-In-Reply-To: <20250224093810.2965667-1-haoxiang_li2024@163.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Feb 2025 10:56:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVufJ3CopGfCXzqfsX14AKWoAn_eUMY4GP1o+mznugKUQ@mail.gmail.com>
-X-Gm-Features: AWEUYZlkdpt8bJJMHFN4pXPfA2mxx7JvlLlSHhLsEyTe_NpsJQ9SXsLfs1W2bic
-Message-ID: <CAMuHMdVufJ3CopGfCXzqfsX14AKWoAn_eUMY4GP1o+mznugKUQ@mail.gmail.com>
-Subject: Re: [PATCH] auxdisplay: hd44780: Fix an API misuse in hd44780_probe()
-To: Haoxiang Li <haoxiang_li2024@163.com>
-Cc: andy@kernel.org, u.kleine-koenig@pengutronix.de, erick.archer@outlook.com, 
-	ojeda@kernel.org, w@1wt.eu, poeschel@lemonage.de, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1739957534.git.gustavoars@kernel.org>
 
-Hi Haoxiang,
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-On Mon, 24 Feb 2025 at 10:39, Haoxiang Li <haoxiang_li2024@163.com> wrote:
-> Variable "lcd" allocated by charlcd_alloc() should be
-> released by charlcd_free(). The following patch changed
-> kfree(lcd) to charlcd_free(lcd) to fix an API misuse.
->
-> Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+Change the type of the middle struct member currently causing trouble from
+`struct bio` to `struct bio_hdr`.
 
-Thanks for your patch!
+We also use `container_of()` whenever we need to retrieve a pointer to
+the flexible structure `struct bio`, through which we can access the
+flexible-array member in it, if necessary.
 
-> --- a/drivers/auxdisplay/hd44780.c
-> +++ b/drivers/auxdisplay/hd44780.c
-> @@ -313,7 +313,7 @@ static int hd44780_probe(struct platform_device *pdev)
->  fail3:
->         kfree(hd);
->  fail2:
-> -       kfree(lcd);
-> +       charlcd_free(lcd);
->  fail1:
->         kfree(hdc);
->         return ret;
+With these changes fix the following warning:
+drivers/md/raid5-ppl.c:153:20: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-LGTM, but please make a similar change to hd44780_remove().
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ drivers/md/raid5-ppl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/md/raid5-ppl.c b/drivers/md/raid5-ppl.c
+index c0fb335311aa..f4333c644b67 100644
+--- a/drivers/md/raid5-ppl.c
++++ b/drivers/md/raid5-ppl.c
+@@ -150,7 +150,7 @@ struct ppl_io_unit {
+ 	bool submitted;			/* true if write to log started */
+ 
+ 	/* inline bio and its biovec for submitting the iounit */
+-	struct bio bio;
++	struct bio_hdr bio;
+ 	struct bio_vec biovec[PPL_IO_INLINE_BVECS];
+ };
+ 
+@@ -250,8 +250,8 @@ static struct ppl_io_unit *ppl_new_iounit(struct ppl_log *log,
+ 	INIT_LIST_HEAD(&io->stripe_list);
+ 	atomic_set(&io->pending_stripes, 0);
+ 	atomic_set(&io->pending_flushes, 0);
+-	bio_init(&io->bio, log->rdev->bdev, io->biovec, PPL_IO_INLINE_BVECS,
+-		 REQ_OP_WRITE | REQ_FUA);
++	bio_init(container_of(&io->bio, struct bio, __hdr), log->rdev->bdev,
++		 io->biovec, PPL_IO_INLINE_BVECS, REQ_OP_WRITE | REQ_FUA);
+ 
+ 	pplhdr = page_address(io->header_page);
+ 	clear_page(pplhdr);
+@@ -430,7 +430,7 @@ static void ppl_submit_iounit(struct ppl_io_unit *io)
+ 	struct ppl_log *log = io->log;
+ 	struct ppl_conf *ppl_conf = log->ppl_conf;
+ 	struct ppl_header *pplhdr = page_address(io->header_page);
+-	struct bio *bio = &io->bio;
++	struct bio *bio = container_of(&io->bio, struct bio, __hdr);
+ 	struct stripe_head *sh;
+ 	int i;
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.43.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
