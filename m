@@ -1,322 +1,187 @@
-Return-Path: <linux-kernel+bounces-529190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95965A420E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:40:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18DBA420E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75CA017901C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C207176757
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9F73FBB3;
-	Mon, 24 Feb 2025 13:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1327C24BC14;
+	Mon, 24 Feb 2025 13:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oLsQveRH"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3Vnd94C"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D8E2571DC;
-	Mon, 24 Feb 2025 13:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DAD2192EB;
+	Mon, 24 Feb 2025 13:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740404139; cv=none; b=sdQ8/Wvizv3XrvhumWCqZ797Y/lAPxPxsdJx7btyFOdblmG91ktN28P84EoF2nr0qvdALNZnwrKfduzOwJvQfJ9dFQ6CsHQrahb7RigCAmjy2l3VCckUF/NzgVJ6O+jIi0W/I+z7xSpkJTs2tk8BSwvgh0wnR0FneNiXfOtY/a4=
+	t=1740404079; cv=none; b=D61tis13biS1TpE05nLBy9dEs5CXrIiGtlZ+RB6lDOiF2t0HlGAzcvbeiVVGVU2CCGejA628nYJJoCFFlVCsg+DgkinHf+6Eq242eDtu/ECVSStIxb/bWA+3TiOtzpWs5P18PG4hHyS2UCzNFiPfVwVofqaAvl8cyBYdjw4eE2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740404139; c=relaxed/simple;
-	bh=0+SnZnG6TPNZQrP0m+qSvmgEgFuRVE60uINmRg9g9ys=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ixAUeuaKE4f2lhmc5DdbBY6OW3gcaqMCrBThUpSI7Z20IWV8vzUZp53wlyi53KDYTRo83pf09FDPYlwVF6rZqfh84OYwaEoJxScF2WSeX4+zbMqYbQiXfbKt/2Z/xWfz3iSdBqae8uUFDWHtmwNSJSMoGqjTZLs7Bledq8DTdFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oLsQveRH; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740404135;
-	bh=0+SnZnG6TPNZQrP0m+qSvmgEgFuRVE60uINmRg9g9ys=;
-	h=From:Date:Subject:To:Cc:From;
-	b=oLsQveRHjmirSaFKKszubQA9tkVE/oUsNKA5b30Trd7O6jr6D2lnx/wesfMVSc/1/
-	 i7k2Y9EeoyAyvoJ6sGrnTIn08ORB8AxtTCXUc8wvDhyzSHrhQShLl5d9hZFCL0mzyr
-	 rNawY1es6aW9/OTWn+bfqugTlh/rFFAu70LsLPOnmOAE5U6lDtHpXHCmocMNOGKAeV
-	 pXyEkkClcxDNRQfDt/v13C98BjFeTurk2SYasjFNXz/6R6qq4W+tJCjzKN3EwakbZR
-	 B3loXNBZw4G9rNWoo7EwWjUtWKgqEHvaSa6xnGp8mL1J2EtSJWeWm5knLhei+SKpFB
-	 Q3r7EyBi/Kd8Q==
-Received: from yukiji.home (lfbn-tou-1-1147-231.w90-76.abo.wanadoo.fr [90.76.208.231])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laeyraud)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BB2D317E00EC;
-	Mon, 24 Feb 2025 14:35:34 +0100 (CET)
-From: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Date: Mon, 24 Feb 2025 14:34:14 +0100
-Subject: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Add display
- on DSI0
+	s=arc-20240116; t=1740404079; c=relaxed/simple;
+	bh=qKTv7i9UlJGQGohAN6G2hXNKurAdQm5fSABB4QmmjxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IF/24xrDwahvUNO1mHuVVWMecjjBORmBCjLZDpM31m0nWcmBV830caIJ574+HABb1v/h8zQ77R9BL7/g2uCT3iSlYmAXV2ClBVyWY7BDzKEj2mm8AVb9cMAiv6kWSU0GRsIBjrDkFIPaO80o5yqfx7wB40gpv3YvbT5BraGuCjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3Vnd94C; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso2261532f8f.3;
+        Mon, 24 Feb 2025 05:34:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740404076; x=1741008876; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OAg+3nWpCX28gp0yop3cTi7eprtgpHgYieQoEXp/Zxw=;
+        b=b3Vnd94Czp22iPPbmF1QjAipNC/mjrMwD0kY/y1TN9tkLtO545t+gXG6bkecLBW3YV
+         X+oDZlaP6Xl5R6b9DWG903WYIw1CPl7l+TSzM2uisR+yNB1iP0PQAQRJoMU6B0nN2HKH
+         J/tfQ0el5pOnj1G4UCDCOkHar23j3z5sVjZixuZSQWPMeSJENfAsLuygifsEUxD5YlQH
+         srNUC+fEpKmlLEQXS5vTZEZU/jHvyShwtg9j124Gs2uSpmtCoR8SpxtOlFF+007WZAK9
+         uqC2ygnjY/ZG8hz7N6Ch4yi2gor/VV8T6e3tJv+Ph2J6mxXIuewSWzdoTEL/7nl5M0Uq
+         ugag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740404076; x=1741008876;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OAg+3nWpCX28gp0yop3cTi7eprtgpHgYieQoEXp/Zxw=;
+        b=e7cKMhGpwcE+ZC+iJioT9judghM38yENB+tI2zRs0ywJ3yVuoZuDsZhlneRho6Q7wz
+         8+5CzdPPWjVby35SJNAu0BPMqQfVDZtfqFsRp83AyqJxdQK9V9S6vjR8TNWfJTa4MlWS
+         Vtuq2g3gcybgQcFWQbvMJGrUkvEMQZP5Mb7+G/QXdrlIwDX7wvlwYgYYjZy4HGoe+jHq
+         PGwq2f8c6aayDJaHS9D3arcZ/M9sSBVOPjrqasPHn1moGV5pDINkF8I1l4KbM8a6KLat
+         AeMSb9hMYGgekWt0E/V7Zu62Pk2vpoV6Fqv4B4jc5Udj3eNQ5u1lhFdzQtiRocXqJr3l
+         NF9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUSZHMamAxdObwlu+553UP0KoAx7qxf2HCtPF3WXXIlucsY75TLUYwIradYXlznVATN5TPKJIfX@vger.kernel.org, AJvYcCUVUpYCVCWR5y0LWZKmtP5yLuJ6FOk8M7kpqlJ1sU6TLR7c/i/sMs25qKXmOS/OeqqBrSwEpxVmGHoeYCY=@vger.kernel.org, AJvYcCV0WvZdj+PhPEl3168XSO0ERTZLZLmi3jK8JH7N+QRlA3xQUSVI3OmU+1bbuQ/5VzgPFZDTt4mJhStelrc=@vger.kernel.org, AJvYcCVTiw83QFXvut+KB0EEZ+ElPZk/tPiCeUrOlgW9jIj2hBTCHiF0nIyte3DuZcS0fCQzCz5ssXZmK+Z5CyCQ@vger.kernel.org, AJvYcCVtZPuaHfEcTEKkKI+0jQyDK1Bkg/GHrJ/S1EyBY1oLRDN0e5BQ+Bq6EAawWjUGmygPDBjlUgY+M3rBYtnduDs=@vger.kernel.org, AJvYcCWS6FaGPdavjkXGQIo5JeOxFxiY1a1T5Iy3MWlRjDitY/fkalmRDKfQI8OUONbyoN8Xn5eZyhadjnC1YGFm@vger.kernel.org, AJvYcCWj5D78JXhBDANAVeQrJgSmEEO72bhG2TYl3JM6RrySaED8574udSkyVliMu/gbFG/y2vA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx60hqBGYKOnp+F+DK9f19+6OCEDNpvBy0vFBmyujKLHd/mJIUV
+	WmOf7Ll7qSQ0ZScbclUcclZxPEaHOo09G+Ivnsnwhs7iCrMklbxy
+X-Gm-Gg: ASbGncvya1YKaExg/UFr4ZM/sC2A6TyckrL/HnHbyqjZw4h5Wd1D+RB/81+LoEt/Cx/
+	h0GaoqsxIff7GsoN6L/ijoiZ88O27GFaAfJUsXA0fhSa9a2mFfnVFYDDQmlyOcAPWlZvyREd9Po
+	jfp9+NIC0biKjrHBJG6fmFWALDdGgQCmCSL3YDJuucg8JJIf5HRJ+dURKfAs0tjDPqdfz9u/+2o
+	eybWR5zEeZ3KhLcUiJLzgWOjXqP4Fno8gVFlzYq8ueXuhpvYu+3lLq/NpXdku3Wm4xMPI3jayZ4
+	nxiB9KnCHvy+Z4eKjZo8wCBo/pV1Osha5t89Q6x86d9oo4p4YkRSKzK4PZtkRZ4T
+X-Google-Smtp-Source: AGHT+IHAk3Wvwyk1vqkRenvO3RPC8nmIGBVFBN9gj/vKmwdIoVhq2/WUUPGNh8lDJR1/QVDS5j7zIQ==
+X-Received: by 2002:a05:6000:144a:b0:38f:4d40:358 with SMTP id ffacd0b85a97d-38f6e7587c5mr11099286f8f.9.1740404075459;
+        Mon, 24 Feb 2025 05:34:35 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f74817cbdsm9492882f8f.68.2025.02.24.05.34.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 05:34:35 -0800 (PST)
+Date: Mon, 24 Feb 2025 13:34:31 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, jk@ozlabs.org, joel@jms.id.au, eajames@linux.ibm.com,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, dmitry.torokhov@gmail.com,
+ mchehab@kernel.org, awalls@md.metrocast.net, hverkuil@xs4all.nl,
+ miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+ louis.peens@corigine.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com,
+ parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+ johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+ yury.norov@gmail.com, akpm@linux-foundation.org, hpa@zytor.com,
+ alistair@popple.id.au, linux@rasmusvillemoes.dk,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
+ linux-input@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
+ linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+ Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH 02/17] bitops: Add generic parity calculation for u64
+Message-ID: <20250224133431.2c38213f@pumpkin>
+In-Reply-To: <bde62fee-4617-4db7-b92c-59fb958c4ca6@kernel.org>
+References: <20250223164217.2139331-1-visitorckw@gmail.com>
+	<20250223164217.2139331-3-visitorckw@gmail.com>
+	<bde62fee-4617-4db7-b92c-59fb958c4ca6@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-mt8395-genio-1200-evk-enable-dsi-panel-v1-1-74f31cf48a43@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAFV1vGcC/5WPwW6DMAyGXwXlPKMkQJeiadp7VD2Y4FFrIe4SW
- lWq+u4LZdcddvxs+f9+31WmxJRVX91VoitnlljAvFTKnzBOBDwWVlbbTlurYV5cs+9gosgCxmo
- NdP0CijgEgjEznDFSANKvjrzFEcmrEnZO9Mm3p+hw3DjR96X4lm2oBswEXuaZl76KdFvg19mu9
- zPljM82ffW2LUxjVr+ru12zb8HAWjfIxILenzhKPVJINEX58BICDpKwLoL3v/Kcactrtnat3Zn
- /5B0fjx+6rlVPSQEAAA==
-X-Change-ID: 20250220-mt8395-genio-1200-evk-enable-dsi-panel-e078ec2adaec
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740404134; l=5964;
- i=louisalexis.eyraud@collabora.com; s=20250113; h=from:subject:message-id;
- bh=0+SnZnG6TPNZQrP0m+qSvmgEgFuRVE60uINmRg9g9ys=;
- b=AAKAfD3Q5a6mZsY6njOsoX7F6kFlJNNhLg8r85Kp3C0zppdAJKg05NDGDW0Z4EhhS98Zn2sOa
- /fF61134ShmCZ8XUb+WNZO3QgPIwZ7trOPgtIKu0Mi+txdegTGpvZEV
-X-Developer-Key: i=louisalexis.eyraud@collabora.com; a=ed25519;
- pk=CHFBDB2Kqh4EHc6JIqFn69GhxJJAzc0Zr4e8QxtumuM=
 
-This board has a Startek KD070FHFID078 MIPI-DSI panel on the DSI0
-connector, so add and configure the pipeline connecting VDOSYS0
-components to DSI0, with the needed pinctrl and display nodes in
-devicetree.
+On Mon, 24 Feb 2025 08:09:43 +0100
+Jiri Slaby <jirislaby@kernel.org> wrote:
 
-Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
----
-I've tested this patch on a Mediatek Genio 1200 EVK P1V2 board,
-with a kernel based on linux-next (tag: next-20250224) plus the
-following patchsets:
-- MediaTek MT8195/MT8395 Display Controller Graph [1]
-- Add driver for Himax HX8279 DriverIC panels [2]
+> On 23. 02. 25, 17:42, Kuan-Wei Chiu wrote:
+> > Several parts of the kernel open-code parity calculations using
+> > different methods. Add a generic parity64() helper implemented with the
+> > same efficient approach as parity8().
+> > 
+> > Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > ---
+> >   include/linux/bitops.h | 22 ++++++++++++++++++++++
+> >   1 file changed, 22 insertions(+)
+> > 
+> > diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> > index fb13dedad7aa..67677057f5e2 100644
+> > --- a/include/linux/bitops.h
+> > +++ b/include/linux/bitops.h
+> > @@ -281,6 +281,28 @@ static inline int parity32(u32 val)
+> >   	return (0x6996 >> (val & 0xf)) & 1;
+> >   }
+> >   
+> > +/**
+> > + * parity64 - get the parity of an u64 value
+> > + * @value: the value to be examined
+> > + *
+> > + * Determine the parity of the u64 argument.
+> > + *
+> > + * Returns:
+> > + * 0 for even parity, 1 for odd parity
+> > + */
+> > +static inline int parity64(u64 val)
+> > +{
+> > +	/*
+> > +	 * One explanation of this algorithm:
+> > +	 * https://funloop.org/codex/problem/parity/README.html
+> > +	 */
+> > +	val ^= val >> 32;  
+> 
+> Do we need all these implementations? Can't we simply use parity64() for 
+> any 8, 16 and 32-bit values too? I.e. have one parity().
 
-[1] https://lore.kernel.org/all/20250213112008.56394-1-angelogioacchino.delregno@collabora.com/
-[2] https://lore.kernel.org/all/20250218143952.84261-1-angelogioacchino.delregno@collabora.com/
----
- .../boot/dts/mediatek/mt8395-genio-1200-evk.dts    | 125 +++++++++++++++++++--
- 1 file changed, 118 insertions(+), 7 deletions(-)
+I'm not sure you can guarantee that the compiler will optimise away
+the unnecessary operations.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index 5950194c9ccb2520d826c4d26f6dc0958a5a17fa..2679727bcf07d6b7d5e8aae5b717c2f31bad7947 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -91,13 +91,12 @@ apu_mem: memory@62000000 {
- 		};
- 	};
- 
--	backlight_lcd0: backlight-lcd0 {
-+	backlight_lcm0: backlight-lcm0 {
- 		compatible = "pwm-backlight";
--		pwms = <&disp_pwm0 0 500000>;
--		enable-gpios = <&pio 47 GPIO_ACTIVE_HIGH>;
- 		brightness-levels = <0 1023>;
--		num-interpolated-steps = <1023>;
- 		default-brightness-level = <576>;
-+		num-interpolated-steps = <1023>;
-+		pwms = <&disp_pwm0 0 500000>;
- 	};
- 
- 	backlight_lcd1: backlight-lcd1 {
-@@ -150,6 +149,24 @@ button-volume-up {
- 		};
- 	};
- 
-+	lcm0_iovcc: regulator-vio18-lcm0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vio18_lcm0";
-+		enable-active-high;
-+		gpio = <&pio 47 GPIO_ACTIVE_HIGH>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&dsi0_vreg_en_pins>;
-+		vin-supply = <&mt6360_ldo2>;
-+	};
-+
-+	lcm0_vddp: regulator-vsys-lcm0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vsys_lcm0";
-+		regulator-always-on;
-+		regulator-boot-on;
-+		vin-supply = <&mt6360_ldo1>;
-+	};
-+
- 	wifi_fixed_3v3: regulator-2 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "wifi_3v3";
-@@ -163,14 +180,65 @@ wifi_fixed_3v3: regulator-2 {
- 
- &disp_pwm0 {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&pwm0_default_pins>;
-+	pinctrl-0 = <&disp_pwm0_pins>;
- 	status = "okay";
- };
- 
-+&dither0_in {
-+	remote-endpoint = <&gamma0_out>;
-+};
-+
-+&dither0_out {
-+	remote-endpoint = <&dsi0_in>;
-+};
-+
- &dmic_codec {
- 	wakeup-delay-ms = <200>;
- };
- 
-+&dsi0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "startek,kd070fhfid078", "himax,hx8279";
-+		reg = <0>;
-+		backlight = <&backlight_lcm0>;
-+		enable-gpios = <&pio 48 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&pio 108 GPIO_ACTIVE_HIGH>;
-+		iovcc-supply = <&lcm0_iovcc>;
-+		vdd-supply = <&lcm0_vddp>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&panel_default_pins>;
-+
-+		port {
-+			dsi_panel_in: endpoint {
-+				remote-endpoint = <&dsi0_out>;
-+			};
-+		};
-+	};
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+			dsi0_in: endpoint {
-+				remote-endpoint = <&dither0_out>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dsi0_out: endpoint {
-+				remote-endpoint = <&dsi_panel_in>;
-+			};
-+		};
-+	};
-+};
-+
- &eth {
- 	phy-mode ="rgmii-rxid";
- 	phy-handle = <&eth_phy0>;
-@@ -194,6 +262,10 @@ eth_phy0: ethernet-phy@1 {
- 	};
- };
- 
-+&gamma0_out {
-+	remote-endpoint = <&dither0_in>;
-+};
-+
- &gpu {
- 	mali-supply = <&mt6315_7_vbuck1>;
- 	status = "okay";
-@@ -346,6 +418,10 @@ &mfg1 {
- 	domain-supply = <&mt6359_vsram_others_ldo_reg>;
- };
- 
-+&mipi_tx0 {
-+	status = "okay";
-+};
-+
- &mmc0 {
- 	status = "okay";
- 	pinctrl-names = "default", "state_uhs";
-@@ -428,6 +504,10 @@ &mt6359codec {
- 	mediatek,mic-type-2 = <1>; /* ACC */
- };
- 
-+&ovl0_in {
-+	remote-endpoint = <&vdosys0_ep_main>;
-+};
-+
- &pcie0 {
- 	pinctrl-names = "default", "idle";
- 	pinctrl-0 = <&pcie0_default_pins>;
-@@ -705,6 +785,25 @@ pins {
- 		};
- 	};
- 
-+	dsi0_vreg_en_pins: dsi0-vreg-en-pins {
-+		pins-pwr-en {
-+			pinmux = <PINMUX_GPIO47__FUNC_GPIO47>;
-+			output-low;
-+		};
-+	};
-+
-+	panel_default_pins: panel-default-pins {
-+		pins-rst {
-+			pinmux = <PINMUX_GPIO108__FUNC_GPIO108>;
-+			output-high;
-+		};
-+
-+		pins-en {
-+			pinmux = <PINMUX_GPIO48__FUNC_GPIO48>;
-+			output-low;
-+		};
-+	};
-+
- 	pcie0_default_pins: pcie0-default-pins {
- 		pins {
- 			pinmux = <PINMUX_GPIO19__FUNC_WAKEN>,
-@@ -731,8 +830,8 @@ pins {
- 		};
- 	};
- 
--	pwm0_default_pins: pwm0-default-pins {
--		pins-cmd-dat {
-+	disp_pwm0_pins: disp-pwm0-pins {
-+		pins-disp-pwm {
- 			pinmux = <PINMUX_GPIO97__FUNC_DISP_PWM0>;
- 		};
- 	};
-@@ -912,6 +1011,18 @@ &ssusb3 {
- 	status = "okay";
- };
- 
-+&vdosys0 {
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vdosys0_ep_main: endpoint@0 {
-+			reg = <0>;
-+			remote-endpoint = <&ovl0_in>;
-+		};
-+	};
-+};
-+
- &xhci0 {
- 	status = "okay";
- };
+But:
+static inline int parity64(u64 val)
+{
+	return parity32(val ^ (val >> 32))
+}
 
----
-base-commit: 907011b922144e5818f97d7c5a8d9a3c95a336b1
-change-id: 20250220-mt8395-genio-1200-evk-enable-dsi-panel-e078ec2adaec
-prerequisite-message-id: <20250213112008.56394-1-angelogioacchino.delregno@collabora.com>
-prerequisite-patch-id: dd6662f92d7c58415b7e6ae2c576705457a1d4e2
-prerequisite-patch-id: a86d97f71944c3c7a59376b02bda0901a33ee462
-prerequisite-patch-id: 144478e815c29b03a11e4618bdd537d3576fcb59
-prerequisite-message-id: <20250218143952.84261-1-angelogioacchino.delregno@collabora.com>
-prerequisite-patch-id: 72961446cc5b827faac095c2d11121d045f93398
-prerequisite-patch-id: 8c71dca8b54f1619d13aea34dca06c357abe8511
+should be ok.
+It will also work on x86-32 where parity32() can just check the parity flag.
+Although you are unlikely to manage to use the the PF the xor sets.
 
-Best regards,
--- 
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+	David
+
+> 
+> > +	val ^= val >> 16;
+> > +	val ^= val >> 8;
+> > +	val ^= val >> 4;
+> > +	return (0x6996 >> (val & 0xf)) & 1;
+> > +}
+> > +
+> >   /**
+> >    * __ffs64 - find first set bit in a 64 bit word
+> >    * @word: The 64 bit word  
+> 
+> 
 
 
