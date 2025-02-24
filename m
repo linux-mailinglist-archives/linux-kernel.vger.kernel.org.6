@@ -1,120 +1,158 @@
-Return-Path: <linux-kernel+bounces-528320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF465A41639
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:27:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7EBA4163A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B691516CED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:27:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED59416BEF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E81240610;
-	Mon, 24 Feb 2025 07:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827120AF7E;
+	Mon, 24 Feb 2025 07:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kT03KoYd"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoTDMkPj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD80C4414;
-	Mon, 24 Feb 2025 07:27:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1294414
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740382029; cv=none; b=MFKlwJbRF3b17stmjRN7/QBnYHL1P6syb+bT/+kr10Mpvsimff4eu9usbI3bU6HykKdQvchxgujk4vPYzhMhA8FF+X8kFH5HsGLQXpKst2SIpQBHgzw/pjpV96yqye8l8svNyJPrnLsFs7AMeOZQAf492hz3DFeWbQdJ+gzWy0c=
+	t=1740382059; cv=none; b=jd4TKjIRcPFW7Ywz04CSBMAKlpTrYJUCkVGeibJcCQZKaZIDW9vbHoMvWC9+Y6HIW8XMhLCHjaJ7+ubunkMh7IZHc419Qjvhw0Dwg/gBCAgtvD9nBGppdDEDYJBzlvF+VuxzucsYafBKkic6+BSFCIehLvAUfRro8xSsgzQgdPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740382029; c=relaxed/simple;
-	bh=fj9ATARjbXR29ISCacUsG5uVWZEBOqKd2CTMA8IFPLM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jwFB5gaB17LM5fzfLAsjQt2lrSQgTHHBb1Id+dnCjKpORmWnxRHvIIJVSBeUC95bcyolINQIzxkE5YYSvfqnht9lkEqHy8w7lUCwMu6OZT9X6VBdCnto6m5BF0Xr1mmvmQo0SVwQPOwprmdGS1zbBzGDP8aqMH1gjLAHKMLi4c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=kT03KoYd; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1740382028; x=1771918028;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=fj9ATARjbXR29ISCacUsG5uVWZEBOqKd2CTMA8IFPLM=;
-  b=kT03KoYdsFKAEPq0DQLXgh1wI8h0Nq4cJ4ttHeqK0lTrGXbSzt0li2z7
-   K2ylPZ/I4jvU5w9wV1g6mvGFbgx4UCHwBPawi5Rphw0HOxdKwVG7/vEp8
-   cJh888/G9HQHNKGltgIMZLMMJlJp9u/4J0pSja1PsQC6bqvexNLTV8KY0
-   b3sX+O0kkXVEpw1aLDNMXqw5Vv7cVdIFAky0sJbdyFzZKsDGb8Oy2DzBm
-   vFp8jfs4FJcqOMoBQhGvIoX+2/wyiabtXFU5KirgJ7f4JnLwEA/masOVz
-   FAsRnpiEg3KaSp7LIjn9xwVJK95OSNWLkGLAaNVbAhvIezRYtz4QqFFSK
-   w==;
-X-CSE-ConnectionGUID: m2OKtz9RQ8GGzkYxdWztiQ==
-X-CSE-MsgGUID: 4T49poF1RKCLNxbUY6QxcQ==
-X-IronPort-AV: E=Sophos;i="6.13,309,1732604400"; 
-   d="scan'208";a="38035487"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Feb 2025 00:27:07 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 24 Feb 2025 00:26:52 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 24 Feb 2025 00:26:50 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <thorsten.blum@linux.dev>
-CC: <alexandre.belloni@bootlin.com>, <andrei.simion@microchip.com>,
-	<broonie@kernel.org>, <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-sound@vger.kernel.org>, <nicolas.ferre@microchip.com>,
-	<perex@perex.cz>, <tiwai@suse.com>
-Subject: Re: [PATCH] ASoC: atmel: atmel-classd: Use str_enabled_disabled() helper
-Date: Mon, 24 Feb 2025 09:26:15 +0200
-Message-ID: <20250224072614.6811-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250222225925.539840-2-thorsten.blum@linux.dev>
-References: <20250222225925.539840-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1740382059; c=relaxed/simple;
+	bh=Hzb/0ReZlhAP1hb0vw7qpMe0Jeo2piZblxd/1kov8b0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I5qxUVaS3WIqwChZeBCD+fwbwIfgIN1xaV9N/VmGFFPmrylQCKe8S1QI+hfZNJ/NMQIbaGVGcErzRUB/4fHaHQCf4713fyuCwLSBNZa4imTFirY+vjjzuX18NzvmxbizpSxYto6eQlqAF2scsvlCvUAnDbQ53rXBUb+h2x3p5L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoTDMkPj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB1BCC4CED6;
+	Mon, 24 Feb 2025 07:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740382058;
+	bh=Hzb/0ReZlhAP1hb0vw7qpMe0Jeo2piZblxd/1kov8b0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aoTDMkPjojgBibf3fIBAr/tfqpTNFBRxagGQTLn0cLtz84PEVfddaAyefrgUrAvfO
+	 Q9ASQX9ccCbdE2sJ6qSpHwq6IUqEfIxw+XmvEKIiBUq53VxEBjWTvcXezUCa9G/f4z
+	 zdYx/pHDcThv3FzzLFJiHhcUlMKFa+f7LdOHaoAB0LY/dUNOhFezRmRzSHyuiUWn69
+	 RdQAUvSxEPnFr7H7R/a7jAS0m8vCylZCQyU7xp88MgsA/RqDOT0H7W0mSop/6j76Ky
+	 95OdNy/eErgQdA3VQjuIl/t0KqvojSYwgl5h5jXqUjUQRaqE3vj6nlSsdT9ysEZ/LC
+	 AfKbuw1evwwtQ==
+Message-ID: <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org>
+Date: Mon, 24 Feb 2025 08:27:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>
+References: <20250129154920.6773-1-ubizjak@gmail.com>
+ <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
+ <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Hi,
+On 24. 02. 25, 8:24, Uros Bizjak wrote:
+> On Mon, Feb 24, 2025 at 8:18 AM Jiri Slaby <jirislaby@kernel.org> wrote:
+>>
+>> On 29. 01. 25, 16:47, Uros Bizjak wrote:
+>>> The return values of some functions are of boolean type. Change the
+>>> type of these function to bool and adjust their return values.
+>>>
+>>> No functional change intended.
+>>>
+>>> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Ingo Molnar <mingo@kernel.org>
+>>> Cc: Borislav Petkov <bp@alien8.de>
+>>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
+>>> ---
+>>>    arch/x86/kernel/bootflag.c | 12 ++++++------
+>>>    1 file changed, 6 insertions(+), 6 deletions(-)
+>>>
+>>> diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
+>>> index 3fed7ae58b60..4d89a2d80d0f 100644
+>>> --- a/arch/x86/kernel/bootflag.c
+>>> +++ b/arch/x86/kernel/bootflag.c
+>>> @@ -20,7 +20,7 @@
+>>>
+>>>    int sbf_port __initdata = -1;       /* set via acpi_boot_init() */
+>>>
+>>> -static int __init parity(u8 v)
+>>> +static bool __init parity(u8 v)
+>>>    {
+>>>        int x = 0;
+>>>        int i;
+>>> @@ -30,7 +30,7 @@ static int __init parity(u8 v)
+>>>                v >>= 1;
+>>>        }
+>>>
+>>> -     return x;
+>>> +     return !!x;
+>>
+>> This "!!" is unnecessary and only obfuscates the code, right?
+> 
+> Not really, this idiom is used in place of (x != 0) to change the type
+> to the return type of the function in a pedantic way.
 
-On 23.02.2025 00:59, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_enabled_disabled() helper
-> function.
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Care to explain what exactly it changes?
 
-Reviewed-by: Andrei Simion <andrei.simion@microchip.com>
-
-> ---
->  sound/soc/atmel/atmel-classd.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/sound/soc/atmel/atmel-classd.c b/sound/soc/atmel/atmel-classd.c
-> index ba314b279919..1f8c60d2de82 100644
-> --- a/sound/soc/atmel/atmel-classd.c
-> +++ b/sound/soc/atmel/atmel-classd.c
-> @@ -11,6 +11,7 @@
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> +#include <linux/string_choices.h>
->  #include <sound/core.h>
->  #include <sound/dmaengine_pcm.h>
->  #include <sound/pcm_params.h>
-> @@ -275,7 +276,7 @@ static int atmel_classd_component_probe(struct snd_soc_component *component)
->  	dev_info(component->dev,
->  		"PWM modulation type is %s, non-overlapping is %s\n",
->  		pwm_type[pdata->pwm_type],
-> -		pdata->non_overlap_enable?"enabled":"disabled");
-> +		str_enabled_disabled(pdata->non_overlap_enable));
->
->  	return 0;
->  }
-
-Best Regards,
-Andrei Simion
+-- 
+js
+suse labs
 
