@@ -1,126 +1,116 @@
-Return-Path: <linux-kernel+bounces-529776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC34EA42AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:13:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C3CA42AFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071581763F3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F8B7A50BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE61B264A89;
-	Mon, 24 Feb 2025 18:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65290265615;
+	Mon, 24 Feb 2025 18:19:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RlUwYmd5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwkbPPry"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FF433F3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B142C24394F;
+	Mon, 24 Feb 2025 18:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420707; cv=none; b=pMkOF0hI0kJ+1lF600lzbZL0qrnSeGAKJHe64mcaQhRsHJ59UGxNWeogi7I4XmNR3QHp/q96oyH2nrxKo9AksABl4VrnFBjZDyjlBBM+jWIphmwFIvv4F5q5+bm1JUpLysGvHncE+DNuhdoHGrj0qGEwHa5HWQ4Ko4ab3Yg6wKM=
+	t=1740421161; cv=none; b=WpU1C6PYaNdZocj1LB1gODrd/OKxKk8BxsIsZPQIMhI2BMKvZb118zOEMqemdMPFaQysqCiPzs+NVbkhOhGlsSNxG5kbYrrciZ9JdpBK1GcGBsNJr3psgT4FJjdmWHjniw0gjw8PKQCmP011wFIAE1mVSO7qMm6LEfCZcedMUE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420707; c=relaxed/simple;
-	bh=6vwIJq36TFsrmFzwCOIaxGEWsTnkWmsv7+48wxqvu7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kS34Jf1MmKNi8HsF76683kCBfuw31cbvGk5sX64GMIRN6U0Bohemrw0fgs0vkGASeBmyo6PpdwGSspPNhQNWUbgKhNV42P0zKp/AM5FfH9TDdeAn1GeiFDz0zr+ig9+HJdoZJvPKd/cdwa07lu5hGjrhp2Gt734sUg6vqYcAzo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RlUwYmd5; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740420706; x=1771956706;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6vwIJq36TFsrmFzwCOIaxGEWsTnkWmsv7+48wxqvu7o=;
-  b=RlUwYmd5R/5y3aOXTkGiD60r5EKcj+Gkf/xHad/72/asxvminP66u6kD
-   z6Rsl59h43X6I4/HW4qHFA+JOWQI52SZv/FSiIHd57y1JC2x71GerkYwq
-   62JYaHRzQxorKUuFVNBUIQAIG7788P7Krm+1Q1fkDZKGdMhEW/7CHqVe4
-   L1Lbv9OOXt81Gap+wKIBv1PnUFGlCI5F2F1+LX3gUzqNTv+t56Le+wSfL
-   xTo+gfVgGGeVFSM/PvtavNqNyfmlFJ5vA3mCnOePye74ZQ5I+fIltqCO7
-   gad4Y6brFUhsCGx/kf7qzMehquUaIeo3IFzENK+pH2NlOAEh4HYKsFnJO
-   g==;
-X-CSE-ConnectionGUID: BmaPwE6zTlSnFAInq43cTA==
-X-CSE-MsgGUID: 2UICPywoTPeeQili3eVzWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="28784332"
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="28784332"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:11:45 -0800
-X-CSE-ConnectionGUID: Pa2ixOGuSm2Otk6dgMUccg==
-X-CSE-MsgGUID: IW03Ccg7StaIxvSF69ZYxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,312,1732608000"; 
-   d="scan'208";a="120755065"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 10:11:43 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmcvb-0000000ElxV-3c5G;
-	Mon, 24 Feb 2025 20:11:39 +0200
-Date: Mon, 24 Feb 2025 20:11:39 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v1 1/1] x86/mm: Check if PTRS_PER_PMD is defined before
- use
-Message-ID: <Z7y2W8tsAOPhqNfn@smile.fi.intel.com>
-References: <20250224173940.219820-1-andriy.shevchenko@linux.intel.com>
- <76b8174e-3c4c-4db4-83d0-aa8d241c7afe@intel.com>
+	s=arc-20240116; t=1740421161; c=relaxed/simple;
+	bh=uwyoOtIyHLqC9nZ97BA9itdUvfRcvpHiv3XhxZ/ILuE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FJr8D258Y18iGOwiGegEewOs002WbBuJIbUaLNGMfxmxcEZvBP+b+trMI0d93JbAJ+5wJ+4EuCOyU6uhcuf/94XaCylLXT5t9j2VfWejXmUZmbrQwOjPosAlLDuB5HsrvcEVxxP6cqRGL8yD5aHzBhYIREwjq2jIyGkF49xYmdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwkbPPry; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF33C4CED6;
+	Mon, 24 Feb 2025 18:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740421161;
+	bh=uwyoOtIyHLqC9nZ97BA9itdUvfRcvpHiv3XhxZ/ILuE=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uwkbPPryHUMDqO+hc+E4Fusjct9SUtD4RluVMaGMy6omU7WWpmxk9a0DzT5Wq6xgI
+	 SZ/idgHZo8u9AjCsIgjGDdTv8Hh9GhLqiQlWQalyNfMSW8TesrHZYqlEgbGnJ2vkSG
+	 QULe7bVc3zDt3Rbm/p7PByJVlgRYP59zKQWxcQ1+2mTGmJ1eNLWgUYbH7mkyzQdoC8
+	 C6YGQpOSNfrNkDXPrjDbWOpy9GkM2TJ9vrJHr/vScNqtKchPHc9MI6/vl85iHMsjlg
+	 /l+4h5LtsMHqKxtO6mt1/fzHb7ryyexS+E2rCvFCaQH7/9dXbsiB/TWjd45owW+CDy
+	 pF2zX3ZGSWGqw==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net 0/3] mptcp: misc. fixes
+Date: Mon, 24 Feb 2025 19:11:49 +0100
+Message-Id: <20250224-net-mptcp-misc-fixes-v1-0-f550f636b435@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <76b8174e-3c4c-4db4-83d0-aa8d241c7afe@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGW2vGcC/x3LSwqAMAwA0atI1gZq8YdXERdSU82itTQiQvHuB
+ pfD8AoIZSaBqSqQ6WbhM2o0dQXuWONOyJs2WGM7Y22LkS4M6XIJA4tDzw8Jjqsfh741mycPSlO
+ mf6icQQUs7/sBGPPiHGsAAAA=
+X-Change-ID: 20250224-net-mptcp-misc-fixes-8af87640dfef
+To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org, 
+ syzbot+cd3ce3d03a3393ae9700@syzkaller.appspotmail.com, 
+ "Chester A. Unal" <chester.a.unal@xpedite-tech.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1036; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=uwyoOtIyHLqC9nZ97BA9itdUvfRcvpHiv3XhxZ/ILuE=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnvLbE/Sc41iqtpNEO42OrCzrDoc6CwtVMpsVom
+ V2EeuGwq+WJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ7y2xAAKCRD2t4JPQmmg
+ c2ifD/9eV4Mq4huRH7bhLHLHZmYz25C/ayWVEGmV+T3aYi1PviW3XMbUXwRGPUzYSRldUPPgpRk
+ Q4haHwrGxYQYN1UTFr0t9a0pbVn9yo0Pm2fzNNfHhlsTVvnE1kJOKxnM5+K1kIr8xwNUFgxx3J0
+ 2nI3ZZzOe5eJRxOklVBBV3G4Gx8KoS6pSRgI0WQePW0rhGwa1mN+hvCVaGzjJMnKwXnH0SZkiCp
+ 8dT1wL8RfxiR8PJc3oMQKaaonCHE40Bhf5bzg5deA7eEDOZDt7C7r2Dasskkz0Sx2zsLOt8DqGV
+ FMIoN7lI13p+bEBYt/T4z6frDwVOjnNUBGnUNc6oQo5iTvTd2wUbrdnyQROywvfXS/Wy+kS6ybr
+ t7X/gMnSljSo3E84ycpskSqTzUaMh1GGAWRofGCqKi7dqcbK3gkruaRNNv+21uvWys5tsYbSsMX
+ rTg0qKgEtdcun6yHJTAGS+dDx1JFiCF8Sp3fCQdxUMCd2w5wBlMWU2b6XceP5o9/uQoRltrTw0P
+ 7mKmBU1Fkv1VpQk9FD1Jbp0A5qx30ZFlqGtJ2dWZr9Z18Jm/FEh3yOgves0LFMTRdVbHPF+vxDo
+ fqqrST11wbT2R/PF6WtoF1KePl2lnK+wR1DTY8QlPUCuCe9uXXuDvWbqPsDg0Rq5CDl6+hCjAw9
+ SYRaijJWjcekdMA==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Mon, Feb 24, 2025 at 09:59:23AM -0800, Dave Hansen wrote:
-> On 2/24/25 09:39, Andy Shevchenko wrote:
-> > Compiler is not happy about PTRS_PER_PMD being undefined
-> > 
-> > In file included from arch/x86/kernel/head_32.S:29:
-> > arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
-> >    59 | #if PTRS_PER_PMD > 1
-> > 
-> > Add a check to make sure PTRS_PER_PMD is defined before use.
-> 
-> Hi Andy,
-> 
-> From reading the "Closes:" link, it appears this is a new issue that
-> originates from a new compile flag. So it doesn't seem like it's worth
-> backporting.
+Here are two unrelated fixes, plus an extra patch:
 
-FWIW, I haven't put any Fixes tag nor Cc: stable@ :-)
-Also note this looks like both compilers complain about the same.
+- Patch 1: prevent a warning by removing an unneeded and incorrect small
+  optimisation in the path-manager. A fix for v5.10.
 
-> Also, the _behavior_ of "#if PTRS_PER_PMD > 1" was fine, right? It
-> didn't cause the logic to go backwards from what was intended, does it?
-> 
-> This:
-> 
-> 	https://gcc.gnu.org/onlinedocs/gcc-3.0.2/cpp_4.html
-> 
-> says: "Identifiers that are not macros, which are all considered to be
-> the number zero."
-> 
-> Which would yield the correct behavior.
-> 
-> So I think this is purely a fix for new warning in new kernels. We
-> shouldn't need to backport this anywhere at all.
+- Patch 2: reset a subflow when MPTCP opts have been dropped after
+  having correctly added a new path. A fix for v5.19.
 
+- Patch 3: add a safety check to prevent issues like the one fixed by
+  the second patch.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (2):
+      mptcp: reset when MPTCP opts are dropped after join
+      mptcp: safety check before fallback
+
+Paolo Abeni (1):
+      mptcp: always handle address removal under msk socket lock
+
+ net/mptcp/pm_netlink.c |  5 -----
+ net/mptcp/protocol.h   |  2 ++
+ net/mptcp/subflow.c    | 15 +--------------
+ 3 files changed, 3 insertions(+), 19 deletions(-)
+---
+base-commit: f15176b8b6e72ac30e14fd273282d2b72562d26b
+change-id: 20250224-net-mptcp-misc-fixes-8af87640dfef
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
