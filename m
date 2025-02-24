@@ -1,92 +1,93 @@
-Return-Path: <linux-kernel+bounces-529621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F5EA428CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:04:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED704A428FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6C219C1B05
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D813B8E28
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 17:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68223265615;
-	Mon, 24 Feb 2025 16:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC01B264FBB;
+	Mon, 24 Feb 2025 16:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="D3ZFpufe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E24263F57
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Yx2H6DuQ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD8D25485D;
+	Mon, 24 Feb 2025 16:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740416260; cv=none; b=ip0W6Bca+e7j1bFoiuE7RkiWRoHnomvGjHqRB9o+qzFKwtnebfAYQWB87n0bInnwUvclYppX6NCR9H4pXN8xzSEjZTscp3zvloL95k6HsliofIKMRRALBOJTgMdL2DNMbI8qEUhp+kbZ7p9Zg5wzNPSqHERaRRdoJRHSmHHV9eU=
+	t=1740416249; cv=none; b=sw5HocFPCrXnSQlE7mMXaketJLG4PLS2MOlaqJh6zNos2kL/jLARJVkTh5qWl4WEAneVVO9oJOE6iJTY/PtBC1V4jgYkJ+zzGxo6heXl7jmIjfsMvSDRfj14+Qxw9aE6HUDNIqrk0Blo6nwtYvNOR78u9UuQ5eTz41iUAWA+9UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740416260; c=relaxed/simple;
-	bh=Kbt09C33MAk+YKGq1E7A3qrzPN58ot8VJKi0PWNi2bc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/9KByLFN7dLev3bVGaS+uWXRld3m092hcPKHNSMPzQ4TXvjWJLioKq+mYtkKWnoDKJ59/N+ecj/095ibigTyoxL+IYKSzXfUrOMfT8N2Sh4e0B2pDYRrRZFe1udHg6FU2Jc/WWoRrv9Kl6km2E6AapfywG4Ag+q3aMwVIptODw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=D3ZFpufe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9F07C4CEDD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:57:39 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="D3ZFpufe"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1740416257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kbt09C33MAk+YKGq1E7A3qrzPN58ot8VJKi0PWNi2bc=;
-	b=D3ZFpufeD3ztTYfod4kVBl23ryUYa9qgrY34Cw7kVAXfFxcw2VPdISJ8a+9qEuJlsjWUzm
-	NM98dT3zC59A0nivNybXrtHgaccxGIwlNKSnC8Yo7jiloMBrMv5M4IUGosElFrTMMnMNAY
-	1mSW/NYPYEvF0JjYfxwE9Mc0ReKPSf8=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0cd3d26e (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO)
-	for <linux-kernel@vger.kernel.org>;
-	Mon, 24 Feb 2025 16:57:35 +0000 (UTC)
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f41091f7c5so2267194b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:57:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXKEQHMgOvrVPBDjbhUaupuHxzLf/5uYcbjrE4ao7MkReoNCTX0veNquG09/a0+xrPScjtWFZyIKt+xuck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXOB9pltooMk5VFQjXwQzkjJU4FO2Js3UbgAFjCCZiR9x1pML/
-	f+Vb09xjb944oHCcOyFhqQ9vaW7hMylctomJYAh4ZY7+cPyFaQmsXaD0aG/OD+Zw75qfJvxl0pH
-	c/Mmk6sQkefB4AmJRcADbuvj/ISA=
-X-Google-Smtp-Source: AGHT+IFFefefdwhnFakKRznoH6UM2IfBKZSke6V097+eiJJj9e+hqoCv6KiH8wOCXuXZQfbi0ZsL5zMRaMnNN/OiqLk=
-X-Received: by 2002:a05:6808:3507:b0:3f4:1879:2af6 with SMTP id
- 5614622812f47-3f425c0a825mr8214115b6e.34.1740416254414; Mon, 24 Feb 2025
- 08:57:34 -0800 (PST)
+	s=arc-20240116; t=1740416249; c=relaxed/simple;
+	bh=/HLBSaNuHMDrMKX1M5g+LydJdhY+NRVc0x02raQ46Xc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fe3EA/L009xx7MV1s1+Ok1khauCF9h3+4C1OJcHeznZoGpVcbPZrE96gAL9JJ954wKAgGL954OO9A73MYJ0h4iji8DWDGRi27xrgld5vUdtThN+opVyTPnnBFCHB0WvhnrN2a5jFrorhNqrPhvXWnfiMNXZRgt46Om77Y9fb9Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Yx2H6DuQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.184.60] (unknown [131.107.160.188])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3879720376FD;
+	Mon, 24 Feb 2025 08:57:27 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3879720376FD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740416247;
+	bh=pfJ+RfQRjA9y2usOQFgOg/fZDtpNvwBXGtY0LXo0f74=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Yx2H6DuQVJ8jwplYihiAKPWkHpHh0x2/54f4W2RcaQ+KAXVMMzTCUHqiqJ/yJE5j7
+	 Hy6CwOVeQwBRzN9VxfE8QiALr+HrtpA9zGjhzKvw0+ZH40l5n2nOyqG1DmeTOLvR7S
+	 5tHqgqhMcO7I08qlItaamHK4cC3vhqc1Lo+brpZI=
+Message-ID: <97010881-4b5e-4fb7-b8b3-b6c9e440e692@linux.microsoft.com>
+Date: Mon, 24 Feb 2025 08:57:27 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224122541.65045-1-xry111@xry111.site>
-In-Reply-To: <20250224122541.65045-1-xry111@xry111.site>
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date: Mon, 24 Feb 2025 17:57:24 +0100
-X-Gmail-Original-Message-ID: <CAHmME9okzk+Cj1yrXQuwjwDsJd+x=UJVM_rLUqgdB6oeCYjw-Q@mail.gmail.com>
-X-Gm-Features: AWEUYZkuzElQp9cVAl_1iXa4R9rcNiIQYnYm0gUgHgwF0Zs5UMK7tkScIF0urC0
-Message-ID: <CAHmME9okzk+Cj1yrXQuwjwDsJd+x=UJVM_rLUqgdB6oeCYjw-Q@mail.gmail.com>
-Subject: Re: [PATCH] RISC-V: vDSO: Wire up getrandom() vDSO implementation
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Guo Ren <guoren@kernel.org>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hyperv-next v2 0/2] x86/hyperv: VTL mode reboot fixes
+To: Ingo Molnar <mingo@kernel.org>
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, decui@microsoft.com,
+ haiyangz@microsoft.com, hpa@zytor.com, kys@microsoft.com, mingo@redhat.com,
+ tglx@linutronix.de, wei.liu@kernel.org, ssengar@linux.microsoft.com,
+ linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+ apais@microsoft.com, benhill@microsoft.com, sunilmut@microsoft.com
+References: <20250220202302.2819863-1-romank@linux.microsoft.com>
+ <Z7h50PqiXxdfMegl@gmail.com>
+Content-Language: en-US
+From: Roman Kisel <romank@linux.microsoft.com>
+In-Reply-To: <Z7h50PqiXxdfMegl@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Feb 24, 2025 at 1:26=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
-e:
->
-> Hook up the generic vDSO implementation to the LoongArch vDSO data page
-> by providing the required __arch_chacha20_blocks_nostack,
-> __arch_get_k_vdso_rng_data, and getrandom_syscall implementations. Also
-> wire up the selftests.
 
-Thomas noted the LoongArch copypasta, but also, there's no
-__arch_get_k_vdso_rng_data implementation here, like the message says,
-presumably because of the generic data storage work.
+
+On 2/21/2025 5:04 AM, Ingo Molnar wrote:
+> 
+> * Roman Kisel <romank@linux.microsoft.com> wrote:
+> 
+>> Roman Kisel (2):
+>>    x86/hyperv: VTL mode emergency restart callback
+>>    x86/hyperv: VTL mode callback for restarting the system
+> 
+> A: These two patch titles verbs.
+> ...
+> ...
+> B: These two patch titles are missing verbs.
+> 
+> Like me you prefer B too, right? If so, please add back the missing
+> verbs to the titles. I suggest "Add"/"Introduce", and "Call". Thank you!
+
+Right :) Thank you for taking the time to help me, much appreciated!
+
+> 
+> 	Ingo
+
+-- 
+Thank you,
+Roman
+
 
