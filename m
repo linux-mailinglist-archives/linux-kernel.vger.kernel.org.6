@@ -1,243 +1,141 @@
-Return-Path: <linux-kernel+bounces-528037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64C84A412BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:40:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC092A412BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3217C171F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1190172083
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C994158536;
-	Mon, 24 Feb 2025 01:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF95B78F36;
+	Mon, 24 Feb 2025 01:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tVEQOXJO"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2085.outbound.protection.outlook.com [40.107.92.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmOWCz1f"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD32155CB3;
-	Mon, 24 Feb 2025 01:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740361215; cv=fail; b=fNmhvGhllecLYnjKbPYwu9tn439HOIBWoi2UDNLx6PU+6NW9Ga5yObzFTly6gFDWPFh3R024FSCJSMsyXWeLZKqQcJB13KAMU31qRAc+0ba4SI04Q16hQ/3zOW4MNwdu40qAaJjCFBwZwiF3r5Yu94YPDVQlhHKnnTMLzQuAIkU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740361215; c=relaxed/simple;
-	bh=+HDxtHsRVRNDrPCUtwGfXhxUGQzS7iNGo+ddc805yI8=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=BgZbap1G+gxRorJZQFy73VxYevOCk7bprTkLiNbNLHNGQyiacIMQiaMOyquA3Hs68d3LFBFCKUW9Oy6D92GokdBKTovz8upacsUntMP8VW3XeUqtcHZuh98NzOTNxOQ3BuD2X4MlUHX3kBe+3KacBYbWQyxMQWw3VJN9roqLu3U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tVEQOXJO; arc=fail smtp.client-ip=40.107.92.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xw+SyKcTVeoGFuAi7Q5qyRTPU50+aSRCMEBG13kn+pofVTSoUSadRmKLqt+vL0F/7k5D3PVMF3hqvdDa7t6YB9Cs9j3IuI3vtncUFXFEPhF10XPv0bOWWAQH9E0DIVatOVBUR4Zomx7mVumy5UmHQ1jSefDsh5Sa2JwGM9gKvtXACWp4zm2JeUhvQX3LL5s96xwKL1YCkm96WodG5PnZBpwrQ/m3i+zYYOOuX0PqwtUZXjVUjPVAvmOaVtGO3D0f2DdMgEAD1J6i335Bv7rrkg7ciI7W3HiQTu79cYrV7e9T25eZwgmD/y/l1hUbEEu6JdnYmbqVazCYNAr37OtNRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=x3qLghnNPSpv28C+9yLjwqamPJoPy/FHP/KwrGkvra4=;
- b=lp37qGwbb59UIjuCJkEbGUaAPFwfg5KEH50080N+K0RPtZQxkW+a1qNcDU1k3mm4tMjxIU4awmJ55ojY4fAoCQs711aFuyisBQd/XndE40G5ulv+mzheN3L7aNJNOTHRyY/aMagdFP2hx9o5PZuLFEi7PnJtRLbGtXaOVlEryah1sgrreJvCtegaOr5BpO9XdpkB8XM0xLhk4sHXzZNDAAgOCV7OcdNS5mucnrQtwPIGenM5h8YIYbzTzmvBA5UF5EkZddFvgbipmw4bG+uRt0/D7UjaGzbFW2ivldOJbmdcJnUdEecmMpdI0j92JUw4AOGRfbNRHFOp4tJ3uJZA1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=x3qLghnNPSpv28C+9yLjwqamPJoPy/FHP/KwrGkvra4=;
- b=tVEQOXJO6YDEvw1monToo/m6mtwdxPAJ0JChSEjMoQUW+XQjrscfs9LDDrfPN1ouEcpP23y4fP6nDyrQKmrMyR7pOdNCSIFzyVl1WFd6rpCG9EuLocbzLRtKvC2dEl3BePrjdWS14dTMzNnD0XSzIo5fpAcNAS7JZFChVX0Cn/Av/2rleUJ/X9b2nglnk8AENOW1r8TVnpkS//hJu5O81tU1n6OXN+S7hoaB2uCkAZ4cxmuFO7JUBIPRS9I+phpsDcpVPYlrHgvLeQWpohkP2Xt4DLwSZBW8wjU3hkf4M0A2u0N4HOuJGXQm+MmnI8zvKOBxf5NUn5tW7DBEvkH1eA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MN2PR12MB4303.namprd12.prod.outlook.com (2603:10b6:208:198::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 01:40:06 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%6]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
- 01:40:05 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 24 Feb 2025 10:40:00 +0900
-Message-Id: <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
-Cc: "John Hubbard" <jhubbard@nvidia.com>, "Ben Skeggs" <bskeggs@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Dave Airlie" <airlied@gmail.com>, "Danilo Krummrich" <dakr@kernel.org>,
- "Joel Fernandes" <joel@joelfernandes.org>, "Boqun Feng"
- <boqun.feng@gmail.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
- <Z7OrKX3zzjrzZdyz@pollux>
- <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
-In-Reply-To: <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
-X-ClientProxiedBy: TYCP301CA0064.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::16) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09B42747B;
+	Mon, 24 Feb 2025 01:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740361238; cv=none; b=Q+1KZOjXQqn7cuP8MIzrcLzoojZvWBrVk5RxBDAziICIMDwADYjmJEHKaSGc0U7YKfPt6Spkwy72+DdJ+XHGJyAsur66kb8W0ZGFu0GOoaT4DyoS3UtsFGWwmlrelatJK2tI8VuXGvlb4F8JZxwed7tKCMKxHRKj6o5COSwTQDQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740361238; c=relaxed/simple;
+	bh=3IUTZmFWM7/bE7zsQEmlvs6HW+7+545qgn3Ky5CMvnc=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CjMMMpj3J2kJXGZe6OiC5/FfGg6wymioctnp2haVEBJkuXbXlMtO1Rb/D8MBOge9dtqq2vjN4pyBArcgwQ2B/+Webt9ynptCOHfJbSNwKQ7luXiV9i8GzxKvx53Ukr3onUs++N29K4S6kkxNDAXwJKNEC86DH27PjzxFs78CbVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmOWCz1f; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fbfe16cc39so7815052a91.3;
+        Sun, 23 Feb 2025 17:40:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740361236; x=1740966036; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P4iFAlpXooA80lhqQNHi8N3JDWtHvtfY51ovaQDKNWA=;
+        b=ZmOWCz1fxIDPKbPgB7IW8XPVuS0uKKHaGrGgzbCvgYQftG2cnUC0OCp/XJ/3rdRBbl
+         fRuT65AnHLpBim6KR0epdgPnyighyHskBSsGUJrHbRTfoE2l/huI/hSvCnIr780pVNon
+         YL5JeAOqyyjn+XLTFLTAX5VXXxnFjkV3Ywl5zMhDw4hQOQv+q/lxpRI8sJO+4K5O1aXc
+         ystkkFNDlTmf206Qhve7NApA5IPQSIRCchAU9I/GN1YjNohVG4GduMTAjFVUoNPZy8Sd
+         mPlfHfGPPr7s4M5VtkQ1iSn6cdiI1JhTIcL5mF22ohDCV9gWn4K0RSXXvM54DyvM/Tr0
+         Ox+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740361236; x=1740966036;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=P4iFAlpXooA80lhqQNHi8N3JDWtHvtfY51ovaQDKNWA=;
+        b=gosGJvr3s7hhyc80hOn1VxPbUZT1ipw1D80EO/pMJ0QvN/NJJzrUORa3S+glqzrNPd
+         cADrMbnzdepVZOnp6WLxHF7dR8LLnYDWZ4YjxwcuGP8B5U/SQBMBjt9L6ogkDR8Ivh8Y
+         nKgJSqOj7qWcWiqCF0ij5YE/0ylnbCG7hds99Hb7DEULrTxTGwg6mqbY/0C+HlGFOXPm
+         ATWfiQ1tAInhI3Qvgtw8FE38tNQtknU903XaUl8PaNSjbulB/X0tkkoNetJHSg7v6OEF
+         jHKoz7ONUVRXKyOGu/uythpciXPxoyaHwWzpxPnCFCl31yf8lnfsDJcyIZfDKA0PK4F3
+         +H3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBOqXEKHpLxo87+Yy+MPJTp+gd9AzjwGLvuyQwxR5w24KKrcSRP6g7VQVbxULWYDjfYTO4bfla1bgTuj0VRLM=@vger.kernel.org, AJvYcCX2IkMwpVu903iezfnD0esOZcfapN5ahX+t0J22yJU1hx/3wiHXckwC7MlaMCcXXDP/4JNhcmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbLuJ6hj+vWf0P+aEk5u402CJUdQiRR1DJbukAP259f5QDV9z8
+	iPSHX3HA7bQX5X1bzPbAj+sQHRrKU68/4UMxjZ+tjCHNEYyVoJn0
+X-Gm-Gg: ASbGncuWRTP5Suj8Pdi4649VtAuXECLFbeqrJvGgQIRkTbyAKY6rt+VyeIOpRh/0Bkd
+	mG0r7fkLwAbVkjeSmezcbdmIBdRSi3i51ZOftr7OlGbFdArhoilOZtivRi6zo11uMkNDGQ5cpnU
+	qPnroYIA1wzDdEIzS09tMFDlSUFzvq0t7PXrY+Uj/kQhmKhamLW686uSf3rCSnrmIaTV8xSI04n
+	yCtiptpk4h+ITd59FvjKGBJ6DvHdwACMt4mCiIBY0sonn4ORshbIk2ynZSZk6ibqOdYZT6ZRkmj
+	I7HGd5sFAztXaILwabC0U/vHqu9BB3HzL4pGfCg9oe/+hCTnq9Q3Pp5WTSPn/mphvzQl3zyj+6Y
+	GxAB7aEg=
+X-Google-Smtp-Source: AGHT+IHZ03r/R6ZSzFCsSoO99TzAkfJFcDQZ64v+Ptlgu3TSFxuhkakn95yNTkit3rWqPwXFA4Y2lg==
+X-Received: by 2002:a17:90b:3807:b0:2ee:d63f:d71 with SMTP id 98e67ed59e1d1-2fce86ae672mr22731055a91.14.1740361235981;
+        Sun, 23 Feb 2025 17:40:35 -0800 (PST)
+Received: from localhost (p3882177-ipxg22501hodogaya.kanagawa.ocn.ne.jp. [180.15.148.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-220d5596394sm170286095ad.250.2025.02.23.17.40.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Feb 2025 17:40:35 -0800 (PST)
+Date: Mon, 24 Feb 2025 10:40:25 +0900 (JST)
+Message-Id: <20250224.104025.43839253856223839.fujita.tomonori@gmail.com>
+To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org
+Cc: linux-kernel@vger.kernel.org, daniel.almeida@collabora.com,
+ aliceryhl@google.com, boqun.feng@gmail.com,
+ rust-for-linux@vger.kernel.org, netdev@vger.kernel.org, andrew@lunn.ch,
+ hkallweit1@gmail.com, tmgross@umich.edu, ojeda@kernel.org,
+ alex.gaynor@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me, a.hindborg@samsung.com, anna-maria@linutronix.de,
+ frederic@kernel.org, tglx@linutronix.de, arnd@arndb.de,
+ jstultz@google.com, sboyd@kernel.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, tgunders@redhat.com, me@kloenk.dev,
+ david.laight.linux@gmail.com
+Subject: Re: [PATCH v11 1/8] sched/core: Add __might_sleep_precision()
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <20250220070611.214262-2-fujita.tomonori@gmail.com>
+References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
+	<20250220070611.214262-2-fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MN2PR12MB4303:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba0c19a2-78e0-4d68-cb59-08dd547429c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OTFRRE1zYll3UGJWTVphNXNualoxZ1pQZk8wb0FKamgvdmowVWhtSUZlWHp3?=
- =?utf-8?B?ejEwbEpBUk1JRVRjbDdXd3lJMldwQXgvRVZPNFFZSWVxajUzelRmM0pwaUxo?=
- =?utf-8?B?US8raGtVR2EvVUNnY21wYm1mRDNDKzFza0tPY2s3Q2xTVXJJVWp2dkEzM29z?=
- =?utf-8?B?c2ZzWFRrQ3ZmQWo2NlZjcHJRa0x3anpvYlJNS3hBNjE4VURpZ2loTzg2N085?=
- =?utf-8?B?NWtvc2hQMjVXckttOHVNNkpDWW5IRWdseWp5UG43NHJybnJVVWtIMDZzQ2Zv?=
- =?utf-8?B?c2RBaVZLQ1haSnJuWkN0Z1FEaTRoSUg3azBoU1pBOSs4V2orT1VBVUJxTUI0?=
- =?utf-8?B?aU8yK1ZBUEoxdHRaNzZjMWhmckNsd1BTQkhDT25nbzZuQkQ0TnNORER2MGRC?=
- =?utf-8?B?RDV0U242UWczakhYbUFwMW9FNldlVURKeGM3WmRiVGhkN1h2cjlhZFRVL2N1?=
- =?utf-8?B?aEd3czNzTkhqZzNQZEtZVmZsRmdGSXoyUHN5aDVQcmY1TDJUdVNkZituWVpS?=
- =?utf-8?B?a1YzLzRrYnRxaTZIVzRDa1RyZWs5bWJTUk5jVmowd2E1UEN6VFFlWEhHaDZB?=
- =?utf-8?B?cXMySTVSdnBERzhvY0Frc05RRmFhSmhSNmlYd2RBSUVlUHRVMFlHcEJXZjlN?=
- =?utf-8?B?MmowbitpYll4UkhlaEF6ZEp1T2N2TlY2eVVIdE1jQmp6NTkzTWJhc0NJUzFa?=
- =?utf-8?B?d3J0cDBqSmNrREdQalNSOHBxdWcvazN3V0V5QmxDRlZwcXo5eXhOVVVCNmtI?=
- =?utf-8?B?T2JXa3ltbG40bU9NR1AyVXRkUC9JYlJOVjlETlVia2tFcm5aWmtWVlgwRE9E?=
- =?utf-8?B?NDBYNDdwVjBZeC8vaUtQMWRBdFA1ZVAwS3lLV1ZrOGhXMTVHZTRaeEpmNy9E?=
- =?utf-8?B?eVdXTTFHS0F6UEFpbC8ySU96T1FWYnR3VUlyZXIwQ0dIOTN6R2p0MCtJWUJw?=
- =?utf-8?B?YjI3NnFTcGRuNFdHeWhUejUwNFBlb3lKU09NTCsrWE5wTldpNUFMOVhZWklF?=
- =?utf-8?B?a1JDdTFPTmtoZUpUQU8vMFFGWWM2SW55TmxoUjlrcFF0Wm51dnhrMVVwMVNa?=
- =?utf-8?B?RGJnQ1U2R2ZxZXNVQXBYcE4wbTE3eExKMzRlaWRjWjVTNXdKaVFpNnFZMUph?=
- =?utf-8?B?Nlg2Uy81cStYS0YxZlFZckpQdGZnRW5xYW81c1czWmluR0kvekprL0VrYkJ5?=
- =?utf-8?B?cEtJYk9Sa0xIUFk4aksrR1pmUTljcVg2R1pyckFxQ3REVmlaTklSSmRPWmNQ?=
- =?utf-8?B?RW5iQW1hbEV2ZjdqT3FvWnd3ejdVYTRxNjMwcnV3Ynl0TkxIOERSaW1wVkZy?=
- =?utf-8?B?WHBESkZmdFR4YmJuMnZnRFYxZGNqekVOVXNLWHlaRTVpM2p5SkxoTXRwTnBQ?=
- =?utf-8?B?WGdrZ3hab0ZLaFBOd3BGbnZWbUF0TVZhWldjTXZRYTBVU2k4bmRvYUxJRWpE?=
- =?utf-8?B?L2ZRazFxMHlvc2xXcWROcU9tK2FPUlVrTWcybFRtVFdRR0E2dDBHeEVUSzN6?=
- =?utf-8?B?R1p0QWhoVVI3RU5ycGt4d0VHYXF1bkxOd3lRNGcvdlJEQk5XcXJzT2hHdEYw?=
- =?utf-8?B?MXhldGk1bUNFWG0xOCt3bnhRRWNmcTRqTXVzQXhzQllQRkpyZ1YwREM1NmEv?=
- =?utf-8?B?SEw1WjhYZDNFajEzVlVnTnh2Z3JVVWxHWjZLWEJWOHFmcGdnODhZaFFEUVZv?=
- =?utf-8?B?Mk4wK2tnQ1A1M0Z2OHNuRnJ5eGZaRE9aTGJNOVRNeVNDejRmUThmSTFZTDA3?=
- =?utf-8?B?Q0xaeFUxZWNJZExLSmxZc1kyNEVDMlFiam9aZVZHdmdHcDM4NGVrSlRhb2RW?=
- =?utf-8?B?M3BaVzZUdmIrREl4QXJ5bzRIM3hBWDdkYmpYcXBVZkU2QWRLYytkYk4wSi82?=
- =?utf-8?Q?auYiXbE3eBblz?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ekVWaXN6V1RIamhnREorRG9DUzZLTFBTTFpsQ1Q3THkxZjJxbHY3MHlROXd0?=
- =?utf-8?B?UTJRVXcxazJVeVRGTmJ1OXd5b0FhaC80R2xtWlp2RVU2aHVzZXp5RE1KWktq?=
- =?utf-8?B?aldZZ1JBN2hMYjR5VEErODYxRmZMTXZwUzVKUEVha1R4VFJWQXZNSEpROVdX?=
- =?utf-8?B?dStMRk5LVEozVG1HaklwajhoUWwvNTZFdGdIamYwNnB0WkFTMklhSDk3ZWh5?=
- =?utf-8?B?Z0F1dmlHTGtlc0RidVowdXZhWUFDVUgwa2F6VmZFU25ENnl4c2R0L2xpaElq?=
- =?utf-8?B?U1BxUmxKZGtJRkp1UEV4NkZvNUFiZ3RHME9kVFlaekExbDZ2TENobjBNdVRo?=
- =?utf-8?B?SjVTTXRJYUI4MXNqREduazlqME14V2dHaEZWTzRPb0w5U0gvTFkxM2NNMXll?=
- =?utf-8?B?RzIwa2RXYnVMdnpNSE00UUdjaTlVRkV5N1dveTdmaWxKcEV3aC9oa3FBamFK?=
- =?utf-8?B?ZFdiSVN2ZkFFamZCc3p0WC9EYk1tSkZSL3NMTHVIQmw2WHZSSGdRTVdyZm5z?=
- =?utf-8?B?eUs3eEMwMGI0YnkrYkR2U01LZ1dzOXNQKzkvaUpYZ3dobTJEUFNOSzZKaExx?=
- =?utf-8?B?aGNJU0ZPTHJVQXJ2MGN1bWJqOE1zMGk0QzlRWVdqSGplcFJDcVFVU3h2YmpX?=
- =?utf-8?B?dkVBbkgxMWNYYXErWXZuUXlGNlBlRTlyRjEvZm9pWnF0VVlHMUxkMkVkanoz?=
- =?utf-8?B?WElEYjArLzBKcGIva3BlYXlHUFBheXZZWlZmdUZPb014am5va3BhbENSVEh0?=
- =?utf-8?B?UTRtYVVaQVlBekR4MElQWWpOV3J1UVRNUlJXc1NkWUt5WFdqcy92TkZuUk9t?=
- =?utf-8?B?WXRDM0RUaXlYbHFBRC9EZW54blQ3Y1cyZmhBcHl0YmpBeStGcE4zUXZ3czlX?=
- =?utf-8?B?Rkx2WW02UktJaTl3ek1sd2RhWmFybzNmcW9GWFU0ODFrbzJsSjVnbE11NkZ0?=
- =?utf-8?B?dklJQWw1d1lieUtBc3IyUTA0S28vdXFxRVVFRGNabzRTTCt2ZldqT016MWVM?=
- =?utf-8?B?VDJldHlZZUZLRFpUYk9UMXFhblN3VVVnRHdjNjlKUlg2Z3M2UmhyNHdqeU1i?=
- =?utf-8?B?MUU1OG5XVzlmYkorL2UxV1R2NUl1M0ZlcHdvWFVEMHhKRFVGS0FQN3VnWmhZ?=
- =?utf-8?B?SisxSzJyTVl0SklhWlJiWkU0bjVCMUtMQmEwdHhKMEtlK0lSd2d5bVUxck8y?=
- =?utf-8?B?QXhobVd0YmliMnhacnFveG9QaU12VWowQ1FEU1ZzSzZETWlDVCtGUjN0a0J0?=
- =?utf-8?B?SS9sMVB6TEZPUFZLSkhBdGtkRFIvL2g0d0YvZ3lPRll6VmpQbHFleEJsanBI?=
- =?utf-8?B?YUxFNlVsRjJHMnpFdWNjYmxLNjFSVEx2dW9nejQrY0lnWncrTkwrYjVBckNv?=
- =?utf-8?B?dHRVVVBVRDhqTFdiNDhoU1JRVnNVS012TWdBRmJvSlBIZEYrR0pxa1RHL0tW?=
- =?utf-8?B?ekdpeGdNOEppbzB1NzRrT2tHY0tHeGxzaktsWXFRS2FTNTlrcFhMc3RQTkM5?=
- =?utf-8?B?NHlEOXA2WmI0elN3SFI2aE42Q2pwRVBVSGg1SGZUeXdZMnc5RXpNemRoekhv?=
- =?utf-8?B?eEdPb3p3ODdXSTZOZzF1SllTK1oxWi9vMnJJNHIyNmc2UUxYaG9tSHZIK2JI?=
- =?utf-8?B?TXNkZ0szV0M2YWY0c21MWnZoa29zSWpxVDl4cFR2MEltRnBuQmE0a3VNTUdo?=
- =?utf-8?B?Q0NhSnNhc2pDR3NRSUhXYXoyY2NoeE1aME5RaFV6elRyaXcvK0I1K09LQmN6?=
- =?utf-8?B?T01RTmhBWlZVT1paZXVtZGNHWEZUYlA2MmNaZWswL0pRR1JMTUprRWZvcDFq?=
- =?utf-8?B?QUI2R1hPdFFaYlZQV3NhRVcydVJhckpwWFZpYjU3bFN4OUFLcFVTSEFycmdX?=
- =?utf-8?B?SmlLcWZVODhpa3pnZzlpY2FTTm5Rbkt0QkVaaXhXM2h2NGpaTXRUcHlJb0RE?=
- =?utf-8?B?ci9xZFlTK1FEZnhnMEY4N2RYa1oxMWNIMU1pczNSTXRCSVl1bGwvb2N5U3lP?=
- =?utf-8?B?Mm9ieDVZeDlPOHpHVVhTVmZrYThVUFpNVGNUVjc5MlRiakhIZmVXL1RVbjh3?=
- =?utf-8?B?YnAwWld5V05lcG5oV0tYS2VLOFlUckR2UVY3bUdyMjZjeFJIbTcrNGZSeE9N?=
- =?utf-8?Q?rkQ1fGJeukaBVoFe48Mi53yb/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba0c19a2-78e0-4d68-cb59-08dd547429c2
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 01:40:05.3515
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Sh6JUWb4+CjsBiZeQM7sFv2qAlNIYmGqDgH796LExoFLJjgBYaXD9KJI3bgR3awhSiagdnK6VMBnTffoZI0EKg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4303
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Tue Feb 18, 2025 at 10:46 AM JST, Dave Airlie wrote:
->> 1. How to avoid unnecessary calls to try_access().
->>
->> This is why I made Boot0.read() take a &RevocableGuard<'_, Bar0> as argu=
-ment. I
->> think we can just call try_access() once and then propage the guard thro=
-ugh the
->> callchain, where necessary.
->
-> Nope, you can't do that, RevocableGuard holds a lock and things
-> explode badly in lockdep if you do.
->
-> [ 39.960247] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [ 39.960265] [ BUG: Invalid wait context ]
-> [ 39.960282] 6.12.0-rc2+ #151 Not tainted
-> [ 39.960298] -----------------------------
-> [ 39.960316] modprobe/2006 is trying to lock:
-> [ 39.960335] ffffa08dd7783a68
-> (drivers/gpu/nova-core/gsp/sharedq.rs:259){....}-{3:3}, at:
-> _RNvMs0_NtNtCs6v51TV2h8sK_6nova_c3gsp7sharedqNtB5_26GSPSharedQueuesr535_1=
-13_018rpc_push+0x34/0x4c0
-> [nova_core]
-> [ 39.960413] other info that might help us debug this:
-> [ 39.960434] context-{4:4}
-> [ 39.960447] 2 locks held by modprobe/2006:
-> [ 39.960465] #0: ffffa08dc27581b0 (&dev->mutex){....}-{3:3}, at:
-> __driver_attach+0x111/0x260
-> [ 39.960505] #1: ffffffffad55ac10 (rcu_read_lock){....}-{1:2}, at:
-> rust_helper_rcu_read_lock+0x11/0x80
-> [ 39.960545] stack backtrace:
-> [ 39.960559] CPU: 8 UID: 0 PID: 2006 Comm: modprobe Not tainted 6.12.0-rc=
-2+ #151
-> [ 39.960586] Hardware name: System manufacturer System Product
-> Name/PRIME X370-PRO, BIOS 6231 08/31/2024
-> [ 39.960618] Call Trace:
-> [ 39.960632] <TASK>
->
-> was one time I didn't drop a revocable before proceeding to do other thin=
-gs,
+On Thu, 20 Feb 2025 16:06:03 +0900
+FUJITA Tomonori <fujita.tomonori@gmail.com> wrote:
 
-This inability to sleep while we are accessing registers seems very
-constraining to me, if not dangerous. It is pretty common to have
-functions intermingle hardware accesses with other operations that might
-sleep, and this constraint means that in such cases the caller would
-need to perform guard lifetime management manually:
+> Add __might_sleep_precision(), Rust friendly version of
+> __might_sleep(), which takes a pointer to a string with the length
+> instead of a null-terminated string.
+> 
+> Rust's core::panic::Location::file(), which gives the file name of a
+> caller, doesn't provide a null-terminated
+> string. __might_sleep_precision() uses a precision specifier in the
+> printk format, which specifies the length of a string; a string
+> doesn't need to be a null-terminated.
+> 
+> Modify __might_sleep() to call __might_sleep_precision() but the
+> impact should be negligible. When printing the error (sleeping
+> function called from invalid context), the precision string format is
+> used instead of the simple string format; the precision specifies the
+> the maximum length of the displayed string.
+> 
+> Note that Location::file() providing a null-terminated string for
+> better C interoperability is under discussion [1].
+> 
+> [1]: https://github.com/rust-lang/libs-team/issues/466
+> 
+> Tested-by: Daniel Almeida <daniel.almeida@collabora.com>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: FUJITA Tomonori <fujita.tomonori@gmail.com>
+> ---
+>  include/linux/kernel.h |  2 ++
+>  kernel/sched/core.c    | 61 +++++++++++++++++++++++++++---------------
+>  2 files changed, 42 insertions(+), 21 deletions(-)
 
-  let bar_guard =3D bar.try_access()?;
-  /* do something non-sleeping with bar_guard */
-  drop(bar_guard);
+SCHEDULER maintainers,
 
-  /* do something that might sleep */
-
-  let bar_guard =3D bar.try_access()?;
-  /* do something non-sleeping with bar_guard */
-  drop(bar_guard);
-
-  ...
-
-Failure to drop the guard potentially introduces a race condition, which
-will receive no compile-time warning and potentialy not even a runtime
-one unless lockdep is enabled. This problem does not exist with the
-equivalent C code AFAICT, which makes the Rust version actually more
-error-prone and dangerous, the opposite of what we are trying to achieve
-with Rust. Or am I missing something?
-
+Can I get an ack for this? Or you prefer a different approach?
 
