@@ -1,317 +1,289 @@
-Return-Path: <linux-kernel+bounces-528221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EAADA41512
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:06:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281CEA41514
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6704616DC38
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103C216DA49
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 06:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B0C1B4234;
-	Mon, 24 Feb 2025 06:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432DA1C6FF7;
+	Mon, 24 Feb 2025 06:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mx5sMXgN"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2060.outbound.protection.outlook.com [40.107.223.60])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jo9R81eA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAA628DB3;
-	Mon, 24 Feb 2025 06:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740377172; cv=fail; b=bKMsazESW9sRq0xydRUC031QlfOJbJcvo2dxB9VzCcjJ/WhUGqYBTcgPpMpnKtLKusZf+oGliCf1MsgBhf2tRsPzDyjf8g3Xj3AqIw1xLHNH8woBnBxLvb3523vRsRmqvWXb2TwvYzwjeNBDs9HFYRu4mnQ4fX9sC9e+eZeXy+E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740377172; c=relaxed/simple;
-	bh=zmm55X2+PPpLvFynRPNsKtmiTzycI2rf8uh5kVHs/fI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VwqOm5/W511gW0l7qrfzt2dxVy/v/q04dEEYf30uUc+eyxyr4wvsFOJEyj9Q5dIxjQara8bYOKI2jLYXMF0SgfI3aBzHFjEc5lbUgCTRpcuRBVTwHMEDvYKzo4v2N79dqNDPh6UJbJLcdc/qeAbRYfS5LNl9AQuGW1OVNlmx6s4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mx5sMXgN; arc=fail smtp.client-ip=40.107.223.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aQNMMtOviHJZCZExg8Q34pJFZJAbwXhsKkfHDJ9kr0XIvI4ffQd9sWMn1sjG3eqgVnyW2deF62wwutOkD+eiJltZ3YJU9uu0r3QdLs2NIA+CS2MB0pbidMsjuSer/FNEJCfsw4yh0c0FLH5hNQRgxBJmUDTfppjxRDJGsWUqdb0J4rBBlPPQ0BY6QbqQW96eEBkv0o092XtuHyW1e3bu7ZQrontkzj1f+MenAgofSrFfVg2wpouGuQlCdhNzA57mj4Aomnmoa48uYHlWicWu16auyuAMBbcuritLBvKdc4zCa+DRI/bM9G5ILVwWAcnJaoyUxegR9xtnzjCqsTKm1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pbyKR6oEjEGDATo7n2StIUwfp3xQjLPI+mJ2A350/Nw=;
- b=HOIc11iiNsWVgeS4T0BAGDyCJz/cFm8SWGZ92jRGWxiyNrADBdJIroETuVhoaaod1kCE6f4TxKDJeMtzBc+bORBffdD/vAAqJVK3QuF2nnzipIDJTxX9BtE8i4s45VGAI2b5l51Z526kvm4AD78KTessvFEVyWYFYgJfheazhhpUaRjxSw5UjMAQuCpbGLCasviXzFPunwAwo5nVI462ZtQjFoB2bE/a0JStCPYCV1bVYPxh5bUEDfo4rdIo7Or4RrnGsJDDz6nn6HLq+C+cdwqwGu95Lzl4euffB1hD3Xu+bvJmamBXlgBYax4uS8RuEJ11GihnPecBVPKo6GjDBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pbyKR6oEjEGDATo7n2StIUwfp3xQjLPI+mJ2A350/Nw=;
- b=mx5sMXgNXHkZZiRUKR2msYdBXzSwvWADiG5/8cJ8ka5hgyUljRQ3WZYrXcPoOGFKw5gVd0jzd5vONZYGd2fngFb4M4Yp6G2Lnceu5b5bj8vXRzFu9wgiZHg9YFcGmQPuwi17YwWk7f58Z8bM2QZaMxFLm3z9gFAuRZOGBqmx140=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by DS7PR12MB6237.namprd12.prod.outlook.com (2603:10b6:8:97::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
- 2025 06:06:05 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8466.015; Mon, 24 Feb 2025
- 06:06:05 +0000
-Message-ID: <086f6284-46b8-4cb1-8b19-009ee0e10af3@amd.com>
-Date: Mon, 24 Feb 2025 11:35:59 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/19] cpufreq/amd-pstate-ut: Drop SUCCESS and FAIL
- enums
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>
-References: <20250219210302.442954-1-superm1@kernel.org>
- <20250219210302.442954-10-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20250219210302.442954-10-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0218.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:ea::10) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7043728DB3;
+	Mon, 24 Feb 2025 06:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740377261; cv=none; b=qRRznJzKs37M3bypa3tLUsk15EFjbIVO31Z7DCUWHzfjtR9LI+uGzZ9jPIO0yzxZ/sTz/HQSZeIGD+fGpAOMxWhrqrKieHqnkmkeK0RRda1+pjQsrGm6wTYfw3QaSy7D3BuKWPwA/n2E6k1qNUSRQajkNz6WJaK3dKSX1OQTnA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740377261; c=relaxed/simple;
+	bh=Sqrj7NwRWuy/rG7PR36Rt4tX9YwItq1zgtEC5MSZkoQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KveYjuPvzd0pqpjTi5CB3md/sPCLvrFsUvmPbEqqXjN/MujyIxqu5J+dvzpBf9UPK3dQ/j5xQirRNEvSyx0LUBf7NqAHVdnpYviGxm4xjxQ8Cc8J4yCZoNJjTtITN9/Lg+j5jiuyTGmLZ7m+KZXabY9pezJJnP5zP7gBq86UzwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jo9R81eA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BA5C4CED6;
+	Mon, 24 Feb 2025 06:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740377260;
+	bh=Sqrj7NwRWuy/rG7PR36Rt4tX9YwItq1zgtEC5MSZkoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Jo9R81eAOmURkxLAByqZ1v1Z7vbPKRFIBp7V7DN8sgUm3lgmpWfPBEVjYI6iR3xgG
+	 EfNOqF0JZt5IvNF1+xQ8qfP0rDxMf/JGVI1iY0iw+83wxWuKRyoJYEpv00/4gM62WP
+	 mhCZZi0k6s6Z+1kgMYdshlE3uaRMmU3Ez0l9JQAQmsNTTwzza2aUSj/LZF6t+u3+s6
+	 Tmc1hg4IaIHynC2TyAfJWO0+lAQP6oFO4SHffNipKg0w3ySyACc6Xqp+KG5tDFEE0j
+	 eVPqnxQSONpDEydEo/YL70O4+m2aDvbH42kj6WpI0ZRuyNZ8521ZVOVlX9tneBoiHu
+	 HzPG+fyTTzQuQ==
+Date: Sun, 23 Feb 2025 22:07:36 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Chun-Tse Shao <ctshao@google.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, nick.forrington@arm.com,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v6 4/4] perf lock: Report owner stack in usermode
+Message-ID: <Z7wMqNUPbFoJA4RR@google.com>
+References: <20250219214400.3317548-1-ctshao@google.com>
+ <20250219214400.3317548-5-ctshao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|DS7PR12MB6237:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67f5ddff-662f-4ece-d82f-08dd549952c4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z3c0L0pXVWZNcWd4Y2d1OE5STGFrV1ZmN3luR1FkOVFoM0FZNlVKTUsvRHZ6?=
- =?utf-8?B?MU1XVG0waE9YeU0zZVNrT1IyNDl2bUJnbU12TEVUQ3VhWEFadGtUOUR6d0lF?=
- =?utf-8?B?QUwyUHFMdkFtZmY1bHJZVm9DdEEwNWZlTElVWG85Rm13U3VXMzU2b295OWhY?=
- =?utf-8?B?cFBVSlBkV3hqbFpPRHg5SzVvbkJqVE1QYjFBUnBjSHB4M0NHTkk2ZmdHNkZY?=
- =?utf-8?B?OHNQVllScC9COUxsa2s5RVhpR1NNa2swVzVlTUdLY2Y0UytLUkFoajYxUVdj?=
- =?utf-8?B?UkV2aXYwYVlXSnl3elRVS3JnMytXTjRLd1VpQmNTR2cxRGZQRWJXbzdmeXZj?=
- =?utf-8?B?VEVkLzdWbTQwaWRGUUVpY01qSWtOT3B3dlZtYTBOOEVYN01aMWxDbHdKUVhH?=
- =?utf-8?B?YWthS1QzSWJVME9tMHRleE1kN1hEeEpRUGlXUURiYzIvcldKeElQaHY2ZlZS?=
- =?utf-8?B?MjlQeDZLeDc2VmZ0WDJJKytYNm1JWjdnaFRBU1hycFBoWlQ5U2Z6MFFqUDNT?=
- =?utf-8?B?U0ZGbUpkSFE0MWxGVGgrWDV0VFYxQ28wcnMwVkQwVXpMcXVEZmFDTmhFTE1l?=
- =?utf-8?B?cllDMTFzdTNOYWJVdFcyTEZEMXJ1QW9ZZU9pRlB3V0ZVYlNDZzBybXd1TlFr?=
- =?utf-8?B?dFhGK3oydHU2Y1VzRWJRRUlOM0lDRk9aMTRxcW5lRHpTV1d2N2tsMGhiZ3di?=
- =?utf-8?B?SzlXTHNxZzQ4cC9VaGtyZnU5ZnpCZEpEVituUlBmS2IyS2R6Y1JnM1VDbEJq?=
- =?utf-8?B?QUFNMG1Vd3NwSG4vcXVwMWZTUlEwUkIvQU5iRzNrU2ZOMzdnOWRJbi9KR0Zv?=
- =?utf-8?B?YzB6R1V0aTVkQUVSdU9SUW0xQnpFcTBNL0JWUGd0RnJ3VDZ1STJKb1E3Y0FT?=
- =?utf-8?B?TkRXemZFNld4Y2VTaVJSamRaa2wxbkw0ZXBvcDJPK1BEcUNJSG1EbHVhdURV?=
- =?utf-8?B?a0ZNZmlQa25rOWRuNFhVR25CYUJUT2hmSU5OSFFUSGREcU5vcDdzRHVjVU1n?=
- =?utf-8?B?bTdtcjRtRmFwcVp0K01rWGNVSkdORHF0eE95YlM4K2RqWmIrM2xxd2krUDNy?=
- =?utf-8?B?c1NVRTQwdFUvbDBPQ1pESnhSWS9FRjBaRDZkdVNja29EcjdEK1Zha0I4Vklh?=
- =?utf-8?B?aER4Rm8wZWh6dlJoS0VCZUpWSWhzN2RYTDVWSTJqc21wcC9zazlPNFpEZWVM?=
- =?utf-8?B?UWdXWUpBZkZvMVhHL1RiZVZvekZHcWZWbVJZdE9OTXJSSDc2VUpTM0FmMkQr?=
- =?utf-8?B?bzcrRndYQW9MVWpLNlV3eENrekdrSnRoeC9ybUhnS1Ewb0J2SGhTVmRPZEh1?=
- =?utf-8?B?UGZVNmRJckVQemlvYkZmdStYQUNnUkZSbmNMU3VLZTRjM0xJeERRSG45VEts?=
- =?utf-8?B?b1Z0UitCaHNFL3h1TXFBdlZYV1RQY21MUE1GMloxQjBjcG5RNFl0bzRaSmlQ?=
- =?utf-8?B?Qllkd0RGYVlpZFlnUllhUHJ0eW1KTDlhWEVSd3pxbCtJZ204YjZHU1BmZGZT?=
- =?utf-8?B?MFpBT3FlZDNyRWtvTEFaTmY3NGhBQ2JYd21yWGhENDF2L0JnclBXSXRrUCtD?=
- =?utf-8?B?c2J2Z1VKWHpZa3RSVU43ZmNBMFM3Zm5IcVBzTjlPTHNVY3VJUnJhVUV6QmZM?=
- =?utf-8?B?TzNYaFQrei9ZSE54WEhVMkZGVDVLdUVTQXVZYnlIWTJoR1RvdUgwUklMOHo2?=
- =?utf-8?B?aER4cUgxaGc0eDJSZ2dYcnA2Mmk1Z3l5REFzOEg3YUZGYy8zcnZrWE50VjhP?=
- =?utf-8?B?SDNuK1ArL3M1UktVekhYdWx4ZzVNVVJFOVVBOGlQVU5VQ1RMVFJNUGJwNzJk?=
- =?utf-8?B?UGFTb01PMXBZdnYwMmswaTFlaUNoV1pneE1ta2JOejJySkh6VllvV2ZJNGVN?=
- =?utf-8?Q?W8nr1KOCrpZH3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aGZJN0ticEFTS1Rqb3hvdUVudFRZNzhnU0dtekppUGI4aDBWWUVOU2hJa2N0?=
- =?utf-8?B?OTlvelo3Q0RkNFFvbUE1bk5hSGlGOWNXNzhpOGVOQ1cvR3poYVJNbHQzc2JU?=
- =?utf-8?B?U2wzSVI4MlFNNksxR2tmTEEvT3RUaXZXQmRITG1MM0hXcDcxZUowY2k0TlNU?=
- =?utf-8?B?NVJwcmRidzNFUnhraTVMZFZmSTZBMzJ3Uy9rc0E3cmdZUHBTd0RqVFVic3NL?=
- =?utf-8?B?R2U0azI3Kzh4S213UTQ0OXVQbmJGV2c5bkdqMEp1d21wVERlaGkxYndMbDBR?=
- =?utf-8?B?RG1seVgvYndUcXh5SnRYaUpwVFVsVHl4Mm1vSFhtd1Qzb0Zsemw0U1hiK2tJ?=
- =?utf-8?B?TDhnbnFmTHdBdUlkMWxpVzR6S2RGN2NtZHFYbmZDdFVHalpaSVFneFRWc0pl?=
- =?utf-8?B?cHk2QU90WEVBdjRSU2dvdFg5Zld6ZXNjUFRYbHlLS0xwaHlTRmNEd1luVG5N?=
- =?utf-8?B?c2NDV2NPd0hSdXpDS3dqa0x4c0IwNENjTEcrMWNRQ25LbFlic2ZIZ1R6TmZB?=
- =?utf-8?B?OVhmWFh0VDBQekc0YzE4TW1SeG1wRm4xZDNmblk0ay9CcExHUk9RdndYMTc0?=
- =?utf-8?B?KzhQb3VWcU9CTGVPTGkrb3N3NjM1MkxRdXVBTWZZRHE1MENyZERPNnF1Y3hZ?=
- =?utf-8?B?Q2p1aUtwb3FMY2c5dUpRbUJWWk1PR3dlbFdCenA4WFVGUjIvUVJHVUNZVVVP?=
- =?utf-8?B?MEFsWG9melM3NFdGcUV3SlppbTJPVWp6ZkMxdDU2bDlvdGowM1RjYWw4cERu?=
- =?utf-8?B?MVNBSWhtdkhTWkhEejYzTTg2d2k3SnR4cDRnUW9kU2k1bzQwSkREV3VxeVNF?=
- =?utf-8?B?WlR1U2lwb3ZlaUtKbUlnU1ZSdHl4UTJMZkxMK3NySGo1d2ZxR2xDODdWdkh5?=
- =?utf-8?B?eVFLa1dhL1lJNldDQ3lmOVZqcWZtUjZpbktoZHo0VnJoY1p6TDVHTWkybHJV?=
- =?utf-8?B?bjVCTzBxaFNSaFRLc1NNcUpzdTc0Z2dyQVY0UlkwSkI4YTJiQjFjQWVyK2M5?=
- =?utf-8?B?dnlmT0RaUkFjVCtkNWJnUVNYQ2NHM2pLT3pTWVNFdFNhTzc2MGc5N25zNnNI?=
- =?utf-8?B?NCtCdjlSQkRMWTlOallPaW1UdVY5YVR5YVBFdjBWbGNzU2l1ekJqc29ZaHhQ?=
- =?utf-8?B?ZnlqSytHRnRTaUlmWitXR3BSVU5LZnAwRWlHTmdFbVRXak1OWjlyZHA3YW1o?=
- =?utf-8?B?dGdZREJxM1lpcWtMVzZ2UmRHZVNOVTVqUVNZTVcybi9ENHZ4U3hpMDZHRDVR?=
- =?utf-8?B?UUJUUzViNlFnUTV5ZmQvZVEwNzFnK0JYamIwZmJIeUxPamFPMHN1WHhaWWs1?=
- =?utf-8?B?V0M5U3pyeWw4UTA2b3AxY0pOSG9ONzJ5S3M5TlZnWGtIK2lMSW9HVWQwZUpM?=
- =?utf-8?B?eFhSTEJ0MXhPVGlQcFFNK2syS2tJbEpRSERmWS9aRUFqdUQ4M2tBYTZldElm?=
- =?utf-8?B?ZVMxUDVUM2hhN0xzNTBBWUk2dTlQdFFVSjZRV20vZFA2TWMyOW5jdytseCtU?=
- =?utf-8?B?dk1McXZxcjYwODV0MTBPZzhjYTVNcmtjRGxFNVVTRUsrWmRCQVpnQTZCbGY3?=
- =?utf-8?B?dXh4OEs2OXZSODdlTUgvMXgxTGJlYkRWdWtSYTQ3V2t0ZVJST0JGMVNLNEFz?=
- =?utf-8?B?UUo2T0dScjZRQ1V3Vll3bDhla0VlUUpoeDlMN1RjZVRKd2o1K2NUOW9ZNkNN?=
- =?utf-8?B?bmJoYzk3YU5Qc0VRbzUvdkRJLzgxV0dYb1AvWDVBV291YUU4c1l1djlzcStp?=
- =?utf-8?B?SXJUYU10V29VTk5hNVpuMEd1L1lEWmJXV2k5djliSDRydHAxMkJoUW1icnZS?=
- =?utf-8?B?Y1d4ZkFoUjJnS0d5c1ozeCt3NklySERSbjRPVmF1eUpsYUVabzVJNGd5VEcv?=
- =?utf-8?B?bWdGYU8vN1YrdEo0WjhYZWUwY1RZTytXN1c5ZkJ0QURLeHNoUnRmRVJMNjF3?=
- =?utf-8?B?bDYxU3Iyd3VjODd3RFlLcDJiaUhoam1ZWFRYK3RxMTYzNzZGNU9PaFg5NW5J?=
- =?utf-8?B?bkR1aXNicVh4elFiUXlFY0RuVUNxc29VdFNlZ1dBYzlGRnFQL3FOdTdLMmdr?=
- =?utf-8?B?R0l5VTU5aHFHczQvL2pGSGhRS3IvYVFuSGFMb0ZZaHFXUHIwUjE3UFFIWTlN?=
- =?utf-8?Q?tjsxhzkrry5ZMj2ZTVhPlqMV3?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67f5ddff-662f-4ece-d82f-08dd549952c4
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 06:06:05.4930
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7mrqgRcrPx6FzmgAuyiqOeJiDQDzOcA1tCHYZWspCrVQTupyc4JJWc7wu1X8W8s69jkZ0pY6ODd2qcmSyPjwsw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6237
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219214400.3317548-5-ctshao@google.com>
 
-On 2/20/2025 2:32 AM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+Hello,
+
+On Wed, Feb 19, 2025 at 01:40:03PM -0800, Chun-Tse Shao wrote:
+> This patch parses `owner_lock_stat` into a RB tree, enabling ordered
+> reporting of owner lock statistics with stack traces. It also updates
+> the documentation for the `-o` option in contention mode, decouples `-o`
+> from `-t`, and issues a warning to inform users about the new behavior
+> of `-ov`.
 > 
-> Enums are effectively used as a boolean and don't show
-> the return value of the failing call.
+> Example output:
+>   $ sudo ~/linux/tools/perf/perf lock con -abvo -Y mutex-spin -E3 perf bench sched pipe
+>   ...
+>    contended   total wait     max wait     avg wait         type   caller
 > 
-> Instead of using enums switch to returning the actual return
-> code from the unit test.
+>          171      1.55 ms     20.26 us      9.06 us        mutex   pipe_read+0x57
+>                           0xffffffffac6318e7  pipe_read+0x57
+>                           0xffffffffac623862  vfs_read+0x332
+>                           0xffffffffac62434b  ksys_read+0xbb
+>                           0xfffffffface604b2  do_syscall_64+0x82
+>                           0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+>           36    193.71 us     15.27 us      5.38 us        mutex   pipe_write+0x50
+>                           0xffffffffac631ee0  pipe_write+0x50
+>                           0xffffffffac6241db  vfs_write+0x3bb
+>                           0xffffffffac6244ab  ksys_write+0xbb
+>                           0xfffffffface604b2  do_syscall_64+0x82
+>                           0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+>            4     51.22 us     16.47 us     12.80 us        mutex   do_epoll_wait+0x24d
+>                           0xffffffffac691f0d  do_epoll_wait+0x24d
+>                           0xffffffffac69249b  do_epoll_pwait.part.0+0xb
+>                           0xffffffffac693ba5  __x64_sys_epoll_pwait+0x95
+>                           0xfffffffface604b2  do_syscall_64+0x82
+>                           0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
 > 
-
-One query below, apart from that LGTM,
-
-Reviewed-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com> 
-
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>   === owner stack trace ===
+> 
+>            3     31.24 us     15.27 us     10.41 us        mutex   pipe_read+0x348
+>                           0xffffffffac631bd8  pipe_read+0x348
+>                           0xffffffffac623862  vfs_read+0x332
+>                           0xffffffffac62434b  ksys_read+0xbb
+>                           0xfffffffface604b2  do_syscall_64+0x82
+>                           0xffffffffad00012f  entry_SYSCALL_64_after_hwframe+0x76
+>   ...
+> 
+> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
 > ---
->  drivers/cpufreq/amd-pstate-ut.c | 143 ++++++++++++--------------------
->  1 file changed, 55 insertions(+), 88 deletions(-)
+>  tools/perf/Documentation/perf-lock.txt |  6 +--
+>  tools/perf/builtin-lock.c              | 22 +++++++++-
+>  tools/perf/util/bpf_lock_contention.c  | 58 ++++++++++++++++++++++++++
+>  tools/perf/util/lock-contention.h      |  7 ++++
+>  4 files changed, 88 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/amd-pstate-ut.c b/drivers/cpufreq/amd-pstate-ut.c
-> index 0f0b867e271cc..028527a0019ca 100644
-> --- a/drivers/cpufreq/amd-pstate-ut.c
-> +++ b/drivers/cpufreq/amd-pstate-ut.c
-> @@ -32,30 +32,20 @@
+> diff --git a/tools/perf/Documentation/perf-lock.txt b/tools/perf/Documentation/perf-lock.txt
+> index d3793054f7d3..255e4f3e9d2b 100644
+> --- a/tools/perf/Documentation/perf-lock.txt
+> +++ b/tools/perf/Documentation/perf-lock.txt
+> @@ -140,7 +140,6 @@ CONTENTION OPTIONS
+>  --use-bpf::
+>  	Use BPF program to collect lock contention stats instead of
+>  	using the input data.
+> -
+>  -a::
+>  --all-cpus::
+>          System-wide collection from all CPUs.
+> @@ -179,8 +178,9 @@ CONTENTION OPTIONS
 >  
->  #include "amd-pstate.h"
+>  -o::
+>  --lock-owner::
+> -	Show lock contention stat by owners.  Implies --threads and
+> -	requires --use-bpf.
+> +	Show lock contention stat by owners. This option can be combined with -t,
+> +	which shows owner's per thread lock stats, or -v, which shows owner's
+> +	stacktrace. Requires --use-bpf.
 >  
-> -/*
-> - * Abbreviations:
-> - * amd_pstate_ut: used as a shortform for AMD P-State unit test.
-> - * It helps to keep variable names smaller, simpler
-> - */
-> -enum amd_pstate_ut_result {
-> -	AMD_PSTATE_UT_RESULT_PASS,
-> -	AMD_PSTATE_UT_RESULT_FAIL,
-> -};
->  
->  struct amd_pstate_ut_struct {
->  	const char *name;
-> -	void (*func)(u32 index);
-> -	enum amd_pstate_ut_result result;
-> +	int (*func)(u32 index);
->  };
->  
->  /*
->   * Kernel module for testing the AMD P-State unit test
->   */
-> -static void amd_pstate_ut_acpi_cpc_valid(u32 index);
-> -static void amd_pstate_ut_check_enabled(u32 index);
-> -static void amd_pstate_ut_check_perf(u32 index);
-> -static void amd_pstate_ut_check_freq(u32 index);
-> -static void amd_pstate_ut_check_driver(u32 index);
-> +static int amd_pstate_ut_acpi_cpc_valid(u32 index);
-> +static int amd_pstate_ut_check_enabled(u32 index);
-> +static int amd_pstate_ut_check_perf(u32 index);
-> +static int amd_pstate_ut_check_freq(u32 index);
-> +static int amd_pstate_ut_check_driver(u32 index);
->  
->  static struct amd_pstate_ut_struct amd_pstate_ut_cases[] = {
->  	{"amd_pstate_ut_acpi_cpc_valid",   amd_pstate_ut_acpi_cpc_valid   },
-> @@ -78,51 +68,46 @@ static bool get_shared_mem(void)
->  /*
->   * check the _CPC object is present in SBIOS.
->   */
-> -static void amd_pstate_ut_acpi_cpc_valid(u32 index)
-> +static int amd_pstate_ut_acpi_cpc_valid(u32 index)
->  {
-> -	if (acpi_cpc_valid())
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_PASS;
-> -	else {
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
-> +	if (!acpi_cpc_valid()) {
->  		pr_err("%s the _CPC object is not present in SBIOS!\n", __func__);
-> +		return -EINVAL;
+>  -Y::
+>  --type-filter=<value>::
+> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+> index 9bebc186286f..34cffa3c7cad 100644
+> --- a/tools/perf/builtin-lock.c
+> +++ b/tools/perf/builtin-lock.c
+> @@ -1817,6 +1817,22 @@ static void print_contention_result(struct lock_contention *con)
+>  			break;
 >  	}
+>  
+> +	if (con->owner && con->save_callstack && verbose > 0) {
+> +		struct rb_root root = RB_ROOT;
 > +
-> +	return 0;
+> +		if (symbol_conf.field_sep)
+> +			fprintf(lock_output, "# owner stack trace:\n");
+> +		else
+> +			fprintf(lock_output, "\n=== owner stack trace ===\n\n");
+> +		while ((st = pop_owner_stack_trace(con)))
+> +			insert_to(&root, st, compare);
+> +
+> +		while ((st = pop_from(&root))) {
+> +			print_lock_stat(con, st);
+> +			zfree(st);
+
+I think it should be 'zfree(&st)' or 'free(st)'.
+
+
+> +		}
+> +	}
+> +
+>  	if (print_nr_entries) {
+>  		/* update the total/bad stats */
+>  		while ((st = pop_from_result())) {
+> @@ -1962,8 +1978,10 @@ static int check_lock_contention_options(const struct option *options,
+>  		}
+>  	}
+>  
+> -	if (show_lock_owner)
+> -		show_thread_stats = true;
+> +	if (show_lock_owner && !show_thread_stats) {
+> +		pr_warning("Now -o try to show owner's callstack instead of pid and comm.\n");
+> +		pr_warning("Please use -t option too to keep the old behavior.\n");
+> +	}
+>  
+>  	return 0;
+>  }
+> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
+> index 76542b86e83f..226ec7a06ab1 100644
+> --- a/tools/perf/util/bpf_lock_contention.c
+> +++ b/tools/perf/util/bpf_lock_contention.c
+> @@ -549,6 +549,64 @@ static const char *lock_contention_get_name(struct lock_contention *con,
+>  	return name_buf;
 >  }
 >  
-> -static void amd_pstate_ut_pstate_enable(u32 index)
-> +/*
-> + * check if amd pstate is enabled
-> + */
-> +static int amd_pstate_ut_check_enabled(u32 index)
->  {
-> -	int ret = 0;
->  	u64 cppc_enable = 0;
-> +	int ret;
+> +struct lock_stat *pop_owner_stack_trace(struct lock_contention *con)
+> +{
+> +	int stacks_fd, stat_fd;
+> +	u64 *stack_trace = NULL;
+> +	s32 stack_id;
+> +	struct contention_key ckey = {};
+> +	struct contention_data cdata = {};
+> +	size_t stack_size = con->max_stack * sizeof(*stack_trace);
+> +	struct lock_stat *st = NULL;
 > +
-> +	if (get_shared_mem())
-> +		return 0;
+> +	stacks_fd = bpf_map__fd(skel->maps.owner_stacks);
+> +	stat_fd = bpf_map__fd(skel->maps.owner_stat);
+> +	if (!stacks_fd || !stat_fd)
+> +		goto out_err;
+> +
+> +	stack_trace = zalloc(stack_size);
+> +	if (stack_trace == NULL)
+> +		goto out_err;
+> +
+> +	if (bpf_map_get_next_key(stacks_fd, NULL, stack_trace))
+> +		goto out_err;
+> +
+> +	bpf_map_lookup_elem(stacks_fd, stack_trace, &stack_id);
+> +	ckey.stack_id = stack_id;
+> +	bpf_map_lookup_elem(stat_fd, &ckey, &cdata);
+> +
+> +	st = zalloc(sizeof(struct lock_stat));
+> +	if (!st)
+> +		goto out_err;
+> +
+> +	st->name = strdup(stack_trace[0] ? lock_contention_get_name(con, NULL, stack_trace, 0) :
+> +					   "unknown");
+> +	if (!st->name)
+> +		goto out_err;
+> +
+> +	st->flags = cdata.flags;
+> +	st->nr_contended = cdata.count;
+> +	st->wait_time_total = cdata.total_time;
+> +	st->wait_time_max = cdata.max_time;
+> +	st->wait_time_min = cdata.min_time;
+> +	st->callstack = stack_trace;
+> +
+> +	if (cdata.count)
+> +		st->avg_wait_time = cdata.total_time / cdata.count;
+> +
+> +	bpf_map_delete_elem(stacks_fd, stack_trace);
+> +	bpf_map_delete_elem(stat_fd, &ckey);
+> +
+> +	return st;
+> +
+> +out_err:
+> +	if (stack_trace)
+> +		free(stack_trace);
+> +	if (st)
+> +		free(st);
 
-What do you think about adding a "cppc_get_enable()" function in acpi_cppc.c so that we can 
-run this check for shared mem systems as well ?
+No need to check NULL before calling free().
 
 Thanks,
-Dhananjay
+Namhyung
 
->  
->  	ret = rdmsrl_safe(MSR_AMD_CPPC_ENABLE, &cppc_enable);
->  	if (ret) {
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
->  		pr_err("%s rdmsrl_safe MSR_AMD_CPPC_ENABLE ret=%d error!\n", __func__, ret);
-> -		return;
-> +		return ret;
->  	}
-> -	if (cppc_enable)
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_PASS;
-> -	else {
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_FAIL;
+
+> +	return NULL;
+> +}
 > +
-> +	if (!cppc_enable) {
->  		pr_err("%s amd pstate must be enabled!\n", __func__);
-> +		return -EINVAL;
->  	}
-> -}
+>  int lock_contention_read(struct lock_contention *con)
+>  {
+>  	int fd, stack, err = 0;
+> diff --git a/tools/perf/util/lock-contention.h b/tools/perf/util/lock-contention.h
+> index a09f7fe877df..97fd33c57f17 100644
+> --- a/tools/perf/util/lock-contention.h
+> +++ b/tools/perf/util/lock-contention.h
+> @@ -168,6 +168,8 @@ int lock_contention_stop(void);
+>  int lock_contention_read(struct lock_contention *con);
+>  int lock_contention_finish(struct lock_contention *con);
 >  
-> -/*
-> - * check if amd pstate is enabled
-> - */
-> -static void amd_pstate_ut_check_enabled(u32 index)
-> -{
-> -	if (get_shared_mem())
-> -		amd_pstate_ut_cases[index].result = AMD_PSTATE_UT_RESULT_PASS;
-> -	else
-> -		amd_pstate_ut_pstate_enable(index);
-> +	return 0;
+> +struct lock_stat *pop_owner_stack_trace(struct lock_contention *con);
+> +
+>  #else  /* !HAVE_BPF_SKEL */
+>  
+>  static inline int lock_contention_prepare(struct lock_contention *con __maybe_unused)
+> @@ -187,6 +189,11 @@ static inline int lock_contention_read(struct lock_contention *con __maybe_unuse
+>  	return 0;
 >  }
 >  
->  /*
->   * check if performance values are reasonable.
->   * highest_perf >= nominal_perf > lowest_nonlinear_perf > lowest_perf > 0
->   */
-> -static void amd_pstate_ut_check_perf(u32 index)
-> +static int amd_pstate_ut_check_perf(u32 index)
->  {
->  	int cpu = 0, ret = 0;
->  	u32 highest_perf = 0, nominal_perf = 0, lowest_nonlinear_perf = 0, lowest_perf = 0;
-[Snip]
+> +struct lock_stat *pop_owner_stack_trace(struct lock_contention *con)
+> +{
+> +	return NULL;
+> +}
+> +
+>  #endif  /* HAVE_BPF_SKEL */
+>  
+>  #endif  /* PERF_LOCK_CONTENTION_H */
+> -- 
+> 2.48.1.601.g30ceb7b040-goog
+> 
 
