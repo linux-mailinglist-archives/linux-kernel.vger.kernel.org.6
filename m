@@ -1,194 +1,139 @@
-Return-Path: <linux-kernel+bounces-529361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD272A42351
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:39:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C01A4239F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:46:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50007189AFDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:37:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B8216B9DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D601A158525;
-	Mon, 24 Feb 2025 14:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ACA19C56D;
+	Mon, 24 Feb 2025 14:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OtjotwbO"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="eoLN/1nr"
+Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D112812E5D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4C31624F3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740407667; cv=none; b=iD+wfTta9KZhUT4b/SXKATLTyjtt1OqHFgR6h7W9avx/dHC8aU8kvq6j0xvzkzI1mw9mrvAG7h4/5y8Gz6/jZvAK+zrfA89n7Ju6O2Lm0Tna8Pesp/p7Kdi4Gq5vpJPEW4XiIQ4Ig4plK/O/HRG1ew132y6rWw5Cen1J+PCpvQs=
+	t=1740407669; cv=none; b=sw3KnoxyhJcOdHQzLAUtlMJJYsC21DcVz8SuQXbo6uc7mP+tyUz46TJmHdrY4eoV7o2hkSTzumbvPLWHEaKB3TgTZTTBGdK/1aLjNB9dMXCBQydG61H1evCMkpGtr60SSNZ+ehQFINSU6BK+IVj3Ie8MtA+RTn2XCNBfCXV8X80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740407667; c=relaxed/simple;
-	bh=D2U5kxz+iEWEzhKwkkyPwINP2ogpE6Zf5GpbOpbaOEc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dAVQRIU/dtWiS7AiLBZe3T7SKPSZ6EMZWeMK2HI9yZspi0OPKswi6s+uKZ1usod8tG4unfa0yTjhCKxnLa/5RjNxCRAOy/f31w6tyiRHfE9FHAQHmqIwIzyag/E7HkMgQGHLMfaBwY/yyi2ikefH6nR9IlOKmXJTvrECfN36RWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OtjotwbO; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so8028588a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:34:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1740407663; x=1741012463; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qkQqnpwYqndRUX8UXmwWgcvggVsTxywAsyTI1tHWoEM=;
-        b=OtjotwbO3ZbCAjbzwNmz5T1135xP7WeADK0W1mQVZQwF1wXvbprNUKzVjPiYWXut7Q
-         O06u9MelSAcHmRjdBnjD1YFpN9xLQInPjvG1IubnCZaW89FwM+zFtu9mEsl8Q2whmh3X
-         IDoVPw2EJKRBqSyrFh3dt7EHsfdpTh2sD4Jk8jnKNa0+4dHZPsIS7q4AQwrCQa2iSTfD
-         PKUMmKpmU0EzhW4X0NLY77yLtj3vDSTee4EYAXaAzzKD5yRdUyEOxa08qcTfKFd+g8tU
-         c5wImhwnhcYksWeubjTKPN+Jub5g2QdKh6vHiUa6IzLsoexJQDy0X6viLnarwzpvozyH
-         Q9jQ==
+	s=arc-20240116; t=1740407669; c=relaxed/simple;
+	bh=gtWoGKMaCntSoWB3c03NP4J9WjVIr1FotK1T44+GyYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWYW8tYo+3oCIanqMjixxPRanb62qszSw3Vsk7tOt2p/OXCs7ZQPehBuXBm0EgrjF8CL6qyMRck4UwisUHvusISP9prvBcb5TUJA8L3sfsm42pwrCpha9qWs7dbS9iblpWcecU9uCDfllwJGEff0gXFmDYp11jb/NwKGuuDh4QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=eoLN/1nr; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 174053F869
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:34:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1740407665;
+	bh=yhFJ4UHx5R5lOf0wcq1Nd4uhLZ5ZR5NOQL7ZBIbthnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=eoLN/1nrS8znZf4RX+gEGhlWGQlrRndvkWojrWEh37KqeJNz1hfQHKcmiRobkHgwE
+	 v7x7CuUuq2zfgr6hDYBFwmSEhD4ZMNXpt0gn3xhKyfQIqLK+EYlh/Rc/1hgda7uZgy
+	 xqq9UnSc4j190bYFbvZ8Rfqi5rTBX3AcOepxREGUhUj7+pIzvtNHk4eUS73NM3z9QW
+	 aUcqx+PK631wEdi+dK2VSkVd7cpvdWQwCwXByMTLcu9ogbH1uY+xkH6+Jr4fETR8hy
+	 Tldfds4EuP0hnvw3oWDSdCM6H6VsblxgOWmRZOsgp/DpiBzYvnsn216xc3AsPI+ZPU
+	 Hpp9kW3xJHOmw==
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fc1a4c150bso8613415a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 06:34:25 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1740407663; x=1741012463;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qkQqnpwYqndRUX8UXmwWgcvggVsTxywAsyTI1tHWoEM=;
-        b=May8YTDjmk73+7SDF2mWH0OLT4B8pCpnzeddYSldiAO6aYo9U5nwzZuCobMuycqXq6
-         dEueHppFSqBeSTt5BRgJBZYERxZRcAbOt6phzIrJKMDBnCA9GQXsCp42Z0I/sU74rbYn
-         P8QB8GFCzzyfLMloxLEDaOCfpudLb0d04c5iKpC7MJwb8KLTy9PXy5YT7mpdyq2RfM0r
-         8qnMXGFpLTWBf5OxxAXy3FBuVCDDz6gatmBkaFrK/mg/QnT3LW5etkYJQhi7+i1W7uNR
-         AAzBiQarQ/LVHD7I7NZuuYYCzUNdlL9Dy5GGNTBPJTb6PCykLot1QUSNCJZt1AQ/Quq3
-         hnfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWfJhG3z5TrVE2GG1hi6eTH4h+D0AEl4hsQoTptqPZxYpHD0C9VoEW/4UXPAZU1gHS4nGwGybVDQSdij/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUf14LIHoZcMa9xHgfUiXcPZvLzkGhVJaF9NJefdwnPT/7xPA2
-	XmYS2COL5q8xYjAXHJX3WAE8AVxdwFxqSaIINskqCUm1Cv1f84qOz/ygbR0AB6kXjz6ATcME2K1
-	HZiPr+FEBWk6bXIoARZncz/bJnyzBUqGlezJNffX3EVSvtRqdMFo=
-X-Gm-Gg: ASbGncuVKswHnvMCTeOrO7UekB60mrtpbuI8jZWgX9VTW4D+h9J0ZkVhShZD0CJvdYa
-	a/yzTvkTfy7cp8vbhZZ0Szle5Wk19Km5XymMoTfpk++hwN4TYR6srkxa7GX+f1zNT04wPkm0++M
-	HZeqTnsaI=
-X-Google-Smtp-Source: AGHT+IGwinAFCE/+cod9Wduw27y3lE5NvmD0zotgNUTu5vxJxVcMXBTXPbgxsG+pETb3Ou9qZ9ES5D869/jPdRTLpmg=
-X-Received: by 2002:a05:6402:3788:b0:5dc:8fb1:d43e with SMTP id
- 4fb4d7f45d1cf-5e0b70e6a03mr11963042a12.12.1740407663035; Mon, 24 Feb 2025
- 06:34:23 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhFJ4UHx5R5lOf0wcq1Nd4uhLZ5ZR5NOQL7ZBIbthnY=;
+        b=TLK5Fj8/sMYOrub+SPeRPd0McyisSYDBaARdTFr1vX9RuXZ1+uvkGpLFc8Skt1Z/v2
+         JixXRqjQHDV8X40AxBn44I96CF6l/rpcKcAGCDhL2utGEL1OnQvoh3ywLIhChUSCriar
+         JviX8vV+xw1g2Ps8yhwbdpImaC2+76qMQ8bEc+MU1Lv+OTbb174wGNLS80nwMpdBgOk0
+         mayXUKjNsQgXpZw5vI0242D00qNItSBeT2J+7O2HxLwF+bhWxBApYdSQlQdrP9S2ffTM
+         gAED4wJ9y1N6QeH8QU6rtxe58scOTFbVixbnIqCYbHPdH0iOkQg+bSaVMg/vqVbdnCb3
+         mWVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMA90cGmkw8NjTNX6fQMlVb13VP5AtyN/rV32XdpZcATESZn8KAD0OEE0pen5bTeYeacN2TiAAnh92nbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZYYrELM6qb4j6EazaRq1ORHKs3efK0pxS7JsHRPCtn5eGrHWm
+	wCG7qzGMMJTXjlmWL2CCYGdi9+gFiZrM0L9QK3A7H26tRVfCeQ5N0Byu9It5XB0q5xWG/j06jst
+	W+8DmY/tqBRF+2CBZQ7Cdi5ifXxsletrZhUFiXwPdoR7OV+bOAiKKgqyh/6jZNfhwIiC+vSzlYT
+	w2Lg==
+X-Gm-Gg: ASbGncvLKS5LVTPxhsL4UzyCnAnRbBmPZ8+VoE4cXKJL1DHIl8TKyNcm4uXvfrhrneO
+	K84oEUUDvMzKu27zTq7vb1D+VhTPbYJshaCNiyKY0iUgA6XhJSjbEUkbv7vYCARWlcxA0uvdBIs
+	vXIIkZUJYYq4tC2rYraLK/e09BEzto7OpCoBzjr0ialH5MUJvt+uN60hga6k7sknfb2Jw6fsih1
+	USB/N2VzMh0eQAoZ6xl3WvhjUJVHaDNg6SwiGl+WErKkz2eXou5qEg9MGosAnnvWD6nBMiSP95e
+	wCEjPdKYjzflYsYWpA==
+X-Received: by 2002:a05:6a21:4613:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eef3c889c7mr24653482637.15.1740407663754;
+        Mon, 24 Feb 2025 06:34:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZoGO5+6SYNEGvQLUG/Lrjbn6pkdcM+ukmw/rDgYUp43ttu6AmhAB4GYyEKrbM+g8j74n7bw==
+X-Received: by 2002:a05:6a21:4613:b0:1ee:be05:1e2 with SMTP id adf61e73a8af0-1eef3c889c7mr24653444637.15.1740407663438;
+        Mon, 24 Feb 2025 06:34:23 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:de7b:58db:ab85:24ee])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7328371e36esm14345854b3a.61.2025.02.24.06.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 06:34:22 -0800 (PST)
+Date: Mon, 24 Feb 2025 23:34:21 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, geert+renesas@glider.be, linus.walleij@linaro.org, 
+	maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] Add synchronous fake device creation utility for
+ GPIO drivers
+Message-ID: <htq76fls75dk7a5nn6u6lqwzm6k5evbgp4uip2jf7kuoq7tjaw@dck7tgbmek3y>
+References: <20250221133501.2203897-1-koichiro.den@canonical.com>
+ <174040547574.48618.1949653889364615138.b4-ty@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127093530.19548-1-alexghiti@rivosinc.com>
- <20250127093530.19548-3-alexghiti@rivosinc.com> <Z5ePZt61CM84Hb36@casper.infradead.org>
- <CAHVXubhf7aMwsKA0H9OvTg2Lk8U7+bwntVT9Cm-7L4o7=LM4TQ@mail.gmail.com>
-In-Reply-To: <CAHVXubhf7aMwsKA0H9OvTg2Lk8U7+bwntVT9Cm-7L4o7=LM4TQ@mail.gmail.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Mon, 24 Feb 2025 15:34:12 +0100
-X-Gm-Features: AWEUYZn3wPoYfPCBnGXzuvofr3D1NoWw4LTFmErwOP5gdYPjvL31yv0cddSq81Q
-Message-ID: <CAHVXubjhkDvFKtK4mQDxJrRekOEAF2P9tmQ-4dyyE9A2O8ojGw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/9] riscv: Restore the pfn in a NAPOT pte when
- manipulated by core mm code
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174040547574.48618.1949653889364615138.b4-ty@linaro.org>
 
-Hi Matthew,
+On Mon, Feb 24, 2025 at 02:58:58PM GMT, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> 
+> On Fri, 21 Feb 2025 22:34:58 +0900, Koichiro Den wrote:
+> > This patch series introduces a utility for some GPIO devices to reduce
+> > code duplication. There are no functional changes.
+> > 
+> > In this series, only gpio-sim and gpio-virtuser are updated to use
+> > dev-sync-probe, as the current gpio-aggregator does not benefit from it at
+> > all. A follow-up patch series that introduces a configfs interface for
+> > gpio-aggregator will convert it to use dev-sync-probe as well.
+> > 
+> > [...]
+> 
+> I don't see any further issues and it passes my libgpiod tests so I queued
+> this series for v6.15. You can now base your aggregator work on top of my
+> gpio/for-next branch. Thanks!
 
-On Fri, Feb 14, 2025 at 1:39=E2=80=AFPM Alexandre Ghiti <alexghiti@rivosinc=
-.com> wrote:
->
-> Hi Matthew,
->
-> Sorry for the very late reply, the flu hit me!
->
-> On Mon, Jan 27, 2025 at 2:51=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > On Mon, Jan 27, 2025 at 10:35:23AM +0100, Alexandre Ghiti wrote:
-> > > +#ifdef CONFIG_RISCV_ISA_SVNAPOT
-> > > +static inline void set_ptes(struct mm_struct *mm, unsigned long addr=
-,
-> > > +                         pte_t *ptep, pte_t pteval, unsigned int nr)
-> > > +{
-> > > +     if (unlikely(pte_valid_napot(pteval))) {
-> > > +             unsigned int order =3D ilog2(nr);
-> > > +
-> > > +             if (!is_napot_order(order)) {
-> > > +                     /*
-> > > +                      * Something's weird, we are given a NAPOT pte =
-but the
-> >
-> > No, nothing is weird.  This can happen under a lot of different
-> > circumstances.  For example, one might mmap() part of a file and the
-> > folio containing the data is only partially mapped.
->
-> I don't see how/when we would mark a PTE as napot if we try to mmap an
-> address that is not aligned on the size of a napot mapping or does not
-> have a napot mapping size.
->
-> > The filesystem /
-> > page cache might choose to use a folio order that isn't one of your
-> > magic hardware orders.
-> >
-> > > +                      * size of the mapping is not a known NAPOT map=
-ping
-> > > +                      * size, so clear the NAPOT bit and map this wi=
-thout
-> > > +                      * NAPOT support: core mm only manipulates pte =
-with the
-> > > +                      * real pfn so we know the pte is valid without=
- the N
-> > > +                      * bit.
-> > > +                      */
-> > > +                     pr_err("Incorrect NAPOT mapping, resetting.\n")=
-;
-> > > +                     pteval =3D pte_clear_napot(pteval);
-> > > +             } else {
-> > > +                     /*
-> > > +                      * NAPOT ptes that arrive here only have the N =
-bit set
-> > > +                      * and their pfn does not contain the mapping s=
-ize, so
-> > > +                      * set that here.
-> > > +                      */
-> > > +                     pteval =3D pte_mknapot(pteval, order);
-> >
-> > You're assuming that pteval is aligned to the order that you've
-> > calculated, and again that's not true.  For example, the user may have
-> > called mmap() on range 0x21000-0x40000 of a file which is covered by
-> > a 128kB folio.  You'll be called with a pteval pointing to 0x21000 and
-> > calculate that you can put a 64kB entry there ... no.
->
-> Yes, I agree with this, then we have to go through the list of ptes
-> and check if inside the region we are currently setting, some
-> subregions correspond to a napot mapping.
+Thank you! I've just sent the aggregator work v5:
+https://lore.kernel.org/all/20250224143134.3024598-1-koichiro.den@canonical.com/
 
-So I looked at that and I think we are safe with the implementation in
-this patch because:
+Koichiro
 
-- this patchset only deals with hugetlb, which cannot be partially
-mapped (right?)
-- when we'll add support for THP (upcoming series), we'll use arm64
-set_ptes() implementation which splits the region to map using the
-contpte mapping size
-(https://elixir.bootlin.com/linux/v6.13.4/source/arch/arm64/mm/contpte.c#L2=
-68),
-so we can't mark an unaligned region with the contpte bit.
-
-Let me know if I missed something,
-
-Thanks again,
-
-Alex
-
->
-> Thanks for your feedback,
->
-> Alex
->
->
-> >
-> > I'd suggest you do some testing with fstests and xfs as your underlying
-> > filesystem.  It should catch these kinds of mistakes.
+> 
+> [1/3] gpio: introduce utilities for synchronous fake device creation
+>       commit: eb5ab6ffb4ca2d28121455dd7452061367ed5588
+> [2/3] gpio: sim: convert to use dev-sync-probe utilities
+>       commit: 2f41dbf9cb84349f510ebf2165c13102f79a550b
+> [3/3] gpio: virtuser: convert to use dev-sync-probe utilities
+>       commit: 45af02f06f6943d73cf9309fd2a63a908b587f57
+> 
+> Best regards,
+> -- 
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
