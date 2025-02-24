@@ -1,94 +1,136 @@
-Return-Path: <linux-kernel+bounces-530173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B511A4301F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:30:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00E44A43028
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:32:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFF81891B0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:30:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8211F1891E8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97374207DE0;
-	Mon, 24 Feb 2025 22:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CAE1CD1E4;
+	Mon, 24 Feb 2025 22:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGn/0Rpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tLCG/Uhd"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41C5207DF7;
-	Mon, 24 Feb 2025 22:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95172571B2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 22:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740436203; cv=none; b=n6qabvpmNX2qC3Q/L25sVBu1MOIcDvPC14LIWEZhUrmHlhetWDVCEiHIlqt3XDl0xPtcDU264uAz3X1xjftN2lZZZZ4MYNkMPu9XLrohJkxupeWkrKnxYXQluGKXt/8tZTBDXRW8sHZwp8eKQNU4NK2jgP5+OI0eznpyRp7/spU=
+	t=1740436358; cv=none; b=fgVYhXI7FMAzUzfbzLymiEQh1RYOmM+QitfUA5Px/oQhIdHCW0hcqc4CWi0mVE9wAa3y1o3eWvg0QXoS33hOaLi10D+YqsJfadYt3uDD6B1uTpIXMP9EinO+Ks/PDYEgziBX8f6+eTqhkAywH1FClNSy1MI/YxF61j2Bv3SIrkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740436203; c=relaxed/simple;
-	bh=o3/XUGQL0m+SzquU2ZDcO4lPV6KEAziuUL08AurUYbE=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=VnKCSCdyb6CB1ayQ39ah2O/JejO7lOIrchRaeQly2RP50NRjkbH62RLOznKNbNZsNSY1xyYFLkdTafJENLyJIirYJ53w6U8VEiUCri82jIxCBKDVdFB7OB5lIyCmn39xej106uskzsf6Ti4VX0BH1WpKv6ov2nAAr4qdp/3pcdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGn/0Rpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC08C4AF09;
-	Mon, 24 Feb 2025 22:30:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740436202;
-	bh=o3/XUGQL0m+SzquU2ZDcO4lPV6KEAziuUL08AurUYbE=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=qGn/0RpawzHOsnFvI+rH6yVY8sEZBQ4Ru9LrvwomnSMOBM7gbURtsNY9Tltn1QPmO
-	 7b4pV2JXHvEvlBzcG0GyAS17NEYI9ssMVLZdBocr77Hkrm5k7gQbEEVLaAu7SvxW1/
-	 yTiGqcWzIszCb+0rVsvn4BrBdeONccFpI69Yk+rDPB05jmJNtAk0D43Z/pLcbaUdl4
-	 Af6dWoKh9cva+nTOa6RA4ORrWVuwIJvsBa6ziNpmn9hL8tHtMdkI03cCT36xZ2lF9Y
-	 4kfbRDe+YPyR1bd7yqQ7gbnk2MCWvLagTJkx0DATywvCPBs/muZq/qqLtMeaOBHncE
-	 //vufIbOmc8fA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33D6F380CEDD;
-	Mon, 24 Feb 2025 22:30:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1740436358; c=relaxed/simple;
+	bh=lR5+K2O0C7fa3hblXHm0+cUXI+NHjy4Oog7sgRxfZDA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oyjyvJCr+pJSZ1os0g2yxiC0YARmX6k3Ou8P/5qQJEmBI37yPcWHIeEvjFXI7UjQrqOMiiOcIfq7F/2oD8+nRJuUsc5vcjItgs7WqbtvR/YZlUCnG52SMvFdFxvGoqeebdJEhBuolg0zUCp0CAGLlYZ9phkiAN9bq2FG84kOogQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tLCG/Uhd; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2210305535bso163449785ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 14:32:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740436356; x=1741041156; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJ602F89Qrv98s0dTpyvrapFlWCXZ4Q+ukdN0YogNYc=;
+        b=tLCG/UhdftbDpTzcxPLk+q3MhOnF0jbS5KzVBsWCsPtq6XpjxbDfEfSDeX081pBW0Y
+         tq8g/IIqVqpg3GZa3x41efGjPXppBXxEkonn1BjIffkSItuVqACahhemD17rQy3nJ65H
+         kNMZxTEmQpBtwn8fxxtpqxPHnJjTR4uaU+jjZ3svRXCCUsplGHJsovSIczOTJmUapjEW
+         Nyv6iUABFlQP+deJVqoZiT2+9wLXtQxG4DfcLXUVlft6bJuXD6sb/iopU+CqsQevDuPz
+         C3GSStgQdMcQ2PtYn7cFMXGB2/eIB0In/s1Ksd7LY8K2otZWrmu3mbxZHhzKqaDxOe3G
+         bgoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740436356; x=1741041156;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rJ602F89Qrv98s0dTpyvrapFlWCXZ4Q+ukdN0YogNYc=;
+        b=PPnpAOoEQJll2rFl89bHzCMTjyXFTHNwUcY+2BTDZKEtocXklTAxnbI24F3EW5Uvdc
+         i/vTdLVbyuQtkNUfAh1OuM/D7OvKuCJAUk+Hc6ExAZ4wt3/726+VPID6Px6niG8+ZGKW
+         nXO/FF5rq7un6Ua12psXFjuVXAKex/3fSyQmHRPnU1fEFU4Rd+xoasMhowHnxEZpmM4s
+         WPDmVdKs1AD8NYDXLw/bIdLN7UaI+nArZZMI7uGDt9PjpO7Zynn9KyQNo+qxaFDWN+r2
+         0zHNSff3je7ABXZJevxlqiXScduX5Nl+weO1geKGT01sWsfw3PuqTf1CccP5j4TKm6s4
+         n9JA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiY130oJd/Y+zpLdm256ejzxjauqmQMffgJlLPSrqwAa3sV7/jrLaNbZFOU9QgH5TrqZMavXTZN03oxkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyuu4zix8NttP93DsBVZuCWqqzzQm0zwz8oDE598JHQzf2ORdsv
+	2o/wIUoimhi/81lz5frZSXeuOOPICGdZWiuKiscVOVJQt1rA3WciFUa+lpoomd63bHZ1Mc4qpyv
+	uvA==
+X-Google-Smtp-Source: AGHT+IFqOEUKQsuWHVPpQJ0lKf4SviNWdzaOb6PyYguj4zrO83Ubft771/46kQy1zz7pRXushkp2tdi5FeE=
+X-Received: from pjyp12.prod.google.com ([2002:a17:90a:e70c:b0:2fb:fa85:1678])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db0f:b0:21f:52e:939e
+ with SMTP id d9443c01a7336-221a10deb2amr283318145ad.28.1740436356245; Mon, 24
+ Feb 2025 14:32:36 -0800 (PST)
+Date: Mon, 24 Feb 2025 14:32:34 -0800
+In-Reply-To: <7794af2d-b3c2-e1f2-6a55-ecd58a1fcc77@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v2] net: stmmac: Correct usage of maximum queue
- number macros
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174043623374.3631570.5317337904130972259.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Feb 2025 22:30:33 +0000
-References: <20250221051818.4163678-1-hayashi.kunihiko@socionext.com>
-In-Reply-To: <20250221051818.4163678-1-hayashi.kunihiko@socionext.com>
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc: alexandre.torgue@foss.st.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- rmk+kernel@armlinux.org.uk, chenhuacai@kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <20250219012705.1495231-1-seanjc@google.com> <20250219012705.1495231-3-seanjc@google.com>
+ <7794af2d-b3c2-e1f2-6a55-ecd58a1fcc77@amd.com>
+Message-ID: <Z7zzgtS-iu0YHwia@google.com>
+Subject: Re: [PATCH 02/10] KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>, 
+	Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Fri, 21 Feb 2025 14:18:18 +0900 you wrote:
-> The maximum numbers of each Rx and Tx queues are defined by
-> MTL_MAX_RX_QUEUES and MTL_MAX_TX_QUEUES respectively.
+On Mon, Feb 24, 2025, Tom Lendacky wrote:
+> On 2/18/25 19:26, Sean Christopherson wrote:
+> > Never rely on the CPU to restore/load host DR0..DR3 values, even if the
+> > CPU supports DebugSwap, as there are no guarantees that SNP guests will
+> > actually enable DebugSwap on APs.  E.g. if KVM were to rely on the CPU to
+> > load DR0..DR3 and skipped them during hw_breakpoint_restore(), KVM would
+> > run with clobbered-to-zero DRs if an SNP guest created APs without
+> > DebugSwap enabled.
+> > 
+> > Update the comment to explain the dangers, and hopefully prevent breaking
+> > KVM in the future.
+> > 
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
 > 
-> There are some places where Rx and Tx are used in reverse. There is no
-> issue when the Tx and Rx macros have the same value, but should correct
-> usage of macros for maximum queue number to keep consistency and prevent
-> unexpected mistakes.
+> See comment below about the Type-A vs Type-B thing, but functionally:
 > 
-> [...]
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> 
+> > ---
+> >  arch/x86/kvm/svm/sev.c | 21 ++++++++++++---------
+> >  1 file changed, 12 insertions(+), 9 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> > index e3606d072735..6c6d45e13858 100644
+> > --- a/arch/x86/kvm/svm/sev.c
+> > +++ b/arch/x86/kvm/svm/sev.c
+> > @@ -4594,18 +4594,21 @@ void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_save_are
+> >  	/*
+> >  	 * If DebugSwap is enabled, debug registers are loaded but NOT saved by
+> >  	 * the CPU (Type-B). If DebugSwap is disabled/unsupported, the CPU both
+> > -	 * saves and loads debug registers (Type-A).  Sadly, on CPUs without
+> > -	 * ALLOWED_SEV_FEATURES, KVM can't prevent SNP guests from enabling
+> > -	 * DebugSwap on secondary vCPUs without KVM's knowledge via "AP Create",
+> > -	 * and so KVM must save DRs if DebugSwap is supported to prevent DRs
+> > -	 * from being clobbered by a misbehaving guest.
+> > +	 * saves and loads debug registers (Type-A).  Sadly, KVM can't prevent
+> 
+> This mention of Type-A was bothering me, so I did some investigation on
+> this. If DebugSwap (DebugVirtualization in the latest APM) is
+> disabled/unsupported, DR0-3 and DR0-3 Mask registers are left alone and
+> the guest sees the host values, they are not fully restored and fully
+> saved. When DebugVirtualization is enabled, at that point the registers
+> become Type-B.
 
-Here is the summary with links:
-  - [net-next,v2] net: stmmac: Correct usage of maximum queue number macros
-    https://git.kernel.org/netdev/net-next/c/352bc4513ec3
+Good catch.  I completely glossed over that; I'm pretty sure my subconcious simply
+rejected that statement as wrong.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> I'm not sure whether it is best to update the comment here or in the
+> first patch.
 
-
+Probably first patch.
 
