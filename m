@@ -1,47 +1,78 @@
-Return-Path: <linux-kernel+bounces-528321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7EBA4163A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:27:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528C8A41640
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:28:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED59416BEF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:27:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E8E3A75F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 07:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827120AF7E;
-	Mon, 24 Feb 2025 07:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5302924166F;
+	Mon, 24 Feb 2025 07:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoTDMkPj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3H3fs4d"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1294414
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187921E5B77;
+	Mon, 24 Feb 2025 07:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740382059; cv=none; b=jd4TKjIRcPFW7Ywz04CSBMAKlpTrYJUCkVGeibJcCQZKaZIDW9vbHoMvWC9+Y6HIW8XMhLCHjaJ7+ubunkMh7IZHc419Qjvhw0Dwg/gBCAgtvD9nBGppdDEDYJBzlvF+VuxzucsYafBKkic6+BSFCIehLvAUfRro8xSsgzQgdPo=
+	t=1740382128; cv=none; b=kVmVyzXul1M7USjH1Ccn1/5SpN4NLNnoy8/SlBy71Kvr+UsdbSoxLLclkxMEiawRlvPXLfcPBdYCeyp3untRlXXI+Vz626FXMCAcyiPY89/26kjrHTUPwbhDtW/pevPir4e3eLmmnh9FPrF1YKefZsjr+KBr8EevH82ICIltjyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740382059; c=relaxed/simple;
-	bh=Hzb/0ReZlhAP1hb0vw7qpMe0Jeo2piZblxd/1kov8b0=;
+	s=arc-20240116; t=1740382128; c=relaxed/simple;
+	bh=4QdLZbLyUQlmED6vmxcN+VQ92PGbQL9gjs3A5m+3Or4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I5qxUVaS3WIqwChZeBCD+fwbwIfgIN1xaV9N/VmGFFPmrylQCKe8S1QI+hfZNJ/NMQIbaGVGcErzRUB/4fHaHQCf4713fyuCwLSBNZa4imTFirY+vjjzuX18NzvmxbizpSxYto6eQlqAF2scsvlCvUAnDbQ53rXBUb+h2x3p5L4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoTDMkPj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB1BCC4CED6;
-	Mon, 24 Feb 2025 07:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740382058;
-	bh=Hzb/0ReZlhAP1hb0vw7qpMe0Jeo2piZblxd/1kov8b0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=aoTDMkPjojgBibf3fIBAr/tfqpTNFBRxagGQTLn0cLtz84PEVfddaAyefrgUrAvfO
-	 Q9ASQX9ccCbdE2sJ6qSpHwq6IUqEfIxw+XmvEKIiBUq53VxEBjWTvcXezUCa9G/f4z
-	 zdYx/pHDcThv3FzzLFJiHhcUlMKFa+f7LdOHaoAB0LY/dUNOhFezRmRzSHyuiUWn69
-	 RdQAUvSxEPnFr7H7R/a7jAS0m8vCylZCQyU7xp88MgsA/RqDOT0H7W0mSop/6j76Ky
-	 95OdNy/eErgQdA3VQjuIl/t0KqvojSYwgl5h5jXqUjUQRaqE3vj6nlSsdT9ysEZ/LC
-	 AfKbuw1evwwtQ==
-Message-ID: <43c41ab4-1771-4b01-853e-08e1689df7f3@kernel.org>
-Date: Mon, 24 Feb 2025 08:27:35 +0100
+	 In-Reply-To:Content-Type; b=QwDuZfgAfW3E9d6R5gRIYw5lfGtxSFNaEzX227aydhRvMaiN+BrnNBbWSWOH92sMb1QYp1TSvhd3GknU/PcIaEqW2TTWwI1SEpuGTHYfOIMGLOkB7RDTHz7mYTEMzAD6yymglLtfL2w1ErGjO7Rn4GRKRRWaP998HusjIrWD/SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3H3fs4d; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so25564735e9.0;
+        Sun, 23 Feb 2025 23:28:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740382124; x=1740986924; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/J1eHs/QwfmQDOJAETe758QiGCVwHhph27kBts3wDI=;
+        b=l3H3fs4dkgMOfNfG9J08YqLImA3XGm3/5jA6w8VWPLOxykaIjQE5YT81V+TuTMmFm3
+         pVWkgPpFFLNPXS6q/lGCN113xkgMKVYqs679xFR/+/9uYrKUXUIeVVd9FmSCmOs8eKjG
+         EYdMiGY2R7YJJLuSDmrD1f1Tx485h+00isPnr2MQz4Itgdt2sfIYMG4yGqxnCmYJqyZT
+         4vLJ5p+/ftdsIzP0lTqtLawiKc+5yYEZp17VALtPFopSlrkUTvGEtUZAFQmnC2SeCDO+
+         xOwCyX1IRiX7dBS7AMJ2z/i2G5EWgGw4ab5k5EzbhlDRLt9gy6dVwKuL8+Aa7+6gslGr
+         KKzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740382124; x=1740986924;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/J1eHs/QwfmQDOJAETe758QiGCVwHhph27kBts3wDI=;
+        b=wj/L37wSJIc0QfbZ7HAVqhzI7NT8ueCvTHsY8C58uQrJ1gUiwnGfzkluhHKQpjd02w
+         MWD//ryiBlkn3IGfuIpcX0SHOqZdZcio5omjue224ef9M9DZ0ox4MjVx5rWRrza2AxaX
+         UNdMvtrZcG3Y/DVpD/M+fQQWY8N8O/rueWOhpPzfE86dyVPHxcpXy5ROVnqdqvqKiLX5
+         m2iRIhonCo6942Mb702kAAIzAfRuyf9138ulJ3CSfNl0umv+SXrKqiGZZuVyHjfewrh1
+         AmADXasTrWEOYgiSAQ//t5uyGT4UwFLUfTDJa5QPtwr4/futmSswi5cxs8s0DVEgqfUl
+         Ai4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWoIzULM09tfImkQK1xp8S1It5l5nApnjwe4ebfbxNAaA0IrT+2sD+DVeXsCeV8BREx8xSUWq06hBnSI/QlQwPPFU=@vger.kernel.org, AJvYcCVctWPOp6n0CjNceekUWJf6o0N5nCtU3h2m5ejqCDnFR/SFijJDZ0cKwTMq7wtA3Nk8Mxv8JtfMvXk2M4db@vger.kernel.org, AJvYcCXkDDJa1jp13lZ5qeJWkye5wyaowkNpzT/j6ijqc9O9eCjVch9DTUderYmO6r0XXXtNwXUwsx4dONCi@vger.kernel.org, AJvYcCXnUs/sMBn1wOr8miE9shRif12HrZOcH52sARZRsxn3KiQ604qXLqS9cKkKUCJ1UHTeELmgapCnMsrvVab0+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw18ycbNRqB+6URCCyATGX3VfxfizUMXmERlDF4jjysucmbXRar
+	g1kO0UTczaZ35v26tVa/fL6VWIQvHR7pQ9JYPQyBRSe14sw78vru
+X-Gm-Gg: ASbGnct0YOxm0k5fEbKZNaBw1lYm9oAqAUCMSC5LbtICf2GjiPLSZ9yV2SmvudGIEF6
+	C4Gbv4kQZsL4RMdRXbKz1lDeOKAFJK5jst2EuAQl1h3B5KXKkGuutu3eYvbcaXchdz4jpvwWrzH
+	qUA/BhIH0Wz1Gk9+pr+e6JbftPjeSKHRO5Pc/Ot+fR5DwkxC8ozqglwt25/iKKa1fqWZsUNMeSs
+	Z1lCdV0heNkxSQaeFJo9hJSlQh7shudZtPhEXj64hMrkSFMxu3FQZZ8GfW+dHEDVSLs+vBmX7jw
+	7Js3c0F3bwMzpMJANuf0r2xQEOWo6GTTZKnNStgk
+X-Google-Smtp-Source: AGHT+IE5cw7vshlFbcyfY+g/VDogOlT1fxKWnLlplcjX26Jv+6luh/NyTC1ES3BHLcR0L8M4kDEHug==
+X-Received: by 2002:a5d:47c3:0:b0:38f:4176:7c25 with SMTP id ffacd0b85a97d-38f70772b51mr8659416f8f.2.1740382124196;
+        Sun, 23 Feb 2025 23:28:44 -0800 (PST)
+Received: from [192.168.43.21] ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38f259d58f3sm30734172f8f.73.2025.02.23.23.28.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 23 Feb 2025 23:28:43 -0800 (PST)
+Message-ID: <3616b414-ba57-4625-aa35-20d3dff61cc5@gmail.com>
+Date: Mon, 24 Feb 2025 09:28:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,110 +80,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bootflag: Change some static functions to bool
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>
-References: <20250129154920.6773-1-ubizjak@gmail.com>
- <31e1c7e4-5b24-4e56-9f17-8be9553fb6f9@kernel.org>
- <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
+Subject: Re: [PATCH v2 6/8] phy: phy-snps-eusb2: make reset control optional
 Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <CAFULd4a4qbMiP3dYXDp0_vPapkoi-i-ApOY5pHfKG1h7=vfbbA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250223122227.725233-7-ivo.ivanov.ivanov1@gmail.com>
+ <rcny5iaxs6gr6vcxmjep6hwtkt2fvtgzhbxlpu3ax6vj7maure@n5bg5y74vwc7>
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <rcny5iaxs6gr6vcxmjep6hwtkt2fvtgzhbxlpu3ax6vj7maure@n5bg5y74vwc7>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24. 02. 25, 8:24, Uros Bizjak wrote:
-> On Mon, Feb 24, 2025 at 8:18 AM Jiri Slaby <jirislaby@kernel.org> wrote:
->>
->> On 29. 01. 25, 16:47, Uros Bizjak wrote:
->>> The return values of some functions are of boolean type. Change the
->>> type of these function to bool and adjust their return values.
->>>
->>> No functional change intended.
->>>
->>> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Ingo Molnar <mingo@kernel.org>
->>> Cc: Borislav Petkov <bp@alien8.de>
->>> Cc: Dave Hansen <dave.hansen@linux.intel.com>
->>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>> ---
->>>    arch/x86/kernel/bootflag.c | 12 ++++++------
->>>    1 file changed, 6 insertions(+), 6 deletions(-)
->>>
->>> diff --git a/arch/x86/kernel/bootflag.c b/arch/x86/kernel/bootflag.c
->>> index 3fed7ae58b60..4d89a2d80d0f 100644
->>> --- a/arch/x86/kernel/bootflag.c
->>> +++ b/arch/x86/kernel/bootflag.c
->>> @@ -20,7 +20,7 @@
->>>
->>>    int sbf_port __initdata = -1;       /* set via acpi_boot_init() */
->>>
->>> -static int __init parity(u8 v)
->>> +static bool __init parity(u8 v)
->>>    {
->>>        int x = 0;
->>>        int i;
->>> @@ -30,7 +30,7 @@ static int __init parity(u8 v)
->>>                v >>= 1;
->>>        }
->>>
->>> -     return x;
->>> +     return !!x;
->>
->> This "!!" is unnecessary and only obfuscates the code, right?
-> 
-> Not really, this idiom is used in place of (x != 0) to change the type
-> to the return type of the function in a pedantic way.
+On 2/24/25 01:48, Dmitry Baryshkov wrote:
+> On Sun, Feb 23, 2025 at 02:22:25PM +0200, Ivaylo Ivanov wrote:
+>> Some SoCs don't provide explicit reset lines, so make them optional.
+> Is there an external reset or some other signal?
 
-Care to explain what exactly it changes?
+Well..  There probably are on a hardware level, but there's no interface
+that exposes them to the kernel.. as far as I've seen. Resets are usually
+managed via the blocks' registers. I can't say with certainty because I
+don't have access to TRMs.
 
--- 
-js
-suse labs
+I can reword this commit message to make that clear.
+
+Best regards,
+Ivaylo
+
+>
+>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>> ---
+>>  drivers/phy/phy-snps-eusb2.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+
 
