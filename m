@@ -1,180 +1,152 @@
-Return-Path: <linux-kernel+bounces-528625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5DFA419F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:02:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC529A419F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 447293B64A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C15DF1738E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85CA2528F2;
-	Mon, 24 Feb 2025 09:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D373E24F5A6;
+	Mon, 24 Feb 2025 09:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsnC3izb"
-Received: from mail-qk1-f195.google.com (mail-qk1-f195.google.com [209.85.222.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfIFXDJe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21324292F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344C02505B7;
 	Mon, 24 Feb 2025 09:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.195
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391070; cv=none; b=jVZt1I16IReZlHnsI00gpeXcMwc15bka9TEWZKGhL7YVdhy3zEGJe6JOWuJ6FPS2IOdpNDpe0rT0bhlF+GyOE42LXQ6VhWDEe4ZhCW69FWGnZnsChduh/rnCQEnbipnQylG+bNHC7Rtr4m5cvYQzUKEeBfdQh4yi6Nhso1pCqPk=
+	t=1740391069; cv=none; b=CDCDTddcGNurCPJPVW39XktWLeKCncBY/F5a2pciUXu0ivNvYLdSS63GnV9klJtp8WE6zs2fCY0TMCUMmAafNDE8SzH3yrsaAbHXaRdNDU6C8WFvANd2lMxdwQxY+9FuZ/xfHgi0sT55l1e9urNszhoWW084Zzy5sdoXmwEJw7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391070; c=relaxed/simple;
-	bh=s8OaGW99ppf2hWfSu+1vSCOUtbexOxS5yMUTM4p0Bc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bhpBjfPqQowPl2w7y8pOm/govDFNjneHEFAg6olrPPQqz2y0IvnZrJpnIrDAgRQphitIWH+BnvvJ2wez4ZfXi2M3XeXlZHOmwVGvWjZ4bvIs55Cf8Vab/NSDyoaO2Z7kHFUXcvbV/Q4ubhjKGMTZub8snh8EjcsZC6ESXw3LJa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PsnC3izb; arc=none smtp.client-ip=209.85.222.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f195.google.com with SMTP id af79cd13be357-7c0ade6036aso512282185a.0;
-        Mon, 24 Feb 2025 01:57:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740391067; x=1740995867; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EE27tvEZr9+4KilAFSdeS60EG0pfp9dwkIWt3ppECpg=;
-        b=PsnC3izb0NSuWQbekFJeBH2HkPCx0+r3vphKkXgTF3A5/7BrPnw4T4k9n3E5fWfZ4B
-         AP17pZV0j4a3aFeJlkTnM9s0slAQYwu+r9rIkAjN0s16QkbgxdKln7sDDWN4f09LN76W
-         Qs8w3od1Ncmj6KgsW023yeuQEMessOvG83NbJGS0yQ1izIqRYRMi0JFPUGCb7COlHLDL
-         GlUVXswN/R7Ign1LY1jv2fHdd+ukO0TT0vfcWTv2DLkztNj5/zrDdW7yyPxIoufw8rHc
-         xs9dvRMCjNFt4XxOTirgMC70EYrhO3ACGGExeqyp/GGPeh+/4CtDtzE0CwMg8zyuMGkh
-         AfHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740391067; x=1740995867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EE27tvEZr9+4KilAFSdeS60EG0pfp9dwkIWt3ppECpg=;
-        b=gBpchRrkbhq/KVUqeYLH35ewIS8K5mExsyllKjR5t1SEVk4tidkB7QnTDJakPkEgwi
-         HY5aXSuFXLAJW7IVQsHnbcnmhg1JPIST3Y/pw79hjU38W+Y42f+A4TX4bVlPA60X3KPu
-         qvTpO1CebumefEye6WL3NAdRTZ3zD6arHjGNRwUYNwJJtYdepjsIAjJiOmsD3Oae5R5k
-         C9kgmL8DAQgh7biT8pCVWOluIUg5LxLICUIRfEgk057zGb/vX+Jax1r5TNwpx5Y7FuFe
-         MzdIKHtXH0PEDJXX8/hNAh88ZNiZ1cwdCtooy2Cy5O076I/YKgy5uPdRnMvf4qFRAqIm
-         1eiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWiqirH4weoleFPmWN9WBQEuLyjT5M519UoylhD81Si7IjlkDCvUw+xbxCUjCtqsvzXE6aLIFZXNJCC+U=@vger.kernel.org, AJvYcCWg8hS2AfwBwhWz/24YtnzDiJdH7rNfuXPXdLC1rdF+N/AR12hAqaHS6j+S36M5Ymgmk7fo8HKrYLYEJK4iroU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj7EcZBy6AwVt5AkYZ1eFdoS/59e0HvAPu+HbdCbadMlM1MiUI
-	QJNhJ6u3FxeelvaYKcjgZkwn1WcvDHI6Pm5VZTXYxvUL1HiH4vQyULbAXBZ4Ti7AH2os9ufM+sO
-	1K5tazpP7AXO7JDp4nnuxNkkwtTU=
-X-Gm-Gg: ASbGncuc1Q2Q1bGARVN2QLrEZhySYatvkYaBw9N1YccIXeMCKHnYlFbPClvFepDc9rO
-	VrZ9P5ygEq3+1/114xAmnLaXJI/hFrvfxdWahiZHIbtQCRhvsKZQ1K8mzBbOz6+GihOvHlBegrL
-	3Trc2lsUlu
-X-Google-Smtp-Source: AGHT+IEiyTlMxnXD1UshSUQEKFq+P4LKtaQ419LnEHYH321oIBTcL/NjQ/kVZ4EfJbLVh4mLO+rdrNOxdDxtei5gAEg=
-X-Received: by 2002:a05:620a:1a18:b0:7c0:a944:c22b with SMTP id
- af79cd13be357-7c0cf118597mr1720922085a.15.1740391067228; Mon, 24 Feb 2025
- 01:57:47 -0800 (PST)
+	s=arc-20240116; t=1740391069; c=relaxed/simple;
+	bh=iE537x/MELrUY0Qtk8aCd5YLeWWHG15hTl09B9wGRWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SQF99Ogla2XncNWI19M3IJU952sY2Oey+5XltVQ7vkN7+I0Do/BBp+tqJ9JQjaMRn+JicHHiANkrohn5T4rmeG7Er1/IShdy6lCoBzoc8Gqu52HuXiqZTtljeIf6hgMFBWb3gNVpGcf3atH/z7GLLBQh3RDsEUd+R6IEMYZtGr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfIFXDJe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 098C3C4CEE8;
+	Mon, 24 Feb 2025 09:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740391068;
+	bh=iE537x/MELrUY0Qtk8aCd5YLeWWHG15hTl09B9wGRWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TfIFXDJen3mMesTjG7OhjLyO68Lu9krViqA7VC3vhkwnLojy4G3CBiTdUmL3na5zf
+	 ey2d8msVYSk18M5THfX+RJdtV/35HTBjjiieiPT1B9lKgRxUblNdrLhnR090a4dUDp
+	 FkP/7/PnwOILK+QWx4uFaUo67l3z3VqYe5pzZuknUTsNQ5E5UX2KyDSU5kOlq4JXSs
+	 Z1Bwr4k9KLgdBR37JAv6X9l6o/j1iGueZhQVbXva5c1h8hjI9PZAm1jeoz8P9C78du
+	 Upp41f6hNuhj6KQ/6UrooNmrkqTQr4K66zIME/NA1If65Ly8AwVuuEYnio7f84sn8m
+	 j8jH/pA1AvlLQ==
+Date: Mon, 24 Feb 2025 20:27:44 +1030
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH 3/8][next] xfs: Avoid -Wflex-array-member-not-at-end warnings
+Message-ID: <e1b8405de7073547ed6252a314fb467680b4c7e8.1739957534.git.gustavoars@kernel.org>
+References: <cover.1739957534.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com> <20250224002745.7d7460a7.gary@garyguo.net>
-In-Reply-To: <20250224002745.7d7460a7.gary@garyguo.net>
-From: Ventura Jack <venturajack85@gmail.com>
-Date: Mon, 24 Feb 2025 02:57:35 -0700
-X-Gm-Features: AWEUYZkXEmHOLDHI6rOFs3YyFgA2bH0xuZYKDQwMN5FBqg4lzIlviFarR_mQuDA
-Message-ID: <CAFJgqgSNjF=LfrCNTH3GdYssXz9YG-AeCtpibejJ7Ywtx0m3HQ@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Gary Guo <gary@garyguo.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1739957534.git.gustavoars@kernel.org>
 
-On Sun, Feb 23, 2025 at 5:27=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
->
-> On Sun, 23 Feb 2025 08:30:06 -0700
-> Ventura Jack <venturajack85@gmail.com> wrote:
->
-> > - In unsafe Rust, it is the programmer's responsibility
-> >     to obey the aliasing rules, though the type system
-> >     can offer limited help.
-> > - The aliasing rules in Rust are possibly as hard or
-> >     harder than for C "restrict", and it is not possible to
-> >     opt out of aliasing in Rust, which is cited by some
-> >     as one of the reasons for unsafe Rust being
-> >     harder than C.
->
-> The analogy is correct, you can more or less treat all Rust references
-> a `restrict` pointers. However it is possible to opt out, and it is
-> done at a per-type basis.
->
-> Rust provides `UnsafeCell` to make a immutable reference mutable (i.e.
-> "interior mutability"), and this makes `&UnsafeCell<T>` behaves like
-> `T*` in C.
->
-> There's another mechanism (currently under rework, though) that makes a
-> mutable reference behave like `T*` in C.
->
-> RfL provides a `Opaque` type that wraps these mechanisms so it
-> absolutely cancel out any assumptions that the compiler can make about
-> a pointer whatsoever. For extra peace of mind, this is used for all
-> data structure that we share with C.
->
-> This type granularity is very useful. It allows selective opt-out for
-> harder to reason stuff, while it allows the compiler (and programmers!)
-> to assume that, say, if you're dealing with an immutable sequence of
-> bytes, then calling an arbitrary function will not magically change
-> contents of it.
->
-> Best,
-> Gary
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-In regards to `UnsafeCell`, I believe that you are correct in regards
-to mutability. However, if I understand you correctly, and if I
-am not mistaken, I believe that you are wrong about `UnsafeCell`
-making it possible to opt-out of the aliasing rules. And thus that
-`UnsafeCell` does not behave like `T*` in C.
+Change the type of the middle struct members currently causing trouble
+from `struct bio` to `struct bio_hdr`.
 
-Documentation for `UnsafeCell`:
-    https://doc.rust-lang.org/std/cell/struct.UnsafeCell.html
+We also use `container_of()` whenever we need to retrieve a pointer to
+the flexible structure `struct bio`, through which we can access the
+flexible-array member in it, if necessary.
 
-    "Note that only the immutability guarantee for shared
-    references is affected by `UnsafeCell`. The uniqueness
-    guarantee for mutable references is unaffected. There is no
-    legal way to obtain aliasing `&mut`, not even with `UnsafeCell<T>`."
+With these changes fix 27 of the following warnings:
 
-    "Note that whilst mutating the contents of an `&UnsafeCell<T>`
-    (even while other `&UnsafeCell<T>` references alias the cell) is
-    ok (provided you enforce the above invariants some other way),
-    it is still undefined behavior to have multiple
-    `&mut UnsafeCell<T>` aliases."
+fs/xfs/xfs_log_priv.h:208:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
 
-The documentation for `UnsafeCell` is long, and also mentions
-that the precise aliasing rules for Rust are somewhat in flux.
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ fs/xfs/xfs_log.c      | 15 +++++++++------
+ fs/xfs/xfs_log_priv.h |  2 +-
+ 2 files changed, 10 insertions(+), 7 deletions(-)
 
-    "The precise Rust aliasing rules are somewhat in flux, but the
-    main points are not contentious:"
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index f8851ff835de..7e8b71f64a46 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1245,7 +1245,7 @@ xlog_ioend_work(
+ 	}
+ 
+ 	xlog_state_done_syncing(iclog);
+-	bio_uninit(&iclog->ic_bio);
++	bio_uninit(container_of(&iclog->ic_bio, struct bio, __hdr));
+ 
+ 	/*
+ 	 * Drop the lock to signal that we are done. Nothing references the
+@@ -1663,7 +1663,8 @@ xlog_write_iclog(
+ 	 * writeback throttle from throttling log writes behind background
+ 	 * metadata writeback and causing priority inversions.
+ 	 */
+-	bio_init(&iclog->ic_bio, log->l_targ->bt_bdev, iclog->ic_bvec,
++	bio_init(container_of(&iclog->ic_bio, struct bio, __hdr),
++		 log->l_targ->bt_bdev, iclog->ic_bvec,
+ 		 howmany(count, PAGE_SIZE),
+ 		 REQ_OP_WRITE | REQ_META | REQ_SYNC | REQ_IDLE);
+ 	iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart + bno;
+@@ -1692,7 +1693,8 @@ xlog_write_iclog(
+ 
+ 	iclog->ic_flags &= ~(XLOG_ICL_NEED_FLUSH | XLOG_ICL_NEED_FUA);
+ 
+-	if (xlog_map_iclog_data(&iclog->ic_bio, iclog->ic_data, count))
++	if (xlog_map_iclog_data(container_of(&iclog->ic_bio, struct bio, __hdr),
++				iclog->ic_data, count))
+ 		goto shutdown;
+ 
+ 	if (is_vmalloc_addr(iclog->ic_data))
+@@ -1705,16 +1707,17 @@ xlog_write_iclog(
+ 	if (bno + BTOBB(count) > log->l_logBBsize) {
+ 		struct bio *split;
+ 
+-		split = bio_split(&iclog->ic_bio, log->l_logBBsize - bno,
++		split = bio_split(container_of(&iclog->ic_bio, struct bio, __hdr),
++				  log->l_logBBsize - bno,
+ 				  GFP_NOIO, &fs_bio_set);
+-		bio_chain(split, &iclog->ic_bio);
++		bio_chain(split, container_of(&iclog->ic_bio, struct bio, __hdr));
+ 		submit_bio(split);
+ 
+ 		/* restart at logical offset zero for the remainder */
+ 		iclog->ic_bio.bi_iter.bi_sector = log->l_logBBstart;
+ 	}
+ 
+-	submit_bio(&iclog->ic_bio);
++	submit_bio(container_of(&iclog->ic_bio, struct bio, __hdr));
+ 	return;
+ shutdown:
+ 	xlog_force_shutdown(log, SHUTDOWN_LOG_IO_ERROR);
+diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+index f3d78869e5e5..32abc48aef24 100644
+--- a/fs/xfs/xfs_log_priv.h
++++ b/fs/xfs/xfs_log_priv.h
+@@ -205,7 +205,7 @@ typedef struct xlog_in_core {
+ #endif
+ 	struct semaphore	ic_sema;
+ 	struct work_struct	ic_end_io_work;
+-	struct bio		ic_bio;
++	struct bio_hdr		ic_bio;
+ 	struct bio_vec		ic_bvec[];
+ } xlog_in_core_t;
+ 
+-- 
+2.43.0
 
-In regards to the `Opaque` type, it looks a bit like a C++
-"smart pointer" or wrapper type, if I am not mistaken.
-
-Documentation and related links for `Opaque`:
-    https://rust.docs.kernel.org/kernel/types/struct.Opaque.html
-    https://rust.docs.kernel.org/src/kernel/types.rs.html#307-310
-    https://github.com/Rust-for-Linux/pinned-init
-
-It uses `UnsafeCell`, Rust "pinning", and the Rust for Linux library
-"pinned-init". "pinned-init" uses a number of experimental,
-unstable and nightly features of Rust. Working with the library
-implementation requires having a good understanding of unsafe
-Rust and many advanced features of Rust.
-
-`Opaque` looks interesting. Do you know if it will become a more
-widely used abstraction outside the Linux kernel?
-
-Best, VJ.
 
