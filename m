@@ -1,167 +1,146 @@
-Return-Path: <linux-kernel+bounces-529297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EE2A422DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:23:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE6C3A4228F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D516444539
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C6C7A760B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA281151992;
-	Mon, 24 Feb 2025 14:11:51 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7221459F6;
+	Mon, 24 Feb 2025 14:12:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB5B14A627;
-	Mon, 24 Feb 2025 14:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4471519A5;
+	Mon, 24 Feb 2025 14:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740406311; cv=none; b=R5q5mTnKojyYNFWkgrEgsZZ1FDM1AMy8o/gc70nSBNxH7DW6XDb44rLA4E69KLbvnZEzglnIf4Z9b39Vn4KDvvTCaYMFMseacQQ3x1wNmxkHpapZLqoC9Nhvpif4zxeZJIb6CSzuyswJE50ySgek5P49fhqUOxkp7X4EPwELis0=
+	t=1740406334; cv=none; b=cXUJhoKknuf/9M9yRnyoQjuDIMFDaP6qB2Cum5yF4RhjtK8jqlzdFd2DU7KMExfgoJY/QRNx4cvxyxll69feJlSk3NYlTqBspqmquxHg8DuYN0S6KcJK8ZuMmGm2ieO/NmmCCtyTwHwvt3o3qLmHTI9+AwQ2GhjBV+F0BTwUnEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740406311; c=relaxed/simple;
-	bh=honEVnfE4V0zsMviYhLubu2ELztDXqvTPG+FhJ7VOjk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MiyHgy5V7ashjPDmfEOdxVCcc8GFjmH1ZBiXpMm/ZkXm9TLi/D4uIk1QSa0EPl//5ur8VYYQhvlNAmurSR58NC4mDqTODDN3YO0oCJ92EykMYvqMyOh6WjgRhhFMNyEFJ6rLP0GdVYs8ehz2Edvp0h01WpjeNDjFYj01A1LtpSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5df07041c24so6559176a12.0;
-        Mon, 24 Feb 2025 06:11:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740406308; x=1741011108;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IryNxkKlBcc9D0krfwIyGbizOCjjxeePhgWwSTN0Pco=;
-        b=pDvQU0ScAw7fg/Uo6xabkPAIKKlrACETqofqUSNX1svlwVsrpO+HNpjhCQImvAv/TI
-         Xlj6Qf+06VmYZsErN7oQTYRe4/+3kFQH5y/5InYVkqTwjqP2H8hiotrVNc98UGeNbx66
-         yv6y2n7ZDAandCLIZHf2quYh6IHuqvzUmU03Z2lbrD0LywPiM+VMy4erdV+Qr9kxD85A
-         DZ+JNstpYPZMBfLPE0CEfrWTB17Pof7JzwgvveC9TCtfYqZ/hBRfcA/bvTaCiiFGRtQK
-         ZhNB+s6YQga5xI1LmsjJdAXw6FrTOR7MyLtmVqd5sRYbcA/+kZEIHYsOITnPlEVegdrS
-         FtNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUto27U76ELjxqe48kg0CBlTZbGEUzOmv3Iknb3bGhZAFc1Kbct0S/6VDa/48FkVGKO9SL7A29I@vger.kernel.org, AJvYcCVCpb34qP+zpqCCDCoRvlf1yG4/MW85SgnOmaIJWTwCloX3bMQmwCjSL9w6kEoRiPFKqHkIwYzGBt+/2Fs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAcdrlUsIHB0HRFRROM/Hix8VRgF/vB0vkhWcoVH85w6QbIZoW
-	l5u1ZEReqcUnlnna/An9BjrFKVp2qK6Xk6UMMNECtXiCiz4Yd2BO
-X-Gm-Gg: ASbGncsAq6/FF7Ai+csFA5/c958Pt8m48Qvn6120/SGtR+Hf06DlCSqQPjgLiv1UioD
-	7u3WdVqBrs62A9ZF694AseDpFWb44MRwLRLPgjyG4dDGBVSpfulp6htxiat5jGtXDmI7u/D8vhw
-	J6+Gc99jvO7UQ7yapFzFxT4BVaeQR43NTSqr75D359eXzccZTXFULUDDRqNw0yMXTomFA1hH/0N
-	CLNjH0r5ijgObkItk0HoYpz9sgAElBfb0ZRNNWsMqWKFIwwiz72hajc51iF9oFWloHM/aow0ZX5
-	GQESRtwANCCAgZlyCQ==
-X-Google-Smtp-Source: AGHT+IFJpKKTHNRBe9nWPzyfqPKFOkrLThbFnGPbXWdFQK/HTVe5NOVch1hoveoxNvgsKgKvjeXnbg==
-X-Received: by 2002:a17:907:3ea8:b0:abb:6f30:32c3 with SMTP id a640c23a62f3a-abc0d9dbdd5mr1294707366b.24.1740406307623;
-        Mon, 24 Feb 2025 06:11:47 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abecd9b9a33sm2884366b.80.2025.02.24.06.11.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 06:11:46 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 24 Feb 2025 06:11:34 -0800
-Subject: [PATCH v2] perf: Add RCU read lock protection to
- perf_iterate_ctx()
+	s=arc-20240116; t=1740406334; c=relaxed/simple;
+	bh=l2myhm4ovXQ6hVa9gcycwcpFHs4yyAu2aOc42alMsxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XO5RveRGTuqxVbwAH7nLumyQWBK5pO73yAu1fK1QKkmrMdotMl7HjKoHracnx/RWmrnYyvMBgqu+YmKsOK+yeKU4Lqki7YbaQND8QQ1xp7Y4OAGLEoACZu8WpbMQ2VMxtwArM/3GNcGWTJNtibRW3/d3DtB9Ls97nb8Ab5SpCEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C3DC4CED6;
+	Mon, 24 Feb 2025 14:12:12 +0000 (UTC)
+Message-ID: <99cc3844-54bd-44f5-88c5-9570fae709a7@xs4all.nl>
+Date: Mon, 24 Feb 2025 15:12:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Avermedia DVD EZMaker 7 video distortion on capture
+To: Randy Kimmett <linuxish@outlook.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>
+Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <PH8PR12MB71128FAC43D4FF7BC3D64050EAF92@PH8PR12MB7112.namprd12.prod.outlook.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <PH8PR12MB71128FAC43D4FF7BC3D64050EAF92@PH8PR12MB7112.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-fix_perf_rcu-v2-1-9e11ec2f0e69@debian.org>
-X-B4-Tracking: v=1; b=H4sIABZ+vGcC/3XMsQqDMBAA0F8JN5uSi9gSp/5HEYnxorckcrFiE
- f+91L3rG94BhYSpQKsOENq4cE7QKlspCLNPE2keoVVgjW0M4kNH3vuFJPYS3trG6Gp0xjXGQ6V
- gEYq8X92rqxTMXNYsn2vf8Kd/og01aqzD4CyaGO7+OdLAPt2yTNCd5/kFBjBf5akAAAA=
-X-Change-ID: 20250117-fix_perf_rcu-2ff93190950a
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Ravi Bangoria <ravi.bangoria@amd.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, stable@vger.kernel.org, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1961; i=leitao@debian.org;
- h=from:subject:message-id; bh=honEVnfE4V0zsMviYhLubu2ELztDXqvTPG+FhJ7VOjk=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnvH4h3QrzQ2sBlSHI21Fcx4F7xfKaMIypsIb9t
- pzsYk55MduJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ7x+IQAKCRA1o5Of/Hh3
- bWcRD/9zHVZRAqiY/kdYGJ4J/yZOC0CW42pp3p2njID5sjXN/tXmOqi1AchXSxoVuVtX7pvKm9q
- ilH+/Hk5iDpY4jhbNIvYA013g2MRUP4rScxeqQCmV/gCcX/9C6pRrxTGBSnZ2Xz5qg/sYZrtG90
- mY2A1o9kIn20zftEJWAuRMsLtLmjZ19lgTZKMp/t9mPW0cVmWqKb5Ybgny+EfB0bXh832hLlrtr
- FRV5xUH9+F1dTlYWA5wLxe/5OScmbRnMHjMrTeyyjHSeNS8mz6cnfeHZBPQ//ftal9pznunb/3v
- l7n7goEaxio+8PPL213nqqB1xaY11olcjbcBW9BOVL2fraSFWbFMFDd0AOFQSpFvkxx0e/njQL3
- Ar93a6v/CmqJbl/e6CGUNq1T0D38/vhFV7rQjOcPZuA9y75I6pWylNeR+HKkXM3FFckogU319sX
- 5H6po/rv6UmVSg5nFKnIk28UvbLwhctuHgOWrVlvoR1c5BOANPz5lPf8QLlBC75tU9rBThTNk0O
- FN/uxneiCXKaKFq8iADHlp1y5wMW/LdwooAHhj6PefAdCWJei8HtkcbMzYUgtG0Xcuug6I0uzcc
- AT/zaKhBkbyoXVi0mGEZfdVl22P3RIgRIcwe7ccSUjX6IEBzCKos5Kq/xPtrvNk1syb69NcLiDr
- RFAVzEfhJsIyUUw==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-The perf_iterate_ctx() function performs RCU list traversal but
-currently lacks RCU read lock protection. This causes lockdep warnings
-when running perf probe with unshare(1) under CONFIG_PROVE_RCU_LIST=y:
+On 15/02/2025 17:18, Randy Kimmett wrote:
+> Avermedia DVD EZMaker 7
+> Model: C039
+> VID:07CA PID:C039
+> Module used: cx231xx
+> Distro: Manjaro
+> Kernel version: 6.13.0-1
+> Components used: Conexant CX23012-11Z (according to https://www.linuxtv.org/wiki/index.php/AVerMedia_DVD_EZMaker_7_(C039))
+> 
+> When capturing analog video from my old Hi8 video camera (NTSC M), the captured video has banding and is grainy, it doesn't matter if I capture from the S-Video or Composite, the results are the same.  On my windows PC the capture is perfect.
+> 
+> dmesg output:
+> 
+> [31173.105709] cx231xx 3-1:1.1: New device AVerMedia TECHNOLOGIES, Inc. AVerMedia C039 USB Pure Capture @ 480 Mbps (07ca:c039) with 7 interfaces
+> [31173.106062] cx231xx 3-1:1.1: can't change interface 4 alt no. to 3: Max. Pkt size = 0
+> [31173.106065] cx231xx 3-1:1.1: Identified as Conexant VIDEO GRABBER (card=5)
+> [31173.106649] i2c i2c-13: Added multiplexed i2c bus 15
+> [31173.106704] i2c i2c-13: Added multiplexed i2c bus 16
+> [31173.214440] cx25840 12-0044: cx23102 A/V decoder found @ 0x88 (cx231xx #0-0)
+> [31175.444434] cx25840 12-0044: loaded v4l-cx231xx-avcore-01.fw firmware (16382 bytes)
+> [31175.493936] cx231xx 3-1:1.1: v4l2 driver version 0.0.3
+> [31175.620281] cx231xx 3-1:1.1: Registered video device video2 [v4l2]
+> [31175.620318] cx231xx 3-1:1.1: Registered VBI device vbi0
+> [31175.620423] cx231xx 3-1:1.1: audio EndPoint Addr 0x83, Alternate settings: 3
+> [31175.620426] cx231xx 3-1:1.1: video EndPoint Addr 0x84, Alternate settings: 5
+> [31175.620429] cx231xx 3-1:1.1: VBI EndPoint Addr 0x85, Alternate settings: 2
+> [31175.620431] cx231xx 3-1:1.1: sliced CC EndPoint Addr 0x86, Alternate settings: 2
+> [31175.620433] cx231xx 3-1:1.1: TS EndPoint Addr 0x81, Alternate settings: 6
+> 
+> https://bugzilla.kernel.org/show_bug.cgi?id=219764 (also contains a sample video clip of the issue)
+> https://www.linuxtv.org/wiki/index.php/AVerMedia_DVD_EZMaker_7_(C039)
+> 
+> 
+> Any help and/or suggestions would be greatly appreciated. :)
 
-	WARNING: suspicious RCU usage
-	kernel/events/core.c:8168 RCU-list traversed in non-reader section!!
+I tested this today, and unfortunately for you it works fine for me.
 
-	 Call Trace:
-	  lockdep_rcu_suspicious
-	  ? perf_event_addr_filters_apply
-	  perf_iterate_ctx
-	  perf_event_exec
-	  begin_new_exec
-	  ? load_elf_phdrs
-	  load_elf_binary
-	  ? lock_acquire
-	  ? find_held_lock
-	  ? bprm_execve
-	  bprm_execve
-	  do_execveat_common.isra.0
-	  __x64_sys_execve
-	  do_syscall_64
-	  entry_SYSCALL_64_after_hwframe
+I do not have this specific model, but it falls back to card 5 (Conexant VIDEO GRABBER)
+and I happen to have the Conexant VIDEO GRABBER, so I tested with that, capturing NTSC
+on the S-Video input. And it is fine.
 
-This protection was previously present but was removed in commit
-bd2756811766 ("perf: Rewrite core context handling"). Add back the
-necessary RCU read locks around perf_iterate_ctx() call in
-perf_event_exec().
+Since you can test under Windows, check the .INF file that is provided for the
+Windows driver: that can sometimes contain useful information about how the
+card should be configured. You can mail it to me and I can take a look at it
+if this is not something you can do yourself.
 
-CC: stable@vger.kernel.org
-Fixes: bd2756811766 ("perf: Rewrite core context handling")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v2:
-- Use scoped_guard() instead of rcu_read_lock() as suggested by Peter Zijlstra.
-- Link to v1: https://lore.kernel.org/r/20250117-fix_perf_rcu-v1-1-13cb9210fc6a@debian.org
----
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Don't hold your breath though.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index bcb09e011e9e1..7dabbcaf825a0 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -8321,7 +8321,8 @@ void perf_event_exec(void)
- 
- 	perf_event_enable_on_exec(ctx);
- 	perf_event_remove_on_exec(ctx);
--	perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
-+	scoped_guard(rcu)
-+		perf_iterate_ctx(ctx, perf_event_addr_filters_exec, NULL, true);
- 
- 	perf_unpin_context(ctx);
- 	put_ctx(ctx);
+Regards,
 
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250117-fix_perf_rcu-2ff93190950a
-
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
-
+	Hans
 
