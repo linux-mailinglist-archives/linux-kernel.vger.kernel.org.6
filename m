@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-529481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFE7A4269E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:42:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C06BA4268B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C04967A4D22
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:41:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 555EE3A83B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9B925A652;
-	Mon, 24 Feb 2025 15:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F65254858;
+	Mon, 24 Feb 2025 15:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AXuLvM9N"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JE3OS9YN"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2465625A348;
-	Mon, 24 Feb 2025 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E174723BCF5;
+	Mon, 24 Feb 2025 15:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740411690; cv=none; b=eMRHU8gF31FMIVaScPWYGY462IMjcWmcnYVbC3aRtGOwT7OB59rzdU7UhSFmD6DmRboB3z4nX4uWiAZ5fnllp6ZSwgj9FMh6uWPEd0HmBe0+HRdZ4/UiGaWrp6xdOB5MKO7dH7ADqiqyEU/tyehhqv88OdYsGw01tyvcFnqYmKA=
+	t=1740411197; cv=none; b=CfRJRVs1/7Ayp2k5aW4BYEPreNwDbE6YqJqMVVVLm6HQeOOaFCa4gGDKjvaPn2lUv3a+UaOilMo+ehpSZyznZVHVuIcX5PirVT7MdB4SkCGrmmy55pG43H8dUuARl8Q4cIhhvb6nuHqUp+J79l+CQP26kfeyUWA9mmpkfaqJsmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740411690; c=relaxed/simple;
-	bh=Afr2XNZYO2y/DV4KL3zXWFGDJkE6nBzrVvYEeUZ6r5w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Skk19UvVFs6MLMmk7U/otqvmbqTYPAn8b52VcRYblv6tTl58m7HlmYeLBkZmSN6p3K4d5K3gsba41cZ2a/jsYNzoXldHZShwryYcuyPl+B3RgTWirQ/yLhuDJuxm/TrSxN742IcOembYUpz4J94dD0S4II0Jm700LIbKUzzPYH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AXuLvM9N; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OEbN9K024048;
-	Mon, 24 Feb 2025 16:41:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Oxqz3gPKLjUeq3RC+gzdPgb15H4SWpt1bnaDWPNbrFk=; b=AXuLvM9NvN0vF00u
-	7VubzQtmXCWHOsUfmf7T3u36wVfJutSO+B5jQdJtEX25CFt0FfwPTigpguZ7+aYt
-	VqPzc/Qo+Cgc8/E2W7Vm8ng0/E96V3WJbNEd/AczmzMN8Di7qaymzdD8gLxMRshU
-	MdUkEgKa8kI4afz5L7DVNs510Z34owrJEhu17+JgchCPo+9OIJktaE4xcSFzVa/z
-	Yl2wuAAPwcb9Gcm5fK/aUMMDb4HGiONS9GI9DDX5ZN8O5PFLpL7RcisO3bnARPb0
-	9pK0SoJkKmeKIrcsTK0mUucpOobrxms8wImdX7TmDREYKj+3KWHJMHF30v60oVNZ
-	yBggYg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 44ytdn5q6s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 16:41:09 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 87B1540045;
-	Mon, 24 Feb 2025 16:39:49 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2F39D540347;
-	Mon, 24 Feb 2025 16:35:22 +0100 (CET)
-Received: from localhost (10.129.178.212) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Feb
- 2025 16:35:21 +0100
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <christian.bruel@foss.st.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>,
-        <p.zabel@pengutronix.de>, <johan+linaro@kernel.org>,
-        <cassel@kernel.org>, <quic_schintav@quicinc.com>
-CC: <fabrice.gasnier@foss.st.com>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 6/9] arm64: dts: st: add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
-Date: Mon, 24 Feb 2025 16:33:10 +0100
-Message-ID: <20250224153313.3416318-7-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250224153313.3416318-1-christian.bruel@foss.st.com>
-References: <20250224153313.3416318-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1740411197; c=relaxed/simple;
+	bh=O2tJz2i0vD7hotp7+UD3YrNL14k8fLmcgvxxr3HFIFE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DLYeyd5PaZ12p+sUwDsiM01ZaELOELSLh7SMVsNTuBNeQ/SbWZzMBjfkIxebodETlJsy5Z+gPt19zitRdQgO9V3If8F+oad2UsO8neNI3Dgb+F/KvmOV/2V6PWzzLx8H/mscwZOXlDzBlSwjENm5srbsfI5dR/TUvHwUWBuaH1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JE3OS9YN; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8EB7D4430D;
+	Mon, 24 Feb 2025 15:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740411193;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4nBcEB5ZqYv4lPSZ2d5hbWxLCG+9RTl08TMuDme7c2c=;
+	b=JE3OS9YN7ghRFygCXouzH5Hykp/g+2H8PEbNXBASW39se3lPZvGwelkhojmFETkz2DK5Ak
+	HMiwkmNZukMo8/YPFbm6t7qiCXZCZin5ZoaKjhR4AHkwfvKjMJFKdpA9R7Vo6sCddHRYGa
+	KHjgeo93uRoZBJw9PXzFyOnHWKUNeCNeso0T8ITE7I8tWuU+Bz6IhKsbMGJUB9TUm4kWX/
+	TG3J7R1z7KX+PtytluXEOMd6kmM0ZByl+pTVjidIc1jHXlh2iCkbc0QwIfRT8iy030AyVA
+	xIZt0bWA2qSV7cbkXZ3zsAmj3P2O+XZH5LgRgdMNMWomuR4kH6V0rah5hHwXQQ==
+Date: Mon, 24 Feb 2025 16:33:11 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: dapm-graph: set fill colour of turned on nodes
+Message-ID: <20250224163311.0611da3f@booty>
+In-Reply-To: <20250221-dapm-graph-node-colour-v1-1-514ed0aa7069@collabora.com>
+References: <20250221-dapm-graph-node-colour-v1-1-514ed0aa7069@collabora.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_06,2025-02-24_02,2024-11-22_01
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejleduhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeglefffefghefhtddvfeeufeeiveekgffgleekieduteekkeetvdehudekgfdvvdenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeehpdhrtghpthhtohepnhhitgholhgrshdrfhhrrghtthgrrhholhhisegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepkhgvrhhnvghlsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqshhouhhnu
+ gesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Add PCIe pinctrl entries in stm32mp25-pinctrl.dtsi
-init: forces GPIO to low while probing so CLKREQ is low for
-phy_init
-default: restore the AFMUX after controller probe
+Hello Nicolas,
 
-Add Analog pins of PCIe to perform power cycle
++Cc: Mark Brown
 
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+On Fri, 21 Feb 2025 21:39:32 +0100
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com> wrote:
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi b/arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi
-index 8fdd5f020425..f0d814bc7c60 100644
---- a/arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi
-+++ b/arch/arm64/boot/dts/st/stm32mp25-pinctrl.dtsi
-@@ -82,6 +82,26 @@ pins {
- 		};
- 	};
- 
-+	pcie_pins_a: pcie-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('J', 0, AF4)>;
-+			bias-disable;
-+		};
-+	};
-+
-+	pcie_init_pins_a: pcie-init-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('J', 0, GPIO)>;
-+			output-low;
-+		};
-+	};
-+
-+	pcie_sleep_pins_a: pcie-sleep-0 {
-+		pins {
-+			pinmux = <STM32_PINMUX('J', 0, ANALOG)>;
-+		};
-+	};
-+
- 	sdmmc1_b4_pins_a: sdmmc1-b4-0 {
- 		pins1 {
- 			pinmux = <STM32_PINMUX('E', 4, AF10)>, /* SDMMC1_D0 */
+> Some tools like KGraphViewer interpret the "ON" nodes not having an
+> explicitly set fill colour as them being entirely black, which obscures
+> the text on them and looks funny. In fact, I thought they were off for
+> the longest time. Comparing to the output of the `dot` tool, I assume
+> they are supposed to be white.
+> 
+> Instead of speclawyering over who's in the wrong and must immediately
+> atone for their wickedness at the altar of RFC2119, just be explicit
+> about it, set the fillcolor to white, and nobody gets confused.
+> 
+> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> ---
+> This is somewhat "just thrown out there"; I noticed that not setting the
+> fill colour breaks KGraphViewer only *after* I thought this was just how
+> they were for several days. With this change, both dot and KGraphViewer
+> render it correctly, but I have no clue as to whether it's in the spirit
+> of the file format at all. I figure that if this saves some other poor
+> souls a bit of time and confusion, then it's worth it.
+
+I confirm the issue with a plain installation of KGraphViewer (which I
+didn't know at all before -- interesting tool).
+
+So, let's have mercy on the poor souls:
+
+Tested-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+
+Luca
+
 -- 
-2.34.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
