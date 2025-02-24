@@ -1,192 +1,142 @@
-Return-Path: <linux-kernel+bounces-528350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2E91A416CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:00:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE06A416CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44BB1895EB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:00:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51AF171575
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C7F207E08;
-	Mon, 24 Feb 2025 08:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929E7282EE;
+	Mon, 24 Feb 2025 08:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b="j0W4CAeG"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KapILkno"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1C717C7C4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:00:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197A527453
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740384009; cv=none; b=oDUxnr+aN5yykTSpcTy4basuKC8LfT9zwn5eqmgiOFjCzMY20WgVyxYKN4PvUHkbMcOqTuFU9NH8T0DxS6HrKsELDgspPHsihjNy8zR1DqCd1r6F8mNjPL+JEXE4uqNCiGxrb8KTYXoU2NTVdZiPwcZDII8rVxmj/qn2oRvdZSw=
+	t=1740384094; cv=none; b=fh4G2WQomnHFRa0ctc1+E+H7fwlRpMrj+BgkgtMOhnsf4kbSzL5qyRHguK4M5mlDdJEHLu1IZWg/YRQzVx5x34TPMs1xsQkH8fzAIU0hWajioozN6+Byc2oX7n1lif8ZwXG8dk1019wBTqSPiXBGxTyJX0llN0qJ4pqjOdPG+UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740384009; c=relaxed/simple;
-	bh=DSSp61QUIymzYrWYGlGupfHXP31daiD2lgNbLtACtSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhIHryqpbQVveqL01PmH1B5o5fClkmMKCY+/LgpHRNJ93dpriFYt2zrQ7hiNedJmvvt9SEDPfT/1ahse1XcBXz4HFYKEbYDnTkUOGZQoul+tli6PmiZ/afJFPPnlMwCkHXIm+dL+CasxqXrEWzQrDH68EZgcAQFtqGNben3IslA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com; spf=pass smtp.mailfrom=scylladb.com; dkim=pass (2048-bit key) header.d=scylladb.com header.i=@scylladb.com header.b=j0W4CAeG; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=scylladb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=scylladb.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fa48404207so8344643a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:00:07 -0800 (PST)
+	s=arc-20240116; t=1740384094; c=relaxed/simple;
+	bh=oRQzRk5xTUcaDM5dqPMGTeTs7TwHysSopVPkeUpXl7I=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nRmxJPm6C6AnAHRropa3RABUASQeoohhhnMLxWpNb8GoVxfJFDvC78mbiUhFYUdivjUiguOYsn/g0jSJ8V9oSN3MN5RAM7gcYFdk0qhklXnM33b2cOSHdt/I4B9MJ4vA3XP05ExDyLbIIl09j3L5JltBzmqLuC1TZ1ewlAzwzpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KapILkno; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so1423255e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=scylladb.com; s=google; t=1740384007; x=1740988807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SVoA3KBTslaxKUJAlPiAwxSQFPk6ze1iD/cIE02/gTk=;
-        b=j0W4CAeG22RLVVZ4znCGt1A2rr6qI7hlDM2t8PDS7h1G/j9JSY8SYDDLQ2cxMb47fb
-         Z0oPDCeWpc7hqbrX/3fxTXE05V50UZ6oRg+hZQZ8z3bYDRodzBiH3GRcceSWg9dY0/rO
-         bVXv3quLRMnQiMIwSd71xv1U6lAktdx3oqz/OtQTnP7TZXziznTJCKPavqabeNFbbsMA
-         huCbL6YsjxpwmGzm+6Jk70jxr6BfboXjrK+gEKQGJeODRBy+m2WLJ99uY/DRRMrqDylV
-         z1sH+0GAYgR4AgtfDEhCBgQ81r1CHAsIYOigEnH9SWQ/SDwZMRy1kcwEfXKvqKbktqBD
-         IMNA==
+        d=linaro.org; s=google; t=1740384090; x=1740988890; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zcxQ5Im6UgvOQisVqwrBvBr+aTDn+0rM0hX5qHkX9dI=;
+        b=KapILknoX6Bgz+vWT064hKVNmv345vC7x95p7+mQ12xaqCGP4KoMjYsyCrPkciObnl
+         4bmdIyrXqZ2uk0NWF7Ptgc5fOzSLlL2BWQGqCjEq/ZngVOBg3S97xxtzcjZ/FThX5b82
+         uQcfNRQTU7uHI/DFuoakCDTEf8FpLOFN6pJacNaOriI54k85ldGd9hmnIFHFPUrmGZoh
+         wg08oiFKzGPftWu2FJhSEOSVZxWsIRlBd+eJKsPD2H3qUbyODvjngDMNK1yxhhW2LFnM
+         bchH1YTyhjFuPb/3eDtp4sMnxBJzARTBGW6ROTFYRDzjZbaiDmi028+E6epML8znmcRs
+         096Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740384007; x=1740988807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SVoA3KBTslaxKUJAlPiAwxSQFPk6ze1iD/cIE02/gTk=;
-        b=ZOVedCq6gfyrnOHIdArpUbQm3VdnuTKgHt+3jPZqnnzKJcwG4LdN9T+whhqk4VQJiI
-         sc2W6ctv1WqAUZ5dn+1HGcvZUoNPAGWkl2ADj3wzYZwSijHhPuRjT5ahfWnjxXZ3/nvf
-         uWE/kX/Tk9YzLoSsE5QVszvCNWw8lOFBvggrB5bbXj8sr7/B6N1pxSMlKsBB9nMescp+
-         emFKi5TO+T85aWeuj42wUUHPr9pE/ygo2huS8havh0NUdpqkil4nT56mBHmIwVBQZDum
-         iiaR3LbRgf+0mU+Cnwcl3yx0EuzPjBzoYanAB9fFfmYW1J9RjS2OkpcL+LcPRfF5EwWk
-         lHNQ==
-X-Gm-Message-State: AOJu0Yz1SnUiCst9V1iWO6IjTqHt9DGAiN6jiJhVQYA0TXhIdMuKeJXs
-	uHqlB70AKU4VkC9CQo90frQwW6VSyg0VXj4IeUerbaL3rE84YFtdrng0WZmo6q+geFo17nDrYSF
-	oKyL/+KZp98SFEYjTp6p7cylgJyPoUYdGk8L66czamqUGppkWgDVnsL2b3ZHlK8fn200HECkQz3
-	et5uDFpDHbozDMlvs1xfpS5OdkXhKz4JZWmOK0xgzgMUedkkjF2LJNznZsIit8A6oLeDGL73+KD
-	YnsETCwr2yCeAKPOW9BJ5j37kbdKnh2/hWJeHl3dwz8t05g3pREUaz+Jr5zDCDSds2AJ4C0T1du
-	Lr6JnLh8tmN891EsnseYKMf0DWJTyX8AMFGOxI7d6sKCHHF2SEtCagoYDj5oKFENIMwNzoElnxj
-	H0zM/oLjn/V6ACirtUDnlQBUPCMkHYpLUjE8w
-X-Gm-Gg: ASbGnct7E/v3HCHFWPoqYFOosa19b0HpmG1ak63CkoINFQG1YpZIDSBK6mw6jUJE1gc
-	OvaBH7OVyZfvH1upUaOMF0QuTP7LIQS4oPpiChtHNs/wAVRzeY+74jnZvM1KB9UraKmGbs2tWo1
-	zCkcIbQaUjmkMMW2EhbG0jT8pL
-X-Google-Smtp-Source: AGHT+IFtdbQ6U/YKuWHB7yqDwwuNE/bSc7IlcjqeG5sANxT1TCSNg1dNn8Tz99FJjQDWn5yBteVeobg3lGuJU2hNAM0=
-X-Received: by 2002:a17:90b:4ec6:b0:2ee:ad18:b309 with SMTP id
- 98e67ed59e1d1-2fce779bc1fmr18989604a91.3.1740384005725; Mon, 24 Feb 2025
- 00:00:05 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740384090; x=1740988890;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zcxQ5Im6UgvOQisVqwrBvBr+aTDn+0rM0hX5qHkX9dI=;
+        b=oad7GE8L//qZMrdpDG5rYwQ8W6ythpab+4rZ9Rwrg55tf0slW6RkvtlYy0dZ9Q2dkl
+         CrZ3DMrxK27EbO+9Xkhb9qBRO1uJtuA1B/7m/jDuMsvUbNLfNHe7aUUay60vlOOk7pF0
+         iRLoj8oNvTAGBKcK0z9eKbd61MTp1+QIWNeX8Jm8f79Q77Qpj/QefTguNJ6YCNcIpyU8
+         teqNBx2f1PXFp5YMTz4teVpokHPeLKcCMFt5ZZZ5sYq3gNsD7ssgsOa6lFUp1Nj06MD6
+         Pm7OPV+tgM6QapgAHZWguEAnObEaKgoeb7PfOWVW+opjEBYATmSfjTrmp9Bb7LlKV53P
+         p7Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuigS/pj4oADQqLU2MewrbA1NGMAncITeb2rgG2YcfZzRKaYq6JxSC9kxMZwSIfhXdHUmm+NSOtlSg3m4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFo6XSPgAtLPIk71rjmK5j+O+DE2tZqWFWWbgWisR4U5imPTz0
+	qnAZT+9CC2ms2ahqgz9U+1Jzj+YPb9nLVtMt1N939TB4D1yVKJyBDBYF6cnwamw=
+X-Gm-Gg: ASbGnctM9+XWXy5Tte7W5Gj4+xPdHKR/6Bh9tViMxqsxg8G3Vt+fgQ6CUMwId8SeMqt
+	krNIH/4s/kmp7cP6MVa6Is89Vr+v7o0MXQtwfR13nH1gX3XaT3zHBaD9YdTxhUU0J2MMT0dmyz6
+	//uOYzzhvYC90Jk0wQ5h1pcIz2B4fUQUrOOZ0QSfNuE8IKT5nOXAeJonGPt/jgePicMIgFD4j85
+	IPJWAHN8TkVNpuKFU4K4Dk76F7pfPlV19MDNg7aKLPmDIuhFVrtCjVNQniSRtqAuBVapXaVIfch
+	2LEiQMO+dECy8I664TmoI1YKkoXDw2AznsOqQAUsq+5Z/2+55jx7ez0+DhdHrds+RdDnumM/yf1
+	PRTCxfQ==
+X-Google-Smtp-Source: AGHT+IEQEeyrw3EzcFeKThOAVt50oI16dNJaA/e4rE8vh2rZw03bfg7CZZRU42r2tScBKfk4Ik5kSg==
+X-Received: by 2002:a05:600c:1d29:b0:439:9377:fa17 with SMTP id 5b1f17b1804b1-439ae1f4d07mr102577595e9.18.1740384090295;
+        Mon, 24 Feb 2025 00:01:30 -0800 (PST)
+Received: from ta2.c.googlers.com (169.178.77.34.bc.googleusercontent.com. [34.77.178.169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b0367533sm97690395e9.27.2025.02.24.00.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 00:01:29 -0800 (PST)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [PATCH 0/3] firmware: samsung: add ACPM debugfs support
+Date: Mon, 24 Feb 2025 08:01:21 +0000
+Message-Id: <20250224-acpm-debugfs-v1-0-2418a3ea1b17@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223235719.66576-1-raphaelsc@scylladb.com> <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
-In-Reply-To: <Z7vyEdJ3SqjFkE9q@casper.infradead.org>
-From: "Raphael S. Carvalho" <raphaelsc@scylladb.com>
-Date: Mon, 24 Feb 2025 04:59:48 -0300
-X-Gm-Features: AWEUYZkvHapCZa_nWwzLdLpvhKFl_jgkyrG-YnMTBsTUmmQGjHUIcJRbVqK-hSE
-Message-ID: <CAKhLTr0UA42AC2yCyFtDbFoS34vvg05EVnf5J4MSit_Sr7JETw@mail.gmail.com>
-Subject: Re: [PATCH] mm: Fix error handling in __filemap_get_folio() with FGP_NOWAIT
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, djwong@kernel.org, 
-	Dave Chinner <david@fromorbit.com>, hch@lst.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylladb,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
-X-CLOUD-SEC-AV-Sent: true
-X-CLOUD-SEC-AV-Info: scylla,google_mail,monitor
-X-Gm-Spam: 0
-X-Gm-Phishy: 0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFEnvGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDIyND3cTkglzdlNSk0vS0Yt0UQ0uzFAOLVDMTMyMloJaCotS0zAqwcdG
+ xtbUA9QyMw14AAAA=
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>
+Cc: andre.draszik@linaro.org, peter.griffin@linaro.org, 
+ willmcvicker@google.com, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740384089; l=1478;
+ i=tudor.ambarus@linaro.org; s=20241212; h=from:subject:message-id;
+ bh=oRQzRk5xTUcaDM5dqPMGTeTs7TwHysSopVPkeUpXl7I=;
+ b=1GPC+AlVrtrDlXyCWt4XXvvUJ+mIw/T4ANo17j4HAMMd79u31gNY//b6q4lBP2v9rVAu+EB+W
+ OQODBr0ljjYAzDnslBcQAMWVTXD5G4t+vNS28bvHbt8GTSFQI3av81S
+X-Developer-Key: i=tudor.ambarus@linaro.org; a=ed25519;
+ pk=uQzE0NXo3dIjeowMTOPCpIiPHEz12IA/MbyzrZVh9WI=
 
-On Mon, Feb 24, 2025 at 1:14=E2=80=AFAM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Sun, Feb 23, 2025 at 08:57:19PM -0300, Raphael S. Carvalho wrote:
-> > This is likely a regression caused by 66dabbb65d67 ("mm: return an ERR_=
-PTR
-> > from __filemap_get_folio"), which performed the following changes:
-> >     --- a/fs/iomap/buffered-io.c
-> >     +++ b/fs/iomap/buffered-io.c
-> >     @@ -468,19 +468,12 @@ EXPORT_SYMBOL_GPL(iomap_is_partially_uptodate=
-);
-> >     struct folio *iomap_get_folio(struct iomap_iter *iter, loff_t pos)
-> >     {
-> >             unsigned fgp =3D FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STA=
-BLE | FGP_NOFS;
-> >     -       struct folio *folio;
-> >
-> >             if (iter->flags & IOMAP_NOWAIT)
-> >                     fgp |=3D FGP_NOWAIT;
-> >
-> >     -       folio =3D __filemap_get_folio(iter->inode->i_mapping, pos >=
-> PAGE_SHIFT,
-> >     +       return __filemap_get_folio(iter->inode->i_mapping, pos >> P=
-AGE_SHIFT,
-> >                             fgp, mapping_gfp_mask(iter->inode->i_mappin=
-g));
-> >     -       if (folio)
-> >     -               return folio;
-> >     -
-> >     -       if (iter->flags & IOMAP_NOWAIT)
-> >     -               return ERR_PTR(-EAGAIN);
-> >     -       return ERR_PTR(-ENOMEM);
-> >     }
->
-> We don't usually put this in the changelog ...
->
-> > Essentially, that patch is moving error picking decision to
-> > __filemap_get_folio, but it missed proper FGP_NOWAIT handling, so ENOME=
-M
-> > is being escaped to user space. Had it correctly returned -EAGAIN with =
-NOWAIT,
-> > either io_uring or user space itself would be able to retry the request=
-.
-> > It's not enough to patch io_uring since the iomap interface is the one
-> > responsible for it, and pwritev2(RWF_NOWAIT) and AIO interfaces must re=
-turn
-> > the proper error too.
-> >
-> > The patch was tested with scylladb test suite (its original reproducer)=
-, and
-> > the tests all pass now when memory is pressured.
-> >
-> > Signed-off-by: Raphael S. Carvalho <raphaelsc@scylladb.com>
->
-> Instead, we add:
->
-> Fixes: 66dabbb65d67 (mm: return an ERR_PTR from __filemap_get_folio)
+The ACPM firmware saves debug information to SRAM. Add debugfs entries
+in order to expose the ACPM logs.
 
-Thanks, will fix it in v2.
+acpm_framework/logb_gprio_level controls the ACPM print verbosity to
+the SRAM log buffer. It encodes a 64 bit value, 4 bits for each of the
+16 Plugin IDs, with verbosity levels from 0xf (log error) to
+0x0 (log debug).
 
->
-> > ---
-> >  mm/filemap.c | 9 ++++++++-
-> >  1 file changed, 8 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 804d7365680c..b06bd6eedaf7 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -1986,8 +1986,15 @@ struct folio *__filemap_get_folio(struct address=
-_space *mapping, pgoff_t index,
-> >
-> >               if (err =3D=3D -EEXIST)
-> >                       goto repeat;
-> > -             if (err)
-> > +             if (err) {
-> > +                     /*
-> > +                      * Presumably ENOMEM, either from when allocating=
- or
-> > +                      * adding folio (this one for xarray node)
-> > +                      */
->
-> I don't like the comment.  Better to do that in code:
->
+acpm_framework/log_level has a maximum value of 2 and controls which
+SRAM log buffers are printed.
 
-Initially I was doing exactly what you proposed above, but after
-reading do_read_cache_folio() and the patch the introduces the
-regression, which transforms failure to get a folio (a NULL) with
-FGP_NOWAIT into NOAGAIN, I decided to do this, but it's indeed better
-to remove assumptions. Not ideal for the long run. Will change in v2.
-thanks.
+Finally, acpm_framework/acpm_debug_cmd provides a way to issue
+ACPM DEBUG commands to the firmware.
+
+Add ACPM debugfs support with the above capabilities.
+
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+---
+Tudor Ambarus (3):
+      firmware: exynos-acpm: rename exynos-acpm.h to exynos-acpm-xfer.h
+      firmware: exynos-acpm: move common structures to exynos-acpm.h
+      firmware: samsung: add ACPM debugfs support
+
+ drivers/firmware/samsung/Makefile              |   1 +
+ drivers/firmware/samsung/exynos-acpm-debugfs.c | 359 +++++++++++++++++++++++++
+ drivers/firmware/samsung/exynos-acpm-pmic.c    |   2 +-
+ drivers/firmware/samsung/exynos-acpm-xfer.h    |  23 ++
+ drivers/firmware/samsung/exynos-acpm.c         |  61 ++---
+ drivers/firmware/samsung/exynos-acpm.h         |  95 ++++++-
+ 6 files changed, 485 insertions(+), 56 deletions(-)
+---
+base-commit: f4d315a1f9d8fcaf608f283f01ce4d66160f44a1
+change-id: 20250221-acpm-debugfs-d196d08e6462
+
+Best regards,
+-- 
+Tudor Ambarus <tudor.ambarus@linaro.org>
+
 
