@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-529405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19F44A42509
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:03:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0820CA42523
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 16:05:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A3D7AB3E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 15:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774B53B0F45
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B461319ADA6;
-	Mon, 24 Feb 2025 15:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C761425A331;
+	Mon, 24 Feb 2025 14:47:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="VqJ8XJQo";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ltmyAaFQ"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T5JB5Sjg"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759171624D9;
-	Mon, 24 Feb 2025 15:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B1156F44;
+	Mon, 24 Feb 2025 14:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740409233; cv=none; b=FochtMOTulWj1EoiiNo6K4rnNOa8DUrgdRDDjvFcp4TxnjSbnX2SpN3tm5dNpMaYbImEfpqCf69tQOftxrTlGWemC5CZNV9zYbWM7IagWfWkvao4TJl3033zil8SZAEwSOTFSWS7oJL5akDUu3Qe5S0o8Wy6yoagZ/RC2vYaBFk=
+	t=1740408475; cv=none; b=V/KrlfVbdkjuDth/VJPdl8wkJ03pQvPoMc9tjzTX5kTRfkjb83ytN+xVFTuV9LZKs9jwht4ZUV8AHO0npHYGM3Q+YOncjEXi1r1DizjplC19Xqm1a6MPKVZPxrX6GOK23jVPGQm1fAmPFkAsirDtZp0zX+5yQBpqQBP2vZSTI6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740409233; c=relaxed/simple;
-	bh=t6+T9VaQ19kUcPOlVUcf9eAWwa3jHSUeOlk51/iGR4E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Dl7wRsB6mSvRGT6ukc679CCXdVw41Uqt0M5oi31ZFFxQCHHRzqGpA4rkpFM/h8A2+LC4a2OG6kV0EyIs+BuKDorarg4pBTIvR1QdHZIf1DZaR4O/VODTEkeaDRrQLoxafO9N7zmPkG3dHLF1XDfmPgsIYCsYVaFLnN4lnpbGzzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=VqJ8XJQo; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ltmyAaFQ reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1740408475; c=relaxed/simple;
+	bh=89ktW5BzAn9iOHa5jek6f3ZHeVoyWQD1oH7vDvuK3rc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dFLCF3uQFYo+LSF5amgZyW3NRPzxNI0lvRiD1rCGBomQfuP6tYQApGmQvZSHF8yie+/OEDdHtYd/pCpxL5JeAs0ekjuipp1tCZ0SLURWODzg3JjWKgOq352rRgwTzNYOgmCogy3jRd4XBXmV/R9OS7nLE2lsC+FkvK1EZuu1kzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T5JB5Sjg; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-222def4189aso2129995ad.0;
+        Mon, 24 Feb 2025 06:47:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1740409230; x=1771945230;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=e8/ydxRgcdYRL7f64fKb27vbnom2TzUpJVder2TaeJE=;
-  b=VqJ8XJQoApmpDc22FBVUt3aVnedP8OUAkXEP+nBu44R3Ni8f9WW8aC2S
-   B3khQAQrYHAAZ1oMIP9wn82AnMmikLLSqeBkzbZwP1IO9t1LeahNe3nvu
-   1R3XEjAKceIC7Joa9YfW0TfLaGJOfULUZ6Ga3yUU/AHK0rp85gFKmdsti
-   xBAftNYqHnGJ9hQpcCZCKiqoSWU+THPAC5bXld1MypAOcgMonXHNln6G4
-   IRa1vk5DXy2zv/VOyI4UCJSs4nLtlgEWKVN50X4LstCLADajoxqtCRJvr
-   BepTx74BIhVNEReAXmYoUlvXjtESi2sTjSsTy2LhhUcf+sClFh4reBnDR
-   w==;
-X-CSE-ConnectionGUID: GtB3/u73ThO5yGqLUAfFVg==
-X-CSE-MsgGUID: u8ZSgRgVQRiTH9FfvFtmtQ==
-X-IronPort-AV: E=Sophos;i="6.13,309,1732575600"; 
-   d="scan'208";a="42043008"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Feb 2025 16:00:29 +0100
-X-CheckPoint: {67BC898D-59-F75C4246-F0BD6D90}
-X-MAIL-CPID: 061B8945113C4A86B8FEABC2A0018200_3
-X-Control-Analysis: str=0001.0A002117.67BC898C.007E,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A53BD166E70;
-	Mon, 24 Feb 2025 16:00:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1740409225;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e8/ydxRgcdYRL7f64fKb27vbnom2TzUpJVder2TaeJE=;
-	b=ltmyAaFQZ7yPxaTU7F0jRIPKVy7zPrZh0mMUK5o4Ly+IYj6cgVXUNGoO1e5fkFDmN+um6a
-	8ZeD3YC6P8EKnpLca8+gkhE7mIdDP7HrZbqZ8PtI7LRlfu0YkG5At5MDmjI9DPhz2CMny5
-	Wo1z1tmVdw8fZvPqD6gX/smaUc8eJITpt8/wz9Z06sAgPnWHs+dFR0qtJN6SvFK9YIYCp6
-	lrmxfDJsAbQ6SFi9N2VZPoxuNoq4dj9XkulULQojMWjhblM1t7+7lvD2KLpErLXIchqy8g
-	VobIKQpah4fNk7xb2ZhBkj2Gm2pdNZYnb1fioxoTJKXffcR8iUUCS4XP8loC0w==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH v2 2/2] arm64: dts: mba8mx: change sound card model name
-Date: Mon, 24 Feb 2025 16:00:15 +0100
-Message-ID: <20250224150016.499055-2-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250224150016.499055-1-alexander.stein@ew.tq-group.com>
-References: <20250224150016.499055-1-alexander.stein@ew.tq-group.com>
+        d=gmail.com; s=20230601; t=1740408473; x=1741013273; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RtB7Dub5njCes9mrJllt2CsrhPv34KUY3ewp7hLxbD8=;
+        b=T5JB5SjgO5FYCP7jlpu7ICh0WWNF8tS799AXQVnBH4p7x4d//RvXsfQwJUOBjcAefV
+         nzyO29d+5AnCV5IpdQkZNYn5Z8GCD5r1Mny5HA9qUPqMDNk9mzWydJZNJxDdH8PgWcQ5
+         Ory0+3hDuM4sqznppSULm/5AunOXiFwNtLp/lgKhmIwFa95lkRmKGSWQ3eEoxVBQD2cy
+         3A/XLYy8NgDBGrwOJXI2nRLT6s7KERsotQ+s7bmTvktJKzoovyWiBzgsITesUkJQVIaH
+         QfIS6CZnZASMzQXpOYB3s+DtBQJfehFid43Pb3sJXSJbk4JiU0kV382YJteH4aiOuDFB
+         8Pcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740408473; x=1741013273;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RtB7Dub5njCes9mrJllt2CsrhPv34KUY3ewp7hLxbD8=;
+        b=cJf+d1kuXrWE5snVTo5s1DNiH9OZLhSMVSAsmFuPEN4G43Iq1B69tawjeqNnhGwtHb
+         fE8IryaN8fXVtSHA6J9ALiFKMFb2lvvkuAOIY7qBJVfCf9rTwgoSpKxM+aplpLc5A22V
+         f2FX7HNA721OywLzqs88SRzd08NrCIzBbohEeOG21/bjCEkAF4rs0XrBzgYR/PJAnF+h
+         D/TbVMsIjoeTYxFTiQo4i+f4JqKKzLLrOVVCP1pV2SoUDGONR4PiA0etOE39KjZ1UR0k
+         u1Dg2Vwnxp+H6Tee61WS2xs/qIQazml7y/yA03pv3R/QHdRWZDw1FYE6NOJ8C4ZYRr7B
+         6RgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxRpBkRJxwHpgwvc1M0E/tO5gqcpcNQ23+q3PtKryKwK6uTVKvB1EjspqMHE3shH/aX17JX6rIZCL8cqtTK+s=@vger.kernel.org, AJvYcCV1GA8nbAlEmgMsVHnFvEDHTuSezGcXXW21g9hSKzskKd6m59CZktpA8cYS2WuAqxIwvhmMLji/qXyy5A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsBeB6yP7ppexKfMnP0F/bjPaCxFNjHcPLAddbvDh9at9GsQJW
+	gXvlNgedtDzSE6/jcerIDMYxO6p01VW0XVXCC0rZSMv9eKZg1OO7lCptqp0xWotqRIbIXuYOmNK
+	+i8Ccyl8Ge+Fj8D49T3fbFfhGSvbpl/7QYC0=
+X-Gm-Gg: ASbGncv4AIK1uas3nHbhA0mY/BOKgfCAfpuLyoT7zr5QtJuU++kcOPC4Hg4+bFmXmCG
+	lv0pM1LiLh/ke0Ka7kBtnvEbwo98YP/LKYSnPgtyVpcqRN6Kr5qdHIijOBXIvu7C9vZMDo3cTYk
+	IjJ8mivMs=
+X-Google-Smtp-Source: AGHT+IFtHAt/2673bkl85WSepaiv/6+wkEUSaW/P5TB+5VYx4rV2nWG972KMsbRKwHotrhVZYVS2P5weLvxESTGhMug=
+X-Received: by 2002:a17:90b:3848:b0:2ee:acea:9ec4 with SMTP id
+ 98e67ed59e1d1-2fce7af8da8mr8559798a91.3.1740408472804; Mon, 24 Feb 2025
+ 06:47:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
+ <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com> <20250224125805.GA5729@mit.edu>
+In-Reply-To: <20250224125805.GA5729@mit.edu>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 24 Feb 2025 15:47:39 +0100
+X-Gm-Features: AWEUYZlCQihPBjrSNYZpOKd-BwVo0fXGumHDWwVlhI4X09pccnCoeiBNU37wuHI
+Message-ID: <CANiq72k-K3-Cbnm=0556sXAWs0kXBCB4oR67M4UtD=fq=kyp7A@mail.gmail.com>
+Subject: Re: C aggregate passing (Rust kernel policy)
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Ventura Jack <venturajack85@gmail.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, 
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Ralf Jung <post@ralfj.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+On Mon, Feb 24, 2025 at 1:58=E2=80=AFPM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> Hmm, I wonder if this is the reason of the persistent hostility that I
+> keep hearing about in the Rust community against alternate
+> implementations of the Rust compiler, such as the one being developed
+> using the GCC backend.  *Since* the aliasing model hasn't been
 
-The card name for ALSA is generated from the model name string and
-is limited to 16 characters. Use a shorter name to prevent cutting the
-name.
+I guess you are referring to gccrs, i.e. the new GCC frontend
+developed within GCC (the other one, which is a backend,
+rustc_codegen_gcc, is part of the Rust project, so no hostility there
+I assume).
 
-Since nearly all starter kit mainboards for i.MX based SoM by TQ-Systems
-use the same codec with the same routing on board it is a good idea to
-use the same model name for the sound card. This allows sharing a default
-asound.conf in BSP over all the kits.
+In any case, yes, there are some people out there that may not agree
+with the benefits/costs of implementing a new frontend in, say, GCC.
+But that does not imply everyone is hostile. In fact, as far as I
+understand, both Rust and gccrs are working together, e.g. see this
+recent blog post:
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/mba8mx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+    https://blog.rust-lang.org/2024/11/07/gccrs-an-alternative-compiler-for=
+-rust.html
 
-diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-index 58e3865c28895..7ee1228a50f4f 100644
---- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-@@ -138,7 +138,7 @@ reg_vcc_3v3: regulator-3v3 {
- 
- 	sound {
- 		compatible = "fsl,imx-audio-tlv320aic32x4";
--		model = "imx-audio-tlv320aic32x4";
-+		model = "tqm-tlv320aic32";
- 		ssi-controller = <&sai3>;
- 		audio-codec = <&tlv320aic3x04>;
- 	};
--- 
-2.43.0
+> developed yet, potential alternate implementations might have
+> different semantics --- for example, I suspect a GCC-based backend
+> might *have* a way of opting out of aliasing, much like gcc and clang
+> has today, and this might cramp rustcc's future choices if the kernel
+> were to depend on it.
 
+The aliasing model is not fully defined, but you can still develop
+unsafe code being conservative, i.e. avoiding to rely on details that
+are not established yet and thus could end up being allowed or not.
+
+In addition, the models being researched, like the new Tree Borrows
+one I linked above, are developed with existing code in mind, i.e.
+they are trying to find a model that does not break the patterns that
+people actually want to write. For instance, in the paper they show
+how they tested ~670k tests across ~30k crates for conformance to the
+new model.
+
+In any case, even if, say, gccrs were to provide a mode that changes
+the rules, I doubt we would want to use it, for several reasons, chief
+among them because we would want to still compile with `rustc`, but
+also because we will probably want the performance, because some
+kernel developers may want to share code between userspace and
+kernelspace (e.g. for fs tools) and because we may want to eventually
+reuse some third-party code (e.g. a compression library).
+
+Cheers,
+Miguel
 
