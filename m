@@ -1,167 +1,172 @@
-Return-Path: <linux-kernel+bounces-528614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D64CA419BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:56:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6FA7A419B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D96A3AEE83
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:56:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A033B16E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D0024BC11;
-	Mon, 24 Feb 2025 09:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 768B82505A1;
+	Mon, 24 Feb 2025 09:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UP9qnqsg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gX4xJkYD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5A024A053;
-	Mon, 24 Feb 2025 09:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1E424E4B7;
+	Mon, 24 Feb 2025 09:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740390943; cv=none; b=XXmuwselZDPo1El+NEG71SZp7h2uXMoejN2W3WlTJ4Gu3a5xdbHDzhLn2lMAGTgJ7xf15lDqijkgG0nXSfiLB/1rwUD1ACXNjAb5Hs5w4ibY1EIfDj1ZCEcCit2uXuzG7SnMPljOCFBveJIAa5maIEI7u8DETcQ/RYtW42o7fhY=
+	t=1740390918; cv=none; b=WbibGb+3NTLGmknPR3kUGwqWU8mElDbTu16BChLyDjRObpY6YnYtE1SFzG7ro9qIM8/BOKQcPudNwzFvgbH7djsOJAld2/VUrVbb3xQdXkvJGxE/SPsgZMBlJzpU0mrgzNjDN1oJaMewQpaWka1uY4Q0P0OpKH6ZMQO+r7823qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740390943; c=relaxed/simple;
-	bh=UUxTvSFg3ECjp3QCMm9uPPVjICTi6yfkGqXzpqI3leE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZxoK3sdDHW3w0+5I6Tv3A5EeuzXfWQ2IjUS1X2tkVX3ic7Ejn28tnLd39pjJ/IJg/qD67eXQCaUXJ4NTE7iCtjsz1qT1fl2htN3TkwYtl01oaHg73UBN25ocZ0qqCyd/KwVpSjlKC0JrRjxLTDtwfxkbve4Zxr8+4fTu8k6LEys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UP9qnqsg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O95emD027634;
-	Mon, 24 Feb 2025 09:55:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AUFFMrp3bF+jtWYjyXpR2YG2vX5Agpa5oP9kLDsjn8c=; b=UP9qnqsg6qGcmCMr
-	Wm+ROyCCYJiUzFQP0lW5nzVzSniF1KBOsS4dGiEPc8qNzgQ3icH+kxJwQJheqIZq
-	yhzOPgUKU28C+liNT2C+dOg3NSj9/Lpj7lT9xor94qJA2NOkOOdKORcWkbZZFB0i
-	zImbFcO9BaIvXblf7esPqJ/F61v/4hwEgYlxJUMyrBIK3KScJXqQ5cnjdp9Gqxih
-	I8E8cItheqOuIFhHk+KD9hxYJ50g0yLewt3oidGLRmJpRhDIAVSiAGvI8OKCcgHn
-	1FzRKO8D5kyh6Orfh8IiMkYo+6GabFKmIH0329bJu+SfjDIs76fcC7i1zkGGe8Dh
-	xDNrIw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6t2me1b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 09:55:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51O9tDrs007351
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Feb 2025 09:55:13 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
- 2025 01:55:05 -0800
-Message-ID: <ddfb3ab1-bb9f-4fa2-9efc-c831febdafc6@quicinc.com>
-Date: Mon, 24 Feb 2025 15:25:02 +0530
+	s=arc-20240116; t=1740390918; c=relaxed/simple;
+	bh=1ilvj0oDQeThsIG8wBY8lof+2A6deA3Sr4q3qxryDVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMM7MiI4Q1R65nYZPcwlH4rnkItChnVbCc1oTDCjco1oAT4k1t7og9gKKULZb/83rIAby+OZY5qqK0MRIvA9vMKmXlutJS+sOnnKH1hrhAsR9goQW+tPXni1JP+2Dq/DBZTjvG2AieGFPEoeL+dzNBBC/MM2w0VlqCzKirkSwQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gX4xJkYD; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740390917; x=1771926917;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1ilvj0oDQeThsIG8wBY8lof+2A6deA3Sr4q3qxryDVo=;
+  b=gX4xJkYDz44whQIiIslBU7wPE51awO3ARrB5WbjBE/7allBy4bbYy5XO
+   EDIoKQWitUmKYhZom5ymyk6B5aQOnW2E/ArCFTU0eE8IFifbnXTQ+djG4
+   l+XEAm/4eTo7TkvqFO69q0SABbkVrbxRrEoHetmRW1CdDZ+oMsWn4zu1U
+   rTPbvcuoW7mnK0QXtbLfF22Iyht66U5NkxCAv0s+wbuLkrbedgmxqaWAY
+   bfpPgSUQRRlQeIby35MLMvThVk0oC+JEFsNx5LicDglr30Bm1ET4JjBcv
+   NVWC93ffvPaK6nTFLRxPXTgvnQdWz0OqJCfXX1k+q1SUNUwTBc6Je4cd9
+   g==;
+X-CSE-ConnectionGUID: Y658+ayFSQazQKCw/RLf7Q==
+X-CSE-MsgGUID: S4G1EQNwRaauum5phCbQgg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11354"; a="52538795"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="52538795"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:55:16 -0800
+X-CSE-ConnectionGUID: lC++JjrHQvqYs+QjHqNAUg==
+X-CSE-MsgGUID: xy0XPd+SSduIhKi6mf0hPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153213616"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 01:55:09 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmVB1-0000000EeoE-3eVf;
+	Mon, 24 Feb 2025 11:55:03 +0200
+Date: Mon, 24 Feb 2025 11:55:03 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"pmladek@suse.com" <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	"linux@rasmusvillemoes.dk" <linux@rasmusvillemoes.dk>,
+	"senozhatsky@chromium.org" <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"apw@canonical.com" <apw@canonical.com>,
+	"joe@perches.com" <joe@perches.com>,
+	"dwaipayanray1@gmail.com" <dwaipayanray1@gmail.com>,
+	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
+	"sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>,
+	Kerem Karabay <kekrby@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
+	Orlando Chamberlain <orlandoch.dev@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	Hector Martin <marcan@marcan.st>,
+	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+	Asahi Linux Mailing List <asahi@lists.linux.dev>,
+	Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>
+Subject: Re: [PATCH v3 1/3] drm/format-helper: Add conversion from XRGB8888
+ to BGR888
+Message-ID: <Z7xB9xD6748bF9vJ@smile.fi.intel.com>
+References: <DC5079B2-9D3D-4917-A50D-20D633071808@live.com>
+ <Z7ig8Br4duEt2TUG@smile.fi.intel.com>
+ <27efffe1-6562-4612-a748-893475ba02fa@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/6] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, <andersson@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <konradybcio@kernel.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <arnd@arndb.de>,
-        <nfraprado@collabora.com>, <quic_tdas@quicinc.com>,
-        <biju.das.jz@bp.renesas.com>, <elinor.montmasson@savoirfairelinux.com>,
-        <ross.burton@arm.com>, <javier.carrasco@wolfvision.net>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20250221101426.776377-1-quic_mmanikan@quicinc.com>
- <20250221101426.776377-5-quic_mmanikan@quicinc.com>
- <3bfe9a79-517d-4a27-94da-263dd691ec37@oss.qualcomm.com>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <3bfe9a79-517d-4a27-94da-263dd691ec37@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6cota9YEDLUM6nxbEAvHa_wUWPqZYlJQ
-X-Proofpoint-GUID: 6cota9YEDLUM6nxbEAvHa_wUWPqZYlJQ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_04,2025-02-24_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- spamscore=0 priorityscore=1501 mlxscore=0 phishscore=0 malwarescore=0
- adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240072
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <27efffe1-6562-4612-a748-893475ba02fa@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Mon, Feb 24, 2025 at 10:19:13AM +0100, Thomas Zimmermann wrote:
+> Am 21.02.25 um 16:51 schrieb andriy.shevchenko@linux.intel.com:
+> > On Fri, Feb 21, 2025 at 11:36:00AM +0000, Aditya Garg wrote:
+
+...
+
+> > > +	for (x = 0; x < pixels; x++) {
+> > > +		pix = le32_to_cpu(sbuf32[x]);
+> > > +		/* write red-green-blue to output in little endianness */
+> > > +		*dbuf8++ = (pix & 0x00ff0000) >> 16;
+> > > +		*dbuf8++ = (pix & 0x0000ff00) >> 8;
+> > > +		*dbuf8++ = (pix & 0x000000ff) >> 0;
+> > put_unaligned_be24()
+> 
+> I'm all for sharing helper code, but maybe not here.
+> 
+> - DRM pixel formats are always little endian.
+> - CPU encoding is LE or BE.
+> - Pixel-component order can be anything: RGB/BGR/etc.
+> 
+> So the code has a comment to explain what happens here. Adding that call
+> with the _be24 postfix into the mix would make it more confusing.
+
+I'm not objecting the comment, the code has definite meaning and with the
+proposed helper it makes clearer (in my opinion).
+
+Comment can be adjusted to explain better this conversion.
+
+Or, perhaps pix should be be32? That's probably where confusion starts.
+
+		pix = be32_to_cpu(sbuf32[x]);
+
+		/* write red-green-blue to output in little endianness */
+		put_unaligned_le24(...);
+
+?
+
+> > > +	}
+
+...
+
+> > > +	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = {
+> > > +		3,
+> > > +	};
+> > One line?
+> > 
+> > 	static const u8 dst_pixsize[DRM_FORMAT_MAX_PLANES] = { 3 };
+> 
+> I'd be ok, if there's a string preference in the kernel to use thins style.
+
+Just a common sense to avoid more LoCs when it's not needed / redundant.
+
+> Most of DRM doesn't AFAIK.
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-
-On 2/21/2025 5:19 PM, Konrad Dybcio wrote:
-> On 21.02.2025 11:14 AM, Manikanta Mylavarapu wrote:
->> From: Devi Priya <quic_devipriy@quicinc.com>
->>
->> Add Networking Sub System Clock Controller (NSSCC) driver for ipq9574 based
->> devices.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
-> 
-> [...]
-> 
->> +static int nss_cc_ipq9574_probe(struct platform_device *pdev)
->> +{
->> +	struct regmap *regmap;
->> +	int ret;
->> +
->> +	ret = devm_pm_runtime_enable(&pdev->dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = devm_pm_clk_create(&pdev->dev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret = pm_clk_add(&pdev->dev, "nsscc");
->> +	if (ret)
->> +		return dev_err_probe(&pdev->dev, ret, "Fail to add AHB clock\n");
->> +
->> +	ret = pm_runtime_resume_and_get(&pdev->dev);
->> +	if (ret)
->> +		return ret;
-> 
-> if /\ suceeds
-> 
->> +
->> +	regmap = qcom_cc_map(pdev, &nss_cc_ipq9574_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
-> 
-> you return here without pm_runtime_put, which doesn't decrease the refcount
-> for core to put down the resource
-> 
-> if (IS_ERR(regmap)) {
-> 	pm_runtime_put(&pdev->dev);
-> 	return PTR_ERR(regmap);
-> }
-> 
-> instead
-> 
-
-Hi Konrad,
-
-Thank you for reviewing the patch.
-I will incorporate your suggested change in the next version.
-
-Thanks & Regards,
-Manikanta.
 
