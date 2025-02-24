@@ -1,133 +1,171 @@
-Return-Path: <linux-kernel+bounces-528451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74960A417CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E44DFA417CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:51:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631971896E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:50:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FC5A16A972
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:51:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442A2191F6D;
-	Mon, 24 Feb 2025 08:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7B0191F6D;
+	Mon, 24 Feb 2025 08:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oHtW+b+y"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="U0o6eDBf"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D342523C393;
-	Mon, 24 Feb 2025 08:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DE118A6D5
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387025; cv=none; b=jbRfuY/Uf4wT2ljnqwzM9jZJbqOEYqVAa7oknkxN8vw7HSMX1NJvXdRIBGsYklYnJE3vFViTO6KCfj3f5Y4mALe8RVzfrSJwmuMp4j9/ka7M+xybxlzIz9ti74dXiowhXIKxS+ZtiiTZda5AQMWzQR353/EMq0UaYSnffGZ31ZY=
+	t=1740387068; cv=none; b=j0J+E9rqapxGdJssOTcXAsyTqqO0ZF+sTOSEntTLrQ7SFwoCLSxbqumukwxntcKZ9mFsRa2BPulcrzcjginELGG88MVdfwlwqRKPA6E/JUcU9BncH5fvvhlWxVsM17Ye88XtWhqN2rrVYF0ihC78zYDycs9jaxvaD67NoG2m7VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387025; c=relaxed/simple;
-	bh=ImnSkDvCyNzWrsxhRq8yrR/K/8hCkVqMMnOSMPJSgKI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YEjNGPmo0438NlT0Qtzp/Aqgiy8nZ2KXvnkelB0s1e502qPDxUS39daIcsysRzZS5kZDa9V8YLYWmjkNzkt3ny8eprxlbtnUq0+GK53waXdqLrakinH5hxW1dSm9V9tDFQwMvfL2uGqF9p2SJm8eskR8HSBMvldU4Rt1Tnhd8vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oHtW+b+y; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740387022;
-	bh=ImnSkDvCyNzWrsxhRq8yrR/K/8hCkVqMMnOSMPJSgKI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oHtW+b+yNkL+q1CHUWFn0ieZHUza/61O+G4CcpW1+kGwZUKbRuylTrG1l/CQl9Y4n
-	 EAbSEPdPGp2XDLmJLGbPR1NO2Y48alxQ6QJVFPqfTosGHpp2AckGElZBRbg4UBAfiJ
-	 2CqRV8RmGsLlv8gxKaydQvvJeeNMvKo2FFIGEVK7xZbmO0RfotU/MvW8fbUlhf0PXq
-	 jaAYtMim1zopKUeYWiwlMh06TwY76HEwRytSBH5koZu4XL3uD8d+1E3Jm4WiAz/Bdd
-	 wFNwzuI+pNaQUKIjIT6TVgRUeFJQxOu0Wp0IfkKMGwGI9NPP2F06SFjj/+SyTqZC1c
-	 RtoPpVsL5w/zA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5727617E001F;
-	Mon, 24 Feb 2025 09:50:21 +0100 (CET)
-Message-ID: <b37788f6-7aa6-46c6-993c-fa30fcaba4c9@collabora.com>
-Date: Mon, 24 Feb 2025 09:50:20 +0100
+	s=arc-20240116; t=1740387068; c=relaxed/simple;
+	bh=AWpVnDdHPnLjlBgLHsI5jv6cR6R9p5fUnRdwZCiqPx0=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O4/4OOBhSyBxXPc7mHh5T75G4kNVpjO4xdZlqE8Cx4i7QAmZ9fytW4tPZMHKmmXVY4dr4gG9abenGjRTcbJm18tlR0HdaGHxUZ3qUAkKmFX9LJl6PjndvC/O55Gbyac4h/zeC0GLVZQ6c2Nekr8HRRHVlg+rpWjpKwnaHyNyprc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=U0o6eDBf; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so4919526e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:51:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740387064; x=1740991864; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7BhzG4nBQaS6pZEmDj6jN7Om9fMKvu1IxUm1+KATAIU=;
+        b=U0o6eDBf4CTWZalsLcxcxJVcAX5wAsdjLGqmZPj+bRI6urB1sGLoUXU5BU6vm5ShJu
+         wot0MVgdw+KRahCZYkBGrwbOJ+J5HkTxRjdTjpgRBJIuRCcHpcYgGMCGDXbYUyGzpcY9
+         O+Ebf6ovM4IiFtExJjBGKxsO43ku6ygUBCdDVP4rGHlqaS8EpZXDE6z2Iq6ZvUNrE979
+         fDYO81esnF/SKC/h77m4XUifqeofMANV+WidrFQyFV5jxHcJ2kehYrBY8H9n1fAInJjY
+         7TYYHLJvlUnEyCxLbePlmNZ+zZsK9nB/FqQZcNZrCaF+cKyaqFjiihf2AdtbYLRYvQyX
+         Q3iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740387064; x=1740991864;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7BhzG4nBQaS6pZEmDj6jN7Om9fMKvu1IxUm1+KATAIU=;
+        b=XvtGA7sbVcn5VGDt274knzIK61mg1UvKrjdM3mVFUVR6oVXnjTYGRJ8/siTzVxYtZ8
+         rAB8pcUQqCuFdB3YAA2Sld52jiGa278wW0lqc9AtPaqnwb2ipdPJ3oCPR0MF2olO5cOp
+         F6b7CQHKPDnvcVXAdYgTyqKdJ7rqPGtwwMqiYjo/RkehLKdQqARcnNR9HmysV6of8Qt8
+         VHxEC+wCrwdQKjSCWSA5TL4lItATkaU3qI0NFrOrU/oraIzxoLRDTZ7j5SOvfamrEhWc
+         DoyAZdx1fFwuYabNjVJXSRlLm83or5WE74athSiAs/HbMIpCNjVbYQAPbSiRUhzHTdW2
+         SBug==
+X-Forwarded-Encrypted: i=1; AJvYcCWuidBNg9KYCJ2KSacg95TIz3zXSxFGtf1HxzA1OYC+DtdkKt4XotdPN25XYsiHhwY3JSL7adHVBGNN9l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pfDHe7GA+5aB3LkknoIIF7eJj+Ymsh8NONnfUQjfsYJBudp2
+	t/78ID443OSIZwPKIVYIBF/jaPFXKTzu0pvowHgov2X9CTHVVP30kpO3PoAjnjMfpzGTm3Hzxk9
+	h7fg1ZvcQJ39djnMoy3rph5c2/2ajmHaxym3G0Q==
+X-Gm-Gg: ASbGnctjJvHBjBGdpSieB7/Q77H11rm0PJ0izMYxFSU0yWFpRM1C7vTVvgQttrrIKJs
+	2KgYnj4OmVTmfYiFzckdMmsvlugcwW46smDZeO9kHC7DiQeU9UibYsatMhyNFqg1N24aeaLjF4F
+	0eweKFsqoSVoTIdf8FzB+Is0Q3gn7VW3tFqmz1OQ==
+X-Google-Smtp-Source: AGHT+IGJUguXGJKpeBE7PfOW0x1i38GshOmr4oabfnWWPRN7xFoQCCjbLZq7tN5p972Bi+c4LXaf/H95WQaopgTHhSw=
+X-Received: by 2002:a05:6512:ac3:b0:545:f69:1d10 with SMTP id
+ 2adb3069b0e04-54838ee1c94mr4275057e87.8.1740387063972; Mon, 24 Feb 2025
+ 00:51:03 -0800 (PST)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 24 Feb 2025 03:51:03 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 24 Feb 2025 03:51:03 -0500
+From: brgl@bgdev.pl
+In-Reply-To: <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] MediaTek MT8188 MTU3 USB and Genio 510/700 TypeC
-To: =?UTF-8?B?Q2h1bmZlbmcgWXVuICjkupHmmKXls7Ap?= <Chunfeng.Yun@mediatek.com>
-Cc: =?UTF-8?B?UGFibG8gU3VuICjlravmr5Pnv5Qp?= <pablo.sun@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>
-References: <20250220105514.43107-1-angelogioacchino.delregno@collabora.com>
- <790ebe87fdaa8d785813a46269036562c405fb01.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <790ebe87fdaa8d785813a46269036562c405fb01.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <9ded85ef-46f1-4682-aabd-531401b511e5@molgen.mpg.de>
+ <CAMRc=McJpGMgaUDM2fHZUD7YMi2PBMcWhDWN8dU0MAr911BvXw@mail.gmail.com>
+ <36cace3b-7419-409d-95a9-e7c45d335bef@molgen.mpg.de> <CAMRc=Mf-ObnFzau9OO1RvsdJ-pj4Tq2BSjVvCXkHgkK2t5DECQ@mail.gmail.com>
+ <a8c9b81c-bc0d-4ed5-845e-ecbf5e341064@molgen.mpg.de>
+Date: Mon, 24 Feb 2025 03:51:03 -0500
+X-Gm-Features: AWEUYZlDQScCnGqmGbQZrje1sb8Ipabug5b7HPQ3I9vkOhxdFZWYtY64UwmbNKc
+Message-ID: <CAMRc=MdNnJZBd=eCa5ggATmqH4EwsGW3K6OgcF=oQrkEj_5S_g@mail.gmail.com>
+Subject: Re: Linux logs new warning `gpio gpiochip0: gpiochip_add_data_with_key:
+ get_direction failed: -22`
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org, 
+	regressions@lists.linux.dev, Bartosz Golaszewski <brgl@bgdev.pl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 22/02/25 09:45, Chunfeng Yun (云春峰) ha scritto:
-> Hi Angelo
-> On Thu, 2025-02-20 at 11:55 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> This series adds MTU3 nodes to the MT8188 base devicetree, fixes the
->> Geralt Chromebooks to use it, and adds support for all of the USB
->> ports, including TypeC Power Delivery, Alternate Modes, etc, found
->> on the MediaTek Genio 510 and Genio 700 Evaluation Kits.
->>
->> This also adds the missing SuperSpeed port to the mtk-xhci binding.
->>
->> AngeloGioacchino Del Regno (3):
->>    dt-bindings: usb: mediatek,mtk-xhci: Add port for SuperSpeed EP
->>    arm64: dts: mediatek: mt8188: Add MTU3 nodes and correctly describe
->>      USB
->>    arm64: dts: mediatek: mt8390-genio-700: Add USB, TypeC Controller,
->> MUX
->>
->>   .../bindings/usb/mediatek,mtk-xhci.yaml       |   4 +
->>   .../boot/dts/mediatek/mt8188-geralt.dtsi      |  18 +++
->>   arch/arm64/boot/dts/mediatek/mt8188.dtsi      | 121 +++++++++-----
->>   .../dts/mediatek/mt8390-genio-common.dtsi     | 151
->> +++++++++++++++++-
->>   4 files changed, 251 insertions(+), 43 deletions(-)
-> Do these patch have also changed the chromebook's dts?
+On Sun, 23 Feb 2025 23:04:05 +0100, Paul Menzel <pmenzel@molgen.mpg.de> sai=
+d:
+> Dear Bortosz,
+>
+>
+> Am 23.02.25 um 21:54 schrieb Bartosz Golaszewski:
+>> On Fri, Feb 21, 2025 at 10:02=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg=
+.de> wrote:
+>>>
+>>>> What GPIO driver is it using? It's likely that it's not using the
+>>>> provider API correctly and this change uncovered it, I'd like to take
+>>>> a look at it and fix it.
+>>>
+>>> How do I find out? The commands below do not return anything.
+>>>
+>>>       $ lsmod | grep gpio
+>>>       $ lspci -nn | grep -i gpio
+>>>       $ sudo dmesg | grep gpio
+>>>       [    5.150955] gpio gpiochip0: gpiochip_add_data_with_key: get_di=
+rection failed: -22
+>>>       [Just these lines match.]
+>
+>> If you have libgpiod-tools installed, you can post the output of
+>> gpiodetect here.
+>
+>      $ sudo gpiodetect
+>      gpiochip0 [INT344B:00] (152 lines)
+>
 
-Yes
+So it's pinctrl-intel, specifically this function in
+drivers/pinctrl/intel/pinctrl-intel.c:
 
-> 
-> if changed it, do test it on chromebook?
+static int intel_gpio_get_direction(struct gpio_chip *chip, unsigned int of=
+fset)
+{
+	struct intel_pinctrl *pctrl =3D gpiochip_get_data(chip);
+	void __iomem *reg;
+	u32 padcfg0;
+	int pin;
 
-Yes, and there's no need to hide the MTU3 hardware on Chromebooks,
-as I already mentioned multiple times.
+	pin =3D intel_gpio_to_pin(pctrl, offset, NULL, NULL);
+	if (pin < 0)
+		return -EINVAL;
 
-Just lock it to host mode and it's always fine :-)
+	reg =3D intel_get_padcfg(pctrl, pin, PADCFG0);
+	if (!reg)
+		return -EINVAL;
 
-Cheers,
-Angelo
+	scoped_guard(raw_spinlock_irqsave, &pctrl->lock)
+		padcfg0 =3D readl(reg);
 
-> 
-> Thanks
-> 
-> 
->>
->> --
->> 2.48.1
->>
+	if (padcfg0 & PADCFG0_PMODE_MASK)
+		return -EINVAL;
 
+	if (__intel_gpio_get_direction(padcfg0) & PAD_CONNECT_OUTPUT)
+		return GPIO_LINE_DIRECTION_OUT;
+
+	return GPIO_LINE_DIRECTION_IN;
+}
+
+Can you add some logs and see which -EINVAL is returned here specifically?
+
+In any case: Linus: what should be our policy here? There are some pinctrl
+drivers which return EINVAL if the pin in question is not in GPIO mode. I d=
+on't
+think this is an error. Returning errors should be reserved for read failur=
+es
+and so on. Are you fine with changing the logic here to explicitly default =
+to
+INPUT as until recently all errors would be interpreted as such anyway?
+
+Bart
 
