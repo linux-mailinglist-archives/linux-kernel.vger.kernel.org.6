@@ -1,419 +1,214 @@
-Return-Path: <linux-kernel+bounces-529857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C0CA42BE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:44:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0D4A42BE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A786418854B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17EC417AED5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821AE266572;
-	Mon, 24 Feb 2025 18:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4D4266572;
+	Mon, 24 Feb 2025 18:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="AfgPu47N"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HvVvUZR3"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C37C11185;
-	Mon, 24 Feb 2025 18:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422678; cv=none; b=Vk2kGHkC8xXPxieHO1T6H4JQb+gbXdNuCRHnEyaoIjF0ag/QQkdaVUhwFQvZbKGHK/H1/z9vh0bi8q9hYL5sbT/R8ykGHM+439PpE5WTo3RwuTudJ+IF+MtBZW/rDq1AFL0sUm3TkDlucsjcNgMDSuH2uMnqiTIBXP1J+zxw3/E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422678; c=relaxed/simple;
-	bh=1gO43EmCi+q/iP2MbCCRWJyfbepMUewhLQvCulPbowQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MH/8eSzDp4ASEsgxtC858AvXZk9aAg7OVbba6Xy+ORvhE3sucT6aF9lh/qjWQdtSrbz1mQWI5ZQySZ6AXpkoln9vkBklSJHuRvmPWsox2ZxuI6OTPPlIXj3ZlLw00JM503X6KJ45lRZdQWhjRB3Zv9c5EY/6Ke7mTCqoSKsjZRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=AfgPu47N; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D5A3C455;
-	Mon, 24 Feb 2025 19:43:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740422588;
-	bh=1gO43EmCi+q/iP2MbCCRWJyfbepMUewhLQvCulPbowQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AfgPu47Nvk5L3BadXL4c2i0Tg7Fz0PCjICI3vDVNaVFMiKKZfacYp0DsYfm6Exu8p
-	 jgwoMid59haDKMhbdqouXW8M9hFRieK1WWsm3NjptXpAlCaGzd0G3SNTM0ZVe1Dfqu
-	 AwPtX+tCX/KABQidspDYF8yCR8ABWWgiDkQ/v3fY=
-Date: Mon, 24 Feb 2025 20:44:16 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org,
-	linux-media@vger.kernel.org, biju.das.jz@bp.renesas.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 11/18] media: rzg2l-cru: Add register mapping support
-Message-ID: <20250224184416.GE6778@pendragon.ideasonboard.com>
-References: <20250221155532.576759-1-tommaso.merciai.xr@bp.renesas.com>
- <20250221155532.576759-12-tommaso.merciai.xr@bp.renesas.com>
- <20250223195232.GF8330@pendragon.ideasonboard.com>
- <Z7x4MDVQ_JxeNllA@tom-desktop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D849265613;
+	Mon, 24 Feb 2025 18:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740422715; cv=fail; b=Hy1ehaCJ/2lSzxlWRHVR7E1rF1RjGMaUlqqGcjPFojs7aEBaAd6MLb3DtBXF8bQ/jhuY/MT6soXB1Z+3NojN/FrHUaXdessCgFPpHI8sFFUB5VYxLql+qU4cNiP+7vT6+mhNSjNK686kWeexrl1K8eunGMFVdSBVugUGMEP/p/o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740422715; c=relaxed/simple;
+	bh=KsWB0P1qbc+9z79i4o4GKYN21MO33Sj8j5vnplw3h1s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=qN8H3pjN+i0/CZ7VlPLJO3bl8BPGdfg+CMwJA5S3OUmw9GsJ77E9f1mMbAPu/XE1sssfsltTWUE5bb6NFRezs+4zUScPj+N5fawA/4b0hD4GpcrW/VUt8Vm+9pjiYioELXZ81Lc4rl05KGKVJEmD7LlDn/4ZiQjuNkg6/RXeLaA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HvVvUZR3; arc=fail smtp.client-ip=40.107.243.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B9CdxTBot1YMRjSnWTD3/pVXkY75q0g5si9mg+etPwT6xkpsKLowEIibC9ZVopqFvJ2rIYd+X9jcQrFrklQin0qbU5sDMPh5z8ZAM73r+tDG6QLVokSupnuX9MrT2Hl7USodLqGa6auU0rGeaVJilkJ1Ez0R9DiKmDzAhMO3hKh3kG/pKYCih9thPeNJT+PJTgsErdoQkdtesiCgSOAKNJy0eZJzoYrqNk3B45tiScT4S3vlVszTHFyPBPpuHaZnI6jyvcyiO9YYbOokDrr3K+tc+3chvEokwA3aJvWy6YtZwpqaBrV5aMSnbJT5j1ePT830rGA3Ir/9tUSQQs/zLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sz2vM5a1q5wpgrv3BkN9/KXbZzbO618tVcbsx6xhKMg=;
+ b=P96/TZX9n7OyjLrPxIu18guxXtTEE+3um+ACqeoMaiS8KG1iTpQGpZ44yIMl0rdLGK3Er/RnDwdfRHdTUUIVP1vfMJVgZmU5t3Qh8CT7eUSDAN8gUP7IWTak68PNSGXop5Qbbk7zWG1k5J0piDHck7gkp8pQpg6SPzRyOaXxc02j6Zj1j0Zh5TH1VdwfB7urGD071w1QOoS0eOj5Lx9KSYgioF7tVOUj7CPShskMzCM8V99st4/ijr56yRZxqIItYGk8cY+vgcqsD4WWGYRfsfsEYg++smwYG/Me04T+wCjy/iDBD54x+Z5zf/6jZnlw5dKba9esEJHuHlWHXM6rVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sz2vM5a1q5wpgrv3BkN9/KXbZzbO618tVcbsx6xhKMg=;
+ b=HvVvUZR34d/8s9UaEzbD6ADW+yGDbWvbQIe8G1LkeX1tyqno+RsrpiP2KPxY7ZndVEceL3vAnr6Zt/Zj+5lUBZ9cKe3DtVDkSnO9BAAxxDhoALYpw0b67LC4F9G9+++S/+B7Jet/dzDC2uqTxM1wjISeHYMMBB8w3S/aE9ED4dDV5WgfBBObwKCdSR9k/M+8ws/dgOidrMmhCOoJTnLv3cjxUUL3Frt7EjtQr1oyxWl72TsaKvnkc+scq/zEt58Dm6OJZ9gV9Udo7BzmeR6zMpqUwFu1L/d40Ju+e4AfaSQ+jLUzGYc3g71LqpgF6qloqljLWYpPBwhNQUOf/PHBmA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by MW5PR12MB5599.namprd12.prod.outlook.com (2603:10b6:303:194::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Mon, 24 Feb
+ 2025 18:45:04 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8466.016; Mon, 24 Feb 2025
+ 18:45:04 +0000
+Date: Mon, 24 Feb 2025 13:45:02 -0500
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	John Hubbard <jhubbard@nvidia.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250224184502.GA1599486@joelnvbox>
+References: <20250217-nova_timer-v1-0-78c5ace2d987@nvidia.com>
+ <Z7OrKX3zzjrzZdyz@pollux>
+ <CAPM=9tyu84z4Xk5X0fykO3Dazby2UqRgwtN4woNKe4Z2yMyDZg@mail.gmail.com>
+ <D80AK2CLL4AZ.1G6R7OBHOF08O@nvidia.com>
+ <Z7xg8uArPlr2gQBU@pollux>
+ <Z7xh5bEyh_MII4WV@pollux>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z7xh5bEyh_MII4WV@pollux>
+X-ClientProxiedBy: IA1P220CA0011.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:208:461::12) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z7x4MDVQ_JxeNllA@tom-desktop>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW5PR12MB5599:EE_
+X-MS-Office365-Filtering-Correlation-Id: cbf963ac-6257-48c9-79aa-08dd55035a4d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TU4oFtHDkZhaIhaZfPcS1txgM2nHgLWo1BsV0r2HNJqAuqAnSALTYP0k7KHn?=
+ =?us-ascii?Q?wVkBcTPjOIS2XOxJKaBhaAEj0D5ak8mg2GC113iJ/JMfc2Z0i5XRKN8FrcLk?=
+ =?us-ascii?Q?QuV3bT10w7JqcUVB8xAAwu4ojFvUmFFawIidj3jHBOQL8g2JIxzw88q0lFTW?=
+ =?us-ascii?Q?WRMHrQBWvKQnPsa/wb/+vV+SFvEiFmsrV7xlG2pxmnd8gAe8UPXv7nk6TgNa?=
+ =?us-ascii?Q?L3a3lNLrNKzMFdDP1l3M7co9TbebgS7cV4tzOHwPQwctyPZYvTvKo7w2wOoe?=
+ =?us-ascii?Q?Q95iReShditHJ+LagA/XvbNKnM6UzyemeK0YHi2VlHFlF9cxa0Z9UfBfufJH?=
+ =?us-ascii?Q?/3ueupNspyZ9k1v+0hbW3MEeVNcCukTzfESvJYrxdIvfrzdH4MWt+dH3r1zp?=
+ =?us-ascii?Q?sJ+fAOpIrpBLkH4Cm51P7w2TSFcTkM2xi4jcB6DqJda6HRL7cqUv9NV2bfip?=
+ =?us-ascii?Q?TF1L6vep8sDOkMckqCGUyiwo/VrFreaOtqpDffuUrP4efEkZMuBxshOxWcZ3?=
+ =?us-ascii?Q?+xfCQRswPfCk+ocmCA0PKzUyh3wFy7UxEOEnhvmKwGlN40IHmJ1K1SC6BxrP?=
+ =?us-ascii?Q?gs9g3bECK2e5Hcp3jjjLzGuuvYjj+zRdkGAVgJigwTNBrj1HbuwtYAav+zQp?=
+ =?us-ascii?Q?PTCBhg+Cht16boR0GMi++gguQlmhiPirmzReGycbT8IJegXumru9pWPBw60r?=
+ =?us-ascii?Q?6rs0Hhv8jKNZCFq7y/kFLvgX+gvVho1e5O9LuwqS/yGt+ID5RPVnqMJmJj6T?=
+ =?us-ascii?Q?d6Dw/10LYVEitiSnGHwihll7m9Cc/JNO7bU/phhIprWO51UHhLBUHeGdF+87?=
+ =?us-ascii?Q?UB9OVxBVVpJtVWbel9/B8qF/Mk/7njdO/Bznu6MPORVbcXtR0UZTtoS/xPNP?=
+ =?us-ascii?Q?9vc9ZWqbIgzHSwQWwoCDuF7wAc8wLj/pwK+lEdRdkp8Y807miEQnccDjevmf?=
+ =?us-ascii?Q?nca4e4xgroUxUk4oARbJtBSh0I4ilUXfAxKFGHMK/fq8yIECMRLJW0LeGamH?=
+ =?us-ascii?Q?FQ1x2HO3tH2AI6jcGCDdQlNen/no8fG4X5CIuWcjv94bNKya+rTJmykVcO7r?=
+ =?us-ascii?Q?6Y5aYw2uX28j990rcpqbULfBxfaxFa4GFQqip/SYQ9xZm9zHrwXi2ayacMCM?=
+ =?us-ascii?Q?j+pnHwHRzYXc6hTKP/+Uo8cs3HRZiarRQNkzMvsXD6HYQgPyRMNyCHL/Jj6O?=
+ =?us-ascii?Q?tGOuQcd7Zh/OxOzF3iVNZ1HkvY4Nut7m1v9j+uvb5FjM3XBky6dh9n5+BtXb?=
+ =?us-ascii?Q?ekhiiH/dK6UPkpU5mEYIfn3recpezyAtTrq/8btSEqQvhMxCWuenYHoU/yxP?=
+ =?us-ascii?Q?2/DVtCpfJHjcyyj0AFgNiSuB9OUc6vSW9yOuMOMFdkrRyxEANUBIS3D8i9TW?=
+ =?us-ascii?Q?a9CcI+oOgbIR92mpIpyZNCRe1kvF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HkVYHXBwbc3n8Uuz4ByXV2iHYHH0ixovz2bmOY4xrOWZCMPYLFVUV0KyXtDb?=
+ =?us-ascii?Q?TRXtZJckI0aL4KREF9d8mr/PU8mpVGK2Odk5EpUlwmeZvmoGdepjSs4QaU9l?=
+ =?us-ascii?Q?1fOlTlgKwVX+unUZM6yx2Bb8ETOXItnvASQayxUohl5JjPj7YngAGjr4/q3q?=
+ =?us-ascii?Q?UsyyIg3m2WCywo0+E/8jK8cqPF/Ux3HoxBrUHuhIYRwfugxLqj8ZaN9QGLvb?=
+ =?us-ascii?Q?dJzuDhg42wpwYzZBL8CuiUoSRcJQfcGNGMNgJUxIMkX6+eBWh1ADl2FsCTyC?=
+ =?us-ascii?Q?OxaabUeXDuBw9heFT/abxoit8aWo9a+lOvTH5A6BmIJqJ2ioPtgPVhhuujQ6?=
+ =?us-ascii?Q?If5/9RVHqwKGPjJdiPlf2N2N8v2xW9klOKXSyiJClNEEwRwHxv7g1/lH85tB?=
+ =?us-ascii?Q?B2c87lA5CWn5/T1SG5sEXDrpo83F3mqyGa8SzyMJ93bnRQ5uoS31GDg/6SAO?=
+ =?us-ascii?Q?ZduZWMd1k+jwQTuhs7tdWX6aai7VoGbKzwtk1mCP+nlI6HsnX5MhfHCOY6fe?=
+ =?us-ascii?Q?jEbbtZ9xRaPofixXlcs1TRM/yeqFIF6VYbmWvl75N6V8w/EMe2iHzK+itvNS?=
+ =?us-ascii?Q?k+XitV2zRuvllzEaZdPIiu4GZL2ONTPy8IZxGgcueOe9PSWKDyRPx5bcx9Ja?=
+ =?us-ascii?Q?PboW+0jxvZERUea0ng13MzBwmiJgPra3ucxbshsxwOK3+fcIx3SEoojuiX2r?=
+ =?us-ascii?Q?yVDtXPa1yFLDvct1ZPGAVSG8hV1l4drT5JzE3FNk0XiOY7OSUmKnNCCmPQ1K?=
+ =?us-ascii?Q?VT7GjTSSNXSvnG4JHsPsg2t/KwB/yIw52eB5Z15bCY0b+j9E+r1CL6G8/Mrt?=
+ =?us-ascii?Q?TqT5QytDecEmiQ1ECPdBOt1Yv8KBXQDHz25aH1Ov4CFQHoIrDRipCLg/kaWf?=
+ =?us-ascii?Q?M5X+scc5QZxcJEudB0sT7uqN8nt6DPm6tUMdL3tXtPlyTx6AYkqHlCXZGNMK?=
+ =?us-ascii?Q?57In12fmryp3fJngcQ3mZBj/th/F5Bg+j32dAAisWzeqF1J1x1hE16aD22Oa?=
+ =?us-ascii?Q?JCnRGrPN9HXzfRITj1L8vzlT/kZTKfrVpKzYcaMywKHdpuo6QlhoSMBgPT3y?=
+ =?us-ascii?Q?2j4pJJ2dnMI9y1kPsFGIfXlbfjcbTSbgVWng6ssXzBh41/lcujG39hB1jaO7?=
+ =?us-ascii?Q?AQRwnwAbjNu/YMLWy2xyjlbmzopJ29cRAZuge7riXCiV/FdXPBVmr01uB3er?=
+ =?us-ascii?Q?LOzt1cLykT2b5Rj7bHaMK7sqeOuGS+QIwkBl7yEf0be2v7hDAI/2Kdy+0zwp?=
+ =?us-ascii?Q?ZEMjxGUa8Iz4HnCKBBB4xVDAnYsudiLARPseaGZLe9OYGvnEMeYPT1oXDLU3?=
+ =?us-ascii?Q?Yy7axCPUzYoBbbJ825XHXzXS67+7vIoOKv8fYovDl9c58dtwbIZ4JnIZj1dv?=
+ =?us-ascii?Q?sckhv7WnwxK6T6WDZe86adEAcFZatkLsfd8sJ9WR+h2G3KPhsYVJrSD9AMC+?=
+ =?us-ascii?Q?cAxoAp8WInltlnuDWTcQQ5nNKsxUzOhRIaVJyYiUi/fCoVXlWG+ueFnUTgrY?=
+ =?us-ascii?Q?iE5NxsrO8WERQHUDHqFuDD9U0UbE1IUXw1dsQsMxHpCMGXziE7UWgT4+ZTtz?=
+ =?us-ascii?Q?owAHMjH1NjO5QlxHi7fcKImqjnzfyMjmJa0dtnWk?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cbf963ac-6257-48c9-79aa-08dd55035a4d
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 18:45:04.6482
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FNJO6WNxDGAYueeU4dkcOY+AdJ7roO4lX1Fp7wIKbNmxmbNbhZqHWA1CY5JMAYbzdtT/xpicwqCAQOzRQBh9gQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5599
 
-On Mon, Feb 24, 2025 at 02:46:24PM +0100, Tommaso Merciai wrote:
-> On Sun, Feb 23, 2025 at 09:52:32PM +0200, Laurent Pinchart wrote:
-> > On Fri, Feb 21, 2025 at 04:55:25PM +0100, Tommaso Merciai wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > 
-> > > Prepare for adding support for RZ/G3E and RZ/V2HP SoCs, which have a
-> > > CRU-IP that is mostly identical to RZ/G2L but with different register
-> > > offsets and additional registers. Introduce a flexible register mapping
-> > > mechanism to handle these variations.
-> > > 
-> > > Define the `rzg2l_cru_info` structure to store register mappings and
-> > > pass it as part of the OF match data. Update the read/write functions
-> > > to use indexed register offsets from `rzg2l_cru_info`, ensuring
-> > > compatibility across different SoC variants.
-> > > 
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-> > > ---
-> > >  .../platform/renesas/rzg2l-cru/rzg2l-core.c   | 46 ++++++++++++-
-> > >  .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 65 ++++++++++---------
-> > >  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  4 ++
-> > >  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 12 ++--
-> > >  4 files changed, 92 insertions(+), 35 deletions(-)
-> > > 
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > index eed9d2bd0841..abc2a979833a 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-> > > @@ -22,6 +22,7 @@
-> > >  #include <media/v4l2-mc.h>
-> > >  
-> > >  #include "rzg2l-cru.h"
-> > > +#include "rzg2l-cru-regs.h"
-> > >  
-> > >  static inline struct rzg2l_cru_dev *notifier_to_cru(struct v4l2_async_notifier *n)
-> > >  {
-> > > @@ -269,6 +270,9 @@ static int rzg2l_cru_probe(struct platform_device *pdev)
-> > >  
-> > >  	cru->dev = dev;
-> > >  	cru->info = of_device_get_match_data(dev);
-> > > +	if (!cru->info)
-> > > +		return dev_err_probe(dev, -EINVAL,
-> > > +				     "Failed to get OF match data\n");
-> > >  
-> > >  	irq = platform_get_irq(pdev, 0);
-> > >  	if (irq < 0)
-> > > @@ -317,8 +321,48 @@ static void rzg2l_cru_remove(struct platform_device *pdev)
-> > >  	rzg2l_cru_dma_unregister(cru);
-> > >  }
-> > >  
-> > > +static const u16 rzg2l_cru_regs[] = {
-> > > +	[CRUnCTRL] = 0x0,
-> > > +	[CRUnIE] = 0x4,
-> > > +	[CRUnINTS] = 0x8,
-> > > +	[CRUnRST] = 0xc,
-> > > +	[AMnMB1ADDRL] = 0x100,
-> > > +	[AMnMB1ADDRH] = 0x104,
-> > > +	[AMnMB2ADDRL] = 0x108,
-> > > +	[AMnMB2ADDRH] = 0x10c,
-> > > +	[AMnMB3ADDRL] = 0x110,
-> > > +	[AMnMB3ADDRH] = 0x114,
-> > > +	[AMnMB4ADDRL] = 0x118,
-> > > +	[AMnMB4ADDRH] = 0x11c,
-> > > +	[AMnMB5ADDRL] = 0x120,
-> > > +	[AMnMB5ADDRH] = 0x124,
-> > > +	[AMnMB6ADDRL] = 0x128,
-> > > +	[AMnMB6ADDRH] = 0x12c,
-> > > +	[AMnMB7ADDRL] = 0x130,
-> > > +	[AMnMB7ADDRH] = 0x134,
-> > > +	[AMnMB8ADDRL] = 0x138,
-> > > +	[AMnMB8ADDRH] = 0x13c,
-> > > +	[AMnMBVALID] = 0x148,
-> > > +	[AMnMBS] = 0x14c,
-> > > +	[AMnAXIATTR] = 0x158,
-> > > +	[AMnFIFOPNTR] = 0x168,
-> > > +	[AMnAXISTP] = 0x174,
-> > > +	[AMnAXISTPACK] = 0x178,
-> > > +	[ICnEN] = 0x200,
-> > > +	[ICnMC] = 0x208,
-> > > +	[ICnMS] = 0x254,
-> > > +	[ICnDMR] = 0x26c,
-> > > +};
-> > > +
-> > > +static const struct rzg2l_cru_info rzgl2_cru_info = {
-> > > +	.regs = rzg2l_cru_regs,
-> > > +};
-> > > +
-> > >  static const struct of_device_id rzg2l_cru_of_id_table[] = {
-> > > -	{ .compatible = "renesas,rzg2l-cru", },
-> > > +	{
-> > > +		.compatible = "renesas,rzg2l-cru",
-> > > +		.data = &rzgl2_cru_info,
-> > > +	},
-> > >  	{ /* sentinel */ }
-> > >  };
-> > >  MODULE_DEVICE_TABLE(of, rzg2l_cru_of_id_table);
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-> > > index 1c9f22118a5d..82920db7134e 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-> > > @@ -10,71 +10,76 @@
-> > >  
-> > >  /* HW CRU Registers Definition */
-> > >  
-> > > -/* CRU Control Register */
-> > > -#define CRUnCTRL			0x0
-> > >  #define CRUnCTRL_VINSEL(x)		((x) << 0)
-> > >  
-> > > -/* CRU Interrupt Enable Register */
-> > > -#define CRUnIE				0x4
-> > >  #define CRUnIE_EFE			BIT(17)
-> > >  
-> > > -/* CRU Interrupt Status Register */
-> > > -#define CRUnINTS			0x8
-> > >  #define CRUnINTS_SFS			BIT(16)
-> > >  
-> > > -/* CRU Reset Register */
-> > > -#define CRUnRST				0xc
-> > >  #define CRUnRST_VRESETN			BIT(0)
-> > >  
-> > >  /* Memory Bank Base Address (Lower) Register for CRU Image Data */
-> > > -#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
-> > > +#define AMnMBxADDRL(base, x)		((base) + (x) * 2)
-> > >  
-> > >  /* Memory Bank Base Address (Higher) Register for CRU Image Data */
-> > > -#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
-> > > +#define AMnMBxADDRH(base, x)		AMnMBxADDRL(base, x)
-> > >  
-> > > -/* Memory Bank Enable Register for CRU Image Data */
-> > > -#define AMnMBVALID			0x148
-> > >  #define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
-> > >  
-> > > -/* Memory Bank Status Register for CRU Image Data */
-> > > -#define AMnMBS				0x14c
-> > >  #define AMnMBS_MBSTS			0x7
-> > >  
-> > > -/* AXI Master Transfer Setting Register for CRU Image Data */
-> > > -#define AMnAXIATTR			0x158
-> > >  #define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
-> > >  #define AMnAXIATTR_AXILEN		(0xf)
-> > >  
-> > > -/* AXI Master FIFO Pointer Register for CRU Image Data */
-> > > -#define AMnFIFOPNTR			0x168
-> > >  #define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
-> > >  #define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
-> > >  
-> > > -/* AXI Master Transfer Stop Register for CRU Image Data */
-> > > -#define AMnAXISTP			0x174
-> > >  #define AMnAXISTP_AXI_STOP		BIT(0)
-> > >  
-> > > -/* AXI Master Transfer Stop Status Register for CRU Image Data */
-> > > -#define AMnAXISTPACK			0x178
-> > >  #define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
-> > >  
-> > > -/* CRU Image Processing Enable Register */
-> > > -#define ICnEN				0x200
-> > >  #define ICnEN_ICEN			BIT(0)
-> > >  
-> > > -/* CRU Image Processing Main Control Register */
-> > > -#define ICnMC				0x208
-> > >  #define ICnMC_CSCTHR			BIT(5)
-> > >  #define ICnMC_INF(x)			((x) << 16)
-> > >  #define ICnMC_VCSEL(x)			((x) << 22)
-> > >  #define ICnMC_INF_MASK			GENMASK(21, 16)
-> > >  
-> > > -/* CRU Module Status Register */
-> > > -#define ICnMS				0x254
-> > >  #define ICnMS_IA			BIT(2)
-> > >  
-> > > -/* CRU Data Output Mode Register */
-> > > -#define ICnDMR				0x26c
-> > >  #define ICnDMR_YCMODE_UYVY		(1 << 4)
-> > >  
-> > > +enum rzg2l_cru_common_regs {
-> > > +	CRUnCTRL,	/* CRU Control */
-> > > +	CRUnIE,		/* CRU Interrupt Enable */
-> > > +	CRUnINTS,	/* CRU Interrupt Status */
-> > > +	CRUnRST, 	/* CRU Reset */
-> > > +	AMnMB1ADDRL,	/* Bank 1 Address (Lower) for CRU Image Data */
-> > > +	AMnMB1ADDRH,	/* Bank 1 Address (Higher) for CRU Image Data */
-> > > +	AMnMB2ADDRL,    /* Bank 2 Address (Lower) for CRU Image Data */
-> > > +	AMnMB2ADDRH,    /* Bank 2 Address (Higher) for CRU Image Data */
-> > > +	AMnMB3ADDRL,    /* Bank 3 Address (Lower) for CRU Image Data */
-> > > +	AMnMB3ADDRH,    /* Bank 3 Address (Higher) for CRU Image Data */
-> > > +	AMnMB4ADDRL,    /* Bank 4 Address (Lower) for CRU Image Data */
-> > > +	AMnMB4ADDRH,    /* Bank 4 Address (Higher) for CRU Image Data */
-> > > +	AMnMB5ADDRL,    /* Bank 5 Address (Lower) for CRU Image Data */
-> > > +	AMnMB5ADDRH,    /* Bank 5 Address (Higher) for CRU Image Data */
-> > > +	AMnMB6ADDRL,    /* Bank 6 Address (Lower) for CRU Image Data */
-> > > +	AMnMB6ADDRH,    /* Bank 6 Address (Higher) for CRU Image Data */
-> > > +	AMnMB7ADDRL,    /* Bank 7 Address (Lower) for CRU Image Data */
-> > > +	AMnMB7ADDRH,    /* Bank 7 Address (Higher) for CRU Image Data */
-> > > +	AMnMB8ADDRL,    /* Bank 8 Address (Lower) for CRU Image Data */
-> > > +	AMnMB8ADDRH,    /* Bank 8 Address (Higher) for CRU Image Data */
-> > > +	AMnMBVALID,	/* Memory Bank Enable for CRU Image Data */
-> > > +	AMnMBS,		/* Memory Bank Status for CRU Image Data */
-> > > +	AMnAXIATTR,	/* AXI Master Transfer Setting Register for CRU Image Data */
-> > > +	AMnFIFOPNTR,	/* AXI Master FIFO Pointer for CRU Image Data */
-> > > +	AMnAXISTP,	/* AXI Master Transfer Stop for CRU Image Data */
-> > > +	AMnAXISTPACK,	/* AXI Master Transfer Stop Status for CRU Image Data */
-> > > +	ICnEN,		/* CRU Image Processing Enable */
-> > > +	ICnMC,		/* CRU Image Processing Main Control */
-> > > +	ICnMS,		/* CRU Module Status */
-> > > +	ICnDMR,		/* CRU Data Output Mode */
-> > > +};
-> > > +
-> > >  #endif /* __RZG2L_CRU_REGS_H__ */
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > index 8b898ce05b84..00c3f7458e20 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-> > > @@ -80,6 +80,10 @@ struct rzg2l_cru_ip_format {
-> > >  	bool yuv;
-> > >  };
-> > >  
-> > > +struct rzg2l_cru_info {
-> > > +	const u16 *regs;
-> > > +};
-> > > +
-> > >  /**
-> > >   * struct rzg2l_cru_dev - Renesas CRU device structure
-> > >   * @dev:		(OF) device
-> > > diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > index cd69c8a686d3..f25fd9b35c55 100644
-> > > --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-> > > @@ -44,12 +44,16 @@ struct rzg2l_cru_buffer {
-> > >   */
-> > >  static void rzg2l_cru_write(struct rzg2l_cru_dev *cru, u32 offset, u32 value)
-> > >  {
-> > > -	iowrite32(value, cru->base + offset);
-> > > +	const u16 *regs = cru->info->regs;
-> > > +
-> > > +	iowrite32(value, cru->base + regs[offset]);
+Hi Danilo,
+
+On Mon, Feb 24, 2025 at 01:11:17PM +0100, Danilo Krummrich wrote:
+> On Mon, Feb 24, 2025 at 01:07:19PM +0100, Danilo Krummrich wrote:
+> > CC: Gary
 > > 
-> > Should out-of-bound accesses be checked ? Ideally that should be done at
-> > build time, but in some cases that may be hard. Maybe rzg2l_cru_write()
-> > and rzg2l_cru_read() could implement compile-time checks, and
-> > __rzg2l_cru_write() and __rzg2l_cru_read() could be used for the cases
-> > where checks are not possible at compile time (for AMnMBxADDRL and
-> > AMnMBxADDRH as far as I can see).
+> > On Mon, Feb 24, 2025 at 10:40:00AM +0900, Alexandre Courbot wrote:
+> > > This inability to sleep while we are accessing registers seems very
+> > > constraining to me, if not dangerous. It is pretty common to have
+> > > functions intermingle hardware accesses with other operations that might
+> > > sleep, and this constraint means that in such cases the caller would
+> > > need to perform guard lifetime management manually:
+> > > 
+> > >   let bar_guard = bar.try_access()?;
+> > >   /* do something non-sleeping with bar_guard */
+> > >   drop(bar_guard);
+> > > 
+> > >   /* do something that might sleep */
+> > > 
+> > >   let bar_guard = bar.try_access()?;
+> > >   /* do something non-sleeping with bar_guard */
+> > >   drop(bar_guard);
+> > > 
+> > >   ...
+> > > 
+> > > Failure to drop the guard potentially introduces a race condition, which
+> > > will receive no compile-time warning and potentialy not even a runtime
+> > > one unless lockdep is enabled. This problem does not exist with the
+> > > equivalent C code AFAICT
 > 
-> What about using:
-> 
-> static void __rzg2l_cru_write(struct rzg2l_cru_dev *cru, u32 offset, u32 value)
-> {
-> 	const u16 *regs = cru->info->regs;
-> 
-> 	if (WARN_ON(offset >= RZG2L_CRU_MAX_REG) ||
-> 	    WARN_ON(offset != CRUnCTRL && regs[offset] == 0))
-> 		return;
-> 
-> 	iowrite32(value, cru->base + regs[offset]);
-> }
-> 
-> static u32 __rzg2l_cru_read(struct rzg2l_cru_dev *cru, u32 offset)
-> {
-> 	const u16 *regs = cru->info->regs;
-> 
-> 	if (WARN_ON(offset >= RZG2L_CRU_MAX_REG) ||
-> 	    WARN_ON(offset != CRUnCTRL && regs[offset] == 0))
-> 		return 0;
-> 
-> 	return ioread32(cru->base + regs[offset]);
-> }
-> 
-> static inline void rzg2l_cru_write(struct rzg2l_cru_dev *cru, u32 offset, u32 value)
-> {
-> 	BUILD_BUG_ON(offset >= RZG2L_CRU_MAX_REG);
-> 	__rzg2l_cru_write(cru, offset, value);
+> Without klint [1] it is exactly the same as in C, where I have to remember to
+> not call into something that might sleep from atomic context.
+>
 
-If there's already a check at compile time, we shouldn't incur a
-performance impact at runtime. I'd do
+Sure, but in C, a sequence of MMIO accesses don't need to be constrained to
+not sleeping?
 
-	iowrite32(value, cru->base + cru->info->regs[offset]);
+I am fairly new to rust, could you help elaborate more about why these MMIO
+accesses need to have RevocableGuard in Rust? What problem are we trying to
+solve that C has but Rust doesn't with the aid of a RCU read-side section? I
+vaguely understand we are trying to "wait for an MMIO access" using
+synchronize here, but it is just a guest.
 
-here. Same below.
++Paul as well.
 
-> }
-> 
-> static u32 rzg2l_cru_read(struct rzg2l_cru_dev *cru, u32 offset)
-> {
-> 	BUILD_BUG_ON(offset >= RZG2L_CRU_MAX_REG);
-> 	return __rzg2l_cru_read(cru, offset);
-> }
-> 
-> And use rzg2l_cru_write, rzg2l_cru_read where check can be done at build
-> time, and __read/__write functions where check can be only done at
-> runtime.
+thanks,
 
-Is there a way we could use a common macro (e.g. rzg2l_cru_write()) and
-use __builtin_constant_p() to dispatch to __rzg2l_cru_write_constant()
-or __rzg2l_cru_write() ?
+ - Joel
 
-> > >  }
-> > >  
-> > >  static u32 rzg2l_cru_read(struct rzg2l_cru_dev *cru, u32 offset)
-> > >  {
-> > > -	return ioread32(cru->base + offset);
-> > > +	const u16 *regs = cru->info->regs;
-> > > +
-> > > +	return ioread32(cru->base + regs[offset]);
-> > >  }
-> > >  
-> > >  /* Need to hold qlock before calling */
-> > > @@ -132,8 +136,8 @@ static void rzg2l_cru_set_slot_addr(struct rzg2l_cru_dev *cru,
-> > >  		return;
-> > >  
-> > >  	/* Currently, we just use the buffer in 32 bits address */
-> > > -	rzg2l_cru_write(cru, AMnMBxADDRL(slot), addr);
-> > > -	rzg2l_cru_write(cru, AMnMBxADDRH(slot), 0);
-> > > +	rzg2l_cru_write(cru, AMnMBxADDRL(AMnMB1ADDRL, slot), addr);
-> > > +	rzg2l_cru_write(cru, AMnMBxADDRH(AMnMB1ADDRH, slot), 0);
-> > 
-> > This seems fairly error-prone. The first argument doesn't seem to be
-> > needed.
-> 
-> Sorry I don't completely got this.
-> Please correct me if I'm wrong.
-> 
-> I think cru argument is needed here has AMnMBxADDRH macro is returning an
-> index of rzg2l_cru_regs[] and not the real address.
-
-I meant the first argument to the AMnMBxADDRL() and AMnMBxADDRH(),
-sorry. Can it ever be something else than AMnMB1ADDRL or AMnMB1ADDRH
-respectively ?
-
-> Btw with the changes above here we can use:
-> 
-> 	__rzg2l_cru_write(cru, AMnMBxADDRL(AMnMB1ADDRL, slot), addr);
-> 	__rzg2l_cru_write(cru, AMnMBxADDRH(AMnMB1ADDRH, slot), 0);
-> 
-> That is checking for out-of-bound accesses at runtime.
-> 
-> What do you think?
-> Thanks in advance.
-> 
-> > >  }
-> > >  
-> > >  /*
-
--- 
-Regards,
-
-Laurent Pinchart
 
