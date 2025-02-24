@@ -1,132 +1,223 @@
-Return-Path: <linux-kernel+bounces-529032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB7DA41F20
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:33:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA21A41EE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C9F3AFC9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:27:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE7037A3E98
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38985221F17;
-	Mon, 24 Feb 2025 12:26:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59004221F12
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A034233720;
+	Mon, 24 Feb 2025 12:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RU33N3fL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2837221F1B;
+	Mon, 24 Feb 2025 12:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740399988; cv=none; b=b6oyyMwWE1NT5m1hjgErN++uN1rv7hiH442COLiUTtu0yK0LGpT1P0igOkMHbahy29se4nHH7WTK3r2hFnL/qGrTBQMH26OB3Touk2iQZQMkCx6bZcIY01SF9ePvH4kA943vdLUy2VmILlxf7lYVI2MMH+syMEMyk1stjs9hUkY=
+	t=1740400020; cv=none; b=olCf4ObUO9C8zcLYwM4/Frzn4uKuMQjaidRtzkTwKZwO0M4rgmCZczzKc425z0rF0ZFmMRdi9YvZY9bAmYklvNDHHhbR/J12Od2FzdfGeOjwqMa/1EiklI6/nDJWNsk8Yaw5e7R9G8xzorReW+2m2aw6cUsQ9MW2r1DQSbqgGi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740399988; c=relaxed/simple;
-	bh=osmVdniy/pTYiMun664m7lGsp96Vjyyk//3CAEGRoBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HP80e8l72eBAO/PYhPNl+4OWHBE6L8QE7lRf+npTK7TxIf4vNiH5mJ7z9gaYiaIYy586BZwCCC7xwQwOtb7kZPln+kbGsvZ3R0Eb9cUF/O7yr5sDC4nqzrWnA7PnPB6Q2516ajoyCJ8E+2ataEQrSc6KCIvFVnxeNx0ejvSixWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61DC01756;
-	Mon, 24 Feb 2025 04:26:43 -0800 (PST)
-Received: from [10.1.27.150] (XHFQ2J9959.cambridge.arm.com [10.1.27.150])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 842BD3F6A8;
-	Mon, 24 Feb 2025 04:26:24 -0800 (PST)
-Message-ID: <90195b91-e9b3-41aa-bb39-45f6a49b171b@arm.com>
-Date: Mon, 24 Feb 2025 12:26:23 +0000
+	s=arc-20240116; t=1740400020; c=relaxed/simple;
+	bh=lMaZnIo/c51auDH+6WQwJ9/tpgxxJvj9CF15z4hlGWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uyfc4DT3dV9K2+QNZexpMGZ0XrBo2Lwkfw/dAIk6zSxpyXeYDC0fSP0zN0KUbfBlwSluD3b9WDrazHjuCkRZtvBUDO/r/LILU0LD0XoxXawVL0FfngeHrJsJbKFnOkRVKff6ihp3BLuti4iDrfWXporG+S0aiJ3XqwUCDfvYc4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RU33N3fL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30E6DC4AF09;
+	Mon, 24 Feb 2025 12:27:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740400020;
+	bh=lMaZnIo/c51auDH+6WQwJ9/tpgxxJvj9CF15z4hlGWQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RU33N3fLUHbl4fLDk+4+4/KChfNrl/ODuy1CGNeQxxo8Ju3ZjG/upPsFp75dbUrma
+	 ONfNyRQJLq4ex8Jt9xfBuEcTi6tnarW0vBkLn6OI36iOwHLwtDZI6GLqawGYnU6Vyq
+	 EnTbnTfROMyE1TErimAq2KJgT8EGuN6BKZPJKbpDDCId4VAD568hqkT8Prn3Ia6X7m
+	 BC8GtkJx//yNrr20ou4x9jelVEDmu6WcRrMs3T1nnOIJnAdXNd+rV4eBkIqpvIHr5J
+	 MmgpZT9DpU4JcHSsxG5bcyM0O1vLpcgP9AY2o6XqPD5+/UH7eOAhWPfUi/c3qEm+7k
+	 UZeXwafboJPMA==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaeec07b705so695003466b.2;
+        Mon, 24 Feb 2025 04:27:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUeSbwjLOGg3Jze6kcGSr7rhXZBGgW86FWJXnP7OgPlKeX3/Q0SNPqDdj5A3eCL3q052X/L5vfhc3hyHc9F@vger.kernel.org, AJvYcCVt3E+/cJUHHEZ2HrLHPZy+24TezOE0G7A6tb9EkuSm0+XqSd33KZxol3U8LFDUPIonLiZ8L2+YJ3Ei@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQDTXWmd54PX4+cMLoKzSb9ACPbXh420gqSw8G7a7YvA/w7wxY
+	wqeoovcxazfJfAkRltiBaE3zmzToiEqZXIhcPpZFtigekRcio6Jp0Pqib/JpltCeRRn4HQzvFtE
+	YQ+KyisqsAu5hF8F6UjkE6ZlC+w==
+X-Google-Smtp-Source: AGHT+IE0bdnAF+czJ4RoK5ksBXS0GISmkLkK0AOBEJHD5YhJY25EFFnVa4LvHrvx4VDNZsHs7ulbsTvrislbrRlsIW4=
+X-Received: by 2002:a17:906:3199:b0:ab6:32d2:16d4 with SMTP id
+ a640c23a62f3a-abc0de519c6mr975592166b.56.1740400018723; Mon, 24 Feb 2025
+ 04:26:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/14] arm64/mm: Avoid barriers for invalid or
- userspace mappings
-Content-Language: en-GB
-To: Kevin Brodsky <kevin.brodsky@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Pasha Tatashin <pasha.tatashin@soleen.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250217140809.1702789-1-ryan.roberts@arm.com>
- <20250217140809.1702789-8-ryan.roberts@arm.com>
- <fc199d7c-ab09-4278-b641-962184bff14d@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <fc199d7c-ab09-4278-b641-962184bff14d@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250224114648.1606184-1-vincenzo.frascino@arm.com> <20250224114648.1606184-2-vincenzo.frascino@arm.com>
+In-Reply-To: <20250224114648.1606184-2-vincenzo.frascino@arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 24 Feb 2025 06:26:45 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJTsk6uudqNJ7dpkH_GeKnAuqTWHSw=WmeN=-PBXDS1Pg@mail.gmail.com>
+X-Gm-Features: AWEUYZmi7hUhVER6mycTzw9mt2QdU5RhHSNKbnPAfDOl3xceqac7UV8a1ZEPzTQ
+Message-ID: <CAL_JsqJTsk6uudqNJ7dpkH_GeKnAuqTWHSw=WmeN=-PBXDS1Pg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] ASoC: dt-bindings: xlnx,i2s: Convert to json-schema
+To: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Cc: linux-sound@vger.kernel.org, 
+	Maruthi Srinivas Bayyavarapu <maruthi.srinivas.bayyavarapu@xilinx.com>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 20/02/2025 16:54, Kevin Brodsky wrote:
-> On 17/02/2025 15:07, Ryan Roberts wrote:
->> __set_pte_complete(), set_pmd(), set_pud(), set_p4d() and set_pgd() are
-> 
-> Nit: it would be more accurate to say __set_pte() instead of
-> __set_pte_complete(), as it is the former that actually writes the PTE
-> (and then issues barriers).
+On Mon, Feb 24, 2025 at 5:47=E2=80=AFAM Vincenzo Frascino
+<vincenzo.frascino@arm.com> wrote:
+>
+> Convert the Xilinx I2S device tree binding documentation to json-schema.
+>
+> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> ---
+>  .../devicetree/bindings/sound/xlnx,i2s.txt    | 28 --------
+>  .../devicetree/bindings/sound/xlnx,i2s.yaml   | 68 +++++++++++++++++++
+>  2 files changed, 68 insertions(+), 28 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+>  create mode 100644 Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/sound/xlnx,i2s.txt b/Docum=
+entation/devicetree/bindings/sound/xlnx,i2s.txt
+> deleted file mode 100644
+> index 5e7c7d5bb60a..000000000000
+> --- a/Documentation/devicetree/bindings/sound/xlnx,i2s.txt
+> +++ /dev/null
+> @@ -1,28 +0,0 @@
+> -Device-Tree bindings for Xilinx I2S PL block
+> -
+> -The IP supports I2S based playback/capture audio
+> -
+> -Required property:
+> - - compatible: "xlnx,i2s-transmitter-1.0" for playback and
+> -              "xlnx,i2s-receiver-1.0" for capture
+> -
+> -Required property common to both I2S playback and capture:
+> - - reg: Base address and size of the IP core instance.
+> - - xlnx,dwidth: sample data width. Can be any of 16, 24.
+> - - xlnx,num-channels: Number of I2S streams. Can be any of 1, 2, 3, 4.
+> -                     supported channels =3D 2 * xlnx,num-channels
+> -
+> -Example:
+> -
+> -       i2s_receiver@a0080000 {
+> -               compatible =3D "xlnx,i2s-receiver-1.0";
+> -               reg =3D <0x0 0xa0080000 0x0 0x10000>;
+> -               xlnx,dwidth =3D <0x18>;
+> -               xlnx,num-channels =3D <1>;
+> -       };
+> -       i2s_transmitter@a0090000 {
+> -               compatible =3D "xlnx,i2s-transmitter-1.0";
+> -               reg =3D <0x0 0xa0090000 0x0 0x10000>;
+> -               xlnx,dwidth =3D <0x18>;
+> -               xlnx,num-channels =3D <1>;
+> -       };
+> diff --git a/Documentation/devicetree/bindings/sound/xlnx,i2s.yaml b/Docu=
+mentation/devicetree/bindings/sound/xlnx,i2s.yaml
+> new file mode 100644
+> index 000000000000..5d7f0c651944
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/xlnx,i2s.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/xlnx,i2s.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx I2S PL block
+> +
+> +description: |
 
-Yeah, fair enough. Will fix in the next version.
+Don't need '|' if no formatting to preserve.
 
-> 
->> used to write entries into pgtables. And they issue barriers (currently
->> dsb and isb) to ensure that the written values are observed by the table
->> walker prior to any program-order-future memory access to the mapped
->> location.
->>
->> Over the years some of these functions have received optimizations: In
->> particular, commit 7f0b1bf04511 ("arm64: Fix barriers used for page
->> table modifications") made it so that the barriers were only emitted for
->> valid-kernel mappings for set_pte() (now __set_pte_complete()). And
->> commit 0795edaf3f1f ("arm64: pgtable: Implement p[mu]d_valid() and check
->> in set_p[mu]d()") made it so that set_pmd()/set_pud() only emitted the
->> barriers for valid mappings. set_p4d()/set_pgd() continue to emit the
->> barriers unconditionally.
->>
->> This is all very confusing to the casual observer; surely the rules
->> should be invariant to the level? Let's change this so that every level
->> consistently emits the barriers only when setting valid, non-user
->> entries (both table and leaf).
->>
->> It seems obvious that if it is ok to elide barriers all but valid kernel
->> mappings at pte level, it must also be ok to do this for leaf entries at
->> other levels: If setting an entry to invalid, a tlb maintenance
->> operation must surely follow to synchronise the TLB and this contains
->> the required barriers. If setting a valid user mapping, the previous
->> mapping must have been invalid and there must have been a TLB
->> maintenance operation (complete with barriers) to honour
->> break-before-make. So the worst that can happen is we take an extra
->> fault (which will imply the DSB + ISB) and conclude that there is
->> nothing to do. These are the arguments for doing this optimization at
->> pte level and they also apply to leaf mappings at other levels.
->>
->> For table entries, the same arguments hold: If unsetting a table entry,
->> a TLB is required and this will emit the required barriers. If setting a
-> 
-> s/TLB/TLB maintenance/
-> 
->> table entry, the previous value must have been invalid and the table
->> walker must already be able to observe that. Additionally the contents
->> of the pgtable being pointed to in the newly set entry must be visible
->> before the entry is written and this is enforced via smp_wmb() (dmb) in
->> the pgtable allocation functions and in __split_huge_pmd_locked(). But
->> this last part could never have been enforced by the barriers in
->> set_pXd() because they occur after updating the entry. So ultimately,
->> the wost that can happen by eliding these barriers for user table
-> 
-> s/wost/worst/
-> 
-> - Kevin
-> 
->> entries is an extra fault.
->>
->> [...]
-> 
+> +  The IP supports I2S based playback/capture audio.
+> +
+> +maintainers:
+> +  - Vincenzo Frascino <vincenzo.frascino@arm.com>
+> +
+> +allOf:
+> +  - $ref: dai-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - xlnx,i2s-receiver-1.0
+> +      - xlnx,i2s-transmitter-1.0
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 4
 
+If there is more than 1 entry, then you need to describe what each one
+is. Looks like 1 entry per channel? But I can only guess.
+
+> +    description: |
+> +      Base address and size of the IP core instance.
+
+That's every 'reg' property if there's only 1 entry. Description
+should be specific to this binding or dropped.
+
+> +
+> +  xlnx,dwidth:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    enum:
+> +      - 16
+> +      - 24
+> +    description: |
+> +      Sample data width. Can be any of 16, 24.
+
+Don't repeat constraints in prose.
+
+> +
+> +  xlnx,num-channels:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    minimum: 1
+> +    maximum: 4
+> +    description: |
+> +      Number of I2S streams.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - xlnx,dwidth
+> +  - xlnx,num-channels
+> +
+> +additionalProperties: true
+> +
+> +examples:
+> +  - |
+> +    i2s_receiver@a0080000 {
+
+i2s@...
+
+> +      compatible =3D "xlnx,i2s-receiver-1.0";
+> +      reg =3D <0x0 0xa0080000 0x0 0x10000>;
+> +      xlnx,dwidth =3D <0x18>;
+> +      xlnx,num-channels =3D <1>;
+> +    };
+> +    i2s_transmitter@a0090000 {
+
+i2s@...
+
+> +      compatible =3D "xlnx,i2s-transmitter-1.0";
+> +      reg =3D <0x0 0xa0090000 0x0 0x10000>;
+> +      xlnx,dwidth =3D <0x18>;
+> +      xlnx,num-channels =3D <1>;
+> +    };
+> +
+> +...
+> --
+> 2.43.0
+>
 
