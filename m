@@ -1,170 +1,93 @@
-Return-Path: <linux-kernel+bounces-528644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9264A41A2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:07:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39761A41A36
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 11:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DCE116C434
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:03:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10B313ABA4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 10:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4102580E7;
-	Mon, 24 Feb 2025 10:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FF8253B57;
+	Mon, 24 Feb 2025 10:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fXgfXy+L"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5F724BC11
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="e01OUvCH"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18B9253331;
+	Mon, 24 Feb 2025 10:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740391218; cv=none; b=WmYOzey/t7G07wvD6mTY4y8Efql/S/evhm0dyXu2dsfc/kmc54Hy0toPGruRoI+zYCELJ+QZkEDvmW9MxF62ZplpmBN+bOq8VaU5UXativp/w26+NvjY22fx5RR+7IRo0T6ctJk6fw7YakSmR9braE/vV+hvUcARSfotKkwJdsY=
+	t=1740391274; cv=none; b=JWOv9t8CD1EBGUnf7lignXFtce4z37+nFbSmw6s9o9wbv6PlgAG+VF5eTxIZFRSdPG0Jo9iYdhPSXkEK+OT7oyghSjTR5852ZlptC89AeE3j30cX2XL343K+OC9e7Hr4HlAsTRYlh6ngqXUWGyjklWcDK9Gr6M3ZKXeBoXZMwpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740391218; c=relaxed/simple;
-	bh=L1CsTylPKpbe7mHhb0x/X+ZtkC9C5FKlAWnDYpGi04Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CII8MKg7mB3ZKFXk0fmTlvqcA4zwkdhQKY7h1MafIfMkgXerLbIJ3OrM7AVGVMGXJJ7fWd61Y0NifkmHcOLwbCXTzNOSYNUnHzkmzxJOKAC/vI7ZDe51qbh9lAq6sQCSG/gX0pXRUEcbI+8/M8GreMuSz86NqC2Dn3VB5rFpYn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fXgfXy+L; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-309311e7b39so38009751fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:00:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740391215; x=1740996015; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e/af6Nf4pYTXjW+k5FHuuUBRQ1ISjrcs1BZad7L7cbM=;
-        b=fXgfXy+Lyvncc7TbLBMjXZe+5rFvdePGhHAr3XgVpCRVIZBLQBI0ZxsHYOUUVxLl9y
-         FFf1vD7RAdmgDziCljaBZ1p1v2DpVlpFARh0t7UkBELh0I62jsq8DtWiPPSAU2c6uaBE
-         jmjo8P08sMsUQikTK9vcYv8CuvQGRpwogJUMZuYknihJzj3O5wgT9XgjpDsMR/adlZu8
-         rVL1IYFdKRzmYE/nr380i4OUSUDBC3WLmt7rjbhXwKbf4vvsW3mlzef8NHjP0JvRDQ9Z
-         0ZYz+3Pg93tdRuVCz21O8z2tOKfBOil2TlASPKMuS8EvmUsBhpHOCq1Jv5m2TtTbSpI6
-         MbiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740391215; x=1740996015;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e/af6Nf4pYTXjW+k5FHuuUBRQ1ISjrcs1BZad7L7cbM=;
-        b=S2DGuDUmmalLshZZxLv+cU2y5Tdj1d6ckB1U/zYT0UZRVSbEHtC1LSGWc7q9fwp/Nd
-         t4m85KBuFCdAFBsFFbbyJktI52f8U6XHoPQ5AYaWBd+NhbIvOb+/jT7eTLGbaYtMb8NK
-         d29ZV6YXMsO5h5yezOqU8Q15N3OMOSb9UQ00qKpF3jBfxcFEhThCC20TZEH1XKB+dGJ8
-         kBYmn9/Xp9lTEu3Rbati7jd3rZs10By/Bd2Ugk3/Ef1iX3qa1yVxREUZBaMHZiSm7LxX
-         5ulYfNsyc4w9NmOOMOtbCT7V2MZj6kw5kLLmmjMrWI8PxwHO/xEl+m/OLBIn0uZWZaXw
-         7rRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhmUqEcY8b9sooflJW1AqruPoBzcMR21G2tIySYWN8qLpkCOoR5MYRbyRIdcrEH6Q1Qe6qWPiL0OjEiMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygtvz0pBk9A+clmFFub7+KlYfAnfvP86JDuqhP0mMZhM2Yp+OK
-	ZyR4qnoKEFr+wILn2yKk/mOYhmVb9FDy0RRyt6L6XbF5wlELesBSs7ILuti6vybhRRnouN+aSdY
-	O/Q/Mdzn273XcFxpPKdzV+OoYPcv0SPnD8VyZNJ3jLy7Tb+1pAuThfg==
-X-Gm-Gg: ASbGncu/17mcex5pZ+wxGS3nvZraDm9OS1sJ95h+GC1ld+u09rpYQ1eg8Cff4lSP392
-	Wrjc/1DX2irNgdZRiuht/4ZD4tKcpZz7sZv3/TD+pPQZWF1K5B1u0fiqo8enq/kRFwiXOAkwKBI
-	bjqOTXCWQ=
-X-Google-Smtp-Source: AGHT+IFvhQ2d0kjawpOA6ae+ZD8D05Wtfz/zZq525EqV3G+li0jFar6Ns4sZTBNcqdZ5o6Ta+CQUR8CvSaROXGWj1Ug=
-X-Received: by 2002:a2e:9098:0:b0:308:ec25:9004 with SMTP id
- 38308e7fff4ca-30a59994167mr42426711fa.35.1740391215090; Mon, 24 Feb 2025
- 02:00:15 -0800 (PST)
+	s=arc-20240116; t=1740391274; c=relaxed/simple;
+	bh=TCvVXCiHDk1V9rJ9VKwPE1xm0gPbe3PuqAGQcLSGzkA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=upmRnW4b4LO4yF0ClF/j85a2lFZW6zd9na2GgWvFFDQx3hNJWuCFy0yxfga0TEDi0cG8U1Hj7EE6bpMy0zt05jO2TqmFXUSf6aR5Sf/Pvi7aUESaQio2lZ2uhKK5Il4acBqVKrhnivlJo4KqCyLlXUER9Ai+6RJw4JZT2zPMEzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=e01OUvCH; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=+p/OR
+	7YcspT2G+MDz+AMaNq8fZXBgvWQLH5OgUJixfo=; b=e01OUvCHWfx+0hTSnwyHC
+	abvo8HqBNPWEJCgEMIN7h+Xp0JIzjHRuEHlneqMs1IOKscVLlxM17Q8hWx5db/nA
+	CBbREVRkKyr1rJdnc76gg9PbCo5ijjRg4r7EC0l/XKHvpKtU8upBWWBZKTfmNHsa
+	ly4DaOt28XAJtUUFAgfQsM=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3V0IrQ7xnddvNOQ--.893S4;
+	Mon, 24 Feb 2025 18:00:12 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: andy@kernel.org,
+	geert@linux-m68k.org,
+	haoxiang_li2024@163.com,
+	u.kleine-koenig@pengutronix.de,
+	erick.archer@outlook.com,
+	ojeda@kernel.org,
+	w@1wt.eu,
+	poeschel@lemonage.de
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] auxdisplay: hd44780: Fix an API misuse in hd44780_remove()
+Date: Mon, 24 Feb 2025 18:00:09 +0800
+Message-Id: <20250224100009.2968190-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224051627.2956304-1-baolu.lu@linux.intel.com> <20250224051627.2956304-11-baolu.lu@linux.intel.com>
-In-Reply-To: <20250224051627.2956304-11-baolu.lu@linux.intel.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Mon, 24 Feb 2025 18:00:03 +0800
-X-Gm-Features: AWEUYZm_Vmy5gXLhP7OjFIo5QaYCXcBq4-MGlly3CV5_Yb7KKQuhKpAi4xpH3T0
-Message-ID: <CABQgh9E2N35pJ5Ehmhq0JydKjWqswypOH9qepu+9QmHmVzdvBw@mail.gmail.com>
-Subject: Re: [PATCH v2 10/12] uacce: Remove unnecessary IOMMU_DEV_FEAT_IOPF
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>, 
-	Fenghua Yu <fenghuay@nvidia.com>, Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Jason Gunthorpe <jgg@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3V0IrQ7xnddvNOQ--.893S4
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr4xtw4rJryxXw45WF45Jrb_yoW3XrX_C3
+	Wrurs7GF4UAr1Fqwn5tFsxury8t3W2qrn3Z3ZFva93XryUuFsFqry7Xwn5Gas8ZFWIyr9x
+	A3Z5WFWDCa17ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRRApnDUUUUU==
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbBkBn9bme8O3-B8AAAs0
 
-On Mon, 24 Feb 2025 at 13:16, Lu Baolu <baolu.lu@linux.intel.com> wrote:
->
-> None of the drivers implement anything for IOMMU_DEV_FEAT_IOPF anymore,
-> remove it to avoid dead code.
->
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-> Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Fix this by using charlcd_free() instead of kfree().
 
-Acked-by: Zhangfei Gao <zhangfei.gao@linaro.org>
+Fixes: 718e05ed92ec ("auxdisplay: Introduce hd44780_common.[ch]")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+ drivers/auxdisplay/hd44780.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  drivers/misc/uacce/uacce.c | 31 -------------------------------
->  1 file changed, 31 deletions(-)
->
-> diff --git a/drivers/misc/uacce/uacce.c b/drivers/misc/uacce/uacce.c
-> index 2a1db2abeeca..42e7d2a2a90c 100644
-> --- a/drivers/misc/uacce/uacce.c
-> +++ b/drivers/misc/uacce/uacce.c
-> @@ -465,31 +465,6 @@ static void uacce_release(struct device *dev)
->         kfree(uacce);
->  }
->
-> -static unsigned int uacce_enable_sva(struct device *parent, unsigned int flags)
-> -{
-> -       int ret;
-> -
-> -       if (!(flags & UACCE_DEV_SVA))
-> -               return flags;
-> -
-> -       flags &= ~UACCE_DEV_SVA;
-> -
-> -       ret = iommu_dev_enable_feature(parent, IOMMU_DEV_FEAT_IOPF);
-> -       if (ret) {
-> -               dev_err(parent, "failed to enable IOPF feature! ret = %pe\n", ERR_PTR(ret));
-> -               return flags;
-> -       }
-> -       return flags | UACCE_DEV_SVA;
-> -}
-> -
-> -static void uacce_disable_sva(struct uacce_device *uacce)
-> -{
-> -       if (!(uacce->flags & UACCE_DEV_SVA))
-> -               return;
-> -
-> -       iommu_dev_disable_feature(uacce->parent, IOMMU_DEV_FEAT_IOPF);
-> -}
-> -
->  /**
->   * uacce_alloc() - alloc an accelerator
->   * @parent: pointer of uacce parent device
-> @@ -509,8 +484,6 @@ struct uacce_device *uacce_alloc(struct device *parent,
->         if (!uacce)
->                 return ERR_PTR(-ENOMEM);
->
-> -       flags = uacce_enable_sva(parent, flags);
-> -
->         uacce->parent = parent;
->         uacce->flags = flags;
->         uacce->ops = interface->ops;
-> @@ -533,7 +506,6 @@ struct uacce_device *uacce_alloc(struct device *parent,
->         return uacce;
->
->  err_with_uacce:
-> -       uacce_disable_sva(uacce);
->         kfree(uacce);
->         return ERR_PTR(ret);
->  }
-> @@ -596,9 +568,6 @@ void uacce_remove(struct uacce_device *uacce)
->                 unmap_mapping_range(q->mapping, 0, 0, 1);
->         }
->
-> -       /* disable sva now since no opened queues */
-> -       uacce_disable_sva(uacce);
-> -
->         if (uacce->cdev)
->                 cdev_device_del(uacce->cdev, &uacce->dev);
->         xa_erase(&uacce_xa, uacce->dev_id);
-> --
-> 2.43.0
->
+diff --git a/drivers/auxdisplay/hd44780.c b/drivers/auxdisplay/hd44780.c
+index 0526f0d90a79..fcd3780ce5d1 100644
+--- a/drivers/auxdisplay/hd44780.c
++++ b/drivers/auxdisplay/hd44780.c
+@@ -328,7 +328,7 @@ static void hd44780_remove(struct platform_device *pdev)
+ 	kfree(hdc->hd44780);
+ 	kfree(lcd->drvdata);
+ 
+-	kfree(lcd);
++	charlcd_free(lcd);
+ }
+ 
+ static const struct of_device_id hd44780_of_match[] = {
+-- 
+2.25.1
+
 
