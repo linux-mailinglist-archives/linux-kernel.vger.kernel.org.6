@@ -1,142 +1,307 @@
-Return-Path: <linux-kernel+bounces-528065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFFD0A4131F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:01:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71651A41320
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 03:02:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38198188771A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:02:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9ECF3A9F53
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227D02BD1B;
-	Mon, 24 Feb 2025 02:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KVwFPVFR"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08352A1BA;
+	Mon, 24 Feb 2025 02:02:20 +0000 (UTC)
+Received: from shelob.surriel.com (shelob.surriel.com [96.67.55.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77576539A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 02:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9732BD1B;
+	Mon, 24 Feb 2025 02:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.67.55.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740362513; cv=none; b=qGgJMUmhEU2IUdEsQ7dPRMw1IATsvLAI+oFCWUC1J4zHFffIvCIZzI9MJiIa7XV0FaYgxFqLEYr/b24QHtrijGZ7cBOheV0weHJSrLOf+FAXp+bp05vH7ma/En0fFri3cO/7u8PZlcb0TyEJ/CmVXnSYfWxa/mW41wBiLoRTuxY=
+	t=1740362540; cv=none; b=n6Lu6Wy9TSRrXMnROMwtu8PmwBXo7BUUXQCJgs7/ImvUvdHrE/0EPWGO5NSzREdpVf1Ao/BrOLbro/apDyu+EOfgUjhMxARuZM2IhVwn4PumDDB59fuCoTpho+w1oECqQC3aJI9EY9d3Iriy6ox6eu5a4iFveRXbuzOevdATVbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740362513; c=relaxed/simple;
-	bh=9KMHWPkt/mzP2FxeLtx7HSsZuineo0SUwsWbbSwMoJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nmOxPqaOIXHgHIGB6wy1oza29qab3TxtFoA2xoEDn/GlEPaInv7vFiv8FXWYcF7DxPTYTPdcNhNEy9tS0/tJEeubrCIuaOlOIN/pIRvfJ0wghTwXYfujoiFFtIiq9NfK2NyeVSZGWqcXZWwj9lqRjZDueLz2vtW4lUqIQ4COvcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KVwFPVFR; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740362510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7/JSF4EW8sAz0SacUsjOJsB92EZAvekc+D7nVVJHuZQ=;
-	b=KVwFPVFRC+Ay7ZEGF5KKz8v6kNk/SHcpwmh4A3bnATDs+vAzdqeteaZl88MhUT1bAMj4wo
-	dMMh8O5se386vNxaQBRLXAkwHrCJHG7rKP7XrWfph6Bn0TJRKDt6CO1oVDo5RPhsH3bB7M
-	jpiahMKO/bwwijdgmdspn/M6YcVxiwQ=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-206-cx89w3J0OxKqUpjDon-TWA-1; Sun, 23 Feb 2025 21:01:48 -0500
-X-MC-Unique: cx89w3J0OxKqUpjDon-TWA-1
-X-Mimecast-MFC-AGG-ID: cx89w3J0OxKqUpjDon-TWA_1740362508
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2fc1a4c14d4so8360355a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 18:01:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740362508; x=1740967308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7/JSF4EW8sAz0SacUsjOJsB92EZAvekc+D7nVVJHuZQ=;
-        b=D+xsgj3a2uExbGBdwu3J+wCclVbhESSDWXn6CWFy08p7YkxGDkmi3+4DhPRy+xZRCo
-         I4EcuET+CJSyrCiMnGnM36aJZoVfEoUF4YFeiNKI4pG8e4coKcO2UUteEx6/VEe84jfB
-         KFeqE6sWGkKq7mGzlcxdjQh/+7m5+sKqYQI/9jc8wd26rpgiMbeAnlRdaH4OF2RNDepv
-         Y9HiiV1UMM1S10WdfFh8cHIrYXJ5Wj/ZUcJTIiPPePWCZ4a8yTtCxW5hA7aB9SIXFsRM
-         p5RtJlYjgX1HHi9BdoAbwNZJgagNBG+cPIYgRefVHiEg0vydcv0+7kZs3oN4W3YQV0hl
-         UdgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIoDPLXpO/7fsXsxSEfSBOBifj57RDLYTdeGop51aW6s3FQxt9klXeRUpmCiL8KkDUHQcLx42/1LuG/z0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMLkWHe8urNOw2PqB25apAcU7+aUtZu9fMzYCYNdHJt62SW7Qu
-	4hOsSrI48izLtCaQtHCGZAGWA8LQmVCqGRL10eMmTr74dX/A+IX/lthnxUtfDIzrx3VdyMjh1Ve
-	BH/G3gcxr7UDyoT580hN7TRhJ1MQO4n0t12OGfHfNtziSlF3V4WtW8tnTGYXDjg4erwVEQBWO9Q
-	i2uw5V4KGNvFew6bRYiTt0bAxkCGszpv6+Hx1U
-X-Gm-Gg: ASbGncs1Ece3iG/ARhHmAlGg8wmckT0DjWuwQLXJv1huidYlVqPpkBctQIDn/OCvtHt
-	MfJNGrsWzJC074zhHhrg1eNfPICaia+q9ar/wzaEp1C+QzSidkS9/VaMxfmpqCTxWriu/3voYtQ
-	==
-X-Received: by 2002:a17:90b:5292:b0:2ee:5bc9:75c7 with SMTP id 98e67ed59e1d1-2fce789e6acmr18362353a91.5.1740362507938;
-        Sun, 23 Feb 2025 18:01:47 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3byH8eo8Yb3n98mptZs0KnZVtNYk3QfL7gWdOG/0QZCy+k/iRcwVcIGwP8Q5J+01dl8JyIjK7VJiXYwtLwks=
-X-Received: by 2002:a17:90b:5292:b0:2ee:5bc9:75c7 with SMTP id
- 98e67ed59e1d1-2fce789e6acmr18362322a91.5.1740362507538; Sun, 23 Feb 2025
- 18:01:47 -0800 (PST)
+	s=arc-20240116; t=1740362540; c=relaxed/simple;
+	bh=ZLask/BKV23TJd8RnIZxzwZpkB9KagOMw8p4/vK2+Fc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hbByc2fAk6HJDIprDHtIL0B/Um0KiUeLGV9NSR/Ljw7OkfkZFyIH7Vnorlx2JpYw6dxNR0InALZcMBEWBiF+iHEkEyudASIOwXhXILTcCW8IPHOcB57V4tZGRBmiKdFF26A53wT18MSdx8hvTCTXPdr3VniVXOG3+0WLd3fhMYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com; spf=pass smtp.mailfrom=shelob.surriel.com; arc=none smtp.client-ip=96.67.55.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shelob.surriel.com
+Received: from [2601:18c:8180:83cc:5a47:caff:fe78:8708] (helo=fangorn)
+	by shelob.surriel.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <riel@shelob.surriel.com>)
+	id 1tmNnA-00000000340-0LPO;
+	Sun, 23 Feb 2025 21:01:56 -0500
+Date: Sun, 23 Feb 2025 21:01:55 -0500
+From: Rik van Riel <riel@surriel.com>
+To: kernel test robot <lkp@intel.com>
+Cc: x86@kernel.org, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, bp@alien8.de, peterz@infradead.org,
+ dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+ nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+ linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+ jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+ Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v13 08/14] x86/mm: global ASID context switch & TLB
+ flush handling
+Message-ID: <20250223210155.3c90843f@fangorn>
+In-Reply-To: <202502240650.kzshiji7-lkp@intel.com>
+References: <20250223194943.3518952-9-riel@surriel.com>
+	<202502240650.kzshiji7-lkp@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221170626.261687-1-eperezma@redhat.com> <20250221170626.261687-6-eperezma@redhat.com>
-In-Reply-To: <20250221170626.261687-6-eperezma@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 24 Feb 2025 10:01:36 +0800
-X-Gm-Features: AWEUYZnr6SSmyz0c1upMGLe9FqKMYegAAGYeATevh8dBr6bWe1ZabFTLnQtaRl8
-Message-ID: <CACGkMEtdWhdPt6yOjBsMuqF5wv6kjHH2OV_HHN3gedXDUe2T5Q@mail.gmail.com>
-Subject: Re: [RFC v2 5/5] virtiofs: Disable notifications more aggresively
-To: =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>
-Cc: Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	Hanna Reitz <hreitz@redhat.com>, linux-kernel@vger.kernel.org, 
-	German Maglione <gmaglione@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, yama@redhat.com, Vivek Goyal <vgoyal@redhat.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, mst@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Sender: riel@surriel.com
 
-On Sat, Feb 22, 2025 at 1:07=E2=80=AFAM Eugenio P=C3=A9rez <eperezma@redhat=
-.com> wrote:
->
-> Disable notifications right before scheduling, instead of waiting until
-> the work is running.
->
-> After applying this patch, fio read test goes from 1191MiB/s to
-> 1263.14Mib/s
+On Mon, 24 Feb 2025 07:08:49 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-Let's describe more about the testing. E.g FIO parameters, test setups.
+> Hi Rik,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on tip/x86/core]
+> [also build test ERROR on tip/x86/mm tip/master linus/master v6.14-rc4 next-20250221]
 
->
-> Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> ---
->  fs/fuse/virtio_fs.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-> index e19c78f2480e..3d6981c0f3c3 100644
-> --- a/fs/fuse/virtio_fs.c
-> +++ b/fs/fuse/virtio_fs.c
-> @@ -915,6 +915,8 @@ static void virtio_fs_vq_done(struct virtqueue *vq)
->
->         dev_dbg(&vq->vdev->dev, "%s %s\n", __func__, fsvq->name);
->
-> +       /* Shceduled, don't send more notifications */
+This version of patch 8 fixes these compile errors.
 
-Typo, and I think we can just drop this commnet.
+I hoped the compiler was smart enough to elide the code when
+broadcast TLB invalidation was disabled at the config level,
+but maybe that happens at a later stage in the compilation,
+after it's already thrown the errors...
 
-> +       virtqueue_disable_cb(vq);
+I'm not entirely happy with this, but it does seem simple enough.
 
-Do we need to tweak the virtio_fs_requests_done_work() as well?
+---8<---
 
->         schedule_work(&fsvq->done_work);
->  }
+x86/mm: global ASID context switch & TLB flush handling
 
-Thanks
+Context switch and TLB flush support for processes that use a global
+ASID & PCID across all CPUs.
 
->
-> --
-> 2.48.1
->
+At both context switch time and TLB flush time, we need to check
+whether a task is switching to a global ASID, and reload the TLB
+with the new ASID as appropriate.
+
+In both code paths, we also short-circuit the TLB flush if we
+are using a global ASID, because the global ASIDs are always
+kept up to date across CPUs, even while the process is not
+running on a CPU.
+
+Signed-off-by: Rik van Riel <riel@surriel.com>
+
+diff --git a/arch/x86/include/asm/tlbflush.h b/arch/x86/include/asm/tlbflush.h
+index 83f1da2f1e4a..24e6531e0b1a 100644
+--- a/arch/x86/include/asm/tlbflush.h
++++ b/arch/x86/include/asm/tlbflush.h
+@@ -240,6 +240,11 @@ static inline bool is_dyn_asid(u16 asid)
+ 	return asid < TLB_NR_DYN_ASIDS;
+ }
+ 
++static inline bool is_global_asid(u16 asid)
++{
++	return !is_dyn_asid(asid);
++}
++
+ #ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
+ static inline u16 mm_global_asid(struct mm_struct *mm)
+ {
+@@ -266,6 +271,14 @@ static inline void assign_mm_global_asid(struct mm_struct *mm, u16 asid)
+ 	mm->context.asid_transition = true;
+ 	smp_store_release(&mm->context.global_asid, asid);
+ }
++
++static inline bool in_asid_transition(struct mm_struct *mm)
++{
++	if (!cpu_feature_enabled(X86_FEATURE_INVLPGB))
++		return false;
++
++	return mm && READ_ONCE(mm->context.asid_transition);
++}
+ #else
+ static inline u16 mm_global_asid(struct mm_struct *mm)
+ {
+@@ -275,6 +288,11 @@ static inline u16 mm_global_asid(struct mm_struct *mm)
+ static inline void assign_mm_global_asid(struct mm_struct *mm, u16 asid)
+ {
+ }
++
++static inline bool in_asid_transition(struct mm_struct *mm)
++{
++	return false;
++}
+ #endif
+ 
+ #ifdef CONFIG_PARAVIRT
+diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
+index 405630479b90..e4aecd38ac4f 100644
+--- a/arch/x86/mm/tlb.c
++++ b/arch/x86/mm/tlb.c
+@@ -227,6 +227,20 @@ static void choose_new_asid(struct mm_struct *next, u64 next_tlb_gen,
+ 		return;
+ 	}
+ 
++	/*
++	 * TLB consistency for global ASIDs is maintained with hardware assisted
++	 * remote TLB flushing. Global ASIDs are always up to date.
++	 */
++	if (static_cpu_has(X86_FEATURE_INVLPGB)) {
++		u16 global_asid = mm_global_asid(next);
++
++		if (global_asid) {
++			*new_asid = global_asid;
++			*need_flush = false;
++			return;
++		}
++	}
++
+ 	if (this_cpu_read(cpu_tlbstate.invalidate_other))
+ 		clear_asid_other();
+ 
+@@ -382,11 +396,30 @@ void destroy_context_free_global_asid(struct mm_struct *mm)
+ 
+ 	guard(raw_spinlock_irqsave)(&global_asid_lock);
+ 
++#ifdef CONFIG_X86_BROADCAST_TLB_FLUSH
+ 	/* The global ASID can be re-used only after flush at wrap-around. */
+ 	__set_bit(mm->context.global_asid, global_asid_freed);
+ 
+ 	mm->context.global_asid = 0;
+ 	global_asid_available++;
++#endif
++}
++
++/*
++ * Is the mm transitioning from a CPU-local ASID to a global ASID?
++ */
++static bool needs_global_asid_reload(struct mm_struct *next, u16 prev_asid)
++{
++	u16 global_asid = mm_global_asid(next);
++
++	if (!static_cpu_has(X86_FEATURE_INVLPGB))
++		return false;
++
++	/* Process is transitioning to a global ASID */
++	if (global_asid && prev_asid != global_asid)
++		return true;
++
++	return false;
+ }
+ 
+ /*
+@@ -694,7 +727,8 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 	 */
+ 	if (prev == next) {
+ 		/* Not actually switching mm's */
+-		VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[prev_asid].ctx_id) !=
++		VM_WARN_ON(is_dyn_asid(prev_asid) &&
++			   this_cpu_read(cpu_tlbstate.ctxs[prev_asid].ctx_id) !=
+ 			   next->context.ctx_id);
+ 
+ 		/*
+@@ -711,6 +745,20 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 				 !cpumask_test_cpu(cpu, mm_cpumask(next))))
+ 			cpumask_set_cpu(cpu, mm_cpumask(next));
+ 
++		/* Check if the current mm is transitioning to a global ASID */
++		if (needs_global_asid_reload(next, prev_asid)) {
++			next_tlb_gen = atomic64_read(&next->context.tlb_gen);
++			choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
++			goto reload_tlb;
++		}
++
++		/*
++		 * Broadcast TLB invalidation keeps this PCID up to date
++		 * all the time.
++		 */
++		if (is_global_asid(prev_asid))
++			return;
++
+ 		/*
+ 		 * If the CPU is not in lazy TLB mode, we are just switching
+ 		 * from one thread in a process to another thread in the same
+@@ -744,6 +792,13 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 		 */
+ 		cond_mitigation(tsk);
+ 
++		/*
++		 * Let nmi_uaccess_okay() and finish_asid_transition()
++		 * know that we're changing CR3.
++		 */
++		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
++		barrier();
++
+ 		/*
+ 		 * Leave this CPU in prev's mm_cpumask. Atomic writes to
+ 		 * mm_cpumask can be expensive under contention. The CPU
+@@ -758,14 +813,12 @@ void switch_mm_irqs_off(struct mm_struct *unused, struct mm_struct *next,
+ 		next_tlb_gen = atomic64_read(&next->context.tlb_gen);
+ 
+ 		choose_new_asid(next, next_tlb_gen, &new_asid, &need_flush);
+-
+-		/* Let nmi_uaccess_okay() know that we're changing CR3. */
+-		this_cpu_write(cpu_tlbstate.loaded_mm, LOADED_MM_SWITCHING);
+-		barrier();
+ 	}
+ 
++reload_tlb:
+ 	new_lam = mm_lam_cr3_mask(next);
+ 	if (need_flush) {
++		VM_WARN_ON_ONCE(is_global_asid(new_asid));
+ 		this_cpu_write(cpu_tlbstate.ctxs[new_asid].ctx_id, next->context.ctx_id);
+ 		this_cpu_write(cpu_tlbstate.ctxs[new_asid].tlb_gen, next_tlb_gen);
+ 		load_new_mm_cr3(next->pgd, new_asid, new_lam, true);
+@@ -884,7 +937,7 @@ static void flush_tlb_func(void *info)
+ 	const struct flush_tlb_info *f = info;
+ 	struct mm_struct *loaded_mm = this_cpu_read(cpu_tlbstate.loaded_mm);
+ 	u32 loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
+-	u64 local_tlb_gen = this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen);
++	u64 local_tlb_gen;
+ 	bool local = smp_processor_id() == f->initiating_cpu;
+ 	unsigned long nr_invalidate = 0;
+ 	u64 mm_tlb_gen;
+@@ -907,6 +960,16 @@ static void flush_tlb_func(void *info)
+ 	if (unlikely(loaded_mm == &init_mm))
+ 		return;
+ 
++	/* Reload the ASID if transitioning into or out of a global ASID */
++	if (needs_global_asid_reload(loaded_mm, loaded_mm_asid)) {
++		switch_mm_irqs_off(NULL, loaded_mm, NULL);
++		loaded_mm_asid = this_cpu_read(cpu_tlbstate.loaded_mm_asid);
++	}
++
++	/* Broadcast ASIDs are always kept up to date with INVLPGB. */
++	if (is_global_asid(loaded_mm_asid))
++		return;
++
+ 	VM_WARN_ON(this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].ctx_id) !=
+ 		   loaded_mm->context.ctx_id);
+ 
+@@ -924,6 +987,8 @@ static void flush_tlb_func(void *info)
+ 		return;
+ 	}
+ 
++	local_tlb_gen = this_cpu_read(cpu_tlbstate.ctxs[loaded_mm_asid].tlb_gen);
++
+ 	if (unlikely(f->new_tlb_gen != TLB_GENERATION_INVALID &&
+ 		     f->new_tlb_gen <= local_tlb_gen)) {
+ 		/*
+@@ -1091,7 +1156,7 @@ STATIC_NOPV void native_flush_tlb_multi(const struct cpumask *cpumask,
+ 	 * up on the new contents of what used to be page tables, while
+ 	 * doing a speculative memory access.
+ 	 */
+-	if (info->freed_tables)
++	if (info->freed_tables || in_asid_transition(info->mm))
+ 		on_each_cpu_mask(cpumask, flush_tlb_func, (void *)info, true);
+ 	else
+ 		on_each_cpu_cond_mask(should_flush_tlb, flush_tlb_func,
 
 
