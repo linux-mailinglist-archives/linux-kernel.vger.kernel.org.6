@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-529099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107E1A41FC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:00:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9775A41FC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:59:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63ACD3A669E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:54:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69C01164CFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AFD23A9B4;
-	Mon, 24 Feb 2025 12:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE74123BCED;
+	Mon, 24 Feb 2025 12:54:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W/Air6NL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k0+td8w5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B9F233733
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 12:54:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359BD221F00;
+	Mon, 24 Feb 2025 12:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401643; cv=none; b=sgZvGhhZ2odEo5zdrhnqOJz31grqxMYhv/lyL9zqA1ccb721rN3aa74VyjSmKCRxAooaw0aJHfnQhRVEbQSazzsBaMjiakbFnkHIFO3m3KGWtKj/E/kMgrm167CrNb3wv5mNI4ufHS9FzOVR5Sk1qoD9Ptkn5q8oaOqRhsEJgCw=
+	t=1740401654; cv=none; b=OGyMN3glK772HuZRuZl6GWaPMlAkRKkoKz/IE02XhOzwIqGneirAUnjKZ+w8IicCKAkQnWEX4OReTxSuzxzDcFQMeZwZq7b8Y3AR22E9J4rUrPSR1WSQQkdCNc18t4eVGxTklrw8p6HTftqU0bcs09ZpVpzt+lsrH3RxsgBIdJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401643; c=relaxed/simple;
-	bh=cPqFlN9hhPH5PUCieVKmof6OSDpqARoal3nq00GKLP0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=B/22OiNRfBUtaPA0hehwMErkswQacT9bT9DgCdWPCdzyFUkxCHsCKCIAK2rdulC7Vs9pRhAqun3oT6OgyuVMM75MpV0CFWYXS7T+uJN7m2r682GZkOjAXJfVHRu0y5omgEpVP8v/ZDQYD9C3Ad6Y3/62mxHTEm0cKWV4Bn7PnqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W/Air6NL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740401640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RyZKAT7kvX4bnRDx3j7DvsDLJEcrsNoetXZGX7kmB2s=;
-	b=W/Air6NLEPAuApYZjjaVIqfGZDnqZ0aCB3J+idrH47XqdkRLcjvcGOmR4Su3VQEszNUQo4
-	gd/CB7HWDCNIWRjZdeqzbmDab9Mf7sG5tKH9ZTXYQE6kxG+v4bOJBpyhyNNLS78reHemA2
-	9uoUvrWO6Mttfca79XpQx649t57l+aY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-sr5YoVDqONGmoayMPwNkzw-1; Mon,
- 24 Feb 2025 07:53:56 -0500
-X-MC-Unique: sr5YoVDqONGmoayMPwNkzw-1
-X-Mimecast-MFC-AGG-ID: sr5YoVDqONGmoayMPwNkzw_1740401634
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E23A51800874;
-	Mon, 24 Feb 2025 12:53:53 +0000 (UTC)
-Received: from [10.45.224.44] (unknown [10.45.224.44])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1C9D300018D;
-	Mon, 24 Feb 2025 12:53:50 +0000 (UTC)
-Date: Mon, 24 Feb 2025 13:53:47 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Jinliang Zheng <alexjlzheng@gmail.com>
-cc: agk@redhat.com, snitzer@kernel.org, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-    flyingpeng@tencent.com, txpeng@tencent.com, dchinner@redhat.com, 
-    Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: Re: [PATCH] dm: fix unconditional IO throttle caused by
- REQ_PREFLUSH
-In-Reply-To: <20250220112014.3209940-1-alexjlzheng@tencent.com>
-Message-ID: <1931a9db-a81d-daf2-2e89-d1f183946618@redhat.com>
-References: <20250220112014.3209940-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1740401654; c=relaxed/simple;
+	bh=BVaV6E0vu9Z/0quDpf7tDL/iGAcbEvGWgsSeHYa0oQA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhJqTixgJ0S+mrkl1Y+0lDUs+bHY+AqqXzinlA7cCmR/7tieGDoQdNaW+jjNBNvECeB3qBo19VQrve/hGQ87UPR/7WlmcNK6CMghC6R5JAwzI7aq9d+n+sS+gDPnAymtYKjDNQ8hF1qTpdJhfuV2kydMu2kcc6DCcBsTC8RyBmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k0+td8w5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D775C4CED6;
+	Mon, 24 Feb 2025 12:54:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740401654;
+	bh=BVaV6E0vu9Z/0quDpf7tDL/iGAcbEvGWgsSeHYa0oQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k0+td8w5VgxPU/n8Lm4t8xexsTS8JTKU13ZGdCDVpzlvuyRuOuGp9ZVrh/d6I38vs
+	 BAAy4T0BFW37EZtL7nqumzaOFImaYLCeLIMsg2z+jWhsRb1jRPeHFR8FM4dVOz3tds
+	 QJ16NtndhMyxPhgOKZsvskkoxVYlNWhi/kPYEvo0=
+Date: Mon, 24 Feb 2025 13:54:10 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: jianqi.ren.cn@windriver.com
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, kvalo@kernel.org,
+	rand.sec96@gmail.com, m@bues.ch, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, zhe.he@windriver.com
+Subject: Re: [PATCH 6.1.y] ssb: Fix potential NULL pointer dereference in
+ ssb_device_uevent()
+Message-ID: <2025022412-unlikable-aftermost-bc2a@gregkh>
+References: <20250224083707.2532381-1-jianqi.ren.cn@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224083707.2532381-1-jianqi.ren.cn@windriver.com>
 
-Applied, thanks.
-
-Mikulas
-
-
-
-On Thu, 20 Feb 2025, Jinliang Zheng wrote:
-
-> When a bio with REQ_PREFLUSH is submitted to dm, __send_empty_flush()
-> generates a flush_bio with REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC,
-> which causes the flush_bio to be throttled by wbt_wait().
+On Mon, Feb 24, 2025 at 04:37:07PM +0800, jianqi.ren.cn@windriver.com wrote:
+> From: Rand Deeb <rand.sec96@gmail.com>
 > 
-> An example from v5.4, similar problem also exists in upstream:
+> [ Upstream commit 789c17185fb0f39560496c2beab9b57ce1d0cbe7 ]
 > 
->     crash> bt 2091206
->     PID: 2091206  TASK: ffff2050df92a300  CPU: 109  COMMAND: "kworker/u260:0"
->      #0 [ffff800084a2f7f0] __switch_to at ffff80004008aeb8
->      #1 [ffff800084a2f820] __schedule at ffff800040bfa0c4
->      #2 [ffff800084a2f880] schedule at ffff800040bfa4b4
->      #3 [ffff800084a2f8a0] io_schedule at ffff800040bfa9c4
->      #4 [ffff800084a2f8c0] rq_qos_wait at ffff8000405925bc
->      #5 [ffff800084a2f940] wbt_wait at ffff8000405bb3a0
->      #6 [ffff800084a2f9a0] __rq_qos_throttle at ffff800040592254
->      #7 [ffff800084a2f9c0] blk_mq_make_request at ffff80004057cf38
->      #8 [ffff800084a2fa60] generic_make_request at ffff800040570138
->      #9 [ffff800084a2fae0] submit_bio at ffff8000405703b4
->     #10 [ffff800084a2fb50] xlog_write_iclog at ffff800001280834 [xfs]
->     #11 [ffff800084a2fbb0] xlog_sync at ffff800001280c3c [xfs]
->     #12 [ffff800084a2fbf0] xlog_state_release_iclog at ffff800001280df4 [xfs]
->     #13 [ffff800084a2fc10] xlog_write at ffff80000128203c [xfs]
->     #14 [ffff800084a2fcd0] xlog_cil_push at ffff8000012846dc [xfs]
->     #15 [ffff800084a2fda0] xlog_cil_push_work at ffff800001284a2c [xfs]
->     #16 [ffff800084a2fdb0] process_one_work at ffff800040111d08
->     #17 [ffff800084a2fe00] worker_thread at ffff8000401121cc
->     #18 [ffff800084a2fe70] kthread at ffff800040118de4
+> The ssb_device_uevent() function first attempts to convert the 'dev' pointer
+> to 'struct ssb_device *'. However, it mistakenly dereferences 'dev' before
+> performing the NULL check, potentially leading to a NULL pointer
+> dereference if 'dev' is NULL.
 > 
-> After commit 2def2845cc33 ("xfs: don't allow log IO to be throttled"),
-> the metadata submitted by xlog_write_iclog() should not be throttled.
-> But due to the existence of the dm layer, throttling flush_bio indirectly
-> causes the metadata bio to be throttled.
+> To fix this issue, move the NULL check before dereferencing the 'dev' pointer,
+> ensuring that the pointer is valid before attempting to use it.
 > 
-> Fix this by conditionally adding REQ_IDLE to flush_bio.bi_opf, which makes
-> wbt_should_throttle() return false to avoid wbt_wait().
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-> Reviewed-by: Tianxiang Peng <txpeng@tencent.com>
-> Reviewed-by: Hao Peng <flyingpeng@tencent.com>
+> Signed-off-by: Rand Deeb <rand.sec96@gmail.com>
+> Signed-off-by: Kalle Valo <kvalo@kernel.org>
+> Link: https://msgid.link/20240306123028.164155-1-rand.sec96@gmail.com
+> Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+> Signed-off-by: He Zhe <zhe.he@windriver.com>
 > ---
->  drivers/md/dm.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
+> Verified the build test.
+> ---
+>  drivers/ssb/main.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index 4d1e42891d24..5ab7574c0c76 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -1540,14 +1540,18 @@ static void __send_empty_flush(struct clone_info *ci)
+> diff --git a/drivers/ssb/main.c b/drivers/ssb/main.c
+> index d52e91258e98..aae50a5dfb57 100644
+> --- a/drivers/ssb/main.c
+> +++ b/drivers/ssb/main.c
+> @@ -341,11 +341,13 @@ static int ssb_bus_match(struct device *dev, struct device_driver *drv)
+>  
+>  static int ssb_device_uevent(struct device *dev, struct kobj_uevent_env *env)
 >  {
->  	struct dm_table *t = ci->map;
->  	struct bio flush_bio;
-> +	blk_opf_t opf = REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC;
-> +
-> +	if ((ci->io->orig_bio->bi_opf & (REQ_IDLE | REQ_SYNC)) ==
-> +	    (REQ_IDLE | REQ_SYNC))
-> +		opf |= REQ_IDLE;
+> -	struct ssb_device *ssb_dev = dev_to_ssb_dev(dev);
+> +	struct ssb_device *ssb_dev;
 >  
->  	/*
->  	 * Use an on-stack bio for this, it's safe since we don't
->  	 * need to reference it after submit. It's just used as
->  	 * the basis for the clone(s).
->  	 */
-> -	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0,
-> -		 REQ_OP_WRITE | REQ_PREFLUSH | REQ_SYNC);
-> +	bio_init(&flush_bio, ci->io->md->disk->part0, NULL, 0, opf);
+>  	if (!dev)
+>  		return -ENODEV;
 >  
->  	ci->bio = &flush_bio;
->  	ci->sector_count = 0;
-> -- 
-> 2.41.1
-> 
+> +	ssb_dev = dev_to_ssb_dev(dev);
 
+This patch does nothing, sorry.  It's impossible for dev to be null so
+no need to verify this and I guess I'll go reject the cve that was
+assigned to it as well as it's pointless.
+
+thanks,
+
+greg k-h
 
