@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-530202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64839A4307B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:04:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F43DA4307A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1A1E3B87FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCF2017357E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 23:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB0C1E1C2B;
-	Mon, 24 Feb 2025 23:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D5B1FFC45;
+	Mon, 24 Feb 2025 23:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="jw9aBPxn"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aPbAqyi2"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666094430
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102DB4430;
+	Mon, 24 Feb 2025 23:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740438205; cv=none; b=WGoC/RkbDLykDorYOScvOeNeAyPPn7PpcGXiQTfD773lsEop+LnX77rewemHf21L+Md0hZVLY9P0WEN9ZUDR5LFg8EOgvoi1pMS2J1A2nEgX9dLE4eMYkjd1o58by2aRZbRYkIH1qXkv9sMPWCR5JwjLy7zmoTdKHqsrZYFRHs8=
+	t=1740438235; cv=none; b=fg/sbgIA/QxSJGtXchEXnu/0sYiwG6AZNeOJQdhSdWDnla4e8OJA+CoqCbm4z796Rmw3UmxuFnOkgCnQKM5fXtc2meFw/dgM53j2aRlVNTL46A0eZ5zxd0I3nGMF/Dv23WBH0s9dNsprWr/WcD1ED0Vbze2mMQReEqUv7JJWSJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740438205; c=relaxed/simple;
-	bh=bw+PNOlqBxg6SccFf9SOtcWrtuDmMg5yoZO34vtTFMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p8JoiAQMprNuMuOzxzFg/IqjzNeLlBqYMZox7llfuewoRTDo0P8+7Lse9u/w0LO0UbCphYt1jwnceW0P9P1O249w3azwdwwVUafDGQJDCBSJ7r3bz9lkS8DVZSRf6w7T4YTMDI8Vufqex92Q7kTcSTTSoBBRrpoLPAhzr+PZUaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=jw9aBPxn; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=sv7NBBUK0iR17+DT1muJAlxLgMMcN2uOXWyR5DIoeRg=; b=jw9aBPxnpgajuAgS7W/f3eeGjf
-	rk9SbNMSDilEMWynXPdU8RPaEPIhYUV0zRUqwbIddDHUyZqvgg2f1NOFaPSdnJ9ANb4pKhdCJE8+I
-	WRiEVR+1pvUULwS+fVhKl1fZJP1a1Mh1R7mn1/+vhQWFptzzPsZo0/w08BL0aT6aQ15lUgSdJpfHe
-	Kol2z/F90F2O29TTJ0tZU8C4G/SheSY6N6nRQK8Dpw8lX4dWvFRSD1BiihsPAtCgvk8ZCa9qMiJff
-	mCtyXqaAWaMbW4HZvSW7DODrgAqhjkBh58CtMMo2/J48TcA1fRrFu+Ha20qgX4DJCERhBRD21bEJZ
-	Jq1/9qcQ==;
-Received: from [58.29.143.236] (helo=[192.168.1.6])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1tmhTh-000955-Bq; Tue, 25 Feb 2025 00:03:15 +0100
-Message-ID: <d10a2e94-7bab-46d8-99cf-6365f0b930cb@igalia.com>
-Date: Tue, 25 Feb 2025 08:03:03 +0900
+	s=arc-20240116; t=1740438235; c=relaxed/simple;
+	bh=UCYFzGm+oqa/rIw4z8gdcEA1xM4+kNzpmdFLMuhTSws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PuhJ0BNFRQmW9KX3PbtJVGHYylPr/CjBVFnFiWAUdHlx5avLk8Mj2+513a2645BKYi4l8aU/NZhj1nso+8h/yg/myRgj53FCeWBQKjRxx4c5tHv6Ao4OQT5+FXmok+0tPXODY3Q/3ktj41Q1Q3W3408pNPivsHLbJd24URK/ClU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aPbAqyi2; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso3077584241.1;
+        Mon, 24 Feb 2025 15:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740438232; x=1741043032; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qZG5uCncxJc27nMcC6EtrucfyR8M9UbZtxPaabTQt7c=;
+        b=aPbAqyi2n6sGB5EbKaZ6YNlFImDPYxdfc6Aon0GxllvPIGTKp+BEMT3FNeBwG5ttVN
+         HMfIjEO6MEcuruxOj3v2A7JAZG4PHOGpADa65ssuilpgQFg7kEQmoSQwg5EKv9IW7xoa
+         hqwiHOb2A4ETggYCbGLrWPJLrDsY88wXSZiBdB0QdQ2qwzgXd/+Sq/FXr1eThsY+TVNl
+         bCynGZJDOkTE9si3CtSroSwvEmmZ1kGATAa866i8NQtL+dgnlHdao0zi876qFsPcXdpl
+         OEa8bW7Mp4PVMvDH2N5eaNJXD2lQI25oSUAHkW79LMyRY/ynZNYaPpso7n3pcZhE4bu+
+         8lVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740438232; x=1741043032;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qZG5uCncxJc27nMcC6EtrucfyR8M9UbZtxPaabTQt7c=;
+        b=PrHOSXOr8YaH7bu5FRsyo1KdbaGK8tqHEBDYT0PewiAYFxKmVR8TVyD451xkn+Aa2u
+         LqIqY8V1XMzB4iaYAi4m5UMpxVC6CxvdPzrxkqUvUKSwpKOjUBA+Fuosu4EW/I6LrnuR
+         0+1C8K0RaTJ7zuCydmkRpIIydOX+izVR6Ul0b1v3/h7vIrqKZunlRUUXhIIHgs2WwcWu
+         l5ne7s179wIoCBDAKBNquA2eU3NUJpHfdqWx/AkM+boCY8sKJBJP4u25tCpPgWC8R57n
+         n+r/nbY1HGP3FyLdmsKCeSS9Ya6PZ68tDpn5hKlpWKF9lyFyo8GIgWpDcJnqYxhj7ncy
+         u3qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXmjXPSzqeFUOgvzCRWWrXOOXULGPOn6Ona1fPaRsUMlVzhtWCwpKDr27nDPfOSHxycs/HhuOumF625Uthiauo=@vger.kernel.org, AJvYcCXwIfsBOJFdUobYmkO8UZ6m7FL63nusiblj/jBoOXtDgbwHov/teffSIW5p0eblpOHlfelsgZZVtIfT9CQD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj6osQBFjBRao3I1S7WKXvpJ3gG+Yc3eAkdMhGTfx3xKpEXpjo
+	aRWz/tKD/QEqqBcWQkd/FiEKmEBzGQEu0W1V6vzryUGjZcG1ez9t0j8JbPwJxrer1430KRGV19p
+	L5+qK/WjIhswYWrj4UUt0xKYc0to=
+X-Gm-Gg: ASbGncvspQxDSiMCmM2wfj3vUDfWhirZsV1YnloEGVgebdnXrWF/XtVuAbX7sOxXF1N
+	y++3kMgYRlVUqT/fRqnByj7agpVuYzk1xBjGoPgFqLfMOmrCIC2rwxA/uHiVt2716G/nlznAQN9
+	YGYdTDcfy5A4ozp1qPlvbp3Mlxvt80HokNJ22if7s=
+X-Google-Smtp-Source: AGHT+IHwFLoPqTHbhsyr/5IxvvXCSWguuLxPn+rRnxIMd+GxUkwJYAvq04NjximczYdwl7AwSCcc8Wi0HulShHapW2M=
+X-Received: by 2002:a05:6122:860c:b0:522:1d6f:2b4d with SMTP id
+ 71dfb90a1353d-5221d6f4d8amr2294272e0c.1.1740438231840; Mon, 24 Feb 2025
+ 15:03:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/sched_ext: Provide consistent access to scx flags
-To: Andrea Righi <arighi@nvidia.com>, Tejun Heo <tj@kernel.org>,
- David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20250224224959.264808-1-arighi@nvidia.com>
-From: Changwoo Min <changwoo@igalia.com>
-Content-Language: en-US, ko-KR, en-US-large, ko
-In-Reply-To: <20250224224959.264808-1-arighi@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250224225246.3712295-1-jeffxu@google.com>
+In-Reply-To: <20250224225246.3712295-1-jeffxu@google.com>
+From: Pedro Falcato <pedro.falcato@gmail.com>
+Date: Mon, 24 Feb 2025 23:03:40 +0000
+X-Gm-Features: AQ5f1JrmtS13tninAaio6tk2UjHNtEXTrRqx2P0eeUq0Gzh4fLbp0C95ziuJk8I
+Message-ID: <CAKbZUD03mBKVfOTQ4me79bZTLgWP8QLyD1PSxTcpw2YPmtsyUQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/7] mseal system mappings
+To: jeffxu@chromium.org
+Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
+	torvalds@linux-foundation.org, vbabka@suse.cz, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
+	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
+	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
+	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
+	johannes@sipsolutions.net, hca@linux.ibm.com, willy@infradead.org, 
+	anna-maria@linutronix.de, mark.rutland@arm.com, linus.walleij@linaro.org, 
+	Jason@zx2c4.com, deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, 
+	peterx@redhat.com, f.fainelli@gmail.com, gerg@kernel.org, 
+	dave.hansen@linux.intel.com, mingo@kernel.org, ardb@kernel.org, 
+	mhocko@suse.com, 42.hyeyoo@gmail.com, peterz@infradead.org, ardb@google.com, 
+	enh@google.com, rientjes@google.com, groeck@chromium.org, mpe@ellerman.id.au, 
+	aleksandr.mikhalitsyn@canonical.com, mike.rapoport@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrea,
+On Mon, Feb 24, 2025 at 10:52=E2=80=AFPM <jeffxu@chromium.org> wrote:
+>
+> From: Jeff Xu <jeffxu@chromium.org>
+>
+> This is V7 version, addressing comments from V6, without code logic
+> change.
+>
+> --------------------------------------------------
+>
+> History:
+> V7:
+>  - Remove cover letter from the first patch (Liam R. Howlett)
+>  - Change macro name to VM_SEALED_SYSMAP (Liam R. Howlett)
+>  - logging and fclose() in selftest (Liam R. Howlett)
 
-On 25. 2. 25. 07:49, Andrea Righi wrote:
-> Make all the SCX_OPS_* and SCX_PICK_IDLE_* flags available to the
-> user-space part of the schedulers via the compat interface.
-> 
-> This allows schedulers / selftests to set all the ops flags in
-> user-space, rather than having them split between BPF and user-space.
-> 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
-> ---
->   tools/sched_ext/include/scx/compat.h | 18 ++++++++++++------
->   1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/tools/sched_ext/include/scx/compat.h b/tools/sched_ext/include/scx/compat.h
-> index 03e06bd15c738..35c67c5174ac0 100644
-> --- a/tools/sched_ext/include/scx/compat.h
-> +++ b/tools/sched_ext/include/scx/compat.h
-> @@ -106,14 +106,20 @@ static inline bool __COMPAT_struct_has_field(const char *type, const char *field
->   	return false;
->   }
->   
-> -#define SCX_OPS_SWITCH_PARTIAL							\
-> -	__COMPAT_ENUM_OR_ZERO("scx_ops_flags", "SCX_OPS_SWITCH_PARTIAL")
-> +#define SCX_OPS_FLAG(name) __COMPAT_ENUM_OR_ZERO("scx_ops_flags", #name)
->   
-> -#define SCX_OPS_BUILTIN_IDLE_PER_NODE						\
-> -	__COMPAT_ENUM_OR_ZERO("scx_ops_flags", "SCX_OPS_BUILTIN_IDLE_PER_NODE")
-> +#define SCX_OPS_KEEP_BUILTIN_IDLE SCX_OPS_FLAG(SCX_OPS_KEEP_BUILTIN_IDLE)
-> +#define SCX_OPS_ENQ_LAST SCX_OPS_FLAG(SCX_OPS_ENQ_LAST)
-> +#define SCX_OPS_ENQ_EXITING  SCX_OPS_FLAG(SCX_OPS_ENQ_EXITING)
-> +#define SCX_OPS_SWITCH_PARTIAL SCX_OPS_FLAG(SCX_OPS_SWITCH_PARTIAL)
-> +#define SCX_OPS_ENQ_MIGRATION_DISABLED SCX_OPS_FLAG(SCX_OPS_ENQ_MIGRATION_DISABLED)
-> +#define SCX_OPS_ALLOW_QUEUED_WAKEUP SCX_OPS_FLAG(SCX_OPS_ALLOW_QUEUED_WAKEUP)
-> +#define SCX_OPS_BUILTIN_IDLE_PER_NODE SCX_OPS_FLAG(SCX_OPS_BUILTIN_IDLE_PER_NODE)
->   
-> -#define SCX_PICK_IDLE_IN_NODE \
-> -	__COMPAT_ENUM_OR_ZERO("scx_pick_idle_cpu_flags", "SCX_PICK_IDLE_IN_NODE")
-> +#define SCX_PICK_IDLE_FLAG(name) __COMPAT_ENUM_OR_ZERO("scx_pick_idle_cpu_flags", #name)
-> +
-> +#define SCX_PICK_IDLE_CORE SCX_PICK_IDLE_FLAG(SCX_PICK_IDLE_CORE)
-> +#define SCX_PICK_IDLE_IN_NODE SCX_PICK_IDLE_FLAG(SCX_PICK_IDLE_IN_NODE)
->   
->   static inline long scx_hotplug_seq(void)
->   {
+Jeff, please don't send out new versions of the patchset that quickly.
+We were having a discussion on v5, you sent v6 today (acceptable) and
+now v7 (while changing barely anything of note). It's hard to track
+things this way, and you're just flooding a bunch of mailboxes.
 
-Looks good to me. Thanks!
-
-Acked-by: Changwoo Min <changwoo@igalia.com>
-
+Thanks,
+Pedro
 
