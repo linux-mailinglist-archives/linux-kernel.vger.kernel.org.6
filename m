@@ -1,238 +1,142 @@
-Return-Path: <linux-kernel+bounces-528017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 537BDA41286
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:42:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7D7A41289
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9905E1892CFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E491716C840
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 00:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164A71F95C;
-	Mon, 24 Feb 2025 00:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58ECA17C79;
+	Mon, 24 Feb 2025 00:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="MyzSgjOA"
-Received: from LO0P265CU003.outbound.protection.outlook.com (mail-uksouthazon11022129.outbound.protection.outlook.com [52.101.96.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBTEXrlR"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826511078F;
-	Mon, 24 Feb 2025 00:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.96.129
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740357752; cv=fail; b=Awo9jZKoeGLeYA82EVLqthqSbx8/IFOi7JNiWAyQTLFu5UriKWhfQPc02XxhyzljqeIYXhhJE8xc8e4g32cRQnGVGWTLg/KjO11PardAWkUwBAq/jqDdaXYWUGvgQP1SRhibM2YC7BY5IW6B7uqahy59U2P/MIOYImwErOVcvtU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740357752; c=relaxed/simple;
-	bh=PFZxPS5IiV777X6Lx9QhgxYcQt8aFatVe811Qx/ijVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EM44xP3hPmxbGLevqNXuvRutG0i+EwmI1JC/63XomEm7aR4qfoLt8mlzxHimGtIg1ghpwuyk4IAGxuwry8qzAdNDcD9PYs7pd08I7qZU17lD4xwwhqTIBvR1K2spfqi+zJzJImndQ3bSNvQKZzcvB7hVrLXxOWgZlT9XTStLuIQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=MyzSgjOA; arc=fail smtp.client-ip=52.101.96.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gY8tkOD1UsXUmifu375OfZE8QL0LtEvjy+Y0nAxjq1rq9TuIjWlBnTPFfh7vLTZYEzsXeHCDZYPwNMS+Cc0G4EoeF9VBRlcU/n7laFBiE2TIqK+95L0SEVqzDa4hSYce5IQAU/w3uDJAS1RsIf6stN/vuyKAsnPDMrJU16vgmYO9p6CqWYXxbPaOOgX/JubmkfMWerNAZgjS0GJlEPK8DT82D1s80JtH8o+xqtfzHhDz7Z9BCBpB/iki445WOw2h4etGq4nUKqpqOkvtNot+GZvScz6EprkePgpW8J0y088UdjjxrvNcrn+ZM23pFNTIqujl1LoTt1HTD5xTrXK9YQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zHZcQQxK0gJSQrCxB12G7O7qmc7BLB7tbv2ULAglzM8=;
- b=UOw8YWlA9AjInY90VB7XMO+Z7d+xIOVkXTrd16ZDCY+Opo6h5h7XR1zO1XNC6AL5sMBoULWe+JhqblW48a18y9S8EmkbjCKHZEqRn/rA+LsRNIcHm6w+VEjIlXT+zJl7/izBHK8lPeFst2iWRNkTjgkFKj4Wn+qIAwIdDoD2Mh1xCDCaIFmouivMoog2cJwWgQw45ZBlJMyZCR02oGbdbix5pr/v+XYDalmMdhzYVRoOH2bVGFwTwT5AU1L1KuSG6Ismhlehf3LXUHwDiu8G4IhnGFqSrwao1yNMknuXCdKWnO9nojd8dSwWtg1P+NSOLq6tkL3IRlHZDxnqAG3nJg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zHZcQQxK0gJSQrCxB12G7O7qmc7BLB7tbv2ULAglzM8=;
- b=MyzSgjOAvzEUOnTFalizdKAHcQDQeSjGMQ7UXhIK4Y4v1YqFYQc1xnuM9feT6hx2C6zSaOCywiC0uAm/aENjrwZrPcFS7I9sarC8uNQoTxhH/o1PB9/a34lWAOYR1EctUyJNCu++xKLL9Y81WMzi5VSRncl1Kwrd5C1JKu0/3S0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO3P265MB2089.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:101::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.15; Mon, 24 Feb
- 2025 00:42:27 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%5]) with mapi id 15.20.8489.014; Mon, 24 Feb 2025
- 00:42:27 +0000
-Date: Mon, 24 Feb 2025 00:42:24 +0000
-From: Gary Guo <gary@garyguo.net>
-To: Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor
- <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda
- <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
- Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild, rust: use -fremap-path-prefix to make paths
- relative
-Message-ID: <20250224004224.07deba56.gary@garyguo.net>
-In-Reply-To: <20250219-rust-path-remap-v2-1-8ce2c10d4d66@weissschuh.net>
-References: <20250219-rust-path-remap-v2-1-8ce2c10d4d66@weissschuh.net>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: FR2P281CA0162.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:99::12) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F354C8F;
+	Mon, 24 Feb 2025 00:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740358145; cv=none; b=Qf92ePc92k3kP9vLZaukyHJJu34RGJzK42QW1yr1U4r8ujA4r5DqfNDPLLLehF/FTKVedkINvYTIGCu6T1pvCwebaNr8CSHUzwMRxZiHtAZqEEW+wEcJ4lYe2aorWBKh1nCfSyCqZX+BgimZQud5Ge9Y6x4n+FbhVeIlzUCwvp0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740358145; c=relaxed/simple;
+	bh=Jzsw5QO4H3N/xARGLoYmpCSLmmdwVRbyiqi9ZCQ7pEI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HY7Xmq3nnL+vZYLyPFebqSfunGeRatIaVZ9dTlgqJvww+aAp9kRNMWSUcPhnOdR4PslbAKLUjCo3hNuaQk//7g1Yo68riwme5GSkGSOJdxnETJ0HqMoWUi6T3zg8NUFzqnUtzaK4IQO1N6fSn8ZrJyvnRrLueHzvCVXD7b80TAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBTEXrlR; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5461a485aa2so3563190e87.2;
+        Sun, 23 Feb 2025 16:49:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740358142; x=1740962942; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xt2LkBK0hGIK9sk8aSwFk64Mnli3ElVLH6wep+qNJUU=;
+        b=OBTEXrlRir58G3VJhV3cq11NCguVD+yw86EvrG1zpTYNj6wPyxhXvQyV9MFpy9KqfZ
+         mc+Ym2KiIrSLmmyWG2vW9I+JyMqsuyOVeZ4a4GrFoPKIslR+eBE1knLQyc41ZTfcFk9l
+         lXDQmY7WDy4KANl5V5g1IfV0HbYcnewk1LAUr+gDuLavS8OpbckBzRNMJzMkDSEF9An5
+         TksHMFbCE7V/jivLuu6NJaTs0CNJUcRzQvzIb5v+1II6td9OJ/6sulTl333UBlrFdPr5
+         svrH5sNTTjoQd6g6MtRWBohpkrKjjA9r1NYs2WFAhZmfrB02P2PzYn+X9Ce5D/gOaQOI
+         gHoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740358142; x=1740962942;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xt2LkBK0hGIK9sk8aSwFk64Mnli3ElVLH6wep+qNJUU=;
+        b=jRpbRkLlofYLDKbuVQ5L31QXjzuaQeP4RY0rQpH5tRcXlt+2uNpK6FIitIro7FS602
+         UVhRRfHqjnf5D9UTboiRLP5OqGhK8nUsTAHax8s9LKbBMDwDv5dH5zwqL+RPkmnjf9nb
+         uN0mp8WuxSB7XK5avCayGQc6f96gMzlTIqV1XUIhGGYbKWBC4RnqUy22KH/OoFoQ78Rz
+         9vehnsQkIdRF10eR1GYF5gslInopqCVBuGFxT/j1S5iuXushnZbPNg8VUNA0/dzPfv3g
+         k8tPBRyR8lNNgYByDxEAgEZ3o5yibZ3xEWUD4lzilZbf9LQ3kF/ux0VyK25wXcxJ2wfF
+         pB/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVSdtSfs0SIz/KdPd9kkVBYcV4IEKtLYum8brzn1OPDf0N8UZeFynv6QEYe2whSXOcQ6G7o1/XlO7ajgOu1@vger.kernel.org, AJvYcCW8EqnMMDafq1FkqdfB50aJvjfRtUsxsfnZ4IMbaHxUOOLJ9pwuKGQPxmjgwoji5aKKDda1lHoL/R06@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw14NFDFarYPr5pZNa3sAs7Sn3MOw+pf1ks9Y6Dmw33AOgRYcH
+	n1iYGYzS8mpX5ANpkHbtvBSbtktUjcIx4enyl4wm3xY4mRiAE4X6cWDuyfOG16goSBqinR5bPN1
+	lGQKi22ZunuIPjgl56bC1vC+gFJ8=
+X-Gm-Gg: ASbGncuTgTwBgrWYuDTPQX1l1t6y5La23EWStFiZ3fKdLdp21hCooVnTsEyiGpCLdcn
+	P4JX4YGkkF2S7rfzVBYUbSZkofsplHLwvPlfcwEutUeRjYHWLhlTclJn3lesFWd6j1wKJUnZW07
+	UMiTBK+E4=
+X-Google-Smtp-Source: AGHT+IGABZZ8wTkaU/4AVUK8/92+7sI96FBM5IfBG3yrIHEi3ysNTlMQstK0NawrS7rEc19Qt2d5Oj4YJWbMFh3Vpxo=
+X-Received: by 2002:a05:6512:1106:b0:53e:3a7c:c0b5 with SMTP id
+ 2adb3069b0e04-54838ee288fmr3802000e87.10.1740358141810; Sun, 23 Feb 2025
+ 16:49:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO3P265MB2089:EE_
-X-MS-Office365-Filtering-Correlation-Id: f0dcd819-ac24-441c-fe45-08dd546c1cfb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?azdBdlZ3OEhNVFc0aTNoR2VJV1pRUFRCZ0dFTE42a3BYNGFHZVRNRWpwUlFu?=
- =?utf-8?B?dUJyY3p2aFdRZURTU2dYcUMyV0RZc094dnB5UEJYT1JIZXZtWUwzZlkrQmo5?=
- =?utf-8?B?Y29BOHU5b0dacXlnZWU1dlp1WWgwN053d1lZVjNlZHlINWRMVExRY3YrU040?=
- =?utf-8?B?UmNhZUR3aHh4SnNuUzRkYm5oU0ZGdDJIcWVVOWZCMEFpRlFWSENZK1ZhTUlI?=
- =?utf-8?B?WmRVT1ZyZmlwWVlwU2hYL3VxeDlwVGhGU2toZktrSkFhTmJ6Q0NzbUlac2I5?=
- =?utf-8?B?Z1NkMHVrdzZwWjR6OW1LMUFyQnZTc2NNYUh1QWV2WHFRcGVXTDltWGRJd0NG?=
- =?utf-8?B?aEFZU1Y1b25YbS9oSjk2MzJTRDNyWDZrZjNEUkVoUUVpWERyMGFVVTRvcUF1?=
- =?utf-8?B?ellEMENvNHgvQ3hFV0JvV3pHY3BUOVhITUd2NEdVMWd6NisyVjZVVDgvYTJk?=
- =?utf-8?B?dHZyeEdiRlFTUXFKVUFGNnlVK2xJYWVVUkgrZVFWdHdYdzA3djhvemlWYkIz?=
- =?utf-8?B?cENITFMyeFUyT0IwbnNUdHE0WVRSRXhDN2FmUkxELzhXT0lCZ3Q0VjFoYjBv?=
- =?utf-8?B?dFVsYnJrNlFDallFdE9iSEM4cFQyT05jcFcwSUdSRXd6cjgybE44cmFUaEpj?=
- =?utf-8?B?VXFYNTNJQnJoNkY4Z3Jib3hCeVpJa0RTYklwSjlqUy8wd3BFWWVVYWhlOUo0?=
- =?utf-8?B?bEExTmVBdGZWQTN1QW8wTmlEZVZIcU5rR1JHQXFSbmhyZHpabEt6OFVRS1FV?=
- =?utf-8?B?MlMrN1M5NHVmazdFd0hvcTJaZXFueEkreXVRNGNpMDFJODFKckR5RTdzTmR5?=
- =?utf-8?B?ck1ucnJ6VFh1OWpUd3dtQVZpVGZKN2FMNlhaTUhIWEN2SzlBaStDTllScWdn?=
- =?utf-8?B?RTNWcHR5enV5aUhpakxjbXlxRmtnU25HaWZhcU5HUWhFaTNhUDc5Wk9XYkdS?=
- =?utf-8?B?ZTJlNHlFTnVqcDNUQXNOTkVqWVFaTkRzN2YxZlE2NCtUY0xib1VrSEppanpU?=
- =?utf-8?B?K2pDeEZ1a1dQenVBQ2RlUHNHT3BaVFRRZytXbXRZR2RhenBqV3k2eFZYZks0?=
- =?utf-8?B?Z1V6djN4azFPbW9lTUw2TzlTYzdUOWtuSkNRQ2tOZGptWHZXQndYcFhTemFK?=
- =?utf-8?B?TmpybGFudmRCdnY2SkpvQ2FzNUU5Z2hFQzRpbWM2RFlhbVl3bkl5M1Z1ZDhW?=
- =?utf-8?B?dUFGT0ZweUZmVlRISHpzM0pFRDE3b281ZXkxWnZlRVFGSWVQMmFnS2JBNG4w?=
- =?utf-8?B?b05Ga2VwbFNIY2F4b1dEejVQUUU4ZUFTTjkrSjR0cy80ViswdzYrNC9jR0Vn?=
- =?utf-8?B?Y2hHQ3BQVThRUXFOMkNJRUtxbFN5WkxaTjJPM3oyeExRUjVyOVFjaG10UTJL?=
- =?utf-8?B?QTdobDhNSTRHbUlBdEdMdEpHYUZBVHlxZEJXTnZUNnhWcjZDMUxDelFsdHRI?=
- =?utf-8?B?VStwMkI3TDhraUpYcGprOE02VU5heTIzdGxCNDRqa0tnMzZ6WDZMYlFtNEFZ?=
- =?utf-8?B?SklxaTVjcWhNZWFyOFcxWUhDZTBwZ0ZZWS91TjNkaE51SDFNaFZrMSsrSzBN?=
- =?utf-8?B?ZDNGV1YyNFR2dk1wTW5uUU5pUTBpNVV3cmFyaVdRR1pwdFB4YnY2VDk1NFpG?=
- =?utf-8?B?UnVyMmJtOElKbFlFWExzdXRBM2J3UXdyK2Y0K2ZIRnhEcnVRNHVDZEhBTENY?=
- =?utf-8?B?Wi9vZjJuK1lOcWtVOWFTWEEwbmt0ZFcxOW1BLzVpdHFtMnFhdkVqQVdRSitu?=
- =?utf-8?B?QTNHMWhHNTRpUFp3TEFvcHM1U0dla29hczIybXBEUHJVM0tNVENReG9jNnZZ?=
- =?utf-8?B?Zy9UTTNyR3NveFFDSnJGUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnZla05DamdCWG1rS3ZQZDhycitiTiszK3AzOXJ1bGp1dUNvanYrK0hTZG92?=
- =?utf-8?B?THhONDNKUEtZcjMxWlpSQ1Z2Q0ZmWUIzTDNJVzNUOVRVUlk3UVM5TmpmcjZF?=
- =?utf-8?B?N092M2VOVnJOK1ByM3NBdXJ4elJYTDh2OWJKMjMweW4vRXdyNEhqLzVpaDVv?=
- =?utf-8?B?Y013OHhrR2lZaGhIMHMzMjY2MjZFYmxPK1RTcUVGeVkwOEIrRHJrSkVUakow?=
- =?utf-8?B?SVJOZUcwQU9ONmh1WlVKVEU5Y3NoNnRKejQybStlbTVjRGdmTlYyTGZPZUVI?=
- =?utf-8?B?d3RCcyswNzZ4eWpIWm80M2RPNzd3Zkx0UWwrTU5tTXE2N0w5M2hERzdnWXdN?=
- =?utf-8?B?WlBGTUNJUElwWW1GQXdMMS81V1ZKTTJXQTlMTzRlYS9KeXJnV21kWjVtUXJJ?=
- =?utf-8?B?QjhwVVhMZnUrbWFUTHY0U0NTZDg1bzM0aFNVUUFNQ2Y4bnBvZ3RXS1NCVW9n?=
- =?utf-8?B?ZnBVOFpWNlRJN08yUmRwd1ZqRVlVRy9IcEFPZXZ5VEs5VnBrOW5YQmsyWVZj?=
- =?utf-8?B?Y1VNbnlsL2c5b3M2cjNsWGZUQUN4TzhLa3FSMVBhR0p4YkRrOU9nVmNIOFFr?=
- =?utf-8?B?ZDlCeVF6a2tjcTJHcFVRdVZiNEFUZ0lCbDdKd1NFWGFLaGpIZjlhYTIrSGRW?=
- =?utf-8?B?NEVKUlhtc2xFeStsdGxBNDNjN0NVNExOYUJqTXZvRUk1c0VWNm45VEsyT2xU?=
- =?utf-8?B?TEVXU0NpS1d5U3FxVFdia0luTzBUZXBZcEErdHBDRWRkSVM0eDRlaWlsTlpD?=
- =?utf-8?B?SnZqbFJVeVhNMGZuM0dwSUMwT2FYZWJGbEV1TWNvMFlCTXV2Qms3UDZHc3pn?=
- =?utf-8?B?ZUsxTjhXWjRzZHJLcHZGUlR5RVJwRVduRXY3M2VVQ3hEUjBWV1hEeWZlMkVv?=
- =?utf-8?B?WVg1ZTZnamloZzU0UEQzUkpTWjJBbWtxWnB0Wm8ranRBeVFMRVY3c21OU3FE?=
- =?utf-8?B?eTFTMnErdnh1OUN4OCtFYW5sbnhNVzczQ2RUWXg4eTk4N3RIT2czS3p3K0ZX?=
- =?utf-8?B?SXllTkxCOVR6QVFLNFZyaStJd01QR2NmWEtMUFYyU3NlcFdMTEFRSjFsNldI?=
- =?utf-8?B?Mm5BdHE5VUo1M1lNYzR5SFRoWTR2MWdML0QrV09wT2FqQmZQNjhGdXcrdXUw?=
- =?utf-8?B?UkE4SVVLMzZ2RkgwVkp5WG5xQjJMbitpakVNeTc2bzI0Q2RWcnd3Y3U0QW9I?=
- =?utf-8?B?U014QTFRVUxEczhoaXlzczVZTDJLaXJYZ25HaDh3K01RNlFDTmNBTC8wUUZa?=
- =?utf-8?B?akdNeHJYc1FSYUtpZW44Vmk2S29EakVVNno2K01jVUZjUnAvSmJ2WUtRSVdY?=
- =?utf-8?B?Ry9JZVcrMHFlUzBzc1RHUFh1dXlVSG5yNWNBbTZubTlsZWpSenV6WXc3ZXly?=
- =?utf-8?B?cGp0N1lXQUJUVFRHYVVVckVPcnd2U1FKTmhFWnIwcUdjZ1F1OUFoYXVKN2Fm?=
- =?utf-8?B?ajNEWWxBTDlqT25BVFo2Z0lqd3RqSk4yb040aWs1T0hwaTRrRldyNVhDaWJD?=
- =?utf-8?B?a1RrQ3lsNVF0dDRWOGhtV1lGMTVTZXgzbTJKbHV1eUZFOEZuajlJZ2tSYlFk?=
- =?utf-8?B?dk5lcDI5OFhSWUdXN2UxRHJsUSsxN0lPNVZsV1d3NUNSL0lNcnZRNEpNUUti?=
- =?utf-8?B?ODRtelZRWGtWMUJ3bm1tWTZKSDc4enBPbXo1NGpITUhoTVkrdGpad1B6WE9X?=
- =?utf-8?B?aFVwSXdMK3NBVGtNYWY3Q3FmZzhYeWd2ZXpkMUQydEw2WXhpV1ZBcjMvdWlS?=
- =?utf-8?B?WVYwT0U4S3hwZWZkczBNOVRxb21sUnByU2hld0hkMHc2U2hhNkdDMENCaldJ?=
- =?utf-8?B?bmlFcXh1S1kvZ1FFUXRobUR2cDZRbzhQandQenMzU1ZwVTJ5cFhDcTJpaDZx?=
- =?utf-8?B?TVI2U2IwMS8rS3dTa0JiMlNvOVhZMWlIRUVyMW8ya1dCa3lPZTgwaWR1dnZL?=
- =?utf-8?B?Q09aa1hsb0pxTi9pbXhZeHhZekhHQ0xEeGFHRXVjMk4vR05aK3hhZDVaY3VG?=
- =?utf-8?B?OE1rNFVlTDQvRFlxVnc4RXVuSXo5RG9ZbG1IYW1SeTRpcUFUenBrZmhPVDIx?=
- =?utf-8?B?UE5TUXFtSi9BRm16L2ZJNkNlWnVIY3RGUnY1N0xmRzAvYlNnM000ZkxzVDVN?=
- =?utf-8?B?MkJUeGJqa0pRS3NTeUNwWEpCbDZQL1ZNTW8zNE9GZWFRb2F2UXp1Sk5mK2Vz?=
- =?utf-8?B?MUE9PQ==?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: f0dcd819-ac24-441c-fe45-08dd546c1cfb
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Feb 2025 00:42:27.7314
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rPG0iOhavUVvJXKoM/gT5rnghiJ/h78pE5UGXe9OjColtEQ8sjTC+EWUwPz4SyDSaBr1xSmEEcEzNKU3vyessA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO3P265MB2089
+References: <20241222145845.23801-1-pali@kernel.org> <20250223222306.plgy3bpy5mjojfve@pali>
+In-Reply-To: <20250223222306.plgy3bpy5mjojfve@pali>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 23 Feb 2025 18:48:50 -0600
+X-Gm-Features: AWEUYZko0ubEJcdQ7txR7GliWeRwpKU887NvYFvgu8t8db5jtuyzTa7hlyTi6R4
+Message-ID: <CAH2r5mv_+ZarrSPEhDjgEYPzqkvdqL-K7NjDsE0sXtrhx65G7A@mail.gmail.com>
+Subject: Re: [PATCH 0/4] cifs: Handle all name surrogate reparse points
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 19 Feb 2025 22:22:13 +0100
-Thomas Wei=C3=9Fschuh <linux@weissschuh.net> wrote:
+On Sun, Feb 23, 2025 at 4:23=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> Hello Steve, I see that you have merged first two changes (1/4 and 2/4)
+> from this patch series, but the remaining (3/4 and 4/4). Is there any
+> reason why 3/4 and 4/4 was not taken?
 
-> Remap source path prefixes in all output, including compiler
-> diagnostics, debug information, macro expansions, etc.
-> This removes a few absolute paths from the binary and also makes it
-> possible to use core::panic::Location properly.
->=20
-> Equivalent to the same configuration done for C sources in
-> commit 1d3730f0012f ("kbuild: support -fmacro-prefix-map for external mod=
-ules")
-> and commit a73619a845d5 ("kbuild: use -fmacro-prefix-map to make __FILE__=
- a relative path").
->=20
-> Link: https://doc.rust-lang.org/rustc/command-line-arguments.html#--remap=
--path-prefix-remap-source-names-in-output
-> Acked-by: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> ---
-> Changes in v2:
-> - Drop the usage of $(call rustc-option)
-> - Link to v1: https://lore.kernel.org/r/20250210-rust-path-remap-v1-1-021=
-c48188df1@weissschuh.net
-> ---
->  Makefile | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Makefile b/Makefile
-> index 9e0d63d9d94b90672f91929e5e148e5a0c346cb6..9ed2222fafd4fa37a367b87a5=
-c681936368318e7 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1068,6 +1068,7 @@ endif
->  # change __FILE__ to the relative path to the source directory
->  ifdef building_out_of_srctree
->  KBUILD_CPPFLAGS +=3D $(call cc-option,-fmacro-prefix-map=3D$(srcroot)/=
-=3D)
-> +KBUILD_RUSTFLAGS +=3D --remap-path-prefix=3D$(srcroot)/=3D
->  endif
-> =20
->  # include additional Makefiles when needed
->=20
-> ---
-> base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
-> change-id: 20250210-rust-path-remap-e97cec71e61a
->=20
-> Best regards,
+Mainly because I wasn't able to easily test it, and didn't get test
+feedback for anyone else
+on those two who had tried it.
 
-Hi Thomas,
+I am ok with looking at them again - and thx for rebasing.   There are
+some of the 41
+patches in your updated cifs branch that do look suitable or rc5
 
-Thanks for sending this. I can confirm that this is working as
-intended, and it also fixes my language server error reporting when
-building out of srctree. So,
 
-Tested-by: Gary Guo <gary@garyguo.net>
+> On Sunday 22 December 2024 15:58:41 Pali Roh=C3=A1r wrote:
+> > Name surrogate reparse point represents another named entity in the sys=
+tem.
+> >
+> > If the name surrogate reparse point is not handled by Linux SMB client
+> > and it is of directory type then treat it as a new mount point.
+> >
+> > Cleanup code for all explicit surrogate reparse points (like reparse
+> > points with tag IO_REPARSE_TAG_MOUNT_POINT) as they are handled by
+> > generic name surrogate reparse point code.
+> >
+> > Pali Roh=C3=A1r (4):
+> >   cifs: Throw -EOPNOTSUPP error on unsupported reparse point type from
+> >     parse_reparse_point()
+> >   cifs: Treat unhandled directory name surrogate reparse points as moun=
+t
+> >     directory nodes
+> >   cifs: Remove explicit handling of IO_REPARSE_TAG_MOUNT_POINT in
+> >     inode.c
+> >   cifs: Improve handling of name surrogate reparse points in reparse.c
+> >
+> >  fs/smb/client/inode.c    | 17 +++++++++++++----
+> >  fs/smb/client/reparse.c  | 24 ++++++++++--------------
+> >  fs/smb/common/smbfsctl.h |  3 +++
+> >  3 files changed, 26 insertions(+), 18 deletions(-)
+> >
+> > --
+> > 2.20.1
+> >
+>
 
-Best,
-Gary
+
+--=20
+Thanks,
+
+Steve
 
