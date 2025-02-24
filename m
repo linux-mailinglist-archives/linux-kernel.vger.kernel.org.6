@@ -1,168 +1,155 @@
-Return-Path: <linux-kernel+bounces-529104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49AFA41FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:01:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0CDA41FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9493AE152
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F66F3A5021
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 12:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C6223BD12;
-	Mon, 24 Feb 2025 12:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF6223BCE3;
+	Mon, 24 Feb 2025 12:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ElaJ2LDS"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4SGZ8yw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF15E23BCF0;
-	Mon, 24 Feb 2025 12:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDD517C61;
+	Mon, 24 Feb 2025 12:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740401755; cv=none; b=NkCj2yc2ustfN1HJKg7kRYixISDh5EB2886DOpK8pDeE/KydDjiHXPDfrTi/igTOE75odmhqk3rVNzZFAYDFle04bUauT3wnvzGz4uzaljQWcG0yJMkJsKgHVk6+aTl2mlHMIs0jd2VM0Pu6x8o8BvVkm/LB+8oAq8ZHyaCBgqk=
+	t=1740401820; cv=none; b=KYWJ7AfWhLR0euOaHkAe0BDPN/Gfvv+GpoSOod4Cks70zFR6+DMWFmJNT6JKyrxHS785yQAL/NvYepYNiRj2V+gEb0jF0+RooWjY/prEMQUYX1NfJborJ4JbMXn5w5Ohz5A7IQfnqbxAIXvxoHXLQy+wvMXqijwA5Vi5BlT3k/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740401755; c=relaxed/simple;
-	bh=/+dAyFbe/EZV9gREohszPIrB1NCJkdIU9nLWKVgW5kc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P+0yddQyK+W+KmIanUcXpJeqNtuhpZf3F+l3s0h1ptLKggR7S2Kdxe4bqTfaz0vXTFauV4y6t2f4UJyT12oVeGZ5lhO1O1S8Dg7B4p8+vqFlNuyJogIWjVDQeMDzXvP2O/noUNg9DCjGGv5P/50qp468h+1JBsEGRS/EqCMHLHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ElaJ2LDS; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6dd1962a75bso34115376d6.3;
-        Mon, 24 Feb 2025 04:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740401753; x=1741006553; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hlCwVJRIkzYP82V74TPg/P0Ovf6zeJdXyQovpILIffQ=;
-        b=ElaJ2LDSBA4HWfxDfaWowcvczwmdA/lsrImIQ1f6vyWPcV3zqDJCwmyh05c62Scjty
-         1ZGP0/ffhTUFVfghzbxSWyJaUFxJQrrbLRaO9ZZXBFHoMrGXghBl0W8HNoeeNEKNJ2OX
-         zykC3Ny6t3inkZwf73P6iFKU93vB5TTPID8PfWXvCI5HW/+2CM6B8WxxROHZ1TIVbeA+
-         5LeMaq9GrYlG0G8QcdBd+1L4IbwGhTBbPyAJshhsz2zsqOIUoG45xjB2MXD4YUhKaCkO
-         muEQdoyOxAlqEharzj3h6h/Mjp83lOgJczmS4DXECv4QxKDTAgsaXG1F86qEH9Hn6isS
-         KTPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740401753; x=1741006553;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hlCwVJRIkzYP82V74TPg/P0Ovf6zeJdXyQovpILIffQ=;
-        b=fZb7jD4VUgjgQQ+mhwIwDRZxem6GzJSnc5wBicKlKz6bwBjo9HMS3y3c8AgBahq2zi
-         Ay4Gkl+UelOhauDKfKsXoLT3QgHXVweIuha2DioBsKmc+KSz0YXZaHLFohMh6zVLvXda
-         rX5/EzassFaAajvdGgQUnsZGaRgmElt3fHHv2qgA9wOHQyA097TmLYMt0ef48u6Z3H1W
-         m92sPnDo5/0u79alWm83dApcN6L/mmCVnh0nI6tkWPJ27AxFHWNTCkOlB2OvEvGcEoJj
-         0f9ZU4Aao+W+o0O+RkTmssRvXqdIflbIS7JTaTcrX+GNafiCuthTm7UgJKzLYspoj8SB
-         Ywcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtTRAVYZayR6j3U5UEOHH2CK/LhNavOhBYLj9xmYRWSeaFhFgNREi2ZzRYh+08TXSd28YJ743ZGN7BVs9n@vger.kernel.org, AJvYcCWorRfpgHeds0zEBfQMiAd9Yy+0AgJxHo9e/Ax1Mcipi5PKx7WawKPVjWDOrLRhAHYks4U=@vger.kernel.org, AJvYcCXwQNRRNXTrkfutALV5u6oEOvT/MT5SIQaBtVwHdOlAxOS4uGBMgf09WhwjlOKCBfASgyNEqUZ3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7edT+7XwzjP2yPrrCSkGJKG4ks/ZecQNlkp49SUGh4atwAEok
-	d6FExBFybItyGa5SVuvAn7zeg4IGNLWHHVpyr5YiNXtGF+MrRdWWvcAdX91+SfcXbn27cO9JkfR
-	VvpCxBKW09OuDTDBwwRNki/+znC1DqI3s
-X-Gm-Gg: ASbGncvUllnMAmp7fsCXTIfOsZsV4RlD34Vy1V4JbRSmvq8UY6BVBIY9YMNi/CKvx2+
-	4LzksOs8GF1bxCJkm2mc8Kot/QPcXmeglO3ylYcuKgyJT6lc2eJFEzPg8sCVBUqvcTLStf1FilX
-	OC6UhWHTqu/g==
-X-Google-Smtp-Source: AGHT+IFyWii/yvBJT6eTZb9Cpicq6Z7cyz4y67RfqGfGpbFd5HzqlUWgsNDmqvn2DGZC0WaSG4XorHDcqtm2ZoT8jko=
-X-Received: by 2002:ad4:5766:0:b0:6d1:9f29:2e3b with SMTP id
- 6a1803df08f44-6e6b0085d50mr152224426d6.13.1740401752800; Mon, 24 Feb 2025
- 04:55:52 -0800 (PST)
+	s=arc-20240116; t=1740401820; c=relaxed/simple;
+	bh=Gd8Lyf68GbHdn/9os+WED7XTbymWYF2+HIt1zvJdHNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2ObH2KJZE0rNg6hz4ZnRJLF1/9NrwLu1zc6zYPxKWqniAkkgkTOOcJ873c7yU+t5Q8wGQu5Ske36IQJPW1vQaejqAKK56Y9VmlO13gWlLOmWdSf2n3ehga6byQP0Dp8S/kxT8o84lPuvRtP9cXh8XCoHH4/+HBcGge3n+q/A20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4SGZ8yw; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740401818; x=1771937818;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=Gd8Lyf68GbHdn/9os+WED7XTbymWYF2+HIt1zvJdHNg=;
+  b=n4SGZ8yw9KIgYaOOnIibPnkcEKomrUIzG9cPvy/znMsv15I+gDV/jZPN
+   2aa7xCydNIBNBWmG4eZRBkJUY/3AHAeydQQcwU2LNHu65b55usLMvFHPa
+   7KAXzfj3n8IzbYgwLMl8O+88gqwXgLl6gexjHJNWt0rO0zaQSlxKRCyQ9
+   symIEbUAJJRVuN47eZ5PbkGRrrpCN2W0uuaVoMtSeP3G0hBhs771G3b2U
+   /hY1/xkxh6Mbono93xz/3e5CQwIf8xyB1EPngQ0Zb8jmnb+lYl0rXiX8s
+   zJNwJ8tTkHYe5QWv2NsQaIN7bpG5kt/rnUcqmtNkIzFmE+DguhWwgD0iA
+   g==;
+X-CSE-ConnectionGUID: bkP+bytjSZW85U92mXv0Dg==
+X-CSE-MsgGUID: YrQyG5/UReW/7bE62RbyKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="51791260"
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="51791260"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:56:56 -0800
+X-CSE-ConnectionGUID: rRZOZy3nRfS9dWBwyOsiBg==
+X-CSE-MsgGUID: LuGIPAodQRqgsubJIsZVZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,309,1732608000"; 
+   d="scan'208";a="116558289"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 04:56:54 -0800
+Date: Mon, 24 Feb 2025 14:56:51 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Oliver Neukum <oneukum@suse.com>,
+	Ajay Agarwal <ajayagarwal@google.com>,
+	Brian Norris <briannorris@google.com>
+Subject: Re: [PATCH v1] PM: runtime: Unify error handling during suspend and
+ resume
+Message-ID: <Z7xsk72jQgBkfpwZ@black.fi.intel.com>
+References: <1922654.tdWV9SEqCh@rjwysocki.net>
+ <Z7rPOt0x5hWncjhr@black.fi.intel.com>
+ <CAJZ5v0jwn0e4HF1SsAG1OXr59tHzh=E2rcGkTdj1FOQdK2Uisw@mail.gmail.com>
+ <Z7tB5wshbGtO6LGg@black.fi.intel.com>
+ <CAJZ5v0jmp4PFb6z+K9cGS83CmX=5Ms0F9HSgcpq-VXn=rTdXgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250222093007.3607691-1-wangliang74@huawei.com>
-In-Reply-To: <20250222093007.3607691-1-wangliang74@huawei.com>
-From: Magnus Karlsson <magnus.karlsson@gmail.com>
-Date: Mon, 24 Feb 2025 13:55:41 +0100
-X-Gm-Features: AWEUYZmEuvp99OJ3DefogbEA6RgrIXcywUwi-Hle99k3LGA5Lc_uakDBRkTKIDA
-Message-ID: <CAJ8uoz1fZ3zYVKergPn-QYRQEpPfC_jNgtY3wzoxxJWFF22LKA@mail.gmail.com>
-Subject: Re: [PATCH net] xsk: fix __xsk_generic_xmit() error code when cq is full
-To: Wang Liang <wangliang74@huawei.com>
-Cc: bjorn@kernel.org, magnus.karlsson@intel.com, maciej.fijalkowski@intel.com, 
-	jonathan.lemon@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, hawk@kernel.org, john.fastabend@gmail.com, 
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com, netdev@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0jmp4PFb6z+K9cGS83CmX=5Ms0F9HSgcpq-VXn=rTdXgg@mail.gmail.com>
 
-On Sat, 22 Feb 2025 at 10:18, Wang Liang <wangliang74@huawei.com> wrote:
->
-> When the cq reservation is failed, the error code is not set which is
-> initialized to zero in __xsk_generic_xmit(). That means the packet is not
-> send successfully but sendto() return ok.
->
-> Set the error code and make xskq_prod_reserve_addr()/xskq_prod_reserve()
-> return values more meaningful when the queue is full.
+On Mon, Feb 24, 2025 at 01:39:14PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Feb 23, 2025 at 4:42 PM Raag Jadav <raag.jadav@intel.com> wrote:
+> >
+> > On Sun, Feb 23, 2025 at 01:56:07PM +0100, Rafael J. Wysocki wrote:
+> > > On Sun, Feb 23, 2025 at 8:33 AM Raag Jadav <raag.jadav@intel.com> wrote:
+> > > >
+> > > > On Thu, Feb 20, 2025 at 09:18:23PM +0100, Rafael J. Wysocki wrote:
+> > > > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > >
+> > > > > There is a confusing difference in error handling between rpm_suspend()
+> > > > > and rpm_resume() related to the special way in which the -EAGAIN and
+> > > > > -EBUSY error values are treated by the former.  Also, converting
+> > > > > -EACCES coming from the callback to an I/O error, which it quite likely
+> > > > > is not, may confuse runtime PM users a bit.
+> > > > >
+> > > > > To address the above, modify rpm_callback() to convert -EACCES coming
+> > > > > from the driver to -EAGAIN and to set power.runtime_error only if the
+> > > > > return value is not -EAGAIN or -EBUSY.
+> > > > >
+> > > > > This will cause the error handling in rpm_resume() and rpm_suspend() to
+> > > > > work consistently, so drop the no longer needed -EAGAIN or -EBUSY
+> > > > > special case from the latter and make it retry autosuspend if
+> > > > > power.runtime_error is unset.
+> > > > >
+> > > > > Link: https://lore.kernel.org/linux-pm/20220620144231.GA23345@axis.com/
+> > > > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > > > ---
+> > > > >  drivers/base/power/runtime.c |   34 ++++++++++++++++++----------------
+> > > > >  1 file changed, 18 insertions(+), 16 deletions(-)
+> > > > >
+> > > > > --- a/drivers/base/power/runtime.c
+> > > > > +++ b/drivers/base/power/runtime.c
+> > > > > @@ -448,8 +448,13 @@
+> > > > >               retval = __rpm_callback(cb, dev);
+> > > > >       }
+> > > > >
+> > > > > -     dev->power.runtime_error = retval;
+> > > > > -     return retval != -EACCES ? retval : -EIO;
+> > > > > +     if (retval == -EACCES)
+> > > > > +             retval = -EAGAIN;
+> > > >
+> > > > While this is one way to address the problem, are we opening the door
+> > > > to changing error codes when convenient? This might lead to different
+> > > > kind of confusion from user standpoint.
+> > >
+> > > Are you saying that if a mistake was made sufficiently long ago, it
+> > > can't be fixed any more because someone may be confused?
+> >
+> > Nothing against the fix but "sufficiently long ago" is why we might
+> > have users that rely on it. As long as we don't break anything I don't
+> > see a problem.
+> >
+> > Messing with error codes is usually received with mixed feelings and
+> > coming across such a code raises more questions than answers. Perhaps a
+> > small explanation might do the trick?
+> 
+> Do you mean an explanation why -EACCES needs to be converted to something else?
+> 
+> That's because -EACCES has a special meaning in runtime PM: it means
+> that runtime PM is disabled for the given device.
 
-Hi Wang,
+I meant a small comment above for those who may not see it as an obvious
+thing, but whatever you think is best.
 
-I agree that this would have been a really good idea if it was
-implemented from day one, but now I do not dare to change this since
-it would be changing the uapi. Let us say you have the following quite
-common code snippet for sending a packet with AF_XDP in skb mode:
-
-err = sendmsg();
-if (err && err != -EAGAIN && err != -EBUSY)
-    goto die_due_to_error;
-continue with code
-
-This code would with your change go and die suddenly when the
-completion ring is full instead of working. Maybe there is a piece of
-code that cleans the completion ring after these lines of code and
-next time sendmsg() is called, the packet will get sent, so the
-application used to work.
-
-So I say: let us not do this. But if anyone has another opinion, please share.
-
-Thanks for the report: Magnus
-
-> Signed-off-by: Wang Liang <wangliang74@huawei.com>
-> ---
->  net/xdp/xsk.c       | 3 ++-
->  net/xdp/xsk_queue.h | 4 ++--
->  2 files changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-> index 89d2bef96469..7d0d2f40ca57 100644
-> --- a/net/xdp/xsk.c
-> +++ b/net/xdp/xsk.c
-> @@ -802,7 +802,8 @@ static int __xsk_generic_xmit(struct sock *sk)
->                  * if there is space in it. This avoids having to implement
->                  * any buffering in the Tx path.
->                  */
-> -               if (xsk_cq_reserve_addr_locked(xs->pool, desc.addr))
-> +               err = xsk_cq_reserve_addr_locked(xs->pool, desc.addr);
-> +               if (err)
->                         goto out;
->
->                 skb = xsk_build_skb(xs, &desc);
-> diff --git a/net/xdp/xsk_queue.h b/net/xdp/xsk_queue.h
-> index 46d87e961ad6..ac90b7fcc027 100644
-> --- a/net/xdp/xsk_queue.h
-> +++ b/net/xdp/xsk_queue.h
-> @@ -371,7 +371,7 @@ static inline void xskq_prod_cancel_n(struct xsk_queue *q, u32 cnt)
->  static inline int xskq_prod_reserve(struct xsk_queue *q)
->  {
->         if (xskq_prod_is_full(q))
-> -               return -ENOSPC;
-> +               return -ENOBUFS;
->
->         /* A, matches D */
->         q->cached_prod++;
-> @@ -383,7 +383,7 @@ static inline int xskq_prod_reserve_addr(struct xsk_queue *q, u64 addr)
->         struct xdp_umem_ring *ring = (struct xdp_umem_ring *)q->ring;
->
->         if (xskq_prod_is_full(q))
-> -               return -ENOSPC;
-> +               return -ENOBUFS;
->
->         /* A, matches D */
->         ring->desc[q->cached_prod++ & q->ring_mask] = addr;
-> --
-> 2.34.1
->
->
+Raag
 
