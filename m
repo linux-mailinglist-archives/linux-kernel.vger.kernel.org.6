@@ -1,135 +1,141 @@
-Return-Path: <linux-kernel+bounces-528463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645C2A417F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 446E1A417F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 09:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FA63AC8A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:56:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB4A83AAFB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 08:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A38524337C;
-	Mon, 24 Feb 2025 08:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8507E2441AF;
+	Mon, 24 Feb 2025 08:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fjWEf4zj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fl4GN5s1"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445D6241CA6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E13E24290E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740387377; cv=none; b=Ju7NGmBl7uKC/4ZFhzcVOTOvwROuyMsbj9RPHbXQVAESeP5qQaq3sLITEzb+L/3Oz1ANSYo8WzFLbvtWJcI+9QjQWEsgz78Tzs3EZz+zhxy3kLP1e1CNXp8sIbPhTmEwlluThrr84I26m1zZFz50FLG1KXSSETESEbmizg7I7/o=
+	t=1740387378; cv=none; b=HWmvkJ4ocF/h5uXWb0W5tFAPhru1K3kxiU9gwVCIojdpbNWw0NAPdfnCPMs0KMYQ/u76C37J8fPSz9JpxUJqAvOEVKMBG9BlxqjWHcQNnAc225VP+H69P+7ZgY4to9nRGWiRpML6XTGWyVVq3GAx1a4NtV9+Lcg+hofZouHGhHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740387377; c=relaxed/simple;
-	bh=ycAwiMbxF3n0lZ9z26ElUzrRQcR5Owt3AdSg+tGrPXY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H6Pw9blCxIDBrckiasuYqSdR6rl5oli4QKOIzmgEjMO4oyMpayTdwwYRxQVFcLH4wj8V1/0gSK2FALWsSQf+n4KsfMuj6gPQhqwPikMVz26m8+K70yWVlRu8Myy0WmozmniXotBeQgHScatypLJZrD101KHe+2JF1vb3yxv3Kcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fjWEf4zj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51O0SEk3021236
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:56:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=TeXXCbYN/NL6nm0TIhtB7ORF7skKDF6mo30
-	jLzYZfoM=; b=fjWEf4zjHwzpUQY7T33v9fYwr3sykKHfc682wdJSe/YCv1v1WTN
-	/lDeRdM5zE6HfRX7eXc0B/B6EtJDLYZ7LgeU8HchSfQO/Bo0tEI5IGprX2UdpglQ
-	xMob63sLxVsEEJ0lrktmesHDPH8JuZ15XadXLJnTHEUpjuiK5p6ZJjY9ZfLfg10J
-	48v1KKDWw0X7tUj9tI33LKNRCpcp2ifPl5wWavGDQZFI4XRhxVrzf6+wYan9zPQ9
-	+rvlGlsWwEq6OSyHj0sOw7mg2JGUU2zHlDRKYN4R5AfqS0jqGiZ6swEGyz/yINqm
-	Dhmxz05HyYx7LkVApfyKQ0qSyrXDLLh/pmg==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgmaje-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 08:56:14 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-220d6c10a17so94666295ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:56:14 -0800 (PST)
+	s=arc-20240116; t=1740387378; c=relaxed/simple;
+	bh=06AblsnnP+1xAekOfi7Ql/W2vrMIvov4zF/dPunqSk4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1j6HvS3kEbWwVaMj9v+77y1UOXLoNGzq5rXPYagDTzqGeC2bWl5Eu/MSg8epAB1EvR1FqWkeJVZNnh2SpP+FM81gCheMsEyBvSnd9zuYOyibJQljbvRNZu9253uzGWWOCoqKqqXcflm80N53gBT3Ow2/KMefjX6rD8GaMyaD14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fl4GN5s1; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-220f4dd756eso81622675ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 00:56:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740387376; x=1740992176; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TaBv8v02Nb3a5UGjEfTd42AEkkKkLNKGhI6ZakaIigA=;
+        b=Fl4GN5s1yDCpk7u6QvDORnFrj1KzI1f4ncIRJ4sP9Gv4vhbkuTHZQU8mNzT2YqUnyf
+         mWuALNw2DfeDR71uhv8k9dh/6Hy5sHadU0mYF4XiAgEmzigEnoq7s1lAEiC/UgMJ7+2O
+         WoGRrnKi+FcmqT6xc0k7IXCXgi8MMWtpq11rPV6AO4LY+Iz1BN01Ej/y9Lf5zxufLAvX
+         t9gdPIe6MZRusdGlA4JehdGXQX5vic+hY2uVY/xCAE7FvhQUr6yzLXPp1p0nkHJdhPZF
+         vEIqAgTvhovNVnCaR5o2qGHoIp+RGX6JkQR0tdo/mPqyNY1c6JNDpjcJx0pcLLohv9/6
+         tpKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740387373; x=1740992173;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TeXXCbYN/NL6nm0TIhtB7ORF7skKDF6mo30jLzYZfoM=;
-        b=ejtgSFc8qGlcsPyD7eEsp9D+SmzFgk3zeh2Y8fzi5zVLCr3ia4JfB7UyQzOf1SujMN
-         3cvlkAdjqpOeVtEdptJD5iqFTV+UHWuyXkuM8B70chQkwL3+aIeoMvseWW03s91GAmPN
-         HKN9wCPZDZrpRKAFmfU5tmpy0WdlY8o+bBj1P+ob0MZgcayADvSoKy/V7Lss48NMWqlD
-         d7wlKEhYfkghmA5GnoHGHkrOslhjNOCRUbaMr7GbOUtOP+8OaOZmWEPMSQK3dIRRWpff
-         bd2uCloy+O4KwWzz8+1s0qkj3gy7jc+Ar1R1e0HF+OnczefmWD8NE+nFWvrB5ep1+PbI
-         +Q0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU/QXBGPnsANShXj+BU1zyG2lNwX1tRjwSxQOYXKGFXIyGAIwl3vHYmexim3vULpQDGHRE+rd92hPE/xVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywai+hBYESUemz3OtdLkcIePtYakWmTvw6gHwZTswPMjGX3Gi5X
-	WDebVDU19vKBwZC51YzKTUQf0NGPeSXDwevHH0mFh8H5leWshwX4RHY38cyFqMbogRM5xQWcqOu
-	jQk1j5oz/+rvMXQQrblReWat34V76DIDgJVVayU1odaFu3rnFT81mdsXHrVoRPUs=
-X-Gm-Gg: ASbGnctHbehlVUG6h/eN9eZw/chq2/g2HdJxz8imeryuCmHdioTZPMZGy9xp4Z5w3xk
-	PKyJvnOhVrrKa+2I4eY8m9MESQt6RzzCbGuoDgwDPvAMrhp01316guxom+onkmVFN0mPyPmEMqo
-	uDkpFRw5HhsnElYpbWeh8tgPLz1OlhPmyvChu/t4EBoxh/c3nUblpLN0zgzg4NeYsxUuMphQGP2
-	Xva+anVHTckDfJIc987hQq6OCmN3ok/swlJGHmaqfLvUHwBG3A7+3XKDoHhAVP+oufJeUeUtTQJ
-	vc0it9XmbVUHHB2/U7+nkZyOF8nMutGzUYuhvqmMjdvi
-X-Received: by 2002:a05:6a21:99a7:b0:1ee:c7c8:cae with SMTP id adf61e73a8af0-1eef3cbe826mr22651560637.9.1740387373187;
-        Mon, 24 Feb 2025 00:56:13 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGODOh9bvtWJ+Wd/yTYPKP51Y5HpfVfLQY6VnaKmCSDPUuwobspDsFFqALPPRN8NBLX7OhXIw==
-X-Received: by 2002:a05:6a21:99a7:b0:1ee:c7c8:cae with SMTP id adf61e73a8af0-1eef3cbe826mr22651528637.9.1740387372762;
-        Mon, 24 Feb 2025 00:56:12 -0800 (PST)
-Received: from hu-prashk-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73242568af8sm20161399b3a.48.2025.02.24.00.56.09
+        d=1e100.net; s=20230601; t=1740387376; x=1740992176;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TaBv8v02Nb3a5UGjEfTd42AEkkKkLNKGhI6ZakaIigA=;
+        b=AtoZ86s4Upi5fJaB6VmUTwLaQvOve0UcpkyaQkLMR7XUV0ue8ppoQReBNebhqFw4Th
+         bV3Ov4OISMo3ejlL66rxUfaKt/owrL+J2T4bNu/w/spAio6IFRHnbFFu3NwLpwlAGnCb
+         6quqyyL0x8CWVjriRN7370NgZwyjYhqb59vMyoAhOeVjRs0N2rnLTcgIH1d6pCJhv+lD
+         m19rhO4HZcG7xU2dIPkx7S3phbm/vGdYzLCi0AkH0vl3i7WU78g+TFoDiq7Peo3EjtVC
+         xrt/zCvtoxF50ig5d+wNBLiwovX2pMhEiWCeqkJrXcBDwzZKodJkh9SWEHguJ1cC6OnT
+         OEBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXghOQGFVgAWqAB26kC4CjvU1fRqHjEwxTt1tsy5W9MIPN2E7zWz/TfAhgBHf7sHxY3zNKfNH/BfvVODD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAZ1CXPJOsXEdo6bfY56TO+hjneXHPJpr1yxmdkpVEn733y3CO
+	LUpDPah9oDlUmd29DaZYw1QSeabLgxDqM5pJzetRGk5CgSQ3QFZiHj1Xo9B/YyQ=
+X-Gm-Gg: ASbGncsAuT9RGFv7W7Z1VNA+iIWn49K0fGKNstZaRcLAW/Q7QZDfpKgF8vZzZqLD2kl
+	ZjX6+GGJoqMzWHNr3Azp3fwjE5671crF1OdXd8ZTMNxm8KW/TPzu4p/wVZ+tVbTKzbnx2B784it
+	/OAyxY1OXa8RokzrfJw69sYfsoGNoEwZe09L9d0fTY7Gq2oR4MDyiarTflAaKxTT8ahCu0C2bfA
+	jsUtT7Soq4sAuPIOygATDlvXW4N54W73ofiW2X4FEwgJAUJN15q7Sr9KNtXrzFxPHaOfZPj4ZAE
+	u7of9IiSTGERMAjFcu+mbkOmgKk=
+X-Google-Smtp-Source: AGHT+IGY+3wZyrH4ts9kooPUWiPLq9Tpuvj09t7MxZdfeBddQhQdu28WeUptIuYXx4KhcW9eZJ1mmA==
+X-Received: by 2002:a17:90b:2246:b0:2ee:693e:ed7a with SMTP id 98e67ed59e1d1-2fce7b3e4cdmr21262746a91.35.1740387376617;
+        Mon, 24 Feb 2025 00:56:16 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fceb0499c2sm6028625a91.12.2025.02.24.00.56.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 00:56:12 -0800 (PST)
-From: Prashanth K <prashanth.k@oss.qualcomm.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Bakker <kees@ijzerbout.nl>,
-        William McVicker <willmcvicker@google.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prashanth K <prashanth.k@oss.qualcomm.com>, stable@vger.kernel.org
-Subject: [PATCH] usb: gadget: Check bmAttributes only if configuration is valid
-Date: Mon, 24 Feb 2025 14:26:04 +0530
-Message-Id: <20250224085604.417327-1-prashanth.k@oss.qualcomm.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 24 Feb 2025 00:56:15 -0800 (PST)
+Date: Mon, 24 Feb 2025 14:26:13 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, Rob Herring <robh@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>, linux-pm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: Add cpumask helpers
+Message-ID: <20250224085613.ksburgsarl35tvnh@vireshk-i7>
+References: <20250221205649.141305-1-yury.norov@gmail.com>
+ <20250221205649.141305-2-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: JvpwHxkdjyuoDxBt_bs7NtPC2xT5hBqY
-X-Proofpoint-ORIG-GUID: JvpwHxkdjyuoDxBt_bs7NtPC2xT5hBqY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-24_03,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=646 spamscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502240064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221205649.141305-2-yury.norov@gmail.com>
 
-If the USB configuration is not valid, then avoid checking for
-bmAttributes to prevent null pointer deference.
+Hi Yury,
 
-Cc: stable@vger.kernel.org
-Fixes: 40e89ff5750f ("usb: gadget: Set self-powered based on MaxPower and bmAttributes")
-Signed-off-by: Prashanth K <prashanth.k@oss.qualcomm.com>
----
- drivers/usb/gadget/composite.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 21-02-25, 15:56, Yury Norov wrote:
+> Question: zalloc_cpumask_war() is a convenient wrapper around
+> alloc_cpumask_var_node(). Maybe rust can use the latter directly as it's
+> a true outlined function? There's more flexibility, if you need it, but
+> also a higher risk that the API will change: ~40 users vs 180 for zalloc
+> thing. Up to you guys. I can send v2 if needed.
 
-diff --git a/drivers/usb/gadget/composite.c b/drivers/usb/gadget/composite.c
-index 4bcf73bae761..869ad99afb48 100644
---- a/drivers/usb/gadget/composite.c
-+++ b/drivers/usb/gadget/composite.c
-@@ -1051,7 +1051,7 @@ static int set_config(struct usb_composite_dev *cdev,
- 		usb_gadget_set_remote_wakeup(gadget, 0);
- done:
- 	if (power > USB_SELF_POWER_VBUS_MAX_DRAW ||
--	    !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER))
-+	    (c && !(c->bmAttributes & USB_CONFIG_ATT_SELFPOWER)))
- 		usb_gadget_clear_selfpowered(gadget);
- 	else
- 		usb_gadget_set_selfpowered(gadget);
+I looked at the APIs again and here is what I feel:
+
+- I am not sure if the Rust code will have any users of the *_node()
+  APIs in the near future. i.e. There is no need for the Rust code to
+  implement Cpumask::new_node() version for now.
+
+- I have missed implementing the uninitialized version earlier,
+  alloc_cpumask_var(), which I think should be implemented right away.
+  Bindings for alloc_cpumask_var() are required to be added for this
+  though.
+
+- One advantage of using zalloc_cpumask_var() instead of
+  alloc_cpumask_var() is that we don't need to open code it in the
+  Rust code, specifically for the !CONFIG_CPUMASK_OFFSTACK case where
+  we need to call cpumask_clear() separately.
+
+- The Rust side can have following abstractions for now:
+
+  pub fn new() -> Result<Self>;
+  pub fn new_zeroed() -> Result<Self>;
+
 -- 
-2.25.1
-
+viresh
 
