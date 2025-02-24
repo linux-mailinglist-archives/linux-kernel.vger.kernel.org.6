@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-530084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD7FA42E9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:09:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07F4CA42EA3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B6C179E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:08:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB6017AA0B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3262F1A2391;
-	Mon, 24 Feb 2025 21:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93681197558;
+	Mon, 24 Feb 2025 21:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="4F3IGbwj"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="hyHc/FsN"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AFD19924D;
-	Mon, 24 Feb 2025 21:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC45921345;
+	Mon, 24 Feb 2025 21:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740431309; cv=none; b=msSsmcxTCWZG0o8wZ5O/BAC1br/r3LM5FroSi4vIlv+Yfcoo1Z3e4SlLVkVHMOrvh60ZldUqvl9k1Bm/Wvs1GbdwwL6Vv3clFypzIa8SuNhu3usZoYPsbvFl28H0L/9Sf5L9iBtgEu/rQVbsfYx/lAR/htdfLzTH3GzfMKoZ2uM=
+	t=1740431359; cv=none; b=W5zOtbPgoaR0jz12acd6tqWS/ad5rjAYxAa2s2CvyhwcjzmLl+kiobCyOxC8VBXuExl5Xw1tgOzH/bKwG1/ax7ShEowyUUKl2kMluO+C5kb2jUlgyihnucFzibaMQBthBZTpkQJ4dfi8ggtZT7tgW1nzxqVzQ4Q7wKJgDobM3Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740431309; c=relaxed/simple;
-	bh=nSvmVEu+bDwLuDudx6Cxjq3+LrMpLO93avt6AWrQfTQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GeFeSZfOWT9dx1nyB6yBezQPv505BiUMcK1OpEXYwyd2Q3DzQm79Dkh+fRR3VZxFApnBrQZT+THDFhGjy1yCd8ekdXdmOVnQxZdaYnOoq56272ds/plOnCSy95NhlTSDEyDNJvBXn3r81NLKGDdtgQOzV0j4Hiysa5xNPWVgV2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=4F3IGbwj; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 3E6952E09390;
-	Mon, 24 Feb 2025 23:08:23 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740431303;
-	bh=nSvmVEu+bDwLuDudx6Cxjq3+LrMpLO93avt6AWrQfTQ=;
-	h=Received:From:Subject:To;
-	b=4F3IGbwjkPVCyWeK3Xv+8y4hPQuaWQ87Ne1gkAZGi8xNtaPi/huCi+w9BLuqqsBG8
-	 LveVAKx+6H/LwYloBUSOGrJUpK0PHFuA5K+/LOOUkTdWyA+XeeFRHXjrN89CYqDWxe
-	 tzbnY8A9m//sgtn+5YjeF+l2JuLJcye6tU4JzsR0=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-307325f2436so47489221fa.0;
-        Mon, 24 Feb 2025 13:08:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVJ6NVPuSkdg7LaQgDqdqztNgOhR8lVKpY7rkrUoB11z8wtWjqd1YnXIUwoghLCrb5nKqVvxrpyLXWpqbO5@vger.kernel.org,
- AJvYcCWRGRVfXYxYGoKcKNtc2fomkckLnbPWzpNWQvO9w5H0tZnmvQy2ZKv3oPL/EL0ADD5ApfVRqJJ0bne66YN4YgQHmzGDhg==@vger.kernel.org,
- AJvYcCXozEDSVOUDcxAmyLdM/XUX6bf4yNAz/l3jC3PSj0uDpswIARzsiIQzt63F7qrxqkms5BoTzQM1o820@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7mydXZD00NEiOyk25hJ6b+LqDjwua5VHxHWuGmZJKgwz7+5EJ
-	w7seHiU9qCo+uT6M7C1D9vzUZ65sxeWL8ff/v544fzflDKFyLXQfMnYA0PHq9RVFE6FoAtvpORr
-	lN1G7vKj+0t8yBoicjSpgAvYeflo=
-X-Google-Smtp-Source: 
- AGHT+IGS5wH864ao53flqW1v1Gh3xCaAlLPeoPS3aHIL1uGJGeCUpz69ACzEewmRUqikFS22FDXEW/plBaJ6vCDdjaQ=
-X-Received: by 2002:a05:651c:541:b0:308:eb58:6580 with SMTP id
- 38308e7fff4ca-30a599b9e2amr63625081fa.33.1740431302369; Mon, 24 Feb 2025
- 13:08:22 -0800 (PST)
+	s=arc-20240116; t=1740431359; c=relaxed/simple;
+	bh=guqJxAKXDfn634VndPunaNjT9uS40FqYaHe1iRQ91Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTqu9GBW1LO9wRcd9ltqjgE0HBx5IF2RjbnqUc4BSoBX3AMjt3l459e7iHckg4qQxzsx/oQWTlABEIKjjetZ530T72XMYG1jigfevr/T8H+uCpJoPoL0wcuLcAQbDO47WY6uKX1kUWd4vsMslZNwIPn1EaHW7QWIREyIxZg48G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=hyHc/FsN; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5709510382F1F;
+	Mon, 24 Feb 2025 22:09:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1740431352;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gCFTUJhvP7sYPpfnNbKkCvTj6m0PeLY9YrwPgvAE7zM=;
+	b=hyHc/FsNBDdoScpDZW8ImxYryCq04KF0/aunnESBYUYsRf8HzG/idd8VmYvK71OKFNzsWP
+	asY0sjWf7WDjdpkHZewqzefdNRcWVokIOKqfQ+9dO3/5vs4XhvvhlcMtSVSRymetQX0JVF
+	FrcUVyjGhXP57Ld1WWT9ZLC4EN5SapHW64hyaBLPCfMIpNlbtZZ9jaJTP2ORvZG6hrAlwn
+	gxK5C3AkxHN9Dq/vkBtcgJ1zTXrIW3XyMPj3iYrTJBoxFSLjRa/Qmav32v80TxBgCSov5b
+	cMufO354Az5jH06mYgdJQ9vND4OR5i2TGBsvhY8yoUx15PJLKaIv+ldWX5le1Q==
+Date: Mon, 24 Feb 2025 22:09:05 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.13 000/138] 6.13.5-rc1 review
+Message-ID: <Z7zf8X5UoDtpX4FS@duo.ucw.cz>
+References: <20250224142604.442289573@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224195059.10185-1-lkml@antheas.dev>
- <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
-In-Reply-To: <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 24 Feb 2025 22:08:11 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwF9rB85zvp4efqVMTu+4B98R7WSzyE_xCh-TfzbMUPBGQ@mail.gmail.com>
-X-Gm-Features: AWEUYZl_KzJWCjDBxqyCylnrxhuVzAtguWJ1WiB14Uo4qhOdjC_014pumR1Ni9A
-Message-ID: 
- <CAGwozwF9rB85zvp4efqVMTu+4B98R7WSzyE_xCh-TfzbMUPBGQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
- multiple handlers
-To: Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: "Limonciello, Mario" <mario.limonciello@amd.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- me@kylegospodneti.ch
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174043130372.6467.11297118136257577281@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="0lwAjGOtVX5NJEWC"
+Content-Disposition: inline
+In-Reply-To: <20250224142604.442289573@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Mark,
-My primary focus with this patch series is a bug fix. I imported
-Mario's series into our Bazzite 6.13 kernel, only to find it broke
-power handling on asus laptops, and it will also do the same on both
-legion gos, once a driver exists for those.
 
-And 6.14rc4 is the same. This needs to be fixed before it ships.
+--0lwAjGOtVX5NJEWC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This was my attempt at it. I considered other options, like making
-amd-pmf implement all profiles. But this seems like too dirty for me.
-So I settled at this.
+Hi!
 
-The primary TDP handler of a device is the WMI handler. When that
-exists, if one of its options is hidden, that is a regression. It does
-not matter the option. If we want amd-pmf to be able to load as a
-secondary handler (where the point of that has not been proven to me),
-then it (or any other secondary handler) cannot obscure the options of
-the primary platform. So it either has to implement all of them, or do
-something like this, where it is in between.
+> This is the start of the stable review cycle for the 6.13.5 release.
+> There are 138 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Antheas
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+
+6.12 and 6.6 pass our testing, too:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--0lwAjGOtVX5NJEWC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ7zf8QAKCRAw5/Bqldv6
+8omFAJ0a8d7UT/lNuUu5714XGT1Ct36W0wCcCixYO1ePu/aQNrUyntkTrpS9e+0=
+=rEnU
+-----END PGP SIGNATURE-----
+
+--0lwAjGOtVX5NJEWC--
 
