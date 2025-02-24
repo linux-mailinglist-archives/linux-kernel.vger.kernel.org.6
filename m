@@ -1,104 +1,102 @@
-Return-Path: <linux-kernel+bounces-529778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACE5A42AC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:12:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E46FA42B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:24:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DB347A2D15
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:11:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A3767A3E7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14279265CC7;
-	Mon, 24 Feb 2025 18:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gn/X48wr"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D315526656A;
+	Mon, 24 Feb 2025 18:20:19 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BF5263F2C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8689A264F93;
+	Mon, 24 Feb 2025 18:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740420739; cv=none; b=CArLbVnxBlTouNITjCMHcmtRVynTxZHdTnmhXZM+t5lN56X0LnMfeuDSTzja/jIXpNjMVSuAEVeZ3Qyy5v3M5MhLYq3tRUhkXIFs8EKYOfUyXBuFMYWHvRRrKjjZDc/q+zBzTkN1VU0Csz1+E7evG+ys1z79dCYzxYHhDjGWphE=
+	t=1740421219; cv=none; b=sNTQI3AqiBRUfkljMvx8i35a5HLkMg10dZAlhY/gB7fy4F9DnZB/CW1sPY/kaBGuFxNp3xToINvki7YEm6ec2dkqxYhnowBcjqL8J1aovNVuJ856GxBUh/jX9P1l2Dgfesizb4F1fOnTNk69ritpsTogol7jgEFnGpiv4g6NrcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740420739; c=relaxed/simple;
-	bh=xvAR+mvpnEkw3V0bWLcJxiiVQwnNac2zGB3dNnVWVd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a9DM8lBi2qiCWkFuujFg1BCtK7dGQPlCWrkNux+K/XXEgJ5XcDEjmRxqpJha/1zRkha3w/L3WezFNOWVM27kReQd+zBessRPomoUbQXxv7Ijmq85DwPU4JEIMBDxGgdkMZt+LnZvkWHhghzG9hOW5beIwvzoCySOpNHradRSH7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gn/X48wr; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so33658535e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 10:12:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740420736; x=1741025536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xvAR+mvpnEkw3V0bWLcJxiiVQwnNac2zGB3dNnVWVd8=;
-        b=Gn/X48wrexe6Aii9vE3OZHM1VFTzXIV1hRR5EI26zCanued5/bMR3ug5DT0mItJ06j
-         iE/bnIRN0wy9zUmy3IUghXz78bhCp3ahzzT3RxRl/m6B4EV7ud9klxTWpEGEprXs41d+
-         m68q3w2SkUKXq3vMicJA6aBPOHRSyys5+4f7ROuF8ivxZIYrM3yX3f4L6RtHNZJk1SdK
-         j1gm1KEu9m3vZD6pjme9ngZQvhbmuWacQjXXtedjC62tO0GHiNqcvyXNjwJWHDjxWe1Q
-         2hdgxrwHb97k6IjHJCCTqqZl5oEowu1HHQ5bT/vtKy1FEzD0K/3+e3AkdXXjEpqqh9AP
-         AzhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740420736; x=1741025536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xvAR+mvpnEkw3V0bWLcJxiiVQwnNac2zGB3dNnVWVd8=;
-        b=WsW19qSOk4bP/Rq9yordj1zDyoK4mJPDUN09fAu9UCdREB80w0QJG64ePq73JNOrm9
-         iG/mPDQWUnSGzyGk6oN93VNPVS3jJXdcNM8ydqRMmt1uuYDOwfrp5IMekr/zAzQliTPY
-         WYVKwFyFU7mkzqUz8Ix3R8bviSAQZXegMxBfvKKiWHa1qKILOy78kpvQLPFh7f5ZXYU7
-         F/MrZkqgNbR9JBH1zeYg9nIEXWpaM51xG0y6w6ix4tD84LF9oPVbt+WzUuO/TSvmbUT7
-         HC6IX6FwugjbtvSuzGs/1bDq61FkYWTarmWpOVXf3b1it7aM+1hacHSlx4DNibA1XbEV
-         pdJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+JqjoU0UQuHO0MgMT455xLhNitYEEMaUSQSm2YBBow2/nAr95D4K6W9V3OsgN03uSWBA8WuZuTApTtE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPo//0kSF83xldNhFmCRRMRPJbjaJ3F99VbGmYbm8jne90cx7t
-	FSHcRRgetfj/Mg/M+uY6NTmYTwH8xkuPLCR0QPW35z1/ehz3APAEIaRcbSAOYm1IAX2cOwnXdut
-	vrBU9YBnPiu/F9VKdTqts7j53M1a/9CsLupJC
-X-Gm-Gg: ASbGnctmxvru+viUfy1PSN9jfVCheT+r34bGrLGna5TZBcr4btEZ0o3G7ZjlMG6qrXz
-	LQVEyLTi77WbWHzucAS6gQjaHZ97iCjQwS5M62ES8Rh6/EZ0bBFFcHG5MQAPsgZGTFtJ2otqv5P
-	QUTs3W1u4w
-X-Google-Smtp-Source: AGHT+IFPMrPhjY/2dbKor0Wcfga1hfkHkJ8ba0hmBnI5YCSJx4/LsXQeF2I6GzVJfar6jBGIA0OBsizuejhRq8QbqZQ=
-X-Received: by 2002:a5d:5985:0:b0:38d:c73d:e52c with SMTP id
- ffacd0b85a97d-38f6f3dc27cmr12092538f8f.14.1740420736050; Mon, 24 Feb 2025
- 10:12:16 -0800 (PST)
+	s=arc-20240116; t=1740421219; c=relaxed/simple;
+	bh=49xXBc1ycQecRqINlj/S10WDVEpHaLb95IwbBpWVPn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ngR8V5Kt1eaP/VWNsrbDS6RKgjX8hT6w1yD8clN7JfAblSQ0PD4vKSyLac5FHcx6jnRt2BvD2/KhOd80ja5hJq4LfKM1J16WjUQ+ZfFGBmed+cqypAwOmrNGclEA7BOGQPeQeHK2ym/ZJC8jdHViZUwdz11y1JJq4ikXjRmyfbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 3013E3000222C;
+	Mon, 24 Feb 2025 19:12:11 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 099015F7D2D; Mon, 24 Feb 2025 19:12:11 +0100 (CET)
+Date: Mon, 24 Feb 2025 19:12:11 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Feng Tang <feng.tang@linux.alibaba.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Liguang Zhang <zhangliguang@linux.alibaba.com>,
+	Guanghui Feng <guanghuifeng@linux.alibaba.com>, rafael@kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>, lkp@intel.com,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] PCI/portdrv: Add necessary wait for disabling
+ hotplug events
+Message-ID: <Z7y2e-EJLijQsp8D@wunner.de>
+References: <20250224034500.23024-1-feng.tang@linux.alibaba.com>
+ <20250224034500.23024-3-feng.tang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
-In-Reply-To: <20250224142326.38396-1-hamzamahfooz@linux.microsoft.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 24 Feb 2025 19:12:02 +0100
-X-Gm-Features: AWEUYZlZXAqT7XF1ViotPOrIIHvgMB0pnr6HYaxTn8vUab2MyN-OHlP2BLxEzrg
-Message-ID: <CAH5fLghR0BBFtV0eGHJsuX_uBFixQT59=eaPFHcCf=agJQSOfw@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: workqueue: define built-in bh queues
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Cc: rust-for-linux@vger.kernel.org, Tejun Heo <tj@kernel.org>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Wedson Almeida Filho <walmeida@microsoft.com>, 
-	Dirk Behme <dirk.behme@gmail.com>, Konstantin Andrikopoulos <kernel@mandragore.io>, 
-	Danilo Krummrich <dakr@kernel.org>, Roland Xu <mu001999@outlook.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224034500.23024-3-feng.tang@linux.alibaba.com>
 
-On Mon, Feb 24, 2025 at 3:23=E2=80=AFPM Hamza Mahfooz
-<hamzamahfooz@linux.microsoft.com> wrote:
->
-> Provide safe getters to the system bh work queues. They will be used
-> to reimplement the Hyper-V VMBus in rust.
->
-> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+On Mon, Feb 24, 2025 at 11:44:58AM +0800, Feng Tang wrote:
+> @@ -255,8 +271,7 @@ static int get_port_device_capability(struct pci_dev *dev)
+>  		 * Disable hot-plug interrupts in case they have been enabled
+>  		 * by the BIOS and the hot-plug service driver is not loaded.
+>  		 */
+> -		pcie_capability_clear_word(dev, PCI_EXP_SLTCTL,
+> -			  PCI_EXP_SLTCTL_CCIE | PCI_EXP_SLTCTL_HPIE);
+> +		pcie_disable_hp_interrupts_early(dev);
+>  	}
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Moving the Slot Control code from pciehp to portdrv (as is done in
+patch 1 of this series) is hackish.  It should be avoided if at all
+possible.
+
+As I've already said before...
+
+https://lore.kernel.org/all/Z6HYuBDP6uvE1Sf4@wunner.de/
+
+...it seems clearing those interrupts is only necessary
+in the CONFIG_HOTPLUG_PCI_PCIE=n case.  And in that case,
+there is no second Slot Control write, so there is no delay
+to be observed.
+
+Hence the proper solution is to make the clearing of the
+interrupts conditional on: !IS_ENABLED(CONFIG_HOTPLUG_PCI_PCIE)
+
+You keep sending new versions of these patches that do not
+incorporate the feedback I provided in the above-linked e-mail.
+
+Please re-read that e-mail and verify if the solution that
+I proposed solves the problem.  That solution does not
+require moving the Slot Control code from pciehp to portdrv.
+
+Thanks,
+
+Lukas
 
