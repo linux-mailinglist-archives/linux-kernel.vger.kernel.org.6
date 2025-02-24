@@ -1,117 +1,212 @@
-Return-Path: <linux-kernel+bounces-529138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 909C6A4204E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:17:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6621FA421D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0DD3A7852
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BA7E1892541
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDDC23BD0C;
-	Mon, 24 Feb 2025 13:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fxmtDWxV"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938D5195;
-	Mon, 24 Feb 2025 13:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F653F9D2;
+	Mon, 24 Feb 2025 13:50:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11270233735
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740403043; cv=none; b=LETJ4Vu8ZGvAeENQC9qyzdUxUhbvjzKKYCOWccunNji74teKWJ8cKdFn/TdzJ0NeDoLb42OJfyaaCaAkdgXMHQ65t7YgP+GhoKYA4uk37YpnIvuk8RGrd6rTBmzmGZwy2rdqIZ9OOmjJUHWxVreA6akJPnLUh+PRiHcHe25mYKc=
+	t=1740405005; cv=none; b=XPHZaou2L52zlFOzggFGYNDB5k0XZLSzy/4eTZODZN6+2/ekh9m1y2SmjIenQoz+Pw0CmEyrS3p5ZoGBuoTgjA8I/XV/VfTPg44RiGjn/GhbLBd6ynMNjAKE1kge1l0BVSo9H3CnoM5vur2ZifVstbIJJrq1qiVGXvcc657Ov3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740403043; c=relaxed/simple;
-	bh=iJujQgrFpeR89LdUfnOUutmKKbuFiKdlZWu5H+P8p/0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aiSaz5A7rqkLzoQBLlOwJdSTRHhv3rANzxryEhzQSFKy+P+V4Bsgf/rRBNSlkqJiKNKdl5z54SRa3tQTIL83q2fPWC8PQk2SFE4hhhiVzGR3Zpy2orVZ93Knu5WgtiRORNF62/6L45b1ilrytUAGzDJzKCNcoNx8p47KDvtrtzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fxmtDWxV; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4A6D941C15;
-	Mon, 24 Feb 2025 13:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740403038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ksTMumsP+uok8AykLK2ZoU0DRsvBnKMfzttvPsXkX04=;
-	b=fxmtDWxVENVonUC0M6cX011xhIvC7sD7bgnqfraUtHc94+VeM1D9puG3DYiF9td+Qom/bj
-	5svpFk+lUN6BTRzWiysDJn9zjQa4DCzQwMihqQXoaVj50V43KjoQ9W/Xw07BUctlWNg4Jc
-	F3E7O1unVUsoGW7/XUmeFK7zhHMsZoDKMV31hO+Dcr/m34eD9TLyb1us+61Zq7d7750IQQ
-	4wUi7kEht2uBnBeQkW7qSwBxgaR8OSz3owt1/b7uoXumL99XMKYsZtXee50rCacwx4EC5H
-	J42tqD4W+z/j1hzQtw5JrktRBkYxAirE/q1T+Ny1rOi8/WOCoLEpCfExNlBcNA==
-Date: Mon, 24 Feb 2025 14:17:16 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Kory Maincent <kory.maincent@bootlin.com>, Andrew Lunn <andrew@lunn.ch>,
- Oleksij Rempel <o.rempel@pengutronix.de>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
- <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v5 09/12] net: pse-pd: pd692x0: Add support for
- controller and manager power supplies
-Message-ID: <20250224141716.01751dc4@fedora>
-In-Reply-To: <Z7xqz-Z5UhqBQXnc@shell.armlinux.org.uk>
-References: <20250218-feature_poe_port_prio-v5-0-3da486e5fd64@bootlin.com>
-	<20250218-feature_poe_port_prio-v5-9-3da486e5fd64@bootlin.com>
-	<20250224134222.358b28d8@fedora>
-	<Z7xqz-Z5UhqBQXnc@shell.armlinux.org.uk>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740405005; c=relaxed/simple;
+	bh=+a35ztu5y7ALOkVFHnxnr5nOSLFjUWAO03woQ3A8Ydc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ggtoiHEvV0GsZxRS/OoCFh2ojvK4vIpBKW+o1uZPJMS0lgURYAwapT99oLKuhALhWROQGrenmlwX0JNeUlvHagWIaeCtYzqmBGubjIPUU4dZNGJO20fbAJB80akQlVtCVTQxNscsaGVUSrKE5lfIsjOBhIBfQeW/GoKnHlOnGSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z1hCR2KX7z9sVs;
+	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id elqyD67td6jR; Mon, 24 Feb 2025 14:19:15 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z1hCR1Gpgz9sVq;
+	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 18CEC8B77C;
+	Mon, 24 Feb 2025 14:19:15 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id PKWx441hCHAv; Mon, 24 Feb 2025 14:19:14 +0100 (CET)
+Received: from [10.25.207.138] (unknown [10.25.207.138])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id CBC498B765;
+	Mon, 24 Feb 2025 14:19:14 +0100 (CET)
+Message-ID: <8f4ec6d4-2646-4a87-b3a1-edfaecff2a01@csgroup.eu>
+Date: Mon, 24 Feb 2025 14:19:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdejkeekkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthejredtredtvdenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegveeltddvveeuhefhvefhlefhkeevfedtgfeiudefffeiledttdfgfeeuhfeukeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghlohepfhgvughorhgrpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepohdrrhgvmhhpvghlsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnv
- ghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] objtool: Skip unannotated intra-function call warning
+ for bl+mflr pattern
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Sathvika Vasireddy <sv@linux.ibm.com>, jpoimboe@kernel.org,
+ peterz@infradead.org, npiggin@gmail.com, maddy@linux.ibm.com,
+ Nathan Chancellor <nathan@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ llvm@lists.linux.dev
+References: <20250219162014.10334-1-sv@linux.ibm.com>
+ <3223ec0e-c445-4bbf-ae72-276688e40908@csgroup.eu>
+ <d5ada017-1ba2-4a89-8a58-4555f09f9d97@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <d5ada017-1ba2-4a89-8a58-4555f09f9d97@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Feb 2025 12:49:19 +0000
-"Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
 
-> On Mon, Feb 24, 2025 at 01:42:22PM +0100, Maxime Chevallier wrote:
-> > On Tue, 18 Feb 2025 17:19:13 +0100
-> > Kory Maincent <kory.maincent@bootlin.com> wrote:  
-> > > diff --git a/drivers/net/pse-pd/pd692x0.c b/drivers/net/pse-pd/pd692x0.c
-> > > index 44ded2aa6fca..c9fa60b314ce 100644
-> > > --- a/drivers/net/pse-pd/pd692x0.c
-> > > +++ b/drivers/net/pse-pd/pd692x0.c
-> > > @@ -976,8 +976,10 @@ pd692x0_register_managers_regulator(struct pd692x0_priv *priv,
-> > >  	reg_name_len = strlen(dev_name(dev)) + 23;
-> > >  
-> > >  	for (i = 0; i < nmanagers; i++) {
-> > > +		static const char * const regulators[] = { "vaux5", "vaux3p3" };  
-> > 
-> > Looks like the 'static' is not needed here :)  
+
+Le 24/02/2025 à 11:33, Christophe Leroy a écrit :
 > 
-> Have you checked the compiler output before saying that?
+> 
+> Le 24/02/2025 à 08:15, Christophe Leroy a écrit :
+>>
+>>
+>> Le 19/02/2025 à 17:20, Sathvika Vasireddy a écrit :
+>>> Architectures like PowerPC use a pattern where the compiler generates a
+>>> branch-and-link (bl) instruction that targets the very next instruction,
+>>> followed by loading the link register (mflr) later. This pattern appears
+>>> in the code like:
+>>>
+>>>   bl .+4
+>>>   li r5,0
+>>>   mflr r30
+>>
+>> What compiler do you use ? Is it a very old version of GCC ?
+> 
+> Oh, I see that this is a report on a projet version of clang ? compiler: 
+> clang version 21.0.0git
+> 
+> Then I guess the bug needs to be fixed in Clang, not in the kernel.
 
-No I have not
+Well, this problem already exists on clang 18 it seems:
 
-> I've seen plenty of instances where "static" should be there but isn't,
-> leading to the compiler generating inline code to create the
-> array/struct on the stack.
+00000004 <btext_map>:
+    4:   7c 08 02 a6     mflr    r0
+    8:   94 21 ff e0     stwu    r1,-32(r1)
+    c:   93 c1 00 18     stw     r30,24(r1)
+   10:   90 01 00 24     stw     r0,36(r1)
+   14:   93 a1 00 14     stw     r29,20(r1)
+   18:   48 00 00 05     bl      1c <btext_map+0x18>
+   1c:   38 a0 00 00     li      r5,0
+   20:   7f c8 02 a6     mflr    r30
 
-Makes sense then, so it should be good here.
+While GCC generates:
 
-Thanks,
+00000418 <btext_map>:
+  418:   94 21 ff e0     stwu    r1,-32(r1)
+  41c:   7c 08 02 a6     mflr    r0
+  420:   42 9f 00 05     bcl     20,4*cr7+so,424 <btext_map+0xc>
+  424:   39 20 00 00     li      r9,0
+  428:   93 c1 00 18     stw     r30,24(r1)
+  42c:   7f c8 02 a6     mflr    r30
 
-Maxime
+So lets make the kernel tolerate it allthough it should be fixed on 
+clang at the end.
+
+I can't find any related issue in the clang issues database 
+(https://github.com/llvm/llvm-project/issues), should we open one ?
+
+Christophe
+
+> 
+>>
+>> That sequence is not correct and should never be used by modern 
+>> compilers. It should be bcl 20,31,+4 instead.
+>>
+>> All such hand writen sequences have been removed from kernel assembly, 
+>> see commit c974809a26a1 ("powerpc/vdso: Avoid link stack corruption in 
+>> __get_datapage()") for details
+>>
+>>
+>>>
+>>> Objtool currently warns about this as an "unannotated intra-function
+>>> call" because find_call_destination() fails to find any symbol at the
+>>> target offset. Add a check to skip the warning when a branch targets
+>>> the immediate next instruction in the same function.
+>>
+>> I think this should be done in arch_decode_instruction(), just set 
+>> insn-  >type to INSN_OTHER when you see bl .+4
+>>
+>> Something like:
+>>
+>> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/ 
+>> powerpc/decode.c
+>> index 53b55690f320..ca264c97ee8d 100644
+>> --- a/tools/objtool/arch/powerpc/decode.c
+>> +++ b/tools/objtool/arch/powerpc/decode.c
+>> @@ -55,7 +55,9 @@ int arch_decode_instruction(struct objtool_file 
+>> *file, const struct section *sec
+>>
+>>       switch (opcode) {
+>>       case 18: /* b[l][a] */
+>> -        if ((ins & 3) == 1) /* bl */
+>> +        if (ins == 0x48000005)    /* bl .+4 */
+>> +            typ = INSN_OTHER;
+>> +        else if ((ins & 3) == 1) /* bl */
+>>               typ = INSN_CALL;
+>>
+>>           imm = ins & 0x3fffffc;
+>>
+>>
+>>
+>>>
+>>> Reported-by: kernel test robot <lkp@intel.com>
+>>> Closes: https://lore.kernel.org/oe-kbuild-all/202502180818.XnFdv8I8- 
+>>> lkp@intel.com/
+>>> Signed-off-by: Sathvika Vasireddy <sv@linux.ibm.com>
+>>> ---
+>>>   tools/objtool/check.c | 6 ++++++
+>>>   1 file changed, 6 insertions(+)
+>>>
+>>> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+>>> index 753dbc4f8198..3f7cf2c917b5 100644
+>>> --- a/tools/objtool/check.c
+>>> +++ b/tools/objtool/check.c
+>>> @@ -1613,6 +1613,7 @@ static struct symbol 
+>>> *find_call_destination(struct section *sec, unsigned long o
+>>>    */
+>>>   static int add_call_destinations(struct objtool_file *file)
+>>>   {
+>>> +       struct instruction *next_insn;
+>>>          struct instruction *insn;
+>>>          unsigned long dest_off;
+>>>          struct symbol *dest;
+>>> @@ -1625,6 +1626,11 @@ static int add_call_destinations(struct 
+>>> objtool_file *file)
+>>>                  reloc = insn_reloc(file, insn);
+>>>                  if (!reloc) {
+>>>                          dest_off = arch_jump_destination(insn);
+>>> +
+>>> +                       next_insn = next_insn_same_func(file, insn);
+>>> +                       if (next_insn && dest_off == next_insn->offset)
+>>> +                               continue;
+>>> +
+>>>                          dest = find_call_destination(insn->sec, 
+>>> dest_off);
+>>>
+>>>                          add_call_dest(file, insn, dest, false);
+>>> -- 
+>>> 2.39.3
+>>>
+>>
+> 
+
 
