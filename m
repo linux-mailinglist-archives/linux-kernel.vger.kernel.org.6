@@ -1,219 +1,134 @@
-Return-Path: <linux-kernel+bounces-528047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-528046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33873A412D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:55:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAC82A412D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 02:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE9431717DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B78173251
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 01:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423FC19D8BE;
-	Mon, 24 Feb 2025 01:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30ACD19C54F;
+	Mon, 24 Feb 2025 01:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZhXCxxb7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="f98j+d3z"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB27A19ABA3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 01:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F07F19343B;
+	Mon, 24 Feb 2025 01:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740362065; cv=none; b=S2yv9zhiHx3eqLxZPdflO5n+haswvGXKWuLIXQVEKnoFninjLBX8E4tGAOtViyKEA4cubl32aELEyVSroS8q7uUWsSmFDjUtYuCTJHcqFpXl+63RaP8UqM1AzzuJVu5tcgsTbTwpzgl/Gbq6qHfy0cf72bQaSxQR5Y6R4jr1hFg=
+	t=1740362063; cv=none; b=D4JWn3zRLJmRR6l2ZES/DQy5ZMu9j/rR5TfCdH4cqnsa9nIimNI7RtouJFE22uXjIFz0zYUh6o0FCq7QFYaP//gVt8n81o06rJmBA10ErCjuAzJqFPPtDz8age7Yw595cFxAT6QMJSYzWu0IMLz6JAutMuwCA1ST7QQO2Ox2FiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740362065; c=relaxed/simple;
-	bh=nD32JzlTG7byCRBkwQ3uZCofLUfybht+9/Qptp6H5VA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLwuJLmwU3Td2XCFT2OZiy28FPjOgtO4z7TjaWT0oLysouGo3FJc2/lOOcqDsx7TJc/D9Mg0w2VQcaoZx/22ajXLsnvBIq7vQKIFvG7wJNIa+6D6sXUKyC6ClN8/JCQ/8LwCIRHe/ZjJmFO/xBAlzu63pa6GeZaDWjiHAqeUD2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZhXCxxb7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740362062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZFIZpi/rBPDIT2lHx7g+LDcaJiO1Zdw8ZZRV1t7ECmM=;
-	b=ZhXCxxb7Faf4KkO+d+jFB7kWc/ZcbrLzwYEyNT/TPO4b3y4KfjUl4iBPchWEtD3u3qOQN+
-	QI8vJRdprGKWTTrawqqbJjRU9aR4zN4N8sVYlh9AS/vQK0F9FB7+78AhMUWCrbnzCyvKKp
-	sM1bdDRD5jum1m7PdVkNtbZXoaeV3hw=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-255-pFTbjQtdMKyoQQdg5LXPsQ-1; Sun, 23 Feb 2025 20:54:21 -0500
-X-MC-Unique: pFTbjQtdMKyoQQdg5LXPsQ-1
-X-Mimecast-MFC-AGG-ID: pFTbjQtdMKyoQQdg5LXPsQ_1740362060
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fbfa786aa4so7889642a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Feb 2025 17:54:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740362060; x=1740966860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZFIZpi/rBPDIT2lHx7g+LDcaJiO1Zdw8ZZRV1t7ECmM=;
-        b=OaEB9+9LVHu8jKLAvEfbAMd3q/v3g++RGEKLvy6iRQMKqNgJWh3HNwfHvOkQFw1UfW
-         dYoTtKx30UR3m1M6ZO4Cg+jTplT4TLLTrRcOKcFlgEMGBCLuUszeGEjb0c+Xu57pHOvt
-         bNyiy1jzUj6o+bqkygkaX4HQ6QAqMZcxsVkZC0O6YVLL5VLSDEgCEYh0C95Vr8kDjTAw
-         N126XOr4pH0X6dqJeHPKWN4//NNLmEIxKgfAMjQbDmImOCp30GjqRNTUx9zc2LRAJSQ2
-         7Yt60dCqU4j8psID18dcIQn0fJq18HC0lL0Tp73UkjyLxL1u/2Jgpcg/VOEOmNvjHQhj
-         OQjg==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/KV8yaGM718mW8GNLjTkYd45iaXIUp/EaBfXDbPaeN3hgJ9GrXgu/v/wcG1ITEVQiX9t6Kk3WGzIyWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5f9CAWNccEtgbHl8HkXuZsEFH5ytFJ1a6Y3dYI96VgR1hhZDV
-	niTxSSVfcWNDS+XwMGL37lk1S7mgtoTWEBHfp7b8CyHRRkqfS/85L8sasPpTF571pj7pC6YzMcB
-	JoSaknSIjyyVz6QSPimaa/g66ekBG5hpAIWR/Krz+rEErFDMQPIwR3M6rum7KoXRKgUudehBd7/
-	ZBVk2ZMPOsjXRjQjSYpj3bBRbDvWbJu1NX8+T6
-X-Gm-Gg: ASbGncvGBpivHzO2soLowm8rjCnO0n0kwtBZGS4K3ZZpZifmpR44+MdFSOuS8kWI1Wt
-	BxoQkpFRWhiY07EYSyj3va4Y3GWq/VXJ64EUAKkZuYmG3xHyxaJtOh/GgQjRCcHMYUevLzNwzLw
-	==
-X-Received: by 2002:a17:90b:1dc3:b0:2ea:8aac:6ac1 with SMTP id 98e67ed59e1d1-2fce7b747ffmr19787120a91.15.1740362059932;
-        Sun, 23 Feb 2025 17:54:19 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFQz2cyjfoUI+8wed4h5euyDATeuNA1Cp7VYDQFAtg3WkovlFwcGthW17REqwEC0lBIE42LsNki3cYepbjKMGo=
-X-Received: by 2002:a17:90b:1dc3:b0:2ea:8aac:6ac1 with SMTP id
- 98e67ed59e1d1-2fce7b747ffmr19787096a91.15.1740362059520; Sun, 23 Feb 2025
- 17:54:19 -0800 (PST)
+	s=arc-20240116; t=1740362063; c=relaxed/simple;
+	bh=7BJnpcUtxMmzlgMD9aCGNNsKxWVHlZhzu0qVxox5Mis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Gn/kUbD0llPfvpiobUza1hoOFOsFVXWM2iFprAgc0VMiUGYInvHVAAZWdYeGggPCVgy38kjJbmeIDI0wUenvOKWeC5VgQMMEjst5Xtp+dlWD6IU8FPx/v4IhL+hceQlsriDq1aszVxddOosVNpRY0Zgqg+LhqV8XOAiisyFfdiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=f98j+d3z; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1740362051; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=5Mgf5q6qhRBmuSgAe02ZdEG2nF1QbJDMGd3ly1/yKPM=;
+	b=f98j+d3zAO1YP5XtijKJbGEULUCD16HAVIFrE6W4OzXimLZUGIw0oqqFKaJBJ7udXn5QCPe0NZMlTErIo7DZ1iTqlS3vWounyRIH39s5N+H3Lqo5Pqldxx3ot8+6lPE6JfmU7ve1f/EaxgCrBbixYCumPvypMYSVl3SNyPmGgQc=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQ1RZjo_1740362050 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 24 Feb 2025 09:54:11 +0800
+Message-ID: <5f25bb49-ce73-48ea-aa74-bd8972a3517d@linux.alibaba.com>
+Date: Mon, 24 Feb 2025 09:54:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250223154042.556001-1-lulu@redhat.com> <20250223154042.556001-6-lulu@redhat.com>
-In-Reply-To: <20250223154042.556001-6-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 24 Feb 2025 09:54:08 +0800
-X-Gm-Features: AWEUYZkU_xjE1Be_7zMS3YfmfEN33QEv5naO52XNn_cqkUkwbYxBzK_psj0_Usc
-Message-ID: <CACGkMEuocDajb0uANEOCLpXsi47Ga+d5K=oF12gDgLRfC2rJSA@mail.gmail.com>
-Subject: Re: [PATCH v6 5/6] vhost: Add new UAPI to support change to task mode
-To: Cindy Lu <lulu@redhat.com>
-Cc: mst@redhat.com, michael.christie@oracle.com, sgarzare@redhat.com, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] perf/dwc_pcie: fix duplicate pci_dev devices
+To: Yunhui Cui <cuiyunhui@bytedance.com>, renyu.zj@linux.alibaba.com,
+ will@kernel.org, mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220121716.50324-1-cuiyunhui@bytedance.com>
+ <20250220121716.50324-3-cuiyunhui@bytedance.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <20250220121716.50324-3-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 23, 2025 at 11:41=E2=80=AFPM Cindy Lu <lulu@redhat.com> wrote:
->
-> Add a new UAPI to enable setting the vhost device to task mode.
-> The userspace application can use VHOST_SET_INHERIT_FROM_OWNER
-> to configure the mode if necessary.
-> This setting must be applied before VHOST_SET_OWNER, as the worker
-> will be created in the VHOST_SET_OWNER function
->
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
+
+
+在 2025/2/20 20:17, Yunhui Cui 写道:
+> During platform_device_register, wrongly using struct device
+> pci_dev as platform_data caused a kmemdup copy of pci_dev. Worse
+> still, accessing the duplicated device leads to list corruption as its
+> mutex content (e.g., list, magic) remains the same as the original.
+> 
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
 > ---
->  drivers/vhost/vhost.c      | 24 ++++++++++++++++++++++--
->  include/uapi/linux/vhost.h | 18 ++++++++++++++++++
->  2 files changed, 40 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index d8c0ea118bb1..45d8f5c5bca9 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -1133,7 +1133,7 @@ void vhost_dev_reset_owner(struct vhost_dev *dev, s=
-truct vhost_iotlb *umem)
->         int i;
->
->         vhost_dev_cleanup(dev);
+>   drivers/perf/dwc_pcie_pmu.c | 18 ++++++++++++------
+>   1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index 19fa2ba8dd67..f851e070760c 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -565,9 +565,7 @@ static int dwc_pcie_register_dev(struct pci_dev *pdev)
+>   	u32 sbdf;
+>   
+>   	sbdf = (pci_domain_nr(pdev->bus) << 16) | PCI_DEVID(pdev->bus->number, pdev->devfn);
+> -	plat_dev = platform_device_register_data(NULL, "dwc_pcie_pmu", sbdf,
+> -						 pdev, sizeof(*pdev));
 > -
-> +       dev->inherit_owner =3D true;
-
-Any reason this needs to be changed under reset_owner?
-
->         dev->umem =3D umem;
->         /* We don't need VQ locks below since vhost_dev_cleanup makes sur=
-e
->          * VQs aren't running.
-> @@ -2278,15 +2278,35 @@ long vhost_dev_ioctl(struct vhost_dev *d, unsigne=
-d int ioctl, void __user *argp)
->  {
->         struct eventfd_ctx *ctx;
->         u64 p;
-> -       long r;
-> +       long r =3D 0;
->         int i, fd;
-> +       u8 inherit_owner;
->
->         /* If you are not the owner, you can become one */
->         if (ioctl =3D=3D VHOST_SET_OWNER) {
->                 r =3D vhost_dev_set_owner(d);
->                 goto done;
->         }
-> +       if (ioctl =3D=3D VHOST_FORK_FROM_OWNER) {
-> +               /*inherit_owner can only be modified before owner is set*=
-/
-> +               if (vhost_dev_has_owner(d)) {
-> +                       r =3D -EBUSY;
-> +                       goto done;
-> +               }
-> +               if (copy_from_user(&inherit_owner, argp, sizeof(u8))) {
-> +                       r =3D -EFAULT;
-> +                       goto done;
-> +               }
-> +               /* Validate the inherit_owner value, ensuring it is eithe=
-r 0 or 1 */
-
-Code explains itself, let's just drop this comment.
-
-> +               if (inherit_owner > 1) {
-> +                       r =3D -EINVAL;
-> +                       goto done;
-> +               }
+> +	plat_dev = platform_device_register_simple("dwc_pcie_pmu", sbdf, NULL, 0);
+>   	if (IS_ERR(plat_dev))
+>   		return PTR_ERR(plat_dev);
+>   
+> @@ -616,18 +614,26 @@ static struct notifier_block dwc_pcie_pmu_nb = {
+>   
+>   static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>   {
+> -	struct pci_dev *pdev = plat_dev->dev.platform_data;
+> +	struct pci_dev *pdev;
+>   	struct dwc_pcie_pmu *pcie_pmu;
+>   	char *name;
+>   	u32 sbdf;
+>   	u16 vsec;
+>   	int ret;
+>   
+> +	sbdf = plat_dev->id;
+> +	pdev = pci_get_domain_bus_and_slot(sbdf >> 16, PCI_BUS_NUM(sbdf & 0xffff),
+> +					   sbdf & 0xff);
+> +	if (!pdev) {
+> +		pr_err("No pdev found for the sbdf 0x%x\n", sbdf);
+> +		return -ENODEV;
+> +	}
 > +
-> +               d->inherit_owner =3D (bool)inherit_owner;
->
-> +               goto done;
-> +       }
->         /* You must be the owner to do anything else */
->         r =3D vhost_dev_check_owner(d);
->         if (r)
-> diff --git a/include/uapi/linux/vhost.h b/include/uapi/linux/vhost.h
-> index b95dd84eef2d..8f558b433536 100644
-> --- a/include/uapi/linux/vhost.h
-> +++ b/include/uapi/linux/vhost.h
-> @@ -235,4 +235,22 @@
->   */
->  #define VHOST_VDPA_GET_VRING_SIZE      _IOWR(VHOST_VIRTIO, 0x82,       \
->                                               struct vhost_vring_state)
-> +
-> +/**
-> + * VHOST_FORK_FROM_OWNER - Set the inherit_owner flag for the vhost devi=
-ce
-> + *
-> + * @param inherit_owner: An 8-bit value that determines the vhost thread=
- mode
-> + *
-> + * When inherit_owner is set to 1:
-> + *   - The VHOST worker threads inherit its values/checks from
-> + *     the thread that owns the VHOST device, The vhost threads will
-> + *     be counted in the nproc rlimits.
+>   	vsec = dwc_pcie_des_cap(pdev);
+>   	if (!vsec)
+>   		return -ENODEV;
+>   
+> -	sbdf = plat_dev->id;
+> +	pci_dev_put(pdev);
+>   	name = devm_kasprintf(&plat_dev->dev, GFP_KERNEL, "dwc_rootport_%x", sbdf);
+>   	if (!name)
+>   		return -ENOMEM;
+> @@ -642,7 +648,7 @@ static int dwc_pcie_pmu_probe(struct platform_device *plat_dev)
+>   	pcie_pmu->on_cpu = -1;
+>   	pcie_pmu->pmu = (struct pmu){
+>   		.name		= name,
+> -		.parent		= &pdev->dev,
+> +		.parent		= &plat_dev->dev,
+>   		.module		= THIS_MODULE,
+>   		.attr_groups	= dwc_pcie_attr_groups,
+>   		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
 
-Since this is uAPI, it's better to avoid mentioning too many
-implementation details. So I would tweak this as.
 
-"Vhost will create tasks similar to processes forked from the owner,
-inheriting all of the owner's attributes."
+LGTM. Thanks.
 
-> + *
-> + * When inherit_owner is set to 0:
-> + *   - The VHOST worker threads will use the traditional kernel thread (=
-kthread)
-> + *     implementation, which may be preferred by older userspace applica=
-tions that
-> + *     do not utilize the newer vhost_task concept.
+Reviewed-by: Shuai Xue <xueshuai@linux.alibaba.com>
 
-"Vhost will create tasks as kernel thread."
-
-> + */
-> +#define VHOST_FORK_FROM_OWNER _IOW(VHOST_VIRTIO, 0x83, __u8)
-> +
->  #endif
-> --
-> 2.45.0
->
-
-Thanks
-
+Shuai
 
