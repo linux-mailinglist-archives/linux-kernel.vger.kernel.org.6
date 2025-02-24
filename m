@@ -1,121 +1,125 @@
-Return-Path: <linux-kernel+bounces-529846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57814A42BBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:40:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A1DA42BBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 19:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85BEC1889DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F094A1885AA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 18:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCEC265633;
-	Mon, 24 Feb 2025 18:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF8C266188;
+	Mon, 24 Feb 2025 18:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="natX+9V6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfQxnxG2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6B15B211
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61AB2641E6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 18:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740422404; cv=none; b=DzxudEtLA5agddAF5dVeBjdufi+s/clqO6XOWWedJaAME/z/7p1iLXiU7jLZb2A8IyvxAISeEQ33y2VckY4PjW7kbzHWJ9w9+4vpVbgfoBzezB4mUctrKJQ8MWdFOi0CRJB2EmLZRG7O8eX0nW/Op4wN+Itsuq4XfaR2TuIVPUo=
+	t=1740422423; cv=none; b=Cky9MA/Yk2SQQB/BHkIFn0/lr31xL/s8dTfeJHlphqaAyseld2MbKH7iOsXhxpevMssj4QA2pfFPEI+Hi+QDSDsSaVOxzOxcW3RAH7tjHcXXnmnm3S5r4o39idvRd20a9gA2/wUsQTBJTbK8r6s5VbVjyGuAewCbVPEIVRTXxys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740422404; c=relaxed/simple;
-	bh=wc0zdtocactArcWWNc92vfeiMvOsfeZMyV+3V2n7pJk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r70NXgBlPwjzeka8A0uE9z75R/2VC+iUtm/JVrUw7Q4SGwDd49MZXM6WBrn8OiHwSQ2hRXbPNuRnM40+mZCWtD1TTP51e+m8swxXpWwNKhPqV1VLMvaZkP0/pHwtBh9lFwu8H6V5QD7OrozdsoFEQ0aufybMBe+MZN8vqpl0TDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=natX+9V6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 3A974C4CEEC;
-	Mon, 24 Feb 2025 18:40:04 +0000 (UTC)
+	s=arc-20240116; t=1740422423; c=relaxed/simple;
+	bh=W/4TB0pejHdesPEYcGw7u9G1KUlaFKUiog0H0ebCgZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7YqcZWBDsAFq84J8HdzsfYCuKT1l28aGDzE6HBSn/FSSooSUUF4PAQaEWmupMvJlqMj4QwBnmOaT/AoNMy9xToJkRisMQWJqEf5b2j45XtvKmJiRZ8lPNnCoaadatRo3zJPnO3yRRvT1EZQ9n1DQ3ES+Zg28NCD/gamMlev18Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfQxnxG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4966EC4CED6;
+	Mon, 24 Feb 2025 18:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740422404;
-	bh=wc0zdtocactArcWWNc92vfeiMvOsfeZMyV+3V2n7pJk=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=natX+9V6g3dzYX8BdqnDRNYENMGXPf3XhHxynjvYfAYdfco1UYfculpHV8mfIWnmU
-	 JXkovay7hTO7i+pbGC5OyNX0QzuJyY/ME8ao6FVgkUR6SmiJnX+U+70578b6JLUBBz
-	 C0ZBGGn5KwzZOgaY5ejChQ+SCavaIb+glXRBkAgkg4zSdqfMD2CCkyA0PquCDZAwvR
-	 P7c7SQpbvDpUQ17fC5Co0lrg5XGs6sfW504MGHO8/whnZ25onkAb2Hvp9gGaefqpuY
-	 Zg4+ETRvYjS/4/jvcMSXd6C6CjwF/6tvuIz4bYzLSzXvBX1Pf7ZVtxv6Ry24hj+qQ5
-	 dQRmTtUiFz6RA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B342C021BB;
-	Mon, 24 Feb 2025 18:40:04 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Mon, 24 Feb 2025 12:39:48 -0600
-Subject: [PATCH] mfd: max77620: Allow building as a module
+	s=k20201202; t=1740422423;
+	bh=W/4TB0pejHdesPEYcGw7u9G1KUlaFKUiog0H0ebCgZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PfQxnxG24sBcRNpkmE9jJOV0VHHLnAJuqY1IqaHBobd2C89p4o7xcDVJR2vzU7sPz
+	 gO7KSCyBga9aWmwMTwDz1jpLA5ktMAjhWvYsMvQHMAxREiXCp1/q7Y3mVNvT135xu6
+	 P3NhsooPfOd2tyx1Cml545qQoxRP7s3VWaGMIot8P9FLoVQgIKadBHD2BCskVwGLYX
+	 WZyioBs5RC8lZ6R4j4ZmGDhGV7vpEHkXeDBObtGltAvPinAn9Y5stzuTffG2BsS9zj
+	 HTbCm9z1TEeSh+z9A/0L0ktC1FLFbaTRa1/G1jsI6eQcp7Y9nXYWZnJkI5/OM1M3pV
+	 VVLYZ4TYLAVvA==
+Date: Mon, 24 Feb 2025 10:40:19 -0800
+From: Kees Cook <kees@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Brian Mak <makb@juniper.net>,
+	Arnd Bergmann <arnd@arndb.de>, David Hildenbrand <david@redhat.com>,
+	Peter Xu <peterx@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Steve Sistare <steven.sistare@oracle.com>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Yang Shi <yang@os.amperecomputing.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: unhide get_dump_page() function
+Message-ID: <202502241038.A4A1ED25A1@keescook>
+References: <20250224151225.3637934-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250224-max77620-module-v1-1-96eb22e9f266@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAPS8vGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyMT3dzECnNzMyMD3dz8lNKcVF0Lk6TUVANDyySDREsloK6CotS0zAq
- widGxtbUANxYYmmEAAAA=
-X-Change-ID: 20250224-max77620-module-84bee019b0a9
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740422403; l=1436;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=+r4q7w35q/PUW+4DTP800ohxi4hzqBWXk37ruWNqFeU=;
- b=arAMSc8xvewZ6BcSWy7gonvoCNgyjMMMvOf/TwbKy6sRhU+0vTk7Rp5wkXOsVAk/5auLjFwZ7
- xOpOtRxttmmBlNNa6LPb808YyA/UbHgLmcgiF3YiDyOzpPhGxP7V7+u
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224151225.3637934-1-arnd@kernel.org>
 
-From: Aaron Kling <webgeek1234@gmail.com>
+On Mon, Feb 24, 2025 at 04:12:21PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The definition of get_dump_page() is guarded by CONFIG_ELF_CORE, but
+> the caller has now moved into a function that is built based on
+> CONFIG_COREDUMP, which leads to a possible link failure:
+> 
+> ld.lld-21: error: undefined symbol: get_dump_page
+> >>> referenced by coredump.c
+> >>>               fs/coredump.o:(dump_vma_snapshot) in archive vmlinux.a
+> 
+> Change the #ifdef block around the definition to match the caller.
+> In practice there is very little difference, as setting COREDUMP
+> but not ELF_CORE is not useful.
+> 
+> Fixes: ff41385709f0 ("coredump: Only sort VMAs when truncating or core_sort_vma sysctl is set")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-The driver works fine as a module, so allowing building as such.
+Thanks for this! I think I'm going to split up ff41385709f0 -- between
+this #ifdef and the recent prototype changes, it's going to be not a
+great backport, so I'll pick this up too. I expect I'll have a simple
+sysctl fix for -rc5 and then the rest in -next.
 
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
----
- drivers/mfd/Kconfig    | 2 +-
- drivers/mfd/max77620.c | 4 ++++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+-Kees
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 6b0682af6e32b434ee3e99940005a6cce14ff55c..922704bd0ce3fe6c094da6b1528b72fedcfa1677 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -858,7 +858,7 @@ config MFD_MAX77541
- 	  There are regulators and adc.
- 
- config MFD_MAX77620
--	bool "Maxim Semiconductor MAX77620 and MAX20024 PMIC Support"
-+	tristate "Maxim Semiconductor MAX77620 and MAX20024 PMIC Support"
- 	depends on I2C=y
- 	depends on OF
- 	select MFD_CORE
-diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
-index 89b30ef91f4f112b06e0e055e75e480fab176f8f..10264fce95a4a37f22f205edbf364fa6783e35dd 100644
---- a/drivers/mfd/max77620.c
-+++ b/drivers/mfd/max77620.c
-@@ -700,3 +700,7 @@ static struct i2c_driver max77620_driver = {
- 	.id_table = max77620_id,
- };
- builtin_i2c_driver(max77620_driver);
-+
-+MODULE_DESCRIPTION("Maxim Semiconductor MAX77620 and MAX20024 PMIC Support");
-+MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
-+MODULE_LICENSE("GPL");
+> ---
+>  mm/gup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/gup.c b/mm/gup.c
+> index d846c0ce41d6..15d6d7b5df1d 100644
+> --- a/mm/gup.c
+> +++ b/mm/gup.c
+> @@ -2266,7 +2266,7 @@ EXPORT_SYMBOL(fault_in_readable);
+>   *
+>   * Called without mmap_lock (takes and releases the mmap_lock by itself).
+>   */
+> -#ifdef CONFIG_ELF_CORE
+> +#ifdef CONFIG_COREDUMP
+>  struct page *get_dump_page(unsigned long addr, int *locked)
+>  {
+>  	struct page *page;
+> @@ -2276,7 +2276,7 @@ struct page *get_dump_page(unsigned long addr, int *locked)
+>  				      FOLL_FORCE | FOLL_DUMP | FOLL_GET);
+>  	return (ret == 1) ? page : NULL;
+>  }
+> -#endif /* CONFIG_ELF_CORE */
+> +#endif /* CONFIG_COREDUMP */
+>  
+>  #ifdef CONFIG_MIGRATION
+>  
+> -- 
+> 2.39.5
+> 
 
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250224-max77620-module-84bee019b0a9
-
-Best regards,
 -- 
-Aaron Kling <webgeek1234@gmail.com>
-
-
+Kees Cook
 
