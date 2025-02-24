@@ -1,202 +1,116 @@
-Return-Path: <linux-kernel+bounces-530083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032E6A42E9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:08:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDD7FA42E9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 22:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47AB179C6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1B6C179E7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D341957E4;
-	Mon, 24 Feb 2025 21:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3262F1A2391;
+	Mon, 24 Feb 2025 21:08:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jIdJHDqg"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="4F3IGbwj"
+Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE98218FDB1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 21:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AFD19924D;
+	Mon, 24 Feb 2025 21:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740431304; cv=none; b=HCM7SRrQ3LseQv7TwF7bjLFo/9DF5tjdDsAvOwibkfk8an3N32KQKW5JQSGFGVLxad6BvfeatFQ3Lv9/yzcW0JdswjXZbm5gwOaQD/foL7pzjpaYCl7ZSUlLbRNYPZTKNMF2VDKM8F1D48i9zK7hCx4E+kRaWkjDeTxwP3hmiPw=
+	t=1740431309; cv=none; b=msSsmcxTCWZG0o8wZ5O/BAC1br/r3LM5FroSi4vIlv+Yfcoo1Z3e4SlLVkVHMOrvh60ZldUqvl9k1Bm/Wvs1GbdwwL6Vv3clFypzIa8SuNhu3usZoYPsbvFl28H0L/9Sf5L9iBtgEu/rQVbsfYx/lAR/htdfLzTH3GzfMKoZ2uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740431304; c=relaxed/simple;
-	bh=S+J4+Y3K6hYWfP2jr6yZLfknW9XR99HY0StPBmeTumU=;
+	s=arc-20240116; t=1740431309; c=relaxed/simple;
+	bh=nSvmVEu+bDwLuDudx6Cxjq3+LrMpLO93avt6AWrQfTQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=YVU/7mPSihgVsX9Qv9dwJgju0JRom/CZmHqyLYgi/sy4w6bXuzR60i/2YaoFQpEL8N1vCHy9cKMVSu0q62NnohlVYH/uBZj24sVy/xdXxwX9YS7Kr9ckFkPU5Sti/TpbPHsuGvj4eqfkeJfspHWn9JnxyWL55ac5qMvtZ1r/SVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jIdJHDqg; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f409ca7c14so100292b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:08:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740431302; x=1741036102; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LqwUM7z/MlyrwkKgNvJiV6cUle8dIMYryU69NwoTdgI=;
-        b=jIdJHDqgktQl8LCWZfVCpEFpXRLbx9VSub2P/saZGbhoKVu9634Os+0hNgETnmAlsT
-         Z/6yG1uTh+XtqTc5EEnt/pG3YVqQ1ZN49SCSFQY1ZI181oiPPXNUm2uOVlH2yfTYe6z8
-         ZKoG4hQPQgLyFqw6czUYA1kS2xLItYBP6rwZk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740431302; x=1741036102;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LqwUM7z/MlyrwkKgNvJiV6cUle8dIMYryU69NwoTdgI=;
-        b=FCZP4WLkxa8d+8E6dhZRWeQREEWJQRrc2wCzBPSi5oc9TrtbZzJkqvz01VvebdXMFf
-         k1oTlWh8XVh6EKUAqEL+eMJPJ6hSc6jLwTPQSRTUXzrZhs0BPB6+ykmhn8A71VECNVmr
-         iYJ0+kHENLGgsZPjln6mTKBlTBiNyy17NxtwoXYXEyRwYPWBpAUn5oBkvfqkCdpjhM53
-         KnjygdRkkJn4aVbGpA1Mi7T3PtEh7QdKEzll1VWWXOeQAISEsfRL2ae8z3bG9Rpq5W69
-         OdGTSf1HkLqNSFKZ4oOTjQJdAHyqKYE6YUXIr5yQ6EjBZPNsH1/pW5jk+5cn1REerVqZ
-         R+Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCUU0C/L4iPkoT7O4yNJnwCv/AjSF83Q4nyUnjtf9NQwJhcsRWsx8jkf2ckMCGlvCF4pPduwdFN8/XswzYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3lUZSFLreaoL9BMxFTIYfrvAA30IDlVjTOh5PMPaerM7VkKCl
-	tqJLfQLQ8rnaP2xd/OujLvMnYpm6ZgPW9Lx3jBy/Kol+TNbpNgwUwywKoiLIps14Zz8aSfOider
-	62rmwNLqCFFVpVpYMnGfUsdPdLLoKQP4vM/m4
-X-Gm-Gg: ASbGncvzPU2iwVoiP82RR8VmYORaOChjICouEzGyseuEDiO8JbzQghIns2VRHw95mzX
-	/v+mKcgs55GN7KHveKJVJ2t0gVEfsiKZoWy7KcxSL9g0+bdlujQl3PWgnqZZd4Mnt6CkUb9GfX7
-	BevzY5+BIxx2XN0qxy8aegwEWOzMsS4q50r8N5
-X-Google-Smtp-Source: AGHT+IEyLdD3QO29qr9sIDUjsytjn1KwgsoakcrCoJ1Ge7lYHKGmGvOWBLOc9ojbyxwW1LykKldxYU6ZYSJ+uRm5UBo=
-X-Received: by 2002:a05:6808:1598:b0:3f3:ffde:7718 with SMTP id
- 5614622812f47-3f42479a661mr4694342b6e.4.1740431301718; Mon, 24 Feb 2025
- 13:08:21 -0800 (PST)
+	 To:Cc:Content-Type; b=GeFeSZfOWT9dx1nyB6yBezQPv505BiUMcK1OpEXYwyd2Q3DzQm79Dkh+fRR3VZxFApnBrQZT+THDFhGjy1yCd8ekdXdmOVnQxZdaYnOoq56272ds/plOnCSy95NhlTSDEyDNJvBXn3r81NLKGDdtgQOzV0j4Hiysa5xNPWVgV2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=4F3IGbwj; arc=none smtp.client-ip=185.138.42.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux1587.grserver.gr (Postfix) with ESMTPSA id 3E6952E09390;
+	Mon, 24 Feb 2025 23:08:23 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1740431303;
+	bh=nSvmVEu+bDwLuDudx6Cxjq3+LrMpLO93avt6AWrQfTQ=;
+	h=Received:From:Subject:To;
+	b=4F3IGbwjkPVCyWeK3Xv+8y4hPQuaWQ87Ne1gkAZGi8xNtaPi/huCi+w9BLuqqsBG8
+	 LveVAKx+6H/LwYloBUSOGrJUpK0PHFuA5K+/LOOUkTdWyA+XeeFRHXjrN89CYqDWxe
+	 tzbnY8A9m//sgtn+5YjeF+l2JuLJcye6tU4JzsR0=
+Authentication-Results: linux1587.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-307325f2436so47489221fa.0;
+        Mon, 24 Feb 2025 13:08:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVJ6NVPuSkdg7LaQgDqdqztNgOhR8lVKpY7rkrUoB11z8wtWjqd1YnXIUwoghLCrb5nKqVvxrpyLXWpqbO5@vger.kernel.org,
+ AJvYcCWRGRVfXYxYGoKcKNtc2fomkckLnbPWzpNWQvO9w5H0tZnmvQy2ZKv3oPL/EL0ADD5ApfVRqJJ0bne66YN4YgQHmzGDhg==@vger.kernel.org,
+ AJvYcCXozEDSVOUDcxAmyLdM/XUX6bf4yNAz/l3jC3PSj0uDpswIARzsiIQzt63F7qrxqkms5BoTzQM1o820@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7mydXZD00NEiOyk25hJ6b+LqDjwua5VHxHWuGmZJKgwz7+5EJ
+	w7seHiU9qCo+uT6M7C1D9vzUZ65sxeWL8ff/v544fzflDKFyLXQfMnYA0PHq9RVFE6FoAtvpORr
+	lN1G7vKj+0t8yBoicjSpgAvYeflo=
+X-Google-Smtp-Source: 
+ AGHT+IGS5wH864ao53flqW1v1Gh3xCaAlLPeoPS3aHIL1uGJGeCUpz69ACzEewmRUqikFS22FDXEW/plBaJ6vCDdjaQ=
+X-Received: by 2002:a05:651c:541:b0:308:eb58:6580 with SMTP id
+ 38308e7fff4ca-30a599b9e2amr63625081fa.33.1740431302369; Mon, 24 Feb 2025
+ 13:08:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224174513.3600914-1-jeffxu@google.com> <20250224174513.3600914-2-jeffxu@google.com>
- <443992d7-f694-4e46-b120-545350a5d598@intel.com> <CABi2SkVKhjShryG0K-NSjjBvGs0UOVsY-6MQVOuQCkfuph5K8Q@mail.gmail.com>
- <3nxcy7zshqxmjia7y6cyajeoclcxizkrhhsitji5ujbafbvhlu@7hqs6uodor56>
- <CABi2SkV-RwWjfXZfK4tHzQWG=dCJU7CRGmthSA8vqhHcbeCiQw@mail.gmail.com>
- <202502241123.D398A24@keescook> <CABi2SkXLdL37LxLuo+W=rUOrBKfMbxgkkR+s3TqnnS-eAQbakg@mail.gmail.com>
- <krwnfnuhjmes4al5pquxax2khy7laurjnvvzntsrk7xpenoc7m@k24fekzllylc>
-In-Reply-To: <krwnfnuhjmes4al5pquxax2khy7laurjnvvzntsrk7xpenoc7m@k24fekzllylc>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Mon, 24 Feb 2025 13:08:10 -0800
-X-Gm-Features: AWEUYZkeA9uH_WH28esMZG2-V_Fo4Bt7LyXoWGFWIzH4LgxhwR4_Q7Am0Wxgglw
-Message-ID: <CABi2SkVTm4m=rUseaQUnJR7CQVuoULSmPB7ho8vKdmDY-pDdnQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/7] mseal, system mappings: kernel config and header change
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jeff Xu <jeffxu@chromium.org>, 
-	Kees Cook <kees@kernel.org>, Dave Hansen <dave.hansen@intel.com>, akpm@linux-foundation.org, 
-	jannh@google.com, torvalds@linux-foundation.org, vbabka@suse.cz, 
-	lorenzo.stoakes@oracle.com, adhemerval.zanella@linaro.org, oleg@redhat.com, 
-	avagin@gmail.com, benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
+References: <20250224195059.10185-1-lkml@antheas.dev>
+ <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+In-Reply-To: <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Mon, 24 Feb 2025 22:08:11 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwF9rB85zvp4efqVMTu+4B98R7WSzyE_xCh-TfzbMUPBGQ@mail.gmail.com>
+X-Gm-Features: AWEUYZl_KzJWCjDBxqyCylnrxhuVzAtguWJ1WiB14Uo4qhOdjC_014pumR1Ni9A
+Message-ID: 
+ <CAGwozwF9rB85zvp4efqVMTu+4B98R7WSzyE_xCh-TfzbMUPBGQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
+ multiple handlers
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: "Limonciello, Mario" <mario.limonciello@amd.com>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Len Brown <lenb@kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	linux-kernel@vger.kernel.org,
+	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
+ me@kylegospodneti.ch
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <174043130372.6467.11297118136257577281@linux1587.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
+X-Virus-Status: Clean
 
-On Mon, Feb 24, 2025 at 12:13=E2=80=AFPM Liam R. Howlett
-<Liam.Howlett@oracle.com> wrote:
->
-> * Jeff Xu <jeffxu@chromium.org> [250224 14:42]:
-> > On Mon, Feb 24, 2025 at 11:25=E2=80=AFAM Kees Cook <kees@kernel.org> wr=
-ote:
-> > >
-> > > On Mon, Feb 24, 2025 at 11:10:22AM -0800, Jeff Xu wrote:
-> > > > On Mon, Feb 24, 2025 at 11:03=E2=80=AFAM Liam R. Howlett
-> > > > <Liam.Howlett@oracle.com> wrote:
-> > > > >
-> > > > > * Jeff Xu <jeffxu@chromium.org> [250224 13:44]:
-> > > > > > On Mon, Feb 24, 2025 at 10:21=E2=80=AFAM Dave Hansen <dave.hans=
-en@intel.com> wrote:
-> > > > > > >
-> > > > > > > On 2/24/25 09:45, jeffxu@chromium.org wrote:
-> > > > > > > > +/*
-> > > > > > > > + * mseal of userspace process's system mappings.
-> > > > > > > > + */
-> > > > > > > > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> > > > > > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_SEALED
-> > > > > > > > +#else
-> > > > > > > > +#define MSEAL_SYSTEM_MAPPINGS_VM_FLAG        VM_NONE
-> > > > > > > > +#endif
-> > > > > > >
-> > > > > > > This ends up looking pretty wonky in practice:
-> > > > > > >
-> > > > > > > > +     vm_flags =3D VM_READ|VM_MAYREAD|VM_IO|VM_DONTDUMP|VM_=
-PFNMAP;
-> > > > > > > > +     vm_flags |=3D MSEAL_SYSTEM_MAPPINGS_VM_FLAG;
-> > > > > > >
-> > > > > > > because MSEAL_SYSTEM_MAPPINGS_VM_FLAG is so much different fr=
-om the
-> > > > > > > other ones.
-> > > > > > >
-> > > > > > > Would it really hurt to have
-> > > > > > >
-> > > > > > >  #ifdef CONFIG_64BIT
-> > > > > > >  /* VM is sealed, in vm_flags */
-> > > > > > >  #define VM_SEALED       _BITUL(63)
-> > > > > > > +#else
-> > > > > > > +#define VM_SEALED       VM_NONE
-> > > > > > >  #endif
-> > > > > > >
-> > > > > > > ?
-> > > > > > >
-> > > > > > VM_SEALED isn't defined in 32-bit systems, and mseal.c isn't pa=
-rt of
-> > > > > > the build. This is intentional. Any 32-bit code trying to use t=
-he
-> > > > > > sealing function or the VM_SEALED flag will immediately fail
-> > > > > > compilation. This makes it easier to identify incorrect usage.
-> > > > > >
-> > > > >
-> > > > > The reason that two #defines are needed is because you can have m=
-seal
-> > > > > enabled while not sealing system mappings, so for this to be clea=
-n we
-> > > > > need two defines.
-> > > > >
-> > > > > However MSEAL_SYSTEM_MAPPINGS_VM_FLAG, is _way_ too long, in my o=
-pinion.
-> > > > > Keeping with "VM_SEALED" I'd suggest "VM_SYSTEM_SEALED".
-> > > > >
-> > > > How about MSEAL_SYSTME_MAPPINGS as Kees suggested ?
-> > > >
-> > > > The VM_SYSTEM_SEALED doesn't have the MSEAL key or the MAPPING, so =
-it
-> > > > might take longer for the new reader to understand what it is.
-> > >
-> > > I think to address Dave's concern, it should start with "VM_". We use
-> > > "SEAL" already with VM_SEALED, so the "M" in "MSEAL" may be redundant=
-,
-> > > and to clarify the system mapping, how avout VM_SEAL_SYSMAP  ? That
-> > > capture's, hopefully, Dave, Liam, and your thoughts about the naming?
-> > >
-> > Liam had a comment in the previous version, asking everything related
-> > with mseal() to have the MSEAL keyword, that is why KCONFIG change has
-> > MSEAL.
-> >
-> > How about VM_MSEAL_SYSMAP ?
->
-> I don't recall if it was this set or previous ones, but seal is becoming
-> overloaded and having mseal would have been good for this one.
->
-> VM_MSEAL does gain more greping, but since we have VM_SEALED,
-> VM_SEAL_SYSMAP is going to show up on VM_SEAL grep, but not VM_SEALED
-> greps.  Maybe VM_SEALED_SYSMAP would be better for searching.
->
-OK, I will change to VM_SEALED_SYSMAP
+Hi Mark,
+My primary focus with this patch series is a bug fix. I imported
+Mario's series into our Bazzite 6.13 kernel, only to find it broke
+power handling on asus laptops, and it will also do the same on both
+legion gos, once a driver exists for those.
 
--Jeff
+And 6.14rc4 is the same. This needs to be fixed before it ships.
 
-> Thanks,
-> Liam
->
->
+This was my attempt at it. I considered other options, like making
+amd-pmf implement all profiles. But this seems like too dirty for me.
+So I settled at this.
+
+The primary TDP handler of a device is the WMI handler. When that
+exists, if one of its options is hidden, that is a regression. It does
+not matter the option. If we want amd-pmf to be able to load as a
+secondary handler (where the point of that has not been proven to me),
+then it (or any other secondary handler) cannot obscure the options of
+the primary platform. So it either has to implement all of them, or do
+something like this, where it is in between.
+
+Antheas
 
