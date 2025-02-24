@@ -1,90 +1,285 @@
-Return-Path: <linux-kernel+bounces-529124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F04A42001
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:11:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33286A42006
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6321647C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C604164786
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1122323BD0D;
-	Mon, 24 Feb 2025 13:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0A023BD0E;
+	Mon, 24 Feb 2025 13:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ctvpDCg5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c94feaQF"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6944823BCF1;
-	Mon, 24 Feb 2025 13:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A1F23BCF6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402682; cv=none; b=jWNa6PW60d8+LvWqS2oh1KhcZ8F+2Mr3VuDqjA69c2RtlGJglgOiggt9tPZFqb9FcL2n6rdVCvnpUbRdgUska2nWqY4QKK65K0+crCX8/NcAGS9rAnqTI51sv5TP3WG/lSeC7T/ci7ryihpvRlAuOrkxwVmlczuMBODpvMneXdE=
+	t=1740402744; cv=none; b=LaOo7T7A1JrKSjAPb0H2F0wYa00daqwl7qF7ExLvjkCCJb4BvKbiOM6OLQU0kk0A80om5n96kLf0o6qL9yLFXKvWdj/XOOL9yOm37BgDgvoLpHy6qJL1Kw0VtelcGxIiEVF4+ZsR2DbnIrodNynsspzhVksO2uok6KILmlj+FCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402682; c=relaxed/simple;
-	bh=LYdAXzO8SbVG83HH+nxA4TnZc//nwyYpcvy5mTdmdKE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q7Vu7ipZrJ9e7F3Fjf0thRFnQvDNfRw9qUPJkJbYZovhqs6zbm58UpAwKN/TMI4hhkQtTSeaGp7VFsSRcqDGqy4n8RC3M7rYKoK8dz/wxmxuaIRdSJSGlNJDRsVTWzFaWqsvwBht0nYU0MttiYk2q21gCYhq+YsX72DYbIgnaJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ctvpDCg5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2F1C4CED6;
-	Mon, 24 Feb 2025 13:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740402682;
-	bh=LYdAXzO8SbVG83HH+nxA4TnZc//nwyYpcvy5mTdmdKE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ctvpDCg5YqsORrsRWCcvWjHj1c9z3quO4ellroNdFN8RHnhvnjXwKZu5pu+HyFRo0
-	 6xnq9lXzwNJgW8LUmQWA94VKHw/tZ2Y8zPEo1T6p/xgtTb2ZOEjKdbjKrbmSe1Zgvl
-	 YCEImmXaYHj3MB/pVu5JUgecqIniz4c40Y/W1CXrR3guezSPMOqdJj40h3FH1/CBBm
-	 LFRdRqu85znYx/Ag+Zuh0jANmqRuE3TPKiki+kRSwMBmboBR6VwJ4JOK/QqMo147Vr
-	 VeFHhD2f6xE4PIcyQOzPPnNJDcJnQRI1JJXowGnWAqEtEka9BkHe0CSKYKYjOdXD6C
-	 G9/XbNR7oUBcA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Abdiel Janulgue" <abdiel.janulgue@gmail.com>
-Cc: <aliceryhl@google.com>,  <dakr@kernel.org>,  <robin.murphy@arm.com>,
-  <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
-  "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno
- Lossin" <benno.lossin@proton.me>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Valentin Obst" <kernel@valentinobst.de>,
-  <linux-kernel@vger.kernel.org>,  "Christoph Hellwig" <hch@lst.de>,
-  "Marek Szyprowski" <m.szyprowski@samsung.com>,  <airlied@redhat.com>,
-  <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 1/3] rust: error: Add EOVERFLOW
-In-Reply-To: <20250224115007.2072043-2-abdiel.janulgue@gmail.com> (Abdiel
-	Janulgue's message of "Mon, 24 Feb 2025 13:49:05 +0200")
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
-	<L-IMnzWNMQGcB6Qt5mnpFrsDdcoiVceLvT66VTWw_ZEbn1eD-t7bRJz5qFocbRfIDXJIiVKEeCVM-EbOZgAM7A==@protonmail.internalid>
-	<20250224115007.2072043-2-abdiel.janulgue@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 24 Feb 2025 14:11:10 +0100
-Message-ID: <87a5ab1o9d.fsf@kernel.org>
+	s=arc-20240116; t=1740402744; c=relaxed/simple;
+	bh=4JJCr+hzIcHgx1zZ7pN1MHsI83h/HIKz+kxxuG1tyKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fdHgy7LWRNsfrN3RVJ8A8OnSN2B5g48yfFnvWBc42bY3XfjIPXir7OwfMtBCbhF3UI1sw2k3ltYVeTFMvL9Kv/PP5+3AgAPmVZfAmlyA0UcMusCL456EJwBK0VA2Q/A6THwhB+zK/6S6Iv1v3azdOy+H14y4VmNfcqBZz3fIFno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c94feaQF; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220ecbdb4c2so3709735ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:12:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740402742; x=1741007542; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6xivWvjfsx4I7sb2/boiuXVtJjYaejU6ywHPFZw0QHc=;
+        b=c94feaQFf8WwknSRZs0SmPCTm/VOOOW9D+Ic8JV/6P4SnqGxc4FZG8fgj+dH0WaBmh
+         2k/gYF1a++k8zp4qcsQBVZy24KSbMZLAvaMRQugEoNtdlNjCD3zsYQ6A1zr1wHKCis6r
+         z5TprjXkctYCeafDE3CUGPCGdfW11DFH/CX1CRpTLmJ2HQVjnS1eSK+1AajN60wqXLyD
+         M9nwImEBgheuYIUzcLAR+nX3kuvIaOhtbTeCuj8puWTxnTCukUfc83SjbnCk4vWOGGcH
+         xHaiFugFyL4QSWdBQFw6uCCF0TCAHUgfLrQAuLlfEutoDpVB2ifhUSSjRryeYu14lTMI
+         HMNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740402742; x=1741007542;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6xivWvjfsx4I7sb2/boiuXVtJjYaejU6ywHPFZw0QHc=;
+        b=KAwfmZogKUzzYBMBXH/bLZwZ+UzHwsNeFucNt8dXCdyR0cl3pWnDE2NunSVK0/S4xs
+         l9ris+Qgz01FDRqBQZS/DXyWjTqHb1bntBjQ5TCz6ZjRnhWRPTV12n4gdmete7hzh3K6
+         ZnRYJON8BSD+4Kkmtrm1ddLEZZe1fObCNu4zluZjSYZjMb/D9COZxyOyKoRSh/XW2XAO
+         CPCAFTXgCyrAn0B2eFKbarHlW9yCUlqtQ04MQoam0uTxxWE3BO2huOf6kv9IPsehizPc
+         LbCi6FlrO+TvAbFdJ2Hiv87jphNEK2EwZB39lSpoMOgAYRA5Oc9vuccKEfeEFaABr+UY
+         Zc0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWZlKNONAaTABECRK2uhN+rCER13PEIvuNjPEpg4iQeRfm3sWJWOdTWMrVaiY2Ltzzh1CsEe1HaPzFlVI4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdiBu7LE2+WM/YRStIpgEOi9KlhPY75OyeWwBl/tRUBTs4Anr7
+	FiL5GfbAlQFeeKrfMy8TdMK+lZpuUGYPHDuMRJ3c0QfxsvOapB/MDolESrUoKA==
+X-Gm-Gg: ASbGncva/fomg3ZHKdp5QivYgC6ZbTu64ukHGbxmHbDnCqV8FB8n9Bin/tH7/e4vPcp
+	VC9n5Vkk+6MmmGB9RyLzrB62btI3e0Kq2ALQz3dHAEcoEu8zQ4n3skdrRFQ9kzDdeFNS0TYgSHb
+	Ebh3Q3TxKbG4+DWRv9xfy2j7yZkzpLWqGh9xeUrmXEHu1MJqB9wR3xpT33h4rgsp/SLh76aqgWs
+	PzJwy9gxMO2VYEpDctO+S766kqHTZ7aE/A1s40HK1R1ynTtrehNunIV1Vz5ccuAf+645XTTNKWs
+	KPJP8CTmA+kVSPFdRze4GH9fRF0GwCACA9n5
+X-Google-Smtp-Source: AGHT+IH66tyyeq6a6srxXBnhCf5MfUJnzgVf0ncZyII3wiL8V1nQJMP3kqGHxIeAsJESjLWajBiwzQ==
+X-Received: by 2002:a05:6a00:4b54:b0:732:6217:8c69 with SMTP id d2e1a72fcca58-73426c94ad6mr24845216b3a.3.1740402741835;
+        Mon, 24 Feb 2025 05:12:21 -0800 (PST)
+Received: from thinkpad ([36.255.17.202])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adcc6fb20f8sm16951931a12.37.2025.02.24.05.12.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 05:12:21 -0800 (PST)
+Date: Mon, 24 Feb 2025 18:42:15 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>
+Subject: Re: [PATCH v14 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20250224131215.slcrh3czyl27zhya@thinkpad>
+References: <20250224073117.767210-1-thippeswamy.havalige@amd.com>
+ <20250224073117.767210-4-thippeswamy.havalige@amd.com>
+ <20250224093024.q4vx2lygrc2swu3h@thinkpad>
+ <SN7PR12MB720127D150CABEECA4A436358BC02@SN7PR12MB7201.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN7PR12MB720127D150CABEECA4A436358BC02@SN7PR12MB7201.namprd12.prod.outlook.com>
 
-"Abdiel Janulgue" <abdiel.janulgue@gmail.com> writes:
+On Mon, Feb 24, 2025 at 11:05:19AM +0000, Havalige, Thippeswamy wrote:
 
-> Trivial addition for missing EOVERFLOW error. This is used by a
-> subsequent patch that might require returning EOVERFLOW as a result
-> of `checked_mul`.
->
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+[...]
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> > +#define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
+> > +#define AMD_MDB_TLP_IR_MASK_MISC		0x4C4
+> > +#define AMD_MDB_TLP_IR_ENABLE_MISC		0x4C8
+> > +#define AMD_MDB_TLP_IR_DISABLE_MISC		0x4CC
+> > +
+> > +#define AMD_MDB_TLP_PCIE_INTX_MASK	GENMASK(23, 16)
+> > +
+> > +#define AMD_MDB_PCIE_INTR_INTX_ASSERT(x)	BIT((x) * 2)
+> 
+> How does these values correspond to the AMD_MDB_TLP_PCIE_INTX_MASK? These values could be: 0, 2, 4, and 6 corresponding to: 0b01010101? Looks wierd.
 
+I don't know if it is your mailer issue or your workflow. Looks like my review
+comments are copy pasted here. So it becomes harder to distinguish between my
+previous comments and your replies.
 
-Best regards,
-Andreas Hindborg
+Please fix it.
 
+> Thank you for reviewing, Yes in register status/Enable/Disable register bits are laid in this way.
+> 
+> > +
+> > +/* Interrupt registers definitions */
+> > +#define AMD_MDB_PCIE_INTR_CMPL_TIMEOUT		15
+> > +#define AMD_MDB_PCIE_INTR_INTX			16
+> > +#define AMD_MDB_PCIE_INTR_PM_PME_RCVD		24
+> 
+> 
+> > +static inline u32 pcie_read(struct amd_mdb_pcie *pcie, u32 reg) {
+> > +	return readl_relaxed(pcie->slcr + reg); }
+> 
+> I think I already commented on these helpers. Please get rid of them. I don't see any value in this new driver. Moreover, 'inline' keywords are not required.
+> Thanks for the review. While I agree to remove the 'inline', I would like pcie_read/pcie_write APIs. Could you please clarify the reason for explicitly removing pcie_read/pcie_write here?
+> If I remove the pcie_read/pcie_write, it will require changes in multiple places throughout the code."
 
+What value does the helper really add? It just wraps the {readl/writel}_relaxed
+calls. Plus it hides which kind of I/O accessors are used. So I don't see a
+value in keeping them.
 
+> 
+> > +
+> > +static inline void pcie_write(struct amd_mdb_pcie *pcie,
+> > +			      u32 val, u32 reg)
+> > +{
+> > +	writel_relaxed(val, pcie->slcr + reg); }
+> > +
+> > +static const struct irq_domain_ops amd_intx_domain_ops = {
+> > +	.map = amd_mdb_pcie_intx_map,
+> > +};
+> > +
+> > +static irqreturn_t dw_pcie_rp_intx_flow(int irq, void *args)
+> 
+> What does the _flow suffix mean?
+> Thanks for reviewing, The _flow suffix in the function name dw_pcie_rp_intx_flow indicates that the function handles the flow or processing related to interrupt handling for the PCIe root port's INTx interrupts through generic_handle_domain_irq.
+> 
+
+(Please wrap your replies to 80 column width)
+
+So it is the regular interrupt handler. I don't see a necessity to add the _flow
+suffix.
+
+> > +{
+> > +	struct amd_mdb_pcie *pcie = args;
+> > +	unsigned long val;
+> > +	int i, int_status;
+> > +
+> > +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
+> 
+> You don't need port->lock here?
+> Thank you for reviewing. In this case, I'm simply reading the status of the INTX register bits without modifying any registers.
+> Since no shared resources are being updated or accessed concurrently, there’s no need for a lock here.
+> 
+
+What if the handler and mask/unmask functions are executed in different CPUs?
+Sharing the same register without lock feels nervous. Locking principle is that
+you would lock both read as well as write.
+
+> 
+> > +	int_status = FIELD_GET(AMD_MDB_TLP_PCIE_INTX_MASK, val);
+> 
+> You don't need to ack/clear the IRQ?
+> - Thank you for reviewing, Thank you for reviewing. In this case, I am using IRQ domains, and the generic_handle_domain_irq function will invoke the necessary irq_mask and irq_unmask operations internally, which will take care of clearing the IRQ.
+> 
+
+Ok.
+
+> > +
+> > +	for (i = 0; i < PCI_NUM_INTX; i++) {
+> > +		if (int_status & AMD_MDB_PCIE_INTR_INTX_ASSERT(i))
+> > +			generic_handle_domain_irq(pcie->intx_domain, i);
+> > +	}
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static void amd_mdb_event_irq_mask(struct irq_data *d) {
+> > +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
+> > +	struct dw_pcie *pci = &pcie->pci;
+> > +	struct dw_pcie_rp *port = &pci->pp;
+> > +	u32 val;
+> > +
+> > +	raw_spin_lock(&port->lock);
+> > +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
+> 
+> This register is accessed in the IRQ handler also. So don't you need raw_spin_lock_irq{save/restore}? 
+> - Thank you for reviewing, In handler I am just reading the status & calling this irq_mask/irq_unmask API's I don't need to have save/restore spin_lock_irq's here.
+> 
+
+Same as above.
+
+> > +	val &= ~BIT(d->hwirq);
+> > +	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
+> > +	raw_spin_unlock(&port->lock);
+> > +}
+> > +
+
+[...]
+
+> > +	for (i = 0; i < ARRAY_SIZE(intr_cause); i++) {
+> > +		if (!intr_cause[i].str)
+> > +			continue;
+> > +		irq = irq_create_mapping(pcie->mdb_domain, i);
+> > +		if (!irq) {
+> > +			dev_err(dev, "Failed to map mdb domain interrupt\n");
+> > +			return -ENOMEM;
+> > +		}
+> > +		err = devm_request_irq(dev, irq, amd_mdb_pcie_intr_handler,
+> > +				       IRQF_SHARED | IRQF_NO_THREAD,
+> > +				       intr_cause[i].sym, pcie);
+> 
+> Aren't these IRQs just part of a single IRQ? I'm wondering why do you need to represent them individually instead of having a single IRQ handler.
+> 
+> Btw, you are not disposing these IRQs anywhere. Especially in error paths.
+> Thank you for reviewing. This code is based on the work authored by Marc Zyngier and Bjorn during the development of our CPM drivers, and it follows the same design principles. The individual IRQ handling is consistent with that approach.
+> For reference, you can review the driver here: pcie-xilinx-cpm.c. All of your comments have been incorporated into this driver as requested.
+> 
+
+Ok for the separate IRQ question. But you still need to dispose the IRQs in
+error path.
+
+> > +		if (err) {
+> > +			dev_err(dev, "Failed to request IRQ %d\n", irq);
+> > +			return err;
+> > +		}
+> > +	}
+> > +
+> > +	pcie->intx_irq = irq_create_mapping(pcie->mdb_domain,
+> > +					    AMD_MDB_PCIE_INTR_INTX);
+> > +	if (!pcie->intx_irq) {
+> > +		dev_err(dev, "Failed to map INTx interrupt\n");
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	err = devm_request_irq(dev, pcie->intx_irq,
+> > +			       dw_pcie_rp_intx_flow,
+> > +			       IRQF_SHARED | IRQF_NO_THREAD, NULL, pcie);
+> > +	if (err) {
+> > +		dev_err(dev, "Failed to request INTx IRQ %d\n", irq);
+> > +		return err;
+> > +	}
+> > +
+> > +	/* Plug the main event handler */
+> > +	err = devm_request_irq(dev, pp->irq, amd_mdb_pcie_event_flow,
+> > +			       IRQF_SHARED | IRQF_NO_THREAD, "amd_mdb pcie_irq",
+> 
+> Why is this a SHARED IRQ?
+> Thank you for reviewing. The IRQ is shared because all the events, errors, and INTx interrupts are routed through the same IRQ line, so multiple handlers need to be able to respond to the same interrupt.
+
+IIUC, you have a single handler for this IRQ and that handler is invoking other
+handlers (for events, INTx etc...). So I don't see how this IRQ is shared.
+
+Shared IRQ is only required if multiple handlers are sharing the same IRQ line.
+But that is not the case here afaics.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
