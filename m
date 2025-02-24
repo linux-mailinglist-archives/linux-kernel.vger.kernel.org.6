@@ -1,159 +1,116 @@
-Return-Path: <linux-kernel+bounces-530070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBED2A42E66
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA82A42E71
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 21:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E16EA176AC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:56:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84CC1176BE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 20:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C38826280C;
-	Mon, 24 Feb 2025 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEDD26560F;
+	Mon, 24 Feb 2025 20:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="VBz27iFe"
-Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DDA15530B;
-	Mon, 24 Feb 2025 20:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="a9roizhM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F8A6264A76;
+	Mon, 24 Feb 2025 20:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740430571; cv=none; b=CXIbN01Ojc5HS5aw7bNCT6gp6k+zaDVGrYwxTQh8mHfXtHTXvhUojL/+hAupeWbTsmHAghX8gemKrQgMc6goHJZTKDwNfUwEto8jD2tpI2n7FWc8MMLppL7eUIhJZo8/MOzUiFvFxQj1NmrRAnAe83HY1QMSY5kz+kU7UXrPLnM=
+	t=1740430666; cv=none; b=VUdwpGmCd2TtvF/oEDRIlc5xBEX8HU+TVqCFFJ0RflPgzGmBmXqbS3b0iJ49xCYD+8E5vIE0FTPYfivQVOZ5ZylFpxbnCqKvbDjTY+E3N+vFwJMD40ewTBopv5dWnd3l5HCB3AvgLi792OWnZ63R1n9n0zXPtfQp52deqf7f+Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740430571; c=relaxed/simple;
-	bh=G2R+4zBK2XNgOp27aKcemTfQxRPqn+Iuj3gTm+PbWzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bVGYH4u9kdHCPFzg1LMYXVz4odb7vnyNXwAEWxuALNLd3TKinbIqFBWZsXh/U2Qk6NY34tLgtiiAcX0rXbbc5Ej25FTekPm4Pz/h1KVpPLTWqaGQZ38QJ17yO+pjDCOgd7vXHPstkSC6SK+K8HJCujKed20ImSfdwYRqNYQqnWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=VBz27iFe; arc=none smtp.client-ip=131.188.11.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Z1tLb49BCz1yGC;
-	Mon, 24 Feb 2025 21:56:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
-	t=1740430567; bh=2BQBum0b+goVLWKOB5pP1qFxnwHGOEafoy0dXVVkvmU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From:To:CC:
-	 Subject;
-	b=VBz27iFe8NNq49wBZmryw9HmEFok7g1z2q6l0ozlxvs9AkuDNXPdLgbgaX3sqffDU
-	 8DHUdy9+240p6SGlmxUcvGd/Qo4B2gak61ZcI/cCaHw0Wq4Y7AIW7OwJk5oLZKTNPt
-	 OvmWi8qsHbIyFb72pAN6KWy9bq0+KIxO2xF/+14q6hARwaLW+Z97YlLP6TikjG2T+H
-	 gLXXv7aIheddE5dlNgm1Be3lVsAY5n5/Xwe7i0XkDFlNcRvaUot1HNM8fVXjmJ2+xo
-	 VA9DpVmINSgN2JxKtszaCHn8enpPdG6i8Y+bAKScQ84jRvJDA8aAHFou7cMWv62tzC
-	 x2it928aFrEhQ==
-X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 2001:9e8:362e:e00:55a6:11d5:2473:17a9
-Received: from luis-tp.fritz.box (unknown [IPv6:2001:9e8:362e:e00:55a6:11d5:2473:17a9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: U2FsdGVkX19+GcG1tOFk8oN3zZR4EziXRkcgB3+AFaA=)
-	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Z1tLX25k5z1xyq;
-	Mon, 24 Feb 2025 21:56:04 +0100 (CET)
-From: Luis Gerhorst <luis.gerhorst@fau.de>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Puranjay Mohan <puranjay@kernel.org>,
-	Xu Kuohai <xukuohai@huaweicloud.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Henriette Herzog <henriette.herzog@rub.de>,
-	Cupertino Miranda <cupertino.miranda@oracle.com>,
-	Matan Shachnai <m.shachnai@gmail.com>,
-	Dimitar Kanaliev <dimitar.kanaliev@siteground.com>,
-	Shung-Hsi Yu <shung-hsi.yu@suse.com>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	bpf@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Cc: Luis Gerhorst <luis.gerhorst@fau.de>,
-	Maximilian Ott <ott@cs.fau.de>,
-	Milan Stephan <milan.stephan@fau.de>
-Subject: [RFC PATCH 9/9] bpf: Cut speculative path verification short
-Date: Mon, 24 Feb 2025 21:55:56 +0100
-Message-ID: <20250224205556.608574-1-luis.gerhorst@fau.de>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224203619.594724-1-luis.gerhorst@fau.de>
-References: <20250224203619.594724-1-luis.gerhorst@fau.de>
+	s=arc-20240116; t=1740430666; c=relaxed/simple;
+	bh=tHp3CW8WUqBJOuJ+M5ldr4pd47GY+B/nMBanKd5tldo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rkhFl/cZJJbcJ1OLXxwWs4TrCFBtM48cgdx/j8fyymYsGTtMPsOd8T+WJ/NOptjC9DWIKk9+4Sx4ilgtOWPPwUYVsEQPuZTX/vHTwJC4IwrUmeTP695m9PG3EUEzRRNGPTD3nUJ0REDe9Z61EYsw1S1Aq/Plh4PFVhlYONqWR30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=a9roizhM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2 (unknown [142.114.216.132])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 1B547203CDE1;
+	Mon, 24 Feb 2025 12:57:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1B547203CDE1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740430664;
+	bh=Xuh6Gw8WVBag6u3aATPx+1OicXMDLi528DsAZL28/pQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a9roizhMqR+1018jc5Z9vNNa0fYhQKVbujlDLHaX3mq0rxvAIJ2awA0we5jGyKbLz
+	 v7I66zdrp0b/q1YGhkGQglJ0kQJ5H2add1506CciBN6065ha53/JETOuuETW90tAiV
+	 mCXJ/pQmg7pWakO5YA7VCK9u2hP8e0j5WSWid7RU=
+Date: Mon, 24 Feb 2025 15:57:31 -0500
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Petr Mladek <pmladek@suse.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Jani Nikula <jani.nikula@intel.com>, Baoquan He <bhe@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: Re: [PATCH v2] panic: call panic handlers before
+ panic_other_cpus_shutdown()
+Message-ID: <Z7zdO6WSoTyrS_B0@hm-sls2>
+References: <20250221213055.133849-1-hamzamahfooz@linux.microsoft.com>
+ <SN6PR02MB4157D993CCE04F2D46E2B8A1D4C72@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <Z7yGv_ZyeyUueXLz@hm-sls2>
+ <BN7PR02MB41481BB6067A7265A459AF69D4C02@BN7PR02MB4148.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <BN7PR02MB41481BB6067A7265A459AF69D4C02@BN7PR02MB4148.namprd02.prod.outlook.com>
 
-This trades verification complexity for runtime overheads due to the
-nospec inserted because of the EINVAL.
+On Mon, Feb 24, 2025 at 07:59:28PM +0000, Michael Kelley wrote:
+> From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Monday, February 24, 2025 6:49 AM
+> > 
+> > On Fri, Feb 21, 2025 at 11:01:09PM +0000, Michael Kelley wrote:
+> > > From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> Sent: Friday, February
+> > 21, 2025 1:31 PM
+> > > >
+> > > > Since, the panic handlers may require certain cpus to be online to panic
+> > > > gracefully, we should call them before turning off SMP. Without this
+> > > > re-ordering, on Hyper-V hv_panic_vmbus_unload() times out, because the
+> > > > vmbus channel is bound to VMBUS_CONNECT_CPU and unless the crashing cpu
+> > > > is the same as VMBUS_CONNECT_CPU, VMBUS_CONNECT_CPU will be offlined by
+> > > > crash_smp_send_stop() before the vmbus channel can be deconstructed.
+> > >
+> > > Hamza -- what specifically is the problem with the way vmbus_wait_for_unload()
+> > > works today? That code is aware of the problem that the unload response comes
+> > > only on the VMBUS_CONNECT_CPU, and that cpu may not be able to handle
+> > > the interrupt. So the code polls the message page of each CPU to try to get the
+> > > unload response message. Is there a scenario where that approach isn't working?
+> > >
+> > 
+> > It doesn't work on arm64 (if the crashing cpu isn't VMBUS_CONNECT_CPU), it
+> > always ends up at "VMBus UNLOAD did not complete" without fail. It seems
+> > like arm64's crash_smp_send_stop() is more aggressive than x86's.
+> 
+> FWIW, I tested on a D16plds_v6 arm64 VM in Azure, running Ubuntu 20.04 with
+> a linux-next20252021 kernel. I caused a panic using "echo c >/proc/sysrq-trigger"
+> using "taskset" to make sure the panic is triggered on a CPU other than CPU 0.
+> I didn't see any problem. The panic code path completely quickly, and there were
+> no messages from vmbus_wait_for_unload(), including none of the periodic
+> "Waiting for unload" messages . I tried initiating the panic on several different
+> CPUs (4, 7, and 15) with the same result. I tested with kdump disabled and with
+> kdump enabled, both with no problems.
+> 
+> So I think the current vmbus_wait_for_unload() code works on arm64, as least
+> in some ordinary scenarios. Any key differences in the configuration or test
+> environment when you see the "did not complete" message?
 
-With increased limits this allows applying mitigations to large BPF
-progs such as the Parca Continuous Profiler's prog. However, this
-requires a jump-seq limit of 256k. In any case, the same principle
-should apply to smaller programs therefore include it even if the limit
-stays at 8k for now. Most programs in "VeriFence: Lightweight and
-Precise Spectre Defenses for Untrusted Linux Kernel
-Extensions" (https://arxiv.org/pdf/2405.00078) only require a limit of
-32k.
+Can you try on a Standard_D16pls_v5 with the stock ubuntu image and
+kernel crash dump (i.e. linux-crashdump) installed and setup?
 
-Signed-off-by: Luis Gerhorst <luis.gerhorst@fau.de>
-Acked-by: Henriette Herzog <henriette.herzog@rub.de>
-Cc: Maximilian Ott <ott@cs.fau.de>
-Cc: Milan Stephan <milan.stephan@fau.de>
----
- kernel/bpf/verifier.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 033780578966..bde4ae1ea637 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -187,6 +187,7 @@ struct bpf_verifier_stack_elem {
- };
- 
- #define BPF_COMPLEXITY_LIMIT_JMP_SEQ	8192
-+#define BPF_COMPLEXITY_LIMIT_SPEC_V1_VERIFICATION	(BPF_COMPLEXITY_LIMIT_JMP_SEQ / 2)
- #define BPF_COMPLEXITY_LIMIT_STATES	64
- 
- #define BPF_MAP_KEY_POISON	(1ULL << 63)
-@@ -1933,6 +1934,19 @@ static struct bpf_verifier_state *push_stack(struct bpf_verifier_env *env,
- 	struct bpf_verifier_stack_elem *elem;
- 	int err;
- 
-+	if (!env->bypass_spec_v1 &&
-+	    cur->speculative &&
-+	    env->stack_size > BPF_COMPLEXITY_LIMIT_SPEC_V1_VERIFICATION) {
-+		/* Avoiding nested speculative path verification because we are
-+		 * close to exceeding the jump sequence complexity limit. Will
-+		 * instead insert a speculation barrier which will impact
-+		 * performace. To improve performance, authors should reduce the
-+		 * program's complexity. Barrier will be inserted in
-+		 * do_check().
-+		 */
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	elem = kzalloc(sizeof(struct bpf_verifier_stack_elem), GFP_KERNEL);
- 	if (!elem) {
- 		err = -ENOMEM;
--- 
-2.48.1
-
+> 
+> Michael
 
