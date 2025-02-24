@@ -1,285 +1,176 @@
-Return-Path: <linux-kernel+bounces-529125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-529126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33286A42006
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:12:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759DDA4201A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 14:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C604164786
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:12:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 728B47A6A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Feb 2025 13:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A0A023BD0E;
-	Mon, 24 Feb 2025 13:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c94feaQF"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA4024886A;
+	Mon, 24 Feb 2025 13:12:31 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A1F23BCF6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 13:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D535E243369;
+	Mon, 24 Feb 2025 13:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740402744; cv=none; b=LaOo7T7A1JrKSjAPb0H2F0wYa00daqwl7qF7ExLvjkCCJb4BvKbiOM6OLQU0kk0A80om5n96kLf0o6qL9yLFXKvWdj/XOOL9yOm37BgDgvoLpHy6qJL1Kw0VtelcGxIiEVF4+ZsR2DbnIrodNynsspzhVksO2uok6KILmlj+FCE=
+	t=1740402751; cv=none; b=dcCDIpRlcefiEGdfgyqlJXUT+f+9GXN/Lfr4wEdIIdQDI7+p1lKWF3xosFi2Ocgf09T8hKvZiKR4XvWaYozG7qKrlWNoSMdWL5Os/xn7O5eQqRrVjKEEqqgcoClCCnQTyYj8rxTRI6E16M5LgccDCvJ51CgBqZTDGROm3kJ6olc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740402744; c=relaxed/simple;
-	bh=4JJCr+hzIcHgx1zZ7pN1MHsI83h/HIKz+kxxuG1tyKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fdHgy7LWRNsfrN3RVJ8A8OnSN2B5g48yfFnvWBc42bY3XfjIPXir7OwfMtBCbhF3UI1sw2k3ltYVeTFMvL9Kv/PP5+3AgAPmVZfAmlyA0UcMusCL456EJwBK0VA2Q/A6THwhB+zK/6S6Iv1v3azdOy+H14y4VmNfcqBZz3fIFno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c94feaQF; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220ecbdb4c2so3709735ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 05:12:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740402742; x=1741007542; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6xivWvjfsx4I7sb2/boiuXVtJjYaejU6ywHPFZw0QHc=;
-        b=c94feaQFf8WwknSRZs0SmPCTm/VOOOW9D+Ic8JV/6P4SnqGxc4FZG8fgj+dH0WaBmh
-         2k/gYF1a++k8zp4qcsQBVZy24KSbMZLAvaMRQugEoNtdlNjCD3zsYQ6A1zr1wHKCis6r
-         z5TprjXkctYCeafDE3CUGPCGdfW11DFH/CX1CRpTLmJ2HQVjnS1eSK+1AajN60wqXLyD
-         M9nwImEBgheuYIUzcLAR+nX3kuvIaOhtbTeCuj8puWTxnTCukUfc83SjbnCk4vWOGGcH
-         xHaiFugFyL4QSWdBQFw6uCCF0TCAHUgfLrQAuLlfEutoDpVB2ifhUSSjRryeYu14lTMI
-         HMNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740402742; x=1741007542;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6xivWvjfsx4I7sb2/boiuXVtJjYaejU6ywHPFZw0QHc=;
-        b=KAwfmZogKUzzYBMBXH/bLZwZ+UzHwsNeFucNt8dXCdyR0cl3pWnDE2NunSVK0/S4xs
-         l9ris+Qgz01FDRqBQZS/DXyWjTqHb1bntBjQ5TCz6ZjRnhWRPTV12n4gdmete7hzh3K6
-         ZnRYJON8BSD+4Kkmtrm1ddLEZZe1fObCNu4zluZjSYZjMb/D9COZxyOyKoRSh/XW2XAO
-         CPCAFTXgCyrAn0B2eFKbarHlW9yCUlqtQ04MQoam0uTxxWE3BO2huOf6kv9IPsehizPc
-         LbCi6FlrO+TvAbFdJ2Hiv87jphNEK2EwZB39lSpoMOgAYRA5Oc9vuccKEfeEFaABr+UY
-         Zc0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWZlKNONAaTABECRK2uhN+rCER13PEIvuNjPEpg4iQeRfm3sWJWOdTWMrVaiY2Ltzzh1CsEe1HaPzFlVI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdiBu7LE2+WM/YRStIpgEOi9KlhPY75OyeWwBl/tRUBTs4Anr7
-	FiL5GfbAlQFeeKrfMy8TdMK+lZpuUGYPHDuMRJ3c0QfxsvOapB/MDolESrUoKA==
-X-Gm-Gg: ASbGncva/fomg3ZHKdp5QivYgC6ZbTu64ukHGbxmHbDnCqV8FB8n9Bin/tH7/e4vPcp
-	VC9n5Vkk+6MmmGB9RyLzrB62btI3e0Kq2ALQz3dHAEcoEu8zQ4n3skdrRFQ9kzDdeFNS0TYgSHb
-	Ebh3Q3TxKbG4+DWRv9xfy2j7yZkzpLWqGh9xeUrmXEHu1MJqB9wR3xpT33h4rgsp/SLh76aqgWs
-	PzJwy9gxMO2VYEpDctO+S766kqHTZ7aE/A1s40HK1R1ynTtrehNunIV1Vz5ccuAf+645XTTNKWs
-	KPJP8CTmA+kVSPFdRze4GH9fRF0GwCACA9n5
-X-Google-Smtp-Source: AGHT+IH66tyyeq6a6srxXBnhCf5MfUJnzgVf0ncZyII3wiL8V1nQJMP3kqGHxIeAsJESjLWajBiwzQ==
-X-Received: by 2002:a05:6a00:4b54:b0:732:6217:8c69 with SMTP id d2e1a72fcca58-73426c94ad6mr24845216b3a.3.1740402741835;
-        Mon, 24 Feb 2025 05:12:21 -0800 (PST)
-Received: from thinkpad ([36.255.17.202])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adcc6fb20f8sm16951931a12.37.2025.02.24.05.12.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 05:12:21 -0800 (PST)
-Date: Mon, 24 Feb 2025 18:42:15 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
-Cc: "bhelgaas@google.com" <bhelgaas@google.com>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Simek, Michal" <michal.simek@amd.com>,
-	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>,
-	"jingoohan1@gmail.com" <jingoohan1@gmail.com>
-Subject: Re: [PATCH v14 3/3] PCI: amd-mdb: Add AMD MDB Root Port driver
-Message-ID: <20250224131215.slcrh3czyl27zhya@thinkpad>
-References: <20250224073117.767210-1-thippeswamy.havalige@amd.com>
- <20250224073117.767210-4-thippeswamy.havalige@amd.com>
- <20250224093024.q4vx2lygrc2swu3h@thinkpad>
- <SN7PR12MB720127D150CABEECA4A436358BC02@SN7PR12MB7201.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1740402751; c=relaxed/simple;
+	bh=6vGmN1f6wbUBK8VBYz22a0rDYixoyXsv7tCKkZmiB84=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aGYRKyYN8uMTR8IHDHP2OWsS0QCk5m2Fgi2Iqeu1z4hcoiuSgUgJBwyqnDeFyyWY4YNHQyShGw5H2YS649JgyFLawXXfY6Tk+cwVtJBgQE4uZ2a+nGSjuSaYs9DD9VIQ99rdkYDYWhQZQgdd24H61+isNMpZrqHQT34KACGqueE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z1gzF29hRzvWpT;
+	Mon, 24 Feb 2025 21:08:41 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id D6D8018006C;
+	Mon, 24 Feb 2025 21:12:24 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 24 Feb 2025 21:12:24 +0800
+Message-ID: <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
+Date: Mon, 24 Feb 2025 21:12:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+ <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+ <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN7PR12MB720127D150CABEECA4A436358BC02@SN7PR12MB7201.namprd12.prod.outlook.com>
+X-ClientProxiedBy: kwepemh100009.china.huawei.com (7.202.181.94) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-On Mon, Feb 24, 2025 at 11:05:19AM +0000, Havalige, Thippeswamy wrote:
+Hi, John
 
-[...]
-
-> > +#define AMD_MDB_TLP_IR_STATUS_MISC		0x4C0
-> > +#define AMD_MDB_TLP_IR_MASK_MISC		0x4C4
-> > +#define AMD_MDB_TLP_IR_ENABLE_MISC		0x4C8
-> > +#define AMD_MDB_TLP_IR_DISABLE_MISC		0x4CC
-> > +
-> > +#define AMD_MDB_TLP_PCIE_INTX_MASK	GENMASK(23, 16)
-> > +
-> > +#define AMD_MDB_PCIE_INTR_INTX_ASSERT(x)	BIT((x) * 2)
+On 2025/2/24 20:21, John Garry wrote:
+> On 24/02/2025 09:36, yangxingui wrote:
+>>>
+>>>
+>>> So do you mean that all IO to this disk will error? If yes, then this 
+>>> is good.
+>> Yes, IO error or IO result does not meet expectations. As shown in the 
+>> log below, due to an abnormal port ID, the SNs of the two disks read 
+>> are the same.
 > 
-> How does these values correspond to the AMD_MDB_TLP_PCIE_INTX_MASK? These values could be: 0, 2, 4, and 6 corresponding to: 0b01010101? Looks wierd.
-
-I don't know if it is your mailer issue or your workflow. Looks like my review
-comments are copy pasted here. So it becomes harder to distinguish between my
-previous comments and your replies.
-
-Please fix it.
-
-> Thank you for reviewing, Yes in register status/Enable/Disable register bits are laid in this way.
+> Do you mean that this is mainline kernel behaviour, below:
+Yes
 > 
-> > +
-> > +/* Interrupt registers definitions */
-> > +#define AMD_MDB_PCIE_INTR_CMPL_TIMEOUT		15
-> > +#define AMD_MDB_PCIE_INTR_INTX			16
-> > +#define AMD_MDB_PCIE_INTR_PM_PME_RCVD		24
+>>
+>> [448000.504979] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
+>> link_rate=10(sata)
+>> [448000.505070] sas: phy-10:1 added to port-10:1, phy_mask:0x2 
+>> (5000000000000a01)
+>> [448000.505247] sas: DOING DISCOVERY on port 1, pid:2239187
+>> [448000.505255] hisi_sas_v3_hw 0000:d4:02.0: dev[2:5] found
+>> [448000.505274] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>> [448000.505295] sas: ata31: end_device-10:0: dev error handler
+>> [448000.505299] sas: ata32: end_device-10:1: dev error handler
+>> [448001.300517] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy1 
+>> phy_state=0x1   // phy1's hw port id released
+>> [448001.300522] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy1 down
+>> [448001.436187] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
+>> link_rate=10(sata) // phy2 occupies the hardware port ID of phy1
+>> [448001.608766] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy1 
+>> link_rate=10(sata) // phy1 was assigned a new hardware port ID
+>> [448001.775605] ata32.00: ATA-11: WUH721816ALE6L4, PCGAW660, max UDMA/133
+>> [448002.159364] sas: phy-10:2 added to port-10:2, phy_mask:0x4 
+>> (5000000000000a02)
+>> [448002.159575] sas: DOING DISCOVERY on port 2, pid:2239187
+>> [448002.159581] hisi_sas_v3_hw 0000:d4:02.0: dev[3:5] found
+>> [448002.159602] sas: Enter sas_scsi_recover_host busy: 0 failed: 0
+>> [448002.159623] sas: ata31: end_device-10:0: dev error handler
+>> [448002.159633] sas: ata32: end_device-10:1: dev error handler
+>> [448002.159636] sas: ata33: end_device-10:2: dev error handler
+>> [448002.393349] hisi_sas_v3_hw 0000:d4:02.0: phydown: phy2 phy_state=0x3
+>> [448002.393354] hisi_sas_v3_hw 0000:d4:02.0: ignore flutter phy2 down
+>> [448002.684937] hisi_sas_v3_hw 0000:d4:02.0: phyup: phy2 
+>> link_rate=10(sata)
+>> [448002.851639] ata33.00: ATA-11: WUH721816ALE6L4, PCGAW660, max UDMA/133
+>> [448002.851644] ata33.00: 31251759104 sectors, multi 0: LBA48 NCQ 
+>> (depth 32)
+>>
+>>>
+>>> But I still don't like the handling in this patch. If we get a phy 
+>>> up, then the directly-attached disk ideally should be gone already, 
+>>> so should not have to do this handling.
+>> There is no problem when the disk is removed. The current problem is 
+>> that multiple phy up at the same time. When one of the phys up and 
+>> enters error handler to execute hardreset, the phy will down and then 
+>> up. other phy up will probably occupy the hw port id of the previous 
+>> phy which do hardreset in EH.
 > 
-> 
-> > +static inline u32 pcie_read(struct amd_mdb_pcie *pcie, u32 reg) {
-> > +	return readl_relaxed(pcie->slcr + reg); }
-> 
-> I think I already commented on these helpers. Please get rid of them. I don't see any value in this new driver. Moreover, 'inline' keywords are not required.
-> Thanks for the review. While I agree to remove the 'inline', I would like pcie_read/pcie_write APIs. Could you please clarify the reason for explicitly removing pcie_read/pcie_write here?
-> If I remove the pcie_read/pcie_write, it will require changes in multiple places throughout the code."
+> Could you do this work (itct update) in lldd_ata_check_ready CB?
 
-What value does the helper really add? It just wraps the {readl/writel}_relaxed
-calls. Plus it hides which kind of I/O accessors are used. So I don't see a
-value in keeping them.
+It's a good idea only for sata disks, but the current problem is not 
+only the scenario of connecting the sata disk. This phenomenon 
+occasionally occurs when the SAS disk is connected after the controller 
+is reset. The following is the log of the stress test recurrence after 
+incorporating the current repair patch. Although we called 
+hisi_sas_refresh_port_id() on controller reset.
 
-> 
-> > +
-> > +static inline void pcie_write(struct amd_mdb_pcie *pcie,
-> > +			      u32 val, u32 reg)
-> > +{
-> > +	writel_relaxed(val, pcie->slcr + reg); }
-> > +
-> > +static const struct irq_domain_ops amd_intx_domain_ops = {
-> > +	.map = amd_mdb_pcie_intx_map,
-> > +};
-> > +
-> > +static irqreturn_t dw_pcie_rp_intx_flow(int irq, void *args)
-> 
-> What does the _flow suffix mean?
-> Thanks for reviewing, The _flow suffix in the function name dw_pcie_rp_intx_flow indicates that the function handles the flow or processing related to interrupt handling for the PCIe root port's INTx interrupts through generic_handle_domain_irq.
-> 
+[ 5387.235015] hisi_sas_v3_hw 0000:74:02.0: I_T nexus reset: internal 
+abort (-5)
+[ 5387.242126] sas: clear nexus ha
+[ 5387.245283] hisi_sas_v3_hw 0000:74:02.0: controller resetting...
+[ 5388.908489] hisi_sas_v3_hw 0000:74:02.0: phyup: phy5 link_rate=10(sata)
+[ 5388.915090] hisi_sas_v3_hw 0000:74:02.0: phyup: phy6 link_rate=10(sata)
+[ 5388.934505] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
+[ 5388.941009] hisi_sas_v3_hw 0000:74:02.0: phyup: phy1 link_rate=9(sata)
+[ 5388.950976] hisi_sas_v3_hw 0000:74:02.0: phyup: phy4 link_rate=11
+[ 5388.957048] hisi_sas_v3_hw 0000:74:02.0: phyup: phy7 link_rate=11
+[ 5388.980097] hisi_sas_v3_hw 0000:74:02.0: phyup: phy2 link_rate=11
+[ 5388.986169] hisi_sas_v3_hw 0000:74:02.0: phyup: phy3 link_rate=11 // 
+phy3 attached a sas disk.
+[ 5389.065103] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+attach device
+[ 5389.072409] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+[ 5389.078492] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+attach device
+[ 5389.085780] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+[ 5389.091861] hisi_sas_v3_hw 0000:74:02.0: task prep: SAS port1 not 
+attach device
+[ 5389.099146] sas: executing TMF task failed 5000c500ae49c8f1 (-70)
+[ 5389.107419] hisi_sas_v3_hw 0000:74:02.0: controller reset complete 
+// controller reset finished
+[ 5389.113686] hisi_sas_v3_hw 0000:74:02.0: phydown: phy0 phy_state=0xfe
+[ 5389.120099] hisi_sas_v3_hw 0000:74:02.0: ignore flutter phy0 down
+[ 5389.136399] hisi_sas_v3_hw 0000:74:02.0: phy3's hw port id changed 
+from 1 to 7
+[ 5389.308114] hisi_sas_v3_hw 0000:74:02.0: phyup: phy0 link_rate=9(sata)
 
-(Please wrap your replies to 80 column width)
+Thanks,
+Xingui
 
-So it is the regular interrupt handler. I don't see a necessity to add the _flow
-suffix.
-
-> > +{
-> > +	struct amd_mdb_pcie *pcie = args;
-> > +	unsigned long val;
-> > +	int i, int_status;
-> > +
-> > +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-> 
-> You don't need port->lock here?
-> Thank you for reviewing. In this case, I'm simply reading the status of the INTX register bits without modifying any registers.
-> Since no shared resources are being updated or accessed concurrently, there’s no need for a lock here.
-> 
-
-What if the handler and mask/unmask functions are executed in different CPUs?
-Sharing the same register without lock feels nervous. Locking principle is that
-you would lock both read as well as write.
-
-> 
-> > +	int_status = FIELD_GET(AMD_MDB_TLP_PCIE_INTX_MASK, val);
-> 
-> You don't need to ack/clear the IRQ?
-> - Thank you for reviewing, Thank you for reviewing. In this case, I am using IRQ domains, and the generic_handle_domain_irq function will invoke the necessary irq_mask and irq_unmask operations internally, which will take care of clearing the IRQ.
-> 
-
-Ok.
-
-> > +
-> > +	for (i = 0; i < PCI_NUM_INTX; i++) {
-> > +		if (int_status & AMD_MDB_PCIE_INTR_INTX_ASSERT(i))
-> > +			generic_handle_domain_irq(pcie->intx_domain, i);
-> > +	}
-> > +
-> > +	return IRQ_HANDLED;
-> > +}
-> > +
-> > +static void amd_mdb_event_irq_mask(struct irq_data *d) {
-> > +	struct amd_mdb_pcie *pcie = irq_data_get_irq_chip_data(d);
-> > +	struct dw_pcie *pci = &pcie->pci;
-> > +	struct dw_pcie_rp *port = &pci->pp;
-> > +	u32 val;
-> > +
-> > +	raw_spin_lock(&port->lock);
-> > +	val = pcie_read(pcie, AMD_MDB_TLP_IR_STATUS_MISC);
-> 
-> This register is accessed in the IRQ handler also. So don't you need raw_spin_lock_irq{save/restore}? 
-> - Thank you for reviewing, In handler I am just reading the status & calling this irq_mask/irq_unmask API's I don't need to have save/restore spin_lock_irq's here.
-> 
-
-Same as above.
-
-> > +	val &= ~BIT(d->hwirq);
-> > +	pcie_write(pcie, val, AMD_MDB_TLP_IR_STATUS_MISC);
-> > +	raw_spin_unlock(&port->lock);
-> > +}
-> > +
-
-[...]
-
-> > +	for (i = 0; i < ARRAY_SIZE(intr_cause); i++) {
-> > +		if (!intr_cause[i].str)
-> > +			continue;
-> > +		irq = irq_create_mapping(pcie->mdb_domain, i);
-> > +		if (!irq) {
-> > +			dev_err(dev, "Failed to map mdb domain interrupt\n");
-> > +			return -ENOMEM;
-> > +		}
-> > +		err = devm_request_irq(dev, irq, amd_mdb_pcie_intr_handler,
-> > +				       IRQF_SHARED | IRQF_NO_THREAD,
-> > +				       intr_cause[i].sym, pcie);
-> 
-> Aren't these IRQs just part of a single IRQ? I'm wondering why do you need to represent them individually instead of having a single IRQ handler.
-> 
-> Btw, you are not disposing these IRQs anywhere. Especially in error paths.
-> Thank you for reviewing. This code is based on the work authored by Marc Zyngier and Bjorn during the development of our CPM drivers, and it follows the same design principles. The individual IRQ handling is consistent with that approach.
-> For reference, you can review the driver here: pcie-xilinx-cpm.c. All of your comments have been incorporated into this driver as requested.
-> 
-
-Ok for the separate IRQ question. But you still need to dispose the IRQs in
-error path.
-
-> > +		if (err) {
-> > +			dev_err(dev, "Failed to request IRQ %d\n", irq);
-> > +			return err;
-> > +		}
-> > +	}
-> > +
-> > +	pcie->intx_irq = irq_create_mapping(pcie->mdb_domain,
-> > +					    AMD_MDB_PCIE_INTR_INTX);
-> > +	if (!pcie->intx_irq) {
-> > +		dev_err(dev, "Failed to map INTx interrupt\n");
-> > +		return -ENXIO;
-> > +	}
-> > +
-> > +	err = devm_request_irq(dev, pcie->intx_irq,
-> > +			       dw_pcie_rp_intx_flow,
-> > +			       IRQF_SHARED | IRQF_NO_THREAD, NULL, pcie);
-> > +	if (err) {
-> > +		dev_err(dev, "Failed to request INTx IRQ %d\n", irq);
-> > +		return err;
-> > +	}
-> > +
-> > +	/* Plug the main event handler */
-> > +	err = devm_request_irq(dev, pp->irq, amd_mdb_pcie_event_flow,
-> > +			       IRQF_SHARED | IRQF_NO_THREAD, "amd_mdb pcie_irq",
-> 
-> Why is this a SHARED IRQ?
-> Thank you for reviewing. The IRQ is shared because all the events, errors, and INTx interrupts are routed through the same IRQ line, so multiple handlers need to be able to respond to the same interrupt.
-
-IIUC, you have a single handler for this IRQ and that handler is invoking other
-handlers (for events, INTx etc...). So I don't see how this IRQ is shared.
-
-Shared IRQ is only required if multiple handlers are sharing the same IRQ line.
-But that is not the case here afaics.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
