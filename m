@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-532154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D174A44962
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:03:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D4BA44961
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A9B717AFC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA731894475
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE60E20E020;
-	Tue, 25 Feb 2025 17:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E85820E6F2;
+	Tue, 25 Feb 2025 17:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWY6ms8q"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FDEKAWZy"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AC6207DE0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A33520B1E2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506396; cv=none; b=IINqqDcZkDsyraxm9IsATHQDsv1eIvO2JbZi8MLJb+7+lDI/gAD/d4N2xaKcm7pQApjwZD+3r0Gglq6w5zFfJe/txTfRN38XAsZ16GiklTokbDA4WJrxXFD3jswKfNFwngsS56uEpTgdaZYKIr0P/6nc5iwojAzobjBNWLq0lws=
+	t=1740506397; cv=none; b=NCZ2H5UVX+zJWnyl5MuqNqCc8hqjruwj7aJY34lmcozScFC7exSqyjd4iN/IgkaXHYbXopfBVYJRpukotjDl5PqYu5r9MOQI5ExCVwNFW4rcnFnvGJKB1WrNHpprkLljRtAOG/1AQ1N38xBTU71S8KZwhHKhrClIWYp8SKwDIp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506396; c=relaxed/simple;
-	bh=IxXEAtaGp3S8bSB/nGS/X5TdcH91rxq4SWWZGWuEYP4=;
+	s=arc-20240116; t=1740506397; c=relaxed/simple;
+	bh=zCp71uFAdalem5CHS8hBoSJC8yM/83uObY+zMk03qZY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t4Onl8sKsfljQPeO+aGsgb51O0ibdgi07TjRyXElHSaM7YX45KPshQwmn+kR7tNyklLEuPBvCZg3ur5+JIBshPImI98AQvrBL3fvmCvWZkCnm4mHqrC0nfXnawZVN+0nreRqXyDih6LKFVWXSiE6d5U+4F87pYMrXycXMuLGPHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWY6ms8q; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version:Content-Type; b=PHWMBtUgqIbo1zMaNvfcRWNr14xDBEG6kpj8ZGK5T+8VBnPzdJWQggMsykV4k2AgrPDTGeT8ZJKBANImNbD9conFH2Y/MrS1JSgH9vas/06mxIejWIbXD0z4dcTsZGv5uHOjsXI1WfQrfnBPDfBrUKh9PiyMTTBuRe0Li9NlSUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FDEKAWZy; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4399d14334aso52020675e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:52 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4398e839cd4so453495e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:59:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740506391; x=1741111191; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740506392; x=1741111192; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9ERnhTJ83jS9HrIxUIwFbH0bG0W+iXLYtduz4GOdzo4=;
-        b=PWY6ms8qJqbr7rZ8GKSnhzGV5YZ/CUZowblPWliFu7W0qloyBqpeSakJZfDst/+J+H
-         nfJvEqFMbi9Ul3iVXY2XKp87UiFMFbXhVbv5tleLKErTpTTME7PpM0qbacZ4Z05kNN6H
-         TJpFYVc5OniKqerODZZk1HcnBcUIwBMSpm+DmaxXMXoGa0dXI5SamlSBCFHon6v7A0Z9
-         DFxDiuXst2J65yI1vGxxGeJkrQHDgJ4gQPy9R90QWxIQvF89StuSTr9lYu71qfD21A8m
-         M7GujiFyS7G7J8VH11NwcyvQ5GfOS3E9Npsi4rmSgUy+jJMPwLvGw9syFmZj9WdOThNf
-         Dx+Q==
+        bh=0WseHHM1e/WuDgTg/fwsfkleyEd/vJ3pyq4Ce8rsGHo=;
+        b=FDEKAWZyqgYDZobe4KS284aBDzDgvXjZ5AB+48qf5Morn/99SAGKgvSJHS4qO2rZSb
+         aQ1DqlcVjjWs7DAXr3C/5N7NsBb6WTgLrECyeOy3y4AUm0h1r/MV2haibSBIzeb7BAhb
+         5pxa3W+ASXkXuN6Z/4s3PfnkmJIUopgPHlZSEGqJ8cWwXKxWnyPO+X3cRCFVZlvAR6/X
+         PgHTFd3FRd1HISYvIvHKO/1Cn7N6sm+gnHUUl47t+8bfTdOMR6QG8LVYVYJIHrwPKY/y
+         VSc5l4obiA/ylMyaI/PU2Mmhk1kJ78jneMuqq0vo7XyxDodPvLYSnrZoa27KTeIObkcY
+         ajLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506391; x=1741111191;
+        d=1e100.net; s=20230601; t=1740506392; x=1741111192;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9ERnhTJ83jS9HrIxUIwFbH0bG0W+iXLYtduz4GOdzo4=;
-        b=oBpScQQmDwxms5ASVuWKM9YkstMg+V0kVPIplzBE46ix8ZZp8mIF6sggBQlsZqw/qg
-         njNxrictr9UDK0ELevTFR4lzGHEjEjUAvDpcN0eJllQh4uTpVKuifar8VM/o8P7lMSCj
-         Plvf3hjfE0jQS2YzDMYx7Eww0kY3uxb6Gd4aogQuolqIzhU8fAmSQMOWy0aXcWEYyG6u
-         3iIyM91+/BV0kWEgvHt1CJ+7INBuOJRRca/LKMwJbvwiSiqUqLbHHhdm3zWYG4JObWiP
-         gxqcvw6ahORRqFJZr+VTwLMUm0KNeUmyeIFZO2AY6nixiIfiOg26tJFytYFbwvx1sKNY
-         YBSg==
-X-Forwarded-Encrypted: i=1; AJvYcCWu9iMeZCYpu7m/mAf2CL4qL7HaB+dA1y64EU4X01UMoak3TcfAIQlTylN6E6M4H/G8wOGYxHrKJx0XtL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyVVYFVMxwN6oYMeqx2H7dWE2pxkLFF31ASeSM6Hi51wXmtQL1
-	R3KKGulomRGlVZ2l1G0WQj4X4LUcfRjyjQUI9f4B83Hq6VwFzMEI
-X-Gm-Gg: ASbGncsNkJhd485Co/UcpvFxEr3sySNYdC6ocqXgzGRKGBsAjSU0iUBeAhbU0YsvF25
-	B/oGfAFLGTf2FEQbqWrLTS5nP6T3KtMRm1hOVBsuc97KJFXvDvflcRalEu+KF38NiiBtCVvZOGI
-	zmVVb8JvSGwzixAqTZGizTnX4RbMFElVfo+Fqy3epFquB6uxsF5vcmrTe4VyWya/jZwPPbSPAmR
-	D5A9g++8V3pC92dYjBj76sl3dy3oZLEMRFSQ+/49dIjYZDTRRNjgKzBe9G4mAQHUq3N/L8X8+Ym
-	1PZomTvRMR1EOZ3Gq0QYB0d16e8M
-X-Google-Smtp-Source: AGHT+IHCWQpZfQj2ZmqqchJwQSTf4iypFQkgwB0Olxc8jlH2dpN0x4GiKPXIgyo4G4hwCub03XS22A==
-X-Received: by 2002:a05:600c:4f86:b0:439:967b:46fc with SMTP id 5b1f17b1804b1-43ab8fd73f2mr4044375e9.8.1740506391126;
-        Tue, 25 Feb 2025 09:59:51 -0800 (PST)
+        bh=0WseHHM1e/WuDgTg/fwsfkleyEd/vJ3pyq4Ce8rsGHo=;
+        b=Y9jxzgo8z4eLNulJKsosPRalOPID0Bpb1mAUzf5h3BsuDrX/9ISK9k5PTlCIWUB5jR
+         Gu2RRF5rfGn5oymPQi/n6XxZ7fGW5jUzRzS/3Aq+HlCGTliLyoPvjW1pNoZdhkYevzLD
+         bA8BuDzByD1G9LZNmxrw2ZsEYQWnqvVVK0yhWS/qOxtUHiVe1gqReVqIVxJ4HIzPJLAj
+         Pm/tLXh7sRZ65zUIyNfnlWu76b8+9nBnlo0C8yNJDGkPIy4B3euskmhCMRuf8pzyAxgG
+         em1vG9XlY6CzFLMCDFrZthnxQcNRFrE7zijZEMLfHNq3YJjbMMX4avBdCfrFlPeOxI/H
+         IQgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyzTmuVboTKVIiwArg7ZaAtaOD+x6xkDgCoxgFt9Ln2PLnmMzH0uQlWm5XpnKgEcpkft/+gFNizabX+gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEHDD1ut8KJv7RIOXz2Jr0M5npBvncmq7D/NRDWRrXf2mFfOb2
+	AJ/yVOqDFlaVWlKqaWmXJ3jjLj/8rJhQ8h2yRz6bKHFdgLx4N+Eg
+X-Gm-Gg: ASbGncvUsDQZvJIBbWvi50KT7R6o108qwoEq5z85dtsgQ3VNjY76TfVhPGiD9NCnrfR
+	91SueTW2PiPIgMYUJJDsG7uUM8Qx0rj3ip8ke3+zjwX25JpvAzPYb43uOx0xNrllsRgWND2jvCS
+	MoMMsiEMDxcwfc3Kzo4uTaY6lVHLj6P2p4W9SIJHs6Rd3Sxt90lZbOh/wcIUtXuUsxpoSmwNrcN
+	6h3HCG5zCWI4UEqZILCv+aApDjBedjI60aLNMjHkEWHoNzwTz3kJJFySlMpEw4/4oLdbWfhHrrb
+	jx/dAAa8DUC1/dR+usqBPPqICb9Q
+X-Google-Smtp-Source: AGHT+IFMAiFjDJbbuzZZaSIag4FnPbXCSWUSYHSMiX/Uiybv87JNBZ27yyUVQxEKr+V2yQ7kikWXmw==
+X-Received: by 2002:a05:600c:88a:b0:439:91c7:895a with SMTP id 5b1f17b1804b1-439a30af6edmr185928635e9.7.1740506392239;
+        Tue, 25 Feb 2025 09:59:52 -0800 (PST)
 Received: from fedora.. ([213.94.27.232])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.50
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02f3e15sm149063655e9.22.2025.02.25.09.59.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:59:50 -0800 (PST)
+        Tue, 25 Feb 2025 09:59:51 -0800 (PST)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: louis.chauvet@bootlin.com
 Cc: hamohammed.sa@gmail.com,
@@ -83,9 +83,9 @@ Cc: hamohammed.sa@gmail.com,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [PATCH v2 09/16] drm/vkms: Allow to attach encoders and CRTCs via configfs
-Date: Tue, 25 Feb 2025 18:59:29 +0100
-Message-ID: <20250225175936.7223-10-jose.exposito89@gmail.com>
+Subject: [PATCH v2 10/16] drm/vkms: Allow to configure multiple connectors via configfs
+Date: Tue, 25 Feb 2025 18:59:30 +0100
+Message-ID: <20250225175936.7223-11-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250225175936.7223-1-jose.exposito89@gmail.com>
 References: <20250225175936.7223-1-jose.exposito89@gmail.com>
@@ -99,127 +99,178 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Create a default subgroup at
-/config/vkms/encoders/encoder/possible_crtcs that will contain symbolic
-links to the possible CRTCs for the encoder.
+/config/vkms/connectors to allow to create as many connectors as
+required.
 
 Co-developed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- Documentation/gpu/vkms.rst           |  2 +
- drivers/gpu/drm/vkms/vkms_configfs.c | 55 ++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+ Documentation/gpu/vkms.rst           |  6 ++
+ drivers/gpu/drm/vkms/vkms_configfs.c | 86 ++++++++++++++++++++++++++++
+ 2 files changed, 92 insertions(+)
 
 diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-index e24767448775..650dbfa76f59 100644
+index 650dbfa76f59..744e2355db23 100644
 --- a/Documentation/gpu/vkms.rst
 +++ b/Documentation/gpu/vkms.rst
-@@ -106,6 +106,7 @@ Next, create one or more encoders::
+@@ -74,6 +74,7 @@ By default, the instance is disabled::
+ And directories are created for each configurable item of the display pipeline::
+ 
+   tree /config/vkms/my-vkms
++  ├── connectors
+   ├── crtcs
+   ├── enabled
+   ├── encoders
+@@ -103,6 +104,10 @@ Next, create one or more encoders::
+ 
+   sudo mkdir /config/vkms/my-vkms/encoders/encoder0
+ 
++Last but not least, create one or more connectors::
++
++  sudo mkdir /config/vkms/my-vkms/connectors/connector0
++
  To finish the configuration, link the different pipeline items::
  
    sudo ln -s /config/vkms/my-vkms/crtcs/crtc0 /config/vkms/my-vkms/planes/plane0/possible_crtcs
-+  sudo ln -s /config/vkms/my-vkms/crtcs/crtc0 /config/vkms/my-vkms/encoders/encoder0/possible_crtcs
- 
- Since at least one primary plane is required, make sure to set the right type::
- 
-@@ -122,6 +123,7 @@ Finally, you can remove the VKMS instance disabling it::
- And removing the top level directory and its subdirectories::
- 
-   sudo rm /config/vkms/my-vkms/planes/*/possible_crtcs/*
-+  sudo rm /config/vkms/my-vkms/encoders/*/possible_crtcs/*
+@@ -127,6 +132,7 @@ And removing the top level directory and its subdirectories::
    sudo rmdir /config/vkms/my-vkms/planes/*
    sudo rmdir /config/vkms/my-vkms/crtcs/*
    sudo rmdir /config/vkms/my-vkms/encoders/*
++  sudo rmdir /config/vkms/my-vkms/connectors/*
+   sudo rmdir /config/vkms/my-vkms
+ 
+ Testing With IGT
 diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-index cf865728abc2..64aa10cd3156 100644
+index 64aa10cd3156..bcbf91fbcd44 100644
 --- a/drivers/gpu/drm/vkms/vkms_configfs.c
 +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-@@ -70,11 +70,13 @@ struct vkms_configfs_crtc {
-  *
-  * @group: Top level configuration group that represents a encoder.
-  * Initialized when a new directory is created under "/config/vkms/encoders"
-+ * @possible_crtcs_group: Default subgroup of @group at "encoder/possible_crtcs"
-  * @dev: The vkms_configfs_device this encoder belongs to
-  * @config: Configuration of the VKMS encoder
-  */
- struct vkms_configfs_encoder {
- 	struct config_group group;
-+	struct config_group possible_crtcs_group;
- 	struct vkms_configfs_device *dev;
+@@ -19,6 +19,7 @@ static bool is_configfs_registered;
+  * @planes_group: Default subgroup of @group at "/config/vkms/planes"
+  * @crtcs_group: Default subgroup of @group at "/config/vkms/crtcs"
+  * @encoders_group: Default subgroup of @group at "/config/vkms/encoders"
++ * @connectors_group: Default subgroup of @group at "/config/vkms/connectors"
+  * @lock: Lock used to project concurrent access to the configuration attributes
+  * @config: Protected by @lock. Configuration of the VKMS device
+  * @enabled: Protected by @lock. The device is created or destroyed when this
+@@ -29,6 +30,7 @@ struct vkms_configfs_device {
+ 	struct config_group planes_group;
+ 	struct config_group crtcs_group;
+ 	struct config_group encoders_group;
++	struct config_group connectors_group;
+ 
+ 	struct mutex lock;
+ 	struct vkms_config *config;
+@@ -81,6 +83,20 @@ struct vkms_configfs_encoder {
  	struct vkms_config_encoder *config;
  };
-@@ -100,6 +102,10 @@ struct vkms_configfs_encoder {
- 	container_of(to_config_group((item)), struct vkms_configfs_encoder, \
- 		     group)
  
-+#define encoder_possible_crtcs_item_to_vkms_configfs_encoder(item) \
-+	container_of(to_config_group((item)), struct vkms_configfs_encoder, \
-+		     possible_crtcs_group)
++/**
++ * struct vkms_configfs_connector - Configfs representation of a connector
++ *
++ * @group: Top level configuration group that represents a connector.
++ * Initialized when a new directory is created under "/config/vkms/connectors"
++ * @dev: The vkms_configfs_device this connector belongs to
++ * @config: Configuration of the VKMS connector
++ */
++struct vkms_configfs_connector {
++	struct config_group group;
++	struct vkms_configfs_device *dev;
++	struct vkms_config_connector *config;
++};
++
+ #define device_item_to_vkms_configfs_device(item) \
+ 	container_of(to_config_group((item)), struct vkms_configfs_device, \
+ 		     group)
+@@ -106,6 +122,10 @@ struct vkms_configfs_encoder {
+ 	container_of(to_config_group((item)), struct vkms_configfs_encoder, \
+ 		     possible_crtcs_group)
+ 
++#define connector_item_to_vkms_configfs_connector(item) \
++	container_of(to_config_group((item)), struct vkms_configfs_connector, \
++		     group)
 +
  static ssize_t crtc_writeback_show(struct config_item *item, char *page)
  {
  	struct vkms_configfs_crtc *crtc;
-@@ -353,6 +359,49 @@ static const struct config_item_type plane_group_type = {
+@@ -469,6 +489,68 @@ static const struct config_item_type encoder_group_type = {
  	.ct_owner	= THIS_MODULE,
  };
  
-+static int encoder_possible_crtcs_allow_link(struct config_item *src,
-+					     struct config_item *target)
++static void connector_release(struct config_item *item)
 +{
-+	struct vkms_configfs_encoder *encoder;
-+	struct vkms_configfs_crtc *crtc;
++	struct vkms_configfs_connector *connector;
++	struct mutex *lock;
 +
-+	if (target->ci_type != &crtc_item_type)
-+		return -EINVAL;
++	connector = connector_item_to_vkms_configfs_connector(item);
++	lock = &connector->dev->lock;
 +
-+	encoder = encoder_possible_crtcs_item_to_vkms_configfs_encoder(src);
-+	crtc = crtc_item_to_vkms_configfs_crtc(target);
-+
-+	guard(mutex)(&encoder->dev->lock);
-+
-+	if (encoder->dev->enabled)
-+		return -EBUSY;
-+
-+	return vkms_config_encoder_attach_crtc(encoder->config, crtc->config);
++	guard(mutex)(lock);
++	vkms_config_destroy_connector(connector->config);
++	kfree(connector);
 +}
 +
-+static void encoder_possible_crtcs_drop_link(struct config_item *src,
-+					     struct config_item *target)
-+{
-+	struct vkms_configfs_encoder *encoder;
-+	struct vkms_configfs_crtc *crtc;
-+
-+	encoder = encoder_possible_crtcs_item_to_vkms_configfs_encoder(src);
-+	crtc = crtc_item_to_vkms_configfs_crtc(target);
-+
-+	guard(mutex)(&encoder->dev->lock);
-+	vkms_config_encoder_detach_crtc(encoder->config, crtc->config);
-+}
-+
-+static struct configfs_item_operations encoder_possible_crtcs_item_operations = {
-+	.allow_link	= encoder_possible_crtcs_allow_link,
-+	.drop_link	= encoder_possible_crtcs_drop_link,
++static struct configfs_item_operations connector_item_operations = {
++	.release	= &connector_release,
 +};
 +
-+static const struct config_item_type encoder_possible_crtcs_group_type = {
-+	.ct_item_ops	= &encoder_possible_crtcs_item_operations,
++static const struct config_item_type connector_item_type = {
++	.ct_item_ops	= &connector_item_operations,
 +	.ct_owner	= THIS_MODULE,
 +};
 +
- static void encoder_release(struct config_item *item)
- {
- 	struct vkms_configfs_encoder *encoder;
-@@ -402,6 +451,12 @@ static struct config_group *make_encoder_group(struct config_group *group,
- 
- 	config_group_init_type_name(&encoder->group, name, &encoder_item_type);
- 
-+	config_group_init_type_name(&encoder->possible_crtcs_group,
-+				    "possible_crtcs",
-+				    &encoder_possible_crtcs_group_type);
-+	configfs_add_default_group(&encoder->possible_crtcs_group,
-+				   &encoder->group);
++static struct config_group *make_connector_group(struct config_group *group,
++						 const char *name)
++{
++	struct vkms_configfs_device *dev;
++	struct vkms_configfs_connector *connector;
 +
- 	return &encoder->group;
++	dev = child_group_to_vkms_configfs_device(group);
++
++	guard(mutex)(&dev->lock);
++
++	if (dev->enabled)
++		return ERR_PTR(-EBUSY);
++
++	connector = kzalloc(sizeof(*connector), GFP_KERNEL);
++	if (!connector)
++		return ERR_PTR(-ENOMEM);
++
++	connector->dev = dev;
++
++	connector->config = vkms_config_create_connector(dev->config);
++	if (IS_ERR(connector->config)) {
++		kfree(connector);
++		return ERR_CAST(connector->config);
++	}
++
++	config_group_init_type_name(&connector->group, name,
++				    &connector_item_type);
++
++	return &connector->group;
++}
++
++static struct configfs_group_operations connectors_group_operations = {
++	.make_group	= &make_connector_group,
++};
++
++static const struct config_item_type connector_group_type = {
++	.ct_group_ops	= &connectors_group_operations,
++	.ct_owner	= THIS_MODULE,
++};
++
+ static ssize_t device_enabled_show(struct config_item *item, char *page)
+ {
+ 	struct vkms_configfs_device *dev;
+@@ -573,6 +655,10 @@ static struct config_group *make_device_group(struct config_group *group,
+ 				    &encoder_group_type);
+ 	configfs_add_default_group(&dev->encoders_group, &dev->group);
+ 
++	config_group_init_type_name(&dev->connectors_group, "connectors",
++				    &connector_group_type);
++	configfs_add_default_group(&dev->connectors_group, &dev->group);
++
+ 	return &dev->group;
  }
  
 -- 
