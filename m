@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-531587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EB8A44261
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:19:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7375DA44267
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:19:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FDDC178641
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:16:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A2217E746
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF01269CEB;
-	Tue, 25 Feb 2025 14:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503F126AAB6;
+	Tue, 25 Feb 2025 14:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="XNJXo7Ce"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sbfhCibv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cwgoIn9a"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDEB256C62;
-	Tue, 25 Feb 2025 14:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A27D269D16;
+	Tue, 25 Feb 2025 14:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492960; cv=none; b=WSncl+DLGXVUjxHDvraJHxpp+c3QSVblwu3e2WdTD/K42KiYhCV7tEa09jlbcbwII5bV8Bro+2D3Nhd7MMt0fjIq6+GHd5v16XYdStdv0uObq3aOzXrcRcN74v0mv9UJ5EO2hV8ICoq6bJvsKi7rpxk3fhu4drer8ViWUCHKHhY=
+	t=1740492963; cv=none; b=MRL4lEYlbQ/cqq8qQgPGkWp0yDnaUfBScyPoOE5YOt/C43jH5W/fycTQfpDm+BkRni48ocExNrlBhGm2+DRwKjbNhOd9LO6m/1uLXC4FE4DpdQ1KkVXN5JP5CdwmVTsTYawpwI1hS/piQwI5vfmAYdylyG9BDvGer3A7H0+8CiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492960; c=relaxed/simple;
-	bh=7HGNsoOe7a343v2XLXWbyMjsn29tQHWh8GwQaE3GIPU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=blJHxwFD9EXNKcIymjB9hiBP8FgKHPbM2aGF00fFE4mB9x2M7MBjITdpul98/nTSQG3MIeIaWStl/fPqvp1/7iZw0f/m7nVb8db/lBCBG2jvnze+R7NdBShGqcgXP5jWpPZAP8ZKYTJQhrCgGpOh7BwMtYEJB2V8lLoFNvdKVjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=XNJXo7Ce; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id E2F332E08A04;
-	Tue, 25 Feb 2025 16:15:50 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740492952;
-	bh=7HGNsoOe7a343v2XLXWbyMjsn29tQHWh8GwQaE3GIPU=; h=From:To:Subject;
-	b=XNJXo7CeWNO0QRudVo2lZ9XNNmiHhaIcO0ymhXQMZsuwHHSnfCXs4Wv2Er+Hs7EGV
-	 x81kSNUkhwt1fL/KT+1jAIvjia3BtVhyaK7KANPjRmdz5NYgYcudvTgzBZsfjhMzhr
-	 /dohhnff2EUPgDihbleIOGI5jUQBXev44PlGmmiY=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: luke@ljones.dev
-Cc: bentiss@kernel.org,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: RE: [PATCH 2/2] platform/x86: asus-wmi: Refactor Ally suspend/resume
-Date: Tue, 25 Feb 2025 15:15:49 +0100
-Message-ID: <20250225141549.11165-1-lkml@antheas.dev>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225081744.92841-3-luke@ljones.dev>
-References: <20250225081744.92841-3-luke@ljones.dev>
+	s=arc-20240116; t=1740492963; c=relaxed/simple;
+	bh=ic89/Xr2wWnm4NQj9ULUvuHyJU+93/gzTZtcYCQygl0=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=MbWvOUz1JNFxW8SD6ZJjPWokaePT3BMFqwehDsV+2adVz3pQRh5UsRNp6eDkKagrmD34wokwWVBkyNapT3iTFNL+KR1424zUC/5kyOhlkUgPwFQ5Ay9DUacVrTpXNcv2ayqHearYgwvsR8EQNhJHouGWf/jb83chVH4HvxxL4xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sbfhCibv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cwgoIn9a; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Feb 2025 14:15:58 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1740492959;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e6pLXy4/8Mz5oIhec1RPb0DvC4iLxRtrz0XGKi6euhs=;
+	b=sbfhCibv06GtrDG2rZTACGWgm6K+OxhzZauOjqv3rqfLX8FhJ0XK6K7ROETjxrpyG6QU3s
+	Z8fyTK6To4sTbBrC6FbD2aqzYNsM/+ATIs/BnX9qr4sU+LACCYJEMFvFcCuMmSKHYVnW8M
+	6owQN+ECezbhwXcLY3z1u1q6cv5KavndTniEZt2rTlYQYPA9Tw1MqyeH7/rXB/g3VfDqny
+	Ez7p6PfJ23sVE1BQFWT53Vxu1Xc5sZFKAQsdy4BdiCnBWDsdITdWSMvk+J72uflqs3AzIl
+	64NhbJw7mu7BWY8aDvG/SJ10bkSh/kyp8ECNMyD1dmQejVgt+UUHP48AXycLQg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1740492959;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e6pLXy4/8Mz5oIhec1RPb0DvC4iLxRtrz0XGKi6euhs=;
+	b=cwgoIn9arTtGH2jxuOF2fUhfx2h7lJLChHGZkpBV+B70vb2OYaR/D54Gccif4bawHsXyYv
+	hZ++7r63fSWT5XBg==
+From: "tip-bot2 for liuye" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/asm] selftests/x86/lam: Fix minor memory in do_uring()
+Cc: liuye <liuye@kylinos.cn>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250114082650.113105-1-liuye@kylinos.cn>
+References: <20250114082650.113105-1-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174049295187.4817.13207375220037046238@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Message-ID: <174049295877.10177.8031601958475058739.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Luke,
-setting MCU powersave too close to the boot-up sequence can cause the
-controller of the original Ally to malfunction. Which is why you created
-this little init sequence in which you call CSEE manually. In addition,
-MCU powersave (which is called Extreme Standby in Windows and you named
-incorrectly in asus-wmi), causes a very large 8 second delay in the resume
-process. It should under no circumstance be set enabled by default.
+The following commit has been merged into the x86/asm branch of tip:
 
-Users that want it can enable it manually. Following, distributions that
-want it and lack the appropriate configuration interface can use a udev
-rule with an 8 second delay to enable it, and then, the udev rule should
-first check if mcu_powersave is disabled before enabling it. This is
-because writing to it even with the same value causes an issue regardless.
+Commit-ID:     c4f23a9d6e7314060ccf5f089eda179cdcc3b36a
+Gitweb:        https://git.kernel.org/tip/c4f23a9d6e7314060ccf5f089eda179cdcc3b36a
+Author:        liuye <liuye@kylinos.cn>
+AuthorDate:    Tue, 14 Jan 2025 16:26:50 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 25 Feb 2025 15:03:06 +01:00
 
-Therefore, please remove both parts of it from the second patch in your
-series and produce a v2, which contains no hints of CSEE. When you do:
+selftests/x86/lam: Fix minor memory in do_uring()
 
-Suggested-by: Antheas Kapenekakis <lkml@antheas.dev>
+Exception branch returns without freeing 'fi'.
 
-Following, when you do finish the new Asus Armoury patch series, please
-rename MCU powersave to extreme standby, and add a suggested-by in the
-appropriate patch. Since to avoid user confusion, the names should match
-their windows branding.
+Signed-off-by: liuye <liuye@kylinos.cn>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250114082650.113105-1-liuye@kylinos.cn
+---
+ tools/testing/selftests/x86/lam.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-During our testing of the controller, we found that the lack of a delay
-causes the RGB of both the Ally and the Ally X to malfunction, so this is
-a small nack for me (the old quirk is preferable in that regard). But then
-again, this patch series is not getting anywhere close to our users even
-if it is accepted, so you can do as you wish (given appropriate attribution).
-
-Best,
-Antheas
+diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
+index 4d4a765..309c93e 100644
+--- a/tools/testing/selftests/x86/lam.c
++++ b/tools/testing/selftests/x86/lam.c
+@@ -596,8 +596,10 @@ int do_uring(unsigned long lam)
+ 	fi->file_fd = file_fd;
+ 
+ 	ring = malloc(sizeof(*ring));
+-	if (!ring)
++	if (!ring) {
++		free(fi);
+ 		return 1;
++	}
+ 
+ 	memset(ring, 0, sizeof(struct io_ring));
+ 
 
