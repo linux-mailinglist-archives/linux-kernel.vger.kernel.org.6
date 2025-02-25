@@ -1,105 +1,100 @@
-Return-Path: <linux-kernel+bounces-532209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 753C2A44A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:34:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA71A44A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B303BB129
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:21:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A799F188D5F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC71D1A23AD;
-	Tue, 25 Feb 2025 18:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XbrcTlM4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC3E1A8F95;
+	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEAE1A0BDB;
-	Tue, 25 Feb 2025 18:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114619D886;
+	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507535; cv=none; b=bwdFP68UJQGUjiC7YGDHZTrs5gc7RzYubJmeHJ1inF2TkBdMgDKJSbTEMyBKpjaOXl6O7Kp/dyzadPTBwaxXg7N69CniJLV+0OEjwJwz/5ICaBUBdTKhIdblHBy97fhMEPeXzRnpaNIlVtm5rWSBdnZV5KLN7+7LXXzG3IxfN6s=
+	t=1740507615; cv=none; b=BDnOJA55I5JGLVIeEm7Vpp+LFjElvoHhBiiifcwBfz+QuMJ2d1atKpQYncnOXMIBKccyEL4DV9g5SKpG5KK+Gj29j1XDllmih0ClM6WG3u8ooCVNKyrDwCSz/CI5j1f0Fjxhev+DqtGg7ruyvgZ2YarigRtuVUwz1Cld5WIKSRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507535; c=relaxed/simple;
-	bh=7OXINymZmewil33z64cp8FT/qYn5nUCuIRaRxvDnaTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EVKVGTO5auJPbSbiu4UHWjBzjcYn7sIH2BOhw8lQVB22/m0YUsbS1wxUjySN8oQOtboCgyTYYNRtpyT9YU1UoYFIHkA2FmHNrmDkh7vcaguIoxxYSZGZRBB5F3aAZ33nR+elBR2b9Z9orGCbbzUUH+FPLTY4ZA36qml8k07MkRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XbrcTlM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96DB1C4CEDD;
-	Tue, 25 Feb 2025 18:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740507534;
-	bh=7OXINymZmewil33z64cp8FT/qYn5nUCuIRaRxvDnaTU=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=XbrcTlM4i+SX3uCIg9f9cb7Bn4JOAxuuN8MBwavcrnobPGBEkOatUNJv7vyfQFov5
-	 04pwDcadpWQt+iyvR3aviVmwIOiZTFktw+kCWbcpFWPPFkXStDZmd6AbzgA1v+AVlP
-	 x4IawZz5R5rluAoeLJfPBbRvkqqW+apib4kCmhe6q7m1YBO/M+vSTdZMd0OQz2yoDW
-	 eD+tktKSIg0U2bfOBqXb/LaTH18fNUgmdIaWL7F5+hy4/4t5Hx6J9Y+ESqnL7cuXBe
-	 JVo3Q56+DIV6PNYoKld41AMsLlnR/T4ks3Z1TFCLjmuPLd0AAYE+/Rx7vjLgB/4gVB
-	 JK1FrPonE1mzw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 302DCCE045A; Tue, 25 Feb 2025 10:18:54 -0800 (PST)
-Date: Tue, 25 Feb 2025 10:18:54 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-	lkmm@lists.linux.dev, kernel-team@meta.com, mingo@kernel.org,
-	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
-	dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
-	Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-Subject: Re: [PATCH memory-model 7/7] tools/memory-model: Distinguish between
- syntactic and semantic tags
-Message-ID: <42d5f3b4-de3e-4110-8273-01b25b92a7c8@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <8cfb51e3-9726-4285-b8ca-0d0abcacb07e@paulmck-laptop>
- <20250220161403.800831-7-paulmck@kernel.org>
- <ec893c4e-b4eb-4279-be66-1ca7e6bce7b1@gmail.com>
+	s=arc-20240116; t=1740507615; c=relaxed/simple;
+	bh=2YKOghZ86hQATb80S+0y70FRgLQaXaEINmhPfDP613Q=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=TuWvOBY2VsGG5GmBtXRwBIgqAKaSodOWqDuKphpRGeEbfiXhBQnGb+3Sa2csRqBwJaMkEmNyKFLpkduPyw7CRCqK2eAhst5KstvNG9ebloqDt9u4T2v1LaZtSGFeAcozJJWOmAx5sn57AfCKJIvfO46PL+zC3XmPSVePp5a1/YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6936EC4CEE2;
+	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tmzY6-000000095XP-15hU;
+	Tue, 25 Feb 2025 13:20:54 -0500
+Message-ID: <20250225182004.473875894@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 25 Feb 2025 13:20:04 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>,
+ "Arnd Bergmann" <arnd@arndb.de>,
+ Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/4] scripts/sorttable: ftrace: Fix some bugs with sorttable and ARM 64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ec893c4e-b4eb-4279-be66-1ca7e6bce7b1@gmail.com>
 
-On Tue, Feb 25, 2025 at 01:28:08PM +0900, Akira Yokosawa wrote:
-> On Thu, 20 Feb 2025 08:14:03 -0800, Paul E. McKenney wrote:
-> > From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> > 
-> > Not all annotated accesses provide the semantics their syntactic tags
-> > would imply. For example, an 'acquire tag on a write does not imply that
-> > the write is finally in the Acquire set and provides acquire ordering.
-> > 
-> > To distinguish in those cases between the syntactic tags and actual
-> > sets, we capitalize the former, so 'ACQUIRE tags may be present on both
-> > reads and writes, but only reads will appear in the Acquire set.
-> > 
-> > For tags where the two concepts are the same we do not use specific
-> > capitalization to make this distinction.
-> > 
-> > Reported-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> > Tested-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> 
-> Tested-by: Akira Yokosawa <akiyks@gmail.com> # herdtools7.7.58
 
-I applied your tag to this commit and the previous one, and also your
-suggested Co-developed-by tags, thank you very much!
+A few bugs with ARM 64 has been reported with the removal of the unused
+weak functions code.
 
-							Thanx, Paul
+One was that kaslr_offset() may not be defined by all architectures and
+it's reference would cause the build to fail. This was fixed by removing
+the kaslr_offset() to check valid mcount_loc addresses and use the
+is_kernel_text() instead.
 
-> > ---
-> >  .../Documentation/herd-representation.txt     |  44 ++--
-> >  tools/memory-model/linux-kernel.bell          |  22 +-
-> >  tools/memory-model/linux-kernel.def           | 198 +++++++++---------
-> >  3 files changed, 132 insertions(+), 132 deletions(-)
-> 
+Another was that clang doesn't do the trick of storing the mcount_loc
+addresses in the Elf_Rela sections like gcc does. Clang does it like
+other achitectures do. To handle this, the Elf_Rela is first used
+but no functions were found there, it then falls back to the same
+code that all the other architectures use.
+
+When reading the mcount_loc and creating the ftrace descriptors, the
+architecture specific function ftrace_call_addr() is called on the
+address from the mcount_loc. But because the unused weak functions were
+zeroed out, but KASLR can still modify them, it can make the address
+invalid. The ftrace_call_addr() from ARM 64 will crash if the address
+passed in is invalid. Have the valid tests done before calling that
+function.
+
+On bug that was found while debugging this but was not reported was that
+the test against the nm output to determine if a function is an unused
+weak function or not was triggering false postives for all functions.
+That's because the address in mcount_loc for ARM 64 is just before
+the function entry. The check against nm would see if the address was
+within the function text, but 8 bytes before is not in the function text
+and this would cause all the functions to be considered unused weak
+functions and there would be no function left to trace.
+
+Steven Rostedt (4):
+      ftrace: Test mcount_loc addr before calling ftrace_call_addr()
+      ftrace: Check against is_kernel_text() instead of kaslr_offset()
+      scripts/sorttable: Use normal sort if there's no relocs in the mcount section
+      scripts/sorttable: Allow matches to functions before function entry
+
+----
+ kernel/trace/ftrace.c | 23 +++++++++++++++++------
+ scripts/sorttable.c   | 16 +++++++++++++---
+ 2 files changed, 30 insertions(+), 9 deletions(-)
 
