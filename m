@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-530456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99642A433B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CBCA433B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 04:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97CA17A859
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71E71894603
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE8D24BC06;
-	Tue, 25 Feb 2025 03:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAA52505B7;
+	Tue, 25 Feb 2025 03:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cvgcx60o"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aPj6j68H"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8752206BC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30953242912;
+	Tue, 25 Feb 2025 03:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740454787; cv=none; b=l1rGF4i93ot/l3UCvdClkrssWoa5JaENFlWEQ3GvtDyw1D2JZAMKLOimPmk/X7T2WB8VQBjM3eIvmNOxMXTFGo/TthrZbNG5IDmrB6D2J7aKUtGMFS3RFRuc7KNGbH9MB5KNKxYEQ9NDghBUTgMEfKi8O6kDWdXDoWU9lGWG8GY=
+	t=1740454805; cv=none; b=VZv+jl5qLbrF5exRoa6HEp/vicXoQomYvtH2VfQz4Dt/LdF94kg1QqAYdQCoO1yP+GSkuTI8UMORLwj/4t0bIg9X/U0BTt6XFqrwiRnP3Xf8hQws2Efd8/hab2P+QxPcEPOwBYASJM0yBfqfcdfJ4STbJhBfRQXJo3MEPEAMrLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740454787; c=relaxed/simple;
-	bh=aF1WRTePyUyRnZHJpGhucp9w76Ljz8qdTGSMRJjqC9Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IPd3C9pD71g9/B6aBU8XRdxzs09cr40V5nE1WbjkR1kJ9gCL6gazoPdwrKusiLWNoL/r3y3oH3FZ7v7qqtjvCc14kZJEYVBtdvWsWUf/UiW52AE8QfdFPAbJ7im4ymFCCHBESerwRk2ZoMTWHHr3LjvaMotOsyPwCRnpVbDI4xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cvgcx60o; arc=none smtp.client-ip=115.124.30.101
+	s=arc-20240116; t=1740454805; c=relaxed/simple;
+	bh=6eC1Ex6Lga2/zVxCD43BHFsYHtz3Za7K6fsq5NQxa9g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=thUN9xcgnq+cfdaVbmRQ9u4eUe3w6ZQMz8zsWTwB5U0gV1Nub4ju/DPfOIJ7l1HpzKu4x8vT+JgPIaRoXURa2sv6jh9b/KhoiNh6ub3FXawvhihgEy0zoWcWVOKBdBFZ+3qcJ3PQ7wkquzzruzoGJ0nBrrmohk6xbKNZ8ZUxUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aPj6j68H; arc=none smtp.client-ip=115.124.30.113
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=linux.alibaba.com; s=default;
-	t=1740454780; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=wfIqepXZVUfIjlPUk4Da5gDeRqNF03KNFcNHAJQ76D4=;
-	b=cvgcx60oMVecghl6p12IkDscpCOmPH6tPl6KPsWU3kBOJAb7edkSA9qwlP1VqZu3wqZmhM89DNxipte0qMY4aK/veXfSLJVDusraqJ+nzn/FgAIQ/viR97WQzDKO/sm5Oae3Hqsf6W92Kayaxb0GtOCoVoapng3eu1hkdSbt6dA=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQD6RSw_1740454776 cluster:ay36)
+	t=1740454793; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kU7ee/i+ZOxoBjtiiWDHV696ORQ4RA5ytO40/bKzA7c=;
+	b=aPj6j68HrMRmxg7rG206S9rayfqJrG+OSqqrHc4vK9WAS0p2VfMqPwf4mOINc3tnJBxkAR4CfX6gNgxM1xumqr8aoxfxOQOBn+IFPYs49zisZ6SItLTq1v6jLbqPB7QeKcdfNg7KED+U/pIT0yy7sk6N/SVdMy7PhdF3xSTejqk=
+Received: from 30.74.144.116(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WQD4a1M_1740454790 cluster:ay36)
           by smtp.aliyun-inc.com;
-          Tue, 25 Feb 2025 11:39:39 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: allow 16-byte volume name again
-Date: Tue, 25 Feb 2025 11:39:34 +0800
-Message-ID: <20250225033934.2542635-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+          Tue, 25 Feb 2025 11:39:51 +0800
+Message-ID: <0af9a7d7-e710-4634-ade8-6a3cf324bb5e@linux.alibaba.com>
+Date: Tue, 25 Feb 2025 11:39:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/7] power: supply: all: switch psy_cfg from of_node to
+ fwnode
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sebastian Reichel <sre@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Hans de Goede <hdegoede@redhat.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
+ Matti Vaittinen <mazziesaccount@gmail.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>, Paul Cercueil <paul@crapouillou.net>,
+ Samuel Holland <samuel@sholland.org>, David Lechner <david@lechnology.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>,
+ Purism Kernel Team <kernel@puri.sm>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Orson Zhai <orsonzhai@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20250225-psy-core-convert-to-fwnode-v1-0-d5e4369936bb@collabora.com>
+ <20250225-psy-core-convert-to-fwnode-v1-4-d5e4369936bb@collabora.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20250225-psy-core-convert-to-fwnode-v1-4-d5e4369936bb@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Actually, volume name doesn't need to include the NIL terminator if
-the string length matches the on-disk field size as mentioned in [1].
 
-I tend to relax it together with the upcoming 48-bit block addressing
-(or stable kernels which backport this fix) so that we could have a
-chance to record a 16-byte volume name like ext4.
 
-Since in-memory `volume_name` has no user, just get rid of the unneeded
-check for now.  `sbi->uuid` is useless and avoid it too.
+On 2025/2/25 07:21, Sebastian Reichel wrote:
+> When registering a power-supply device, either a of_node or the more
+> recent fwnode can be supplied. Since fwnode can also contain an of_node,
+> let's try to get rid of it.
+> 
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
 
-Fixes: a64d9493f587 ("staging: erofs: refuse to mount images with malformed volume name")
-[1] https://lore.kernel.org/r/96efe46b-dcce-4490-bba1-a0b00932d1cc@linux.alibaba.com
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
- fs/erofs/internal.h | 2 --
- fs/erofs/super.c    | 8 --------
- 2 files changed, 10 deletions(-)
+[snip]
 
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index f955793146f4..b452b6557aa5 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -152,8 +152,6 @@ struct erofs_sb_info {
- 	/* used for statfs, f_files - f_favail */
- 	u64 inos;
- 
--	u8 uuid[16];                    /* 128-bit uuid for volume */
--	u8 volume_name[16];             /* volume name */
- 	u32 feature_compat;
- 	u32 feature_incompat;
- 
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 3dc86d931ef1..19e52ffa34c5 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -317,14 +317,6 @@ static int erofs_read_superblock(struct super_block *sb)
- 
- 	super_set_uuid(sb, (void *)dsb->uuid, sizeof(dsb->uuid));
- 
--	ret = strscpy(sbi->volume_name, dsb->volume_name,
--		      sizeof(dsb->volume_name));
--	if (ret < 0) {	/* -E2BIG */
--		erofs_err(sb, "bad volume name without NIL terminator");
--		ret = -EFSCORRUPTED;
--		goto out;
--	}
--
- 	/* parse on-disk compression configurations */
- 	ret = z_erofs_parse_cfgs(sb, dsb);
- 	if (ret < 0)
--- 
-2.43.5
+>   drivers/power/supply/sc2731_charger.c       | 2 +-
+>   drivers/power/supply/sc27xx_fuel_gauge.c    | 3 +--
 
+> diff --git a/drivers/power/supply/sc2731_charger.c b/drivers/power/supply/sc2731_charger.c
+> index 50d5157af9277dc09fe24852747f4f62e72bc712..58b86fd78771360f74ffdad152c3905e1bee7c1b 100644
+> --- a/drivers/power/supply/sc2731_charger.c
+> +++ b/drivers/power/supply/sc2731_charger.c
+> @@ -480,7 +480,7 @@ static int sc2731_charger_probe(struct platform_device *pdev)
+>   	}
+>   
+>   	charger_cfg.drv_data = info;
+> -	charger_cfg.of_node = np;
+> +	charger_cfg.fwnode = dev_fwnode(&pdev->dev);
+>   	info->psy_usb = devm_power_supply_register(&pdev->dev,
+>   						   &sc2731_charger_desc,
+>   						   &charger_cfg);
+> diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
+> index f36edc2ba708748d0ceb61298056f8c905aca012..196d96cd986266738785d8582e907858faaf2ba3 100644
+> --- a/drivers/power/supply/sc27xx_fuel_gauge.c
+> +++ b/drivers/power/supply/sc27xx_fuel_gauge.c
+> @@ -1141,7 +1141,6 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
+>   static int sc27xx_fgu_probe(struct platform_device *pdev)
+>   {
+>   	struct device *dev = &pdev->dev;
+> -	struct device_node *np = dev->of_node;
+>   	struct power_supply_config fgu_cfg = { };
+>   	struct sc27xx_fgu_data *data;
+>   	int ret, irq;
+> @@ -1205,7 +1204,7 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
+>   	platform_set_drvdata(pdev, data);
+>   
+>   	fgu_cfg.drv_data = data;
+> -	fgu_cfg.of_node = np;
+> +	fgu_cfg.fwnode = dev_fwnode(dev);
+>   	data->battery = devm_power_supply_register(dev, &sc27xx_fgu_desc,
+>   						   &fgu_cfg);
+>   	if (IS_ERR(data->battery)) {
+
+For sc27xx parts:
+
+Acked-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+
+Thanks.
 
