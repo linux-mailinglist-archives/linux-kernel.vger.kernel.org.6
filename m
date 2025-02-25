@@ -1,97 +1,100 @@
-Return-Path: <linux-kernel+bounces-531719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73FDA44415
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:15:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08405A44416
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFF43189B55B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:14:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3444517023D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7863226B0BC;
-	Tue, 25 Feb 2025 15:14:22 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96FB26B2A4;
+	Tue, 25 Feb 2025 15:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJd6DEYP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACB1A21ABDD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226C0268C7D;
+	Tue, 25 Feb 2025 15:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740496462; cv=none; b=PFtCxIhoCJ6OxiImY/2BUSKTtPOiO/XzazMdaX9+pFD0loXtX+KRt3nW06HKO9rwsee4kS3NQPJq/F7wBjM+YZ4Wn9/y4lSRTw7BEGEpKDY06b5jY53jpHGDpxMLlyL4IWqH8V8OW8VKgAZGxHdjz74OSzGd8pfzqjIsp/rWMMg=
+	t=1740496520; cv=none; b=Y79+g4tkzexsk8a3oQGalIAvhuO2g/D8XawYk8b0dEGQVPmGkEv4AbA06N3SrISYurE1Uoxdqeb52X8rHkrF4gOxlpHdE3PVDMXK+wIh2AH+Za8tfeoKE/u6j8x0cb1c4+hPyjqwqj+6cD0KjuOfs42/eIum7jD+of9XlleAYHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740496462; c=relaxed/simple;
-	bh=pvTGZKSYu80TwXaYGOfuhUqK1pEERbXydrR80aMKOeM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QU6+Jvxhz/Q6ezHbgODk5r1y9Y3atUJ/SvqD8BrtLe2AcWKrdptN9HG6I/uC7sBjG/iIcpU5ClGjsgPWZei4aTWPobGh1sSWMg4PrPr/GAVpYK12CEu3083j1CUkBvh7UitjlLF4SCsc28CVyyX/YcyMBtAH7KiOYjbFs7Whjp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d18fbafa4dso42091225ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:14:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740496460; x=1741101260;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LqSNQanHHBGnbJKnLFdL6Ce5Z46qlBWfbEE/8S5V+PI=;
-        b=Lwbk/Ljf0EIhRYd+3Ddw9mHGYRw9Mzriqf6rLJcNy7/a26o392E+3o+g8/gmRP/lc1
-         0mZ1Pp2Onq4KUyFGZKcVYbbN+33CMlJ/dM7cVjFiMBnf9tosOB8pWv+XRuNGkFcyAyZv
-         hQNTsw4+3effJ2WhoAaHWa2omNoMZHpFvy8FWQY69jy0cEVlaPPFk4Ieb6uraJ4gQ7y+
-         Nqvj5sOpWJeCz5+awkDCfbwZqsNvQ/1VVT+2CzFCBYKMHIz1m0mekKl648OCu+DEplWg
-         IMNaQ0rKXJ2hCWw+654cYiCYOG3ReIOviYP7OGuB1h6drt/fYH4dsk5Sb06Zw1SCWfBt
-         4c5w==
-X-Gm-Message-State: AOJu0Yx2ST5KZW62TMxn+v+pIYX19CrcgHOusmlg/Rw6w9umm3YSgbh9
-	BCSlHflIV19wj3CcSoOcn9NcpmN8uM55OL8naDQyXpPuxyzfHUB4T60wXo8Thcy+hqDIpVHKner
-	vGwcx4Y0cDugATwqE+bGd4pbTObn0PDzeaqTyx5/pEMw00guv7noPOvo=
-X-Google-Smtp-Source: AGHT+IH3MC8/j7PGYeeZC0YDXVofgXnNz+mKy/4wrNT7+2JwUmuTMwQQcKTr1YZceT8HnSMfSxegHWbDAErP1xYz7lAOvEf+mELq
+	s=arc-20240116; t=1740496520; c=relaxed/simple;
+	bh=6f5OEnzY9m9xXiDHb3EeYpobugQNcSW5nVamDn3gNno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4iTqQ32/5e13K/cvhDWkhxzsHhACdAvM1MlS2E83KDjqMEBGpYzI/NhVylrZZzUuMOe+un8ZFQX/F9jSBuHW1LJSVvY/bTxjXcMwX7mEiSBmW/rBeWeEA6EwjMKETHCGHtAveoS+3MOSCG24t+hFWJYiAJcmJFF8p1+zH9T2Ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJd6DEYP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74671C4CEDD;
+	Tue, 25 Feb 2025 15:15:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740496520;
+	bh=6f5OEnzY9m9xXiDHb3EeYpobugQNcSW5nVamDn3gNno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FJd6DEYPLQYmP52tzuiGreDumf8FYrOpuh9r2tDDHvRvzlqZnfajjidJFiZDS2Gph
+	 A/eIIlLrORzz7RIY84LgZ8bvkaOV1JMruLSB3EcYuB7jPZfpBGObQDdMH70TFoVy8E
+	 tsBuUvuZBYv9wjYCkb8vL71Eg0HHvY3FOaNr91b4T4ThtqndYE8kSIC6W8sG0/dJRb
+	 ysGmT/us08zoN8ry9LtNDUzebAQ8Nb68sZQc/laKQBI0Q70Vk+blax2XX6JAI8sISs
+	 7ew4OlCVE36P+2IF1OQL2dnwSOApbI2VI4ODhsuC1MvkyNW8xVicBGaubBDSzIMYqY
+	 3dGc2YrCZ7oxg==
+Date: Tue, 25 Feb 2025 15:15:15 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: tiwai@suse.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH 1/2] firmware: cs_dsp: Remove async regmap writes
+Message-ID: <e2f3397b-05c0-42f7-9950-29c4d9b24350@sirena.org.uk>
+References: <20250225131843.113752-1-rf@opensource.cirrus.com>
+ <20250225131843.113752-2-rf@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:174d:b0:3d1:a34b:4d01 with SMTP id
- e9e14a558f8ab-3d2ff09ff49mr41356485ab.8.1740496459863; Tue, 25 Feb 2025
- 07:14:19 -0800 (PST)
-Date: Tue, 25 Feb 2025 07:14:19 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67bdde4b.050a0220.bbfd1.00ab.GAE@google.com>
-Subject: [syzbot] Monthly virt report (Feb 2025)
-From: syzbot <syzbot+list6b0a0e4de61d18e18ed0@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CXDYsStpVtdJdK5s"
+Content-Disposition: inline
+In-Reply-To: <20250225131843.113752-2-rf@opensource.cirrus.com>
+X-Cookie: I'm not available for comment..
 
-Hello virt maintainers/developers,
 
-This is a 31-day syzbot report for the virt subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/virt
+--CXDYsStpVtdJdK5s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 5 issues are still open and 47 have already been fixed.
+On Tue, Feb 25, 2025 at 01:18:42PM +0000, Richard Fitzgerald wrote:
 
-Some of the still happening issues:
+> The async writes are a 12-year-old workaround for inefficiency of
+> synchronous writes in the SPI subsystem. The SPI subsystem has since
+> been changed to avoid the overheads, so this workaround should not be
+> necessary.
 
-Ref Crashes Repro Title
-<1> 327     No    INFO: task hung in __vhost_worker_flush
-                  https://syzkaller.appspot.com/bug?extid=7f3bbe59e8dd2328a990
-<2> 70      No    INFO: task hung in drm_atomic_get_plane_state
-                  https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
-<3> 31      No    KCSAN: data-race in virtqueue_disable_cb / virtqueue_disable_cb (5)
-                  https://syzkaller.appspot.com/bug?extid=9d46c74b27b961b244a9
+That wasn't really the issue, it was that on systems with low numbers of
+slower cores (especially single core but there were some dual core
+systems too) there was a surprisingly low threashold where it was useful
+to overlap the marshalling of data to send to the device with
+transmitting already marshalled data.  SMP adds locking requirements
+which loose a lot of the gains, and it's controller dependent where the
+cuttoff points for interrupts and/or DMA are.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--CXDYsStpVtdJdK5s
+Content-Type: application/pgp-signature; name="signature.asc"
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+-----BEGIN PGP SIGNATURE-----
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme93oIACgkQJNaLcl1U
+h9DUygf8D2z/MW2+ckLJ3lDNYEYhiSZDQMkXrfzN3XjEGDpC50i+C2dl0ZcQUKVt
+4jz+afxVVzohIZ1WVuxwrHv00kokY6j57sklMwsIrIc8IVIyXSBfjdD4j0O863ir
+A9BLFarfpXbFw0jCl5k1wSa+uewGBl/GZ73VgWq/HIzMwWZMuzNovvPyaCZN74lM
+xg1QDwreF4m+amhmSjCHCOjF2CA0KGRsGkP1iIU38x8HMgAJ9YWBeaXF5SR58FQe
+GlF/faKmObLRZeTN3zsZpRVkoeoiA9cSA6Jx7LOCeeAIdI26JKWz8jRmR4lZmWSY
+rL2BGaPdwCZ51C6uUiHsT3bLxepi6g==
+=ShGq
+-----END PGP SIGNATURE-----
 
-You may send multiple commands in a single email message.
+--CXDYsStpVtdJdK5s--
 
