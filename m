@@ -1,126 +1,232 @@
-Return-Path: <linux-kernel+bounces-530632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1920A435F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:15:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFDDA435FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053223B4800
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:15:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0512118994F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:16:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA81E25A2D4;
-	Tue, 25 Feb 2025 07:15:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9A823BD00;
+	Tue, 25 Feb 2025 07:16:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kf59STFB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hK7nFdyj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34A214D2BB;
-	Tue, 25 Feb 2025 07:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F8D1547C8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:16:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740467712; cv=none; b=BfLEjMExRPbfQuKLd59ONjpPt1TPvrqUaBHNsr4+AxW8gildEHeagbnW0hfrmMrJkzCAl5nhGNP+X4nuo02r7kb/w28OxAWJVLkiaEfuc6DuwMaOWMJiJP3HQdSVmYjEsBIqEwt0nr9yJJaqv4GtRylabjRJIiMNsXnXeHBUna4=
+	t=1740467787; cv=none; b=hG9TwG7FurXhPqSl8qk7wIrdImVESD9/bXHWH6UqDLETIxizwxzaxsWw+1i/N0J9JisjyU8UOkww+AuJOkr7S3eQEUqyZ1QiLjHytA12Yz7VDA+YyRlia97Qg8KfPbLvCNABIDeo7bNhdhLGsXsvA8kxTwoxIOm1yQU8Y5w80ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740467712; c=relaxed/simple;
-	bh=LRD6OoMszjMiec2Df0s5N0O9u11A0kShWiGsRHii9Vw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=figAuYefziUrBuqYFIwxUTYE3BX5cRlZIP3Tf2L6cawM5Jvi3WAd88mzt+GhGPPZR6Tpy+XvTEY06aRfZN/xUmgFCvudTrtfTs00gTdwqwLu2kTOhYiZ4X9ygaaureIAcq5v+PjAFz7jm1KABkysdMO7tMvbAkr4kKJG3+2uB8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kf59STFB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOmHh017362;
-	Tue, 25 Feb 2025 07:15:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	RiLylepOzLfAIOw4jKJU+nrVaR7OZmn5yTHoeXsQJCg=; b=kf59STFB4/Ufka3f
-	WqTH9aP7ptFmLWdTTU/q+r2lTll6ZE/aUQkFmNSiRF/4X8ZXoW4t+pqP/O0X6gil
-	8Zp4/U53QKXoaKhMx1hZUwtPuk0SUNuBlTTO6Xe4I3d3tbYO7kv6GhD5eVQfDZk/
-	Kp/ueW3p+mi4lHEICdW2VqlI5MghXgE6YIasc55cz0OZ2805Lm5KqAtNfQhQ84Th
-	KQgLi27CeyFy0JPSX/fHR/Lbgw76qHWmpUVpnJAlCvgk3+1ilG0Ud+SnInqxPtT2
-	9Z9T92nnMPR8WTAt6vbTMVWGGifcnNHwf55wKVLAZxtsQGNz0+KxhCGjbenSRXOl
-	JJAyjQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5k681j4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 07:15:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P7F3Rs008153
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 07:15:03 GMT
-Received: from [10.216.5.11] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
- 2025 23:15:00 -0800
-Message-ID: <1989fdc2-453d-48f2-a89a-f0ab5bf582fb@quicinc.com>
-Date: Tue, 25 Feb 2025 12:44:02 +0530
+	s=arc-20240116; t=1740467787; c=relaxed/simple;
+	bh=/pgV5jyjK6Z1jVtfeCTPOeHBCDBaaVf166zwsVuNipQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NdgnvI4aTnMfcbP/Ms8ggMzpoq3b2P5jrGzK35t4lm6T9l9Q90FLRTUrRBd6ZNsG9rkO4HnT1sMX4p7YbjR6K9SnSeEnqmguZ2BXpnhd3p8rToYZmH/QogkNsfw0Qi11YGOMIZrLawFZNjO2kaSsWoG7MToPEy8HkuU+51JhMP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hK7nFdyj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740467783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQ8ganHFrjZwdAsNJKERIzeXH5APWE2/FMGZlEN7QT0=;
+	b=hK7nFdyj4qzZqyWBntPedvhAyemuvvFWXDBE/akjoqKVMKn+yQP1+jYXLJdyeuu5fs5XrR
+	UNyBng6lqZoB3sD0BNWr3UqmT4StmRMxCatA9T0Jrr7XcOr9/4d7sqacVJ1jaoFDujDV5Z
+	DtuHCn7z+YQyOmVrFL9R7btSZjc7YHw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-677-fAVd8RFoPDSNw3XkInb7QQ-1; Tue, 25 Feb 2025 02:16:22 -0500
+X-MC-Unique: fAVd8RFoPDSNw3XkInb7QQ-1
+X-Mimecast-MFC-AGG-ID: fAVd8RFoPDSNw3XkInb7QQ_1740467781
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4394c489babso28902935e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 23:16:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740467781; x=1741072581;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nQ8ganHFrjZwdAsNJKERIzeXH5APWE2/FMGZlEN7QT0=;
+        b=d4hkogwz5B/VTzajoIXqyV6HCKtXoVd3RGknukz4+fXfLRivSUiv7E4BkYvpHsqyFL
+         aEVO6iCkqOC8deSazMHXNbrfEinwO0lDxLWOuK5gLJUaZpp7+S8W97OaMl9I9GcFhC/O
+         WznzchdCGy6uDnc6oLJb7PdRwh/TZEXBK9EH/J8QWJJUBGQ1Ycs7LRiDsDKqTu1quiK+
+         4OnMv7EnSfcOQTevd3tZw0zl0q1Ty1Tiz6occqBOEDuS5Sxrw7AiW/GZdVBtBMwlD14f
+         Svjkw9bMEW+5nCDh0nGaV1NZqv4qM7NVUTrKe4ohD3hc0kcwGmI3LQlxL/EPBE2/kw3v
+         Qe2A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGBYmePdO8pwOc7CSXz5y0AWNK2sc3eZuH7S/N0eXHBB5t9SPLEYwk45uiYT9Hv5nDXYpe8mn1uBmnsRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxOoLkAHyXevF48FuUJ/pgJGQhVZTZLtx3nJEhhLPB1jxgfl0s
+	zmDJcWoI1zIhoOwXUFCO7wKK9pFyXBGtV14CD+eqbDPc1QeXOPJbF0qkXjcWj8HT2tizmY5fCYT
+	uda24fO6dmkXxEBHkLXBo/HsVNTJ6ONlpesXyOqGJYOg1898fYV2qBbveuCbVnw==
+X-Gm-Gg: ASbGncu4f0mq2PxaddPp0D7P8Pg0hT1ePlvxGE92/Co/+DVbFSwNjAYEgdqwWb2xW7Y
+	QS3A8117HVvW1nQnVKGj/4bAdros5VpzMiU9EYjFQxTpTaIrADc8hoZRg3EEdAYsYV4fE8CrODi
+	6/YO5du8BRIQMfasQv09p44sT3acj4PSQ2aagq6TVJ2k/G8f17gyloqubHWeQVv2q3PCvvljhPs
+	chK0/JuOV6GJpOr4Qb3MNCciNmSN9QVlr7qGzly9/LyIsRiIlw1XCT3s+HR/qowSSF/DpbC3cpH
+	H4udLlLaWznOdt2ZYHIdRPCQK5powgVGMPyuhT9QmQ==
+X-Received: by 2002:a05:600c:4e8b:b0:439:9eba:939a with SMTP id 5b1f17b1804b1-43ab0f8b68bmr15347825e9.26.1740467781033;
+        Mon, 24 Feb 2025 23:16:21 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGKAYIbDeUkxN/sPOdOh9dmDT/KC44JigW8G4nDwTJ+erWGkxMnzLVafhwjP4Cz13s3tIx2WQ==
+X-Received: by 2002:a05:600c:4e8b:b0:439:9eba:939a with SMTP id 5b1f17b1804b1-43ab0f8b68bmr15347625e9.26.1740467780642;
+        Mon, 24 Feb 2025 23:16:20 -0800 (PST)
+Received: from [10.32.64.164] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1539da5sm15328505e9.10.2025.02.24.23.16.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 23:16:20 -0800 (PST)
+Message-ID: <f1c3e538e19aca7fd46dd7f10da190d691bace83.camel@redhat.com>
+Subject: Re: [PATCH net-next v3 4/4] stmmac: Replace deprecated PCI functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Philipp Stanner <phasta@kernel.org>, Andrew Lunn
+ <andrew+netdev@lunn.ch>,  "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Yanteng Si <si.yanteng@linux.dev>, Yinggang Gu
+ <guyinggang@loongson.cn>, Feiyang Chen <chenfeiyang@loongson.cn>, Jiaxun
+ Yang <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Tue, 25 Feb 2025 08:16:18 +0100
+In-Reply-To: <20250224135321.36603-6-phasta@kernel.org>
+References: <20250224135321.36603-2-phasta@kernel.org>
+	 <20250224135321.36603-6-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/5] dt-bindings: net: wireless: describe the ath12k
- wifi device IPQ5424
-To: Conor Dooley <conor@kernel.org>
-CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250130051838.1924079-1-quic_rajkbhag@quicinc.com>
- <20250130051838.1924079-2-quic_rajkbhag@quicinc.com>
- <20250130-divisible-chrome-3f9c5d1aff11@spud>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <20250130-divisible-chrome-3f9c5d1aff11@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DaHTu8TE7Mh2Uzc3QpY7kpxbRvFl1S62
-X-Proofpoint-GUID: DaHTu8TE7Mh2Uzc3QpY7kpxbRvFl1S62
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_02,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- bulkscore=0 spamscore=0 phishscore=0 clxscore=1011 impostorscore=0
- mlxlogscore=999 suspectscore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502250047
 
-On 1/31/2025 12:20 AM, Conor Dooley wrote:
-> On Thu, Jan 30, 2025 at 10:48:34AM +0530, Raj Kumar Bhagat wrote:
->> Describe and add the device-tree bindings for the ATH12K AHB wifi device
->> IPQ5424.
->>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->> ---
->>  .../net/wireless/qcom,ath12k-ahb.yaml         | 119 ++++++++++++++++++
->>  1 file changed, 119 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k-ahb.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k-ahb.yaml
->> index bd953a028dc3..1d24389a0ab3 100644
->> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k-ahb.yaml
->> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k-ahb.yaml
->> @@ -18,6 +18,7 @@ properties:
->>    compatible:
->>      enum:
->>        - qcom,ipq5332-wifi
->> +      - qcom,ipq5424-wifi
-> Patch should end here, another example for something that doesn't have
-> different properties etc is pointless.
+On Mon, 2025-02-24 at 14:53 +0100, Philipp Stanner wrote:
+> From: Philipp Stanner <pstanner@redhat.com>
+>=20
+> The PCI functions
+> =C2=A0 - pcim_iomap_regions() and
+> =C2=A0 - pcim_iomap_table()
+> have been deprecated.
+>=20
+> Replace them with their successor function, pcim_iomap_region().
+>=20
+> Make variable declaration order at closeby places comply with reverse
+> christmas tree order.
+>=20
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> ---
+> =C2=A0.../net/ethernet/stmicro/stmmac/dwmac-loongson.c=C2=A0=C2=A0 | 11 +=
++++-------
+> =C2=A0drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c=C2=A0=C2=A0 | 14 +=
++++++------
+> --
+> =C2=A02 files changed, 10 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> index f3ea6016be68..25ef7b9c5dce 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.c
+> @@ -521,10 +521,10 @@ static int loongson_dwmac_acpi_config(struct
+> pci_dev *pdev,
+> =C2=A0static int loongson_dwmac_probe(struct pci_dev *pdev, const struct
+> pci_device_id *id)
+> =C2=A0{
+> =C2=A0	struct plat_stmmacenet_data *plat;
+> +	struct stmmac_resources res =3D {};
+> =C2=A0	struct stmmac_pci_info *info;
+> -	struct stmmac_resources res;
+> =C2=A0	struct loongson_data *ld;
+> -	int ret, i;
+> +	int ret;
+> =C2=A0
+> =C2=A0	plat =3D devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
+> =C2=A0	if (!plat)
+> @@ -554,13 +554,11 @@ static int loongson_dwmac_probe(struct pci_dev
+> *pdev, const struct pci_device_id
+> =C2=A0	pci_set_master(pdev);
+> =C2=A0
+> =C2=A0	/* Get the base address of device */
+> -	ret =3D pcim_iomap_regions(pdev, BIT(0), DRIVER_NAME);
+> +	res.addr =3D pcim_iomap_region(pdev, 0, DRIVER_NAME);
+> +	ret =3D PTR_ERR_OR_ZERO(res.addr);
+> =C2=A0	if (ret)
+> =C2=A0		goto err_disable_device;
+> =C2=A0
+> -	memset(&res, 0, sizeof(res));
+> -	res.addr =3D pcim_iomap_table(pdev)[0];
+> -
+> =C2=A0	plat->bsp_priv =3D ld;
+> =C2=A0	plat->setup =3D loongson_dwmac_setup;
+> =C2=A0	ld->dev =3D &pdev->dev;
+> @@ -603,7 +601,6 @@ static void loongson_dwmac_remove(struct pci_dev
+> *pdev)
+> =C2=A0	struct net_device *ndev =3D dev_get_drvdata(&pdev->dev);
+> =C2=A0	struct stmmac_priv *priv =3D netdev_priv(ndev);
+> =C2=A0	struct loongson_data *ld;
+> -	int i;
+
+Just saw that this is a left-over that actually should be in patch 3.
+Will fix.
 
 
-Thanks, will update in next version.
+P.
+
+> =C2=A0
+> =C2=A0	ld =3D priv->plat->bsp_priv;
+> =C2=A0	stmmac_dvr_remove(&pdev->dev);
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> index 91ff6c15f977..37fc7f55a7e4 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
+> @@ -155,9 +155,9 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
+> =C2=A0{
+> =C2=A0	struct stmmac_pci_info *info =3D (struct stmmac_pci_info *)id-
+> >driver_data;
+> =C2=A0	struct plat_stmmacenet_data *plat;
+> -	struct stmmac_resources res;
+> -	int i;
+> +	struct stmmac_resources res =3D {};
+> =C2=A0	int ret;
+> +	int i;
+> =C2=A0
+> =C2=A0	plat =3D devm_kzalloc(&pdev->dev, sizeof(*plat), GFP_KERNEL);
+> =C2=A0	if (!plat)
+> @@ -188,13 +188,13 @@ static int stmmac_pci_probe(struct pci_dev
+> *pdev,
+> =C2=A0		return ret;
+> =C2=A0	}
+> =C2=A0
+> -	/* Get the base address of device */
+> +	/* The first BAR > 0 is the base IO addr of our device. */
+> =C2=A0	for (i =3D 0; i < PCI_STD_NUM_BARS; i++) {
+> =C2=A0		if (pci_resource_len(pdev, i) =3D=3D 0)
+> =C2=A0			continue;
+> -		ret =3D pcim_iomap_regions(pdev, BIT(i),
+> pci_name(pdev));
+> -		if (ret)
+> -			return ret;
+> +		res.addr =3D pcim_iomap_region(pdev, i,
+> STMMAC_RESOURCE_NAME);
+> +		if (IS_ERR(res.addr))
+> +			return PTR_ERR(res.addr);
+> =C2=A0		break;
+> =C2=A0	}
+> =C2=A0
+> @@ -204,8 +204,6 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
+> =C2=A0	if (ret)
+> =C2=A0		return ret;
+> =C2=A0
+> -	memset(&res, 0, sizeof(res));
+> -	res.addr =3D pcim_iomap_table(pdev)[i];
+> =C2=A0	res.wol_irq =3D pdev->irq;
+> =C2=A0	res.irq =3D pdev->irq;
+> =C2=A0
+
 
