@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-531838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B688A445B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:17:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110C0A445B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:16:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25243B4308
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:13:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E511895F08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 291FC18C93C;
-	Tue, 25 Feb 2025 16:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8007A18FDD8;
+	Tue, 25 Feb 2025 16:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oz2Kd9zi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k79C2Q8S"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813E321ABAB;
-	Tue, 25 Feb 2025 16:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C9218C930;
+	Tue, 25 Feb 2025 16:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740500018; cv=none; b=ngVN/VNtt95UuTwhtx/GwCgTAWUFq+qjR9gdZl0mfLyqYd/bmnHcM+VcVau/bLe4fcAlm1/UGKd2Isz0/3aPcv9tK1L2Ow8zjwTkYhFHhQ5w8YVABeEVNOUlw3MspcwPpNdp8+i40JW3F3bB0JbBwc7lYQdwpqgyPjGPHPbDiiI=
+	t=1740500042; cv=none; b=NNq8kJzzZT74K+T35O/FLEtSNtOhKNJIwwxJEOKaC4nDFnXHeJmVV9VfZlKca+IctXTwAcDdsPhxya+ogBbNH3iHTTxCKtrUdMwwZYEBSh4KHj+ezTWkpyVSHy251FzfPRE51SHoSTh+wpd7/PrLc8pvNwoE78uCCdwKqyvqLDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740500018; c=relaxed/simple;
-	bh=zxHilzlwDf7ovEtBPkSL+tIZUqIVWUarGWX8NAWd+bQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bohQrny7OVSufcyJZepLHEsW3OdPsdP7imOnOORJoldzuibUZ5+YaTJDEmZvp8Min4whTyg5hBgKRZv+G9TRfqzHEChzgOLks5hosmSVHnLQQP33SFGDsiCuJYTtY+NfJS0L5iTzi8tGDdjnDh9mehVQMtDWYfizhVXkSyFWiEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oz2Kd9zi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8D60C4CEDD;
-	Tue, 25 Feb 2025 16:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740500018;
-	bh=zxHilzlwDf7ovEtBPkSL+tIZUqIVWUarGWX8NAWd+bQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oz2Kd9ziWB20Tn9xySVGugZduBZV1GtbCE11NCHQTqg2eFRVdD8gJ1voa9Iq/ZJX+
-	 AqU4ymCwQMPEPcKfZ+Q3/0sPK7Ra4SwsV2HQCE5uLxRL7fxBoDq1ig9UM5tYAqbOUb
-	 EC7lMCJRSjxbUPUvd1/dcRWpr8Km0w8h1b09Flc01m/esDg7fB9BIm6lRNYDB0fLE7
-	 QihjZMIqv+B66qa80w83pAJMUcfEt/gESTzJvuYp5Do+Qt+RGWCUjokSVIXPUCVExj
-	 6xIupq+6HZJt1jpJxceVp/GINA0+k8Ka8oLa9tO+F2B7EMr/TM7yfeHnmD2cFIuowD
-	 Dc0lehLXNQyPA==
-From: Lee Jones <lee@kernel.org>
-To: lee@kernel.org,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1740500042; c=relaxed/simple;
+	bh=QFTbxmMTthkctu4tV0CojyuOfRzetFKnNh9ri6aKSLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YwO2RXngaKUsM6tHb23ryCFiE1R+tVu5YrNjAzJD0mzDtAEVaxwFyZo+3Ze7UPjNEnr7m/zNEesECe+7v/t090b3vJGRMSCVbW3dBy47gwHU/vttUNEhaMG+IOLYPWq46D9d6e73J9kc4laN1l1FWjucACXvD+6uKIXaQEDVIIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k79C2Q8S; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4399a1eada3so50798495e9.2;
+        Tue, 25 Feb 2025 08:14:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740500039; x=1741104839; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YVqC1KYj3QeFyojAXvM68gVfAafK5PNiYMunoZclccA=;
+        b=k79C2Q8Sz+4acTO6HyIOR+PCGa/R1169vPvkskAlTS6KeNEf7NVhjrbcA8a7MnsC1J
+         rgDSUhs10q+XSf4I+4ucq/iT0uTxh6D9Pvi4zDoUNhIRUPXTJuggNIxzMveE9coflp2n
+         agAcMnNJejyZHDGm2gLqWzSQKPAkqQ6PeV5hN7ysYqnRiFUdVL+6c6TF6eGQsBnxx0Vc
+         TJVX4U5SvFLW1z/gsWS0mHe5gr6oKZaBTQWgCg5qVAQ8h5XhdXjEW3u6BtZw3pf1+vCy
+         XFd8RgYCYJPeMidps4B2LY6pc29kYWC6q9pWDJ6GFPnqdnym2ZLWKapbtLwP7Kez36I8
+         GlNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740500039; x=1741104839;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YVqC1KYj3QeFyojAXvM68gVfAafK5PNiYMunoZclccA=;
+        b=iGaL5TEV+wsWAxB97h5jNhcddArBx71x7NxyxwkJGw+zKtZhRF6ziYBJLU9V7ZfodY
+         KNJipGGahLq1yFkTU8HXCjhLw2myGIIIIkodg3ObozUz8kDaZ36PLhJCgs2CoB6VKptH
+         fq0szww36RU27780iAeBMfO0vSriCYNSzC7Oyjivdb7ihlPIIWzQY82muaPpsr3jPCee
+         iTJtTOsxeHBwg2vlw8Rk+Gq3RmAxGbOtg6UCUZn4e+T3j1FDDEiEqSx+1mN+YIDSHhrV
+         0bE7t0f/gW7YfiJ7q29ZlqDqaYf6+/t8HbF94xmPj0XqFawYb1V1hnVoqk/D90bNCEh1
+         huYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUk8RT4oVCl0uZSlavEh0NjtEz7BTR8YCGZLsp34OBIMdX61qs2b3ZIK0UAA8fHTacECvJG5O+otI41PXU=@vger.kernel.org, AJvYcCWHzZOi3fM329tmEWL5fzliVmo3Cvm1S0IYPOtfuwHLU51c8o2ju2MuJafNyKAPs1D6BP8Ln0KzrGkpgA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqcRHYtpqf+jrui8AlFw/fWD9491gbz2BGomU1/VX00B3r8VXq
+	4wDL5POVMOP1U0P1ugyKV3fFFG7e5DNA6ZFvnWhqouvkYHrTBH2u
+X-Gm-Gg: ASbGnctDkovPMD2/GATnDw+KZzs7Sv5y3s/o7EcWXOHDhrLQASeOPRDJjyanCjuQ9kx
+	TdEH33tvj+gZ7LjXyZsbHY0G8nSrodWbqvoSENMmm+dE3iY5V6NH6QXK13IUqFzm0s2sHO9bXeo
+	gAaLt+H+EKjywsWPpLcU43q/GVbpB4f2GKapBfsUgDApuQQxsvMtr1LMmY9PZRyhsi4L6yG3bdp
+	JR3CPe1N7AgLfGgHfio5GDowryocSF2F8PWVqe+WON8QsjK9BH3S6r45D/3AbWknRwzAXwGyNjy
+	zTwh73H2KNWRVSFjqev9VGTyF6I=
+X-Google-Smtp-Source: AGHT+IHy4xy6/HN4dy/+/6JzfHC644RceilHrzVGqkVL0BnSOX0fmHA+U1810SLzdXoTSnHtfBg5cg==
+X-Received: by 2002:a05:600c:a05:b0:439:30bd:7df9 with SMTP id 5b1f17b1804b1-43ab8fd7947mr1252705e9.9.1740500039281;
+        Tue, 25 Feb 2025 08:13:59 -0800 (PST)
+Received: from localhost ([194.120.133.72])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ab60c68b9sm18126425e9.29.2025.02.25.08.13.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:13:58 -0800 (PST)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	=?UTF-8?q?Kai=20M=C3=A4kisara?= <Kai.Makisara@kolumbus.fi>,
+	John Meneghini <jmeneghi@redhat.com>,
+	linux-scsi@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Quang Le <quanglex97@gmail.com>,
-	Cong Wang <cong.wang@bytedance.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH v6.1-v5.4 1/1] pfifo_tail_enqueue: Drop new packet when sch->limit == 0
-Date: Tue, 25 Feb 2025 16:13:09 +0000
-Message-ID: <20250225161310.2194361-1-lee@kernel.org>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Subject: [PATCH][next] scsi: scsi_debug: Fix addition of uninitialized variable len
+Date: Tue, 25 Feb 2025 16:13:24 +0000
+Message-ID: <20250225161324.184873-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-[ Upstream commit 647cef20e649c576dff271e018d5d15d998b629d ]
+There is an addition on a previously uninitialized variable len that
+results in an undefined result. Fix this by making the addition an
+assignment. Issue detected with static analysis.
 
-Expected behaviour:
-In case we reach scheduler's limit, pfifo_tail_enqueue() will drop a
-packet in scheduler's queue and decrease scheduler's qlen by one.
-Then, pfifo_tail_enqueue() enqueue new packet and increase
-scheduler's qlen by one. Finally, pfifo_tail_enqueue() return
-`NET_XMIT_CN` status code.
+Fixes: 568354b24c7d ("scsi: scsi_debug: Add compression mode page for tapes")
 
-Weird behaviour:
-In case we set `sch->limit == 0` and trigger pfifo_tail_enqueue() on a
-scheduler that has no packet, the 'drop a packet' step will do nothing.
-This means the scheduler's qlen still has value equal 0.
-Then, we continue to enqueue new packet and increase scheduler's qlen by
-one. In summary, we can leverage pfifo_tail_enqueue() to increase qlen by
-one and return `NET_XMIT_CN` status code.
-
-The problem is:
-Let's say we have two qdiscs: Qdisc_A and Qdisc_B.
- - Qdisc_A's type must have '->graft()' function to create parent/child relationship.
-   Let's say Qdisc_A's type is `hfsc`. Enqueue packet to this qdisc will trigger `hfsc_enqueue`.
- - Qdisc_B's type is pfifo_head_drop. Enqueue packet to this qdisc will trigger `pfifo_tail_enqueue`.
- - Qdisc_B is configured to have `sch->limit == 0`.
- - Qdisc_A is configured to route the enqueued's packet to Qdisc_B.
-
-Enqueue packet through Qdisc_A will lead to:
- - hfsc_enqueue(Qdisc_A) -> pfifo_tail_enqueue(Qdisc_B)
- - Qdisc_B->q.qlen += 1
- - pfifo_tail_enqueue() return `NET_XMIT_CN`
- - hfsc_enqueue() check for `NET_XMIT_SUCCESS` and see `NET_XMIT_CN` => hfsc_enqueue() don't increase qlen of Qdisc_A.
-
-The whole process lead to a situation where Qdisc_A->q.qlen == 0 and Qdisc_B->q.qlen == 1.
-Replace 'hfsc' with other type (for example: 'drr') still lead to the same problem.
-This violate the design where parent's qlen should equal to the sum of its childrens'qlen.
-
-Bug impact: This issue can be used for user->kernel privilege escalation when it is reachable.
-
-Fixes: 57dbb2d83d10 ("sched: add head drop fifo queue")
-Reported-by: Quang Le <quanglex97@gmail.com>
-Signed-off-by: Quang Le <quanglex97@gmail.com>
-Signed-off-by: Cong Wang <cong.wang@bytedance.com>
-Link: https://patch.msgid.link/20250204005841.223511-2-xiyou.wangcong@gmail.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[Lee: Backported to linux-6.6.y - fixed a minor surrounding diff conflict]
-(cherry picked from commit e40cb34b7f247fe2e366fd192700d1b4f38196ca)
-Signed-off-by: Lee Jones <lee@kernel.org>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
+ drivers/scsi/scsi_debug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-- Applies cleanly to v6.1, v5.15, v5.10 and v5.4
-
- net/sched/sch_fifo.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/net/sched/sch_fifo.c b/net/sched/sch_fifo.c
-index e1040421b797..af5f2ab69b8d 100644
---- a/net/sched/sch_fifo.c
-+++ b/net/sched/sch_fifo.c
-@@ -39,6 +39,9 @@ static int pfifo_tail_enqueue(struct sk_buff *skb, struct Qdisc *sch,
- {
- 	unsigned int prev_backlog;
- 
-+	if (unlikely(READ_ONCE(sch->limit) == 0))
-+		return qdisc_drop(skb, sch, to_free);
-+
- 	if (likely(sch->q.qlen < sch->limit))
- 		return qdisc_enqueue_tail(skb, sch);
- 
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 722ee8c067ae..f3e9a63bbf02 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -3032,7 +3032,7 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 	case 0xf:	/* Compression Mode Page (tape) */
+ 		if (!is_tape)
+ 			goto bad_pcode;
+-		len += resp_compression_m_pg(ap, pcontrol, target, devip->tape_dce);
++		len = resp_compression_m_pg(ap, pcontrol, target, devip->tape_dce);
+ 		offset += len;
+ 		break;
+ 	case 0x11:	/* Partition Mode Page (tape) */
 -- 
-2.48.1.658.g4767266eb4-goog
+2.47.2
 
 
