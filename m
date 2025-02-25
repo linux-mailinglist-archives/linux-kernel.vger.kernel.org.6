@@ -1,210 +1,117 @@
-Return-Path: <linux-kernel+bounces-531410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66F92A44028
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B8BDA44024
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC95189EF75
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:07:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A0603BFC2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353F52690C4;
-	Tue, 25 Feb 2025 13:06:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16898268FE9;
+	Tue, 25 Feb 2025 13:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bSi34QCM"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d47K0QFR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726D126869E;
-	Tue, 25 Feb 2025 13:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775741E485
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488810; cv=none; b=FZm/eyGf9pUiUQoMsTbsDsvI4wYpl6xlxVchG3r/1HkW/vwvOAFjyaeYR1ACBXLfRo1J5zB1tMgOilYUsq7sBTLIYojPLifXln8JshruJ78f0PVFyBQkV3PWSJKMbcTCqS+ID1sm2BMpVi4ZRHryT6hW/1IdoDkWE2Jtaox56tc=
+	t=1740488818; cv=none; b=bEPU7KYDJL3VEFSRFLAl3q0zYHT/Keb5wFhEue7lsNExA7tlKkR0V7ak4JxkCLWa7iuTz/ClWFZEFRH1PDvSTJVEpyjUEWWubFlWMYDxQ1FAJSnB5gyLuRToEE3nx5ZomaSZQveHaYKPdbewhRr1ZKqWYU3G8SlFgDEZQyMqMDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488810; c=relaxed/simple;
-	bh=FH0Z9n6n+rbztuPpg0AwFq+ZeandoPBp2IqLIgthyHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XwuE18VNobyvCT2ML4bIbliObb9TBQ5jLuuwHXJtXfQUapSwuMo/5WCosH8xpotZNTsCLsPYrwWIt2FPVgekB2eNSQX+y1+Sh5hSNVfo/MrNrqpSUkIPOPqpZ3D9+liOFqcIkMdwWVjnVbDbXV+JoJVHegnpA5tzGOS1WvB0Uh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bSi34QCM; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0D8814439E;
-	Tue, 25 Feb 2025 13:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740488805;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kIvi06Mb+JppGKBH1GDtlMpik2hj2BRVbz0nApw4Vws=;
-	b=bSi34QCMkoea7NELXiPstkmIqW7+LCROLfLbLU7kFnoEGfYXlqYWpd23eaCl7hNz5p6kX9
-	J4fFRWYlOwbJXWg4zGMK5ZXEa6WX9G0HG9rXzvPfoXJadb9CHgu1nltY2uGeeQRG70FV8t
-	dNNevOCrq9pRrx3QA7eSGuc24cfN3MhkZ2h7k3dzVoTRjHalXjNNaBIJXlLWgRv40qBdAn
-	gepfv/7BL3apoDQ6OUU5DTXuAYQH7hPTaT3aimNulpI6RekbU0Cf+lXf/R8jmQ9uBvprpX
-	KnWqoz0iVFcmrE3WhfnUrUpQpLgFNaAeOP5qQD4aTCSXMCESjtJyJgcDwvaUsA==
-Date: Tue, 25 Feb 2025 14:06:40 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
- Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
- Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
-Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
- access
-Message-ID: <20250225140640.382fec83@fedora.home>
-In-Reply-To: <87o6yqrygp.fsf@miraculix.mork.no>
-References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
-	<Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
-	<87o6yqrygp.fsf@miraculix.mork.no>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740488818; c=relaxed/simple;
+	bh=HGxpJnDx9gWoDIeHrVycioE7JbtGoUw2jn2z8E1lQOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D6014nebWYSb3era2sPpix8HxrKOq85P00f5AvZ/HDp9OycRsf9T8A+UOMwOdW8gkvuJHqzQLOxcohRMjIahoR1JbOm4XCj+e8FNWrS2qfLfUlVKkonRPvzkiF/RPVhfbw4YQfpgb407nZ0DTLf8lyE/aqlMTZE062+nSBHSEvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d47K0QFR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D6A4C4CEDD;
+	Tue, 25 Feb 2025 13:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740488818;
+	bh=HGxpJnDx9gWoDIeHrVycioE7JbtGoUw2jn2z8E1lQOM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d47K0QFRSLdcdX0nD+KtNaCOGDpTlgBNw6lPZNCHDEZ3FeCgagpIeOzVPJyynOuk+
+	 yzsP4pae492Uxp7xgvd/WjiVUHP5RThb7MOBoWNKvCCkq34wn8xDTJcd+kJeqihudE
+	 RTkZFsz1m8VmYbl0EsBSNQkfgwJBvTxGMdB5SHMzh6cYq5zPfLkIxTxq6URVHv+nB2
+	 6ontFnxE/QKey+ubACx4EHJRTprNfrhkvGHyGUVahLvEaQd5zlTZ3W82d4MIyA2oT5
+	 sfScxaoA2pZsdL3AKg2HhAnr5nUUOTk5KQuid0kNJfC4kJBOXGd1rKpzK0mK9nhzT1
+	 JdiPHGm+nrdeQ==
+Message-ID: <2bfb37fe-6e6a-4f9a-82be-5776935563cc@kernel.org>
+Date: Tue, 25 Feb 2025 14:06:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable iris video driver
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, Hans Verkuil <hverkuil@xs4all.nl>
+References: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-enable-iris-defconfig-v1-1-1ed49c8396bb@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuueeuhffgtdetjefhgfetgfefjeeltdehieetvdfgffelieekteegtdeilefhleenucffohhmrghinhepmhgrrhhvvghllhdrtghomhdprhgvphhothgvtgdrtghomhdprghprggtohgvrdgtohhmrdhtfienucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopegsjhhorhhnsehmohhrkhdrnhhopdhrtghpthhtoheplhhinhhugiesrghrm
- hhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 25/02/2025 11:09, Dikshita Agarwal wrote:
+> Enable the building of the iris video driver by default.
 
-On Tue, 25 Feb 2025 13:38:30 +0100
-Bj=C3=B8rn Mork <bjorn@mork.no> wrote:
 
-> "Russell King (Oracle)" <linux@armlinux.org.uk> writes:
-> > On Sun, Feb 23, 2025 at 06:28:45PM +0100, Maxime Chevallier wrote: =20
-> >> Hi everyone,
-> >>=20
-> >> Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" desi=
-gned to
-> >> access SFP modules downstream. These controllers are actually SMBus co=
-ntrollers
-> >> that can only perform single-byte accesses for read and write. =20
-> >
-> > This goes against SFF-8472, and likely breaks atomic access to 16-bit
-> > PHY registers.
-> >
-> > For the former, I quote from SFF-8472:
-> >
-> > "To guarantee coherency of the diagnostic monitoring data, the host is
-> > required to retrieve any multi-byte fields from the diagnostic
-> > monitoring data structure (e.g. Rx Power MSB - byte 104 in A2h, Rx
-> > Power LSB - byte 105 in A2h) by the use of a single two-byte read
-> > sequence across the 2-wire interface."
-> >
-> > So, if using a SMBus controller, I think we should at the very least
-> > disable exporting the hwmon parameters as these become non-atomic
-> > reads. =20
->=20
-> Would SMBus word reads be an alternative for hwmon, if the SMBus
-> controller support those?  Should qualify as "a single two-byte read
-> sequence across the 2-wire interface."
+1. Why?
 
-There are different flavors when it comes to what an SMBus controller
-can do. In the case of what this patchset supports, its really about
-SMBus controllers that can only perform single-byte operations, which
-will cause issues here.
+2. This was already sent by Neil...
 
-What I have is a controller that only supports I2C_FUNC_SMBUS_BYTE, in
-that the controller will issue a STOP after reading/writing one byte.
-
-But if you have a controller that supports, say,
-I2C_FUNC_SMBUS_WORD_DATA (i.e. 16 bits words xfers), that's already a
-different story, as the diags situation Russell mentions will fit in a
-word. That will also make MDIO accesses to embedded PHYs easier, at
-least for C22.=20
-
-> > Whether PHY access works correctly or not is probably module specific.
-> > E.g. reading the MII_BMSR register may not return latched link status
-> > because the reads of the high and low bytes may be interpreted as two
-> > seperate distinct accesses. =20
->=20
-> Bear with me.  Trying to learn here.  AFAIU, we only have a defacto
-> specification of the clause 22 phy interface over i2c, based on the
-> 88E1111 implementation.  As Maxime pointed out, this explicitly allows
-> two sequential distinct byte transactions to read or write the 16bit
-> registers. See figures 27 and 30 in
-> https://www.marvell.com/content/dam/marvell/en/public-collateral/transcei=
-vers/marvell-phys-transceivers-alaska-88e1111-datasheet.pdf
->=20
-> Looks like the latch timing restrictions are missing, but I still do not
-> think that's enough reason to disallow access to phys over SMBus.  If
-> this is all the interface specification we have?
->=20
-> I have been digging around for the RollBall protocol spec, but Google
-> isn't very helpful.  This list and the mdio-i2c.c implementation is all
-> that comes up.  It does use 4 and 6 byte transactions which will be
-> difficult to emulate on SMBus.  But the
->=20
-> 	/* By experiment it takes up to 70 ms to access a register for these
-> 	 * SFPs. Sleep 20ms between iterations and try 10 times.
-> 	 */
->=20
-> comment in i2c_rollball_mii_poll() indicates that it isn't very timing
-> sensitive at all. The RollBall SFP+ I have ("FS", "SFP-10G-T") is faster
-> than the comment indicates, but still leaves plenty of time for the
-> single byte SMBus transactions to complete.
->=20
-> Haven't found any formal specification of i2c clause 45 access either.
-> But some SFP+ vendors have been nice enough to document their protocol
-> in datasheets.  Examples:
->=20
-> https://www.repotec.com/download/managed-ethernet/ds-ml/01-MOD-M10GTP-DS-=
-verB.pdf
-> https://www.apacoe.com.tw/files/ASFPT-TNBT-X-NA%20V1.4.pdf
->=20
-> They all seem to agree that 2/4/6 byte accesses are required, and they
-> offer no single byte alternative even if the presence of a "smart"
-> bridge should allow intelligent latching.  So this might be
-> "impossible" (aka "hard") to do over SMBus.   I have no such SFP+ so I
-> cannot even try.
->=20
-> > In an ideal world, I'd prefer to say no to hardware designs like this,
-> > but unfortunately, hardware designers don't know these details of the
-> > protocol, and all they see is "two wire, oh SMBus will do". =20
->=20
-> I believe you are reading more into the spec than what's actually there.
->=20
-> SFF-8419 defines the interface as
->=20
->  "The SFP+ management interface is a two-wire interface, similar to
->   I2C."
->=20
-> There is no i2c requirement. This does not rule out SMBus. Maybe I am
-> reading too much into it as well, but in my view "similar to I2C" sounds
-> like they wanted to include SMBus.
->=20
-> Both the adhoc phy additions and the diagnostic parts of SFF-8472
-> silently ignores this.  I do not think the blame for any incompatibilty
-> is solely on the host side here.
-
-At least for this series, SMBus by itself isn't the main issue, the
-main problem is single-byte SMBus. As soon as you can do 16 bits xfers,
-that rules-out a whole class of potential problems (which doesn't mean
-there will be no issue :) ), but I haven't really digged into how C45
-and rollball will behave in that case.
-
-Note that the series actually doesn't support I2C_FUNC_SMBUS_WORD_DATA,
-but doesn't prevent it either :)
-
-The driver for the SMBus controller in the rtl930x SoC you mention seem
-to support I2C_FUNC_SMBUS_WORD_DATA and even longer xfers, in which
-case you could add SFP support for smbus-only controllers in a much
-more reliable way. It could be conceivable to remove the hwmon-disabled
-restriction for I2C_FUNC_SMBUS_WORD_DATA.
-
-Maxime
+Best regards,
+Krzysztof
 
