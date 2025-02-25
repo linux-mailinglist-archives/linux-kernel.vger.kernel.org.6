@@ -1,100 +1,136 @@
-Return-Path: <linux-kernel+bounces-530338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB0AA43235
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:03:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A3DA43231
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6820C16E543
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:02:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ACD189EB2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:02:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FF11CAB3;
-	Tue, 25 Feb 2025 01:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6946AA7;
+	Tue, 25 Feb 2025 01:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="IfjXErYg"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UqP6etYg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E393D6F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A112571A9;
+	Tue, 25 Feb 2025 01:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740445358; cv=none; b=KC1CUZIs++SRURASscU20cyBri+D1XKfMy8bZA2PYQp0E/2o/9n9ec25E4jEQ3to2xhmE+SxQwJs9PbNqCKPqMPugZ50EthFMPH1C87L0MpVnKg9QZhB5vTzPmnSsJDbnyBPu39I8O7Qqn7OKmbNAm9s7Iozfd4x1KrWeG7E5hY=
+	t=1740445347; cv=none; b=sWVEMqBRzhZjduMYCYmeOKQLssh06xXIaPdp9uSPDIDZ5q4NsCd/Qjll3lMWnNpmw8NfcomnuQeCCvlSl/wpocMb/Af/7P5y27WLHLPf0bdkr3e4YLDIM+7AiTQb1HY4hfYP+3CF2Ok8tSPV6KNkBVyvHAAy0wRuhhiRrhOmqto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740445358; c=relaxed/simple;
-	bh=BLF89FTJgLtqVPy5ZQ78HKhffkNe+07YlFwdyQtRWgQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nCLSSV5Fc4KR5HCjaQIBm5FRNc1vWhX+YzFSS6W7FJegRqjyIj3j88qR+1aglFPO4Xolwt098Ng2yBfJnZ+0sxMYZgi/mZP0NGU4ekKLcN1OhCTnG2jtzRqyk7BPkyYPd59FwQFpqPcQC5TZZFhbk3JhuXw4q83oQEiPVlBAbWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=IfjXErYg; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=0+Y4hJZRDmSs2b1VJTCcj1/rup869Y150tqh1F9h3YY=; b=IfjXErYgZF2s8h42o9Jyyt5NKt
-	GF/Loj8aTJZuz7jfhvaYqp9AttTkY5cAuHBsOsYyuP7QpK7sCE8uMi4hGuDz3R2yWa1ASZnRZP/Ub
-	zvBIOh7q9VS+NQF/iTY6d72qoZgYZf+8yLHgZlP8E0nxL7saAXTgpgq+OClKuK7GSvcIbYzydh1h5
-	rzGa+HUvaJMqNiGKh4QqVFejW875vCs8iEj03o2qO260JdDwDon7W6/ewkgZTx/WIVRH092TviQ9L
-	VIaTgU6RO2zw++UDoVO9wEKzY4WTKyLBxg9xt8MJLZjhUxIlGaDe34loRwYhtEtGNz3cdyrAaFlQ+
-	3OBXAm+A==;
-Received: from [191.204.194.148] (helo=localhost.localdomain)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tmjL5-000B7k-CR; Tue, 25 Feb 2025 02:02:29 +0100
-From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-To: Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?=27Christian=20K=C3=B6nig=27?= <christian.koenig@amd.com>,
-	Xinhui Pan <Xinhui.Pan@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	kernel-dev@igalia.com,
-	siqueira@igalia.com
-Cc: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Subject: [PATCH v3] drm/amdgpu: Trigger a wedged event for ring reset
-Date: Mon, 24 Feb 2025 22:02:21 -0300
-Message-ID: <20250225010221.537059-1-andrealmeid@igalia.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740445347; c=relaxed/simple;
+	bh=z3gA8G/+cbZRJr6i5y3OAGbi5KlZyfJB9qPij//8txw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nog12OGxoKswDXvT4Usg4H/V10aRA8LiM1jChqGVrtXFnbeYTVDh10AlX6YxEKfyq0PV9XfAEj6GcpFYve0JRmLNfXNSwxSOM5uL9ffTWgDmuQ526bK+mH1yrQs2Lpw+qkwLFI51QBzhGdqMzG0Oh9LzmZQZeIwI4iQM7XRU5Jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UqP6etYg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F17B2C4CED6;
+	Tue, 25 Feb 2025 01:02:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740445347;
+	bh=z3gA8G/+cbZRJr6i5y3OAGbi5KlZyfJB9qPij//8txw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UqP6etYgq3wAqL90iZcCJZ3kBYG2D3bBG4lMRzhoqJmXHm+FRay5/15bv1/vC28NR
+	 sQ0D/Iy2dQpRe0Nx7aYydiGqWnLa34CcmktEH1G1oWzrchXViYArvqQO23nUbzy467
+	 FZLQ84xxL2TtxE1ANCl1tSGs0mQpIBD7/8F4ksM9PI933kOgGUGc58WrITFBhG2Z0e
+	 aik85N0OR/h+2zxkpxJw4LaJqJYgjwWjny3TwI3L2wrw6dyqZQxomjPtXlxXOch0cm
+	 h294nA04lu8pMa72eJL44fpGZFgqb28a6tQcpyYTvrj22SsCYMu39yU/gCQIFYkQrt
+	 vbsQJuS8Sdpuw==
+Received: by venus (Postfix, from userid 1000)
+	id D780E18066E; Tue, 25 Feb 2025 02:02:24 +0100 (CET)
+Date: Tue, 25 Feb 2025 02:02:24 +0100
+From: Sebastian Reichel <sre@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the gpio-intel
+ tree
+Message-ID: <tppj7h63bmgtnwdmf4mr6yg5g55gsfcvpdnoo5jt2ua6soiqbr@olbbul3jro7r>
+References: <20250224083406.6174f821@canb.auug.org.au>
+ <Z7xDmddu6TZHNAFu@smile.fi.intel.com>
+ <Z7xKKW-GrD6rEpYP@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="kfxr4ztylv36datk"
+Content-Disposition: inline
+In-Reply-To: <Z7xKKW-GrD6rEpYP@smile.fi.intel.com>
 
-Instead of only triggering a wedged event for complete GPU resets,
-trigger for ring resets. Regardless of the reset, it's useful for
-userspace to know that it happened because the kernel will reject
-further submissions from that app.
 
-Signed-off-by: André Almeida <andrealmeid@igalia.com>
----
-v3: do only for ring resets, no soft recoveries
-v2: Keep the wedge event in amdgpu_device_gpu_recover() and add and
-    extra check to avoid triggering two events.
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_job.c | 1 +
- 1 file changed, 1 insertion(+)
+--kfxr4ztylv36datk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: linux-next: Signed-off-by missing for commit in the gpio-intel
+ tree
+MIME-Version: 1.0
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-index 698e5799e542..760a720c842e 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_job.c
-@@ -150,6 +150,7 @@ static enum drm_gpu_sched_stat amdgpu_job_timedout(struct drm_sched_job *s_job)
- 			if (amdgpu_ring_sched_ready(ring))
- 				drm_sched_start(&ring->sched, 0);
- 			dev_err(adev->dev, "Ring %s reset succeeded\n", ring->sched.name);
-+			drm_dev_wedged_event(adev_to_drm(adev), DRM_WEDGE_RECOVERY_NONE);
- 			goto exit;
- 		}
- 		dev_err(adev->dev, "Ring %s reset failure\n", ring->sched.name);
--- 
-2.48.1
+Hi,
 
+On Mon, Feb 24, 2025 at 12:30:01PM +0200, Andy Shevchenko wrote:
+> On Mon, Feb 24, 2025 at 12:02:01PM +0200, Andy Shevchenko wrote:
+> > On Mon, Feb 24, 2025 at 08:34:06AM +1100, Stephen Rothwell wrote:
+> > > Hi all,
+> > >=20
+> > > Commits
+> > >=20
+> > >   b16e9f8547a3 ("input: ipaq-micro-keys: use devm_kmemdup_array()")
+> > >   67b12cda28e1 ("input: sparse-keymap: use devm_kmemdup_array()")
+> > >   5f95e8d0be63 ("iio: adc: xilinx-xadc-core: use devm_kmemdup_array()=
+")
+> > >   18c4aec76056 ("pinctrl: pxa2xx: use devm_kmemdup_array()")
+> > >   d7f6555aec79 ("pinctrl: tangier: use devm_kmemdup_array()")
+> > >   6e1bba1140a9 ("pinctrl: cherryview: use devm_kmemdup_array()")
+> > >   af946f612dfe ("pinctrl: baytrail: copy communities using devm_kmemd=
+up_array()")
+> > >   85ab35bae5ac ("pinctrl: intel: copy communities using devm_kmemdup_=
+array()")
+> > >   4c176c256dd9 ("devres: Introduce devm_kmemdup_array()")
+> > >   d7a76a31c46e ("err.h: move IOMEM_ERR_PTR() to err.h")
+> > >=20
+> > > are missing a Signed-off-by from their committer.
+> >=20
+> > Thanks for the report!
+> >=20
+> > But I dunno how to fix it now since it's most likely have been taken to=
+ some
+> > other repos before battery.
+> >=20
+> > I can issue another tag with that being addressed, nevertheless.
+>=20
+> Done as https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com.
+
+Thanks, I rebased the power-supply's for-next tree to use that instead.
+
+-- Sebastian
+
+--kfxr4ztylv36datk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAme9FpwACgkQ2O7X88g7
++pp5FQ//bYNajbQOKNw/pPeUdNyKEtAZSHTMC2QxcSpN5J1c8eSLaS5Pl9Ev9Soo
+Yo8+Lj4WTVgJqP0AnGgCk+VMwIFcWhOAXbfNnAiIeOJhCOECbfXs9iGdlK3qixn0
+ZoKOXLSo8Tr0CG17cZRtruSa9QN488SYdIh4D44Ojiz8xoaSr87Z44KtRl37n72H
+mceE2boXkJlbk8mv86MoDIA3bTcVY+JnxKdT4WnK7FmtPxm46YbK3ycgbZHpEZLh
+aELzZURyomION4WlQ9NUuZOELJVN7VGvNIjM9n2BZOCL2FYoqqJPS2oSB2B0PuuM
+TCcXdi3/Frs+8V5mSU0hnG+frXIbrJqMzPlf3OwreA0XO5RxcbBUwvx/WxVBkAjc
+kRMB1DYAFXUM9p/sHOBcxKUNlhEJ3XOo+XwsXa/wgsevvdqJQZqaUOV1z36szhSy
+dzqMjtOn52s+eNnElRyUItWWtYNAGLhuz3lMY73s1AX2cpXxr/f7aXbbVK0/iHbD
+X0m9d2yubKYpSymdTtYEm49wqVS6zbeW9hcT9nN8fJTGXQiyQTfoEhhUToSUmm9n
++9wFQWnUmuM+tfWJ8yTG8FWyyIAxXvthRHOm/LQX/u+o3VUrzOHRRhOBya9Qjyws
+Oss6MIjhJZDHa5Kgjh5BeL2zsPLeK+3BgeahJNqqE+3xVpJNrKg=
+=Q2V6
+-----END PGP SIGNATURE-----
+
+--kfxr4ztylv36datk--
 
