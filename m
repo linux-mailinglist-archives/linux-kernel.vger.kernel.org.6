@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-530683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C761A436C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:00:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB39A4364B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:41:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0203BD00B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:59:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC64217717C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF2125A32F;
-	Tue, 25 Feb 2025 07:59:26 +0000 (UTC)
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8F3257ACA;
+	Tue, 25 Feb 2025 07:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RLKIoIsg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5DE17DFF3;
-	Tue, 25 Feb 2025 07:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD9E126C18;
+	Tue, 25 Feb 2025 07:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470366; cv=none; b=t03NM71/g0n8PQaPNiyBMW5DRDbaWKj5vOORKIHMt6SmNR72dra7hMjdcFh+omrLPnCPB3RzLJadBFmJqM5tyHRnh2dyBGfLMHzyHxdm3XagyStc1RNDrZ5iEnjv7VnblqtuOPUzYVlNAWvkA5KX4Bb/Hqs98hcRcgH7JqZjia4=
+	t=1740469297; cv=none; b=n3T/8e9omPTR3J7GPcTJXmRWJgkM/TkXfpGTg4maX+sCeus7KCW2QVgcsm9Ir2Ykkc4qH8GnNKgjT8EFXgw9l+IQskug7yIVfGPOAHdsR4a/hG79yuGEJfR60k8klz/tmSh4/0q/sLGSJ4BE+rlTD8iZhDgkn5RUXxjBUYvtLic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470366; c=relaxed/simple;
-	bh=nu9yynYk0XIGZa52r+Naeo8gTBGfALG27Mv+5Wx/NJ0=;
+	s=arc-20240116; t=1740469297; c=relaxed/simple;
+	bh=2XYXMJOoj8jR7rOLBVWUvoeGA6TeanSWB2tNbRdbaQU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdztTdE+0/myenkHg1y2ozlftHT9X5nSeqvDt3SsDGvuxwXCfxKMfWDgREcLqesrEImo3NVoW9FASxykruyNrw3fgopWZjODCkHKLyl9cX+lM9Dg43ZSiEHP+M5AE+8NaSylflLnqTPc7J03LYE4Ik6BRjgrO9g3Y1Y3dJo7Dqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z288J41Lcz9v7N8;
-	Tue, 25 Feb 2025 15:18:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 48FDB140361;
-	Tue, 25 Feb 2025 15:40:59 +0800 (CST)
-Received: from [10.221.99.159] (unknown [10.221.99.159])
-	by APP2 (Coremail) with SMTP id GxC2BwD3X+L9c71nhYEeAw--.47156S2;
-	Tue, 25 Feb 2025 08:40:58 +0100 (CET)
-Message-ID: <756aed25-f4de-4c2f-b6e8-5bf67c0fde69@huaweicloud.com>
-Date: Tue, 25 Feb 2025 08:40:43 +0100
+	 In-Reply-To:Content-Type; b=T6yxrAhCuRSPXn5W3Dr9HiXCWtSj3ZHcB6A1IClB6FaF2xPKPET7qvVOjV7wPZNTihJ/hMtkovi8yDoa/SxVmosEBKhN5d/nzQd7FShBOa70rNNEXblgZd/M2cn9Wt6cW4uYfWfGUceD4IQzZv9lZ69VpITGL54hVBNqZEPSLDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RLKIoIsg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB343C4CEDD;
+	Tue, 25 Feb 2025 07:41:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740469296;
+	bh=2XYXMJOoj8jR7rOLBVWUvoeGA6TeanSWB2tNbRdbaQU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RLKIoIsgeoicWMs+xqA4V4aZNWo2G8yktpiOZlISV4mUzuWt9fLm1yWSzzP9eZgZ/
+	 bcFztsBRKEibxZ3c1sniOKr9IVzzgNmovqwWag/gXHFtn0yGbxMRFvGVFRr9LZrKH0
+	 nqBbGQwxXpExqaVNbSnhSn0xOQKfqQgPxDcTJ67zrPUhOcqOaAVJBLPlGwO9qb9heu
+	 CcDpIj0gfM4W/qlBIfLvgCI6Qi9RdWvakvJFmXPNxoinjGXrTvO7FGE9cBG9vLLbKl
+	 +f+MSIHmCPLf+abECnqs9Xm+znb73qVK44E7X6YFNiHzZbw4yZXX5oHviJEAZAAHTE
+	 DBEZ5XtHZKGbw==
+Message-ID: <2e383452-9a06-4278-930d-d6f8deed13a9@kernel.org>
+Date: Tue, 25 Feb 2025 08:41:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,96 +49,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH memory-model 6/7] tools/memory-model: Switch to softcoded
- herd7 tags
-To: Akira Yokosawa <akiyks@gmail.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, lkmm@lists.linux.dev, kernel-team@meta.com,
- mingo@kernel.org
-Cc: stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
- peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
- dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
- Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-References: <8cfb51e3-9726-4285-b8ca-0d0abcacb07e@paulmck-laptop>
- <20250220161403.800831-6-paulmck@kernel.org>
- <105532ce-a41d-4f14-8172-cd68bdffae1d@gmail.com>
+Subject: Re: [PATCH 2/2] input/touchscreen: imagis: document ist3038h
+To: Andras Sebok <sebokandris2009@gmail.com>, markuss.broks@gmail.com,
+ dmitry.torokhov@gmail.com, linux-input@vger.kernel.org
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-kernel@vger.kernel.org
+References: <20250224090354.102903-2-sebokandris2009@gmail.com>
+ <20250224090354.102903-4-sebokandris2009@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-In-Reply-To: <105532ce-a41d-4f14-8172-cd68bdffae1d@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250224090354.102903-4-sebokandris2009@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:GxC2BwD3X+L9c71nhYEeAw--.47156S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw47uF18Xr1xKw48tr4DXFb_yoW8uF4kpa
-	yrWa43KF1kJrWa9w1xWa1qvFy5Xan3Jr1UJrnrA3s5ZFy293WakrySg3WqqF9rA3yI9w4Y
-	yr1jg3WkC3s8Za7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: xkhu0tnqos00pfhgvzhhrqqx5xdzvxpfor3voofrz/
 
-On 2/25/2025 5:24 AM, Akira Yokosawa wrote:
-> On Thu, 20 Feb 2025 08:14:02 -0800, Paul E. McKenney wrote:
->> From: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
->>
->> A new version of herd7 provides a -lkmmv2 switch which overrides the old herd7
->> behavior of simply ignoring any softcoded tags in the .def and .bell files. We
->> port LKMM to this version of herd7 by providing the switch in linux-kernel.cfg
->> and reporting an error if the LKMM is used without this switch.
->>
->> To preserve the semantics of LKMM, we also softcode the Noreturn tag on atomic
->> RMW which do not return a value and define atomic_add_unless with an Mb tag in
->> linux-kernel.def.
->>
->> We update the herd-representation.txt accordingly and clarify some of the
->> resulting combinations.
->>
-> 
-> Having failed to hear from Jonas or Hernan in response to my question at:
-> 
->      https://lore.kernel.org/lkmm/ec97f28e-31ad-4a45-ac87-fab91e27d4ee@gmail.com/
+On 24/02/2025 10:03, Andras Sebok wrote:
+> Signed-off-by: Andras Sebok <sebokandris2009@gmail.com>
+> ---
+>  .../devicetree/bindings/input/touchscreen/imagis,ist3038c.yaml   | 1 +
 
-Sorry Akira, I lost track of the thread and forgot to answer.
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 
-> 
-> , let me guess.  Past contributions strongly suggest that Hernan looks after
-> herd7 changes and Jonas takes care of LKMM side of changes.
+Please run scripts/checkpatch.pl and fix reported warnings. After that,
+run also `scripts/checkpatch.pl --strict` and (probably) fix more
+warnings. Some warnings can be ignored, especially from --strict run,
+but the code here looks like it needs a fix. Feel free to get in touch
+if the warning is not clear.
 
-Yes, this is correct.
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
 
-Hernan
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
 
-> 
-> So my suggestion is to add a Co-developed-by tag of Hernan here:
-> 
-> Co-developed-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
->> Signed-off-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
->> Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
->> Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
->> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->> Tested-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> , and let me add a Tested-by:
-> 
-> Tested-by: Akira Yokosawa <akiyks@gmail.com> # herdtools7.7.58
-> 
->          Thanks, Akira
-> 
->> ---
->>   .../Documentation/herd-representation.txt     | 27 ++++++++++---------
->>   tools/memory-model/README                     |  2 +-
->>   tools/memory-model/linux-kernel.bell          |  3 +++
->>   tools/memory-model/linux-kernel.cfg           |  1 +
->>   tools/memory-model/linux-kernel.def           | 18 +++++++------
->>   5 files changed, 30 insertions(+), 21 deletions(-)
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
 
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+
+
+Best regards,
+Krzysztof
 
