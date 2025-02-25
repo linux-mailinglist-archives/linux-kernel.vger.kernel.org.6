@@ -1,179 +1,136 @@
-Return-Path: <linux-kernel+bounces-532692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A1B3A4510B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:55:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EC67A4510D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:55:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AE093A929D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059013A9285
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C934C236A74;
-	Tue, 25 Feb 2025 23:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4914123A98C;
+	Tue, 25 Feb 2025 23:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ivuBa7xf"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Iv1V3kpe"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968F71A2392
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDC42153FE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740527699; cv=none; b=Ji92UfdrXNZa2DjJsr1kjpeaSRB6cHHYKXwC175yzKCM48CwkSENoFNabZe0bwZkrMjljL+B8O61eSggbQIWTzRVfl4LmE6EF/QDxdDrcaIZCCmgHEEsNiOUN4ajl2hpe61ZxbXbI5B3hNLlDG1YqRiF+75sb8kuHFGxF6wiEgY=
+	t=1740527712; cv=none; b=VgmGDzdUciRLNEPha+o7GCNnhEioE2getPiUgutA/VOuoB5Z1HrxmewbihBUzup/pVRmR8LVhvV8oSoAWChdcVFIaRzfkaX7kGOx5nu3so5gvludmGmrX8WBGCYTCbFxul+syodYklh8WV7U7P2/7u6h5WkQRUwmnL24/g3r1Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740527699; c=relaxed/simple;
-	bh=pxdC/62rAoRuJSWlwmGhWe4xUiKN8iX0091lT7RGSzg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=aXzFSpOLpLD+cacipT4OPJ8noqIdny3mYgT/OV+S/b/ctimuXq9WWPH46kxVkfHTOtF4NMneenAGZ2kELQTrdhDf3G0SZcz5OZg9WH1ztMbR3KPmmIRTFW+gdwPMwqz7oxHR5aKv+D8JwD7y+WrNDUWm1YFZRqeKzrFt/hjhiL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ivuBa7xf; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--wnliu.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-220ec5c16e9so127648165ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:54:57 -0800 (PST)
+	s=arc-20240116; t=1740527712; c=relaxed/simple;
+	bh=sSju0BgS5fdbP5bJXxnI1mhD392jojs14xjCr3USU/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SnmlT71S7TbwiXKk4JSrvYigPfgrdtsgrVbpStAc9SM9V0+QDTtquGGYu/WDij9C8edbSgOoWGdfmB4CpoZqADP4/kgtviJrmx4Q4HMT7cBc5JFBMhjrUSGw02ISCJ+aM3Dj4RvcPQAiCyd94G3WpX7XHR47BbM/S+hWorCOESg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Iv1V3kpe; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c0818add57so634241985a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:55:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740527697; x=1741132497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pxdC/62rAoRuJSWlwmGhWe4xUiKN8iX0091lT7RGSzg=;
-        b=ivuBa7xfJ9XVpv0hyJZ7/B0T0TdRcRWLi6+5ZtKkNyDR8w07y6F1O9kf/3dvEvBDzc
-         R8TsQsKlGTDsXPRSZ0SgmDN2TCjXJlfkvzq7IJmmnaBuWEwxPUT/wCV+PTJlGJrEHRoS
-         TPIUZWajdbAzc7RuCYKi0FawDiAWc32nKi7stjZs+xSXZVqXOop84BrW3RRGmSZK8FOO
-         HTKPfIjd3DVkGlJo8YMen8EKGspvzAblA5AQnFrZ7f7V+juWXUdkyAFeQim6VXH+gBMH
-         Sg7HM3SjovhRvDBNGdYLYK8Kldc7Mm31co3q+aDo5+78bWXdZvAf3VD8C031siYOyPit
-         Wc9g==
+        d=fastly.com; s=google; t=1740527710; x=1741132510; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e5dMDjXKxu+T2AG0RdE1FsQr1C+kvYp4sA7RFoC2U8Q=;
+        b=Iv1V3kpePGOsVJPR7iZTZrUFxHJ2K2LyvzWbKGW5ufieDLZfh7Nu4Z2E/LW6E5qVvy
+         NYlSFeYNl3FyZS/k70vXLG0xzN5i2Z5GOa6Rcmpr0lu8fXkNstVG3U2/SK3U1y88FhDL
+         eEfHi/hdcqNJMF/tpPVafnNQSh4tPJnfHxsnA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740527697; x=1741132497;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pxdC/62rAoRuJSWlwmGhWe4xUiKN8iX0091lT7RGSzg=;
-        b=DuHEmSbxfZva37SPSPJLQSlcRxIGq/xJKIXk0n7V7FO2yqty97TwHq+6oKs8H9TvRc
-         qZrhGqv+CY8ghcOhrvNtqLCgy3xkhkMJkcDUGbMi38p1KSKz6j4oDz9AJiD3gbKFl7Re
-         qd1j0zgZTBaAqd3xyQ/D3B6pd78SViuyNWvSJmYPvtri7gJMQuxTBinMMix6sMM5Pes8
-         97BcZ5AWViPz06KxhCCl+df9Zc5CCgYAtXIBr/i3mc8uzmrq8X5xUN7uBoz1mGBDlGO+
-         U7XCJicZDESS1dv2Ry5iqv5TsGrIWj2nqy8vW+z8s1FsOUJcDiQCrjuWJQN/zV1kEIrL
-         fTag==
-X-Forwarded-Encrypted: i=1; AJvYcCXt6DOkKvGqSH/1vG1DxchPj92Cn21EetUUTlXt1zZ3K7SrE2wp5JbmMnIX8NR/HqkRedCNoZi1y/DixtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQVI3maNQRZvMBTBNX726fwqLb9wVPQLp/K9d0nf+A9STXpbUb
-	9d7cOV9iCAnrXYN2lXlm52N8ppXhHQcVCQ4FVr6XbSzUVz4H0JbWnicrp6JNp9Yiqq/Y4pSCsw=
-	=
-X-Google-Smtp-Source: AGHT+IGm7OlvsiRCbKMLn2MJybb+vZ4eGRwGa0mzKMAShvASY73Heo8D8O95riW5nBaMdjkiDwddH2xcSg==
-X-Received: from pljj1.prod.google.com ([2002:a17:902:c3c1:b0:220:ca3c:96bb])
- (user=wnliu job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f60a:b0:21f:752f:f2b1
- with SMTP id d9443c01a7336-221a1102975mr274878155ad.30.1740527696921; Tue, 25
- Feb 2025 15:54:56 -0800 (PST)
-Date: Tue, 25 Feb 2025 23:54:54 +0000
-In-Reply-To: <4356c17a-8dba-4da0-86dd-f65afb8145e2@oracle.com>
+        d=1e100.net; s=20230601; t=1740527710; x=1741132510;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e5dMDjXKxu+T2AG0RdE1FsQr1C+kvYp4sA7RFoC2U8Q=;
+        b=YxEDD6Ee4FOINFUJ0leyttaNjLZRyW4Tym7U1DrcHCul8nARHrBViORLwVzVUb/62f
+         3A4tuO5wPLyc33u4GjvBieCKZNFwCCzaFiUniRXYiMFDCEpqJWeuewpfcwV8mxiW3Zq/
+         8QhNv4kANwsz9JaD8vKo3PgBOtDGM19lj2a7APlbXouSy3Du7ARNHGzONcBaAyRS6iQS
+         cHbDUyjFgWoArHHL/98NhHz8xuLIL8FrREaBFXgf32wMje7fW6hXng3rZ0WGgtCavxV1
+         A4GOgzyFRbPs/pAB5QNYxEyOK1aERrYAoJrMLnMm5UfEHBc0coGoskdVQ8wVQN9qZbwn
+         cTgg==
+X-Forwarded-Encrypted: i=1; AJvYcCWMKvHVciQuMZx3a7ehojaMZ4o+4uSIWfG8DeiSM9NrcZvLTYiiGswuo4U3hpFu0ZoO77ICzZTyr9Ijed0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtdfCmiGHDnFaajgxn5cB1vKjXwbTKp/VQUhgCR+BJKnm7Etsi
+	SrTHQP/IUaVDhMHbnYf5bGQqyTOAKya8Fn6xN0DW7s36BeEH+6wh9WMgzWU0pyM=
+X-Gm-Gg: ASbGncvj6L9aeYLI1FnWsk4EVK/Z9q88hBHtUKIXjxqLB6Ysc9bhDzScWniz9eNyXTT
+	suKrpK8Sk8lzpTfE3p47l+219Ze39r4CMaLwdG17FYjVMJHqEddVknjRIJrMhBLbw++NWm9yUUW
+	dvae0KAAkwjVCgpyU7Gg9dlcQzAzRVQI6pUv1H/ZB4LzFMU/+O/LqvLGbrq85uS3X5XuGsX3gc0
+	YjVta2DYQpK9MSFxTTw1+5E+Sg22XhEIXtoAFx2/dF85MVlaHb1rE5dZFTtPpJ5bWx0R5oM5kLt
+	qIdMPHPrzObrmlTe2rPDClsuJZomBKDsDhtZhzHELZ+rbbMNoey7+XrHOWrPFKvC
+X-Google-Smtp-Source: AGHT+IEQKPLVcj2d7UodbbPtUnNi2hKgmOPHZLs2IO/LLKJ0Sxi9MIUzhinnLH5GAtqXty/lewDjdg==
+X-Received: by 2002:ad4:5aa8:0:b0:6d8:848e:76c8 with SMTP id 6a1803df08f44-6e6b01d78ddmr267840586d6.42.1740527709979;
+        Tue, 25 Feb 2025 15:55:09 -0800 (PST)
+Received: from LQ3V64L9R2 (ool-44c5a22e.dyn.optonline.net. [68.197.162.46])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b08857asm15479706d6.49.2025.02.25.15.55.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 15:55:09 -0800 (PST)
+Date: Tue, 25 Feb 2025 18:55:06 -0500
+From: Joe Damato <jdamato@fastly.com>
+To: David Wei <dw@davidwei.uk>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] selftests: drv-net: Check if combined-count exists
+Message-ID: <Z75YWvDcvzsMlVHK@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	David Wei <dw@davidwei.uk>, netdev@vger.kernel.org,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20250225181455.224309-1-jdamato@fastly.com>
+ <1c263479-43a4-40ec-94ae-987c7da7d43d@davidwei.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <4356c17a-8dba-4da0-86dd-f65afb8145e2@oracle.com>
-X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
-Message-ID: <20250225235455.655634-1-wnliu@google.com>
-Subject: Re: [PATCH 0/8] unwind, arm64: add sframe unwinder for kernel
-From: Weinan Liu <wnliu@google.com>
-To: indu.bhagat@oracle.com
-Cc: irogers@google.com, joe.lawrence@redhat.com, jpoimboe@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org, live-patching@vger.kernel.org, 
-	mark.rutland@arm.com, peterz@infradead.org, puranjay@kernel.org, 
-	roman.gushchin@linux.dev, rostedt@goodmis.org, will@kernel.org, 
-	wnliu@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c263479-43a4-40ec-94ae-987c7da7d43d@davidwei.uk>
 
-On Tue, Feb 25, 2025 at 11:38=E2=80=AFAM Indu Bhagat <indu.bhagat@oracle.co=
-m> wrote:
->
-> On Mon, Feb 10, 2025 at 12:30=E2=80=AFAM Weinan Liu <wnliu@google.com> wr=
-ote:
-> >> I already have a WIP patch to add sframe support to the kernel module.
-> >> However, it is not yet working. I had trouble unwinding frames for the
-> >> kernel module using the current algorithm.
-> >>
-> >> Indu has likely identified the issue and will be addressing it from th=
-e
-> >> toolchain side.
-> >>
-> >> https://sourceware.org/bugzilla/show_bug.cgi?id=3D32666
-> >
-> > I have a working in progress patch that adds sframe support for kernel
-> > module.
-> > https://github.com/heuza/linux/tree/sframe_unwinder.rfc
-> >
-> > According to the sframe table values I got during runtime testing, look=
-s
-> > like the offsets are not correct .
-> >
->
-> I hope to sanitize the fix for 32666 and post upstream soon (I had to
-> address other related issues). =C2=A0Unless fixed, relocating .sframe
-> sections using the .rela.sframe is expected to generate incorrect output.
->
-> > When unwind symbols init_module(0xffff80007b155048) from the kernel
-> > module(livepatch-sample.ko), the start_address of the FDE entries in th=
-e
-> > sframe table of the kernel modules appear incorrect.
->
-> init_module will apply the relocations on the .sframe section, isnt it ?
->
-> > For instance, the first FDE's start_addr is reported as -20564. Adding
-> > this offset to the module's sframe section address (0xffff80007b15a040)
-> > yields 0xffff80007b154fec, which is not within the livepatch-sample.ko
-> > memory region(It should be larger than 0xffff80007b155000).
-> >
->
-> Hmm..something seems off here. =C2=A0Having tested a potential fix for 32=
-666
-> locally, I do not expect the first FDE to show this symptom.
->
+On Tue, Feb 25, 2025 at 03:11:24PM -0800, David Wei wrote:
+> On 2025-02-25 10:14, Joe Damato wrote:
+[...]
+> > diff --git a/tools/testing/selftests/drivers/net/queues.py b/tools/testing/selftests/drivers/net/queues.py
+> > index 38303da957ee..baa8845d9f64 100755
+> > --- a/tools/testing/selftests/drivers/net/queues.py
+> > +++ b/tools/testing/selftests/drivers/net/queues.py
+> > @@ -45,10 +45,13 @@ def addremove_queues(cfg, nl) -> None:
+> >  
+> >      netnl = EthtoolFamily()
+> >      channels = netnl.channels_get({'header': {'dev-index': cfg.ifindex}})
+> > -    if channels['combined-count'] == 0:
+> > -        rx_type = 'rx'
+> > +    if 'combined-count' in channels:
+> > +        if channels['combined-count'] == 0:
+> > +            rx_type = 'rx'
+> > +        else:
+> > +            rx_type = 'combined'
+> >      else:
+> > -        rx_type = 'combined'
+> > +        rx_type = 'rx'
+> 
+> Logic is good but minor nit in reducing nestiness:
+> 
+> rx_type = 'rx'
+> if channels.get('combined-count', 0) > 0:
+> 	rx_type = 'combined'
 
-Yes, I think init_module will apply the relocation as well.
-To further investigate, here's the relevant relocation and symbol table
-information for the kernel module:
+Thanks; will fix in the v2.
 
-Relocation section '.rela.sframe' at offset 0x28350 contains 3 entries:
-=C2=A0 Offset =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Info =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 Type =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 Sym. Value =C2=A0 =C2=
-=A0Sym. Name + Addend
-00000000001c =C2=A0000100000105 R_AARCH64_PREL32 =C2=A00000000000000000 .te=
-xt + 8
-000000000030 =C2=A0000100000105 R_AARCH64_PREL32 =C2=A00000000000000000 .te=
-xt + 28
-000000000044 =C2=A0000100000105 R_AARCH64_PREL32 =C2=A00000000000000000 .te=
-xt + 68
-
-Symbol table '.symtab' contains 68 entries:
-=C2=A0 =C2=A0Num: =C2=A0 =C2=A0Value =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0Size=
- Type =C2=A0 =C2=A0Bind =C2=A0 Vis =C2=A0 =C2=A0 =C2=A0Ndx Name
-=C2=A0 =C2=A0 =C2=A00: 0000000000000000 =C2=A0 =C2=A0 0 NOTYPE =C2=A0LOCAL =
-=C2=A0DEFAULT =C2=A0UND
-=C2=A0 =C2=A0 =C2=A01: 0000000000000000 =C2=A0 =C2=A0 0 SECTION LOCAL =C2=
-=A0DEFAULT =C2=A0 =C2=A01 .text
-...
-=C2=A0 =C2=A0 32: 0000000000000008 =C2=A0 =C2=A012 FUNC =C2=A0 =C2=A0LOCAL =
-=C2=A0DEFAULT =C2=A0 =C2=A01 livepatch_exit
-=C2=A0 =C2=A0 33: 0000000000000008 =C2=A0 =C2=A0 0 NOTYPE =C2=A0LOCAL =C2=
-=A0DEFAULT =C2=A0 =C2=A03 $d
-=C2=A0 =C2=A0 34: 0000000000000028 =C2=A0 =C2=A044 FUNC =C2=A0 =C2=A0LOCAL =
-=C2=A0DEFAULT =C2=A0 =C2=A01 livepatch_init
-=C2=A0 =C2=A0 35: 0000000000000000 =C2=A0 =C2=A0 0 NOTYPE =C2=A0LOCAL =C2=
-=A0DEFAULT =C2=A0 =C2=A09 $d
-=C2=A0 =C2=A0 36: 0000000000000010 =C2=A0 =C2=A0 0 NOTYPE =C2=A0LOCAL =C2=
-=A0DEFAULT =C2=A0 =C2=A03 $d
-=C2=A0 =C2=A0 37: 0000000000000068 =C2=A0 =C2=A056 FUNC =C2=A0 =C2=A0LOCAL =
-=C2=A0DEFAULT =C2=A0 =C2=A01 livepatch_cmdlin[...]
-...
-=C2=A0 =C2=A0 63: 0000000000000008 =C2=A0 =C2=A012 FUNC =C2=A0 =C2=A0GLOBAL=
- DEFAULT =C2=A0 =C2=A01 cleanup_module
-=C2=A0 =C2=A0 64: 0000000000000000 =C2=A0 =C2=A0 0 NOTYPE =C2=A0GLOBAL DEFA=
-ULT =C2=A0UND klp_enable_patch
-=C2=A0 =C2=A0 65: 0000000000000028 =C2=A0 =C2=A044 FUNC =C2=A0 =C2=A0GLOBAL=
- DEFAULT =C2=A0 =C2=A01 init_module
+---
+pw-bot: cr
 
