@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-532637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E38A45029
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:32:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3309A45022
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41A4B3B4C01
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDE1189A36A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1472213E74;
-	Tue, 25 Feb 2025 22:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B78421422A;
+	Tue, 25 Feb 2025 22:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NoC98Hp0"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jd9yjKfX"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2BE2139A2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A89718C32C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522424; cv=none; b=X4cROlbu94G+t9nGpPR5kB+uwFdiZ1ZVgsXaUOZsIi3JDb8drr3/1T3DQO279kVayN4y1nIfW5BxwrVSaZ8TN7fYbFYrAI5Y3cWob0DuoCG4ObmD3e3HNXXwfQtZ4Xlzzke47Bu3mxqlo+Wzk/lyIia3OnzYEyUAEmWWTZ0NQSk=
+	t=1740522514; cv=none; b=Bq6fzVXVGbvnIDDt8Odb8j3ZrmhkWBQ3NY1yPxahKMLcJ/r3Pce8zC9pigFdCE5UxronkDy9sEzHp5kRwzJencNMrb6WPN7ZZTUemiydqlwkIyDauTwmRNp1NWxXJNaIhfHHERuKWd9VNGUvT0op5etxsvIv5X+xKA0yUyT+pMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522424; c=relaxed/simple;
-	bh=ueH8v3kAhGtMl1UaJ8GyVYQK+IqP2YvKKitd4jbFMlc=;
+	s=arc-20240116; t=1740522514; c=relaxed/simple;
+	bh=HJj0Yz5Lll+CiPhh7qmf+hpU1aku+LfYtxgi3IkOjCI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rpzj9xlOmmYXEPxqpKAwVBkuqgCVJztpz6czLI0DL9tjNCZeIXoOgdeGBifgEDKUa8q2jwlwk/dxHHS9EIcbeGgkxH42BasTMWT2Sh5A9NKb4k5OFxxl45CxvE2R3to+3UoPeCuRxLlKWaWbVYuPFmMy2OKv0nwG7lw0NaLZUNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NoC98Hp0; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fd062e9f91so245802eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:27:02 -0800 (PST)
+	 To:Cc:Content-Type; b=jVG3yalfiNq5MlIhVoXUWcOiPhCn4b+4vnULzrSNNOQw7DEterMIjav2xEJ/gglvT05mDbyWiMx9Q+Ysxo5xFfwXCrF0o2kRGYL4m3HJq/x2qM2CuODXqbPH1ZdKqFhfVfDKWmVqMDHsUkBsEG985M1/ETKgtd6TV7Kt3EwyMUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jd9yjKfX; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e67ce516efso49107956d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:28:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740522421; x=1741127221; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1740522512; x=1741127312; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+xqOSCFzGcNZ5N5goLofc5rFgMD/6qlIIoCbD7zYyOg=;
-        b=NoC98Hp0XC1o0kee0R/XAklgGEYt22idj9mbWZ6Le8MhXrrFypJjoxRjRYFzp44sLw
-         yJAWN9Ey1tEj45czHZyRASunLPqSmilj2bpbslERVUTelC6Z52QJPqFDZxS1oM6UnE2w
-         skxnqcWzQnPATTI/tbZDT/c2ezDwYaHGKCNHM=
+        bh=d/vvYkyp7Hb/QOidIce1lg6CZDEUavwEmPlWHS0qFxI=;
+        b=Jd9yjKfXAToczzHo4+c+1PHLDwqaGubXipmY/cUkUVsKvQN9vgePb/ifKC0kAk8ekX
+         0iF4ttMRl9y6G41gHzz1X7Bfq5CfR9lTFGjC5jK9AWDDm1exNLq1zwFraNmoc9gRUAtP
+         28hQyinnRyECTBYNbeY48qmNck07MPg88BIHrnDwUXabutGEiOIN1OVRI9SgH73nRex4
+         UOftmgFDRltEqv3sRkjr30kkS0oMCCY1HyG1BIgJ1bmaC5CBO1n+xvtcyB0EzJytmdox
+         r+zxS2YpT6BFnX6Fv3ks5z2fOMEHcogFyfjTR8aytHzzIUKiDp8w6StVQpvVld8fbWHc
+         2ylQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740522421; x=1741127221;
+        d=1e100.net; s=20230601; t=1740522512; x=1741127312;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+xqOSCFzGcNZ5N5goLofc5rFgMD/6qlIIoCbD7zYyOg=;
-        b=xSmCZX+nurWFIAMtK0xyIT7naoDkOcGn74VUxepfRIO44ncwg5Ww3EiSGqBIJe5rP8
-         RLMPC14wh64yZl4z6DhAsA4E8YhuvtFUzXMF8kXB0+7HCSFe95C5QRrtK6B+35gqKigp
-         j2uiY1kbJj4rvafkS2iILKgkD8A7W2OMER1yOD911FepQ921V4PsrY74pm1m/n+3YOqU
-         JWvsC5YQfeEoxGNQPrRgJHRrw16HGj+ulmHGE/4zh07OSVY00bS888HFP4k0JH45dWOs
-         jQkCYUdsUr1y3JsUxCQgQwXg71/ufgY8CARWFFeGI+b4RSKeY172c9J8Yx/tRgiZmz56
-         oV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWyV2BKv21yb55I+eUUybmiDi7jJu+mUFyEIC5aZ6AhT+JTAVc37/jFtV47+bkPLekLe/HLi7Fzl6hfPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc5wFMlS3Hp4KjqysqJS+xybpGjq8r3UUkKwU4ntFe2OrJwObF
-	aapNiqIonfDaAcmZIT+EDtGTTtfWAkSSv29Byy8aruVglDjlwmzKNCTaWX8W2P0s2IxXfsSxP3w
-	19HNhcmgTOhs3lRG9MRUQsKAfwi7feri7ZdgO
-X-Gm-Gg: ASbGncumYTDXBGjoJ/2o+EU9z7G0An3FHaCDUZb8aCHZ1j1jUuaeLGpRHAfsViM72XB
-	UAFF/l1O+XSg7xfQ6Lq/GuSyxbQaXqnOHo2KP6gRFT6A1RsmjQ+N9P2C3e3sC2WuI3NHjFPduVM
-	ffm/TU1/c+KG+tAd8/W00NE/AhT86XresbQeI=
-X-Google-Smtp-Source: AGHT+IGrIRM05nqTpSS/aN8tN5ECXM3Wnwq1SCF4hVG6Zt8KUBaf9vuM/b8YblkxFeS8P+eF3vSb9Z8wwra7W+6rXys=
-X-Received: by 2002:a05:6820:1e02:b0:5fc:e36d:ffb6 with SMTP id
- 006d021491bc7-5fd19395e2amr4484916eaf.0.1740522421670; Tue, 25 Feb 2025
- 14:27:01 -0800 (PST)
+        bh=d/vvYkyp7Hb/QOidIce1lg6CZDEUavwEmPlWHS0qFxI=;
+        b=UzTloqGZZAlMATKrY4aQId0bxdkmtrPFuo3NFpj8YneDCZVBZ7C9PZgE8uHT9a8RDN
+         cL6l5eOt6zIbso5wwilxvMeDLP7u4WRo2mXiHtKyAB0/L+06A/2E/vYtv6C7AigzKNeX
+         bdTUYfoZkCDJZEH7Y1HAmlYT8OsGqp/P2wCiLgNdKdrhGWyxx1xWQc0XyaccZzB1M+UT
+         J8zrYxuUdqVhRys3rpL5/X+J1BLCh/HwHq69Y1PfKpfo6jlE6BNzY/jyeBUvIcj/hztm
+         WPKz9zxRTqwH+IQHFjE29c0EMM2LMzvEgHFoLeVZUbG8v0yc/I1YTWD38UuEeCP9bp7u
+         y+tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8fYMn2TW7z429tdXSOweo56RkdQyGsL42zKhjatLSIbGNWX9B6iXZ4HBBGdkZs1+zGg1hz5Jy1UCjNvk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9HGqy3+XC7ceGQVXtQK1KrJPr53kke8HGPq+bsnQ7UVPJIT3T
+	jYTf1G/6KrDoFNMN1ggGTbbzn1JqCmg02KbNtt7ufePhmQ5DvhNBYy2uGQ6lNIrJl6aMOlGV89m
+	/Dd9T+S6sT5In0XkCXdfvDt27kFs=
+X-Gm-Gg: ASbGncs7cL2cZ72AWtzXKIoqks0KGES/BucrrPFd0g3r5JqMvqXi+QzjE8XorDrI6N0
+	4ehZtw2ahZa34SZ3orOLG9dwHXtognH+83y7nSXEVl4lYVgEa6WAjaNTe1tdPr2ynCfXcV2aCAW
+	WZjE3iqBAP5gnymIAZt67DocuvLu9pOers9VRgou0=
+X-Google-Smtp-Source: AGHT+IHz/Af49tTQvF2gXpTHPb6xQHIyiSN8wd7gJXeCwTVtHe0hucq8LVTvxWzrwI0Pz8Ltsf7x4kEfoV2c7SKEQ0A=
+X-Received: by 2002:a05:6214:484:b0:6e6:5d9a:9db4 with SMTP id
+ 6a1803df08f44-6e886901dcamr16015806d6.41.1740522512399; Tue, 25 Feb 2025
+ 14:28:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224225246.3712295-1-jeffxu@google.com> <20250224225246.3712295-5-jeffxu@google.com>
- <899d39af-08d2-4cd9-9698-9741d37186b8@lucifer.local>
-In-Reply-To: <899d39af-08d2-4cd9-9698-9741d37186b8@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Tue, 25 Feb 2025 14:26:50 -0800
-X-Gm-Features: AQ5f1JpEnTIek47kMMdYY3wMb_Ou1MsxH8iLDFczn7mUq9qPucRsYU6MSTAQhEE
-Message-ID: <CABi2SkX0oGnqM4BDfRt0+7Pcf31td8np3=dVg1ixcaDNoUyHkQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/7] mseal, system mappings: enable arm64
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, jorgelo@chromium.org, 
-	sroettger@google.com, hch@lst.de, ojeda@kernel.org, 
-	thomas.weissschuh@linutronix.de, adobriyan@gmail.com, 
-	johannes@sipsolutions.net, pedro.falcato@gmail.com, hca@linux.ibm.com, 
-	willy@infradead.org, anna-maria@linutronix.de, mark.rutland@arm.com, 
-	linus.walleij@linaro.org, Jason@zx2c4.com, deller@gmx.de, 
-	rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com
+References: <20250225213200.729056-1-nphamcs@gmail.com> <20250225142518.cec35a0ea77a0d86f3e860c3@linux-foundation.org>
+In-Reply-To: <20250225142518.cec35a0ea77a0d86f3e860c3@linux-foundation.org>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 25 Feb 2025 14:28:20 -0800
+X-Gm-Features: AQ5f1JoxxuL2tZkp3XCjgAMe7HNqcE0g1hHNvRdYOmpLmlRy-y9P30uIFJX2xeI
+Message-ID: <CAKEwX=MuKwhnooRO4pHH_UqGStMdH5RHbxnYJtYmqLhBBE0StA@mail.gmail.com>
+Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: hannes@cmpxchg.org, yosryahmed@google.com, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 24, 2025 at 10:20=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
+On Tue, Feb 25, 2025 at 2:25=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
 >
-> On Mon, Feb 24, 2025 at 10:52:43PM +0000, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Provide support for CONFIG_MSEAL_SYSTEM_MAPPINGS on arm64, covering
-> > the vdso, vvar, and compat-mode vectors and sigpage mappings.
-> >
-> > Production release testing passes on Android and Chrome OS.
+> On Tue, 25 Feb 2025 13:32:00 -0800 Nhat Pham <nphamcs@gmail.com> wrote:
 >
-> This is pretty limited (yes yes I know android is massive etc. but we mus=
-t
-> account for all the weird and wonderful arm64 devices out there in contex=
-t of
-> upstream :)
+> > @@ -984,12 +987,19 @@ static void zswap_decompress(struct zswap_entry *=
+entry, struct folio *folio)
+> >       sg_init_table(&output, 1);
+> >       sg_set_folio(&output, folio, PAGE_SIZE, 0);
+> >       acomp_request_set_params(acomp_ctx->req, &input, &output, entry->=
+length, PAGE_SIZE);
+> > -     BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &=
+acomp_ctx->wait));
+> > -     BUG_ON(acomp_ctx->req->dlen !=3D PAGE_SIZE);
+> > +     if (crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &aco=
+mp_ctx->wait) ||
+> > +                     acomp_ctx->req->dlen !=3D PAGE_SIZE) {
+> > +             ret =3D false;
+> > +             zswap_reject_decompress_fail++;
+> > +             pr_alert_ratelimited(
+> > +                     "decompression failed on zswap entry with offset =
+%08lx\n",
+> > +                     entry->swpentry.val);
+> > +     }
+> >       mutex_unlock(&acomp_ctx->mutex);
 >
-> Have you looking through all arm64-code relating to vdso, vvar, compat-mo=
-de
-> vectors, sigpage mapping and ensured nothing kernel-side relies upon relo=
-cation?
-> Some arches actually seem to want to do this. Pretty sure PPC does... so =
-a bit
-> nervous of that.
->
-Can you please point out where PPC munmap/mremap the vdso ?
+> This mutex_unlock() isn't present in current kernels.  I'd normally just =
+fix
+> the reject but a change in the locking environment needs some careful
+> checking and retesting, please.
 
-Previously, when you mentioned that, I thought you meant user space in
-PPC, I didn't realize that you meant that kernel code in PPC.  I
-tried, but didn't find anything, hence asking.
-
-Thanks.
--Jeff
+Hah strange. I could have sworn I pulled the latest mm-unstable, but
+maybe the git pull failed and I didn't notice. Thanks for picking this
+up Andrew! Lemme re-pull and rebase.
 
