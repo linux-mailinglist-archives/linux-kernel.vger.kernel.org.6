@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-531482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9281A4410D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:40:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E36A4410E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF0FB7AC188
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:37:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA8B3AD3CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6391C8600;
-	Tue, 25 Feb 2025 13:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7541269837;
+	Tue, 25 Feb 2025 13:38:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvqjUDqo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aozRsqQc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AFC269819;
-	Tue, 25 Feb 2025 13:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41815269819;
+	Tue, 25 Feb 2025 13:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490726; cv=none; b=ArRTpYrYosGLFw7Cv7gqBN0/cg5fjIqWjgoQhZeWvpKlPm4Chzh3YgLN90ZU8hicgNcVZOMbmT2S+1uOOMGhxqKsupx+Ancie2dIjXJYZq1d2sgMHGA/QEtX6SsDOttaN44wVUBVX9JCcWw7TXqiCkAb8ST1Y3csps6pEDBzgAw=
+	t=1740490729; cv=none; b=g9oXDeABSebUPIprbYQ5VhzKhkUWg86szRmeW36xOhShppcbMGKJy1+JcSXXGowhleVIhUfzjDEK62QuoHq+o+jH30jdOQmFqE78K5OeOJmQALaevA80y8zl6bDLlN/g1OUdz9V0s5o7NrzKgeOhpaSVmKQ135HBgDKhJgWX4Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490726; c=relaxed/simple;
-	bh=UPwGdf4XoJMItFYS8KBqZHuoRc5P6DTbta0DBll+khg=;
+	s=arc-20240116; t=1740490729; c=relaxed/simple;
+	bh=bJ3NHtM9/m9NUKbxneBtDPd7ROoBbzlkPBC3/NbsPqA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fY5nZ6zFZJOom/9ymFo4RStAe674Cewpu5k8So2hGwQwKQKE+iCqvvE2TexSmcDQmyV9GdtWboPcN66n9lG2n9UNr1jTY8LOTt8I8/tDH9RAQzJ+PgCWMrjAB3YZSM6lcxsV2bMiwnXMM7NbBmf1AYfxt4HN6L44CqadNM6DkRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TvqjUDqo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D842EC4CEE8;
-	Tue, 25 Feb 2025 13:38:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=nFKkWHM9R2NszlEGevks5gg5ZnTu1PaJ/mJjm4xoErXgYNH7OfaN4LH6EkhDcYkzu0VZHAbPzelAtPkxm43MXkxc6e702lYnu/sRtnHhFVD3fNmOlTlV1aIWeuQbSuMa8X4qEwdl69+adinmEQEZA3ZuQxRTKxWl4a5wRnEx2b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aozRsqQc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFC8C4CEDD;
+	Tue, 25 Feb 2025 13:38:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740490726;
-	bh=UPwGdf4XoJMItFYS8KBqZHuoRc5P6DTbta0DBll+khg=;
+	s=k20201202; t=1740490728;
+	bh=bJ3NHtM9/m9NUKbxneBtDPd7ROoBbzlkPBC3/NbsPqA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=TvqjUDqoZnLZ1CKRTfEe/kAlPzaswhfI8+hgOVkWa8Xa34befAncEym4ln5rtOQeu
-	 vT1iJkR2JB9gSKmUlcHQ5U7zCNw4mYSWRJ/EhyEUl7vUaBV3pPyzIFCP+BKmf9hPGK
-	 w0REPfP1XHFCQmXnUBJfsD9vzKKHFVLwpD4fwUnS5/Y46NWKI4SqV9dA8Af+1yW7+v
-	 K9fY7qhKo/CgaRThzEqyV/5ieqwX8DcFs+rchEfPCeDYfx9x7cu3QKlMWq/j7Rl8HO
-	 oBRvJEi2nH4Wv1gnbp3F3Q3rKllMQne78ZV8pPPIkFexrkRgV2ZOJrYnqFNWWLHEEC
-	 G3u1iDccY0jCw==
+	b=aozRsqQcxJytbSXfak4vSwnCDDCrH7+LkABfWILugEivMpJONUQtuia7FcMU8ndmB
+	 ixDXHiPlBQ4imWw2fDG5LoPr4IbhUs5AzHEElp97IYpQ0IBER+Jh8svQqtYiAwiRT7
+	 o8g57BzTJFhg98uon5ILu1KB2iyDsYSpGbOGOUaOyvoCJjn8AiDf51xSlkNOSw5rJx
+	 ziBEaGtdpGsEN5mLIcn+xsYCp6xOum4DXB+8HY1yOVHq/u/8+iG6nrqg7gTafImNMj
+	 oNNrJispyfCYpK8xD5KnUDEsnwGERpHLf/y0XGuW8xzFSSCStG0dUwKg3GMrNEdv7c
+	 EfJDLWyD7pKVw==
 From: Mark Brown <broonie@kernel.org>
-To: Cheng-Yi Chiang <cychiang@chromium.org>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, Guenter Roeck <groeck@chromium.org>, 
+To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ Andrei Simion <andrei.simion@microchip.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Benson Leung <bleung@chromium.org>, 
+ Takashi Iwai <tiwai@suse.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
  Thorsten Blum <thorsten.blum@linux.dev>
-Cc: chrome-platform@lists.linux.dev, linux-sound@vger.kernel.org, 
+Cc: linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20250220120100.1530-2-thorsten.blum@linux.dev>
-References: <20250220120100.1530-2-thorsten.blum@linux.dev>
-Subject: Re: [PATCH] ASoC: cros_ec_codec: Use str_enable_disable() helper
- in wov_enable_put()
-Message-Id: <174049072359.42497.10441700607973248883.b4-ty@kernel.org>
-Date: Tue, 25 Feb 2025 13:38:43 +0000
+In-Reply-To: <20250222225925.539840-2-thorsten.blum@linux.dev>
+References: <20250222225925.539840-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH] ASoC: atmel: atmel-classd: Use str_enabled_disabled()
+ helper
+Message-Id: <174049072628.42497.15584165793923327558.b4-ty@kernel.org>
+Date: Tue, 25 Feb 2025 13:38:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,8 +65,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Thu, 20 Feb 2025 13:01:01 +0100, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_enable_disable() helper
+On Sat, 22 Feb 2025 23:59:25 +0100, Thorsten Blum wrote:
+> Remove hard-coded strings by using the str_enabled_disabled() helper
 > function.
 > 
 > 
@@ -76,8 +77,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: cros_ec_codec: Use str_enable_disable() helper in wov_enable_put()
-      commit: 10efa807929084a8a1c38655942a3bf83bce587a
+[1/1] ASoC: atmel: atmel-classd: Use str_enabled_disabled() helper
+      commit: 88e09306b7e0f8a9e9f9c729ac13ccd11ed9679d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
