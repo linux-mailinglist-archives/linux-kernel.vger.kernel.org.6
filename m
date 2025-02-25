@@ -1,377 +1,205 @@
-Return-Path: <linux-kernel+bounces-531243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B41DA43E02
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:44:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B26A43E13
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148081884C52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5B83BFC61
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39053267B78;
-	Tue, 25 Feb 2025 11:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbgAVjaA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C29267F58;
+	Tue, 25 Feb 2025 11:43:39 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DF81A2391;
-	Tue, 25 Feb 2025 11:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F94267F53
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483813; cv=none; b=XQiN79+XM401jUjesCevh3c4y4jCfD4QMHpu7rVzXmQL9Y6UtKrfPg+MWzUFQsQ62DmJKe9zr3TcttH+akZlcn5F/7MqwqlFdoFV52BmM8rHEcO9RfC8IhPg53K1QmoQgxjUkzGi+0dlMGYeLNkThXzPc8OWx58fHfHSO6S9wI8=
+	t=1740483819; cv=none; b=rZtYgH/Ck6XgUVaLF9aDUTN6SIqygt3NO0eAn06QRBUUeQQuPBGkJkpNXRZ4lvN+eR++3lwUUV7OLQ2lBotOmNh+gSg27jBeWeNAuAJV70bWz3F2CfJqKq6Rlh+oeQ5rOp7FZSrsPpTsWsbMsdK0n1CpjkQYo4BxNoPPVCIfx+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483813; c=relaxed/simple;
-	bh=50SXg6QdeZvBJt8kvyeAzwQsyWO8Eg4+cCDqsw8URSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IHM+AUcZv5BF7rn/+bv7OYUTffmpWf90SJj+memf8r/FYUeRyrjwoP4VSV6Ej804fxspopl1PG8DdEZlL4yS+qt8+dQD8YvthcF3CxBn+/w6k45Z2+BzEOjANOIc6Tpsvs9VysAXrXcdBf31WfmF2Ab5U6WqdlY7AREE7aqy2Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbgAVjaA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5637FC4CEDD;
-	Tue, 25 Feb 2025 11:43:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740483812;
-	bh=50SXg6QdeZvBJt8kvyeAzwQsyWO8Eg4+cCDqsw8URSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lbgAVjaAFYhCw+rKSAMpobKfHX6bo4H1IbhfngfFeyr0SATkZC+zXIRNE1LFjZlYP
-	 7AyI78cXE70m3+Cm33BKlUTmvnEidmq13rME0kgTVEC5ejxbTpUcChIk0a4qiZJIqC
-	 E5OBc9JIGPil8ct9R5Tuz3C3vw3QErt4BgB/QaZdR8pN5qtl6XMbkIYS2jzOG5Cb3m
-	 iUc2llQej8ER2zoOxQju485qYEgCyHZO/ZhT7iZL+nVnIci7rttACCzBDiANsNlox0
-	 8xfX22Fu46yquq3fsEQGVoqxkmuwIIGwDaBQGefvPtXeZIH3KIcjrXznr8FkghFVVp
-	 nFUUMqfyso58A==
-Date: Tue, 25 Feb 2025 11:43:29 +0000
-From: Filipe Manana <fdmanana@kernel.org>
-To: haoran zheng <zhenghaoran154@gmail.com>
-Cc: Daniel Vacek <neelx@suse.com>, clm@fb.com, josef@toxicpanda.com,
-	dsterba@suse.com, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com,
-	21371365@buaa.edu.cn
-Subject: Re: [PATCH] btrfs: fix data race when accessing the block_group's
- used field
-Message-ID: <Z72s4bDZghGhcWzN@debian0.Home>
-References: <20250208073829.1176287-1-zhenghaoran154@gmail.com>
- <CAL3q7H5JgQkFavwrjOsvxDt9mMjVUK_nPOha-WYU-muLW=Orug@mail.gmail.com>
- <CAPjX3FeaL2+oRz81OEkLKjWwr1XuOOa3t-kgCrc51we-C-GVng@mail.gmail.com>
- <CAL3q7H7iFQ0pS+TB8NNj5CDA=c1cmurSiGsuXDn61O6A5=mBSQ@mail.gmail.com>
- <CAPjX3Feo9=hkptSxOMREKVckbvhfbmjHAWYBL2sBryDcVzp0NA@mail.gmail.com>
- <CAL3q7H7eSw0gg=JQwiEe9_pSEqcxugpgOWJDdv45UHrZbsFhzw@mail.gmail.com>
- <CAKa5YKjymZzRWy6WhVhu+mMzENunsM6URBL3o-_yy1wPGhdV-A@mail.gmail.com>
+	s=arc-20240116; t=1740483819; c=relaxed/simple;
+	bh=A0H+uA5AcuxpI89I3toRLh3HSxHEqNAQR44KjeeZe9M=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Obd3tdbOr5KFoNOccRWWgoxKrSNnID/FxY7bN0MT/4hF5whyTPRWErxyEPhajzzhh/BduOYbPvJOQKp2fGeyj1a+K57eq64NIpYStW4dClDnJqRsnixHtmj2qvDr28Dc9fNGD6V9/L40Is4nYBtIh9ch02AyvgTS2zJ60/j08Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d2b3a2f2d4so108358815ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:43:37 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740483816; x=1741088616;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gHUPwMMe6tL/hSjkxiVP3JeiNcJ8v+AqTWhilBCfmyU=;
+        b=WgJZXCNSI/4yKd4QezZbpZ8mntngPHtJ1g8S8hxKuDjsd4GKTmfrnkpYXrEVJraPdd
+         0BCFt6Ln3aiqgaNTsmpNk/EyhSjLiqNat/Ka837AjAZZnD1VVu4vCtvYQh7eyv2VWMOx
+         Ylhfg4SZUUb49aS/ua/WkGDfKCy9UL7xR7VJPf61kd/s/r9Fx8glUqQ0wavhAqs5aCKL
+         3Ik4XL7Tl+WUoCoIgftTe/Vwj3PLAKtY9E6lFQbszIBbPHNM9kpN9I9XfZe+J0TTuB0u
+         ljR0HILYGpA3wWK7vpbz2dNh3yz5U3NP8LN/uXBBcZ7/CTiJaCOIqwwkqH9E4S4nLkOW
+         eh5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUaZ8b95h2thpqo25ERpMLovgCEUc2GJk/kCqtcdMT1wVR+Tg/HJ1Ww2OwQ8JltLVANWHhUOhew+Ekam/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrsTLgu/Gfi32enAXM76GNpAiyk0r7hm4WYh1kqZYWk4+keXjW
+	Sqiuhghwp/n9RKotivYqqz8wcx2H1erGxpcizHgAISiCgoRbBB1Kq/7v/qOlSqSMsnuWSbjQ+fJ
+	HyEEBi+ql6AKTybVBGx/lzpXsVMGU185Y0zy4t68PXN9xZy0G3bapync=
+X-Google-Smtp-Source: AGHT+IFj1NHM3myWluJ/MLqEZZdrQqAer5LCyfIFbALYWLAaIEavN+NNUifjDGoWsNuzZvQIzUnrcyBSXJF1jPv5ha2RRM5WyYyF
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKa5YKjymZzRWy6WhVhu+mMzENunsM6URBL3o-_yy1wPGhdV-A@mail.gmail.com>
+X-Received: by 2002:a05:6e02:4602:b0:3d3:ce1b:5e84 with SMTP id
+ e9e14a558f8ab-3d3ce1b6053mr8414535ab.22.1740483816347; Tue, 25 Feb 2025
+ 03:43:36 -0800 (PST)
+Date: Tue, 25 Feb 2025 03:43:36 -0800
+In-Reply-To: <67bd6bef.050a0220.bbfd1.009d.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bdace8.050a0220.bbfd1.00a6.GAE@google.com>
+Subject: Re: [syzbot] [fbdev?] KASAN: slab-out-of-bounds Read in fbcon_prepare_logo
+From: syzbot <syzbot+0c815b25cdb3678e7083@syzkaller.appspotmail.com>
+To: deller@gmx.de, dri-devel@lists.freedesktop.org, 
+	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, simona@ffwll.ch, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 19, 2025 at 04:52:40PM +0800, haoran zheng wrote:
-> On Wed, Feb 19, 2025 at 12:29 AM Filipe Manana <fdmanana@kernel.org> wrote:
-> >
-> > On Tue, Feb 18, 2025 at 4:14 PM Daniel Vacek <neelx@suse.com> wrote:
-> > >
-> > > On Tue, 18 Feb 2025 at 11:19, Filipe Manana <fdmanana@kernel.org> wrote:
-> > > >
-> > > > On Tue, Feb 18, 2025 at 8:08 AM Daniel Vacek <neelx@suse.com> wrote:
-> > > > >
-> > > > > On Mon, 10 Feb 2025 at 12:11, Filipe Manana <fdmanana@kernel.org> wrote:
-> > > > > >
-> > > > > > On Sat, Feb 8, 2025 at 7:38 AM Hao-ran Zheng <zhenghaoran154@gmail.com> wrote:
-> > > > > > >
-> > > > > > > A data race may occur when the function `btrfs_discard_queue_work()`
-> > > > > > > and the function `btrfs_update_block_group()` is executed concurrently.
-> > > > > > > Specifically, when the `btrfs_update_block_group()` function is executed
-> > > > > > > to lines `cache->used = old_val;`, and `btrfs_discard_queue_work()`
-> > > > > > > is accessing `if(block_group->used == 0)` will appear with data race,
-> > > > > > > which may cause block_group to be placed unexpectedly in discard_list or
-> > > > > > > discard_unused_list. The specific function call stack is as follows:
-> > > > > > >
-> > > > > > > ============DATA_RACE============
-> > > > > > >  btrfs_discard_queue_work+0x245/0x500 [btrfs]
-> > > > > > >  __btrfs_add_free_space+0x3066/0x32f0 [btrfs]
-> > > > > > >  btrfs_add_free_space+0x19a/0x200 [btrfs]
-> > > > > > >  unpin_extent_range+0x847/0x2120 [btrfs]
-> > > > > > >  btrfs_finish_extent_commit+0x9a3/0x1840 [btrfs]
-> > > > > > >  btrfs_commit_transaction+0x5f65/0xc0f0 [btrfs]
-> > > > > > >  transaction_kthread+0x764/0xc20 [btrfs]
-> > > > > > >  kthread+0x292/0x330
-> > > > > > >  ret_from_fork+0x4d/0x80
-> > > > > > >  ret_from_fork_asm+0x1a/0x30
-> > > > > > > ============OTHER_INFO============
-> > > > > > >  btrfs_update_block_group+0xa9d/0x2430 [btrfs]
-> > > > > > >  __btrfs_free_extent+0x4f69/0x9920 [btrfs]
-> > > > > > >  __btrfs_run_delayed_refs+0x290e/0xd7d0 [btrfs]
-> > > > > > >  btrfs_run_delayed_refs+0x317/0x770 [btrfs]
-> > > > > > >  flush_space+0x388/0x1440 [btrfs]
-> > > > > > >  btrfs_preempt_reclaim_metadata_space+0xd65/0x14c0 [btrfs]
-> > > > > > >  process_scheduled_works+0x716/0xf10
-> > > > > > >  worker_thread+0xb6a/0x1190
-> > > > > > >  kthread+0x292/0x330
-> > > > > > >  ret_from_fork+0x4d/0x80
-> > > > > > >  ret_from_fork_asm+0x1a/0x30
-> > > > > > > =================================
-> > > > > > >
-> > > > > > > Although the `block_group->used` was checked again in the use of the
-> > > > > > > `peek_discard_list` function, considering that `block_group->used` is
-> > > > > > > a 64-bit variable, we still think that the data race here is an
-> > > > > > > unexpected behavior. It is recommended to add `READ_ONCE` and
-> > > > > > > `WRITE_ONCE` to read and write.
-> > > > > > >
-> > > > > > > Signed-off-by: Hao-ran Zheng <zhenghaoran154@gmail.com>
-> > > > > > > ---
-> > > > > > >  fs/btrfs/block-group.c | 4 ++--
-> > > > > > >  fs/btrfs/discard.c     | 2 +-
-> > > > > > >  2 files changed, 3 insertions(+), 3 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-> > > > > > > index c0a8f7d92acc..c681b97f6835 100644
-> > > > > > > --- a/fs/btrfs/block-group.c
-> > > > > > > +++ b/fs/btrfs/block-group.c
-> > > > > > > @@ -3678,7 +3678,7 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
-> > > > > > >         old_val = cache->used;
-> > > > > > >         if (alloc) {
-> > > > > > >                 old_val += num_bytes;
-> > > > > > > -               cache->used = old_val;
-> > > > > > > +               WRITE_ONCE(cache->used, old_val);
-> > > > > > >                 cache->reserved -= num_bytes;
-> > > > > > >                 cache->reclaim_mark = 0;
-> > > > > > >                 space_info->bytes_reserved -= num_bytes;
-> > > > > > > @@ -3690,7 +3690,7 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
-> > > > > > >                 spin_unlock(&space_info->lock);
-> > > > > > >         } else {
-> > > > > > >                 old_val -= num_bytes;
-> > > > > > > -               cache->used = old_val;
-> > > > > > > +               WRITE_ONCE(cache->used, old_val);
-> > > > > > >                 cache->pinned += num_bytes;
-> > > > > > >                 btrfs_space_info_update_bytes_pinned(space_info, num_bytes);
-> > > > > > >                 space_info->bytes_used -= num_bytes;
-> > > > > > > diff --git a/fs/btrfs/discard.c b/fs/btrfs/discard.c
-> > > > > > > index e815d165cccc..71c57b571d50 100644
-> > > > > > > --- a/fs/btrfs/discard.c
-> > > > > > > +++ b/fs/btrfs/discard.c
-> > > > > > > @@ -363,7 +363,7 @@ void btrfs_discard_queue_work(struct btrfs_discard_ctl *discard_ctl,
-> > > > > > >         if (!block_group || !btrfs_test_opt(block_group->fs_info, DISCARD_ASYNC))
-> > > > > > >                 return;
-> > > > > > >
-> > > > > > > -       if (block_group->used == 0)
-> > > > > > > +       if (READ_ONCE(block_group->used) == 0)
-> > > > > >
-> > > > > > There are at least 3 more places in discard.c where we access ->used
-> > > > > > without being under the protection of the block group's spinlock.
-> > > > > > So let's fix this for all places and not just a single one...
-> > > > > >
-> > > > > > Also, this is quite ugly to spread READ_ONCE/WRITE_ONCE all over the place.
-> > > > > > What we typically do in btrfs is to add helpers that hide them, see
-> > > > > > block-rsv.h for example.
-> > > > > >
-> > > > > > Also, I don't think we need READ_ONCE/WRITE_ONCE.
-> > > > > > We could use data_race(), though I think that could be subject to
-> > > > > > load/store tearing, or just take the lock.
-> > > > > > So adding a helper like this to block-group.h:
-> > > > > >
-> > > > > > static inline u64 btrfs_block_group_used(struct btrfs_block_group *bg)
-> > > > > > {
-> > > > > >    u64 ret;
-> > > > > >
-> > > > > >    spin_lock(&bg->lock);
-> > > > > >    ret = bg->used;
-> > > > > >    spin_unlock(&bg->lock);
-> > > > > >
-> > > > > >     return ret;
-> > > > > > }
-> 
-> I understand that using lock to protect block_group->used
-> in discard.c file is feasible. In addition, I looked at the code
-> of block-group.c and found that locks have been added in
-> some places where block_group->used are used. , it
-> seems that it is not appropriate to call
-> btrfs_block_group_used again to obtain (because it will
-> cause deadlock). 
+syzbot has found a reproducer for the following issue on:
 
-In places where we are reading it while holding the block group's
-spinlock, there's nothing that needs to be changed.
+HEAD commit:    d082ecbc71e9 Linux 6.14-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14f56db0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b1635bf4c5557b92
+dashboard link: https://syzkaller.appspot.com/bug?extid=0c815b25cdb3678e7083
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172e77f8580000
 
-Also we can't call it btrfs_block_group_used() since there's already
-an accessor function for struct btrfs_block_group_item with that name
-(defined through macros at accessors.h).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/323a5d590eec/disk-d082ecbc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f7c4b6e33fd9/vmlinux-d082ecbc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c518bbd55334/bzImage-d082ecbc.xz
 
-I took a closer look at the cases in discard.c, and it's safe to use
-data_race() instead, even if load/store tearing happens or we get stale
-values, nothing harmful happens, only a few things can be done later or
-unnecessarily without side effects - like adding a non-empty block group
-to the list of unused block groups, which is fine since the we won't
-delete it the cleaner kthread in case it's not empty, or delay the discard.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0c815b25cdb3678e7083@syzkaller.appspotmail.com
 
-Either give it another name like btrfs_get_block_group_used() or directly
-use data_race() in discard.c - I don't like much either of them, the first
-because there's the similar named accessor for block group items, the
-second due to spreading data_race(), but I don't see any more elegant
-alternative.
+==================================================================
+BUG: KASAN: slab-out-of-bounds in scr_memcpyw include/linux/vt_buffer.h:38 [inline]
+BUG: KASAN: slab-out-of-bounds in fbcon_prepare_logo+0xa15/0xc80 drivers/video/fbdev/core/fbcon.c:614
+Read of size 256 at addr ffff888032edef60 by task syz.2.2428/8600
 
-So a sample patch:
+CPU: 0 UID: 0 PID: 8600 Comm: syz.2.2428 Not tainted 6.14.0-rc4-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc3/0x670 mm/kasan/report.c:521
+ kasan_report+0xd9/0x110 mm/kasan/report.c:634
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ __asan_memcpy+0x23/0x60 mm/kasan/shadow.c:105
+ scr_memcpyw include/linux/vt_buffer.h:38 [inline]
+ fbcon_prepare_logo+0xa15/0xc80 drivers/video/fbdev/core/fbcon.c:614
+ fbcon_init+0xd41/0x1890 drivers/video/fbdev/core/fbcon.c:1146
+ visual_init+0x31d/0x620 drivers/tty/vt/vt.c:1011
+ do_bind_con_driver.isra.0+0x57a/0xbf0 drivers/tty/vt/vt.c:3831
+ vt_bind drivers/tty/vt/vt.c:3987 [inline]
+ store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
+ dev_attr_store+0x55/0x80 drivers/base/core.c:2439
+ sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+ kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb44418d169
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe52f027e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007fb4443a5fa0 RCX: 00007fb44418d169
+RDX: 0000000000000002 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007fb44420e2a0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fb4443a5fa0 R14: 00007fb4443a5fa0 R15: 0000000000000003
+ </TASK>
 
-diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-index 36937eeab9b8..ba635a69a23d 100644
---- a/fs/btrfs/block-group.h
-+++ b/fs/btrfs/block-group.h
-@@ -278,6 +278,15 @@ static inline bool btrfs_is_block_group_used(const struct btrfs_block_group *bg)
- 	return (bg->used > 0 || bg->reserved > 0 || bg->pinned > 0);
- }
- 
-+/*
-+ * To be used in contexts where we aren't holding the block group's spinlock and
-+ * it's safe to do so.
-+ */
-+static inline u64 btrfs_get_block_group_used(const struct btrfs_block_group *bg)
-+{
-+	return data_race(bg->used);
-+}
-+
- static inline bool btrfs_is_block_group_data_only(const struct btrfs_block_group *block_group)
- {
- 	/*
-diff --git a/fs/btrfs/discard.c b/fs/btrfs/discard.c
-index e815d165cccc..eef1c0ab0a97 100644
---- a/fs/btrfs/discard.c
-+++ b/fs/btrfs/discard.c
-@@ -247,7 +247,7 @@ static struct btrfs_block_group *peek_discard_list(
- 
- 	if (block_group && now >= block_group->discard_eligible_time) {
- 		if (block_group->discard_index == BTRFS_DISCARD_INDEX_UNUSED &&
--		    block_group->used != 0) {
-+		    btrfs_get_block_group_used(block_group) != 0) {
- 			if (btrfs_is_block_group_data_only(block_group)) {
- 				__add_to_discard_list(discard_ctl, block_group);
- 			} else {
-@@ -363,7 +363,7 @@ void btrfs_discard_queue_work(struct btrfs_discard_ctl *discard_ctl,
- 	if (!block_group || !btrfs_test_opt(block_group->fs_info, DISCARD_ASYNC))
- 		return;
- 
--	if (block_group->used == 0)
-+	if (btrfs_get_block_group_used(block_group) == 0)
- 		add_to_discard_unused_list(discard_ctl, block_group);
- 	else
- 		add_to_discard_list(discard_ctl, block_group);
-@@ -460,7 +460,7 @@ static void btrfs_finish_discard_pass(struct btrfs_discard_ctl *discard_ctl,
- {
- 	remove_from_discard_list(discard_ctl, block_group);
- 
--	if (block_group->used == 0) {
-+	if (btrfs_get_block_group_used(block_group) == 0) {
- 		if (btrfs_is_free_space_trimmed(block_group))
- 			btrfs_mark_bg_unused(block_group);
- 		else
-@@ -719,7 +719,7 @@ static void btrfs_discard_purge_list(struct btrfs_discard_ctl *discard_ctl)
- 					 discard_list) {
- 			list_del_init(&block_group->discard_list);
- 			spin_unlock(&discard_ctl->lock);
--			if (block_group->used == 0)
-+			if (btrfs_get_block_group_used(block_group) == 0)
- 				btrfs_mark_bg_unused(block_group);
- 			spin_lock(&discard_ctl->lock);
- 			btrfs_put_block_group(block_group);
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x32edc
+head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+head: 00fff00000000040 0000000000000000 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
+head: 00fff00000000002 ffffea0000cbb701 ffffffffffffffff 0000000000000000
+head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0x140dc0(GFP_USER|__GFP_COMP|__GFP_ZERO), pid 8600, tgid 8600 (syz.2.2428), ts 463971995066, free_ts 463963903452
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1551
+ prep_new_page mm/page_alloc.c:1559 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3477
+ __alloc_frozen_pages_noprof+0x221/0x2470 mm/page_alloc.c:4739
+ __alloc_pages_noprof+0xb/0x1b0 mm/page_alloc.c:4773
+ __alloc_pages_node_noprof include/linux/gfp.h:265 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:292 [inline]
+ ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4239
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4266
+ __do_kmalloc_node mm/slub.c:4282 [inline]
+ __kmalloc_noprof.cold+0xc/0x61 mm/slub.c:4306
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ vc_do_resize+0x1e3/0x10f0 drivers/tty/vt/vt.c:1174
+ vc_resize include/linux/vt_kern.h:49 [inline]
+ fbcon_init+0xd1d/0x1890 drivers/video/fbdev/core/fbcon.c:1143
+ visual_init+0x31d/0x620 drivers/tty/vt/vt.c:1011
+ do_bind_con_driver.isra.0+0x57a/0xbf0 drivers/tty/vt/vt.c:3831
+ vt_bind drivers/tty/vt/vt.c:3987 [inline]
+ store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
+ dev_attr_store+0x55/0x80 drivers/base/core.c:2439
+ sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+ kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+page last free pid 8600 tgid 8600 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_frozen_pages+0x6db/0xfb0 mm/page_alloc.c:2660
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ vc_do_resize+0xe31/0x10f0 drivers/tty/vt/vt.c:1194
+ vc_resize include/linux/vt_kern.h:49 [inline]
+ fbcon_startup+0x406/0xb70 drivers/video/fbdev/core/fbcon.c:997
+ do_bind_con_driver.isra.0+0x207/0xbf0 drivers/tty/vt/vt.c:3794
+ vt_bind drivers/tty/vt/vt.c:3987 [inline]
+ store_bind+0x61d/0x760 drivers/tty/vt/vt.c:4059
+ dev_attr_store+0x55/0x80 drivers/base/core.c:2439
+ sysfs_kf_write+0x117/0x170 fs/sysfs/file.c:139
+ kernfs_fop_write_iter+0x33d/0x500 fs/kernfs/file.c:334
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x5ae/0x1150 fs/read_write.c:679
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888032edef00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff888032edef80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff888032edf000: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+                   ^
+ ffff888032edf080: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+ ffff888032edf100: fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe fe
+==================================================================
 
 
-
-> I would like to ask other similar places
-> where block_group->used needs to call
-> btrfs_block_group_used function in addition to the four
-> places in discard.c?
-
-I noticed one for block-group.c but the solution isn't the same because
-there's an actual bug there, see:
-
-https://lore.kernel.org/linux-btrfs/cover.1740427964.git.fdmanana@suse.com/
-
-> 
-> > > > >
-> > > > > Would memory barriers be sufficient here? Taking a lock just for
-> > > > > reading one member seems excessive...
-> 
-> Do I need to perform performance testing to ensure the impact if I lock it?
-
-No, specially with data_race().
-
-Thanks.
-
-> 
-> > > >
-> > > > Do you think there's heavy contention on this lock?
-> > >
-> > > This is not about contention. Spin lock should just never be used this
-> > > way. Or any lock actually. The critical section only contains a single
-> > > fetch operation which does not justify using a lock.
-> > > Hence the only guarantee such lock usage provides are the implicit
-> > > memory barriers (from which maybe only one of them is really needed
-> > > depending on the context where this helper is going to be used).
-> > >
-> > > Simply put, the lock is degraded into a memory barrier this way. So
-> > > why not just use the barriers in the first place if only ordering
-> > > guarantees are required? It only makes sense.
-> >
-> > As said earlier, it's a lot easier to reason about lock() and unlock()
-> > calls rather than spreading memory barriers in the write and read
-> > sides.
-> > Historically he had several mistakes with barriers, they're simply not
-> > as straightforward to reason as locks.
-> >
-> > Plus spreading the barriers in the read and write sides makes the code
-> > not so easy to read, not to mention in case of any new sites updating
-> > the member, we'll have to not forget adding a barrier.
-> >
-> > It's just easier to reason and maintain.
-> >
-> >
-> > >
-> > > > Usually I prefer to go the simplest way, and using locks is a lot more
-> > > > straightforward and easier to understand than memory barriers.
-> > >
-> > > How so? Locks provide the same memory barriers implicitly.
-> >
-> > I'm not saying they don't.
-> > I'm talking about easier code to read and maintain.
-> >
-> > >
-> > > > Unless it's clear there's an observable performance penalty, keeping
-> > > > it simple is better.
-> > >
-> > > Exactly. Here is where our opinions differ. For me 'simple' means
-> > > without useless locking.
-> > > I mean especially with locks they should only be used when absolutely
-> > > necessary. In a sense of 'use the right tool for the job'. There are
-> > > more lightweight tools possible in this context. Locks provide
-> > > additional guarantees which are not needed here.
-> > >
-> > > On the other hand I understand that using a lock is a 'better safe
-> > > than sorry' approach which should also work. Just keep in mind that
-> > > spinlock may sleep on RT.
-> >
-> > It's not about a better safe than sorry, but easier to read, reason
-> > and maintain.
-> >
-> > >
-> > > > data_race() may be ok here, at least for one of the unprotected
-> > > > accesses it's fine, but would have to analyse the other 3 cases.
-> > >
-> > > That's exactly my thoughts. Maybe not even the barriers are needed
-> > > after all. This needs to be checked on a per-case basis.
-> > >
-> > > > >
-> > > > > > And then use btrfs_bock_group_used() everywhere in discard.c where we
-> > > > > > aren't holding a block group's lock.
-> > > > > >
-> > > > > > Thanks.
-> > > > > >
-> > > > > >
-> > > > > > >                 add_to_discard_unused_list(discard_ctl, block_group);
-> > > > > > >         else
-> > > > > > >                 add_to_discard_list(discard_ctl, block_group);
-> > > > > > > --
-> > > > > > > 2.34.1
-> > > > > > >
-> > > > > > >
-> > > > > >
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
