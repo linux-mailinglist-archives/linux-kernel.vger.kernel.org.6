@@ -1,85 +1,160 @@
-Return-Path: <linux-kernel+bounces-531834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED52A4459D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:15:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC3CCA44593
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:12:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F503A72A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A41A166D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E2718C34B;
-	Tue, 25 Feb 2025 16:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1110F18C930;
+	Tue, 25 Feb 2025 16:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NU2EeJ8F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="PIBGw+2D";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="u+iOPhAH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E7F17E015;
-	Tue, 25 Feb 2025 16:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FE21552E3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499940; cv=none; b=D01MrrJqucRiRhfE4XPEVRviPPB2C2mXYEqNyUEEmZBfXiGprN6OeqPRHprWFMOSs7A63anbVp03UPIJNfLGCgSF+HbJW2NKTkAaGLZ34iOaHOV2Pb4bDxFZK6CIJIl7YLzByCREUOD437f02cfdAM61OvJHfJ07JRbi6vat9yY=
+	t=1740499962; cv=none; b=gSKNhhHx6T+ocWimc8tYI1yEiBkwZPQFNadG9vLa6a1L87VDbtT28jQ0gXBrDWHjC4Eyn4mpgP0BcwYsb1FEoGkTY37I7+TbJKnhHM0e5sufinzwtPAMRCMlUZDUNlxs+bHLf/TACok/wffXvG+9n9txwQ1QXo/Qdfw9A+ZEOtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499940; c=relaxed/simple;
-	bh=6TPSx9DDdcDsDZc4Z3MH/7GdfIzQc59GGd56ID/Sx5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LOWCQUtXF3Ze3KVqjFuY4n7z/mjJ34pSg6wP8Vh4BZ6ES3qy9Z0K055TB/WGr/R6KjgbJUk9IEhdgS05Yy6rxAa1g+43hyzDDhyczuwkszgSUHd8d5oeZF3Q8uoizeUnv10mwkrbMr5DLuzAeLHBGyu3S6YYSDmQb3TtYgOOh1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NU2EeJ8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7572C4CEDD;
-	Tue, 25 Feb 2025 16:12:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740499940;
-	bh=6TPSx9DDdcDsDZc4Z3MH/7GdfIzQc59GGd56ID/Sx5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NU2EeJ8FyzWf7HI2/8kGM+qhJabN/O1VJNuarGCTaaTAf7SR0p+tXbOv0rNLPxQ1P
-	 GkqL3qVSbuxuVt9WmUtYt4eLECgRNhSgxMT0XJ/QUI9wAN5TWpY3nPWU8jNdGjfQJ1
-	 LEUk04YN6vDTgqNHfkNpZ21fN8T0YcAAhr04EjLYBM4jAXdRaS7W4XTBxCiIxrqv4P
-	 57Y+JoPZ9jyr40AvmvoOKNnT4zak99uCOcC7BXyI5g+RhLFg7ZZKkroT5cbSGKYFZx
-	 /ZFM9Ce6EOdxSFVina9oQWVocBhDIDX72LveN6lPTQLAoVJoBBHIB2h6yRFVQvtex7
-	 lT6g4Vkayq9QA==
-Date: Tue, 25 Feb 2025 10:12:18 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>
-Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Will Deacon <will@kernel.org>, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Christophe Roullier <christophe.roullier@foss.st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH v2 04/10] dt-bindings: stm32: add STM32MP21 and STM32MP23
- compatibles for syscon
-Message-ID: <174049993788.2634473.18262936778020471573.robh@kernel.org>
-References: <20250225-b4-stm32mp2_new_dts-v2-0-1a628c1580c7@foss.st.com>
- <20250225-b4-stm32mp2_new_dts-v2-4-1a628c1580c7@foss.st.com>
+	s=arc-20240116; t=1740499962; c=relaxed/simple;
+	bh=3/fNi19RJfcvacWgCItifvTHSZ50HeWIOZOdt8wsEdc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=c4N9MpGdGUqi3ZuCi4HemsNGkfQZ/qaEC3NQ/xsbHuSBeMS/TGtJPQEz/gZG+K4Hd9b0aTDloAAvJGAv84J+PTQqvJR6vHsYZBKKSYPvE0l3JhGoHmhsx8uEW1brWIJN3Wom510XkBQHfk0zsEx6L3hge8zVJ4/QQgxEdUD0Luk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=PIBGw+2D; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=u+iOPhAH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E875D2117A;
+	Tue, 25 Feb 2025 16:12:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1740499958; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=fiV4HPeQ3R2YmxZL5EtKks+aJ4Oci1p45h7vPgEn3Ok=;
+	b=PIBGw+2DaKRY4F3JtLG8JayiM3S7u3goYyTUp6LO3OcdoOX6h0jDFcPJ6imgS7Q2evmFa8
+	EiHRRyr8KcGU9Hh8yoeQnZbOA9oSAtYf9ZnA7F++NXntVmCF5FvjZcx17TdogoWUD5ULMv
+	mvi5CWK9k1SXcRkDVE22soIz8anfAHw=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=u+iOPhAH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1740499957; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=fiV4HPeQ3R2YmxZL5EtKks+aJ4Oci1p45h7vPgEn3Ok=;
+	b=u+iOPhAHvSGyJe+sy+WGq6PHo43OMJPYQnmfR5Qnca1+6MZo7r93Jz/GYr9gOVCmvlRdj8
+	7SH6FFapkpNRTOOXCqZEBp3197z3cns+XOCQ6zQ29+B2S9lR7NGOVuhvoN1LJ+JvqGJk8c
+	SMG1g0+rjS7JB6m6ueXf0mbTxEHdPOE=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1FC313888;
+	Tue, 25 Feb 2025 16:12:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 6OUmN/XrvWf/OAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Tue, 25 Feb 2025 16:12:37 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.14-rc5
+Date: Tue, 25 Feb 2025 17:12:34 +0100
+Message-ID: <cover.1740498490.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-b4-stm32mp2_new_dts-v2-4-1a628c1580c7@foss.st.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: E875D2117A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_HAS_DN(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
+Hi,
 
-On Tue, 25 Feb 2025 09:54:07 +0100, Amelie Delaunay wrote:
-> Add the new syscon compatibles for STM32MP21 syscfg = "st,stm32mp21-syscfg"
-> and for STM32MP23 syscfg = "st,stm32mp23-syscfg".
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
->  Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+please pull a few more fixes. Thanks.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+- extent map shrinker fixes
+  - fix potential use after free accessing an inode to reach fs_info,
+    the shrinker could do iput() in the meantime
+  - skip unnecessary scanning of inodes without extent maps
+  - do direct iput(), no need for indirection via workqueue
 
+- in block < page mode, fix race when extending i_size in buffered mode
+
+- fix minor memory leak in selftests
+
+- print descriptive error message when seeding device is not found
+
+----------------------------------------------------------------
+The following changes since commit da2dccd7451de62b175fb8f0808d644959e964c7:
+
+  btrfs: fix hole expansion when writing at an offset beyond EOF (2025-02-11 23:09:03 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.14-rc4-tag
+
+for you to fetch changes up to efa11fd269c139e29b71ec21bc9c9c0063fde40d:
+
+  btrfs: fix data overwriting bug during buffered write when block size < page size (2025-02-21 09:32:24 +0100)
+
+----------------------------------------------------------------
+David Disseldorp (1):
+      btrfs: selftests: fix btrfs_test_delayed_refs() leak of transaction
+
+Filipe Manana (3):
+      btrfs: fix use-after-free on inode when scanning root during em shrinking
+      btrfs: skip inodes without loaded extent maps when shrinking extent maps
+      btrfs: do regular iput instead of delayed iput during extent map shrinking
+
+Qu Wenruo (2):
+      btrfs: output an error message if btrfs failed to find the seed fsid
+      btrfs: fix data overwriting bug during buffered write when block size < page size
+
+ fs/btrfs/extent_map.c               | 83 ++++++++++++++++++++++++++-----------
+ fs/btrfs/file.c                     |  9 +++-
+ fs/btrfs/tests/delayed-refs-tests.c |  1 +
+ fs/btrfs/volumes.c                  |  6 ++-
+ 4 files changed, 73 insertions(+), 26 deletions(-)
 
