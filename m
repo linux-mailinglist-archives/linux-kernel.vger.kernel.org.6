@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-532212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305DFA44A27
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:22:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7472A44A76
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6AB118910B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0FCF3BCE89
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC0D1ACED7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD67B1DB548;
 	Tue, 25 Feb 2025 18:20:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A69C1A38F9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8C01A9B46;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507616; cv=none; b=IHNGjTME8iIrts62oYLlctkDFI3TATZ8mteO6n/Egwql5bPLTanQ6ZzucV4AaIEQoZ1W4zQ0uVXs72ETpnZIPWUEqzar3Ag3Daz10RDgcImhfZGjYiOp7e6tqAy+gjKC3gvQTAhQO4/QPMArysB6qmXQVt42vV0GSZLKu7HzNuc=
+	t=1740507616; cv=none; b=DuqDnd3ycbN9lrhsrpXDw548Xnj/U3Ua0XgoZVBmsKfGjdF48xAadGIz2Tirt0mBzs/9NWQESXBsjd7Te6GaRPcoNan6ZMlT0+TNwVTkDUK+nxdE4kRAw1sk2Fqplo02KYaG97QeqOdGUuSnxS12Cc6uLsqa6UPgohWxVh5ZzN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740507616; c=relaxed/simple;
-	bh=bjXwCEFL3RTxjvXbt/lE5V7lqwwfrOXJ5cW/b9UMM8E=;
+	bh=K/F1CY7g3Rg1wpx3W23+5xHOx/IOS3QKZnW8nZXMLXE=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=Wv+SD+LCVKPwpZvl5mPWpEhqKwdvEpOfNt3vrHWE2TuRbgKxmYqPEv/PNFgMyau9jLdRvSujcUjBzbGHHFv7Y/WEBysLUBALMhr6EV6aC8cWKzzENqYgu1kUn8Kg8lj6yPBQwffNTliuO56uSOQdrfbr6t5mMgsgYevQOVbGs2E=
+	 Content-Type; b=pRAItC2amRNkhM5OpEk+8QQwoYWRaN5yjL4Mq0DHgaJTwT/voWH+mzm5tDwNVdNlGV1L1+qRG2KUOqSBV2Ncys6f8Jja4nGz1ieXzddWLdEamQchbDdAOdYLj9c2AQjKUgwcvdlrn4iodBZYFqUKQzU97+ULkPtGGPPk+wLR9Go=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EE33C4CEEE;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFD2C4CEF1;
 	Tue, 25 Feb 2025 18:20:15 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tmzY6-000000095YQ-2bvl;
+	id 1tmzY6-000000095Yu-3KXv;
 	Tue, 25 Feb 2025 13:20:54 -0500
-Message-ID: <20250225182054.471759017@goodmis.org>
+Message-ID: <20250225182054.648398403@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 25 Feb 2025 13:20:06 -0500
+Date: Tue, 25 Feb 2025 13:20:07 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -49,7 +49,8 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Nathan Chancellor <nathan@kernel.org>,
  "Arnd Bergmann" <arnd@arndb.de>,
  Mark Brown <broonie@kernel.org>
-Subject: [PATCH 2/4] ftrace: Check against is_kernel_text() instead of kaslr_offset()
+Subject: [PATCH 3/4] scripts/sorttable: Use normal sort if theres no relocs in the mcount
+ section
 References: <20250225182004.473875894@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,66 +62,48 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-As kaslr_offset() is architecture dependent and also may not be defined by
-all architectures, when zeroing out unused weak functions, do not check
-against kaslr_offset(), but instead check if the address is within the
-kernel text sections. If KASLR added a shift to the zeroed out function,
-it would still not be located in the kernel text. This is a more robust
-way to test if the text is valid or not.
+When ARM 64 is compiled with gcc, the mcount_loc section will be filled
+with zeros and the addresses will be located in the Elf_Rela sections. To
+sort the mcount_loc section, the addresses from the Elf_Rela need to be
+placed into an array and that is sorted.
 
-Fixes: ef378c3b8233 ("scripts/sorttable: Zero out weak functions in mcount_loc table")
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Reported-by: Mark Brown <broonie@kernel.org>
+But when ARM 64 is compiled with clang, it does it the same way as other
+architectures and leaves the addresses as is in the mcount_loc section.
+
+To handle both cases, ARM 64 will first try to sort the Elf_Rela section,
+and if it doesn't find any functions, it will then fall back to the
+sorting of the addresses in the mcount_loc section itself.
+
+Fixes: b3d09d06e052 ("arm64: scripts/sorttable: Implement sorting mcount_loc at boot for arm64")
+Reported-by: "Arnd Bergmann" <arnd@arndb.de>
 Tested-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20250224180805.GA1536711@ax162/
-Closes: https://lore.kernel.org/all/5225b07b-a9b2-4558-9d5f-aa60b19f6317@sirena.org.uk/
+Closes: https://lore.kernel.org/all/893cd8f1-8585-4d25-bf0f-4197bf872465@app.fastmail.com/
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/ftrace.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ scripts/sorttable.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index 183f72cf15ed..bec7b5dbdb3b 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -7004,7 +7004,6 @@ static int ftrace_process_locs(struct module *mod,
- 	unsigned long count;
- 	unsigned long *p;
- 	unsigned long addr;
--	unsigned long kaslr;
- 	unsigned long flags = 0; /* Shut up gcc */
- 	unsigned long pages;
- 	int ret = -ENOMEM;
-@@ -7056,9 +7055,6 @@ static int ftrace_process_locs(struct module *mod,
- 		ftrace_pages->next = start_pg;
+diff --git a/scripts/sorttable.c b/scripts/sorttable.c
+index 23c7e0e6c024..07ad8116bc8d 100644
+--- a/scripts/sorttable.c
++++ b/scripts/sorttable.c
+@@ -827,9 +827,14 @@ static void *sort_mcount_loc(void *arg)
+ 		pthread_exit(m_err);
  	}
  
--	/* For zeroed locations that were shifted for core kernel */
--	kaslr = !mod ? kaslr_offset() : 0;
--
- 	p = start;
- 	pg = start_pg;
- 	while (p < end) {
-@@ -7072,7 +7068,18 @@ static int ftrace_process_locs(struct module *mod,
- 		 * object files to satisfy alignments.
- 		 * Skip any NULL pointers.
- 		 */
--		if (!addr || addr == kaslr) {
-+		if (!addr) {
-+			skipped++;
-+			continue;
+-	if (sort_reloc)
++	if (sort_reloc) {
+ 		count = fill_relocs(vals, size, ehdr, emloc->start_mcount_loc);
+-	else
++		/* gcc may use relocs to save the addresses, but clang does not. */
++		if (!count) {
++			count = fill_addrs(vals, size, start_loc);
++			sort_reloc = 0;
 +		}
-+
-+		/*
-+		 * If this is core kernel, make sure the address is in core
-+		 * or inittext, as weak functions get zeroed and KASLR can
-+		 * move them to something other than zero. It just will not
-+		 * move it to an area where kernel text is.
-+		 */
-+		if (!mod && !(is_kernel_text(addr) || is_kernel_inittext(addr))) {
- 			skipped++;
- 			continue;
- 		}
++	} else
+ 		count = fill_addrs(vals, size, start_loc);
+ 
+ 	if (count < 0) {
 -- 
 2.47.2
 
