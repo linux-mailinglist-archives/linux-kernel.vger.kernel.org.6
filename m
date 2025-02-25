@@ -1,285 +1,145 @@
-Return-Path: <linux-kernel+bounces-532685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A102AA450F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:34:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C225EA450F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:35:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44053B06BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:34:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5AA16A0E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3B7236A7C;
-	Tue, 25 Feb 2025 23:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CF023A98C;
+	Tue, 25 Feb 2025 23:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="E31QG26v"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02olkn2025.outbound.protection.outlook.com [40.92.48.25])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NOVOkcB8"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611AF25771;
-	Tue, 25 Feb 2025 23:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.48.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740526488; cv=fail; b=XqXVbxggl8xERCHUm5Ra/Vbr+MCpoehdPlbOYakDHD7SiepMpwgmbHVRxpZKy/hqe1zu/Bf1UXWYMF/yMCVQVu+GLLovtWORei591VYyjAZzT8aC5KH4djsDxGOPCZOzHWiVg7roBy0BFLGFbMXz9lNNzqs+qLIf++kM2lsNNLo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740526488; c=relaxed/simple;
-	bh=v2VslUzXudNfVt6Sr8+IB5HKjlsDKVaLveMwdTnSO40=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JOUCCRufAYiRrBGZHX3rURrfXMFmt1opl2jUmS2e20E9Je29Fb/tUICgYVmo5tYAchWPzl0WRCbqj9w/jw9X7wOmDJXfzZQvs5mLMCAK1z2bL/8DM3TEMSACLfi1UoLk1q7N4qRqpmjF+IqGPtva9bfgFb41VfVHnGI2qbTZHtM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=E31QG26v; arc=fail smtp.client-ip=40.92.48.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GlS4SZSPz9vmqO1DYv7+9WVtKtEPo8NWi+x5vwKjiDC2sLAqVH+3q/HDg7gO6V8RG2v9xp01rx5p8msRn2pq48xS8oWzggqyEpgZEfo8ruET63H6JYjRqCrg/bAWOSZ8XeYQkMCYVUVpIkbn9Eck7esVIuhyQzIKq58i9xmLt7NRRakwxW/0zFG33g+iz3NxSc635EVcu7pc3eORGLhIX9K9ujAOvNOfcqczMfloNBHzuToWPCjCL1O2rIadlcv2bprqspUn+c7qdzZ18udQrBxmFTloyV6m1fhupp+UtnFta07Wba173n1FoD/ShKgkwH6Gr6Zxoqwnv0vjssnCtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qdBBnISJONgek03M3E8W5vpbvSn/VPguTxghQz8nsf0=;
- b=L0plbhNG9Aq8EoYx5rcEkUoS4m5noscaFAeeV2VyrDQ782U9VYb0JUEiBx0sqtCHUIiD0A66IY9m4+dMiGkjjVQ9Q9MjGIChE/ndZDyBNFpevL+mJOdd6U31Y+gsCp/8IAstl6fPkmTtEJJUDpaNjdpsFWdDZC/7PU6OoaIwi+gsKou+j61KgLOcFJgTTxi7HsSgmdKt+VPNOHZ9nf04Fb6btToca2lcs5nwqPdwKH+Gt3b9UVW+YXjpuzGJ6T55NUo+F+06kG4+O6eOZdCmqGsi1JISep3wUu49INbdDpZGJb02fR65BfVO3cOM0ZzOs1TdDnr+I/OLoVsvDRuxWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qdBBnISJONgek03M3E8W5vpbvSn/VPguTxghQz8nsf0=;
- b=E31QG26viQTYgv8NjP0QAgUpJ29CR0V/UVwuaI9bwAwW0bHrfYFDcC3ej3Y7zHwgA4viXHwKFuQH1VRqs+ol6Nu2dtjHzQu1VzgZiJA7c5rTTQUNS/vIjQz7nOCmQVqUtkSi36Uf94R/VV4Z6XykPHriWBWqRYrS4og4/zGc/q5RBHl0EihIqvcHJnsx1ck+WAWE0+8fSoOcPJFn58IKpOJAiNXh+FAscFTcdZseffq6vPjg0sa9qRtY0X865zoiIbs8JjSRMkAm9OsS1NsybsDugaafCR7my0QHtw7Mksy01zCQTkuiDQ+nqs3kvF9CTP9OAHBo2AQS0OS7NulRsw==
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com (2603:10a6:20b:90::20)
- by AM0PR03MB6196.eurprd03.prod.outlook.com (2603:10a6:20b:15b::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 23:34:44 +0000
-Received: from AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8]) by AM6PR03MB5080.eurprd03.prod.outlook.com
- ([fe80::a16:9eb8:6868:f6d8%5]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 23:34:43 +0000
-Message-ID:
- <AM6PR03MB50802FB7A70353605235806E99C32@AM6PR03MB5080.eurprd03.prod.outlook.com>
-Date: Tue, 25 Feb 2025 23:34:27 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH bpf-next 4/6] bpf: Add bpf runtime hooks for tracking
- runtime acquire/release
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Kumar Kartikeya Dwivedi <memxor@gmail.com>, snorcht@gmail.com,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <AM6PR03MB5080513BFAEB54A93CC70D4399FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <AM6PR03MB5080FFF4113C70F7862AAA5D99FE2@AM6PR03MB5080.eurprd03.prod.outlook.com>
- <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
-Content-Language: en-US
-From: Juntong Deng <juntong.deng@outlook.com>
-In-Reply-To: <CAADnVQLR0=L7xwh1SpDfcxRUhVE18k_L8g3Kx+Ykidt7f+=UhQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO2P123CA0089.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::22) To AM6PR03MB5080.eurprd03.prod.outlook.com
- (2603:10a6:20b:90::20)
-X-Microsoft-Original-Message-ID:
- <228b5f50-2d0f-4907-9092-351cd4c19d2b@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C65523959F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:34:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740526491; cv=none; b=uPRh4TjMxh9ailPtY2kPpk9AW5RGmVTBolCX0lyKrSUiiHMyBAAIyUA0iOtMcbCCPndsTlDDbAWc7trkf6TbbFSuEbmKSiYA3eOqYCBik0npRYZZbwOOM3oGdUPm4RpTbg4teqFgwWOUy569L1t3p9h80zShbcUs71COppsiShg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740526491; c=relaxed/simple;
+	bh=W2U3OCVP08ILGCN0pvTsVdLcGG7RpAJsKKWk8SJXRUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zt03wEdEalrc5VweDiXcofnWl0yUp/1vYHxabW7SPjVfsPXHesD/On17hejuVTLHCXIjeabGxuJTqhkDOki+BoHkA1bM01MFo/IUbDUiFxKwdf/8P9zexUuhjOc779ke3sgeUNHgQyUwTcJI26H+dVBxz/uxVihGeILt+6t/YmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NOVOkcB8; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 25 Feb 2025 18:34:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1740526487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ymij2cOzOeeGgSy9Fk623wKplb3B9+lyzrX4hrokkAY=;
+	b=NOVOkcB8k3QXQjujzoLxuI3ZDjaujT9CqT5eVInjhO62pBCuFgAs6wgq4DAHanidZjcrfM
+	fWHAoyNUKARiSxGxdZ1KLj7C4Ih1AZrZroIGrAs/TLnUG+ub0x3wmlG1wxZmX/8EWkRBro
+	Ptsku2BYZNxyigRS4TI3skGmtlzUWUY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, 
+	Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, airlied@gmail.com, 
+	boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, 
+	gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, rust-for-linux@vger.kernel.org
+Subject: Re: C aggregate passing (Rust kernel policy)
+Message-ID: <hofm7mo46jzkevpr6fkqe2jnl3zrp5uxdux457hli3ywkneaij@yhhibsnuqfny>
+References: <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
+ <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
+ <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
+ <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com>
+ <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
+ <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
+ <gqw7cvclnfa7x4xdz4vkns2msf2bqrms5ecxp2lwzbws7ab6dt@7zbli7qwiiz6>
+ <CAHk-=whGY2uYcXog8kmuAAAPJy4R84Jy9rEfXfoHBe-evmuYDQ@mail.gmail.com>
+ <4l6xl5vnpulcvssfestsgrzoazoveopzupb32z5bv6mk23gazo@qn63k7rgsckv>
+ <CAHk-=wgMnSOnaddFzfAFwjT-dGO9yeSkv6Lt21LgWmCKYCM7cg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5080:EE_|AM0PR03MB6196:EE_
-X-MS-Office365-Filtering-Correlation-Id: 46472877-9b11-4496-c3f3-08dd55f4fb68
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|5072599009|6090799003|15080799006|19110799003|8060799006|13041999003|440099028|3412199025|41001999003|18061999006|12091999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VVVSczEvNExIdktlVjVnbFdDQUd4TmdvS0V5VTNhanBFZWN1UnNtS0ZYWEFH?=
- =?utf-8?B?VzlFNWJ2ZWVLRlZUODJ0ZGgvN2JwQmJSR28ydXNFOWtBTk5DbHZycDEvSmtJ?=
- =?utf-8?B?V3owVnEvUkEvM2xwR3NPQmtZd05rbCtxYTVmNDRldEQyMm9uVEVyWHhEcUxS?=
- =?utf-8?B?NEdUakVWajZtMzNiUkN6TEp4SmlXTSttNUg5TzBwU0dLOXRFeFJBTzYwV0FW?=
- =?utf-8?B?b2ovYlZqd1lIOG5wa2FONmdhdit6WlQyVytxb1ZGbWNyMHhiUVEwOHJhZHdB?=
- =?utf-8?B?S2pTV3NINGZJZnNPU01qcFQwNXRlMFVNdDVwbVBZY3B2a0UwamFQVDdKS2hX?=
- =?utf-8?B?S3dnZDhXcWcvRjVPRDhWMks4dnhnWEdGNTd1Q1dlZy9IRDY2Zlg2d1kxckIy?=
- =?utf-8?B?MFZ5SjMxNXJSVVduOWc0MkdDd3p3ZFVBenZMOHdneHhtSGJhdElqME9qc0lh?=
- =?utf-8?B?MnhzaWx2ZWE3OXZkSlFVcFJseWRaK3VVZmVUOERDV2wwd3RhQ0NQcFhVaVNK?=
- =?utf-8?B?b2tmZmlPNnJvSTlZcHhYaHBDWFRhaDBZWDBraWg1NVc4YThrR0tnVU54aERs?=
- =?utf-8?B?UFoyRG4vaWMvOWpQRzVjMHZJejV6S3E5clBDVHN1U1l3QjhtQlI3NUJxU0p6?=
- =?utf-8?B?eVEybEVRdkNWZUZlZ0hxcUxmMldPSUpycTFsQS9Fd2kzOU5kcnFFeC9PTWZq?=
- =?utf-8?B?bDhTQk13aXJHUllkaDkwRkZPVHVNL0wxL1NxVmNtaFcrbldaVTNLWThCYS9P?=
- =?utf-8?B?TVJPelJlOThZVnJhODArd3VIdUpQSHlaVTBrYkpyemYvWEIxUzFGVnlnNlBW?=
- =?utf-8?B?Z0dPcFAvOE1HU1ZTRmQ4Z2tKOFFQckovRDhISXFGeEM5VmJyRWJOOFNRT1JN?=
- =?utf-8?B?K3lEcDZiSDFVMld5Qi92UDRlL2RQM3RkU2NrbXJjb2Z4NUtqTDNiRVhnVlJD?=
- =?utf-8?B?N0F1dVBZMDlSU2IwMWFQVWI3OHlzMmtMdVA4ejh5bzFTc0hsUGxXZzdsdTBO?=
- =?utf-8?B?U0FvOEk1OVphNUxqOVRocThRd3YvenlUYW9hYUVoK0t6N0hBMTlaN0lwZVVk?=
- =?utf-8?B?YkpodTR6bHZuN2Y0NSsyK0RMQ2E3NUhPdFp2bzYrallkRkJocytIWTZzcHRB?=
- =?utf-8?B?Ly9JRllLemJSQTJqeE1FOUpJdVJyYmQ4bVZVaGFJdVNDS1VYMW9TVVoyUWdC?=
- =?utf-8?B?ZDVSWDA2a2ROUDVtQXNqdEF5Y3BCOWx2dmdZOElzUGR4M25rWDNUQzlTNUt1?=
- =?utf-8?B?Zm93YkovcWNzcEtjd3RxSEVNdW16NDdQWmVScGhoUzgway9zTlZHdmE0Vy9I?=
- =?utf-8?B?NGRPU0Z3eTZJWDNYQmw3V2ppcTdvSlRweTBFV1hncWFVNTNzM2FkZE9rRDRC?=
- =?utf-8?B?NGN3U3c4Sld3UDJtTXQ5dGFacERQVFowSU9jc1FYRThlVXpNM1FrM2p0UHNO?=
- =?utf-8?B?VS8yR1F5c3BPQTBhVFNKcndNZTA4ditkam5qcFVlUWJUbUlNVHQ1N3dhanpS?=
- =?utf-8?B?ZDluN3JzemJPcGtUeGRJaUpjbm5UdjIvSllsOXoyVDYxQVAxT2U1UWR5VGU0?=
- =?utf-8?B?dE8xcmoyN2JBU3NYTkhpWmg4Q1RvOXNFczBUNithTVhiSWVYNTRoMUM0QTds?=
- =?utf-8?B?dmIxd0ZLdk51QzRYWm91Q1g4ajZBelE9PQ==?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OWVSWk42Rys3Nm5vdmxhc1p1Sk91aFFObmh5NzRGQmdQY2dRR3lCV1ZQeG1V?=
- =?utf-8?B?RDhkZ1RzditBMWh5RkF3czE4YUx6amxvb05qY3JmS2NoOGZVSFRVTnJoSnhY?=
- =?utf-8?B?YjNicG00R0ltZUJDTXRmOEVxc3ZIUkJrdCsrbkEvSHhUaDlzUks1MGM1NVdC?=
- =?utf-8?B?aHRqaGZFMWhUcktVMzFuSHNTN0tJRVBPS2tBZWxlREloV2FiMG9xLzNDQlZJ?=
- =?utf-8?B?a05TelJDeGZaMzFCb0FTdExoRXNNOHRMemRiYndaYk5pVHI2YVZFNG1tMHpF?=
- =?utf-8?B?UTJjN1JQU2c0SHcvODZ0UU1TdFQvVTRFM0lsYzRqanRUSW13NkdsTHY4VTVE?=
- =?utf-8?B?TXFwUXE3VVZQOUZyTUJyWGlUVkx2dXk2SGIvMkhHazBJYXk1dkF5WGY3WFVL?=
- =?utf-8?B?aUVMQlpURTAzRko2OUk0Yy9zZGErN1lRS3lGc3NJRjEycEkyZzUraVZTQ2du?=
- =?utf-8?B?TTdNZCt4TzkwMU5NRjh3b1QrRmZPTlphNXptWkpiWXFadjN1eEo2dUEyVkhy?=
- =?utf-8?B?Z1NoSHY2VlJrZklLUkp2aXdWb01NWGF1YnBUbitCUWZiWGVnaXFEeVlYNHRF?=
- =?utf-8?B?U1lSZUZMbHc0d0NOVVJGbm8vMmxWWGJKWnc0YXBFbnlKdkx6WlhOOE1jbmRD?=
- =?utf-8?B?ZUVaRWdJaDVVVG1FZzdkUHB1Y24rKzdsdzE3WUFIMUs4UmhPM0RuYnRaUlds?=
- =?utf-8?B?SW1Nd2JGRXFyVC9MZk9lVXVZT04vSC9ULzhCbUllU0lmSUU0Qk9NemhFME4x?=
- =?utf-8?B?anFjWTNpWnZ2WWZPY1JacFdWakNuMXUxK3R2bXVJeHhpS3JlblVuUkROeGR4?=
- =?utf-8?B?RHdQdVo3QnYzaFJRU2VpZWJJWEtnWGsxNTBENEgxaDJVYVJxWHpmdVpvVURo?=
- =?utf-8?B?Tk9zRWVtUGhESllvL3Btd08xTXJwUWd4ZDhwUmVjcG9KRGN6QnF2NmVCZVlo?=
- =?utf-8?B?bnp5ZFJ1YWR5bkVEenlBY3dQeld0TnNOUWRwamZPS0sxaUlHeFBYS2hlcGtT?=
- =?utf-8?B?UnM2YjdlYTFRK2gyNXF4TTVibHVYRVZHdnpzaUtDcmhkR3hFekJOc3BXK2FS?=
- =?utf-8?B?aFpOWUtXcFN1bXRMdWhnV1FIWTRsQ1VvcVBlRFg0ck9tVUNIQ2tGSEpIeUpq?=
- =?utf-8?B?SngrQTF4RzdRWjhGN01OZXQrcElWMHRMdlpSaFBnM1FqcHI4Wm5jeGw2REJQ?=
- =?utf-8?B?RGZCZzhteTNHTW1TRHdIMGRBZGUwTlNuMkhYdisyNXl2OHMyb0VZVnNnT2Jx?=
- =?utf-8?B?ZGFzeTBLN0lUdWR2cmNXR2cwcUY5ZHErNDRFVXpGWnR0bHhEMExHYU9JSEJW?=
- =?utf-8?B?elVjSkFRK216R2dydksvcWt5TlJXUFdUNWJ0ellFRXI2WEFGMThmaURhQmcx?=
- =?utf-8?B?bGhjdGUrT3lpVlpVRWFxYXorbXlIVHZPN3B5RytPSWtlVnVvK3hLQlVtSElK?=
- =?utf-8?B?WTJmWmNXRm1OeDZOZXk5a0tzeGdtNlE1Vm1kTVF0dm9DY3d0Q2t4QzNkMjM4?=
- =?utf-8?B?YWI0dEpVSjcxKzBIU1kvcXV0YVpRMGlVL3lEQjlnaFZXSkJ1ZGtrSzBTbk9G?=
- =?utf-8?B?QVZtYnNVeWZXZjRWcHoyTWl0VFRlNSsyWGFPYzFPYWRXVDVjUytOM2ptakFO?=
- =?utf-8?B?OVFKMk9pV2ppY1lzWUZtNE4wUTB2dFZKVEpIZUJiZzVlN1RYcFp0YmxydDJj?=
- =?utf-8?Q?LLEgoTSZd/CpsrcnE//W?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46472877-9b11-4496-c3f3-08dd55f4fb68
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5080.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 23:34:43.8950
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR03MB6196
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wgMnSOnaddFzfAFwjT-dGO9yeSkv6Lt21LgWmCKYCM7cg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2025/2/25 22:12, Alexei Starovoitov wrote:
-> On Thu, Feb 13, 2025 at 4:36 PM Juntong Deng <juntong.deng@outlook.com> wrote:
->>
->> +void *bpf_runtime_acquire_hook(void *arg1, void *arg2, void *arg3,
->> +                              void *arg4, void *arg5, void *arg6 /* kfunc addr */)
->> +{
->> +       struct btf_struct_kfunc *struct_kfunc, dummy_key;
->> +       struct btf_struct_kfunc_tab *tab;
->> +       struct bpf_run_ctx *bpf_ctx;
->> +       struct bpf_ref_node *node;
->> +       bpf_kfunc_t kfunc;
->> +       struct btf *btf;
->> +       void *kfunc_ret;
->> +
->> +       kfunc = (bpf_kfunc_t)arg6;
->> +       kfunc_ret = kfunc(arg1, arg2, arg3, arg4, arg5);
->> +
->> +       if (!kfunc_ret)
->> +               return kfunc_ret;
->> +
->> +       bpf_ctx = current->bpf_ctx;
->> +       btf = bpf_get_btf_vmlinux();
->> +
->> +       tab = btf->acquire_kfunc_tab;
->> +       if (!tab)
->> +               return kfunc_ret;
->> +
->> +       dummy_key.kfunc_addr = (unsigned long)arg6;
->> +       struct_kfunc = bsearch(&dummy_key, tab->set, tab->cnt,
->> +                              sizeof(struct btf_struct_kfunc),
->> +                              btf_kfunc_addr_cmp_func);
->> +
->> +       node = list_first_entry(&bpf_ctx->free_ref_list, struct bpf_ref_node, lnode);
->> +       node->obj_addr = (unsigned long)kfunc_ret;
->> +       node->struct_btf_id = struct_kfunc->struct_btf_id;
->> +
->> +       list_del(&node->lnode);
->> +       hash_add(bpf_ctx->active_ref_list, &node->hnode, node->obj_addr);
->> +
->> +       pr_info("bpf prog acquire obj addr = %lx, btf id = %d\n",
->> +               node->obj_addr, node->struct_btf_id);
->> +       print_bpf_active_refs();
->> +
->> +       return kfunc_ret;
->> +}
->> +
->> +void bpf_runtime_release_hook(void *arg1, void *arg2, void *arg3,
->> +                             void *arg4, void *arg5, void *arg6 /* kfunc addr */)
->> +{
->> +       struct bpf_run_ctx *bpf_ctx;
->> +       struct bpf_ref_node *node;
->> +       bpf_kfunc_t kfunc;
->> +
->> +       kfunc = (bpf_kfunc_t)arg6;
->> +       kfunc(arg1, arg2, arg3, arg4, arg5);
->> +
->> +       bpf_ctx = current->bpf_ctx;
->> +
->> +       hash_for_each_possible(bpf_ctx->active_ref_list, node, hnode, (unsigned long)arg1) {
->> +               if (node->obj_addr == (unsigned long)arg1) {
->> +                       hash_del(&node->hnode);
->> +                       list_add(&node->lnode, &bpf_ctx->free_ref_list);
->> +
->> +                       pr_info("bpf prog release obj addr = %lx, btf id = %d\n",
->> +                               node->obj_addr, node->struct_btf_id);
->> +               }
->> +       }
->> +
->> +       print_bpf_active_refs();
->> +}
+On Tue, Feb 25, 2025 at 01:24:42PM -0800, Linus Torvalds wrote:
+> On Tue, 25 Feb 2025 at 12:55, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > The problem isn't that "pointer aliasing is fundamentally unsafe and
+> > dangerous and therefore the compiler just has to stay away from it
+> > completely" - the problem has just been the lack of a workable model.
 > 
-> So for every acq/rel the above two function will be called
-> and you call this:
-> "
-> perhaps we can use some low overhead runtime solution first as a
-> not too bad alternative
-> "
+> It's not entirely clear that a workable aliasing model exists outside
+> of "don't assume lack of aliasing".
 > 
-> low overhead ?!
+> Because THAT is the only truly workable model I know of. It's the one
+> we use in the kernel, and it works just fine.
 > 
-> acq/rel kfuncs can be very hot.
-> To the level that single atomic_inc() is a noticeable overhead.
-> Doing above is an obvious no-go in any production setup.
+> For anything else, we only have clear indications that _unworkable_
+> models exist.
 > 
->> Before the bpf program actually runs, we can allocate the maximum
->> possible number of reference nodes to record reference information.
-> 
-> This is an incorrect assumption.
-> Look at register_btf_id_dtor_kfuncs()
-> that patch 1 is sort-of trying to reinvent.
-> Acquired objects can be stashed with single xchg instruction and
-> people are not happy with performance either.
-> An acquire kfunc plus inlined bpf_kptr_xchg is too slow in some cases.
-> A bunch of bpf progs operate under constraints where nanoseconds count.
-> That's why we rely on static verification where possible.
-> Everytime we introduce run-time safety checks (like bpf_arena) we
-> sacrifice some use cases.
-> So, no, this proposal is not a solution.
+> We know type aliasing is garbage.
 
-OK, I agree, if single atomic_inc() is a noticeable overhead, then any
-runtime solution is not applicable.
+The C people thinking casting to a union was a workable escape hatch was
+hilarious, heh. But now we've got mem::transmute(), i.e. that can (and
+must be) annotated to the compiler.
 
-(I had thought about using btf id as another argument to further
-eliminate the O(log n) overhead of binary search, but now it is
-obviously not enough)
+> We know "restrict" doesn't work very well: part of that is that it's
+> fairly cumbersome to use, but a large part of that is that a pointer
+> will be restricted in one context and not another, and it's just
+> confusing and hard to get right.
 
+And it only works at all in the simplest of contexts...
 
-I am not sure, BPF runtime hooks seem to be a general feature, maybe it
-can be used in other scenarios?
+> What we do know works is hard rules based on provenance. All compilers
+> will happily do sane alias analysis based on "this is a variable that
+> I created, I know it cannot alias with anything else, because I didn't
+> expose the address to anything else".
 
-Do you think there would be value in non-intrusive bpf program behavior
-tracking if it is only enabled in certain modes?
+Yep. That's what all this is based on.
 
-For example, to help us debug/diagnose bpf programs.
+> So *provenance*-based aliasing works, but it only works in contexts
+> where you can see the provenance. Having some way to express
+> provenance across functions (and not *just* at allocation time) might
+> be a good model.
 
+We have that! That's exactly what lifetime annotations are.
+
+We don't have that for raw pointers, but I'm not sure that would ever be
+needed since you use raw pointers in small and localized places, and a
+lot of the places where aliasing comes up in C (e.g. memmove()) you
+express differently in Rust, with slices and indices.
+
+(You want to drop from references to raw pointers at the last possible
+moment).
+
+And besides, a lot of the places where aliasing comes up in C are
+already gone in Rust, there's a lot of little things that help.
+Algebraic data types are a big one, since a lot of the sketchy hackery
+that goes on in C where aliasing is problematic is just working around
+the lack of ADTs.
+
+> But in the absence of knowledge, and in the absence of
+> compiler-imposed rules (and "unsafe" is by *definition* that absence),
+> I think the only rule that works is "don't assume they don't alias".
+
+Well, for the vast body of Rust code that's been written that just
+doesn't seem to be the case, and I think it's been pretty well
+demonstrated that anything we can do in C, we can also do just as
+effectively in Rust.
+
+treeborrow is already merged into Miri - this stuff is pretty far along.
+
+Now if you're imagining directly translating all the old grotty C code I
+know you have in your head - yeah, that won't work. But we already knew
+that.
 
