@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-531899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB8DA446A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:45:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924DBA4471C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:59:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88668867CF5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA6188165A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA415197A7A;
-	Tue, 25 Feb 2025 16:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6D1EA7DF;
+	Tue, 25 Feb 2025 16:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j04eIAjM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="AMpBHNJa"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497081946DF;
-	Tue, 25 Feb 2025 16:37:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF62319CC34;
+	Tue, 25 Feb 2025 16:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501476; cv=none; b=UJ8LcSFh03hA7tEQC5VGNL+mCw53zC+jf0o16Cy6V/POrej37mRSR3avCrdeCo15PPuPH9R0uU+pcJcgdN0jRZXTKJ+yEeDelPVoVu68tHoLdFoNbCnRiKkbpnOjXbXbSuQxypiY9zRxtFYuHkQiAuMZ2YQh29OSaX294z/8g6Y=
+	t=1740501989; cv=none; b=fA9yDbQ4Vkg41faJJArfclh/Oi1lOFdhNKryw2G6CGY3llPxXov7b8XaLN42F5F88+OwdTdGGVErwgJqzi+jImrbolC95EvSXXkfG0DUdfp51nstg+DSZukfStI+6rKNpnYh6fGlBX3kKuAJ6Jjc17OGgc8onGJ9i0qJXtroQF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501476; c=relaxed/simple;
-	bh=x0zgUEyszgmXbH70RPAvEFcAqEKHO4ecuk8dAHzOCM4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fG5yKMJp4CZ44lDYSG3J4Hl7f4kjyOQ9q2jRqH/8iVgMPihe0RvLhAXQPBhABenYRia3N8jKbQ6CLRoJIdBwLOb3wmAwhmxicwj4wdssX1UsPJqDuZRnIFeehPJvQ2AnR9bGdQ611knkWmAdqEaPaYR+ho4NrMZJw+3fFkgxS0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j04eIAjM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A906AC4CEE9;
-	Tue, 25 Feb 2025 16:37:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740501475;
-	bh=x0zgUEyszgmXbH70RPAvEFcAqEKHO4ecuk8dAHzOCM4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j04eIAjMqRhX/Lvpjxdud0obWUV3HeVnZb68G5pnJb0Xlek8Kzkd9IdjPfbaU/dls
-	 8ANmIGcuV9YmnixOQbWs/lvDYdHx2PqV1n8hqE5z9Hp1QXPlgMvemJJhWg3w76LY+e
-	 j/1graw0NghecYI95Z0P93e1J1VvCM2Nufm79vDXY5jo5kKAwbxvzxr8mvHqTsaFEi
-	 XKzguORi2xADcE6i3fWuwShOnmvcCbHiRupbyllC3qYrDOCVFo26gFj/F/QAjM30z/
-	 yAtWpGbx394iPUaEZimTa70W0zYuOoObzPqs//AQc03DzL6Lh53IWZb/BcScnjad/K
-	 WAgbv09KA909w==
-Date: Tue, 25 Feb 2025 16:37:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: tiwai@suse.com, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 1/2] firmware: cs_dsp: Remove async regmap writes
-Message-ID: <5814df5e-315e-4556-9196-df982716d9b8@sirena.org.uk>
-References: <20250225131843.113752-1-rf@opensource.cirrus.com>
- <20250225131843.113752-2-rf@opensource.cirrus.com>
- <e2f3397b-05c0-42f7-9950-29c4d9b24350@sirena.org.uk>
- <a027bb81-01a9-4658-a089-8035ae5f0815@opensource.cirrus.com>
+	s=arc-20240116; t=1740501989; c=relaxed/simple;
+	bh=rUhGtkeEKO5bgIAnZW0g4xICaX1zD95BWrXoltsZvcQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cLZe4MjNbqlIKS9MGb3vYeKZ7ESdqw8F9jOIgkMv7TN1axHgiIxsvc906QlbD+WOMOJgHUOQi7qtX9N+KSHtiQnGU26qsISIsJX5DH5zvugSyyJsOuuGAGC+9IeW3cgQM32KvgOdqNQk87lco7Jne+4dnQDO60VgTDt8jxmH53Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=AMpBHNJa; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.1)
+ id 25b314a4524873c0; Tue, 25 Feb 2025 17:46:20 +0100
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 943EC22C28BF;
+	Tue, 25 Feb 2025 17:46:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1740501980;
+	bh=rUhGtkeEKO5bgIAnZW0g4xICaX1zD95BWrXoltsZvcQ=;
+	h=From:Subject:Date;
+	b=AMpBHNJaC6riQO5RLvDgwyK/IRNpNgzCCdUYJYTbF8ee79t1G0ZTDm2ixoJa+50PS
+	 Nblp9kB93bYuzFBzXtED611EuWCeYCAXlgfYkC9rsAM7QEyH2Q+eyb0xsS9WvK/+DQ
+	 DgOXj1/H5RQjBrj0Bz6Q6g+20dXpzy78TBFbUIbqwCGWdpZevXZTDHA2MCibhmzFP9
+	 Hzt32Z5QbPvWrMNSfw9gBgBowBs/thQ1XBWT13gtfhFDBhu48oKI1uOR6ZWkYEUUL3
+	 QUA9KLnDa7n2brdDMI4OheoL64lMrxxHAFC652oOr0bfgU8l4CkZufYvAYYO4uTK5U
+	 tSquc+5pl4E0g==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Alan Stern <stern@rowland.harvard.edu>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Johan Hovold <johan@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Saravana Kannan <saravanak@google.com>
+Subject:
+ [PATCH v1 0/5] PM: sleep: Improvements of async suspend and resume of devices
+Date: Tue, 25 Feb 2025 17:38:01 +0100
+Message-ID: <13709135.uLZWGnKmhe@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sJf7fJbshNhYBAus"
-Content-Disposition: inline
-In-Reply-To: <a027bb81-01a9-4658-a089-8035ae5f0815@opensource.cirrus.com>
-X-Cookie: I'm not available for comment..
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: clean
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddvvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfjqffogffrnfdpggftiffpkfenuceurghilhhouhhtmecuudehtdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkggfgtgesthfuredttddtjeenucfhrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqeenucggtffrrghtthgvrhhnpeegfffhudejlefhtdegffekteduhfethffhieettefhkeevgfdvgfefieekiefgheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhjfiesrhhjfiihshhotghkihdrnhgvthdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgvrhhnsehrohiflhgrnhgurdhhrghrvhgrrhgurdgvughupdhrtghpthhtohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepjhhohhg
+X-DCC--Metrics: v370.home.net.pl 1024; Body=7 Fuz1=7 Fuz2=7
+
+Hi Everyone,
+
+Initially, this was an attempt to address the problems described by
+Saravana related to spawning async work for any async device upfront
+in the resume path:
+
+https://lore.kernel.org/linux-pm/20241114220921.2529905-1-saravanak@google.com/
+
+but then I realized that it could be extended to the suspend path and
+used for speeding it up, which it really does.
+
+Overall, the idea is that instead of starting an async work item for every
+async device upfront, which is not very efficient because the majority of
+those devices will not be able to make progress due to dependencies anyway,
+the async handling is only started upfront for the devices that are likely
+to be able to make progress.  That is, devices without parents in the resume
+path and leaf devices (ie. devices without children or consumers) in the
+suspend path (the underlying observation here is that devices without parents
+are likely to have no suppliers too whereas devices without children that
+have consumers are not unheard of).  This allows to reduce the amount of
+processing that needs to be done to start with.
+
+Then, after processing every device ("async" or "sync"), "async" processing
+is started for some devices that have been "unblocked" by it, which are its
+children in the resume path or its parent and its suppliers in the suspend
+path.  This allows asynchronous handling to start as soon as it makes sense
+without delaying the "async" devices unnecessarily.
+
+Fortunately, the additional plumbing needed to implement this is not
+particularly complicated.
+
+The first two patches in the series are preparatory.
+
+Patch [3/5] deals with the resume path for all device resume phases.
+
+Patch [4/5] optimizes the "suspend" phase which has the most visible effect (on
+the systems in my office the speedup is in the 100 ms range which is around 20%
+of the total device resume time).
+
+Patch [5/5] extend this to the "suspend late" and "suspend noirq" phases.
+
+Thanks!
 
 
---sJf7fJbshNhYBAus
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Feb 25, 2025 at 04:22:49PM +0000, Richard Fitzgerald wrote:
-
-> Ok. It was a very long time ago.
-> Do you want a V2 with a commit message that doesn't libel the SPI
-> framework?
-
-No, it's fine - it's in CI already.
-
-> FWIW switching to sync write reduced the download of small amp firmware
-> by 200ms on a 1.67MHz SPI bus.
-
-Yeah, with modern multi-core systems that's unsurprising especially
-with a controller that does small writes synchronously - the cost of
-locking on modern CPUs tends to blow out the overlapping of the
-formatting with the I/O.  It's part of why maple tree caches don't do
-async writes during sync.
-
---sJf7fJbshNhYBAus
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme98d8ACgkQJNaLcl1U
-h9A/YQf/bPoRa91Fg8GSmJA3mBYJAj2i6LlWssI4A2LuQg8Dk5lNaZNZTgYUZb8V
-l4O/KwHq2lo5HOMP0U0zjGHBEWJT6T7r/SboIZsipwLsAOzDmFtRjx48AQRglph/
-M7erzTtVqBwR/ehCWkesCxQrwScKFYM3Sp1/O1YyfZ1ZsLFx6tKETStINVquW4on
-P2C7h9gFBQIWc2nHIV7erEga2EEwymXoiB9jaV7mZSnVCaJTZRWB2UtbN3dbycZz
-wdRnqXeNWQmQQO2AX8XpgWWtB9953sjR7cXt6V3UzeeNGnRmCQkJ9wh1O6hLo4VS
-1PLlXOMroSqwYouiTFG9LoJy8x4mJA==
-=Rnao
------END PGP SIGNATURE-----
-
---sJf7fJbshNhYBAus--
 
