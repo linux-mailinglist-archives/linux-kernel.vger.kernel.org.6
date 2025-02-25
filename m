@@ -1,194 +1,343 @@
-Return-Path: <linux-kernel+bounces-530691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9A6A436E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:03:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343C2A436E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE2C164FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6201885177
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9AE25C6E7;
-	Tue, 25 Feb 2025 08:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4025B692;
+	Tue, 25 Feb 2025 08:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="nEzLwcVr"
-Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19010007.outbound.protection.outlook.com [52.103.68.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nx/7M07h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A042F25B697
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740470564; cv=fail; b=AofQHZeW8D00bp4fmm03EXhWct14uwrWFuHmARitIB4Cwes/Lify4zmm3fSCq1kaF1tp4WcMjryN4E6qI9U0aJ3DV9UnsVTNzAXJDh57v+g1F4fI/5yHxLPlXMuN+ZYgKv4W0YGPdXYhbcSwWbjmMRX5qN/2hnf7d2Nlsrqdy8g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740470564; c=relaxed/simple;
-	bh=XHECoGkmo5Ejko+FXnGqaCT6wdEaHKSEbo+DqhTHn0E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FfuWXLc4lpNCkSEtcUFQgNnoj1cVxjQztiajyHkAyaUuhp3tG6Lg5mJlf3Ja6QvpSWJ47L0REmEcfudZKCJ3LanT1/ZBCSRKRzWm+Zkc/jaeqKpuwZVVjIsXj1ZyH8UCnmPQisw9awAu5wSEqeUBHSKKsVWYJfpZ+c10umTgvQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=nEzLwcVr; arc=fail smtp.client-ip=52.103.68.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W3OYkoM70PGTRHNGeE5DCw4KBafMij6cHheML/HXlMogDzeLy9qQKm4+hYlLMhTGbUZRHXMpce+7aQPIB5Eb3VtrCIuMpJaPfANFOeX82HS7m+fOM3u3qNWLr9HntUjaFZ97iGFUSSjVuruMasDit6HT3LokCjq7Vwt5xHgEcbbgyN+Ba6RHwJAW279K/nd5zPcg7Ioxj4nUNaneob+CzU7HXby/JKMot5rCWOEy9JBaCP1Xm/LEesi+DnPPOcfMgkC7rrHo//cKorOQZA4xLs9oClOsFeGfrMbIBMCIRIOD31ZA0qyhQGfA76k7q00wH4orq0UEz9CSKL5URKyIyQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XHECoGkmo5Ejko+FXnGqaCT6wdEaHKSEbo+DqhTHn0E=;
- b=N81HOtBu8judXbqDugR4hWT7fiv4HHDA0/Ddtq2VA5buvpE8TrjgzCJeL7T4AnnwuqmILmCP3GzbcFIYMwLpig3YI3xGk3Dhn+L9quMJeTpv1+DPW4wBons60br+tTbhTlLpsX2FTvyRcm6SuRHG8A1pn/t7koNite9Y1A0ML1NQkdK8tr5YB5BYQR0XHEHLL7jPhwsJ1SKzzvJSqonkmtJKxcqnBnwZEgHYhfRDlLdGz4ASoli98i/qtIS3/SBUMYrEnKNxowttpIs1aQ43++Idznobh0Xt14CmjiOXhSZM9KUmExXTqN+kqa1oKHxP/mA5S4vCFwp3Xcl9PV7p3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XHECoGkmo5Ejko+FXnGqaCT6wdEaHKSEbo+DqhTHn0E=;
- b=nEzLwcVrtN+wiebqsYZ+VmLb2n8BJXkQMEaR3oI4mra+3pfPDOjHcS/4wB2JS5BX3dJS+iPzv6Y2Oyk1aUpR8dgEXDj143iJq87T1o2Gz03a6XlaCyTrANNMX4e+4V23IWwatnKLbCgxD5UCC/GQ468HObLHToXfi2bslSUaUzIps1D+a/nIFGUthh016iuISYY4NbXc6iqhP8RtcpPiaFmwSyaKxdd10umPW5NGp3n+RZjDNzAeI9wS6YPxk2SmIuBVnLbabcjpZxeaOa4DgfbaJD4oIng/JzjxzldiVkUP2FPcOE/cwFpccUZTw7wZG5lz/3avxHLWxALItfimBg==
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
- by PN3PR01MB6823.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:94::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.21; Tue, 25 Feb
- 2025 08:02:37 +0000
-Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8466.016; Tue, 25 Feb 2025
- 08:02:37 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-CC: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Topic: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Thread-Index: AQHbhsGm46fWR/3mxEipqc6+PMbxkrNWrTuIgAD67QCAAAGYdA==
-Date: Tue, 25 Feb 2025 08:02:37 +0000
-Message-ID:
- <PN3PR01MB95977080AD62E0BD2518C106B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
- <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
- <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
-In-Reply-To: <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
-Accept-Language: en-IN, en-US
-Content-Language: en-IN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN3PR01MB6823:EE_
-x-ms-office365-filtering-correlation-id: 9e5c2547-2e7c-4f24-9650-08dd5572c4d2
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|6072599003|19110799003|8062599003|7092599003|15080799006|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cTFYYzVkVmsrRUNDZy9FdnQ1Vit0Tk1Remk0WE9Cek9Zcks2ZlNPbk9tWXdL?=
- =?utf-8?B?NUFiOEl1MVhIS1Z5OXZYc1daeEVhQ1dnU3kvWml1cDZ5OGtNZWdSYUVBZmVV?=
- =?utf-8?B?MXA3bXBZa1hyY21xNUdqTHVRUjNyQUtDYVZsMDZxbGdUaHVBMmJLYXZ4TW8x?=
- =?utf-8?B?YmhyK0dGUXBiNi9WSnExVHp1RG5hbHU2Z0VhSkJNcUdFT0VCTDRiTzZnN1g1?=
- =?utf-8?B?OS8zRFVwWVlGc29SOHROUzBXdlB5S1RLYlV1aUVreFNtR0pWVk5TYThMZVRi?=
- =?utf-8?B?Q21HTitReEx3blVFWlBDTGhPdkNmSVVGdkdIaWdXeEdmNGFzalhJNi8rd0VK?=
- =?utf-8?B?MWNneC9rWmhCbWxzaG9Md2VLZHQwQ2ZLQk1WMXNlTXdLeElCUkVlV2EyT1dR?=
- =?utf-8?B?TDJGZGk2ZFQzTzBBK2dNcHR1VW4wNUNDbWFuYWFGMFBWZ3VGRTFVSEFkbUdX?=
- =?utf-8?B?ZUFBd0NKdUtkMzVmbUd2ZytJRS9qUFczeCtjcEpCVjFzcHBHR2hJaUNuUlp6?=
- =?utf-8?B?ay9zM0o3RjUvODlwVmRHK1NPV0xHUmhQbHdvbDdzR0ZMMzV5WjVMMi9uSWh1?=
- =?utf-8?B?OWZlVHJramxoQlR0Kys0MmlEM3NDU083S09DT1NtWEpURWlOR0JUYmQ1b0tz?=
- =?utf-8?B?QWVqU25tYWEzclEyYU9qT2tsMmNHenJkYkN0NmZWZFBHZm9zY3BPa0Y5bE1G?=
- =?utf-8?B?dlJtNkFaRHNSZGMyWkp5VmkxRUVMZ21sbUFEZ3JZMG5VdE04bkdlMVFIZ2p6?=
- =?utf-8?B?NDlpbkRNZlVTRkw1aDI0NkFsMlkveFRST2Vld1g1VXVpU1FRVzQ1NTdMQmw0?=
- =?utf-8?B?VWhHNFc4NmJ5UFVERmJHQ3poM2dwaWg2Uml3MXlEK25ITDlNUUFndlRhb3pQ?=
- =?utf-8?B?Mjg1SDNlK2xrRWFKQzJjajZJZ2VuWnJnZkdYRDR5RkQ1M083RHBUOHp5UlU2?=
- =?utf-8?B?cFp1b3pnMSsyZVBtSlJFSUg0amorcUJ1Q2RJeDEvejZhTm5UOG9xdHEwNXpY?=
- =?utf-8?B?WXg1VnYrT2luMWJPYUh3NElaTEg0a3dic1pLcUl3MFZBSmZXb0hmR2NHNzEz?=
- =?utf-8?B?cGZWK25BV3RoSjVyY3F5VnV5bmNzQUNyNXEvU2FiK3JMTzUrWG5NY1MwWHlh?=
- =?utf-8?B?ZmNLN0FLVnkxOUd6dU16R21VOFNkZUJ3OU9GN3k3Z1hvdUt0dGt6ZEtyeU5z?=
- =?utf-8?B?M3ZiYjBWUVhLb25NV2FWQWt3OWRNR2tGa0h6VzRNbDZpWURTbG1JVDNBMStT?=
- =?utf-8?B?cTZpYW1hTUQ3djA3RmNCL0JraHNwTjlENHJxb1ROUFZOVzU2NERmVWdzWHZ1?=
- =?utf-8?B?Z1JXYytrdVAwQm1HeW51bTEwUlR3OVJkU01oQ2pScm9hUnJPanVZS2dRaFRI?=
- =?utf-8?B?c1h1OFY1NUxmN2VjR0V0WVlDVmdraGhKYWhHbmIyMUIrQmpVQlF0RDZwSHpR?=
- =?utf-8?B?U2Voak5pRzVDWkcyVHJod2wvZ1c4Smx1ZFFDclV3S0ZEN1RhU1JjVzgwYzM0?=
- =?utf-8?Q?mvH2IQ=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?Mng5YnVmVFF0bGNReGN3WldWaHFiWk4vYlFyTkJLZlJ5VFBzNE5CNU5lZVR1?=
- =?utf-8?B?S29qcmpoQkl2QmU1Wnl3OFhJcjZ4MVV1a3RSVHVlMm9sZWZwVkpjU21KbGk4?=
- =?utf-8?B?SG9wanJuN2NZNzFkOG01dmhzMkZPdUJzemVzVFJvREhleWVvMVcyQzEreG9t?=
- =?utf-8?B?QXZmMEpISk4wWDd3UVR0aXZjd2N6UG9QQTBjTnRCQmFxLzFocmZVdmREZmZP?=
- =?utf-8?B?VVNNRHFBK0VaVENWUk5NMGRlNjFWaStKUnNqbTA3UTVIeTNmUHFVbkljU1dM?=
- =?utf-8?B?MHNtVVlNeU1nVUYvc2hDcks1SDRsVDFKcnFSWWJUNTFXcHZYUzNLMUFjb2tE?=
- =?utf-8?B?VXlxL0UzYnBNQk4vOWlzcVltOWJYSzJDb2NpNkdqU2svN2xTRUt3cko0enp6?=
- =?utf-8?B?WURyelk5ZHdpYXFnTTN6WU5nMFJkaWN1RGcwT0R4bXgrcGFOWjdZVHN2cnIy?=
- =?utf-8?B?bnhHUnIrb1dVdlRmck9ycjdsYW9WSHBBMmR6YndmMFpPbnlaVlNPd2ZDN29G?=
- =?utf-8?B?ZzJ4RVVheFM0WXpITk11MERTNElMOTFUYTFWcXBSVUk0cnF1YytWRXhYNE96?=
- =?utf-8?B?VTZ2Z2NZNW5SM3lYbXJ5QUpsaUNpZTdLYnkrVlduZzJSTnVkVFRSN2lsSGNJ?=
- =?utf-8?B?YTZxVGFnWjI1eFdUNmJlS2VyTDZYdjl2Ynlkamc5NFI2aC9QZG1aUVMvcFU3?=
- =?utf-8?B?U0JXTVV2V0ZxTnEzejhhL29JOWFsdVp2cTNuZEJxUW5sc0I5U2JGRFpmbU82?=
- =?utf-8?B?K2xwNmVGMmVqNFFZLy9vdlJabUFUd1VoRi9WZWNDNzJoUkYwQTJ5VXo2MHF6?=
- =?utf-8?B?Z3B2elhDZXpadFNlK3FqeXRUOUYxL2c0LzRZYVAwNGRHanNBNXI1b3VRdDJ5?=
- =?utf-8?B?SmFTMEIrTGw3YUttMDFpN1NnOERrVzJXWHYvdklxQVZkNURpM0x6NEpJTGNH?=
- =?utf-8?B?QlpGd21SVGZCTHNPUmo3U1QvNUp3a3R2WjVlQ2NWcW0vbUFZZ1AwZlVRWjR6?=
- =?utf-8?B?VmJFNXpsbE5FOGVQZmVvK2srVTRDVDl4WUx4U2tDejEyeXhJQUFxRXJKWUZ1?=
- =?utf-8?B?cVNObDluR1QwbjI0Q1ZpWlVKTmVFSjdERG83Q2I3NjZmRDIvWHhxS09paHp3?=
- =?utf-8?B?eXhiYXZRNWo1Y1VvUGlhSVhaLzNnZlIyTFVjeGRzVnczeCtOMktKbmI4Vk8x?=
- =?utf-8?B?WFhuZmlBMHN6ZTB1cU1ZMWJkU2pkblNndFRtSmZtY0hLNnhQTFJsMzBtQWtj?=
- =?utf-8?B?N0VjVVM0b0NZOVIydXVrcGFsaUYvOVBFNmM4MmJxVUFsaWpxZVhQOE5Xa1RN?=
- =?utf-8?B?R0w2MGNLMEJDQzNwWFpQdzVSM1lDQ056R05pNEZTclBjNStHdXFxdlBOT2Zt?=
- =?utf-8?B?NnRnWU1YeE1BbkZVZE9SaUljb2Mya2lMeUg3SG5pUjdOMFJaeTY3dHV2T3dZ?=
- =?utf-8?B?Ym9lM3hJdk85aWJPelBYbU1pMm9nc2Q2Z01MazRWNkM3ZDlMWWZwS3BkdWRD?=
- =?utf-8?B?SHVkL1d2SCtBSlVueW9MQjE0ak1sR3llamJlVGFPRUVkdUxMTmd6cEp1M3d2?=
- =?utf-8?B?VHFvekpCTnFLL05TeHZoUDg0cFBiZEFSbU80UHUrY1JPNjlLeEtVUUlyMXZR?=
- =?utf-8?Q?dukHMfeWdx2JHfL5rFMXFB5RjlSRtW2GqQb6xmY2V0yo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D1D3F9D2;
+	Tue, 25 Feb 2025 08:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740470585; cv=none; b=RDggA4sYvDybkSOAhnuszywKMMaXhJ1GWBNI03bIlbZ2uuX6CNE2zYP7G5osjCw3sC2SsBZMFScIauLvfOI1jeHLXsYkJZTNela8EM3jd9SD2usaCnGc/tPuwsEC7jILkL0xJVNlwJqTgjbKRUn+YLI2Oj6qQA5cEeuJJzTsLvU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740470585; c=relaxed/simple;
+	bh=2eHIphndq2uDMmUAi5YKrcovaUYO7tN2516cB/KGSJE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QuSNn4PUlcpWcprZnIs8FdltXI/tDrMVEpmSUs9jFnKpXwf887FkgP+BJhRTwl8cC+KzYzyDz4H+wF3jWp1lkaUnfUVnYoP5ePODDto1I6XI+rS4w00s7ARYJ/bw1i8y1y10PEqXptUKuknz/ac3MKQoKbiR7mUu+ziIeeQ7O7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nx/7M07h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DFC5C4CEDD;
+	Tue, 25 Feb 2025 08:02:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740470584;
+	bh=2eHIphndq2uDMmUAi5YKrcovaUYO7tN2516cB/KGSJE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Nx/7M07hAEBi0dLlOognbXKP6zq06Mb+JLcy+hbp6Hw3vWiiOFg/cm80dQ6uNtGHV
+	 +/03BHv396IAmmIoHUMtxlb8bVJfKk4Qii+Bg7WDbDbeSO5Nf3d4K8PDgsO1uznoEg
+	 eWsClj93xEpdFNIQOlWQNv0nsZI7Y31QGKvBZDpK/So0Av3ctaVqwA9NAjZFS+YFo9
+	 THHdDUh+4ThoEQ7Fujacm4SdarEdXljz98nU5gRSBQ+u78no0N7hhNpG+M3B0BykSr
+	 2J7UO/So99wxDo3Ug4vK0reQDkh3ldYSXakmo3Z1TbziV3nvjMBP8I2xcmXj6XjwG+
+	 JFF2ctpbpF5tg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Masahiro Yamada"
+ <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  "Luis Chamberlain"
+ <mcgrof@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  "Adam Bratschi-Kaye"
+ <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,  "Petr Pavlu"
+ <petr.pavlu@suse.com>,  "Sami Tolvanen" <samitolvanen@google.com>,
+  "Daniel Gomez" <da.gomez@samsung.com>,  "Simona Vetter"
+ <simona.vetter@ffwll.ch>,  "Greg KH" <gregkh@linuxfoundation.org>,
+  <linux-modules@vger.kernel.org>
+Subject: Re: [PATCH v7 6/6] rust: add parameter support to the `module!` macro
+In-Reply-To: <8AF85A37-76AC-4937-BD59-115BB432B738@collabora.com> (Daniel
+	Almeida's message of "Mon, 24 Feb 2025 12:28:56 -0300")
+References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
+	<20250218-module-params-v3-v7-6-5e1afabcac1b@kernel.org>
+	<oUH3AFSXY_kfA4fHRG_JpLCzAsZp4wujRwtOGwjKUuaB0-xVhRPPIQZ41nWZaJGFqTkbqBNKHTg3OskxIN7g5g==@protonmail.internalid>
+	<8AF85A37-76AC-4937-BD59-115BB432B738@collabora.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 25 Feb 2025 09:02:52 +0100
+Message-ID: <87o6yqxxhv.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e5c2547-2e7c-4f24-9650-08dd5572c4d2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 08:02:37.2436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB6823
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gMjUgRmViIDIwMjUsIGF0IDE6MjfigK9QTSwgVGhvbWFzIFppbW1lcm1hbm4gPHR6
-aW1tZXJtYW5uQHN1c2UuZGU+IHdyb3RlOg0KPiANCj4g77u/SGkNCj4gDQo+IEFtIDI0LjAyLjI1
-IHVtIDE3OjU4IHNjaHJpZWIgQWRpdHlhIEdhcmc6DQo+IFsuLi5dDQo+Pj4gDQo+Pj4gK2NvbmZp
-ZyBEUk1fQVBQTEVUQkRSTQ0KPj4+ICsgICAgdHJpc3RhdGUgIkRSTSBzdXBwb3J0IGZvciBBcHBs
-ZSBUb3VjaCBCYXJzIg0KPj4+ICsgICAgZGVwZW5kcyBvbiBEUk0gJiYgVVNCICYmIE1NVQ0KPj4+
-ICsgICAgc2VsZWN0IERSTV9HRU1fU0hNRU1fSEVMUEVSDQo+Pj4gKyAgICBzZWxlY3QgRFJNX0tN
-U19IRUxQRVINCj4+PiArICAgIHNlbGVjdCBISURfQVBQTEVUQl9CTA0KPj4gQnR3IEkgaGF2ZSBh
-IGRvdWJ0IHJlZ2FyZGluZyB0aGlzIGRlcGVuZGVuY3kuIFdoaWxlIGhpZC1hcHBsZXRiLWJsIGhh
-cyBtYWRlIGludG8gdGhlIGxpbnV4LW5leHQgdHJlZSwgaXQgaGFzIHN0aWxsIG5vdCBiZWVuIG1l
-cmdlZCBpbnRvIExpbnVzJyB0cmVlLCBhbmQgbmVpdGhlciB0aGUgZHJtIHRyZWUgSSBhc3N1bWUu
-IEl0IHBvdGVudGlhbGx5IGNvdWxkIGNhdXNlIGlzc3Vlcz8NCj4gDQo+IFllcy4gV2UgY2Fubm90
-IG1lcmdlIHRoaXMgZHJpdmVyIHVudGlsIHdlIGhhdmUgdGhpcyBzeW1ib2wgaW4gb3VyIHRyZWUu
-IEJ1dCB0aGF0IHdpbGwgaGFwcGVuIHNvb25lciBvciBsYXRlci4NCj4gDQo+IE1vcmUgcHJvYmxl
-bWF0aWMgaXMgdGhhdCB5b3VyIGRyaXZlciBzZWxlY3RzIEhJRF9BUFBMRVRCX0JMLiBGcm9tIHdo
-YXQgSSd2ZSBzZWVuLCB0aGlzIHN5bWJvbCBpcyB1c2VyIGNvbmZpZ3VyYWJsZSwgc28gdGhlIGRy
-aXZlciBzaG91bGRuJ3Qgc2VsZWN0IGl0LiBZb3UgbmVlZCB0byB1c2UgJ2RlcGVuZHMgb24nIGlu
-c3RlYWQgb2YgJ3NlbGVjdCcgaGVyZS4NCg0KSSBhc3N1bWUgd2UgbmVlZCB0aGUgc2FtZSBmb3Ig
-SElEX01VTFRJVE9VQ0ggYXMgd2VsbCwgc2luY2UgaXQncyBuZWVkZWQgZm9yIHRoZSB0b3VjaCBm
-ZWVkYmFjay4NCj4gDQo+IEJlc3QgcmVnYXJkcw0KPiBUaG9tYXMNCj4gDQo+PiANCj4+PiArICAg
-IHNlbGVjdCBISURfTVVMVElUT1VDSA0KPj4+ICsgICAgaGVscA0KPj4+ICsgICAgICBTYXkgWSBo
-ZXJlIGlmIHlvdSB3YW50IHN1cHBvcnQgZm9yIHRoZSBkaXNwbGF5IG9mIFRvdWNoIEJhcnMgb24g
-eDg2DQo+Pj4gKyAgICAgIE1hY0Jvb2sgUHJvcy4NCj4+PiArDQo+Pj4gKyAgICAgIFRvIGNvbXBp
-bGUgdGhpcyBkcml2ZXIgYXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmU6IHRoZQ0KPj4+ICsgICAg
-ICBtb2R1bGUgd2lsbCBiZSBjYWxsZWQgYXBwbGV0YmRybS4NCj4+PiArDQo+IA0KPiAtLQ0KPiAt
-LQ0KPiBUaG9tYXMgWmltbWVybWFubg0KPiBHcmFwaGljcyBEcml2ZXIgRGV2ZWxvcGVyDQo+IFNV
-U0UgU29mdHdhcmUgU29sdXRpb25zIEdlcm1hbnkgR21iSA0KPiBGcmFua2Vuc3RyYXNzZSAxNDYs
-IDkwNDYxIE51ZXJuYmVyZywgR2VybWFueQ0KPiBHRjogSXZvIFRvdGV2LCBBbmRyZXcgTXllcnMs
-IEFuZHJldyBNY0RvbmFsZCwgQm91ZGllbiBNb2VybWFuDQo+IEhSQiAzNjgwOSAoQUcgTnVlcm5i
-ZXJnKQ0KPiANCg==
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+
+> Hi Andreas, thanks for working on this, I can see that this patch took a =
+lot
+> of effort.
+
+Thanks! It's not all me though, it's based on old code from the
+pre-merge days.
+
+[...]
+
+>> index 0000000000000..0047126c917f4
+>> --- /dev/null
+>> +++ b/rust/kernel/module_param.rs
+>> @@ -0,0 +1,226 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +//! Types for module parameters.
+>
+> nit: maybe =E2=80=9CSupport for module parameters=E2=80=9D?
+>
+> Or anything else other than =E2=80=9Ctypes=E2=80=9D, really :)
+
+I agree. I think originally the naming came from this being types
+backing the macro implementation.
+
+>
+>> +//!
+>> +//! C header: [`include/linux/moduleparam.h`](srctree/include/linux/mod=
+uleparam.h)
+>> +
+>> +use crate::prelude::*;
+>> +use crate::str::BStr;
+>> +
+>> +/// Newtype to make `bindings::kernel_param` [`Sync`].
+>> +#[repr(transparent)]
+>> +#[doc(hidden)]
+>> +pub struct RacyKernelParam(pub ::kernel::bindings::kernel_param);
+>> +
+>> +// SAFETY: C kernel handles serializing access to this type. We never a=
+ccess
+>
+> nit: perhaps: =E2=80=9Cwe never access *it* from *a* Rust module=E2=80=9D=
+ ?
+
+Right =F0=9F=91=8D
+
+>
+>> +// from Rust module.
+>> +unsafe impl Sync for RacyKernelParam {}
+>> +
+>> +/// Types that can be used for module parameters.
+>> +///
+>> +/// Note that displaying the type in `sysfs` will fail if
+>> +/// [`Display`](core::fmt::Display) implementation would write more than
+>
+> nit: perhaps `implementation writes more than`? Although it=E2=80=99d be =
+great if a
+> native speaker could chime in on this one.
+
+Actually, we removed the support for displaying in sysfs from the
+series, so I will just yank that note.
+
+>
+>> +/// [`PAGE_SIZE`] - 1 bytes.
+>> +///
+>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
+>> +pub trait ModuleParam: Sized {
+>> +    /// The [`ModuleParam`] will be used by the kernel module through t=
+his type.
+>> +    ///
+>> +    /// This may differ from `Self` if, for example, `Self` needs to tr=
+ack
+>> +    /// ownership without exposing it or allocate extra space for other=
+ possible
+>> +    /// parameter values.
+>
+> I don=E2=80=99t understand what=E2=80=99s being said here. e.g.: what doe=
+s =E2=80=9CSelf needs to track
+> ownership without exposing it=E2=80=9D mean? Can you expand on this?
+
+For some parameter types, such as string values, the parameter may
+assume a reference value or an owned value. The reference value would be
+used as default (as a reference to a static string), while an owned
+value would be passed in when the value is set. For that, `Value` can be
+an enum.
+
+We yanked support for anything but integer parameters from this series,
+but I would like to keep this around to make adding string parameters
+less churn in the near future.
+
+If you follow link [1] in the cover letter, you can see the original
+code from the pre-merge branch that this patch is based on.
+
+>
+> Also this is pub. It should perhaps also be sealed?
+
+We might in the future allow users to implement their own parsers.
+
+>
+>
+>> +    // This is required to support string parameters in the future.
+>> +    type Value: ?Sized;
+>
+> Why? Can you also expand on this a tad further?
+
+As explained above.
+
+>
+>> +
+>> +    /// Parse a parameter argument into the parameter value.
+>> +    ///
+>> +    /// `Err(_)` should be returned when parsing of the argument fails.
+>> +    ///
+>> +    /// Parameters passed at boot time will be set before [`kmalloc`] is
+>> +    /// available (even if the module is loaded at a later time). Howev=
+er, in
+>> +    /// this case, the argument buffer will be valid for the entire lif=
+etime of
+>> +    /// the kernel. So implementations of this method which need to all=
+ocate
+>> +    /// should first check that the allocator is available (with
+>> +    /// [`crate::bindings::slab_is_available`]) and when it is not avai=
+lable
+>> +    /// provide an alternative implementation which doesn't allocate. I=
+n cases
+>> +    /// where the allocator is not available it is safe to save referen=
+ces to
+>> +    /// `arg` in `Self`, but in other cases a copy should be made.
+>> +    ///
+>> +    /// [`kmalloc`]: srctree/include/linux/slab.h
+>> +    fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
+>> +}
+>> +
+>> +/// Set the module parameter from a string.
+>> +///
+>> +/// Used to set the parameter value at kernel initialization, when load=
+ing
+>> +/// the module or when set through `sysfs`.
+>> +///
+>> +/// `param.arg` is a pointer to `*mut T` as set up by the [`module!`]
+>> +/// macro.
+>
+> Perhaps the above should also be an invariant?
+
+Actually, I think it should be part of the safety requirements.
+
+[...]
+
+>> +
+>> +impl<T> ModuleParamAccess<T> {
+>> +    #[doc(hidden)]
+>> +    pub const fn new(value: T) -> Self {
+>
+> I assume that this is pub so that the macro can find it? If so, can you l=
+eave a note
+> outlining this?
+
+Yes, it must be accessible from other crates (modules). Will add a note.
+
+>
+>> +        Self {
+>> +            data: core::cell::UnsafeCell::new(value),
+>> +        }
+>> +    }
+>> +
+>> +    /// Get a shared reference to the parameter value.
+>> +    // Note: When sysfs access to parameters are enabled, we have to pa=
+ss in a
+>> +    // held lock guard here.
+>
+> What lock guard, guarding what exactly?
+
+That is yet to be determined. When we enable sysfs, we will have async
+access to the parameter value when user space interacts with sysfs.
+Thus, we need to apply synchronization on parameter value access. I
+envision a lock being taken before this method is called and a lock
+guard passed in to access the data.
+
+The code has deviated quite a bit from the original, but you can see a
+possible implementation here [1].
+
+[1] https://github.com/Rust-for-Linux/linux/blob/bc22545f38d74473cfef3e9fd6=
+5432733435b79f/rust/macros/module.rs#L410
+
+
+[...]
+
+>> +    fn emit_params(&mut self, info: &ModuleInfo) {
+>> +        let Some(params) =3D &info.params else {
+>> +            return;
+>> +        };
+>
+> Shouldn=E2=80=99t this panic? A call to emit_params() where there=E2=80=
+=99s nothing to emit doesn=E2=80=99t
+> look right at a first glance.
+
+No, having no parameters is a valid configuration. If the "params" key
+is left out in the module macro call, the option will be `None`. The
+call to this function when generating code is unconditional.
+
+[...]
+
+>> -    if let Some(firmware) =3D info.firmware {
+>> +    if let Some(firmware) =3D &info.firmware {
+>>         for fw in firmware {
+>> -            modinfo.emit("firmware", &fw);
+>> +            modinfo.emit("firmware", fw);
+>>         }
+>>     }
+>
+> These seem a bit unrelated?
+
+They could be split in a precursor patch, but they are required for this
+change set. If you insist I will split them out, but I am also happy to
+keep them as one big change.
+
+>
+>>
+>>     // Built-in modules also export the `file` modinfo string.
+>>     let file =3D
+>>         std::env::var("RUST_MODFILE").expect("Unable to fetch RUST_MODFI=
+LE environmental variable");
+>> -    modinfo.emit_only_builtin("file", &file);
+>> +    modinfo.emit_only_builtin("file", &file, false);
+>> +
+>> +    modinfo.emit_params(&info);
+>>
+>>     format!(
+>>         "
+>> @@ -362,14 +514,17 @@ unsafe fn __exit() {{
+>>                             __MOD.assume_init_drop();
+>>                         }}
+>>                     }}
+>> -
+>>                     {modinfo}
+>>                 }}
+>>             }}
+>> +            mod module_parameters {{
+>> +                {params}
+>> +            }}
+>>         ",
+>>         type_ =3D info.type_,
+>>         name =3D info.name,
+>>         modinfo =3D modinfo.buffer,
+>> +        params =3D modinfo.param_buffer,
+>>         initcall_section =3D ".initcall6.init"
+>>     )
+>>     .parse()
+>> diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
+>> index 4aaf117bf8e3c..d999a77c6eb9a 100644
+>
+> I wonder if the changes to rust_minimal.rs should be a separate patch.
+
+Either way works for me.
+
+
+Thanks for the comments!
+
+
+Best regards,
+Andreas Hindborg
+
+
 
