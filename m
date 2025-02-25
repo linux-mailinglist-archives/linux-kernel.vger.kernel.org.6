@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-532170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC3EA44999
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:08:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4CBCA44996
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:08:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1054B17FDBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:05:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8BC17DFAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86E420E018;
-	Tue, 25 Feb 2025 18:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3389620C493;
+	Tue, 25 Feb 2025 18:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vkmQ7jAk"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVmnxV6o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525D520CCF1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7744A15445D;
+	Tue, 25 Feb 2025 18:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740506613; cv=none; b=uKO34xrfbA/NgEkHD1hkEnpr9BSVvKqe7Wt7kBJfxNetcjwxmV0sJwAfD1NbAFr6u80Gnv4lOQWxS0FH+gZ8uszp6bmqsZkx+LM2NEmeRMNpuDfBEschjnZHwBiajJaxqazq/o4Z5OlSGLCCB3HqrflMfjyQFfuvSAFpDaWBl1E=
+	t=1740506610; cv=none; b=qh447+iMZhDHmNpTqYZ/UlC7DTg15GO4WRMevk59h1h2kdwmc2yXE/33j1BLvIO2tV45u2WENNj+JYHgjq7MsNJCvalXYNvEMZEks8Cwv9BM1UmrSEGL9Jt5OPhMSlctFCewoYf/zv+t4s0W2zy4RHTgJqL5QQqYGc8hO8auaWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740506613; c=relaxed/simple;
-	bh=S0vGc2fxgTl4TxHz9pfDkbgBvrLucJN6TxhxE7gqfBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GkIfghSvZbHJ/ESJ94spXdr04aC+yxsmr6DT9vUHqyl3q8FOZJcihYpQedX9qd9NRSvA2GhI8xU4e0Nhh1gyNRXotDf+CK4N7swgncdPE1ZaZ9Lpn8eUWG34ZCNNhbPQ4jtvZxrHsU+ORppRw4GVm6jwvE1TEs1lxGp/Q6KadpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vkmQ7jAk; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-546202d633dso5840625e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:03:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740506609; x=1741111409; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8O4HWot5EUMVzTxv5rN66ccO0MtiNkXIqoN+/YVntbU=;
-        b=vkmQ7jAkN/gYQOO/5PmGlbB38HvpHUF3j2ctzKvtglnij1M+kLRqO4oLONj46WY8sL
-         sClSzi7xzDdbeqiDx3V9DJMsgMxkiJ3wSunK8xSsjIHWeddQL6T1Je4bVG9SvDh2/vIC
-         azBqLO65ZNsfY6OkEChuajieEB99xb1Sjf0p0ABi7tznhF057mmCf8Cmpr+tUFwpF/MQ
-         tlSLnSilpjDIqsT9rxlErVlDtyQnuyTS53VYFTyQCA+OlC8ucnFPyi56h7vfi580DBlT
-         xCCOW6chyEwdeY5XHksc5ZoP2SF4BBV0C9wMSUvGpsLGpaXsVYB1L2TPQA6CGzInwHeH
-         02Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740506609; x=1741111409;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8O4HWot5EUMVzTxv5rN66ccO0MtiNkXIqoN+/YVntbU=;
-        b=j0kBBhdonADiHNB4g1MPbCVjceIUxBmT4a4C4kt85kc6pQcNJjt6DnLNvueBxi3OmY
-         dYRXWG0sShHDDKu5Ww49dvpnABXpNNh7y3nU7m1aA/QmeHupWUAaRLRejfWwRgm+EZkw
-         H4NCLIAS643j/lA0+X+3AVwPUv6G8tS5fvmu9dAOBDcsa7YHPel8KzT7mSP5shH3afLs
-         Qvz2bkJygf3ClLTAZz0ZnWRhRn5z7Nooq2tzGpOux63JRlxEdm3YYoTHfvD5U20eeWuo
-         5rbMcwlkF/abtoOVsaiqYdCa9fIFn2jamRUfNsD+gb5cax9b+89g4DKXlvKeflaC600H
-         mWbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOTnYomWxbFW61DVqm5jqs0bovX9C5VavfgxCnQYmyNJlKPmfK2KvE2ErWFD8+2YiBLV78QejQIpfJFQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw9gteDBlsGqspRBIIElfZ0Rrtghi8K2E5kmDz1uoAByibyHRC
-	w+JdVvXRQcw7CXohrBFG8NRj68JUR8TxdWV/0l1JPh5hARgJgglyXRUCVrd1Gjc=
-X-Gm-Gg: ASbGncvSJIu4zMWr77m5T7pLzVpJLvpisOit9kPWJm0mdLkqHH82AYhavgNceZo5aDa
-	nu/ccET5K2/9bdPWenCXXBAbk6R+K3GDSIj3ZNclxAEGFfXeU+snsAk9PbjjxporubmlCB0K979
-	R5DbFmm07hJeBRxS3PwQAZYumjnZD84P4brwm63CdWBE4DcLUtM4u0RLZ7ptC7mTa18JmTxU74O
-	3uOwTIkBGmMGWrGKtzDuTs95Ag/SrBpNJDwEhD0hoJn8ASb3nEMPYhvaHUw2srpxxGejfHX7G+h
-	8t1kHfi4EytU+dVHk7tOARTYkhrjSzNHORMc96Z0IYf+zbcycbIWTjc/o1tJX9FydQb/OqNrWgv
-	1WU3WBg==
-X-Google-Smtp-Source: AGHT+IG0Zc7wZsxG0nheOFfzzmCVwdzpAM4bFH1CEvsvsI0SU1fbCv6O1tOWiwsm5/goJ00WgZzfcA==
-X-Received: by 2002:a05:6512:b05:b0:545:8c5:44cb with SMTP id 2adb3069b0e04-548510dc89emr2751908e87.31.1740506609286;
-        Tue, 25 Feb 2025 10:03:29 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514fb084sm234263e87.221.2025.02.25.10.03.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 10:03:28 -0800 (PST)
-Date: Tue, 25 Feb 2025 20:03:26 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	robdclark@gmail.com, sean@poorly.run, marijn.suijten@somainline.org, 
-	andersson@kernel.org, robh@kernel.org, robh+dt@kernel.org, krzk+dt@kernel.org, 
-	konradybcio@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com, 
-	quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com, quic_jesszhan@quicinc.com
-Subject: Re: [PATCH 11/11] drm/bridge: anx7625: change the gpiod_set_value API
-Message-ID: <rgdujikhrizof6p67cztu3oh4svy7do4okvowlgxg6rddeoqkq@hjc7pni57ilb>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-12-quic_amakhija@quicinc.com>
+	s=arc-20240116; t=1740506610; c=relaxed/simple;
+	bh=DCOUoVzVNSydpQ/dS03bguPxoI1g9gTndpvRpxQgL5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=srth9ON8cS7uxndXqUHBDmn9wpykmuZ+mn7qV5y1maA+YtJAU7Mx5QyF9K42QD+sYLEzHKYXXrKvvBHfDdlWluSJXAAjFEUWGE4kfCHe+cmYGfhPAAriq6CXlhiglvjXI6Kyz3mZz7vnDLrb/bQAo2hyrHwRrDrs4TgY5lwEF94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVmnxV6o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 989D2C4CEDD;
+	Tue, 25 Feb 2025 18:03:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740506610;
+	bh=DCOUoVzVNSydpQ/dS03bguPxoI1g9gTndpvRpxQgL5U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gVmnxV6oNNkD0+ncPquUaGL++hfjCkZTHvhFuvpdtUabzc6pemipfQ4iZYzu83xon
+	 pRwkkf5xh/DVcSTsBOX65vog+SrmsoUmcy6ISp3y3vPCDVurmE28vRuAbOA/+Ya32A
+	 JKlciHKttoak86VlLAj2HyuQbfVQNMDQmXlqq6l7ILI7CC/yt2TIsGXOa7JBex7k9t
+	 65QZV1j/M3zjdFuI0UtXgEQwMl9DrT46m6rptwZ/UblGoodb8aOozG/rzaulK2Gabh
+	 4Pk7Gy6R/BzrOashE02ihMAjxNzjWR1VF0rYixW9TLQ5/hZRNb8Zwm8AQ0/nOtbqBq
+	 3Lfft0A1FtP7A==
+Message-ID: <a003b144-0abf-4274-abff-a6e391a3e20b@kernel.org>
+Date: Tue, 25 Feb 2025 11:03:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225121824.3869719-12-quic_amakhija@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v5 3/9] net: devmem: Implement TX path
+Content-Language: en-US
+To: Mina Almasry <almasrymina@google.com>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, virtualization@lists.linux.dev,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>,
+ Harshitha Ramamurthy <hramamurthy@google.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn
+ <willemb@google.com>, Neal Cardwell <ncardwell@google.com>,
+ Stefan Hajnoczi <stefanha@redhat.com>,
+ Stefano Garzarella <sgarzare@redhat.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Shuah Khan <shuah@kernel.org>, sdf@fomichev.me,
+ asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim <jhs@mojatatu.com>,
+ Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>
+References: <20250222191517.743530-1-almasrymina@google.com>
+ <20250222191517.743530-4-almasrymina@google.com>
+ <a814c41a-40f9-4632-a5bb-ad3da5911fb6@redhat.com>
+ <CAHS8izNfNJLrMtdR0je3DsXDAvP2Hs8HfKf5Jq7_kQJsVUbrzg@mail.gmail.com>
+From: David Ahern <dsahern@kernel.org>
+In-Reply-To: <CAHS8izNfNJLrMtdR0je3DsXDAvP2Hs8HfKf5Jq7_kQJsVUbrzg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 05:48:24PM +0530, Ayushi Makhija wrote:
-> Use gpiod_set_value_cansleep() instead of gpiod_set_value()
-> to fix the below call trace in the boot log:
+On 2/25/25 10:41 AM, Mina Almasry wrote:
+> On Tue, Feb 25, 2025 at 5:04 AM Paolo Abeni <pabeni@redhat.com> wrote:
+>>
+>> On 2/22/25 8:15 PM, Mina Almasry wrote:
+>> [...]
+>>> @@ -119,6 +122,13 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
+>>>       unsigned long xa_idx;
+>>>       unsigned int rxq_idx;
+>>>
+>>> +     xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+>>> +
+>>> +     /* Ensure no tx net_devmem_lookup_dmabuf() are in flight after the
+>>> +      * erase.
+>>> +      */
+>>> +     synchronize_net();
+>>
+>> Is the above statement always true? can the dmabuf being stuck in some
+>> qdisc? or even some local socket due to redirect?
+>>
 > 
-> [    5.690534] Call trace:
-> [    5.690536]  gpiod_set_value+0x40/0xa4
-> [    5.690540]  anx7625_runtime_pm_resume+0xa0/0x324 [anx7625]
-> [    5.690545]  __rpm_callback+0x48/0x1d8
-> [    5.690549]  rpm_callback+0x6c/0x78
-> 
-> Certain GPIO controllers require access via message-based buses
-> such as I2C or SPI, which may cause the GPIOs to enter a sleep
-> state. Therefore, use the gpiod_set_value_cansleep().
-> 
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/anx7625.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
+> Yes, we could have have netmems in the TX path in the qdisc or waiting
+> for retransmits that still have references to the dmabuf, and that's
+> fine here I think.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+skbs with references to netmem from a dmabuf can get stuck in retransmit
+queues for a long time. The comment should at least acknowledge that.
 
--- 
-With best wishes
-Dmitry
+
 
