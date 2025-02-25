@@ -1,139 +1,159 @@
-Return-Path: <linux-kernel+bounces-531423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA91A44061
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7ABEA44057
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DFE19E0407
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A140A1653BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8113D268FE9;
-	Tue, 25 Feb 2025 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEA1269835;
+	Tue, 25 Feb 2025 13:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NBAza7K/"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Y68DGfYD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C8E268C40
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F51269827
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740489049; cv=none; b=PqPFrY/7RCd8Szl4Vp95TErp5a2UUOrtVUTYxjWsLjjrWc6d0kaXobXrsScPEFeisHB8ewze9H9sVRGArcIZRu/zFu4qAqrT0KwiqNsbU5Y9b6DUkLjBegrgB3N0Hp5RIGNqqIdVhG8eAF7jAEMtXs02CwwlNWPpuujYu6ZEgpo=
+	t=1740489054; cv=none; b=hQmfA2oxTZKewxP1m1wIKiQlMqhG04YUAA09IKZaTKZCH8XXLVnfGASDIfgMV9/F+Cj2pjfjoxwkH1DQYNyUz0BtQpO5YQK4Wnh1pBZ3OY9ThGw2UdkPfdYzWAfm8Cwh/3RvibaMrTay4Jxzc3zPtYzoQ6H3YFXif0jUP8v6GdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740489049; c=relaxed/simple;
-	bh=5YEF+jstnWy7/0vubwbJg7dOnf1P4zQx345sO6nYAWw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eQYSg9W06F/YTTtxZJydM/Uu/K+hb7oMhG2u1pp+KvpwpetulQg47QL+rHZpiCQwfeKFR4KeGd5e5OU+HRkbby4HZmE0GCYIRUL9A3oUhLradWJ2Yb12TEDbZf+/jtBdqUHZQB7a6iJrGP08VoU1GDJGPZ8ceK5uPJYhnfEcoN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NBAza7K/; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6dd1962a75bso43322326d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:10:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1740489046; x=1741093846; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkagoJjJX//F8ZAz8tjpxEvWJOpdWzJAPbQJpEIxATI=;
-        b=NBAza7K/oTqn5OCcFwJ6CX3QoWa12k2ihcnTn6hAZEF4ErZIhPUIORvgwK6PgpT+Tk
-         5Dz+ZXlnJMmxzghrffOacS3nXN9lUsZlKaDWjQChUzkul745kR/MOBomgh+Z+52+hcWv
-         33ZOeZRX7VG38L5aaK26fBwVXi2FPrX3k+r8c=
+	s=arc-20240116; t=1740489054; c=relaxed/simple;
+	bh=yx0DiXFYi2E0RAolLE2o02wku5Alo0N6dJAKu3gpUDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ShweaEnVU7xzrRuRnq/ore9/Ax29cGx6OQUd6I6NjrGtDavisyat4PXTaYIgWdO5WAdxbZqW2YoCvuGGkJlzDTOMSP00bHD2C5AJyJChGI/zfOhPFu9m/UD12MV9gshVarSDPlvEjCPWutrfLf4+z2X07si6RndbdD608rxg6ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Y68DGfYD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8K7Xr009785
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ygYBZ9DB9YSUCjV3ts2cfjtg+adg0ivMA3fujfqgrNg=; b=Y68DGfYDj77qcMi/
+	2zsZ9HbdnbaJtJBwogbovVpvx5PL2FfTM6m/9CP6Y3reVov7bO7IGYiXgOcZbMPy
+	IHLXWgi3pWlEzDd/tLKl6oprWdUWAC+EpMHSqZyV7D7Q6AwSfCOr/Yt9jiZMyiL5
+	Q0D/LwQ+7/aCd8XPOc9HMpMNLhcS02cYhuRQNY2YpmzFb4//9ErBePNtEPWqFmUM
+	UfgoeXZrmwSfUpmMv6lIvnOw2PwCUIMdIxyMYvywsZ6295g45Hnzn9vV6EzZv0Zt
+	JSVmw0bwm2G68C/kVpTQYQ4NNq6bwF6/ui3/5Q3U403MyySCdLLD+xgU/aFql3SP
+	W2mRPw==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xnh658-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:10:51 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-471edf114feso6217341cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:10:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740489046; x=1741093846;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IkagoJjJX//F8ZAz8tjpxEvWJOpdWzJAPbQJpEIxATI=;
-        b=VFhMw6xvP6+v3Kne5VWmSG7h33eL5XWCO/v3HJNerWgGh3Jry0AYz3hrqJ2itYX684
-         uRqyrsJkWcTNsjZp0FmQZ1sLGltcb0Ux6sez/sx4v45/kpoCcK4oA7JOrnluVzTPJC/K
-         6QIah8+zSwalUfsJzz6kYH1j2AUkKwdw7vO9YkhoNOBxcewg2q8DCuAZL8csq+IWGDPQ
-         ITLZUUZrpyKd2Ck7ifnEMRdRPqo5hEGuqXp5cDz20WhqwuL8Phb2gcmJ+0DzhVyBZfMG
-         wrqo/FjIw7zCZeM1cZSO7NkZ79a6eh013wJI1v0kiXPQCJRY47+bNliGE0NPM3JClLT1
-         osWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmSO63VNkE9ROIMEM8PXrFQymasrgWgd39KfTET3y3BqfSQzKnRIyXea2ndZFTt7UE7ZCBfaeKyuzU4ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweiC1qCzbpW1IlX6EVEuiujNdI8YRgMoDVj8qQ3CN2G1NyVY1e
-	7ZdTRG57bhEfOB6PrBCE3dJ4ZALaN9ad3TvTQc9kZlR+xk2wKTy6aVF+7T32Fdy23qCIbbU26TA
-	=
-X-Gm-Gg: ASbGncufQ3Z7qwQEC5pKSyawhodkQNVpxb85dOkGfQPm0CnjrSZXawvLUJ4XXd8u6bp
-	IhPE21HbVXRJy9gB8+uFhxppcxlGE9E+qTMZDLaain+tRPImNNIfB9arPgfgxd7IpzZYIFItbnm
-	mo1rXxqarwTDm2DSm4u53Tzvnb/uQz/7sNIgRxepxAEYiCqJzFtcvsTYrFEaYptdQMajHJJ5uj9
-	Pq8BnNPJxucVN0pVacIcxDRiXL9hJrtanzzyzo2AKCWH2mlGyQkFSMgoBK7/ceU39tw4S8Foz7s
-	sJWuQrcctYap+D6ib4c/kGFw77Fwysi4+xoR8zRHW2WnP0rRJ50wgYD0oB+MSRxe3+yAT8Ooxrw
-	4es0=
-X-Google-Smtp-Source: AGHT+IFStKQAwWRvJwouI6DTl4jomer8HvasLLUepvoeRNew+SRO7KoDYWAAQMXggyGTsUqWvxI86w==
-X-Received: by 2002:a05:6214:c2e:b0:6e6:66a6:558b with SMTP id 6a1803df08f44-6e6b010ce3cmr238375676d6.22.1740489046280;
-        Tue, 25 Feb 2025 05:10:46 -0800 (PST)
-Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b0871d7sm9263656d6.28.2025.02.25.05.10.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:10:45 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 25 Feb 2025 13:10:41 +0000
-Subject: [PATCH] scripts/spdxcheck: Limit the scope of git.Repo
+        d=1e100.net; s=20230601; t=1740489051; x=1741093851;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ygYBZ9DB9YSUCjV3ts2cfjtg+adg0ivMA3fujfqgrNg=;
+        b=q1fDxYS7yo5wsCsRHp8V9htyIcuQd1FX4Bw2nRx15Xl+6KtP6O6pKuhKt0BkCwpJq3
+         /HMkPjdVeMZCT1lAwvr2IXzTs+Tkij35FcnfXm4DKLwq+/UIZKkJEvL+35pMO6962/dX
+         PT4MUOH55whz8MrAAYgwLlAfbGOMtOIxXEdYIT+wNEqMOijhfJNmycKgpodx4dfK30JM
+         hlsZS/s9Qn7upDD2aRg/zpL+DO+zeA4+BehTb1ysB9Yd7WsNFfVaVu99mE9gsfZnIK3U
+         pkSqv+NfWjinq2c6VaKCpaFZlVGaCqJ+JW1wcDTv+LM5ZAuDiEY3kXOBnsdrCt9bt/co
+         4OoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjpRIOJK7yVWER/9eoZBD5chGmZ4OXhmsGo/Bj1bDIDRgP88f8jAVGvnXweHc+oGEKE/c7dO8db5o6IuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysGxYEu7yTn6UNJg2PZjtE7mrr4LUWyrCJThymcsmC1uWoulDW
+	XDlhzLmSHADym1yJ8hrc9P/StEzCIWX0Ms51DlR5J2yHU2jiWLI5i8xdnE0zc8AuWrNJf5G+Lvp
+	rSIMRhU8lpXjgon3L5cxBS1jWav4DFYuV7TDaTDEqS360ybHX1VKbprEfAZ6pMrk=
+X-Gm-Gg: ASbGncv0/jKQ5jUUkccJbikxDO0ThH3JE47CoOouwRB2tC6IklrxqthhBhEKFtLKEaS
+	GkgG2ntuRAJs/lOGx/WxbX12N7amwlKnilGIklKUvYhliCVlV0INyaveI5ZhV+IYtQ2oZs/rLOJ
+	eritzzJfDsOf2nVyXfgQs6ypkxOHPXZBiuINU6SLsqJgpGNArZPqSCEDvhWszbMH4WS4ENDJYtA
+	vPKw0MNMmUXpajv4CgDRGm+WL94SB4n1G0OWBU+NFMS11UJ1C2/egtg0qljYkg5u20KDDkaBc/i
+	DRoCPix+bhE/XZM+A4NB2hanrjtdOcC84Bu8mEt8OZDGqgRTokVyXl3UjNtWuBt8jM9tVQ==
+X-Received: by 2002:a05:622a:494:b0:472:801:3e6f with SMTP id d75a77b69052e-472229771b8mr97835141cf.10.1740489050896;
+        Tue, 25 Feb 2025 05:10:50 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH0xw03/W+6JbMalKdB3Xj87E8H+dMaQ9tekePz+MT52R83K55h5CarFRLbuABJFco6rOWFow==
+X-Received: by 2002:a05:622a:494:b0:472:801:3e6f with SMTP id d75a77b69052e-472229771b8mr97835081cf.10.1740489050525;
+        Tue, 25 Feb 2025 05:10:50 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20122b0sm140606566b.107.2025.02.25.05.10.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 05:10:50 -0800 (PST)
+Message-ID: <6600a115-a935-4d21-996f-e2251777fecb@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 14:10:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/11] arm64: dts: qcom: sa8775p-ride: add anx7625 DSI to
+ DP bridge nodes
+To: Ayushi Makhija <quic_amakhija@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: robdclark@gmail.com, dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, andersson@kernel.org, robh@kernel.org,
+        robh+dt@kernel.org, krzk+dt@kernel.org, konradybcio@kernel.org,
+        conor+dt@kernel.org, andrzej.hajda@intel.com,
+        neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, quic_abhinavk@quicinc.com,
+        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
+        quic_jesszhan@quicinc.com
+References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
+ <20250225121824.3869719-8-quic_amakhija@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250225121824.3869719-8-quic_amakhija@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250225-spx-v1-1-e935b27eb80d@chromium.org>
-X-B4-Tracking: v=1; b=H4sIAFDBvWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyNT3eKCCl1jC6PkNFMTY2Nzg1QloMqCotS0zAqwKdGxtbUAChz0rlU
- AAAA=
-To: Thomas Gleixner <tglx@linutronix.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-spdx@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.1
+X-Proofpoint-ORIG-GUID: Rr27sGQr4djWQOX2SvHMqTa9J29VfVqb
+X-Proofpoint-GUID: Rr27sGQr4djWQOX2SvHMqTa9J29VfVqb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250091
 
-If the git.Repo object's scope extends to the Python interpreter's
-shutdown phase, its destructor may fail due to the interpreter's state.
+On 25.02.2025 1:18 PM, Ayushi Makhija wrote:
+> Add anx7625 DSI to DP bridge device nodes.
+> 
+> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 136 ++++++++++++++++++++-
+>  1 file changed, 135 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> index 175f8b1e3b2d..151f66512303 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+> @@ -517,9 +517,128 @@ &i2c11 {
+>  
+>  &i2c18 {
+>  	clock-frequency = <400000>;
+> -	pinctrl-0 = <&qup_i2c18_default>;
+> +	pinctrl-0 = <&qup_i2c18_default>,
+> +			<&io_expander_intr_active>,
+> +			<&io_expander_reset_active>;
 
-Exception ignored in: <function Git.AutoInterrupt.__del__ at 0x7f1941dd5620>
-Traceback (most recent call last):
-  File "/usr/lib/python3/dist-packages/git/cmd.py", line 565, in __del__
-  File "/usr/lib/python3/dist-packages/git/cmd.py", line 546, in _terminate
-  File "/usr/lib/python3.13/subprocess.py", line 2227, in terminate
-ImportError: sys.meta_path is None, Python is likely shutting down
+Please align the '<'s
 
-Use the `with` statement to limit the scope of git.Repo and ensure
-proper resource management.
+>  	pinctrl-names = "default";
+> +
+>  	status = "okay";
+> +
+> +	io_expander: gpio@74 {
+> +		compatible = "ti,tca9539";
+> +		reg = <0x74>;
+> +		interrupt-parent = <&tlmm>;
+> +		interrupts = <98 IRQ_TYPE_EDGE_BOTH>;
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- scripts/spdxcheck.py | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+use interrupts-extended, here and below
 
-diff --git a/scripts/spdxcheck.py b/scripts/spdxcheck.py
-index 8d608f61bf37..eba808cbaeeb 100755
---- a/scripts/spdxcheck.py
-+++ b/scripts/spdxcheck.py
-@@ -349,11 +349,11 @@ if __name__ == '__main__':
- 
-     try:
-         # Use git to get the valid license expressions
--        repo = git.Repo(os.getcwd())
--        assert not repo.bare
-+        with git.Repo(os.getcwd()) as repo:
-+            assert not repo.bare
- 
--        # Initialize SPDX data
--        spdx = read_spdxdata(repo)
-+            # Initialize SPDX data
-+            spdx = read_spdxdata(repo)
- 
-         # Initialize the parser
-         parser = id_parser(spdx)
-
----
-base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
-change-id: 20250225-spx-382cf543370e
-
-Best regards,
--- 
-Ricardo Ribalda <ribalda@chromium.org>
-
+Konrad
 
