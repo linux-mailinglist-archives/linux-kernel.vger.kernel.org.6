@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-531732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36A8AA4443C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:23:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6F5A4443E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 554AF170EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05E71188BD31
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD66C26B958;
-	Tue, 25 Feb 2025 15:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF3B26BDB7;
+	Tue, 25 Feb 2025 15:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DdulrPYi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gu/o1aR/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 237EC1FBEAE;
-	Tue, 25 Feb 2025 15:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C92A26BDA4;
+	Tue, 25 Feb 2025 15:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497008; cv=none; b=ZjSDmn/3LJ+1ND3RxzaCdpnUUZGbZcH/tI966fg0OJZRZhaW4mfEw7dDEntz482OZtIXaohl4xQxO0tWb0BIyAXLvs+218lFMwb3jrUoghR4r+PIhWId23E23r0JKRSFMnqnPjna/YkYqh0FunpQv4GkSdVrIrzyNwZXMfL5Kz0=
+	t=1740497010; cv=none; b=AP3dSoFad1Yz8Ug2x5SdawANMS9zZ7ljsAQHd6bPXGYdP0rlWCzQjIn1Ub5KHfsmY0+7o+6Y6V3O4RXY5CZAqtRkbSAcGglUQbhkb2jLcBGTjLf9RBTReUvvEaXo3NQrfQokxII/+lAYIc21ClVzzlU0uJjD4/nNmbQ3LIwQKyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497008; c=relaxed/simple;
-	bh=+afvHQcPpEDdsffOzlrEAUhpoQQo9ExNXkrAwMiFtzY=;
+	s=arc-20240116; t=1740497010; c=relaxed/simple;
+	bh=Tzn/9eNWuHdFVskUYV6vkNglzOC0sJhfMg7yZDmW82U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ulT1ldZcG50vtTz2sYOjkUDvkpMUQtgZVGsjx+NYYqsLZA6pmTL3YoslEVfV1DZ6z4LAi8Zb8iSTIbW5QFWYByz+yo/TQWRjbptfQXlPgkEGCo5NAiNNmAU7u8+3kv8RtT9sHGbwW6OVmUK4W29GRp8LL9dHj8dyrWavpWgT2Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DdulrPYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2286C4CEE8;
-	Tue, 25 Feb 2025 15:23:25 +0000 (UTC)
+	 MIME-Version:Content-Type; b=GdUjAu/YLGsz4qLFBSxlKPjdMPgxUAKD7CvrdqS8z3qfDTrBvFGLMYNbh8BshgYVMqBGNnqggHgevsmDkwTNnUJAfu2ZvrCEFIhvKuTbbDsFpa5eZvxQRnI3g/98xAnAOnw6oAikub3W9XaMi0bKgoNYEFW9B6jMZ0sRx/zt6lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gu/o1aR/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BF54C4CEDD;
+	Tue, 25 Feb 2025 15:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740497007;
-	bh=+afvHQcPpEDdsffOzlrEAUhpoQQo9ExNXkrAwMiFtzY=;
+	s=k20201202; t=1740497010;
+	bh=Tzn/9eNWuHdFVskUYV6vkNglzOC0sJhfMg7yZDmW82U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DdulrPYiO4NYI2Abum2GXf2vOdqF24uZiIF52zev0BRIecEoAg5xjww/v6PHDjlyC
-	 D736Y3k0lt7oxBL75mEeOvWrnUMnIDn/5UXAgd9h7R7MX4ikVK6J1KYqAC4M0gQYdD
-	 CVjikHSFWsU0ikYqyt8r9JhlGPu4kPHUCL1WbXj+DEWz2vyQdC/ZaQ2vd99Chl9cBy
-	 lrG0Ih3n5pSvKmpN/6R/1drlFLNMjhPrvqbi8kX8+bpHQ7zsk+cllBlild0PEDlO6a
-	 dC5A8csJ4M+yAsGTAoycII5YbWGjBrokf0BNPQRk49ROpzJp6gX1oOfvqSEnGO9qfE
-	 P2Xvjs7vgachA==
+	b=gu/o1aR/lmSVyHK9F3eiDPcxFDUTIlT4zmj7kAA6rXq5qDsAzvYeKtvIMfg9CGxvH
+	 tKUAuBEbQbFjkhqkeyX9jF82FMatB+xSVMi0x6xxd7XWz+tOxCZ9EC7ttH/QF4WO99
+	 ZkzfxK/71Hg2hSCrf3tmH9O+IPTygZI99kwZzcGxij95lbGAp2o+HziAECGvBPJhd9
+	 8FTYsX37A06nIBlT2pWeos/wsRQGTxgJpf4tZxJ3f6ILzG3tVAt5OmZCvt1ZLyEPGK
+	 lbndOS4DltfphidRKZv07ru2tgifG7PRDcn1f3zQoYHVEOjrjjvVQvosEoVJ7w1Fgd
+	 25ii37gvR0HRQ==
 From: Mark Brown <broonie@kernel.org>
-To: Markus Elfring <Markus.Elfring@web.de>, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, linux-sound@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org
-In-Reply-To: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
-References: <20250222-q6apm-kcalloc-v1-1-6f09dae6c31c@ethancedwards.com>
-Subject: Re: [PATCH] ASoC: q6dsp: q6apm: replace kzalloc() with kcalloc()
- in q6apm_map_memory_regions()
-Message-Id: <174049700536.77394.10930423942125840620.b4-ty@kernel.org>
-Date: Tue, 25 Feb 2025 15:23:25 +0000
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250224221214.199849-2-thorsten.blum@linux.dev>
+References: <20250224221214.199849-2-thorsten.blum@linux.dev>
+Subject: Re: (subset) [PATCH] ASoC: amd: acp: acp70: Remove unnecessary
+ if-check
+Message-Id: <174049700783.77394.8393718992202773075.b4-ty@kernel.org>
+Date: Tue, 25 Feb 2025 15:23:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,14 +64,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Sat, 22 Feb 2025 14:55:20 -0500, Ethan Carter Edwards wrote:
-> We are trying to get rid of all multiplications from allocation
-> functions to prevent integer overflows[1]. Here the multiplication is
-> obviously safe, but using kcalloc() is more appropriate and improves
-> readability. This patch has no effect on runtime behavior.
+On Mon, 24 Feb 2025 23:12:12 +0100, Thorsten Blum wrote:
+> Since list_for_each_entry() expects the list to not be empty, the
+> iterator variable cannot be NULL and the unnecessary if-check can be
+> removed. Remove it and indent the code accordingly.
 > 
-> Link: https://github.com/KSPP/linux/issues/162 [1]
-> Link: https://www.kernel.org/doc/html/next/process/deprecated.html#open-coded-arithmetic-in-allocator-arguments
+> Compile-tested only.
+> 
 > 
 > [...]
 
@@ -81,8 +80,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: q6dsp: q6apm: replace kzalloc() with kcalloc() in q6apm_map_memory_regions()
-      commit: 63d93f4d0f38fbb95a55729fbd2cc4920743931c
+[1/1] ASoC: amd: acp: acp70: Remove unnecessary if-check
+      commit: 8fd0e127d8da856e34391399df40b33af2b307e0
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
