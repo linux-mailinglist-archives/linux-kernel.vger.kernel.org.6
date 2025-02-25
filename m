@@ -1,81 +1,137 @@
-Return-Path: <linux-kernel+bounces-532677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D283A450D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:05:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D7CA450D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Feb 2025 00:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1A34188CB1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:04:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C93616B0CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B74D235BF4;
-	Tue, 25 Feb 2025 23:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CDE2356D7;
+	Tue, 25 Feb 2025 23:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="lplbe7pz"
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=personaltelco-net.20230601.gappssmtp.com header.i=@personaltelco-net.20230601.gappssmtp.com header.b="hqplqFEV"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2834235374
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C842E2356CD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 23:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524639; cv=none; b=g2aq/QMBuroT/F2YeqZ5klCCNBxmHI7KRHeO1r/TVAYdW0drxEdxxqkEBidvSDse3fvUoNxhftYZ+Ww1ZSUfnZEXrUosWavF+rV4UpQQOiuq7yY9mVVW613o89j25llppUV0mAlmpZH/uUvWZpJaiYvlL5k015AyKnRMgsOUf0s=
+	t=1740524911; cv=none; b=tsxqNEm+mTjDxdjIq3B6jWT4BSGLxn+E6o8t8wxfDLmeZvYOtS8BF9hQOPSvi3sYGklEKLxhyFsDVD1TSaTf/6zKvXH0pFSGepOuPvaaCCXYwlSKeiZcMQj+cH48QCGyrFDYsmhGb8/wvS4HyS/XEHH39B8JqtpapqknW0/ZXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524639; c=relaxed/simple;
-	bh=pBz9I+KEaZOCbjA3ZwZoxg+hI8zX2LqoHPTGBpCbDpw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c2Az2s3pMguBey/2uUBK5uKnSsUh0ZecxQc3npm2nzvzelLwVMBv5Xe84N2E30YvttuYXXckbEyagqvw2GvOsVIovbKi3MMWmmZdo5SEMK1vji+ykK5gv20AninA06ym+seEZcop8HKaPZP6JAxfdHX362ZJFRy5QXCEeOZSe2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=lplbe7pz; arc=none smtp.client-ip=79.135.106.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1740524629; x=1740783829;
-	bh=pBz9I+KEaZOCbjA3ZwZoxg+hI8zX2LqoHPTGBpCbDpw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=lplbe7pzev/w97HAXcMMMF629/PR7plhtfwLzZZ6S2FhCJ+B1twvwwMoFHMubBxr/
-	 oGTYZlftNzw9ppNA8QIZ5/lZpwusmMar2uSmH2Os+um4gAULhWiHEZfKMB+J4/uzJF
-	 U1QFWWyqnm4rJ2Rp6YlGZKqCBJBGrhRNlJ0SpESLeUWQwUH8LnWyqBP15qlMeoGng0
-	 6Evjuw/G73Blw4DEPcdmzvtyXUAnb/nziyezdleWFjOPWUHIC5ExbIokVoea6Ie/u3
-	 iITUnOR0OuTsDadYK2Tx2cGJiXzsg8kMUKCbikBHFNWG/VJDIoiGrvhuGrvjtmRHBv
-	 3v9mdz2IE2eDg==
-Date: Tue, 25 Feb 2025 23:03:44 +0000
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Ventura Jack <venturajack85@gmail.com>, Gary Guo <gary@garyguo.net>, Linus Torvalds <torvalds@linux-foundation.org>, Kent Overstreet <kent.overstreet@linux.dev>, airlied@gmail.com, boqun.feng@gmail.com, david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: C aggregate passing (Rust kernel policy)
-Message-ID: <ad82d675-80fc-4826-957b-6b6a66d4c9aa@proton.me>
-In-Reply-To: <CANiq72=L4AHq0dNYV-KBsYy_TJwfDRwR+GTJn81EXs=xefvdsQ@mail.gmail.com>
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com> <4cb1d98b-f94b-410a-be90-4394c48bdbf2@proton.me> <CAFJgqgQ3P81-iskGu9R+T=c=wyB2K0JqUhx+Gj+6mkYeY8-ORg@mail.gmail.com> <a4b79751-f1c8-4476-98a5-c59fb2e545ad@proton.me> <CAFJgqgRdiQ29bWvwsu11yokZb4OFF7pYYUU=ES6CYv9847KgVg@mail.gmail.com> <c05cb400-969d-44a1-bd40-9b799ed894d7@proton.me> <CAFJgqgTs3h5YagY1RU2AZf3wKWKfXiPTE2mx7CuWyzN=ee-k3g@mail.gmail.com> <137dd7ef-b8f6-43df-87e0-115f913d0465@proton.me> <CANiq72=L4AHq0dNYV-KBsYy_TJwfDRwR+GTJn81EXs=xefvdsQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: fc2b64091c08ed25fd75ed65619672fc39128744
+	s=arc-20240116; t=1740524911; c=relaxed/simple;
+	bh=VNs+uNKbsgOog+ykksQ+V6UNOoc4YAhlJC8TKboxdKg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P+YFzV04IO4biONlKcuN2B0AlJasmJISQxZ4OF/3enxIZtwwJ2rZWHt6G/6fsMwwwTB+UlxDiXiE52s+yHkiqJDlqU3Ouy91EuZ8WdUeMPkfka7Lx0ohrDAc58ey/ssoiwI6KQmgjcjJmAezkFlJK2U/0Df6sOdl5+FZZcdQn2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=personaltelco.net; spf=pass smtp.mailfrom=personaltelco.net; dkim=pass (2048-bit key) header.d=personaltelco-net.20230601.gappssmtp.com header.i=@personaltelco-net.20230601.gappssmtp.com header.b=hqplqFEV; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=personaltelco.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=personaltelco.net
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c07cd527e4so576101085a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:08:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=personaltelco-net.20230601.gappssmtp.com; s=20230601; t=1740524908; x=1741129708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWly2J8lVB0HlIyvQqVH+YkHOO56M9iLE6aUYkDuMV4=;
+        b=hqplqFEVWNfPlc2c+gsv2/DzXYT9vAhV337cwXgfXnfgZh269+OpXYwy94j3D3DlYp
+         9u6qEnDGa4vLCRxyR9e4/yCUZUSf5Jj7fIw4PlTzdDAMRD3YX6QpSHWwqhdO/gRbnBYW
+         m1yD+p3/CrXKcJaZtKrgVzGF/w+Wf7Z9kQK3PENzePmlzZri44iuxzv3T1+r4dlRWv+W
+         9hEV50H9tCOYY7R9adQ7W6q/+C26pGC4b/xlcKLgnu864JCwv1/GADG1EipLO1jEHO0W
+         BrneN2DL1Xv722c4xUe/TUVTfe6YkoAML2S/U/Wlykqwe9eUYEbwfIOOIKRzQgQkJ/EU
+         uBbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740524908; x=1741129708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lWly2J8lVB0HlIyvQqVH+YkHOO56M9iLE6aUYkDuMV4=;
+        b=rjoWnb6jDqV2e5aXNI/yAMR0h1M934i10BBQd0X/B10T4Zqmex3cow5SlmZG970sgW
+         nGidFRHczzmoSL8z52x1Bs46pwJYBJFLx54uKn/gX8PSJiWfBU8im8tRnSEGs+fgMXHS
+         82v4vDnQpM0xEQpHmkI9nnSs4AeUq6R4X8xN6dvpcjwbh5qXHs/cB8Dp+rHbSGAGHAZe
+         it1zfV/kZJcH2XZREViHXemEzYM+c56Nb4269IWBVA5ggHxUuTMlkeBF4rPQxiXjbCEw
+         XIjiGlpJixTlwJiK/JSodzpEkUbTKv3h3Ba9DJTDRzxsPyIpXtF+0HfU70xO8xSZgKd4
+         zgXg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCv1qBOxz704Lq7pPQjBnwbWdX7OUkZFi3oOh21RpUiSPVFAySbcgsEi/2buaeXqFi+qD7euD2E28h+H4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwukZn4XPV8ejK2arSFCfPUErADFiLYCl1q/964gKa5942xouSz
+	UP506BhhY66Uk/E5RK4319RuI4csSxryAeNX9vsZKzF0lSzHYT0BpUzQGFKVDgplSMRXc/ZKMW/
+	81JHFyr9hUksdwjAw3vQVAzjeFR/34GNzhTme
+X-Gm-Gg: ASbGncsza3idJ6U1k1mf4JXZvxqAhUMqmWLQssXp6DQivjSoCGjDqm2laE2JjBdZZlG
+	P83HGD3qYqNtW8U22PB887VjnzXafWTTwdpqCA8goJeptKaAJiuA4BdY5VhQvwntkt+Fa6X8kko
+	A9KUuF4FU6JbVZFNBD8TjTFyP3HVbwhkL85T/rJg==
+X-Google-Smtp-Source: AGHT+IFAgVwhH4HdLzQV8uBFYFR6SFQGxRRzGSQlemolq5sd/0Q2ovmx5MYigtWBuD3S1eHnRv0E3uyefDA4Fdngr5g=
+X-Received: by 2002:a05:620a:192a:b0:7c0:b018:5933 with SMTP id
+ af79cd13be357-7c0cef0f10amr2291690085a.31.1740524908641; Tue, 25 Feb 2025
+ 15:08:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <CAHP3WfMgm_rYWBL9DAeWUn0ERsdFjb+ySSFxsRLNkj2us6UNQg@mail.gmail.com>
+ <CAHP3WfOgs3Ms4Z+L9i0-iBOE21sdMk5erAiJurPjnrL9LSsgRA@mail.gmail.com> <Z745J8VCJ7YNbUiX@gmail.com>
+In-Reply-To: <Z745J8VCJ7YNbUiX@gmail.com>
+From: Russell Senior <russell@personaltelco.net>
+Date: Tue, 25 Feb 2025 15:08:17 -0800
+X-Gm-Features: AWEUYZmApdTCESCebWKANwQQwcQDNwAYpndMsaA_qBYxp0CPU-IRG19oqiQEhmQ
+Message-ID: <CAHP3WfPqcxcBjQoKHbO3=0-hpJ6oNOeT-C8WP9hYFJqTDPjotw@mail.gmail.com>
+Subject: Re: [PATCH] x86/CPU: Fix warm boot hang regression on AMD SC1100 SoC systems
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Matthew Whitehead <tedheadster@gmail.com>, linux-kernel@vger.kernel.org, tglx@linutronix.de, 
+	luto@kernel.org, Jonas Gorski <jonas.gorski@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 25.02.25 23:47, Miguel Ojeda wrote:
-> On Tue, Feb 25, 2025 at 11:38=E2=80=AFPM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>
->> I do not get UB when I comment out any of the commented lines. Can you
->> share the output of MIRI?
->=20
-> I think he means when only having one of the `pz`s definitions out of
-> the 4, i.e. uncommenting the first and commenting the last one that is
-> live in the example.
+On Tue, Feb 25, 2025 at 1:42=E2=80=AFPM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Russell Senior <russell@personaltelco.net> wrote:
+>
+> > More poking/prodding and coaching from Jonas Gorski (cc'd), it looks
+> > like this test patch fixes the problem on my board: Tested against
+> > v6.6.67 and v4.14.113:
+> >
+> > --- a/arch/x86/kernel/cpu/cyrix.c
+> > +++ b/arch/x86/kernel/cpu/cyrix.c
+> > @@ -153,8 +153,8 @@ static void geode_configure(void)
+> >         u8 ccr3;
+> >         local_irq_save(flags);
+> >
+> > -       /* Suspend on halt power saving and enable #SUSP pin */
+> > -       setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x88);
+> > +       /* Suspend on halt power saving */
+> > +       setCx86(CX86_CCR2, getCx86(CX86_CCR2) | 0x08);
+> >
+> >         ccr3 =3D getCx86(CX86_CCR3);
+> >         setCx86(CX86_CCR3, (ccr3 & 0x0f) | 0x10);       /* enable MAPEN=
+ */
+>
+> That's really useful - thank you!
+>
+> I've constructed a fix patch from your mails, attached below. I added
+> your Signed-off-by to the fix, let me know if that's OK with you.
 
-Ah of course :facepalm:, thanks for clarifying :)
+That's OK with me.
 
----
-Cheers,
-Benno
+>
+> I have applied your fix to the x86 tree, if everything goes fine it
+> ought to go upstream during the next merge window in ~4 weeks, with
+> v6.15.
+>
+> Thanks,
+>
+>         Ingo
+>
 
+Thank you!
+
+--=20
+Russell Senior
+russell@personaltelco.net
 
