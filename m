@@ -1,274 +1,225 @@
-Return-Path: <linux-kernel+bounces-531764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9303FA44487
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:36:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2C9BA4448B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B37933BC92F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:35:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193244238B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5162715534D;
-	Tue, 25 Feb 2025 15:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840001624F7;
+	Tue, 25 Feb 2025 15:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCArztDA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MacJrO2+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ACC21ABAF;
-	Tue, 25 Feb 2025 15:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A716B1624DD;
+	Tue, 25 Feb 2025 15:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497719; cv=none; b=DaWeuVNQ/qb33709QbZSEjnIQ2opv/yFkfxXQ2PCMtLJk7vr3B6MGBG2057mCuAPW2icjfJSQMVjpKATXky8/Zf7rofdhWZG+8gDYtpqxLvytAuVTmrh0k+Bx9DqdMimN7UAvJjwyPCcdrOZHz30MISQZBsAur5tUb4XsRjFBNQ=
+	t=1740497723; cv=none; b=cKCgYT5ZcM4W9nNlmJ7n9TGd7afHBU1TTFi/2F0N3ChTQkOu+v6+veAcqKHWFn++Lh2ebQR8InXeNgRoRFLKgchtmrKf/OAqb167Gnm2xdsDkBDN6BOeta8AUeSKIjHog9RdK8I1RW5rvLO55w4+HD+8nhj0fTe147hZfWt40v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497719; c=relaxed/simple;
-	bh=bp9oZvL4RjxCwLE4GDLSsOKNBAf+jW4nFVxebzeOHuQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FQgHRDlNIrO5LDxa6fOe2Tg8hr4lUbAivRik/WYASE6XNXVgO6+tOVOZCTyOBCzzKQBMoTAvy6b2sUgdknPNEJVunkv6Jxet9oPivTd3SBjteTsj8JdkedOnyp/1qzUKL1DPI+xUkbxpQCZKkFQdLRYSRbvneRlq2H242GJFFJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCArztDA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA567C4CEDD;
-	Tue, 25 Feb 2025 15:35:13 +0000 (UTC)
+	s=arc-20240116; t=1740497723; c=relaxed/simple;
+	bh=XItyUEZepBSi+iNDaSIT9S/Mq6Xh426aEX3xchTQv4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e640nWYMQIlVmhhvLjHNatdTXM380s2YxiyB3RkxWUy704Xb3Py8LvRDaxQIfn7VsaVDXUMPu3BgwyLP6BxQN1JuRHEIZ4oeMxbxTxQYYKX4SdEeh4F0nxE5vlxQYg6T0kCfM4xIO7yGZomzq/Ww5RxK6iKVPsFp7DN+UROCZfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MacJrO2+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F2C7C4CEEB;
+	Tue, 25 Feb 2025 15:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740497718;
-	bh=bp9oZvL4RjxCwLE4GDLSsOKNBAf+jW4nFVxebzeOHuQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SCArztDAOEC0cjov2xuTkVWMG4aYNAhdWgJAvIGBrkFaMIb/0kyyRAaVpNURLy2iN
-	 xQgRiMORgEImRMCI7UuBDoyeVrdS3VNYdsSbyY19r/8BGnGNhc75JnB8oEtqvk/cQm
-	 eURDT1BXsrw8xUcBnkAZZRwclKPYB4Azzpc8rFCGbBqSxZtON5eex2PKayQflDnzZp
-	 O6FS0zGZo2OY/JRqncv/2e2ZqakfX0NeBxzztehgv/QsOW5I4eC12ibLxK5z87NnFN
-	 1zY59dGEAZA0RjFzw/5dd/5XZcGO1Q0G6dh1YQ2Qfo3JwBjobTEttncOLP+6xDbSQp
-	 ahPTiI40dzdCQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Gary Guo" <gary@garyguo.net>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,
-  =?utf-8?Q?Bj=C3=B6rn?= Roy
- Baron <bjorn3_gh@protonmail.com>,  "Benno Lossin"
- <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Masahiro Yamada" <masahiroy@kernel.org>,
-  "Nathan Chancellor" <nathan@kernel.org>,  "Nicolas Schier"
- <nicolas@fjasle.eu>,  "Luis Chamberlain" <mcgrof@kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,  "Adam
- Bratschi-Kaye" <ark.email@gmail.com>,  <linux-kbuild@vger.kernel.org>,
-  "Petr Pavlu" <petr.pavlu@suse.com>,  "Sami Tolvanen"
- <samitolvanen@google.com>,  "Daniel Gomez" <da.gomez@samsung.com>,
-  "Simona Vetter" <simona.vetter@ffwll.ch>,  "Greg KH"
- <gregkh@linuxfoundation.org>,  <linux-modules@vger.kernel.org>
-Subject: Re: [PATCH v7 6/6] rust: add parameter support to the `module!` macro
-In-Reply-To: <20250225151417.7805b697@eugeo> (Gary Guo's message of "Tue, 25
-	Feb 2025 15:14:17 +0000")
-References: <20250218-module-params-v3-v7-0-5e1afabcac1b@kernel.org>
-	<20250218-module-params-v3-v7-6-5e1afabcac1b@kernel.org>
-	<F8_61WnicMEefukOwS9IyBGAd4t351bIHekvrbaiiIsdBU_lHw2fefp1Ru4bMIBgJRwAzN2mWJdPDQUCOaEm-g==@protonmail.internalid>
-	<20250225151417.7805b697@eugeo>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 25 Feb 2025 16:35:02 +0100
-Message-ID: <87wmdeujfd.fsf@kernel.org>
+	s=k20201202; t=1740497723;
+	bh=XItyUEZepBSi+iNDaSIT9S/Mq6Xh426aEX3xchTQv4s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MacJrO2+ftUHpyu1YUk3rA0JXXCu9Qww0QjDsWQIY2Eg5Z3EJ+uYMDEcIMLXjRY8z
+	 yS5ELmu5jINaiK0034HiA131r2iKw6sCPKLB9vKr+XkcT1h/z9z2ZrSdLtfJEN/dxV
+	 tvJJLTlJwglsFIKrLbNV9UPnfgF7Yy1IQXT3Jjn0Uo2c+elJvM+/IDeKgf7mfgtov7
+	 L7TqPtFDJvZF1DPMoDnmVqfYwRl3vDg/gE0xt6mLfdNX7E5wxNw6terDqAeMAu2QWr
+	 9WpIDLcIFeMGRx7QTH+nmEQODtBCovzodoZhl/dGfNrKj+dqRgpaeDWtAkJgqRRaLT
+	 mE/HtNPBy+j1Q==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so10276814a12.1;
+        Tue, 25 Feb 2025 07:35:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWNVZlQLxPHTdjREUckPmGLshVrspfcRiXaWUURWphtXreu7xBB9t3hbvcS5xpsdlkOPE8vdQb08tRAOVG4@vger.kernel.org, AJvYcCWlU7CV152kWwNFPJfqZOrm5i3DdZp3bLv4c+t/CIaACsXOFqPQAVx6pkuiUyR/Ah6LDUZf8r5eiVA=@vger.kernel.org, AJvYcCWnxiTHrgNUjratomYnbiydHVTZsCXfYzCxWSDE9RDm3DGmSG2deC5bPztfqeybzpyhjcka265ld1vG9rnKzDwBBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAiIdiQo68a4wp5N/v73PHSyItuSN8UIYmQgnaPgfExTkBcy5c
+	GbUtVUWmw6nZry+mmliBKO883f83N1VjNTIVLingEFoZiHcfQ/RuJ/ONCTvBj/CjfZfew1Yn4hN
+	bRAuQL5PCrsgoUS6jDcqj1t7LXg==
+X-Google-Smtp-Source: AGHT+IG3W78BIijkWq7Fyxr+xyyGetXy3PWKs3KsePxUk1BA+35b6sqYHWgJT8HK9oC/8GAmOY2QdyNYtk6IUss22yk=
+X-Received: by 2002:a05:6402:3587:b0:5de:3c29:e834 with SMTP id
+ 4fb4d7f45d1cf-5e44b7635damr3926277a12.27.1740497721673; Tue, 25 Feb 2025
+ 07:35:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <20250218-arm-brbe-v19-v20-11-4e9922fc2e8e@kernel.org> <20250224122507.GE8144@e132581.arm.com>
+ <CAL_Jsq+0fZ2uasgAam7qGTdCeDBQxXeyL-J1_suyxy6GE_ERTg@mail.gmail.com>
+ <20250224140317.GF8144@e132581.arm.com> <Z7yY19UtSnND5KTl@J2N7QTR9R3.cambridge.arm.com>
+ <20250224180301.GI8144@e132581.arm.com> <CAL_JsqKNad6eEBerUOco=SDWxdp6dgRD3FDrSt5OpGQYwwstSg@mail.gmail.com>
+ <20250225123813.GA1821331@e132581.arm.com>
+In-Reply-To: <20250225123813.GA1821331@e132581.arm.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 25 Feb 2025 09:35:09 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJ4cSGVjkBqU9uZdB2gjF6FyfQaD=jmcqEamEoqWLYGaQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo1RJnU8UBv-NkgDA5mYeZ3KtlYf8lNMthdII-jEnwh4DVqd7qs9q-S8Hk
+Message-ID: <CAL_JsqJ4cSGVjkBqU9uZdB2gjF6FyfQaD=jmcqEamEoqWLYGaQ@mail.gmail.com>
+Subject: Re: [PATCH v20 11/11] perf: arm_pmuv3: Add support for the Branch
+ Record Buffer Extension (BRBE)
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Will Deacon <will@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu <yuzenghui@huawei.com>, 
+	James Clark <james.clark@linaro.org>, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	kvmarm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Gary Guo" <gary@garyguo.net> writes:
-
-> On Tue, 18 Feb 2025 14:00:48 +0100
-> Andreas Hindborg <a.hindborg@kernel.org> wrote:
+On Tue, Feb 25, 2025 at 6:38=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
 >
->> This patch includes changes required for Rust kernel modules to utilize
->> module parameters. This code implements read only support for integer
->> types without `sysfs` support.
->>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->> Acked-by: Petr Pavlu <petr.pavlu@suse.com> # from modules perspective
->> ---
->>  rust/kernel/lib.rs           |   1 +
->>  rust/kernel/module_param.rs  | 226 +++++++++++++++++++++++++++++++++++++++++++
->>  rust/macros/helpers.rs       |  25 +++++
->>  rust/macros/lib.rs           |  31 ++++++
->>  rust/macros/module.rs        | 191 ++++++++++++++++++++++++++++++++----
->>  samples/rust/rust_minimal.rs |  10 ++
->>  6 files changed, 466 insertions(+), 18 deletions(-)
->>
->> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
->> index 496ed32b0911a..aec04df2bac9f 100644
->> --- a/rust/kernel/lib.rs
->> +++ b/rust/kernel/lib.rs
->> @@ -57,6 +57,7 @@
->>  pub mod kunit;
->>  pub mod list;
->>  pub mod miscdevice;
->> +pub mod module_param;
->>  #[cfg(CONFIG_NET)]
->>  pub mod net;
->>  pub mod of;
->> diff --git a/rust/kernel/module_param.rs b/rust/kernel/module_param.rs
->> new file mode 100644
->> index 0000000000000..0047126c917f4
->> --- /dev/null
->> +++ b/rust/kernel/module_param.rs
->> @@ -0,0 +1,226 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Types for module parameters.
->> +//!
->> +//! C header: [`include/linux/moduleparam.h`](srctree/include/linux/moduleparam.h)
->> +
->> +use crate::prelude::*;
->> +use crate::str::BStr;
->> +
->> +/// Newtype to make `bindings::kernel_param` [`Sync`].
->> +#[repr(transparent)]
->> +#[doc(hidden)]
->> +pub struct RacyKernelParam(pub ::kernel::bindings::kernel_param);
->> +
->> +// SAFETY: C kernel handles serializing access to this type. We never access
->> +// from Rust module.
->> +unsafe impl Sync for RacyKernelParam {}
+> On Mon, Feb 24, 2025 at 07:31:52PM -0600, Rob Herring wrote:
 >
-> I wonder if we should have a custom impl of `SyncUnsafeCell` for this
-> kind of usage (so that when it is stabilized by Rust, we can just switc
-> over).
-
-We discussed this before, I don't recall what we decided. At any rate,
-it's orthogonal. We can patch this if we add `SyncUnsafeCell`.
-
+> [...]
 >
->> +
->> +/// Types that can be used for module parameters.
->> +///
->> +/// Note that displaying the type in `sysfs` will fail if
->> +/// [`Display`](core::fmt::Display) implementation would write more than
->> +/// [`PAGE_SIZE`] - 1 bytes.
->> +///
->> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->> +pub trait ModuleParam: Sized {
->> +    /// The [`ModuleParam`] will be used by the kernel module through this type.
->> +    ///
->> +    /// This may differ from `Self` if, for example, `Self` needs to track
->> +    /// ownership without exposing it or allocate extra space for other possible
->> +    /// parameter values.
->> +    // This is required to support string parameters in the future.
->> +    type Value: ?Sized;
->> +
->> +    /// Parse a parameter argument into the parameter value.
->> +    ///
->> +    /// `Err(_)` should be returned when parsing of the argument fails.
->> +    ///
->> +    /// Parameters passed at boot time will be set before [`kmalloc`] is
->> +    /// available (even if the module is loaded at a later time). However, in
->> +    /// this case, the argument buffer will be valid for the entire lifetime of
->> +    /// the kernel. So implementations of this method which need to allocate
->> +    /// should first check that the allocator is available (with
->> +    /// [`crate::bindings::slab_is_available`]) and when it is not available
->> +    /// provide an alternative implementation which doesn't allocate. In cases
->> +    /// where the allocator is not available it is safe to save references to
->> +    /// `arg` in `Self`, but in other cases a copy should be made.
->> +    ///
->> +    /// [`kmalloc`]: srctree/include/linux/slab.h
->> +    fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
->> +}
->> +
->> +/// Set the module parameter from a string.
->> +///
->> +/// Used to set the parameter value at kernel initialization, when loading
->> +/// the module or when set through `sysfs`.
->> +///
->> +/// `param.arg` is a pointer to `*mut T` as set up by the [`module!`]
->> +/// macro.
->> +///
->> +/// See `struct kernel_param_ops.set`.
->> +///
->> +/// # Safety
->> +///
->> +/// If `val` is non-null then it must point to a valid null-terminated
->> +/// string. The `arg` field of `param` must be an instance of `T`.
->> +///
->> +/// # Invariants
->> +///
->> +/// Currently, we only support read-only parameters that are not readable
->> +/// from `sysfs`. Thus, this function is only called at kernel
->> +/// initialization time, or at module load time, and we have exclusive
->> +/// access to the parameter for the duration of the function.
->> +///
->> +/// [`module!`]: macros::module
->> +unsafe extern "C" fn set_param<T>(
->> +    val: *const kernel::ffi::c_char,
->> +    param: *const crate::bindings::kernel_param,
->> +) -> core::ffi::c_int
->> +where
->> +    T: ModuleParam,
->> +{
->> +    // NOTE: If we start supporting arguments without values, val _is_ allowed
->> +    // to be null here.
->> +    if val.is_null() {
->> +        // TODO: Use pr_warn_once available.
->> +        crate::pr_warn!("Null pointer passed to `module_param::set_param`");
->> +        return crate::error::code::EINVAL.to_errno();
+> > > > > When event rotation happens, if without context switch, in theory=
+ we
+> > > > > should can directly use the branch record (no invalidation, no in=
+jection)
+> > > > > for all events.
+> > > >
+> > > > No; that only works in *some* cases, and will produce incorrect res=
+ults
+> > > > in others.
+> > > >
+> > > > For example, consider filtering. Imagine a PMU with a single counte=
+r,
+> > > > and two events, where event-A filters for calls-and-returns and eve=
+nt-B
+> > > > filters for calls-only. When switching from event-A to event-B, it'=
+s
+> > > > theoretically possible to keep the existing records around, knowing=
+ that
+> > > > the returns can be filtered out later. When switching from event-B =
+to
+> > > > event-A we cannot keep the existing records, since there are gaps
+> > > > whenever a return should have been recorded.
+> > >
+> > > Seems to me, the problem is not caused by event rotation.  We need to
+> > > calculate a correct filter in the first place - the BRBE driver shoul=
+d
+> > > calculate a superset for all filters of events for a session.  Then,
+> > > generate branch record based event's specific filter.
+> >
+> > The driver doesn't have enough information. If it is told to schedule
+> > event A, it doesn't know anything about event B. It could in theory
+> > try to remember event B if event B had already been scheduled, but it
+> > never knows when event B is gone.
 >
-> This is already in prelude, so you can just use `EINVAL` directly.
-
-Thanks.
-
+> E.g., I tried below command for enabling 10 events in a perf session:
 >
->> +    }
->> +
->> +    // SAFETY: By function safety requirement, val is non-null and
->> +    // null-terminated. By C API contract, `val` is live and valid for reads
->> +    // for the duration of this function.
->> +    let arg = unsafe { CStr::from_char_ptr(val).as_bytes() };
->> +
->> +    crate::error::from_result(|| {
->> +        let new_value = T::try_from_param_arg(arg)?;
->> +
->> +        // SAFETY: `param` is guaranteed to be valid by C API contract
->> +        // and `arg` is guaranteed to point to an instance of `T`.
->> +        let old_value = unsafe { (*param).__bindgen_anon_1.arg as *mut T };
->> +
->> +        // SAFETY: `old_value` is valid for writes, as we have exclusive
->> +        // access. `old_value` is pointing to an initialized static, and
->> +        // so it is properly initialized.
->> +        unsafe { core::ptr::replace(old_value, new_value) };
->> +        Ok(0)
->> +    })
->> +}
->> +
->> +/// Drop the parameter.
->> +///
->> +/// Called when unloading a module.
->> +///
->> +/// # Safety
->> +///
->> +/// The `arg` field of `param` must be an initialized instance of `T`.
->> +unsafe extern "C" fn free<T>(arg: *mut core::ffi::c_void)
->> +where
->> +    T: ModuleParam,
->> +{
->> +    // SAFETY: By function safety requirement, `arg` is an initialized
->> +    // instance of `T`. By C API contract, `arg` will not be used after
->> +    // this function returns.
->> +    unsafe { core::ptr::drop_in_place(arg as *mut T) };
->> +}
->> +
->> +macro_rules! impl_int_module_param {
->> +    ($ty:ident) => {
->> +        impl ModuleParam for $ty {
->> +            type Value = $ty;
->> +
->> +            fn try_from_param_arg(arg: &'static [u8]) -> Result<Self> {
->> +                let bstr = BStr::from_bytes(arg);
+>   perf record -e armv9_nevis/r04/ -e armv9_nevis/r05/ \
+>               -e armv9_nevis/r06/ -e armv9_nevis/r07/ \
+>               -e armv9_nevis/r08/ -e armv9_nevis/r09/ \
+>               -e armv9_nevis/r10/ -e armv9_nevis/r11/ \
+>               -e armv9_nevis/r12/ -e armv9_nevis/r13/ \
+>               -- sleep 1
 >
-> Why isn't `arg` BStr in the first place?
+> For Arm PMU, the flow below is invoked for every event on every
+> affinied CPU in initialization phase:
+>
+>   armpmu_event_init() {
+>     armv8pmu_set_event_filter();
+>   }
 
-I'll change it.
+That function is passed *1* event. It is not intended to go looking at
+all events or muck with any global state. Could we go poking around
+all the data structures? Probably, it's C and data structures are
+often not opaque when they should be, so that wouldn't be a good idea.
+If you think it is, I'd recommend you stay away from Rust.
 
+Furthermore, an event here may not actually be enabled. A user could
+open 2 events and handle them as mutually exclusive continuously
+disabling one and enabling the other. If the branch filters that they
+want are not overlapping, we'd be reducing our effective branch record
+size. Maximizing the size seems much more important to me than keeping
+some branches in a few corner cases.
 
-Best regards,
-Andreas Hindborg
+> Shouldn't we calculate a superset branch filter for all events, store
+> it into a per-CPU data structure and then apply the filter on BRBE?
 
+Suppose we do that, what happens when a 2nd session (as Mark pointed
+out, sessions only exist in the perf tool, not the kernel) adds more
+events. We configured the filters and now we have to change them
+again. So we have to invalidate the branch record. It's the same thing
+with event rotation (though less frequent (probably)).
 
+> > > > There are a number of cases of that shape given the set of configur=
+able
+> > > > filters. In theory it's possible to retain those in some cases, but=
+ I
+> > > > don't think that the complexity is justified.
+> > > >
+> > > > Similarly, whenever kernel branches are recorded it's necessary to =
+drop
+> > > > the stale branches whenever branch recording is paused, as there's
+> > > > necessarily a blackout period and hence a gap in the records.
+> > >
+> > > If we save BRBE record when a process is switched out and then restor=
+e
+> > > the record when a process is switched in, should we can keep a decent
+> > > branch record for performance profiling?
+> >
+> > Keep in mind that there's only 64 branches recorded at most. How many
+> > branches in a context switch plus reconfiguring the PMU? Not a small
+> > percentage of 64 I think. In traces where freeze on overflow was not
+> > working (there's an example in v18), just the interrupt entry until
+> > BRBE was stopped was a significant part of the trace. A context switch
+> > is going to be similar.
+>
+> That is true for kernel mode enabled tracing.  But we will have no
+> such kind noises for userspace only mode tracing.
+>
+> [...]
+>
+> > > > Do you have a reason why you think we *must* keep events around?
+> > >
+> > > Here I am really concerned are cases when a process is preempted or
+> > > migrated.  The driver doesn't save and restore branch records for the=
+se
+> > > cases, it just invalidates all records when a task is scheduled in.
+> > >
+> > > As a result, if an event overflow is close to context switch, it is
+> > > likely to capture incomplete branch records.  For a userspace-only
+> > > tracing, it is risk to capture empty branch record after preemption
+> > > and migrations.
+> >
+> > There's the same risk if something else is recording kernel branches
+> > when you are recording userspace only. I think the user has to be
+> > aware if other things like context switches are perturbing their data.
+>
+> I am confused for the decription above.  Does it refer to branch
+> recording cross different sessions?  It is fine for me that the branch
+> data is interleaved by different sessions (e.g. one is global tracing
+> and another is only per-thread tracing).
+>
+> We might need to consider an intact branch record for the single perf
+> session case.  E.g. if userspace program calls:
+>
+>     func_a -> func_b -> func_c
+>
+> In a case for only userspace tracing, we will have no chance to preserve
+> the call sequence of these functions after the program is switched out.
+
+So you miss the few times that happens in a context switch. But we are
+sampling and all/most of the other samples are going to be fine. How
+much is that really going to affect your profile?
+
+Rob
 
