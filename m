@@ -1,140 +1,182 @@
-Return-Path: <linux-kernel+bounces-531077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114A8A43BE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:39:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22868A43BEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:40:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A073B31C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:34:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3C617374D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A3266196;
-	Tue, 25 Feb 2025 10:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2928265637;
+	Tue, 25 Feb 2025 10:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="er/yb3It"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="mAUkYqqF"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82B31FE47F;
-	Tue, 25 Feb 2025 10:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484A8260A3D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:35:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479685; cv=none; b=Vnp3+3ykZ+p7rSZIUaWUHpzodZ6WKLGzlwcPdcduW7gtZ+vD4iqAYNuZKj5DY11+6hGMT2Lf/A/ED3S0Kb11zI0TioVJnnFX2LbK0td1nJB1QLy4XLyaGOS0vRSRzbT9DJa/trhDVKqYf0gZsyGWSFeEWRgHfDW+Sf31eKXijRA=
+	t=1740479747; cv=none; b=mIh7NbvWD5CVwREQRMh5QCTsLDS1Zyc/uClRZMgA3l0LmoGDG3tkYgJ0Gyojwy6IBQHPzu82WvPu09keT2nbaxImVzPwpx2gg94V1as16bnk6EVx/GF2v3buDGgixJy3fNBlsqhZ7LPfUUBRSYWixDssVfJe8Kl0sVeg5LZSzMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479685; c=relaxed/simple;
-	bh=XJluooaCyPB2jljIMQRMoaWqXuID8XVavs2nSqxk9dM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=k1HWHjVxAiu3/zRX62Nwt9jFzkomnyluYPLQxTQKJC1mKxvfTxFpIwiZnlPwx4BCeX/l7ibPRQTQPJvpwesNR7k8yLx38POSENluw0tU0KBpwuB0oPeaMfRHlXMpF9RRwIOCiEhvi6ikLo09TIvjEAVqXKGIszDL0LTEPwiT1bA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=er/yb3It; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C29C4CEDD;
-	Tue, 25 Feb 2025 10:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740479684;
-	bh=XJluooaCyPB2jljIMQRMoaWqXuID8XVavs2nSqxk9dM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=er/yb3Itjw7P47kNjm8+yzln8Ojk+87rbgL9HdjU4v2JVWcP8HA7Yv1+aZjCu1ibQ
-	 CHD/HQt2c9KoJBpOy5YUY4mWX0itxuIlnKNoEVYLu0mudOoDshz4xp1nvwC7aQloO2
-	 PXs8QVtH/Akg9tQCfsAnn15hZ2Qoq27a4vQ2RNH312Qwrgq1IMHhSP7OSjbAXyNWrS
-	 nMFSVJpOBmZ4fKOrlenUeNN0El2GwNoVjLl9mh0O7QvhJ/6BeFdnLwu8rNY4jwxr2m
-	 WKn2fGUyJLXsOOMEc9GSDYpi6iOzPXWHKwndjjofyUEvzcf8nB7/oDyE6+ZEYedoTX
-	 rQFfGdJo7mASg==
-Message-ID: <4c3009e1-6cd8-4477-95f9-b0fb35b7dc4e@kernel.org>
-Date: Tue, 25 Feb 2025 11:34:38 +0100
+	s=arc-20240116; t=1740479747; c=relaxed/simple;
+	bh=mqeYPrC0Jbni8o2GPLE5Q5M3lXmezH0A/f1uj17SVkI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C3NE9/dKeo+mw5qWaSQselW/fY2nMmM2+NAHsXDmT/cHHEQwjeBhAuLOcpmUweF2eF+n49OCmHYPIPYfQ4mFFary8h9VYB4yLb3EXJBBYm7HdWXHj/IxlkbUQuwOEcZicDa0XGB8SH2mmASm7PoWHtw01BFVM5FB4oeYL5d3Ujo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=mAUkYqqF; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5461a485aa2so5021060e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:35:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1740479743; x=1741084543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWkswUZMqfevVy0UXA4NMvw9eRHX0pnwJJJrYa4op+c=;
+        b=mAUkYqqFDEa4bXqYNb1Z6+tjQCl95Oc1vObnHT0F6MYWSflG7eX/99ONYlMKEZWfIU
+         ovhigruU5OZMhwI/m2JSPHuSDOS9ZK61bIpvS0UYQezA7BKu1YDN08ivb7/BI4xnk/gH
+         R5juaQrDXR5kX5DjYTyMf7D329PeI3flBmeVKqLoDzTjxOBrSozln4E6qKeO2TeLrzjI
+         HdrZ6HvgmIck0uVQKsIh9gGVie+KYyLVVNWhrpR1e6Um2cqEKyVkC+YX5myV4wyTIIv1
+         Or3z1rmp7g1EHoF0FaS9X8i8IKhhN3cOP3qiGZFGzKiVDPaXU1OYvW/d6SlJoaW2U8pA
+         DzuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740479743; x=1741084543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fWkswUZMqfevVy0UXA4NMvw9eRHX0pnwJJJrYa4op+c=;
+        b=MSFN5UPHARlK3w5dEw+RoRyVUiHtNslfixS9oxD2peS4S/aumBuTFbj0YbwixSAvU7
+         ZoL4WrywfI/jAeQtNFau3a8oSirqHvKMXzw0jFfTrmGTcuYSJnvuYhIev3wEr9keQ0m3
+         9hNvvXS0etWD/jIpRXi7HvYoo4NTsypOs5I4nAPxB98z1EjjDiWh40v+kIus+SnB44ip
+         9+JhzHd6p02fD4ONWo54LNKNb2sWO3aQLFAZs6/cNt1aCrgIqAqJmiz/UNSLmXw9BSxA
+         UfRCBUGx2wlcPKFaePGDiSieh69Q0Wab3blrDeRYTIRUUVJSCNAWJpS3cwbXNhz8OgH1
+         Vw5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXv/aoP4rdJAQ9q41kWGRCnyO3QGdVPuNzBnE4mHqEjV2fQx10Lm5ZaqN8FGuA14mEfQGmVw5DWfEjwne8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJmaIaXIuxvVhdZPlaX5+3u6zGJYb/GhrHViIOCCyPdFcBoMa6
+	u5t68Z1M6KCHdGyw6q4KlBoRJZso3ygbC1GJUWdQR1YiyIP/sV2/gYqY6oRPRZ8dmj6UYC3eSQB
+	iqOw1cSs/TnUtvG9tp4+t0iB08uyqZ7Nw7qrrTg==
+X-Gm-Gg: ASbGncsQpB4GwH1EX/MAfCgPDnMgeeDqDyIQsGejY0TmRf3Q+O3MFTIjLP+MVFeMy/I
+	sZb0/AmUnXzM/pVx49SmHklA94l6u/DvjvZkT74AHObpta83MI5Bnvs3WK5pEyabPFnSPjmX+gh
+	O+v6IhOIlaKAoIP8aKwGbouDAsLuwD+wcnDH64GFg=
+X-Google-Smtp-Source: AGHT+IGVGBEo9wyLm1K/x9da5Fbed363zPzOoOAfJYzvu9T++3+EDILNDSJrlots2Z/U4bIECPAu75iCiDMiHdSjPWo=
+X-Received: by 2002:a19:f61a:0:b0:548:de7f:b3be with SMTP id
+ 2adb3069b0e04-548de7fb4e5mr313788e87.21.1740479743336; Tue, 25 Feb 2025
+ 02:35:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/13] dt-bindings: net: wireless: describe the ath12k
- AHB module for IPQ5332
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Cc: ath12k@lists.infradead.org, Johannes Berg <johannes@sipsolutions.net>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225064834.2002499-1-quic_rajkbhag@quicinc.com>
- <20250225064834.2002499-2-quic_rajkbhag@quicinc.com>
- <20250225-abstract-arcane-chimpanzee-ca7e4f@krzk-bin>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250225-abstract-arcane-chimpanzee-ca7e4f@krzk-bin>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+ <20250210-gpio-sanitize-retvals-v1-4-12ea88506cb2@linaro.org> <Z7yekJ8uRh8dphKn@black.fi.intel.com>
+In-Reply-To: <Z7yekJ8uRh8dphKn@black.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 25 Feb 2025 11:35:31 +0100
+X-Gm-Features: AWEUYZnCp-KDYRM5tDKxLTZuy1OY-X2886HZx6-p_7y2wEThFHxE_ISRfreGXp4
+Message-ID: <CAMRc=Mej-GHH3buisJLhRfqoWd9Bfcfy-jbHJM3Oe2Cw=Bk9Ew@mail.gmail.com>
+Subject: Re: [PATCH 4/8] gpiolib: sanitize the return value of gpio_chip::get()
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/02/2025 09:47, Krzysztof Kozlowski wrote:
-> On Tue, Feb 25, 2025 at 12:18:22PM +0530, Raj Kumar Bhagat wrote:
->> +  memory-region:
->> +    description:
->> +      Memory regions used by the ath12k firmware.
->> +    items:
->> +      - description: Q6 memory region
->> +      - description: m3 dump memory region
->> +      - description: Q6 caldata memory region
->> +      - description: Multi Link Operation (MLO) Global memory region
->> +
->> +  memory-region-names:
->> +    items:
->> +      - const: q6-region
->> +      - const: m3-dump
->> +      - const: q6-caldb
->> +      - const: mlo-global-mem
->> +
->> +  qcom,ath12k-calibration-variant:
-> 
-> qcom,calibration-variant
+On Mon, Feb 24, 2025 at 5:30=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@intel.com> wrote:
+>
+> On Mon, Feb 10, 2025 at 11:51:58AM +0100, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > As per the API contract, the get() callback is only allowed to return 0=
+,
+> > 1 or a negative error number. Add a wrapper around the callback calls
+> > that filters out anything else.
+>
+> ...
+>
+> > +static int gpiochip_get(struct gpio_chip *gc, unsigned int offset)
+> > +{
+> > +     int ret;
+> > +
+> > +     lockdep_assert_held(&gc->gpiodev->srcu);
+> > +
+> > +     if (!gc->get)
+> > +             return -EIO;
+> > +
+> > +     ret =3D gc->get(gc, offset);
+> > +     if (ret > 1)
+>
+> Perhaps use the respective GPIO macro instead? Otherwise it's not clear w=
+hat
+> the meaning of 1 is.
+>
 
-FYI:
+We don't have one for GPIO values.
 
-https://lore.kernel.org/linux-devicetree/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org/
 
-Best regards,
-Krzysztof
+> > +             ret =3D -EBADE;
+> > +
+> > +     return ret;
+> > +}
+> > +
+> >  static int gpio_chip_get_value(struct gpio_chip *gc, const struct gpio=
+_desc *desc)
+> >  {
+> > -     return gc->get ? gc->get(gc, gpio_chip_hwgpio(desc)) : -EIO;
+> > +     return gpiochip_get(gc, gpio_chip_hwgpio(desc));
+> >  }
+>
+> ...
+>
+> >               for_each_set_bit(i, mask, gc->ngpio) {
+> > -                     value =3D gc->get(gc, i);
+> > +                     value =3D gpiochip_get(gc, i);
+>
+> This will delay the function for checking every time if the get() exists.=
+ Which
+> must be here.
+>
+> >                       if (value < 0)
+> >                               return value;
+> >                       __assign_bit(i, bits, value);
+>
+> What I would expect here is something like this:
+>
+> static int gpio_chip_get_value_nocheck(struct gpio_chip *gc, unsigned int=
+ offset)
+> {
+>         int ret;
+>
+>         lockdep_assert_held(&gc->gpiodev->srcu);
+>
+>         ret =3D gc->get(gc, offset);
+>         if (ret > GPIO_LINE_DIRECTION_IN)
+>                 ret =3D -EBADE;
+>
+>         return ret;
+> }
+>
+> static int gpio_chip_get_value(struct gpio_chip *gc, const struct gpio_de=
+sc *desc)
+> {
+>         return gc->get ? gpio_chip_get_value_nocheck(gc, gpio_chip_hwgpio=
+(desc)) : -EIO;
+> }
+>
+> But I see the downside of it as it might lurk without RCU lock if get is =
+not
+> defined. So, up to you.
+>
+
+Makes sense, gpiochip_get() is only called in gpio_chip_get_value()
+and gpiochip_get_multiple() where gc->get is already checked.
+
+Bart
 
