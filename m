@@ -1,298 +1,124 @@
-Return-Path: <linux-kernel+bounces-531949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C40BAA446FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:55:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AE0A446EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:52:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17CF176069
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D33418909F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F0D19992D;
-	Tue, 25 Feb 2025 16:46:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F2F188733;
+	Tue, 25 Feb 2025 16:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="nsK1c1Yy"
-Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazolkn19012051.outbound.protection.outlook.com [52.103.20.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="huqWsyP9"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AD819924E;
-	Tue, 25 Feb 2025 16:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501979; cv=fail; b=uo5aDeHWOpOYK50vy6AwAbp057i+7yan9SHtt7Efn2pBBfGxcSBD5ujhShNQKeD/lwqfbfwb8KDaTxz3cHINZ82zl7NMwqb+4OhNFAOG/WbYKwySZYEdY2GOYJcZhPQ2gojecq/I5+iY/9DPOU/59mkEflPjGvpirkcI1kBQ0Yk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501979; c=relaxed/simple;
-	bh=cO+8BvixyV9bZRZ4/lQBuF87tfFvNE8XDrstb/bMbDo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=WNPOP5Pwrdfcesm28N/On9H4w+p/RptO3kLo7ZE2pXzgNtSQl9tcKSnOem0czKt1129jSyDiO5coyZM7tVErr2sG2eOqjeUJ0L3phUGh//5axe/hRfkoWkUrMDR7ocROSTVvhbJYJj9gaFme0gbGoQyQIX01nmKCDycLAA68igM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=nsK1c1Yy; arc=fail smtp.client-ip=52.103.20.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=InimTrwjZujtti90jCLkxeyaX1osxJIPAQNAfzEncHqh8Bv9I58wxKzprXvawtJcqEL9ajFWfm9/obHEst+JxQc20vXQ1OBvwJvzaFDSdFcxTgJ2Oyn0JjmDEfp5K3SSLkRkdHMT0H7pVOsKJAqDVfCaADV52aldtrTO98r7xUNWCSuG6RBdv+1Yq7oMge3vB9D3oop0t8EmZqLxphY8U+WutomjqOvwcu44sYMP8s6dNglZ8E5ssXvKnoKaM/4SJkfz644dkpxbc6UGDHHRvaHVeQAOlAhvnKuVQiEe78bH7+GV7gb+KNMS4wL1/DuCFNlJ2dBu9HrmrMyTxmZTNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hA8EoysHT/MdtK8BSGhAlcKy1SF0hWCuMWkoHCJ/Bdc=;
- b=WzH/cgFeYwC/+j2QsfuXAzr9KE5QRZB99yEijz1ofsGxXQmArNgjrVx9G/zCv6+WAzisxDS3hwyxxuQqW5TMCDL3VVDJUOHPewyXc5xdYYXzjYWlJuaobuXoUOZKsF6a1vzLhILE2nys1lkIO00DQxV0jOfb5DAvk0axsr0nJ7FV9o/99FI4XXbkhSSkxBD0gNPLDIq9O0T8u5HJMYcIew0cIrmteeEIDzTPczidYv6/AVYIUNYvR0KF89s40euUWW/Q/phlAQTrx6hc/zslWll9LvZTu71Fe3PAevlVQi5AdYeTqSspAUAbkpoTgvkkEUeKgNe1tN1IGoSa7a3reA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hA8EoysHT/MdtK8BSGhAlcKy1SF0hWCuMWkoHCJ/Bdc=;
- b=nsK1c1Yy+c7abjG84ff0/sHflXFaqEAS53ZNgZbyWpf76Mbc54ktfpWzj2fsjdzlDdw22Xt4kwgE//XhfXfa3zdWiRkcSpttqNcMR1p+FiyiM1rEhJIaR6wok3Lu6XNWL+rPy0QpIylzyJSo6i3UGqeeBllkRp68F8iHTcgMziJbOT/wobQGA2gfhFwVHEwtl7UsIRSz1MPMtXcFVglFB9/3WQdN9nVQY+ONdiAdMsmpmz+ISeeSSKSxllHB/mwjNHB+y5ZbSTqN9p5ixVn/Mg6ICos4CFsYbSluo7LPVtIbcznebrLkNrQAmeo+c1tkTkRrvWKEw+9fajrepBQYAg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SJ0PR02MB8481.namprd02.prod.outlook.com (2603:10b6:a03:3f9::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 25 Feb
- 2025 16:46:13 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8466.020; Tue, 25 Feb 2025
- 16:46:13 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Saurabh Sengar <ssengar@linux.microsoft.com>, "kys@microsoft.com"
-	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
-	<decui@microsoft.com>, "deller@gmx.de" <deller@gmx.de>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC: "ssengar@microsoft.com" <ssengar@microsoft.com>
-Subject: RE: [PATCH v2] fbdev: hyperv_fb: Allow graceful removal of
- framebuffer
-Thread-Topic: [PATCH v2] fbdev: hyperv_fb: Allow graceful removal of
- framebuffer
-Thread-Index: AQHbh2M3LEMsoaxXn022ELKP4Dyh37NYM/YA
-Date: Tue, 25 Feb 2025 16:46:12 +0000
-Message-ID:
- <SN6PR02MB41574CD095A292D20AD6C84ED4C32@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <1740473808-9754-1-git-send-email-ssengar@linux.microsoft.com>
-In-Reply-To: <1740473808-9754-1-git-send-email-ssengar@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SJ0PR02MB8481:EE_
-x-ms-office365-filtering-correlation-id: a2747b21-bfce-44da-1bd4-08dd55bbea0b
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799003|8062599003|8060799006|15080799006|461199028|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?L92uOv4B/kZO9QXbroQkK3tGGkpradzXj0tm6/xC8+ifJ7op3+CeFA0woRwD?=
- =?us-ascii?Q?eVMzj5lQx63IzBItsD99u/k/Z8mqB8FG/P8YJmsWT+SgSCKvKcwWCjjMPSnl?=
- =?us-ascii?Q?fAZ/KjwITtoL5yX1wXp18+ncNAtgTz+4BIHwGxU2PH266yh2L5uDpEHbad7U?=
- =?us-ascii?Q?P3kIxYpdH0NanzRTf49HSKZ7EZ7/HakmxfabF10PXtYfCBNMrTv8JdqhS6+C?=
- =?us-ascii?Q?wbGKyGmyzrRZBT8u2blCwwe4WY6He2Dvf3qxt/ICCHD8U2+It2UcNG3sdCFT?=
- =?us-ascii?Q?ciuq+wa2F5fxN7XXMUrMcgUtAn82RqYz+Km9Pmy8CysmMRyFfYJB55PoZZDO?=
- =?us-ascii?Q?hz6ZSeViibWqjBOAi5KuZhFW3Sg4aVlCLcN4eyEhnCkpph/P/y1fepTaVqLN?=
- =?us-ascii?Q?DrB7GqRYVZ51cI18q6/0Gbs6y8JfizzKgCdOsZ+r/aIg0kKR92cazUaVD5C1?=
- =?us-ascii?Q?PsgAcch4/7EXNO2EQCyiSWQyHzs6tHBbD9YPbyEdo0jGzU030eAI6lfb88WH?=
- =?us-ascii?Q?3FZlRt4UXurCcg74t5NuF+RXvZtVRkKypHGOZ0ZKgLE9j78plragiwcSJEb0?=
- =?us-ascii?Q?Z6gAiZyiS8frEuNTL0hnSqCn+ydKkA29uzmEH1MKCoPfA3wA7390Kscs5jPr?=
- =?us-ascii?Q?efM9RgTIp4h8aj8frGGRyTdY188qo3uSVvJrPnm2Zu4e20JbAnF+/vFEYlwt?=
- =?us-ascii?Q?mdIa7SKOiuKyQprKjiWWq3q9LIfbTu4OAKeK+1qa8zHIjrqAOCh5HyOv/Cne?=
- =?us-ascii?Q?rMvHtA1nXOSpkKDOpzSaRa3ZhGE/aflK2A607BNYXqLxEsTZRPanAkteNVtF?=
- =?us-ascii?Q?vCR/fps7dw/avzDZKLsAku+40VINdTkI/I0OGxxjOjbRSZK2T1FR1Mlk2Cf0?=
- =?us-ascii?Q?NLWS8eHazwcL8xVzuxmxftlLnvLQyDwHmLWbiejXI4haqb3PD+MmDP1zXrE7?=
- =?us-ascii?Q?LK7wKzQJFLsaXH/4gGyQRQ428gPuOdD3oSSJ+wxEGpyQunmqfuXoT+ZsSIOI?=
- =?us-ascii?Q?DhYpD0YxsvtXQ3qIE8ERVzwJv+LO2coL79oXIjU2rD7NHiM=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?XAzxZ9X9DqPqonXpr0dzLWxs69ZwE2PXn2L/NrGkfnkXVWeNbyrTMmGZFZcM?=
- =?us-ascii?Q?2PPEE9OhFQs70QzaNbS5wReyZcpgrtqcKcXSP7nJtnYU1HbUty4Z3MrHSBrA?=
- =?us-ascii?Q?zuJ/1DvKPNOCouLgPMSqjw7AbJcP78Ntf3P1oHmcPL9gMnwcIlQ0ZHaoRCDP?=
- =?us-ascii?Q?/6hmkJFYYWvzJXRPuAL2BEx9QZC4f8XQHOfB2lFMwYlztcmBhwR1XgTkYdFu?=
- =?us-ascii?Q?cLweKTNHUTs/Hdg8QymduWRRg5wCoTU85gsxdO75N/gvoeq9Rz+8s3o9Sv9c?=
- =?us-ascii?Q?Nc0ymoMI8hyLQ++nqg5bRio/emLU+wa20cBalq2Ja5Y0r6vv6ondnjeL3FMk?=
- =?us-ascii?Q?OzGHwJ8Tg0efwtdA2ThQY+MnOJe6V8TJ+RBUXPkLvfw2WFTm8xt0HFieD+WX?=
- =?us-ascii?Q?ryMcBIznGuCY0r6/hNNOESfw4HmN2O3zMV0O2tUsksy4tItMPZE8hm8icZGR?=
- =?us-ascii?Q?5vxej8cciIq/5DnvYYHop6sr2hQhpX4Re6hqvirOcofV9ef5U0y1Np8D4ZKK?=
- =?us-ascii?Q?DhYIoG1MSBsWEhCuM/IG2vthov9dc+kdOUDIh/XIh6Tb7GS99owFc0vxiP22?=
- =?us-ascii?Q?G/OML9oQxPtpq+ayTxsPSzNodv9WuknwXfNjfoDnK97BY3rWCQcy+NP7rBe5?=
- =?us-ascii?Q?yK7VVUGYv26iWQC8UFG8lpUKglhagN4d/usRywjXe9SL+bXnzQivSMqoyZwT?=
- =?us-ascii?Q?KAJKWgnWcE+9sByCEbiZE9kLTNKyQKbv79CFVO9VHz0Y3PTyJY5U2HwGOA88?=
- =?us-ascii?Q?4bVrUdj9NYw/xX+IOIkDmvUFMxM7B7ypJjYre9its/yn9dzC0J6x103dlaa7?=
- =?us-ascii?Q?PczRT0dxZ8ZLjXpolvsJQCP9DLtj1YACfUiqOQwOGWqvdD2wugXj/QqD6Sh2?=
- =?us-ascii?Q?VhE1S0w1DgL8fBriP4w/7Nii9GoU6KfD24utcCKCzGVLK+oWiZBOsL1PLfca?=
- =?us-ascii?Q?iHzXlRlvIL+oyH9/BNS+/tyELIX0ehN1Eg0PROhVQvN2t8Gd2X0lUtFxvvsr?=
- =?us-ascii?Q?+8KwkjHdtxHPAZtLMnGqdCXQC6/p8Pu6Y8fAwF0WLKfx+E9hMr9plHkhiiK4?=
- =?us-ascii?Q?S26Zah0IhdTHvKFJuH1gFB177dAWnrlAAEuUkuKl0bYf0y4VkJigkujYxiXk?=
- =?us-ascii?Q?/vtiIqI6net7CIOT0Ul0pyw6ih520wfeW29ioWwBl2TU2kpIlcUjBNkYwRPE?=
- =?us-ascii?Q?3K/trGa4ocbWxQ/5Q6huJHa5immEHmESCXUgXOGGjQ+bbTPDiIXX08lcU/4?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B9C433A0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:47:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740502023; cv=none; b=ZhqbffBrNCUtkTAhKui5qLi26VHIWOd2zGNuDLcqIdChtwPwd8UxKjpODXqalxdu8ncuXM6xy9/iFQcSOFYwdw8GCe4WhZgkM8/Bgnjj3nzuzQzlpY+X2kIASl1nayWXHkWfwBr6vOtK2MZDPLlh8rVXK1RuyXr6vSffKxkOdo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740502023; c=relaxed/simple;
+	bh=OQpRQcQVxXe+edvh1YblQ5RBIrqz+IWlCtlibqXhqc4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZMnw6nKb+oM12B32UQ7DUuzZIOXc/lBDrZzgQWkls2eLRot79asaBAgtxp2q1/c9qs8wICiIzmt8zJvpeQpZG+NetPfYw+9GHkNYZxFkvXkjdc9si0Db2f1EfE9n0z6EdBHJF/NhEIP0fgGMi15jhoM6kRl17/ryLVGm4tXayQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=huqWsyP9; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f325ddbc2so4248967f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:47:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740502020; x=1741106820; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XkQxvp4D/2a6lNDlzyRZd3Y+3HL8xskDBwPpQvdRzfg=;
+        b=huqWsyP9vB74LJBeMdyj3qB9n2xBVztXjvQkKwEENhBNhhHe3wCkjzhKEDGI0H1mq6
+         3Ml6lc65+iKEuGgw3Idu5e+7nbR3+kgpMDeT0Qsm4USmsbGNM0sgBRuWpMaMevTpKHrG
+         bWjXKw67mwnAdfZX6ThTAFlf2W//wSIHC3WyVXuCkj4M9FQTQ2lnqt0F96v5HPkVTgWO
+         Hma3He5Lyk36dWu2mVhvO+gjqdBTCi8WcRr5giR6aIhinkFhFl4OWxRddg9OwPAzdmxw
+         Z/HY2F+iDhrJT3NL0HfrNvs0IwF3qrVkdy8tHQ6JPAv/f3dmGv9M/HnbgY3bez/ixReG
+         4ynQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740502020; x=1741106820;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XkQxvp4D/2a6lNDlzyRZd3Y+3HL8xskDBwPpQvdRzfg=;
+        b=PXtp/KH5yIybSawKkG9nrNoRgWFtrjpoZwYO5Obi5ye1lXDUKa2uBabSK3nSM0IZjW
+         moOzZx6VN2oDEGJRsZh9RO1ke/FestbwGGanrDujV7Qb6nigMrA3pqy6wzwwPeiQRrd2
+         7wMDA+k0iUndxiTLeoJUMZbnfHyl8rnYES1rSCJ+9iT0L2K8YQQFy/+MaxLnl9S4T8zE
+         150PGvCxK8RRUl+O+m+vh0oji+Bfa9oL+CbhTwqn2I+DdynanNkc/3/O2zT2GURMD6Ty
+         VOie5wrDbl7AA0vE5jAvlZGMWHspmBr0cWA4FXvdXQ5mR8UVoRmEYcY6Qr6aLmIZ+Nn9
+         LBkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWph3EdCr7SOm0U03IeEIxSQyeVM62UcChpmsRKbu7PfeoXiZd5tCKHJmQQBLuLwWfcb8QHiBaLsfM0hG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNZ2Ob+bNjX2oBGoOX9JDG9+XfINypI0vvtbFk5Z0c8m4r4X/L
+	Pn61Row1ekQrth74UJS+IVzHCsR/y/TjJZHNva+71yw9MrHL0VSufMSdgVNo0hE=
+X-Gm-Gg: ASbGncu1c52fszxxNvFjpraKSi4NriKzzE/HW/MaorTPKzS15wAeXfyT4Ysr3a1AEiU
+	3S2UwJR5X3nJCtIS27X2yj9ydyq8caHcFRW/oiBaQjmKCdD9pWGPGr6RX5MquOAk8gc+Fw8XoU+
+	GMGCt4SGwcWZNnQ9lBRaIhwYXGKYe1PV7SdadeA55TqDRWP2QniRZDrxE79SSs7gXn7gegLLC3I
+	PSgyus7zkTWsDISao9VyMu6DHg+4zSNfF480EezOH0czy2Gr8DWG9YafDnUF/4MeQdjFIFVMPof
+	om9fXbcsFI96BJm+R3Ib2vVd+Q==
+X-Google-Smtp-Source: AGHT+IEx1hi4grLoN/YpVbZi7IffgGHtsWzKhP67uDqANfNBhSA1o6apjbKViGQ/G3u3hWJGv+0kHA==
+X-Received: by 2002:a05:6000:18ae:b0:38d:e070:6cf5 with SMTP id ffacd0b85a97d-38f708553e2mr16068784f8f.51.1740502019748;
+        Tue, 25 Feb 2025 08:46:59 -0800 (PST)
+Received: from pop-os.lan ([145.224.90.0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab154754esm32072415e9.21.2025.02.25.08.46.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:46:59 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	namhyung@kernel.org,
+	cyy@cyyself.name
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Junhao He <hejunhao3@huawei.com>,
+	Jean-Philippe Romain <jean-philippe.romain@foss.st.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] perf pmu: Dynamically allocate tool PMU
+Date: Tue, 25 Feb 2025 16:46:27 +0000
+Message-Id: <20250225164639.522741-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a2747b21-bfce-44da-1bd4-08dd55bbea0b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Feb 2025 16:46:13.0265
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB8481
+Content-Transfer-Encoding: 8bit
 
-From: Saurabh Sengar <ssengar@linux.microsoft.com>
->=20
-> When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
-> release the framebuffer forcefully. If this framebuffer is in use it
-> produce the following WARN and hence this framebuffer is never released.
->=20
-> [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_=
-info.c:70
-> framebuffer_release+0x2c/0x40
-> < snip >
-> [   44.111289] Call Trace:
-> [   44.111290]  <TASK>
-> [   44.111291]  ? show_regs+0x6c/0x80
-> [   44.111295]  ? __warn+0x8d/0x150
-> [   44.111298]  ? framebuffer_release+0x2c/0x40
-> [   44.111300]  ? report_bug+0x182/0x1b0
-> [   44.111303]  ? handle_bug+0x6e/0xb0
-> [   44.111306]  ? exc_invalid_op+0x18/0x80
-> [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
-> [   44.111311]  ? framebuffer_release+0x2c/0x40
-> [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
-> [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
-> [   44.111323]  device_remove+0x40/0x80
-> [   44.111325]  device_release_driver_internal+0x20b/0x270
-> [   44.111327]  ? bus_find_device+0xb3/0xf0
->=20
-> Fix this by moving the release of framebuffer and assosiated memory
-> to fb_ops.fb_destroy function, so that framebuffer framework handles
-> it gracefully.
->=20
-> While we fix this, also replace manual registrations/unregistration of
-> framebuffer with devm_register_framebuffer.
->=20
-> Fixes: 68a2d20b79b1 ("drivers/video: add Hyper-V Synthetic Video Frame Bu=
-ffer
-> Driver")
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> ---
-> V2 : Move hvfb_putmem into destroy()
->=20
->  drivers/video/fbdev/hyperv_fb.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv=
-_fb.c
-> index 363e4ccfcdb7..89ee49f1c3dc 100644
-> --- a/drivers/video/fbdev/hyperv_fb.c
-> +++ b/drivers/video/fbdev/hyperv_fb.c
-> @@ -282,6 +282,8 @@ static uint screen_depth;
->  static uint screen_fb_size;
->  static uint dio_fb_size; /* FB size for deferred IO */
->=20
-> +static void hvfb_putmem(struct hv_device *hdev, struct fb_info *info);
-> +
->  /* Send message to Hyper-V host */
->  static inline int synthvid_send(struct hv_device *hdev,
->  				struct synthvid_msg *msg)
-> @@ -862,6 +864,24 @@ static void hvfb_ops_damage_area(struct fb_info *inf=
-o, u32 x,
-> u32 y, u32 width,
->  		hvfb_ondemand_refresh_throttle(par, x, y, width, height);
->  }
->=20
-> +/*
-> + * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
-> + * of unregister_framebuffer() or fb_release(). Do any cleanup related t=
-o
-> + * framebuffer here.
-> + */
-> +static void hvfb_destroy(struct fb_info *info)
-> +{
-> +	struct hv_device *hdev;
-> +	struct device *dev;
-> +	void *driver_data =3D (void *)info;
-> +
-> +	dev =3D container_of(driver_data, struct device, driver_data);
+A few minor fixes that I came across when poking around with the Perf
+list behavior on hybrid Arm.
 
-I don't think the above is right. The struct fb_info was allocated
-with kzalloc() in framebuffer_alloc(). You would use container_of()
-if fb_info was embedded in a struct device, but that's not the case
-here. The driver_data field within the struct device is a pointer to the
-fb_info, but that doesn't help find the struct device.
+James Clark (3):
+  perf pmu: Dynamically allocate tool PMU
+  perf pmu: Don't double count common sysfs and json events
+  perf list: Document -v option deduplication feature
 
-What does help is that info->device (not to be confused with info->dev,
-which is a different struct device) points to the struct device that
-you need here. That "device" field is set in framebuffer_alloc().
-So that's an easy fix.
+ tools/perf/Documentation/perf-list.txt |  2 +-
+ tools/perf/builtin-list.c              |  2 +-
+ tools/perf/util/pmu.c                  |  7 ++++---
+ tools/perf/util/pmu.h                  |  5 +++++
+ tools/perf/util/pmus.c                 |  2 +-
+ tools/perf/util/tool_pmu.c             | 23 +++++++++++------------
+ tools/perf/util/tool_pmu.h             |  2 +-
+ 7 files changed, 24 insertions(+), 19 deletions(-)
 
-> +	hdev =3D container_of(dev, struct hv_device, device);
-> +
-> +	hvfb_putmem(hdev, info);
-
-Another observation: The interface to hvfb_putmem() is more
-complicated than it needs to be. The hdev argument could be
-dropped because it is used only to get the device pointer,
-which is already stored in info->device. hvfb_release_phymem()
-would also need to be updated to take a struct device instead of
-struct hv_device. But if you made those changes, then the
-container_of() to get the hdev wouldn't be needed either.
-
-A similar simplification could be applied to hvfb_getmem().
-
-Maybe do two patches -- the first to simplify the interfaces,
-and the second to do this patch but with reduced
-complexity because of the simpler interfaces.
-
-Michael =20
-
-> +	framebuffer_release(info);
-> +}
-> +
->  /*
->   * TODO: GEN1 codepaths allocate from system or DMA-able memory. Fix the
->   *       driver to use the _SYSMEM_ or _DMAMEM_ helpers in these cases.
-> @@ -877,6 +897,7 @@ static const struct fb_ops hvfb_ops =3D {
->  	.fb_set_par =3D hvfb_set_par,
->  	.fb_setcolreg =3D hvfb_setcolreg,
->  	.fb_blank =3D hvfb_blank,
-> +	.fb_destroy	=3D hvfb_destroy,
->  };
->=20
->  /* Get options from kernel paramenter "video=3D" */
-> @@ -1172,7 +1193,7 @@ static int hvfb_probe(struct hv_device *hdev,
->  	if (ret)
->  		goto error;
->=20
-> -	ret =3D register_framebuffer(info);
-> +	ret =3D devm_register_framebuffer(&hdev->device, info);
->  	if (ret) {
->  		pr_err("Unable to register framebuffer\n");
->  		goto error;
-> @@ -1220,14 +1241,9 @@ static void hvfb_remove(struct hv_device *hdev)
->=20
->  	fb_deferred_io_cleanup(info);
->=20
-> -	unregister_framebuffer(info);
->  	cancel_delayed_work_sync(&par->dwork);
->=20
->  	vmbus_close(hdev->channel);
-> -	hv_set_drvdata(hdev, NULL);
-> -
-> -	hvfb_putmem(hdev, info);
-> -	framebuffer_release(info);
->  }
->=20
->  static int hvfb_suspend(struct hv_device *hdev)
-> --
-> 2.43.0
+-- 
+2.34.1
 
 
