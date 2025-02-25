@@ -1,156 +1,222 @@
-Return-Path: <linux-kernel+bounces-531543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95325A441C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:06:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A3C6A441CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39444442BF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:00:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 175E7188DF08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433D726B097;
-	Tue, 25 Feb 2025 14:00:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AD226A0A1;
+	Tue, 25 Feb 2025 14:05:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BnFEFeYs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D5szGzZD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AE326A0A4;
-	Tue, 25 Feb 2025 14:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0533CFC;
+	Tue, 25 Feb 2025 14:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492012; cv=none; b=teFmOvRnMjmkh470H2jkWcSNdIcO9mtfXdoJLYFK8fZglQLoD//kzQXB5GzMfDavAIZ3hJ2lJbwfc4uKIjjEaPU5MRc1eI3jrRQREHaskBtEdoMmIYOhwMvfalFqOwqpOyb/6+yNRvSTbHQyJtQaN45I+wwHgHHukReV1q24v9o=
+	t=1740492303; cv=none; b=uSTur4GZnTFuvUJ7rmgBwwyqMTwjxkyrIcdwfQPXTBDqmixt+GVm9J2cWyLG85jgWoQD79tCEpKSagzeA/3ZHQXZDJMlMZWRSJTGYFhkV/sCUjMW0k95NU8NAaRL4BAWnP0yNhGUkOhxvQ1cgnQqtFDovzOadmVxyTz7JibQbfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492012; c=relaxed/simple;
-	bh=z0NM4k/FSSDfqS2mjYdariSVt/ETmZ+fP+JtXH7aT5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j1C6hLOlHdfmtj7KtYo1bCKaRtMjxFOOrcSWzU27NtkQ5SMoIO7xfmXMai76pqDSd8TOo1K3kHC/2tCCE/B/P6HTOtq/IQkarssn8vLiuHw5Hhi4z5ux3xZFTDRSp1bYWK+qCyrV/NDeCkvV1o5mCJLBA/v2cpam6hX7W2OgwFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BnFEFeYs; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1740492303; c=relaxed/simple;
+	bh=hdQzrrNE52j/1pPIwjImRAwPDZ4EG0HB8b/6MuOnZsA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VCVceGWcF4RNXqANeiKr+UKHp58JPufiHhay+XBhU5CjrM0yzvuu0385Ch8L0oCqafVbe7K2CwfCPsVAFeZDgkErtaUfTrwtgPzwpMm8nuRhLSm19y/Din6cwm54VxIjLH8aNzYliUjICphIeQCXa/7IZJfcOW/UBVlbaq7r8cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D5szGzZD; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740492010; x=1772028010;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=z0NM4k/FSSDfqS2mjYdariSVt/ETmZ+fP+JtXH7aT5c=;
-  b=BnFEFeYs5WvgShhEO3zjeYqdiwPp8U1AL5wJ9Vwwyu4kGCrPqTGtP2t9
-   +n5wcvlmF9OdQKINQGmtXi/1ispDF2G6AcYelMFia1BULqpIyB9mj4VFW
-   6SpEeQIPnHj83pipWCZpF5unakpFfDFgMTGCH1VxYH/tJjHXPoS0C77w4
-   br9tsK/dUX7ivzRRxvsdAJ+GXCGsmvoLp5jh1+bNBKBdncRqGY8N6Me+v
-   1OdDEjOF661hSIlPuyywPJiDLiZ7jpnn478/UIJT7DFHL87lAPiJZm9xs
-   S3ByjzUAg7wkFqRYTd66qQcjmjj4hFgnnyDBSY7QZFfuH/BOejApO1bfF
+  t=1740492302; x=1772028302;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=hdQzrrNE52j/1pPIwjImRAwPDZ4EG0HB8b/6MuOnZsA=;
+  b=D5szGzZDfn1JT+NYprq2nNa+60QZ05C0TdIUT6vIQCF9AjozjcfyrLuy
+   cIaQJfuqdlT0zKZ+EM56fCCBN+ZBF13I2JKvLMrb0a1MloQBmtssyTaWl
+   a/9fjQuHS0A5NOFvrX7V7TsYk07ts5CxAenjOtBTXY1patibmQxvGQ1S7
+   O+WgyqKQ6/PAhgh2dYS3kczyJu2ev991PTh+E95g31h3Qeh6rFqJ8oqao
+   2jADKZpNh2ib28OeNJb7SxzjqvKF5jl90v9FBjHihY5d1JQIcw2UFoHA0
+   gzmBx+QNvuxyQADNz17wrI49A2flWbIWI8GMREqDOd41SHA2qURDR4u+U
    g==;
-X-CSE-ConnectionGUID: SqwrGY74SfeYSku1DNJ6EA==
-X-CSE-MsgGUID: yotztxgiSOmvf8pldCj9bA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11314"; a="41500373"
-X-IronPort-AV: E=Sophos;i="6.12,310,1728975600"; 
-   d="scan'208";a="41500373"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:00:09 -0800
-X-CSE-ConnectionGUID: 5wdBO304QIGqIKmBnH0WxA==
-X-CSE-MsgGUID: o2kscnJVSLCiJ/DTQH/+dw==
+X-CSE-ConnectionGUID: VTCZTJuQTSmsFuMHa2rKPw==
+X-CSE-MsgGUID: YqaiZC5LQ1KUsLiwl84qSQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41424598"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="41424598"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:05:01 -0800
+X-CSE-ConnectionGUID: jOvlhMYcRna49H6HM95Otg==
+X-CSE-MsgGUID: aHIhg91ZQQexTDVfL18beg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120502479"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:00:02 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmvTa-0000000F0fX-0FCE;
-	Tue, 25 Feb 2025 15:59:58 +0200
-Date: Tue, 25 Feb 2025 15:59:57 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
-	Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Guillaume Stols <gstols@baylibre.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v4 02/10] property: Add
- device_get_child_node_count_named()
-Message-ID: <Z73M3Ua6u1FpgBEK@smile.fi.intel.com>
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
- <29ec24f1498392cafbecc0e0c0e23e1ce3289565.1740421248.git.mazziesaccount@gmail.com>
- <Z72QAOA9xXbP16K-@kuha.fi.intel.com>
- <Z72Zp8tpnvlFGdQ_@smile.fi.intel.com>
- <ad39b453-7e5b-49bd-a4fd-6a4988636130@gmail.com>
- <Z72d7TzZ21WITW3f@smile.fi.intel.com>
- <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="116590762"
+Received: from chenyu-dev.sh.intel.com ([10.239.62.107])
+  by fmviesa008.fm.intel.com with ESMTP; 25 Feb 2025 06:04:56 -0800
+From: Chen Yu <yu.c.chen@intel.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@redhat.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Tim Chen <tim.c.chen@intel.com>,
+	Aubrey Li <aubrey.li@intel.com>,
+	Michael Wang <yun.wang@linux.alibaba.com>,
+	Kaiyang Zhao <kaiyang2@cs.cmu.edu>,
+	David Rientjes <rientjes@google.com>,
+	Raghavendra K T <raghavendra.kt@amd.com>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Chen Yu <yu.c.chen@intel.com>
+Subject: [RFC PATCH 1/3] sched/numa: Introduce numa balance task migration and swap in schedstats
+Date: Tue, 25 Feb 2025 22:00:01 +0800
+Message-Id: <1847c5ef828ad4835a35e3a54b88d2e13bce0eea.1740483690.git.yu.c.chen@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1740483690.git.yu.c.chen@intel.com>
+References: <cover.1740483690.git.yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <893a3c45-537e-47ad-afbd-1e5d3b9abe2c@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 25, 2025 at 03:29:17PM +0200, Matti Vaittinen wrote:
-> On 25/02/2025 12:39, Andy Shevchenko wrote:
-> > On Tue, Feb 25, 2025 at 12:29:31PM +0200, Matti Vaittinen wrote:
-> > > On 25/02/2025 12:21, Andy Shevchenko wrote:
-> > > > On Tue, Feb 25, 2025 at 11:40:16AM +0200, Heikki Krogerus wrote:
+There is a requirement to track task activities during NUMA
+balancing. NUMA balancing has two mechanisms for task migration:
+one is to migrate the task to an idle CPU in its preferred node,
+and the other is to swap tasks on different nodes if they are
+on each other's preferred node. The kernel already has NUMA page
+migration statistics. Add the task migration and swap count
+described above in the per-task/cgroup scope. The data will be
+displayed at
 
-...
+/sys/fs/cgroup/mytest/memory.stat and
+/proc/{PID}/sched.
 
-> > > > > 
-> > > > > I did not check how many users are you proposing for this, but if
-> > > > > there's only one, then IMO this should not be a global function yet.
-> > > > > It just feels to special case to me. But let's see what the others
-> > > > > think.
-> > > > 
-> > > > The problem is that if somebody hides it, we might potentially see
-> > > > a duplication in the future. So I _slightly_ prefer to publish and
-> > > > then drop that after a few cycles if no users appear.
-> > > 
-> > > After taking a very quick grep I spotted one other existing place where we
-> > > might be able to do direct conversion to use this function.
-> > > 
-> > > drivers/net/ethernet/freescale/gianfar.c
-> > > 
-> > > That'd be 2 users.
-> > 
-> > I haven't checked myself, I believe your judgement,
-> 
-> I took a better look and you obviously shouldn't believe :) The gianfar used
-> of_node instead of the fwnode. So, it'd be a single caller at starters.
+Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+---
+ include/linux/sched.h         |  4 ++++
+ include/linux/vm_event_item.h |  2 ++
+ kernel/sched/core.c           | 10 ++++++++--
+ kernel/sched/debug.c          |  4 ++++
+ mm/memcontrol.c               |  2 ++
+ mm/vmstat.c                   |  2 ++
+ 6 files changed, 22 insertions(+), 2 deletions(-)
 
-...which is the same as dev_of_node(), which means that you can use your
-function there.
-
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9632e3318e0d..01faa608ed7c 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -527,6 +527,10 @@ struct sched_statistics {
+ 	u64				nr_failed_migrations_running;
+ 	u64				nr_failed_migrations_hot;
+ 	u64				nr_forced_migrations;
++#ifdef CONFIG_NUMA_BALANCING
++	u64				nr_numa_migrations;
++	u64				nr_numa_swap;
++#endif
+ 
+ 	u64				nr_wakeups;
+ 	u64				nr_wakeups_sync;
+diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
+index f70d0958095c..aef817474781 100644
+--- a/include/linux/vm_event_item.h
++++ b/include/linux/vm_event_item.h
+@@ -64,6 +64,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
+ 		NUMA_HINT_FAULTS,
+ 		NUMA_HINT_FAULTS_LOCAL,
+ 		NUMA_PAGE_MIGRATE,
++		NUMA_TASK_MIGRATE,
++		NUMA_TASK_SWAP,
+ #endif
+ #ifdef CONFIG_MIGRATION
+ 		PGMIGRATE_SUCCESS, PGMIGRATE_FAIL,
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 165c90ba64ea..44efc725054a 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3348,6 +3348,11 @@ void set_task_cpu(struct task_struct *p, unsigned int new_cpu)
+ #ifdef CONFIG_NUMA_BALANCING
+ static void __migrate_swap_task(struct task_struct *p, int cpu)
+ {
++	__schedstat_inc(p->stats.nr_numa_swap);
++
++	if (p->mm)
++		count_memcg_events_mm(p->mm, NUMA_TASK_SWAP, 1);
++
+ 	if (task_on_rq_queued(p)) {
+ 		struct rq *src_rq, *dst_rq;
+ 		struct rq_flags srf, drf;
+@@ -7901,8 +7906,9 @@ int migrate_task_to(struct task_struct *p, int target_cpu)
+ 	if (!cpumask_test_cpu(target_cpu, p->cpus_ptr))
+ 		return -EINVAL;
+ 
+-	/* TODO: This is not properly updating schedstats */
+-
++	__schedstat_inc(p->stats.nr_numa_migrations);
++	if (p->mm)
++		count_memcg_events_mm(p->mm, NUMA_TASK_MIGRATE, 1);
+ 	trace_sched_move_numa(p, curr_cpu, target_cpu);
+ 	return stop_one_cpu(curr_cpu, migration_cpu_stop, &arg);
+ }
+diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+index ef047add7f9e..ed801cc00bf1 100644
+--- a/kernel/sched/debug.c
++++ b/kernel/sched/debug.c
+@@ -1204,6 +1204,10 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
+ 		P_SCHEDSTAT(nr_failed_migrations_running);
+ 		P_SCHEDSTAT(nr_failed_migrations_hot);
+ 		P_SCHEDSTAT(nr_forced_migrations);
++#ifdef CONFIG_NUMA_BALANCING
++		P_SCHEDSTAT(nr_numa_migrations);
++		P_SCHEDSTAT(nr_numa_swap);
++#endif
+ 		P_SCHEDSTAT(nr_wakeups);
+ 		P_SCHEDSTAT(nr_wakeups_sync);
+ 		P_SCHEDSTAT(nr_wakeups_migrate);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 46f8b372d212..496b5edc3db6 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -460,6 +460,8 @@ static const unsigned int memcg_vm_event_stat[] = {
+ 	NUMA_PAGE_MIGRATE,
+ 	NUMA_PTE_UPDATES,
+ 	NUMA_HINT_FAULTS,
++	NUMA_TASK_MIGRATE,
++	NUMA_TASK_SWAP,
+ #endif
+ };
+ 
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 16bfe1c694dd..d6651778e4bf 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1339,6 +1339,8 @@ const char * const vmstat_text[] = {
+ 	"numa_hint_faults",
+ 	"numa_hint_faults_local",
+ 	"numa_pages_migrated",
++	"numa_task_migrated",
++	"numa_task_swaped",
+ #endif
+ #ifdef CONFIG_MIGRATION
+ 	"pgmigrate_success",
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
 
