@@ -1,207 +1,218 @@
-Return-Path: <linux-kernel+bounces-532329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F359A44BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:45:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7BA9A44BBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:45:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4039219C511E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:44:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C4F7AAF2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F80B20E028;
-	Tue, 25 Feb 2025 19:44:27 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3047A20D517;
+	Tue, 25 Feb 2025 19:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="y2dk9jy2"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2056.outbound.protection.outlook.com [40.107.92.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D0820DD42
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740512667; cv=none; b=bxlgDmz0fGE0l45S6fRIGOVtagrr0zUzGoWd7ju72ypE+AZ5l14Xvx5tbaQqp0SSwqaqR/3ZeokrEiUf96aDtwpSio5MFtl4UbJRrmPn6Q8MB6HNcY1t5mGvU2QuAMj4q5IrrawtY7AtGJRjTLJUYOoREgosQjPo5PQTAPJwDbU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740512667; c=relaxed/simple;
-	bh=Z2fFK85mzRgcR7RW7ufzAyzQ8Q7Chtjm54Vmco841ZU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=iwV9NqOnbFu9AeGguS/2GcBtXRSWaCxESwLuEQVk4kjrQfR2XQc/Uzq3T/TrseyYLkc6iMKmfHHdPUdvDefwYpl0039pM6ElDIlBXWEgKXHPR2PGPWF/s3dOiZ/5Qb5qWdOs0uEyP8MjW6Vgjkc6CJaknMRjVXA/NZWBwrxEQSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d1a365d10fso1278995ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:44:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740512664; x=1741117464;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=76x+UPV5MX91QGzIZEkWwMxGpj5DzJVSb7MVwzvstts=;
-        b=MSW6pHZJK2MGIFWoRg76LpcZDMroJXZT5O9REM82nVPFAOVjf3yfbQkqo8nFiohplu
-         KHvv9FG8y2Cw5gON5Y/pOGAb/i4KCodNUYRYXyNz7uR6ZcZ/H2BGm967h9wo66bBgpay
-         i2D5zas68bOnSCyK/JzMSsqpdG5PMGmyFm/nm74MNOZ1Wkp5DY322mdY1dI6tbPsUXBm
-         Q0v25/DUBcgVxcrQjzrzXeDAWPfjCJtPZJ/4W6NRyYoLCrKKavysFlpBudNq576anuvZ
-         HHRXazb6MsjJOcSlIvjFqbS3fWu9PFjny4seX8Kqyk61UPHNzg3FB4Dp0Xy3cN9M2Hhp
-         5rVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWFFntenHZHCXTE4R46P03QtYpBOrFpR5Yspv9lQj4WCOXLybzUj5wYGlB8wZ4VLCUUJGIekoiTruvaIhM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwARhtwUdBpJqobazElKXZe74lxMxQgD+IaVF8zzcqZaVH0RUH7
-	tQyaJiFDN31dHNcOJp+d90vCsGa7F6E/lv4NW7HOUv9f9aJDY6PRik9AyNWQq/KOBJimOYSTPU1
-	th/mZL915kSQ4eXG57dRtZGWXMZRM49TZF8njpD5VnFf7h5ukJgaDR0E=
-X-Google-Smtp-Source: AGHT+IG4MLCKeVgpdvui/NNSnjP81MVT3zXXfY2Km1qdmyJCOO453G2qxPE1zHlajevDs6hE442++KBrTozK6a2ekmHDhvQioWHS
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A051A7045;
+	Tue, 25 Feb 2025 19:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740512718; cv=fail; b=dlUIy+/IvPwT736FdW+ca7507QboFmL2518jqpeChoeJ3LcuM7iN9RtIiFaiexj0M2UI6U2oXbOzYiYmSrVF8JxHgkH5gKdmEVZaNklP77TuV8tjw0Cig9qjrUqc1ISpYGCdTqr/3ofreo9WyBkn+7+Jnyn/GZFEKOOq0rtFshQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740512718; c=relaxed/simple;
+	bh=LdRLnZIlyiO3BnY8Gr8zSHyB9MHTyj2Vu5IvHUZfDbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F1EJqoJhDHLcjPZR9YyhEDNSg3R9ssGJVB8My7foAiVYaC2IeoKm1/9nHcqzxwJjMkLBFbUw17oG/jJJu1W3ljewJmSB6NV2Gb3cX5I42bhXKPEPiiXY1kLi3dUaC0hQwQaOR6gAZ0PRpdV/kJht0Vn0BkpgGeJwJZKgRcQ5vcc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=y2dk9jy2; arc=fail smtp.client-ip=40.107.92.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iA2WI6GoQUlx6Wz51wMApjKLk8y3CYhm2VbNGXxlgc9c6c5a4yKDm+oJOayakO1ErvZYPN8bCQxe4q4zZhxDpEHRte1fN5QgVYYKWo/BV+pupLUY6wpiA/pfW0ItvZfZRP86KmnWSJiDz29aCmZLVtebBNBfxM1W2yp1p9ujd1zcEScPaTclOZoEcPA1xvNy3/0yc6oLY5Hu/idD28HxOzwO8SpjQVa4Arie1b6DTLsh3Di1q+0+MpHrqb66c/Gy3CFqJclTP9eKWdnfJskZTSJ883I0FLkJA5KBsuDyTEWfbMSsZp+gAYpeAPqLc6UHgnjD0Tvgv/t3If7RtX2OtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nYo4UfYkYq2Uka5FO/9IZdOXRnt4fMoszkj8X9hpjks=;
+ b=ZrdI5OfjnC0gLwaU6g383HYZEvtWJz/6QvzIpcRgFq8EPC+YJb5nCxq8cDsRDyUjWWL92AEKYNBQaueCo1clHPRIye4QQSVuuIz99f8eq+ge6dGsxKj96anWT3RN9RlUyQX47rZ+/aHP3zQMd1PQzTCMvVONk/5wTsR1sY2vecoROD90aXAGsRvXwlj/68s/gCAHjOlwfbdOiaidopZOlkHlrVNHhJCyewEsu9M9GmaF3GkPry7MtVbBjqtSyiGMYPFTCq/mcbemHzdWC8x/oo3TJ296qb7kXlnL5XERM5632BfKXXJrFIBpLdW3L4yR26EdJ1FG19xMW9XkeAiM2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nYo4UfYkYq2Uka5FO/9IZdOXRnt4fMoszkj8X9hpjks=;
+ b=y2dk9jy23iPQ+hLKBXa+lSl9ojVqAmeLWmWNGD+GKBVMkzpfTZ2iIfH9b/z8XG4xH9naAOXQEgnzmq11vEA1QXfL5ltzGmU1R674dgcs3DhZjTrUaifyBfOQEjL0nXA1A6pXFwlQAefGWNUqYT7Cm2S+iHAGO2PMvoeU0OKhIc8=
+Received: from PH7P220CA0171.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:33b::32)
+ by IA0PR12MB8349.namprd12.prod.outlook.com (2603:10b6:208:407::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.18; Tue, 25 Feb
+ 2025 19:45:12 +0000
+Received: from SN1PEPF000252A3.namprd05.prod.outlook.com
+ (2603:10b6:510:33b:cafe::82) by PH7P220CA0171.outlook.office365.com
+ (2603:10b6:510:33b::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8466.20 via Frontend Transport; Tue,
+ 25 Feb 2025 19:45:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SN1PEPF000252A3.mail.protection.outlook.com (10.167.242.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8489.16 via Frontend Transport; Tue, 25 Feb 2025 19:45:12 +0000
+Received: from [10.236.185.178] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
+ 2025 13:45:09 -0600
+Message-ID: <6c497385-6447-4d81-8d93-20c46cad29f9@amd.com>
+Date: Tue, 25 Feb 2025 13:45:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1686:b0:3cf:fd62:e39c with SMTP id
- e9e14a558f8ab-3d2cacde097mr161618245ab.5.1740512664445; Tue, 25 Feb 2025
- 11:44:24 -0800 (PST)
-Date: Tue, 25 Feb 2025 11:44:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67be1d98.050a0220.bbfd1.00b0.GAE@google.com>
-Subject: [syzbot] [bluetooth?] possible deadlock in l2cap_info_timeout
-From: syzbot <syzbot+d8bca25877c7eda36f5b@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 01/10] KVM: SEV: Disable SEV-SNP support on
+ initialization failure
+To: Tom Lendacky <thomas.lendacky@amd.com>, <linux-kernel@vger.kernel.org>,
+	<x86@kernel.org>, <kvm@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<shuah@kernel.org>, <pgonda@google.com>, <ashish.kalra@amd.com>,
+	<nikunj@amd.com>, <pankaj.gupta@amd.com>, <michael.roth@amd.com>,
+	<sraithal@amd.com>
+References: <20250221210200.244405-1-prsampat@amd.com>
+ <20250221210200.244405-2-prsampat@amd.com>
+ <88fc49a9-d801-5d8f-f156-28fa06910cd6@amd.com>
+ <9480ce1b-2c35-499c-b60f-1c02ea9cdc16@amd.com>
+ <a84a3d32-9cf7-4c24-87db-99132a450557@amd.com>
+ <b0fe42da-b257-bf1a-94e5-77cd8c090341@amd.com>
+Content-Language: en-US
+From: "Pratik R. Sampat" <prsampat@amd.com>
+In-Reply-To: <b0fe42da-b257-bf1a-94e5-77cd8c090341@amd.com>
 Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    8a61cb6e150e Merge tag 'block-6.14-20250221' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17261fdf980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b7bde34acd8f53b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=d8bca25877c7eda36f5b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-8a61cb6e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/420db9e4c0d8/vmlinux-8a61cb6e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6ce6feff857d/bzImage-8a61cb6e.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d8bca25877c7eda36f5b@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.14.0-rc3-syzkaller-00213-g8a61cb6e150e #0 Not tainted
-------------------------------------------------------
-kworker/0:2/56 is trying to acquire lock:
-ffff888042bae338 (&conn->lock#2){+.+.}-{4:4}, at: l2cap_info_timeout+0x60/0xa0 net/bluetooth/l2cap_core.c:1666
-
-but task is already holding lock:
-ffffc9000103fc60 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
-ffffc9000103fc60 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3317
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       touch_work_lockdep_map kernel/workqueue.c:3920 [inline]
-       start_flush_work kernel/workqueue.c:4174 [inline]
-       __flush_work+0x739/0xc60 kernel/workqueue.c:4206
-       __cancel_work_sync+0xbc/0x110 kernel/workqueue.c:4362
-       l2cap_conn_del+0x507/0x690 net/bluetooth/l2cap_core.c:1794
-       hci_disconn_cfm include/net/bluetooth/hci_core.h:2069 [inline]
-       hci_conn_hash_flush+0x1be/0x350 net/bluetooth/hci_conn.c:2698
-       hci_dev_do_reset net/bluetooth/hci_core.c:547 [inline]
-       hci_dev_reset+0x3ed/0x5d0 net/bluetooth/hci_core.c:591
-       sock_do_ioctl+0x158/0x460 net/socket.c:1199
-       sock_ioctl+0x626/0x8e0 net/socket.c:1318
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&conn->lock#2){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3163 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3282 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
-       __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
-       l2cap_info_timeout+0x60/0xa0 net/bluetooth/l2cap_core.c:1666
-       process_one_work kernel/workqueue.c:3236 [inline]
-       process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3317
-       worker_thread+0x870/0xd30 kernel/workqueue.c:3398
-       kthread+0x7a9/0x920 kernel/kthread.c:464
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock((work_completion)(&(&conn->info_timer)->work));
-                               lock(&conn->lock#2);
-                               lock((work_completion)(&(&conn->info_timer)->work));
-  lock(&conn->lock#2);
-
- *** DEADLOCK ***
-
-2 locks held by kworker/0:2/56:
- #0: ffff88801b074d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff88801b074d48 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x98b/0x18e0 kernel/workqueue.c:3317
- #1: ffffc9000103fc60 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #1: ffffc9000103fc60 ((work_completion)(&(&conn->info_timer)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9c6/0x18e0 kernel/workqueue.c:3317
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 56 Comm: kworker/0:2 Not tainted 6.14.0-rc3-syzkaller-00213-g8a61cb6e150e #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events l2cap_info_timeout
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2076
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2208
- check_prev_add kernel/locking/lockdep.c:3163 [inline]
- check_prevs_add kernel/locking/lockdep.c:3282 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3906
- __lock_acquire+0x1397/0x2100 kernel/locking/lockdep.c:5228
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5851
- __mutex_lock_common kernel/locking/mutex.c:585 [inline]
- __mutex_lock+0x19c/0x1010 kernel/locking/mutex.c:730
- l2cap_info_timeout+0x60/0xa0 net/bluetooth/l2cap_core.c:1666
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3317
- worker_thread+0x870/0xd30 kernel/workqueue.c:3398
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF000252A3:EE_|IA0PR12MB8349:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23e1df12-5325-4d37-ecb1-08dd55d4eb46
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGdmMDBrdWxqd2paN2FIMUd2NGVKTDlNb0ZMZ09ZdytYdDcyUk42MlJZbE5E?=
+ =?utf-8?B?c2RhQityNzUwRUE1TDZWMzkyNndheGhmTEhhUkFzQWJoMXVXdi9XRTNOQ0N5?=
+ =?utf-8?B?M3AxUVo0WDZVeFhMVHE5Y0E1dlZoYll2WWRuVFhsazd5a2JnS3g2NmZKVDMy?=
+ =?utf-8?B?SDU2NWd5aEl0SnZ0L0Rna3VXOWY4WXEzS291c2hWRnFlcUNiUnVxWHlVRkRF?=
+ =?utf-8?B?bDYvYlMrYithQnFMSm83Z3MrWDVJTGlvY0owU1lOMk03OC9rRS9EZ1k1M1F5?=
+ =?utf-8?B?WTlUVEJ2b2xhRHZ5TnZBbDRTMzZDOEJjbmxDY2E5OVgzK0FkY3N2a1hUMUMz?=
+ =?utf-8?B?cUJPN3dCblBQWWZYQjNiZjJ6NFNVb3lHWG1jQWw4T0JaQ3NNS2JrcE1xSm40?=
+ =?utf-8?B?TWdpYjlhZ093TWJlZWRBQmdSVjZxZThYRWd5dGtUMksycXFZVmVJQUcyMG5B?=
+ =?utf-8?B?ZDdlOHprQSswUlF6VlA3OFY2Q0R5aFdpNTB0RE9wRXphbm9QZFVQbE43V2xV?=
+ =?utf-8?B?WFV0TmxDQWlhYlhIOWN1Q3BzdktiRXlDQm1KTWt6R2RzZGFvbVNYWDJyOEdi?=
+ =?utf-8?B?QVBJbisrTHhnQStXN1hick1yb3BORGVMSDJ4RU5oZ21WQjIraTJiYXhtcDdn?=
+ =?utf-8?B?WHpBVFI1bWVBK3JVMEJ4aFNvSlhCZTlDQVJnMWRBMWttUXlic3pFYXBMaWk5?=
+ =?utf-8?B?Rm93NUFncE9DdVg0ai83SmlpOTNaM3ludE5QMXZOWmdUbFllR3gwOXAwOUll?=
+ =?utf-8?B?QXRaVi9ERC81bTZ6TFJPSDc5MTNKUWM5NU40SmM2QlBwZG9pOWhoQUxuc251?=
+ =?utf-8?B?alVrb3lYeGJMWUlHckdSUEdxT2dwVVU5ZTUyemZ4TW9EZVMwUWplK1pOMDQ2?=
+ =?utf-8?B?UDhuczd0cnVnOHUxT1FuQUNqWmZDU0wyaUpxNC9XK0tpQ3FVZnYrWVAzWm1w?=
+ =?utf-8?B?b1k1VE4xK3V4L3FEQW40SlV3L05PVENDUzNNKzNFemRrR21NZTdNcXo1U2NP?=
+ =?utf-8?B?N09QbTdSWmVobEJKci9IbVNiNDdVZDFqSmY1YjhScXhSdVQ0ZitKbEVYMVYw?=
+ =?utf-8?B?UlFPR21nbVByem44UGxYQ0ZLSVpudmhoeVVzWENUN1NYVHhZTG9oa2JpUXdY?=
+ =?utf-8?B?b0F6RGhjVndvQ0wzUUZIODN3Y3NRVHh2SEhZYUJyVEFwMUJBUGdNUVhBOFJW?=
+ =?utf-8?B?RFZlV1FTc3dxUHpONG1vQUIyTDg4dnFWbjBXdmZvTmRlZVRMNlFtRGZzcXRo?=
+ =?utf-8?B?MkptcmhsaWFnOFhoZVJxRExWZnAzNEZwYVcxZE9RM1VZTTN2dzY2WVZUa1Ro?=
+ =?utf-8?B?b2ZDMnhYeEpBSGFWeXRWbHJUUUVSUG5vKzA3THd6U3RRNVp2eDkyVFFSdkh3?=
+ =?utf-8?B?WDRwQ1JlZ3N3TktnbHdWSjdNemgxQXJ4eThoOGhseDZlTzZBR24vOUJTUGNt?=
+ =?utf-8?B?d1MvM01tbWFPcnkwV09rZ0E2Tzd3Tk1nZzkwY3lOR3VhaHo5ZjhwQ1FRZGwz?=
+ =?utf-8?B?ZmI4ekI3OHpXRXpXZm5xRHVMRHY5T0tOSXN3N0dkbVU3bWpiVTVpUUxBMjdv?=
+ =?utf-8?B?eSs5cTJDYjV0NFlJUFFXVDBEcHVZK2Y3anpoNU5QL0R0TmJ3WXFTM2RGc1dM?=
+ =?utf-8?B?TE5zOHhIbjVmRFd1MUtNWFlVNEpQSUpKTGZVZzh1cDRuOFhyaVBTLzQvZzZB?=
+ =?utf-8?B?M0tnZmtMdHU1c1JWUGlLUGFGdWxWZzQ1eEZ1b2pDL0VVK2hCYk9jbVFhREZL?=
+ =?utf-8?B?NzVsZTZteU04NThIMjBmTlBnQTM5aEwzc1cvREJVTmU4dWVpSmw4WjVZVG9i?=
+ =?utf-8?B?aGNsRUtFMTVGL1VRYVBIY0s0ZlBzdzk5c2s0dGtxZG5qbzJiaVZvS0ZyWXBG?=
+ =?utf-8?B?d1ZwWjhIQ2w3ZUJEVlI3SE52M0twcTVtYzhSenduOEp0UlB1ZDZZdnFaQjJx?=
+ =?utf-8?B?cXZaTmhkU3IwMC9BQktBOVNEMUt6S2FZOERMeU5aTHZiSm1kT2NVNnloT3ZP?=
+ =?utf-8?Q?1Cdpl+atIWHR5aTriBKzrp6DgUrfGQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 19:45:12.4262
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23e1df12-5325-4d37-ecb1-08dd55d4eb46
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SN1PEPF000252A3.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8349
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 2/25/2025 1:09 PM, Tom Lendacky wrote:
+> On 2/25/25 11:45, Pratik R. Sampat wrote:
+>> On 2/25/2025 10:41 AM, Pratik R. Sampat wrote:
+>>> Hi Tom,
+>>>
+>>> On 2/24/2025 3:28 PM, Tom Lendacky wrote:
+>>>> On 2/21/25 15:01, Pratik R. Sampat wrote:
+>>>>> During platform init, SNP initialization may fail for several reasons,
+>>>>> such as firmware command failures and incompatible versions. However,
+>>>>> the KVM capability may continue to advertise support for it. Export this
+>>>>> information to KVM and withdraw SEV-SNP support if has not been
+>>>>> successfully initialized.
+>>>>
+>>>> Hmmm... rather than creating a new API, can you just issue an
+>>>> SNP_PLATFORM_STATUS command and see if the SNP is not in the UNINIT state?
+>>>>
+>>>
+>>> Although reading sev->snp_initialized is probably cheaper to do, it is
+>>> cleaner to query the platform status.
+>>>
+>>> Querying SNP_PLATFORM_STATUS requires the pages to transition to
+>>> firmware-owned and back, and the helpers for it are implemented within
+>>> sev-dev.c. So, similar to sev_platform_status(), I'm thinking it is
+>>> probably better to create the snp_platform_status() API as well and use
+>>> that within KVM to check the state.
+>>>
+>>
+>> Although I am guessing the initial intent was to not have an API exposed
+>> at all from CCP and only make the SNP_PLATFORM_STATUS call instead?
+>>
+>> Since that may not be cleanly possible (we have helpers for page state
+>> conversions such as rmp_mark_pages_firmware() in ccp) without
+>> duplicating functionality in KVM as well, I guess the question really
+>> boils down to whether we export the cheaper snp_initialized() or the
+>> snp_platform_status() API instead?
+> 
+> Taking a closer look, we do already have APIs that KVM uses to allocate
+> firmware pages (output pages for SNP APIs) that can be used:
+> snp_alloc_firmware_page() and snp_free_firmware_page().
+> 
+> I think that should be enough to use sev_do_cmd() to perform the
+> SEV_CMD_SNP_PLATFORM_STATUS command without exposing a new API.
+> 
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Ah, I had missed that! Calling the SNP_PLATFORM_STATUS this way works.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Pratik
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> Thanks,
+> Tom
+> 
+>>
+>> Thanks again!
+>> Pratik
 
-If you want to undo deduplication, reply with:
-#syz undup
 
