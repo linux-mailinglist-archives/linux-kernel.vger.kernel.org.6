@@ -1,211 +1,137 @@
-Return-Path: <linux-kernel+bounces-532078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2A28A4480F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:30:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EBECA4481B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B63D27A44A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:29:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5515F7A5077
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36911A5BAF;
-	Tue, 25 Feb 2025 17:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA22321420D;
+	Tue, 25 Feb 2025 17:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="bDAvNgol"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mf7pqCu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64AAB20FA9B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504394; cv=fail; b=bmxNpX3EgKjH/TPLrH7pax6+5AF/HcTucwO/Z5+mp6sHASSHi1vDbAuTK5wXfnNoWM/HdsowKbcHZC3goAVly8ZXCbP+JAO8og3S30R7gn6IAaO+kl5xgCL4hQfM99kj2JqudnvOqTaulQsqQPMVmSCQTyqA8ID9LdkItcsU6H4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504394; c=relaxed/simple;
-	bh=LnJ/08d06DLwF82wJMmPiUxhNfbBe2PhGXFQt5BqzfI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EyQxIQtfe6IBdduI0+WELt9MYm/Bc4VrCk33bnONnoZiY/vrbPingPZ84zg4acl/V1IHku3Bex4+nMSmenxR78tnhlvcis4fkWuhUm78e9OqdekKLijpk1F5lnasjQS2QD/uhkzx901Rp3tl2iZKD0Zth6SzNbUvxF2n8o3Emng=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=bDAvNgol; arc=fail smtp.client-ip=40.107.102.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X1x3kYC+iO0AowKPrZ2XWnC2VFJJAUmk55W1JXEg6e3nELVqUT0ClwLDAE2rR7Ca92VvYqtnum3HEXUnhcWQN2piFvtGJ9GaI7m97ZOcnw4fx+E1kTDodVgr2Uzf0utENH7lXFVWG7BeRlDnge8iEZ0D/wk7XfqHP+MKail4E5uBfKuKA6o9RemjjWh6LCnUc9dCORP2+dfAyg/XBHDNxgTNdg1xEMBMTOzwuHxTqTnbjEZjSiCj3gv8YNGwJIJ33MB/TqpPw1WHDqOqy1ezZi6tnrvSyTorjfYvO31rHFr3Jax670PcSECsSECYDff5h1XXK3xWweG55vqMRGkztw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AQeLq7D5UZilvDr63oAW97PuFONu/IvAO5cBkruO9Jw=;
- b=vzamiZGIg6Dn5iGUer2ImZz4Jv3wOPStm5LrDx/OiQsDMewOniyvtFJE6/V60CobABv/PWVOqYy/7Llrwa8TwUwo+MxQlGUeQmAL4WJA3My0USlMHA13adZRtertFZN0bGsAoEnZI2f64NTM0KTSIUtQFH98EXwKwpf+B+zd6NCrQJEr6sgl1tRbfagiPr/GhxBPelqBzQoY76ckM+Kbs8e+vfAMVwMumPztBjNf8lNp5Mj2GbEm2djAxxMczPAGAVx3l7kaFaqXa7zvON+vRnNlVsLU4C9vQvE6+T1bwFRZk64eeQ/RwG9xaD0ySuQiO22FCm3mpz0Vj0ymRv3XZw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AQeLq7D5UZilvDr63oAW97PuFONu/IvAO5cBkruO9Jw=;
- b=bDAvNgolrenQfDNLbHycVkImtTp69Ktuy/B/1C5efL51ObbcOsI27Y9b/2xSkcmJhnNpNKWntssaCCb1nBuvFzPYxSqIKRwBBDy59ZpxSEKVddiPibmyZpoT5sT55NWtBh3iwZKwtETeofDbPMtHO2u2IvSydenH1+lZ7zdz0xQ=
-Received: from MN2PR20CA0066.namprd20.prod.outlook.com (2603:10b6:208:235::35)
- by IA1PR12MB8288.namprd12.prod.outlook.com (2603:10b6:208:3fe::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.19; Tue, 25 Feb
- 2025 17:26:29 +0000
-Received: from BN2PEPF000044A0.namprd02.prod.outlook.com
- (2603:10b6:208:235:cafe::df) by MN2PR20CA0066.outlook.office365.com
- (2603:10b6:208:235::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.18 via Frontend Transport; Tue,
- 25 Feb 2025 17:26:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BN2PEPF000044A0.mail.protection.outlook.com (10.167.243.151) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8489.16 via Frontend Transport; Tue, 25 Feb 2025 17:26:29 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 11:26:28 -0600
-Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 25 Feb 2025 11:26:28 -0600
-From: Lizhi Hou <lizhi.hou@amd.com>
-To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
-	<Mario.Limonciello@amd.com>, <dri-devel@lists.freedesktop.org>
-CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
-	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
-	<king.tam@amd.com>
-Subject: [PATCH] accel/amdxdna: Check interrupt register before mailbox_rx_worker exits
-Date: Tue, 25 Feb 2025 09:26:16 -0800
-Message-ID: <20250225172616.3804796-1-lizhi.hou@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF38213E71;
+	Tue, 25 Feb 2025 17:26:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740504403; cv=none; b=JEr9cuXnwAZsBqjEgWLUN7/WdY6M1HLBOUcZ+cOA6a0dbl7SCkWF7AoaspIaf+EU1GIsbekyZdcDpVqMIF8gi3ytgZTrS/DAThdRMYNXB+ZcX1+zDLYOs80M2BUq1900hQD0YSVmMWS+MQmBY+dxRhuiJsRUghQ/qxAMrqw/Z70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740504403; c=relaxed/simple;
+	bh=0mztrH3ytGxlCbS6Ryva8g8RQSt6fulem72n6/yyelk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o3fvvl/hUJ/Xv/Hd9cZFEPRYGvyhQsxaz6SHP4Enx51uRrID/AUXZRs71VP8shbWbSoKX7ah0PnkZfLkTt4iHxKXIXbWQr4dIVvOkx3kzR81VkPPBTO9+Ko1FuyvblBm/qDxipIfnjC5tuublrMjJz9ENumooWitAhOrsNbv6UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mf7pqCu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2051C4CEE7;
+	Tue, 25 Feb 2025 17:26:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740504401;
+	bh=0mztrH3ytGxlCbS6Ryva8g8RQSt6fulem72n6/yyelk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Mf7pqCu8ujIyWTjfssZdVeY8oUBPHb/Y5nGLp9FNzNlsytUKHlNRwiOey++gq1HBs
+	 J6qEM/rfg5K4Mz1M+EafdGUFPiUslqbs4LEtEPIRn5bX/7SEUZx1rtNumqPzX6eeeJ
+	 2t6hD0sQlErGbWEXltpCW/XY1CYTgcXc/GGCm22iZLraBwtpVBJFlLXj2DwojzQYZ7
+	 QPX62ZPR8Ornom1n5tAXqALNzupDt5DPYfvCP68L7hXgQoq9vp8aijxAMfWySTT2fb
+	 g979PK9/Yx0E9Ni2fHC8cs5bh6Ai/QlHS1Xkv8djsKYH/xBGzQ+OfVAhJu/fK9wDbq
+	 1qPaMQJTfK7BA==
+Message-ID: <171c5e1c-5526-4846-aa50-fe2d49fb7f7f@kernel.org>
+Date: Tue, 25 Feb 2025 18:26:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000044A0:EE_|IA1PR12MB8288:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7606ca6d-5418-4f0f-6784-08dd55c18a3e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Kdxy5XNnXOfMcwO8fJqJhwd/oNelGvR7fJfwL8WQVjUNie2wD9QXXLPBjMkN?=
- =?us-ascii?Q?iE5gihK/1z3RnE0xvZr5u6yFLn+ojbap8X4dJdU2eh5d5zDuuNhUJ2kN9MWE?=
- =?us-ascii?Q?vwy6D/DMzk4XE/ekp7G5cxDMrGtxb/dxUDMeIrKhiMynNhHcnMqN+0Few5as?=
- =?us-ascii?Q?JxjrP7fHetofalFFzNoCv7swGNKkFozgPZNgaCio01M95Ib3j5Xm6XP6fkgc?=
- =?us-ascii?Q?L2PWwRLpq3cEQ+V9aALOui5n8GAgZXV2Qmw9Fwcx7KMJD4yCo9gn6NHtUtms?=
- =?us-ascii?Q?V0GOY//T+O9eCaJ4wdrZsSaHeYIKh2kGcEpdj7EKL1XqZUsHpZ/wslToYfbd?=
- =?us-ascii?Q?LWJwp4BaZV5tr37UQU86D1r3e8DQMprvcLK/qmN8gCJP0nBX1/W5XXLagNtX?=
- =?us-ascii?Q?9C6bDBYOzAWmDwyDKy0zLqKehmp3FRF7ZMcwVfNivT4LqHMHFm+ZqvqYF1Wf?=
- =?us-ascii?Q?wDwYevTN3jMsElGnVbqs5WztYGuEf+KPrIPtylONI7UiMf+QXkIQg65cQDhI?=
- =?us-ascii?Q?08LpbhTCoc1kZ6G+vS558d5/2MbSdDiYNwH5xESjyx1K81aL0ThFItLCpDO1?=
- =?us-ascii?Q?P0FqJ/zRyMHpPx/bo4BeJPfVJMBZcXJ0OlitsJpUZBAmyVMsRJMi1gGVkex0?=
- =?us-ascii?Q?P1XUohYfuN7t2dzWXYzAhum/yn/0RI1geNqdzDfWOYb7dmotpXQXdVcZtMdY?=
- =?us-ascii?Q?cN12K0uUw94a3IyFxP+Kkal/1r1op7zv0stjO6J9udAg9fFPzUdRiahFiASo?=
- =?us-ascii?Q?kD6qEkwsYBL45PbW+frfO5eV554FJ1afvEra75Oil5ecD4GOUJpIrpsAes42?=
- =?us-ascii?Q?OdG/5TNwmEoBcKRKE1a7jPLpcrGZxw3kF0JQmwN7IxBOUKFgM6OcBD4kuVUR?=
- =?us-ascii?Q?im/NDiM08WBJyTv36pKdhGLKHe0yMV3JtjaPueU2e7CN0dF8FlyEGNAyIm8H?=
- =?us-ascii?Q?5yoyLg2nUt4w6DDFHoRM9vZyREexfOZNuRCujLOAij7JwCk8ocyPlL0N2nzY?=
- =?us-ascii?Q?wbcgSwaB0Pr34wTmfnYkndBjbfeY5F/k4ZTzHjat0t+rtenc9TcNPRA2hUEV?=
- =?us-ascii?Q?sJg53/Q1h7NvuvXIynnDfXSpbSJI5JjoPObOMoQ674JXlim9uVZ5k8Z4XuYL?=
- =?us-ascii?Q?BRnVao9xG4IJkZkmIaDEyqHijkluomLqiG0zN1Hh2VWdRRQaHlTOhzBY/ZMZ?=
- =?us-ascii?Q?9V7+XTc2vtqP93uWwFEqbF5Mx86cEs9eoJ7aodnGzDQXNh8+kD/rp+zTEHwC?=
- =?us-ascii?Q?rnAWyCtsmgCgrAACpdpjip6Y/BnylJBPzhyt5AGYPbpmmSqdghrcqIfPM6l7?=
- =?us-ascii?Q?ivGa2amUSdHMsbGz08bGu3FCc7R79Gnsp/3sBXbfz+i4bhC0avIK44JiDL2g?=
- =?us-ascii?Q?7GH1PDuOS6PgiAmTGMYVc03ZRznNLyZ9wH0E2s0hUiKdg7S/NnLhe9pAmp0a?=
- =?us-ascii?Q?3pPw+gLNAslCdThMLP1dm/7/LrXWwDJu0w2TOTamToytiLseggK3/Q=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2025 17:26:29.2404
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7606ca6d-5418-4f0f-6784-08dd55c18a3e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000044A0.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8288
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] rtc: fsl-ftm: remove incorrect ACPI_PTR annotation
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250225163427.4168570-1-arnd@kernel.org>
+ <db184d51-db88-4f90-bf6b-dd92d3089eb3@kernel.org>
+ <20250225171623302b7862@mail.local>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225171623302b7862@mail.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There is a timeout failure been found during stress tests. If the firmware
-generates a mailbox response right after driver clears the mailbox channel
-interrupt register, the hardware will not generate an interrupt for the
-response. This causes the unexpected mailbox command timeout.
+On 25/02/2025 18:16, Alexandre Belloni wrote:
+> On 25/02/2025 18:12:10+0100, Krzysztof Kozlowski wrote:
+>> On 25/02/2025 17:34, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> Building with W=1 shows a warning about ftm_imx_acpi_ids being unused when
+>>> CONFIG_ACPI is disabled:
+>>>
+>>> drivers/rtc/rtc-fsl-ftm-alarm.c:312:36: error: unused variable 'ftm_imx_acpi_ids' [-Werror,-Wunused-const-variable]
+>>>
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> I already sent a fix for this few days ago:
+>>
+>> https://lore.kernel.org/all/20250222114146.162835-1-krzysztof.kozlowski@linaro.org/
+>>
+> 
+> But wouldn't Arnd's one be better?
 
-To handle this failure, driver checks the interrupt register before
-exiting mailbox_rx_worker(). If there is a new response, driver goes back
-to process it.
+ACPI table can be here entirely dropped and driver will match via
+PRP0001, so I think ACPI_PTR makes sense.
 
-Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
----
- drivers/accel/amdxdna/amdxdna_mailbox.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+But if you have arguments for keeping both, sure... There was no
+response to my trivial patch and multiple people will be wasting same
+time on the same issue. So just apply whichever of these, before third
+person wastes more time on that warning.
 
-diff --git a/drivers/accel/amdxdna/amdxdna_mailbox.c b/drivers/accel/amdxdna/amdxdna_mailbox.c
-index de7bf0fb4594..efe6cbc44d14 100644
---- a/drivers/accel/amdxdna/amdxdna_mailbox.c
-+++ b/drivers/accel/amdxdna/amdxdna_mailbox.c
-@@ -348,8 +348,6 @@ static irqreturn_t mailbox_irq_handler(int irq, void *p)
- 	trace_mbox_irq_handle(MAILBOX_NAME, irq);
- 	/* Schedule a rx_work to call the callback functions */
- 	queue_work(mb_chann->work_q, &mb_chann->rx_work);
--	/* Clear IOHUB register */
--	mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
- 
- 	return IRQ_HANDLED;
- }
-@@ -357,6 +355,7 @@ static irqreturn_t mailbox_irq_handler(int irq, void *p)
- static void mailbox_rx_worker(struct work_struct *rx_work)
- {
- 	struct mailbox_channel *mb_chann;
-+	u32 iohub;
- 	int ret;
- 
- 	mb_chann = container_of(rx_work, struct mailbox_channel, rx_work);
-@@ -366,6 +365,9 @@ static void mailbox_rx_worker(struct work_struct *rx_work)
- 		return;
- 	}
- 
-+again:
-+	mailbox_reg_write(mb_chann, mb_chann->iohub_int_addr, 0);
-+
- 	while (1) {
- 		/*
- 		 * If return is 0, keep consuming next message, until there is
-@@ -380,9 +382,19 @@ static void mailbox_rx_worker(struct work_struct *rx_work)
- 			MB_ERR(mb_chann, "Unexpected ret %d, disable irq", ret);
- 			WRITE_ONCE(mb_chann->bad_state, true);
- 			disable_irq(mb_chann->msix_irq);
--			break;
-+			return;
- 		}
- 	}
-+
-+	/*
-+	 * The hardware will not generate interrupt if firmware creates a new
-+	 * response right after driver clears interrupt register. Check
-+	 * the interrupt register to make sure there is not any new response
-+	 * before exiting.
-+	 */
-+	iohub = mailbox_reg_read(mb_chann, mb_chann->iohub_int_addr);
-+	if (iohub)
-+		goto again;
- }
- 
- int xdna_mailbox_send_msg(struct mailbox_channel *mb_chann,
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
