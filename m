@@ -1,162 +1,124 @@
-Return-Path: <linux-kernel+bounces-530403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580D4A43306
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:26:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD95A43307
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:28:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4423917B69A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:26:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83C023ACBCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7306F13C9A4;
-	Tue, 25 Feb 2025 02:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B477213DDAE;
+	Tue, 25 Feb 2025 02:28:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="csnxFQFH"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UsiQINCa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB40138DD1;
-	Tue, 25 Feb 2025 02:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE5F33EC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740450399; cv=none; b=dM6f8q8ckRAB+cZnr5H50qfJG2k3rD1dGo1MRfbtjWWaxZt/jtpNsJaTo19IMVTnSi72K9XBfw3d1fEyHdmOvu5EtVcsO9vMYYj6ZnJI70Lc4Xe5caGtduC8wv67v5BBGdD4R9vjlC/e8T1kIf4wEjUSd4AmcN/ylJcC53QqnIU=
+	t=1740450515; cv=none; b=Zo6Zr1+s1dcCRJDxQbTSZ4iutljbZ+RMgqXax34UP60A83VOB+hhWIhTVUp0HsBilPeojvSt60j9q3sbJrJyg/zWJYSmt/srrp+f2wBwWNytZ6KNSP3V/RJz4Yy7k/IAlxq5ZS8fddhMEaylkyN/q3b5qoPRErcLo1nJPrEf86I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740450399; c=relaxed/simple;
-	bh=2/S8GzGGp1EAO+ei0U1YohUwTWYIkHcGYkFZnxQKYHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fW74mPGHOA+cwjJBJxMo+xD3/MDKJEF/swf0IYqVM8bNm/AoEX+zfU6us387XvS6uDuW73Hybx0OGRxaASClo58TLp5wimVaEoUjBLegSC3+3TBT5oavTYiHbY/vAg/wLYFV5RSf6EUUG2KasTH/TpmM82BHK1YPeqCLvNVZQmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=csnxFQFH; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 81A1F2E09903;
-	Tue, 25 Feb 2025 04:26:32 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740450393;
-	bh=6yEMucTT/8r8Bz/V5khjoFIdTDerWe8lwET5bE8j/EE=;
-	h=Received:From:Subject:To;
-	b=csnxFQFHEn5g4APMEJ/PX0g24nzJkFDLawHS+UolJ/Or1DUrZ9DfoIw+zRsmo/hTQ
-	 oDvq6/Up5wU3HfLKb/cc3F2ekb42WngBb82UOvHW3Gjq8O7OJ3TlFio7j+g12httZN
-	 P0lh+XnVVC8gWDVQgpYH4PuS+8dNagKp+LLeRFtQ=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.172) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f172.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f172.google.com with SMTP id
- 38308e7fff4ca-3076262bfc6so52757881fa.3;
-        Mon, 24 Feb 2025 18:26:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCV5ZQ7RpqOTR3lfX4hUrTblqh3NUBaVzCXQfLy9U5JFE4CaZQ6a8QnoduNupg5IpF3w/BZQ8L+8vxAphto9vyNqmAW2VQ==@vger.kernel.org,
- AJvYcCVUtH+BSDIm2geSVOJv8VEsAPNKnJtUYVlGglvaoNBSAj0AfhtHU1X8N0aMn7b92Oi92TO1PVQjsoQJ@vger.kernel.org,
- AJvYcCXRBSQ/yMXmQwDD5IquqXpSJ/c6gL/asjT+C+MtAHTezPqwwY4la9yfEpQsXxckDu2x/Vmpl7GVhkDXt2Ob@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbvEEk63fpchMFhfb0wgHpc+7UWy6uk3574jsheQeOpWhr88E/
-	AK1woA8gVU5v/sgX8VNFO6LeIqpuqLUTySDp6GaTz02+GLu27MaV4tZV67QANDDKlcf5Jpg2z+c
-	eIxVPD8c7j8ZPNcjG2MTRvaUbcKU=
-X-Google-Smtp-Source: 
- AGHT+IEbXET/HeVji31Gvbtzv5tRJY7nNQJckddbQXpoONn6VU1fmF8l63k5Lxzn5lzxvTrreXukJoOVfuteMWOjiYU=
-X-Received: by 2002:a2e:9c93:0:b0:306:10d6:28b3 with SMTP id
- 38308e7fff4ca-30a80be1ea7mr4923701fa.1.1740450391735; Mon, 24 Feb 2025
- 18:26:31 -0800 (PST)
+	s=arc-20240116; t=1740450515; c=relaxed/simple;
+	bh=uMcY4G3651ZFYEbBk3k62ogT1HEqLUJ1RFlcVnUn5mM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=il25dhM4Py6LE0k1GPB7xPSqx70WueAU7yIMfCTAKNWdGBY958d36cg6ZZCDYKkfVCnU6R+BX0FKszlgfn0s8W2fTNBqRipXpKrsqlBprlg8b0lxOgMNx1Pu10OLXebyWBA1ph5Exqxb3W7LTvFmY677/PvSAKBb/uDRJgEH91g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UsiQINCa; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740450512;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2giTZHStMn+eSIeoZsooVzDmKiBSO2mDY/bn03jyBAQ=;
+	b=UsiQINCadikBWxy1BoztuQyQVW0efod9/P14yQ+5IdkbLi2AFxt4FJMcrDa0V3snGHfzMz
+	jY1ST+AdtdQaMmdXsYfvD9kaIXw42E7ddruQ3v561c3PYzL5LRLw1CHpgOr6VQrPzY8YfM
+	FE0YomiCLMECn/sLM1gNw44BAjS9GKc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-qI7JLcOwOdCDMw59u4ccWA-1; Mon,
+ 24 Feb 2025 21:28:28 -0500
+X-MC-Unique: qI7JLcOwOdCDMw59u4ccWA-1
+X-Mimecast-MFC-AGG-ID: qI7JLcOwOdCDMw59u4ccWA_1740450507
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1B24E180087B;
+	Tue, 25 Feb 2025 02:28:27 +0000 (UTC)
+Received: from fedora (unknown [10.72.120.21])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8D2931800357;
+	Tue, 25 Feb 2025 02:28:18 +0000 (UTC)
+Date: Tue, 25 Feb 2025 10:28:13 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
+	yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+Message-ID: <Z70qvZEBdq6L3-Yb@fedora>
+References: <20250222092823.210318-1-yukuai1@huaweicloud.com>
+ <20250222092823.210318-3-yukuai1@huaweicloud.com>
+ <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+ <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+ <Z7w0P8ImJiZhRsPD@fedora>
+ <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
+ <Z70btzRaN83FbTJp@fedora>
+ <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224195059.10185-1-lkml@antheas.dev>
- <1c0c988b-8fe6-4857-9556-6ac6880b76ff@app.fastmail.com>
- <633bbd2d5469db5595f66c9eb6ea3172ab7c56b7.camel@ljones.dev>
- <CAGwozwGmDHMRbURuCvWsk8VTJEf-eFXTh+mamB1sKaHX5DO8WA@mail.gmail.com>
- <f5d39d3c932a78a5021877230c212c620edc586e.camel@ljones.dev>
-In-Reply-To: <f5d39d3c932a78a5021877230c212c620edc586e.camel@ljones.dev>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Tue, 25 Feb 2025 03:26:19 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwEWZxWzcTjPby4OeUz+CCXbvQAkvCExo-Qc7=r-0-6BCg@mail.gmail.com>
-X-Gm-Features: AWEUYZnmKp-5xyz2Myjf507XBlyebUKTN9ik_I7tNguo3Uj-baR5tj5C16NcIbo
-Message-ID: 
- <CAGwozwEWZxWzcTjPby4OeUz+CCXbvQAkvCExo-Qc7=r-0-6BCg@mail.gmail.com>
-Subject: Re: [PATCH 0/3] ACPI: platform_profile: fix legacy sysfs with
- multiple handlers
-To: Luke Jones <luke@ljones.dev>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"Limonciello, Mario" <mario.limonciello@amd.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Len Brown <lenb@kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- me@kylegospodneti.ch
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-PPP-Message-ID: 
- <174045039299.26735.16345396436918484116@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-> If these "scripts" use `platform_profile_choices` to get their
-> selections and verify they are available then there should be zero
-> breakage. If they don't then they should be updated to be correct.
+On Tue, Feb 25, 2025 at 10:07:06AM +0800, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/02/25 9:24, Ming Lei 写道:
+> > > -       if (!time_elapsed)
+> > > +       /* don't trim slice until at least 2 slice is used */
+> > > +       if (time_elapsed < tg->td->throtl_slice * 2)
+> > >                  return;
+> > 
+> > If you just want to fix throtl/001, the above patch might
+> > work(sometimes, it might not, and timer may expire by 2 jiffies), but it
+> > is easy to fail other tests, such as, reduce the bps limit a bit, and
+> > increase BS a bit to make the IO cross exactly two slices.
+> 
+> That's fine, the key point is the following code, above code is
+> just to make sure there is still at least one slice to trim after
+> removing the last slice.
+> 
+> +       /* dispite the last slice, trim previous slice */
+> +       time_elapsed -= tg->td->throtl_slice;
+> 
+> In this case, if one BIO cross 1+ slices, the rate is the same as
+> expected in the previous slices, we can trim them without any negative
+> impact.
 
-Yeah, if any Asus users wrote scripts for their laptops to e.g., "echo
-quiet | sudo tee /sys/firmware/acpi/platform_profile" or used TLP let
-them spend a few days finding out why kernel 6.14 does not work. They
-should have written a 300 line bash script instead.
+Can you explain in details why it signals that the rate is expected now?
 
-> In any case I am in the process of finalising an update to use the new
-> platform_profile API including "custom". Please don't begin trying to
-> break things just to be "first". My work has been ongoing for this
+If rate isn't expected, it will cause trouble to trim, even just the
+previous part.
 
- drivers/acpi/platform_profile.c    | 57 +++++++++++++++++++++++++-----
- drivers/platform/x86/amd/pmf/spc.c |  3 ++
- drivers/platform/x86/amd/pmf/sps.c |  8 +++++
- include/linux/platform_profile.h   |  7 ++++
 
-I do not see the name Asus here. This is a compatibility patch. You
-should try it before commenting on it further. Looking at my ACPI
-database, there are at least a few Ayaneos, GPDs, and Legion laptops
-that have the ACPI bindings for pmf, this is not an Asus issue.
+Thanks,
+Ming
 
-By the way, I have merged your patch series on Bazzite (well... a
-cleaned up version that does not happen to crash your own software...)
-and it happens to work fine with this patch (I know you said platform
-profiles are not in yet). I still use the asus-wmi APIs personally.
-
-sudo fwupdmgr get-bios-setting
-Authenticating=E2=80=A6          [ -                                     ]
-ppt_pl3_fppt:
-  Setting type:         Integer
-  Current Value:        80
-  Description:          Set the CPU slow package limit
-  Read Only:            False
-  Minimum value:        5
-...
-
-> in my spare time for months.
-
-Let me comment on this a bit further. Hobbies are good to have and it
-is nice you found one you like. However, a lot of people are spending
-a lot of money on their Asus laptops and are actually starting to
-depend on Linux. If they cannot depend on you or your hobby for
-support, you should at least make sure to not interfere with parallel
-efforts for that support, if not try to be synergistic.
-
-I did not make this patch to one up you or rush it. This issue is a
-blocker for deploying our 6.13 kernel. Since this kernel needs to work
-for the Z13 and pmf quirks are dead ends now (I also got annoyed by
-asus users complaining about their fan curves being wrong because pmf
-blew up), I pulled in Mario's platform profile series early, only to
-find this issue. Botching the asus-wmi platform handler did not meet
-my standards, so I had to make this series. Also, since I could not
-pull in Kurk's series, and his changes were extensive, I had to make
-this series twice, and test it twice.
-
-Good news is this series works and the kernel is on its way to be
-deployed in a few days. Flatpak fix came in clutch today too with
-6.13.4.
-
-Antheas
 
