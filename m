@@ -1,228 +1,113 @@
-Return-Path: <linux-kernel+bounces-530886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D6FA439D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:40:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FB1A439DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:40:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 920CB19C5F92
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:37:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8378516F09E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CA52676CF;
-	Tue, 25 Feb 2025 09:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xw5OlW/T";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PEfabdvd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ChdH3SHs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HVd+TvcY"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F68267731;
+	Tue, 25 Feb 2025 09:35:40 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D902263C7C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87B112641C7;
+	Tue, 25 Feb 2025 09:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740476126; cv=none; b=mfntniNCrzKae2yfrlbCjn1bCw+t5jiw8ifP+kMgaeYo469fJ1ZwWlQ6VgwmkF1qDQs4G+GtUJsxGoQWGoWmZ3Qsn9ntBFNNkHGpL9RsizR9JeJXVBm4/fLciA1op/sME39FbO4tKjivFTmiptMk5sNky4gaIALFXPWdKv0SwzI=
+	t=1740476140; cv=none; b=YJu+1jZaw+OsIrENHgZlwk9YWiYZrqgI6p2rJkpBGP8ZZ1DBtJW7PAgi4J3ZjmXMPvWEXBnkMxIrW4+plc2NDT10PRO1j/1HB6ExzRk6G1E7Vd0AHs6rc66BlnWzX3HOoNQUAOW2hhBoDyugm2up07zrPJaGY7TDGL9urfkoRXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740476126; c=relaxed/simple;
-	bh=XqCC82gN7Ax+Edng+oAk3lNgokxpfuy53+8WAujaTnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmlDi10wThXa/6rmiFMVz1jls4pREmt189dQ1nT8QxTjf4uk/D7PqfdczuvwROoUbWDwLZHMV4DsxwZ4+Zz85kcFvS01GJcDmqmq+1goMO4KFOAgOSBI5QpssSJGl8UWhfYqwVhncDxgnrd0CpyBWv0Qh8dkBswqacvj6e+r8Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xw5OlW/T; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PEfabdvd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ChdH3SHs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HVd+TvcY; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 612112116F;
-	Tue, 25 Feb 2025 09:35:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740476122; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0hjlv3pwtvm7CLkK6D7gSMixWOvwntnGrnvPq2AR1Ew=;
-	b=xw5OlW/T+rAd2to0uX2hzoEnn3yX4kK1Tm4L0Bt28wHwd0nAzSaAf0boghvxb9X8foEBVm
-	PUJkwEyqf/6yR6A8L3x/gg3VFk1s3hiB0Q6ePrE3g69TCLN89UuqagFFLvnZlhzNvtrmCk
-	t+yoyTyVZlZA5PwyQeLRKwIW6cUONag=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740476122;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0hjlv3pwtvm7CLkK6D7gSMixWOvwntnGrnvPq2AR1Ew=;
-	b=PEfabdvdOwTjL+Ck5IvbKA4xxbe7+QHZjbcEBgPWfBvEoeb5ZYwcVLEOehnz/zhKwc7rOP
-	N6SCPMFEjovEz2Cg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ChdH3SHs;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=HVd+TvcY
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1740476121; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0hjlv3pwtvm7CLkK6D7gSMixWOvwntnGrnvPq2AR1Ew=;
-	b=ChdH3SHsqwj3nNTJA+P+ydIh2XcdaFR3aJSEU+cBWV+FfSNyhxnBypMZCiJZxnX1I69f5m
-	xN/gjMpSwibrsRXMGR8VVdo+ETEYN1sVrlG7WAGb1DjDevX4HsrjIC/qCKEpWE2si38fHo
-	1mHntAIrWUVFT5OQWY3PQ7W3CMilDVE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1740476121;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0hjlv3pwtvm7CLkK6D7gSMixWOvwntnGrnvPq2AR1Ew=;
-	b=HVd+TvcYLdBQ/wVgrzL/+hNM6H++htk8KcjG/c0eN0msIFrWwuCZtNFmCUdShMPYlT5s6p
-	zwXQdVoUD+t0asBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0F23813332;
-	Tue, 25 Feb 2025 09:35:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EZwsAtmOvWfmFgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 25 Feb 2025 09:35:21 +0000
-Message-ID: <a4bc0440-5451-49e7-b7a3-9299c5200a2e@suse.de>
-Date: Tue, 25 Feb 2025 10:35:20 +0100
+	s=arc-20240116; t=1740476140; c=relaxed/simple;
+	bh=VzmHHAJ4lfXuHw0Z6bdVgeMX5QBu24Qi/C6qVXpxxRw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p1WbUr5A2lzRyR0iwsrNIevdyoK7ppJQURZ3opU8/iiUrh2KvW2Jsvgobmm/PmI79pizpphSbR/rs+MX0hGnaEZJhF0VeenfbeZjjRlw56o1aP1x+TdBss+mjA9jSWP2B0J/AfA3e81P9dpt6oftK4dI43cGgIeDUucvYxFFmXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z2C6C2pwnz2CpdL;
+	Tue, 25 Feb 2025 17:31:31 +0800 (CST)
+Received: from kwepemg100017.china.huawei.com (unknown [7.202.181.58])
+	by mail.maildlp.com (Postfix) with ESMTPS id BFCA3140203;
+	Tue, 25 Feb 2025 17:35:33 +0800 (CST)
+Received: from [10.67.120.108] (10.67.120.108) by
+ kwepemg100017.china.huawei.com (7.202.181.58) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 25 Feb 2025 17:35:33 +0800
+Message-ID: <d4b7ae14-5b60-883a-c4f8-be11fc51a4f7@huawei.com>
+Date: Tue, 25 Feb 2025 17:35:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- Kerem Karabay <kekrby@gmail.com>, Atharva Tiwari <evepolonium@gmail.com>,
- Aun-Ali Zaidi <admin@kodeit.net>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
- <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
- <PN3PR01MB95974D5EB5A25386A8BF6FDAB8C02@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <ca34309a-f2b2-4082-92df-86a775952348@suse.de>
- <PN3PR01MB95979D1B21250604F834357FB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
- <PN3PR01MB959719792308EBB9370993DFB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <PN3PR01MB959719792308EBB9370993DFB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.1
+Subject: Re: [PATCH v3 1/3] scsi: hisi_sas: Enable force phy when SATA disk
+ directly connected
+Content-Language: en-CA
+To: John Garry <john.g.garry@oracle.com>, <liyihang9@huawei.com>,
+	<yanaijie@huawei.com>
+CC: <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liuyonglong@huawei.com>,
+	<kangfenglong@huawei.com>, <liyangyang20@huawei.com>,
+	<f.fangjian@huawei.com>, <xiabing14@h-partners.com>
+References: <20250220130546.2289555-1-yangxingui@huawei.com>
+ <20250220130546.2289555-2-yangxingui@huawei.com>
+ <4bf89b6c-8730-4ae8-8b26-770b2aab2c13@oracle.com>
+ <5a4384dc-4edb-9e29-d1dd-190d69b9e313@huawei.com>
+ <1e98a1eb-a763-4190-94c5-a867cdf0e09b@oracle.com>
+ <235e7ad8-1e19-4b7b-c64b-b6703851ca65@huawei.com>
+ <d233a108-a46e-47dd-86ad-756c60c8665e@oracle.com>
+ <cc9ba6f8-1efb-4910-8952-9ca07c707658@huawei.com>
+ <5d34595f-ff57-4679-b263-fa3fea006ce3@oracle.com>
+ <25552c7d-858d-ea1e-0987-55f71642a503@huawei.com>
+ <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
+From: yangxingui <yangxingui@huawei.com>
+In-Reply-To: <420fde94-28ec-4321-943b-5cb84cf14f0e@oracle.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 612112116F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[live.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,kodeit.net,vger.kernel.org,lists.freedesktop.org];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+X-ClientProxiedBy: kwepemh200004.china.huawei.com (7.202.181.111) To
+ kwepemg100017.china.huawei.com (7.202.181.58)
 
-Hi
+Hi, John
 
-Am 25.02.25 um 10:07 schrieb Aditya Garg:
->
->> On 25 Feb 2025, at 2:34 PM, Aditya Garg <gargaditya08@live.com> wrote:
->>
->> ﻿
->>
->>> On 25 Feb 2025, at 1:27 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+On 2025/2/25 16:19, John Garry wrote:
+> On 25/02/2025 01:48, yangxingui wrote:
 >>>
->>> ﻿Hi
 >>>
->>> Am 24.02.25 um 17:58 schrieb Aditya Garg:
->>> [...]
->>>>> +config DRM_APPLETBDRM
->>>>> +    tristate "DRM support for Apple Touch Bars"
->>>>> +    depends on DRM && USB && MMU
->>>>> +    select DRM_GEM_SHMEM_HELPER
->>>>> +    select DRM_KMS_HELPER
->>>>> +    select HID_APPLETB_BL
->>>> Btw I have a doubt regarding this dependency. While hid-appletb-bl has made into the linux-next tree, it has still not been merged into Linus' tree, and neither the drm tree I assume. It potentially could cause issues?
->>> Yes. We cannot merge this driver until we have this symbol in our tree. But that will happen sooner or later.
->>>
->>> More problematic is that your driver selects HID_APPLETB_BL. From what I've seen, this symbol is user configurable, so the driver shouldn't select it. You need to use 'depends on' instead of 'select' here.
->> Looking at this again, maybe it should be selected. If you see the kernel config of TINYDRM_HX8357D, which is also in drm/tiny, it is selecting BACKLIGHT_CLASS_DEVICE.
+>>> pm8001 sends sas_notify_port_event(sas_phy, PORTE_LINK_RESET_ERR,) 
+>>> link reset errors - can you consider doing that in 
+>>> hisi_sas_update_port_id() when you find an inconstant port id?
+>> Currently during phyup, the hw port id may change, and the 
+>> corresponding hisi_sas_port.id and the port id in itct are not updated 
+>> synchronously. The problem caused is not a link error, so we don't 
+>> need deform port, just update the port id when phyup.
+> 
+> Sure, but I am just trying to keep this simple. If you deform and reform 
+> the port - and so lose and find the disk (which does the itct config) - 
+> will that solve the problem?
 
-This driver does it wrong.
+1、phyup ->form port -> eh -> ata reset -> found hw port change -> 
+deform port -> let dev gone -> refound
 
-> To make things more clear,
->
-> 1. hid-appletb-bl is for the backlight of the touchbar. The DRM code remains separate.
-> 2. hid-multitouch is to make the touchbar a touch screen. You can still use the driver without the touch functionality.
+2、controller reset -> phyup -> finish controller reset -> found hw port 
+change -> deform port -> let dev gone -> refound
 
-If your driver does not require this, it shouldn't select or depend on it.
+I also thought about the plan you mentioned in the early days. The above 
+will make the process more complicated and retriggering phyup may result 
+in a new round of port id changes. Lose and find the disk will cause the 
+upper layer IO to report error when controller reset. It seems that it 
+is better to make the upper layer unaware of the hw port id change when 
+phyup in reset, like ata reset or controller reset. ^_^
 
-Best regards
-Thomas
-
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Thanks,
+Xingui
 
 
