@@ -1,188 +1,125 @@
-Return-Path: <linux-kernel+bounces-531359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D605DA43F82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:35:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 428A2A43FE3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:00:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7D77ADF90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E3B4440546
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2896268689;
-	Tue, 25 Feb 2025 12:33:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="iK9cS+Yv"
-Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B992690D9;
+	Tue, 25 Feb 2025 12:59:17 +0000 (UTC)
+Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F294B266B40
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5674D268FE9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486809; cv=none; b=HUJe0KuefG8ir7nx0J14HnRBgwV8a37ISjSiBQVFgNSRMen/el4ILFUlOfANR3HUiAzlPwadEGhDnINBDmntybZKimJvfU9QfSuWR18d6DJUuVTz2+CrD64CTQxsVwvUOd0LqAXHFw+DcUFffiFZOJw7GBNcYLdnVvnwk3fLa38=
+	t=1740488357; cv=none; b=fib4VrdVsh8ZBxBy/Yx+lUHdrAXlCwtVM6kz2E+xxplDHoWrB7kzBA8NiRkwrh8DKuBK4CyR7hMmazfPOqgLActLL9+6kP/3k7m8GP0+JKLORpHxhNJf2o8TjZdT9RJpYggmNuW541ByHWbDll5sKa0bVonBZ77moXfdF4gQ5DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486809; c=relaxed/simple;
-	bh=oxeNg/3kTTYdWOP+m0MjbWQatWl1xtjweDH0uB/M8o0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=snisbc4723tsrMtKTJAVPP2waq6BcWv5OXt4kKaMjJulL03WjWMAjL4FTDPEm7bcSrvqw9OfDiOeIvyEWgZ7P+0S6k0Jy3orEua5pbws4z46SpFeXeKjnG1ezuh89TM9HietH8RHe3lH3+0Nl903bn9pdLMMM58wOOUuXAs/R8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=iK9cS+Yv; arc=none smtp.client-ip=17.58.6.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=tfkcqBi0ou5N+iPlIoNtZJvvEZ4xTbBbnOJsMG5xchk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=iK9cS+Yv3SeyUoWcFPENdzP+BUb/qiZOQ3e6yjJto3o2tW9q0Inf7gw1nwR6TiMl0
-	 Y7N1lTA1bQniIn+rT3FnYxouFVUBGrgfVR8JqGkY5YhRsUIBap6Lp6JUsF7PfRXjZ5
-	 KZfR8yUER992Zm6ykzRH/jaB8ertUDOhHg8WA4ym76ZXtpSVYUnw6JH7CoFhKwLJs1
-	 9dM7PX7Zkab0iuwacWMdGyBOl22d2Rf1VY60MEr9FwtPxJrSPY2FNvg0smJykXwQzZ
-	 PvbRJj3rkz/OAsaCjQ1Sf8hD9Dz66uG1F3W/Y0JK23p6E9niVHrQoEsblcf1EB8h+4
-	 aYGklqoEKINSQ==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id ED3F168035B;
-	Tue, 25 Feb 2025 12:33:20 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 25 Feb 2025 20:32:39 +0800
-Subject: [PATCH RESEND 2/2] phy: core: Remove API devm_phy_destroy()
+	s=arc-20240116; t=1740488357; c=relaxed/simple;
+	bh=9MDAaOkzjRCOz3MuMWw4HXIQo4co0NCFHKCaS5GZhbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awQeG7B/ZyGocrfpUeon8zksHElOErJA9cjftFCayh+IUx2qzIp7wsbqt8yVTNFyelleAAYY48OVDaMfTGVCVlx/p4UOKDHGi3hkh75ziqiM2CJSApy7AnotxkP7b4yx4QN6I9nLVsfmE+uzuHSKFsIgcGQg2yf+jwvgDV1lGA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gnumonks.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
+Received: from uucp by ganesha.gnumonks.org with local-bsmtp (Exim 4.94.2)
+	(envelope-from <laforge@gnumonks.org>)
+	id 1tmu7y-003Gx0-L0; Tue, 25 Feb 2025 13:33:34 +0100
+Received: from laforge by nataraja.fritz.box with local (Exim 4.98)
+	(envelope-from <laforge@gnumonks.org>)
+	id 1tmu7r-00000000YTm-4306;
+	Tue, 25 Feb 2025 13:33:27 +0100
+Date: Tue, 25 Feb 2025 13:33:27 +0100
+From: Harald Welte <laforge@gnumonks.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux <linux@treblig.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org, david@rowetel.com
+Subject: Re: users of drivers/misc/echo ?
+Message-ID: <Z724l3DFJbGevtPF@nataraja>
+References: <Z7tZhYET41DAoHVf@gallifrey>
+ <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250225-remove-apis-v1-2-e49b4a1941fd@quicinc.com>
-References: <20250225-remove-apis-v1-0-e49b4a1941fd@quicinc.com>
-In-Reply-To: <20250225-remove-apis-v1-0-e49b4a1941fd@quicinc.com>
-To: Jonathan Corbet <corbet@lwn.net>, Alex Shi <alexs@kernel.org>, 
- Yanteng Si <si.yanteng@linux.dev>, Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-ORIG-GUID: Nn6owD0_M8syBbjLW7GXmAtZeTfeyw_R
-X-Proofpoint-GUID: Nn6owD0_M8syBbjLW7GXmAtZeTfeyw_R
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 mlxscore=0 bulkscore=0
- adultscore=0 spamscore=0 malwarescore=0 phishscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2502250088
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07afd3cb-3ab1-4dc9-b0c1-3fef2d52f60b@app.fastmail.com>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hi Arnd,
 
-API devm_phy_destroy() has not had callers since 2013-09-27
-when it was introduced.
+> Adding Harald to Cc, might know more about it.
 
-Remove the API.
+thanks for Cc'ing me on this thread.
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- Documentation/driver-api/phy/phy.rst                    |  6 ++----
- Documentation/translations/zh_CN/driver-api/phy/phy.rst |  7 ++-----
- drivers/phy/phy-core.c                                  | 17 -----------------
- include/linux/phy/phy.h                                 |  5 -----
- 4 files changed, 4 insertions(+), 31 deletions(-)
+On Sun, Feb 23, 2025 at 09:38:12PM +0100, Arnd Bergmann wrote:
+> I don't see any in-tree users for it either, but I found one
+> project using the exported symbols, and there is a debian
+> package for it as well:
+> 
+> https://tracker.debian.org/pkg/osmocom-dahdi-linux
+> https://gitea.osmocom.org/retronetworking/dahdi-linux/src/branch/master/drivers/dahdi/dahdi_echocan_oslec.c#L34
 
-diff --git a/Documentation/driver-api/phy/phy.rst b/Documentation/driver-api/phy/phy.rst
-index be3687a2a11bbf84e6e5561b11931ea6db984434..cae03d8a4812b3c4cfca64272cc6b8f83a81d1c8 100644
---- a/Documentation/driver-api/phy/phy.rst
-+++ b/Documentation/driver-api/phy/phy.rst
-@@ -173,13 +173,11 @@ Destroying the PHY
- ==================
- 
- When the driver that created the PHY is unloaded, it should destroy the PHY it
--created using one of the following 2 APIs::
-+created using the following API::
- 
- 	void phy_destroy(struct phy *phy);
--	void devm_phy_destroy(struct device *dev, struct phy *phy);
- 
--Both these APIs destroy the PHY and devm_phy_destroy destroys the devres
--associated with this PHY.
-+The API destroys the PHY.
- 
- PM Runtime
- ==========
-diff --git a/Documentation/translations/zh_CN/driver-api/phy/phy.rst b/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-index 2d3f98deb92035c44fcb1ff0e3dc8543053140f6..37c23fcebf11f397d0dc502bbba11a74c525f085 100644
---- a/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-+++ b/Documentation/translations/zh_CN/driver-api/phy/phy.rst
-@@ -164,14 +164,11 @@ PHY 关联的设备资源。
- 销毁 PHY
- ========
- 
--当创建 PHY 的驱动程序被卸载时，它应该使用以下 2 个 API 之一销毁其创
--建的 PHY::
-+当创建 PHY 的驱动程序被卸载时，它应该使用以下 API 销毁其创建的 PHY::
- 
- 	void phy_destroy(struct phy *phy);
--	void devm_phy_destroy(struct device *dev, struct phy *phy);
- 
--这两个 API 都会销毁 PHY，并且 devm_phy_destroy 会销毁与此 PHY 关
--联的 devres。
-+这个 API 会销毁 PHY。
- 
- PM Runtime
- ==========
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index dd6302dfd14d2ec060857fc019268096c33e37a2..8e0e11553e369e06f5ee4cdbb111b4ddb1b34e74 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -1107,23 +1107,6 @@ void phy_destroy(struct phy *phy)
- }
- EXPORT_SYMBOL_GPL(phy_destroy);
- 
--/**
-- * devm_phy_destroy() - destroy the PHY
-- * @dev: device that wants to release this phy
-- * @phy: the phy returned by devm_phy_get()
-- *
-- * destroys the devres associated with this phy and invokes phy_destroy
-- * to destroy the phy.
-- */
--void devm_phy_destroy(struct device *dev, struct phy *phy)
--{
--	int r;
--
--	r = devres_release(dev, devm_phy_consume, devm_phy_match, phy);
--	dev_WARN_ONCE(dev, r, "couldn't find PHY resource\n");
--}
--EXPORT_SYMBOL_GPL(devm_phy_destroy);
--
- /**
-  * __of_phy_provider_register() - create/register phy provider with the framework
-  * @dev: struct device of the phy provider
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 06037a7eefc4b0319008065d142c9f1caba2c74d..66eb664249ddaa6635bf80d8db115cb21473ceb8 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -278,7 +278,6 @@ struct phy *phy_create(struct device *dev, struct device_node *node,
- struct phy *devm_phy_create(struct device *dev, struct device_node *node,
- 			    const struct phy_ops *ops);
- void phy_destroy(struct phy *phy);
--void devm_phy_destroy(struct device *dev, struct phy *phy);
- struct phy_provider *__of_phy_provider_register(struct device *dev,
- 	struct device_node *children, struct module *owner,
- 	struct phy * (*of_xlate)(struct device *dev,
-@@ -521,10 +520,6 @@ static inline void phy_destroy(struct phy *phy)
- {
- }
- 
--static inline void devm_phy_destroy(struct device *dev, struct phy *phy)
--{
--}
--
- static inline struct phy_provider *__of_phy_provider_register(
- 	struct device *dev, struct device_node *children, struct module *owner,
- 	struct phy * (*of_xlate)(struct device *dev,
+Note: The official upstream of DAHDI is maintained as part of the Asterisk soft switch project,
+the Osmocom fork has just become more popular in recent years due to very slow maintenance of
+upstream.
 
+Any of the DAHDI forks is used in production deployments by a number of
+different telephony / softswitch / telecom software projects (like
+Asterisk, FreeSWITCH, yate or many osmocom sub-projects) in order to
+interface with classic anaolog or TDM (time division multiplex)
+telephony technology.  
+
+Even today this TDM technology (most likely in most instances without
+open source softswitches) is still relevant in commercial production
+deployments, including many (but not all) cellular carriers
+around the world, but for example also as part of GSM-R (railway
+communications systems) for at least until 2035.  I personally also know
+of present-day production deployments in satellite telephony
+infrastructure.
+
+However, those DAHDI-using deployments that I personally am familiar
+with do not use the software echo canceller discussed here.  On the
+other hand, I'm quite certain that there are many PBX/IVR related
+systems out there (unrelated to my area of cellular or trunked radio)
+that would still use the echo canceller discussed here.
+
+In any case, for this discussion, it doesn't matter, as all DAHDI
+flavours make use of the same API function.
+
+> With our normal rules, we should just remove it as there is no
+> way to use the code without external modules, but I don't know
+> how we even got to this state.
+
+I'd expect the echo cancellation code was used by mISDN for as long as
+that was still in upstream.  As mISDN has (sadly, but understandably)
+been removed, the echo canceller likely remained in the tree without any
+other in-tree users.
+
+DAHDI has been using the in-kernel echo canceller for decades.  If it's
+removed now, it will likely mean that DAHDI will carry a copy of it and
+selectively compile that as out-of-tree module for future kernel
+versions.
+
+I personally wouldn't see that as a big problem, as DAHDI itself has
+always been out-of-tree anyway, and adding one more module to that is
+not a big deal.  Note that I cannot speak officially for the DAHDI
+project as I'm just maintaining the Osmocom fork.
+
+Kind regards,
+	Harald
 -- 
-2.34.1
-
+- Harald Welte <laforge@gnumonks.org>          https://laforge.gnumonks.org/
+============================================================================
+"Privacy in residential applications is a desirable marketing option."
+                                                  (ETSI EN 300 175-7 Ch. A6)
 
