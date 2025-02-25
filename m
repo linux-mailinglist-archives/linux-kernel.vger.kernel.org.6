@@ -1,200 +1,140 @@
-Return-Path: <linux-kernel+bounces-531074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EF2A43BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114A8A43BE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 070181888693
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:34:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A073B31C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CB7260A3D;
-	Tue, 25 Feb 2025 10:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A3266196;
+	Tue, 25 Feb 2025 10:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KA74OT2U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="er/yb3It"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF441C8625
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82B31FE47F;
+	Tue, 25 Feb 2025 10:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479630; cv=none; b=Bneq56LQG9o2gcqMST4S076qadT6zpD1gzfxb3Z0d66eUlYN5Kgb+3jXi6ociIUiEHc5y/0E9KM+TYOH4MDcMkAD9KjJ4z8s9tMUilq1YNKmgzrXHo998jFgOwdxA3x7uOOB1QkRz45kcTkc1F2xIjGITeDN8qUZ+TM0UjYmI6I=
+	t=1740479685; cv=none; b=Vnp3+3ykZ+p7rSZIUaWUHpzodZ6WKLGzlwcPdcduW7gtZ+vD4iqAYNuZKj5DY11+6hGMT2Lf/A/ED3S0Kb11zI0TioVJnnFX2LbK0td1nJB1QLy4XLyaGOS0vRSRzbT9DJa/trhDVKqYf0gZsyGWSFeEWRgHfDW+Sf31eKXijRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479630; c=relaxed/simple;
-	bh=xDtEhN1Z+pJ+VKbDwekrT0fQS2yTec4QWfwd4POyIVM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gVOqmy8jjILCY2IgzovPKyaGAgDRjETk/UsQU2BwV18GlTbPTgYe4k7qu25mEkzLjIK8nrMQEFguI5RkjRNFhvWtxvAGy0JFxJeEHSPj8/x5tACsGVK5D5A/pZrDTtcS+ft3LZ84RBanjcnB+3tnhWI2rCLsoEkoZO3chOpHg44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KA74OT2U; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1740479629; x=1772015629;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xDtEhN1Z+pJ+VKbDwekrT0fQS2yTec4QWfwd4POyIVM=;
-  b=KA74OT2UmALD+uqUh8pev2uwL354ec7iAWEtVYvohlr2fcc4xHFEf5bQ
-   n5Zlqgpl7sDhca7t8nhNvtgQ/GS5rlWSN8FrnkJE6LbqRlJPixiThPEH6
-   GKgnpiSvZJafSpeuf62U5GiVRKApXsWfZmV7S1YUdlr7EbasjdkrpBnBR
-   mLsUImja4aC8d4BOOhZ76ZTQC8aKIABbbs7ejAP0G671weCZ6wYEkYoUn
-   NLA7wZvPcZtdhiNWMn/2JxHGZss52dqkh9VmpuYrkeM1GsaHyWqBSn116
-   NcgIMGxIQrTzuWD+HVOAMkxvgDCKLtL9XEDWnD5eV5W/Jhrg9exMLphFm
-   Q==;
-X-CSE-ConnectionGUID: o0BsO8IvTVm77PtcONvk8g==
-X-CSE-MsgGUID: gnEP1JhNR/+F3mQ9Bizl2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41412499"
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="41412499"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:33:48 -0800
-X-CSE-ConnectionGUID: TmKLdnSVTkCUMbCIqENeyw==
-X-CSE-MsgGUID: 84RCDiuURBW2Y8gDTdIwew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
-   d="scan'208";a="116144291"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:33:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tmsFy-0000000ExYS-2dxt;
-	Tue, 25 Feb 2025 12:33:42 +0200
-Date: Tue, 25 Feb 2025 12:33:42 +0200
-From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
-To: Aditya Garg <gargaditya08@live.com>
-Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>,
-	"tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>,
-	"simona@ffwll.ch" <simona@ffwll.ch>,
-	Kerem Karabay <kekrby@gmail.com>,
-	Atharva Tiwari <evepolonium@gmail.com>,
-	Aun-Ali Zaidi <admin@kodeit.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
- Macs
-Message-ID: <Z72chunE_vvxtjLQ@smile.fi.intel.com>
-References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
- <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
+	s=arc-20240116; t=1740479685; c=relaxed/simple;
+	bh=XJluooaCyPB2jljIMQRMoaWqXuID8XVavs2nSqxk9dM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=k1HWHjVxAiu3/zRX62Nwt9jFzkomnyluYPLQxTQKJC1mKxvfTxFpIwiZnlPwx4BCeX/l7ibPRQTQPJvpwesNR7k8yLx38POSENluw0tU0KBpwuB0oPeaMfRHlXMpF9RRwIOCiEhvi6ikLo09TIvjEAVqXKGIszDL0LTEPwiT1bA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=er/yb3It; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C29C4CEDD;
+	Tue, 25 Feb 2025 10:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740479684;
+	bh=XJluooaCyPB2jljIMQRMoaWqXuID8XVavs2nSqxk9dM=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=er/yb3Itjw7P47kNjm8+yzln8Ojk+87rbgL9HdjU4v2JVWcP8HA7Yv1+aZjCu1ibQ
+	 CHD/HQt2c9KoJBpOy5YUY4mWX0itxuIlnKNoEVYLu0mudOoDshz4xp1nvwC7aQloO2
+	 PXs8QVtH/Akg9tQCfsAnn15hZ2Qoq27a4vQ2RNH312Qwrgq1IMHhSP7OSjbAXyNWrS
+	 nMFSVJpOBmZ4fKOrlenUeNN0El2GwNoVjLl9mh0O7QvhJ/6BeFdnLwu8rNY4jwxr2m
+	 WKn2fGUyJLXsOOMEc9GSDYpi6iOzPXWHKwndjjofyUEvzcf8nB7/oDyE6+ZEYedoTX
+	 rQFfGdJo7mASg==
+Message-ID: <4c3009e1-6cd8-4477-95f9-b0fb35b7dc4e@kernel.org>
+Date: Tue, 25 Feb 2025 11:34:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 01/13] dt-bindings: net: wireless: describe the ath12k
+ AHB module for IPQ5332
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Cc: ath12k@lists.infradead.org, Johannes Berg <johannes@sipsolutions.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ linux-wireless@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250225064834.2002499-1-quic_rajkbhag@quicinc.com>
+ <20250225064834.2002499-2-quic_rajkbhag@quicinc.com>
+ <20250225-abstract-arcane-chimpanzee-ca7e4f@krzk-bin>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250225-abstract-arcane-chimpanzee-ca7e4f@krzk-bin>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 10:09:42AM +0000, Aditya Garg wrote:
-> From: Kerem Karabay <kekrby@gmail.com>
+On 25/02/2025 09:47, Krzysztof Kozlowski wrote:
+> On Tue, Feb 25, 2025 at 12:18:22PM +0530, Raj Kumar Bhagat wrote:
+>> +  memory-region:
+>> +    description:
+>> +      Memory regions used by the ath12k firmware.
+>> +    items:
+>> +      - description: Q6 memory region
+>> +      - description: m3 dump memory region
+>> +      - description: Q6 caldata memory region
+>> +      - description: Multi Link Operation (MLO) Global memory region
+>> +
+>> +  memory-region-names:
+>> +    items:
+>> +      - const: q6-region
+>> +      - const: m3-dump
+>> +      - const: q6-caldb
+>> +      - const: mlo-global-mem
+>> +
+>> +  qcom,ath12k-calibration-variant:
 > 
-> The Touch Bars found on x86 Macs support two USB configurations: one
-> where the device presents itself as a HID keyboard and can display
-> predefined sets of keys, and one where the operating system has full
-> control over what is displayed.
-> 
-> This commit adds support for the display functionality of the second
-> configuration. Functionality for the first configuration has been
-> merged in the HID tree.
-> 
-> Note that this driver has only been tested on T2 Macs, and only includes
-> the USB device ID for these devices. Testing on T1 Macs would be
-> appreciated.
-> 
-> Credit goes to Ben (Bingxing) Wang on GitHub for reverse engineering
-> most of the protocol.
-> 
-> Also, as requested by Andy, I would like to clarify the use of __packed
-> structs in this driver:
-> 
-> - All the packed structs are aligned except for appletbdrm_msg_information.
-> - We have to pack appletbdrm_msg_information since it is requirement of
->   the protocol.
-> - We compared binaries compiled by keeping the rest structs __packed and
->   not __packed using bloat-o-meter, and __packed was not affecting code
->   generation.
-> - To maintain consistency, rest structs have been kept __packed.
-> 
-> I would also like to point out that since the driver was reverse-engineered
-> the actual data types of the protocol might be different, including, but
-> not limited to, endianness.
+> qcom,calibration-variant
 
-...
+FYI:
 
-> +static int appletbdrm_probe(struct usb_interface *intf,
-> +			    const struct usb_device_id *id)
-> +{
-> +	struct usb_endpoint_descriptor *bulk_in, *bulk_out;
-> +	struct device *dev = &intf->dev;
-> +	struct appletbdrm_device *adev;
-> +	struct drm_device *drm;
-> +	int ret;
-> +
-> +	ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, NULL, NULL);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to find bulk endpoints\n");
+https://lore.kernel.org/linux-devicetree/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org/
 
-This is simply wrong (and in this case even lead to crash in some circumstances).
-drm_err() may not be used here. That's my point in previous discussions.
-Independently on the subsystem the ->probe() for the sake of consistency and
-being informative should only rely on struct device *dev,
-
-> +		return ret;
-> +	}
-> +
-> +	adev = devm_drm_dev_alloc(dev, &appletbdrm_drm_driver, struct appletbdrm_device, drm);
-> +	if (IS_ERR(adev))
-> +		return PTR_ERR(adev);
-> +
-> +	adev->in_ep = bulk_in->bEndpointAddress;
-> +	adev->out_ep = bulk_out->bEndpointAddress;
-> +	adev->dmadev = dev;
-> +
-> +	drm = &adev->drm;
-> +
-> +	usb_set_intfdata(intf, adev);
-> +
-> +	ret = appletbdrm_get_information(adev);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to get display information\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = appletbdrm_signal_readiness(adev);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to signal readiness\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = appletbdrm_setup_mode_config(adev);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to setup mode config\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = drm_dev_register(drm, 0);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to register DRM device\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = appletbdrm_clear_display(adev);
-> +	if (ret) {
-> +		drm_err(drm, "Failed to clear display\n");
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Best regards,
+Krzysztof
 
