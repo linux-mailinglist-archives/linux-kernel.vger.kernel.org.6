@@ -1,214 +1,118 @@
-Return-Path: <linux-kernel+bounces-530332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E77B3A4321C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:54:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97CEA43222
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:56:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27635189E9B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D0B1679BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543AF15E96;
-	Tue, 25 Feb 2025 00:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0EE10A1E;
+	Tue, 25 Feb 2025 00:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jJwD2Cd1"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="hvTKWSPw"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A85317578
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C4F23AD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740444851; cv=none; b=s3xe98r3oEjnX/V4MiCkl1sDJImPtbwublE6Le7qMmdvY0AJ63IjEVxN4zKVXGdTf/RopEQ18HdEA9JrZLqchUA3EBYbNhEqTzj0c4hBZelN0d2rIQZWcAUhcT5kmAw8eoQGRUL6bB2gbK4zfc0epOX1ASY8x41YF1adXpFZR9I=
+	t=1740444991; cv=none; b=iaP1zCohJTWzbYCR+59WDni0mTeDLa87v+x0msepOlGyyzKV4GZBKPlpZ7h3ye4d0h/5zWkUb9NiyXN6UvwwA+/Wj91kRzC7mnMkAaw0HIWihpGxNs2orEpMaYB+PFQ5IJoN1tvSy3nhCVTB6c10CRgdnBafB8x1KxvN42T6e2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740444851; c=relaxed/simple;
-	bh=eSNE9SpqsMKJGUnfQSYvUpz0ITo6/+EEEAk6+jIriYs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=NnWrMDxCUSeiNlWuoJDyJtwWkPRJ8T4p6UUlsjzMovvPiWorH07B1pUUyboZbxlMrpd6SfqZXGWCtyHbJL4KYnjxSYiGLU6L0HviZqqZO+WUR8f1PvSzrAV5bB55UUUx1liXpZW1OkDJMSQWM/1biDV9gFuFQ5sLzNq0V4x2Ng8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jJwD2Cd1; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc2e648da3so9698273a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740444849; x=1741049649; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMj3ogmbSNHf4nwGWlr5jLmxfUU0ZTeLt3VrAyHhBlI=;
-        b=jJwD2Cd1QhpGtc2rCCYkWPnQ3dQH0wRLDlW5KsoHb7mrW5kEVf5or0+AUdLoN0jyIk
-         n9Q3qgww3I4y6fiFCY+K6Jt56RxretwcsfN2RJl52ZDuzhGu0Q0M2RvTv4pkFqNZp5jh
-         1Qi4kIPlcFjetMC1YsFEK0tC9975jN0KQaHUu9WYqhFJ6Z1MOnRg7bP/HtLE0Dc4f/wU
-         5u0PNTqgl4BfR736lWgY4rTvHjgjeb7L3rOORW+Zr3c+oHHf42FEl4PWFZbisN5q2VHw
-         ++PNKss75yN4CtJu1CHK7HFzr/Lxd4yWHOx3nxtzEYfwv7v/JQldTTop5RLfWbvUJn1i
-         xuSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740444849; x=1741049649;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WMj3ogmbSNHf4nwGWlr5jLmxfUU0ZTeLt3VrAyHhBlI=;
-        b=LKISXtHj/UBegbNg81Q+R5j8w4NkKF0s0TBrNQYucMvDliQugGVqzpNF40qG0T5/Sv
-         mJ5m9mO3tkVBrgwC5GhI/2YWjrKejYVBN6Fcep879r2Dz3ktMnPBXradQHfioqGHelpl
-         Et4m0rLluk0egACWKPgB0xwWvPR0DgSo9eY7yEb1Qfm6eIPu7r/4PAeln6yMfE5/3IjX
-         hxuBT4A7UHnDXhtCO+XSxCt0Dr7rzAAuWdhfgfH77M9ezuO+v0ls495GXWkyMXeDc78V
-         LnzGSqg9cQeuZbnHMLhYoNqkUBHGPCvqwJ+SRDheswm4hE8Fob+rTfhYVAkx4nuaaR8L
-         TlxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpDlrTzy9dkik9RcRvgBp2bCavocGhiw+yQ4w6XXJK4i+4qpXzxgO0MnBOouoM9TXpTyJbi3kYeqmTuEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqi1plaEik0vJK/i4Do0tedYaBifer4Db3ZHOF+QNUSpcFoBpZ
-	3z0+PT6qMEpYMEGPauZUepIijkqncsRQDsvqPY1RSJV4uAeX/QZhKINHpvghBzkvNfq/M3S8yUg
-	4Yw==
-X-Google-Smtp-Source: AGHT+IFwU4tsgKfQpQ0F9TpDCTa6nuPqHf5O1NRFL7byHKxAWJgpMYV1Sek68AsT2p2rXJmmuIZbuGqbSY8=
-X-Received: from pjbsd8.prod.google.com ([2002:a17:90b:5148:b0:2ea:5613:4d5d])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:528f:b0:2ee:741c:e9f4
- with SMTP id 98e67ed59e1d1-2fce78ab918mr27279855a91.11.1740444849479; Mon, 24
- Feb 2025 16:54:09 -0800 (PST)
-Date: Mon, 24 Feb 2025 16:54:08 -0800
-In-Reply-To: <f9050ee1-3f82-7ae0-68b0-eccae6059fde@amd.com>
+	s=arc-20240116; t=1740444991; c=relaxed/simple;
+	bh=L4XqhSC+5QQ1aomriMfSul3p0/mMZQNVRcw/FajCz30=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UBxwzibZlKAZrcbk5Wiujtz0QXwo6qu12QGRizprwHh7B1wof43hxY64oUIbgsqV0W8t66FCUlugbaW532xb/5vp1j/FWs5gQh/+ChnxaTxyQRvJv+etQ6O66S4J13gqF7wM81UB+Ugx+jUhDaW3HpaaCFfU5FjenEAm6buiqpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=hvTKWSPw; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=OAHHgv0L+tOtR4u+k11uGAQYtSpCSi3f0RqAKr/DkRI=; b=hvTKWSPwPE5q7AYa
+	8bKYG5N1T65B2gD+f0QOTee104qZutU9BRaFM7vpYADmbRtKu9H8rq7V2eMnDJ5ziGNah1Xzz45jv
+	opBt7YsreyCj+9OtPbUdbZ0xWhQrW7tf1vxGoONZXitK4xrN7giD8u13OhDsUMhSaWbRHvZoHp1h9
+	ZMmVbzhKWHPmWE3J3qRntAUao+jq3CmEpJt76yKCxLxBxOARpGifJEAgKJAMbRKXHKrMpXjyENjFG
+	Di+xjZt/HhD3v5O2izEwFHr1xOKviLf1oLVJvqu7MxQc8Ritx4aafxqMc63L90WRcOixvWaiM08Ou
+	G8Lho/3TNp05TIDOQA==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tmjFF-000YZX-13;
+	Tue, 25 Feb 2025 00:56:21 +0000
+From: linux@treblig.org
+To: tomi.valkeinen@ideasonboard.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: airlied@gmail.com,
+	simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] drm/omap: Remove unused omapdss_find_device_by_node
+Date: Tue, 25 Feb 2025 00:56:20 +0000
+Message-ID: <20250225005620.88667-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250219012705.1495231-1-seanjc@google.com> <20250219012705.1495231-4-seanjc@google.com>
- <4e762d94-97d4-2822-4935-2f5ab409ab29@amd.com> <Z7z43JVe2C4a7ElJ@google.com> <f9050ee1-3f82-7ae0-68b0-eccae6059fde@amd.com>
-Message-ID: <Z70UsI0kgcZu844d@google.com>
-Subject: Re: [PATCH 03/10] KVM: SVM: Terminate the VM if a SEV-ES+ guest is
- run with an invalid VMSA
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>, 
-	Alexey Kardashevskiy <aik@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 24, 2025, Tom Lendacky wrote:
-> On 2/24/25 16:55, Sean Christopherson wrote:
-> > On Mon, Feb 24, 2025, Tom Lendacky wrote:
-> >> On 2/18/25 19:26, Sean Christopherson wrote:
-> >>> -void pre_sev_run(struct vcpu_svm *svm, int cpu)
-> >>> +int pre_sev_run(struct vcpu_svm *svm, int cpu)
-> >>>  {
-> >>>  	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
-> >>> -	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
-> >>> +	struct kvm *kvm = svm->vcpu.kvm;
-> >>> +	unsigned int asid = sev_get_asid(kvm);
-> >>> +
-> >>> +	/*
-> >>> +	 * Terminate the VM if userspace attempts to run the vCPU with an
-> >>> +	 * invalid VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after
-> >>> +	 * an SNP AP Destroy event.
-> >>> +	 */
-> >>> +	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa)) {
-> >>> +		kvm_vm_dead(kvm);
-> >>> +		return -EIO;
-> >>> +	}
-> >>
-> >> If a VMRUN is performed with the vmsa_pa value set to INVALID_PAGE, the
-> >> VMRUN will fail and KVM will dump the VMCB and exit back to userspace
-> > 
-> > I haven't tested, but based on what the APM says, I'm pretty sure this would crash
-> > the host due to a #GP on VMRUN, i.e. due to the resulting kvm_spurious_fault().
-> > 
-> >   IF (rAX contains an unsupported physical address)
-> >     EXCEPTION [#GP]
-> 
-> Well that's for the VMCB, the VMSA is pointed to by the VMCB and results
-> in a VMEXIT code of -1 if you don't supply a proper page-aligned,
-> physical address.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Ah, good to know (and somewhat of a relief :-) ).
+The last use of omapdss_find_device_by_node() was removed by 2020's
+commit 811860ddceac ("drm/omap: drop unused DSS next pointer")
 
-> >>>  static void svm_inject_nmi(struct kvm_vcpu *vcpu)
-> >>> @@ -4231,7 +4233,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
-> >>>  	if (force_immediate_exit)
-> >>>  		smp_send_reschedule(vcpu->cpu);
-> >>>  
-> >>> -	pre_svm_run(vcpu);
-> >>> +	if (pre_svm_run(vcpu))
-> >>> +		return EXIT_FASTPATH_EXIT_USERSPACE;
-> 
-> In testing this out, I think userspace continues on because I eventually
-> get:
-> 
-> KVM_GET_PIT2 failed: Input/output error
-> /tmp/cmdline.98112: line 1: 98163 Aborted (core dumped) ...
-> 
-> Haven't looked too close, but maybe an exit_reason needs to be set to
-> get qemu to quit sooner?
+Remove it.
 
-Oh, the irony.  In trying to do the right thing (exit to userspace), I managed to
-do the wrong thing.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/gpu/drm/omapdrm/dss/base.c    | 12 ------------
+ drivers/gpu/drm/omapdrm/dss/omapdss.h |  1 -
+ 2 files changed, 13 deletions(-)
 
-If KVM tried to re-enter the guest, vcpu_enter_guest() would have encountered
-the KVM_REQ_DEAD and exited with -EIO.
-
-		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu)) {
-			r = -EIO;
-			goto out;
-		}
-
-By returning EXIT_FASTPATH_EXIT_USERSPACE, KVM exited to userspace more directly
-and returned '0' instead of -EIO.
-
-Getting KVM to return -EIO is easy, but doing so feels wrong, especially if we
-take the quick-and-dirty route like so:
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 454fd6b8f3db..9c8b400e04f2 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -11102,7 +11102,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
-                kvm_lapic_sync_from_vapic(vcpu);
+diff --git a/drivers/gpu/drm/omapdrm/dss/base.c b/drivers/gpu/drm/omapdrm/dss/base.c
+index a4ac113e1690..f8be1399a79c 100644
+--- a/drivers/gpu/drm/omapdrm/dss/base.c
++++ b/drivers/gpu/drm/omapdrm/dss/base.c
+@@ -73,18 +73,6 @@ void omapdss_device_put(struct omap_dss_device *dssdev)
+ 	put_device(dssdev->dev);
+ }
  
-        if (unlikely(exit_fastpath == EXIT_FASTPATH_EXIT_USERSPACE))
--               return 0;
-+               return kvm_test_request(KVM_REQ_VM_DEAD, vcpu) ? -EIO : 0;
- 
-        r = kvm_x86_call(handle_exit)(vcpu, exit_fastpath);
-        return r;
+-struct omap_dss_device *omapdss_find_device_by_node(struct device_node *node)
+-{
+-	struct omap_dss_device *dssdev;
+-
+-	list_for_each_entry(dssdev, &omapdss_devices_list, list) {
+-		if (dssdev->dev->of_node == node)
+-			return omapdss_device_get(dssdev);
+-	}
+-
+-	return NULL;
+-}
+-
+ /*
+  * Search for the next output device starting at @from. Release the reference to
+  * the @from device, and acquire a reference to the returned device if found.
+diff --git a/drivers/gpu/drm/omapdrm/dss/omapdss.h b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+index 4c22c09c93d5..95897a1b711b 100644
+--- a/drivers/gpu/drm/omapdrm/dss/omapdss.h
++++ b/drivers/gpu/drm/omapdrm/dss/omapdss.h
+@@ -240,7 +240,6 @@ void omapdss_device_register(struct omap_dss_device *dssdev);
+ void omapdss_device_unregister(struct omap_dss_device *dssdev);
+ struct omap_dss_device *omapdss_device_get(struct omap_dss_device *dssdev);
+ void omapdss_device_put(struct omap_dss_device *dssdev);
+-struct omap_dss_device *omapdss_find_device_by_node(struct device_node *node);
+ int omapdss_device_connect(struct dss_device *dss,
+ 			   struct omap_dss_device *dst);
+ void omapdss_device_disconnect(struct dss_device *dss,
+-- 
+2.48.1
 
-Given that, IIUC, KVM would eventually return KVM_EXIT_FAIL_ENTRY, I like your
-idea of returning meaningful information.  And unless I'm missing something, that
-would obviate any need to terminate the VM, which would address your earlier point
-of whether terminating the VM is truly better than returning than returning a
-familiar error code.
-
-So this? (completely untested)
-
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 7345cac6f93a..71b340cbe561 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -3463,10 +3463,8 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
-         * invalid VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after
-         * an SNP AP Destroy event.
-         */
--       if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa)) {
--               kvm_vm_dead(kvm);
--               return -EIO;
--       }
-+       if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa))
-+               return -EINVAL;
- 
-        /* Assign the asid allocated with this SEV guest */
-        svm->asid = asid;
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 46e0b65a9fec..f72bcf2e590e 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -4233,8 +4233,12 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
-        if (force_immediate_exit)
-                smp_send_reschedule(vcpu->cpu);
- 
--       if (pre_svm_run(vcpu))
-+       if (pre_svm_run(vcpu)) {
-+               vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
-+               vcpu->run->fail_entry.hardware_entry_failure_reason = SVM_EXIT_ERR;
-+               vcpu->run->fail_entry.cpu = vcpu->cpu;
-                return EXIT_FASTPATH_EXIT_USERSPACE;
-+       }
- 
-        sync_lapic_to_cr8(vcpu);
 
