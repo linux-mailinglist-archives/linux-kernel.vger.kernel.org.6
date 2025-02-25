@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-532241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980B4A44A7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:34:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E980A44A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:31:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D10016115F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:33:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E206A1890B4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B9920C470;
-	Tue, 25 Feb 2025 18:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B882175D48;
+	Tue, 25 Feb 2025 18:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="Uc/2dSvg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dyorD1kL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B05E1A8F79;
-	Tue, 25 Feb 2025 18:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740508377; cv=pass; b=DN5AeWN+Pxvstq/XQrXwDinCNymcI2/9wNKZ6SI+cJ1FyJcsw5DZx9ZNp467CuyEjydkn+D0KEkMurKL0FCYG6/szSVocIX8G4AeO4XObOoJPoo4Num4ffIVLdTCmSIjC17Cu+dgJ4qf0w47/M0Dp/fnrU+gVmYgYHK4Ah/euYg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740508377; c=relaxed/simple;
-	bh=710on4FianZf50Zr3diy6L+j+7/aC3MoxnjIw+csFKE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=A3OSwtEL9zC6LsVTq1V6Wgtu4Qz8BcNL4j+rwZeKV5qKGKE3ErrTctNDy85KGJYC434uSTieG4QBvZKeCLByOgP8oL5I9X8UP7B7K/Lc5sZInrSQzaU84KrP/b/mxsf07TFoxOZMyMCuIGXtNHNIrDMpK1WbMHqygefJeXZORMc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=Uc/2dSvg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1740508336; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NAVluGKpp/hHUVVj+JxBpRBCQBz+X/4naBTk3fwp8FFJVh9jWYEsdF+C9gnx+4gP+cpCdwqg4IRFIdbVuo8hhMvXWSaXfMSQQTvKVYLm8sBOwNXf57Lr9zgKjSVLKm7q7N4piaS+61abaF/P3X+S0YDCTHiYCIZcN5ypYrBKKAM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1740508336; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tCejzOVQqwKvlJ+w4GPysB0BnrgHd030RmrjnYJfw9M=; 
-	b=mF8QfykBvKtsu8Y1GMsiDt10MHDqSo9xZQj6t1HjOGd4vM3TOZS1BXyPjOddToTitoJVWTnuCtOZQt0kuzyCGAjc+OBALvyy08ft934zLcGF6LPMGzOzQEy0xAQzvQsbpbY9iZdeP4OI0Ik7KePaAt/QhniFLCxCQYxLOn5gPi4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740508336;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=tCejzOVQqwKvlJ+w4GPysB0BnrgHd030RmrjnYJfw9M=;
-	b=Uc/2dSvgq6Z/Ci2LMENGCAL/8uH67vuWViuP/LSjtvVwe3Z2T+qTCqbWQ2ztfAbE
-	0oz9ZcfUJM1MvjkxrdTOQ4mZpRQROouuO2tWvgutw5S9bv6TRodaeucsFRBlZf4ahaF
-	Cd97yYKvWC7cfMYv/DWjHzYFr70xqt5Mgdg1+SGk=
-Received: by mx.zohomail.com with SMTPS id 1740508334520703.6738518506259;
-	Tue, 25 Feb 2025 10:32:14 -0800 (PST)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Shreeya Patel <shreeya.patel@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	jose.abreu@synopsys.com,
-	nelson.costa@synopsys.com,
-	shawn.wen@rock-chips.com,
-	nicolas.dufresne@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Tim Surber <me@timsurber.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v10 6/6] arm64: defconfig: Enable Synopsys HDMI receiver
-Date: Tue, 25 Feb 2025 21:30:58 +0300
-Message-ID: <20250225183058.607047-7-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
-References: <20250225183058.607047-1-dmitry.osipenko@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B7C189F57
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740508290; cv=none; b=aUEO+BCF2SWNFCS5yVOgEjq68CgMxQDbtY4ZALw6JuTfn060oRO5jSxwrPYVJwpqM4BDldC7Hf4xRaW1DA6EwvcJgNp3Vz5ndQVrJpVqOfZWJL2yTm2YSeeMF/55hwHcU8700h0yNbRBJa69jL4hKKZWZLR2lLJMCFH3ARXGEqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740508290; c=relaxed/simple;
+	bh=WIvGeSNx0cISssd95er/+ewyGY+cb/tUe6OCtmrY5+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ct7JP1vFOdU3IzQmDmNcQzipAi5BAxn0U37yjI+7Ahwa+O8ITyakEv0NbYQ1uTND2Frw/GeSjhDP7mMAVXGAi1pNkyD5h2Y1zzsYKunmIp+5/pa3LcVPYvUc1J910SXgOefLuN0jHzGVYPur4ALTqE6116skK9TSeTVfLO/JboY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dyorD1kL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F24A2C4CEDD;
+	Tue, 25 Feb 2025 18:31:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740508290;
+	bh=WIvGeSNx0cISssd95er/+ewyGY+cb/tUe6OCtmrY5+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dyorD1kLF/ahGRc3zZgKS6b0Qm1G58NZ1rbwxjUkNOysDlalCbjfPyJtajeOfOsNL
+	 ohkwoF7pxpmBuqYTIl+YPW2RR9hijiCtxV1crbn7TqDWCObOitMSoJbDi9NbDGjsWz
+	 bO19NX88OmmC7zPTHSdUEAHvLHdjMwZAXOkTGJDDFn67Z/M1zyXHxuensm+yaMjRYn
+	 8juU+zpp1YAm8kPqfRb3s/X2l5JGpx8373LJMxrCe0LezLacgj6xRRLS8NOuBpt3GF
+	 GkFJScTdDpsrMIjhsL3LmnuDQOjVxqKNvjaNYwlPrVWdzlIPsfXeFajaOp/TsePxKq
+	 bYzUvEi2X2H6g==
+Date: Tue, 25 Feb 2025 10:31:26 -0800
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, alyssa.milburn@intel.com,
+	scott.d.constable@intel.com, joao@overdrivepizza.com,
+	andrew.cooper3@citrix.com, jpoimboe@kernel.org,
+	jose.marchesi@oracle.com, hjl.tools@gmail.com,
+	ndesaulniers@google.com, samitolvanen@google.com, nathan@kernel.org,
+	ojeda@kernel.org, alexei.starovoitov@gmail.com, mhiramat@kernel.org,
+	jmill@asu.edu
+Subject: Re: [PATCH v4 08/10] x86: BHI stubs
+Message-ID: <202502251031.90B499810@keescook>
+References: <20250224123703.843199044@infradead.org>
+ <20250224124200.717378681@infradead.org>
+ <202502241100.9B62173958@keescook>
+ <20250225085212.GG11590@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225085212.GG11590@noisy.programming.kicks-ass.net>
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+On Tue, Feb 25, 2025 at 09:52:12AM +0100, Peter Zijlstra wrote:
+> On Mon, Feb 24, 2025 at 11:01:02AM -0800, Kees Cook wrote:
+> 
+> > On Mon, Feb 24, 2025 at 01:37:11PM +0100, Peter Zijlstra wrote:
+> > > 
+> > > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > 
+> > Did this commit log go missing?
+> 
+> Nah, it never had one.
+> 
+> How does this sound?
+> 
+> ---
+> 
+> Add an array of code thunks, to be called from the FineIBT preamble,
+> clobbering the first 'n' argument registers for speculative execution.
+> 
+> Notably the 0th entry will clobber no argument registers and will never
+> be used, it exists so the array can be naturally indexed, while the 7th
+> entry will clobber all the 6 argument registers and also RSP in order to
+> mess up stack based arguments.
+> 
 
-The Rockchip RK3588 has a built-in HDMI receiver block from
-Synopsys. Let's enable the driver for it.
+Yes, this reads well. Thanks!
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- arch/arm64/configs/defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da4415599..3dccc9e1c4aa 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -859,6 +859,8 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
- CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_SUN6I_CSI=m
-+CONFIG_VIDEO_SYNOPSYS_HDMIRX=m
-+CONFIG_VIDEO_SYNOPSYS_HDMIRX_LOAD_DEFAULT_EDID=y
- CONFIG_VIDEO_TI_J721E_CSI2RX=m
- CONFIG_VIDEO_HANTRO=m
- CONFIG_VIDEO_IMX219=m
+
 -- 
-2.48.1
-
+Kees Cook
 
