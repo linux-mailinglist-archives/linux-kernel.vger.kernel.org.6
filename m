@@ -1,93 +1,93 @@
-Return-Path: <linux-kernel+bounces-532306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A059A44B44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:26:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44135A44B46
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:26:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305DC189F473
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9900E189E6B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9338220C46B;
-	Tue, 25 Feb 2025 19:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4532F1C84DE;
+	Tue, 25 Feb 2025 19:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WiAtUBIZ"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pet9dkxl"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B4120C006
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C420CCEF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740511480; cv=none; b=OKXkopT3iqyeChUaLMIncl/biPpBsydVU5u761fof2LxDMFKl7M2C13cDDDIc/p9GAgoalYBYCEL1UqpvShY9vtAsTHQj7FShwi5Y2j+2YdAiqgurOOMIIVFeDtzWeYvZ6W+w4yAlRO8GN/65kgBkUSnF0iT8xl6t2bx4nyN/CM=
+	t=1740511482; cv=none; b=kG+P+o230RX7d8yxVwJRyxIMswxR8bRkCI9upCHt3YOQcsvUk4Ik8b5TpqC9du56e8vpcUn/L2wAsLpHYFp6qR3rpSzhUpZ5zT+K7rqcdZfPdFmy0w2tzOXGVz5N4yHj2N87gAcOaoEgvG3C6CTZ//NePp5B6ICp+NBF3690rOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740511480; c=relaxed/simple;
-	bh=lLwIURtKZJUGidXlT3Y8BXV8+48ulOdPve60a5sXTu8=;
+	s=arc-20240116; t=1740511482; c=relaxed/simple;
+	bh=Pp4LWmQJeI2n2hns25e4yRUIVR5rPF1mXNrxkrycmYI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kBTfzsmbJK98IcVvvPINKEVVrDOil3EHDdo9tRNhm+MTSHoRWdf6j6gEoQkp+O9ob84KtaCeWkSy81lP2fqp4qqZj5+OxMEFnqr3pCdHTvPC/RgoWwYFy4pJGbE0YEO27ZySdrAVyTRwfKsTbpV7uyHNgVN4oAQYphuvAgGYy80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WiAtUBIZ; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version; b=j9WjmvZKGgAzNcSbe47NFVtRoihGCJZIk6HJiQS1Fd+YfFNjVchr7CfN1uItMqNd59CvdQpJ0GISrNZ0WEOTXbH8VSNFz0TsjJkdxU3rn6VopSp6cCu6R3Fq/u3SPPImSwI0DuqCso9s8lC5Lz1QGLbDFJRt6W6fAN69u7SxyiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pet9dkxl; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PI4USn013334
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:38 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PIRB7Q017266
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:39 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=sncinBpcYxj
-	t4APU9WKLzYEwcQdqUmwiyrxdzC7yG6M=; b=WiAtUBIZj0ttkCcp07XUSFDGiyj
-	1HiQg5y53sKGXUZHvwodICq4dxQER817hoFLKh7C2dPfuwcTgTfGjVjqYgCRjJ/C
-	X9YOUJleEHPLCUWMIRWF/f+as8DrYT67AiDBWdOURV10QQvhJTBgOHOHbOG+sOXn
-	jP86iNP7sagbe/fGS3IHfckpQVNcHZEbi2UVXf2qMTz+2z8X7Fgsic19Pw3OP6Hv
-	SPbPC1CdeBxtXaBEHh5GUCVQk7kWSpOztTvBQ02kV1bfc5wmMA1893N6FFbfk5wp
-	X+SEHGBAmzxE+s9r53zrMWszPL3eUWnNQx3eNcvt8ysqT6Xnd6OW9NZAHLw==
+	:mime-version:references:subject:to; s=qcppdkim1; bh=n9ufafBkhPy
+	0t2hvJ7w74GUJXSKmHUttNBHTqYvNH+0=; b=pet9dkxlTjnq9D0ziJT/vdx1Sel
+	cypuh4ehD/7v+g4mRg9TwY9Iy7TSxnE3GtdM1E4oOdaQFtAyHDbUoojBbQkGetlH
+	mlgjUM+uiK44p/AZxrEDlnOYsOSaJ9u6p1uLw+mHEjsQ4g6Er0HZ0SePOw5u6Tvk
+	l7Cp5vy+2OY4R40tonSJFZqgejiZGPDF1dajdqAJoW/mSj6yfAnZo0nUr+jfgBLI
+	kHaXXbLA6zEUjrsJWN/Cd/O9rO2+rptxEksqveSoFY2hKPlvHmH9b8zf8fJ22ZBB
+	eRq2bns53PFAs3lteyorFX1+Zlf6K8Y2CMWH0o7072jBlljwPxMaYPGyrjA==
 Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgt28x-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5k6a44y-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:37 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2210305535bso197954705ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:24:37 -0800 (PST)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:24:39 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22114b800f0so75048685ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:24:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740511476; x=1741116276;
+        d=1e100.net; s=20230601; t=1740511478; x=1741116278;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sncinBpcYxjt4APU9WKLzYEwcQdqUmwiyrxdzC7yG6M=;
-        b=iHMBvHKTIDkJoVBK9T5EjkGeEcR0ruj4OIZqr+Fwr5tvvphY9rYHAl75gjh4EH5FOc
-         2Y9+dt0N+3UBi4Hr8C9ikHVazddSa3umvbBl3s2T8BWPnpQTO7OIMU91ooSXswMuSAmq
-         5YrCcaE9lJgtK/IanN/MxkUfwRJ53z8YR/LMdTyBC0b3/hkBk6oJ0ww0XPIxnmOch8bE
-         6Rcy6WxED6H1cZ3SjUeikZ2pTJeZYasankgLFabDnvYhgHaOCgf4rFiKZwPEdj/vD5LN
-         ZOFRQBmkWaNP6Cio7jVpyqyzXXkJRhqo5uCeyV1W/zkarBLxsQvrNV4yqM37XTNs7MTv
-         PHhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVh1eKm1wnqylWsKPoCKGJULiCBAPIISneecW3cwLNcm1R5qoNG5JHQ8/RGR63JhlWyyK6SsxFyiPkl+8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN/rA4Dk2Ughpvz3B+9s57V4/ZHskf1mP9zZbo6jEeZlpi6Ch4
-	HvzzsBdRtiqKmXgcUrOHtWLjmK+oqYMvGwaY/1P71BPVDoBV8udp6vNRmRVcW4Az4b5UM1VMW8y
-	+919dQ0QccZ59ZXCP10Wf7oa87ASDwe8CD323xhVAs+2j/+mi5uomP2QMxp3AMqw=
-X-Gm-Gg: ASbGncvJhB7/L2so9E4SbFju+uXjP/L8w8Cd2rsTZrUxL4roxhykmlp53KPlb6orinG
-	R9Mrsa11mbTm6mbgzG5eJGZCa2s9YFm+8i7n4Tj8k2BdoRlDRk/sDKC+XPchZvXM0xWMpsoDBs0
-	UcUF0V7uq/dNx+n/O36bPy4NuLaIA6i3PmC9PwcLiq2zahEypEDlpBWzvOnOh6qfPZ/NRmYeJJV
-	AYzJ0bKKipKXdItHf17AqCRmtSSmRIrRxo4hJmy2ehtAeada03EpBIM1Y/zYLRVxlCzyD8tM2Ob
-	IZP+tCEBvkjYT9sRiI19o1A6zh7zGEMwD3YY3A5+X7oYu922GjGkKk9qnLSLuYOVeqjnPPBwAmw
-	W4Uk=
-X-Received: by 2002:a17:902:ea0c:b0:21f:35fd:1b57 with SMTP id d9443c01a7336-221a118747dmr293239285ad.43.1740511476554;
-        Tue, 25 Feb 2025 11:24:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGcZhSdu3/3liSui3KRPqS+qc4K7OLYsdM23pgGyUKxKLvh4wc8up9IeNok70qF0g++GnZEmw==
-X-Received: by 2002:a17:902:ea0c:b0:21f:35fd:1b57 with SMTP id d9443c01a7336-221a118747dmr293238895ad.43.1740511476154;
-        Tue, 25 Feb 2025 11:24:36 -0800 (PST)
+        bh=n9ufafBkhPy0t2hvJ7w74GUJXSKmHUttNBHTqYvNH+0=;
+        b=DhZdaHHEjDDDrqI9BF+4YQKMJmn1afWV9vVG9lXDCTRJOpqOClSjiu+QTiMhSnzRqv
+         3Gy+ujgO5ZjIKMjWt+1uv+Wk9zKzHB1e9nZXVzvTcRGIuxMxy3AZuP2jR6GxlKt0+2hl
+         DimePomOVBJyVM7ZGACIrJ1QShWpnuvnK9iUG1PNdB6WFLEpllDSgpXXOhZ9RqlntG5p
+         Jplm7Gs/thkecj5WFUt+Fa8nPpOc4vP7ov0q0QfhEqNAxtT9oB/1XVOSIBmEx+h15wTk
+         39DjyAO7x23lA0JZfwCSOqlKFGFl2TPaz7ZRzQc2DtwWoMK52LXbEovUhcnVR8BLvZu8
+         33Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVokaQWgoiNQY2qWHm+nZg0Ic2RIMPjDkczRUjLT6ZMuYKeLV0wzxR0ABK9DnN6aSCl+RIXC6orYa6vD0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMnHd4Me01kHi8Z691waUDS27I+yq++UGpFXKnIt4cErpcvqlQ
+	kbYhbj6xRUECJniUr18xnRu24PH5e+oi3Gx5jQfFkpKjoCLPUYFnPrWbTrtNxD3rksQaCqqzBAl
+	VSeVgVuYrcX+19Z7ASZ3+kjLf6KJhAQNK/a/W9yrARliG8Nd1/0PjHcRf/S7DOqc=
+X-Gm-Gg: ASbGncvrtTrsyb1M0lfRQjLhbV52agVO8E0jnK/aj08rJ2yVKOYpkqm/vFdvcY8xViQ
+	I6ZFsNAw0QafP/884NrGObvVvTO7PMcwlogf8qVOmRzt2qEv0n5U49h/2Anr3+3ugX3gAJOOwob
+	o4qP3kqUjcO5ActLMtjVW9X2PI/UJd3H8r7oMQ+h+LuPk5pRzPEv9+64K1HCNVpexbD1l/tTypd
+	IASBjpfeBupaPvrA59t/VlRugSKQgXjpYGtCfgGN0XUkQMlI3hJNTxbfzHr8drSYxidzXyuGM/9
+	A8Gr4inKQs1Xd7Wsk2Muy9NxmCYSnLEPpTpm+TwPKv1c63gKyo4IMhXw0rOAG/edgHQBMmteoDL
+	BG90=
+X-Received: by 2002:a17:902:db0f:b0:220:efc8:60b1 with SMTP id d9443c01a7336-22307e6587bmr72524575ad.39.1740511477934;
+        Tue, 25 Feb 2025 11:24:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGV3PgJsP16R7Q9ZLc4cvyMFvQrhThDMR9kUHqv1+xLdIaqLpkSjGLYubMLFsHKJcqWKu/48w==
+X-Received: by 2002:a17:902:db0f:b0:220:efc8:60b1 with SMTP id d9443c01a7336-22307e6587bmr72524205ad.39.1740511477512;
+        Tue, 25 Feb 2025 11:24:37 -0800 (PST)
 Received: from hu-amelende-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a095865sm17915365ad.145.2025.02.25.11.24.34
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a095865sm17915365ad.145.2025.02.25.11.24.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 11:24:35 -0800 (PST)
+        Tue, 25 Feb 2025 11:24:36 -0800 (PST)
 From: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 To: amitk@kernel.org, thara.gopinath@gmail.com, rafael@kernel.org,
         daniel.lezcano@linaro.org
 Cc: rui.zhang@intel.com, lukasz.luba@arm.com, david.collins@oss.qualcomm.com,
         linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/5] thermal: qcom-spmi-temp-alarm: add support for GEN2 rev 2 PMIC peripherals
-Date: Tue, 25 Feb 2025 11:24:28 -0800
-Message-Id: <20250225192429.2328092-5-anjelique.melendez@oss.qualcomm.com>
+Subject: [PATCH v2 5/5] thermal: qcom-spmi-temp-alarm: add support for LITE PMIC peripherals
+Date: Tue, 25 Feb 2025 11:24:29 -0800
+Message-Id: <20250225192429.2328092-6-anjelique.melendez@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250225192429.2328092-1-anjelique.melendez@oss.qualcomm.com>
 References: <20250225192429.2328092-1-anjelique.melendez@oss.qualcomm.com>
@@ -98,110 +98,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 9qlrgNtODXC68mKW1w5CIWA6mDaHzXD5
-X-Proofpoint-ORIG-GUID: 9qlrgNtODXC68mKW1w5CIWA6mDaHzXD5
+X-Proofpoint-ORIG-GUID: gzzHCNxHWyYLyQGMscosjUGJjJuMZHuC
+X-Proofpoint-GUID: gzzHCNxHWyYLyQGMscosjUGJjJuMZHuC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-02-25_06,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
- clxscore=1015 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ bulkscore=0 spamscore=0 phishscore=0 clxscore=1015 impostorscore=0
+ mlxlogscore=999 suspectscore=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2502100000 definitions=main-2502250120
 
-Add support for TEMP_ALARM GEN2 PMIC peripherals with digital major
-revision 2.  This revision utilizes individual temp DAC registers
-to set the threshold temperature for over-temperature stages 1,
-2, and 3 instead of a single register to specify a set of
-thresholds.
+Add support for TEMP_ALARM LITE PMIC peripherals. This subtype
+utilizes a pair of registers to configure a warning interrupt
+threshold temperature and an automatic hardware shutdown
+threshold temperature.
 
 Signed-off-by: David Collins <david.collins@oss.qualcomm.com>
 Signed-off-by: Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>
 ---
- drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 136 ++++++++++++++++++++
- 1 file changed, 136 insertions(+)
+ drivers/thermal/qcom/qcom-spmi-temp-alarm.c | 204 +++++++++++++++++++-
+ 1 file changed, 203 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-index fbfe633441ba..b4afe93ae87f 100644
+index b4afe93ae87f..50e6c29afde3 100644
 --- a/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
 +++ b/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-@@ -26,6 +26,11 @@
+@@ -23,6 +23,7 @@
+ #define QPNP_TM_REG_TYPE		0x04
+ #define QPNP_TM_REG_SUBTYPE		0x05
+ #define QPNP_TM_REG_STATUS		0x08
++#define QPNP_TM_REG_IRQ_STATUS		0x10
  #define QPNP_TM_REG_SHUTDOWN_CTRL1	0x40
  #define QPNP_TM_REG_ALARM_CTRL		0x46
  
-+/* TEMP_DAC_STGx registers are only present for TEMP_GEN2 v2.0 */
-+#define QPNP_TM_REG_TEMP_DAC_STG1	0x47
-+#define QPNP_TM_REG_TEMP_DAC_STG2	0x48
-+#define QPNP_TM_REG_TEMP_DAC_STG3	0x49
-+
+@@ -30,14 +31,20 @@
+ #define QPNP_TM_REG_TEMP_DAC_STG1	0x47
+ #define QPNP_TM_REG_TEMP_DAC_STG2	0x48
+ #define QPNP_TM_REG_TEMP_DAC_STG3	0x49
++#define QPNP_TM_REG_LITE_TEMP_CFG1	0x50
++#define QPNP_TM_REG_LITE_TEMP_CFG2	0x51
+ 
  #define QPNP_TM_TYPE			0x09
  #define QPNP_TM_SUBTYPE_GEN1		0x08
  #define QPNP_TM_SUBTYPE_GEN2		0x09
-@@ -65,6 +70,25 @@ static const long temp_map_gen2_v1[THRESH_COUNT][STAGE_COUNT] = {
++#define QPNP_TM_SUBTYPE_LITE		0xC0
  
- #define TEMP_STAGE_HYSTERESIS		2000
+ #define STATUS_GEN1_STAGE_MASK		GENMASK(1, 0)
+ #define STATUS_GEN2_STATE_MASK		GENMASK(6, 4)
+ 
++/* IRQ status only needed for TEMP_ALARM_LITE */
++#define IRQ_STATUS_MASK			BIT(0)
++
+ #define SHUTDOWN_CTRL1_OVERRIDE_S2	BIT(6)
+ #define SHUTDOWN_CTRL1_THRESHOLD_MASK	GENMASK(1, 0)
+ 
+@@ -45,6 +52,8 @@
+ 
+ #define ALARM_CTRL_FORCE_ENABLE		BIT(7)
+ 
++#define LITE_TEMP_CFG_THRESHOLD_MASK	GENMASK(3, 2)
++
+ #define THRESH_COUNT			4
+ #define STAGE_COUNT			3
+ 
+@@ -89,6 +98,19 @@ static const long temp_dac_max[STAGE_COUNT] = {
+ 	119375, 159375, 159375
+ };
  
 +/*
-+ * For TEMP_GEN2 v2.0, TEMP_DAC_STG1/2/3 registers are used to set the threshold
-+ * for each stage independently.
-+ * TEMP_DAC_STG* = 0 --> 80 C
-+ * Each 8 step increase in TEMP_DAC_STG* value corresponds to 5 C (5000 mC).
++ * TEMP_ALARM_LITE has two stages: warning and shutdown with independently
++ * configured threshold temperatures.
 + */
-+#define TEMP_DAC_MIN			80000
-+#define TEMP_DAC_SCALE_NUM		8
-+#define TEMP_DAC_SCALE_DEN		5000
 +
-+#define TEMP_DAC_TEMP_TO_REG(temp) \
-+	(((temp) - TEMP_DAC_MIN) * TEMP_DAC_SCALE_NUM / TEMP_DAC_SCALE_DEN)
-+#define TEMP_DAC_REG_TO_TEMP(reg) \
-+	(TEMP_DAC_MIN + (reg) * TEMP_DAC_SCALE_DEN / TEMP_DAC_SCALE_NUM)
++static const long temp_lite_warning_map[THRESH_COUNT] = {
++	115000, 125000, 135000, 145000
++};
 +
-+static const long temp_dac_max[STAGE_COUNT] = {
-+	119375, 159375, 159375
++static const long temp_lite_shutdown_map[THRESH_COUNT] = {
++	135000, 145000, 160000, 175000
 +};
 +
  /* Temperature in Milli Celsius reported during stage 0 if no ADC is present */
  #define DEFAULT_TEMP			37000
  
-@@ -73,6 +97,7 @@ struct qpnp_tm_chip;
- struct spmi_temp_alarm_data {
- 	const struct thermal_zone_device_ops *ops;
- 	const long (*temp_map)[THRESH_COUNT][STAGE_COUNT];
-+	int (*setup)(struct qpnp_tm_chip *chip);
- 	int (*get_temp_stage)(struct qpnp_tm_chip *chip);
- 	int (*configure_trip_temps)(struct qpnp_tm_chip *chip);
- };
-@@ -88,6 +113,7 @@ struct qpnp_tm_chip {
- 	unsigned int			thresh;
- 	unsigned int			stage;
- 	unsigned int			base;
-+	unsigned int			ntrips;
- 	/* protects .thresh, .stage and chip registers */
- 	struct mutex			lock;
- 	bool				initialized;
-@@ -305,6 +331,52 @@ static const struct thermal_zone_device_ops qpnp_tm_sensor_ops = {
- 	.set_trip_temp = qpnp_tm_set_trip_temp,
+@@ -198,6 +220,24 @@ static int qpnp_tm_gen2_get_temp_stage(struct qpnp_tm_chip *chip)
+ 	return alarm_state_map[ret];
+ }
+ 
++/**
++ * qpnp_tm_lite_get_temp_stage() - return over-temperature stage
++ * @chip:		Pointer to the qpnp_tm chip
++ *
++ * Return: alarm interrupt state on success, or errno on failure.
++ */
++static int qpnp_tm_lite_get_temp_stage(struct qpnp_tm_chip *chip)
++{
++	u8 reg = 0;
++	int ret;
++
++	ret = qpnp_tm_read(chip, QPNP_TM_REG_IRQ_STATUS, &reg);
++	if (ret < 0)
++		return ret;
++
++	return reg & IRQ_STATUS_MASK;
++}
++
+ /*
+  * This function updates the internal temp value based on the
+  * current thermal stage and threshold as well as the previous stage
+@@ -377,6 +417,96 @@ static const struct thermal_zone_device_ops qpnp_tm_gen2_rev2_sensor_ops = {
+ 	.set_trip_temp = qpnp_tm_gen2_rev2_set_trip_temp,
  };
  
-+static int qpnp_tm_gen2_rev2_set_temp_thresh(struct qpnp_tm_chip *chip, int trip, int temp)
++static int qpnp_tm_lite_set_temp_thresh(struct qpnp_tm_chip *chip, int trip, int temp)
 +{
-+	int ret, temp_cfg;
-+	u8 reg;
++	int ret, temp_cfg, i;
++	const long *temp_map;
++	u16 addr;
++	u8 reg, thresh;
 +
 +	if (trip < 0 || trip >= STAGE_COUNT) {
-+		dev_err(chip->dev, "invalid TEMP_DAC trip = %d\n", trip);
-+		return -EINVAL;
-+	} else if (temp < TEMP_DAC_MIN || temp > temp_dac_max[trip]) {
-+		dev_err(chip->dev, "invalid TEMP_DAC temp = %d\n", temp);
++		dev_err(chip->dev, "invalid TEMP_LITE trip = %d\n", trip);
 +		return -EINVAL;
 +	}
 +
-+	reg = TEMP_DAC_TEMP_TO_REG(temp);
-+	temp_cfg = TEMP_DAC_REG_TO_TEMP(reg);
++	switch (trip) {
++	case 0:
++		temp_map = temp_lite_warning_map;
++		addr = QPNP_TM_REG_LITE_TEMP_CFG1;
++		break;
++	case 1:
++		/*
++		 * The second trip point is purely in software to facilitate
++		 * a controlled shutdown after the warning threshold is crossed
++		 * but before the automatic hardware shutdown threshold is
++		 * crossed.
++		 */
++		return 0;
++	case 2:
++		temp_map = temp_lite_shutdown_map;
++		addr = QPNP_TM_REG_LITE_TEMP_CFG2;
++		break;
++	default:
++		return 0;
++	}
 +
-+	ret = qpnp_tm_write(chip, QPNP_TM_REG_TEMP_DAC_STG1 + trip, reg);
++	if (temp < temp_map[THRESH_MIN] || temp > temp_map[THRESH_MAX]) {
++		dev_err(chip->dev, "invalid TEMP_LITE temp = %d\n", temp);
++		return -EINVAL;
++	}
++
++	thresh = 0;
++	temp_cfg = temp_map[thresh];
++	for (i = THRESH_MAX; i >= THRESH_MIN; i--) {
++		if (temp >= temp_map[i]) {
++			thresh = i;
++			temp_cfg = temp_map[i];
++			break;
++		}
++	}
++
++	if (temp_cfg == chip->temp_thresh_map[trip])
++		return 0;
++
++	ret = qpnp_tm_read(chip, addr, &reg);
 +	if (ret < 0) {
-+		dev_err(chip->dev, "TEMP_DAC_STG write failed, ret=%d\n", ret);
++		dev_err(chip->dev, "LITE_TEMP_CFG read failed, ret=%d\n", ret);
++		return ret;
++	}
++
++	reg &= ~LITE_TEMP_CFG_THRESHOLD_MASK;
++	reg |= FIELD_PREP(LITE_TEMP_CFG_THRESHOLD_MASK, thresh);
++
++	ret = qpnp_tm_write(chip, addr, reg);
++	if (ret < 0) {
++		dev_err(chip->dev, "LITE_TEMP_CFG write failed, ret=%d\n", ret);
 +		return ret;
 +	}
 +
@@ -210,80 +282,90 @@ index fbfe633441ba..b4afe93ae87f 100644
 +	return 0;
 +}
 +
-+static int qpnp_tm_gen2_rev2_set_trip_temp(struct thermal_zone_device *tz,
-+					   const struct thermal_trip *trip, int temp)
++static int qpnp_tm_lite_set_trip_temp(struct thermal_zone_device *tz,
++				      const struct thermal_trip *trip, int temp)
 +{
 +	unsigned int trip_index = THERMAL_TRIP_PRIV_TO_INT(trip->priv);
 +	struct qpnp_tm_chip *chip = thermal_zone_device_priv(tz);
 +	int ret;
 +
 +	mutex_lock(&chip->lock);
-+	ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, trip_index, temp);
++	ret = qpnp_tm_lite_set_temp_thresh(chip, trip_index, temp);
 +	mutex_unlock(&chip->lock);
 +
 +	return ret;
 +}
 +
-+static const struct thermal_zone_device_ops qpnp_tm_gen2_rev2_sensor_ops = {
++static const struct thermal_zone_device_ops qpnp_tm_lite_sensor_ops = {
 +	.get_temp = qpnp_tm_get_temp,
-+	.set_trip_temp = qpnp_tm_gen2_rev2_set_trip_temp,
++	.set_trip_temp = qpnp_tm_lite_set_trip_temp,
 +};
 +
  static irqreturn_t qpnp_tm_isr(int irq, void *data)
  {
  	struct qpnp_tm_chip *chip = data;
-@@ -329,6 +401,58 @@ static int qpnp_tm_configure_trip_temp(struct qpnp_tm_chip *chip)
- 	return qpnp_tm_update_critical_trip_temp(chip, crit_temp);
+@@ -453,6 +583,68 @@ static int qpnp_tm_gen2_rev2_setup(struct qpnp_tm_chip *chip)
+ 	return 0;
  }
  
-+/* Configure TEMP_DAC registers based on DT thermal_zone trips */
-+static int qpnp_tm_gen2_rev2_configure_trip_temps_cb(struct thermal_trip *trip, void *data)
++/* Configure TEMP_LITE registers based on DT thermal_zone trips */
++static int qpnp_tm_lite_configure_trip_temps_cb(struct thermal_trip *trip, void *data)
 +{
 +	struct qpnp_tm_chip *chip = data;
 +	int ret;
 +
 +	trip->priv = THERMAL_INT_TO_TRIP_PRIV(chip->ntrips);
-+	ret = qpnp_tm_gen2_rev2_set_temp_thresh(chip, chip->ntrips, trip->temperature);
++	ret = qpnp_tm_lite_set_temp_thresh(chip, chip->ntrips, trip->temperature);
 +	chip->ntrips++;
 +
 +	return ret;
 +}
 +
-+static int qpnp_tm_gen2_rev2_configure_trip_temps(struct qpnp_tm_chip *chip)
++static int qpnp_tm_lite_configure_trip_temps(struct qpnp_tm_chip *chip)
 +{
-+	int ret, i;
++	int ret;
 +
-+	ret = thermal_zone_for_each_trip(chip->tz_dev,
-+					 qpnp_tm_gen2_rev2_configure_trip_temps_cb, chip);
++	ret = thermal_zone_for_each_trip(chip->tz_dev, qpnp_tm_lite_configure_trip_temps_cb, chip);
 +	if (ret < 0)
 +		return ret;
 +
 +	/* Verify that trips are strictly increasing. */
-+	for (i = 1; i < STAGE_COUNT; i++) {
-+		if (chip->temp_thresh_map[i] <= chip->temp_thresh_map[i - 1]) {
-+			dev_err(chip->dev, "Threshold %d=%ld <= threshold %d=%ld\n",
-+				i, chip->temp_thresh_map[i], i - 1,
-+				chip->temp_thresh_map[i - 1]);
-+			return -EINVAL;
-+		}
++	if (chip->temp_thresh_map[2] <= chip->temp_thresh_map[0]) {
++		dev_err(chip->dev, "Threshold 2=%ld <= threshold 0=%ld\n",
++			chip->temp_thresh_map[2], chip->temp_thresh_map[0]);
++		return -EINVAL;
 +	}
 +
 +	return 0;
 +}
 +
-+/* Read the hardware default TEMP_DAC stage threshold temperatures */
-+static int qpnp_tm_gen2_rev2_setup(struct qpnp_tm_chip *chip)
++/* Read the hardware default TEMP_LITE stage threshold temperatures */
++static int qpnp_tm_lite_setup(struct qpnp_tm_chip *chip)
 +{
-+	int ret, i;
++	int ret, thresh;
 +	u8 reg = 0;
 +
-+	for (i = 0; i < STAGE_COUNT; i++) {
-+		ret = qpnp_tm_read(chip, QPNP_TM_REG_TEMP_DAC_STG1 + i, &reg);
-+		if (ret < 0)
-+			return ret;
++	/*
++	 * Store the warning trip temp in temp_thresh_map[0] and the shutdown trip
++	 * temp in temp_thresh_map[2].  The second trip point is purely in software
++	 * to facilitate a controlled shutdown after the warning threshold is
++	 * crossed but before the automatic hardware shutdown threshold is
++	 * crossed.  Thus, there is no register to read for the second trip
++	 * point.
++	 */
++	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG1, &reg);
++	if (ret < 0)
++		return ret;
 +
-+		chip->temp_thresh_map[i] = TEMP_DAC_REG_TO_TEMP(reg);
-+	}
++	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
++	chip->temp_thresh_map[0] = temp_lite_warning_map[thresh];
++
++	ret = qpnp_tm_read(chip, QPNP_TM_REG_LITE_TEMP_CFG2, &reg);
++	if (ret < 0)
++		return ret;
++
++	thresh = FIELD_GET(LITE_TEMP_CFG_THRESHOLD_MASK, reg);
++	chip->temp_thresh_map[2] = temp_lite_shutdown_map[thresh];
 +
 +	return 0;
 +}
@@ -291,39 +373,39 @@ index fbfe633441ba..b4afe93ae87f 100644
  static const struct spmi_temp_alarm_data spmi_temp_alarm_data = {
  	.ops = &qpnp_tm_sensor_ops,
  	.temp_map = &temp_map_gen1,
-@@ -350,6 +474,13 @@ static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev1_data = {
+@@ -481,6 +673,13 @@ static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev2_data = {
  	.get_temp_stage = qpnp_tm_gen2_get_temp_stage,
  };
  
-+static const struct spmi_temp_alarm_data spmi_temp_alarm_gen2_rev2_data = {
-+	.ops = &qpnp_tm_gen2_rev2_sensor_ops,
-+	.setup = qpnp_tm_gen2_rev2_setup,
-+	.configure_trip_temps = qpnp_tm_gen2_rev2_configure_trip_temps,
-+	.get_temp_stage = qpnp_tm_gen2_get_temp_stage,
++static const struct spmi_temp_alarm_data spmi_temp_alarm_lite_data = {
++	.ops = &qpnp_tm_lite_sensor_ops,
++	.setup = qpnp_tm_lite_setup,
++	.configure_trip_temps = qpnp_tm_lite_configure_trip_temps,
++	.get_temp_stage = qpnp_tm_lite_get_temp_stage,
 +};
 +
  /*
   * This function initializes the internal temp value based on only the
   * current thermal stage and threshold. Setup threshold control and
-@@ -484,6 +615,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
+@@ -605,7 +804,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
+ 	}
  
- 	if (subtype == QPNP_TM_SUBTYPE_GEN1)
- 		chip->data = &spmi_temp_alarm_data;
-+	else if (subtype == QPNP_TM_SUBTYPE_GEN2 && dig_major >= 2)
-+		chip->data = &spmi_temp_alarm_gen2_rev2_data;
- 	else if (subtype == QPNP_TM_SUBTYPE_GEN2 && dig_major >= 1)
+ 	if (type != QPNP_TM_TYPE || (subtype != QPNP_TM_SUBTYPE_GEN1
+-				     && subtype != QPNP_TM_SUBTYPE_GEN2)) {
++				     && subtype != QPNP_TM_SUBTYPE_GEN2
++				     && subtype != QPNP_TM_SUBTYPE_LITE)) {
+ 		dev_err(&pdev->dev, "invalid type 0x%02x or subtype 0x%02x\n",
+ 			type, subtype);
+ 		return -ENODEV;
+@@ -621,6 +821,8 @@ static int qpnp_tm_probe(struct platform_device *pdev)
  		chip->data = &spmi_temp_alarm_gen2_rev1_data;
  	else if (subtype == QPNP_TM_SUBTYPE_GEN2)
-@@ -491,6 +624,9 @@ static int qpnp_tm_probe(struct platform_device *pdev)
+ 		chip->data = &spmi_temp_alarm_gen2_data;
++	else if (subtype == QPNP_TM_SUBTYPE_LITE)
++		chip->data = &spmi_temp_alarm_lite_data;
  	else
  		return -ENODEV;
  
-+	if (chip->data->setup)
-+		chip->data->setup(chip);
-+
- 	/*
- 	 * Register the sensor before initializing the hardware to be able to
- 	 * read the trip points. get_temp() returns the default temperature
 -- 
 2.34.1
 
