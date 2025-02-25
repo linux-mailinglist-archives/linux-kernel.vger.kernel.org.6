@@ -1,197 +1,351 @@
-Return-Path: <linux-kernel+bounces-532437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F7BA44DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:40:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 408BEA44DD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E5816C2B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D712C16ADCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A401494AB;
-	Tue, 25 Feb 2025 20:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1DE2135B5;
+	Tue, 25 Feb 2025 20:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCTyihQ/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV8LbgxD"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308941448E3;
-	Tue, 25 Feb 2025 20:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90164210180;
+	Tue, 25 Feb 2025 20:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740515686; cv=none; b=F2p5tOjySuBqv/hN/G4l2YDNnrmnI0WymtaqX2Mt/TW4K+E/ad/4hWPECJ26fN/mE06jPlqCirBU6IHiEK4nMBcd2XqIQU+wdwKmhyFiC1djM8i6sFOXE8mp0ifMZsGHF6yh4ZLS73uvxzxI8vwL8LyVei3uwqp8W03Z0P1oUjo=
+	t=1740515743; cv=none; b=k33uoxHTUvh/+vQK953CH5utGw5m7n2MtZ90fITE4mGpZ1e+TekISbRFgUS5fhH8abBh/1G4t/d+asnqzdlaV6wxIM5/k8M+lT7CrEjf9ZY2X9P1AH4VpPPV0toCLvRRViGeFanBzaOuL0oX7w+JkZ3om64Q7rSDNhkZL4XP5jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740515686; c=relaxed/simple;
-	bh=BRDE49GDK1WZQtOVWzMxOTVjKgnZs4mLJeGOsJR4KcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ni1RrSHaKfp711JMMLwThXNesiPTzabJSRHR7R29m4FMdHRgAl5MnZB+9sJZL2r04gvYvRzXMXbqJAggNm0ms7qeJEW2PLEFquQJPTCCE9U8gS8knwIkZhz0+X+9uPQoKemH+L1FU9XTWw6sm9QuSkApA+2eXJrJ3B7/NL4QJ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCTyihQ/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A12C4CEDD;
-	Tue, 25 Feb 2025 20:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740515685;
-	bh=BRDE49GDK1WZQtOVWzMxOTVjKgnZs4mLJeGOsJR4KcY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GCTyihQ/b2fTjWjL/w3eMUhECoP7pQUVh6qE6TXIEJ1BjHjigwTdvaXZ8aa1oOZW9
-	 oKgOEDdFkHlCFZJGO4qmPSlQfmqTMdR4q6AaRRkwLGJ3tn5IsA6CVTfZngMu04uwvU
-	 USQQvX2Ui2Py5GmeTon0UPIp4jb3Kllog7qTR84ZVlGPWnNhBglvmgANXSDfz/nF8C
-	 fe6Ei8S+wY4QXqwkmTNtltifZ28vYDexOBzcB6Jx/JDAMQqYWr6bIziStGJLhdUGBs
-	 KFr35I0nEjHgGeGnYKE+sCz27ig69d53549TBv6xK6RZKoaFrkcXukrE4yB0TGFtgY
-	 hJMWUKlbR87Lg==
-Received: by pali.im (Postfix)
-	id 5A20189B; Tue, 25 Feb 2025 21:34:32 +0100 (CET)
-Date: Tue, 25 Feb 2025 21:34:32 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>, linux-xfs@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <20250225203432.o2lxjbimka4jldrx@pali>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
- <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
- <6b51ffa2-9d67-4466-865e-e703c1243352@app.fastmail.com>
- <20250225-strom-kopflos-32062347cd13@brauner>
- <3c860dc0-ba8d-4324-b286-c160b7d8d2c4@app.fastmail.com>
- <20250225-testfahrt-seilwinde-64e6f44c01ce@brauner>
- <20250225155926.GD6265@frogsfrogsfrogs>
+	s=arc-20240116; t=1740515743; c=relaxed/simple;
+	bh=Tz59V4906cizkmnAyLwAF7UMXQmgEg8hAksuM9UAhYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZG8MtAx6rSG7hrd3Z3PW5NUMJoe9TxTq1hp5iTC5imvAqnfNr21XZlC31tBm40/5vfZwHHd26r+s7ucgMd+Xx3KAdCHpja+mf9txeHjIW+CCHVkXVur5y0R4QPnAPY5v2MDZGEmmsCFqDnwvj3UK9lQH84jlMzFym6MAlnqrNaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EV8LbgxD; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-52096b4e163so1375009e0c.1;
+        Tue, 25 Feb 2025 12:35:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740515740; x=1741120540; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+XwywpaYtj2l46Dle33DDpq7qxGEX6r8LCnpx6a8Ja0=;
+        b=EV8LbgxDI5EIWVpdT6s4awSLNk+BlGiOgehBJ0hxEzlLgZAnMxPddnHRqRrTQ6k+mk
+         vivNg12YYuVIK+XI0ffJX0EZHChx8XvEg17AKg20DzU/ojOeTmZLBqoLqsoP3GDfDJjn
+         k9/Y3285EzOTnvQeMQ9tRe+vErbrr+cwtWlwgCbqC/79CfLCruNnvXxCC4aSv4v4wIRw
+         ZyB75huYP/42N7mwjtop+MONEJHUHQ2XpoPOMm5MT60ecBHgIXc5fwCvaYKV3XicDmBy
+         5TMUbBBTk11BJTknwXmPvJ/uRlu90065cdmUz3ri9dvs1ViJeDbSlXCjlHEj7OkFr/EM
+         SYBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740515740; x=1741120540;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+XwywpaYtj2l46Dle33DDpq7qxGEX6r8LCnpx6a8Ja0=;
+        b=ho4CtyXB877UNEXPRhqq2wogkn0VV/ATfN+Y5ZQE9W/pLDuzaLj8t4HkhvXQ/v4mFP
+         2EWhspQkMcuCGiIyJcXMTxhnqQzY5gQPbN+/AQeLNu0FLhUrpv8im2MmpE4fRN9HIx5Q
+         Ptguusrad1VZYo7mCTQ4G5NqPk8TEVsUBayCNja7JaVkruHKtNYM6H7Lt0aONxQTT4y4
+         0hbQrFY5Qxy/LNqkD+CRywkKzhQUjzXaTS3QM9qrQnTwx+5lHZ/jBBOnHfwFDKNXEp59
+         pzjsVPRsqWCdwcaG+kodeVEN36X3gIvmtVCPVvlidgGTF1bYN84r4/h4SMXbf8Wb2j25
+         aM5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLM8P8c+Mn3mdaKlAe3tvYrBTivyfaX6c0cvFB1rHAVjKIBnhNl8WxOt9+oqWi5AK18oKiE0EPP15wZyL4@vger.kernel.org, AJvYcCVPwagQjzqH77C5aP1tBVTCagDlgIBnNi80xOZs5C/Ku5x3MLE+S/UobXHXp0Z/9rEI/i1+Tx+G62t1mS8BZzKcukw=@vger.kernel.org, AJvYcCXuQEsn1/0OUE2b071AhZaarGm0x6SGp8+LnnEd0FANNTJn1ksZBYSgFRK7zd7JiNt1I+IRqDLxGA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6+ZN8uVDfSH5lDSBcBEHLuIDRC3ntco9O+is70Er6IKWdsgEO
+	WivPmNFZabaQWlO9AxmdPjc5dAQbkwFirNc8DNNawJM9Tjjum1d3t+Txy7ohJ+6GluodQ3QA/zj
+	POHQnZGHJH7CNhhR9IBHKmXgyG4Lp4nAFp9A=
+X-Gm-Gg: ASbGncu3cwUcDZ//SdFf0iVIlu0YF+j9L2rJ9EPM+TgIxk3eDuM7wZsGoWrWyODh+7B
+	FV8HRpptvye+7ZFmXZ/+1DZkR6DGkRywyFo7dR1Xd1/9+Upp+6hQ9vsYRVZjPfuACTuHynsbun5
+	ud9f6nWDQ=
+X-Google-Smtp-Source: AGHT+IEOg3FN4XhV8eDdeGzHvTE/i8yhURPWnZYtSByTKQHBWCTONJ80ukzBmtui63GXiQHBKHd/9pVKUJn4HYNnCqI=
+X-Received: by 2002:a05:6122:3c94:b0:518:791a:3462 with SMTP id
+ 71dfb90a1353d-521ee45c3e6mr8864926e0c.9.1740515740115; Tue, 25 Feb 2025
+ 12:35:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225155926.GD6265@frogsfrogsfrogs>
-User-Agent: NeoMutt/20180716
+References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com> <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Feb 2025 20:35:14 +0000
+X-Gm-Features: AQ5f1JqEjlRTnX7gXKwgOoeBVHxzXc63ua0nEMVxP_m_ype3EgDDhW-oZn_cCeM
+Message-ID: <CA+V-a8s+-ZS-Y7D1FmdKfVoH5i3Ee86KgYQC6QyfdE0ygDMt+A@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] iio: adc: rzg2l_adc: Open a devres group
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 25 February 2025 07:59:26 Darrick J. Wong wrote:
-> On Tue, Feb 25, 2025 at 12:24:08PM +0100, Christian Brauner wrote:
-> > On Tue, Feb 25, 2025 at 11:40:51AM +0100, Arnd Bergmann wrote:
-> > > On Tue, Feb 25, 2025, at 11:22, Christian Brauner wrote:
-> > > > On Tue, Feb 25, 2025 at 09:02:04AM +0100, Arnd Bergmann wrote:
-> > > >> On Mon, Feb 24, 2025, at 12:32, Christian Brauner wrote:
-> > > >> 
-> > > >> The ioctl interface relies on the existing behavior, see
-> > > >> 0a6eab8bd4e0 ("vfs: support FS_XFLAG_COWEXTSIZE and get/set of
-> > > >> CoW extent size hint") for how it was previously extended
-> > > >> with an optional flag/word. I think that is fine for the syscall
-> > > >> as well, but should be properly documented since it is different
-> > > >> from how most syscalls work.
-> > > >
-> > > > If we're doing a new system call I see no reason to limit us to a
-> > > > pre-existing structure or structure layout.
-> > > 
-> > > Obviously we could create a new structure, but I also see no
-> > > reason to do so. The existing ioctl interface was added in
-> > > in 2002 as part of linux-2.5.35 with 16 bytes of padding, half
-> > > of which have been used so far.
-> > > 
-> > > If this structure works for another 23 years before we run out
-> > > of spare bytes, I think that's good enough. Building in an
-> > > incompatible way to handle potential future contents would
-> > > just make it harder to use for any userspace that wants to
-> > > use the new syscalls but still needs a fallback to the
-> > > ioctl version.
-> > 
-> > The fact that this structure has existed since the dawn of time doesn't
-> > mean it needs to be retained when adding a completely new system call.
-> > 
-> > People won't mix both. They either switch to the new interface because
-> > they want to get around the limitations of the old interface or they
-> > keep using the old interface and the associated workarounds.
-> > 
-> > In another thread they keep arguing about new extensions for Windows
-> > that are going to be added to the ioctl interface and how to make it fit
-> > into this. That just shows that it's very hard to predict from the
-> > amount of past changes how many future changes are going to happen. And
-> > if an interface is easy to extend it might well invite new changes that
-> > people didn't want to or couldn't make using the old interface.
-> 
-> Agreed, I don't think it's hard to enlarge struct fsxattr in the
-> existing ioctl interface; either we figure out how to make the kernel
-> fill out the "missing" bytes with an internal getfsxattr call, or we
-> make it return some errno if we would be truncating real output due to
-> struct size limits and leave a note in the manpage that "EL3HLT means
-> use a bigger structure definition"
-> 
-> Then both interfaces can plod along for another 30 years. :)
-> 
-> --D
+On Mon, Feb 24, 2025 at 12:13=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev>=
+ wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> On all systems where the rzg2l_adc driver is used, the ADC clocks are par=
+t
+> of a PM domain. The code that implements the PM domains support is in
+> drivers/clk/renesas/rzg2l-cpg.c, the functions of interest for this commi=
+t
+> being rzg2l_cpg_attach_dev() and rzg2l_cpg_deattach_dev(). The PM
+> domains support is registered with GENPD_FLAG_PM_CLK which, according to
+> the documentation, instructs genpd to use the PM clk framework while
+> powering on/off attached devices.
+>
+> During probe, the ADC device is attached to the PM domain
+> controlling the ADC clocks. Similarly, during removal, the ADC device is
+> detached from the PM domain.
+>
+> The detachment call stack is as follows:
+>
+> device_driver_detach() ->
+>   device_release_driver_internal() ->
+>     __device_release_driver() ->
+>       device_remove() ->
+>         platform_remove() ->
+>           dev_pm_domain_detach()
+>
+> During driver unbind, after the ADC device is detached from its PM domain=
+,
+> the device_unbind_cleanup() function is called, which subsequently invoke=
+s
+> devres_release_all(). This function handles devres resource cleanup.
+>
+> If runtime PM is enabled via devm_pm_runtime_enable(), the cleanup proces=
+s
+> triggers the action or reset function for disabling runtime PM. This
+> function is pm_runtime_disable_action(), which leads to the following cal=
+l
+> stack of interest when called:
+>
+> pm_runtime_disable_action() ->
+>   pm_runtime_dont_use_autosuspend() ->
+>     __pm_runtime_use_autosuspend() ->
+>       update_autosuspend() ->
+>         rpm_idle()
+>
+> The rpm_idle() function attempts to runtime resume the ADC device. Howeve=
+r,
+> at the point it is called, the ADC device is no longer part of the PM
+> domain (which manages the ADC clocks). Since the rzg2l_adc runtime PM
+> APIs directly modifies hardware registers, the
+> rzg2l_adc_pm_runtime_resume() function is invoked without the ADC clocks
+> being enabled. This is because the PM domain no longer resumes along with
+> the ADC device. As a result, this leads to system aborts.
+>
+> Open a devres group in the driver probe and release it in the driver
+> remove. This ensures the runtime PM is disabled (though the devres group)
+> after the rzg2l_adc_remove() finishes its execution avoiding the describe=
+d
+> scenario.
+>
+> Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v3:
+> - open a devres group in probe and release it in remove; the failure
+>   path of probe() was also updated to close the devres group
+> - dropped Ulf's Rb tag as the patch is different now
+> - updated the patch description to match the new approach
+>
+> Note: a generic approach was proposed in [1] to have this in the platform
+> bus itself but wasn't seen acceptable.
+>
+> [1] https://lore.kernel.org/all/20250215130849.227812-1-claudiu.beznea.uj=
+@bp.renesas.com/
+>
+> Changes in v2:
+> - collected Ulf's tag
+> - add a comment above pm_runtime_enable() explaining the reason
+>   it shouldn't be converted to devres
+> - drop devres calls that request IRQ and register IIO device
+>   as proposed in the review process: Ulf, I still kept you Rb
+>   tag; please let me know otherwise
+>
+>  drivers/iio/adc/rzg2l_adc.c | 88 ++++++++++++++++++++++++++++---------
+>  1 file changed, 67 insertions(+), 21 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-For Windows attributes, there are for sure needed new 11 bits for
-attributes which can be both get and set, additional 4 bits for get-only
-attributes, and plus there are 9 reserved bits (which Windows can start
-using it and exporting over NTFS or SMB). And it is possible that
-Windows can reuse some bits which were previously assigned for things
-which today does not appear on NTFS.
+Cheers,
+Prabhakar
 
-I think that fsx_xflags does not have enough free bits for all these
-attributes. So it would be really nice to design API/ABI in away which
-can be extended for new fields.
-
-Also another two points, for this new syscalls. I have not looked at the
-current changes (I was added to CC just recently), but it would be nice:
-
-1) If syscall API allows to operate on the symlink itself. This is
-   because NTFS and also SMB symlink also contains attributes. ioctl
-   interface currently does not support to get/set these symlink
-   attributes.
-
-2) If syscall API contains ability to just change subset of attributes.
-   And provide an error reporting to userspace if userspace application
-   is trying to set attribute which is not supported by the filesystem.
-   This error reporting is needed for possible "cp -a" or possible
-   "rsync" implementation which informs when some metadata cannot be
-   backup/restored. There are more filesystems which supports only
-   subset of attributes, this applies also for windows attributes.
-   For example UDF fs supports only "hidden" attribute.
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 883c167c0670..7db04416e1cf 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -85,6 +85,7 @@ struct rzg2l_adc {
+>         struct reset_control *adrstn;
+>         const struct rzg2l_adc_data *data;
+>         const struct rzg2l_adc_hw_params *hw_params;
+> +       void *devres_group_id;
+>         struct completion completion;
+>         struct mutex lock;
+>         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
+> @@ -429,60 +430,88 @@ static int rzg2l_adc_probe(struct platform_device *=
+pdev)
+>         struct device *dev =3D &pdev->dev;
+>         struct iio_dev *indio_dev;
+>         struct rzg2l_adc *adc;
+> +       void *devres_group_id;
+>         int ret;
+>         int irq;
+>
+> -       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*adc));
+> -       if (!indio_dev)
+> +       /*
+> +        * Open a devres group to allow using devm_pm_runtime_enable()
+> +        * w/o interfeering with dev_pm_genpd_detach() in the platform bu=
+s
+> +        * remove. Otherwise, durring repeated unbind/bind operations,
+> +        * the ADC may be runtime resumed when it is not part of its powe=
+r
+> +        * domain, leading to accessing ADC registers without its clocks
+> +        * being enabled and its PM domain being turned on.
+> +        */
+> +       devres_group_id =3D devres_open_group(dev, NULL, GFP_KERNEL);
+> +       if (!devres_group_id)
+>                 return -ENOMEM;
+>
+> +       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*adc));
+> +       if (!indio_dev) {
+> +               ret =3D -ENOMEM;
+> +               goto release_group;
+> +       }
+> +
+>         adc =3D iio_priv(indio_dev);
+>
+> +       adc->devres_group_id =3D devres_group_id;
+>         adc->hw_params =3D device_get_match_data(dev);
+> -       if (!adc->hw_params || adc->hw_params->num_channels > RZG2L_ADC_M=
+AX_CHANNELS)
+> -               return -EINVAL;
+> +       if (!adc->hw_params || adc->hw_params->num_channels > RZG2L_ADC_M=
+AX_CHANNELS) {
+> +               ret =3D -EINVAL;
+> +               goto release_group;
+> +       }
+>
+>         ret =3D rzg2l_adc_parse_properties(pdev, adc);
+>         if (ret)
+> -               return ret;
+> +               goto release_group;
+>
+>         mutex_init(&adc->lock);
+>
+>         adc->base =3D devm_platform_ioremap_resource(pdev, 0);
+> -       if (IS_ERR(adc->base))
+> -               return PTR_ERR(adc->base);
+> +       if (IS_ERR(adc->base)) {
+> +               ret =3D PTR_ERR(adc->base);
+> +               goto release_group;
+> +       }
+>
+>         adc->adrstn =3D devm_reset_control_get_exclusive_deasserted(dev, =
+"adrst-n");
+> -       if (IS_ERR(adc->adrstn))
+> -               return dev_err_probe(dev, PTR_ERR(adc->adrstn),
+> -                                    "failed to get/deassert adrst-n\n");
+> +       if (IS_ERR(adc->adrstn)) {
+> +               ret =3D dev_err_probe(dev, PTR_ERR(adc->adrstn),
+> +                                   "failed to get/deassert adrst-n\n");
+> +               goto release_group;
+> +       }
+>
+>         adc->presetn =3D devm_reset_control_get_exclusive_deasserted(dev,=
+ "presetn");
+> -       if (IS_ERR(adc->presetn))
+> -               return dev_err_probe(dev, PTR_ERR(adc->presetn),
+> -                                    "failed to get/deassert presetn\n");
+> +       if (IS_ERR(adc->presetn)) {
+> +               ret =3D dev_err_probe(dev, PTR_ERR(adc->presetn),
+> +                                   "failed to get/deassert presetn\n");
+> +               goto release_group;
+> +       }
+>
+>         pm_runtime_set_autosuspend_delay(dev, 300);
+>         pm_runtime_use_autosuspend(dev);
+>         ret =3D devm_pm_runtime_enable(dev);
+>         if (ret)
+> -               return ret;
+> +               goto release_group;
+>
+>         platform_set_drvdata(pdev, indio_dev);
+>
+>         ret =3D rzg2l_adc_hw_init(dev, adc);
+> -       if (ret)
+> -               return dev_err_probe(&pdev->dev, ret,
+> -                                    "failed to initialize ADC HW\n");
+> +       if (ret) {
+> +               ret =3D dev_err_probe(&pdev->dev, ret,
+> +                                   "failed to initialize ADC HW\n");
+> +               goto release_group;
+> +       }
+>
+>         irq =3D platform_get_irq(pdev, 0);
+> -       if (irq < 0)
+> -               return irq;
+> +       if (irq < 0) {
+> +               ret =3D irq;
+> +               goto release_group;
+> +       }
+>
+>         ret =3D devm_request_irq(dev, irq, rzg2l_adc_isr,
+>                                0, dev_name(dev), adc);
+>         if (ret < 0)
+> -               return ret;
+> +               goto release_group;
+>
+>         init_completion(&adc->completion);
+>
+> @@ -492,7 +521,23 @@ static int rzg2l_adc_probe(struct platform_device *p=
+dev)
+>         indio_dev->channels =3D adc->data->channels;
+>         indio_dev->num_channels =3D adc->data->num_channels;
+>
+> -       return devm_iio_device_register(dev, indio_dev);
+> +       ret =3D devm_iio_device_register(dev, indio_dev);
+> +       if (ret)
+> +               goto release_group;
+> +
+> +       return 0;
+> +
+> +release_group:
+> +       devres_release_group(dev, devres_group_id);
+> +       return ret;
+> +}
+> +
+> +static void rzg2l_adc_remove(struct platform_device *pdev)
+> +{
+> +       struct iio_dev *indio_dev =3D platform_get_drvdata(pdev);
+> +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
+> +
+> +       devres_release_group(&pdev->dev, adc->devres_group_id);
+>  }
+>
+>  static const struct rzg2l_adc_hw_params rzg2l_hw_params =3D {
+> @@ -614,6 +659,7 @@ static const struct dev_pm_ops rzg2l_adc_pm_ops =3D {
+>
+>  static struct platform_driver rzg2l_adc_driver =3D {
+>         .probe          =3D rzg2l_adc_probe,
+> +       .remove         =3D rzg2l_adc_remove,
+>         .driver         =3D {
+>                 .name           =3D DRIVER_NAME,
+>                 .of_match_table =3D rzg2l_adc_match,
+> --
+> 2.43.0
+>
+>
 
