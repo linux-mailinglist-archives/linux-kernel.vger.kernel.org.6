@@ -1,91 +1,64 @@
-Return-Path: <linux-kernel+bounces-531633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A506EA442ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:37:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C558BA44326
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:41:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 429F44207ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:35:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38D0A19C7E10
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348EE26E155;
-	Tue, 25 Feb 2025 14:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AFA27127B;
+	Tue, 25 Feb 2025 14:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="ECHhAzrl"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r8f3yZvj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4BA426BDBB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9366B270ECB;
+	Tue, 25 Feb 2025 14:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494118; cv=none; b=Q/3MmO/ILwGEyQXvZiVR2nRM006BilkahUELX7fIW69Ud5JjmpVM/ZdoW/pbqA/oi51jEvP3/LR4W3Z9aRqvbOiDQq275fuC/M+ix/G/N747x3/q/Dg63MuUFh6t6pLEG0ktOhYhmovIJab2g6IFQB41qkzR19T+p4sZjXq0tkQ=
+	t=1740494132; cv=none; b=Rl2G3BVNXxwhtCb1U/8jj4tKfUXLykhX5qoqgfV6Tj9Tq4pnu2655mqUNcwlfb1I2fFELqBSLe0iZ4IGq1YSqFc6b1TKuVY0h+69e3BRBdO50ZDZ7/f8fwz6zRQPaWXYMm8PgdTpX3GcvHOX4cjQ+BsoMMX5RtPAoJasFYWjSE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494118; c=relaxed/simple;
-	bh=4LXH6hHiM+bwKdfiEgtyzEEXo5T8p09+JZBv4iD47CA=;
+	s=arc-20240116; t=1740494132; c=relaxed/simple;
+	bh=cbtKDD3eUOS+sdzuwx+f9hBpWAvAFS/SyQ4YGdqd6Mk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ClbrMKNGL1gRQdXxF5rofzm2LqiM7pAiyY6l8CH3s8TslrhCNZNR4BMxd5GOIO4lPiXEXdcjDjzcziit7lqd5Kpbx+4bQ5qt82te2A75AIjlqT3r7uUwDJh2mLCCGwWGoZxSn8IRbKqxsk+qfANJlVlIa8Ejc19i5L7QaTzvUWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=ECHhAzrl; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43aac0390e8so13480235e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:35:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1740494114; x=1741098914; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Qdy8pR/Dcc2nulb9kFWPIH5MwfoS+sb5ucheWbrsmU=;
-        b=ECHhAzrleb01XcJnRDBeN8GcUhgnsy9v3pytzFdEgh+vv64qhINtgu6aKfT7tGqvDV
-         Td/FhvvSBVJ4/ssx5lrShJoCsNepZ0oTqPrWiCPh2tOVTrPMRmrIyoiQKGWndYNAPL9o
-         WdMsBbzWVXbbfX8d09sHQ5HRLuDy8uJ8YZ3zYGk3ehswHx2ZrWX+Olt098aP3Npljfwe
-         izYGOxbAudnlAoPOmSXB4LOa9x4CKnc9Dm9fplizU3DdnVmyqLSWRqzfLRgpVPZUkhL4
-         k5qrGdYdlwrg1iX9sbXkNhGbSkvqxNvKKodvmFyf60DFlrZKJ9RIQiinV6uFxKsbfLER
-         iWkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494114; x=1741098914;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Qdy8pR/Dcc2nulb9kFWPIH5MwfoS+sb5ucheWbrsmU=;
-        b=EYSnz4JErZgC4cPq+ID0aHZnwd736lGhOZJxLns0pYuI479L+E0WKC2K+LqxLsLANh
-         HIVr4o3nxOo4b2KrR8TSkeSUurcCzuAy1W8zj4JIFGdPVlRCYueNq3AyUegWSdJJ2e8d
-         ZXpVOpIaOzbH/372FJLLEdqY8mNBNaEf6i3j6RoFpEdgqq7AJpqmoMrWmliWsWquEM4f
-         8n5GZ0E7eTCsyiN5NRX8QwjK6Bm5j6X8wn+jnqBH+TGFJTR5q5uZd5Lg34LzlK/uGKL/
-         E06IDBH76624W0fKqxidN5FGHifVyUqO3iDKJfsTPju1Gku/Wk2kVn1l3G0oBIZBQm/D
-         VzuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQXtXXooM80aG6ywct9kJ6en74zHKxa5OOTzz7CGIU+N2a1fZqT69muXoOvlEMyCiL4P4dMcK7T67e/IM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLM7eSJd8XwzebI3GtX5VRL0mP7WEgy7tg0gcsadBs4Je20NnF
-	ExY2k32BVYedzkhGMZYSPUFmw/7KNtwmNW82FcIbTQ/ZY2UkVbx1AEnXPrBRHS8=
-X-Gm-Gg: ASbGncs78y/7vLqfsyDDjh3OjZv6nPZcaR7H5z8jQXZ1ddD0g+UqSQMdc4RmNh7i3UX
-	xmdldu1ghxHYVW73sueAxnJvQHMTqCqdwhn3ozJU2S1/UBuRCfc/pXj0hff/au9binlV48Qkz5m
-	qYW1RuimlBy6bFoja6uP7WoYduyCwphheuij0T3azmZ6UpThYnLyVHD9CF4nIS0Nn9zwd/eMOln
-	ZMowIwLhbylkjJctiHNgaD+QAWOLZgxAh0QKTOkxNx7CsDrSiPa5dq1f141CnWOYE///S43aYUz
-	OjWD30Ym01XUPXO6UXzvh8LfX8ka2gdR/ci1yK2Jyg0oG6T2ODWM3Q==
-X-Google-Smtp-Source: AGHT+IFbUcoHiBtSwH/dRFa+OIyHDCaNUFaFSzscYqKv5SpUEUS4+iybkDZXSOreAsEymh00vLC2+Q==
-X-Received: by 2002:a05:600c:458e:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-439ae221d72mr140180855e9.29.1740494113674;
-        Tue, 25 Feb 2025 06:35:13 -0800 (PST)
-Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86ca9csm2483645f8f.22.2025.02.25.06.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 06:35:13 -0800 (PST)
-Date: Tue, 25 Feb 2025 15:35:09 +0100
-From: Jiri Pirko <jiri@resnulli.us>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org, 
-	Tony Nguyen <anthony.l.nguyen@intel.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Cosmin Ratiu <cratiu@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>, netdev@vger.kernel.org, 
-	Konrad Knitter <konrad.knitter@intel.com>, Jacob Keller <jacob.e.keller@intel.com>, davem@davemloft.net, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, 
-	linux-kernel@vger.kernel.org, ITP Upstream <nxne.cnse.osdt.itp.upstreaming@intel.com>, 
-	Carolina Jubran <cjubran@nvidia.com>
-Subject: Re: [RFC net-next v2 1/2] devlink: add whole device devlink instance
-Message-ID: <zzyls3te4he2l5spf4wzfb53imuoemopwl774dzq5t5s22sg7l@37fk7fvgvnrr>
-References: <20250219164410.35665-1-przemyslaw.kitszel@intel.com>
- <20250219164410.35665-2-przemyslaw.kitszel@intel.com>
- <ybrtz77i3hbxdwau4k55xn5brsnrtyomg6u65eyqm4fh7nsnob@arqyloer2l5z>
- <87855c66-0ab4-4b40-81fa-b37149c17dca@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=frVqyWuRQgRIzyJolJzQF3s/aSI59C2m2Wo5bIoliLmde+6gspckJMmquz+EDlyzuTdKwaRHC1y8jPwVRZMDu4JH+sMzFJYjJRpMxlerbs3FchJrWvj7OWcYVZe3QNAiLvwmUEmDuGlTkHHyKs6WI5pqzl2b2m30ErLFaku5fYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r8f3yZvj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F11A0C4CEE8;
+	Tue, 25 Feb 2025 14:35:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740494132;
+	bh=cbtKDD3eUOS+sdzuwx+f9hBpWAvAFS/SyQ4YGdqd6Mk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=r8f3yZvj6glDk0Tl6Ruw/u8+8ujoAUZt22G0OqJjvBqdqE+u1Qwltqu1+JBbvyPLt
+	 KIT0fHwdI+kF0q7M4O6MdEhtC+1CEbSukUvteTZzdDiyQY9dtehS2rIDd1rAkJCDDd
+	 eB9jaqfAxpq96FAi16Qmz9PGaDXDi2nOxYwjmMMN8YSbzS6UyCuaDQrUIcSu0jU/ow
+	 VeO9Fx/p//NqKI2B8xptU36u5s7nvl+/H/f/h9auyqCmXByU25jGso2WBqbBFwRVDV
+	 vkG5icBx3VYlfnO8oCmutzq7ergr7st/bPjtX06E3prnGiD1jjB+D8h4i9iAZTJ1N/
+	 aujNSqYX4Xpow==
+Date: Tue, 25 Feb 2025 15:35:25 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 0/5] Add support for debugfs based RAS DES feature in
+ PCIe DW
+Message-ID: <Z73VLYudJVPkdbGN@ryzen>
+References: <CGME20250221132011epcas5p4dea1e9ae5c09afaabcd1822f3a7d15c5@epcas5p4.samsung.com>
+ <20250221131548.59616-1-shradha.t@samsung.com>
+ <Z7yniizCTdBvUBI0@ryzen>
+ <20250225082835.dl4yleybs3emyboq@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,108 +67,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87855c66-0ab4-4b40-81fa-b37149c17dca@intel.com>
+In-Reply-To: <20250225082835.dl4yleybs3emyboq@thinkpad>
 
-Tue, Feb 25, 2025 at 12:30:49PM +0100, przemyslaw.kitszel@intel.com wrote:
->
->> > Thanks to Wojciech Drewek for very nice naming of the devlink instance:
->> > PF0:		pci/0000:00:18.0
->> > whole-dev:	pci/0000:00:18
->> > But I made this a param for now (driver is free to pass just "whole-dev").
->> > 
->> > $ devlink dev # (Interesting part of output only)
->> > pci/0000:af:00:
->> >   nested_devlink:
->> >     pci/0000:af:00.0
->> >     pci/0000:af:00.1
->> >     pci/0000:af:00.2
->> >     pci/0000:af:00.3
->> >     pci/0000:af:00.4
->> >     pci/0000:af:00.5
->> >     pci/0000:af:00.6
->> >     pci/0000:af:00.7
->> 
->> 
->> In general, I like this approach. In fact, I have quite similar
->> patch/set in my sandbox git.
->> 
->> The problem I didn't figure out how to handle, was a backing entity
->> for the parent devlink.
->> 
->> You use part of PCI BDF, which is obviously wrong:
->> 1) bus_name/dev_name the user expects to be the backing device bus and
->>     address on it (pci/usb/i2c). With using part of BDF, you break this
->>     assumption.
->> 2) 2 PFs can have totally different BDF (in VM for example). Then your
->>     approach is broken.
->
->To make the hard part of it easy, I like to have the name to be provided
->by what the PF/driver has available (whichever will be the first of
->given device PFs), as of now, we resolve this issue (and provide ~what
->your devlink_shared does) via ice_adapter.
+On Tue, Feb 25, 2025 at 01:58:35PM +0530, Manivannan Sadhasivam wrote:
+> On Mon, Feb 24, 2025 at 06:08:26PM +0100, Niklas Cassel wrote:
+> > Hello Shradha,
+> > 
+> > On Fri, Feb 21, 2025 at 06:45:43PM +0530, Shradha Todi wrote:
+> > > DesignWare controller provides a vendor specific extended capability
+> > > called RASDES as an IP feature. This extended capability  provides
+> > > hardware information like:
+> > >  - Debug registers to know the state of the link or controller. 
+> > >  - Error injection mechanisms to inject various PCIe errors including
+> > >    sequence number, CRC
+> > >  - Statistical counters to know how many times a particular event
+> > >    occurred
+> > > 
+> > > However, in Linux we do not have any generic or custom support to be
+> > > able to use this feature in an efficient manner. This is the reason we
+> > > are proposing this framework. Debug and bring up time of high-speed IPs
+> > > are highly dependent on costlier hardware analyzers and this solution
+> > > will in some ways help to reduce the HW analyzer usage.
+> > > 
+> > > The debugfs entries can be used to get information about underlying
+> > > hardware and can be shared with user space. Separate debugfs entries has
+> > > been created to cater to all the DES hooks provided by the controller.
+> > > The debugfs entries interacts with the RASDES registers in the required
+> > > sequence and provides the meaningful data to the user. This eases the
+> > > effort to understand and use the register information for debugging.
+> > > 
+> > > This series creates a generic debugfs framework for DesignWare PCIe
+> > > controllers where other debug features apart from RASDES can also be
+> > > added as and when required.
+> > > 
+> > > v7:
+> > >     - Moved the patches to make finding VSEC IDs common from Mani's patchset [1]
+> > >       into this series to remove dependancy as discussed
+> > >     - Addressed style related change requests from v6
+> > 
+> > I tested this series, and one thing that I noticed:
+> > 
+> > # for f in /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/counter_enable; do echo 1 > $f; done
+> > 
+> > # grep "" /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/* | grep Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/ctl_skp_os_parity_err/counter_enable:Counter Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/deskew_uncompleted_err/counter_enable:Counter Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/framing_err_in_l0/counter_enable:Counter Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/margin_crc_parity_err/counter_enable:Counter Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/retimer_parity_err_1st/counter_enable:Counter Disabled
+> > /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/retimer_parity_err_2nd/counter_enable:Counter Disabled
+> > 
+> > that there are some events that cannot be enabled when testing on my platform,
+> > rk3588, perhaps this is because my version of the DWC IP does not have these
+> > events.
+> > 
+> > (Because all the other events can be enabled successfully:
+> > # grep "" /sys/kernel/debug/dwc_pcie_a40000000.pcie/rasdes_event_counter/*/* | grep Enabled | wc -l
+> > 29
+> > )
+> > 
+> > 
+> > So the question is, how do we want to handle that?
+> >
+> 
+> This is a really good question.
+>  
+> > E.g. counter_enable_write() could theoretically read back the
+> > dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG);
+> > register after doing the
+> > ww_pcie_writel_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_CTRL_REG, val);
+> > 
+> > to actually check if it could enable the event.
+> > 
+> > If counter_enable_write() could not enable the specific event, should it
+> > perhaps return a failure to user space?
+> > 
+> 
+> Yes, it would be appropriate to return -EOPNOTSUPP in that case. But I'd like to
+> merge this series asap. So this patch can come on top of this series.
 
-I don't understand. Can you provide some examples please?
+I agree that returning an error is probably the nicest thing.
 
+However, this series has been picked up already :)
 
->
->Making it a devlink instance gives user an easy way to see the whole
->picture of all resources handled as "shared per device", my current
->output, for all PFs and VFs on given device:
->
->pci/0000:af:00:
->  name rss size 8 unit entry size_min 0 size_max 24 size_gran 1
->    resources:
->      name lut_512 size 0 unit entry size_min 0 size_max 16 size_gran 1
->      name lut_2048 size 8 unit entry size_min 0 size_max 8 size_gran 1
->
->What is contributing to the hardness, this is not just one for all ice
->PFs, but one per device, which we distinguish via pci BDF.
+Is there anyone who volunteers on implementing the proposed feature?
 
-How?
-
-
->
->> 
->> I was thinking about having an auxiliary device created for the parent,
->> but auxiliary assumes it is child. The is upside-down.
->> 
->> I was thinking about having some sort of made-up per-driver bus, like
->> "ice" of "mlx5" with some thing like DSN that would act as a "dev_name".
->> I have a patch that introduces:
->> 
->> struct devlink_shared_inst;
->> 
->> struct devlink *devlink_shared_alloc(const struct devlink_ops *ops,
->>                                       size_t priv_size, struct net *net,
->>                                       struct module *module, u64 per_module_id,
->>                                       void *inst_priv,
->>                                       struct devlink_shared_inst **p_inst);
->> void devlink_shared_free(struct devlink *devlink,
->>                          struct devlink_shared_inst *inst);
->> 
->> I took a stab at it here:
->> https://github.com/jpirko/linux_mlxsw/commits/wip_dl_pfs_parent/
->> The work is not finished.
->> 
->> 
->> Also, I was thinking about having some made-up bus, like "pci_ids",
->> where instead of BDFs as addresses, there would be DSN for example.
->> 
->> None of these 3 is nice.
->
->how one would invent/infer/allocate the DSN?
-
-Driver knows DSN, it can obtain from pci layer.
+If you have time, it would be interesting to see if you see the same behavior
+on QCOM SoCs. (Assuming that your DWC PCIe controller does not implement all
+events that Samsung DWC PCIe controller does.)
 
 
->
->faux_bus mentioned by Jake would be about the same level of "fakeness"
->as simply allocating a new instance of devlink by the first PF, IMO :)
-
-Hmm, briefly looking at faux, this looks like fills the gap I missed in
-auxdev. Will try to use it in my patchset.
-
-Thanks!
-
-
+Kind regards,
+Niklas
 
