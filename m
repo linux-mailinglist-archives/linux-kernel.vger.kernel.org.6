@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-531316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E83A43EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:11:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46705A43EFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:14:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDD53AC097
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF45C4258AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A9626869E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6F3268694;
 	Tue, 25 Feb 2025 12:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cMYxddYi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UmbTRmkY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A182267B98
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C19260A57
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485352; cv=none; b=hlvfDxwQdumUIVoeTmAQUS7J1TSHMhq4nhvdaqEz5YWlYE876xe11rjszUZ9ZYVQTuzk5vNZMWfWj/kP3+UXLRE+QYkQd/bAzM7qDGWFJBBiZgnpSee8BSFUhY1QZPpUCXLmiUQeEsn2xoqMrzlpcFM4l0iPzN7zyhKuXxId/Sk=
+	t=1740485352; cv=none; b=qJa7UvGt0DImgwM3WPF3QwREodzdC2kXEVPYrtMkWplA0SdklUHQcP9WcFTGgpe6QD/URzY+PqqEGLhy/3jCMcnhz5hdOmNzztnhQ909wHOynhicf3gguCTNTvwEFfgJUFWiLK7KCHg9glWVv/KOodvgUYte5GmF6Z3+y6SmRF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1740485352; c=relaxed/simple;
-	bh=/bHMF+VqAm3mXiDy/c+NSnUieIygySTPgyaXzjzK+SQ=;
+	bh=iCgS3i4jeT3RTXkayVl0IK8NtFDsUCkuiJsYeX22TDw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gPLFt1WlioaTin/WzH97xC66HmyYoMUibg8NfoF62aKAOYBYI5oa3mtosbjKcl/sgt4f5Wd49mOkKQ6cU+DqpE7oktyp0wcsNxjthdCMc47cWtWnJk0FZtn0wYKM3abYl73OSReUEljs3Cv22rHC+jTDG410cxBCJhKPz5y9xdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cMYxddYi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740485349;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R9dFANPP4pAshr+nYJnMq+hckSzRgNmjIswd4al9xQk=;
-	b=cMYxddYioyxysXODhFW+i8LTgfU/0YnxUj5aMNZYVY11uVVT5rfqSygv3cz8NYKFgZjoJY
-	t9hnIqBOr+Pcsjo0OOKM5E2VCtk6UETvLfXD6GVhHERT/3HnetP73EDRMimKrJkWK/bJoD
-	u9v6LUQrcOE6YoG+laohrBItWQESKds=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-205-9KKHcL1SOEuN82WTOM3cAA-1; Tue, 25 Feb 2025 07:09:08 -0500
-X-MC-Unique: 9KKHcL1SOEuN82WTOM3cAA-1
-X-Mimecast-MFC-AGG-ID: 9KKHcL1SOEuN82WTOM3cAA_1740485347
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa6b904a886so519769666b.0
+	 In-Reply-To:Content-Type; b=WUvTc3og7uMcrMFANA1/7NlVts1/nrOVRe4VfN9C8trHC/BnbnFdQfoSQr5TgS6PRkPgIrJkkRrz8pYldkZiWYCy+f0mJitWzvKIqWDgzyfbUDFkXheEP9tZZKMCl0UB1DO/9XK1da7q7/Hd+moYFHfn6Hc6DyT5vGOFHPjJG4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UmbTRmkY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8UcX1002901
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:09:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	liyKdemlEyYUI2F9xPgM63joz99qtCmXbXh4OS9ua+Y=; b=UmbTRmkYHXtlT9Zk
+	8xuUn1hdDUvJ4/AQg1trwY5wG6DAyasQsbxW0P4K21hzEM3MpDB6546tmo7VDyaR
+	0olCwdxgmn2nV8/Iu00fica/xmJ0LqKAGQ8u8tiNCbpZ3ub2ITgQYA2x3dHfvo5T
+	/dGo4reJmOzi8xXpOy2GocJsuB/lSYjqmqCyLoNOfTAfCyfhUw81HuJGm303Dq88
+	LIIZVLi4hZYUps1pzHjWQXTWLSKUkAzG5zPHdnmbJ2ehzTRELNWqqPsnQg4UMnr+
+	4kO7dUkenU0kg0pefiU3zcWGGxuJ8myikoV3L/IQ64Ae/iaWZ3TpWPT0VqFGoxv3
+	NOp5lQ==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6nu0tdp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:09:08 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e65d6882a6so5462306d6.3
         for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:09:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740485347; x=1741090147;
+        d=1e100.net; s=20230601; t=1740485348; x=1741090148;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R9dFANPP4pAshr+nYJnMq+hckSzRgNmjIswd4al9xQk=;
-        b=qBIxnQuZYiGKTF0BgpTismHl+oUG/iyFW7VmBBEn3PO2+B/DplQi26GmRF//JJrWb/
-         bk8RpLzbuuRkKkh+cidrgIUaq7tiXVfv2oeThKSMr4gGyvJO0iFDCPc3h4OXLIPOU+tM
-         QYhjZHwMSG6wjYw5UZ0Q1mCkcnsaJ7xBf8HbPD4QjeKPbLKZm69t2ut31hv7YP2H28wX
-         zz5/aNyjRf0MK6sGEqHBieeAW/Neg05mNc6/AUh/vPT6L3XoVND3TiGgtwdpqeGQUBJV
-         9udZw0Fg0pJYIyxKTZ962v0JkChsDaodTCSZSe/zrXCN2exiYcHzIjdtxhXP9V25OMpt
-         RMuQ==
-X-Gm-Message-State: AOJu0YyHL/K/+Irnqvlaoo9j9ohoUeJspQ4O+/+J+Okag8dgH2FCpg5E
-	rvh2VKJv1I5z9rt5OHmEdv7LaXQ5adWg5sJxE+VO3iUsShzNWSfm4NAlB0QknX3jenKj8G7qyqR
-	mDb6Dtn3Qc/s4tLtoEnZ51MxQ1B8n9Y/IvyUGAycMGOFZUhRDJmQHBtljqUQ25g==
-X-Gm-Gg: ASbGncsYNf4xbx3WCFaoCmG3wkr1+ybDzERfRGw7kyY53btlj71RDLQ5dX72D6IsPti
-	JqA7pEaxyDhAzKUzyYfa75H5+JLFqnWU+qaDDUB0QzorbWk3mc5yT4g3up0Z3UsheLeSzRa7nZm
-	HMb70ETM8lKMcY09WF5ScFypjgJu4DQ2FcGMgTjUth7JdBNs9kO1tm67SJ6o6DFLbqc8sqFWgjN
-	qGdXxPsT4mZ7MMCiaMIk5SnqzgnqL3ptAg22jcU3fuoAwN0dbPgHH67tC6RLwFnC5D7FV/nF70N
-	3d7eLw5D0MyKHnaJ7ZU97dtC1IQ44JytmGX+5FTzdmlSLt1XxtISmydIh5qUnu+1BC3Iha+BkDq
-	Bq4HIHS2Qd34M1E++EdKl4DIwXXyiQidYfuhpsgkkigZLssYSnGzJ0kWT6AY66tfYoA==
-X-Received: by 2002:a17:907:8692:b0:abe:cde3:aae2 with SMTP id a640c23a62f3a-abecde46455mr416867266b.44.1740485344021;
-        Tue, 25 Feb 2025 04:09:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IERbNL3SiexVOR9DKHPeYekUBMbVmBKTexIXmQRAzXrRMgfAbLIL6d20GsjrH+tXJ22hRzmPQ==
-X-Received: by 2002:a17:907:8692:b0:abe:cde3:aae2 with SMTP id a640c23a62f3a-abecde46455mr416864566b.44.1740485343619;
-        Tue, 25 Feb 2025 04:09:03 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2057281sm129705766b.155.2025.02.25.04.09.02
+        bh=liyKdemlEyYUI2F9xPgM63joz99qtCmXbXh4OS9ua+Y=;
+        b=BYS9nSdL8F6d4X9r+6h7yL2DyHi5vqlV9JqELeT6LVibo5Uy62SUK/3K92bC4wag3D
+         4vKfChiqS/B27Ahkvhp2mQYsmYWkT85ccOxfEMeizYnvl6MURqQGYRTcFufHnGyMuPDa
+         1M1fhbxR0k9JBTyJQXmP9JYBn3v27BuVRpcQU+ZKKi55TFQz9zSFiRxsgkFxP63bcXwM
+         tgIVTfrCvxPor1yRuFa+c47vDiJNj7ViXDrk5ZfZLErdLyvNA69Ah0pWOcw5vTkyROup
+         hdn+lj6gyVjUuC0yhsEM0Nm/3jD+STh6aWcZznM7GyhIMsu/QmCtjUw0DBmCXj38vLTy
+         iKWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsIXhzFychsEoFbdQC5DZB5HrpMwNpQ9gLzSTlQCxs5V64GvXV3PDjD9o8EA/vnwXuBUmklx7v3KisDgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrlq8UhEN7zB8NUnSrwX0n8GyJHd+b3tLUdXscl9unGnnSyBxw
+	kxh1YHNXeds11v+UnqoIa+pr7t1rqKmJl0P/u0sDTSH91SwHYEnwgiPbLXA5jkUL0BPw9a2dkRt
+	/xvfd015yGbV8cSxnfgKJ2ZZ5PhX1KsoJkroS491vW2507IQTlzTdbWfumdw6N30=
+X-Gm-Gg: ASbGncvTvd7KqW05Kr+RcvZOglxOnO4BI7mY9Px0NRddy4QWcW1fCN1kcFlnaiXjxiK
+	DxvxfzznsQkWsTtEg3nHbY9eWYV4XcI1D/GR9qLkxRysRsj6iv9hg5hFM5P6J9szcAyoa69Azpi
+	hIMABEq4NoWSkk89cgC0KLRwOHh4B5nmHT+dMahzhFbqrIdpqsbtzdv4LLODHzCbwAyLmJ4EiaO
+	Ksc/9JT/lLDjGOq+qljXwPVpR2S+oSmOPYLKrOU/sBi/uVEsl/ikbEaNha/saE70vGkP+9mDnv8
+	+MDGhVXSM2ZkevJ16l32JOWNWJgtptmYP8KW0VXlVG55W+W4pSPBGqsJia/M1LyVhQtLZw==
+X-Received: by 2002:ad4:576a:0:b0:6d8:98a4:cc5c with SMTP id 6a1803df08f44-6e6ae5f3142mr86218816d6.0.1740485347825;
+        Tue, 25 Feb 2025 04:09:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEBcYh3OaD6A8QQEHJCnWXKawL33DJwmF++4szvw0YSegATx81D674T3VIyiwI6/jeN5Mgo4w==
+X-Received: by 2002:ad4:576a:0:b0:6d8:98a4:cc5c with SMTP id 6a1803df08f44-6e6ae5f3142mr86218666d6.0.1740485347469;
+        Tue, 25 Feb 2025 04:09:07 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2012175sm129900566b.118.2025.02.25.04.09.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 04:09:02 -0800 (PST)
-Message-ID: <8c7b5560-27d0-42bc-8f25-0797500fb889@redhat.com>
-Date: Tue, 25 Feb 2025 13:09:01 +0100
+        Tue, 25 Feb 2025 04:09:06 -0800 (PST)
+Message-ID: <d8ef7b67-a31f-4a49-8810-90dfebd2d8e1@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 13:09:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,69 +88,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] Plans for GDIX1003 Support in Goodix Touchscreen
- Driver
-To: Weikang Guo <guoweikang.kernel@gmail.com>,
- Bastien Nocera <hadess@hadess.net>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-References: <CAOm6qnnhR9++REgtjhZpqNXkBbBAZsGAY8Oy89cXUF9S=Vy-9Q@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAOm6qnnhR9++REgtjhZpqNXkBbBAZsGAY8Oy89cXUF9S=Vy-9Q@mail.gmail.com>
+Subject: Re: [PATCH v4 08/10] PCI: pwrctrl: Add power control driver for
+ tc956x
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        chaitanya chundru <quic_krichai@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org, Jingoo Han <jingoohan1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: quic_vbadigan@quicnic.com, amitk@kernel.org, dmitry.baryshkov@linaro.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        jorge.ramirez@oss.qualcomm.com,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com>
+ <20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250225-qps615_v4_1-v4-8-e08633a7bdf8@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: jC6_jP2NDHF76jJztqnznG-Co1ydn_fm
+X-Proofpoint-GUID: jC6_jP2NDHF76jJztqnznG-Co1ydn_fm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 impostorscore=0 phishscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 bulkscore=0 mlxscore=0
+ priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2502250085
 
-Hi WeiKang,
-
-On 25-Feb-25 3:04 AM, Weikang Guo wrote:
-> Hi Bastien, Hans, Dmitry,
+On 25.02.2025 10:34 AM, Krishna Chaitanya Chundru wrote:
+> TC956x is a PCIe switch which has one upstream and three downstream
+> ports. To one of the downstream ports ethernet MAC is connected as endpoint
+> device. Other two downstream ports are supposed to connect to external
+> device. One Host can connect to TC956x by upstream port. TC956x switch
+> needs to be configured after powering on and before PCIe link was up.
 > 
-> I am currently working on the Ayaneo Flip DS device, which I installed Kali
-> Linux with kernel version 6.8.11-amd. This device has two touchscreens,
-> but only one is functional. After investigating, I found that the second
-> touchscreen has the device ID GDIX1003(confirmed by exporting the results
-> through acpidump), and upon comparing with the current driver, I noticed
-> that only GDIX1001, GDIX1002, and GDX9110 are supported.
+> The PCIe controller driver already enables link training at the host side
+> even before this driver probe happens, due to this when driver enables
+> power to the switch it participates in the link training and PCIe link
+> may come up before configuring the switch through i2c. Once the link is
+> up the configuration done through i2c will not have any affect.To prevent
+> the host from participating in link training, disable link training on the
+> host side to ensure the link does not come up before the switch is
+> configured via I2C.
 > 
-> I would like to inquire about the following:
+> Based up on dt property and type of the port, tc956x is configured
+> through i2c.
 > 
-> Is there any ongoing development or plans to add support for the GDIX1003
-> touchscreen in the Goodix driver?
-> 
-> Are there any patches or workarounds currently being developed or available
-> to support this device?
-> 
-> I have also reviewed the ACPI description and can provide the details if
-> needed. Any guidance or updates on this would be greatly appreciated.
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+> Reviewed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-I think this might just work with the existing goodix driver, just
-add the new GDIX1003 HID to the goodix_acpi_match table:
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index a3e8a51c9144..4b497540ed2d 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -1519,6 +1519,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
- static const struct acpi_device_id goodix_acpi_match[] = {
- 	{ "GDIX1001", 0 },
- 	{ "GDIX1002", 0 },
-+	{ "GDIX1003", 0 },
- 	{ "GDX9110", 0 },
- 	{ }
- };
+> +struct tc956x_pwrctrl_cfg {
+> +	u32 l0s_delay;
+> +	u32 l1_delay;
+> +	u32 tx_amp;
+> +	u8 nfts[2]; /* GEN1 & GEN2*/
 
-Note I'm not sure this will work, but is worth a try.
+GEN2 */
 
-Also please run:
+[...]
 
-sudo acpidump -o acpidump.txt
+> +static int tc956x_pwrctrl_set_l0s_l1_entry_delay(struct tc956x_pwrctrl_ctx *ctx,
+> +						 enum tc956x_pwrctrl_ports port, bool is_l1, u32 ns)
+> +{
+> +	u32 rd_val, units;
+> +	int ret;
+> +
+> +	if (!ns)
+> +		return 0;
+> +
+> +	/* convert to units of 256ns */
+> +	units = ns / 256;
 
-and send me a private (off-list) email with acpidump.txt
-attached,
+Should we round up here, so that values in 1 <= x < 256 give a delay
+value of 1 unit? Or maybe such values are never expected?
 
-Regards,
+[...]
 
-Hans
+> +static int tc956x_pwrctrl_set_tx_amplitude(struct tc956x_pwrctrl_ctx *ctx,
+> +					   enum tc956x_pwrctrl_ports port, u32 amp)
+> +{
+> +	int port_access;
+> +
+> +	if (amp < TC956X_TX_MARGIN_MIN_VAL)
+> +		return 0;
+> +
+> +	/*  txmargin = (Amp(uV) - 400000) / 3125 */
 
+double space
+
+> +	amp = (amp - TC956X_TX_MARGIN_MIN_VAL) / 3125;
+
+similarly here, is 0 an expected value for 1 <= x < 3125?
+
+Konrad
 
