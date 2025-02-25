@@ -1,132 +1,226 @@
-Return-Path: <linux-kernel+bounces-531711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C08EA44404
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:11:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 720B9A443F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:09:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06E1E860D91
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:07:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2EEA7A470C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538FB26B0B1;
-	Tue, 25 Feb 2025 15:07:48 +0000 (UTC)
-Received: from dediextern.your-server.de (dediextern.your-server.de [85.10.215.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5CF26B0BE;
+	Tue, 25 Feb 2025 15:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="fpwfSYmb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="P9DTov8v"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5EA1C6FF3;
-	Tue, 25 Feb 2025 15:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.10.215.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA89726A093;
+	Tue, 25 Feb 2025 15:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740496067; cv=none; b=DDLp0PJF8vdmdqmbbnilnH2RBTXxs4iAZhMpqVhH79t1Ikz9cKtyl1L4BCcQz7KxAd51NRCl/NMgegSE2BJfQBhpo850dBZBUY+JlnTpNoUaHQUGx8XsyKOdr5QPEbaHmQOSThKqGC36Yg7BvMr+1GmUJkwmWY99xwXMwj50CcM=
+	t=1740496114; cv=none; b=UbFbpAXxovK9wukg1qIFi5trT7kgH9ZgD33i5mXDtLEJ+5t1YLZknbuuXsU3vv1fBxg7q4IuhXRU9K6M1+t3txPXEdEcUNTpgjAxlwsQnK7chc/JIgLww3GPggQATHAq3gDZ1iWPXItA029hAAuNan1JvfzNqILDS644fNo8nxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740496067; c=relaxed/simple;
-	bh=bhmQGmo6H06KAaOwOt7dtvkEEcgzxnb3as45HbNo+/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=etPgfD9+oyclSCzwwv+B7u7cszRInnVsnBb7QwLhknqWqSGEIlRbr7P7Apbg7Ef+9ywSz01E64Tka26H5KQXlisMK6cAYsBQOHASULMGyQOIllspvFq3f99+K7wD9VMFHn2edgaYKYRUtHK5T1X7sUaJ7KpJkBd62lj/catzo2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de; spf=pass smtp.mailfrom=hetzner-cloud.de; arc=none smtp.client-ip=85.10.215.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hetzner-cloud.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hetzner-cloud.de
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by dediextern.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tmwWw-00098H-UI; Tue, 25 Feb 2025 16:07:30 +0100
-Received: from [2a0d:3344:1523:1f10:f118:b2d4:edbb:54af]
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <marcus.wichelmann@hetzner-cloud.de>)
-	id 1tmwWx-000Mo3-0R;
-	Tue, 25 Feb 2025 16:07:30 +0100
-Message-ID: <efcc6e11-2d3a-489e-80bc-cbc3f72f7afa@hetzner-cloud.de>
-Date: Tue, 25 Feb 2025 16:07:27 +0100
+	s=arc-20240116; t=1740496114; c=relaxed/simple;
+	bh=Mc09/S3fGVi49IxpJn+6i1XyGTEZyCW41n3AVQAt/lg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i3q8H2gfVyUl1O6MN7o0G+pBHHgMNV6HAQj7+4IhKQ75fUU3tQfktFPKhA8/Nd/dLJh8cc+TPafv6YZjtwLF+yIU03wEt4F5CyiNjw3mrJ10N8DY7Pl11CQYDsCYRfX28/wLJvmH6ULZgGMSJ1OxOQINPpHb+eiA3UGi4BpnGHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=fpwfSYmb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=P9DTov8v reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1740496110; x=1772032110;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=8OCdIQ+1x1cdbbT6miIAd2P9zxEWox7eNmbXTr+ysKY=;
+  b=fpwfSYmbj0J33C2nP/29PesegYwpxMvwQsenvvJ5YrunbL0tfu4QlFuI
+   hLjPwj6k/NAqwIJBLAppDzI3REPYX8O8GNkoc8psAxMbelph0EzGnnJ1f
+   oZsuvBFyoWDHU+VthQo/EwEo4kCHT6CMBoIKcRCAZl4OFMEd9yX0aUnq2
+   +gdk+WDtPbyzHVnSOwshiytIXb/I1Lbm+ctGdKhythmyrbm6GylvNwmL5
+   gb9bDzPiTdTMPmSVWLVB7kl22QwpHiJiOPXQIxy+f4ibvPtJZWo1KTVKN
+   x189g+q8XPh2xuhPUxD1lQ0ptbCTJjSm92fZUblV+SphvQ98BSrSG4tNh
+   w==;
+X-CSE-ConnectionGUID: 1GyThBsLQ4OceJgWl5whpQ==
+X-CSE-MsgGUID: FsBtDC9aQT2FMo0eJhVDew==
+X-IronPort-AV: E=Sophos;i="6.13,314,1732575600"; 
+   d="scan'208";a="42075805"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 25 Feb 2025 16:08:27 +0100
+X-CheckPoint: {67BDDCEB-D-B8541F8F-E50F9B0E}
+X-MAIL-CPID: 05053AFA6C7480CC67EA1FCBF7FF12EF_2
+X-Control-Analysis: str=0001.0A00211E.67BDDCEA.00A2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70C09161586;
+	Tue, 25 Feb 2025 16:08:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1740496102;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8OCdIQ+1x1cdbbT6miIAd2P9zxEWox7eNmbXTr+ysKY=;
+	b=P9DTov8vYZt7Blks1GbficO9L/ZMl57uv2ZEwzS02Bqr9ZWS8uyxoxYPxvou+t/b2Oh2jX
+	8KAfzObCZac4PfeKKPv4PAwAhjBc1ATBGLXxB3BWUxFZqqYmMBMziJPwk21hd/mN+bG/8v
+	KeE2X+eWeQDHa4U3HmD9W28OwLqXFYQ4reeZYuY2li9KtwwJknfvG+5Hxcab3h9YYD8639
+	QJSQa3uDCO6EGgd0lX06YXAlKb0+udsqaZKdtYlShKomBYFjJ8PjG4zgUAKBsCjxgMqdM8
+	dQ7YHsSmY6qlN+DmfaWD/i+X5kuZ3xrhWyj8lymgD9BwEP3+ua9bmOZazZpAjA==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject:
+ Re: [PATCH v2 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB subnode
+ into schema and example
+Date: Tue, 25 Feb 2025 16:08:20 +0100
+Message-ID: <2215802.irdbgypaU6@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250225145254.GA2361434-robh@kernel.org>
+References:
+ <20250224142831.485159-1-alexander.stein@ew.tq-group.com>
+ <20250224142831.485159-3-alexander.stein@ew.tq-group.com>
+ <20250225145254.GA2361434-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 4/6] selftests/bpf: refactor
- xdp_context_functional test and bpf program
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com, jasowang@redhat.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, andrii@kernel.org, eddyz87@gmail.com,
- mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
- song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
- shuah@kernel.org, hawk@kernel.org
-References: <20250224152909.3911544-1-marcus.wichelmann@hetzner-cloud.de>
- <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
-Content-Language: en-US
-From: Marcus Wichelmann <marcus.wichelmann@hetzner-cloud.de>
-Autocrypt: addr=marcus.wichelmann@hetzner-cloud.de; keydata=
- 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
- wySmewx3h/yfMh0aFxHhvLPxrO2IEQ==
-In-Reply-To: <20250224152909.3911544-5-marcus.wichelmann@hetzner-cloud.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: marcus.wichelmann@hetzner-cloud.de
-X-Virus-Scanned: Clear (ClamAV 1.0.7/27560/Tue Feb 25 10:44:40 2025)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Am 24.02.25 um 16:29 schrieb Marcus Wichelmann:
-> [...]
-> +	/* By default, Linux sends IPv6 multicast listener reports which
-> +	 * interfere with this test. Set the IFF_NOARP flag to ensure
-> +	 * silence on the interface.
-> +	 */
-> +	SYS(close, "ip link set dev " RX_NAME " arp off");
->   	SYS(close, "ip link set dev " RX_NAME " up");
+Am Dienstag, 25. Februar 2025, 15:52:54 CET schrieb Rob Herring:
+> ********************
+> Achtung externe E-Mail: =D6ffnen Sie Anh=E4nge und Links nur, wenn Sie wi=
+ssen, dass diese aus einer sicheren Quelle stammen und sicher sind. Leiten =
+Sie die E-Mail im Zweifelsfall zur Pr=FCfung an den IT-Helpdesk weiter.
+> Attention external email: Open attachments and links only if you know tha=
+t they are from a secure source and are safe. In doubt forward the email to=
+ the IT-Helpdesk to check it.
+> ********************
+>=20
+> On Mon, Feb 24, 2025 at 03:28:23PM +0100, Alexander Stein wrote:
+> > Document the LDB bridge subnode and add the subnode into the example.
+> > For the subnode to work, the block control must scan its subnodes and
+> > bind drivers to them, do not misuse either simple-bus or simple-mfd
+> > here.
+> >=20
+> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > ---
+> >  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
+> >  1 file changed, 51 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-=
+blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-b=
+lk-ctrl.yaml
+> > index b3554e7f9e76d..d914dea6ecbb5 100644
+> > --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
+l.yaml
+> > +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctr=
+l.yaml
+> > @@ -24,6 +24,14 @@ properties:
+> >    reg:
+> >      maxItems: 1
+> > =20
+> > +  ranges: true
+> > +
+> > +  '#address-cells':
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 1
+> > +
+> >    '#power-domain-cells':
+> >      const: 1
+> > =20
+> > @@ -46,9 +54,20 @@ properties:
+> >        - const: csi
+> >        - const: dsi
+> > =20
+> > +  bridge@20:
+> > +    type: object
+> > +    additionalProperties: true
+> > +    properties:
+> > +      compatible:
+> > +        contains:
+> > +          const: fsl,imx93-ldb
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > +  - ranges
+> > +  - '#address-cells'
+> > +  - '#size-cells'
+> >    - power-domains
+> >    - clocks
+> >    - clock-names
+> > @@ -77,4 +96,36 @@ examples:
+> >                 clock-names =3D "apb", "axi", "nic", "disp", "cam",
+> >                               "pxp", "lcdif", "isi", "csi", "dsi";
+> >        #power-domain-cells =3D <1>;
+> > +      #address-cells =3D <1>;
+> > +      #size-cells =3D <1>;
+> > +      ranges;
+>=20
+> Given the address below is 0x20, this looks wrong unless the parent=20
+> address is 0.
 
-Hm, setting the NOARP flag seems to have not been sufficient to fix the flaky
-test:
-https://github.com/kernel-patches/bpf/actions/runs/13507111620/job/37739614229
+Thanks for pointing out. Because system-controller@4ac10000 is not
+a simple-bus I assume this needs explicit ranges, as you pointed out in
+your comment on Patch 4, no?
 
-I was not able to reproduce it locally or with my own CI runs unfortunately, but
-I'll try something else in the next patch version which should definitely stop
-IPv6 multicast listener report packets from messing with the tests.
+Best regards,
+Alexander
+
+> > +
+> > +      bridge@20 {
+> > +          compatible =3D "fsl,imx93-ldb";
+> > +          reg =3D <0x20 0x4>, <0x24 0x4>;
+> > +          reg-names =3D "ldb", "lvds";
+> > +          clocks =3D <&clk IMX93_CLK_LVDS_GATE>;
+> > +          clock-names =3D "ldb";
+> > +
+> > +          ports {
+> > +              #address-cells =3D <1>;
+> > +              #size-cells =3D <0>;
+> > +
+> > +              port@0 {
+> > +                  reg =3D <0>;
+> > +
+> > +                  ldb_from_lcdif2: endpoint {
+> > +                      remote-endpoint =3D <&lcdif2_to_ldb>;
+> > +                  };
+> > +              };
+> > +
+> > +              port@1 {
+> > +                  reg =3D <1>;
+> > +
+> > +                  ldb_lvds: endpoint {
+> > +                      remote-endpoint =3D <&ldb_to_panel>;
+> > +                  };
+> > +              };
+> > +          };
+> > +        };
+> >      };
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
