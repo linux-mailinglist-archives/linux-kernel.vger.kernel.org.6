@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-531210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60BD4A43D7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:26:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1BC7A43DAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:31:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF3217052E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B031719C45CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2360E267B12;
-	Tue, 25 Feb 2025 11:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB6A267B83;
+	Tue, 25 Feb 2025 11:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WL0S8IpA"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aDNjx0O6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B03B267AF2;
-	Tue, 25 Feb 2025 11:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1188D267AF6;
+	Tue, 25 Feb 2025 11:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740482751; cv=none; b=FPK80oS5xncH84BBQfaQtJhwDvh4sbAy0wRwVTD1/4xus1Wzie/E0LArkExyTlr5kTjNqUnZEiA4tgePvuy7i+TA3hEhmNv9Ks4m7KOrc/DOY1QDoiXjTtkOvH70vdaxvxub5m85Us9B1QOxXK5tIvQroWZd3NoNX9ya3asdmjw=
+	t=1740482941; cv=none; b=Ko9CmGeb8vAZbINqnmBR8rj954n9DNyM3g02/1E89e5BFMBevH7akPdffjbGgBxsnYGpDIZEUBokzS2C9ptdOsOUs3mn3GWS04TCu9Va+bf3SNEIaINTmEU+O7me/bqyRgstwCe8jyeTh1OnohxvpOMIv4VrXa8cdbmyfpRuHWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740482751; c=relaxed/simple;
-	bh=Lhrwl1x6WS1e4L0zo3QZm7lLfOMmhJbsDbNnkKZwnoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ien8MnF3Ty8oQKgStkZivCy/NkTzOFuwJYqMrl5mgY1Lxy6jh/i52Zf/H5RwgxEo/dm+GQf0zhJstkE3aqK2u8MrNTypd2VM2N7VXCNjU/ObkX7ZjFncuyzefR2Y0DXNXcYD02xrV3UOX/N7rJyUCTIIA+E0N7bQhr9A3llLeVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WL0S8IpA; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Lhrwl1x6WS1e4L0zo3QZm7lLfOMmhJbsDbNnkKZwnoc=; b=WL0S8IpAQoEwauZY6lBtK5wOR9
-	5O5SN6NWP0e5vkh+piwcr7J1+FN4O6oiABvTqF6EMpPg2tsL+LJd6cbyfIInpEYpgdclKGSNAZMiS
-	p5szNhj617nQInk8okB5JuYAvhi7vkxUCenxvVwt91pZbcoQSKqkOshl1jdaCnTpcWyhodPUJsV70
-	PTEFm6Ey6Vk3Bn5Z01ZVeSnG6bXkPnZW0SHOMKWOuzp5iVJhrmVc2Y4iRuafFgzFpkuGmgxMhHMoI
-	lE8RhK7wCPEQVlNbOzCsgQjeHtokHqtsEJ20CeD9zlsd078JXDXiN42bEQuRFFFLkoni7vp1kVUwY
-	QEBBfQOQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmt4J-00000003Ktc-2raQ;
-	Tue, 25 Feb 2025 11:25:44 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 451C73006E6; Tue, 25 Feb 2025 12:25:43 +0100 (CET)
-Date: Tue, 25 Feb 2025 12:25:43 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 12/24] perf/x86/intel: Allocate arch-PEBS buffer and
- initialize PEBS_BASE MSR
-Message-ID: <20250225112543.GM11590@noisy.programming.kicks-ass.net>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1740482941; c=relaxed/simple;
+	bh=4sgbNAfckysK5yUpsHXkpcHylYnfBrrpT1xYb428eDc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j2YQBuc+ZlIDHapx6UEXd0RuR6bl9NcwT85n4cxFuNJvss1TbygJU6EgA5jKsvrGLSRmK5THiBm7zMX8crj98qJC0CIf14d64UuEydX+pVXZMKIeQU9Uq0GJ/Y47PASqxQ11WiKDUbg1WDdB0v67zcwcLx4Tbz2W4wxLX1NRvPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aDNjx0O6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8Dmgu009109;
+	Tue, 25 Feb 2025 11:28:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=AH6XyKMQKy1L5/1/4qcQ3Dq5
+	+Ibr/w74DoNERr7pYSI=; b=aDNjx0O6kRUrZmxs1FJNFDwlArHvEk4P1kDlXtSl
+	+TwgnKsIULHWmVIlIBfrmBYQUDcILJ8a2LCogStr90Np0sZgk9Em7NfA1P9jX/li
+	gC3CuPC0+JKmfDAWoEly+Gy5Ga85wX/6mSInUc6XaH7fvLWsaU+5aFj9rdIwPktc
+	BgTvgYPBVAi9gvfL/xEZMnJsn46DCWy0eUTuHAoA5n/zI06TlEXpWEOjTn0noRTP
+	WBmKG7D/o3u3cHVqORlaUf5+NpVcP9lHr8HtS5iKmSat+bOaJV9AaHae4Sf4/rLR
+	gEqsuxsN3jDL170vvn+wdhEAw0kmzEUxiOUoFHRMC8j4ng==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6y6rp38-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 11:28:33 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PBSW8O029297
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 11:28:32 GMT
+Received: from PHILBER.na.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Feb 2025 03:28:27 -0800
+Date: Tue, 25 Feb 2025 12:28:24 +0100
+From: Peter Hilber <quic_philber@quicinc.com>
+To: Simon Horman <horms@kernel.org>
+CC: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Srivatsa Vaddagiri
+	<quic_svaddagi@quicinc.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio
+ =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <virtualization@lists.linux.dev>,
+        <netdev@vger.kernel.org>, David Woodhouse
+	<dwmw2@infradead.org>,
+        "Ridoux, Julien" <ridouxj@amazon.com>, Marc Zyngier
+	<maz@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Lezcano
+	<daniel.lezcano@linaro.org>,
+        Alexandre Belloni
+	<alexandre.belloni@bootlin.com>,
+        Parav Pandit <parav@nvidia.com>,
+        "Matias
+ Ezequiel Vara Larsen" <mvaralar@redhat.com>,
+        Cornelia Huck
+	<cohuck@redhat.com>, <virtio-dev@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v5 2/4] virtio_rtc: Add PTP clocks
+Message-ID: <vhlhes7wepjrtfo6qsnw5tmtvw6pdt2tfi4woqdejlit5ruczj@4cs2yvffhx74>
+References: <20250219193306.1045-1-quic_philber@quicinc.com>
+ <20250219193306.1045-3-quic_philber@quicinc.com>
+ <20250224175618.GG1615191@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250218152818.158614-13-dapeng1.mi@linux.intel.com>
+In-Reply-To: <20250224175618.GG1615191@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HaD8-URwhEOYl4JEkmXZIwXbLt2o3JAj
+X-Proofpoint-GUID: HaD8-URwhEOYl4JEkmXZIwXbLt2o3JAj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
+ malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
+ mlxlogscore=537 impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250081
 
-On Tue, Feb 18, 2025 at 03:28:06PM +0000, Dapeng Mi wrote:
-> Arch-PEBS introduces a new MSR IA32_PEBS_BASE to store the arch-PEBS
-> buffer physical address. This patch allocates arch-PEBS buffer and then
-> initialize IA32_PEBS_BASE MSR with the buffer physical address.
+On Mon, Feb 24, 2025 at 05:56:18PM +0000, Simon Horman wrote:
+> On Wed, Feb 19, 2025 at 08:32:57PM +0100, Peter Hilber wrote:
+> 
+> ...
+> 
+> > +/**
+> > + * viortc_ptp_gettimex64() - PTP clock gettimex64 op
+> > + *
+> 
+> Hi Peter,
+> 
+> Tooling recognises this as a kernel doc, and complains
+> that there is no documentation present for the function's
+> parameters: ptp, ts, and sts.
+> 
+> Flagged by W=1 builds.
+> 
 
-Just to clarify, parts with ARCH PEBS will not have BTS and thus not
-have DS?
+Thanks, I will change the offending documentation to non kernel-doc. I
+was not aware that these warnings are always considered a problem.
 
+Peter
+
+> > + * Context: Process context.
+> > + */
+> > +static int viortc_ptp_gettimex64(struct ptp_clock_info *ptp,
+> > +				 struct timespec64 *ts,
+> > +				 struct ptp_system_timestamp *sts)
+> 
+> ...
 
