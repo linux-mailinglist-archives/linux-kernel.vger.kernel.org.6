@@ -1,151 +1,138 @@
-Return-Path: <linux-kernel+bounces-532222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51638A44A41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:27:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DF85A44A73
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:33:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D23F119C6A3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49CCB863CE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0813919F48D;
-	Tue, 25 Feb 2025 18:24:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F722036F0;
+	Tue, 25 Feb 2025 18:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ync+WzAA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b="GNbCf/o3";
+	dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b="ByhPtz+6"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04471FBEAE;
-	Tue, 25 Feb 2025 18:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDAB19DF4F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740507848; cv=none; b=KZ++s+AENm/9Ui4qR4Ckuuh3TMMhWG7KjWhbVp7m9xbkpQ26dvPN+ls0B/2mDPGNLH9p1zJuNittSFzeb4cx98tUIKTC7x4JmmOsfvhBqQ44uwUWwlIm8zlKFoRqlle8U9ZSf4VahBjYFrzz5nbLS6Uazd6oe6YvRGo9TsR9EEA=
+	t=1740507847; cv=none; b=PYBt2NQj9O3ajfyr5OocyMHfCmA0TYPcTn2uCxxXKU4m7h/3Db9oysulbgMvsOC8ULBh4GbPezl1vGn9nm4K5sHtBZKgvQuQ+gYshLTCoxrIoKO1mxA9ufc4W3IP57P23Fqbcsk7mtliNDjoh6/ZuakmA9vebmb0PfhKABYhY8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740507848; c=relaxed/simple;
-	bh=gkURQyDBFIIXVu+lUbjZG9GDidubVbJnt/AHKi//iwA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/qxl7X0vt1GANZyXN28R4tfiyhhh0uA2wANAdSdMqgxTvRfVFPaWL72i+W7jBweKMS3WXIdKwH3JGg+/4e/ZkuonZYjewFmF2dzik0/frnUvLjMTKhkQOWdkuMQwSBCj0DF2/diXz50fMlRVLOE5L8VaqYPv+A3SVjIJdA+mTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ync+WzAA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=HbEd1ycjERioNwQFESLBBImaWldcivxrxVLgLZpicQI=; b=ync+WzAAgbJ+vRdCqf9cvcOqmr
-	SZ1EskLrr7w1ZbMgwqat6LgAavMv4wwUOdWW/bWdwI4yyw+lyp0wlmaku8MKYklpDIyxuP9CpGgKN
-	dYyXhTlzGupfJZHM9+XgBSNXWyXpJaFj31RGLzwCj2JcP8BqfL7vz6Cwk10JHj1PaxEP9LmThQ90+
-	SBi8F7cG/cyvM/v4IOuV4unRaG4w0f+mUtdZslUROkhuT2O6+YstgXPfjmxPFzoMwH4D7qJi654iL
-	USgAZdQqcDP4LVUhou7/Ce1UbYxfnyxs52sQl10rM6oeqn8IIGwpnUEbcTHpXI2NxrQqk/lCPZpFC
-	rzuMKzog==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:41384)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tmzb4-0002Dt-2S;
-	Tue, 25 Feb 2025 18:23:58 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tmzb2-0006EN-01;
-	Tue, 25 Feb 2025 18:23:56 +0000
-Date: Tue, 25 Feb 2025 18:23:55 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Antoine Tenart <atenart@kernel.org>,
-	Marek =?iso-8859-1?Q?Beh=FAn?= <kabel@kernel.org>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	=?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
-Subject: Re: [PATCH net-next v2 1/2] net: phy: sfp: Add support for SMBus
- module access
-Message-ID: <Z74Kuzb6kPJOZRQw@shell.armlinux.org.uk>
-References: <20250225112043.419189-1-maxime.chevallier@bootlin.com>
- <20250225112043.419189-2-maxime.chevallier@bootlin.com>
- <6ff4a225-07c0-40f6-9509-c4fa79966266@lunn.ch>
- <20250225145617.1ed1833d@fedora.home>
- <caa65ad9-9489-4d22-9e87-dd30e4e16cca@lunn.ch>
+	s=arc-20240116; t=1740507847; c=relaxed/simple;
+	bh=SBkC6K1saiGACNoan7QB2EPwo5J7cMg6MkvBnK5tNHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KTxOYkaGsZt4sZu0GxwWYwj6nrQ/hGMotOPfCQiA/jHjz5RBHfO8pGq5YiKt1Lpw5kqtv1/LMkn9iEY2Rr9qNc32jlYfFQFybU5UrVl7ctwqpYFtHEM3LXwtq0MQNcAp8v/xwPJU29/7MlFnQdeo4P5+4YRt0DoKE18dwAe+Wi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net; spf=pass smtp.mailfrom=sladewatkins.com; dkim=pass (2048-bit key) header.d=sladewatkins.com header.i=@sladewatkins.com header.b=GNbCf/o3; dkim=pass (2048-bit key) header.d=sladewatkins.net header.i=@sladewatkins.net header.b=ByhPtz+6; arc=none smtp.client-ip=67.231.154.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sladewatkins.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sladewatkins.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sladewatkins.com;
+ h=cc:cc:content-transfer-encoding:content-transfer-encoding:content-type:content-type:date:date:from:from:in-reply-to:in-reply-to:message-id:message-id:mime-version:mime-version:references:references:subject:subject:to:to;
+ s=selector-1739986532; bh=xkCeOl6nj9IK5tQwcy8oiuh52jYXAnIOceDA8IVe+lQ=;
+ b=GNbCf/o3kO4exRHdGWDWiY3J0McRGr0JhvLtWvKZSi4gvTxctTYvYJCMrZN8wnFMs8w+0oVAqH0YfOrErVm8FUZ4FSZsGrVKTDIVBPOdfSgpn4NTX27FeXDKHSEkiLKQepjv6ZSqjyq59K74d1ND3tDVtKrWisFydo2+PFMpu6qbDHeT+RJAsVewpWVvkqWVSVc1xDQQyP1qHuEaWgVS0nPr+9jYA25c/xslJQ8HB6X8r5B/DatCUNg9ySwXvC2XqnaQ7fvpjzHkPxo18tUi8w7HiV0mis8Z2FI3LndPM2NvyI8yRX673H01XrACrPX3xo4f55gZypUc6SkVtoXQqg==
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTPS id CB548C000A4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:23:57 +0000 (UTC)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7c0a3568f4eso603741485a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:23:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sladewatkins.net; s=google; t=1740507837; x=1741112637; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xkCeOl6nj9IK5tQwcy8oiuh52jYXAnIOceDA8IVe+lQ=;
+        b=ByhPtz+6sYVf8zlqsbegd7OBAPxJEaI+Sa4hVVjMqZWjlEPCOObPpn9Pa69c4bRcrO
+         qnxHWgfM4/9grqrl94sWuniKGSW+hVUKxXGYJUdsDmJcte6tmDRepOUNTrNAnVODX9qL
+         /hMioBcHCNQqSiLUKy1c4CUutUK3KpkhW4MvjaaWBss8mBXnpAKvbFMQa8dsPtgnEcPA
+         qRFZzaLh3oWGpbVU5yDIqevqCIv4oEdse63nWnu2w0e5Pj0WAdUUMuD+xEwjE8NflsvP
+         p4t1dKlREyexIyk3GJ8GA8/NpgM4n1pIjOvy5iVRgfOsNOP6ck/rCqHgKhfyiZHTR/bn
+         FrOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740507837; x=1741112637;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkCeOl6nj9IK5tQwcy8oiuh52jYXAnIOceDA8IVe+lQ=;
+        b=TyVQMx3A698DFBmBVpEJpESyGHXxny1q1cqeRFz7dwHuw/YLBT3lKtQzIzq6PUbd1g
+         bxvJb/Wwe9PhGh0jqUEhYCt/Sd6Ce5qEDkFX7SsrW/IfhqXtG9F+vHy932X33FQSG7ju
+         qE947CaP2lSFZc+7AnH0E2T2XIEljLIy+c51/edohqpBny+qcPGY92/9uzLW4zd7Yy1h
+         LWseuWtgKl9p1yJTMKwTGJsZsYNjoXxI+lapdAWuSmHQA6onFQRZGkCYbyuUxRA6qApD
+         CWpWaB0H0KYHE7WD1aGzHYgh8B7eUbt2d4xDqg0twzQU0YncIiODsWLmSv/6+uU7Fm3q
+         bQiA==
+X-Forwarded-Encrypted: i=1; AJvYcCX53506oQGL4pozoTa3h/LySCGM5ejUEUqbuuDMBiDckjypztDtuawtbUpinw/JZGkhy0JRFSK8SmjjqKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRtmibmjyCP/T54bWKPW3lxa7kgLLhkAH34tvF9q7Efc/c8S7a
+	whoOWdx9psRgDwbDJzjwwB4IVUgtoUmukqSzZEQzNdrPhjW13iHj0BHoJcw2SVLN7bD558ENSWa
+	SDAsrh0Q+Voip86dDkZ8KV0tMM5RCRpHVYKmXWD9uxXbLFHMW7ZqeBxgf7cedIpPbSm5ZT9zYGc
+	qXVVs+6QI=
+X-Gm-Gg: ASbGnct9jyxlymMpGDTNLZVBgEAVyquIPZBV3/BPMW5JzAqmiu6a3/E8dLHD/3vhRgK
+	u/ljokRisQHZUaqAvrF6hIp2EOZSS1uW5V9nAo00jIe2+YRuJenY14lspVjdfCsSsNmFWFXkA3C
+	OPy50vLkGDsRM9BIvAhODZmR57pdA1zL1AhoiDHK+2n1D9GmBk2mWzBiRQW9x3k/nMUe8B5xgTF
+	zyObOn3Xou3oxsk+V9IhyH0WjxVn/wHplKdtwEbDaBn2tcWrdVczicr5sjfyN9TXz4dKlXeyIvG
+	4tmsvoAZWSYngjXnnl7ahYR4qykn/5F74btqS19iS75pyGoq7AJVsI7HPYjwJaFJa3PQFUQMuWo
+	m8Dw1KaDWSCBDTV1WMjKTFLnPcN99iWzCobHU
+X-Received: by 2002:a05:620a:294f:b0:7b6:d8da:9095 with SMTP id af79cd13be357-7c247f20022mr65059885a.13.1740507837368;
+        Tue, 25 Feb 2025 10:23:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IH55M+1Ifas+XqNzr8X3+KkOff8XpRApkTQhxLbzscTrrKWkaE4uVGMnrWH4qExo9dqce3f1g==
+X-Received: by 2002:a05:620a:294f:b0:7b6:d8da:9095 with SMTP id af79cd13be357-7c247f20022mr65054885a.13.1740507837013;
+        Tue, 25 Feb 2025 10:23:57 -0800 (PST)
+Received: from ghostleviathan.computer.sladewatkins.net (syn-076-037-141-128.res.spectrum.com. [76.37.141.128])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e87b06dd6esm12101966d6.19.2025.02.25.10.23.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 10:23:56 -0800 (PST)
+Message-ID: <09882df3-a186-404f-adce-cdde1a6e887a@sladewatkins.net>
+Date: Tue, 25 Feb 2025 13:23:55 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <caa65ad9-9489-4d22-9e87-dd30e4e16cca@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/153] 6.12.17-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250225064751.133174920@linuxfoundation.org>
+Content-Language: en-US
+From: Slade Watkins <srw@sladewatkins.net>
+In-Reply-To: <20250225064751.133174920@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MDID: 1740507838-bH1dWjC0lI69
+X-MDID-O:
+ us5;at1;1740507838;bH1dWjC0lI69;<slade@sladewatkins.com>;c71d53d8b4bf163c84f4470b0e4d7294
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On Tue, Feb 25, 2025 at 03:58:31PM +0100, Andrew Lunn wrote:
-> > You might be correct. As I have been running that code out-of-tree for
-> > a while, I was thinking that surely I'd have noticed if this was
-> > wrong, however there are only a few cases where we actually write to
-> > SFP :
-> > 
-> >  - sfp_modify_u8(...) => one-byte write
-> >  - in sfp_cotsworks_fixup_check(...) there are 2 writes : one 1-byte
-> > write and a 3-bytes write.
-> > 
-> > As I don't have any cotsworks SFP, then it looks like having the writes
-> > mis-ordered would have stayed un-noticed on my side as I only
-> > stressed the 1 byte write path...
-> > 
-> > So, good catch :) Let me triple-check and see if I can find any
-> > conceivable way of testing that...
+
+On 2/25/2025 1:49 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.17 release.
+> There are 153 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Read might be more important than write. This is particularly
-> important for the second page containing the diagnostics, and dumped
-> by ethtool -m. It could be the sensor values latch when you read the
-> higher byte, so you can read the lower byte without worrying about it
-> changing. This is why we don't want HWMON, if you can only do byte
-> access. You might be able to test this with the temperature
-> sensor. The value is in 1/256 degrees. So if you can get is going from
-> 21 255/256C to 22 0/256C and see if you ever read 21 0/256 or 22
-> 255/256C.
+> Responses should be made by Thu, 27 Feb 2025 06:47:31 +0000.
+> Anything received after that time might be too late.
 
-<frustrated>
+Hey Greg,
+No regressions or any sort of issues to speak of. Builds fine on my 
+x86_64 test machine.
 
-Why don't we read SFF-8472 instead of testing module specific behaviour?
-Section 9.1 (Diagnostics overview) paragraphs 4 and 5 cover this.
+Tested-by: Slade Watkins <srw@sladewatkins.net>
 
-No, it's not latched when you read the high byte. Paragraph 4 states
-that multi-byte fields must be read using "a single two-byte read
-sequence across the 2-wire interface".
+All the best,
+-slade
 
-Paragraph 5 states that "the transceiver shall not update a multi-byte
-field within the structure during the transfer of that multi-byte field
-to the host, such that partially updated data would be transferred to
-the host."
-
-In other words, while reading the the individual bytes of a multi-byte
-field, the value will remain stable _while the bus transaction which
-is required to be a multi-byte read is in progress_.
-
-So, when the STOP condition is signalled on the bus, the transceiver
-is then free to change the values. So accessing the high byte and
-low byte seperately does not guarantee to be coherent.
-
-It *might* work with some modules. It may not work with others. It
-might crash or lock the I2C bus with other modules. (I already know
-that at least one GPON module locks the bus with byte reads of
-0xA0 EEPROM offset 0x51.)
-
-We've had this before. We have a byte-mode fallback in the SFP code,
-and we've had to be *very* careful when enabling this only for
-modules that need it.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
