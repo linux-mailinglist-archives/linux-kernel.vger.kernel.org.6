@@ -1,156 +1,111 @@
-Return-Path: <linux-kernel+bounces-531355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC56A43F7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:33:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7924AA43F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:32:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C19487AD4AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAD013BAECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:31:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A03268FF2;
-	Tue, 25 Feb 2025 12:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E66F220C477;
+	Tue, 25 Feb 2025 12:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="HU9eGRBy"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1308C267F58;
-	Tue, 25 Feb 2025 12:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="P5YmsyYX"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1CAE2571AD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740486742; cv=none; b=a/R9mLYY0OWTv+pdlJGZFq4UE4I4hyS0yhE8Q95dsySCtLcqPM/XqVK9XosN/zZPu913oClngQNLdCjxSwpM0AWiovf/o0qjAFDAOVBOyUuty6mKERCacXifbgWElw/GugH71c7gJLTv54XHWpbxIj/I57sOk6px2RkhEQew6Js=
+	t=1740486714; cv=none; b=VIJilzqDsj+wj2SXZu4shP+Q5Ow2GwA8JXubQTwsQ5H0iTt7hdfJ7agK7mRmC4nLhUSZRyBb7N0voQR2FvtQWGxZ8cYSYzy0e7+hHxVySZT6Cuy4z9BWr1XPCWxBYxjtzpRqVu7GLlBQ8o/JnrNu//sOPDyWB/J7f6R8n/Eg/X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740486742; c=relaxed/simple;
-	bh=h8PDT9P5RGKVlHl1hL6S1sHDxqWxMEzZ0RmWvnH5804=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UUGemEcjI0hJY2/eYUDsj1e64rT0MD/BVI4OmbeTK5yrwjORX+jiLtF6VGrTAHtobKh4X9GFF+QNhej96b4GS0NTJeZWb6ijhqVZFX4otf7tb4/IgDQuq/vvEo1Jl5JsjQjRtELbzA9lAMEaRnRiP9PkaK9BYNa3WSlFmoVei0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=HU9eGRBy; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=b/anH
-	9Si7AGNeGlSpdEHPfH0OT7WBuTxniqMA05MAeY=; b=HU9eGRByLz8KnTz7ckPK+
-	ynj9cETk4kn9VerHd6acIO2UYIv1lWAN+iMDyFKynQ77KRwk+nPXZVpS9I7n0Os4
-	ejnIYpqLbaJbQqBBvrtivUEBWxAi8liWDvQUA0OYKYSOsO6urU9+FLYZll2ZdrCN
-	7dyqtH1ekojdG4CMWsguZk=
-Received: from localhost.localdomain (unknown [193.203.214.57])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgCnFlwpuL1nryiDPA--.50629S4;
-	Tue, 25 Feb 2025 20:31:39 +0800 (CST)
-From: Ran Xiaokai <ranxiaokai627@163.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mathieu.desnoyers@efficios.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	ran.xiaokai@zte.com.cn,
-	yang.guang5@zte.com.cn,
-	Wang Yong <wang.yong12@zte.com.cn>
-Subject: [PATCH] tracing/osnoise: Fix possible recursive locking for cpus_read_lock()
-Date: Tue, 25 Feb 2025 12:31:32 +0000
-Message-Id: <20250225123132.2583820-1-ranxiaokai627@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1740486714; c=relaxed/simple;
+	bh=BE3dddq/PJ2LGVwbssOwVpXeFrwbodiYdIqHe8+jSQ8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WO2DamCrCCu0M2mPW/Q88154Bm+IlunWDbN1/7czSNSaVLqGR9vW+I79mYYHNREb+DZn44tDpECPIvz/Wz8VlfBtm3JVUSdmrco5GpFbi3ZPtjOJHJ/WaI/D/pYi22FH4vgw0F6uEQmOemEHTJ+QCqX35unErb9IUI4qBqQ+FyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=P5YmsyYX; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1740486703; x=1741091503; i=markus.elfring@web.de;
+	bh=BE3dddq/PJ2LGVwbssOwVpXeFrwbodiYdIqHe8+jSQ8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=P5YmsyYXGHN9ZDoNse3XScWxylVITeZpAIWcAOUmyhrmA68rPjTm0sZ22D1WyTvK
+	 BOxMec3dWIxSQXHym+YEnGigQp/+GT5foQ2vBMamjnCDDa6F5/uLE8yi4YaYMa0sE
+	 9zr+7tO9tnsgr+n2W4ZfvrZbQUNiO1UAe3cwS7Ldgmz5nja893r+355qLWl20BrHX
+	 xlczbC4QTb9GLY3fWUejz02PH2Ozf76zwLted6YcPF8Uip9hbfn4PmLxrbJsbdKFF
+	 U4D8iMTN18F80ZrlxOJWo5QEjh3iNimfIDCPyORlJt8A+dueZqZMFReMwlXjI58s6
+	 17RQJY6/nt/IvSrT2g==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.36]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M9qhD-1th7LG2WVZ-004otk; Tue, 25
+ Feb 2025 13:31:43 +0100
+Message-ID: <9bc553de-2266-4134-b370-bb287d3538dd@web.de>
+Date: Tue, 25 Feb 2025 13:31:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgCnFlwpuL1nryiDPA--.50629S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxXrWxWFWrCryrZr47ur15Jwb_yoW5XFy8pr
-	ZxKFyxJw4UCFyvv3yUZF1rJw10q3yqqF4xt34ktw1rA3Z8uw43Xr1UtFyFq345ury8ZrWa
-	v3WDArW7Cw4DXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j5R6wUUUUU=
-X-CM-SenderInfo: xudq5x5drntxqwsxqiywtou0bp/xtbBkBn+TGe9sWSGWgAAso
+User-Agent: Mozilla Thunderbird
+To: Dave Penkler <dpenkler@gmail.com>, linux-staging@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20250222202301.3729-1-dpenkler@gmail.com>
+Subject: Re: [PATCH] staging: gpib: Add return value to request_control
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250222202301.3729-1-dpenkler@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:A4K7lIFDn9B7GUN6vCI4Ifk5k7USBdi47WS54kZMNLKMDtceSNI
+ OTCseK2vw1k7OinV996DZAUzfi/i6KBUdU/NsON/bGTiAchru/KqlEa+9xmsyUmGnKe6bjR
+ lB2t/YBzjKGt4H1TZg3iKrlAw0gJtcW7FaSy4sNe/q/NpEYh03uQMOd54PDyF4OyTp5bc4F
+ NOPFaV2vEBnMXdfUckb4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8uJ62oDRgss=;bxudl0MtuFdFeSmj6qNLHwpY+HW
+ gb0Mv0Cwwbsqbq/4UeogT6P2Hc8yrhV+aWXP2xnmWD21Qb6raqZGqlHdEnb1HzWzMMHFW2sGo
+ uX9SmW2+bYAJx7msKV1rjLBloLwsLc0e++at2hCQNN+M4jlP8eu9a8i2uwolB/mHpz3J524fD
+ KcMQMWEKU2M9VOXrXlWTfbIanOey2x/BOPGhzRTl7WexvKKd4FwOJEiasq12axFjTUOnEnH/V
+ ibTB413iaiqaBM0Ljihk0QsmXPNlIzMmBOAfgtsed4+oELK8PRm+hafZN3N+F/wnMDwzkiTep
+ foPjI2yFRjdZRlrNcf9kgYssOKKtz6ERegBgkpPMlNPNVNMUYnEZglD0bCx1psxfsVNJsUzk6
+ Jazm3wq70jO5/r7V+9lc5te3wWwaFDgBptVi+MBApTz0X/9/W0rXzM54aZYq7q9WGHttkcIWz
+ sW40upVDh7Qrz9L+QYriEuxj+cYYJ7M1IeEY6Nl01rUhcljNDIO0HmBkCdpZiEsIeJ5R8LGm+
+ Hwsrn9AbG6Q4Je4b1GSBdFbkhrc1D+daezZLV4pzxvclxDssxje32Of3N+n5sK9IzDDLYyIrK
+ Q2FnUnY8aCuw2rLr0uEXEY8ZSDFSK7CWkNmb1eUD+hhxhrnM9f48Uz0KV1j/TSMB5g/YDWeAb
+ Jgs/lynZrxvIymK3ZsAz/shxsWruJF665mlj1sRmMXzCKSOn0CCmO5g1qSUgKmWgqu/yw4ij4
+ JG+dp1CmRsJpaffXhOWufZ0CLSref6f7Yj5K809mn38qOEuMi1M0PUvMytJcNmpyVY5HDdNgX
+ A/VJbIAJOkVWnDUMUxU8FZGghXIz3R37teb0hTLiRXv5c84ErmhUVtfQ8+HcmKPCVIhvBMkff
+ vxV0WD1juuIbzJeAmwRSomwijOxHc0tjrg1ZE2KmtZG5lNjByaHf9y6OTqlPcB2cjHHGGDeVC
+ sTp7okPLeQz8e6x5TC+5yB+5qRubQSlWK0DRBq3LExlq90dEh0F/wDzUG90PlvoG9wKSTezPK
+ +MPjBHokEdKwT3sFfDvV6KgmoCkQwayYOo14Xv2Y/EUACwe72TTGBS3N04bdM9c7an+ElKQh6
+ TcFnNjtIVkOz+9vo0cIIn32Yg2LE7YDdkkl0PFNrLeGU3gpk9+dxCi80G6A0z+pKKBj9I06Om
+ /Q7p6qCUgZC0cEeP8ODJ66uBFOR1nD6Y+ieJm3mMQtsLi++2+nv4Heed5DMPSWvZVyB7jueHN
+ jWQis1Y87kjpurM6VzG3PvQ2OSRT5gutE8cgra+M3m/uUhrTcNd/vn5+RHIm2oRwbQOxmdx8J
+ YzW2yt1JswZ3SigNSqYnERomkw0g1WiPwYj7a4V0+/Nezd5i26BxoUP20D9H5vFRPbhYUyc+p
+ uHE2kvVQu/MlJ8qOiiUOfB0kEN0pvD/1oL9N8Zbvc63VHIUaSDZo9QI/itFmE/sqNz6of2a9T
+ 3h43GgZPjIdvTbq+7k7Csx7Sn3aE=
 
-From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
+=E2=80=A6
+> This patch changes the prototype of request_control to int
+=E2=80=A6
 
-Lockdep reports this deadlock log:
-============================================
-WARNING: possible recursive locking detected
---------------------------------------------
-sh/31444 is trying to acquire lock:
-ffffffff82c51af0 (cpu_hotplug_lock){++++}-{0:0}, at:
-stop_per_cpu_kthreads+0x7/0x60
+You may occasionally put more than 58 characters into text lines
+of such a change description.
 
-but task is already holding lock:
-ffffffff82c51af0 (cpu_hotplug_lock){++++}-{0:0}, at:
-start_per_cpu_kthreads+0x28/0x140
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
+See also:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.14-rc4#n94
 
-       CPU0
-       ----
-  lock(cpu_hotplug_lock);
-  lock(cpu_hotplug_lock);
-
-Call Trace:
- <TASK>
- __lock_acquire+0x1612/0x29b0
- lock_acquire+0xd0/0x2e0
- cpus_read_lock+0x49/0x120
- stop_per_cpu_kthreads+0x7/0x60
- start_kthread+0x105/0x120
- start_per_cpu_kthreads+0xdd/0x140
- osnoise_workload_start+0x261/0x2f0
- osnoise_tracer_start+0x18/0x4
-
-In start_kthread(), when kthread_run_on_cpu() fails,
-cpus_read_unlock() should be called before stop_per_cpu_kthreads(),
-but both start_per_cpu_kthreads() and start_kthread() call the error
-handling routine stop_per_cpu_kthreads(),
-which is redundant. Only one call is necessary.
-To fix this, move stop_per_cpu_kthreads() outside of start_kthread(),
-use the return value of start_kthread() to determine kthread creation
-error.
-The same issue exists in osnoise_hotplug_workfn() too.
-
-Reviewed-by: Yang Guang <yang.guang5@zte.com.cn>
-Reviewed-by: Wang Yong <wang.yong12@zte.com.cn>
-Signed-off-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
- kernel/trace/trace_osnoise.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/trace/trace_osnoise.c b/kernel/trace/trace_osnoise.c
-index 92e16f03fa4e..38fb0c655f5b 100644
---- a/kernel/trace/trace_osnoise.c
-+++ b/kernel/trace/trace_osnoise.c
-@@ -2029,7 +2029,6 @@ static int start_kthread(unsigned int cpu)
- 
- 	if (IS_ERR(kthread)) {
- 		pr_err(BANNER "could not start sampling thread\n");
--		stop_per_cpu_kthreads();
- 		return -ENOMEM;
- 	}
- 
-@@ -2097,7 +2096,7 @@ static void osnoise_hotplug_workfn(struct
-work_struct *dummy)
- 		return;
- 
- 	guard(mutex)(&interface_lock);
--	guard(cpus_read_lock)();
-+	cpus_read_lock();
- 
- 	if (!cpu_online(cpu))
- 		return;
-@@ -2105,7 +2104,12 @@ static void osnoise_hotplug_workfn(struct
-work_struct *dummy)
- 	if (!cpumask_test_cpu(cpu, &osnoise_cpumask))
- 		return;
- 
--	start_kthread(cpu);
-+	if (start_kthread(cpu)) {
-+		cpus_read_unlock();
-+		stop_per_cpu_kthreads();
-+		return;
-+	}
-+	cpus_read_unlock();
- }
- 
- static DECLARE_WORK(osnoise_hotplug_work, osnoise_hotplug_workfn);
--- 
-2.15.2
-
+Regards,
+Markus
 
