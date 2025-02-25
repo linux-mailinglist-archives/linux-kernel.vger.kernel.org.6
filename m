@@ -1,99 +1,94 @@
-Return-Path: <linux-kernel+bounces-531264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F74DA43E35
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:50:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627F4A43E53
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CB607AC79B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:49:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCDC54438B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB71267B0E;
-	Tue, 25 Feb 2025 11:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D60267AE1;
+	Tue, 25 Feb 2025 11:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="VprRbqvo"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdcQkwlW"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EFC14A4E9;
-	Tue, 25 Feb 2025 11:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FDE15B980;
+	Tue, 25 Feb 2025 11:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484198; cv=none; b=C8lk79KWp3VXvqIDC+144W5Qjny6EMDmXqYw/bSRqHds9zhYOmWOv41GsvCbPIG6T2H2qU0ZqpLnpWtV909KwagumCg9XM/9Pu6Pk2MSNg5YKPIuDhtYTtKsqzYqizL9KoHZ0Pgz1pdtwpdNYbGZqbcCJ8xTOgBu+4IR1ZI2N2Y=
+	t=1740484214; cv=none; b=k6S9bB4bnn4zFndKMscChX6835JDxyMLTg0dQSf3k4cb4zF/1an46vGJY67Z4PX7EhJ240ZU69kOGqHqmvNoMjIoUHTRRi9c1YvBpsZjYuoqKU/3ejhmcz4FUikfrlC2BfkMUtO9O/O9lq767VohJlmm7qJlTjs3L9kQl720nAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484198; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=byJniACOklMvik0xaqn8ILQTEwvzA7cnusiRkjsQAwoE/93W2oC0zwIKVd1rlSVyG1CzveIg7q4dgBdOfiG8CAhd4FHG8kB1LKxExDMIQwvZGSWBIlkM9H4yFSoeJB8YdT8vlDwfTUuYd2Gh+VSgYNiyT6GqjrV7UWDt8e9XQd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=VprRbqvo; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1740484194; x=1741088994; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=VprRbqvoa2tuq4s0R27/ZxZzStATvxZNlpWCO80U9wu83NrpLwRcEISZg4C5kdot
-	 z6lnIf3igo0pXvG0AkkEa5jd6cskjOmI1lMp/eSSqnnVdU6+M+l7dm0C7pdeJipDr
-	 RBSazRXjNBFOq2/uzKUzg2GWDB0NvMsvhnThPrPi9GgSAEHVhRSWYQGOndQdd2xaf
-	 jNEHvfPRZ7NMUKBs6HmxsgLpPQhnpfeFNVJiBBe0/iM16iu9CmcXM1EWt6ZUjOpWz
-	 wtgmVOejCX2dVTgvjEpdL9dgc0/t1K1lTzXwmVPMYFS+fmUhRMZjfEjQeTHQefvzD
-	 0BUm16IXeSkjl3/ggw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.52]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M89Kr-1timiP1Kmh-00C0dT; Tue, 25
- Feb 2025 12:49:54 +0100
-Message-ID: <30ace3a6-f0e2-4dc6-b5ed-ef7af78adcfc@gmx.de>
-Date: Tue, 25 Feb 2025 12:49:54 +0100
+	s=arc-20240116; t=1740484214; c=relaxed/simple;
+	bh=UxEOdwg0ihDoq4aqItGrjjobZcNx/KJtRnB5kORZoJ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qOn/eglwxKU0N67UWa7mK0bKPQIfO04weobjaxDnKG/IoqonzR1HSXnV5+6HvTk7Pm0nTD4P87kY0LEn1QJemkhpJsiMfLHB8ExVepNMvTToOWh63wS1WEMr21kFhHcviO/LRnqH4wHXIPCOba2H8Nr76mq5aqaNtsYevaicIdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdcQkwlW; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740484212; x=1772020212;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=UxEOdwg0ihDoq4aqItGrjjobZcNx/KJtRnB5kORZoJ8=;
+  b=TdcQkwlWUIX4Y5BvZeljVEcrAU0OnZcE/HXOWAny1bPljIE6CF1PTd6a
+   jqxzRPOABwFpnmvXa9uvgbPyjgBAb6i5iyX51mWGSYaoSAlZPWoIyX3Nr
+   9jBD2Q7fFgmqqC6HiA2Hp9Y/otpFgh5hIhAZ6yxMOfi5ktYe0Z/VmuF8U
+   sA8Da8S+1deSscUYmFPHf38peXYeAmoW0igeaCB76Nr8T4jMI3cujAtTn
+   ydK8x/onC2D0zfna2M9x8v52dDNcM99EQYsq9miXTFjSFygdaEP5SoqXi
+   T8MtTLQT3eP2b3Lj2md8m78GsosTmGjlZOx/urVwZGSz+y7w9jXWW3HXZ
+   Q==;
+X-CSE-ConnectionGUID: msipkubiS/y4WBbFGfmPag==
+X-CSE-MsgGUID: QSuhhlQnSkmukogHQfiDNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="44109810"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="44109810"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:50:11 -0800
+X-CSE-ConnectionGUID: X9uOLBsgRPmzoEzQLs4odA==
+X-CSE-MsgGUID: clXZvq46Siynv1mc20Bw3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="121463642"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:50:11 -0800
+Received: from abityuts-desk1.ger.corp.intel.com (abityuts-desk1.fi.intel.com [10.237.68.150])
+	by linux.intel.com (Postfix) with ESMTP id CD69A20B5713;
+	Tue, 25 Feb 2025 03:50:09 -0800 (PST)
+Message-ID: <9446c26ad0a640b9f65ac8630f7878e76fe23c3c.camel@linux.intel.com>
+Subject: Re: [PATCH v2] cpuidle: intel_idle: Update MAINTAINERS
+From: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM
+ <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>, 
+ "Rafael J. Wysocki"
+	 <rjw@rjwysocki.net>
+Date: Tue, 25 Feb 2025 13:50:08 +0200
+In-Reply-To: <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
+References: <12621866.O9o76ZdvQC@rjwysocki.net>
+	 <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.13 000/137] 6.13.5-rc2 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:XzwzF56WR7hnlioLwEFgbZHw6IunB6xfiDGWfnzGIYyqxNkO5zD
- wQEoGBPjsO9gxfA+69w3lJpokQZzQlXL+dtwKhs/2+X/JuUaemmwbJ33PZmdtg9dxtpUlSe
- 8MdrxELVBZryDUdxRq+IBnSyhAtDBQiaC9JrCuXWjRKghJEUFxUdpLXp3JN9o6PZQ5MZpVH
- 7s+s+UIij3rTG9uUDSO8A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ns34rmsCxhM=;Y3fm3R9DfWUksw+3Fkx9yxedwit
- ZO3X/r7/DsUqM0ewMwn4gDEOTh4YX2MdoGcbsNbTN8twu1fey+eLvmRQg+BRtwsz4eOcytjpV
- S0s6sENbxYB/jPTe3UnhT7RRqKqyvpA3jM1cslOn20BBhxPtR06YqTedh03KDEtATvrdW+aYS
- f31I8lsBY0Hl/IvgPbrFI01QzGpEJH3AQvISAcDhsNmMIRSurOkktKMTgA5RimUVBj0kZMdzh
- nXN38VU1Odlc2afn8etAYBQjEr+kA55izFJVvp9Xq1mVFZBpQR5KPSR0T4Zs6guKzQ/iaY688
- MQj7hAAie9+f5uWgzlluzCefE/edUUVHA/dQmvdj/Y7oDEeue7btxYtYvnAtlpz/pBIBzTvnj
- bV0gi5sZwoOz2IQnQgrolqRC6VobjKphRc2OJtLdPuR3x3Dbv0ESUK76MmcSzOey6OQo6+8pQ
- 4U7C8lEzN+bIF4TjLxIH30nElrM6D+YorzNOQNBqJ0DhD0l2Zz5Au6jqG2trNJHLSFNt/TODP
- ucE6HnZfITn8bujoVfWIHy22Ug5BDdNPk12OMQGzfGXNizHXoeOn3PSdXdYvQFqGZ8m2Lbk8O
- 5E4m+sObD+f2ycp7s19BQaOKDD7oVqiXJocDf7fydRVmUJcx63nmU6ZwE9y6xeoKKZJIUkQxB
- 6J+VIK1H0deWvPnX3NrUtk5jkKmyGkcmbVRJbvDD8GH5iizaSgpz/BAs3lMmvfOTSZUnvz0g6
- a1JXOD/xcO2tAlZHFA2KKSuUGMieyLEC4aR2TxO04d/wppuF/VqdgTdtzVj8Nmia49O5YiJ66
- 43RnU695tPoWmWCr235IfUZEkOf0MGtm8/ONJbRvSEBl2t+Sq3ULixYECFV+qDF3ACRBkBHsx
- BZexcBULTO9jsbqLuHjNMseXkFbWimJZNt51paiVyJbrfIYCM0aZk6VFfuOyIZMNq2SPbgRzb
- KPA+6mwPN9dS0OllEjUL16X3pB+zZ+8cFiRTzz7StZ/MU9TnlsBCfyHHwzp6M2dq7DRQcSsYB
- FUVhN6of/1BMXe9XJfudwsmxy4kgpuquU46J9YTFCUUr34Ruw7HakkUuclZD7c7SXPdMr7Qlh
- KMlh+27SloKBEyCUm4Y5bn0d0oGT38QfJ7J1L3Wx2HE3c+Ovoi96oP+tj7pS1IhxBwnU8pagd
- JDD5H/PiiTW+fnIeiBEHWWPujemo2DtedBJp5Lr4s7eh5LE9hvZqL4+zMPQGgWPUgDBHdyRK7
- vrwpYgeIfLIwofGAHumau9MfeO0bn9ernQywCjfYbReLpXLVO+cGQbXvJ5qHI7R20FjiPt+eB
- 5Rc2Q7G59otCGp9hvsRiwCXBMPy6Bq9O867tWp39TGxy01PDzwWnzwNhbGLe09RO9CWCI6peR
- AWI1iXl/xCFcNNM/QhpErj5DpzCsMZ87j/ZL+c9nQsl6NkoH2nQ9eKYHj9
 
-Hi Greg
+On Tue, 2025-02-25 at 12:41 +0100, Rafael J. Wysocki wrote:
+> > v1 -> v2:
+> > =C2=A0=C2=A0=C2=A0 * Add an alternative address for Artem and change hi=
+s role to M.
+> > =C2=A0=C2=A0=C2=A0 * Change the development git tree link.
+>=20
+> I am assuming no objections.
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
-
-Thanks
-
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Oh, yes, thanks!
 
