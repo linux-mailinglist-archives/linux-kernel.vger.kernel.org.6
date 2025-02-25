@@ -1,140 +1,83 @@
-Return-Path: <linux-kernel+bounces-531531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E86A44199
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:02:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AA7DA44187
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:59:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B65853ACC7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:57:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF07169525
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CA426BD98;
-	Tue, 25 Feb 2025 13:55:23 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D09426A0AC;
+	Tue, 25 Feb 2025 13:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0in2wbK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A81269D06
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD44D269D06
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740491723; cv=none; b=lbtKA9TQ3ty+yKSHsiSeV2SIssnVVQ94fyWnJ/NHmmDkGgNYu+gHaFtiOWfVEX4imk9jJtLbyAi/XOcHnxRhkI7nY/oPCL13u9TmhYX2mocKodElyP1XCPHg22x4Xx1y5YukUeHcBbjh3iIYHGnEXM2BSx78ItmyfUI3xCNG6sI=
+	t=1740491756; cv=none; b=jZRX2w638EsA9kTLe55s5g1c2iBCruC8Doj39mODaOxBCmcX8eZ3sulB05YDje5nTl4nJT4UCtdevdFduL0t04aWUz8jT9fzGjqr8TKz56+qFeodWR2jxfqWsY1CXuzPXy9XgVKZ8ABbuQv9ihBJyz0DcdrgcmvoJrIpSeOWVNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740491723; c=relaxed/simple;
-	bh=VcJKrlbLSdRhpFre3KIRw2OrgXKAi3d9H2jhcUDLdk8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ITBMs7K2VhW7fIaAxIoTPOWUw8RriCJKEl34HhTdLO+x174gqHfb49X9Fp/3FVAFcqncEPdgoISGfQDxUlvsNJXICYRqIuVTn39lcOS4WCJkDyRGADARNCsuSTibdNeJDQIi0NCd9OStNlbL0/YOuzOYgq9y4YxwPFIqwg+gCiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmvP0-0003K8-TI; Tue, 25 Feb 2025 14:55:14 +0100
-Received: from lupine.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::4e] helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmvP0-002mjO-1D;
-	Tue, 25 Feb 2025 14:55:14 +0100
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1tmvP0-0009vz-0s;
-	Tue, 25 Feb 2025 14:55:14 +0100
-Message-ID: <460ce86a847cb13e6e51cf0c89a65602e0080e67.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/8] dt-bindings: dsp: fsl,dsp: Add resets property
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Daniel Baluta <daniel.baluta@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>, robh@kernel.org,
- krzk+dt@kernel.org,  shawnguo@kernel.org, mathieu.poirier@linaro.org,
- conor+dt@kernel.org,  s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com,  linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev, 
- linux-arm-kernel@lists.infradead.org, linux-remoteproc@vger.kernel.org, 
- andersson@kernel.org, Frank.Li@nxp.com, peng.fan@nxp.com, 
- laurentiu.mihalcea@nxp.com, iuliana.prodan@nxp.com
-Date: Tue, 25 Feb 2025 14:55:14 +0100
-In-Reply-To: <CAEnQRZBL+r2-CRDszK54SD_8E9=1QRKRj3_YDHsM7YetKMcs_w@mail.gmail.com>
-References: <20250225102005.408773-1-daniel.baluta@nxp.com>
-	 <20250225102005.408773-3-daniel.baluta@nxp.com>
-	 <78e60d723c27b7fa0f03bc6a74f6ad37d6508734.camel@pengutronix.de>
-	 <CAEnQRZBL+r2-CRDszK54SD_8E9=1QRKRj3_YDHsM7YetKMcs_w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1740491756; c=relaxed/simple;
+	bh=HeiWbUguAKUYy1aVv0iBfNJLRPPEIGhzLryoTTLyFIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZyXfIurBdSc1SEZ9Tp6Z4qOH1P3UM0EmPLQkJPQtrwy/e3k3ykIVQ4Bj/N6W+gQYrh7y+mgSZohSC/C+Epp9bwo3B6bKt0eFWZh5Tl2+h80RRj/gsEZ88VoPO9zxwCIhiH7UrumVPzP7mV3EoZwgZNoAWng8ZOJL/U3dkp/GMiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0in2wbK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F066C4CEDD;
+	Tue, 25 Feb 2025 13:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740491756;
+	bh=HeiWbUguAKUYy1aVv0iBfNJLRPPEIGhzLryoTTLyFIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0in2wbKSIU1S5+2vstT9d7ZxIjjOSs0YlwaW2tnv/XWu0no/PgMsvAKM4wI+QciP
+	 vNevM+ZgL5YXC4a0TB6IExzKwo/c8+xkCBuwvSBsI1h9Sa5FZnjUzQap4yh2m3FxhY
+	 bvajFRqXn46FDxgd64ykCyTtczVGwUH8vQs6MKJ6/PAIYfbiFTAtoBNXrTZ1kr0CWo
+	 0G3co3+uczamhorX37a5A1hBMsuD59KrKxAE0teGfRHyXVRXGJwqGblV7qnU+GCHnq
+	 pshmjvXUmbk+OFTLLgqZGc4pDW7RCr2wqDSzYAwOon7UHAqoKZypQ4twjSlpTpgV6B
+	 pAmqX1Qu0WZkA==
+Date: Tue, 25 Feb 2025 14:55:51 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Matthew Brost <matthew.brost@intel.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/sched: Remove kthread header
+Message-ID: <Z73L5_wrBWudDemZ@cassiopeiae>
+References: <20250225131332.83415-2-phasta@kernel.org>
+ <20250225131332.83415-4-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225131332.83415-4-phasta@kernel.org>
 
-Hi Daniel,
+On Tue, Feb 25, 2025 at 02:13:34PM +0100, Philipp Stanner wrote:
+> The kthread header doesn't need to be included anymore. It's a relict
+> from the days when the scheduler was still using a kthread instead of
+> workqueues.
+> 
+> Remove the unneeded includes.
+> 
+> Fixes: a6149f039369 ("drm/sched: Convert drm scheduler to use a work queue rather than kthread")
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+> I'm not sure whether we should Cc the stable kernel. It's inconvenient
+> and makes build times slower, but isn't really a bug.
 
-On Di, 2025-02-25 at 15:41 +0200, Daniel Baluta wrote:
-> Hello Philipp,
->=20
-> Thanks for your comments!
->=20
-> > The DAP core reset is mentioned in the commit message. Why is it
-> > missing here? After reading the discussion in [1], I'd expect both the
-> > stall and the (core) reset signal to be documented, something like:
->=20
-> There is no reset controller driver for DAP area yet.
-
-This is about the device tree bindings, not the driver. Even if the
-driver maps DAP address space with a hard-coded address, ...
-
-> We manipulate the bits directly by remapping the DAP address space
-> inside remoteproc driver.
-
-... which it should not, the bindings could already correctly describe
-the core reset.
-
-I'd just like to make sure that there will be no confusion about the
-stall "reset" signal, and adding a reset-names property would be an
-easy way to do it.
-
-> See for example: drivers/remoteproc/imx_dsp_rproc.c
->=20
-> /* Reset function for DSP on i.MX8MP */
-> static int imx8mp_dsp_reset(struct imx_dsp_rproc *priv)
-> {
-> =C2=BB       void __iomem *dap =3D ioremap_wc(IMX8M_DAP_DEBUG,
-> IMX8M_DAP_DEBUG_SIZE);
-> =C2=BB       int pwrctl;
->=20
-> =C2=BB       /* Put DSP into reset and stall */
-> =C2=BB       pwrctl =3D readl(dap + IMX8M_DAP_PWRCTL);
-> =C2=BB       pwrctl |=3D IMX8M_PWRCTL_CORERESET;
-> =C2=BB       writel(pwrctl, dap + IMX8M_DAP_PWRCTL);
->=20
->=20
-> If we agree that this is the right way to go, the next step would be
-> to create a new reset controller driver for DAP area.
->
-> I want to keep this as a follow up patch in order to not compilate
-> this patch series even more.
-
-I have no issues with adding a reset driver for the DAP region and
-hooking it up to the DSP driver in a separate series, but the device
-tree bindings could be correct from the start.
-
-> > Is there nothing else in this range that will have to be controlled by
-> > the DSP driver in the future, such as the IMPWIRE register or the
-> > XOCDMODE[OCDHALTONRESET] bit?
->=20
-> We are internally running SOF for couple of years now and we didn't
-> need any of these bits.
-
-Ok.
-
-regards
-Philipp
+I don't think that's needed. Analogous to the previous patch of this series, I
+don't even think it should have a 'Fixes' tag.
 
