@@ -1,210 +1,173 @@
-Return-Path: <linux-kernel+bounces-532555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E9DA44F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:51:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21959A44F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:52:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EB29189C708
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:51:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DAA87AA4BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6257521148B;
-	Tue, 25 Feb 2025 21:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44C0212B0E;
+	Tue, 25 Feb 2025 21:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwG+IMni"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b="GJVmQA6y"
+Received: from rcdn-iport-5.cisco.com (rcdn-iport-5.cisco.com [173.37.86.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6B420FA9B;
-	Tue, 25 Feb 2025 21:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E330920FA9B;
+	Tue, 25 Feb 2025 21:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520298; cv=none; b=pnI0p9vh3vvtEdkGVZj2JRxptNwPWhEEiFR8SCrrEcQcP81WhJyqU+SeypAi2/WdqoNlISNlXqupwv1OcXE9ByjWWjVqepBPM+5OHl48gbLexFJ2+bgBjJgi+Txf4CPQ1sGAIPSDndGmS7nkLU9+PHvwgh9jXAPn2KyLZdTmojU=
+	t=1740520320; cv=none; b=m3Sqf6Vy9PBl/HJNp0I5FAjVZl8PPvtvW0L9NhlPjWK/Co0mf0SjKfrEJkTtRAsSWVs49cipu/QEuLYCyWZU/9BfvG9XUgnlgSAkC9+KWYGrVjtbeohBwJJjkuf+/NDOBVelkq+hHJ85rvJ7kiqkzdATrrc4cH3A7Z/0bYQF9rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520298; c=relaxed/simple;
-	bh=zUHi0AJJJCLJAhCclTuxVVO4dK4Q4dVPyAyoh9UCuUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SMnqnM+CZk1ZQkHOnWxthyS15oUzVNr9Je+2KaPrwfaZo1v/VkowTEbHDKxusLZLCEH+MQg+JNhz/ZpaCSbL3NPLHy/hMIc0TIf33uGu+jHx9xkT2I0W91TDR2Bw5+BeNc7UfKla9JHlLNfkbe2a3uJTjRqxfsN8Kois0TtEGJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwG+IMni; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220dc3831e3so3664085ad.0;
-        Tue, 25 Feb 2025 13:51:36 -0800 (PST)
+	s=arc-20240116; t=1740520320; c=relaxed/simple;
+	bh=/mVb1cWmahOS0hdzk0lGF9RbsSLIIt2giyY6mwneQAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bJem0/6PQL8Fh2THk9JZZhvObrVrTPU+gU156y6Ab/jy0fgKr+g402j9Sx0b4KDiTZ/O57h9C84+P6SzRrAAHtwSUQr9771d7F+7aLxl/r6mCt3VIbx81UzpBIQC8AWcTasYOjwPyGcrY8BBskiYgSQhVq59OLBkBugrtX3i3Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (2048-bit key) header.d=cisco.com header.i=@cisco.com header.b=GJVmQA6y; arc=none smtp.client-ip=173.37.86.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740520296; x=1741125096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=h7px0Ndhq9lUrgjQFROlw953RzIYIbSKavntnqGmD0o=;
-        b=dwG+IMniUYf2p1qda68B1mtsr60oJAeuQAi0nas/JJ6z2CqPrICvh+A6kVgYEm5zpe
-         xBbNYAWDS2MGJtTmpeC9bv+VKjkcz1iYBGgD+wZ3W7yZFhqhTRedBg0JQH+tquxNKHkR
-         XB4j/bzUvrmPewQnE7q+ewHdbLAhKfyUzzoa7nLrU0zQdMJ05GFSSPn7UpWLxsrrLCcm
-         C89OKxi8Z0q5U6YukuEHRz7m+WtwBHxG/gvTuLrUpPG9sWDDY3+15NUJ5S6OKS4qS3pr
-         QqCX+vZs5AduQRYn1B+GFVKHccoNxWjuPBVkCHwu+jKC5aoM6O18/fPbbTattTpB5f7j
-         oDjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740520296; x=1741125096;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h7px0Ndhq9lUrgjQFROlw953RzIYIbSKavntnqGmD0o=;
-        b=jVc01eEU/UedD2sDBdGBrZVwGhRiV3LR2dDXfhNzjbfnOh3bKq++3sTpetyDxSb0cE
-         QIZH99V7GEwIMQ9y9HY5EGdYRcdP77NFqapBYSAju9dvmeOK3bEpMWhNIV4FzqnjS+eE
-         JSbdhXbvrhTEUtijz+1G0RM6ItO6tMYjMjGc7OVA2uPou147XQtrWxKF1jY9UBYEZv8m
-         xhDlCAtoHhZGwKZbokj4ANDCSWwM0zhrLJFrot8+TCUAXaaMsSQArxRKQCM0WT/miayx
-         kLlN2iwcp8kKXDjnfXyGdWu6DS0W1BFPxsUNj4GbJP78akP/kLg+R+zQ/HvK1NY7hYoo
-         +Llw==
-X-Forwarded-Encrypted: i=1; AJvYcCVookOBBK32azw9E5QZKwe1vJUkkh0OSwaL9H0UfVd48Dby+wE7W4hgxAZf3t17cfLAL4wBzL50vzXxK2c=@vger.kernel.org, AJvYcCWdqqD8lWUySZQ+Y+TCF6W7kBcnKETzEHJL3+qVqKopdegEWoEWORs94QzWb9wC8XQtbIL+tCqOKpaUJX21DRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCqKvFswCGgQB8jS+90OmUkaJulnvfqS19fnxZJZiIvuWRWpah
-	R5rSgCF/ddgFy7f2l3cSCGqQffqa3Toy6jdL3Vm8OX1CaT/AzN65wUj7nA==
-X-Gm-Gg: ASbGncsyewRSAS94e/5i5JlvfQAi1pIZHqIiwCXF7/Wi2RkgBfsxIqdjyOzn+5f9+RH
-	PVQZygKtUnTU1PJowvFtCvhXiQGrCSNEn4I9O1KSFi5RCv5i+DN3U9m4ojZvLl4sOYTMRJaEl1G
-	PJS/w5WNqtNdigf6C/g8IfeU1FWRjNjKix3bYAC9IMrBfGyvK8OZx86tbp9bKsb0OKUOUGCE22u
-	2xgBwY6t7AHQeCxIct79ePRwNdyl+6X0XGhD6yxbrT7/pGsxbooOeXWiECrbRV0mGPpjfVnkXtU
-	xjzd8qbqMMwp8UN7apc0Tx+9Ulvrlg+wst0Y2WnY0OAac1zpTwqG9jXUE8gKmZzGVpI7pl1zTkU
-	=
-X-Google-Smtp-Source: AGHT+IFDUxCf16vlokyauZ7By83P4bZv10+rmxrvEgQvW7LhaUGLdE7Sqg2syC9gOosegx4KhIy6Dg==
-X-Received: by 2002:a05:6a21:150b:b0:1ee:c8a4:c329 with SMTP id adf61e73a8af0-1eee2c8c34cmr36492575637.0.1740520295994;
-        Tue, 25 Feb 2025 13:51:35 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aeda75a0bb7sm1883945a12.12.2025.02.25.13.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 13:51:34 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2547277e-d9c0-4138-abaa-7afbff1ba3ca@roeck-us.net>
-Date: Tue, 25 Feb 2025 13:51:32 -0800
+  d=cisco.com; i=@cisco.com; l=2219; q=dns/txt;
+  s=iport01; t=1740520318; x=1741729918;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3MonZo2jXloOtsIh/XS4/JCVgUFE8L/wLWsGXbbJe80=;
+  b=GJVmQA6yInGZMiaPl6JCOzMCmdHL05zfkoYhInXDhmKhO1iGPNHfaklD
+   QeDAC9bWUqEwljtp3W9aLIbGjJoCF/riUKDhBNt/wqP97ncQH7ks0P3DR
+   3WHIAzlv6vpG4hglpZTkyqsKW453H5kCe6S4anjURqEXREilp+fmO1M9p
+   GH1gsM5wBGRe+g4qbpKqjqth8OuilJQ9+TIiEztPG/rQ1HymtBQ4i2atH
+   9+bcwvFUhgju8UvWhXQB2tEUUeCmKgJWWBq9ufTFt8rv0U15vCuXsAxs4
+   E9YuSu62QZhGX9dOqwfy69x/fRnI6HBsQjYIQwQSO362HDwT3koO4lUNh
+   g==;
+X-CSE-ConnectionGUID: KE9Qo0bbSXGDID3eKMJerg==
+X-CSE-MsgGUID: +K+bT5CWQNGDdrO7PyF2Sw==
+X-IPAS-Result: =?us-ascii?q?A0ANAACsOr5n/4r/Ja1aGwEBAQEBAQEBBQEBARIBAQEDA?=
+ =?us-ascii?q?wEBAYF/BgEBAQsBgkqBT0MZL4xyp2qBJQNWDwEBAQ9EBAEBhQeLEwImNAkOA?=
+ =?us-ascii?q?QIEAQEBAQMCAwEBAQEBAQEBAQEBCwEBBQEBAQIBBwWBDhOGCIZdKwsBRoFQg?=
+ =?us-ascii?q?wKCZQOvLIF5M4EB3jSBboFIAY1KcIR3JxUGgUlEhH2BUoM+hXcEh1unakiBI?=
+ =?us-ascii?q?QNZLAFVEw0KCwcFgXEDNQwLLhWBRkM3gkVpSToCDQI1gh58giuEVIRDhEGFU?=
+ =?us-ascii?q?oIRiz2ECkADCxgNSBEsNxQbBj5uB6ArPIQ8gQ4UgiwpOqURoQSEJaFIGjOqV?=
+ =?us-ascii?q?S6YT6kwgWc8gVkzGggbFYMiUhkPji0Wz0YlMjwCBwsBAQMJkWUBAQ?=
+IronPort-Data: A9a23:oGEi/6B2brRCaRVW/wLiw5YqxClBgxIJ4kV8jS/XYbTApGsh3zcDn
+ DdNDTvQOf6MNmLxLot+Ot++p0MEuZ/Sx4MxOVdlrnsFo1CmBibm6XV1Cm+qYkt+++WaFBoPA
+ /02M4eGdIZsCCeB/n9BC5C5xVFkz6aEW7HgP+DNPyF1VGdMRTwo4f5Zs7ZRbrVA357gWGthh
+ fuo+5eCYAX/hmYuWo4pw/vrRC1H7ayaVAww5jTSVdgT1HfCmn8cCo4oJK3ZBxPQXolOE+emc
+ P3Ixbe/83mx109F5gSNy+uTnuUiG9Y+DCDW4pZkc/HKbitq+kTe5p0G2M80Mi+7vdkmc+dZk
+ 72hvbToIesg0zaldO41C3G0GAkmVUFKFSOuzXWX6aSuI0P6n3TE4Ng/NUZuN4cjyslbIE0V+
+ N89Cj0XYUXW7w626OrTpuhEnM8vKozveYgYoHwllWifBvc9SpeFSKLPjTNa9G5v3YYVQrCEO
+ pdfMGE/BPjDS0Un1lM/C5skgOasj3rXeDxDo1XTrq0yi4TW5FcrjeWzYYKIIbRmQ+0WvQWSm
+ j/twF3fLT0WLvvA8SurqEmz07qncSTTHdh6+KeD3vJjhhuYz3YLBRsKWEGTpfi/g1S5HdVFJ
+ CQ8+Ccsp4A29Uq2Xp/8VRj+q3mB1jYZUsBMEut88AyRx7DP7gCxAXINRTpMLtchsaceQT0sy
+ 0/MnN7zAzFrmKOaRGjb9bqOqz62fy8PIgcqYS4CUBtA+NL4oaktgR/VCNVuCqi4ipvyAz6Y/
+ tyRhDI1i7NWiYsA0L+2uAiexTmtvZPOCAUy4207Q16Y0++wX6b9D6TA1LQRxawowFqxJrVZg
+ EU5pg==
+IronPort-HdrOrdr: A9a23:xFetjq/azUuT4MjXH8duk+DrI+orL9Y04lQ7vn2ZhyY4TiX+rb
+ HNoB1173HJYVoqMk3I+urwW5VoI0m8yXcd2+B4VotKNzOIhILHFuxfxLqn6yH8GiH46+5W3b
+ ptfuxDEtHqZGIK6PoSmDPZLz7lq+P3l5xBQozlvhNQcT0=
+X-Talos-CUID: =?us-ascii?q?9a23=3A1Ebptmk2CNcu6gu+JKXsbgjZVW3XOV7wnU7Xe0W?=
+ =?us-ascii?q?yMlZGZJy5ElKz3YFpicU7zg=3D=3D?=
+X-Talos-MUID: 9a23:Pr8M8QWvTBq8+Vrq/HzPxzteaexX2oKBJEwXtso+qufeDjMlbg==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
+   d="scan'208";a="325569053"
+Received: from rcdn-l-core-01.cisco.com ([173.37.255.138])
+  by rcdn-iport-5.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 25 Feb 2025 21:51:56 +0000
+Received: from fedora.cisco.com (unknown [10.188.0.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by rcdn-l-core-01.cisco.com (Postfix) with ESMTPSA id 154BC18000294;
+	Tue, 25 Feb 2025 21:51:54 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH 1/2] scsi: fnic: Replace fnic->lock_flags with local flags
+Date: Tue, 25 Feb 2025 13:51:45 -0800
+Message-ID: <20250225215146.4937-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] watchdog: sunxi_wdt: Allow watchdog to remain enabled
- after probe
-To: Regis Dargent <regis.dargent@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, linux-watchdog@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250225143638.1989755-1-regis.dargent@gmail.com>
- <20250225143638.1989755-2-regis.dargent@gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20250225143638.1989755-2-regis.dargent@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.188.0.187, [10.188.0.187]
+X-Outbound-Node: rcdn-l-core-01.cisco.com
 
-On 2/25/25 06:36, Regis Dargent wrote:
-> If the watchdog is already running during probe, let it run on, read its
-> configured timeout, and set its status so that it is correctly handled by the
-> kernel.
-> 
-> Signed-off-by: Regis Dargent <regis.dargent@gmail.com>
-> 
-> --
-> 
-> Changelog v1..v2:
-> - add sunxi_wdt_read_timeout function
-> - add signed-off-by tag
-> 
-> Changelog v2..v3:
-> - WDIOF_SETTIMEOUT was set twice, and other code cleanup
-> ---
->   drivers/watchdog/sunxi_wdt.c | 45 ++++++++++++++++++++++++++++++++++--
->   1 file changed, 43 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
-> index b85354a99582..d509dbcb77ce 100644
-> --- a/drivers/watchdog/sunxi_wdt.c
-> +++ b/drivers/watchdog/sunxi_wdt.c
-> @@ -140,6 +140,7 @@ static int sunxi_wdt_set_timeout(struct watchdog_device *wdt_dev,
->   		timeout++;
->   
->   	sunxi_wdt->wdt_dev.timeout = timeout;
-> +	sunxi_wdt->wdt_dev.max_hw_heartbeat_ms = 0;
->   
->   	reg = readl(wdt_base + regs->wdt_mode);
->   	reg &= ~(WDT_TIMEOUT_MASK << regs->wdt_timeout_shift);
-> @@ -152,6 +153,32 @@ static int sunxi_wdt_set_timeout(struct watchdog_device *wdt_dev,
->   	return 0;
->   }
->   
-> +static int sunxi_wdt_read_timeout(struct watchdog_device *wdt_dev)
-> +{
-> +	struct sunxi_wdt_dev *sunxi_wdt = watchdog_get_drvdata(wdt_dev);
-> +	void __iomem *wdt_base = sunxi_wdt->wdt_base;
-> +	const struct sunxi_wdt_reg *regs = sunxi_wdt->wdt_regs;
-> +	int i;
-> +	u32 reg;
-> +
-> +	reg = readl(wdt_base + regs->wdt_mode);
-> +	reg >>= regs->wdt_timeout_shift;
-> +	reg &= WDT_TIMEOUT_MASK;
-> +
-> +	/* Start at 0 which actually means 0.5s */
-> +	for (i = 0; (i < WDT_MAX_TIMEOUT) && (wdt_timeout_map[i] != reg); i++)
+Replace fnic->lock_flags with local variable for usage with spinlocks
+in fdls_schedule_oxid_free_retry_work.
 
-Unnecessary (). On top of that, its complexity is unnecessary.
-The timeout in seconds, except for reg == 0, is wdt_timeout_map[reg],
-with values of 0x0c..0x0f undefined. Worse, the above code can access
-beyond the size of wdt_timeout_map[] if reg >= 0x0c.
+Suggested-by: Dan Carpenter <dan.carpenter@linaro.org>
+Fixes: a63e78eb2b0f ("scsi: fnic: Add support for fabric based solicited requests and responses")
+Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
+Reviewed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
+Reviewed-by: Gian Carlo Boffa <gcboffa@cisco.com>
+Reviewed-by: Arun Easi <aeasi@cisco.com>
+Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
+---
+ drivers/scsi/fnic/fdls_disc.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-> +		;
-> +	if (i == 0) {
-> +		wdt_dev->timeout = 1;
-> +		wdt_dev->max_hw_heartbeat_ms = 500;
-
-This is an unacceptable API abuse. max_hw_heartbeat_ms, if set,
-should be 16000, not 500. You could set the timeout to 1 second instead.
-
-Guenter
+diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
+index 3a41e92d5fd6..8843d9486dbb 100644
+--- a/drivers/scsi/fnic/fdls_disc.c
++++ b/drivers/scsi/fnic/fdls_disc.c
+@@ -308,23 +308,24 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+ 	struct fnic *fnic = iport->fnic;
+ 	struct reclaim_entry_s *reclaim_entry;
+ 	unsigned long delay_j = msecs_to_jiffies(OXID_RECLAIM_TOV(iport));
++	unsigned long flags;
+ 	int idx;
+ 
+-	spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
++	spin_lock_irqsave(&fnic->fnic_lock, flags);
+ 
+ 	for_each_set_bit(idx, oxid_pool->pending_schedule_free, FNIC_OXID_POOL_SZ) {
+ 
+ 		FNIC_FCS_DBG(KERN_INFO, fnic->host, fnic->fnic_num,
+ 			"Schedule oxid free. oxid idx: %d\n", idx);
+ 
+-		spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ 		reclaim_entry = kzalloc(sizeof(*reclaim_entry), GFP_KERNEL);
+-		spin_lock_irqsave(&fnic->fnic_lock, fnic->lock_flags);
++		spin_lock_irqsave(&fnic->fnic_lock, flags);
+ 
+ 		if (!reclaim_entry) {
+ 			schedule_delayed_work(&oxid_pool->schedule_oxid_free_retry,
+ 				msecs_to_jiffies(SCHEDULE_OXID_FREE_RETRY_TIME));
+-			spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++			spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ 			return;
+ 		}
+ 
+@@ -339,7 +340,7 @@ void fdls_schedule_oxid_free_retry_work(struct work_struct *work)
+ 		}
+ 	}
+ 
+-	spin_unlock_irqrestore(&fnic->fnic_lock, fnic->lock_flags);
++	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
+ }
+ 
+ static bool fdls_is_oxid_fabric_req(uint16_t oxid)
+-- 
+2.47.1
 
 
