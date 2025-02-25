@@ -1,165 +1,270 @@
-Return-Path: <linux-kernel+bounces-531019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BE5A43B1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:17:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2AFA43B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:18:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C316E1886AC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:14:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9593A33A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22BE265CB1;
-	Tue, 25 Feb 2025 10:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA85A262D07;
+	Tue, 25 Feb 2025 10:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tN/8iZaR"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uUcArU5m"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F92225486D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB0025EF8A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740478409; cv=none; b=Srx1BY2ErBLC5r9ZmRLYibn3bpshFK949VYfXMGbOTVLuBWqa0hJErYxH5AjrvhX/IJqGuRuecaLeFFFsTqABEqknWionhTIyODgk7RGYQEKzRtMCMiV+Rw5LXDhi78SokQYAroqul7qrapSx8Slj5TlSBvuS7BbgYIyBKrWYf0=
+	t=1740478431; cv=none; b=AURDqSkpwooO/ikHQS1JxtCW2ek91/+KbyPD49DLluvUwWGwRXmAV48sXf+k97jAk1WL8i8bxX5QhgDYCnO3uIaJ2GofRAmklMYIAG59qSTp9+YLcDot7OMZxa9Y5N2olnnJjTZzZCiBbCYab8zV7L5gFNZpUsO0gkVp59Zaimk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740478409; c=relaxed/simple;
-	bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PWN0HNVYQ8FgCNXTvqlpB9Ww2sY8bx3R85Av5Un8jxRVu99SxPlE4J1bQ0a51h4y+p+W/0XHsXLjRY749MhWZEPVfX1y7iHPodHEdH1CX9Rlu+SswtpLTPBiKFtXxV7EknjINjd4HfjjUv1vPkG1l6incNfUJHmvH0yU9QfyWNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tN/8iZaR; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so9672135a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:13:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740478405; x=1741083205; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
-        b=tN/8iZaRJBptsCbYlIe9njuwvXjQzgU5BQCsxVWEApQjzH2QYMk4q1da+xEqBlMMPq
-         Ffo9d0d/nsu7AXMKMpPlVJRh5X3lKRzbZljmGlqnlsKQCZeG4cPPB+391Nr66QCkjoZp
-         zls42s8eHlI5YUHon0b7ureop1FbMMzExoBPKFZK64mA8X2Rd+0zHivFwJKEAHSscB/0
-         CSkENoaIgPcP7AErrYxMoUgfWkm2RM0Sr9dFLanYWbUWJX4Q/EDBRI+/4EYktwyn7o9S
-         JvDbYoyERVNQ8KpId31QJ9d60U9kdrCdbHgGpzelaJe3Z/vINDg/+2agBdtVowZsvAzX
-         oSrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740478405; x=1741083205;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GmPZTrUL5VmBJD+i4cq0Kpx3DIpVJnr1M/2XQaV5Vgw=;
-        b=bfoQlkx8usmxldA2QOslDfvbdGn9AiPgiOIYMgzzmD37nDSWiSq2r/4k2eOQPVmlVx
-         m7L8ojJMePRhCNI1drYrCtDbYs3QTPqc+/GACe0aXMK8VmPWCpFdatOsLpqGWthdaO70
-         uIT99a+SkLLmTGgpFm09CLMeQda0qYeBeyxCJgHmF28Z2AB5DiPRKf4TGiJZIpN55j7N
-         JtoHPtcnmzheFd8OBblxLpqfqm4QI8kcMBz6YNcAFSnj/gyajNyQ1ubrg6HffijyBfbZ
-         Sp4ylPyBBhqPRYpmtanJPBRlMTaizFDsVykpOkzaYuHxTgmtLlvp2ThODTIEmf7iON/O
-         5RkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Oa7vubQQFubc+h9YzxtiryeN0RVecFt4eOEZl2KRWMqV1okQV5b10P81sJQgUtcDRWSYtB0zEb1OFnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWIj8i5N4inxj4lDxIsUUizwu3MhVFr/vOCLBjjQwz8Lk9V/nm
-	voiVTBWT39UPoqYxD0x4alXxVeHIN4uBCep1oPjQkcpr67T48WlCy4GL6Rr1l4My3AdHn1JJ3FN
-	bwgs51nadPG6vDOfqApxHkZRAvokwUsrz2EhUWg==
-X-Gm-Gg: ASbGncuzy9QprZXPwGrUr+MKLEgl6QfooHSvk9yyMv0TGHKccUz9B5SMwfjRt8Vefmn
-	kP6hMMg/awGQEMpSm9PzujR4tOw080XtnVZkRV4MvzFcHLAvy5HR+a5zU9dglrNFQao2y4rC6e7
-	qyOZKefhGbr2huw/uM5TEa86mNEwPp0tSlohPI
-X-Google-Smtp-Source: AGHT+IHRStcu9HegPXd2HjXOYrNAxroYBpglNd/obIxLjZ6LqADm2z000PieLRyQ+GzPVyjZk8kBb0aXPwWxrx/BJpM=
-X-Received: by 2002:a17:906:308f:b0:ab7:e73a:f2c8 with SMTP id
- a640c23a62f3a-abed0d3eb46mr221769566b.26.1740478405372; Tue, 25 Feb 2025
- 02:13:25 -0800 (PST)
+	s=arc-20240116; t=1740478431; c=relaxed/simple;
+	bh=EK2z1/mY11k+Yb49rOAUKqHQhZiWMwS9lP8bNojUrdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=sEePn0fJtO9NuFoevMvsLD93DvYM6LpQKdUUVfQ6vqIwfGEw2pwm/JlnbNLBFHF7Lp5ptdG4vYIfpuIL6TNFZXYbGSH0/3NubxG3mHdgfL0cNBP2G8jmfcY74eITz+cQIsI4BWNS1fIWkmiTqz+SplEaY/ukxcev4QVYdGaLcmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uUcArU5m; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250225101340euoutp027a55f4a1ce67c4909afc162129acd29d~na_by6P9c2419524195euoutp02g
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:13:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250225101340euoutp027a55f4a1ce67c4909afc162129acd29d~na_by6P9c2419524195euoutp02g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1740478420;
+	bh=e4LoxeP+NNcsDPVZ19HjPLj+ANosetEFcVUdRrnEUHk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=uUcArU5mgRaynZ7gI0Za9HkSBPmwQz7W4TXg/UNMkJ2PA9OFICiEqPlUIETM6D6QU
+	 MbHXzX3aRtx7LRNGWvsTRVii2d0QlGjtcuJ6ZZVw4dtYGRdZxILS7V22JB2YKs3+er
+	 NMTsFTDCcsvy5CvRNSoqfU269nFQzSMatNg5Udlw=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20250225101340eucas1p24e6b1dcf0b1c21cc4f14ae4f5bce2cb8~na_boJNfM2612526125eucas1p23;
+	Tue, 25 Feb 2025 10:13:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 9A.A4.20397.4D79DB76; Tue, 25
+	Feb 2025 10:13:40 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250225101340eucas1p13c0c9cbc62ee7c9bfe964941c901bd1b~na_bW4vV30133801338eucas1p1V;
+	Tue, 25 Feb 2025 10:13:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20250225101340eusmtrp2a4228c2859af6cb4c14eadbe9858fe3a~na_bWYsNm1504215042eusmtrp2P;
+	Tue, 25 Feb 2025 10:13:40 +0000 (GMT)
+X-AuditID: cbfec7f5-e59c770000004fad-dd-67bd97d4b2ce
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 81.2D.19654.4D79DB76; Tue, 25
+	Feb 2025 10:13:40 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250225101339eusmtip28791148859bb831304eea6c9258be84e~na_a8IrGO2867128671eusmtip2y;
+	Tue, 25 Feb 2025 10:13:39 +0000 (GMT)
+Message-ID: <81f890fc-6688-42f0-9756-567efc8bb97a@samsung.com>
+Date: Tue, 25 Feb 2025 11:13:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250208074821.11832-1-15645113830zzh@gmail.com>
- <20250208075322.13139-1-15645113830zzh@gmail.com> <20250210012931.ym337oexdcjmwwzv@airbuntu>
- <20250210091352.GC10324@noisy.programming.kicks-ass.net> <CAKfTPtCLg_kuRtknPsiLwRdKpvb4CYHqv+BRh5yJV8Z+o4oQcw@mail.gmail.com>
- <20250225002521.t5w2deyyw6uqxo3r@airbuntu> <CAKfTPtDLRWVWhZ3QNEL_fQMwwh_LMZPPFcAEQ=shhRyVdmGQPg@mail.gmail.com>
-In-Reply-To: <CAKfTPtDLRWVWhZ3QNEL_fQMwwh_LMZPPFcAEQ=shhRyVdmGQPg@mail.gmail.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Tue, 25 Feb 2025 11:13:13 +0100
-X-Gm-Features: AWEUYZkKaAFQNk4lRK3ptlA3d2BKCSsdlpNHog2a1Ku1EfADdnG9UxxHcpIW7S0
-Message-ID: <CAKfTPtDjEHZkJR6C0vv2OLq2vZgvFKu6NMRCLsU6MK+6R7iLCA@mail.gmail.com>
-Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks
- getting an extra tick
-To: Qais Yousef <qyousef@layalina.io>
-Cc: Peter Zijlstra <peterz@infradead.org>, zihan zhou <15645113830zzh@gmail.com>, bsegall@google.com, 
-	dietmar.eggemann@arm.com, juri.lelli@redhat.com, linux-kernel@vger.kernel.org, 
-	mgorman@suse.de, mingo@redhat.com, rostedt@goodmis.org, vschneid@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] gpiolib: sanitize the return value of
+ gpio_chip::get_direction()
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
+	<linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Bartosz
+	Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250210-gpio-sanitize-retvals-v1-8-12ea88506cb2@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZduznOd0r0/emG7z7LGmx4tsaJotdD7ax
+	WUz5s5zJYvP8P4wWl3fNYXNg9Vh87Tarx51re9g8Pm+SC2CO4rJJSc3JLEst0rdL4Mp43beM
+	teCkdsX25QdZGxh3qXQxcnJICJhI3H03h7WLkYtDSGAFo0T3uQ4mCOcLo0T/+2YmkCohgc+M
+	Eid+18N0PO99wgZRtJxRYtuaJ8wQzkdGiS8v1jKCVPEK2Ekc3LOIDcRmEVCVWLPrOAtEXFDi
+	5MwnYLaogLzE/Vsz2EFsYYFoiQ87/jKD2CICwRJfnt4A62UWKJH4/n8bI4QtLnHryXywi9gE
+	DCW63naB1XAKeEl03f7IClEjL9G8dTbYQRICOzgkVmybwwpxtovE9PProGxhiVfHt7BD2DIS
+	/3fOZ4JoaGeUWPD7PpQzgVGi4fktRogqa4k7534BreMAWqEpsX6XPogpIeAo8aOzEMLkk7jx
+	VhDiBj6JSdumM0OEeSU62oQgZqhJzDq+Dm7rwQuXmCcwKs1CCpVZSL6cheSbWQhrFzCyrGIU
+	Ty0tzk1PLTbOSy3XK07MLS7NS9dLzs/dxAhMLaf/Hf+6g3HFq496hxiZOBgPMUpwMCuJ8HJm
+	7kkX4k1JrKxKLcqPLyrNSS0+xCjNwaIkzrtof2u6kEB6YklqdmpqQWoRTJaJg1OqgWnWPpf3
+	F/5feC4psF/3YoaWk2XPjLNF++w2pPyOOcz46uNdMxNVQyl2j+eCPEpfbZuNFu2N96tTf33a
+	Vf3Pwq7nLCoX/ohMTT4119FBW2Pu89mXCttKq5IdjvOFPrnId2Tq1lsezQfye79eMbWfIcEn
+	2S2xidc6M4Wra6fnVaPrr/KeBGomZtV0PYtzNXppOqut79Xm/xFsTh3XtuZsT8iytDwebb/8
+	u7FkbNnP+fUBm63yovzmhu+OOe4jdOT2+5lv5jqvfxxptsS590jlJpmqzg+2Ricea609OMlm
+	s5jSu/hfO5NVT65TNNjz6cjCCL9u1k//jM0u3hW/IZmxxn7D9kZO7kBGztezJx45dkSJpTgj
+	0VCLuag4EQDvJI/UnAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsVy+t/xe7pXpu9NN7i2mcNixbc1TBa7Hmxj
+	s5jyZzmTxeb5fxgtLu+aw+bA6rH42m1WjzvX9rB5fN4kF8AcpWdTlF9akqqQkV9cYqsUbWhh
+	pGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfxum8Za8FJ7Yrtyw+yNjDuUuli5OSQ
+	EDCReN77hK2LkYtDSGApo8SrjXcYIRIyEienNbBC2MISf651QRW9Z5RoX3GeGSTBK2AncXDP
+	IjYQm0VAVWLNruMsEHFBiZMzn4DZogLyEvdvzWAHsYUFoiU+7PgL1isiECyx6G4n2DJmgRKJ
+	SQ//Qy3oZJQ4cOMZK0RCXOLWk/lMIDabgKFE19susGWcAl4SXbc/QtWYSXRt7YIaJC/RvHU2
+	8wRGoVlI7piFZNQsJC2zkLQsYGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJERhP24793LKD
+	ceWrj3qHGJk4GA8xSnAwK4nwcmbuSRfiTUmsrEotyo8vKs1JLT7EaAoMjInMUqLJ+cCIziuJ
+	NzQzMDU0MbM0MLU0M1YS52W7cj5NSCA9sSQ1OzW1ILUIpo+Jg1Oqgan7T/kptcNqU1flilyw
+	uGG3Iup4vk71v6vKLkdCy1LcZi0OjNnw74+1nZqFprvJSg5Bs0kb+5ak71Tc+tRw1vukrkXX
+	PbvePj4TWLvkzJdJxSmnWtxmiZjc8J9apXhFOLSee25QLvOWt4Vumb84dxy8/FeohvFAh5Pd
+	5rsKjBIv+Yseuiwqs1UPCVNZ6vRHO/3qBznlZV9yCz5yVsUf0p83cZOBxZq3F6tPpCxi+e0a
+	Wmr/unLqvlNl9rWO268tTYxpfbH9mmuHsMOhdfEh/ZYztTxDvnoI514oDOJVUXzxt0ci8vNj
+	168xHck7n88Wu2iq28odLqzY72gZWFLffq7uTLV20ySVScuWLJpmpsRSnJFoqMVcVJwIANdT
+	0tcwAwAA
+X-CMS-MailID: 20250225101340eucas1p13c0c9cbc62ee7c9bfe964941c901bd1b
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250225101340eucas1p13c0c9cbc62ee7c9bfe964941c901bd1b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250225101340eucas1p13c0c9cbc62ee7c9bfe964941c901bd1b
+References: <20250210-gpio-sanitize-retvals-v1-0-12ea88506cb2@linaro.org>
+	<20250210-gpio-sanitize-retvals-v1-8-12ea88506cb2@linaro.org>
+	<CGME20250225101340eucas1p13c0c9cbc62ee7c9bfe964941c901bd1b@eucas1p1.samsung.com>
 
-On Tue, 25 Feb 2025 at 02:29, Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
+On 10.02.2025 11:52, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> On Tue, 25 Feb 2025 at 01:25, Qais Yousef <qyousef@layalina.io> wrote:
-> >
-> > On 02/24/25 15:15, Vincent Guittot wrote:
-> > > On Mon, 10 Feb 2025 at 10:13, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > >
-> > > > On Mon, Feb 10, 2025 at 01:29:31AM +0000, Qais Yousef wrote:
-> > > >
-> > > > > I brought the topic up of these magic values with Peter and Vincent in LPC as
-> > > > > I think this logic is confusing. I have nothing against your patch, but if the
-> > > > > maintainers agree I am in favour of removing it completely in favour of setting
-> > > > > it to a single value that is the same across all systems.
-> > > >
-> > > > You're talking about the scaling, right?
-> > > >
-> > > > Yeah, it is of limited use. The cap at 8, combined with the fact that
-> > > > its really hard to find a machine with less than 8 CPUs on, makes the
-> > > > whole thing mostly useless.
-> > > >
-> > > > Back when we did this, we still had dual-core laptops. Now phones have
-> > > > 8 or more CPUs on.
-> > > >
-> > > > So I don't think I mind ripping it out.
-> > >
-> > > Beside the question of ripping it out or not. We still have a number
-> > > of devices with less than 8 cores but they are not targeting phones,
-> > > laptops or servers ...
-> >
-> > I'm not sure if this is in favour or against the rip out, or highlighting a new
-> > problem. But in case it is against the rip-out, hopefully my answer in [1]
+> As per the API contract, the get_direction() callback can only
+> return 0, 1 or a negative error number. Add a wrapper around the callback
+> calls that filters out anything else.
 >
-> My comment was only about the fact that assuming that systems now have
-> 8 cpus or more so scaling doesn't make any real diff at the end is not
-> really true.
->
-> > highlights why the relationship to CPU number is actually weak and not really
-> > helping much - I think it is making implicit assumptions about the workloads and
-> > I don't think this holds anymore. Ignore me otherwise :-)
->
-> Then regarding the scaling factor, I don't have a strong opinion but I
-> would not be so definitive about its uselessness as there are few
-> things to take into account:
-> - From a scheduling PoV, the scheduling delay is impacted by largeer
-> slices on devices with small number of CPUs even for light loaded
-> cases
-> - 1000 HZ with 1ms slice will generate 3 times more context switch
-> than 2.8ms in a steady loaded case and if some people were concerned
-> but using 1000hz by default, we will not feel better with 1ms slice
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Figures showing that there is no major regression to use a base slice
-< 1ms everywhere would be a good starting point.
-Some slight performance regression has just been reported for this
-patch which moves base slice from 3ms down to 2.8ms [1].
+This patch landed in today's linux-next as commit e623c4303ed11 
+("gpiolib: sanitize the return value of gpio_chip::get_direction()"). It 
+introduced a lockdep warning from the gpiochip_get_direction() function. 
+IMHO it looks that gpiochip_add_data_with_key() lacks proper srcu 
+locking/annotation for the newly created gpio chip. Here is the log:
 
-[1] https://lore.kernel.org/lkml/202502251026.bb927780-lkp@intel.com/
+gpio gpiochip1: Static allocation of GPIO base is deprecated, use 
+dynamic allocation.
+------------[ cut here ]------------
+WARNING: CPU: 2 PID: 35 at drivers/gpio/gpiolib.c:349 
+gpiochip_get_direction+0x48/0x66
+Modules linked in: cdns_usb_common roles cdns3_starfive 
+snd_soc_simple_card snd_soc_simple_card_utils phy_jh7110_dphy_rx 
+clk_starfive_jh7110_vout pcie_starfive(+) clk_starfive_jh7110_isp 
+jh7110_trng sfctemp dwmac_starfive stmmac_platform 
+spi_cadence_quadspi(+) clk_starfive_jh7110_stg stmmac 
+clk_starfive_jh7110_aon jh7110_pwmdac pcs_xpcs phy_jh7110_usb spi_pl022 
+phy_jh7110_pcie snd_soc_spdif_tx i2c_dev drm 
+drm_panel_orientation_quirks backlight dm_mod configfs ip_tables x_tables
+CPU: 2 UID: 0 PID: 35 Comm: kworker/u18:0 Tainted: G W          
+6.14.0-rc4-next-20250225 #1054
+Tainted: [W]=WARN
+Hardware name: StarFive VisionFive 2 v1.2A (DT)
+Workqueue: events_unbound deferred_probe_work_func
+epc : gpiochip_get_direction+0x48/0x66
+  ra : gpiochip_get_direction+0x46/0x66
+...
+[<ffffffff805fc72c>] gpiochip_get_direction+0x48/0x66
+[<ffffffff80603a14>] gpiochip_add_data_with_key+0x74a/0xde2
+[<ffffffff806044e6>] devm_gpiochip_add_data_with_key+0x1e/0x5a
+[<ffffffff805f8738>] jh7110_pinctrl_probe+0x298/0x3aa
+[<ffffffff80731116>] platform_probe+0x4e/0x92
+[<ffffffff8000c366>] really_probe+0x10a/0x2de
+[<ffffffff8000c5e4>] __driver_probe_device.part.0+0xaa/0xe0
+[<ffffffff8072ee34>] driver_probe_device+0x78/0xc4
+[<ffffffff8072eee6>] __device_attach_driver+0x66/0xc6
+[<ffffffff8072d0b0>] bus_for_each_drv+0x5c/0xb0
+[<ffffffff8072f33e>] __device_attach+0x84/0x13c
+[<ffffffff8072f55e>] device_initial_probe+0xe/0x16
+[<ffffffff8072e002>] bus_probe_device+0x88/0x8a
+[<ffffffff8072e516>] deferred_probe_work_func+0xd4/0xee
+[<ffffffff80047b7e>] process_one_work+0x1d0/0x57a
+[<ffffffff8004854e>] worker_thread+0x166/0x2cc
+[<ffffffff80051568>] kthread+0xdc/0x1b4
+[<ffffffff80bcb942>] ret_from_fork+0xe/0x18
+irq event stamp: 17857
+hardirqs last  enabled at (17857): [<ffffffff80bca986>] 
+_raw_spin_unlock_irqrestore+0x4c/0x4e
+hardirqs last disabled at (17856): [<ffffffff80bca73c>] 
+_raw_spin_lock_irqsave+0x5e/0x64
+softirqs last  enabled at (17322): [<ffffffff80adff1a>] 
+inet6_fill_ifla6_attrs+0x3d0/0x420
+softirqs last disabled at (17320): [<ffffffff80adfefe>] 
+inet6_fill_ifla6_attrs+0x3b4/0x420
+---[ end trace 0000000000000000 ]---
 
 
-> - 1ms is not a good value. In fact anything which is a multiple of the
-> tick is not a good number as the actual time accounted to the task is
-> usually less than the tick
-> - And you can always set the scaling to none with tunable_scaling to
-> get a fixed 0.7ms default slice whatever the number of CPUs
+> ---
+>   drivers/gpio/gpiolib.c | 27 +++++++++++++++++++++------
+>   1 file changed, 21 insertions(+), 6 deletions(-)
 >
-> >
-> > FWIW a raspberry PI can be used as a server, a personal computer, a multimedia
-> > entertainment system, a dumb sensor recorder/relayer or anything else. I think
-> > most systems expect to run a variety of workloads and IMHO the fact the system
-> > is overloaded and we need a reasonable default base_slice to ensure timely
-> > progress of all running tasks has little relation to NR_CPUs nowadays.
-> >
-> > [1] https://lore.kernel.org/all/20250210230500.53mybtyvzhdagot5@airbuntu/
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index 683a03d237c0..7f2aca9f81a1 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -341,6 +341,22 @@ static int gpiochip_find_base_unlocked(u16 ngpio)
+>   	}
+>   }
+>   
+> +static int gpiochip_get_direction(struct gpio_chip *gc, unsigned int offset)
+> +{
+> +	int ret;
+> +
+> +	lockdep_assert_held(&gc->gpiodev->srcu);
+> +
+> +	if (WARN_ON(!gc->get_direction))
+> +		return -EOPNOTSUPP;
+> +
+> +	ret = gc->get_direction(gc, offset);
+> +	if (ret > 1)
+> +		ret = -EBADE;
+> +
+> +	return ret;
+> +}
+> +
+>   /**
+>    * gpiod_get_direction - return the current direction of a GPIO
+>    * @desc:	GPIO to get the direction of
+> @@ -381,7 +397,7 @@ int gpiod_get_direction(struct gpio_desc *desc)
+>   	if (!guard.gc->get_direction)
+>   		return -ENOTSUPP;
+>   
+> -	ret = guard.gc->get_direction(guard.gc, offset);
+> +	ret = gpiochip_get_direction(guard.gc, offset);
+>   	if (ret < 0)
+>   		return ret;
+>   
+> @@ -1057,7 +1073,7 @@ int gpiochip_add_data_with_key(struct gpio_chip *gc, void *data,
+>   		desc->gdev = gdev;
+>   
+>   		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+> -			ret = gc->get_direction(gc, desc_index);
+> +			ret = gpiochip_get_direction(gc, desc_index);
+>   			if (ret < 0)
+>   				goto err_cleanup_desc_srcu;
+>   
+> @@ -2770,8 +2786,7 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
+>   		ret = gpiochip_direction_input(guard.gc,
+>   					       gpio_chip_hwgpio(desc));
+>   	} else if (guard.gc->get_direction) {
+> -		ret = guard.gc->get_direction(guard.gc,
+> -					      gpio_chip_hwgpio(desc));
+> +		ret = gpiochip_get_direction(guard.gc, gpio_chip_hwgpio(desc));
+>   		if (ret < 0)
+>   			return ret;
+>   
+> @@ -2818,8 +2833,8 @@ static int gpiod_direction_output_raw_commit(struct gpio_desc *desc, int value)
+>   	} else {
+>   		/* Check that we are in output mode if we can */
+>   		if (guard.gc->get_direction) {
+> -			ret = guard.gc->get_direction(guard.gc,
+> -						      gpio_chip_hwgpio(desc));
+> +			ret = gpiochip_get_direction(guard.gc,
+> +						     gpio_chip_hwgpio(desc));
+>   			if (ret < 0)
+>   				return ret;
+>   
+>
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
 
