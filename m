@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-532494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD28DA44E7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:15:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E8AA44EA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9B91898A66
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77D9019C04B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88F4520F068;
-	Tue, 25 Feb 2025 21:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE1020E31E;
+	Tue, 25 Feb 2025 21:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="EIlwq+CF"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="BiNly+uQ"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759001922DD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3A418FDAA;
+	Tue, 25 Feb 2025 21:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518092; cv=none; b=ma5EVqa7CJsNPtPpoRXhYM/h+1R7sPpJCAppYu0Fz8F24rxB//MJ7XCzbxwTXvXNXuPAWNqEGM37ySHbBfUYRYI3Cp8x7DHYNHZplLtOfyDiZJ/mZlTcwo8f0ZEViSqTe8kmT9KTGpDstzfhICstnRt0bLbMmh3Rm6GJXv22Z9c=
+	t=1740518213; cv=none; b=SNN/5Hzg03GFCwOt6V5o19+5YXztJSii/txNq5xKitxn8ft6bn63t1GUU7dH7XHb2ZSYediUwEjB6ivsr3SQQ7gLK65CGh6Ki0vM9/c9KuVqwj1JNYMHKxjK8U64TSHXWcwgAIqHEBs8xxRxRdonc6QimxEMB2Xhua5TJRwUVRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518092; c=relaxed/simple;
-	bh=z/htcAKy8BejW6BaJDus/dUUa71EVLTzM8XjVA5Dt6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jtjbpUCNIHOwhTIVEOwlPsGhm/b1ypX8fHJ3VGlcG38KTo0tvozme99xxvubLnHOXS3lmYMHqcgo3ZdjBEo7Bhmw1Jz/iaYMnfrhiTFPk3VgJbFaVkFXlWR6bfr14p6FfIDUCJKbXuOk/t4UtIuK37eRaRIc5gmePxk/Lc4Co4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=EIlwq+CF; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d1a428471fso46016595ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:14:50 -0800 (PST)
+	s=arc-20240116; t=1740518213; c=relaxed/simple;
+	bh=4kRPWlClDYOUSoAHc2QVT1gZywE1fbr7r4UHSBjdXVw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m4tR/4yavrTF1KGezdMf/FiCmZ5u8LC/WO8nk69nAubYMYVnRjtBL6A5gcfc6rlneUWRB3lgIv6FO/QFcwgRqDtnHSlj6+H/kI1F9/r01b28z6Wc3+uSIGsQ/kBiE+KaOpXCvrRMJpk+IToJmPHC1xtPshrTT/zf9m+AvsnQXGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=fail smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=BiNly+uQ; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1740518089; x=1741122889; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh2s6sLjIXbWIAOmjMi7Yyx9NKVsC0mal+LFgBmzJUY=;
-        b=EIlwq+CFdz4mG+Xrh0uEGEZ54MGQdEFFbeVFENLfhrkpm6ZwY/nlaE0VtqAioJlvUa
-         21/pO1bYfmgkwAnyyEDn9bGhNLVf2qrdL0IxZnfIFNQffzXiml1XymG37H2RP3j2Z5bE
-         7xx8+sQcYCBP6C7YT/p/LvaUJMFU6KPeQu2JoGYNWZAoGOnCUFewtzlGUYDE6C5//tyo
-         ToImm8uFeOmwsdOJwGvD4J17L7g69K1ROU3mbNqJiFhoeFZHUun9bX5mRkGOPT5pq80h
-         UzAeZ2Uss1XrjNKymjEPRSQdxIp6AQ2cHgBCAJpuVR/e/uSU7uina2lb4AUff5RnWvNF
-         owBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740518089; x=1741122889;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xh2s6sLjIXbWIAOmjMi7Yyx9NKVsC0mal+LFgBmzJUY=;
-        b=OgjR5Dek9Sy5C+8OsMIKXlekV4QO3sYuXpOgfyE2bcSawj+ifWh3oLYaKBjS0vWFOc
-         Q9tEf3GNeUkqaKlGJGf2pAfTJGRIsMc+U7Xu0y3eKFrPxqyptOrFnwMioNbrUViNrFM4
-         OE0TcAgaD9U3pqWA7sZrVS+I91/g5nW+fzyxxQaZDMjSZdaplA3TJrpgNbMoS8b1oyLS
-         h7gsomZlJyZij/3/vBwWQfKqabL8McJw6GV6k7U+4qsSFjHFUoaW5qcgHpHaqW7BcyAA
-         11YaQY06kbQCv9/EuXTxC4R1UW2UWFy9WPK0UYfbQ4ewiWsDrPREgZQ2+2NhzOWueRtJ
-         V4eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWlTeSKcSA1bGbChThP7B30ZJ41nkT77QjSe6WesUL0WaiRlYmYU6u+Z23i93AQX3o1P1m+YJzzIBEJzWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpxbpJZuwjGW+731jJoq1aubG/X0n9Ujt3s21El8XG2o2EwZIS
-	FbfjHPouqT8M8cb9N9YicAh+MhJM4tVfiHCqxaBAUGQstUoJubjueUaRZkEoOCA=
-X-Gm-Gg: ASbGncsMUPo5HU0jeQVwzkHmQ4l2A9hk2+7QR7l8ZHKXW4wu9rPjRg9c82j2JyboxLJ
-	W3PMv3KnOfO0R+o62z+lXz8cI4elePmyUyQeSbFJVgNRbn4yxau9AasYu4+Q6xmpS1jkIMEpp0X
-	V1hiZYqaEG7BLn/s9BQfmwhz3K5c8RYkFvjpG/yxRjIq/H/4RSVXfGr4V/dBKKfd1/Zb8oNcTnl
-	xpBOaxPp92yUb1lZdcy8WC/GLvbSEk28IkydwcvYCrU4npMKsKXYlFrV2/juVyvMLeBMH4Q2Jpm
-	hc8OU5jx/MMvgiLy2tYYm1iI/UQi44sliQ6CIIO8ZAxOmPnGXFTws/CKJr1ZFepQHw==
-X-Google-Smtp-Source: AGHT+IFYiGdbqXZivMiTUNph/SuErSNuziRQ4+AzafOTADCcFATdduAQ55CPRDAy/XVPlsW8jn+L5Q==
-X-Received: by 2002:a92:ca0f:0:b0:3d0:1fc4:edf0 with SMTP id e9e14a558f8ab-3d3048802e7mr47557345ab.15.1740518089508;
-        Tue, 25 Feb 2025 13:14:49 -0800 (PST)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d361ca210bsm4894255ab.55.2025.02.25.13.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 13:14:48 -0800 (PST)
-Message-ID: <34666c12-d10d-49a1-8316-bdd18cf1319b@riscstar.com>
-Date: Tue, 25 Feb 2025 15:14:47 -0600
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1740518212; x=1772054212;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vTbIfOI1pwPLKR/Xg2D9C9fx1fVIbzOlXdU2l6tT3ew=;
+  b=BiNly+uQ9W6BfwzyL3zB409pHhSvAC60uLooAFqx5k8fd60u2dHOhVNf
+   h5b65KnjtnEVlxEx6FZyD4uo7yGFn0DctkP9WPz0LU6WE9QpwodQ1tkVR
+   HVyrcZOtcfW/93Ln6pQRhtcAxbReuqkchFsK5ggCPRiDfqBFEY3jLTdsx
+   I=;
+X-IronPort-AV: E=Sophos;i="6.13,314,1732579200"; 
+   d="scan'208";a="274300763"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 21:16:46 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.21.151:47411]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.18.32:2525] with esmtp (Farcaster)
+ id cc5325a5-0b44-4c0f-aa1d-6f3fa40d5ce9; Tue, 25 Feb 2025 21:16:45 +0000 (UTC)
+X-Farcaster-Flow-ID: cc5325a5-0b44-4c0f-aa1d-6f3fa40d5ce9
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 25 Feb 2025 21:16:45 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.106.100.5) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 25 Feb 2025 21:16:41 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <wanghai38@huawei.com>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<horms@kernel.org>, <kerneljasonxing@gmail.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>, <liujian56@huawei.com>,
+	<ncardwell@google.com>, <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
+Subject: Re: [PATCH v3 net] tcp: Defer ts_recent changes until req is owned
+Date: Tue, 25 Feb 2025 13:16:31 -0800
+Message-ID: <20250225211631.97380-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <20250224090047.50748-1-wanghai38@huawei.com>
+References: <20250224090047.50748-1-wanghai38@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: soc: spacemit: Add spacemit,k1-syscon
-To: Krzysztof Kozlowski <krzk@kernel.org>, Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Haylen Chu <heylenay@outlook.com>,
- Yixun Lan <dlan@gentoo.org>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Inochi Amaoto <inochiama@outlook.com>,
- Chen Wang <unicornxdotw@foxmail.com>, Jisheng Zhang <jszhang@kernel.org>,
- Meng Zhang <zhangmeng.kevin@linux.spacemit.com>,
- Guodong Xu <guodong@riscstar.com>
-References: <aw2vqnz5vcccqqvrrhz5tgawj7fnzzg3tds7nnepuorit37a7r@jcj3wrs7d73h>
- <Z6rdBhQ7s2ReOgBL@ketchup> <19e5129b-8423-4660-8e4f-8b898214d275@kernel.org>
- <Z63T_EDvXiuRQbvb@ketchup> <2ab715bd-e26c-41bb-ac64-baa864d90414@kernel.org>
- <Z7BTVu10EKHMqOnJ@ketchup>
- <7c697e9a-d6d9-4672-9738-93ce3a71beb6@riscstar.com>
- <4f7bf109-bf18-42be-971c-5d5edd9595b5@kernel.org> <Z7mrdrACFp3m-7sy@ketchup>
- <6ea8ac17-42c8-46fa-b970-77ba89de66c4@kernel.org> <Z7xHRAFE4-QEA6PO@ketchup>
- <976a2029-c0c0-4093-a3cd-71e1524db032@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <976a2029-c0c0-4093-a3cd-71e1524db032@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWA001.ant.amazon.com (10.13.139.101) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 2/25/25 2:12 AM, Krzysztof Kozlowski wrote:
->>> They were brought here to discuss for some reason. Long discussions,
->>> long emails, unrelated topics like hardware or different devices - all
->>> this is not making it easier for me to understand.
->>>
->>> Best regards,
->>> Krzysztof
->> By the way, I made a summary on the hardware covered by this series in
->> one of my earlier reply[1]. Could you please comment further on my
->> proposal[2] according it, or pointing out anything that's unclear or
->> missing? It will be helpful for things to improve.
-> Thanks, it looks good.
+From: Wang Hai <wanghai38@huawei.com>
+Date: Mon, 24 Feb 2025 17:00:47 +0800
+> Recently a bug was discovered where the server had entered TCP_ESTABLISHED
+> state, but the upper layers were not notified.
+> 
+> The same 5-tuple packet may be processed by different CPUSs, so two
+> CPUs may receive different ack packets at the same time when the
+> state is TCP_NEW_SYN_RECV.
+> 
+> In that case, req->ts_recent in tcp_check_req may be changed concurrently,
+> which will probably cause the newsk's ts_recent to be incorrectly large.
+> So that tcp_validate_incoming will fail. At this point, newsk will not be
+> able to enter the TCP_ESTABLISHED.
+> 
+> cpu1                                    cpu2
+> tcp_check_req
+>                                         tcp_check_req
+>  req->ts_recent = rcv_tsval = t1
+>                                          req->ts_recent = rcv_tsval = t2
+> 
+>  syn_recv_sock
+>   tcp_sk(child)->rx_opt.ts_recent = req->ts_recent = t2 // t1 < t2
+> tcp_child_process
+>  tcp_rcv_state_process
+>   tcp_validate_incoming
+>    tcp_paws_check
+>     if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win)
+>         // t2 - t1 > paws_win, failed
+>                                         tcp_v4_do_rcv
+>                                          tcp_rcv_state_process
+>                                          // TCP_ESTABLISHED
+> 
+> The cpu2's skb or a newly received skb will call tcp_v4_do_rcv to get
+> the newsk into the TCP_ESTABLISHED state, but at this point it is no
+> longer possible to notify the upper layer application. A notification
+> mechanism could be added here, but the fix is more complex, so the
+> current fix is used.
+> 
+> In tcp_check_req, req->ts_recent is used to assign a value to
+> tcp_sk(child)->rx_opt.ts_recent, so removing the change in req->ts_recent
+> and changing tcp_sk(child)->rx_opt.ts_recent directly after owning the
+> req fixes this bug.
+> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> Reviewed-by: Jason Xing <kerneljasonxing@gmail.com>
 
-Sorry about my earlier message; I hadn't reviewed the discussion
-carefully enough, and what I said didn't help.  It seems like
-Haylen is on the right track now, and I'll wait for the next
-version of the series to comment again.
-
-					-Alex
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
