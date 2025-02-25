@@ -1,214 +1,235 @@
-Return-Path: <linux-kernel+bounces-531293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D02C4A43EAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:04:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593D8A43E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B393AEF77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707397AB690
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541B6267B87;
-	Tue, 25 Feb 2025 11:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E252E267F69;
+	Tue, 25 Feb 2025 11:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rv9jgcjr"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vXQI9//s";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vsO1ypZr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vXQI9//s";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vsO1ypZr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D9F262D2D;
-	Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9560E266B7B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484786; cv=none; b=CW0gGsVaJBeWhr2Gv5RlnbtG5mhwiQvt+Xi7O5f/WO4+AvGjhx1fmO6Pa3Jh9tYrV+oOLsYZLD2EEmUmEDwv1QCRc9AFe13LNekEV5CDD+DZJ94EMALsoAzOJkWpvnJVZ3KIGKBTDdug+h6PFZTQ7kXc4J6oI3VfpIwNSZ+LkM4=
+	t=1740484788; cv=none; b=HYG+h+BKWmzPsqh6zeK1ZAh/onUneGHFNJaQpt7dnVrr9TNTTK/NAvhGmv1+eWVBCTG6a33EPyOnroxQX7ZPWv7/y4NZ/s9tsFeGHRl7AsDfay7CMCQFDqf+q0Tm7ZqpZxUOhqd8sdAjj4z9uZr0AdrLplgREpm7WDCR4Ag7P+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484786; c=relaxed/simple;
-	bh=O+pTnhJjs6H33Ym38gmHlxqcaSfLUxX1LU4OxRu7neM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UbJsj8w/OYsOYoR0k68gLyafP7oIzS8bXNLCbjfUTlroWM0M4Wf+QBhwXJATAcWhiN2p30uiJLmfK7NVynf6S/t+WQ8uPunyjq1cP+J2SC80gm7Qcjjjvoyee6RMhFoPLjMrgZpXahKmzGT6EXShQagVCUfuQuJj5Uh3SPbDqPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rv9jgcjr; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e02eba02e8so7485740a12.0;
-        Tue, 25 Feb 2025 03:59:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740484783; x=1741089583; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rjtbe6XyfVXU7CLIUh2zIuX23o5DTHKFfpILeJ7M3lg=;
-        b=Rv9jgcjr/Bj5T0HQwKjaHovfTz3kFDikgBkieyPoMjCZK0EGBfVh7Ymr1Rn+M9ZTHG
-         rmoxJF+fEl1sLdPoTclHANOmp5Y2dPjkZJlHRoMHJdFSYhRiOVMQR9Evorza0JnRR/vq
-         cnqRscsAhPsrlajuTDMcLc8cgHZ7zY2XFuXwCuvoV8koMsOOOcv1c2Uw7NboeKG9UeNY
-         pb4PD/qPtZW8LVg94KcwSMJ2f2jt0VjNZiUbLg18RaDMTTSBp84khThzrPdad4ZH9ihY
-         AFXz5Q+ssIAwjmGxlp9v1OmXKCuTutcQw4al4Y4DVJ/gAG3s+EdH/8xsorlxfu0BPmkZ
-         FHhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740484783; x=1741089583;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rjtbe6XyfVXU7CLIUh2zIuX23o5DTHKFfpILeJ7M3lg=;
-        b=GFkITWKvd6PBGb0qVtGRWOpAdZYaA3fJZatkmbV+iDkukabpkHmybY8wbPdBYWGrmK
-         /vQ2Fo/9gJIorRkt0wrqCnqHkO/AR/VPJ5DsKpyGiyer+UOIoS7VLcsbfXSp2lgi64rO
-         XUHKcMNug/rco1ChrCnAm9zm6Po+r4DPZiqKcc+kbJ1h2de1dHWZ6cKN0LNoSmfe3LYz
-         +VN7HuOoK8lN2FRDj5hCIrkraZtMMwVRX+li4/nxAzna3t8TfAQsKZkwGNcBF/SJ09Bn
-         uU3hFZk8xIIF4azRkffrt2MPuNiwgGwwkaoFBLLVsFSUdflhjECEJ/g6V/JypYzZ+yMe
-         8/HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULZ2LeQ6zC2+17td61LDCcuhW2BNQLiL196unnQpdk0xoIk+YFMBA496RtlTW/33dWqgdvAljJ8RtuTaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmP+PRzZlMn04dxM+BoaKiHV6MkC7oE0tYKCdCwb51PTyT906o
-	11BJsfDtfO9e5kCOQwOWKzTYT30N8bbdAT/RLov5k09r13hXPZyn
-X-Gm-Gg: ASbGncvWuWzIa9wBuHmxPG91Gb23b6N9a5BM2A5WM2GTcWup/JXMP7oy494+UV7WIKS
-	tRTv7EGjjHRtcWtedyjK8szU0jchj/zoR5/KFHpFr0pUYmVnCh9/3uJe0cyKPLjKqdLmS9JVCKl
-	6nA1gEyyTwQkm33B31Cx7fG/C81eSUuLyUFfQbGPOKW08J/1eQgaMuugrIkR3ena4Czf8MddGQT
-	ODB6ZNYlsndW+PRXgsAil3A1h7dMZnwYWbD6vaGsiBg7uNMPZTJI6deWgu8NJsEUb1lby6YnbkV
-	Uc3u06yF4UecZTApdk+1tWtsTdY0Db+6OOWfBfvRz6c=
-X-Google-Smtp-Source: AGHT+IG0z7wdec8nCHOissKNBAOpzj5lFrj/nifN83acYYVsMzUtVB9xCMZpR7bdJ0Nc8UB4kWGWag==
-X-Received: by 2002:a17:906:c142:b0:ab7:5cc9:66fc with SMTP id a640c23a62f3a-abc09e46652mr1684707466b.50.1740484782838;
-        Tue, 25 Feb 2025 03:59:42 -0800 (PST)
-Received: from foxbook (adqm166.neoplus.adsl.tpnet.pl. [79.185.146.166])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d9fsm129689866b.147.2025.02.25.03.59.42
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 25 Feb 2025 03:59:42 -0800 (PST)
-Date: Tue, 25 Feb 2025 12:59:39 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] usb: xhci: Simplify moving HW Dequeue Pointer past
- cancelled TDs
-Message-ID: <20250225125939.7a248e38@foxbook>
-In-Reply-To: <20250225125750.1b345e2c@foxbook>
-References: <20250225125750.1b345e2c@foxbook>
+	s=arc-20240116; t=1740484788; c=relaxed/simple;
+	bh=u1jDhyZRtu5R60/MIm7LROeT/pOlxDezFsxy+RV/5Uc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=re3I/xkGIBeQcD6kru97dzco9biUO2SEV4oFHBJDt+kHU3wSgbvR6HB0jDX0v2u+SrYAx7FbOYVapA42INndBtVpCyrztANzjzHyE/W1h1UyLw7oUGNIp6Fl0aghLT9TIReKoHs2MqpiUEfX4wIipnZDLNhEbta+rEiZjsfOtxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vXQI9//s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vsO1ypZr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vXQI9//s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vsO1ypZr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9789F2116A;
+	Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740484784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ulZ455PIMbfE9cqopcfTAI64PTcJtYeUpNcHevWOWFQ=;
+	b=vXQI9//sBOarQ+HrIaNRtjL0JIu4j15qZiJPWINujBs60uS7oeuBsnmIpjvUT5ObyXM9W/
+	dKnV95o7evQX+H9OeZ+eIBjK+Pz/FedUgHZcBJsiGyejQqe759la3lE5GHOsPWOi4arvbC
+	BtbUxMAyVWURhsRFrqaBEEkX/dptalE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740484784;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ulZ455PIMbfE9cqopcfTAI64PTcJtYeUpNcHevWOWFQ=;
+	b=vsO1ypZrXXy3l3LQqZfqLXdrVkcDMWnx/bs7N9v93tAYNIqfcZ2s8R0eXu0LADm0iokJ78
+	/dq7FZ5OrwxuoGCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="vXQI9//s";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vsO1ypZr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1740484784; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ulZ455PIMbfE9cqopcfTAI64PTcJtYeUpNcHevWOWFQ=;
+	b=vXQI9//sBOarQ+HrIaNRtjL0JIu4j15qZiJPWINujBs60uS7oeuBsnmIpjvUT5ObyXM9W/
+	dKnV95o7evQX+H9OeZ+eIBjK+Pz/FedUgHZcBJsiGyejQqe759la3lE5GHOsPWOi4arvbC
+	BtbUxMAyVWURhsRFrqaBEEkX/dptalE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1740484784;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ulZ455PIMbfE9cqopcfTAI64PTcJtYeUpNcHevWOWFQ=;
+	b=vsO1ypZrXXy3l3LQqZfqLXdrVkcDMWnx/bs7N9v93tAYNIqfcZ2s8R0eXu0LADm0iokJ78
+	/dq7FZ5OrwxuoGCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4BF7D13888;
+	Tue, 25 Feb 2025 11:59:44 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id imxkEbCwvWfYRgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 25 Feb 2025 11:59:44 +0000
+Message-ID: <9efdb233-2bca-4a5d-a6bc-de81fa96efb3@suse.de>
+Date: Tue, 25 Feb 2025 12:59:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+To: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ Aditya Garg <gargaditya08@live.com>
+Cc: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, Kerem Karabay <kekrby@gmail.com>,
+ Atharva Tiwari <evepolonium@gmail.com>, Aun-Ali Zaidi <admin@kodeit.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+References: <3457BF95-0E50-4B70-86DE-EE5EE95D3ACE@live.com>
+ <4D7C00B4-7B75-4715-8D37-0059B22C030D@live.com>
+ <Z72chunE_vvxtjLQ@smile.fi.intel.com>
+ <PN3PR01MB9597BF95EC490951D75748F1B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z72foRL3diil9icd@smile.fi.intel.com>
+ <PN3PR01MB9597B5ECF47B04E3201DD56BB8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <Z72jHeCG6-ByMyhh@smile.fi.intel.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <Z72jHeCG6-ByMyhh@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 9789F2116A
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[linux.intel.com,live.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_EQ_ADDR_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,kernel.org,gmail.com,ffwll.ch,kodeit.net,vger.kernel.org,lists.freedesktop.org];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DKIM_TRACE(0.00)[suse.de:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,intel.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-xhci_move_dequeue_past_td() uses a relatively complex and inefficient
-procedure to find new dequeue position after the cancelled TD.
+Hi
 
-Replace it with a simpler function which moves dequeue immediately to
-the first pending TD, or to enqueue if the ring is empty.
+Am 25.02.25 um 12:01 schrieb andriy.shevchenko@linux.intel.com:
+> On Tue, Feb 25, 2025 at 10:48:53AM +0000, Aditya Garg wrote:
+>>> On 25 Feb 2025, at 4:17 PM, andriy.shevchenko@linux.intel.com wrote:
+>>> On Tue, Feb 25, 2025 at 10:36:03AM +0000, Aditya Garg wrote:
+>>>>>> On 25 Feb 2025, at 4:03 PM, andriy.shevchenko@linux.intel.com wrote:
+>>>>> On Tue, Feb 25, 2025 at 10:09:42AM +0000, Aditya Garg wrote:
+> ...
+>
+>>>>>> +static int appletbdrm_probe(struct usb_interface *intf,
+>>>>>> +                const struct usb_device_id *id)
+>>>>>> +{
+>>>>>> +    struct usb_endpoint_descriptor *bulk_in, *bulk_out;
+>>>>>> +    struct device *dev = &intf->dev;
+>>>>>> +    struct appletbdrm_device *adev;
+>>>>>> +    struct drm_device *drm;
+>>>>>> +    int ret;
+>>>>>> +
+>>>>>> +    ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, NULL, NULL);
+>>>>>> +    if (ret) {
+>>>>>> +        drm_err(drm, "Failed to find bulk endpoints\n");
+>>>>> This is simply wrong (and in this case even lead to crash in some circumstances).
+>>>>> drm_err() may not be used here. That's my point in previous discussions.
+>>>>> Independently on the subsystem the ->probe() for the sake of consistency and
+>>>>> being informative should only rely on struct device *dev,
+>>>> I'm not sure how drm_err works,
+>>> It's a macro.
+>>>
+>>>> but struct drm_device does have a struct device *dev as well.
+>>> Yes, but only when it's initialized.
+>>>
+>>>> Anyways, this is something I'll leave for Thomas to reply.
+>>> The code above is wrong independently on his reply :-)
+>> I'm kinda stuck between contrasting views of 2 kernel maintainers lol,
+>> so I said let Thomas reply.
+> Sure. I also want him to clarify my question about potential drm_err_probe().
 
-The outcome should be basically equivalent, because we only clear xHC
-cache if it stopped or halted on some cancelled TD and moving past the
-TD effectively means moving to the first remaining TD, if any.
+These threads get a little lengthy. What is the question?
 
-If the cancelled TD is followed by more cancelled TDs turned into No-
-Ops, we will now jump over them and save the xHC some work.
+Best regards
+Thomas
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 64 ++++++++++--------------------------
- 1 file changed, 18 insertions(+), 46 deletions(-)
+>
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 965bffce301e..fd2d5b371483 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -630,9 +630,9 @@ static u64 xhci_get_hw_deq(struct xhci_hcd *xhci, struct xhci_virt_device *vdev,
- 	return le64_to_cpu(ep_ctx->deq);
- }
- 
--static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
--				unsigned int slot_id, unsigned int ep_index,
--				unsigned int stream_id, struct xhci_td *td)
-+/* Move HW dequeue to the first pending TD or to our enqueue if there are no TDs */
-+static int set_ring_dequeue(struct xhci_hcd *xhci, unsigned int slot_id,
-+				unsigned int ep_index, unsigned int stream_id)
- {
- 	struct xhci_virt_device *dev = xhci->devs[slot_id];
- 	struct xhci_virt_ep *ep = &dev->eps[ep_index];
-@@ -640,58 +640,31 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
- 	struct xhci_command *cmd;
- 	struct xhci_segment *new_seg;
- 	union xhci_trb *new_deq;
-+	struct xhci_td *td;
- 	int new_cycle;
- 	dma_addr_t addr;
--	u64 hw_dequeue;
--	bool cycle_found = false;
--	bool td_last_trb_found = false;
- 	u32 trb_sct = 0;
- 	int ret;
- 
--	ep_ring = xhci_triad_to_transfer_ring(xhci, slot_id,
--			ep_index, stream_id);
-+	ep_ring = xhci_triad_to_transfer_ring(xhci, slot_id, ep_index, stream_id);
-+
- 	if (!ep_ring) {
- 		xhci_warn(xhci, "WARN can't find new dequeue, invalid stream ID %u\n",
- 			  stream_id);
- 		return -ENODEV;
- 	}
- 
--	hw_dequeue = xhci_get_hw_deq(xhci, dev, ep_index, stream_id);
--	new_seg = ep_ring->deq_seg;
--	new_deq = ep_ring->dequeue;
--	new_cycle = hw_dequeue & 0x1;
-+	if (!list_empty(&ep_ring->td_list)) {
-+		td = list_first_entry(&ep_ring->td_list, struct xhci_td, td_list);
-+		new_seg = td->start_seg;
-+		new_deq = td->start_trb;
-+		new_cycle = le32_to_cpu(new_deq->generic.field[3]) & TRB_CYCLE;
-+	} else {
-+		new_seg = ep_ring->enq_seg;
-+		new_deq = ep_ring->enqueue;
-+		new_cycle = ep_ring->cycle_state;
-+	}
- 
--	/*
--	 * We want to find the pointer, segment and cycle state of the new trb
--	 * (the one after current TD's end_trb). We know the cycle state at
--	 * hw_dequeue, so walk the ring until both hw_dequeue and end_trb are
--	 * found.
--	 */
--	do {
--		if (!cycle_found && xhci_trb_virt_to_dma(new_seg, new_deq)
--		    == (dma_addr_t)(hw_dequeue & ~0xf)) {
--			cycle_found = true;
--			if (td_last_trb_found)
--				break;
--		}
--		if (new_deq == td->end_trb)
--			td_last_trb_found = true;
--
--		if (cycle_found && trb_is_link(new_deq) &&
--		    link_trb_toggles_cycle(new_deq))
--			new_cycle ^= 0x1;
--
--		next_trb(&new_seg, &new_deq);
--
--		/* Search wrapped around, bail out */
--		if (new_deq == ep->ring->dequeue) {
--			xhci_err(xhci, "Error: Failed finding new dequeue state\n");
--			return -EINVAL;
--		}
--
--	} while (!cycle_found || !td_last_trb_found);
--
--	/* Don't update the ring cycle state for the producer (us). */
- 	addr = xhci_trb_virt_to_dma(new_seg, new_deq);
- 	if (addr == 0) {
- 		xhci_warn(xhci, "Can't find dma of new dequeue ptr\n");
-@@ -1055,9 +1028,8 @@ static int xhci_invalidate_cancelled_tds(struct xhci_virt_ep *ep)
- 	if (!cached_td)
- 		return 0;
- 
--	err = xhci_move_dequeue_past_td(xhci, slot_id, ep->ep_index,
--					cached_td->urb->stream_id,
--					cached_td);
-+	err = set_ring_dequeue(xhci, slot_id, ep->ep_index, cached_td->urb->stream_id);
-+
- 	if (err) {
- 		/* Failed to move past cached td, just set cached TDs to no-op */
- 		list_for_each_entry_safe(td, tmp_td, &ep->cancelled_td_list, cancelled_td_list) {
 -- 
-2.48.1
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
