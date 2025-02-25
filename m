@@ -1,123 +1,181 @@
-Return-Path: <linux-kernel+bounces-530620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6FBA435DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:59:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBFBA435DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F78A1797F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:58:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C2E63AE3BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3F92586ED;
-	Tue, 25 Feb 2025 06:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0025A2A5;
+	Tue, 25 Feb 2025 07:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i0NaIEjx"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W4iaVXM3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2224F126C10;
-	Tue, 25 Feb 2025 06:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9518B19F495;
+	Tue, 25 Feb 2025 07:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740466712; cv=none; b=qNO5/7wXaNHmrPOaTY7c8QjVsztrRAQpt4jMSav9n0hXSKloxiD9xqTM1/7mrk5KK0HMy8qJKz0BVvn1UxM6//YRRIRfnTiV1c9yGGYFe9LbQ8//5yvbR4ioAGaC+jyC22CzM5xxw1By83ZxwBRMIYlEdC0fqm9MXCR9qW6jqmc=
+	t=1740466817; cv=none; b=MNt9MXORUs8mkUnq5+0RDv76/WJfRaYMvJzH6MrJ1D4uneqWrCJgsiJARTKGcGmL6fROWpgcxwPO47ugeWblVtIqoDolYwXyTXb35VfijnBPvOcqZIQqL4LC1jtItlqZeWYYrhcETjfwcVDgoHW1r37jzleo1rVzrK2byWLblJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740466712; c=relaxed/simple;
-	bh=7n1NEXEZX1x+SAMkNZ1zmOKpOrcQM8yKNkEbs+8t+sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QjrnYywbhbZ+QWE/J1ujHOStnPuf/spA81pvjoYrGE4E4WBSBFziCI4EoPghF6FiwpDIIDJ0RHkOXbTraMu9+KNJGn5lGQxfG8XdZmErO/uNbVRHjvrNXLOxT6VfAOfF2kA058tPgaz1GSwJQ9F9nlAuD+3KuZZ1M49GUVqOCTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i0NaIEjx; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2210d92292eso5123145ad.1;
-        Mon, 24 Feb 2025 22:58:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740466710; x=1741071510; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJ4IIBqtZ+7dg9GjIFDDWBbqrCmJeC0sJly4M0s0wws=;
-        b=i0NaIEjxUyQUzlcJ+LaAj0U11j6wuBaYYl2fLfPNwb7rHgsfSu0iFQ/vifpxxaG26O
-         tOCVKDRxWl6DEniYE/9Ab8tisNh2yeWnK+hINyRClcMh5E61irHNJZOVj8HHLbG09j6g
-         FFzIYHz2BuCj69txGXlCFvVlx5zgJQWD41c6t9LO69TEYYb5eiGeiO2nKFqZmF12Hg4q
-         7uIfISWdnKcOA6yKf3/urcHYyiFEt+u0OBGaH/22zMm9xxvBdINcLTE5O7Xj8J1VDtq+
-         YI0ZyEWk29dx4Sn87E1Xg0OHBqFSomU8XJXQjEu0GbRo0U+gmPcB8nvvElbxcMG+Zh4B
-         kLjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740466710; x=1741071510;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZJ4IIBqtZ+7dg9GjIFDDWBbqrCmJeC0sJly4M0s0wws=;
-        b=MVtn4gI9vKNh9Rkcmhz+lQVhsGaF8dvwcX9Q6DA1AgniIjQlEMB9IbP8CjmluXimg/
-         b4m95dClCLEgxADNpLR4BAENhmJ5oUpsZUvRx5b7zWgKz3g8rmMPs8uQVUP59Eqhw9A0
-         KPtXdVp5LjZ/m6Cpt/8VFQNsvkpaR1rf2zlvSA4HDZKl5Cb2/C8xtd/gJUvPB22IYOcM
-         IhBIDPsOheZ2L7xOfoBf5NRfaG3CSoxn1gA9qZvCyP+5xX7Vl4GUw/zEjdrtlTh3ebDj
-         8xl1Edk9TaYk+zoWdQLBhWnIUuC042KMx4HSGQOg1L7iwqrJojQnHBcXS9U7MrOYzS9N
-         VY7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTfEvDJ+Q86lWXnfPU/AlyLbuZb2iHbW4UOa41dZyEuMIbVodP053u5/eOKfAAVb8tpOhlkgWAAkSh60Js@vger.kernel.org, AJvYcCUhVwB0ZGrGMeQstVieXzsuLZt/fpBuLM+WhY8EfVzpMvJhHfMtgZuP1KOba172seoRz99rnhOzeAVD/ZQ=@vger.kernel.org, AJvYcCVW9VYfYX1uCNqmGB/1JcQkueRSYtVARf44RWyna94jELxNfvpCnis4BQlBTBIlcllTxT+r5WP14sSu@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoL45SJ0sahidzXbfpifUhV4+3pX++Vci3nkblufhtZpIGrQEy
-	xLGAvgKspYjcjLbyHCuBZjup6XwTjWJIL3/BOcWmYImQkg3wcdi9QBG91w==
-X-Gm-Gg: ASbGncso/SBNVLRJfhaCRPkKW4AUdAY6Uzd68KKLUMLgv0xRwtx9421gZ90Vkh1Ontl
-	HlqCCX/lHPBfHlHXr1Ve4t4uvLlxGQXeKzZE9f3s6SdDK2r/RBW8O4G4c+hJYGCLjlFsByBdXk6
-	ybOweZBbOjYvqY2MNuJ+bC1g3nTRt8fGlymZZC/vHy7m5REaeqoU1U2hZgUg0+7JOBBn40QlCSl
-	R84WpFiALg12DcIWCYu8vqoPcR1ZvSeVfnfBeo5QqMM4GbV3bSiwB/QraqJsxOd8hA287fmq6Dy
-	i5Tcn/2zTMQqB/dvZHo4qOpZ+2g=
-X-Google-Smtp-Source: AGHT+IFxMEkF4ozJ9A9pUzGjVLBrdC+gVqGS4GB5H2EERgj00pbgpPTyNSLvVsjQ8jlzx7M3xIDcTQ==
-X-Received: by 2002:a05:6a00:982:b0:731:737c:3224 with SMTP id d2e1a72fcca58-73426cab055mr25848353b3a.10.1740466710284;
-        Mon, 24 Feb 2025 22:58:30 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a6f8fc3sm786057b3a.50.2025.02.24.22.58.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:58:29 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:58:27 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Manuel Traut <manuel.traut@mt.com>
-Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] Input: matrix_keypad - detect change during scan
-Message-ID: <Z71qEyDVz22j_CvL@google.com>
-References: <20250110054906.354296-1-markus.burri@mt.com>
- <20250110054906.354296-8-markus.burri@mt.com>
- <Z7YNKl4ljWFQEa-u@mt.com>
+	s=arc-20240116; t=1740466817; c=relaxed/simple;
+	bh=Jm9aY5N8Dq6B/Se5BKvQ1YCroA5kAnewWsbVHEv5BFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BW4hTlrWSH3UNVleYcxMF3jkPRAwq4PmOh20JLcDCfh2iCpraiVx1m291pfh4oBg8ohUtQZrBmK1jPp46UJXRjpztEw4kSN+Aw4oq+siTdOXw0oiMUQX6Wt4uwb+wcGYp7TjTjvH0D9ClrPFSsseb9s6tSlXpCz8wGftFrurRTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W4iaVXM3; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740466816; x=1772002816;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Jm9aY5N8Dq6B/Se5BKvQ1YCroA5kAnewWsbVHEv5BFQ=;
+  b=W4iaVXM3kIa2Q1Kz8QITLF7kDRIJDa+aTZUUbDdt33hvRqCtIlAARU8/
+   KjCyY/X92nNsG9rZvn9p/vdq5Y5HU46Yni1kN8yna17jM5sXfXX7eztFm
+   8aH9cmtHz5L6HHPD4n1DNUbVk2FW7hniJ1BFHAFA/HFOUeJja/WZWEGwn
+   C/POyYrC8oWh21YJ2oezNeJDVhDwt7h5hxjLbG6Wzxxk30e2hIFz9qWQO
+   9kgtBK4MH6Szg6i1C6sH0XrzmsVEZ9HkVDnSr35aaLBS2xmRJeNNkIcSU
+   1KFEVIfabtl3xXY2Da3sOy5tDg8CwRhI1Etnq3+w4lTJ2Nz6KCFJL9RXG
+   Q==;
+X-CSE-ConnectionGUID: kjaD/FYuTsWUGz2SqNQANw==
+X-CSE-MsgGUID: Epq0gFQgRXSrRVs9qgNydw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="41139948"
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="41139948"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:00:13 -0800
+X-CSE-ConnectionGUID: WV/FS0LjRB2TisF+x+zDLg==
+X-CSE-MsgGUID: oJ4khU6BQ8OOcG0mMINBsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,313,1732608000"; 
+   d="scan'208";a="121242251"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Feb 2025 23:00:07 -0800
+Message-ID: <84cc95e6-74a5-47b2-9f36-ae33f1e8b5c8@intel.com>
+Date: Tue, 25 Feb 2025 15:00:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z7YNKl4ljWFQEa-u@mt.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 08/12] KVM: x86: Allow to update cached values in
+ kvm_user_return_msrs w/o wrmsr
+To: Adrian Hunter <adrian.hunter@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: kvm@vger.kernel.org, rick.p.edgecombe@intel.com, kai.huang@intel.com,
+ reinette.chatre@intel.com, tony.lindgren@linux.intel.com,
+ binbin.wu@linux.intel.com, dmatlack@google.com, isaku.yamahata@intel.com,
+ nik.borisov@suse.com, linux-kernel@vger.kernel.org, yan.y.zhao@intel.com,
+ chao.gao@intel.com, weijiang.yang@intel.com
+References: <20250129095902.16391-1-adrian.hunter@intel.com>
+ <20250129095902.16391-9-adrian.hunter@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250129095902.16391-9-adrian.hunter@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 19, 2025 at 05:56:10PM +0100, Manuel Traut wrote:
-> On Fri, Jan 10, 2025 at 06:49:06AM +0100, Markus Burri wrote:
-> > For a setup where the matrix keypad is connected over a slow interface
-> > (e.g. a gpio-expansion over i2c), the scan can take a longer time to read.
-> > 
-> > Interrupts need to be disabled during scan. And therefore changes in this
-> > period are not detected.
-> > To improve this situation, scan the matrix again if the row state changed
-> > during interrupts disabled.
-> > The rescan is repeated until no change is detected anymore.
+On 1/29/2025 5:58 PM, Adrian Hunter wrote:
+> From: Chao Gao <chao.gao@intel.com>
 > 
-> This is a quirk for a bad hardware design. For 'good' hardware it adds
-> an additional read_row_state for no need. For even slower connected
-> GPIOs this will also not help much. However it is obvious that it will
-> be an improvement for some designs. 
+> Several MSRs are constant and only used in userspace(ring 3).  But VMs may
+> have different values.  KVM uses kvm_set_user_return_msr() to switch to
+> guest's values and leverages user return notifier to restore them when the
+> kernel is to return to userspace.  To eliminate unnecessary wrmsr, KVM also
+> caches the value it wrote to an MSR last time.
 > 
-> Dmitry, would it make sense to make this configurable?
+> TDX module unconditionally resets some of these MSRs to architectural INIT
+> state on TD exit.  It makes the cached values in kvm_user_return_msrs are
+> inconsistent with values in hardware.  This inconsistency needs to be
+> fixed.  Otherwise, it may mislead kvm_on_user_return() to skip restoring
+> some MSRs to the host's values.  kvm_set_user_return_msr() can help correct
+> this case, but it is not optimal as it always does a wrmsr.  So, introduce
+> a variation of kvm_set_user_return_msr() to update cached values and skip
+> that wrmsr.
+> 
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
 
-What if we do not disable interrupts after the first one, but record
-the last interrupt time and rescan if it arrived after work handler
-started executing?
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
-Thanks.
+> ---
+> TD vcpu enter/exit v2:
+>   - No changes
+> 
+> TD vcpu enter/exit v1:
+>   - Rename functions and remove useless comment (Binbin)
+> ---
+>   arch/x86/include/asm/kvm_host.h |  1 +
+>   arch/x86/kvm/x86.c              | 24 +++++++++++++++++++-----
+>   2 files changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 6b686d62c735..e557a441fade 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -2322,6 +2322,7 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
+>   int kvm_add_user_return_msr(u32 msr);
+>   int kvm_find_user_return_msr(u32 msr);
+>   int kvm_set_user_return_msr(unsigned index, u64 val, u64 mask);
+> +void kvm_user_return_msr_update_cache(unsigned int index, u64 val);
+>   
+>   static inline bool kvm_is_supported_user_return_msr(u32 msr)
+>   {
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 5cf9f023fd4b..15447fe7687c 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -636,6 +636,15 @@ static void kvm_user_return_msr_cpu_online(void)
+>   	}
+>   }
+>   
+> +static void kvm_user_return_register_notifier(struct kvm_user_return_msrs *msrs)
+> +{
+> +	if (!msrs->registered) {
+> +		msrs->urn.on_user_return = kvm_on_user_return;
+> +		user_return_notifier_register(&msrs->urn);
+> +		msrs->registered = true;
+> +	}
+> +}
+> +
+>   int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+>   {
+>   	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+> @@ -649,15 +658,20 @@ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
+>   		return 1;
+>   
+>   	msrs->values[slot].curr = value;
+> -	if (!msrs->registered) {
+> -		msrs->urn.on_user_return = kvm_on_user_return;
+> -		user_return_notifier_register(&msrs->urn);
+> -		msrs->registered = true;
+> -	}
+> +	kvm_user_return_register_notifier(msrs);
+>   	return 0;
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_set_user_return_msr);
+>   
+> +void kvm_user_return_msr_update_cache(unsigned int slot, u64 value)
+> +{
+> +	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
+> +
+> +	msrs->values[slot].curr = value;
+> +	kvm_user_return_register_notifier(msrs);
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_user_return_msr_update_cache);
+> +
+>   static void drop_user_return_notifiers(void)
+>   {
+>   	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
 
--- 
-Dmitry
 
