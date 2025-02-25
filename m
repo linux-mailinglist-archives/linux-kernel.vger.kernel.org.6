@@ -1,194 +1,146 @@
-Return-Path: <linux-kernel+bounces-531962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 928E9A4472F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1261FA4472D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1922F3A26D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAC24867CE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E1E20AF63;
-	Tue, 25 Feb 2025 16:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24177195B1A;
+	Tue, 25 Feb 2025 16:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z4uUfH49"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R8KRm3E8"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DF31A23A2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B674B192B75
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502106; cv=none; b=erzjIA0YiyDPWQAT+wl1rf31K/BQSTu9mLc9aTtLqUbw5KCMtuNHCoZ94jGiJdv8L+Yq2VykXSyq8D8mSR2uPIkbCsOgzzLc00wMAy/HSCEDx8F96GKbBZUR/XmWosUQrTP3BCt/4Ww0hNaD9wUTAVJUoBsWNrzPdKQhIIQVGt4=
+	t=1740502181; cv=none; b=uHohsl8whY+9UABp96y2x5D8CYiOb0nuncGbOAyI1SKXNJ+wMYCcnL0doXwauf0IaPL1WM9hT5z87Vy4zH8JRoBObVRolhk5aNOm+LzwUkDUC7fyF4kF8OBZ836P1YB4mAafFGASzg95c024YaAoGoFa9gbuwszlsUzobqUgE38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502106; c=relaxed/simple;
-	bh=QLeXofl8oz+1YDj2uHG9Af1DIWMS8S6ol/g/+nY++FQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OEEOq3EiO1sac3nWH/YhOUuW4tXsFfiMqGyPzFhhmzaxdMHOVfYjPFiiNwEGoRqcbA/hbhodSpMTUDGD9Clrvrua9Pp0imuFOboKCasa+tkHy4NnZcNLK3mx2GUeDqHsMqpb6SWEspyLWzDrSY301rM7+sCNtrmANQ4idf1oZOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z4uUfH49; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740502103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=jw2CX8GJqxuLRFAFx88zTCcWlXcKTO/rHj8BJTgdWyk=;
-	b=Z4uUfH494yPKf+qWMKBmLoNxiI948PB3j16TGiZaRDoTA6wdKzq/SC/oNJzzORITsJvrYv
-	jrissvshBpo4KYV1rZfT5nfgKJ/MOIpjtOgj94kB4S6IQB8yREvzSo5VTTbV9YuoxFZWmH
-	HSKcZuLTKMjUm2R9EKLP069+Ypfy5v4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-_PAjNytkNjeZglNGu_BCeA-1; Tue, 25 Feb 2025 11:48:21 -0500
-X-MC-Unique: _PAjNytkNjeZglNGu_BCeA-1
-X-Mimecast-MFC-AGG-ID: _PAjNytkNjeZglNGu_BCeA_1740502100
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-439858c5911so27922875e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:48:21 -0800 (PST)
+	s=arc-20240116; t=1740502181; c=relaxed/simple;
+	bh=cSZ9ztT4mLDjdEXFNeLmYtzxxkPEck5tI6MIaJ3bziU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t7JKf1rQbPJOtrGRDzNU/on+n4V3caCLPp2ZiGpxgecS94uThSQ2/4AcU1dg2LfuuFmwqcRtMYCyBUFTDR1OMzo0CBvZPvI5qSnJn8xFfBt3PLSmNIXajCyFAxuO84X/WFWzmQfSLF7zB7a7Ngw3NfP6jjwoU1wdIXXq1Onbap8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R8KRm3E8; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-54527a7270eso5852456e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740502178; x=1741106978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0mgWZibQMuHj44S/S8PoDTRgBr00ghmQvGRAk6+vKs4=;
+        b=R8KRm3E8/OF+6VPT+4EdtupMDi/G+HBtGPP5JXaRFd5AQCzNdzTG0L6GV75HAl3PLQ
+         b0SXmqtZNaNSFA+mfeuaAzFNK9qy8fpM0SSphKz9DyseCXpR96eGp63mG1qHMN64Am2b
+         L+ih8xwibZoxRYkwqx2UOHKez/BNFhmhoK3o3B+T9M3RkBfzQ4hRznTqNtOJ+lV7ECcZ
+         IX9SuB77oCqrP4B0t/8Ux4PBayUDOf5N8e5CPi68+vmrkGC/qg/7l7KFLmT6GfD1G9g/
+         nYpUeC5FvYN5MbhzNilw+524h6Ek/R9PdXOy4JiDumXAn6bSdgKUXODvVmq2nIhiaZwg
+         mQlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502100; x=1741106900;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jw2CX8GJqxuLRFAFx88zTCcWlXcKTO/rHj8BJTgdWyk=;
-        b=d9d8bLguQbtFN93zT0jsjW3WAPA35DUGeuGRT/EdVON1WS/lFQHVX8BexSwXag1mw/
-         QopZhAp0HNwug7M9q56Ljavt49UT+YGhRazKb1hHyTgo0GZ5qUayTgjpmtLcUuyeHFFn
-         4qweHBfNqnj/18zSJ6rIqD2PDROjQEYPh6cqCabk04rl+fjACjxyqQGTYHSPDLWysGEo
-         4JlzfI+qupq4pTG7XYL1422CAccfGnS4xRSkqzT8GoiukEzQbF9xY2dj9heRWdxaQwAt
-         ppSDattS+tmWwcUVo256pKi4VTu24aoQug1QwQuVkVO6i9Rh6DIAaQxg2BF8vlxA+HDs
-         M0Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9s/7zpQe92OhKU0UBibCBLdWqIGbVJ46WtiP1XuJaSsDQaIsCa+Q573d5RflLyUewFPpU/HHsSFqNbWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrjuyfg35RdEETeISi5tgRQg3zHIXQkZJlrbmN2Ms2rYT2Zo27
-	zhJKDGAa0R7UZJIYH/D5F54dsHS3BtMKPylLBZGTn49mHhWkW/5mSyBLcQ2o+B1dns+huVZsaJD
-	cSXNvAj5TLMoMD9RAUR5EaqAR5RQaD6fr5m+imlXXhIKulP58G5OLItNgKKfrQw==
-X-Gm-Gg: ASbGncvyvsY1sdzBC6Dy3iOPaxYQ8Uu+MmH/fLbT+W2UHOXQiGFwBrO+V7mgPWO7yJB
-	veEL8Ha2JOunr/TKYhUWFxH1IDQCkuZPyJB5qWcf1jlFfbNBYNaj5ddyAE99tddDqmDSRSgD7sl
-	/czYnBm2u4c8Dkn5bLFjbB3ChCV3XJJ9CtwvgtfBMeFKLjvZTqiIryGNBV30cG4AZUlcSjZ8S/J
-	UB7go84YcP9EpeDPGsmVsE65mWH4w8by8Qx5cepL3wewuGQPaTojowx1eI83ESupfB38YZ22VSk
-	OU6ORl7qJuM2lUahGhnkLutVjGHqPsWvmTrM/tf7dmxO8I0vLx62yJp7VH7nBUfYsVZy8D84cT6
-	E0m2x8T1pFCzhshl2Kx9Zjy/o6/iZ23gLPqzOwGgnIWw=
-X-Received: by 2002:a5d:59a3:0:b0:38d:e15e:17e9 with SMTP id ffacd0b85a97d-38f6f0b2161mr20087636f8f.35.1740502100260;
-        Tue, 25 Feb 2025 08:48:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE8sdF4FkFqdZXDiyQJpYRdr9jotf0bgjSy0tUCoeN9Ynzu8FAq0ynzblVc1iJsuqV0PE3uGw==
-X-Received: by 2002:a5d:59a3:0:b0:38d:e15e:17e9 with SMTP id ffacd0b85a97d-38f6f0b2161mr20087605f8f.35.1740502099887;
-        Tue, 25 Feb 2025 08:48:19 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab15476f0sm32638635e9.23.2025.02.25.08.48.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:48:19 -0800 (PST)
-Message-ID: <48ffe442-5015-44fe-bbd6-708ba8500505@redhat.com>
-Date: Tue, 25 Feb 2025 17:48:17 +0100
+        d=1e100.net; s=20230601; t=1740502178; x=1741106978;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0mgWZibQMuHj44S/S8PoDTRgBr00ghmQvGRAk6+vKs4=;
+        b=qxOOigsam3BAPQyOURndMojDzgVZWQq1QxWi2+h2BzcIERHF4boHD0kz2IZMZIrZkz
+         SwbdjsaD+OhoAHKeqgS8mFeYKPL6w8xMqA0QTzSR3h8s3Cmpr1VqbQBrh0u1taYs/tPq
+         JhPJVuia4WlXgqbyUSWrL+aZpQV9CirTHp2EgSJ0dFSzd2vi3G3vojNphEcMJXGmLEK+
+         JX5nVoTiHlgR5l/ZiAFJmNItdXgYDdQX9q/v/xERWwmq+c2oe02np4iA8NJjQp0OFNKw
+         caoVHdzWDWBAjWrxmqhXnzSUIM3BViWxkXXkQkCBHl9Gkh0hqQRkIQim/ruWUeXF1fn5
+         Swpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzfpPtUKqg/O8rRVnVkrt3a4sYjsYvI1ecKNcrPfG7kU1t6wj7z5LBf3rLIwyDJM2nWDNDTBQlRaKmIBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxU/1mSkJMbq/2McaqYNCIr73oEonTup3GRt3JZ7EGxqK7YqHTn
+	PvDRc5TeQ3iZo/1VxB27tMa9Bv8cVatudROmuWGdJMUTR7sFUdkFWnW6j/H1GXo=
+X-Gm-Gg: ASbGncuG0m1PJMBuGBe/C5yZs+MUPShswYFLVMC4RahV+kPtg65yUxWzZRa0PpFfFEB
+	B1CUAYq+mhoIU7kgj9WarNTb1DtJFVip17h8Yna00ZiMrN7erC+5slNuKnN22JXq14StJTA89b9
+	6B+hxVFy+3i8F3HW4/fqdSn6NFk03RU8FL9wMaDXQz7EJ8GMhcacrGhjxQ/Zm054rQKDZIueT+b
+	tgP4T76x9Zr7d2qCOY0CqDL9srHAOd8PMfU7sbFTN9WA9MKpY9gsfJpKvePt79Pl7u5KebRUvP4
+	ZLMkb0zs2UkVsHHRCmVo7Ex9t4HP2/J8GmJLybT0RCwQrJw/zwiZ7L80faujZlLLuUdNyw==
+X-Google-Smtp-Source: AGHT+IFORbfzYSemq6WfOCUglMYdhzTg71XD6K2L6XeaH8kQIvUGNHFObPzSD2MUJfic2yxCajAruA==
+X-Received: by 2002:a05:6512:b0a:b0:545:1d96:d701 with SMTP id 2adb3069b0e04-548392598eamr7478215e87.36.1740502177754;
+        Tue, 25 Feb 2025 08:49:37 -0800 (PST)
+Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-548514b25e6sm220407e87.7.2025.02.25.08.49.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 08:49:37 -0800 (PST)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	nouveau@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Imre Deak <imre.deak@intel.com>
+Subject: Re: [PATCH v5 0/4] drm/dp: Rework LTTPR transparent mode handling and add support to msm driver
+Date: Tue, 25 Feb 2025 18:49:35 +0200
+Message-ID: <174050217098.2377948.2211237197268827323.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250203-drm-dp-msm-add-lttpr-transparent-mode-set-v5-0-c865d0e56d6e@linaro.org>
+References: <20250203-drm-dp-msm-add-lttpr-transparent-mode-set-v5-0-c865d0e56d6e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm: permit guard regions for file-backed/shmem
- mappings
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Suren Baghdasaryan <surenb@google.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Matthew Wilcox <willy@infradead.org>, "Paul E . McKenney"
- <paulmck@kernel.org>, Jann Horn <jannh@google.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
- linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
- John Hubbard <jhubbard@nvidia.com>, Juan Yescas <jyescas@google.com>,
- Kalesh Singh <kaleshsingh@google.com>
-References: <8d643393-ddc0-490d-8fad-ad0b2720afb1@lucifer.local>
- <37b606be-f1ef-4abf-83ff-c1f34567568e@redhat.com>
- <b5b9cfcb-341d-4a5a-a6b7-59526643ad71@lucifer.local>
- <0db666da-10d3-4b2c-9b33-781fb265343f@redhat.com>
- <62c0ba1c-7724-4033-b1de-d62a59751ca5@lucifer.local>
- <a49d277e-128c-4853-bdeb-3a94134acbf6@redhat.com>
- <6eb33b5d-3040-4637-b627-48f8f78e4e28@lucifer.local>
- <b30a6306-d62b-4515-add8-4550d044501c@redhat.com>
- <c0e079bd-a840-4240-93ae-0ee2755d425a@lucifer.local>
- <e0954e13-2c7d-447c-ba86-19875c74bc3b@suse.cz>
- <3102ab3b-67b6-4047-9db7-e83c3b9c1c53@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <3102ab3b-67b6-4047-9db7-e83c3b9c1c53@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
->> As for compatibility with VM_LOCKONFAULT, do we need a new
->> MADV_GUARD_INSTALL_LOCKED or can we say MADV_GUARD_INSTALL is new enough
->> that it can be just retrofitted (like you retrofit file backed mappings)?
->> AFAIU the only risk would be breaking somebody that already relies on a
->> failure for VM_LOCKONFAULT, and it's unlikely there's such a somebody now.
->>
->>
+On Mon, 03 Feb 2025 12:57:55 +0200, Abel Vesa wrote:
+> Looking at both i915 and nouveau DP drivers, both are setting the first
+> LTTPR (if found) in transparent mode first and then in non-transparent
+> mode, just like the DP v2.0 specification mentions in section 3.6.6.1.
 > 
-> Hmm yeah I suppose. I guess just to be consistent with the other _LOCKED
-> variants? (which seem to be... undocumented at least in man pages :P, and yes I
-> realise this is me semi-volunteering to do that obviously...).
+> Being part of the standard, setting the LTTPR in a specific operation mode
+> can be easily moved in the generic framework. So do that by adding a new
+> helper.
 > 
-> But on the other hand, we could also expand this if you and I see also Dave feel
-> this makes sense and wouldn't be confusing.
+> [...]
 
-Just my 2 cents: one thing that came to mind: an existing library would 
-have to be updated to use the _LOCKED variant if the app would be using 
-mlockall(future), which is a bit unfortunate -- and if it could be 
-avoided, it would be great.
+Applied to drm-misc-next, thanks!
 
-But yeah, devil is in the detail ...
+[1/4] drm/dp: Add helper to set LTTPRs in transparent mode
+      commit: 5e7715478c273e5b17b08942182bc0350b7ef3a6
+[2/4] drm/nouveau/dp: Use the generic helper to control LTTPR transparent mode
+      commit: 226a0baf9098841ceb92ab7804a07426540663c7
+[3/4] drm/i915/dp: Use the generic helper to control LTTPR transparent mode
+      commit: 6dcc3c5121b72c3633592db761e76083cf7623a3
+[4/4] drm/msm/dp: Add support for LTTPR handling
+      commit: 72d0af4accd965dc32f504440d74d0a4d18bf781
 
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+With best wishes
+Dmitry
 
 
