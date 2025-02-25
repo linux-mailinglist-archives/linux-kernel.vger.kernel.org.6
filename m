@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-531478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09667A44101
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:39:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CE9A4411B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:42:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA052188FD2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:36:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8844423A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:36:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864A726983E;
-	Tue, 25 Feb 2025 13:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C8B2698A8;
+	Tue, 25 Feb 2025 13:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c45E3FOn"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="zKBcbCuE"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B27026772D;
-	Tue, 25 Feb 2025 13:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9468E26772D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490544; cv=none; b=nu+9S6+yCPW/4pg/DLunl4Tdxy7raZQL54rKeqoaJdHw9bgtcfaipsgtWNTmr5JUbgMlY8ZD7oHnYkrRud5nPHZM3Fbt/GZtqWvgTysfb5hfRBdDy8bZeW80jX4PwkTqtgPmkpR+Xs4T9Au0pFHJkwVgLSaBetg1o8AvazH+juQ=
+	t=1740490574; cv=none; b=E+ecV5E0uxSLXPkaSHOsoWgHHnQrh1tZyv0+aqDQWqt8bIzdNAYrqdYkeU6UK6ZsxeY1qmLCCj/mzxw85GoEkdM8PuGCGH3ODeqPN+994kLDbaC3Jrpipapj0ibULHtvLeL+Sjre3GyXLOFdQqaWM1MPiuOdHJWrvfbUyW9Vsf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490544; c=relaxed/simple;
-	bh=ucXOOXen6EfBi1st8qEzQiNdZQ9t1hTv+Day5P0J/ko=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y3XoDrau+bMdkWIbEoqaBJPiFurHElEg4zvIvf3QfiZx5ETJePY1uwcDI1Zi66I2mc1xPPmSsiUcG0CLvORgwXKuyEaf3pvskPLwUA7cbXPxyU5jJ1/bSbiBpnHqeo6qdaow2BqyPh71k0r7ArPNs+yszdnYDv+YGE0azCihyLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c45E3FOn; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f2b7ce2f3so4058609f8f.0;
-        Tue, 25 Feb 2025 05:35:41 -0800 (PST)
+	s=arc-20240116; t=1740490574; c=relaxed/simple;
+	bh=6zIDGY7o8wonG5XSWfvfNzMNhLDCQ4e5sFlmf6YJhHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZTL1T6VKnnvRVSitzriIURu7JnRwYGvWdEt3ETX3DqIyvWfVnsytLoHhr4/GSvSbUQ2WL7+endbLOimL+1Vsrkb3HftVhgH+S10nEWY9wEFKhaYgf3X/mYZKMz1CSs6JAimCB4VJIZ43OrVA3SQ6k/BIO3rTm2Oe1vrzUpq2+uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=zKBcbCuE; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5deb956aa5eso7667663a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:36:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740490540; x=1741095340; darn=vger.kernel.org;
+        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1740490571; x=1741095371; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=tnPmEicx+PRAtzm6pe4Eno9ZF32qRgxFaSmqT4meCGw=;
-        b=c45E3FOn7uIwmzIAun9trZ3S+jvnEcc5Yt0tc5++jIknqFnCQSyQUxTiF176WYfXAg
-         kTYAjAKsckLHMuJASup+Cvtc/cu9H+mrNgWZDZPGCq0eEvOjAqCHr2KLzGXt3FITHquY
-         G2/fRJhp5XTrFX5szkcP3cg3csnQl5b6kT7hoe6iYMwREvOFA0F8xdUPMYVRdT2CNvmH
-         hIvUMNyQ0k5sWw1tzrMF2g67gdkWz4JeijesSOCbOrEtSn6MLU4bb4huEqSu3LWo0Elf
-         rSsoQPtDkZLF0zsrWlVFEDGetzPyO+td82OhmCmInxwHco8ZZWNQSGqFRpf44cGvuXFm
-         KHCg==
+        bh=AZPYRoqfrPagvwL/VaIj4ZSda7O5NYpHMyVSIETeVto=;
+        b=zKBcbCuET1NBYuwsZqMtPPNWwln0LKbAGf9DiFhMvxHo3ePFgv2ZRwHQ1m+/X3IXF0
+         /0SyQqa7PogVHz8goMiWLt/TcbuRvjr61hXI6Yae2IYtOQ8Qc2PTJ6GeOKMcJm07Lj1S
+         7OKvrE31v1Jg1a7dgnH6XD2udWEbDnBhB3JWSufEr3izLLu6QVF4woo+GD4kOay2Dbxx
+         6+6LshdWjmMXJiGBnp8jmvL4CP1ppPdxBwzFEiVr32IaTGIAk0VIHGawXnTF4Ng7F7Mp
+         Nv8dajrEdryY97lRYRzVO5k7lLkXEGcYFFF+DloGD19YYuiCmIjxymramJBqepcGpBQY
+         zHOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490540; x=1741095340;
+        d=1e100.net; s=20230601; t=1740490571; x=1741095371;
         h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnPmEicx+PRAtzm6pe4Eno9ZF32qRgxFaSmqT4meCGw=;
-        b=ZyJq/PeOexZMCUmr3HWdtLf8YbTJbp5LqO11Ez/2vh1pT+KEqvjlLry9PgfwXtA2jO
-         IpdgdOA/Cm2gmp9cG5CeGuBT16T6AgBWeHNHi4gfhTr6/4Pfq0IVfEEjZwH7w6KZR7w8
-         bocGCshzKPC1Ffj6eecv8aKBYrFcEDpk2m8Zc9tjfJcKKypUizzlzyh6U4ktJMj7QBKT
-         iYKUOMYcnNjNbkfQcu5buModQpiWqrv/5k5mqgCHyRx+8tT9mWDWCq5sA/D9wyhNd6RY
-         l8KG4aozHWP/8rT22KprARinmpqe3tg3m8j8Sj18RJNv9ADlRICs8s0NuRcMUlqe7LQ2
-         wPEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUmA7AHSkxuwjCYIGBsghL9ejM+Z03G5nSkqkbt8jl91Wn1C5f4htVro+BhWDR+TNx4nPs=@vger.kernel.org, AJvYcCVyJQvnXVyQY58RFcMp/rfQ/LKO6BHRhSKvCMJWXpwvGZe5Yi4g5vabXKDImKIz4+aNdjJO/2Wg060n0wPv@vger.kernel.org, AJvYcCX3LHig6HX84PwxddqatUW6u4oo4Dsc5PIUjlf72OlqI4LsDikn5iRmYBfmH4X88FRXAwTNtpHZqgq4SoeUyqzoE4bR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxftJHv2DEye53ZCv77rS+f+PDVln7i6peyGcYla5DanzSC+kTO
-	67EjvcXdVjn1POz1MJKMPt82I77Q7hoejgFmjlJlG9oUZz+/rIff
-X-Gm-Gg: ASbGncueQ1ulaxMQxMiMQGhZEgDR0d7sI6lMO76UfMSZqwRPh/Oj0sHa4CJ//y+a9MC
-	2EETSGcK/Ey6t/FQQhucZ0QbF9LTd3gddKZntF2a24xJac8l/gIQCCG1453v9M82VTO3rcqrhWv
-	TpFmRGjl6cmdAhmfl+6Z0kIo0p9ocjlhX0FkIUH4So5syErmwGJK8dsRvHw71iv4uz1TO+SNg2e
-	UR5t1dsgfHrDW2wfC9wytQJZk3dJoqi4d/VFNoFUCSUWUCLyWkDTyO1q2/ms7MKsWEA1kqmpoqC
-	PzFIoe6qXqotGkkr6Qs=
-X-Google-Smtp-Source: AGHT+IHycTtTcXq7MrkPyPlqMfLwfA3JqA0emRZEu9JW7bvsTOpXwu9WBSiB5eInJrlK4691Xip5Mg==
-X-Received: by 2002:a5d:6d8f:0:b0:38f:2111:f5ac with SMTP id ffacd0b85a97d-38f707b0941mr14871078f8f.31.1740490539972;
-        Tue, 25 Feb 2025 05:35:39 -0800 (PST)
-Received: from krava ([2a00:102a:5013:7b7d:132e:7dd4:845b:548e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86c992sm2294723f8f.27.2025.02.25.05.35.38
+        bh=AZPYRoqfrPagvwL/VaIj4ZSda7O5NYpHMyVSIETeVto=;
+        b=N8IHcCFDISiSV2UlirnJdsySr7lnX1rsxhQ8+D3KDBpD4kEX4D/XjhjlkbGqG6iCTa
+         OZaJuApG2r3E+XSXf9AoaeOh4ZMc/w/EHGr8AwZjfxCt3/VztXe8xhhZTWNkCodWaiuk
+         lDE4rqJH5vy98M1mNQddMaijwmZ23EYWwtoOeEvX2rooI9a/g/jCbhpMBL/ttmR0dQIH
+         jVB1pcCpGBncOGN+CjtfMIGkMKwLgO/Q34d2ommiTVMBDElFUeSsW0DI7z+Za5CMUW9L
+         33R95mT11L7JKKhN304DAAoeAP18n5VJzMtIZeFnCM5jangIMdLAgxYQ8X9SVICX6jay
+         AXog==
+X-Forwarded-Encrypted: i=1; AJvYcCX8YhOhUH+gU9cDfVj2OoG2mbpu82T40JRV1EdfuUQnwAsjxNFhwYCW/XVIwrR0WZk0utKYKF81U3+Ebag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEsg2t3QCTMoQXKg9OrpD0MYAGtsra+Ajo64Ysn+gNrfdGJ7mG
+	GQN/QSBMLmtlYBncWPsB/JtHJAGMeTYmTDSkNOKRTEG0J0/yBVUNUbgTeQR+XmA=
+X-Gm-Gg: ASbGncvbokTsHoql26YLEcbD1W6GYfi+zOvoYStnJ6p376hxiQ9DiP32lxcTlJSJ2qH
+	7iZJHlUugOE/wdY7Rw1CjO4LANo46EJoB6KARUZEAt/4CoPgL9nOPfzIYEvfFXiBZP7nli47hJF
+	Nf4V82GltfegxmQg+kIUm/NfeJt8uL57vkcR2TWgbKRJ+ZzcrCP8I0qeg82TTFmXzoR01q898tI
+	AM+MCXDb1yIjEOC1ECscwX2o7pRZTM4jesNJagwYf9RnLap0n68A62l/MkzLXkhiwr+LFhoeLI3
+	8VFIpym3Q8VYuJGs/T2OeItYBwsUJl2SkjAZQMEvobomWh6Yv9+zOQ==
+X-Google-Smtp-Source: AGHT+IGwZxstsJgbZbrGjWctQYTkmnZEeqGMf6YIvXycHvPmwGPJt3l7AO/RiG5BKR9nAP88NqhdmQ==
+X-Received: by 2002:a05:6402:4604:b0:5e0:7cc4:ec57 with SMTP id 4fb4d7f45d1cf-5e44bb37281mr6445272a12.31.1740490570625;
+        Tue, 25 Feb 2025 05:36:10 -0800 (PST)
+Received: from jiri-mlt.client.nvidia.com ([140.209.217.212])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2057276sm143453466b.142.2025.02.25.05.36.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:35:39 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Tue, 25 Feb 2025 14:35:36 +0100
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>,
-	X86 ML <x86@kernel.org>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	David Laight <David.Laight@aculab.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH RFCv2 08/18] uprobes/x86: Add uprobe syscall to speed up
- uprobe
-Message-ID: <Z73HDU5IZ5NV3BtM@krava>
-References: <20250224140151.667679-1-jolsa@kernel.org>
- <20250224140151.667679-9-jolsa@kernel.org>
- <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com>
+        Tue, 25 Feb 2025 05:36:10 -0800 (PST)
+Date: Tue, 25 Feb 2025 14:36:07 +0100
+From: Jiri Pirko <jiri@resnulli.us>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Tariq Toukan <tariqt@nvidia.com>, 
+	"David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jiri Pirko <jiri@nvidia.com>, Cosmin Ratiu <cratiu@nvidia.com>, 
+	Carolina Jubran <cjubran@nvidia.com>, Gal Pressman <gal@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH net-next 03/10] devlink: Serialize access to rate domains
+Message-ID: <qaznnl77zg24zh72axtv7vhbfdbxnzmr73bqr7qir5wu2r6n52@ob25uqzyxytm>
+References: <20250213180134.323929-1-tariqt@nvidia.com>
+ <20250213180134.323929-4-tariqt@nvidia.com>
+ <ieeem2dc5mifpj2t45wnruzxmo4cp35mbvrnsgkebsqpmxj5ib@hn7gphf6io7x>
+ <20250218182130.757cc582@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,98 +97,37 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAADnVQJ_-7cB3OaeFWaupcq0fRPh3uP62HBGxq0QbyZsx3aHqA@mail.gmail.com>
+In-Reply-To: <20250218182130.757cc582@kernel.org>
 
-On Mon, Feb 24, 2025 at 11:22:42AM -0800, Alexei Starovoitov wrote:
-> On Mon, Feb 24, 2025 at 6:08 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > +SYSCALL_DEFINE0(uprobe)
-> > +{
-> > +       struct pt_regs *regs = task_pt_regs(current);
-> > +       unsigned long bp_vaddr;
-> > +       int err;
-> > +
-> > +       err = copy_from_user(&bp_vaddr, (void __user *)regs->sp + 3*8, sizeof(bp_vaddr));
-> > +       if (err) {
-> > +               force_sig(SIGILL);
-> > +               return -1;
-> > +       }
-> > +
-> > +       /* Allow execution only from uprobe trampolines. */
-> > +       if (!in_uprobe_trampoline(regs->ip)) {
-> > +               force_sig(SIGILL);
-> > +               return -1;
-> > +       }
-> > +
-> > +       handle_syscall_uprobe(regs, bp_vaddr - 5);
-> > +       return 0;
-> > +}
-> > +
-> > +asm (
-> > +       ".pushsection .rodata\n"
-> > +       ".balign " __stringify(PAGE_SIZE) "\n"
-> > +       "uprobe_trampoline_entry:\n"
-> > +       "endbr64\n"
-> 
-> why endbr is there?
-> The trampoline is called with a direct call.
+Wed, Feb 19, 2025 at 03:21:30AM +0100, kuba@kernel.org wrote:
+>On Fri, 14 Feb 2025 13:54:43 +0100 Jiri Pirko wrote:
+>> For the record, I'm still not convinced that introducing this kind of
+>> shared inter-devlink lock is good idea. We spent quite a bit of painful
+>> times getting rid of global devlink_mutex and making devlink locking
+>> scheme nice and simple as it currently is.
+>> 
+>> But at the same time I admit I can't think of any other nicer solution
+>> to the problem this patchset is trying to solve.
+>> 
+>> Jakub, any thoughts?
+>
+>The problem comes from having a devlink instance per function /
+>port rather than for the ASIC. Spawn a single instance and the
+>problem will go away 🤷️
 
-ok, that's wrong, will remove that
+Yeah, we currently have VF devlink ports created under PF devlink instance.
+That is aligned with PCI geometry. If we have a single per-ASIC parent
+devlink, this does not change and we still need to configure cross
+PF devlink instances.
 
-> 
-> > +       "push %rcx\n"
-> > +       "push %r11\n"
-> > +       "push %rax\n"
-> > +       "movq $" __stringify(__NR_uprobe) ", %rax\n"
-> 
-> To avoid introducing a new syscall for a very similar operation
-> can we disambiguate uprobe vs uretprobe via %rdi or
-> some other way?
-> imo not too late to change uretprobe api.
-> Maybe it was discussed already.
+The only benefit I see is that we don't need rate domain, but
+we can use parent devlink instance lock instead. The locking ordering
+might be a bit tricky to fix though.
 
-yes, I recall discussing that early during uretprobe work with the decision to
-have separate syscalls for each uprobe and uretprobe.. however wrt recent seccomp
-changes, it might be easier just to add argument to uretprobe syscall to handle
-uprobe
 
-too bad it's not the other way around.. uprobe syscall with argument to do uretprobe
-would sound better
-
-> 
-> > +       "syscall\n"
-> > +       "pop %rax\n"
-> > +       "pop %r11\n"
-> > +       "pop %rcx\n"
-> > +       "ret\n"
-> 
-> In later patches I see nop5 is replaced with a call to
-> uprobe_trampoline_entry, but which part saves
-> rdi and other regs?
-> Compiler doesn't automatically spill/fill around USDT's nop/nop5.
-> Selftest is doing:
-> +__naked noinline void uprobe_test(void)
-> so just lucky ?
-
-if you mean registers that would carry usdt arguments, ebpf programs
-access those based on assembler operand string stored in usdt record:
-
-  stapsdt              0x00000048       NT_STAPSDT (SystemTap probe descriptors)
-    Provider: test
-    Name: usdt3
-    Location: 0x0000000000712f2f, Base: 0x0000000002f516b0, Semaphore: 0x0000000003348ec2
-->  Arguments: -4@-1192(%rbp) -8@-1200(%rbp) 8@%rax
-
-it's up to bpf program to know which register(+offset) to access, libbpf have all
-this logic hidden behind usdt_manager_attach_usdt and bpf_usdt_arg bpf call
-
-the trampoline only saves rcx/r11/rax, because they are changed by syscall instruction
-
-but actually I forgot to load these saved values (of rcx/r11/rax) and rsp into regs that
-are passed to ebpf program, (like we do in uretprobe syscall) will fix that in next version
-
-I'll add tests for optimized usdt with more arguments
-
-thanks,
-jirka
+>
+>I think we talked about this multiple times, I think at least
+>once with Jake, too. Not that I remember all the details now..
+>-- 
+>pw-bot: cr
 
