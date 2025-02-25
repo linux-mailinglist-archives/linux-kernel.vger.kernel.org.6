@@ -1,205 +1,107 @@
-Return-Path: <linux-kernel+bounces-532588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7210A44F93
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:13:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72B2A44F98
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD18A3B0936
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992EE3B0AA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7013D212FA9;
-	Tue, 25 Feb 2025 22:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7992135CA;
+	Tue, 25 Feb 2025 22:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kUKrniKw"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HKHrvHIP"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC59212B0D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBD2212D83
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740521564; cv=none; b=ufvJMkiwUu3aQY2b2touPknDLf6QAcAiKo8V5FWhAWZcAlhXFD630lJpiEduKQU0otu512li/dyJeDmM+8dcNDYBqL5iTpcMB1CIuHdKJ1fKhe/63r33Ld+T3bI4iOB6axjrFTR+jwkMYXxJbClRoVUBEr3H9NJ2KmXvID/bKEg=
+	t=1740521675; cv=none; b=OrZms5VobR/5WJAtTwA9RQkvZYuKcXXpIDcoyPXUdGGmg19BVAQq4BvcAOaQJb9bmngFuwkCpdaljzsGjF0x0eJbjYTS9lCzUEz7VeoCeKTkb3I8WqgFlrY/SF0BEhKH/xwSlLmbRTHuDy6+JlGy0e6xMJyOBFTwdx8y/8rRcE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740521564; c=relaxed/simple;
-	bh=+omL0bG5usAOiKMbZmtMn11yUx6SDU1JFErIAPC2NWs=;
+	s=arc-20240116; t=1740521675; c=relaxed/simple;
+	bh=MDGLRB1elogkq5ZS7O3/EtHbyE61wRXahwAtSkqJ0aw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CynPePOSReEF+643L8ubg26lOHQbBVDmD/NUBxj3pY+MP9e+eUyoRTn4qqKbJbKFkrguVetotglesphJfVZIgeXqZMf3OZz2nNv9fq0S7o5VMW3KTiH8SOCio9NeAgjVxEUuI1NLGOSRmICmOsVMoqu6iPOMdCEillqv14oQ+hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kUKrniKw; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-471f1dd5b80so29631cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:12:42 -0800 (PST)
+	 To:Cc:Content-Type; b=QswyQZPaTvb7QX6HH3IshlrjTBsM54qlXhKf/L9ljLVVkNKtIjwglyKEMKWNFmGfKtV2UDcdPqTgRIeHH3+cPE4ApuO0hqdJq3vgQiI/uwvY+8BKCIzOH/7sTLoP2tCl37bvRAu8qFkaC6TRGqkNUEZDaQQKBc0Ee7g8WR3WsyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HKHrvHIP; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6f9625c0fccso54485157b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:14:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740521562; x=1741126362; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1740521672; x=1741126472; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KwrTC5LqQGsUOp6a4E+fD006nIMQ2oDxzYaqrSA4yW0=;
-        b=kUKrniKw6IrSIS0jfZ6OkawNTQwKUr+JaAdct6a0RIHE/6dExpXvfiwzZ4/e1t+ydq
-         BpVkhrfRD8bnQQS2bREfeEZ0gT1qfLMonSACsEb+JYrkkJPVONE6xDmhzvR/iU5ZnHta
-         DO8yAjRppw+VoL0/qadLqiOBwXX58RMvt8qdxe+s4CDHSMBzRut66+cJ98WDbRONpLgn
-         ZVGiZdRhCR6GmPJJp9mzjzOkK1f+ovICMUOjxkhaoBtRZLn5+7AsGZ2mAFKC1fmrKtof
-         ncFU6tWgJ5RKLFWPH+AYxsuTbO8iq7bhh/kqBtshOAJXGTIL0QNBVbEL+7qVP1Gq3aP5
-         gKMA==
+        bh=MDGLRB1elogkq5ZS7O3/EtHbyE61wRXahwAtSkqJ0aw=;
+        b=HKHrvHIPGOs1LAPhaKGNVYAN4p1hSmui5H2x05WfT8rpf/+sxE5cNaJe4j4UPShABd
+         QdglBIJRHJlmFTsh0oXtBBF8oK31iko2mj5XAMfkURIXlnHuNViYHY6r4rtcvAFOoCtI
+         iKp00SFOYRRF4IrIH5cz9W1tHw+QlEtTRXMqgiMh24y1D7JKw+EngatYg/Lh+9uAIW+r
+         B1jSUsbiiMY20xcsisZek9Fjju86noKydwlAvseGVqLwOeC4Pci7nwp+jLZt0Uf28mO8
+         we5gSJFCqE0NJTVwC1+55Q/k4JgavG3yBljPZJ2worsbEqjsdGQPxVIwT4TwA5Y2IM+5
+         ukpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740521562; x=1741126362;
+        d=1e100.net; s=20230601; t=1740521672; x=1741126472;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KwrTC5LqQGsUOp6a4E+fD006nIMQ2oDxzYaqrSA4yW0=;
-        b=R+4IUsnB6fSc4eYRcW0hSqR1mm5eyKmnIYdZZXX1t2kB22IRVZFlKxR5jCpw3YVUwU
-         ZjFmDAnwDJ1xxe/habWI2Tp8GHXHjJRsG48p5n0spUILC2hXzgGUp1j7kGuk3GVx5oba
-         pR0SYYX7zMJoceLz3zO6/wrWD3eZj/PC6NkugR52/XFdy3e7b+M0GNdhr1WRQB9URSze
-         hFVw3AulhMrbxtlK+swjmh+gvdpo1pqtuEOj67zJ/qHIsV/YK+yTSXdQm4EY52pBxFO9
-         Ikr9B6z6Wu2R3wxmfThXNyNf7PxNfH0ewjzdiwGm6s7UjrKB5JasHbUxYnLGbJ6Mq8zr
-         9i8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWujOYvBdUDLb5vh6wz8/oUOOaUCNveaDlhpaFUfIq0uyRhbgXfkKL7yFlaiXQPxQGGVuEHyzm0kJB5Ris=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIbof9MZJP4j6XuIkrwVJ0CqIkhCpmwVQwm1vQlbz8bJ670U5K
-	WmvE3gk7/6ZsJRWUaPkTSkIE+GVy/YXTvnadqJFwyT6eDTsVZxsIG1ECrHddwEVVJuMQKSZ9pru
-	+ntzr+ciRq2JDX+0p/hG7MPkyMeFNAiy4YLdU
-X-Gm-Gg: ASbGncsYi09QhFqCQKrQHlR4QeXqxGfEbWqchbEPu8/ixlXrb9zc+ROZSqwLch9w4D4
-	rkynYQOK7jYb4V38sHd3CLY2PPwZuoC8EnOqOR33sPibD1d5WvVNiyHgJrP/IIeuLThuM/css23
-	5TJCcN0cA=
-X-Google-Smtp-Source: AGHT+IG8QHwqC/lfMZgIU/2wkhNunDI7FmTTo0moaCzvZNTzHf2UgTGIJS4OByBvqQnxdoCvhd4P+CJkuyJL8FDcvK0=
-X-Received: by 2002:a05:622a:13ca:b0:466:861a:f633 with SMTP id
- d75a77b69052e-47376e5d9bdmr6454421cf.5.1740521561574; Tue, 25 Feb 2025
- 14:12:41 -0800 (PST)
+        bh=MDGLRB1elogkq5ZS7O3/EtHbyE61wRXahwAtSkqJ0aw=;
+        b=jBF3aB0Mvw7HJdRoXdQ+20Gi5x0jQUruE9SNSHxaiLK17AK0R8AGDT9oDC5m+sERH+
+         GJ+rWnb5RTpy6PV49PWA3YZzMfyUoDMFSs8h443LX+TdqDqdmmcpk9hTviUn8Q+kuiix
+         au1ayDAepVXoZmn+BiUBZriR6xLpne45VjXqR8ojiIkYYFsiXah2nc0W/uhSOtMSxVMe
+         hctdgtHP+RGJQxWG161qkJz0h2WjFL45ijMxze6vGbuo3t2Zl7q/lwFroWyOCmgSuMbL
+         zmTUG0wRjVCrT9axM+991Dpu7pGxueTVidtzxcKSeXsoh2IHbIp/8IXNHJTveQXzy2Up
+         C8XA==
+X-Forwarded-Encrypted: i=1; AJvYcCVS+oNafIUSy4L4P1RjkIad+uC0r9FX/64UFREEeOXc4v4r2gU1FR2eWW9d220vWwecUt+4N/zkdZNaHEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjP6u6PeQdtt5w4+C5J+DdJedzeH3w3cpkJfx77eI5PkiZ2wwt
+	VGDKa8iWdLPxEDZfay+F879OxUV0Vs6lobZb8L9XM9csA8h0Fo3cho9zls9J0XqLQApf93NsSN2
+	Jc8MbxSZ243H/8MQM1ZubGSgrZ7A2HMEFDtKA
+X-Gm-Gg: ASbGncvFiDVEe9Mzi6GKlypdQiFHIr/Nn11JfzMU+cojRj9TFrqR5qTwHg7MEbrRA5K
+	6OzjhYodv/p6+k2U2IOHYEHWzt5KlOc+K325sQ4wwdtoBtWdO1GccJgOOQnp1b6nZCizV0edoEZ
+	2oef/KjNs=
+X-Google-Smtp-Source: AGHT+IEq+q/3SNBzxXflir8s+6QdmuMLr7mPJKzm7/BUu7IXjxCgJ1uEovP+G+hSJ9QqgINvHv7u8FQo9Dm4e0gAv10=
+X-Received: by 2002:a05:690c:312:b0:6fb:9fb2:5840 with SMTP id
+ 00721157ae682-6fd10ad8d15mr47580827b3.28.1740521672571; Tue, 25 Feb 2025
+ 14:14:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225204613.2316092-1-surenb@google.com> <Z7420bbHoz3y73xh@x1.local>
-In-Reply-To: <Z7420bbHoz3y73xh@x1.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 25 Feb 2025 14:12:30 -0800
-X-Gm-Features: AWEUYZkYR2X7-hqdcRQcXL8Vrtj_xi5DIxLU7WQvN1cO0LOhMz7v5f97S-16abI
-Message-ID: <CAJuCfpGLcxSLNek7bUALKcg8HwF8vd9piaBf+cvjYRhY=xOfrA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] userfaultfd: do not block on locking a large folio
- with raised refcount
-To: Peter Xu <peterx@redhat.com>
-Cc: akpm@linux-foundation.org, lokeshgidra@google.com, aarcange@redhat.com, 
-	21cnbao@gmail.com, v-songbaohua@oppo.com, david@redhat.com, 
-	willy@infradead.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	hughd@google.com, jannh@google.com, kaleshsingh@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
+ <20250225192644.1410948-1-paullawrence@google.com>
+In-Reply-To: <20250225192644.1410948-1-paullawrence@google.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 25 Feb 2025 17:14:18 -0500
+X-Gm-Features: AQ5f1JqI7MeM_scLLuLOFY1u27DXLEkWvnLakhLURvGM4cGQ0eQrhjUWTYnMN4E
+Message-ID: <CAHC9VhSu-034tguAKj+rptYB0w8D9mtgmjbDgLwVc-bJQcSrBg@mail.gmail.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+To: amir73il@gmail.com
+Cc: corbet@lwn.net, dvander@google.com, ebiederm@xmission.com, 
+	john.stultz@linaro.org, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	luca.boccassi@microsoft.com, miklos@szeredi.hu, paulmoore@microsoft.com, 
+	rdunlap@infradead.org, salyzyn@android.com, sds@tycho.nsa.gov, 
+	selinux@vger.kernel.org, vgoyal@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 1:32=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Tue, Feb 25, 2025 at 12:46:13PM -0800, Suren Baghdasaryan wrote:
-> > Lokesh recently raised an issue about UFFDIO_MOVE getting into a deadlo=
-ck
-> > state when it goes into split_folio() with raised folio refcount.
-> > split_folio() expects the reference count to be exactly
-> > mapcount + num_pages_in_folio + 1 (see can_split_folio()) and fails wit=
-h
-> > EAGAIN otherwise. If multiple processes are trying to move the same
-> > large folio, they raise the refcount (all tasks succeed in that) then
-> > one of them succeeds in locking the folio, while others will block in
-> > folio_lock() while keeping the refcount raised. The winner of this
-> > race will proceed with calling split_folio() and will fail returning
-> > EAGAIN to the caller and unlocking the folio. The next competing proces=
-s
-> > will get the folio locked and will go through the same flow. In the
-> > meantime the original winner will be retried and will block in
-> > folio_lock(), getting into the queue of waiting processes only to repea=
-t
-> > the same path. All this results in a livelock.
-> > An easy fix would be to avoid waiting for the folio lock while holding
-> > folio refcount, similar to madvise_free_huge_pmd() where folio lock is
-> > acquired before raising the folio refcount.
-> > Modify move_pages_pte() to try locking the folio first and if that fail=
-s
-> > and the folio is large then return EAGAIN without touching the folio
-> > refcount. If the folio is single-page then split_folio() is not called,
-> > so we don't have this issue.
-> > Lokesh has a reproducer [1] and I verified that this change fixes the
-> > issue.
-> >
-> > [1] https://github.com/lokeshgidra/uffd_move_ioctl_deadlock
-> >
-> > Reported-by: Lokesh Gidra <lokeshgidra@google.com>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->
-> Reviewed-by: Peter Xu <peterx@redhat.com>
->
-> One question irrelevant of this change below..
->
-> > ---
-> >  mm/userfaultfd.c | 17 ++++++++++++++++-
-> >  1 file changed, 16 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index 867898c4e30b..f17f8290c523 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -1236,6 +1236,7 @@ static int move_pages_pte(struct mm_struct *mm, p=
-md_t *dst_pmd, pmd_t *src_pmd,
-> >                */
-> >               if (!src_folio) {
-> >                       struct folio *folio;
-> > +                     bool locked;
-> >
-> >                       /*
-> >                        * Pin the page while holding the lock to be sure=
- the
-> > @@ -1255,12 +1256,26 @@ static int move_pages_pte(struct mm_struct *mm,=
- pmd_t *dst_pmd, pmd_t *src_pmd,
-> >                               goto out;
-> >                       }
-> >
-> > +                     locked =3D folio_trylock(folio);
-> > +                     /*
-> > +                      * We avoid waiting for folio lock with a raised =
-refcount
-> > +                      * for large folios because extra refcounts will =
-result in
-> > +                      * split_folio() failing later and retrying. If m=
-ultiple
-> > +                      * tasks are trying to move a large folio we can =
-end
-> > +                      * livelocking.
-> > +                      */
-> > +                     if (!locked && folio_test_large(folio)) {
-> > +                             spin_unlock(src_ptl);
-> > +                             err =3D -EAGAIN;
-> > +                             goto out;
-> > +                     }
-> > +
-> >                       folio_get(folio);
-> >                       src_folio =3D folio;
-> >                       src_folio_pte =3D orig_src_pte;
-> >                       spin_unlock(src_ptl);
-> >
-> > -                     if (!folio_trylock(src_folio)) {
-> > +                     if (!locked) {
-> >                               pte_unmap(&orig_src_pte);
-> >                               pte_unmap(&orig_dst_pte);
->
-> .. just notice this.  Are these problematic?  I mean, orig_*_pte are stac=
-k
-> variables, afaict.  I'd expect these things blow on HIGHPTE..
+On Tue, Feb 25, 2025 at 2:26=E2=80=AFPM Paul Lawrence <paullawrence@google.=
+com> wrote:
+> Would a patch to set credentials during remount be
+> of interest?
 
-Ugh! Yes, I think so. From a quick look, move_pages_pte() is the only
-place we have this issue and I don't see a reason for copying src_pte
-and dst_pte values. I'll spend some more time trying to understand if
-we really need these local copies.
+Amir mentioned (in a html email so I'm not sure it will go through the
+lists, I haven't seen it yet) that Christian recently proposed an
+override_creds option using the new mount API, does anyone have a lore
+link they could share?
 
->
-> >                               src_pte =3D dst_pte =3D NULL;
-> >
-> > base-commit: 801d47bd96ce22acd43809bc09e004679f707c39
-> > --
-> > 2.48.1.658.g4767266eb4-goog
-> >
->
-> --
-> Peter Xu
->
+--=20
+paul-moore.com
 
