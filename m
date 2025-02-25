@@ -1,160 +1,130 @@
-Return-Path: <linux-kernel+bounces-531082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7E9A43BED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C9DA43BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E7153A7036
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D18B3A89D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E88B26389C;
-	Tue, 25 Feb 2025 10:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476A7261571;
+	Tue, 25 Feb 2025 10:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dF3BFq0A"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YC/xapEf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9BF33981;
-	Tue, 25 Feb 2025 10:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBDE1FDE18;
+	Tue, 25 Feb 2025 10:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479871; cv=none; b=q6p8j1h5MOLgxqG0OsQfKTHHC4FYEpmTRqy/4giVrLg7aVZ5vVRhKdlAxvM5GZwSbIUeeC6NwmItln+Hmv4/H4/KShhslPspM6F4N6IyDRDortm5PRu7WI/Ru7RQcItEC8HCHWllfKBozCpe1lohHBgXWTZNFn2XdrXLXtPyvhY=
+	t=1740479878; cv=none; b=PJj7ePVSWnptzidzGsich76Jmuq0WXJsZEUl1MX7XrWT515hKoRx4v/fX62+fzw+WRnCBgZVwfokTVUxLsoSYvlVpRQYQ8InJef7p+htfvsfTTEvkPuLn6xSM9+tX9s4XX7PVGyXUJraH/TWjq2eaq4s8coZKr8qfrNkhAJShU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479871; c=relaxed/simple;
-	bh=RmuohZsGKRJn8ZSVEgb9yStQAk8o1NUhogGprx7O9PU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JmUGQk2zGlYqrau/yal17L0tzwjmi3cODFkMX1tLyeQp9lJYfIIUR9AmpX1/mGjZBKjVuwLfWhBtyM22cDJaA93jqDC0qiFGaMQUSHxaT1groL+yE8Rr1rXmgSafLKGf/5jVSgvAUBc8Mm1KVhQyRN3XBjpvn5SbKubjltSZS00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dF3BFq0A; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=uz53DfJ8sPKLjR4oalBeJFPjDH5pBX1GJqpCzJiXeWg=; b=dF3BFq0A+/03kmDENk7U8ijpwD
-	KbcFXr3fdXLIiPzr+6C89/vTcWNKaSIzX4WHRJaaEBCM+OCen4auri/JWYWji1oak+ZUiLMl/K+tN
-	JP1/aqALIxeOw1TAsIHko9lii2ishxFrJJARZQjRBExEpGfg2X1jo6FWH+UeIbxT/tY6ddsBk7FFj
-	jsKaA0FmvKBZyjNJMiGuj/JU43otMhvSWN/sxupiF+ZMWW8Ac+5+RVTIOWt51ppz02p2cxK+QNCFO
-	FpAJbYyA1mhFkdw1XUYf3vDxAAZEzHC0Mti8WIIEMxCtS/UtiGoFx4SS54+RRlNwwjZr+LLPlFl4F
-	XyBOUYSA==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tmsJm-000L4t-1o; Tue, 25 Feb 2025 11:37:43 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org,  Bernd
- Schubert <bernd@bsbernd.com>,  Teng Qin <tqin@jumptrading.com>,  Matt
- Harvey <mharvey@jumptrading.com>
-Subject: Re: [RFC PATCH v2] fuse: fix race in fuse_notify_store()
-In-Reply-To: <CAJfpeguQTZ8KcdffKvY8kknZVnBH6h3Tz1GSESwBjXSz_25TLw@mail.gmail.com>
-	(Miklos Szeredi's message of "Mon, 24 Feb 2025 15:39:38 +0100")
-References: <20250130101607.21756-1-luis@igalia.com>
-	<CAJfpegsrGO25sJe1GQBVe=Ea5jhkpr7WjpQOHKxkL=gJTk+y8g@mail.gmail.com>
-	<87tt8j4dqe.fsf@igalia.com>
-	<CAJfpeguQTZ8KcdffKvY8kknZVnBH6h3Tz1GSESwBjXSz_25TLw@mail.gmail.com>
-Date: Tue, 25 Feb 2025 10:37:28 +0000
-Message-ID: <87v7sy48ev.fsf@igalia.com>
+	s=arc-20240116; t=1740479878; c=relaxed/simple;
+	bh=vs/wwxt5DOMp/6xhNJ+6yjgOoU2fOm7g5unK87DJaC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyMvHGRD7imhPF9YAPR5N4mTbHAZyDERHwSKagKhaXLQO7WH1GD/NrNrCIBKWhzNsKBGxf0uU6X7Sy883qOw385NftMTFMP+BOeQaTrrCbPLdLDW+LH27KLAzV6EsVsMtsxMVaXAF+sQ8GtvxMDlBPk2Vl/bBd+sxSH8w/QXj9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YC/xapEf; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740479877; x=1772015877;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vs/wwxt5DOMp/6xhNJ+6yjgOoU2fOm7g5unK87DJaC0=;
+  b=YC/xapEfoKCzwG1PrDnWCgdhVnifhQ2fuUC3wJOXwBiWHjUo29UJF9hW
+   fsI9yj62kxb3aOyedX+bIerC4SVODBAnD91FIfqWAAmDamVFi3pk4y4Jh
+   elLWS/shzmI/9nlT0h7/2WqihhDBOrF+acNacRbvMv8Gwg8LMOOCRoqTM
+   YJfeaN0nBD4L0kLFxyTDKUGad/2UBtJ2uaNjTX0dZnnBLGKGvMyfa3RKb
+   +LzgAbCm3LK/UruA7RfDffealkymADwWv/wuoScdvlswfDg3xw9oXXooe
+   fkgeMwIDUU/BIml+ergsFI/3SFsmL9BsjCJ5h1JiV46Rc9BLTw2lI8E1A
+   g==;
+X-CSE-ConnectionGUID: gIOttq0vS1ybJxWtST0OWg==
+X-CSE-MsgGUID: FsOXRq47SQusBIDL5VoPhw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="28869635"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="28869635"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:37:56 -0800
+X-CSE-ConnectionGUID: ZB6kWAn6SkWq6/29SPCKdw==
+X-CSE-MsgGUID: Rxoeeh+3QwG+6vRQoDD+Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="116362428"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:37:55 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmsK0-0000000ExbG-0sh8;
+	Tue, 25 Feb 2025 12:37:52 +0200
+Date: Tue, 25 Feb 2025 12:37:51 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v1 1/1] at24: Drop of_match_ptr() and ACPI_PTR()
+ protections
+Message-ID: <Z72dfxKzLLORkLl1@smile.fi.intel.com>
+References: <20250225100838.362125-1-andriy.shevchenko@linux.intel.com>
+ <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8a1315a-8d86-4904-92d1-179699f54e03@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Feb 24 2025, Miklos Szeredi wrote:
+On Tue, Feb 25, 2025 at 11:29:05AM +0100, Arnd Bergmann wrote:
+> On Tue, Feb 25, 2025, at 11:08, Andy Shevchenko wrote:
+> > These result in a very small reduction in driver size, but at the cost
+> > of more complex build and slightly harder to read code. In the case of
+> > of_match_ptr() it also prevents use of PRP0001 ACPI based identification.
+> > In this particular case we have a valid ACPI/PNP ID that should be used
+> > in preference to PRP0001 but doesn't mean we should prevent that route.
+> >
+> > With this done, drop unneeded of*.h inclusions and __maybe_unused markers.
+> >
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-> On Mon, 24 Feb 2025 at 15:30, Luis Henriques <luis@igalia.com> wrote:
->>
->> On Mon, Feb 24 2025, Miklos Szeredi wrote:
->>
->> > On Thu, 30 Jan 2025 at 11:16, Luis Henriques <luis@igalia.com> wrote:
->> >>
->> >> Userspace filesystems can push data for a specific inode without it b=
-eing
->> >> explicitly requested.  This can be accomplished by using NOTIFY_STORE.
->> >> However, this may race against another process performing different
->> >> operations on the same inode.
->> >>
->> >> If, for example, there is a process reading from it, it may happen th=
-at it
->> >> will block waiting for data to be available (locking the folio), whil=
-e the
->> >> FUSE server will also block trying to lock the same folio to update i=
-t with
->> >> the inode data.
->> >>
->> >> The easiest solution, as suggested by Miklos, is to allow the userspa=
-ce
->> >> filesystem to skip locked folios.
->> >
->> > Not sure.
->> >
->> > The easiest solution is to make the server perform the two operations
->> > independently.  I.e. never trigger a notification from a request.
->> >
->> > This is true of other notifications, e.g. doing FUSE_NOTIFY_DELETE
->> > during e.g. FUSE_RMDIR will deadlock on i_mutex.
->>
->> Hmmm... OK, the NOTIFY_DELETE and NOTIFY_INVAL_ENTRY deadlocks are
->> documented (in libfuse, at least).  So, maybe this one could be added to
->> the list of notifications that could deadlock.  However, IMHO, it would =
-be
->> great if this could be fixed instead.
->>
->> > Or am I misunderstanding the problem?
->>
->> I believe the initial report[1] actually adds a specific use-case where
->> the deadlock can happen when the server performs the two operations
->> independently.  For example:
->>
->>   - An application reads 4K of data at offset 0
->>   - The server gets a read request.  It performs the read, and gets more
->>     data than the data requested (say 4M)
->>   - It caches this data in userspace and replies to VFS with 4K of data
->>   - The server does a notify_store with the reminder data
->>   - In the meantime the userspace application reads more 4K at offset 4K
->>
->> The last 2 operations can race and the server may deadlock if the
->> application already has locked the page where data will be read into.
->
-> I don't see the deadlock.  If the race was won by the read, then it
-> will proceed with FUSE_READ and fetch the data from the server.  When
-> this is finished,  NOTIFY_STORE will overwrite the page with the same
-> data.
+Thank you!
 
-OK, that makes sense.  Took a bit to go through all this again, but I
-agree that the only thing to do in then is probably to add a warning to
-the libfuse API documentation, in fuse_lowlevel_notify_store(), as shown
-below.  (I'll prepare an MR for that.)
+> For reference, see below for a couple of patches in this area that
+> I have sent in the past. Ideally I think we should try to fix these
+> all up and enable -Wunused-const-variable, which is useful in its
+> own right.
 
-Thank you, Miklos.
+Agree.
 
-Cheers,
---=20
-Lu=C3=ADs
+> Your patch does not address a warning, but it's still a step
+> in that direction.
 
-diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
-index 93bcba296c2d..d1f9717347da 100644
---- a/include/fuse_lowlevel.h
-+++ b/include/fuse_lowlevel.h
-@@ -1845,6 +1845,10 @@ int fuse_lowlevel_notify_delete(struct fuse_session =
-*se,
-  * If the stored data overflows the current file size, then the size
-  * is extended, similarly to a write(2) on the filesystem.
-  *
-+ * To avoid a deadlock this function must not be called while executing
-+ * a related filesystem operation (e.g. while replying to a FUSE_READ
-+ * request).
-+ *
-  * If this function returns an error, then the store wasn't fully
-  * completed, but it may have been partially completed.
-  *
+Yeah, because the original code uses __maybe_unused markers.
+
+...
+
+> Subject: [PATCH] [SUBMITTED 20240403] spi: remove incorrect of_match_ptr
+>  annotations
+
+Was it applied (and the rest you provided here)?
+
+To me sounds like a good cleanup that should be applier sooner than later to
+move forward of getting rid of of_match_ptr()/ACPI_PTR() completely.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
