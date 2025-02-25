@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-530406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFC8DA43310
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:30:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA0CA43312
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:31:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1ED118992B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1C1917CB42
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7867E1422D4;
-	Tue, 25 Feb 2025 02:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391D51547E3;
+	Tue, 25 Feb 2025 02:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VnyaCnvM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJQoKo5s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF15628E3F;
-	Tue, 25 Feb 2025 02:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8CB15B980;
+	Tue, 25 Feb 2025 02:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740450605; cv=none; b=QXJUcxY7LdV/5QPtsQFg1AGNvLRq/0+EO0cZyNvzp2cUIvfzzesOemZVulEddL6urzW8jZP9x3yILGEVHntqjzTbOjq8Gzs832garOnIriXObnY4v9fzUmVHT2iHs+cAxdUnQapvDqjqRXlzCbEPsHJjesyBRvCxTncAL02Qemc=
+	t=1740450607; cv=none; b=W+raRhG0R+Oco0cFD+Z8q3RbPOxp9NBYMOpWyuPHALaUhB3qmV4bkBD2HNUvuiMl7rviGplJxf+deBgCg8SPXw75u+HddGGPkgisQAPA+XfFZuOw0Ftjr9FlhXT6FgOGMOkw+XNbH6Uuu+WouVorq3PlyOfTZsFgo9iXgFGGnrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740450605; c=relaxed/simple;
-	bh=SZSuXVLjjSMXNnUi5YM5/yiVN6XNKTPvopWsPMzHCZg=;
+	s=arc-20240116; t=1740450607; c=relaxed/simple;
+	bh=pGhIeDgVro3WnQNDUGPY/gM/16DqF2aP+gTqj6q8N04=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rVNwLzSJRk2uJp/B/EoGEDBC30GQ2SC8+8w9rgOJ4pr8oSpzOaLLLFEHi8DRoYd04QTiH4zTmsQ0V9S1QwIVm70f2yHhfb5o4j2zoUGDAsE/Z0JIWbi+U1cmPJ79R9mLT10zIazHnYDy6fXMQzrtRZMcihq2LqPdNax241FjSvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VnyaCnvM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AADC8C4AF09;
-	Tue, 25 Feb 2025 02:30:05 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=k5yl2XH+9HtBzdOt3D1EB9ZbnU0okOVKQ0Y8E72CqZV32ol0c7lfbUfXehoCl3hB/mTkslHRPtHgDptEsaFSoT4Hy7OHUKiRlfJsqNgpQeQWTfqX5FHdsqdCJaMwnobx791qkok6UAzIEWohvXxbGz/slMpOCNHX5aMtVaOCzk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJQoKo5s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A03C4CEE8;
+	Tue, 25 Feb 2025 02:30:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740450605;
-	bh=SZSuXVLjjSMXNnUi5YM5/yiVN6XNKTPvopWsPMzHCZg=;
+	s=k20201202; t=1740450607;
+	bh=pGhIeDgVro3WnQNDUGPY/gM/16DqF2aP+gTqj6q8N04=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VnyaCnvMuICuar+2aspmQQ/3XyEWjahjYded4FZ7O3xKZiKYsQ971oBuQWe/l52zn
-	 P3aj9Gsu4NWhnYsHCfy4o8MGhhY8JlgwzioGHHywdTz+GkdEnL83jVc1+BG9rVfQOx
-	 WGxqpDPnt5kAqr71knEkPQDdIpIyc91wSWylPvrrIkCjG7ivZjpze+qOyALmt9ph5t
-	 VK+1yyKsO3eA1JehpCzmVj3GR62fIAIYBAkK7XfN+j7bUvGqe7JeUJUgm87rrmQx9R
-	 88NFdoDvCTuJcwKvz7TnciuUXmTc+Gv4gw/FixSo4ajYJov3VmrOQQoSrFey73GN6m
-	 oxUo+2uCpe+NQ==
+	b=uJQoKo5sf5OYoqteSmlIO9TGMJn2RMod1UP5fFubTO0QQivqoPu+44uJlRv4hXGFW
+	 5swiUlULqdcpNKk82m9/jAHgi5L+gkpGcA1bxNtPFNU3HXY/azckeRScxG3lXJkXJj
+	 9XYRzxF40mtZokSkGX6xB/dNMrYy2gKyvKkioIom1ezYo1U5L0viSxOiI8XF1IXsH0
+	 FARm3Gp9SeZ+lTknzF9ZTLQZGHamu+uohvmftYXy9450RsmmgGAHlyFBv4satqPzg0
+	 fI9Ur31G07QilTzEXeIhP7dNQPRLIJbKLFcmoo02YWWDrC0CGS/UmzYvoLqVzif+cy
+	 /1x8uZy5s6yDQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C38380CFD8;
-	Tue, 25 Feb 2025 02:30:38 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCFC380CFD8;
+	Tue, 25 Feb 2025 02:30:39 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,41 +51,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [RESEND PATCH net-next] net/mlx5: Use secs_to_jiffies() instead of
- msecs_to_jiffies()
+Subject: Re: [PATCH net-next 00/10] mptcp: pm: misc cleanups, part 3
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <174045063700.3682145.1145479825846035545.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Feb 2025 02:30:37 +0000
-References: <20250221085350.198024-3-thorsten.blum@linux.dev>
-In-Reply-To: <20250221085350.198024-3-thorsten.blum@linux.dev>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, kliteyn@nvidia.com, mbloch@nvidia.com,
- igozlan@nvidia.com, jacob.e.keller@intel.com, saeed@kernel.org,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <174045063849.3682145.16015341527538028739.git-patchwork-notify@kernel.org>
+Date: Tue, 25 Feb 2025 02:30:38 +0000
+References: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
+In-Reply-To: <20250221-net-next-mptcp-pm-misc-cleanup-3-v1-0-2b70ab1cee79@kernel.org>
+To: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, martineau@kernel.org, geliang@kernel.org,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
 Hello:
 
-This patch was applied to netdev/net-next.git (main)
+This series was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Fri, 21 Feb 2025 09:53:22 +0100 you wrote:
-> Use secs_to_jiffies() and simplify the code.
+On Fri, 21 Feb 2025 16:43:53 +0100 you wrote:
+> These cleanups lead the way to the unification of the path-manager
+> interfaces, and allow future extensions. The following patches are not
+> all linked to each others, but are all related to the path-managers,
+> except the last three.
 > 
-> Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-> Reviewed-by: Saeed Mahameed <saeed@kernel.org>
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> ---
-> Resend with "net-next" in the title as suggested by Jacob and Saeed.
+> - Patch 1: remove unused returned value in mptcp_nl_set_flags().
 > 
 > [...]
 
 Here is the summary with links:
-  - [RESEND,net-next] net/mlx5: Use secs_to_jiffies() instead of msecs_to_jiffies()
-    https://git.kernel.org/netdev/net-next/c/8f3f4464ff08
+  - [net-next,01/10] mptcp: pm: remove unused ret value to set flags
+    https://git.kernel.org/netdev/net-next/c/bc337e8c0e76
+  - [net-next,02/10] mptcp: pm: change to fullmesh only for 'subflow'
+    https://git.kernel.org/netdev/net-next/c/145dc6cc4abd
+  - [net-next,03/10] mptcp: pm: add a build check for userspace_pm_dump_addr
+    https://git.kernel.org/netdev/net-next/c/63132fb05474
+  - [net-next,04/10] mptcp: pm: add mptcp_pm_genl_fill_addr helper
+    https://git.kernel.org/netdev/net-next/c/f8fe81746573
+  - [net-next,05/10] mptcp: pm: drop match in userspace_pm_append_new_local_addr
+    https://git.kernel.org/netdev/net-next/c/640e3d69d0bc
+  - [net-next,06/10] mptcp: pm: drop inet6_sk after inet_sk
+    https://git.kernel.org/netdev/net-next/c/dc41695200a1
+  - [net-next,07/10] mptcp: pm: use ipv6_addr_equal in addresses_equal
+    https://git.kernel.org/netdev/net-next/c/7720790fd56b
+  - [net-next,08/10] mptcp: sched: split get_subflow interface into two
+    https://git.kernel.org/netdev/net-next/c/9771a96a7a35
+  - [net-next,09/10] mptcp: sched: reduce size for unused data
+    https://git.kernel.org/netdev/net-next/c/b68b106b0f15
+  - [net-next,10/10] mptcp: blackhole: avoid checking the state twice
+    https://git.kernel.org/netdev/net-next/c/8275ac799ee1
 
 You are awesome, thank you!
 -- 
