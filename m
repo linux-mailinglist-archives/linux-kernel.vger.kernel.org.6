@@ -1,47 +1,89 @@
-Return-Path: <linux-kernel+bounces-530393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C37CA432E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:15:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4CD7A432E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 03:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72D1A165E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:15:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B383B833B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9029713D8A0;
-	Tue, 25 Feb 2025 02:15:05 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFBDB54F8C;
+	Tue, 25 Feb 2025 02:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNDtnb7l"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B3E2030A;
-	Tue, 25 Feb 2025 02:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D02030A;
+	Tue, 25 Feb 2025 02:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740449705; cv=none; b=IpCJKyh1HEQgEWTZ/48Oc52tFCD9AQ+D6q6wG1uRRHyjyrKZA06BgUewFI+ssJ7yR8R9NITCxztgvzHAfAfrZ/WvlRAHOOUUOP5b7JcTNglsQjehJ9vlM5L5ADw3q9hRlLnDjmOFCrQ6RD6azq5qAvsLgm+IqIhNPT77NFCr0eA=
+	t=1740449729; cv=none; b=nDlJSDRlWUiU6B/wMmHExwOayTbW3UNrvksUpM6dWkT8tJ1RyZPBQgBRQYe/zQEtPIpi9I6377KTlrZHjmeB5jQ70locmzjA8VI3jmDLxs2NvrN2dQQIWKyaMEAoWYUxAA1PuWnC2pD31B6tHZpQGWOnt8hbBOht8tj1zxxbAtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740449705; c=relaxed/simple;
-	bh=syPmBwmUMBo0QIBV7GdWdnT0SdfzyuqB5EAPVxcSIkY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X0pxrsdDI+WW6FQEcPaECxgWRTa1GQTIwpmwF4tBkdFlzB5rVE724hP1Q9mhVC9howAR0VIBCLB7TN3a2yABuOzsr6jUNLiH6sZJgCai8Lv8Ix8AYkEYEEGXtG0+QQkAnHSBS9JC53nh+Yj0tJBIUX2pZiyZAygxCJDffoOht/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABXXW2SJ71n8sQyEA--.3132S2;
-	Tue, 25 Feb 2025 10:14:52 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: bhelgaas@google.com,
-	arnd@arndb.de,
-	treding@nvidia.com
-Cc: linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1740449729; c=relaxed/simple;
+	bh=iRbG47sCANDY3FCzmTRh11kWxd+TdU3fhkQZyTjVa3g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hvrKZ4GwGvE9iycoFjnVclF41J8mBUhlYpdQxNDwzjNt6PDVXOaNPPqeAy9zSkOEPmr5x+4jJwFnsubQyih+ALSnUIrHsRxzh4qXfUgHRvYEJJc7EJL4R6K1kzgLzwrC9/4PrnW3p4mTbTDPuSMpjBuZizNx4ULlEmNSuitGJjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNDtnb7l; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2f9b9c0088fso8713084a91.0;
+        Mon, 24 Feb 2025 18:15:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740449727; x=1741054527; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=F2RCAC+gdt/KaJu/iQUcgfbAB6xrc5AkdAaC3TV+ngQ=;
+        b=CNDtnb7lqIpDvkBjbSgueAcw/QxpcQker51o/jZEXfQNk1ycdVTiinoUu5iMDK8tgH
+         qaWrIj1ASUYSPtILausMpSddxp4NxWSEt2omGXTQbLoSTWKiW4sij1sJg0gYGHwNaZnG
+         uCEb4BWMvtlO4F5McKccknMyvEQCL4StpvqVL6Wyab7Z37tJSg5LaGTtRJFkbAypHyxd
+         Abr+zJfeZzaUZLOONVYPowuFoW+1IK4RHSAU1Y/r8k/XqmcTaIMOUOxkZziHnDUEfHUI
+         Xo34DThoaHGAKig80ME3H+nvEX8oT2pLkdpOb0f3BR3ssjeRF1xe5/gJFlEhPezYy0pF
+         7iSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740449727; x=1741054527;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=F2RCAC+gdt/KaJu/iQUcgfbAB6xrc5AkdAaC3TV+ngQ=;
+        b=BiTdkh8IbGrMQHtkh17b0W2cDbL6cfM//vTT1t+dfoMJcG1wU9eaHaNNfabF/l75RG
+         BlWniCPicR6JEHs4yLqeeYgXRcaM9NZCflx339LBeH770jwEY1rTYA9drnCLPQ4thjHJ
+         vVTOhpNRXaPzv+2ZQntPcI1cwjWMrGWZOsujXO+1dit5oc1Y69/9cWBwDC2PFoMerSdK
+         D4NLekQIFRr1utzqCWOEj0wJKPS220r5ufdRHXGpuIRESOZuwo6SOU9DTuJrT3LblH4s
+         5PsfNSWZgwwl4VO3a0GB9NgCJPIcePegow09yP16wBR3Hzaf4LTO3l8rt6G/Ok3Y2Pjt
+         gftw==
+X-Forwarded-Encrypted: i=1; AJvYcCVffGg8mZWPHkYEwK/5o0kYh2TX1vkef70Agt3d00tsl1AAkAqg9LPExpz/LwmhjiFybagtQ4ps@vger.kernel.org, AJvYcCX2kYs9SalYoOy4vo5kB/JkdtJbF8QPmxwTvDcRaIPqmLok2Y5ncumPK5aCHdkvnv+d+JidjCv4qE6vLW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzuy27X/oHIH3aPxc1sgoRD6NYby9aRup2zXO8Z5QrWs+pGFDUT
+	wW/ZEDyPgQAi+HoqVZZWYyqNkzsDzcY7q2Ajep01RRPPjltlTeo2
+X-Gm-Gg: ASbGncszKLOFe0VbK8j/NtMdP672UmHEHkfjp7SqZNrFaFVaWpCk67o+D/+J1s5x9B5
+	wJWnRuyEh4osRo5rrSYgGCaMGtNbAFz4fjsU4yae1MOTMeZ3QJm28OHzLD2Rv6G8aZpLRyzKT/2
+	YuealnXmuuLCIj8XynfxK15gSWE0V1Gj1CIZVtooEv/objeV3MRPhx0sD7/63e2NGVVDAuJZO5u
+	BQaKvjoH8OmmwQYC7B6pRLHs3o69zu4Bq8Ts88fvNl4Df1U0zq7dc7H/HPHBqX2UAlOXM0VkuTc
+	xI5SHY1JJPrL+sNDI/s+uyRojPwmHwqnOdi9SoQT5SikHd1235WH0WQCAtgIpPN1hI45iTMAbke
+	jUQHvYkHW
+X-Google-Smtp-Source: AGHT+IEun3d0mqviGGXiD1pq62e8dvIHV3jZdQZVXB3L8zSulmRDjEGghXZS3iOG95u+DQXXM8ROXw==
+X-Received: by 2002:a17:90b:2647:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-2fccc117cb6mr32839386a91.7.1740449726980;
+        Mon, 24 Feb 2025 18:15:26 -0800 (PST)
+Received: from AHUANG12-3ZHH9X.lenovo.com (220-143-206-67.dynamic-ip.hinet.net. [220.143.206.67])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe6a39a691sm359880a91.4.2025.02.24.18.15.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 18:15:26 -0800 (PST)
+From: Adrian Huang <adrianhuang0701@gmail.com>
+X-Google-Original-From: Adrian Huang <ahuang12@lenovo.com>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] PCI: fix reference leak in pci_register_host_bridge()
-Date: Tue, 25 Feb 2025 10:14:40 +0800
-Message-Id: <20250225021440.3130264-1-make24@iscas.ac.cn>
+	Adrian Huang <ahuang12@lenovo.com>
+Subject: [PATCH v2 1/1] af_unix: Fix memory leak in unix_dgram_sendmsg()
+Date: Tue, 25 Feb 2025 10:14:57 +0800
+Message-Id: <20250225021457.1824-1-ahuang12@lenovo.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -50,62 +92,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXXW2SJ71n8sQyEA--.3132S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF13GrWUGF4kuFy3ZF43Jrb_yoWkArXEgr
-	109Fy7Zr4rG3Zagr13ArnxZr10k3ZFgrWfGr48tFZ7ZayrXFZIg3ZxZFWYyr17Ca1DCr1U
-	J3WDXr4DCr1I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
-	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
-	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWI
-	evJa73UjIFyTuYvjfUY3kuUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Once device_register() failed, we should call put_device() to
-decrement reference count for cleanup. Or it could cause memory leak.
+From: Adrian Huang <ahuang12@lenovo.com>
 
-device_register() includes device_add(). As comment of device_add()
-says, 'if device_add() succeeds, you should call device_del() when you
-want to get rid of it. If device_add() has not succeeded, use only
-put_device() to drop the reference count'.
+After running the 'sendmsg02' program of Linux Test Project (LTP),
+kmemleak reports the following memory leak:
 
-Found by code review.
+  # cat /sys/kernel/debug/kmemleak
+  unreferenced object 0xffff888243866800 (size 2048):
+    comm "sendmsg02", pid 67, jiffies 4294903166
+    hex dump (first 32 bytes):
+      00 00 00 00 00 00 00 00 5e 00 00 00 00 00 00 00  ........^.......
+      01 00 07 40 00 00 00 00 00 00 00 00 00 00 00 00  ...@............
+    backtrace (crc 7e96a3f2):
+      kmemleak_alloc+0x56/0x90
+      kmem_cache_alloc_noprof+0x209/0x450
+      sk_prot_alloc.constprop.0+0x60/0x160
+      sk_alloc+0x32/0xc0
+      unix_create1+0x67/0x2b0
+      unix_create+0x47/0xa0
+      __sock_create+0x12e/0x200
+      __sys_socket+0x6d/0x100
+      __x64_sys_socket+0x1b/0x30
+      x64_sys_call+0x7e1/0x2140
+      do_syscall_64+0x54/0x110
+      entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-Cc: stable@vger.kernel.org
-Fixes: 37d6a0a6f470 ("PCI: Add pci_register_host_bridge() interface")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Commit 689c398885cc ("af_unix: Defer sock_put() to clean up path in
+unix_dgram_sendmsg().") defers sock_put() in the error handling path.
+However, it fails to account for the condition 'msg->msg_namelen != 0',
+resulting in a memory leak when the code jumps to the 'lookup' label.
+
+Fix issue by calling sock_put() if 'msg->msg_namelen != 0' is met.
+
+Fixes: 689c398885cc ("af_unix: Defer sock_put() to clean up path in unix_dgram_sendmsg().")
+Signed-off-by: Adrian Huang <ahuang12@lenovo.com>
 ---
-Changes in v2:
-- modified the patch description.
----
- drivers/pci/probe.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Changelog v2:
+ - Per Kuniyuki's suggestion: Remove 'else' statement
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 246744d8d268..7b1d7ce3a83e 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1018,8 +1018,10 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	name = dev_name(&bus->dev);
+---
+ net/unix/af_unix.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 34945de1fb1f..f0e613d97664 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -2102,6 +2102,7 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 			goto out_sock_put;
+ 		}
  
- 	err = device_register(&bus->dev);
--	if (err)
-+	if (err) {
-+		put_device(&bus->dev);
- 		goto unregister;
-+	}
- 
- 	pcibios_add_bus(bus);
++		sock_put(other);
+ 		goto lookup;
+ 	}
  
 -- 
-2.25.1
+2.34.1
 
 
