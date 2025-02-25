@@ -1,164 +1,130 @@
-Return-Path: <linux-kernel+bounces-531783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C655A444DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:46:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C6CA444E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:47:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B29CB19C3035
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB7E91677BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA9D17E015;
-	Tue, 25 Feb 2025 15:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5374156960;
+	Tue, 25 Feb 2025 15:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vm8jpCp2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JB8OjMCt"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7425156F3A;
-	Tue, 25 Feb 2025 15:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C446D199B9;
+	Tue, 25 Feb 2025 15:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740498391; cv=none; b=cNfByMIOGyP69Z3cq/RfukX7V4jfKxfaE9OOUD9vb8xeWcdffYrzt+E7Hktxl3X5+awfFfSE4RboYNRnnxYZXyWKwFXRtLDyu2And7e6dGSG7YJPt5EChW1EwCHs9EwLPhUxug2ZjBjHpO4JXxAJG/jLsBGbi+S803ZTs8xqo7Y=
+	t=1740498389; cv=none; b=QmoY/w4KU15hzDmtMcoRvKmpFZPlHxQdB+0La2SurEfjymDyQaTNv5BuQvNrpW/k0KyE6NgKja3HLJ2GL9LcmJDusYO8OWC5O3r417Fdmny3UcloqrBdI0SxBNTZExHR6L85rgaNUUFPrT1Qr+z9mGukQqwxG0jyKRZf4tv0Nks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740498391; c=relaxed/simple;
-	bh=RLEyNw4p0IjCU146brG7GSEawkup6y5x3nH2i+FMet0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s842XgJjGU9qR4Ym517NDO7Az/fGYUePZ8i5018EHrQPJTZivUFyIJRIv2Zsag+X/nE36wGcA7ZDTu+JfYusvG29lF4VpEo9OfWnm3/1DLvt0MFo4/NA6/rcgful6oCnugg6JoxZsFGK1ZOyMQUto5FCR3T9wBV+v1vdm+dxdfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Vm8jpCp2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 833E282E;
-	Tue, 25 Feb 2025 16:45:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1740498300;
-	bh=RLEyNw4p0IjCU146brG7GSEawkup6y5x3nH2i+FMet0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vm8jpCp2ozlRiYp9yEnZeN9pDF8gmlJ3pEroM1P40CuyV9C9j79KOzuu5/5pjt2Wq
-	 3bf+RwsLHqi8DuswwQ6Acs3Q1db1TFONBTd0KancqMjPHibSlB2XGPsb047mkQFEIb
-	 Dj7Fi4CTknlti0ufmAzrOm+wfJU9mvnRHghj2MJg=
-Date: Tue, 25 Feb 2025 17:46:07 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Richard Leitner <richard.leitner@linux.dev>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
-Message-ID: <20250225154607.GA18426@pendragon.ideasonboard.com>
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev>
- <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
- <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
+	s=arc-20240116; t=1740498389; c=relaxed/simple;
+	bh=MFvmP9LovArK9OERLzzbnLEOunRvxAUL0nHnW9lN2zc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Qe9utyhhaUZ/ErQtDb5OYCbL/FToo3dp6708ekrQnBeqEgbeDHvO75HPS9BkSQqpj1MtBV0RsZyG8FOZHkfkCu5xaynFOCIGFNftWRVBUIF5RAC3aT/DvtF6P0Ve7Im6Z2zUVqENgq5ftAtj9W/qeVjgMtqxuU0bzYkPxcgSqjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JB8OjMCt; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D59644429F;
+	Tue, 25 Feb 2025 15:46:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740498385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0QMFPn7v0dvtqEnFRRWaHTTHu3sj+oRLzfepMtxanK8=;
+	b=JB8OjMCtCzJ1YInn4tNfeR0v0PbEPGZGOGVlzbzrit48JNQTeiTdt+9vYx4sh+wmawS/6N
+	CETWdosaxauFkwlusUa9edkiZgRA6Ds9BO18Zl/y2+e36l0G7BDMOGrYrL+wG0xPiz6kvh
+	NdCEI9zw1kowE2dr151TWTPB2obKNZHjLQsEqqALDY4IBajPhsJh8KGxAekJtz2SszH+ra
+	P9Cv91kFMMvIoKx0qeykfMlaoVZSoamphKkqkcGwSiatDie1PU6n+6jTGQN1TvfxkqrFaX
+	2IbDUk+L0Evph8E7rEmZiInCnG2QeentPxoE4AE7iwU5AZ8q75g5aRQAGmX7Ew==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Tue, 25 Feb 2025 16:46:22 +0100
+Subject: [PATCH] drm/vkms: Add "hardware limitation" emulation TODO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250225-vkms-update-todo-v1-1-afb1e6f7d714@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAM3lvWcC/zWMQQrCMBBFr1Jm7WAaGpVeRbpIk1EHSVIzaSmU3
+ t1gcfffh/c2EMpMAn2zQaaFhVOs0J4acC8bn4TsK4NW2iitDS7vIDhP3hbCknxCo66q1d1ldP4
+ GVZsyPXj9Je/DwZk+cy2X44TRCqFLIXDpG58DBhZ3/g+MtBYY9v0LdOQsTJwAAAA=
+X-Change-ID: 20250225-vkms-update-todo-50701246bcd8
+To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
+ David Airlie <airlied@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Jonathan Corbet <corbet@lwn.net>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1429;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=MFvmP9LovArK9OERLzzbnLEOunRvxAUL0nHnW9lN2zc=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBnveXPQ2q8V3VeN1NbMRQPdRMMaL4QjQAynIylm
+ AUfAMv05wWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZ73lzwAKCRAgrS7GWxAs
+ 4t5VEACUFayeAdbvJqZBoi1QRKlqceU3JOBr31o/wBKDiJ1qzS2UbREIJvAB+a1RFRfgaNByGFB
+ qDaAN6Af8AbAkWVEu7MWzsUwelIPNlKCB9jm6GZCTiGBi21qUicgPWN/4jlAmx6BQ0Lpjg+ICBC
+ sqzNO9Rg7oUx0zMnh8JquaWLKrqOf68L/mKA7auEA2eXmqOlxbdJFmsDWwLwCZPJ+9wgobGzjr8
+ jETrvKjGZMIUIdJb1d5AjcLlqcWdb9Dn1rOUHDFfie+M5mRWSdk2w+1njLp1qTYjmefWF6Uqq8o
+ xmkdirueb4RhqN09hCI9vREVFdBJGgwuTTDsoQx2g0JhMlVQlllWvtibZv47yzzh41a0wD9tVDp
+ aT+7GEAXDHR3I3C+TY8rMm9plPimKKE9OwympO+6AWdAcOgtYK/HFYej+ilLmTZcgVgc7n7qLJJ
+ qctsn8kr43fmptBxeWt6OMUtdE6eEj8+/llY20vqK25HY1hTonNusLSaJ6L2CQkTJl+qjWF6dkr
+ DGMtcJ+Ieze+qYFErhzTDnwIpbOnYjiSAwd3CWyWgVfdT+MYD3yEJP1ShVpA/GXtK56Z+XQJ8ax
+ YaP406FvqC6KPgq1XzlIMmmcp121MBO/+JFKlLXw9t+yVJ7FH2cOVXLHMCl/7y65RECPD7oktku
+ ZYCZrvKztktDC7w==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvddutdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepueetjeeggeffvdegkeetudekjeevkeehheduledtgeejhfduvdeuleehleffgefgnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludejvddrudekrddtrddungdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhouhhis
+ hdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Tue, Feb 25, 2025 at 03:30:16PM +0000, Dave Stevenson wrote:
-> On Tue, 25 Feb 2025 at 13:09, Richard Leitner wrote:
-> >
-> > The sensors analogue gain is stored within two "LONG GAIN" registers
-> > (0x3508 and 0x3509) where the first one holds the upper 5 bits of the
-> > value. The second register (0x3509) holds the lower 4 bits of the gain
-> > value in its upper 4 bits. The lower 4 register bits are fraction bits.
-> >
-> > This patch changes the gain control to adhere to the datasheet and
-> > make the "upper gain register" (0x3508) accessible via the gain control,
-> > resulting in a new maximum of 0x1fff instead of 0xff.
-> >
-> > As the "upper gain register" is now written during exposure/gain update
-> > remove the hard-coded 0x00 write to it from common_regs.
-> >
-> > We cover only the "real gain format" use-case. The "sensor gain
-> > format" one is ignored as based on the hard-coded "AEC MANUAL" register
-> > configuration it is disabled.
-> >
-> > All values are based on the OV9281 datasheet v1.01 (09.18.2015).
-> 
-> My web searches turn up a 1.53 from Jan 2019 -
-> http://www.sinotimes-tech.com/product/20220217221034589.pdf
-> That lists 0x3508 as DEBUG, not LONG_GAIN.
-> 
-> The current range allows analogue gain to x15.9375.
-> Expanding it to 0x1ff.f would be up to x511.9375. I believe that
-> equates to ~54dB as we're scaling voltages, not power. The spec sheet
-> for the sensor lists S/N of 38dB and dynamic range of 68dB, so x511
-> will be almost pure noise.
-> 
-> Doing a very basic test using i2ctransfer to set gain values whilst
-> the sensor is running suggests that the image is the same regardless
-> of bits 2-4 of 0x3508. Setting either bits 0 or 1 increases the gain
-> by around x8.5, but they don't combine.
-> 
-> Overall can I ask how you've tested that a range up to 0x1fff works,
-> and on which module? I currently don't believe this works as intended.
-> 
->   Dave
-> 
-> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > ---
-> >  drivers/media/i2c/ov9282.c | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > index c882a021cf18852237bf9b9524d3de0c5b48cbcb..e6effb2b42d4d5d0ca3d924df59c60512f9ce65d 100644
-> > --- a/drivers/media/i2c/ov9282.c
-> > +++ b/drivers/media/i2c/ov9282.c
-> > @@ -54,11 +54,11 @@
-> >  #define OV9282_AEC_MANUAL_DEFAULT      0x00
-> >
-> >  /* Analog gain control */
-> > -#define OV9282_REG_AGAIN       0x3509
-> > -#define OV9282_AGAIN_MIN       0x10
-> > -#define OV9282_AGAIN_MAX       0xff
-> > -#define OV9282_AGAIN_STEP      1
-> > -#define OV9282_AGAIN_DEFAULT   0x10
-> > +#define OV9282_REG_AGAIN       0x3508
-> > +#define OV9282_AGAIN_MIN       0x0010
-> > +#define OV9282_AGAIN_MAX       0x1fff
-> > +#define OV9282_AGAIN_STEP      0x0001
-> > +#define OV9282_AGAIN_DEFAULT   0x0010
-> >
-> >  /* Group hold register */
-> >  #define OV9282_REG_HOLD                0x3308
-> > @@ -226,7 +226,6 @@ static const struct ov9282_reg common_regs[] = {
-> >         {OV9282_REG_AEC_MANUAL, OV9282_GAIN_PREC16_EN},
-> >         {0x3505, 0x8c},
-> >         {0x3507, 0x03},
-> > -       {0x3508, 0x00},
-> >         {0x3610, 0x80},
-> >         {0x3611, 0xa0},
-> >         {0x3620, 0x6e},
-> > @@ -605,7 +604,11 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
-> >         if (ret)
-> >                 goto error_release_group_hold;
-> >
-> > -       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
-> > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, (gain >> 8) & 0x1f);
-> > +       if (ret)
-> > +               goto error_release_group_hold;
-> > +
-> > +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN + 1, 1, gain & 0xff);
+Add the hardware limitation todo.
 
-Ignoring Dave's functional review for a moment to focus on the code:
-16-bit registers should ideally use the v4l2-cci helpers. It would be
-nice to convert the driver to them.
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+---
+ Documentation/gpu/vkms.rst | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-> >
-> >  error_release_group_hold:
-> >         ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
-> >
+diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+index ba04ac7c2167..d5bc602547e7 100644
+--- a/Documentation/gpu/vkms.rst
++++ b/Documentation/gpu/vkms.rst
+@@ -147,6 +147,15 @@ module. Use/Test-cases:
+ - Change output configuration: Plug/unplug screens, change EDID, allow changing
+   the refresh rate.
+ 
++- Emulating Hardware Limitations with eBPF for MST and Atomic Checks
++  Hardware limitations can often prevent valid DRM configurations during
++  atomic checks. Examples of such limitations include bandwidth constraints in
++  MST and limited clock signals for multiple CRTCs.
++  These limitations are dynamic and require extensive checks, making them
++  difficult to describe statically. To address this, we propose creating an
++  eBPF interface for atomic checks. This interface will allow userspace applications
++  to simulate and enforce custom hardware limitations.
++
+ The currently proposed solution is to expose vkms configuration through
+ configfs. All existing module options should be supported through configfs
+ too.
 
+---
+base-commit: acf3256160bdabcb5c07032f3bf6eb5a21f5b95f
+change-id: 20250225-vkms-update-todo-50701246bcd8
+
+Best regards,
 -- 
-Regards,
+Louis Chauvet <louis.chauvet@bootlin.com>
 
-Laurent Pinchart
 
