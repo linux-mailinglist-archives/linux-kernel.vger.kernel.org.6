@@ -1,143 +1,139 @@
-Return-Path: <linux-kernel+bounces-531066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC3AA43BBB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:34:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370E0A43BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15B6D420BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F252119C482A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8450D1C84B8;
-	Tue, 25 Feb 2025 10:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6402B266190;
+	Tue, 25 Feb 2025 10:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dXQfYYfK"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lUutau1m"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C094F261399
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423E265610
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479336; cv=none; b=cFuVWai/XbDAvnzdCPyX7iq2vSFndwDKzoJBumC1MRNgsnzgWsz40UQhLio6RjmFtpbxgrxyJXKHvykX5jqKz6w547CX6DuhaJENc6vdwRsJVq+2Q3psy661yjD0K1B/O+pZ2UnIyRV1LNaq/WB/K0zLjxC4qijnVeVyYuIUm7M=
+	t=1740479343; cv=none; b=fyq3QEEiwLo42xDNFJMpc4ZSRdgYnJj4tiL8GV3pe1gTejoVRWc46TW6nGFc6rsU9yv4qcFZSzRgRbT13peQOuxqlFygUbM7NDv0hMqgZKpJSPGiaAcd/uVgN5Wlc2S3paA8fCwc7Bn0URCGFnm1eOynhJJ1blSobSTkCeHLUc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479336; c=relaxed/simple;
-	bh=lw7LGz5u4+UY3MSVtdaDIcTdVd1t9SjnuxeMySHbeIw=;
+	s=arc-20240116; t=1740479343; c=relaxed/simple;
+	bh=bQ6fvZqvVAScXUHVfi2Jgc1uaKIbM24bSW4bUHsGHUQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jq6Bv84T/Khbfyx8uLIXXhWfMpglD7CjIMWCMDGbdGHAhVdq3DjFx+rh7BqRjRMG5YyJHhBPmxv061+NNOimys0MFncQtKr9TUryY014v9xIqZk1RRlN/fbgxWXeXvTLBL9NrlhJJBfhLkIAcTURzh5+NeYANB7/ppSG7YEoyDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dXQfYYfK; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-439a2780b44so33823585e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:28:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1740479333; x=1741084133; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lw7LGz5u4+UY3MSVtdaDIcTdVd1t9SjnuxeMySHbeIw=;
-        b=dXQfYYfKuOPsuHKGMYaAyYAlL5LjoJTcuej+QOEToCgzk6dHhny0zasRm2kNVTu6D0
-         m9OwIkeLxTfrL+hXi7oeWX1c1XwWS5+evTuEcjUKwPKrCNBq0/RkfgjfosqqAlLTEXKk
-         cERwlFUjYnOikFvtGetgok5ilAXny++i4nv4G44dlVV3tI5GuonqyiFCrIv7xGM5FP0w
-         6Co+zukyLgB8JEylIqCAKTKB3jA18vWUDtaHCgM0Gcn+a3BXOvJaPb98A9uKcDqCIHxU
-         +0b8L7udU6k0b8yO3AU4hXX+eTfyYho7BCDUGJcizeEeFBj4BsINpR/XhjvHIUudX8uy
-         Ho9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740479333; x=1741084133;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lw7LGz5u4+UY3MSVtdaDIcTdVd1t9SjnuxeMySHbeIw=;
-        b=SN94+hgwZBddnuI3Zzfhjc5LOqiBx7N0jKKx0EK6e2JIgwAsTrlJ5YmU6GPnVakQFL
-         Cxa/c9e2BCNzaZrRVblAjilrP69eQ/gYCKng6iC4Hp8c2LcZiLwrEekaStg52K9uU0kq
-         3hfqBBcZvBTcdyQWUa4B1xbtK4wFjMQQd4SLGkoskoDGEvX6knsP8q8E12ePQUGIQsh7
-         B9R8Y13Kg/WXgvX/fGk//orXdRQ2a7qNJPoXc+QO6/oFemgHpaWi+ylJPvRd8TqYlt7I
-         t90v6B1TBWYlsnb/b4Uj6PHHpF2Re6Qrc6KQrskYpELxGgqkcR1FVUNYcf6JPZRFotBd
-         jcuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUAsQR3CY4bAkSaw7yCAfaYknGvJeu9/a+L2yMcylreaqokVf7INsPu3TqTN3begHYvQ97ki83O860J0lM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5GCYaXfLgpILS+UhONI/2XU/CdtHYoaICD6/rEsU/SiKa7oB9
-	+YlJhJeIVIj2Hk9EXt2f7mYVfJGYSf7ohHoK7UWmfmgTS2gaR02sWRHG2MR8Nr0=
-X-Gm-Gg: ASbGncvHhrVHix6hehB5K5dXvDKaaVdGuD4UFxYu4kTbMwjlTejuTDKNntqGN51d7Vl
-	TYZIGzsrOUUU14RgorVgwlAum7qNBuMu/GC2yClNIqBXBmWPjoY9ecaKYX6DESDxAhlKpf5Evxj
-	J5gjR3P/Y+dzR+Wk3Rx6327plTo1hlYWsHogcvFP+HlXJcI9uCkTOa3DMBLwpALj+D8zrzbVPyJ
-	QJ86q7gmrI2lZKNwF59ApSZg8KKPL8cApbJUQmC6uoMDrAHuNU75xC8uXFzo039fBvvOUVpED7n
-	WxQ+AdnjJ/Z4zUt+3GYqmQ==
-X-Google-Smtp-Source: AGHT+IEIzE6LVOdzTaiF/XQxe5YVoLSwzJB4+evEnTKWGqEM97O2xxmk4cpePWYkQ5BISMx7dPcrxA==
-X-Received: by 2002:adf:ea8f:0:b0:388:da10:ff13 with SMTP id ffacd0b85a97d-38f6e95b41dmr13202225f8f.21.1740479333083;
-        Tue, 25 Feb 2025 02:28:53 -0800 (PST)
-Received: from localhost ([2001:4091:a245:8327:7bba:546d:aa63:621e])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390cd8e7233sm1802184f8f.66.2025.02.25.02.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:28:52 -0800 (PST)
-Date: Tue, 25 Feb 2025 11:28:51 +0100
-From: Markus Schneider-Pargmann <msp@baylibre.com>
-To: Judith Mendez <jm@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tero Kristo <kristo@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hari Nagalla <hnagalla@ti.com>
-Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62a/p: Add r5fss nodes
-Message-ID: <qlqxmqluqrw36bkjaa7efcsk6cinyr2rxvznfhz6dopeu67dsf@w4lkuq65uwno>
-References: <20250122-topic-dt-updates-am62-wkup-v6-13-v1-0-f74835b91da9@baylibre.com>
- <c81ccd05-4fb7-4ec0-8cc0-c59ac4dff91e@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cbgx9tQ2wPffny3+rbpTJLQH6J5bnQfUco6MUHSVWt9qCzdrUHUN75B3mrl6I3ln6j2PyKoQaXS517uWyUi6woV1dHZv/tNkadGv54zgAJDPAS/6HFT+c7RiJ0p7eSCDIoZuP+iy28TAbgvlzMVZoqdUfUAy9AVACbYjjBZ9z9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lUutau1m; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740479342; x=1772015342;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=bQ6fvZqvVAScXUHVfi2Jgc1uaKIbM24bSW4bUHsGHUQ=;
+  b=lUutau1mFYjt1s1ex9aXWOXW+1fzkr8LGIQTMagW5+k3X7zDIQXHk/BY
+   CvJbOxPunj9SH8CkKgZPSRdWVjdBpJ1tChePTXa8W/BLsOZFrORNy4Kpp
+   uNfvWCLXC++CB+4Nbc2XrOJFVXlGz4UwVfsOulFbxS3thxIfF/M89qosW
+   TyiPY1Y7hAJou+b8m46/oBqXVttTljPS8BBsU2Z1w+AV6d3+2OdMg11Mt
+   7ukRQoW6jqFztteP7ZIMnbswD3dLJIwXmplzXn0DaVeI49ZjwFzrcqT4P
+   +TmDhTCFaaYxQA+XCbsxX9seftnloW5x26+Nco9aOENQQhYhOFhv51IJp
+   w==;
+X-CSE-ConnectionGUID: ytxYfSKITBaHusHqppSJPg==
+X-CSE-MsgGUID: 915NqoOnRSG/Wur5KGxAIQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="51914614"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="51914614"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:29:01 -0800
+X-CSE-ConnectionGUID: 4kiwgWtzSHWSQoZWk1IDOA==
+X-CSE-MsgGUID: DMZs2XXcT0ywATF+ooUJ+w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153534389"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 02:28:58 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmsBL-0000000ExTN-21Rf;
+	Tue, 25 Feb 2025 12:28:55 +0200
+Date: Tue, 25 Feb 2025 12:28:55 +0200
+From: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Aditya Garg <gargaditya08@live.com>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"simona@ffwll.ch" <simona@ffwll.ch>,
+	Kerem Karabay <kekrby@gmail.com>,
+	Atharva Tiwari <evepolonium@gmail.com>,
+	Aun-Ali Zaidi <admin@kodeit.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v4 2/2] drm/tiny: add driver for Apple Touch Bars in x86
+ Macs
+Message-ID: <Z72bZ3iURwhW5Pj1@smile.fi.intel.com>
+References: <B08444CD-38A8-4B82-94B2-4162D6D2EABD@live.com>
+ <844C1D39-4891-4DC2-8458-F46FA1B59FA0@live.com>
+ <91a39a2e-a3ad-499d-86cd-0e621a68e282@suse.de>
+ <PN3PR01MB959702F55F747E5D87D9AD56B8C32@PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM>
+ <54e45d37-6ada-42e3-a3ae-92d3ee475c5f@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="obza7ftg5kvgvlah"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <c81ccd05-4fb7-4ec0-8cc0-c59ac4dff91e@ti.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <54e45d37-6ada-42e3-a3ae-92d3ee475c5f@suse.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+
+On Tue, Feb 25, 2025 at 09:48:11AM +0100, Thomas Zimmermann wrote:
+> Am 25.02.25 um 09:00 schrieb Aditya Garg:
+> > > On 25 Feb 2025, at 1:22 PM, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+> > > > Am 24.02.25 um 14:40 schrieb Aditya Garg:
+
+...
+
+> > > > +struct appletbdrm_device {
+> > > > +    struct device *dev;
+> > > This field should go away, please. There's drm.dev, which contains the same address.
+> > > 
+> > > So seems to have remove the dmadev field instead, which you'll need for
+> > > dma-buf sharing. Was that a misunderstanding from the last review?
+> > Yeah that was a misunderstanding. I though you meant to remove dmadev.
+> > > The rest of the driver looks good.
+> > Maybe you missed the left over dev_err_probe left in this patch? I'll fix
+> > them.
+> 
+> Sure.
+
+But can you comment on my reply where I'm asking for a clarification how
+drm_err() can be used on the physical device ->probe() to begin with?
+
+> > > > +    unsigned int in_ep;
+> > > > +    unsigned int out_ep;
+> > > > +
+> > > > +    unsigned int width;
+> > > > +    unsigned int height;
+> > > > +
+> > > > +    struct drm_device drm;
+> > > > +    struct drm_display_mode mode;
+> > > > +    struct drm_connector connector;
+> > > > +    struct drm_plane primary_plane;
+> > > > +    struct drm_crtc crtc;
+> > > > +    struct drm_encoder encoder;
+> > > > +};
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
---obza7ftg5kvgvlah
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/3] arm64: dts: ti: k3-am62a/p: Add r5fss nodes
-MIME-Version: 1.0
-
-Hi Judith,
-
-On Mon, Feb 24, 2025 at 09:06:56AM -0600, Judith Mendez wrote:
-> Hi Markus,
->=20
-> On 1/22/25 3:54 AM, Markus Schneider-Pargmann wrote:
-> > Hi,
-> >=20
-> > am62p-wakeup already has the r5fss node defined, but it is currently
-> > missing from the am62a-wakeup domain in the devicetree. This is added as
-> > part of the series.
-> >=20
-> > For am62a and am62p starter kit boards the r5fss memory region is added
-> > and referenced for the r5fss core 0 node.
->=20
->=20
-> This has already been sent here:
-> https://lore.kernel.org/linux-devicetree/20250210221530.1234009-1-jm@ti.c=
-om/
-
-yes, I saw that recently. Could you please cc me on the next version?
-
-Thanks!
-
-Best
-Markus
-
---obza7ftg5kvgvlah
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd8KHufh7XoFiu4kEkjLTi1BWuPwUCZ72bXgAKCRAkjLTi1BWu
-P3ayAQCmje7sVfMPAH4ZyOoLuKscrkF/LVOMHgeJryGd7sabvwD/Z4OE3BQ8OMVR
-Z4ksn1XTyKXHDVVnCnaiIwLS83cpoAU=
-=qRs/
------END PGP SIGNATURE-----
-
---obza7ftg5kvgvlah--
 
