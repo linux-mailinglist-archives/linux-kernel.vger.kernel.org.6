@@ -1,191 +1,194 @@
-Return-Path: <linux-kernel+bounces-531382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0303A43FCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:56:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2574A43FD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:58:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF8179678
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40DE519C0DC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE24268C70;
-	Tue, 25 Feb 2025 12:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B0826980C;
+	Tue, 25 Feb 2025 12:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ke6xQC6D"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="W1PiSNut"
+Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E16267B86
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488200; cv=none; b=gCbz6uK1fCzC3A16kePW5izg/wQ9RNHMRn3Qm3Gh9EU5eqyT1AKFENzphTNpfrSCryZ+3SmlY8RSouTzogUyQ3eRevaz6Ex66gsKjTgAtPht/qTPCec/+2PQZMrnCcbxLShrG9v35+r2E6ks2iJZY0cTwtFvdelUzEeexyYB9O0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488200; c=relaxed/simple;
-	bh=qeHqr2N7h2hbEwkQv0Vwe6G5E97ceWLeI1LIx1Yu2ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CRoU1hYXKNj3pTBvtzG+0gKskGfy4Fms6PpvvfwAgaMI3tw73yov2imqHsKkirIfliEe6PgJlEk0d7JiOArDdEoLRXlKtkAqiGrbeWGq1YZSsyOgQ5DuOln47ggbQ+onrjAGOX+QQpYBseFNAIxzMlZrpLqot/o7gNqXoocd+gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ke6xQC6D; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4393ee912e1so37495e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 04:56:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740488197; x=1741092997; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MC9KPLvVqWKMt0reEhfmjJu692XzkFN80RWzCGUDFJk=;
-        b=Ke6xQC6Dwzf3Xr8Rlh5t/4YYHw5cWoLpDtX1wrSkbWEnPnwMVvbAZmEZ4mSfoGYXFn
-         QS+JeD0oYjuzX1bFXXT7rHFJqs5mTfKH93PKdB0ivvQzx8raYzLPPm2qPkkpPqb+zoFW
-         VVaxU48EljrpNC3R1Lthmv9WsiebuEBPwH/5cZFxYRQYRzWyN4rWl9QqeZFJE6mNYjqD
-         QeN6oCDrTW18iv6QTUsg4pqiNQcq04BqRPl0UKR98Nx3ZMMlMGBhR9ML9HKeJ051mxpG
-         KcygWzBCAklppDwfjaOtIwjutywMVWi0tsvc/1xazNRGKINFEAHVadvoAuqpAe1rQDpp
-         KFSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740488197; x=1741092997;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MC9KPLvVqWKMt0reEhfmjJu692XzkFN80RWzCGUDFJk=;
-        b=qd6RPjeyJDiV/RjGvfn1mqRLQjUWtODeB0PKWq/7Qhi+xy9MpJr+5EUlERFszZRe4I
-         5j6ZR4yho+ZFZQ9XZshNF07e4Tvvd0Tu18vJRGbxoWK2nsk3sDwWtMrV39BxsMA0BJJQ
-         A4T4JgAkO/TUdh4dJL3zKkd3jKP6vbjSV4qclkl/dHYmHxVL6wUZ9B40NzXk4YMN9S8W
-         xRIZxybsW679tOdzeM7eSIX01kMi4f0fSWqrhyGgteZrZBJxqEf6u+HE7NB7q78Pmcwb
-         /OUln6NHjUafosa9GUpQEFYqisomuAbHnI/rIOqlKcK8sfwIxVzxjue1OoVim64LxG8U
-         g/DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNrZq3MPf9liB3+i5GsXuACQagcU5DpUlFK/mbxZRPeP3lay1Q4TlmmBEeW+jZD9XaGp8Q2T1jLU0A1Tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOx66TPiRpCyXPPu3hHSldLLqlzg25Vjxz+aaMVrpPtJx/Amgh
-	xDDUtVIMyHe8QlKCgyZXudX/UMe9QwsaA3S3g/JCC8pQbs+1vJqs7Fx+WGVanA==
-X-Gm-Gg: ASbGnct8BK7b7whpL160FtPlvpR97VRWZUAt9glb/zxlJIFSUyqnKzeTZHPaUU6j748
-	ci5JOEy3qbTxBuVJImgZ9yYBkg0KtmqmNThCCv6I/7BefVSUkDPpJL8ixAIUlD8PgS1VjlRqQkD
-	F9+a/dQwI6lqaRAuID1Sd3Z0fjkFOW/kt4DkvPpmQm/WVL5xu28/yeGaygxhHSML4+hwut6aI39
-	f7CJImM5gxETMECaEy1JCWfyXcc8akhRvYlajJYCdzit9TgaM9bKB7R+WRx+dmA/kYRHJ82Doff
-	NWrUvmWtpRWaFfPvxhV3VLkmu8quBajSyiW29abmusbt5EQzcUK2X3MZHQaLvQ==
-X-Google-Smtp-Source: AGHT+IHHx1tnED5DbqgakpRRi9n7AbytxVfYjoT3lvOaag4Ekssq2e8VL3NZ4DRLo24ldsb4E07AvA==
-X-Received: by 2002:a05:600c:590c:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-43ab0fa8bd4mr1345945e9.2.1740488197133;
-        Tue, 25 Feb 2025 04:56:37 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab156a183sm24997255e9.40.2025.02.25.04.56.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 04:56:36 -0800 (PST)
-Date: Tue, 25 Feb 2025 12:56:32 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: Re: [PATCH RFC 0/4] mm: KUnit tests for the page allocator
-Message-ID: <Z72-AP-yQ2hPwpKe@google.com>
-References: <20250224-page-alloc-kunit-v1-0-d337bb440889@google.com>
- <0449ff75-0a6b-4c1e-bf12-ff052aad5287@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031BA268FC9;
+	Tue, 25 Feb 2025 12:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740488281; cv=pass; b=uVX+ECJfiC1iPCxaW2vg1kx57IL11+vIeN9fx7UjnBiichX6Gaqo266e24XlgUGS8x8V07/6HQskwnOST5PSGB/T0bjHIeRnw9DM4TxrOJ5L/bJ5Sz7oe/V3PB2thJE2llk+sXlkJzPv/lqTxNnh3SN+Ea6MnWpFkTYNmlD8Wck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740488281; c=relaxed/simple;
+	bh=gmVRBp31ky8f3h0ObsfAUWA2PBlhlr8lpiwr6zAEC0s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ge4aug3iMDmc4uWZijPZkDqW9alErjlDjenkm8nRhqT7TF87huFyIPLimh/H2clmQpYyqkEecMdmzj6EFojysFgmji9xM+i1MK2X8dOP0wm5qBa5dvKzEKXIfo0gGd+1d2GUZbumRDg36VkNAINLoC3h258+U61ehdh3WkljwP4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=W1PiSNut; arc=pass smtp.client-ip=136.143.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1740488244; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Ub9JGPo9D1ifA95PSsr4m+nbi/kTPs5vuK7r5cMtIi0SJwgLE7zIgCvT0bU7BPeeQBq4YjmKnWv2Jw07tHLKeh/NbaUczps7VRx4d9Kh4vhu6XEk7WMUbTs4OPSuRQummXVyXm5N4hhM0vDuTnShDcKlTlX9gPGLwflw6Yty9MI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740488244; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jJAK7+RdO6qxkZv/jve6HIDmzwFTZEZnuZrMgglgd14=; 
+	b=IE4aNldVR/c28tAtpUCr+3VCnSE7PcAJ0CpVWx6Qi3Ak/lXNyO78IvuLzdAEjV4La106FEY3n5eLuqmSakAeU1efkQnhQNGKScsOUWnQ5jSEEE3oBFugaPw3jb2WHKF8Omf5QZJQFrwnAqakslUuZ5Yy/xXLWsFlc2ggVodoWLw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740488244;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
+	bh=jJAK7+RdO6qxkZv/jve6HIDmzwFTZEZnuZrMgglgd14=;
+	b=W1PiSNutconTu6O9hPtA+Vj3nN0CGYuIRbb9lz4JdbWozm3x2X60Cso80vaKzRro
+	qBSUSD2aG+K+SqL0hn3AajUnimV7Qq9w87jN259nqhjRg2ksP9VBi4BW5+rrN/MK3Mq
+	dY/yeBbu791mXgOuEgQPbu/5a7fg0P6K7gne/Yz0=
+Received: by mx.zohomail.com with SMTPS id 1740488236610849.3832570884305;
+	Tue, 25 Feb 2025 04:57:16 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Subject: [PATCH v2 0/6] RK3576 thermal sensor support, including OTP trim
+ adjustments
+Date: Tue, 25 Feb 2025 13:56:43 +0100
+Message-Id: <20250225-rk3576-tsadc-upstream-v2-0-6eb7b00de89c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0449ff75-0a6b-4c1e-bf12-ff052aad5287@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAu+vWcC/3WOQQ6CMBREr0L+2m9okSKsvIdhUcpHGoFiWwiGc
+ HcruHX5JpmZt4Ijq8lBEa1gadZOmyEAP0WgWjk8CHUdGHjM05izFO0zSTOB3sla4TQ6b0n2mFG
+ sWJ40mbhKCN3RUqOXffdeHmzpNYV5f4RQSUeoTN9rX0QDLR6PC57Ct9Bq5419714z2xs/BfFHY
+ WYYoyCVizzhXLLLTZmuk5Wx8hx+oNy27QO5nTMe7wAAAA==
+X-Change-ID: 20250215-rk3576-tsadc-upstream-7e0c193f768a
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ kernel@collabora.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+ Ye Zhang <ye.zhang@rock-chips.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Feb 25, 2025 at 11:01:47AM +0100, David Hildenbrand wrote:
-> > This is an RFC and not a PATCH because:
-> > 
-> > 1. I have not taken much care to ensure the isolation is complete.
-> >     There are probably sources of flakiness and nondeterminism in here.
-> > 
-> > 2. I suspect the the basic idea might be over-complicated: do we really
-> >     need memory hotplug here? Do we even need the instance of the
-> >     allocator we're testing to actual memory behind the pages it's
-> >     allocating, or could we just hallucinate a new region of vmemmap
-> >     without any of that awkwardness?
-> > 
-> >     One significant downside of relying on memory hotplug is that the
-> >     test won't run if we can't hotplug anything out. That means you have
-> >     to fiddle with the platform to even run the tests - see the
-> >     --kernel_args and --qemu_args I had to add to my kunit.py command
-> >     above.
-> > 
-> >     So yeah, other suggestions welcome.
-> > 
-> >     2b. I'm not very confident I'm using the hotplug API properly.
-> 
-> Me neither ;)
-> 
-> Dynamically adding memory to that "fake" node is certainly interesting, but
-> which guarantees do we have that some other features (page migration, memory
-> offlining, page reporting ...) don't interact in weird ways with this "fake"
-> node? Adding special-casing all over the place for that feels wrong. I
-> assume this is point 1. you note above.
+This series adds support for the RK3576's thermal sensor.
 
-Yeah, basically this is the big downside. Changing the system we're
-trying to test in order to make it testable can't be avoided entirely,
-but I am also pretty unhappy with sprinkling "if (node_isolated(node))"
-everywhere.
+The sensor has six channels, providing measurements for the package
+temperature, the temperature of the big cores, the temperature of the
+little cores, and the GPU, NPU and DDR controller.
 
-I guess the ideal approach is one where, instead of having to modify
-the meaning of node_data, we just support replacing it completely,
-e.g:
+In addition to adding support for the sensor itself, the series also
+adds support for reading thermal trim values out of the device tree.
+Most of this functionality is not specific to this SoC, but needed to be
+implemented to make the sensors a little more accurate in order to
+investigate whether the TRM swapped GPU and DDR or downstream swapped
+GPU and DDR in terms of channel IDs, as downstream disagrees with what's
+in the TRM, and the difference is so small and hard to pin down with
+testing that the constant offset between the two sensors was a little
+annoying for me to deal with.
 
-struct page *__alloc_frozen_pages_noprof(gfp_t gfp, unsigned int order,
-		int preferred_nid, nodemask_t *nodemask, 
-		struct pagelist_data *node_data)
-{
-	struct alloc_context ac = { .node_data = node_data };
+I ended up going with the channel assignment the TRM lists, as I see the
+DDR sensor get a larger deviation from baseline temperatures during memory
+stress tests (stress-ng --memrate 8 --memrate-flush) than what the TRM
+claims is the GPU sensor but downstream claims is the DDR sensor. Input
+from Rockchip engineers on whether the TRM is right or wrong welcome.
 
-	// ...
-}
+The trim functionality is only used by RK3576 at the moment. Code to
+handle other SoCs can rely on the shared otp reading and perhaps even
+the IP revision specific function, but may need its own IP revision
+specific functions added as well. Absent trim functionality in other
+SoCs should not interfere with the modified common code paths.
 
-Ideally this could be done in such a way that it disappears completely
-outside of KUnit builds, the interface should be private and we'd
-wanna get rid of any unnecessary pointer chasing with stuff like:
+Patch 1 adds the RK3576 compatible to the bindings.
 
-#ifdef CONFIG_PAGE_ALLOC_KUNIT_TESTS
-static inline struct ac_node_data(struct alloc_context *ac, int node)
-{
-	return ac->node_data[node];
-}
-#else
-#define ac_node_data(ac, node) (NODE_DATA(node))
-#endif
+Patch 2 adds the basic thermal nodes required to get temperature
+readings and device throttling to the rk3576.dtsi device tree.
 
-I initially rejected this approach because it felt "too intrusive",
-but now that I've actually written this RFC I think it could be less
-intrusive than the node_isolated() thing I've proposed here.
+Patch 3 adds support for this SoC's thermal chip to the driver. It is a
+port of the downstream commit adding support for this.
 
-The most obvious challenges I can see there are:
+Patch 4 adds some documentation for imminent additional functionality to
+the binding, namely the trim value stuff.
 
-- There might be places that page_alloc.c calls out to that care about
-  node_data but where we really don't want to plumb the alloc_context
-  through (maybe vmscan.c is already such a place)?
+Patch 5 adds the requisite OTP cells and tsadc nodes to the SoC's device
+tree, conforming with the bindings modified in Patch 4.
 
-- I dunno how many more such helpers we'd need beyond ac_node_data(),
-  like do we need ac_nodes_possible_mask() etc etc etc?
+Patch 6 adds support for reading these OTP values in the
+rockchip_thermal driver, and makes use of them. The code is mostly new
+upstream code written by me, using downstream code as reference.
 
-But maybe worth a try - can you see any obvious reason this idea is
-stupid?
+You can grab yourself a spicy linux-next based tree from [1] with this
+changeset if you just want to give it a spin on your own board.
 
-> So I don't quite love the idea on first sight ... but I haven't grasped all
-> details of the full picture yet I'm afraid.
+For the record, here's a listing of SoCs that implement the OTP trim
+functionality in some variation, with a legend that is as follows:
+- A = chip-wide trim value
+- B = trim_base value
+- C = trim_base_frac value
+- D = per-channel trim value
+- E = compatible is either in mainline or in this series
 
-Do you have any thoughts about "making up" memory instead of
-hot-unplugging real memory for test usage? That might simplify things
-a bit?
+The list is as follows:
+- RK3502 (A____)
+- RK3528 (A____)
+- RK3562 (ABC__)
+- RK3566 (_BCDE)
+- RK3568 (_BCDE)
+- RK3576 (___DE) <- the only one we're adding OTP trim for here atm
+- RV1126 (AB___)
 
-It seems possible that very little mm code cares if the memory we're
-managing actually exists. (For ASI code we did briefly experiment with
-tracking information about free pages in the page itself, but it's
-pretty sketchy and the presence of debug_pagealloc makes me think
-nobody does it today).
+[1]: https://gitlab.collabora.com/fratti/linux/-/tree/rk3576-thermal-adc-5
 
-There might be arch-specific issues there, but for unit tests it
-seems OK if they don't work on every ISA.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+Changes in v2:
+- As per Rob's request, the bindings now only feature the new properties
+  depending on the compatible. Since the combination is slightly
+  different for each SoC anyway, this makes future work easier too.
+- The different channels are now explicitly named, instead of giving
+  them patternProperties names. This is once again per-compatible.
+- As per Sebastian's suggestion, unified trim_l and trim_h into just one
+  nvmem cell in the bindings, device tree and driver. I did this after
+  verifying that downstream has no SoC where trim_l and trim_h are ever
+  non-contiguous, including for SoCs upstream does not (yet) support.
+- Rebased on top of next-20250225 and dropped Heiko's OTP patchset as a
+  dependency as it was merged.
+- Added a handy overview of which SoCs use which part of the OTP trim
+  functionality in the cover letter
+- Reintroduced an accidentally removed dev_dbg in the function 
+  rockchip_thermal_set_trips
+- Link to v1: https://lore.kernel.org/r/20250216-rk3576-tsadc-upstream-v1-0-6ec969322a14@collabora.com
+
+---
+Nicolas Frattaroli (5):
+      dt-bindings: rockchip-thermal: Add RK3576 compatible
+      arm64: dts: rockchip: Add thermal nodes to RK3576
+      dt-bindings: thermal: rockchip: document otp thermal trim
+      arm64: dts: rockchip: Add thermal trim OTP and tsadc nodes
+      thermal: rockchip: support reading trim values from OTP
+
+Ye Zhang (1):
+      thermal: rockchip: Support RK3576 SoC in the thermal driver
+
+ .../bindings/thermal/rockchip-thermal.yaml         |  65 +++++
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi           | 221 ++++++++++++++++-
+ drivers/thermal/rockchip_thermal.c                 | 263 +++++++++++++++++++--
+ 3 files changed, 528 insertions(+), 21 deletions(-)
+---
+base-commit: 8c1704d15a5e488ee273b953afbdf781fd1b939d
+change-id: 20250215-rk3576-tsadc-upstream-7e0c193f768a
+
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+
 
