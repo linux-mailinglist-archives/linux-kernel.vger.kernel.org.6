@@ -1,145 +1,110 @@
-Return-Path: <linux-kernel+bounces-531677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD71FA4437A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:50:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0425A4438B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D86CC1733E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:46:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A666C19C4D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D28C26FDAE;
-	Tue, 25 Feb 2025 14:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688F921ABC0;
+	Tue, 25 Feb 2025 14:46:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tUcA1Bci"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JBngrPUB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083CE26E63E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFACA21ABAE;
+	Tue, 25 Feb 2025 14:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740494702; cv=none; b=udQZXQoHvchp4iZ6VLOMJqMVaqICsu8KlL3kttl6LvOaC2Lx1szVx8MPWGVLfOy9mCroIu+zijaiDf5Jy0kNxUTm1kV5OLDtIb2BF7hPQ8Pjj8n8+bPgxPwTu51Pa/8vdEwWlE+bWtCSVAMLTq1JGQL3YwIEikid6qF4pfjs8Xc=
+	t=1740494785; cv=none; b=O5bG7fr9fKImlCwZ3SbY39EC9rplffrBKE1Ew2tm0TDmZOZHH5Qof+a8OfFVvik1DIzc+mECNei6ahDCQ7TUIOgz2K9mjURBkuBzc0aupoHH9uESwTQ6FjsWNJLSeE7ffayazh+TPY6zps73wxCz8EDJlhVdmYdL5PjndQHShqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740494702; c=relaxed/simple;
-	bh=JVQ6Hr0btkRg9FyQveqK2uYTu6pLizXhjF4MAm5RJjg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pwVGIbQ+/wsJrerFnBRI2Gy7633FvDmCLtSompDepFEU8iRSXujAfQ+YGu5MwovVy1b4xptsGMhkMztrLTkrvxS42quQjZFyflZ4QK0SsWIstLDd3IZpsjHIrSo7WdT2nZG/j0kjduMi9P/PozsZZi99lL6Tnd9oYR7A48irnKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tUcA1Bci; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc1c7c8396so11799562a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:45:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740494700; x=1741099500; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NffzjCDpuTmdNSnLuEbvoNsdUgp9uFncpWixfvcrqX0=;
-        b=tUcA1BciX5VRiNq1kY0Uat/uX67XRbRqQaMz9De0918dbtV0JrGjP60KHiBirMVP22
-         cBb4kXeEhmvFpjEG64mpOEZfTwKGc8EOVRVTHYtp4UJgK3RW31vmBYkomAxlUI25giWB
-         LPZ03cESi6bCSxL/+w+nlQYiu6V4WeRuHb7ojUoWR5wkziB7CNkiSN0NjHFyd2okF5GC
-         C8XshHnZcmSENOdUzrjMSwixQ9HUzhOqLPsEgJwclRubOT0bOYGa73uKlh/CXydiosoi
-         6WvsqN18/A8h8d6lwZ0Rfy+lS5e0qW6UspZ+UqEaQj2fomPcDHDPy38X2o3RbHao6ISe
-         lYHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740494700; x=1741099500;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NffzjCDpuTmdNSnLuEbvoNsdUgp9uFncpWixfvcrqX0=;
-        b=TQzUMbcPaLbZ1Dpw5jf3ujVgx0AMBdRD2N8dGb8mxM4MrhGCs5sKVOa+RBZL2E0lOa
-         gPyPTtGqZ3xzvR+FxAo4/ryWaJkQ0xeW9D2CiCkTomKqFvGKJOqThyVeH+XydaYtO3Am
-         9m5m1ishrxXZ3KKnER4m2aEvDyfUIiI99LronaBFx4HHxJbaKe63NhqxTUlcCrmHfOl8
-         nldUymZsOrzUtgWTSy5oJdthkMSYBeC0+C/sJWQNE36zO0YJVe5LNhFCpj+UKQ6uJzec
-         oT21ZM1PeGOVmM2sm7BM43Dalcj4+toYrQbAJ/YlXR3DytOSpKDhRaWObJwkeXMwXbXQ
-         KYbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXkl1SVZC3bdUPze8kp9/+Ze+v5wiLbzOgtz3skLXwzPiVE5t3M8oiW0O6WFF91JUY5jwYl6W6Zq5zYG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzLS7XBHm7i8nI6A0M7wLQNv8AVb1lQDwZu+N7koTQQOTo7xaW
-	gw66Owzres9r23U4ZRKDH0FYNtsD3WFE6A5drAnfnSGZ+1MJv99nKTG1MoNWdEiUSKm73O7s2HB
-	8kw==
-X-Google-Smtp-Source: AGHT+IG2KruXetDYoI9qbCSWmcITW+yhg6mxBcrrqoCenX7IkOOc3aJKkHxPw+LBj1f6DGaIHr4WklpxusU=
-X-Received: from pjh14.prod.google.com ([2002:a17:90b:3f8e:b0:2ea:29de:af10])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:548f:b0:2ee:d7d3:3008
- with SMTP id 98e67ed59e1d1-2fce86ae5d0mr31991980a91.12.1740494700343; Tue, 25
- Feb 2025 06:45:00 -0800 (PST)
-Date: Tue, 25 Feb 2025 06:44:58 -0800
-In-Reply-To: <Z71tlzQJISk6PFAL@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1740494785; c=relaxed/simple;
+	bh=6ZThMx3yk5s32UwJseFaT+0LfZxbEk9CwJs9at/sz4o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IMuiCl4nDQaRjOTlfK8axG0w8mJg6fTZjOO8eeqUQpdP/I5G5gl4BQhIinRDvMF7sIgQ1tqylBFzy7XUvGw8B5kcXjcEKXK5Vmm/5uIa6KdXwJbrSIS5D/hVdCEYu5A05OBizU3CsnBDIPvLtVGFRKJonB0PhEA+q/ZyP2M8c2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JBngrPUB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A07C4CEDD;
+	Tue, 25 Feb 2025 14:46:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740494785;
+	bh=6ZThMx3yk5s32UwJseFaT+0LfZxbEk9CwJs9at/sz4o=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=JBngrPUB7/i1+yjFpBp9I9OvqFFITb4P6hFYqyz+5W3iuG/l83/RgnZFIQroM4OrC
+	 YaKdAQ8NMAL01KLJKlB93BVlGXMIFs8RiE8uxS2iJ01lILFP3WCMwnnqRRf+MGqxWt
+	 0U8nRcEY0hNM5MIuxYghPIraxG6uFjF0jL/2VkW7PDXgCwsFxE7JbqEGL+FqUfQvMT
+	 o7z0blAKwjG+kEN08spkJTBd6roI64NzBumphKDGBkvIHn1Gjl2vVFE6svS3q915xH
+	 HPftpzYJtBQoSTGGYNnGKtq8R8lwuM3m/VH7vyxidZOLNRhW8/r9UfTjBOwNdjeRFu
+	 pg6bRqLdMN6+A==
+From: Mark Brown <broonie@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Heiko Stuebner <heiko@sntech.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, 
+ Elaine Zhang <zhangqing@rock-chips.com>, 
+ =?utf-8?q?Adri=C3=A1n_Mart=C3=ADnez_Larumbe?= <adrian.larumbe@collabora.com>, 
+ Boris Brezillon <boris.brezillon@collabora.com>, 
+ Peter Geis <pgwipeout@gmail.com>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, 
+ Vignesh Raman <vignesh.raman@collabora.com>, linux-kernel@vger.kernel.org, 
+ linux-pm@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+ devicetree@vger.kernel.org
+In-Reply-To: <20250220-rk3588-gpu-pwr-domain-regulator-v6-0-a4f9c24e5b81@kernel.org>
+References: <20250220-rk3588-gpu-pwr-domain-regulator-v6-0-a4f9c24e5b81@kernel.org>
+Subject: Re: (subset) [PATCH v6 0/8] Fix RK3588 power domain problems
+Message-Id: <174049478169.62098.16182863254035343977.b4-ty@kernel.org>
+Date: Tue, 25 Feb 2025 14:46:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250224235542.2562848-1-seanjc@google.com> <20250224235542.2562848-5-seanjc@google.com>
- <Z71tlzQJISk6PFAL@yzhao56-desk.sh.intel.com>
-Message-ID: <Z73XaiRZMIi_vyvK@google.com>
-Subject: Re: [PATCH 4/7] KVM: x86: Don't load/put vCPU when unloading its MMU
- during teardown
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>, 
-	Huacai Chen <chenhuacai@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Aaron Lewis <aaronlewis@google.com>, Jim Mattson <jmattson@google.com>, 
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-On Tue, Feb 25, 2025, Yan Zhao wrote:
-> On Mon, Feb 24, 2025 at 03:55:39PM -0800, Sean Christopherson wrote:
-> > Don't load (and then put) a vCPU when unloading its MMU during VM
-> > destruction, as nothing in kvm_mmu_unload() accesses vCPU state beyond the
-> > root page/address of each MMU, i.e. can't possible need to run with the
-> > vCPU loaded.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/kvm/x86.c | 9 +--------
-> >  1 file changed, 1 insertion(+), 8 deletions(-)
-> > 
-> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > index 045c61cc7e54..9978ed4c0917 100644
-> > --- a/arch/x86/kvm/x86.c
-> > +++ b/arch/x86/kvm/x86.c
-> > @@ -12767,13 +12767,6 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
-> >  	return ret;
-> >  }
-> >  
-> > -static void kvm_unload_vcpu_mmu(struct kvm_vcpu *vcpu)
-> > -{
-> > -	vcpu_load(vcpu);
-> > -	kvm_mmu_unload(vcpu);
-> > -	vcpu_put(vcpu);
-> > -}
-> > -
-> >  static void kvm_unload_vcpu_mmus(struct kvm *kvm)
-> >  {
-> >  	unsigned long i;
-> > @@ -12781,7 +12774,7 @@ static void kvm_unload_vcpu_mmus(struct kvm *kvm)
-> >  
-> >  	kvm_for_each_vcpu(i, vcpu, kvm) {
-> >  		kvm_clear_async_pf_completion_queue(vcpu);
-> > -		kvm_unload_vcpu_mmu(vcpu);
-> > +		kvm_mmu_unload(vcpu);
-> What about just dropping kvm_unload_vcpu_mmu() here?
-> kvm_mmu_unload() will be invoked again in kvm_mmu_destroy().
+On Thu, 20 Feb 2025 19:58:03 +0100, Sebastian Reichel wrote:
+> I got a report, that the Linux kernel crashes on Rock 5B when the panthor
+> driver is loaded late after booting. The crash starts with the following
+> shortened error print:
 > 
-> kvm_arch_vcpu_destroy() --> kvm_mmu_destroy() --> kvm_mmu_unload().
+> rockchip-pm-domain fd8d8000.power-management:power-controller: failed to set domain 'gpu', val=0
+> rockchip-pm-domain fd8d8000.power-management:power-controller: failed to get ack on domain 'gpu', val=0xa9fff
+> SError Interrupt on CPU4, code 0x00000000be000411 -- SError
+> 
+> [...]
 
-Ugh, I missed that there's yet another call to kvm_mmu_unload().  I definitely
-agree with dropping the first kvm_mmu_load(), but I'll do it in a follow-up patch
-so that all three changes are isolated (not doing the load/put, doing unload as
-part of vCPU destruction, doing unload only once at the end).
+Applied to
 
-And looking at both calls to kvm_mmu_unload(), I suspect that grabbing kvm->srcu
-around kvm_mmu_destroy() is unnecessary.  I'll try cleaning that up as well.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/8] regulator: Add (devm_)of_regulator_get()
+      commit: 0dffacbbf8d044456d50c893adb9499775c489f4
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
