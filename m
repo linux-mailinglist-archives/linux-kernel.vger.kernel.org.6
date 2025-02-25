@@ -1,166 +1,282 @@
-Return-Path: <linux-kernel+bounces-530345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72876A43251
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:13:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10B0DA4328C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:41:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA8523A9E27
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:13:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82FC5189BD97
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2444317BA9;
-	Tue, 25 Feb 2025 01:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F34D812D1F1;
+	Tue, 25 Feb 2025 01:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OrjUtc+d"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b="yhRcTsfc"
+Received: from mx0b-00206402.pphosted.com (mx0b-00206402.pphosted.com [148.163.152.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67DBE6AA7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C906EB4C;
+	Tue, 25 Feb 2025 01:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740446007; cv=none; b=mQtd8UlFHAtjVRIDiCkYbphTO5+DlsqKRQgMqjBcMEkDWZ7mQrr2DtRhu7vS2EbqGXVNVY542NlJXcBtoJrlAU05Of9VaAt4FSocv9CYNG7WB6QiMl1WNCQlR1y0aSaetXv0Svz/Z9qYkztCGJshZXTVqXiGb3AaZgKTWpz42hE=
+	t=1740447698; cv=none; b=RSdgdGIRmGYKZIA17v0zL97XQpKJG4Z00Iw0l6xn5NTV3aaRqmOQZwKXJnJXLClwr2eoFu/HmxBFeeNFwMVaEzG2FDPVjiPYoDy9BhEOu74GAOvu9osssu64wiQXgtLSLf3JMtgYQXAhXOiDBCKnNEFIDcOAeM1Y5+DtGGK6BTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740446007; c=relaxed/simple;
-	bh=sNyhVyQv0VA1vkJvtKy5BEdJycXecj0nyHKXfyEJWjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=Im3lLE64AEEQ48dNx8vOV40gnRJsYG1TdoyZC09G03oVhEfoVv+tYFsheT5zx3lk+u/ShXaDNBvKd+WbvtwVhidGnshkfT2L2fKEdJkTK8uY0vajdFIREO/DH6v28S42rWncPnRtmd3ksoXpNEAx14cu6d9JMleNJZTD6MqT79w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OrjUtc+d; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250225011322epoutp037212d1a0b795890a93f56560af89d5dc~nTmsY3i282004920049epoutp03N
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:13:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250225011322epoutp037212d1a0b795890a93f56560af89d5dc~nTmsY3i282004920049epoutp03N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1740446002;
-	bh=MTWtqLPydZIhx4hoCh35M7njM0H8vWlViIKvoqL1epI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OrjUtc+dA49/t5uNhfp2QJEMVwWoHaDewuI7LM/sk8eGpK+oQSPuzRlD87LJrVlRC
-	 ehGWN7VImXISBqZUPdCJ/qrYhPrcU/bkVsFngS8QnxXrBt8EFSl5VVe/o8UqKWMAUe
-	 HTDZbJWwsN4jPthpdaXewS5XUtWRB5OvTy6D1k9Q=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-	20250225011322epcas2p3c611a053c4b88a576e80c6b8c8d176d5~nTmr_YFb71642416424epcas2p3D;
-	Tue, 25 Feb 2025 01:13:22 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z203Q03r3z4x9Py; Tue, 25 Feb
-	2025 01:13:22 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	5B.3A.23368.1391DB76; Tue, 25 Feb 2025 10:13:21 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250225011321epcas2p1dfe6b96f5749767781b113a0b1d57cea~nTmrMDVsM0932209322epcas2p1C;
-	Tue, 25 Feb 2025 01:13:21 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250225011321epsmtrp1df0ab98bb664f29f7a45dd3f7a5a87b5~nTmrLDUd31608316083epsmtrp1j;
-	Tue, 25 Feb 2025 01:13:21 +0000 (GMT)
-X-AuditID: b6c32a45-dc9f070000005b48-d0-67bd1931a100
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	63.0D.18949.1391DB76; Tue, 25 Feb 2025 10:13:21 +0900 (KST)
-Received: from tiffany (unknown [10.229.95.142]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250225011321epsmtip1c8473a8c93e38786f6a553a96f8ca548~nTmq_mis51465714657epsmtip1K;
-	Tue, 25 Feb 2025 01:13:21 +0000 (GMT)
-Date: Tue, 25 Feb 2025 10:11:54 +0900
-From: Hyesoo Yu <hyesoo.yu@samsung.com>
-To: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-Cc: janghyuck.kim@samsung.com, vbabka@suse.cz, Pekka Enberg
-	<penberg@kernel.org>, David Rientjes <rientjes@google.com>, Joonsoo Kim
-	<iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, Roman
-	Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] mm: slub: Print the broken data before restoring
- slub.
-Message-ID: <20250225011154.GB2345951@tiffany>
+	s=arc-20240116; t=1740447698; c=relaxed/simple;
+	bh=g6aUaTojdNvf/YcN3Weqm/NHumO0uO2W45Rn+zfqbbw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R99XOdJyMgYlWtQfSBVc5k4mtM/MrB86Vg5pOGwB5EaQsGNq2wpTAJ+tqElFX3hEaSGtitg/x4UfSU9DsLjkBtsWBTWXiGN6sOnU1KBdQmxcuDA2PDrgtGo8BKND7H13UP4jyrJpxTRXWLrXt1brrdj1fGK3BLMwVcEd1OIXMSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com; spf=pass smtp.mailfrom=crowdstrike.com; dkim=pass (2048-bit key) header.d=crowdstrike.com header.i=@crowdstrike.com header.b=yhRcTsfc; arc=none smtp.client-ip=148.163.152.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=crowdstrike.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crowdstrike.com
+Received: from pps.filterd (m0354654.ppops.net [127.0.0.1])
+	by mx0b-00206402.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OLj3tF002668;
+	Tue, 25 Feb 2025 01:12:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crowdstrike.com;
+	 h=cc:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	default; bh=C3dnc16gEIyGpwzy8St3qAXWKJxIdmhRQXzAy2TPXcI=; b=yhRc
+	TsfcFnQza8lU8dnqTnhrjd82usIvrtEsdz8PV8UOGFWcUfcP5AvUlVCLwOFeooW2
+	vI71ELfALo5GOA2+9QYpNYH2rtEtu8c7QzcMAXlS1bd+bSIanpesmpsJuPFfrypT
+	1HuF2kNu3BbJmjzCKjz3Ga4SdpxasIZ/PXxJsqkkM1FdQOAcCideoJRaPjKQI/+E
+	dKgJyGUs8mr+i4Ieqmg+bd36PlwRQbNtsBYDCgkabrR04OhJQvtyVXajc0VsMmnv
+	Cv/Zt/y4s/TjYItzaYJukESD+bWM8BiSLR+PGoLk1P82/QvljPslm+WphUq0in6U
+	ZO8kVLl8Jo2Mh4TBfA==
+Received: from mail.crowdstrike.com (dragosx.crowdstrike.com [208.42.231.60] (may be forged))
+	by mx0b-00206402.pphosted.com (PPS) with ESMTPS id 450vxnhgb1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 01:12:39 +0000 (GMT)
+Received: from ML-CTVHTF21DX.crowdstrike.sys (10.100.11.122) by
+ 04WPEXCH007.crowdstrike.sys (10.100.11.74) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Feb 2025 01:12:33 +0000
+From: Slava Imameev <slava.imameev@crowdstrike.com>
+To: <andrii.nakryiko@gmail.com>
+CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+        <daniel@iogearbox.net>, <eddyz87@gmail.com>, <haoluo@google.com>,
+        <john.fastabend@gmail.com>, <jolsa@kernel.org>, <kpsingh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <mark.fontana@crowdstrike.com>, <martin.kelly@crowdstrike.com>,
+        <martin.lau@linux.dev>, <mykolal@fb.com>, <sdf@fomichev.me>,
+        <shuah@kernel.org>, <slava.imameev@crowdstrike.com>, <song@kernel.org>,
+        <yonghong.song@linux.dev>
+Subject: Re: Re: Re: Re: Re: [PATCH 2/2] libbpf: BPF programs dynamic loading and attaching
+Date: Tue, 25 Feb 2025 12:12:31 +1100
+Message-ID: <20250225011231.27681-1-slava.imameev@crowdstrike.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+In-Reply-To: <CAEf4BzZ=-r7AkSGhru_NMxPcXDLmkVpTiQrBxUvsgq-LE0Lk6w@mail.gmail.com>
+References: <CAEf4BzZ=-r7AkSGhru_NMxPcXDLmkVpTiQrBxUvsgq-LE0Lk6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8befd391-3741-40ca-fd84-47112a75c7ac@gentwo.org>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBJsWRmVeSWpSXmKPExsWy7bCmha6h5N50g6vHLC0m9hhYzFm/hs1i
-	+Zy5TBYru5vZLDbPKba4vGsOm8W9Nf9ZLdo+/wMSSzYyWUxcI2oxu7GP0YHbY//hIo+ds+6y
-	eyzYVOqxaVUnm8emT5PYPbreXmHyODHjN4vHwoapzB59W1YxepxZcITd4/MmuQDuqGybjNTE
-	lNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKCblRTKEnNKgUIB
-	icXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6xYm5xaV56Xp5qSVWhgYGRqZAhQnZGX9X32Aq
-	WM5eMefmZKYGxi62LkYODgkBE4nu/T5djFwcQgI7GCXW/O9g7mLkBHI+MUqcmqwPkfjGKNHQ
-	+4ARJAHWsHgGG0RiL6PE884L7BDOU0aJayungrWzCKhKHD4/jx3EZhNQlzixZRkjyDoRAQOJ
-	hTciQOqZBS4ySTzu3M4GUiMsECIxc/o6FhCbV0BPomvfGmYIW1Di5MwnYHFOATugOb8ZQZol
-	BNZySLzbe50N4iQXiXs/D7JD2MISr45vgbKlJF72t0HZxRLbFh9mgmhuYJTY3HGfGSJhLDHr
-	WTvYb8wCmRJ7rk+GBoyyxJFbLBBhPomOw3/ZIcK8Eh1tQhCdyhL7l81jgbAlJR6tbWeFsD0k
-	LpzaygoJlO+MEicOt7FPYJSbheSfWUi2Qdg6Egt2fwKyOYBsaYnl/zggTE2J9bv0FzCyrmIU
-	Sy0ozk1PLTYqMIRHcHJ+7iZGcBLWct3BOPntB71DjEwcjIcYJTiYlUR4OTP3pAvxpiRWVqUW
-	5ccXleakFh9iNAVGzkRmKdHkfGAeyCuJNzSxNDAxMzM0NzI1MFcS563e0ZIuJJCeWJKanZpa
-	kFoE08fEwSnVwOR26NhKptuiBU3LYp68cjxclnrsicH9B06cq1ubStznRnhwWm2YUt9X8MiP
-	can8tPCw7+ZTuB4f3BzaWPCoMOBSeaWv0YYrodN/njHRueon0v/qrrmw7BXH+2f99nx0iSr9
-	6dR05kOwpfw0u2dflFOX8y7YKGK8sKVB8w+XIsOFgr4ZvoyhOoVKGzxK8tp3Tbcv7ecv/3bR
-	Pmp2oPeLVL994Q846id/abspGGpx4Pbz7P7+1k7GHhaDtQGRnxyPbZK6+bt0v125b69g1PX3
-	ujkxeXy/1+5dn+KmJOVWq/DyS7vMHm0p1iDukzosZ57dX71Jx6a7Ye26z4/Tdrw4cbXYY331
-	jrtGgQy3/7kuV2Ipzkg01GIuKk4EAKA73KRLBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsWy7bCSnK6h5N50g9Y3shYTewws5qxfw2ax
-	fM5cJouV3c1sFpvnFFtc3jWHzeLemv+sFm2f/wGJJRuZLCauEbWY3djH6MDtsf9wkcfOWXfZ
-	PRZsKvXYtKqTzWPTp0nsHl1vrzB5nJjxm8VjYcNUZo++LasYPc4sOMLu8XmTXAB3FJdNSmpO
-	Zllqkb5dAlfGpx0/WAqesFT86nzF0sD4gLmLkZNDQsBEonvxDDYQW0hgN6PElRuOEHFJiVmf
-	TzJB2MIS91uOsHYxcgHVPGaUWNqzGayZRUBV4vD5eewgNpuAusSJLcsYuxg5OEQEDCQW3ogA
-	qWcWuM4k8ePOVrAFwgIhEjOnr2MBsXkF9CS69q1hhhj6nVGif95pNoiEoMTJmU/AipgFtCRu
-	/HvJBDKUWUBaYvk/DpAwp4Ad0K7fjBMYBWYh6ZiFpGMWQscCRuZVjJKpBcW56bnFhgVGeanl
-	esWJucWleel6yfm5mxjBUaSltYNxz6oPeocYmTgYDzFKcDArifByZu5JF+JNSaysSi3Kjy8q
-	zUktPsQozcGiJM777XVvipBAemJJanZqakFqEUyWiYNTqoFpgkL/ht45/U77M1MU7M4t3de7
-	M+H98Zbpx44GB3/9aGLdKK65grN/kvydxR+u9UvKZec9vp86Vb/cguu458+eqDK+k66+eT+e
-	fGm3qvU8/NUgJupCgGv23S86t3yS5+UUyB+d1CPhd2+tLaPsrPvfRRf2Npm7S9xmKXkc2tIp
-	0pad3RGkt5XhsazY2bsntq2sMfua/eVymfC7++yJ7dcczexvHfDVqrqeUyfe2+HAONXmeqGF
-	wsMdSre6kwqtmJmOSfTxzl8cGznlS4pG9V6jinbeHMZL2wOv7i8LveKRsqOVVTxnnpLQHqtt
-	6j4aZct2z91rsMjN2cD9WPhBo5O1S1R6wpYlbvMLDpv1WYmlOCPRUIu5qDgRAGy8oGURAwAA
-X-CMS-MailID: 20250225011321epcas2p1dfe6b96f5749767781b113a0b1d57cea
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----m7PZ4BT1ldTQPVcONAqyTj2Zy1CXq_CO7oNb.DekQ57E.lpM=_139d21_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f
-References: <20250220033953.1606820-1-hyesoo.yu@samsung.com>
-	<CGME20250220034153epcas2p286194dda687b47a3dec8fb89b868f96f@epcas2p2.samsung.com>
-	<20250220033953.1606820-2-hyesoo.yu@samsung.com>
-	<8befd391-3741-40ca-fd84-47112a75c7ac@gentwo.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: 04WPEXCH016.crowdstrike.sys (10.100.11.68) To
+ 04WPEXCH007.crowdstrike.sys (10.100.11.74)
+X-Disclaimer: USA
+X-Authority-Analysis: v=2.4 cv=MM6amNZl c=1 sm=1 tr=0 ts=67bd1907 cx=c_pps a=1d8vc5iZWYKGYgMGCdbIRA==:117 a=1d8vc5iZWYKGYgMGCdbIRA==:17 a=EjBHVkixTFsA:10 a=IkcTkHD0fZMA:10 a=T2h4t0Lz3GQA:10 a=P-IC7800AAAA:8 a=YdVmfgTgZjZG2QomKWsA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=d3PnA9EDa4IxuAV0gXij:22
+X-Proofpoint-GUID: guqdbejqgUvRNFYOP4EUwJSqXeGbtK_B
+X-Proofpoint-ORIG-GUID: guqdbejqgUvRNFYOP4EUwJSqXeGbtK_B
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-24_12,2025-02-24_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 impostorscore=0 mlxscore=0 mlxlogscore=999
+ suspectscore=0 clxscore=1015 bulkscore=0 malwarescore=0 spamscore=0
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250006
 
-------m7PZ4BT1ldTQPVcONAqyTj2Zy1CXq_CO7oNb.DekQ57E.lpM=_139d21_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+This reply was resent as the previous email had a missing In-Reply-To
+in the header.
 
-On Mon, Feb 24, 2025 at 09:24:42AM -0800, Christoph Lameter (Ampere) wrote:
-> On Thu, 20 Feb 2025, Hyesoo Yu wrote:
-> 
-> > @@ -1396,11 +1400,6 @@ static int check_object(struct kmem_cache *s, struct slab *slab,
-> >  		ret = 0;
-> >  	}
+> > > On Mon, 2025-02-10 at 16:06 -0800, Andrii Nakryiko wrote:
+> > > > Tracking associated maps for a program is not necessary. As long as
+> > > > the last BPF program using the BPF map is unloaded, the kernel will
+> > > > automatically free not-anymore-referenced BPF map. Note that
+> > > > bpf_object itself will keep FDs for BPF maps, so you'd need to make
+> > > > sure to do bpf_object__close() to release those references.
+> > > >
+> > > > But if you are going to ask to re-create BPF maps next time BPF
+> > > > program is loaded... Well, I'll say you are asking for a bit too >
+> > > > much,
+> > > > tbh. If you want to be *that* sophisticated, it shouldn't be too
+> > > > hard
+> > > > for you to get all this information from BPF program's
+> > > > instructions.
+> > > >
 > >
-> > -	if (!ret && !slab_in_kunit_test()) {
-> 
-> 
-> > -		print_trailer(s, slab, object);
-> > -		add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
-> 
-> No tainting and printing of the trailer anymore?
-> 
+> > We really are that sophisticated (see below for more details). We could
+> > scan program instructions, but we'd then tie our logic to BPF
+> > implementation details and duplicate logic already present in libbpf
+> > implementation details and duplicate logic already present in libbpf
+> > (https://elixir.bootlin.com/linux/v6.13.2/source/tools/lib/bpf/libbpf.c#L=
+6087
+> > ). Obviously this *can* be done but it's not at all ideal from an
+> > application perspective.
+> >
+>
+>
+> I agree it's not ideal, but it's also not some complicated and
+> bound-to-be-changed logic. What you point out in libbpf source code is
+> a bit different thing, reality is much simpler. Only so-called ldimm64
+> instruction (BPF_LD | BPF_IMM | BPF_DW opcode) can be referencing map
+> FD, so analysing this is borderline trivial. And this is part of BPF
+> ISA, so not going to change.
 
-If there is an error before on check_object, the check_bytes_and_report
-calls object_err that calls print_trailer and add_traint.
 
-Thanks,
-Regards.
+Our approach is to associate an array of maps as a property with each
+BPF program, this property is initialised at the relocation stage.
+So, we do not need to parse BPF program instructions. Instead, we rely on
+recorded relocations. I think this is a more robust and clean solution with
+advantage of all code in the same place and being at the higher level of
+abstraction with a relocation table.
 
-------m7PZ4BT1ldTQPVcONAqyTj2Zy1CXq_CO7oNb.DekQ57E.lpM=_139d21_
-Content-Type: text/plain; charset="utf-8"
+The mainline libbpf keeps array of maps for a bpf_object, we extended
+this by adding an array of maps associated with each bpf_program.
+
+For example, a code excerpt, from our development branch, which associates
+a map with bpf_program at relocation phase:
+
+     insn[0].src_reg = BPF_PSEUDO_MAP_FD;
+     insn[0].imm = map->fd;
+     err = bpf_program__add_map(prog, map);
 
 
-------m7PZ4BT1ldTQPVcONAqyTj2Zy1CXq_CO7oNb.DekQ57E.lpM=_139d21_--
+> > > > > >
+> > > > bpf_object is the unit of coherence in libbpf, so I don't see us
+> > > > refcounting maps between bpf_objects. Kernel is doing refcounting
+> > > > based on FDs, so see if you can use that.
+> > > >
+> >
+> > I can understand that. That said, I think if there's no logic across
+> > objects, and bpf_object access is not thread-safe, it puts us into a
+> > tough situation:
+> > - Complex refcounting, code scanning, etc to keep consistency when
+> > manipulating maps used by multiple programs.
+> > - Parallel loading not being well-balanced, if we split programs across
+> > objects.
+> >
+> > We could alternatively write our own custom loader, but then we’d have
+> > to duplicate much of the useful logic that libbpf already implements:
+> > skeleton generation, map/program association, embedding programs into
+> > ELFs, loading logic and kernel probing, etc. We’d like some way to
+> > handle dynamic/parallel loading without having to replicate all the
+> > advantages libbpf grants us.
+> >
+>
+>
+> Yeah, I can understand that as well, but bpf_object's single-threaded
+> design and the fact that bpf_object__load is kind of the final step
+> where programs are loaded (or not) is pretty backed in. I don't see
+> bpf_object becoming multi-threaded.
+
+
+We understood this, but the current bpf_object design allowed us to use
+it in a multithreaded environment with minor modification for bpf_program
+load.
+
+We understand that the design choice of libbpf being single threaded
+is unlikely to be reconsidered.
+
+
+> > > > > >
+> > > > bpf_object is the unit of coherence in libbpf, so I don't see us
+> > > > refcounting maps between bpf_objects. Kernel is doing refcounting
+> > > > based on FDs, so see if you can use that.
+> > > >
+> >
+> > I can understand that. That said, I think if there's no logic across
+> > objects, and bpf_object access is not thread-safe, it puts us into a
+> > tough situation:
+> > - Complex refcounting, code scanning, etc to keep consistency when
+> > manipulating maps used by multiple programs.
+> > - Parallel loading not being well-balanced, if we split programs across
+> > objects.
+> >
+> > We could alternatively write our own custom loader, but then we’d have
+> > to duplicate much of the useful logic that libbpf already implements:
+> > skeleton generation, map/program association, embedding programs into
+> > ELFs, loading logic and kernel probing, etc. We’d like some way to
+> > handle dynamic/parallel loading without having to replicate all the
+> > advantages libbpf grants us.
+> >
+>
+>
+> Yeah, I can understand that as well, but bpf_object's single-threaded
+> design and the fact that bpf_object__load is kind of the final step
+> where programs are loaded (or not) is pretty backed in. I don't see
+> bpf_object becoming multi-threaded. The dynamic program
+> loading/unloading/loading again is something that I can't yet justify,
+> tbh.
+>
+>
+> So the best I can propose you is to use libbpf's skeleton and
+> bpf_object concept for, effectively, ELF handling, relocations, all
+> the preparations up to loading BPF programs. And after that you can
+> take over loading and handling program lifetime outside of bpf_object.
+>
+>
+> Dynamic map creation after bpf_object__load() I think is completely
+> outside of the scope and you'll have to solve this problem for
+> yourself. I would point out, though, that internally libbpf already
+> switched to sort-of pre-creating stable FDs for maps before they are
+> actually created in the kernel. So it's conceivable that we can have
+> more granularity in bpf_object preparation. I.e., first step would be
+> to parse ELF and handle relocations, prepare everything. After that we
+> can have a step to create maps, and then another one to create
+> programs. Usually people would do all that, but you can stop right
+> before maps creation or before program creation, whatever fits your
+> use case better.
+>
+>
+> The key is that program instructions will be final and won't need
+> adjustments regardless of maps actually being created or not. FDs, as
+> I mentioned, are stable regardless.
+
+
+We used this in our design, so we did not need to scan BPF program
+instructions to fix map's fds referenced by instructions from a dynamically
+loaded bpf_program with dynamically created maps.
+
+
+> >
+> > The use case here is that our security monitoring agent leverages eBPF
+> > as its foundational technology to gather telemetry from the kernel. As
+> > part of that, we hook many different kernel subsystems (process,
+> > memory, filesystem, network, etc), tying them together and tracking
+> > with maps. So we legitimately have a very large number of programs all
+> > doing different work. For products of this scale, it increases security
+> > and performance to load this set of programs and their maps in an
+> > optimized, parallel fashion and subsequently change the loaded set of
+> > programs and maps dynamically without disturbing the rest of the
+> > application.
+>
+>
+> Yes, makes sense. You'll need to decide for yourself if it's actually
+> more meaningful to split those 200 programs into independent
+> bpf_objects by features, and be rigorous about sharing state (maps)
+> through bpf_map__reuse_fd(), which would allow to parallelize loading
+> within confines of existing libbpf APIs. Or you can be a bit more
+> low-level with program loading outside of bpf_object API, as I
+> described above.
+
+Yes, this can be one of the ways to share bpf maps across multiple
+bpf_objects and use existing libbpf for parallel bps programs loading,
+if we want to keep a full libbpf compatibility, but at a cost of
+complicating design, as we need to convert a single bpf_object model
+to multiple bpf_objects with a new layer that manages these bpf_objects.
+
+In our case, as a bpf_program can map to multiple features, which can be
+modified independently, and to achieve an even load balancing across
+multiple threads, it would be probably one bpf_program for a bpf_object.
+
+
+
+
 
