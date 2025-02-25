@@ -1,56 +1,71 @@
-Return-Path: <linux-kernel+bounces-532361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF459A44C11
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:11:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88C9BA44C04
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:09:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34CD917BA9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:09:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B23667A1BC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E2A20E028;
-	Tue, 25 Feb 2025 20:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD56020F098;
+	Tue, 25 Feb 2025 20:09:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvodTOYi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JE2z64t7"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60701EBFE6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 20:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937C620F06D;
+	Tue, 25 Feb 2025 20:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740514147; cv=none; b=tx7/KagDHBmG4sPws8PPmvjUD3sfHthZ78+UfizZmyTwQ57HbONpKbwzZFqZNQEkSkVg3n5miwJrNt/66zZ+jXw+kOGQYmgXD1AAJ8R+0NgEWFktAcs+phBPn4rD4Ae1v6j1AykKpWCcqK3xy0dluw1ALtlxbhlXnfZR6cUw1I4=
+	t=1740514174; cv=none; b=FuljLAoF+hbm27Ve167D0eXOn4LecsKxR35p43GOtvo1A2RmtCzzIBVPHmV8rr17dXWyRTsQl3xDC0LJ/e/24x5C8M79zTH8wUsofsuYcpoS6IuSMkQ3la/4PVYbnqoKmxCJDTMoenl5DNbTUP7UYw40+th914kJGZ1NsXB3gr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740514147; c=relaxed/simple;
-	bh=xBkc39cTQDwiDEofgep3iX9dGL/1NrWOWxUE4XdfEXs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K1kut2bdavF5iyii0SD68BCBEn77vLuOvirJtBNk23qmp7stuA+TIr67jydFl6z+cf25lHzkN1oIDqsZqQsspQeBx9RngnGLQ1dbtAqJ1VtwUaIC7kf6Vtv6JN5KIBtuq/pmQxK1I2PZwmR/KGX6F23Zfa3ubSJa5sFqmII39Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvodTOYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2BF6C4CEDD;
-	Tue, 25 Feb 2025 20:09:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740514146;
-	bh=xBkc39cTQDwiDEofgep3iX9dGL/1NrWOWxUE4XdfEXs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=EvodTOYiuc93Q3u7BJGsP8U4+iqK2hqXcvoHVm6JCz0a/Zf9sllragKc6SGBFDm83
-	 JyuFUKs/ka/eLlLxcSxY1I4cZfoBDjhzajtIRgVHRnXyPsaF6AY1pHzIMek1bz3qO6
-	 MHOULi0CV9OfZIn07Fxt3RFEggehmyrjndIhxdPpb0F6Deq0hbzozWZaME20b5AaLc
-	 DlzdzptQWHR3/rrj+HwZV+Qltci+3YxVHxat0j/+gQFF5ay3+0axUXF07xVUhIHUl+
-	 zlciV9KcIKekVAve5ol4Phu7GgJE+QvnVvoIAOE97KO+9DyfSaWX3WIQXD5jMB5IOa
-	 n0LOCVu38DT3Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Martin Brandenburg <martin@omnibond.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devel@lists.orangefs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] orangefs: move s_kmod_keyword_mask_map[] into debugfs.c
-Date: Tue, 25 Feb 2025 21:08:52 +0100
-Message-Id: <20250225200901.4041575-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1740514174; c=relaxed/simple;
+	bh=dmRYgbBgNbE0KIqy2IkqRL4dfNeKhxJpfjAYZ1perr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qvKR6xicNM0nbOf0hcNH40M1elftQu9IqEdcLl3y68Q54W1jyBOUfBS0BHCt8gM1AGJaDf/d+uQKROy6C8jm2C5O2A3rfyYWZawrp0ZNHpiDVkcdFq7z1LXZjVjjNzuGY8Ptvc1zHWVOKQS+YiG+r2xKCziWrq3DATpVTLRQ65U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=JE2z64t7; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PIXtPx013169;
+	Tue, 25 Feb 2025 20:09:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2023-11-20; bh=Xj6W16NaZnM+zUJ8G5K8YCYzStAxq
+	s0M7oAS0qsagM0=; b=JE2z64t7LlBQSSzAdT5iR3X0YqwBYcFkxEB7YRWq/knh2
+	4MqE6zg92p3IbF4YHJSC7KRIZOUWJBC/S+NbM0hhXvFVAdMkSC3R1YItrr4uypY/
+	weo4cAw9P2L+HaOc23ogM5vFl2wzpmMWU8JmtjU1WOlU85doUQIFZBoiO89yRi/3
+	fStIhobY5j36JoI6EgUcCWWB2Y1leEzz7+EFuhzDnD3DOf7ugMVjcqR6BfVu3PaQ
+	M1IQaQhwYi3zbNQ/qtfVTPRq8bmxiCozKc0zXQJJavo2JeTz8u6Vq/owbiDZAXUy
+	5LoE5at2836gVTzDvLRbuBswkX3SYqiubTZ5dkgjA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 44y6mbpa78-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 20:09:27 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 51PJLldY025436;
+	Tue, 25 Feb 2025 20:09:26 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 44y51g9ys3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Feb 2025 20:09:26 +0000
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 51PK9QpT011891;
+	Tue, 25 Feb 2025 20:09:26 GMT
+Received: from sishan-generic.osdevelopmeniad.oraclevcn.com (sishan-generic.appad1iad.osdevelopmeniad.oraclevcn.com [100.100.231.227])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 44y51g9yrn-1;
+	Tue, 25 Feb 2025 20:09:26 +0000
+From: Sinadin Shan <sinadin.shan@oracle.com>
+To: shuah@kernel.org, sshegde@linux.ibm.com, chris.hyser@oracle.com
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sinadin Shan <sinadin.shan@oracle.com>
+Subject: [PATCH v3 0/2] selftests: sched: Add default target support for sched
+Date: Tue, 25 Feb 2025 20:09:08 +0000
+Message-ID: <20250225200910.260569-1-sinadin.shan@oracle.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,133 +73,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_06,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxlogscore=999
+ phishscore=0 mlxscore=0 suspectscore=0 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
+ definitions=main-2502250122
+X-Proofpoint-ORIG-GUID: r-lM0GTdM3q-m3oZgTd3oJ5SuSNplh8T
+X-Proofpoint-GUID: r-lM0GTdM3q-m3oZgTd3oJ5SuSNplh8T
 
-From: Arnd Bergmann <arnd@arndb.de>
+This patch series introduces changes to add default build support for
+the sched tests in selftests.
 
-gcc warns about unused const variables when building with W=1
+The only test under sched is cs_prctl_test which validates cookies when
+core scheduling is in effect. This test fails on systems where core
+scheduling is disabled. The patch series also modifies this behaviour to
+gracefully skip the test on such systems.
 
-    In file included from fs/orangefs/protocol.h:287,
-                     from fs/orangefs/acl.c:8:
-    fs/orangefs/orangefs-debug.h:86:18: error: 'num_kmod_keyword_mask_map' defined but not used [-Werror=unused-const-variable=]
-       86 | static const int num_kmod_keyword_mask_map = (int)
-          |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+A system with core scheduling disabled would skip the test like:
+~# ./run_kselftest.sh
+TAP version 13
+1..1
+ timeout set to 45
+ selftests: sched: cs_prctl_test
+ prctl failed: Invalid argument
+ Core sched not supported, hence skipping tests
+ok 1 selftests: sched: cs_prctl_test # SKIP
 
-This one is only used in one file, so just move the definition
-next to its only user.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sinadin Shan <sinadin.shan@oracle.com>
 ---
- fs/orangefs/orangefs-debug.h   | 43 ----------------------------------
- fs/orangefs/orangefs-debugfs.c | 43 ++++++++++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+), 43 deletions(-)
+v3:
+* Use prctl to check core sched support instead of config
+* v2 link: https://lore.kernel.org/all/20250221115750.631990-1-sinadin.shan@oracle.com/
+v2:
+* Add patch to skip cs_prctl_test on core scheduling disabled systems
+* v1 link: https://lore.kernel.org/all/20250219064658.449069-1-sinadin.shan@oracle.com
+---
 
-diff --git a/fs/orangefs/orangefs-debug.h b/fs/orangefs/orangefs-debug.h
-index 6e079d4230d0..d4463534cec6 100644
---- a/fs/orangefs/orangefs-debug.h
-+++ b/fs/orangefs/orangefs-debug.h
-@@ -43,47 +43,4 @@
- #define GOSSIP_MAX_NR                 16
- #define GOSSIP_MAX_DEBUG              (((__u64)1 << GOSSIP_MAX_NR) - 1)
- 
--/* a private internal type */
--struct __keyword_mask_s {
--	const char *keyword;
--	__u64 mask_val;
--};
--
--/*
-- * Map all kmod keywords to kmod debug masks here. Keep this
-- * structure "packed":
-- *
-- *   "all" is always last...
-- *
-- *   keyword     mask_val     index
-- *     foo          1           0
-- *     bar          2           1
-- *     baz          4           2
-- *     qux          8           3
-- *      .           .           .
-- */
--static struct __keyword_mask_s s_kmod_keyword_mask_map[] = {
--	{"super", GOSSIP_SUPER_DEBUG},
--	{"inode", GOSSIP_INODE_DEBUG},
--	{"file", GOSSIP_FILE_DEBUG},
--	{"dir", GOSSIP_DIR_DEBUG},
--	{"utils", GOSSIP_UTILS_DEBUG},
--	{"wait", GOSSIP_WAIT_DEBUG},
--	{"acl", GOSSIP_ACL_DEBUG},
--	{"dcache", GOSSIP_DCACHE_DEBUG},
--	{"dev", GOSSIP_DEV_DEBUG},
--	{"name", GOSSIP_NAME_DEBUG},
--	{"bufmap", GOSSIP_BUFMAP_DEBUG},
--	{"cache", GOSSIP_CACHE_DEBUG},
--	{"debugfs", GOSSIP_DEBUGFS_DEBUG},
--	{"xattr", GOSSIP_XATTR_DEBUG},
--	{"init", GOSSIP_INIT_DEBUG},
--	{"sysfs", GOSSIP_SYSFS_DEBUG},
--	{"none", GOSSIP_NO_DEBUG},
--	{"all", GOSSIP_MAX_DEBUG}
--};
--
--static const int num_kmod_keyword_mask_map = (int)
--	(ARRAY_SIZE(s_kmod_keyword_mask_map));
--
- #endif /* __ORANGEFS_DEBUG_H */
-diff --git a/fs/orangefs/orangefs-debugfs.c b/fs/orangefs/orangefs-debugfs.c
-index f52073022fae..6a34e6feac45 100644
---- a/fs/orangefs/orangefs-debugfs.c
-+++ b/fs/orangefs/orangefs-debugfs.c
-@@ -54,6 +54,49 @@
- #define ORANGEFS_VERBOSE "verbose"
- #define ORANGEFS_ALL "all"
- 
-+/* a private internal type */
-+struct __keyword_mask_s {
-+	const char *keyword;
-+	__u64 mask_val;
-+};
-+
-+/*
-+ * Map all kmod keywords to kmod debug masks here. Keep this
-+ * structure "packed":
-+ *
-+ *   "all" is always last...
-+ *
-+ *   keyword     mask_val     index
-+ *     foo          1           0
-+ *     bar          2           1
-+ *     baz          4           2
-+ *     qux          8           3
-+ *      .           .           .
-+ */
-+static struct __keyword_mask_s s_kmod_keyword_mask_map[] = {
-+	{"super", GOSSIP_SUPER_DEBUG},
-+	{"inode", GOSSIP_INODE_DEBUG},
-+	{"file", GOSSIP_FILE_DEBUG},
-+	{"dir", GOSSIP_DIR_DEBUG},
-+	{"utils", GOSSIP_UTILS_DEBUG},
-+	{"wait", GOSSIP_WAIT_DEBUG},
-+	{"acl", GOSSIP_ACL_DEBUG},
-+	{"dcache", GOSSIP_DCACHE_DEBUG},
-+	{"dev", GOSSIP_DEV_DEBUG},
-+	{"name", GOSSIP_NAME_DEBUG},
-+	{"bufmap", GOSSIP_BUFMAP_DEBUG},
-+	{"cache", GOSSIP_CACHE_DEBUG},
-+	{"debugfs", GOSSIP_DEBUGFS_DEBUG},
-+	{"xattr", GOSSIP_XATTR_DEBUG},
-+	{"init", GOSSIP_INIT_DEBUG},
-+	{"sysfs", GOSSIP_SYSFS_DEBUG},
-+	{"none", GOSSIP_NO_DEBUG},
-+	{"all", GOSSIP_MAX_DEBUG}
-+};
-+
-+static const int num_kmod_keyword_mask_map = (int)
-+	(ARRAY_SIZE(s_kmod_keyword_mask_map));
-+
- /*
-  * An array of client_debug_mask will be built to hold debug keyword/mask
-  * values fetched from userspace.
+Sinadin Shan (2):
+  selftests: sched: add sched as a default selftest target
+  selftests: sched: skip cs_prctl_test for systems with core scheduling
+    disabled
+
+ tools/testing/selftests/Makefile              |  1 +
+ tools/testing/selftests/sched/cs_prctl_test.c | 34 ++++++++++++++++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
+
 -- 
-2.39.5
+2.43.5
 
 
