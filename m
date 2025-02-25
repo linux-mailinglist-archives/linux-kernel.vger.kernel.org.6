@@ -1,171 +1,125 @@
-Return-Path: <linux-kernel+bounces-530377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F819A432AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:53:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CC51A432AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 02:53:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2539716668C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:53:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 332E9167FF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094BA823DE;
-	Tue, 25 Feb 2025 01:53:18 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C1883A14;
+	Tue, 25 Feb 2025 01:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lZu4Rdq4"
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAA8450FE;
-	Tue, 25 Feb 2025 01:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAE778F45
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 01:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740448397; cv=none; b=iAgV1TUglCAh0wdiX/R06S6OZUfd7E/8XxJwFjtiA22iDv5KcViuZM1jWayVyaXDGgN35JoWJLoYeq79ExdAX5KdO15xEfJ+7NdZYC/AYbO4WQ3SM5hgWyBUcwZAtMlKxJeTkpQGw9ltjRZLvFJAUyecEy3NH758nmBOcmfuCU8=
+	t=1740448413; cv=none; b=Xnag3iC/JnE8X8lpe1MhGf6E4C2sWsvgC24+QHataqdrS+oqm5RL2uMK7O4tgsm3w3NbP412gVYYWRrvGiiBDkUcRQBcDb4le5fxKaEnaBN9zcv3q17evdxZZS7I8VioLgSCz4jGyL9tPlEfYSvREfmmMaYlx6IWICQNY3v8fWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740448397; c=relaxed/simple;
-	bh=gKtdkH/FUJhSmNeXPSQGpNJZSyRDX4r/ZF51CLUAd9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HhGAMDnlxVXdAscLea9UZcdrZl0lnTi+GWEKBmUVZiKGcafXO6oCOVHgVvn46uTM35Dm9A1ALoOqOv/vF4ZlTn6INzWRtlKhG2RqunKNYPWxgRZ4QZ1PG1lLm6K6Y1a7fEfgMU778JenOVe9G5qmSdTAyyh6W/oXWj35tDKy1NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z20vZ11RPz1HLxh;
-	Tue, 25 Feb 2025 09:51:38 +0800 (CST)
-Received: from kwepemg500008.china.huawei.com (unknown [7.202.181.45])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7C38D1A016C;
-	Tue, 25 Feb 2025 09:53:12 +0800 (CST)
-Received: from [127.0.0.1] (10.174.177.71) by kwepemg500008.china.huawei.com
- (7.202.181.45) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 25 Feb
- 2025 09:53:11 +0800
-Message-ID: <3f9a67e2-ef08-47d4-b35e-41841e24bb71@huawei.com>
-Date: Tue, 25 Feb 2025 09:53:10 +0800
+	s=arc-20240116; t=1740448413; c=relaxed/simple;
+	bh=lDnDEm+dSfaeSLN9szJPpAcWhldP+uIqITh9ILIqPuo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Xtk1Nfe3JXWhvAZSTkc7iQc7dc/1JXuElLh/maxtcrub6iRoULH/GYZauU1fGagX65CudnwGqkioD/dUJXPaq45jz5d6Z/n0O+qfs7qqGIewP8JEJCFi/OBQFwTxMDdVjJWVO+vBDb5pQUL7rzaSRTaBsiUShYtAYY8pd9b795Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lZu4Rdq4; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--qperret.bounces.google.com
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5dece867fe2so5021973a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 17:53:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740448409; x=1741053209; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AH9Y+qk/plKTRCQ8rdCbOXUmRPqvAGtJ+mP7kh2bkjA=;
+        b=lZu4Rdq40eBXReVsy27/ntL36x/ZMqyICKSS6Gj/FvJvlfCciFuCnVf1llQ+ym++DV
+         HYMaHctIYnqs7+aKnXJdKoFRih9w4YpBekYo4UPKDq13YLm19W4bXEQ/iK3LnQ1Dvct1
+         0XDFJJ5Fa5CQdURGPkAdH+mK/OKMQQKgYAH5s5ZR6l1WLwXKKrpD/B3x/VJgsTY20g2F
+         jUFZ0DpmylVtsqW5LorQ6+lDJwyjDl/0eLZvT6hNdxV694xRwd0MH67xuaFrEHoIfv3V
+         XXEGbq/G5EPEPXL58H0/pUkGurPmA/dNZJN+x+B/BrTDBn7iKBt7xT4ce6mE3SoFZgrq
+         320A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740448409; x=1741053209;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AH9Y+qk/plKTRCQ8rdCbOXUmRPqvAGtJ+mP7kh2bkjA=;
+        b=Ya+HWgLt5RgDtX2e/XZBx5k7uxivbqP0UfvsYuFcnMG5go2HDSENEXbzyonlkZ6eX1
+         sMLHN97zvNuM6FddR5+DuSdXzSJ6JUde1QPoDwGEHx39n8l/5IpiBt/q5+LUuM+ClER0
+         32WN/8ueb35QteQre3U4Z2FyuQjnMY0WkwohLdWmhLCLcN+hr3pkaL97b5cH6KT1uCoC
+         cW0z+tnBx8ky/2ctN7OMKzKb3Xon7e0uFdPt+HRXeSO5BsV/2DU6SKFPErqEYqqbdA70
+         rrQJIPSEbUC1vaiR1Yyp84CQl2nKyn4bljGcuuBHJNPhGsUMfNbw8qgp+Mllh/dDt91o
+         gkvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIDXKqU9guZAX7TmCxn0d7mBfPzn8Pyga4A/oHb2Ejr91gB3fZtbDz2moRBRs0ym2a/fGbZDUjlsQSmtM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyomONwqGYTZGyT3QT1KYgAeWPqo8E6iga5ALZZ5kQDKYDnlqAe
+	qtB/2zU0uLv4iwz/VnHHgiDzQY07+Nw0rnrSRQN9sh7hHPUjuceenJviAj8TCaxhVjZtZnG+NsV
+	DxiMrqA==
+X-Google-Smtp-Source: AGHT+IHJKOHeegcslTQv6gGnIpceJABRkLrMUljBH8OEUmqvgitKR+e8++1jZBdKvqfUQIxfPe64opEc23yp
+X-Received: from edbig12.prod.google.com ([2002:a05:6402:458c:b0:5de:bbcb:2c3])
+ (user=qperret job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:2113:b0:5e0:8ab6:65fa
+ with SMTP id 4fb4d7f45d1cf-5e4469daaa1mr1165847a12.19.1740448409709; Mon, 24
+ Feb 2025 17:53:29 -0800 (PST)
+Date: Tue, 25 Feb 2025 01:53:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] ext4: only defer sb update on error if SB_ACTIVE
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-CC: <linux-ext4@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>, Jan Kara
-	<jack@suse.cz>, <linux-kernel@vger.kernel.org>, Mahesh Kumar
-	<maheshkumar657g@gmail.com>, Ritesh Harjani <ritesh.list@gmail.com>, Yang
- Erkun <yangerkun@huawei.com>
-References: <cover.1740212945.git.ojaswin@linux.ibm.com>
- <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
-Content-Language: en-US
-From: Baokun Li <libaokun1@huawei.com>
-In-Reply-To: <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500008.china.huawei.com (7.202.181.45)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.658.g4767266eb4-goog
+Message-ID: <20250225015327.3708420-1-qperret@google.com>
+Subject: [PATCH v2 0/4] Selftest for pKVM ownership transitions
+From: Quentin Perret <qperret@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, qperret@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2025/2/22 16:40, Ojaswin Mujoo wrote:
-> Presently we always BUG_ON if trying to start a transaction on a journal
-> marked with JBD2_UNMOUNT, since this should never happen. However while
-> running stress tests it was observed that in case of some error handling
-> paths, it is possible for update_super_work to start a transaction after
-> the journal is destroyed eg:
->
-> (umount)
-> ext4_kill_sb
->    kill_block_super
->      generic_shutdown_super
->        sync_filesystem /* commits all txns */
->        evict_inodes
->          /* might start a new txn */
->        ext4_put_super
-> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
->          jbd2_journal_destroy
->            journal_kill_thread
->              journal->j_flags |= JBD2_UNMOUNT;
->            jbd2_journal_commit_transaction
->              jbd2_journal_get_descriptor_buffer
->                jbd2_journal_bmap
->                  ext4_journal_bmap
->                    ext4_map_blocks
->                      ...
->                      ext4_inode_error
-Just curious, since jbd2_journal_bmap() only queries the map and does not
-create it, how does it fail here? Is there more information in dmesg?
-Is s_journal_inum normal after file system corruption?
+Hi all,
 
-Thanks,
-Baokun
->                        ext4_handle_error
->                          schedule_work(&sbi->s_sb_upd_work)
->
->                                                 /* work queue kicks in */
->                                                 update_super_work
->                                                   jbd2_journal_start
->                                                     start_this_handle
->                                                       BUG_ON(journal->j_flags &
->                                                              JBD2_UNMOUNT)
->
-> Hence, make sure we only defer the update of ext4 sb if the sb is still
-> active.  Otherwise, just fallback to an un-journaled commit.
->
-> The important thing to note here is that we must only defer sb update if
-> we have not yet flushed the s_sb_update_work queue in umount path else
-> this race can be hit (point 1 below). Since we don't have a direct way
-> to check for that we use SB_ACTIVE instead. The SB_ACTIVE check is a bit
-> subtle so adding some notes below for future reference:
->
-> 1. Ideally we would want to have a something like (flags & JBD2_UNMOUNT
-> == 0) however this is not correct since we could end up scheduling work
-> after it has been flushed:
->
->   ext4_put_super
->    flush_work(&sbi->s_sb_upd_work)
->
->                             **kjournald2**
->                             jbd2_journal_commit_transaction
->                             ...
->                             ext4_inode_error
->                               /* JBD2_UNMOUNT not set */
->                               schedule_work(s_sb_upd_work)
->
->     jbd2_journal_destroy
->      journal->j_flags |= JBD2_UNMOUNT;
->
->                                        **workqueue**
->                                        update_super_work
->                                         jbd2_journal_start
->                                          start_this_handle
->                                            BUG_ON(JBD2_UNMOUNT)
->
-> Something like the above doesn't happen with SB_ACTIVE check because we
-> are sure that the workqueue would be flushed at a later point if we are
-> in the umount path.
->
-> 2. We don't need a similar check in ext4_grp_locked_error since it is
-> only called from mballoc and AFAICT it would be always valid to schedule
-> work here.
->
-> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
-> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
-> Suggested-by: Ritesh Harjani <ritesh.list@gmail.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
->   fs/ext4/super.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index a963ffda692a..b7341e9acf62 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
->   		 * constraints, it may not be safe to do it right here so we
->   		 * defer superblock flushing to a workqueue.
->   		 */
-> -		if (continue_fs && journal)
-> +		if (continue_fs && journal && (sb->s_flags & SB_ACTIVE))
->   			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
->   		else
->   			ext4_commit_super(sb);
+This is the v2 of the pKVM selftest originally posted here [1].
 
+Changes since v1:
+ - added support for testing NP guest transitions;
+ - added .data section in pKVM to allow using non-zero globals (needed
+   for previous point);
+ - dropped superfluous WARN() from __pkvm_host_share_guest() which is a
+   pain for testing;
+ - updated assertions for hyp/host transitions according to the
+   discussion on v1.
+
+Patches based on v6.14-rc4, tested on Qemu.
+
+[1] https://lore.kernel.org/kvmarm/20241129125800.992468-1-qperret@google.com/
+
+David Brazdil (1):
+  KVM: arm64: Add .hyp.data section
+
+Quentin Perret (3):
+  KVM: arm64: Don't WARN from __pkvm_host_share_guest()
+  KVM: arm64: Selftest for pKVM transitions
+  KVM: arm64: Extend pKVM selftest for np-guests
+
+ arch/arm64/include/asm/kvm_pkvm.h             |   6 +
+ arch/arm64/include/asm/sections.h             |   1 +
+ arch/arm64/kernel/image-vars.h                |   2 +
+ arch/arm64/kernel/vmlinux.lds.S               |  18 +-
+ arch/arm64/kvm/Kconfig                        |  10 +
+ arch/arm64/kvm/arm.c                          |   7 +
+ arch/arm64/kvm/hyp/include/nvhe/mem_protect.h |   6 +
+ arch/arm64/kvm/hyp/nvhe/hyp.lds.S             |   2 +
+ arch/arm64/kvm/hyp/nvhe/mem_protect.c         | 198 +++++++++++++++++-
+ arch/arm64/kvm/hyp/nvhe/setup.c               |  12 ++
+ arch/arm64/kvm/pkvm.c                         |   2 +
+ 11 files changed, 260 insertions(+), 4 deletions(-)
+
+-- 
+2.48.1.658.g4767266eb4-goog
 
 
