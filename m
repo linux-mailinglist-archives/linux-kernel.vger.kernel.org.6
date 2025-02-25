@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-531180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC13FA43D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:17:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ED21A43D0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA563A9242
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:11:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2CD188CCB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625B7267F60;
-	Tue, 25 Feb 2025 11:09:27 +0000 (UTC)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC52268685;
+	Tue, 25 Feb 2025 11:09:40 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A99264A7C;
-	Tue, 25 Feb 2025 11:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23892676F7;
+	Tue, 25 Feb 2025 11:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481766; cv=none; b=LT/QYMEF5T0uUEdtDC4PTPvUkZN9KRYKYi3nlNpO3Gu4nzANIDMlKoc3jIY9U56BwjZNjcjgLCnqOKZ6YbHZsKqj5OXgGVkldsOghVlbn+jEilAq2SS/5XNKceK4eZDC3CtcuRTN2vladxadJrjY5O7tY1TNwoApLZ5QcJz62a4=
+	t=1740481780; cv=none; b=V6ZuS+P5bCXKP3TBv8K6hh2MeTBZ+a2mN1LcuTzpTLMBggk0a4fNKn0a9V5GqqEue+CEunqFX+9SnDW991cOyKKNPsPa9b3rduGfKrHhEZGGC3KS+dY3N94MVa4bD0qt3hH2zOghSeHsLz9/oceYYwrmkrVyWYW5kKoXnnLo7ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481766; c=relaxed/simple;
-	bh=TtBQCEIEL2mTq/30X9Qjp4A9+mPF9QER9TihXX7Hng8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkZjVI8VevC0q3mehy8jhSptuadGIvwpsI8TSMIISDAhahO6u7n1cPS1nzC1Ns2Jp+0T659EvgoqFAi+lCNCchY+XFtvsLFoAMAhFi5N/lwgliV6BxlQud8d/WDHMkRhYqCm3RTnMCnl/0LlK5aCVtfy8U6Aq1OL7zCMXwb0JwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dee1626093so11670170a12.1;
-        Tue, 25 Feb 2025 03:09:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740481763; x=1741086563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/HP9OZuJ6AU1JfkSYo6B6srazy0msILW/CieEyyhb2E=;
-        b=JpYnkp+cLzs8KSyOIghHt1J/SsOOobj9vE3UHHAo4/zPPSdMjAoBMH+UomrAEXZBsn
-         KPTrf3qOEC4qfy73VjJR/Xb4qWI4Qn0Fnef4kqiM6giFQR9iszgtkpm0KSETtxubpDn/
-         bRGFtEx1BkwhheizlyPwG5MtnaRoHDrN+ZZYBnbNuu1qLBj6naG/5lCuK+1Je7pPgDDB
-         AK+YQAqNYYmyIdXjxJZTn9+av73Kfeh/eFvKFI6Vpjn+EoNC1D1L9XwWu0u8h2Ft7tHb
-         bDkhX6d7hL5h+f3Gg6P85sVxb4opUDKmLck77GPQLnrymdl7VWam8D/FRli+JW4Di3oc
-         q46g==
-X-Forwarded-Encrypted: i=1; AJvYcCV0ORY8thReyEB6FIchyHbWm8MA0XQ1WVXSFNHePJR1dyS4+l1nkgeoL05OUzFxGpAwTy54C3zHmHWvHAAK@vger.kernel.org, AJvYcCVd0ehRGZfRl2JmPIJxfAYhwEh6AfAjY/+VfKV4LHoqYMlLM7zLpqn3VrYzMXU5JzURv/WmNRUE/HA=@vger.kernel.org, AJvYcCVeQIoJxIykyLvNBN2+MkRAuAf3muGexVmKjx7Q2DRmceokiJhF5ZPa2Jr8hBmMww+VnVLdEZTx@vger.kernel.org, AJvYcCXJ37uYE0BzcDu2pSIpPDVrmP5HJAUxvwzAM42UvgX904r0mdFbzabc9IbmrHHgZH10mSiHiZdA9CkeNfqoICXa@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRi6Mprtmx8COUiTPVdmvhgV1OFlKodl8rySTfWKLbeLyRUqmW
-	Egv9nkrr7ts/N1LO+YhWv7woxqOAT+0zb5dwbfdfPCz4//hl4BIg
-X-Gm-Gg: ASbGncu0a+XLLERzJmy53fPfMwayQJqQOiNpW7u03gMpx2c22arD7fz3p51SCSSB9wM
-	BzVqIprA0j6LsfQdQCGuBMyoVUntr08VZsAKDR7G1llCmcQDqBGUcKdnrcfL2RwvJPtDcyO5PST
-	jJgmYOtPS7R+az0mc7OTUnIaonH9GmRota+dx+ujJAZjk7uPnmUSiGcsarhUpT8NAgku1de9p8o
-	ahaGcy0sA1vcCRkb+6+z04ZD19VlZ7PLfIDkzdbtuOdpz7NlgzAvi/M//UDbREhJSWuuHceT5tW
-	713IInsuoNUZJt8m
-X-Google-Smtp-Source: AGHT+IFtEU/qbtI5q4s+/3i4tDPt/bCCUO0KkhYar0f3IBw5ANItfNk//tImV+wtlwslPGilHyVkQQ==
-X-Received: by 2002:a17:907:c015:b0:abb:61b0:faa5 with SMTP id a640c23a62f3a-abbeda27eacmr2004055666b.4.1740481763220;
-        Tue, 25 Feb 2025 03:09:23 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:4::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed20b81a0sm120938266b.180.2025.02.25.03.09.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 03:09:22 -0800 (PST)
-Date: Tue, 25 Feb 2025 03:09:20 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next 2/7] netconsole: refactor CPU number formatting
- into separate function
-Message-ID: <20250225-diamond-gaur-of-anger-b0f77e@leitao>
-References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
- <20250221-netcons_current-v1-2-21c86ae8fc0d@debian.org>
- <20250225101748.GL1615191@kernel.org>
+	s=arc-20240116; t=1740481780; c=relaxed/simple;
+	bh=d1JecBOd39KaxgofY9dObpdwKr5wka7PaavQk7GYTxo=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=YuGP3Bc/ChnLvFAy7nI3H1bXXZgwlPsB0qUuuj/D1Z3iwLo98m7Rg1A7N91RhveecVSQCxaxB8218GrB+URVJrE5FBMtctElyGheQxZUI/PtVLUBsajGoyQynDdN0uFi/YJEgSeT6OQoCDc7WUYSehVS85ZymUhgd3WOhSzLJMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z2FH00sZCz4f3jt0;
+	Tue, 25 Feb 2025 19:09:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9294A1A0DE0;
+	Tue, 25 Feb 2025 19:09:32 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgB321_qpL1nVnlrEw--.6688S3;
+	Tue, 25 Feb 2025 19:09:32 +0800 (CST)
+Subject: Re: [PATCH 2/2] blk-throttle: fix off-by-one jiffies wait_time
+To: Ming Lei <ming.lei@redhat.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+ cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <Z7nAJSKGANoC0Glb@fedora>
+ <f2f54206-b5c0-7486-d607-337d29e9c145@huaweicloud.com>
+ <Z7vnTyk6Y6X4JWQB@fedora>
+ <e6a29a6a-f5ec-7953-14e9-2550a549f955@huaweicloud.com>
+ <Z7w0P8ImJiZhRsPD@fedora>
+ <611f02a8-8430-16cf-46e5-e9417982b077@huaweicloud.com>
+ <Z70btzRaN83FbTJp@fedora>
+ <8473fca2-16ab-b2a6-ede7-d1449aa7d463@huaweicloud.com>
+ <Z70qvZEBdq6L3-Yb@fedora>
+ <084e25a1-5ed7-3097-5bae-b87addeaf01f@huaweicloud.com>
+ <Z719gj8GOl0itRwV@fedora>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <dc2b3a40-b33b-0bc5-3a73-18b288b4283f@huaweicloud.com>
+Date: Tue, 25 Feb 2025 19:09:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225101748.GL1615191@kernel.org>
+In-Reply-To: <Z719gj8GOl0itRwV@fedora>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgB321_qpL1nVnlrEw--.6688S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KFW3WF4rGr13KrW3Jw47urg_yoW8Zr4DpF
+	Waqrn0kr4YqFn7KF4Fv3Z8Wa48AayDWr98Gw4DJrWxA3WDCw1xtF12kFs0kF9ayFn7Cr4j
+	va4rXFy3AFy8ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hello Simon,
+Hi,
 
-On Tue, Feb 25, 2025 at 10:17:48AM +0000, Simon Horman wrote:
-> On Fri, Feb 21, 2025 at 05:52:07AM -0800, Breno Leitao wrote:
-> > Extract CPU number formatting logic from prepare_extradata() into a new
-> > append_cpu_nr() function.
-> > 
-> > This refactoring improves code organization by isolating CPU number
-> > formatting into its own function while reducing the complexity of
-> > prepare_extradata().
-> > 
-> > The change prepares the codebase for the upcoming taskname feature by
-> > establishing a consistent pattern for handling sysdata features.
-> > 
-> > The CPU number formatting logic itself remains unchanged; only its
-> > location has moved to improve maintainability.
-> > 
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  drivers/net/netconsole.c | 18 +++++++++++-------
-> >  1 file changed, 11 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > index c086e2fe51f874812379e6f89c421d7d32980f91..26ff2ed4de16bce58e9eeaf8b5b362dfaafaca0a 100644
-> > --- a/drivers/net/netconsole.c
-> > +++ b/drivers/net/netconsole.c
-> > @@ -1117,13 +1117,21 @@ static void populate_configfs_item(struct netconsole_target *nt,
-> >  	init_target_config_group(nt, target_name);
-> >  }
-> >  
-> > +static int append_cpu_nr(struct netconsole_target *nt, int offset)
-> > +{
-> > +	/* Append cpu=%d at extradata_complete after userdata str */
-> > +	return scnprintf(&nt->extradata_complete[offset],
-> > +			 MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
-> > +			 raw_smp_processor_id());
-> > +}
-> > +
-> >  /*
-> >   * prepare_extradata - append sysdata at extradata_complete in runtime
-> >   * @nt: target to send message to
-> >   */
-> >  static int prepare_extradata(struct netconsole_target *nt)
-> >  {
-> > -	int sysdata_len, extradata_len;
-> > +	int extradata_len;
-> >  
-> >  	/* userdata was appended when configfs write helper was called
-> >  	 * by update_userdata().
-> > @@ -1133,12 +1141,8 @@ static int prepare_extradata(struct netconsole_target *nt)
-> >  	if (!(nt->sysdata_fields & SYSDATA_CPU_NR))
-> >  		goto out;
-> >  
-> > -	/* Append cpu=%d at extradata_complete after userdata str */
-> > -	sysdata_len = scnprintf(&nt->extradata_complete[nt->userdata_length],
-> > -				MAX_EXTRADATA_ENTRY_LEN, " cpu=%u\n",
-> > -				raw_smp_processor_id());
-> > -
-> > -	extradata_len += sysdata_len;
-> > +	if (nt->sysdata_fields & SYSDATA_CPU_NR)
-> > +		extradata_len += append_cpu_nr(nt, nt->userdata_length);
+在 2025/02/25 16:21, Ming Lei 写道:
+> On Tue, Feb 25, 2025 at 11:12:24AM +0800, Yu Kuai wrote:
+>> Hi, Ming!
+>>
+>> 在 2025/02/25 10:28, Ming Lei 写道:
+>>> Can you explain in details why it signals that the rate is expected now?
+>>>
+>>> If rate isn't expected, it will cause trouble to trim, even just the
+>>> previous part.
+>>
+>> Ok, for example, assume bps_limit is 1000bytes, 1 jiffes is 10ms, and
+>> slice is 20ms(2 jiffies).
+>>
 > 
-> Hi Breno,
+> We all know how it works, but I didn't understand the behind idea why it
+> is correct. Now I figured it out:
 > 
-> As this is the only caller of append_cpu_nr() I'm wondering
-> if it would be nicer if nt was the only argument to append_cpu_nr().
+> 1) increase default slice window to 2 * td->throttle_slice
+> 
+> 2) slice window is set as [jiffies - td->throttle_slice, jiffies + td->throttle_slice]
+> 
+> 3) initialize td->bytes_disp[]/td->io_dis[] as actual dispatched bytes/ios
+> done [jiffies - td->throttle_slice, 0]
+> 
+> This approach looks smart, and it should work well for any deviation which is <= 1
+> throttle_slice.
+> 
+> Probably it is enough for fixing the issue in throtl/001, even though 2 jiffies
+> timer drift still may be observed, see the below log collected in my VM(HZ_100)
+> by just running one time of blktests './check throtl':
+> 
+> @timer_expire_delay:
+> [1, 2)               387 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [2, 3)                11 |@                                                   |
+> 
+> bpftrace -e 'kfunc:throtl_pending_timer_fn { @timer_expire_delay = lhist(jiffies - args->t->expires, 0, 16, 1);}'
+> 
+> 
+> Also I'd suggest to remove ->carryover_bytes/ios since blk-throttle algorithm is
+> supposed to be adaptive, and the approach I suggested may cover this area,
+> what do you think of this cleanup? I have one local patchset, which can
+> pass all blktest throtl tests with removing ->carryover_bytes/ios.
+> 
 
-Yes, I can do it. I just kept both functions the same:
+It's always welcome for such cleanup. BTW, do you have plans to support
+bio merge for iops limit in blk-throttle? Since bio split is handled. I
+was thinking about using carryover_ios, perhaps you can handle this as
+well.
 
-  static int append_taskname(struct netconsole_target *nt, int offset)
-  static int append_cpu_nr(struct netconsole_target *nt, int offset)
+Thanks,
+Kuai
+> 
+> 
+> Thanks,
+> Ming
+> 
+> 
+> .
+> 
 
-Another option is to use extradata_len as the second argument, instead
-of nt->userdata_length. That might(?) make the code easier to read? it
-would look like the following:
-
-          extradata_len = nt->userdata_length;
-          if (nt->sysdata_fields & SYSDATA_CPU_NR)
-                  extradata_len += append_cpu_nr(nt, extradata_len);
-          if (nt->sysdata_fields & SYSDATA_TASKNAME)
-                  extradata_len += append_taskname(nt, extradata_len);
-
-What would you write yourself?
-
-Thank you very much for the review,
---breno
 
