@@ -1,319 +1,212 @@
-Return-Path: <linux-kernel+bounces-531279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6815A43E6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:56:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496C9A43E0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D89487A428B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62CDC1884CEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B59268684;
-	Tue, 25 Feb 2025 11:54:29 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [58.251.27.85])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1358267B72;
+	Tue, 25 Feb 2025 11:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LLrGEkgz"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA89267F7B;
-	Tue, 25 Feb 2025 11:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.251.27.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D02820B21B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740484468; cv=none; b=o347qZ8JXrZLQEJC217TeM6BI1+JDl9gD8Iwdh6I+sz7rzcQZ0knYWbxhpsv6sgjNwYxClyVIUl9bxIEDM8YSVdHcYNZndx8/5iF0+7Vo/HOmDtBcDgz7MbMK0X0gB/3BqDOqKMMV8rRWQqvuUG+vg21GIjkvJNUYadGIUdQYR8=
+	t=1740483943; cv=none; b=fzzkG1bfiGwVzzbKZoGIMFbPyOEuWwB3clfsyGbbxQDq5vxVotosHuRjJTfxvM8+mERqKGonb+SrW5n6mzs0dxqYbt52WKclfjKwvbItX9XhVE0ZWDlYOFPwevmMZKKn4nOPTn1J6kjDv4gFUQ33x39kcu3WVkELfSzgvg6Roqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740484468; c=relaxed/simple;
-	bh=8uqSU9g/Z7TXfxQDqugu98jENClfSwtOsnky93zJkPE=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=ClRmQZN/TcpLIX1zXcYvZHhi3FzoKagB+oXZLAEG8zlDBicXWxkBnZoQGInIoN5Tx1TlZ7VhtXEj/YJtJkL1y+XCdseniDTbclIp2wBGKY8nED8FnuxcCvkt1gNnOL7Rvp3sDwd97avdydfR/J/bPzgd58UpWO2X99F+CzEmQiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=58.251.27.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxde.zte.com.cn (unknown [10.35.20.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Z2G4Y1G8KzKhl;
-	Tue, 25 Feb 2025 19:45:17 +0800 (CST)
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4Z2G4S0TC6zBRHKT;
-	Tue, 25 Feb 2025 19:45:12 +0800 (CST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4Z2G4G1qwNz5B1LX;
-	Tue, 25 Feb 2025 19:45:02 +0800 (CST)
-Received: from njb2app07.zte.com.cn ([10.55.22.95])
-	by mse-fl1.zte.com.cn with SMTP id 51PBirfO019687;
-	Tue, 25 Feb 2025 19:44:53 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njb2app06[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Tue, 25 Feb 2025 19:44:56 +0800 (CST)
-Date: Tue, 25 Feb 2025 19:44:56 +0800 (CST)
-X-Zmail-TransId: 2afe67bdad38ffffffffd53-28c3b
-X-Mailer: Zmail v1.0
-Message-ID: <20250225194456879v1ipo2r4_8PJZn1s1J9Ge@zte.com.cn>
+	s=arc-20240116; t=1740483943; c=relaxed/simple;
+	bh=DWkFzyUNSroNJbrok6V9w/pFXCdIMs59dYxdSxifuTU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YyNwyJ3+N4852D3nslS9D1VmIN/tQhE/GljEuXFxV3/J8MVDonDJ/PgcQfxcXwI410JevVFvXUJSuE7Y2MN388zVbJToyu0x3PGDESvkyMlvD8CSgbTqVv8q6o8huiFDdPmCBR23q8EWBg4gpf3l5TgYEG1La7hfq3y1ij3un9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LLrGEkgz; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P8TAA9009903
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:45:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=TW/r5bOMKQEdl/fm5iKEjy
+	IL+RUW8fkuKadv/ulCZKw=; b=LLrGEkgzQfqghVs/1rD/PQxocAEg15oonSF8U/
+	7ZweznkhQwOkIqWl186VCLXjYITvBRQLonf3JaFniGhnIGxp1XBR/Fb6kjpmqqVW
+	xbja/hkjRdEVtTm7VZK3PQUNbSI8IK7WMOw2krqz9a5PfDPQ8m2gUWNb/0hSyFrn
+	9mAJRE1rhGQciUU9qqacgBTocSizs45BTodYVvUMo0szC24cmO/LoxnCmgzfxGwL
+	0cB2BuAFlW4GMR9uCqYxHqOqotyB9DFh5PHoGue1jMp5hAL6q0fmXPY4auyBYkSm
+	63AqJE3uItmuLbNPbQMUBLzCfZFGFYXHTEKGtKo5zrZKvu6w==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y3xngycq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:45:39 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2fc3e239675so18470544a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:45:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740483939; x=1741088739;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TW/r5bOMKQEdl/fm5iKEjyIL+RUW8fkuKadv/ulCZKw=;
+        b=YCrAGWBKAU09h7YZhydNQYbHegpsfqyR/kGuuyts5TSOuKBsD+NXXFaVLKcRCeWdpp
+         Kwm2AyKbAM7JiNWR/Wtmyw0dxEtk+SN/o5qwMpa4DR/fFXFQ0muz2yTDeKyiZ2VPSyZ2
+         R6Fu2Pdc24zaDNvZ9vVAz/b0OzGwAH8dh0xka09qMaepCOblPmTyjEPSwgKQKd4ollo6
+         J1METrhQQemsF0r0+8zFAo5K90pbYS8/W0J8SRl4ByPnS3l/n7KxOfUDt8lnj0OEHe+Q
+         eqrTFu1dErIRFI3LJaG7ECTUC2/0VUxkpxSBUcsJulemji9u0GTAqNOiuUL/AoxhxYBd
+         iORA==
+X-Forwarded-Encrypted: i=1; AJvYcCXURvUv1k52jC/2mdUDHj7qOjz3sHLG2rprvCSYKJMk4DETotQYlasNISJDIYxk4OOMzVizlFzQoYSzPOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIWI91lzAd4otZsgHr7jeaCtnSWmBBJcdmL0x6ykW7rYccHDtY
+	+CoKk1YjrBhzgn7dPiPGJyNeKq7Vr2gDmwRnGhA0JPL83gn9MtJ5GBC1qd9BgItP3w2FLSkHgtt
+	35cXXE8fV0CQ86K9dSJlc2Rw1RQWP3D9Wi6DbNtKRsxsYU3qSGdbJ5rW1DGecZWg=
+X-Gm-Gg: ASbGncuHoieB9pgKJ6mYi78ymt4ZhDwLyfQ/bvPsgDf2a9NzUAzVTVVrtTzLzGLafJD
+	oCA1wIzwXVN5Et1aXkR1qOd5CblR91R44BfmL0W7roj7kBxIN69MiW6qlmPnQhpo1/5/u5JTw1d
+	RyTyYsfvmn1uCfVHcXokv3B5IaywP5BCSrLumlbI4x5mQ4gWehSo0Um0V1rzhsENZOGEu+FqK1+
+	k8l96kc8LQuFDdfdnnTXzgDNX4pEJjz2A7mFt4kbo0tRCxBr2qf0YP/2IAYjLfjoGvYEyKFQqZK
+	rtZYPp7ilXzabepvPSoLNnvxIR8ePoN0PTuqzsih4ijIzoZK+TU=
+X-Received: by 2002:a05:6a20:2444:b0:1ee:c390:58ac with SMTP id adf61e73a8af0-1eef55609d8mr35663327637.34.1740483938650;
+        Tue, 25 Feb 2025 03:45:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFWBhzAVbfQ0L1U8HV4Uzb/8b9X8qD7HqTBOw4AUiTbZkGzedrzw6VJc8oD/CmX66NqdU/U1A==
+X-Received: by 2002:a05:6a20:2444:b0:1ee:c390:58ac with SMTP id adf61e73a8af0-1eef55609d8mr35663285637.34.1740483938268;
+        Tue, 25 Feb 2025 03:45:38 -0800 (PST)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9bb1sm1331790b3a.92.2025.02.25.03.45.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 03:45:37 -0800 (PST)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH v7 0/4] PCI: dwc: Add support for configuring lane
+ equalization presets
+Date: Tue, 25 Feb 2025 17:15:03 +0530
+Message-Id: <20250225-preset_v6-v7-0-a593f3ef3951@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <xu.xin16@zte.com.cn>, <yang.yang29@zte.com.cn>, <wang.yaxin@zte.com.cn>,
-        <fan.yu9@zte.com.cn>, <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>,
-        <ye.xingchen@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4IG5leHRdIERvY3MvemhfQ046IFRyYW5zbGF0ZSBtc2dfemVyb2NvcHkucnN0IHRvClNpbXBsaWZpZWQgQ2hpbmVzZQ==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 51PBirfO019687
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 67BDAD4B.005/4Z2G4Y1G8KzKhl
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD+tvWcC/22M0QqCQBBFf0XmuZVxxVV66j9CwnbGXEi3dkwK8
+ d+bfA6GC+fe4awgnAILHLMVEi9BQpwU6kMGfuimG5tAymDRVmgLNI/EwvNlcabguq8cUlF2BPq
+ vSx/eu+vcKg9B5pg+u3pxv/afRQ+Nv1JT1oRoGzpFkfz56u4+jmOuAe22bV+4E7scqQAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>, Jingoo Han <jingoohan1@gmail.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_mrana@quicinc.com, quic_vbadigan@quicinc.com,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740483933; l=4008;
+ i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
+ bh=DWkFzyUNSroNJbrok6V9w/pFXCdIMs59dYxdSxifuTU=;
+ b=jDiewY/1+DFurlRHILiMVCI5fF7O7vzQdKD4Aykn8XCHJdefZvosHwamZPKEr8d5WiC3PUPlo
+ lyLmva5NLIEBqKn7Tj5gRwYzai7Nl2PpQ+Lxl9xKLzyCLCY3bF/K0UW
+X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-Proofpoint-ORIG-GUID: 1sZubDC7t6HD3e7B9XMeS95v9nsJPUj0
+X-Proofpoint-GUID: 1sZubDC7t6HD3e7B9XMeS95v9nsJPUj0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=970 bulkscore=0
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0 clxscore=1015
+ priorityscore=1501 spamscore=0 malwarescore=0 phishscore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2502250082
 
-From: Wang Yaxin <wang.yaxin@zte.com.cn>
+PCIe equalization presets are predefined settings used to optimize
+signal integrity by compensating for signal loss and distortion in
+high-speed data transmission.
 
-translate the "msg_zerocopy.rst" into Simplified Chinese
+As per PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4 for data rates
+of 8.0 GT/s, 16.0 GT/s, 32.0 GT/s, and 64.0 GT/s, there is a way to
+configure lane equalization presets for each lane to enhance the PCIe
+link reliability. Each preset value represents a different combination
+of pre-shoot and de-emphasis values. For each data rate, different
+registers are defined: for 8.0 GT/s, registers are defined in section
+7.7.3.4; for 16.0 GT/s, in section 7.7.5.9, etc. The 8.0 GT/s rate has
+an extra receiver preset hint, requiring 16 bits per lane, while the
+remaining data rates use 8 bits per lane.
 
-Update to commit bac2cac12c26("docs: net: description of
-MSG_ZEROCOPY for AF_VSOCK")
+Based on the number of lanes and the supported data rate, read the
+device tree property and stores in the presets structure.
 
-Signed-off-by: Wang Yaxin <wang.yaxin@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-Reviewed-by: He Peilin <he.peilin@zte.com.cn>
+Based upon the lane width and supported data rate update lane
+equalization registers.
+
+This patch depends on the this dt binding pull request which got recently
+merged: https://github.com/devicetree-org/dt-schema/pull/146
+
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+---
+Changes in v7:
+- Update the 16bit array in the array (mani & konrad)
+- Update the couple of nits (comments, error log format etc) (mani)
+- remove !num_lanes check as this is not needed with this series (mani)
+- Add warning prints if the data rate is not supported and if there is
+  no devicetree property for the data rate (mani).
+- Link to v6: https://lore.kernel.org/r/20250210-preset_v6-v6-0-cbd837d0028d@oss.qualcomm.com
+
+Changes in v6:
+- update the dt properties to match the lane width ( mani & konard)
+- move everything to helper function and let the helper function
+  determine reg size and offset (mani)
+- update the function header (mani)
+- move the num_lanes check to the main function (mani)
+- Link to v5: https://lore.kernel.org/linux-kernel/20250128-preset_v2-v5-0-4d230d956f8c@oss.qualcomm.com/
+
+Changes in v5:
+- Instead of using of_property_present use return value of
+  of_property_read_u8_array to know about property is present or not and
+  add a macro for reserved value(Konrad).
+- Link to v4: https://lore.kernel.org/r/20250124-preset_v2-v4-0-0b512cad08e1@oss.qualcomm.com
+
+Changes in v4:
+- use static arrays for storing preset values and use default value 0xff
+  to indicate the property is not present (Dimitry & konrad).
+- Link to v3: https://lore.kernel.org/r/20241223-preset_v2-v3-0-a339f475caf5@oss.qualcomm.com
+
+Changes in v3:
+- In previous series a wrong patch was attached, correct it
+- Link to v2: https://lore.kernel.org/r/20241212-preset_v2-v2-0-210430fbcd8a@oss.qualcomm.com
+
+Changes in v2:
+- Fix the kernel test robot error
+- As suggested by konrad use for loop and read "eq-presets-%ugts", (8 << i)
+- Link to v1: https://lore.kernel.org/r/20241116-presets-v1-0-878a837a4fee@quicinc.com
 
 ---
- .../zh_CN/networking/msg_zerocopy.rst         | 218 ++++++++++++++++++
- 1 file changed, 218 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/networking/msg_zerocopy.rst
+Krishna Chaitanya Chundru (4):
+      arm64: dts: qcom: x1e80100: Add PCIe lane equalization preset properties
+      PCI: of: Add API to retrieve equalization presets from device tree
+      PCI: dwc: Improve handling of PCIe lane configuration
+      PCI: dwc: Add support for configuring lane equalization presets
 
-diff --git a/Documentation/translations/zh_CN/networking/msg_zerocopy.rst b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
-new file mode 100644
-index 000000000000..80c4da5efae4
---- /dev/null
-+++ b/Documentation/translations/zh_CN/networking/msg_zerocopy.rst
-@@ -0,0 +1,218 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/networking/msg_zerocopy.rst
-+
-+:翻译:
-+
-+   王亚鑫 Wang Yaxin <wang.yaxin@zte.com.cn>
-+
-+============
-+MSG_ZEROCOPY
-+============
-+
-+简介
-+====
-+
-+MSG_ZEROCOPY 标志用于启用套接字发送调用的免拷贝功能。该功能目前适用于 TCP、UDP 和 VSOCK
-+（使用 virtio 传输）套接字。
-+
-+机遇与注意事项
-+--------------
-+
-+在用户进程与内核之间拷贝大型缓冲区可能会消耗大量资源。Linux 支持多种免拷贝的接口，如sendfile
-+和 splice。MSG_ZEROCOPY 标志将底层的拷贝避免机制扩展到了常见的套接字发送调用中。
-+
-+免拷贝并非毫无代价。在实现上，它通过页面固定（page pinning）将按字节拷贝的成本替换为页面统计
-+（page accounting）和完成通知的开销。因此，MSG_ZEROCOPY 通常仅在写入量超过大约 10 KB 时
-+才有效。
-+
-+页面固定还会改变系统调用的语义。它会暂时在进程和网络堆栈之间共享缓冲区。与拷贝不同，进程在系统
-+调用返回后不能立即覆盖缓冲区，否则可能会修改正在传输中的数据。内核的完整性不会受到影响，但有缺
-+陷的程序可能会破坏自己的数据流。
-+
-+当内核返回数据可以安全修改的通知时，进程才可以修改数据。因此，将现有应用程序转换为使用
-+MSG_ZEROCOPY 并非总是像简单地传递该标志那样容易。
-+
-+更多信息
-+--------
-+
-+本文档的大部分内容是来自于 netdev 2.1 上发表的一篇长篇论文。如需更深入的信息，请参阅该论文和
-+演讲，或者浏览 LWN.net 上的精彩报道，也可以直接阅读源码。
-+
-+  论文、幻灯片、视频：
-+    https://netdevconf.org/2.1/session.html?debruijn
-+
-+  LWN 文章：
-+    https://lwn.net/Articles/726917/
-+
-+  补丁集：
-+    [PATCH net-next v4 0/9] socket sendmsg MSG_ZEROCOPY
-+    https://lore.kernel.org/netdev/20170803202945.70750-1-willemdebruijn.kernel@gmail.com
-+
-+接口
-+====
-+
-+传递 MSG_ZEROCOPY 标志是启用免拷贝功能的最明显步骤，但并非唯一的步骤。
-+
-+套接字设置
-+----------
-+
-+当应用程序向 send 系统调用传递未定义的标志时，内核通常会宽容对待。默认情况下，它会简单地忽略
-+这些标志。为了避免为那些偶然传递此标志的遗留进程启用免拷贝模式，进程必须首先通过设置套接字选项
-+来表明意图：
-+
-+::
-+
-+    if (setsockopt(fd, SOL_SOCKET, SO_ZEROCOPY, &one, sizeof(one)))
-+        error(1, errno, "setsockopt zerocopy");
-+
-+传输
-+----
-+
-+对 send（或 sendto、sendmsg、sendmmsg）本身的改动非常简单。只需传递新的标志即可。
-+
-+::
-+
-+    ret = send(fd, buf, sizeof(buf), MSG_ZEROCOPY);
-+
-+如果零拷贝操作失败，将返回 -1，并设置 errno 为 ENOBUFS。这种情况可能发生在套接字超出其
-+optmem 限制，或者用户超出其锁定页面的 ulimit 时。
-+
-+混合使用免拷贝和拷贝
-+~~~~~~~~~~~~~~~~~~~~
-+
-+许多工作负载同时包含大型和小型缓冲区。由于对于小数据包来说，免拷贝的成本高于拷贝，因此该
-+功能是通过标志实现的。带有标志的调用和没有标志的调用可以安全地混合使用。
-+
-+通知
-+----
-+
-+当内核认为可以安全地重用之前传递的缓冲区时，它必须通知进程。完成通知在套接字的错误队列上
-+排队，类似于传输时间戳接口。
-+
-+通知本身是一个简单的标量值。每个套接字都维护一个内部的无符号 32 位计数器。每次带有
-+MSG_ZEROCOPY 标志的 send 调用成功发送数据时，计数器都会增加。如果调用失败或长度为零，
-+则计数器不会增加。该计数器统计系统调用的调用次数，而不是字节数。在 UINT_MAX 次调用后，
-+计数器会循环。
-+
-+通知接收
-+~~~~~~~~
-+
-+下面的代码片段展示了 API 的使用。在最简单的情况下，每次 send 系统调用后，都会对错误队列
-+进行轮询和 recvmsg 调用。
-+
-+从错误队列读取始终是一个非阻塞操作。poll 调用用于阻塞，直到出现错误。它会在其输出标志中
-+设置 POLLERR。该标志不需要在 events 字段中设置。错误会无条件地发出信号。
-+
-+::
-+
-+    pfd.fd = fd;
-+    pfd.events = 0;
-+    if (poll(&pfd, 1, -1) != 1 || pfd.revents & POLLERR == 0)
-+        error(1, errno, "poll");
-+
-+    ret = recvmsg(fd, &msg, MSG_ERRQUEUE);
-+    if (ret == -1)
-+        error(1, errno, "recvmsg");
-+
-+    read_notification(msg);
-+
-+
-+这个示例仅用于演示目的。在实际应用中，不等待通知，而是每隔几次 send 调用就进行一次非阻塞
-+读取会更高效。
-+
-+零拷贝通知可以与其他套接字操作乱序处理。通常，拥有错误队列套接字会阻塞其他操作，直到错误
-+被读取。然而，零拷贝通知具有零错误代码，因此不会阻塞 send 和 recv 调用。
-+
-+通知批处理
-+~~~~~~~~~~~~
-+
-+可以使用 recvmmsg 调用来一次性读取多个未决的数据包。这通常不是必需的。在每条消息中，内核
-+返回的不是一个单一的值，而是一个范围。当错误队列上有一个通知正在等待接收时，它会将连续的通
-+知合并起来。
-+
-+当一个新的通知即将被排队时，它会检查队列尾部的通知的范围是否可以扩展以包含新的值。如果是这
-+样，它会丢弃新的通知数据包，并增大未处理通知的范围上限值。
-+
-+对于按顺序确认数据的协议（如 TCP），每个通知都可以合并到前一个通知中，因此在任何时候在等待
-+的通知都不会超过一个。
-+
-+有序交付是常见的情况，但不能保证。在重传和套接字拆除时，通知可能会乱序到达。
-+
-+通知解析
-+~~~~~~~~
-+
-+下面的代码片段演示了如何解析控制消息：前面代码片段中的 read_notification() 调用。通知
-+以标准错误格式 sock_extended_err 编码。
-+
-+控制数据中的级别和类型字段是协议族特定的，对于 TCP 或 UDP 套接字，分别为 IP_RECVERR 或
-+IPV6_RECVERR。对于 VSOCK 套接字，cmsg_level 为 SOL_VSOCK，cmsg_type 为 VSOCK_RECVERR。
-+
-+错误来源是新的类型 SO_EE_ORIGIN_ZEROCOPY。如前所述，ee_errno 为零，以避免在套接字上
-+阻塞地读取和写入系统调用。
-+
-+32 位通知范围编码为 [ee_info, ee_data]。这个范围是包含边界值的。除了下面讨论的 ee_code
-+字段外，结构中的其他字段应被视为未定义的。
-+
-+::
-+
-+    struct sock_extended_err *serr;
-+    struct cmsghdr *cm;
-+
-+    cm = CMSG_FIRSTHDR(msg);
-+    if (cm->cmsg_level != SOL_IP &&
-+        cm->cmsg_type != IP_RECVERR)
-+        error(1, 0, "cmsg");
-+
-+    serr = (void *) CMSG_DATA(cm);
-+    if (serr->ee_errno != 0 ||
-+        serr->ee_origin != SO_EE_ORIGIN_ZEROCOPY)
-+        error(1, 0, "serr");
-+
-+    printf("completed: %u..%u\n", serr->ee_info, serr->ee_data);
-+
-+
-+延迟拷贝
-+~~~~~~~~
-+
-+传递标志 MSG_ZEROCOPY 是向内核发出的一个提示，让内核采用免拷贝的策略，同时也是一种约
-+定，即内核会对完成通知进行排队处理。但这并不保证拷贝操作一定会被省略。
-+
-+拷贝避免不总是适用的。不支持分散/聚集 I/O 的设备无法发送由内核生成的协议头加上零拷贝用户
-+数据组成的数据包。数据包可能需要在协议栈底层转换为一份私有数据副本，例如用于计算校验和。
-+
-+在所有这些情况下，当内核释放对共享页面的持有权时，它会返回一个完成通知。该通知可能在（已
-+拷贝）数据完全传输之前到达。因此。零拷贝完成通知并不是传输完成通知。
-+
-+如果数据不在缓存中，延迟拷贝可能会比立即在系统调用中拷贝开销更大。进程还会因通知处理而产
-+生成本，但却没有带来任何好处。因此，内核会在返回时通过在 ee_code 字段中设置标志
-+SO_EE_CODE_ZEROCOPY_COPIED 来指示数据是否以拷贝的方式完成。进程可以利用这个信号，在
-+同一套接字上后续的请求中停止传递 MSG_ZEROCOPY 标志。
-+
-+实现
-+====
-+
-+环回
-+----
-+
-+对于 TCP 和 UDP：
-+如果接收进程不读取其套接字，发送到本地套接字的数据可能会无限期排队。无限期的通知延迟是不
-+可接受的。因此，所有使用 MSG_ZEROCOPY 生成并环回到本地套接字的数据包都将产生延迟拷贝。
-+这包括环回到数据包套接字（例如，tcpdump）和 tun 设备。
-+
-+对于 VSOCK：
-+发送到本地套接字的数据路径与非本地套接字相同。
-+
-+测试
-+====
-+
-+更具体的示例代码可以在内核源码的 tools/testing/selftests/net/msg_zerocopy.c 中找到。
-+
-+要留意环回约束问题。该测试可以在一对主机之间进行。但如果是在本地的一对进程之间运行，例如当使用
-+msg_zerocopy.sh 脚本在跨命名空间的虚拟以太网（veth）对之间运行时，测试将不会显示出任何性能
-+提升。为了便于测试，可以通过让 skb_orphan_frags_rx 与 skb_orphan_frags 相同，来暂时放宽
-+环回限制。
-+
-+对于 VSOCK 类型套接字的示例可以在 tools/testing/vsock/vsock_test_zerocopy.c 中找到。
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi            | 13 +++++
+ drivers/pci/controller/dwc/pcie-designware-host.c | 69 +++++++++++++++++++++++
+ drivers/pci/controller/dwc/pcie-designware.c      | 11 +++-
+ drivers/pci/controller/dwc/pcie-designware.h      |  4 ++
+ drivers/pci/of.c                                  | 43 ++++++++++++++
+ drivers/pci/pci.h                                 | 27 ++++++++-
+ include/uapi/linux/pci_regs.h                     |  3 +
+ 7 files changed, 168 insertions(+), 2 deletions(-)
+---
+base-commit: 3175967ecb3266d0ad7d2ca7ccceaf15fa2f15e2
+change-id: 20250210-preset_v6-1e7f560d13ad
+
+Best regards,
 -- 
-2.25.1
+Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+
 
