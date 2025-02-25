@@ -1,69 +1,74 @@
-Return-Path: <linux-kernel+bounces-531132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F083EA43C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD09A43C8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:01:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E5D617BC2B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B2418892D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299E264A99;
-	Tue, 25 Feb 2025 11:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC34D267F56;
+	Tue, 25 Feb 2025 11:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jgkdqvb7"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k5FEkeRd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2D81C84A4;
-	Tue, 25 Feb 2025 11:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD70267B71;
+	Tue, 25 Feb 2025 11:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740481219; cv=none; b=bNs34YOCDGGM91E2X59iC5yFIirIBM7wtHCMyc4uQcGOmfYVVb7EYxXd+hiKDAymHtMdhg+ii6tf7r/UhBo8UNqrK3GxiZ9RRNY9I9XROvqPP5D8zOTdf1cxyuU4TZkUITOWq1VB8HA5jiyeDDGdRrcc/VYJ+faCkAVhuo9sM5U=
+	t=1740481225; cv=none; b=YDERoDEHqVT/kNNSZnAiDZ1Py+PxBQHo2JqVAGl9MHXX/X8cXl515H415ju0E1cP3zXzBp0d8jvzxQmgfALp29e109/V511EmE7RWOiMDwuuBZ+SClm8dy736biG2Rd5XNXdipIXhtfcwVs8sRR7Dpw4AskKgTQMUv3dcgsJrak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740481219; c=relaxed/simple;
-	bh=OIAYG0DTu1dbYqV7zeemEwB6CnpNfpQ2N8t5mKh6jvA=;
+	s=arc-20240116; t=1740481225; c=relaxed/simple;
+	bh=J1HWkZJkiWOegQfp5vHIqN+whL/4IGe+JzHch6uSDhM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+htZa+RsGBQHI7tEKk56BRl9Yxw0Sjpc3qH1xPhFCDv2BdJ5/Wi94Gt64HmhrEFuX1r5lZK4yUPeF84ZxeBA/Wer0em/LCRolIb0QvPigONKfPY65q3ThomdtgWSWlUDVv1YQu5TSwtuZvm1W7ekpn0SScHjqIvzqPG84Hel+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Jgkdqvb7; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X2opscf7XUW1j6O0X55tJb+3c775cxiqTofDgsyFe/Y=; b=Jgkdqvb7s4a0Rh/GZwdTMHhQJW
-	cR484LNq2IM+vKyXTxn5adBmJ/FoStGMvW+6lzoHsV0W3PDSNNMC5T9mnbjdJaWyUWj4Mr90q78wN
-	uL8B9BaGCH6VuzHgpNNYT5qHpQ5Q8533RdUuktVOQUQ6wCDKJtLPviE6Mpm8nfs/kt0Tn9vTrHk15
-	WiS+B9VkIu+LARgpjcCE7ja8vLyy/3yNSjERu7AUSKqGpf/VCAu8RqbWrYQywSpVlz5Pwq1APq+T1
-	bOxwZnvxgEF7f4rypYStpdcGm4wUE25wZ8UaKUrQeMoJMbri9dSujE4B+69HblRoLmR1RVvdr/fPV
-	jRb6QZqg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tmsfc-0000000B1Or-1tYN;
-	Tue, 25 Feb 2025 11:00:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0E448300472; Tue, 25 Feb 2025 12:00:12 +0100 (CET)
-Date: Tue, 25 Feb 2025 12:00:12 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
-Subject: Re: [Patch v2 10/24] perf/x86/intel: Process arch-PEBS records or
- record fragments
-Message-ID: <20250225110012.GK31462@noisy.programming.kicks-ass.net>
-References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
- <20250218152818.158614-11-dapeng1.mi@linux.intel.com>
- <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fxvbRZK2Bu0Ikh3Gm41lo7BGWqHPtT+7FKoswqPfmKhqO37kHS09z9vu3owic/2XaovovyX8jqQcmfGoTk+Nqh3xHmTRIoNoIvaixfiEt8aCpiS9/Pd7o4QZBOH3TrZkfjrq7pP2XVktgE0LoJA4PCcYnRE0YYZVIC+yzI049no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k5FEkeRd; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740481224; x=1772017224;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=J1HWkZJkiWOegQfp5vHIqN+whL/4IGe+JzHch6uSDhM=;
+  b=k5FEkeRd3zMogToEymcl2ViDiFGVnWactS7FbzVePQIPGxbnfbJ557mL
+   fIeLCEVynlOgMzjXjQZ/0kNCZTtMGxX5VU5zoqBPWeh6GFrX1/p6LVb7L
+   d8J6JrjAycXpGH8qBPZJ/SnEbVUt4GbNbBDiWYee2yOVN7z17HdkTpjx1
+   2a9w09ncP5+H5PglEf8lbMlNmHgS0duNYG4sGj/NxQEsem8gFvYIBibOM
+   Y/NCuuR/0WnIWVrINZvnsimXRSNt7HgCLlMtVXpqLqez96kXHY3Uec+MB
+   9Q9PFY2H4W+EITbDqyrb10sJEYhQ1gZlA6T1Gze2cG/hIvBfx2F9CT780
+   g==;
+X-CSE-ConnectionGUID: i2Fb9CGFSGOOcAvkb1zP/g==
+X-CSE-MsgGUID: V5BhLf/yTdSh80tmxi0HHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11355"; a="58821997"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="58821997"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:00:23 -0800
+X-CSE-ConnectionGUID: VKcO8oSbTdGI6udia3EFxg==
+X-CSE-MsgGUID: jyifJL4kRbGD9sqL2GIF/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153538303"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 03:00:22 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmsfi-0000000Ext0-47Ej;
+	Tue, 25 Feb 2025 13:00:18 +0200
+Date: Tue, 25 Feb 2025 13:00:18 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Guenter Roeck <linux@roeck-us.net>, linux-watchdog@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH v1 1/1] watchdog: nic7018_wdt: tidy up ACPI ID table
+Message-ID: <Z72iwgbvlYFCz5q0@smile.fi.intel.com>
+References: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,65 +77,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250225103927.GJ11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250225095804.360899-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Feb 25, 2025 at 11:39:27AM +0100, Peter Zijlstra wrote:
-> On Tue, Feb 18, 2025 at 03:28:04PM +0000, Dapeng Mi wrote:
-> > A significant difference with adaptive PEBS is that arch-PEBS record
-> > supports fragments which means an arch-PEBS record could be split into
-> > several independent fragments which have its own arch-PEBS header in
-> > each fragment.
-> > 
-> > This patch defines architectural PEBS record layout structures and add
-> > helpers to process arch-PEBS records or fragments. Only legacy PEBS
-> > groups like basic, GPR, XMM and LBR groups are supported in this patch,
-> > the new added YMM/ZMM/OPMASK vector registers capturing would be
-> > supported in subsequent patches.
-> > 
-> > Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> > ---
-> >  arch/x86/events/intel/core.c      |   9 ++
-> >  arch/x86/events/intel/ds.c        | 219 ++++++++++++++++++++++++++++++
-> >  arch/x86/include/asm/msr-index.h  |   6 +
-> >  arch/x86/include/asm/perf_event.h | 100 ++++++++++++++
-> >  4 files changed, 334 insertions(+)
-> > 
-> > diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-> > index 37540eb80029..184f69afde08 100644
-> > --- a/arch/x86/events/intel/core.c
-> > +++ b/arch/x86/events/intel/core.c
-> > @@ -3124,6 +3124,15 @@ static int handle_pmi_common(struct pt_regs *regs, u64 status)
-> >  			wrmsrl(MSR_IA32_PEBS_ENABLE, cpuc->pebs_enabled);
-> >  	}
-> >  
-> > +	/*
-> > +	 * Arch PEBS sets bit 54 in the global status register
-> > +	 */
-> > +	if (__test_and_clear_bit(GLOBAL_STATUS_ARCH_PEBS_THRESHOLD_BIT,
-> > +				 (unsigned long *)&status)) {
+On Tue, Feb 25, 2025 at 11:58:04AM +0200, Andy Shevchenko wrote:
+> Tidy up ACPI ID table:
+> - drop ACPI_PTR() and hence replace acpi.h with mod_devicetable.h
+> - remove explicit driver_data initializer
+> - drop comma in the terminator entry
 > 
-> Will arch_pebs hardware ever toggle bit 62?
+> With that done, extend compile test coverage.
 
-This had me looking at the bit 62 handling, and I noticed the thing from
-commit 8077eca079a2 ("perf/x86/pebs: Add workaround for broken OVFL
-status on HSW+").
+...
 
-Did that ever get fixed in later chips; notably I'm assuming ARCH PEBS
-does not suffer this?
+>  config NIC7018_WDT
+>  	tristate "NIC7018 Watchdog"
+> -	depends on X86 && ACPI
+> +	depends on HAS_IOMEM
 
-Also, should that workaround have been extended to also include
-GLOBAL_STATUS_PERF_METRICS_OVF in that mask, or was that defect fixed
-for every chip capable of metrics stuff?
+Oh, this should be HAS_IOPORT, compiling on X86 won't help to find this issue
+:-)
 
-In any case, I think we want a patch clarifying the situation with a
-comment.
+> +	depends on ACPI || COMPILE_TEST
+>  	select WATCHDOG_CORE
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-> > +		handled++;
-> > +		x86_pmu.drain_pebs(regs, &data);
-> 
-> 		static_call(x86_pmu_drain_pebs)(regs, &data);
-> 
-> > +	}
-> 
 
