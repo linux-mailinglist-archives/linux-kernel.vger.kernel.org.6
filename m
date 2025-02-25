@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-531058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D855A43BA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:30:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11930A43BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:32:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 702D93B9672
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:26:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17BAF3AD9A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 10:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DEC267720;
-	Tue, 25 Feb 2025 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE84C266B43;
+	Tue, 25 Feb 2025 10:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TgQsTvv3"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="R3BMLr4V"
+Received: from mail-m1973175.qiye.163.com (mail-m1973175.qiye.163.com [220.197.31.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5043266190
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21756157E99;
+	Tue, 25 Feb 2025 10:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740479142; cv=none; b=VZFoX9tXmI4QbXE2Usgst7ljCI1G/7D1Gc53LRZyYftjLRNgjnagsXNBsKYO1XulHiqQVE5CIhnwvS/SZTZmUfGZci3TrCkM/6qQ+xxMqMOsURvL16kr/SNiwGw2LigsbFG25JN3A6FWgomS0F2hwLdDKMnHOJWqbDYLX15a+gM=
+	t=1740479190; cv=none; b=uOHeGYkDwOTldc41fhfD8hqw7E2l+wTEV4A4uzFf4udHMriKZ5saDWCEEOC+O1uspWOqOJHmMsqKtY9Icae7U0bV7tud+WsRgB7fwA3SSQ4o50bP9Ww0DGLzCsskxUvkYX+urXoZSRNZNxS3gq8sKOSQ+ClaFtlXtaPGeuGuBBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740479142; c=relaxed/simple;
-	bh=JXUEw/mTrCXp4uW0hpKJGSmWwnmo1L+q5KtrwP5O3eg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=DAJob8B5EkfG1jep9xiUMA5vJ+fycvJIl8rwvwPVG4vBVbjrOdVey51QLVBa9t+zH3Ea3WB54vSY0+4MZ80DIXVbMEv99Od8VHjM8kBNDPCmRI/Jpqo6YzRE631lFjrjkPYu350r1gTCsdsdoAtvDE10mHlzuQ/H4wEChWgHvvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TgQsTvv3; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-38f6287649eso4250935f8f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 02:25:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1740479139; x=1741083939; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GO+8glDRZ70FolfJHUuyOyuSWWMeXZ0930x4j7bHw1E=;
-        b=TgQsTvv3cRqBC82p71ZQ91uUgLlbelNFKPdr1tURFhGoEGqGVn0qHgaaSm4/AS0G5R
-         +ClpAg3vpj55o2Je0Zhu+RjS7UHLoWsTYRz+nUkOMrQn7C0XY7BV0T025OihuqmuTNLk
-         vjyWrXNxVtiB6OmLlR+9K72KX03IjRbjRmYQSkVomo1dbEV1buisH5AlPf9LaiQwJb2T
-         TNoYLatkL4C+ea7LFpDVBXRwKQXvAIpaWsBAxekJJG6mISWdPncl3pKgauJ/TKsSKfIG
-         CV/X1o5ra/b2lX7BhPbYXu6ko+859OQRV7y3Lvgr55oc1eyI20m2JpktU21qan8ssgFU
-         E4jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740479139; x=1741083939;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GO+8glDRZ70FolfJHUuyOyuSWWMeXZ0930x4j7bHw1E=;
-        b=AYA7i+tU8lXAh+3bgNeSIIdGYDIzMMVTUDFGlStU9o+DwbOUPXv8imzahwxQf++jPx
-         B7dXGAmBsuQJQBvGG9X11ayB3cg/E2tySqN/wOxV8PxV2UeBWULnz87FOM/QbI6UbrEv
-         KkalVGpMlyilQq8izBtsZTI6nb++gxmQnVvc1Apuujr1RTO/stkpZD89d6KDP0hBQ1Cy
-         99trw0NCRuTztZH+cTw+sZfn3/3erO8LDa5OVm7Y8brVgCpApvk/gtrCndLj/NjmXY9o
-         5filtCMjlBmdza+QK+e9T0pazerhFKaW3e+MQcRlejIO7j6E0Q5H0gyvdVdkLPoE/wny
-         pGkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2ONtxb9Eh3fHLNOzRGesWs3rI/4AuxIU/vW1WVS+Vi5X+ur+jMNkortBX6Bo7cQYjjy/eQGsg9b9J3nA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDobvnrCyXQtrZuJIJjlU5vv16TuwQ7ZUzUR4vwixJulAgItxE
-	qLHC+8UDwo6Emy93sAB+yAhefTX4gu7f9uiCuwjSXyl+X3+Jn8w2d1jkaIH0gaE=
-X-Gm-Gg: ASbGncvGigfZo9o5zM2DrhY/C0aEkd8cNE3Wffevp55JwebbDzCceojisJ4ghGQtpro
-	UHWZlnWebSgJm+mgORNVn3kv56j0z8JhUiz0uPHE1/UV/zcU3sNz8OY6f57DNBBycw62FpZQTl4
-	8PCWh0VHjZ0naTxzwaNOZiBMyP6hUmc91ckJn0N0CVAreFXsV7F43lGS2yicUOrrAaKJcjV/m8y
-	HJQfMYGyvaPc88W4f5EImiNP8RIMxlrlOdEOYY4ETDqu/1bex0igYb1Su1WQpyL8wh6D8THwNtC
-	WuLRysVkNaqcI4d0It3TzjQUM4vk8P6+keSNrAgLJlI3sTE=
-X-Google-Smtp-Source: AGHT+IGCJja0+bBP6yFXu5tgG751wKC5th2J7f0lmxV62+z2DFSuW2JXXrH5OxE79sHt4myCc7POkw==
-X-Received: by 2002:a05:6000:1a86:b0:38a:8906:6b66 with SMTP id ffacd0b85a97d-38f708267ffmr17605833f8f.38.1740479139095;
-        Tue, 25 Feb 2025 02:25:39 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86707asm1764378f8f.5.2025.02.25.02.25.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 02:25:38 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, asahi@lists.linux.dev, 
- Janne Grunau <j@jannau.net>, Sasha Finkelstein <fnkl.kernel@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alyssa Ross <hi@alyssa.is>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Neal Gompa <neal@gompa.dev>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
-References: <20250217-adpdrm-v7-0-ca2e44b3c7d8@gmail.com>
-Subject: Re: (subset) [PATCH v7 0/5] Driver for pre-DCP apple display
- controller.
-Message-Id: <174047913824.2131221.6545389561298332217.b4-ty@linaro.org>
-Date: Tue, 25 Feb 2025 11:25:38 +0100
+	s=arc-20240116; t=1740479190; c=relaxed/simple;
+	bh=w+aiH2+ERaF147qiGvcUQoNta8JgrpXQVYoocIyjwaA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GSPJFNM1c5uBmA0jWkQjv2xhFitJfxmiTgWfg/CRRikcfWOZ0SpA1tbeXdfHWs8B3L4Q08VR56TSMCPuUhq3cMvLUy2QFFDfFzOq03ZKpD3Dc2FZbg/4Q45iTxPcMMPd7GFGEomUSnquXbbBco6tcII4wVyjIKNWgt6kUrRLWTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=R3BMLr4V; arc=none smtp.client-ip=220.197.31.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id c22892ce;
+	Tue, 25 Feb 2025 18:26:14 +0800 (GMT+08:00)
+From: Kever Yang <kever.yang@rock-chips.com>
+To: heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org,
+	Kever Yang <kever.yang@rock-chips.com>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Simon Xue <xxm@rock-chips.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Shawn Lin <shawn.lin@rock-chips.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v7 1/2] dt-bindings: PCI: dw: rockchip: Add rk3576 support
+Date: Tue, 25 Feb 2025 18:26:10 +0800
+Message-Id: <20250225102611.2096462-1-kever.yang@rock-chips.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkseQ1YfSB0aTEwYGUJJSBlWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a953ca4987e03afkunmc22892ce
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MhA6HBw6GDIPFRYcSDkhMxQM
+	ARcwCwpVSlVKTE9LT0xCSkxNSEhNVTMWGhIXVRAeDR4JVQIaFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFPSEpCNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=R3BMLr4VE9NCGf8G4KX+2yLPIsbV569yp/uPk999vqXfs7FFoJL7emRzj64MIQndiq3cBm9P2mt1N8kDy1TPipD1VcFQZzfMPXfVONnsMcpgaFBn9rM6nXgG/5lLBqQSanojrWWu6DtbmY4QSiDKSWW/wlwUgo3s3cTNL3PbEcc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=HxawArc165Ay2TKvOqn7tpKGAFxaS9bJbDWsvB3viO8=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi,
+rk3576 is using DWC PCIe controller, with msi interrupt directly to GIC
+instead of using GIC ITS, so
+- no ITS support is required and the 'msi-map' is not required,
+- a new 'msi' interrupt is needed.
 
-On Mon, 17 Feb 2025 12:39:30 +0100, Sasha Finkelstein wrote:
-> This patch series adds support for a secondary display controller
-> present on Apple M1/M2 chips and used to drive the display of the
-> "touchbar" touch panel present on those.
-> 
-> 
+Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+Changes in v7:
+- Move the rk3576 device specific schema out of common.yaml
 
-[3/5] drm: panel: Add a panel driver for the Summit display
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/40115947b59f2ca361a47615304dff0a2b69a2b4
+Changes in v6:
+- Fix make dt_binding_check and make CHECK_DTBS=y
 
+Changes in v5:
+- Add constraints per device for interrupt-names due to the interrupt is
+different from rk3588.
+
+Changes in v4:
+- Fix wrong indentation in dt_binding_check report by Rob
+
+Changes in v3:
+- Fix dtb check broken on rk3588
+- Update commit message
+
+Changes in v2:
+- remove required 'msi-map'
+- add interrupt name 'msi'
+
+ .../bindings/pci/rockchip-dw-pcie-common.yaml | 10 +++-
+ .../bindings/pci/rockchip-dw-pcie.yaml        | 55 +++++++++++++++++--
+ 2 files changed, 57 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+index cc9adfc7611c..2150bd8b5fc2 100644
+--- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
++++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie-common.yaml
+@@ -65,7 +65,11 @@ properties:
+           tx_cpl_timeout, cor_err_sent, nf_err_sent, f_err_sent, cor_err_rx,
+           nf_err_rx, f_err_rx, radm_qoverflow
+       - description:
+-          eDMA write channel 0 interrupt
++          If the matching interrupt name is "msi", then this is the combinded
++          MSI line interrupt, which is to support MSI interrupts output to GIC
++          controller via GIC SPI interrupt instead of GIC its interrupt.
++          If the matching interrupt name is "dma0", then this is the eDMA write
++          channel 0 interrupt.
+       - description:
+           eDMA write channel 1 interrupt
+       - description:
+@@ -81,7 +85,9 @@ properties:
+       - const: msg
+       - const: legacy
+       - const: err
+-      - const: dma0
++      - enum:
++          - msi
++          - dma0
+       - const: dma1
+       - const: dma2
+       - const: dma3
+diff --git a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+index 550d8a684af3..4764a0173ae4 100644
+--- a/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
++++ b/Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml
+@@ -16,16 +16,13 @@ description: |+
+   PCIe IP and thus inherits all the common properties defined in
+   snps,dw-pcie.yaml.
+ 
+-allOf:
+-  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+-  - $ref: /schemas/pci/rockchip-dw-pcie-common.yaml#
+-
+ properties:
+   compatible:
+     oneOf:
+       - const: rockchip,rk3568-pcie
+       - items:
+           - enum:
++              - rockchip,rk3576-pcie
+               - rockchip,rk3588-pcie
+           - const: rockchip,rk3568-pcie
+ 
+@@ -71,8 +68,54 @@ properties:
+ 
+   vpcie3v3-supply: true
+ 
+-required:
+-  - msi-map
++allOf:
++  - $ref: /schemas/pci/snps,dw-pcie.yaml#
++  - $ref: /schemas/pci/rockchip-dw-pcie-common.yaml#
++  - if:
++      not:
++        properties:
++          compatible:
++            contains:
++              const: rockchip,rk3576-pcie
++    then:
++      required:
++        - msi-map
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: rockchip,rk3576-pcie
++    then:
++      properties:
++        interrupts:
++          minItems: 6
++          maxItems: 6
++        interrupt-names:
++          items:
++            - const: sys
++            - const: pmc
++            - const: msg
++            - const: legacy
++            - const: err
++            - const: msi
++    else:
++      properties:
++        interrupts:
++          minItems: 5
++        interrupt-names:
++          minItems: 5
++          items:
++            - const: sys
++            - const: pmc
++            - const: msg
++            - const: legacy
++            - const: err
++            - const: dma0
++            - const: dma1
++            - const: dma2
++            - const: dma3
++
+ 
+ unevaluatedProperties: false
+ 
 -- 
-Neil
+2.25.1
 
 
