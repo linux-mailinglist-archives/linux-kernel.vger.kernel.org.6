@@ -1,93 +1,149 @@
-Return-Path: <linux-kernel+bounces-531611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A6CA442AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:28:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0E13A442AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:28:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ABEA3B4FB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614773A54FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A13A26B0AD;
-	Tue, 25 Feb 2025 14:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84C826AA93;
+	Tue, 25 Feb 2025 14:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="terzUy0u"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lzmuUsxZ"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375182698A8;
-	Tue, 25 Feb 2025 14:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E487B2698BB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493569; cv=none; b=az5v+OyGL31Co7ngi0eQKuwmoVlX114r7z1AF3CaLYcSEkeQE4CQFviOnhRhuPgmP8FJQ1ViUBPpNRS5OwSt2TrRs9WQ4KrHpS1vknQnTQ1jS/eTNGibIzowLxTr6GP5BVRiXMGamncXInDRel3Wx2wqLyB2+T1qF9Fu/1NQGVY=
+	t=1740493568; cv=none; b=p7sIixMvDCS/eW1DbaS/wU23nJAWhfc1nhxyqNoS5m9N/Mi+gweOi+9W4KXtpSF3GwZPyKhvPyhkDHYJrvbPW+Ix1C5VrrWA34if5B3PGd3x1ay+9rejLW/7GKWIimPfOE7vlLRsWLOgZZtAJpf/9qlY635NCC+p1rpMXh3v5Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493569; c=relaxed/simple;
-	bh=jpEqmQ45wBRCVC0jxGc+LOlCURwWWVUWO5MCp8cspTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BFrxg4VAXGOzgiobKobycA8iPMLqNXZp96gyPTxQON0EcR7/tgBZ5iD8w9s9DLxqf/yyZ0vvHXSkA+3puv+BW3kBwUws9VAe2bHnzU/VcwHcC6X1R3Nh4QmWb7LzGYSuiXKRGLABYb16auYvtUuTdC73e0qmRleoxItax8qoHGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=terzUy0u; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from localhost.localdomain (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 8A6372E08B57;
-	Tue, 25 Feb 2025 16:25:59 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1740493560;
-	bh=jpEqmQ45wBRCVC0jxGc+LOlCURwWWVUWO5MCp8cspTs=; h=From:To:Subject;
-	b=terzUy0utYQeZbKu94hIf8N7x1dL0dIxBLhFvqoOD1qLJRuaCooqJ1pd6vihfgwdq
-	 5uWQLr3+c0DY9nNA2su6xb/2cVbqjQFGXbEVdl75aYWXlofeR7YrfxzWDg1vCrH/6H
-	 y9zfsCHz8h/ilVia6S/B2iXIKzTep1N7MrZrW0hc=
-Authentication-Results: linux1587.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=localhost.localdomain
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: luke@ljones.dev,
-	mario.limonciello@amd.com
-Cc: corentin.chary@gmail.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: RE: [PATCH] platform/x86: asus-wmi: change quiet to low-power
-Date: Tue, 25 Feb 2025 15:25:55 +0100
-Message-ID: <20250225142555.14005-1-lkml@antheas.dev>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224223551.16918-1-luke@ljones.dev>
-References: <20250224223551.16918-1-luke@ljones.dev>
+	s=arc-20240116; t=1740493568; c=relaxed/simple;
+	bh=FUrFj3PPFdgEF6I2+YW2of97TyNe/PEbmQ/9Sbf5BHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JiN2VY+RMGsB77P5508xoAd5eR9H0mI9CqeD6WYR3uHJZ9qKb3TSMMvtN/KXFHTDDzAA+2LBTNGF60vff06nhTqDV1B2TeDB3ps3NEhcdBJslvDk/ypcBODJ9we74BiR52YHKMZc4T0eOph9GzX2DylRqBm1ilCYGAwBouy37M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lzmuUsxZ; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A020A4428E;
+	Tue, 25 Feb 2025 14:26:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740493563;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvLOf1Il+fND7fKaPevJ1U14K1YzlRjSMw/lmyXoejg=;
+	b=lzmuUsxZM8l+IaCHD5r/Ozdu+cOVsDDMvjGpnupQjXKYV9d+z2R2s1AEdQgDBCgHpngKmn
+	oCxz7TcKPQBux0LWH/IB37ROtgYViMamEqm49AZY0DkQ5Ivth9QEYfUDHiCHylI2KrQT8I
+	Os+iJgvoo1yo6xHx+HqPvz7FFMIj/8vYI+MJ7I8odWa+UyAvoyAM3qoIsmshic4QC1c7Uk
+	noNtM/41wSxXiD9zZJoGZa2N7ZVwl0bM9Xdkn8WiykkIRzOFaVPBFrwkzXwSpJ2IKBsuUr
+	AYJnJt4WmrqBsq2BYwi3gEwpvxpv+SZYRTD/hXPkMHN86kejN6LY2zVDHrOw7w==
+Date: Tue, 25 Feb 2025 15:26:01 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 20/63] dyndbg: drop premature optimization in
+ ddebug_add_module
+Message-ID: <9b3b1683-c248-466c-9e0b-6d4c986648b9@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-21-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <174049356048.12946.16381279399138541255@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+In-Reply-To: <20250125064619.8305-21-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelgecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Luke,
-please add appropriate attribution.
 
-Closes: https://lore.kernel.org/all/20250224195059.10185-1-lkml@antheas.dev/
-Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
 
-For me, this patch series plus the multi-platform profile one constitute
-a double ABI break. Not only does the legacy sysfs for platform profile
-regress when there is a second profile handler for a device, but all
-hardcoded scripts for Asus devices will have to be updated.
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> The class_ct var was added to avoid 2 function calls, but to do this
+> it loops over all the module's debug callsites to determine the count.
+> But it doesn't really help, so remove it.
+> 
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
 
-While I would personally like to avoid this, I am ok with it, given
-appropriate attribution, since I did go through the effort of reporting it
-and providing a mitigation.
+Hi Jim,
 
-@Mario: you added Reviewed-by to a patch without proper attribution. Let's
-not rehash our discussion from few days ago. Please try to do better when
-it comes to attributions in the future.
+If you move the other patch earlier, can you also move this one before 
+"for_subvec", so you don't change the same lines twice.
 
-Antheas
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
+
+Thanks,
+Louis Chauvet
+
+> ---
+>   lib/dynamic_debug.c | 10 ++--------
+>   1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 067db504dd1d..16c9b752822b 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -1284,8 +1284,6 @@ static void ddebug_attach_user_module_classes(struct ddebug_table *dt,
+>   static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   {
+>   	struct ddebug_table *dt;
+> -	struct _ddebug *iter;
+> -	int i, class_ct = 0;
+>   
+>   	if (!di->descs.len)
+>   		return 0;
+> @@ -1308,18 +1306,14 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   
+>   	INIT_LIST_HEAD(&dt->link);
+>   
+> -	for_subvec(i, iter, di, descs)
+> -		if (iter->class_id != _DPRINTK_CLASS_DFLT)
+> -			class_ct++;
+> -
+> -	if (class_ct && di->maps.len)
+> +	if (di->maps.len)
+>   		ddebug_attach_module_classes(dt, di);
+>   
+>   	mutex_lock(&ddebug_lock);
+>   	list_add_tail(&dt->link, &ddebug_tables);
+>   	mutex_unlock(&ddebug_lock);
+>   
+> -	if (class_ct && di->users.len)
+> +	if (di->users.len)
+>   		ddebug_attach_user_module_classes(dt, di);
+>   
+>   	vpr_info("%3u debug prints in module %s\n", di->descs.len, modname);
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
