@@ -1,271 +1,172 @@
-Return-Path: <linux-kernel+bounces-530717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C30A4377E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:23:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5542CA43763
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:21:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C6BD7AC820
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86E3F3AA43E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20562261360;
-	Tue, 25 Feb 2025 08:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171DC260A55;
+	Tue, 25 Feb 2025 08:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="hU4J+QEe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XXisPTtr"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CQ4h2EQh"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577BB266F0C;
-	Tue, 25 Feb 2025 08:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C189D260A50
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740471479; cv=none; b=XVw9l9PwgMXdvwMudov6tmSklWrHe/I7ygGoDbtXql5n0u95+X94G+TNKD3ZjeP5lFuXXijKdF1cqgE4ebMQ+CxnIjiU0Nv/HciF13a1ur2P22YnLzXYrJ+0Ip26c7/impdEG21h3ttmUW7u5bCC5lDrgsLDkCXiUJ4FvAE+OSM=
+	t=1740471472; cv=none; b=MVEwVL7FTCn0qUrPd1eN8sbtRDeKUoa9RIGqZ7KGs8UFsVQZd7oE1Qam3MBAbiugoDvrE2lZ1vmOqP/SXYvSjBcSKAksxQzmaNvYrhly18zCXpcKHOKZ6sru1jPf8SB6LHj8xzZE7fltXpQLnlij9n474MP0edwpUktJFO7i9DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740471479; c=relaxed/simple;
-	bh=DF0yJCSgWku2Qh+hjwAfly4BrXeaV02IL45lb7rnNFk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=psS2F3hpUV9oyA7P5fGlRU9DY4+6ZE5Of9QqgJJe//HjVlX3VNCvnhA6J1kJACVKeYPkSUuRUjNsw+M29KptA6urwPgV8sZT/ExGn1TO7B6nP/feFbWSSp8hWUs0fJ/Q3aUmdLy4ke/V6unBsDloZ0sajZp7D0NbYtKBp3iovGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=hU4J+QEe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XXisPTtr; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4AE531140117;
-	Tue, 25 Feb 2025 03:17:56 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Tue, 25 Feb 2025 03:17:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1740471476; x=
-	1740557876; bh=PXVJmloJsQF5heTHD5DBkxvBIpoRIMfclHE+NbIcyi4=; b=h
-	U4J+QEeoXmvsonRbJ6uSqv968rv0jAC5gOgrXouJ/IkiSYSUIpUihwngHUwo5p/y
-	XEFzydeL8+Etoq2hNUg7pMWw1MC0mvRCMe3CWZ8/TON2vrlev9YV9PMonaptHcNh
-	R9RojhXcmiGHExZ0Al9fGL4irLaC9yRGfP+8onbiBqJ7g79VOvKa8suBDCxaOLDf
-	w6ZBo9lxG12wZMVHaiRGk8qqbA/80E6nR0llzth3G73pCoe8wpuZbA3n4EB2/rlG
-	rzqHCJLuWoEiSm9f70o48yHSSXsObJnfB2ZZ9uRSbGFX3OF8hub9JlSOlWvWaubz
-	bZtCOolc9ElsDJm6e8dWg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm1; t=1740471476; x=1740557876; bh=P
-	XVJmloJsQF5heTHD5DBkxvBIpoRIMfclHE+NbIcyi4=; b=XXisPTtrlafiCJlTo
-	9KSxzGYUkrTBPJz/JY1ruo3VhKT3uFBoUM8MYVkTvsxGvBd6uzer8+W2bXkSi9b4
-	D7v26o9EnKvrZgwuR+NzgJyl/i6nra6UxsBTcr1zAFpcIriHXGCVdXNkrj3+g91W
-	DFeDC3dTI+We+FWi2Bra8zgXL71ODCuypFZ0WYfQmhleQIRutR/bg2+gPOtzm2xx
-	8nhBi4kocPe2fjFOxeiKQmyWku5//MJ7YGN3mKRZ4RYTEAKq8Rb00b4jIVm55RJh
-	Oo2IUKKYCbAD+yKeXcng/hVjca8cbizoyGRz6vJeqln8AdAdgGku5N/kO6+kJm2B
-	BqnDQ==
-X-ME-Sender: <xms:s3y9Z5Q-l-Th_YxQdtxSWYYyYGXISztp8iyqWtF6qJbkB9GyZtjosQ>
-    <xme:s3y9Zyy5BIdBMjijDmmrRZnirFHQK8TQEIzmipXd2J2UhKcA7eyBQMcNFg4U9Mzfy
-    xFJ8YLyFiA13hiHxRM>
-X-ME-Received: <xmr:s3y9Z-23UI_9WMlaNgACUL1B5rs1y8loC_CIJ6puItXGvg4PfTjTpdIP-sYk2-y1dkfNHqY85fEOhZ7BAg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekuddvtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddt
-    necuhfhrohhmpefnuhhkvgculfhonhgvshcuoehluhhkvgeslhhjohhnvghsrdguvghvqe
-    enucggtffrrghtthgvrhhnpeeuueelfeefiefhlefhhfehleefffegteeuhfehveekteeu
-    udfgteefteelhfeijeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpehluhhkvgeslhhjohhnvghsrdguvghvpdhnsggprhgtphhtthhopeekpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrght
-    rdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhugidrihhnth
-    gvlhdrtghomhdprhgtphhtthhopehplhgrthhfohhrmhdqughrihhvvghrqdigkeeisehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegsvghnthhishhssehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehjihhkohhssehkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehluhhkvgeslhhjohhnvghsrdguvghv
-X-ME-Proxy: <xmx:s3y9ZxCq_OONkGLRHT0Nz0Jds0xCZ6QFJ4W5UuyT77l9vvAI6F9jeQ>
-    <xmx:s3y9ZyiNYvYD4Le_tbOfYGR1AHZlUvi_sgeV4Y7ZpvSp88UBLespfw>
-    <xmx:s3y9Z1qmjsSEdo5Cg_ZYqZRe0R_IeUZVfecyA8uFgLdmIBooOj0dpg>
-    <xmx:s3y9Z9hBx7Ol71mJT9IISYmiJ3npClrNgaop19dLMdaLJGy_c4BYEw>
-    <xmx:tHy9Z2jm_qtYS3kVSvU_0q2BIoZYLei2xmn_xePTP30Cm7rdZKuQY2w->
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Feb 2025 03:17:52 -0500 (EST)
-From: Luke Jones <luke@ljones.dev>
-To: linux-kernel@vger.kernel.org
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	bentiss@kernel.org,
-	jikos@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH 1/2] hid-asus: check ROG Ally MCU version and warn
-Date: Tue, 25 Feb 2025 21:17:43 +1300
-Message-ID: <20250225081744.92841-2-luke@ljones.dev>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250225081744.92841-1-luke@ljones.dev>
-References: <20250225081744.92841-1-luke@ljones.dev>
+	s=arc-20240116; t=1740471472; c=relaxed/simple;
+	bh=iKdnUTC2SL9RWox/NZyjSQlFZl5BzggDAPhGbl4SBLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPkznjCSyKcCQbO1TRTvE1fpoqHJECX7MK73uWuIip9a1SfjvLRwpb0wf8aSetWCNl2OiSsQIzuQYa7318cG3zNkmui7zD/LmtPotA75KP8xTO5LcBDNQUrXEkYpLRRIb33oMY4zOd41HzugdBlca6nNUjAHnTty67zBw7vgwcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CQ4h2EQh; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220c92c857aso89644175ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:17:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1740471470; x=1741076270; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=K5qgM7poxXm8j+OGJ1RCh5kOjLjfZERLhGhbtMwbOUg=;
+        b=CQ4h2EQhtBg+LRtoyp7ke3wIeASvEC5PdobVXgfiOIhJlSyt0MfC2w5S/fUg8poSGx
+         OFCb8ATGqon0MTaK2P34I9S2lyI537r15D6Ktj+sXUFvlazEMX9D8hu6fYRXfMkVMkqi
+         MKQGiWRLmaiRHaFyUPhpI+eYCp8G7rBND0A9uvQx6yEbG+3qGFbldACtfEtbvipqUTWT
+         xBW4Ik/ZQakQrYzJ8mXaPuLM8yCa5sgSv39Ag65aWCimOjaHGCZRLkiKzQ6Utpfze2Sv
+         3gsLuVdJSA7h4sfYB9Pw/HwKwBfzOTrvfmxZC/hmGf+H8eGGT5CISWl1iZspkNfOs6Id
+         PtoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740471470; x=1741076270;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K5qgM7poxXm8j+OGJ1RCh5kOjLjfZERLhGhbtMwbOUg=;
+        b=WgyqWIcpqF2rq2d/i4+hjXb8UI+yTlAbXHIrosl2yOn4FxD8y4LlSC/LbcIEORklZG
+         2oS8PpPxIOyhFsNxonLgSUiWlJNGjyZvFLkrR+FZKp2E1OL+lUg9vjRciHc/r1E3kMR6
+         ckUUDd0X8P8/Amb+RCHjX6tPG7JgdIblbLFCn6xMjRopwZZQVpJQuoEz7XltOPIGthT6
+         pYkDR28/6XBsNiIzSjp5xaaUcUetyv6OdGOJFHx4Zwxuo3mWmglwA96WijLOH8DzlYzn
+         DwJHvgHkDXgg4RYFvhZe3DmuYcgldw5hkMDNyaf8HnYnPtOqGtBPq8QuTkmTPjDxIWfG
+         oOrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUpVAezM2+xvN8uE8iCrSgqWbEHjhik21atkGE3PMz5Cz4Sj84/yIwMjknaSs/sdaXmR7VfzgN6zUj0ey4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztx1SlO26mwCdWrHApGSmpgh4k/plhikoxjUtZoE7fS62IF9MP
+	F+AfBZAVmKOv0EsHXf7g2Fhy6ImPR97WtQRLz+5iuHNXu0t5PKoOwjjcXoAUQg==
+X-Gm-Gg: ASbGncsGCmCKZ6LB+YDWyRhODW9VyXF8dFVxVD+Cg8KcXO0tvcfeXtx4ugsrhhFNW25
+	d8hGoPMjjFiUTxsvYDA6Cu3gDTd4j5l53IaMXTShgdtOcXj2kz1j51WC04qwbbGjqKgRHbR867L
+	ReH0bYIqKt3AMqyAJINeIPNEagMZBsfO8x2y1uA0IJiN5Q2+gDquABNR4Py1O5FdFBwTxH1brqp
+	iHRZHbJ1LHvndK4Ge6Vgei+O1L8S/akRkix1wqCeG/UHFPn9erHiBfBrXQMtGnIFmPAbSxMa7QB
+	STvrNYkjrEKmfChtRq3dOCspDdO0OLdCAYW1
+X-Google-Smtp-Source: AGHT+IEpO/yJbCJfiyxz5Zgl+Ab9e8pW5yGytcKSCdHEpsimzdcIh/9jYIizG0EAUBk3flqU4p1GwA==
+X-Received: by 2002:a17:902:ce11:b0:21f:6167:183a with SMTP id d9443c01a7336-2218c3f434fmr337409465ad.15.1740471469949;
+        Tue, 25 Feb 2025 00:17:49 -0800 (PST)
+Received: from thinkpad ([36.255.17.214])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092eb0sm8545385ad.142.2025.02.25.00.17.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Feb 2025 00:17:49 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:47:44 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: "Wenbin Yao (Consultant)" <quic_wenbyao@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, vkoul@kernel.org,
+	kishon@kernel.org, p.zabel@pengutronix.de,
+	dmitry.baryshkov@linaro.org, abel.vesa@linaro.org,
+	quic_qianyu@quicinc.com, neil.armstrong@linaro.org,
+	quic_devipriy@quicinc.com, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] phy: qcom: qmp-pcie: Add PHY register retention
+ support
+Message-ID: <20250225081744.3aprpztylrdgs2cl@thinkpad>
+References: <20250220102253.755116-1-quic_wenbyao@quicinc.com>
+ <20250220102253.755116-3-quic_wenbyao@quicinc.com>
+ <20250224073301.aqbw3gxjnupbejfy@thinkpad>
+ <7ffb09cd-9c77-4407-9087-3e789cd8bf44@quicinc.com>
+ <ea5de507-1252-4ff3-9b18-40981624afea@oss.qualcomm.com>
+ <20250224122439.njrcoyrfsisddoer@thinkpad>
+ <eea55dfa-3dd3-488b-958c-cd20e18a7d7d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <eea55dfa-3dd3-488b-958c-cd20e18a7d7d@quicinc.com>
 
-From: "Luke D. Jones" <luke@ljones.dev>
+On Tue, Feb 25, 2025 at 04:06:16PM +0800, Wenbin Yao (Consultant) wrote:
+> On 2/24/2025 8:24 PM, Manivannan Sadhasivam wrote:
+> > On Mon, Feb 24, 2025 at 12:46:44PM +0100, Konrad Dybcio wrote:
+> > > On 24.02.2025 9:46 AM, Wenbin Yao (Consultant) wrote:
+> > > > On 2/24/2025 3:33 PM, Manivannan Sadhasivam wrote:
+> > > > > On Thu, Feb 20, 2025 at 06:22:53PM +0800, Wenbin Yao wrote:
+> > > > > > From: Qiang Yu <quic_qianyu@quicinc.com>
+> > > > > > 
+> > > > > > Some QCOM PCIe PHYs support no_csr reset. Unlike BCR reset which resets the
+> > > > > > whole PHY (hardware and register), no_csr reset only resets PHY hardware
+> > > > > > but retains register values, which means PHY setting can be skipped during
+> > > > > > PHY init if PCIe link is enabled in booltloader and only no_csr is toggled
+> > > > > > after that.
+> > > > > > 
+> > > > > > Hence, determine whether the PHY has been enabled in bootloader by
+> > > > > > verifying QPHY_START_CTRL register. If it's programmed and no_csr reset is
+> > > > > > available, skip BCR reset and PHY register setting to establish the PCIe
+> > > > > > link with bootloader - programmed PHY settings.
+> > > > > > 
+> > > > > > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> > > > > > Signed-off-by: Wenbin Yao <quic_wenbyao@quicinc.com>
+> > > > > Some nitpicks below.
+> > > > > 
+> > > > > > ---
+> > > [...]
+> > > 
+> > > > > > +     * In this way, no matter whether the PHY settings were initially
+> > > > > > +     * programmed by bootloader or PHY driver itself, we can reuse them
+> > > > > It is really possible to have bootloader not programming the init sequence for
+> > > > > no_csr reset platforms? The comment sounds like it is possible. But I heard the
+> > > > > opposite.
+> > > > PCIe3 on X1E80100 QCP is disabled by default in UEFI. We need to enable it
+> > > > manually in UEFI shell if we want.
+> > > IIUC this will not be a concern going forward, and this is a special case
+> > > 
+> > I'm wondering how many *special* cases we may have to deal with going forward.
+> > Anyhow, I would propose to atleast throw an error and fail probe() if:
+> > 
+> > * the platform has no_csr reset AND
+> > * bootloader has not initialized the PHY AND
+> > * there are no init sequences in the kernel
+> > 
+> > - Mani
+> 
+> Hmmm, regardless of whether it's a special case, we can't assume that UEFI
+> will enable the PHY supporting no_csr reset on all platforms. It's a bit
+> risky. If we make such an assumption, we also won't need to check whether
+> the PHY is enabled by UEFI during powering on. We just need to check
+> whether no_csr reset is available.
+> 
 
-ASUS have fixed suspend issues arising from a flag not being cleared in
-the MCU FW in both the ROG Ally 1 and the ROG Ally X.
+I am not supportive of this assumption to be clear. While I am OK with relying
+on no_csr reset and bootloader programming the PHY, we should also make sure to
+catch if the PHY doesn't initialize it. Otherwise, the driver would assume that
+the PHY is working, but the users won't see any PCIe devices.
 
-Implement a check and a warning to encourage users to update the FW to
-a minimum supported version.
+> But it makes sense to check the exsitence of PHY senquence. How about
+> adding the check in qmp_pcie_init, if a PHY supports no_csr reset and isn't
+> initialized in UEFI and there is no cfg->tbls, return error and print some
+> error log so that the PCIe controller will fail to probe.
+> 
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- drivers/hid/hid-asus.c | 97 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 95 insertions(+), 2 deletions(-)
+Sounds good to me.
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index 46e3e42f9eb5..e1e60b80115a 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -52,6 +52,10 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
- #define FEATURE_KBD_LED_REPORT_ID1 0x5d
- #define FEATURE_KBD_LED_REPORT_ID2 0x5e
- 
-+#define ROG_ALLY_REPORT_SIZE 64
-+#define ROG_ALLY_X_MIN_MCU 313
-+#define ROG_ALLY_MIN_MCU 319
-+
- #define SUPPORT_KBD_BACKLIGHT BIT(0)
- 
- #define MAX_TOUCH_MAJOR 8
-@@ -84,6 +88,7 @@ MODULE_DESCRIPTION("Asus HID Keyboard and TouchPad");
- #define QUIRK_MEDION_E1239T		BIT(10)
- #define QUIRK_ROG_NKEY_KEYBOARD		BIT(11)
- #define QUIRK_ROG_CLAYMORE_II_KEYBOARD BIT(12)
-+#define QUIRK_ROG_ALLY_XPAD		BIT(13)
- 
- #define I2C_KEYBOARD_QUIRKS			(QUIRK_FIX_NOTEBOOK_REPORT | \
- 						 QUIRK_NO_INIT_REPORTS | \
-@@ -534,9 +539,89 @@ static bool asus_kbd_wmi_led_control_present(struct hid_device *hdev)
- 	return !!(value & ASUS_WMI_DSTS_PRESENCE_BIT);
- }
- 
-+/*
-+ * We don't care about any other part of the string except the version section.
-+ * Example strings: FGA80100.RC72LA.312_T01, FGA80100.RC71LS.318_T01
-+ */
-+static int mcu_parse_version_string(const u8 *response, size_t response_size)
-+{
-+	const u8 *end = response + response_size;
-+	const u8 *p = response;
-+	int dots, err;
-+	long version;
-+
-+	dots = 0;
-+	while (p < end && dots < 2) {
-+		if (*p++ == '.')
-+			dots++;
-+	}
-+
-+	if (dots != 2 || p >= end)
-+		return -EINVAL;
-+
-+	err = kstrtol((const char *)p, 10, &version);
-+	if (err || version < 0)
-+		return -EINVAL;
-+
-+	return version;
-+}
-+
-+static int mcu_request_version(struct hid_device *hdev)
-+{
-+	const u8 request[] = { 0x5a, 0x05, 0x03, 0x31, 0x00, 0x20 };
-+	u8 *response;
-+	int ret;
-+
-+	response = kzalloc(ROG_ALLY_REPORT_SIZE, GFP_KERNEL);
-+	if (!response)
-+		return -ENOMEM;
-+
-+	ret = asus_kbd_set_report(hdev, request, sizeof(request));
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = hid_hw_raw_request(hdev, FEATURE_REPORT_ID, response,
-+				ROG_ALLY_REPORT_SIZE, HID_FEATURE_REPORT,
-+				HID_REQ_GET_REPORT);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = mcu_parse_version_string(response, ROG_ALLY_REPORT_SIZE);
-+
-+out:
-+	if (ret < 0)
-+		hid_err(hdev, "Failed to get MCU version: %d, response: %*ph\n",
-+					ret, ROG_ALLY_REPORT_SIZE, response);
-+	kfree(response);
-+	return ret;
-+}
-+
-+static void validate_mcu_fw_version(struct hid_device *hdev, int idProduct)
-+{
-+	int min_version = ROG_ALLY_X_MIN_MCU;
-+	int version;
-+
-+	version = mcu_request_version(hdev);
-+	if (version < 0)
-+		return;
-+
-+	if (idProduct == USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY)
-+		min_version = ROG_ALLY_MIN_MCU;
-+
-+	hid_info(hdev, "Ally device MCU version: %d\n", version);
-+	if (version < min_version) {
-+		hid_warn(hdev,
-+			 "The MCU firmware version must be %d or greater\n"
-+			 "Please update your MCU with official ASUS firmware release\n",
-+			 min_version);
-+	}
-+}
-+
- static int asus_kbd_register_leds(struct hid_device *hdev)
- {
- 	struct asus_drvdata *drvdata = hid_get_drvdata(hdev);
-+	struct usb_interface *intf;
-+	struct usb_device *udev;
- 	unsigned char kbd_func;
- 	int ret;
- 
-@@ -560,6 +645,14 @@ static int asus_kbd_register_leds(struct hid_device *hdev)
- 			if (ret < 0)
- 				return ret;
- 		}
-+
-+		if (drvdata->quirks & QUIRK_ROG_ALLY_XPAD) {
-+			intf = to_usb_interface(hdev->dev.parent);
-+			udev = interface_to_usbdev(intf);
-+			validate_mcu_fw_version(hdev,
-+				le16_to_cpu(udev->descriptor.idProduct));
-+		}
-+
- 	} else {
- 		/* Initialize keyboard */
- 		ret = asus_kbd_init(hdev, FEATURE_KBD_REPORT_ID);
-@@ -1280,10 +1373,10 @@ static const struct hid_device_id asus_devices[] = {
- 	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD},
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_NKEY_ALLY_X),
--	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD },
-+	  QUIRK_USE_KBD_BACKLIGHT | QUIRK_ROG_NKEY_KEYBOARD | QUIRK_ROG_ALLY_XPAD },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_ASUSTEK,
- 	    USB_DEVICE_ID_ASUSTEK_ROG_CLAYMORE_II_KEYBOARD),
- 	  QUIRK_ROG_CLAYMORE_II_KEYBOARD },
+- Mani
+
 -- 
-2.48.1
-
+மணிவண்ணன் சதாசிவம்
 
