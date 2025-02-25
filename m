@@ -1,225 +1,144 @@
-Return-Path: <linux-kernel+bounces-531820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AB44A44576
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:07:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833EAA44592
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:12:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1679C1884967
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89CA51884992
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D1318C930;
-	Tue, 25 Feb 2025 16:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D90189F3F;
+	Tue, 25 Feb 2025 16:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B+lbSHnu"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k9BnQAh1"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6E818B475;
-	Tue, 25 Feb 2025 16:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1561624CD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:11:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499489; cv=none; b=PUosQCV4DTTDJlFoU3mPOCAjR28epcdE6+2tkMitdtDWEDNEwJD0+ABPs/anfZQjzK9tDi1Rb6a/6o/Ml7+4fny/aarDNf7D2CIQeDpXoIIFagrXsuq6RVsYN2raOfkr40RlOfCDp1xJcXV62o0cDPFbBnyu9XTAaSTFGvEAzTI=
+	t=1740499912; cv=none; b=cDoamHJQlbmmtXwbb5MLbkMkv1zmg5AVREdIrqovNVXI0V0sJEvDTT+l31TpVJ3YJ8UVJmXThMqc40+aaTp49M2z4nHku+KVcHzZ3wcLSBYpB2Z5twJ37MKRp99gEFGbEH6QC0cUW2upFmNe+CjXIlJrNuexAEpvP4l49Gnt7Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499489; c=relaxed/simple;
-	bh=Cssv3O9deygNopTJWPD44unAzs/rt53XfRmlY8D0JAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiddOpLo+HvNzRomLEWGIas1dhKWPGHqzRSDjsMNegY43ArHqeVL+DEom3LbO3qMldMvnlfEMUevXR0m+AGldWLzp7yWN7QzXTFRvCVniHVmErv0Qbfc83MX90yaKrCcf42qlYKEvOlg+BQ0aYiBsrwGshrjOqvLZNxwERJEdaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B+lbSHnu; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220e6028214so127566285ad.0;
-        Tue, 25 Feb 2025 08:04:47 -0800 (PST)
+	s=arc-20240116; t=1740499912; c=relaxed/simple;
+	bh=rCByvJMOjUxh8ZzB5E/B1+AmONBCyWA+/sUB1yHUqbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vBElISt3kep84LHbzZqlVKz/fdGBgYHkICpEc5rp4sxAiAmy3HsfTUi5qa/iR7iOkhiCqnIvCYK8nRRBa8STe5lwpG/NEhrqE1G3I8vTSZQpB51/70eWTo/OqqkUPU7oUnKga0d7hGMq+I4UURjPO6yPH7dOoDLKQv8tRuLi0QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=k9BnQAh1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e0516e7a77so8921385a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:11:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740499487; x=1741104287; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nfC4yU0nUtrxnIRRLUVwOoOOnizoCUAoie4Fblmw1ow=;
-        b=B+lbSHnu2Zx726ASecpXlGVGi91RA0xFm0h72ehzihvkXYlsH04pquuGNKNtXJyJPK
-         8nEsy17YWP21NAbN+IBS+CF2zspoWaTWoFRsh+xiMnchiu8xqW0BynyhJsFaEjTO3SzG
-         ajRaI5SwxXVlfUQZ9Jnn0Nghvem/efnYCTltLgOCsoEZoszy9ttAgg6iA0THLdb5+RvU
-         VSJVL0lM4UfsJLmMydHSOOPWAiovQ/oKv3EKduQ948BX/GSW7AMobrfln15Q0Fzy9+8k
-         LVk6v04otSvDRBJ6YUUrA0DaCnLqy4dLcKwvv6VF4dhg9fkpuDAzgKm3TO3QsgiNO8GL
-         2IGg==
+        d=chromium.org; s=google; t=1740499908; x=1741104708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lwUSC8OCkUHVVAACMeGE7Ik1ANgp9jf6fyVgqusnzdY=;
+        b=k9BnQAh1Xwo2S4DrTPkb/F3Vstn3eNQfa/J/aKMjtGu0PtkUPfjMgsTtciXiBEcswC
+         URbIPvUwbw/QFwc1PwdHS5eQvMgo0fmljEAhI8Mig+1aBKrJsZ4SN3KWj45cgJZRrbWs
+         XyTbfhIyrsSWavF0cJBE4pO/ftFJ/TOcE1+50=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740499487; x=1741104287;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1740499908; x=1741104708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nfC4yU0nUtrxnIRRLUVwOoOOnizoCUAoie4Fblmw1ow=;
-        b=rFNewLTprhvnw1xytnfK3GDcD/LKbPYNx16oW+JrCKJ5FTvtClEbqbNvI4aXQhu7k+
-         Dv5zDX+Od6IWGqROG+DfyOCiWUacIQH7Cl4hgMUxtCsgx+dAdTwwfF+YVLN2YAI0Jr8S
-         /bUKgJn/EAlFJaaYvQbEVzl2/1Vb+uhiTPj+3n+O2snbP9DjMYpWe+NycnB9HpYrOCfz
-         N0Tuj856d6fIzRgN9gwQDVS6NLL7V4X27l8c7S/35nNbGTREjdz5B8mIQvOSPa9ZDRvB
-         sOIBhc6D64VFGOqva7JhFugQbjgLDJJWBkIKUiWPVcSVt3QjZN33dHe+VVIv/4kgpzcr
-         8/Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCU03wQZe+ZfweZmfPoCE9q9xq2iN00/HbQ7035u8BZGa4l4iicxJV3BxXkIGejQzTPQlpIdMrtCCStKusaOCQs=@vger.kernel.org, AJvYcCUQq8UoKF3JupCkJMbWcpRlqgoOW/udC8qXYNpgx1yXqdHa2h/zfG1A05cZn1PzxABMZixsCMfyOX+4c+z2@vger.kernel.org, AJvYcCWo4cHK4lH2r5Fnr4lGGF28aosQwVMwDSDmQeRbXMARSHTHBIvG4phXQhXXM9ik905r0NVo9PnLPDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybK+JPRyCBW5ZKPpxQLtR+SjRZVEOqQAqEAd+EXdmocGK9LS5Y
-	E7GYusMuIJ+iubL6kOdl4LVOGU3hSEh2YPTmaPj6bm1QU456abiffwziTw==
-X-Gm-Gg: ASbGncsHhW/r7dw6Dwwkc64xjiTBQ6LN5+HurDS2MJyBf+JEdtBIT85HULIZ6/lGZ2f
-	eAN0OTWb0qdw0Ja3G3GQuxAie4UORo5zh/5BXCrFIXwdGsHZWZiV9hfCR+Z4XkdRFdN1OVQJGRC
-	7eX/zXr+vv4L9jNBktYc20Wv/zJozwiiSZk1f/mlgNpSHmNfVVMpIzvomaeYlcWzsrAoKf+QL6O
-	7d0hK/+KCl87giW0Zv5mQUPymFOiy0DMMXjg9mIBS8i7ZKv6K85VLfTGdwbs/HkGlvArIj1hi0H
-	wJTJh4J19XNNY+LTtuGeYfui8oUemQXuf5Y/c1E=
-X-Google-Smtp-Source: AGHT+IGkE+gW8A5hUQrZyr2X9IDG8DRjjSSNdNAFCdIreEChLZj609zabpm5mLXa8Bqxjvjfv4DSmA==
-X-Received: by 2002:a17:902:e74c:b0:220:cd13:d0ec with SMTP id d9443c01a7336-221a00274d7mr287259265ad.48.1740499486466;
-        Tue, 25 Feb 2025 08:04:46 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0ad903sm15922925ad.217.2025.02.25.08.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 08:04:46 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 25 Feb 2025 08:04:44 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: George Cherian <george.cherian@marvell.com>
-Cc: wim@linux-watchdog.org, corbet@lwn.net, linux-watchdog@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drivers: watchdog: Add support for panic notifier
- callback
-Message-ID: <85d99af3-a3ee-41dc-96df-0b9903a6f516@roeck-us.net>
-References: <20250225140615.2141119-1-george.cherian@marvell.com>
+        bh=lwUSC8OCkUHVVAACMeGE7Ik1ANgp9jf6fyVgqusnzdY=;
+        b=t+dc9cU+gMsvfQtEDyI7hCDcMS7Npa4pB1eBpgw4Z9jfDBDTGiRbChOFp64mbLikHI
+         AuHUBOGkrTKLmv4P8FXw9hwIgu45DVtMyBqk9TcQh2c/GP/I7uheBzD5X5jMo46Dj0t5
+         g+14FSPy1o+H8TaBgEncDsnqxMXd1IFyZ4eucFBYk7o7qsnB9B7vcbxAFq2x+R5yuWWI
+         23l83V8lBI0DL7frkh9/5Vqvn/F7KCu7tuW7MtkY17Q2a/GpDXFqwQfH4v5v3KFyLYyp
+         ptVvqBEUxivZUcrVwvM6Cc99HStJP32JOsH/YxkdY+ySVVD4zZRZPldujtK+uXvrmAox
+         l5ug==
+X-Forwarded-Encrypted: i=1; AJvYcCXNIF3PrpeY+8cPvz5vVHmlKEcxmtGuhsW50BbxhJ2EqKsaG+YE8ijj16VkP0iQKAxF9dCsUt3XRoxzgbY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0uwtscastCbFwzZfvyeF86kgDYf2be9HcU535oTCQELCd/wLz
+	qKhC8Kv/xQiktIA7yVvNvVsP5ACc4Av7IRmgULrTetBv2FZrsXGF4nmG0uagG0g67jAjmZdhkLG
+	aaF/G
+X-Gm-Gg: ASbGncsR2zTlLtvEyLEmcw3IVS5gGNPK6rCPacvpXVoyzpvdLWM3wdInMa2uca1/ico
+	t5rWH3FF08q9iWJ5ogP7Iq6tluPduG1Ew4s15rFYmfNAml3J+qA5ypuQt9mchvvdrNzxR+HbjmP
+	JcrDPkQXTX490uC0NV4baaBs62MKZu+LSUF9oDPq/Z75YF+mX8xdn8judzPWdGWzIAkhagIHFai
+	7KIPkRbZQmg7ME6dXUDXz2vYnrpIyMUJyfT2P0rqoqFBz4uTdpL9fgdlY0IJdsw2t2hC79A3hq2
+	A+Xr6CjAidm9Ig32zRAID/eKmVa6yYu8Uq6OoZ06uqo32T0QJod5yI0AxHQ6x7k4bA==
+X-Google-Smtp-Source: AGHT+IF172n9G+WG7Mj1EEpvmgy+XQO5kMd8rsQa6NaftxSdjWp4xpgFEGWlXhLmz5e1rbNJ5STY3g==
+X-Received: by 2002:a05:6402:1ec9:b0:5e0:8c55:501 with SMTP id 4fb4d7f45d1cf-5e0b70cb891mr16791870a12.7.1740499908133;
+        Tue, 25 Feb 2025 08:11:48 -0800 (PST)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e459b4b671sm1451475a12.7.2025.02.25.08.11.47
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 08:11:47 -0800 (PST)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e0516e7a77so8921336a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:11:47 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWVfnDkqrXrnB0brsxNhmwOKycZp73nxT8B3xh8/TAOfvHR6FqSN0nGifQMsKoYSRqY6V8RyRWrf4ZW4P0=@vger.kernel.org
+X-Received: by 2002:a05:6512:1241:b0:547:6723:93b6 with SMTP id
+ 2adb3069b0e04-5483909d1d1mr6678553e87.0.1740499509419; Tue, 25 Feb 2025
+ 08:05:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225140615.2141119-1-george.cherian@marvell.com>
+References: <20250218-aux-device-create-helper-v4-0-c3d7dfdea2e6@baylibre.com> <20250218-aux-device-create-helper-v4-3-c3d7dfdea2e6@baylibre.com>
+In-Reply-To: <20250218-aux-device-create-helper-v4-3-c3d7dfdea2e6@baylibre.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 25 Feb 2025 08:04:57 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Vb+Wb6wJ42jUBxVVNp9P87BiqHZgoY+Tw6W3fO==FF6g@mail.gmail.com>
+X-Gm-Features: AWEUYZm3vRrajChqqVao9eJTA9wadMF2aiVVZGdKkNeW96YTlQauMsPFnVVKvC0
+Message-ID: <CAD=FV=Vb+Wb6wJ42jUBxVVNp9P87BiqHZgoY+Tw6W3fO==FF6g@mail.gmail.com>
+Subject: Re: [PATCH v4 3/8] drm/bridge: ti-sn65dsi86: use the auxiliary device
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dave Ertman <david.m.ertman@intel.com>, 
+	Ira Weiny <ira.weiny@intel.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Danilo Krummrich <dakr@kernel.org>, 
+	Conor Dooley <conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Abel Vesa <abelvesa@kernel.org>, 
+	Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Kevin Hilman <khilman@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, dri-devel@lists.freedesktop.org, 
+	platform-driver-x86@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 02:06:15PM +0000, George Cherian wrote:
-> Watchdog is not turned off in kernel panic situation.
-> In certain systems this might prevent the successful loading
-> of kdump kernel. The kdump kernel might hit a watchdog reset
-> while it is booting.
-> 
-> To avoid such scenarios add a panic notifier call back function
-> which can stop the watchdog. This provision can be enabled by
-> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
-> 
-> Signed-off-by: George Cherian <george.cherian@marvell.com>
+Hi,
+
+On Tue, Feb 18, 2025 at 11:30=E2=80=AFAM Jerome Brunet <jbrunet@baylibre.co=
+m> wrote:
+>
+> The auxiliary device creation of this driver is simple enough to
+> use the available auxiliary device creation helper.
+>
+> Use it and remove some boilerplate code.
+>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
-> Changelog:
-> v1 -> v2
-> - Remove the per driver flag setting option
-> - Take the parameter via kernel command-line parameter to watchdog_core.
-> 
-> v2 -> v3
-> - Remove the helper function watchdog_stop_on_panic() from watchdog.h.
-> - There are no users for this. 
-> 
->  drivers/watchdog/watchdog_core.c | 42 ++++++++++++++++++++++++++++++++
->  include/linux/watchdog.h         |  2 ++
->  2 files changed, 44 insertions(+)
-> 
-> diff --git a/drivers/watchdog/watchdog_core.c b/drivers/watchdog/watchdog_core.c
-> index d46d8c8c01f2..8cbebe38b7dd 100644
-> --- a/drivers/watchdog/watchdog_core.c
-> +++ b/drivers/watchdog/watchdog_core.c
-> @@ -34,6 +34,7 @@
->  #include <linux/idr.h>		/* For ida_* macros */
->  #include <linux/err.h>		/* For IS_ERR macros */
->  #include <linux/of.h>		/* For of_get_timeout_sec */
-> +#include <linux/panic_notifier.h> /* For panic handler */
->  #include <linux/suspend.h>
->  
->  #include "watchdog_core.h"	/* For watchdog_dev_register/... */
-> @@ -47,6 +48,9 @@ static int stop_on_reboot = -1;
->  module_param(stop_on_reboot, int, 0444);
->  MODULE_PARM_DESC(stop_on_reboot, "Stop watchdogs on reboot (0=keep watching, 1=stop)");
->  
-> +static int stop_on_panic = -1;
-> +module_param(stop_on_panic, int, 0444);
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 49 +++++------------------------=
+------
+>  1 file changed, 7 insertions(+), 42 deletions(-)
 
-This can now be bool.
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
-> +MODULE_PARM_DESC(stop_on_panic, "Stop watchdogs on panic (0=keep watching, 1=stop)");
->  /*
->   * Deferred Registration infrastructure.
->   *
-> @@ -155,6 +159,23 @@ int watchdog_init_timeout(struct watchdog_device *wdd,
->  }
->  EXPORT_SYMBOL_GPL(watchdog_init_timeout);
->  
-> +static int watchdog_panic_notify(struct notifier_block *nb,
-> +				 unsigned long action, void *data)
-> +{
-> +	struct watchdog_device *wdd;
-> +
-> +	wdd = container_of(nb, struct watchdog_device, panic_nb);
-> +	if (watchdog_active(wdd)) {
-> +		int ret;
-> +
-> +		ret = wdd->ops->stop(wdd);
-> +		if (ret)
-> +			return NOTIFY_BAD;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
->  static int watchdog_reboot_notifier(struct notifier_block *nb,
->  				    unsigned long code, void *data)
->  {
-> @@ -299,6 +320,14 @@ static int ___watchdog_register_device(struct watchdog_device *wdd)
->  			clear_bit(WDOG_STOP_ON_REBOOT, &wdd->status);
->  	}
->  
-> +	/* Module parameter to force watchdog policy on panic. */
-> +	if (stop_on_panic != -1) {
-> +		if (stop_on_panic &&  !test_bit(WDOG_NO_WAY_OUT, &wdd->status))
-> +			set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-> +		else
-> +			clear_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-> +	}
-> +
+I'll snooze this for a bunch of weeks and check back to see if this
+can be landed in drm-misc-next every once in a while. If you notice
+that drm-misc-next has the necessary patches before I do then feel
+free to poke me and I'll commit it.
 
-No longer needed here. See below.
-
->  	if (test_bit(WDOG_STOP_ON_REBOOT, &wdd->status)) {
->  		if (!wdd->ops->stop)
->  			pr_warn("watchdog%d: stop_on_reboot not supported\n", wdd->id);
-> @@ -334,6 +363,16 @@ static int ___watchdog_register_device(struct watchdog_device *wdd)
->  				wdd->id, ret);
->  	}
->  
-> +	if (test_bit(WDOG_STOP_ON_PANIC, &wdd->status)) {
-> +		if (!wdd->ops->stop) {
-> +			pr_warn("watchdog%d: stop_on_panic not supported\n", wdd->id);
-> +		} else {
-> +			wdd->panic_nb.notifier_call = watchdog_panic_notify;
-> +			atomic_notifier_chain_register(&panic_notifier_list,
-> +						       &wdd->panic_nb);
-> +		}
-> +	}
-
-Simplify to
-	if (stop_on_panic) {
-		if (!wdd->ops->stop) {
-			pr_warn("watchdog%d: stop_on_panic not supported\n", wdd->id);
-		} else {
-			wdd->panic_nb.notifier_call = watchdog_panic_notify;
-			atomic_notifier_chain_register(&panic_notifier_list,
-						       &wdd->panic_nb);
-			set_bit(WDOG_STOP_ON_PANIC, &wdd->status);
-		}
-	}
-
-This also fixes the bug where the unregistration function is called
-even if the notifier was not actually registered.
-
-One thing I just realized is that we'll have to figure out if atomic
-notifiers can be used here unconditionally. Unless I am missing
-something, watchdog stop functions can sleep. Of course, sleeping
-while panic isn't a good idea. That means we _may_ need a driver
-flag indicating either that the stop function can sleep or that it
-won't. If we need that, I suggest we add WDIOF_STOP_MAYSLEEP or
-similar to the watchdog_info options field.
-
-Thanks,
-Guenter
+-Doug
 
