@@ -1,128 +1,139 @@
-Return-Path: <linux-kernel+bounces-532505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43362A44EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:22:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47A8A44EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:23:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6418D17C858
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:20:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C123A3777
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC2A20C48E;
-	Tue, 25 Feb 2025 21:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB87920C002;
+	Tue, 25 Feb 2025 21:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUdLM4gt"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7TxPtds"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E1C1A8F95;
-	Tue, 25 Feb 2025 21:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2665419CD1E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 21:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740518441; cv=none; b=HMLO4KjPUGfLnckR189tQ7f2xu5TIb4BN2NIYGfLU7tBCf9RI2z9XZz8AFbhL42lSqkQXyzm9R5mNFRoqrgJg+XDLeX/n52CgA7cMXvHznDvweb1WoSn3NSye3aLeoDnZynnfjpP/u3vC/av/Y4O96mJYe1+PlN7gaeSPZZnLPY=
+	t=1740518531; cv=none; b=WTNHqCwLB/nSDOcy8ZIDX9lwchoIcB0FV8Y07dkXdN6/jjlKPNKGQDTJJ1HmwubTazeYID0dz5ZphtiLq9/os6JJXQBXI/6FAf/A4C10/+fBt7uO8yeSRRQFHPkOLxD18HeDJBukfL6rrvFTnXbgbhFCSz50OM8VXZv8iQixMEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740518441; c=relaxed/simple;
-	bh=cLqhDbrPYvWuIQ01P5u1Pg/JDTDb9OtRsIwc4NEfevQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DFhKuMLTz9COiVw+t9difU8KGy4vLFZBN4BFJAMOl/NmURt+lv/VSeLgQqLwRplbkMHeunv7zVDW4KXNsp38G/QPIcqHGNi1XcRibX7qzUFi4rhY9uRfjWlNH90S+GZ2xIBw1kS95DKENekA1cSL44kQr2g/sF8VmO1+0FLKFDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUdLM4gt; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4397dff185fso53341655e9.2;
-        Tue, 25 Feb 2025 13:20:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740518438; x=1741123238; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ETJS16OnTYl7vwlekxa+pFGq8xk1BazLklga/IsiBKI=;
-        b=EUdLM4gt+vmC/Mc6km5yrKsf4YyI89d9aGOlFobYArMKmkwgm/H5IlvF+sgIP4XPzF
-         pVxH63bmvHrlYi8VixD+s5WFSf/VoKakeis6KR7fYsDv3M5kDw0RC38beMzGIv0IT++d
-         1zoTTlHchjGX9cnEZV3zksZmLNUHppmYgAm9/M2x46/xDaw7afPCI8FZR/ve9tj8+upJ
-         zsakP/3WfRdqtUrdRGbYBkSMlcxgusMmPcjb7J02OjBjiCAn3MbieYYATF/OtnVVsZbk
-         Q8U2NERJ2Y9BfUQ2fEyHnAcvj7pXKqpfTi98Inu+awMWu2HBXYXCnfp/O7fVw5KQJk2W
-         4akA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740518438; x=1741123238;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ETJS16OnTYl7vwlekxa+pFGq8xk1BazLklga/IsiBKI=;
-        b=GpJQXAYmR2L3aRt6nmyc6MaLNHEg0tOE85eOm41fWggEeLp+7Wm37sok67tozfIFKd
-         ee5sa6cLyJvrB7AfqUg563e1UbvwgEHaNFcXy9kAVrW33PNoYVovaB6BNHJy8RiP3pW+
-         Nim0r8nyoYQxRSiYLMUzu1s7U0IErySJvNd9kpfGNzZX793uU4sUn+Q9iLEHgM3KTeZB
-         DI/wLLll/+TjZwQ+nMo3pHh2K+5lpCgLnvjBwUs+MUOxL/h4CXwx+5oflypSI3mXW7dB
-         UqMo5qqC2uMiObH2Ph3ojB7V7LQum39s9u9iX4XOqaH/fJFogJh114fNHiVGm2uqePZG
-         0irA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGBQ+o+OTwqmSR16PUFN7y6Kovf0Pf3ppS/fKDMTAhsqqiUCdCHRtwHksEvtb5pe/hXrJ3GVUYuvbkPlw=@vger.kernel.org, AJvYcCW735bEbVYQ2H3bBj9iLyD0P7SljdaS0WJwZLxTDAGqP5THaipwjyNPzTUQ6QNLHOvjjExH6GDt1+Eqs3I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCQ6ajRwiaMBLJ2h13TuNSC5rzS0K0Yj/knFj0XMJhwka4H7NI
-	G5XogDWCzhqWau6TGcDT+t2W+2+Z+9Q/AHcV+mXWswuwd9ELGqvD
-X-Gm-Gg: ASbGnctO6QiPz/kVzhxy/Z1s0f3gsmK4DEknSt5/nJC/iLa3tOfmFqeUOzn3hmR7ext
-	5lfVpJGeNzBKlhj2WeLzKg7njGYAxgfV/aojvlPI6+DHqQjW1X3jKQqFK+/lb2cHCykE6qcpWeG
-	BI6Uc/bkVif6+NSbCRVvtuemrux5plbsASWksLkWQvfEVieEQ4FpWzDyUHj2tBZwuVxfRtz1aeK
-	q75fMZICzlBk0yp6sWBbOybrO3esRh0BOvScse1oyVMbGhPHKrxceFvP7YXQs9ARooJR615M6MQ
-	ZHX/0o+zx6RGPI3bIHWNjucEHxUEhhIK7l9TJzU=
-X-Google-Smtp-Source: AGHT+IGb4WNnMBJZw29M3uaY/4XEnbOyHtds/lEjO/1INAFbGy/YiqTYqtMMwMU9n7j05m1HLtMuMA==
-X-Received: by 2002:a05:600c:4e8b:b0:439:6101:5440 with SMTP id 5b1f17b1804b1-43ab8fd875dmr7917395e9.8.1740518437510;
-        Tue, 25 Feb 2025 13:20:37 -0800 (PST)
-Received: from demon-pc.localdomain ([188.27.130.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86cc26sm3605357f8f.30.2025.02.25.13.20.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 13:20:36 -0800 (PST)
-From: Cosmin Tanislav <demonsingur@gmail.com>
-To: 
-Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	linux-media@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Cosmin Tanislav <demonsingur@gmail.com>
-Subject: [PATCH] media: platform: rpi1-cfe: fix pad in call to get_mbus_config()
-Date: Tue, 25 Feb 2025 23:20:30 +0200
-Message-ID: <20250225212031.188987-1-demonsingur@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1740518531; c=relaxed/simple;
+	bh=+Ec/mIumHeFLdpNxbtqhH8+wRQITguW0MhsTNczarSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b7IHZ+IPl0Wlz2eRsyaJ7Hzhj4zNnKwpdpJeXM0TfZCWuX1XCPL/6sInduypB6dRxZ5/IyH1f39SYbGB75rYrFNVN7WKpu0hjex7shjtRHtsBjN5QRjzXUe1zk4anJHKPaENwNYoX1cosuKvgrta/tZzf4mq8XJb9f1nf1mOOTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7TxPtds; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D698C4CEDD;
+	Tue, 25 Feb 2025 21:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740518530;
+	bh=+Ec/mIumHeFLdpNxbtqhH8+wRQITguW0MhsTNczarSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H7TxPtdsqV6RaGWaDfcEFywZSggTYbaYbm81jgOD5UIUCHb4T1D3mIqJ/aoNWya9L
+	 hyQhVewSJWkLVJMvxlAeGJIek7GR+9MEOPaw7Mgs17norTfOCdzTyMjvfsSWfs0Kqv
+	 XbdrP0fI1kskWDcFKmd+Bhl7DJKtx51izjwWDPcBQueTue/5AKIQlvDaFB2oxHDibp
+	 zYHRPeraGkAt6u0H6ztKlU/gwm7h0Zj2mLpM7YRv2atKxdJhsqiZ2r+RLUu28VRB/F
+	 qDh7tS9mf5o9ssfi9h2qG/eP+qJYtHUjK2NXv1K/k4nPncbWwcgelnXtRs2gqVoS4c
+	 Eu3d+tDQ4OnWA==
+Date: Tue, 25 Feb 2025 22:22:00 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Yujun Dong <yujundong@pascal-lab.net>
+Cc: Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle, sched: Use smp_mb__after_atomic() in
+ current_clr_polling()
+Message-ID: <Z740eIZcK31DQETq@gmail.com>
+References: <20241230141624.155356-1-yujundong@pascal-lab.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241230141624.155356-1-yujundong@pascal-lab.net>
 
-The source subdevice might be using a source pad not equal to 0.
 
-Use the already existing source_pad field of cfe.
+[ Sorry about the belated reply, found this in my TODO pile ... ]
 
-Fixes: e7bad98c205d ("media: v4l: Convert the users of v4l2_get_link_freq to call it on a pad")
-Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
----
- drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+* Yujun Dong <yujundong@pascal-lab.net> wrote:
 
-diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-index 69a5f23e7954..7db4fe5e0fd4 100644
---- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-+++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
-@@ -1206,8 +1206,8 @@ static int cfe_start_streaming(struct vb2_queue *vq, unsigned int count)
- 	cfg_reg_write(cfe, MIPICFG_INTE,
- 		      MIPICFG_INT_CSI_DMA | MIPICFG_INT_PISP_FE);
- 
--	ret = v4l2_subdev_call(cfe->source_sd, pad, get_mbus_config, 0,
--			       &mbus_config);
-+	ret = v4l2_subdev_call(cfe->source_sd, pad, get_mbus_config,
-+			       cfe->source_pad, &mbus_config);
- 	if (ret < 0 && ret != -ENOIOCTLCMD) {
- 		cfe_err(cfe, "g_mbus_config failed\n");
- 		goto err_clear_inte;
--- 
-2.48.1
+> In architectures that use the polling bit, current_clr_polling() employs
+> smp_mb() to ensure that the clearing of the polling bit is visible to
+> other cores before checking TIF_NEED_RESCHED.
+> 
+> However, smp_mb() can be costly. Given that clear_bit() is an atomic
+> operation, replacing smp_mb() with smp_mb__after_atomic() is appropriate.
+> 
+> Many architectures implement smp_mb__after_atomic() as a lighter-weight
+> barrier compared to smp_mb(), leading to performance improvements.
+> For instance, on x86, smp_mb__after_atomic() is a no-op. This change
+> eliminates a smp_mb() instruction in the cpuidle wake-up path, saving
+> several CPU cycles and thereby reducing wake-up latency.
+> 
+> Architectures that do not use the polling bit will retain the original
+> smp_mb() behavior to ensure that existing dependencies remain unaffected.
+> 
+> Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
+> ---
+>  include/linux/sched/idle.h | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
+> 
+> diff --git a/include/linux/sched/idle.h b/include/linux/sched/idle.h
+> index e670ac282333..439f6029d3b9 100644
+> --- a/include/linux/sched/idle.h
+> +++ b/include/linux/sched/idle.h
+> @@ -79,6 +79,21 @@ static __always_inline bool __must_check current_clr_polling_and_test(void)
+>  	return unlikely(tif_need_resched());
+>  }
+>  
+> +static __always_inline void current_clr_polling(void)
+> +{
+> +	__current_clr_polling();
+> +
+> +	/*
+> +	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
+> +	 * Once the bit is cleared, we'll get IPIs with every new
+> +	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
+> +	 * fold.
+> +	 */
+> +	smp_mb__after_atomic(); /* paired with resched_curr() */
+> +
+> +	preempt_fold_need_resched();
+> +}
+> +
+>  #else
+>  static inline void __current_set_polling(void) { }
+>  static inline void __current_clr_polling(void) { }
+> @@ -91,21 +106,15 @@ static inline bool __must_check current_clr_polling_and_test(void)
+>  {
+>  	return unlikely(tif_need_resched());
+>  }
+> -#endif
+>  
+>  static __always_inline void current_clr_polling(void)
+>  {
+>  	__current_clr_polling();
+>  
+> -	/*
+> -	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
+> -	 * Once the bit is cleared, we'll get IPIs with every new
+> -	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
+> -	 * fold.
+> -	 */
+>  	smp_mb(); /* paired with resched_curr() */
 
+So this part is weird: you remove the comment that justifies the 
+smp_mb(), but you leave the smp_mb() in place. Why?
+
+Thanks,
+
+	Ingo
 
