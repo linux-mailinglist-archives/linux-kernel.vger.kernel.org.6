@@ -1,183 +1,283 @@
-Return-Path: <linux-kernel+bounces-532670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384F8A45094
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:56:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2A7A4509A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:58:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4653C3ACC96
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A58E3ADA17
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F3D23536A;
-	Tue, 25 Feb 2025 22:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="sRiT5u/F";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mo6A19Mf"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D65204F9B;
+	Tue, 25 Feb 2025 22:58:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C023237B;
-	Tue, 25 Feb 2025 22:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB582222D9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524174; cv=none; b=DhvLlnkLvsp+RK8lNOrAL8QGAiM8ezcU/9ZAyf6M1E5qXZB0nUsg6nCqHy53wUi94Kva/tJtB0zqb6G3LvSNezl8B+QWGAOcMLswcsUKTDlUU7th/Hj0au/kjdV98XU1EDxRQ/LM8NDjHNBFCRCNnVVICMuU9Xgk1fc27TaD7dk=
+	t=1740524280; cv=none; b=i1wKQXMSgSRa7QweWzEvK9z0/u4yB7tbtQqd639Q/Wr7STr1O+irvQtxs1ViJkGZ5wgRq2gDinSrw3fhUP0yuBXKrU4eGBti9Z6Ehv2sPwPoQQNoat6+7h7CWtA4TmppzWyuNFM7t+Z1T9DpppT5hnlBSY2F3kUBn7jJdPiNFwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524174; c=relaxed/simple;
-	bh=MLXsjM4OpYPkGdtcQe1WJfFmLK0HKbZxON1wdjGZOE8=;
+	s=arc-20240116; t=1740524280; c=relaxed/simple;
+	bh=PoTlQ4385s5DrEh/kQ0+befiVswqZC276gg7tyJP8fs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDw9J+BF9zUAHmR4UpH4uCGpwBXkVpzDrvJchi1dOKXBi5KNVvmUkyHsBDpZwrqiL0w+MngSrRJV2HorrcjtExvGtHTkoXRL+I3XfUP5eFcB3VgREXC3tQYbmXx8Ej2T0uKWwGg4JzmiTEx9/2Xb0WVGdcDRELJkNzng5oqW7sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=sRiT5u/F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mo6A19Mf; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8657A114018F;
-	Tue, 25 Feb 2025 17:56:09 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Tue, 25 Feb 2025 17:56:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1740524169;
-	 x=1740610569; bh=K598ZDf++Qaq8RRv1ivt1GifhME6grtmW2GDDOtSqEY=; b=
-	sRiT5u/FvWW4NmZQx1iSBe7KgVD6a9ZDcsklCaAsUtiwPykwadoR6YCJXluTPRfj
-	khykLO9FeSVCsgNkxAPSxJcte2q8yv0OM9hAdODe/ysIM7GRetxHwSZ9hFAHuCNy
-	QIH/xIXyF/HIjO0Nxk8v7krfvC9v1s1mYjphkGlodRm+Sc2jsrK4meYozWwoQzX9
-	PnmHsxJQ1gEUwdwZoj4fWtFmnAozyYFtGRwgZYETQvbL6RuBe2WlslToP+J052oT
-	wBnCP7EVWKXB04e7A5TgbHD5l31mQhFB4VykOs+FX6ro6rFGUvIxdl2daMyV1b6D
-	Ag9FHsfuJbMPGDbg5SDGTw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740524169; x=
-	1740610569; bh=K598ZDf++Qaq8RRv1ivt1GifhME6grtmW2GDDOtSqEY=; b=m
-	o6A19Mf71H/0dWgLV2p34JK8b2CJk25P5iX8PYvTyfmLPNFfnbF4iLjmrrQjC6u6
-	yBXxd7xhzFrxzS6MzOl0oG/BTGsCSLTtw/lXjJFsKMu5uHehUi05K11aw24hADPP
-	aL5WGeyXJG2KMBuHVzOVDcDcYArPK/zZ3F72O2Dyy6sPMynNwx80Pk+fFuUlJM4V
-	ZKwBLgsh1DZ0XYnSIl802QQSJZP1h3tHcOFEP2Xf3xz6kKQbLGseCH/QTTue3HQb
-	P6HtTDDCtaT4DSX3WDq8j8/dp3ycBhQOZCJdNd1gmQ+x19/W4RMfR+1ZUnKsUo4H
-	2Ztysx9iWvlKaAjBxzvIA==
-X-ME-Sender: <xms:iUq-Z7iC2c6g9MgtvrLdoi6oHiUZpcznCPbXz7PZzgKWp_GH2IRteQ>
-    <xme:iUq-Z4AUpNehvIF1s5pkAJL0VkA-lIo1Gt_qUlnhZpegUz_nqj39iQrJ8OV8GcId7
-    iXBFiDDTI-jW7F5yus>
-X-ME-Received: <xmr:iUq-Z7ESqBiLEfqlY76Iacf6yhtwhFDjtS8fuYP9WXahhBEGs5Cn8-3KU35x-PBXc3i1E751dB2oq3tNXGnaXQNteAlJEOiqZA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdelhecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
-    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
-    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
-    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepjedpmh
-    houggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgrtghophhordhmohhnughiodhrvghn
-    vghsrghssehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehlrghurhgvnh
-    htrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohep
-    khhivghrrghnrdgsihhnghhhrghmodhrvghnvghsrghssehiuggvrghsohhnsghorghrug
-    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrth
-    dorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgtohhm
-X-ME-Proxy: <xmx:iUq-Z4Rnan5b3Ch2cS0gU_i3LyWmsjk77fHQI3PPBmZpBvG6AmSIEQ>
-    <xmx:iUq-Z4xvQo5c88fYTtEIWR_rG-KqTejovQsUTj99hPMKjxSpJ2rwcw>
-    <xmx:iUq-Z-7idwCF4A80qDqbnF9fWHAQIiuMa1O1-TB0OYGv-4ERW48MWA>
-    <xmx:iUq-Z9wE8_KnJS0qdqKYEgPjTAnyEEsYpAnNLD-HHVWyoNPN1_uicQ>
-    <xmx:iUq-Z7y-O0Wiqn2xnMvva0lANV8_5T49i8yW9qCUWFLhUtW_Jw4-NyNJ>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Feb 2025 17:56:08 -0500 (EST)
-Date: Tue, 25 Feb 2025 23:56:05 +0100
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Subject: Re: [PATCH v2 0/6] media: renesas: vsp1: Add support for IIF
-Message-ID: <20250225225605.GA2676269@ragnatech.se>
-References: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=afM2fg3VJ00ZGH8cQWGKsHp/ixeC+ux29UD78Yj6bTXIL87TrVVx98TdVSggbK+Gs1lnjDW3xOPz/2TK8U2CoHQOw3FOLMSw0lXOKjTWdr97b81IjoyzH3WleW/ROOoVdQT84bQJLUZkZtfzZCvPTS0nXyMSbRt7sQP0bPl2WXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tn3s4-0000tz-9u; Tue, 25 Feb 2025 23:57:48 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1tn3s3-002qjR-2f;
+	Tue, 25 Feb 2025 23:57:47 +0100
+Received: from pengutronix.de (p5b164285.dip0.t-ipconnect.de [91.22.66.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 808E33CBDC8;
+	Tue, 25 Feb 2025 22:57:47 +0000 (UTC)
+Date: Tue, 25 Feb 2025 23:57:47 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Eduard Zingerman <eddyz87@gmail.com>
+Cc: Chris Ward <tjcw01@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	linux-kernel@vger.kernel.org, Chris Ward <tjcw@uk.ibm.com>, bpf@vger.kernel.org
+Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
+Message-ID: <20250225-radical-piquant-tench-4d2588-mkl@pengutronix.de>
+References: <CAC=wTOhhyaoyCcAbX1xuBf5v-D=oPjjo1RLUmit=Uj9y0-3jrw@mail.gmail.com>
+ <CAC=wTOgrEP3g3sKxBfGXqTEyMR2-D74sK2gsCmPS2+H-wBH6QA@mail.gmail.com>
+ <20250225-gay-awesome-copperhead-502cd2-mkl@pengutronix.de>
+ <397970e484d2d0c1e0649d78cc723fbe3ad2ad5f.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4eimhjfg3mx4uc63"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
+In-Reply-To: <397970e484d2d0c1e0649d78cc723fbe3ad2ad5f.camel@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
 
-Thanks for your work.
+--4eimhjfg3mx4uc63
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: eBPF verifier does not load libxdp dispatcher eBPF program
+MIME-Version: 1.0
 
-On 2025-02-24 21:19:40 +0100, Jacopo Mondi wrote:
-> The IIF (ISP InterFace) is a VSP2 function that reads data from
-> external memory using two RPF instances and feed it to the ISP.
-> 
-> The IIF support is modeled in the vsp1 driver as a new, simple,
-> entity type.
-> 
-> IIF is part of VSPX, a version of the VSP2 IP specialized for ISP
-> interfacing. To prepare to support VSPX, support IIF first by
-> introducing a new entity and by adjusting the RPF/WPF drivers to
-> operate correctly when an IIF is present.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> ---
-> Changes in v2:
-> - Collect tags
-> - Address review comments from Laurent, a lot of tiny changes here and
->   there but no major redesign worth an entry in the patchset changelog
+On 25.02.2025 10:21:11, Eduard Zingerman wrote:
+> On Tue, 2025-02-25 at 16:55 +0100, Marc Kleine-Budde wrote:
+> > On 23.01.2023 12:35:41, Chris Ward wrote:
+> > > The 5.15.0 kernel (built by 'git checkout v5.15' from the kernel.org
+> > > torvalds tree) fails in the same way that the 6.2.0-rc5+ kernel fails.
+> > > So it seems that something Canonical did for the Ubuntu 20.04 kernel
+> > > causes eBPF to work correctly.
+> > >
+> > > On Mon, 23 Jan 2023 at 11:06, Chris Ward <tjcw01@gmail.com> wrote:
+> > > >
+> > > > I am trying to use the 'bleeding edge' kernel to determine whether a
+> > > > problem I see has already been fixed, but with this kernel the eBPF
+> > > > verifier will not load the dispatcher program that is contained wit=
+hin
+> > > > libxdp. I am testing kernel commit hash 2475bf0 which fails, and the
+> > > > kernel in Ubuntu 22.04 (5.15.0-58-generic) works properly. I am
+> > > > running the test case from
+> > > > https://github.com/tjcw/bpf-examples/tree/tjcw-explore-sameeth ; to
+> > > > build it go to the AF_XDP-filter directory and type 'make', and to =
+run
+> > > > it go to the AF_XDP-filter/runscripts/iperf3-namespace directory and
+> > > > type 'sudo FILTER=3Daf_xdp_kern PORT=3D50000 ./run.sh' .
+> > > > The lines from the run output indicating the failure are
+> > > > libbpf: prog 'xdp_dispatcher': BPF program load failed: Invalid arg=
+ument
+> > > > libbpf: prog 'xdp_dispatcher': -- BEGIN PROG LOAD LOG --
+> > > > Func#11 is safe for any args that match its prototype
+> > > > btf_vmlinux is malformed
+> > > > reg type unsupported for arg#0 function xdp_dispatcher#29
+> > > > 0: R1=3Dctx(off=3D0,imm=3D0) R10=3Dfp0
+> > > > ; int xdp_dispatcher(struct xdp_md *ctx)
+> > > > 0: (bf) r6 =3D r1                       ; R1=3Dctx(off=3D0,imm=3D0)
+> > > > R6_w=3Dctx(off=3D0,imm=3D0)
+> > > > 1: (b7) r0 =3D 2                        ; R0_w=3D2
+> > > > ; __u8 num_progs_enabled =3D conf.num_progs_enabled;
+> > > > 2: (18) r8 =3D 0xffffb2f6c06d8000       ; R8_w=3Dmap_value(off=3D0,=
+ks=3D4,vs=3D84,imm=3D0)
+> > > > 4: (71) r7 =3D *(u8 *)(r8 +0)           ; R7=3D1
+> > > > R8=3Dmap_value(off=3D0,ks=3D4,vs=3D84,imm=3D0)
+> > > > ; if (num_progs_enabled < 1)
+> > > > 5: (15) if r7 =3D=3D 0x0 goto pc+141      ; R7=3D1
+> > > > ; ret =3D prog0(ctx);
+> > > > 6: (bf) r1 =3D r6                       ; R1_w=3Dctx(off=3D0,imm=3D=
+0)
+> > > > R6=3Dctx(off=3D0,imm=3D0)
+> > > > 7: (85) call pc+140
+> > > > btf_vmlinux is malformed
+> > > > R1 type=3Dctx expected=3Dfp
+> > > > Caller passes invalid args into func#1
+> > > > processed 84 insns (limit 1000000) max_states_per_insn 0 total_stat=
+es
+> > > > 9 peak_states 9 mark_read 1
+> > > > -- END PROG LOAD LOG --
+> > > > libbpf: prog 'xdp_dispatcher': failed to load: -22
+> > > > libbpf: failed to load object 'xdp-dispatcher.o'
+> > > > libxdp: Failed to load dispatcher: Invalid argument
+> > > > libxdp: Falling back to loading single prog without dispatcher
+> > > >
+> > > > Can this regression be fixed before kernel 6.2 ships ?
+> >
+> > I'm seeing the same failure on 32 bit ARM on v6.13.
+> >
+> > Have you found a solution?
 
-I'm still no expert on the VSP1 but the changes looks good, so FWIW.
+> When I try the link from the discussion:
+> https://github.com/tjcw/bpf-examples/tree/tjcw-explore-sameeth
+> I get a 404 error from github.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+I'm have the same error as Chris Ward wrote in their original mail. But
+I'm using the xdp-tutorial's [1] basic01-xdp-pass/xdp_pass_user example.
 
-I also tested this with the ISP and it all works as expected,
+[1] https://github.com/xdp-project/xdp-tutorial.git
 
-Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+This is my error message.
 
-> 
-> ---
-> Jacopo Mondi (6):
->       media: vsp1: Add support IIF ISP Interface
->       media: vsp1: Clean FRE interrupt status
->       media: vsp1: dl: Use singleshot DL for VSPX
->       media: vsp1: rwpf: Break out format handling
->       media: vsp1: rwpf: Support RAW Bayer and ISP config
->       media: vsp1: rwpf: Support operations with IIF
-> 
->  drivers/media/platform/renesas/vsp1/Makefile      |   2 +-
->  drivers/media/platform/renesas/vsp1/vsp1.h        |   3 +
->  drivers/media/platform/renesas/vsp1/vsp1_dl.c     |   7 +-
->  drivers/media/platform/renesas/vsp1/vsp1_drv.c    |  14 ++-
->  drivers/media/platform/renesas/vsp1/vsp1_entity.c |   8 ++
->  drivers/media/platform/renesas/vsp1/vsp1_entity.h |   1 +
->  drivers/media/platform/renesas/vsp1/vsp1_iif.c    | 133 ++++++++++++++++++++++
->  drivers/media/platform/renesas/vsp1/vsp1_iif.h    |  26 +++++
->  drivers/media/platform/renesas/vsp1/vsp1_pipe.c   |   1 +
->  drivers/media/platform/renesas/vsp1/vsp1_pipe.h   |   1 +
->  drivers/media/platform/renesas/vsp1/vsp1_regs.h   |   8 ++
->  drivers/media/platform/renesas/vsp1/vsp1_rpf.c    |  18 ++-
->  drivers/media/platform/renesas/vsp1/vsp1_rwpf.c   | 110 ++++++++++++++++--
->  drivers/media/platform/renesas/vsp1/vsp1_wpf.c    |  14 ++-
->  14 files changed, 327 insertions(+), 19 deletions(-)
-> ---
-> base-commit: b2c4bf0c102084e77ed1b12090d77a76469a6814
-> change-id: 20250123-v4h-iif-a1dda640c95d
-> 
-> Best regards,
-> -- 
-> Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
-> 
+| sudo ./xdp_pass_user -d lan0
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: prog 'xdp_dispatcher': BPF program load failed: Invalid argument
+| libbpf: prog 'xdp_dispatcher': -- BEGIN PROG LOAD LOG --
+| btf_vmlinux is malformed
+  ^^^^^^^^^^^^^^^^^^^^^^^^
 
--- 
-Kind Regards,
-Niklas Söderlund
+Now I understand, what this error message wants to tell me. I should
+recompile my kernel with CONFIG_DEBUG_INFO_BTF=3Dy.
+
+| 0: R1=3Dctx() R10=3Dfp0
+| ; int xdp_dispatcher(struct xdp_md *ctx) @ xdp-dispatcher.c:118
+| 0: (bf) r6 =3D r1                       ; R1=3Dctx() R6_w=3Dctx()
+| ; __u8 num_progs_enabled =3D conf.num_progs_enabled; @ xdp-dispatcher.c:1=
+20
+| 1: (18) r8 =3D 0xc3b45cc8               ; R8_w=3Dmap_value(map=3Dxdp_disp=
+=2Erodata,ks=3D4,vs=3D124)
+| 3: (71) r7 =3D *(u8 *)(r8 +2)           ; R7_w=3D1 R8_w=3Dmap_value(map=
+=3Dxdp_disp.rodata,ks=3D4,vs=3D124)
+| 4: (b7) r0 =3D 2                        ; R0_w=3D2
+| ; if (num_progs_enabled < 1) @ xdp-dispatcher.c:123
+| 5: (15) if r7 =3D=3D 0x0 goto pc+136      ; R7_w=3D1
+| ; ret =3D prog0(ctx); @ xdp-dispatcher.c:125
+| 6: (bf) r1 =3D r6                       ; R1_w=3Dctx() R6_w=3Dctx()
+| 7: (85) call pc+135
+| btf_vmlinux is malformed
+| R1 type=3Dctx expected=3Dfp
+| Caller passes invalid args into func#1 ('prog0')
+| processed 7 insns (limit 1000000) max_states_per_insn 0 total_states 0 pe=
+ak_states 0 mark_read 0
+| -- END PROG LOAD LOG --
+| libbpf: prog 'xdp_dispatcher': failed to load: -22
+| libbpf: failed to load object 'xdp-dispatcher.o'
+| libxdp: Failed to load dispatcher: Invalid argument
+| libxdp: Falling back to loading single prog without dispatcher
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| Success: Loading XDP prog name:xdp_prog_simple(id:118) on device:lan0(ifi=
+ndex:4)
+
+
+With the CONFIG_DEBUG_INFO_BTF=3Dy kernel the verifier seems to be more
+happy. Now it fails with "-22":
+
+| sudo ./xdp_pass_user -d lan0
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: prog 'xdp_pass': BPF program load failed: Invalid argument
+| libbpf: prog 'xdp_pass': -- BEGIN PROG LOAD LOG --
+| Extension programs should be JITed
+| processed 0 insns (limit 1000000) max_states_per_insn 0 total_states 0 pe=
+ak_states 0 mark_read 0
+| -- END PROG LOAD LOG --
+| libbpf: prog 'xdp_pass': failed to load: -22
+| libbpf: failed to load object 'xdp-dispatcher.o'
+| libxdp: Compatibility check for dispatcher program failed: Invalid argume=
+nt
+| libxdp: Falling back to loading single prog without dispatcher
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| Success: Loading XDP prog name:xdp_prog_simple(id:20) on device:lan0(ifin=
+dex:4)
+
+
+After unloading and enabling the JIT...
+
+| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
+=97) echo 1 |sudo tee /proc/sys/net/core/bpf_jit_enable                    =
+              =20
+
+=2E.. the dispatcher fails to load with "524". Yes, the number is
+positive.
+
+| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
+=97) sudo ./xdp_pass_user -d lan0 --unload-all
+| Success: Unloading XDP prog name: xdp_prog_simple
+| =E2=9E=9C (pts/0) frogger@riot:xdp-tutorial/basic01-xdp-pass (main=E2=9C=
+=97) sudo ./xdp_pass_user -d lan0            =20
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| libxdp: Compatibility check for dispatcher program failed: Unknown error =
+524
+| libxdp: Falling back to loading single prog without dispatcher
+| libbpf: elf: skipping unrecognized data section(7) xdp_metadata
+| Success: Loading XDP prog name:xdp_prog_simple(id:48) on device:lan0(ifin=
+dex:4)
+
+strace indicates this syscalls fails:
+
+| bpf(BPF_RAW_TRACEPOINT_OPEN, {raw_tracepoint=3D{name=3DNULL, prog_fd=3D17=
+}}, 16) =3D -1 ENOTSUPP (Unknown error 524)
+
+I'm on a armv7l, i.e. a 32 bit ARM system. Maybe I'm missing some kernel
+option or BPF_RAW_TRACEPOINT_OPEN is not supported on armv7l. Will look
+deeper into the kernel config options tomorrow.
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--4eimhjfg3mx4uc63
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEn/sM2K9nqF/8FWzzDHRl3/mQkZwFAme+SugACgkQDHRl3/mQ
+kZym9QgAhImQR2nv2LbKQCYUtfl8kx4lC3rP4M/Zf4YR9P9qBIqShfyAMDBEMDrx
+m4c3OUPTugMDtYO6JLQM7A+SgCSn0lPkrj+yaygZb0f8YSvCNy8Z4PALaMm2R6wO
+dnY+DL0ysv1ECc0e3F0fhZSqxda1Dzxfi4KPOVHAfhLrij6ET+fQBggpKes567Kv
+5qruYFCqxj67v6e0qINB59Q/qFi280cUO9KmcXYe1aqgp2e1I36eqKkgMD6FQc/p
+PDjImetj6Gp92p3KXQW7oU3EW7EDSqNAHewyy9rH6+AcaTfmwDVD76fZJ5Y+ocm3
+5uvddOsEquEz9AAACpR4ZRCllCYuNg==
+=AB+9
+-----END PGP SIGNATURE-----
+
+--4eimhjfg3mx4uc63--
 
