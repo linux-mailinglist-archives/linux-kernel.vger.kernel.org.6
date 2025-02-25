@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-531471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE9A1A440FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:38:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D21A440E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:35:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C497C1644CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35CF189C92A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C36C26982D;
-	Tue, 25 Feb 2025 13:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AEA269891;
+	Tue, 25 Feb 2025 13:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="RbZyabTS"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WtvwuQgZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0B526A0AB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D5AD268FF8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:30:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740490212; cv=none; b=lc9NklyMClWj8XWM34bU8MULYs7aB9eqZgSoFWizMgRAvPCLfbTlzk9vIKHFMYlIgP2B0Fl6Je5zHj6i3jee21fx9ooKR2yanhh9ZBh2b4p8f5dy4nvu7bDAZIJzv+mCIdjdHzJdc+D0/G8g9QmYisH5VFzer8AeKfcMDJA0Fgc=
+	t=1740490249; cv=none; b=FnsIgxt4UUajpnA4ZC4POBAKCNdWo2vjfY7S+wYyfgoJWd/ELfS3Uyxg3DQ0ok0lYldhZfKYzpzl1tNbQ2KSmqoW3LPpxPPzaaBZU0H/Dg110xJ7+j4jTvsHEhxvlXdqdKa/kEY4zUGl+XiSsI5fo8fCyEzoxw63OsH91nTMB+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740490212; c=relaxed/simple;
-	bh=hvLj0F4Uwm40bxLfNRVMTVx2jzkCvz6JcDf1yH4Ju1Q=;
+	s=arc-20240116; t=1740490249; c=relaxed/simple;
+	bh=wuAI4vGUijPnTtk+36Nugk8Q7ab8WJXds5NIWN/WtzI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AWT3lVbH7fKQkFGD7uEVc7UXJ1rnYfaDDbmlpsh5zSjFaA/jKZG0oo1fnnEqAMxFYsg+CQPZHrJjeVfQWKYMn6TuIu3lo4CCNmyQU8vuDg/UtTAfFgV6SDMWjhfoL5VQABF/pLvyWhOWmC2KkJplDCHoOy/72PY5qhTiSJSQM04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=RbZyabTS; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abb7520028bso749786666b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:30:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1740490209; x=1741095009; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FWPAKB8cSPuv3a8g0C1bOw8Zay5mwFkNm0SF2AsIuEQ=;
-        b=RbZyabTSnrz9r84fjBO10x8bHkBJaQaMnhl2FqSeyxsPXLPEjyGU8yBFo25wa2a8kc
-         Q4q5Lgmr3JgrRItPy3hKveqN7yzjHCX85oLRVq2BELG+XnecdKnjQ88Phz9+WG577KMX
-         5b3+kOY22Hd+jgNZuBLPR/8IPlYFEkJUIrR09ttu0rZLbJPjad4JBtdH5wHcg3vA6U6u
-         YsJi24IXOolHpdnPlAGjyisZn+SZEeM4QwmhXYrWSnio/CMY9qae/8bkx1K3PWvKoVQe
-         aD8u36rZGDuqARWgqz4yOqE+UOjd0EzwpmOdHKOH/8gc/BTVQd79eIlMO2+ncNDEfH1W
-         ZmBA==
+	 In-Reply-To:Content-Type; b=mN0Rxwwpa2YlYC8gcXx9Wocl1pH7Myoe1J28vbhNtC3abN/6HTLxIUU2AKiyecN4iEtHaUwH+NAXMtJ70AGgauo4E1WndXJPZmC5p4WS5OiHp5D9XXbkdSPJN/48l4C0bSndH+uyQ7jKTTJzeba81pg11bwcNV1jAqEHKZI92TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WtvwuQgZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PAUp3T030657
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:30:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Bc2n7N6LrsSsfLdU3/CSzOVYKaVednS4e8P74t418mI=; b=WtvwuQgZGtD64t41
+	mgEe4Tqxw7EW+UyAISwxO0LXyEOLQG5xtf+9F6+xkYBeY6idvcooff0a3abOENmt
+	deyGZ+hdIInNWPx8bljVYuJnRx+kk6nn504F2cYtB48X60cxeo4XMOtZLA+Ttm1I
+	R6JaLz84dpH4ANeZzgOdr4JSpWNQZj7XSsuJuQaFoavAQWx1przf6Er+h4v8Q5wK
+	Sre9sEx0JwQN4t2S0Hmi1WgsvOOu/w+os5RYn0ZIoFz05jCJ5s54odgy1gN6uXXD
+	UH2PkyYp0BiVCXwrpRIdxm2oOWqUhh0nuZMpmR5Xj0v78O6oTEm+sLeTNJ3pXu0p
+	S76wjQ==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 450kqg566f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:30:46 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e66e017ea4so7154256d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:30:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740490209; x=1741095009;
+        d=1e100.net; s=20230601; t=1740490245; x=1741095045;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWPAKB8cSPuv3a8g0C1bOw8Zay5mwFkNm0SF2AsIuEQ=;
-        b=Uc/aImIE1XfWIv340BV2CEkhidzz0v0N6ei7+LopndVqvGmam8gZMtWhfxYfupaFrD
-         BcY685KP9HbnfMnvi8VQmYn7VJT6foeKsFTnl9wuuEigKmZlF1Va566P4JZgOaLdgCxy
-         fl9BxXGmj1bNohTh90ikCjWb04to/GArDMCPpaqcoMki7eoza4i7K9S5RRtXHuu3K7Ns
-         q21GYuR8Lk4VFqCkSHTCs8AdS6UblRbv5lIDk00ijdL42W7PFNpHt+T3yPP4kEzBqAvD
-         f9dwOHkbhvLHOQ7wG4ogMv9aRywMOq6mg7JydQpOPuP3pP1qSKH3W4oGgfRG1TILN/bW
-         BJqA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1vCKIWlC8eru3ONaRyXLdml++F9hVNUluNKsPPvW3n9RW8DXoYzuEVNnJed6loWlC1wR6gMme35nfSJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt3Eeux6Nt/G4j4YDeNo3XW2sy8WlXyUrb2FSCB1RpNfBn1ZUK
-	tdtBOM9Nso/Lme+coYkKmGAq1DqAy2fk2azYLE6Ztj3Ik709kNXEsQj5lXndh+k=
-X-Gm-Gg: ASbGncsGBOA6hgvC1Eg4Uykb0TR+ieUEtLsImHywBTIRrJGdFMaYTfzygMFsfANpUAi
-	KZWad4yDkp6miiin/sAnnVpdE15doYc5OSgvCJmA6xyuutbClLFnyR4tRM1/Is3CWlgZBtiFU+D
-	nFujLeTyudfDJqakzqwhF5LEQ9f9QE/5kF19AOA8b2B0EwF4lAAnySKiiazxG4vNpWzSw+wJAf/
-	zKQxl6YEizihXuKMN8uS8Vv/18gWM4WcoKnB7Hc5PHpma/3e2OTfoPDts12LgAZnCdpfAreG7W/
-	P2bNogVscMGM/+Rhde+sHTmOvAj0QIqR2vALA1SweZ10lJ87Kj7DbZhT1g==
-X-Google-Smtp-Source: AGHT+IGt1d9HYoncPo/XlY2JEaN6xcouJm1b6mDBrkdkRB6XvWdMBX+M9vXDwh/uV+eQuDAPmnCDIA==
-X-Received: by 2002:a17:907:9722:b0:aab:daf9:972 with SMTP id a640c23a62f3a-abc09ac1bd0mr1636694466b.28.1740490208363;
-        Tue, 25 Feb 2025 05:30:08 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed204f6edsm139335666b.128.2025.02.25.05.30.07
+        bh=Bc2n7N6LrsSsfLdU3/CSzOVYKaVednS4e8P74t418mI=;
+        b=U5FNUJN9+Fg4ZrpPGQDfiWiEJWHNBsIhgSsNrYaxvHRrCmdobF5+i64x/LBDZxxnw4
+         ZVHANamGXpcFCF2UqT+FQGzARyguw9e2MhmSFf0nnZcUIxWfH+/kTf4Z45eVLmiKQAUG
+         wnxCP1BnZyR8a3ejvHce95biqvwIWGImuB0rvj7aI8eUWNLXiMsfLnAiUuZdIPtcOi9O
+         6rzTrslVMFUPnw2wyI8Fpjij48Gw3HM416OD0iNWd9W4UjPUhJ0sUPnmlm9xMUoGPkvs
+         94GAaEHKaX4XQxIxi6hh+g3PTy+sN7bAcFAbcZOHd+zoVu3qrWqm8KsHLhEVJoBYutHK
+         w28A==
+X-Forwarded-Encrypted: i=1; AJvYcCVMsdERYbha1kNxyEgL2hiFsRMIRerkor7WSMI89hnUNoC858xm2usa1t1nRWmm/PpC3mAXcrm2+6SoMP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/+2aYeRsgdNQXn/KXIGSmw6Xuj4fMGI9tR9onoHa6Cw/34ot
+	B/IDGctv8FbQ2iNZZ0+j+6adOkMIDOJc+i7Y8upXOTstSoROurkmy4EDTeahZpuLVAuMoNSRXji
+	YdwiU6uMgnW/8b83xbsfQOxWIcwnRCLLeOiqs6QaUBJ/BbRnIQtAv6mNg4GLVSaM=
+X-Gm-Gg: ASbGncvWNyLa20SSsnvS/FcJ0p8+cKRmH0cwwa1XmsJlab2xqQDMe0U0/BGarebTo6+
+	uzjF2sLIZEr6IDXQC3EbnyPGE2gK1igoaXY4nfhNqrR5HStw7iwOsNIrDk1uIYDIUzfs3TxswWU
+	j3m4z7PCKF6GLjTYOer2Gxm0+XL/DJl5BXLiOdNDmB/zVIwbHZFC9lfibq1qcGAedCbPpz9bjeV
+	xrd4P3ynq2h3KAB2ukXK2WE06dp0kFz2Odm5BzQ11Mvsy1OIwtj8K39P8+InDHxFooPmaJhv4x4
+	9znu8dhUI3EwhygOCa7VLjdHDBpEK7sq80moNA36hU9vh6NhEgVL1uTC/nGUosJJHOqcwQ==
+X-Received: by 2002:a05:6214:c4b:b0:6e4:3caf:c9aa with SMTP id 6a1803df08f44-6e6ae80129amr87622526d6.3.1740490244850;
+        Tue, 25 Feb 2025 05:30:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHlvs30Bcej2ehUoX5uYBPU/0u/U41vnUBagzU9ehas+iea8IpGY9brXOMrEMFxTREYhyjkBg==
+X-Received: by 2002:a05:6214:c4b:b0:6e4:3caf:c9aa with SMTP id 6a1803df08f44-6e6ae80129amr87621916d6.3.1740490243814;
+        Tue, 25 Feb 2025 05:30:43 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed2054d7esm141970366b.136.2025.02.25.05.30.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 05:30:07 -0800 (PST)
-Message-ID: <72827395-743d-488f-af12-39eead3a0650@blackwall.org>
-Date: Tue, 25 Feb 2025 15:30:06 +0200
+        Tue, 25 Feb 2025 05:30:43 -0800 (PST)
+Message-ID: <b81fb350-f680-4e50-8cab-89c93f733bfc@oss.qualcomm.com>
+Date: Tue, 25 Feb 2025 14:30:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,108 +88,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net 1/3] bonding: move mutex lock to a work queue for
- XFRM GC tasks
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
- Jarod Wilson <jarod@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Cosmin Ratiu <cratiu@nvidia.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250225094049.20142-1-liuhangbin@gmail.com>
- <20250225094049.20142-2-liuhangbin@gmail.com>
- <a658145a-df99-4c79-92a2-0f67dd5c157b@blackwall.org>
- <Z73CBzgTVucuOMMb@fedora>
+Subject: Re: [PATCH v2 1/3] arm64: dts: qcom: sm8650: add OSM L3 node
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Sibi Sankar <quic_sibis@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250211-topic-sm8650-ddr-bw-scaling-v2-0-a0c950540e68@linaro.org>
+ <20250211-topic-sm8650-ddr-bw-scaling-v2-1-a0c950540e68@linaro.org>
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <Z73CBzgTVucuOMMb@fedora>
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250211-topic-sm8650-ddr-bw-scaling-v2-1-a0c950540e68@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: cO6-lUWWGXElNAjD4c6R7wK4iilQ-Myy
+X-Proofpoint-ORIG-GUID: cO6-lUWWGXElNAjD4c6R7wK4iilQ-Myy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_04,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 spamscore=0 clxscore=1015 mlxlogscore=793
+ adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250092
 
-On 2/25/25 15:13, Hangbin Liu wrote:
-> On Tue, Feb 25, 2025 at 01:05:24PM +0200, Nikolay Aleksandrov wrote:
->>> @@ -592,15 +611,17 @@ static void bond_ipsec_del_sa(struct xfrm_state *xs)
->>>  	real_dev->xfrmdev_ops->xdo_dev_state_delete(xs);
->>>  out:
->>>  	netdev_put(real_dev, &tracker);
->>> -	mutex_lock(&bond->ipsec_lock);
->>> -	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
->>> -		if (ipsec->xs == xs) {
->>> -			list_del(&ipsec->list);
->>> -			kfree(ipsec);
->>> -			break;
->>> -		}
->>> -	}
->>> -	mutex_unlock(&bond->ipsec_lock);
->>> +
->>> +	xfrm_work = kmalloc(sizeof(*xfrm_work), GFP_ATOMIC);
->>> +	if (!xfrm_work)
->>> +		return;
->>> +
->>
->> What happens if this allocation fails? I think you'll leak memory and
->> potentially call the xdo_dev callbacks for this xs again because it's
->> still in the list. Also this xfrm_work memory doesn't get freed anywhere, so
->> you're leaking it as well.
+On 11.02.2025 1:56 PM, Neil Armstrong wrote:
+> Add the OSC L3 Cache controller node.
 > 
-> Yes, I thought this too simply and forgot free the memory.
->>
->> Perhaps you can do this allocation in add_sa, it seems you can sleep
->> there and potentially return an error if it fails, so this can never
->> fail later. You'll have to be careful with the freeing dance though.
-> 
-> Hmm, if we allocation this in add_sa, how to we get the xfrm_work
-> in del_sa? Add the xfrm_work to another list will need to sleep again
-> to find it out in del_sa.
-> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
 
-Well, you have struct bond_ipsec and it is tied with the work's lifetime
-so you can stick it there. :)
-I haven't looked closely how feasible it is.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
->> Alternatively, make the work a part of struct bond so it doesn't need
->> memory management, but then you need a mechanism to queue these items (e.g.
->> a separate list with a spinlock) and would have more complexity with freeing
->> in parallel.
-> 
-> I used a dealy work queue in bond for my draft patch. As you said,
-> it need another list to queue the xs. And during the gc works, we need
-> to use spinlock again to get the xs out...
-> 
-
-Correct, it's a different kind of mess. :)
-
->>
->>> +	INIT_WORK(&xfrm_work->work, bond_xfrm_state_gc_work);
->>> +	xfrm_work->bond = bond;
->>> +	xfrm_work->xs = xs;
->>> +	xfrm_state_hold(xs);
->>> +
->>> +	queue_work(bond->wq, &xfrm_work->work);
->>
->> Note that nothing waits for this work anywhere and .ndo_uninit runs before
->> bond's .priv_destructor which means ipsec_lock will be destroyed and will be
->> used afterwards when destroying bond->wq from the destructor if there were
->> any queued works.
-> 
-> Do you mean we need to register the work queue in bond_init and cancel
-> it in bond_work_cancel_all()?
-> 
-> Thanks
-> Hangbin
-
-That is one way, the other is if you have access to the work queue items then
-you can cancel them which should be easier (i.e. cancel_delayed_work_sync).
-
-Regardless of which way you choose to solve this (gc or work in bond_ipsec), there will
-be some dance to be done for the sequence of events that will not be straight-forward.
-
-Cheers,
- Nik
-
+Konrad
 
