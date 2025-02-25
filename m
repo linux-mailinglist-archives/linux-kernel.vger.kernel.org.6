@@ -1,111 +1,83 @@
-Return-Path: <linux-kernel+bounces-532584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BB2A44F8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:07:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC861A44F8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3682B19C24FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:08:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C0E23AE4C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0AA2210180;
-	Tue, 25 Feb 2025 22:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED54F211A31;
+	Tue, 25 Feb 2025 22:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="mYYa5x6n"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uh3uiWde"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D8E19415E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5704E19415E;
+	Tue, 25 Feb 2025 22:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740521272; cv=none; b=iGnL8Xf/sA//jexgCoHnMico4k7uUyshjCoyhcqL2654Z2fcCdRSbsN9sOuAOC3lXC+m/G8sLQmrmmQdnqvO3OSOpXkErBPUqyXuB2xmvyLQCZuYRVWRX91jM+XsW6aHnWu0ko2eFVnb+hGX86cua9lq0Q6/CuaOrstqPqhk3KQ=
+	t=1740521280; cv=none; b=W8CyXpLWXeFbsPdPfH3lfoMqWGIqr8kcCZy9YbU6gcyjjjnkNq+dKAaZ881+6dxu7Jc6IxgqDRrvn2nP6QsmnetGqExLeOh3jvljyfKdfs1ISClzjoJmuWJF1zMS7eJkikPkyl/Yb9yrGqrHeUs+U9/I3R5I+H7qyYLdOKj/Bec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740521272; c=relaxed/simple;
-	bh=ba0j2m9trbko/enX/FXNnTMvVwBjeGanAzmodk9Ois4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VuEnV0aoXHNxQjFPpiU0Ri+CQVeStoQ3Z5DBj2hYKgQkUCOxhus1cQrRwrliX4h6cbzz2B7zRZEYbZQhaCRGe1DRBNayIh/mueEKMrVhhdeRiFbDsE/+0yR+KlYPQabepsBN2uJG5OD27rKojASLl08xsnXD8C8KdrCmlbbcq2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=mYYa5x6n; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9y5sTKYEXLQagcrQ08sowh0qtFj8xpcMz2E6G6v/6/w=; b=mYYa5x6nqhBuI09Hs4BwIXoyme
-	BEl+PH9xRCyB3e6jQJu2QydrZ6WGmEeLV29u7ZUKGy9aErUM8gIQTLHJZl2JzfPCMatot48tIF9MZ
-	TqGoegyZqDL6BgKJekpCqJyCq+AItqpL1WUrBYyMaXhqhA1vxJvR2bkONd5LzuML6iJj2LplatPok
-	XYfWpaewm0Ovlg6pXQvkTNsjuKvSYg9VXKxfyg6hgRuiZkUDQ/PfHGuhxBkFnBeNGs313a/p7EZW2
-	CyELE4ZinuHnn2toOFlBM8b7i30e2U/n6DfMvlDztb1JF4Wi4w9YKlJXqd49kkjnMjEUqGAGIiZci
-	G6B68apQ==;
-Received: from i53875b47.versanet.de ([83.135.91.71] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tn35c-0008Bd-Ut; Tue, 25 Feb 2025 23:07:44 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org
-Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- quentin.schulz@cherry.de, sebastian.reichel@collabora.com,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject:
- Re: [PATCH 2/2] phy: rockchip: usbdp: re-init the phy on orientation-change
-Date: Tue, 25 Feb 2025 23:07:44 +0100
-Message-ID: <10951990.zapYfy813O@diego>
-In-Reply-To: <20250225184519.3586926-3-heiko@sntech.de>
-References:
- <20250225184519.3586926-1-heiko@sntech.de>
- <20250225184519.3586926-3-heiko@sntech.de>
+	s=arc-20240116; t=1740521280; c=relaxed/simple;
+	bh=0NcnfcWnvhmaN3XeVuV1OJeIKLaEyYNHBl+5GykE8Xo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YaEYom1MnZZ3ka2B2hDAICcONLUuCZzXljnw/fyLPF4zFO7rs7cBtIcr+Iz3Ag4Z7E6IrN6Y4h+eRHoHjxVx5vEEYbZfIDwIPPFUPr1cBBzUHu4B06BBV5qeAVJr4FkMNIZSeyHJyY6SMv9NFii+Oq8BVVK0fV2fterP6EudPXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uh3uiWde; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9347C4CEDD;
+	Tue, 25 Feb 2025 22:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740521279;
+	bh=0NcnfcWnvhmaN3XeVuV1OJeIKLaEyYNHBl+5GykE8Xo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Uh3uiWdef72dvl149o9u47xcNbMbLPVbdtdmwTLVcK85olNQSjF6ATId68LBsI/eL
+	 DylIN94K8lz6mH6rBJ/xN2SfqgCM1GMuK2rbZh5s6S5iD1spmN/2cmeafJa5A912r7
+	 EeLph/5AxQX1eH0Rwx5jblpCrAlgVE4F8ATtB0AKRGeLEpgTczqjKM3attTazZ2hTK
+	 4mNdgM6LCNQKiBbKx+Ib1qKhzL+vHPG4wZNXC0nM0ot18fEHoWL6+5z5dliV/sUXZQ
+	 8VVsTsWBHQUG+8eLBbdYl/kX5vwd2fh9UtZSxdRsyDlkmDNgIvp0c6ypahdWWp7COI
+	 Q1wuY9hVh8ggQ==
+Date: Tue, 25 Feb 2025 23:07:53 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Lyude Paul <lyude@redhat.com>
+Cc: rust-for-linux@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] rust/faux: Add missing parent argument to
+ Registration::new()
+Message-ID: <Z74_OalguCdq8uqU@pollux>
+References: <20250225213112.872264-1-lyude@redhat.com>
+ <20250225213112.872264-3-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225213112.872264-3-lyude@redhat.com>
 
-Am Dienstag, 25. Februar 2025, 19:45:19 MEZ schrieb Heiko Stuebner:
-> diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> index 7b17c82ebcfc..b63259a90d85 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> @@ -1277,6 +1277,7 @@ static int rk_udphy_orien_sw_set(struct typec_switch_dev *sw,
->  				 enum typec_orientation orien)
->  {
->  	struct rk_udphy *udphy = typec_switch_get_drvdata(sw);
-> +	int ret = 0;
->  
->  	mutex_lock(&udphy->mutex);
->  
-> @@ -1292,6 +1293,12 @@ static int rk_udphy_orien_sw_set(struct typec_switch_dev *sw,
->  	rk_udphy_set_typec_default_mapping(udphy);
->  	rk_udphy_usb_bvalid_enable(udphy, true);
->  
-> +	/* re-init the phy if already on */
-> +	if (udphy->status != UDPHY_MODE_NONE) {
-> +		rk_udphy_disable(udphy);
-> +		ret = rk_udphy_setup(udphy);
-> +	}
-> +
+On Tue, Feb 25, 2025 at 04:29:01PM -0500, Lyude Paul wrote:
+> A little late in the review of the faux device interface, we added the
+> ability to specify a parent device when creating new faux devices - but
+> this never got ported over to the rust bindings. So, let's add the missing
+> argument now so we don't have to convert other users later down the line.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-just realized that 
-
-	if (udphy->status != UDPHY_MODE_NONE)
-		ret = rk_udphy_init(udphy);
-
-does the same, and we really don't need to disable and re-enable the
-phy's clocks that are the added via rk_udphy_disable and _setup.
-
-So will give it a day and send a v2 then.
-
-
-Heiko
-
-
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
