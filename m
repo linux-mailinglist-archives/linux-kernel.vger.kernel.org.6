@@ -1,180 +1,206 @@
-Return-Path: <linux-kernel+bounces-531971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BADFA44714
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:57:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8893A4472A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:01:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8771899D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:57:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5B8424ADF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E946199EAF;
-	Tue, 25 Feb 2025 16:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD6116CD33;
+	Tue, 25 Feb 2025 16:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TRV4ZQYc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkMW0v+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F954188733
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:56:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFBE21ABC4;
+	Tue, 25 Feb 2025 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740502561; cv=none; b=hvyobP6FF2kGLYn990kOA0LWmX1DbtZ4OqqOjj1GxA5R5bIqroBLukrwyJiKlTpy+zNYJ5h0nv6ZMolfaQ/Z8ij/C6t+hr5OTQ2hvZAk4/JDYgXHfjpf2r/KMR4v1eumJOQxjEg2oHVvEOkcFXMT4E+w4ZzJgsq94beyrYlo9Nw=
+	t=1740502672; cv=none; b=AWRMq7MsnYKhaekt+U1Pls1X7hhUBvto1osx0/JUQ90DTipWeeiiNkqk9H5PHGaHdbXXhsYTcbDwiaFO2To2XKgKJZCipin3K5ws5Q6kp7QvqONBxoY8l48/PT9Jr7LU/MXeZsbJNqAklJwGywASb21oZtvS/tcQa547TaQPpN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740502561; c=relaxed/simple;
-	bh=nQ44Bzpza4hhTa9otIjinjm0k/20MprTjt+HR8ATJQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uWVav7N88au3ni0K1MPy84VYPMGaJNTJm2/SUA5u+LsI4CDrqC4IhIOrLR0rVU9gKXKoprtOuEkWv5w9qRF9XJ42uvQJQahNSBQy6gjylQdiOSCUZ81K5ZN2OQxVLuu+fhurbzT76xgC4CB64bXi2Ey8A2AgcYo+3xmQ219bVyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TRV4ZQYc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740502559;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=gc6nQtNUWZYE/MaGMWTUUIeNQ1kSqCMg8WjpiOLHoso=;
-	b=TRV4ZQYcrNaRTgolF/UExLUgXwKYGtaGIe620OzT0Ph1weMaAZSQPiW6urDm3E/oBi3wk+
-	SDh7k1Ex70MzOCL7o0g/Ya0+PbaWYoFWpKXhBmNub0eugf1N8hblTksB65ZGLdWRXSSVIy
-	WjJwNqdFLvDcAJHWv3asyspPRKL+isE=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-615-GksYvmNZPVWl9tknKKdoMw-1; Tue, 25 Feb 2025 11:55:57 -0500
-X-MC-Unique: GksYvmNZPVWl9tknKKdoMw-1
-X-Mimecast-MFC-AGG-ID: GksYvmNZPVWl9tknKKdoMw_1740502557
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43947979ce8so25516265e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:55:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740502557; x=1741107357;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gc6nQtNUWZYE/MaGMWTUUIeNQ1kSqCMg8WjpiOLHoso=;
-        b=IjgXZQY8x0D2IZ58Nyo5g+dMoLKudLDgk9R7ZU1hACMNAnStuyYIo4a/fkHAhJ/2v6
-         t7Bi8WmKPkj1uw9rkoVdHtBeXYvQocyw2rSwylC5pV3cqsvO6EzhR/0BlVTBTUAwK1AW
-         OrlNa263tsv3pvwWLs6z6V22fD+9Xg4dCm/uT0fh59Tm+W5A6rUACSqS7gpMrDh+I5Eb
-         Rm6Q4EVYeIomNxQOf0vh9guMiiY2P+DACM9MCeWE2Yw10DrCtgXnE1ZjpK708xrIDvOW
-         xGyBA8+0csS/mJiSNQZws9RXuV5/Vm9zaRKxAjhg4BOLqDdN42Z5DPNmuxzOPLkPVL60
-         ELqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnv2BJxYiCimO+8M41g/aquCsHh3FutgVhWC8+5y4OaxsJv4JDAtBSTettwwvcu+x4jbAu/gAJ23/8TBA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcg6+prtT1S+w9h070mCOQazEk1GOUT9VB4KOm6E7UfcawT8Nx
-	oXCS3je72EwnOJTwYqKAXAB4FR0PyGQP4Fb8Ufv2HiakUZC5eXjLTDFl8WmySuyyYBXz49o72A4
-	w7Fz4WcfWY62ebOf5e9hCm8JnkIeEfshMN+f8JKWa26z7I1pUljhKcyxe+ZvK/w==
-X-Gm-Gg: ASbGncvg1fU85PpLZ3fDVID4NNZeHD64P/03JNg1Sg82CT96AjgtP0x61//eww5wgpp
-	i2CahJ40WmmJeaey8BkrdPUe1+pYyOO6RD21GwCVVXHGSTweB3LnWFHpftYoXvy7kP/B7G9b0we
-	LI3VX6Z+OBMLJjkNYUKEeZWuu8ctRZLu6HSDQ2SdH3hPZwO9p3N3bOfeoybmCsxLLAb3ZhxVBHK
-	6fW5GhtZaHVajYvlG4Cecz/vJ2fYAQrDy/+/klPfzouXTGS2RbnrBGNLmtqIJ/kRuX5CSqas+5A
-	vimkZLF3mSF5UPOu4cnovyK4DN87WspXhG8vwZrb6ITL7nehkjrWw6r5E/faXGQySx3MVQ47rZz
-	qrvktUO2E1/NcvVstaaZrJa4ITzu1irsx4Q8/azZC3PQ=
-X-Received: by 2002:a05:600c:1396:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-439ae1d9a2dmr164242615e9.2.1740502556780;
-        Tue, 25 Feb 2025 08:55:56 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEzE/g/wzyX4nO+TszgBSun1B7uE43oREDnV0UH0oQHkzl3BhbsKqcoCLgqarg7oHx6lgcPEw==
-X-Received: by 2002:a05:600c:1396:b0:439:88bb:d02d with SMTP id 5b1f17b1804b1-439ae1d9a2dmr164242175e9.2.1740502556358;
-        Tue, 25 Feb 2025 08:55:56 -0800 (PST)
-Received: from ?IPV6:2003:cb:c73e:aa00:c9db:441d:a65e:6999? (p200300cbc73eaa00c9db441da65e6999.dip0.t-ipconnect.de. [2003:cb:c73e:aa00:c9db:441d:a65e:6999])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-439b02ce60asm149821775e9.7.2025.02.25.08.55.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 08:55:55 -0800 (PST)
-Message-ID: <ce3ce109-f38a-4053-808b-5cc75257f3f7@redhat.com>
-Date: Tue, 25 Feb 2025 17:55:53 +0100
+	s=arc-20240116; t=1740502672; c=relaxed/simple;
+	bh=qadF+V0pCnFQNycLz+FvUseJRs1YmaEo0AdSamAZ7zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KxmgXXy3yIrjnXVmpOZ9Qxc/MBswewwXIgYpdIq/5vOFQgq38CsizEdhbHctWhydRfkLHjal65fLVualib7rtF8aIMjCkUqsZIbrcF3tsAP8DNbxn03UggHGxUXR0urceGVXmFoNH+CaK/ew0h7SYnj2vey39CgKK7lQknysd1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkMW0v+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0296CC4CEDD;
+	Tue, 25 Feb 2025 16:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740502671;
+	bh=qadF+V0pCnFQNycLz+FvUseJRs1YmaEo0AdSamAZ7zg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SkMW0v+iW9ctHfiu3Qcq3SQLpY+OEbUio/MjSX4deqcR6Bpb87ooZrB7Y68V22dxG
+	 dZWzG9Zwfh6lhxscJsRHGaoivs+A6QRXF1cJYH3uolKkA1X3dhc97KkH0RdAuAAgTc
+	 DxRVBFCGdY4IxaAYv6LVoFpU2r7Xr8KxMoaT44tXGbW/GPJAV016sGnFxWZDmLHBpw
+	 jyedUAZIzFE2Dm4We9hmaY5F02LucYFBFcwgXSHxhEPF1rdk4CY2bmoXE/aSrq5a4t
+	 vvis4/fewAytbGhaOO9fIAxwmvRbs4RGxRhglxoUay349tnmAzfIEEkhbCK1ZrQG9l
+	 mkUTAPEtDa75g==
+Date: Tue, 25 Feb 2025 18:57:46 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
+Message-ID: <20250225165746.GH53094@unreal>
+References: <c93a253b24701513dbeeb307cb2b9e3afd4c74b5.1737271118.git.leon@kernel.org>
+ <20250225160542.GA507421@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/12] KVM: Add capability to discover
- KVM_GMEM_NO_DIRECT_MAP support
-To: Patrick Roy <roypat@amazon.co.uk>, rppt@kernel.org, seanjc@google.com
-Cc: pbonzini@redhat.com, corbet@lwn.net, willy@infradead.org,
- akpm@linux-foundation.org, song@kernel.org, jolsa@kernel.org,
- ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
- john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
- vbabka@suse.cz, jannh@google.com, shuah@kernel.org, kvm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, tabba@google.com, jgowans@amazon.com,
- graf@amazon.com, kalyazin@amazon.com, xmarcalx@amazon.com,
- derekmn@amazon.com, jthoughton@google.com
-References: <20250221160728.1584559-1-roypat@amazon.co.uk>
- <20250221160728.1584559-5-roypat@amazon.co.uk>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250221160728.1584559-5-roypat@amazon.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225160542.GA507421@bhelgaas>
 
-On 21.02.25 17:07, Patrick Roy wrote:
-> Add a capability to let userspace discover whether guest_memfd supports
-> removing its folios from the direct map. Support depends on guest_memfd
-> itself being supported, but also on whether KVM can manipulate the
-> direct map at page granularity at all (possible most of the time, just
-> arm64 is a notable outlier where its impossible if the direct map has
-> been setup using hugepages, as arm64 cannot break these apart due to
-> break-before-make semantics).
+On Tue, Feb 25, 2025 at 10:05:42AM -0600, Bjorn Helgaas wrote:
+> On Sun, Jan 19, 2025 at 09:27:54AM +0200, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> > 
+> > The Vital Product Data (VPD) attribute is not readable by regular
+> > user without root permissions. Such restriction is not needed at
+> > all for Mellanox devices, as data presented in that VPD is not
+> > sensitive and access to the HW is safe and well tested.
+> > 
+> > This change changes the permissions of the VPD attribute to be accessible
+> > for read by all users for Mellanox devices, while write continue to be
+> > restricted to root only.
+> > 
+> > The main use case is to remove need to have root/setuid permissions
+> > while using monitoring library [1].
 > 
-> Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
-> ---
+> As far as I can tell, this is basically a device identification
+> problem, which would be better handled by the Vendor, Device, and
+> Revision IDs.  If that would solve the problem, it would also make
+> standard unprivileged lspci output more specific.
 
-Not sure how KVM folks handle that, but I suspect we would just want to 
-squash that into the previous commit,
+Yes, unfortunately these devices have same IDs as "regular" NICs and the
+difference in some FW configuration.
 
--- 
-Cheers,
+> 
+> VPD has never been user readable, so I assume you have some existing
+> method for device identification?
 
-David / dhildenb
+We always read VPD by using "sudo ..." command, until one of our customers
+requested to provide a way to run monitoring library without any root access.
+It runs on hypervisor and being non-root there is super important for them.
 
+> 
+> Other concerns raised in previous threads include:
+> 
+>   - Potential for sensitive information in VPD, similar to dmesg and
+>     dmidecode
+> 
+>   - Kernel complexity of reading VPD (mutex, address/data registers)
+> 
+>   - Performance and potential denial of service as a consequence of
+>     mutex and hardware interaction
+> 
+>   - Missing EEPROMs or defective or incompletely-installed firmware
+>     breaking VPD read
+> 
+>   - Broken devices that crash when VPD is read
+
+This patch allows non-root read for Mellanox (NICs) devices only and
+such access is going to be used only once during library initiation
+flow. So nothing from above is applicable in our case.
+
+In general case, all devices in the world were accessed at least once
+with "sudo lspci ....", during their bringup, installation, daily use
+e.t.c. Broken devices are filtered by kernel and have limited access
+to VPD.
+
+So if it is broken, it will be broken with sudo too.
+
+> 
+>   - Potential for issues with future Mellanox devices, even though all
+>     current ones work fine
+
+It is not different from any other feature. MLNX devices exist for more
+than 25 years already and we never exposed anything sensitive through VPD.
+
+I'm confident that we have no plans to change this policy in the future
+either.
+
+> 
+> This is basically similar to mmapping a device BAR, for which we also
+> require root.
+
+It is kernel controlled exposure, through well defined sysfs file and
+in-kernel API for very specific PCI section. Device BAR is much more
+than that.
+
+Thanks
+
+> 
+> > [leonro@vm ~]$ lspci |grep nox
+> > 00:09.0 Ethernet controller: Mellanox Technologies MT2910 Family [ConnectX-7]
+> > 
+> > Before:
+> > [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+> > -rw------- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
+> > After:
+> > [leonro@vm ~]$ ls -al /sys/bus/pci/devices/0000:00:09.0/vpd
+> > -rw-r--r-- 1 root root 0 Nov 13 12:30 /sys/bus/pci/devices/0000:00:09.0/vpd
+> > 
+> > [1] https://developer.nvidia.com/management-library-nvml
+> > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+> > ---
+> > Changelog:
+> > v4:
+> >  * Change comment to the variant suggested by Stephen
+> > v3: https://lore.kernel.org/all/18f36b3cbe2b7e67eed876337f8ba85afbc12e73.1733227737.git.leon@kernel.org
+> >  * Used | to change file attributes
+> >  * Remove WARN_ON
+> > v2: https://lore.kernel.org/all/61a0fa74461c15edfae76222522fa445c28bec34.1731502431.git.leon@kernel.org
+> >  * Another implementation to make sure that user is presented with
+> >    correct permissions without need for driver intervention.
+> > v1: https://lore.kernel.org/all/cover.1731005223.git.leonro@nvidia.com
+> >  * Changed implementation from open-read-to-everyone to be opt-in
+> >  * Removed stable and Fixes tags, as it seems like feature now.
+> > v0: https://lore.kernel.org/all/65791906154e3e5ea12ea49127cf7c707325ca56.1730102428.git.leonro@nvidia.com/
+> > ---
+> >  drivers/pci/vpd.c | 7 +++++++
+> >  1 file changed, 7 insertions(+)
+> > 
+> > diff --git a/drivers/pci/vpd.c b/drivers/pci/vpd.c
+> > index a469bcbc0da7..c873ab47526b 100644
+> > --- a/drivers/pci/vpd.c
+> > +++ b/drivers/pci/vpd.c
+> > @@ -332,6 +332,13 @@ static umode_t vpd_attr_is_visible(struct kobject *kobj,
+> >  	if (!pdev->vpd.cap)
+> >  		return 0;
+> >  
+> > +	/*
+> > +	 * On Mellanox devices reading VPD is safe for unprivileged users,
+> > +	 * so just add needed bits to allow read.
+> > +	 */
+> > +	if (unlikely(pdev->vendor == PCI_VENDOR_ID_MELLANOX))
+> > +		return a->attr.mode | 0044;
+> > +
+> >  	return a->attr.mode;
+> >  }
+> >  
+> > -- 
+> > 2.47.1
+> > 
 
