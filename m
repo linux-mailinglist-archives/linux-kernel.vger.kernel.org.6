@@ -1,189 +1,125 @@
-Return-Path: <linux-kernel+bounces-532560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11C57A44F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:53:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F34F9A44F51
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:55:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF4273B359E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:52:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B5B7AA4FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D2212D83;
-	Tue, 25 Feb 2025 21:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EF4212B09;
+	Tue, 25 Feb 2025 21:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ce2SbEsp"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="hfal9T5n"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53C221171A;
-	Tue, 25 Feb 2025 21:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2EF5198A32;
+	Tue, 25 Feb 2025 21:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740520365; cv=none; b=T3xyvvAUiTlMNFdSfN8TnidHYnQnNU+5g4QeJ1DJ3FrG5yfmIVC3BEYliwE/JwiCNHpsXBlHVnVpXAERCIOEcjy3fOyny5ij3yeBHp5onMkWR3gI33fWFrq188nKu57m0tYC7SdLw+MKjwMuXW4yy1pKHlglwqW86OA1qJQPWD0=
+	t=1740520507; cv=none; b=TgahALl+NR6UTmWcpQ/owNTX0qLbcysIkCRShBvVdUpbespv+eM64q42SHNA1rCnDW9OSMG+W76+6+EufRV73wxk0LlV4RIi1Dsn8VbBOzDEE85MbMNjDKeZp4XDySDn6Doi/ZdnAp5CsoZfIEV/Wt3ggAGRENdUqckguWlRjso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740520365; c=relaxed/simple;
-	bh=8Y9rmuMcKl0zy+sdizyBBwu0pZypzvQMyyqv5Rrr5wA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RP6Ai2mAncDIyDP/nX/7+CCw5IQltHO2d/lWHxHq8zaDXBQYsTKYXro1vJd8HDe+Pg/Y6qkqX8gbT8+BPcgIwoIX1VWTMYCd5sbzSSd0i/O7NLgCy+VpXh4Mn7mu7yfynFsSjH9MIk9nSqMNfcLBmOgl0ABQIjb+3kMKVVplZPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ce2SbEsp; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fc1843495eso9080667a91.1;
-        Tue, 25 Feb 2025 13:52:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740520363; x=1741125163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BB6oxdGmdWsniKQ7DCrH6iIic1TMC3/1oTlo14itLWw=;
-        b=ce2SbEsp/QdQH/JpHXp1xvOydp2nu/y2qOcamvxuocd/FvsNUMhhiwgmBVgT7OqD4/
-         N8/EEHYnQ+yEXO/8CMi6C5KMAZBGsM9qLB00oea2i+zRgmhdproMSxtoZeYqXGx8WOhD
-         kW01pZ9P7ox+SRvekbn73c3HbXO80l1Hmlxezv0dKci7Y9sRmfdnCLlZzoFvaAp1x7o/
-         94zV/Jq4EBZ965Se/9X6ZS2tHN+fXlk28lZklnCCeMVjV+lkTv14YbMGxkCSM+ymqODS
-         w8rMS/uE4boqp2Ct+8SUKk7iifJbcPFjmLh3+WRw/BrqkvfSEmbE+nYLEqztaIpASRQW
-         Q/QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740520363; x=1741125163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BB6oxdGmdWsniKQ7DCrH6iIic1TMC3/1oTlo14itLWw=;
-        b=IWU56jiSTK78i9UFNuY1kUJLpphWF7oz92mbpBbU18ZvOZMXfctfjULWR7wa+Uuwva
-         zgR+U2SX4z8kWKmOZuV/fY0YnzKtwjeUnRWYyCdMbdAqeezZnCfPdgrKmgNtg6tjXY/W
-         BYGtvKWzCGFcorids1xecAHfB4M/EQnBhr+qhh0dbE5DeVTPY7wuEZ+0c1TobSJd2t/P
-         qFaey3IgerJTuKPdMPlPGXLfomVR2jaE/rsqa8UDhI5vfoQKqlZO1c4B8t0mu8SUuWlW
-         OhFHzCsZG8/NTR8ZJ++o5/KS9sGpQSAHdhl/7rIS9Maj+dyt5l7a0fi+TrYnl+dmzphS
-         QNNw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2tBcoWjdjyQV605szbQTGZA13JseVkyI6WB72wXui4yK9pPHTxZya52yqDSEmIe5tP6Y=@vger.kernel.org, AJvYcCUB1JaTbENCtFGFXNylSPOUikIN8qxL0ZAcbElIPk9KUgYE2v4nL/DPPx53fKuZzsbBin74quZB9WduKw==@vger.kernel.org, AJvYcCUKn8hk79Bbku9WHbBWJUt9u4cs+EnRQt+65nuq00ruXWHU6aQwd5+cPrRmBTb41/qSuDRmMH/OE3ymSxJWkfzT@vger.kernel.org, AJvYcCWZU6UoR+y0bgxSIbGgmTYjOMQtvda2JVOD9LeFy/RfUwHzofd48V328NjggsEGqkRYRxsdDojGrzVjzCZQ@vger.kernel.org, AJvYcCXrW0KqmFRvKwLROurFVxEdsIUV41Mw61K2Ifa/bvo4/dbd/zUjn98SKr0gEZXL45bT/8ovtKQHV3OO9VGu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxa492i5zt88HJ3Iuj1wOgPz2qnkCwTKM8xwSgoAyG32gdslcP+
-	T68xyr6M3vLsiEBIN7PfFrsQN8UPmiEr31VydrtzDzlow8L8HGjkfBSIZCQSXLlPGUpUGJ5CCTr
-	sCn9r5JJcRdJfxLnCZh1832oeshs=
-X-Gm-Gg: ASbGnctoXzsrVTkp4Bp7oiewCqiV/MoZNy0e602hnoGKkk2DXtEG7+tlSXVetcFZC7E
-	0P9Lgp/LGW8lfpf2Dgy3fbcYZcFz6FnxLv7m7y7Rs7qFNCPd55ohh+b+JqR0gROfeKgYtEiFOKr
-	h49ep9q3c2BG+Xd0Z+iYQq08A=
-X-Google-Smtp-Source: AGHT+IGRomNE8qud7Uu+5mcp3y45cfmiKLTBWoGo5gkppuz16rT0/tPr1Y4UqBxU2B1PV6obQyISvJoYI/p5wMgzZFs=
-X-Received: by 2002:a17:90b:5202:b0:2ee:bc7b:9237 with SMTP id
- 98e67ed59e1d1-2fce7b04f9bmr30219633a91.27.1740520362970; Tue, 25 Feb 2025
- 13:52:42 -0800 (PST)
+	s=arc-20240116; t=1740520507; c=relaxed/simple;
+	bh=KOaUpuobEYJa6FPJI2WuExOdYmMlPWWncrQ/Jha0ucE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EinIHlvaJC13/EOVDYoiFf1ZMMe5GofuBeUSQvAoL4wagQbbsqRjcfBnLZqChCKctxyHzyY88X12fLywWcUg0FF8pSMnck7w2V/opqBPli7RuQHJz6w12Pq8GP7eD55gsHoVMZzR7TvcPZUQNp0Y3TwNxGAMbAHUJmyQzE1kNRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=hfal9T5n; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1740520500;
+	bh=fA2zsdMbwAeLI5ZvHBc6b5RYSJ2cOjYBLDyph7IPDWg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hfal9T5nxHSpS8X9tO5ZiAmNoUUuFGQ8AAMSS2F7IeA9DBMPFRCO/0uietMMVC/sG
+	 0kN3NJPX9gKk5MArO1/1e7c8BX8rBqemRu1BzzTOlAhCn81bsziZENz1cp0/jL00RO
+	 yHD3wUcEaKe+VfFBJiWThw5qdd111i0ax4FFdrRI7WikwJPL8rxIeJJxGEPYi5Zszt
+	 AYOqaJA8TQQSbB0+32LtVCm447tW8D+Onw1QsSBK2QW370z6TEaXn5q5BIz4Rj4llz
+	 xLdC+cdkK7p9ioZOffYsu8JjexRc8fIH8gKPSW9hpTnqq6tkPZvmN7nSnHffcJizyp
+	 eqEBGxNo5SUfA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z2Wc30dVSz4x04;
+	Wed, 26 Feb 2025 08:54:59 +1100 (AEDT)
+Date: Wed, 26 Feb 2025 08:54:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: John Garry <john.g.garry@oracle.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Ingo Molnar <mingo@redhat.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Bart Van
+ Assche <bvanassche@acm.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
+Subject: Re: linux-next: manual merge of the scsi-mkp tree with the tip tree
+Message-ID: <20250226085435.50a140ab@canb.auug.org.au>
+In-Reply-To: <87h64hg6r7.ffs@tglx>
+References: <20250225153200.00773d86@canb.auug.org.au>
+	<a902ea86-132a-4b64-8710-575a798f1a18@oracle.com>
+	<87h64hg6r7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250207012045.2129841-1-stephen.s.brennan@oracle.com>
- <20250207012045.2129841-3-stephen.s.brennan@oracle.com> <CAADnVQLiyezBW34dhkwZw+mWmkFAYMZUdHbOa4uYCdPbgS10SQ@mail.gmail.com>
- <83a42276-22cc-4642-8ce6-7ef16fa93d9c@oracle.com>
-In-Reply-To: <83a42276-22cc-4642-8ce6-7ef16fa93d9c@oracle.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 25 Feb 2025 13:52:30 -0800
-X-Gm-Features: AWEUYZnYhl-iPxCkwOD_3RmI5SjMUyi3IqiNvLAQBYwML34ZoIPnPey0X-PqGl8
-Message-ID: <CAEf4BzYvFnqeZjNy_b_VP9DEpBaTMWuMAau8j6ZAWtgwcE5ysg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] btf: Add the option to include global variable types
-To: Alan Maguire <alan.maguire@oracle.com>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Stephen Brennan <stephen.s.brennan@oracle.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Kees Cook <kees@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Sami Tolvanen <samitolvanen@google.com>, Eduard Zingerman <eddyz87@gmail.com>, 
-	linux-arch <linux-arch@vger.kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
-	Jiri Olsa <jolsa@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Jann Horn <jannh@google.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Hao Luo <haoluo@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Arnd Bergmann <arnd@arndb.de>, Nathan Chancellor <nathan@kernel.org>, linux-debuggers@vger.kernel.org, 
-	Alexei Starovoitov <ast@kernel.org>, Song Liu <song@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 25, 2025 at 2:02=E2=80=AFAM Alan Maguire <alan.maguire@oracle.c=
-om> wrote:
->
-> On 07/02/2025 23:50, Alexei Starovoitov wrote:
-> > On Thu, Feb 6, 2025 at 5:21=E2=80=AFPM Stephen Brennan
-> > <stephen.s.brennan@oracle.com> wrote:
-> >> When the feature was implemented in pahole, my measurements indicated
-> >> that vmlinux BTF size increased by about 25.8%, and module BTF size
-> >> increased by 53.2%. Due to these increases, the feature is implemented
-> >> behind a new config option, allowing users sensitive to increased memo=
-ry
-> >> usage to disable it.
-> >>
-> >
-> > ...
-> >> +config DEBUG_INFO_BTF_GLOBAL_VARS
-> >> +       bool "Generate BTF type information for all global variables"
-> >> +       default y
-> >> +       depends on DEBUG_INFO_BTF && PAHOLE_VERSION >=3D 128
-> >> +       help
-> >> +         Include type information for all global variables in the BTF=
-. This
-> >> +         increases the size of the BTF information, which increases m=
-emory
-> >> +         usage at runtime. With global variable types available, runt=
-ime
-> >> +         debugging and tracers may be able to provide more detail.
-> >
-> > This is not a solution.
-> > Even if it's changed to 'default n' distros will enable it
-> > like they enable everything and will suffer a regression.
-> >
-> > We need to add a new module like vmlinux_btf.ko that will contain
-> > this additional BTF data. For global vars and everything else we might =
-need.
-> >
->
-> In this area, I've been exploring adding support for
-> CONFIG_DEBUG_INFO_BTF=3Dm , so that the BTF info for vmlinux is delivered
-> via a module. From the consumer side, everything looks identical
-> (/sys/kernel/btf/vmlinux is there etc), it is just that the .BTF section
-> is delivered via btf_vmlinux.ko instead. The original need for this was
-> that embedded folks noted that because in the current situation BTF data
-> is in vmlinux, they cannot enable BTF because such small-footprint
-> systems do not support a large vmlinux binary. However they could
-> potentially use kernel BTF if it was delivered via a module. The other
-> nice thing about module delivery in the general case is we can make use
-> of module compression. In experiments I see a 5.8Mb vmlinux BTF reduce
-> to a 1.8Mb btf_vmlinux.ko.gz module on-disk.
->
-> The challenge in delivering vmlinux BTF in a module is that on module
-> load during boot other modules expect vmlinux BTF to be there when
-> adding their own BTF to /sys/kernel/btf. And kfunc registration from
-> kernel and modules expects this also. So support for deferred BTF module
-> load/kfunc registration is required too. I've implemented the former and
-> now am working on the latter. Hope to have some RFC patches ready soon,
-> but it looks feasible at this point.
+Hi all,
 
-Lazy btf_vmlinux.ko loading when BTF is actually needed (i.e., when
-user reads /sys/kernel/btf/vmlinux for the first time; or when BPF
-program is validated and needs kernel BTF) would be great. Curious too
-see how all that fits together!
-
+On Tue, 25 Feb 2025 20:32:28 +0100 Thomas Gleixner <tglx@linutronix.de> wro=
+te:
 >
-> Assuming such an option was available to small-footprint systems, should
-> we consider adding global variables to core vmlinux BTF along with
-> per-cpu variables? Then vmlinux BTF extras could be used for some of the
-> additional optional representations like function site-specific data
-> (inlines etc)? Or are there other factors other than on-disk footprint
-> that we need to consider? Thanks!
-
-I'd keep BTF for variables separate from "core" vmlinux BTF. We can
-have /sys/kernel/btf/vmlinux.vars, which would depend on
-/sys/kernel/btf/vmlinux as a base BTF. Separately, we could eventually
-have /sys/kernel/btf/vmlinux.inlines which would also have
-/sys/kernel/btf/vmlinux as base BTF. If no one needs vmlinux.vars on
-the system, we won't need to waste memory on it. Seems more modular
-and extensible.
-
->
-> Alan
->
-> > pw-bot: cr
+> On Tue, Feb 25 2025 at 09:38, John Garry wrote:
 > >
->
+> > static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct=20
+> > scsi_cmnd *cmd)
+> > {
+> > 	struct sdebug_scsi_cmd *sdsc =3D scsi_cmd_priv(cmd);
+> > 	struct sdebug_defer *sd_dp =3D &sdsc->sd_dp;
+> >
+> > 	spin_lock_init(&sdsc->lock);
+> > 	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
+> > 		      HRTIMER_MODE_REL_PINNED);
+> > 	sd_dp->hrt.function =3D sdebug_q_cmd_hrt_complete; ***
+> > 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
+> >
+> >
+> > I guess that setting sd_dp->hrt.function explicitly, at *** above, is=20
+> > not needed (as hrtimer_setup()) does this. =20
+>=20
+> Correct. hrtimer_setup is enough.
+
+Thanks, I have updated my merge resolution.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAme+PBwACgkQAVBC80lX
+0GxDEQf+OIs7m12CrjF4Vp27eyc5zzcnhB3TpqslahusUaCwJyQX9ewMzpdOpCa0
+vg8H0i+4gs3HrJVOUKh41zpUr3SiqAOmfEbAlAPY/SRopulNzbhq2+25qfTmXmwf
+Lg2495AkLwmz45V5Edh5yAHWyGHERIayh06rO9VA7XFqMERrWfufcolQPlIQKAVV
++ubycHFztIlEx96fjcN04nTR9T45o+MlDa8SXeLGf5/L1GBWcpKFncxffECfoXms
+GkOO+BPyxrmpQYoxr+xlXQgdiOMa3iPfA1/wSrSECKYDrJQEM0wbSUhaFmLkNrwY
+ZOgY5jSRUmlhnleEk/Ex6I3K5ApdQA==
+=v6/I
+-----END PGP SIGNATURE-----
+
+--Sig_/=JQ4+YJ7Dc8tjQ+W8HjhzNz--
 
