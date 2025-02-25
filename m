@@ -1,172 +1,182 @@
-Return-Path: <linux-kernel+bounces-531752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16249A4446F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:31:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1815A44471
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54B0B1884BF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:30:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B676718908CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B28C268FC2;
-	Tue, 25 Feb 2025 15:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A106925771;
+	Tue, 25 Feb 2025 15:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yZFm787S"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="L8hsneJE"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFE426BDBF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC86290F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 15:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740497402; cv=none; b=hEtur+B/cCLRHrVnJy7GfOkdD1/Vdzt2e5rO3Bco2NLrwOOlvTyvdbKeEvbcqQiil5rJTce0w2hKuvR43li+CkPrcf+PaJHAvLltN1noVYGrCZR/mZZzSxI63VcONm+kvFYb4A/YRWI58nGIyB7hkdQ/6HULsMQ4UhjpimcZAhY=
+	t=1740497436; cv=none; b=WHnwVtFKQrG1scquXdZ4kKuBZaaQIwHj6glMV8kQmyfi5jIDl8Wcs6g6D3ijlTqgUDAmOlwFQ0a78NAlIGeuXYj4vpKWuEOMtdJ+oF/Dx2NNvN1oWjz4IdtaepKOEZq3PyR785nPVDGtmVQK4uvQyrWlDg7A89SN2vYch8DyDzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740497402; c=relaxed/simple;
-	bh=2t7x2tjKNw2qIHCtZTtrUlEyUmTO9R0TRnhffv1XEwM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jfgVD9TdczDu7HbA+eKPPidAXYzrp/UZHjbcn7PaIyfbG9AZgy5JekLJm8orrWJUG0yFy9Odn/ACbP0OzJJpkW2eNbR/EINW71wsNzH7VdJD7asI+Z17B6IX5eV2gGmCEgatH+oCWytnasf5f4G12bSJFp1tLINIylTngdSAKFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yZFm787S; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-438e4e9a53fso46035075e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:30:00 -0800 (PST)
+	s=arc-20240116; t=1740497436; c=relaxed/simple;
+	bh=IaKNOR+jJAMt3BEDuqUtFSYG0Yat04sYjFaoF4lMOyA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XeJBOfKuEEb5c61ZVxbq/arrsIltl7AxuBvdgt7EpvA7es2SZ64B+ZydHa1jSuseXCNoyFzTQY8Ub9WQeGpu10HEJ3TyomEeVzhyyRmAfeUYpSKM9dmb2v3OOAF11BSXWbM4tqqHVAO7NZbF1zgYtjj/9WsYvOzvTIeroinXcmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=L8hsneJE; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e549be93d5eso6184688276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 07:30:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740497399; x=1741102199; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLwoRANke7kr877qFcAfj/lJYQPtzdEo7Afw90Odwbs=;
-        b=yZFm787SImXmOE4/jgnBaC/RMffXZRgeq1wm3Eq1kXBio24R0gWa2UK24jjIGHV7nK
-         3UsjDy3NUJI+vMY5Zoq5wNMS2SZ6SIUQuIkJFev+kKzRNaJec03j9mqaC6QSSNh/cGld
-         jGoqDK/tMi3MkdlWIVoQDAxEE4Af5noK8fyBsUTcF2IlxlDtFsY/tTmcKIofz2RJ3pti
-         X5y78NOCAMb/PnSObmv40aWxKS6/MC8FGGEga7J0mel5n2cAGxHTUhmofrFZ32KykzED
-         SaWl/LVGA51ffemcusou2P2yxFWdH2jYrvImY6l6j/F8QVnZRiUXDRg+wGKd9t6bPnDB
-         Bx8w==
+        d=raspberrypi.com; s=google; t=1740497432; x=1741102232; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KwFIy+pfxKXbXFSW3tXFLJhNS2T5ZHeCg/y22PAaxLU=;
+        b=L8hsneJE5y8QHXQk5CGCnHufi+uvUEDcnBMHu8LTJ8HS5/YJMexlFYEU0KwVTJkBeV
+         joKtY6PLA7hOwx0g1QksVmcyHg21ZXdSVZZyEQhNAFqyJA35/2TtUdJ7DS+wcAg7zBci
+         ws7rpRttZuAX8sm9i7AZ/z6Ium2ZkhWvnl810vlxLe+vrE/K5XHul71LJPHotk9Sgdxy
+         UiWgbS1DzlDrc9cTO9akUqdRIM61HN0wL2TrmIlOmq9FurFgd11MrDELGd9dI0NcVduY
+         05fgXyeCOOIyrAl0P6v6QN/dagrWf12ew21v4l610QrKtk7RNDMraVLYKyJKoWcZdhRp
+         BncQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740497399; x=1741102199;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLwoRANke7kr877qFcAfj/lJYQPtzdEo7Afw90Odwbs=;
-        b=Km0QXNmNTUde/egQcY81+DUr3/8nAs7uPyVp+yn2+uRYXWef/pPDzrpQf7oSRez85S
-         P8ztbPWMykGsg917Cl9C9bTvcBfNNw1hmsNnfN90DIU0bzXD1fL0Ud2YC9/yD2DoS4tm
-         LEaAGqn/UkypnZJ8TkiGjWYV56AozIup4J9zUL56vKV9oSnrd/yCNV0k5/Lh4ANxlkGF
-         XY2nQBXQc2rWnrLKPAR+r0+UpXRd4pzPQRfgAJz4ZrhKboLSs29J8KPDcxRtu5SWGTen
-         w//8MXp8Bt3tBwdnRJ+wq1oFUY5ao38WR/dnrhyW7xwb8jy/XkEMEl8zZca8ybaevrMM
-         rrVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnQt3usjwSpD/b3/CGtZi11uJSLaYEIMSq0UwC1aiG+J1xt9GoJU+XmbFviTzqerO1knKFPfES72QI+yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8o0t0NxerlcXtb4XlYUjV6IiyvrhcZdJYARVYWpzRV/MCXSVn
-	DTgFqT9NE5Shi/4i/VAmSVAK8p3yJMz18TcFoAkYzYeeshZp2HeOW1zYPIr6OxP0IeycApIS/QW
-	yo268vfsMeA==
-X-Google-Smtp-Source: AGHT+IGO83dLwzMAW2+OSLdDNKSAMPRJx7wbGvVzqnB7FL9rEUp8ltEN+IEPBCHAKKIyLKaCJmNhINOp203v6A==
-X-Received: from wmbed10.prod.google.com ([2002:a05:600c:614a:b0:439:985c:9199])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1910:b0:439:98f6:8bc8 with SMTP id 5b1f17b1804b1-439aebcf61dmr138093215e9.26.1740497399462;
- Tue, 25 Feb 2025 07:29:59 -0800 (PST)
-Date: Tue, 25 Feb 2025 15:29:49 +0000
-In-Reply-To: <20250225-clarify-steal-v3-0-f2550ead0139@google.com>
+        d=1e100.net; s=20230601; t=1740497432; x=1741102232;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KwFIy+pfxKXbXFSW3tXFLJhNS2T5ZHeCg/y22PAaxLU=;
+        b=V6ZWwJrg2jrG9LK+/rjACFmxsej9l1hLRZpcC74d3RXFZ1e6hU1khGVkf2sIVe+yz8
+         OKhmODNqLomW0AsLJAk126ywga8DXYnrNhBNl87Tg6h8e2ccXTbc/uaLiB2ajP4gTNzO
+         meSneiJ3h4TpN4hNENGv4r2fD8Ih7jEqQIi/K3sSZBAjz4P9cfKema2N7nXTb5dlbVn1
+         hEhbVjWFBmK72ozdeJVb4AsQV3jetLfLFP5V8A5Bby2/YSrQM7w5WclcnOpMBmwx4oP+
+         IWxUhYmbjxGfEL9aLwuz8YyaLzaHj2zQPrI2JlMb0OysNffpr51pGCcJcDccX+7ZssZW
+         SIzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9JkcqZJXrdF4K1zvFrFraHXImIhzxHylmahfh+vgBAgEVvtml7mkotsGnlda2RVPr1kP0Wu03e2/ZCJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQUxoTFvkdvJ044XrEnze0r7NCAovG1IgRtOsO6W6FMjDPEUNk
+	LivUAtQ4dgOPL3GLEk3EnIjHsVJiQxyNGxlLalg9S3YLW8UOGmEryX1WOeVXWFhTywzRSkwI1QY
+	hQNPsRx/ZkEHbkxBxwkTb9yTJY1DhVJp6vxRiTRGg6i+VkX5F
+X-Gm-Gg: ASbGnctt2dk5kG3u9hlMhgeJ/iSF7Vct7gr/zMEs9zBTnwGndoe8MzYDtL/WBR+LnmZ
+	GtMHhmlwo39i2zOH3DG9NDmMyoncviqKEEbw9+hg71i1aCZ6iPeeJecrOIo2eruN4nNYL+LhdGV
+	PsgaFfIsGIg9/xamFYgd5XleQVXdQgim0p9JbKqbE=
+X-Google-Smtp-Source: AGHT+IF67EI0gNo1oQTwHhmZVcpbL4ZitqmXV46b+PzRbtROLKZwoilrpvSrY1kXE0u0S1BQog3YNexBmVYItvnDdOk=
+X-Received: by 2002:a05:6902:1706:b0:e60:782f:3a34 with SMTP id
+ 3f1490d57ef6-e607a4c9e5dmr2905768276.2.1740497432457; Tue, 25 Feb 2025
+ 07:30:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250225-clarify-steal-v3-0-f2550ead0139@google.com>
-X-Mailer: b4 0.15-dev
-Message-ID: <20250225-clarify-steal-v3-2-f2550ead0139@google.com>
-Subject: [PATCH v3 2/2] mm/page_alloc: Clarify should_claim_block() commentary
-From: Brendan Jackman <jackmanb@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Mel Gorman <mgorman@techsingularity.net>, 
-	Michal Hocko <mhocko@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>, 
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev> <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
+In-Reply-To: <20250225-b4-ov9282-gain-v1-3-a24af2820dde@linux.dev>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 25 Feb 2025 15:30:16 +0000
+X-Gm-Features: AQ5f1JqDNLQeYCXCr9B35EOsUjzzSxxxDQGLVzHslMJFFKWlkPxFWSjqna-ILMQ
+Message-ID: <CAPY8ntCLUVX91+QYbFk-bHQumuvs70CuDLe85VZRTS2wW-tYHw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] media: i2c: ov9282: fix analogue gain maximum
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-There's lots of text here but it's a little hard to follow, this is an
-attempt to break it up and align its structure more closely with the
-code.
+Hi Richard
 
-Reword the top-level function comment to just explain what question the
-function answers from the point of view of the caller.
+On Tue, 25 Feb 2025 at 13:09, Richard Leitner <richard.leitner@linux.dev> wrote:
+>
+> The sensors analogue gain is stored within two "LONG GAIN" registers
+> (0x3508 and 0x3509) where the first one holds the upper 5 bits of the
+> value. The second register (0x3509) holds the lower 4 bits of the gain
+> value in its upper 4 bits. The lower 4 register bits are fraction bits.
+>
+> This patch changes the gain control to adhere to the datasheet and
+> make the "upper gain register" (0x3508) accessible via the gain control,
+> resulting in a new maximum of 0x1fff instead of 0xff.
+>
+> As the "upper gain register" is now written during exposure/gain update
+> remove the hard-coded 0x00 write to it from common_regs.
+>
+> We cover only the "real gain format" use-case. The "sensor gain
+> format" one is ignored as based on the hard-coded "AEC MANUAL" register
+> configuration it is disabled.
+>
+> All values are based on the OV9281 datasheet v1.01 (09.18.2015).
 
-Break up the internal logic into different sections that can have their
-own commentary describing why that part of the rationale is present.
+My web searches turn up a 1.53 from Jan 2019 -
+http://www.sinotimes-tech.com/product/20220217221034589.pdf
+That lists 0x3508 as DEBUG, not LONG_GAIN.
 
-Note the page_groupy_by_mobility_disabled logic is not explained in the
-commentary, that is outside the scope of this patch...
+The current range allows analogue gain to x15.9375.
+Expanding it to 0x1ff.f would be up to x511.9375. I believe that
+equates to ~54dB as we're scaling voltages, not power. The spec sheet
+for the sensor lists S/N of 38dB and dynamic range of 68dB, so x511
+will be almost pure noise.
 
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
----
- mm/page_alloc.c | 39 +++++++++++++++++++++++----------------
- 1 file changed, 23 insertions(+), 16 deletions(-)
+Doing a very basic test using i2ctransfer to set gain values whilst
+the sensor is running suggests that the image is the same regardless
+of bits 2-4 of 0x3508. Setting either bits 0 or 1 increases the gain
+by around x8.5, but they don't combine.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 5e694046ef92965b34d4831e96d92f02681a8b45..475ec1284033acec69da4a39dd4e7d7fbaee6d0f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1941,16 +1941,9 @@ static inline bool boost_watermark(struct zone *zone)
- }
- 
- /*
-- * When we are falling back to another migratetype during allocation, try to
-- * claim entire blocks to satisfy further allocations, instead of polluting
-- * multiple pageblocks.
-- *
-- * If we are stealing a relatively large buddy page, it is likely there will be
-- * more free pages in the pageblock, so try to claim the whole block. For
-- * reclaimable and unmovable allocations, we claim the whole block regardless of
-- * page size, as fragmentation caused by those allocations polluting movable
-- * pageblocks is worse than movable allocations stealing from unmovable and
-- * reclaimable pageblocks.
-+ * When we are falling back to another migratetype during allocation, should we
-+ * try to claim an entire block to satisfy further allocations, instead of
-+ * polluting multiple pageblocks?
-  */
- static bool should_claim_block(unsigned int order, int start_mt)
- {
-@@ -1964,6 +1957,26 @@ static bool should_claim_block(unsigned int order, int start_mt)
- 	if (order >= pageblock_order)
- 		return true;
- 
-+	/*
-+	 * Above a certain threshold, always try to claim, as it's likely there
-+	 * will be more free pages in the pageblock.
-+	 */
-+	if (order >= pageblock_order / 2)
-+		return true;
-+
-+	/*
-+	 * Unmovable/reclaimable allocations would cause permanent
-+	 * fragmentations if they fell back to allocating from a movable block
-+	 * (polluting it), so we try to claim the whole block regardless of the
-+	 * allocation size. Later movable allocations can always steal from this
-+	 * block, which is less problematic.
-+	 */
-+	if (start_mt == MIGRATE_RECLAIMABLE || start_mt == MIGRATE_UNMOVABLE)
-+		return true;
-+
-+	if (page_group_by_mobility_disabled)
-+		return true;
-+
- 	/*
- 	 * Movable pages won't cause permanent fragmentation, so when you alloc
- 	 * small pages, you just need to temporarily steal unmovable or
-@@ -1972,12 +1985,6 @@ static bool should_claim_block(unsigned int order, int start_mt)
- 	 * and the next movable allocation may not need to steal.  Unmovable and
- 	 * reclaimable allocations need to actually claim the whole block.
- 	 */
--	if (order >= pageblock_order / 2 ||
--		start_mt == MIGRATE_RECLAIMABLE ||
--		start_mt == MIGRATE_UNMOVABLE ||
--		page_group_by_mobility_disabled)
--		return true;
--
- 	return false;
- }
- 
+Overall can I ask how you've tested that a range up to 0x1fff works,
+and on which module? I currently don't believe this works as intended.
 
--- 
-2.48.1.658.g4767266eb4-goog
+  Dave
 
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/i2c/ov9282.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index c882a021cf18852237bf9b9524d3de0c5b48cbcb..e6effb2b42d4d5d0ca3d924df59c60512f9ce65d 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -54,11 +54,11 @@
+>  #define OV9282_AEC_MANUAL_DEFAULT      0x00
+>
+>  /* Analog gain control */
+> -#define OV9282_REG_AGAIN       0x3509
+> -#define OV9282_AGAIN_MIN       0x10
+> -#define OV9282_AGAIN_MAX       0xff
+> -#define OV9282_AGAIN_STEP      1
+> -#define OV9282_AGAIN_DEFAULT   0x10
+> +#define OV9282_REG_AGAIN       0x3508
+> +#define OV9282_AGAIN_MIN       0x0010
+> +#define OV9282_AGAIN_MAX       0x1fff
+> +#define OV9282_AGAIN_STEP      0x0001
+> +#define OV9282_AGAIN_DEFAULT   0x0010
+>
+>  /* Group hold register */
+>  #define OV9282_REG_HOLD                0x3308
+> @@ -226,7 +226,6 @@ static const struct ov9282_reg common_regs[] = {
+>         {OV9282_REG_AEC_MANUAL, OV9282_GAIN_PREC16_EN},
+>         {0x3505, 0x8c},
+>         {0x3507, 0x03},
+> -       {0x3508, 0x00},
+>         {0x3610, 0x80},
+>         {0x3611, 0xa0},
+>         {0x3620, 0x6e},
+> @@ -605,7 +604,11 @@ static int ov9282_update_exp_gain(struct ov9282 *ov9282, u32 exposure, u32 gain)
+>         if (ret)
+>                 goto error_release_group_hold;
+>
+> -       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, gain);
+> +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN, 1, (gain >> 8) & 0x1f);
+> +       if (ret)
+> +               goto error_release_group_hold;
+> +
+> +       ret = ov9282_write_reg(ov9282, OV9282_REG_AGAIN + 1, 1, gain & 0xff);
+>
+>  error_release_group_hold:
+>         ov9282_write_reg(ov9282, OV9282_REG_HOLD, 1, 0);
+>
+> --
+> 2.47.2
+>
+>
 
