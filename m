@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-532638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3309A45022
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:31:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A48AA45025
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:31:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BDE1189A36A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:31:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E474188C2BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:31:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B78421422A;
-	Tue, 25 Feb 2025 22:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D42215172;
+	Tue, 25 Feb 2025 22:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jd9yjKfX"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jHGM+7S9"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A89718C32C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9182135B6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522514; cv=none; b=Bq6fzVXVGbvnIDDt8Odb8j3ZrmhkWBQ3NY1yPxahKMLcJ/r3Pce8zC9pigFdCE5UxronkDy9sEzHp5kRwzJencNMrb6WPN7ZZTUemiydqlwkIyDauTwmRNp1NWxXJNaIhfHHERuKWd9VNGUvT0op5etxsvIv5X+xKA0yUyT+pMs=
+	t=1740522529; cv=none; b=gBh3RBP9rpa61ao4KfHrp8XVVudCH6wYBafqW3K5OHrg6zqCw/zR9XpwDfk2jqQOl0A0UYck1+UTII7H5pIrnZ9gqlUKPCuLOIGCu3sa29DDDw8MdkkhwW/jYHnpXf/MFwrCStVEJb6y10LpEo8ubCs0i6eLQ9zGben5lxEzcsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522514; c=relaxed/simple;
-	bh=HJj0Yz5Lll+CiPhh7qmf+hpU1aku+LfYtxgi3IkOjCI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jVG3yalfiNq5MlIhVoXUWcOiPhCn4b+4vnULzrSNNOQw7DEterMIjav2xEJ/gglvT05mDbyWiMx9Q+Ysxo5xFfwXCrF0o2kRGYL4m3HJq/x2qM2CuODXqbPH1ZdKqFhfVfDKWmVqMDHsUkBsEG985M1/ETKgtd6TV7Kt3EwyMUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jd9yjKfX; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e67ce516efso49107956d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:28:33 -0800 (PST)
+	s=arc-20240116; t=1740522529; c=relaxed/simple;
+	bh=JpnNtM3ALYIN6NMVHSPc0tO/Xi12yjgAOZhMGdcbQN0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=V5YHqOS4KR/52a7PlSsztBuMfzf5pXrgmLSY2uphL9t+NAFYtRgP43SJPFpiz3CP86nyFRdOp9Yo6h+cljrprZMXt6DVI9qkqI5PIM1wncO7Tdl5/DVUqmGzllu6NPEMxuhH0vOTZliKQQMzHT/XY805n9hG5oq4s5qOWmbQAcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jHGM+7S9; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc46431885so20108912a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:28:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740522512; x=1741127312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d/vvYkyp7Hb/QOidIce1lg6CZDEUavwEmPlWHS0qFxI=;
-        b=Jd9yjKfXAToczzHo4+c+1PHLDwqaGubXipmY/cUkUVsKvQN9vgePb/ifKC0kAk8ekX
-         0iF4ttMRl9y6G41gHzz1X7Bfq5CfR9lTFGjC5jK9AWDDm1exNLq1zwFraNmoc9gRUAtP
-         28hQyinnRyECTBYNbeY48qmNck07MPg88BIHrnDwUXabutGEiOIN1OVRI9SgH73nRex4
-         UOftmgFDRltEqv3sRkjr30kkS0oMCCY1HyG1BIgJ1bmaC5CBO1n+xvtcyB0EzJytmdox
-         r+zxS2YpT6BFnX6Fv3ks5z2fOMEHcogFyfjTR8aytHzzIUKiDp8w6StVQpvVld8fbWHc
-         2ylQ==
+        d=google.com; s=20230601; t=1740522528; x=1741127328; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZ1g0mrUUxkUYLXEel+mk1QRtmfWBrQqVWukeD4l44w=;
+        b=jHGM+7S9+d9FoqpOcxU6ahtmLahb9lkHowAepW+B7hLQ7CDp4D7ZSfQxaraLOF1Pxl
+         ZDlzxL2HQN4L6vSjYAkY37L0gX8LpqmtGm7bobQlNP/iOqrGLqET+GHWbltlmRvzdGdr
+         HzeU35TzOKAqS2vXshmAJZPl5ya2o7l3seyj9WXGg24aqg5a7xsE236cCMBRsDAajGuF
+         ud0VSiKesGyK/N/+lZu3xCqNWA2R/nvePli+fVGDH4rPVcOm1lg5akCBR0/Xg47GaslS
+         Jeo9DQvoH4D306DGUREcCODU6tqoM1tqxuqvpgQPO86xgoFlg7wgiz7Xic6mGuat/kRY
+         dRJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740522512; x=1741127312;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d/vvYkyp7Hb/QOidIce1lg6CZDEUavwEmPlWHS0qFxI=;
-        b=UzTloqGZZAlMATKrY4aQId0bxdkmtrPFuo3NFpj8YneDCZVBZ7C9PZgE8uHT9a8RDN
-         cL6l5eOt6zIbso5wwilxvMeDLP7u4WRo2mXiHtKyAB0/L+06A/2E/vYtv6C7AigzKNeX
-         bdTUYfoZkCDJZEH7Y1HAmlYT8OsGqp/P2wCiLgNdKdrhGWyxx1xWQc0XyaccZzB1M+UT
-         J8zrYxuUdqVhRys3rpL5/X+J1BLCh/HwHq69Y1PfKpfo6jlE6BNzY/jyeBUvIcj/hztm
-         WPKz9zxRTqwH+IQHFjE29c0EMM2LMzvEgHFoLeVZUbG8v0yc/I1YTWD38UuEeCP9bp7u
-         y+tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8fYMn2TW7z429tdXSOweo56RkdQyGsL42zKhjatLSIbGNWX9B6iXZ4HBBGdkZs1+zGg1hz5Jy1UCjNvk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9HGqy3+XC7ceGQVXtQK1KrJPr53kke8HGPq+bsnQ7UVPJIT3T
-	jYTf1G/6KrDoFNMN1ggGTbbzn1JqCmg02KbNtt7ufePhmQ5DvhNBYy2uGQ6lNIrJl6aMOlGV89m
-	/Dd9T+S6sT5In0XkCXdfvDt27kFs=
-X-Gm-Gg: ASbGncs7cL2cZ72AWtzXKIoqks0KGES/BucrrPFd0g3r5JqMvqXi+QzjE8XorDrI6N0
-	4ehZtw2ahZa34SZ3orOLG9dwHXtognH+83y7nSXEVl4lYVgEa6WAjaNTe1tdPr2ynCfXcV2aCAW
-	WZjE3iqBAP5gnymIAZt67DocuvLu9pOers9VRgou0=
-X-Google-Smtp-Source: AGHT+IHz/Af49tTQvF2gXpTHPb6xQHIyiSN8wd7gJXeCwTVtHe0hucq8LVTvxWzrwI0Pz8Ltsf7x4kEfoV2c7SKEQ0A=
-X-Received: by 2002:a05:6214:484:b0:6e6:5d9a:9db4 with SMTP id
- 6a1803df08f44-6e886901dcamr16015806d6.41.1740522512399; Tue, 25 Feb 2025
- 14:28:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740522528; x=1741127328;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tZ1g0mrUUxkUYLXEel+mk1QRtmfWBrQqVWukeD4l44w=;
+        b=xAVEcRJWIuHiocF3CzyLOQchxICHpd+bB/mRUzk6FaN2+hNRLU3R5RGko/Vb/UDMuW
+         s0HyWSacpxUKOQXnC1Nmp6iG0sgXy2/t4QqBabkwNDwEgJ1apZCNyvLI8upm5G6nxo+A
+         jBuiKP/iDI6VhBRPLVU4qYTFWjCWxgrGHpBqNx9Lv9Dqo5VuLgkSnBSf0t7ld3kfHhhI
+         GUtkRMwK4C28YsqbzNDMmtiNjmS0WR5/I3rMHVE6Z4FYCdEhw+zdfV+SXdHuyVEG/x1w
+         hCN9iH3k9yq3/5ymj34DUgf8ypxXCD84BhVGsveDwGkvx2nQZwyBhPInnnjoxa2EFV3x
+         pDvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNWqceTmag90KD1hWanA7hB8Wv74SLM/20wOCkTT7y50CkhRdGQvd95Qaz/7f06uiTcEn6uZcDnLtdXsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeNv4iGXs1/sStFEJKv6I8YQcu64O2s/kmtxbTQnSftKGT4Ev0
+	Y3YsBWvA2U6HwgFDjfnc7JIIni7nfX2zF7jodZ4VmobRK/z/5ODbOaglMpy1rlt2ttZ5EKzOxMS
+	MCA==
+X-Google-Smtp-Source: AGHT+IHPMOLjqXDahjHXCs/m7LvJtLpfnNjXUG9EkPnxnpvT/GyZUXLxwNikQZw5S5HAHQIVkJ1YiRiJceU=
+X-Received: from pjbsg17.prod.google.com ([2002:a17:90b:5211:b0:2fa:2661:76ac])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1344:b0:2fa:2252:f438
+ with SMTP id 98e67ed59e1d1-2fce8740eb3mr29741371a91.30.1740522527792; Tue, 25
+ Feb 2025 14:28:47 -0800 (PST)
+Date: Tue, 25 Feb 2025 14:28:46 -0800
+In-Reply-To: <20250225213937.2471419-2-huibo.wang@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250225213200.729056-1-nphamcs@gmail.com> <20250225142518.cec35a0ea77a0d86f3e860c3@linux-foundation.org>
-In-Reply-To: <20250225142518.cec35a0ea77a0d86f3e860c3@linux-foundation.org>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Tue, 25 Feb 2025 14:28:20 -0800
-X-Gm-Features: AQ5f1JoxxuL2tZkp3XCjgAMe7HNqcE0g1hHNvRdYOmpLmlRy-y9P30uIFJX2xeI
-Message-ID: <CAKEwX=MuKwhnooRO4pHH_UqGStMdH5RHbxnYJtYmqLhBBE0StA@mail.gmail.com>
-Subject: Re: [PATCH] zswap: do not crash the kernel on decompression failure
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: hannes@cmpxchg.org, yosryahmed@google.com, chengming.zhou@linux.dev, 
-	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250225213937.2471419-1-huibo.wang@amd.com> <20250225213937.2471419-2-huibo.wang@amd.com>
+Message-ID: <Z75EHspU4ZPcqw0U@google.com>
+Subject: Re: [PATCH v5 1/2] KVM: SVM: Convert plain error code numbers to defines
+From: Sean Christopherson <seanjc@google.com>
+To: Melody Wang <huibo.wang@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, KVM <kvm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Paluri PavanKumar <pavankumar.paluri@amd.com>, Pavan Kumar Paluri <papaluri@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Feb 25, 2025 at 2:25=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Tue, 25 Feb 2025 13:32:00 -0800 Nhat Pham <nphamcs@gmail.com> wrote:
->
-> > @@ -984,12 +987,19 @@ static void zswap_decompress(struct zswap_entry *=
-entry, struct folio *folio)
-> >       sg_init_table(&output, 1);
-> >       sg_set_folio(&output, folio, PAGE_SIZE, 0);
-> >       acomp_request_set_params(acomp_ctx->req, &input, &output, entry->=
-length, PAGE_SIZE);
-> > -     BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &=
-acomp_ctx->wait));
-> > -     BUG_ON(acomp_ctx->req->dlen !=3D PAGE_SIZE);
-> > +     if (crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &aco=
-mp_ctx->wait) ||
-> > +                     acomp_ctx->req->dlen !=3D PAGE_SIZE) {
-> > +             ret =3D false;
-> > +             zswap_reject_decompress_fail++;
-> > +             pr_alert_ratelimited(
-> > +                     "decompression failed on zswap entry with offset =
-%08lx\n",
-> > +                     entry->swpentry.val);
-> > +     }
-> >       mutex_unlock(&acomp_ctx->mutex);
->
-> This mutex_unlock() isn't present in current kernels.  I'd normally just =
-fix
-> the reject but a change in the locking environment needs some careful
-> checking and retesting, please.
+On Tue, Feb 25, 2025, Melody Wang wrote:
+> Convert VMGEXIT SW_EXITINFO1 codes from plain numbers to proper defines.
+> 
+> No functionality changed.
+> 
+> Signed-off-by: Melody Wang <huibo.wang@amd.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> Reviewed-by: Pavan Kumar Paluri <papaluri@amd.com>
+> ---
+>  arch/x86/include/asm/sev-common.h |  8 ++++++++
+>  arch/x86/kvm/svm/sev.c            | 12 ++++++------
+>  arch/x86/kvm/svm/svm.c            |  2 +-
+>  3 files changed, 15 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/sev-common.h b/arch/x86/include/asm/sev-common.h
+> index dcbccdb280f9..3aca97d22cdc 100644
+> --- a/arch/x86/include/asm/sev-common.h
+> +++ b/arch/x86/include/asm/sev-common.h
+> @@ -211,6 +211,14 @@ struct snp_psc_desc {
+>  
+>  #define GHCB_RESP_CODE(v)		((v) & GHCB_MSR_INFO_MASK)
+>  
+> +/*
+> + * Error codes of the GHCB SW_EXITINFO1 related to GHCB input that can be
 
-Hah strange. I could have sworn I pulled the latest mm-unstable, but
-maybe the git pull failed and I didn't notice. Thanks for picking this
-up Andrew! Lemme re-pull and rebase.
+The use of "Error codes" is confusing due to a psuedo-conflict with the below
+comment for the "Error codes" for malformed input.
+
+On that topic, the comment for _those_ error codes is a bad example, and shouldn't
+be used as the basis for copy+paste.  Most notably, it doesn't explicitly state
+that the values are *defined* by the GHCB.
+
+> + * communicated back to the guest
+> + */
+> +#define GHCB_HV_RESP_NO_ACTION		0
+> +#define GHCB_HV_RESP_ISSUE_EXCEPTION	1
+> +#define GHCB_HV_RESP_MALFORMED_INPUT	2
+> +
+>  /*
+>   * Error codes related to GHCB input that can be communicated back to the guest
+>   * by setting the lower 32-bits of the GHCB SW_EXITINFO1 field to 2.
+
+Now that GHCB_HV_RESP_MALFORMED_INPUT is properly defined, this comment can refer
+to "malformed input (see above)" instead of open coding '2'.
 
