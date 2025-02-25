@@ -1,124 +1,85 @@
-Return-Path: <linux-kernel+bounces-530776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09234A43845
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:54:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FB8A4380B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D393B3C9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:53:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12B13AA0AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501A2264A95;
-	Tue, 25 Feb 2025 08:52:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="nC2GRX3W"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AEC425EF9C;
+	Tue, 25 Feb 2025 08:48:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F17C261364;
-	Tue, 25 Feb 2025 08:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D95325D55D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 08:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740473538; cv=none; b=t/HaAk8/8sUkSmzxXpQKCEtiesfwLq8ETTj8jhQHE1GMRQC6milnQmykDCemvM978vSsN57j2Nygpi1dcgPLyL3DHXFeKEkvmTz66JGXnt0ktqy21tXA9RPz9DTvfcSB/2wRV77EqqApKF8iv56ZjTxRwp4+xFB337n0WTNBeB8=
+	t=1740473287; cv=none; b=NN5q45q2hn8vWAig491o/LurrzprFQMn5DmHNHseWylnz36386o7UYSpnmgDmPVkL54rO0Dy8aDVqRVkkODNMY4jg/96sZQPTj+MsGHzQzNOpJfBJTdBHqdk4qw9lMwodHkslVXuL6aiyZFVoGeWZbvKP15vHNEWO6UhzEBVMxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740473538; c=relaxed/simple;
-	bh=HfehjW+Fe/Xy/uzYxRImEvw6aSJ00yfmPKS1OVbl28o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=rfDrAf2+2jMpWcoBqVmMQAogbjZ0PMqQo4vok5CV3cDWSGP4TKa46Pmf5PNltYME2GanfTF2J/CGI4d6JByhRT+wPLgJxXqXsSW8SOpf/Lhg1QA3TDye/JinMecwwv36osnaV+Ipcra7tlPNrlAyqSIPlQcWPhd/VM2Dm8iTsx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=nC2GRX3W; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51P7lqXA000766;
-	Tue, 25 Feb 2025 09:52:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	J2yxfbKgPGF9vwYBDWO/BnP5mUD9w8yyaZXb38xTgW8=; b=nC2GRX3W1NsXSMvB
-	6ih/iR4IJy0/kw10GELfjorf99thW7Tp/+AjrPCOa7TeOHVu8rRBRqvWNkWvwgmV
-	BPyGudzYS6teHdfabPFTnQh+BN/tSBffjtWMLi3efb1WzkIrgrBho7bFu2Wg0Jiv
-	I8QQWS0OW2HYJ8oBa4F4cwRXBv34Gthf/7FnaYsLbe/7Ye8sLXyS0NR98JmRieI0
-	/y+jLdmZZ+R6W2gutDLpbaSDvFvAcO3a2GZlboUh40u/Aj+f4C7NUPb8OWwtoyeV
-	YULjgWBWMW1mmEyTXU1JI63dK7RrtGbrD1xX5ffEMS+TeCueBMr60acygflcrAms
-	N5Duug==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4512sp1t4e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 09:52:01 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 337014005A;
-	Tue, 25 Feb 2025 09:50:52 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node2.st.com [10.75.129.70])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 9F80947A7A1;
-	Tue, 25 Feb 2025 09:48:09 +0100 (CET)
-Received: from localhost (10.48.86.185) by SHFDAG1NODE2.st.com (10.75.129.70)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Feb
- 2025 09:48:09 +0100
-From: =?utf-8?q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Date: Tue, 25 Feb 2025 09:48:04 +0100
-Subject: [PATCH 5/9] ARM: dts: stm32: add Hardware debug port (HDP) on
- stm32mp13
+	s=arc-20240116; t=1740473287; c=relaxed/simple;
+	bh=OHKlWGri6qWq1Dxq0BGK/tfWfNbWFrKNqYhwA2coYRM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ReSeME0zY2gjoK+ImYAzCoLVs+oyuABxfFOOHz0lTQGBPYtLHVEVTQuYutKA6swdBDRgOtJljMAjnS+kMnevKNM6E6Zym5kMDjjs6yfxvFJ8Xtfk+p3Awqk7xatJrf42CACMz6ZTce8jwtbsD7zcYhCYEukWu3ADywz4BWAqOUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3d18a1a0f0eso107952295ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:48:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740473284; x=1741078084;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zmDwwiwnY1/pn9LtAuEYnZkaVT7FgXu6jQtE0uKiD+4=;
+        b=NPZXyfIkWalqoM41G+Cf1QP2acvXLCCs+KtkvGWK4aBmCcZi1pWO7qNoWy//nhjbr2
+         1rKE36jUo8tk+NrS1+SL0SyYpoYHqByECbBhfFEQgnt2Wuatt6kAb3LFKUrrkSxmV1jS
+         KbBJTpjP4VTVys0V8d+YJkXl1+nUzHEPhkCQGQPTPgTPrIMq8dHo0XU19SwEMMBoePc1
+         ud4xD4EBz4VgjqCyUyQRIvgH7ZCDhH1xQ8WbAO2F7saKzfGsym1rIrV8ckryXD11K65M
+         3QZlrfxp8QfkAIS954/U097O9yZfHe1msc4Thp6HVvxQrJip4LhEaGrozteUyCjWiqz/
+         1bGg==
+X-Forwarded-Encrypted: i=1; AJvYcCUopLx9E9OlqaOZy3euV4rrXOEfo+tGulcGdhdcrQ9vwb/5G8XqEaXoqB3abwRO52VepIJTPRtJRqdCK1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLaO5idldJbeHfjCrwGGnnLzshNrfoW8Yuls5EUL2EU00u5C15
+	30JTfgCffxuSvvqXkqIeqKqNf5Fvk+e8IACcsddIbCHdAsVoGG2VPWKt+jIXofdX54Eqz4mWJJq
+	0ZN3yOE4rxWoZ+6z3itI4MWn2i3x3GJN3FWoThuM6CG/Kz8WySEDDKj4=
+X-Google-Smtp-Source: AGHT+IGlAuR4a5sa8m5tx+eftwAoE3rYiz7tIrUM/PHyGCyswM2pWfbxLGW1/w9rGn1LkAPCBd1p6C0xsk51RT5YfusEUEyumWil
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-ID: <20250225-hdp-upstream-v1-5-9d049c65330a@foss.st.com>
-References: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
-In-Reply-To: <20250225-hdp-upstream-v1-0-9d049c65330a@foss.st.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-CC: <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        =?utf-8?q?Cl=C3=A9ment_Le_Goffic?=
-	<clement.legoffic@foss.st.com>
-X-Mailer: b4 0.15-dev-42535
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE2.st.com
- (10.75.129.70)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_03,2025-02-24_02,2024-11-22_01
+X-Received: by 2002:a05:6e02:3113:b0:3d2:b509:af44 with SMTP id
+ e9e14a558f8ab-3d2cae6c9damr179390375ab.8.1740473284530; Tue, 25 Feb 2025
+ 00:48:04 -0800 (PST)
+Date: Tue, 25 Feb 2025 00:48:04 -0800
+In-Reply-To: <tencent_1C33E69E051B5B4B211B972571BA1CBB1C08@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67bd83c4.050a0220.bbfd1.00a0.GAE@google.com>
+Subject: Re: [syzbot] [io-uring?] [mm?] general protection fault in lock_vma_under_rcu
+From: syzbot <syzbot+556fda2d78f9b0daa141@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add the hdp devicetree node for stm32mp13 SoC family
+Hello,
 
-Signed-off-by: Clément Le Goffic <clement.legoffic@foss.st.com>
----
- arch/arm/boot/dts/st/stm32mp131.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+syzbot tried to test the proposed patch but the build/boot failed:
 
-diff --git a/arch/arm/boot/dts/st/stm32mp131.dtsi b/arch/arm/boot/dts/st/stm32mp131.dtsi
-index 0019d12c3d3d..73c9971c4c80 100644
---- a/arch/arm/boot/dts/st/stm32mp131.dtsi
-+++ b/arch/arm/boot/dts/st/stm32mp131.dtsi
-@@ -919,6 +919,13 @@ timer {
- 			};
- 		};
- 
-+		hdp: pinctrl@5002a000 {
-+			compatible = "st,stm32mp-hdp";
-+			reg = <0x5002a000 0x400>;
-+			clocks = <&rcc HDP>;
-+			status = "disabled";
-+		};
-+
- 		mdma: dma-controller@58000000 {
- 			compatible = "st,stm32h7-mdma";
- 			reg = <0x58000000 0x1000>;
+<stdin>:4:15: error: use of undeclared identifier '__ref_stack_chk_guard'
 
--- 
-2.43.0
+
+Tested on:
+
+commit:         0226d0ce Add linux-next specific files for 20250225
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e945b2fe8e5992f
+dashboard link: https://syzkaller.appspot.com/bug?extid=556fda2d78f9b0daa141
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=128a97a4580000
 
 
