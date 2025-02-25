@@ -1,208 +1,147 @@
-Return-Path: <linux-kernel+bounces-531599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD9B1A44281
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E644EA44284
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D1DB3B14D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D6F3AC854
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C99026981F;
-	Tue, 25 Feb 2025 14:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3B269CEB;
+	Tue, 25 Feb 2025 14:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VS2zEWd3"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="EsNU/CKb"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04722267AEA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177C5126C18
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493140; cv=none; b=NPssI1PlKY8r7wXfnJt+sdwecEzY8+4Wsrj8m355+oOZpC+VIQblLVPp8P2XYkaa/JNEdoUNUZz/YRGQm780WVZuPI0bsPkF/g4TRhH6blSEH10H1Z3y5sGADLgj7GlxDkheifPsTNMMOgHSfs/uQDpmQ5oa8QNFnK169g+LAnA=
+	t=1740493173; cv=none; b=SJJv4R8LGEQAbku9PyGc8B59HqDwBoGUR/nAJxkL9k2nQ77spKXRgo7CXcKAJSlupXMSUhWwxtFRGLVZZgpxhDMePdbqc2RjCVMV1CeCu3/1+azl3ZGt48eglmsd0qOjO5r/V8g2thv9eaMY8Uk6cMSBgY+UseqsW4EJ6qGg4Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493140; c=relaxed/simple;
-	bh=1u8TmiDL1+9v+qezBeYui2cnPPMk8pv3NB12bWAHPb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TR8we9EqxWVK3Kh6ycM40BedDpI2C3NW4U2UoR5LBtHS0pcNV5Sf8QHBmII6LkverzTErBSPJ//VcP9l7I/GD9XohTJ7g1O22i6vk5MIAekbh2Q8d/ElAZefpTtrBuIbiEH6G65G6tKRvoi0+mo2k8c7+IskfIRVAPSlRpc89sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VS2zEWd3; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A59841F764;
-	Tue, 25 Feb 2025 14:18:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1740493137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KUG7GiC+NoSlu5vBYCzR4y1saIDfKTsXhfWSzsPrF8Q=;
-	b=VS2zEWd3vOtIWUqiMJKdEJ4VC/jGkUTDgQ7JOTpnviJ3cBJG5pPl66WTWGcRjXsbfRWqT6
-	ZVM8ui70cY2Bev20U1rTPelYowNGHi5i5PeoWRUzVTMESPD3+nLL+FQMNmbnyIkCG/jWxd
-	QNQsZYLVGU7kTxz2VFfDHWNNas+qjS8gWLrqwsBakQiVkbcNdHqlmpr6gVpsxvaR1RhQrk
-	8yGfi5a9b4GzU02hX1Mf45raF4FuYkDeMrNXILaGEsOAGOJ7soYYiU5tWSt2bZ+/m6IU6s
-	2JLEIMrHR7sp1VeqzMPCNGyBmdtmrsRBSl4pSZDX7EePvgCzA8PVHLNqtpoPrg==
-Date: Tue, 25 Feb 2025 15:18:54 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
-	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
-Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-Subject: Re: [PATCH 18/63] dyndbg: add/use for_subvec() to reduce boilerplate
-Message-ID: <1a0034df-292b-49f5-bc90-709bcd5af9a9@bootlin.com>
-Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
-	linux-kernel@vger.kernel.org, jbaron@akamai.com,
-	gregkh@linuxfoundation.org, ukaszb@chromium.org,
-	intel-gfx-trybot@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-	intel-gvt-dev@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
-	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
-	ville.syrjala@linux.intel.com
-References: <20250125064619.8305-1-jim.cromie@gmail.com>
- <20250125064619.8305-19-jim.cromie@gmail.com>
+	s=arc-20240116; t=1740493173; c=relaxed/simple;
+	bh=YfaowTrjdM+Bd8R3YzDrhq7lbCbVr2H6FlNDkDda0Bo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=grxFrzbKUJBvX45/xuB4XpHlSxt9uHiL7jupFz/Jjc8Nlq3E+4ncq7gbIInfzwm+IewoySZ4n2wAqvMGVNhlLqa+W7GMuvVmN0uSjsNmBnmOvfPi0JH8zr1ev/IOkzcUgIuj3hXP201qf0RBnEoyC+tkjitRKhxsxFTxKYrlghA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=EsNU/CKb; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e587cca1e47so5251190276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1740493170; x=1741097970; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G3qJd2sc6L4K5ZD860Vogae0xgCZ9+DNu5FmGC60GsY=;
+        b=EsNU/CKb5oyJt9xAs0uaXVTY6MiyWQQDF6jV763+vIQeAw47hAAkKOPhfhk+e2X9Ol
+         moGl60vTRG9ZmEbXbQBRldAgvppP9b9hQ7U0HP/k2yfvwOBnRSX+8atlMmEkTUZwytTC
+         d3jLeG8hb+tYjm7TzqcWHwVQPM0+OIXnIa8wOYEaiQMfOKulQGXYOueZufwm+Ur3EY8v
+         lJc79ODu1tidw7/C21gvFdBxPvdzrW38ufEqS/IPT359RModCa1fc5RZpHtiXqmE7B7J
+         Twjh7mxRgTruDvDZD5MTg6tbTUnd44nMqmioVk8OAC9Od8TD3BlLtYqYVpqHNpcfIvdb
+         0Muw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740493170; x=1741097970;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G3qJd2sc6L4K5ZD860Vogae0xgCZ9+DNu5FmGC60GsY=;
+        b=D78Qz5bKCGf++5HQkWo/ONIBxxrlqWO05Lb0r88c6SmWWn/zuLczfOx7peciynVfab
+         RRgK03u8FltC/qXeOEsJOhd8yg5LNXeTMc58U5dmxdtvKDr8sUOR9Pm9rmTL85OmDa1b
+         sAmgb6otcbpQGoDMveVdJTIIS3VyzuLVr88THvEAVvmiZLBBYHCloyvBuFsx+VrwtcYb
+         4d6g4bvEpuMIyQvfrFNViE7epL96vT2oErjv0/tGXGH3Fy7kPsjcuad4xv/Z38bjFKDQ
+         FqgzZzh8XiV5gQ0so+HDGIxoKugSGW0FlLbcRl9197J+O49NSU2FPVjIIgDNawJ5vBJG
+         imJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWsmqMuTYSsqEAwfXDxFos0iVqQNQgTcIFhUnPXmH1E4XbHx8nMxZ2FytqUx4JGTxAdT/Ga5KOIYOgySCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz23tmTpzSrBjDLRUul825wLSaRoSi3bBigfB1MEfz2GPTpdhhU
+	/sfi2zNfgjzveBjK/OFu+qzyuwLZp1IKDlT58R7Y0NHO5+jfal/djsxjqKaBmtOCHmx5MtMiC45
+	Nbbb5ULO5mcBFoh4B6qEXMipw6XDd28Z9WIcUYQ==
+X-Gm-Gg: ASbGncsxEb268H7Ni9J6Rhd8KVQId8oe/j6EZkurpRxutZXxO3Pw0Uks6kJooZ12mrQ
+	FszWCa8C7no81IXspq44yNuKd6AxaXqGoGL2XI7SmCauMB9puZdg52zf9xqL9Jp8P+MCcwtr7g3
+	8yPqk0uByrowOkGq23X/ndmjqJERbQ+01ny1ueBcE=
+X-Google-Smtp-Source: AGHT+IEC4qfF8/eiKYWC6b87/URt2aZmRGTvr02EO+vykpkfp0nILc5ac/dlwepmQfxWmjI9CHtInw3sHU4Kc94JtHc=
+X-Received: by 2002:a05:6902:2085:b0:e5b:34cb:ebb2 with SMTP id
+ 3f1490d57ef6-e5e245efd0bmr13195185276.19.1740493170016; Tue, 25 Feb 2025
+ 06:19:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250125064619.8305-19-jim.cromie@gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
- dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
-X-GND-Sasl: louis.chauvet@bootlin.com
+References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev> <20250225-b4-ov9282-gain-v1-1-a24af2820dde@linux.dev>
+In-Reply-To: <20250225-b4-ov9282-gain-v1-1-a24af2820dde@linux.dev>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 25 Feb 2025 14:19:14 +0000
+X-Gm-Features: AQ5f1Jro6d8OWU49F-6F1vKdHETRh6QOCZRuMfdR_PmC7PcRjIrOpwo4uPciv6I
+Message-ID: <CAPY8ntDYYPs90JVCLiZGqQAak=WOga90hgCns_TRWTxdrROPiw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] media: i2c: ov9282: use register definitions
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Richard
 
+Thanks for the patch
 
-Le 25/01/2025 à 07:45, Jim Cromie a écrit :
-> add for_subvec() macro to encapsulate a for-loop pattern thats used
-> repeatedly to iterate over a boxed.vector of N elements.
-> 
-> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+On Tue, 25 Feb 2025 at 13:09, Richard Leitner <richard.leitner@linux.dev> wrote:
+>
+> For better readability use already available register definitions in
+> hard-coded common and mode register structs.
+>
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
 
-Hi Jim,
-
-Do you think it is possible to move this patch earlier in the series, so 
-you can use it when introducing class_users.
-
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-Thanks,
-Louis Chauvet
+Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
 > ---
->   lib/dynamic_debug.c | 30 ++++++++++++++++++++++--------
->   1 file changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
-> index 6bca0c6727d4..08b6e4e7489f 100644
-> --- a/lib/dynamic_debug.c
-> +++ b/lib/dynamic_debug.c
-> @@ -158,20 +158,34 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
->   		  _dt->num_class_users);				\
->   	})
->   
-> +/*
-> + * simplify a repeated for-loop pattern walking N steps in a T _vec
-> + * member inside a struct _box.  It expects int i and T *_sp to be
-> + * declared in the caller.
-> + * @_i:  caller provided counter.
-> + * @_sp: cursor into _vec, to examine each item.
-> + * @_box: ptr to a struct containing @_vec member
-> + * @_vec: name of a sub-struct member in _box, with array-ref and length
-> + */
-> +#define for_subvec(_i, _sp, _box, _vec)				       \
-> +	for ((_i) = 0, (_sp) = (_box)->_vec;			       \
-> +	     (_i) < (_box)->num_##_vec;				       \
-> +	     (_i)++, (_sp)++)
-> +
->   static int ddebug_find_valid_class(struct ddebug_table const *dt, const char *class_string)
->   {
->   	struct ddebug_class_map *map;
->   	struct ddebug_class_user *cli;
->   	int i, idx;
->   
-> -	for (i = 0, map = dt->classes; i < dt->num_classes; i++, map++) {
-> +	for_subvec(i, map, dt, classes) {
->   		idx = match_string(map->class_names, map->length, class_string);
->   		if (idx >= 0) {
->   			vpr_dt_info(dt, "good-class: %s.%s ", map->mod_name, class_string);
->   			return idx + map->base;
->   		}
->   	}
-> -	for (i = 0, cli = dt->class_users; i < dt->num_class_users; i++, cli++) {
-> +	for_subvec(i, cli, dt, class_users) {
->   		idx = match_string(cli->map->class_names, cli->map->length, class_string);
->   		if (idx >= 0) {
->   			vpr_dt_info(dt, "class-ref: %s -> %s.%s ",
-> @@ -1190,7 +1204,7 @@ static void ddebug_apply_params(const struct ddebug_class_map *cm, const char *m
->   	if (cm->mod) {
->   		vpr_cm_info(cm, "loaded classmap: %s", modnm);
->   		/* ifdef protects the cm->mod->kp deref */
-> -		for (i = 0, kp = cm->mod->kp; i < cm->mod->num_kp; i++, kp++)
-> +		for_subvec(i, kp, cm->mod, kp)
->   			ddebug_match_apply_kparam(kp, cm, modnm);
->   	}
->   #endif
-> @@ -1212,7 +1226,7 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt,
->   	struct ddebug_class_map *cm;
->   	int i, nc = 0;
->   
-> -	for (i = 0, cm = di->classes; i < di->num_classes; i++, cm++) {
-> +	for_subvec(i, cm, di, classes) {
->   		if (!strcmp(cm->mod_name, dt->mod_name)) {
->   			vpr_cm_info(cm, "classes[%d]:", i);
->   			if (!nc++)
-> @@ -1225,7 +1239,7 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt,
->   	vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
->   	dt->num_classes = nc;
->   
-> -	for (i = 0, cm = dt->classes; i < dt->num_classes; i++, cm++)
-> +	for_subvec(i, cm, dt, classes)
->   		ddebug_apply_params(cm, cm->mod_name);
->   }
->   
-> @@ -1245,7 +1259,7 @@ static void ddebug_attach_user_module_classes(struct ddebug_table *dt,
->   	 * module's refs, save to dt.  For loadables, this is the
->   	 * whole array.
->   	 */
-> -	for (i = 0, cli = di->class_users; i < di->num_class_users; i++, cli++) {
-> +	for_subvec(i, cli, di, class_users) {
->   		if (WARN_ON_ONCE(!cli || !cli->map || !cli->mod_name))
->   			continue;
->   		if (!strcmp(cli->mod_name, dt->mod_name)) {
-> @@ -1261,7 +1275,7 @@ static void ddebug_attach_user_module_classes(struct ddebug_table *dt,
->   	dt->num_class_users = nc;
->   
->   	/* now iterate dt */
-> -	for (i = 0, cli = dt->class_users; i < dt->num_class_users; i++, cli++)
-> +	for_subvec(i, cli, di, class_users)
->   		ddebug_apply_params(cli->map, cli->mod_name);
->   
->   	vpr_dt_info(dt, "attach-client-module: ");
-> @@ -1299,7 +1313,7 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
->   
->   	INIT_LIST_HEAD(&dt->link);
->   
-> -	for (i = 0, iter = di->descs; i < di->num_descs; i++, iter++)
-> +	for_subvec(i, iter, di, descs)
->   		if (iter->class_id != _DPRINTK_CLASS_DFLT)
->   			class_ct++;
->   
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+>  drivers/media/i2c/ov9282.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index 87e5d7ce5a47ee23a721ea39c0ab314c6fca6007..c926842257893c4da3319b847fab9908b5bdaec6 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -296,8 +296,8 @@ static const struct ov9282_reg mode_1280x800_regs[] = {
+>         {0x3813, 0x08},
+>         {0x3814, 0x11},
+>         {0x3815, 0x11},
+> -       {0x3820, 0x40},
+> -       {0x3821, 0x00},
+> +       {OV9282_REG_TIMING_FORMAT_1, 0x40},
+> +       {OV9282_REG_TIMING_FORMAT_2, 0x00},
+>         {0x4003, 0x40},
+>         {0x4008, 0x04},
+>         {0x4009, 0x0b},
+> @@ -327,8 +327,8 @@ static const struct ov9282_reg mode_1280x720_regs[] = {
+>         {0x3813, 0x08},
+>         {0x3814, 0x11},
+>         {0x3815, 0x11},
+> -       {0x3820, 0x3c},
+> -       {0x3821, 0x84},
+> +       {OV9282_REG_TIMING_FORMAT_1, 0x3c},
+> +       {OV9282_REG_TIMING_FORMAT_2, 0x84},
+>         {0x4003, 0x40},
+>         {0x4008, 0x02},
+>         {0x4009, 0x05},
+> @@ -358,8 +358,8 @@ static const struct ov9282_reg mode_640x400_regs[] = {
+>         {0x3813, 0x04},
+>         {0x3814, 0x31},
+>         {0x3815, 0x22},
+> -       {0x3820, 0x60},
+> -       {0x3821, 0x01},
+> +       {OV9282_REG_TIMING_FORMAT_1, 0x60},
+> +       {OV9282_REG_TIMING_FORMAT_2, 0x01},
+>         {0x4008, 0x02},
+>         {0x4009, 0x05},
+>         {0x400c, 0x00},
+>
+> --
+> 2.47.2
+>
+>
 
