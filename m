@@ -1,273 +1,154 @@
-Return-Path: <linux-kernel+bounces-531849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03FBBA445CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:19:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D56DEA445D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB485168867
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:17:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7FC3A6C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F1E195B1A;
-	Tue, 25 Feb 2025 16:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0345016631C;
+	Tue, 25 Feb 2025 16:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PePPDQuD"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U3U53aRw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ED8192D63;
-	Tue, 25 Feb 2025 16:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670D618DB03
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740500197; cv=none; b=s/LAeEHDlcj7WKLHBkc3v7movkWnwUF+CaP2TAf/MwbDDHRwHUSkVddCUAD6NKv5nlZ6W1/4V4VtvEd0qxbousHrs95qah6eJEjM3EQwcHHmGK19uDUuK/j2/zVeCdYMebADhlT3X/s5Vlbqx0BPs/xZfdC4y2V87vmyGuGf25A=
+	t=1740500152; cv=none; b=FgWhb/DeW0dTb5nt6fMwMZdNJ8p/jEzLb5mp2lnhthwToC5eMb0cJ/VcwLL1jqDSE1Ek/wG0/7F5a81UJ9qcpLWSvmCHoX6NzA3JGGaObDDhhnlocGBptFfX8P1jT6U9EqnH8i+OVJv2jR6awPZn3NoColtfE3U0PHHDJx95iCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740500197; c=relaxed/simple;
-	bh=cErrfXom+s5pVkXQLiiVjTzZPrY+mFw7aipCxQfEmaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MIXyzmbuisLD95T0XDyCq8QpnHiIGpFFC4ybxtbpKNPvLQyb6ON8+fEoVJzIgED1bFXMwCPMbyejo4PZeiq50Fz0kemfp0OIOza1Cy6WPRLi6/ysrxU9idApyKiAi3bJVlabobed7SMfRMSQqvG1KhjiCMq/k3AWsCNXG+m+WC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PePPDQuD; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PDjY8u011012;
-	Tue, 25 Feb 2025 16:15:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=EB5xjS
-	HoX3r4ods50zGkpSGZkJJvGI3sQjehgnGJBSo=; b=PePPDQuDji4R5cS+e2V1L2
-	z0JCj0LuK/xrDfeO46zmjIF3tGJgtoBeM4FgD5lYzomRRMeymyFRQ1N+COj4+n3z
-	zhEh1DIkK25owLsjddnGuriJp+VNxa6TBp8Rqe92T59nFrOI7ZEJ/STGVfcZT+f4
-	w5Vkh8iT36VQgba/UrWh/IbdwEpnNF1cpE72Ep3nuf6eryElWG6187EYNn2YUBzB
-	/xjn4vT9fw//W5Q2vkK1bLOBHbvGSrYvCT45nvnMlQfN9pA0ot3+nAKgP2j7p90s
-	BhZNP6wxViFEBdCttUtxJVgzsm+4N0qgG/8wgEaR+9yaWQmjIPQfV92dQlq6+8Eg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4514q0brm5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 16:15:55 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51PG36en010783;
-	Tue, 25 Feb 2025 16:15:54 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4514q0brm3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 16:15:54 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51PF0EdW002578;
-	Tue, 25 Feb 2025 16:15:53 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yu4jnfxu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 16:15:53 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51PGFoBR33358422
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Feb 2025 16:15:50 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E488120043;
-	Tue, 25 Feb 2025 16:15:49 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3319720040;
-	Tue, 25 Feb 2025 16:15:48 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.171.32.179])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Tue, 25 Feb 2025 16:15:48 +0000 (GMT)
-Date: Tue, 25 Feb 2025 17:15:44 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-        Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Madhavan Srinivasan
- <maddy@linux.ibm.com>,
-        Anup Patel <anup@brainfault.org>,
-        Paul Walmsley
- <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou
- <aou@eecs.berkeley.edu>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-        kvm@vger.kernel.org, loongarch@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Aaron Lewis
- <aaronlewis@google.com>,
-        Jim Mattson <jmattson@google.com>, Yan Zhao
- <yan.y.zhao@intel.com>,
-        Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-        Kai
- Huang <kai.huang@intel.com>,
-        Isaku Yamahata <isaku.yamahata@intel.com>
-Subject: Re: [PATCH 7/7] KVM: Drop kvm_arch_sync_events() now that all
- implementations are nops
-Message-ID: <20250225171544.40477437@p-imbrenda>
-In-Reply-To: <20250224235542.2562848-8-seanjc@google.com>
-References: <20250224235542.2562848-1-seanjc@google.com>
-	<20250224235542.2562848-8-seanjc@google.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1740500152; c=relaxed/simple;
+	bh=QXsBfsIISxZ2gFReJTeInABcer4EMKFKNpX1g7AORNg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TOSZEggkDZ+71tAYmMMfc9y3hMnAu3EmG3XyzFcEmPcAVd1Zg1bSQOGbBFCH2A1fxOm3CS33Tt3chGFQmUTOYyBjv5mSz4/ptyaJ4302C1NjYkm1TyweNetpbCi67t6CQcUdByMKHLOaRT4+8UtMCHuz+GeyhUawu4dsNFdHgO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U3U53aRw; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740500150; x=1772036150;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QXsBfsIISxZ2gFReJTeInABcer4EMKFKNpX1g7AORNg=;
+  b=U3U53aRwEK68+AMtvX2fbpDVu6IuDbwpT82h4BUvXoqXJSCdN371lI6B
+   gBQWnbX4xTZMI09Mb4KtttjERM4tW+fb7iblgxG4c5pa8ZiBvaKQVwrV2
+   hdOr3vRvKcC8iIahgLm38XeQjixAD/jFuB0rnCkTovcbbEwAQOJsgJfwk
+   c8DNxScXfiGorTFGHq3tuAs7hPRLueTyhY2L0AZUpUZFvqh+cC931Lv7y
+   dKO3/oG2CbJ/PzF2lbJ3Hl6IUqzwQlqo/cU9FOTh2K7ihLR+l8nHjYZgc
+   xkVJGidcuNOxvd3Dtp6ghKcBfRMnH+qtLzrcd0V0pIhzB2LTxpKZkVGjq
+   g==;
+X-CSE-ConnectionGUID: lVTp5tk7Qo6hcMLAPeuTCw==
+X-CSE-MsgGUID: czyttNNJQiKDbHSoT8Y8SA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="58850890"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="58850890"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 08:15:49 -0800
+X-CSE-ConnectionGUID: gEogGYdgQDul57xqv1I2YQ==
+X-CSE-MsgGUID: X8yea/TLReqQW+Q8QMoSSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="153610290"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.111.148]) ([10.125.111.148])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 08:15:48 -0800
+Message-ID: <d352ab70-6c13-453b-a018-dcf19d1a9924@intel.com>
+Date: Tue, 25 Feb 2025 08:15:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] pkeys: add API to switch to permissive pkey register
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: mathieu.desnoyers@efficios.com, peterz@infradead.org,
+ boqun.feng@gmail.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, hpa@zytor.com, aruna.ramakrishna@oracle.com,
+ elver@google.com, "Paul E. McKenney" <paulmck@kernel.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1739790300.git.dvyukov@google.com>
+ <ffd123bb0c73df5cdd3a5807b360bd390983150b.1739790300.git.dvyukov@google.com>
+ <32af68b8-4280-4c15-8e5c-be807c282f94@intel.com>
+ <CACT4Y+YmWrEW9m5zxKoD-Hu0TXKWPVAr0_Xe_X9WGtZWH5W1_g@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CACT4Y+YmWrEW9m5zxKoD-Hu0TXKWPVAr0_Xe_X9WGtZWH5W1_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4oNEms2UIOy6dhSLXf3MQHQxp5QC-fsG
-X-Proofpoint-GUID: XwTFU_1fd0Y_Q4qJBAUmVROi_e0umdsT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_05,2025-02-25_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 impostorscore=0
- spamscore=0 mlxlogscore=999 malwarescore=0 clxscore=1011
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2502250103
 
-On Mon, 24 Feb 2025 15:55:42 -0800
-Sean Christopherson <seanjc@google.com> wrote:
+On 2/24/25 05:25, Dmitry Vyukov wrote:
+>>> +#ifndef CONFIG_ARCH_HAS_PERMISSIVE_PKEY
+>>> +
+>>> +/*
+>>> + * Common name for value of the register that controls access to PKEYs
+>>> + * (called differently on different arches: PKRU, POR, AMR).
+>>> + */
+>>> +typedef int pkey_reg_t;
+>> Tiny nit: Should this be an unsigned type?
+>>
+>> Nobody should be manipulating it, but I'd be surprised if any of the
+>> architectures have a signed type for it.
+> Since this is a stub type, can matching the real types do any good
+> besides masking programming errors?
+> I've changed it to char in v4 to surface more potential programming errors.
 
-> Remove kvm_arch_sync_events() now that x86 no longer uses it (no other
-> arch has ever used it).
-> 
-> No functional change intended.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+I was more worried about copy-and-paste.
 
-Acked-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+I agree that 'char' is the most fragile, but it's going to fragile in
+subtle ways and I'm not sure subtly broken code (whether it's expected
+to be compiled in or not) is great to have in a code base.
 
-> ---
->  arch/arm64/include/asm/kvm_host.h     | 2 --
->  arch/loongarch/include/asm/kvm_host.h | 1 -
->  arch/mips/include/asm/kvm_host.h      | 1 -
->  arch/powerpc/include/asm/kvm_host.h   | 1 -
->  arch/riscv/include/asm/kvm_host.h     | 2 --
->  arch/s390/include/asm/kvm_host.h      | 1 -
->  arch/x86/kvm/x86.c                    | 5 -----
->  include/linux/kvm_host.h              | 1 -
->  virt/kvm/kvm_main.c                   | 1 -
->  9 files changed, 15 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index 7cfa024de4e3..40897bd2b4a3 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -1346,8 +1346,6 @@ static inline bool kvm_system_needs_idmapped_vectors(void)
->  	return cpus_have_final_cap(ARM64_SPECTRE_V3A);
->  }
->  
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -
->  void kvm_init_host_debug_data(void);
->  void kvm_vcpu_load_debug(struct kvm_vcpu *vcpu);
->  void kvm_vcpu_put_debug(struct kvm_vcpu *vcpu);
-> diff --git a/arch/loongarch/include/asm/kvm_host.h b/arch/loongarch/include/asm/kvm_host.h
-> index 590982cd986e..ab5b7001e2ff 100644
-> --- a/arch/loongarch/include/asm/kvm_host.h
-> +++ b/arch/loongarch/include/asm/kvm_host.h
-> @@ -320,7 +320,6 @@ static inline bool kvm_is_ifetch_fault(struct kvm_vcpu_arch *arch)
->  
->  /* Misc */
->  static inline void kvm_arch_hardware_unsetup(void) {}
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->  static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
->  static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
->  static inline void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu) {}
-> diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-> index f7222eb594ea..c14b10821817 100644
-> --- a/arch/mips/include/asm/kvm_host.h
-> +++ b/arch/mips/include/asm/kvm_host.h
-> @@ -886,7 +886,6 @@ extern unsigned long kvm_mips_get_ramsize(struct kvm *kvm);
->  extern int kvm_vcpu_ioctl_interrupt(struct kvm_vcpu *vcpu,
->  			     struct kvm_mips_interrupt *irq);
->  
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->  static inline void kvm_arch_free_memslot(struct kvm *kvm,
->  					 struct kvm_memory_slot *slot) {}
->  static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-> index 6e1108f8fce6..2d139c807577 100644
-> --- a/arch/powerpc/include/asm/kvm_host.h
-> +++ b/arch/powerpc/include/asm/kvm_host.h
-> @@ -902,7 +902,6 @@ struct kvm_vcpu_arch {
->  #define __KVM_HAVE_ARCH_WQP
->  #define __KVM_HAVE_CREATE_DEVICE
->  
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->  static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
->  static inline void kvm_arch_flush_shadow_all(struct kvm *kvm) {}
->  static inline void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu) {}
-> diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> index cc33e35cd628..0e9c2fab6378 100644
-> --- a/arch/riscv/include/asm/kvm_host.h
-> +++ b/arch/riscv/include/asm/kvm_host.h
-> @@ -301,8 +301,6 @@ static inline bool kvm_arch_pmi_in_guest(struct kvm_vcpu *vcpu)
->  	return IS_ENABLED(CONFIG_GUEST_PERF_EVENTS) && !!vcpu;
->  }
->  
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
-> -
->  #define KVM_RISCV_GSTAGE_TLB_MIN_ORDER		12
->  
->  void kvm_riscv_local_hfence_gvma_vmid_gpa(unsigned long vmid,
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index 9a367866cab0..424f899d8163 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -1056,7 +1056,6 @@ bool kvm_s390_pv_cpu_is_protected(struct kvm_vcpu *vcpu);
->  extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
->  extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
->  
-> -static inline void kvm_arch_sync_events(struct kvm *kvm) {}
->  static inline void kvm_arch_free_memslot(struct kvm *kvm,
->  					 struct kvm_memory_slot *slot) {}
->  static inline void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen) {}
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index ea445e6579f1..454fd6b8f3db 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12770,11 +12770,6 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
->  	return ret;
->  }
->  
-> -void kvm_arch_sync_events(struct kvm *kvm)
-> -{
-> -
-> -}
-> -
->  /**
->   * __x86_set_memory_region: Setup KVM internal memory slot
->   *
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index c28a6aa1f2ed..5438a1b446a6 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -1747,7 +1747,6 @@ static inline void kvm_unregister_perf_callbacks(void) {}
->  
->  int kvm_arch_init_vm(struct kvm *kvm, unsigned long type);
->  void kvm_arch_destroy_vm(struct kvm *kvm);
-> -void kvm_arch_sync_events(struct kvm *kvm);
->  
->  int kvm_cpu_has_pending_timer(struct kvm_vcpu *vcpu);
->  
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 991e8111e88b..55153494ac70 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -1271,7 +1271,6 @@ static void kvm_destroy_vm(struct kvm *kvm)
->  	kvm_destroy_pm_notifier(kvm);
->  	kvm_uevent_notify_change(KVM_EVENT_DESTROY_VM, kvm);
->  	kvm_destroy_vm_debugfs(kvm);
-> -	kvm_arch_sync_events(kvm);
->  	mutex_lock(&kvm_lock);
->  	list_del(&kvm->vm_list);
->  	mutex_unlock(&kvm_lock);
-
+Do we have any types in sparse that would be appropriate? Could we mark
+the pkey_reg_t as being in a different address space when pkeys is
+compiled out so that sparse knows not to let it interact with other types?
 
