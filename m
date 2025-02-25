@@ -1,76 +1,90 @@
-Return-Path: <linux-kernel+bounces-530591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE48CA43586
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:40:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C81FFA4358A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F1C167454
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6CF4167EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E86F256C80;
-	Tue, 25 Feb 2025 06:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641F4257437;
+	Tue, 25 Feb 2025 06:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CWhO5Yra"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDWMu4N3"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DD0257438
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678A33D984;
+	Tue, 25 Feb 2025 06:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465597; cv=none; b=SK5bbr3JZ6QF5rYchi5pCiEUKM0nFyWQItdxjQCu4ozn+niXGfs5eDePSkBsz9CqDZhbdI2VLfevnfuv+yyfzlzt5QQ40xvF0/r3imIrQQs6Hs5UDB2YsBA3vZktGj1a2Qbgd8raZASxLF/I/3255utJH3M4R4nUh9euw9uQxjE=
+	t=1740465660; cv=none; b=kg4WQwO497k7iafjye4rFzXuwYYQmcvRTeoHSc0dqe6ioUZgJNqthCf2SEopl+xigR2Pz6UUd7Dqh8/e7bpQx8hJg7ARHv8/AS3MI/R97WCgpnYUW98baaM/jU4+HPDGwXj/1xcrEZs4nDFfmhs2qMsnudIhFqp7zGgeji6aWqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465597; c=relaxed/simple;
-	bh=VYVyWSL41gzONtU6hCsxIy3y5hnE7xAKsQLJOUa3gXA=;
+	s=arc-20240116; t=1740465660; c=relaxed/simple;
+	bh=bP75iQdWMfulJf6yXOUhCLzS3q7ljtZNdMT5g3yO9kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7R4MvbOyQnK2pxDn7OxRIgt9/ZVmoujJ/qxbMwpt/PXk+ZxtrhjsiRc5bxFneyXIyLlwt9I5am+COCDywtthdQpvT0hLqX93KPSDRxYkyghZ/Q2KewYAAP9/UkSfVHYX1qqMjBAmApf8eTRkeOjSdROAWMdZgv3BshfzMUiaoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CWhO5Yra; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740465594;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hj5D227ch1iq8F50kZ0cjU0+st5jyGocbEADkQeAaXY=;
-	b=CWhO5YraPc+GvCRN6NshPWtyDAi/Ysl7Sam7MpI29+XCm59ey4kFssUELeuZ3BkO893wpB
-	V9EMwkU6fNOzAb3l1KNBui+XAHDO5VOQf58ZUZXMBp4onP6zISmM54D2H/q4+jSrd0S/ol
-	tGH0BN6Hz5mJyhs6l7IjCGcFuWtCsac=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-582-T0i9WcdWNCim8CMnpziD5Q-1; Tue,
- 25 Feb 2025 01:39:47 -0500
-X-MC-Unique: T0i9WcdWNCim8CMnpziD5Q-1
-X-Mimecast-MFC-AGG-ID: T0i9WcdWNCim8CMnpziD5Q_1740465585
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E979A1800877;
-	Tue, 25 Feb 2025 06:39:44 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13E1219560A3;
-	Tue, 25 Feb 2025 06:39:42 +0000 (UTC)
-Date: Tue, 25 Feb 2025 14:39:38 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/7] mm, swap: remove swap slot cache
-Message-ID: <Z71lqkZfnDeLCjEx@MiWiFi-R3L-srv>
-References: <20250224180212.22802-1-ryncsn@gmail.com>
- <20250224180212.22802-7-ryncsn@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgdGnJabGUQ6h1HgqVkknIkLkGZUY0LGo8eUu+Tq3Q60WfojnvBhvY7fISPxZXmo32Jdm3tghcuaOxB6mxFe2wodYAo0nYBFVFntL1LJtv/FrjtN/ZcDn8ZQLUcN3mShQPs9gx/FhoV99uurSAc1JL1XRytrNDRZ2o3YxPpzQOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDWMu4N3; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-220ecbdb4c2so29921575ad.3;
+        Mon, 24 Feb 2025 22:40:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1740465658; x=1741070458; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2P/2v/Klk6zqg9pFD4grzPc6MwHkHIHVcHBwEQXLhQ=;
+        b=gDWMu4N3YcRxW4gEaGEwMPtkGKoJ0NOednBiXiSxtM6IlMZxTV5QRLegaPtvkZSWTR
+         UOuui23gHDP0g41JC+8m33SGaQaYwpJ1r8VhHZocoaAAedm3Zx8i/qp8dMi+Ke3dmoGb
+         r//KkVusF2dBkkJAcYfW71iU4LxdhcIVdGTe7CtuKNUyJAwAD+rv0h/vvVYFeDvwvD5Z
+         J33P9jTzqwEYifSQ0fFt+WFHjWCwhoRN/EzBcER68Fa972z4hyseWbskmXyGkawjuDzJ
+         s64xhpjGIIJ9vPc9ZkHHMJntSwADtMJCAGmrrtVUkvKd2P4groferjQrYPieNsUM7n9G
+         RpKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740465658; x=1741070458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t2P/2v/Klk6zqg9pFD4grzPc6MwHkHIHVcHBwEQXLhQ=;
+        b=jaY0FTPOpafmQXlk5UaOVt4F/VdduAEB27ZI6Gthr9mNtQso7/d/0bvhWaJSxVTECK
+         RV190tX162VSSvHiW3m+Pi0imIiiqO1VJG7FM2xXYHfDxetVUomjskjwLvUlDoAvAKQQ
+         0O2f77ZaZ21qqJsdgZZP0Tt5d0lnugQGF/hbmc0CCN5C9+cr0X8IyqsmFHvlXJ5tTHBR
+         PxPB8TGIxHAvEHQlrrBV2FAD+KyYQ8aJddnP5e7Oh1PuH8Kh/9DkoXy0R9iDzQYyr3fD
+         rDYr8Mj42Q8j0ll/2y5ApzKrJpnhHxztEtwABXJMVaVP9q8EymGqvC5C0F53nj/vub2r
+         rF2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWq2uFWvbFyUE+TxXM/H+7XvZPvgFMfAnKItiarIZyzn1Hzg8Io28OSXpMM08sOND3H/qIljxxJSBtO0FQ=@vger.kernel.org, AJvYcCXILrTbTVjbyPKIUxx8Swt8uLM+i90BI1Q2XHFhDBxqCj7p+0EremoXbxqtpOgKTOoopBBZA3f81iBj@vger.kernel.org, AJvYcCXcylexuwGQL0JbFAHUILLhZJ4OADb54HZI1dC1wYfeNKN4iQr8AQpUGkAgQI3unzv4FTDErcobp+RBRq5x@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLAF75VwOgspM/GfNR19uJwsIN3aAENRcbIcHK7k77VnFJUApI
+	LeaSYdlRkv9Wiv2S6HzSrc4YVrsN5+WBoH+XhGuXT7RcCsS6Wu29
+X-Gm-Gg: ASbGncupPo0QIV8HjevSLLJoXgkwFQE5W2zEtuw9+5MQ2xcOFCurNyW2aQMmnqpL74Z
+	Ii1gR78m7eO0p9qf9vJ+bWfh1H01cV8BKDUd8B7AGBIQpbY7kzftzU5z28uXGum/1QixZRvlQUF
+	zg/RTdRuczaxqA0a694kK9So9kz4TIBkGCFce16ywSLwDD1jK3/mOgo5xbebF1fhZHln0tO2Miw
+	xzrOSRPAS3tseiSh4eCYk4VKkqSFHiUQtH5ZRzuhfKAC2Hn0Nyx+MpTKQbzqECmHxeQku1YsrDq
+	E0EDqdnabYEQxeXxApC/9QhwQnU=
+X-Google-Smtp-Source: AGHT+IEOk1x5AoIYZW+55H4hzFIVfeVeIvyzhHdJ23TfluHygEQbpPwlmqAbahw8Whoj+DhzHTCW8A==
+X-Received: by 2002:a17:902:d501:b0:21f:dbb:20a6 with SMTP id d9443c01a7336-221a1148f3amr234622445ad.33.1740465658520;
+        Mon, 24 Feb 2025 22:40:58 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092edasm6677905ad.130.2025.02.24.22.40.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Feb 2025 22:40:58 -0800 (PST)
+Date: Mon, 24 Feb 2025 22:40:55 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Manuel Traut <manuel.traut@mt.com>
+Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/7] Input: matrix_keypad - use fsleep for variable
+ delay duration
+Message-ID: <Z71l9046XyjxicFf@google.com>
+References: <20250110054906.354296-1-markus.burri@mt.com>
+ <20250110054906.354296-2-markus.burri@mt.com>
+ <Z7YIKaG0jBHV2FSE@mt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,47 +93,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250224180212.22802-7-ryncsn@gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <Z7YIKaG0jBHV2FSE@mt.com>
 
-On 02/25/25 at 02:02am, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
+On Wed, Feb 19, 2025 at 05:34:49PM +0100, Manuel Traut wrote:
+> On Fri, Jan 10, 2025 at 06:49:00AM +0100, Markus Burri wrote:
+> > The delay is retrieved from a device-tree property, so the duration is
+> > variable. fsleep guesses the best delay function based on duration.
+> > 
+> > see Documentation/timers/delay_sleep_functions.rst
+> > 
+> > Signed-off-by: Markus Burri <markus.burri@mt.com>
 > 
-> Slot cache is no longer needed now, removing it and all related code.
-> 
-> - vm-scalability with: `usemem --init-time -O -y -x -R -31 1G`,
-> 12G memory cgroup using simulated pmem as SWAP (32G pmem, 32 CPUs),
-> 16 test runs for each case, measuring the total throughput:
-> 
->                       Before (KB/s) (stdev)  After (KB/s) (stdev)
-> Random (4K):          424907.60 (24410.78)   414745.92  (34554.78)
-> Random (64K):         163308.82 (11635.72)   167314.50  (18434.99)
-> Sequential (4K, !-R): 6150056.79 (103205.90) 6321469.06 (115878.16)
-> 
-> The performance changes are below noise level.
-> 
-> - Build linux kernel with make -j96, using 4K folio with 1.5G memory
-> cgroup limit and 64K folio with 2G memory cgroup limit, on top of tmpfs,
-> 12 test runs, measuring the system time:
-> 
->                   Before (s) (stdev)  After (s) (stdev)
-> make -j96 (4K):   6445.69 (61.95)     6408.80 (69.46)
-> make -j96 (64K):  6841.71 (409.04)    6437.99 (435.55)
-> 
-> Similar to above, 64k mTHP case showed a slight improvement.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
->  include/linux/swap.h       |   2 -
->  include/linux/swap_slots.h |  28 ----
->  mm/Makefile                |   2 +-
->  mm/swap_slots.c            | 295 -------------------------------------
->  mm/swap_state.c            |   8 +-
->  mm/swapfile.c              | 193 +++++++++---------------
->  6 files changed, 71 insertions(+), 457 deletions(-)
->  delete mode 100644 include/linux/swap_slots.h
->  delete mode 100644 mm/swap_slots.c
+> Reviewed-by: Manuel Traut <manuel.traut@mt.com> 
 
-Reviewed-by: Baoquan He <bhe@redhat.com>
+As I mentioned in other review activate_col() may be called in atomic
+context where we can not sleep:
 
+"activate_col() may be called in atomic context, and if fsleep() turns
+into usleep_range() or msleep() we are going to have a bad time.
+
+We should either stop using request_any_context_irq() or figure out if
+interrupt handler can sleep or not and adjust behavior properly."
+
+Unfortunately this was completely ignored.
+
+> 
+> > ---
+> >  drivers/input/keyboard/matrix_keypad.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/input/keyboard/matrix_keypad.c b/drivers/input/keyboard/matrix_keypad.c
+> > index 2a3b3bf..5571d2e 100644
+> > --- a/drivers/input/keyboard/matrix_keypad.c
+> > +++ b/drivers/input/keyboard/matrix_keypad.c
+> > @@ -68,7 +68,7 @@ static void activate_col(struct matrix_keypad *keypad, int col, bool on)
+> >  	__activate_col(keypad, col, on);
+> >  
+> >  	if (on && keypad->col_scan_delay_us)
+> > -		udelay(keypad->col_scan_delay_us);
+> > +		fsleep(keypad->col_scan_delay_us);
+> >  }
+> >  
+> >  static void activate_all_cols(struct matrix_keypad *keypad, bool on)
+> > -- 
+> > 2.39.5
+> > 
+
+Thanks.
+
+-- 
+Dmitry
 
