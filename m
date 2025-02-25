@@ -1,200 +1,210 @@
-Return-Path: <linux-kernel+bounces-531409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63847A44023
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F92A44028
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 691C51888720
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:06:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AC95189EF75
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B513F268C67;
-	Tue, 25 Feb 2025 13:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 353F52690C4;
+	Tue, 25 Feb 2025 13:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="Uq9bBd88"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bSi34QCM"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6BA2686AF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 13:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726D126869E;
+	Tue, 25 Feb 2025 13:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740488797; cv=none; b=ggoOq0QD9UyjyZgb1GUSw6l+Pb0OBgH8D5REMW+MPQOY6fjX0ZBwXz8LPFnJWm+L9lFnFM+Tt4XdTUR5bVFSj1R41NQ8IljjeyNg+E2LhBFie6HvcZG45xq6FCEHLPFIXGwPxSFMoM+++UTghp2Z6OqwdcnGG7Gp5/yWyxJkF98=
+	t=1740488810; cv=none; b=FZm/eyGf9pUiUQoMsTbsDsvI4wYpl6xlxVchG3r/1HkW/vwvOAFjyaeYR1ACBXLfRo1J5zB1tMgOilYUsq7sBTLIYojPLifXln8JshruJ78f0PVFyBQkV3PWSJKMbcTCqS+ID1sm2BMpVi4ZRHryT6hW/1IdoDkWE2Jtaox56tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740488797; c=relaxed/simple;
-	bh=dEDYnB/ZGue7AXnCtN0db3onXsruxL5yCDkNfsvKVpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WXBweSptIbms8iwIW1QrFIsBw7NJs3rxA6R4DfLtOt/Nc5HkyMvLdnKIz8hGMxiTFBs76W9R0NbDcZu+ohpB7BuecOnZCYiPvfAbfhgW3nM8JsnzJnW7Jzeyj1WRWjsrFl9p99OiqliK9eh6xmWLwkEQlXoOdyX7hyCGDCQXgZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=Uq9bBd88; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-38f26a82d1dso2860977f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 05:06:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1740488794; x=1741093594; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3r2abtexQ5so+Aq2Ix0QxPeBhuLrVnX7e6NAOqOuWow=;
-        b=Uq9bBd88brYbrYbByfLzML4MrfYpNerfNUdXD8F1ECacfbmIh4/Qrh2sFrS/g2AOKa
-         TLW5dyVQDmpdbRLCfBT9eu+BPtCB1e9A5LsSGPsu7Q9HVvZA6cRnOt1Ad8vQurkkLjDp
-         ZXzsyxUMRnM7fJ+xUD/iDJBY8/7sZKMlsZqqXNDJFkhnvkofyvPUsfMPMro3b5Y9YpIS
-         GVqcvuL1CfQfDTDdD7cHdGBLf+S4VADp0VxLfR82Ln0wQ2IBM+HGEf+5dSCXTuW/rMEE
-         55wYf1SIV93xVXPuzsA1cuVwvahiqR8Ehtb6amltrC1VJYDb0qR2f0cnImMPjCoymKa2
-         8r/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740488794; x=1741093594;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3r2abtexQ5so+Aq2Ix0QxPeBhuLrVnX7e6NAOqOuWow=;
-        b=do/2ZZDAT1EKa0iWtcrdlPlutS+vTC6uxD4MyF8eRabH17IV/VP9ijx6GHmtXskAtr
-         ihRjQoQFAWeNQ8qKS5/mfauzfo+yyAuBLmLb2hbTEXPRANwVNwsQPWFFAg9U082v39Zg
-         ToBK1XliGBxk27/LhiQxYygNJY+vAoEVK69CNR1gfHkElZzLDK+lI2KGNQY1N1FAxH7u
-         tpqiijnLoA4UQBKp3n2YXeogB9TAv9Edw+IejFIo8hCFjDtMkVcT+omcm9WCbAI5Glw8
-         iHzP8cP6IejclaJhKOs3EIAc7DjbF1fAfCbGi5ES79U/NhE18Mh1CBpyXolht1WTWFpJ
-         tHIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCR6rDu4F/Ku+TLyD5iB66jYDxZAS1MhuEcpCpXX+r2vhAL+brxphrCcfchcERcsija3DLhtrMnDObwes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWv6TwJeOA+shonXnUhs8yfz8xxT26UAk+zJl10jhXM7pznOUn
-	n290XwwWNzjG8jwa7kNgi/JYlGO0PGFSoJIG1hYX8Q+sHxM47NDMj2O6ZbrjE5E=
-X-Gm-Gg: ASbGncs6rIMXPN5xbjWjQeX8j8hZGI/6EnjzlhQONwQTCwdye3XVSTdkArXM9PH/ai2
-	XKSkq3jwkLDXZAI3Yj/xQrdu5X3B1kxOYk/RgQxtHt/jVttyTmVNzDnmVI68xl1xFNmdq2/W8Sh
-	qUivmy/wSsYpewZ7t6WSPJ0Eh5wlUb2KOqLLVlkLP1oPg7rKyV4SmkltBtgg1SDG+S48ZMsF593
-	MkA9hvWQxeYVOfVvnmLISexiMJPb0TOmXe9qqKpPTI6AoVSku8t//Gd5vWKr1KaNy6E0BdxYT6j
-	wzLDgdVXLOoxbr9y3aQo
-X-Google-Smtp-Source: AGHT+IFPGaLaQqolYTV6Jqk9DfglHXkMkXYqQkS5537ij0pmGpVMAzM91KDMjwvm+BMnPBjAwDjFGA==
-X-Received: by 2002:a05:6000:1447:b0:385:ee40:2d88 with SMTP id ffacd0b85a97d-390cc5f20e0mr2880469f8f.3.1740488793228;
-        Tue, 25 Feb 2025 05:06:33 -0800 (PST)
-Received: from airbuntu ([46.186.201.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390cd86ca0asm2284946f8f.32.2025.02.25.05.06.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 05:06:32 -0800 (PST)
-Date: Tue, 25 Feb 2025 13:06:28 +0000
-From: Qais Yousef <qyousef@layalina.io>
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	zihan zhou <15645113830zzh@gmail.com>, bsegall@google.com,
-	dietmar.eggemann@arm.com, juri.lelli@redhat.com,
-	linux-kernel@vger.kernel.org, mgorman@suse.de, mingo@redhat.com,
-	rostedt@goodmis.org, vschneid@redhat.com
-Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks
- getting an extra tick
-Message-ID: <20250225130628.ydoijpev7qwmz5kw@airbuntu>
-References: <20250208074821.11832-1-15645113830zzh@gmail.com>
- <20250208075322.13139-1-15645113830zzh@gmail.com>
- <20250210012931.ym337oexdcjmwwzv@airbuntu>
- <20250210091352.GC10324@noisy.programming.kicks-ass.net>
- <CAKfTPtCLg_kuRtknPsiLwRdKpvb4CYHqv+BRh5yJV8Z+o4oQcw@mail.gmail.com>
- <20250225002521.t5w2deyyw6uqxo3r@airbuntu>
- <CAKfTPtDLRWVWhZ3QNEL_fQMwwh_LMZPPFcAEQ=shhRyVdmGQPg@mail.gmail.com>
- <CAKfTPtDjEHZkJR6C0vv2OLq2vZgvFKu6NMRCLsU6MK+6R7iLCA@mail.gmail.com>
+	s=arc-20240116; t=1740488810; c=relaxed/simple;
+	bh=FH0Z9n6n+rbztuPpg0AwFq+ZeandoPBp2IqLIgthyHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XwuE18VNobyvCT2ML4bIbliObb9TBQ5jLuuwHXJtXfQUapSwuMo/5WCosH8xpotZNTsCLsPYrwWIt2FPVgekB2eNSQX+y1+Sh5hSNVfo/MrNrqpSUkIPOPqpZ3D9+liOFqcIkMdwWVjnVbDbXV+JoJVHegnpA5tzGOS1WvB0Uh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bSi34QCM; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0D8814439E;
+	Tue, 25 Feb 2025 13:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740488805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kIvi06Mb+JppGKBH1GDtlMpik2hj2BRVbz0nApw4Vws=;
+	b=bSi34QCMkoea7NELXiPstkmIqW7+LCROLfLbLU7kFnoEGfYXlqYWpd23eaCl7hNz5p6kX9
+	J4fFRWYlOwbJXWg4zGMK5ZXEa6WX9G0HG9rXzvPfoXJadb9CHgu1nltY2uGeeQRG70FV8t
+	dNNevOCrq9pRrx3QA7eSGuc24cfN3MhkZ2h7k3dzVoTRjHalXjNNaBIJXlLWgRv40qBdAn
+	gepfv/7BL3apoDQ6OUU5DTXuAYQH7hPTaT3aimNulpI6RekbU0Cf+lXf/R8jmQ9uBvprpX
+	KnWqoz0iVFcmrE3WhfnUrUpQpLgFNaAeOP5qQD4aTCSXMCESjtJyJgcDwvaUsA==
+Date: Tue, 25 Feb 2025 14:06:40 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: =?UTF-8?B?QmrDuHJu?= Mork <bjorn@mork.no>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, davem@davemloft.net,
+ Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Florian
+ Fainelli <f.fainelli@gmail.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Antoine Tenart <atenart@kernel.org>,
+ Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>
+Subject: Re: [PATCH net-next 0/2] net: phy: sfp: Add single-byte SMBus SFP
+ access
+Message-ID: <20250225140640.382fec83@fedora.home>
+In-Reply-To: <87o6yqrygp.fsf@miraculix.mork.no>
+References: <20250223172848.1098621-1-maxime.chevallier@bootlin.com>
+	<Z7tdlaGfVHuaWPaG@shell.armlinux.org.uk>
+	<87o6yqrygp.fsf@miraculix.mork.no>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtDjEHZkJR6C0vv2OLq2vZgvFKu6NMRCLsU6MK+6R7iLCA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepofgrgihimhgvucevhhgvvhgrlhhlihgvrhcuoehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeuueeuhffgtdetjefhgfetgfefjeeltdehieetvdfgffelieekteegtdeilefhleenucffohhmrghinhepmhgrrhhvvghllhdrtghomhdprhgvphhothgvtgdrtghomhdprghprggtohgvrdgtohhmrdhtfienucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedujedprhgtphhtthhopegsjhhorhhnsehmohhrkhdrnhhopdhrtghpthhtoheplhhinhhugiesrghrm
+ hhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 02/25/25 11:13, Vincent Guittot wrote:
-> On Tue, 25 Feb 2025 at 02:29, Vincent Guittot
-> <vincent.guittot@linaro.org> wrote:
+Hi,
+
+On Tue, 25 Feb 2025 13:38:30 +0100
+Bj=C3=B8rn Mork <bjorn@mork.no> wrote:
+
+> "Russell King (Oracle)" <linux@armlinux.org.uk> writes:
+> > On Sun, Feb 23, 2025 at 06:28:45PM +0100, Maxime Chevallier wrote: =20
+> >> Hi everyone,
+> >>=20
+> >> Some PHYs such as the VSC8552 have embedded "Two-wire Interfaces" desi=
+gned to
+> >> access SFP modules downstream. These controllers are actually SMBus co=
+ntrollers
+> >> that can only perform single-byte accesses for read and write. =20
 > >
-> > On Tue, 25 Feb 2025 at 01:25, Qais Yousef <qyousef@layalina.io> wrote:
-> > >
-> > > On 02/24/25 15:15, Vincent Guittot wrote:
-> > > > On Mon, 10 Feb 2025 at 10:13, Peter Zijlstra <peterz@infradead.org> wrote:
-> > > > >
-> > > > > On Mon, Feb 10, 2025 at 01:29:31AM +0000, Qais Yousef wrote:
-> > > > >
-> > > > > > I brought the topic up of these magic values with Peter and Vincent in LPC as
-> > > > > > I think this logic is confusing. I have nothing against your patch, but if the
-> > > > > > maintainers agree I am in favour of removing it completely in favour of setting
-> > > > > > it to a single value that is the same across all systems.
-> > > > >
-> > > > > You're talking about the scaling, right?
-> > > > >
-> > > > > Yeah, it is of limited use. The cap at 8, combined with the fact that
-> > > > > its really hard to find a machine with less than 8 CPUs on, makes the
-> > > > > whole thing mostly useless.
-> > > > >
-> > > > > Back when we did this, we still had dual-core laptops. Now phones have
-> > > > > 8 or more CPUs on.
-> > > > >
-> > > > > So I don't think I mind ripping it out.
-> > > >
-> > > > Beside the question of ripping it out or not. We still have a number
-> > > > of devices with less than 8 cores but they are not targeting phones,
-> > > > laptops or servers ...
-> > >
-> > > I'm not sure if this is in favour or against the rip out, or highlighting a new
-> > > problem. But in case it is against the rip-out, hopefully my answer in [1]
+> > This goes against SFF-8472, and likely breaks atomic access to 16-bit
+> > PHY registers.
 > >
-> > My comment was only about the fact that assuming that systems now have
-> > 8 cpus or more so scaling doesn't make any real diff at the end is not
-> > really true.
+> > For the former, I quote from SFF-8472:
 > >
-> > > highlights why the relationship to CPU number is actually weak and not really
-> > > helping much - I think it is making implicit assumptions about the workloads and
-> > > I don't think this holds anymore. Ignore me otherwise :-)
+> > "To guarantee coherency of the diagnostic monitoring data, the host is
+> > required to retrieve any multi-byte fields from the diagnostic
+> > monitoring data structure (e.g. Rx Power MSB - byte 104 in A2h, Rx
+> > Power LSB - byte 105 in A2h) by the use of a single two-byte read
+> > sequence across the 2-wire interface."
 > >
-> > Then regarding the scaling factor, I don't have a strong opinion but I
-> > would not be so definitive about its uselessness as there are few
-> > things to take into account:
-> > - From a scheduling PoV, the scheduling delay is impacted by largeer
-> > slices on devices with small number of CPUs even for light loaded
-> > cases
-> > - 1000 HZ with 1ms slice will generate 3 times more context switch
-> > than 2.8ms in a steady loaded case and if some people were concerned
-> > but using 1000hz by default, we will not feel better with 1ms slice
+> > So, if using a SMBus controller, I think we should at the very least
+> > disable exporting the hwmon parameters as these become non-atomic
+> > reads. =20
+>=20
+> Would SMBus word reads be an alternative for hwmon, if the SMBus
+> controller support those?  Should qualify as "a single two-byte read
+> sequence across the 2-wire interface."
 
-Oh I was thinking of keeping the 3ms base_slice for all systems instead.
-While I think 3ms is a bit too high, but this is more contentious topic and
-needs more thinking/experimenting.
+There are different flavors when it comes to what an SMBus controller
+can do. In the case of what this patchset supports, its really about
+SMBus controllers that can only perform single-byte operations, which
+will cause issues here.
 
-> 
-> Figures showing that there is no major regression to use a base slice
-> < 1ms everywhere would be a good starting point.
+What I have is a controller that only supports I2C_FUNC_SMBUS_BYTE, in
+that the controller will issue a STOP after reading/writing one byte.
 
-I haven't tried less than 1ms. Worth experimenting with. Given our fastest tick
-is 1ms, then without HRTICK this will not be helpful. Except for helping wakeup
-preemption. I do strongly believe a shorter base slice (than 3ms) and HRTICK
-are the right defaults. But this needs more data and evaluation. And fixing x86
-(and similar archs) expensive HRTIMERs.
+But if you have a controller that supports, say,
+I2C_FUNC_SMBUS_WORD_DATA (i.e. 16 bits words xfers), that's already a
+different story, as the diags situation Russell mentions will fit in a
+word. That will also make MDIO accesses to embedded PHYs easier, at
+least for C22.=20
 
-> Some slight performance regression has just been reported for this
-> patch which moves base slice from 3ms down to 2.8ms [1].
-> 
-> [1] https://lore.kernel.org/lkml/202502251026.bb927780-lkp@intel.com/
+> > Whether PHY access works correctly or not is probably module specific.
+> > E.g. reading the MII_BMSR register may not return latched link status
+> > because the reads of the high and low bytes may be interpreted as two
+> > seperate distinct accesses. =20
+>=20
+> Bear with me.  Trying to learn here.  AFAIU, we only have a defacto
+> specification of the clause 22 phy interface over i2c, based on the
+> 88E1111 implementation.  As Maxime pointed out, this explicitly allows
+> two sequential distinct byte transactions to read or write the 16bit
+> registers. See figures 27 and 30 in
+> https://www.marvell.com/content/dam/marvell/en/public-collateral/transcei=
+vers/marvell-phys-transceivers-alaska-88e1111-datasheet.pdf
+>=20
+> Looks like the latch timing restrictions are missing, but I still do not
+> think that's enough reason to disallow access to phys over SMBus.  If
+> this is all the interface specification we have?
+>=20
+> I have been digging around for the RollBall protocol spec, but Google
+> isn't very helpful.  This list and the mdio-i2c.c implementation is all
+> that comes up.  It does use 4 and 6 byte transactions which will be
+> difficult to emulate on SMBus.  But the
+>=20
+> 	/* By experiment it takes up to 70 ms to access a register for these
+> 	 * SFPs. Sleep 20ms between iterations and try 10 times.
+> 	 */
+>=20
+> comment in i2c_rollball_mii_poll() indicates that it isn't very timing
+> sensitive at all. The RollBall SFP+ I have ("FS", "SFP-10G-T") is faster
+> than the comment indicates, but still leaves plenty of time for the
+> single byte SMBus transactions to complete.
+>=20
+> Haven't found any formal specification of i2c clause 45 access either.
+> But some SFP+ vendors have been nice enough to document their protocol
+> in datasheets.  Examples:
+>=20
+> https://www.repotec.com/download/managed-ethernet/ds-ml/01-MOD-M10GTP-DS-=
+verB.pdf
+> https://www.apacoe.com.tw/files/ASFPT-TNBT-X-NA%20V1.4.pdf
+>=20
+> They all seem to agree that 2/4/6 byte accesses are required, and they
+> offer no single byte alternative even if the presence of a "smart"
+> bridge should allow intelligent latching.  So this might be
+> "impossible" (aka "hard") to do over SMBus.   I have no such SFP+ so I
+> cannot even try.
+>=20
+> > In an ideal world, I'd prefer to say no to hardware designs like this,
+> > but unfortunately, hardware designers don't know these details of the
+> > protocol, and all they see is "two wire, oh SMBus will do". =20
+>=20
+> I believe you are reading more into the spec than what's actually there.
+>=20
+> SFF-8419 defines the interface as
+>=20
+>  "The SFP+ management interface is a two-wire interface, similar to
+>   I2C."
+>=20
+> There is no i2c requirement. This does not rule out SMBus. Maybe I am
+> reading too much into it as well, but in my view "similar to I2C" sounds
+> like they wanted to include SMBus.
+>=20
+> Both the adhoc phy additions and the diagnostic parts of SFF-8472
+> silently ignores this.  I do not think the blame for any incompatibilty
+> is solely on the host side here.
 
-Oh I didn't realize this patch was already picked up. Let me send a patch
-myself then, assuming we agree ripping the scaling logic out and keeping
-base_slice a constant 3ms for all systems is fine. This will undo this patch
-though.. I do want to encourage people to think more about their workloads and
-their requirements. The kernel won't ever have a default that is optimum across
-the board. They shouldn't be shy to tweak it via the task runtime or debugfs
-instead. But the default should be representative for modern systems/workloads
-still as the world moves on. It would be great if we get feedback outside of
-these synthetic benchmarks though. I really don't think they represent reality
-that much (not saying they are completely useless).
+At least for this series, SMBus by itself isn't the main issue, the
+main problem is single-byte SMBus. As soon as you can do 16 bits xfers,
+that rules-out a whole class of potential problems (which doesn't mean
+there will be no issue :) ), but I haven't really digged into how C45
+and rollball will behave in that case.
 
-> 
-> 
-> > - 1ms is not a good value. In fact anything which is a multiple of the
-> > tick is not a good number as the actual time accounted to the task is
-> > usually less than the tick
-> > - And you can always set the scaling to none with tunable_scaling to
-> > get a fixed 0.7ms default slice whatever the number of CPUs
-> >
-> > >
-> > > FWIW a raspberry PI can be used as a server, a personal computer, a multimedia
-> > > entertainment system, a dumb sensor recorder/relayer or anything else. I think
-> > > most systems expect to run a variety of workloads and IMHO the fact the system
-> > > is overloaded and we need a reasonable default base_slice to ensure timely
-> > > progress of all running tasks has little relation to NR_CPUs nowadays.
-> > >
-> > > [1] https://lore.kernel.org/all/20250210230500.53mybtyvzhdagot5@airbuntu/
+Note that the series actually doesn't support I2C_FUNC_SMBUS_WORD_DATA,
+but doesn't prevent it either :)
+
+The driver for the SMBus controller in the rtl930x SoC you mention seem
+to support I2C_FUNC_SMBUS_WORD_DATA and even longer xfers, in which
+case you could add SFP support for smbus-only controllers in a much
+more reliable way. It could be conceivable to remove the hwmon-disabled
+restriction for I2C_FUNC_SMBUS_WORD_DATA.
+
+Maxime
 
