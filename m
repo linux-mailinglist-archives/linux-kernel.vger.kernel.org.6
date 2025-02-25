@@ -1,166 +1,228 @@
-Return-Path: <linux-kernel+bounces-532275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A47A44AFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:58:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50887A44AF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6122B3ABF52
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D6E19E01CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB401A7262;
-	Tue, 25 Feb 2025 18:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C20B188736;
+	Tue, 25 Feb 2025 18:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ELaoWmCq"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/NMttvC"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A743E1A23A9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CCA61552E3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 18:56:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740509708; cv=none; b=qBvR9MDRlUqLVAJ6Iak/W2MQMD8OQvG9n115tUkxSF/P8qVSe/ULmikKVbGCp17KPrk/VvWq8CjAb8qnjHX8kFuwsueopVZQwqfl+3CQs9e+pFTLvI2l/NU3Tr9CXYn2QxgGrgcGNMgulSw6+3WNPva9AxxaegCaStcCzMUpoc0=
+	t=1740509780; cv=none; b=OLuVwY1MKfipC/ssYemoaJw3/mAe9qHShfsSoOEwmnhBBDKCRdB4TmBhSsxBT0cqpiZCpl4XLQj5Ih42dbQVUXpdTVGvCFSpiQNAZMDdWGJxI/BBzPmIk1G1fchIoXiLH/2Cy6UM/GwVrrTeWpmUOqeNhgetDFA44T7W0kn6s00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740509708; c=relaxed/simple;
-	bh=PYHSgLO7lQsS8Kx+B9mtZoE1y7zDRkButLc9RwemdLY=;
+	s=arc-20240116; t=1740509780; c=relaxed/simple;
+	bh=o3FsOm0fTAIzQZQgl8z8uv1ktoiIxqkpUMyGsybUgSo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REBE6RHYw05zKbp5dYlQbLW0tsiWQlqKt4y1fkT+cn222oVACpG9iqTNC1kTlPzFp59L9XjMkJnRpS8radWJz/xjEZuGwQOWVuJeoBmozPI5Q0YrWGOwvXwZ5/+iPv1KgEh5jIfhsJerklXJGqnpQoF7JDhsy/hyA3om2PWfJWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ELaoWmCq; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abbda4349e9so871926366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:55:06 -0800 (PST)
+	 To:Cc:Content-Type; b=hg8dd6oy5q5kdhd0iv7lKSnJYuCJsfo/WprJkQ9GCdjEsOuo2WjQeZol4vq7SPLowPBhHQywDDDhCwNWIQRaGM242uR2vwkXLIklgtYQg+82DtXeweehFX91/nAsj14cWXQYHJtO2omFIFw2fdwNuDXO77FJC6QBoKUN3kE0PVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/NMttvC; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fc288da33eso1630063a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:56:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1740509705; x=1741114505; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=i+rWhtD5x8D6XUhYZf1P7I+awMTvGfoNgd9n4DqDTvI=;
-        b=ELaoWmCqO4eg5spGLL2TEeE9Crn7uH81+THRp8z29jMY+Jd3nucMxsQMYSwAQ0pQep
-         gkB+xak+oQ5KVIEKmLj7D8kZgKAa/yBqqaFzyIovCYY7l+0KKSwweNDI2nM6+/vDmb1e
-         MAtY3ugPb7VM5sx3nfxmvN6GqRwR88/xbLG/k=
+        d=gmail.com; s=20230601; t=1740509778; x=1741114578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5LJYpUID6W4I5EJhScurw/AX4q422xg2nTEM2WBLhuA=;
+        b=b/NMttvCd2vUc9R1RTEERgQpyt1Y0U0clQstBNm896NdOWnQXPLjczIjnnh9qFrbNV
+         rmz9UmiiBLodRiI71s5bEo8uGcs63ugr34rJC5r22KHzv95V13aeyClT/sgMH3m5BFez
+         XszmHa/LOv7tB9xGKJmqcF8oCpPQk9ePa8dEzLXw48TFhh272Fa0Gyt3OrirWfEKpl/A
+         MmiuDjXd2Tv+mH7UCjZttJUAxxkACZ+LaKD67KPY5rNYCKon5vPOWzRdbhi9jabatzI5
+         5K//8dUdtpAXbEBehQdveBYyabuD7g8LVDivfUu0iOKrBoCHyXlvnnELkdL3b8eRAJAE
+         4K8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740509705; x=1741114505;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i+rWhtD5x8D6XUhYZf1P7I+awMTvGfoNgd9n4DqDTvI=;
-        b=Bc0fY09KywX2nPLfk00wIHxYdite7hRT+tRePAZUEbYUPxZK7XBuupuEzD+BnQx2XP
-         DpLHeUoUq9nhCO5KCTPe7/jWV+z2/UHrmKtaNUNEIlVuO3oUDYEOwCMZnNQeY7mWsYFY
-         nP4QqDetV8HZ4aYFznf+Wpps3Rk94oUyiwWuOqKL0LWJ9k7rVRB4S5EMHxrdauVG3QPX
-         rVJePs0jmodXGj8a4qkURMhXkhHRVSv66LEKSa/tBAWR16vUgeKfvm8szmNbSzeAsEOY
-         oZZrITEhfL5qSaGtEB0qIjwyxU4YeIec7cGwYWifdI619N1tFyy2u4VwiFGLovZYgRJ3
-         pWTg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFbki36WXJZAV8VJXDCaNHj6JiAlivZNpU/7KNGRG0za3zvtmUdvADRMS0lQAyoTFBOtjslA0X3mrBgIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1+4rGY7X7d6v7dJmBxq36b2my4YwLrc2jXrIyRm7uoeEn61Gm
-	8arNT1oEKDBwUusQfb9ZHrw9UNibROqJ+PrzvjFn6xe4lyB4EWZ/qt1KHUfiFEODMQgcsItrbEC
-	oeCU=
-X-Gm-Gg: ASbGncsLD6ZpEeHT3GACsGXtENBRHfrNdISPVonOuV4hS3+9XObxa/MIWBJQwzm08qo
-	cwwDEpFn7efuyFePTdMOj34mSZuPb3fQ7FlsWBo+DQFOt9aw0lBmUArS3u0MCFZHzMbnhD5qMfM
-	65ieI3I0GR2vb+rxBCuVPyrhQ5nsolBJEL57d0HjNG9wdimMrhvYNJ9AdGhEhg6lmQ+Ktzzx6o5
-	ZNh++I0n+3VQrpW1375i6UWaJtBBzqi7OO/LgFAxz8tIlrvVcPo5HxnP4FB6DSKChDxr5R97JK+
-	FeUnr/n8ewYpioCOUzjXoPze8frMxZtWpCiNg3lJEdSXZfAfF5Tt52Z0JPPzYF3OHSOiSf2bPyi
-	c
-X-Google-Smtp-Source: AGHT+IEyilJbscHJ1rg4gw7JaDIMymrEUAMTJGr6021Bbkq1AISN6tyzfJlADh1b6i5j0Z4395yZVQ==
-X-Received: by 2002:a17:906:310b:b0:ab7:da56:af95 with SMTP id a640c23a62f3a-abc0d97c68cmr1718407266b.2.1740509704759;
-        Tue, 25 Feb 2025 10:55:04 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abed1cdbf06sm184589466b.23.2025.02.25.10.55.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Feb 2025 10:55:03 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e08064b4ddso8040010a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 10:55:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXAhgP+9Mpu3KzJMDKjA8vcKB4CUDlAy42hC0t6Xv6xgDu7NcdPUu67ADy/IlBj8BtGbaIrKTKeMPrEEkA=@vger.kernel.org
-X-Received: by 2002:a05:6402:2b86:b0:5d9:a54:f8b4 with SMTP id
- 4fb4d7f45d1cf-5e0b70dc05emr16845178a12.11.1740509703150; Tue, 25 Feb 2025
- 10:55:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1740509778; x=1741114578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5LJYpUID6W4I5EJhScurw/AX4q422xg2nTEM2WBLhuA=;
+        b=Eqh4+juuhXzxwsMo9aBvUYDc7ByEBw+ZAfC0dNHQL1D1OeJWTPOHrPkwRu8dzWP87g
+         ijZ4SjEUK81z22oVKbNdI0V997mGF56HBOj7/qwsFbGTemu6ZxE6bUTtc+ndI2yFH0A5
+         7qJH7CA9OhEXeRyeOWBOT81PcgnzIea5v5vw0eMCHinyYGFuP2zjyXlbcbr8s0p10llk
+         0f2cXVTb1k6vsbcey872spN6yVeT0zuTh1EvaMcUYwlU0EtMbM3pUYwSMIQJ/ELslpMN
+         iqi97wTuI0C541zdefb6w/BcJTogNie7HqTibFKj/JVt+HyECi7AdiOsjJSIoKv0JiRY
+         esIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXd3DroIprT41at3xureKlu5e/RF9u9oICJvprQ2wWdItuFYyVo6eOTN6tl6EsDnae+HgxM+dToamrHXJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD1YINBzn9xt5qXiBnie0WvOHq1KrCvax93v0c6XN9ifCns04Y
+	i91QE3lHPbBWrIhuSsgsVk81bd0riCJPPAxyrcPrQRARVdR0ytXaqL66Bw2Jy2Fk79N9P62OsNe
+	qLFsQJVfGzUER3dVfxkkKzx4Uf5w=
+X-Gm-Gg: ASbGnctuNWpvWgS4e5psCJjgqGuPk8yjmnMon8VakDS0JfjWCn3gYL1SO3hJyJj/GrO
+	UeBfdCQFR+T9AvlNd97bFLvTx7yLQHVGZsnG6UMTZHuk6e6tLlyR+xsojamNg/KHibntDSKQJXi
+	I75WZuoKE=
+X-Google-Smtp-Source: AGHT+IGkDAct65mknFExr5qSoeMevF/bWfU3G2E8vI3pXH1PsZu7yjosujAuCh+2s6GdpE0tBa1Vyokcv8UkFO7+ROg=
+X-Received: by 2002:a17:90b:3e8d:b0:2fa:2011:c85d with SMTP id
+ 98e67ed59e1d1-2fce7b4f29fmr10629837a91.7.1740509778436; Tue, 25 Feb 2025
+ 10:56:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFJgqgRygssuSya_HCdswguuj3nDf_sP9y2zq4GGrN1-d7RMRw@mail.gmail.com>
- <20250222141521.1fe24871@eugeo> <CAFJgqgSG4iZE12Yg6deX3_VYSOLxkm5yr5yu25HxN+y4wPD5bg@mail.gmail.com>
- <6pwjvkejyw2wjxobu6ffeyolkk2fppuuvyrzqpigchqzhclnhm@v5zhfpmirk2c>
- <CAHk-=wgq1DvgNVoodk7JKc6BuU1m9UnoN+k=TLtxCAL7xTP=Dg@mail.gmail.com>
- <CAFJgqgSqMO724SQxinNqVGCGc7=ibUvVq-f7Qk1=S3A47Mr-ZQ@mail.gmail.com> <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-In-Reply-To: <CAH5fLgh7Be0Eg=7UipL7PXqeV1Jq-1rpMJRa_sBkeiOgA7W9Cg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Feb 2025 10:54:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-X-Gm-Features: AWEUYZk0cXay_isXRx72KKy4FfsgUiBHKihS09o_3cl8pFnpf_e0Ez6oe_KpUXU
-Message-ID: <CAHk-=wgJQAPaYubnD3YNu8TYCLmmqs89ET4xE8LAe2AVFc_q9A@mail.gmail.com>
-Subject: Re: C aggregate passing (Rust kernel policy)
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Ventura Jack <venturajack85@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Gary Guo <gary@garyguo.net>, airlied@gmail.com, boqun.feng@gmail.com, 
-	david.laight.linux@gmail.com, ej@inai.de, gregkh@linuxfoundation.org, 
-	hch@infradead.org, hpa@zytor.com, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, miguel.ojeda.sandonis@gmail.com, 
-	rust-for-linux@vger.kernel.org
+References: <20250224014942.193407-1-linux@treblig.org>
+In-Reply-To: <20250224014942.193407-1-linux@treblig.org>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Tue, 25 Feb 2025 13:56:04 -0500
+X-Gm-Features: AWEUYZkV-VKShpz06myyPBFccE18IuxpHMzvBHAaolC_sSnG3Qgfe_3AzTFlGo4
+Message-ID: <CADnq5_MPXqCucYhh1kSCQVOm0QXT00+Bax9G=S9+vRJ2QLB6Sg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Remove unused optc3_fpu_set_vrr_m_const
+To: linux@treblig.org
+Cc: alexander.deucher@amd.com, chaitanya.dhere@amd.com, jun.lei@amd.com, 
+	harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	christian.koenig@amd.com, Xinhui.Pan@amd.com, airlied@gmail.com, 
+	simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025 at 08:12, Alice Ryhl <aliceryhl@google.com> wrote:
+Applied.  Thanks!
+
+Alex
+
+On Mon, Feb 24, 2025 at 8:43=E2=80=AFAM <linux@treblig.org> wrote:
 >
-> I think all of this worrying about Rust not having defined its
-> aliasing model is way overblown. Ultimately, the status quo is that
-> each unsafe operation that has to do with aliasing falls into one of
-> three categories:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 >
-> * This is definitely allowed.
-> * This is definitely UB.
-> * We don't know whether we want to allow this yet.
-
-Side note: can I please ask that the Rust people avoid the "UD" model
-as much as humanly possible?
-
-In particular, if there is something that is undefined behavior - even
-if it's in some "unsafe" mode, please please please make the rule be
-that
-
- (a) either the compiler ends up being constrained to doing things in
-some "naive" code generation
-
-or it's a clear UB situation, and
-
- (b) the compiler will warn about it
-
-IOW, *please* avoid the C model of "Oh, I'll generate code that
-silently takes advantage of the fact that if I'm wrong, this case is
-undefined".
-
-And BTW, I think this is _particularly_ true for unsafe rust. Yes,
-it's "unsafe", but at the same time, the unsafe parts are the fragile
-parts and hopefully not _so_ hugely performance-critical that you need
-to do wild optimizations.
-
-So the cases I'm talking about is literally re-ordering accesses past
-each other ("Hey, I don't know if these alias or not, but based on
-some paper standard - rather than the source code - I will assume they
-do not"), and things like integer overflow behavior ("Oh, maybe this
-overflows and gives a different answer than the naive case that the
-source code implies, but overflow is undefined so I can screw it up").
-
-I'd just like to point to one case where the C standards body seems to
-have actually at least consider improving on undefined behavior (so
-credit where credit is due, since I often complain about the C
-standards body):
-
-   https://www9.open-std.org/JTC1/SC22/WG14/www/docs/n3203.htm
-
-where the original "this is undefined" came from the fact that
-compilers were simple and restricting things like evaluation order
-caused lots of problems. These days, a weak ordering definition causes
-*many* more problems, and compilers are much smarter, and just saying
-that the code has to act as if there was a strict ordering of
-operations still allows almost all the normal optimizations in
-practice.
-
-This is just a general "please avoid the idiocies of the past". The
-potential code generation improvements are not worth the pain.
-
-              Linus
+> The last use of optc3_fpu_set_vrr_m_const() was removed in 2022's
+> commit 64f991590ff4 ("drm/amd/display: Fix a compilation failure on Power=
+PC
+> caused by FPU code")
+> which removed the only caller (with a similar) name.
+>
+> Remove it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  .../drm/amd/display/dc/dml/dcn30/dcn30_fpu.c  | 76 -------------------
+>  .../drm/amd/display/dc/dml/dcn30/dcn30_fpu.h  |  3 -
+>  2 files changed, 79 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.c b/drive=
+rs/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.c
+> index aac0a0ae2966..88789987bdbc 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.c
+> @@ -178,82 +178,6 @@ struct _vcs_dpi_soc_bounding_box_st dcn3_0_soc =3D {
+>  };
+>
+>
+> -void optc3_fpu_set_vrr_m_const(struct timing_generator *optc,
+> -               double vtotal_avg)
+> -{
+> -       struct optc *optc1 =3D DCN10TG_FROM_TG(optc);
+> -       double vtotal_min, vtotal_max;
+> -       double ratio, modulo, phase;
+> -       uint32_t vblank_start;
+> -       uint32_t v_total_mask_value =3D 0;
+> -
+> -       dc_assert_fp_enabled();
+> -
+> -       /* Compute VTOTAL_MIN and VTOTAL_MAX, so that
+> -        * VOTAL_MAX - VTOTAL_MIN =3D 1
+> -        */
+> -       v_total_mask_value =3D 16;
+> -       vtotal_min =3D dcn_bw_floor(vtotal_avg);
+> -       vtotal_max =3D dcn_bw_ceil(vtotal_avg);
+> -
+> -       /* Check that bottom VBLANK is at least 2 lines tall when running=
+ with
+> -        * VTOTAL_MIN. Note that VTOTAL registers are defined as 'total n=
+umber
+> -        * of lines in a frame - 1'.
+> -        */
+> -       REG_GET(OTG_V_BLANK_START_END, OTG_V_BLANK_START,
+> -               &vblank_start);
+> -       ASSERT(vtotal_min >=3D vblank_start + 1);
+> -
+> -       /* Special case where the average frame rate can be achieved
+> -        * without using the DTO
+> -        */
+> -       if (vtotal_min =3D=3D vtotal_max) {
+> -               REG_SET(OTG_V_TOTAL, 0, OTG_V_TOTAL, (uint32_t)vtotal_min=
+);
+> -
+> -               optc->funcs->set_vtotal_min_max(optc, 0, 0);
+> -               REG_SET(OTG_M_CONST_DTO0, 0, OTG_M_CONST_DTO_PHASE, 0);
+> -               REG_SET(OTG_M_CONST_DTO1, 0, OTG_M_CONST_DTO_MODULO, 0);
+> -               REG_UPDATE_3(OTG_V_TOTAL_CONTROL,
+> -                       OTG_V_TOTAL_MIN_SEL, 0,
+> -                       OTG_V_TOTAL_MAX_SEL, 0,
+> -                       OTG_SET_V_TOTAL_MIN_MASK_EN, 0);
+> -               return;
+> -       }
+> -
+> -       ratio =3D vtotal_max - vtotal_avg;
+> -       modulo =3D 65536.0 * 65536.0 - 1.0; /* 2^32 - 1 */
+> -       phase =3D ratio * modulo;
+> -
+> -       /* Special cases where the DTO phase gets rounded to 0 or
+> -        * to DTO modulo
+> -        */
+> -       if (phase <=3D 0 || phase >=3D modulo) {
+> -               REG_SET(OTG_V_TOTAL, 0, OTG_V_TOTAL,
+> -                       phase <=3D 0 ?
+> -                               (uint32_t)vtotal_max : (uint32_t)vtotal_m=
+in);
+> -               REG_SET(OTG_V_TOTAL_MIN, 0, OTG_V_TOTAL_MIN, 0);
+> -               REG_SET(OTG_V_TOTAL_MAX, 0, OTG_V_TOTAL_MAX, 0);
+> -               REG_SET(OTG_M_CONST_DTO0, 0, OTG_M_CONST_DTO_PHASE, 0);
+> -               REG_SET(OTG_M_CONST_DTO1, 0, OTG_M_CONST_DTO_MODULO, 0);
+> -               REG_UPDATE_3(OTG_V_TOTAL_CONTROL,
+> -                       OTG_V_TOTAL_MIN_SEL, 0,
+> -                       OTG_V_TOTAL_MAX_SEL, 0,
+> -                       OTG_SET_V_TOTAL_MIN_MASK_EN, 0);
+> -               return;
+> -       }
+> -       REG_UPDATE_6(OTG_V_TOTAL_CONTROL,
+> -               OTG_V_TOTAL_MIN_SEL, 1,
+> -               OTG_V_TOTAL_MAX_SEL, 1,
+> -               OTG_SET_V_TOTAL_MIN_MASK_EN, 1,
+> -               OTG_SET_V_TOTAL_MIN_MASK, v_total_mask_value,
+> -               OTG_VTOTAL_MID_REPLACING_MIN_EN, 0,
+> -               OTG_VTOTAL_MID_REPLACING_MAX_EN, 0);
+> -       REG_SET(OTG_V_TOTAL, 0, OTG_V_TOTAL, (uint32_t)vtotal_min);
+> -       optc->funcs->set_vtotal_min_max(optc, vtotal_min, vtotal_max);
+> -       REG_SET(OTG_M_CONST_DTO0, 0, OTG_M_CONST_DTO_PHASE, (uint32_t)pha=
+se);
+> -       REG_SET(OTG_M_CONST_DTO1, 0, OTG_M_CONST_DTO_MODULO, (uint32_t)mo=
+dulo);
+> -}
+> -
+>  void dcn30_fpu_populate_dml_writeback_from_context(
+>                 struct dc *dc, struct resource_context *res_ctx, display_=
+e2e_pipe_params_st *pipes)
+>  {
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.h b/drive=
+rs/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.h
+> index cab864095ce7..e3b6ad6a8784 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.h
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/dcn30/dcn30_fpu.h
+> @@ -29,9 +29,6 @@
+>  #include "core_types.h"
+>  #include "dcn20/dcn20_optc.h"
+>
+> -void optc3_fpu_set_vrr_m_const(struct timing_generator *optc,
+> -               double vtotal_avg);
+> -
+>  void dcn30_fpu_populate_dml_writeback_from_context(
+>                 struct dc *dc, struct resource_context *res_ctx, display_=
+e2e_pipe_params_st *pipes);
+>
+> --
+> 2.48.1
+>
 
