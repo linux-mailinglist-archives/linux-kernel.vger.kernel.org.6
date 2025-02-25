@@ -1,262 +1,199 @@
-Return-Path: <linux-kernel+bounces-532488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA8EA44E67
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:10:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A5CA44E72
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B41717AFC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:10:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB8D17A7267
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 21:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8EE1A9B58;
-	Tue, 25 Feb 2025 21:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A181211486;
+	Tue, 25 Feb 2025 21:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXUhKbaU"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="Nt/l6W83"
+Received: from smtp.smtpout.orange.fr (smtp-79.smtpout.orange.fr [80.12.242.79])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1301A0BCD;
-	Tue, 25 Feb 2025 21:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C791A0BCD;
+	Tue, 25 Feb 2025 21:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740517800; cv=none; b=jVS9kQdWXaBXffCuED0xmKZxUg5TfcxU81qeg0rQzcCs2p4Xck3vFqJ8vcJEkn2YTC/RxUBE3HvyLMX6CPiHHR/6cES51ObxjKYErirEXsYFRpWMqVRuFDhgp/idvVHyYuCv0jpCPRzF9QcjPx3JKrNtWTkhSdHyn2pOL21w6UE=
+	t=1740517820; cv=none; b=CPjpIWXMQjmv/dgXNmHbsuQC72eHOInALzrKV+NIt+Pk/6qaCT9zPIU7JLFxfr64gyzVmMZ9AXUE9oDdMdprpHWndsf4Nxd0tDGUEq1LqYwEKBSCit4M8nRbIfJmGHFcSvy0dGzLW9+EJVzwwghsIqpC8n4L96PB/fKmtP+h734=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740517800; c=relaxed/simple;
-	bh=Z+iaNm/CbiyBgxvdgSxp4XJmuOgH6m9D8eLOzDl2Rxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RlQSrt6l4cvluxFxwPc20g2Nys50EjPx5d9fRJtFcT5yGk3Kg0RVe35B+eIRf0bHO6iSWJcvRWsQsFdR79UTnePnWlifWxVii220XtaWJkr93PiRMeKNQJj7kCRuoDINFtbJdoTDjw6i4Ib3dOLFVqZDInUkFSCfkVcoN8d1btc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MXUhKbaU; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-521b5bd2268so3480832e0c.0;
-        Tue, 25 Feb 2025 13:09:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740517797; x=1741122597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SOR5cTk1MfDjtZsccw3VnmvVGIbB3SXF6xEA02QDYvk=;
-        b=MXUhKbaUDuaiT5yr/hIzsKu3eZoJ2Kh8UYM2cnkaKdgt9zXY6b1pC1RqdHFO8/WEsZ
-         4DbF6ZDBIR7GHtMEbReOVeuHDtYXxBs6IYfy2TqSOE4k9DE1XHiP3+JzCR+wB0k+KJGy
-         8AgvUiybZiwM3AoQj22kWoQlI0iBzadlWUif0LMDWeZA2h+zojNKIJXyHR+wpbxOE3FQ
-         eVDmvqRrKipYu28hS921OT6LzjQ3tecXKEN2bEK46PLUvpTC8dS9pkLttGakfRnM2unl
-         X/uHiEmd/W2HfBRvwA6/oje/qB8M1XE8Un+QL/vELMq+ufIUdyxs5EBcXONeAq5D94kG
-         /AWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740517797; x=1741122597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SOR5cTk1MfDjtZsccw3VnmvVGIbB3SXF6xEA02QDYvk=;
-        b=OLL3gdB8ub1vMU/HPRxL/uQfI0sdmDt1uhuOEWo1NB7a2xXMH8lSvCgjSQnXFy17FC
-         h/YAEj2RBa1IoNmKe+cjmfN5ZWoQHp6RcL4U3db4tVx0L1TRbG73z9pmt3ecFrueg/+p
-         v6+IIS1MDKnN9yBjwNe1MDy6rJUq9a6lutOwYu2MLx4urAUOHHRt1R/8AUXxVcYASmA4
-         gDVOcnBClnm7bjEyus4Og8Bat7W4mLPQ+C32aJ7kbORirTjHGhgwykJzMyGjnZ/U/rPK
-         Ql2FoEEvmnCjDEEGJaZTA411Sh0hKNZwKXXm1Brwc1+PcJWBX2oOOB75LEEAF/utTEOO
-         JV1g==
-X-Forwarded-Encrypted: i=1; AJvYcCU1Yh2q7MFOEFLtDNffcjd0SkjbENwO2xb/s32vTOsAwq3jki21HBQlp6pMhKCkP4OJh4ruMnOf9TE8d4u+LRQwTeM=@vger.kernel.org, AJvYcCU2ZExe4mAAOd66qyHP6cOZRti0O7ciuixW3X5RX6Rat4pyTDTmp/cBFLuyqDrJuGN+yrqxy5j7MB0euRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX4wRQ5j+k1rTKEbn+7FDX6F3HH3xfKAicBVt8+/yo7ADTmQNT
-	mYfKzq82oDo5PRNzclS1Gq/TLuA3jUvQVqVR7tLJcgxgxi5oyFsI+e+v8C7xz89OqPeBRatbf7K
-	OeyE3HfoUs/YlRDPD6GItyX/4ni2Y5ejjGUQ=
-X-Gm-Gg: ASbGncujTKvQ5wvmzng7inVCuV4H1Ve+11UJrXJTUyKo+qcczFwTY0ZTr+zdfTWe5hv
-	i5YLA3o1pEepaY4u1JtH1I6AWqM/HM2ivInxAECEjsGMbeO7dyz1pvBNM/LDY7drQFR9fYe/0mS
-	cBnyGRwKg=
-X-Google-Smtp-Source: AGHT+IEZ4n9ZShSdryejSp0Dll4XjthRfrSp33D8IwRdnaU7WcKhyo+/LlXeqV9wsIUpxerFszpgB8+a2mgywwq0ii0=
-X-Received: by 2002:a05:6122:4009:b0:520:5a87:66f0 with SMTP id
- 71dfb90a1353d-5224ca5f48amr671522e0c.0.1740517797488; Tue, 25 Feb 2025
- 13:09:57 -0800 (PST)
+	s=arc-20240116; t=1740517820; c=relaxed/simple;
+	bh=T3EHka1tFcSlRH3Fj1NbaXNKSeWHzxd6Y1SaHsloxZc=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:Cc:
+	 In-Reply-To:Content-Type; b=OMSxxy09yHyr5JRC4L90nckq1gkJsZ0VzhYPSNe1S4gqrj4/Sg6aX3L52A32RVGDTY24HGpC8jthghHmGVTspnWSkdY9seZNTRXpz+pJPZTMovLzBTstSsMn+HuXbDBkDvX5MSC57JpbsiX9d0DOM3pu5oCIIumdb/ZEVTU5Ijc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=Nt/l6W83; arc=none smtp.client-ip=80.12.242.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id n2BftCcRTqJDFn2BitbctU; Tue, 25 Feb 2025 22:10:09 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1740517809;
+	bh=tARq/I59R/ifvYF0dCCLUoCvyYc1ZBk7Dm3FuvihB2s=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To;
+	b=Nt/l6W83BU5mDSrDQIQy8CZKAo0h68PJvcKps3BRoVn2m6bAUl1vWhK2es/BP8BFW
+	 DN3RlPUQFqJK58J49zS8Iq+H8FIQKGC4aR3FLiDA6idBgn8tIg5Twr41t+eDK/0sPp
+	 mg1FQKV8UkENBVw737LGxuMBZo+ZBM/oK6VglExOrG9+5UCmVjY6kqG7UnMc6VpiKZ
+	 s5Dl6bX1iLuElode1uDwU8GHn7T6IquRWeHKn8Hf+NPHn6mqYOqdxW2q2i+4k7lkXn
+	 e6Eo2vgp4trckiymDN9vhHfOlmyq2Gyk1kUlSKjSw+1pc9JkNq2cH1UTJN+cQ2XgrM
+	 /ezXxEpZ+Rm3Q==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 25 Feb 2025 22:10:09 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <e53d7586-b278-4338-95a2-fa768d5d8b5e@wanadoo.fr>
+Date: Tue, 25 Feb 2025 22:09:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225105907.845347-1-claudiu.beznea.uj@bp.renesas.com> <20250225105907.845347-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250225105907.845347-3-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 25 Feb 2025 21:09:30 +0000
-X-Gm-Features: AQ5f1JpQJgx8-n0KxaKQyAOyx625Jj9XjopprYm-sqCSUpMvznb-yaEwd2QYPHs
-Message-ID: <CA+V-a8sS5m7jtKj6S3BaPN0f43Q4wCZ8vgMEY+A204HuzhqYgg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] phy: renesas: rcar-gen3-usb2: Move IRQ request in probe
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: yoshihiro.shimoda.uh@renesas.com, vkoul@kernel.org, kishon@kernel.org, 
-	horms+renesas@verge.net.au, fabrizio.castro.jz@renesas.com, 
-	linux-renesas-soc@vger.kernel.org, linux-phy@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 06/16] rbd: convert timeouts to secs_to_jiffies()
+References: <20250225-converge-secs-to-jiffies-part-two-v3-0-a43967e36c88@linux.microsoft.com>
+ <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: Frank.Li@nxp.com, James.Bottomley@HansenPartnership.com,
+ Julia.Lawall@inria.fr, Shyam-sundar.S-k@amd.com, akpm@linux-foundation.org,
+ axboe@kernel.dk, broonie@kernel.org, cassel@kernel.org, cem@kernel.org,
+ ceph-devel@vger.kernel.org, clm@fb.com, cocci@inria.fr,
+ dick.kennedy@broadcom.com, djwong@kernel.org, dlemoal@kernel.org,
+ dongsheng.yang@easystack.cn, dri-devel@lists.freedesktop.org,
+ dsterba@suse.com, festevam@gmail.com, hch@lst.de, hdegoede@redhat.com,
+ hmh@hmh.eng.br, ibm-acpi-devel@lists.sourceforge.net, idryomov@gmail.com,
+ ilpo.jarvinen@linux.intel.com, imx@lists.linux.dev,
+ james.smart@broadcom.com, jgg@ziepe.ca, josef@toxicpanda.com,
+ kalesh-anakkur.purayil@broadcom.com, kbusch@kernel.org,
+ kernel@pengutronix.de, leon@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-pm@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-spi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ martin.petersen@oracle.com, nicolas.palix@imag.fr, ogabbay@kernel.org,
+ perex@perex.cz, platform-driver-x86@vger.kernel.org, s.hauer@pengutronix.de,
+ sagi@grimberg.me, selvin.xavier@broadcom.com, shawnguo@kernel.org,
+ sre@kernel.org, tiwai@suse.com, xiubli@redhat.com, yaron.avizrat@intel.com
+In-Reply-To: <20250225-converge-secs-to-jiffies-part-two-v3-6-a43967e36c88@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+Le 25/02/2025 à 21:17, Easwar Hariharan a écrit :
+> Commit b35108a51cf7 ("jiffies: Define secs_to_jiffies()") introduced
+> secs_to_jiffies().  As the value here is a multiple of 1000, use
+> secs_to_jiffies() instead of msecs_to_jiffies() to avoid the multiplication
+> 
+> This is converted using scripts/coccinelle/misc/secs_to_jiffies.cocci with
+> the following Coccinelle rules:
+> 
+> @depends on patch@ expression E; @@
+> 
+> -msecs_to_jiffies(E * 1000)
+> +secs_to_jiffies(E)
+> 
+> @depends on patch@ expression E; @@
+> 
+> -msecs_to_jiffies(E * MSEC_PER_SEC)
+> +secs_to_jiffies(E)
+> 
+> While here, remove the no-longer necessary check for range since there's
+> no multiplication involved.
 
-Thank you for the patch.
+I'm not sure this is correct.
+Now you multiply by HZ and things can still overflow.
 
-On Tue, Feb 25, 2025 at 11:00=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Commit 08b0ad375ca6 ("phy: renesas: rcar-gen3-usb2: move IRQ registration
-> to init") moved the IRQ request operation from probe to
-> struct phy_ops::phy_init API to avoid triggering interrupts (which lead t=
-o
-> register accesses) while the PHY clocks (enabled through runtime PM APIs)
-> are not active. If this happens, it results in a synchronous abort.
->
-> One way to reproduce this issue is by enabling CONFIG_DEBUG_SHIRQ, which
-> calls free_irq() on driver removal.
->
-> Move the IRQ request and free operations back to probe, and take the
-> runtime PM state into account in IRQ handler. This commit is preparatory
-> for the subsequent fixes in this series.
->
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Hoping I got casting right:
+
+#define MSEC_PER_SEC	1000L
+#define HZ 100
+
+
+#define secs_to_jiffies(_secs) (unsigned long)((_secs) * HZ)
+
+static inline unsigned long _msecs_to_jiffies(const unsigned int m)
+{
+	return (m + (MSEC_PER_SEC / HZ) - 1) / (MSEC_PER_SEC / HZ);
+}
+
+int main() {
+
+	int n = INT_MAX - 5;
+
+	printf("res  = %ld\n", secs_to_jiffies(n));
+	printf("res  = %ld\n", _msecs_to_jiffies(1000 * n));
+
+	return 0;
+}
+
+
+gives :
+
+res  = -600
+res  = 429496130
+
+with msec, the previous code would catch the overflow, now it overflows 
+silently.
+
+untested, but maybe:
+	if (result.uint_32 > INT_MAX / HZ)
+		goto out_of_range;
+
+?
+
+CJ
+
+
+> 
+> Acked-by: Ilya Dryomov <idryomov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Easwar Hariharan <eahariha-1pm0nblsJy7Jp67UH1NAhkEOCMrvLtNR@public.gmane.org>
 > ---
->
-> Changes in v2:
-> - collected tags
->
->  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 46 +++++++++++++-----------
->  1 file changed, 26 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renes=
-as/phy-rcar-gen3-usb2.c
-> index 46afba2fe0dc..826c9c4dd4c0 100644
-> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-> @@ -120,7 +120,6 @@ struct rcar_gen3_chan {
->         struct work_struct work;
->         struct mutex lock;      /* protects rphys[...].powered */
->         enum usb_dr_mode dr_mode;
-> -       int irq;
->         u32 obint_enable_bits;
->         bool extcon_host;
->         bool is_otg_channel;
-> @@ -428,16 +427,25 @@ static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, =
-void *_ch)
->  {
->         struct rcar_gen3_chan *ch =3D _ch;
->         void __iomem *usb2_base =3D ch->base;
-> -       u32 status =3D readl(usb2_base + USB2_OBINTSTA);
-> +       struct device *dev =3D ch->dev;
->         irqreturn_t ret =3D IRQ_NONE;
-> +       u32 status;
->
-> +       pm_runtime_get_noresume(dev);
-> +
-> +       if (pm_runtime_suspended(dev))
-> +               goto rpm_put;
-> +
-> +       status =3D readl(usb2_base + USB2_OBINTSTA);
->         if (status & ch->obint_enable_bits) {
-> -               dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
-> +               dev_vdbg(dev, "%s: %08x\n", __func__, status);
->                 writel(ch->obint_enable_bits, usb2_base + USB2_OBINTSTA);
->                 rcar_gen3_device_recognition(ch);
->                 ret =3D IRQ_HANDLED;
->         }
->
-> +rpm_put:
-> +       pm_runtime_put_noidle(dev);
->         return ret;
->  }
->
-> @@ -447,17 +455,6 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
->         struct rcar_gen3_chan *channel =3D rphy->ch;
->         void __iomem *usb2_base =3D channel->base;
->         u32 val;
-> -       int ret;
-> -
-> -       if (!rcar_gen3_is_any_rphy_initialized(channel) && channel->irq >=
-=3D 0) {
-> -               INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
-> -               ret =3D request_irq(channel->irq, rcar_gen3_phy_usb2_irq,
-> -                                 IRQF_SHARED, dev_name(channel->dev), ch=
-annel);
-> -               if (ret < 0) {
-> -                       dev_err(channel->dev, "No irq handler (%d)\n", ch=
-annel->irq);
-> -                       return ret;
-> -               }
-> -       }
->
->         /* Initialize USB2 part */
->         val =3D readl(usb2_base + USB2_INT_ENABLE);
-> @@ -490,9 +487,6 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
->                 val &=3D ~USB2_INT_ENABLE_UCOM_INTEN;
->         writel(val, usb2_base + USB2_INT_ENABLE);
->
-> -       if (channel->irq >=3D 0 && !rcar_gen3_is_any_rphy_initialized(cha=
-nnel))
-> -               free_irq(channel->irq, channel);
-> -
->         return 0;
->  }
->
-> @@ -698,7 +692,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
-evice *pdev)
->         struct device *dev =3D &pdev->dev;
->         struct rcar_gen3_chan *channel;
->         struct phy_provider *provider;
-> -       int ret =3D 0, i;
-> +       int ret =3D 0, i, irq;
->
->         if (!dev->of_node) {
->                 dev_err(dev, "This driver needs device tree\n");
-> @@ -714,8 +708,6 @@ static int rcar_gen3_phy_usb2_probe(struct platform_d=
-evice *pdev)
->                 return PTR_ERR(channel->base);
->
->         channel->obint_enable_bits =3D USB2_OBINT_BITS;
-> -       /* get irq number here and request_irq for OTG in phy_init */
-> -       channel->irq =3D platform_get_irq_optional(pdev, 0);
->         channel->dr_mode =3D rcar_gen3_get_dr_mode(dev->of_node);
->         if (channel->dr_mode !=3D USB_DR_MODE_UNKNOWN) {
->                 channel->is_otg_channel =3D true;
-> @@ -784,6 +776,20 @@ static int rcar_gen3_phy_usb2_probe(struct platform_=
-device *pdev)
->                 channel->vbus =3D NULL;
->         }
->
-> +       irq =3D platform_get_irq_optional(pdev, 0);
-You may want to propagate the error and fail in case of errors like below:
-            if (irq < 0 && irq !=3D -ENXIO) {
-                    ret =3D irq;
-                    goto error;
-            }
+>   drivers/block/rbd.c | 8 +++-----
+>   1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
+> index faafd7ff43d6ef53110ab3663cc7ac322214cc8c..41207133e21e9203192adf3b92390818e8fa5a58 100644
+> --- a/drivers/block/rbd.c
+> +++ b/drivers/block/rbd.c
+> @@ -108,7 +108,7 @@ static int atomic_dec_return_safe(atomic_t *v)
+>   #define RBD_OBJ_PREFIX_LEN_MAX	64
+>   
+>   #define RBD_NOTIFY_TIMEOUT	5	/* seconds */
+> -#define RBD_RETRY_DELAY		msecs_to_jiffies(1000)
+> +#define RBD_RETRY_DELAY		secs_to_jiffies(1)
+>   
+>   /* Feature bits */
+>   
+> @@ -4162,7 +4162,7 @@ static void rbd_acquire_lock(struct work_struct *work)
+>   		dout("%s rbd_dev %p requeuing lock_dwork\n", __func__,
+>   		     rbd_dev);
+>   		mod_delayed_work(rbd_dev->task_wq, &rbd_dev->lock_dwork,
+> -		    msecs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT * MSEC_PER_SEC));
+> +		    secs_to_jiffies(2 * RBD_NOTIFY_TIMEOUT));
+>   	}
+>   }
+>   
+> @@ -6283,9 +6283,7 @@ static int rbd_parse_param(struct fs_parameter *param,
+>   		break;
+>   	case Opt_lock_timeout:
+>   		/* 0 is "wait forever" (i.e. infinite timeout) */
+> -		if (result.uint_32 > INT_MAX / 1000)
+> -			goto out_of_range;
+> -		opt->lock_timeout = msecs_to_jiffies(result.uint_32 * 1000);
+> +		opt->lock_timeout = secs_to_jiffies(result.uint_32);
+>   		break;
+>   	case Opt_pool_ns:
+>   		kfree(pctx->spec->pool_ns);
+> 
 
-Rest lgtm,
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Cheers,
-Prabhakar
-
-> +       if (irq =3D=3D -EPROBE_DEFER) {
-> +               ret =3D -EPROBE_DEFER;
-> +               goto error;
-> +       } else if (irq >=3D 0) {
-> +               INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
-> +               ret =3D devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq=
-,
-> +                                      IRQF_SHARED, dev_name(dev), channe=
-l);
-> +               if (ret < 0) {
-> +                       dev_err(dev, "Failed to request irq (%d)\n", irq)=
-;
-> +                       goto error;
-> +               }
-> +       }
-> +
->         provider =3D devm_of_phy_provider_register(dev, rcar_gen3_phy_usb=
-2_xlate);
->         if (IS_ERR(provider)) {
->                 dev_err(dev, "Failed to register PHY provider\n");
-> --
-> 2.43.0
->
->
 
