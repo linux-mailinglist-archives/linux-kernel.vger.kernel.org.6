@@ -1,243 +1,241 @@
-Return-Path: <linux-kernel+bounces-531924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7E6A446AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:46:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F4DA446A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD367AE566
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 524C81891D56
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587831A2557;
-	Tue, 25 Feb 2025 16:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC3F1922E0;
+	Tue, 25 Feb 2025 16:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMVjLfi8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAHGoG5g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875A5198A19;
-	Tue, 25 Feb 2025 16:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B3816C684
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 16:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740501743; cv=none; b=IMLVQZswWkt6HihikbS+dWwlQN8Y7gWVX/OM0kJeYVwDFhlR93OYBkTxb4rg0al9tW0f8rZ7I3Uj+q8d6JLYM7eir02aGM8gyBI/rQFD0lIK/onCjcg2l7TqxeyvFMHiqb3UIY2B0KV6+Oqb02Dryg29dHYhMEptHzo1LgNbTEc=
+	t=1740501844; cv=none; b=Vjaz21S+es6Vfh65Q2Hs/SwbXf3e+Hs0tGmRhWvlLuVMzwkxOE6vaWQ2PXHbV+2vZCU9l0MMEdRZtT6ZP4ZEG1grveiB4cBMnkKPFpVu+Bbw0V7hmzjWSkW+WSEU2DjNXDMHk7KXViXtHzY3SltbtjFKyFqOGMbrA9UkbpG1mOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740501743; c=relaxed/simple;
-	bh=E1I+A2ijUQsaJXZ97m6qRzEkqsAgeCC2zPqldsjqxWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aS7pRMH9DUlGVqk51pQ7qyIiDPCoZM+ENANRaOQhMADtyxv51SXE5bdWyEcAA6TRXbcaVaq4yqmxzUNNxIQd7Ptd6UgiG7I1e7LtR15p5R7LPfc1w/zUwOWrTbYFMDtNaCFu1fO2DP+ftLAXW/WMlU6u5Rs4Hm9XlwwbMC6CIc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMVjLfi8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D075BC4CEE6;
-	Tue, 25 Feb 2025 16:42:18 +0000 (UTC)
+	s=arc-20240116; t=1740501844; c=relaxed/simple;
+	bh=Ql5s9tXR9G/woA8eFE6vmrVxYTCWBGMKz7pHTDWcxpI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FVt8kv7t91mt2q9O4NQydSUnOf5XCqCTyiEpqh/PJuoTX1ADzlSaLhj5Z9GxQE96lWCNOUUls3W8bHApcUftpd4nl/Q/Xr1sRqxhJ2NNGNrZoLnb6Q0/s1Xw9Wb154hzAHyHPzNNOc4A4VS8v14NnrfiPYPLCWwhaw5Ju1xyj7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAHGoG5g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CA6BC4CEE9;
+	Tue, 25 Feb 2025 16:44:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740501743;
-	bh=E1I+A2ijUQsaJXZ97m6qRzEkqsAgeCC2zPqldsjqxWo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=gMVjLfi8RUbNJ1VSvtuyy71POodgGy0/kNnREyvDNg64smohUM2ALzQWrZi8w3f9I
-	 4LVmOLgrARJol4lLYOoUiobbX7Y3aQFL3sOxabO6oTV7550ZjxQ2xUAMdZ3szOUVhj
-	 CUPx79Br1nHmlgNXnJu7UF5b1ZfWSFhb6beB0/4BpMk6aGhwJT296Nyz+zHxGSZc1o
-	 ZGDGCza9K9x6n7zMHowk721uOxmBPdUDnEEby16e1qkZLrvjqigseSzNQa6PhG7Len
-	 hbONMGfxrM3RqDXrhZO0vN+dvny2/0bRrL91EkMBKKZR9FqYZPeEStSR4wYc9ujzIi
-	 5EtkuYflCfmHA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Holger Dengler <dengler@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Eric Biggers <ebiggers@google.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-crypto@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org
-Subject: [PATCH] crypto: lib/Kconfig - fix chacha/poly1305 dependencies more more
-Date: Tue, 25 Feb 2025 17:42:07 +0100
-Message-Id: <20250225164216.4807-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1740501844;
+	bh=Ql5s9tXR9G/woA8eFE6vmrVxYTCWBGMKz7pHTDWcxpI=;
+	h=From:Subject:Date:To:Cc:From;
+	b=TAHGoG5gzY+0pUNA9ggiK+Uf5AaO/NrJ9NrkDzOI3vyjE6pGhlaxfwUNODsWLS2BK
+	 ChkCQR6Ii9z68MJ3zo0oxWJ1Ft64lXa17d4bGI2f2ZA98zflo3xLBWmLdhRQ0+QqTk
+	 PXO8wippyYAboF48/3io8YykZsDnHXZ8IQCHrs1g/dy31W/OXDrpcjsLXlyimn+41P
+	 3PVIOS0wDh4Ij5Gb2nIJkcf/F5BEFz0zJ9Dq451cjFwQPv7OeWQ6dZaXjCq6mfOpJC
+	 OxYxgqpS7zWP/jG6nZN3naMKWwHHuYxtlgp5VnH6BMktTLfgDbNnDrR4+m9J5LSy23
+	 14peaGo7XrYxw==
+From: Maxime Ripard <mripard@kernel.org>
+Subject: [PATCH v4 00/15] drm/bridge: Various quality of life improvements
+Date: Tue, 25 Feb 2025 17:43:48 +0100
+Message-Id: <20250225-bridge-connector-v4-0-7ecb07b09cad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAETzvWcC/33NTQ7CIBAF4KsY1mL4bcGV9zAuKgwt0YABQzRN7
+ y7tRo2Ny/cy75sRZUgeMtpvRpSg+OxjqEFsN8gMXegBe1szYoRJQqnE5+RtbU0MAcw9Juw0p1o
+ Aa1rnUJ3dEjj/WMjjqebB53r2XD4UOrd/sEIxwbpjDoxVqumawwVSgOsuph7NWmFvgRGxIrAqc
+ GltYxQXQNSPwD8EylcEXgVoqdTKCW2U+xKmaXoBvf27cDUBAAA=
+X-Change-ID: 20250115-bridge-connector-f93194e267ff
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+ Simona Vetter <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: Herve Codina <herve.codina@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Simona Vetter <simona.vetter@ffwll.ch>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8313; i=mripard@kernel.org;
+ h=from:subject:message-id; bh=Ql5s9tXR9G/woA8eFE6vmrVxYTCWBGMKz7pHTDWcxpI=;
+ b=owGbwMvMwCmsHn9OcpHtvjLG02pJDOl7P3u1PeZ13xHU+uXDpQnLI3zdGpSuPr7s7d5xm9d5+
+ 7HlAYWHO6ayMAhzMsiKKbI8kQk7vbx9cZWD/cofMHNYmUCGMHBxCsBEZt1jbFiud331jbVln3XT
+ 3JK7iuKkVt90+NN00j/guqm0xDnuiaqasouzmvUPB/2SOHzpT6fcP8Y6m8Maq4sM1598s07lode
+ iec9z5skcS7/6Y2PXxOPZp21vtrzunXj85cnGUl09buEDtcfiAA==
+X-Developer-Key: i=mripard@kernel.org; a=openpgp;
+ fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
 
-From: Arnd Bergmann <arnd@arndb.de>
+Hi,
 
-A recent change tries to fix Kconfig dependencies, but introduced
-two problems in the process:
+Here's a series of changes after to the KMS helpers and bridge API
+following a bunch of reviews I did.
 
- - only arm, powerpc and x86 are changed, while mips, arm64 and s390
-   are now broken
+It's mostly centered across providing an easier time to deal with bridge
+states, and a somewhat consistent with the other entities API.
 
- - there are now configurations where the architecture enables its
-   own helper functions as loadable modules, but they remain silently
-   unused because CRYPTO_LIB_* falls back to the generic helpers
+It's build tested only, with arm64 allmodconfig.
 
-Address both by changing the logic again: the architecture functions
-select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA, which may be a loadable
-module or built-in, and this controls whether the library is
-also built-in.
+Maxime
 
-Fixes: 04f9ccc955c7 ("crypto: lib/Kconfig - Fix lib built-in failure when arch is modular")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 ---
-I did not quite understand what problem the 04f9ccc955c7 patch
-actually tried to solve, so there is a chance that my version
-undoes it. I tested this on randconfig builds across, arm,
-arm64 and x86 and found no other dependency problems with these
-libraries.
----
- arch/arm64/crypto/Kconfig |  4 ++--
- arch/mips/crypto/Kconfig  |  4 ++--
- arch/s390/crypto/Kconfig  |  2 +-
- lib/crypto/Kconfig        | 20 +++++++++++---------
- 4 files changed, 16 insertions(+), 14 deletions(-)
+Changes in v4:
+- Rebased on top of drm-misc-next-2025-02-20
+- Changed the approach to helpers suggested by Sima, dropped the tags
+  affected by the rework
+- Drop drm_bridge_state->crtc and connector fields
+- Drop drm_bridge->encoder deprecation
+- Introduced kunit tests
+- Link to v3: https://lore.kernel.org/r/20250213-bridge-connector-v3-0-e71598f49c8f@kernel.org
 
-diff --git a/arch/arm64/crypto/Kconfig b/arch/arm64/crypto/Kconfig
-index 5636ab83f22a..3d90efdcf5a5 100644
---- a/arch/arm64/crypto/Kconfig
-+++ b/arch/arm64/crypto/Kconfig
-@@ -29,7 +29,7 @@ config CRYPTO_POLY1305_NEON
- 	tristate "Hash functions: Poly1305 (NEON)"
- 	depends on KERNEL_MODE_NEON
- 	select CRYPTO_HASH
--	select CRYPTO_ARCH_HAVE_LIB_POLY1305
-+	select CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
- 	help
- 	  Poly1305 authenticator algorithm (RFC7539)
- 
-@@ -190,7 +190,7 @@ config CRYPTO_CHACHA20_NEON
- 	depends on KERNEL_MODE_NEON
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_LIB_CHACHA_GENERIC
--	select CRYPTO_ARCH_HAVE_LIB_CHACHA
-+	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	help
- 	  Length-preserving ciphers: ChaCha20, XChaCha20, and XChaCha12
- 	  stream cipher algorithms
-diff --git a/arch/mips/crypto/Kconfig b/arch/mips/crypto/Kconfig
-index 7decd40c4e20..cbeb2f62eb79 100644
---- a/arch/mips/crypto/Kconfig
-+++ b/arch/mips/crypto/Kconfig
-@@ -5,7 +5,7 @@ menu "Accelerated Cryptographic Algorithms for CPU (mips)"
- config CRYPTO_POLY1305_MIPS
- 	tristate "Hash functions: Poly1305"
- 	depends on MIPS
--	select CRYPTO_ARCH_HAVE_LIB_POLY1305
-+	select CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
- 	help
- 	  Poly1305 authenticator algorithm (RFC7539)
- 
-@@ -55,7 +55,7 @@ config CRYPTO_CHACHA_MIPS
- 	tristate "Ciphers: ChaCha20, XChaCha20, XChaCha12 (MIPS32r2)"
- 	depends on CPU_MIPS32_R2
- 	select CRYPTO_SKCIPHER
--	select CRYPTO_ARCH_HAVE_LIB_CHACHA
-+	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	help
- 	  Length-preserving ciphers: ChaCha20, XChaCha20, and XChaCha12
- 	  stream cipher algorithms
-diff --git a/arch/s390/crypto/Kconfig b/arch/s390/crypto/Kconfig
-index b760232537f1..6f7495264943 100644
---- a/arch/s390/crypto/Kconfig
-+++ b/arch/s390/crypto/Kconfig
-@@ -112,7 +112,7 @@ config CRYPTO_CHACHA_S390
- 	depends on S390
- 	select CRYPTO_SKCIPHER
- 	select CRYPTO_LIB_CHACHA_GENERIC
--	select CRYPTO_ARCH_HAVE_LIB_CHACHA
-+	select CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	help
- 	  Length-preserving cipher: ChaCha20 stream cipher (RFC 7539)
- 
-diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
-index c542ef1d64d0..6b45bd634cd9 100644
---- a/lib/crypto/Kconfig
-+++ b/lib/crypto/Kconfig
-@@ -50,8 +50,6 @@ config CRYPTO_ARCH_HAVE_LIB_CHACHA
- 
- config CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	tristate
--	select CRYPTO_ARCH_HAVE_LIB_CHACHA if CRYPTO_LIB_CHACHA=m
--	select CRYPTO_ARCH_HAVE_LIB_CHACHA if CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA=y
- 
- config CRYPTO_LIB_CHACHA_GENERIC
- 	tristate
-@@ -65,7 +63,9 @@ config CRYPTO_LIB_CHACHA_GENERIC
- 
- config CRYPTO_LIB_CHACHA
- 	tristate "ChaCha library interface"
--	select CRYPTO_LIB_CHACHA_GENERIC if CRYPTO_ARCH_HAVE_LIB_CHACHA=n
-+	select CRYPTO_LIB_CHACHA_GENERIC if CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA=n
-+	select CRYPTO_ARCH_HAVE_LIB_CHACHA if CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA!=n
-+	depends on CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA || !CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	help
- 	  Enable the ChaCha library interface. This interface may be fulfilled
- 	  by either the generic implementation or an arch-specific one, if one
-@@ -80,8 +80,6 @@ config CRYPTO_ARCH_HAVE_LIB_CURVE25519
- 
- config CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
- 	tristate
--	select CRYPTO_ARCH_HAVE_LIB_CURVE25519 if CRYPTO_LIB_CURVE25519=m
--	select CRYPTO_ARCH_HAVE_LIB_CURVE25519 if CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519=y
- 
- config CRYPTO_LIB_CURVE25519_GENERIC
- 	tristate
-@@ -94,7 +92,9 @@ config CRYPTO_LIB_CURVE25519_GENERIC
- 
- config CRYPTO_LIB_CURVE25519
- 	tristate "Curve25519 scalar multiplication library"
--	select CRYPTO_LIB_CURVE25519_GENERIC if CRYPTO_ARCH_HAVE_LIB_CURVE25519=n
-+	select CRYPTO_LIB_CURVE25519_GENERIC if CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519=n
-+	select CRYPTO_ARCH_HAVE_LIB_CURVE25519 if CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519!=n
-+	depends on CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519 || !CRYPTO_ARCH_MAY_HAVE_LIB_CURVE25519
- 	select CRYPTO_LIB_UTILS
- 	help
- 	  Enable the Curve25519 library interface. This interface may be
-@@ -120,8 +120,6 @@ config CRYPTO_ARCH_HAVE_LIB_POLY1305
- 
- config CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
- 	tristate
--	select CRYPTO_ARCH_HAVE_LIB_POLY1305 if CRYPTO_LIB_POLY1305=m
--	select CRYPTO_ARCH_HAVE_LIB_POLY1305 if CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305=y
- 
- config CRYPTO_LIB_POLY1305_GENERIC
- 	tristate
-@@ -134,7 +132,9 @@ config CRYPTO_LIB_POLY1305_GENERIC
- 
- config CRYPTO_LIB_POLY1305
- 	tristate "Poly1305 library interface"
--	select CRYPTO_LIB_POLY1305_GENERIC if CRYPTO_ARCH_HAVE_LIB_POLY1305=n
-+	select CRYPTO_LIB_POLY1305_GENERIC if CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305=n
-+	select CRYPTO_ARCH_HAVE_LIB_POLY1305 if CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305!=n
-+	depends on CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305 || !CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
- 	help
- 	  Enable the Poly1305 library interface. This interface may be fulfilled
- 	  by either the generic implementation or an arch-specific one, if one
-@@ -143,6 +143,8 @@ config CRYPTO_LIB_POLY1305
- config CRYPTO_LIB_CHACHA20POLY1305
- 	tristate "ChaCha20-Poly1305 AEAD support (8-byte nonce library version)"
- 	depends on CRYPTO
-+	depends on CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305 || !CRYPTO_ARCH_MAY_HAVE_LIB_POLY1305
-+	depends on CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA || !CRYPTO_ARCH_MAY_HAVE_LIB_CHACHA
- 	select CRYPTO_LIB_CHACHA
- 	select CRYPTO_LIB_POLY1305
- 	select CRYPTO_ALGAPI
+Changes in v3:
+- Add tags
+- Fix compilation breakages
+- Reword some commit messages
+- Create drm_bridge_is_atomic() helper
+- Retrieve the CRTC state through drm_atomic_get_new_crtc_state()
+  instead of crtc->state in bridges
+- Fix ti-sn65dsi86
+- Link to v2: https://lore.kernel.org/r/20250204-bridge-connector-v2-0-35dd6c834e08@kernel.org
+
+Changes in v2:
+- Pass the full atomic state to bridge atomic hooks
+- Make attach take the encoder as a parameter
+- Mark bridge->encoder as deprecated
+- Rework the logic to detect if a bridge uses a state or not at
+  atomic_check time
+- Add lockdep assertion to drm_bridge_get_current_state()
+- Link to v1: https://lore.kernel.org/r/20250115-bridge-connector-v1-0-9a2fecd886a6@kernel.org
+
+---
+Maxime Ripard (15):
+      drm/bridge: Add encoder parameter to drm_bridge_funcs.attach
+      drm/bridge: Provide a helper to retrieve current bridge state
+      drm/tests: Add kunit tests for bridges
+      drm/atomic: Introduce helper to lookup connector by encoder
+      drm/tests: helpers: Create new helper to enable output
+      drm/tests: Create tests for drm_atomic
+      drm/bridge: Add helper to reset bridge pipeline
+      drm/tests: bridge: Provide tests for drm_bridge_reset_crtc
+      drm/bridge: ti-sn65dsi83: Switch to drm_bridge_reset_crtc
+      drm/bridge: Introduce drm_bridge_is_atomic() helper
+      drm/bridge: cdns-csi: Switch to atomic helpers
+      drm/bridge: tc358775: Switch to atomic commit
+      drm/bridge: tc358768: Stop disabling when failing to enable
+      drm/bridge: tc358768: Convert to atomic helpers
+      drm/bridge: ti-sn65dsi86: Use bridge_state crtc pointer
+
+ drivers/gpu/drm/Kconfig                            |   1 +
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c       |   3 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx6345.c |   3 +-
+ drivers/gpu/drm/bridge/analogix/analogix-anx78xx.c |   3 +-
+ drivers/gpu/drm/bridge/analogix/analogix_dp_core.c |   2 +-
+ drivers/gpu/drm/bridge/analogix/anx7625.c          |   3 +-
+ drivers/gpu/drm/bridge/aux-bridge.c                |   3 +-
+ drivers/gpu/drm/bridge/aux-hpd-bridge.c            |   1 +
+ drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c     |  34 +-
+ .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |   1 +
+ drivers/gpu/drm/bridge/chipone-icn6211.c           |   6 +-
+ drivers/gpu/drm/bridge/chrontel-ch7033.c           |   5 +-
+ drivers/gpu/drm/bridge/display-connector.c         |   1 +
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |   3 +-
+ drivers/gpu/drm/bridge/imx/imx-ldb-helper.c        |   7 +-
+ drivers/gpu/drm/bridge/imx/imx-ldb-helper.h        |   2 +-
+ drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c     |   3 +-
+ drivers/gpu/drm/bridge/imx/imx8mp-hdmi-pvi.c       |   3 +-
+ .../gpu/drm/bridge/imx/imx8qxp-pixel-combiner.c    |   3 +-
+ drivers/gpu/drm/bridge/imx/imx8qxp-pixel-link.c    |   3 +-
+ drivers/gpu/drm/bridge/imx/imx8qxp-pxl2dpi.c       |   3 +-
+ drivers/gpu/drm/bridge/ite-it6263.c                |   7 +-
+ drivers/gpu/drm/bridge/ite-it6505.c                |   1 +
+ drivers/gpu/drm/bridge/ite-it66121.c               |   3 +-
+ drivers/gpu/drm/bridge/lontium-lt8912b.c           |   3 +-
+ drivers/gpu/drm/bridge/lontium-lt9211.c            |   3 +-
+ drivers/gpu/drm/bridge/lontium-lt9611.c            |   3 +-
+ drivers/gpu/drm/bridge/lontium-lt9611uxc.c         |   3 +-
+ drivers/gpu/drm/bridge/lvds-codec.c                |   3 +-
+ .../drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.c   |   1 +
+ drivers/gpu/drm/bridge/microchip-lvds.c            |   3 +-
+ drivers/gpu/drm/bridge/nwl-dsi.c                   |   3 +-
+ drivers/gpu/drm/bridge/nxp-ptn3460.c               |   5 +-
+ drivers/gpu/drm/bridge/panel.c                     |   3 +-
+ drivers/gpu/drm/bridge/parade-ps8622.c             |   1 +
+ drivers/gpu/drm/bridge/parade-ps8640.c             |   3 +-
+ drivers/gpu/drm/bridge/samsung-dsim.c              |   3 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |   5 +-
+ drivers/gpu/drm/bridge/sil-sii8620.c               |   1 +
+ drivers/gpu/drm/bridge/simple-bridge.c             |   5 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c          |   3 +-
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c      |   5 +-
+ drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi2.c     |   5 +-
+ drivers/gpu/drm/bridge/tc358762.c                  |   3 +-
+ drivers/gpu/drm/bridge/tc358764.c                  |   3 +-
+ drivers/gpu/drm/bridge/tc358767.c                  |   2 +
+ drivers/gpu/drm/bridge/tc358768.c                  |  41 ++-
+ drivers/gpu/drm/bridge/tc358775.c                  |  45 ++-
+ drivers/gpu/drm/bridge/tda998x_drv.c               |   1 +
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |   3 +-
+ drivers/gpu/drm/bridge/ti-dlpc3433.c               |   4 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c              |  29 +-
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c              |  61 ++--
+ drivers/gpu/drm/bridge/ti-tdp158.c                 |   6 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |   5 +-
+ drivers/gpu/drm/bridge/ti-tpd12s015.c              |   3 +-
+ drivers/gpu/drm/drm_atomic.c                       |  45 +++
+ drivers/gpu/drm/drm_bridge.c                       |  55 ++-
+ drivers/gpu/drm/imx/ipuv3/parallel-display.c       |   3 +-
+ drivers/gpu/drm/ingenic/ingenic-drm-drv.c          |   5 +-
+ drivers/gpu/drm/mcde/mcde_dsi.c                    |   3 +-
+ drivers/gpu/drm/mediatek/mtk_dp.c                  |   3 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c                 |   3 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c                 |   3 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c                |   3 +-
+ drivers/gpu/drm/meson/meson_encoder_cvbs.c         |   3 +-
+ drivers/gpu/drm/meson/meson_encoder_dsi.c          |   3 +-
+ drivers/gpu/drm/meson/meson_encoder_hdmi.c         |   3 +-
+ drivers/gpu/drm/msm/dsi/dsi_manager.c              |   3 +-
+ drivers/gpu/drm/omapdrm/dss/dpi.c                  |   3 +-
+ drivers/gpu/drm/omapdrm/dss/dsi.c                  |   3 +-
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c                |   3 +-
+ drivers/gpu/drm/omapdrm/dss/hdmi5.c                |   3 +-
+ drivers/gpu/drm/omapdrm/dss/sdi.c                  |   3 +-
+ drivers/gpu/drm/omapdrm/dss/venc.c                 |   3 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c        |   3 +-
+ drivers/gpu/drm/renesas/rcar-du/rcar_mipi_dsi.c    |   3 +-
+ drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c     |   3 +-
+ drivers/gpu/drm/stm/lvds.c                         |  11 +-
+ drivers/gpu/drm/tests/Makefile                     |   2 +
+ drivers/gpu/drm/tests/drm_atomic_test.c            | 153 +++++++++
+ drivers/gpu/drm/tests/drm_bridge_test.c            | 376 +++++++++++++++++++++
+ drivers/gpu/drm/tests/drm_hdmi_state_helper_test.c | 151 +++++----
+ drivers/gpu/drm/tests/drm_kunit_helpers.c          |  61 ++++
+ drivers/gpu/drm/tidss/tidss_encoder.c              |   3 +-
+ drivers/gpu/drm/vc4/vc4_dsi.c                      |   3 +-
+ drivers/gpu/drm/xlnx/zynqmp_dp.c                   |   3 +-
+ drivers/platform/arm64/acer-aspire1-ec.c           |   3 +-
+ include/drm/drm_atomic.h                           |   3 +
+ include/drm/drm_bridge.h                           |  36 +-
+ include/drm/drm_kunit_helpers.h                    |   8 +
+ 91 files changed, 1107 insertions(+), 239 deletions(-)
+---
+base-commit: e82e1a0c22d841f379b1c768469dcdaae650e443
+change-id: 20250115-bridge-connector-f93194e267ff
+
+Best regards,
 -- 
-2.39.5
+Maxime Ripard <mripard@kernel.org>
 
 
