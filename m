@@ -1,142 +1,114 @@
-Return-Path: <linux-kernel+bounces-531605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29463A44277
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:21:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D665A4429D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CD27A83E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:20:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70821894BE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD5B26D5A4;
-	Tue, 25 Feb 2025 14:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20F226B968;
+	Tue, 25 Feb 2025 14:20:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="nIsJWFUV"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ht7FGo4h"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7758926A1B4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EAB626B0B6;
+	Tue, 25 Feb 2025 14:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493255; cv=none; b=eu+H36cu4zaCWlqb+rkMBh+K9NWJRil27ye/sWiqRg2MqB1eFPQqRI2dLbj4m3+kMcycmot61Cbch3OJLtOhhVz9gEnLmQH/wPHg2LaWJSbEHpSRom5QU1h9ims3zJMZBhYTpEDT0Fm0mjEyu+jNAMRDhTrvuzYThD6Tqyv0VHg=
+	t=1740493243; cv=none; b=VyAq6r01aAA3hHR0H2s+R/NQLfhIMwfSTEtczlNLMpTQ5yjdH9YuVQGQ07u2wsH7n11RNouRFOY8lLFcqH6djlACDc+AWOY2b4Jx9TJ5QIcIZfzrB+AsWKJoidFsHlcuwXhpSM7qk5ySgtmSv7/Vog0kdJzYvLLR3Q1EL5XEFCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493255; c=relaxed/simple;
-	bh=4aRVcR1MtxzUuDinO58olTCgo2qDQEdNqepuqBaC/20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=USM7iuzc4KBq9mpZG+5DCEYk+78PQuuvurDn3Ep4Gi7SEI3ZJSfQzHqLHJefa/zXAVIyqgXiOQR6LA9f6GKdA6W3KMpUAWPFxqDMAgBq9a8XYIyan5xTIG/3LJKQL3IYAnkmemzxkUxc9pztmXZI2wH6XhT8g9zSbur2c3MAgnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=nIsJWFUV; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so4593661276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:20:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1740493252; x=1741098052; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yLGj3f01/5YqskB/AMHKol9KSvNGpbV7f974e7GtQ0U=;
-        b=nIsJWFUVPNvfheUD0MUZufKF654v4pxGi87gALKIYaHHUUQuyeU5xFijZM0cJ2RYqG
-         phYCIFwesyEK4kRNVgrTrDApp8aDCjaF5XMJTh7oYacvAvPFUdcOTA+mrm2veSm5OA9O
-         rnjDunJ8Itk42bUf8qlqQVQm72kx2oZAhSFLglqTIg15K0WShjUmB2Z/FExjSaV16wI2
-         WDu6gUMuEFpU8Z1OzSNdXYShzINVOrzpRN8pYUsqtGayndG9ykZkzx1tzcCarUrdl2uP
-         Crg/YSNkSq3i9dmLuA5s/fLI4baibikpicY8gAVfxBRDrYjs3lnku29eFfDLOn7t979l
-         bbFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740493252; x=1741098052;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yLGj3f01/5YqskB/AMHKol9KSvNGpbV7f974e7GtQ0U=;
-        b=guKZXrkooDd7DUkHuRKOyIpG2BgMgEAGiWT2bJ7xPOfG4Quz5TuKWJJa5DdhGbikkm
-         /TdTxcBRxdFAAQ5IcaK3SuYqw0pc9Lqy7dMKUwfQcylO/Q0yeafKZv8PjeZBeR2xfxUg
-         Jyv9PY0woC6nSwLp4oEPGpYhcUhl1Ir4aM6JXjwM+VTYOgcHuKthjvJ5HeZ73shrGfw5
-         EG3TGIt2W1SDGdO8QhQiCgr5W9LuMEYFuZLr68oizGyFJlpF+RNNXP265q40B08XBxB1
-         KR25iUIxmGOheXJUSn91OrV2LoYMbLSyR5Ux/WSZAUXCdNsTElWcJ6EOX6QJUjLpN0Hu
-         +gLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUVolD+T/YUAosny5uC73Slj6B4sKRJJHslnO0YuEX6JEi2orReYtFpBHGjpz50VAXEdVUbNJlJ39woWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxFynJ9RrSY4OIyqyO5AQaAtNezcpHGEas4hXTkalMEGnMElm4
-	l6OvnLd7C8QOVUb0JVqBfE6wtE287Uv8eZHI75RP3vW4YTedcwk9ph/E6nqlUT914iw9uymigdI
-	QN769fE0xAxiezEfWXi3ilVmRYCgN0fcTC2Sxbw==
-X-Gm-Gg: ASbGncvg4Dh1XqYoFOQUlO2c1uD6SVEfEgMP/5nmB0qZpc6uYUHlg4DZvSxVYf45/tB
-	GP3x4IuSXLP7DyaHHdc0DpQKKhbCIeCLJKrg4scPaLUFiwKXEhNSEWrOhqaDv+Xu7O4uyJbeeV/
-	nOuXP2DSyoK3G4PxaPCvQB6ErKI2kXaGb6lIYG424=
-X-Google-Smtp-Source: AGHT+IENualTBjQ0gC23IsPS4Y3OAVTdoidslIODPAXgztEQkt/QwuDATXiFsWJ/F2T2gnPhUdShHIX8sQEr6smL7nA=
-X-Received: by 2002:a05:6902:2493:b0:e5b:43dd:cf18 with SMTP id
- 3f1490d57ef6-e5e2490dc3amr14360779276.22.1740493251235; Tue, 25 Feb 2025
- 06:20:51 -0800 (PST)
+	s=arc-20240116; t=1740493243; c=relaxed/simple;
+	bh=0nB8zD88/ETArJkz+n7GmRzMANgETAdoS3ICvt6uEn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NOGh6sSsUW+pfnJdedywn2FpZtzT/xz1fsvI4ctDX83Mpij3f2J6ZDRFQ9qCSNVikeRV3ZeIuKPHG5PF+BJCNjP2OlLHsHK3gu54khnCHkgEMFGzB2gardHx0ERMzgR+XbfizM97lWZ8+59NCfCJNy6BWL/JkHoVOyJ9aE8Hcvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ht7FGo4h; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1740493242; x=1772029242;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0nB8zD88/ETArJkz+n7GmRzMANgETAdoS3ICvt6uEn8=;
+  b=Ht7FGo4hUjYBW4OYicoXXIvEpIf44DuUxlX7jewgd/Nm341q1xamcPLY
+   soGKYibuPS5vQWvs3EVMm9DjhaHEQt0e/b6RBGCCpxM4cuuZZAXujDlsP
+   5WkTPO33IwcSDFeCWwmsWVecPpfWPV/3npXuHm1m87ggisNdZBjAa4uzn
+   1XClJB7qd8N9P1knAoAz3aU9Be7jqeYqtd6lJGMisgaXD3OmRGwFgDlNA
+   sY8fIq0ekVVxh4kuT/He9+Mi2FboQje9T3bmPyLY0hNZo85TrUIdpFJKz
+   JcXVtcDB6HuGK/5bUpKXTgu2s72iceplY9zw7IMbnVzEUGUmgacXKcqT2
+   A==;
+X-CSE-ConnectionGUID: BQICi72dQpKe6s7EJ/2vLg==
+X-CSE-MsgGUID: GFSbOynnQ1uYcLOy1AwneA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11356"; a="41003327"
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="41003327"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:20:41 -0800
+X-CSE-ConnectionGUID: mYOz7AmTQoGiMPFODo97HQ==
+X-CSE-MsgGUID: Ssj3M0sgSRSCOWvPV3AbRA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,314,1732608000"; 
+   d="scan'208";a="116889296"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Feb 2025 06:20:37 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tmvnW-0000000F10y-1RF9;
+	Tue, 25 Feb 2025 16:20:34 +0200
+Date: Tue, 25 Feb 2025 16:20:34 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v4 2/2] of: Align macro MAX_PHANDLE_ARGS with
+ NR_FWNODE_REFERENCE_ARGS
+Message-ID: <Z73RssDaLZ1NLpSZ@smile.fi.intel.com>
+References: <20250225-fix_arg_count-v4-0-13cdc519eb31@quicinc.com>
+ <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev> <20250225-b4-ov9282-gain-v1-2-a24af2820dde@linux.dev>
-In-Reply-To: <20250225-b4-ov9282-gain-v1-2-a24af2820dde@linux.dev>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 25 Feb 2025 14:20:34 +0000
-X-Gm-Features: AQ5f1JpnFy2Fej1Tv3LO4JDgq3THZkPkBcXgbtSirWhgQwozrTWSiHSj1Na7Bi0
-Message-ID: <CAPY8ntCoerdGgM1CjLWzNPx-0gACR1O9yaccRoHByq-B3D-rJg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] media: i2c: ov9282: add AEC Manual register definition
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250225-fix_arg_count-v4-2-13cdc519eb31@quicinc.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Richard
+On Tue, Feb 25, 2025 at 09:58:07PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Macro NR_FWNODE_REFERENCE_ARGS defines the maximal argument count
+> for firmware node reference, and MAX_PHANDLE_ARGS defines the maximal
+> argument count for DT node reference, both have the same value now.
+> 
+> To void argument count inconsistency between firmware and DT, simply
+> align both macros by '#define MAX_PHANDLE_ARGS NR_FWNODE_REFERENCE_ARGS'.
 
-Thanks for the patch
+I would add here that the of.h includes fwnode.h already, so it doesn't
+add any new compile time dependency.
 
-On Tue, 25 Feb 2025 at 13:09, Richard Leitner <richard.leitner@linux.dev> wrote:
->
-> Add #define's for the "AEC MANUAL" (0x3503) register and its
-> values/flags. Use those in the registers single usage within the
-> `common_regs` struct.
->
-> All values are based on the OV9281 datasheet v1.01 (09.18.2015).
->
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+Both patches LGTM,
+Acked-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> ---
->  drivers/media/i2c/ov9282.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index c926842257893c4da3319b847fab9908b5bdaec6..c882a021cf18852237bf9b9524d3de0c5b48cbcb 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -44,6 +44,15 @@
->  #define OV9282_EXPOSURE_STEP   1
->  #define OV9282_EXPOSURE_DEFAULT        0x0282
->
-> +/* AEC/AGC manual */
-> +#define OV9282_REG_AEC_MANUAL          0x3503
-> +#define OV9282_DIGFRAC_GAIN_DELAY      BIT(6)
-> +#define OV9282_GAIN_CHANGE_DELAY       BIT(5)
-> +#define OV9282_GAIN_DELAY              BIT(4)
-> +#define OV9282_GAIN_PREC16_EN          BIT(3)
-> +#define OV9282_GAIN_MANUAL_AS_SENSGAIN BIT(2)
-> +#define OV9282_AEC_MANUAL_DEFAULT      0x00
-> +
->  /* Analog gain control */
->  #define OV9282_REG_AGAIN       0x3509
->  #define OV9282_AGAIN_MIN       0x10
-> @@ -214,7 +223,7 @@ static const struct ov9282_reg common_regs[] = {
->         {0x3030, 0x10},
->         {0x3039, 0x32},
->         {0x303a, 0x00},
-> -       {0x3503, 0x08},
-> +       {OV9282_REG_AEC_MANUAL, OV9282_GAIN_PREC16_EN},
->         {0x3505, 0x8c},
->         {0x3507, 0x03},
->         {0x3508, 0x00},
->
-> --
-> 2.47.2
->
->
+
 
