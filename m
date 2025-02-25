@@ -1,64 +1,65 @@
-Return-Path: <linux-kernel+bounces-532597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3163A44FAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:21:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A104CA44FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:21:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FCD17C415
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:21:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B54E17D7BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A88E211A18;
-	Tue, 25 Feb 2025 22:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364F42135DD;
+	Tue, 25 Feb 2025 22:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K0okz68J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GmvbTF85"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81750205AD5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130F1212FAC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:21:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740522066; cv=none; b=sRky87LuOe6gafwXTZnRHZ/MJ8Bdh05qCsQxb8/Mzo/SMKYkL6zfJuudfUD5H314GDNy0aWih1Ou70m/k40fiXC2fWZziSMhlngjD0BT41m+UkgDTb15X+TpNVCXjxtRvjLM3+fVivBZ3EBpcLh58k8mht7iz+Cl1sUBF2gyYR0=
+	t=1740522088; cv=none; b=Wc9JXUA5Fzsg4qt/D7HgK4hrDCzJySuXGRgC7Z2GZs1liCjmuGFBfFPr0aB1JtplNUQkEZerHTzM1cphIz/Gl80v9IOc/+d2UKYHaW2i+EbW/uGEJmECUpkMulfDGRBvgK9Ga/o65sP1D0EymUQsoz9dfmgY+lMRJ5BT4T+SPKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740522066; c=relaxed/simple;
-	bh=VRew4thqjNNr9Bhh7XZ9CycetampVVfLEpViJv98lrg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sOP50w0xD30/C65ozQb+fxHkLMVC/e5rw5TtOTry4BOqGQKv7z/TGMo3kcljtAdjMsc9HrTEOySQ/3DyABKlAfUYHMBFg3O5+ONlQPbxtun9fuPi/CwEBIF7TB+pzwjECNBLrFzNeV1ctfhEao8W2gi85b0A/UZ2/deMIgcGZsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K0okz68J; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1740522088; c=relaxed/simple;
+	bh=Ji2upCwA2YC69EXYhE7xdrMWzAZFX1xUI3aJsw8TVlU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=QKo8KPOl6Ks4MzTVOcK9BJirz05Yh0HvgGvR8NxdmB9Q9jLmexJlt4z6ISJMQJ62ODLHz2uiMw2vHWgPSQQgITJx9u5f4Gnu3trl4NLO0FvKNLI+l3HiWMKg9ze7t+PLeCNsWXo/Lxw8SmrGGWHhrZQZbQGe6C9+sDV7kZc21wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GmvbTF85; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740522062;
+	s=mimecast20190719; t=1740522086;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=HmdS/AlEx+8JlcqZ5mtM6o9rE+VmGN6xnAqIajbGwQA=;
-	b=K0okz68J60Z1Lcy0T2fnLWWJrTpMcr8TCqAu8Co38EcQ77rfE7wkSU/aFk7+C/94mPgZnE
-	2iQnrPr52d8rMEoD6NcqQ+4qb1H0aZifKK/qKJnC0bDUEtTp48IP2pou7MmoHxAwa8GFdq
-	Yyv8njdTfuslyQIHTnfF2IjxJks2eeI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fXC/g2hx4+SuKNdvLb6DJYqgd3Fo4tqg7uIP9fRKLiE=;
+	b=GmvbTF852TUOG1bpkfxbwa73GWIZPpOA4NJwUjOmzbSTTA6mcoSae+FprQDkLQWIyQ3w/D
+	XbJALYieTGamXDVeEsHi0h7ZH6VlaJkKUqEPJwLUgy9GtLtW//WSeGd7aoCyXsRxSHYRix
+	Lea3pqw0Uxs9FH1h5mTI3ub7nPHO0Ns=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-557-BgMv0OcLNzaExVvUQIY1oQ-1; Tue,
- 25 Feb 2025 17:21:00 -0500
-X-MC-Unique: BgMv0OcLNzaExVvUQIY1oQ-1
-X-Mimecast-MFC-AGG-ID: BgMv0OcLNzaExVvUQIY1oQ_1740522059
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-583-KyhcA59cM1-BWPF_GwZ8XQ-1; Tue,
+ 25 Feb 2025 17:21:20 -0500
+X-MC-Unique: KyhcA59cM1-BWPF_GwZ8XQ-1
+X-Mimecast-MFC-AGG-ID: KyhcA59cM1-BWPF_GwZ8XQ_1740522074
 Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A78BA19560B5;
-	Tue, 25 Feb 2025 22:20:59 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2B59918EB2C3;
+	Tue, 25 Feb 2025 22:21:12 +0000 (UTC)
 Received: from asrivats-na.rmtustx.csb (unknown [10.2.16.79])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8BC6E1800359;
-	Tue, 25 Feb 2025 22:20:46 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2DAF9180035F;
+	Tue, 25 Feb 2025 22:20:59 +0000 (UTC)
 From: Anusha Srivatsa <asrivats@redhat.com>
-Subject: [PATCH RESEND 00/12] drm: Move to using
- devm_platform_ioremap_resource
-Date: Tue, 25 Feb 2025 17:20:41 -0500
-Message-Id: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
+Date: Tue, 25 Feb 2025 17:20:42 -0500
+Subject: [PATCH RESEND 01/12] drm/aspeed: move to
+ devm_platform_ioremap_resource() usage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,10 +68,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADlCvmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDIyNT3dzU3PyiSt2Uolzd3MziZN281IoS3SQjExOTJBMLi5QkIyWg1oK
- i1LTMCrCx0UpBrsGufi5KsbW1AGMd+zJuAAAA
-X-Change-ID: 20250225-memory-drm-misc-next-b2444b488db2
+Message-Id: <20250225-memory-drm-misc-next-v1-1-9d0e8761107a@redhat.com>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
+In-Reply-To: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
 To: Joel Stanley <joel@jms.id.au>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -110,37 +110,20 @@ Cc: linux-aspeed@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>, 
- CK Hu <ck.hu@mediatek.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=4600;
+ linux-doc@vger.kernel.org, Anusha Srivatsa <asrivats@redhat.com>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740522045; l=1480;
  i=asrivats@redhat.com; s=20250122; h=from:subject:message-id;
- bh=VRew4thqjNNr9Bhh7XZ9CycetampVVfLEpViJv98lrg=;
- b=ECHxTPhmX8SH8mJXx2ad9sYUXYHscl1DXpCA8GXt5zVBerbXI/IktA9aaJ7pdl+ts3xeDePFN
- 9Ct46KCSVgmCxQFFFX9oDZfk9E0JAYbrP432VYqTJmou2zlqrmetjZp
+ bh=Ji2upCwA2YC69EXYhE7xdrMWzAZFX1xUI3aJsw8TVlU=;
+ b=DdfQ2GZmNJIAnLQLuMwyCjQyCNxnWwAGvIaThNcrvWSxsm+dwd/vHuHsmVFm/giZCmo/zRMpW
+ jYHBm++WaPQAHFDQoesclZIx86uVez3dOkR1k3aY3PejKo57J/l+FxU
 X-Developer-Key: i=asrivats@redhat.com; a=ed25519;
  pk=brnIHkBsUZEhyW6Zyn0U92AeIZ1psws/q8VFbIkf1AU=
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Start replacing the below occurences with the newer API:
-- (devm_)platform_get_resource + devm_ioremap_resource
-- (devm_)platform_get_resource + (devm_)ioremap
-- platform_get_resource_byname + devm_ioremap
-Move all these occurences to uses devm_platform_ioremap_resource
-instead.
+Replace platform_get_resource + devm_ioremap_resource
+with just devm_platform_ioremap_resource()
 
-This is a resend of v3 of the series. Sending this from drm-misc-next.
-Changes from v2 [1]:
-- Keep the old snippet of documentation and add further
-clarification (Thomas)
-- change in vc4 driver for the a resource is not needed.
-Add a comment to clarify why that is left behind (Maxime)
-
-[1] - https://patchwork.freedesktop.org/series/144073/
-
-Used Coccinelle to make the code changes.Semantic patch:
-
-//First Case
-//rule s/platform_get_resource + devm_ioremap_resource/devm_platform_ioremap_resource
+Used Coccinelle to do this change. SmPl patch:
 @rule_1@
 identifier res;
 expression ioremap_res;
@@ -152,96 +135,33 @@ identifier pdev;
 -ioremap_res = devm_ioremap_resource(...);
 +ioremap_res = devm_platform_ioremap_resource(pdev,0);
 
-//Second case
-//rule s/(devm_)platform_get_resource + (devm_)ioremap/devm_platform_ioremap_resource.
-@rule_2@
-identifier res;
-expression ioremap;
-identifier pdev;
-@@
--struct resource *res;
-...
--res = platform_get_resource(pdev,...);
-<...
--if (!res) {
--...
--}
-...>
--ioremap = devm_ioremap(...);
-+ioremap = devm_platform_ioremap_resource(pdev,0);
-
-//Third case
-//rule s/(devm_)platform_get_resource_byname + (devm_)ioremap/devm_platform_ioremap_resource_byname.
-@rule_3@
-identifier res;
-expression ioremap;
-identifier pdev;
-constant mem;
-expression name;
-@@
--struct resource *res;
-<+...
--res = platform_get_resource_byname(pdev,mem,name);
-<...
--if (!res) {
--...
--}
-...>
--ioremap = devm_ioremap(...);
-+ioremap = devm_platform_ioremap_resource_byname(pdev,name);
-...+>
-
+Cc: Joel Stanley <joel@jms.id.au>
+Acked-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
 ---
-Anusha Srivatsa (12):
-      drm/aspeed: move to devm_platform_ioremap_resource() usage
-      drm/fsl-dcu: move to devm_platform_ioremap_resource() usage
-      drm/hisilicon: move to devm_platform_ioremap_resource() usage
-      drm/mediatek: move to devm_platform_ioremap_resource() usage
-      drm/mxsfb: move to devm_platform_ioremap_resource() usage
-      drm/sprd: move to devm_platform_ioremap_resource() usage
-      drm/sti: move to devm_platform_ioremap_resource() usage
-      drm/stm: move to devm_platform_ioremap_resource() usage
-      drm/tegra: move to devm_platform_ioremap_resource() usage
-      drm/tiny: move to devm_platform_ioremap_resource() usage
-      drm/vc4: move to devm_platform_ioremap_resource() usage
-      Documentation: Update the todo
+ drivers/gpu/drm/aspeed/aspeed_gfx_drv.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- Documentation/gpu/todo.rst                      | 13 +++---
- drivers/gpu/drm/aspeed/aspeed_gfx_drv.c         |  4 +-
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c       |  4 +-
- drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.c    |  4 +-
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c |  4 +-
- drivers/gpu/drm/mediatek/mtk_disp_color.c       |  4 +-
- drivers/gpu/drm/mediatek/mtk_disp_gamma.c       |  4 +-
- drivers/gpu/drm/mediatek/mtk_disp_merge.c       |  4 +-
- drivers/gpu/drm/mediatek/mtk_disp_ovl.c         |  4 +-
- drivers/gpu/drm/mediatek/mtk_disp_rdma.c        |  4 +-
- drivers/gpu/drm/mediatek/mtk_dsi.c              |  4 +-
- drivers/gpu/drm/mediatek/mtk_hdmi.c             |  4 +-
- drivers/gpu/drm/mediatek/mtk_mdp_rdma.c         |  4 +-
- drivers/gpu/drm/mxsfb/lcdif_drv.c               |  4 +-
- drivers/gpu/drm/mxsfb/mxsfb_drv.c               |  4 +-
- drivers/gpu/drm/sprd/sprd_dpu.c                 |  9 +----
- drivers/gpu/drm/sprd/sprd_dsi.c                 |  9 +----
- drivers/gpu/drm/sti/sti_compositor.c            | 10 +----
- drivers/gpu/drm/sti/sti_dvo.c                   | 10 +----
- drivers/gpu/drm/sti/sti_hda.c                   |  9 +----
- drivers/gpu/drm/sti/sti_hdmi.c                  | 11 +----
- drivers/gpu/drm/sti/sti_hqvdp.c                 | 10 +----
- drivers/gpu/drm/sti/sti_tvout.c                 | 10 +----
- drivers/gpu/drm/sti/sti_vtg.c                   | 10 +----
- drivers/gpu/drm/stm/ltdc.c                      |  4 +-
- drivers/gpu/drm/tegra/dsi.c                     |  4 +-
- drivers/gpu/drm/tiny/arcpgu.c                   |  4 +-
- drivers/gpu/drm/vc4/vc4_hdmi.c                  | 53 +++++++++----------------
- 28 files changed, 51 insertions(+), 171 deletions(-)
----
-base-commit: 27d4815149ba0c80ef2db2a82f0512f647e76d62
-change-id: 20250225-memory-drm-misc-next-b2444b488db2
+diff --git a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
+index 397e677a691c2c6d199063f44358196a4569b389..46094cca297479d1cf19f6db99538c5e7a0fec92 100644
+--- a/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
++++ b/drivers/gpu/drm/aspeed/aspeed_gfx_drv.c
+@@ -144,11 +144,9 @@ static int aspeed_gfx_load(struct drm_device *drm)
+ 	struct aspeed_gfx *priv = to_aspeed_gfx(drm);
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct aspeed_gfx_config *config;
+-	struct resource *res;
+ 	int ret;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	priv->base = devm_ioremap_resource(drm->dev, res);
++	priv->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(priv->base))
+ 		return PTR_ERR(priv->base);
+ 
 
-Best regards,
 -- 
-Anusha Srivatsa <asrivats@redhat.com>
+2.48.1
 
 
