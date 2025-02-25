@@ -1,90 +1,57 @@
-Return-Path: <linux-kernel+bounces-530597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE88A4359B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:46:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9CAA435A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 07:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F4ED3AA4EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:46:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B724D1718EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC92257AFC;
-	Tue, 25 Feb 2025 06:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83F4257AD1;
+	Tue, 25 Feb 2025 06:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kN8DBztz"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aWoNVFA0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6566B17799F;
-	Tue, 25 Feb 2025 06:46:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2263F2561B3;
+	Tue, 25 Feb 2025 06:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740465974; cv=none; b=txFoTp8A+Lmhg1r0n1oOjQftAC2SjHWbdzACF/2ehnxmUP0T2XziWzSzMq0oFz1UEEQFQjygsCJmJJVi2kfWCIozxqWlE2iPCbI4pawAlmUXTNPU+tOTyK5nh0nbNfL58PUxYMPkcBYrPIV9j/QQgz4NdjxMlD7k9K8zwTpFk1M=
+	t=1740466060; cv=none; b=OtWS8AVTXykRUn0s7FQjKZmoL+ygiV6VEURWz6iZxUVDlm/9NQSj+cQv6tXNSiZcNV21pbSAqgTt8TxBhAiC9eeFHG9bOxp2+LJfL5m4DHtRXXA2FdH6nbwpDRy7DuRyU2PVJ/Yrf/0zs3jGn1Jn9e8tOFVtdopD4c+7leuXUmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740465974; c=relaxed/simple;
-	bh=YhMEIbsRIvbWB+7KZzTlLukUlrMY88pxddu0Q/hl0/E=;
+	s=arc-20240116; t=1740466060; c=relaxed/simple;
+	bh=JN+Y7+xRhOboVTT+XYkqz5hY7pcjKTvSAZbIFpwW5j4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reHpeICh5IVcRgdvlEtFN8WS9pZR1VJR2sRgSPDDtGZcwJv/LonD/5XDMQa2bQkQdQElZK/fTAc0fMAV1R6yj9PrzIh7hSIH2+Mo3BRSSjdfi5eF0pyRt0y68j2TGlDM+o8tATmatFKYDPn4vQrpVInYOTS6vYNEiFwuj30PiLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kN8DBztz; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-220bfdfb3f4so3774325ad.2;
-        Mon, 24 Feb 2025 22:46:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740465972; x=1741070772; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=erzJh64ZInq4C+WQxodkZcfUgNCq+SmOBLDEylQe/ks=;
-        b=kN8DBztz73+oR5t5EIQxPkwPN6hRvNAgrNJdHkUd7w2rfzrJJ4mn871hApWhKuOwKo
-         JWgGhJ0jhcL0s853UKTTa4xTk9ILPiQ2j7ougX2n/UlIO6idJbhHJ5ZVCdvdcUZ6bEIj
-         VW9jO2Do5eJNcyFiVBx/gAtTEwOENxdO6tvDWHI1HELDZ8qxwdLttpQDX6Wp4MMQfV9p
-         Cxzu1M4waq4dB9HjVC+4iJDsglPBmibx6Jf/vf9kz5SRiwPTaTTA1JJdBAV7umfIUXSP
-         YSZJ71HSr6x7sOWXSxs6i9UJQlYoIB+KM9z+0N5IvGAxbzzpwFztSnqT+7pX+Xq8GQ0Z
-         iYsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740465972; x=1741070772;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=erzJh64ZInq4C+WQxodkZcfUgNCq+SmOBLDEylQe/ks=;
-        b=K/W4c5SLuaPQXe7KoeXKbNAjW1t+TP5jXtnd6dUoFsvg8FXo9rSm49pkBxvIyEmkQl
-         1kdvY345eaCeKQspmhO0ohkTb+HlJVQa/bS+L0tbTvDNkYTHakVKsyefGRQvq/ECVZX1
-         xa+icTiyTwxd5mtD7CM7J0YbB9hOeTSNRgr3WUg8Q/67KrUkFKKuj0f8VgQ2JDdYMQ0p
-         TwDciJayvTb0yZNBdT/P9Ytr0W7bCFN+kOhXaGngsUl3CfN0EpTYDucl1SxlhqIMoa7h
-         0rvT6vbSlpfhloz8R9Rz+4WSf36aJs3N1J08K/HWSRLLKIaEDM79wdsoAPWa5YU5N6Th
-         UFiA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7vBVIbOMLuuesaX5L1KYGpwtcqh0eUeuoEA+qvzVFbaWT4VwR3fsK2q+lBPjSST5Qompw7dOukMcqSLM=@vger.kernel.org, AJvYcCX7EFArYW1ZGsjUagCDk9wgExB6qG0OexFUZ4uAUb7r71qYfzE42rfU79N+GBbyuYfHH4zptOxMqV4x6gf3@vger.kernel.org, AJvYcCXReb2oMJJzS45UJ98cYuLzi6/6weFzYgnFQSE0ljfPLuwTowY2Q918mJXrFxkBe8QMTHGnsSOu9ouB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze/CPtyT7LlSLdaL/f4lmeTGPIj2bttX5X0OwHn0Sf/RBUsduK
-	KY8aIKu9ssIXpF0zX4lwsp+xZhki9Fu8ZijE3oKMjH4XhnlazUMd
-X-Gm-Gg: ASbGncsemtr3j/QyQXi3yQNXRb6RQlQZyfeNycT1c+mDt76uD+U7PBDjF+jFIRItaJu
-	rkCAxgiu9V3aOaYEPttAkfatKZiKC7K9c7mEl9jvaz694kpjofEqOm1+9o4UGVfI4S1VIjjc8Ui
-	Manacl3wwtwPhBioo+W71SoisSmw1jkKvBwF7d6JvrIh7aD3sNpz0KAdkMMpAFBuyLS8i4YLC5t
-	ip0COP69CJos7nDG9d/6JACJsXk6a4s8/JVHs5H0qtLYiqBpFKwiH/+F1q5wNNwTvcSSMSEfmPt
-	Q6eIQHbEr5uMp5lkR5tPXcZVJdE=
-X-Google-Smtp-Source: AGHT+IEjteMLbPDStwxJWyvBRk9q2u4rnG1byUjMGICKrX4aTXbNk+HcE/9bPEWZmFzstr35XSNC3Q==
-X-Received: by 2002:a05:6a21:9014:b0:1ee:d664:179e with SMTP id adf61e73a8af0-1eef3dcc4dbmr28018156637.37.1740465972601;
-        Mon, 24 Feb 2025 22:46:12 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9ac6sm721825b3a.87.2025.02.24.22.46.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 22:46:11 -0800 (PST)
-Date: Mon, 24 Feb 2025 22:46:09 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Manuel Traut <manuel.traut@mt.com>
-Cc: Markus Burri <markus.burri@mt.com>, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marek.vasut@gmail.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] dt-bindings: input: matrix_keypad - add missing
- property
-Message-ID: <Z71nMdTvyIg5a85Y@google.com>
-References: <20250110054906.354296-1-markus.burri@mt.com>
- <20250110054906.354296-5-markus.burri@mt.com>
- <Z7YJ2ENZ04Nktnwf@mt.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj0LMuAtfsJxIyjKmeuM+UZYq/tLCKDNtsIAmK5PqU5sreDPVvQpxVqEm+44sfztGYKSN12VNkA8Uk4SmHS7jksN6cCxOlWcsXQI7v6jYiJlurkmkSixCxFNUWWJmY9x/z0X8wewevt2TPoF8wPQpXA2B437hPrnpKlIlCY20Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aWoNVFA0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECE2EC4CEDD;
+	Tue, 25 Feb 2025 06:47:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1740466059;
+	bh=JN+Y7+xRhOboVTT+XYkqz5hY7pcjKTvSAZbIFpwW5j4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aWoNVFA0sVELW4tytwqVeZvp/8wr3GVpPpUGhtI/owQ2u6fJ1EvHmBm/O5t6esUBJ
+	 6Y79Jf4EtyIToLDDI+7NCRf1Og8wxtTiEdZZfpRGgpqzbs6tk/VNTugJZgQIXoA5nE
+	 378kp0wfXSTFVb0+bvPWbBJEVr/fuojR/Zee7jsY=
+Date: Tue, 25 Feb 2025 07:46:29 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+	linux-tegra@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 6.12 000/154] 6.12.17-rc1 review
+Message-ID: <2025022516-bauble-renter-d88b@gregkh>
+References: <20250224142607.058226288@linuxfoundation.org>
+ <a89ebd7b-4cbb-4427-9fcf-76a3737454c2@rnnvmail205.nvidia.com>
+ <3e5b29cd-b9c1-4509-8362-a4465e11a9f3@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,42 +60,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z7YJ2ENZ04Nktnwf@mt.com>
+In-Reply-To: <3e5b29cd-b9c1-4509-8362-a4465e11a9f3@nvidia.com>
 
-On Wed, Feb 19, 2025 at 05:42:00PM +0100, Manuel Traut wrote:
-> On Fri, Jan 10, 2025 at 06:49:03AM +0100, Markus Burri wrote:
-> > The property is implemented in the driver but not described in dt-bindings.
-> > Add missing property 'gpio-activelow' to DT schema.
-> > 
-> > Signed-off-by: Markus Burri <markus.burri@mt.com>
+On Tue, Feb 25, 2025 at 12:06:32AM +0000, Jon Hunter wrote:
 > 
-> Reviewed-by: Manuel Traut <manuel.traut@mt.com>
-> 
-> > ---
-> >  .../devicetree/bindings/input/gpio-matrix-keypad.yaml       | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> On 25/02/2025 00:03, Jon Hunter wrote:
+> > On Mon, 24 Feb 2025 15:33:19 +0100, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.12.17 release.
+> > > There are 154 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Wed, 26 Feb 2025 14:25:29 +0000.
+> > > Anything received after that time might be too late.
+> > > 
+> > > The whole patch series can be found in one patch at:
+> > > 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.17-rc1.gz
+> > > or in the git tree and branch at:
+> > > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> > > and the diffstat can be found below.
+> > > 
+> > > thanks,
+> > > 
+> > > greg k-h
 > > 
-> > diff --git a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > index 0f348b9..9c91224 100644
-> > --- a/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > +++ b/Documentation/devicetree/bindings/input/gpio-matrix-keypad.yaml
-> > @@ -40,6 +40,12 @@ properties:
-> >      type: boolean
-> >      description: Do not enable autorepeat feature.
-> >  
-> > +  gpio-activelow:
-> > +    type: boolean
-> > +    deprecated: true
-> > +    description:
-> > +      The GPIOs are low active (deprecated).
-> > +      Use the GPIO-flags in gpio controller instead of this property.
+> > Failures detected for Tegra ...
+> > 
+> > Test results for stable-v6.12:
+> >      10 builds:	10 pass, 0 fail
+> >      32 boots:	26 pass, 6 fail
+> >      72 tests:	64 pass, 8 fail
+> > 
+> > Linux version:	6.12.17-rc1-g497e403c6ee0
+> > Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+> >                  tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
+> >                  tegra20-ventana, tegra210-p2371-2180,
+> >                  tegra210-p3450-0000, tegra30-cardhu-a04
+> > 
+> > Boot failures:	tegra124-jetson-tk1, tegra210-p2371-2180,
+> >                  tegra30-cardhu-a04
+> > 
+> > Test failures:	tegra20-ventana: devices
+> >                  tegra20-ventana: tegra-audio-boot-sanity.sh
+> >                  tegra210-p3450-0000: devices
+> >                  tegra210-p3450-0000: mmc-dd-urandom.sh
+> 
+> 
+> I am seeing some gpio related failures ...
+> 
+> [    2.524869] gpiochip_add_data_with_key: GPIOs 0..255 (tegra-gpio) failed to register, -22
+> [    2.533066] tegra-gpio 6000d000.gpio: probe with driver tegra-gpio failed with error -22
+> 
+> So I am wondering if this is the same issue Mark reported?
 
-No, we unfortunately can not rely on GPIO-flags. This is not how driver
-works: current driver behavior is to force GPIOs as active high if the
-property is missing and ignore polarity specified in GPIO property.
+Probably, I'll go drop this and push out a -rc2
 
-Thanks.
+thanks,
 
--- 
-Dmitry
+greg k-h
 
