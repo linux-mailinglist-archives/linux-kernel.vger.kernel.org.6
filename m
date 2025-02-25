@@ -1,300 +1,214 @@
-Return-Path: <linux-kernel+bounces-530331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEBEA4321E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:54:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77B3A4321C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 01:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C943A91B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27635189E9B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 00:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE5E11712;
-	Tue, 25 Feb 2025 00:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 543AF15E96;
+	Tue, 25 Feb 2025 00:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JuqQrvKh"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jJwD2Cd1"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B8A13A27B;
-	Tue, 25 Feb 2025 00:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A85317578
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 00:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740444784; cv=none; b=PJBWOQuv9/so8Lp9WE2EyYOYJ9c6+zuJs/He4xZ3On/Ylmlj5BqAy+bAqgbYzbYCsjooraxnsjeofBAR7VPTusJiu7ARUJb+cvLKwJJDzHeDd+3TnvIlHehnBd4VtbBZI9nZ9PigawiJHei58u3wDwaoz86UnUpQODNRegQFe6k=
+	t=1740444851; cv=none; b=s3xe98r3oEjnX/V4MiCkl1sDJImPtbwublE6Le7qMmdvY0AJ63IjEVxN4zKVXGdTf/RopEQ18HdEA9JrZLqchUA3EBYbNhEqTzj0c4hBZelN0d2rIQZWcAUhcT5kmAw8eoQGRUL6bB2gbK4zfc0epOX1ASY8x41YF1adXpFZR9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740444784; c=relaxed/simple;
-	bh=6Eqh1u8ZeHsCE0wX4nbaCoJEd0C+Yput5YmMDMIcWbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SJmN7gNJHBHO/jXPHH6EdV9qZ5zq+51jG8kMZfuQHrFDX9vn0OHZdmqQGdTB/J/Ag4Yo25XRI7YHoXs4bDTe4Bioxb5clz15TZ4Q+f65ZCmnAR+PlhifmyuML1x4mdF9BdxM/W0dOFiH9hYNk94DyNfOIqXHME7bdhIIHg0BnEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JuqQrvKh; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2230c74c8b6so1934625ad.0;
-        Mon, 24 Feb 2025 16:53:02 -0800 (PST)
+	s=arc-20240116; t=1740444851; c=relaxed/simple;
+	bh=eSNE9SpqsMKJGUnfQSYvUpz0ITo6/+EEEAk6+jIriYs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NnWrMDxCUSeiNlWuoJDyJtwWkPRJ8T4p6UUlsjzMovvPiWorH07B1pUUyboZbxlMrpd6SfqZXGWCtyHbJL4KYnjxSYiGLU6L0HviZqqZO+WUR8f1PvSzrAV5bB55UUUx1liXpZW1OkDJMSQWM/1biDV9gFuFQ5sLzNq0V4x2Ng8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jJwD2Cd1; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fc2e648da3so9698273a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Feb 2025 16:54:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740444781; x=1741049581; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ni16q3lUg55hroWQM+WeY1LNmMBQAc6C68Nk7KUZcug=;
-        b=JuqQrvKhVL1lZyTLIO1Wg+SNlb+481a8A2aRS3TXiJIBpqDWjm4TQC0S2p1hjSOPTA
-         rSKYF2YWI8VSajMPSH+5ANuNLIv7/gkh/E7yyZ+hh1/CTGGhRzl3ZjLCExK5PXqlPyeR
-         6UVigyfOSWO7l9L9PlhZBLdijupeQjqpjxrPptT1Wjs6CEDSIiKxxJxe8en2htQXpraf
-         1+C3/kOohVSxAFhIFOG11sY8iNY0Pd2HXWJlXNSpbSQmnrWlSkHjS9IwkeRPIZ46OueZ
-         4wB7wCjsnKcwbEXH+Du4yd5/tCamh8L4CAEllvUvZkbAH4K8bddkFIUPnkAsb20/Qqgx
-         wfBA==
+        d=google.com; s=20230601; t=1740444849; x=1741049649; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMj3ogmbSNHf4nwGWlr5jLmxfUU0ZTeLt3VrAyHhBlI=;
+        b=jJwD2Cd1QhpGtc2rCCYkWPnQ3dQH0wRLDlW5KsoHb7mrW5kEVf5or0+AUdLoN0jyIk
+         n9Q3qgww3I4y6fiFCY+K6Jt56RxretwcsfN2RJl52ZDuzhGu0Q0M2RvTv4pkFqNZp5jh
+         1Qi4kIPlcFjetMC1YsFEK0tC9975jN0KQaHUu9WYqhFJ6Z1MOnRg7bP/HtLE0Dc4f/wU
+         5u0PNTqgl4BfR736lWgY4rTvHjgjeb7L3rOORW+Zr3c+oHHf42FEl4PWFZbisN5q2VHw
+         ++PNKss75yN4CtJu1CHK7HFzr/Lxd4yWHOx3nxtzEYfwv7v/JQldTTop5RLfWbvUJn1i
+         xuSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740444781; x=1741049581;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ni16q3lUg55hroWQM+WeY1LNmMBQAc6C68Nk7KUZcug=;
-        b=FybRcrKUEvCY1oXGb2UR9oMyyvrwyzc19YPbbXAlUOFSifRCrInBxXt1SIRrJhnBA6
-         HwJD8lVIbCvChVL500IQcTkJfcVkQuQlT/zUVfY7btZbzVVpwInGT4S7SB5/rt+0a6n0
-         dcWuaVIG11TyVsOvUaGnftil+WC4QWoJP8y94ScRSpQRvJOa0m6vkaZvZXdVQaaoY34b
-         EJkmUfh3G8kCtZRxQGoP/BjVMEIarkmf67Av6Usch8AxnkzhP1PAT+8B34A8V1D06wuh
-         nuYlr3LLN7KDUuIDPq47XxK0auALxQovYO3Tr74Z6mvgNyJxGLrgd51ntkn3kQ9LcclY
-         vL1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUsYL0yKjbRVVVWaPY4DWtF0+jugdTIhEQv5uupKdkB8o7xvpZZqLbag/c+nOye+h/sZigbMwOAFfOgqg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIXamIG3/N9T12wg/m76QX+R4gPJmcCAmFAPeYMOlA8NhJbBN0
-	i+47DjTCCvByujr/h8WioXng+WxVk6RtwFcb7rqYtCxVVuUPgjfP
-X-Gm-Gg: ASbGncux/78sNDvVBSa886rGcEdCF5n7jQBS60SlZn8ibszB2eAuOBntTlC6jm9Pl6W
-	Hykz2z94Y3DLyymkSgS4ZD2pnWNQZlD99VdmhVgV3WByGaoWy6SkJrGtK3TYbs0IVYQ87P1CTVr
-	bsMrWv14Ahy5pzT3H9H13HloUjkRgmUApRvXhEAghb5yB6Usgcfr5kNo9P36t18V49ozaCGHLGs
-	5IYVhTt0lxwnX8VgyP+PY6+7ufw6LfTqKXRwwrgizna4j/J+xfgTg+KpaI6ssxEpkC4JoFCAlgX
-	g+a6dALgbJmqijDL3dyQG7AENQY=
-X-Google-Smtp-Source: AGHT+IHeeI88NajexuIR9appPZ/TdMLLXOXQqlAuAA+eSd9GwIET0fAx3xwSUK8GuPSm2oOBMhC5lg==
-X-Received: by 2002:a17:902:d50a:b0:20c:6399:d637 with SMTP id d9443c01a7336-22307e65a63mr23441015ad.40.1740444781281;
-        Mon, 24 Feb 2025 16:53:01 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:464c:6229:2280:227e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a0217e7sm2314505ad.104.2025.02.24.16.53.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Feb 2025 16:53:00 -0800 (PST)
-Date: Mon, 24 Feb 2025 16:52:58 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Guillermo =?iso-8859-1?Q?Rodr=EDguez?= <guille.rodriguez@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: Re: [PATCH 0/1] Input: evdev - fix wrong timestamp after SYN_DROPPED
-Message-ID: <Z70UagY4hxDwUDHv@google.com>
-References: <20241202123351.86957-1-guille.rodriguez@gmail.com>
+        d=1e100.net; s=20230601; t=1740444849; x=1741049649;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WMj3ogmbSNHf4nwGWlr5jLmxfUU0ZTeLt3VrAyHhBlI=;
+        b=LKISXtHj/UBegbNg81Q+R5j8w4NkKF0s0TBrNQYucMvDliQugGVqzpNF40qG0T5/Sv
+         mJ5m9mO3tkVBrgwC5GhI/2YWjrKejYVBN6Fcep879r2Dz3ktMnPBXradQHfioqGHelpl
+         Et4m0rLluk0egACWKPgB0xwWvPR0DgSo9eY7yEb1Qfm6eIPu7r/4PAeln6yMfE5/3IjX
+         hxuBT4A7UHnDXhtCO+XSxCt0Dr7rzAAuWdhfgfH77M9ezuO+v0ls495GXWkyMXeDc78V
+         LnzGSqg9cQeuZbnHMLhYoNqkUBHGPCvqwJ+SRDheswm4hE8Fob+rTfhYVAkx4nuaaR8L
+         TlxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpDlrTzy9dkik9RcRvgBp2bCavocGhiw+yQ4w6XXJK4i+4qpXzxgO0MnBOouoM9TXpTyJbi3kYeqmTuEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywqi1plaEik0vJK/i4Do0tedYaBifer4Db3ZHOF+QNUSpcFoBpZ
+	3z0+PT6qMEpYMEGPauZUepIijkqncsRQDsvqPY1RSJV4uAeX/QZhKINHpvghBzkvNfq/M3S8yUg
+	4Yw==
+X-Google-Smtp-Source: AGHT+IFwU4tsgKfQpQ0F9TpDCTa6nuPqHf5O1NRFL7byHKxAWJgpMYV1Sek68AsT2p2rXJmmuIZbuGqbSY8=
+X-Received: from pjbsd8.prod.google.com ([2002:a17:90b:5148:b0:2ea:5613:4d5d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:528f:b0:2ee:741c:e9f4
+ with SMTP id 98e67ed59e1d1-2fce78ab918mr27279855a91.11.1740444849479; Mon, 24
+ Feb 2025 16:54:09 -0800 (PST)
+Date: Mon, 24 Feb 2025 16:54:08 -0800
+In-Reply-To: <f9050ee1-3f82-7ae0-68b0-eccae6059fde@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241202123351.86957-1-guille.rodriguez@gmail.com>
+Mime-Version: 1.0
+References: <20250219012705.1495231-1-seanjc@google.com> <20250219012705.1495231-4-seanjc@google.com>
+ <4e762d94-97d4-2822-4935-2f5ab409ab29@amd.com> <Z7z43JVe2C4a7ElJ@google.com> <f9050ee1-3f82-7ae0-68b0-eccae6059fde@amd.com>
+Message-ID: <Z70UsI0kgcZu844d@google.com>
+Subject: Re: [PATCH 03/10] KVM: SVM: Terminate the VM if a SEV-ES+ guest is
+ run with an invalid VMSA
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>, 
+	Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi Guillermo,
-
-On Mon, Dec 02, 2024 at 01:33:50PM +0100, Guillermo Rodríguez wrote:
-> Hi all,
+On Mon, Feb 24, 2025, Tom Lendacky wrote:
+> On 2/24/25 16:55, Sean Christopherson wrote:
+> > On Mon, Feb 24, 2025, Tom Lendacky wrote:
+> >> On 2/18/25 19:26, Sean Christopherson wrote:
+> >>> -void pre_sev_run(struct vcpu_svm *svm, int cpu)
+> >>> +int pre_sev_run(struct vcpu_svm *svm, int cpu)
+> >>>  {
+> >>>  	struct svm_cpu_data *sd = per_cpu_ptr(&svm_data, cpu);
+> >>> -	unsigned int asid = sev_get_asid(svm->vcpu.kvm);
+> >>> +	struct kvm *kvm = svm->vcpu.kvm;
+> >>> +	unsigned int asid = sev_get_asid(kvm);
+> >>> +
+> >>> +	/*
+> >>> +	 * Terminate the VM if userspace attempts to run the vCPU with an
+> >>> +	 * invalid VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after
+> >>> +	 * an SNP AP Destroy event.
+> >>> +	 */
+> >>> +	if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa)) {
+> >>> +		kvm_vm_dead(kvm);
+> >>> +		return -EIO;
+> >>> +	}
+> >>
+> >> If a VMRUN is performed with the vmsa_pa value set to INVALID_PAGE, the
+> >> VMRUN will fail and KVM will dump the VMCB and exit back to userspace
+> > 
+> > I haven't tested, but based on what the APM says, I'm pretty sure this would crash
+> > the host due to a #GP on VMRUN, i.e. due to the resulting kvm_spurious_fault().
+> > 
+> >   IF (rAX contains an unsupported physical address)
+> >     EXCEPTION [#GP]
 > 
-> We are seeing an issue with gpio_keys where the first event after
-> a SYN_DROPPED has the same timestamp as the SYN_DROPPED event itself.
-> After some investigation it looks like this is an issue with evdev
-> and not specific to gpio_keys.
+> Well that's for the VMCB, the VMSA is pointed to by the VMCB and results
+> in a VMEXIT code of -1 if you don't supply a proper page-aligned,
+> physical address.
+
+Ah, good to know (and somewhat of a relief :-) ).
+
+> >>>  static void svm_inject_nmi(struct kvm_vcpu *vcpu)
+> >>> @@ -4231,7 +4233,8 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+> >>>  	if (force_immediate_exit)
+> >>>  		smp_send_reschedule(vcpu->cpu);
+> >>>  
+> >>> -	pre_svm_run(vcpu);
+> >>> +	if (pre_svm_run(vcpu))
+> >>> +		return EXIT_FASTPATH_EXIT_USERSPACE;
 > 
-> The issue was originally introduced in commit 3b51c44 ("Input: allow
-> drivers specify timestamp for input events").
+> In testing this out, I think userspace continues on because I eventually
+> get:
 > 
-> This commit introduced input_set_timestamp and input_get_timestamp.
-> The latter (despite the name) actually generates and stores a timestamp
-> in dev->timestamp if the driver did not set one itself. This timestamp
-> needs to be reset when events are flushed; otherwise the next event
-> will use a stale timestamp. A partial fix was implemented in 4370b23
-> ("Input: reset device timestamp on sync"), but this does not cover the
-> case of SYN_DROPPED.
+> KVM_GET_PIT2 failed: Input/output error
+> /tmp/cmdline.98112: line 1: 98163 Aborted (core dumped) ...
 > 
-> If a SYN_DROPPED is generated (currently only done by evdev), the
-> following happens:
-> 
-> - evdev calls input_get_timestamp to generate a timestamp for the
->   SYN_DROPPED event.
-> - input_get_timestamp generates a timestamp and stores it in
->   dev->timestamp
-> - When the next real event is reported (in evdev_events), evdev
->   calls input_get_timestamp, which uses the timestamp already
->   stored in dev->timestamp, which corresponds to the SYN_DROPPED event
->
-> How to fix:
->
-> - When a SYN_DROPPED is generated, after calling input_get_timestamp,
->   the timestamp stored in dev->timestamp should be reset (same as is
->   currently done in input_handle_event). The attached patch does that.
+> Haven't looked too close, but maybe an exit_reason needs to be set to
+> get qemu to quit sooner?
 
-So this happens after you change clock type of a client, right?
+Oh, the irony.  In trying to do the right thing (exit to userspace), I managed to
+do the wrong thing.
 
-I do dot think having one client affecting timestamp for everyone is a
-good idea. Instead I think __evdev_queue_syn_dropped() should either:
+If KVM tried to re-enter the guest, vcpu_enter_guest() would have encountered
+the KVM_REQ_DEAD and exited with -EIO.
 
-- use "now" time for SYN_DROPPED generated when user requests clock
-  change or reads device's current state, or
+		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu)) {
+			r = -EIO;
+			goto out;
+		}
 
-- check if input device has timestamp set and use it or use "now". This
-  option is needed if we are concerned about timestamps potentially
-  going backwards if clock change happens in a middle of delivering
-  input packet.
+By returning EXIT_FASTPATH_EXIT_USERSPACE, KVM exited to userspace more directly
+and returned '0' instead of -EIO.
 
->
-> (Perhaps the underlying problem is that it is not expected that a
-> function called input_get_timestamp will have side effects. The
-> commit history of input.c shows that this has actually caused a
-> few issues since 3b51c44.)
+Getting KVM to return -EIO is easy, but doing so feels wrong, especially if we
+take the quick-and-dirty route like so:
 
-Yes, maybe something like below will work better. It does not address
-the keeping timestamp for SYN_DROPPED though.
-
-Thanks.
-
--- 
-Dmitry
-
-
-diff --git a/drivers/input/input.c b/drivers/input/input.c
-index 54d35c1a2a24..954c5104a1c1 100644
---- a/drivers/input/input.c
-+++ b/drivers/input/input.c
-@@ -61,6 +61,66 @@ static const unsigned int input_max_code[EV_CNT] = {
- 	[EV_FF] = FF_MAX,
- };
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 454fd6b8f3db..9c8b400e04f2 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -11102,7 +11102,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+                kvm_lapic_sync_from_vapic(vcpu);
  
-+/**
-+ * input_set_timestamp - set timestamp for input events
-+ * @dev: input device to set timestamp for
-+ * @timestamp: the time at which the event has occurred
-+ *   in CLOCK_MONOTONIC
-+ *
-+ * This function is intended to provide to the input system a more
-+ * accurate time of when an event actually occurred. The driver should
-+ * call this function as soon as a timestamp is acquired ensuring
-+ * clock conversions in input_set_timestamp are done correctly.
-+ *
-+ * The system entering suspend state between timestamp acquisition and
-+ * calling input_set_timestamp can result in inaccurate conversions.
-+ */
-+void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
-+{
-+	dev->timestamp[INPUT_CLK_MONO] = timestamp;
-+	dev->timestamp[INPUT_CLK_REAL] = ktime_mono_to_real(timestamp);
-+	dev->timestamp[INPUT_CLK_BOOT] = ktime_mono_to_any(timestamp,
-+							   TK_OFFS_BOOT);
-+}
-+EXPORT_SYMBOL(input_set_timestamp);
-+
-+/**
-+ * input_get_timestamp - get timestamp for input events
-+ * @dev: input device to get timestamp from
-+ *
-+ * A valid timestamp is a timestamp of non-zero value.
-+ */
-+ktime_t *input_get_timestamp(struct input_dev *dev)
-+{
-+	bool have_timestamp;
-+
-+	/* TODO: remove setting of the timestamp in a few releases. */
-+	have_timestamp = ktime_compare(dev->timestamp[INPUT_CLK_MONO],
-+				       ktime_set(0, 0));
-+	if (WARN_ON_ONCE(!have_timestamp))
-+		input_set_timestamp(dev, ktime_get());
-+
-+	return dev->timestamp;
-+}
-+EXPORT_SYMBOL(input_get_timestamp);
-+
-+static bool input_is_timestamp_set(struct input_dev *dev)
-+{
-+	return ktime_compare(dev->timestamp[INPUT_CLK_MONO], ktime_set(0, 0));
-+}
-+
-+/*
-+ * Reset timestamp for an input device so that next input event will get
-+ * a new one.
-+ *
-+ * Note we only need to reset the monolithic one as we use its presence when
-+ * deciding whether to generate a synthetic timestamp.
-+ */
-+static void input_reset_timestamp(struct input_dev *dev)
-+{
-+	dev->timestamp[INPUT_CLK_MONO] = ktime_set(0, 0);
-+}
-+
- static inline int is_event_supported(unsigned int code,
- 				     unsigned long *bm, unsigned int max)
- {
-@@ -342,11 +402,9 @@ static void input_event_dispose(struct input_dev *dev, int disposition,
- 		dev->num_vals = 0;
- 		/*
- 		 * Reset the timestamp on flush so we won't end up
--		 * with a stale one. Note we only need to reset the
--		 * monolithic one as we use its presence when deciding
--		 * whether to generate a synthetic timestamp.
-+		 * with a stale one in the next event packet.
- 		 */
--		dev->timestamp[INPUT_CLK_MONO] = ktime_set(0, 0);
-+		input_reset_timestamp(dev);
- 	} else if (dev->num_vals >= dev->max_vals - 2) {
- 		dev->vals[dev->num_vals++] = input_value_sync;
- 		input_pass_values(dev, dev->vals, dev->num_vals);
-@@ -366,6 +424,9 @@ void input_handle_event(struct input_dev *dev,
- 		if (type != EV_SYN)
- 			add_input_randomness(type, code, value);
+        if (unlikely(exit_fastpath == EXIT_FASTPATH_EXIT_USERSPACE))
+-               return 0;
++               return kvm_test_request(KVM_REQ_VM_DEAD, vcpu) ? -EIO : 0;
  
-+		if (!input_is_timestamp_set(dev))
-+			input_set_timestamp(dev, ktime_get());
-+
- 		input_event_dispose(dev, disposition, type, code, value);
- 	}
- }
-@@ -2053,46 +2114,6 @@ void input_free_device(struct input_dev *dev)
- }
- EXPORT_SYMBOL(input_free_device);
+        r = kvm_x86_call(handle_exit)(vcpu, exit_fastpath);
+        return r;
+
+Given that, IIUC, KVM would eventually return KVM_EXIT_FAIL_ENTRY, I like your
+idea of returning meaningful information.  And unless I'm missing something, that
+would obviate any need to terminate the VM, which would address your earlier point
+of whether terminating the VM is truly better than returning than returning a
+familiar error code.
+
+So this? (completely untested)
+
+diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+index 7345cac6f93a..71b340cbe561 100644
+--- a/arch/x86/kvm/svm/sev.c
++++ b/arch/x86/kvm/svm/sev.c
+@@ -3463,10 +3463,8 @@ int pre_sev_run(struct vcpu_svm *svm, int cpu)
+         * invalid VMSA, e.g. if userspace forces the vCPU to be RUNNABLE after
+         * an SNP AP Destroy event.
+         */
+-       if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa)) {
+-               kvm_vm_dead(kvm);
+-               return -EIO;
+-       }
++       if (sev_es_guest(kvm) && !VALID_PAGE(svm->vmcb->control.vmsa_pa))
++               return -EINVAL;
  
--/**
-- * input_set_timestamp - set timestamp for input events
-- * @dev: input device to set timestamp for
-- * @timestamp: the time at which the event has occurred
-- *   in CLOCK_MONOTONIC
-- *
-- * This function is intended to provide to the input system a more
-- * accurate time of when an event actually occurred. The driver should
-- * call this function as soon as a timestamp is acquired ensuring
-- * clock conversions in input_set_timestamp are done correctly.
-- *
-- * The system entering suspend state between timestamp acquisition and
-- * calling input_set_timestamp can result in inaccurate conversions.
-- */
--void input_set_timestamp(struct input_dev *dev, ktime_t timestamp)
--{
--	dev->timestamp[INPUT_CLK_MONO] = timestamp;
--	dev->timestamp[INPUT_CLK_REAL] = ktime_mono_to_real(timestamp);
--	dev->timestamp[INPUT_CLK_BOOT] = ktime_mono_to_any(timestamp,
--							   TK_OFFS_BOOT);
--}
--EXPORT_SYMBOL(input_set_timestamp);
--
--/**
-- * input_get_timestamp - get timestamp for input events
-- * @dev: input device to get timestamp from
-- *
-- * A valid timestamp is a timestamp of non-zero value.
-- */
--ktime_t *input_get_timestamp(struct input_dev *dev)
--{
--	const ktime_t invalid_timestamp = ktime_set(0, 0);
--
--	if (!ktime_compare(dev->timestamp[INPUT_CLK_MONO], invalid_timestamp))
--		input_set_timestamp(dev, ktime_get());
--
--	return dev->timestamp;
--}
--EXPORT_SYMBOL(input_get_timestamp);
--
- /**
-  * input_set_capability - mark device as capable of a certain event
-  * @dev: device that is capable of emitting or accepting event
+        /* Assign the asid allocated with this SEV guest */
+        svm->asid = asid;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 46e0b65a9fec..f72bcf2e590e 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -4233,8 +4233,12 @@ static __no_kcsan fastpath_t svm_vcpu_run(struct kvm_vcpu *vcpu,
+        if (force_immediate_exit)
+                smp_send_reschedule(vcpu->cpu);
+ 
+-       if (pre_svm_run(vcpu))
++       if (pre_svm_run(vcpu)) {
++               vcpu->run->exit_reason = KVM_EXIT_FAIL_ENTRY;
++               vcpu->run->fail_entry.hardware_entry_failure_reason = SVM_EXIT_ERR;
++               vcpu->run->fail_entry.cpu = vcpu->cpu;
+                return EXIT_FASTPATH_EXIT_USERSPACE;
++       }
+ 
+        sync_lapic_to_cr8(vcpu);
 
