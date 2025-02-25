@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-531695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F582A443AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5E1CA443C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 16:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94987A84B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A26B86110D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D41F221ABC6;
-	Tue, 25 Feb 2025 14:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B43121ABC9;
+	Tue, 25 Feb 2025 14:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgOS9yfp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVZan0fV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D02221ABB2;
-	Tue, 25 Feb 2025 14:54:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0AA21ABC6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740495297; cv=none; b=BT/6j58icfUfGKBsOLNyYwhgzYA0opNfXsPsoKMw75dTPFb8NANuoDhNmh7E6p5kvQlPjSqC/EooYHZ5X6EbdhRgqmBLXfAg5QQhxUoiTMc3I/Vrba61SeSOxjFjxeC4Q2wS7bnl/azbrZTBSy0I37rwN668+Nj/hJqxWzo8Ffk=
+	t=1740495328; cv=none; b=V3zeMe1OOVcBvSLJ/SYDW2FP7mR4mA61aVbz0qcgftPAF5Av0ajghkezNgB003+knAokV05OUPH8Li156BZbWrtLI4OvMP1FEwU/9kCAEgwMc33LIz7gvQ10v15a02/ocWe7H5m5JaX9HkdDmL6PDBgpH/sZnS15E399FNRqyrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740495297; c=relaxed/simple;
-	bh=IAZmZupfWPhUfgk4lZe0NsfW4XTnGX4gwlCfIrMA8Wg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MqYq8+FkxNv5+q+4rLQ5AVda8aB1uSSl/iK4JIc/s7Bfb2kVtORq/9TsPT5GdgkJjzgj0p02vNNQqhO6OEbg+FQcVv9MFYTHJ6iZlxxm6l4W8uzLI/5khjpTlcnUextwR02fQnzQPamKhGNJEQpb5tcqIXoTWASYlLIzXfbrokE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgOS9yfp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13575C4CEDD;
-	Tue, 25 Feb 2025 14:54:54 +0000 (UTC)
+	s=arc-20240116; t=1740495328; c=relaxed/simple;
+	bh=N7cXk0xwkxHLyp46KrkCrfl8x3DEFXzKxkNNdsktsZo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dvophu42LZ9OPctE/lp3+Bx42RkG+rjAckQR7FZU9WbI3VOcOHMEoH0fzuTZX7bNi17ppQjXeee2x5dJ3lTtgksNm7xi9a24rm8KPaoLUjqQdgSPOfavT3icsl+s4a+qB/K5M+4S/1uDT6ybOZ4jBHR7habJC7mdCmRmKfBmxNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVZan0fV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5041C4CEDD;
+	Tue, 25 Feb 2025 14:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740495296;
-	bh=IAZmZupfWPhUfgk4lZe0NsfW4XTnGX4gwlCfIrMA8Wg=;
+	s=k20201202; t=1740495328;
+	bh=N7cXk0xwkxHLyp46KrkCrfl8x3DEFXzKxkNNdsktsZo=;
 	h=From:To:Cc:Subject:Date:From;
-	b=WgOS9yfpjE+KWaYWPUS/RZgHbThsyBPh8Fs4M6MiHWrLG/MR8ymb/kU5R150TOhCd
-	 TuG94czczt9WPUO4dAFhz8rkK7kxFYknyXNb2ua4XhxI/PYtExNFRnEAtrq/7HEjy9
-	 4wTE8PCgtOIovdI83kyD9/EOXoaJwHtEcBmQZroo6xucjyCF8wn5hyt/hBeb3Zvi+6
-	 lOgGUPMeJbsjRDy9n5rZPgRtcX5yltHJ4+9oJmjfS0HI7CBOSi9tA+MuHx5X/opE0m
-	 KPlpkZ2d87YitWNY2gpTGAzUGiCHT8JkovswSHYG4b32E7PYYhF46SigBI1OnUTlfm
-	 JnjaWaxTPsXUQ==
+	b=dVZan0fVJsecmsulx83oIUJIB5qetsUe6hLw9ehObVSx1I2iUmgPKjLcGk0vFJYPQ
+	 UqaObFVnVDV87Hw+QLEqcKpsCfcX9smN1x3rsgT8AbXwi67gaWvmfy799njlwat7D6
+	 5VxsVQy1iqhrjnTA3H4VejEasXkDscHSx+vXCHAiOz1nrRms2z8sWMKFIMSyS27HJE
+	 UlQ66u4lS+bzdoLDDHt1px+sb7y0gZz66rkEBUfWL1k2iQCuU03fBJ8+KSDGOCbglF
+	 YQb9FrVC/dNJhkZdzF0TofsdaGMLKc6wpiZUeYIYvxxEyKJF6zJECA8synDV2ktC6b
+	 DS963AfrUoxmQ==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Takashi Iwai <tiwai@suse.de>,
-	Jonathan Denose <jdenose@google.com>,
-	Erick Archer <erick.archer@outlook.com>,
-	linux-input@vger.kernel.org,
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Kosina <jkosina@suse.com>,
+	Jiri Kosina <jikos@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] [RESEND] Input: synaptics: hide unused smbus_pnp_ids[] array
-Date: Tue, 25 Feb 2025 15:54:38 +0100
-Message-Id: <20250225145451.1141995-1-arnd@kernel.org>
+Subject: [PATCH] [RESEND] apm-emulation: hide an unused variable
+Date: Tue, 25 Feb 2025 15:55:14 +0100
+Message-Id: <20250225145524.1154444-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,40 +59,45 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-When SMBUS is disabled, this is never referenced, causing a W=1 warning:
+The driver_version variable is only used inside of an #ifdef block, which
+leads to a W=1 warning:
 
-drivers/input/mouse/synaptics.c:164:27: error: 'smbus_pnp_ids' defined but not used [-Werror=unused-const-variable=]
+drivers/char/apm-emulation.c:144:19: error: 'driver_version' defined but not used [-Werror=unused-const-variable=]
 
-Hide the array behind the same #ifdef as the code referencing it.
+Move this into the function using it.
 
-Fixes: e839ffab0289 ("Input: synaptics - add support for Intertouch devices")
+Fixes: 7726942fb15e ("[APM] Add shared version of APM emulation")
+Acked-by: Jiri Kosina <jkosina@suse.com>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-Sent this about a year ago, the patch is still needed, so resending without changes
+Found while looking through my patch backlog, still applies
 ---
- drivers/input/mouse/synaptics.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/char/apm-emulation.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index aba57abe6978..309c360aab55 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -161,6 +161,7 @@ static const char * const topbuttonpad_pnp_ids[] = {
- 	NULL
- };
+diff --git a/drivers/char/apm-emulation.c b/drivers/char/apm-emulation.c
+index e795390b070f..53ce352f7197 100644
+--- a/drivers/char/apm-emulation.c
++++ b/drivers/char/apm-emulation.c
+@@ -141,9 +141,6 @@ static struct apm_queue kapmd_queue;
  
-+#ifdef CONFIG_MOUSE_PS2_SYNAPTICS_SMBUS
- static const char * const smbus_pnp_ids[] = {
- 	/* all of the topbuttonpad_pnp_ids are valid, we just add some extras */
- 	"LEN0048", /* X1 Carbon 3 */
-@@ -196,6 +197,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"SYN3257", /* HP Envy 13-ad105ng */
- 	NULL
- };
-+#endif
+ static DEFINE_MUTEX(state_lock);
  
- static const char * const forcepad_pnp_ids[] = {
- 	"SYN300D",
+-static const char driver_version[] = "1.13";	/* no spaces */
+-
+-
+ 
+ /*
+  * Compatibility cruft until the IPAQ people move over to the new
+@@ -435,6 +432,8 @@ static struct miscdevice apm_device = {
+  */
+ static int proc_apm_show(struct seq_file *m, void *v)
+ {
++	static const char driver_version[] = "1.13";	/* no spaces */
++
+ 	struct apm_power_info info;
+ 	char *units;
+ 
 -- 
 2.39.5
 
