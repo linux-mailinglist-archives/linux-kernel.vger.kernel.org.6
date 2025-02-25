@@ -1,108 +1,232 @@
-Return-Path: <linux-kernel+bounces-532320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35EE3A44B6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:36:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF7CA44B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 20:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCED3A6C99
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71A003B2B21
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 19:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7001C8626;
-	Tue, 25 Feb 2025 19:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDA31DB153;
+	Tue, 25 Feb 2025 19:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4lQxC/vP"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CHopUVH8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332DFEC2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 19:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0467821ABC6;
+	Tue, 25 Feb 2025 19:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740512174; cv=none; b=Jm6VDOGP0QWEPPQCGfV9PSneNVW+2B5dkvc7Hr4dkgnVoDd5gyoqjiQgPvehrw+YpRGNTW8UB6PdFjxZzjwBkIV2dhhGNeoMsETEs35JsiRregx/2d51IqV5l/OA8aSO8FB5fXHG/5taLbt67mKS63iyoQfkK5VPF25bJnSI6IM=
+	t=1740512237; cv=none; b=VsFa7jkIff+fLHKHOyQqDh9Dayj+1GIkIRD74lwYwqS8gG8bw5ekaqtVmoen1FBcSOAk4JPT9NKn9Lrjyu2JNYjzr4Y1zX+ZhBSVDCVsYHFBprF43poh74yxZ9EEx7Z3uTtmEjdcgMeJUhoXhBlnwDFa7awKAQlYQdl1RLqssIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740512174; c=relaxed/simple;
-	bh=KG5MWZNUweaYYldKGZHsm0/vi9Gg3rQjK/eO40hF+vQ=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=f8UmksozhytHBQTmlKUOoTcfiQ1t812qEDTvOxEEI2ZDq1+0EaDKHjsol+1LJ/EMKw1zzb43WP7C78DrqMr08xDVpyhI0n5OVQ6L/QdxVttUzy2wlZv6+Usov7JmCPBf7Sx/aFaTT7x+y/Pxj8TH06VTdAAm9bbQ5tJbDSZksEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4lQxC/vP; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e5dd69746f5so8223598276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:36:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740512172; x=1741116972; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=m3pywi2vHa9A/RVrz4AHdduVJ/73uQpM4Dpx98DE2+U=;
-        b=4lQxC/vPTcyxkCaZ7wzKKe2cTTyG4cOzSt2z3zCLP2oFqBZIM1nK70lJZQrc/2W7Pf
-         3OCdgBfXehNkfJdag/EkWzquqZcS6vOIRW1kRlXozZ9Oe0bYt/vMNujISuq4sj02f8HO
-         rt8QWXl0MB+36oOm/80Hv4TfuaepLgBSAAX+AfSryPPpEk2kHEZ8O6rjMvVtEQROGns+
-         KSnQEGXjx04agaeCOUegkUsSERVtGK0IlHg8lWE8kYEKile7E1z2rgb3LPz5qH6Ky02W
-         v5eKywsaPZIk96Y4PW0KOwlW0ZmTW0UnYVPiZs3bTlqPNUZTwxDXOZWMBucI6B9rX0AV
-         WQbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740512172; x=1741116972;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=m3pywi2vHa9A/RVrz4AHdduVJ/73uQpM4Dpx98DE2+U=;
-        b=jdbP8FWOEoluenDGm9xhiie/5WSFJUjA4F7fNNbdrSrNv4A66IZcBSmIOni8z13/9M
-         Qsq1bN7GEplNGd2MglPRBkAaVupJYDFvQhLEVDTwaO5fNkaJKZZuP6dYBJ+KeWGlrBf4
-         9gfjhVqaK7KzcKRPeEL1QAw/hwwcr1wPNEjXbVWb7uEbnuhavddAAYvHCglhh2+IPIea
-         HAnAqtn6Oz+lHhByaKA97EGBFoc9T0T/criCfT3zEUytRxCtDCvLCs5A9NzLg++8Ey1Z
-         xOWT1XSY2LGk+jHUQAar4Yx70rCPFQhl+PcGTgwm/P0vSX1TQv3+y3dG96ahrYx53D38
-         jiaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkqFbiQtO+R2Gum+1gc4qZVPJgzJ/5Heh0YwUm4Gi3hfAoGO5Fhck7M2J02Fbwrr92CFDDPnxQW4BFtKU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRoGR+iZ9ER5vheGkcI+31vZe+/qp+IkkPd09fpkDtOBu4D53H
-	KFxmQt0hJkNW7+hPOkA9YALztEcczmJsFkZeGt2uUpugk6NrCnwG5JaJdmK+itZ3Lwsy/0WBURQ
-	iU64DcA==
-X-Google-Smtp-Source: AGHT+IF+rqRKsMslRLdrMWlb6cIa/Q0Qd+fRL+o/sfhU3rqig48SrWa5nfxjCHfBLk0jJm8fftR68L6DsEtA
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:ea22:428a:b9cc:203c])
- (user=irogers job=sendgmr) by 2002:a25:abab:0:b0:e5e:1cb:25b4 with SMTP id
- 3f1490d57ef6-e5e245004f2mr126315276.0.1740512172139; Tue, 25 Feb 2025
- 11:36:12 -0800 (PST)
-Date: Tue, 25 Feb 2025 11:36:00 -0800
-Message-Id: <20250225193600.90037-1-irogers@google.com>
+	s=arc-20240116; t=1740512237; c=relaxed/simple;
+	bh=VjH9vNCiu3abfUxNaT6nINjS7akZ+Q5dBNiweXmoEpk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=CAYjKrsNFvvTjyfYmbNp/MWJz1z8lTHrCGaU+kvhDaWqWTowDaqYstYQWau6H1vO/LdT/Rhl6cKV5HmNUDXBjghpB5Z4tJT41wZ4hOKi5A7+MS6IuAnWhwJCIXU9xzA/BH0wASw5KaTMEf2XiBlsxMbfGpw5S9CGp+kga4elm+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CHopUVH8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51PHsERo013305;
+	Tue, 25 Feb 2025 19:37:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=NodEt7I6mKquqqHW9X6vXf
+	RbJ/et24sQ+jaIy1bvO/8=; b=CHopUVH8pp4Jga397zRqXK3U0RQsyZPT3S5P7z
+	MNFFL/Zzr5DxUjUIapcK+/N2kt2i/s4PXawWtwq4lEiBrwEn1wZe3Eh6Azd5TSRL
+	VJ3IvAflrXjXqXfzLAcs0mlu3Rr8k1AgFkjajoRcIHoO+HpwH8/s68gEFDtMFicE
+	0ylKqjEcGTvnKMPqm4AZ5do7w6Q6EgXFc1pa65PNSqon4QhGw+3h+tlh3+tPnKDq
+	TgCeOH6eD+lpdHdTP7fQELpqmPa3+ngnv+hgpOlaicefgnYGJBx6DN4v52AwOXFj
+	rurAP0dEmy6wkY6tKDPKUUHUZxpqpAFp8MpRWMjmJpYlUFTA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y5wgt354-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 19:37:05 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51PJb4QK023736
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Feb 2025 19:37:04 GMT
+Received: from [10.213.111.143] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Feb
+ 2025 11:37:00 -0800
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Date: Wed, 26 Feb 2025 01:06:27 +0530
+Subject: [PATCH] drm/msm/a6xx: Fix stale rpmh votes from GPU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Subject: [PATCH v1] x86/insn: Fix linux/unaligned.h include path
-From: Ian Rogers <irogers@google.com>
-To: Adrian Hunter <adrian.hunter@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Ian Rogers <irogers@google.com>, 
-	linux-kernel@vger.kernel.org, Arnaldo Carvalho de Melo <acme@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250226-adreno-sys-suspend-fix-v1-1-054261bba114@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALobvmcC/yWMQQ7CIBBFr9LMWhJAkOpVTBfADMqitDKt0TS9u
+ 8Qu3/v5bwOmmonh1m1Q6Z05T6WBOnUQn748SGRsDFpqK5WSwmOlMgn+suCVZyooUv6IaEN0gcj
+ LaKCd50pN/8P34eBKr7X1l0NC8EwiTuOYl1vnNEqfjI8RrxeL8ayTlcYYic60xaDqQ3K9gmHff
+ 1VYOkO0AAAA
+X-Change-ID: 20250110-adreno-sys-suspend-fix-c5bc7beea0c4
+To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Jordan Crouse <jordan@cosmicpenguin.net>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Akhil P
+ Oommen" <quic_akhilpo@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1740512220; l=3990;
+ i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
+ bh=VjH9vNCiu3abfUxNaT6nINjS7akZ+Q5dBNiweXmoEpk=;
+ b=xjeoldI0qTLOM55Y/lXODIcejB2UM+RT52Zi9F1KAGY1zYhCeMv3PF61EpE+S+2nLpXBjGbb3
+ jfEjeUqdMa9B4nXL2pIy9Xy+SRPvE9a/twflug4wm4jbiUoeyauiuW0
+X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
+ pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4LJM5ITYHbAuK60lqsvi9heg-2MBJssl
+X-Proofpoint-ORIG-GUID: 4LJM5ITYHbAuK60lqsvi9heg-2MBJssl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-25_06,2025-02-25_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ clxscore=1011 adultscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ mlxscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502250120
 
-tools/arch/x86/include/linux doesn't exist but building is working by
-virtue of a -I. Building using bazel this fails. Use angle brackets to
-include unaligned.h so there isn't an invalid relative include.
+It was observed on sc7180 (A618 gpu) that GPU votes for GX rail and CNOC
+BCM nodes were not removed after GPU suspend. This was because we
+skipped sending 'prepare-slumber' request to gmu during suspend sequence
+in some cases. So, make sure we always call prepare-suspend hfi during
+suspend. Also, calling prepare-suspend without a prior oob-gpu handshake
+messes up gmu firmware's internal state. So, do that when required.
 
-Fixes: 5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-Signed-off-by: Ian Rogers <irogers@google.com>
+Fixes: 4b565ca5a2cb ("drm/msm: Add A6XX device support")
+Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 ---
- tools/arch/x86/lib/insn.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 72 +++++++++++++++++++----------------
+ 1 file changed, 39 insertions(+), 33 deletions(-)
 
-diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
-index ab5cdc3337da..e91d4c4e1c16 100644
---- a/tools/arch/x86/lib/insn.c
-+++ b/tools/arch/x86/lib/insn.c
-@@ -13,7 +13,7 @@
- #endif
- #include "../include/asm/inat.h" /* __ignore_sync_check__ */
- #include "../include/asm/insn.h" /* __ignore_sync_check__ */
--#include "../include/linux/unaligned.h" /* __ignore_sync_check__ */
-+#include <linux/unaligned.h> /* __ignore_sync_check__ */
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+index 699b0dd34b18f0ec811e975779ba95991d485098..38c94915d4c9d6d33354502651a77c1f9e4648df 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+@@ -1169,49 +1169,50 @@ static void a6xx_gmu_shutdown(struct a6xx_gmu *gmu)
+ 	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+ 	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+ 	u32 val;
++	int ret;
  
- #include <linux/errno.h>
- #include <linux/kconfig.h>
+ 	/*
+-	 * The GMU may still be in slumber unless the GPU started so check and
+-	 * skip putting it back into slumber if so
++	 * GMU firmware's internal power state gets messed up if we send "prepare_slumber" hfi when
++	 * oob_gpu handshake wasn't done after the last wake up. So do a dummy handshake here when
++	 * required
+ 	 */
+-	val = gmu_read(gmu, REG_A6XX_GPU_GMU_CX_GMU_RPMH_POWER_STATE);
++	if (adreno_gpu->base.needs_hw_init) {
++		if (a6xx_gmu_set_oob(&a6xx_gpu->gmu, GMU_OOB_GPU_SET))
++			goto force_off;
+ 
+-	if (val != 0xf) {
+-		int ret = a6xx_gmu_wait_for_idle(gmu);
++		a6xx_gmu_clear_oob(&a6xx_gpu->gmu, GMU_OOB_GPU_SET);
++	}
+ 
+-		/* If the GMU isn't responding assume it is hung */
+-		if (ret) {
+-			a6xx_gmu_force_off(gmu);
+-			return;
+-		}
++	ret = a6xx_gmu_wait_for_idle(gmu);
+ 
+-		a6xx_bus_clear_pending_transactions(adreno_gpu, a6xx_gpu->hung);
++	/* If the GMU isn't responding assume it is hung */
++	if (ret)
++		goto force_off;
+ 
+-		/* tell the GMU we want to slumber */
+-		ret = a6xx_gmu_notify_slumber(gmu);
+-		if (ret) {
+-			a6xx_gmu_force_off(gmu);
+-			return;
+-		}
++	a6xx_bus_clear_pending_transactions(adreno_gpu, a6xx_gpu->hung);
+ 
+-		ret = gmu_poll_timeout(gmu,
+-			REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS, val,
+-			!(val & A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS_GPUBUSYIGNAHB),
+-			100, 10000);
++	/* tell the GMU we want to slumber */
++	ret = a6xx_gmu_notify_slumber(gmu);
++	if (ret)
++		goto force_off;
+ 
+-		/*
+-		 * Let the user know we failed to slumber but don't worry too
+-		 * much because we are powering down anyway
+-		 */
++	ret = gmu_poll_timeout(gmu,
++		REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS, val,
++		!(val & A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS_GPUBUSYIGNAHB),
++		100, 10000);
+ 
+-		if (ret)
+-			DRM_DEV_ERROR(gmu->dev,
+-				"Unable to slumber GMU: status = 0%x/0%x\n",
+-				gmu_read(gmu,
+-					REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS),
+-				gmu_read(gmu,
+-					REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS2));
+-	}
++	/*
++	 * Let the user know we failed to slumber but don't worry too
++	 * much because we are powering down anyway
++	 */
++
++	if (ret)
++		DRM_DEV_ERROR(gmu->dev,
++			"Unable to slumber GMU: status = 0%x/0%x\n",
++			gmu_read(gmu,
++				REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS),
++			gmu_read(gmu,
++				REG_A6XX_GPU_GMU_AO_GPU_CX_BUSY_STATUS2));
+ 
+ 	/* Turn off HFI */
+ 	a6xx_hfi_stop(gmu);
+@@ -1221,6 +1222,11 @@ static void a6xx_gmu_shutdown(struct a6xx_gmu *gmu)
+ 
+ 	/* Tell RPMh to power off the GPU */
+ 	a6xx_rpmh_stop(gmu);
++
++	return;
++
++force_off:
++	a6xx_gmu_force_off(gmu);
+ }
+ 
+ 
+
+---
+base-commit: 72d0af4accd965dc32f504440d74d0a4d18bf781
+change-id: 20250110-adreno-sys-suspend-fix-c5bc7beea0c4
+
+Best regards,
 -- 
-2.48.1.711.g2feabab25a-goog
+Akhil P Oommen <quic_akhilpo@quicinc.com>
 
 
