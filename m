@@ -1,119 +1,176 @@
-Return-Path: <linux-kernel+bounces-531241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A605A43DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:43:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF938A43E06
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BD417F7D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:42:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87A303B27FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 11:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC7772686A8;
-	Tue, 25 Feb 2025 11:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F02268C47;
+	Tue, 25 Feb 2025 11:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IpGofq2A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EIv0Xm8J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3020C267B18;
-	Tue, 25 Feb 2025 11:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCC52686AF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 11:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740483712; cv=none; b=Nav2+kKz4oDR8Rprj2NdqknFraPQt2EenkCnw8pPo/4TsfTLOrGdiXUOU3n/8i/cfP8se/urt2vYOGnM8NXkPnN+5xobVbZ8SrioMs/cIc9x2Tdp18YLNw58lGRMhEO7T1kn+YSEo53IWMOCuJzYik1R6csvYttLKWb4/n7fhy8=
+	t=1740483717; cv=none; b=rYiWEkUZ4FOFBF2Flo4dWIFMbnXxoYyiwl/jxaBjDJBkUDrDBRpOlw49HGfa6Y3JpKhsRTSgEoZ6aNhgxYsfXyge0UYE7vHwdoJeqnLLp74mJZze8szu7YQ1VkHvUL3tkHTtBghKoshASjKFPGr0I9FCZS6KJiqbch8bYf6NY8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740483712; c=relaxed/simple;
-	bh=h+T2raKsJQ4RIjg6WeCVYCV+c6BCAPildkAWxCUIX/w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cP6z0ugy3KekUlfq4rvJwMIZfPndVPc392t95Bmax7Dpc1VM+Q4wCTD0QQp97SQ6QkW59U4JJRJiipFlsKxQa+xunqLed15UAChjw+VpRENGD9x2BD17sOu/acQMWAJAGz+D6I3X3ud8tB82zhAqCz/qXeBG2Qw1LfMuAD8gZAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IpGofq2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAF78C4CEE8;
-	Tue, 25 Feb 2025 11:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740483711;
-	bh=h+T2raKsJQ4RIjg6WeCVYCV+c6BCAPildkAWxCUIX/w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IpGofq2AcmbR4vt31xCxO64zinsSFkZJJ5nItKx3Fhmd6tieLHJOJo/x0GC6o8UGu
-	 RlAYCEc7aH/Lu6ACM2g+MsmNEFKgkliPGyY/o9nt+PinIP8GLtXrlq8pyfHSSn3eYA
-	 2MWw7xQrPyXNPjcPmtNy2aD0OBQIfThDEze8tfeHdOX5sBgg3ihlW7E2hA/y263Ab6
-	 fSPmRg6lKJc374JGY9CxoDLFdKHxanRBeoVinvZYx+9iCtU2MS/D6oLKCLB1c/ulNl
-	 wDZoqsusxBCqxRi4Xj0hXOtj13e6SlncTreuJ6IdHoKLRe9OmLyk6gDd6PoGrIdN2i
-	 kSJLDED4XtNmA==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2a9ef75a20dso322559fac.2;
+	s=arc-20240116; t=1740483717; c=relaxed/simple;
+	bh=CKyOL0dq4XhTxXKNvgQCDaAmo0Z3lBdpUJRyRETK/1w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SVfvFCl+etQNwX0wD4S00WUu0X7psoR38I//UmkrsDdgrpLcVWIwbPbe6jygxXz7ZcL8XVbSNWBBKwJPkDwnLh/PCdwXVh9wgabeuGaR+6cVVQQUwjmvuZpJL1MhknEPLnkE86Tgv59ipYd2+ADme3P4T9iMeqO/yEFfr8KEph8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EIv0Xm8J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740483715;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6ggdA4Yip2z1d3LHS7C+TUR3rF6w0Xoc1I30vx9XO4=;
+	b=EIv0Xm8JUxTA0qTeRH5rmqQ8Dx9tuV46RTzQ/Qm642uHt2TewCsqlvmk8CKUJnhspcdkEy
+	5VzZgnI7jWufT1F4k9U4rVmUWknbyTtpcoUF/C4sLXJGkzbNYw8ctBYGDbhnMa8fCsvIXb
+	ssJVEdQiKexAZ0fFWbINY+aJv8qsVbI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-538-DdifgAluPmKz0riAvzVETw-1; Tue, 25 Feb 2025 06:41:53 -0500
+X-MC-Unique: DdifgAluPmKz0riAvzVETw-1
+X-Mimecast-MFC-AGG-ID: DdifgAluPmKz0riAvzVETw_1740483712
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43945f32e2dso52128965e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 03:41:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740483712; x=1741088512;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N6ggdA4Yip2z1d3LHS7C+TUR3rF6w0Xoc1I30vx9XO4=;
+        b=m5edVVUREi9e+7RTjvI2dt23Cn0GzBlSnZ4vKnLHYK6LhH9XBbnqX/piZ8Ebj0n2yh
+         KK5lXFIzI3zdEbtv2U/tpf6Ri1eNdd5/IupwyTaIXgNxt1ZGSGgeumHuQxJHyIoJVyoi
+         2c77JMCE9EJi4yRaQrOKVVInXjK+NzkQxoQR+9nUNbzoedI46KDJwzlYhSQ1gg1JLsY4
+         nqqaSTPLf7c0/vnA8Qjg7FvVgX8usOsaEG6EWbYGEGVQ3RMfQ+CJ2nOAoAPGQQ02Lvet
+         COPIzeJ6DEU1PQK0vti0jvQmqkswI9RkM9pE3PtgYmOMuBe0VVdquZSlVLjmHeDVaSny
+         9OcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVktFSlyVKcT2wmOsisNZpDIeUWJ6wJgiKxF8QbcOZc6sPIvnMLrhjYdZ+YGdUlXV6RLP4FqivVa+p3QhY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY2qblQAGNQ3nKe1+LBB+K3R9Ke6r8cvy4qBtWI9n5e/qLsZ69
+	S5pAQExrKpI/4f/ucnPYw/UOTl17X7Tv37+kosCJShHjJ5MS1giXn/bgRjvJ2PNS9n9GcNYUGpw
+	xciX0TZyiuzjR0NcDd4/5+9+GwjHrN/1tHUkB/LaYDjIoWlkOEarCbYyHzACWwA==
+X-Gm-Gg: ASbGncvkDyprR+2kuRInzRQz507GmAzKPrLK3CfBnku3V5SwqYz3JHK4oi/v/68aEy4
+	O5fxISBrtdEbjycoI9qcmryafWtgxRgrwrIZUQp1dWtSvaDWd4VXVsSUwNhSXigu+PjGaE3M4Yf
+	Y7p0mmsGxr/KTfZMftdxVBFP6nEXinM21dMBbuK75GycxLk8C3KRwsIQbUpS6cEo0+R1gqQL/D0
+	J+1W5EwY8HT7MxuWhOwlPPQjnXbrdg9wtfh74Q+3acunNteOAqTbLID+wckvadacen0OKd9L19k
+	IVYwttxObrFaCGaXBNYSUGUaAILuE9vhPmM5ZdWE0oM=
+X-Received: by 2002:a05:600c:468b:b0:439:9eba:93bb with SMTP id 5b1f17b1804b1-43ab0f42a24mr30046825e9.18.1740483712369;
+        Tue, 25 Feb 2025 03:41:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGhUzCsKXyrBcsIL02vOqLDaHj/LvRegxo7XAQO9jd0Q3JP7pHTLj0XRvx0x5fW0Mplj5/KsQ==
+X-Received: by 2002:a05:600c:468b:b0:439:9eba:93bb with SMTP id 5b1f17b1804b1-43ab0f42a24mr30046415e9.18.1740483711879;
         Tue, 25 Feb 2025 03:41:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXC/fbdzrMxUSSN2GP1yNIj0F06r7i8UJz6lvAggbM7H4i8rK6Uhu3dV0lMMc9rn+yrByWT/gk+Fw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+7QH1WQArnVfwHKcEdW2yIhalvG0oZDnIvShzUF83QjEcElfi
-	zzW95cqJrlhEiwwvV7yR5G96JpJhZl1LnNEzY72OyKLejEUry0YnbDC2nFoViHFv4Gu+OByzCQ5
-	BZFA5BOUJeLTw5hzegPXLWjhKGZg=
-X-Google-Smtp-Source: AGHT+IESOKAn6/6SxHhIFWP1AFVhPJkMLAgNGXvllYRSJo64sMAw0+x+uc3N5W3CH98SANCjk/yMzlu76qtnIH5ufa0=
-X-Received: by 2002:a05:6871:a0c7:b0:2b8:3c87:f36 with SMTP id
- 586e51a60fabf-2c10f25d68dmr1773131fac.13.1740483711039; Tue, 25 Feb 2025
- 03:41:51 -0800 (PST)
+Received: from [192.168.88.253] (146-241-59-53.dyn.eolo.it. [146.241.59.53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43ab1569e84sm22373085e9.33.2025.02.25.03.41.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Feb 2025 03:41:51 -0800 (PST)
+Message-ID: <7309e760-63b0-4b58-ad33-2fb8db361141@redhat.com>
+Date: Tue, 25 Feb 2025 12:41:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12621866.O9o76ZdvQC@rjwysocki.net>
-In-Reply-To: <12621866.O9o76ZdvQC@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 25 Feb 2025 12:41:39 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
-X-Gm-Features: AWEUYZk3UVbVtstv3dpzo5EDIv7DprcgjKQT6sFuqRWhkPgtXZR1G4XYFGJhHPk
-Message-ID: <CAJZ5v0goH0unRRuQNCKC8WYRndsSenJaVJOYU64COYHocVE7ig@mail.gmail.com>
-Subject: Re: [PATCH v2] cpuidle: intel_idle: Update MAINTAINERS
-To: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>, Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 4/7] netconsole: add configfs controls for
+ taskname sysdata feature
+To: Breno Leitao <leitao@debian.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250221-netcons_current-v1-0-21c86ae8fc0d@debian.org>
+ <20250221-netcons_current-v1-4-21c86ae8fc0d@debian.org>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250221-netcons_current-v1-4-21c86ae8fc0d@debian.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 20, 2025 at 9:11=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->
-> Update the intel_idle record in MAINTAINERS to reflect the current
-> state of affairs.
->
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On 2/21/25 2:52 PM, Breno Leitao wrote:
+> Add configfs interface to enable/disable the taskname sysdata feature.
+> This adds the following functionality:
+> 
+> The implementation follows the same pattern as the existing CPU number
+> feature, ensuring consistent behavior and error handling across sysdata
+> features.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 > ---
->
-> v1 -> v2:
->    * Add an alternative address for Artem and change his role to M.
->    * Change the development git tree link.
+>  drivers/net/netconsole.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
+> index 1b109f46512ffb7628c6b34c6efdfc301376dd53..5a29144ae37ee7b487b1a252b0f2ce8574f9cefa 100644
+> --- a/drivers/net/netconsole.c
+> +++ b/drivers/net/netconsole.c
+> @@ -426,6 +426,20 @@ static ssize_t sysdata_cpu_nr_enabled_show(struct config_item *item, char *buf)
+>  	return sysfs_emit(buf, "%d\n", cpu_nr_enabled);
+>  }
+>  
+> +/* configfs helper to display if taskname sysdata feature is enabled */
+> +static ssize_t sysdata_taskname_enabled_show(struct config_item *item,
+> +					     char *buf)
+> +{
+> +	struct netconsole_target *nt = to_target(item->ci_parent);
+> +	bool taskname_enabled;
+> +
+> +	mutex_lock(&dynamic_netconsole_mutex);
+> +	taskname_enabled = !!(nt->sysdata_fields & SYSDATA_TASKNAME);
+> +	mutex_unlock(&dynamic_netconsole_mutex);
+> +
+> +	return sysfs_emit(buf, "%d\n", taskname_enabled);
+> +}
+> +
+>  /*
+>   * This one is special -- targets created through the configfs interface
+>   * are not enabled (and the corresponding netpoll activated) by default.
+> @@ -841,6 +855,40 @@ static void disable_sysdata_feature(struct netconsole_target *nt,
+>  	nt->extradata_complete[nt->userdata_length] = 0;
+>  }
+>  
+> +static ssize_t sysdata_taskname_enabled_store(struct config_item *item,
+> +					      const char *buf, size_t count)
+> +{
+> +	struct netconsole_target *nt = to_target(item->ci_parent);
+> +	bool taskname_enabled, curr;
+> +	ssize_t ret;
+> +
+> +	ret = kstrtobool(buf, &taskname_enabled);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mutex_lock(&dynamic_netconsole_mutex);
+> +	curr = nt->sysdata_fields & SYSDATA_TASKNAME;
 
-I am assuming no objections.
+Minor nit:
+	curr = !!(nt->sysdata_fields & SYSDATA_TASKNAME);
 
-> ---
->  MAINTAINERS |    8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11669,12 +11669,14 @@
->  F:     drivers/crypto/intel/iaa/*
->
->  INTEL IDLE DRIVER
-> -M:     Jacob Pan <jacob.jun.pan@linux.intel.com>
-> -M:     Len Brown <lenb@kernel.org>
-> +M:     Rafael J. Wysocki <rafael@kernel.org>
-> +M:     Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-> +M:     Artem Bityutskiy <dedekind1@gmail.com>
-> +R:     Len Brown <lenb@kernel.org>
->  L:     linux-pm@vger.kernel.org
->  S:     Supported
->  B:     https://bugzilla.kernel.org
-> -T:     git git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux.git
-> +T:     git git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm=
-.git
->  F:     drivers/idle/intel_idle.c
->
->  INTEL IDXD DRIVER
->
->
->
->
+would be preferable, and more robust if later on other SYSDATA_ bits are
+added, 'moving down' SYSDATA_TASKNAME definition.
+
+Also it would be more consistent with previous usage in
+`sysdata_taskname_enabled_show()`
+
+Cheers,
+
+Paolo
+
 
