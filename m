@@ -1,166 +1,126 @@
-Return-Path: <linux-kernel+bounces-530751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A264A437D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:41:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BDDA437DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 09:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 943471899054
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:41:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FE1C1898D7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 08:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B65325EFBC;
-	Tue, 25 Feb 2025 08:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194F5260A34;
+	Tue, 25 Feb 2025 08:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tPGaAN7T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="awJjbPIc"
+Received: from relay2.mymailcheap.com (relay2.mymailcheap.com [217.182.113.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9A6170A26;
-	Tue, 25 Feb 2025 08:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9B25EF99;
+	Tue, 25 Feb 2025 08:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.182.113.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740472880; cv=none; b=iJd31PkAxd1k+JRC8bjpupP+18ebzBLKEl0TgG0Aoexb8fRqhHuG5cFOGlHWF7tLXC4miLbQvd8O4osQGDyPjXdb0aT0vhrp/OS0Mo8Rc4MzoTiVUKSpZcmxWXHiUcoQ2ANfwZ0p99sJ+3OgzoRsTk3AS7prIWPXc6lw6Oo8dAI=
+	t=1740472979; cv=none; b=KXPVv0FCaBZd7ALr2nHl11B+mKdfz//ErtifBdIJ81/QmpgHDs5brEY0iQxeSJMyimmPUcXbQj9kpxQaBJxyNQfcQcpEFcMI/bEygSg0xHUkfII3LRARKd/6dzNXWPnHJ0aeqJ7CcL6KflXrXMTXLGz5uT/hwyMlqDWDL0cSjbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740472880; c=relaxed/simple;
-	bh=vIQYdyOEzWu+41zMz1p5OCKUmlP+4f9CSqgxogleOFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2Ts/kmWYf3/cNE6oYyex/o3neiINXjt5pOHaEEMJ8NcX2CQp3YuvrkZw0ychOtY44qrdccZXFt1qiqnYxjxddXg5nR98P6PAvK9qDV0yu2WMuEDkjA+eKeo+n4c8FEGpSBrBL3arzOW16KBWMUNDAJILYqhwRhzX57cf1N/d/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tPGaAN7T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E35A7C4CEDD;
-	Tue, 25 Feb 2025 08:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740472880;
-	bh=vIQYdyOEzWu+41zMz1p5OCKUmlP+4f9CSqgxogleOFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tPGaAN7Th6HycsZsaacoGSR8Dh0cuUxMZZBWi83PHwXsPLxStxPX493fz1Ak3+bDX
-	 lg8PgRxXJ45npe2td1IoNrj72tEvuWP99SJEev2chGJiPjIM7oX1Z9F3KZmFiqOCtN
-	 6kTIa26b4cquFXyMe/zEK5KXicpDMKw/UStlP+1RcqFJgmdPD0Z4guSJrmuj0v1tf5
-	 klOmsqt+286Frm4FhriFVmtcoiluXP+EDTgSCSdqdnFP9fRvN7FiPZNLU+o6dNSbdK
-	 FNjbfJseEoroqFVXzzB/MoDDSx3Sb05WNL6pTEyzjJC0hZuHIYtGq2qovxejg6b5yB
-	 5F5kkB+NfP1MQ==
-Date: Tue, 25 Feb 2025 09:41:17 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, patches@opensource.cirrus.com, 
-	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Francesco Dolcini <francesco.dolcini@toradex.com>, 
-	Charles Keepax <ckeepax@opensource.cirrus.com>
-Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
- and EQ support
-Message-ID: <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
-References: <20250224155500.52462-1-francesco@dolcini.it>
- <20250224155500.52462-4-francesco@dolcini.it>
+	s=arc-20240116; t=1740472979; c=relaxed/simple;
+	bh=SvTIxBmHI5DMIMShUe39OEwtK1e9wQc7BfeYlCDczcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nIoqi4WdLsQGwc2tN28MPZLqK/baL0xN3KY8IMinUKzQBtXJDUwrXqjIVYoYxgj9km8IK78x8+m9jSiSko3czDQRWug5fEI9rBTlNth53RI84I6gTRhWH24zRwjPMUeO+0cg2UFNuam69Pi8XTRa+1giABFS+FG1FFmOsI7YTiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=awJjbPIc; arc=none smtp.client-ip=217.182.113.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
+Received: from nf1.mymailcheap.com (nf1.mymailcheap.com [51.75.14.91])
+	by relay2.mymailcheap.com (Postfix) with ESMTPS id 5C7473E8A5;
+	Tue, 25 Feb 2025 08:42:49 +0000 (UTC)
+Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
+	by nf1.mymailcheap.com (Postfix) with ESMTPSA id 069F24023E;
+	Tue, 25 Feb 2025 08:42:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
+	t=1740472968; bh=SvTIxBmHI5DMIMShUe39OEwtK1e9wQc7BfeYlCDczcg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=awJjbPIc/rkyrlun2vipC5Sk2sl9Qfm18DpZMffn1Ja9t1lZMgGlo5thyI8KQtaCk
+	 2ZH1oG80paVWzwbcPELQbWVSn5+qL7hfA4L7YxyCeiO6Ql5MFtPHwR3V53JhOuDiGo
+	 619uleMYufnJE5Vu1ACeTul7J5BjSYoiACP9t/Rc=
+Received: from [50.50.1.183] (unknown [58.246.137.130])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail20.mymailcheap.com (Postfix) with ESMTPSA id A5ADF40284;
+	Tue, 25 Feb 2025 08:42:41 +0000 (UTC)
+Message-ID: <4881179a-aab1-4d10-8917-665fffa66721@aosc.io>
+Date: Tue, 25 Feb 2025 16:42:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250224155500.52462-4-francesco@dolcini.it>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 0/4] stmmac: Several PCI-related improvements
+To: Philipp Stanner <phasta@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+ Yinggang Gu <guyinggang@loongson.cn>, Feiyang Chen
+ <chenfeiyang@loongson.cn>, Philipp Stanner <pstanner@redhat.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, Qing Zhang <zhangqing@loongson.cn>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Kexy Biscuit <kexybiscuit@aosc.io>, Mingcong Bai <jeffbai@aosc.io>
+References: <20250224135321.36603-2-phasta@kernel.org>
+Content-Language: en-US
+From: Henry Chen <chenx97@aosc.io>
+In-Reply-To: <20250224135321.36603-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: nf1.mymailcheap.com
+X-Rspamd-Queue-Id: 069F24023E
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [1.40 / 10.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[netdev];
+	FREEMAIL_TO(0.00)[kernel.org,lunn.ch,davemloft.net,google.com,redhat.com,gmail.com,foss.st.com,linux.dev,loongson.cn,flygoat.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPFBL_URIBL_EMAIL_FAIL(0.00)[chenx97.aosc.io:server fail];
+	TO_MATCH_ENVRCPT_SOME(0.00)[];
+	TO_DN_SOME(0.00)[]
 
-On Mon, Feb 24, 2025 at 04:54:58PM +0100, Francesco Dolcini wrote:
-> +  wlf,drc-cfg-regs:
-> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> +    description:
-> +      Default register values for R40/41/42/43 (DRC).
-> +      The list must be 4 times the length of wlf,drc-cfg-names.
-> +      If absent, DRC is disabled.
-> +
-> +  wlf,retune-mobile-cfg-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-> +    description:
-> +      List of strings for the available retune modes.
-> +      If absent, retune is disabled.
+On 2/24/25 21:53, Philipp Stanner wrote:
+> Changes in v3:
+>    - Several formatting nits (Paolo)
+>    - Split up patch into a patch series (Yanteng)
+> 
+> Philipp Stanner (4):
+>    stmmac: loongson: Pass correct arg to PCI function
+>    stmmac: loongson: Remove surplus loop
+>    stmmac: Remove pcim_* functions for driver detach
+>    stmmac: Replace deprecated PCI functions
+> 
+>   .../ethernet/stmicro/stmmac/dwmac-loongson.c  | 31 ++++++-------------
+>   .../net/ethernet/stmicro/stmmac/stmmac_pci.c  | 24 ++++----------
+>   2 files changed, 15 insertions(+), 40 deletions(-)
+> 
 
-How is this retune supposed to be used? If by user-space I can easily
-imagine that static DTS configuration won't be enough, because you need
-to factor for example temperature or some other minor differences
-between same boards.
+I have tested This patch series on my Loongson-3A5000-HV-7A2000-1w-V0.1-
+EVB. The onboard STMMAC ethernet works as expected.
 
-> +
-> +  wlf,retune-mobile-cfg-rates:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+Tested-by: Henry Chen <chenx97@aosc.io>
 
-Drop
-
-> +    description:
-> +      List of rates for the available retune modes.
-
-Use standard property suffixes - hz or whatever is matching here.
-
-> +      The list must be the same length as wlf,retune-mobile-cfg-names.
-> +      If absent, retune is disabled.
-> +
-> +  wlf,retune-mobile-cfg-regs:
-> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> +    description:
-> +      Default register values for R134/.../157 (EQ).
-> +      The list must be 24 times the length of wlf,retune-mobile-cfg-names.
-> +      If absent, retune is disabled.
-> +
-> +dependencies:
-> +  wlf,drc-cfg-names: [ 'wlf,drc-cfg-regs' ]
-> +  wlf,drc-cfg-regs: [ 'wlf,drc-cfg-names' ]
-> +
-> +  wlf,retune-mobile-cfg-names: [ 'wlf,retune-mobile-cfg-rates', 'wlf,retune-mobile-cfg-regs' ]
-> +  wlf,retune-mobile-cfg-regs: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-rates' ]
-> +  wlf,retune-mobile-cfg-rates: [ 'wlf,retune-mobile-cfg-names', 'wlf,retune-mobile-cfg-regs' ]
-> +
->  required:
->    - compatible
->    - reg
-> @@ -70,5 +138,43 @@ examples:
->              DBVDD-supply = <&reg_1p8v>;
->              DCVDD-supply = <&reg_1p8v>;
->              MICVDD-supply = <&reg_1p8v>;
-> +
-> +            wlf,drc-cfg-names = "default", "peaklimiter", "tradition", "soft", "music";
-> +            wlf,drc-cfg-regs =
-> +                /* coded default: KNEE_IP = KNEE_OP = 0, HI_COMP = LO_COMP = 1  */
-
-Please follow DTS coding style - how you wrap, where to break lines.
-
-> +                /bits/ 16 <0x01af 0x3248 0x0000 0x0000>,
-> +                /* coded default: KNEE_IP = -24, KNEE_OP = -6, HI_COMP = 1/4, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0010 0x0408>,
-> +                /* coded default: KNEE_IP = -42, KNEE_OP = -3, HI_COMP = 0, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0028 0x0704>,
-> +                /* coded default: KNEE_IP = -45, KNEE_OP = -9, HI_COMP = 1/8, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0018 0x078c>,
-> +                /* coded default: KNEE_IP = -30, KNEE_OP = -10.5, HI_COMP = 1/4, LO_COMP = 1 */
-> +                /bits/ 16 <0x04af 0x324b 0x0010 0x050e>;
-> +
-> +            wlf,gpio-cfg = <
-
-There is almost never empty line after <
-
-> +                0x0018 /* GPIO1 => DMIC_CLK */
-> +                0xffff /* GPIO2 => don't touch */
-> +                0xffff /* GPIO3 => don't touch */
-> +                0xffff /* GPIO4 => don't touch */
-
-Not mentioning this looks really incorrect or incomplete. No ending of
-property.
-
-> +
-> +            wlf,retune-mobile-cfg-names = "bassboost", "bassboost", "treble";
-> +            wlf,retune-mobile-cfg-rates = <48000 44100 48000>;
-> +            wlf,retune-mobile-cfg-regs =
-> +                /* bassboost: EQ_ENA = 1, +6 dB @ 100 Hz, +3 dB @ 300 Hz, 0 dB @ 875, 2400, 6900 Hz */
-> +                /bits/ 16 <0x1 0x12 0xf 0xc 0xc 0xc>,
-> +                /* default values for ReTune Mobile registers 140-157 */
-> +                /bits/ 16 <0x0fca 0x0400 0x00d8 0x1eb5 0xf145 0x0bd5 0x0075 0x1c58 0xf3d3 0x0a54 0x0568 0x168e 0xf829 0x07ad 0x1103 0x0564 0x0559 0x4000>,
-
-See DTS coding style.
-
-Best regards,
-Krzysztof
+     Henry
 
 
