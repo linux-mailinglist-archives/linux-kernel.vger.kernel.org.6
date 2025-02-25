@@ -1,150 +1,183 @@
-Return-Path: <linux-kernel+bounces-532669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043AEA45091
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384F8A45094
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:56:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25C957A6402
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:55:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4653C3ACC96
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58EC233714;
-	Tue, 25 Feb 2025 22:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F3D23536A;
+	Tue, 25 Feb 2025 22:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5kIXR3v"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="sRiT5u/F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mo6A19Mf"
+Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678F204F9B;
-	Tue, 25 Feb 2025 22:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46C023237B;
+	Tue, 25 Feb 2025 22:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524171; cv=none; b=mDIUILxAtSHeyqKEkOM72MuZSAXhPooit//w317o/fpCgOrT7XTwi6Vdz5Lmwv2VdZxVGVvvfzkI2U2sPgAyghCdfIBkkeZKYFEfHbV9tWVnkW29lWpgtVfvgR10sk2D/n2eg0zu/tNyKrjtBjOBJ83E80QBmgdbGHgMOL65jj4=
+	t=1740524174; cv=none; b=DhvLlnkLvsp+RK8lNOrAL8QGAiM8ezcU/9ZAyf6M1E5qXZB0nUsg6nCqHy53wUi94Kva/tJtB0zqb6G3LvSNezl8B+QWGAOcMLswcsUKTDlUU7th/Hj0au/kjdV98XU1EDxRQ/LM8NDjHNBFCRCNnVVICMuU9Xgk1fc27TaD7dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524171; c=relaxed/simple;
-	bh=WP5ICD/fUvspwcDOC+vCPGstk3m2lObTd1WmHN0cTTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Go+a/21rPPQd0dPwZd5fTn/R8eXPcEWspVfa70bwpII30YGRcZWpwHAvsmxbBccXvxn0Yi2Q6wE0FNUyJq2UUjqI/y06BIdSlmlM6+M8o9ufoEKModPkbiKb1Bt/NEVEFzaqh46R8TYSdqoF+vEaPiHLw0zzjHTqZWrDUjTkNqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5kIXR3v; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a2594435dso2993491fa.1;
-        Tue, 25 Feb 2025 14:56:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740524167; x=1741128967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
-        b=Q5kIXR3vNlZPwuOh8yaGs+Dv0XMT4ecnpzNL97taumi3QJQvM3GpWd+4CQ0DbRAmv0
-         lmsJ3o5wXMLdgwDtqJT+eHkpyIPbn/m5ckwl5nfMjVc1F+3jjU5S0N3mF4wAFe94bmbq
-         Yr9Azcmp7dEfSavusOBf0jzZUxvT87C8tNgSRG2+DJf436igi7yAts5vxZ3Ez2HnZDrY
-         t/Q6ODyzUqWadwBGfpfVfre+Vz3xcoKNEp4Aoc+/UZCZLrzBJxImib67ZOQETNARVFrG
-         gWP6zmTmA1K2nxwtKGYeBVJJWVxEYmI5ER0657xEFliaAL2YRXvycXhFXBa3mnlS9G+e
-         RI/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740524167; x=1741128967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
-        b=qN0IMBgObkmrZDnG0R1s/ZpX0P3ipX/Qp5h6wazVOl2MMxbtCZ5GuKfxmPkS6lLP2f
-         7XSwJ1aNhR4+ZGtGdQlhJTDqwAgu0+0YoDQKW+D3PA2G6RfY1d+JsRoB3NGjiARdRu9Y
-         9g6v8DDfN1hmnTQE2pLWyYsER0TNAPHZtnbryXeqO2ZYGOlw1GiVeFvOOO9L15mcjHz9
-         PxTqYAl5pjx25flqvJOXcG6+s6FANemYskvBbm6gdPrXXgNvTqPEkYKqCCgF+wZNUAZl
-         WNjj94n+6wIXtZIGqM0BikBz9Uj2+DECSkiO42NOcDooIvwR0tSQeCDgcUCynsSyKPMZ
-         PxFw==
-X-Forwarded-Encrypted: i=1; AJvYcCWrelgw74ZxewTeNa6i4Oz52nhpiPceJRWuXlpsUHqX1k7WY4QF2GBzxsc5CHizvecAAYR/IeZxD015@vger.kernel.org, AJvYcCX3sbaBOpuAhIddJLmfWCsP6pFSV9AYgD39QFehI7JRkKtzA78rsOAB4fD92O+6CSgUSjrLhrDH3iPnvw/f@vger.kernel.org, AJvYcCXSj4qe3IdDZYArXLkdmCzt+heOvVxz+BTApjhhZcPuk4Tilr7kEY2JbC46egVWdfIs/iMEeaQzKjm0OZAWqw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIKQMGdmXo4W6nvvAisD73/FRrH2KMaKXovzMvFxz2YKkxkFWj
-	lyaZucLwVziNqVADfh6zmaJu8ioaQxeTXw5AgBXZjLrJ18CKzVt/dDuDWJ82fWR4pjbR0yOdKb2
-	oSvBCUx6Ke1P+n49/QkFo59u39H0=
-X-Gm-Gg: ASbGncuOefNfUS4+ec/R7DOsmQf3DpZ1D2k5UpZSNWiBnXh1274RJOD8hMxPEntbDzY
-	tED0BxbkJnYxSFdG6/iqZgUl6YrtvYXKz6g/cRVPAWPII/91h70l3ILkw3J12+h+k7XxU7Uld8y
-	JZjnjDcMo=
-X-Google-Smtp-Source: AGHT+IHwSWJ7XNj4Mb9xUjz4kISutQjQS5qgcJOweA9fncToSusgnMBoMCQnx1ZOHcc9hRULT9kO2A2WM5J2rYS4I5k=
-X-Received: by 2002:a19:4317:0:b0:549:39b1:65d4 with SMTP id
- 2adb3069b0e04-54939b16edbmr1848816e87.0.1740524167158; Tue, 25 Feb 2025
- 14:56:07 -0800 (PST)
+	s=arc-20240116; t=1740524174; c=relaxed/simple;
+	bh=MLXsjM4OpYPkGdtcQe1WJfFmLK0HKbZxON1wdjGZOE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDw9J+BF9zUAHmR4UpH4uCGpwBXkVpzDrvJchi1dOKXBi5KNVvmUkyHsBDpZwrqiL0w+MngSrRJV2HorrcjtExvGtHTkoXRL+I3XfUP5eFcB3VgREXC3tQYbmXx8Ej2T0uKWwGg4JzmiTEx9/2Xb0WVGdcDRELJkNzng5oqW7sE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=sRiT5u/F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mo6A19Mf; arc=none smtp.client-ip=202.12.124.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.stl.internal (Postfix) with ESMTP id 8657A114018F;
+	Tue, 25 Feb 2025 17:56:09 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Tue, 25 Feb 2025 17:56:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1740524169;
+	 x=1740610569; bh=K598ZDf++Qaq8RRv1ivt1GifhME6grtmW2GDDOtSqEY=; b=
+	sRiT5u/FvWW4NmZQx1iSBe7KgVD6a9ZDcsklCaAsUtiwPykwadoR6YCJXluTPRfj
+	khykLO9FeSVCsgNkxAPSxJcte2q8yv0OM9hAdODe/ysIM7GRetxHwSZ9hFAHuCNy
+	QIH/xIXyF/HIjO0Nxk8v7krfvC9v1s1mYjphkGlodRm+Sc2jsrK4meYozWwoQzX9
+	PnmHsxJQ1gEUwdwZoj4fWtFmnAozyYFtGRwgZYETQvbL6RuBe2WlslToP+J052oT
+	wBnCP7EVWKXB04e7A5TgbHD5l31mQhFB4VykOs+FX6ro6rFGUvIxdl2daMyV1b6D
+	Ag9FHsfuJbMPGDbg5SDGTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1740524169; x=
+	1740610569; bh=K598ZDf++Qaq8RRv1ivt1GifhME6grtmW2GDDOtSqEY=; b=m
+	o6A19Mf71H/0dWgLV2p34JK8b2CJk25P5iX8PYvTyfmLPNFfnbF4iLjmrrQjC6u6
+	yBXxd7xhzFrxzS6MzOl0oG/BTGsCSLTtw/lXjJFsKMu5uHehUi05K11aw24hADPP
+	aL5WGeyXJG2KMBuHVzOVDcDcYArPK/zZ3F72O2Dyy6sPMynNwx80Pk+fFuUlJM4V
+	ZKwBLgsh1DZ0XYnSIl802QQSJZP1h3tHcOFEP2Xf3xz6kKQbLGseCH/QTTue3HQb
+	P6HtTDDCtaT4DSX3WDq8j8/dp3ycBhQOZCJdNd1gmQ+x19/W4RMfR+1ZUnKsUo4H
+	2Ztysx9iWvlKaAjBxzvIA==
+X-ME-Sender: <xms:iUq-Z7iC2c6g9MgtvrLdoi6oHiUZpcznCPbXz7PZzgKWp_GH2IRteQ>
+    <xme:iUq-Z4AUpNehvIF1s5pkAJL0VkA-lIo1Gt_qUlnhZpegUz_nqj39iQrJ8OV8GcId7
+    iXBFiDDTI-jW7F5yus>
+X-ME-Received: <xmr:iUq-Z7ESqBiLEfqlY76Iacf6yhtwhFDjtS8fuYP9WXahhBEGs5Cn8-3KU35x-PBXc3i1E751dB2oq3tNXGnaXQNteAlJEOiqZA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekvdelhecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
+    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
+    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
+    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepjedpmh
+    houggvpehsmhhtphhouhhtpdhrtghpthhtohepjhgrtghophhordhmohhnughiodhrvghn
+    vghsrghssehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehlrghurhgvnh
+    htrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohep
+    khhivghrrghnrdgsihhnghhhrghmodhrvghnvghsrghssehiuggvrghsohhnsghorghrug
+    drtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmvgguihgrsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotgesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlrghurhgvnhhtrdhpihhntghhrghrth
+    dorhgvnhgvshgrshesihguvggrshhonhgsohgrrhgurdgtohhm
+X-ME-Proxy: <xmx:iUq-Z4Rnan5b3Ch2cS0gU_i3LyWmsjk77fHQI3PPBmZpBvG6AmSIEQ>
+    <xmx:iUq-Z4xvQo5c88fYTtEIWR_rG-KqTejovQsUTj99hPMKjxSpJ2rwcw>
+    <xmx:iUq-Z-7idwCF4A80qDqbnF9fWHAQIiuMa1O1-TB0OYGv-4ERW48MWA>
+    <xmx:iUq-Z9wE8_KnJS0qdqKYEgPjTAnyEEsYpAnNLD-HHVWyoNPN1_uicQ>
+    <xmx:iUq-Z7y-O0Wiqn2xnMvva0lANV8_5T49i8yW9qCUWFLhUtW_Jw4-NyNJ>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Feb 2025 17:56:08 -0500 (EST)
+Date: Tue, 25 Feb 2025 23:56:05 +0100
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 0/6] media: renesas: vsp1: Add support for IIF
+Message-ID: <20250225225605.GA2676269@ragnatech.se>
+References: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2433838.1740522300@warthog.procyon.org.uk> <20250225223826.sm4445vrc56mfuwh@pali>
-In-Reply-To: <20250225223826.sm4445vrc56mfuwh@pali>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 25 Feb 2025 16:55:55 -0600
-X-Gm-Features: AQ5f1Jo6XXLVbjx1gBz329g2rRAPrhuHDOb-nfzLQJUf_2H9sBrfoXnqj9dxnNE
-Message-ID: <CAH2r5muYgfd-GmwQKt-ZHgt7Up57j1OEJy-6e9OdN--aiQHDGQ@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix the smb1 readv callback to correctly call netfs
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
-	Jean-Christophe Guillain <jean-christophe@guillain.net>, Paulo Alcantara <pc@manguebit.com>, 
-	Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250224-v4h-iif-v2-0-0305e3c1fe2d@ideasonboard.com>
 
-Thanks for the quick fix and reviews/testing.  Merged into
-cifs-2.6.git for-next.  Will run some additional tests on it tonight
+Hi Jacopo,
 
-On Tue, Feb 25, 2025 at 4:38=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
-rote:
->
-> On Tuesday 25 February 2025 22:25:00 David Howells wrote:
-> >
-> > Fix cifs_readv_callback() to call netfs_read_subreq_terminated() rather
-> > than queuing the subrequest work item (which is unset).  Also call the
-> > I/O progress tracepoint.
-> >
-> > Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only u=
-se one work item")
-> > Reported-by: Jean-Christophe Guillain <jean-christophe@guillain.net>
-> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219793
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > cc: Steve French <stfrench@microsoft.com>
-> > cc: Pali Roh=C3=A1r <pali@kernel.org>
-> > cc: Paulo Alcantara <pc@manguebit.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: linux-cifs@vger.kernel.org
-> > cc: netfs@lists.linux.dev
-> > cc: linux-fsdevel@vger.kernel.org
->
-> Thanks! With this change, I cannot reproduce crash anymore.
->
-> Tested-by: Pali Roh=C3=A1r <pali@kernel.org>
->
-> Steve, could you please include this fix into some queue? This should be
-> merged into next -rc.
->
-> > ---
-> >  fs/smb/client/cifssmb.c |    3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> > index 6a3e287eabfa..bf9acea53ccb 100644
-> > --- a/fs/smb/client/cifssmb.c
-> > +++ b/fs/smb/client/cifssmb.c
-> > @@ -1338,7 +1338,8 @@ cifs_readv_callback(struct mid_q_entry *mid)
-> >       rdata->credits.value =3D 0;
-> >       rdata->subreq.error =3D rdata->result;
-> >       rdata->subreq.transferred +=3D rdata->got_bytes;
-> > -     queue_work(cifsiod_wq, &rdata->subreq.work);
-> > +     trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
-> > +     netfs_read_subreq_terminated(&rdata->subreq);
-> >       release_mid(mid);
-> >       add_credits(server, &credits, 0);
-> >  }
-> >
->
+Thanks for your work.
 
+On 2025-02-24 21:19:40 +0100, Jacopo Mondi wrote:
+> The IIF (ISP InterFace) is a VSP2 function that reads data from
+> external memory using two RPF instances and feed it to the ISP.
+> 
+> The IIF support is modeled in the vsp1 driver as a new, simple,
+> entity type.
+> 
+> IIF is part of VSPX, a version of the VSP2 IP specialized for ISP
+> interfacing. To prepare to support VSPX, support IIF first by
+> introducing a new entity and by adjusting the RPF/WPF drivers to
+> operate correctly when an IIF is present.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> ---
+> Changes in v2:
+> - Collect tags
+> - Address review comments from Laurent, a lot of tiny changes here and
+>   there but no major redesign worth an entry in the patchset changelog
 
---=20
-Thanks,
+I'm still no expert on the VSP1 but the changes looks good, so FWIW.
 
-Steve
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+I also tested this with the ISP and it all works as expected,
+
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
+> ---
+> Jacopo Mondi (6):
+>       media: vsp1: Add support IIF ISP Interface
+>       media: vsp1: Clean FRE interrupt status
+>       media: vsp1: dl: Use singleshot DL for VSPX
+>       media: vsp1: rwpf: Break out format handling
+>       media: vsp1: rwpf: Support RAW Bayer and ISP config
+>       media: vsp1: rwpf: Support operations with IIF
+> 
+>  drivers/media/platform/renesas/vsp1/Makefile      |   2 +-
+>  drivers/media/platform/renesas/vsp1/vsp1.h        |   3 +
+>  drivers/media/platform/renesas/vsp1/vsp1_dl.c     |   7 +-
+>  drivers/media/platform/renesas/vsp1/vsp1_drv.c    |  14 ++-
+>  drivers/media/platform/renesas/vsp1/vsp1_entity.c |   8 ++
+>  drivers/media/platform/renesas/vsp1/vsp1_entity.h |   1 +
+>  drivers/media/platform/renesas/vsp1/vsp1_iif.c    | 133 ++++++++++++++++++++++
+>  drivers/media/platform/renesas/vsp1/vsp1_iif.h    |  26 +++++
+>  drivers/media/platform/renesas/vsp1/vsp1_pipe.c   |   1 +
+>  drivers/media/platform/renesas/vsp1/vsp1_pipe.h   |   1 +
+>  drivers/media/platform/renesas/vsp1/vsp1_regs.h   |   8 ++
+>  drivers/media/platform/renesas/vsp1/vsp1_rpf.c    |  18 ++-
+>  drivers/media/platform/renesas/vsp1/vsp1_rwpf.c   | 110 ++++++++++++++++--
+>  drivers/media/platform/renesas/vsp1/vsp1_wpf.c    |  14 ++-
+>  14 files changed, 327 insertions(+), 19 deletions(-)
+> ---
+> base-commit: b2c4bf0c102084e77ed1b12090d77a76469a6814
+> change-id: 20250123-v4h-iif-a1dda640c95d
+> 
+> Best regards,
+> -- 
+> Jacopo Mondi <jacopo.mondi+renesas@ideasonboard.com>
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
