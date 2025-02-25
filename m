@@ -1,147 +1,476 @@
-Return-Path: <linux-kernel+bounces-531600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E644EA44284
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4942DA44285
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:23:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06D6F3AC854
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935AB3B3590
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A3B269CEB;
-	Tue, 25 Feb 2025 14:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8184267703;
+	Tue, 25 Feb 2025 14:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="EsNU/CKb"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZkpO8h4n"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 177C5126C18
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8D926770C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740493173; cv=none; b=SJJv4R8LGEQAbku9PyGc8B59HqDwBoGUR/nAJxkL9k2nQ77spKXRgo7CXcKAJSlupXMSUhWwxtFRGLVZZgpxhDMePdbqc2RjCVMV1CeCu3/1+azl3ZGt48eglmsd0qOjO5r/V8g2thv9eaMY8Uk6cMSBgY+UseqsW4EJ6qGg4Os=
+	t=1740493187; cv=none; b=TRBMMBVsNNJKlLBkeX4/bmZmcYehH2NTiqjRmULyu7yvdU07R1ll6vOnus4lzsn7DpCFCgTELFk5Gp8F/slwLCNEJLUdrVSIphc4bGM4NkX6xs1ZfaCedchQU1VGs34N0FnvXF+3xRlwhDL6tckfm+WTc2ubsiFBfANLVMGkSuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740493173; c=relaxed/simple;
-	bh=YfaowTrjdM+Bd8R3YzDrhq7lbCbVr2H6FlNDkDda0Bo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=grxFrzbKUJBvX45/xuB4XpHlSxt9uHiL7jupFz/Jjc8Nlq3E+4ncq7gbIInfzwm+IewoySZ4n2wAqvMGVNhlLqa+W7GMuvVmN0uSjsNmBnmOvfPi0JH8zr1ev/IOkzcUgIuj3hXP201qf0RBnEoyC+tkjitRKhxsxFTxKYrlghA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=EsNU/CKb; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e587cca1e47so5251190276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 06:19:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1740493170; x=1741097970; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=G3qJd2sc6L4K5ZD860Vogae0xgCZ9+DNu5FmGC60GsY=;
-        b=EsNU/CKb5oyJt9xAs0uaXVTY6MiyWQQDF6jV763+vIQeAw47hAAkKOPhfhk+e2X9Ol
-         moGl60vTRG9ZmEbXbQBRldAgvppP9b9hQ7U0HP/k2yfvwOBnRSX+8atlMmEkTUZwytTC
-         d3jLeG8hb+tYjm7TzqcWHwVQPM0+OIXnIa8wOYEaiQMfOKulQGXYOueZufwm+Ur3EY8v
-         lJc79ODu1tidw7/C21gvFdBxPvdzrW38ufEqS/IPT359RModCa1fc5RZpHtiXqmE7B7J
-         Twjh7mxRgTruDvDZD5MTg6tbTUnd44nMqmioVk8OAC9Od8TD3BlLtYqYVpqHNpcfIvdb
-         0Muw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740493170; x=1741097970;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G3qJd2sc6L4K5ZD860Vogae0xgCZ9+DNu5FmGC60GsY=;
-        b=D78Qz5bKCGf++5HQkWo/ONIBxxrlqWO05Lb0r88c6SmWWn/zuLczfOx7peciynVfab
-         RRgK03u8FltC/qXeOEsJOhd8yg5LNXeTMc58U5dmxdtvKDr8sUOR9Pm9rmTL85OmDa1b
-         sAmgb6otcbpQGoDMveVdJTIIS3VyzuLVr88THvEAVvmiZLBBYHCloyvBuFsx+VrwtcYb
-         4d6g4bvEpuMIyQvfrFNViE7epL96vT2oErjv0/tGXGH3Fy7kPsjcuad4xv/Z38bjFKDQ
-         FqgzZzh8XiV5gQ0so+HDGIxoKugSGW0FlLbcRl9197J+O49NSU2FPVjIIgDNawJ5vBJG
-         imJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsmqMuTYSsqEAwfXDxFos0iVqQNQgTcIFhUnPXmH1E4XbHx8nMxZ2FytqUx4JGTxAdT/Ga5KOIYOgySCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz23tmTpzSrBjDLRUul825wLSaRoSi3bBigfB1MEfz2GPTpdhhU
-	/sfi2zNfgjzveBjK/OFu+qzyuwLZp1IKDlT58R7Y0NHO5+jfal/djsxjqKaBmtOCHmx5MtMiC45
-	Nbbb5ULO5mcBFoh4B6qEXMipw6XDd28Z9WIcUYQ==
-X-Gm-Gg: ASbGncsxEb268H7Ni9J6Rhd8KVQId8oe/j6EZkurpRxutZXxO3Pw0Uks6kJooZ12mrQ
-	FszWCa8C7no81IXspq44yNuKd6AxaXqGoGL2XI7SmCauMB9puZdg52zf9xqL9Jp8P+MCcwtr7g3
-	8yPqk0uByrowOkGq23X/ndmjqJERbQ+01ny1ueBcE=
-X-Google-Smtp-Source: AGHT+IEC4qfF8/eiKYWC6b87/URt2aZmRGTvr02EO+vykpkfp0nILc5ac/dlwepmQfxWmjI9CHtInw3sHU4Kc94JtHc=
-X-Received: by 2002:a05:6902:2085:b0:e5b:34cb:ebb2 with SMTP id
- 3f1490d57ef6-e5e245efd0bmr13195185276.19.1740493170016; Tue, 25 Feb 2025
- 06:19:30 -0800 (PST)
+	s=arc-20240116; t=1740493187; c=relaxed/simple;
+	bh=SNjAAzKKwhOKnClnwNh7u6ybxiqVK/F+DKplMP7fJgo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ix5YC/nN2upw1dQUfLfMWey3AzSSrer9Ia8Pm6uMiBXtmoG1X9hDDPURahhKe5RbLdaNzPgh1ETh6ERWwFMxNUE72vmWjo3sipef/WzdomaJDKrLOt0s4pFgmJbckWfLzfGE0+mWi2UM4UHAaBu8gRsoP/AS519Rt9a1h3IwtBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZkpO8h4n; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5519944284;
+	Tue, 25 Feb 2025 14:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1740493183;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hDkkqmZ4caBeAmp+5yCWsPyGqZBN2ya4J9NVnxHeg7I=;
+	b=ZkpO8h4nKh+tceth9zmiAW5x76eNswrkbbuKc7F8/2dmEZ0xVyboPP28NKxrbnCxCOjUnU
+	BJhv2PmNypYOlGiVlMOxybFuAyMrGbsS7zdZGVXKyHlpNwhDQptQbpMmFvdvDpQABoQk6B
+	DLPdHjO5JVM/OIqWTVPZWY/1Aue1455/OFRqQYOnTwx1GvqWS56rniSK7K68v2uRkHnrWz
+	o0d+IODGe3OGPyTreCXk7c3Yw8UbfaLHTv7j6stRdpIcvUaBJw7xIft/UlkB33x54oGhtv
+	DXA5eQIJXEMSCD0XQLFhS4CTf+0DmKPm+v8zmnNxujBTohhj87SKlObW/P0pUQ==
+Date: Tue, 25 Feb 2025 15:19:41 +0100
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Jim Cromie <jim.cromie@gmail.com>, linux-kernel@vger.kernel.org,
+	jbaron@akamai.com, gregkh@linuxfoundation.org, ukaszb@chromium.org
+Cc: intel-gfx-trybot@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	amd-gfx@lists.freedesktop.org, intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+Subject: Re: [PATCH 19/63] dyndbg: make proper substructs in _ddebug_info
+Message-ID: <74f6ee77-523c-4943-9b3f-a9bcab78faa7@bootlin.com>
+Mail-Followup-To: Jim Cromie <jim.cromie@gmail.com>,
+	linux-kernel@vger.kernel.org, jbaron@akamai.com,
+	gregkh@linuxfoundation.org, ukaszb@chromium.org,
+	intel-gfx-trybot@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
+	intel-gvt-dev@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, daniel.vetter@ffwll.ch,
+	tvrtko.ursulin@linux.intel.com, jani.nikula@intel.com,
+	ville.syrjala@linux.intel.com
+References: <20250125064619.8305-1-jim.cromie@gmail.com>
+ <20250125064619.8305-20-jim.cromie@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225-b4-ov9282-gain-v1-0-a24af2820dde@linux.dev> <20250225-b4-ov9282-gain-v1-1-a24af2820dde@linux.dev>
-In-Reply-To: <20250225-b4-ov9282-gain-v1-1-a24af2820dde@linux.dev>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 25 Feb 2025 14:19:14 +0000
-X-Gm-Features: AQ5f1Jro6d8OWU49F-6F1vKdHETRh6QOCZRuMfdR_PmC7PcRjIrOpwo4uPciv6I
-Message-ID: <CAPY8ntDYYPs90JVCLiZGqQAak=WOga90hgCns_TRWTxdrROPiw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] media: i2c: ov9282: use register definitions
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250125064619.8305-20-jim.cromie@gmail.com>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdekudelfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttddunecuhfhrohhmpefnohhuihhsucevhhgruhhvvghtuceolhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepudeiffduffeivdejgfejheeuudekkedvjeeuffegfefghfffkeelgffgieevudejnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohhuihhsqdgthhgruhhvvghtqdhlrghpthhophdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedugedprhgtphhtthhopehjihhmrdgtrhhomhhivgesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnr
+ dhorhhgpdhrtghpthhtohepuhhkrghsiigssegthhhrohhmihhumhdrohhrghdprhgtphhtthhopehinhhtvghlqdhgfhigqdhtrhihsghotheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtoheprghmugdqghhfgieslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrgh
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Richard
 
-Thanks for the patch
 
-On Tue, 25 Feb 2025 at 13:09, Richard Leitner <richard.leitner@linux.dev> wrote:
->
-> For better readability use already available register definitions in
-> hard-coded common and mode register structs.
->
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+Le 25/01/2025 à 07:45, Jim Cromie a écrit :
+> struct _ddebug_info's jobs is to enapsulate the __sections of dyndbg
+> data from the linker.  The data started as a single pair of fields:
+> descs - ref'g an array of descriptors & num_descs - counting the
+> "pertinent" descriptors.  Then classes & num_classes were added, and
+> _ddebug_info was invented to contain the 4 fields.
+> 
+> When class_users & num_class_users were added (earlier in this
+> series), the easy path was to replicate functions and adapt them to
+> work on ddebug_class_users, instead of class_maps.  This worked, but
+> made repetitive boilerplate code, leading to (other commits with)
+> macros walking num_##{classes,class_users} to capture the repetition.
+> 
+> To fix it better, create structs to contain start,len for vectors of
+> all 3 objects: classmaps, class_users, and pr_debug descriptors, and
+> adjust field-refs accordingly.
+> 
+> Also recompose struct ddebug_table to contain a _ddebug_info (rather
+> than repeat the contents, as before), and adjust all array-walks to
+> use the newly contained info.
+> 
+> This allows ridding the class* macros of the num##<T> paste-up, and
+> should enable further cleanups.
+> 
+> NB: The __packed attribute on _ddebug_info and the 3 contained structs
+> closes the holes otherwise created by the structification (which was
+> the excuse for not doing it originally).
+> 
+> TBD: see if this can precede other patches, to reduce churn
 
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Hi Jim,
+
+This could be amazing if possible!
+
+> Signed-off-by: Jim Cromie <jim.cromie@gmail.com>
+
+Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
 > ---
->  drivers/media/i2c/ov9282.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index 87e5d7ce5a47ee23a721ea39c0ab314c6fca6007..c926842257893c4da3319b847fab9908b5bdaec6 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -296,8 +296,8 @@ static const struct ov9282_reg mode_1280x800_regs[] = {
->         {0x3813, 0x08},
->         {0x3814, 0x11},
->         {0x3815, 0x11},
-> -       {0x3820, 0x40},
-> -       {0x3821, 0x00},
-> +       {OV9282_REG_TIMING_FORMAT_1, 0x40},
-> +       {OV9282_REG_TIMING_FORMAT_2, 0x00},
->         {0x4003, 0x40},
->         {0x4008, 0x04},
->         {0x4009, 0x0b},
-> @@ -327,8 +327,8 @@ static const struct ov9282_reg mode_1280x720_regs[] = {
->         {0x3813, 0x08},
->         {0x3814, 0x11},
->         {0x3815, 0x11},
-> -       {0x3820, 0x3c},
-> -       {0x3821, 0x84},
-> +       {OV9282_REG_TIMING_FORMAT_1, 0x3c},
-> +       {OV9282_REG_TIMING_FORMAT_2, 0x84},
->         {0x4003, 0x40},
->         {0x4008, 0x02},
->         {0x4009, 0x05},
-> @@ -358,8 +358,8 @@ static const struct ov9282_reg mode_640x400_regs[] = {
->         {0x3813, 0x04},
->         {0x3814, 0x31},
->         {0x3815, 0x22},
-> -       {0x3820, 0x60},
-> -       {0x3821, 0x01},
-> +       {OV9282_REG_TIMING_FORMAT_1, 0x60},
-> +       {OV9282_REG_TIMING_FORMAT_2, 0x01},
->         {0x4008, 0x02},
->         {0x4009, 0x05},
->         {0x400c, 0x00},
->
-> --
-> 2.47.2
->
->
+>   include/linux/dynamic_debug.h | 29 ++++++++---
+>   kernel/module/main.c          | 18 +++----
+>   lib/dynamic_debug.c           | 93 +++++++++++++++++------------------
+>   3 files changed, 74 insertions(+), 66 deletions(-)
+> 
+> diff --git a/include/linux/dynamic_debug.h b/include/linux/dynamic_debug.h
+> index 2b0c943af330..48d76a273f68 100644
+> --- a/include/linux/dynamic_debug.h
+> +++ b/include/linux/dynamic_debug.h
+> @@ -173,15 +173,28 @@ struct ddebug_class_user {
+>   		.map = &(_var),						\
+>   	}
+>   
+> -/* encapsulate linker provided built-in (or module) dyndbg data */
+> +/*
+> + * @_ddebug_info: gathers module/builtin dyndbg_* __sections together.
+> + * For builtins, it is used as a cursor, with the inner structs
+> + * marking sub-vectors of the builtin __sections in DATA.
+> + */
+> +struct _ddebug_descs {
+> +	struct _ddebug *start;
+> +	int len;
+> +} __packed;
+> +struct dd_class_maps {
+> +	struct ddebug_class_map *start;
+> +	int len;
+> +} __packed;
+> +struct dd_class_users {
+> +	struct ddebug_class_user *start;
+> +	int len;
+> +} __packed;
+>   struct _ddebug_info {
+> -	struct _ddebug *descs;
+> -	struct ddebug_class_map *classes;
+> -	struct ddebug_class_user *class_users;
+> -	unsigned int num_descs;
+> -	unsigned int num_classes;
+> -	unsigned int num_class_users;
+> -};
+> +	struct _ddebug_descs descs;
+> +	struct dd_class_maps maps;
+> +	struct dd_class_users users;
+> +} __packed;
+>   
+>   struct ddebug_class_param {
+>   	union {
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index c394a0c6e8c6..858882a1eacd 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -2540,15 +2540,15 @@ static int find_module_sections(struct module *mod, struct load_info *info)
+>   		pr_warn("%s: Ignoring obsolete parameters\n", mod->name);
+>   
+>   #ifdef CONFIG_DYNAMIC_DEBUG_CORE
+> -	mod->dyndbg_info.descs = section_objs(info, "__dyndbg",
+> -					      sizeof(*mod->dyndbg_info.descs),
+> -					      &mod->dyndbg_info.num_descs);
+> -	mod->dyndbg_info.classes = section_objs(info, "__dyndbg_classes",
+> -						sizeof(*mod->dyndbg_info.classes),
+> -						&mod->dyndbg_info.num_classes);
+> -	mod->dyndbg_info.class_users = section_objs(info, "__dyndbg_class_users",
+> -						    sizeof(*mod->dyndbg_info.class_users),
+> -						   &mod->dyndbg_info.num_class_users);
+> +	mod->dyndbg_info.descs.start = section_objs(info, "__dyndbg",
+> +						    sizeof(*mod->dyndbg_info.descs.start),
+> +						    &mod->dyndbg_info.descs.len);
+> +	mod->dyndbg_info.maps.start = section_objs(info, "__dyndbg_classes",
+> +						   sizeof(*mod->dyndbg_info.maps.start),
+> +						   &mod->dyndbg_info.maps.len);
+> +	mod->dyndbg_info.users.start = section_objs(info, "__dyndbg_class_users",
+> +						    sizeof(*mod->dyndbg_info.users.start),
+> +						    &mod->dyndbg_info.users.len);
+>   #endif
+>   
+>   	return 0;
+> diff --git a/lib/dynamic_debug.c b/lib/dynamic_debug.c
+> index 08b6e4e7489f..067db504dd1d 100644
+> --- a/lib/dynamic_debug.c
+> +++ b/lib/dynamic_debug.c
+> @@ -49,10 +49,7 @@ extern struct ddebug_class_user __stop___dyndbg_class_users[];
+>   struct ddebug_table {
+>   	struct list_head link;
+>   	const char *mod_name;
+> -	struct _ddebug *ddebugs;
+> -	struct ddebug_class_map *classes;
+> -	struct ddebug_class_user *class_users;
+> -	unsigned int num_ddebugs, num_classes, num_class_users;
+> +	struct _ddebug_info info;
+>   };
+>   
+>   struct ddebug_query {
+> @@ -154,8 +151,8 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+>   #define vpr_dt_info(dt_p, msg_p, ...) ({				\
+>   	struct ddebug_table const *_dt = dt_p;				\
+>   	v2pr_info(msg_p " module:%s nd:%d nc:%d nu:%d\n", ##__VA_ARGS__, \
+> -		  _dt->mod_name, _dt->num_ddebugs, _dt->num_classes,	\
+> -		  _dt->num_class_users);				\
+> +		  _dt->mod_name, _dt->info.descs.len, _dt->info.maps.len, \
+> +		  _dt->info.users.len);					\
+>   	})
+>   
+>   /*
+> @@ -168,8 +165,8 @@ static void vpr_info_dq(const struct ddebug_query *query, const char *msg)
+>    * @_vec: name of a sub-struct member in _box, with array-ref and length
+>    */
+>   #define for_subvec(_i, _sp, _box, _vec)				       \
+> -	for ((_i) = 0, (_sp) = (_box)->_vec;			       \
+> -	     (_i) < (_box)->num_##_vec;				       \
+> +	for ((_i) = 0, (_sp) = (_box)->_vec.start;		       \
+> +	     (_i) < (_box)->_vec.len;				       \
+>   	     (_i)++, (_sp)++)
+>   
+>   static int ddebug_find_valid_class(struct ddebug_table const *dt, const char *class_string)
+> @@ -178,14 +175,14 @@ static int ddebug_find_valid_class(struct ddebug_table const *dt, const char *cl
+>   	struct ddebug_class_user *cli;
+>   	int i, idx;
+>   
+> -	for_subvec(i, map, dt, classes) {
+> +	for_subvec(i, map, &dt->info, maps) {
+>   		idx = match_string(map->class_names, map->length, class_string);
+>   		if (idx >= 0) {
+>   			vpr_dt_info(dt, "good-class: %s.%s ", map->mod_name, class_string);
+>   			return idx + map->base;
+>   		}
+>   	}
+> -	for_subvec(i, cli, dt, class_users) {
+> +	for_subvec(i, cli, &dt->info, users) {
+>   		idx = match_string(cli->map->class_names, cli->map->length, class_string);
+>   		if (idx >= 0) {
+>   			vpr_dt_info(dt, "class-ref: %s -> %s.%s ",
+> @@ -229,8 +226,8 @@ static int ddebug_change(const struct ddebug_query *query, struct flag_settings
+>   			valid_class = _DPRINTK_CLASS_DFLT;
+>   		}
+>   
+> -		for (i = 0; i < dt->num_ddebugs; i++) {
+> -			struct _ddebug *dp = &dt->ddebugs[i];
+> +		for (i = 0; i < dt->info.descs.len; i++) {
+> +			struct _ddebug *dp = &dt->info.descs.start[i];
+>   
+>   			/* match site against query-class */
+>   			if (dp->class_id != valid_class)
+> @@ -990,8 +987,8 @@ static struct _ddebug *ddebug_iter_first(struct ddebug_iter *iter)
+>   	}
+>   	iter->table = list_entry(ddebug_tables.next,
+>   				 struct ddebug_table, link);
+> -	iter->idx = iter->table->num_ddebugs;
+> -	return &iter->table->ddebugs[--iter->idx];
+> +	iter->idx = iter->table->info.descs.len;
+> +	return &iter->table->info.descs.start[--iter->idx];
+>   }
+>   
+>   /*
+> @@ -1012,10 +1009,10 @@ static struct _ddebug *ddebug_iter_next(struct ddebug_iter *iter)
+>   		}
+>   		iter->table = list_entry(iter->table->link.next,
+>   					 struct ddebug_table, link);
+> -		iter->idx = iter->table->num_ddebugs;
+> +		iter->idx = iter->table->info.descs.len;
+>   		--iter->idx;
+>   	}
+> -	return &iter->table->ddebugs[iter->idx];
+> +	return &iter->table->info.descs.start[iter->idx];
+>   }
+>   
+>   /*
+> @@ -1064,15 +1061,15 @@ static void *ddebug_proc_next(struct seq_file *m, void *p, loff_t *pos)
+>   
+>   static const char *ddebug_class_name(struct ddebug_table *dt, struct _ddebug *dp)
+>   {
+> -	struct ddebug_class_map *map = dt->classes;
+> -	struct ddebug_class_user *cli = dt->class_users;
+> +	struct ddebug_class_map *map;
+> +	struct ddebug_class_user *cli;
+>   	int i;
+>   
+> -	for (i = 0; i < dt->num_classes; i++, map++)
+> +	for_subvec(i, map, &dt->info, maps)
+>   		if (class_in_range(dp->class_id, map))
+>   			return map->class_names[dp->class_id - map->base];
+>   
+> -	for (i = 0; i < dt->num_class_users; i++, cli++)
+> +	for_subvec(i, cli, &dt->info, users)
+>   		if (class_in_range(dp->class_id, cli->map))
+>   			return cli->map->class_names[dp->class_id - cli->map->base];
+>   
+> @@ -1203,8 +1200,7 @@ static void ddebug_apply_params(const struct ddebug_class_map *cm, const char *m
+>   
+>   	if (cm->mod) {
+>   		vpr_cm_info(cm, "loaded classmap: %s", modnm);
+> -		/* ifdef protects the cm->mod->kp deref */
+> -		for_subvec(i, kp, cm->mod, kp)
+> +		for (i = 0, kp = cm->mod->kp; i < cm->mod->num_kp; i++, kp++)
+>   			ddebug_match_apply_kparam(kp, cm, modnm);
+>   	}
+>   #endif
+> @@ -1226,20 +1222,20 @@ static void ddebug_attach_module_classes(struct ddebug_table *dt,
+>   	struct ddebug_class_map *cm;
+>   	int i, nc = 0;
+>   
+> -	for_subvec(i, cm, di, classes) {
+> +	for_subvec(i, cm, di, maps) {
+>   		if (!strcmp(cm->mod_name, dt->mod_name)) {
+>   			vpr_cm_info(cm, "classes[%d]:", i);
+>   			if (!nc++)
+> -				dt->classes = cm;
+> +				dt->info.maps.start = cm;
+>   		}
+>   	}
+>   	if (!nc)
+>   		return;
+>   
+>   	vpr_info("module:%s attached %d classes\n", dt->mod_name, nc);
+> -	dt->num_classes = nc;
+> +	dt->info.maps.len = nc;
+>   
+> -	for_subvec(i, cm, dt, classes)
+> +	for_subvec(i, cm, &dt->info, maps)
+>   		ddebug_apply_params(cm, cm->mod_name);
+>   }
+>   
+> @@ -1259,23 +1255,23 @@ static void ddebug_attach_user_module_classes(struct ddebug_table *dt,
+>   	 * module's refs, save to dt.  For loadables, this is the
+>   	 * whole array.
+>   	 */
+> -	for_subvec(i, cli, di, class_users) {
+> +	for_subvec(i, cli, di, users) {
+>   		if (WARN_ON_ONCE(!cli || !cli->map || !cli->mod_name))
+>   			continue;
+>   		if (!strcmp(cli->mod_name, dt->mod_name)) {
+>   			vpr_cm_info(cli->map, "class_ref[%d] %s -> %s", i,
+>   				    cli->mod_name, cli->map->mod_name);
+>   			if (!nc++)
+> -				dt->class_users = cli;
+> +				dt->info.users.start = cli;
+>   		}
+>   	}
+>   	if (!nc)
+>   		return;
+>   
+> -	dt->num_class_users = nc;
+> +	dt->info.users.len = nc;
+>   
+>   	/* now iterate dt */
+> -	for_subvec(i, cli, di, class_users)
+> +	for_subvec(i, cli, di, users)
+>   		ddebug_apply_params(cli->map, cli->mod_name);
+>   
+>   	vpr_dt_info(dt, "attach-client-module: ");
+> @@ -1291,10 +1287,10 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   	struct _ddebug *iter;
+>   	int i, class_ct = 0;
+>   
+> -	if (!di->num_descs)
+> +	if (!di->descs.len)
+>   		return 0;
+>   
+> -	v3pr_info("add-module: %s %d sites\n", modname, di->num_descs);
+> +	v3pr_info("add-module: %s %d sites\n", modname, di->descs.len);
+>   
+>   	dt = kzalloc(sizeof(*dt), GFP_KERNEL);
+>   	if (dt == NULL) {
+> @@ -1308,8 +1304,7 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   	 * this struct ddebug_table.
+>   	 */
+>   	dt->mod_name = modname;
+> -	dt->ddebugs = di->descs;
+> -	dt->num_ddebugs = di->num_descs;
+> +	dt->info.descs = di->descs;
+>   
+>   	INIT_LIST_HEAD(&dt->link);
+>   
+> @@ -1317,17 +1312,17 @@ static int ddebug_add_module(struct _ddebug_info *di, const char *modname)
+>   		if (iter->class_id != _DPRINTK_CLASS_DFLT)
+>   			class_ct++;
+>   
+> -	if (class_ct && di->num_classes)
+> +	if (class_ct && di->maps.len)
+>   		ddebug_attach_module_classes(dt, di);
+>   
+>   	mutex_lock(&ddebug_lock);
+>   	list_add_tail(&dt->link, &ddebug_tables);
+>   	mutex_unlock(&ddebug_lock);
+>   
+> -	if (class_ct && di->num_class_users)
+> +	if (class_ct && di->users.len)
+>   		ddebug_attach_user_module_classes(dt, di);
+>   
+> -	vpr_info("%3u debug prints in module %s\n", di->num_descs, modname);
+> +	vpr_info("%3u debug prints in module %s\n", di->descs.len, modname);
+>   	return 0;
+>   }
+>   
+> @@ -1474,12 +1469,12 @@ static int __init dynamic_debug_init(void)
+>   	char *cmdline;
+>   
+>   	struct _ddebug_info di = {
+> -		.descs = __start___dyndbg,
+> -		.classes = __start___dyndbg_classes,
+> -		.class_users = __start___dyndbg_class_users,
+> -		.num_descs = __stop___dyndbg - __start___dyndbg,
+> -		.num_classes = __stop___dyndbg_classes - __start___dyndbg_classes,
+> -		.num_class_users = __stop___dyndbg_class_users - __start___dyndbg_class_users,
+> +		.descs.start = __start___dyndbg,
+> +		.maps.start = __start___dyndbg_classes,
+> +		.users.start = __start___dyndbg_class_users,
+> +		.descs.len = __stop___dyndbg - __start___dyndbg,
+> +		.maps.len = __stop___dyndbg_classes - __start___dyndbg_classes,
+> +		.users.len = __stop___dyndbg_class_users - __start___dyndbg_class_users,
+>   	};
+>   
+>   #ifdef CONFIG_MODULES
+> @@ -1508,8 +1503,8 @@ static int __init dynamic_debug_init(void)
+>   
+>   		if (strcmp(modname, iter->modname)) {
+>   			mod_ct++;
+> -			di.num_descs = mod_sites;
+> -			di.descs = iter_mod_start;
+> +			di.descs.len = mod_sites;
+> +			di.descs.start = iter_mod_start;
+>   			ret = ddebug_add_module(&di, modname);
+>   			if (ret)
+>   				goto out_err;
+> @@ -1519,8 +1514,8 @@ static int __init dynamic_debug_init(void)
+>   			iter_mod_start = iter;
+>   		}
+>   	}
+> -	di.num_descs = mod_sites;
+> -	di.descs = iter_mod_start;
+> +	di.descs.len = mod_sites;
+> +	di.descs.start = iter_mod_start;
+>   	ret = ddebug_add_module(&di, modname);
+>   	if (ret)
+>   		goto out_err;
+> @@ -1530,8 +1525,8 @@ static int __init dynamic_debug_init(void)
+>   		 i, mod_ct, (int)((mod_ct * sizeof(struct ddebug_table)) >> 10),
+>   		 (int)((i * sizeof(struct _ddebug)) >> 10));
+>   
+> -	if (di.num_classes)
+> -		v2pr_info("  %d builtin ddebug class-maps\n", di.num_classes);
+> +	if (di.maps.len)
+> +		v2pr_info("  %d builtin ddebug class-maps\n", di.maps.len);
+>   
+>   	/* now that ddebug tables are loaded, process all boot args
+>   	 * again to find and activate queries given in dyndbg params.
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
