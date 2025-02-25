@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-531371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D4EA43FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:44:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15487A43FA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 13:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A63F21890DDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:43:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEF4A1758AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 12:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A18268C50;
-	Tue, 25 Feb 2025 12:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B4A268C42;
+	Tue, 25 Feb 2025 12:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ahtVADj3"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b="cHtd0TlZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155663A1DB
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 12:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740487417; cv=none; b=SvBseiWYQkkVWbTuZDbxp3JhxZNWOR0IWakMXu0eBlN4A4W1f4B/a58WqBwFv6YenI4jSIqnj3DhO1zmIUFo+KEKjf5F5gV1wBKfbNZP6w5ovWFjhJ/YQk4/jvrRfuAR792eymqLGHh+uydADLBf87B3dUTsuyaSIX4SUaa43rQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740487417; c=relaxed/simple;
-	bh=ThZw8T6DuX3V5frsHq3jSN62Ru0Y+m5d8yUPxihXdE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ckKOHjXjGNFeMXtRtesqJIsHfbx7JQjuZM72/P/pgSXZ4X5Cc7pdHGijI0uw4q5Rbgh2vrXR0dx9hRBkS80xH/AUw+RAOXimI3FwlaKXscBdRYuYJXwNAaee6zf8g+88mzkk6T4NrzzP3f8jLMc91P79iKqBtr5LJwvRmK8ecL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ahtVADj3; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3645F23A9;
+	Tue, 25 Feb 2025 12:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1740487589; cv=pass; b=JDN8dB0sQ1DdJtbfRgV2zsUtNao4XvSqcVenspvpaNGWQjZXQLAJropnngUzfggpnHDN05TuouFKQKtjczQSC99WnhcRDJdx2bZHyzAyEV0WtjKIeFNKBAtt8mYE+7OzQkaxQhf492n1MqCPa0X8U5EmOdM1Exd0LapBI4O8HiY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1740487589; c=relaxed/simple;
+	bh=mRn0urmcylqBrShUfe5g+U6oWDrD9p1pgaRXLAAiGMA=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=s1kAFccaJMWQKaFc77uKIR1bCI4PZgk+lRhXNsBtVSsBZ7kCE/9lCHV3wMIxJCHI6QY41y55r8aRaFC4lNEny6QbzSLtsyhXuCMl1ca51tsNck5eufBi4iLzHl35Y7XjeMBKa+nENbxrjyVz48+nOMVbyAqLYQ4tbNjHfagoWNY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.fricke@collabora.com header.b=cHtd0TlZ; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1740487414;
-	bh=ThZw8T6DuX3V5frsHq3jSN62Ru0Y+m5d8yUPxihXdE4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ahtVADj3Eee4RvfCy9YX0ZRDzziZHexss9gc6QtR9GrJjhUjtv2cKhh+oKVFYHI68
-	 nVn/jcuQkf48vWYnsE/lKjawfIwFDwu9ZaeZLvUKrTnpJwXt2y+lQwEC2guMISSjOI
-	 5TC5m8B9Ntkh262//3SkgI0NK9umoEZ/g44iCiSMuwzrxLlwG+uXIYLOrEtImjCvVE
-	 eh0LK8loXyo1gL4mAhLTzCyXQh4GlwKw4Z4riNJm1cLg5pYzkEgG0cHsrSjvnRWHzH
-	 QI7aGcj+fIRlYXc8GI7T6kUrewUcFt1D7Zn+BHguyeX93oRTwmzKFWVLoE2zzKscpr
-	 bMJmV5l6oWU5Q==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B9E1317E0B59;
-	Tue, 25 Feb 2025 13:43:33 +0100 (CET)
-Date: Tue, 25 Feb 2025 13:43:25 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Steven
- Price <steven.price@arm.com>, Rob Herring <robh@kernel.org>, Hugh Dickins
- <hughd@google.com>, kernel@collabora.com, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 1/7] shmem: Introduce non-blocking allocation of
- shmem pages
-Message-ID: <20250225134325.72a071b6@collabora.com>
-In-Reply-To: <20250218232552.3450939-2-adrian.larumbe@collabora.com>
-References: <20250218232552.3450939-1-adrian.larumbe@collabora.com>
-	<20250218232552.3450939-2-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+ARC-Seal: i=1; a=rsa-sha256; t=1740487566; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Kmp+aW4phAtAnXQshyMG1VGv9VxQ3kDl8jRvEdv2NUJz7PkLTy6xsztn8DyLvcN58tNaCtSVQnxP39h7zRt9MjTma+wZD0HXvB5Cul5sfxL+qqm5IWabtjJ2v9v4J5tulEMzxTaOurIIwDI3P/RGdfXTyqn6mEqaoAWTv1Kiz+o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1740487566; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=A5TQD7QobQ3Dhbbj5VbcHbkmPAOZf39Q9xSHqjBs79I=; 
+	b=cZAowJ0KPDYQ8WnBxNkujmaQ9mAmLjm/YJ4B65Rn8jQEkO2nvxtSHbUFz+pDS6GFhfyi5KPiwK0QB0UEOEW/3BVBOGMW2RVD2rlOpFpEOC303/4CvxSMdMifbzdPe7kMp5eG2KSGniA1/gifRVi4U2j56o5HBkOyGEP7OpEJfzs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.fricke@collabora.com;
+	dmarc=pass header.from=<sebastian.fricke@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1740487566;
+	s=zohomail; d=collabora.com; i=sebastian.fricke@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=A5TQD7QobQ3Dhbbj5VbcHbkmPAOZf39Q9xSHqjBs79I=;
+	b=cHtd0TlZ9uwKJuZBaiquiOgaD7ugIirgpBCMdEsQudHqb70lMvRppKHPL+CZ/2vw
+	ZZkMKKoQHc7wmSpHmGhppNDRcjLToqdiJ606yf+IzRj/wn/fSYo/6RDpaCrERuAg308
+	z2nD37oahp2gu8SmyW9zPbq5CQh4qKSJ2PymxXn8=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1740487564371275.2248105795393; Tue, 25 Feb 2025 04:46:04 -0800 (PST)
+Date: Tue, 25 Feb 2025 13:46:04 +0100
+From: Sebastian Fricke <sebastian.fricke@collabora.com>
+To: "Sebastian Fricke" <sebastian.fricke@collabora.com>
+Cc: "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+	"Ezequiel Garcia" <ezequiel@vanguardiasur.com.ar>,
+	"Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+	"Hans Verkuil" <hverkuil@xs4all.nl>,
+	"Boris Brezillon" <boris.brezillon@collabora.com>,
+	"linux-media" <linux-media@vger.kernel.org>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"linux-rockchip" <linux-rockchip@lists.infradead.org>,
+	"linux-staging" <linux-staging@lists.linux.dev>,
+	"Mauro Carvalho Chehab" <mchehab+huawei@kernel.org>,
+	"Alex Bee" <knaerzche@gmail.com>,
+	"Nicolas Dufresne" <nicolas.dufresne@collabora.com>,
+	"Benjamin Gaignard" <benjamin.gaignard@collabora.com>,
+	"Detlev Casanova" <detlev.casanova@collabora.com>,
+	"Dan Carpenter" <dan.carpenter@linaro.org>,
+	"Jonas Karlman" <jonas@kwiboo.se>
+Message-ID: <1953d249c3c.d1d6678f34821.5333341344528638254@collabora.com>
+In-Reply-To: <20250225124008.195405-1-sebastian.fricke@collabora.com>
+References: <20250225-rkvdec_h264_high10_and_422_support-v7-0-7992a68a4910@collabora.com> <20250225124008.195405-1-sebastian.fricke@collabora.com>
+Subject: Re: [PATCH] fixup! media: v4l2-common: Add helpers to calculate
+ bytesperline and sizeimage
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Tue, 18 Feb 2025 23:25:31 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+Hey,
 
-> With the future goal of preventing deadlocks with the shrinker when recla=
-iming
-> GEM-allocated memory, a variant of shmem_read_mapping_page_gfp() that doe=
-s not
-> sleep when enough memory isn't available, therefore potentially triggerin=
-g the
-> shrinker on same driver, is introduced.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  include/linux/shmem_fs.h | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-> index 0b273a7b9f01..5735728aeda2 100644
-> --- a/include/linux/shmem_fs.h
-> +++ b/include/linux/shmem_fs.h
-> @@ -167,6 +167,13 @@ static inline struct page *shmem_read_mapping_page(
->  					mapping_gfp_mask(mapping));
->  }
-> =20
-> +static inline struct page *shmem_read_mapping_page_nonblocking(
-> +				struct address_space *mapping, pgoff_t index)
-> +{
-> +	return shmem_read_mapping_page_gfp(mapping, index,
-> +					mapping_gfp_mask(mapping) | GFP_NOWAIT);
-> +}
+sorry about missing this in the patch series, if you don't like the fixup path, then I can send a new patch series as well.
+I just thought the change was minor enough and addressed the final comments.
 
-Just my 2 cents, but I'm not entirely sure it's worth adding a helper
-for the non-blocking case given we can pretty easily call
-shmem_read_mapping_page_gfp() with the GFP_NOWAIT addition where needed.
+Regards,
+Sebastian
 
-> +
->  static inline bool shmem_file(struct file *file)
->  {
->  	if (!IS_ENABLED(CONFIG_SHMEM))
+ ---- On Tue, 25 Feb 2025 13:40:08 +0100  Sebastian Fricke <sebastian.fricke@collabora.com> wrote --- 
+ > ---
+ >  drivers/media/v4l2-core/v4l2-common.c | 2 +-
+ >  1 file changed, 1 insertion(+), 1 deletion(-)
+ > 
+ > diff --git a/drivers/media/v4l2-core/v4l2-common.c b/drivers/media/v4l2-core/v4l2-common.c
+ > index 07a999f75755..aa86b8c6aa75 100644
+ > --- a/drivers/media/v4l2-core/v4l2-common.c
+ > +++ b/drivers/media/v4l2-core/v4l2-common.c
+ > @@ -360,7 +360,7 @@ static inline unsigned int v4l2_format_block_height(const struct v4l2_format_inf
+ >  }
+ >  
+ >  static inline unsigned int v4l2_format_plane_stride(const struct v4l2_format_info *info, int plane,
+ > -                           unsigned int width)
+ > +                            unsigned int width)
+ >  {
+ >      unsigned int hdiv = plane ? info->hdiv : 1;
+ >      unsigned int aligned_width =
+ > -- 
+ > 2.25.1
+ > 
+ > 
 
 
