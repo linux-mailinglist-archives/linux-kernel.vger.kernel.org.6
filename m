@@ -1,338 +1,345 @@
-Return-Path: <linux-kernel+bounces-530509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-530510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34657A43481
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:15:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3C2A43484
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 06:20:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60DD23A2624
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2758178846
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 05:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCF62561B7;
-	Tue, 25 Feb 2025 05:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C880F24FC09;
+	Tue, 25 Feb 2025 05:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jloXX+Lt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870E41E487;
-	Tue, 25 Feb 2025 05:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FmkWAVKL"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A6C8494;
+	Tue, 25 Feb 2025 05:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740460510; cv=none; b=IBLn4ncbWsoP1caRM6O7fyhEiXeJbfXEk6sFLzRGHndQa7nSyvla85UApDFnOwfi7ytqN9UgPNzHx2egUKWwNGUnKuOaqmKzW2dIGk107F02QFJs2htG2kIR4U0i7LYLDma0dpYyRIrX9iSsA3yYCrPj7mcUPdDW/8drUM4qJhw=
+	t=1740460814; cv=none; b=OMqZu3SIdl7Bi5dG1OFrvI1N+K8KeTqCWDg7khWxnbKLcIMmDUz4uvWanv0s4oJtRdioGHlmDHtHam6BxIwZnd8w6eOHe/Za56US2ON1k4ZSeobF79HZW056tWqDqN95fJ6Zm/P5WK6LAGCSulkE1sXuWuwX6splyK31ByqwDj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740460510; c=relaxed/simple;
-	bh=h43w+yc+3wzFnuMcI9vF5WiKWf8fPyNQuYMhPAP9p00=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=A1mosbIEy3av8nozPT/IZqyhx+W8xU6JYzR+A+PmMX7muh5KUCuJ03jV8HvTqXR12yPVi7HlvpOFhChd6TikDJxZyJHTwsZrPKJnUAlzH7sOSUas7dyFJCveD6JqpVuLgpVm/gUE6CRxdhxi6Ce1rB4Y1et/poOx3Z3byQmXKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jloXX+Lt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51OKOkSu010111;
-	Tue, 25 Feb 2025 05:15:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	76hdxH/bI9qNoXx4UPst50578Vycjb82kL+GOcZN/5c=; b=jloXX+LtqRyDPd/j
-	Y6Qke0U880znEyy55aKwUyZZL55bWHBzZzyoVXJ7L2E49U1xw693WxQx24NYm2eP
-	LYN0GfCNcJNTysrqc3xj+EjjabuhLxssgK4ExoMaahO2OmOkWSvEyCXkwCeiDFmG
-	xBL1w3nqeQ7XpBIN8ICb04iZpASBHgTbshISZadQzhc6KcI9DmfpDsgZhZumU29H
-	Z+B0eQmXJgYO+nivTD2SAGeu0aiKjMxsoMh7blUHk7nRKsCxmOxXtjZCR3Bey3/7
-	bGE+kZ5S8nXr+dtP8zLTkpQ5uYlsQ14TOcW+QuDnxt+RbA5WZkQ/ulGKCF5sx/eN
-	ib4+Kg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 44y6y6qhbb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 05:15:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 51P5F3v1022423
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Feb 2025 05:15:03 GMT
-Received: from [10.219.0.139] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Feb
- 2025 21:14:59 -0800
-Message-ID: <14305d3c-f6c0-406e-a15b-c8031d20f96e@quicinc.com>
-Date: Tue, 25 Feb 2025 10:44:56 +0530
+	s=arc-20240116; t=1740460814; c=relaxed/simple;
+	bh=EL566HSRo5UKqp9HPgyvbPceyZ56tDF1V4TxgCEoQUY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZgsKq1pI+DUzRes8/8DJ6FzdBM0iPSN7nXPqkeZXOzYqSz7/hzcVyeBKcE68nXuQvzu/m4LzgIaTEHUbDZCDXD6d9oQ9D6k9WnzD+VYebXgegyTLGcIqgqozKH9DhNNYdD+ZBXLcOVHd9AxrhtRXTkwsXgcZP8+P5ZaOxS6k59w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FmkWAVKL; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from namjain-Virtual-Machine.mshome.net (unknown [167.220.238.203])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 94A48203CDE4;
+	Mon, 24 Feb 2025 21:20:08 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 94A48203CDE4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740460811;
+	bh=nJIObqK6fP2YmlJiARmlfatrlVVG07Yq68JgB7zHMv0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FmkWAVKLvheBpd1oY+6x7MwplW0haemhOMKjs6tjXgwdyuULuYIxFKXVlbgO+PeKR
+	 zWqOQjC1Vi/mjvZC9LapRCCFtbkKg/lNLntV325IwoFWhNtDMmZDqLRti8kf9NiLtq
+	 BPzfSvjA19TbK/1j6ZHTsnfSqlzK2xnG9Z0BFEcE=
+From: Naman Jain <namjain@linux.microsoft.com>
+To: "K . Y . Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Cc: linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@kernel.org,
+	Saurabh Sengar <ssengar@linux.microsoft.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Naman Jain <namjain@linux.microsoft.com>
+Subject: [PATCH] uio_hv_generic: Fix sysfs creation path for ring buffer
+Date: Tue, 25 Feb 2025 10:50:01 +0530
+Message-Id: <20250225052001.2225-1-namjain@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 1/1] arm64: dts: qcom: qcs6490-rb3gen2: add and enable
- BT node
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20250224171737.2522834-1-quic_janathot@quicinc.com>
- <20250224171737.2522834-2-quic_janathot@quicinc.com>
-Content-Language: en-US
-From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-In-Reply-To: <20250224171737.2522834-2-quic_janathot@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GiKst79zdZufh5r7qvgJqWW9Mkdy2gxl
-X-Proofpoint-GUID: GiKst79zdZufh5r7qvgJqWW9Mkdy2gxl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-25_01,2025-02-24_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- malwarescore=0 phishscore=0 adultscore=0 lowpriorityscore=0
- mlxlogscore=999 impostorscore=0 priorityscore=1501 bulkscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502250031
+Content-Transfer-Encoding: 8bit
 
+On regular bootup, devices get registered to vmbus first, so when
+uio_hv_generic driver for a particular device type is probed,
+the device is already initialized and added, so sysfs creation in
+uio_hv_generic probe works fine. However, when device is removed
+and brought back, the channel rescinds and device again gets
+registered to vmbus. However this time, the uio_hv_generic driver is
+already registered to probe for that device and in this case sysfs
+creation is tried before the device gets initialized completely.
 
+Fix this by moving the core logic of sysfs creation for ring buffer,
+from uio_hv_generic to HyperV's vmbus driver, where rest of the sysfs
+attributes for the channels are defined. While doing that, make use
+of attribute groups and macros, instead of creating sysfs directly,
+to ensure better error handling and code flow.
 
-On 2/24/2025 10:47 PM, Janaki Ramaiah Thota wrote:
-> Add the PMU node for WCN6750 present on the qcs6490-rb3gen
-> board and assign its power outputs to the Bluetooth module.
-> 
-> In WCN6750 module sw_ctrl and wifi-enable pins are handled
-> in the wifi controller firmware. Therefore, it is not required
-> to have those pins' entries in the PMU node.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-> ---
->   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 171 ++++++++++++++++++-
->   1 file changed, 170 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index 7a36c90ad4ec..de03770e0b90 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -1,6 +1,6 @@
->   // SPDX-License-Identifier: BSD-3-Clause
->   /*
-> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->    */
->   
->   /dts-v1/;
-> @@ -34,6 +34,7 @@ / {
->   
->   	aliases {
->   		serial0 = &uart5;
-> +		serial1 = &uart7;
->   	};
->   
->   	chosen {
-> @@ -218,6 +219,63 @@ vph_pwr: vph-pwr-regulator {
->   		regulator-min-microvolt = <3700000>;
->   		regulator-max-microvolt = <3700000>;
->   	};
-> +
-> +	wcn6750-pmu {
-> +		compatible = "qcom,wcn6750-pmu";
-> +		pinctrl-0 = <&bt_en>;
-> +		pinctrl-names = "default";
-> +		vddaon-supply = <&vreg_s7b_0p972>;
-> +		vddasd-supply = <&vreg_l11c_2p8>;
-> +		vddpmu-supply = <&vreg_s7b_0p972>;
-> +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
-> +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
-> +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
-> +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
-> +
-> +		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
-> +
-> +		regulators {
-> +			vreg_pmu_rfa_cmn: ldo0 {
-> +				regulator-name = "vreg_pmu_rfa_cmn";
-> +			};
-> +
-> +			vreg_pmu_aon_0p59: ldo1 {
-> +				regulator-name = "vreg_pmu_aon_0p59";
-> +			};
-> +
-> +			vreg_pmu_wlcx_0p8: ldo2 {
-> +				regulator-name = "vreg_pmu_wlcx_0p8";
-> +			};
-> +
-> +			vreg_pmu_wlmx_0p85: ldo3 {
-> +				regulator-name = "vreg_pmu_wlmx_0p85";
-> +			};
-> +
-> +			vreg_pmu_btcmx_0p85: ldo4 {
-> +				regulator-name = "vreg_pmu_btcmx_0p85";
-> +			};
-> +
-> +			vreg_pmu_rfa_0p8: ldo5 {
-> +				regulator-name = "vreg_pmu_rfa_0p8";
-> +			};
-> +
-> +			vreg_pmu_rfa_1p2: ldo6 {
-> +				regulator-name = "vreg_pmu_rfa_1p2";
-> +			};
-> +
-> +			vreg_pmu_rfa_1p7: ldo7 {
-> +				regulator-name = "vreg_pmu_rfa_1p7";
-> +			};
-> +
-> +			vreg_pmu_pcie_0p9: ldo8 {
-> +				regulator-name = "vreg_pmu_pcie_0p9";
-> +			};
-> +
-> +			vreg_pmu_pcie_1p8: ldo9 {
-> +				regulator-name = "vreg_pmu_pcie_1p8";
-> +			};
-> +		};
-> +	};
->   };
->   
->   &apps_rsc {
-> @@ -799,6 +857,39 @@ &pon_resin {
->   	status = "okay";
->   };
->   
-> +&qup_uart7_cts {
-> +	/*
-> +	 * Configure a bias-bus-hold on CTS to lower power
-> +	 * usage when Bluetooth is turned off. Bus hold will
-> +	 * maintain a low power state regardless of whether
-> +	 * the Bluetooth module drives the pin in either
-> +	 * direction or leaves the pin fully unpowered.
-> +	 */
-> +	bias-bus-hold;
-> +};
-> +
-> +&qup_uart7_rts {
-> +	/* We'll drive RTS, so no pull */
-> +	drive-strength = <2>;
-> +	bias-disable;
-> +};
-> +
-> +&qup_uart7_rx {
-> +	/*
-> +	 * Configure a pull-up on RX. This is needed to avoid
-> +	 * garbage data when the TX pin of the Bluetooth module is
-> +	 * in tri-state (module powered off or not driving the
-> +	 * signal yet).
-> +	 */
-> +	bias-pull-up;
-> +};
-> +
-> +&qup_uart7_tx {
-> +	/* We'll drive TX, so no pull */
-> +	drive-strength = <2>;
-> +	bias-disable;
-> +};
-> +
->   &qupv3_id_0 {
->   	status = "okay";
->   };
-> @@ -842,12 +933,90 @@ &sdhc_2 {
->   &tlmm {
->   	gpio-reserved-ranges = <32 2>, /* ADSP */
->   			       <48 4>; /* NFC */
-> +
-> +	bt_en: bt-en-state {
-> +		pins = "gpio85";
-> +		function = "gpio";
-> +		output-low;
-> +		bias-disable;
-> +	};
-> +
-> +	qup_uart7_sleep_cts: qup-uart7-sleep-cts-state {
-> +		pins = "gpio28";
-> +		function = "gpio";
-> +		/*
-> +		 * Configure a bias-bus-hold on CTS to lower power
-> +		 * usage when Bluetooth is turned off. Bus hold will
-> +		 * maintain a low power state regardless of whether
-> +		 * the Bluetooth module drives the pin in either
-> +		 * direction or leaves the pin fully unpowered.
-> +		 */
-> +		bias-bus-hold;
-> +	};
-> +
-> +	qup_uart7_sleep_rts: qup-uart7-sleep-rts-state {
-> +		pins = "gpio29";
-> +		function = "gpio";
-> +		/*
-> +		 * Configure pull-down on RTS. As RTS is active low
-> +		 * signal, pull it low to indicate the BT SoC that it
-> +		 * can wakeup the system anytime from suspend state by
-> +		 * pulling RX low (by sending wakeup bytes).
-> +		 */
-> +		bias-pull-down;
-> +	};
-> +
-> +	qup_uart7_sleep_rx: qup-uart7-sleep-rx-state {
-> +		pins = "gpio31";
-> +		function = "gpio";
-> +		/*
-> +		 * Configure a pull-up on RX. This is needed to avoid
-> +		 * garbage data when the TX pin of the Bluetooth module
-> +		 * is floating which may cause spurious wakeups.
-> +		 */
-> +		bias-pull-up;
-> +	};
-> +
-> +	qup_uart7_sleep_tx: qup-uart7-sleep-tx-state {
-> +		pins = "gpio30";
-> +		function = "gpio";
-> +		/*
-> +		 * Configure pull-up on TX when it isn't actively driven
-> +		 * to prevent BT SoC from receiving garbage during sleep.
-> +		 */
-> +		bias-pull-up;
-> +	};
->   };
->   
->   &uart5 {
->   	status = "okay";
->   };
->   
-> +&uart7 {
-> +	/delete-property/ interrupts;
-> +	interrupts-extended = <&intc GIC_SPI 608 IRQ_TYPE_LEVEL_HIGH>,
-> +			      <&tlmm 31 IRQ_TYPE_EDGE_FALLING>;
-> +	pinctrl-1 = <&qup_uart7_sleep_cts>,
-> +		    <&qup_uart7_sleep_rts>,
-> +		    <&qup_uart7_sleep_tx>,
-> +		    <&qup_uart7_sleep_rx>;
-> +	pinctrl-names = "default",
-> +			"sleep";
-> +
-> +	status = "okay";
-> +
-> +	bluetooth: bluetooth {
-> +		compatible = "qcom,wcn6750-bt";
-> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
-> +		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-> +		max-speed = <3200000>;
-> +	};
-> +};
-> +
->   &usb_1 {
->   	status = "okay";
->   };
+Problem path:
+vmbus_device_register
+    device_register
+        uio_hv_generic probe
+                    sysfs_create_bin_file (fails here)
+        kset_create_and_add (dependency)
+        vmbus_add_channel_kobj (dependency)
 
-Please ignore this patch, will resend corrected patch.
+Fixes: 9ab877a6ccf8 ("uio_hv_generic: make ring buffer attribute for primary channel")
+Cc: stable@kernel.org
+Suggested-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+---
+Hi,
+This is the first patch after initial RFC was posted.
+https://lore.kernel.org/all/20250214064351.8994-1-namjain@linux.microsoft.com/
 
-Thanks,
-Janakiram
+Changes since RFC patch:
+* Different approach to solve the problem is proposed (credits to
+  Michael Kelley).
+* Core logic for sysfs creation moved out of uio_hv_generic, to VMBus
+  drivers where rest of the sysfs attributes for a VMBus channel
+  are defined. (addressed Greg's comments)
+* Used attribute groups instead of sysfs_create* functions, and bundled
+  ring attribute with other attributes for the channel sysfs.  
+
+Error logs:
+
+[   35.574120] ------------[ cut here ]------------
+[   35.574122] WARNING: CPU: 0 PID: 10 at fs/sysfs/file.c:591 sysfs_create_bin_file+0x81/0x90
+[   35.574168] Workqueue: hv_pri_chan vmbus_add_channel_work
+[   35.574172] RIP: 0010:sysfs_create_bin_file+0x81/0x90
+[   35.574197] Call Trace:
+[   35.574199]  <TASK>
+[   35.574200]  ? show_regs+0x69/0x80
+[   35.574217]  ? __warn+0x8d/0x130
+[   35.574220]  ? sysfs_create_bin_file+0x81/0x90
+[   35.574222]  ? report_bug+0x182/0x190
+[   35.574225]  ? handle_bug+0x5b/0x90
+[   35.574244]  ? exc_invalid_op+0x19/0x70
+[   35.574247]  ? asm_exc_invalid_op+0x1b/0x20
+[   35.574252]  ? sysfs_create_bin_file+0x81/0x90
+[   35.574255]  hv_uio_probe+0x1e7/0x410 [uio_hv_generic]
+[   35.574271]  vmbus_probe+0x3b/0x90
+[   35.574275]  really_probe+0xf4/0x3b0
+[   35.574279]  __driver_probe_device+0x8a/0x170
+[   35.574282]  driver_probe_device+0x23/0xc0
+[   35.574285]  __device_attach_driver+0xb5/0x140
+[   35.574288]  ? __pfx___device_attach_driver+0x10/0x10
+[   35.574291]  bus_for_each_drv+0x86/0xe0
+[   35.574294]  __device_attach+0xc1/0x200
+[   35.574297]  device_initial_probe+0x13/0x20
+[   35.574315]  bus_probe_device+0x99/0xa0
+[   35.574318]  device_add+0x647/0x870
+[   35.574320]  ? hrtimer_init+0x28/0x70
+[   35.574323]  device_register+0x1b/0x30
+[   35.574326]  vmbus_device_register+0x83/0x130
+[   35.574328]  vmbus_add_channel_work+0x135/0x1a0
+[   35.574331]  process_one_work+0x177/0x340
+[   35.574348]  worker_thread+0x2b2/0x3c0
+[   35.574350]  kthread+0xe3/0x1f0
+[   35.574353]  ? __pfx_worker_thread+0x10/0x10
+[   35.574356]  ? __pfx_kthread+0x10/0x10
+
+---
+ drivers/hv/hyperv_vmbus.h    |  4 +++
+ drivers/hv/vmbus_drv.c       | 62 ++++++++++++++++++++++++++++++++++++
+ drivers/uio/uio_hv_generic.c | 34 ++------------------
+ include/linux/hyperv.h       |  3 ++
+ 4 files changed, 72 insertions(+), 31 deletions(-)
+
+diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+index 29780f3a7478..e0c7b75e6c7a 100644
+--- a/drivers/hv/hyperv_vmbus.h
++++ b/drivers/hv/hyperv_vmbus.h
+@@ -477,4 +477,8 @@ static inline int hv_debug_add_dev_dir(struct hv_device *dev)
+ 
+ #endif /* CONFIG_HYPERV_TESTING */
+ 
++/* Create and remove sysfs entry for memory mapped ring buffers for a channel */
++int hv_create_ring_sysfs(struct vmbus_channel *channel);
++int hv_remove_ring_sysfs(struct vmbus_channel *channel);
++
+ #endif /* _HYPERV_VMBUS_H */
+diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+index 22afebfc28ff..0110643bad3f 100644
+--- a/drivers/hv/vmbus_drv.c
++++ b/drivers/hv/vmbus_drv.c
+@@ -1802,6 +1802,39 @@ static ssize_t subchannel_id_show(struct vmbus_channel *channel,
+ }
+ static VMBUS_CHAN_ATTR_RO(subchannel_id);
+ 
++/* Functions to create sysfs interface to allow mmap of the ring buffers.
++ * The ring buffer is allocated as contiguous memory by vmbus_open
++ */
++static int hv_mmap_ring_buffer(struct vmbus_channel *channel, struct vm_area_struct *vma)
++{
++	void *ring_buffer = page_address(channel->ringbuffer_page);
++
++	if (channel->state != CHANNEL_OPENED_STATE)
++		return -ENODEV;
++
++	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
++			       channel->ringbuffer_pagecount << PAGE_SHIFT);
++}
++
++static int hv_mmap_ring_buffer_wrapper(struct file *filp, struct kobject *kobj,
++				       const struct bin_attribute *attr,
++				       struct vm_area_struct *vma)
++{
++	struct vmbus_channel *channel = container_of(kobj, struct vmbus_channel, kobj);
++
++	if (!channel->mmap_ring_buffer)
++		return -ENODEV;
++	return channel->mmap_ring_buffer(channel, vma);
++}
++
++static struct bin_attribute chan_attr_ring_buffer = {
++	.attr = {
++		.name = "ring",
++		.mode = 0600,
++	},
++	.size = 2 * SZ_2M,
++	.mmap = hv_mmap_ring_buffer_wrapper,
++};
+ static struct attribute *vmbus_chan_attrs[] = {
+ 	&chan_attr_out_mask.attr,
+ 	&chan_attr_in_mask.attr,
+@@ -1818,6 +1851,7 @@ static struct attribute *vmbus_chan_attrs[] = {
+ 	&chan_attr_out_full_total.attr,
+ 	&chan_attr_monitor_id.attr,
+ 	&chan_attr_subchannel_id.attr,
++	&chan_attr_ring_buffer.attr,
+ 	NULL
+ };
+ 
+@@ -1838,6 +1872,10 @@ static umode_t vmbus_chan_attr_is_visible(struct kobject *kobj,
+ 	     attr == &chan_attr_monitor_id.attr))
+ 		return 0;
+ 
++	/* Hide ring attribute if channel's mmap_ring_buffer function is not yet initialised */
++	if (attr ==  &chan_attr_ring_buffer.attr && !channel->mmap_ring_buffer)
++		return 0;
++
+ 	return attr->mode;
+ }
+ 
+@@ -1851,6 +1889,30 @@ static const struct kobj_type vmbus_chan_ktype = {
+ 	.release = vmbus_chan_release,
+ };
+ 
++/*
++ * hv_create_ring_sysfs - create ring sysfs entry corresponding to ring buffers for a channel
++ */
++int hv_create_ring_sysfs(struct vmbus_channel *channel)
++{
++	struct kobject *kobj = &channel->kobj;
++
++	channel->mmap_ring_buffer = hv_mmap_ring_buffer;
++	return sysfs_update_group(kobj, &vmbus_chan_group);
++}
++EXPORT_SYMBOL_GPL(hv_create_ring_sysfs);
++
++/*
++ * hv_remove_ring_sysfs - remove ring sysfs entry corresponding to ring buffers for a channel
++ */
++int hv_remove_ring_sysfs(struct vmbus_channel *channel)
++{
++	struct kobject *kobj = &channel->kobj;
++
++	channel->mmap_ring_buffer = NULL;
++	return sysfs_update_group(kobj, &vmbus_chan_group);
++}
++EXPORT_SYMBOL_GPL(hv_remove_ring_sysfs);
++
+ /*
+  * vmbus_add_channel_kobj - setup a sub-directory under device/channels
+  */
+diff --git a/drivers/uio/uio_hv_generic.c b/drivers/uio/uio_hv_generic.c
+index 1b19b5647495..c120259ee1b1 100644
+--- a/drivers/uio/uio_hv_generic.c
++++ b/drivers/uio/uio_hv_generic.c
+@@ -131,33 +131,6 @@ static void hv_uio_rescind(struct vmbus_channel *channel)
+ 	vmbus_device_unregister(channel->device_obj);
+ }
+ 
+-/* Sysfs API to allow mmap of the ring buffers
+- * The ring buffer is allocated as contiguous memory by vmbus_open
+- */
+-static int hv_uio_ring_mmap(struct file *filp, struct kobject *kobj,
+-			    const struct bin_attribute *attr,
+-			    struct vm_area_struct *vma)
+-{
+-	struct vmbus_channel *channel
+-		= container_of(kobj, struct vmbus_channel, kobj);
+-	void *ring_buffer = page_address(channel->ringbuffer_page);
+-
+-	if (channel->state != CHANNEL_OPENED_STATE)
+-		return -ENODEV;
+-
+-	return vm_iomap_memory(vma, virt_to_phys(ring_buffer),
+-			       channel->ringbuffer_pagecount << PAGE_SHIFT);
+-}
+-
+-static const struct bin_attribute ring_buffer_bin_attr = {
+-	.attr = {
+-		.name = "ring",
+-		.mode = 0600,
+-	},
+-	.size = 2 * SZ_2M,
+-	.mmap = hv_uio_ring_mmap,
+-};
+-
+ /* Callback from VMBUS subsystem when new channel created. */
+ static void
+ hv_uio_new_channel(struct vmbus_channel *new_sc)
+@@ -178,8 +151,7 @@ hv_uio_new_channel(struct vmbus_channel *new_sc)
+ 	/* Disable interrupts on sub channel */
+ 	new_sc->inbound.ring_buffer->interrupt_mask = 1;
+ 	set_channel_read_mode(new_sc, HV_CALL_ISR);
+-
+-	ret = sysfs_create_bin_file(&new_sc->kobj, &ring_buffer_bin_attr);
++	ret = hv_create_ring_sysfs(new_sc);
+ 	if (ret) {
+ 		dev_err(device, "sysfs create ring bin file failed; %d\n", ret);
+ 		vmbus_close(new_sc);
+@@ -350,7 +322,7 @@ hv_uio_probe(struct hv_device *dev,
+ 		goto fail_close;
+ 	}
+ 
+-	ret = sysfs_create_bin_file(&channel->kobj, &ring_buffer_bin_attr);
++	ret = hv_create_ring_sysfs(channel);
+ 	if (ret)
+ 		dev_notice(&dev->device,
+ 			   "sysfs create ring bin file failed; %d\n", ret);
+@@ -375,7 +347,7 @@ hv_uio_remove(struct hv_device *dev)
+ 	if (!pdata)
+ 		return;
+ 
+-	sysfs_remove_bin_file(&dev->channel->kobj, &ring_buffer_bin_attr);
++	hv_remove_ring_sysfs(dev->channel);
+ 	uio_unregister_device(&pdata->info);
+ 	hv_uio_cleanup(dev, pdata);
+ 
+diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
+index 7f4f8d8bdf43..26b7e7c38864 100644
+--- a/include/linux/hyperv.h
++++ b/include/linux/hyperv.h
+@@ -1058,6 +1058,9 @@ struct vmbus_channel {
+ 
+ 	/* The max size of a packet on this channel */
+ 	u32 max_pkt_size;
++
++	/* function to mmap ring buffer memory to the channel's sysfs ring attribute */
++	int (*mmap_ring_buffer)(struct vmbus_channel *channel, struct vm_area_struct *vma);
+ };
+ 
+ #define lock_requestor(channel, flags)					\
+
+base-commit: 4ef7aa6a88280d015c6533a210e46efd55bdb57f
+-- 
+2.34.1
+
 
