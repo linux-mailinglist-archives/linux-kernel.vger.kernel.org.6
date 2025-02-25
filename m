@@ -1,120 +1,145 @@
-Return-Path: <linux-kernel+bounces-532099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C63A448F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:52:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A07A4489E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 18:42:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D95848874C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:37:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 229F0188EBC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 17:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120AB1A0BC9;
-	Tue, 25 Feb 2025 17:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2601A3A8D;
+	Tue, 25 Feb 2025 17:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="arYogA2N"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="22e4g97n"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BC042AA5;
-	Tue, 25 Feb 2025 17:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04EDA1A2642
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 17:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740504894; cv=none; b=j/8dlB7wvZAiXaW60/wTGiqwoQ5p11NxCFjBGkyVYFEhB7S+Cj0ZDmT15XaElKyRJIoaf62cBFcGarrmSNUevD4cDAfCJlMWN15dIaBkE3xdF13giJIKdWtS86pdF5jD5cEbYqZB4vJlbOwT3LPrNV4cMdl9zrYtSq40N2NB2S4=
+	t=1740504922; cv=none; b=XWk03Own3gaXJ8sdiY+C4YVhIa90cctzF3fd4cbYH+PHdA7GMiwDuMr4k7OkfPNCAxFojTmKXGj4ZyeXMol3ODISDqRdolnSdM+LEfYkYXDTpn2ijeJCkbTFyV2DXxbTSSYXmFjn34j7taf246yl8+VOiBK/Hvfc2cv/oMpkcoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740504894; c=relaxed/simple;
-	bh=LR7pXcJosTSUOOsJpWPomSYJcINg8nEivuH9TAYjqA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bbzqg07Ld6rogaDWznrijncKPDMpG6wbSsU3NL2ANfpwB9pW2+A7RSScFUkdmA3swLjgJTmzwE7oLE3+E8VA/Dupjsn7bowvcOLc261ns+UmDXI+slMizVOYYfKYYnBwWlFbvhl+k+SB3UZnRHb6BQQChbOJrqn+B6w94DrNLGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=arYogA2N; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22185cddbffso531585ad.1;
-        Tue, 25 Feb 2025 09:34:52 -0800 (PST)
+	s=arc-20240116; t=1740504922; c=relaxed/simple;
+	bh=DCj+7jqMyXQfbY2xp2rvzhQWlsMYVO7zaB44y+WoB/4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QqQBKScq1YaLkb8PjnoZEAe8/fJwzbGUwvwW5J8jK1pNKX0omzrURrYYYJkt4MHBW/JnAXM38aZnJBuDHjt+ACnu/0KUiobjOw3hfmU16RVwDJisVSyC5Z18EESpWS8zhOeuFODS8S0fRq6MakcPIZBdWS9cvM5GMZQOO3sG5Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=22e4g97n; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2217b4a48a4so114804275ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 09:35:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740504892; x=1741109692; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h+YoddM30ZuOoLuZFWAILIJYkTUfH7Xy1b0eiSahC7k=;
-        b=arYogA2N7C7wWAibA5PZTFIZPsPUxBVMbyFTQSKLxFkJALPIdxaF1+YMEf8nNjFfhW
-         IrOFoX3fASWsFfmklAZcyYKy7EYcdGvsjoT3uLXIhtv2Et5JH41hb8aGi++UL5hnhhN+
-         AUl8GGTo0/R9IObAVhX+38L3M1A5gRBiJcBG0gQgiNK6pkMTgdVdcRZ7LtuEx7mEaoRb
-         lZtePzDA/B6z5QPCLN77RUO3iHfFHVt3Zk3jeHwu6Pi3qw7ygdm9W/pqE9HsIsNO5H+B
-         di7tU8ze85VmCU4WK0/QYNQk2EOSwIQjoVTSJz6GenoJrlof5hPbSSqAL1EapsHmNBK6
-         spxQ==
+        d=google.com; s=20230601; t=1740504920; x=1741109720; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WmPVK+L+lkct4my4gWXOH7349iAbiLDSdgIlILE/gx4=;
+        b=22e4g97neCm8yw41ONcrauyntt+5VswzU5AUngctfJ9y4Nn78LKP3UqO/0mWFyIxxh
+         o2Tldizy34LiAEkUavi0Ifsk3d6XaTSeklXAYYGIrWReaTFoVhtJwI3hdbqQxhipLdP3
+         x/rpo2ods/7KkAuE2ApAF5AVtWRB3wrmlweiW3Mecn2fjzibvkXulqnu2v154hKllWlh
+         GpmLk2FMgZ/Gp8mHT2DLysr53QuOvp8p1QVQF/6D6hOrvu6R7B7nC2lSEVmxEud9ERdg
+         8mUNOUNLrGOZft90LXZ53PQnSrsAWkPigAlgwInZEH+AysL0Q1W6f5j4B49nef3vG9zK
+         A82Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740504892; x=1741109692;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=h+YoddM30ZuOoLuZFWAILIJYkTUfH7Xy1b0eiSahC7k=;
-        b=t+e9OPKK1SYc7wePUatu1U/ZnTIBJIp/3x/05TAZNkgN2jcjHTFBZDKf4NY7i+sVGZ
-         xEewGfYxVQ4QlPHp+untA89nO77gspxa7fW2jbH7unf42L59oZtTIZJV/8rFsKoNjjvx
-         sPOxkQDzeLOYsM0u13ydtTRM4BQZi9YAeffRKmbXyZ6TSmVPjgVI2O29mvv0tCysLUTL
-         /nTtaq2YeROFw097/DdWXDnUB/rqsYMkEgnL2+h3HOx0U0JhY8zjCrFce1+JTcIEx4T+
-         tAXMyFhvsVimwsnXlDWI5/gk/5iOtvd1aGlquxmqHh2l0r5C/fPdE/UBVinaG77s8i0h
-         Extw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/AFAjTa45EhbdL7bvtCHDD1/eiWx6hVu+k1dMP5lu+Zj+8wT3tUg+2yr6j1JnlM+F1gxncOw4IhPI+QkO@vger.kernel.org, AJvYcCWOCNAddk4l4BwTwKzDpCSsJG841Rn+FNvkH5bm4vdVjKtP+F/pGdIyFvlAI+ziH8DvpHiGozTrMptuBA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGc6ALlB9q7APksOvVzuxSR5ghTAyYJsslo/T7AlOljAP5TT9X
-	P5qKcw0kwoVQTa+r24eswUpxyic9OHnir3DhWUc6DADuNySQCH8U
-X-Gm-Gg: ASbGnctuawhO8pX/4kIMmQ3rdlUT3p3GtDDsoF6RgnsKANqug9NDJdic4fLLNe+mw7p
-	ETL/Y/m+FaZSm1Yge5LZgI1CDrJbJz2Gk619PHX9vkHGmL2xbx8K+NRr9PqrGsevLKPxcrzzIzb
-	oD7HZ+GOFSV0bJ+RrL3kojJZ42mxGHUq1E0hvt+wn68lp7tAp32ee0RYBMURBm3I7MXs9UKRVKN
-	z0ja5tjzL5zCLw/ANSYE8jjY1TuIdt+ktDLYDww57GJZjs1VwIkdTIBnBOg/6rqqX2WM/4yYU8L
-	XgBrIYRXpg9iHG+JzvBHw6Ov04M=
-X-Google-Smtp-Source: AGHT+IGzT8D98mm/xfqHVwKnnruGiSqgtsx9ZMPyvQeorwaPdEAalISlU4iJJJ1meGZlaeeWMlSHzg==
-X-Received: by 2002:a05:6a00:3d10:b0:734:a78:2f36 with SMTP id d2e1a72fcca58-73425cde0d6mr27762695b3a.12.1740504892200;
-        Tue, 25 Feb 2025 09:34:52 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:987e:29fc:176a:2ed5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7347a7f9aa4sm1834621b3a.107.2025.02.25.09.34.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 09:34:51 -0800 (PST)
-Date: Tue, 25 Feb 2025 09:34:49 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Bastien Nocera <hadess@hadess.net>, Hans de Goede <hdegoede@redhat.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Input: goodix-berlin - constify 'struct bin_attribute'
-Message-ID: <Z73_OabHseExVhXs@google.com>
-References: <20241222-sysfs-const-bin_attr-input-v1-1-1229dbe5ae71@weissschuh.net>
- <Z71j73PPLO5AwkxA@google.com>
- <2cedc1f5-3a6e-46cc-a214-497f899fd115@t-8ch.de>
+        d=1e100.net; s=20230601; t=1740504920; x=1741109720;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WmPVK+L+lkct4my4gWXOH7349iAbiLDSdgIlILE/gx4=;
+        b=klTkGlSz+zEdXg/Ikl6Ntjri671EsbZW0TE/rAcKizQFvL4aEFseSu5Bi9dANfsmaa
+         T+vS2udqIuAavFKps13qcLUm1PyxtVdttMlUlnx5FSXGqWNDTGvOV7dzyiVvusRX3Loq
+         ntNRfyfaJ5ol+qeDlFISjMHYse0fLbnUSHcasPQ3bfBHeMcPbeZ10QwPnO539UPyI/s6
+         EKnNgGRfKULHkytuWXJEIhkFtskpII0FW+AcBHhoJEOrAexYyQ0BqfMfdzbdX0ctsx6Y
+         xyTG2mb4lWj3Hriy8Hf9LVcl704wB3AGxJdKqDjgiq5pMjcICmhBeMPqwoCVs8bHCgmF
+         JBhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWe1B4+6pRlI0pEaO81ueWHXry9JfRMTlWcg2XxGfuhgovTnLd77ODnwuX/tUVTQYjMI8HdUhRhZ4aLB9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKk8t/OwqxJByD82XGg6gmqchjmyhtkb46qUsAKOYgS6B5eXSV
+	io5URFtctOhKhhJiuTGUbXHGyWqzOBZE3tfzUJOrTUvVQrebvBPG0ni16E7RCe9ZGpUxht6LQFJ
+	wHg==
+X-Google-Smtp-Source: AGHT+IHDF07aCt7qpFwpvTs1RpT9A9C3sPRgbFPhlXEj6AO9EgopLjMJSD4qeqFfHqD0Sv4+QnSbcOjcYsQ=
+X-Received: from pjbqo14.prod.google.com ([2002:a17:90b:3dce:b0:2fa:a101:755])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d506:b0:216:501e:e314
+ with SMTP id d9443c01a7336-221a0edda05mr242845745ad.20.1740504920269; Tue, 25
+ Feb 2025 09:35:20 -0800 (PST)
+Date: Tue, 25 Feb 2025 09:35:11 -0800
+In-Reply-To: <b1f0f8f3-515f-4fde-b779-43ef93484ab3@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2cedc1f5-3a6e-46cc-a214-497f899fd115@t-8ch.de>
+Mime-Version: 1.0
+References: <20241001050110.3643764-1-xin@zytor.com> <22d4574b-7e2d-4cd8-91bd-f5208e82369e@zytor.com>
+ <Z73gxklugkYpwJiZ@google.com> <b1f0f8f3-515f-4fde-b779-43ef93484ab3@zytor.com>
+Message-ID: <Z73_TwUgIsceWyzQ@google.com>
+Subject: Re: [PATCH v3 00/27] Enable FRED with KVM VMX
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin@zytor.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Chao Gao <chao.gao@intel.com>, pbonzini@redhat.com, 
+	corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, luto@kernel.org, 
+	peterz@infradead.org, andrew.cooper3@citrix.com
+Content-Type: text/plain; charset="us-ascii"
 
-On Tue, Feb 25, 2025 at 07:38:28AM +0100, Thomas Weiﬂschuh wrote:
-> Hi Dmitry,
-> 
-> On 2025-02-24 22:32:15-0800, Dmitry Torokhov wrote:
-> > On Sun, Dec 22, 2024 at 09:00:43PM +0100, Thomas Weiﬂschuh wrote:
-> > > The sysfs core now allows instances of 'struct bin_attribute' to be
-> > > moved into read-only memory. Make use of that to protect them against
-> > > accidental or malicious modifications.
-> > > 
-> > > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+On Tue, Feb 25, 2025, Xin Li wrote:
+> On 2/25/2025 7:24 AM, Sean Christopherson wrote:
+> > On Tue, Feb 18, 2025, Xin Li wrote:
+> > > On 9/30/2024 10:00 PM, Xin Li (Intel) wrote:
+> > > While I'm waiting for the CET patches for native Linux and KVM to be
+> > > upstreamed, do you think if it's worth it for you to take the cleanup
+> > > and some of the preparation patches first?
 > > 
-> > Applied, thank you.
+> > Yes, definitely.  I'll go through the series and see what I can grab now.
 > 
-> Thanks.
-> 
-> However Greg already took this through the driver core tree, as it was
-> blocking the general progress.
-> Could you drop it again?
+> I planned to do a rebase and fix the conflicts due to the reordering.
+> But I'm more than happy you do a first round.
 
-Oh, sorry, dropped.
+For now, I'm only going to grab these:
 
-Thanks.
+  KVM: VMX: Pass XFD_ERR as pseudo-payload when injecting #NM
+  KVM: VMX: Don't modify guest XFD_ERR if CR0.TS=1
+  KVM: x86: Use a dedicated flow for queueing re-injected exceptions
 
--- 
-Dmitry
+and the WRMSRNS patch.  I'll post (and apply, if it looks good) the entry/exit
+pairs patch separately.
+
+Easiest thing would be to rebase when all of those hit kvm-x86/next.
+
+> BTW, if you plan to take
+> 	KVM: VMX: Virtualize nested exception tracking
+
+I'm not planning on grabbing this in advance of the FRED series, especially if
+it's adding new uAPI.  The code doesn't need to exist without FRED, and doesn't
+really make much sense to readers without the context of FRED.
+
+> > > Top of my mind are:
+> > >      KVM: x86: Use a dedicated flow for queueing re-injected exceptions
+> > >      KVM: VMX: Don't modify guest XFD_ERR if CR0.TS=1
+> > >      KVM: VMX: Pass XFD_ERR as pseudo-payload when injecting #NM
+
+As above, I'll grab these now.
+
+> > >      KVM: nVMX: Add a prerequisite to existence of VMCS fields
+> > >      KVM: nVMX: Add a prerequisite to SHADOW_FIELD_R[OW] macros
+
+Unless there's a really, really good reason to add precise checking, I strongly
+prefer to skip these entirely.
+
+> > > 
+> > > Then specially, the nested exception tracking patch seems a good one as
+> > > Chao Gao suggested to decouple the nested tracking from FRED:
+> > >      KVM: VMX: Virtualize nested exception tracking
+> > > 
+> > > Lastly the patches to add support for the secondary VM exit controls might
+> > > go in early as well:
+> > >      KVM: VMX: Add support for the secondary VM exit controls
+> > >      KVM: nVMX: Add support for the secondary VM exit controls
+
+Unless there's another feature on the horizon that depends on secondary exit controls,
+(and y'all will be posted patches soon), I'd prefer just grab these in the FRED
+series.  With the pairs check prep work out of the way, adding support for the
+new controls should be very straightforward, and shouldn't conflict with anything.
 
