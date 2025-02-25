@@ -1,198 +1,150 @@
-Return-Path: <linux-kernel+bounces-532668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-532669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87F12A4508C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:55:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043AEA45091
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 23:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DADE516A109
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:55:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25C957A6402
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 22:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC9C233151;
-	Tue, 25 Feb 2025 22:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58EC233714;
+	Tue, 25 Feb 2025 22:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="Z09qg6/M"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q5kIXR3v"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C4204F9B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 22:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5678F204F9B;
+	Tue, 25 Feb 2025 22:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740524104; cv=none; b=l0jpcHiJBsYfvIdOrV+1wr/5haSbvX5QNeTz/O27A886KkLBEqejPHo6prRpWK8S/KCbEpSEJLTGAsAA3fDw/dwtCaffDj/Ws/XZiCLL/DmOPIAWrawaxelLZirdlQAFOqClrAHY43S5jE0z6R9xMNfRX8lAqDDCg+bFRf3BFek=
+	t=1740524171; cv=none; b=mDIUILxAtSHeyqKEkOM72MuZSAXhPooit//w317o/fpCgOrT7XTwi6Vdz5Lmwv2VdZxVGVvvfzkI2U2sPgAyghCdfIBkkeZKYFEfHbV9tWVnkW29lWpgtVfvgR10sk2D/n2eg0zu/tNyKrjtBjOBJ83E80QBmgdbGHgMOL65jj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740524104; c=relaxed/simple;
-	bh=b7GE2WDSJ8erb2DRmKw664l9pESoplGUaVO7FPP4lP8=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=cFxMKf4PBCTv34lZgiT1xOBdOJnPsXaRs/GLCtEsOZNQQmDxmjbx7a6Whs8Aa3wMK18amLsaz0nElOwZuweob5g1TUYVSZBWAI5YeT85OoSTsaMOUEFMvLZ8QE9pKIREqBkqAgOtpd6TnqW+Kg2jO2k4Ta/2g5ICRI5zg+I5gqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=Z09qg6/M; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-220c665ef4cso108723495ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Feb 2025 14:55:01 -0800 (PST)
+	s=arc-20240116; t=1740524171; c=relaxed/simple;
+	bh=WP5ICD/fUvspwcDOC+vCPGstk3m2lObTd1WmHN0cTTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Go+a/21rPPQd0dPwZd5fTn/R8eXPcEWspVfa70bwpII30YGRcZWpwHAvsmxbBccXvxn0Yi2Q6wE0FNUyJq2UUjqI/y06BIdSlmlM6+M8o9ufoEKModPkbiKb1Bt/NEVEFzaqh46R8TYSdqoF+vEaPiHLw0zzjHTqZWrDUjTkNqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q5kIXR3v; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30a2594435dso2993491fa.1;
+        Tue, 25 Feb 2025 14:56:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1740524101; x=1741128901; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eoxgd0LXqhYyoIs1TcxAsnvLmRYvl51fOK6HZwrhImc=;
-        b=Z09qg6/MfsbPoF1aSZoQlg2H7xUhPjefiDOQjO8gpa2Lqh5KndyaQ9FoA5gTzFKk1d
-         +7j8aL3Iwcrwyzlcx3Dgu1LzjUu57gVNIwCi0gfX8zli8bv1kMXJWde7/cECc/G7UspX
-         nL9/o+8IiYEsVIohGvH76EaAvL/IbHTTGrCIo7wS8tfS+TriUJi2orYFDWZgYtiJnpQV
-         rcq05FGC6yUzHYCYqu4l6MGU65qCqC1h7P2Elqu0f/0aYAZHPiW31+V7HqhyfidI+fbl
-         ARGjydJdtIPrJA1yRi+Oia3CIzLqGfCVUmG+xDXNVcpHHwJBUlcpRaMGCSC/y8Z8E3wD
-         OnEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740524101; x=1741128901;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1740524167; x=1741128967; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eoxgd0LXqhYyoIs1TcxAsnvLmRYvl51fOK6HZwrhImc=;
-        b=H1dzb+h2C4iu0UfoM1u+wbbj4vIwYsMfiqvreNVQXrgQafJi+NbILhb8GqTcsLht3D
-         EzOmt8UH0lZ1uMi73YqkHd0rRXtgoCZWSyZ7kC8EYirGwO4khMLlO8W0onVyGsT2Eztj
-         CS7Tife2iFN0kkX0s5/1AuK4sXTdeqHNtV6FcmOwsy/YXK6rJNE7hgrwFNwvnyPD/YW8
-         qOUcNdQ3QoAp5C1t+OWpA8KLGu2obSCuubLJwhOFPoDkO9/Mdey1Kr2TGjFWYcxIV0p6
-         SC1+yu9ibQGGiPYAs6VuPQPMJ6QDlYwTYI3jBtFI9YH1+6/L6ltb5dIOSRCjSyI3q6Nd
-         5B8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWz2gN53Wod9ZBn3qwdOIanldCo7KCc9bgD/ZWuip6yp+4cxgUuc+MW2SU6z8PUCNBM3zogDUhMoZrzgcw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwILwlcUSUIO7JQ4u3MfXv/d33nWZOD5rP+r/QyUl2pU68svT7P
-	aM8tl2qpPcujsIW8+JBaOrcr3U3RGOrF6Tj7gzriqqx/COJ9QiXeRy38o/3MjMc=
-X-Gm-Gg: ASbGncsTXLhoQu5KVleDJQPQm5e7/wDsf/gHzjTt+KXSF1zpsG3nbEFg5yR7ma0oAxP
-	PvtBMYUNW2QbbvqfIcFmQCDwaX2O/UzaqE5maUXf11IrQRBfxW/iQEBqlQiQMpCvYArrgiiWgYk
-	ka39nwLhSu71tuipeB2WKfvfqpcONPR86MQlmOAs7D42B/AZ+Ad9q0lBsUS7SJvL5kTjdOhoh85
-	sIdbLZqUpPr6WC3OtNoJ9tg17Y1M8pTZQbiuPU7LuddK+7wtFpHCYJfdWzvYc86+g5jllRVp84x
-	idHZBTkb9TYohul2WYw=
-X-Google-Smtp-Source: AGHT+IHDF0cWJ/SEBMVNAJOxihTtvNcg7f922v9D9w95rEqvhz8RZQiYleayAK1FRV0WuHL7CfLLPw==
-X-Received: by 2002:a17:903:986:b0:221:80f8:99cd with SMTP id d9443c01a7336-2219ffb3badmr294881865ad.21.1740524101121;
-        Tue, 25 Feb 2025 14:55:01 -0800 (PST)
-Received: from localhost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2230a092fc9sm19662355ad.126.2025.02.25.14.55.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2025 14:55:00 -0800 (PST)
-Date: Tue, 25 Feb 2025 14:55:00 -0800 (PST)
-X-Google-Original-Date: Tue, 25 Feb 2025 14:54:59 PST (-0800)
-Subject:     Re: [PATCH] riscv: tracing: Fix __write_overflow_field in ftrace_partial_regs()
-In-Reply-To: <Z74DlyiSS75MrkqS@ghost>
-CC: alex@ghiti.fr, rostedt@goodmis.org, mhiramat@kernel.org,
-  Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-  oleg@redhat.com, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-  linux-riscv@lists.infradead.org
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Message-ID: <mhng-2350fde8-5ca3-4770-94d0-26582bdfc0dd@palmer-ri-x1c9a>
+        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
+        b=Q5kIXR3vNlZPwuOh8yaGs+Dv0XMT4ecnpzNL97taumi3QJQvM3GpWd+4CQ0DbRAmv0
+         lmsJ3o5wXMLdgwDtqJT+eHkpyIPbn/m5ckwl5nfMjVc1F+3jjU5S0N3mF4wAFe94bmbq
+         Yr9Azcmp7dEfSavusOBf0jzZUxvT87C8tNgSRG2+DJf436igi7yAts5vxZ3Ez2HnZDrY
+         t/Q6ODyzUqWadwBGfpfVfre+Vz3xcoKNEp4Aoc+/UZCZLrzBJxImib67ZOQETNARVFrG
+         gWP6zmTmA1K2nxwtKGYeBVJJWVxEYmI5ER0657xEFliaAL2YRXvycXhFXBa3mnlS9G+e
+         RI/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740524167; x=1741128967;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HgEgO8Ju/firUMwZDW4ea1qs6sMMAvv6pWGk9qZ2srE=;
+        b=qN0IMBgObkmrZDnG0R1s/ZpX0P3ipX/Qp5h6wazVOl2MMxbtCZ5GuKfxmPkS6lLP2f
+         7XSwJ1aNhR4+ZGtGdQlhJTDqwAgu0+0YoDQKW+D3PA2G6RfY1d+JsRoB3NGjiARdRu9Y
+         9g6v8DDfN1hmnTQE2pLWyYsER0TNAPHZtnbryXeqO2ZYGOlw1GiVeFvOOO9L15mcjHz9
+         PxTqYAl5pjx25flqvJOXcG6+s6FANemYskvBbm6gdPrXXgNvTqPEkYKqCCgF+wZNUAZl
+         WNjj94n+6wIXtZIGqM0BikBz9Uj2+DECSkiO42NOcDooIvwR0tSQeCDgcUCynsSyKPMZ
+         PxFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrelgw74ZxewTeNa6i4Oz52nhpiPceJRWuXlpsUHqX1k7WY4QF2GBzxsc5CHizvecAAYR/IeZxD015@vger.kernel.org, AJvYcCX3sbaBOpuAhIddJLmfWCsP6pFSV9AYgD39QFehI7JRkKtzA78rsOAB4fD92O+6CSgUSjrLhrDH3iPnvw/f@vger.kernel.org, AJvYcCXSj4qe3IdDZYArXLkdmCzt+heOvVxz+BTApjhhZcPuk4Tilr7kEY2JbC46egVWdfIs/iMEeaQzKjm0OZAWqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIKQMGdmXo4W6nvvAisD73/FRrH2KMaKXovzMvFxz2YKkxkFWj
+	lyaZucLwVziNqVADfh6zmaJu8ioaQxeTXw5AgBXZjLrJ18CKzVt/dDuDWJ82fWR4pjbR0yOdKb2
+	oSvBCUx6Ke1P+n49/QkFo59u39H0=
+X-Gm-Gg: ASbGncuOefNfUS4+ec/R7DOsmQf3DpZ1D2k5UpZSNWiBnXh1274RJOD8hMxPEntbDzY
+	tED0BxbkJnYxSFdG6/iqZgUl6YrtvYXKz6g/cRVPAWPII/91h70l3ILkw3J12+h+k7XxU7Uld8y
+	JZjnjDcMo=
+X-Google-Smtp-Source: AGHT+IHwSWJ7XNj4Mb9xUjz4kISutQjQS5qgcJOweA9fncToSusgnMBoMCQnx1ZOHcc9hRULT9kO2A2WM5J2rYS4I5k=
+X-Received: by 2002:a19:4317:0:b0:549:39b1:65d4 with SMTP id
+ 2adb3069b0e04-54939b16edbmr1848816e87.0.1740524167158; Tue, 25 Feb 2025
+ 14:56:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+References: <2433838.1740522300@warthog.procyon.org.uk> <20250225223826.sm4445vrc56mfuwh@pali>
+In-Reply-To: <20250225223826.sm4445vrc56mfuwh@pali>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 25 Feb 2025 16:55:55 -0600
+X-Gm-Features: AQ5f1Jo6XXLVbjx1gBz329g2rRAPrhuHDOb-nfzLQJUf_2H9sBrfoXnqj9dxnNE
+Message-ID: <CAH2r5muYgfd-GmwQKt-ZHgt7Up57j1OEJy-6e9OdN--aiQHDGQ@mail.gmail.com>
+Subject: Re: [PATCH] cifs: Fix the smb1 readv callback to correctly call netfs
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Steve French <stfrench@microsoft.com>, 
+	Jean-Christophe Guillain <jean-christophe@guillain.net>, Paulo Alcantara <pc@manguebit.com>, 
+	Jeff Layton <jlayton@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-cifs@vger.kernel.org, 
+	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Feb 2025 09:53:27 PST (-0800), Charlie Jenkins wrote:
-> On Tue, Feb 25, 2025 at 09:36:04AM +0100, Alexandre Ghiti wrote:
->> Hi Charlie,
->>
->> On 25/02/2025 03:42, Charlie Jenkins wrote:
->> > The size of &regs->a0 is unknown, causing the error:
->> >
->> > ../include/linux/fortify-string.h:571:25: warning: call to
->> > '__write_overflow_field' declared with attribute warning: detected write
->> > beyond size of field (1st parameter); maybe use struct_group()?
->> > [-Wattribute-warning]
->>
->>
->> I can't reproduce this warning with gcc and llvm, even when setting by hand
->> -Wattribute-warning when compiling bpf_trace.c (which is the user of
->> ftrace_partial_regs()).
->>
->> Which toolchain did you use?
+Thanks for the quick fix and reviews/testing.  Merged into
+cifs-2.6.git for-next.  Will run some additional tests on it tonight
+
+On Tue, Feb 25, 2025 at 4:38=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
 >
-> You need to have the configs:
-> CONFIG_BPF_SYSCALL=y
-> CONFIG_FORTIFY_SOURCE=y
-
-I don't think I have any FORTIFY_SOURCE runs, unless they're on by 
-default behind some other argument.  I'm kind of surprised this is the 
-only bug we have, that usually trips up all sorts of stuff.
-
-I'll go add some runs and see...
-
-(I'm also going to just go pick this up, might take a little bit to show 
-up.)
-
-Thanks!
-
-> CONFIG_FUNCTION_TRACER=y
-> CONFIG_FPROBE=y
-> CONFIG_DYNAMIC_FTRACE=y
+> On Tuesday 25 February 2025 22:25:00 David Howells wrote:
+> >
+> > Fix cifs_readv_callback() to call netfs_read_subreq_terminated() rather
+> > than queuing the subrequest work item (which is unset).  Also call the
+> > I/O progress tracepoint.
+> >
+> > Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only u=
+se one work item")
+> > Reported-by: Jean-Christophe Guillain <jean-christophe@guillain.net>
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D219793
+> > Signed-off-by: David Howells <dhowells@redhat.com>
+> > cc: Steve French <stfrench@microsoft.com>
+> > cc: Pali Roh=C3=A1r <pali@kernel.org>
+> > cc: Paulo Alcantara <pc@manguebit.com>
+> > cc: Jeff Layton <jlayton@kernel.org>
+> > cc: linux-cifs@vger.kernel.org
+> > cc: netfs@lists.linux.dev
+> > cc: linux-fsdevel@vger.kernel.org
 >
-> I used gcc 14.2.0
+> Thanks! With this change, I cannot reproduce crash anymore.
 >
-> - Charlie
+> Tested-by: Pali Roh=C3=A1r <pali@kernel.org>
 >
->>
->> Thanks,
->>
->> Alex
->>
->>
->> >
->> > Fix this by wrapping the required registers in pt_regs with
->> > struct_group() and reference the group when doing the offending
->> > memcpy().
->> >
->> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->> > ---
->> >   arch/riscv/include/asm/ftrace.h |  2 +-
->> >   arch/riscv/include/asm/ptrace.h | 18 ++++++++++--------
->> >   2 files changed, 11 insertions(+), 9 deletions(-)
->> >
->> > diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
->> > index c4721ce44ca474654b37b3d51bc0a63d46bc1eff..ec6db1162021fbf4fa48fc87e7984266040aa7d9 100644
->> > --- a/arch/riscv/include/asm/ftrace.h
->> > +++ b/arch/riscv/include/asm/ftrace.h
->> > @@ -207,7 +207,7 @@ ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
->> >   {
->> >   	struct __arch_ftrace_regs *afregs = arch_ftrace_regs(fregs);
->> > -	memcpy(&regs->a0, afregs->args, sizeof(afregs->args));
->> > +	memcpy(&regs->a_regs, afregs->args, sizeof(afregs->args));
->> >   	regs->epc = afregs->epc;
->> >   	regs->ra = afregs->ra;
->> >   	regs->sp = afregs->sp;
->> > diff --git a/arch/riscv/include/asm/ptrace.h b/arch/riscv/include/asm/ptrace.h
->> > index b5b0adcc85c18e15c156de11172a5d7f03ada037..2910231977cb71dac3cc42f2dc32590284204057 100644
->> > --- a/arch/riscv/include/asm/ptrace.h
->> > +++ b/arch/riscv/include/asm/ptrace.h
->> > @@ -23,14 +23,16 @@ struct pt_regs {
->> >   	unsigned long t2;
->> >   	unsigned long s0;
->> >   	unsigned long s1;
->> > -	unsigned long a0;
->> > -	unsigned long a1;
->> > -	unsigned long a2;
->> > -	unsigned long a3;
->> > -	unsigned long a4;
->> > -	unsigned long a5;
->> > -	unsigned long a6;
->> > -	unsigned long a7;
->> > +	struct_group(a_regs,
->> > +		unsigned long a0;
->> > +		unsigned long a1;
->> > +		unsigned long a2;
->> > +		unsigned long a3;
->> > +		unsigned long a4;
->> > +		unsigned long a5;
->> > +		unsigned long a6;
->> > +		unsigned long a7;
->> > +	);
->> >   	unsigned long s2;
->> >   	unsigned long s3;
->> >   	unsigned long s4;
->> >
->> > ---
->> > base-commit: d082ecbc71e9e0bf49883ee4afd435a77a5101b6
->> > change-id: 20250224-fix_ftrace_partial_regs-eddaf4a7e5ed
+> Steve, could you please include this fix into some queue? This should be
+> merged into next -rc.
+>
+> > ---
+> >  fs/smb/client/cifssmb.c |    3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> > index 6a3e287eabfa..bf9acea53ccb 100644
+> > --- a/fs/smb/client/cifssmb.c
+> > +++ b/fs/smb/client/cifssmb.c
+> > @@ -1338,7 +1338,8 @@ cifs_readv_callback(struct mid_q_entry *mid)
+> >       rdata->credits.value =3D 0;
+> >       rdata->subreq.error =3D rdata->result;
+> >       rdata->subreq.transferred +=3D rdata->got_bytes;
+> > -     queue_work(cifsiod_wq, &rdata->subreq.work);
+> > +     trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+> > +     netfs_read_subreq_terminated(&rdata->subreq);
+> >       release_mid(mid);
+> >       add_credits(server, &credits, 0);
+> >  }
+> >
+>
+
+
+--=20
+Thanks,
+
+Steve
 
