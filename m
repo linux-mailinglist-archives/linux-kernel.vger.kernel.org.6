@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-531555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-531560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE2DA441C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:07:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C251DA441F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 15:10:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A8AF16C817
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:06:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBABC170B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Feb 2025 14:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C14269CEC;
-	Tue, 25 Feb 2025 14:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E729020E6E0;
+	Tue, 25 Feb 2025 14:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="awUFXT9N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lshnKFxr"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 851961FC7D5;
-	Tue, 25 Feb 2025 14:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195B426157A;
+	Tue, 25 Feb 2025 14:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740492396; cv=none; b=sCZ9NfF7rfU8IsYDvfL8WSblkjtsd+1ileKEFUaL3huGK7LCr5z3vCH8XlogBtuaT7FUEDt2+PGh1lrp39V/lR/Uv9Q3IAPdc+GavLF54pd4R4a0zTnxiPIa17JQt/vSJd1h70TAnMG5/ZKshVWMuup8kyZEzq9zMysMOliGBzw=
+	t=1740492472; cv=none; b=YHNp98akJFTXFJf9ITiVI8ZbpdzSbnUe/iv3Z5oKq0fZ/0Du7THexi9BPv9vAXOXf6/5zbU4exgHCsnrRFRc4T1jqMKQxn4tFFMVQInwKx16w8vSeuA9BH9avxUCI7+X6kped1GGsthBkI11/dmFrJhvohapGW/gWP95AN24MHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740492396; c=relaxed/simple;
-	bh=5p8g0jn/H6LJ5TXlZMtN4+RQEgxn/quDJzMY5IiihGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iB9skkrpPkMWrlH3XcnO9Nir2lt4IlI5Eo/X2HjNAurVK2FF+2IfW4VvP6oUpZq+KW7Dn4nII0uN0IMCChvvhBvo9Ja2YmJgnUESGiLJu+Sn6IPsYqvf5w5NX2UqEpfImEtyM7nq+hEf0ZFgwk8lC4EtOeKGHHYVNs6gFtlXONI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=awUFXT9N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60FBDC4CEDD;
-	Tue, 25 Feb 2025 14:06:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740492396;
-	bh=5p8g0jn/H6LJ5TXlZMtN4+RQEgxn/quDJzMY5IiihGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=awUFXT9NLboiavoY9ijieTyGuvgKAA3TiyEDv8/DfJhkyznEwsPUCpb1DL/F56zOo
-	 O6yDJLgaaqF3WEYlBl8qvZud7rSBZ+e2UBUJFW5beaCemISY+WywEFNysjc15mfP2+
-	 Jvk7SAiUF/lYQLdyy7QjqzcQlm8xNhVGBas+h+/qmHQHOJ1+Sp8/G08tojI+VjnFCX
-	 3HwkD1Ez/c9Om7DFpAzDHHwU30fxH8sWN2McP8SifDRUTtma2NruqhEjaNK8bQ5+G9
-	 lWlIkWUIGK/tk6LuG+WovMUSKjDQNVSA7lgWsPafoMmUif6hP/alF8cKBltvSiIlEy
-	 FCHG5FYxZ9mbQ==
-Date: Tue, 25 Feb 2025 14:06:31 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Alexis Czezar Torreno <alexisczezar.torreno@analog.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: regulator: add adi,adp5055-regulator
-Message-ID: <cf90cf64-202b-456c-9a9a-ba33d0e68961@sirena.org.uk>
-References: <20250225-upstream-adp5055-v1-0-a5a7f8e46986@analog.com>
- <20250225-upstream-adp5055-v1-1-a5a7f8e46986@analog.com>
+	s=arc-20240116; t=1740492472; c=relaxed/simple;
+	bh=pLINc7sGYsNf6o0xLYyTEPx1QbSFQ+m5ajNum3oEKzA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gt9+zCFNO6Vs+1dl5Ns9M3kNMTtgai0ZT2nidHqNz2VquRCkRPFrnrhsrqDUAIKfbJUVrp2Yq+qcvl2i4FxW5pI2WkBpo4/zSdU8n/1yXXtZl5bhDkHKNc5b+psOVFeS2VAzt1ZhLkFC6YYO1xe5XooiuNv5SjPQ8e2b6xwO/VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lshnKFxr; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: de660e96f38111ef8eb9c36241bbb6fb-20250225
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=p9bPP8SA0wg3WU33l4tSgklIjkOTJBKb71wpMn8Q+TI=;
+	b=lshnKFxrS9inMaNZw8VDU+C06nH+EPAbcqyWk3ds+wOsYFxBhBnLf1rVmCqJ/rJAnbIYeHjYJRWPakbyIsTZtUshxOMiq+/o8e1n2Xp7bRu0Yj2+lYk7dnYM5dONzORCougco6zydaxIGOcZWy8cpPgx4xQCd/Oko/RbPCHYfkA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.46,REQID:305e7522-63f0-497e-baa9-2fc5005558cf,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:60aa074,CLOUDID:a21ae8d9-654e-41f2-8a8e-a96c1e834c64,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: de660e96f38111ef8eb9c36241bbb6fb-20250225
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <ot_chhao.chang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 407840700; Tue, 25 Feb 2025 22:07:37 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Tue, 25 Feb 2025 22:07:36 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Tue, 25 Feb 2025 22:07:35 +0800
+From: Hao Chang <ot_chhao.chang@mediatek.com>
+To: Sean Wang <sean.wang@kernel.org>, Linus Walleij
+	<linus.walleij@linaro.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+CC: Wenbin Mei <wenbin.mei@mediatek.com>, Axe Yang <axe.yang@mediatek.com>,
+	Qingliang Li <qingliang.li@mediatek.com>, Hanks Chen
+	<hanks.chen@mediatek.com>, Chunhui Li <chunhui.li@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Hao
+ Chang <ot_chhao.chang@mediatek.com>
+Subject: [PATCH v4 0/3] Add EINT support for multiple addresses
+Date: Tue, 25 Feb 2025 22:07:21 +0800
+Message-ID: <20250225140732.21557-1-ot_chhao.chang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cwPN3DqgCIzTZZ2R"
-Content-Disposition: inline
-In-Reply-To: <20250225-upstream-adp5055-v1-1-a5a7f8e46986@analog.com>
-X-Cookie: I'm not available for comment..
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+v4 changes:
+1)Add err statement for exception handling
+2)Add check for invalid pins
+3)Use defined eint pins
 
---cwPN3DqgCIzTZZ2R
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+v3 changes:
+1)Add error judgment
 
-On Tue, Feb 25, 2025 at 05:08:33PM +0800, Alexis Czezar Torreno wrote:
+v2 changes:
+1)Remove instance structure
+2)Modify the way to obtain eint address
 
-> +      adi,power-saving-mode:
-> +        description:
-> +          If present, enables power saving mode for
-> +          individual channels.
-> +        type: boolean
+---
+This patch depends on
+[v3,2/2] pinctrl: mediatek: add mt8196 driver
+[v3,1/2] dt-bindings: pinctrl: mediatek: add support for mt8196
 
-We have standard mode operations, please implement those.
+Please also accept this patch together with [1]
+to avoid build and dt binding check error.
+[1]https://patchwork.kernel.org/project/linux-mediatek/list/?series=&submitter=215008&state=&q=v3&archive=&delegate=
+---
+Hao Chang (3):
+  pinctrl: mediatek: add eint pins
+  inctrl: mediatek: modify the method of obtaining eint address
+  pinctrl: mediatek: adapt to EINT multi-segment addresses
 
-> +      adi,output-discharge-function:
-> +        description:
-> +          If present, enable output discharge functionality
-> +          for individual channels.
-> +        type: boolean
+ drivers/pinctrl/mediatek/mtk-eint.c           | 246 ++++++++++-----
+ drivers/pinctrl/mediatek/mtk-eint.h           |  21 +-
+ drivers/pinctrl/mediatek/pinctrl-mt8196.c     |   1 +
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |  49 ++-
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.h  |   1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt8196.h | 296 ++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.h      |   7 +
+ 7 files changed, 518 insertions(+), 103 deletions(-)
 
-set_active_discharge()
+-- 
+2.46.0
 
-> +      adi,disable-delay-us:
-> +        description:
-> +          Configures the disable delay for each channel. Dependent on Tset.
-> +        enum: [0, 5200, 10400, 15600, 20800, 26000, 31200, 36400]
-> +        default: 0
-> +
-> +      adi,enable-delay-us:
-> +        description:
-> +          Configures the disable delay for each channel. Dependent on Tset.
-> +        enum: [0, 2600, 5200, 7800, 10400, 13000, 15600, 18200]
-> +        default: 0
-
-This looks a lot like the driver should implemnt the enable_time()
-and/or set_ramp_delay() operations and use the constraints to configure
-this.
-
---cwPN3DqgCIzTZZ2R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme9zmYACgkQJNaLcl1U
-h9Barwf/fTcd5fyS9EAHbBYRAXg0QdNpGeZxnN+qwMc7wLEUl1KielZIfwTi1OuK
-SoxCfX1FwRRhWSXpCGcBqQd+fwKbYSY0Xqn2sYPqUr8NhPMxg5kpkD/dTSJ8biQY
-Mm1fv/5xZhdmwyJkFqWzVIUJpSsg6+9DZ9ctpIUfU1Z3EqrQIYFUQVlbzHFXQPi2
-lEADEeMYrgCLr0p2hV2lWLHu+6s6dfGSRhXOzKytEMjGpvW1vxBbTGKX9vyuLxgi
-IU/MGCXJZu+TfARUvnkq89cJZj+HkBy5t1LEnRJwCl1j1djpP8xtTzLVaFm80Trm
-MQIPbKOCgUOXWl7K+oPY25InBr2R3Q==
-=Awj7
------END PGP SIGNATURE-----
-
---cwPN3DqgCIzTZZ2R--
 
